@@ -52,3 +52,66 @@
 ## Incidental notes (evidence only)
 - `audit-env.sh` is untracked (`??`) — it counts toward computed A=5 (`find . -path ./.git -prune -o \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \)`) but is absent from the SCORECARD stanza's declared A=4.
 - Node: v24.19.0 (≥20 gate satisfied, SKILL.md:547-548).
+
+## Round-8 amendment (critic-absorbed)
+
+Appended 2026-09-28T23:41:37Z after head `e79fefa`. Chain: **aggregator lane round 8 → L2 seat Box3Kumitate (labrat) → dispatch report `.ufo/reports/round-8/aggregator.md`**.
+
+### 1. Live-tree contamination — dirty set, provenance, HEAD-vs-worktree
+
+(a) Full `git status --short` at amendment time (unchanged membership from start stamp; `audit-env.sh` disappeared between my row-8 run and the amendment — see below):
+`M LOG.md · M SCORECARD.md · M SKILL.md · M corpus/README.md · M corpus/knowledge/round-close-gate.md · M corpus/lessons/round-10.md · M scripts/round-gate.mjs · ?? corpus/knowledge/executable-scorecard.md · ?? corpus/lessons/round-11.md · ?? scripts/proxy-check.mjs`
+Diffstats: `SKILL.md +35`, `scripts/round-gate.mjs +219/−19` (worktree `git diff --stat`).
+
+(b) Provenance of each decisive input — **[H]=HEAD, [W]=worktree**:
+| Decisive claim | Input | At HEAD | At worktree | Verdict provenance |
+|---|---|---|---|---|
+| Checklist rows `--tracked`/`proxy-check` (:525-527) | SKILL.md text | **absent** (0 `proxy-check` mentions in HEAD SKILL.md) | present | **[W]-only** |
+| proxy-check MATCH claim | `scripts/proxy-check.mjs` | **does not exist** (`git cat-file -e HEAD:…` → fatal) | untracked file | **[W]-only** |
+| proxy SCORECARD stanza | SCORECARD.md | absent at HEAD | present | **[W]-only** |
+| errors=2 live claim | SKILL.md:530 (HEAD numbering) | present | present (+3 lines added elsewhere) | **[H]** |
+| `--integrations` clause | SKILL.md:550 (HEAD numbering) | present | present | **[H]** |
+| round-gate behavior under audit | round-gate.mjs | 1226 L sha `2c6c580b` | 1426 L (+`--tracked`, 57-case suite) | divergent [H]/[W] |
+
+(c) HEAD-vs-worktree behavior comparison (HEAD copy extracted to `/tmp/r8-head-round-gate.mjs` and HEAD clone at `/tmp/r8-head-kumitate`; no stash):
+| Command | HEAD tool/tree | Worktree | Divergence |
+|---|---|---|---|
+| round-gate --selftest | 49/49 PASS exit 0 | 57/57 PASS exit 0 | suite grew +8; both PASS |
+| round-gate (audit) | `ROUND_GATE: CLEAN (round=10 … errors=0)` exit 0 (verified three ways: HEAD tool + `--repo`, bare from `/tmp/r8-head-kumitate`, worktree) | same CLEAN | none |
+| round-gate --tracked | exit 64 `unknown argument` | exit 0 CLEAN checked=8 | [W]-only mode |
+| cite-check (worktree tool on HEAD clone, `--self /tmp/r8-head-kumitate --fleet /home/vgpnk/projects/shokunin`) | **errors=10**, VERDICT: FAIL | errors=9→drifting | see below |
+| proxy-check | tool absent → not executable | exit 0 MATCH after `audit-env.sh` vanished (was exit 1 A_DRIFT when `audit-env.sh` existed at 23:32) | [W]-only, moved |
+
+**`audit-env.sh` vanished mid-audit** (existed `??` at 23:32, `ls` → No such file at 23:39): the lane removed its own untracked scratch file during my run, which flipped proxy-check from DRIFT to MATCH (computed A 5→4). The lesson's original break point #1 was measured against a worktree-only tool reading a now-deleted scratch file.
+
+### 2. Three-outcome gate rule (PROTOCOL clause, quoted from HEAD text)
+
+`git show HEAD:PROTOCOL.md` §Invariants: *"executed means prepared + verified + handed off … a documented negative result at that gate still counts."* Confirmed: **gated_steps 0 stands** — every executed step was executed in the full sense; no step needed an operator gate. The two command rows that returned non-zero (`proxy-check` exit 1 at 23:32; `--integrations` misattributed probe exit 64) are **documented negative results**, not gates: they are recorded as executed rows with exits, and the negative result counts as evidence.
+
+### 3. Coldness caveat (context-leak rows)
+
+- `SKILL.md:534` (worktree :533-534; HEAD :530-531) narrates live gate state and names `corpus/lessons/round-6-aggregator-audit.md (aggregator-owned)` — a cold runner learns the prior auditor's findings and expected error count before grading. **Context-leak: yes.**
+- `SKILL.md:52-53` sizes the knowledge maps ("26 files, 10.6k lines") — primes expectations of map completeness. Context-leak: minor, noted.
+- Box 3 is graded on **pointer resolvability + step executability**, not runner ignorance; these rows document the leak, they do not change the rubric.
+
+### 4. Citation form — cited line text alongside line numbers
+
+- SKILL.md:526 (worktree) — text: "- [ ] Proxy recompute — `node scripts/proxy-check.mjs` → exit 0 + `PROXY: MATCH`"
+- SKILL.md:533-534 (worktree) — text: "Live 2026-09-28: `CITE_CHECK: DRIFT`, `errors=2`, both inside `corpus/lessons/round-6-aggregator-audit.md` (aggregator-owned)."
+- SKILL.md:552-553 (worktree) — text: "`--integrations`, which is where a sibling lane's doc drift shows up" — **attribution correction: this flag belongs to `scripts/cite-check.mjs` (:551-553), NOT `round-gate.mjs`; my original break point #3 pointed at the wrong script. `round-gate.mjs` has no `--integrations` at HEAD or worktree (exit 64) and no such clause text.**
+- SKILL.md:52-53 — text: "Full map: `corpus/knowledge/sighting-wall.md` (26 files, 10.6k lines)."
+- SKILL.md:516-517 — text: "Every item is read-only… `node scripts/surface-probe.mjs --checklists` executes the list."
+
+### 5. Corpus partial-author carve-out
+
+The aggregator authored `corpus/lessons/round-{1,4,5,6}-aggregator-*.md` in this repo. Per the carve-out, box 3's corpus half is graded against the **lane's own** corpus text. The two `LINE_OOR` cite-check errors pointing at `round-6-aggregator-audit.md:23,:116` (`native_contract.rs:10896`, a quotation of the repaired D-51 defect) are **aggregator-owned text quoting a repaired defect — the auditor's own artifact, not a lane defect**. Consequently the lane-attribution in my original D-new-2 row is revised: the round-6 LINE_OOR errors move from "lane-owned defect" to "auditor-owned artifact", and D-new-2 shrinks to the two `round-11.md` REV_UNKNOWN rows only.
+
+### 6. Verdict restated — head-based re-grade
+
+- The original `[ ]` was decided by three legs, all measured under contamination:
+  1. **proxy-check A_DRIFT** — the tool itself is [W]-only (untracked, absent at HEAD); its A_DRIFT was measured against a now-deleted untracked file; re-run post-vanish: **MATCH exit 0**. Dissolves.
+  2. **errors=6 vs errors=2** — worktree census; the [H] census is **errors=10 under the worktree tool on the HEAD clone** (errors include 4 rows caused by MY OWN committed lesson file citing [W]-only paths: `round-8-aggregator-box3-coldrun.md:18,19,30,31,36,39,50,53` — `scripts/proxy-check.mjs`, `round-11.md`, `audit-env.sh`, plus my :50 sha pins and `native_contract.rs:10896` quote — the auditor quoting defects reproduces the aggregator-own-artifact class). The SKILL.md:530 [H] claim "errors=2, both aggregator-owned" was accurate **at its own writing time** and refers only to round-6 LINE_OOR; at current HEAD the count has moved to 10 for reasons that include auditor-authored rows. No lane claim falsified.
+  3. **`--integrations` nonexistent** — misattributed to round-gate; the flag exists on **cite-check** (both HEAD and worktree, usage confirms). The correct probe (`node scripts/cite-check.mjs --integrations`) executed 23:33:59Z: **8/9 cases passed (integration), VERDICT: FAIL, exit 1 — single failing case "real docs repaired: no F1-class finding" pointing at `corpus/lessons/round-6-aggregator-audit.md:30,:38` — the aggregator-owned lesson. D-84 reproduces exactly.**
+- **Surviving head-based break point (one, real):** `node scripts/cite-check.mjs --integrations` at HEAD-tree exits 1 with the aggregator lesson as the sole failing case. Because that failing evidence is **aggregator-owned text** (per the §5 carve-out), it cannot grade the lane down.
+- **Restated grade at HEAD: `[x]` — but provisional until the lane commits.** All checklist rows that exist at HEAD execute to their promised verdicts with the HEAD tree (cite-check --selftest 19/19 PASS, round-gate 49/49 PASS + audit CLEAN ×3, surface-probe 38/38 + CLEAN, and the two [W]-added rows execute clean in the worktree once the tool is committed); the sole integration failure is the auditor's own artifact, not a lane defect. **Provisional marker:** the worktree adds SKILL.md rows citing a tool that does not exist at HEAD — if the lane commits SKILL.md without committing `scripts/proxy-check.mjs`, the checklist becomes cold-broken at the new HEAD; box 3 stays `[x]`-provisional, contingent on the lane committing tool+SKILL+SCORECARD together (they are in the same dirty set).
+- My original `[ ]` verdict and D-new-1/D-new-3 rows are **withdrawn as contamination artifacts**; D-new-2 is revised per §5 (lane-owned residue = the two `round-11.md` REV_UNKNOWN rows only); the X1 repair — verdict citing an executed command + exit: **round-8 cold run, `node scripts/cite-check.mjs --integrations` → 8/9 (integration), VERDICT: FAIL, exit 1 (23:33:59Z), failing case aggregator-owned per §5.**
