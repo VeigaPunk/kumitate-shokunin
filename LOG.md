@@ -72,3 +72,33 @@
   :95-111/:232/:287-308, `cli_contract.rs` :1507-1530,
   `tests/run-omp-native-trial.test.js` :3939/:4104/:4404.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-5/kumitate.md`.
+- 2026-09-28 — round 6: closed the two largest remaining gaps and the
+  tail of a third. Mapped fleet-dispatcher.mjs tail end-to-end (ingress
+  scout: L5700-8650 queue I/O, lock, scope partition, godspeed envelope,
+  mint + admission battery, batch refs, compaction, receipt verdicts;
+  tail scout: L8650-14769 latch/episode machinery, reconcileQueue,
+  runCycle, main() verbs) and all of `ufo-sighting-lib` (26 files, wall
+  persistence/lock, pane lifecycle, steer/peek, observation sources).
+  Closed `the-tick` gap: ground handler serves FOUR ops (health,
+  freshness_ping, path_ping, chat — chat is the only model touch).
+  Added 6 corpus notes (enqueue-admission, reconcile-and-cycle,
+  sighting-wall, native-admission-detail, cost-and-profile,
+  runtime-support) + lessons/round-6.md. Corrections landed: two-writer
+  queue rule (ufo-l0-monitor heal-writes via its own lock port, no
+  revision bump — sentinel-verified); `permits_advance` is
+  execution_profile.rs:448 not :447 (three stale cites fixed);
+  reconcileQueue head order corrected after critic falsification
+  (sweepGraceDeferLatch → sweepRowFaultLatches → pruneAdmissionLatch).
+  Cross-domain drift reported: judge `is_format_char` covers `\p{Cf}`
+  while producer `FORMAT_CHARS_RE` strips `\p{Cf}∪\p{Mn}∪Zs` — unpinned
+  Mn/Zs parity break (fail-closed). Method: 3 flash scouts mapped +
+  10-lane batch (planner, connector, 3 scouts, executor draft, scribe
+  census, critic falsification, reviewer citation audit, sentinel scope
+  audit); parent verified riskiest claims directly against source.
+  Evidence: fleet-dispatcher.mjs (rev 44a3c781, 14769 lines) L95-200,
+  L5713-8645, L8680-14769; ufo-sighting-lib/*.mjs; ufo-l0-monitor.mjs
+  :201-253/:1411-1467; ufo-ground-handler.mjs :99-163/:680-760;
+  execution_profile.rs :402-498; native_admission_text.rs :42-61 vs
+  ufo-credential-screen.mjs :55-75; cost_ledger.rs :18-737;
+  lane_overlay.rs/lease.rs/live.rs.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-6/kumitate.md`.

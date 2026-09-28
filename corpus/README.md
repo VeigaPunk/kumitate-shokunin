@@ -18,22 +18,28 @@ scripts, `crates/ufo-core-runtime`. Sources are in
 | `knowledge/loop-driver.md` | `LoopDriver` epoch loop, boundary-stop gate, round pipeline, `LoopOutcome`/`BrakeTelemetry`/checkpoint vocabulary | `loop_driver*.rs`, `state.rs`, `ufo-cli/src/main.rs` |
 | `knowledge/native-trial-launch.md` | `run-omp-native-trial.mjs` main() spine: preflight gates → wall handoff → deferred assignments → anchor/drift/probe gates → spawn → collect/judge/seal; refusal vocabulary; membrane-seal `write` defect | `run-omp-native-trial.mjs`, `ufo-cli/src/main.rs`, `cli_contract.rs` |
 | `knowledge/queue-and-claim.md` | pending-work schema/lock, claim pipeline, four counters, state vocabulary, repend door, ledger kinds | `fleet-dispatcher.mjs` L1-6740 |
+| `knowledge/enqueue-admission.md` | Queue I/O + lock mechanics, scope partition, godspeed envelope gate, mint + admission battery, batch sibling refs, compaction, receipt verdict machinery | `fleet-dispatcher.mjs` L5713-8645 |
+| `knowledge/reconcile-and-cycle.md` | reconcileQueue ordered rules, latch/episode machinery (emitLatched/durable kinds), runCycle pipeline, main() verb surface, constants | `fleet-dispatcher.mjs` L95-200, L8680-14769 |
+| `knowledge/sighting-wall.md` | Wall manifest persistence, lock protocol, pane lifecycle (spawn/pane-run/register/resume/stop/restore), steer/peek transport, observation sources, boundary crossings | `scripts/ufo-sighting-lib/` (26 files) |
+| `knowledge/native-admission-detail.md` | Seat model vs seat grammar attribution, JS-parity coercions, `FAILURE_RULES` home, profile admission order; Cf-vs-Mn/Zs parity drift (cross-domain) | `native_seats.rs`, `native_admission_text.rs`, `native_admission_rules.rs`, `native_text.rs` |
+| `knowledge/cost-and-profile.md` | cost_ledger wire types + validation (seats/lineage/totals), HonestyBrake trigger; execution_profile route catalog + FailureClass authorities (`permits_advance` :448) | `cost_ledger.rs`, `execution_profile.rs`, `native_profile.rs` |
+| `knowledge/runtime-support.md` | lane_overlay overrides, writer-lease epochs/sentinels, live Qwen distiller transport | `lane_overlay.rs`, `lease.rs`, `live.rs` |
+| `lessons/round-6.md` | Two-writer queue rule (l0-monitor), A1 head-order falsification, Cf/Mn/Zs parity drift | LOG.md round-6; commit `round-6` |
 | `lessons/round-5.md` | Wall-handoff double-run defect, membrane-seal `write` mismatch, stub-symmetry trap | LOG.md round-5; commit `round-5` |
 | `lessons/round-1.md` | Round-1 method notes, drift trap, stated gaps | LOG.md round-1; commit `round-1` |
 | `lessons/round-3.md` | Defer-not-die doctrine, park-epoch trap, admission-latch counting | LOG.md round-3; commit `round-3` |
 
 ## Known gaps
 
-- `crates/ufo-core-runtime` support families: `native_seats.rs` helpers,
-  `native_admission_text.rs` JS-parity coercions, `lane_overlay`, `lease`,
-  `live`, `cost_ledger` internals (ledger lineage walk), `l3_swarm` —
-  loop-driver + native admission surfaces now mapped at pipeline level.
-- the-tick ground-handler ops beyond `path_ping`
-- fleet-dispatcher middle tail: settle/reconcile machinery after the
-  claim path (recordDispatchResult settle verbs, auto-reap, manifest
-  reconcile) — queue schema, claim, dispatch, repend now mapped.
-- wall-side internals referenced but unmapped: `ufo-sighting-lib/
-  launch-verb.mjs`, `spawn-pane.mjs`, `pane-run.mjs` details beyond the
-  native-trial chain.
+- `crates/ufo-core-runtime` remainder: `l3_swarm` internals, `distill.rs`,
+  `native_ledger`, `native_seat_coverage`, `native_transcript` internals,
+  test-file case inventories, `bounded_fs`/`fs_durability`/`local_ship`
+  internals. Round-7 order drafted in `local://kumitate-r6-plan.md`.
+- fleet-dispatcher: `queueSummary` field internals remain thin (projection
+  named, per-field semantics in the tail map only); sibling-script consumers
+  of ledger kinds enumerated at `local://kumitate-r6-ledger-census.md`.
+- `ufo-sighting-lib`: done at internals level; entry shim + `__idle`/
+  `__reconcile`/`__pane-run` plumbing mapped, deeper display-matrix detail
+  (layout engine) not mapped.
 
 All entries are falsifiable and cite file+symbol. Opinions marked as such.
