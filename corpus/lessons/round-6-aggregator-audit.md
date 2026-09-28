@@ -5,6 +5,7 @@
 - **Audited state:** `kumitate-shokunin` HEAD `7a4c9a00ee8d353421c8aea0aca979d92c492007`; origin tree `/home/vgpnk/Projects/origin-work/ufo-fsd-alpha` HEAD `ee907f1cf75241e21ee311e35ba4c2cdf44bcbbe`.
 - **Freeze timestamp:** `date -u` → `2026-09-28T21:30:03Z`. The kumitate round-8 lane was **live and writing during the audit** (PID 1133123, launched 17:57:53; `SCORECARD.md` created 18:29:11), so every finding below is pinned to that instant and re-runnable.
 - **Method:** read-only. Every number carries the command that produced it; every absence carries its sweep. No build, test, service, or browser was executed.
+- **Anchor revision:** main-repo `PROTOCOL.md`/`ROADMAP.md` were being edited by the live protocol lane during this audit (`wc -l PROTOCOL.md` 387 → 576; `sha256sum` → `9e700d691307…`); their line numbers below are soft, the quoted clause text is the durable pointer.
 
 ## Verdict
 
