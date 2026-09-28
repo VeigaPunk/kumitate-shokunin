@@ -115,3 +115,32 @@ The aggregator authored `corpus/lessons/round-{1,4,5,6}-aggregator-*.md` in this
 - **Surviving head-based break point (one, real):** `node scripts/cite-check.mjs --integrations` at HEAD-tree exits 1 with the aggregator lesson as the sole failing case. Because that failing evidence is **aggregator-owned text** (per the §5 carve-out), it cannot grade the lane down.
 - **Restated grade at HEAD: `[x]` — but provisional until the lane commits.** All checklist rows that exist at HEAD execute to their promised verdicts with the HEAD tree (cite-check --selftest 19/19 PASS, round-gate 49/49 PASS + audit CLEAN ×3, surface-probe 38/38 + CLEAN, and the two [W]-added rows execute clean in the worktree once the tool is committed); the sole integration failure is the auditor's own artifact, not a lane defect. **Provisional marker:** the worktree adds SKILL.md rows citing a tool that does not exist at HEAD — if the lane commits SKILL.md without committing `scripts/proxy-check.mjs`, the checklist becomes cold-broken at the new HEAD; box 3 stays `[x]`-provisional, contingent on the lane committing tool+SKILL+SCORECARD together (they are in the same dirty set).
 - My original `[ ]` verdict and D-new-1/D-new-3 rows are **withdrawn as contamination artifacts**; D-new-2 is revised per §5 (lane-owned residue = the two `round-11.md` REV_UNKNOWN rows only); the X1 repair — verdict citing an executed command + exit: **round-8 cold run, `node scripts/cite-check.mjs --integrations` → 8/9 (integration), VERDICT: FAIL, exit 1 (23:33:59Z), failing case aggregator-owned per §5.**
+
+## Operative verdict (integrator-resolved at the round-8 cutoff — last block by design)
+
+The `## Box-3 verdict` line above reads `**[ ]**` and is **WITHDRAWN** by `## Round-8 amendment
+(critic-absorbed)` §6 (live-tree contamination). A reader resolving the grade with
+`grep -m1 -E '\*\*\[[x~ ]\]\*\*' <this file>` gets the withdrawn mark, so this block is the
+machine-readable operative verdict and is deliberately the file's last section: resolve grades
+with a tail-anchored read, not a first-match grep.
+
+- **Operative box-3 grade: `[x]` — non-provisional at `59e6c0c`.**
+- Re-executed by the **aggregator lane itself** (not by the cold-run seat) at the round-8 cutoff
+  **2026-09-28T23:46:28Z**, after the kumitate lane landed its round-11 work:
+  - `git -C kumitate-shokunin ls-files scripts/` → `cite-check.mjs proxy-check.mjs round-gate.mjs surface-probe.mjs`
+    — the tool §6 called worktree-only is **tracked at HEAD**;
+  - `git -C kumitate-shokunin show HEAD:SKILL.md | grep -c proxy-check` → `5` (the checklist rows landed too);
+  - `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=39/39 coverage=7; pins=4 match)`,
+    **exit 0** — the `SKILL.md:526` promise reproduces exactly, on a clean tree
+    (`git -C kumitate-shokunin status --porcelain | wc -l` → `0`).
+- §6's contingency ("if the lane commits `SKILL.md` without `scripts/proxy-check.mjs`, box 3 goes
+  cold-broken at the new HEAD") **did not fire**: tool, `SKILL.md` rows and the `SCORECARD.md` stanza
+  landed together (`59e6c0c` in this repo; main-repo report commit `46e9ec3`). The provisional marker
+  is therefore **lifted**, and this is the first provisional box-3 verdict of round 8 re-tested against
+  the author lane's landed commit.
+- Residual, unchanged and lane-owned: `node scripts/cite-check.mjs --integrations` still exits 1 with
+  `corpus/lessons/round-6-aggregator-audit.md:30,:38` as the sole failing case — **aggregator-owned
+  text** per §5, so it cannot grade the lane down (ledger D-51/D-84 folded, proposal P-f).
+- Verifier chain: aggregator lane round 8 → L2 seat `Box3Kumitate` (labrat, cold run `e79fefa` +
+  amendment `0f24ca7`) → integrator re-execution at `59e6c0c` → dispatch report
+  `.ufo/reports/round-8/aggregator.md` (main repo `shokunin`).
