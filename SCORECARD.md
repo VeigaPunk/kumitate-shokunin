@@ -28,13 +28,16 @@ artifact cannot claim the axis.
   → **0** at `7a4c9a0`; → **1** after round 8 (`scripts/cite-check.mjs`); →
   **2** after round 9 (`scripts/cite-check.mjs` + `scripts/surface-probe.mjs`,
   both with a documented invocation, a verdict line and a firmware-style exit
-  map).
+  map); → **3** after round 10 (+ `scripts/round-gate.mjs`, contract
+  `kumitate-round-gate-v1`: 1226 L, 14 finding kinds, 49-case hermetic suite,
+  exit 0/1/2/64, sha256 `2c6c580b…`).
 - **C — executable checklist items in `SKILL.md`.** GFM task lines naming a
   runnable command: `grep -c '^\s*- \[' SKILL.md` → **0** at `7a4c9a0`; → **4**
   after round 9 (`## Verifiable checklist`: citation gate verdict, citation gate
   hermetic suite, live sighting-surface conformance, surface-probe hermetic
-  suite). All four are *executed*, not merely listed:
-  `node scripts/surface-probe.mjs --checklists` → `CHECKLIST: 4/4 pass`,
+  suite); → **6** after round 10 (+ round-gate hermetic suite, round-close
+  artifact audit). All six are *executed*, not merely listed:
+  `node scripts/surface-probe.mjs --checklists` → `CHECKLIST: 6/6 pass`,
   `VERDICT: PASS`, exit 0 (each item names a command, an accepted exit set and
   an expected verdict substring; a miss fails the item). At round-8 close the
   count was still 0 — the round-8 Working-rules bullet had a real command but no
@@ -54,22 +57,24 @@ is a filed defect that cannot run at all.
 nor a fresh map alone can inflate the axis.
 
 - **C1 — in-scope surface coverage.** Surface families with ≥1 internals-level
-  corpus note, over the registry below: **14 / 18 = 0.778**. Unchanged in round
-  9: the new `corpus/knowledge/live-surface-probe.md` is an instrument note for
-  S1/S4 surfaces that already had notes, not a new family.
+  corpus note, over the registry below: **14 / 18 = 0.778**. Unchanged in rounds
+  9–10: `corpus/knowledge/round-close-gate.md` documents a tool, not one of the
+  18 source families below, and `live-surface-probe.md` (round 9) covers S1/S4
+  surfaces that already had notes.
 - **C2 — README-map freshness.** Rows in `corpus/README.md` naming a corpus note
-  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **34**;
-  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **34** after
-  round 9 (rows added for `knowledge/live-surface-probe.md`,
-  `lessons/round-9.md`, and the previously unrowed third-party
-  `lessons/round-6-aggregator-audit.md`) ⇒ **1.0** (was 31/31).
+  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **36**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **36** after
+  round 10 (rows added for `knowledge/round-close-gate.md` and
+  `lessons/round-10.md`) ⇒ **1.0** (34/34 at round-9 close).
 
 Diagnostic, deliberately **not** scored — file granularity over the in-scope
 source files (`scripts/*.mjs` 72 + `scripts/*/` 42 + `ufo-core-runtime/src/*.rs`
 93 + `ufo-cli/src/*.rs` 5 = **212** files / **211** unique basenames),
-basename-matched against `corpus/**/*.md` + `SKILL.md`: **140 / 211 ≈ 0.664**
-cited in round 9, up from 105 / 211 ≈ 0.50 in round 8 (method: recursive walk of
-`corpus/**.md` + `SKILL.md`, `basename` containment). Basename matching is
+basename-matched against `corpus/**/*.md` + `SKILL.md`: **140 / 211 ≈ 0.664**,
+unchanged across round 9 → round 10 (the round-10 note cites fleet artifacts —
+`PROTOCOL.md`, `MISSION.md`, `watchdog.sh` — not origin sources), up from
+105 / 211 ≈ 0.50 in round 8 (method: recursive walk of `corpus/**.md` +
+`SKILL.md`, `basename` containment). Basename matching is
 collision-prone in both directions, which is why it is not the scored term.
 Denominator grew 211 → 212 files between rounds (origin tree), so the registry's
 `scripts/*/` row below is now 42, not 41.
@@ -106,22 +111,29 @@ round 8 recorded 41, the origin tree added one file); runtime+CLI members sum to
 
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
-| operability | 6 | `f_O = (A+C)/(A+C+3)` with A=2 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`) and C=4 (`## Verifiable checklist`, all 4 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 4/4 pass`) ⇒ 6/9 = 0.667 ⇒ 6 | round 9 |
-| coverage | 7 | `floor(10 × 0.778 × 1.0)` = 7; C1 registry below (14/18), C2 34/34 (`grep -c` + `find … \| wc -l`), file-level residue 140/211 ≈ 0.664 up from 105/211 — no score change | round 9 (bookkeeping) |
+| operability | 7 | `f_O = (A+C)/(A+C+3)` with A=3 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`) and C=6 (`## Verifiable checklist`, all 6 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 6/6 pass`) ⇒ 9/12 = 0.75 ⇒ 7 | round 10 |
+| coverage | 7 | `floor(10 × 0.778 × 1.0)` = 7; C1 registry below (14/18), C2 36/36 (`grep -c` + `find … \| wc -l`), file-level residue 140/211 ≈ 0.664 (unchanged — the new note cites fleet artifacts, not origin sources) — no score change | round 10 (bookkeeping) |
 
-Why not 10 on either axis: operability has two runnable artifacts and four
-executed checklist items, but no CI/schedule, and the probes cover citations and
-two live surfaces — not the other 16 registry families. Coverage still has four
-uncovered/partial families (S6, S7, R10, R11) and ~34% of in-scope source files
-uncited. Why not 0/lower: the whole judgment path (dispatcher, launcher, judge
-pipeline, loop driver, wall) is mapped at internals level with line-level
-citations, and both gates that check those citations and two of those live
-surfaces now run on demand.
+Why not 10 on either axis: operability has three runnable artifacts and six
+executed checklist items, but no CI/schedule leg, and the probes cover citations,
+two live surfaces and the round record — not the other 16 registry families.
+Coverage still has four uncovered/partial families (S6, S7, R10, R11) and ~34% of
+in-scope source files uncited. Why not 0/lower: the whole judgment path
+(dispatcher, launcher, judge pipeline, loop driver, wall) is mapped at internals
+level with line-level citations, and the gates that check those citations, two of
+those live surfaces, and this lane's own round record now run on demand.
+
+Reaching 8 on operability is arithmetically explicit, not a matter of taste:
+`(A+C)/(A+C+3) ≥ 0.8` needs `A+C ≥ 12`, i.e. six more real executed items or a
+scheduled leg — re-chartering the proxy to score the same artifacts higher is
+explicitly rejected here.
 
 ## Move log
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 10 | operability | A=2, C=4 ⇒ `f_O = 6/9` ⇒ 6; round 9's plan offered (a) a third live surface — which "raises no proxy term" — or (b) widening the checklist to the round-close gates | A=3 (`scripts/round-gate.mjs`, contract `kumitate-round-gate-v1`, 1226 L, 14 finding kinds, 49-case hermetic suite) + C=6 (2 new executed items) ⇒ `f_O = 9/12 = 0.75` ⇒ **7** | `surface-probe.mjs --checklists` → `CHECKLIST: 6/6 pass` exit 0; `round-gate.mjs --selftest` → `ROUND_GATE_SELFTEST: 49/49 pass` `VERDICT: PASS` exit 0 (3.1 s); default audit → `ROUND_GATE: CLEAN (round=9 lane=kumitate checks=10 errors=0 warnings=1)` exit 0; `--round 42` → `DRIFT` exit 1; `--reports-dir /nonexistent` → exit 2 `REPORTS_DIR_MISSING`; `--repo /tmp` → exit 2 `NOT_A_GIT_WORKTREE`; `--bogus` → exit 64; cited-commit arms falsified live (`COMMIT_CITED_UNRESOLVED [deadbeef0]`; `COMMIT_CITED_NOT_ANCESTOR [d65aa24 31f09cd 0ac2272]` against a clone checked out at `efe19da`) |
+| 10 | coverage | C1 14/18, C2 34/34 | C2 36/36 (2 rows: `knowledge/round-close-gate.md`, `lessons/round-10.md`); C1 unchanged 14/18; residue 140/211 unsplit ⇒ score stays 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 36; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 36; residue loop over 211 unique basenames |
 | 9 | operability | A=1, C=0 ⇒ `f_O = 1/4` ⇒ 2; and the one gate had a non-hermetic suite (`--selftest` 27/28, `VERDICT: FAIL`, exit 1, broken by a sibling lane's doc) | A=2 (`scripts/surface-probe.mjs`, 1438 L: 12 conformance checks, 38 hermetic fixtures, `--json`, exit 0/1/2/64) + C=4 (executed checklist) ⇒ 6/9 ⇒ 6; `cite-check --selftest` split to 19 hermetic cases (`VERDICT: PASS`, exit 0 any tree state) with live assertions behind `--integrations` (exit 1, findings preserved) | `SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1)` exit 0 (0.19 s); `surface-probe --selftest` 38/38 exit 0 (0.35 s); `surface-probe --checklists` `CHECKLIST: 4/4 pass` exit 0; `cite-check --selftest` 19/19 exit 0; `cite-check --integrations` exit 1 naming the third-party rows; `JSON` totals in LOG.md r9 |
 | 9 | coverage | C2 31/31, residue 105/211 | C2 34/34 (3 rows added), residue 140/211; C1 unchanged at 14/18 ⇒ score stays 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 34; `find … \| wc -l` → 34; residue command in the diagnostic block above |
 | 8 | operability | A=0 runnable artifacts, C=0 executable checklist items ⇒ 0 | A=1 `scripts/cite-check.mjs` (verdict line, `--selftest` 28/28, exit 0/1/2); C still 0 (`grep -c '^\s*- \[' SKILL.md` → 0 — the new Working-rules step is a bullet with a real command, not a GFM task item, so the frozen proxy does not credit it) ⇒ `f_O = 1/4` ⇒ 2 | `node scripts/cite-check.mjs` → `CITE_CHECK: CLEAN (files=33 tokens=2026 errors=0 warnings=48)` exit 0; `--selftest` → `VERDICT: PASS` exit 0; cited-claim repair 22 → 0 errors with the same tool + flags |
@@ -129,37 +141,46 @@ surfaces now run on demand.
 
 ## Planned
 
-**round 10 (operability, 6, still lowest): extend or gate — pick on evidence.**
-Two candidate moves, both inside the frozen proxy: (a) add a third live surface
-to `scripts/surface-probe.mjs` (`fleet-dispatcher.mjs view`, or the
-`ufo-swarm-wave.mjs` policy derivation) so the probe also covers the S1/S3
-contracts this repo documents; (b) widen the `SKILL.md` checklist to the
-fleet-round gates a lane must actually run (corpus gate, report lands, commit +
-push), so the round ritual is mechanical instead of prose. Honest scoring
-consequence, stated up front: (a) raises no proxy term (A already counts the
-file, C unchanged) so operability **saturates at 6** until either C grows or
-the proxy is re-chartered with a `checks`/surface term; (b) moves C to 5–6 and
-therefore moves `f_O` again. Choose at round open from measured value, not
-preference — and if (a) is chosen, re-charter the proxy in the same round with
-that reasoning recorded, since a probe that cannot move its own axis is a cost,
-not a move.
+**round 11 (operability, 7, still lowest): move the gate from on-demand to
+scheduled, or grow C with real items — not by re-chartering the proxy.**
+Round 10 landed (b) from the previous plan and measured the consequence: `A+C = 9`
+⇒ 0.75 ⇒ 7. The arithmetic for 8 is fixed at `A+C ≥ 12`, so the honest options are
+(a) a scheduled/CI leg that actually runs the three gates (the axis's own named
+gap: "no CI/schedule", and the only one that would make the checklist items
+*enforced* rather than *offered*), or (b) three more genuinely executed checklist
+items — candidates, each needing a real command: the `--close` trio split so the
+parts that are true mid-round (`report tracked` for the *previous* round) become
+items, a `round-gate --json` schema assertion, and a corpus-map freshness item.
+Option (a) is preferred on evidence if a scheduler exists that is not the
+lane's own; otherwise (b) with the close-only items left out by the same
+reasoning recorded this round. Coverage stays a bookkeeping axis (C2 36/36) until
+a family note lands; the four uncovered families (S6, S7, R10, R11) are the only
+route to C1 > 0.778, and S7 (68 members) is the largest.
 
 ## Limits (recorded, not hidden)
 
 - **A quotation of a finding is itself a finding.** The aggregator lane's
-  `corpus/lessons/round-6-aggregator-audit.md` quotes its own ERROR rows; after
-  its 18:56 edit the tree read `errors=4`, all four inside that artifact
-  (`native_contract.rs:10896` LINE_OOR at its :23 and :116; `corpus/lessons/
-  round-9.md` UNRESOLVED at :36 and :118 — both resolve now that this round
-  ships `corpus/lessons/round-9.md`). No quotation exemption exists or was
-  added: the artifact is the auditor's, reported and not rewritten. Owner:
-  aggregator lane.
-- **Suite split (round 9).** `--selftest` now measures the tool only (19
-  hermetic cases, `VERDICT: PASS` in any tree state); live-tree assertions moved
-  behind `--integrations`, which is red for third-party content rather than for
-  tooling. One run shows both: `--selftest --integrations`.
-- 47 of 51 warnings are suffix-resolved citations (real hits, under-specified
-  paths) and 21 pins remain `PIN_UNTYPED` (bare hex without a declared kind).
+  `corpus/lessons/round-6-aggregator-audit.md` quotes its own ERROR rows; the
+  round-10 re-measure still counts exactly two errors, both inside that artifact
+  (`native_contract.rs:10896` LINE_OOR at its :23 and :116). No quotation
+  exemption exists or was added: the artifact is the auditor's, reported and not
+  rewritten. Owner: aggregator lane.
+- **Suite split (round 9).** `--selftest` measures the tool only (19 hermetic
+  cases; round 10's `round-gate --selftest` follows the same rule with 48);
+  live-tree assertions sit behind `--integrations`, which is red for
+  third-party content rather than for tooling. One run shows both:
+  `--selftest --integrations`.
+- 49 of 52 warnings are suffix-resolved citations (real hits, under-specified
+  paths) and 22 pins remain `PIN_UNTYPED` (bare hex without a declared kind).
+  Round-10 delta measured in place:
+  `files=36 tokens=2324 errors=2 warnings=52` → `files=37 tokens=2415 errors=2
+  warnings=52`.
+- **The audit mode of `round-gate.mjs` cannot see a round that filed no report**
+  (it pins the latest *existing* report for the lane) — `--round N` is the
+  explicit path, and the tool is a tripwire, not a monitor. Its 1024-byte and
+  2-heading thresholds are this lane's bar, not fleet law; only the two citation
+  checks and the `SHONEN` heading trace to written protocol
+  (`PROTOCOL.md:151-152`, `:263-265`).
 - **The origin tree grows under the citations.** `scripts/*/` gained a file
   (41 → 42 members) and `crates/ufo-core-runtime/bundled/omp-seat-routing.json`
   is red on the origin's own `sync-ufo-contracts.mjs --check` (ownerLane

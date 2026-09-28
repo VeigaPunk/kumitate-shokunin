@@ -520,6 +520,8 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Live sighting-surface conformance — `node scripts/surface-probe.mjs` → exit 0 + `SURFACE_PROBE: CLEAN`
 - [ ] Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
@@ -527,6 +529,15 @@ empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
 measured the tree, the owner named in that line owns the repair, and neither
 gate writes to the origin tree. Live 2026-09-28: `CITE_CHECK: DRIFT`, `errors=2`,
 both inside `corpus/lessons/round-6-aggregator-audit.md` (aggregator-owned).
+
+`ROUND_GATE: DRIFT` is this lane's own record, and the kinds in that line name
+what is missing (a thin report, a missing `SCORECARD.md` row or `LOG.md` entry,
+no `round-<N>` commit marker, a cited commit that does not resolve or is no
+longer an ancestor of lane `HEAD`) — the repair is this lane's, not another
+lane's. Warnings (`SCORECARD_PLAN_MISSING`, `REPORT_SHONEN_MISSING`) print but do
+not gate unless `--strict`; kinds, thresholds and the boundary against the
+integrator's fleet-conformance step are in
+`corpus/knowledge/round-close-gate.md`.
 
 ## Working rules for this repo
 
@@ -550,6 +561,24 @@ both inside `corpus/lessons/round-6-aggregator-audit.md` (aggregator-owned).
   (`sync-ufo-contracts.mjs:853-862`), while `manifest.scriptDigest` hashes
   concatenated file bytes (`ufo-sighting-lib/surface.mjs:43-60`) — comparing the
   pin to `scriptDigest` is always a false drift signal.
+- Re-verify the round-close contract before claiming a round done:
+  `node scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`; kinds,
+  thresholds, fail-closed arms and the boundary against the integrator's
+  fleet-conformance step in `corpus/knowledge/round-close-gate.md`) audits THIS
+  lane's own round artifacts — a tripwire + integration smoke, not a guarantee:
+  a round that filed no report at all is invisible to it (`--round N` audits one
+  by hand). Unflagged it audits the latest closed round = max N with
+  `<reports-dir>/round-<N>/<lane>.md` present (none ⇒ fail-closed 2; `--lane`
+  defaults to `kumitate`, `--reports-dir` to
+  `/home/vgpnk/projects/shokunin/.ufo/reports`). It re-derives, never re-runs:
+  report presence / weight / headings / round identity / `SHONEN` heading, cited
+  commit tokens resolving and staying ancestors of lane `HEAD`
+  (`PROTOCOL.md:264-265`), a `SCORECARD.md` row, a `LOG.md` entry, a
+  `round-<N>` commit marker. `--close` adds the close-only trio (clean tree,
+  nothing unpushed, report tracked + pushed in `--main-repo`) — deliberately not
+  a checklist item, since it is red until the round is committed and pushed.
+  Exit 0 clean · 1 findings · 2 fail-closed · 64 usage; `--json` is the machine
+  interface, `--selftest` the hermetic suite.
 - Cite file + symbol for every claim; if the source moves, update the
   citation, not the claim from memory.
 - Constants live once: `ENTRY_FAILURE_CLASSES`, `CAPACITY_FAILURES`,

@@ -260,3 +260,55 @@
   origin tree's `crates/ufo-core-runtime/bundled/omp-seat-routing.json`
   routes-equivalence drift; `scripts/*/` grew 41 → 42 members.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-9/kumitate.md`.
+- 2026-09-28 — round 10 (operability 6 → 7): the fleet round-close contract
+  turned executable. New `scripts/round-gate.mjs` (contract
+  `kumitate-round-gate-v1`, 1226 L, zero deps, sha256 `2c6c580b…`): audit mode
+  re-derives THIS lane's own record — report present / ≥1024 B / ≥2 `#`
+  headings / names its round / `SHONEN` heading, cited commit tokens resolve
+  (lane → main repo → origin) and stay ancestors of lane `HEAD`, a
+  `SCORECARD.md` row, a `LOG.md` entry, a `round-<N>` commit marker
+  (11 kinds: 9 error, 2 warning); `--close` adds clean tree / nothing unpushed /
+  report tracked+pushed in the main repo; 5 fail-closed arms; exit 0/1/2/64;
+  `--json`; 49-case hermetic suite. Proxy before→after: A 2 → 3, C 4 → 6 ⇒
+  `f_O` 6/9 → 9/12 ⇒ **6 → 7**; `node scripts/surface-probe.mjs --checklists`
+  → `CHECKLIST: 6/6 pass` `VERDICT: PASS` exit 0 (was 4/4).
+  Evidence: default audit → `ROUND_GATE: CLEAN (round=9 lane=kumitate checks=10
+  errors=0 warnings=1)` exit 0; `--selftest` → `ROUND_GATE_SELFTEST: 49/49 pass`
+  `VERDICT: PASS` exit 0 (3.1 s); `--round 42` → `DRIFT` exit 1 naming
+  REPORT_MISSING / SCORECARD_ROW_MISSING / LOG_ENTRY_MISSING / COMMIT_MISSING;
+  `--reports-dir /nonexistent` → exit 2 `REPORTS_DIR_MISSING`; `--repo /tmp` →
+  exit 2 `NOT_A_GIT_WORKTREE`; `--bogus` → exit 64; both citation kinds
+  falsified live (`COMMIT_CITED_UNRESOLVED [deadbeef0]` on a doctored report
+  copy; `COMMIT_CITED_NOT_ANCESTOR [d65aa24 31f09cd 0ac2272]` with `--repo` a
+  clone checked out at `efe19da`). Docs: `SKILL.md` (2 checklist items +
+  Working-rules bullet + `ROUND_GATE: DRIFT` paragraph),
+  `corpus/knowledge/round-close-gate.md` (new), `corpus/lessons/round-10.md`
+  (new), `corpus/README.md` (2 rows, 34/34 → 36/36), `SCORECARD.md`.
+  Cited-claim delta, measured in place (a `/tmp` clone is an invalid baseline —
+  fleet-rung refs cannot resolve): `files=36 tokens=2324 errors=2 warnings=52`
+  → `files=37 tokens=2415 errors=2 warnings=52`; both errors remain the
+  aggregator-owned `LINE_OOR` rows in `corpus/lessons/round-6-aggregator-audit.md`.
+  Defect found and repaired by the new gate itself: `.ufo/reports/round-9/
+  kumitate.md` was never tracked in the main repo (`git ls-files
+  --error-unmatch` → exit 1) — `REPORT_UNTRACKED` true positive, committed with
+  this round's report.
+  Method: 13-lane batched dispatch (planner, scout, 2 executors, scribe,
+  connector, critic, reviewer, sentinel, labrat, mutation-tester, simplifier,
+  distiller) routed planner/connector `@m_lunamax` · executor/scribe/scout
+  `@m_flash` · critic/reviewer/sentinel/labrat/mutation-tester/simplifier/
+  distiller `@m_zfl`; L1 re-measured every claim before it entered a document —
+  the critic's turf objection narrowed the framing (two new citation checks are
+  the lane-local pre-check of `PROTOCOL.md:264-265`, not a fleet grade), the
+  executor's "watchdog line 44 is blank" claim was falsified, and the
+  origin-tree claim in the frozen spec was corrected to a lazy `--origin`.
+  Cross-domain (reported, not absorbed): the origin tree's
+  `crates/ufo-core-runtime/bundled/omp-seat-routing.json` routes-equivalence
+  drift (`sync-ufo-contracts.mjs --check`, ownerLane `nc8-runtime`, exit 1);
+  the main repo's existence-only completion signal
+  (`scripts/shokunin-watchdog.sh:44`) and no aggregator round-10 prompt;
+  `kasegi-round-10.md` still quotes the pre-`c8f9f57` route map
+  (`m_composer`/`m_antigravity`) that `PROTOCOL.md:266-269` requires to match
+  the current `MISSION.md` bucket; sibling round-10 reports missing the
+  contract-required `SHONEN` heading (`kagi`, `kake`, `kasegi` — the gate now
+  records this locally as a warning; the fleet call is the integrator's).
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-10/kumitate.md`.
