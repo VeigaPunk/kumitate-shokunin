@@ -522,13 +522,27 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Proxy recompute — `node scripts/proxy-check.mjs` → exit 0 + `PROXY: MATCH`
+- [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
 `CITE_CHECK: DRIFT` / `SURFACE_PROBE: DRIFT` is a tree finding — the gate
 measured the tree, the owner named in that line owns the repair, and neither
-gate writes to the origin tree. Live 2026-09-28: `CITE_CHECK: DRIFT`, `errors=2`,
-both inside `corpus/lessons/round-6-aggregator-audit.md` (aggregator-owned).
+gate writes to the origin tree. Live 2026-09-28 at round-11 close:
+`CITE_CHECK: DRIFT (files=41 tokens=2739 errors=14 warnings=72)` — every error
+sits inside third-party aggregator artifacts
+(`corpus/lessons/round-6-aggregator-audit.md` 2 × `LINE_OOR`;
+`corpus/lessons/round-8-aggregator-box3-coldrun.md` 12, that file being extended
+by its owner during the round), and **zero are in this lane's own prose**. The
+third-party count is not stable — it moved 7 → 14 inside one round as the
+auditor's artifact grew — so the durable claim is the lane-local one: no lane
+document may appear in that list. One consequence, paid for in round 11: a **bare sha of a superseded
+revision** in a corpus doc is read as a content pin of the nearest cited file and
+becomes a `PIN_MISMATCH` error the moment that file changes, so superseded
+revisions are described, not pinned — only the current revision's sha appears in
+a `.md`, and the historical ones live in `LOG.md`.
 
 `ROUND_GATE: DRIFT` is this lane's own record, and the kinds in that line name
 what is missing (a thin report, a missing `SCORECARD.md` row or `LOG.md` entry,
@@ -577,8 +591,40 @@ integrator's fleet-conformance step are in
   `round-<N>` commit marker. `--close` adds the close-only trio (clean tree,
   nothing unpushed, report tracked + pushed in `--main-repo`) — deliberately not
   a checklist item, since it is red until the round is committed and pushed.
+  `--tracked` is the mid-round shadow of that trio's tracking clause and runs NO
+  audit check of its own: it enumerates `<reports-dir>/round-*/<lane>.md`, drops
+  the highest round (the in-flight one), and requires every older report to be
+  tracked in `--main-repo` — each miss is `REPORT_UNTRACKED`. Fewer than two
+  filed reports ⇒ fail-closed 2 `NO_FILED_REPORTS` (nothing older can be
+  checked, so the mode refuses rather than reporting CLEAN); `--tracked` with
+  `--close` is usage 64 (mutually exclusive modes). Verdict text is
+  `ROUND_GATE: CLEAN|DRIFT (mode=tracked checked=<n> errors=<e> warnings=<w>)`.
   Exit 0 clean · 1 findings · 2 fail-closed · 64 usage; `--json` is the machine
   interface, `--selftest` the hermetic suite.
+- Keep the measurement itself honest: `node scripts/proxy-check.mjs` (contract
+  `kumitate-proxy-v1`, zero deps, node ≥20, READ-ONLY, no network) recomputes
+  the frozen proxy terms from the tree — A (count of `*.mjs|*.js|*.sh|*.py`
+  files), C (`SKILL.md` lines matching `/^\s*- \[/`), C1/C1_total (registry rows
+  whose 4th cell starts `yes`, over all registry rows), C2/C2_total (`README.md`
+  note rows over corpus note files) — then derives both scores
+  (`floor(10×(A+C)/(A+C+3))`, `floor(10×(C1/C1_total)×(C2/C2_total))`) and
+  compares them against the `## Axes` table, plus the four `scripts/*.mjs`
+  sha256 pins. The claim block it reads is one HTML comment in `SCORECARD.md`
+  whose first line is `<!-- kumitate-proxy-v1`, body lines `key=value` (`A`,
+  `C`, `C1`, `C1_total`, `C2`, `C2_total`, `pin.cite-check`, `pin.surface-probe`,
+  `pin.round-gate`, `pin.proxy-check`): `PROXY: MATCH (…)` exit 0,
+  `PROXY: DRIFT (…)` exit 1 naming each term delta, 2 fail-closed
+  (`SCORECARD_MISSING`, `STANZA_MISSING`, `STANZA_MALFORMED`,
+  `STANZA_KEY_UNKNOWN`, `STANZA_KEY_DUPLICATE`, `REGISTRY_MISSING`,
+  `SKILL_MISSING`, `README_MISSING`, `CORPUS_DIRS_MISSING`, `SELF_NOT_A_DIR`),
+  64 usage. Because the stanza carries `pin.proxy-check`, ANY later edit to the
+  tool must re-pin or the live run reports `PIN_DRIFT` — intended, not a wart.
+  What it does NOT do: it recomputes claims, it cannot show that a claim is
+  well-founded (a registry row flipped to `yes` with no note behind it still
+  passes — the note's own citations are `cite-check`'s job), and the file-level
+  residue diagnostic (origin-tree basenames) is not covered. It is portable: any
+  lane that writes the same block into its own `SCORECARD.md` can be re-derived
+  by a non-author with `--self <lane repo>`.
 - Cite file + symbol for every claim; if the source moves, update the
   citation, not the claim from memory.
 - Constants live once: `ENTRY_FAILURE_CLASSES`, `CAPACITY_FAILURES`,

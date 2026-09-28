@@ -20,7 +20,8 @@
  *   change mission completion (mission state is projected read-only from
  *   `.ufo/state/*` — `scripts/shokunin-watchdog.sh:41-46`).
  *
- * Modes (one per run; `--selftest` wins, then `--close`, else the audit)
+ * Modes (one per run; `--selftest` wins, then `--tracked`, then `--close`,
+ * else the audit; `--tracked` together with `--close` is refused as usage)
  *   audit       (default) the round-<N> artifact set for `--lane`: report
  *               presence/weight/headings/round identity/SHONEN heading, cited
  *               commit tokens, SCORECARD.md round row and `## Planned` forward
@@ -30,6 +31,17 @@
  *               commits in `--repo`, and the lane report tracked AND pushed in
  *               `--main-repo`. Skipped in audit mode so the default stays green
  *               mid-round.
+ *   --tracked   filed-report freshness ONLY — no audit check runs, `--repo` and
+ *               `--round` are not consulted, and no closed round is required:
+ *               enumerate `<reports-dir>/round-<N>/<lane>.md`, drop the highest N
+ *               (the in-flight round), then require every remaining report to be
+ *               tracked in `--main-repo` (`git ls-files --error-unmatch`,
+ *               read-only). This is the dispatcher's integrator hand-off check:
+ *               every *previous* round's report is in the main-repo index before
+ *               the current one is filed. The only finding kind it can emit is
+ *               REPORT_UNTRACKED, one per report; verdict shape `ROUND_GATE:
+ *               CLEAN|DRIFT (mode=tracked checked=<n> errors=<e> warnings=<w>)`;
+ *               `--json` replaces `round` with `checked` and `excludedRound`.
  *   --selftest  HERMETIC fixture suite (temp dirs only, zero network, git
  *               fixtures pinned by env). It never reads the live trees, `--repo`
  *               or the environment: bogus flags and a polluted env cannot affect
@@ -82,6 +94,9 @@
  *   error   UNPUSHED           close: `git rev-list --count @{u}..HEAD` > 0.
  *   error   REPORT_UNTRACKED   close: the lane report is not tracked in
  *                              `--main-repo`, or is in `@{u}..HEAD` (unpushed).
+ *                              --tracked: a non-in-flight filed report is not
+ *                              tracked in `--main-repo`, or lies outside it
+ *                              (`outside --main-repo …`) — one finding per report.
  *
  * Notes a reader cannot re-derive cheaply
  *   COMMIT_MISSING is a *convention* check: the round marker is scanned over
@@ -99,7 +114,10 @@
  *   origin is not a git work tree the resolution space is incomplete and such
  *   tokens are not findings (`--json` `citations.unverifiable`).
  *   Fail-closed tokens (exit 2): REPORTS_DIR_MISSING, NOT_A_GIT_WORKTREE,
- *   NO_CLOSED_ROUND, UPSTREAM_MISSING, MAIN_REPO_NOT_GIT, INTERNAL_ERROR.
+ *   NO_CLOSED_ROUND, NO_FILED_REPORTS, UPSTREAM_MISSING, MAIN_REPO_NOT_GIT,
+ *   INTERNAL_ERROR. NO_FILED_REPORTS is `--tracked` with fewer than two
+ *   `round-<N>/<lane>.md` files: the highest round is excluded as in-flight, so
+ *   there is nothing left to check (a single filed report is not verifiable).
  *   UPSTREAM_MISSING is any non-zero `rev-list @{u}..HEAD` exit (128 with
  *   `fatal: no upstream configured`): an unverifiable push state is refused
  *   rather than green-lit, so a fresh clone without upstream cannot close a
@@ -136,8 +154,8 @@ const FINDING_KINDS = [
 ];
 const USAGE = [
   'usage: node scripts/round-gate.mjs [--round N] [--lane kumitate] [--repo DIR]',
-  '       [--reports-dir DIR] [--main-repo DIR] [--origin DIR] [--close] [--json]',
-  '       [--strict] [--selftest]',
+  '       [--reports-dir DIR] [--main-repo DIR] [--origin DIR]',
+  '       [--close | --tracked] [--json] [--strict] [--selftest]',
   `contract id: ${CONTRACT}`,
   '',
   'exit map: 0 clean · 1 findings (errors; warnings too under --strict) · 2 fail-closed · 64 usage',
@@ -196,6 +214,7 @@ function parseArgs(argv, env = process.env) {
     reportsDir: null,
     origin: null,
     close: false,
+    tracked: false,
     json: false,
     strict: false,
     selftest: false,
@@ -225,6 +244,7 @@ function parseArgs(argv, env = process.env) {
     else if (a === '--main-repo') { opts.mainRepo = dirValue(a, next()); mainRepoSrc = 'flag'; }
     else if (a === '--origin') { opts.origin = dirValue(a, next()); }
     else if (a === '--close') opts.close = true;
+    else if (a === '--tracked') opts.tracked = true;
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
     else if (a === '--selftest') opts.selftest = true;
@@ -356,7 +376,6 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
   const scorecard = readText(scorecardPath);
   if (scorecard === null) {
     add('SCORECARD_ROW_MISSING', 'error', false, `SCORECARD.md missing (${scorecardPath})`);
-    add('SCORECARD_PLAN_MISSING', 'warning', false, `SCORECARD.md missing (${scorecardPath})`);
   } else {
     const hasRow = new RegExp(`^\\|\\s*${round}\\s*\\|`, 'm').test(scorecard);
     add('SCORECARD_ROW_MISSING', 'error', hasRow, hasRow
@@ -420,9 +439,7 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
     };
   }
   const aheadCount = Number.parseInt(String(ahead.stdout ?? '').trim(), 10);
-  add('UNPUSHED', 'error', aheadCount === 0, Number.isSafeInteger(aheadCount)
-    ? `ahead=${aheadCount}`
-    : `ahead=?(raw="${firstLine(ahead.stdout)}")`);
+  add('UNPUSHED', 'error', aheadCount === 0, `ahead=${aheadCount}`);
 
   /* close: the report is tracked AND pushed in the main repo ------------------ */
   if (!isWorkTree(mainRepo)) {
@@ -458,6 +475,85 @@ function runChecks({ repo, reportsDir, round, lane, close, mainRepo, origin }) {
     }
   }
   return { items, failClosed: null, citations };
+}
+
+/* -------------------------------------------------------------- tracked mode */
+
+/** `<reports-dir>/round-<N>/<lane>.md` files, ascending by N. */
+function roundReports(reportsDir, lane) {
+  let entries;
+  try { entries = readdirSync(reportsDir, { withFileTypes: true }); } catch { return []; }
+  const out = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const m = /^round-(\d+)$/.exec(entry.name);
+    if (!m) continue;
+    const path = join(reportsDir, entry.name, `${lane}.md`);
+    if (statKind(path) !== 'file') continue;
+    out.push({ round: Number.parseInt(m[1], 10), path });
+  }
+  return out.sort((a, b) => a.round - b.round);
+}
+
+/**
+ * `--tracked`: every filed (non-in-flight) lane report is tracked in
+ * `--main-repo`. No audit check runs; REPORT_UNTRACKED is the only kind.
+ */
+function runTracked(opts, started) {
+  if (statKind(opts.reportsDir) !== 'dir') {
+    return failClosed(opts, 'tracked', 'REPORTS_DIR_MISSING',
+      `--reports-dir ${opts.reportsDir} is ${statKind(opts.reportsDir)}`, [], started);
+  }
+  if (!isWorkTree(opts.mainRepo)) {
+    return failClosed(opts, 'tracked', 'MAIN_REPO_NOT_GIT',
+      `--main-repo ${opts.mainRepo} is not a git work tree`, [], started);
+  }
+  const filed = roundReports(opts.reportsDir, opts.lane);
+  if (filed.length < 2) {
+    return failClosed(opts, 'tracked', 'NO_FILED_REPORTS',
+      `filed=${filed.length} round-<N>/${opts.lane}.md under ${opts.reportsDir}`
+      + ' (the highest round is excluded as in-flight, so >=2 are needed)', [], started);
+  }
+  const inFlight = filed[filed.length - 1];
+  const checked = filed.length - 1;
+  const items = [];
+  const add = (id, severity, ok, detail) => { items.push({ id, severity, ok, detail }); };
+  for (const r of filed.slice(0, -1)) {
+    const rel = relative(resolve(opts.mainRepo), resolve(r.path));
+    if (rel.startsWith('..') || isAbsolute(rel)) {
+      add('REPORT_UNTRACKED', 'error', false, `outside --main-repo ${opts.mainRepo}: ${r.path}`);
+      continue;
+    }
+    const tracked = git(opts.mainRepo, ['ls-files', '--error-unmatch', '--', rel]).status === 0;
+    add('REPORT_UNTRACKED', 'error', tracked, tracked
+      ? `tracked: ${rel}`
+      : `ls-files: ${rel} is not tracked in ${opts.mainRepo}`);
+  }
+  const { findings, errors, warnings, verdict, exitCode } = summarize(items, opts.strict);
+  const body = {
+    contract: CONTRACT,
+    mode: 'tracked',
+    lane: opts.lane,
+    mainRepo: opts.mainRepo,
+    reportsDir: opts.reportsDir,
+    checked,
+    excludedRound: inFlight.round,
+    verdict,
+    checks: items,
+    findings,
+    errors,
+    warnings,
+    durationMs: Math.max(0, Date.now() - started),
+  };
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+  } else {
+    const lines = findings.map((f) => `ROUND_GATE  ${f.severity}  ${f.kind}  ${f.detail}`);
+    lines.push(`ROUND_GATE: ${verdict} (mode=tracked checked=${checked}`
+      + ` errors=${errors} warnings=${warnings})`);
+    process.stdout.write(`${lines.join('\n')}\n`);
+  }
+  return exitCode;
 }
 
 /* ------------------------------------------------------------------ verdict */
@@ -500,16 +596,8 @@ function failClosed(opts, mode, token, detail, checks, started) {
 }
 
 function latestClosedRound(reportsDir, lane) {
-  let best = null;
-  for (const entry of readdirSync(reportsDir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const m = /^round-(\d+)$/.exec(entry.name);
-    if (!m) continue;
-    const n = Number.parseInt(m[1], 10);
-    if (statKind(join(reportsDir, entry.name, `${lane}.md`)) !== 'file') continue;
-    best = best === null ? n : Math.max(best, n);
-  }
-  return best;
+  const filed = roundReports(reportsDir, lane);
+  return filed.length === 0 ? null : filed[filed.length - 1].round;
 }
 
 function main() {
@@ -522,8 +610,13 @@ function main() {
     return 64;
   }
   if (opts.selftest) return selfTest();
-  const mode = opts.close ? 'close' : 'audit';
+  if (opts.tracked && opts.close) {
+    process.stderr.write(`round-gate: --tracked and --close are mutually exclusive modes\n\n${USAGE}`);
+    return 64;
+  }
+  const mode = opts.tracked ? 'tracked' : opts.close ? 'close' : 'audit';
   try {
+    if (opts.tracked) return runTracked(opts, started);
     if (!isWorkTree(opts.repo)) {
       return failClosed(opts, mode, 'NOT_A_GIT_WORKTREE', `--repo ${opts.repo} is not a git work tree`, [], started);
     }
@@ -707,6 +800,33 @@ function selfTest() {
     const origin = opts.origin === false ? join(base, 'no-origin') : (opts.origin ?? fxEmptyRepo(base));
     return { base, round, laneRepo, reports, main, rel, origin };
   };
+  /* --tracked fixtures: a main repo whose `.ufo/reports/round-<N>/` holds the
+     lane reports, with a chosen subset left out of the index. */
+  const fxTrackedMain = (name, { rounds = [3, 4, 5], untracked = [] } = {}) => {
+    const base = fxDir(name);
+    const main = join(base, 'main');
+    mkdirSync(main, { recursive: true });
+    fxExpect(fxGit(main, ['init', '--quiet', '-b', 'main']), 'tracked main init');
+    writeFileSync(join(main, 'README.md'), '# main fixture\n');
+    fxExpect(fxGit(main, ['add', '-A']), 'tracked main add');
+    fxExpect(fxGit(main, ['commit', '--quiet', '-m', 'main fixture seed']), 'tracked main commit');
+    const reports = join(main, '.ufo', 'reports');
+    const tracked = [];
+    for (const round of rounds) {
+      const rel = join('.ufo', 'reports', `round-${round}`, `${DEFAULT_LANE}.md`);
+      mkdirSync(dirname(join(main, rel)), { recursive: true });
+      writeFileSync(join(main, rel), fxBigReport(round));
+      if (!untracked.includes(round)) tracked.push(rel);
+    }
+    if (tracked.length > 0) {
+      fxExpect(fxGit(main, ['add', '--', ...tracked]), 'tracked main add reports');
+      fxExpect(fxGit(main, ['commit', '--quiet', '-m', 'fixture lane reports']), 'tracked main commit reports');
+    }
+    return { base, main, reports };
+  };
+  const trackedArgs = (f, extra = []) => ['--tracked', '--lane', DEFAULT_LANE,
+    '--reports-dir', f.reports, '--main-repo', f.main, ...extra];
+
   const auditArgs = (f, extra = []) => ['--round', String(f.round), '--repo', f.laneRepo,
     '--reports-dir', f.reports, '--main-repo', f.main, '--origin', f.origin, ...extra];
   const closeArgs = (f, extra = []) => ['--close', ...auditArgs(f, extra)];
@@ -1197,6 +1317,86 @@ function selfTest() {
         };
       });
     }
+
+    /* --tracked mode (round-11) ---------------------------------------------- */
+    const tkClean = fxTrackedMain('tracked-clean');
+    const rt1 = runGate(trackedArgs(tkClean));
+    check('--tracked: 3 filed reports, highest excluded, rest tracked → exit 0, CLEAN, checked=2', () => {
+      const line = verdictLine(rt1);
+      const m = /^ROUND_GATE: CLEAN \(mode=tracked checked=(\d+) errors=(\d+) warnings=(\d+)\)$/u.exec(line);
+      const k = kindsEq(rt1, []);
+      return {
+        ok: rt1.status === 0 && m !== null && Number(m[1]) === 2 && Number(m[2]) === 0 && Number(m[3]) === 0 && k.ok,
+        detail: `exit=${rt1.status} ${line}`,
+      };
+    });
+    const tkOld = fxTrackedMain('tracked-oldest-untracked', { untracked: [3] });
+    const rt2 = runGate(trackedArgs(tkOld));
+    check('--tracked: oldest filed report untracked → exit 1, DRIFT, exactly [REPORT_UNTRACKED]', () => {
+      const k = kindsEq(rt2, ['REPORT_UNTRACKED']);
+      const f = parseFindings(rt2.stdout)[0];
+      const rel = join('.ufo', 'reports', 'round-3', `${DEFAULT_LANE}.md`);
+      return {
+        ok: rt2.status === 1 && k.ok
+          && /^ROUND_GATE: DRIFT \(mode=tracked checked=2 errors=1 warnings=0\)$/u.test(verdictLine(rt2))
+          && f !== undefined && f.severity === 'error'
+          && f.detail === `ls-files: ${rel} is not tracked in ${tkOld.main}`,
+        detail: `exit=${rt2.status} ${verdictLine(rt2)} ${f ? f.detail : ''}`,
+      };
+    });
+    const tkOne = fxTrackedMain('tracked-single-report', { rounds: [7] });
+    const rt3 = runGate(trackedArgs(tkOne));
+    check('--tracked: only one filed report (the in-flight round) → exit 2 (NO_FILED_REPORTS)', () => ({
+      ok: rt3.status === 2 && /ROUND_GATE: FAIL-CLOSED \(NO_FILED_REPORTS\)/u.test(String(rt3.stdout ?? ''))
+        && /filed=1 round-<N>\/kumitate\.md/u.test(String(rt3.stdout ?? '')),
+      detail: `exit=${rt3.status} ${firstLine(String(rt3.stdout ?? ''))}`,
+    }));
+    const rt4 = runGate(['--tracked', '--close']);
+    check('usage: --tracked with --close → exit 64 (mutually exclusive modes)', () => ({
+      ok: rt4.status === 64 && /mutually exclusive/u.test(String(rt4.stderr ?? ''))
+        && /usage:/u.test(String(rt4.stderr ?? '')),
+      detail: `exit=${rt4.status} ${firstLine(String(rt4.stderr ?? ''))}`,
+    }));
+    const tkNoMain = join(tkClean.base, 'not-a-repo');
+    mkdirSync(tkNoMain, { recursive: true });
+    const rt5 = runGate(['--tracked', '--lane', DEFAULT_LANE, '--reports-dir', tkClean.reports],
+      { KUMITATE_MAIN_REPO: tkNoMain });
+    check('fail-closed: --tracked with no usable --main-repo → exit 2 (MAIN_REPO_NOT_GIT)', () => ({
+      ok: rt5.status === 2 && /ROUND_GATE: FAIL-CLOSED \(MAIN_REPO_NOT_GIT\)/u.test(String(rt5.stdout ?? '')),
+      detail: `exit=${rt5.status} ${firstLine(String(rt5.stdout ?? ''))}`,
+    }));
+    const tkOut = fxTrackedMain('tracked-outside');
+    const stray = join(tkOut.base, 'stray-reports');
+    for (const round of [3, 4, 5]) {
+      mkdirSync(join(stray, `round-${round}`), { recursive: true });
+      writeFileSync(join(stray, `round-${round}`, `${DEFAULT_LANE}.md`), fxBigReport(round));
+    }
+    const rt6 = runGate(['--tracked', '--lane', DEFAULT_LANE, '--reports-dir', stray, '--main-repo', tkOut.main]);
+    check('--tracked: reports under a dir outside --main-repo → one REPORT_UNTRACKED per report (`outside …`)', () => {
+      const k = kindsEq(rt6, ['REPORT_UNTRACKED', 'REPORT_UNTRACKED']);
+      const f = parseFindings(rt6.stdout)[0];
+      return {
+        ok: rt6.status === 1 && k.ok && f !== undefined && f.detail.startsWith(`outside --main-repo ${tkOut.main}:`),
+        detail: `exit=${rt6.status} kinds=[${k.got.join(' ')}]`,
+      };
+    });
+    const rt7 = runGate(trackedArgs(tkClean, ['--json']));
+    check('--tracked --json: mode=tracked, checked=2, excludedRound=5, findings=[]', () => {
+      const j = JSON.parse(rt7.stdout);
+      return {
+        ok: rt7.status === 0 && j.contract === CONTRACT && j.mode === 'tracked' && j.checked === 2
+          && j.excludedRound === 5 && j.findings.length === 0 && j.errors === 0 && j.warnings === 0,
+        detail: `exit=${rt7.status} mode=${j.mode} checked=${j.checked} excludedRound=${j.excludedRound}`,
+      };
+    });
+    const rt8 = runGate(trackedArgs(tkClean, ['--repo', join(tkClean.base, 'no-such-lane-repo')]));
+    check('--tracked runs no other audit check: a bogus --repo does not change the verdict', () => {
+      const k = kindsEq(rt8, []);
+      return {
+        ok: rt8.status === 0 && k.ok && /^ROUND_GATE: CLEAN \(mode=tracked checked=2 /u.test(verdictLine(rt8)),
+        detail: `exit=${rt8.status} ${verdictLine(rt8)}`,
+      };
+    });
 
     /* 47 ─ meta: every frozen kind fires ------------------------------------ */
     check('every declared finding kind fires in at least one fixture', () => {

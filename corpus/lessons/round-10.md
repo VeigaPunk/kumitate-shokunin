@@ -13,8 +13,12 @@ verdict exit, C = `SKILL.md` GFM task items naming a runnable command that
 
 ## What landed
 
-`scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`, 1226 L, zero deps,
-node ≥20, sha256 `2c6c580b…`): audit mode re-derives this lane's own round
+`scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`, zero deps,
+node ≥20, the round-10 revision — 1226 L, its sha recorded in `LOG.md` round 10;
+round 11 added the
+`--tracked` mode and a −3 L simplifier pass, so the tool is now 1426 L with a
+57-case suite and a sha pinned in `SCORECARD.md`'s claim block; see
+`corpus/lessons/round-11.md`): audit mode re-derives this lane's own round
 record — report present / ≥1024 B / ≥2 `#` headings / names its round / carries
 a `SHONEN` heading, cited commit tokens resolve (lane → main repo → origin) and
 stay ancestors of lane `HEAD`, a `SCORECARD.md` row, a `LOG.md` entry, a

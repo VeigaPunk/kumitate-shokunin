@@ -19,12 +19,15 @@ or `ROUND_GATE: DRIFT (…)`; `--json` is a single object, schema id
 ```
 usage: node scripts/round-gate.mjs [--round N] [--lane kumitate] [--repo DIR]
        [--reports-dir DIR] [--main-repo DIR] [--origin DIR]
-       [--close] [--json] [--strict] [--selftest]
+       [--close] [--tracked] [--json] [--strict] [--selftest]
 contract id: kumitate-round-gate-v1
 ```
 
-Modes: `--selftest` wins; else `--close`; else artifact audit. `--close` runs
-the audit checks **plus** the three close-only checks. Defaults: `--lane
+Modes: `--selftest` wins; else `--tracked`; else `--close`; else the artifact
+audit. `--tracked` and `--close` are mutually exclusive modes (both ⇒ usage 64).
+`--close` runs the audit checks **plus** the three close-only checks; `--tracked`
+runs **only** the filed-report freshness clause (below) and no audit check at
+all. Defaults: `--lane
 kumitate`; `--repo` = the repo root containing the script (the same sibling
 convention `scripts/surface-probe.mjs` uses for `DEFAULT_SELF`); `--reports-dir
 /home/vgpnk/projects/shokunin/.ufo/reports`; `--main-repo
@@ -153,7 +156,38 @@ surface can't be read, "absent" must never be reported as `CLEAN`:
 | `REPORTS_DIR_MISSING` | `--reports-dir` missing / not a directory — no evidence surface to audit; the report's home is fixed by contract (`PROTOCOL.md:140-143`: `.ufo/reports/round-<N>/<id>.md` in the main repo), so with the directory gone there is nothing to read and absence must not verdict `CLEAN` |
 | `NOT_A_GIT_WORKTREE` | `--repo` is not a git work tree — the round is defined against that repo's `HEAD` and commits (`PROTOCOL.md:117-120`) |
 | `NO_CLOSED_ROUND` | no closed round found for the lane — rounds are per-lane counters (`PROTOCOL.md:109-113`) and the report path is what closes one (`PROTOCOL.md:140`) |
-| `MAIN_REPO_NOT_GIT` | `<main-repo>` is not a git repo — the report lives in the main repo (`PROTOCOL.md:140-141`) |
+| `MAIN_REPO_NOT_GIT` | `<main-repo>` is not a git repo — the report lives in the main repo (`PROTOCOL.md:140-141`); reused by `--tracked` for an unusable/absent `--main-repo` |
+| `NO_FILED_REPORTS` | `--tracked` found fewer than two filed reports for the lane — with only one on disk there is nothing *older* to check, and "nothing to check" must not be reported as CLEAN |
+
+## The filed-report freshness mode (`--tracked`)
+
+`--tracked` is the mid-round form of exactly one close clause — the tracking
+half of `REPORT_UNTRACKED`, without the push half (a push is a *close-time* act,
+`MISSION.md:47`, so checking it mid-round would be red by construction). It runs
+no audit check at all, which is why it stays green while the current round is
+still in flight:
+
+- It enumerates `<reports-dir>/round-*/<lane>.md`, sorts by round, and **drops
+  the highest round** — the in-flight one, whose report may legitimately not be
+  committed yet.
+- Every remaining report must be tracked in `--main-repo`
+  (`git -C <main> ls-files --error-unmatch -- <rel>`); each miss is one
+  `REPORT_UNTRACKED` finding, and a report outside `--main-repo` gets its own
+  `outside …` detail rather than being silently skipped.
+- `--tracked` + `--close` ⇒ usage 64 (mutually exclusive modes); `--selftest`
+  still wins over both.
+- `--round` and `--repo` are never consulted in this mode, so a bogus `--repo`
+  cannot change the verdict (selftest case 56).
+- Verdict line: `ROUND_GATE: CLEAN (mode=tracked checked=<n> errors=0
+  warnings=<w>)` or `ROUND_GATE: DRIFT (mode=tracked …)`; `--json` adds
+  `mode`, `checked` and `excludedRound`.
+
+Why the newest report is excluded, and the blind spot it leaves: a report filed
+in round N but never committed becomes visible the moment round N+1 files its own
+report (N is no longer the highest) — the failure
+`.ufo/reports/round-9/kumitate.md` demonstrated, found in round 10 only at close
+by `--close`. A lane that never files another report keeps that blind spot; it is
+recorded, not hidden.
 
 ## Exit map and verdict line
 
@@ -164,13 +198,13 @@ surface can't be read, "absent" must never be reported as `CLEAN`:
 | 2 | fail-closed (arms above) |
 | 64 | usage (unknown flag, non-numeric `--round`) |
 
-Same four-value shape as the two gates beside it (`cite-check.mjs`: 0/1/2/64;
-`surface-probe.mjs`: 0/1/2/64), so the checklist grammar's `exit <n>[|<m>…]`
-reads identically for all three.
+Same four-value shape as the three gates beside it (`cite-check.mjs`: 0/1/2/64;
+`surface-probe.mjs`: 0/1/2/64; `proxy-check.mjs`: 0/1/2/64), so the checklist
+grammar's `exit <n>[|<m>…]` reads identically for all four.
 
-## How it composes with the other two gates
+## How it composes with the other three gates
 
-Three instruments, three disjoint inputs, three disjoint failure domains — none
+Four instruments, four disjoint inputs, four disjoint failure domains — none
 of them shells another.
 
 | Gate | Contract | Reads | Failure domain |
@@ -178,13 +212,14 @@ of them shells another.
 | `scripts/cite-check.mjs` | `kumitate-cite-check-v1` | every path/line/symbol/pin in `SKILL.md` + `corpus/**/*.md`, resolved against the origin tree (`--symbols`, `--integrations`, `--selftest`, `--json`, `--strict`) | prose rot against the origin tree |
 | `scripts/surface-probe.mjs` | `kumitate-surface-probe-v1` | the `ufo-sighting surface --json` manifest + `fleet-dispatcher.mjs status` vs the origin bytes; `--checklists` executes this repo's `SKILL.md` task list | live-surface drift |
 | `scripts/round-gate.mjs` | `kumitate-round-gate-v1` | this repo's git record, `.ufo/reports/round-<N>/`, the main repo | the round contract itself |
+| `scripts/proxy-check.mjs` | `kumitate-proxy-v1` | this repo's `SCORECARD.md` (claim block + registry + `## Axes`), `SKILL.md`, `corpus/README.md`, corpus dirs | the lane's own axis arithmetic (`corpus/knowledge/executable-scorecard.md`) |
 
 The only shared surface is the checklist: `surface-probe.mjs --checklists` runs
-the `SKILL.md` items, so one command exercises all three gates. The origin tree
+the `SKILL.md` items, so one command exercises all four gates. The origin tree
 is not scanned here — the only `--origin` read is a lazy `git cat-file`/ancestry
 probe for a cited-commit token that resolved in neither the lane nor the main
 repo, so the gate stays safe to run in any lane, and it reports into the same
-`exit 0|1 + <VERDICT>:` shape the other two use.
+`exit 0|1 + <VERDICT>:` shape the other three use.
 
 ## Why audit mode deliberately omits live git state
 
@@ -233,7 +268,7 @@ item stays meaningful.
   `kumitate-shokunin/LOG.md:3` (`- 2026-09-28 — round 0: minted as shonen.`) —
   the row/entry shapes the audit parses.
 
-## Observed verdicts (round 10, `scripts/round-gate.mjs` sha256 `2c6c580b…`, 1226 L)
+## Observed verdicts (round 10 — the 1226 L / 49-case revision; its sha is superseded and recorded in `LOG.md` round 10)
 
 Every arm below was run by hand at round-10 close, from the repo root; the
 default flip from round 9 to round 10 happens the moment a round-10 report
@@ -274,6 +309,28 @@ ROUND_GATE  error  COMMIT_CITED_NOT_ANCESTOR  cited=4 notAncestor=3 [d65aa24 31f
 The real report cites four tokens, three of which resolve in this repo and one
 (`ee907f1cf`) only in the origin tree — the measured reason `--origin` exists and
 why an unresolved-token finding is not raised for it.
+
+## Observed verdicts (round 11, `scripts/round-gate.mjs` sha256 `4c447463…`, 1426 L, 57-case suite)
+
+Round 11 added the `--tracked` mode and applied a two-site simplifier pass (the
+unreachable `ahead=?(raw=…)` arm and the duplicate missing-`SCORECARD.md`
+warning; −3 L, no case-count change). Verdicts below were run by hand from the
+repo root; `checked=8` is the nine filed reports (rounds 1, 3–10 — round 2 filed
+none) minus the newest, round 10:
+
+```
+$ node scripts/round-gate.mjs --tracked
+ROUND_GATE: CLEAN (mode=tracked checked=8 errors=0 warnings=0)                # exit 0
+$ node scripts/round-gate.mjs --tracked --json
+{"contract":"kumitate-round-gate-v1","mode":"tracked","checked":8,"excludedRound":10,…}
+$ node scripts/round-gate.mjs --tracked --close                               # exit 64
+$ node scripts/round-gate.mjs --tracked --lane other   # exit 2 NO_FILED_REPORTS filed=0
+$ node scripts/round-gate.mjs --selftest
+ROUND_GATE_SELFTEST: 57/57 pass
+VERDICT: PASS                                                                 # exit 0, ~3.5 s
+$ node scripts/round-gate.mjs
+ROUND_GATE: CLEAN (round=10 lane=kumitate checks=10 errors=0 warnings=0)      # exit 0
+```
 
 ## What it deliberately does not do
 

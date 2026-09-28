@@ -312,3 +312,52 @@
   contract-required `SHONEN` heading (`kagi`, `kake`, `kasegi` — the gate now
   records this locally as a warning; the fleet call is the integrator's).
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-10/kumitate.md`.
+- 2026-09-28 — round 11 (operability 7 → 8): this lane's own axis arithmetic
+  turned executable. New `scripts/proxy-check.mjs` (contract
+  `kumitate-proxy-v1`, 1173 L, zero deps, read-only, no network/no git/no
+  subprocess on the measurement path, 9 finding kinds, 10 fail-closed arms,
+  sha256 `9d35ae743102…`): recomputes `A`, `C`, `C1`, `C1_total`, `C2`,
+  `C2_total`, both derived scores and four `scripts/*.mjs` sha256 pins from the
+  tree, then compares them with `SCORECARD.md`'s machine-readable
+  `<!-- kumitate-proxy-v1 -->` block and its `## Axes` integers —
+  `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=38/38 coverage=7; pins=4
+  match)` exit 0, `PROXY: DRIFT` exit 1, exit 0/1/2/64,
+  `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0 (hermetic, tmp fixtures). Before close, an L1 falsification pass on a `/tmp` copy of the tree found a parse defect the green suite had missed: a `\|` inside a registry cell shifted the 4th-cell `yes` test onto a prose cell and silently stopped counting that row (the flip produced NO drift) — fixed with an escape-aware `splitRowCells()` and two regression fixtures (suite 53 → 55, `pin.proxy-check` re-pinned; the live term was unchanged, C1 14/18 under both parses).
+  New `round-gate.mjs --tracked` mode: the mid-round half of the close-time
+  tracking clause (enumerate `<reports-dir>/round-*/<lane>.md`, drop the highest
+  round, require the rest tracked in `--main-repo`; `REPORT_UNTRACKED` per miss;
+  fewer than two filed reports ⇒ fail-closed exit 2 `NO_FILED_REPORTS`;
+  `--tracked --close` ⇒ usage 64) → `ROUND_GATE: CLEAN (mode=tracked checked=8
+  errors=0 warnings=0)` exit 0; the same file took a −3 L simplifier pass
+  (unreachable `UNPUSHED ahead=?(raw=…)` arm, duplicate missing-`SCORECARD.md`
+  warning ⇒ 1426 L, sha `4c447463…`, `ROUND_GATE_SELFTEST: 57/57 pass`).
+  Proxy before→after: A 3 → 4, C 6 → 9 ⇒ `f_O` 9/12 → 13/16 = 0.8125 ⇒ **7 → 8**;
+  `node scripts/surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass` exit 0.
+  Option (a) from round 10's plan (a scheduled/CI leg) was refused on evidence:
+  the host's only schedulers are other identities' `systemd --user` timers
+  (`ai-usage`, `webzites-probe`, `charter-scribe`) and kake's recorded precedent
+  is that a lane does not toggle host state itself (`.ufo/l0-questions.md`).
+  Evidence: `SCORECARD.md` (claim block at `:117-140`, axes rows, 2 move-log rows,
+  3 new limits, S7 row 68 → 69), `SKILL.md` (3 checklist items `:525-527` + a
+  Working-rules bullet `:604-627`), `corpus/knowledge/executable-scorecard.md`
+  (new), `corpus/knowledge/round-close-gate.md` (`--tracked` section + round-11
+  verdicts), `corpus/lessons/round-11.md` (new), `corpus/lessons/round-10.md`
+  (drift marker), `corpus/README.md` (2 rows, 36 → 38), `/tmp/kumitate-r11/*`
+  (14 lane artifacts).
+  Method: 14-lane batched L2 dispatch (planner, 2 scouts, 2 executors, scribe,
+  connector, critic, reviewer, sentinel, labrat, mutation-tester, simplifier,
+  distiller); L1 re-measured every claim before it entered a document — five L2
+  claims were corrected in that pass (a wrong residue number before publication;
+  the stale `## Axes` prose whose integer survived; the mutation table's interim
+  revision (sha in the report) vs the landed one, whose suite grew 53 → 55 cases;
+  the S7 row's member count).
+  Cross-domain (reported, not absorbed): the origin tree's
+  `crates/ufo-core-runtime/bundled/omp-seat-routing.json` is red on the origin's
+  own `sync-ufo-contracts.mjs --check` (ownerLane `nc8-runtime`, exit 1) and
+  `scripts/charter-scribe/` grew 5 → 6 files (S7 row corrected here, owner:
+  origin); a stray `audit-env.sh` was written into THIS repo by an L2 lane
+  mid-round — `proxy-check` caught it as `A_DRIFT declared=4 computed=5` and it
+  was removed before close; kagi's `drift-pins.sh --selftest` now reports 13
+  cases where this file's old calibration paragraph quoted 11 (owner: kagi;
+  corrected in `SCORECARD.md`).
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-11/kumitate.md`.
