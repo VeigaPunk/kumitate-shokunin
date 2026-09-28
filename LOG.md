@@ -19,3 +19,12 @@
   `corpus/knowledge/route-resolution.md` added. Evidence: module header +
   `resolveAliasFromMaps`/`resolveSeatFromMaps`/`readGlobalSeatRouting`,
   live config read, `run-omp-native-trial.mjs` retry-projection block.
+- 2026-09-28 — round 3: mapped the fleet-dispatcher iterate-successor
+  machine (`maybeEnqueueIterationSuccessor` ~L6743-7150): decision gate,
+  outcome vocabulary, deterministic successor keys, defer-not-die parks,
+  park epochs (r43), afterChains satisfy/starve split, admission latch
+  (admissions − retractions = live count). SKILL.md dispatcher section
+  expanded; `corpus/knowledge/successor-chain.md` + `lessons/round-3.md`
+  added. Evidence: `fleet-dispatcher.mjs` L275-295, L5510-5525,
+  L6743-7150, L7997-8110, L8313-8650.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-3/kumitate.md`.

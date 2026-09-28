@@ -77,7 +77,7 @@ hatch" etc.) route to `open` verbatim. Implementation is split across
 `scripts/ufo-sighting-lib/*.mjs` (surface, launch-verb, resume-verb,
 steer-peek, wall*, options, …) plus `scripts/ufo-sighting/` assets.
 
-### `scripts/fleet-dispatcher.mjs` — queue drain
+### `scripts/fleet-dispatcher.mjs` — queue drain + iterate chain
 
 Drains `.ufo/pending-work.json` (`ufo-pending-work-v1`) by task key; ledger
 `fleet-ledger.jsonl` rotates at 10 MiB to `.jsonl.N` then cold archives
@@ -85,6 +85,23 @@ Drains `.ufo/pending-work.json` (`ufo-pending-work-v1`) by task key; ledger
 refill, or filler work. Singleton via `acquireSingletonLock`; exec-path
 env overrides fail closed `EXEC_PATH_OUTSIDE_ROOT` unless
 `UFO_FLEET_ALLOW_EXTERNAL_TOOLS=1`.
+
+Iterate chain (`maybeEnqueueIterationSuccessor` ~L6743): only an explicit
+receipt `iteration.decision: "continue"` mints the next round.
+Outcome kinds `continue|stop|blocked|budget_halt|decision_missing|
+successor_error|successor_superseded`; round-budget exhaustion is
+`budget_halt` (overrides a declared `continue`); a missing decision fails
+closed; transient blocks DEFER never die — `deferred:"scope_occupied"` /
+`"queue_capacity"` re-mint on drain onto the same deterministic successor
+key `(parent, round, priorReceiptSha256)`. `iterationOutcome.at` is the
+park epoch (r43 — never re-stamped on re-eval; `lastEvalAt` carries the
+evaluation). afterChains: `stop|budget_halt|decision_missing|
+successor_superseded` satisfy waiters; `blocked|successor_error` starve;
+unknown kinds fail closed. Acceptance writes one
+`receipt_snapshot_binding_accepted` per (taskKey, runId, attempt,
+generation) paired with exactly one `receipt_snapshot_binding_retracted`
+per completion demotion via durable `admission-latch.json` — admissions
+minus retractions is the live count.
 
 ### `scripts/run-omp-native-trial.mjs` — judged-round launcher
 

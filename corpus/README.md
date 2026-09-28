@@ -12,14 +12,15 @@ scripts, `crates/ufo-core-runtime`. Sources are in
 | `knowledge/route-resolution.md` | `omp-global-config.mjs` resolution precedence, live alias table, fleet-map drift, retry surfaces | `omp-global-config.mjs`, `~/.omp/agent/config.yml` |
 | `knowledge/failure-telemetry.md` | Failure classes, capacity subset, routing-health outcomes, outcome triple, exit codes | `ufo-mission-result.mjs`, `collect-omp-native-handoff-lib/base.mjs` |
 | `knowledge/singleton-and-queue-ownership.md` | `acquireSingletonLock` mechanics, queue ownership, exec-path gating | `ufo-mission-result.mjs`, `fleet-dispatcher.mjs`, `ufo-stale-watchdog.mjs` |
+| `knowledge/successor-chain.md` | Iterate-successor decision gate, defer-not-die, park epochs, afterChains satisfy/starve, admission latch | `fleet-dispatcher.mjs` L275-295/5510/6743-7150/8313+ |
 | `lessons/round-1.md` | Round-1 method notes, drift trap, stated gaps | LOG.md round-1; commit `round-1` |
 
 ## Known gaps
 
-- fleet-dispatcher settle/successor internals (~15k lines; header only so far)
 - `crates/ufo-core-runtime` loop-driver and native admission internals
 - native-trial launch sequence (wall handoff, pane binding)
-
-- `omp-global-config.mjs` alias-table resolution detail
+- `the-tick` ground-handler ops beyond `path_ping`
+- fleet-dispatcher remaining surfaces: dispatch/claim path, whip/respawn
+  plumbing, queue schema details beyond the successor chain
 
 All entries are falsifiable and cite file+symbol. Opinions marked as such.
