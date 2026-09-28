@@ -48,3 +48,27 @@
   scouts (LoopDriverMap, NativeAdmissionMap) mapped the two module
   families.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-4/kumitate.md`.
+- 2026-09-28 — round 5: mapped the `run-omp-native-trial.mjs` launch
+  sequence end-to-end (gate stack → wall handoff → deferred assignment
+  authoring → O_EXCL anchor → drift/probe gates with snapshot rollback →
+  attested omp spawn → collect/judge/seal → retire) and the
+  fleet-dispatcher front half (queue schema/lock, claim pipeline, four
+  counters, state vocabulary, repend door, ledger kinds). Two
+  scout-mapped slices verified by parent against source. Surfaced a
+  LATENT cross-domain defect: `sealBoundaryViaRuntime` shells
+  `ufo membrane-seal write` but `Command::MembraneSeal` has no `write`
+  subcommand — clap rejects the argv at parse, so every real
+  `authority_boundary` seal write fails `membrane_seal_write_failed`
+  (stub-symmetry on both test sides hid it since H13 cutover d76ddcc0e;
+  verified with a minimal clap 4.6 repro). Added
+  `corpus/knowledge/native-trial-launch.md`,
+  `corpus/knowledge/queue-and-claim.md`, `lessons/round-5.md`; SKILL.md
+  gained a launch-sequence section + dispatcher front-half summary +
+  defect advisory; README coverage/gaps updated. Evidence:
+  `run-omp-native-trial.mjs` :194-4693 (main() :3539+, seal
+  :1904-1961, wall :1357-1387, snapshot :1553-1630, drift :2929-3003,
+  probes :3383-3514), `fleet-dispatcher.mjs` L96/L114-150/L5310-5701/
+  L5743-5924/L12086-12513/L12798/L13187/L8937, `ufo-cli/src/main.rs`
+  :95-111/:232/:287-308, `cli_contract.rs` :1507-1530,
+  `tests/run-omp-native-trial.test.js` :3939/:4104/:4404.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-5/kumitate.md`.

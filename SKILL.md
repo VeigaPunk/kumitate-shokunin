@@ -103,6 +103,93 @@ generation) paired with exactly one `receipt_snapshot_binding_retracted`
 per completion demotion via durable `admission-latch.json` — admissions
 minus retractions is the live count.
 
+Front half (queue/claim/dispatch — full map
+`corpus/knowledge/queue-and-claim.md`): rows in
+`pending-work.json` (`ufo-pending-work-v1`) are content-keyed
+`task_[a-f0-9]{24}` / `runId=gq[a-f0-9]{16}` / `sessionId=omp-<runId>`;
+global uniqueness on key/runId/sessionId/resultPath; DFS cycle check over
+dependsOn∪afterChains. `claimNextTask` L12086 takes tasks in INSERTION
+order, at most one per call, commits `launching` BEFORE spawning (a
+launching row is a claim lock; LAUNCHING_GRACE_MS=120s is the only
+crash-recovery boundary). Four counters never to conflate: `attempts`
+(monotone dispatch tries), `resumeAttempts` (≤8 paused-resume budget),
+`launchMisses` (≤8 registration failures), and the watchdog's per-row
+`attempt N/3` (a fifth vocabulary). `blocked` is not terminal (rependable
+= chain-live); NOTHING ever writes `state=failed` — a `failed` row is an
+external edit. `recoveredExisting===true` overrides nonzero launcherExit
+(a conflict-recovery bound mission is a SUCCESS). The watchdog mutates
+the queue ONLY through `fleet-dispatcher.mjs repend --run <gq16>`
+(`rependTask` L8937); a successful repend stamps
+`blocker.code='repend_requested'` — a repend mark, not an error.
+
+
+## Launch sequence — `scripts/run-omp-native-trial.mjs` `main()` (:3539)
+
+Full map: `corpus/knowledge/native-trial-launch.md`. The ordered spine:
+
+1. `parseArgs` → `planLaunchMode` (wall = interactive ∧ !insideWall ∧
+   !no-wall ∧ !prepare-only) → `assertShutdownHookReady`.
+2. Freeze inputs (`snapshotDispatchInputs`: config + `.omp/config.yml`
+   bytes+digest) → `resolveNativeDispatchPolicy` (global OMP config is the
+   SOLE routing authority; `.omp/config.yml` carries only non-routing pins
+   — maxConcurrency:0, extendedContext, retry{modelFallback:true,
+   waitForUsageReset:false, usageAwareFallback:false,
+   fallbackRevertPolicy:never}).
+3. Path guards (lexical containment + per-component lstat walk) → rerun
+   guard (`handoff.json` exists → `run_handoff_duplicate`) → predecessor
+   chain read (round>1) → idempotency decision (pre-dispatch snapshot
+   exists ⇒ resume pairing, `collectionSettled` is hardcoded false).
+4. Membrane-seal gate (fresh dispatch only) → resume-anchor digest+roster
+   gates (resume only) → session preflight → contract-mirror check.
+5. Wall handoff :3707 — `autoRegisterInvokedNativeTrial` is a config
+   BOOLEAN, not a verb. KNOWN SOURCE DEFECT: the handoff does not exit the
+   outer process; main() continues in-process too and the O_EXCL dispatch
+   snapshot arbitrates the double-dispatch race (loser dies
+   `double_dispatch`; tests/run-omp-native-trial.test.js:4404 names it "a
+   source defect under its own report").
+6. Run-dir reset (fresh only) → inputs/assignments authored+hashed but
+   DEFERRED until the resume roster gate passes → flush+re-hash.
+7. Main prompt → `main-assignment.md` (hash from disk) →
+   `assertFrozenDigest` re-read → `launch.json` (dispatch-time record;
+   manifest.json is written post-session — never confuse the two) →
+   `--prepare-only` exits here.
+8. Heartbeat starts → pre-dispatch anchor written O_EXCL →
+   `assertPreDispatchFrozen` full policy re-resolve → phase-0 domain
+   probes (critical seats' failure domains; budget-gated) — ANY halt or
+   drift rolls the snapshot back (`rmSync`), the ONLY rollback in the
+   launch.
+9. Epoch receipt (non-fatal on write failure, must precede spawn: the
+   judge's Saturated-vs-BudgetHalt discriminator) → omp spawn of the
+   ATTESTED binary (sha256'd realpath, OMP_BIN/UFO_OMP_BIN honored).
+10. The launcher NEVER calls `task` — Main's prompt carries the wave:
+    planner task → ONE batched proposal-wave task call with
+    `wave_token: <token>` verbatim in context → distiller task.
+11. Post-session (ompExit==0 only): session pairing → manifest.json →
+    collector → `ufo judge-handoff` → verdict.json O_EXCL.
+    `authority_boundary` verdict → `ufo membrane-seal write` via
+    `sealBoundaryViaRuntime` — see LATENT DEFECT below.
+12. verdict.json XOR rejection.txt drives the tick marker +
+    `retireWallMission` (detached child polls the pane wrapper's death,
+    then `ufo-sighting complete`). Exit 0 iff finalExit==0 &&
+    verdict.json exists; every designed failure is a
+    `ufo-trial-refusal-v1` line, exit 2.
+
+### ⚠ Cross-domain defect (reported, not owned)
+
+`sealBoundaryViaRuntime` shells `ufo membrane-seal write --…` (:1931) but
+`Command::MembraneSeal` (ufo-cli/src/main.rs:95-111) is a flat flag struct
+with no `write` subcommand/positional — clap 4.6 exits at `Cli::parse`
+("unexpected argument 'write'"), so EVERY real `authority_boundary` seal
+write fails `membrane_seal_write_failed`: verdict durable, seal absent,
+next fresh dispatch permanently `membrane_seal_standing` until an
+operator signs/removes. Latent since H13 cutover d76ddcc0e; both test
+sides stubbed it (JS pins the `write` argv against a fake runtime; the
+Rust contract test omits `write`, cli_contract.rs:1514). Verified against
+clap 4.6.6 with a minimal repro. Fix belongs in ufo-fsd-alpha (drop the
+`write` token OR add `MembraneSealAction::Write`); report cross-domain,
+do not absorb.
+
+
 ### `scripts/run-omp-native-trial.mjs` — judged-round launcher
 
 `--run-id ID [--interactive|--headless] [--no-wall] [--prepare-only]
