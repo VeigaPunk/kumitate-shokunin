@@ -1,7 +1,7 @@
 # Fleet-dispatcher front half — queue schema, claim, dispatch, repend
 
 `scripts/fleet-dispatcher.mjs` (14,769 lines), everything before the
-successor machine at L6743. Citations `L<line>` are this file.
+successor machine at :6753. Citations `L<line>` are this file.
 
 ## Queue file & locking
 

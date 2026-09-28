@@ -111,7 +111,7 @@ refill, or filler work. Singleton via `acquireSingletonLock`; exec-path
 env overrides fail closed `EXEC_PATH_OUTSIDE_ROOT` unless
 `UFO_FLEET_ALLOW_EXTERNAL_TOOLS=1`.
 
-Iterate chain (`maybeEnqueueIterationSuccessor` ~L6743): only an explicit
+Iterate chain (`maybeEnqueueIterationSuccessor` :6753-7215): only an explicit
 receipt `iteration.decision: "continue"` mints the next round.
 Outcome kinds `continue|stop|blocked|budget_halt|decision_missing|
 successor_error|successor_superseded`; round-budget exhaustion is
@@ -511,17 +511,45 @@ second copy.
     while doctrine moved to the 16–100 band — derive via `loadSwarmPolicy`
     (`ufo-stale-watchdog.mjs` header).
 
+## Verifiable checklist
+
+Every item is read-only, runs from this repo's root, and prints its own verdict;
+`node scripts/surface-probe.mjs --checklists` executes the list.
+
+- [ ] Citation gate verdict — `node scripts/cite-check.mjs` → exit 0|1 + `CITE_CHECK:`
+- [ ] Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Live sighting-surface conformance — `node scripts/surface-probe.mjs` → exit 0 + `SURFACE_PROBE: CLEAN`
+- [ ] Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`
+
+Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
+empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
+`CITE_CHECK: DRIFT` / `SURFACE_PROBE: DRIFT` is a tree finding — the gate
+measured the tree, the owner named in that line owns the repair, and neither
+gate writes to the origin tree. Live 2026-09-28: `CITE_CHECK: DRIFT`, `errors=2`,
+both inside `corpus/lessons/round-6-aggregator-audit.md` (aggregator-owned).
+
 ## Working rules for this repo
 
 - Re-verify before claiming: `node scripts/cite-check.mjs` (repo-local,
   read-only, zero deps, node ≥20) re-resolves every path / line / symbol / pin
   in `SKILL.md` + `corpus/**/*.md` against the origin tree and prints
   `CITE_CHECK: CLEAN|DRIFT (…)` — exit 0 clean, 1 on source-class findings, 2
-  fail-closed (missing `--src`, empty scan set). `--selftest` runs the 28-case
-  fixture suite; `--json` is the machine interface. Bounds: workspace/run
-  artifacts (`.ufo/…`, `manifest.json`, …), HOME config candidates and
-  `$OUT_DIR`-generated files are informational by construction — they cannot be
-  verified from the source tree; `--strict` promotes warnings to failure.
+  fail-closed (missing `--src`, empty scan set). `--selftest` runs the hermetic
+  19-case fixture suite (fixtures only — live-tree assertions moved to
+  `--integrations`, which is where a sibling lane's doc drift shows up);
+  `--json` is the machine interface. Bounds: workspace/run artifacts (`.ufo/…`,
+  `manifest.json`, …), HOME config candidates and `$OUT_DIR`-generated files are
+  informational by construction — they cannot be verified from the source tree;
+  `--strict` promotes warnings to failure.
+- Re-verify the live surfaces the same way: `node scripts/surface-probe.mjs`
+  (contract `kumitate-surface-probe-v1`) re-derives the `ufo-sighting surface
+  --json` manifest and the `fleet-dispatcher.mjs status` projection against the
+  origin bytes, then reports `SURFACE_PROBE: CLEAN|DRIFT (…)`; `--selftest` is
+  hermetic, `--checklists` runs the checklist above. Two digests, one pin: the
+  pin `config/ufo.json` `sighting.surfaceDigest` hashes `canonicalJson(manifest)`
+  (`sync-ufo-contracts.mjs:853-862`), while `manifest.scriptDigest` hashes
+  concatenated file bytes (`ufo-sighting-lib/surface.mjs:43-60`) — comparing the
+  pin to `scriptDigest` is always a false drift signal.
 - Cite file + symbol for every claim; if the source moves, update the
   citation, not the claim from memory.
 - Constants live once: `ENTRY_FAILURE_CLASSES`, `CAPACITY_FAILURES`,

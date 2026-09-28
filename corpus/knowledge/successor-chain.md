@@ -1,6 +1,6 @@
 # Iterate-successor chain — `maybeEnqueueIterationSuccessor`
 
-`scripts/fleet-dispatcher.mjs` ~L6743-7150. The chain that keeps an
+`scripts/fleet-dispatcher.mjs` :6753-7215. The chain that keeps an
 iterate mission alive across rounds — or ends it honestly.
 
 ## Decision gate (receipt-bound, fail-closed)
@@ -90,6 +90,6 @@ ALREADY settled (`evidenceEraCurrent` + `resultReceiptValid`), never on
 evidence alone — the old `running` leg killed panes mid-turn and could
 invalidate the very evidence acceptance later read.
 
-Sources: `scripts/fleet-dispatcher.mjs` L275-295, L5510-5525, L6743-7150,
+Sources: `scripts/fleet-dispatcher.mjs` L275-295, L5510-5525, L6753-7215,
 L7997-8110, L8313-8450, L8589-8650; `ufo-l0-watch.mjs` header (why the
 respawn chain exists).

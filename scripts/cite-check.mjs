@@ -8,7 +8,7 @@
  *
  *   node scripts/cite-check.mjs [--src DIR] [--self DIR] [--fleet DIR]
  *                              [--json] [--strict] [--symbols] [--all]
- *                              [--selftest|--self-test]
+ *                              [--selftest|--self-test] [--integrations]
  *
  * Grammar
  *   Token census: single-backtick spans outside ``` fences (SKILL.md + corpus/**).
@@ -47,6 +47,20 @@
  *   exit 0 CLEAN · 1 DRIFT (error, or warn under --strict) · 2 fail-closed
  *        (missing/non-dir --src or --self, empty scan set, zero resolutions)
  *   64 usage error. No file text, env value, or symbol body is ever printed.
+ *
+ * Suite groups (--selftest | --integrations)
+ *   hermetic     fixture-only checks over a synthetic tree in the system temp dir.
+ *                Never reads --src or --self; MUST PASS in any repo state. This is
+ *                the whole of --selftest.
+ *   integration  live-tree assertions (--src/--self): the F1-F4 repair classes, the
+ *                good-sample set, the symbol-machinery mutation copy, and the pruned
+ *                index size. Run only by --integrations. Its failures are reported
+ *                with the live error findings underneath them, never suppressed.
+ *   --selftest runs hermetic only · --integrations alone runs the integration group ·
+ *   --selftest --integrations runs both. Every executed group prints its own
+ *   `n/m cases passed (group)` line; the run ends with one `VERDICT: PASS|FAIL` over
+ *   the executed groups, and exits 0 iff every executed group passes. With --json the
+ *   suite emits {schema,suites,verdict} instead of text.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -145,10 +159,14 @@ const USAGE = `usage: node scripts/cite-check.mjs [options]
   --self DIR      docs tree to scan (default: repo root containing this script)
   --fleet DIR     parent of --self for fleet-parent/sibling-lane docs (default: dirname --self)
   --json          machine output: {schema:"${SCHEMA}",src,self,fleet,files,totals,verdict}
+                  (suite runs: {schema,suites,verdict})
   --strict        DRIFT also on warn-level findings
   --symbols       line-coupled symbol check for citations that carry a line ref
   --all           print note-level (informational) findings in text mode
-  --selftest      run the built-in fixture regression suite (alias: --self-test)
+  --selftest      run the HERMETIC fixture regression suite (alias: --self-test);
+                  fixture-only, passes in any repo state
+  --integrations  run the INTEGRATION group against --src/--self (live-tree
+                  assertions); combine with --selftest to run both groups
   -h, --help      this help
 `;
 
@@ -157,7 +175,7 @@ const USAGE = `usage: node scripts/cite-check.mjs [options]
 function parseArgs(argv) {
   const opts = {
     src: DEFAULT_SRC, self: DEFAULT_SELF, fleet: null, json: false, strict: false,
-    symbols: false, all: false, selfTest: false,
+    symbols: false, all: false, selfTest: false, integrations: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -174,6 +192,7 @@ function parseArgs(argv) {
     else if (a === '--symbols') opts.symbols = true;
     else if (a === '--all' || a === '-v') opts.all = true;
     else if (a === '--selftest' || a === '--self-test') opts.selfTest = true;
+    else if (a === '--integrations') opts.integrations = true;
     else if (a === '-h' || a === '--help') { process.stdout.write(USAGE); return null; }
     else throw new Error(`unknown argument: ${a}`);
   }
@@ -1349,12 +1368,18 @@ Shorthand: \`cli:1\` resolves through the alias map.
 
 function selfTest(opts) {
   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-cite-selftest-'));
-  const results = [];
-  const check = (name, fn) => {
+  const hermetic = [];
+  const integration = [];
+  let liveErrors = null;
+  // The fixture group is always materialized in the shared tmpdir; the groups are
+  // selected at reporting time, so `--integrations` alone stays read-only.
+  const record = (group, name, fn) => {
     let ok = false, detail = '';
     try { const r = fn(); ok = r.ok; detail = r.detail; } catch (e) { detail = `threw: ${e.message}`; }
-    results.push({ name, ok, detail });
+    group.push({ name, ok, detail });
   };
+  const check = (name, fn) => record(hermetic, name, fn);
+  const checkI = (name, fn) => record(integration, name, fn);
   try {
     const selfRoot = join(tmp, 'self');
     const srcRoot = join(tmp, 'src');
@@ -1465,22 +1490,33 @@ function selfTest(opts) {
       return { ok, detail: `filesScanned=${r.totals.filesScanned} verdict=${r.verdict}` };
     });
 
-    // real-tree assertions: machinery does not regress, live docs are repaired
+    // real-tree assertions: machinery does not regress, live docs are repaired.
+    // Gated on --integrations: `--selftest` alone must do NO live-tree work. A
+    // suite that reads the live 8124-file index (and, through it, a sibling
+    // lane's docs) and then discards the result is not hermetic — the cost, the
+    // hidden failure and the tree coupling all remain even when the verdict
+    // ignores them (r9 Reviewer: the block ran unconditionally).
     const realSrc = opts.src;
     const realSelf = opts.self;
-    if (existsSync(join(realSrc, 'crates', 'ufo-core-runtime', 'src', 'gate.rs')) && existsSync(join(realSelf, 'SKILL.md'))) {
+    if (!opts.integrations) {
+      integration.push({ name: 'real-tree F1–F4 + good samples', ok: true, skipped: true,
+        detail: 'SKIP (integration group not requested — run with --integrations)' });
+    } else if (existsSync(join(realSrc, 'crates', 'ufo-core-runtime', 'src', 'gate.rs')) && existsSync(join(realSelf, 'SKILL.md'))) {
       const real = runCheck({ ...opts, src: realSrc, self: realSelf, symbols: true, json: true });
       const all = real.files.flatMap((f) => f.findings);
-      check('real docs repaired: no F1-class finding (GateDecision off-line)', () => {
+      liveErrors = all.filter((f) => f.severity === 'error')
+        .map((f) => ({ file: f.file, line: f.line, kind: f.kind, token: f.token, ref: f.ref || '' }))
+        .sort((a, b) => (a.file === b.file ? a.line - b.line : a.file < b.file ? -1 : 1));
+      checkI('real docs repaired: no F1-class finding (GateDecision off-line)', () => {
         const bad = all.filter((f) => f.kind === 'SYMBOL_OFF_LINE' && /GateDecision/.test(f.message));
         return { ok: bad.length === 0, detail: bad.length ? bad.map((f) => `${f.file}:${f.line}`).join(', ') : '0 SYMBOL_OFF_LINE for GateDecision' };
       });
-      check('real docs repaired: no F4-class finding (primeagent-assimilation.json ref)', () => {
+      checkI('real docs repaired: no F4-class finding (primeagent-assimilation.json ref)', () => {
         const bad = all.filter((f) => f.token === 'config/primeagent-assimilation.json'
           && (f.kind === 'LINE_OOR' || f.kind === 'REF_OWNER_AMBIG' || f.severity === 'error'));
         return { ok: bad.length === 0, detail: bad.length ? bad.map((f) => `${f.file}:${f.line} ${f.kind}`).join(', ') : '0 findings' };
       });
-      check('real symbol machinery fires on a repaired site (mutation copy)', () => {
+      checkI('real symbol machinery fires on a repaired site (mutation copy)', () => {
         const copy = join(tmp, 'mut-self');
         copyDocs(realSelf, copy);
         const skillPath = join(copy, 'SKILL.md');
@@ -1493,26 +1529,26 @@ function selfTest(opts) {
           .find((f) => f.kind === 'SYMBOL_OFF_LINE' && /GateDecision/.test(f.message));
         return { ok: Boolean(hit), detail: hit ? `${hit.file}:${hit.line} ${hit.message}` : 'mutation not flagged' };
       });
-      check('real F2 omp_role_chains.rs → generated, informational', () => {
+      checkI('real F2 omp_role_chains.rs → generated, informational', () => {
         const hit = all.find((f) => f.class === 'generated' && f.token === 'omp_role_chains.rs');
         return { ok: Boolean(hit) && hit.severity === 'note', detail: hit ? hit.message : 'not reported' };
       });
-      check('real F3 content pin 44a3c781 resolves-by-content (never REV_UNKNOWN)', () => {
+      checkI('real F3 content pin 44a3c781 resolves-by-content (never REV_UNKNOWN)', () => {
         const unknown = all.filter((f) => f.kind === 'REV_UNKNOWN' && f.token === '44a3c781');
         const content = all.filter((f) => f.token === '44a3c781' && /resolved-by-content|matches sha256/.test(f.message));
         return { ok: unknown.length === 0 && content.length >= 2,
           detail: `content=${content.length} revUnknown=${unknown.length}` };
       });
-      check('real pin staleness: b18e0274d reports commits-behind-HEAD', () => {
+      checkI('real pin staleness: b18e0274d reports commits-behind-HEAD', () => {
         const hit = all.find((f) => f.token === 'b18e0274d' && /commits behind HEAD/.test(f.message));
         return { ok: Boolean(hit), detail: hit ? hit.message : 'not reported' };
       });
-      check('real fleet doc rung: sibling-lane program-quirks.md resolves under --fleet', () => {
+      checkI('real fleet doc rung: sibling-lane program-quirks.md resolves under --fleet', () => {
         const hit = all.find((f) => f.token === 'program-quirks.md');
         return { ok: Boolean(hit) && hit.rung === 'fleet' && hit.severity !== 'error',
           detail: hit ? `${hit.rung} ${hit.target}` : 'not reported' };
       });
-      check('real good samples stay clean (no error-level finding)', () => {
+      checkI('real good samples stay clean (no error-level finding)', () => {
         const good = [
           ['scripts/ufo-swarm-wave.mjs', null], ['scripts/fleet-dispatcher.mjs', ':12086'],
           ['scripts/ufo-l0-monitor.mjs', ':226-232'], ['scripts/ufo-sighting-lib/queue.mjs', null],
@@ -1537,21 +1573,57 @@ function selfTest(opts) {
         }
         return { ok: bad.length === 0, detail: bad.length ? bad.join('; ') : '0 error-level findings on the 16 samples' };
       });
-      check('real index size matches pruned find (8124)', () => ({ ok: real.indexSize === 8124, detail: `indexSize=${real.indexSize}` }));
+      checkI('real index size matches pruned find (8124)', () => ({ ok: real.indexSize === 8124, detail: `indexSize=${real.indexSize}` }));
     } else {
-      check('real-tree F1–F4 + good samples', () => ({ ok: true, detail: `SKIP (no live tree at ${realSrc} / ${realSelf})` }));
+      integration.push({ name: 'real-tree F1–F4 + good samples', ok: true, skipped: true,
+        detail: `SKIP (no live tree at ${realSrc} / ${realSelf})` });
     }
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
 
-  const lines = ['kumitate cite-check --selftest'];
-  for (const r of results) lines.push(`${r.ok ? 'PASS' : 'FAIL'}  ${r.name} — ${r.detail}`);
-  const failed = results.filter((r) => !r.ok).length;
-  lines.push(`${results.length - failed}/${results.length} cases passed`);
-  lines.push(`VERDICT: ${failed ? 'FAIL' : 'PASS'}`);
+  const groups = [];
+  if (opts.selfTest) groups.push({ group: 'hermetic', cases: hermetic, liveErrors: null });
+  if (opts.integrations) groups.push({ group: 'integration', cases: integration, liveErrors });
+
+  const suites = groups.map((g) => {
+    const ran = g.cases.filter((r) => !r.skipped);
+    const failed = ran.filter((r) => !r.ok).length;
+    return {
+      group: g.group, cases: g.cases, ran, failed, skipped: g.cases.length - ran.length,
+      liveErrors: g.liveErrors, verdict: failed ? 'FAIL' : 'PASS',
+    };
+  });
+  const verdict = suites.some((s) => s.verdict === 'FAIL') ? 'FAIL' : 'PASS';
+
+  if (opts.json) {
+    process.stdout.write(JSON.stringify({
+      schema: SCHEMA,
+      suites: suites.map((s) => ({
+        group: s.group, cases: s.ran.length, passed: s.ran.length - s.failed, failed: s.failed,
+        skipped: s.skipped, verdict: s.verdict, liveErrors: s.liveErrors,
+        results: s.cases.map((r) => ({ name: r.name, ok: r.ok, skipped: Boolean(r.skipped), detail: r.detail })),
+      })),
+      verdict,
+    }, null, 2) + '\n');
+    return verdict === 'FAIL' ? 1 : 0;
+  }
+
+  const flags = groups.map((g) => (g.group === 'hermetic' ? '--selftest' : '--integrations'));
+  const lines = [`kumitate cite-check ${flags.join(' ')}`];
+  for (const s of suites) {
+    lines.push(`group: ${s.group}`);
+    for (const r of s.cases) lines.push(`${r.skipped ? 'SKIP' : r.ok ? 'PASS' : 'FAIL'}  ${r.name} — ${r.detail}`);
+    lines.push(`${s.ran.length - s.failed}/${s.ran.length} cases passed (${s.group})`);
+    if (s.liveErrors) {
+      lines.push(`live error findings under ${opts.self}:`);
+      for (const e of s.liveErrors) lines.push(`  ${e.file}:${e.line}  ERROR ${e.kind.padEnd(17)} ${e.token}${e.ref}`);
+      if (!s.liveErrors.length) lines.push('  (none)');
+    }
+  }
+  lines.push(`VERDICT: ${verdict}`);
   process.stdout.write(lines.join('\n') + '\n');
-  return failed ? 1 : 0;
+  return verdict === 'FAIL' ? 1 : 0;
 }
 
 /* -------------------------------------------------------------------- main */
@@ -1563,7 +1635,7 @@ function main() {
     return 64;
   }
   if (opts === null) return 0;
-  if (opts.selfTest) return selfTest(opts);
+  if (opts.selfTest || opts.integrations) return selfTest(opts);
 
   for (const [flag, dir] of [['--src', opts.src], ['--self', opts.self], ['--fleet', opts.fleet]]) {
     let kind = null;

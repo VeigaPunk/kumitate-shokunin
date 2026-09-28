@@ -18,7 +18,7 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/route-resolution.md` | `omp-global-config.mjs` resolution precedence, live alias table, fleet-map drift, retry surfaces | `omp-global-config.mjs`, `~/.omp/agent/config.yml` |
 | `knowledge/failure-telemetry.md` | Failure classes, capacity subset, routing-health outcomes, outcome triple, exit codes | `ufo-mission-result.mjs`, `collect-omp-native-handoff-lib/base.mjs` |
 | `knowledge/singleton-and-queue-ownership.md` | `acquireSingletonLock` mechanics, queue ownership, exec-path gating | `ufo-mission-result.mjs`, `fleet-dispatcher.mjs`, `ufo-stale-watchdog.mjs` |
-| `knowledge/successor-chain.md` | Iterate-successor decision gate, defer-not-die, park epochs, afterChains satisfy/starve, admission latch | `fleet-dispatcher.mjs` L275-295/5510/6743-7150/8313+ |
+| `knowledge/successor-chain.md` | Iterate-successor decision gate, defer-not-die, park epochs, afterChains satisfy/starve, admission latch | `fleet-dispatcher.mjs` L275-295/5510/6753-7215/8313+ |
 | `knowledge/queue-and-claim.md` | pending-work schema/lock, claim pipeline, four counters, state vocabulary, repend door, ledger kinds | `fleet-dispatcher.mjs` L1-6740 |
 | `knowledge/enqueue-admission.md` | Queue I/O + lock mechanics, scope partition, godspeed envelope gate, mint + admission battery, batch sibling refs, compaction, receipt verdict machinery | `fleet-dispatcher.mjs` L5713-8645 |
 | `knowledge/reconcile-and-cycle.md` | reconcileQueue ordered rules, latch/episode machinery (emitLatched/durable kinds), runCycle pipeline, main() verb surface, constants | `fleet-dispatcher.mjs` L95-200, L8680-14769 |
@@ -44,6 +44,9 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-5-aggregator-mirror-out-of-province-membrane-seal.md` | Cross-province latent-defect mirror: `membrane-seal write` argv cannot parse against the CLI clap surface; no owning repo exists, so the routing is recorded here | LOG.md round-5; commit `294cbf1` |
 | `lessons/round-6.md` | Two-writer queue rule (l0-monitor), A1 head-order falsification, Cf/Mn/Zs parity drift | LOG.md round-6; commit `eca3d14` |
 | `lessons/round-7.md` | Round-7 gap: five corpus notes landed (`7a4c9a0`) but SKILL/README/LOG/lesson went un-updated; pins held because they are content pins (296-commit git pin, byte-identical file) | LOG.md round-7; commit `7a4c9a0` |
+| `knowledge/live-surface-probe.md` | `scripts/surface-probe.mjs` (`kumitate-surface-probe-v1`): read-only conformance probe over `ufo-sighting surface --json` + `fleet-dispatcher.mjs status`; digest-set / verb / error-code / pin checks; the two-digests-one-pin trap; what it refuses to touch | `ufo-sighting.mjs`, `ufo-sighting-lib/surface.mjs`, `fleet-dispatcher.mjs:14387`, `sync-ufo-contracts.mjs:853` |
+| `lessons/round-9.md` | Round-9 method: the non-hermetic `--selftest` defect and its hermetic/integration split; the two-digest category error caught inside the round; live-surface probe as the second runnable artifact; executable checklist | LOG.md round-9; commit `round-9` |
+| `lessons/round-6-aggregator-audit.md` | Round-6 aggregator audit (third-party artifact, aggregator-owned): independent re-verification of this lane's counts; ERROR rows quoted inside it are re-detected as findings (no quotation exemption) | LOG.md round-6; artifact owner: aggregator lane |
 
 ## Known gaps
 
@@ -105,7 +108,12 @@ fixture suite, `--strict` to fail on warnings.
 - **Audit holes** — no aggregator/reviewer audit exists for the round-2,
   round-3, round-6 or round-7 corpus deltas, and round 2 and round 7 landed no
   `lessons/round-<N>.md` at the time (round 7's was backfilled in round 8).
-  Counts: `ls corpus/lessons/*.md | wc -l` → 10 (2026-09-28).
+  Counts: `ls corpus/lessons/*.md | wc -l` → 12 (2026-09-28).
+- **Live-surface coverage is 2 surfaces, not the registry** — round 9's
+  `scripts/surface-probe.mjs` probes `ufo-sighting surface --json` and
+  `fleet-dispatcher.mjs status` only; the other 16 surface families in
+  `SCORECARD.md` are covered by prose, not by a runnable probe. S6, S7, R10 and
+  R11 remain uncovered families.
 - **Closed by round 7** (kept here one round for traceability):
   fleet-dispatcher `queueSummary` per-field semantics → `knowledge/
   queue-summary.md`; big-test-file case inventories → `knowledge/

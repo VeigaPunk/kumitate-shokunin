@@ -175,4 +175,88 @@
   `scripts/cite-check.mjs` (`--selftest` 28/28); before/after JSON captured
   with `--symbols`; `corpus/README.md`; `SCORECARD.md`;
   `/tmp/kumitate-r8/{run4,before-real}.json`.
+  Note: after the repair pass the aggregator lane landed
+  `corpus/lessons/round-6-aggregator-audit.md` (18:38) into this repo; the
+  repo-wide verdict then reads `files=34 tokens=2145 errors=4 warnings=50`, all
+  four inside that third-party artifact (`native_contract.rs:10896` misattributed
+  — the ref belongs to `fleet-dispatcher.mjs`; `gate.rs:11` quoted twice from the
+  pre-repair snapshot; one pointer to a `corpus/lessons/round-9.md` that does not
+  exist). Not rewritten here: it is the auditor's artifact — the gate's first
+  non-author catch, recorded rather than absorbed.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-8/kumitate.md`.
+- 2026-09-28 — round 9 (operability 2 → 6): one axis-move, measured with the
+  frozen proxy `f_O = (A+C)/(A+C+3)`. Two defects were live at round open and
+  both were this lane's: (1) `node scripts/cite-check.mjs --selftest` →
+  `27/28 cases passed`, `VERDICT: FAIL`, exit 1, because case 21 asserted LIVE
+  repo doc state that the aggregator lane's
+  `corpus/lessons/round-6-aggregator-audit.md` broke — a hermetic fixture suite
+  broken by a third party's prose; (2) the gate's `--selftest` still EXECUTED
+  the live block (`scripts/cite-check.mjs:1493` unconditional `runCheck` over
+  the live tree) even after the case split, which the round-9 planner lane
+  caught in source. Fix, verified: `--selftest` = 19 hermetic fixtures only
+  (`19/19 cases passed (hermetic)`, `VERDICT: PASS`, exit 0 in 0.076 s — also
+  with `--src /nonexistent --self /nonexistent`), live-tree assertions behind
+  `--integrations` (exit 1, the same findings named), `--selftest
+  --integrations` runs both; the live block is gated on `opts.integrations`
+  (`scripts/cite-check.mjs:1493-1504`). Shipped the second runnable artifact:
+  `scripts/surface-probe.mjs` (contract `kumitate-surface-probe-v1`, 1438 L,
+  zero deps, read-only) — 12 conformance checks over two live surfaces
+  (`bash scripts/ufo-sighting surface --json`; `node scripts/fleet-dispatcher.mjs
+  status`), 38 hermetic fixtures, `--json`, `--strict`, `--checklists`, exit
+  0/1/2/64. Live: `SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0
+  warnings=1)` exit 0 (0.19 s), the only warn the non-gating
+  `ERROR_CODE_OFF_MANIFEST` (6 sites / 4 codes assigned to a `code:` field as
+  literals but absent from `manifest.errors`: `base.mjs:181`/`:586`/`:588`
+  `UNEXPECTED_ERROR`/`EFBIG`, `launch-verb.mjs:98`, `layout.mjs:440`
+  `RECONCILE_UNATTESTED_STOP`, `pane-run.mjs:137` `SPAWN_FAILED`). Checklist:
+  `SKILL.md` gained `## Verifiable checklist` with 4 GFM task items that
+  `node scripts/surface-probe.mjs --checklists` EXECUTES → `CHECKLIST: 4/4
+  pass`, `VERDICT: PASS`, exit 0; `grep -c '^\s*- \[' SKILL.md` → 4 (was 0).
+  Proxy before→after: A 1 → 2, C 0 → 4 ⇒ `f_O` 1/4 → 6/9 ⇒ **2 → 6**;
+  coverage bookkeeping only (C2 rows/files 31/31 → 34/34, file-level residue
+  105/211 → 140/211, C1 14/18 unchanged ⇒ stays 7).
+  Falsified in-round claim (recorded because two L2 lanes repeated it): the
+  opening recon called `config/ufo.json:65`'s `sighting.surfaceDigest` stale by
+  comparing it with `manifest.scriptDigest`. Category error: the pin hashes
+  `canonicalJson(manifest)` (`scripts/sync-ufo-contracts.mjs:853-862`) and
+  MATCHES — recomputed
+  `sha256:de50bca59b159cbd77029bf6e26d1bf26762c9849fc6b89fa2fba572995fc099` ==
+  pin, and the origin's own gating leg reports outcome `match`
+  (`scripts/sync-ufo-contracts.mjs:941`; its exit 1 is unrelated
+  `routesEquivalence` drift, ownerLane `nc8-runtime`). `manifest.scriptDigest`
+  is a different function over concatenated file bytes
+  (`sha256:0e98c908bb8dc52353716852b5451605ad5889c98b7bc620fceebd7797725567`,
+  verified recomputable, `scripts/ufo-sighting-lib/surface.mjs:43-58`). Manifest stdout
+  is 18826 BYTES (18818 was my UTF-16 string length; md5
+  `8ed7ef0a…`, byte-identical via shim and module).
+  Docs: `corpus/knowledge/live-surface-probe.md` (new), `corpus/lessons/
+  round-9.md` (new), `SKILL.md` (checklist + Working-rules bullet + successor
+  anchor `~L6743` → `:6753-7215`), `corpus/knowledge/successor-chain.md`
+  `:6753-7215` ×2, `corpus/knowledge/queue-and-claim.md:4`, `corpus/README.md`
+  (4 rows incl. the previously unrowed third-party lesson), `SCORECARD.md`.
+  Read-only proof (sentinel, 85,365-file snapshot): all 31 named files
+  byte/size/mtime identical; no lock, no tmux change, HEAD `ee907f1cf`; the
+  ONLY delta in the whole origin tree is ambient `NODE_COMPILE_CACHE` churn
+  (one cache file, size unchanged; `env -u NODE_COMPILE_CACHE` control run
+  leaves it byte-identical), i.e. origin-owned, not probe-caused.
+  Method: 10-lane batch (planner spec, surface census, doc-claim census, probe
+  executor, cite-check executor, scribe, critic, citation reviewer, sentinel,
+  connector) routed planner/connector `@m_lunamax` · executor/scribe/scout
+  `@m_flash` · critic/reviewer/sentinel `@m_zfl`; L1 re-measured every claim —
+  two lane errors caught before a document carried them (the stale-pin
+  category error; an interim probe revision whose `--selftest` took 91 s and
+  read 32/35).
+  Evidence: `scripts/surface-probe.mjs` (sha256 `86bdcd9a…` at acceptance),
+  `scripts/cite-check.mjs`, `SKILL.md:514-552`, `corpus/knowledge/
+  live-surface-probe.md`, `corpus/lessons/round-9.md`, `SCORECARD.md`,
+  `/tmp/kumitate-r9/{census-surface.md,census-docclaims.md,sentinel-readonly.md,
+  connector-overlap.md,spec.md}`.
+  Cross-domain (reported, not absorbed): the aggregator artifact's quoted ERROR
+  rows are re-detected as findings after its 18:56 edit — `errors=2` in the
+  default verdict at round close, both inside
+  `corpus/lessons/round-6-aggregator-audit.md` (`:23`/`:116` LINE_OOR
+  `native_contract.rs:10896`; the two dangling `corpus/lessons/round-9.md`
+  pointers resolved implicitly because this round ships that lesson); the
+  origin tree's `crates/ufo-core-runtime/bundled/omp-seat-routing.json`
+  routes-equivalence drift; `scripts/*/` grew 41 → 42 members.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-9/kumitate.md`.
