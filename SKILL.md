@@ -107,6 +107,26 @@ the in-flight wave, never re-fires). Round plan artifact
 `artifacts/l1-plan.json` (`ufo-round-plan-v1`) is REQUIRED; its sha256
 enters the handoff as `plan_digest`.
 
+### `scripts/omp-global-config.mjs` — seat-route resolver
+
+Canonical hand-rolled parser over the global OMP config (no YAML dep);
+`run-omp-native-trial` imports `yamlBlock` from here. Discovery order
+`DEFAULT_CANDIDATES`: `.omp/agent/config.yml`, `.omp/agent/config.yaml`,
+`.config/omp/config.yml`, `.config/omp/config.yaml`, `.omp/config.yml`,
+`.omp/config.yaml` under HOME. Precedence per seat:
+`task.agentModelOverrides.<seat>` → `@alias` → `modelRoles.<alias>` →
+concrete `provider/model[:effort]`; `retry.fallbackChains` keys on the
+alias when present, else the concrete route, else `[]`. Aliases never
+recurse (`@`-valued `modelRoles` = `malformed`); missing seat/alias =
+typed `missing` — fail closed. `readGlobalSeatRouting` parses once for
+all seats; `readGlobalProviderAliasRoutes(provider)` filters by provider
+segment. Reads are fd-bound (`O_NOFOLLOW` + size pin, ≤1 MiB).
+`ufo route-plan --role <role>` prints the same resolution from the Rust
+side. Two retry surfaces: the global file may carry
+`usageAwareFallback:true`, but a native trial's projected
+`.omp/config.yml` MUST carry `false` + `fallbackRevertPolicy:never` —
+enforced by `requireBinding` in the launcher.
+
 ### `ufo` CLI (`crates/ufo-cli`, backed by `crates/ufo-core-runtime`)
 
 `status`, `titanium`, `plan`, `gates` (ParetoGate mutation battery),

@@ -12,3 +12,10 @@
   constants + `classifyFailure`, `config/ufo.json` `sighting.dispatch`,
   `crates/ufo-cli/src/main.rs` command enum, installed `ufo` skill text.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-1/kumitate.md`.
+- 2026-09-28 — round 2: closed the `omp-global-config.mjs` gap — resolution
+  precedence, live `~/.omp/agent/config.yml` alias table, fleet-map vs
+  global drift record (scout→`m_flash` operator correction landed),
+  dual retry surfaces. SKILL.md gained the resolver section;
+  `corpus/knowledge/route-resolution.md` added. Evidence: module header +
+  `resolveAliasFromMaps`/`resolveSeatFromMaps`/`readGlobalSeatRouting`,
+  live config read, `run-omp-native-trial.mjs` retry-projection block.
