@@ -30,8 +30,8 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/native-admission-detail.md` | Seat model vs seat grammar attribution, JS-parity coercions, `FAILURE_RULES` home, profile admission order; Cf-vs-Mn/Zs parity drift (cross-domain) | `native_seats.rs`, `native_admission_text.rs`, `native_admission_rules.rs`, `native_text.rs` |
 | `knowledge/cost-and-profile.md` | cost_ledger wire types + validation (seats/lineage/totals), HonestyBrake trigger; execution_profile route catalog + FailureClass authorities (`permits_advance` :448) | `cost_ledger.rs`, `execution_profile.rs`, `native_profile.rs` |
 | `knowledge/runtime-support.md` | lane_overlay overrides, writer-lease epochs/sentinels, live Qwen distiller transport | `lane_overlay.rs`, `lease.rs`, `live.rs` |
-| `knowledge/distill-and-l3.md` | `distill.rs` identity_hash dedupe (`ufo.dedupe.v4`), Rust-owned D3 survivor order, D2 gate-valid medians, structural blinding, `Malformed`-vs-`Semantic` split; `l3_swarm.rs` declaration-only surface (64 ceiling, canonical chain, `EvidenceOnly`); `live.rs` `ufo_dedupe_v2` schema staleness (report-class) | `distill.rs` (1553 L), `l3_swarm.rs` (591 L), `live.rs`, `native_contract.rs` :63 |
-| `knowledge/local-ship.md` | `ufo local-ship` apply/verify/rollback: refusal order, verdict asymmetry + CLI exit map, cooperative apply-lock election, journal recovery tree, verifier denylist (95 basenames / 13 prefixes), external-effect table, `bounded_fs`/`fs_durability`/`atomic_write`, bounds table; defects D-A/B/C | `local_ship.rs` (2489 L), `bounded_fs.rs` (155 L), `fs_durability.rs` (277 L), `ufo-cli/src/main.rs` :1848-1860 |
+| `knowledge/distill-and-l3.md` | `distill.rs` identity_hash dedupe (`ufo.dedupe.v4`), Rust-owned D3 survivor order, D2 gate-valid medians, structural blinding, `Malformed`-vs-`Semantic` split; `l3_swarm.rs` declaration-only surface (64 ceiling, canonical chain, `EvidenceOnly`); `live.rs` `ufo_dedupe_v2` schema staleness (report-class) | `distill.rs` (1553 L), `l3_swarm.rs` (591 L), `live.rs`, `native_contract.rs` :132 (63rd registry entry; ordinal note :54) |
+| `knowledge/local-ship.md` | `ufo local-ship` apply/verify/rollback: refusal order, verdict asymmetry + CLI exit map, cooperative apply-lock election, journal recovery tree, verifier denylist (95 basenames / 13 prefixes), external-effect table, `bounded_fs`/`fs_durability`/`atomic_write`, bounds table; defects D-A/B/C | `local_ship.rs` (2489 L), `bounded_fs.rs` (155 L), `fs_durability.rs` (277 L), `ufo-cli/src/main.rs` :1841-1860 |
 | `knowledge/native-transcript-ledger-seats.md` | `native_transcript.rs` 9 ordered gates + byte-exact assignment binding + recomputed continuity; `native_ledger.rs` resilient attempt ledger (capacity-only hops, T07 effort); `native_seat_coverage.rs` proposal roster + pre-spawn dispatch attempts; contract ordinals 55/56/60 | `native_transcript.rs` (939 L), `native_ledger.rs` (350 L), `native_seat_coverage.rs` (317 L), `native_contract.rs` :124/125/129 |
 | `knowledge/test-inventories.md` | Case-level census of the four big test files (340/168/85/57 `#[test]`), literal-needle pinning style, test-only seams, unix arms, named survivor mutants, cross-suite ownership, unpinned surfaces | `native_tests.rs`, `loop_driver_tests.rs`, `local_ship_tests.rs`, `distill_tests.rs`, `gate_tests.rs` |
 | `lessons/round-1.md` | Round-1 method notes, drift trap, stated gaps | LOG.md round-1; commit `45b4ed3` |
@@ -47,37 +47,51 @@ fixture suite, `--strict` to fail on warnings.
 
 ## Known gaps
 
-- **Script layer** — 59 of the 72 top-level `scripts/*.mjs` carry no corpus
-  entry, plus `charter-scribe/` (5) and `lean-cargo/` (4):
-  `probe-*` / `sync-*` route-health and mirror generators, `primeagent-*`,
-  `ufo-mission-{activity,lifecycle,observation}.mjs`, `ufo-state-retention.mjs`,
-  `ufo-credential-screen.mjs`, `fleet-ledger-{read,rotate}.mjs`,
-  `ufo-watchdog-repend.mjs`, `the-tick-config.mjs`,
-  `prepare-ephemeral-l1.mjs`, and the `*.test.mjs` files. The ops watchers are
-  covered only where another note touches them: `ufo-stale-watchdog.mjs` in
-  `singleton-and-queue-ownership.md`, `ufo-l0-monitor.mjs` in
-  `lessons/round-6.md` (two-writer rule); `the-tick-ping.mjs` +
-  `ufo-ground-handler.mjs` appear only in `SKILL.md`. Counts:
-  `ls $UFO_SRC/scripts/*.mjs | wc -l` → 72; `ls $UFO_SRC/scripts | wc -l` → 82
-  (2026-09-28). Round-8 `scripts/cite-check.mjs --symbols --json` resolves
-  1 906 of the 2 108 path-like tokens this corpus + `SKILL.md` carry (the rest
-  are fragments, workspace artifacts, HOME candidates or foreign roots by
-  class) with 0 errors and 48 warnings; per-class histogram is in `LOG.md` r8.
-- **`crates/ufo-core-runtime` remainder** — 37 of the 93 `src/*.rs` have no
-  corpus citation at all, and `gate.rs`/`gate_tests.rs` (ParetoGate internals)
+- **Script layer** — 48 of the 72 top-level `scripts/*.mjs` carry no basename
+  mention in `SKILL.md` + this corpus's notes (49 when this README's own
+  mentions are excluded; both counts from a python basename scan, 2026-09-28),
+  plus `charter-scribe/` (5) and `lean-cargo/` (4). The uncited remainder is
+  dominated by `*_tests*.mjs` and the `primeagent-*` / `fleet-ledger-*` /
+  `local-helper` / `gates-plan` / `fake-omp` / `mutation`-family helpers. Named
+  files that ARE cited somewhere and must not be listed as gaps:
+  `ufo-state-retention.mjs` (`sighting-wall.md`), `ufo-credential-screen.mjs`
+  (`native-admission-detail.md`, `round-6.md`), `ufo-watchdog-repend.mjs`
+  (`queue-and-claim.md`, `round-5-aggregator-audit.md`),
+  `primeagent-refinement-ledger.mjs` (`queue-summary.md`),
+  `sync-ufo-contracts.mjs` (`native-judge-pipeline.md`,
+  `native-trial-launch.md`), `prepare-ephemeral-l1.mjs` and `the-tick-ping.mjs`
+  (`SKILL.md`; the latter also `round-1-aggregator-audit.md`).
+  `the-tick-ping.mjs` + `ufo-ground-handler.mjs` have no dedicated note —
+  `SKILL.md` is their only map. Counts: `ls $UFO_SRC/scripts/*.mjs | wc -l` → 72;
+  `ls $UFO_SRC/scripts | wc -l` → 82 (2026-09-28). Round-8
+  `scripts/cite-check.mjs --symbols --json` over the same scan set: 2026
+  path-like tokens → 1738 resolved, 46 suffix-resolved, 18 bound by file
+  context, 1 by source-root precedence, 288 fragments, 72 workspace artifacts,
+  26 HOME candidates, 2 foreign roots, 123 self-doc, 6 fleet-doc, 1
+  `$OUT_DIR`-generated — 0 errors, 48 warnings, verdict `CLEAN`. Per-class
+  histogram: `LOG.md` r8.
+- **`crates/ufo-core-runtime` remainder** — 36 of the 93 `src/*.rs` carry no
+  basename mention in `SKILL.md` + the corpus notes (python basename scan over
+  `corpus/**/*.md` excluding this README + `SKILL.md`, 2026-09-28). The
+  uncited set is dominated by test companions and helpers: `axes_tests.rs`,
+  `axis_checks_tests.rs`, `bounded_fixture{,_tests}.rs`, `bounded_fs_tests.rs`,
+  `build_json.rs`, `config_tests.rs`, `execution_profile_tests.rs`,
+  `fixture_spawn.rs`, `godspeed_tests.rs`, `l3_swarm_tests.rs`,
+  `lane_overlay_tests.rs`, `lanes.rs`/`lanes_tests.rs`, `lease_tests.rs`,
+  `live_tests.rs`, `mutation.rs`, `native_digests.rs`, `native_epoch_tests.rs`,
+  `native_evidence.rs`, `native_launch_tests.rs`, `native_route.rs`,
+  `operator_guidance.rs`, `probe.rs`, `process_group_tests.rs`,
+  `profile_shape_refusal_tests.rs`, `proposal{,_tests}.rs`, `provenance{,_tests}.rs`,
+  `replay_falsification_probes.rs`, `rfc3339.rs`, `round_digest_tests.rs`,
+  `specialist.rs`, `state_tests.rs`, `test_env.rs`. `gate.rs`/`gate_tests.rs`
   are covered only at verdict-vocabulary level by `native-judge-pipeline.md`.
-  Uncited set includes `axes.rs`, `axis_checks.rs`, `build_json.rs`,
-  `config.rs`, `fixture_spawn.rs`, `godspeed.rs`, `lanes.rs`, `mutation.rs`,
-  `native_dispatch_topology.rs`, `native_evidence.rs`, `native_telemetry.rs`,
-  `operator_guidance.rs`, `probe.rs`, `proposal.rs`, `provenance.rs`,
-  `rfc3339.rs`, `round.rs`, `round_digest.rs`, `specialist.rs` and the
-  `*_tests` companions. On the CLI side only `main.rs` is mapped
-  (`titanium.rs`, `admission.rs` are not). Counts: `ls
-  $UFO_SRC/crates/ufo-core-runtime/src/*.rs | wc -l` → 93;
-  `ls $UFO_SRC/crates/ufo-cli/src/*.rs | wc -l` → 5; uncited figure from a
-  basename match over `corpus/**/*.md` + `SKILL.md` (2026-09-28) — basename
-  collisions make it a ±few estimate, and it undercounts where a note names the
-  module without the `.rs` (e.g. `fs_durability`).
+  On the CLI side 4 of `crates/ufo-cli/src/*.rs` are uncited
+  (`admission.rs`, `titanium.rs`, `main_tests.rs`, `titanium_tests.rs`).
+  Counts: `ls $UFO_SRC/crates/ufo-core-runtime/src/*.rs | wc -l` → 93;
+  `ls $UFO_SRC/crates/ufo-cli/src/*.rs | wc -l` → 5 (2026-09-28). Basename
+  matching cuts both ways — it undercounts where a note names the module
+  without the `.rs` (e.g. `fs_durability`) and overcounts where a `*_tests`
+  file is only implied by its parent's note.
 - **`ufo-sighting-lib` display depth** — internals are mapped (entry shim,
   `__idle`/`__reconcile`/`__pane-run` plumbing, 26 files / 10620 lines), but the
   layout/display-matrix engine detail is not.
