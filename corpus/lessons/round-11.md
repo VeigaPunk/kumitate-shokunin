@@ -47,6 +47,8 @@ ROUND_GATE: CLEAN (mode=tracked checked=8 errors=0 warnings=0)                  
 $ node scripts/round-gate.mjs --selftest
 ROUND_GATE_SELFTEST: 57/57 pass        VERDICT: PASS                               # exit 0
 $ node scripts/round-gate.mjs --tracked --close                                     # exit 64
+$ node scripts/round-gate.mjs --close
+ROUND_GATE: CLEAN (round=11 lane=kumitate checks=13 errors=0 warnings=0)            # exit 0
 $ node scripts/round-gate.mjs --tracked --lane other                                # exit 2 NO_FILED_REPORTS
 ```
 
