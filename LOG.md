@@ -95,10 +95,84 @@
   10-lane batch (planner, connector, 3 scouts, executor draft, scribe
   census, critic falsification, reviewer citation audit, sentinel scope
   audit); parent verified riskiest claims directly against source.
-  Evidence: fleet-dispatcher.mjs (rev 44a3c781, 14769 lines) L95-200,
+  Evidence: fleet-dispatcher.mjs (sha256 44a3c781, 14769 lines) L95-200,
   L5713-8645, L8680-14769; ufo-sighting-lib/*.mjs; ufo-l0-monitor.mjs
   :201-253/:1411-1467; ufo-ground-handler.mjs :99-163/:680-760;
   execution_profile.rs :402-498; native_admission_text.rs :42-61 vs
   ufo-credential-screen.mjs :55-75; cost_ledger.rs :18-737;
   lane_overlay.rs/lease.rs/live.rs.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-6/kumitate.md`.
+- 2026-09-28 — round 7 (BACKFILLED by round 8; round 7 landed no LOG entry —
+  `git show --name-only 7a4c9a0` = the five corpus notes only): closed the
+  round-6 README gap list — the `ufo-core-runtime` remainder, the dispatcher
+  `queueSummary` projection, and the big-test-file case inventories — as five
+  knowledge notes in one commit `7a4c9a0` (5 files, +815). Note anchors
+  re-executed read-only at rev `ee907f1cf`: `distill.rs` 1553 L, `l3_swarm.rs`
+  591 L (`L3_CONCURRENCY_CEILING = 64` :24; absent from
+  `NATIVE_CONTRACT_FILES`), `local_ship.rs` 2489 L, `bounded_fs.rs` 155 L,
+  `fs_durability.rs` 277 L, `native_transcript.rs` 939 L / `native_ledger.rs`
+  350 L / `native_seat_coverage.rs` 317 L at contract ordinals 55/56/60
+  (`native_contract.rs` = 66 entries; `distill.rs` 63rd), `queueSummary`
+  :10896 with `QUEUE_STATES` :149 / `runnerCeiling` :5222 / `starved` :10928,
+  test counts `grep -c '#\[test\]'` 340/168/85/57, `assert_error_contains`
+  ×188, `#[cfg(test)]` unix arms ×9. Report-class defects filed there (not
+  fixed; belong to `origin-work/ufo-fsd-alpha`): `live.rs` `QWEN_RESPONSE_FORMAT`
+  (`ufo_dedupe_v2`, no `identity_hash`) vs `ufo.dedupe.v4`; local-ship D-A
+  (`read_bounded` identity=None :2317), D-B (`st_size>8MiB` arm), D-C
+  (`atomic_write` fsync doc vs code); journal uppercase-digest asymmetry.
+  Left undone in r7 and closed in r8: no SKILL/README/LOG/lesson update, no
+  SCORECARD. Evidence: commit `7a4c9a0`; `corpus/lessons/round-7.md`.
+  Round-7 report path holds a 122-byte retirement stub only.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-7/kumitate.md`.
+- 2026-09-28 — round 8 (operability axis-move; 13 L2 lanes in two batches):
+  landed the repo's FIRST runnable artifact `scripts/cite-check.mjs` (read-only,
+  zero-dep ESM, 1588 lines) — a mechanical re-verifier for every path / line /
+  symbol / pin citation in `SKILL.md` + `corpus/**/*.md` against the origin
+  tree. Gate: `node scripts/cite-check.mjs` →
+  `CITE_CHECK: CLEAN (files=33 tokens=2022 errors=0 warnings=48)`, exit 0;
+  `--selftest` 28/28 PASS exit 0; `--json` schema `kumitate-cite-check-v1`;
+  fail-closed exit 2 (missing/non-dir `--src`, empty scan set); text/json totals
+  agree; index 8124 files (`.ufo/`, `.git/`, `target/`, `node_modules/`
+  pruned — the `.ufo` prune alone prevents 18 basenames flipping unique→ambig).
+  Before→after with the SAME tool and flags (`--symbols`), measured in-repo by
+  stashing the round's doc repairs: **22 errors → 0** (18 SYMBOL_OFF_LINE,
+  3 UNRESOLVED, 1 LINE_OOR → none), warnings 46 → 48 (suffix-resolved /
+  runtime-hint / ambig only, non-blocking by design), orphan refs 260 → 0
+  (sticky-owner + scope-declaration binding), pins 28 ok / 0 mismatch /
+  0 unknown. Drift repaired (all verified against source before/after):
+  `gate.rs:11`→`:15` ×3 docs (`SKILL.md`, `loop-driver.md`,
+  `native-judge-pipeline.md`); `permits_advance` `:447`→`:448` ×2 (round 6
+  fixed three sites, these two survived); `publish_guarded` `:127`→`:124` ×2;
+  `ldd_dry_round_*_phase` `:117`/`:457`→`:112`/`:428`; `LoopStateView`
+  `:331`→`:327`; `HonestyBrake` `:97`→`boundary_stop` enum `:319-322`;
+  `validate_header` `:247`→`:243`; `clamp_honest_baseline_vector` `:22`→`:21`;
+  `native_seats.rs:218-233`→`:218-230` (overshoot past a 230-line file);
+  `judge.rs`→`loop_driver_judge.rs:410`; `run_root_alias_mutation_hook`
+  `:482`→`:445`; four survivor-mutant lines → their name lines;
+  `local_ship_tests.rs:25/:42`→`:31/:50`; CLI exit map `main.rs:1848-1860`→
+  `1841-1860`; `GODSPEED_EVIDENCE_MARKER`→`EVIDENCE_MARKER` (the real const);
+  `validate_native_` (line-wrapped) → `validate_native_measurement`;
+  `LOCAL_COLLAPSE` → `LOCAL_COLLAPSE_SENTINEL` (`live.rs:45`, use `:254`);
+  `scripts/ufo-sighting/`→file ×2; `:1348-1355` and `:7043/:7073` refs given
+  their real owners; `omp_role_chains.rs` → generator pointers
+  (`build.rs:117`, `execution_profile.rs:572`). Pin typology established
+  (parent-verified): `44a3c781` is a sha256 CONTENT pin that MATCHES
+  (`sha256sum scripts/fleet-dispatcher.mjs` = `44a3c781eacf…`) — never a git
+  rev; `b18e0274d` is a valid commit 296 behind HEAD with the file
+  byte-identical (`git diff --stat` empty); bare-`rev` wording re-typed
+  `sha256` in `reconcile-and-cycle.md:3` and this log. Coverage: SCORECARD.md
+  created (both owned axes, proxies, move log); `corpus/README.md` map
+  20/30 → 31/31 rows (five r7 notes + five lessons added, `lessons/round-7.md`
+  written); five lesson rows re-pinned from unresolvable `commit round-N` to
+  real shas `45b4ed3`/`efe19da`/`e0f5ca7`/`e748e44`/`eca3d14`. Cross-domain
+  (reported, not absorbed): `fleets/registry.json` lane→model routing remains
+  disputed between kasegi and this province; the kagi credential-screen seam
+  (`ufo-credential-screen.mjs`); the `membrane-seal write` argv defect stands.
+  Method: 10-lane batch (planner spec, SKILL census 599 rows, corpus census
+  4915 tokens/923 pins, ambiguity map, executor build, scribe drafts, critic
+  falsification, citation audit 28/30, connector overlap, sentinel scope) then
+  5 lanes (2 doc-verification reviewers, YAGNI, mutation, re-audit). Evidence:
+  `scripts/cite-check.mjs` (`--selftest` 28/28); before/after JSON captured
+  with `--symbols`; `corpus/README.md`; `SCORECARD.md`;
+  `/tmp/kumitate-r8/{run4,before-real}.json`.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-8/kumitate.md`.

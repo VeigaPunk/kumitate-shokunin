@@ -26,7 +26,7 @@ support-family level.
 - JS-parity coercions (`js_string_simple`, `js_string_f64`, `clean_field_value`,
   `bounded_route_field`, `is_format_char`): `native_admission_text.rs`.
 - Profile admission (`validate_profile`): `native_admission_rules.rs:45-131`,
-  invoked FIRST in `validate_header` (`native_header.rs:247`) — the very first
+  invoked FIRST in `validate_header` (`native_header.rs:243`) — the very first
   judge rule.
 
 ## Rules worth carrying
@@ -40,7 +40,7 @@ support-family level.
 - `correlation_group_for` signature order is (resolved_model, role, lineage)
   while its hash material order is (role, lineage, resolved_model) matching
   the JS `correlationGroup` — reading the JS signature as material order
-  yields a wrong digest (native_seats.rs:218-233 vs ufo-native-names.mjs).
+  yields a wrong digest (native_seats.rs:218-230 vs ufo-native-names.mjs).
 - `js_string_simple` returning `None` is load-bearing (falls back to
   charset-class checks), not an error — `native_telemetry.rs:498-507`.
 - `js_string_f64_total`'s documented "Rust exponent spelling" comment is

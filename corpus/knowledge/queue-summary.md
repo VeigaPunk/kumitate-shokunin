@@ -138,7 +138,8 @@ Two-level memoization:
   (:10830-10846).
 - **Key = `ledgerProbeEvidenceKey`** (:10858): store stat tuple
   `dev:ino:size:mtimeNs:ctimeNs` + ledger DIR tuple + sorted per-entry
-  signature + `policy:` (`config/primeagent-assimilation.json`, :10751) +
+  signature + `policy:` :10751 (`LEDGER_STATUS_POLICY_PATH` →
+  `config/primeagent-assimilation.json`) +
   `cli:` + `node:` tuples. Absence is a key VALUE (`"absent"`/`"dir:absent"`)
   — a later-appearing store is a different key, never a stale hit. Any
   unstatable path → `null` key → never memoizes (unknown provenance
@@ -198,10 +199,11 @@ no mid-verb read skew. `chainCtx` lets the caller supply
 
 ## Cross-references
 
-- Archive index + `ingestCompletedTask`/`foldArchiveChains`:
-  `corpus/knowledge/enqueue-admission.md` (`archivedCompletions` :4789 —
+- Archive index + `ingestCompletedTask`/`foldArchiveChains`
+  (`fleet-dispatcher.mjs` `archivedCompletions` :4789 —
   `unsafe`/`over_bound` fail-closed-empty with latched `queue_archive_unsafe`
-  telemetry :4796-4801; `faults` travel with the index :4815).
+  telemetry :4796-4801; `faults` travel with the index :4815). Side map:
+  `corpus/knowledge/enqueue-admission.md`.
 - `dependencyGaps` (:12615) — per-row dep/run starvation used by `status`'s
   per-task drill-down, shares `isRependableBlock` and the chain context
   (:12088-12200).

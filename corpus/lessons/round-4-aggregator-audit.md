@@ -16,7 +16,7 @@ mechanism claim verified at symbol level. Six minor items, one carried defect.
 ## What reproduced (24 citations, symbol-level)
 
 `classify_failure_fields` at `native_text.rs:161` + `FAILURE_RULES` first-match
-order; `FailureClass::permits_advance` at `execution_profile.rs:447`;
+order; `FailureClass::permits_advance` at `execution_profile.rs:448`;
 `fail_local` at `ufo-cli/src/main.rs:906` — exit 2 covers every typed refusal
 (`invalid|json|validation|io`), untyped → exit 1 `ufo: <err>`;
 `NATIVE_CONTRACT_FILES` = 66 entries (counted), `MAX_CONTRACT_FILE_BYTES` 256

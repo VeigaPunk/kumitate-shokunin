@@ -238,7 +238,8 @@ seal file.
 ## Wall handoff (`handOffToSightingWall` :1357-1387, called :3707)
 
 - `sighting.autoRegisterInvokedNativeTrial` is a CONFIG BOOLEAN read live
-  from config/ufo.json (:1348-1355, config/ufo.json:79) — the verb-sounding
+  by `run-omp-native-trial.mjs` (`autoOpenL1Enabled` :1348-1355) from
+  `config/ufo.json:79` — the verb-sounding
   name is a trap; `===true` required else `sighting_auto_register_disabled`.
 - Shells `ufo-sighting.mjs launch --run-id <id> --session-id omp-<id>
   --substrate omp --cwd <root> --title "UFO native <id>" --fleet <fleet>

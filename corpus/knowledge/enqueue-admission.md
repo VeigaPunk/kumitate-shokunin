@@ -1,7 +1,8 @@
 # Fleet-dispatcher ingress — queue I/O, mint, admission, compaction, receipt verdicts
 
-`scripts/fleet-dispatcher.mjs` (14,769 lines; rev-pinned sha256 `44a3c781…`,
-HEAD `b18e0274d`). Citations `L<line>` are this file. Condensed from the full
+`scripts/fleet-dispatcher.mjs` (14,769 lines; sha256-pinned `44a3c781…`;
+git pin `b18e0274d` — 296 commits behind HEAD `ee907f1cf`, but the file is
+byte-identical across that range). Citations `L<line>` are this file. Condensed from the full
 round-6 scout map (`local://kumitate-r6-dispatch-ingress.md`); reviewer-verified
 (citation-clean). Complements `queue-and-claim.md` (row schema/claim/dispatch).
 

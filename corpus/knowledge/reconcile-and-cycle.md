@@ -1,6 +1,6 @@
 # Fleet-dispatcher tail — reconcileQueue, runCycle, latch machinery, CLI surface
 
-`scripts/fleet-dispatcher.mjs` tail (L8650-14769; rev `44a3c781…`).
+`scripts/fleet-dispatcher.mjs` tail (L8650-14769; sha256-pinned `44a3c781…`).
 Condensed from the round-6 scout map (`local://kumitate-r6-dispatch-tail.md`,
 revision 2 — all cited start lines re-verified) plus parent line-reads of
 `reconcileQueue` (L9760-10552), `runCycle` (L13415-14102), the emitter latch

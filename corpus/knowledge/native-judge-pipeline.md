@@ -87,7 +87,7 @@ Fail-closed, in this sequence; every refusal is `NativeHandoffError`
 8. `ParetoGate::new(handoff.axes)` → `contract_round_epoch`
    (`native_epoch.rs:177`; absent → Ok(None), malformed → refusal) →
    `validate_score_vector` → `clamp_honest_baseline_vector`
-   (`native_scores.rs:22` — paper-parity `implementation` clamp) →
+   (`native_scores.rs:21` — paper-parity `implementation` clamp) →
    `validate_proposals` (`:60` — producer sequence must exactly match
    completed frozen seats: the all-proposal-failure refusal) →
    `validate_integrated_candidate` (`:395` — `candidate_digest` must equal
@@ -109,7 +109,7 @@ Fail-closed, in this sequence; every refusal is `NativeHandoffError`
   `RoundValidity::Sound` is the only construction on the native path
   (`native.rs:398`). `Unsound` exists for callers outside the judge
   (e.g. the self-iter report's empty/blocked rounds, `cli:594`).
-- `GateDecision` (`gate.rs:11`, serde tag `verdict`): `admit{improved}`,
+- `GateDecision` (`gate.rs:15`, serde tag `verdict`): `admit{improved}`,
   `reject_regression`, `reject_no_improvement`, `reject_malformed`,
   `reject_insufficient_evidence` (constructed only by `axis_checks`, not by
   `ParetoGate::decide`). Admit iff ≥1 axis improves AND none regress.
@@ -154,19 +154,18 @@ Fail-closed, in this sequence; every refusal is `NativeHandoffError`
 `FAILURE_RULES` (:96) evaluated in order — exact status/id string equality,
 then literal needles, then digit-guarded status codes (`contains_status_code`
 :81), then word-boundary `process` → `ToolFailure` (`contains_word` :87), else
-`Unknown`. `FailureClass::permits_advance` (`execution_profile.rs:447`) =
+`Unknown`. `FailureClass::permits_advance` (`execution_profile.rs:448`) =
 `UsageLimit|RateLimit|ModelUnavailable` — the capacity subset.
 
 ## Traps
 
-- Executable axes can never ride a native handoff: `Axis::validate_native_
-  measurement` (`axes.rs:66`) rejects `executable` at header intake — a
+- Executable axes can never ride a native handoff: `Axis::validate_native_measurement` (`axes.rs:66`) rejects `executable` at header intake — a
   handoff has no candidate tree; executable scoring belongs to the fixture
   loop only (`axis_checks.rs` is driven by `loop_driver_judge.rs`, not the
   judge).
 - `assignment` bytes are digest-bound AND must begin with the exact
   canonical Godspeed directive AND carry exactly one terminal `| godspeed`
-  marker (`native_continuity.rs:288/302/317`; `GODSPEED_EVIDENCE_MARKER`
+  marker (`native_continuity.rs:288/302/317`; `EVIDENCE_MARKER`
   `godspeed.rs:10`). Misplaced and duplicated markers are the same refusal.
 - A lane_timeout on a critical seat invalidates the round for judgment —
   D1a retry is a substrate action, not a judge patch

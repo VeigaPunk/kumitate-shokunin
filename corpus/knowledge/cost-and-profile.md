@@ -80,7 +80,8 @@ one-hop in `native_profile.rs:21-93`; bounds in `native_profile.rs:187-198`.
   `profile_hash` (serialization-shape-bound — unset fields hash as `null`,
   "do not delete" is explicit).
 - `canonical_chain` per substrate; `Omp` delegates to the GENERATED
-  `omp_role_chains.rs` (`include!` from OUT_DIR); the compiled catalog is the
+  `omp_role_chains.rs` (`build.rs:117` → OUT_DIR; `include!`d at
+  `execution_profile.rs:572`); the compiled catalog is the
   DISPATCH-time authority — the judge's route authority is the contract-root
   mirror (`contract_role_table`).
 - `FailureClass` :402-412; **`permits_advance` at `:448` (the `:447` cite in

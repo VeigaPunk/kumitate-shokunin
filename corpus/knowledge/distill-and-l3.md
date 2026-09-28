@@ -40,7 +40,8 @@ route; high confidence requires ≥2 distinct non-RG000 groups
 — explicit local-live promote, route must be `hvm/qwen-hvm` else typed
 cause :1194-1201) → `synthesis_ready` requires `live && exit 0 &&
 handler ∈ {distiller-qwen-hvm-live, distiller-qwen-direct-live} &&
-nonempty stdout && !stdout.contains("LOCAL_COLLAPSE")` (`live.rs:246-256`)
+nonempty stdout && !stdout.contains(LOCAL_COLLAPSE_SENTINEL)` (`live.rs`
+:45 definition, :254 in-predicate)
 → live: `validate_qwen_synthesis` (:966-1052 — parse, echo-mutation
 check, high-confidence floor, exactly-once classification,
 `validate_class_parity` D4: advisory duplicate links must stay inside

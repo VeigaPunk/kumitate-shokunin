@@ -75,7 +75,8 @@ Verbs (`ufo-sighting <verb> --help` is real scoped help):
 `steer`/`peek` require live (`MISSION_NOT_LIVE`). Hatch phrases ("open the
 hatch" etc.) route to `open` verbatim. Implementation is split across
 `scripts/ufo-sighting-lib/*.mjs` (surface, launch-verb, resume-verb,
-steer-peek, wall*, options, …) plus `scripts/ufo-sighting/` assets.
+steer-peek, wall*, options, …) plus the `scripts/ufo-sighting` entry script
+(224 lines, bash — a FILE, not a directory).
 
 ### `scripts/ufo-sighting-lib/*` — wall internals
 
@@ -351,7 +352,7 @@ maps: `corpus/knowledge/loop-driver.md`,
   vectors → honesty clamp → proposals → integrated candidate → verdict
   assembly → `emit_native_round_digest` (`.ufo/rounds/<runId>/r<NN>-
   digest.json` on EVERY verdict-bearing outcome).
-- **Verdict vocabulary.** `GateDecision` (`gate.rs:11`): admit iff ≥1
+- **Verdict vocabulary.** `GateDecision` (`gate.rs:15`): admit iff ≥1
   axis improves AND none regress. `RoundValidity::Sound` is the only
   native-path construction — a refused handoff is an `Err`, never an
   `Unsound` verdict. `mission_goal` derives ONLY from plan
@@ -369,7 +370,7 @@ maps: `corpus/knowledge/loop-driver.md`,
   plan rebinding uses the persisted `plan_token`/`plan_digest`, never
   leftover bytes that happen to say "wwkd" (F-C5). Writer lease is a
   mission arbiter — acquisition failure runs unpromoted; lease-guarded
-  publishes fail instead (`publish_guarded` `loop_driver_publish.rs:127`).
+  publishes fail instead (`publish_guarded` `loop_driver_publish.rs:124`).
 
 ### Watchers & helpers (L0-owned, display/ops only)
 
@@ -412,7 +413,8 @@ second copy.
   (`native_text.rs:96`) is evaluated first-match; `permits_advance`
   (`execution_profile.rs:448`) is the capacity subset authority.
 - **Capacity subset**: `CAPACITY_FAILURES = {usage_limit, rate_limit,
-  model_unavailable}` — the ONLY classes that justify a route fallback
+  model_unavailable}` (`collect-omp-native-handoff-lib/base.mjs:109`) — the
+  ONLY classes that justify a route fallback
   advance (I6). `lane_timeout` is never capacity, never a chain advance;
   non-critical late seats report `unavailable`, critical seats get ONE
   same-identity same-route retry (D1a) then the round is invalid.
@@ -511,6 +513,15 @@ second copy.
 
 ## Working rules for this repo
 
+- Re-verify before claiming: `node scripts/cite-check.mjs` (repo-local,
+  read-only, zero deps, node ≥20) re-resolves every path / line / symbol / pin
+  in `SKILL.md` + `corpus/**/*.md` against the origin tree and prints
+  `CITE_CHECK: CLEAN|DRIFT (…)` — exit 0 clean, 1 on source-class findings, 2
+  fail-closed (missing `--src`, empty scan set). `--selftest` runs the 28-case
+  fixture suite; `--json` is the machine interface. Bounds: workspace/run
+  artifacts (`.ufo/…`, `manifest.json`, …), HOME config candidates and
+  `$OUT_DIR`-generated files are informational by construction — they cannot be
+  verified from the source tree; `--strict` promotes warnings to failure.
 - Cite file + symbol for every claim; if the source moves, update the
   citation, not the claim from memory.
 - Constants live once: `ENTRY_FAILURE_CLASSES`, `CAPACITY_FAILURES`,

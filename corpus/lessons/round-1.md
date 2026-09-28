@@ -23,8 +23,9 @@ commit `round-1` in this repo; report at
 3. **`ufo-sighting.mjs` is a thin dispatcher** — the verb surface lives in
    `ufo-sighting-lib/surface.mjs` (`USAGE_LINES`, `VERB_USAGE_INDEX`).
    Grepping the entry file for usage text finds imports only. Trap:
-   `scripts/ufo-sighting/` is an asset dir, `scripts/ufo-sighting-lib/` is
-   the implementation — similar names, different roles.
+   `scripts/ufo-sighting` is a 224-line bash entry script (not a directory),
+   `scripts/ufo-sighting-lib/` is the implementation — similar names,
+   different roles.
 4. **Doc-vs-code drift exists and must be caught, not parroted.** The
    installed `ufo` skill text says the swarm cap is 128 lanes; the script
    header says the operator contract caps at 100 (stricter than kimi's

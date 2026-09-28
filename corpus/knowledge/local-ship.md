@@ -46,7 +46,7 @@ already final (recovery marks `live==before` without rewriting), so its
 finalize fault rides `receipt.journal_finalization_error` (:1756, :1827-1832).
 `final_sha256` after rollback is `before_sha256` — never re-read (:1837).
 
-CLI exit map (`main.rs:1848-1860`): `Committed`→0, `RolledBack`→1,
+CLI exit map (`main.rs:1841-1860`): `Committed`→0, `RolledBack`→1,
 `Err(Rollback)`→3, other typed refusals→2 with kind
 (`rollback`/`journal_finalize`/`path_escape`/`symlink`/`hash_mismatch`/
 `external_effect`/`replacement_too_large`/`apply_locked`/`invalid`/`io`).

@@ -14,7 +14,7 @@ major (CORPUS.md verdicts name corpus rules):
 
 1. **"No SHONEN section in the round-5 report"** — a real **report-conformance
    defect** (kumitate was steered to round-5 at 16:17:22, 67 s after `c5abaac`
-   16:16:15 landed the heading rule; `grep -c SHONEN .ufo/reports/round-5/kumitate.md`
+   (fleet repo `~/projects/shokunin`, 2026-09-28 16:16:15) landed the heading rule; `grep -c SHONEN .ufo/reports/round-5/kumitate.md`
    → 0), but it is filed with the integrator in the round notes, not against
    the corpus. Consequence stands: the report is disqualified as promotion
    evidence; `SHONEN.md` remains the untouched verbatim 4-box mint seed

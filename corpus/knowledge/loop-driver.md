@@ -31,8 +31,8 @@ children under `lib.rs`. Paths relative to
    refusal (`refuse_if_membrane_sealed`, `loop_driver_publish.rs:186`), then
    interrupt check → wall-clock budget → token budget → p50 projection. A
    stop here dispatches ZERO lanes; `BoundaryStop` carries `Interrupted` or
-   `HonestyBrake(BrakeTelemetry)` (`loop_driver.rs:97`).
-2. **Dispatch phase** (`ldd_dry_round_dispatch_phase` `loop_driver_dry.rs:117`):
+   `HonestyBrake(BrakeTelemetry)` (`loop_driver.rs:319-322`).
+2. **Dispatch phase** (`ldd_dry_round_dispatch_phase` `loop_driver_dry.rs:112`):
    roster validation → baseline vector validate → `freeze_round_digests`
    (`loop_driver_digest.rs:172`, generation-keyed cache) → plan token/prompt
    caches → `dispatch_planner_seat` → `write_wwkd_plan` → `dispatch_specialists`
@@ -41,12 +41,12 @@ children under `lib.rs`. Paths relative to
    `loop_driver_dispatch.rs:1357`): per-lane attempt state machine —
    herd/domain admission (`DomainCooldowns` :1640), temporary retry,
    capacity advance/reroute, lane-health buckets.
-4. **Judge phase** (`ldd_dry_round_judge_phase` `loop_driver_dry.rs:457`):
+4. **Judge phase** (`ldd_dry_round_judge_phase` `loop_driver_dry.rs:428`):
    `dispatch_critical_distiller_seat` → `Distiller::run_phase` →
    `assert_plan_before_judge` → `judge_wave` (`loop_driver_judge.rs:54`,
    `gate.decide_with_deltas` :356) → `bind_loop_candidate`
    (`loop_driver_candidate.rs:56`) → `membrane_touching_accepts`
-   (`judge.rs:410`).
+   (`loop_driver_judge.rs:410`).
 5. **Persist** (`ldd_dry_round_persist_phase` `:978`): stop-outcome mapping
    → round digest → `persist_state` + optional membrane seal →
    `IterationReport` (`report.rs:38`).
@@ -95,7 +95,7 @@ refuses resume), `frontier_digest`, `writing_goal`, `stop_reason`,
 `lane_identities`, `rejected_order`, `candidate_receipts`,
 `round_token_usage` (p50 projection history), `mission_cumulative_tokens`,
 `mission_started_ms`, `stop_telemetry`, `membrane_accepts`. Everything
-`deny_unknown_fields`; `LoopStateView` (`state.rs:331`) is the borrowed
+`deny_unknown_fields`; `LoopStateView` (`state.rs:327`) is the borrowed
 byte-identical serializer.
 
 ## Module table
@@ -115,7 +115,7 @@ byte-identical serializer.
 
 ## Judgment vocabulary (fixture side)
 
-`GateDecision` (`gate.rs:11`): `admit{improved} | reject_regression |
+`GateDecision` (`gate.rs:15`): `admit{improved} | reject_regression |
 reject_no_improvement | reject_malformed{reason} |
 reject_insufficient_evidence{unmeasured}`. `RejectionReason`
 (`loop_driver_judge.rs:537`, codes at :544/:558) is the digest-side
@@ -133,7 +133,7 @@ taxonomy — one spelling, two consumers (digest + contract side via the
   zeros (`TokenUsage` `state.rs:84`).
 - The writer lease (`lease.rs`) is a mission-scoped arbiter: acquisition
   failure at `open` does not block the driver — it runs unpromoted and
-  lease-guarded publishes (`publish_guarded` `loop_driver_publish.rs:127`)
+  lease-guarded publishes (`publish_guarded` `loop_driver_publish.rs:124`)
   fail instead. `LeaseDurability::Unconfirmed` inside an `Ok` arm means the
   name landed but the directory fsync failed — do not treat as absent
   (`loop_driver.rs:415-423`).

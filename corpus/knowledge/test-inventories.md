@@ -12,7 +12,7 @@ surfaces are conspicuously unpinned.
   convention: deleting/reordering a check flips `expect_err`→`Ok` or
   routes to the next check's literal — stated `native_tests.rs:11548`).
 - **`#[cfg(test)]` production seams exist solely for tests:**
-  `run_root_alias_mutation_hook` (`native.rs:482`),
+  `run_root_alias_mutation_hook` (`native.rs:445`, call :480),
   `natg_take_captured_digest_root` (`native_header.rs`),
   `impl LoopDriver` shim (`loop_driver_tests.rs:1-19`), the
   `SAMPLE_TO_LOCK_HOOK` mutation seam (`local_ship.rs:1130-1144`,
@@ -20,13 +20,14 @@ surfaces are conspicuously unpinned.
 - **Unix-shaped:** `native_tests.rs` has 9 `#[cfg(unix)]` tests
   (symlink/hardlink/FIFO alias-binding arms unenforced elsewhere);
   `local_ship_tests.rs` uses `std::os::unix::fs` directly; env-vacuity
-  guards `dac_override_active()`/`mode_bits_enforced()`
-  (`local_ship_tests.rs:25/:42`) mean permission arms prove nothing under
-  CAP_DAC_OVERRIDE or mode-ignoring mounts.
+  guards `dac_override_active()` (`local_ship_tests.rs:31`) and
+  `mode_bits_enforced()` (`local_ship_tests.rs:50`) mean permission arms prove
+  nothing under CAP_DAC_OVERRIDE or mode-ignoring mounts.
 - **Named survivor mutants encode the motivating bug:** `MutLocalShipGroup`
   (`local_ship_tests.rs:927`), `MutLoopRerouteTake` (`loop_driver_tests.rs:716`),
-  `MutationR14` probe-7, `MutationWave2-b` (`:6510`), `MutDistillUtf8`
-  (`distill_tests.rs:634`), `ScoutSmall` (`:7043`), `Planner20` (`:7073`).
+  `MutationR14` probe-7, `MutationWave2-b` (`loop_driver_tests.rs:6504`),
+  `MutDistillUtf8` (`distill_tests.rs:630`), `ScoutSmall`
+  (`loop_driver_tests.rs:7038`), `Planner20` (`loop_driver_tests.rs:7070`).
 
 ## `native_tests.rs` — 340 tests / 34 groups (judge pipeline pins)
 
