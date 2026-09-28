@@ -323,6 +323,8 @@
   `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=38/38 coverage=7; pins=4
   match)` exit 0, `PROXY: DRIFT` exit 1, exit 0/1/2/64,
   `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0 (hermetic, tmp fixtures). Before close, an L1 falsification pass on a `/tmp` copy of the tree found a parse defect the green suite had missed: a `\|` inside a registry cell shifted the 4th-cell `yes` test onto a prose cell and silently stopped counting that row (the flip produced NO drift) — fixed with an escape-aware `splitRowCells()` and two regression fixtures (suite 53 → 55, `pin.proxy-check` re-pinned; the live term was unchanged, C1 14/18 under both parses).
+  Close: `round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=11 lane=kumitate
+  checks=13 errors=0 warnings=0)` exit 0, tree clean, 0 unpushed, report tracked+pushed.
   New `round-gate.mjs --tracked` mode: the mid-round half of the close-time
   tracking clause (enumerate `<reports-dir>/round-*/<lane>.md`, drop the highest
   round, require the rest tracked in `--main-repo`; `REPORT_UNTRACKED` per miss;
