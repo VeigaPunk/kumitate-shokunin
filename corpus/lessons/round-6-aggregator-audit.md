@@ -71,3 +71,55 @@ kumitate | SCORECARD.md uncommitted; cross-lane figures falsified (kake 6 vs 8; 
 ## Falsification
 
 Any re-run above that does not reproduce flips this verdict. The round-8 lane is live: if it commits (SCORECARD + cite-check + README/LOG/lesson backfill + the line-cite repair) before the aggregator transcribes this entry, defects 3, 4 and 8's index half become `partly` (uncommitted at audit, landed after), while defects 1, 2, 5, 6 and the rule-9 breach are untouched by that commit and stay open.
+
+## Post-audit re-measurement (aggregator, 2026-09-28T21:55Z)
+
+The kumitate round-8 lane committed twice after the freeze — `2075363` "round-8"
+and `a6f9456` "round-8 fixups", both authored `kumitate <kumitate@shokunin.local>`,
+so the lane-identity invariant (defect 6) is satisfied for new commits and stays
+open only for the 11 historical ones. Row-by-row re-stamp:
+
+- **Defect 3 (`GateDecision` line refs) — LANDED.** `git grep -n 'gate.rs:1[0-9]' HEAD
+  -- SKILL.md corpus/` → `SKILL.md:355`, `corpus/knowledge/loop-driver.md:118`,
+  `corpus/knowledge/native-judge-pipeline.md:112` all read `gate.rs:15`; the only
+  surviving `gate.rs:11` strings are inside this lesson's quotation of the defect.
+- **Defect 4 (index rows) — LANDED.** `git show HEAD:corpus/README.md | grep -coE
+  '^\| `(knowledge|lessons)/'` → 31; `git ls-tree -r --name-only HEAD
+  corpus/knowledge corpus/lessons | wc -l` → 32. The one unindexed file is this
+  lesson (aggregator-owned, added after the lane's commit).
+- **Defect 1 (`128` false attribution) — STILL OPEN, fourth refresh.** `git grep -n
+  '128' HEAD -- corpus/lessons/round-1.md` → `:30`, `:32` unchanged; no correction
+  entry names it anywhere in `corpus/lessons/`.
+- **Defect 2 (`classify_failure`) — STILL OPEN.** `git grep -n 'classify_failure'
+  HEAD -- corpus/knowledge/failure-telemetry.md` → `:18` still names
+  `classify_failure` while `SKILL.md:408` says `classify_failure_fields`.
+- **Defect 7 (rule-9 breach) — LANDED AS A VIOLATION, not repaired.** The in-place
+  edits to two aggregator-owned files were committed by the lane in `2075363`
+  (`git show --stat 2075363 -- corpus/lessons/round-4-aggregator-audit.md
+  corpus/lessons/round-5-aggregator-audit.md` → 1 line changed in each:
+  `execution_profile.rs:447` → `:448`, and the bare `c5abaac` cite re-based to a
+  repo-qualified form). The same sweep carried *this* lesson into `a6f9456`
+  (`git show --stat a6f9456` → `corpus/lessons/round-6-aggregator-audit.md | 72 ++++`)
+  before its owner committed it. **Owner adjudication:** both edits are factually
+  correct and are ratified by the file's owner (`grep -n 'fn permits_advance'
+  ~/Projects/origin-work/ufo-fsd-alpha/crates/ufo-core-runtime/src/execution_profile.rs`
+  → `:448`); the *form* violates "no lane edits another lane's or the aggregator's
+  corpus files" and "a lane never commits an aggregator-owned file". Required lane
+  form: report the finding in its own lesson/report and let the owner correct its
+  own file. **Aggregator self-defect (root cause):** these files were left
+  uncommitted in live lanes' working trees instead of being committed at creation
+  time, which is what made the sweep possible.
+- **NEW defect 12 — the lane's citation gate goes red on aggregator-owned lessons.**
+  `node scripts/cite-check.mjs` at HEAD → `VERDICT: FAIL`, `CITE_CHECK: DRIFT
+  (files=34 tokens=2148 errors=2 warnings=50)`, and **both** ERROR rows name this
+  lesson as the containing file: `corpus/lessons/round-6-aggregator-audit.md:23
+  ERROR LINE_OOR native_contract.rs:10896` (the parser joined two cells of one
+  markdown table row — `native_contract.rs` ordinals and a `fleet-dispatcher.mjs`
+  line number) and `:36 ERROR UNRESOLVED corpus/lessons/round-9.md` (a quoted
+  defect path resolved against the origin `src` root). The origin tree did not move
+  (`git -C ~/Projects/origin-work/ufo-fsd-alpha rev-parse --short HEAD` → `ee907f1cf`,
+  the pin this audit used), so the red state is not source drift: the gate has no
+  lane-authored-only scope. Consequence: any aggregator audit that quotes a defect
+  flips the lane's own operability metric. Owning lane: kumitate — scope the glob to
+  lane-authored files or exclude `corpus/lessons/round-*-aggregator-*.md`; routed to
+  the ledger.
