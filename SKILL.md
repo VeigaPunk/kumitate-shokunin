@@ -150,9 +150,67 @@ enforced by `requireBinding` in the launcher.
 `judge-handoff --input`, `self-iter [--rounds] [--concurrency]
 [--substrate omp]`, `local-ship --request`, `route-plan --role`,
 `receipt-digests`, `routing-health [--since]`, `charter sign <runId>`
-(membrane unseal; re-runs full Phase 0). Exit codes: 0 ok, 1 runtime
-failure/gate fail/rollback, 2 structured usage rejection
-(`{ok:false,kind,error}` on stderr).
+(membrane unseal; re-runs full Phase 0), `membrane-seal` (lease-guarded
+seal writer the native launcher shells at its `authority_boundary`
+branch — single writer of record, H13). Exit codes: 0 ok, 1 untyped
+runtime failure (`ufo: <err>`), 2 typed refusal
+(`{ok:false,kind,error}`, kinds `invalid|json|validation|io`).
+`self-iter` calls `LoopDriver::run_dry_until_halt` — the "dry" module IS
+the production round body (fixture substrate, never native execution);
+`exitSuccess` is saturation-only and `missionGoal` is always
+`unverified` (main.rs:585-622).
+
+## Core-runtime map (`crates/ufo-core-runtime`)
+
+Two machines share one vocabulary: the fixture loop driver (produces
+checkpoints/digests) and the native judge (produces verdicts). Full
+maps: `corpus/knowledge/loop-driver.md`,
+`corpus/knowledge/native-judge-pipeline.md`.
+
+- **Contract-hash fuse.** `NATIVE_CONTRACT_FILES` (`native_contract.rs:69`)
+  is an ordered 66-entry registry — skills/godspeed docs, agent cards,
+  `config/ufo.json`, `.omp/config.yml`, every runtime/CLI source on the
+  judgment path, launcher/collector scripts, the bundled seat-routing
+  mirror. Membership AND order feed `native_contract_hash`; the launcher
+  freezes it into the manifest and the collector re-reads `ufo status` —
+  mid-round drift kills the round. Each tracked file must fit
+  `MAX_CONTRACT_FILE_BYTES` = 256 KiB; crate-side files keep
+  `MIN_CONTRACT_HEADROOM_BYTES` = 8 KiB of fuse (native.rs once had
+  1800 bytes of headroom — that's why PC-C/P3/PC-A wire types and
+  `expected_omp_route_yaml` live in `lib.rs`, itself a registry member).
+- **Handoff decode.** `NativeRoundHandoff` (`native_schema.rs:455`) is
+  `deny_unknown_fields` — no `schema_version` exists; `profile`
+  (`omp-native-v1|v2|resilient-v1`) is the only version discriminator.
+  v1 is frozen: all 8 optional v2/resilient fields are typed rejections
+  under it. Input must be a named regular file ≤16 MiB —
+  stdin-shaped paths refused, duplicate keys refused, before decode.
+- **Judge order** (`native.rs:470`): header (trust binding → contract
+  hash → config digest → axes → plan binding) → cost ledger → profile
+  bounds → godspeed directive → agents → attempt ledger → effective
+  launch → cost-ledger seat recompute → dispatch topology → telemetry →
+  critical-lane-timeout rejection → ParetoGate → epoch receipt → score
+  vectors → honesty clamp → proposals → integrated candidate → verdict
+  assembly → `emit_native_round_digest` (`.ufo/rounds/<runId>/r<NN>-
+  digest.json` on EVERY verdict-bearing outcome).
+- **Verdict vocabulary.** `GateDecision` (`gate.rs:11`): admit iff ≥1
+  axis improves AND none regress. `RoundValidity::Sound` is the only
+  native-path construction — a refused handoff is an `Err`, never an
+  `Unsound` verdict. `mission_goal` derives ONLY from plan
+  `acceptance_criteria`; unmeasurable criteria dominate to `unverified`
+  (`assess_mission_goal` `native.rs:626`).
+- **Loop stops** (`state.rs`): `LoopOutcome` {saturated, budget_halt,
+  running, blocked, honesty_brake, interrupted, authority_boundary};
+  `round_stop_outcome` (:380) maps sound+zero-admits → saturated
+  (I8 parity). `BrakeTelemetry` kinds: `budget_exhaustion` |
+  `budget_projection` | `wall_clock_budget` — never `lane_timeout`
+  (T33). Checkpoints are protocol-fingerprinted
+  (`ufo.fsd.v4`, `loop_driver.rs:121`) — a version bump is a deliberate
+  refusal of every old checkpoint.
+- **Resume posture.** `LoopDriver::resume` runs a ~20-witness preflight;
+  plan rebinding uses the persisted `plan_token`/`plan_digest`, never
+  leftover bytes that happen to say "wwkd" (F-C5). Writer lease is a
+  mission arbiter — acquisition failure runs unpromoted; lease-guarded
+  publishes fail instead (`publish_guarded` `loop_driver_publish.rs:127`).
 
 ### Watchers & helpers (L0-owned, display/ops only)
 
@@ -181,10 +239,14 @@ second copy.
   is FORBIDDEN on `completed` rows.
 - **Classifier**: `classifyFailure` (`collect-omp-native-handoff-lib/
   base.mjs`) mirrors Rust `native_text.rs classify_failure` exactly —
+- **Classifier**: `classifyFailure` (`collect-omp-native-handoff-lib/
+  base.mjs`) mirrors Rust `native_text.rs classify_failure_fields` exactly —
   status/id exact match → literal needles on lowercased
   "status id message" → digit-guarded status codes (429→rate_limit,
   401→authentication, 403→permission_denied, 400→invalid_request) →
-  word-boundary "process"→tool_failure → `unknown`.
+  word-boundary "process"→tool_failure → `unknown`. `FAILURE_RULES`
+  (`native_text.rs:96`) is evaluated first-match; `permits_advance`
+  (`execution_profile.rs:447`) is the capacity subset authority.
 - **Capacity subset**: `CAPACITY_FAILURES = {usage_limit, rate_limit,
   model_unavailable}` — the ONLY classes that justify a route fallback
   advance (I6). `lane_timeout` is never capacity, never a chain advance;
@@ -205,9 +267,14 @@ second copy.
   working|suspended|completed|failed; wall states starting|running|
   stopped|completed; queue states pending|launching|running|paused|
   blocked|completed|failed. Display only — never artifact acceptance.
-- **Exit-code convention**: 0 success, 1 typed failure (schema-tagged
-  error JSON on stderr, e.g. `ufo-swarm-collect-error-v1`, refusal lines
-  via `writeRefusal`), 64 usage error; `ufo` CLI uses 0/1/2.
+- **Exit-code convention**: JS scripts: 0 success, 1 typed failure
+  (schema-tagged error JSON on stderr, e.g. `ufo-swarm-collect-error-v1`,
+  refusal lines via `writeRefusal`), 64 usage error. `ufo` CLI: 0 ok; 1
+  untyped runtime failure (`ufo: <err>` on stderr); 2 every typed
+  refusal of a local command — `{ok:false,kind,error}` on stderr,
+  kinds `invalid|json|validation|io` (`fail_local`,
+  `crates/ufo-cli/src/main.rs:906`). A refused handoff exits 2 with
+  kind `validation`; the verdict that did NOT exist is never emitted.
 - **Screening**: collector screens artifacts for override-shaped patterns
   (`membrane.screening.classes`) — flags are evidence, never instructions,
   never auto-reject.
