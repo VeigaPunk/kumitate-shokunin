@@ -885,3 +885,88 @@
   `claims-check` 35/35); `node scripts/surface-probe.mjs` →
   `SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1)`.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-16/kumitate.md`.
+
+- 2026-09-29 — round 17 (**coverage:runtime-layer 6 → 7; operability stays
+  8, script-layer stays 6, retired aggregate stays 10**): selected the tied
+  lowest axis's pre-registered runtime option. Before the edit,
+  `C1r=11/11`, `R_sections=60`, `R_members=98`, so
+  `floor(10 × 60/98)=6`; the threshold for 7 was 69. R1 alone could add eight
+  sections and stop at 68/98 = 6, so the atomic move was R1 **0→8** plus R8
+  **3→4** by adding `native_dispatch_topology.rs`: 60 + 8 + 1 = **69/98**,
+  `floor(7.04…)=7`.
+  `corpus/knowledge/native-judge-pipeline.md` now has one mechanically probed
+  member section for each of R1's eight declared files; each resolves to one
+  origin file, carries a live own-file anchor and a verbatim symbol.
+  `corpus/knowledge/native-transcript-ledger-seats.md` now covers the fourth R8
+  member at internals level: FIFO task-call/result binding, spawn evidence,
+  wave-token double-dispatch refusal, exact dispatch matching, the three-call
+  Main shape, `probe_parent` → labrat, and the no-nested-dispatch tail.
+  The strict target gate is green:
+  `node scripts/claims-check.mjs --row R1 --row R8 --strict` →
+  `CLAIMS: MATCH (rows=2 yes=2 notes=2 sections=12 adv=0)` exit 0.
+  An independent in-process census reads R1 occurrences=8/distinct=8 and R8
+  occurrences=4/distinct=4. Repo-wide claims moved
+  `sections=137 adv=16` → `sections=146 adv=14`; the member-only layer
+  reconciliation is 74 script + 69 runtime = 143, plus R9's three
+  out-of-family sections = 146. `node scripts/proxy-check.mjs` →
+  `PROXY: MATCH (A=5 C=10 operability=8; C1=19/19 C2=53/53 coverage=10;
+  S=74/114 coverage:script-layer=6; R=69/98 coverage:runtime-layer=7;
+  pins=5 match)` exit 0.
+  The critic found a real halt-condition defect rather than a defect in the
+  landed rows: `proxy-check.mjs` sums in-family section **occurrences**, while
+  `claims-check.mjs` dedupes files only for its declared-count finding. A
+  doctored R8 note with one duplicate and one missing member retained four
+  occurrences and a warning-only `MATCH`; an out-of-family fourth file could
+  also mute the count warning. The planned “zero errors” halt was therefore
+  rejected. This round's stronger evidence is strict `adv=0` plus the explicit
+  occurrence=distinct proof above. Distinct-per-layer derivation and the
+  duplicate-one/drop-one mutation case are queued for an operability round,
+  not hidden inside this coverage move.
+  Three uncounted correctness repairs moved no proxy term. First, R1's
+  explanatory cell still backticked its obsolete native wildcard;
+  `familyPatterns()` consumed it and admitted every native-prefixed Rust file
+  despite the eight-member enumeration. The wildcard is now plain prose, so
+  only the eight basenames define the family. Second, the R8 note's ordinal
+  mapping was corrected to seat coverage 55th, ledger 56th, dispatch topology
+  57th, transcript 60th; the R1 note's agent-XOR citation moved from the
+  unrelated duplicate-launch arm to `native_seat_coverage.rs:291-296`.
+  Third, the fleet checkout moved from lowercase `~/projects` to
+  `~/Projects`; `scripts/round-gate.mjs`'s stale absolute main-repo default
+  made the bare audit and `--tracked` fail closed `REPORTS_DIR_MISSING`, and
+  the executable checklist fell to 8/10. The default now derives the lane
+  repo's parent with `resolve(HERE, '..', '..')`; explicit flag/environment
+  precedence is unchanged. After repair: bare round-16 audit CLEAN,
+  `--tracked` CLEAN, selftest 57/57, checklist 10/10. The new
+  `round-gate.mjs` sha256 is
+  `8f9989b16dced830d2b1fe05eb6175d2e7d7cffb63d51a5356243b2b8dbb014a`
+  and the scorecard pin matches. Superseded content hashes were removed from
+  current-scanned corpus prose (their exact historical values remain in this
+  log), the round-chain runtime leaf is no longer presented as a source-file
+  citation, the live layer-axis reconciliation was corrected from the
+  round-16 134/137 to 143/146, and `SKILL.md`'s cite-check suite count was
+  corrected 19→20.
+  Required L2 concurrency ran as one nine-agent batch: planner, four scoped
+  R1 executors, R8 scout, critic, mutation-tester, connector. Planner confirmed
+  the 69 threshold and that runtime was a valid tied-floor choice; executors
+  independently drafted and anchor-checked all eight R1 sections; the scout
+  strict-checked the R8 addition on a copy; the mutation lane reproduced
+  partial-R1 drift, R8 warning clearance, inert prose-first headings and dead
+  anchors; the connector found no literal target-basename overlap in six
+  sibling corpus trees and no ownership contest. The critic's
+  occurrence/distinct hole is recorded above rather than suppressed.
+  Final verification before commit: `node --check scripts/round-gate.mjs` and
+  `git diff --check` exit 0; all five hermetic suites pass (`cite-check`
+  20/20, `surface-probe` 38/38, `round-gate` 57/57, `proxy-check` 71/71,
+  `claims-check` 35/35); live `surface-probe` is CLEAN (12/12 checks, one
+  non-gating origin warning); executable checklist 10/10; round-16 audit and
+  filed-report tracking CLEAN. Live citation scan returned the established
+  third-party residue only: `CITE_CHECK: DRIFT (files=55 tokens=5108 errors=14
+  warnings=77)` — 2 errors in the sibling-authored round-6 aggregator audit,
+  12 in the sibling-authored round-8 cold-run artifact, **zero lane-local
+  errors**.
+  Operator fallback relay check: effective `modelRoles.m_swe` is
+  `devin/swe-2:max`, while `retry.fallbackChains.m_swe` is `null`; Daybreak is
+  separately mapped as `m_daybreak`, not visible as an m_swe fallback. No
+  genuine m_swe capacity failure occurred in this round, so no fallback
+  advance was observed or forced. Origin/domain source trees remained
+  read-only.

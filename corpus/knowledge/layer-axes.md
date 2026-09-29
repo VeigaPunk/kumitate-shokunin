@@ -150,10 +150,28 @@ halves, entirely from the honesty term the parent never measured. That is the
 point of the split — it **exposes** a worse number instead of renaming a
 saturated one.
 
+### Current after round 17
+
+The formula did not change. R1 gained eight distinct in-family member sections
+and R8 gained `native_dispatch_topology.rs`, so runtime moved 60 → 69 / 98 and
+score 6 → 7; script stayed 74/114 and 6:
+
+| Successor | Rows | `C1_layer` | Members | Sections | `V_layer` | Score |
+|---|---|---|---|---|---|---|
+| `coverage:script-layer` | `S1`–`S8` | 8/8 = 1.0 | 114 | 74 | 0.6491 | **6** |
+| `coverage:runtime-layer` | `R1`–`R11` | 11/11 = 1.0 | 98 | 69 | 0.7041 | **7** |
+
+`claims-check --row R1 --row R8 --strict` reports 12 sections / adv=0; an
+explicit census reports occurrences=distinct (8=8, 4=4). The extra guard is
+required because round 17's critic reproduced an implementation limit:
+`layerTerms()` counts section occurrences while the gate dedupes files for its
+declared-count finding. Distinct-per-layer counting is queued; it was not hidden
+inside the coverage move.
+
 Three counting notes a re-deriving reader will hit:
 
-- `S_sections + R_sections` = 74 + 60 = **134** member sections, out of the
-  **137** the claims gate reports (`totals.sections`). The 3 difference is
+- `S_sections + R_sections` = 74 + 69 = **143** member sections, out of the
+  **146** the claims gate reports (`totals.sections`). The 3 difference is
   exactly `R9`'s out-of-family sections — the cross-cutting test inventories
   (`crates/ufo-core-runtime/src/loop_driver_tests.rs`,
   `crates/ufo-core-runtime/src/local_ship_tests.rs`,
@@ -181,17 +199,16 @@ after round 15 — a recall, not re-derived here).
 That fallback is refuted by the measurement above, and the reason is structural,
 not incidental:
 
-- `C1_layer` is **1.0 in both layers** (8/8 and 11/11) while `V_layer` is
-  **0.6491** and **0.6122**. If the two moved together, a saturated `C1_layer`
-  would force `V_layer` to 1.0; instead one is at its ceiling and the other is
-  near 61–65%.
+- `C1_layer` is **1.0 in both layers** (8/8 and 11/11) while the first
+  measurement's `V_layer` was **0.6491** and **0.6122**. Round 17 moved only
+  runtime `V_layer` to 0.7041; neither value is forced to 1.0 by saturated C1.
 - The terms are computed from different objects: `C1_layer` reads **registry
   cells** (a lane-prose claim about a family), `V_layer` reads **member sections
   inside the notes** (a machine-verified heading with a live own-file anchor and
-  a verbatim symbol). The 9 topic-form rows — `S1`–`S5`, `R1`, `R2`, `R5`, `R7` —
-  are `yes` with **zero** sections: the gate can only assert note existence
-  there. A layer can therefore be fully covered and mostly unverified at the same
-  time, which is exactly what 1.0 vs 0.649 looks like.
+  a verbatim symbol). At the first measurement 9 rows were topic-form
+  (`S1`–`S5`, `R1`, `R2`, `R5`, `R7`); round 17 sectionized R1, leaving 8
+  (`S1`–`S5`, `R2`, `R5`, `R7`). A layer can therefore be fully cell-covered
+  and materially member-unverified.
 - The historical readings show the same decoupling across rounds: on the
   round-14 tree (reproduced from lane HEAD `637d181`) the gate read `CLAIMS:
   MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)`, with the per-layer split

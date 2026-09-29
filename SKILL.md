@@ -580,14 +580,16 @@ R_sections/R_members)` over the `R` rows. `C1s`/`C1r` are each layer's `yes`
 rows over that layer's registry rows; the sections term is the Σ of member
 sections the claims gate verifies in those rows' notes, **in-family only** (a
 section the gate grades `SECTION_FILE_NOT_MEMBER` — R9's 3 sibling-suite
-sections — is excluded, so `R_sections` is 60 of the 63 raw row sections); the
-member term is the layer's declared members counted from the origin tree —
-script layer `scripts/*.mjs` (72) + every file under
-`scripts/*/` (42, recursive: a depth-1 count reads 38 and is wrong), runtime
-layer `crates/ufo-core-runtime/src/*.rs` (93) + `crates/ufo-cli/src/*.rs` (5).
-Measured 2026-09-28: `8/8 × 74/114` ⇒ 6 and `11/11 × 60/98` ⇒ 6, against the
-retired parent's terminal 10. The stanza therefore carries six more integer
-terms — `S_members`, `S_sections`, `R_members`, `R_sections`, `coverage_script`,
+sections — is excluded, so current `R_sections` is 69 of the 72 raw runtime-row
+sections; round 16 first measured 60 of 63); the member term is the layer's
+declared members counted from the origin tree — script layer `scripts/*.mjs`
+(72) + every file under `scripts/*/` (42, recursive: a depth-1 count reads 38
+and is wrong), runtime layer `crates/ufo-core-runtime/src/*.rs` (93) +
+`crates/ufo-cli/src/*.rs` (5). Current 2026-09-29 measurement:
+`8/8 × 74/114` ⇒ **6** and `11/11 × 69/98` ⇒ **7**, against the retired
+parent's terminal 10 (round 16's first reading was 6/6 at runtime 60/98).
+The stanza therefore carries six more integer terms — `S_members`,
+`S_sections`, `R_members`, `R_sections`, `coverage_script`,
 `coverage_runtime` (the stanza's `key=value` charset forbids `:`, so the axis
 name `coverage:script-layer` is carried by the key `coverage_script`).
 Amendment to the proxy's self-only invariant: the legacy terms (`A`, `C`,
@@ -617,7 +619,7 @@ integrator's fleet-conformance step are in
   in `SKILL.md` + `corpus/**/*.md` against the origin tree and prints
   `CITE_CHECK: CLEAN|DRIFT (…)` — exit 0 clean, 1 on source-class findings, 2
   fail-closed (missing `--src`, empty scan set). `--selftest` runs the hermetic
-  19-case fixture suite (fixtures only — live-tree assertions moved to
+  20-case fixture suite (fixtures only — live-tree assertions moved to
   `--integrations`, which is where a sibling lane's doc drift shows up);
   `--json` is the machine interface. Bounds: workspace/run artifacts (`.ufo/…`,
   `manifest.json`, …), HOME config candidates and `$OUT_DIR`-generated files are
@@ -636,12 +638,15 @@ integrator's fleet-conformance step are in
   `kumitate-claims-v1`) re-derives every `yes` cell from the corpus note behind it
   — note resolution, one member section per file with a live own-file anchor and a
   verbatim symbol, and the declared member count when the cell names one. Live
-  2026-09-28: `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)` exit 0,
-  0.14 s; the 16 advisories are the family standard's printed residue (9
-  topic-form rows, 4 count-suspect rows, R9's 3 sibling-suite sections) and
-  `--strict` promotes them to exit 1. It is the compensating check for the hole
-  `proxy-check` cannot see (measured at round 14: a renamed or deleted member
-  section still read `PROXY: MATCH … coverage=9`). Contract, arms, anchor
+  2026-09-29: `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=146 adv=14)`
+  exit 0; the 14 advisories are the family standard's printed residue (8
+  topic-form rows, 3 count-suspect rows, R9's 3 sibling-suite sections) and
+  `--strict` promotes them to exit 1. For a row that changes a layer score,
+  additionally require row-local adv=0 and prove section occurrences equal
+  distinct resolved in-family files: `proxy-check` currently counts
+  occurrences while the gate dedupes only for declared-count findings
+  (`SCORECARD.md` round-17 limit). It is the compensating check for the
+  scorecard arithmetic's historical note-blind spot; contract, arms, anchor
   semantics and limits:
   `corpus/knowledge/member-claims-gate.md`.
 - Re-verify the round-close contract before claiming a round done:
@@ -652,8 +657,11 @@ integrator's fleet-conformance step are in
   a round that filed no report at all is invisible to it (`--round N` audits one
   by hand). Unflagged it audits the latest closed round = max N with
   `<reports-dir>/round-<N>/<lane>.md` present (none ⇒ fail-closed 2; `--lane`
-  defaults to `kumitate`, `--reports-dir` to
-  `/home/vgpnk/projects/shokunin/.ufo/reports`). It re-derives, never re-runs:
+  defaults to `kumitate`, `--reports-dir` to `<lane repo>/../.ufo/reports` —
+  derived from `resolve(HERE, '..', '..')`, the lane repo's parent, so the
+  default follows a moved checkout (the repo's 2026-09-29 move to
+  `~/Projects` broke the old literal `/home/vgpnk/projects/...` default;
+  env/flag overrides unchanged). It re-derives, never re-runs:
   report presence / weight / headings / round identity / `SHONEN` heading, cited
   commit tokens resolving and staying ancestors of lane `HEAD`
   (`PROTOCOL.md:264-265`), a `SCORECARD.md` row, a `LOG.md` entry, a

@@ -60,8 +60,8 @@ source here; the module's own patterns are
 | `C1` — in-scope surface coverage | rows `^\| (S\|R)\d+ \|` in `SCORECARD.md` whose 4th `\|`-separated cell, trimmed, starts with `yes`; `C1_total` = **all** such rows (table `SCORECARD.md:114-153`; `scripts/proxy-check.mjs:336-361`) | a family counts as covered only when its row says `yes`; `partial` (S6) therefore counts as not covered, and the denominator is the table's own size. Escaped `\|` inside a cell is **not** a cell break (`splitRowCells()` at `scripts/proxy-check.mjs:336-348`): round 11 found by falsification that a naive `split('|')` let a `\|`-bearing row shift the 4th-cell test to a prose cell and silently stop counting that row — fixed, with two regression cases in the suite |
 | `C2` — README-map freshness | rows in `corpus/README.md` matching `^\| \`(knowledge\|lessons)/` over `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` (`SCORECARD.md:88-94`; `scripts/proxy-check.mjs:325-335`) | every corpus note has a README row; a deleted note or a deleted row moves the term |
 | `S_members` / `R_members` — declared layer members | one walk of the **origin tree**: `scripts/<name>.mjs` plus any file under `scripts/<dir>/` (recursive) → script layer; `crates/ufo-core-runtime/src/<name>.rs` plus `crates/ufo-cli/src/<name>.rs` → runtime layer (`S_members` 114 = 72 + 42; `R_members` 98 = 93 + 5, 2026-09-28) | the denominators are the same 212-file universe the unscored residue diagnostic walks — counted from the origin tree, so a member added or deleted upstream moves the term and the universe cannot silently shrink to flatter the ratio |
-| `S_sections` / `R_sections` — gate-verified member sections | Σ member sections `scripts/claims-check.mjs` verifies in that layer's registry rows' notes, taken from its `probeSections()` derivation and filtered to `inFamily === true` (74 script-layer + **60** runtime-layer; the raw all-section total is 137 — `R`'s 63 drops to 60 because `R9`'s three sibling-suite sections are `SECTION_FILE_NOT_MEMBER` warnings the gate does not verify as members) | the numerator is the **same** derivation the member-claims gate already runs, imported in-process, so a successor cannot count a section the gate would not verify as a member; a topic-form row contributes 0 (its member completeness is unchecked), and a section resolved outside the row's declared family is excluded rather than credited |
-| `coverage_script` / `coverage_runtime` — successor scores | `floor(10 × C1s/C1s_total × S_sections/S_members)` = `floor(10 × 8/8 × 74/114)` = **6**; `floor(10 × C1r/C1r_total × R_sections/R_members)` = `floor(10 × 11/11 × 60/98)` = **6** (`C1s`/`C1r` = `yes` rows among ids starting `S`/`R`) | the retired `coverage` split at its own saturation: the honesty term (`sections/members` = 0.649 / 0.612) is what the aggregate's `C2` pair — 1.0 by construction — never measured, so the successors read a worse number (6/6) rather than 10 under two new names |
+| `S_sections` / `R_sections` — gate-verified member sections | Σ in-family section **occurrences** from `scripts/claims-check.mjs`'s `probeSections()` derivation (`inFamily === true`): 74 script-layer + **69** runtime-layer; raw total 146, with R9's 3 out-of-family sections excluded | one section must resolve to a declared member and carry a live own-file anchor + verbatim symbol. Limit found round 17: this counter is occurrence-based while the gate's declared-count finding dedupes files; require occurrence=distinct for a score-changing row until the queued distinct-numerator hardening lands |
+| `coverage_script` / `coverage_runtime` — successor scores | `floor(10 × C1s/C1s_total × S_sections/S_members)` = `floor(10 × 8/8 × 74/114)` = **6**; `floor(10 × C1r/C1r_total × R_sections/R_members)` = `floor(10 × 11/11 × 69/98)` = **7** (`C1s`/`C1r` = `yes` rows among ids starting `S`/`R`) | the retired `coverage` split at its own saturation: the honesty term is what the aggregate's saturated `C2` pair never measured. Round 16 first measured 6/6 at runtime 60/98; round 17 moved runtime to 69/98 and 7 |
 | pins | `sha256` of `scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs` (`scripts/proxy-check.mjs:188-195`) | the tools a document describes are byte-for-byte the tools on disk; a pin whose file is absent is reported `computed=absent (…)`, never skipped (`scripts/proxy-check.mjs:527-549`) |
 | derived scores | `operability = floor(10 × (A+C)/(A+C+3))`, `coverage = floor(10 × C1/C1_total × C2/C2_total)` (`SCORECARD.md:20-113`; `scripts/proxy-check.mjs:363-369`) | the arithmetic in `## Axes` is the arithmetic of the recomputed terms, not a remembered number |
 
@@ -295,6 +295,18 @@ the two terms do not double-count and the fallback's extra origin-tree I/O was
 never needed beyond the single `probeSections()` walk. That is the split exposing
 a worse number (6/6) rather than 10 under two new names — and the parent stays
 retired.
+
+**Round 17 moved the runtime successor, not its definition.** R1 gained eight
+distinct member sections and R8 gained `native_dispatch_topology.rs`, moving
+`R_sections` 60 → 69 and `coverage_runtime` 6 → 7; script remains 74/114 ⇒ 6.
+The proxy verdict is now `S=74/114 coverage:script-layer=6; R=69/98
+coverage:runtime-layer=7`. The critic reproduced a limitation in the frozen
+derivation: `layerTerms()` counts section occurrences, while the claims gate
+dedupes files for the row's declared-count check. Live R1/R8 are protected by
+strict adv=0 plus an explicit occurrence=distinct census (8=8, 4=4); changing
+the derivation is queued as operability work rather than hidden in this
+coverage round.
+
 
 ## Reuse path (portability)
 

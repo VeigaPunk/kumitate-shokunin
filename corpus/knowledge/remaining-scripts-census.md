@@ -332,7 +332,7 @@ must report zero errors in this note (its remaining errors are third-party
 artifacts, named in `LOG.md`):
 
 ```bash
-cd /home/vgpnk/projects/shokunin/kumitate-shokunin && node scripts/cite-check.mjs
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && node scripts/cite-check.mjs
 ```
 
 At this note's landing the gate reports `errors=14`, **all of them inside the two

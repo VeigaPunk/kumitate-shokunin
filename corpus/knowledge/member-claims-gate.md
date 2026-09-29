@@ -21,12 +21,13 @@ node scripts/claims-check.mjs --selftest        # hermetic; touches no live tree
 ```
 `--self` defaults to this repo, `--scorecard` to `SCORECARD.md` under it, `--src`
 to `$UFO_SRC` or `/home/vgpnk/Projects/origin-work/ufo-fsd-alpha` — the same
-convention as `scripts/cite-check.mjs:78`. Live 2026-09-28 (lane HEAD `7a099b2`,
-origin `f65ee4b3d`):
+convention as `scripts/cite-check.mjs:78`. At its round-14 landing the live
+tree read `yes=18`, `sections=90`, `adv=16` (the historical drop-one transcript
+below). Current 2026-09-29:
 
 ```
 $ node scripts/claims-check.mjs
-CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)        # exit 0, 0.13 s
+CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=146 adv=14)       # exit 0
 ```
 
 ## What each arm re-derives
@@ -49,16 +50,16 @@ CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)        # exit 0, 0.13
 A row is **section-form** when ≥1 of its notes carries a member section — a `## `
 heading whose first backticked token is path-like (contains `/`, or ends
 `.mjs .js .sh .rs .timer .service .json .md .toml .yml`); trailing prose after the
-token is allowed (`## \`cost_ledger.rs\` (737 L) — wire types…`). Measured
-section-form rows and distinct member sections: S6 5, S7 9, S8 60, R3 2, R4 3,
-R6 2, R8 3, R9 4, R10 2 = **90**. Topic-form (0 sections): S1, S2, S3, S4, S5,
-R1, R2, R5, R7 = the 9 `ROW_NO_SECTIONS` advisories.
+token is allowed (`## \`cost_ledger.rs\` (737 L) — wire types…`). Current
+section-form rows and section occurrences: S6 5, S7 9, S8 60, R1 8, R3 2,
+R4 3, R6 2, R8 4, R9 4, R10 2, R11 47 = **146**. Topic-form (0 sections):
+S1, S2, S3, S4, S5, R2, R5, R7 = the 8 `ROW_NO_SECTIONS` advisories.
 
-The other four advisories measured: `MEMBER_COUNT_SUSPECT` ×4 (R3 5→2, R4 6→3,
-R6 4→2, R8 4→3) and `SECTION_FILE_NOT_MEMBER` ×3 (R9's `test-inventories.md`
-heads sections for `loop_driver_tests.rs`, `local_ship_tests.rs`,
-`distill_tests.rs`, which the registry places inside R2/R6/R7 on purpose) — the
-printed residue of the family standard, a worklist rather than a defect.
+The other six advisories: `MEMBER_COUNT_SUSPECT` ×3 (R3 5→2, R4 6→3,
+R6 4→2) and `SECTION_FILE_NOT_MEMBER` ×3 (R9's `test-inventories.md` heads
+sections for `loop_driver_tests.rs`, `local_ship_tests.rs`,
+`distill_tests.rs`, which the registry places inside R2/R6/R7). R1 became
+section-form and R8 reached 4/4 in round 17; R11's 47 arrived in round 15.
 
 ## Anchor semantics (frozen from round 13, widened on measurement)
 
@@ -97,11 +98,18 @@ membership, and the same two drop-one outcomes.
 
 ## Limits (recorded, not hidden)
 
-- **Topic-form rows stay prose.** The 9 rows above have no member sections, so
+- **Topic-form rows stay prose.** The 8 rows above have no member sections, so
   `claims-check` can only assert note existence and `NOTE_FOREIGN` there; a note
-  that names one member of five passes. This is the strongest residual hole the
-  round's critic measured (its cheapest passing fake: reduce S1's note to one
-  token → `CLAIMS: MATCH … adv=16` exit 0).
+  that names one member of five passes. The round-14 critic's cheapest passing
+  fake (reduce S1's note to one token) remains valid; only its historical
+  `adv=16` total changed as other rows gained sections.
+- **Occurrence and distinct-file counts diverge.** `probeSections()` returns
+  every section occurrence, while the declared-count arm dedupes
+  `s.file ?? s.heading`. `proxy-check` currently sums the occurrences. Round
+  17 reproduced a duplicate-one/drop-one R8 note that preserved four
+  occurrences and a `MATCH` verdict with a warning while verifying only three
+  distinct members. A score-changing row therefore needs strict adv=0 plus an
+  explicit occurrence=distinct census until the queued distinct-numerator fix.
 - **Cross-row repointing shows as a warning spike, not an error.** Pointing S6's
   cell at S8's 60-member note produces `sections=145 adv=76` and still `MATCH`
   exit 0: the foreign note does name family members, and the 60 extra sections are

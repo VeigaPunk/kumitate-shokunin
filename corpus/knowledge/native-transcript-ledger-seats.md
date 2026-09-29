@@ -1,8 +1,9 @@
-# `native_transcript.rs` + `native_ledger.rs` + `native_seat_coverage.rs`
+# `native_transcript.rs` + `native_ledger.rs` + `native_seat_coverage.rs` + `native_dispatch_topology.rs`
 
-All three are `NATIVE_CONTRACT_FILES` members (55th/56th/60th —
-`native_contract.rs:124/125/129`); membership AND order feed
-`native_contract_hash`. Two distinct "ledgers" exist: the JS-only
+All four are `NATIVE_CONTRACT_FILES` members — bound to ordinals, not
+position: `native_contract.rs:124` seat_coverage (55th), `:125` ledger
+(56th), `:126` dispatch_topology (57th), `:129` transcript (60th);
+membership AND order feed `native_contract_hash`. Two distinct "ledgers"
 refinement ledger under `.ufo/scopes/<scope>/ledger/` (no Rust reader)
 and the in-handoff resilient **attempt ledger** validated here —
 never conflate them (`queue-summary.md` covers the JS side).
@@ -138,3 +139,78 @@ admits ANY FailureClass wire name — the capacity-only rule applies to
 hops, not pre-spawn rejections. Coverage vocabulary: required =
 `core_keys` (main/planner/distiller/labrat) ∪ roster; observed =
 `by_seat` agents ∪ `dispatch_seats`.
+
+## `native_dispatch_topology.rs` (465 L) — transcript-derived dispatch proof: exact counts, FIFO call/result binding, wave-token double dispatch
+
+Pure code motion from `native.rs` (r16 cut AB), no behavior change, and the
+family's 57th `NATIVE_CONTRACT_FILES` entry (`native_contract.rs:126`; the
+other three sit at `native_contract.rs:129` / `:125` / `:124`) — so its bytes
+are hash-tracked like theirs. It is the **transcript proof** counterpart of the
+seat-coverage sets, not a restatement: coverage decides whether every required
+seat is accounted for (agent XOR pre-spawn dispatch attempt), while this file
+proves that the dispatches a transcript actually shows are exactly the ones the
+roster implies, with no extra and no nested dispatch.
+
+`observed_task_dispatches` (:344-357) is the only reader of the retained
+transcript cache: it looks `parent.transcript_path` up in
+`evidence.transcript_events` and refuses with "no cached transcript events for
+agent '<id>'" rather than re-reading any file — the retention predicate itself
+lives in `native_transcript.rs:426-456`. `ObservedTaskDispatch` (:14-22) keeps
+`call_id`/`agent_id`/`role` borrowed from the cached events and owns
+`dispatch_name`/`assignment`, because those two may come from a locally
+re-parsed `arguments` JSON **string** (`nati_task_dispatch_arguments`
+:78-92 — "task dispatch arguments are not JSON: <error>").
+
+Call/result binding is one FIFO walk (`natd_observed_task_dispatches_from_calls`
+:273-341), because OMP reuses sequential task ids once a call settles: each
+`toolResult` must bind the earliest still-unmatched call and echo its id
+verbatim, so a set hit by id is never accepted. Duplicate call or result ids
+refuse at sight (:330-332, :209-211); an orphan result reads "successful task
+result has no matching task call '<id>'" only when `isError == false` with
+non-empty `details.progress`, else the plain "task result '<id>' has no
+matching task call"; a result whose id differs from the pending head reports
+both facts — "task call '<id>' has no tool result before it could echo task
+result '<id>'" (:222-237); a call still pending at end-of-transcript is "task
+call '<id>' has no tool result" (:336-340). A result that did not succeed is a
+collector PC-C pre-spawn rejection: the call is popped, nothing is recorded,
+and its malformed arguments are never parsed (:238-244).
+
+Spawn pairing (`nati_push_observed_dispatches_from_spawn_pairs` :121-186) zips
+the call's `tasks` array against the result's `details.progress` and requires
+equal lengths before anything is recorded ("spawn evidence does not match its
+task count" :256-260); id, role and assignment must each be present and
+non-empty on the spawn entry. `task.agent` absent is fine, but a present value
+that is not the spawned role string is refused ("requested a different role
+than OMP spawned") — a number, bool or null is a different role, not an absent
+request (:153-170). The task's own assignment is compared only after
+`effective_task_assignment` (:29-35) drops exactly ONE transport-added terminal
+newline (never two), so a dispatch that differs by a blank line is still
+"spawned a different assignment".
+
+The wave token is the batched-proposal-wave identity: `wave_token_line`
+(:49-76) applies the collector grammar `^wave_token: (\S+)$` to the **trimmed**
+line — exactly one space, whitespace-free remainder to end-of-line, so
+`wave_token:alpha`, `wave_token:  alpha` and `wave_token: alpha beta` are
+absent, never announcements — and two distinct tokens in one context are the
+typed `double_dispatch` refusal (`nati_record_wave_token_dispatch` :94-119
+raises the same literal for a second successful wave call carrying a token,
+single-task calls included; token-free evidence takes the pre-P2 legacy path).
+The scan borrows slices: the common 0–1-token path allocates nothing.
+
+`require_exact_dispatches` (:360-408) is the whole proof engine: observed count
+must equal child count ("agent '<id>' must dispatch exactly <N> tasks, got
+<M>"), then a multiset keyed by the four matched fields (`dispatch_name`,
+`agent_id`, role, `assignment`) must hit each child exactly once, else "agent
+'<id>' must dispatch '<agent_id>/<seat_label>' exactly once with the verbatim
+assignment" — a duplicated dispatch and a mutated assignment both refuse.
+`validate_dispatch_topology` (:410-465) then fixes the shape: Main's required
+children are planner + every proposal seat + distiller, and the proposal
+children must share ONE `call_id` distinct from planner's and distiller's
+("Main must dispatch planner, one batched proposal wave, and distiller in
+three distinct successful task calls" :442-450); `probe_parent` must dispatch
+exactly `[labrat]`; and every remaining seat must dispatch **zero** tasks
+(:452-463) — nested dispatch is a topology refusal, not a coverage warning.
+
+Probe: `validate_dispatch_topology` (:410) — the entry point `native.rs` calls
+at `native.rs:527`, whose pass ends by requiring empty dispatch sets for every
+non-Main, non-`probe_parent` seat (:456-463).

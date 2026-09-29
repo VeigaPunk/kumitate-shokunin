@@ -29,9 +29,12 @@ audit. `--tracked` and `--close` are mutually exclusive modes (both ⇒ usage 64
 runs **only** the filed-report freshness clause (below) and no audit check at
 all. Defaults: `--lane
 kumitate`; `--repo` = the repo root containing the script (the same sibling
-convention `scripts/surface-probe.mjs` uses for `DEFAULT_SELF`); `--reports-dir
-/home/vgpnk/projects/shokunin/.ufo/reports`; `--main-repo
-/home/vgpnk/projects/shokunin`; `--round` = the lane's latest closed round =
+convention `scripts/surface-probe.mjs` uses for `DEFAULT_SELF`); `--main-repo`
+= `resolve(HERE, '..', '..')` — the lane repo's **parent dir**, which is the
+main repo only because `kumitate-shokunin/` lives inside it (derived since the
+2026-09-29 repo move to `~/Projects`; the pre-move literal
+`/home/vgpnk/projects/shokunin` went stale and fail-closed `REPORTS_DIR_MISSING`);
+`--reports-dir` = `<main-repo>/.ufo/reports`; `--round` = the lane's latest closed round =
 max N with `<reports-dir>/round-<N>/<lane>.md` present — none found is
 fail-closed, exit 2. Usage is exit 64 (unknown flag, non-numeric `--round`).
 Findings print as `ROUND_GATE  <severity>  <KIND>  <detail>`; the kind tokens
@@ -42,10 +45,10 @@ constant (`scripts/cite-check.mjs:78`, `scripts/surface-probe.mjs:131`) and its
 flag-over-env precedence (`opts.src = DEFAULT_SRC` at
 `scripts/cite-check.mjs:177`, overwritten by `--src` at `scripts/cite-check.mjs:187`):
 
-| Value | Env | Flag | Literal fallback |
+| Value | Env | Flag | Fallback |
 |---|---|---|---|
-| reports dir | `KUMITATE_REPORTS_DIR` | `--reports-dir` | `/home/vgpnk/projects/shokunin/.ufo/reports` |
-| main repo | `KUMITATE_MAIN_REPO` | `--main-repo` | `/home/vgpnk/projects/shokunin` |
+| reports dir | `KUMITATE_REPORTS_DIR` | `--reports-dir` | `<main-repo>/.ufo/reports` |
+| main repo | `KUMITATE_MAIN_REPO` | `--main-repo` | `resolve(HERE, '..', '..')` |
 | lane | `KUMITATE_LANE` | `--lane` | `kumitate` |
 | origin tree (cited-commit resolution only) | `UFO_SRC` | `--origin` | `/home/vgpnk/Projects/origin-work/ufo-fsd-alpha` |
 
@@ -310,7 +313,7 @@ The real report cites four tokens, three of which resolve in this repo and one
 (`ee907f1cf`) only in the origin tree — the measured reason `--origin` exists and
 why an unresolved-token finding is not raised for it.
 
-## Observed verdicts (round 11, `scripts/round-gate.mjs` sha256 `4c447463…`, 1426 L, 57-case suite)
+## Observed verdicts (round 11, then-current `scripts/round-gate.mjs` revision; superseded, exact digest in `LOG.md`, 1426 L, 57-case suite)
 
 Round 11 added the `--tracked` mode and applied a two-site simplifier pass (the
 unreachable `ahead=?(raw=…)` arm and the duplicate missing-`SCORECARD.md`

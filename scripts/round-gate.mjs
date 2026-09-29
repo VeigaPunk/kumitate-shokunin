@@ -53,10 +53,8 @@
  *                 realpath(resolve(dirname(fileURLToPath(import.meta.url)), '..')),
  *                 never process.cwd() — so a symlinked invocation still resolves
  *                 to the real root
- *   --main-repo   KUMITATE_MAIN_REPO   else /home/vgpnk/projects/shokunin
- *   --reports-dir KUMITATE_REPORTS_DIR else <main-repo>/.ufo/reports when
- *                 main-repo was set explicitly (flag or env), else
- *                 /home/vgpnk/projects/shokunin/.ufo/reports
+ *   --main-repo   KUMITATE_MAIN_REPO   else <this lane repo's parent dir>
+ *   --reports-dir KUMITATE_REPORTS_DIR else <main-repo>/.ufo/reports
  *   --origin      UFO_SRC               else /home/vgpnk/Projects/origin-work/ufo-fsd-alpha
  *   --round       latest closed round for the lane = max N with
  *                 `<reports-dir>/round-<N>/<lane>.md` present; none ⇒ fail-closed.
@@ -139,8 +137,8 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CONTRACT = 'kumitate-round-gate-v1';
 const DEFAULT_LANE = 'kumitate';
-const DEFAULT_REPORTS_DIR = '/home/vgpnk/projects/shokunin/.ufo/reports';
-const DEFAULT_MAIN_REPO = '/home/vgpnk/projects/shokunin';
+const DEFAULT_MAIN_REPO = resolve(HERE, '..', '..');
+const DEFAULT_REPORTS_DIR = join(DEFAULT_MAIN_REPO, '.ufo', 'reports');
 const DEFAULT_ORIGIN = '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
 const REPORT_MIN_BYTES = 1024;
 const HISTORY_LIMIT = 1000;

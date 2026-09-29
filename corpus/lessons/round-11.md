@@ -26,7 +26,7 @@ half of the close-time tracking clause (enumerate `<reports-dir>/round-*/<lane>.
 drop the highest round, require the rest tracked in `--main-repo`; only kind
 `REPORT_UNTRACKED`; fewer than two filed reports ⇒ exit 2 `NO_FILED_REPORTS`;
 `--tracked --close` ⇒ 64) — and a −3 L simplifier pass on the same file (57-case
-suite, sha256 `4c447463…`, 1426 L). Docs: `SKILL.md` (3 checklist items + a
+suite, then-current revision now superseded with its exact digest retained in `LOG.md`, 1426 L). Docs: `SKILL.md` (3 checklist items + a
 Working-rules bullet), `corpus/knowledge/executable-scorecard.md`,
 `corpus/knowledge/round-close-gate.md` (`--tracked` mode, round-11 verdicts),
 `corpus/README.md` rows, `SCORECARD.md` (claim block + `## Axes` rows + limits),
