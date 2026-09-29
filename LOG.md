@@ -439,3 +439,13 @@
   so the coverage convention stays lane-local (kasegi's class-granularity proxy
   is a different measure).
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-12/kumitate.md`.
+  Close evidence (lane HEAD after the round-12 commit `64a27e7`, pushed):
+  `node scripts/round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=12
+  lane=kumitate checks=13 errors=0 warnings=0)` exit 0 (clean tree, 0 unpushed,
+  report tracked+pushed in the main repo as `c41e197`); `--round 12` →
+  `ROUND_GATE: CLEAN (round=12 lane=kumitate checks=10 errors=0 warnings=0)`;
+  `--tracked` → `ROUND_GATE: CLEAN (mode=tracked checked=10 errors=0
+  warnings=0)`; re-run after this evidence commit: `node scripts/proxy-check.mjs`
+  → `PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4
+  match)` exit 0 (A=4 and C=9 unchanged, so the four pins still match —
+  no `scripts/*.mjs` was edited this round).
