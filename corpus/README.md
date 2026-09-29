@@ -49,26 +49,33 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/executable-scorecard.md` | `scripts/proxy-check.mjs` (`kumitate-proxy-v1`): this lane's own frozen proxies turned executable — term table (A/C/C1/C2 → frozen command → what it guards), the `SCORECARD.md` claim-block (stanza) grammar, the `## Axes` cross-check, exit map, 10 fail-closed arms, 9 finding kinds, what it refuses to assert, and the reuse path for another lane; read-only, no env, no network, no subprocess on the measurement path | `SCORECARD.md:95-114`, `SCORECARD.md:134-143`, `SKILL.md:514-527`, `scripts/proxy-check.mjs` |
 | `knowledge/ops-watchers.md` | The five L0 ops watchers at internals level (registry family S6, 5 of 5 named): `ufo-l0-watch.mjs` per-tick heal → respawn → whip ladder; `ufo-stale-watchdog.mjs` stale-mtime nudge 1–2 → nudge 3 `remove` + `fleet-dispatcher repend`, plus the single-writer rule; `ufo-l0-monitor.mjs` `--rebind --repair --repend --settle` heal path and its queue write; `the-tick-ping.mjs` completion wakeup through ground handlers; `ufo-ground-handler.mjs` four-op unix socket (`health`/`freshness_ping`/`path_ping`/`chat`), the closed `PATH_PING_ERROR_CODES` vocabulary and the 1 s clock-skew bound | `ufo-l0-watch.mjs` (1679 L), `ufo-stale-watchdog.mjs` (1010 L), `ufo-l0-monitor.mjs` (1638 L), `the-tick-ping.mjs` (831 L), `ufo-ground-handler.mjs` (859 L) |
 | `knowledge/gate-verdict.md` | `gate.rs` + `gate_tests.rs` at internals level (registry family R10, 2 of 2 named): `GateDecision`'s five arms with line anchors, the `verdict` priority ladder, the five refusal literals, `validate_vector`'s two-scan precedence, the `echo_bounded` 512-char ceiling, the consumer call sites, and a case-level census of the 19-test pin file with its named gaps | `gate.rs` (254 L), `gate_tests.rs` (426 L), `axes.rs`, `round_digest.rs`, `loop_driver_judge.rs` |
-| `knowledge/route-probe-cluster.md` | The route-probe cluster at internals level (9 of S7's 69 members — the family row stays `no`): route-health probe internals with its outcome/refusal vocabulary and exit map, the shared redaction table and emit gate, the token-plan probes' catalog + subprocess wiring, `atomic-write.mjs`'s durable publish, and `fake-omp.mjs`'s no-network double | `probe-ufo-route-health.mjs` (1364 L), `probe-ufo-route-health.test.mjs` (411 L), `probe-redact.mjs` (160 L), `probe-redact.test.mjs` (79 L), `probe-token-plan-shared.mjs` (235 L), `probe-token-plan-models.mjs` (247 L), `probe-token-plan-kimi.mjs` (155 L), `atomic-write.mjs` (82 L), `fake-omp.mjs` (399 L) |
+| `knowledge/route-probe-cluster.md` | The route-probe cluster at internals level (**the whole of registry family S7 — 9 of 9 members**, one `##` section per member): route-health probe internals with its outcome/refusal vocabulary and exit map, the shared redaction table and emit gate, the token-plan probes' catalog + subprocess wiring, `atomic-write.mjs`'s durable publish, and `fake-omp.mjs`'s no-network double | `probe-ufo-route-health.mjs` (1364 L), `probe-ufo-route-health.test.mjs` (411 L), `probe-redact.mjs` (160 L), `probe-redact.test.mjs` (79 L), `probe-token-plan-shared.mjs` (235 L), `probe-token-plan-models.mjs` (247 L), `probe-token-plan-kimi.mjs` (155 L), `atomic-write.mjs` (82 L), `fake-omp.mjs` (399 L) |
+| `knowledge/remaining-scripts-census.md` | The S8 remainder of the script layer at census level (registry family S8 — 60 of 60 members, one `##` section per member): the split of round 12's 69-member S7 into the 9-member route-probe cluster and this remainder, the 60-row size/class census (29 suites + 23 tools + 3 shims + 4 assets + 1 doc, 54,874 L by `wc -l`), the S1–S6/S7 boundary arithmetic, the five top-level `.sh` scripts the frozen universe cannot reach, and the two-arm member-completeness probe (`comm -3` heading diff + per-section own-file anchor/symbol re-open) that sees a deleted member section where `proxy-check` cannot | `ufo-drills.mjs` (4684 L), `fleet-dispatcher.test.mjs` (4094 L), `sync-ufo-contracts.mjs` (3869 L), `ufo-swarm-wave.test.mjs` (3691 L), `primeagent-refinement-ledger.mjs` (2645 L) |
 | `lessons/round-9.md` | Round-9 method: the non-hermetic `--selftest` defect and its hermetic/integration split; the two-digest category error caught inside the round; live-surface probe as the second runnable artifact; executable checklist | LOG.md round-9; commit `round-9` |
 | `lessons/round-10.md` | Round-10 method: the fleet round-close contract turned executable (`round-gate.mjs` — 14 finding kinds, 49-case hermetic suite, exit 0/1/2/64); the two cited-commit checks derived from `PROTOCOL.md:263-265` and falsified live; `--close` red-by-construction shown on real data; the round-9 report found untracked (`REPORT_UNTRACKED` true positive) and repaired; origin-tree toy-baseline trap | LOG.md round-10; commit `round-10` |
 | `lessons/round-11.md` | Round-11 method: the lane's own axis arithmetic turned executable (`proxy-check.mjs` — 9 finding kinds, 10 fail-closed arms, 55-case hermetic suite, exit 0/1/2/64) and `round-gate.mjs --tracked` as the filed-report freshness check; the proxy before→after is measured by the same tool it verifies; the falsifications (stale `## Axes` prose, a wrong residue count caught before publication, a mid-flight red suite) | LOG.md round-11; commit `round-11` |
+| `lessons/round-13.md` | Round-13 method: the pre-registered S7 partition executed as two top-level ids (S7 = the 9-member route-probe cluster, S8 = the 60-member remainder) ⇒ C1 16/18 → 18/19 and coverage 8 → 9; why a sub-id (`S7a`) is invisible to `RE_REGISTRY_ROW` and trips `C1_TOTAL_DRIFT`; the per-member probe that closes `proxy-check`'s note-blind spot (a renamed member section on an accepted `yes` note still reads `PROXY: MATCH`); the `cite-check.mjs` prototype-chain crash and its hermetic regression case; the six in-round falsifications | LOG.md round-13; commit `round-13` |
 | `lessons/round-12.md` | Round-12 method: two fully enumerable families named at internals level (S6 ops watchers 5/5, R10 gate 2/2) ⇒ C1 14/18 → 16/18 and coverage 7 → 8; why the 13%-complete route-probe cluster did NOT flip S7 (15/18 and 16/18 both ⇒ 8; 17/18 ⇒ 9); the falsifications (a stale `## Planned` forecast, a stale `## Axes` family list, a wrong 5 s clock-skew claim in `SKILL.md`) | LOG.md round-12; commit `round-12` |
 | `lessons/round-6-aggregator-audit.md` | Round-6 aggregator audit (third-party artifact, aggregator-owned): independent re-verification of this lane's counts; ERROR rows quoted inside it are re-detected as findings (no quotation exemption) | LOG.md round-6; artifact owner: aggregator lane |
 | `lessons/round-8-aggregator-box3-coldrun.md` | Aggregator-lane round-8 box-3 non-author cold run against this lane's `SKILL.md` (third-party artifact, aggregator-owned, committed into this repo by that lane as `e79fefa`): re-ran the checklist items and measured this lane's embedded live claims at that time; its own pins were correct then and read as stale now — recorded, not rewritten | LOG.md round-8; artifact owner: aggregator lane |
 
 ## Known gaps
 
-- **Script layer** — 39 of the 72 top-level `scripts/*.mjs` carry no basename
-  mention in `SKILL.md` + `corpus/**` (re-measured round 12 with a per-basename
-  `grep -rqF` shell loop; the round-11 figure was 48 including this README's own
-  mentions), plus `charter-scribe/` (6) and `lean-cargo/` (4) — **S7 is 69
-  members in total**. The uncited remainder is
+- **Script layer** — split in round 13: **S7 is now the 9-member route-probe
+  cluster and S8 the 60-member remainder** (69 = 9 + 60), and both notes name
+  every member (`knowledge/route-probe-cluster.md`,
+  `knowledge/remaining-scripts-census.md`), so the *family* gap is closed. What
+  remains here is the file-level basename residue: 39 of the 72 top-level
+  `scripts/*.mjs` carry no basename mention in `SKILL.md` + `corpus/**`
+  (re-measured round 13 with a per-basename `grep -rqF` shell loop; the round-11
+  figure was 48 including this README's own mentions), plus `charter-scribe/`
+  (6) and `lean-cargo/` (4). The uncited remainder is
   dominated by `*_tests*.mjs` and the `primeagent-*` / `fleet-ledger-*` /
   `ufo-statusline-*`-family helpers. Named
   files that ARE cited somewhere and must not be listed as gaps:
-  `ufo-state-retention.mjs` (`sighting-wall.md`), `ufo-credential-screen.mjs`
-  (`native-admission-detail.md`, `round-6.md`), `ufo-watchdog-repend.mjs`
+  `ufo-state-retention.mjs` (`sighting-wall.md`; now also its own S8 section),
+  `ufo-credential-screen.mjs` (`native-admission-detail.md`, `round-6.md`; now
+  also its own S8 section), `ufo-watchdog-repend.mjs`
   (`queue-and-claim.md`, `round-5-aggregator-audit.md`),
   `primeagent-refinement-ledger.mjs` (`queue-summary.md`),
   `sync-ufo-contracts.mjs` (`native-judge-pipeline.md`,
@@ -76,7 +83,8 @@ fixture suite, `--strict` to fail on warnings.
   and `ufo-ground-handler.mjs` (all three now in
   `knowledge/ops-watchers.md`; `the-tick-ping.mjs` also
   `round-1-aggregator-audit.md`), `atomic-write.mjs` and `fake-omp.mjs` (both in
-  `knowledge/route-probe-cluster.md`, which is also where the probes now sit).
+  `knowledge/route-probe-cluster.md`, which is also where the probes now sit),
+  and the other 57 S8 members (each has its own `##` section in the census note).
   Counts: `ls $UFO_SRC/scripts/*.mjs | wc -l` → 72;
   `ls $UFO_SRC/scripts | wc -l` → 82 (2026-09-28). Round-8
   `scripts/cite-check.mjs --symbols --json` over the same scan set: 2026
@@ -124,11 +132,13 @@ fixture suite, `--strict` to fail on warnings.
 - **Live-surface coverage is 2 surfaces, not the registry** — round 9's
   `scripts/surface-probe.mjs` probes `ufo-sighting surface --json` and
   `fleet-dispatcher.mjs status` only; the other 16 surface families in
-  `SCORECARD.md` are covered by prose, not by a runnable probe. After round 12
-  the uncovered families are **S7** (9 of 69 members named, in
-  `knowledge/route-probe-cluster.md`) and **R11** (0 of 47); S6 and R10 closed
-  with notes that name every member, and the standard for "covered" is written
-  down in `SCORECARD.md` → `### coverage`.
+  `SCORECARD.md` are covered by prose, not by a runnable probe. After round 13
+  the single uncovered family is **R11** (42 runtime `.rs` + 5 CLI `.rs`, 0
+  named); S7 closed with its 9-member cluster note, S8 with the 60-member census,
+  and the standard for "covered" is written down in `SCORECARD.md` →
+  `### coverage`. Note the two kinds of evidence are not interchangeable: a
+  *prose* family note can be re-derived by the member probe, but no family is
+  probed live, so a covered family still means "named", not "watching".
 - **Closed by round 7** (kept here one round for traceability):
   fleet-dispatcher `queueSummary` per-field semantics → `knowledge/
   queue-summary.md`; big-test-file case inventories → `knowledge/

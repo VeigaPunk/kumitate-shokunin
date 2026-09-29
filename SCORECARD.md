@@ -69,28 +69,33 @@ nor a fresh map alone can inflate the axis.
   the family. This was implicit in rounds 8–11 (S6 read `partial — 2 of 5`);
   round 12 wrote it down and re-adjudicated S6 against it line by line.
 - **C1 — in-scope surface coverage.** Surface families whose registry cell
-  starts `yes`, over the registry below: **16 / 18 = 0.888** after round 12
-  (S6 → `yes`, R10 → `yes`; S7 and R11 stay `no`). 14 / 18 = 0.778 at round 11.
+  starts `yes`, over the registry below: **18 / 19 = 0.947** after round 13. The
+  round-12 catch-all `S7` is partitioned into `S7` = the route-probe cluster
+  (9 members; `knowledge/route-probe-cluster.md`) and the new `S8` = the
+  remaining scripts (60 members; `knowledge/remaining-scripts-census.md`) — both
+  `yes`, R11 stays `no`. C1_total therefore moves 18 → 19; that is a **registry**
+  change and it was pre-registered in round 12's `## Planned`, not slipped into
+  the round that measures it. 16 / 18 = 0.888 at round 12, 14 / 18 = 0.778 at
+  round 11.
 - **C2 — README-map freshness.** Rows in `corpus/README.md` naming a corpus note
-  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **43**;
-  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **43** after
-  round 12 (rows added for `knowledge/ops-watchers.md`,
-  `knowledge/gate-verdict.md`, `knowledge/route-probe-cluster.md` and
-  `lessons/round-12.md`) ⇒ **1.0** (39/39 at round-11 close).
+  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **45**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **45** after
+  round 13 (rows added for `knowledge/remaining-scripts-census.md` and
+  `lessons/round-13.md`) ⇒ **1.0** (43/43 at round-12 close).
 
 Diagnostic, deliberately **not** scored — file granularity over the in-scope
 source files (`scripts/*.mjs` 72 + `scripts/*/` 42 + `ufo-core-runtime/src/*.rs`
 93 + `ufo-cli/src/*.rs` 5 = **212** files / **211** unique basenames),
-basename-matched against `corpus/**/*.md` + `SKILL.md`: **150 / 211 ≈ 0.711**
-after round 12 (the numerator rose from 140 with the three new notes naming S6,
-R10 and cluster basenames; the denominator is unchanged and the components
-re-measure 72 + 42 + 93 + 5 = 212 files / 211 unique basenames), up from
+basename-matched against `corpus/**/*.md` + `SKILL.md`: **195 / 211 ≈ 0.924**
+after round 13 (the numerator rose from 150 because the S8 census names 45
+basenames no earlier note carried; the components re-measure 72 + 42 + 93 + 5 =
+212 files / 211 unique basenames), up from **150 / 211 ≈ 0.711** at round 12,
 **140 / 211 ≈ 0.663** at rounds 9–11 and 105 / 211 ≈ 0.50 in round 8 (method:
 recursive walk of `corpus/**.md` + `SKILL.md`, `basename` containment).
 Basename matching is collision-prone in both directions, which is why it is not
 the scored term; the registry's `scripts/*/` row is 42.
 
-#### In-scope surface registry (18 families)
+#### In-scope surface registry (19 families)
 
 | # | Family | Members (origin tree) | Corpus note |
 |---|---|---|---|
@@ -100,7 +105,8 @@ the scored term; the registry's `scripts/*/` row is 42.
 | S4 | sighting wall | `ufo-sighting.mjs` (396 L) + `ufo-sighting` (224 L bash) + `ufo-sighting-lib/` (26 files / 10620 L) | yes — sighting-wall |
 | S5 | routing & result helpers | `omp-global-config.mjs` (735 L) + `ufo-mission-result.mjs` (3691 L) | yes — route-resolution · failure-telemetry · singleton-and-queue-ownership |
 | S6 | ops watchers | `ufo-stale-watchdog.mjs` (1010 L) + `ufo-l0-monitor.mjs` (1638 L) + `ufo-l0-watch.mjs` (1679 L) + `the-tick-ping.mjs` (831 L) + `ufo-ground-handler.mjs` (859 L) | yes — ops-watchers (5 of 5 named at internals level, round 12; the round-11 reading `2 of 5` was right in number, wrong in members — `ufo-stale-watchdog.mjs` had only a usage list and a `Sources:` footer, while `ufo-l0-monitor.mjs` was named in `lessons/round-6.md`) |
-| S7 | remaining scripts | 69 members: 59 top-level `*.mjs` + `charter-scribe/` (6) + `lean-cargo/` (4) — re-counted round 11 (`ls scripts/*.mjs \| wc -l` → 72 minus the 13 S1–S6 `.mjs` basenames → 59; `find scripts/charter-scribe -type f \| wc -l` → 6, where the round-10 row said 5: the origin tree grew a file, owner: origin) | no — 9 of 69 named at internals level (`knowledge/route-probe-cluster.md`: the 7 `probe-*` files + `atomic-write.mjs` + `fake-omp.mjs`; `ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9, `wc -l … \| tail -1` → 3132 total). The family stays uncovered under the 5-of-5 standard — 13% named is below S6's 40% at the reading it was denied on |
+| S7 | route-probe cluster + shared helpers | 9 members: 7 `probe-*.mjs` + `atomic-write.mjs` + `fake-omp.mjs` (3,132 L) — the round-12 cluster reading, now the family's whole membership (`ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9) | yes — `knowledge/route-probe-cluster.md`: 9 of 9 named at internals level, one `## ` section per member with own-file anchors and verbatim named symbols (round 13) |
+| S8 | remaining scripts | 60 members: 50 top-level `*.mjs` + `charter-scribe/` (6) + `lean-cargo/` (4), 54,874 L (`ls scripts/*.mjs` → 72 − 13 S1–S6 basenames − 9 S7 members = 50; rebuilt from the tree by an independent scout, `comm -3` against the authoritative list empty) | yes — `knowledge/remaining-scripts-census.md`: 60 of 60 named at internals level, one `## ` section per member with ≥1 anchor in that member's own file and ≥1 symbol verbatim in it (605 OK refs, 0 errors, round 13) |
 | R1 | judge pipeline | 8 `native*.rs` core modules | yes — native-judge-pipeline |
 | R2 | loop driver + state | 12 files (`loop_driver*.rs` ×10, `state.rs`, `state_tests.rs`) | yes — loop-driver |
 | R3 | profile & cost | 5 files (`execution_profile*`, `cost_ledger*`, `native_profile.rs`) | yes — cost-and-profile |
@@ -113,11 +119,20 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
 | R11 | runtime remainder + CLI | 42 runtime `.rs` + `ufo-cli/src/*.rs` (5) | no |
 
-Covered = **16**; S7 (9 of 69 named) and R11 (0 of 47 named) count as **not**
-covered, and so does any family whose note names only part of it. Families are
-disjoint and exhaustive: script-layer members sum to **114** = 72 + 42
-(round-9 re-measure; round 8 recorded 41, the origin tree added one file);
-runtime+CLI members sum to **98** = 93 + 5.
+Covered = **18** of 19; R11 (0 of 47 named) counts as **not** covered, and so does
+any family whose note names only part of it. Families are disjoint and
+exhaustive: the script layer is the same 114 files it was in round 9 (72
+top-level `*.mjs` + 42 under `scripts/*/`; round 8 recorded 41 and the origin
+tree added one file), and round 13 cuts it three ways — S1–S6 **45** (13
+top-level `*.mjs` basenames + `collect-omp-native-handoff-lib/` 6 +
+`ufo-sighting-lib/` 26), S7 **9** (the probe cluster + its two helpers), S8
+**60** (the remaining 50 top-level `*.mjs` + `charter-scribe/` 6 +
+`lean-cargo/` 4): 45 + 9 + 60 = 114. Runtime+CLI members sum to **98** = 93 + 5.
+The count does not include the five unattributed top-level shell scripts
+(`scripts/dev-verify.sh`, `gates.sh`, `self-iter.sh`, `smoke.sh`,
+`ufo-night-watchdog.sh`) — the frozen universe is `scripts/*.mjs` plus files
+under `scripts/*/`, so they belong to no family; that is a definitional limit of
+the proxy, not a member this round silently dropped.
 
 ### Machine-readable claim block (`kumitate-proxy-v1`)
 
@@ -134,11 +149,11 @@ including `proxy-check.mjs` itself (an unrecorded edit then shows up as
 <!-- kumitate-proxy-v1
 A=4
 C=9
-C1=16
-C1_total=18
-C2=43
-C2_total=43
-pin.cite-check=8a6b5c9dd9e2fde8180dbee8293264c2b78618a15532d9c9f9e13224a4de74ce
+C1=18
+C1_total=19
+C2=45
+C2_total=45
+pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946
 pin.proxy-check=9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e
@@ -149,19 +164,34 @@ pin.proxy-check=9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=4 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`) and C=9 (`## Verifiable checklist`, all 9 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass`) ⇒ 13/16 = 0.8125 ⇒ 8 | round 11 |
-| coverage | 8 | `floor(10 × 0.888 × 1.0)` = 8; C1 registry below (16/18 — S6 and R10 flipped `yes`), C2 43/43 (`grep -c` + `find … \| wc -l`), file-level residue 150/211 ≈ 0.711 (up from 140 — the three new notes name origin basenames) | round 12 |
+| coverage | 9 | `floor(10 × 0.947 × 1.0)` = 9; C1 registry below (**18/19** — the round-12 `S7` catch-all partitioned into `S7` 9 + `S8` 60, both `yes`), C2 45/45 (`grep -c` + `find … \| wc -l`), file-level residue 195/211 ≈ 0.924 (up from 150 — the census names 45 basenames no earlier note carried) | round 13 |
 
 Why not 10 on either axis: operability now has four runnable artifacts and nine
 executed checklist items, but still no CI/schedule leg, and the probes cover
 citations, two live surfaces, the round record and this lane's own scorecard —
-not the other 16 registry families. Coverage still has two uncovered families
-(S7 at 9 of 69 members named, R11 at 0 of 47) and ~29% of in-scope source files
-uncited; a note that names a fraction of a family is exactly what the standard
-above refuses to count. Why not 0/lower: the whole judgment path (dispatcher,
+not the other 17 registry families. Coverage now has **one** uncovered family
+(R11, 42 runtime `.rs` + 5 CLI `.rs`, 0 of 47 named) and ~8% of in-scope source
+files uncited (16 of 211 basenames never named anywhere in this lane's prose,
+counting basenames rather than files and ignoring family membership); a note that
+names a fraction of a family is exactly what the standard above refuses to count.
+Why not 0/lower: the whole judgment path (dispatcher,
 launcher, judge pipeline, loop driver, wall) is mapped at internals level with
 line-level citations, and the gates that check those citations, two of those live
 surfaces, this lane's round record and the scorecard claim itself now run on
 demand.
+
+Round 13 changed the *shape* of the registry, not only its value: the round-12
+catch-all `S7` (69 members) was partitioned at the boundary the round-12 residue
+note already drew — `S7` is now the 9-member route-probe cluster and `S8` the
+60-member remainder — so both halves are judged against notes that name every
+member, and `C1_total` moved 18 → 19 as a pre-registered registry change. The
+partition was forced to keep top-level ids: `scripts/proxy-check.mjs` counts
+registry rows with `/^\| (S|R)\d+ \|/`, so the plan's original `S7a`/`S7b` labels
+would have been invisible to the tool (`C1_TOTAL_DRIFT`, measured). One more move
+landed in the same round and moved no proxy term: `scripts/cite-check.mjs` could
+die on a doc containing a backticked `Object.prototype` member name
+(`toString`/`valueOf`/`constructor`) — a real crash reproduced before the fix and
+now a hermetic case (19 → 20 cases).
 
 Round 12 changed what the coverage score *rests on*, not only its value: the
 family standard ("every member named at internals level") was written down after
@@ -187,6 +217,9 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 13 | coverage | C1 16/18 (C1_total 18), C2 43/43, residue 150/211 ≈ 0.711 ⇒ `floor(10 × 0.888 × 1.0)` = 8; the pre-registered plan offered a partition (17/19 = 0.894 ⇒ **still 8**) or a census of the 60-member remainder, and named the arithmetic: only 17/18 covered or a stated partition reaches 9 | C1 **18/19** (S7 = the 9-member probe cluster, S8 = the 60-member remainder — both `yes` at internals level, one `## ` section per member with an own-file anchor and a verbatim symbol), C2 **45/45** (`knowledge/remaining-scripts-census.md` + `lessons/round-13.md`), residue **195/211 ≈ 0.924** ⇒ `floor(10 × 0.947 × 1.0)` = **9**; operability untouched (A=4, C=9 — no script and no `- [` line added) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=18/19 C2=45/45 coverage=9; pins=4 match)` exit 0; member probe `MEMBER_PROBE: 60/60 ok` (S8) and `9/9 ok` (S7); `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 45, `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 45 |
+| 13 | coverage (registry change — pre-registered in round 12's `## Planned`) | S7 = a 69-member catch-all whose cell read `no`, pointed at a 9-member residue note; the plan's labels were `S7a`/`S7b` | S7 = 9 members `yes` (`knowledge/route-probe-cluster.md`, now with one `## ` section per member) + new S8 = 60 members `yes` (`knowledge/remaining-scripts-census.md`); C1_total 18 → 19. `S7a`/`S7b` were **refused on measurement**: `RE_REGISTRY_ROW = /^\| (S\|R)\d+ \|/` (`scripts/proxy-check.mjs:139-143`) makes a suffixed id invisible — the critic's arm measured `C1_TOTAL_DRIFT declared=18 computed=17` | registry rows 108-109; independent scout census (`comm -3` vs the authoritative list → empty; `wc -l` total 54874); critic arms (i)/(iii)/(iv)/(v) |
+| 13 | operability (uncounted: a defect repair inside a coverage round, no proxy term moves) | `scripts/cite-check.mjs` — the lane's citation gate — died with an uncaught `TypeError [ERR_INVALID_ARG_TYPE] … Received function toString` (no verdict line) on any doc containing a backticked `Object.prototype` member name (`toString`, `valueOf`, `constructor`, `hasOwnProperty`): `ALIASES` was a plain object literal, so `ALIASES['toString']` returned the inherited function and `aliasRec` joined `opts.src` with it; `GENERATED_POINTERS` had the same shape. 19 hermetic cases | three token-keyed maps are null-prototype; a fixture doc + a hermetic regression case added; `node scripts/cite-check.mjs --selftest` → `20/20 cases passed (hermetic)` `VERDICT: PASS` exit 0. The un-fixed file with the same fixture dies inside the suite (exit 1) — failing-before/passing-after both recorded | `node scripts/cite-check.mjs --selftest`; A and C unchanged (A=4, C=9), so `operability` stays 8 and only `pin.cite-check` is re-pinned; defect found by an L2 executor, reproduced by L1 before repair |
 | 12 | coverage | C1 14/18 (S6 `partial — 2 of 5 named`, R10 `no`), C2 39/39, residue 140/211 ≈ 0.663 ⇒ `floor(10 × 0.778 × 1.0)` = 7; round 11's plan named S7's route-probe cluster as the route | C1 **16/18** (S6 5 of 5, R10 2 of 2 — both notes landed at internals level with a per-member probe), C2 **43/43** (3 knowledge notes + `lessons/round-12.md`), residue **150/211 ≈ 0.711** ⇒ `floor(10 × 0.888 × 1.0)` = **8**; the pre-registered S7 route was **deviated from on evidence** — a 9-of-69 cluster note would have flipped a family at 13% named while S6 sat denied at 40%, so S7 keeps `no` and the cluster note lands as C2-only residue progress; operability untouched (A=4, C=9 — the round adds no script and no `- [` line) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4 match)` exit 0; `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 43; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 43; member probes in `knowledge/ops-watchers.md` and `knowledge/gate-verdict.md` (both printed with their output); 7/7 mutation arms re-proved incl. a dishonest `yes` flip → `C1_DRIFT` |
 | 12 | coverage (uncounted) | S7 69 members, 0 named | S7 row keeps `no`; `knowledge/route-probe-cluster.md` names 9 members at internals level (`ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9; `wc -l … \| tail -1` → `3132 total`; the narrower `probe-*` glob is 7 files / 2,651 L — both measurements recorded) | registry S7 cell; `corpus/knowledge/route-probe-cluster.md` (`## Scope — this note does NOT cover S7`); README row |
 | 11 | operability | A=3, C=6 ⇒ `f_O = 9/12 = 0.75` ⇒ 7; the plan fixed the arithmetic (`A+C ≥ 12` for 8) and named (a) a scheduled/CI leg or (b) three more genuinely executed items | A=4 (`scripts/proxy-check.mjs`, contract `kumitate-proxy-v1`, 1173 L, 9 finding kinds, 10 fail-closed arms, 55-case hermetic suite) + C=9 (+ filed-report tracking, proxy recompute, proxy-check hermetic suite) ⇒ `f_O = 13/16 = 0.8125` ⇒ **8**; option (a) refused on evidence — the only schedulers on this host are `systemd --user` timers owned by other identities (`ai-usage`, `webzites-probe`, `charter-scribe`) and the kake lane's recorded precedent is that a lane does not toggle host state itself (`.ufo/l0-questions.md`, kake round-12); a parse defect found by L1 falsification AFTER the suite was green — a `\|` inside a registry cell shifted the 4th-cell test and silently stopped counting that row — was fixed with two regression cases (suite 53 → 55, re-pinned) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=39/39 coverage=7; pins=4 match)` exit 0; `--selftest` → `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0; `surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass` exit 0; `round-gate.mjs --tracked` → `ROUND_GATE: CLEAN (mode=tracked checked=8 errors=0 warnings=0)` exit 0; `round-gate.mjs --selftest` 57/57 exit 0; failures kept: `--tracked --close` exit 64, `--tracked --lane other` exit 2 `NO_FILED_REPORTS`, stanza/registry/pin mutations → `PROXY: DRIFT` exit 1; the `\|`-row falsification that exposed the parse defect produced a false MATCH before the fix and the correct parse after it; close: `node scripts/round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=11 lane=kumitate checks=13 errors=0 warnings=0)` exit 0 |
@@ -200,42 +233,41 @@ the frozen definitions name.
 
 ## Planned
 
-**round 12 (executed) vs the forecast above.** The pre-registered route — "one
-internals-level family note out of the S7 census, landed from the route-probe
-cluster" — was **not** taken as written, and the deviation is recorded rather
-than smoothed: flipping S7 on a 9-of-69 cluster note (13% named) while S6 sat
-denied at 40% would have inverted the standard the registry already applied to
-S6. Round 12 instead completed the two *fully enumerable* families (S6 5/5, R10
-2/2 ⇒ C1 16/18) and landed the cluster note as C2-only residue progress. The
-forecast's arithmetic was also stale twice: C2 had already closed at 39/39 (not
-38/38), and 15/18 and 16/18 both score 8 — the next threshold is **17/18 ⇒ 9**.
+**round 13 (executed) vs the forecast above.** The pre-registered 13-plan is the
+row that ran, with one substitution and one addition, both measured:
 
-**round 13 (coverage, 8): pre-register the S7 partition, then work it.** Two
-candidate moves, both arithmetic-checked and neither to be slipped in mid-round:
-1. **Partition S7 into `S7a` (route-probe cluster + its shared helpers) and
-   `S7b` (the 60-member remainder)** — a *registry* change (C1_total 18 → 19).
-   With S7a's note already landed, C1 becomes 17/19 = 0.894 ⇒ still 8; the gain
-   is a clean, honest boundary plus a smaller remainder to name later. The
-   partition rule must be stated with the same completeness test as S6/R10 and
-   must be declared in the round that measures it (definition changes are
-   pre-registered, never slipped in — see the `C`-regex note below).
-2. **Name the 60-member remainder at census level** (`S7b`) — the round-11
-   census is done (69 members, `ls scripts/*.mjs | wc -l` → 72 − 13 S1–S6 = 59,
-   + `charter-scribe/` 6 + `lean-cargo/` 4), so the work is reading and citing,
-   not discovery. R11 (42 runtime `.rs` + 5 CLI `.rs`, 0 named) is the other
-   candidate and is larger per member than it looks.
-C1 17/18 without a partition is impossible for S7 alone; reaching 9 on this axis
-needs either 17/18 covered or a stated partition — which is why the partition
-decision is the first thing round 13 states.
+- The partition was executed, but **not with the `S7a`/`S7b` labels the plan
+  used**: a suffixed id is invisible to `RE_REGISTRY_ROW` (`/^\| (S|R)\d+ \|/`,
+  `scripts/proxy-check.mjs:139-143`), so the split is `S7` = the 9-member cluster
+  and `S8` = the new 60-member remainder. The plan's id labels would have
+  produced `C1_TOTAL_DRIFT`, measured on a copy before landing.
+- Option 1 alone (partition ⇒ 17/19 = 0.894) would have moved **no** score; the
+  round did option 1 **and** option 2 (name all 60 members), so the forecast's
+  "plus a smaller remainder to name later" is already named: C1 18/19 ⇒ 9.
+- The forecast's "17/18 ⇒ 9" for the un-partitioned registry was right and is now
+  unreachable by construction — the 69-member catch-all no longer exists.
 
-One hardening is deliberately *not* applied here: the frozen `C` definition's
-regex (`^\s*- \[`) admits `- [x]` lines that `surface-probe --checklists` skips,
-so the term has a theoretical farming vector. Tightening it to "executed `- [ ]`
-items only" changes **no number today** (all nine items are `- [ ]` and executed:
-`CHECKLIST_SKIPPED: 0`, `CHECKLIST: 9/9 pass`), which is exactly why it must be
-pre-registered as a definition change in the round whose *before* state it is
-measured against — the round-11 critic raised it, and slipping it in now would
-change the meaning of a before→after that is already recorded.
+**round 14 (coverage, 9): pre-register before measuring, because two of the
+three candidate moves change what a term means.** In preference order:
+
+1. **R11 coverage** — the last uncovered family (42 runtime `.rs` + 5 CLI `.rs`),
+   named at internals level the same way. Pure coverage work, but it lands at
+   C1 19/19 ⇒ `floor(10 × 1.0 × 1.0)` = **10**, i.e. saturation, which this
+   scorecard must not claim while the file-level residue is 0.924 and the family
+   standard rests on lane prose. If it lands, coverage retires or splits (see
+   `## Retired`).
+2. **The `--claims` mode** — move the member probe into `scripts/proxy-check.mjs`
+   so a `yes` cell is re-derived from the notes. That is an **operability** move
+   (A=4 → 5, C unchanged; `f_O = 14/17 = 0.823` ⇒ still 8) and it closes the
+   loudest hole both the round-12 and round-13 critics found; it needs its own
+   pin, its own hermetic cases and its own before/after row.
+3. **The frozen `C` regex tightening** (`^\s*- \[` admits `- [x]` lines that
+   `surface-probe --checklists` skips) — still a **definition** change, still
+   changes no number today (`CHECKLIST_SKIPPED: 0`, `CHECKLIST: 9/9 pass`), so it
+   must be declared in the round whose *before* state is measured against it.
+
+Only one of these is one axis-move; they are pre-registered here and must not be
+combined in a round that also claims a first.
 
 ## Limits (recorded, not hidden)
 
@@ -251,20 +283,29 @@ change the meaning of a before→after that is already recorded.
 - **Member completeness is not machine-checked by `proxy-check.mjs`.** It parses
   the registry cell (`cells[4].startsWith('yes')`) and the C2 row regex, never
   note contents, so the *cheapest* fake — flip two cells, update the stanza and
-  the `## Axes` integer — passes all arithmetic checks. The round-12 answer is
-  the per-note member probe (one `## ` heading per member plus line-anchored
-  citations inside that member's section, printed with its output in each note);
-  it is a documentation check a reader or lane can re-run, not a gate. Turning it
-  into a gate (a `--claims` mode that re-derives member coverage from the notes)
-  is a *next*/operability move and is deliberately not slipped into this round.
+  the `## Axes` integer — passes all arithmetic checks. The answer is the
+  per-note member probe (one `## ` heading per member, each with an anchor in that
+  member's own file and a verbatim symbol, printed with its output in the note);
+  it is a documentation check a reader or lane can re-run, not a gate. Round 13
+  measured the hole rather than restating it: with one member section renamed,
+  `MEMBER_PROBE: 58/60 ok` exit 1 (S8) and `7/9 ok` exit 1 (S7) while
+  `scripts/proxy-check.mjs` still printed `PROXY: MATCH … coverage=9` exit 0, and
+  a registry row flipped to `yes` with no note behind it also passes. Turning the
+  probe into a gate (`--claims` mode re-deriving member coverage from the notes)
+  is pre-registered for round 14 and is deliberately not slipped into this round.
+  The probe is also blind to what it cannot read: it checks shape (heading, live
+  anchor, symbol presence), never whether the sentence around the anchor is true.
 - **The route-probe cluster's boundary is a stated rule, not a natural kind.**
   9 members (`probe-*.mjs` ×7 + `atomic-write.mjs` + `fake-omp.mjs`; 3,132 L) is
   this lane's cluster definition, chosen because both helpers are imported by the
   cluster's suites; the narrower `probe-*` glob gives 7 files / 2,651 L. The
   round-11 plan's "8 uncited companions / 3,132 L" matches the 9-member reading
   (8 companions = members − hub), so its figure was a membership-boundary
-  artifact, not a wrong number — both measurements are in the note and the cell.
-  `scripts/omp-global-config.mjs` is excluded (S5 member, already covered).
+  artifact, not a wrong number. Round 13 promoted this rule to a **registry
+  boundary** (S7 = these 9, S8 = the other 60), which is what makes S7's `yes`
+  honest: the same 9 files that were "13% of a family" in round 12 are now 100%
+  of a smaller one. `scripts/omp-global-config.mjs` is excluded (S5 member,
+  already covered).
 - **A quotation of a finding is itself a finding.** The aggregator lane's
   `corpus/lessons/round-6-aggregator-audit.md` quotes its own ERROR rows; the
   round-11 re-measure counts `errors=14`, **all** inside third-party aggregator
@@ -278,11 +319,32 @@ change the meaning of a before→after that is already recorded.
   quotation exemption exists or was added: those artifacts are the auditor's,
   reported and not rewritten. Owner: aggregator lane. Zero of the seven are in
   this lane's own prose.
-- **Suite split (round 9).** `--selftest` measures the tool only (19 hermetic
-  cases; `round-gate --selftest` follows the same rule — 57 cases after round 11,
+- **Suite split (round 9).** `--selftest` measures the tool only
+  (`cite-check` 20 hermetic cases after the round-13 regression case;
+  `round-gate --selftest` follows the same rule — 57 cases after round 11,
   `proxy-check --selftest` with 55); live-tree assertions sit behind
   `--integrations`, which is red for third-party content rather than for
   tooling. One run shows both: `--selftest --integrations`.
+- **A gate that dies is not a gate that disagrees.** Round 13 repaired a real
+  crash in `scripts/cite-check.mjs`: a backticked `Object.prototype` member name
+  in ANY doc (`toString`, `valueOf`, `constructor`, `hasOwnProperty`) walked the
+  prototype chain of three token-keyed map literals and threw
+  `ERR_INVALID_ARG_TYPE` from `path.join` before any verdict line — the process
+  died, so a reader saw no `CLEAN`/`DRIFT`. Reproduced by L1 before the fix, fixed
+  by making the three maps null-prototype, covered by a hermetic case that fails
+  on the un-fixed file (`--selftest` dies, no verdict) and passes after
+  (`20/20 cases passed (hermetic)`). The class matters more than the instance:
+  this lane's gates are also its evidence, so an unhandled throw in one is a
+  silent hole in the round record, not just a tool bug.
+- **`REF_OWNER_AMBIG` can rebind a ref to the wrong file.** `cite-check`
+  attributes a short `:N` ref to the most recent explicit path token; when a
+  sentence mentions another file's path before the ref, the ref is rebound to a
+  file whose length fits. In round 13, 17 refs across the two new notes were
+  ambiguous and **three of them** (`scripts/ufo-swarm-wave.test.mjs:158/573/980`)
+  were rebound to the SUT `scripts/ufo-swarm-wave.mjs`, which also fits — the
+  author's intent was the suite. Both notes were repaired to cite the intended
+  file explicitly (17 → 0 ambiguities), and the durable rule is: a ref that
+  follows a foreign path token must be written with its own full path.
 - **The claim block recomputes, it does not justify.** `proxy-check.mjs` verifies
   that `SCORECARD.md`'s terms match the tree and that the derived scores match
   the `## Axes` rows; it cannot show that a term measures what its name suggests
@@ -328,10 +390,26 @@ change the meaning of a before→after that is already recorded.
   5 → 6 files (the S7 member row in this file is corrected to 69 in round 11) and
   `crates/ufo-core-runtime/bundled/omp-seat-routing.json` is red on the origin's
   own `sync-ufo-contracts.mjs --check` (ownerLane `nc8-runtime`, exit 1) — both
-  reported, neither owned here.
+  reported, neither owned here. Round 13 measures the drift it must survive:
+  origin HEAD moved `ee907f1cf` → `daa371583` → `4f34e7dab` over rounds 12–13 with
+  35 dirty paths at the round-13 reading, and every one of the 69 census targets
+  was checked for a same-day mtime (none; newest 2026-09-27 20:17) before its
+  anchors were written, so the 605 + 270 refs in the two new notes are pinned to a
+  revision the origin was not editing. A future re-census must re-run the probes,
+  not trust this file's numbers.
+- **The census counts 45 + 9 + 60 + the five unattributed shell scripts.** The
+  frozen universe is `scripts/*.mjs` plus files under `scripts/*/`; five
+  top-level shell scripts (`scripts/dev-verify.sh`, `gates.sh`, `self-iter.sh`,
+  `smoke.sh`, `ufo-night-watchdog.sh`) sit outside it and belong to no family, so
+  no registry row can ever name them. Recorded as a definitional limit rather
+  than absorbed into S8, whose cell would otherwise be inflated by files the
+  family definition does not cover.
 
 ## Retired
 
-None. Neither owned axis is saturated. If the surface registry reaches 18/18
-while the file-level residue stays above ~20%, coverage splits into
-`coverage:script-layer` vs `coverage:runtime-layer` rather than being retired.
+None. Neither owned axis is saturated. Coverage now stands at 18/19 with **R11**
+(42 runtime `.rs` + 5 CLI `.rs`, 0 of 47 named) as the only uncovered family; if
+that lands, C1 reaches 19/19 and the axis is saturated at 10 — at which point
+coverage splits into `coverage:script-layer` vs `coverage:runtime-layer` (the
+file-level residue is 0.924, not 1.0, and the family standard is still lane prose
+rather than a gate) rather than being retired.

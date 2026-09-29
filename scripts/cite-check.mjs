@@ -87,15 +87,26 @@ const ROOT_PRECEDENCE = [
   /^tests\//,
 ];
 
+/**
+ * Token-keyed maps MUST be null-prototype. A plain object literal resolves an
+ * inherited key — `ALIASES['toString']` yields `Object.prototype.toString`, not
+ * `undefined` — so a backticked `toString`/`valueOf`/`constructor` token in a doc
+ * used to pass the path guard and reach `aliasRec`, which then joined `opts.src`
+ * with a function: uncaught `ERR_INVALID_ARG_TYPE`, no verdict line, gate dead.
+ * `GENERATED_POINTERS['toString']` had the same shape (spread of a function).
+ * Repair: round 13, regression case `prototype-member token` in the hermetic suite.
+ */
+const nullProto = (entries) => Object.freeze(Object.assign(Object.create(null), entries));
+
 /** Path shorthands found in the docs (data-driven; see report). */
-const ALIASES = {
+const ALIASES = nullProto({
   cli: 'crates/ufo-cli/src/main.rs',
   dispatcher: 'scripts/fleet-dispatcher.mjs',
   base: 'scripts/ufo-sighting-lib/base.mjs',
-};
-const SHORTHAND_PATHS = {
+});
+const SHORTHAND_PATHS = nullProto({
   'cli/main.rs': 'crates/ufo-cli/src/main.rs',
-};
+});
 /** Prefixes that make an unresolved path real drift rather than prose. */
 const SOURCE_PREFIXES = [
   'crates/', 'scripts/', 'config/', 'conformance/', 'tests/', 'docs/', 'packages/', 'skills/',
@@ -130,12 +141,12 @@ const WORKSPACE_PREFIX_RES = [
   /\/\.ufo\//, /^\.ufo$/,
 ];
 /** $OUT_DIR-generated names: informational, printed with their pointers. */
-const GENERATED_POINTERS = {
+const GENERATED_POINTERS = nullProto({
   'omp_role_chains.rs': [
     'crates/ufo-core-runtime/build.rs:117',
     'crates/ufo-core-runtime/src/execution_profile.rs:572',
   ],
-};
+});
 const HOME_CONFIG_RE = /^(?:~\/)?\.(?:omp|config\/omp)\//;
 
 const SYMBOL_STOPWORDS = new Set([
@@ -1362,6 +1373,9 @@ Shorthand: \`cli:1\` resolves through the alias map.
   writeFileSync(join(selfRoot, 'corpus', 'README.md'),
     '# fixture corpus\n\nsee `knowledge/dispatch-shapes.md` and `corpus/knowledge/dispatch-shapes.md`\n');
   writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'dispatch-shapes.md'), '# dispatch shapes\n');
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'prototype-tokens.md'),
+    '# prototype member tokens\n\nProse, not paths: `toString`, `valueOf`, `constructor`, `hasOwnProperty`.\n'
+    + 'One real ref in the same doc: `scripts/real.mjs:1`.\n');
   writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'orphan.md'),
     '# orphan fixture\n\nA lone ref (:424242) with no path token anywhere above it.\n');
 }
@@ -1400,6 +1414,13 @@ function selfTest(opts) {
       const hit = kindOf(rep, 'UNRESOLVED').find((f) => f.token === 'scripts/no-such-file.mjs');
       return { ok: Boolean(hit) && hit.severity === 'error' && rep.verdict === 'FAIL',
         detail: hit ? `${hit.kind}/${hit.severity} @${hit.file}:${hit.line}` : 'not reported' };
+    });
+    check('prototype-member token (`toString`) is prose, not a crash', () => {
+      const protoRep = run();
+      const docs = protoRep.files.filter((f) => f.file === 'corpus/knowledge/prototype-tokens.md');
+      const errors = docs.flatMap((f) => f.findings).filter((f) => f.severity === 'error');
+      return { ok: docs.length === 1 && errors.length === 0,
+        detail: `docs=${docs.length} errors=${errors.length}${errors[0] ? ` ${errors[0].kind}` : ''}` };
     });
     check('out-of-range ref → LINE_OOR error', () => {
       const hit = kindOf(rep, 'LINE_OOR').find((f) => f.token === 'scripts/real.mjs' && f.ref === ':999');

@@ -397,8 +397,15 @@ mirror checks; `prepare-ephemeral-l1.mjs` stages an ephemeral L1 env.
   level (tick order, the nudge→remove→repend ladder, the single-writer rule,
   the four socket ops and their closed wire vocabulary).
 - `corpus/knowledge/route-probe-cluster.md` — the `probe-*` cluster named above
-  (9 of S7's 69 members): route-health probe internals, the redaction table and
-  emit gate, the token-plan probes' catalog + subprocess wiring.
+  (the whole of registry family S7 — 9 of 9 members, one section per member):
+  route-health probe internals, the redaction table and emit gate, the
+  token-plan probes' catalog + subprocess wiring, `atomic-write.mjs`'s durable
+  publish and `fake-omp.mjs`'s no-network double.
+- `corpus/knowledge/remaining-scripts-census.md` — registry family S8, the 60
+  script-layer members no other family owns (S7 + S8 = the 69 the round-12
+  catch-all counted): a 60-row size/class census, the S1–S6/S7 boundary
+  arithmetic, and the two-arm member-completeness probe that re-derives the
+  claim from the note (`proxy-check` never reads note contents).
 - `corpus/knowledge/gate-verdict.md` — `gate.rs` + `gate_tests.rs` verdict
   machinery (registry family R10): the `verdict` ladder, the refusal literals,
   `validate_vector` precedence, the echo ceiling and the 19-test census.
@@ -540,8 +547,8 @@ Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
 `CITE_CHECK: DRIFT` / `SURFACE_PROBE: DRIFT` is a tree finding — the gate
 measured the tree, the owner named in that line owns the repair, and neither
-gate writes to the origin tree. Live 2026-09-28 at round-11 close:
-`CITE_CHECK: DRIFT (files=41 tokens=2739 errors=14 warnings=72)` — every error
+gate writes to the origin tree. Live 2026-09-28 at round-13 close:
+`CITE_CHECK: DRIFT (files=47 tokens=4530 errors=14 warnings=75)` — every error
 sits inside third-party aggregator artifacts
 (`corpus/lessons/round-6-aggregator-audit.md` 2 × `LINE_OOR`;
 `corpus/lessons/round-8-aggregator-box3-coldrun.md` 12, that file being extended

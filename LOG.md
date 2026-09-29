@@ -449,3 +449,109 @@
   → `PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4
   match)` exit 0 (A=4 and C=9 unchanged, so the four pins still match —
   no `scripts/*.mjs` was edited this round).
+- 2026-09-28 — round 13 (coverage 8 → 9): the S7 partition, pre-registered in
+  round 12's `## Planned`, executed as **two top-level registry ids** — `S7` =
+  the 9-member route-probe cluster and the new `S8` = the 60-member remainder —
+  and both halves named at internals level in the same round. Before: C1 16/18
+  (S7 `no` at 9 of 69 named, C1_total 18), C2 43/43, residue 150/211 ≈ 0.711 ⇒
+  `floor(10 × 0.888 × 1.0)` = 8. After: `PROXY: MATCH (A=4 C=9 operability=8;
+  C1=18/19 C2=45/45 coverage=9; pins=4 match)` exit 0; C2 by `grep -c '^\|
+  \`\(knowledge\|lessons\)/' corpus/README.md` → 45 and `find corpus/knowledge
+  corpus/lessons -name '*.md' \| wc -l` → 45; residue 195/211 ≈ 0.924. A and C
+  untouched (`find … \| wc -l` → 4; `grep -c '^\s*- \[' SKILL.md` → 9), so
+  operability stays 8. The S7 half alone would have scored nothing: 17/19 ⇒
+  `floor(8.947)` = 8.
+  The partition's id labels were **refused on measurement**, not preference:
+  `scripts/proxy-check.mjs` counts registry rows with `RE_REGISTRY_ROW =
+  /^\| (S\|R)\d+ \|/` (`:139-143`, count at `:255-265`), so the plan's `S7a`/
+  `S7b` would have been invisible — a copy with `| S7a |` reports `C1_TOTAL_DRIFT
+  declared=18 computed=17` exit 1. The split therefore had to be two top-level
+  rows, which is also what makes 18/19 reachable.
+  Landed: `corpus/knowledge/remaining-scripts-census.md` (new, 854 L — registry
+  family S8, 60 of 60 members: a 60-row `| member | L | class |` census (29
+  suites + 23 tools + 3 shims + 4 assets + 1 doc, 54,874 L by `wc -l`), the
+  S1–S6/S7 boundary arithmetic, the five top-level `.sh` scripts the frozen
+  universe cannot reach, the trailing-newline caveat on
+  `scripts/ufo-l0-monitor.test.mjs` (1345 by `wc -l`, 1346 real), and a two-arm
+  member-completeness probe printed with its output); `corpus/knowledge/
+  route-probe-cluster.md` (rewritten: title, `## Scope` and membership block now
+  state the partition, `## What each probe answers` replaced by nine per-member
+  `## ` sections from the S7 executor, plus the probe section and rewritten
+  limits; the round-12 topic sections, decision table and fenced citation ledger
+  are unchanged); `SCORECARD.md` (registry S7 9-member `yes` + new S8 row, 19
+  families, C1/C1_total/C2/C2_total + re-pinned `pin.cite-check`, `## Axes`
+  coverage 8 → 9, three move-log rows, round-13 verification of the round-12 plan
+  + a round-14 plan, four new limits: the partition's boundary rule, a gate that
+  dies is not a gate that disagrees, `REF_OWNER_AMBIG` can rebind a ref to the
+  wrong file, and the five unattributed `.sh` scripts); `corpus/README.md` (2 new
+  rows ⇒ C2 45/45, the cluster row's parenthetical, the script-layer and
+  live-surface gap prose); `corpus/lessons/round-13.md` (new); `SKILL.md` (the
+  census pointer bullet, the cluster bullet, the live `CITE_CHECK:` reading);
+  `scripts/cite-check.mjs` (defect repair, below); `LOG.md` (this entry).
+  Evidence: `node scripts/proxy-check.mjs` → `PROXY: MATCH (…)` exit 0;
+  `--selftest` → `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0;
+  `node scripts/cite-check.mjs` → `CITE_CHECK: DRIFT (files=47 tokens=4530
+  errors=14 warnings=75)` exit 1 — **all 14 errors inside the two third-party
+  aggregator artifacts** (`round-6-aggregator-audit.md` 2 × `LINE_OOR`,
+  `round-8-aggregator-box3-coldrun.md` 12), `errors=0` in the two new notes
+  (`byKind` for `remaining-scripts-census.md`: `OK=605 FRAGMENT=69`;
+  `route-probe-cluster.md`: `OK=270 FRAGMENT=45`); `--selftest` →
+  `20/20 cases passed (hermetic)` `VERDICT: PASS` exit 0;
+  `node scripts/surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass` exit 0;
+  member probes → `MEMBER_PROBE: 60/60 ok` (S8) and `9/9 ok` (S7) exit 0, and
+  with one member heading renamed `58/60 ok` / `7/9 ok` exit 1 while
+  `proxy-check` still prints `PROXY: MATCH` exit 0 — the arm that proves the
+  compensating check is armed.
+  In-round falsifications that changed documents:
+  1. a member sheet inside the round mis-transcribed one member (a g5 file, 58 L,
+     listed in g6 with `scripts/ufo-state-retention.mjs` 2,284 L missing; the
+     group total proved it: 6,929 against the declared 9,155) — caught by the
+     member probe (`DUPLICATE_HEADING` + `MISSING_HEADING`), fixed by the author,
+     and the landed note verifies 60/60 against the origin-derived census;
+  2. `wc -l` vs real lines on `scripts/ufo-l0-monitor.test.mjs` (no trailing
+     newline: 1,345 vs 1,346; the column's total is 54,874, the per-file reading
+     54,875) — both recorded in the note, the column keeps `wc -l`;
+  3. `scripts/cite-check.mjs` **died** — uncaught `TypeError
+     [ERR_INVALID_ARG_TYPE] … Received function toString` from `path.join`, no
+     verdict line — on any doc containing a backticked `Object.prototype` member
+     name (`toString`, `valueOf`, `constructor`, `hasOwnProperty`), because three
+     token-keyed maps were plain literals whose prototype chain answered for the
+     token (`ALIASES`, `SHORTHAND_PATHS`, `GENERATED_POINTERS`). Found by an L2
+     executor, reproduced by L1, fixed by making the maps null-prototype, and
+     covered by a hermetic case that kills the un-fixed file (suite exits 1 with
+     no verdict) and passes after (`20/20`); `pin.cite-check` re-pinned
+     `8a6b5c9d…` → `a11ead17…`; A and C did not move, so no proxy term changed;
+  4. 17 short `:N` refs in the two new notes were `REF_OWNER_AMBIG`, and three
+     (`scripts/ufo-swarm-wave.test.mjs:158/573/980`) had been rebound to the SUT
+     `scripts/ufo-swarm-wave.mjs`, which also fits — the `test(...)` names live in
+     the suite; all 17 were rewritten to cite the intended file explicitly and
+     both notes now report zero ambiguity;
+  5. the census note's `SCORECARD.md` line refs moved when this round edited that
+     file (the S7 row `:103` → `:108`, the plan `:213` → prose, R11 `:114` →
+     `:120`) — re-pointed after landing;
+  6. the frame's own claims were corrected against measurement before landing:
+     "six members already named" → eleven by full path (15 by basename), and the
+     class histogram → 29 suites + 23 tools + 3 shims + 4 assets + 1 doc.
+  Method: 16-lane batched L2 dispatch (planner, scout/census, 7 executors —
+  six S8 slices balanced by `wc -l` plus the S7 addendum — scribe, connector,
+  critic, 2 reviewers, labrat, sentinel) routed planner/connector `@m_lunamax` ·
+  executor/scribe/scout `@m_flash` · critic/reviewer/sentinel/labrat `@m_zfl`;
+  executors drafted into `/tmp/kumitate-r13/parts/`, L1 re-verified every ledger
+  (428 anchors + 506 symbols by its own pass, in addition to the reviewers'),
+  assembled the notes, repaired the ambiguities, ran both probes and the gates,
+  and landed every edit. Reviewer coverage: 290 rows / 289 OK / 1
+  truncated-ledger-text and 314 rows / 0 wrong-line / 0 missing symbols; 29/29 +
+  30/30 sections judged to describe their own member; labrat: 69/69 parse, 804
+  symbols with 0 missing, `wc -l` totals 54,874 (S8) + 3,132 (S7); sentinel:
+  both trees read-only, no target with a same-day mtime, zero credential-shaped
+  hits in the scratch tree, no lane-owned listener or unit; connector: two
+  Kake references to `charter-scribe` (site-probe context), no sibling uses
+  family-member enumeration.
+  Cross-domain (reported, not absorbed): origin HEAD moved `daa371583` →
+  `4f34e7dab` with 35 dirty paths at the round-13 reading (none of the 69 census
+  targets; sentinel verified no target file has a 2026-09-28 mtime and all 69 are
+  git-tracked); `scripts/lean-cargo/README.md:77` claims `measure.sh` wipes
+  sccache when `RESET_CACHE=1`, but that token exists nowhere in the script and
+  the wipe at `measure.sh:66` is unconditional (owner: origin tooling lane); the
+  five top-level `.sh` scripts sit outside the frozen counting universe.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-13/kumitate.md`.
