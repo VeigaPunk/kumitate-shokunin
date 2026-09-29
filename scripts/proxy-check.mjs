@@ -4,7 +4,7 @@
  * Read-only, zero deps, ESM, node >= 20, no network. Contract:
  * kumitate-proxy-v1 (parent-frozen).
  *
- *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--json] [--strict]
+ *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--json] [--strict]
  *   node scripts/proxy-check.mjs --selftest
  *   node scripts/proxy-check.mjs -h|--help
  *
@@ -16,11 +16,26 @@
  *   tool recomputes all of them and compares them, key by key, with the
  *   machine-readable claim the scorecard carries.
  *
+ *   Round-16 amendment (terms pre-registered in `SCORECARD.md` `## Planned`):
+ *   the two successors of the retired `coverage` axis get their first
+ *   measurement here, as the six stanza keys `S_members S_sections R_members
+ *   R_sections coverage_script coverage_runtime`. The legacy terms (`A C C1
+ *   C1_total C2 C2_total` and the scores derived from them, `operability` and
+ *   `coverage`) stay what they always were: arithmetic over `--self` and
+ *   `--scorecard` alone, no origin tree. The two LAYER terms are not self-only
+ *   — they read the origin tree (`--src`) exactly once, in process, through
+ *   `probeSections()` imported from the sibling `scripts/claims-check.mjs`:
+ *   a module import, never a subprocess, and that gate's single walk is reused,
+ *   not repeated. These are the only new reads this tool makes, and they are
+ *   named here rather than hidden.
+ *
  * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
- *   default     recompute the five terms + the four pins under `--self` and
- *               compare them with the kumitate-proxy-v1 stanza. The registry
- *               rows and the `## Axes` rows are read from the SAME file as the
- *               stanza (`--scorecard`, default `<self>/SCORECARD.md`).
+ *   default     recompute the twelve terms + the five pins under `--self`,
+ *               `--scorecard` and the origin tree `--src`, and compare them
+ *               with the kumitate-proxy-v1 stanza. The registry rows and the
+ *               `## Axes` rows are read from the SAME file as the stanza
+ *               (`--scorecard`, default `<self>/SCORECARD.md`); the two layer
+ *               terms come from the claims gate's walk of `--src`.
  *   --selftest  HERMETIC fixture suite: synthetic repos under `mkdtemp` only.
  *               It never reads this repo, the live scorecard or the
  *               environment, so it PASSes in any tree state and a bogus
@@ -39,9 +54,30 @@
  *   operability = floor(10 × (A+C)/(A+C+3))
  *   coverage    = floor(10 × C1/C1_total × C2/C2_total)
  *   pins  sha256 hex of `<self>/scripts/{cite-check,surface-probe,round-gate,
- *         proxy-check}.mjs`
- *   The derived `operability` / `coverage` must ALSO equal the integers in the
- *   scorecard's `## Axes` rows `| operability | N |` and `| coverage | N |`.
+ *         proxy-check,claims-check}.mjs`
+ *   Layer terms (round-16 amendment), counted over the ONE origin-tree walk
+ *   `probeSections()` already performs for the claims gate — the proxy never
+ *   walks `--src` itself:
+ *     scripts/<name>.mjs                     → script layer
+ *     any file under scripts/<dir>/          → script layer (recursive)
+ *     crates/ufo-core-runtime/src/<name>.rs  → runtime layer
+ *     crates/ufo-cli/src/<name>.rs           → runtime layer
+ *   S_members / R_members  those file counts
+ *   S_sections / R_sections  Σ over the registry rows whose id starts `S` / `R`
+ *         of the row's sections with `inFamily === true` — the member sections
+ *         the claims gate verifies AND grades as members of that row's declared
+ *         family. A section the gate resolves to a file outside the family
+ *         (`SECTION_FILE_NOT_MEMBER`: R9's `loop_driver_tests.rs`,
+ *         `local_ship_tests.rs`, `distill_tests.rs`) is excluded, which is the
+ *         whole difference between the raw section count (63 for `R`) and the
+ *         scored one (60); an unresolved section (no file) is excluded too.
+ *   coverage_script  = floor(10 × C1s/C1s_total × S_sections/S_members)
+ *   coverage_runtime = floor(10 × C1r/C1r_total × R_sections/R_members)
+ *         where C1s/C1s_total is the `yes`-row fraction among the `S` rows
+ *         (same for `R`). A zero denominator scores 0, never NaN.
+ *   The four derived scores must ALSO equal the integers in the scorecard's
+ *   `## Axes` rows `| operability | N |`, `| coverage | N |`,
+ *   `| coverage:script-layer | N |` and `| coverage:runtime-layer | N |`.
  *   These counts are shell-identical to the commands the scorecard already
  *   prints: `find . -path ./.git -prune -o -type f \( -name '*.mjs' … \) -print
  *   | wc -l`, `grep -c '^\s*- \[' SKILL.md`, `grep -cE '^\| (S|R)[0-9]+ \|'`
@@ -53,26 +89,33 @@
  *   Exactly one HTML comment block in the scorecard whose first line is
  *   `<!-- kumitate-proxy-v1`; its body is `key=value` lines and it is closed by
  *   a line containing `-->`:
- *     A C C1 C1_total C2 C2_total           the declared counts
+ *     A C C1 C1_total C2 C2_total           the declared self-only counts
+ *     S_members S_sections R_members R_sections  the declared layer universe
+ *     coverage_script coverage_runtime       the two layer scores
  *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
  *     pin.claims-check                      sha256 hex of scripts/<name>.mjs
- *   All eleven keys are REQUIRED, exactly once; no other key is accepted. Every
- *   value is re-derived from the tree and never trusted: a term or pin that
- *   disagrees is a finding, and the stanza is never rewritten here. No key can
- *   vouch for itself — A, C and C1 are states of other files, C2 counts the
- *   corpus notes, and `pin.proxy-check` hashes this file for a reader, not for
- *   this run.
+ *   All seventeen keys are REQUIRED, exactly once; no other key is accepted
+ *   (the stanza key charset forbids `:`, which is why the axes' names are
+ *   spelled `coverage_script` / `coverage_runtime` here). Every value is
+ *   re-derived from the trees and never trusted: a term or pin that disagrees
+ *   is a finding, and the stanza is never rewritten here. No key can vouch for
+ *   itself — A, C and C1 are states of other files, C2 counts the corpus notes,
+ *   the layer terms come from the origin tree through the claims gate, and
+ *   `pin.proxy-check` hashes this file for a reader, not for this run.
  *
  * Findings (text mode prints `PROXY  <severity>  <KIND>  <detail>`)
  *   error A_DRIFT C_DRIFT C1_DRIFT C1_TOTAL_DRIFT C2_DRIFT C2_TOTAL_DRIFT
- *         PIN_DRIFT (a pin whose file is absent is reported as
- *         `computed=absent`, never silently skipped) AXES_DRIFT
+ *         S_MEMBERS_DRIFT S_SECTIONS_DRIFT R_MEMBERS_DRIFT R_SECTIONS_DRIFT
+ *         COVERAGE_SCRIPT_DRIFT COVERAGE_RUNTIME_DRIFT PIN_DRIFT (a pin whose
+ *         file is absent is reported as `computed=absent`, never silently
+ *         skipped) AXES_DRIFT
  *   warn  PIN_UNPINNED — a `scripts/*.mjs` file no `pin.*` key covers: pin
  *         coverage is incomplete (advisory; `--strict` promotes it to a gate).
  *
  * Verdict lines (always the last stdout line)
  *   PROXY: MATCH (A=<a> C=<c> operability=<s>; C1=<x>/<y> C2=<p>/<q>
- *                 coverage=<s>; pins=<n> match)
+ *                 coverage=<s>; S=<s>/<m> coverage:script-layer=<s>;
+ *                 R=<s>/<m> coverage:runtime-layer=<s>; pins=<n> match)
  *   PROXY: DRIFT (<KIND term=… declared=… computed=… delta=…>…)
  *   PROXY: FAIL-CLOSED (<TOKEN>) <detail>     (exit 2)
  *
@@ -82,9 +125,13 @@
  *       `--selftest` is present, exactly as `round-gate.mjs` does.
  *
  * Fail-closed arms (exit 2; each prints its named kind; checked in this order)
- *   SELF_NOT_A_DIR SCORECARD_MISSING STANZA_MISSING STANZA_MALFORMED
- *   STANZA_KEY_UNKNOWN STANZA_KEY_DUPLICATE REGISTRY_MISSING SKILL_MISSING
- *   README_MISSING CORPUS_DIRS_MISSING
+ *   SELF_NOT_A_DIR SRC_NOT_A_DIR SCORECARD_MISSING STANZA_MISSING
+ *   STANZA_MALFORMED STANZA_KEY_UNKNOWN STANZA_KEY_DUPLICATE REGISTRY_MISSING
+ *   SKILL_MISSING README_MISSING CORPUS_DIRS_MISSING
+ *   SRC_NOT_A_DIR = `--src` is not a directory. The four legacy terms do not
+ *   need it, but the two layer terms do — they are counted over the claims
+ *   gate's walk of that tree — so a missing origin tree refuses the whole
+ *   verdict rather than printing a score it cannot derive.
  *   STANZA_MISSING = no claim block at all; STANZA_MALFORMED = more than one
  *   block, no `-->` terminator, a body line that is not `key=value`, a required
  *   key absent, or a value outside `\d+` (counts) / `[0-9a-f]{64}` (pins).
@@ -95,13 +142,17 @@
  *   rather than a stack trace.
  *
  * Bounds and what this tool never does
- *   Reads only, under `--self` + the scorecard: no writes, no network, no
- *   subprocess, no git, no lock. `--selftest` is the only writer, and only into
- *   a fresh `mkdtemp` dir it removes afterwards. No environment variable is
- *   consulted — unlike its siblings, whose defaults are env-overridable, the
- *   only defaults here are the scorecard and tree next to this script, so a
- *   polluted env cannot move a measurement. That (not a flag) is why
- *   `--selftest` is hermetic. Portable: node >= 20, ESM, zero deps.
+ *   Reads only, under `--self` + the scorecard + the origin tree named by
+ *   `--src`: no writes, no network, no subprocess, no git, no lock. The origin
+ *   tree is opened only through the imported `probeSections()` (which walks it
+ *   exactly once, in process) and the files that gate already reads for its own
+ *   member derivations — never a second walk, never a shell-out. `--selftest`
+ *   is the only writer, and only into a fresh `mkdtemp` dir it removes
+ *   afterwards. Environment: the ONLY variable consulted is `UFO_SRC`, and only
+ *   as `--src`'s default (`process.env.UFO_SRC || the lane's origin checkout`),
+ *   so the legacy self-only terms stay env-independent; `--selftest` reads no
+ *   environment and no live tree at all, which is what makes it hermetic.
+ *   Portable: node >= 20, ESM, zero deps.
  */
 
 import { createHash } from 'node:crypto';
@@ -112,11 +163,17 @@ import {
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+// The claims gate is imported IN PROCESS (never spawned as a subprocess): the
+// two layer terms need its registry-row derivation and its single walk of the
+// origin tree. Importing it runs no CLI — its main() is guarded.
+import { probeSections } from './claims-check.mjs';
 
 const CONTRACT = 'kumitate-proxy-v1';
 const STANZA_HEAD = `<!-- ${CONTRACT}`;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
+/** Origin tree the layer terms count over; `--src` overrides it. */
+const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
 
 const SCORECARD_FILE = 'SCORECARD.md';
 const SKILL_FILE = 'SKILL.md';
@@ -124,7 +181,9 @@ const CORPUS_README = 'corpus/README.md';
 const CORPUS_DIRS = ['corpus/knowledge', 'corpus/lessons'];
 
 /** Declared-count keys of the stanza, in comparison order. */
-const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total'];
+const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
+  'S_members', 'S_sections', 'R_members', 'R_sections',
+  'coverage_script', 'coverage_runtime'];
 /** Pin key → the file whose sha256 it declares. */
 const PINS = {
   'pin.cite-check': 'scripts/cite-check.mjs',
@@ -134,8 +193,25 @@ const PINS = {
   'pin.claims-check': 'scripts/claims-check.mjs',
 };
 const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
-/** The two scorecard axis rows the derived scores must equal. */
-const AXIS_ROWS = ['operability', 'coverage'];
+/** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+const AXIS_ROWS = [
+  { axis: 'operability', term: 'operability' },
+  { axis: 'coverage', term: 'coverage' },
+  { axis: 'coverage:script-layer', term: 'coverage_script' },
+  { axis: 'coverage:runtime-layer', term: 'coverage_runtime' },
+];
+
+/**
+ * The frozen layer universe (round-16 amendment), applied as a FILTER over the
+ * one origin walk `probeSections()` performs — this file never walks `--src`
+ * itself. `scripts/<name>.mjs` and everything under `scripts/<dir>/` (any
+ * extension, recursive) are script-layer members; the two `src` dirs' top-level
+ * `.rs` files are runtime-layer members.
+ */
+const LAYER_PATTERNS = {
+  S: [/^scripts\/[^/]+\.mjs$/, /^scripts\/[^/]+\/.+/],
+  R: [/^crates\/ufo-core-runtime\/src\/[^/]+\.rs$/, /^crates\/ufo-cli\/src\/[^/]+\.rs$/],
+};
 
 /** Frozen derivation patterns (see the header; do not widen them here). */
 const RE_RUNNABLE = /\.(?:mjs|js|sh|py)$/;
@@ -150,31 +226,44 @@ const RE_HEX64 = /^[0-9a-f]{64}$/;
 /** Every finding kind the hermetic suite must fire at least once. */
 const FINDING_KINDS = [
   'A_DRIFT', 'C_DRIFT', 'C1_DRIFT', 'C1_TOTAL_DRIFT', 'C2_DRIFT', 'C2_TOTAL_DRIFT',
+  'S_MEMBERS_DRIFT', 'S_SECTIONS_DRIFT', 'R_MEMBERS_DRIFT', 'R_SECTIONS_DRIFT',
+  'COVERAGE_SCRIPT_DRIFT', 'COVERAGE_RUNTIME_DRIFT',
   'PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED',
 ];
 /** Every fail-closed arm the hermetic suite must fire at least once. */
 const FAIL_CLOSED_KINDS = [
-  'SELF_NOT_A_DIR', 'SCORECARD_MISSING', 'STANZA_MISSING', 'STANZA_MALFORMED',
-  'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE', 'REGISTRY_MISSING', 'SKILL_MISSING',
-  'README_MISSING', 'CORPUS_DIRS_MISSING',
+  'SELF_NOT_A_DIR', 'SRC_NOT_A_DIR', 'SCORECARD_MISSING', 'STANZA_MISSING',
+  'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
+  'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
 ];
 
-const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--json] [--strict]
+const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--json] [--strict]
        node scripts/proxy-check.mjs --selftest
        node scripts/proxy-check.mjs -h|--help
 contract id: ${CONTRACT}
 
 modes:
-  default      recompute A C C1 C1_total C2 C2_total, the operability/coverage
-               scores and the four script pins under --self, then compare them
-               with the ${CONTRACT} block in --scorecard (default
-               <self>/${SCORECARD_FILE}) and with that file's ## Axes rows
+  default      recompute A C C1 C1_total C2 C2_total, the layer terms
+               (S_members S_sections R_members R_sections), the four scores
+               (operability, coverage, coverage:script-layer,
+               coverage:runtime-layer) and the five script pins, then compare
+               them with the ${CONTRACT} block in --scorecard (default
+               <self>/${SCORECARD_FILE}) and with that file's ## Axes rows.
+               The legacy counts are self-only; the layer terms are counted
+               over --src, walked exactly once and in process by
+               probeSections() imported from scripts/claims-check.mjs, and the
+               layer numerator counts only member sections that gate grades
+               inside the row's declared family (out-of-family sections are
+               excluded)
   --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
   -h | --help  print this text, exit 0
 
 options:
   --self DIR       repo root to measure (default: the repo containing this script)
   --scorecard FILE claim block + registry rows + ## Axes rows (default <self>/${SCORECARD_FILE})
+  --src DIR        origin tree the layer terms count over, via the claims gate
+                   (default: \$UFO_SRC or ${DEFAULT_SRC});
+                   a non-directory is refused as SRC_NOT_A_DIR (exit 2)
   --json           one machine-readable object on stdout
   --strict         promote warn-level findings (PIN_UNPINNED) to failure
 
@@ -200,6 +289,11 @@ function statKind(p) {
 
 function readText(p) {
   try { return readFileSync(p, 'utf8'); } catch { return null; }
+}
+
+/** Escape a literal for embedding in a RegExp source (`coverage:script-layer`). */
+function escapeRe(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /** `grep -c` over a line regex: the number of matching lines. */
@@ -274,8 +368,61 @@ function coverageOf(C1, C1Total, C2, C2Total) {
   return Math.floor(10 * (C1 / C1Total) * (C2 / C2Total));
 }
 
-/** The five counts + the two scores, derived from the tree alone. */
-function deriveTerms({ self, scorecardText, skillText, readmeText, notes }) {
+/** The layer a relative origin path belongs to, or null (the frozen universe). */
+function layerOf(rel) {
+  for (const [layer, patterns] of Object.entries(LAYER_PATTERNS)) {
+    if (patterns.some((re) => re.test(rel))) return layer;
+  }
+  return null;
+}
+
+/**
+ * `floor(10 × covered/total × sections/members)`. A zero denominator scores 0:
+ * an empty layer universe is a degenerate tree, not a division this proxy may
+ * turn into NaN and then print as a score.
+ */
+function layerCoverage(covered, total, sections, members) {
+  if (total === 0 || members === 0) return 0;
+  return Math.floor(10 * (covered / total) * (sections / members));
+}
+
+/**
+ * The two layer terms, derived from the claims gate's own output: its registry
+ * rows (id prefix, `covered`, member sections) and its single origin walk
+ * (`files`). A section counts only when the gate resolved it AND graded it a
+ * member of the row's declared family (`inFamily === true`) — a
+ * `SECTION_FILE_NOT_MEMBER` section is named by the note but belongs to another
+ * family, so counting it would credit a layer with members it never verified
+ * (that exclusion is the whole 63 → 60 for the runtime layer).
+ */
+function layerTerms(rows, files) {
+  const members = { S: 0, R: 0 };
+  for (const rel of files) {
+    const layer = layerOf(rel);
+    if (layer !== null) members[layer] += 1;
+  }
+  const total = { S: 0, R: 0 };
+  const covered = { S: 0, R: 0 };
+  const sections = { S: 0, R: 0 };
+  for (const row of rows) {
+    const layer = typeof row.id === 'string' && /^[SR]/.test(row.id) ? row.id[0] : null;
+    if (layer === null) continue;
+    total[layer] += 1;
+    if (row.covered) covered[layer] += 1;
+    for (const s of row.sections ?? []) if (s.inFamily === true) sections[layer] += 1;
+  }
+  return {
+    S_members: members.S,
+    S_sections: sections.S,
+    R_members: members.R,
+    R_sections: sections.R,
+    coverage_script: layerCoverage(covered.S, total.S, sections.S, members.S),
+    coverage_runtime: layerCoverage(covered.R, total.R, sections.R, members.R),
+  };
+}
+
+/** The twelve counts + the four scores: legacy terms self-only, layer terms origin-walked. */
+function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe }) {
   const A = walkFiles(self).filter((r) => RE_RUNNABLE.test(r)).length;
   const C = countLines(skillText, RE_CHECKLIST);
   const reg = registryCounts(scorecardText);
@@ -290,6 +437,7 @@ function deriveTerms({ self, scorecardText, skillText, readmeText, notes }) {
     C2_total: C2Total,
     operability: operabilityOf(A, C),
     coverage: coverageOf(reg.covered, reg.total, C2, C2Total),
+    ...layerTerms(probe.rows, probe.files),
   };
 }
 
@@ -442,17 +590,18 @@ function axesSection(scorecardText) {
 /** The derived scores must equal the scorecard's own `## Axes` integers. */
 function compareAxes(scorecardText, terms, findings) {
   const section = axesSection(scorecardText);
-  for (const axis of AXIS_ROWS) {
+  for (const { axis, term } of AXIS_ROWS) {
     const m = section === null
       ? null
-      : new RegExp(`^\\|\\s*${axis}\\s*\\|\\s*(\\d+)\\s*\\|`, 'm').exec(section);
+      : new RegExp(`^\\|\\s*${escapeRe(axis)}\\s*\\|\\s*(\\d+)\\s*\\|`, 'm').exec(section);
     const declared = m ? Number.parseInt(m[1], 10) : null;
-    const computed = terms[axis];
+    const computed = terms[term];
     if (declared === computed) continue;
     findings.push({
       severity: 'error',
       kind: 'AXES_DRIFT',
       term: axis,
+      key: term,
       declared: declared === null ? 'absent' : declared,
       computed,
       detail: `${axis}: ## Axes row=${declared === null ? (section === null ? 'no ## Axes section' : 'absent') : declared} derived=${computed}`,
@@ -482,6 +631,8 @@ function renderVerdict(verdict, terms, pinStats, findings) {
   if (verdict === 'MATCH') {
     return `PROXY: MATCH (A=${terms.A} C=${terms.C} operability=${terms.operability};`
       + ` C1=${terms.C1}/${terms.C1_total} C2=${terms.C2}/${terms.C2_total} coverage=${terms.coverage};`
+      + ` S=${terms.S_sections}/${terms.S_members} coverage:script-layer=${terms.coverage_script};`
+      + ` R=${terms.R_sections}/${terms.R_members} coverage:runtime-layer=${terms.coverage_runtime};`
       + ` pins=${pinStats.matched} match)`;
   }
   return `PROXY: DRIFT (${findings.map(findingSummary).join('; ')})`;
@@ -498,6 +649,7 @@ function failClosed(opts, token, detail, terms, started) {
     exitCode: 2,
     self: opts.self,
     scorecard: opts.scorecard,
+    src: opts.src,
     strict: Boolean(opts.strict),
     terms: terms ?? {},
     findings: [{ severity: 'error', kind: token, detail }],
@@ -516,6 +668,9 @@ function failClosed(opts, token, detail, terms, started) {
 function runCheck(opts, started) {
   if (statKind(opts.self) !== 'dir') {
     return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, {}, started);
+  }
+  if (statKind(opts.src) !== 'dir') {
+    return failClosed(opts, 'SRC_NOT_A_DIR', `--src ${opts.src} is ${statKind(opts.src)}`, {}, started);
   }
   const scorecardText = readText(opts.scorecard);
   if (scorecardText === null) {
@@ -546,8 +701,21 @@ function runCheck(opts, started) {
     {}, started);
   }
 
+  // The claims gate walks the origin tree once and hands back both its rows and
+  // that walk; the layer terms are folded from those two, never from a second
+  // traversal here. A refusal from it is this run's refusal (fail-closed).
+  const probe = probeSections({ self: opts.self, scorecard: opts.scorecard, src: opts.src });
+  if (!probe.ok) {
+    const token = FAIL_CLOSED_KINDS.includes(probe.kind) ? probe.kind : 'INTERNAL_ERROR';
+    return failClosed(opts, token, `claims gate refused: ${probe.detail}`, {}, started);
+  }
+  if (!Array.isArray(probe.files)) {
+    return failClosed(opts, 'INTERNAL_ERROR',
+      'scripts/claims-check.mjs probeSections() returned no origin file index (files[])', {}, started);
+  }
+
   const terms = deriveTerms({
-    self: opts.self, scorecardText, skillText, readmeText, notes,
+    self: opts.self, scorecardText, skillText, readmeText, notes, probe,
   });
   const findings = [];
   compareTerms(terms, stanza.values, findings);
@@ -564,6 +732,7 @@ function runCheck(opts, started) {
     exitCode,
     self: opts.self,
     scorecard: opts.scorecard,
+    src: opts.src,
     strict: Boolean(opts.strict),
     terms: {
       ...terms,
@@ -597,6 +766,34 @@ const fixtureScript = (name) => `#!/usr/bin/env node\n// hermetic fixture stand-
 const FIXTURE_PINS = Object.fromEntries(FIXTURE_SCRIPTS.map((s) => [
   `pin.${s.replace(/\.mjs$/u, '')}`, sha256Hex(Buffer.from(fixtureScript(s), 'utf8')),
 ]));
+
+/**
+ * The fixture ORIGIN tree (`--src`): three script-layer members (one top-level
+ * `.mjs`, one `.mjs` under a `scripts/` subdir, one non-`.mjs` under another —
+ * the recursive arm) and two runtime-layer members (one per `src` dir), plus a
+ * file in neither layer. `--self` never contains these, so the legacy `A` count
+ * cannot absorb them.
+ */
+const FX_SRC_FILES = [
+  'scripts/a.mjs',
+  'scripts/lib/x.mjs',
+  'scripts/lib/deep/y.sh',
+  'crates/ufo-core-runtime/src/b.rs',
+  'crates/ufo-cli/src/c.rs',
+  'docs/readme.md',
+];
+const FX_SRC_MEMBER = 'MEMBER\nsecond line\n';
+
+function fixtureSrc(root) {
+  for (const rel of FX_SRC_FILES) {
+    const p = join(root, rel);
+    mkdirSync(dirname(p), { recursive: true });
+    writeFileSync(p, FX_SRC_MEMBER);
+  }
+}
+
+/** A member-section note body naming `rel` with a live own-file anchor + symbol. */
+const fxLayerNote = (rel) => `## \`${rel}\`\n\nMember \`MEMBER\` at \`${rel}:1\`.\n`;
 
 function fxSkill(checklist) {
   const items = [];
@@ -636,6 +833,8 @@ function fxScorecard(fx) {
     '|---|---|---|---|',
     `| operability | ${expect.operability} | fixture | round 11 |`,
     `| coverage | ${expect.coverage} | fixture | round 11 |`,
+    `| coverage:script-layer | ${expect.coverage_script} | fixture | round 16 |`,
+    `| coverage:runtime-layer | ${expect.coverage_runtime} | fixture | round 16 |`,
     '', STANZA_HEAD,
   );
   for (const k of TERM_KEYS) lines.push(`${k}=${expect[k]}`);
@@ -691,6 +890,8 @@ function selfTest() {
   /* fixtures -------------------------------------------------------------- */
   const fxBase = (name, knobs = {}) => {
     const dir = fxDir(name);
+    const src = fxDir(`${name}-src`);
+    fixtureSrc(src);
     const scripts = knobs.scripts ?? FIXTURE_SCRIPTS;
     const checklist = knobs.checklist ?? 3;
     const readmeRows = knobs.readmeRows ?? 2;
@@ -702,28 +903,49 @@ function selfTest() {
     fxWrite(join(dir, '.git', 'junk.mjs'), '// must never be counted\n');
     fxWrite(join(dir, SKILL_FILE), fxSkill(checklist));
     fxWrite(join(dir, CORPUS_README), fxReadme(readmeRows));
-    for (const rel of notes) fxWrite(join(dir, `corpus/${rel}`), `# ${rel}\n\nfixture note\n`);
-    const fx = { dir, checklist, readmeRows, notes, registry, expect: knobs.expect };
+    for (const entry of notes) {
+      const [rel, body] = Array.isArray(entry) ? entry : [entry, `# ${entry}\n\nfixture note\n`];
+      fxWrite(join(dir, `corpus/${rel}`), body);
+    }
+    const fx = { dir, src, checklist, readmeRows, notes, registry, expect: knobs.expect };
     if (knobs.scorecard !== false) fx.scorecard = fxScorecard(fx);
     if (fx.scorecard !== undefined) fxWrite(join(dir, SCORECARD_FILE), fx.scorecard);
     return fx;
   };
-  const args = (fx, extra = []) => ['--self', fx.dir, ...extra];
+  const args = (fx, extra = []) => ['--self', fx.dir, '--src', fx.src, ...extra];
 
   /* hand-arithmetic fixtures (literal assertions below, never re-derived) --- */
   const F1 = fxBase('match-basic', {
-    expect: { A: 5, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 },
+    expect: {
+      A: 5, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+      S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
+    },
   });
   const F2 = fxBase('match-low', {
     checklist: 1, readmeRows: 1,
     registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'no']],
-    expect: { A: 5, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 6, coverage: 3 },
+    expect: {
+      A: 5, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 6, coverage: 3,
+      S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
+    },
   });
   const F3 = fxBase('match-saturated', {
-    checklist: 3, readmeRows: 3, notes: ['knowledge/a.md', 'knowledge/b.md', 'lessons/c.md'],
-    registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'yes']],
+    checklist: 3, readmeRows: 3,
+    notes: [
+      ['knowledge/a.md', fxLayerNote('scripts/a.mjs')],
+      ['knowledge/b.md', fxLayerNote('scripts/lib/x.mjs')],
+      ['lessons/c.md', fxLayerNote('crates/ufo-core-runtime/src/b.rs')],
+    ],
+    registry: [
+      ['S1', 'a', '`a.mjs`', 'yes — `knowledge/a.md`'],
+      ['S2', 'b', '`x.mjs`', 'yes — `knowledge/b.md`'],
+      ['R1', 'c', '`b.rs`', 'yes — `lessons/c.md`'],
+    ],
     extraRunnables: ['tools/a.mjs', 'tools/b.js', 'bin/c.sh', 'vendor/d.py', 'vendor/e.mjs'],
-    expect: { A: 10, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10 },
+    expect: {
+      A: 10, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10,
+      S_members: 3, S_sections: 2, R_members: 2, R_sections: 1, coverage_script: 6, coverage_runtime: 5,
+    },
   });
 
   try {
@@ -731,7 +953,7 @@ function selfTest() {
     const r1 = runProxy(args(F1));
     check('MATCH: A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
       ok: r1.status === 0
-        && verdictLine(r1) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
+        && verdictLine(r1) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
       detail: `exit=${r1.status} ${verdictLine(r1)}`,
     }));
     check('MATCH: text mode prints the verdict line and nothing else', () => {
@@ -741,13 +963,13 @@ function selfTest() {
     const r2 = runProxy(args(F2));
     check('MATCH: A=4 C=1 operability=6; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
       ok: r2.status === 0
-        && verdictLine(r2) === 'PROXY: MATCH (A=5 C=1 operability=6; C1=2/3 C2=1/2 coverage=3; pins=5 match)',
+        && verdictLine(r2) === 'PROXY: MATCH (A=5 C=1 operability=6; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
       detail: `exit=${r2.status} ${verdictLine(r2)}`,
     }));
     const r3 = runProxy(args(F3));
-    check('MATCH: A=9 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10', () => ({
+    check('MATCH: A=9 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
       ok: r3.status === 0
-        && verdictLine(r3) === 'PROXY: MATCH (A=10 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; pins=5 match)',
+        && verdictLine(r3) === 'PROXY: MATCH (A=10 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; pins=5 match)',
       detail: `exit=${r3.status} ${verdictLine(r3)}`,
     }));
     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
@@ -785,9 +1007,153 @@ function selfTest() {
           && j.verdict === 'MATCH' && Array.isArray(j.findings) && j.findings.length === 0
           && j.terms.A === FIXTURE_SCRIPTS.length && j.terms.C === 3 && j.terms.C1 === 1 && j.terms.C1_total === 2
           && j.terms.C2 === 2 && j.terms.C2_total === 2 && j.terms.operability === 7 && j.terms.coverage === 5
+          && j.terms.S_members === 3 && j.terms.S_sections === 0 && j.terms.coverage_script === 0
+          && j.terms.R_members === 2 && j.terms.R_sections === 0 && j.terms.coverage_runtime === 0
+          && j.terms.declared.S_sections === '0' && j.terms.declared.coverage_script === '0'
+          && j.terms.declared.S_members === '3'
           && j.terms.pinsMatched === FIXTURE_SCRIPTS.length && j.terms.pinsTotal === FIXTURE_SCRIPTS.length
           && Object.keys(j.terms.pins).every((k) => j.terms.pins[k].match === true),
-        detail: `exit=${j1.status} terms=${JSON.stringify({ A: j.terms.A, C: j.terms.C, op: j.terms.operability, cov: j.terms.coverage })}`,
+        detail: `exit=${j1.status} terms=${JSON.stringify({ A: j.terms.A, C: j.terms.C, op: j.terms.operability, cov: j.terms.coverage, S: `${j.terms.S_sections}/${j.terms.S_members}`, R: `${j.terms.R_sections}/${j.terms.R_members}` })}`,
+      };
+    });
+
+    /* 12b-12j ─ the two layer terms (round-16 amendment) ------------------- */
+    const j3 = runProxy(args(F3, ['--json']));
+    check('layer terms: S=2/3 R=1/2 from the claims gate walk; coverage_script=6 coverage_runtime=5', () => {
+      const t = JSON.parse(j3.stdout).terms;
+      return {
+        ok: j3.status === 0
+          && t.S_members === 3 && t.S_sections === 2 && t.R_members === 2 && t.R_sections === 1
+          && t.coverage_script === 6 && t.coverage_runtime === 5
+          && t.declared.S_members === '3' && t.declared.coverage_runtime === '5',
+        detail: `exit=${j3.status} S=${t.S_sections}/${t.S_members} script=${t.coverage_script} R=${t.R_sections}/${t.R_members} runtime=${t.coverage_runtime}`,
+      };
+    });
+    check('layer terms are declared integers in the stanza (all twelve TERM_KEYS compared)', () => ({
+      ok: TERM_KEYS.length === 12 && TERM_KEYS.includes('coverage_script') && TERM_KEYS.includes('R_sections'),
+      detail: `TERM_KEYS=${TERM_KEYS.join(' ')}`,
+    }));
+
+    // A four-row, two-note-per-layer fixture: the S/R prefix split and the
+    // section numerator are both exercised (S1/R1 section-form, S2/R2 topic).
+    const LAYER_KNOBS = {
+      checklist: 3,
+      readmeRows: 4,
+      notes: [
+        ['knowledge/alpha.md', fxLayerNote('scripts/a.mjs')],
+        ['knowledge/topic-s.md', '# topic-s.md\n\ntopic-form note\n'],
+        ['lessons/beta.md', fxLayerNote('crates/ufo-core-runtime/src/b.rs')],
+        ['lessons/topic-r.md', '# topic-r.md\n\ntopic-form note\n'],
+      ],
+      registry: [
+        ['S1', 'scripts one', '`a.mjs`', 'yes — `knowledge/alpha.md`'],
+        ['S2', 'scripts two', '`b.mjs`', 'yes — `knowledge/topic-s.md`'],
+        ['R1', 'runtime one', '`b.rs`', 'yes — `lessons/beta.md`'],
+        ['R2', 'runtime two', '`c.rs`', 'yes — `lessons/topic-r.md`'],
+      ],
+      expect: {
+        A: 5, C: 3, C1: 4, C1_total: 4, C2: 4, C2_total: 4, operability: 7, coverage: 10,
+        S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
+      },
+    };
+    const layers = fxBase('layer-rows', LAYER_KNOBS);
+    const layersRun = runProxy(args(layers));
+    check('layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal)', () => ({
+      ok: layersRun.status === 0
+        && verdictLine(layersRun) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; pins=5 match)',
+      detail: `exit=${layersRun.status} ${verdictLine(layersRun)}`,
+    }));
+    const layerCase = (name, edits) => {
+      const fx = fxBase(name, LAYER_KNOBS);
+      let text = fx.scorecard;
+      for (const [from, to] of edits) text = text.replace(from, to);
+      fxWrite(join(fx.dir, SCORECARD_FILE), text);
+      return fx;
+    };
+    const layerDrift = (name, edits, expected) => check(`layer drift: ${name} → [${expected.join()}]`, () => {
+      const res = runProxy(args(layerCase(name, edits)));
+      const k = kindsEq(res, expected);
+      return {
+        ok: res.status === 1 && k.ok,
+        detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res).slice(0, 120)}`,
+      };
+    });
+    // The stanza values are doctored one key at a time: every other term must
+    // stay silent, which is what makes each case evidence for its own key.
+    layerDrift('s-members', [['\nS_members=3\n', '\nS_members=4\n']], ['S_MEMBERS_DRIFT']);
+    layerDrift('s-sections', [['\nS_sections=1\n', '\nS_sections=2\n']], ['S_SECTIONS_DRIFT']);
+    layerDrift('r-members', [['\nR_members=2\n', '\nR_members=3\n']], ['R_MEMBERS_DRIFT']);
+    layerDrift('r-sections', [['\nR_sections=1\n', '\nR_sections=2\n']], ['R_SECTIONS_DRIFT']);
+    const S2_OFF = ['| S2 | scripts two | `b.mjs` | yes — `knowledge/topic-s.md` |', '| S2 | scripts two | `b.mjs` | no — `knowledge/topic-s.md` |'];
+    const R2_OFF = ['| R2 | runtime two | `c.rs` | yes — `lessons/topic-r.md` |', '| R2 | runtime two | `c.rs` | no — `lessons/topic-r.md` |'];
+    layerDrift('coverage-script', [
+      S2_OFF, ['\nC1=4\n', '\nC1=3\n'], ['\ncoverage=10\n', '\ncoverage=7\n'],
+      ['| coverage | 10 |', '| coverage | 7 |'],
+      ['| coverage:script-layer | 3 |', '| coverage:script-layer | 1 |'],
+    ], ['COVERAGE_SCRIPT_DRIFT']);
+    layerDrift('coverage-runtime', [
+      R2_OFF, ['\nC1=4\n', '\nC1=3\n'], ['\ncoverage=10\n', '\ncoverage=7\n'],
+      ['| coverage | 10 |', '| coverage | 7 |'],
+      ['| coverage:runtime-layer | 5 |', '| coverage:runtime-layer | 2 |'],
+    ], ['COVERAGE_RUNTIME_DRIFT']);
+    check('a layer row going `no` moves its own score (S2 off ⇒ script 3→1, runtime stays 5)', () => {
+      const fx = layerCase('coverage-script-axes', [
+        S2_OFF, ['\nC1=4\n', '\nC1=3\n'], ['\ncoverage=10\n', '\ncoverage=7\n'],
+        ['| coverage | 10 |', '| coverage | 7 |'],
+        ['| coverage:script-layer | 3 |', '| coverage:script-layer | 1 |'],
+        ['\ncoverage_script=3\n', '\ncoverage_script=1\n'],
+      ]);
+      const j = JSON.parse(runProxy(args(fx, ['--json'])).stdout);
+      return {
+        ok: j.verdict === 'MATCH' && j.terms.coverage_script === 1 && j.terms.coverage_runtime === 5
+          && j.terms.C1 === 3 && j.terms.S_sections === 1,
+        detail: `verdict=${j.verdict} script=${j.terms.coverage_script} runtime=${j.terms.coverage_runtime} C1=${j.terms.C1}`,
+      };
+    });
+    check('an R row going `no` drops only the runtime score (R2 off ⇒ runtime 5→2, script stays 3)', () => {
+      const fx = layerCase('coverage-runtime-axes', [
+        R2_OFF, ['\nC1=4\n', '\nC1=3\n'], ['\ncoverage=10\n', '\ncoverage=7\n'],
+        ['| coverage | 10 |', '| coverage | 7 |'],
+        ['| coverage:runtime-layer | 5 |', '| coverage:runtime-layer | 2 |'],
+        ['\ncoverage_runtime=5\n', '\ncoverage_runtime=2\n'],
+      ]);
+      const j = JSON.parse(runProxy(args(fx, ['--json'])).stdout);
+      return {
+        ok: j.verdict === 'MATCH' && j.terms.coverage_script === 3 && j.terms.coverage_runtime === 2 && j.terms.R_sections === 1,
+        detail: `verdict=${j.verdict} script=${j.terms.coverage_script} runtime=${j.terms.coverage_runtime}`,
+      };
+    });
+    const xFamily = fxBase('layer-out-of-family', {
+      readmeRows: 2,
+      notes: [
+        ['knowledge/alpha.md', fxLayerNote('scripts/lib/x.mjs')],
+        ['lessons/topic.md', '# topic.md\n\nprose note, no member section\n'],
+      ],
+      registry: [['S1', 'scripts one', '`a.mjs`', 'yes — `knowledge/alpha.md`']],
+      expect: {
+        A: 5, C: 3, C1: 1, C1_total: 1, C2: 2, C2_total: 2, operability: 7, coverage: 10,
+        S_members: 3, S_sections: 1, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
+      },
+    });
+    const xFamilyRun = runProxy(args(xFamily));
+    check('out-of-family section is NOT counted: `scripts/lib/x.mjs` under S1 (`a.mjs`) ⇒ S_sections 0', () => {
+      const k = kindsEq(xFamilyRun, ['S_SECTIONS_DRIFT']);
+      return {
+        ok: xFamilyRun.status === 1 && k.ok
+          && verdictLine(xFamilyRun) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=1 computed=0 delta=-1)',
+        detail: `exit=${xFamilyRun.status} kinds=[${k.got}] ${verdictLine(xFamilyRun)}`,
+      };
+    });
+    check('AXES_DRIFT covers the two successor rows (term=axis name, key=term key)', () => {
+      const fx = fxBase('axes-layer-drift', LAYER_KNOBS);
+      fxWrite(join(fx.dir, SCORECARD_FILE), fx.scorecard.replace('| coverage:runtime-layer | 5 |', '| coverage:runtime-layer | 4 |'));
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      const f = j.findings[0] ?? {};
+      return {
+        ok: res.status === 1 && j.findings.length === 1 && f.kind === 'AXES_DRIFT'
+          && f.term === 'coverage:runtime-layer' && f.key === 'coverage_runtime' && f.declared === 4 && f.computed === 5,
+        detail: `exit=${res.status} findings=${JSON.stringify(j.findings.map((x) => `${x.kind}:${x.term}`))}`,
       };
     });
 
@@ -809,7 +1175,7 @@ function selfTest() {
     }));
     const scTampered = join(fxDir('scorecard-flag'), 'SCORECARD.md');
     fxWrite(scTampered, F1.scorecard.replace('\nA=5\n', '\nA=6\n'));
-    const d2 = runProxy(['--self', F1.dir, '--scorecard', scTampered]);
+    const d2 = runProxy(['--self', F1.dir, '--src', F1.src, '--scorecard', scTampered]);
     check('--scorecard FILE: the claim is read from FILE, the tree from --self', () => {
       const k = kindsEq(d2, ['A_DRIFT']);
       return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=6 computed=5'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
@@ -838,7 +1204,7 @@ function selfTest() {
     const dEsc = runProxy(args(regPipe));
     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
       ok: dEsc.status === 0
-        && verdictLine(dEsc) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
+        && verdictLine(dEsc) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
     }));
     const regPipeNo = fxBase('registry-escaped-pipe-no', {
@@ -935,7 +1301,7 @@ function selfTest() {
       const k = kindsEq(d13, []);
       return {
         ok: d13.status === 0 && k.ok
-          && verdictLine(d13) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
+          && verdictLine(d13) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
       };
     });
@@ -943,8 +1309,8 @@ function selfTest() {
     fxWrite(join(noAxesSection.dir, SCORECARD_FILE),
       F1.scorecard.replace(/## Axes[\s\S]*?<!-- kumitate-proxy-v1/u, '<!-- kumitate-proxy-v1'));
     const d14 = runProxy(args(noAxesSection));
-    check('no `## Axes` heading → both axes AXES_DRIFT with `no ## Axes section`', () => {
-      const k = kindsEq(d14, ['AXES_DRIFT', 'AXES_DRIFT']);
+    check('no `## Axes` heading → all four axes AXES_DRIFT with `no ## Axes section`', () => {
+      const k = kindsEq(d14, ['AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT']);
       const f = parseFindings(d14.stdout)[0];
       return {
         ok: d14.status === 1 && k.ok && f && f.detail === 'operability: ## Axes row=no ## Axes section derived=7',
@@ -963,7 +1329,12 @@ function selfTest() {
     });
 
     /* 24-25 ─ the advisory warning + --strict ------------------------------- */
-    const unpinned = fxBase('pin-unpinned', { expect: { A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 } });
+    const unpinned = fxBase('pin-unpinned', {
+      expect: {
+        A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+        S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
+      },
+    });
     fxWrite(join(unpinned.dir, 'scripts', 'extra.mjs'), fixtureScript('extra.mjs'));
     const w1 = runProxy(args(unpinned));
     check('PIN_UNPINNED: an unpinned scripts/*.mjs warns, exit 0, verdict still MATCH', () => {
@@ -971,7 +1342,7 @@ function selfTest() {
       const f = parseFindings(w1.stdout)[0];
       return {
         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
-          && verdictLine(w1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
+          && verdictLine(w1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
         detail: `exit=${w1.status} ${verdictLine(w1)}`,
       };
     });
@@ -995,6 +1366,8 @@ function selfTest() {
     });
     fc('self absent', ['--self', join(tmp, 'nope-nope')], 'SELF_NOT_A_DIR');
     fc('self is a file', ['--self', join(F1.dir, SKILL_FILE)], 'SELF_NOT_A_DIR');
+    fc('--src absent', ['--self', F1.dir, '--src', join(tmp, 'nope-src-dir')], 'SRC_NOT_A_DIR');
+    fc('--src is a file', ['--self', F1.dir, '--src', join(F1.src, 'docs', 'readme.md')], 'SRC_NOT_A_DIR');
     const noSc = fxBase('no-scorecard', { expect: F1.expect, scorecard: false });
     fc('SCORECARD.md absent', args(noSc), 'SCORECARD_MISSING');
     const noStanza = fxBase('no-stanza', { expect: F1.expect });
@@ -1010,7 +1383,7 @@ function selfTest() {
     fxWrite(join(badBody.dir, SCORECARD_FILE), F1.scorecard.replace('\nC1_total=2\n', '\nC1 total=2\n'));
     fc('body line not key=value', args(badBody), 'STANZA_MALFORMED');
     const missingKey = fxBase('missing-key', { expect: F1.expect });
-    fxWrite(join(missingKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nC2_total=2\n', ''));
+    fxWrite(join(missingKey.dir, SCORECARD_FILE), F1.scorecard.replace(/^C2_total=2\n/mu, ''));
     fc('required key absent', args(missingKey), 'STANZA_MALFORMED');
     const badValue = fxBase('bad-value', { expect: F1.expect });
     fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=four\n'));
@@ -1069,6 +1442,10 @@ function selfTest() {
     const u4 = runProxy(['--scorecard', '']);
     check('usage: empty --scorecard value → exit 64', () => ({
       ok: u4.status === 64 && /--scorecard requires/u.test(String(u4.stderr ?? '')), detail: `exit=${u4.status}`,
+    }));
+    const u5 = runProxy(['--src']);
+    check('usage: --src without a value → exit 64', () => ({
+      ok: u5.status === 64 && /--src requires/u.test(String(u5.stderr ?? '')), detail: `exit=${u5.status}`,
     }));
 
     /* 42 ─ hermeticity ------------------------------------------------------ */
@@ -1129,7 +1506,15 @@ function selfTest() {
 /* --------------------------------------------------------------------- main */
 
 function parseArgs(argv) {
-  const opts = { self: DEFAULT_SELF, scorecard: null, json: false, strict: false, selftest: false, help: false };
+  const opts = {
+    self: DEFAULT_SELF,
+    scorecard: null,
+    src: DEFAULT_SRC,
+    json: false,
+    strict: false,
+    selftest: false,
+    help: false,
+  };
   const dirValue = (flag, v) => {
     if (v === undefined || v.trim() === '' || v.startsWith('-')) {
       throw new Error(`${flag} requires a non-empty directory (got ${JSON.stringify(v)})`);
@@ -1142,6 +1527,7 @@ function parseArgs(argv) {
     if (a === '-h' || a === '--help') opts.help = true;
     else if (a === '--self') opts.self = dirValue(a, next());
     else if (a === '--scorecard') opts.scorecard = dirValue(a, next());
+    else if (a === '--src') opts.src = dirValue(a, next());
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
     else if (a === '--selftest') opts.selftest = true;

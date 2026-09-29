@@ -409,6 +409,16 @@ mirror checks; `prepare-ephemeral-l1.mjs` stages an ephemeral L1 env.
 - `corpus/knowledge/gate-verdict.md` — `gate.rs` + `gate_tests.rs` verdict
   machinery (registry family R10): the `verdict` ladder, the refusal literals,
   `validate_vector` precedence, the echo ceiling and the 19-test census.
+- `corpus/knowledge/runtime-remainder-census.md` — registry family R11, the
+  runtime remainder + CLI (47 of 47 members, 24,874 L): the boundary subtraction
+  (`crates/ufo-core-runtime/src/*.rs` 93 − the 51 named by `R1`–`R10` = 42, plus
+  `crates/ufo-cli/src/*.rs` 5), the size/class census, one section per member
+  with a live own-file anchor and a verbatim symbol, and the two-arm probe
+  (`--row R11` → `CLAIMS: MATCH (… sections=47 adv=0)` plus the
+  `LC_ALL=C`-collated `comm -3` boundary diff). Closing it put `C1` at 19/19,
+  which is why `SCORECARD.md` retires `coverage` as saturated and carries the
+  successors `coverage:script-layer` / `coverage:runtime-layer` in `## Retired`
+  — the frozen aggregate stops moving once both its terms hit their ceilings.
 
 ## Failure-telemetry patterns
 
@@ -562,6 +572,35 @@ becomes a `PIN_MISMATCH` error the moment that file changes, so superseded
 revisions are described, not pinned — only the current revision's sha appears in
 a `.md`, and the historical ones live in `LOG.md`.
 
+Round 16 gives the retired `coverage` axis's two successors their first measured
+terms inside the same `kumitate-proxy-v1` verdict. `coverage:script-layer` =
+`floor(10 × C1s/C1s_total × S_sections/S_members)` over the registry rows whose
+id starts `S`; `coverage:runtime-layer` = `floor(10 × C1r/C1r_total ×
+R_sections/R_members)` over the `R` rows. `C1s`/`C1r` are each layer's `yes`
+rows over that layer's registry rows; the sections term is the Σ of member
+sections the claims gate verifies in those rows' notes, **in-family only** (a
+section the gate grades `SECTION_FILE_NOT_MEMBER` — R9's 3 sibling-suite
+sections — is excluded, so `R_sections` is 60 of the 63 raw row sections); the
+member term is the layer's declared members counted from the origin tree —
+script layer `scripts/*.mjs` (72) + every file under
+`scripts/*/` (42, recursive: a depth-1 count reads 38 and is wrong), runtime
+layer `crates/ufo-core-runtime/src/*.rs` (93) + `crates/ufo-cli/src/*.rs` (5).
+Measured 2026-09-28: `8/8 × 74/114` ⇒ 6 and `11/11 × 60/98` ⇒ 6, against the
+retired parent's terminal 10. The stanza therefore carries six more integer
+terms — `S_members`, `S_sections`, `R_members`, `R_sections`, `coverage_script`,
+`coverage_runtime` (the stanza's `key=value` charset forbids `:`, so the axis
+name `coverage:script-layer` is carried by the key `coverage_script`).
+Amendment to the proxy's self-only invariant: the legacy terms (`A`, `C`,
+`C1`/`C1_total`, `C2`/`C2_total` and the scores derived from them) still read
+this repo alone, while the four layer terms read the origin tree **once**,
+in-process — `proxy-check` imports `probeSections` from
+`scripts/claims-check.mjs` (one walk, no subprocess, no second traversal) — so
+the `Proxy recompute` item now needs the origin tree exactly as `cite-check`,
+`claims-check` and `surface-probe` already do: `--src DIR` is accepted
+(`$UFO_SRC` or the ufo-fsd-alpha tree by default), and a `--src` that is not a
+directory is the new fail-closed arm `SRC_NOT_A_DIR` (exit 2), never a scored
+zero — the layer terms cannot be computed without the tree.
+
 `ROUND_GATE: DRIFT` is this lane's own record, and the kinds in that line name
 what is missing (a thin report, a missing `SCORECARD.md` row or `LOG.md` entry,
 no `round-<N>` commit marker, a cited commit that does not resolve or is no
@@ -597,12 +636,13 @@ integrator's fleet-conformance step are in
   `kumitate-claims-v1`) re-derives every `yes` cell from the corpus note behind it
   — note resolution, one member section per file with a live own-file anchor and a
   verbatim symbol, and the declared member count when the cell names one. Live
-  2026-09-28: `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)` exit 0,
-  0.13 s; the 16 advisories are the family standard's printed residue (9
+  2026-09-28: `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)` exit 0,
+  0.14 s; the 16 advisories are the family standard's printed residue (9
   topic-form rows, 4 count-suspect rows, R9's 3 sibling-suite sections) and
   `--strict` promotes them to exit 1. It is the compensating check for the hole
-  `proxy-check` cannot see (measured: a renamed or deleted member section still
-  reads `PROXY: MATCH … coverage=9`). Contract, arms, anchor semantics and limits:
+  `proxy-check` cannot see (measured at round 14: a renamed or deleted member
+  section still read `PROXY: MATCH … coverage=9`). Contract, arms, anchor
+  semantics and limits:
   `corpus/knowledge/member-claims-gate.md`.
 - Re-verify the round-close contract before claiming a round done:
   `node scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`; kinds,
@@ -635,25 +675,48 @@ integrator's fleet-conformance step are in
   the frozen proxy terms from the tree — A (count of `*.mjs|*.js|*.sh|*.py`
   files), C (`SKILL.md` lines matching `/^\s*- \[/`), C1/C1_total (registry rows
   whose 4th cell starts `yes`, over all registry rows), C2/C2_total (`README.md`
-  note rows over corpus note files) — then derives both scores
-  (`floor(10×(A+C)/(A+C+3))`, `floor(10×(C1/C1_total)×(C2/C2_total))`) and
-  compares them against the `## Axes` table, plus the four `scripts/*.mjs`
-  sha256 pins. The claim block it reads is one HTML comment in `SCORECARD.md`
+  note rows over corpus note files) — plus the four layer terms it reads from
+  the origin tree: the script layer is `scripts/*.mjs` (72) + every file under
+  `scripts/*/` (42, recursive — a depth-1 count reads 38), the runtime layer is
+  `crates/ufo-core-runtime/src/*.rs` (93) + `crates/ufo-cli/src/*.rs` (5), and
+  `S_sections`/`R_sections` are the member sections the claims gate verifies in
+  those rows' notes — `inFamily` sections only, so R9's 3 sibling-suite sections
+  are excluded and the readout is 74 / 60 (63 raw; the excluded three belong to
+  R2/R6/R7) — and it then derives four scores
+  (`floor(10×(A+C)/(A+C+3))`, `floor(10×(C1/C1_total)×(C2/C2_total))`,
+  `coverage_script = floor(10×(C1s/C1s_total)×(S_sections/S_members))` = 6,
+  `coverage_runtime = floor(10×(C1r/C1r_total)×(R_sections/R_members))` = 6,
+  `C1s`/`C1r` being each layer's `yes` rows over that layer's registry rows —
+  the two successors of the retired
+  `coverage` axis, first measured 2026-09-28) and compares them against the
+  `## Axes` table, whose rows now include `coverage:script-layer` and
+  `coverage:runtime-layer`, plus the five `scripts/*.mjs` sha256 pins. The claim
+  block it reads is one HTML comment in `SCORECARD.md`
   whose first line is `<!-- kumitate-proxy-v1`, body lines `key=value` (`A`,
-  `C`, `C1`, `C1_total`, `C2`, `C2_total`, `pin.cite-check`, `pin.surface-probe`,
-  `pin.round-gate`, `pin.proxy-check`): `PROXY: MATCH (…)` exit 0,
+  `C`, `C1`, `C1_total`, `C2`, `C2_total`, `S_members`, `S_sections`,
+  `R_members`, `R_sections`, `coverage_script`, `coverage_runtime`,
+  `pin.cite-check`, `pin.surface-probe`,
+  `pin.round-gate`, `pin.proxy-check`, `pin.claims-check`): `PROXY: MATCH (…)` exit 0,
   `PROXY: DRIFT (…)` exit 1 naming each term delta, 2 fail-closed
   (`SCORECARD_MISSING`, `STANZA_MISSING`, `STANZA_MALFORMED`,
   `STANZA_KEY_UNKNOWN`, `STANZA_KEY_DUPLICATE`, `REGISTRY_MISSING`,
-  `SKILL_MISSING`, `README_MISSING`, `CORPUS_DIRS_MISSING`, `SELF_NOT_A_DIR`),
+  `SKILL_MISSING`, `README_MISSING`, `CORPUS_DIRS_MISSING`, `SELF_NOT_A_DIR`,
+  and `SRC_NOT_A_DIR` when `--src` is not a directory),
   64 usage. Because the stanza carries `pin.proxy-check`, ANY later edit to the
   tool must re-pin or the live run reports `PIN_DRIFT` — intended, not a wart.
   What it does NOT do: it recomputes claims, it cannot show that a claim is
   well-founded (a registry row flipped to `yes` with no note behind it still
   passes — the note's own citations are `cite-check`'s job), and the file-level
-  residue diagnostic (origin-tree basenames) is not covered. It is portable: any
-  lane that writes the same block into its own `SCORECARD.md` can be re-derived
-  by a non-author with `--self <lane repo>`.
+  residue diagnostic (origin-tree basenames) is not covered. Amendment (round
+  16): the legacy terms (`A`, `C`, `C1`/`C1_total`, `C2`/`C2_total` and the
+  `operability`/`coverage` scores derived from them) stay self-only, but the
+  layer terms read the origin
+  tree once and in-process, never via a subprocess — the tool imports
+  `probeSections` from `scripts/claims-check.mjs` and consumes the single walk
+  that gate already performs, so a missing or non-directory `--src` is
+  `SRC_NOT_A_DIR`, not a scored zero. It is portable: any lane that writes the
+  same block into its own `SCORECARD.md` can be re-derived by a non-author with
+  `--self <lane repo>`; the layer terms additionally need `--src`.
 - Cite file + symbol for every claim; if the source moves, update the
   citation, not the claim from memory.
 - Constants live once: `ENTRY_FAILURE_CLASSES`, `CAPACITY_FAILURES`,

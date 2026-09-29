@@ -59,7 +59,7 @@
  * never modified: `--src` (default `$UFO_SRC` or the lane's origin checkout)
  * is only ever opened for reading.
  */
-import { readFileSync, readdirSync, statSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve, basename as pathBasename } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -427,47 +427,72 @@ function failClosed(opts, token, detail, started) {
   return 2;
 }
 
-function runCheck(opts, started) {
-  if (statKind(opts.self) !== 'dir') return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, started);
-  const scorecardPath = opts.scorecard.startsWith('/') ? opts.scorecard : join(opts.self, opts.scorecard);
+/**
+ * The ONE derivation of the claim shape (round 16): resolve the registry,
+ * probe every covered row, and total what was read. `runCheck` renders this;
+ * `scripts/proxy-check.mjs` scores the layer terms from the same rows instead
+ * of re-reading the notes, so the S/R section counts have one authority.
+ * Returns the fail-closed arm — same kind tokens `runCheck` prints — when a
+ * tree the derivation needs is not there. `files` is that ONE walk's index
+ * (relative, sorted): `scripts/proxy-check.mjs` counts its four layer
+ * universes from it, so the origin tree is traversed exactly once per round.
+ */
+export function probeSections({ self = DEFAULT_SELF, scorecard = SCORECARD_FILE, src = DEFAULT_SRC } = {}) {
+  if (statKind(self) !== 'dir') return { ok: false, kind: 'SELF_NOT_A_DIR', detail: `--self ${self} is ${statKind(self)}` };
+  const scorecardPath = scorecard.startsWith('/') ? scorecard : join(self, scorecard);
   const scorecardText = readText(scorecardPath);
-  if (scorecardText === null) return failClosed(opts, 'SCORECARD_MISSING', `--scorecard ${scorecardPath} is ${statKind(scorecardPath)}`, started);
+  if (scorecardText === null) return { ok: false, kind: 'SCORECARD_MISSING', detail: `--scorecard ${scorecardPath} is ${statKind(scorecardPath)}` };
   for (const d of CORPUS_DIRS) {
-    if (statKind(join(opts.self, d)) !== 'dir') return failClosed(opts, 'CORPUS_DIRS_MISSING', `${d} is ${statKind(join(opts.self, d))} under --self`, started);
+    if (statKind(join(self, d)) !== 'dir') return { ok: false, kind: 'CORPUS_DIRS_MISSING', detail: `${d} is ${statKind(join(self, d))} under --self` };
   }
   const registry = parseRegistry(scorecardText);
-  if (registry.length === 0) return failClosed(opts, 'REGISTRY_MISSING', 'no `| S<n> |` / `| R<n> |` rows in the scorecard', started);
-  if (statKind(opts.src) !== 'dir') return failClosed(opts, 'SRC_NOT_A_DIR', `--src ${opts.src} is ${statKind(opts.src)}`, started);
+  if (registry.length === 0) return { ok: false, kind: 'REGISTRY_MISSING', detail: 'no `| S<n> |` / `| R<n> |` rows in the scorecard' };
+  if (statKind(src) !== 'dir') return { ok: false, kind: 'SRC_NOT_A_DIR', detail: `--src ${src} is ${statKind(src)}` };
 
-  const known = new Set(registry.map((r) => r.id));
+  const files = walkFiles(src).sort();
+  const ctx = { self, src, resolve: makeResolver(files) };
+  const rows = [];
+  for (const row of registry) {
+    if (!row.covered) { rows.push({ id: row.id, family: row.family, covered: false, form: 'uncovered', notes: [], sections: [], advisories: 0 }); continue; }
+    rows.push(probeRow(row, ctx).row);
+  }
+  return { ok: true, rows, totals: tally(rows), files };
+}
+
+/** Totals over a row set: the row summary and the verdict line read these. */
+function tally(rows) {
+  const totals = {
+    rows: rows.length,
+    yes: rows.filter((r) => r.covered).length,
+    notes: rows.reduce((n, r) => n + (r.notes?.length ?? 0), 0),
+    sections: rows.reduce((n, r) => n + (r.sections?.length ?? 0), 0),
+    errors: 0, warnings: 0, adv: 0,
+  };
+  for (const r of rows) {
+    for (const f of r.findings ?? []) {
+      if (f.severity === 'error') totals.errors += 1;
+      else totals.warnings += 1;
+    }
+  }
+  totals.adv = totals.warnings;
+  return totals;
+}
+
+function runCheck(opts, started) {
+  const probe = probeSections({ self: opts.self, scorecard: opts.scorecard, src: opts.src });
+  if (!probe.ok) return failClosed(opts, probe.kind, probe.detail, started);
+  const scorecardPath = opts.scorecard.startsWith('/') ? opts.scorecard : join(opts.self, opts.scorecard);
+
+  const known = new Set(probe.rows.map((r) => r.id));
   const unknown = opts.row.filter((id) => !known.has(id));
   if (unknown.length > 0) {
     process.stdout.write(`claims-check: ROW_UNKNOWN --row ${unknown.join(',')} is not a registry row (${[...known].join(' ')})\n${USAGE}`);
     return 64;
   }
-  const filtered = opts.row.length > 0 ? registry.filter((r) => opts.row.includes(r.id)) : registry;
-
-  const ctx = { self: opts.self, src: opts.src, resolve: makeResolver(walkFiles(opts.src)) };
-  const rows = [];
-  const findings = [];
-  for (const row of filtered) {
-    if (!row.covered) { rows.push({ id: row.id, family: row.family, covered: false, form: 'uncovered', notes: [], sections: [], advisories: 0 }); continue; }
-    const probed = probeRow(row, ctx);
-    rows.push(probed.row);
-    findings.push(...probed.findings);
-  }
-
-  const totals = {
-    rows: filtered.length,
-    yes: filtered.filter((r) => r.covered).length,
-    notes: rows.reduce((n, r) => n + (r.notes?.length ?? 0), 0),
-    sections: rows.reduce((n, r) => n + (r.sections?.length ?? 0), 0),
-    errors: 0, warnings: 0, adv: 0,
-  };
+  const rows = opts.row.length > 0 ? probe.rows.filter((r) => opts.row.includes(r.id)) : probe.rows;
+  const findings = rows.flatMap((r) => r.findings ?? []);
+  const totals = opts.row.length > 0 ? tally(rows) : probe.totals;
   const sum = summarize(findings, opts.strict);
-  totals.errors = sum.errors;
-  totals.warnings = sum.warnings;
-  totals.adv = sum.warnings;
   const verdict = sum.drift ? 'DRIFT' : 'MATCH';
 
   if (opts.json) {
@@ -780,6 +805,16 @@ function selfTest() {
   return failed.length === 0 ? 0 : 1;
 }
 
+/* ----------------------------------------------------------------- exports */
+
+/**
+ * The importable surface (round 16). `probeSections` is the whole claim shape;
+ * the rest are the frozen primitives `scripts/proxy-check.mjs` reuses instead
+ * of re-walking the registry — importing this module runs no CLI (see the
+ * entrypoint guard at the bottom).
+ */
+export { walkFiles, parseRegistry, DEFAULT_SRC, SCORECARD_FILE, CORPUS_DIRS };
+
 /* ------------------------------------------------------------------- argv */
 
 function parseArgs(argv) {
@@ -817,4 +852,13 @@ function main() {
   process.exit(runCheck(opts, started));
 }
 
-main();
+/** Entrypoint guard: the CLI runs only when this file started the process.
+ *  `await import()` (proxy-check's probe) must never print a verdict or exit. */
+const isEntry = (() => {
+  if (process.argv[1] === undefined) return false;
+  const invoked = resolve(process.argv[1]);
+  if (invoked === TOOL_FILE) return true;
+  try { return realpathSync(invoked) === TOOL_FILE; } catch { return false; }
+})();
+
+if (isEntry) main();

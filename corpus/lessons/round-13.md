@@ -55,7 +55,7 @@ against the live origin tree.
   change is the round that must declare it, and this one did, in the first
   sentence of the coverage section.
 - **The plan's own ids were refused on measurement.** `S7a`/`S7b` are invisible
-  to `RE_REGISTRY_ROW` (`/^\| (S|R)\d+ \|/`, `scripts/proxy-check.mjs:140-144`),
+  to `RE_REGISTRY_ROW` (`/^\| (S|R)\d+ \|/`, `scripts/proxy-check.mjs:219`),
   so the split had to be two top-level rows — a copy with `| S7a |` reports
   `C1_TOTAL_DRIFT declared=18 computed=17` exit 1.
 - **Neither `yes` rests on arithmetic.** `proxy-check.mjs` parses no note

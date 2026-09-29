@@ -3,7 +3,7 @@
 `scripts/claims-check.mjs` (contract `kumitate-claims-v1`, read-only, zero deps,
 exit 0/1/2/64) is the gate for the one claim `scripts/proxy-check.mjs` cannot
 read: the surface registry's fourth cell. `proxy-check.mjs` treats that cell as a
-string (`cells[4].startsWith('yes')`, `scripts/proxy-check.mjs:263`) and never
+string (`cells[4].startsWith('yes')`, `scripts/proxy-check.mjs:358`) and never
 opens the note behind it, so the cheapest fake — flip a cell, or point it at a
 note that names nothing — passes every arithmetic check. Round 13 measured that
 hole by hand (a renamed member section in
@@ -132,7 +132,7 @@ membership, and the same two drop-one outcomes.
 
 Design record: the round-13 pre-registration said "move the member probe into
 `scripts/proxy-check.mjs`". It landed as a separate artifact because the frozen
-`A` term is a **file count** (`scripts/proxy-check.mjs:281`), so a mode inside the
+`A` term is a **file count** (`scripts/proxy-check.mjs:426`), so a mode inside the
 proxy moves no term — measured, and the plan's `A=4 → 5` for that placement is
 refuted. The claim block still pins it (`pin.claims-check`), so the tool cannot
 drift silently either: `LOG.md` round 14.

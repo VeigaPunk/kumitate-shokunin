@@ -73,31 +73,42 @@ nor a fresh map alone can inflate the axis.
   the family. This was implicit in rounds 8–11 (S6 read `partial — 2 of 5`);
   round 12 wrote it down and re-adjudicated S6 against it line by line.
 - **C1 — in-scope surface coverage.** Surface families whose registry cell
-  starts `yes`, over the registry below: **18 / 19 = 0.947** after round 13. The
+  starts `yes`, over the registry below: **19 / 19 = 1.0** after round 15
+  (`R11` = the runtime remainder + CLI, 47 members,
+  `knowledge/runtime-remainder-census.md`) — the last uncovered family, so no
+  `no` cell remains; 18 / 19 = 0.947 at rounds 13–14. The
   round-12 catch-all `S7` is partitioned into `S7` = the route-probe cluster
   (9 members; `knowledge/route-probe-cluster.md`) and the new `S8` = the
   remaining scripts (60 members; `knowledge/remaining-scripts-census.md`) — both
-  `yes`, R11 stays `no`. C1_total therefore moves 18 → 19; that is a **registry**
+  `yes`; `R11` stayed `no` at rounds 13–14 and is named at internals level in
+  round 15. C1_total moved 18 → 19 in round 13; that is a **registry**
   change and it was pre-registered in round 12's `## Planned`, not slipped into
   the round that measures it. 16 / 18 = 0.888 at round 12, 14 / 18 = 0.778 at
   round 11.
 - **C2 — README-map freshness.** Rows in `corpus/README.md` naming a corpus note
-  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **48**;
-  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **48** after
-  round 14 (rows added for `knowledge/member-claims-gate.md` and
-  `lessons/round-14.md`, plus a close-time row for the third-party
-  `lessons/round-9-aggregator-corpus-verdict.md` the aggregator lane committed as
-  `93b0567`) ⇒ **1.0** (45/45 at round-13 close).
+  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **52**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **52** after
+  round 16 (rows added this round for `knowledge/layer-axes.md` and
+  `lessons/round-16.md`; 50/50 after round 15, when the rows added were
+  `knowledge/runtime-remainder-census.md` and `lessons/round-15.md`) ⇒ **1.0**
+  (48/48 at round-14 close, 45/45 at round-13 close).
 
 Diagnostic, deliberately **not** scored — file granularity over the in-scope
 source files (`scripts/*.mjs` 72 + `scripts/*/` 42 + `ufo-core-runtime/src/*.rs`
 93 + `ufo-cli/src/*.rs` 5 = **212** files / **211** unique basenames),
-basename-matched against `corpus/**/*.md` + `SKILL.md`: **195 / 211 ≈ 0.924**
-after round 13 (the numerator rose from 150 because the S8 census names 45
-basenames no earlier note carried; the components re-measure 72 + 42 + 93 + 5 =
-212 files / 211 unique basenames), up from **150 / 211 ≈ 0.711** at round 12,
-**140 / 211 ≈ 0.663** at rounds 9–11 and 105 / 211 ≈ 0.50 in round 8 (method:
-recursive walk of `corpus/**.md` + `SKILL.md`, `basename` containment).
+basename-matched against `corpus/**/*.md` + `SKILL.md`: **201 / 211 ≈ 0.952**
+after round 15 (the numerator rose 196 → 201 because the R11 census names 5
+basenames no earlier note carried — `bounded_fixture.rs`,
+`bounded_fixture_tests.rs`, `proposal_tests.rs`, `provenance.rs`,
+`provenance_tests.rs` — and the uncited remainder is now 10 basenames). Round 15
+also re-measured the earlier numbers with the same walk and found the recall off
+by one: the pre-round-15 corpus measures **196 / 211 ≈ 0.929**, and only
+**195 / 211 ≈ 0.924** if `lessons/round-14.md` and the third-party
+`lessons/round-9-aggregator-corpus-verdict.md` are excluded — so rounds 13–14's
+`195` is the round-13 corpus, not the round-14 one (see `## Limits`). Earlier:
+**150 / 211 ≈ 0.711** at round 12, **140 / 211 ≈ 0.663** at rounds 9–11 and
+105 / 211 ≈ 0.50 in round 8 (method: recursive walk of `corpus/**.md` +
+`SKILL.md`, `basename` containment, both exact in round 15's re-measure).
 Basename matching is collision-prone in both directions, which is why it is not
 the scored term; the registry's `scripts/*/` row is 42.
 
@@ -113,7 +124,7 @@ the scored term; the registry's `scripts/*/` row is 42.
 | S6 | ops watchers | `ufo-stale-watchdog.mjs` (1010 L) + `ufo-l0-monitor.mjs` (1638 L) + `ufo-l0-watch.mjs` (1679 L) + `the-tick-ping.mjs` (831 L) + `ufo-ground-handler.mjs` (859 L) | yes — ops-watchers (5 of 5 named at internals level, round 12; the round-11 reading `2 of 5` was right in number, wrong in members — `ufo-stale-watchdog.mjs` had only a usage list and a `Sources:` footer, while `ufo-l0-monitor.mjs` was named in `lessons/round-6.md`) |
 | S7 | route-probe cluster + shared helpers | 9 members: 7 `probe-*.mjs` + `atomic-write.mjs` + `fake-omp.mjs` (3,132 L) — the round-12 cluster reading, now the family's whole membership (`ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9) | yes — `knowledge/route-probe-cluster.md`: 9 of 9 named at internals level, one `## ` section per member with own-file anchors and verbatim named symbols (round 13) |
 | S8 | remaining scripts | 60 members: 50 top-level `*.mjs` + `charter-scribe/` (6) + `lean-cargo/` (4), 54,874 L (`ls scripts/*.mjs` → 72 − 13 S1–S6 basenames − 9 S7 members = 50; rebuilt from the tree by an independent scout, `comm -3` against the authoritative list empty) | yes — `knowledge/remaining-scripts-census.md`: 60 of 60 named at internals level, one `## ` section per member with ≥1 anchor in that member's own file and ≥1 symbol verbatim in it (605 OK refs, 0 errors, round 13) |
-| R1 | judge pipeline | 8 `native*.rs` core modules | yes — native-judge-pipeline |
+| R1 | judge pipeline | 8 members: `native.rs` + `native_header.rs` + `native_schema.rs` + `native_contract.rs` + `native_scores.rs` + `native_plan_digest.rs` + `native_launch.rs` + `native_telemetry.rs` (enumerated in round 15 — the cell's old `native*.rs` glob matched 26 files, so R11's remainder was not derivable from the registry alone; the 8 are forced by the arithmetic, see `knowledge/runtime-remainder-census.md`) | yes — native-judge-pipeline |
 | R2 | loop driver + state | 12 files (`loop_driver*.rs` ×10, `state.rs`, `state_tests.rs`) | yes — loop-driver |
 | R3 | profile & cost | 5 files (`execution_profile*`, `cost_ledger*`, `native_profile.rs`) | yes — cost-and-profile |
 | R4 | runtime support | 6 files (`lane_overlay*`, `lease*`, `live*`) | yes — runtime-support |
@@ -123,10 +134,12 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R8 | transcript / ledger / seat coverage | 4 files (`native_transcript.rs`, `native_ledger.rs`, `native_seat_coverage.rs`, `native_dispatch_topology.rs`) | yes — native-transcript-ledger-seats (r7) |
 | R9 | judge test suite | `native_tests.rs` (340 cases; other big test files sit inside R2/R6/R7) | yes — test-inventories (r7) |
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
-| R11 | runtime remainder + CLI | 42 runtime `.rs` + `ufo-cli/src/*.rs` (5) | no |
+| R11 | runtime remainder + CLI | 47 members: 42 runtime `.rs` (`crates/ufo-core-runtime/src/*.rs` minus the 51 named by R1–R10) + `crates/ufo-cli/src/*.rs` (5), 24,874 L (`ls crates/ufo-core-runtime/src/*.rs` → 93 − 51 = 42; rebuilt from the tree by an independent scout and diffed against the written 47 with `LC_ALL=C sort` + `comm -3` → empty) | yes — `knowledge/runtime-remainder-census.md`: 47 of 47 named at internals level, one `## ` section per member with ≥1 anchor in that member's own file and ≥1 symbol verbatim in it (`--row R11` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=47 adv=0)`, round 15) |
 
-Covered = **18** of 19; R11 (0 of 47 named) counts as **not** covered, and so does
-any family whose note names only part of it. Families are disjoint and
+Covered = **19** of 19 after round 15; every family's registry cell now starts
+`yes`, and a family whose note names only part of it still counts as not covered —
+the cell is a claim `scripts/claims-check.mjs` re-derives member by member.
+`R11` (47 of 47 named) was the last `no` cell. Families are disjoint and
 exhaustive: the script layer is the same 114 files it was in round 9 (72
 top-level `*.mjs` + 42 under `scripts/*/`; round 8 recorded 41 and the origin
 tree added one file), and round 13 cuts it three ways — S1–S6 **45** (13
@@ -140,6 +153,100 @@ The count does not include the five unattributed top-level shell scripts
 under `scripts/*/`, so they belong to no family; that is a definitional limit of
 the proxy, not a member this round silently dropped.
 
+### coverage:script-layer
+
+`score = floor(10 × C1s/C1s_total × S_sections/S_members)` — the first successor
+of the retired `coverage` axis, terms **pre-registered in round 15** and first
+**measured in round 16** (`scripts/proxy-check.mjs` derives it as
+`coverage_script`; the layer universe is counted over the single origin-tree walk
+`scripts/claims-check.mjs`'s `probeSections` performs — no second traversal —
+read once, read-only, `--src DIR`). **Vocabulary mapping:** the pre-registration's
+`C1_layer/C1_total_layer` here read `C1s/C1s_total` (registry rows whose id starts
+`S`), and its `V_layer` = `S_sections/S_members` — **member sections only**
+(`inFamily === true`), so a section the gate warns is outside the row's family is
+never counted as one of its members.
+
+- **`C1s/C1s_total` — covered script-layer families.** `yes` rows among the
+  registry rows whose id starts with `S`: **8 / 8 = 1.0** (`S1`–`S8`, every cell
+  `yes` since round 13 / round 15).
+- **`S_members` — the layer's declared members, counted from the origin tree.**
+  `ls scripts/*.mjs | wc -l` → **72** plus `find scripts -mindepth 2 -type f | wc -l`
+  → **42** ⇒ **114**. The 42 is **recursive** over `scripts/*/`; a depth-1 count
+  (`find scripts -mindepth 2 -maxdepth 2 -type f | wc -l`) reads **38** and is
+  wrong — the four files it drops are the depth-2 members
+  (`charter-scribe/prompts/kimi-update.prompt.txt`,
+  `charter-scribe/systemd/charter-scribe.service`,
+  `charter-scribe/systemd/charter-scribe.timer`, `lean-cargo/bin/cargo-shim.sh`).
+- **`S_sections` — member sections the claims gate verifies in those rows'
+  notes:** **74** = `S6` 5 + `S7` 9 + `S8` 60. The other five `S` rows are
+  topic-form and carry 0 gated member sections, and all 74 are in-family
+  (`SECTION_FILE_NOT_MEMBER` fires for no `S` row).
+- **Score:** `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = **6** — one point
+  below operability's 8, and tied with `coverage:runtime-layer` for the lane's
+  lowest axis (`## Limits`).
+
+**`V_layer` is not a re-expression of `C1_layer` — the pre-registered fallback
+was refuted by measurement.** The round-16 pre-registration named its own
+fallback condition: *"if round 16 measures that `V_layer` double-counts
+`C1_layer` (a family is either all-section-form or all-topic, so the two terms
+move together), the fallback is `floor(10 × C1_layer × F_layer)`"* with `F_layer`
+the file-level residue — which would have needed origin-tree I/O in the proxy.
+The measurement refutes the condition, two ways:
+
+- **Statically, inside the numerator's own rows:** `C1_layer` sits at its ceiling
+  (**1.0** on both layers) while `V_layer` reads **0.649** (74/114) and **0.612**
+  (60/98) at the same instant — a layer can be 100% cell-covered and still
+  61–65% member-gated, so the two terms are not the same quantity.
+- **Historically, they moved independently:** at rounds 13–14 `C1` read **18/19**
+  (0.947) beside `sections=90` over 212 declared members (0.425) — a recorded
+  measurement, not a recall (round-14 move-log row) — and round 15 moved the two
+  by different amounts: `sections` 90 → 137 (**+47**, the `R11` census) while
+  `C1` moved `18/19 → 19/19` (**+1 cell**).
+
+So the fallback to a file-level residue `F_layer` is **REFUTED**: `V_layer` is
+not a restatement of `C1_layer`, it is the honesty term the aggregate never
+measured (the retired 10 came from `C1 × C2`, neither of which is
+section-granular). The residue diagnostic stays unscored prose, and the proxy
+pays origin-tree I/O only for the two member counts it cannot derive locally
+(`## Limits`).
+
+### coverage:runtime-layer
+
+`score = floor(10 × C1r/C1r_total × R_sections/R_members)` — the second
+successor, likewise pre-registered in round 15 and first measured in round 16
+(`coverage_runtime`). **Vocabulary mapping:** the pre-registration's
+`C1_layer/C1_total_layer` here read `C1r/C1r_total` (registry rows whose id starts
+`R`), and its `V_layer` = `R_sections/R_members` — **member sections only**
+(`inFamily === true`).
+
+- **`C1r/C1r_total` — covered runtime-layer families.** `yes` rows among the
+  registry rows whose id starts with `R`: **11 / 11 = 1.0** (`R1`–`R11`; `R11`
+  was the last `no` cell, closed in round 15).
+- **`R_members` — the layer's declared members, counted from the origin tree.**
+  `ls crates/ufo-core-runtime/src/*.rs | wc -l` → **93** plus
+  `ls crates/ufo-cli/src/*.rs | wc -l` → **5** ⇒ **98**.
+- **`R_sections` — member sections the claims gate verifies in those rows'
+  notes:** **60**, the member-only numerator. All sections in `R` notes read
+  **63**, but `R9`'s note carries 3 sections the gate *warns* about
+  (`SECTION_FILE_NOT_MEMBER`: `loop_driver_tests.rs`, `local_ship_tests.rs`,
+  `distill_tests.rs` — members of `R2`/`R6`/`R7`, not of `R9`), and a section
+  outside a row's declared members is not one of that row's members.
+  In-family sum: `R3` 2 + `R4` 3 + `R6` 2 + `R8` 3 + `R9` 1 + `R10` 2 +
+  `R11` 47 = **60**; 60 + 3 = 63.
+- **Score:** `floor(10 × 11/11 × 60/98)` = `floor(6.12…)` = **6**.
+- **Round-16 forecast-vs-measurement deviation.** The pre-registration's
+  arithmetic used the **63** (all-gate-sections) numerator: `floor(10 × 63/98)`
+  = 6. The integer is unchanged, but the measured numerator under the frozen
+  definition ("the fraction of that layer's **declared** members whose member
+  section the claims gate verifies") is **60**. Recorded rather than quietly
+  substituted: the forecast read a superset of the term's own denominator, and
+  the deviation was found by an independent critic lane before this round closed.
+- **Cross-check against the gate's own total.** `S_sections + R_sections` =
+  74 + 60 = **134** member sections against the gate's reported **137** sections
+  (`CLAIMS: MATCH (… sections=137 …)`); the 3-file difference is exactly `R9`'s
+  out-of-family sections — the same 3 this layer's numerator excludes, so the two
+  totals reconcile by construction rather than by assertion.
+
 ### Machine-readable claim block (`kumitate-proxy-v1`)
 
 `scripts/proxy-check.mjs` recomputes every term below from this tree, re-derives
@@ -149,21 +256,35 @@ exit 1, fail-closed exit 2, usage 64. The values are **claims** — the tool
 re-derives and never trusts them, and it never rewrites this block. The five pins
 are full sha256 hex of `scripts/*.mjs`; re-pin them after ANY edit to those files,
 including `proxy-check.mjs` itself (an unrecorded edit then shows up as
-`PIN_DRIFT`, not as a silently stale claim). Grammar and boundary:
+`PIN_DRIFT`, not as a silently stale claim). Six of the terms are new in round 16:
+`S_members`, `S_sections`, `R_members`, `R_sections` and the two scores derived
+from them (`coverage_script`, `coverage_runtime`) — the layer member counts are
+read from the origin tree **once, in-process, read-only** through
+`scripts/claims-check.mjs`'s `probeSections` (an import, never a subprocess, never
+a second walk), `--src DIR` defaults to `$UFO_SRC` or the lane's checkout, and a
+`--src` that is not a directory fails closed (`SRC_NOT_A_DIR`, exit 2) rather than
+scoring the layer terms at 0. The six legacy terms stay self-only. Grammar and
+boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
 A=5
 C=10
-C1=18
+C1=19
 C1_total=19
-C2=48
-C2_total=48
+C2=52
+C2_total=52
+S_members=114
+S_sections=74
+R_members=98
+R_sections=60
+coverage_script=6
+coverage_runtime=6
 pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946
-pin.proxy-check=d0a722c5cb06cb4edabba6cbb38d09f151a322117c273af93659bdf2fad29ba4
-pin.claims-check=d0f95fa051687a8235678d4b212351c04d562abece394ae7727aa9bf763cb188
+pin.proxy-check=5ed61cbe7f83c7a181c5fd932142d8af2c330edbde099d6524eab31d31d76f61
+pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1ed
 -->
 
 ## Axes
@@ -171,20 +292,36 @@ pin.claims-check=d0f95fa051687a8235678d4b212351c04d562abece394ae7727aa9bf763cb18
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=5 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`) and C=10 (`## Verifiable checklist`, all 10 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 10/10 pass`) ⇒ 15/18 = 0.8333 ⇒ 8 — 9 needs A+C ≥ 27 (12 more honest items), so the proxy saturates long before the axis does | round 14 |
-| coverage | 9 | `floor(10 × 0.947 × 1.0)` = 9; C1 registry below (**18/19** — the round-12 `S7` catch-all partitioned into `S7` 9 + `S8` 60, both `yes`), C2 48/48 (`grep -c` + `find … \| wc -l`), file-level residue 195/211 ≈ 0.924 (unchanged — round 14 adds a gate, not coverage, but the `yes` cells it rests on are now machine-checked for the 9 section-form rows) | round 14 |
+| coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **52/52** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured this round with the frozen walk: 196/211 pre-round, `195/211` at round 13's corpus — the `195` of rounds 13–14 is reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are declared in `## Retired` and **scored from round 16** (6 and 6, rows below); the integer is kept at 10 because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
+| coverage:script-layer | 6 | `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = 6 — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**74** = `S6` 5 + `S7` 9 + `S8` 60; the five topic-form `S` rows carry 0), `S_members` = **114** = `ls scripts/*.mjs \| wc -l` → 72 + `find scripts -mindepth 2 -type f \| wc -l` → 42 (RECURSIVE; depth-1 reads 38 and is wrong). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
+| coverage:runtime-layer | 6 | `floor(10 × 11/11 × 60/98)` = `floor(6.12…)` = 6 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = the **member-only** sections the gate verifies (**60**; all `R` note sections read 63, minus `R9`'s 3 `SECTION_FILE_NOT_MEMBER` warnings for `loop_driver_tests.rs` / `local_ship_tests.rs` / `distill_tests.rs`), `R_members` = **98** = `ls crates/ufo-core-runtime/src/*.rs \| wc -l` → 93 + `ls crates/ufo-cli/src/*.rs \| wc -l` → 5. Derived as `coverage_runtime` | round 16 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
 citations, two live surfaces, the round record, this lane's own scorecard and the
 registry's member claims — not the other 17 registry families. The next integer
-needs A+C ≥ 27 (12 more honest items): the proxy saturates, the axis walks. Coverage now has **one** uncovered family
-(R11, 42 runtime `.rs` + 5 CLI `.rs`, 0 of 47 named) and ~8% of in-scope source
-files uncited (16 of 211 basenames never named anywhere in this lane's prose,
-counting basenames rather than files and ignoring family membership); a note that
-names a fraction of a family is exactly what the standard above refuses to count.
-Why not 0/lower: the whole judgment path (dispatcher,
-launcher, judge pipeline, loop driver, wall) is mapped at internals level with
-line-level citations, and the gates that check those citations, two of those live
+needs A+C ≥ 27 (12 more honest items): the proxy saturates, the axis walks.
+
+Coverage **is** 10 — and the number is the problem, not the achievement. The
+frozen aggregate is a product of two terms that both reached their terminal
+values (`C1 19/19`: every registry cell is `yes`; `C2 50/50` when it retired,
+`52/52` after round 16: every note has a
+README row), so it can no longer move, and it stops measuring exactly where the
+lane's own truth is least settled: the file-level residue is 201/211 ≈ 0.952, the
+family standard is lane prose that only the section-form rows are gated for
+(137 member sections across the registry, against 212 declared members in the 19
+cells — `CLAIMS: MATCH (… sections=137 …)`), and 9 of 19 rows (S1–S5, R1, R2,
+R5, R7) can be probed only for note existence.
+Claiming 10 as a live axis would therefore be the round-12/13 `partial`-cell
+mistake in its final form — a cell reading its own terminal value while the object
+it names is 92% covered and roughly two-thirds member-gated. So the axis is
+retired at saturation
+(reason and successors in `## Retired`), and what continues is the *unfinished*
+part of the object, under two terms that can still move. Why not 0/lower: the
+whole judgment path (dispatcher,
+launcher, judge pipeline, loop driver, wall, and now the runtime remainder + CLI)
+is mapped at internals level with line-level citations, and the gates that check
+those citations, two of those live
 surfaces, this lane's round record and the scorecard claim itself now run on
 demand.
 
@@ -225,11 +362,16 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 16 | coverage:script-layer + coverage:runtime-layer | the successors were **declared and unscored** since round 15: `## Retired` carried `floor(10 × 8/8 × 74/114)` and `floor(10 × 11/11 × 63/98)` as arithmetic **forecasts** with no machine derivation, and the section derivation the honesty term needs had no caller outside `scripts/claims-check.mjs` — the proxy read only this repo | **first measurement**: `S` = `C1 8/8 × 74/114` ⇒ `floor(6.49…)` = **6** and `R` = `C1 11/11 × 60/98` ⇒ `floor(6.12…)` = **6**, now **machine-derived** by `scripts/proxy-check.mjs` as `coverage_script` / `coverage_runtime` (fed by `probeSections`, the gate's single derivation; origin tree read once, read-only). The lane goes from **one live integer to three** (operability 8, the two successors 6; `coverage` 10 stays terminal) and its lowest axis drops **8 → 6**. The pre-registered `F_layer` fallback is **refuted** — `V_layer` is not a re-expression of `C1_layer` (`### coverage:script-layer`). One deviation from the forecast: the `R` numerator is **member-only 60**, not the forecast's all-sections 63; the integer is unchanged | `ls scripts/*.mjs \| wc -l` → **72**; `find scripts -mindepth 2 -type f \| wc -l` → **42** (depth-1 reads **38**); `ls crates/ufo-core-runtime/src/*.rs \| wc -l` → **93**; `ls crates/ufo-cli/src/*.rs \| wc -l` → **5**; `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)` exit 0, `S` rows summing **74** (`S6` 5 + `S7` 9 + `S8` 60) and `R` rows **63** (member-only **60**: `R9` carries 3 `SECTION_FILE_NOT_MEMBER` sections); `node scripts/claims-check.mjs --row S1` → `CLAIMS: MATCH (rows=1 yes=1 notes=5 sections=0 adv=1)` exit 0; `node -e "import('./scripts/claims-check.mjs').then(m=>m.probeSections())"` → `ok=true` with no `main()` output (`S` 8 rows/8 yes/74 in-family sections, `R` 11 rows/11 yes/60 in-family of 63) — the export, not a subprocess; `node scripts/proxy-check.mjs --scorecard /tmp/r16-ExecScorecard/sc-pins.md` (this scorecard with only the two stale `pin.*` lines substituted by the current file hashes) → `PROXY: MATCH (A=5 C=10 operability=8; C1=19/19 C2=52/52 coverage=10; S=74/114 coverage:script-layer=6; R=60/98 coverage:runtime-layer=6; pins=5 match)` exit 0 |
+| 16 | coverage:script-layer + coverage:runtime-layer (uncounted: the origin-I/O amendment) | `scripts/proxy-check.mjs` read **only this repo** — no subprocess, no git, no origin tree (the round-14 split kept the legacy arithmetic "free of origin-tree I/O"), so a layer member count could not be scored at all | the amendment, priced: the **legacy** terms stay self-only (`A C C1 C1_total C2 C2_total`, one local walk, five pins, no subprocess) while the **two layer terms** read the origin tree **once, in-process, read-only** through `probeSections` (`--src DIR`, default `$UFO_SRC` or the lane's checkout); new fail-closed `SRC_NOT_A_DIR` (exit 2) so the layer terms cannot read `0` when the tree is absent. Cost recorded in `## Limits`: checklist item `Proxy recompute` now needs the origin tree, exactly as `cite-check`, `claims-check` and `surface-probe` already do. Both `scripts/*.mjs` pins are re-pinned **once all round-16 edits land** (L1 with the tool owners) — an unrecorded edit still shows as `PIN_DRIFT`, never as a silently stale claim | `node scripts/proxy-check.mjs` → `PROXY: DRIFT (PIN_DRIFT term=pin.proxy-check; PIN_DRIFT term=pin.claims-check)` exit 1 — **two findings, both pins, zero term drift** (the declared `d0a722c5…` / `d0f95fa0…` are the round-15 hashes and both tools were edited this round, so both drift until the re-pin) — while the same scorecard with those two lines substituted by the current file hashes reads `PROXY: MATCH (… pins=5 match)` exit 0, so the re-pin is the only outstanding step; `node scripts/proxy-check.mjs --src /nonexistent` → `PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /nonexistent is absent` exit 2 (the new arm) |
+| 15 | coverage | C1 18/19, C2 48/48 ⇒ coverage 9; registry `R11` = `no`, 0 of 47 named; the family's membership was not derivable from the registry alone (R1's cell globbed 26 files) | C1 **19/19**, C2 **50/50** ⇒ `floor(10 × 1.0 × 1.0)` = **10** — the frozen aggregate's terminal value; `corpus/knowledge/runtime-remainder-census.md` names 47 of 47 at internals level (one `## ` section per member, own-file anchor + verbatim symbol, 24,874 L); `coverage` **retired as saturated**, successors recorded in `## Retired`; operability untouched (A=5, C=10 — the round adds a note and a `yes` cell, no script and no `- [` line) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=5 C=10 operability=8; C1=19/19 C2=50/50 coverage=10; pins=5 match)` exit 0; `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)` exit 0; `--row R11` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=47 adv=0)` |
+| 15 | coverage (uncounted: a registry *text* change that moves no term) | `R1`'s members cell read ``8 `native*.rs` core modules`` — a glob matching 26 files in the crate, so `R11`'s 42 could not be subtracted from the registry alone | the cell names the 8; the subtraction is now reproducible from the registry (`93 − 43 (R2–R10) − 42 = 8`), and independently the `native*.rs` set mentioned ≥2× in `knowledge/native-judge-pipeline.md` is the same 8 (both sorted lists hash identically — the boundary is forced, not inferred); `R1` stays one `yes` cell, `C1` gains only `R11` | `node scripts/claims-check.mjs --scorecard /tmp/kumitate-r15/sc-r1.md --row R1` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=0 adv=1)` exit 0, repo-wide advisories unchanged at 16; independent scout reconstruction (`comm -3` empty, 47 paths, 24,874 L) |
+| 15 | coverage (uncounted: the boundary probe's locale trap, found and recorded) | an unqualified `comm -3` between the member list (`en_US.UTF-8` collation) and a C-collated list printed *empty* on one run and a bogus `round.rs` line plus `comm: input is not in sorted order` on the next | both sides are `LC_ALL=C sort`ed; the C-collated diff is empty and the sorted copies hash identically; the trap is recorded in the note's probe section (``## Member-completeness probe``, arm 2) and in `lessons/round-15.md` | `comm -3` run twice with and without `LC_ALL=C`; note probe section |
 | 14 | operability | A=4, C=9 ⇒ `f_O = 13/16 = 0.8125` ⇒ 8; the registry's `yes` claim was checkable only by hand (round 13 measured a renamed member section still reading `PROXY: MATCH … coverage=9` exit 0) | A=**5** (`scripts/claims-check.mjs`, contract `kumitate-claims-v1`, 791 L, 12 finding kinds, 35-case hermetic suite, 5 fail-closed + 3 usage arms, exit 0/1/2/64) + C=**10** (the member-claims gate added to `## Verifiable checklist`) ⇒ `f_O = 15/18 = 0.8333` ⇒ **8** (9 needs A+C ≥ 27 — the saturating proxy walks, it does not jump) | `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)` exit 0 (0.13 s); `--selftest` → `CLAIMS_SELFTEST: 35/35 pass` `VERDICT: PASS` exit 0; `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=5 C=10 operability=8; C1=18/19 C2=47/47 coverage=9; pins=5 match)` exit 0; `surface-probe --checklists` → `CHECKLIST: 10/10 pass` |
 | 14 | operability (the compensating arm, on a doctored copy) | a `yes` cell with a renamed or deleted member section passed everything | rename → `SECTION_FILE_UNRESOLVED row=S8 …` `CLAIMS: DRIFT` exit 1; delete → `MEMBER_COUNT_DRIFT row=S8 declared 60 members, found 59 distinct sections` exit 1; **on the same copies** `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 … coverage=9; pins=4 match)` exit 0 (claims-check moved out to hold the frozen A=4) | `LOG.md` round 14; `/tmp/kumitate-r14/census.md` §8 (independent probe, same two outcomes); critic arms 03/04 |
 | 14 | coverage (uncounted) | C2 45/45; C1 18/19; the `yes` cells rested on lane prose | C2 **47/47** at the round commit (48/48 at close, see `LOG.md`); C1 unchanged 18/19 ⇒ `floor(10 × 0.947 × 1.0)` = **9**; the claim itself is now machine-checked for the 9 section-form rows (90 member sections) and the residue is printed: 9 × `ROW_NO_SECTIONS`, 4 × `MEMBER_COUNT_SUSPECT`, 3 × `SECTION_FILE_NOT_MEMBER` | `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 47; `find … | wc -l` → 47; `node scripts/proxy-check.mjs` → `C1=18/19 C2=47/47` |
 | 13 | coverage | C1 16/18 (C1_total 18), C2 43/43, residue 150/211 ≈ 0.711 ⇒ `floor(10 × 0.888 × 1.0)` = 8; the pre-registered plan offered a partition (17/19 = 0.894 ⇒ **still 8**) or a census of the 60-member remainder, and named the arithmetic: only 17/18 covered or a stated partition reaches 9 | C1 **18/19** (S7 = the 9-member probe cluster, S8 = the 60-member remainder — both `yes` at internals level, one `## ` section per member with an own-file anchor and a verbatim symbol), C2 **45/45** (`knowledge/remaining-scripts-census.md` + `lessons/round-13.md`), residue **195/211 ≈ 0.924** ⇒ `floor(10 × 0.947 × 1.0)` = **9**; operability untouched (A=4, C=9 — no script and no `- [` line added) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=18/19 C2=45/45 coverage=9; pins=4 match)` exit 0; member probe `MEMBER_PROBE: 60/60 ok` (S8) and `9/9 ok` (S7); `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 45, `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 45 |
-| 13 | coverage (registry change — pre-registered in round 12's `## Planned`) | S7 = a 69-member catch-all whose cell read `no`, pointed at a 9-member residue note; the plan's labels were `S7a`/`S7b` | S7 = 9 members `yes` (`knowledge/route-probe-cluster.md`, now with one `## ` section per member) + new S8 = 60 members `yes` (`knowledge/remaining-scripts-census.md`); C1_total 18 → 19. `S7a`/`S7b` were **refused on measurement**: `RE_REGISTRY_ROW = /^\| (S\|R)\d+ \|/` (`scripts/proxy-check.mjs:140-144`) makes a suffixed id invisible — the critic's arm measured `C1_TOTAL_DRIFT declared=18 computed=17` | registry rows 108-109; independent scout census (`comm -3` vs the authoritative list → empty; `wc -l` total 54874); critic arms (i)/(iii)/(iv)/(v) |
+| 13 | coverage (registry change — pre-registered in round 12's `## Planned`) | S7 = a 69-member catch-all whose cell read `no`, pointed at a 9-member residue note; the plan's labels were `S7a`/`S7b` | S7 = 9 members `yes` (`knowledge/route-probe-cluster.md`, now with one `## ` section per member) + new S8 = 60 members `yes` (`knowledge/remaining-scripts-census.md`); C1_total 18 → 19. `S7a`/`S7b` were **refused on measurement**: `RE_REGISTRY_ROW = /^\| (S\|R)\d+ \|/` (`scripts/proxy-check.mjs:219`) makes a suffixed id invisible — the critic's arm measured `C1_TOTAL_DRIFT declared=18 computed=17` | registry rows 108-109; independent scout census (`comm -3` vs the authoritative list → empty; `wc -l` total 54874); critic arms (i)/(iii)/(iv)/(v) |
 | 13 | operability (uncounted: a defect repair inside a coverage round, no proxy term moves) | `scripts/cite-check.mjs` — the lane's citation gate — died with an uncaught `TypeError [ERR_INVALID_ARG_TYPE] … Received function toString` (no verdict line) on any doc containing a backticked `Object.prototype` member name (`toString`, `valueOf`, `constructor`, `hasOwnProperty`): `ALIASES` was a plain object literal, so `ALIASES['toString']` returned the inherited function and `aliasRec` joined `opts.src` with it; `GENERATED_POINTERS` had the same shape. 19 hermetic cases | three token-keyed maps are null-prototype; a fixture doc + a hermetic regression case added; `node scripts/cite-check.mjs --selftest` → `20/20 cases passed (hermetic)` `VERDICT: PASS` exit 0. The un-fixed file with the same fixture dies inside the suite (exit 1) — failing-before/passing-after both recorded | `node scripts/cite-check.mjs --selftest`; A and C unchanged (A=4, C=9), so `operability` stays 8 and only `pin.cite-check` is re-pinned; defect found by an L2 executor, reproduced by L1 before repair |
 | 12 | coverage | C1 14/18 (S6 `partial — 2 of 5 named`, R10 `no`), C2 39/39, residue 140/211 ≈ 0.663 ⇒ `floor(10 × 0.778 × 1.0)` = 7; round 11's plan named S7's route-probe cluster as the route | C1 **16/18** (S6 5 of 5, R10 2 of 2 — both notes landed at internals level with a per-member probe), C2 **43/43** (3 knowledge notes + `lessons/round-12.md`), residue **150/211 ≈ 0.711** ⇒ `floor(10 × 0.888 × 1.0)` = **8**; the pre-registered S7 route was **deviated from on evidence** — a 9-of-69 cluster note would have flipped a family at 13% named while S6 sat denied at 40%, so S7 keeps `no` and the cluster note lands as C2-only residue progress; operability untouched (A=4, C=9 — the round adds no script and no `- [` line) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4 match)` exit 0; `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 43; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 43; member probes in `knowledge/ops-watchers.md` and `knowledge/gate-verdict.md` (both printed with their output); 7/7 mutation arms re-proved incl. a dishonest `yes` flip → `C1_DRIFT` |
 | 12 | coverage (uncounted) | S7 69 members, 0 named | S7 row keeps `no`; `knowledge/route-probe-cluster.md` names 9 members at internals level (`ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9; `wc -l … \| tail -1` → `3132 total`; the narrower `probe-*` glob is 7 files / 2,651 L — both measurements recorded) | registry S7 cell; `corpus/knowledge/route-probe-cluster.md` (`## Scope — this note does NOT cover S7`); README row |
@@ -249,7 +391,7 @@ row that ran, with one substitution and one addition, both measured:
 
 - The partition was executed, but **not with the `S7a`/`S7b` labels the plan
   used**: a suffixed id is invisible to `RE_REGISTRY_ROW` (`/^\| (S|R)\d+ \|/`,
-  `scripts/proxy-check.mjs:140-144`), so the split is `S7` = the 9-member cluster
+  `scripts/proxy-check.mjs:219`), so the split is `S7` = the 9-member cluster
   and `S8` = the new 60-member remainder. The plan's id labels would have
   produced `C1_TOTAL_DRIFT`, measured on a copy before landing.
 - Option 1 alone (partition ⇒ 17/19 = 0.894) would have moved **no** score; the
@@ -264,7 +406,7 @@ two measured deviations from the forecast:
 
 - It landed as a **separate artifact**, not a mode inside `scripts/proxy-check.mjs`.
   The forecast's `A=4 → 5` for the in-proxy placement is **refuted by the frozen
-  definition**: `A` is a file count (`scripts/proxy-check.mjs:281`), so a new mode
+  definition**: `A` is a file count (`scripts/proxy-check.mjs:426`), so a new mode
   in an existing file moves no term. The separate artifact also keeps the proxy's
   self-only arithmetic free of origin-tree I/O.
 - `C` moved 9 → 10 (the forecast said "C unchanged"): the gate needs its S
@@ -273,7 +415,175 @@ two measured deviations from the forecast:
 - Neither option 1 (R11) nor option 3 (the `C` regex tightening) was combined in:
   the round is one axis-move.
 
-**round 15 (pre-register, one move).** Coverage, and it must be declared *before*
+**round 15 (executed) vs the forecast above.** Option 1 ran **alone**, with the
+fallback the pre-registration named, and three measured deviations:
+
+- **The split was not landed in the same round, and that was the honest call.**
+  The pre-registration fixed only the partition and "each keeping its own C1/C2
+  pair"; the *terms* were not fixed. Measured against the tree, that form is
+  terminal: `C2_layer` is 1.0 by construction (every note a layer's rows
+  reference already has a README row — 50 rows / 49 notes before the round-15
+  lesson landed), so both successors would have read `floor(10 × 1.0 × 1.0)` = 10
+  under two new names. Splitting with an unmeasured honesty term would be a
+  definition change slipped into the round that measures it — the exact failure
+  `## Limits` names — so `R11` landed alone and `coverage` was **retired as
+  saturated**, successors declared in `## Retired` and scheduled below.
+- **A registry text gap was found and closed**: `R1`'s cell globbed
+  `` `native*.rs` `` (26 files in the crate), so `R11`'s 42 was not derivable
+  from the registry. The cell now names the 8; `C1` gains only `R11`.
+- **The boundary probe had a locale trap**: an unqualified `comm -3` on the
+  `en_US.UTF-8`-ordered member list is not a comparison — it printed empty once
+  and a bogus line plus `comm: input is not in sorted order` on the next. Both
+  sides are `LC_ALL=C sort`ed; recorded in the note and the lesson.
+- Option 2 (the paragraph-level `claims-check` arm, an operability move) was **not**
+  combined in: one axis-move per round. Operability is untouched (A=5, C=10).
+
+**round 16 (executed) vs the forecast above.** The pre-registered 16-plan is the
+row that ran — the successors' first measurement — with one substantive deviation
+and two things the forecast got right:
+
+- **The forecast's 6/6 was arithmetic, and the measurement confirmed it.** The
+  before values were recomputed from the tree *before* either tool was edited
+  (the pre-registration's own requirement): `ls scripts/*.mjs | wc -l` → 72,
+  `find scripts -mindepth 2 -type f | wc -l` → 42 (recursive; depth-1 reads 38),
+  `ls crates/ufo-core-runtime/src/*.rs | wc -l` → 93,
+  `ls crates/ufo-cli/src/*.rs | wc -l` → 5, `node scripts/claims-check.mjs` →
+  `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)` exit 0 with the
+  `S` rows summing 74 and the `R` rows 63. Only then did the terms land:
+  `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = **6** and
+  `floor(10 × 11/11 × 60/98)` = `floor(6.12…)` = **6** — two successors measured,
+  the lane's live-integer count 1 → 3, its lowest axis 8 → 6.
+- **Deviation: the runtime numerator is 60, not the forecast's 63.** The
+  pre-registration's arithmetic read *all* gate sections; the frozen definition
+  counts a row's **declared** members only, and `R9`'s note carries 3 sections
+  the gate warns are outside its family (`loop_driver_tests.rs`,
+  `local_ship_tests.rs`, `distill_tests.rs` — members of `R2`/`R6`/`R7`).
+  Measured live: in-family `S` 74 / all 74, in-family `R` 60 / all 63. The
+  integer is unchanged (6 either way), which is exactly why the substitution
+  would have gone unnoticed — recorded in `### coverage:runtime-layer` and in
+  `## Retired` instead of quietly absorbed.
+- **The pre-registered fallback was refuted by measurement, not by argument.**
+  The fallback condition was "`V_layer` double-counts `C1_layer` (… so the two
+  terms move together)"; it does not hold (`C1_layer` 1.0/1.0 against `V_layer`
+  0.649/0.612 at the same instant; at rounds 13–14 `C1 18/19` sat beside
+  `sections=90`, and round 15 moved `sections` by +47 while `C1` moved by +1
+  cell). So `F_layer` — the file-level residue, which would have bought nothing
+  and made the proxy read the origin for a *diagnostic* — was **not** taken. The
+  suite of reasons is in `### coverage:script-layer`.
+- **The cost was paid, and it is the origin-I/O amendment.** The pre-registration
+  named the constraint: the proxy's self-only, no-subprocess invariant. The
+  legacy six terms keep it; the two layer terms read the origin tree **once,
+  in-process, read-only** through `scripts/claims-check.mjs`'s single
+  `probeSections` derivation (an import, not a second implementation and not a
+  subprocess), with `--src DIR` and `SRC_NOT_A_DIR` fail-closed (exit 2). The
+  checklist item `Proxy recompute` therefore now needs the origin tree, exactly
+  as `cite-check`, `claims-check` and `surface-probe` already do — priced in
+  `## Limits`, not discovered later.
+- **Option 3 (the paragraph-level `claims-check` arm) was not combined in.** One
+  axis-move per round; operability is untouched (A=5, C=10), and the arm remains
+  pre-registered below.
+
+**round 17 (pre-register, one move).** The lowest-axis rule is the selector, and
+it is currently **ambiguous by design**: both successors read **6**, so the two
+coverage layers are tied for the floor and any operability option is one integer
+*above* it (8) — the first round since 12 where the lowest axis is not
+operability. Three admissible moves, arithmetic stated before measurement (all
+thresholds recomputed against the **member-only** numerators `74/114` and `60/98`,
+not against the pre-registration's all-sections `63`):
+
+- **(a) Raise `V_script` — `coverage:script-layer` to 7.** `floor(10 × n/114) ≥ 7`
+  ⇒ `n ≥ 80` ⇒ **+6** member sections from 74. Concrete plan: complete `S2`
+  (8 members, noted in `corpus/knowledge/native-trial-launch.md` +
+  `corpus/knowledge/failure-telemetry.md`) ⇒ 74 + 8 = **82/114** ⇒ `floor(7.19)` =
+  **7**. Measured caveat: 4 of `S2`'s six `collect-omp-native-handoff-lib/`
+  members (`events.mjs`, `evidence.mjs`, `policy.mjs`, `screening.mjs`) have **no
+  hits** in `corpus/` or `SKILL.md` today (`grep -rl` → 0 each), so this option
+  needs new **source analysis**, not a re-form.
+- **(b) Raise `V_runtime` — `coverage:runtime-layer` to 7. RECOMMENDED.**
+  `floor(10 × n/98) ≥ 7` ⇒ `n ≥ ceil(7 × 98/10) = 69` (69/98 = 0.704) ⇒ **+9**
+  member sections from 60. Concrete plan: complete `R1` (8 member sections; its
+  note `corpus/knowledge/native-judge-pipeline.md` already carries the internals,
+  so it is a **re-form**, not new research) **plus** `R8`'s one missing member
+  `crates/ufo-core-runtime/src/native_dispatch_topology.rs` in
+  `corpus/knowledge/native-transcript-ledger-seats.md` — a note that already
+  discusses it, so `R8` goes 3 → 4 of 4 ⇒ 60 + 8 + 1 = **69/98** ⇒
+  `floor(10 × 0.704)` = **7**, exactly on the threshold. **`R1` alone reads
+  68/98 ⇒ `floor(6.94)` = 6 and must not be landed alone**: under the
+  all-sections numerator (`63 + 6`) it looked like 7, and the member-only
+  numerator moved the baseline to 60, which is the number that changed.
+- **Per-row in-family sections, measured before this plan** (`probeSections`,
+  `inFamily === true`): `S1` 0 · `S2` 0 · `S3` 0 · `S4` 0 · `S5` 0 · `S6` 5 ·
+  `S7` 9 · `S8` 60 (**= 74**); `R1` 0 · `R2` 0 · `R3` 2 · `R4` 3 · `R5` 0 ·
+  `R6` 2 · `R7` 0 · `R8` 3 · `R9` 1 of 4 (3 out-of-family) · `R10` 2 · `R11` 47
+  (**= 60**). The two candidate rows are the ones with real headroom and an
+  internals-level note already in place.
+- **(c) The paragraph-level `claims-check` arm** — a member named with a live
+  anchor **and** a verbatim symbol **outside** any member section, which would
+  let the 9 topic-form rows be probed weakly. This is an **operability** move:
+  `A` 5 → 5 (a new mode in an existing file moves no file count) — but it can add
+  a checklist item, `C` 10 → 11, so `A+C` 15 → 16 and
+  `f_O = 16/19 = 0.8421` ⇒ `floor(10 × 16/19)` = **8**. It **cannot pay while
+  operability's proxy saturates** (9 needs `A+C ≥ 27`), it moves no axis integer
+  while the floor is 6, and the lowest-axis rule therefore rejects it as a
+  primary move.
+- **Falsifier and halt condition, stated before the round.** Stop when
+  `node scripts/claims-check.mjs --row R1` verifies the declared 8 members and
+  `--row R8` verifies **4 in-family** members, both with **zero errors**, and
+  `node scripts/proxy-check.mjs` reports `coverage:runtime-layer=7`. **Do not
+  sectionize a third row**: the threshold is met at exactly 69, and a third row
+  would inflate the numerator without establishing that the pair earned it, while
+  a half-sectionized row turns `ROW_NO_SECTIONS` into `MEMBER_COUNT_SUSPECT`
+  instead of removing it. **Falsifier:** any of the 9 new sections failing the
+  gate's own-file anchor / verbatim symbol / declared-family checks, or the
+  recompute landing below 69/98 — either means the move did not land and the round
+  reports 6, not 7.
+- **Which one the lane intends: (b)**, and the tie between the two layers is no
+  longer a coin flip once costs are read: (a) needs new source analysis for four
+  library members no corpus note names at all, while (b) is a re-form of two notes
+  that already carry their internals. The lowest-axis rule selects the *layer*
+  (both read 6); the cost class selects the *rows*.
+- **Honest measurement note: this plan was recomputed mid-round.** The member-only
+  numerator moved the runtime baseline **63 → 60**, and an earlier draft of this
+  pre-registration (written against 63) would have landed `R1` alone — which read
+  **7** under the 63-based arithmetic (`63 + 6`) and reads **68/98 ⇒ 6** under the
+  measured baseline, a round that moves no integer. The threshold is therefore
+  **69/98** and the plan is `R1`'s 8 + `R8`'s 1 = **69/98**, not `R1` alone.
+  Recorded here because that draft is exactly the kind of forecast the `## Limits`
+  rule about measurement-vs-recall exists to catch.
+- **Not a move, queued:** the `C2` term stays saturated-for-now and nothing in
+  this lane can raise the two successors except member sections, so (a)/(b) are
+  the only live coverage levers; a registry change (e.g. re-drawing a family
+  boundary) must be pre-registered a round ahead of the round that measures it,
+  as in rounds 12→13.
+
+**round 16 (pre-register, one move).** The successors, whose *terms* are fixed
+here rather than in the round that measures them:
+
+1. **`coverage:script-layer` and `coverage:runtime-layer`**, each
+   `floor(10 × C1_layer/C1_total_layer × V_layer)`: `C1_layer` keeps the family
+   standard over that layer's registry rows (`S1`–`S8` = 8 rows / 114 members;
+   `R1`–`R11` = 11 rows / 98 members); `V_layer` = the fraction of that layer's
+   **declared** members whose member section the claims gate verifies, i.e.
+   section-form members over declared members, so the successor's honesty term is
+   the same machine derivation the gate already runs (`CLAIMS: MATCH (… sections=137
+   …)` today, over 212 declared members). Cost: `scripts/proxy-check.mjs` learns
+   the `S`/`R` prefix split and consumes `scripts/claims-check.mjs`'s section
+   derivation **in process** (an import, not a subprocess — the proxy's
+   no-subprocess, no-origin-I/O invariant is the constraint); new hermetic cases
+   for both terms; both `scripts/*.mjs` pins re-pinned. Round 16 must compute the
+   `before` values from the tree *before* editing either tool.
+2. If round 16 measures that `V_layer` double-counts `C1_layer` (a family is
+   either all-section-form or all-topic, so the two terms move together), the
+   fallback is `floor(10 × C1_layer × F_layer)` with `F_layer` = the file-level
+   residue of that layer (201/211 ≈ 0.952 overall after round 15) — which needs origin-tree I/O
+   in the proxy, the thing round 14 deliberately kept out of it, so it is the
+   second choice and must be priced, not assumed.
+3. Queue, not a move: the paragraph-level arm in `claims-check` (a member named
+   with a live anchor and a verbatim symbol outside any member section) would let
+   the 9 topic-form rows be probed weakly — `A+C` 15 → 16, still ⇒ 8 on
+   operability's saturating proxy.
+
+**round 15's pre-registration (kept for the record, executed in part).** Coverage, and it must be declared *before*
 it is measured, because it saturates:
 
 1. **R11** — the last uncovered family (42 runtime `.rs` + 5 CLI `.rs`, 0 of 47
@@ -473,19 +783,227 @@ combined in a round that also claims a first.
   on two fixtures so a kind-blind totals mutation fails, but the audit's verdict
   stands: it is a regression net for the arms, not a proof that the arms are
   correct. Treated as a worklist, and the paragraph-level arm is pre-registered
-  for round 15.
+  for round 16 — it was **not** landed in round 15, whose one axis-move was
+  coverage.
 - **Two `--symbols` findings are pre-existing and belong to older rounds.**
   `SKILL.md` `PROTOCOL.md:264-265` / `HEAD` (`--symbols`-only `SYMBOL_OFF_LINE`,
   the sentence was `SKILL.md:607` at HEAD and moved to `:620` when round 14's
   bullet was inserted) and `corpus/knowledge/live-surface-probe.md:176`
   (`base.mjs:586` / `UNEXPECTED_ERROR`). Plain-mode lane-local errors are 0;
   the repo-wide 14 are the two third-party aggregator artifacts.
+- **The aggregate is terminal, so this lane now has one scored axis (round 15).**
+  `coverage` reached `19/19 × 50/50` and cannot move again; `operability` is at
+  `f_O = 15/18 = 0.8333 ⇒ 8` and needs `A+C ≥ 27` for the next integer. The two
+  successors are declared but **unscored** until round 16 gives them terms and a
+  derivation, so between rounds 15 and 16 the scorecard carries exactly one live
+  integer. That is the cost of not claiming a saturated 10, and it is recorded
+  rather than papered over with a hand-typed successor number: the `## Retired`
+  forecasts (6 and 6) are labelled arithmetic, not measurements. **Superseded in
+  round 16**: the successors now have derived terms, so the lane carries three
+  live integers (operability 8, the two successors 6) — see the lowest-axis entry
+  below.
+- **`R11` is a remainder, and its boundary is arithmetic rather than a natural
+  kind (round 15).** 93 `crates/ufo-core-runtime/src/*.rs` − the 51 named by
+  `R1`–`R10` = 42, plus `crates/ufo-cli/src/*.rs` = 5. Until this round `R1`'s
+  cell globbed `` `native*.rs` `` (26 files in the crate), so the subtraction was
+  not derivable from the registry at all — the 8 were recovered as *forced*
+  (93 − 43 (`R2`–`R10`) − 42 = 8, and the same 8 are the `native*.rs` files the
+  judge-pipeline note mentions ≥2×, both sorted lists hashing identically) and the
+  cell now names them. A sibling lane re-deriving `R11` from the *old* cell would
+  have had to read a note's prose, which is exactly the failure mode the family
+  standard refuses.
+- **`R11`'s 47 sections are gate-verified in shape, not in truth (round 15).**
+  `--row R11` reports `sections=47 adv=0`: every heading resolves to a distinct
+  file inside the cell's patterns, each carries a live own-file anchor and a
+  verbatim symbol, and the declared `47 members` equals the distinct section
+  count. It does **not** show that the sentence around an anchor is true, and the
+  prose in those 47 sections is the part no gate reads. Eight fixture arms
+  (absent note, 1-of-3 members, anchor past EOF, blank anchor endpoint, no
+  verbatim symbol, a section outside the declared patterns, an ambiguous
+  basename, a non-path-like heading) were measured by an independent lane and
+  behaved as the tool's header claims (8/8), with `--strict` promoting the one
+  warning and a missing `--src` failing closed — but that is sensitivity to the
+  fakes tried, not completeness.
+- **A collated diff is not a comparison unless both sides are C-collated (round
+  15).** `comm -3` between the `en_US.UTF-8`-ordered member list and a C-ordered
+  list printed *empty* on one run and a bogus `round.rs` line plus `comm: input
+  is not in sorted order` on the next. The note's boundary probe therefore
+  `LC_ALL=C sort`s both sides; a reader re-running the file-level residue
+  diagnostic should do the same.
+- **9 of 19 registry rows remain note-existence-only (round 15).** After `R11`
+  flipped, the advisories are unchanged at 16: 9 × `ROW_NO_SECTIONS` (S1–S5, R1,
+  R2, R5, R7), 4 × `MEMBER_COUNT_SUSPECT` (R3, R4, R6, R8), 3 ×
+  `SECTION_FILE_NOT_MEMBER` (R9's sibling suites). The successors' honesty term
+  `V` is designed to price exactly that gap rather than leave it as a footnote.
+- **The residue diagnostic's recalled numbers were off by one (round 15).**
+  Re-running the walk the scorecard describes (`corpus/**.md` + `SKILL.md`,
+  basename containment, over `scripts/*.mjs` + `scripts/*/` + runtime `.rs` +
+  CLI `.rs` = 212 files / 211 unique basenames) reproduces round 13's `195/211`
+  only when `lessons/round-14.md` and the third-party
+  `lessons/round-9-aggregator-corpus-verdict.md` are excluded; over the actual
+  pre-round-15 corpus it reads **196/211**. So rounds 13–14's `195` was carried
+  forward without being re-run on the grown corpus — the diagnostic is
+  unscored, which is why nothing gated it, and it is the second such recall
+  error this lane has had to repair (round 11 caught a wrong residue count
+  before publication). The durable rule: a recalled count is a claim; re-run it
+  or label it as recalled.
+- **The proxy's origin-tree I/O amendment, and its cost (round 16).** Until this
+  round `scripts/proxy-check.mjs` was self-only — no subprocess, no git, no
+  origin tree — and that was a deliberate property (round 14 kept the claim gate
+  in a separate artifact for exactly this reason). The layer terms cannot be
+  self-only: `S_members` and `R_members` are counts over the origin tree. The
+  amendment keeps the legacy path untouched (the six legacy terms still come from
+  one local walk) and opens the origin tree **once, in-process, read-only**
+  (through the imported `probeSections`, never a subprocess), with `--src DIR`
+  and a fail-closed `SRC_NOT_A_DIR` (exit 2). The cost is real and is not waved
+  away: the `round-gate` checklist item `Proxy recompute` — and any reader
+  re-running `node scripts/proxy-check.mjs` — now needs that tree present,
+  exactly as `cite-check`, `claims-check` (both take `--src`) and
+  `surface-probe --integrations` already do. A missing tree is `exit 2`, never a
+  score: the layer terms cannot quietly read `0`. Priced, not assumed — the
+  round-16 pre-registration named this I/O as the reason the file-level-residue
+  fallback was the *second* choice.
+- **`scripts/*/` is recursive (42), not depth-1 (38) (round 16).** The frozen
+  universe is `scripts/*.mjs` (72) plus **all files under** `scripts/*/`
+  (42, recursive) = `S_members` 114. Measured both ways:
+  `find scripts -mindepth 2 -type f | wc -l` → **42**;
+  `find scripts -mindepth 2 -maxdepth 2 -type f | wc -l` → **38**. The four files
+  the shallower count drops are the depth-2 members
+  (`charter-scribe/prompts/kimi-update.prompt.txt`,
+  `charter-scribe/systemd/charter-scribe.service`,
+  `charter-scribe/systemd/charter-scribe.timer`, `lean-cargo/bin/cargo-shim.sh`).
+  A depth-1 reading gives 110 members and `74/110` instead of `74/114` — the same
+  integer 6, but a different term, which is why the definition is stated here
+  rather than left to the glob's shape.
+- **The layer numerators are gate-verified in shape, not in truth (round 16).**
+  `S_sections` = 74 and `R_sections` = 60 are member sections the gate *shape-
+  checks* (path-like heading inside the row's declared patterns, a live own-file
+  anchor, a verbatim symbol in that file). Across the whole registry the gate
+  reads **137** sections over **212** declared members (114 + 98), of which
+  **134** are in-family (74 + 60) and the remaining **3** are `R9`'s
+  `SECTION_FILE_NOT_MEMBER` sections. None of that shows the sentence around an
+  anchor is true, and the gate still cannot see the 9 topic-form rows' member
+  completeness at all — which is exactly what `V_layer` prices as a fraction
+  rather than a footnote.
+- **The origin tree's HEAD moved again (round 16).** `93798be12` (the round-15
+  reading) → **`5725fa7d3`**
+  (`git -C /home/vgpnk/Projects/origin-work/ufo-fsd-alpha rev-parse --short=9 HEAD`,
+  measured this round). The layer member counts are read live on every run, so they are
+  HEAD-relative *by construction* and not pinned to a revision: a re-run months
+  from now re-measures this round's 114/98 against whatever the tree then holds.
+  That is the right behaviour for a live proxy and the wrong behaviour for a
+  citation — which is why the notes' line anchors (not the counts) are the part
+  that must be re-probed.
+- **The honest consequence: this lane's lowest axis is now 6 (round 16).**
+  `coverage:script-layer` 6 and `coverage:runtime-layer` 6 sit below operability
+  8, so the lowest-axis rule that selects a move now points at the successors
+  rather than at operability — the reverse of rounds 12–14, when operability was
+  the floor. `coverage` 10 is terminal and is not a work target. A round that
+  moves neither successor therefore moves no *lowest* axis, whatever else it
+  improves.
+- **`C1_layer` is a 0–1 multiplier on top of `V_layer`, so a row can be
+  penalised twice (round 16, from the critic lane).** A cell flipping to `no`
+  costs once in `C1_layer/C1_total_layer` and again in the same row's share of
+  `V_layer` (its member sections stop counting). Today both layers read
+  `C1_layer` = 1.0, so the coupling is inactive and the terms are separable; the
+  factor is kept because the term is pre-registered, and both unrounded factors
+  (`S_sections/S_members`, `R_sections/R_members`) are exposed in `--json`
+  alongside the integers, so the coupling is inspectable rather than inferred.
+- **Axes are not summed, and the retired row is not a live target (round 16).**
+  `coverage` keeps its terminal integer 10 in `## Axes` only because the frozen
+  proxy derives and cross-checks that row (`AXES_DRIFT` would fire otherwise);
+  the planning rule reads only live axes. The two successors are disjoint by
+  registry prefix (`S` rows vs `R` rows), so `6 + 6` is not a score and must
+  never be read as a 12: the lane's floor is 6, and no average or sum of the
+  remaining axes is computed anywhere in this file or in the proxy.
+- **`cite-check` does not line-check lane-local script citations (round 16).**
+  A `scripts/<tool>.mjs:<N>` token resolves as class `self-doc`, rung `self`,
+  kind `OK` — no range check. Measured: after `scripts/proxy-check.mjs` grew
+  1174 → 1560 L, a plain run reported **0** findings naming either edited tool,
+  before and after the 44 doc pins were re-anchored. The re-anchor was therefore
+  correct maintenance that no gate would have caught, verified by symbol lookup
+  instead; the 18 of 44 pins the auto-map got wrong (a shifted endpoint is only
+  valid where a block moved rather than was replaced) were found the same way.
+- **`cite-check`'s span scanner loses backtick alignment after a ``` fence
+  (round 16, sibling lane + reproduced here).** `findSpans()`
+  (`scripts/cite-check.mjs:338-350`) pairs `` /`([^`]+)`/g `` over the whole text
+  and drops spans whose endpoints fall in a fence range from `findFences()`
+  (`:324-336`); the three backticks of a ``` fence line are consumed by that
+  pairing and shift it by one for the rest of the document, while `~~~` fences
+  shift nothing. Reproduced in a `git archive HEAD` copy, one construct per file:
+  a prose token with no fence → `UNRESOLVED`; a prose token **after a ``` fence**
+  → no finding (lost); **after a `~~~` fence** → `UNRESOLVED`; fence content →
+  not tokenized for either marker (that part is by design). Scale, from the
+  sibling lane: 13 of 229 inline citations tokenized in a ``` draft, 230 of 230
+  in a `~~~` draft. Consequence: this lane's cited `tokens=` counts and
+  `CITE_CHECK` findings understate coverage for every doc that uses ``` fences,
+  so "zero findings in my file" is weak evidence in those files. Queued as an
+  operability repair with its own before/after, not patched into this round.
+- **Mutation coverage of the six new terms is 7 of 9 killed (round 16).** An
+  independent lane mutated copies of `scripts/proxy-check.mjs`; the two surviving
+  mutants are named gaps, queued with their proposed cases: (a) removing the
+  proxy's early `SRC_NOT_A_DIR` validation survives because no fixture asserts the
+  arm's *precedence* over a malformed/missing scorecard, and (b) `probeSections`
+  crediting a section whose heading resolves to no origin file survives because no
+  fixture asserts that `SECTION_FILE_UNRESOLVED` earns no layer credit. Seven
+  mutants were killed (all-sections numerator; 114 → 72; 98 → 93; swapped
+  denominators; `floor` → `round`; the runtime axis mapped to the script term;
+  inverted `C1` ratio).
 
 ## Retired
 
-None. Neither owned axis is saturated. Coverage now stands at 18/19 with **R11**
-(42 runtime `.rs` + 5 CLI `.rs`, 0 of 47 named) as the only uncovered family; if
-that lands, C1 reaches 19/19 and the axis is saturated at 10 — at which point
-coverage splits into `coverage:script-layer` vs `coverage:runtime-layer` (the
-file-level residue is 0.924, not 1.0, and the family standard is still lane prose
-rather than a gate) rather than being retired.
+### `coverage` — retired at saturation, round 15
+
+**Reason.** The frozen aggregate `floor(10 × C1/C1_total × C2/C2_total)` reached
+its **terminal** value: `19/19 × 50/50 ⇒ 10`. Both terms are at their ceiling and
+neither can move again — every registry cell starts `yes`, and every corpus note
+has a README row — so the integer is no longer a measurement of the object. It
+also stops measuring exactly where this lane's truth is least settled: the
+file-level residue is 201/211 ≈ 0.952, the family standard is lane prose, and 9
+of 19 rows can be probed only for note existence (the section-form rows carry 137
+gated member sections against 212 declared members). Keeping `coverage` as a live
+axis at 10 would be the round-12/13 `partial`-cell mistake in its final form.
+
+**What is recorded, not claimed.** The 10 is the axis's *terminal* value and its
+last measured one; the round's actual deliverable is the object underneath it —
+`corpus/knowledge/runtime-remainder-census.md`, 47 of 47 members named at
+internals level with a live own-file anchor and a verbatim symbol each, the last
+`no` cell in the registry closed.
+
+**Successors (declared round 15; terms pre-registered in `## Planned`; first
+measurement round 16).**
+
+| Successor | Registry rows | Members | Measured score |
+|---|---|---|---|
+| `coverage:script-layer` | `S1`–`S8` | 114 | `floor(10 × 8/8 × 74/114)` = **6** (measured round 16) |
+| `coverage:runtime-layer` | `R1`–`R11` | 98 | `floor(10 × 11/11 × 60/98)` = **6** (measured round 16) |
+
+Each is `floor(10 × C1_layer/C1_total_layer × V_layer)`, where `V_layer` is the
+fraction of that layer's declared members whose member section the claims gate
+verifies (74 member sections script-layer, **60** runtime-layer, 134 of the 137
+gated sections in all — `CLAIMS: MATCH (… sections=137 …)`). These are
+**measurements now, not forecasts**: round 16 recomputed both numerators and
+denominators from the tree (before editing either tool, as the pre-registration
+required) and `scripts/proxy-check.mjs` re-derives them on every run as
+`coverage_script` / `coverage_runtime`. The round-15 forecast read `63/98` for
+the runtime layer; the frozen definition counts only a row's **declared** members,
+which reads **60**, and the integer is unchanged either way — the deviation is
+recorded in `### coverage:runtime-layer` and in `## Planned`. The forecast was
+arithmetic and the measurement confirmed it; the forecast's own *fallback*
+(`F_layer`, the file-level residue) was refuted by measurement, see below.
+
+**Why a split and not a claim of 10, and why it is honest.** Kasegi states the
+fleet's test for a split at `kasegi-shokunin/SCORECARD.md:69-78`: splitting must
+**expose a worse number rather than conceal it**. These successors read 6 and 6
+against the retired 10 — a drop of four points on both halves, entirely from the
+honesty term `V`, which is the part the aggregate never measured. The
+pre-registered alternative form (each successor "keeping its own C1/C2 pair") was
+**refuted by measurement before landing**: `C2_layer` is 1.0 by construction
+(every note a layer's rows reference already has a README row), so both
+successors would have read 10 under two new names — a split that conceals.
+
+**No sibling precedent for retiring a saturated parent.** The only split found in
+the fleet is kasegi's `depth` → `depth:density` + `depth:verifiability` (round
+15), and that lane records "No axis retired" (`kasegi-shokunin/SCORECARD.md:78`,
+`:103-105`) — its parent was never saturated, so this entry is the first
+retirement-at-saturation in the fleet rather than a citation of one.

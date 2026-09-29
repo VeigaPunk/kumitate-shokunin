@@ -575,7 +575,7 @@
   Pre-registration: round 13's `## Planned` option 2 (`--claims`) — an
   **operability** move, because operability (8) is this lane's lower axis.
   Deviations, both measured: landed as a **separate artifact** (the frozen `A` is
-  a file count — `scripts/proxy-check.mjs:281` — so a mode inside the proxy moves
+  a file count — `scripts/proxy-check.mjs:426` — so a mode inside the proxy moves
   no term; the plan's `A=4 → 5` for that placement is refuted), and `C` moved
   9 → 10 (the gate's execution path is a checklist item `surface-probe
   --checklists` runs).
@@ -664,3 +664,187 @@
   coverage unchanged at 9) — rather than by rewriting the tool's claim. The
   sibling's commit also pushed as part of this lane's push (`dffbf0e..93b0567`).
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-14/kumitate.md`.
+- 2026-09-28 — round 15 (**coverage 9 → 10, then retired as saturated**): the
+  last uncovered registry family `R11` — the runtime remainder plus the CLI
+  (`crates/ufo-core-runtime/src/*.rs` 93 − the 51 named by `R1`–`R10` = 42, plus
+  `crates/ufo-cli/src/*.rs` 5) — named at internals level: **47 of 47 members /
+  24,874 L** in `corpus/knowledge/runtime-remainder-census.md`, one `## `
+  section per member with a live own-file anchor and a verbatim symbol each.
+  Measured before → after by the same tools:
+  `PROXY: MATCH (A=5 C=10 operability=8; C1=18/19 C2=48/48 coverage=9)` →
+  `PROXY: MATCH (A=5 C=10 operability=8; C1=19/19 C2=50/50 coverage=10)`;
+  `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)` →
+  `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=137 adv=16)`;
+  `node scripts/claims-check.mjs --row R11` → `CLAIMS: MATCH (rows=1 yes=1
+  notes=1 sections=47 adv=0)` exit 0. Operability untouched (A=5, C=10 — the
+  round adds a note and a `yes` cell, no script and no `- [` line).
+  **The axis was then retired, not claimed.** `10` is the frozen aggregate's
+  terminal value (`C1` and `C2` both at their ceilings ⇒ the integer can no
+  longer move), while the file-level residue is 201/211 ≈ 0.952 and only the 11
+  section-form rows are member-gated — so `coverage` is recorded as saturated in
+  `## Axes` and retired in `## Retired`, with successors
+  `coverage:script-layer` (S1–S8, 114 members) and `coverage:runtime-layer`
+  (R1–R11, 98 members) declared and their terms pre-registered for round 16.
+  The pre-registered split form ("each keeping its own C1/C2 pair") was
+  **refuted by measurement before landing**: `C2_layer` is 1.0 by construction
+  (every note a layer's rows reference already has a README row), so both
+  successors would have read 10 under two new names — a split that conceals. The
+  successors' honesty term `V_layer` (gate-verified member sections over declared
+  members) is the term that can still move; the forecast integers (6 and 6) are
+  labelled arithmetic, not measurements.
+  Falsifications and independent re-derivations in-round (10-lane batched L2
+  dispatch, routed planner/connector `@m_lunamax` · executor/scout `@m_flash` ·
+  reviewer/critic/labrat/distiller `@m_zfl`): the boundary was rebuilt from the
+  tree and diffed (`comm -3` empty, `wc -l` 24,874, union pairwise disjoint, no
+  basename collision); all 47 sections were re-derived by a second lane
+  (`47/47 VERIFIED`, zero defects, no `REF_OWNER_AMBIG`); the gate's sensitivity
+  was measured on 8 doctored fixtures (absent note · 1-of-3 members · anchor past
+  EOF · blank anchor endpoint · no verbatim symbol · section outside the declared
+  patterns · ambiguous basename · non-path-like heading) — 8/8 as documented,
+  `--strict` promoted the warning, a missing `--src` failed closed; a scan of 51
+  corpus files found **no duplicate member section** for any of the 47; a
+  cross-lane scan found **no contested scope** and no R11 basename overlap.
+  Three findings the round did not plan for, all repaired or recorded:
+  (a) `R1`'s members cell read ``8 `native*.rs` core modules`` — a glob matching
+  26 files in the crate — so `R11` was not derivable from the registry at all;
+  the 8 are *forced* (93 − 43 (`R2`–`R10`) − 42 = 8, and the same 8 are the
+  `native*.rs` the judge-pipeline note mentions ≥2×, both sorted lists hashing
+  identically), so the cell now names them — registry text only, no scored term
+  moved (`node scripts/claims-check.mjs --scorecard /tmp/kumitate-r15/sc-r1.md
+  --row R1` → `CLAIMS: MATCH` exit 0, advisories unchanged at 16);
+  (b) `comm -3` between the `en_US.UTF-8`-ordered member list and a C-ordered
+  list is not a comparison — it printed empty once and a bogus `round.rs` line
+  plus `comm: input is not in sorted order` the next, so the note's probe
+  `LC_ALL=C sort`s both sides; (c) re-measuring the file-level residue
+  diagnostic found rounds 13–14's recalled `195/211` to be the round-13 corpus —
+  the actual pre-round-15 corpus reads `196/211` — and this round moves it
+  **196 → 201 / 211 ≈ 0.952** (5 basenames no earlier note carried), recorded in
+  `## Limits` as a recall error, not silently corrected.
+  Cites repaired in-round: one `UNRESOLVED epoch.json` (a runtime receipt under
+  `.ufo/`, not an origin path) and one `AMBIG directive.md` (35 same-basename
+  matches) in the new note were reworded; the note now yields **zero** plain-mode
+  findings, so the repo-wide `errors=14` remain exactly the two third-party
+  aggregator artifacts. `SKILL.md` and `corpus/knowledge/executable-scorecard.md`
+  were re-pointed: the claims verdict line, the "four pins" prose (five since
+  round 14), the stanza key list, the four-gate composition table (five
+  instruments), the `SCORECARD.md`/`SKILL.md` line refs, and a stale
+  "round 12 = current readings" inputs section that was two rounds old.
+  Cross-domain (reported, not absorbed): origin HEAD unchanged at `93798be12`
+  but dirty paths moved 36 → 37 while the round ran (no R11 member touched that
+  day); the only sibling split precedent is kasegi's `depth` →
+  `depth:density` + `depth:verifiability` (`kasegi-shokunin/SCORECARD.md:69-78`),
+  which records "No axis retired" — so this lane's retirement-at-saturation is
+  the fleet's first, not a citation of one.
+  Close evidence (lane HEAD after the round-15 commit `round-15`, pushed; report
+  committed+pushed in the main repo): `node scripts/round-gate.mjs --close` →
+  `ROUND_GATE: CLEAN (round=15 lane=kumitate checks=13 errors=0 warnings=0)`
+  exit 0; `surface-probe --checklists` → `CHECKLIST: 10/10 pass`; all five
+  hermetic suites green (`cite-check` 20/20, `surface-probe` 38/38, `round-gate`
+  57/57, `proxy-check` 55/55, `claims-check` 35/35); `surface-probe` →
+  `SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1)`.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-15/kumitate.md`.
+- 2026-09-28 — round 16 (**coverage successors' first measurement: unscored →
+  6 and 6**, via the terms pre-registered in round 15): the retired `coverage`
+  axis's two successors are now machine-derived terms of the frozen proxy, so
+  before→after is a re-derivation rather than a hand count. Terms, frozen in
+  round 15's `## Planned` and implemented, not redefined: `coverage:script-layer
+  = floor(10 × C1s/C1s_total × S_sections/S_members)` and
+  `coverage:runtime-layer = floor(10 × C1r/C1r_total × R_sections/R_members)`,
+  where `C1s`/`C1r` are the layer's registry `yes` rows over its rows and the
+  section terms count only members of the row's declared family (`inFamily ===
+  true`). Measured, same tools both sides:
+  `before  PROXY: MATCH (A=5 C=10 operability=8; C1=19/19 C2=50/50
+  coverage=10; pins=5 match)` → `after  PROXY: MATCH (A=5 C=10 operability=8;
+  C1=19/19 C2=52/52 coverage=10; S=74/114 coverage:script-layer=6; R=60/98
+  coverage:runtime-layer=6; pins=5 match)`; members from the origin tree
+  (`scripts/*.mjs` 72 + all files under `scripts/*/` 42 recursive = 114;
+  `crates/ufo-core-runtime/src/*.rs` 93 + `crates/ufo-cli/src/*.rs` 5 = 98),
+  sections from `node scripts/claims-check.mjs --json` reduced per layer
+  (`S 8/8 rows, 74 in-family sections; R 11/11 rows, 60 in-family of 63 raw`).
+  Three findings the round did not pre-register, all measured:
+  (a) the numerator had to be member-only: the frozen definition says "the
+  layer's **declared** members", and R9's note carries 3 sections the gate warns
+  `SECTION_FILE_NOT_MEMBER` (`loop_driver_tests.rs`, `local_ship_tests.rs`,
+  `distill_tests.rs` — R2/R6/R7 members), so the runtime reading is 60/98 =
+  0.612 and not the forecast's 63/98 = 0.643 (integer 6 either way — the
+  forecast's *number* was refuted, not its score); an independent critic lane
+  found this, L1 reproduced it;
+  (b) the pre-registered fallback (file-level residue `F_layer`) is refuted by
+  measurement, not taste: `C1_layer` is 1.0 on both layers while `V_layer` is
+  0.649/0.612, so the two terms are not re-expressions of each other — and
+  rounds 13–14 show them moving apart (`C1 18/19` beside `sections=90`);
+  (c) the round-15 lesson's arithmetic would have landed `R1` alone
+  (`68/98 ⇒ 6`); the plan was recomputed before pre-registration (R1's 8 +
+  R8's `native_dispatch_topology.rs` = `69/98 ⇒ 7`).
+  The **cost, paid and recorded**: the proxy stops being self-only. The four
+  legacy terms still never read the origin tree; the two layer terms read it
+  once, in process, through an import of `scripts/claims-check.mjs`'s
+  `probeSections()` (never a subprocess, no second walk), with `SRC_NOT_A_DIR`
+  fail-closed (exit 2). Consequence in `## Limits`: the `Proxy recompute`
+  checklist item now needs the origin tree, exactly as `cite-check`,
+  `claims-check` and `surface-probe` already do.
+  Artifacts: `scripts/proxy-check.mjs` (1174 → 1560 L, six new terms, `--src`,
+  `SRC_NOT_A_DIR`, hermetic suite 55 → 71 cases), `scripts/claims-check.mjs`
+  (819 → 863 L, additive `probeSections` export + main guard, CLI stdout
+  byte-identical, suite still 35/35), `SCORECARD.md` (two `### coverage:*`
+  definition sections, stanza 11 → 17 keys, two `## Axes` rows, move-log,
+  limits, round-17 pre-registration), `SKILL.md` (proxy vocabulary; checklist
+  count held at 10 — an operability term, not this round's), new
+  `corpus/knowledge/layer-axes.md` (370 L) and `corpus/lessons/round-16.md`
+  (326 L) + their README rows, `corpus/knowledge/executable-scorecard.md`
+  (grammar/term tables, fail-closed arms, the amended invariant, round-16
+  inputs).
+  Uncounted repairs inside the move: **44 `scripts/proxy-check.mjs` line
+  citations in the lane docs were re-anchored** after the tool grew ~400 lines
+  (a line map moved them; symbol verification then corrected 18 of the 44,
+  because an endpoint shift is unsafe where a block was replaced rather than
+  moved — e.g. `RE_REGISTRY_ROW` 140-144 → 219, the `A` count 281 → 426,
+  `DEFAULT_SELF` 170 → 174); `cite-check` plain mode is back at its baseline
+  (`CITE_CHECK: DRIFT (files=54 tokens=4861 errors=14 warnings=76)`, the 14
+  errors all in the two third-party aggregator artifacts) with **zero**
+  findings naming either edited tool, and `--symbols` errors 20 → 19 (the one
+  removed was the auto-map's own error, `executable-scorecard.md:11`).
+  Two gate limits measured this round, recorded not absorbed:
+  (i) `cite-check` does **not** line-check lane-local script citations —
+  `scripts/<tool>.mjs:<N>` tokens resolve as class `self-doc`, rung `self`,
+  kind `OK` (0 findings naming the two tools before and after the 44 moves), so
+  the re-anchor was correct maintenance that no gate would have caught;
+  (ii) the same tool's **span scanner loses backtick alignment after a ```
+  fence**, so prose citations in a document that uses ``` fences are largely
+  unchecked. Mechanism (read, then reproduced in a `git archive HEAD` copy):
+  `findSpans()` (`scripts/cite-check.mjs:338-350`) pairs backticks with
+  `/`([^`]+)`/g` over the whole text and discards spans whose endpoints fall
+  inside a fence range from `findFences()` (`:324-336`); the three backticks of a
+  fence line are consumed by that pairing and shift it by one for the rest of the
+  document, while `~~~` fences carry no backticks and shift nothing. Measured in
+  the copy, one construct per file: prose token, no fence → `UNRESOLVED`
+  (flagged); prose token **after a ``` fence** → no finding (lost); prose token
+  **after a `~~~` fence** → `UNRESOLVED` (flagged); fence *content* → not
+  tokenized for either marker (by design). A sibling lane measured the scale in
+  one draft: 13 of 229 inline citations tokenized with ``` fences, 230 of 230
+  with `~~~`. So the 44 pins re-anchored above were verified by symbol lookup and
+  not by this gate, and the defect is queued, not slipped into this round.
+  Also recovered: **round 15 was never committed** (its process ended first) —
+  its two new notes are now the `round-15` commit, and its scorecard/log/skill
+  text, interleaved with round 16's edits by then, lands inside the `round-16`
+  commit; both statements are in the commit bodies.
+  Wave-2 verification (second batched dispatch): reviewer/hermetic-arm/
+  mutation lanes against the landed tools — mutation coverage of the new
+  machinery is **7 of 9 killed**; the two survivors are named gaps, queued for
+  the operability axis and recorded in `## Limits`, not patched in a coverage
+  round. Cross-lane (reported, not absorbed): kasegi's split test is its own
+  lane's rule, cited as such; kagi's "documentation-coverage score" adjacency
+  note stands with the integrator; no sibling defines a layer/member-section
+  term.
+  Close evidence (lane HEAD after the `round-16` commit, pushed; report
+  committed+pushed in the main repo): `node scripts/round-gate.mjs --close` →
+  `ROUND_GATE: CLEAN (round=16 lane=kumitate checks=13 errors=0 warnings=0)`
+  exit 0; `node scripts/proxy-check.mjs` → `PROXY: MATCH (… S=74/114
+  coverage:script-layer=6; R=60/98 coverage:runtime-layer=6; pins=5 match)`
+  exit 0; `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=19
+  notes=27 sections=137 adv=16)` exit 0; `surface-probe --checklists` →
+  `CHECKLIST: 10/10 pass`; all five hermetic suites green (`cite-check` 20/20,
+  `surface-probe` 38/38, `round-gate` 57/57, `proxy-check` 71/71,
+  `claims-check` 35/35); `node scripts/surface-probe.mjs` →
+  `SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1)`.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-16/kumitate.md`.
