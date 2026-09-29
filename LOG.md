@@ -555,3 +555,13 @@
   the wipe at `measure.sh:66` is unconditional (owner: origin tooling lane); the
   five top-level `.sh` scripts sit outside the frozen counting universe.
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-13/kumitate.md`.
+  Close evidence (lane HEAD after the round-13 commit `ed991d0`, pushed;
+  report committed+pushed in the main repo as `a197445`):
+  `node scripts/round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=13
+  lane=kumitate checks=13 errors=0 warnings=0)` exit 0 (clean tree, 0 unpushed,
+  report tracked+pushed); `--round 13` → `ROUND_GATE: CLEAN (round=13
+  lane=kumitate checks=10 errors=0 warnings=0)`; `--tracked` → `ROUND_GATE:
+  CLEAN (mode=tracked checked=11 errors=0 warnings=0)`. L1's own ledger
+  verification over all seven executor slices: 801 anchors re-read in their own
+  file and 804 symbols re-grepped, 0 problems (g5's ledger schema differs from
+  g1's and is handled explicitly in that pass).
