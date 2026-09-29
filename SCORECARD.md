@@ -963,6 +963,32 @@ combined in a round that also claims a first.
   are correct by the frozen grammar — recorded because the wrong prediction
   (`KEY_UNKNOWN` for the colon form) was in this round's own brief.
 
+- **The successor integer is coarser than its terms (round 16, reviewer lane).**
+  Deleting one member section from a script-layer note moves `S_sections` 74 → 73
+  and fires `S_SECTIONS_DRIFT` alone — `coverage:script-layer` stays 6, because
+  `floor(10 × 73/114) = 6.41`. The gate is therefore precise about the *term* and
+  coarse about the *integer*; a round that moves `V` by one or two sections is
+  measurable in the term and invisible in the score, so the move log records both.
+- **Replayed on the round-14 tree, the successors would have exposed a 1 (round
+  16, reviewer lane).** `git archive 637d181` + the current claims gate →
+  `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)`; per layer,
+  script would have read `floor(10 × 8/8 × 74/114) = 6` while runtime would have
+  read `floor(10 × (10/11) × 13/98) = 1` — R11 was `no` and the runtime layer had
+  13 member sections. The retired aggregate read **9** on that same tree. This is
+  the split's first hard evidence that the honesty term is informative rather than
+  merely lower: it found a 1 where the parent reported a 9. The proxy itself
+  cannot be replayed there (`STANZA_MALFORMED`, exit 2 — the old stanza lacks the
+  six keys), which is the fail-closed posture working as documented.
+- **The `cite-check` fence defect is severity medium and independently
+  reproduced twice (round 16, L1 + reviewer lane).** Stronger than first reported:
+  the misalignment does **not** self-heal (`~~~` is immune only because it carries
+  no backticks), a ```-opened fence can be *closed* by a `~~~` line (the scanner
+  keeps a single open-state — a CommonMark deviation), and so any bogus backticked
+  citation after a ``` fence is unflagged — dead citations can be smuggled past the
+  gate by accident or on purpose. Proposed fix: mask the fence byte-ranges (or
+  replace them with spaces) before the span/prose/ref scans. Queued with the two
+  mutation survivors rather than patched inside a coverage round.
+
 ## Retired
 
 ### `coverage` — retired at saturation, round 15

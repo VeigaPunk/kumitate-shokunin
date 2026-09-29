@@ -853,6 +853,26 @@
   lane's own commits were pushed as usual). Also queued, from the mutation lane's
   two survivors: an `SRC_NOT_A_DIR`-precedence case and an
   unresolved-heading-earns-no-credit case.
+  Wave-2 reviewer (`ReviewLayerTerms`): re-derived all six terms from the origin
+  tree and the claims gate **before** reading the tool's code — agreement on every
+  term; re-checked the main guard by importing the module in process (no verdict
+  line, no CLI); four doctored copies behaved with a single, precise finding each
+  (delete one script-layer member section → `S_SECTIONS_DRIFT` 74 → 73 **alone**,
+  the integer unmoved at floor granularity — the gate is precise about the term
+  and coarse about the score; promote R9's out-of-family file → `R_SECTIONS_DRIFT`
+  60 → 61 and the gate's own warning set shrinks 3 → 2; append an out-of-family
+  section to R4's note → **no** term moves, the numerator is provably not
+  inflated; restore the round-15 pins → exactly the two `PIN_DRIFT`). Boundary
+  re-proved (`comm -12` empty, 114/98, the four depth-3 files named). Round-14
+  replay (`git archive 637d181`): the current claims gate reads
+  `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)`, so the successors
+  would have read **script 6, runtime 1** where the retired aggregate read 9 — the
+  split's first hard evidence that the honesty term finds what the parent hid; the
+  proxy itself refuses that tree (`STANZA_MALFORMED`, exit 2). The `cite-check`
+  fence defect was independently reproduced and is stronger than first reported
+  (no self-heal; a ```-opened fence can be closed by `~~~`; bogus post-fence
+  citations can be smuggled past) — recorded in `## Limits` with the proposed fix
+  (mask fence byte-ranges before the span/prose/ref scans) and queued.
   Close evidence (lane HEAD after the `round-16` commit, pushed; report
   committed+pushed in the main repo): `node scripts/round-gate.mjs --close` →
   `ROUND_GATE: CLEAN (round=16 lane=kumitate checks=13 errors=0 warnings=0)`
