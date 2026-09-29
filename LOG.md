@@ -363,3 +363,79 @@
   cases where this file's old calibration paragraph quoted 11 (owner: kagi;
   corrected in `SCORECARD.md`).
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-11/kumitate.md`.
+
+- 2026-09-28 — round 12 (coverage 7 → 8): two fully enumerable surface families
+  named end-to-end, and the lane's coverage standard written down. Before:
+  `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8;
+  C1=14/18 C2=39/39 coverage=7; pins=4 match)` exit 0. After: `PROXY: MATCH
+  (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4 match)` exit 0;
+  `floor(10 × 16/18 × 43/43)` = 8, C2 by `grep -c '^\| \`\(knowledge\|lessons\)/'
+  corpus/README.md` → 43 and `find corpus/knowledge corpus/lessons -name '*.md'
+  \| wc -l` → 43. A and C untouched (`find … \| wc -l` → 4; `grep -c '^\s*- \['
+  SKILL.md` → 9), so operability stays 8.
+  Landed: `corpus/knowledge/ops-watchers.md` (S6, 5 of 5 members —
+  `ufo-l0-watch.mjs` 1679 L, `ufo-stale-watchdog.mjs` 1010 L,
+  `ufo-l0-monitor.mjs` 1638 L, `the-tick-ping.mjs` 831 L,
+  `ufo-ground-handler.mjs` 859 L, each one `## ` section with line-anchored
+  internals and its own member probe), `corpus/knowledge/gate-verdict.md` (R10,
+  2 of 2 — `gate.rs` 254 L, `gate_tests.rs` 426 L: enum arms, the `verdict`
+  priority ladder, five refusal literals, `validate_vector` two-scan precedence,
+  the `echo_bounded` 512-char ceiling, consumer sites, 19-`#[test]` census with
+  named gaps), `corpus/knowledge/route-probe-cluster.md` (S7 residue, 9 of 69
+  members — `ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs
+  \| wc -l` → 9, `wc -l … \| tail -1` → `3132 total`), `corpus/lessons/round-12.md`,
+  4 `corpus/README.md` rows (39 → 43) plus re-measured gap prose, the
+  `SCORECARD.md` registry cells (S6/R10 → `yes`), claim block (C1 14 → 16, C2 39 →
+  43), `## Axes` coverage row 7 → 8, 2 move-log rows, the stated family standard,
+  3 new limits and the round-13 partition plan, 2 `SKILL.md` fixes (three pointer
+  bullets; the `FRESHNESS_CLOCK_SKEW_MS = 1_000` correction for the stale
+  `>5 s future-skew` claim at `SKILL.md:388`), and this entry.
+  Deviated from the pre-registered route on evidence: round 11 planned an S7
+  family flip from the route-probe cluster; a 9-of-69 note would have flipped a
+  family at 13% named while S6 sat denied at 40%, so S7 keeps `no` and the
+  cluster note lands as C2-only residue progress. Measured: 15/18 and 16/18 both
+  score 8; 17/18 ⇒ 9 (`AXES_DRIFT` when the axes row is left at 8).
+  Gates at close (lane HEAD): `node scripts/surface-probe.mjs --checklists` →
+  `CHECKLIST_SKIPPED: 0`, `CHECKLIST: 9/9 pass`, `VERDICT: PASS` exit 0;
+  `node scripts/proxy-check.mjs --selftest` → `PROXY_SELFTEST: 55/55 pass`
+  (10 fail-closed arms observed) exit 0; `node scripts/cite-check.mjs` →
+  `CITE_CHECK: DRIFT (files=45 tokens=3769 errors=14 warnings=75)` exit 1 —
+  **all 14 errors inside the third-party aggregator artifacts**, zero in this
+  lane's own prose (4 errors this round's own notes introduced were found by the
+  gate and fixed before landing); `--symbols` reports no symbol finding in the
+  three new notes; mutation pass on a `/tmp` copy re-proved 7/7 proxy arms
+  including a dishonest `yes` flip → `C1_DRIFT` + `AXES_DRIFT` and a stray script
+  → `A_DRIFT` + `PIN_UNPINNED`.
+  In-round falsifications that changed documents: the S6 attribution (the number
+  2 of 5 stayed, the *members* changed — `ufo-stale-watchdog.mjs` had only a
+  usage list and a `Sources:` footer, `ufo-l0-monitor.mjs` was named in
+  `lessons/round-6.md`); the round-11 `## Planned` forecast (stale C2, "one note"
+  already sufficient); the `## Axes` "four uncovered families" prose; `SKILL.md`'s
+  5 s clock-skew claim (origin constant `FRESHNESS_CLOCK_SKEW_MS = 1_000`,
+  `ufo-ground-handler.mjs:38`/`:319`, `docs/THE-TICK.md:89`); the route-probe
+  cluster's membership boundary (9 files / 3,132 L under the cluster rule vs 7 /
+  2,651 L under the `probe-*` glob — the round-11 figure was the 9-member
+  reading).
+  Method: 16-lane batched L2 dispatch (planner, 3 scouts, 5 executors, scribe,
+  connector, critic, reviewer, sentinel, labrat, mutation-tester) routed
+  planner/connector `@m_lunamax` · executor/scribe/scout `@m_flash` ·
+  critic/reviewer/sentinel/labrat/mutation-tester `@m_zfl`; L1 re-measured every
+  claim before it entered a document and landed every edit. One lane
+  (`ExecGateNote`, `@m_flash`) died mid-run on a substrate quota error after
+  writing its artifact; the draft was recovered from `/tmp/kumitate-r12/` and
+  adjudicated like any other. Reviewer adjudicated 398 ledger rows against origin
+  HEAD `daa371583` (394 OK, 1 wrong-line, 1 truncated quote, 2 absence-by-
+  truncation; 1.01%). Labrat verified empirically: `node --check` 11/11 files
+  exit 0, help-only probes exit 0 for 5 members, `PATH_PING_ERROR_CODES` 7/7 and
+  the tick-ping defaults match the origin. Sentinel: origin HEAD and target
+  mtimes unchanged, no L2 write into this repo, no daemon/socket, no
+  credential-shaped string in the scratch drafts.
+  Cross-domain (reported, not absorbed): origin HEAD moved `ee907f1cf` →
+  `daa371583` with 37 dirty paths (none of this round's target files);
+  `conformance/vectors/native/judge-wave.json:1368` still describes
+  `validate_vector`'s order as "the reverse" of the reordered code (`23e476e21`,
+  owner: origin runtime lane); sibling lanes hold zero exact-name hits for this
+  round's 9 surfaces (connector), and no sibling uses family-member enumeration,
+  so the coverage convention stays lane-local (kasegi's class-granularity proxy
+  is a different measure).
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-12/kumitate.md`.

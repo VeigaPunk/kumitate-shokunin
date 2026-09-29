@@ -61,30 +61,34 @@ is a filed defect that cannot run at all.
 `score = floor(10 × C1 × C2)` — a product, so neither a broad surface registry
 nor a fresh map alone can inflate the axis.
 
-- **C1 — in-scope surface coverage.** Surface families with ≥1 internals-level
-  corpus note, over the registry below: **14 / 18 = 0.778**. Unchanged in rounds
-  9–11: `corpus/knowledge/round-close-gate.md` and
-  `corpus/knowledge/executable-scorecard.md` document this lane's own tools, not
-  one of the 18 source families below, and `live-surface-probe.md` (round 9)
-  covers S1/S4 surfaces that already had notes.
+- **The family standard, stated (round 12).** A registry family counts as
+  covered only when a corpus note names **every** member at internals level —
+  a line anchor or a named symbol describing *that member's own behavior*.
+  Usage lists, `Sources:` footers, `corpus/README.md` map/hole rows and
+  `SKILL.md` do **not** count, and neither does a note that names a fraction of
+  the family. This was implicit in rounds 8–11 (S6 read `partial — 2 of 5`);
+  round 12 wrote it down and re-adjudicated S6 against it line by line.
+- **C1 — in-scope surface coverage.** Surface families whose registry cell
+  starts `yes`, over the registry below: **16 / 18 = 0.888** after round 12
+  (S6 → `yes`, R10 → `yes`; S7 and R11 stay `no`). 14 / 18 = 0.778 at round 11.
 - **C2 — README-map freshness.** Rows in `corpus/README.md` naming a corpus note
-  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **39**;
-  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **39** after
-  round 11 (rows added for `knowledge/executable-scorecard.md`,
-  `lessons/round-11.md` and the third-party `lessons/round-8-aggregator-box3-coldrun.md`
-  the aggregator lane committed into this repo mid-round) ⇒ **1.0** (36/36 at
-  round-10 close).
+  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **43**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **43** after
+  round 12 (rows added for `knowledge/ops-watchers.md`,
+  `knowledge/gate-verdict.md`, `knowledge/route-probe-cluster.md` and
+  `lessons/round-12.md`) ⇒ **1.0** (39/39 at round-11 close).
 
 Diagnostic, deliberately **not** scored — file granularity over the in-scope
 source files (`scripts/*.mjs` 72 + `scripts/*/` 42 + `ufo-core-runtime/src/*.rs`
 93 + `ufo-cli/src/*.rs` 5 = **212** files / **211** unique basenames),
-basename-matched against `corpus/**/*.md` + `SKILL.md`: **140 / 211 ≈ 0.663**,
-re-measured unchanged in round 11 (both round-11 notes cite this lane's own
-tools, the fleet protocol files and this repo's scripts — no origin basename was
-added), up from 105 / 211 ≈ 0.50 in round 8 (method: recursive walk of
-`corpus/**.md` + `SKILL.md`, `basename` containment). Basename matching is
-collision-prone in both directions, which is why it is not the scored term. The
-denominator itself is stable at 212 files; the registry's `scripts/*/` row is 42.
+basename-matched against `corpus/**/*.md` + `SKILL.md`: **150 / 211 ≈ 0.711**
+after round 12 (the numerator rose from 140 with the three new notes naming S6,
+R10 and cluster basenames; the denominator is unchanged and the components
+re-measure 72 + 42 + 93 + 5 = 212 files / 211 unique basenames), up from
+**140 / 211 ≈ 0.663** at rounds 9–11 and 105 / 211 ≈ 0.50 in round 8 (method:
+recursive walk of `corpus/**.md` + `SKILL.md`, `basename` containment).
+Basename matching is collision-prone in both directions, which is why it is not
+the scored term; the registry's `scripts/*/` row is 42.
 
 #### In-scope surface registry (18 families)
 
@@ -95,8 +99,8 @@ denominator itself is stable at 212 files; the registry's `scripts/*/` row is 42
 | S3 | swarm path | `ufo-swarm-wave.mjs` (2711 L) + `ufo-swarm-collect.mjs` (988 L) | yes — dispatch-shapes · swarm-wave-lifecycle |
 | S4 | sighting wall | `ufo-sighting.mjs` (396 L) + `ufo-sighting` (224 L bash) + `ufo-sighting-lib/` (26 files / 10620 L) | yes — sighting-wall |
 | S5 | routing & result helpers | `omp-global-config.mjs` (735 L) + `ufo-mission-result.mjs` (3691 L) | yes — route-resolution · failure-telemetry · singleton-and-queue-ownership |
-| S6 | ops watchers | `ufo-stale-watchdog.mjs` (1010 L) + `ufo-l0-monitor.mjs` (1638 L) + `ufo-l0-watch.mjs` + `the-tick-ping.mjs` (831 L) + `ufo-ground-handler.mjs` (859 L) | partial — 2 of 5 named; `the-tick-ping`/`ufo-ground-handler` live only in `SKILL.md` |
-| S7 | remaining scripts | 69 members: 59 top-level `*.mjs` + `charter-scribe/` (6) + `lean-cargo/` (4) — re-counted round 11 (`ls scripts/*.mjs \| wc -l` → 72 minus the 13 S1–S6 `.mjs` basenames → 59; `find scripts/charter-scribe -type f \| wc -l` → 6, where the round-10 row said 5: the origin tree grew a file, owner: origin) | no |
+| S6 | ops watchers | `ufo-stale-watchdog.mjs` (1010 L) + `ufo-l0-monitor.mjs` (1638 L) + `ufo-l0-watch.mjs` (1679 L) + `the-tick-ping.mjs` (831 L) + `ufo-ground-handler.mjs` (859 L) | yes — ops-watchers (5 of 5 named at internals level, round 12; the round-11 reading `2 of 5` was right in number, wrong in members — `ufo-stale-watchdog.mjs` had only a usage list and a `Sources:` footer, while `ufo-l0-monitor.mjs` was named in `lessons/round-6.md`) |
+| S7 | remaining scripts | 69 members: 59 top-level `*.mjs` + `charter-scribe/` (6) + `lean-cargo/` (4) — re-counted round 11 (`ls scripts/*.mjs \| wc -l` → 72 minus the 13 S1–S6 `.mjs` basenames → 59; `find scripts/charter-scribe -type f \| wc -l` → 6, where the round-10 row said 5: the origin tree grew a file, owner: origin) | no — 9 of 69 named at internals level (`knowledge/route-probe-cluster.md`: the 7 `probe-*` files + `atomic-write.mjs` + `fake-omp.mjs`; `ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9, `wc -l … \| tail -1` → 3132 total). The family stays uncovered under the 5-of-5 standard — 13% named is below S6's 40% at the reading it was denied on |
 | R1 | judge pipeline | 8 `native*.rs` core modules | yes — native-judge-pipeline |
 | R2 | loop driver + state | 12 files (`loop_driver*.rs` ×10, `state.rs`, `state_tests.rs`) | yes — loop-driver |
 | R3 | profile & cost | 5 files (`execution_profile*`, `cost_ledger*`, `native_profile.rs`) | yes — cost-and-profile |
@@ -106,13 +110,14 @@ denominator itself is stable at 212 files; the registry's `scripts/*/` row is 42
 | R7 | local ship + fs layer | 5 files (`local_ship*`, `bounded_fs*`, `fs_durability.rs`) | yes — local-ship (r7) |
 | R8 | transcript / ledger / seat coverage | 4 files (`native_transcript.rs`, `native_ledger.rs`, `native_seat_coverage.rs`, `native_dispatch_topology.rs`) | yes — native-transcript-ledger-seats (r7) |
 | R9 | judge test suite | `native_tests.rs` (340 cases; other big test files sit inside R2/R6/R7) | yes — test-inventories (r7) |
-| R10 | gate | `gate.rs` + `gate_tests.rs` | no — verdict vocabulary only (inside native-judge-pipeline) |
+| R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
 | R11 | runtime remainder + CLI | 42 runtime `.rs` + `ufo-cli/src/*.rs` (5) | no |
 
-Covered = 14; partial (S6) counts as **not** covered. Families are disjoint and
-exhaustive: script-layer members sum to **114** = 72 + 42 (round-9 re-measure;
-round 8 recorded 41, the origin tree added one file); runtime+CLI members sum to
-**98** = 93 + 5.
+Covered = **16**; S7 (9 of 69 named) and R11 (0 of 47 named) count as **not**
+covered, and so does any family whose note names only part of it. Families are
+disjoint and exhaustive: script-layer members sum to **114** = 72 + 42
+(round-9 re-measure; round 8 recorded 41, the origin tree added one file);
+runtime+CLI members sum to **98** = 93 + 5.
 
 ### Machine-readable claim block (`kumitate-proxy-v1`)
 
@@ -129,10 +134,10 @@ including `proxy-check.mjs` itself (an unrecorded edit then shows up as
 <!-- kumitate-proxy-v1
 A=4
 C=9
-C1=14
+C1=16
 C1_total=18
-C2=39
-C2_total=39
+C2=43
+C2_total=43
 pin.cite-check=8a6b5c9dd9e2fde8180dbee8293264c2b78618a15532d9c9f9e13224a4de74ce
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946
@@ -144,17 +149,28 @@ pin.proxy-check=9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=4 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`) and C=9 (`## Verifiable checklist`, all 9 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass`) ⇒ 13/16 = 0.8125 ⇒ 8 | round 11 |
-| coverage | 7 | `floor(10 × 0.778 × 1.0)` = 7; C1 registry below (14/18), C2 39/39 (`grep -c` + `find … \| wc -l`), file-level residue 140/211 ≈ 0.663 (unchanged — both round-11 notes cite fleet/tool artifacts, not origin sources) — no score change | round 11 (bookkeeping) |
+| coverage | 8 | `floor(10 × 0.888 × 1.0)` = 8; C1 registry below (16/18 — S6 and R10 flipped `yes`), C2 43/43 (`grep -c` + `find … \| wc -l`), file-level residue 150/211 ≈ 0.711 (up from 140 — the three new notes name origin basenames) | round 12 |
 
 Why not 10 on either axis: operability now has four runnable artifacts and nine
 executed checklist items, but still no CI/schedule leg, and the probes cover
 citations, two live surfaces, the round record and this lane's own scorecard —
-not the other 16 registry families. Coverage still has four uncovered/partial
-families (S6, S7, R10, R11) and ~33% of in-scope source files uncited. Why not
-0/lower: the whole judgment path (dispatcher, launcher, judge pipeline, loop
-driver, wall) is mapped at internals level with line-level citations, and the
-gates that check those citations, two of those live surfaces, this lane's round
-record and the scorecard claim itself now run on demand.
+not the other 16 registry families. Coverage still has two uncovered families
+(S7 at 9 of 69 members named, R11 at 0 of 47) and ~29% of in-scope source files
+uncited; a note that names a fraction of a family is exactly what the standard
+above refuses to count. Why not 0/lower: the whole judgment path (dispatcher,
+launcher, judge pipeline, loop driver, wall) is mapped at internals level with
+line-level citations, and the gates that check those citations, two of those live
+surfaces, this lane's round record and the scorecard claim itself now run on
+demand.
+
+Round 12 changed what the coverage score *rests on*, not only its value: the
+family standard ("every member named at internals level") was written down after
+being applied re-adjudicating S6, and the two families that flipped are the
+fully-enumerable ones — S6 (5 members) and R10 (2) — not the 69-member S7, which
+a single-cluster note could have flipped while S6 sat denied at a higher
+completion ratio. Re-chartering the proxy to score the same artifacts higher is
+still explicitly rejected: the formula is unchanged since round 8 and the round-12
+terms are counted by the same commands the frozen definitions name.
 
 Round 11 changed what the score *means*, not only its value: the proxy terms are
 no longer hand-typed prose. `scripts/proxy-check.mjs` recomputes A/C/C1/C2 and
@@ -171,6 +187,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 12 | coverage | C1 14/18 (S6 `partial — 2 of 5 named`, R10 `no`), C2 39/39, residue 140/211 ≈ 0.663 ⇒ `floor(10 × 0.778 × 1.0)` = 7; round 11's plan named S7's route-probe cluster as the route | C1 **16/18** (S6 5 of 5, R10 2 of 2 — both notes landed at internals level with a per-member probe), C2 **43/43** (3 knowledge notes + `lessons/round-12.md`), residue **150/211 ≈ 0.711** ⇒ `floor(10 × 0.888 × 1.0)` = **8**; the pre-registered S7 route was **deviated from on evidence** — a 9-of-69 cluster note would have flipped a family at 13% named while S6 sat denied at 40%, so S7 keeps `no` and the cluster note lands as C2-only residue progress; operability untouched (A=4, C=9 — the round adds no script and no `- [` line) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4 match)` exit 0; `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 43; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 43; member probes in `knowledge/ops-watchers.md` and `knowledge/gate-verdict.md` (both printed with their output); 7/7 mutation arms re-proved incl. a dishonest `yes` flip → `C1_DRIFT` |
+| 12 | coverage (uncounted) | S7 69 members, 0 named | S7 row keeps `no`; `knowledge/route-probe-cluster.md` names 9 members at internals level (`ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs \| wc -l` → 9; `wc -l … \| tail -1` → `3132 total`; the narrower `probe-*` glob is 7 files / 2,651 L — both measurements recorded) | registry S7 cell; `corpus/knowledge/route-probe-cluster.md` (`## Scope — this note does NOT cover S7`); README row |
 | 11 | operability | A=3, C=6 ⇒ `f_O = 9/12 = 0.75` ⇒ 7; the plan fixed the arithmetic (`A+C ≥ 12` for 8) and named (a) a scheduled/CI leg or (b) three more genuinely executed items | A=4 (`scripts/proxy-check.mjs`, contract `kumitate-proxy-v1`, 1173 L, 9 finding kinds, 10 fail-closed arms, 55-case hermetic suite) + C=9 (+ filed-report tracking, proxy recompute, proxy-check hermetic suite) ⇒ `f_O = 13/16 = 0.8125` ⇒ **8**; option (a) refused on evidence — the only schedulers on this host are `systemd --user` timers owned by other identities (`ai-usage`, `webzites-probe`, `charter-scribe`) and the kake lane's recorded precedent is that a lane does not toggle host state itself (`.ufo/l0-questions.md`, kake round-12); a parse defect found by L1 falsification AFTER the suite was green — a `\|` inside a registry cell shifted the 4th-cell test and silently stopped counting that row — was fixed with two regression cases (suite 53 → 55, re-pinned) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=39/39 coverage=7; pins=4 match)` exit 0; `--selftest` → `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0; `surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass` exit 0; `round-gate.mjs --tracked` → `ROUND_GATE: CLEAN (mode=tracked checked=8 errors=0 warnings=0)` exit 0; `round-gate.mjs --selftest` 57/57 exit 0; failures kept: `--tracked --close` exit 64, `--tracked --lane other` exit 2 `NO_FILED_REPORTS`, stanza/registry/pin mutations → `PROXY: DRIFT` exit 1; the `\|`-row falsification that exposed the parse defect produced a false MATCH before the fix and the correct parse after it; close: `node scripts/round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=11 lane=kumitate checks=13 errors=0 warnings=0)` exit 0 |
 | 11 | coverage | C1 14/18, C2 36/36 | C2 39/39 (rows: `knowledge/executable-scorecard.md`, `lessons/round-11.md`, and the third-party `lessons/round-8-aggregator-box3-coldrun.md` the aggregator lane committed into this repo mid-round); C1 unchanged 14/18; residue 140/211 ≈ 0.663 (re-measured, unchanged — both notes cite this lane's own tools and fleet docs, not origin sources) ⇒ score stays 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 39; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 39; residue loop over 211 unique basenames |
 | 10 | operability | A=2, C=4 ⇒ `f_O = 6/9` ⇒ 6; round 9's plan offered (a) a third live surface — which "raises no proxy term" — or (b) widening the checklist to the round-close gates | A=3 (`scripts/round-gate.mjs`, contract `kumitate-round-gate-v1`, 1226 L, 14 finding kinds, 49-case hermetic suite) + C=6 (2 new executed items) ⇒ `f_O = 9/12 = 0.75` ⇒ **7** | `surface-probe.mjs --checklists` → `CHECKLIST: 6/6 pass` exit 0; `round-gate.mjs --selftest` → `ROUND_GATE_SELFTEST: 49/49 pass` `VERDICT: PASS` exit 0 (3.1 s); default audit → `ROUND_GATE: CLEAN (round=9 lane=kumitate checks=10 errors=0 warnings=1)` exit 0; `--round 42` → `DRIFT` exit 1; `--reports-dir /nonexistent` → exit 2 `REPORTS_DIR_MISSING`; `--repo /tmp` → exit 2 `NOT_A_GIT_WORKTREE`; `--bogus` → exit 64; cited-commit arms falsified live (`COMMIT_CITED_UNRESOLVED [deadbeef0]`; `COMMIT_CITED_NOT_ANCESTOR [d65aa24 31f09cd 0ac2272]` against a clone checked out at `efe19da`) |
@@ -182,26 +200,33 @@ the frozen definitions name.
 
 ## Planned
 
-**round 12 (coverage, 7 — now the lowest axis): one internals-level family
-note out of the S7 census, landed from the route-probe cluster.**
-Operability sits at 8 and its remaining gap is unchanged and out of this lane's
-reach: the only schedulers on this host are other identities' `systemd --user`
-timers, and this round refused option (a) on that evidence rather than toggling
-host state (recorded in the move log). Coverage therefore moves next, and the
-route is C1: `14/18 → 15/18 = 0.8333 ⇒ floor(10 × 0.8333 × 1.0) = 8` at
-C2 38/38 — one note, no proxy change. Round 11's L2 census measured S7 at **69
-members / 58,075 L (re-measured by L1: the scout's 68 was the stale row count;
-`charter-scribe/` holds 6 files, not 5)**, of which **55 of 69 carry no
-`.mjs`-basename mention anywhere in `corpus/**/*.md` + `SKILL.md`** (strict
-containment; the scout's looser "in any form" count was 46 — both measured, the
-strict one is this lane's diagnostic method). The recommended entry point is the
-route-probe cluster the scout ranked first (`scripts/probe-ufo-route-health.mjs`,
-1,364 L, 8 uncited companions, 3,132 L to read); `scripts/fake-omp.mjs` is a
-no-network NDJSON fixture that could later carry a hermetic checklist item for
-that surface — an operability term, deliberately not claimed until the note
-exists. The other uncovered families are the alternatives, in descending value:
-S6 (2 of 5 ops watchers named), R11 and R10. S7 stays the largest gap and is the
-only one whose census is already done.
+**round 12 (executed) vs the forecast above.** The pre-registered route — "one
+internals-level family note out of the S7 census, landed from the route-probe
+cluster" — was **not** taken as written, and the deviation is recorded rather
+than smoothed: flipping S7 on a 9-of-69 cluster note (13% named) while S6 sat
+denied at 40% would have inverted the standard the registry already applied to
+S6. Round 12 instead completed the two *fully enumerable* families (S6 5/5, R10
+2/2 ⇒ C1 16/18) and landed the cluster note as C2-only residue progress. The
+forecast's arithmetic was also stale twice: C2 had already closed at 39/39 (not
+38/38), and 15/18 and 16/18 both score 8 — the next threshold is **17/18 ⇒ 9**.
+
+**round 13 (coverage, 8): pre-register the S7 partition, then work it.** Two
+candidate moves, both arithmetic-checked and neither to be slipped in mid-round:
+1. **Partition S7 into `S7a` (route-probe cluster + its shared helpers) and
+   `S7b` (the 60-member remainder)** — a *registry* change (C1_total 18 → 19).
+   With S7a's note already landed, C1 becomes 17/19 = 0.894 ⇒ still 8; the gain
+   is a clean, honest boundary plus a smaller remainder to name later. The
+   partition rule must be stated with the same completeness test as S6/R10 and
+   must be declared in the round that measures it (definition changes are
+   pre-registered, never slipped in — see the `C`-regex note below).
+2. **Name the 60-member remainder at census level** (`S7b`) — the round-11
+   census is done (69 members, `ls scripts/*.mjs | wc -l` → 72 − 13 S1–S6 = 59,
+   + `charter-scribe/` 6 + `lean-cargo/` 4), so the work is reading and citing,
+   not discovery. R11 (42 runtime `.rs` + 5 CLI `.rs`, 0 named) is the other
+   candidate and is larger per member than it looks.
+C1 17/18 without a partition is impossible for S7 alone; reaching 9 on this axis
+needs either 17/18 covered or a stated partition — which is why the partition
+decision is the first thing round 13 states.
 
 One hardening is deliberately *not* applied here: the frozen `C` definition's
 regex (`^\s*- \[`) admits `- [x]` lines that `surface-probe --checklists` skips,
@@ -214,6 +239,32 @@ change the meaning of a before→after that is already recorded.
 
 ## Limits (recorded, not hidden)
 
+- **The family standard is lane prose, and it was re-adjudicated (round 12).**
+  `SCORECARD.md` now states the rule the registry had been applying implicitly
+  ("every member named at internals level; usage lists, `Sources:` footers,
+  README hole rows and `SKILL.md` do not count"), and S6 was re-adjudicated
+  against it line by line: the number stayed 2 of 5, the *members* changed
+  (`ufo-l0-watch.mjs` and `ufo-l0-monitor.mjs` were named; `ufo-stale-watchdog.mjs`
+  was only a usage list plus a `Sources:` footer). A scout's looser reading
+  (counting those as naming ⇒ "3 of 5") was rejected, and both readings are
+  recorded so a non-author can see the disagreement rather than one number.
+- **Member completeness is not machine-checked by `proxy-check.mjs`.** It parses
+  the registry cell (`cells[4].startsWith('yes')`) and the C2 row regex, never
+  note contents, so the *cheapest* fake — flip two cells, update the stanza and
+  the `## Axes` integer — passes all arithmetic checks. The round-12 answer is
+  the per-note member probe (one `## ` heading per member plus line-anchored
+  citations inside that member's section, printed with its output in each note);
+  it is a documentation check a reader or lane can re-run, not a gate. Turning it
+  into a gate (a `--claims` mode that re-derives member coverage from the notes)
+  is a *next*/operability move and is deliberately not slipped into this round.
+- **The route-probe cluster's boundary is a stated rule, not a natural kind.**
+  9 members (`probe-*.mjs` ×7 + `atomic-write.mjs` + `fake-omp.mjs`; 3,132 L) is
+  this lane's cluster definition, chosen because both helpers are imported by the
+  cluster's suites; the narrower `probe-*` glob gives 7 files / 2,651 L. The
+  round-11 plan's "8 uncited companions / 3,132 L" matches the 9-member reading
+  (8 companions = members − hub), so its figure was a membership-boundary
+  artifact, not a wrong number — both measurements are in the note and the cell.
+  `scripts/omp-global-config.mjs` is excluded (S5 member, already covered).
 - **A quotation of a finding is itself a finding.** The aggregator lane's
   `corpus/lessons/round-6-aggregator-audit.md` quotes its own ERROR rows; the
   round-11 re-measure counts `errors=14`, **all** inside third-party aggregator

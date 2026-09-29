@@ -385,13 +385,23 @@ missions once per id. `the-tick-ping.mjs --interval-ms 250 --timeout-ms
 900000 <handoff.json>` = completion wakeup through ground handlers.
 `ufo-ground-handler.mjs` serves a one-line-JSON unix socket with FOUR ops
 — `health` (liveness), `freshness_ping` (heartbeat-file mtime under
-`heartbeatRoot`, >5 s future-skew refused), `path_ping` (existence poller,
+`heartbeatRoot`, future mtime beyond the `FRESHNESS_CLOCK_SKEW_MS =
+1_000` allowance refused), `path_ping` (existence poller,
 never model inference), `chat` (the ONLY model touch — `fetch` to
 `config.backend.endpoint`, model identity + 12 KiB prompt bound,
 temperature 0.1) — closed `PATH_PING_ERROR_CODES` wire vocabulary, only
 known codes ever reach the wire.
 `probe-*` scripts = bounded route-health probes; `sync-*` = generated
 mirror checks; `prepare-ephemeral-l1.mjs` stages an ephemeral L1 env.
+- `corpus/knowledge/ops-watchers.md` — the five watchers above at internals
+  level (tick order, the nudge→remove→repend ladder, the single-writer rule,
+  the four socket ops and their closed wire vocabulary).
+- `corpus/knowledge/route-probe-cluster.md` — the `probe-*` cluster named above
+  (9 of S7's 69 members): route-health probe internals, the redaction table and
+  emit gate, the token-plan probes' catalog + subprocess wiring.
+- `corpus/knowledge/gate-verdict.md` — `gate.rs` + `gate_tests.rs` verdict
+  machinery (registry family R10): the `verdict` ladder, the refusal literals,
+  `validate_vector` precedence, the echo ceiling and the 19-test census.
 
 ## Failure-telemetry patterns
 

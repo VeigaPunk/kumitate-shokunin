@@ -46,8 +46,8 @@ source here; the module's own patterns are
 |---|---|---|
 | `A` — runnable artifacts | `find . -path ./.git -prune -o -type f \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \) -print \| wc -l` (`SCORECARD.md:25-35`) | the operability numerator counts *files* — any `.git` tree pruned (`scripts/proxy-check.mjs:217-228`) — so "N runnable artifacts" cannot drift from the tree |
 | `C` — executable checklist items | `grep -c '^\s*- \[' SKILL.md` (`SCORECARD.md:36-47`) | the checklist term counts GFM task lines that `node scripts/surface-probe.mjs --checklists` actually executes under `CHECKLIST_RE` (`scripts/surface-probe.mjs:162`, parse site `scripts/surface-probe.mjs:781-785`) — a prose bullet is not credited |
-| `C1` — in-scope surface coverage | rows `^\| (S\|R)\d+ \|` in `SCORECARD.md` whose 4th `\|`-separated cell, trimmed, starts with `yes`; `C1_total` = **all** such rows (table `SCORECARD.md:89-111`; `scripts/proxy-check.mjs:241-266`) | a family counts as covered only when its row says `yes`; `partial` (S6) therefore counts as not covered, and the denominator is the table's own size. Escaped `\|` inside a cell is **not** a cell break (`splitRowCells()` at `scripts/proxy-check.mjs:241-253`): round 11 found by falsification that a naive `split('|')` let a `\|`-bearing row shift the 4th-cell test to a prose cell and silently stop counting that row — fixed, with two regression cases in the suite |
-| `C2` — README-map freshness | rows in `corpus/README.md` matching `^\| \`(knowledge\|lessons)/` over `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` (`SCORECARD.md:70-87`; `scripts/proxy-check.mjs:230-240`) | every corpus note has a README row; a deleted note or a deleted row moves the term |
+| `C1` — in-scope surface coverage | rows `^\| (S\|R)\d+ \|` in `SCORECARD.md` whose 4th `\|`-separated cell, trimmed, starts with `yes`; `C1_total` = **all** such rows (table `SCORECARD.md:95-114`; `scripts/proxy-check.mjs:241-266`) | a family counts as covered only when its row says `yes`; `partial` (S6) therefore counts as not covered, and the denominator is the table's own size. Escaped `\|` inside a cell is **not** a cell break (`splitRowCells()` at `scripts/proxy-check.mjs:241-253`): round 11 found by falsification that a naive `split('|')` let a `\|`-bearing row shift the 4th-cell test to a prose cell and silently stop counting that row — fixed, with two regression cases in the suite |
+| `C2` — README-map freshness | rows in `corpus/README.md` matching `^\| \`(knowledge\|lessons)/` over `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` (`SCORECARD.md:74-79`; `scripts/proxy-check.mjs:230-240`) | every corpus note has a README row; a deleted note or a deleted row moves the term |
 | pins | `sha256` of `scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs` (`scripts/proxy-check.mjs:129-134`) | the tools a document describes are byte-for-byte the tools on disk; a pin whose file is absent is reported `computed=absent (…)`, never skipped (`scripts/proxy-check.mjs:378-400`) |
 | derived scores | `operability = floor(10 × (A+C)/(A+C+3))`, `coverage = floor(10 × C1/C1_total × C2/C2_total)` (`SCORECARD.md:20-87`; `scripts/proxy-check.mjs:268-274`) | the arithmetic in `## Axes` is the arithmetic of the recomputed terms, not a remembered number |
 
@@ -79,7 +79,9 @@ pin.proxy-check=9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e
 -->
 ```
 
-The values above are this lane's **round-11** block (`SCORECARD.md:117-140`), and
+The values above are this lane's **round-11** block — a historical snapshot; the
+live block is the round-12 one in `SCORECARD.md:134-143` and those are the values
+the current readings in this file repeat — and
 the pins are full hex rather than abbreviating `…` because the tool requires
 `[0-9a-f]{64}` (`scripts/proxy-check.mjs:147`). Every value is a *claim*: the
 tool re-derives each one from the tree and never trusts it, and it never rewrites
@@ -217,7 +219,36 @@ tree, so one script yields different integers per lane without a code change. A
 lane with no `| S<n> |` registry table gets `REGISTRY_MISSING`, which is the
 honest answer: the claim surface is not there yet.
 
-## Inputs as measured 2026-09-28 (round 11)
+## Inputs as measured 2026-09-28 (round 12)
+
+The live values are always the stanza's; these are the current readings, and the
+round-11 block below is kept as the historical snapshot it labels itself.
+
+- term A: `find . -path ./.git -prune -o -type f \( -name '*.mjs' -o -name
+  '*.js' -o -name '*.sh' -o -name '*.py' \) -print | wc -l` → **4** (unchanged:
+  the round adds notes, not scripts).
+- term C: `grep -c '^\s*- \[' SKILL.md` → **9** (unchanged; the three round-12
+  pointer bullets in `### Watchers & helpers` begin `- \``, not `- [`, and
+  `surface-probe --checklists` still executes 9/9).
+- term C1: `grep -cE '^\| (S|R)[0-9]+ \|' SCORECARD.md` → **18**; `yes` 5th cell
+  → **16** ⇒ **16/18** (S6 ops watchers and R10 gate flipped after their notes
+  named every member at internals level; S7 stays `no` at 9 of 69 named).
+- term C2: `grep -c '^| \`\(knowledge\|lessons\)/' corpus/README.md` → **43**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **43** (4 rows for
+  `knowledge/ops-watchers.md`, `knowledge/gate-verdict.md`,
+  `knowledge/route-probe-cluster.md`, `lessons/round-12.md`).
+- pins: all four unchanged from round 11 — this round edits no `scripts/*.mjs`,
+  which is itself checked: an unrecorded edit would surface as `PIN_DRIFT`.
+
+Derived: `A+C = 13` ⇒ operability **8** (unchanged);
+coverage `floor(10 × 16/18 × 43/43)` = **8** (was 7). The live run:
+
+```
+$ node scripts/proxy-check.mjs
+PROXY: MATCH (A=4 C=9 operability=8; C1=16/18 C2=43/43 coverage=8; pins=4 match)   # exit 0
+```
+
+## Inputs as measured 2026-09-28 (round 11, historical)
 
 Every number below came from the frozen command in this repo, read-only:
 
