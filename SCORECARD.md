@@ -950,6 +950,19 @@ combined in a round that also claims a first.
   denominators; `floor` → `round`; the runtime axis mapped to the script term;
   inverted `C1` ratio).
 
+- **Two `--src` / stanza boundaries, measured by the arm lane (round 16).** (a)
+  `--src` refuses a **non-directory** (`SRC_NOT_A_DIR`, exit 2) but accepts an
+  *existing empty* directory: with the real stanza that degrades to `DRIFT` (four
+  layer terms and both scores at delta −114/−74/−98/−60/−6) and never to a false
+  `MATCH` — it only reads `MATCH` against a stanza that has itself been zeroed. A
+  mistyped-but-existing directory is therefore loud, not silent; hardening it to
+  fail closed is queued. (b) A colon-form stanza key (`coverage:script-layer=6`)
+  dies as `STANZA_MALFORMED` (the `RE_STANZA_KV` charset excludes `:`, so the line
+  never reaches the key-membership test); the *dash* form
+  (`coverage-script-layer=6`) is the one that reports `STANZA_KEY_UNKNOWN`. Both
+  are correct by the frozen grammar — recorded because the wrong prediction
+  (`KEY_UNKNOWN` for the colon form) was in this round's own brief.
+
 ## Retired
 
 ### `coverage` — retired at saturation, round 15

@@ -836,6 +836,23 @@
   lane's rule, cited as such; kagi's "documentation-coverage score" adjacency
   note stands with the integrator; no sibling defines a layer/member-section
   term.
+  Wave-2 arms (`LabratLayerArms`, 9 doctored stanza/axes/src arms on copies with
+  the live pins): each new kind fires alone where predicted —
+  `S_MEMBERS_DRIFT` (115 vs 114), `R_SECTIONS_DRIFT` (declared 63 computed 60,
+  delta −3), `COVERAGE_RUNTIME_DRIFT`, `AXES_DRIFT` naming
+  `coverage:runtime-layer`; `--src` at a file and at an absent path both fail
+  closed. Two boundaries it measured that this round got wrong in the brief and
+  records instead of hiding: a colon-form stanza key dies as
+  `STANZA_MALFORMED` rather than `STANZA_KEY_UNKNOWN` (the charset excludes `:`,
+  so the line never reaches the key test — the dash form reports KEY_UNKNOWN), and
+  an *existing empty* `--src` directory is not refused: against the real stanza it
+  degrades to `DRIFT` (terms at delta −114/−74/−98/−60, both scores −6), never to
+  a false `MATCH`; hardening it is queued. Real recovery item from the same close
+  pass: **round 15's report was also never committed to the main repo**, so
+  `round-gate --tracked` was red until it was filed (round 16's report and this
+  lane's own commits were pushed as usual). Also queued, from the mutation lane's
+  two survivors: an `SRC_NOT_A_DIR`-precedence case and an
+  unresolved-heading-earns-no-credit case.
   Close evidence (lane HEAD after the `round-16` commit, pushed; report
   committed+pushed in the main repo): `node scripts/round-gate.mjs --close` →
   `ROUND_GATE: CLEAN (round=16 lane=kumitate checks=13 errors=0 warnings=0)`
