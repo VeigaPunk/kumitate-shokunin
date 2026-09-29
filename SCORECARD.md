@@ -82,10 +82,12 @@ nor a fresh map alone can inflate the axis.
   the round that measures it. 16 / 18 = 0.888 at round 12, 14 / 18 = 0.778 at
   round 11.
 - **C2 — README-map freshness.** Rows in `corpus/README.md` naming a corpus note
-  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **47**;
-  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **47** after
+  over corpus note files: `grep -c '^| `\(knowledge\|lessons\)/'` → **48**;
+  `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` → **48** after
   round 14 (rows added for `knowledge/member-claims-gate.md` and
-  `lessons/round-14.md`) ⇒ **1.0** (45/45 at round-13 close).
+  `lessons/round-14.md`, plus a close-time row for the third-party
+  `lessons/round-9-aggregator-corpus-verdict.md` the aggregator lane committed as
+  `93b0567`) ⇒ **1.0** (45/45 at round-13 close).
 
 Diagnostic, deliberately **not** scored — file granularity over the in-scope
 source files (`scripts/*.mjs` 72 + `scripts/*/` 42 + `ufo-core-runtime/src/*.rs`
@@ -155,8 +157,8 @@ A=5
 C=10
 C1=18
 C1_total=19
-C2=47
-C2_total=47
+C2=48
+C2_total=48
 pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946
@@ -169,7 +171,7 @@ pin.claims-check=d0f95fa051687a8235678d4b212351c04d562abece394ae7727aa9bf763cb18
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=5 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`) and C=10 (`## Verifiable checklist`, all 10 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 10/10 pass`) ⇒ 15/18 = 0.8333 ⇒ 8 — 9 needs A+C ≥ 27 (12 more honest items), so the proxy saturates long before the axis does | round 14 |
-| coverage | 9 | `floor(10 × 0.947 × 1.0)` = 9; C1 registry below (**18/19** — the round-12 `S7` catch-all partitioned into `S7` 9 + `S8` 60, both `yes`), C2 47/47 (`grep -c` + `find … \| wc -l`), file-level residue 195/211 ≈ 0.924 (unchanged — round 14 adds a gate, not coverage, but the `yes` cells it rests on are now machine-checked for the 9 section-form rows) | round 14 |
+| coverage | 9 | `floor(10 × 0.947 × 1.0)` = 9; C1 registry below (**18/19** — the round-12 `S7` catch-all partitioned into `S7` 9 + `S8` 60, both `yes`), C2 48/48 (`grep -c` + `find … \| wc -l`), file-level residue 195/211 ≈ 0.924 (unchanged — round 14 adds a gate, not coverage, but the `yes` cells it rests on are now machine-checked for the 9 section-form rows) | round 14 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -225,7 +227,7 @@ the frozen definitions name.
 |---|---|---|---|---|
 | 14 | operability | A=4, C=9 ⇒ `f_O = 13/16 = 0.8125` ⇒ 8; the registry's `yes` claim was checkable only by hand (round 13 measured a renamed member section still reading `PROXY: MATCH … coverage=9` exit 0) | A=**5** (`scripts/claims-check.mjs`, contract `kumitate-claims-v1`, 791 L, 12 finding kinds, 35-case hermetic suite, 5 fail-closed + 3 usage arms, exit 0/1/2/64) + C=**10** (the member-claims gate added to `## Verifiable checklist`) ⇒ `f_O = 15/18 = 0.8333` ⇒ **8** (9 needs A+C ≥ 27 — the saturating proxy walks, it does not jump) | `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)` exit 0 (0.13 s); `--selftest` → `CLAIMS_SELFTEST: 35/35 pass` `VERDICT: PASS` exit 0; `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=5 C=10 operability=8; C1=18/19 C2=47/47 coverage=9; pins=5 match)` exit 0; `surface-probe --checklists` → `CHECKLIST: 10/10 pass` |
 | 14 | operability (the compensating arm, on a doctored copy) | a `yes` cell with a renamed or deleted member section passed everything | rename → `SECTION_FILE_UNRESOLVED row=S8 …` `CLAIMS: DRIFT` exit 1; delete → `MEMBER_COUNT_DRIFT row=S8 declared 60 members, found 59 distinct sections` exit 1; **on the same copies** `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 … coverage=9; pins=4 match)` exit 0 (claims-check moved out to hold the frozen A=4) | `LOG.md` round 14; `/tmp/kumitate-r14/census.md` §8 (independent probe, same two outcomes); critic arms 03/04 |
-| 14 | coverage (uncounted) | C2 45/45; C1 18/19; the `yes` cells rested on lane prose | C2 **47/47** (two new rows); C1 unchanged 18/19 ⇒ `floor(10 × 0.947 × 1.0)` = **9**; the claim itself is now machine-checked for the 9 section-form rows (90 member sections) and the residue is printed: 9 × `ROW_NO_SECTIONS`, 4 × `MEMBER_COUNT_SUSPECT`, 3 × `SECTION_FILE_NOT_MEMBER` | `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 47; `find … | wc -l` → 47; `node scripts/proxy-check.mjs` → `C1=18/19 C2=47/47` |
+| 14 | coverage (uncounted) | C2 45/45; C1 18/19; the `yes` cells rested on lane prose | C2 **47/47** at the round commit (48/48 at close, see `LOG.md`); C1 unchanged 18/19 ⇒ `floor(10 × 0.947 × 1.0)` = **9**; the claim itself is now machine-checked for the 9 section-form rows (90 member sections) and the residue is printed: 9 × `ROW_NO_SECTIONS`, 4 × `MEMBER_COUNT_SUSPECT`, 3 × `SECTION_FILE_NOT_MEMBER` | `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 47; `find … | wc -l` → 47; `node scripts/proxy-check.mjs` → `C1=18/19 C2=47/47` |
 | 13 | coverage | C1 16/18 (C1_total 18), C2 43/43, residue 150/211 ≈ 0.711 ⇒ `floor(10 × 0.888 × 1.0)` = 8; the pre-registered plan offered a partition (17/19 = 0.894 ⇒ **still 8**) or a census of the 60-member remainder, and named the arithmetic: only 17/18 covered or a stated partition reaches 9 | C1 **18/19** (S7 = the 9-member probe cluster, S8 = the 60-member remainder — both `yes` at internals level, one `## ` section per member with an own-file anchor and a verbatim symbol), C2 **45/45** (`knowledge/remaining-scripts-census.md` + `lessons/round-13.md`), residue **195/211 ≈ 0.924** ⇒ `floor(10 × 0.947 × 1.0)` = **9**; operability untouched (A=4, C=9 — no script and no `- [` line added) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=18/19 C2=45/45 coverage=9; pins=4 match)` exit 0; member probe `MEMBER_PROBE: 60/60 ok` (S8) and `9/9 ok` (S7); `grep -c '^\| `\(knowledge\|lessons\)/' corpus/README.md` → 45, `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 45 |
 | 13 | coverage (registry change — pre-registered in round 12's `## Planned`) | S7 = a 69-member catch-all whose cell read `no`, pointed at a 9-member residue note; the plan's labels were `S7a`/`S7b` | S7 = 9 members `yes` (`knowledge/route-probe-cluster.md`, now with one `## ` section per member) + new S8 = 60 members `yes` (`knowledge/remaining-scripts-census.md`); C1_total 18 → 19. `S7a`/`S7b` were **refused on measurement**: `RE_REGISTRY_ROW = /^\| (S\|R)\d+ \|/` (`scripts/proxy-check.mjs:140-144`) makes a suffixed id invisible — the critic's arm measured `C1_TOTAL_DRIFT declared=18 computed=17` | registry rows 108-109; independent scout census (`comm -3` vs the authoritative list → empty; `wc -l` total 54874); critic arms (i)/(iii)/(iv)/(v) |
 | 13 | operability (uncounted: a defect repair inside a coverage round, no proxy term moves) | `scripts/cite-check.mjs` — the lane's citation gate — died with an uncaught `TypeError [ERR_INVALID_ARG_TYPE] … Received function toString` (no verdict line) on any doc containing a backticked `Object.prototype` member name (`toString`, `valueOf`, `constructor`, `hasOwnProperty`): `ALIASES` was a plain object literal, so `ALIASES['toString']` returned the inherited function and `aliasRec` joined `opts.src` with it; `GENERATED_POINTERS` had the same shape. 19 hermetic cases | three token-keyed maps are null-prototype; a fixture doc + a hermetic regression case added; `node scripts/cite-check.mjs --selftest` → `20/20 cases passed (hermetic)` `VERDICT: PASS` exit 0. The un-fixed file with the same fixture dies inside the suite (exit 1) — failing-before/passing-after both recorded | `node scripts/cite-check.mjs --selftest`; A and C unchanged (A=4, C=9), so `operability` stays 8 and only `pin.cite-check` is re-pinned; defect found by an L2 executor, reproduced by L1 before repair |

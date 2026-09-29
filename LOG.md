@@ -647,4 +647,20 @@
   touched today); sibling lanes carry analogous gates (kagi `claim-ledger.sh
   cells`, kotoba `verify_*`, kake `probe-delta.mjs`) but no sibling uses a
   member-enumeration convention, so the family standard stays lane-local.
+  Close evidence (lane HEAD after the round-14 commit `dffbf0e`, pushed; report
+  committed+pushed in the main repo as `5fa216c`): `node scripts/round-gate.mjs
+  --close` → `ROUND_GATE: CLEAN (round=14 lane=kumitate checks=13 errors=0
+  warnings=0)` exit 0; `--round 14` → `ROUND_GATE: CLEAN (round=14 lane=kumitate
+  checks=10 errors=0 warnings=0)`; `--tracked` → `ROUND_GATE: CLEAN (mode=tracked
+  checked=12 errors=0 warnings=0)`; `surface-probe --checklists` → `CHECKLIST:
+  10/10 pass`; `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=5 C=10
+  operability=8; C1=18/19 C2=48/48 coverage=9; pins=5 match)` exit 0.
+  Mid-close correction: the aggregator lane committed
+  `corpus/lessons/round-9-aggregator-corpus-verdict.md` (`93b0567`, third-party
+  artifact, aggregator-owned) into this checkout after the round commit and
+  without a README row, which moved `C2_TOTAL` 47 → 48 and made the stanza drift
+  (`C2_TOTAL_DRIFT declared=47 computed=48`). Repaired the way rounds 8, 9 and 11
+  repaired the same seam — a README row for the third-party note (`C2` 48/48,
+  coverage unchanged at 9) — rather than by rewriting the tool's claim. The
+  sibling's commit also pushed as part of this lane's push (`dffbf0e..93b0567`).
   Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-14/kumitate.md`.
