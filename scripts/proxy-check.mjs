@@ -55,8 +55,8 @@
  *   a line containing `-->`:
  *     A C C1 C1_total C2 C2_total           the declared counts
  *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
- *                                           sha256 hex of scripts/<name>.mjs
- *   All ten keys are REQUIRED, exactly once; no other key is accepted. Every
+ *     pin.claims-check                      sha256 hex of scripts/<name>.mjs
+ *   All eleven keys are REQUIRED, exactly once; no other key is accepted. Every
  *   value is re-derived from the tree and never trusted: a term or pin that
  *   disagrees is a finding, and the stanza is never rewritten here. No key can
  *   vouch for itself — A, C and C1 are states of other files, C2 counts the
@@ -131,6 +131,7 @@ const PINS = {
   'pin.surface-probe': 'scripts/surface-probe.mjs',
   'pin.round-gate': 'scripts/round-gate.mjs',
   'pin.proxy-check': 'scripts/proxy-check.mjs',
+  'pin.claims-check': 'scripts/claims-check.mjs',
 };
 const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
 /** The two scorecard axis rows the derived scores must equal. */
@@ -590,8 +591,8 @@ function runCheck(opts, started) {
 
 /* ----------------------------------------------------------------- selftest */
 
-/** Fixture stand-ins for the four pinned scripts (bytes only, never executed). */
-const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs'];
+/** Fixture stand-ins for the five pinned scripts (bytes only, never executed). */
+const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs', 'claims-check.mjs'];
 const fixtureScript = (name) => `#!/usr/bin/env node\n// hermetic fixture stand-in for scripts/${name}\nexport const FIXTURE = ${JSON.stringify(name)};\n`;
 const FIXTURE_PINS = Object.fromEntries(FIXTURE_SCRIPTS.map((s) => [
   `pin.${s.replace(/\.mjs$/u, '')}`, sha256Hex(Buffer.from(fixtureScript(s), 'utf8')),
@@ -711,18 +712,18 @@ function selfTest() {
 
   /* hand-arithmetic fixtures (literal assertions below, never re-derived) --- */
   const F1 = fxBase('match-basic', {
-    expect: { A: 4, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 },
+    expect: { A: 5, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 },
   });
   const F2 = fxBase('match-low', {
     checklist: 1, readmeRows: 1,
     registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'no']],
-    expect: { A: 4, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 6, coverage: 3 },
+    expect: { A: 5, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 6, coverage: 3 },
   });
   const F3 = fxBase('match-saturated', {
     checklist: 3, readmeRows: 3, notes: ['knowledge/a.md', 'knowledge/b.md', 'lessons/c.md'],
     registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'yes']],
     extraRunnables: ['tools/a.mjs', 'tools/b.js', 'bin/c.sh', 'vendor/d.py', 'vendor/e.mjs'],
-    expect: { A: 9, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10 },
+    expect: { A: 10, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10 },
   });
 
   try {
@@ -730,7 +731,7 @@ function selfTest() {
     const r1 = runProxy(args(F1));
     check('MATCH: A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
       ok: r1.status === 0
-        && verdictLine(r1) === 'PROXY: MATCH (A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=4 match)',
+        && verdictLine(r1) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
       detail: `exit=${r1.status} ${verdictLine(r1)}`,
     }));
     check('MATCH: text mode prints the verdict line and nothing else', () => {
@@ -740,18 +741,18 @@ function selfTest() {
     const r2 = runProxy(args(F2));
     check('MATCH: A=4 C=1 operability=6; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
       ok: r2.status === 0
-        && verdictLine(r2) === 'PROXY: MATCH (A=4 C=1 operability=6; C1=2/3 C2=1/2 coverage=3; pins=4 match)',
+        && verdictLine(r2) === 'PROXY: MATCH (A=5 C=1 operability=6; C1=2/3 C2=1/2 coverage=3; pins=5 match)',
       detail: `exit=${r2.status} ${verdictLine(r2)}`,
     }));
     const r3 = runProxy(args(F3));
     check('MATCH: A=9 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10', () => ({
       ok: r3.status === 0
-        && verdictLine(r3) === 'PROXY: MATCH (A=9 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; pins=4 match)',
+        && verdictLine(r3) === 'PROXY: MATCH (A=10 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; pins=5 match)',
       detail: `exit=${r3.status} ${verdictLine(r3)}`,
     }));
     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
-      ok: verdictLine(r3).includes('A=9'),
-      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=9`,
+      ok: verdictLine(r3).includes('A=10'),
+      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=10`,
     }));
     const r1b = runProxy(args(F1));
     check('determinism: the same fixture yields byte-identical stdout on a re-run', () => ({
@@ -782,9 +783,9 @@ function selfTest() {
       return {
         ok: j1.status === 0 && j.contract === CONTRACT && j.mode === 'check' && j.ok === true
           && j.verdict === 'MATCH' && Array.isArray(j.findings) && j.findings.length === 0
-          && j.terms.A === 4 && j.terms.C === 3 && j.terms.C1 === 1 && j.terms.C1_total === 2
+          && j.terms.A === FIXTURE_SCRIPTS.length && j.terms.C === 3 && j.terms.C1 === 1 && j.terms.C1_total === 2
           && j.terms.C2 === 2 && j.terms.C2_total === 2 && j.terms.operability === 7 && j.terms.coverage === 5
-          && j.terms.pinsMatched === 4 && j.terms.pinsTotal === 4
+          && j.terms.pinsMatched === FIXTURE_SCRIPTS.length && j.terms.pinsTotal === FIXTURE_SCRIPTS.length
           && Object.keys(j.terms.pins).every((k) => j.terms.pins[k].match === true),
         detail: `exit=${j1.status} terms=${JSON.stringify({ A: j.terms.A, C: j.terms.C, op: j.terms.operability, cov: j.terms.coverage })}`,
       };
@@ -792,13 +793,13 @@ function selfTest() {
 
     /* 13-20 ─ drift on terms ------------------------------------------------ */
     const driftA = fxBase('drift-a', { expect: F1.expect });
-    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=4\n', '\nA=3\n'));
+    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=4\n'));
     const d1 = runProxy(args(driftA));
-    check('A_DRIFT: declared=3 computed=4 delta=+1, exit 1, exactly [A_DRIFT]', () => {
+    check('A_DRIFT: declared=4 computed=5 delta=+1, exit 1, exactly [A_DRIFT]', () => {
       const k = kindsEq(d1, ['A_DRIFT']);
       return {
         ok: d1.status === 1 && k.ok
-          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=3 computed=4 delta=+1)',
+          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=5 delta=+1)',
         detail: `exit=${d1.status} ${verdictLine(d1)}`,
       };
     });
@@ -807,11 +808,11 @@ function selfTest() {
       detail: `stdout=${JSON.stringify(String(d1.stdout ?? '').split('\n')[0])}`,
     }));
     const scTampered = join(fxDir('scorecard-flag'), 'SCORECARD.md');
-    fxWrite(scTampered, F1.scorecard.replace('\nA=4\n', '\nA=5\n'));
+    fxWrite(scTampered, F1.scorecard.replace('\nA=5\n', '\nA=6\n'));
     const d2 = runProxy(['--self', F1.dir, '--scorecard', scTampered]);
     check('--scorecard FILE: the claim is read from FILE, the tree from --self', () => {
       const k = kindsEq(d2, ['A_DRIFT']);
-      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=5 computed=4'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
+      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=6 computed=5'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
     });
     const driftC = fxBase('drift-c', { expect: F1.expect });
     fxWrite(join(driftC.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=4\n'));
@@ -837,7 +838,7 @@ function selfTest() {
     const dEsc = runProxy(args(regPipe));
     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
       ok: dEsc.status === 0
-        && verdictLine(dEsc) === 'PROXY: MATCH (A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=4 match)',
+        && verdictLine(dEsc) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
     }));
     const regPipeNo = fxBase('registry-escaped-pipe-no', {
@@ -874,13 +875,13 @@ function selfTest() {
       return { ok: d7.status === 1 && k.ok, detail: `exit=${d7.status} ${verdictLine(d7)}` };
     });
     const driftMany = fxBase('drift-many', { expect: F1.expect });
-    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=4\n', '\nA=3\n').replace('\nC=3\n', '\nC=4\n'));
+    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=4\n').replace('\nC=3\n', '\nC=4\n'));
     const d8 = runProxy(args(driftMany));
     check('two drifts → both findings, in term order, joined in one verdict line', () => {
       const k = kindsEq(d8, ['A_DRIFT', 'C_DRIFT']);
       return {
         ok: d8.status === 1 && k.ok && verdictLine(d8).includes('; ')
-          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=3 computed=4 delta=+1; C_DRIFT'),
+          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=4 computed=5 delta=+1; C_DRIFT'),
         detail: `exit=${d8.status} ${verdictLine(d8)}`,
       };
     });
@@ -902,8 +903,8 @@ function selfTest() {
     const missingScript = fxBase('drift-pin-absent', { expect: F1.expect });
     rmSync(join(missingScript.dir, 'scripts', 'proxy-check.mjs'), { force: true });
     const d10 = runProxy(args(missingScript));
-    check('PIN_DRIFT (absent) + A_DRIFT + AXES_DRIFT: a removed pinned script is never skipped', () => {
-      const k = kindsEq(d10, ['A_DRIFT', 'PIN_DRIFT', 'AXES_DRIFT']);
+    check('PIN_DRIFT (absent) + A_DRIFT: a removed pinned script is never skipped', () => {
+      const k = kindsEq(d10, ['A_DRIFT', 'PIN_DRIFT']);
       const f = parseFindings(d10.stdout).find((x) => x.kind === 'PIN_DRIFT');
       return {
         ok: d10.status === 1 && k.ok && f && /^pin\.proxy-check: declared=[0-9a-f]{64} computed=absent \(scripts\/proxy-check\.mjs is absent\)$/u.test(f.detail),
@@ -934,7 +935,7 @@ function selfTest() {
       const k = kindsEq(d13, []);
       return {
         ok: d13.status === 0 && k.ok
-          && verdictLine(d13) === 'PROXY: MATCH (A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=4 match)',
+          && verdictLine(d13) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
       };
     });
@@ -962,7 +963,7 @@ function selfTest() {
     });
 
     /* 24-25 ─ the advisory warning + --strict ------------------------------- */
-    const unpinned = fxBase('pin-unpinned', { expect: { A: 5, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 } });
+    const unpinned = fxBase('pin-unpinned', { expect: { A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5 } });
     fxWrite(join(unpinned.dir, 'scripts', 'extra.mjs'), fixtureScript('extra.mjs'));
     const w1 = runProxy(args(unpinned));
     check('PIN_UNPINNED: an unpinned scripts/*.mjs warns, exit 0, verdict still MATCH', () => {
@@ -970,7 +971,7 @@ function selfTest() {
       const f = parseFindings(w1.stdout)[0];
       return {
         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
-          && verdictLine(w1) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=4 match)',
+          && verdictLine(w1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; pins=5 match)',
         detail: `exit=${w1.status} ${verdictLine(w1)}`,
       };
     });
@@ -1012,13 +1013,13 @@ function selfTest() {
     fxWrite(join(missingKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nC2_total=2\n', ''));
     fc('required key absent', args(missingKey), 'STANZA_MALFORMED');
     const badValue = fxBase('bad-value', { expect: F1.expect });
-    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=4\n', '\nA=four\n'));
+    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=four\n'));
     fc('count value not an integer', args(badValue), 'STANZA_MALFORMED');
     const badPin = fxBase('bad-pin', { expect: F1.expect });
     fxWrite(join(badPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.proxy-check=)[0-9a-f]{64}\n/u, '$1zz\n'));
     fc('pin value not a 64-hex sha256', args(badPin), 'STANZA_MALFORMED');
     const unknownKey = fxBase('unknown-key', { expect: F1.expect });
-    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=4\n', '\nA=4\nZ=1\n'));
+    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=5\nZ=1\n'));
     fc('unknown key', args(unknownKey), 'STANZA_KEY_UNKNOWN');
     const dupKey = fxBase('duplicate-key', { expect: F1.expect });
     fxWrite(join(dupKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=3\nC=3\n'));

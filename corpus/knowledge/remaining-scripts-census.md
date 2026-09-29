@@ -12,10 +12,10 @@ and `fake-omp.mjs` — 9 members, named in
 script layer that S1–S6 do not own, exactly the 60 members measured below. The
 69 count is unchanged: it is now 9 + 60.
 
-Both ids keep the registry grammar `S<n>`/`R<n>`. `scripts/proxy-check.mjs:142`
-defines `RE_REGISTRY_ROW`, and `scripts/proxy-check.mjs:260` counts only rows
+Both ids keep the registry grammar `S<n>`/`R<n>`. `scripts/proxy-check.mjs:143`
+defines `RE_REGISTRY_ROW`, and `scripts/proxy-check.mjs:261` counts only rows
 matching it (a row is covered when its note cell starts `yes`,
-`scripts/proxy-check.mjs:263`). A sub-id such as `S7a` is therefore invisible to
+`scripts/proxy-check.mjs:264`). A sub-id such as `S7a` is therefore invisible to
 C1 accounting and is reported as `C1_TOTAL_DRIFT`, so the partition has to be
 drawn with two top-level ids rather than a suffixed one.
 

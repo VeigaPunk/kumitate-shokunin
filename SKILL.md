@@ -542,6 +542,7 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`
 - [ ] Proxy recompute — `node scripts/proxy-check.mjs` → exit 0 + `PROXY: MATCH`
 - [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
@@ -592,6 +593,17 @@ integrator's fleet-conformance step are in
   (`sync-ufo-contracts.mjs:853-862`), while `manifest.scriptDigest` hashes
   concatenated file bytes (`ufo-sighting-lib/surface.mjs:43-60`) — comparing the
   pin to `scriptDigest` is always a false drift signal.
+- Re-verify the registry's own claim: `node scripts/claims-check.mjs` (contract
+  `kumitate-claims-v1`) re-derives every `yes` cell from the corpus note behind it
+  — note resolution, one member section per file with a live own-file anchor and a
+  verbatim symbol, and the declared member count when the cell names one. Live
+  2026-09-28: `CLAIMS: MATCH (rows=19 yes=18 notes=26 sections=90 adv=16)` exit 0,
+  0.13 s; the 16 advisories are the family standard's printed residue (9
+  topic-form rows, 4 count-suspect rows, R9's 3 sibling-suite sections) and
+  `--strict` promotes them to exit 1. It is the compensating check for the hole
+  `proxy-check` cannot see (measured: a renamed or deleted member section still
+  reads `PROXY: MATCH … coverage=9`). Contract, arms, anchor semantics and limits:
+  `corpus/knowledge/member-claims-gate.md`.
 - Re-verify the round-close contract before claiming a round done:
   `node scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`; kinds,
   thresholds, fail-closed arms and the boundary against the integrator's

@@ -213,7 +213,7 @@
   `node scripts/surface-probe.mjs --checklists` EXECUTES → `CHECKLIST: 4/4
   pass`, `VERDICT: PASS`, exit 0; `grep -c '^\s*- \[' SKILL.md` → 4 (was 0).
   Proxy before→after: A 1 → 2, C 0 → 4 ⇒ `f_O` 1/4 → 6/9 ⇒ **2 → 6**;
-  coverage bookkeeping only (C2 rows/files 31/31 → 34/34, file-level residue
+  coverage bookkeeping only (C2 rows/files 31/31 → 35/35, file-level residue
   105/211 → 140/211, C1 14/18 unchanged ⇒ stays 7).
   Falsified in-round claim (recorded because two L2 lanes repeated it): the
   opening recon called `config/ufo.json:65`'s `sighting.surfaceDigest` stale by
@@ -283,7 +283,7 @@
   clone checked out at `efe19da`). Docs: `SKILL.md` (2 checklist items +
   Working-rules bullet + `ROUND_GATE: DRIFT` paragraph),
   `corpus/knowledge/round-close-gate.md` (new), `corpus/lessons/round-10.md`
-  (new), `corpus/README.md` (2 rows, 34/34 → 36/36), `SCORECARD.md`.
+  (new), `corpus/README.md` (2 rows, 35/35 → 36/36), `SCORECARD.md`.
   Cited-claim delta, measured in place (a `/tmp` clone is an invalid baseline —
   fleet-rung refs cannot resolve): `files=36 tokens=2324 errors=2 warnings=52`
   → `files=37 tokens=2415 errors=2 warnings=52`; both errors remain the
@@ -316,7 +316,7 @@
   turned executable. New `scripts/proxy-check.mjs` (contract
   `kumitate-proxy-v1`, 1173 L, zero deps, read-only, no network/no git/no
   subprocess on the measurement path, 9 finding kinds, 10 fail-closed arms,
-  sha256 `9d35ae743102…`): recomputes `A`, `C`, `C1`, `C1_total`, `C2`,
+  a 64-hex sha256, superseded and therefore not restated here): recomputes `A`, `C`, `C1`, `C1_total`, `C2`,
   `C2_total`, both derived scores and four `scripts/*.mjs` sha256 pins from the
   tree, then compares them with `SCORECARD.md`'s machine-readable
   `<!-- kumitate-proxy-v1 -->` block and its `## Axes` integers —
@@ -565,3 +565,86 @@
   verification over all seven executor slices: 801 anchors re-read in their own
   file and 804 symbols re-grepped, 0 problems (g5's ledger schema differs from
   g1's and is handled explicitly in that pass).
+- 2026-09-28 — round 14 (operability 8 → 8 with f_O 0.8125 → 0.8333): the
+  registry's `yes` claim turned into a gate. New `scripts/claims-check.mjs`
+  (contract `kumitate-claims-v1`, 791 L, zero deps, read-only, sha256
+  `7bb9451d…`): re-derives every covered row's claim from the corpus note behind
+  it — note resolution, one member section per file with a live own-file anchor
+  and a verbatim symbol, the declared member count when the cell names one —
+  12 finding kinds, exit 0/1/2/64, 35-case hermetic suite.
+  Pre-registration: round 13's `## Planned` option 2 (`--claims`) — an
+  **operability** move, because operability (8) is this lane's lower axis.
+  Deviations, both measured: landed as a **separate artifact** (the frozen `A` is
+  a file count — `scripts/proxy-check.mjs:281` — so a mode inside the proxy moves
+  no term; the plan's `A=4 → 5` for that placement is refuted), and `C` moved
+  9 → 10 (the gate's execution path is a checklist item `surface-probe
+  --checklists` runs).
+  Before → after, same commands: A 4 → 5 (`find … | wc -l`); C 9 → 10
+  (`grep -c '^\s*- \[' SKILL.md`); `f_O = 13/16 = 0.8125` → `15/18 = 0.8333` ⇒
+  integer **8 → 8** (9 needs A+C ≥ 27 — 12 more honest items; recorded, not
+  rounded). Coverage bookkeeping only: C1 18/19 unchanged, C2 45/45 → **47/47**,
+  coverage stays 9.
+  Evidence: `node scripts/claims-check.mjs` → `CLAIMS: MATCH (rows=19 yes=18
+  notes=26 sections=90 adv=16)` exit 0, 0.13 s (9 section-form rows / 90 member
+  sections; advisories exactly 9 × `ROW_NO_SECTIONS`, 4 × `MEMBER_COUNT_SUSPECT`,
+  3 × `SECTION_FILE_NOT_MEMBER`); `--selftest` → `CLAIMS_SELFTEST: 35/35 pass`
+  `VERDICT: PASS` exit 0; `--row S8` MATCH rows=1 sections=60; `--row Z9` →
+  usage exit 64; `--src/--scorecard/--self /nonexistent` → fail-closed exit 2;
+  `--json` totals == text totals; `node scripts/proxy-check.mjs` → `PROXY: MATCH
+  (A=5 C=10 operability=8; C1=18/19 C2=47/47 coverage=9; pins=5 match)` exit 0;
+  `--selftest` → `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0 (the fifth
+  pin forced 20 expected strings, 4 fixture constants and 1 case to be
+  re-derived); `surface-probe --checklists` → `CHECKLIST: 10/10 pass`; `cite-check`
+  → `CITE_CHECK: DRIFT (files=49 tokens=4557 errors=14 warnings=75)` with **zero
+  errors in this lane's own prose** (both new notes clean; the 14 are the two
+  third-party aggregator artifacts).
+  Drop-one arms on a lane copy (the compensating check, measured): renamed S8
+  member heading → `SECTION_FILE_UNRESOLVED row=S8 …` `CLAIMS: DRIFT` exit 1;
+  deleted S8 member section → `MEMBER_COUNT_DRIFT row=S8 declared 60 members,
+  found 59 distinct sections` exit 1 — while `node scripts/proxy-check.mjs` on the
+  same copies (claims-check moved out to hold the frozen A=4) prints `PROXY: MATCH
+  (A=4 C=9 operability=8; C1=18/19 C2=45/45 coverage=9; pins=4 match)` exit 0.
+  In-round falsifications that changed the artifact or the record:
+  1. a **ghost note passed** — the first landed revision raised `NOTE_MISSING` only
+     for the explicit `knowledge/<stem>.md` form, so `yes — ghost-note-that-does-not-exist`,
+     a bare `yes` with no em dash and a nested-path spelling all read `MATCH` exit
+     0 (found by the executor-review lane, reproduced by the critic). Fixed: a
+     part asserts a note when it is the token, token + `: …`, or a path; the
+     aggregate finding fires only when the cell asserts nothing. All three
+     spellings now `DRIFT` exit 1;
+  2. `--row Z9` was fail-closed (2) instead of usage (64) — caught by two lanes
+     against the dispatched contract, reclassified;
+  3. the drop-one harness first matched the note's **own documentation** of the
+     round-13 control (a prose occurrence of `## \`scripts/ufo-drills.mjs\``) and
+     reported a false green; the arm now mutates a line-anchored heading and
+     proves the byte delta first;
+  4. a backtick-only, `.mjs/.rs/.sh/.js`-only anchor scanner called 17 sections
+     anchor-less (the runtime notes and the S8 `.timer` section write plain
+     parenthesised refs) — the scanner was widened on measurement;
+  5. a naive `split('|')` dropped S7 from the covered set (its members cell
+     carries `\|`) — the escape-aware splitter is now a frozen rule;
+  6. adding one line to `proxy-check.mjs` shifted 28 cited line numbers and made
+     three corpus mentions of its previous sha256 read as `PIN_MISMATCH`; cites
+     were re-pointed arithmetically and the superseded hashes described instead
+     of pinned (the round-11 rule).
+  Method: 15-lane batched L2 dispatch (planner, scout/census, 5 executors, scribe,
+  connector, critic, reviewer, sentinel, labrat, mutation-tester, simplifier,
+  distiller, citation audit) routed planner/connector `@m_lunamax` ·
+  executor/scribe/scout `@m_flash` · critic/reviewer/sentinel/labrat/
+  mutation-tester/simplifier/distiller `@m_zfl`; the implementation lane did not
+  deliver in time, so L1 wrote the tool from the frozen contract and re-pointed
+  the fleet at the file; the census lane then re-derived all 19 rows with its own
+  probe (0 differences on heading order, resolved file, anchor counts, symbol
+  verdicts, family membership; same two drop-one outcomes). Reviewer, labrat,
+  critic, simplifier and mutation-tester each ran against the landed file; L1
+  landed every edit and re-measured every number before it entered a document.
+  Sentinel correction, recorded rather than absorbed: the "census-target mtimes
+  today" alarm came from `.ufo/`, `clean-ephemeral/` and `clean-siblings/` paths,
+  which are not registry targets; the correctly scoped max target mtime is
+  2026-09-27 20:10 (`proposal.rs`).
+  Cross-domain (reported, not absorbed): origin HEAD moved `4f34e7dab` →
+  `f65ee4b3d` with 35 dirty paths at the round reading (no registry target
+  touched today); sibling lanes carry analogous gates (kagi `claim-ledger.sh
+  cells`, kotoba `verify_*`, kake `probe-delta.mjs`) but no sibling uses a
+  member-enumeration convention, so the family standard stays lane-local.
+  Report: `/home/vgpnk/projects/shokunin/.ufo/reports/round-14/kumitate.md`.

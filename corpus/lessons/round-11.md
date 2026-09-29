@@ -15,7 +15,7 @@ the arithmetic for 8 at `A+C ≥ 12` (`SCORECARD.md`, round-10 move-log row).
 ## What landed
 
 `scripts/proxy-check.mjs` (contract `kumitate-proxy-v1`, 1173 L, zero deps, node
-≥20, read-only, no network, sha256 `9d35ae743102…`): default mode recomputes the
+≥20, read-only, no network, a 64-hex sha256, superseded and therefore not restated here): default mode recomputes the
 six declared terms (`A`, `C`, `C1`, `C1_total`, `C2`, `C2_total`), the two
 derived scores and the four script sha256 pins from this repo's own tree, then
 compares them with the machine-readable claim block in `SCORECARD.md` and with

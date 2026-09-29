@@ -24,7 +24,7 @@ contract id: kumitate-proxy-v1
 Modes (one per run; argument parsing precedes modes, so an unknown flag or a flag
 without a value is refused with 64 even when `--selftest` is present —
 `scripts/proxy-check.mjs:79-82`, `parseArgs()` at
-`scripts/proxy-check.mjs:1130`, `main()` at `scripts/proxy-check.mjs:1153`):
+`scripts/proxy-check.mjs:1131`, `main()` at `scripts/proxy-check.mjs:1154`):
 default = recompute A, C, C1, C1_total, C2, C2_total, the two derived scores and
 the four pins under `--self`, then compare them with the `kumitate-proxy-v1`
 stanza in `--scorecard` (default `<self>/SCORECARD.md`); `--selftest` = hermetic
@@ -34,25 +34,25 @@ repo root containing the script (`DEFAULT_SELF` at
 `scripts/proxy-check.mjs:119`), the same sibling convention
 `scripts/surface-probe.mjs` and `scripts/round-gate.mjs` use. `--strict`
 promotes the one advisory kind (`PIN_UNPINNED`) to a failure (`summarize()` at
-`scripts/proxy-check.mjs:451`).
+`scripts/proxy-check.mjs:452`).
 
 ## The contract it executes — term → frozen command → what it guards
 
 Each term is defined once, in `SCORECARD.md`, and never restated as a second
 source here; the module's own patterns are
-`scripts/proxy-check.mjs:140-147`:
+`scripts/proxy-check.mjs:141-148`:
 
 | Term | Frozen command (source) | What it guards |
 |---|---|---|
-| `A` — runnable artifacts | `find . -path ./.git -prune -o -type f \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \) -print \| wc -l` (`SCORECARD.md:25-35`) | the operability numerator counts *files* — any `.git` tree pruned (`scripts/proxy-check.mjs:217-228`) — so "N runnable artifacts" cannot drift from the tree |
+| `A` — runnable artifacts | `find . -path ./.git -prune -o -type f \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \) -print \| wc -l` (`SCORECARD.md:25-35`) | the operability numerator counts *files* — any `.git` tree pruned (`scripts/proxy-check.mjs:218-229`) — so "N runnable artifacts" cannot drift from the tree |
 | `C` — executable checklist items | `grep -c '^\s*- \[' SKILL.md` (`SCORECARD.md:36-47`) | the checklist term counts GFM task lines that `node scripts/surface-probe.mjs --checklists` actually executes under `CHECKLIST_RE` (`scripts/surface-probe.mjs:162`, parse site `scripts/surface-probe.mjs:781-785`) — a prose bullet is not credited |
-| `C1` — in-scope surface coverage | rows `^\| (S\|R)\d+ \|` in `SCORECARD.md` whose 4th `\|`-separated cell, trimmed, starts with `yes`; `C1_total` = **all** such rows (table `SCORECARD.md:95-114`; `scripts/proxy-check.mjs:241-266`) | a family counts as covered only when its row says `yes`; `partial` (S6) therefore counts as not covered, and the denominator is the table's own size. Escaped `\|` inside a cell is **not** a cell break (`splitRowCells()` at `scripts/proxy-check.mjs:241-253`): round 11 found by falsification that a naive `split('|')` let a `\|`-bearing row shift the 4th-cell test to a prose cell and silently stop counting that row — fixed, with two regression cases in the suite |
-| `C2` — README-map freshness | rows in `corpus/README.md` matching `^\| \`(knowledge\|lessons)/` over `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` (`SCORECARD.md:74-79`; `scripts/proxy-check.mjs:230-240`) | every corpus note has a README row; a deleted note or a deleted row moves the term |
-| pins | `sha256` of `scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs` (`scripts/proxy-check.mjs:129-134`) | the tools a document describes are byte-for-byte the tools on disk; a pin whose file is absent is reported `computed=absent (…)`, never skipped (`scripts/proxy-check.mjs:378-400`) |
-| derived scores | `operability = floor(10 × (A+C)/(A+C+3))`, `coverage = floor(10 × C1/C1_total × C2/C2_total)` (`SCORECARD.md:20-87`; `scripts/proxy-check.mjs:268-274`) | the arithmetic in `## Axes` is the arithmetic of the recomputed terms, not a remembered number |
+| `C1` — in-scope surface coverage | rows `^\| (S\|R)\d+ \|` in `SCORECARD.md` whose 4th `\|`-separated cell, trimmed, starts with `yes`; `C1_total` = **all** such rows (table `SCORECARD.md:95-114`; `scripts/proxy-check.mjs:242-267`) | a family counts as covered only when its row says `yes`; `partial` (S6) therefore counts as not covered, and the denominator is the table's own size. Escaped `\|` inside a cell is **not** a cell break (`splitRowCells()` at `scripts/proxy-check.mjs:242-254`): round 11 found by falsification that a naive `split('|')` let a `\|`-bearing row shift the 4th-cell test to a prose cell and silently stop counting that row — fixed, with two regression cases in the suite |
+| `C2` — README-map freshness | rows in `corpus/README.md` matching `^\| \`(knowledge\|lessons)/` over `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` (`SCORECARD.md:74-79`; `scripts/proxy-check.mjs:231-241`) | every corpus note has a README row; a deleted note or a deleted row moves the term |
+| pins | `sha256` of `scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs` (`scripts/proxy-check.mjs:129-134`) | the tools a document describes are byte-for-byte the tools on disk; a pin whose file is absent is reported `computed=absent (…)`, never skipped (`scripts/proxy-check.mjs:379-401`) |
+| derived scores | `operability = floor(10 × (A+C)/(A+C+3))`, `coverage = floor(10 × C1/C1_total × C2/C2_total)` (`SCORECARD.md:20-87`; `scripts/proxy-check.mjs:269-275`) | the arithmetic in `## Axes` is the arithmetic of the recomputed terms, not a remembered number |
 
 The registry is parsed out of the **same** `SCORECARD.md` the stanza lives in
-(`scripts/proxy-check.mjs:277-302`), so a registry edit and a stanza edit cannot
+(`scripts/proxy-check.mjs:278-303`), so a registry edit and a stanza edit cannot
 silently disagree: the next run raises `REGISTRY_MISSING` if the table is gone,
 `C1_DRIFT` / `C1_TOTAL_DRIFT` if the counted rows change.
 
@@ -61,7 +61,7 @@ silently disagree: the next run raises `REGISTRY_MISSING` if the table is gone,
 Exactly one HTML comment block in `<self>/SCORECARD.md`, first line
 `<!-- kumitate-proxy-v1`, body lines `key=value`, closed by a line containing
 `-->` (`scripts/proxy-check.mjs:52-65`, parser at
-`scripts/proxy-check.mjs:303-357`). All ten keys are required exactly once; no
+`scripts/proxy-check.mjs:304-358`). All ten keys are required exactly once; no
 other key is accepted:
 
 ```
@@ -75,7 +75,7 @@ C2_total=39
 pin.cite-check=8a6b5c9dd9e2fde8180dbee8293264c2b78618a15532d9c9f9e13224a4de74ce
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946
-pin.proxy-check=9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e
+pin.proxy-check=<64-hex sha256 of scripts/proxy-check.mjs at that round>
 -->
 ```
 
@@ -83,12 +83,12 @@ The values above are this lane's **round-11** block — a historical snapshot; t
 live block is the round-12 one in `SCORECARD.md:134-143` and those are the values
 the current readings in this file repeat — and
 the pins are full hex rather than abbreviating `…` because the tool requires
-`[0-9a-f]{64}` (`scripts/proxy-check.mjs:147`). Every value is a *claim*: the
+`[0-9a-f]{64}` (`scripts/proxy-check.mjs:148`). Every value is a *claim*: the
 tool re-derives each one from the tree and never trusts it, and it never rewrites
 the block (`scripts/proxy-check.mjs:52-65`).
 
 Fail-closed outcomes of the grammar itself (`scripts/proxy-check.mjs:84-96`,
-`scripts/proxy-check.mjs:303-357`): no block → `STANZA_MISSING`; **more than one
+`scripts/proxy-check.mjs:304-358`): no block → `STANZA_MISSING`; **more than one
 block**, no `-->` terminator, a body line that is not `key=value`, a **required
 key absent**, or a value outside `\d+` (counts) / `[0-9a-f]{64}` (pins) →
 `STANZA_MALFORMED`; an unknown key → `STANZA_KEY_UNKNOWN`; a repeated key →
@@ -103,11 +103,11 @@ rather than as a silently stale claim (the maintenance tax is the point).
 
 The derived operability and coverage integers **must equal** the integers in
 `SCORECARD.md`'s `## Axes` rows `| operability | N |` and `| coverage | N |`
-(`scripts/proxy-check.mjs:137`, `scripts/proxy-check.mjs:442-460`). A mismatch —
+(`scripts/proxy-check.mjs:138`, `scripts/proxy-check.mjs:443-461`). A mismatch —
 *including a missing row or a missing `## Axes` section* — is `AXES_DRIFT`
 (error, exit 1), so the scorecard's prose and its arithmetic are tied together by
 an executable check. The lookup is scoped to the `## Axes` section body on
-purpose (`scripts/proxy-check.mjs:427-440`): an unscoped search would let a
+purpose (`scripts/proxy-check.mjs:428-441`): an unscoped search would let a
 move-log row (`| 11 | operability | … |`) shadow the current axis row. The move
 log is **not** parsed — it is history, and the tool grades the present state only.
 
@@ -133,7 +133,7 @@ The principle is the one `corpus/knowledge/round-close-gate.md` records for the
 round contract: when the claim surface cannot be read, "absent" must never be
 reported as `MATCH`.
 
-| Arm (printed token, in check order) | Trigger (`scripts/proxy-check.mjs:84-96`, `scripts/proxy-check.mjs:155-159`) |
+| Arm (printed token, in check order) | Trigger (`scripts/proxy-check.mjs:84-96`, `scripts/proxy-check.mjs:156-160`) |
 |---|---|
 | `SELF_NOT_A_DIR` | `--self DIR` (or the script's own root) is absent or not a directory |
 | `SCORECARD_MISSING` | `<self>/SCORECARD.md`, or `--scorecard FILE`, absent — no claim block and no registry to compare against |
@@ -148,7 +148,7 @@ reported as `MATCH`.
 
 Not in that frozen list: `INTERNAL_ERROR`, the crash net, so an unexpected throw
 is a refused verdict rather than a stack trace
-(`scripts/proxy-check.mjs:1167-1170`).
+(`scripts/proxy-check.mjs:1168-1171`).
 
 ## What it deliberately does not check
 
@@ -156,8 +156,8 @@ is a refused verdict rather than a stack trace
   scorecard it reads only: no writes, no network, no subprocess, no git, no lock
   (`scripts/proxy-check.mjs:97-101`). `--selftest` is the only writer *and* the
   only spawner — it runs the script as a child into a fresh `mkdtemp` it removes
-  afterwards (`scripts/proxy-check.mjs:632`, `scripts/proxy-check.mjs:658`,
-  `scripts/proxy-check.mjs:1083`).
+  afterwards (`scripts/proxy-check.mjs:633`, `scripts/proxy-check.mjs:659`,
+  `scripts/proxy-check.mjs:1084`).
 - **No environment variable is consulted.** Unlike its siblings, whose defaults
   are env-overridable, `proxy-check.mjs` takes its tree and scorecard from the
   script's own location, so a polluted env cannot move a measurement — which is
@@ -266,7 +266,7 @@ Every number below came from the frozen command in this repo, read-only:
   the aggregator lane committed into this repo mid-round, which gains a row here
   the way the round-6 audit artifact already had one).
 - pins: `scripts/proxy-check.mjs` sha256
-  `9d35ae743102e517448e93558fd8479f0930b2c9b281e58d083a3ea639070a6e` (1173 L,
+  a 64-hex sha256 (1173 L at round 11; superseded, so not restated —
   55-case hermetic suite); `scripts/round-gate.mjs`
   `4c44746384cfe4485f133ff02b00931426ef9f16382dd86142bd92abf79ab946` (1426 L,
   57-case suite after the `--tracked` mode and the round-11 simplifier pass);
