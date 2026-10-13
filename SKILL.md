@@ -570,18 +570,19 @@ Citations are to the notes — the notes carry the live anchors.
   substrate; do not assume OMP wave numbers apply to kimi-native swarms
   (`kimi-modes-machinery.md`).
 - **The substrate is live-checked by `scripts/kimi-census.mjs`**
-  (contract `kumitate-kimi-census-v1`, round 19): verifies the frozen K1–K4
-  member rules (46 members) against `~/.kimi-code` — `MEMBER_MISSING` /
-  `UNLISTED` / `SHAPE_DRIFT` arms, secret paths stat-only (the selftest
-  proves the gate never *reads* them: a FIFO token passes shape-clean without
-  blocking), fail-closed `KIMI_ROOT_MISSING`. Two stated limits: the census
-  root is not enumerable by default (`workspaces.json`, `tui.toml.bak`,
-  `rc-qrcode.png` are undeclared residue — the K5 fix is pre-registered for
-  round 20), and mode pins are floors, so a loosened secret mode still
-  passes. config.toml *content* drift is detected by no machine gate — the
-  config-plane note's live rows are timestamped snapshots, expected to drift
-  (round-19 audit watched the secondary `default_model` flip
-  opencode-go → hyper mid-round).
+  (contract `kumitate-kimi-census-v1`, rounds 19-20): verifies the frozen
+  K1–K5 member rules (**49** members since the round-20 K5 residue family:
+  `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png`) against
+  `~/.kimi-code` — `MEMBER_MISSING` / `UNLISTED` / `SHAPE_DRIFT` arms; with
+  K5 declared the root is **enumerable** (root `UNLISTED` is always-on; the
+  former `--root-enum` flag is now a usage refusal, no escape hatch), secret
+  paths stat-only (the selftest proves the gate never *reads* them: a FIFO
+  token passes shape-clean without blocking), fail-closed
+  `KIMI_ROOT_MISSING`. Two stated limits: mode pins are floors (a loosened
+  secret mode still passes), and config.toml *content* drift is detected by
+  no machine gate — the config-plane note's live rows are timestamped
+  snapshots, expected to drift (round-19 audit watched the secondary
+  `default_model` flip opencode-go → hyper mid-round).
 
 ## Verifiable checklist
 

@@ -4,21 +4,24 @@
  * (contract `kumitate-kimi-census-v1`).
  *
  * WHAT IT RE-DERIVES. `~/.kimi-code` is the installation the fleet's lanes run
- * on, and its shape is a frozen fact: the K1–K4 member rules in `SCORECARD.md`
- * (round-19 freeze, 46 members) were derived from this tree read live. Prose
- * cannot keep that honest — an upgrade can drop `bin/fd`, a new lane file or
- * plugin can appear undeclared, a secret path can loosen, a state dir can
- * vanish. This gate resolves the frozen member set against the tree at
- * measurement time and fails on exactly the shapes the rules name:
+ * on, and its shape is a frozen fact: the K1–K5 member rules in `SCORECARD.md`
+ * (the round-19 freeze of 46 members, plus the round-20 K5 residue family ⇒ 49)
+ * were derived from this tree read live. Prose cannot keep that honest — an
+ * upgrade can drop `bin/fd`, a new lane file or plugin can appear undeclared, a
+ * secret path can loosen, a state dir can vanish. This gate resolves the frozen
+ * member set against the tree at measurement time and fails on exactly the
+ * shapes the rules name:
  *
  *   MEMBER_MISSING  a declared member is absent, or resolves with a kind other
  *                   than the one declared, or an enumerable dir dropped a
  *                   declared child.
- *   UNLISTED        an undeclared child sits directly under an enumerable dir.
+ *   UNLISTED        an undeclared child sits directly under an enumerable dir —
+ *                   and since round 20 that includes the ROOT, which K1–K5 now
+ *                   exhausts. Root enumeration is the frozen rule, not a flag.
  *   SHAPE_DRIFT     a secret-bearing member's shape pin fails: the mode lacks
  *                   the declared floor bits, or the kind pin fails.
  *
- * MEMBER RULES (frozen; the counts are read live and total 46 on the recon
+ * MEMBER RULES (frozen; the counts are read live and total 49 on the recon
  * tree — `agents/secondary/` = 18 lane files, `skills/` = 5 entries).
  *   K1 = `config.toml`, `tui.toml`, and the `config.toml.*.bak` drift chain as
  *        ONE member (its generation count is reported as info, never gated).
@@ -32,6 +35,10 @@
  *   K4 = `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`,
  *        `device_id`, `region`, `credentials/`, `oauth/` — directories count as
  *        one member each.
+ *   K5 = `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` — the round-20
+ *        root-residue family: three root files pinned by presence + kind only,
+ *        never by content. `workspaces.json` is the anchor member (the K3 `wd_*`
+ *        session-key scheme reads it), so it is gated like any other file.
  *
  * SECRECY POLICY (enforced in code, not by convention). `credentials/`,
  * `oauth/` and `server.token` are SHAPE-ONLY members: the gate calls
@@ -48,13 +55,16 @@
  * ENUMERABLE DIRS. Only a dir whose complete child set is declared by the
  * member rules is enumerated: `agents/secondary/` and `skills/` by live child
  * count (names not gated — a rename is not a finding), `plugins/` and
- * `plugins/managed/` by declared child name. The tree root is NOT enumerable by
- * default: the live root carries three entries outside the frozen K1–K4 set
- * (`rc-qrcode.png`, `tui.toml.bak`, `workspaces.json`) and no K family declares
- * them, so gating them would read DRIFT against a documented-clean substrate
- * and contradict the frozen member set this tool checks. They are reported as
- * an INFO residue line instead, and `--root-enum` promotes them (and any future
- * root stray) to `UNLISTED` for callers who want the strict reading.
+ * `plugins/managed/` by declared child name, and the tree ROOT by declared
+ * child name. The root became enumerable in round 20, once K5 declared the
+ * three residue files that made K1–K4 non-exhaustive there; there is no flag
+ * to turn the arm off (an escape hatch would leave the freeze unverifiable),
+ * so an undeclared root child is `UNLISTED` and exit 1. The arm exempts the
+ * `config.toml.*.bak` drift-chain generations, because the K1 chain member
+ * already accounts for them as ONE member with its generation count reported
+ * as info — gating them by name would double-report a single member — and it
+ * exempts nothing else: the verify path is read-only and creates nothing under
+ * the root.
  *
  * Verdict line (always the last stdout line)
  *   KIMI_CENSUS: CLEAN (members=<n> checked=<n> chain=<n> info=<n>)
@@ -86,7 +96,7 @@ const TOOL_FILE = fileURLToPath(import.meta.url);
 /** The drift chain glob: `config.toml.bak` is the newest generation too. */
 const RE_CHAIN = /^config\.toml(\..+)?\.bak$/;
 
-/** The frozen member set (see the header). Order is K1 → K4, file order. */
+/** The frozen member set (see the header). Order is K1 → K5, file order. */
 const MEMBERS = [
   { id: 'config.toml', family: 'K1', path: 'config.toml', kind: 'file' },
   { id: 'tui.toml', family: 'K1', path: 'tui.toml', kind: 'file' },
@@ -116,6 +126,10 @@ const MEMBERS = [
   { id: 'region', family: 'K4', path: 'region', kind: 'file' },
   { id: 'credentials/', family: 'K4', path: 'credentials', kind: 'dir', secret: true, modeFloor: 0o700 },
   { id: 'oauth/', family: 'K4', path: 'oauth', kind: 'dir', secret: true, modeFloor: 0o700 },
+
+  { id: 'workspaces.json', family: 'K5', path: 'workspaces.json', kind: 'file' },
+  { id: 'tui.toml.bak', family: 'K5', path: 'tui.toml.bak', kind: 'file' },
+  { id: 'rc-qrcode.png', family: 'K5', path: 'rc-qrcode.png', kind: 'file' },
 ];
 
 /** Enumerable dirs: counted-live (names not gated) or declared-child-name. */
@@ -126,9 +140,9 @@ const ENUMERABLE = [
   { dir: 'plugins/managed', children: ['kimi-webbridge'] },
 ];
 
-const FAMILIES = ['K1', 'K2', 'K3', 'K4'];
-/** The frozen K-block counts, reported for callers that compare to round 19. */
-const FROZEN = { K1: 3, K2: 25, K3: 9, K4: 9 };
+const FAMILIES = ['K1', 'K2', 'K3', 'K4', 'K5'];
+/** The frozen K-block counts, reported for callers that compare to round 19/20. */
+const FROZEN = { K1: 3, K2: 25, K3: 9, K4: 9, K5: 3 };
 
 const FINDING_KINDS = ['MEMBER_MISSING', 'UNLISTED', 'SHAPE_DRIFT'];
 const FAIL_CLOSED_KINDS = ['KIMI_ROOT_MISSING'];
@@ -140,16 +154,18 @@ contract id: ${CONTRACT}
 
 verbs
   verify           the default verb: census ~/.kimi-code against the frozen
-                   K1-K4 member rules and print one verdict line
+                   K1-K5 member rules (49 members) and print one verdict line
 
 options
   --root DIR       installation root to census (default: ~/.kimi-code)
-  --root-enum      also treat the root itself as an enumerable dir, so an
-                   undeclared root child is UNLISTED (default: report the root
-                   residue as info only — see the header)
   --json           one machine-readable object on stdout
   --selftest       run the hermetic fixture suite (touches no live tree)
   -h, --help       this text
+
+root enumeration is the frozen rule, not a flag: with K5 declared, K1-K5
+exhausts the root, so an undeclared root child is UNLISTED (exit 1). The
+config.toml.*.bak drift-chain generations are exempt — the K1 chain member
+accounts for them as one member, never gated by name. There is no --root-enum.
 
 findings: ${FINDING_KINDS.join(' ')}
 secrecy : credentials/ oauth/ server.token are stat-only (kind+mode pins; never read)
@@ -208,10 +224,11 @@ function declaredRootNames() {
 
 /**
  * The one derivation. Read-only: lstat on members, readdir on enumerable dirs
- * and on the root (to prove it is readable and to count the drift chain).
+ * and on the root (to prove it is readable, to count the drift chain, and to
+ * enumerate the root against the K1–K5 declared set — the round-20 rule).
  * Returns `{ ok: true, ... }` or the fail-closed arm `{ ok: false, kind, detail }`.
  */
-function verify(root, opts = {}) {
+function verify(root) {
   const findings = [];
   const infos = [];
   const err = (kind, id, detail) => findings.push({ severity: 'error', kind, id, detail });
@@ -324,21 +341,20 @@ function verify(root, opts = {}) {
     }
   }
 
-  // Root residue: live root entries outside the frozen member set.
+  // Root enumeration (round 20): K1–K5 exhausts the root, so the root is an
+  // enumerable dir and an undeclared child of it is UNLISTED. Drift-chain
+  // generations are exempt — the K1 chain member above already accounts for
+  // them as ONE member and gates them by presence, never by name — and nothing
+  // else is exempt: this pass creates no file anywhere.
   const declared = declaredRootNames();
-  const residue = rootChildren.filter((n) => !declared.has(n) && !RE_CHAIN.test(n)).sort();
-  if (residue.length > 0) {
-    if (opts.rootEnum) {
-      for (const n of residue) {
-        err('UNLISTED', n, `${n} sits at the root and is not in the frozen K1–K4 set (--root-enum)`);
-      }
-    } else {
-      infos.push({
-        kind: 'ROOT_RESIDUE', id: '-',
-        detail: `root residue: ${residue.join(', ')} (outside the frozen K1–K4 set; informational — pass --root-enum to gate it)`,
-      });
-    }
+  const strays = rootChildren.filter((n) => !declared.has(n) && !RE_CHAIN.test(n)).sort();
+  for (const n of strays) {
+    err('UNLISTED', n, `${n} sits at the root and is not declared by the frozen K1–K5 set`);
   }
+  infos.push({
+    kind: 'ROOT_ENUM', id: '-',
+    detail: `root children=${rootChildren.length} declared=${declared.size} chain=${chainCount} strays=${strays.length} (root enumerated against K1–K5; drift-chain generations exempt)`,
+  });
 
   const totals = {
     members: FAMILIES.reduce((n, f) => n + famTotals[f].members, 0),
@@ -348,8 +364,9 @@ function verify(root, opts = {}) {
     chain: chainCount,
     frozen: FROZEN,
     families: famTotals,
+    rootEnum: { children: rootChildren.length, declared: declared.size, strays: strays.length },
   };
-  return { ok: true, findings, infos, rows, enumerables, residue, totals };
+  return { ok: true, findings, infos, rows, enumerables, strays, totals };
 }
 
 /* ------------------------------------------------------------------ render */
@@ -367,7 +384,7 @@ function failClosed(opts, token, detail, started) {
   if (opts.json) {
     process.stdout.write(`${JSON.stringify({
       schema: CONTRACT, contract: CONTRACT, mode: 'verify', root: opts.root,
-      options: { rootEnum: Boolean(opts.rootEnum), json: true },
+      options: { json: true, rootEnumeration: 'always-on (frozen)' },
       findings: [{ severity: 'error', kind: token, id: '-', detail }],
       totals: { members: 0, checked: 0, errors: 1, info: 0, chain: 0 },
       verdict: 'FAIL-CLOSED', fatal: { kind: token, detail }, durationMs: Date.now() - started,
@@ -380,15 +397,15 @@ function failClosed(opts, token, detail, started) {
 }
 
 function runVerify(opts, started) {
-  const v = verify(opts.root, { rootEnum: opts.rootEnum });
+  const v = verify(opts.root);
   if (!v.ok) return failClosed(opts, v.kind, v.detail, started);
 
   const verdict = v.findings.length === 0 ? 'CLEAN' : 'DRIFT';
   if (opts.json) {
     process.stdout.write(`${JSON.stringify({
       schema: CONTRACT, contract: CONTRACT, mode: 'verify', root: opts.root,
-      options: { rootEnum: Boolean(opts.rootEnum), json: true },
-      members: v.rows, enumerables: v.enumerables, rootResidue: v.residue,
+      options: { json: true, rootEnumeration: 'always-on (frozen)' },
+      members: v.rows, enumerables: v.enumerables, rootStrays: v.strays,
       findings: v.findings, infos: v.infos, totals: v.totals, verdict,
       durationMs: Date.now() - started,
     }, null, 2)}\n`);
@@ -410,7 +427,7 @@ function runVerify(opts, started) {
 
 const FIXTURE_CHAIN = 3;
 
-/** Build a fixture tree holding all 46 members, shape-clean. */
+/** Build a fixture tree holding all 49 members, shape-clean. */
 function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
   for (const m of MEMBERS) {
     if (m.kind === 'chain') continue;
@@ -486,33 +503,36 @@ function selfTest() {
   };
 
   try {
-    // 1. green baseline — the frozen 46, exact verdict line
+    // 1. green baseline — the frozen 49, exact verdict line
     const green = mk('green');
-    check('green fixture → CLEAN exit 0, members=46 checked=46 chain=3 info=3', () => {
+    check('green fixture → CLEAN exit 0, members=49 checked=49 chain=3 info=4', () => {
       const r = runGate(['--root', green]);
       return {
         ok: r.status === 0 && kinds(r).length === 0
-          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=46 checked=46 chain=3 info=3)',
+          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=49 checked=49 chain=3 info=4)',
         detail: `exit=${r.status} last=${lastLine(r)}`,
       };
     });
 
-    // 2. per-family frozen counts, live-derived
-    check('--json families read 3/25/9/9 and members=46', () => {
+    // 2. per-family frozen counts, live-derived (round 20 adds K5 = 3)
+    check('--json families read 3/25/9/9/3 and members=49', () => {
       const r = runGate(['--root', green, '--json']);
       const j = JSON.parse(r.stdout);
       const f = j.totals.families;
-      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 46
+      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 49
         && f.K1.members === 3 && f.K2.members === 25 && f.K3.members === 9 && f.K4.members === 9
-        && j.members.length === 25;
-      return { ok, detail: `members=${j.totals.members} K1=${f.K1.members} K2=${f.K2.members} K3=${f.K3.members} K4=${f.K4.members} rows=${j.members.length}` };
+        && f.K5.members === 3 && f.K5.checked === 3
+        && j.members.length === 28
+        && j.totals.frozen.K5 === 3
+        && j.totals.rootEnum.strays === 0 && j.rootStrays.length === 0;
+      return { ok, detail: `members=${j.totals.members} K1=${f.K1.members} K2=${f.K2.members} K3=${f.K3.members} K4=${f.K4.members} K5=${f.K5.members} rows=${j.members.length} strays=${j.totals.rootEnum.strays}` };
     });
 
     check('--json totals agree with the text verdict', () => {
       const j = JSON.parse(runGate(['--root', green, '--json']).stdout);
       const t = runGate(['--root', green]);
       return {
-        ok: j.totals.members === 46 && lastLine(t).includes(`members=${j.totals.members}`)
+        ok: j.totals.members === 49 && lastLine(t).includes(`members=${j.totals.members}`)
           && lastLine(t).includes(`checked=${j.totals.checked}`) && j.verdict === 'CLEAN',
         detail: `json=${j.totals.members}/${j.totals.checked} text=${lastLine(t).slice(0, 70)}`,
       };
@@ -523,7 +543,7 @@ function selfTest() {
     rmSync(join(drop, 'bin/fd'));
     check('MEMBER_MISSING: a deleted member file (bin/fd)', () => {
       const r = runGate(['--root', drop]);
-      return drift(r, 'MEMBER_MISSING', 45);
+      return drift(r, 'MEMBER_MISSING', 48);
     });
 
     const kindFlip = mk('kind-flip');
@@ -536,7 +556,7 @@ function selfTest() {
 
     const dropDir = mk('drop-dir');
     rmSync(join(dropDir, 'telemetry'), { recursive: true });
-    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 45));
+    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 48));
 
     const dropBucket = mk('drop-bucket');
     rmSync(join(dropBucket, 'skills', 'skills-lane-04'), { recursive: true });
@@ -547,14 +567,14 @@ function selfTest() {
 
     const noChain = mk('no-chain');
     for (const n of readdirSync(noChain)) if (RE_CHAIN.test(n)) rmSync(join(noChain, n));
-    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 45));
+    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 48));
 
     // 4. UNLISTED arms
     const newLane = mk('new-lane');
     writeFileSync(join(newLane, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
     check('UNLISTED: a 19th lane file under agents/secondary/', () => {
       const r = runGate(['--root', newLane]);
-      return { ...drift(r, 'UNLISTED', 47), ok: drift(r, 'UNLISTED', 47).ok && r.stdout.includes('19 children, 18 declared') };
+      return { ...drift(r, 'UNLISTED', 50), ok: drift(r, 'UNLISTED', 50).ok && r.stdout.includes('19 children, 18 declared') };
     });
 
     const newPlugin = mk('new-plugin');
@@ -587,7 +607,7 @@ function selfTest() {
     chmodSync(join(looseFile, 'server.token'), 0o400);
     check('SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)', () => {
       const r = runGate(['--root', looseFile]);
-      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=45') };
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=48') };
     });
 
     const secretKind = mk('secret-kind');
@@ -649,25 +669,105 @@ function selfTest() {
     for (let i = 0; i < 3; i += 1) writeFileSync(join(moreChain, `config.toml.extra-${i}.bak`), 'x\n');
     check('info: a growing drift chain is reported (chain=6) and never gated → CLEAN', () => {
       const r = runGate(['--root', moreChain]);
-      return { ...clean(r, 'chain=6 info=3'), ok: clean(r, 'chain=6 info=3').ok && r.stdout.includes('generations=6') };
+      return { ...clean(r, 'chain=6 info=4'), ok: clean(r, 'chain=6 info=4').ok && r.stdout.includes('generations=6') };
     });
 
-    const residue = mk('root-residue');
-    writeFileSync(join(residue, 'rc-qrcode.png'), 'png\n');
-    check('info: an undeclared root child is info by default (CLEAN) and UNLISTED under --root-enum', () => {
-      const soft = runGate(['--root', residue]);
-      const hard = runGate(['--root', residue, '--root-enum']);
+    check('root enum: drift-chain generations are never double-reported as root strays', () => {
+      const r = runGate(['--root', moreChain, '--json']);
+      const j = JSON.parse(r.stdout);
+      const chainNamed = j.rootStrays.some((n) => n.endsWith('.bak'));
       return {
-        ok: soft.status === 0 && soft.stdout.includes('root residue: rc-qrcode.png') && lastLine(soft).includes('info=4')
-          && hard.status === 1 && kinds(hard).includes('UNLISTED') && hard.stdout.includes('rc-qrcode.png'),
-        detail: `soft exit=${soft.status} (${lastLine(soft).slice(0, 60)}) hard exit=${hard.status} kinds=[${kinds(hard).join(',')}]`,
-        kinds: kinds(hard),
+        ok: r.status === 0 && j.verdict === 'CLEAN' && j.totals.chain === 6
+          && j.totals.members === 49 && j.totals.rootEnum.strays === 0 && !chainNamed
+          && j.totals.families.K1.members === 3,
+        detail: `exit=${r.status} chain=${j.totals.chain} members=${j.totals.members} strays=${j.totals.rootEnum.strays} rootStrays=[${j.rootStrays.join(',')}] K1=${j.totals.families.K1.members}`,
       };
     });
 
-    check('--root-enum is idempotent on a fixture with no root residue (CLEAN)', () => {
+    // 7b. the round-20 root enumeration arm — the frozen rule, no flag
+    const stray = mk('root-stray');
+    writeFileSync(join(stray, 'notes.txt'), 'x\n');
+    check('UNLISTED: a planted undeclared root child → exit 1, and it is not counted as a member', () => {
+      const r = runGate(['--root', stray]);
+      const j = JSON.parse(runGate(['--root', stray, '--json']).stdout);
+      return {
+        ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('notes.txt sits at the root')
+          && r.stdout.includes('not declared by the frozen K1–K5 set')
+          && j.rootStrays.length === 1 && j.rootStrays[0] === 'notes.txt'
+          && j.totals.members === 49 && j.totals.rootEnum.strays === 1,
+        detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] strays=${JSON.stringify(j.rootStrays)} members=${j.totals.members}`,
+        kinds: kinds(r),
+      };
+    });
+
+    check('UNLISTED: a hidden root child is gated too (the root arm reads the raw listing)', () => {
+      const hidden = mk('root-hidden-stray');
+      writeFileSync(join(hidden, '.stray'), 'x\n');
+      const r = runGate(['--root', hidden]);
+      return {
+        ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('.stray'),
+        detail: `exit=${r.status} kinds=[${kinds(r).join(',')}]`,
+        kinds: kinds(r),
+      };
+    });
+
+    check('the removed --root-enum flag is refused — root enumeration has no escape hatch (exit 64)', () => {
       const r = runGate(['--root', green, '--root-enum']);
-      return clean(r, 'KIMI_CENSUS: CLEAN');
+      return {
+        ok: r.status === 64 && r.stderr.includes('unsupported argument: --root-enum') && r.stdout === '',
+        detail: `exit=${r.status} stderr=${r.stderr.split('\n')[0].slice(0, 60)}`,
+      };
+    });
+
+    check('root enum is orthogonal to counted-dir drift (both arms fire on one run)', () => {
+      const both = mk('root-and-count');
+      writeFileSync(join(both, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
+      writeFileSync(join(both, 'scratchpad.txt'), 'x\n');
+      const r = runGate(['--root', both]);
+      const listed = r.stdout.split('\n').filter((l) => l.startsWith('CENSUS  error  UNLISTED')).map((l) => l.split(/\s+/)[3]);
+      return {
+        ok: r.status === 1 && listed.includes('scratchpad.txt') && listed.some((x) => x.startsWith('agents/secondary'))
+          && r.stdout.includes('19 children, 18 declared') && r.stdout.includes('strays=1'),
+        detail: `exit=${r.status} listed=[${listed.join(',')}]`,
+        kinds: kinds(r),
+      };
+    });
+
+    // 7c. K5 — the round-20 root-residue family, file-kind pins
+    for (const name of ['workspaces.json', 'tui.toml.bak', 'rc-qrcode.png']) {
+      const k5 = mk(`k5-drop-${name}`);
+      rmSync(join(k5, name));
+      check(`MEMBER_MISSING: the K5 member ${name} removed (49 → 48)`, () => {
+        const r = runGate(['--root', k5]);
+        return {
+          ...drift(r, 'MEMBER_MISSING', 48),
+          ok: drift(r, 'MEMBER_MISSING', 48).ok && r.stdout.includes(`${name} is absent under`)
+            && !kinds(r).includes('UNLISTED'),
+          detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)} kinds=[${kinds(r).join(',')}]`,
+          kinds: kinds(r),
+        };
+      });
+    }
+
+    const k5Kind = mk('k5-kind-flip');
+    rmSync(join(k5Kind, 'workspaces.json'));
+    mkdirSync(join(k5Kind, 'workspaces.json'));
+    check('MEMBER_MISSING: workspaces.json declared file, live dir (K5 kind pin)', () => {
+      const r = runGate(['--root', k5Kind]);
+      return {
+        ...drift(r, 'MEMBER_MISSING', 48),
+        ok: drift(r, 'MEMBER_MISSING', 48).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
+        detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)}`,
+        kinds: kinds(r),
+      };
+    });
+
+    check('K5 is presence + kind only: content changes are never a finding (CLEAN)', () => {
+      const edited = mk('k5-content');
+      writeFileSync(join(edited, 'workspaces.json'), '{"wd_changed_000000000000":"/tmp/changed"}\n');
+      writeFileSync(join(edited, 'rc-qrcode.png'), 'not-a-png-at-all\n');
+      const r = runGate(['--root', edited]);
+      return { ...clean(r, 'members=49'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
     });
 
     // 8. fail-closed arm
@@ -757,7 +857,7 @@ function selfTest() {
 /* ------------------------------------------------------------------- argv */
 
 function parseArgs(argv) {
-  const opts = { root: DEFAULT_ROOT, json: false, rootEnum: false, selftest: false, help: false };
+  const opts = { root: DEFAULT_ROOT, json: false, selftest: false, help: false };
   const need = (flag, v) => {
     if (v === undefined || v.trim() === '' || v.startsWith('-')) {
       process.stderr.write(`kimi-census: ${flag} needs a value\n${USAGE}`);
@@ -769,7 +869,6 @@ function parseArgs(argv) {
     const a = argv[i];
     if (a === 'verify') continue;
     if (a === '--root') { opts.root = resolve(need(a, argv[++i])); continue; }
-    if (a === '--root-enum') { opts.rootEnum = true; continue; }
     if (a === '--json') { opts.json = true; continue; }
     if (a === '--selftest' || a === '--self-test') { opts.selftest = true; continue; }
     if (a === '-h' || a === '--help') { opts.help = true; continue; }

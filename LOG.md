@@ -1026,3 +1026,29 @@
   coverage:kimi-layer measurement pre-registered for round 20. Cross-domain
   routed: endpoints → kama; credential shapes → kagi; nothing measured for
   kengaku.
+- 2026-10-13 — round 20 (as pre-registered in round 19): the round-16 role
+  for the K block. K5 root-residue family landed (3 members:
+  `workspaces.json` — the wd-key derivation's input, 9/9 recomputations;
+  `tui.toml.bak` — 1-byte diff re-verified; `rc-qrcode.png` — shape census,
+  payload never decoded) via one content lane; `kimi-census.mjs` gained K5 +
+  always-on root enumeration (896 L, 43 selftest cases, live CLEAN
+  members=49, strays=0, `--root-enum` now a usage refusal, secrecy re-proven
+  by strace); `proxy-check.mjs` gained the K-block derivation (92/92
+  selftest, +21 K cases, `--kimi-root` with KIMI_ROOT_NOT_A_DIR fail-closed,
+  strace-proven stat-only secrecy). First measurement:
+  **coverage:kimi-layer = 4** = floor(10 × 5/5 × 24/49); stanza gained
+  C1k/C1k_total/K_members/K_sections/coverage_kimi + pin.kimi-census,
+  pin.proxy-check re-pinned, C2 re-pinned 60→**63** (round 19 left it at 60
+  while the tree already read 61; round 20 first wrote 62 — an arithmetic
+  slip on +2 rows — and the gate's own C2_DRIFT caught the missing row, `##
+  Axes` row landed — tool, stanza, and axes traveled together. Defects
+  recorded: (1) stale stanza self-caught — C2 went un-re-pinned at round 19
+  (declared 60, tree read 61) and round 19's close glossed the DRIFT line as
+  "layer terms only"; surfaced by the M3 lane reading the stanza literally;
+  durable rule: capture the FULL drift line at close, never a summary;
+  (2) occurrence-vs-distinct limit — 24 K-sections name 17 distinct members
+  (definition kept as frozen; tightening queued with its own before/after);
+  (3) wave-1-era title-label collisions repaired (session-state K4→K3,
+  binary-secrets K5→K4). Goal contract: third and final round closed.
+  Carried debt unchanged: OMP-side re-census parked with S2; checklist 7/11
+  (three origin-dependent items fail closed on it; the census item is green).

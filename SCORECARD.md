@@ -134,6 +134,11 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R8 | transcript / ledger / seat coverage | 4 files (`native_transcript.rs`, `native_ledger.rs`, `native_seat_coverage.rs`, `native_dispatch_topology.rs`) | yes — native-transcript-ledger-seats (r7) |
 | R9 | judge test suite | `native_tests.rs` (340 cases; other big test files sit inside R2/R6/R7) | yes — test-inventories (r7) |
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
+| K1 | kimi config plane (round-18 expansion) | `~/.kimi-code/config.toml`, `~/.kimi-code/tui.toml`, the `config.toml.*.bak` drift chain counted as 1 member (12 generations at the round-19 census) | yes — `knowledge/kimi-config-plane.md` |
+| K2 | kimi delegate/lane plane (round-18) | 18 `agents/secondary/*.md` + 5 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (25) | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
+| K3 | kimi session/state plane (round-18) | `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`, `search-index` (9) | yes — `knowledge/kimi-session-state.md` |
+| K4 | kimi binary/secret plane (round-18) | `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`, `device_id`, `region`, `credentials/`, `oauth/` (9; secret members shape-only, never content-read) | yes — `knowledge/kimi-binary-secrets.md` |
+| K5 | kimi root-residue (round-20 registry change, pre-registered round 19) | `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` (3) | yes — `knowledge/kimi-residue-files.md` (lands round 20) |
 | R11 | runtime remainder + CLI | 47 members: 42 runtime `.rs` (`crates/ufo-core-runtime/src/*.rs` minus the 51 named by R1–R10) + `crates/ufo-cli/src/*.rs` (5), 24,874 L (`ls crates/ufo-core-runtime/src/*.rs` → 93 − 51 = 42; rebuilt from the tree by an independent scout and diffed against the written 47 with `LC_ALL=C sort` + `comm -3` → empty) | yes — `knowledge/runtime-remainder-census.md`: 47 of 47 named at internals level, one `## ` section per member with ≥1 anchor in that member's own file and ≥1 symbol verbatim in it (`--row R11` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=47 adv=0)`, round 15) |
 
 Covered = **19** of 19 after round 15; every family's registry cell now starts
@@ -273,19 +278,25 @@ A=6
 C=11
 C1=19
 C1_total=19
-C2=60
-C2_total=60
+C2=63
+C2_total=63
 S_members=114
 S_sections=74
 R_members=98
 R_sections=69
 coverage_script=6
 coverage_runtime=7
+C1k=5
+C1k_total=5
+K_members=49
+K_sections=24
+coverage_kimi=4
 pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=8f9989b16dced830d2b1fe05eb6175d2e7d7cffb63d51a5356243b2b8dbb014a
-pin.proxy-check=5ed61cbe7f83c7a181c5fd932142d8af2c330edbde099d6524eab31d31d76f61
+pin.proxy-check=a01aac6c974468dfbbc245b93353f0522f9af5eeffda5765208331f2f102ac9e
 pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1ed
+pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 -->
 
 ## Axes
@@ -296,6 +307,7 @@ pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1e
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 6 | `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = 6 — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**74** = `S6` 5 + `S7` 9 + `S8` 60; the five topic-form `S` rows carry 0), `S_members` = **114** = `ls scripts/*.mjs \| wc -l` → 72 + `find scripts -mindepth 2 -type f \| wc -l` → 42 (RECURSIVE; depth-1 reads 38 and is wrong). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
 | coverage:runtime-layer | 7 | `floor(10 × 11/11 × 69/98)` = `floor(7.04…)` = 7 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **69** member-only sections: round 17 completed R1 (**0→8**) and R8 (**3→4**, adding `native_dispatch_topology.rs`) on top of the round-16 baseline 60; all `R` note sections read 72, minus R9's 3 `SECTION_FILE_NOT_MEMBER` sections. `R_members` = **98** = 93 runtime + 5 CLI. Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
+| coverage:kimi-layer | 4 | `floor(10 × 5/5 × 24/49)` = `floor(4.89…)` = 4 — **first measurement (round 20)**; `C1k` = 5/5 K-registry rows `yes` (K5 residue family pre-registered round 19), `K_members` = **49** live from `~/.kimi-code` (K1 3 + K2 25 + K3 9 + K4 9 + K5 3; chain = 1), `K_sections` = **24** distinct (note, heading) member-sections across the `kimi-*.md` notes. **Limit, recorded not hidden:** 24 sections name 17 distinct members (`config.toml` heads 5 sections in `kimi-config-plane.md`) — the occurrence-vs-distinct hole of rounds 17/19, queued hardening; derived by `scripts/proxy-check.mjs` as `coverage_kimi` with `--kimi-root` / `KIMI_ROOT_NOT_A_DIR` fail-closed | round 20 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -363,6 +375,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 20 | coverage:kimi-layer (first measurement — the round-16 role for the K block; registry change + tool + stanza + axes landed together per pre-registration) | no K terms; the K block declared unscored since round 18 | C1k **5/5**, `K_members` **49** (live), `K_sections` **24** ⇒ `floor(10 × 1.0 × 24/49)` = **4**; A=6, C=11 held; stanza gained 5 term keys + `pin.kimi-census`, `pin.proxy-check` re-pinned, `## Axes` row landed — tool, stanza, and axes travel together | `node scripts/kimi-census.mjs` → `CLEAN (members=49 checked=49)` with root enumeration live (`strays=0`); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K terms + legacy terms MATCH, layer terms DRIFT (carried debt); `--selftest` 92/92 (proxy, +21 K cases) and 43/43 (census, +8 K5 cases); occurrence-vs-distinct limit recorded (24 sections name 17 distinct members); wave-3 lane-found label collisions repaired (session-state title K4→K3, binary-secrets K5→K4); `kimi-residue-files.md` (364 L, 3 member sections, 9/9 wd-key recomputations, the 1-byte tui diff re-verified) |
 | 19 | operability (the f_O walk; integer held by the saturating proxy) | A=5, C=10 ⇒ `f_O = 15/18 = 0.8333` ⇒ 8 | A=**6** (`scripts/kimi-census.mjs`, contract `kumitate-kimi-census-v1`, 797 L, 35-case hermetic suite, live `KIMI_CENSUS: CLEAN (members=46 checked=46 chain=12 info=4)` exit 0, `KIMI_ROOT_MISSING` fail-closed verified, secrecy proven via strace — zero reads of the secret members) + C=**11** (census admitted to the executable checklist, item 11) ⇒ `f_O = 17/20 = 0.85` ⇒ **8** (9 needs A+C ≥ 27) | audits A1–A4 (fast lanes, independent re-runs): 4 append-only errata blocks landed, 2 drift annotations (config.toml's secondary `default_model` flipped opencode-go → hyper at 18:15 mid-round — the note snapshots were true at reading time), 1 process defect recorded (an audit lane printed `api_key` values to its own transient output — redacted, no durable artifact touched; future briefs: `grep -c` only, never values); K-block terms frozen (round-19 pre-registration); the census's K-exhaustiveness gap named: `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` undeclared → **K5 residue family pre-registered for round 20** |
 | 18 | — (definition/expansion round; no live axis moves by pre-registration) | C2 53/53; no kimi-* notes | C2 **60/60** (6 `knowledge/kimi-*.md` notes + `lessons/round-18.md`, each with a README row); A=5, C=10, C1=19/19, both layer successors unchanged — the stanza re-pin below is the only proxy change, contract-mandated | `grep -c '^| \`\(knowledge\|lessons\)/' corpus/README.md` → 60; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 60; 6-lane AgentSwarm wave on `alibaba-token-plan/deepseek-v4.1-flash`, one note per lane; first pass **rejected** by the citation gate (80 citation-form errors — bare basenames bound to the wrong tree), 3-lane repair wave re-admitted at **0** (independently re-verified: 0 errors in every `kimi-*` note; repo-wide 386 = carried debt); carried debt: origin tree relocated + restructured ⇒ S/R gates read DRIFT until the parked re-census |
 | 17 | coverage:runtime-layer | `C1r=11/11`, `R_sections=60`, `R_members=98` ⇒ `floor(10 × 60/98)` = **6**; R1 topic-form (0 sections, `ROW_NO_SECTIONS`), R8 3 of 4 (`MEMBER_COUNT_SUSPECT`); repo gate `sections=137 adv=16`; the threshold for 7 was 69, so R1 alone would stop at 68/98 ⇒ 6 | R1 **0→8** plus R8 **3→4** (`native_dispatch_topology.rs`) ⇒ `R_sections` **60→69**, `floor(10 × 69/98)` = **7**; repo gate `sections=146 adv=14`; strict R1/R8 check 12 sections, adv=0; explicit occurrence=distinct proof R1 8=8 and R8 4=4; script layer remains 74/114 ⇒ 6, operability remains A=5/C=10 ⇒ 8 | `node scripts/claims-check.mjs --row R1 --row R8 --strict` → `MATCH (… sections=12 adv=0)` exit 0; in-process `probeSections` census prints 8=8 / 4=4; `node scripts/proxy-check.mjs` → `PROXY: MATCH (… C2=53/53 … S=74/114 coverage:script-layer=6; R=69/98 coverage:runtime-layer=7; pins=5 match)` exit 0; `corpus/lessons/round-17.md` |

@@ -1,4 +1,4 @@
-# K5 — binary & version plane: `bin/`, `updates/`, and the shape-only secret census
+# K4 — binary & version plane: `bin/`, `updates/`, and the shape-only secret census
 
 ## Scope — four surfaces, one of them shape-only by declaration
 

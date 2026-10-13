@@ -4,7 +4,7 @@
  * Read-only, zero deps, ESM, node >= 20, no network. Contract:
  * kumitate-proxy-v1 (parent-frozen).
  *
- *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--json] [--strict]
+ *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--json] [--strict]
  *   node scripts/proxy-check.mjs --selftest
  *   node scripts/proxy-check.mjs -h|--help
  *
@@ -29,9 +29,27 @@
  *   not repeated. These are the only new reads this tool makes, and they are
  *   named here rather than hidden.
  *
+ *   Round-20 amendment (terms pre-registered in `SCORECARD.md` `## Planned`,
+ *   round-19 freeze + the round-20 K5 registry change): the kimi substrate gets
+ *   its first measurement here, as the five stanza keys `C1k C1k_total
+ *   K_members K_sections coverage_kimi`. `C1k/C1k_total` is the `yes`-row
+ *   fraction among registry rows matching /^\| K\d+ \|/ (the K1–K5 families,
+ *   same 4th-cell test as C1). `K_members` is read LIVE from the kimi root
+ *   (`--kimi-root`, default `$KIMI_ROOT` or `~/.kimi-code`) under the frozen
+ *   counting rules that `scripts/kimi-census.mjs` gates — that file exports no
+ *   member table, so the rules are re-derived here (K1 3, K2 the live child
+ *   counts of `agents/secondary/` and `skills/` plus 2, K3 9, K4 9, K5 3; the
+ *   drift chain is 1 member; secret members are lstat-kind only, never read).
+ *   `K_sections` counts distinct `(note, heading)` pairs over
+ *   `corpus/knowledge/kimi-*.md`: a `## ` heading counts when one of its
+ *   backticked spans, or one of its `/`-bearing tokens, names a declared or
+ *   live member by full path or basename. A missing/odd `--kimi-root` is the
+ *   fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
+ *
  * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
- *   default     recompute the twelve terms + the five pins under `--self`,
- *               `--scorecard` and the origin tree `--src`, and compare them
+ *   default     recompute the seventeen terms + the six pins under `--self`,
+ *               `--scorecard`, the origin tree `--src` and the kimi root
+ *               `--kimi-root`, and compare them
  *               with the kumitate-proxy-v1 stanza. The registry rows and the
  *               `## Axes` rows are read from the SAME file as the stanza
  *               (`--scorecard`, default `<self>/SCORECARD.md`); the two layer
@@ -75,9 +93,38 @@
  *   coverage_runtime = floor(10 × C1r/C1r_total × R_sections/R_members)
  *         where C1s/C1s_total is the `yes`-row fraction among the `S` rows
  *         (same for `R`). A zero denominator scores 0, never NaN.
- *   The four derived scores must ALSO equal the integers in the scorecard's
+ *   K terms (round-20 amendment; the round-19 frozen rules, K5 added by the
+ *   round-20 registry change), counted over the kimi root named by
+ *   `--kimi-root` — the ONLY tree reads outside `--self`/`--src`:
+ *     C1k / C1k_total  registry rows matching /^\| K\d+ \|/ over ALL such rows,
+ *         covered = those whose 4th `|`-separated cell, trimmed, starts `yes`
+ *         (the same cell test as C1; the S/R rows are NOT in this denominator).
+ *     K_members   the live member-slot total under the frozen counting rules:
+ *         K1 3 (`config.toml`, `tui.toml`, the `config.toml.*.bak` chain as ONE
+ *         member); K2 `agents/secondary/` + `skills/` counted by LIVE non-hidden
+ *         child count, + `plugins/installed.json` + the
+ *         `plugins/managed/kimi-webbridge` tree (1); K3 9 presence-only paths;
+ *         K4 9 (directories are 1 member each; `server.token`, `credentials/`,
+ *         `oauth/` are kind-checked by LSTAT ONLY — never opened, never listed);
+ *         K5 3 root-residue files (`workspaces.json`, `tui.toml.bak`,
+ *         `rc-qrcode.png`), presence + kind, never content. An absent member or
+ *         a member whose live kind differs from the declared one counts 0, and
+ *         the total lands wherever the tree actually is — the census gate
+ *         (`scripts/kimi-census.mjs`, `kumitate-kimi-census-v1`) is the tool
+ *         that names WHICH slot drifted; here a moved tree shows up as
+ *         `K_MEMBERS_DRIFT`, not as a fitted number.
+ *     K_sections  distinct `(note, heading)` pairs over the
+ *         `corpus/knowledge/kimi-*.md` notes: a `## ` heading names a K member
+ *         when one of its backticked spans, or one of its whitespace-separated
+ *         tokens that contains `/`, equals a member's declared path, a member's
+ *         live child path, or any of those by basename. Topic-form headings
+ *         name nothing, so they count 0 — the honesty term.
+ *     coverage_kimi = floor(10 × C1k/C1k_total × K_sections/K_members); a zero
+ *         denominator scores 0, never NaN.
+ *   The five derived scores must ALSO equal the integers in the scorecard's
  *   `## Axes` rows `| operability | N |`, `| coverage | N |`,
- *   `| coverage:script-layer | N |` and `| coverage:runtime-layer | N |`.
+ *   `| coverage:script-layer | N |`, `| coverage:runtime-layer | N |` and
+ *   `| coverage:kimi-layer | N |`.
  *   These counts are shell-identical to the commands the scorecard already
  *   prints: `find . -path ./.git -prune -o -type f \( -name '*.mjs' … \) -print
  *   | wc -l`, `grep -c '^\s*- \[' SKILL.md`, `grep -cE '^\| (S|R)[0-9]+ \|'`
@@ -92,21 +139,27 @@
  *     A C C1 C1_total C2 C2_total           the declared self-only counts
  *     S_members S_sections R_members R_sections  the declared layer universe
  *     coverage_script coverage_runtime       the two layer scores
+ *     C1k C1k_total K_members K_sections     the declared kimi-block universe
+ *     coverage_kimi                          the kimi-layer score
  *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
- *     pin.claims-check                      sha256 hex of scripts/<name>.mjs
- *   All seventeen keys are REQUIRED, exactly once; no other key is accepted
+ *     pin.claims-check pin.kimi-census       sha256 hex of scripts/<name>.mjs
+ *   All twenty-three keys are REQUIRED, exactly once; no other key is accepted
  *   (the stanza key charset forbids `:`, which is why the axes' names are
- *   spelled `coverage_script` / `coverage_runtime` here). Every value is
+ *   spelled `coverage_script` / `coverage_runtime` / `coverage_kimi` here).
+ *   Every value is
  *   re-derived from the trees and never trusted: a term or pin that disagrees
  *   is a finding, and the stanza is never rewritten here. No key can vouch for
  *   itself — A, C and C1 are states of other files, C2 counts the corpus notes,
- *   the layer terms come from the origin tree through the claims gate, and
+ *   the layer terms come from the origin tree through the claims gate, the K
+ *   terms come from the kimi root and the `kimi-*.md` notes, and
  *   `pin.proxy-check` hashes this file for a reader, not for this run.
  *
  * Findings (text mode prints `PROXY  <severity>  <KIND>  <detail>`)
  *   error A_DRIFT C_DRIFT C1_DRIFT C1_TOTAL_DRIFT C2_DRIFT C2_TOTAL_DRIFT
  *         S_MEMBERS_DRIFT S_SECTIONS_DRIFT R_MEMBERS_DRIFT R_SECTIONS_DRIFT
- *         COVERAGE_SCRIPT_DRIFT COVERAGE_RUNTIME_DRIFT PIN_DRIFT (a pin whose
+ *         COVERAGE_SCRIPT_DRIFT COVERAGE_RUNTIME_DRIFT
+ *         C1K_DRIFT C1K_TOTAL_DRIFT K_MEMBERS_DRIFT K_SECTIONS_DRIFT
+ *         COVERAGE_KIMI_DRIFT PIN_DRIFT (a pin whose
  *         file is absent is reported as `computed=absent`, never silently
  *         skipped) AXES_DRIFT
  *   warn  PIN_UNPINNED — a `scripts/*.mjs` file no `pin.*` key covers: pin
@@ -115,7 +168,9 @@
  * Verdict lines (always the last stdout line)
  *   PROXY: MATCH (A=<a> C=<c> operability=<s>; C1=<x>/<y> C2=<p>/<q>
  *                 coverage=<s>; S=<s>/<m> coverage:script-layer=<s>;
- *                 R=<s>/<m> coverage:runtime-layer=<s>; pins=<n> match)
+ *                 R=<s>/<m> coverage:runtime-layer=<s>;
+ *                 K=<sections>/<members> coverage:kimi-layer=<n>;
+ *                 pins=<n> match)
  *   PROXY: DRIFT (<KIND term=… declared=… computed=… delta=…>…)
  *   PROXY: FAIL-CLOSED (<TOKEN>) <detail>     (exit 2)
  *
@@ -125,13 +180,17 @@
  *       `--selftest` is present, exactly as `round-gate.mjs` does.
  *
  * Fail-closed arms (exit 2; each prints its named kind; checked in this order)
- *   SELF_NOT_A_DIR SRC_NOT_A_DIR SCORECARD_MISSING STANZA_MISSING
+ *   SELF_NOT_A_DIR SRC_NOT_A_DIR KIMI_ROOT_NOT_A_DIR SCORECARD_MISSING
+ *   STANZA_MISSING
  *   STANZA_MALFORMED STANZA_KEY_UNKNOWN STANZA_KEY_DUPLICATE REGISTRY_MISSING
  *   SKILL_MISSING README_MISSING CORPUS_DIRS_MISSING
  *   SRC_NOT_A_DIR = `--src` is not a directory. The four legacy terms do not
  *   need it, but the two layer terms do — they are counted over the claims
  *   gate's walk of that tree — so a missing origin tree refuses the whole
  *   verdict rather than printing a score it cannot derive.
+ *   KIMI_ROOT_NOT_A_DIR = `--kimi-root` is not a directory (absent, a file, or
+ *   unreadable): `K_members` is a live count, so a missing substrate refuses the
+ *   run — it is never scored 0, which would read as a substrate that vanished.
  *   STANZA_MISSING = no claim block at all; STANZA_MALFORMED = more than one
  *   block, no `-->` terminator, a body line that is not `key=value`, a required
  *   key absent, or a value outside `\d+` (counts) / `[0-9a-f]{64}` (pins).
@@ -143,15 +202,24 @@
  *
  * Bounds and what this tool never does
  *   Reads only, under `--self` + the scorecard + the origin tree named by
- *   `--src`: no writes, no network, no subprocess, no git, no lock. The origin
+ *   `--src` + the kimi root named by `--kimi-root`: no writes, no network, no
+ *   subprocess, no git, no lock. The origin
  *   tree is opened only through the imported `probeSections()` (which walks it
  *   exactly once, in process) and the files that gate already reads for its own
- *   member derivations — never a second walk, never a shell-out. `--selftest`
+ *   member derivations — never a second walk, never a shell-out. The kimi root
+ *   is read by `lstatSync` on member paths and `readdirSync` on the root plus
+ *   the two counted dirs (`agents/secondary/`, `skills/`) and
+ *   `corpus/knowledge/kimi-*.md` under `--self` — no file content is read, and
+ *   the secret members (`server.token`, `credentials/`, `oauth/`) are
+ *   kind-statted and never opened or listed. `--selftest`
  *   is the only writer, and only into a fresh `mkdtemp` dir it removes
- *   afterwards. Environment: the ONLY variable consulted is `UFO_SRC`, and only
- *   as `--src`'s default (`process.env.UFO_SRC || the lane's origin checkout`),
+ *   afterwards. Environment: the variables consulted are `UFO_SRC` and
+ *   `KIMI_ROOT`, each only as its flag's default
+ *   (`process.env.UFO_SRC || the lane's origin checkout`,
+ *   `process.env.KIMI_ROOT || ~/.kimi-code`),
  *   so the legacy self-only terms stay env-independent; `--selftest` reads no
- *   environment and no live tree at all, which is what makes it hermetic.
+ *   environment and no live tree at all (its K terms count over a fixture kimi
+ *   root it builds in the tmp dir), which is what makes it hermetic.
  *   Portable: node >= 20, ESM, zero deps.
  */
 
@@ -160,8 +228,9 @@ import { spawnSync } from 'node:child_process';
 import {
   mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { lstatSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The claims gate is imported IN PROCESS (never spawned as a subprocess): the
 // two layer terms need its registry-row derivation and its single walk of the
@@ -174,6 +243,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
 /** Origin tree the layer terms count over; `--src` overrides it. */
 const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/** Kimi installation the K terms count over; `--kimi-root` overrides it. */
+const DEFAULT_KIMI_ROOT = process.env.KIMI_ROOT || join(homedir(), '.kimi-code');
 
 const SCORECARD_FILE = 'SCORECARD.md';
 const SKILL_FILE = 'SKILL.md';
@@ -183,7 +254,8 @@ const CORPUS_DIRS = ['corpus/knowledge', 'corpus/lessons'];
 /** Declared-count keys of the stanza, in comparison order. */
 const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
   'S_members', 'S_sections', 'R_members', 'R_sections',
-  'coverage_script', 'coverage_runtime'];
+  'coverage_script', 'coverage_runtime',
+  'C1k', 'C1k_total', 'K_members', 'K_sections', 'coverage_kimi'];
 /** Pin key → the file whose sha256 it declares. */
 const PINS = {
   'pin.cite-check': 'scripts/cite-check.mjs',
@@ -191,6 +263,7 @@ const PINS = {
   'pin.round-gate': 'scripts/round-gate.mjs',
   'pin.proxy-check': 'scripts/proxy-check.mjs',
   'pin.claims-check': 'scripts/claims-check.mjs',
+  'pin.kimi-census': 'scripts/kimi-census.mjs',
 };
 const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
@@ -199,6 +272,7 @@ const AXIS_ROWS = [
   { axis: 'coverage', term: 'coverage' },
   { axis: 'coverage:script-layer', term: 'coverage_script' },
   { axis: 'coverage:runtime-layer', term: 'coverage_runtime' },
+  { axis: 'coverage:kimi-layer', term: 'coverage_kimi' },
 ];
 
 /**
@@ -217,36 +291,84 @@ const LAYER_PATTERNS = {
 const RE_RUNNABLE = /\.(?:mjs|js|sh|py)$/;
 const RE_CHECKLIST = /^\s*- \[/;
 const RE_REGISTRY_ROW = /^\| (S|R)\d+ \|/;
+/** Round-20: the K-block registry rows (K1–K5), same 4th-cell `yes` test. */
+const RE_K_ROW = /^\| K\d+ \|/;
 const RE_README_ROW = /^\| `(knowledge|lessons)\//;
 /** `key=value`; the key charset covers the `pin.<name>` family. */
 const RE_STANZA_KV = /^([A-Za-z][A-Za-z0-9_.-]*)=(\S+)$/;
 const RE_INT = /^\d+$/;
 const RE_HEX64 = /^[0-9a-f]{64}$/;
+/** The K1 drift chain, and the kimi notes whose headings feed `K_sections`. */
+const RE_CHAIN = /^config\.toml(\..+)?\.bak$/;
+const RE_KIMI_NOTE = /^kimi-.*\.md$/;
+
+/**
+ * The frozen K member rules (round-19 freeze + the round-20 K5 family), read
+ * live under `--kimi-root`. `scripts/kimi-census.mjs` gates the same rules but
+ * exports no member table, so the rules are re-derived here — the census is the
+ * tool that names WHICH slot drifted; this proxy only counts. A counted dir
+ * contributes its LIVE non-hidden child count; `chain` is one member when any
+ * generation exists; secret members are lstat-kind only, never opened.
+ */
+const K_MEMBER_RULES = [
+  { id: 'config.toml', family: 'K1', path: 'config.toml', kind: 'file' },
+  { id: 'tui.toml', family: 'K1', path: 'tui.toml', kind: 'file' },
+  { id: 'config.toml.*.bak', family: 'K1', path: 'config.toml.*.bak', kind: 'chain' },
+  { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'counted' },
+  { id: 'skills/', family: 'K2', path: 'skills', kind: 'counted' },
+  { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
+  { id: 'plugins/managed/kimi-webbridge', family: 'K2', path: 'plugins/managed/kimi-webbridge', kind: 'dir' },
+  { id: 'sessions/', family: 'K3', path: 'sessions', kind: 'dir' },
+  { id: 'session_index.jsonl', family: 'K3', path: 'session_index.jsonl', kind: 'file' },
+  { id: 'workspace-trust/', family: 'K3', path: 'workspace-trust', kind: 'dir' },
+  { id: 'telemetry/', family: 'K3', path: 'telemetry', kind: 'dir' },
+  { id: 'logs/kimi-code.log', family: 'K3', path: 'logs/kimi-code.log', kind: 'file' },
+  { id: 'file-history/', family: 'K3', path: 'file-history', kind: 'dir' },
+  { id: 'user-history/', family: 'K3', path: 'user-history', kind: 'dir' },
+  { id: 'cache/', family: 'K3', path: 'cache', kind: 'dir' },
+  { id: 'search-index/', family: 'K3', path: 'search-index', kind: 'dir' },
+  { id: 'bin/kimi', family: 'K4', path: 'bin/kimi', kind: 'file' },
+  { id: 'bin/fd', family: 'K4', path: 'bin/fd', kind: 'file' },
+  { id: 'updates/', family: 'K4', path: 'updates', kind: 'dir' },
+  { id: 'server/', family: 'K4', path: 'server', kind: 'dir' },
+  { id: 'server.token', family: 'K4', path: 'server.token', kind: 'file', secret: true },
+  { id: 'device_id', family: 'K4', path: 'device_id', kind: 'file' },
+  { id: 'region', family: 'K4', path: 'region', kind: 'file' },
+  { id: 'credentials/', family: 'K4', path: 'credentials', kind: 'dir', secret: true },
+  { id: 'oauth/', family: 'K4', path: 'oauth', kind: 'dir', secret: true },
+  { id: 'workspaces.json', family: 'K5', path: 'workspaces.json', kind: 'file' },
+  { id: 'tui.toml.bak', family: 'K5', path: 'tui.toml.bak', kind: 'file' },
+  { id: 'rc-qrcode.png', family: 'K5', path: 'rc-qrcode.png', kind: 'file' },
+];
 
 /** Every finding kind the hermetic suite must fire at least once. */
 const FINDING_KINDS = [
   'A_DRIFT', 'C_DRIFT', 'C1_DRIFT', 'C1_TOTAL_DRIFT', 'C2_DRIFT', 'C2_TOTAL_DRIFT',
   'S_MEMBERS_DRIFT', 'S_SECTIONS_DRIFT', 'R_MEMBERS_DRIFT', 'R_SECTIONS_DRIFT',
   'COVERAGE_SCRIPT_DRIFT', 'COVERAGE_RUNTIME_DRIFT',
+  'C1K_DRIFT', 'C1K_TOTAL_DRIFT', 'K_MEMBERS_DRIFT', 'K_SECTIONS_DRIFT',
+  'COVERAGE_KIMI_DRIFT',
   'PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED',
 ];
 /** Every fail-closed arm the hermetic suite must fire at least once. */
 const FAIL_CLOSED_KINDS = [
-  'SELF_NOT_A_DIR', 'SRC_NOT_A_DIR', 'SCORECARD_MISSING', 'STANZA_MISSING',
-  'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
+  'SELF_NOT_A_DIR', 'SRC_NOT_A_DIR', 'KIMI_ROOT_NOT_A_DIR', 'SCORECARD_MISSING',
+  'STANZA_MISSING', 'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
   'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
 ];
 
-const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--json] [--strict]
+const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--json] [--strict]
        node scripts/proxy-check.mjs --selftest
        node scripts/proxy-check.mjs -h|--help
 contract id: ${CONTRACT}
 
 modes:
   default      recompute A C C1 C1_total C2 C2_total, the layer terms
-               (S_members S_sections R_members R_sections), the four scores
+               (S_members S_sections R_members R_sections), the kimi-block terms
+               (C1k C1k_total K_members K_sections), the five scores
                (operability, coverage, coverage:script-layer,
-               coverage:runtime-layer) and the five script pins, then compare
+               coverage:runtime-layer, coverage:kimi-layer) and the six script
+               pins, then compare
                them with the ${CONTRACT} block in --scorecard (default
                <self>/${SCORECARD_FILE}) and with that file's ## Axes rows.
                The legacy counts are self-only; the layer terms are counted
@@ -254,18 +376,24 @@ modes:
                probeSections() imported from scripts/claims-check.mjs, and the
                layer numerator counts only member sections that gate grades
                inside the row's declared family (out-of-family sections are
-               excluded)
+               excluded); the kimi-block terms count over --kimi-root (lstat and
+               readdir only — secret members are never opened) plus the
+               corpus/knowledge/kimi-*.md headings under --self
   --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
   -h | --help  print this text, exit 0
 
 options:
-  --self DIR       repo root to measure (default: the repo containing this script)
-  --scorecard FILE claim block + registry rows + ## Axes rows (default <self>/${SCORECARD_FILE})
-  --src DIR        origin tree the layer terms count over, via the claims gate
-                   (default: \$UFO_SRC or ${DEFAULT_SRC});
-                   a non-directory is refused as SRC_NOT_A_DIR (exit 2)
-  --json           one machine-readable object on stdout
-  --strict         promote warn-level findings (PIN_UNPINNED) to failure
+  --self DIR         repo root to measure (default: the repo containing this script)
+  --scorecard FILE   claim block + registry rows + ## Axes rows (default <self>/${SCORECARD_FILE})
+  --src DIR          origin tree the layer terms count over, via the claims gate
+                     (default: \$UFO_SRC or ${DEFAULT_SRC});
+                     a non-directory is refused as SRC_NOT_A_DIR (exit 2)
+  --kimi-root DIR    kimi installation the K terms count over
+                     (default: \$KIMI_ROOT or ${DEFAULT_KIMI_ROOT});
+                     a non-directory is refused as KIMI_ROOT_NOT_A_DIR (exit 2),
+                     never scored 0
+  --json             one machine-readable object on stdout
+  --strict           promote warn-level findings (PIN_UNPINNED) to failure
 
 exit map: 0 match · 1 drift (findings; warnings too under --strict) · 2 fail-closed · 64 usage
 `;
@@ -285,6 +413,24 @@ function statKind(p) {
     const s = statSync(p);
     return s.isDirectory() ? 'dir' : s.isFile() ? 'file' : 'other';
   } catch { return 'absent'; }
+}
+
+/** Kind of an inode WITHOUT following a symlink (`absent` covers any stat failure). */
+function lstatKind(p) {
+  try {
+    const s = lstatSync(p);
+    if (s.isDirectory()) return 'dir';
+    if (s.isFile()) return 'file';
+    if (s.isSymbolicLink()) return 'symlink';
+    if (s.isFIFO()) return 'fifo';
+    if (s.isSocket()) return 'socket';
+    return 'other';
+  } catch { return 'absent'; }
+}
+
+/** Non-hidden child names of a dir, sorted; `[]` when it cannot be listed. */
+function listChildren(p) {
+  try { return readdirSync(p).filter((n) => !n.startsWith('.')).sort(); } catch { return []; }
 }
 
 function readText(p) {
@@ -347,12 +493,12 @@ function splitRowCells(line) {
   return cells;
 }
 
-/** Registry rows (`| S<n> |` / `| R<n> |`) and how many carry a `yes` 4th cell. */
-function registryCounts(scorecardText) {
+/** Registry rows of one family prefix (`S|R` or `K`) and how many carry a `yes` 4th cell. */
+function registryCounts(scorecardText, re = RE_REGISTRY_ROW) {
   let total = 0;
   let covered = 0;
   for (const line of scorecardText.split('\n')) {
-    if (!RE_REGISTRY_ROW.test(line)) continue;
+    if (!re.test(line)) continue;
     total += 1;
     const cells = splitRowCells(line);
     if ((cells[4] ?? '').trim().startsWith('yes')) covered += 1;
@@ -421,8 +567,95 @@ function layerTerms(rows, files) {
   };
 }
 
-/** The twelve counts + the four scores: legacy terms self-only, layer terms origin-walked. */
-function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe }) {
+/** The live K member set under `kimiRoot`: counts the slots and names the members. */
+function kMembers(kimiRoot) {
+  const rootChildren = listChildren(kimiRoot);
+  const names = new Set();
+  let members = 0;
+  for (const m of K_MEMBER_RULES) {
+    if (m.kind === 'chain') {
+      const gens = rootChildren.filter((n) => RE_CHAIN.test(n));
+      if (gens.length > 0) members += 1;
+      for (const g of gens) names.add(g);
+      continue;
+    }
+    const abs = join(kimiRoot, m.path);
+    const kind = lstatKind(abs);
+    names.add(m.path);
+    names.add(basename(m.path));
+    if (m.kind === 'counted') {
+      if (kind === 'dir') {
+        const kids = listChildren(abs);
+        members += kids.length;
+        for (const k of kids) {
+          names.add(`${m.path}/${k}`);
+          names.add(k);
+        }
+      }
+      continue;
+    }
+    const present = m.secret
+      ? (m.kind === 'dir' ? kind === 'dir' : (kind !== 'absent' && kind !== 'dir'))
+      : kind === m.kind;
+    if (present) members += 1;
+  }
+  return { members, names };
+}
+
+/** Does this `## ` heading name a K member (by full path or basename)? */
+function headingNamesKMember(heading, names) {
+  const tokens = [];
+  for (const m of heading.matchAll(/`([^`]+)`/gu)) tokens.push(m[1]);
+  for (const t of heading.split(/\s+/u)) if (t.includes('/')) tokens.push(t);
+  for (const raw of tokens) {
+    const tok = raw
+      .replace(/^.*\.kimi-code\//u, '')
+      .replace(/^[^\w~./-]+/u, '')
+      .replace(/[^\w~./*-]+$/u, '')
+      .replace(/\/+$/u, '');
+    if (tok === '') continue;
+    if (RE_CHAIN.test(tok)) return true;
+    const base = tok.split('/').filter(Boolean).pop() ?? '';
+    if (names.has(tok) || (base !== '' && names.has(base))) return true;
+  }
+  return false;
+}
+
+/** Distinct `(note, heading)` pairs naming a K member across `kimi-*.md` notes. */
+function kSections(self, names) {
+  const dir = join(self, 'corpus', 'knowledge');
+  const rels = walkFiles(dir).filter((r) => RE_KIMI_NOTE.test(basename(r))).sort();
+  const pairs = new Set();
+  for (const rel of rels) {
+    const text = readText(join(dir, rel));
+    if (text === null) continue;
+    for (const line of text.split('\n')) {
+      const h = /^## (.+)$/u.exec(line);
+      if (h === null) continue;
+      const heading = h[1].trim();
+      if (heading === '') continue;
+      if (headingNamesKMember(heading, names)) pairs.add(`${rel}\u0000${heading}`);
+    }
+  }
+  return pairs.size;
+}
+
+/** The five K terms, read live from the kimi root plus the scorecard's K rows. */
+function kTerms({ scorecardText, self, kimi }) {
+  const kreg = registryCounts(scorecardText, RE_K_ROW);
+  const members = kimi.members;
+  const sections = kSections(self, kimi.names);
+  return {
+    C1k: kreg.covered,
+    C1k_total: kreg.total,
+    K_members: members,
+    K_sections: sections,
+    coverage_kimi: layerCoverage(kreg.covered, kreg.total, sections, members),
+  };
+}
+
+/** The seventeen counts + the five scores: legacy self-only, layer origin-walked, K root-counted. */
+function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe, kimi }) {
   const A = walkFiles(self).filter((r) => RE_RUNNABLE.test(r)).length;
   const C = countLines(skillText, RE_CHECKLIST);
   const reg = registryCounts(scorecardText);
@@ -438,6 +671,7 @@ function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe 
     operability: operabilityOf(A, C),
     coverage: coverageOf(reg.covered, reg.total, C2, C2Total),
     ...layerTerms(probe.rows, probe.files),
+    ...kTerms({ scorecardText, self, kimi }),
   };
 }
 
@@ -633,6 +867,7 @@ function renderVerdict(verdict, terms, pinStats, findings) {
       + ` C1=${terms.C1}/${terms.C1_total} C2=${terms.C2}/${terms.C2_total} coverage=${terms.coverage};`
       + ` S=${terms.S_sections}/${terms.S_members} coverage:script-layer=${terms.coverage_script};`
       + ` R=${terms.R_sections}/${terms.R_members} coverage:runtime-layer=${terms.coverage_runtime};`
+      + ` K=${terms.K_sections}/${terms.K_members} coverage:kimi-layer=${terms.coverage_kimi};`
       + ` pins=${pinStats.matched} match)`;
   }
   return `PROXY: DRIFT (${findings.map(findingSummary).join('; ')})`;
@@ -650,6 +885,7 @@ function failClosed(opts, token, detail, terms, started) {
     self: opts.self,
     scorecard: opts.scorecard,
     src: opts.src,
+    kimiRoot: opts.kimiRoot,
     strict: Boolean(opts.strict),
     terms: terms ?? {},
     findings: [{ severity: 'error', kind: token, detail }],
@@ -671,6 +907,14 @@ function runCheck(opts, started) {
   }
   if (statKind(opts.src) !== 'dir') {
     return failClosed(opts, 'SRC_NOT_A_DIR', `--src ${opts.src} is ${statKind(opts.src)}`, {}, started);
+  }
+  if (statKind(opts.kimiRoot) !== 'dir') {
+    return failClosed(opts, 'KIMI_ROOT_NOT_A_DIR',
+      `--kimi-root ${opts.kimiRoot} is ${statKind(opts.kimiRoot)}`, {}, started);
+  }
+  try { readdirSync(opts.kimiRoot); } catch (e) {
+    return failClosed(opts, 'KIMI_ROOT_NOT_A_DIR',
+      `--kimi-root ${opts.kimiRoot} is unreadable (${e && e.code})`, {}, started);
   }
   const scorecardText = readText(opts.scorecard);
   if (scorecardText === null) {
@@ -714,8 +958,13 @@ function runCheck(opts, started) {
       'scripts/claims-check.mjs probeSections() returned no origin file index (files[])', {}, started);
   }
 
+  // The K terms count over the kimi root exactly once, in process: lstat on the
+  // member paths, readdir on the root plus the two counted dirs, and the
+  // `kimi-*.md` headings under `--self`. Never a second tree, never a shell-out.
+  const kimi = kMembers(opts.kimiRoot);
+
   const terms = deriveTerms({
-    self: opts.self, scorecardText, skillText, readmeText, notes, probe,
+    self: opts.self, scorecardText, skillText, readmeText, notes, probe, kimi,
   });
   const findings = [];
   compareTerms(terms, stanza.values, findings);
@@ -733,6 +982,7 @@ function runCheck(opts, started) {
     self: opts.self,
     scorecard: opts.scorecard,
     src: opts.src,
+    kimiRoot: opts.kimiRoot,
     strict: Boolean(opts.strict),
     terms: {
       ...terms,
@@ -760,8 +1010,8 @@ function runCheck(opts, started) {
 
 /* ----------------------------------------------------------------- selftest */
 
-/** Fixture stand-ins for the five pinned scripts (bytes only, never executed). */
-const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs', 'claims-check.mjs'];
+/** Fixture stand-ins for the six pinned scripts (bytes only, never executed). */
+const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs', 'claims-check.mjs', 'kimi-census.mjs'];
 const fixtureScript = (name) => `#!/usr/bin/env node\n// hermetic fixture stand-in for scripts/${name}\nexport const FIXTURE = ${JSON.stringify(name)};\n`;
 const FIXTURE_PINS = Object.fromEntries(FIXTURE_SCRIPTS.map((s) => [
   `pin.${s.replace(/\.mjs$/u, '')}`, sha256Hex(Buffer.from(fixtureScript(s), 'utf8')),
@@ -791,6 +1041,59 @@ function fixtureSrc(root) {
     writeFileSync(p, FX_SRC_MEMBER);
   }
 }
+
+/**
+ * The fixture KIMI ROOT (`--kimi-root`): every K1–K5 member present with its
+ * declared kind, and the two counted dirs seeded small (2 + 1 children) so the
+ * total is hand-checkable: K1 3 + K2 (2+1+1+1)=5 + K3 9 + K4 9 + K5 3 = 29.
+ * The real tree holds 49 (18 + 5 there); the fixture is a shape, not a copy.
+ */
+const FX_KIMI_FILES = [
+  'config.toml', 'tui.toml', 'config.toml.bak',
+  'agents/secondary/sec-a.md', 'agents/secondary/sec-b.md',
+  'skills/skill-a',
+  'plugins/installed.json',
+  'session_index.jsonl', 'logs/kimi-code.log',
+  'bin/kimi', 'bin/fd', 'server.token', 'device_id', 'region',
+  'workspaces.json', 'tui.toml.bak', 'rc-qrcode.png',
+];
+const FX_KIMI_DIRS = [
+  'plugins/managed/kimi-webbridge',
+  'sessions', 'workspace-trust', 'telemetry', 'file-history', 'user-history',
+  'cache', 'search-index', 'updates', 'server', 'credentials', 'oauth',
+];
+
+function fixtureKimi(root) {
+  mkdirSync(join(root, 'skills'), { recursive: true });
+  mkdirSync(join(root, 'plugins/managed'), { recursive: true });
+  for (const rel of FX_KIMI_DIRS) mkdirSync(join(root, rel), { recursive: true });
+  for (const rel of FX_KIMI_FILES) {
+    const p = join(root, rel);
+    mkdirSync(dirname(p), { recursive: true });
+    writeFileSync(p, 'fixture member\n');
+  }
+}
+
+/** A `kimi-*.md` note: four member-named `## ` sections + one topic-form heading. */
+const FX_KIMI_NOTE = '# kimi-alpha fixture note\n\n'
+  + '## Scope — topic form\n\nprose\n\n'
+  + '## `config.toml` — the global keys\n\nprose\n\n'
+  + '## `~/.kimi-code/sessions/` — the store\n\nprose\n\n'
+  + '## `plugins/managed/kimi-webbridge` — a managed plugin\n\nprose\n\n'
+  + '## prose heading naming `cache/`\n\nprose\n';
+
+/** The same note with one member section renamed to topic form (−1 section). */
+const FX_KIMI_NOTE_RENAMED = FX_KIMI_NOTE
+  .replace('## `~/.kimi-code/sessions/` — the store', '## The store, in prose');
+
+/** The five K family rows, all `yes` — the fixture's C1k=5/5. */
+const FX_K_ROWS = [
+  ['K1', 'kimi config plane', '3', 'yes — `knowledge/kimi-alpha.md`'],
+  ['K2', 'kimi delegate/lane plane', '25', 'yes — `knowledge/kimi-alpha.md`'],
+  ['K3', 'kimi session/state plane', '9', 'yes — `knowledge/kimi-alpha.md`'],
+  ['K4', 'kimi binary/secret plane', '9', 'yes — `knowledge/kimi-alpha.md`'],
+  ['K5', 'kimi root-residue', '3', 'yes — `knowledge/kimi-alpha.md`'],
+];
 
 /** A member-section note body naming `rel` with a live own-file anchor + symbol. */
 const fxLayerNote = (rel) => `## \`${rel}\`\n\nMember \`MEMBER\` at \`${rel}:1\`.\n`;
@@ -835,6 +1138,7 @@ function fxScorecard(fx) {
     `| coverage | ${expect.coverage} | fixture | round 11 |`,
     `| coverage:script-layer | ${expect.coverage_script} | fixture | round 16 |`,
     `| coverage:runtime-layer | ${expect.coverage_runtime} | fixture | round 16 |`,
+    `| coverage:kimi-layer | ${expect.coverage_kimi} | fixture | round 20 |`,
     '', STANZA_HEAD,
   );
   for (const k of TERM_KEYS) lines.push(`${k}=${expect[k]}`);
@@ -892,6 +1196,8 @@ function selfTest() {
     const dir = fxDir(name);
     const src = fxDir(`${name}-src`);
     fixtureSrc(src);
+    const kimi = knobs.kimiRoot === false ? null : fxDir(`${name}-kimi`);
+    if (kimi !== null) fixtureKimi(kimi);
     const scripts = knobs.scripts ?? FIXTURE_SCRIPTS;
     const checklist = knobs.checklist ?? 3;
     const readmeRows = knobs.readmeRows ?? 2;
@@ -907,17 +1213,29 @@ function selfTest() {
       const [rel, body] = Array.isArray(entry) ? entry : [entry, `# ${entry}\n\nfixture note\n`];
       fxWrite(join(dir, `corpus/${rel}`), body);
     }
-    const fx = { dir, src, checklist, readmeRows, notes, registry, expect: knobs.expect };
+    // Hand-arithmetic defaults for the five K terms: the fixture kimi root holds
+    // 29 members (3+5+9+9+3), the base notes name none of them, and the base
+    // registry has no K rows. A K-specific fixture overrides what it moves.
+    const fx = {
+      dir, src, kimi, checklist, readmeRows, notes, registry,
+      expect: { C1k: 0, C1k_total: 0, K_members: 29, K_sections: 0, coverage_kimi: 0, ...knobs.expect },
+    };
     if (knobs.scorecard !== false) fx.scorecard = fxScorecard(fx);
     if (fx.scorecard !== undefined) fxWrite(join(dir, SCORECARD_FILE), fx.scorecard);
     return fx;
   };
-  const args = (fx, extra = []) => ['--self', fx.dir, '--src', fx.src, ...extra];
+  const args = (fx, extra = []) => {
+    const base = ['--self', fx.dir, '--src', fx.src];
+    const kimiRoot = fx.kimi ?? join(fx.dir, '..', 'no-kimi-root');
+    const withKimi = ['--kimi-root', kimiRoot, ...base];
+    // An explicit `--kimi-root` in `extra` wins: parseArgs reads left to right.
+    return extra.includes('--kimi-root') ? [...base, ...extra] : [...withKimi, ...extra];
+  };
 
   /* hand-arithmetic fixtures (literal assertions below, never re-derived) --- */
   const F1 = fxBase('match-basic', {
     expect: {
-      A: 5, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+      A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
       S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
     },
   });
@@ -925,7 +1243,7 @@ function selfTest() {
     checklist: 1, readmeRows: 1,
     registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'no']],
     expect: {
-      A: 5, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 6, coverage: 3,
+      A: 6, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 7, coverage: 3,
       S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
     },
   });
@@ -943,7 +1261,7 @@ function selfTest() {
     ],
     extraRunnables: ['tools/a.mjs', 'tools/b.js', 'bin/c.sh', 'vendor/d.py', 'vendor/e.mjs'],
     expect: {
-      A: 10, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10,
+      A: 11, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10,
       S_members: 3, S_sections: 2, R_members: 2, R_sections: 1, coverage_script: 6, coverage_runtime: 5,
     },
   });
@@ -951,9 +1269,9 @@ function selfTest() {
   try {
     /* 1-3 ─ MATCH, against literal verdict lines (hand arithmetic) ---------- */
     const r1 = runProxy(args(F1));
-    check('MATCH: A=4 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
+    check('MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
       ok: r1.status === 0
-        && verdictLine(r1) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
+        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
       detail: `exit=${r1.status} ${verdictLine(r1)}`,
     }));
     check('MATCH: text mode prints the verdict line and nothing else', () => {
@@ -961,20 +1279,20 @@ function selfTest() {
       return { ok: lines.length === 1 && parseFindings(r1.stdout).length === 0, detail: `lines=${lines.length}` };
     });
     const r2 = runProxy(args(F2));
-    check('MATCH: A=4 C=1 operability=6; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
+    check('MATCH: A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
       ok: r2.status === 0
-        && verdictLine(r2) === 'PROXY: MATCH (A=5 C=1 operability=6; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
+        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
       detail: `exit=${r2.status} ${verdictLine(r2)}`,
     }));
     const r3 = runProxy(args(F3));
-    check('MATCH: A=9 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
+    check('MATCH: A=11 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
       ok: r3.status === 0
-        && verdictLine(r3) === 'PROXY: MATCH (A=10 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; pins=5 match)',
+        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
       detail: `exit=${r3.status} ${verdictLine(r3)}`,
     }));
     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
-      ok: verdictLine(r3).includes('A=10'),
-      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=10`,
+      ok: verdictLine(r3).includes('A=11'),
+      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=11`,
     }));
     const r1b = runProxy(args(F1));
     check('determinism: the same fixture yields byte-identical stdout on a re-run', () => ({
@@ -1009,11 +1327,14 @@ function selfTest() {
           && j.terms.C2 === 2 && j.terms.C2_total === 2 && j.terms.operability === 7 && j.terms.coverage === 5
           && j.terms.S_members === 3 && j.terms.S_sections === 0 && j.terms.coverage_script === 0
           && j.terms.R_members === 2 && j.terms.R_sections === 0 && j.terms.coverage_runtime === 0
+          && j.terms.C1k === 0 && j.terms.C1k_total === 0 && j.terms.K_members === 29
+          && j.terms.K_sections === 0 && j.terms.coverage_kimi === 0 && j.kimiRoot === F1.kimi
           && j.terms.declared.S_sections === '0' && j.terms.declared.coverage_script === '0'
-          && j.terms.declared.S_members === '3'
+          && j.terms.declared.C1k_total === '0' && j.terms.declared.K_members === '29'
+          && j.terms.declared.coverage_kimi === '0'
           && j.terms.pinsMatched === FIXTURE_SCRIPTS.length && j.terms.pinsTotal === FIXTURE_SCRIPTS.length
           && Object.keys(j.terms.pins).every((k) => j.terms.pins[k].match === true),
-        detail: `exit=${j1.status} terms=${JSON.stringify({ A: j.terms.A, C: j.terms.C, op: j.terms.operability, cov: j.terms.coverage, S: `${j.terms.S_sections}/${j.terms.S_members}`, R: `${j.terms.R_sections}/${j.terms.R_members}` })}`,
+        detail: `exit=${j1.status} terms=${JSON.stringify({ A: j.terms.A, C: j.terms.C, op: j.terms.operability, cov: j.terms.coverage, S: `${j.terms.S_sections}/${j.terms.S_members}`, R: `${j.terms.R_sections}/${j.terms.R_members}`, K: `${j.terms.K_sections}/${j.terms.K_members}` })}`,
       };
     });
 
@@ -1029,8 +1350,9 @@ function selfTest() {
         detail: `exit=${j3.status} S=${t.S_sections}/${t.S_members} script=${t.coverage_script} R=${t.R_sections}/${t.R_members} runtime=${t.coverage_runtime}`,
       };
     });
-    check('layer terms are declared integers in the stanza (all twelve TERM_KEYS compared)', () => ({
-      ok: TERM_KEYS.length === 12 && TERM_KEYS.includes('coverage_script') && TERM_KEYS.includes('R_sections'),
+    check('layer terms are declared integers in the stanza (all seventeen TERM_KEYS compared)', () => ({
+      ok: TERM_KEYS.length === 17 && TERM_KEYS.includes('coverage_script') && TERM_KEYS.includes('R_sections')
+        && TERM_KEYS.includes('coverage_kimi') && TERM_KEYS.includes('K_members'),
       detail: `TERM_KEYS=${TERM_KEYS.join(' ')}`,
     }));
 
@@ -1052,7 +1374,7 @@ function selfTest() {
         ['R2', 'runtime two', '`c.rs`', 'yes — `lessons/topic-r.md`'],
       ],
       expect: {
-        A: 5, C: 3, C1: 4, C1_total: 4, C2: 4, C2_total: 4, operability: 7, coverage: 10,
+        A: 6, C: 3, C1: 4, C1_total: 4, C2: 4, C2_total: 4, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
       },
     };
@@ -1060,7 +1382,7 @@ function selfTest() {
     const layersRun = runProxy(args(layers));
     check('layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal)', () => ({
       ok: layersRun.status === 0
-        && verdictLine(layersRun) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; pins=5 match)',
+        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
       detail: `exit=${layersRun.status} ${verdictLine(layersRun)}`,
     }));
     const layerCase = (name, edits) => {
@@ -1131,7 +1453,7 @@ function selfTest() {
       ],
       registry: [['S1', 'scripts one', '`a.mjs`', 'yes — `knowledge/alpha.md`']],
       expect: {
-        A: 5, C: 3, C1: 1, C1_total: 1, C2: 2, C2_total: 2, operability: 7, coverage: 10,
+        A: 6, C: 3, C1: 1, C1_total: 1, C2: 2, C2_total: 2, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
       },
     });
@@ -1157,15 +1479,209 @@ function selfTest() {
       };
     });
 
+    /* K-block terms (round-20 amendment) ---------------------------------- */
+    const K_KNOBS = {
+      readmeRows: 3,
+      notes: [
+        ['knowledge/alpha.md', fxLayerNote('scripts/a.mjs')],
+        ['lessons/beta.md', fxLayerNote('crates/ufo-core-runtime/src/b.rs')],
+        ['knowledge/kimi-alpha.md', FX_KIMI_NOTE],
+      ],
+      registry: [
+        ['S1', 'alpha', '`a.mjs`', 'yes — `knowledge/alpha.md`'],
+        ['R1', 'beta', '`b.rs`', 'yes — `lessons/beta.md`'],
+        ...FX_K_ROWS,
+      ],
+      expect: {
+        A: 6, C: 3, C1: 2, C1_total: 2, C2: 3, C2_total: 3, operability: 7, coverage: 10,
+        S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
+        C1k: 5, C1k_total: 5, K_members: 29, K_sections: 4, coverage_kimi: 1,
+      },
+    };
+    const kCase = (name, edits = [], mutate = null) => {
+      const fx = fxBase(name, K_KNOBS);
+      if (edits.length > 0) {
+        let text = fx.scorecard;
+        for (const [from, to] of edits) text = text.replace(from, to);
+        fxWrite(join(fx.dir, SCORECARD_FILE), text);
+      }
+      if (mutate !== null) mutate(fx);
+      return fx;
+    };
+    const K5_ROW_OFF = [
+      '| K5 | kimi root-residue | 3 | yes — `knowledge/kimi-alpha.md` |',
+      '| K5 | kimi root-residue | 3 | no — `knowledge/kimi-alpha.md` |',
+    ];
+
+    const kMatch = fxBase('kimi-match', K_KNOBS);
+    const kr = runProxy(args(kMatch));
+    check('K terms MATCH: `C1k=5/5 K=4/29 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict)', () => {
+      const k = kindsEq(kr, []);
+      return {
+        ok: kr.status === 0 && k.ok
+          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/29 coverage:kimi-layer=1; pins=6 match)',
+        detail: `exit=${kr.status} kinds=[${k.got}] ${verdictLine(kr)}`,
+      };
+    });
+    check('--json parity: the five K terms compute AND carry their declared strings', () => {
+      const j = JSON.parse(runProxy(args(kMatch, ['--json'])).stdout);
+      return {
+        ok: j.terms.C1k === 5 && j.terms.C1k_total === 5 && j.terms.K_members === 29
+          && j.terms.K_sections === 4 && j.terms.coverage_kimi === 1
+          && j.terms.declared.C1k === '5' && j.terms.declared.K_members === '29'
+          && j.terms.declared.coverage_kimi === '1' && j.kimiRoot === kMatch.kimi,
+        detail: `terms=${JSON.stringify({ C1k: `${j.terms.C1k}/${j.terms.C1k_total}`, K: `${j.terms.K_sections}/${j.terms.K_members}`, cov: j.terms.coverage_kimi })}`,
+      };
+    });
+    check('the drift chain is ONE member whatever the generation count (+2 generations ⇒ MATCH)', () => {
+      const fx = kCase('kimi-chain-generations', [], (f) => {
+        writeFileSync(join(f.kimi, 'config.toml.20260101-000000.bak'), 'gen\n');
+        writeFileSync(join(f.kimi, 'config.toml.20260102-000000.bak'), 'gen\n');
+      });
+      const res = runProxy(args(fx));
+      return {
+        ok: res.status === 0 && verdictLine(res).includes('K=4/29 coverage:kimi-layer=1'),
+        detail: `exit=${res.status} ${verdictLine(res).slice(0, 150)}`,
+      };
+    });
+    check('K_members reads live: a removed K5 file is K_MEMBERS_DRIFT (never a fitted count)', () => {
+      const fx = kCase('kimi-members-drift', [], (f) => rmSync(join(f.kimi, 'workspaces.json'), { force: true }));
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['K_MEMBERS_DRIFT']);
+      const f = parseFindings(res.stdout)[0] ?? { detail: '' };
+      return {
+        ok: res.status === 1 && k.ok && f.detail === 'K_members: declared=29 computed=28 delta=-1',
+        detail: `exit=${res.status} kinds=[${k.got}] ${f.detail}`,
+      };
+    });
+    check('K_members reads live: a new counted-dir child moves the total (29 → 30)', () => {
+      const fx = kCase('kimi-members-added', [['\nK_members=29\n', '\nK_members=30\n']], (f) => {
+        writeFileSync(join(f.kimi, 'skills/skill-b'), 'fixture member\n');
+      });
+      const okAdded = runProxy(args(fx));
+      const fx2 = kCase('kimi-members-added-stale', [], (f) => {
+        writeFileSync(join(f.kimi, 'agents/secondary/sec-c.md'), 'fixture member\n');
+      });
+      const stale = runProxy(args(fx2));
+      const k = kindsEq(stale, ['K_MEMBERS_DRIFT']);
+      return {
+        ok: okAdded.status === 0 && stale.status === 1 && k.ok
+          && verdictLine(okAdded).includes('K=4/30 coverage:kimi-layer=1')
+          && parseFindings(stale.stdout)[0].detail.includes('declared=29 computed=30'),
+        detail: `added=${verdictLine(okAdded).slice(0, 60)} stale=${verdictLine(stale).slice(0, 60)}`,
+      };
+    });
+    check('kind matters: a declared dir member replaced by a file drops the count (K_MEMBERS_DRIFT)', () => {
+      const fx = kCase('kimi-kind-drift', [], (f) => {
+        rmSync(join(f.kimi, 'credentials'), { recursive: true, force: true });
+        writeFileSync(join(f.kimi, 'credentials'), 'not a dir\n');
+      });
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['K_MEMBERS_DRIFT']);
+      return {
+        ok: res.status === 1 && k.ok && parseFindings(res.stdout)[0].detail.includes('computed=28'),
+        detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout)[0] ? parseFindings(res.stdout)[0].detail : ''}`,
+      };
+    });
+    check('K_sections drift: one member section renamed to topic form is K_SECTIONS_DRIFT alone', () => {
+      const fx = kCase('kimi-sections-drift', [], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'), FX_KIMI_NOTE_RENAMED);
+      });
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['K_SECTIONS_DRIFT']);
+      return {
+        ok: res.status === 1 && k.ok
+          && parseFindings(res.stdout)[0].detail === 'K_sections: declared=4 computed=3 delta=-1',
+        detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout)[0] ? parseFindings(res.stdout)[0].detail : ''}`,
+      };
+    });
+    check('coverage_kimi recompute: two sections lost ⇒ 1→0, terms AND the ## Axes row drift', () => {
+      const fx = kCase('kimi-coverage-recompute', [], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'), FX_KIMI_NOTE
+          .replace('## `~/.kimi-code/sessions/` — the store', '## The store, in prose')
+          .replace('## `plugins/managed/kimi-webbridge` — a managed plugin', '## Managed plugins, in prose'));
+      });
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['K_SECTIONS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']);
+      return {
+        ok: res.status === 1 && k.ok
+          && parseFindings(res.stdout)[1].detail === 'coverage_kimi: declared=1 computed=0 delta=-1',
+        detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout).map((x) => x.detail).join(' | ')}`,
+      };
+    });
+    check('a K row going `no` moves C1k (5/5→4/5); coverage_kimi floors to the same 1', () => {
+      const fx = kCase('kimi-c1k-drift', [K5_ROW_OFF, ['\nC1k=5\n', '\nC1k=4\n']]);
+      const flipped = runProxy(args(fx));
+      const staleFx = kCase('kimi-c1k-stale', [K5_ROW_OFF]);
+      const stale = runProxy(args(staleFx));
+      const k = kindsEq(stale, ['C1K_DRIFT']);
+      return {
+        ok: flipped.status === 0 && stale.status === 1 && k.ok
+          && verdictLine(flipped).includes('C1=2/2') && verdictLine(flipped).includes('K=4/29 coverage:kimi-layer=1')
+          && parseFindings(stale.stdout)[0].detail === 'C1k: declared=5 computed=4 delta=-1',
+        detail: `flipped=${flipped.status} ${verdictLine(flipped).slice(0, 130)} stale=[${k.got}]`,
+      };
+    });
+    check('C1k_total drift: the K-row denominator is its own count, not C1_total\'s', () => {
+      const fx = kCase('kimi-c1k-total', [['\nC1k_total=5\n', '\nC1k_total=6\n']]);
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['C1K_TOTAL_DRIFT']);
+      return {
+        ok: res.status === 1 && k.ok && verdictLine(res) === 'PROXY: DRIFT (C1K_TOTAL_DRIFT term=C1k_total declared=6 computed=5 delta=-1)',
+        detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res)}`,
+      };
+    });
+    check('AXES_DRIFT covers `| coverage:kimi-layer | N |`', () => {
+      const fx = kCase('kimi-axes-drift', [['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 2 |']]);
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      const f = j.findings[0] ?? {};
+      return {
+        ok: res.status === 1 && j.findings.length === 1 && f.kind === 'AXES_DRIFT'
+          && f.term === 'coverage:kimi-layer' && f.key === 'coverage_kimi' && f.declared === 2 && f.computed === 1,
+        detail: `exit=${res.status} findings=${JSON.stringify(j.findings.map((x) => `${x.kind}:${x.term}`))}`,
+      };
+    });
+    check('zero denominators score 0: no K rows at all ⇒ C1k_total=0, coverage_kimi=0, never NaN', () => {
+      const fx = fxBase('kimi-no-rows', {
+        ...K_KNOBS,
+        registry: K_KNOBS.registry.filter((r) => !r[0].startsWith('K')),
+        expect: { ...K_KNOBS.expect, C1k: 0, C1k_total: 0, coverage_kimi: 0 },
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 0 && j.terms.C1k === 0 && j.terms.C1k_total === 0
+          && j.terms.coverage_kimi === 0 && Number.isInteger(j.terms.coverage_kimi)
+          && j.terms.K_members === 29 && j.terms.K_sections === 4,
+        detail: `exit=${res.status} C1k=${j.terms.C1k}/${j.terms.C1k_total} cov=${j.terms.coverage_kimi}`,
+      };
+    });
+    // The fixtures the fail-closed arms below fire on; the arms run in their own
+    // section, where the `fc` helper exists.
+    const K_BAD_VALUE = kCase('kimi-bad-value', [['\nK_members=29\n', '\nK_members=five\n']]);
+    const K_BAD_RATIO = kCase('kimi-bad-coverage', [['\ncoverage_kimi=1\n', '\ncoverage_kimi=1.5\n']]);
+    const K_UNKNOWN_KEY = kCase('kimi-unknown-key', [['\nC1k=5\n', '\nC1k=5\nK_blocks=5\n']]);
+    const K_MISSING_KEY = kCase('kimi-missing-key', [['K_sections=4\n', '']]);
+    check('fail-closed KIMI_ROOT_NOT_A_DIR --json carries the token and no terms', () => {
+      const res = runProxy(['--json', '--self', F1.dir, '--src', F1.src, '--kimi-root', join(tmp, 'no-kimi-here')]);
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 2 && j.verdict === 'FAIL-CLOSED' && j.findings[0].kind === 'KIMI_ROOT_NOT_A_DIR'
+          && Object.keys(j.terms).length === 0 && j.kimiRoot === join(tmp, 'no-kimi-here'),
+        detail: `exit=${res.status} verdict=${j.verdict} terms=${JSON.stringify(j.terms)}`,
+      };
+    });
+
     /* 13-20 ─ drift on terms ------------------------------------------------ */
     const driftA = fxBase('drift-a', { expect: F1.expect });
-    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=4\n'));
+    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=4\n'));
     const d1 = runProxy(args(driftA));
-    check('A_DRIFT: declared=4 computed=5 delta=+1, exit 1, exactly [A_DRIFT]', () => {
+    check('A_DRIFT: declared=4 computed=6 delta=+2, exit 1, exactly [A_DRIFT]', () => {
       const k = kindsEq(d1, ['A_DRIFT']);
       return {
         ok: d1.status === 1 && k.ok
-          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=5 delta=+1)',
+          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2)',
         detail: `exit=${d1.status} ${verdictLine(d1)}`,
       };
     });
@@ -1174,11 +1690,11 @@ function selfTest() {
       detail: `stdout=${JSON.stringify(String(d1.stdout ?? '').split('\n')[0])}`,
     }));
     const scTampered = join(fxDir('scorecard-flag'), 'SCORECARD.md');
-    fxWrite(scTampered, F1.scorecard.replace('\nA=5\n', '\nA=6\n'));
-    const d2 = runProxy(['--self', F1.dir, '--src', F1.src, '--scorecard', scTampered]);
+    fxWrite(scTampered, F1.scorecard.replace('\nA=6\n', '\nA=7\n'));
+    const d2 = runProxy(['--self', F1.dir, '--src', F1.src, '--kimi-root', F1.kimi, '--scorecard', scTampered]);
     check('--scorecard FILE: the claim is read from FILE, the tree from --self', () => {
       const k = kindsEq(d2, ['A_DRIFT']);
-      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=6 computed=5'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
+      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=7 computed=6'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
     });
     const driftC = fxBase('drift-c', { expect: F1.expect });
     fxWrite(join(driftC.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=4\n'));
@@ -1204,7 +1720,7 @@ function selfTest() {
     const dEsc = runProxy(args(regPipe));
     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
       ok: dEsc.status === 0
-        && verdictLine(dEsc) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
+        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
     }));
     const regPipeNo = fxBase('registry-escaped-pipe-no', {
@@ -1241,13 +1757,13 @@ function selfTest() {
       return { ok: d7.status === 1 && k.ok, detail: `exit=${d7.status} ${verdictLine(d7)}` };
     });
     const driftMany = fxBase('drift-many', { expect: F1.expect });
-    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=4\n').replace('\nC=3\n', '\nC=4\n'));
+    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=4\n').replace('\nC=3\n', '\nC=4\n'));
     const d8 = runProxy(args(driftMany));
     check('two drifts → both findings, in term order, joined in one verdict line', () => {
       const k = kindsEq(d8, ['A_DRIFT', 'C_DRIFT']);
       return {
         ok: d8.status === 1 && k.ok && verdictLine(d8).includes('; ')
-          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=4 computed=5 delta=+1; C_DRIFT'),
+          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2; C_DRIFT'),
         detail: `exit=${d8.status} ${verdictLine(d8)}`,
       };
     });
@@ -1301,7 +1817,7 @@ function selfTest() {
       const k = kindsEq(d13, []);
       return {
         ok: d13.status === 0 && k.ok
-          && verdictLine(d13) === 'PROXY: MATCH (A=5 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
+          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
       };
     });
@@ -1309,8 +1825,8 @@ function selfTest() {
     fxWrite(join(noAxesSection.dir, SCORECARD_FILE),
       F1.scorecard.replace(/## Axes[\s\S]*?<!-- kumitate-proxy-v1/u, '<!-- kumitate-proxy-v1'));
     const d14 = runProxy(args(noAxesSection));
-    check('no `## Axes` heading → all four axes AXES_DRIFT with `no ## Axes section`', () => {
-      const k = kindsEq(d14, ['AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT']);
+    check('no `## Axes` heading → all five axes AXES_DRIFT with `no ## Axes section`', () => {
+      const k = kindsEq(d14, ['AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT']);
       const f = parseFindings(d14.stdout)[0];
       return {
         ok: d14.status === 1 && k.ok && f && f.detail === 'operability: ## Axes row=no ## Axes section derived=7',
@@ -1331,7 +1847,7 @@ function selfTest() {
     /* 24-25 ─ the advisory warning + --strict ------------------------------- */
     const unpinned = fxBase('pin-unpinned', {
       expect: {
-        A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+        A: 7, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
         S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
       },
     });
@@ -1342,7 +1858,7 @@ function selfTest() {
       const f = parseFindings(w1.stdout)[0];
       return {
         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
-          && verdictLine(w1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; pins=5 match)',
+          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
         detail: `exit=${w1.status} ${verdictLine(w1)}`,
       };
     });
@@ -1368,6 +1884,12 @@ function selfTest() {
     fc('self is a file', ['--self', join(F1.dir, SKILL_FILE)], 'SELF_NOT_A_DIR');
     fc('--src absent', ['--self', F1.dir, '--src', join(tmp, 'nope-src-dir')], 'SRC_NOT_A_DIR');
     fc('--src is a file', ['--self', F1.dir, '--src', join(F1.src, 'docs', 'readme.md')], 'SRC_NOT_A_DIR');
+    fc('--kimi-root absent', ['--self', F1.dir, '--src', F1.src, '--kimi-root', join(tmp, 'nope-kimi-dir')], 'KIMI_ROOT_NOT_A_DIR');
+    fc('--kimi-root is a file', ['--self', F1.dir, '--src', F1.src, '--kimi-root', join(F1.dir, 'notes.txt')], 'KIMI_ROOT_NOT_A_DIR');
+    fc('K count value is not an integer', args(K_BAD_VALUE), 'STANZA_MALFORMED');
+    fc('coverage_kimi value is not an integer', args(K_BAD_RATIO), 'STANZA_MALFORMED');
+    fc('unknown K-ish key', args(K_UNKNOWN_KEY), 'STANZA_KEY_UNKNOWN');
+    fc('required K key absent', args(K_MISSING_KEY), 'STANZA_MALFORMED');
     const noSc = fxBase('no-scorecard', { expect: F1.expect, scorecard: false });
     fc('SCORECARD.md absent', args(noSc), 'SCORECARD_MISSING');
     const noStanza = fxBase('no-stanza', { expect: F1.expect });
@@ -1386,13 +1908,13 @@ function selfTest() {
     fxWrite(join(missingKey.dir, SCORECARD_FILE), F1.scorecard.replace(/^C2_total=2\n/mu, ''));
     fc('required key absent', args(missingKey), 'STANZA_MALFORMED');
     const badValue = fxBase('bad-value', { expect: F1.expect });
-    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=four\n'));
+    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=four\n'));
     fc('count value not an integer', args(badValue), 'STANZA_MALFORMED');
     const badPin = fxBase('bad-pin', { expect: F1.expect });
     fxWrite(join(badPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.proxy-check=)[0-9a-f]{64}\n/u, '$1zz\n'));
     fc('pin value not a 64-hex sha256', args(badPin), 'STANZA_MALFORMED');
     const unknownKey = fxBase('unknown-key', { expect: F1.expect });
-    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=5\n', '\nA=5\nZ=1\n'));
+    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=6\nZ=1\n'));
     fc('unknown key', args(unknownKey), 'STANZA_KEY_UNKNOWN');
     const dupKey = fxBase('duplicate-key', { expect: F1.expect });
     fxWrite(join(dupKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=3\nC=3\n'));
@@ -1447,6 +1969,14 @@ function selfTest() {
     check('usage: --src without a value → exit 64', () => ({
       ok: u5.status === 64 && /--src requires/u.test(String(u5.stderr ?? '')), detail: `exit=${u5.status}`,
     }));
+    const u6 = runProxy(['--kimi-root']);
+    check('usage: --kimi-root without a value → exit 64', () => ({
+      ok: u6.status === 64 && /--kimi-root requires/u.test(String(u6.stderr ?? '')), detail: `exit=${u6.status}`,
+    }));
+    const u7 = runProxy(['--kimi-root', '--json']);
+    check('usage: a value that is a flag is refused (--kimi-root --json) → exit 64', () => ({
+      ok: u7.status === 64 && /--kimi-root requires/u.test(String(u7.stderr ?? '')), detail: `exit=${u7.status}`,
+    }));
 
     /* 42 ─ hermeticity ------------------------------------------------------ */
     if (process.env.KUMITATE_PROXY_NESTED === '1') {
@@ -1465,6 +1995,7 @@ function selfTest() {
           KUMITATE_MAIN_REPO: '/nonexistent/main',
           KUMITATE_LANE: 'not-a-lane',
           UFO_SRC: '/nonexistent/origin',
+          KIMI_ROOT: '/nonexistent/kimi',
         },
       );
       check('hermeticity: `--selftest` ignores bogus --self/--scorecard and every env var', () => {
@@ -1510,6 +2041,7 @@ function parseArgs(argv) {
     self: DEFAULT_SELF,
     scorecard: null,
     src: DEFAULT_SRC,
+    kimiRoot: DEFAULT_KIMI_ROOT,
     json: false,
     strict: false,
     selftest: false,
@@ -1528,6 +2060,7 @@ function parseArgs(argv) {
     else if (a === '--self') opts.self = dirValue(a, next());
     else if (a === '--scorecard') opts.scorecard = dirValue(a, next());
     else if (a === '--src') opts.src = dirValue(a, next());
+    else if (a === '--kimi-root') opts.kimiRoot = dirValue(a, next());
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
     else if (a === '--selftest') opts.selftest = true;

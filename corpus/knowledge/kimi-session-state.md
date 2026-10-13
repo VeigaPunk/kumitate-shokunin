@@ -1,4 +1,4 @@
-# K4 — Kimi Code session & runtime state plane
+# K3 — Kimi Code session & runtime state plane
 
 ## Scope — five members, one plane
 
