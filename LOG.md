@@ -970,3 +970,10 @@
   genuine m_swe capacity failure occurred in this round, so no fallback
   advance was observed or forced. Origin/domain source trees remained
   read-only.
+
+## 2026-10-13 — HOURS.md ledger opened
+
+- Operator seed per PROTOCOL.md §Craft-hours: shonen→shokunin now requires
+  ≥10,000 verified craft-hours AND the SHONEN gate. Ledger starts at 0;
+  instrumented rounds accrue collective in-domain lane-minutes.
+- Evidence: fleet commit; PROTOCOL.md §Craft-hours.
