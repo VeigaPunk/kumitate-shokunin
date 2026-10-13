@@ -970,3 +970,38 @@
   genuine m_swe capacity failure occurred in this round, so no fallback
   advance was observed or forced. Origin/domain source trees remained
   read-only.
+- 2026-10-13 — round 18 (operator directive "focus on kimi code cli for
+  now"): province expansion — Kimi Code CLI orchestration absorbed as new
+  domain surfaces via a 6-lane AgentSwarm wave on
+  `alibaba-token-plan/deepseek-v4.1-flash` (kaidoku train-round style: frozen
+  K1–K4 scopes per lane, one note per lane, parent integrates). Landed:
+  `corpus/knowledge/kimi-config-plane.md` (7 provider groups / 8 tables, 124
+  model tables, 13-generation `.bak` drift narrative), `kimi-lane-definitions.md`
+  (18 lanes in 3 buckets, 1:1 against `config.toml:1255-1277`),
+  `kimi-skills-plugins.md` (user skills are symlinks; User > Extra > Built-in
+  precedence), `kimi-session-state.md` (`wd_<slug>_<sha12>` keys reproduced
+  against binary constants), `kimi-binary-secrets.md` (CDN/zstd/atomic-swap
+  update path from binary strings; secrets shape-only, never read),
+  `kimi-modes-machinery.md` (4-mode storage keys + goal-mode contract; kimi is
+  an undeclared substrate for the swarm/tower docs); `lessons/round-18.md`;
+  README rows ⇒ C2 53/53 → 60/60, stanza re-pinned in-round. No frozen S/R
+  term moved (definition/expansion round); the git-identity defect (checkout
+  configured `ci <ci@local>`) was worked around with `-c user.*` on the
+  round-18 commit. Carried debt, recorded not fitted: the origin tree
+  relocated to `~/Projects/ufo-fsd-alpha` and restructured upstream (50 files
+  deleted incl. frozen registry members `atomic-write.mjs`,
+  `charter-scribe/sync.test.mjs`, `collect-omp-native-handoff-lib/refusal-line.mjs`),
+  so `cite-check` / `proxy-check` / `claims-check` and the executable
+  checklist cannot read CLEAN/MATCH until the parked OMP re-census; the
+  relocation also leaves every gate's default `--src` stale (queued repair,
+  round-17 precedent). Cross-domain routed, not absorbed: credential shapes →
+  kagi; model-selection material → kengaku; endpoints (CDN, plugin daemon
+  :10086, provider base_urls) → kama.
+  Round-18 addendum (same round, pre-close): the first-pass admission claim was
+  wrong — the citation gate REJECTED the wave's notes with 80 citation-form
+  errors (bare basenames bound to the origin tree; two gate-artifact specials
+  in `kimi-modes-machinery.md`; one backtick mispairing left as follow-up). A
+  3-lane repair wave fixed citation form only (line-count reconciliation
+  verified no claim moved) and re-admitted at 0 errors; independent re-run
+  confirms 0 errors in every `kimi-*` note, repo-wide 386 all carried OMP
+  debt. Spot-check samples, the gate sweeps — admit only on the sweep.

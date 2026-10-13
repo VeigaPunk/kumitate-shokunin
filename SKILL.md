@@ -538,6 +538,38 @@ second copy.
     while doctrine moved to the 16–100 band — derive via `loadSwarmPolicy`
     (`ufo-stale-watchdog.mjs` header).
 
+## Kimi Code CLI orchestration surfaces (round 18)
+
+New province surfaces, documented at internals level in
+`corpus/knowledge/kimi-*.md`; this section is the decision-level distillation.
+Citations are to the notes — the notes carry the live anchors.
+
+- **Dispatch planes** (three, parallel to the OMP dispatch shapes):
+  `config.toml` is the routing authority (7 provider groups / 8 tables, 124
+  model tables); `agents/secondary/*.md` (18 lanes: 7 fast / 5 mid / 6 strong)
+  are the delegate definitions, each pinning its model verbatim
+  ("ALWAYS spawn with model ..."), 1:1 with `[secondary_model.models]`
+  (`config.toml:1255-1277`); the binary carries the mode machinery (4-mode
+  storage keys, the goal-mode contract) — `kimi-modes-machinery.md`.
+- **Resolution precedence** (verified): User skills > Extra (managed plugins)
+  > Built-in; user skills under `~/.kimi-code/skills/` are **symlinks** into
+  `~/Projects/myskills` and `~/.agents/skills` — editing a skill means editing
+  its source root, and a broken symlink silences a skill silently
+  (`kimi-skills-plugins.md`).
+- **Session addressing**: `wd_<slug>_<sha256(workdir)[:12]>` — reproducible
+  against binary constants (`HASH_LENGTH=12`); session state, workspace
+  trust, and telemetry all key off it (`kimi-session-state.md`).
+- **Hard invariants** (same discipline as the OMP plane): the Kimi
+  installation is read-only — probe, detect, report; `credentials/`, `oauth/`,
+  `server.token` are shape-only, never content-read (`kimi-binary-secrets.md`);
+  substrate docs (skill files) are evidence about behavior only when labelled
+  INFERENCE-from-docs — measured behavior needs a live probe.
+- **Known substrate gap**: the swarm/tower skill docs declare substrate
+  `omp, devin`, but kimi has native `/swarm` and `/tower` modes gated by
+  `[experimental] tower` (`config.toml:1233-1236`) — kimi is an undeclared
+  substrate; do not assume OMP wave numbers apply to kimi-native swarms
+  (`kimi-modes-machinery.md`).
+
 ## Verifiable checklist
 
 Every item is read-only, runs from this repo's root, and prints its own verdict;
