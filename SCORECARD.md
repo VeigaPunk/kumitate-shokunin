@@ -509,6 +509,120 @@ runtime layer both held:
 - Option (a), S2, was not combined in. It is now the next move because the
   script layer remains 6 while runtime is 7 and operability is 8.
 
+**round 18 (pre-register, 2026-10-13, operator directive — supersedes the S2
+pre-registration below, which is parked, not deleted).** Expand the province:
+absorb **Kimi Code CLI orchestration** as new domain surfaces. This is a
+*definition* round: candidate surfaces, mechanism, and the registry/axis
+extension are named and frozen here; measurement lands in a later round, per
+the rounds 15→16 discipline — never slip a definition change into the round
+that measures it.
+
+- **Operator directive (verbatim):** "focus on kimi code cli for now". The
+  approved goal text names the surfaces: "swarm mode, tower mode, AgentSwarm
+  and subagent dispatch, secondary/fast/middle model lanes, permission modes,
+  and the round/goal machinery".
+- **Bounded candidate surfaces (read-only recon 2026-10-13, all resolving on
+  this host):** `~/.kimi-code/config.toml` — the provider/model registry
+  (`[providers."managed:kimi-code"]` oauth, `[providers.alibaba-token-plan]`
+  ×3, `[providers.zai-coding-plan]`, `[providers.hyper]`,
+  `[providers.opencode-go]`; the `models.*` table carries the secondary lanes
+  — `deepseek-v4.1-flash`, `glm-5.3-flash`, `qwen3.8-flash` — the session's
+  `sec-*` aliases resolve against) plus a 12-file `.bak` drift chain
+  (`config.toml.20261004-165601.bak` … `config.toml.bak`) as a freshness
+  surface; `~/.kimi-code/tui.toml`; `~/.kimi-code/agents/secondary/`; skills
+  resolution (`~/.kimi-code/skills/` — godspeed, reverse-engineer-anything,
+  shokunin, ufo, wwkd — vs `plugins/managed/kimi-webbridge`); sessions
+  (`~/.kimi-code/sessions/` — 7 `wd_*` dirs, worktree-keyed) +
+  `session_index.jsonl`; `workspace-trust/`; `telemetry/`; `bin/kimi`
+  (2.1.1) + `bin/fd`. All read-only per PROVINCE.md: probe, detect, report;
+  never mutate the installation.
+
+- **K-family membership (frozen 2026-10-13 recon — the member counts waves
+  will document against).** Four families, disjoint, exhaustive over
+  `~/.kimi-code`:
+  - **K1 — config plane.** `config.toml` (1,293 L at the recon reading;
+    `[providers.*]` ×6 groups incl. the three `alibaba-token-plan` keys,
+    `[models.*]` carrying the primary + secondary lanes), `tui.toml` (31 L),
+    and the drift chain `config.toml.*.bak` (12 files, 20261004 → config.toml.bak).
+  - **K2 — delegate/lane plane.** `agents/secondary/` — **18** lane definition
+    files, bucket taxonomy `sec-fast-*` / `sec-mid-*` over lanes
+    `tp1|tp2|tp3|hyper|zai`, each frontmatter pinning its model verbatim
+    (e.g. `sec-fast-tp1-ds-flash.md`: "ALWAYS spawn with model
+    \"alibaba-token-plan/deepseek-v4.1-flash\""); `skills/` (5 user skills:
+    godspeed, reverse-engineer-anything, shokunin, ufo, wwkd);
+    `plugins/installed.json` + `plugins/managed/kimi-webbridge`.
+  - **K3 — session/state plane.** `sessions/` (7 `wd_*` dirs, worktree-keyed —
+    `wd_shokunin_8c4a99c6228c` is this fleet's checkout) + `session_index.jsonl`;
+    `workspace-trust/` (5 `wd_*` dirs); `logs/kimi-code.log`; `telemetry/`
+    (`failed_*.jsonl`); `file-history/`; `user-history`; `cache/`;
+    `search-index`.
+  - **K4 — binary/secret plane.** `bin/kimi` (2.1.1) + `bin/fd`; `updates/`;
+    `server/`; and the secret-bearing paths — `credentials/`, `oauth/`,
+    `server.token` — **shape-pinned only, never content-read** (the kagi
+    census discipline; declared here so no wave ever opens them).
+  - **Membership rules:** counts are read live from `~/.kimi-code` at
+    measurement time — HEAD-relative by construction, the same rule the S/R
+    layer terms carry (`## Limits`, round 16). Secret paths carry kind/mode
+    pins, never byte pins. K terms are additive; nothing in K1–K4 redefines a
+    frozen S/R term.
+- **Registry/axis extension proposal (definition only; measured later):** the
+  S/R registry is origin-tree-relative and cannot admit Kimi surfaces.
+  Proposal: a new registry family block `K` (Kimi-CLI) with member counts read
+  from `~/.kimi-code`, judged by the same family standard (every member named
+  at internals level; member sections gate-verified). The exact terms
+  (`K_members`, section counts, which axis they feed) are deliberately NOT
+  fixed in this round — they land with their derivation in the measuring
+  round, as the successors' terms did in round 16.
+- **Mechanism (frozen here so the first dispatch round spends no time on
+  design):** expansion waves run on secondary models via AgentSwarm — kaidoku
+  train-round style: distinct item scopes per lane, parent integrates,
+  `corpus/QUALITY.md` admissions gate, rejections kept as evidence of taste.
+  As of this pre-registration the host session has tower mode active, which
+  denies AgentSwarm: per the goal contract the lane stops and reports at the
+  dispatch step rather than routing around it (kumitate does not absorb the
+  host-session mode question; reported, not owned).
+- **Hygiene defect recorded:** the checkout's local git identity reads
+  `ci <ci@local>` (`git -C . config user.name`), not the lane identity; round
+  commits from round 18 onward must be made with `-c
+  user.name=kumitate-shokunin -c user.email=kumitate@shokunin.local` until the
+  checkout config is repaired by the operator.
+- **Halt conditions (stated before the round):** a K-family member that cannot
+  be probed read-only is recorded as a blocker row and excluded from the
+  member count, never claimed from docs; K terms are additive only — no frozen
+  S/R term changes; and the five gates must read unchanged at the definition
+  round's close (A=5, C=10, C1=19/19, C2=53/53 — this round lands prose only,
+  so no proxy term may move; if one does, the round mis-scoped itself).
+
+**Environmental findings (2026-10-13 recon, recorded — not absorbed).** (1) The
+origin tree moved: `~/Projects/origin-work/ufo-fsd-alpha` is gone;
+`~/Projects/ufo-fsd-alpha` holds the same repo (history contains the round-16
+pin `5725fa7d3`), HEAD now `964f443e` (2026-10-12, "ompskills host apply").
+The gates' default `--src` is stale — same failure class as round 17's
+`REPORTS_DIR_MISSING`; repair (derive or re-pin the default) is queued
+operability work, not done inside this definition round. (2) The tree
+**restructured upstream**: 3 commits since `5725fa7d3`, 50 files deleted
+including frozen registry members — `scripts/atomic-write.mjs` (S7),
+`scripts/charter-scribe/sync.test.mjs` (S8),
+`scripts/collect-omp-native-handoff-lib/refusal-line.mjs` (**S2**). Live
+re-measure against the moved tree: `S_members` 114→**91**, `S_sections`
+74→**56**, `R_members` 98→**92**, `R_sections` 69→**63**,
+`coverage_runtime` computes **6** — `PROXY: DRIFT` / `CLAIMS: DRIFT` are the
+gates reading the live tree correctly, not a gate defect. (3) Consequence,
+stated plainly: the frozen S/R stanza cannot read `MATCH` against the current
+tree without a full re-census of both layers — an OMP-side coverage round,
+parked with the S2 move per the operator's Kimi-CLI directive. The completion
+contract's `PROXY: MATCH` / `CLAIMS: MATCH` rows therefore cannot close on the
+OMP terms until that re-census runs; this is recorded as a blocker row, and
+the round-closing plan must state how each round closes its gates honestly
+(re-deriving the K-block terms against `~/.kimi-code`, which is present and
+live, and recording the OMP-side DRIFT as carried debt) rather than fitting
+the old denominators. (4) `~/.kimi-code` itself resolves fully (see the
+candidate-surfaces bullet); no blocker on the K side.
+
+**Parked (2026-10-13, operator directive "focus on kimi code cli for now") —
+the S2 pre-registration below remains the standing OMP/ufo-fsd move and
+resumes when the operator redirects; it claims no round number while parked.**
+
 **round 18 (pre-register, one move).** The lowest-axis rule is no longer tied:
 `coverage:script-layer` is **6**, below runtime 7 and operability 8. Complete
 registry family `S2` at member-section level:
