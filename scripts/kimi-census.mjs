@@ -1,0 +1,798 @@
+#!/usr/bin/env node
+/**
+ * kimi-census.mjs — the Kimi Code CLI substrate census gate
+ * (contract `kumitate-kimi-census-v1`).
+ *
+ * WHAT IT RE-DERIVES. `~/.kimi-code` is the installation the fleet's lanes run
+ * on, and its shape is a frozen fact: the K1–K4 member rules in `SCORECARD.md`
+ * (round-19 freeze, 46 members) were derived from this tree read live. Prose
+ * cannot keep that honest — an upgrade can drop `bin/fd`, a new lane file or
+ * plugin can appear undeclared, a secret path can loosen, a state dir can
+ * vanish. This gate resolves the frozen member set against the tree at
+ * measurement time and fails on exactly the shapes the rules name:
+ *
+ *   MEMBER_MISSING  a declared member is absent, or resolves with a kind other
+ *                   than the one declared, or an enumerable dir dropped a
+ *                   declared child.
+ *   UNLISTED        an undeclared child sits directly under an enumerable dir.
+ *   SHAPE_DRIFT     a secret-bearing member's shape pin fails: the mode lacks
+ *                   the declared floor bits, or the kind pin fails.
+ *
+ * MEMBER RULES (frozen; the counts are read live and total 46 on the recon
+ * tree — `agents/secondary/` = 18 lane files, `skills/` = 5 entries).
+ *   K1 = `config.toml`, `tui.toml`, and the `config.toml.*.bak` drift chain as
+ *        ONE member (its generation count is reported as info, never gated).
+ *   K2 = the 18 files under `agents/secondary/` (counted live, names not
+ *        gated), the 5 entries under `skills/` (counted live), plus
+ *        `plugins/installed.json` and the `plugins/managed/kimi-webbridge`
+ *        tree as one presence-only member.
+ *   K3 = `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`,
+ *        `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`,
+ *        `search-index` — presence-only, children never enumerated.
+ *   K4 = `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`,
+ *        `device_id`, `region`, `credentials/`, `oauth/` — directories count as
+ *        one member each.
+ *
+ * SECRECY POLICY (enforced in code, not by convention). `credentials/`,
+ * `oauth/` and `server.token` are SHAPE-ONLY members: the gate calls
+ * `lstatSync` on them (kind + mode bits) and NEVER opens or reads them — no
+ * `readFileSync`, no `readdirSync` inside them, no content in any output. Their
+ * kind pin for files is deliberately `leaf` (any non-directory inode) rather
+ * than `isFile`, so the hermetic suite can build a FIFO / dangling symlink at
+ * `server.token` and prove stat-only enforcement: a read of a FIFO would block
+ * the gate forever and a followed symlink would read `ENOENT`. The mode pins
+ * are floors (`mode & floor === floor`), not equality: that is the only reading
+ * the live tree admits (`oauth/` is 0755, not 0700) and it matches the frozen
+ * "mode 600/700 floors" rule.
+ *
+ * ENUMERABLE DIRS. Only a dir whose complete child set is declared by the
+ * member rules is enumerated: `agents/secondary/` and `skills/` by live child
+ * count (names not gated — a rename is not a finding), `plugins/` and
+ * `plugins/managed/` by declared child name. The tree root is NOT enumerable by
+ * default: the live root carries three entries outside the frozen K1–K4 set
+ * (`rc-qrcode.png`, `tui.toml.bak`, `workspaces.json`) and no K family declares
+ * them, so gating them would read DRIFT against a documented-clean substrate
+ * and contradict the frozen member set this tool checks. They are reported as
+ * an INFO residue line instead, and `--root-enum` promotes them (and any future
+ * root stray) to `UNLISTED` for callers who want the strict reading.
+ *
+ * Verdict line (always the last stdout line)
+ *   KIMI_CENSUS: CLEAN (members=<n> checked=<n> chain=<n> info=<n>)
+ *   KIMI_CENSUS: DRIFT (<KIND> <id>; …)            at most 6 findings, then `+N more`
+ *   KIMI_CENSUS: FAIL-CLOSED (<TOKEN> <detail>)
+ * `members` is the live member-slot total (counted dirs contribute their live
+ * child count, absent/wrong-kind members contribute 0); `checked` is the subset
+ * that resolved with its declared kind and passed its shape pins.
+ * exit map: 0 clean · 1 drift · 2 fail-closed · 64 usage (refusals → stderr)
+ *
+ * Zero dependencies (node: builtins only), single file, and the verify path
+ * spawns no subprocess and writes no file anywhere. The probe is read-only on
+ * every tree it touches; the only writes in this file build the hermetic
+ * fixtures under a `mkdtemp` root in `--selftest`.
+ */
+import {
+  lstatSync, readdirSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync,
+  rmSync, symlinkSync, realpathSync,
+} from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { join, dirname, resolve } from 'node:path';
+import { tmpdir, homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+
+const CONTRACT = 'kumitate-kimi-census-v1';
+const DEFAULT_ROOT = join(homedir(), '.kimi-code');
+const TOOL_FILE = fileURLToPath(import.meta.url);
+
+/** The drift chain glob: `config.toml.bak` is the newest generation too. */
+const RE_CHAIN = /^config\.toml(\..+)?\.bak$/;
+
+/** The frozen member set (see the header). Order is K1 → K4, file order. */
+const MEMBERS = [
+  { id: 'config.toml', family: 'K1', path: 'config.toml', kind: 'file' },
+  { id: 'tui.toml', family: 'K1', path: 'tui.toml', kind: 'file' },
+  { id: 'config.toml.*.bak', family: 'K1', path: 'config.toml.*.bak', kind: 'chain' },
+
+  { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'dir', counted: 18 },
+  { id: 'skills/', family: 'K2', path: 'skills', kind: 'dir', counted: 5 },
+  { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
+  { id: 'plugins/managed/kimi-webbridge', family: 'K2', path: 'plugins/managed/kimi-webbridge', kind: 'dir' },
+
+  { id: 'sessions/', family: 'K3', path: 'sessions', kind: 'dir' },
+  { id: 'session_index.jsonl', family: 'K3', path: 'session_index.jsonl', kind: 'file' },
+  { id: 'workspace-trust/', family: 'K3', path: 'workspace-trust', kind: 'dir' },
+  { id: 'telemetry/', family: 'K3', path: 'telemetry', kind: 'dir' },
+  { id: 'logs/kimi-code.log', family: 'K3', path: 'logs/kimi-code.log', kind: 'file' },
+  { id: 'file-history/', family: 'K3', path: 'file-history', kind: 'dir' },
+  { id: 'user-history/', family: 'K3', path: 'user-history', kind: 'dir' },
+  { id: 'cache/', family: 'K3', path: 'cache', kind: 'dir' },
+  { id: 'search-index/', family: 'K3', path: 'search-index', kind: 'dir' },
+
+  { id: 'bin/kimi', family: 'K4', path: 'bin/kimi', kind: 'file' },
+  { id: 'bin/fd', family: 'K4', path: 'bin/fd', kind: 'file' },
+  { id: 'updates/', family: 'K4', path: 'updates', kind: 'dir' },
+  { id: 'server/', family: 'K4', path: 'server', kind: 'dir' },
+  { id: 'server.token', family: 'K4', path: 'server.token', kind: 'file', secret: true, modeFloor: 0o600 },
+  { id: 'device_id', family: 'K4', path: 'device_id', kind: 'file' },
+  { id: 'region', family: 'K4', path: 'region', kind: 'file' },
+  { id: 'credentials/', family: 'K4', path: 'credentials', kind: 'dir', secret: true, modeFloor: 0o700 },
+  { id: 'oauth/', family: 'K4', path: 'oauth', kind: 'dir', secret: true, modeFloor: 0o700 },
+];
+
+/** Enumerable dirs: counted-live (names not gated) or declared-child-name. */
+const ENUMERABLE = [
+  { dir: 'agents/secondary', childCount: 18 },
+  { dir: 'skills', childCount: 5 },
+  { dir: 'plugins', children: ['installed.json', 'managed'] },
+  { dir: 'plugins/managed', children: ['kimi-webbridge'] },
+];
+
+const FAMILIES = ['K1', 'K2', 'K3', 'K4'];
+/** The frozen K-block counts, reported for callers that compare to round 19. */
+const FROZEN = { K1: 3, K2: 25, K3: 9, K4: 9 };
+
+const FINDING_KINDS = ['MEMBER_MISSING', 'UNLISTED', 'SHAPE_DRIFT'];
+const FAIL_CLOSED_KINDS = ['KIMI_ROOT_MISSING'];
+
+const USAGE = `usage: node scripts/kimi-census.mjs [verify] [options]
+       node scripts/kimi-census.mjs --selftest
+       node scripts/kimi-census.mjs -h|--help
+contract id: ${CONTRACT}
+
+verbs
+  verify           the default verb: census ~/.kimi-code against the frozen
+                   K1-K4 member rules and print one verdict line
+
+options
+  --root DIR       installation root to census (default: ~/.kimi-code)
+  --root-enum      also treat the root itself as an enumerable dir, so an
+                   undeclared root child is UNLISTED (default: report the root
+                   residue as info only — see the header)
+  --json           one machine-readable object on stdout
+  --selftest       run the hermetic fixture suite (touches no live tree)
+  -h, --help       this text
+
+findings: ${FINDING_KINDS.join(' ')}
+secrecy : credentials/ oauth/ server.token are stat-only (kind+mode pins; never read)
+exit map: 0 clean · 1 drift · 2 fail-closed · 64 usage
+`;
+
+/* ------------------------------------------------------------------ helpers */
+
+/**
+ * Kind of an inode WITHOUT following a symlink. `absent` covers every stat
+ * failure (ENOENT and EACCES alike): a member we cannot stat is not a member we
+ * can vouch for, and callers distinguish root-level unreadability separately.
+ */
+function lstatKind(p) {
+  try {
+    const s = lstatSync(p);
+    if (s.isDirectory()) return 'dir';
+    if (s.isFile()) return 'file';
+    if (s.isSymbolicLink()) return 'symlink';
+    if (s.isFIFO()) return 'fifo';
+    if (s.isSocket()) return 'socket';
+    return 'other';
+  } catch { return 'absent'; }
+}
+
+/** Permission bits of an inode (never its contents). */
+function modeOf(p) {
+  try { return lstatSync(p).mode & 0o777; } catch { return null; }
+}
+
+/** Non-hidden child names of a dir; `null` when it cannot be listed. */
+function listChildren(p) {
+  try { return readdirSync(p).filter((n) => !n.startsWith('.')).sort(); } catch { return null; }
+}
+
+/** Non-directory inode kinds — the secret-file kind pin (see the header). */
+function isLeaf(kind) { return kind !== 'absent' && kind !== 'dir'; }
+
+const oct = (n) => `0${n.toString(8).padStart(3, '0')}`;
+
+/**
+ * Root-level names the frozen member set declares. Derived from MEMBERS so the
+ * rule lives in one place; the chain contributes its literal prefix because the
+ * generation names are matched by `RE_CHAIN`, not listed.
+ */
+function declaredRootNames() {
+  const names = new Set();
+  for (const m of MEMBERS) {
+    if (m.kind === 'chain') { names.add('config.toml'); continue; }
+    names.add(m.path.split('/')[0]);
+  }
+  return names;
+}
+
+/* ------------------------------------------------------------------- verify */
+
+/**
+ * The one derivation. Read-only: lstat on members, readdir on enumerable dirs
+ * and on the root (to prove it is readable and to count the drift chain).
+ * Returns `{ ok: true, ... }` or the fail-closed arm `{ ok: false, kind, detail }`.
+ */
+function verify(root, opts = {}) {
+  const findings = [];
+  const infos = [];
+  const err = (kind, id, detail) => findings.push({ severity: 'error', kind, id, detail });
+
+  const rootKind = lstatKind(root);
+  if (rootKind === 'absent') return { ok: false, kind: 'KIMI_ROOT_MISSING', detail: `--root ${root} is absent` };
+  if (rootKind !== 'dir') return { ok: false, kind: 'KIMI_ROOT_MISSING', detail: `--root ${root} is a ${rootKind}, not a directory` };
+  let rootChildren;
+  try { rootChildren = readdirSync(root); } catch (e) {
+    return { ok: false, kind: 'KIMI_ROOT_MISSING', detail: `--root ${root} is unreadable (${e && e.code})` };
+  }
+
+  const famTotals = Object.fromEntries(FAMILIES.map((f) => [f, { members: 0, checked: 0 }]));
+  const rows = [];
+  let chainCount = 0;
+
+  for (const m of MEMBERS) {
+    const fam = famTotals[m.family];
+    const abs = join(root, m.path);
+
+    if (m.kind === 'chain') {
+      const gens = rootChildren.filter((n) => RE_CHAIN.test(n)).sort();
+      chainCount = gens.length;
+      const present = gens.length > 0;
+      fam.members += present ? 1 : 0;
+      fam.checked += present ? 1 : 0;
+      if (!present) err('MEMBER_MISSING', m.id, `${m.path} has no generation under ${root}`);
+      rows.push({ id: m.id, family: m.family, path: m.path, kind: m.kind, declared: 1, live: present ? 1 : 0, generations: gens.length, state: present ? 'ok' : 'missing' });
+      infos.push({ kind: 'CHAIN', id: m.id, detail: `generations=${gens.length} (reported as info, never gated)` });
+      continue;
+    }
+
+    const kind = lstatKind(abs);
+    let live = 1;
+    let checked = 1;
+    let state = 'ok';
+
+    if (kind === 'absent') {
+      state = 'missing'; live = 0; checked = 0;
+      err('MEMBER_MISSING', m.id, `${m.path} is absent under ${root}`);
+    } else if (m.counted !== undefined) {
+      if (kind !== 'dir') {
+        state = 'kind'; live = 0; checked = 0;
+        err('MEMBER_MISSING', m.id, `${m.path} is declared dir, live ${kind}`);
+      } else {
+        const kids = listChildren(abs) ?? [];
+        live = kids.length;
+        checked = kids.length;
+        if (kids.length !== m.counted) {
+          state = 'count';
+          const delta = kids.length > m.counted
+            ? `an undeclared child appeared`
+            : `a declared child is gone`;
+          err(kids.length > m.counted ? 'UNLISTED' : 'MEMBER_MISSING', m.id,
+            `${m.path} has ${kids.length} children, ${m.counted} declared — ${delta} (names not gated)`);
+        }
+        infos.push({ kind: 'COUNT', id: m.id, detail: `children=${kids.length} (counted live, names not gated)` });
+      }
+    } else {
+      const expectedOk = m.secret
+        ? (m.kind === 'dir' ? kind === 'dir' : isLeaf(kind))
+        : kind === m.kind;
+      if (!expectedOk) {
+        state = 'kind'; live = 0; checked = 0;
+        const detail = `${m.path} is declared ${m.kind}, live ${kind}`;
+        if (m.secret) err('SHAPE_DRIFT', m.id, `${detail} — the shape pin requires ${m.kind === 'dir' ? 'a directory' : 'a non-directory leaf'}`);
+        else err('MEMBER_MISSING', m.id, detail);
+      }
+    }
+
+    // Secret shape pins: kind (above) + the mode floor. Stat only, never open.
+    if (m.secret && kind !== 'absent') {
+      const mode = modeOf(abs);
+      const kindOk = m.kind === 'dir' ? kind === 'dir' : isLeaf(kind);
+      if (kindOk && (mode === null || (mode & m.modeFloor) !== m.modeFloor)) {
+        state = state === 'ok' ? 'shape' : state;
+        if (checked === 1) checked = 0;
+        err('SHAPE_DRIFT', m.id, `${m.path} mode ${mode === null ? 'unknown' : oct(mode)} lacks the ${oct(m.modeFloor)} floor`);
+      }
+      rows.push({ id: m.id, family: m.family, path: m.path, kind: kindOk ? 'leaf-or-dir' : kind, declared: 1, live, checked, secret: true, modeFloor: oct(m.modeFloor), mode: mode === null ? null : oct(mode), state });
+      fam.members += live; fam.checked += checked;
+      continue;
+    }
+
+    rows.push({ id: m.id, family: m.family, path: m.path, kind, declared: m.counted ?? 1, live, checked, state });
+    fam.members += live;
+    fam.checked += checked;
+  }
+
+  // Enumeration, pass 2: declared-child-name dirs. A declared child that is
+  // itself a member path is owned by the member pass — never double-reported.
+  const memberPaths = new Set(MEMBERS.filter((m) => m.kind !== 'chain').map((m) => m.path));
+  const enumerables = [];
+  for (const e of ENUMERABLE) {
+    if (e.children === undefined) continue;
+    const abs = join(root, e.dir);
+    const kids = lstatKind(abs) === 'dir' ? (listChildren(abs) ?? []) : null;
+    enumerables.push({ dir: e.dir, declared: e.children, live: kids });
+    if (kids === null) continue;
+    for (const n of kids) {
+      if (!e.children.includes(n)) {
+        err('UNLISTED', `${e.dir}/${n}`, `${e.dir}/${n} is not a declared child of ${e.dir}/ (declared: ${e.children.join(', ')})`);
+      }
+    }
+    for (const n of e.children) {
+      const rel = `${e.dir}/${n}`;
+      if (!kids.includes(n) && !memberPaths.has(rel)) {
+        err('MEMBER_MISSING', rel, `${rel} is absent from ${e.dir}/ (declared child)`);
+      }
+    }
+  }
+
+  // Root residue: live root entries outside the frozen member set.
+  const declared = declaredRootNames();
+  const residue = rootChildren.filter((n) => !declared.has(n) && !RE_CHAIN.test(n)).sort();
+  if (residue.length > 0) {
+    if (opts.rootEnum) {
+      for (const n of residue) {
+        err('UNLISTED', n, `${n} sits at the root and is not in the frozen K1–K4 set (--root-enum)`);
+      }
+    } else {
+      infos.push({
+        kind: 'ROOT_RESIDUE', id: '-',
+        detail: `root residue: ${residue.join(', ')} (outside the frozen K1–K4 set; informational — pass --root-enum to gate it)`,
+      });
+    }
+  }
+
+  const totals = {
+    members: FAMILIES.reduce((n, f) => n + famTotals[f].members, 0),
+    checked: FAMILIES.reduce((n, f) => n + famTotals[f].checked, 0),
+    errors: findings.length,
+    info: infos.length,
+    chain: chainCount,
+    frozen: FROZEN,
+    families: famTotals,
+  };
+  return { ok: true, findings, infos, rows, enumerables, residue, totals };
+}
+
+/* ------------------------------------------------------------------ render */
+
+function renderVerdict(verdict, findings, totals) {
+  if (verdict === 'CLEAN') {
+    return `KIMI_CENSUS: CLEAN (members=${totals.members} checked=${totals.checked} chain=${totals.chain} info=${totals.info})`;
+  }
+  const parts = findings.slice(0, 6).map((f) => `${f.kind} ${f.id}`);
+  if (findings.length > parts.length) parts.push(`+${findings.length - parts.length} more`);
+  return `KIMI_CENSUS: DRIFT (${parts.join('; ')})`;
+}
+
+function failClosed(opts, token, detail, started) {
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify({
+      schema: CONTRACT, contract: CONTRACT, mode: 'verify', root: opts.root,
+      options: { rootEnum: Boolean(opts.rootEnum), json: true },
+      findings: [{ severity: 'error', kind: token, id: '-', detail }],
+      totals: { members: 0, checked: 0, errors: 1, info: 0, chain: 0 },
+      verdict: 'FAIL-CLOSED', fatal: { kind: token, detail }, durationMs: Date.now() - started,
+    }, null, 2)}\n`);
+  } else {
+    process.stdout.write(`KIMI_CENSUS: FAIL-CLOSED (${token} ${detail})\n`);
+  }
+  process.stderr.write(`kimi-census: ${token} ${detail}\n`);
+  return 2;
+}
+
+function runVerify(opts, started) {
+  const v = verify(opts.root, { rootEnum: opts.rootEnum });
+  if (!v.ok) return failClosed(opts, v.kind, v.detail, started);
+
+  const verdict = v.findings.length === 0 ? 'CLEAN' : 'DRIFT';
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify({
+      schema: CONTRACT, contract: CONTRACT, mode: 'verify', root: opts.root,
+      options: { rootEnum: Boolean(opts.rootEnum), json: true },
+      members: v.rows, enumerables: v.enumerables, rootResidue: v.residue,
+      findings: v.findings, infos: v.infos, totals: v.totals, verdict,
+      durationMs: Date.now() - started,
+    }, null, 2)}\n`);
+  } else {
+    const lines = [`KIMI_ROOT: ${opts.root}`];
+    for (const f of FAMILIES) {
+      lines.push(`FAMILY ${f}  members=${v.totals.families[f].members}  checked=${v.totals.families[f].checked}  frozen=${FROZEN[f]}`);
+    }
+    for (const i of v.infos) lines.push(`INFO  ${i.kind}  ${i.id}  ${i.detail}`);
+    for (const f of v.findings) lines.push(`CENSUS  ${f.severity}  ${f.kind}  ${f.id}  ${f.detail}`);
+    lines.push(`TOTALS: members=${v.totals.members} checked=${v.totals.checked} errors=${v.totals.errors} info=${v.totals.info} chain=${v.totals.chain}`);
+    lines.push(renderVerdict(verdict, v.findings, v.totals));
+    process.stdout.write(`${lines.join('\n')}\n`);
+  }
+  return verdict === 'CLEAN' ? 0 : 1;
+}
+
+/* ---------------------------------------------------------------- selftest */
+
+const FIXTURE_CHAIN = 3;
+
+/** Build a fixture tree holding all 46 members, shape-clean. */
+function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+  for (const m of MEMBERS) {
+    if (m.kind === 'chain') continue;
+    const abs = join(root, m.path);
+    if (m.kind === 'dir') {
+      mkdirSync(abs, { recursive: true });
+      chmodSync(abs, m.modeFloor ?? 0o755);
+    } else {
+      mkdirSync(dirname(abs), { recursive: true });
+      writeFileSync(abs, 'fixture\n');
+      chmodSync(abs, m.modeFloor ?? 0o644);
+    }
+  }
+  for (let i = 0; i < chain; i += 1) {
+    writeFileSync(join(root, `config.toml.fixture-${String(i).padStart(2, '0')}.bak`), 'x\n');
+  }
+  for (const e of ENUMERABLE) {
+    if (e.childCount === undefined) continue;
+    for (let i = 0; i < e.childCount; i += 1) {
+      const name = `${e.dir.split('/').pop()}-lane-${String(i).padStart(2, '0')}`;
+      if (e.dir === 'skills') mkdirSync(join(root, e.dir, name));
+      else writeFileSync(join(root, e.dir, `${name}.md`), 'x\n');
+    }
+  }
+}
+
+function runGate(args, timeout = 30_000) {
+  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
+  return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+}
+
+function lastLine(run) {
+  const lines = run.stdout.trim().split('\n');
+  return lines.length > 0 ? lines[lines.length - 1] : '';
+}
+
+function kinds(run) {
+  return run.stdout.split('\n').filter((l) => l.startsWith('CENSUS  ')).map((l) => l.trim().split(/\s+/)[2]);
+}
+
+function selfTest() {
+  const tmp = mkdtempSync(join(tmpdir(), 'kumitate-kimi-census-selftest-'));
+  const results = [];
+  const observed = new Set();
+  const failClosedSeen = new Set();
+  let passed = 0;
+
+  const check = (label, fn) => {
+    let r;
+    try { r = fn(); } catch (err) { r = { ok: false, detail: `threw ${err && err.message}` }; }
+    for (const k of r.kinds ?? []) observed.add(k);
+    for (const k of r.failClosed ?? []) failClosedSeen.add(k);
+    results.push({ label, ok: Boolean(r.ok), detail: r.detail ?? '' });
+  };
+  const mk = (name) => { const p = join(tmp, name); mkdirSync(p, { recursive: true }); fixtureTree(p); return p; };
+  const clean = (run, needle, kindList) => {
+    const k = kinds(run);
+    return {
+      ok: run.status === 0 && lastLine(run).includes(needle)
+        && (kindList === undefined || JSON.stringify(k) === JSON.stringify(kindList)),
+      detail: `exit=${run.status} last=${lastLine(run).slice(0, 100)} kinds=[${k.join(',')}]`,
+      kinds: k,
+    };
+  };
+  const drift = (run, kind, members) => {
+    const k = kinds(run);
+    return {
+      ok: run.status === 1 && lastLine(run).startsWith('KIMI_CENSUS: DRIFT')
+        && k.includes(kind) && (members === undefined || lastLine(run).includes(`members=${members}`) || run.stdout.includes(`members=${members}`)),
+      detail: `exit=${run.status} last=${lastLine(run).slice(0, 100)} kinds=[${k.join(',')}]`,
+      kinds: k,
+    };
+  };
+
+  try {
+    // 1. green baseline — the frozen 46, exact verdict line
+    const green = mk('green');
+    check('green fixture → CLEAN exit 0, members=46 checked=46 chain=3 info=3', () => {
+      const r = runGate(['--root', green]);
+      return {
+        ok: r.status === 0 && kinds(r).length === 0
+          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=46 checked=46 chain=3 info=3)',
+        detail: `exit=${r.status} last=${lastLine(r)}`,
+      };
+    });
+
+    // 2. per-family frozen counts, live-derived
+    check('--json families read 3/25/9/9 and members=46', () => {
+      const r = runGate(['--root', green, '--json']);
+      const j = JSON.parse(r.stdout);
+      const f = j.totals.families;
+      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 46
+        && f.K1.members === 3 && f.K2.members === 25 && f.K3.members === 9 && f.K4.members === 9
+        && j.members.length === 25;
+      return { ok, detail: `members=${j.totals.members} K1=${f.K1.members} K2=${f.K2.members} K3=${f.K3.members} K4=${f.K4.members} rows=${j.members.length}` };
+    });
+
+    check('--json totals agree with the text verdict', () => {
+      const j = JSON.parse(runGate(['--root', green, '--json']).stdout);
+      const t = runGate(['--root', green]);
+      return {
+        ok: j.totals.members === 46 && lastLine(t).includes(`members=${j.totals.members}`)
+          && lastLine(t).includes(`checked=${j.totals.checked}`) && j.verdict === 'CLEAN',
+        detail: `json=${j.totals.members}/${j.totals.checked} text=${lastLine(t).slice(0, 70)}`,
+      };
+    });
+
+    // 3. MEMBER_MISSING arms
+    const drop = mk('drop-file');
+    rmSync(join(drop, 'bin/fd'));
+    check('MEMBER_MISSING: a deleted member file (bin/fd)', () => {
+      const r = runGate(['--root', drop]);
+      return drift(r, 'MEMBER_MISSING', 45);
+    });
+
+    const kindFlip = mk('kind-flip');
+    rmSync(join(kindFlip, 'session_index.jsonl'));
+    mkdirSync(join(kindFlip, 'session_index.jsonl'));
+    check('MEMBER_MISSING: a member with the wrong kind (file → dir)', () => {
+      const r = runGate(['--root', kindFlip]);
+      return { ...drift(r, 'MEMBER_MISSING'), ok: drift(r, 'MEMBER_MISSING').ok && r.stdout.includes('declared file, live dir') };
+    });
+
+    const dropDir = mk('drop-dir');
+    rmSync(join(dropDir, 'telemetry'), { recursive: true });
+    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 45));
+
+    const dropBucket = mk('drop-bucket');
+    rmSync(join(dropBucket, 'skills', 'skills-lane-04'), { recursive: true });
+    check('MEMBER_MISSING: an enumerable dir lost a declared child (skills/ 4 of 5)', () => {
+      const r = runGate(['--root', dropBucket]);
+      return { ...drift(r, 'MEMBER_MISSING'), ok: drift(r, 'MEMBER_MISSING').ok && r.stdout.includes('4 children, 5 declared') };
+    });
+
+    const noChain = mk('no-chain');
+    for (const n of readdirSync(noChain)) if (RE_CHAIN.test(n)) rmSync(join(noChain, n));
+    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 45));
+
+    // 4. UNLISTED arms
+    const newLane = mk('new-lane');
+    writeFileSync(join(newLane, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
+    check('UNLISTED: a 19th lane file under agents/secondary/', () => {
+      const r = runGate(['--root', newLane]);
+      return { ...drift(r, 'UNLISTED', 47), ok: drift(r, 'UNLISTED', 47).ok && r.stdout.includes('19 children, 18 declared') };
+    });
+
+    const newPlugin = mk('new-plugin');
+    writeFileSync(join(newPlugin, 'plugins/rogue.json'), '{}\n');
+    check('UNLISTED: an undeclared child directly under plugins/', () => {
+      const r = runGate(['--root', newPlugin]);
+      return { ...drift(r, 'UNLISTED'), ok: drift(r, 'UNLISTED').ok && r.stdout.includes('plugins/rogue.json') };
+    });
+
+    const newManaged = mk('new-managed');
+    mkdirSync(join(newManaged, 'plugins/managed/other-plugin'));
+    check('UNLISTED: an undeclared child under plugins/managed/', () => {
+      const r = runGate(['--root', newManaged]);
+      return { ...drift(r, 'UNLISTED'), ok: drift(r, 'UNLISTED').ok && r.stdout.includes('plugins/managed/other-plugin') };
+    });
+
+    const dropManaged = mk('drop-managed');
+    rmSync(join(dropManaged, 'plugins/managed/kimi-webbridge'), { recursive: true });
+    check('MEMBER_MISSING: the managed webbridge tree removed', () => drift(runGate(['--root', dropManaged]), 'MEMBER_MISSING'));
+
+    // 5. SHAPE_DRIFT arms
+    const looseDir = mk('loose-dir');
+    chmodSync(join(looseDir, 'credentials'), 0o500);
+    check('SHAPE_DRIFT: credentials/ below its 0700 floor', () => {
+      const r = runGate(['--root', looseDir]);
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0500 lacks the 0700 floor') };
+    });
+
+    const looseFile = mk('loose-file');
+    chmodSync(join(looseFile, 'server.token'), 0o400);
+    check('SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)', () => {
+      const r = runGate(['--root', looseFile]);
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=45') };
+    });
+
+    const secretKind = mk('secret-kind');
+    rmSync(join(secretKind, 'credentials'), { recursive: true });
+    writeFileSync(join(secretKind, 'credentials'), 'not a dir\n');
+    check('SHAPE_DRIFT: credentials/ replaced by a file (kind pin)', () => {
+      const r = runGate(['--root', secretKind]);
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('a directory') };
+    });
+
+    const tokenDir = mk('token-dir');
+    rmSync(join(tokenDir, 'server.token'));
+    mkdirSync(join(tokenDir, 'server.token'));
+    check('SHAPE_DRIFT: server.token replaced by a directory (leaf pin)', () => {
+      const r = runGate(['--root', tokenDir]);
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('non-directory leaf') };
+    });
+
+    // 6. secrecy: the gate must stat and never read
+    check('secrecy: fixtures are shape-clean with a 0600 leaf token (mode floor passes)', () => {
+      const r = runGate(['--root', green]);
+      return clean(r, 'KIMI_CENSUS: CLEAN');
+    });
+
+    const fifo = mk('secret-fifo');
+    rmSync(join(fifo, 'server.token'));
+    const mkfifo = spawnSync('mkfifo', ['-m', '600', join(fifo, 'server.token')], { encoding: 'utf8' });
+    check('secrecy: server.token is a FIFO → still CLEAN, no read (would block forever)', () => {
+      if (mkfifo.status !== 0) return { ok: false, detail: `mkfifo unavailable (status=${mkfifo.status} ${mkfifo.error?.code ?? ''}) — the anti-read arm cannot be built here` };
+      const r = runGate(['--root', fifo], 10_000);
+      return {
+        ok: r.status === 0 && lastLine(r).startsWith('KIMI_CENSUS: CLEAN') && r.signal === null,
+        detail: `exit=${r.status} signal=${r.signal} last=${lastLine(r).slice(0, 70)}`,
+      };
+    });
+
+    const dangling = mk('secret-symlink');
+    rmSync(join(dangling, 'server.token'));
+    symlinkSync('/nonexistent-secret-target', join(dangling, 'server.token'));
+    check('secrecy: a dangling symlink token is never followed (lstat-only → CLEAN)', () => {
+      const r = runGate(['--root', dangling]);
+      return clean(r, 'KIMI_CENSUS: CLEAN');
+    });
+
+    const canary = mk('secret-redact');
+    const canaryFile = 'canary-token.json';
+    writeFileSync(join(canary, 'credentials', canaryFile), '{}\n', { mode: 0o600 });
+    check('secrecy: a canary inside credentials/ is never listed (no readdir, no read)', () => {
+      const r = runGate(['--root', canary, '--json']);
+      const leak = r.stdout.includes(canaryFile) || r.stderr.includes(canaryFile);
+      return {
+        ok: r.status === 0 && !leak && lstatKind(join(canary, 'credentials', canaryFile)) === 'file',
+        detail: `exit=${r.status} canary-leak=${leak} (fixture name must not contain the needle: root=${canary})`,
+      };
+    });
+
+    // 7. info arms never fail the gate
+    const moreChain = mk('more-chain');
+    for (let i = 0; i < 3; i += 1) writeFileSync(join(moreChain, `config.toml.extra-${i}.bak`), 'x\n');
+    check('info: a growing drift chain is reported (chain=6) and never gated → CLEAN', () => {
+      const r = runGate(['--root', moreChain]);
+      return { ...clean(r, 'chain=6 info=3'), ok: clean(r, 'chain=6 info=3').ok && r.stdout.includes('generations=6') };
+    });
+
+    const residue = mk('root-residue');
+    writeFileSync(join(residue, 'rc-qrcode.png'), 'png\n');
+    check('info: an undeclared root child is info by default (CLEAN) and UNLISTED under --root-enum', () => {
+      const soft = runGate(['--root', residue]);
+      const hard = runGate(['--root', residue, '--root-enum']);
+      return {
+        ok: soft.status === 0 && soft.stdout.includes('root residue: rc-qrcode.png') && lastLine(soft).includes('info=4')
+          && hard.status === 1 && kinds(hard).includes('UNLISTED') && hard.stdout.includes('rc-qrcode.png'),
+        detail: `soft exit=${soft.status} (${lastLine(soft).slice(0, 60)}) hard exit=${hard.status} kinds=[${kinds(hard).join(',')}]`,
+        kinds: kinds(hard),
+      };
+    });
+
+    check('--root-enum is idempotent on a fixture with no root residue (CLEAN)', () => {
+      const r = runGate(['--root', green, '--root-enum']);
+      return clean(r, 'KIMI_CENSUS: CLEAN');
+    });
+
+    // 8. fail-closed arm
+    check('KIMI_ROOT_MISSING: --root /nonexistent → exit 2, no scored zero', () => {
+      const r = runGate(['--root', '/nonexistent']);
+      return {
+        ok: r.status === 2 && lastLine(r).startsWith('KIMI_CENSUS: FAIL-CLOSED (KIMI_ROOT_MISSING')
+          && r.stderr.includes('KIMI_ROOT_MISSING') && !lastLine(r).includes('members='),
+        detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}`,
+        failClosed: ['KIMI_ROOT_MISSING'],
+      };
+    });
+
+    const unreadable = mk('root-unreadable');
+    chmodSync(unreadable, 0o000);
+    check('KIMI_ROOT_MISSING: an unreadable root → exit 2 (fail-closed, never a zero)', () => {
+      const r = runGate(['--root', unreadable]);
+      return {
+        ok: r.status === 2 && lastLine(r).includes('FAIL-CLOSED (KIMI_ROOT_MISSING') && r.stdout.includes('unreadable'),
+        detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)}`,
+        failClosed: ['KIMI_ROOT_MISSING'],
+      };
+    });
+    chmodSync(unreadable, 0o700);
+
+    check('--json fail-closed carries the same token and no totals', () => {
+      const r = runGate(['--root', '/nonexistent', '--json']);
+      const j = JSON.parse(r.stdout);
+      return {
+        ok: r.status === 2 && j.verdict === 'FAIL-CLOSED' && j.fatal.kind === 'KIMI_ROOT_MISSING' && j.totals.members === 0,
+        detail: `exit=${r.status} verdict=${j.verdict} fatal=${j.fatal && j.fatal.kind}`,
+        failClosed: ['KIMI_ROOT_MISSING'],
+      };
+    });
+
+    // 9. usage arms
+    check('unknown flag → usage refusal on stderr, exit 64', () => {
+      const r = runGate(['--bogus']);
+      return { ok: r.status === 64 && r.stderr.includes('usage:') && r.stdout === '', detail: `exit=${r.status} stdout=${JSON.stringify(r.stdout.slice(0, 20))}` };
+    });
+    check('--root without a value → usage exit 64', () => {
+      const r = runGate(['--root']);
+      return { ok: r.status === 64 && r.stderr.includes('needs a value'), detail: `exit=${r.status}` };
+    });
+    check('unknown positional verb → usage exit 64', () => {
+      const r = runGate(['census']);
+      return { ok: r.status === 64, detail: `exit=${r.status}` };
+    });
+    check('the explicit `verify` verb is accepted', () => {
+      const r = runGate(['verify', '--root', green]);
+      return clean(r, 'KIMI_CENSUS: CLEAN');
+    });
+    check('-h prints usage with the contract id, exit 0', () => {
+      const r = runGate(['-h']);
+      return { ok: r.status === 0 && r.stdout.includes(`contract id: ${CONTRACT}`), detail: `exit=${r.status}` };
+    });
+
+    // 10. hermeticity structure
+    check('every fixture root lives under tmpdir() (no live tree in reach)', () => ({
+      ok: tmp.startsWith(`${tmpdir()}/`) && !green.startsWith(homedir() + '/.kimi-code'),
+      detail: `tmp=${tmp}`,
+    }));
+    check('the default root is the one the frozen rules name (~/.kimi-code)', () => ({
+      ok: DEFAULT_ROOT === join(homedir(), '.kimi-code'),
+      detail: `DEFAULT_ROOT=${DEFAULT_ROOT}`,
+    }));
+
+    // 11. the arm tables themselves
+    const missingKinds = FINDING_KINDS.filter((k) => !observed.has(k));
+    const missingArms = FAIL_CLOSED_KINDS.filter((k) => !failClosedSeen.has(k));
+    check('every finding kind fired by the suite', () => ({ ok: missingKinds.length === 0, detail: `unfired=[${missingKinds.join(',')}]` }));
+    check('every fail-closed arm fired by the suite', () => ({ ok: missingArms.length === 0, detail: `unfired=[${missingArms.join(',')}]` }));
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+
+  const failed = results.filter((r) => !r.ok);
+  passed = results.length - failed.length;
+  for (const r of results) {
+    if (!r.ok) process.stdout.write(`FAIL ${r.label}\n     ${r.detail}\n`);
+  }
+  process.stdout.write(`KIMI_CENSUS_SELFTEST: ${passed}/${results.length} pass\n`);
+  process.stdout.write(`VERDICT: ${failed.length === 0 ? 'PASS' : 'FAIL'}\n`);
+  return failed.length === 0 ? 0 : 1;
+}
+
+/* ------------------------------------------------------------------- argv */
+
+function parseArgs(argv) {
+  const opts = { root: DEFAULT_ROOT, json: false, rootEnum: false, selftest: false, help: false };
+  const need = (flag, v) => {
+    if (v === undefined || v.trim() === '' || v.startsWith('-')) {
+      process.stderr.write(`kimi-census: ${flag} needs a value\n${USAGE}`);
+      process.exit(64);
+    }
+    return v;
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === 'verify') continue;
+    if (a === '--root') { opts.root = resolve(need(a, argv[++i])); continue; }
+    if (a === '--root-enum') { opts.rootEnum = true; continue; }
+    if (a === '--json') { opts.json = true; continue; }
+    if (a === '--selftest' || a === '--self-test') { opts.selftest = true; continue; }
+    if (a === '-h' || a === '--help') { opts.help = true; continue; }
+    process.stderr.write(`kimi-census: unsupported argument: ${a}\n${USAGE}`);
+    process.exit(64);
+  }
+  return opts;
+}
+
+function main() {
+  const started = Date.now();
+  const opts = parseArgs(process.argv.slice(2));
+  if (opts.help) { process.stdout.write(USAGE); process.exit(0); }
+  if (opts.selftest) process.exit(selfTest());
+  process.exit(runVerify(opts, started));
+}
+
+/** Entrypoint guard: an `await import()` of this module must not print. */
+const isEntry = (() => {
+  if (process.argv[1] === undefined) return false;
+  const invoked = resolve(process.argv[1]);
+  if (invoked === TOOL_FILE) return true;
+  try { return realpathSync(invoked) === TOOL_FILE; } catch { return false; }
+})();
+
+if (isEntry) main();

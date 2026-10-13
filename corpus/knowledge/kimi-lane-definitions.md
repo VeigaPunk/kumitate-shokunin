@@ -157,3 +157,14 @@ Spot-checks that lane prose matches config metadata (OBSERVATION, both sides rea
 - UNKNOWN — whether all 18 lanes are reachable right now (quota/health) is not
   tested here; only the static definitions and their config-backed ids.
 - No blockers: all 18 assigned files were readable; no absent/unreadable surface.
+## Errata (round-19 audit A2, 2026-10-13, append-only)
+
+- **`default_model` paragraph (L115-120): drift, not transcription.**
+  The note recorded `opencode-go/deepseek-v4.1-flash` at `config.toml:1256`
+  per the 17:00:05 snapshot; the live file at 18:15:19 reads
+  `hyper/deepseek-v4.1-flash` (A2 first read this as a note error because no
+  `.bak` carries opencode-go as default — but the 17:00 state was never a
+  `.bak`; the note's own snapshot evidence stands). The dependent inference
+  "the default secondary has no persona" is **refuted**: the current
+  default id IS lane-backed (`sec-fast-hyper-ds-flash.md`,
+  `~/.kimi-code/config.toml:778`, registry `:1262`).

@@ -480,3 +480,24 @@ Per PROVINCE.md ("report cross-domain evidence back"):
   extraction of the mode/permission/goal vocabulary.
 - `~/Projects/ufo-fsd-alpha/config/ufo.json:71,79,88-94`;
   `~/Projects/ufo-fsd-alpha/.omp/hooks/pre/ufo-godspeed-inject.js`.
+## Errata (round-19 audit A4, 2026-10-13, append-only)
+
+- **§8 row 1 (`globalRunnerCeiling`) — the UNKNOWN is resolved:**
+  `ufo.json:78` = `globalRunnerCeiling: 1056` (the note's original grep
+  window was too narrow).
+- **§9 secondary-default claim — same drift as `kimi-lane-definitions.md`:**
+  `config.toml:1256` read `opencode-go/deepseek-v4.1-flash` at the 17:00
+  snapshot and `hyper/deepseek-v4.1-flash` at 18:15; the opencode-go id sits
+  at `:1277` with an empty description in both readings (the orphan row).
+- **Labelling note (not a defect):** the note's OBSERVATION class
+  deliberately includes binary strings (L7-8); under a stricter taxonomy
+  the §0/§5/§6 rows grade STRINGS-ONLY. A4 verified the labels are
+  self-consistent and the boundary is disclosed (§8 row 2).
+- **Process (corrected at integration):** the wave-1b "backtick mispairing"
+  follow-up was investigated, not repaired — the 16 stray `base` bindings
+  (`OK` notes, not errors) come from the prose word "base" inside quoted
+  skill-doc text ("Never guess a base commit") being tokenized as a ref and
+  suffix-resolving to `scripts/ufo-sighting-lib/base.mjs`. Repairing would
+  mean altering quoted material; recorded as a `cite-check` tokenization
+  limit (multi-word spans yield inner-word refs) and queued as a tool
+  hardening item, not patched inside this round.

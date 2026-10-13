@@ -409,3 +409,20 @@ default_model = "zai-coding-plan/glm-5.3-flash"          ← replaced, not lost
 | credential store split: 0-byte `oauth/kimi-code-env-0e4f99c69cc27850` vs populated `credentials/kimi-code-env-0e4f99c69cc27850.json` (1556 B) | `~/.kimi-code/oauth/`, `~/.kimi-code/credentials/` | **kagi** |
 | `kimi-k2.7-code` exists for `hyper` (:886) and `opencode-go` (:1173) but was **removed from all three `alibaba-token-plan` lanes** on 10-10 and never returned; the managed lane offers `k3`/`k3-256k` with `default_effort` `high` vs `kimi-for-coding` `max` | `~/.kimi-code/config.toml:60–76`, `:886`, `:1173`; diff 6→7 | **kengaku** — model roster/quality comparison; this lane only records the roster |
 | every served endpoint in the plane (7 provider `base_url`s, 3 `oauth_host` refs, 2 moonshot service URLs, 1 MCP `npx rea-agents@6.4.0`) | `~/.kimi-code/config.toml:7,12,15,20,25,30,35,40,951,1216,1225,1287` | **kama** — endpoint/serving inventory |
+## Errata (round-19 audit A1, 2026-10-13, append-only)
+
+- **"12 timestamped `.bak`" → 11.** `ls config.toml.*.bak | wc -l` = 11 (the
+  note's own generation table already listed 11; the prose count was wrong).
+- **Cross-domain `api_key` sentence → 6 non-empty, four vendor shape
+  families** (not 7 / three): `grep -c '^api_key'` = 9 total, 3 empty
+  (`:6`, `:1217`, `:1226`).
+- **"15 tail sections" → 16** (from `[thinking]` `:1211` to
+  `[mcp_servers.rea.env]` `:1290`).
+- **Live-file row is a snapshot, and the substrate moved under it.** The
+  note's live row (40,605 B, sha `6a0345c7…`, mtime 17:00:05,
+  `default_model opencode-go/deepseek-v4.1-flash`) was measured true at
+  note time; the live file at 18:15:19 reads 40,599 B, sha `eae8e021…`,
+  and `config.toml:1256` = `default_model = "hyper/deepseek-v4.1-flash"`.
+  config.toml is a mutating substrate — every live-row claim in this note
+  carries its snapshot time and is expected to drift; the drift narrative
+  (the `.bak` chain) is the durable part.

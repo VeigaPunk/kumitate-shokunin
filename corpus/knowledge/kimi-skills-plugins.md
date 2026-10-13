@@ -325,3 +325,10 @@ outrank user skills by explicit `interface` config.
 `stat` modes for all of the above; `~/.kimi-code/{config.toml,tui.toml}` grepped
 shape-only; `~/.kimi-code/logs/kimi-code.log` grepped for load lines; rendered skill
 listing of this session (scope grouping and precedence rule text).
+## Errata (round-19 audit A2, 2026-10-13, append-only)
+
+- **Nits (three counts):** live `config.toml` section count at audit time =
+  **148**, not 150 (the note's count was taken pre-drift); `oauth/` mode =
+  **0755**, not 0700 (mode-floor consequence, matches the census gate's
+  floor design); the drift chain is **11 timestamped `.bak` + 1 plain
+  `config.toml.bak`** (the note's "14" double-counted).

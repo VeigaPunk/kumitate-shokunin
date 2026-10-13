@@ -294,3 +294,11 @@ updates have been staged on this host.
   `credentials/kimi-code-env-<hash>.json` (600, 1556 B), `oauth/kimi-code-env-<hash>` (644, 0 B),
   `device_id` (600, 36 B). Contents unread by design; kagi owns the minting/expiry anatomy.
 - **Model quality → kengaku.** None — no model-behaviour evidence was produced on this lane.
+## Errata (round-19 audit A3, 2026-10-13, append-only)
+
+- **"all 88 rollout rows carry `latest=2.1.1`" → 87/88.** Line 1 is the
+  pre-CDN-cache `no-latest` row with `latest:null` (the note's own
+  classification already counted it 87+1; the prose overgeneralized).
+- **Shape-census mtimes for `credentials/` and `oauth/` have drifted**
+  (17:26 → 18:13 at audit time) — sizes/modes confirmed unchanged; mtimes
+  are snapshot values like the config-plane live row.

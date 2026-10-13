@@ -569,6 +569,19 @@ Citations are to the notes — the notes carry the live anchors.
   `[experimental] tower` (`config.toml:1233-1236`) — kimi is an undeclared
   substrate; do not assume OMP wave numbers apply to kimi-native swarms
   (`kimi-modes-machinery.md`).
+- **The substrate is live-checked by `scripts/kimi-census.mjs`**
+  (contract `kumitate-kimi-census-v1`, round 19): verifies the frozen K1–K4
+  member rules (46 members) against `~/.kimi-code` — `MEMBER_MISSING` /
+  `UNLISTED` / `SHAPE_DRIFT` arms, secret paths stat-only (the selftest
+  proves the gate never *reads* them: a FIFO token passes shape-clean without
+  blocking), fail-closed `KIMI_ROOT_MISSING`. Two stated limits: the census
+  root is not enumerable by default (`workspaces.json`, `tui.toml.bak`,
+  `rc-qrcode.png` are undeclared residue — the K5 fix is pre-registered for
+  round 20), and mode pins are floors, so a loosened secret mode still
+  passes. config.toml *content* drift is detected by no machine gate — the
+  config-plane note's live rows are timestamped snapshots, expected to drift
+  (round-19 audit watched the secondary `default_model` flip
+  opencode-go → hyper mid-round).
 
 ## Verifiable checklist
 
@@ -585,6 +598,7 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Proxy recompute — `node scripts/proxy-check.mjs` → exit 0 + `PROXY: MATCH`
 - [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`
+- [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named

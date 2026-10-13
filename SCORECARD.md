@@ -43,7 +43,8 @@ artifact cannot claim the axis.
   suite); → **6** after round 10 (+ round-gate hermetic suite, round-close
   artifact audit); → **9** after round 11 (+ filed-report tracking, proxy
   recompute, proxy-check hermetic suite); → **10** after round 14 (+ the
-  member-claims gate). All ten are *executed*, not merely
+  member-claims gate); → **11** after round 19 (+ the kimi-substrate census —
+  the first item that runs green without the origin tree). All eleven are *executed*, not merely
   listed: `node scripts/surface-probe.mjs --checklists` → `CHECKLIST: 10/10 pass`,
   `VERDICT: PASS`, exit 0 (each item names a command, an accepted exit set and
   an expected verdict substring; a miss fails the item). At round-8 close the
@@ -268,8 +269,8 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=5
-C=10
+A=6
+C=11
 C1=19
 C1_total=19
 C2=60
@@ -291,7 +292,7 @@ pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1e
 
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
-| operability | 8 | `f_O = (A+C)/(A+C+3)` with A=5 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`) and C=10 (`## Verifiable checklist`, all 10 executed by `surface-probe.mjs --checklists` → `CHECKLIST: 10/10 pass`) ⇒ 15/18 = 0.8333 ⇒ 8 — 9 needs A+C ≥ 27 (12 more honest items), so the proxy saturates long before the axis does | round 14 |
+| operability | 8 | `f_O = (A+C)/(A+C+3)` with A=6 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`) and C=11 (`## Verifiable checklist`; 11th item = the kimi-substrate census, the first item that runs green without the origin tree) ⇒ 17/20 = 0.85 ⇒ 8 — 9 needs A+C ≥ 27 (10 more honest items), so the proxy saturates long before the axis does | round 19 |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 6 | `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = 6 — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**74** = `S6` 5 + `S7` 9 + `S8` 60; the five topic-form `S` rows carry 0), `S_members` = **114** = `ls scripts/*.mjs \| wc -l` → 72 + `find scripts -mindepth 2 -type f \| wc -l` → 42 (RECURSIVE; depth-1 reads 38 and is wrong). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
 | coverage:runtime-layer | 7 | `floor(10 × 11/11 × 69/98)` = `floor(7.04…)` = 7 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **69** member-only sections: round 17 completed R1 (**0→8**) and R8 (**3→4**, adding `native_dispatch_topology.rs`) on top of the round-16 baseline 60; all `R` note sections read 72, minus R9's 3 `SECTION_FILE_NOT_MEMBER` sections. `R_members` = **98** = 93 runtime + 5 CLI. Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
@@ -362,6 +363,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 19 | operability (the f_O walk; integer held by the saturating proxy) | A=5, C=10 ⇒ `f_O = 15/18 = 0.8333` ⇒ 8 | A=**6** (`scripts/kimi-census.mjs`, contract `kumitate-kimi-census-v1`, 797 L, 35-case hermetic suite, live `KIMI_CENSUS: CLEAN (members=46 checked=46 chain=12 info=4)` exit 0, `KIMI_ROOT_MISSING` fail-closed verified, secrecy proven via strace — zero reads of the secret members) + C=**11** (census admitted to the executable checklist, item 11) ⇒ `f_O = 17/20 = 0.85` ⇒ **8** (9 needs A+C ≥ 27) | audits A1–A4 (fast lanes, independent re-runs): 4 append-only errata blocks landed, 2 drift annotations (config.toml's secondary `default_model` flipped opencode-go → hyper at 18:15 mid-round — the note snapshots were true at reading time), 1 process defect recorded (an audit lane printed `api_key` values to its own transient output — redacted, no durable artifact touched; future briefs: `grep -c` only, never values); K-block terms frozen (round-19 pre-registration); the census's K-exhaustiveness gap named: `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` undeclared → **K5 residue family pre-registered for round 20** |
 | 18 | — (definition/expansion round; no live axis moves by pre-registration) | C2 53/53; no kimi-* notes | C2 **60/60** (6 `knowledge/kimi-*.md` notes + `lessons/round-18.md`, each with a README row); A=5, C=10, C1=19/19, both layer successors unchanged — the stanza re-pin below is the only proxy change, contract-mandated | `grep -c '^| \`\(knowledge\|lessons\)/' corpus/README.md` → 60; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 60; 6-lane AgentSwarm wave on `alibaba-token-plan/deepseek-v4.1-flash`, one note per lane; first pass **rejected** by the citation gate (80 citation-form errors — bare basenames bound to the wrong tree), 3-lane repair wave re-admitted at **0** (independently re-verified: 0 errors in every `kimi-*` note; repo-wide 386 = carried debt); carried debt: origin tree relocated + restructured ⇒ S/R gates read DRIFT until the parked re-census |
 | 17 | coverage:runtime-layer | `C1r=11/11`, `R_sections=60`, `R_members=98` ⇒ `floor(10 × 60/98)` = **6**; R1 topic-form (0 sections, `ROW_NO_SECTIONS`), R8 3 of 4 (`MEMBER_COUNT_SUSPECT`); repo gate `sections=137 adv=16`; the threshold for 7 was 69, so R1 alone would stop at 68/98 ⇒ 6 | R1 **0→8** plus R8 **3→4** (`native_dispatch_topology.rs`) ⇒ `R_sections` **60→69**, `floor(10 × 69/98)` = **7**; repo gate `sections=146 adv=14`; strict R1/R8 check 12 sections, adv=0; explicit occurrence=distinct proof R1 8=8 and R8 4=4; script layer remains 74/114 ⇒ 6, operability remains A=5/C=10 ⇒ 8 | `node scripts/claims-check.mjs --row R1 --row R8 --strict` → `MATCH (… sections=12 adv=0)` exit 0; in-process `probeSections` census prints 8=8 / 4=4; `node scripts/proxy-check.mjs` → `PROXY: MATCH (… C2=53/53 … S=74/114 coverage:script-layer=6; R=69/98 coverage:runtime-layer=7; pins=5 match)` exit 0; `corpus/lessons/round-17.md` |
 | 17 | coverage:runtime-layer (uncounted repairs; no second axis move) | the main repo moved from `/home/vgpnk/projects/shokunin` to `/home/vgpnk/Projects/shokunin`, but `round-gate.mjs` kept the old literal, so the bare audit and `--tracked` both failed closed `REPORTS_DIR_MISSING` and `surface-probe --checklists` read **8/10**; R1's historical backticked `native*.rs` explanation leaked into `familyPatterns()` and admitted every native-prefixed file; two note citations misidentified the R8 ordinals and the seat-coverage XOR arm | main-repo default derives from `resolve(HERE, '..', '..')`; bare audit and tracked mode CLEAN, selftest 57/57, checklist returns 10/10 after the sha256 pin update; R1's obsolete glob explanation is no longer a backticked pattern; R8 ordinals bind explicitly (55/56/57/60), XOR cite points to `native_seat_coverage.rs:291-296`. A=5, C=10, all non-runtime axis terms unchanged | `node scripts/round-gate.mjs` → CLEAN exit 0; `--tracked` → CLEAN exit 0; `--selftest` → `57/57 pass`; `pin.round-gate=8631be…`; mutation arm: topology inside R1 was `inFamily=true` before the registry-text repair; source reads at `native_contract.rs:124-129`, `native_seat_coverage.rs:291-296`, `native_launch.rs:128-132` |
@@ -619,6 +621,83 @@ the round-closing plan must state how each round closes its gates honestly
 live, and recording the OMP-side DRIFT as carried debt) rather than fitting
 the old denominators. (4) `~/.kimi-code` itself resolves fully (see the
 candidate-surfaces bullet); no blocker on the K side.
+
+**Parked (2026-10-13, operator directive "focus on kimi code cli for now") —
+
+**round 20 (pre-register, 2026-10-13 — registry change + first measurement,
+both declared here).** Two ingredients, sequenced by the rounds 12→13
+discipline (a registry change is pre-registered a round ahead of the round
+that measures it):
+
+- **K5 residue family (registry change).** The M1 census deviation exposed
+  that K1–K4 is not exhaustive over `~/.kimi-code`: `workspaces.json`,
+  `tui.toml.bak`, and `rc-qrcode.png` are undeclared root children (reported
+  as INFO residue). Round 20 declares **K5 = the root-residue family, 3
+  members counted live**, which makes the census root enumerable (the
+  `UNLISTED` arm activates at the root). `K_members` 46 → **49**. The three
+  are file-members (presence + kind), not content-pinned; `workspaces.json`
+  is load-bearing for the K3 session-key scheme (the `wd_*` derivation reads
+  it), so it is the family's anchor member.
+- **`coverage:kimi-layer`, first measurement (the round-16 role).** Terms
+  were frozen in round 19; round 20 lands the derivation: `C1k/C1k_total`
+  over the K1–K5 rows against the family standard, `K_members` read live from
+  `~/.kimi-code` (once, in-process — the round-16 amendment pattern; a
+  `--kimi-root` fail-closed arm `KIMI_ROOT_NOT_A_DIR`, exit 2, never a scored
+  zero), `K_sections` = gate-verified `## ` member-sections in the
+  `kimi-*.md` notes. Because the notes are topic-form today, the first
+  measurement is expected near zero — that is the honesty term starting
+  honest, not a failed round. The stanza gains the K keys and
+  `## Axes` gains the row **in the same round as the derivation lands**
+  (tool change + stanza re-pin + axes row travel together, with
+  `pin.proxy-check` re-pinned because the tool itself is edited).
+- **Halt conditions:** before-measurement recompute of the frozen terms
+  against the live tree (the round-16 rule: compute `before` before editing
+  the tool); if K5 membership has drifted, record and stop rather than fit;
+  one axis-move (the measurement) — the census root-enumeration change rides
+  the registry-change slot, not a second move.
+
+**round 19 (pre-register, 2026-10-13 — the round-16 role for the K block:
+terms fixed here, measurement lands round 20).** Three ingredients:
+
+- **K-term freeze (definition).** New registry rows K1–K4 (membership per the
+  round-18 recon bullet) and one successor axis:
+  `coverage:kimi-layer = floor(10 × C1k/C1k_total × K_sections/K_members)`.
+  `C1k/C1k_total` = `yes` rows over the 4 K rows, family standard unchanged.
+  `K_members` = **46 by the frozen counting rules**: K1 = 3 (`config.toml`,
+  `tui.toml`, the `.bak` drift chain counted as **1** member — a chain, its
+  generation count living in the note); K2 = 25 (18 `agents/secondary/*.md` +
+  5 skill symlinks + `installed.json` + the `managed/kimi-webbridge` tree as
+  1); K3 = 9 (`sessions/`, `session_index.jsonl`, `workspace-trust/`,
+  `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`,
+  `cache/`, `search-index`); K4 = 9 (`bin/kimi`, `bin/fd`, `updates/`,
+  `server/`, `server.token`, `device_id`, `region`, `credentials/`,
+  `oauth/` — directories count as 1 member each; secret paths are members by
+  shape, never by content). `K_sections` = `## ` member-sections in the
+  `kimi-*.md` notes whose heading names a K member, gate-verified (the
+  notes are topic-form today, so the honesty term starts near zero and grows
+  as waves sectionize them — the same design as `V_layer`). Rules: counts
+  read live from `~/.kimi-code` at measurement time (HEAD-relative, the
+  round-16 precedent); K terms are additive, no frozen S/R term changes.
+- **The round-19 move (operability):** `scripts/kimi-census.mjs` — a census
+  gate over the K families (contract `kumitate-kimi-census-v1`): verifies
+  the frozen member rules against `~/.kimi-code` live, emits
+  `KIMI_CENSUS: CLEAN|DRIFT`, exit 0/1/2, hermetic suite, zero deps. Frozen
+  effect, stated before landing: A 5→**6**; if admitted to
+  `## Verifiable checklist`, C 10→**11**, so `f_O` 15/18=0.8333 → 17/20=
+  0.85 — the integer holds at **8** (the proxy saturates: 9 needs A+C ≥ 27);
+  the move is recorded as the f_O walk, not an integer claim. It is also the
+  first checklist item that runs green without the origin tree.
+- **Audits (kaidoku round-2 pattern):** fast-lane audit lanes re-verify
+  round-18's six notes against the live substrate before round-20
+  measurement builds on them; verdicts + errata are parent-integrated.
+
+**Halt conditions (round 19):** the census gate must kill a drifted member
+set (a member missing under `~/.kimi-code` is `MEMBER_MISSING`, a new
+undeclared child of an enumerable dir is `UNLISTED` — kagi's census
+discipline); audits that cannot re-verify a claim file a blocker row, never
+a silent pass; and no scoreboard term (stanza key or `## Axes` row) changes
+this round — the K stanza lands in round 20 with its derivation, or not at
+all.
 
 **Parked (2026-10-13, operator directive "focus on kimi code cli for now") —
 the S2 pre-registration below remains the standing OMP/ufo-fsd move and

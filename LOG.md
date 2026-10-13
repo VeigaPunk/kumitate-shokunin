@@ -1005,3 +1005,24 @@
   verified no claim moved) and re-admitted at 0 errors; independent re-run
   confirms 0 errors in every `kimi-*` note, repo-wide 386 all carried OMP
   debt. Spot-check samples, the gate sweeps — admit only on the sweep.
+- 2026-10-13 — round 19 (as pre-registered): four fast-lane audits
+  re-verified round 18's six notes independently — load-bearing quantities
+  overwhelmingly CONFIRMED (18-lane 1:1, rollout-log 87+1, shape census,
+  12/12 drift generations, 9/9 wd-key recomputations); 4 append-only errata
+  blocks landed (config-plane 11-not-12 .bak / 16-not-15 tail sections /
+  6-not-7 api_key cross-domain; skills nits; session slug rule now
+  case-folding-correct; binary-secrets 87/88-not-88/88); 2 drift annotations —
+  config.toml's secondary `default_model` flipped opencode-go → hyper at
+  18:15 mid-round (substrate mutates under observation; note snapshots true
+  at reading time; no machine gate detects config content drift — recorded as
+  a limit). `scripts/kimi-census.mjs` landed (797 L, 35-case hermetic suite,
+  live CLEAN members=46, strace-proven stat-only secrecy; mode pins are
+  floors — stated limit). Proxy: A 5→6, C 10→11, f_O 0.8333→0.85, integer
+  held at 8. Process defect recorded: audit lane A2 printed api_key values to
+  transient stdout during a probe (redacted, no durable artifact; future
+  briefs: count, never print values). The implementer's own deviation
+  exposed K1–K4 non-exhaustiveness (`workspaces.json`, `tui.toml.bak`,
+  `rc-qrcode.png` undeclared) → K5 residue family + first
+  coverage:kimi-layer measurement pre-registered for round 20. Cross-domain
+  routed: endpoints → kama; credential shapes → kagi; nothing measured for
+  kengaku.

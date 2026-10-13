@@ -433,3 +433,14 @@ must equal `wc -l ~/.kimi-code/session_index.jsonl` (both are 37 here), and
   `turn.steer`/`prompt.steered` (54/57), `full_compaction.begin/complete` (3/3) — all
   counted from the 161 `wire.jsonl` files, and all keyed `agentId` + `time`, with no
   session-level rollup file anywhere.
+## Errata (round-19 audit A3, 2026-10-13, append-only)
+
+- **"slug = basename(root)" is REFUTED as stated — it omits
+  case-folding.** `/home/vgpnk/Projects` keys to `wd_projects_…`, not
+  `wd_Projects_…`; the binary shows the normalization
+  (`…normalized.toLowerCase() : normalized`, strings-grade @~125573900).
+  Correct rule: `slug = basename(root).toLowerCase()` (40-char floor).
+- **The `wd_<slug>_<sha12>` derivation is upgraded from strings-only to
+  measured-corroborated**: A3 recomputed 9/9 catalog keys independently from
+  `workspaces.json` roots (`sha256(root)[:12]`) and all matched their dir
+  names. The binary-constants claim itself remains strings-grade.
