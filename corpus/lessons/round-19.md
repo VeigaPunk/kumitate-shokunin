@@ -65,3 +65,9 @@ of round 18's notes first. Executed as registered.
     `cite-check --src … --json` → 0 errors in every `kimi-*` note.
   - Carried debt unchanged: the OMP-side re-census (proxy/claims/checklist
     greens) remains parked with the S2 move.
+  - **Self-sweep lesson (recorded because it happened):** the round-19 errata
+    blocks themselves introduced 4 bare-basename citation errors — the exact
+    defect class the audits had just repaired — caught only by the gate sweep
+    after integration. Repaired uncounted (claims untouched). The durable
+    rule: an integrator's own errata is not exempt from the sweep; run the
+    citation gate after writing errata, not before.
