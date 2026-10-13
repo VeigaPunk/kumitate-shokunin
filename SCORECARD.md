@@ -278,8 +278,8 @@ A=6
 C=11
 C1=19
 C1_total=19
-C2=64
-C2_total=64
+C2=65
+C2_total=65
 S_members=114
 S_sections=74
 R_members=98
@@ -289,12 +289,12 @@ coverage_runtime=7
 C1k=5
 C1k_total=5
 K_members=49
-K_sections=52
+K_sections=49
 coverage_kimi=10
 pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
 pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
 pin.round-gate=8f9989b16dced830d2b1fe05eb6175d2e7d7cffb63d51a5356243b2b8dbb014a
-pin.proxy-check=a01aac6c974468dfbbc245b93353f0522f9af5eeffda5765208331f2f102ac9e
+pin.proxy-check=e2b63baf9e9f23a1189aedfd39f8fe93d7f791770e6c0e53f284b89276349b2f
 pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1ed
 pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 -->
@@ -307,7 +307,7 @@ pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 6 | `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = 6 — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**74** = `S6` 5 + `S7` 9 + `S8` 60; the five topic-form `S` rows carry 0), `S_members` = **114** = `ls scripts/*.mjs \| wc -l` → 72 + `find scripts -mindepth 2 -type f \| wc -l` → 42 (RECURSIVE; depth-1 reads 38 and is wrong). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
 | coverage:runtime-layer | 7 | `floor(10 × 11/11 × 69/98)` = `floor(7.04…)` = 7 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **69** member-only sections: round 17 completed R1 (**0→8**) and R8 (**3→4**, adding `native_dispatch_topology.rs`) on top of the round-16 baseline 60; all `R` note sections read 72, minus R9's 3 `SECTION_FILE_NOT_MEMBER` sections. `R_members` = **98** = 93 runtime + 5 CLI. Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
-| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 52/49)` = `floor(10.61…)` = 10 — round-21 sectionization (the notes restructured to one `## <member>` section per K member) moved `K_sections` 24 → **52**; `K_members` = **49** live, `C1k` = 5/5. **Limits, recorded not hidden:** the occurrence term credits `config.toml` 5× (52 sections name ~30 distinct members — the occurrence-vs-distinct hole; the distinct-member tightening is pre-registered for round 22, where the score will drop honestly) | round 21 |
+| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 49/49)` = **10** — round 22 tightened `K_sections` to **distinct** members named in sections (pre-registered round 21, hole closed with duplicate-one/drop-one hermetic cases, 98/98 selftest). The anticipated honest drop **did not occur**: measurement refuted the round-21 "~30 distinct" estimate — all **49/49** members were already named by the sectionization wave. Term improved (occurrence inflation closed), score unchanged | round 22 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -375,6 +375,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 22 | coverage:kimi-layer (term tightening; score unchanged — the anticipated drop was refuted by measurement) | occurrence term: K_sections 52, `floor(10 × 52/49)` = 10, with the known duplicate-one/drop-one hole | **distinct-member term lands** (pre-registered round 21): K_sections 52 occurrences → **49 distinct** (49/49 members named — the round-21 "~30 distinct" estimate was wrong and is corrected in the round-21 lesson's wake), `floor(10 × 49/49)` = **10** held; new `K_SECTION_AMBIGUOUS` warn arm (0 live); selftest 92 → 98 (+6, incl. the duplicate-one/drop-one mutation); `pin.proxy-check` re-pinned | implementer lane (hyper ds-flash) + independent cross-check (occurrence 52 / distinct 49 / 0 ambiguous / 0 unnamed); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha --selftest` → 98/98; live run: only the six carried OMP layer DRIFTs + PIN_DRIFT (re-pinned at close) |
 | 21 | coverage:kimi-layer (4 → 10) | K_sections 24, `floor(10 × 24/49)` = 4 | sectionization wave (operator directive: swarm more, buckets hyper/zai — opencode-go returned provider 400 `x-opencode-session` missing, recorded and routed to hyper): 6 coder+audit lanes restructured the notes to one `## <full-path>` section per K member (claims preserved — verified by 2 explore audit swarms + a 12-lane read-only verify wave, 49/49 members OK, 3 errata) ⇒ K_sections 24 → **52**, `floor(10 × 52/49)` = **10**; A=6, C=11 held; stanza re-pinned in-round | `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K_SECTIONS/COVERAGE_KIMI DRIFT (the two re-pinned terms), every other legacy + K term MATCH, pins=6 match; `kimi-census.mjs` CLEAN members=49; `cite-check` 0 errors in every `kimi-*` note; occurrence-vs-distinct recorded (52 sections ≈ 30 distinct members; distinct-term tightening pre-registered round 22) |
 | 20 | coverage:kimi-layer (first measurement — the round-16 role for the K block; registry change + tool + stanza + axes landed together per pre-registration) | no K terms; the K block declared unscored since round 18 | C1k **5/5**, `K_members` **49** (live), `K_sections` **24** ⇒ `floor(10 × 1.0 × 24/49)` = **4**; A=6, C=11 held; stanza gained 5 term keys + `pin.kimi-census`, `pin.proxy-check` re-pinned, `## Axes` row landed — tool, stanza, and axes travel together | `node scripts/kimi-census.mjs` → `CLEAN (members=49 checked=49)` with root enumeration live (`strays=0`); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K terms + legacy terms MATCH, layer terms DRIFT (carried debt); `--selftest` 92/92 (proxy, +21 K cases) and 43/43 (census, +8 K5 cases); occurrence-vs-distinct limit recorded (24 sections name 17 distinct members); wave-3 lane-found label collisions repaired (session-state title K4→K3, binary-secrets K5→K4); `kimi-residue-files.md` (364 L, 3 member sections, 9/9 wd-key recomputations, the 1-byte tui diff re-verified) |
 | 19 | operability (the f_O walk; integer held by the saturating proxy) | A=5, C=10 ⇒ `f_O = 15/18 = 0.8333` ⇒ 8 | A=**6** (`scripts/kimi-census.mjs`, contract `kumitate-kimi-census-v1`, 797 L, 35-case hermetic suite, live `KIMI_CENSUS: CLEAN (members=46 checked=46 chain=12 info=4)` exit 0, `KIMI_ROOT_MISSING` fail-closed verified, secrecy proven via strace — zero reads of the secret members) + C=**11** (census admitted to the executable checklist, item 11) ⇒ `f_O = 17/20 = 0.85` ⇒ **8** (9 needs A+C ≥ 27) | audits A1–A4 (fast lanes, independent re-runs): 4 append-only errata blocks landed, 2 drift annotations (config.toml's secondary `default_model` flipped opencode-go → hyper at 18:15 mid-round — the note snapshots were true at reading time), 1 process defect recorded (an audit lane printed `api_key` values to its own transient output — redacted, no durable artifact touched; future briefs: `grep -c` only, never values); K-block terms frozen (round-19 pre-registration); the census's K-exhaustiveness gap named: `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` undeclared → **K5 residue family pre-registered for round 20** |

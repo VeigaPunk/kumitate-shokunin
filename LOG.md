@@ -1070,3 +1070,18 @@
   occurrence term now credits ~30 distinct members — the distinct-member
   tightening is pre-registered for round 22 and the score will drop there,
   honestly. Cross-domain routed: nothing new for kagi/kengaku/kama.
+- 2026-10-13 — round 22 (free craft, godspeed): the measured state argued for
+  the standing plan — the occurrence-based K_sections (52) carried the known
+  duplicate-one/drop-one hole; the distinct-member tightening (pre-registered
+  round 21) landed via one implementer lane (hyper ds-flash): canonical
+  49-member identities, full-path binding, K_SECTION_AMBIGUOUS warn arm
+  (0 live), selftest 92 → 98/98 with the mutation case that must lower the
+  numerator. The anticipated honest drop was REFUTED: 49/49 members were
+  already named by the round-21 sectionization — the round-21 "~30 distinct"
+  limit was a mis-estimate and is corrected. Score holds at 10, now
+  arithmetically saturated (floor(10 × 49/49)); further movement needs C1k
+  honesty or more members. Godspeed verdicts: operability improved (hole
+  closed by machine check), calibration improved (score means what it says;
+  false limit removed), coverage:kimi-layer unchanged. Stanza re-pinned
+  (K_sections 49, pin.proxy-check e2b63baf…); C2 64→65 re-pinned with this
+  lesson's row (the gate-count rule applied).

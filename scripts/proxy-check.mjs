@@ -40,11 +40,14 @@
  *   member table, so the rules are re-derived here (K1 3, K2 the live child
  *   counts of `agents/secondary/` and `skills/` plus 2, K3 9, K4 9, K5 3; the
  *   drift chain is 1 member; secret members are lstat-kind only, never read).
- *   `K_sections` counts distinct `(note, heading)` pairs over
- *   `corpus/knowledge/kimi-*.md`: a `## ` heading counts when one of its
- *   backticked spans, or one of its `/`-bearing tokens, names a declared or
- *   live member by full path or basename. A missing/odd `--kimi-root` is the
- *   fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
+ *   `K_sections` counts the DISTINCT K members named by the `## ` headings of
+ *   `corpus/knowledge/kimi-*.md`: a heading names a member when one of its
+ *   backticked spans, or one of its `/`-bearing tokens, equals that member's
+ *   full path, or a basename only that member owns (a shared basename binds to
+ *   none and warns `K_SECTION_AMBIGUOUS`). Round-22 amendment: the numerator
+ *   used to count `(note, heading)` OCCURRENCES, which credited one member once
+ *   per section; it now counts each member once. A missing/odd `--kimi-root` is
+ *   the fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
  *
  * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
  *   default     recompute the seventeen terms + the six pins under `--self`,
@@ -113,12 +116,17 @@
  *         (`scripts/kimi-census.mjs`, `kumitate-kimi-census-v1`) is the tool
  *         that names WHICH slot drifted; here a moved tree shows up as
  *         `K_MEMBERS_DRIFT`, not as a fitted number.
- *     K_sections  distinct `(note, heading)` pairs over the
- *         `corpus/knowledge/kimi-*.md` notes: a `## ` heading names a K member
- *         when one of its backticked spans, or one of its whitespace-separated
- *         tokens that contains `/`, equals a member's declared path, a member's
- *         live child path, or any of those by basename. Topic-form headings
- *         name nothing, so they count 0 — the honesty term.
+ *     K_sections  DISTINCT K members named by the `## ` headings over the
+ *         `corpus/knowledge/kimi-*.md` notes: a heading names a member when one
+ *         of its backticked spans, or one of its whitespace-separated tokens
+ *         that contains `/`, equals that member's canonical identity — a member
+ *         path, a counted dir's live child path (`agents/secondary/<lane>.md`,
+ *         `skills/<name>`), or the `config.toml.*.bak` chain as one member
+ *         whatever generation a heading names. A token that is not itself a
+ *         member path binds by basename ONLY when exactly one member owns that
+ *         basename; a shared basename binds to none and warns
+ *         (`K_SECTION_AMBIGUOUS`). Topic-form headings name nothing, and a
+ *         member named by five sections still counts once — the honesty term.
  *     coverage_kimi = floor(10 × C1k/C1k_total × K_sections/K_members); a zero
  *         denominator scores 0, never NaN.
  *   The five derived scores must ALSO equal the integers in the scorecard's
@@ -164,6 +172,9 @@
  *         skipped) AXES_DRIFT
  *   warn  PIN_UNPINNED — a `scripts/*.mjs` file no `pin.*` key covers: pin
  *         coverage is incomplete (advisory; `--strict` promotes it to a gate).
+ *         K_SECTION_AMBIGUOUS — a `kimi-*.md` heading whose only candidate is a
+ *         basename shared by several K members: it names none of them
+ *         (advisory; `--strict` promotes it to a gate).
  *
  * Verdict lines (always the last stdout line)
  *   PROXY: MATCH (A=<a> C=<c> operability=<s>; C1=<x>/<y> C2=<p>/<q>
@@ -348,7 +359,7 @@ const FINDING_KINDS = [
   'COVERAGE_SCRIPT_DRIFT', 'COVERAGE_RUNTIME_DRIFT',
   'C1K_DRIFT', 'C1K_TOTAL_DRIFT', 'K_MEMBERS_DRIFT', 'K_SECTIONS_DRIFT',
   'COVERAGE_KIMI_DRIFT',
-  'PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED',
+  'PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED', 'K_SECTION_AMBIGUOUS',
 ];
 /** Every fail-closed arm the hermetic suite must fire at least once. */
 const FAIL_CLOSED_KINDS = [
@@ -378,7 +389,10 @@ modes:
                inside the row's declared family (out-of-family sections are
                excluded); the kimi-block terms count over --kimi-root (lstat and
                readdir only — secret members are never opened) plus the
-               corpus/knowledge/kimi-*.md headings under --self
+               corpus/knowledge/kimi-*.md headings under --self; K_sections is
+               the count of DISTINCT K members those headings name, and a heading
+               whose only candidate is a basename shared by several members names
+               none of them (warn K_SECTION_AMBIGUOUS)
   --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
   -h | --help  print this text, exit 0
 
@@ -393,7 +407,8 @@ options:
                      a non-directory is refused as KIMI_ROOT_NOT_A_DIR (exit 2),
                      never scored 0
   --json             one machine-readable object on stdout
-  --strict           promote warn-level findings (PIN_UNPINNED) to failure
+  --strict           promote warn-level findings (PIN_UNPINNED,
+                     K_SECTION_AMBIGUOUS) to failure
 
 exit map: 0 match · 1 drift (findings; warnings too under --strict) · 2 fail-closed · 64 usage
 `;
@@ -567,46 +582,67 @@ function layerTerms(rows, files) {
   };
 }
 
-/** The live K member set under `kimiRoot`: counts the slots and names the members. */
+/**
+ * The live K member set under `kimiRoot`: counts the slots and names every
+ * member by its CANONICAL identity — the same 49-member identity
+ * `scripts/kimi-census.mjs` gates. A member file/dir is its path, a counted
+ * dir's member is the live child path, and the `config.toml.*.bak` drift chain
+ * is ONE identity however many generations exist. Only members that count
+ * toward `K_members` are named, so the `K_sections` numerator and the
+ * `K_members` denominator count the same universe. `byBasename` maps each
+ * basename to the identities that own it: a basename owned by more than one
+ * member is ambiguous and binds to none.
+ */
+const CHAIN_MEMBER = 'config.toml.*.bak';
+
 function kMembers(kimiRoot) {
   const rootChildren = listChildren(kimiRoot);
-  const names = new Set();
+  const identities = new Set();
   let members = 0;
   for (const m of K_MEMBER_RULES) {
     if (m.kind === 'chain') {
       const gens = rootChildren.filter((n) => RE_CHAIN.test(n));
-      if (gens.length > 0) members += 1;
-      for (const g of gens) names.add(g);
+      if (gens.length > 0) { members += 1; identities.add(CHAIN_MEMBER); }
       continue;
     }
     const abs = join(kimiRoot, m.path);
     const kind = lstatKind(abs);
-    names.add(m.path);
-    names.add(basename(m.path));
     if (m.kind === 'counted') {
       if (kind === 'dir') {
         const kids = listChildren(abs);
         members += kids.length;
-        for (const k of kids) {
-          names.add(`${m.path}/${k}`);
-          names.add(k);
-        }
+        for (const k of kids) identities.add(`${m.path}/${k}`);
       }
       continue;
     }
     const present = m.secret
       ? (m.kind === 'dir' ? kind === 'dir' : (kind !== 'absent' && kind !== 'dir'))
       : kind === m.kind;
-    if (present) members += 1;
+    if (present) { members += 1; identities.add(m.path); }
   }
-  return { members, names };
+  const byBasename = new Map();
+  for (const id of identities) {
+    const b = basename(id);
+    if (!byBasename.has(b)) byBasename.set(b, new Set());
+    byBasename.get(b).add(id);
+  }
+  return { members, identities, byBasename };
 }
 
-/** Does this `## ` heading name a K member (by full path or basename)? */
-function headingNamesKMember(heading, names) {
+/**
+ * The K members this `## ` heading names, by canonical identity. A backticked
+ * span, or a whitespace-separated token containing `/`, names a member when it
+ * equals that member's full path — or, when it is not itself a member path,
+ * when its basename is owned by exactly ONE member. A basename shared by more
+ * than one member binds to none and is reported in `ambiguous` so the caller can
+ * warn: a bare name that could mean two members must not credit either.
+ */
+function kMembersNamedByHeading(heading, kimi) {
   const tokens = [];
   for (const m of heading.matchAll(/`([^`]+)`/gu)) tokens.push(m[1]);
   for (const t of heading.split(/\s+/u)) if (t.includes('/')) tokens.push(t);
+  const named = new Set();
+  const ambiguous = new Set();
   for (const raw of tokens) {
     const tok = raw
       .replace(/^.*\.kimi-code\//u, '')
@@ -614,18 +650,31 @@ function headingNamesKMember(heading, names) {
       .replace(/[^\w~./*-]+$/u, '')
       .replace(/\/+$/u, '');
     if (tok === '') continue;
-    if (RE_CHAIN.test(tok)) return true;
+    if (RE_CHAIN.test(tok)) { named.add(CHAIN_MEMBER); continue; }
+    if (kimi.identities.has(tok)) { named.add(tok); continue; }
     const base = tok.split('/').filter(Boolean).pop() ?? '';
-    if (names.has(tok) || (base !== '' && names.has(base))) return true;
+    if (base === '') continue;
+    const owners = kimi.byBasename.get(base);
+    if (owners === undefined) continue;
+    if (owners.size > 1) { ambiguous.add(base); continue; }
+    named.add([...owners][0]);
   }
-  return false;
+  return { named, ambiguous };
 }
 
-/** Distinct `(note, heading)` pairs naming a K member across `kimi-*.md` notes. */
-function kSections(self, names) {
+/**
+ * The `K_sections` numerator: how many DISTINCT K members the `## ` headings of
+ * the `kimi-*.md` notes name — the same member counts once, however many
+ * sections or notes name it (occurrence counts let one member be credited five
+ * times). A heading whose only candidate is a basename shared by several
+ * members names nothing and yields a `K_SECTION_AMBIGUOUS` warning.
+ */
+function kSections(self, kimi) {
   const dir = join(self, 'corpus', 'knowledge');
   const rels = walkFiles(dir).filter((r) => RE_KIMI_NOTE.test(basename(r))).sort();
-  const pairs = new Set();
+  const named = new Set();
+  const warnings = [];
+  const seen = new Set();
   for (const rel of rels) {
     const text = readText(join(dir, rel));
     if (text === null) continue;
@@ -634,23 +683,39 @@ function kSections(self, names) {
       if (h === null) continue;
       const heading = h[1].trim();
       if (heading === '') continue;
-      if (headingNamesKMember(heading, names)) pairs.add(`${rel}\u0000${heading}`);
+      const hits = kMembersNamedByHeading(heading, kimi);
+      for (const id of hits.named) named.add(id);
+      for (const b of hits.ambiguous) {
+        const key = `${rel}\u0000${heading}\u0000${b}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        warnings.push({
+          severity: 'warn',
+          kind: 'K_SECTION_AMBIGUOUS',
+          term: b,
+          detail: `${rel}: heading names \`${b}\`, a basename shared by `
+            + `${[...kimi.byBasename.get(b)].sort().join(', ')} — binds to none`,
+        });
+      }
     }
   }
-  return pairs.size;
+  return { count: named.size, warnings };
 }
 
 /** The five K terms, read live from the kimi root plus the scorecard's K rows. */
 function kTerms({ scorecardText, self, kimi }) {
   const kreg = registryCounts(scorecardText, RE_K_ROW);
   const members = kimi.members;
-  const sections = kSections(self, kimi.names);
+  const sections = kSections(self, kimi);
   return {
-    C1k: kreg.covered,
-    C1k_total: kreg.total,
-    K_members: members,
-    K_sections: sections,
-    coverage_kimi: layerCoverage(kreg.covered, kreg.total, sections, members),
+    terms: {
+      C1k: kreg.covered,
+      C1k_total: kreg.total,
+      K_members: members,
+      K_sections: sections.count,
+      coverage_kimi: layerCoverage(kreg.covered, kreg.total, sections.count, members),
+    },
+    warnings: sections.warnings,
   };
 }
 
@@ -661,17 +726,21 @@ function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe,
   const reg = registryCounts(scorecardText);
   const C2 = countLines(readmeText, RE_README_ROW);
   const C2Total = notes.length;
+  const k = kTerms({ scorecardText, self, kimi });
   return {
-    A,
-    C,
-    C1: reg.covered,
-    C1_total: reg.total,
-    C2,
-    C2_total: C2Total,
-    operability: operabilityOf(A, C),
-    coverage: coverageOf(reg.covered, reg.total, C2, C2Total),
-    ...layerTerms(probe.rows, probe.files),
-    ...kTerms({ scorecardText, self, kimi }),
+    terms: {
+      A,
+      C,
+      C1: reg.covered,
+      C1_total: reg.total,
+      C2,
+      C2_total: C2Total,
+      operability: operabilityOf(A, C),
+      coverage: coverageOf(reg.covered, reg.total, C2, C2Total),
+      ...layerTerms(probe.rows, probe.files),
+      ...k.terms,
+    },
+    warnings: k.warnings,
   };
 }
 
@@ -963,10 +1032,13 @@ function runCheck(opts, started) {
   // `kimi-*.md` headings under `--self`. Never a second tree, never a shell-out.
   const kimi = kMembers(opts.kimiRoot);
 
-  const terms = deriveTerms({
+  const derived = deriveTerms({
     self: opts.self, scorecardText, skillText, readmeText, notes, probe, kimi,
   });
-  const findings = [];
+  const terms = derived.terms;
+  // The K-section ambiguity warnings come out of the derivation itself (the
+  // notes are read once, there); the term comparisons append their own.
+  const findings = [...derived.warnings];
   compareTerms(terms, stanza.values, findings);
   const pinStats = comparePins(opts.self, stanza.values, findings);
   compareAxes(scorecardText, terms, findings);
@@ -1657,6 +1729,127 @@ function selfTest() {
         detail: `exit=${res.status} C1k=${j.terms.C1k}/${j.terms.C1k_total} cov=${j.terms.coverage_kimi}`,
       };
     });
+    /* the tightened numerator: DISTINCT members, not occurrences (round 22) --- */
+    check('distinct ≠ occurrence: a duplicated member section + a dropped one lowers the numerator (4→3, never 4)', () => {
+      const fx = kCase('kimi-dup-drop', [], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'),
+          FX_KIMI_NOTE.replace('## `~/.kimi-code/sessions/` — the store\n\nprose\n\n', '')
+            + '\n## `config.toml` — the same member, a second section\n\nprose\n');
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 1 && j.terms.K_sections === 3
+          && j.findings.length === 1 && j.findings[0].kind === 'K_SECTIONS_DRIFT'
+          && j.findings[0].detail === 'K_sections: declared=4 computed=3 delta=-1',
+        detail: `exit=${res.status} K_sections=${j.terms.K_sections} (occurrence would be 4) findings=${JSON.stringify(j.findings.map((x) => x.kind))}`,
+      };
+    });
+    check('basename ambiguity: a basename owned by two members binds to none and warns; a full path still binds', () => {
+      const fx = kCase('kimi-ambiguous', [
+        ['\nK_members=29\n', '\nK_members=30\n'],
+        ['\nK_sections=4\n', '\nK_sections=1\n'],
+        ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+        ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+      ], (f) => {
+        writeFileSync(join(f.kimi, 'agents/secondary/skill-a'), 'fixture member\n');
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'),
+          '# kimi-amb fixture note\n\n'
+          + '## `skill-a` — a bare basename owned by two members\n\nprose\n\n'
+          + '## `skills/skill-a` — the full path binds to one\n\nprose\n');
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      const warn = j.findings.find((x) => x.kind === 'K_SECTION_AMBIGUOUS') ?? {};
+      // Text mode registers the warning kind for the meta-check that every
+      // declared finding kind fires; --strict proves the warning gates.
+      const text = parseFindings(runProxy(args(fx)).stdout);
+      const strict = runProxy(args(fx, ['--strict']));
+      return {
+        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 30
+          && j.warnings === 1 && warn.severity === 'warn' && warn.term === 'skill-a'
+          && String(warn.detail).includes('agents/secondary/skill-a')
+          && String(warn.detail).includes('skills/skill-a')
+          && text.some((x) => x.kind === 'K_SECTION_AMBIGUOUS')
+          && strict.status === 1,
+        detail: `exit=${res.status} K_sections=${j.terms.K_sections} (occurrence would be 2) warnings=${j.warnings} strict=${strict.status} ${warn.detail ?? ''}`,
+      };
+    });
+    check('chain-as-one: two `.bak` generation headings name the CHAIN member once', () => {
+      const fx = kCase('kimi-chain-one', [
+        ['\nK_sections=4\n', '\nK_sections=1\n'],
+        ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+        ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+      ], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'),
+          '# kimi-chain fixture note\n\n'
+          + '## `~/.kimi-code/config.toml.20260101-000000.bak` — generation one\n\nprose\n\n'
+          + '## `~/.kimi-code/config.toml.20260102-000000.bak` — generation two\n\nprose\n');
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 29,
+        detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} (occurrence would be 2)`,
+      };
+    });
+    check('counted-children: a lane-file heading names that lane; a repeat adds no second member', () => {
+      const fx = kCase('kimi-counted-children', [
+        ['\nK_sections=4\n', '\nK_sections=2\n'],
+        ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+        ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+      ], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'),
+          '# kimi-lanes fixture note\n\n'
+          + '## `~/.kimi-code/agents/secondary/sec-a.md` — lane one\n\nprose\n\n'
+          + '## `~/.kimi-code/agents/secondary/sec-b.md` — lane two\n\nprose\n\n'
+          + '## `~/.kimi-code/agents/secondary/sec-a.md` — lane one again\n\nprose\n');
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 0 && j.terms.K_sections === 2 && j.terms.K_members === 29,
+        detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} (occurrence would be 3)`,
+      };
+    });
+    check('zero denominator safety: an empty kimi root ⇒ K_members=0, K_sections=0, coverage_kimi=0 (integer, never NaN)', () => {
+      const fx = kCase('kimi-empty-root', [
+        ['\nK_members=29\n', '\nK_members=0\n'],
+        ['\nK_sections=4\n', '\nK_sections=0\n'],
+        ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+        ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+      ], (f) => {
+        rmSync(f.kimi, { recursive: true, force: true });
+        mkdirSync(f.kimi, { recursive: true });
+      });
+      const res = runProxy(args(fx, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return {
+        ok: res.status === 0 && j.terms.K_members === 0 && j.terms.K_sections === 0
+          && j.terms.coverage_kimi === 0 && Number.isInteger(j.terms.coverage_kimi),
+        detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} cov=${j.terms.coverage_kimi}`,
+      };
+    });
+    check('stanza drift arm: declaring the OCCURRENCE count (2) where distinct is 1 is K_SECTIONS_DRIFT alone', () => {
+      const fx = kCase('kimi-sections-occurrence', [
+        ['\nK_sections=4\n', '\nK_sections=2\n'],
+        ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+        ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+      ], (f) => {
+        fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'),
+          '# kimi-chain fixture note\n\n'
+          + '## `~/.kimi-code/config.toml.20260101-000000.bak` — generation one\n\nprose\n\n'
+          + '## `~/.kimi-code/config.toml.20260102-000000.bak` — generation two\n\nprose\n');
+      });
+      const res = runProxy(args(fx));
+      const k = kindsEq(res, ['K_SECTIONS_DRIFT']);
+      return {
+        ok: res.status === 1 && k.ok
+          && verdictLine(res) === 'PROXY: DRIFT (K_SECTIONS_DRIFT term=K_sections declared=2 computed=1 delta=-1)',
+        detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res)}`,
+      };
+    });
+
     // The fixtures the fail-closed arms below fire on; the arms run in their own
     // section, where the `fc` helper exists.
     const K_BAD_VALUE = kCase('kimi-bad-value', [['\nK_members=29\n', '\nK_members=five\n']]);
