@@ -2,7 +2,7 @@
 
 ## Scope — four surfaces, one of them shape-only by declaration
 
-K5 documents the **binary & version plane** of the host's Kimi Code CLI data
+K4 documents the **binary & version plane** of the host's Kimi Code CLI data
 directory (`~/.kimi-code`, the `getDataDir()` root the binary itself resolves): (1) the two
 managed executables `bin/kimi` and `bin/fd`; (2) the `updates/` directory and what an update
 artifact is; (3) the `server/` runtime surface plus the four secret-shaped siblings
@@ -156,7 +156,40 @@ documents `--port` default `58627`, the bearer token, and `--allowed-host` DNS-r
 check (`bin/kimi @sha256:66f47536… «Run the local Kimi server and open the web UI through
 Remote Control.»`). `rc-qrcode.png` (§below) is the pairing QR for this same surface.
 
-## `server.token`, `device_id`, `region`, `oauth/`, `credentials/` — SHAPE-ONLY census
+## `~/.kimi-code/server.token` — shape-only; the RC bearer token
+
+**Shape-only by declaration — never opened.** Regular file, mode **600**, 43 B; a bearer
+token whose contents are NOT read. Kind/mode/size/mtime are censused in
+§"Shape-only census — the declaration"; the in-binary doc-comment reading of it is in that
+same section.
+
+## `~/.kimi-code/device_id` — shape-only; the 36 B UUID text
+
+**Shape-only by declaration — never opened.** Regular file, mode **600**, 36 B; 36 = UUID
+text length, value NOT printed. Kind/mode/size/mtime are censused in §"Shape-only census —
+the declaration".
+
+## `~/.kimi-code/region` — shape-only; the profile selector
+
+**Shape-only by declaration — never opened.** Regular file, mode 644, 7 B; value `global`,
+a non-secret region marker. `region` (`global`) selects the profile row in §"Update
+mechanism". Kind/mode/size/mtime are censused in §"Shape-only census — the declaration".
+
+## `~/.kimi-code/credentials/` — shape-only; the credential blob
+
+**Shape-only by declaration — never opened.** Directory, mode **700**, holding
+`credentials/kimi-code-env-0e4f99c69cc27850.json` (regular file, mode **600**, 1556 B) — a
+credential blob whose contents are NOT read. Kind/mode/size/mtime are censused in
+§"Shape-only census — the declaration".
+
+## `~/.kimi-code/oauth/` — shape-only; the presence marker
+
+**Shape-only by declaration — never opened.** Directory, mode 755, holding
+`oauth/kimi-code-env-0e4f99c69cc27850` (regular file, 644, **0 B**) — an empty marker;
+contents (none) NOT read. Kind/mode/size/mtime are censused in §"Shape-only census — the
+declaration".
+
+## Shape-only census — the declaration
 
 **No secret file below was opened.** This table is the declaration.
 
@@ -185,7 +218,7 @@ vs `644` on the oauth marker is a consistent secret-classification split. `regio
 files, which this lane did not do. Full credential/minting anatomy belongs to the kagi lane,
 not here.
 
-## `rc-qrcode.png` and `~/.kimi-code/session_index.jsonl` — siblings by shape
+## `~/.kimi-code/rc-qrcode.png`
 
 **`rc-qrcode.png`** (2,323 B, 644, mtime 2026-10-13 16:03:10 — same minute as
 `server.token`): **OBSERVATION** the header is `\x89PNG\r\n\x1a\n` + `IHDR` with width/height
@@ -195,6 +228,8 @@ server-start time is the **Remote-Control pairing QR** — it encodes the `~/.ki
 both are produced by the same first `kimi rc`/`kimi web` boot. It is not a secret surface
 (mode 644, and a QR to a loopback origin). **UNKNOWN:** the encoded payload (reading it would
 require decoding a pairing secret — deliberately not done).
+
+## `~/.kimi-code/session_index.jsonl`
 
 **`~/.kimi-code/session_index.jsonl`** (7,588 B, **600**, 37 lines, mtime 2026-10-13 17:05:07):
 **OBSERVATION** every line is a JSON object with the identical three-key shape

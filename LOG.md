@@ -1052,3 +1052,21 @@
   binary-secrets K5→K4). Goal contract: third and final round closed.
   Carried debt unchanged: OMP-side re-census parked with S2; checklist 7/11
   (three origin-dependent items fail closed on it; the census item is green).
+- 2026-10-13 — round 21 (as pre-registered): operator directive — swarm
+  more, parallelize wider, buckets hyper/opencode-go deepseek-v4.1-flash +
+  zai glm-5.3-flash (alibaba out of credits). Sectionization wave: 6 lanes
+  (opencode-go returned provider 400 x-opencode-session — recorded as a
+  bucket defect, routed to hyper) restructured the kimi-* notes to one
+  `## <full-path>` section per K member; claims preserved, verified by 2
+  explore audit swarms and then a 12-lane read-only verify wave (6 hyper +
+  6 zai) re-resolving all 49 members live: 49/49 OK. Findings: session_index
+  37→38 lines (live drift, new session mid-round; index↔disk 38=38; erratum),
+  file-history tier-1 size range write-time error (corrected 94–1374 B),
+  drift observations recorded as the snapshot class; stale wave-1 family
+  labels repaired (binary-secrets intro K5→K4; round-20 title collisions);
+  shokunin "six probed"/seven-paths nit recorded. Measurement:
+  **coverage:kimi-layer 4 → 10** (K_sections 24→52, floor(10 × 52/49));
+  stanza re-pinned (K_sections 52, coverage_kimi 10, C2 63→64); the
+  occurrence term now credits ~30 distinct members — the distinct-member
+  tightening is pre-registered for round 22 and the score will drop there,
+  honestly. Cross-domain routed: nothing new for kagi/kengaku/kama.

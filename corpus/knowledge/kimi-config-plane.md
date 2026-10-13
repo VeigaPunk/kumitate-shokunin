@@ -37,7 +37,9 @@ config.toml.bak
 Everything below separates **OBSERVATION** (measured on this host, anchor given), **INFERENCE**
 (this lane's reading of measured structure), and **UNKNOWN** (not verifiable from the artifacts).
 
-## `config.toml` — global keys (the only two lines before the first table)
+## `~/.kimi-code/config.toml` — the agent/runtime config
+
+### `config.toml` — global keys (the only two lines before the first table)
 
 ```
 $ sed -n '1,2p' config.toml
@@ -62,7 +64,7 @@ default_permission_mode = "auto"
   mtime `2026-10-13 17:04`), which is a plausible trust-decision store but its contents were not
   read and its semantics are unverified.
 
-## `config.toml` — the provider plane: 7 groups in 8 tables, one section each
+### `config.toml` — the provider plane: 7 groups in 8 tables, one section each
 
 Line anchors are the exact table headers in the live file. The 8 rows below are the **7 provider
 groups** plus the one nested OAuth sub-table (`row 1a`), which is the reason `grep -c
@@ -110,7 +112,7 @@ groups** plus the one nested OAuth sub-table (`row 1a`), which is the reason `gr
   **UNKNOWN** — which of the two files the runtime treats as authoritative is not verifiable from
   names alone; flagged for kagi.
 
-## `config.toml` — the `[models.*]` table structure
+### `config.toml` — the `[models.*]` table structure
 
 **OBSERVATION** — `grep -c '^\[models\.'` = **124 tables**, which decomposes as **122 model rows +
 2 `.overrides` sub-tables** (`~/.kimi-code/config.toml:117` for
@@ -199,7 +201,7 @@ through an Anthropic-shaped endpoint selected per model, not per provider; the r
 `opencode-go` rows inherit the provider `base_url`/`type = "openai"`. **UNKNOWN** — whether the
 runtime requires both keys together is unverified; both are present on all 6 rows.
 
-## `config.toml` — how primary vs secondary lanes are declared
+### `config.toml` — how primary vs secondary lanes are declared
 
 - **Primary lane** = the single global `default_model` at `~/.kimi-code/config.toml:1`
   (`kimi-code/kimi-for-coding`). **OBSERVATION** — this key's value is byte-identical in **all 13
@@ -236,7 +238,7 @@ model named by `secondary_model.default_model` at `:1256`. Measured bucket compo
   this corpus is where the consuming side lives — this note documents only how the pool is
   *declared*.
 
-## `config.toml` — config tail: one section per remaining key group
+### `config.toml` — config tail: one section per remaining key group
 
 | Section (line) | Live values | Notes |
 |---|---|---|
@@ -264,7 +266,7 @@ model named by `secondary_model.default_model` at `:1256`. Measured bucket compo
   built-in web tools; both are OAuth-only (`api_key = ""` + `.oauth` sub-table). **UNKNOWN** —
   whether a non-empty `api_key` would supersede the OAuth store is unverified.
 
-## `tui.toml` — full inventory (all 31 lines accounted for)
+## `~/.kimi-code/tui.toml` — full inventory (all 31 lines accounted for)
 
 **OBSERVATION** — `~/.kimi-code/tui.toml` is 31 L / 1300 B / mode 644, mtime `2026-10-03 18:36`,
 and its header states the split of concerns verbatim: `# Client preferences for kimi-code.` and
@@ -296,7 +298,7 @@ lines are comments. Every key, with anchor and its own inline semantics:
   `:10 disable_feedback_survey = false # …` → `= true # …`. 1301−1300 = 1 byte, entirely explained
   by `false`→`true`. No other line differs.
 
-## The `config.toml` drift chain — 13 generations, oldest → newest
+## `~/.kimi-code/config.toml.*.bak` — the drift chain, 13 generations, oldest → newest
 
 **OBSERVATION** — all 13 files exist side by side in `~/.kimi-code/`, all mode 600, and the bare
 `config.toml.bak` is the **oldest by mtime** (`2026-10-03 18:29`) — despite its unsuffixed name, its

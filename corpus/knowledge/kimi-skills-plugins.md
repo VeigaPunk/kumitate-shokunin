@@ -1,15 +1,16 @@
 # Kimi skills & plugins plane — how skills and plugins resolve
 
+## Scope — the skills and plugins plane of Kimi Code CLI
+
 Plane covered: `~/.kimi-code/skills/` (user skills), `~/.kimi-code/plugins/installed.json`
 (installation manifest), `~/.kimi-code/plugins/managed/kimi-webbridge/` (one managed
 plugin). All reads on this host 2026-10-13. `~/.kimi-code` itself is mode `700`; the
 `skills/` and `plugins/` subtrees are `755`, so the plane is world-readable by design
 while the surrounding home dir is not.
 
-## Surface 1 — `~/.kimi-code/skills/` is a symlink farm, not a content dir
-
-OBSERVATION (`ls -la ~/.kimi-code/skills/`): the directory holds **five entries, all
-symlinks**, zero real files. The skill *content* lives in two external roots.
+OBSERVATION (`ls -la ~/.kimi-code/skills/`): the `skills/` root is a symlink farm, not a
+content dir — the directory holds **five entries, all symlinks**, zero real files. The
+skill *content* lives in two external roots.
 
 | Skill (dir name) | Link target (`readlink`) | SKILL.md lines / bytes | Link mode |
 |---|---|---|---|
@@ -35,7 +36,17 @@ OBSERVATION: the skill dir contains **only** `SKILL.md` (plus `references/` or
 version file at the skill level.
 A skill is defined by `SKILL.md` alone.
 
-### 1.1 `godspeed` — frontmatter L1–8
+UNKNOWN: no frontmatter key beyond `name` / `description` / `metadata` was observed in
+any of the five; whether `metadata` is a recognized harness field or inert YAML is not
+determinable from files on this host.
+
+Each member below is one `## ` section, cited by the **symlink path** as it appears
+under `~/.kimi-code/skills/`; each section notes the `readlink` target it resolves to.
+
+## `~/.kimi-code/skills/godspeed`
+
+Member path `~/.kimi-code/skills/godspeed` is a symlink — `readlink` →
+`/home/vgpnk/Projects/myskills/godspeed`. Frontmatter (L1–8):
 
 - L2 `name: godspeed`
 - L3–7 description (`>` folded scalar), trigger verbatim: *"Triggered by \"godspeed\",
@@ -43,7 +54,10 @@ A skill is defined by `SKILL.md` alone.
 - Body delegates to a second file: L12 *"You follow **one file**: `directive.md` (in this
   skill directory)."* — `directive.md` is 429 B / 9 lines and is the entire posture.
 
-### 1.2 `reverse-engineer-anything` — frontmatter L1–7
+## `~/.kimi-code/skills/reverse-engineer-anything`
+
+Member path `~/.kimi-code/skills/reverse-engineer-anything` is a symlink — `readlink` →
+`/home/vgpnk/.agents/skills/reverse-engineer-anything`. Frontmatter (L1–7):
 
 - L2 `name: reverse-engineer-anything`
 - L3 description (plain scalar), incl. the negative trigger: *"Skip REA for ordinary
@@ -58,7 +72,10 @@ A skill is defined by `SKILL.md` alone.
   `~/.kimi-code/skills/reverse-engineer-anything/references/android-applications.md`,
   `~/.kimi-code/skills/reverse-engineer-anything/references/runtime-observation.md`).
 
-### 1.3 `shokunin` — full internal layout (the assigned deep member)
+## `~/.kimi-code/skills/shokunin`
+
+Member path `~/.kimi-code/skills/shokunin` is a symlink — `readlink` →
+`/home/vgpnk/Projects/myskills/shokunin`. Full internal layout (the assigned deep member).
 
 `SKILL.md` is 213 lines / 11919 B. Frontmatter is the **shortest** of the five:
 L1 `---`, L2 `name: shokunin`, L3 one plain-scalar description line, L4 `---` — no
@@ -108,7 +125,10 @@ family is the fleet driver, which lives at the *fleet repo* root, not the skill:
 INFERENCE: `shokunin`'s pointer block describes a fleet-repo layout that the published
 skill does not carry; only the `protocol/` half shipped.
 
-### 1.4 `ufo` — frontmatter L1–17
+## `~/.kimi-code/skills/ufo`
+
+Member path `~/.kimi-code/skills/ufo` is a symlink — `readlink` →
+`/home/vgpnk/Projects/myskills/ufo`. Frontmatter (L1–17):
 
 - L2 `name: ufo`
 - L3–12 description (`>` folded), trigger verbatim: *"Typing \"ufo\", \"/ufo\", or
@@ -132,7 +152,10 @@ mirror are **byte-identical** —
 `~/.kimi-code/skills/ufo/references/godspeed-core/directive.md` (both 429 B). The
 declared sync gate is therefore satisfied on this host.
 
-### 1.5 `wwkd` — frontmatter L1–13
+## `~/.kimi-code/skills/wwkd`
+
+Member path `~/.kimi-code/skills/wwkd` is a symlink — `readlink` →
+`/home/vgpnk/Projects/myskills/wwkd`. Frontmatter (L1–13):
 
 - L2 `name: wwkd`
 - L3–12 description (`>` folded), trigger verbatim: *"Activate on \"/wwkd\", \"plan
@@ -142,13 +165,11 @@ declared sync gate is therefore satisfied on this host.
   file is the enrichment, and any drift resolves in §5's favor (I9)."*
 - Body L17 opens `# WWKD — Axes-Mapping Posture (ufo L1)` and L27–28 restate the same
   subordination: *"it is enrichment, never a gate (I9; run-logic §5 wins on drift)."*
-- Carries `SHA256SUMS` (see Surface 1); no `references/`, no `metadata:`.
+- Carries `SHA256SUMS` (see `## Scope`); no `references/`, no `metadata:`.
 
-UNKNOWN: no frontmatter key beyond `name` / `description` / `metadata` was observed in
-any of the five; whether `metadata` is a recognized harness field or inert YAML is not
-determinable from files on this host.
+## `~/.kimi-code/plugins/installed.json`
 
-## Surface 2 — `~/.kimi-code/plugins/installed.json` — the versioned install manifest
+The versioned install manifest.
 
 390 B, mode `644`, mtime 2026-10-03T18:06. Full body quoted verbatim:
 
@@ -181,7 +202,9 @@ manifest records **no** hash, signature, or file list, so tamper detection is no
 this schema. UNKNOWN: whether `enabled: false` suppresses a plugin entirely or only its
 tools; no disabled record exists on this host to observe.
 
-## Surface 3 — `~/.kimi-code/plugins/managed/kimi-webbridge` — a managed plugin is a package, not a skill
+## `~/.kimi-code/plugins/managed/kimi-webbridge`
+
+A managed plugin is a package, not a skill.
 
 Layout (measured, `find -L … | sort`), only 3 files total:
 
@@ -291,7 +314,7 @@ outrank user skills by explicit `interface` config.
 |---|---|---|
 | Runtime load telemetry for skills/plugins | **absence** | `grep -i 'skill\|plugin\|webbridge' ~/.kimi-code/logs/kimi-code.log` (7882 B) → *"No non-sensitive matches found"*. Loading leaves no log line; only the rendered prompt listing shows the result. |
 | `builtin://` skills | **opaque** | `check-kimi-code-docs`, `update-config`, `write-goal` have no resolvable file path on this host. |
-| `shokunin` `templates/` + `scripts/` + `commands/` runtime kit | **absent** | Probed MISS in skill dir and in source root `/home/vgpnk/Projects/myskills/` (see 1.3). |
+| `shokunin` `templates/` + `scripts/` + `commands/` runtime kit | **absent** | Probed MISS in skill dir and in source root `/home/vgpnk/Projects/myskills/` (see `~/.kimi-code/skills/shokunin`). |
 | `installed.json` disabled-plugin semantics | **unobservable** | Single record, `enabled: true`; no counterexample. |
 | Secret-adjacent surfaces | **not opened** | `~/.kimi-code/credentials/` (`700`), `~/.kimi-code/oauth/`, `~/.kimi-code/server.token` (43 B, `600`) noted shape-only, never read. |
 
@@ -325,6 +348,7 @@ outrank user skills by explicit `interface` config.
 `stat` modes for all of the above; `~/.kimi-code/{config.toml,tui.toml}` grepped
 shape-only; `~/.kimi-code/logs/kimi-code.log` grepped for load lines; rendered skill
 listing of this session (scope grouping and precedence rule text).
+
 ## Errata (round-19 audit A2, 2026-10-13, append-only)
 
 - **Nits (three counts):** live `config.toml` section count at audit time =

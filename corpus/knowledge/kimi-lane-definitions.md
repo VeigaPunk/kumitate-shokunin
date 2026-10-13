@@ -16,6 +16,9 @@ The assignment named "sec-fast-* and sec-mid-*"; the directory actually holds a
 `sec-strong-*` prefix is a correction to the assignment wording, not an extra
 surface.
 
+Every one of the 18 lane files also has its own `## ` member section below,
+headed by the lane file's full path — the per-member probe a non-author re-runs.
+
 ## Family schema
 
 Every lane file is identical in shape: 5-line YAML frontmatter
@@ -69,7 +72,7 @@ by an `overrides` sub-table — `~/.kimi-code/config.toml:118` `default_effort =
 the xhigh id) and `~/.kimi-code/config.toml:652` `default_effort = "low"` (for the low id)
 (OBSERVATION, both blocks read).
 
-## The 18-lane matrix
+## Lane matrix
 
 Alias: `$A = ~/.kimi-code/agents/secondary` (lane file), `cfg = ~/.kimi-code/config.toml`.
 `cfg-model` is the `[models."<id>"]` header line; `cfg-reg` is the
@@ -99,6 +102,78 @@ Alias: `$A = ~/.kimi-code/agents/secondary` (lane file), `cfg = ~/.kimi-code/con
 Bucket counts: FAST 7, MIDDLE 5, STRONG 6 = 18 (OBSERVATION). Lane ids are
 `sec-<bucket>-<lane>-<model>`; the `<lane>` token is `zai`, `hyper`, `tp1`,
 `tp2`, `tp3` (OBSERVATION from the basenames).
+
+## `~/.kimi-code/agents/secondary/sec-fast-zai-flash.md`
+
+FAST bucket; pinned model `zai-coding-plan/glm-5.3-flash`; cfg-model `~/.kimi-code/config.toml:631`, cfg-reg `~/.kimi-code/config.toml:1259`. Pool default — explore/review/summary (`~/.kimi-code/agents/secondary/sec-fast-zai-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-zai-flash-low.md`
+
+FAST bucket; pinned model `zai-coding-plan/glm-5.3-flash-low`; cfg-model `~/.kimi-code/config.toml:641`, cfg-reg `~/.kimi-code/config.toml:1260`. LOW effort — grep-and-report/mechanical (`~/.kimi-code/agents/secondary/sec-fast-zai-flash-low.md:3-4`); the effort pin is the `overrides.default_effort = "low"` sub-table (see `### Effort-pinned mutants`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-hyper-glm-flash.md`
+
+FAST bucket; pinned model `hyper/glm-5.3-flash`; cfg-model `~/.kimi-code/config.toml:741`, cfg-reg `~/.kimi-code/config.toml:1261`. Provider diversity off zai/token-plan (`~/.kimi-code/agents/secondary/sec-fast-hyper-glm-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-hyper-ds-flash.md`
+
+FAST bucket; pinned model `hyper/deepseek-v4.1-flash`; cfg-model `~/.kimi-code/config.toml:778`, cfg-reg `~/.kimi-code/config.toml:1262`. Non-GLM fast lane; token-plan saturated (`~/.kimi-code/agents/secondary/sec-fast-hyper-ds-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-tp1-ds-flash.md`
+
+FAST bucket; pinned model `alibaba-token-plan/deepseek-v4.1-flash`; cfg-model `~/.kimi-code/config.toml:129`, cfg-reg `~/.kimi-code/config.toml:1263`. Primary token-plan fast lane (`~/.kimi-code/agents/secondary/sec-fast-tp1-ds-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-tp2-ds-flash.md`
+
+FAST bucket; pinned model `alibaba-token-plan-2/deepseek-v4.1-flash`; cfg-model `~/.kimi-code/config.toml:309`, cfg-reg `~/.kimi-code/config.toml:1264`. Key-2 overflow (`~/.kimi-code/agents/secondary/sec-fast-tp2-ds-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-fast-tp3-ds-flash.md`
+
+FAST bucket; pinned model `alibaba-token-plan-3/deepseek-v4.1-flash`; cfg-model `~/.kimi-code/config.toml:489`, cfg-reg `~/.kimi-code/config.toml:1265`. Key-3 overflow (`~/.kimi-code/agents/secondary/sec-fast-tp3-ds-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-mid-tp1-qwen-flash.md`
+
+MIDDLE bucket; pinned model `alibaba-token-plan/qwen3.8-flash`; cfg-model `~/.kimi-code/config.toml:186`, cfg-reg `~/.kimi-code/config.toml:1266`. Default coder delegate (`~/.kimi-code/agents/secondary/sec-mid-tp1-qwen-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-mid-tp2-qwen-flash.md`
+
+MIDDLE bucket; pinned model `alibaba-token-plan-2/qwen3.8-flash`; cfg-model `~/.kimi-code/config.toml:366`, cfg-reg `~/.kimi-code/config.toml:1267`. Key-2 coder (`~/.kimi-code/agents/secondary/sec-mid-tp2-qwen-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-mid-tp3-qwen-flash.md`
+
+MIDDLE bucket; pinned model `alibaba-token-plan-3/qwen3.8-flash`; cfg-model `~/.kimi-code/config.toml:546`, cfg-reg `~/.kimi-code/config.toml:1268`. Key-3 coder (`~/.kimi-code/agents/secondary/sec-mid-tp3-qwen-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-mid-zai-glm-5-turbo.md`
+
+MIDDLE bucket; pinned model `zai-coding-plan/glm-5-turbo`; cfg-model `~/.kimi-code/config.toml:693`, cfg-reg `~/.kimi-code/config.toml:1269`. zai coder, 200k context (`~/.kimi-code/agents/secondary/sec-mid-zai-glm-5-turbo.md:3,7`).
+
+## `~/.kimi-code/agents/secondary/sec-mid-hyper-qwen-flash.md`
+
+MIDDLE bucket; pinned model `hyper/qwen3.8-flash`; cfg-model `~/.kimi-code/config.toml:849`, cfg-reg `~/.kimi-code/config.toml:1270`. Hyper coder (`~/.kimi-code/agents/secondary/sec-mid-hyper-qwen-flash.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-tp1-qwen-max.md`
+
+STRONG bucket; pinned model `alibaba-token-plan/qwen3.8-max`; cfg-model `~/.kimi-code/config.toml:97`, cfg-reg `~/.kimi-code/config.toml:1271`. Plan/hard subtasks (`~/.kimi-code/agents/secondary/sec-strong-tp1-qwen-max.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-tp1-qwen-max-xhigh.md`
+
+STRONG bucket; pinned model `alibaba-token-plan/qwen3.8-max-xhigh`; cfg-model `~/.kimi-code/config.toml:107`, cfg-reg `~/.kimi-code/config.toml:1272`. XHIGH effort — the single hardest subtask (`~/.kimi-code/agents/secondary/sec-strong-tp1-qwen-max-xhigh.md:3-4`); the effort pin is the `overrides.default_effort = "xhigh"` sub-table (see `### Effort-pinned mutants`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-tp2-qwen-max.md`
+
+STRONG bucket; pinned model `alibaba-token-plan-2/qwen3.8-max`; cfg-model `~/.kimi-code/config.toml:290`, cfg-reg `~/.kimi-code/config.toml:1273`. Key-2 hard subtasks (`~/.kimi-code/agents/secondary/sec-strong-tp2-qwen-max.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-tp3-qwen-max.md`
+
+STRONG bucket; pinned model `alibaba-token-plan-3/qwen3.8-max`; cfg-model `~/.kimi-code/config.toml:470`, cfg-reg `~/.kimi-code/config.toml:1274`. Key-3 hard subtasks (`~/.kimi-code/agents/secondary/sec-strong-tp3-qwen-max.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-zai-glm-53.md`
+
+STRONG bucket; pinned model `zai-coding-plan/glm-5.3`; cfg-model `~/.kimi-code/config.toml:702`, cfg-reg `~/.kimi-code/config.toml:1275`. zai hard reasoning (`~/.kimi-code/agents/secondary/sec-strong-zai-glm-53.md:3-4`).
+
+## `~/.kimi-code/agents/secondary/sec-strong-hyper-qwen-max.md`
+
+STRONG bucket; pinned model `hyper/qwen3.8-max`; cfg-model `~/.kimi-code/config.toml:759`, cfg-reg `~/.kimi-code/config.toml:1276`. Hyper strong reasoning (`~/.kimi-code/agents/secondary/sec-strong-hyper-qwen-max.md:3-4`).
 
 ## Cross-reference: lanes ↔ `~/.kimi-code/config.toml`
 
