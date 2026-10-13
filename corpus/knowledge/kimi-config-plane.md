@@ -422,7 +422,7 @@ default_model = "zai-coding-plan/glm-5.3-flash"          ← replaced, not lost
   note's live row (40,605 B, sha `6a0345c7…`, mtime 17:00:05,
   `default_model opencode-go/deepseek-v4.1-flash`) was measured true at
   note time; the live file at 18:15:19 reads 40,599 B, sha `eae8e021…`,
-  and `config.toml:1256` = `default_model = "hyper/deepseek-v4.1-flash"`.
+  and `~/.kimi-code/config.toml:1256` = `default_model = "hyper/deepseek-v4.1-flash"`.
   config.toml is a mutating substrate — every live-row claim in this note
   carries its snapshot time and is expected to drift; the drift narrative
   (the `.bak` chain) is the durable part.
