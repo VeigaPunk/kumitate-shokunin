@@ -11,12 +11,18 @@
  *                              [--selftest|--self-test] [--integrations]
  *
  * Grammar
- *   Token census: single-backtick spans outside ``` fences (SKILL.md + corpus/**).
- *   Span pairing is line-local: within a line, backticks pair left-to-right and a
- *   line with an odd count leaves its final backtick unpaired, so no span crosses
- *   a newline (an escaped `\`` is a literal, never a delimiter). Multi-line inline
- *   spans are not part of this grammar — the corpus does contain them, so their
- *   content reads as prose (the round-26 finding recorded in findSpans).
+ *   Token census: single-backtick spans and `«…»` verbatim-quote spans outside
+ *   ``` fences (SKILL.md + corpus/**).
+ *   Quote pairing runs first: a `«` opens and the next `»` closes, and the pair
+ *   may cross newlines — the house's multi-line verbatim-quote convention (e.g.
+ *   corpus/knowledge/kimi-binary-secrets.md:64-68). A lone `«` stays prose, never
+ *   an error. Quoted content is span content, so a citation inside a quote is
+ *   censused, and each byte is covered by exactly one span (a quote nested in a
+ *   backtick span, or the other way round, is never counted twice).
+ *   Backtick pairing is line-local: within a line, backticks pair left-to-right
+ *   and a line with an odd count leaves its final backtick unpaired, so no
+ *   backtick span crosses a newline (an escaped `\`` is a literal, never a
+ *   delimiter). Multi-line backtick spans are not part of this grammar.
  *   Fence byte-ranges are masked (spaces, same length, newlines kept) before the
  *   span/prose/ref scans, so a fence marker can never pair with an inline span's
  *   backtick. Detection is marker-symmetric (``` closes ```, ~~~ closes ~~~, no
@@ -518,6 +524,59 @@ function isEscapedBacktick(line, i) {
 }
 
 /**
+ * Verbatim-quote spans — the house's `«…»` convention, the round-28 repair of the
+ * round-26 multi-line coverage loss. A `«` opens and the next `»` closes; the pair
+ * may cross newlines (corpus/knowledge/kimi-binary-secrets.md:64-68 wraps its
+ * quotes across lines). A `«` with no following `»` is left as prose — the grammar
+ * never invents a span from a lone delimiter. The span's content is the quoted
+ * bytes between the delimiters; the delimiters themselves are never citation-shaped.
+ */
+const QUOTE_OPEN = '\u00ab';
+const QUOTE_CLOSE = '\u00bb';
+
+function findQuoteSpans(text, fences) {
+  const inFence = (i) => fences.some(([a, b]) => i >= a && i < b);
+  const spans = [];
+  let i = 0;
+  for (;;) {
+    const a = text.indexOf(QUOTE_OPEN, i);
+    if (a < 0) return spans;
+    if (inFence(a)) { i = a + 1; continue; }
+    const b = text.indexOf(QUOTE_CLOSE, a + 1);
+    if (b < 0 || b === a + 1) return spans; // unpaired / empty « stays prose
+    spans.push({ start: a, end: b + 1 });
+    i = b + 1;
+  }
+}
+
+/**
+ * A span's raw content with the byte ranges owned by a nested span blanked out
+ * (same length, newlines kept). A byte is covered by exactly one span, so where a
+ * `«…»` quote sits inside a backtick span the backtick span drops the quoted bytes
+ * and the quote carries them, and where the backticks sit inside the quote it is
+ * the other way round (round-28 no-double-count invariant).
+ */
+function clipSpanRaw(text, start, end, ranges) {
+  const chars = text.slice(start, end).split('');
+  for (const [a, b] of ranges) {
+    const lo = Math.max(a, start), hi = Math.min(b, end);
+    for (let i = lo; i < hi; i++) if (chars[i - start] !== '\n') chars[i - start] = ' ';
+  }
+  return chars.join('');
+}
+
+/**
+ * The ranges of the OTHER delimiter form that are nested in this span — i.e. the
+ * ones this span must not carry. A range that CONTAINS this span is its parent,
+ * not its child, so it is left out: in `` `«inline»` `` the backtick span drops the
+ * quote, while the quote keeps its content (clipping it there would blank both
+ * copies and lose the bytes entirely).
+ */
+function innerRanges(ranges, span) {
+  return ranges.filter(([a, b]) => !(a <= span.start && b >= span.end));
+}
+
+/**
  * Inline-code spans, paired line-locally — repair of the round-23 pairing-parity
  * residual. The previous grammar paired backticks with /`([^`]+)`/g across the
  * whole document, so one escaped backtick or one odd run of backticks flipped the
@@ -526,34 +585,46 @@ function isEscapedBacktick(line, i) {
  * kimi-binary-secrets.md / kimi-modes-machinery.md at round 23) while other spans
  * in the same files re-paired. Pairing is now confined to each line: backticks
  * pair left-to-right and a line with an odd count leaves its final backtick
- * unpaired — a span never crosses a newline.
+ * unpaired — a backtick span never crosses a newline.
  *
- * Multi-line inline-code spans are not part of this grammar, and the corpus does
- * use them (e.g. corpus/knowledge/kimi-binary-secrets.md:64-68, whose `«…»`
- * verbatim quotes run across lines). Their content therefore reads as prose here,
- * which resolves silently but is not reported; the house style favours
- * single-line citations. Recorded as the round-26 finding, not supported.
+ * The `«…»` verbatim quotes are extracted FIRST (round 28) and are the one span
+ * form that crosses newlines: a multi-line backtick span is still not part of the
+ * grammar, so the corpus's multi-line citations read as prose unless the author
+ * wraps them in the quote convention the corpus already speaks. Pairing inside a
+ * quote is the same line-local backtick pairing, so a citation the author wrote in
+ * backticks inside a quote is still found; the two forms clip each other's raw so
+ * no byte is ever censused twice.
  */
 function findSpans(text, fences) {
+  const quotes = findQuoteSpans(text, fences);
   const inFence = (i) => fences.some(([a, b]) => i >= a && i < b);
-  const spans = [];
+  const ticks = [];
   let off = 0;
   for (const line of text.split('\n')) {
     const lineStart = off;
     off += line.length + 1;
     if (inFence(lineStart)) continue;
-    const ticks = [];
+    const marks = [];
     for (let i = 0; i < line.length; i++) {
       if (line[i] !== '`' || isEscapedBacktick(line, i)) continue;
-      ticks.push(lineStart + i);
+      marks.push(lineStart + i);
     }
-    for (let k = 0; k + 1 < ticks.length; k += 2) {
-      const start = ticks[k], end = ticks[k + 1] + 1;
+    for (let k = 0; k + 1 < marks.length; k += 2) {
+      const start = marks[k], end = marks[k + 1] + 1;
       if (end - start <= 2) continue; // adjacent backticks pair to nothing
-      spans.push({ raw: text.slice(start + 1, end - 1), start, end });
+      ticks.push({ start, end });
     }
   }
-  return spans;
+  const quoteRanges = quotes.map((q) => [q.start, q.end]);
+  const tickRanges = ticks.map((t) => [t.start, t.end]);
+  return [
+    ...quotes.map((q) => ({
+      raw: clipSpanRaw(text, q.start + 1, q.end - 1, innerRanges(tickRanges, q)), start: q.start, end: q.end,
+    })),
+    ...ticks.map((t) => ({
+      raw: clipSpanRaw(text, t.start + 1, t.end - 1, innerRanges(quoteRanges, t)), start: t.start, end: t.end,
+    })),
+  ].sort((a, b) => a.start - b.start);
 }
 
 function unwrap(raw, base) {
@@ -1242,9 +1313,17 @@ function analyzeDoc(rel, ctx) {
 
   const linesOf2 = (content, a, b) => ({ text: content.split('\n').slice(a - 1, b).join('\n') });
 
+  // The innermost containing span owns a byte: with `«…»` quotes a span can now
+  // nest inside a backtick span (and vice versa), and the nested span is the one
+  // whose raw carries that byte (see clipSpanRaw). For the disjoint spans of the
+  // backtick-only grammar this is the same span the old first-hit scan returned.
   const spanIndexAt = (off) => {
-    for (let i = 0; i < spans.length; i++) if (off >= spans[i].start && off < spans[i].end) return i;
-    return -1;
+    let best = -1;
+    for (let i = 0; i < spans.length; i++) {
+      if (off < spans[i].start || off >= spans[i].end) continue;
+      if (best < 0 || spans[i].end - spans[i].start < spans[best].end - spans[best].start) best = i;
+    }
+    return best;
   };
   const symbolsForOff = (off, excludeWord) => {
     const si = spanIndexAt(off);
@@ -1706,6 +1785,28 @@ Shorthand: \`cli:1\` resolves through the alias map.
     `The kimi binary (~/.kimi-code/bin/kimi) carries a strings region `
     + `${BT}src/utils/remote-control-qr.ts${BT} at byte 142051126, and a mapped one `
     + `${BT}src/utils/remote-control-ok.ts${BT} too.`));
+
+  // Round-28 quote fixtures. `quote-spans.md` carries the house `«…»`
+  // verbatim-quote convention: a quote crossing three lines (one span, content
+  // preserved), a backticked citation inside a quote (the line-local backtick
+  // pairing runs inside the quote too), a backticked `«inline»` pair and a
+  // backticked quote carrying a citation (each byte owned by exactly one span,
+  // so a citation is reported once, never twice), a quote inside a fence (never
+  // a span — the round-16 masking still wins), and a lone `«` on the LAST line
+  // (nothing follows it, so it stays prose and no span is invented).
+  const GQ = '\u00ab';
+  const GQc = '\u00bb';
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'quote-spans.md'), fenceDoc(
+    `# round-28 fixture: the ${GQ}…${GQc} verbatim-quote convention`, '',
+    `A three-line quote: ${GQ}first line of the quote`,
+    `second line carries a real citation ${BT}scripts/real.mjs:1${BT} inside it`,
+    `third line closes the quote.${GQc}`, '',
+    `A backticked ${BT}${GQ}inline${GQc}${BT} pair is one span, not two.`, '',
+    `A backticked quote with a citation: ${BT}${GQ}scripts/real.mjs:2${GQc}${BT}.`, '',
+    `A plain citation in a quote: ${GQ}see scripts/other-lib/base.mjs here${GQc}.`, '',
+    `${BT}config/app.json${BT} after the quote block is still found.`, '',
+    F3, `${GQ}quoted ${BT}scripts/no-such-file.mjs${BT} inside a fence${GQc}`, F3, '',
+    `A lone opener ${GQ} stays prose to the end of the document.`));
 }
 
 function selfTest(opts) {
@@ -1963,12 +2064,12 @@ function selfTest(opts) {
       return { ok: p.spans.length === 1 && raws[0] === 'lone',
         detail: `spans=${JSON.stringify(raws)}` };
     });
-    check('pairing: no span ever crosses a newline (grammar invariant)', () => {
+    check('pairing: no backtick span ever crosses a newline (grammar invariant)', () => {
       const names = ['pairing-odd-line.md', 'pairing-escaped.md', 'pairing-trailing.md', 'pairing-fence-both.md'];
       const bad = names.flatMap((n) => pairProbe(n).spans
         .filter((s) => s.raw.includes('\n'))
         .map((s) => `${n}:${JSON.stringify(s.raw.slice(0, 24))}`));
-      return { ok: bad.length === 0, detail: bad.length ? bad.join(' ') : 'all spans single-line' };
+      return { ok: bad.length === 0, detail: bad.length ? bad.join(' ') : 'all backtick spans single-line' };
     });
     check('R23 repro under line-local pairing: tokens before AND after a ``` fence are both found', () => {
       const before = fenceHits('pairing-fence-both.md', 'scripts/real.mjs');
@@ -2041,6 +2142,85 @@ function selfTest(opts) {
       const ok = hits.find((f) => f.kind === 'OK' && f.rung === 'src');
       return { ok: Boolean(ok) && !hits.some((f) => f.kind === 'FP_EXEMPT'),
         detail: hits.length ? `${hits.map((f) => `${f.kind}/${f.severity}[${f.rung}]`).join(', ')}` : 'no finding' };
+    });
+
+    // round-28 ─ the `«…»` verbatim-quote convention (repair of the round-26
+    // multi-line coverage loss: the corpus's quotes wrap across lines, and the
+    // line-local backtick grammar alone read their content as prose).
+    const quoteProbe = (name) => {
+      const text = readFileSync(join(selfRoot, 'corpus', 'knowledge', name), 'utf8');
+      const fences = findFences(text);
+      const masked = maskFences(text, fences);
+      return { text, fences, masked, spans: findSpans(masked, fences) };
+    };
+    const QF = 'quote-spans.md';
+    const quoteHits = (token) => fenceHits(QF, token);
+    // every byte a span's raw does NOT carry verbatim must be owned by a span
+    // nested inside it — the no-double-count invariant, checked structurally.
+    const clipViolations = (p) => {
+      const bad = [];
+      for (const s of p.spans) {
+        const nested = p.spans.filter((o) => o !== s && o.start >= s.start && o.end <= s.end);
+        const owned = (i) => !nested.some((o) => i >= o.start && i < o.end);
+        for (let i = s.start + 1; i < s.end - 1; i++) {
+          const want = p.masked[i];
+          if (owned(i) && s.raw[i - s.start - 1] !== want) bad.push(`${s.start}+${i - s.start - 1}`);
+        }
+      }
+      return bad;
+    };
+
+    check('R28 quote: a «…» span crossing three lines is ONE span, content preserved', () => {
+      const p = quoteProbe(QF);
+      const hit = p.spans.filter((s) => s.raw.includes('first line of the quote'));
+      return {
+        ok: hit.length === 1 && hit[0].raw.includes('\n')
+          && hit[0].raw.includes('third line closes the quote.')
+          && hit[0].raw.includes('second line carries a real citation'),
+        detail: hit.length === 1
+          ? `one span, ${hit[0].raw.split('\n').length} lines: ${JSON.stringify(hit[0].raw.slice(0, 48))}`
+          : `${hit.length} spans matched`,
+      };
+    });
+    check('R28 quote: an unpaired « stays prose — no span is invented', () => {
+      const p = quoteProbe(QF);
+      const bad = p.spans.filter((s) => s.raw.includes('stays prose to the end'));
+      const errs = fenceHits(QF, 'stays').length;
+      return { ok: bad.length === 0 && errs === 0,
+        detail: `spansOverLoneOpener=${bad.length} findingsForLoneText=${errs}` };
+    });
+    check('R28 quote: a backticked citation INSIDE a quote is still found', () => {
+      const hit = quoteHits('scripts/real.mjs').filter((f) => f.ref === ':1');
+      return { ok: hit.length === 1 && hit[0].kind === 'OK' && hit[0].rung === 'src',
+        detail: hit.length ? `${hit.length}x ${hit[0].kind} ${hit[0].message}` : 'lost (no finding)' };
+    });
+    check('R28 quote: a plain citation inside a quote is span content', () => {
+      const hit = quoteHits('scripts/other-lib/base.mjs');
+      return { ok: hit.length === 1 && hit[0].kind === 'OK',
+        detail: hit.length ? `${hit[0].kind}/${hit[0].severity} ${hit[0].message}` : 'lost (no finding)' };
+    });
+    check('R28 quote: a backticked «inline» pair is one span (no double count)', () => {
+      const p = quoteProbe(QF);
+      const inline = p.spans.filter((s) => s.raw.trim() === 'inline');
+      return { ok: inline.length === 1, detail: `spansWithInlineContent=${inline.length}` };
+    });
+    check('R28 quote: a backticked quote carrying a citation counts once', () => {
+      const hit = quoteHits('scripts/real.mjs').filter((f) => f.ref === ':2');
+      const bogus = hit.filter((f) => f.severity === 'error');
+      return { ok: hit.length === 1 && hit[0].kind === 'OK' && bogus.length === 0,
+        detail: hit.length ? `${hit.length}x ${hit.map((f) => `${f.kind}/${f.severity}`).join(', ')}` : 'lost (no finding)' };
+    });
+    check('R28 quote: a «…» inside a fence is never a span (round-16 masking still wins)', () => {
+      const p = quoteProbe(QF);
+      const inside = p.spans.filter((s) => s.raw.includes('quoted'));
+      const found = quoteHits('scripts/no-such-file.mjs').length;
+      return { ok: inside.length === 0 && found === 0,
+        detail: `fencedQuoteSpans=${inside.length} findingsForFencedCitation=${found}` };
+    });
+    check('R28 quote: no byte is censused twice (span-raw coverage invariant)', () => {
+      const bad = ['quote-spans.md', 'pairing-escaped.md', 'pairing-odd-line.md']
+        .flatMap((n) => clipViolations(quoteProbe(n)).map((b) => `${n}:${b}`));
+      return { ok: bad.length === 0, detail: bad.length ? bad.slice(0, 6).join(' ') : 'every raw byte is owned exactly once' };
     });
 
     // round-24 ─ the derived --src default (bare invocation). A bare run carries

@@ -1156,3 +1156,18 @@
   around; root cause queued. Selftest 41→50/50; pin re-pinned; C2 69→70.
   Godspeed verdicts: calibration/quality improved, operability improved,
   coverage/freshness unchanged.
+- 2026-10-14 — round 28 (quote-grammar fix + verify lane, hyper): the «…»
+  verbatim-quote grammar lands — paired quotes extracted whole, cross-line
+  by design, no-double-count byte invariant, nesting-aware span lookup;
+  selftest 50→58/58 (+8, mutation control 55/58); zero vanished findings at
+  any severity (verify-lane key diff 981=981); pin re-pinned. The verify
+  lane graded the round's expectation DEFECT — the round-26 losses did not
+  return — and the refutation corrects the record: round-6-aggregator-audit
+  has ZERO « (its loss is multi-line backtick spans, a different still-open
+  class now named with its 5 real lost citations: AXES.md, SKILL.md,
+  corpus/, loop-driver.md, fleet-dispatcher.mjs:36); binary-secrets' −30
+  was mostly emphasis noise the parity fix correctly removed. Actual
+  restoration +2 findings + structural invariants. The multi-line-backtick
+  class is queued with its ambiguity tradeoff stated. C2 70→71. Godspeed
+  verdicts: operability/calibration/quality improved, coverage unchanged
+  (the loss class is named, not fixed — honest).
