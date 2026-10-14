@@ -12,6 +12,11 @@
  *
  * Grammar
  *   Token census: single-backtick spans outside ``` fences (SKILL.md + corpus/**).
+ *   Span pairing is line-local: within a line, backticks pair left-to-right and a
+ *   line with an odd count leaves its final backtick unpaired, so no span crosses
+ *   a newline (an escaped `\`` is a literal, never a delimiter). Multi-line inline
+ *   spans are not part of this grammar — the corpus does contain them, so their
+ *   content reads as prose (the round-26 finding recorded in findSpans).
  *   Fence byte-ranges are masked (spaces, same length, newlines kept) before the
  *   span/prose/ref scans, so a fence marker can never pair with an inline span's
  *   backtick. Detection is marker-symmetric (``` closes ```, ~~~ closes ~~~, no
@@ -394,14 +399,15 @@ function findFences(text) {
 }
 
 /**
- * Fence masking — repair of the round-16 fence defect. `findSpans` pairs
- * /`([^`]+)`/g across the whole text, so the three backticks of a ``` fence line
- * were consumed by that pairing: the opening backtick of the next inline span was
- * eaten and every backticked citation after the fence vanished from the census
- * (dead citations smuggled past the gate). ~~~ fences carry no backtick, so they
- * never shifted anything. Replacing each fence byte-range with spaces of the same
- * length — newlines kept, so positions and line structure are preserved — makes
- * fence markers invisible to the span/prose/ref scans that run next.
+ * Fence masking — repair of the round-16 fence defect. The span grammar then in
+ * force paired backticks with /`([^`]+)`/g across the whole document, so the
+ * three backticks of a ``` fence line were consumed by that pairing: the opening
+ * backtick of the next inline span was eaten and every backticked citation after
+ * the fence vanished from the census (dead citations smuggled past the gate).
+ * ~~~ fences carry no backtick, so they never shifted anything. Replacing each
+ * fence byte-range with spaces of the same length — newlines kept, so positions
+ * and line structure are preserved — makes fence markers invisible to the
+ * span/prose/ref scans that run next.
  */
 function maskFences(text, fences) {
   if (!fences.length) return text;
@@ -414,15 +420,53 @@ function maskFences(text, fences) {
   return chars.join('');
 }
 
+/**
+ * A backtick preceded by an odd run of backslashes is escaped (`\``) and is a
+ * literal, never a span delimiter. The corpus writes such backticks inside code
+ * spans (e.g. a `grep -c '^| \`knowledge/' …` command); counting them as
+ * delimiters splits the span and drops the citations it carries.
+ */
+function isEscapedBacktick(line, i) {
+  let n = 0;
+  for (let j = i - 1; j >= 0 && line[j] === '\\'; j--) n++;
+  return n % 2 === 1;
+}
+
+/**
+ * Inline-code spans, paired line-locally — repair of the round-23 pairing-parity
+ * residual. The previous grammar paired backticks with /`([^`]+)`/g across the
+ * whole document, so one escaped backtick or one odd run of backticks flipped the
+ * parity of every line below it: citations that had resolved were silently
+ * dropped (13 across executable-scorecard.md / round-6-aggregator-audit.md /
+ * kimi-binary-secrets.md / kimi-modes-machinery.md at round 23) while other spans
+ * in the same files re-paired. Pairing is now confined to each line: backticks
+ * pair left-to-right and a line with an odd count leaves its final backtick
+ * unpaired — a span never crosses a newline.
+ *
+ * Multi-line inline-code spans are not part of this grammar, and the corpus does
+ * use them (e.g. corpus/knowledge/kimi-binary-secrets.md:64-68, whose `«…»`
+ * verbatim quotes run across lines). Their content therefore reads as prose here,
+ * which resolves silently but is not reported; the house style favours
+ * single-line citations. Recorded as the round-26 finding, not supported.
+ */
 function findSpans(text, fences) {
   const inFence = (i) => fences.some(([a, b]) => i >= a && i < b);
   const spans = [];
-  const re = /`([^`]+)`/g;
-  let m;
-  while ((m = re.exec(text))) {
-    const start = m.index, end = m.index + m[0].length;
-    if (inFence(start) || inFence(end - 1)) continue;
-    spans.push({ raw: m[1], start, end });
+  let off = 0;
+  for (const line of text.split('\n')) {
+    const lineStart = off;
+    off += line.length + 1;
+    if (inFence(lineStart)) continue;
+    const ticks = [];
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] !== '`' || isEscapedBacktick(line, i)) continue;
+      ticks.push(lineStart + i);
+    }
+    for (let k = 0; k + 1 < ticks.length; k += 2) {
+      const start = ticks[k], end = ticks[k + 1] + 1;
+      if (end - start <= 2) continue; // adjacent backticks pair to nothing
+      spans.push({ raw: text.slice(start + 1, end - 1), start, end });
+    }
   }
   return spans;
 }
@@ -1522,6 +1566,30 @@ Shorthand: \`cli:1\` resolves through the alias map.
     '# fence fixture: alignment self-heal', '',
     `${BT}scripts/real.mjs${BT} before the fence.`, '', F3, 'fenced body text', F3, '',
     `${BT}config/app.json${BT} after the fence.`));
+
+  // Round-26 pairing fixtures. Pairing is line-local, so an odd or escaped
+  // backtick on one line can no longer shift the parity of the lines below it.
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'pairing-odd-line.md'), fenceDoc(
+    '# pairing fixture: an odd backtick line above a cited line', '',
+    `An odd line carrying a single stray ${BT} backtick.`, '',
+    `A bare citation follows: ${BT}scripts/real.mjs${BT}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'pairing-escaped.md'), fenceDoc(
+    '# pairing fixture: an escaped backtick is a literal', '',
+    `Command: ${BT}grep -c '^| \\${BT}knowledge/' corpus/README.md${BT} here.`, '',
+    `A lone escaped backtick: \\${BT}.`, '',
+    `Still cited below the escaped line: ${BT}config/app.json${BT}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'pairing-trailing.md'), fenceDoc(
+    '# pairing fixture: an unpaired trailing backtick', '',
+    `A line ending in one backtick ${BT}`, '',
+    `A following line with ${BT}lone${BT} text.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'pairing-fence-both.md'), fenceDoc(
+    '# pairing fixture: odd line, then a fence, tokens both sides', '',
+    `Before the fence: ${BT}scripts/real.mjs${BT} with a stray ${BT} tick.`, '',
+    F3, 'fenced body text', F3, '',
+    `After the fence: ${BT}config/app.json${BT}.`));
 }
 
 function selfTest(opts) {
@@ -1750,6 +1818,58 @@ function selfTest(opts) {
       const hit = aliasHits('alias-shapes.md', 'dispatcher').find((f) => f.ref === ':5');
       return { ok: Boolean(hit) && hit.kind === 'OK' && /fleet-dispatcher\.mjs/.test(hit.message),
         detail: hit ? hit.message : 'not expanded' };
+    });
+
+    // round-26 ─ line-local span pairing (repair of the round-23 parity residual:
+    // an escaped or odd backtick used to flip the pairing parity for the whole
+    // file, silently dropping the citations below it).
+    const pairProbe = (name) => {
+      const text = readFileSync(join(selfRoot, 'corpus', 'knowledge', name), 'utf8');
+      const fences = findFences(text);
+      const masked = maskFences(text, fences);
+      return { text, fences, masked, spans: findSpans(masked, fences) };
+    };
+
+    check("pairing: an odd-backtick line leaves the next line's citation reported", () => {
+      const hit = fenceHits('pairing-odd-line.md', 'scripts/real.mjs');
+      return { ok: hit.length >= 1 && hit[0].kind === 'OK',
+        detail: hit.length ? `${hit[0].kind}/${hit[0].severity} @line${hit[0].line}` : 'lost (no finding)' };
+    });
+    check('pairing: an escaped backtick stays in its span and flips no parity', () => {
+      const inSpan = fenceHits('pairing-escaped.md', 'corpus/README.md');
+      const below = fenceHits('pairing-escaped.md', 'config/app.json');
+      return { ok: inSpan.length >= 1 && inSpan[0].kind === 'OK' && below.length >= 1 && below[0].kind === 'OK',
+        detail: `escapedLineSpan=${inSpan.length ? inSpan[0].kind : 'lost'} belowLine=${below.length ? below[0].kind : 'lost'}` };
+    });
+    check('pairing: an unpaired trailing backtick makes no phantom span', () => {
+      const p = pairProbe('pairing-trailing.md');
+      const raws = p.spans.map((s) => s.raw);
+      return { ok: p.spans.length === 1 && raws[0] === 'lone',
+        detail: `spans=${JSON.stringify(raws)}` };
+    });
+    check('pairing: no span ever crosses a newline (grammar invariant)', () => {
+      const names = ['pairing-odd-line.md', 'pairing-escaped.md', 'pairing-trailing.md', 'pairing-fence-both.md'];
+      const bad = names.flatMap((n) => pairProbe(n).spans
+        .filter((s) => s.raw.includes('\n'))
+        .map((s) => `${n}:${JSON.stringify(s.raw.slice(0, 24))}`));
+      return { ok: bad.length === 0, detail: bad.length ? bad.join(' ') : 'all spans single-line' };
+    });
+    check('R23 repro under line-local pairing: tokens before AND after a ``` fence are both found', () => {
+      const before = fenceHits('pairing-fence-both.md', 'scripts/real.mjs');
+      const after = fenceHits('pairing-fence-both.md', 'config/app.json');
+      return { ok: before.length >= 1 && after.length >= 1 && before[0].kind === 'OK' && after[0].kind === 'OK',
+        detail: `before=${before.length ? before[0].kind : 'lost'} after=${after.length ? after[0].kind : 'lost'}` };
+    });
+    check('R16 regression: fence content is never tokenized under line-local pairing', () => {
+      const p = pairProbe('fence-content.md');
+      const inside = p.spans.filter((s) => s.raw.includes('no-such-file')).length;
+      const after = fenceHits('fence-content.md', 'scripts/real.mjs');
+      return { ok: inside === 0 && after.length === 1 && after[0].kind === 'OK',
+        detail: `fenceSpans=${inside} afterFence=${after.length ? after[0].kind : 'lost'}` };
+    });
+    check('R25 regression: a bare backticked alias word is still not a citation', () => {
+      const hits = aliasHits('alias-prose.md', 'base');
+      return { ok: hits.length === 0, detail: hits.length ? `${hits.length} finding(s): ${hits[0].kind}` : 'no citation' };
     });
 
     // round-24 ─ the derived --src default (bare invocation). A bare run carries

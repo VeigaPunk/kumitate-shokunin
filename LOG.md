@@ -1129,3 +1129,16 @@
   before integration and resolved the 414-vs-415 baseline (this round's own
   lesson quote). pin.cite-check re-pinned; C2 67→68. Godspeed verdicts:
   calibration/operability/quality improved, coverage/freshness unchanged.
+- 2026-10-13 — round 26 (pairing fix + verify lane, hyper): findSpans is
+  line-local (odd lines leave a trailing backtick unpaired; escaped
+  backticks are literals; no span crosses a newline) + escaped-backtick
+  handling: selftest 34→41/41 (+7, mutation control 36/41). Verify lane:
+  parity class dead (36 citations restored on replay — the recorded 13 was
+  a floor; concrete rescues in executable-scorecard); ZERO vanished errors
+  (the gate never got permissive); errors 420→554 with the composition
+  adjudicated — census +88 / route-probe +32 are citations to upstream-
+  deleted files (carried debt at full size), ~5 FPs named for a
+  classification pass, and the named coverage loss: multi-line «…» verbatim
+  spans now read as prose (~5 warns + ~30 notes — re-anchoring decision
+  queued). pin.cite-check re-pinned; C2 68→69. Godspeed verdicts:
+  calibration/operability/quality improved, coverage/freshness unchanged.
