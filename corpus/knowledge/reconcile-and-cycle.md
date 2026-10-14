@@ -1,8 +1,16 @@
 # Fleet-dispatcher tail — reconcileQueue, runCycle, latch machinery, CLI surface
 
-`scripts/fleet-dispatcher.mjs` tail (L8650-14769; sha256-pinned `44a3c781…`).
-Condensed from the round-6 scout map (`local://kumitate-r6-dispatch-tail.md`,
-revision 2 — all cited start lines re-verified) plus parent line-reads of
+**Superseded revision (historical).** This note maps the pre-2026-10-12
+`scripts/fleet-dispatcher.mjs` tail (L8650-14769) at 14,769 lines. Its git pin
+is `b18e0274d` (byte-identical through `ee907f1cf`) and its content hash is
+`44a3c781…` — the pin typology is recorded in `LOG.md`. The 2026-10-12
+restructure replaced the origin tree with a different file at the same path:
+the current `scripts/fleet-dispatcher.mjs` is 9,829 lines, sha256-pinned
+`ba5e02be…`, and does not carry the behaviours below. **Every `L<line>`
+citation in this note is against that superseded 14,769-line revision, not the
+current file.** Condensed from the round-6 scout map
+(`local://kumitate-r6-dispatch-tail.md`, revision 2 — all cited start lines
+re-verified against that revision) plus parent line-reads of
 `reconcileQueue` (L9760-10552), `runCycle` (L13415-14102), the emitter latch
 (L11735-12084) and `main()` (L14295-14769). A critic lane falsified one ordering
 claim (head-call order) — the corrected order is below.
@@ -264,3 +272,14 @@ Ordered pipeline (my line-read; critic-verified):
 - A persistently-erroring PARKED row re-stamps `updatedAt` each pass
   (change-guard compares `completed` vs `blocked`; the marker write is
   unconditional) — cosmetic churn, not a fault signal.
+
+## Erratum (round 30, 2026-10-14, append-only)
+
+The `44a3c781…` content hash this note records at its head was presented in
+earlier revisions as a **live content pin** of `scripts/fleet-dispatcher.mjs`.
+It is the **superseded** pre-2026-10-12 file — 14,769 lines, git pin
+`b18e0274d`, byte-identical through `ee907f1cf`. The 2026-10-12
+restructure replaced the origin tree with a different revision of that path —
+9,829 lines, sha256 `ba5e02be…` — so the `L<line>` anchors above index the
+superseded revision, not the current file. The supersession and the pin
+typology are recorded in `LOG.md`.

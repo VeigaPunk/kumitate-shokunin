@@ -2386,9 +2386,9 @@ function selfTest(opts) {
         const hit = all.find((f) => f.class === 'generated' && f.token === 'omp_role_chains.rs');
         return { ok: Boolean(hit) && hit.severity === 'note', detail: hit ? hit.message : 'not reported' };
       });
-      checkI('real F3 content pin 44a3c781 resolves-by-content (never REV_UNKNOWN)', () => {
-        const unknown = all.filter((f) => f.kind === 'REV_UNKNOWN' && f.token === '44a3c781');
-        const content = all.filter((f) => f.token === '44a3c781' && /resolved-by-content|matches sha256/.test(f.message));
+      checkI('real F3 content pin ba5e02be resolves-by-content (never REV_UNKNOWN)', () => {
+        const unknown = all.filter((f) => f.kind === 'REV_UNKNOWN' && f.token === 'ba5e02be');
+        const content = all.filter((f) => f.token === 'ba5e02be' && /resolved-by-content|matches sha256/.test(f.message));
         return { ok: unknown.length === 0 && content.length >= 2,
           detail: `content=${content.length} revUnknown=${unknown.length}` };
       });

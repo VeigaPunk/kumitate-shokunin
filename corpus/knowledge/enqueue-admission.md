@@ -1,10 +1,17 @@
 # Fleet-dispatcher ingress — queue I/O, mint, admission, compaction, receipt verdicts
 
-`scripts/fleet-dispatcher.mjs` (14,769 lines; sha256-pinned `44a3c781…`;
-git pin `b18e0274d` — 296 commits behind HEAD `ee907f1cf`, but the file is
-byte-identical across that range). Citations `L<line>` are this file. Condensed from the full
-round-6 scout map (`local://kumitate-r6-dispatch-ingress.md`); reviewer-verified
-(citation-clean). Complements `queue-and-claim.md` (row schema/claim/dispatch).
+**Superseded revision (historical).** This note maps the pre-2026-10-12
+`scripts/fleet-dispatcher.mjs` at 14,769 lines. Its git pin is `b18e0274d`
+(2026-09-26; then 850 commits behind (re-measured round 30: git rev-list --count b18e0274d..ee907f1cf) its era's `ee907f1cf`, the file
+byte-identical across that range) and its content hash is `44a3c781…` — the
+pin typology is recorded in `LOG.md`. The 2026-10-12 restructure replaced the
+origin tree with a different file at the same path: the current
+`scripts/fleet-dispatcher.mjs` is 9,829 lines, sha256-pinned `ba5e02be…`, and
+does not carry the behaviours below. **Every `L<line>` citation in this note is
+against that superseded 14,769-line revision, not the current file.** Condensed
+from the full round-6 scout map (`local://kumitate-r6-dispatch-ingress.md`);
+reviewer-verified (citation-clean against that revision). Complements
+`queue-and-claim.md` (row schema/claim/dispatch).
 
 ## Queue I/O and the queue lock (L5713-5976)
 
@@ -159,3 +166,14 @@ present — hand-edited archives fail replay as corrupt.
   receipt; a stopped mission reaping a completed row deliberately does NOT
   retract the admission (display settle only — "reaped while open" rows are
   this arm working as designed).
+
+## Erratum (round 30, 2026-10-14, append-only)
+
+The `44a3c781…` content hash this note records at its head was presented in
+earlier revisions as a **live content pin** of `scripts/fleet-dispatcher.mjs`.
+It is the **superseded** pre-2026-10-12 file — 14,769 lines, git pin
+`b18e0274d`, byte-identical through `ee907f1cf`. The 2026-10-12
+restructure replaced the origin tree with a different revision of that path —
+9,829 lines, sha256 `ba5e02be…` — so the `L<line>` anchors above index the
+superseded revision, not the current file. The supersession and the pin
+typology are recorded in `LOG.md`.

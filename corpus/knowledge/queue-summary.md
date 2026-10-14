@@ -119,7 +119,9 @@ out of retention and would false-positive (:11030-11036, live repro cited).
 ### Probe machinery — `spawnSync` once per scope (:11127-11130)
 
 `node PRIMEAGENT_LEDGER_CLI status --ledger <rel> --json` (`:6314`,
-`primeagent-refinement-ledger.mjs`), 15 s timeout, 256 KiB maxBuffer.
+`primeagent-refinement-ledger.mjs`), 15 s timeout, 256 KiB maxBuffer. The bare
+line refs that follow are into `fleet-dispatcher.mjs` (this note's subject); the
+CLI script is named here only as the probe it spawns, and owns no line ref.
 Per-chain probes use `ledger.<chain>.json` siblings; chain id grammar
 `/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/` (:11191-11213); per-chain failures
 land as `null` digest — never coverage.
@@ -140,7 +142,9 @@ Two-level memoization:
   `dev:ino:size:mtimeNs:ctimeNs` + ledger DIR tuple + sorted per-entry
   signature + `policy:` :10751 (`LEDGER_STATUS_POLICY_PATH` →
   `config/primeagent-assimilation.json`) +
-  `cli:` + `node:` tuples. Absence is a key VALUE (`"absent"`/`"dir:absent"`)
+  `cli:` + `node:` tuples. Every bare line ref from here to the
+  cross-references section is into `fleet-dispatcher.mjs` (this note's subject),
+  not the policy file. Absence is a key VALUE (`"absent"`/`"dir:absent"`)
   — a later-appearing store is a different key, never a stale hit. Any
   unstatable path → `null` key → never memoizes (unknown provenance
   re-probes, and drops any prior cached verdict :11096-11102). The CLI's
@@ -210,3 +214,39 @@ no mid-verb read skew. `chainCtx` lets the caller supply
 - Ledger status shape consumed here is produced by
   `scripts/primeagent-refinement-ledger.mjs` (`successor.parentRunIdDigest`,
   `archives.list.slots[].stamp`, `chains.detail[].archiveSlots`).
+
+## Erratum (round 30, 2026-10-14, append-only)
+
+**F4 repair — every bare `:N` ref in this note now names its true owner.**
+`cite-check` binds a bare `:N` ref to the most recent path token in the document.
+Two legitimate inline mentions — `primeagent-refinement-ledger.mjs` (the probe
+this note spawns) and `config/primeagent-assimilation.json` (the policy file
+`LEDGER_STATUS_POLICY_PATH` points at) — therefore captured the dispatcher refs
+that follow them: 9 refs in the probe-machinery section and 15 in the
+memo/continuation/seal sections, graded `LINE_OOR`/`REF_OWNER_AMBIG` against the
+policy file. Both stretches now state their owner explicitly
+(`fleet-dispatcher.mjs`, this note's subject). No claim and no ref was dropped,
+and this note's error count is unchanged (69, now all correctly tokenised
+`fleet-dispatcher.mjs`).
+
+Measured 2026-10-14 against `--src ~/Projects/ufo-fsd-alpha`:
+
+- `wc -l config/primeagent-assimilation.json` → 36; its keys are `$schema`,
+  `description`, `ledger.*`, `hook.*`, `invariants[]`. No line number cited in
+  this note falls inside that range — none of the 24 refs was ever a policy-file
+  ref, so there is no policy key to re-anchor and none to mark dead.
+- The refs are dispatcher refs and their lines are **historical**. This note was
+  written against the pre-restructure `fleet-dispatcher.mjs` (14769 lines, where
+  `queueSummary` sits at line 10896 — the revision the round-6 aggregator audit
+  pinned). The current tree's `fleet-dispatcher.mjs` is 9829 lines and
+  `queueSummary` is at `fleet-dispatcher.mjs:7624`; the projections named in the
+  second half of this note (`chainAdvancedBlocked`, `chainAdvancedSuccessor`,
+  `ledgerProbeEvidenceKey`, `deferredContinuations`, `parkedContinuations`,
+  `readMembraneSealState`, `LEDGER_STATUS_POLICY_PATH`) are absent from it
+  entirely. Every ref above 9829 is out of range today and is still reported as
+  such: this erratum corrects the citation *owner*, and does not re-derive the
+  note against the current revision — it says so rather than quietly re-pointing
+  anchors or dropping them.
+- `node scripts/cite-check.mjs --src ~/Projects/ufo-fsd-alpha --integrations` →
+  `PASS real docs repaired: no F4-class finding (primeagent-assimilation.json
+  ref) — 0 findings`.

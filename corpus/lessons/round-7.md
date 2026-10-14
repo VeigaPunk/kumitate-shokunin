@@ -21,7 +21,7 @@ files`) scored **20/30** at round-8 open precisely because of this — five note
 on disk, zero rows. The map row is part of the note, not paperwork around it.
 
 **Also worth keeping:** the five notes were written against a pinned tree
-(`scripts/fleet-dispatcher.mjs` sha256 `44a3c781…`, git pin `b18e0274d`), and
+(`scripts/fleet-dispatcher.mjs` at the superseded revision — content hash `44a3c781…` described not pinned, git pin `b18e0274d`; the current file is 9,829 lines, `ba5e02be…` — round-30 treatment, consistent with enqueue-admission/reconcile-and-cycle), and
 round 8 re-verified 23 of their anchors — all matching. The pins held
 *precisely because they are content pins*: 296 commits landed between
 `b18e0274d` and HEAD `ee907f1cf` and the dispatcher file did not change a byte

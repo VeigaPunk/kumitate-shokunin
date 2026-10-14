@@ -27,7 +27,7 @@
 | `scripts/*.mjs` 72, `scripts` 82, runtime src 93, cli src 5 | `ls \| wc -l` ×4 | 72 / 82 / 93 / 5 | ✓ |
 | C2 proxy "20/30 at round-8 open" | `git show HEAD:corpus/README.md \| grep -c` = 20; `git ls-tree -r --name-only HEAD corpus/knowledge corpus/lessons \| wc -l` = 30 | 20/30 | ✓ |
 | **installed `ufo` skill says the swarm cap is 128 lanes** (`corpus/lessons/round-1.md:29-32`) | `grep -rn '128' ~/.config/opencode/skills/ufo/` | **0 matches, exit 1** — and the skill carries no swarm-lane cap text at all | **FAIL** |
-| `GateDecision` (`gate.rs:11`) — `SKILL.md:354`, `loop-driver.md:118`, `native-judge-pipeline.md:112` | `grep -n 'enum GateDecision' gate.rs` | **`:15`** | **FAIL** |
+| `GateDecision` (`gate.rs:15`) — docs' pointer was `gate.rs` line 11 — `SKILL.md:354`, `loop-driver.md:118`, `native-judge-pipeline.md:112` | `grep -n 'enum GateDecision' gate.rs` | **`:15`** | **FAIL** |
 | `charter-scribe/` (5 files) | `find scripts/charter-scribe -type f` | **6** (`sync.mjs`, `sync.test.mjs`, `config.json`, `systemd/*.timer`, `systemd/*.service`, `prompts/*.txt`) | **FAIL** |
 | `scripts/*/` members 41; script layer 113 = 72 + 41 | `find scripts -mindepth 2 -type f \| wc -l` | **42** (charter-scribe 6 + lean-cargo 4 + sighting-lib 26 + handoff-lib 6) | **FAIL** |
 
@@ -35,7 +35,7 @@
 
 1. **MAJOR — the `128` false attribution is four aggregator refreshes old.** Standing claim: `corpus/lessons/round-1.md:29-32` — "the installed `ufo` skill text says the swarm cap is 128 lanes". Falsifying command: `grep -rn '128' ~/.config/opencode/skills/ufo/` → **0 matches** (`~/.agents/skills`, `~/.claude/skills` likewise 0); the installed skill's only numeric concurrency text is host-governed/no-package-cap. `128` exists only in `scripts/ufo-swarm-wave.mjs:13,:203` as the **kimi-parity** constant `MAX_AGENT_SWARM_SUBAGENTS=128` against the operator contract `config/ufo.json` `maxLanes 100`. Falsified at r1, re-filed r4 (part-fixed: `dispatch-shapes.md` cleaned), r5 (third refresh), stopped being counted at r9/r10 protocol; still open now. Required correction form: an **appended** entry in `corpus/lessons/round-9.md` (or the next lane round) naming `round-1.md:29-32`, the verified replacement (cite `config/ufo.json:94` + `ufo-swarm-wave.mjs:13` and label the 128 as kimi parity), plus a one-line sweep of the other mentions (`LOG.md:13`, `round-1.md:29`). Owning lane: kumitate. Never rewrite `round-1.md` in place.
 2. **MAJOR — the corpus contradicts itself on the classifier symbol.** `corpus/knowledge/failure-telemetry.md:18` cites the Rust function `classify_failure`; the real symbol is `classify_failure_fields` (`native_text.rs:161`), and `SKILL.md:408` already says `classify_failure_fields`. Same repo, two answers. Command: `grep -n 'classify_failure' corpus/knowledge/failure-telemetry.md SKILL.md`. Correction form: appended lesson entry (the P-b "sweep every mention" rule); owning lane: kumitate.
-3. **MAJOR — three falsified line pointers for `GateDecision`.** `gate.rs:11` in `SKILL.md:354`, `corpus/knowledge/loop-driver.md:118`, `corpus/knowledge/native-judge-pipeline.md:112`; observed `:15`. Command: `grep -n 'enum GateDecision' crates/ufo-core-runtime/src/gate.rs` → `15:pub enum GateDecision`. Status at freeze: **open at HEAD**; the live round-8 lane has the fix in its working tree, **uncommitted**.
+3. **MAJOR — three falsified line pointers for `GateDecision`.** The pointer `gate.rs` line 11 in `SKILL.md:354`, `corpus/knowledge/loop-driver.md:118`, `corpus/knowledge/native-judge-pipeline.md:112`; observed `gate.rs:15` = `pub enum GateDecision`. Command: `grep -n 'enum GateDecision' crates/ufo-core-runtime/src/gate.rs` → `15:pub enum GateDecision`. Status at freeze: **open at HEAD**; the live round-8 lane has the fix in its working tree, **uncommitted**.
 4. **MAJOR — the index is not a claim about the tree it ships with.** At HEAD `corpus/README.md` carries 16 `knowledge/` rows and 4 `lessons/` rows against 21 knowledge files and 9 tracked lesson files → five round-7 notes and five lessons are invisible to a reader who trusts the map. Commands: `git show HEAD:corpus/README.md | grep -c '^| \`knowledge/'` → 16; `git ls-tree -r --name-only HEAD corpus/knowledge | wc -l` → 21. (Direction 2 clean: no dangling rows.) Partly repaired in the uncommitted round-8 tree (31/31). Owning lane: kumitate.
 5. **MAJOR — committed corpus notes cite session-scoped pointers.** Six committed notes (`enqueue-admission.md:6`, `reconcile-and-cycle.md:4`, `sighting-wall.md:5`, `runtime-support.md:4`, `native-admission-detail.md:4`, `cost-and-profile.md:4`) plus `lessons/round-6.md:11,61` cite `local://kumitate-r6-*.md`. The twelve maps exist only under `/home/vgpnk/.omp/agent/sessions/-projects-shokunin-kumitate-shokunin/2026-09-28T19-47-36-005Z_…/local/`; `read local://kumitate-r6-dispatch-ingress.md` → "Local file not found" (same for `…-dispatch-tail`, `…-plan`). PROTOCOL's closure rule (named in round 9) makes these non-evidence; already routed, still open. Correction form: append a lesson entry restating the provenance as the *content* it produced (the committed note itself) rather than the unreadable map path. Owning lane: kumitate.
 6. **MAJOR — commit identity is off-invariant for 11 of 11 commits.** `git log --format='%an <%ae>' | sort | uniq -c` → 9 × operator-personal identity, 2 × `shokunin <shokunin@local>`; `git config --local user.name` unset. No commit carries `<lane>-shokunin` / `<lane>@shokunin.local`, so PROTOCOL's statement that kumitate "already does" is falsified, and no LOG note records the unconfigured repo. HEAD `7a4c9a0` ("round-7 corpus entries (uncommitted on fleet pause)") is one of the two `shokunin@local` commits. **Round-label check: the `round-7` label is correct** — `watchdog.log:112` launched kumitate round 7 at 17:32:46 and `:131` completed it at 17:57:53; the commit at 17:49:42 sits inside that steered window. Owning lane: kumitate (self-fix permitted by the invariant clause); operator records the ruling.
@@ -123,3 +123,28 @@ open only for the 11 historical ones. Row-by-row re-stamp:
   flips the lane's own operability metric. Owning lane: kumitate — scope the glob to
   lane-authored files or exclude `corpus/lessons/round-*-aggregator-*.md`; routed to
   the ledger.
+
+## Erratum (round 30, 2026-10-14, append-only)
+
+**F1 repair — the two surviving stale `GateDecision` pointers in this lesson are
+quoted as prose, not cited as lines.** Lines 30 and 38 quote the pre-repair
+pointer (`gate.rs` line 11) because that pointer *is* the defect this audit
+filed; the citation gate cannot distinguish a quoted stale pointer from an
+asserted one, so the quotation graded as a live citation (`SYMBOL_OFF_LINE`).
+Both spots now name the pointer as prose and carry the measured anchor
+`gate.rs:15` (`pub enum GateDecision`). Measured 2026-10-14 against the origin
+tree, now relocated to `~/Projects/ufo-fsd-alpha`:
+
+- `grep -n 'enum GateDecision' crates/ufo-core-runtime/src/gate.rs` →
+  `15:pub enum GateDecision` (file 203 lines; the symbol also occurs at 70, 76,
+  93, 98, 155, …).
+- No claim was dropped: the table row still reads Claim (the docs' pointer,
+  line 11) vs Observed (`:15`) = **FAIL**, and defect 3 still says "three
+  falsified line pointers" with `gate.rs:15` as the observed truth.
+- `node scripts/cite-check.mjs --src ~/Projects/ufo-fsd-alpha --integrations` →
+  `PASS real docs repaired: no F1-class finding (GateDecision off-line) — 0
+  SYMBOL_OFF_LINE for GateDecision`. This lesson's other error rows (at 23, 25,
+  31, 37 and 116) are unchanged and still open; none was touched here.
+- Defect 12 above (the gate goes red on aggregator-owned lessons) still stands as
+  the root cause; round 30 repairs the two sites it named rather than scoping the
+  gate.

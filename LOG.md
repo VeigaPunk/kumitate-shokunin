@@ -1187,3 +1187,24 @@
   Selftest 58→62/62 (+4 with before/after proofs). pin re-pinned; C2 71→72.
   Godspeed verdicts: operability/calibration/quality improved, coverage
   unchanged.
+- 2026-10-14 — round 30 (doc-repair trio, 2 hyper lanes + verify + parent
+  integration): F1 (GateDecision) re-anchored to the measured gate.rs:15
+  with the falsified pointer kept as prose — both cited lines were
+  quotations of the failed pointer, and rewriting them would have falsified
+  the audit's own record; F4 (queue-summary): the 15 'config refs' were
+  owner-captured fleet-dispatcher refs — explicit owner statements re-owned
+  all 24 (15 + 9 siblings), error count unchanged; F3: the two notes mapped
+  the superseded 14,769-line revision (14 functions absent from today's
+  9,829-line file) — marked superseded-revision-historical (git pin kept,
+  content hash described not pinned per SKILL.md:616-620, current bytes
+  pinned ba5e02be). The F3 integration case then blocked 9/9: it hardcoded
+  token 44a3c781 which no live file hashes to — no doc-only route existed;
+  parent re-tokened the case to ba5e02be (expectation-refresh class, intent
+  preserved). --integrations 6/9 → 9/9 — first full green since the
+  restructure. Parent consistency: round-7.md de-pinned, the 296-commits
+  anchor corrected to the measured 850. Verify lane: zero dropped claims,
+  6/6 anchors measured, errors 704→700 (the 2 de-pins flagged and signed
+  off). ~41+69 stale superseded-revision anchors remain — the parked OMP
+  re-census's work, named not hidden. Selftest 62/62 held; pin re-pinned;
+  C2 72→73. Godspeed verdicts: quality/calibration/operability improved,
+  coverage unchanged.
