@@ -1117,3 +1117,15 @@
   README 24 + remaining-scripts-census (carried OMP-move citations). Two
   pins re-pinned; C2 66→67. Godspeed verdicts: quality/calibration/
   operability improved, coverage/freshness unchanged.
+- 2026-10-13 — round 25 (alias fix + verify lane, hyper): cite-check alias
+  expansion now requires citation shape (an attached :N ref) — prose `base`/
+  `dispatcher`/`cli` never mint citations, `base:1233` shorthand preserved.
+  Selftest 29→34/34 (+5 alias cases, mutation control 32/34 un-gated).
+  ~230 refs rebound to correct per-section owners across the OMP notes; the
+  7 pins stay honest PIN_UNTYPED. Accepted deviation, verify-lane
+  characterized as true positives: errors 415→417 (+2, remaining-scripts-
+  census:429 stale OMP refs rescued only by the poison; suppressing would
+  keep the poison). Verify lane also caught a broken mid-edit cut (31/34)
+  before integration and resolved the 414-vs-415 baseline (this round's own
+  lesson quote). pin.cite-check re-pinned; C2 67→68. Godspeed verdicts:
+  calibration/operability/quality improved, coverage/freshness unchanged.

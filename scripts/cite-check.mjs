@@ -128,6 +128,23 @@ const ALIASES = nullProto({
   dispatcher: 'scripts/fleet-dispatcher.mjs',
   base: 'scripts/ufo-sighting-lib/base.mjs',
 });
+
+/**
+ * Alias expansion is citation-shaped only (round 25). The ALIASES keys are bare
+ * words (`base`, `cli`, `dispatcher`) that also occur as ordinary prose; the
+ * span/prose scans used to expand any of them, so a bare backticked `base`
+ * minted a citation to scripts/ufo-sighting-lib/base.mjs and the sticky-owner
+ * fallback then hashed all seven @sha256 pins in
+ * corpus/knowledge/kimi-binary-secrets.md against that unrelated file (false
+ * PIN_MISMATCHs; the pins are true). An expansion now requires the author's own
+ * citation evidence: an attached line ref (`base:1233`, `base:1233-1235`,
+ * `cli:L12`). Writing the alias VALUE verbatim
+ * (`scripts/ufo-sighting-lib/base.mjs`) is a plain path and never reaches this
+ * predicate. Regression cases `alias: …` in the hermetic suite.
+ */
+function aliasCited(word, hasRef) {
+  return Boolean(ALIASES[word]) && Boolean(hasRef);
+}
 const SHORTHAND_PATHS = nullProto({
   'cli/main.rs': 'crates/ufo-cli/src/main.rs',
 });
@@ -1116,13 +1133,14 @@ function analyzeDoc(rel, ctx) {
       const word = stripTrailing(wordRaw);
       if (!word) continue;
       let head = word;
+      let hasRef = false;
       const rm = REF_SCAN_RE.exec(word);
       if (rm && rm.index > 0) {
         const cand = word.slice(0, rm.index);
-        if (isPathLike(cand, opts.src) || ALIASES[cand]) head = cand;
+        if (isPathLike(cand, opts.src) || ALIASES[cand]) { head = cand; hasRef = true; }
       }
-      if (!isPathLike(head, opts.src) && !ALIASES[head]) continue;
-      tokenEvents.push({ off: span.start, line, word: head, span, view });
+      if (!isPathLike(head, opts.src) && !aliasCited(head, hasRef)) continue;
+      tokenEvents.push({ off: span.start, line, word: head, span, view, hasRef });
     }
   }
 
@@ -1154,7 +1172,8 @@ function analyzeDoc(rel, ctx) {
       continue;
     }
     if (ev.type === 'ptoken') {
-      const rec = ALIASES[ev.word]
+      // a prose token carries no ref by construction, so a bare alias word is prose here
+      const rec = aliasCited(ev.word, false)
         ? aliasRec(ev.word, opts)
         : classifyToken(ev.word, { opts, selfIdx, fleetIdx, srcIdx, rel, docText: text, off: ev.off });
       counts.prose++;
@@ -1178,7 +1197,7 @@ function analyzeDoc(rel, ctx) {
         });
         continue;
       }
-      const rec = ALIASES[ev.word]
+      const rec = aliasCited(ev.word, ev.hasRef)
         ? aliasRec(ev.word, opts)
         : classifyToken(ev.word, { opts, selfIdx, fleetIdx, srcIdx, rel, docText: text, off: ev.off });
       rec.symbols = symbolsForOff(ev.span.start, ev.word);
@@ -1204,11 +1223,11 @@ function analyzeDoc(rel, ctx) {
       const word = ev.attachedTo;
       let rec = null;
       if (isPathLike(word, opts.src) && !fragmentKind(word)) rec = classifyToken(word, { opts, selfIdx, fleetIdx, srcIdx, rel, docText: text, off: ev.off });
-      else if (ALIASES[word]) rec = aliasRec(word, opts);
+      else if (aliasCited(word, true)) rec = aliasRec(word, opts);
       if (rec && rec.targetPath) {
         owner = { rec, symbols: symbolsForOff(ev.off, word) };
         via = 'inline';
-      } else if (rec && rec.kind === 'UNRESOLVED' && ALIASES[word]) {
+      } else if (rec && rec.kind === 'UNRESOLVED' && aliasCited(word, true)) {
         push({
           file: rel, line: ev.line, token: word, class: rec.klass, rung: rec.rung, kind: rec.kind,
           severity: rec.severity, target: null, ref: ev.refs.map((r) => r.short).join('/'), via: 'inline',
@@ -1399,6 +1418,13 @@ function materialize(selfRoot, srcRoot) {
   writeFileSync(join(srcRoot, 'scripts', 'real.mjs'), Array.from({ length: 20 }, (_, i) => `// line ${i + 1}`).join('\n') + '\n');
   writeFileSync(join(srcRoot, 'scripts', 'ufo-lib', 'base.mjs'), '// ufo-lib base\nexport const X = 1;\n');
   writeFileSync(join(srcRoot, 'scripts', 'other-lib', 'base.mjs'), '// other-lib base\nexport const Y = 2;\n');
+  // round-25 alias fixtures: the ALIASES targets must exist so a citation-shaped
+  // `base:N` / `dispatcher:N` resolves (the bare forms must not be cited at all).
+  mkdirSync(join(srcRoot, 'scripts', 'ufo-sighting-lib'), { recursive: true });
+  writeFileSync(join(srcRoot, 'scripts', 'ufo-sighting-lib', 'base.mjs'),
+    Array.from({ length: 1240 }, (_, i) => `// alias target line ${i + 1}`).join('\n') + '\n');
+  writeFileSync(join(srcRoot, 'scripts', 'fleet-dispatcher.mjs'),
+    Array.from({ length: 20 }, (_, i) => `// dispatcher line ${i + 1}`).join('\n') + '\n');
   writeFileSync(join(srcRoot, 'crates', 'ufo-core-runtime', 'src', 'gate.rs'),
     'use std::collections::BTreeMap;\n\npub enum GateDecision { Admit }\n');
   writeFileSync(join(srcRoot, 'crates', 'ufo-core-runtime', 'src', 'real.rs'),
@@ -1452,6 +1478,21 @@ Shorthand: \`cli:1\` resolves through the alias map.
   const T3 = '~'.repeat(3);
   const fenceDoc = (...lines) => lines.join('\n') + '\n';
   const CITATION = `${BT}scripts/no-such-file.mjs${BT}`;
+
+  // Round-25 alias fixtures. `alias-prose.md` holds bare alias words (no ref) that
+  // must stay prose; `alias-shapes.md` holds the citation-shaped forms (attached
+  // :N, backticked and in a table cell) that must still expand.
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'alias-prose.md'),
+    '# alias prose — a bare alias word is not a citation\n\n'
+    + `The step-6 sentence names the ${BT}cdnBase${BT} constant; this bare ${BT}base${BT} is prose.\n`
+    + `A ${BT}dispatcher${BT} spawns lane children; this bare ${BT}dispatcher${BT} is prose too.\n`
+    + `The ${BT}cli${BT} parses argv; this bare ${BT}cli${BT} is prose as well.\n`);
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'alias-shapes.md'),
+    '# alias citation shapes — an attached :N makes the alias a citation\n\n'
+    + `Backticked range ref: ${BT}base:1233-1235${BT}.\n\n`
+    + '| surface | ref |\n|---|---|\n| base:1233 | citation-shaped table cell |\n\n'
+    + `Second alias with a ref: ${BT}dispatcher:5${BT}.\n`);
 
   writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-backtick.md'), fenceDoc(
     '# fence fixture: backtick marker', '', F3, 'fenced body text', F3, '',
@@ -1674,6 +1715,41 @@ function selfTest(opts) {
       return { ok: before.length === 1 && after.length === 1
         && before[0].kind === 'OK' && after[0].kind === 'OK',
         detail: `before=${before.length ? before[0].kind : 'lost'} after=${after.length ? after[0].kind : 'lost'}` };
+    });
+
+    // round-25 ─ alias-poisoning repair: an alias expands only in citation shape
+    // (the bare word carrying an attached :N), never as bare prose. Before the
+    // repair a bare backticked `base` minted a citation to the sighting-lib base
+    // module and the sticky-owner fallback then mis-hashed the seven @sha256
+    // pins in kimi-binary-secrets.md against it (false PIN_MISMATCHs).
+    const aliasFile = (name) => rep.files.find((f) => f.file === `corpus/knowledge/${name}`);
+    const aliasHits = (name, token) => (aliasFile(name) ? aliasFile(name).findings : [])
+      .filter((f) => f.token === token);
+
+    check('alias: a bare backticked `base` in prose is not a citation', () => {
+      const hits = aliasHits('alias-prose.md', 'base');
+      return { ok: hits.length === 0,
+        detail: hits.length ? `${hits.length} finding(s): ${hits[0].kind}` : 'no citation' };
+    });
+    check('alias: bare `dispatcher` and `cli` in prose are not citations', () => {
+      const d = aliasHits('alias-prose.md', 'dispatcher');
+      const c = aliasHits('alias-prose.md', 'cli');
+      return { ok: d.length === 0 && c.length === 0, detail: `dispatcher=${d.length} cli=${c.length}` };
+    });
+    check('alias: `base:1233-1235` still expands (citation shape)', () => {
+      const hit = aliasHits('alias-shapes.md', 'base').find((f) => f.ref === ':1233-1235');
+      return { ok: Boolean(hit) && hit.kind === 'OK' && hit.rung === 'src',
+        detail: hit ? `${hit.kind}/${hit.severity} ${hit.message}` : 'not expanded' };
+    });
+    check('alias: `base:1233` in a citation-shaped table cell still expands', () => {
+      const hit = aliasHits('alias-shapes.md', 'base').find((f) => f.ref === ':1233');
+      return { ok: Boolean(hit) && hit.kind === 'OK',
+        detail: hit ? `${hit.kind} ${hit.message}` : 'not expanded' };
+    });
+    check('alias: second alias `dispatcher:5` gets the same treatment (expands)', () => {
+      const hit = aliasHits('alias-shapes.md', 'dispatcher').find((f) => f.ref === ':5');
+      return { ok: Boolean(hit) && hit.kind === 'OK' && /fleet-dispatcher\.mjs/.test(hit.message),
+        detail: hit ? hit.message : 'not expanded' };
     });
 
     // round-24 ─ the derived --src default (bare invocation). A bare run carries

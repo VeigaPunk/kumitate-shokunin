@@ -278,8 +278,8 @@ A=6
 C=11
 C1=19
 C1_total=19
-C2=67
-C2_total=67
+C2=68
+C2_total=68
 S_members=114
 S_sections=74
 R_members=98
@@ -291,7 +291,7 @@ C1k_total=5
 K_members=49
 K_sections=49
 coverage_kimi=10
-pin.cite-check=1c49537a777250f6bbfba8120938c4be0c7dfcc109f412064158674d75c5c7c5
+pin.cite-check=154ada5a35b7a2e803ec913cc08fa8cf238329bfe17a766a3b90df66d0c85c00
 pin.surface-probe=148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
 pin.proxy-check=a052ddb97a0b6f84be5993891273905bcb19f2dfef25aa523924c0d3cc5dcdba
@@ -375,6 +375,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 25 | operability + calibration (alias-poisoning fix, verified) | ALIASES expanded any backticked alias word: prose `base`/`dispatcher`/`cli` minted citations and the sticky-owner fallback hashed 7 true pins against an unrelated file (false PIN_MISMATCHs, r24) | **fix + independent verify lane**: alias expansion now requires citation shape (an attached `:N` ref); prose words never expand; `base:1233` shorthand preserved. Selftest 29→**34/34** (+5 alias cases, mutation control 32/34 on the un-gated copy); ~230 refs across the OMP notes **rebound to their correct per-section owners** (ops-watchers: 149→ufo-stale-watchdog, 168→ufo-l0-monitor); the 7 pins stay honest PIN_UNTYPED. **Accepted deviation, verified true-positive**: errors 415→417 (+2, remaining-scripts-census:429 — stale OMP line refs whose only "rescue" was the poisoning itself; the file is carried OMP debt; suppressing them would require keeping the poison). Baseline discrepancy resolved (414 vs 415 = this lesson row's own quote). pin.cite-check re-pinned | verify lane: fixture old-vs-new behavior, repo delta table (exactly one file moved), selftest rerun — PASS with the deviation flagged, not glossed |
 | 24 | quality + operability (the triage round) | 519 repo-wide citation errors after the honest-gate census (123 new + 396 carried); kimi-* queue = 106 across 7 notes | **105 repaired, 0 left in scope**: session-state 38→0, skills-plugins 17→0, binary-secrets 14→0, config-plane 13→0, residue 3→0, member-claims-gate 1→0, modes-machinery 20→1 (last error sits inside a verbatim quote — documented floor, not repairable without altering quoted bytes). Discoveries recorded: **cite-check ALIASES `base` poisoning** (7 PIN_MISMATCHs in binary-secrets were the tool binding the prose word "base" to the origin tree's base.mjs — the pins themselves verified TRUE against live sha256; alias-poisoning fix queued); directory-context cascade (a full path adjacent to a bare basename hijacks its refs — reworded, quote preserved); the `~/.agents/skills` symlink correction (erratum-only). **FIX E**: `--src` derivation lands in cite-check (29/29) + round-gate (60/60); bare invocations all reach the tree. Repo errors 519 → **414**; the residual = SKILL.md 9 + README 24 (carried OMP-move citations) + the 1 quote-floor + remaining-scripts-census (OMP debt) | `cite-check --src …` per-file re-verification by every lane; selftests 29/29 + 60/60; repo-wide JSON before/after; 2 pins re-pinned |
 | 23 | operability + calibration (gate repairs; one named checklist regression) | cite-check fence defect hid citations after ``` fences (round-16, reproduced twice); proxy/claims/surface-probe bare runs failed closed on the dead origin-work literal | **T1**: cite-check fence masking (marker-symmetric fences, mask-before-scan) — selftest 20→26 (+6, mutation-proven 3/3), sha `52ce53d0…`; **findings census**: 123 errors + 59 warnings newly surfaced (session-state 38, modes-machinery 20, skills-plugins 17, remaining-scripts-census 17, binary-secrets 14, config-plane 13, residue 3, member-claims-gate 1) — triage queue, NOT mass-edited; 13 previously-OK citations now unreported (pairing-parity residual, follow-up candidate); **T2**: `--src` derivation ($UFO_SRC → first existing candidate, round-17 precedent) in proxy/claims/surface-probe — selftests +4 each (102/102, 39/39, 42/42), shas `a052ddb9…`/`e9a21b44…`/`148cbf85…`; bare invocations now reach the tree. **Named regression**: the `citation gate verdict` checklist item reads DRIFT (errors 396 → 519) until the triage round; cite-check:78 + round-gate:142 still carry the stale literal (next round) | 4 pins re-pinned; proxy selftest 102/102; live proxy DRIFT = six carried OMP layer terms only; census reproduced twice |
 | 22 | coverage:kimi-layer (term tightening; score unchanged — the anticipated drop was refuted by measurement) | occurrence term: K_sections 52, `floor(10 × 52/49)` = 10, with the known duplicate-one/drop-one hole | **distinct-member term lands** (pre-registered round 21): K_sections 52 occurrences → **49 distinct** (49/49 members named — the round-21 "~30 distinct" estimate was wrong and is corrected in the round-21 lesson's wake), `floor(10 × 49/49)` = **10** held; new `K_SECTION_AMBIGUOUS` warn arm (0 live); selftest 92 → 98 (+6, incl. the duplicate-one/drop-one mutation); `pin.proxy-check` re-pinned | implementer lane (hyper ds-flash) + independent cross-check (occurrence 52 / distinct 49 / 0 ambiguous / 0 unnamed); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha --selftest` → 98/98; live run: only the six carried OMP layer DRIFTs + PIN_DRIFT (re-pinned at close) |
