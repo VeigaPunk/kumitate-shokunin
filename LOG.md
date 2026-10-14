@@ -1142,3 +1142,17 @@
   spans now read as prose (~5 warns + ~30 notes — re-anchoring decision
   queued). pin.cite-check re-pinned; C2 68→69. Godspeed verdicts:
   calibration/operability/quality improved, coverage/freshness unchanged.
+- 2026-10-14 — round 27 (FP pass + verify lane, hyper): exact-shape FP_EXEMPT
+  exemptions (extension-list/runtime-artifact/binary-internal) grade note,
+  never error, never dropped — errors 558→543 with a full-finding-set
+  conservation proof (15 UNRESOLVED/errors → 15 FP_EXEMPT notes 1:1, zero
+  real citations vanished; verify lane confirmed guards bite). Scope honesty:
+  15 exempted vs ~5 named (extra 9 adjudicated with evidence). Repair saga:
+  the verify lane caught the binary-internal 200-char window as a latent
+  permissiveness hole; the own-line overcorrection broke the one genuine
+  token (wrapped paragraph); the durable fix is the byte-offset-marker shape
+  (at byte N / (byte N)) — window failed both directions, shape fails
+  neither. Span-scanner off-by-one (token-start −1) measured and worked
+  around; root cause queued. Selftest 41→50/50; pin re-pinned; C2 69→70.
+  Godspeed verdicts: calibration/quality improved, operability improved,
+  coverage/freshness unchanged.

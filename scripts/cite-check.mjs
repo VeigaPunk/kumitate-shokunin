@@ -45,6 +45,11 @@
  *   (absolute paths), fragment / ignored-fragment (globs, extension-only,
  *   placeholders, URIs). node_modules/ .git/ target/ .ufo/ are pruned from the
  *   index and never used as resolution targets.
+ *   Round-27 adjudicated false positives are exempted ahead of the UNRESOLVED
+ *   arm as three exact-shape namespaces (extension-list, runtime-artifact,
+ *   binary-internal); see the EXEMPTION block above `fragmentKind`. Each fires
+ *   only for a token that does not resolve under --src, so a real citation is
+ *   never shadowed.
  *
  * Findings
  *   error UNRESOLVED LINE_OOR REV_UNKNOWN PIN_MISMATCH SYMBOL_OFF_LINE
@@ -53,6 +58,8 @@
  *   note  OK RESOLVED_BY_CONTEXT RESOLVED_BY_PRECEDENCE PIN_UNTYPED
  *         FRAGMENT (fragment/ignored-fragment classes, runtime, generated,
  *         home-config, foreign-root)
+ *         FP_EXEMPT (round-27 exemption classes extension-list,
+ *         runtime-artifact, binary-internal — reported, never dropped)
  *   exit 0 CLEAN · 1 DRIFT (error, or warn under --strict) · 2 fail-closed
  *        (missing/non-dir --src or --self, empty scan set, zero resolutions)
  *   64 usage error. No file text, env value, or symbol body is ever printed.
@@ -203,7 +210,8 @@ const SYMBOL_STOPWORDS = new Set([
 
 const SEVERITY = {
   OK: 'note', RESOLVED_BY_CONTEXT: 'note', RESOLVED_BY_PRECEDENCE: 'note', PIN_UNTYPED: 'note',
-  FRAGMENT: 'note', SUFFIX_RESOLVED: 'warn', RUNTIME_UNRESOLVED: 'warn', AMBIG: 'warn',
+  FRAGMENT: 'note', FP_EXEMPT: 'note', SUFFIX_RESOLVED: 'warn', RUNTIME_UNRESOLVED: 'warn',
+  AMBIG: 'warn',
   SYMBOL_MISS: 'warn', ORPHAN_REF: 'warn', REF_OWNER_AMBIG: 'note', UNRESOLVED: 'error',
   LINE_OOR: 'error',
   REV_UNKNOWN: 'error', PIN_MISMATCH: 'error', SYMBOL_OFF_LINE: 'error', SELF_MISSING: 'error',
@@ -362,12 +370,89 @@ function isPathLike(tok, srcRoot) {
   return false;
 }
 
+/**
+ * Round-27 adjudicated false positives — exempted ahead of the UNRESOLVED arm.
+ *
+ * Round 26 surfaced three non-citation token shapes that graded UNRESOLVED
+ * error. Each is exempted by exact shape only, as its own class, graded `note`
+ * (reported, never silently dropped, never error):
+ *
+ *   extension-list   `.mjs/.rs/.sh/.js` — a dot-extension enumeration, i.e. a
+ *                    file-extension list written in prose, never a path.
+ *   runtime-artifact a basename that is a run-state/scratch/output name: a
+ *                    dot-prefixed `.session-retention.lock`-shaped artifact,
+ *                    or a name in the declared round-27 FP list below.
+ *   binary-internal  a `src/…` path immediately followed by a byte-offset marker
+ *                    preceding 200 chars name `strings` or the binary).
+ *
+ * Every shape is guarded: it fires only when the token does not resolve under
+ * --src, so a token that merely resembles an exemption but is a real path
+ * (e.g. `scripts/audit-env.sh`, `scripts/x.mjs/.rs`) keeps grading normally.
+ */
+const EXTENSION_LIST_RE = /^\.[A-Za-z0-9]+(?:\/\.[A-Za-z0-9]+)+$/;
+const RUNTIME_ARTIFACT_RE = /^\.[A-Za-z0-9.-]+\.(json|lock|log|sha256|txt)$/;
+/**
+ * The round-27 adjudicated FP list — declared literally, exact basenames only.
+ * Each name was checked against the current error census and is not a citation
+ * to a file under --src today: `audit-env.sh` is an L2 lane's removed untracked
+ * scratch script, `summary.txt` a measurement-harness output name, and
+ * `l0-watch-state.json` the L0 night watch's own run-state file. The list is a
+ * closed enumeration — adding a name is a deliberate adjudication, never a
+ * pattern, and a slash-path form (`scripts/audit-env.sh`) is not covered.
+ */
+const RUNTIME_ARTIFACT_NAMES = new Set(['audit-env.sh', 'summary.txt', 'l0-watch-state.json']);
+/** The kimi binary whose strings regions a `src/…` token may name. */
+const BINARY_PATH_RE = /\.kimi-code\/bin\/kimi/;
+
 function fragmentKind(tok) {
   if (/:\/\//.test(tok)) return 'ignored-fragment';
   if (/^[-+]/.test(tok)) return 'ignored-fragment';
   if (/[*?]/.test(tok)) return 'fragment';
   if (/^\.[A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*$/.test(tok)) return 'fragment';
   if (/[<>{}]/.test(tok)) return 'fragment';
+  return null;
+}
+
+/**
+ * The round-27 exemption predicate: { klass, message } for an exact-shape
+ * false positive, else null. The `present` guard keeps a token that does
+ * resolve under --src on the normal ladder, so the exemption never shadows a
+ * real citation (it only reclassifies what would otherwise reach UNRESOLVED).
+ */
+function exemptionShape(token, ctx) {
+  const { docText, off, srcIdx, opts } = ctx;
+  const present = token.includes('/')
+    ? statKind(join(opts.src, token), false) !== null
+    : (srcIdx.byBase.get(basename(token)) || []).length > 0;
+  if (present) return null;
+  if (EXTENSION_LIST_RE.test(token)) {
+    return {
+      klass: 'extension-list',
+      message: `${token} is a dot-extension enumeration (extension list), not a path citation`,
+    };
+  }
+  if (!token.includes('/') && (RUNTIME_ARTIFACT_RE.test(token) || RUNTIME_ARTIFACT_NAMES.has(token))) {
+    return {
+      klass: 'runtime-artifact',
+      message: `${token} is a run-state/scratch artifact name (round-27 adjudicated non-citation), not a source citation`,
+    };
+  }
+  if (/^src\//.test(token)) {
+    // r27-repair: context WINDOWS (200-char, own-line) could exempt a real
+    // dead src/ path because a strings mention preceded it (verify-lane
+    // counterexample); own-line scope broke the real case (the mention sits
+    // on a wrapped paragraph's first line). The corpus's strings citations
+    // are distinguished by a BYTE-OFFSET MARKER immediately after the token
+    // — the precise shape, no window.
+    const at = off || 0;
+    const post = docText ? docText.slice(at + token.length, at + token.length + 80) : '';
+    if (/^.{0,3}(at byte\s+\d|\(\s*byte\s+\d)/.test(post)) {
+      return {
+        klass: 'binary-internal',
+        message: `${token} is a kimi-binary-internal source path (binary-strings citation), not a tree citation`,
+      };
+    }
+  }
   return null;
 }
 
@@ -707,6 +792,11 @@ function classifyToken(token, ctx) {
   // fragment shapes are handled by the caller, but keep a guard here
   if (fragmentKind(token)) return rec(token, fragmentKind(token), 'none', 'FRAGMENT', null, null,
     `${token} is not a citation`);
+
+  // round-27 adjudicated false positives — exact-shape exemption, before the
+  // UNRESOLVED arm; each shape its own class, graded note (never error)
+  const exempt = exemptionShape(token, ctx);
+  if (exempt) return rec(token, exempt.klass, 'none', 'FP_EXEMPT', null, null, exempt.message);
 
   // documented path shorthands
   if (SHORTHAND_PATHS[token]) {
@@ -1590,6 +1680,32 @@ Shorthand: \`cli:1\` resolves through the alias map.
     `Before the fence: ${BT}scripts/real.mjs${BT} with a stray ${BT} tick.`, '',
     F3, 'fenced body text', F3, '',
     `After the fence: ${BT}config/app.json${BT}.`));
+
+  // Round-27 FP-exemption fixtures. `fp-exempt.md` carries the extension-list
+  // and runtime-artifact shapes (each positive must grade note) plus three
+  // negative guards that must keep grading UNRESOLVED error. `fp-binary.md`
+  // carries the binary-internal shape: the same `src/…` token shape must be a
+  // note when a byte-offset marker follows it ('at byte N' / '(byte N)'), an
+  // error when no marker follows, and a normal src resolution when the file
+  // really exists (the exemption never shadows a resolvable citation).
+  mkdirSync(join(srcRoot, 'src', 'utils'), { recursive: true });
+  writeFileSync(join(srcRoot, 'src', 'utils', 'remote-control-ok.ts'), 'export const mapped = 1;\n');
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fp-exempt.md'), fenceDoc(
+    '# round-27 exemptions: extension lists and runtime-artifact names', '',
+    `Extension list, not a path: ${BT}.mjs/.rs/.sh/.js${BT}.`, '',
+    `Runtime dot artifact: ${BT}.session-retention.lock${BT} is the retention lock name.`, '',
+    `Declared run-state names: ${BT}audit-env.sh${BT}, ${BT}summary.txt${BT}, ${BT}l0-watch-state.json${BT}.`, '',
+    `Negative guard, real dead path: ${BT}scripts/dead-helper.mjs${BT}.`, '',
+    `Negative guard, extension list with a real path mixed in: ${BT}scripts/x.mjs/.rs${BT}.`, '',
+    `Negative guard, slash-path lookalikes: ${BT}scripts/audit-env.sh${BT} and ${BT}logs/.session-retention.lock${BT}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fp-binary.md'), fenceDoc(
+    '# binary-internal fixture: region context decides', '',
+    `A bare region token with no binary context: ${BT}src/utils/plain-thing.ts${BT}.`, '',
+    `The kimi binary (~/.kimi-code/bin/kimi) carries a strings region `
+    + `${BT}src/utils/remote-control-qr.ts${BT} at byte 142051126, and a mapped one `
+    + `${BT}src/utils/remote-control-ok.ts${BT} too.`));
 }
 
 function selfTest(opts) {
@@ -1870,6 +1986,61 @@ function selfTest(opts) {
     check('R25 regression: a bare backticked alias word is still not a citation', () => {
       const hits = aliasHits('alias-prose.md', 'base');
       return { ok: hits.length === 0, detail: hits.length ? `${hits.length} finding(s): ${hits[0].kind}` : 'no citation' };
+    });
+
+    // round-27 ─ the FP classification pass. Three exact-shape exemption classes
+    // (extension-list, runtime-artifact, binary-internal) grade FP_EXEMPT note
+    // ahead of the UNRESOLVED arm; the negative guards below prove the
+    // exemption is exact-shape only (a lookalike path still errors).
+    const fpNote = (name, token, klass) => {
+      const hits = fenceHits(name, token);
+      const errors = hits.filter((f) => f.severity === 'error');
+      const note = hits.find((f) => f.kind === 'FP_EXEMPT' && f.class === klass);
+      return {
+        ok: Boolean(note) && note.severity === 'note' && errors.length === 0,
+        detail: hits.length
+          ? `${hits.map((f) => `${f.kind}/${f.severity}[${f.class}]`).join(', ')}`
+          : 'no finding',
+      };
+    };
+    const fpError = (name, token) => {
+      const hits = fenceHits(name, token);
+      const bad = hits.find((f) => f.kind === 'UNRESOLVED' && f.severity === 'error');
+      return {
+        ok: Boolean(bad) && !hits.some((f) => f.kind === 'FP_EXEMPT'),
+        detail: hits.length ? `${hits.map((f) => `${f.kind}/${f.severity}[${f.class}]`).join(', ')}` : 'no finding',
+      };
+    };
+
+    check('R27 exemption: extension list `.mjs/.rs/.sh/.js` → FP_EXEMPT note, not error', () => (
+      fpNote('fp-exempt.md', '.mjs/.rs/.sh/.js', 'extension-list')));
+    check('R27 exemption: dot runtime artifact `.session-retention.lock` → FP_EXEMPT note', () => (
+      fpNote('fp-exempt.md', '.session-retention.lock', 'runtime-artifact')));
+    check('R27 exemption: declared run-state names `audit-env.sh`/`summary.txt`/`l0-watch-state.json` → note', () => {
+      const a = fpNote('fp-exempt.md', 'audit-env.sh', 'runtime-artifact');
+      const s = fpNote('fp-exempt.md', 'summary.txt', 'runtime-artifact');
+      const l = fpNote('fp-exempt.md', 'l0-watch-state.json', 'runtime-artifact');
+      return { ok: a.ok && s.ok && l.ok,
+        detail: `audit-env[${a.detail}] summary[${s.detail}] l0-watch[${l.detail}]` };
+    });
+    check('R27 exemption: binary-internal `src/…` in a strings region → FP_EXEMPT note', () => (
+      fpNote('fp-binary.md', 'src/utils/remote-control-qr.ts', 'binary-internal')));
+    check('R27 negative guard: a real dead path `scripts/dead-helper.mjs` still errors', () => (
+      fpError('fp-exempt.md', 'scripts/dead-helper.mjs')));
+    check('R27 negative guard: extension list with a real path mixed in (`scripts/x.mjs/.rs`) still errors', () => (
+      fpError('fp-exempt.md', 'scripts/x.mjs/.rs')));
+    check('R27 negative guard: slash-path lookalikes (`scripts/audit-env.sh`, `logs/.session-retention.lock`) still error', () => {
+      const a = fpError('fp-exempt.md', 'scripts/audit-env.sh');
+      const l = fpError('fp-exempt.md', 'logs/.session-retention.lock');
+      return { ok: a.ok && l.ok, detail: `scripts/audit-env.sh[${a.detail}] logs/.session-retention.lock[${l.detail}]` };
+    });
+    check('R27 negative guard: binary-internal shape without a strings context (`src/utils/plain-thing.ts`) still errors', () => (
+      fpError('fp-binary.md', 'src/utils/plain-thing.ts')));
+    check('R27 guard: a `src/…` token that really exists resolves (the exemption never shadows it)', () => {
+      const hits = fenceHits('fp-binary.md', 'src/utils/remote-control-ok.ts');
+      const ok = hits.find((f) => f.kind === 'OK' && f.rung === 'src');
+      return { ok: Boolean(ok) && !hits.some((f) => f.kind === 'FP_EXEMPT'),
+        detail: hits.length ? `${hits.map((f) => `${f.kind}/${f.severity}[${f.rung}]`).join(', ')}` : 'no finding' };
     });
 
     // round-24 ─ the derived --src default (bare invocation). A bare run carries
