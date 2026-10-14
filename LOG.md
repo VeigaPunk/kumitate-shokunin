@@ -1171,3 +1171,19 @@
   class is queued with its ambiguity tradeoff stated. C2 70→71. Godspeed
   verdicts: operability/calibration/quality improved, coverage unchanged
   (the loss class is named, not fixed — honest).
+- 2026-10-14 — round 29 (scanner+ca fix + verify lane, hyper): the off-by-one
+  ROOT-CAUSED — `off` was span.start for every span token: −1 for a first
+  token (the rounds 27-28 measurement) but the WHOLE SPAN START for later
+  tokens in multi-token spans (latent, unmeasured until now). Fixed via
+  regex-run tokenization over the unwrapped view with offsets mapped through
+  view.offs: 4128/4128 span-tokens slice-exact (verify-lane instrumented
+  probe); marker window tightened 3→2. Error set byte-identical (703→703
+  symbols / 543→543 plain; zero vanished errors/warnings; one lost citation
+  CORRECTED — aggregator-audit:118 :36 rebinds to fleet-dispatcher.mjs).
+  --integrations sample list refreshed to the current tree (queue.mjs →
+  surface.mjs; indexSize computed live = 1743): 4/9 → 6/9; the 3 residual
+  reds are doc-repair items (F1 GateDecision pointer, F3 stale 44a3c781 pin,
+  F4 15 primeagent line refs) — queued for a doc-repair lane, not weakened.
+  Selftest 58→62/62 (+4 with before/after proofs). pin re-pinned; C2 71→72.
+  Godspeed verdicts: operability/calibration/quality improved, coverage
+  unchanged.

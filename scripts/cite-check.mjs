@@ -449,10 +449,14 @@ function exemptionShape(token, ctx) {
     // counterexample); own-line scope broke the real case (the mention sits
     // on a wrapped paragraph's first line). The corpus's strings citations
     // are distinguished by a BYTE-OFFSET MARKER immediately after the token
-    // — the precise shape, no window.
+    // — the precise shape, no window. Round 29: `off` is now the token's own
+    // start (root-cause fix of the token-start−1 off-by-one), so `off +
+    // token.length` IS the token's end and the tolerance shrinks from 3 to 2
+    // — exactly the span's closing delimiter (` or ») plus one separator
+    // space, the off-by-one slack removed. A wider gap no longer exempts.
     const at = off || 0;
     const post = docText ? docText.slice(at + token.length, at + token.length + 80) : '';
-    if (/^.{0,3}(at byte\s+\d|\(\s*byte\s+\d)/.test(post)) {
+    if (/^.{0,2}(?:at byte\s+\d|\(\s*byte\s+\d)/.test(post)) {
       return {
         klass: 'binary-internal',
         message: `${token} is a kimi-binary-internal source path (binary-strings citation), not a tree citation`,
@@ -644,6 +648,44 @@ function unwrap(raw, base) {
     offs.push(base + i);
   }
   return { text: out, offs };
+}
+
+/**
+ * Span tokens → token events, in document order. `off` is the token's own start
+ * byte in the document, never the span's opening delimiter — the round-29
+ * root-cause fix of the token-start−1 off-by-one the rounds 27-28 debug harness
+ * measured (with the old `off = span.start`, `docText[off + token.length]` began
+ * one char early). The token is consumed from `unwrap`'s view, whose `offs[k]`
+ * is the docText byte of view char k, so the run's docText start is
+ * `view.offs[k]`. An attached line ref is stripped from the word (it owns
+ * itself), and the head is always a prefix of the run, so head and run start
+ * together. Consumers keyed on `off` — the binary-internal marker window
+ * (`exemptionShape`), the sticky-owner/`symbolsForOff` attribution, and the
+ * tokenTimeline ref-distance check — now see the token's true start.
+ */
+function spanTokenEvents(spans, starts, opts) {
+  const events = [];
+  const wordRe = /[^\s,;|()[\]]+/g;
+  for (const span of spans) {
+    const view = unwrap(span.raw, span.start + 1);
+    const line = lineAt(starts, span.start);
+    wordRe.lastIndex = 0;
+    let m;
+    while ((m = wordRe.exec(view.text))) {
+      const word = stripTrailing(m[0]);
+      if (!word) continue;
+      let head = word;
+      let hasRef = false;
+      const rm = REF_SCAN_RE.exec(word);
+      if (rm && rm.index > 0) {
+        const cand = word.slice(0, rm.index);
+        if (isPathLike(cand, opts.src) || ALIASES[cand]) { head = cand; hasRef = true; }
+      }
+      if (!isPathLike(head, opts.src) && !aliasCited(head, hasRef)) continue;
+      events.push({ off: view.offs[m.index], line, word: head, span, view, hasRef });
+    }
+  }
+  return events;
 }
 
 const REF_HEAD_RE = /^(?::(\d+)(?:[\u2013-](\d+))?(\+)?|~?L(\d{2,})(?:[\u2013-](\d+))?)/;
@@ -1227,7 +1269,6 @@ function analyzeDoc(rel, ctx) {
     || /All\s+`:?N{2,}`?\s+citations\s+are\s+this\s+file/i.test(line);
 
   const push = (f) => findings.push(f);
-  const tokenEvents = [];
   const spans = findSpans(masked, fences);
 
   const lineCountCache = new Map();
@@ -1339,23 +1380,7 @@ function analyzeDoc(rel, ctx) {
   };
 
   // span tokens -> token events (attached refs are stripped: they own themselves)
-  for (const span of spans) {
-    const view = unwrap(span.raw, span.start + 1);
-    const line = lineAt(starts, span.start);
-    for (const wordRaw of view.text.split(/[\s,;|()[\]]+/)) {
-      const word = stripTrailing(wordRaw);
-      if (!word) continue;
-      let head = word;
-      let hasRef = false;
-      const rm = REF_SCAN_RE.exec(word);
-      if (rm && rm.index > 0) {
-        const cand = word.slice(0, rm.index);
-        if (isPathLike(cand, opts.src) || ALIASES[cand]) { head = cand; hasRef = true; }
-      }
-      if (!isPathLike(head, opts.src) && !aliasCited(head, hasRef)) continue;
-      tokenEvents.push({ off: span.start, line, word: head, span, view, hasRef });
-    }
-  }
+  const tokenEvents = spanTokenEvents(spans, starts, opts);
 
   const declEvents = [];
   {
@@ -1765,8 +1790,9 @@ Shorthand: \`cli:1\` resolves through the alias map.
   // negative guards that must keep grading UNRESOLVED error. `fp-binary.md`
   // carries the binary-internal shape: the same `src/…` token shape must be a
   // note when a byte-offset marker follows it ('at byte N' / '(byte N)'), an
-  // error when no marker follows, and a normal src resolution when the file
-  // really exists (the exemption never shadows a resolvable citation).
+  // error when no marker follows or when the marker is more than one delimiter +
+  // space away (round-29 tightened window), and a normal src resolution when the
+  // file really exists (the exemption never shadows a resolvable citation).
   mkdirSync(join(srcRoot, 'src', 'utils'), { recursive: true });
   writeFileSync(join(srcRoot, 'src', 'utils', 'remote-control-ok.ts'), 'export const mapped = 1;\n');
 
@@ -1784,7 +1810,10 @@ Shorthand: \`cli:1\` resolves through the alias map.
     `A bare region token with no binary context: ${BT}src/utils/plain-thing.ts${BT}.`, '',
     `The kimi binary (~/.kimi-code/bin/kimi) carries a strings region `
     + `${BT}src/utils/remote-control-qr.ts${BT} at byte 142051126, and a mapped one `
-    + `${BT}src/utils/remote-control-ok.ts${BT} too.`));
+    + `${BT}src/utils/remote-control-ok.ts${BT} too.`, '',
+    // round-29 negative guard: the marker sits two spaces past the closing
+    // delimiter, beyond the tightened `.{0,2}` window, so it must NOT exempt.
+    `A region token with the marker two spaces out: ${BT}src/utils/spaced-thing.ts${BT}  at byte 7.`));
 
   // Round-28 quote fixtures. `quote-spans.md` carries the house `«…»`
   // verbatim-quote convention: a quote crossing three lines (one span, content
@@ -2223,6 +2252,56 @@ function selfTest(opts) {
       return { ok: bad.length === 0, detail: bad.length ? bad.slice(0, 6).join(' ') : 'every raw byte is owned exactly once' };
     });
 
+    // round-29 ─ the span-scanner off-by-one (rounds 27-28 debug harness: `off`
+    // measured as token-start −1, so docText[off + token.length] began one char
+    // early). spanTokenEvents maps each token through unwrap()'s index table, so
+    // `off` IS the token's own start byte. The cases below pin that invariant
+    // directly: before the fix `docText.slice(off, off + len)` returned the span's
+    // opening delimiter plus all but the token's last char.
+    const R29BQ = '`';
+    const offEvents = (doc) => {
+      const fences = findFences(doc);
+      const spans = findSpans(maskFences(doc, fences), fences);
+      return spanTokenEvents(spans, lineStarts(doc), { src: srcRoot });
+    };
+    const offMismatch = (doc) => offEvents(doc)
+      .filter((e) => doc.slice(e.off, e.off + e.word.length) !== e.word)
+      .map((e) => `${e.word}@${e.off}=${JSON.stringify(doc.slice(e.off, e.off + e.word.length))}`);
+
+    check('R29 off-by-one: `off` is the token start — the round-27 repro sentence slices back exactly', () => {
+      const doc = 'The kimi binary (~/.kimi-code/bin/kimi) carries a region '
+        + `${R29BQ}src/utils/remote-control-qr.ts${R29BQ} (byte 142051126) and a citation `
+        + `${R29BQ}scripts/real.mjs:1${R29BQ}.\n`;
+      const evs = offEvents(doc);
+      const bad = offMismatch(doc);
+      const qr = evs.find((e) => e.word === 'src/utils/remote-control-qr.ts');
+      return {
+        ok: evs.length >= 2 && Boolean(qr) && bad.length === 0,
+        detail: bad.length ? bad.join('; ')
+          : `tokens=${evs.length} qrOff=${qr ? qr.off : 'n/a'} slice=${qr ? JSON.stringify(doc.slice(qr.off, qr.off + qr.word.length)) : 'n/a'}`,
+      };
+    });
+    check('R29 off-by-one: a later token in a multi-token span is not the span start either', () => {
+      const doc = `A span with two tokens ${R29BQ}first.mjs second-thing.mjs${R29BQ} on one line.\n`;
+      const evs = offEvents(doc);
+      const bad = offMismatch(doc);
+      return { ok: evs.length === 2 && bad.length === 0,
+        detail: bad.length ? bad.join('; ') : evs.map((e) => `${e.word}@${e.off}`).join(', ') };
+    });
+    check('R29 off-by-one: `off` maps across a multi-line «…» quote join', () => {
+      const GQo = '\u00ab', GQc = '\u00bb';
+      const doc = `Quote opens ${GQo}line one plain\nline two cites ${R29BQ}scripts/real.mjs${R29BQ} here${GQc} and closes.\n`;
+      const evs = offEvents(doc);
+      const bad = offMismatch(doc);
+      return { ok: evs.length === 1 && bad.length === 0,
+        detail: bad.length ? bad.join('; ') : evs.map((e) => `${e.word}@${e.off}`).join(', ') };
+    });
+    check('R29 marker window: the binary-internal marker sits within the closing delimiter + one space', () => {
+      const near = fpNote('fp-binary.md', 'src/utils/remote-control-qr.ts', 'binary-internal');
+      const far = fpError('fp-binary.md', 'src/utils/spaced-thing.ts');
+      return { ok: near.ok && far.ok, detail: `near[${near.detail}] far[${far.detail}]` };
+    });
+
     // round-24 ─ the derived --src default (bare invocation). A bare run carries
     // no `--src`; the default is derived from `$HOME`-relative candidates, so
     // pointing HOME at a tmp dir makes the resolution hermetic (tmp paths only).
@@ -2323,9 +2402,19 @@ function selfTest(opts) {
           detail: hit ? `${hit.rung} ${hit.target}` : 'not reported' };
       });
       checkI('real good samples stay clean (no error-level finding)', () => {
+        // Refreshed to the current tree (round 29). The 2026-10-12 restructure
+        // deleted `scripts/ufo-sighting-lib/queue.mjs` (its two doc citations now
+        // grade UNRESOLVED), and the CLI refusal pointer drifted: the old
+        // `crates/ufo-cli/src/main.rs:906` sample now carries the true-positive
+        // SYMBOL_OFF_LINE (`fail_local` occurs at line 115, not 906). The
+        // replacements are current-tree citations that resolve cleanly today —
+        // `scripts/ufo-sighting-lib/surface.mjs` (9 doc citations, 0 findings)
+        // and the `main.rs L95` `MembraneSeal {` citation. The curated set stays
+        // a live-tree assertion distinct from the hermetic fixtures; every other
+        // error still surfaces in the `liveErrors` block below.
         const good = [
           ['scripts/ufo-swarm-wave.mjs', null], ['scripts/fleet-dispatcher.mjs', ':12086'],
-          ['scripts/ufo-l0-monitor.mjs', ':226-232'], ['scripts/ufo-sighting-lib/queue.mjs', null],
+          ['scripts/ufo-l0-monitor.mjs', ':226-232'], ['scripts/ufo-sighting-lib/surface.mjs', null],
           ['scripts/collect-omp-native-handoff-lib/base.mjs', null],
           ['crates/ufo-core-runtime/src/execution_profile.rs', ':448'],
           ['crates/ufo-core-runtime/src/native.rs', ':470'],
@@ -2334,7 +2423,7 @@ function selfTest(opts) {
           ['crates/ufo-core-runtime/src/state.rs', ':380'],
           ['crates/ufo-core-runtime/src/loop_driver.rs', ':121'],
           ['crates/ufo-core-runtime/src/native_text.rs', ':96'],
-          ['crates/ufo-cli/src/main.rs', ':906'],
+          ['crates/ufo-cli/src/main.rs', 'L95'],
           ['crates/ufo-cli/tests/cli_contract.rs', ':1514'],
           ['conformance/fixtures/native-handoff/handoff.json', null], ['config/ufo.json', null],
         ];
@@ -2347,7 +2436,21 @@ function selfTest(opts) {
         }
         return { ok: bad.length === 0, detail: bad.length ? bad.join('; ') : '0 error-level findings on the 16 samples' };
       });
-      checkI('real index size matches pruned find (8124)', () => ({ ok: real.indexSize === 8124, detail: `indexSize=${real.indexSize}` }));
+      // The pruned index size is computed live, never frozen: the 2026-10-12
+      // restructure moved the origin tree and the old frozen 8124 went stale
+      // (today's tree is 1743). walk() skips symlinks and node_modules/.git/
+      // target/.ufo, which `find` mirrors — so the assertion stays a live-tree
+      // check against an independent tool, not a constant to re-pin each round:
+      //   find <src> \( -name node_modules -o -name .git -o -name target -o -name .ufo \) \
+      //     -prune -o -type f -print | wc -l
+      checkI('real index size matches a pruned live find', () => {
+        const r = spawnSync('find', [realSrc,
+          '(', '-name', 'node_modules', '-o', '-name', '.git', '-o', '-name', 'target', '-o', '-name', '.ufo', ')',
+          '-prune', '-o', '-type', 'f', '-print'], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+        const live = r.status === 0 ? String(r.stdout ?? '').split('\n').filter(Boolean).length : -1;
+        return { ok: live > 0 && real.indexSize === live,
+          detail: `indexSize=${real.indexSize} live-find=${live}` };
+      });
     } else {
       integration.push({ name: 'real-tree F1–F4 + good samples', ok: true, skipped: true,
         detail: `SKIP (no live tree at ${realSrc} / ${realSelf})` });
