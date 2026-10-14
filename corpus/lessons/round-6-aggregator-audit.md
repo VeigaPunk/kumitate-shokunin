@@ -48,7 +48,7 @@
 ## Fleet-2 axis-framework state
 
 - **`SCORECARD.md` does not exist at HEAD** (`git ls-files SCORECARD.md` → 0; no file on disk at 18:16). **At freeze it exists as an untracked 8595-byte file** written by the live round-8 lane at 18:29:11.
-- It carries all three AXES.md contract fields — **axes / planned / retired** — declares exactly the MISSION-assigned pair **operability + coverage**, and records a round-8 before→after (operability 0→2 via `A=0→1`, `C=0`; coverage 5→7 via `C1 14/18`, `C2 20/30→31/31`).
+- It carries all three `AXES.md` contract fields — **axes / planned / retired** — declares exactly the MISSION-assigned pair **operability + coverage**, and records a round-8 before→after (operability 0→2 via `A=0→1`, `C=0`; coverage 5→7 via `C1 14/18`, `C2 20/30→31/31`).
 - Proxies re-derived independently: `A` → 0 at HEAD / 1 on disk; `C` → `grep -c '^\s*- \[' SKILL.md` = 0 and `grep -c '^```' SKILL.md` = 0; `C2` → 31 rows / 31 files; arithmetic `(1+0)/(1+0+3) → 2` and `floor(10 × 0.778 × 1.0) = 7` both correct.
 - **Gap:** every pointer it relies on is uncommitted (`scripts/cite-check.mjs`, `SCORECARD.md` itself, and a "recorded in `LOG.md` r8" that has no r8 entry at freeze). Nothing in the round-8 axis-move is durable until the lane commits and files its report.
 - **First conforming version must:** (1) be committed in `kumitate-shokunin/` and listed by `git ls-files`; (2) carry exactly the two owned axes as rows of **axis → score 0–10 → evidence pointer → last-change round**, with each pointer resolving from a fresh session (committed repo path or pinned origin path — never a `local://` map, never an untracked file, never a not-yet-written LOG section); (3) print each score's counting command with its observed output and the commit it was measured against; (4) name in `planned` the single next axis-move as one axis + one falsifiable improvement; (5) give `retired` as an explicit "None" with the non-saturation reason (the current draft does this correctly); (6) state no cross-lane number it has not re-derived from that lane's committed artifact.
@@ -79,8 +79,8 @@ and `a6f9456` "round-8 fixups", both authored `kumitate <kumitate@shokunin.local
 so the lane-identity invariant (defect 6) is satisfied for new commits and stays
 open only for the 11 historical ones. Row-by-row re-stamp:
 
-- **Defect 3 (`GateDecision` line refs) — LANDED.** `git grep -n 'gate.rs:1[0-9]' HEAD
-  -- SKILL.md corpus/` → `SKILL.md:355`, `corpus/knowledge/loop-driver.md:118`,
+- **Defect 3 (`GateDecision` line refs) — LANDED.** `git grep -n 'gate.rs:1[0-9]' HEAD -- SKILL.md corpus/`
+  → `SKILL.md:355`, `corpus/knowledge/loop-driver.md:118`,
   `corpus/knowledge/native-judge-pipeline.md:112` all read `gate.rs:15`; the only
   surviving `gate.rs:11` strings are inside this lesson's quotation of the defect.
 - **Defect 4 (index rows) — LANDED.** `git show HEAD:corpus/README.md | grep -coE

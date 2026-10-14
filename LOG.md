@@ -1208,3 +1208,16 @@
   re-census's work, named not hidden. Selftest 62/62 held; pin re-pinned;
   C2 72→73. Godspeed verdicts: quality/calibration/operability improved,
   coverage unchanged.
+- 2026-10-14 — round 31 (FINAL, repair + verify lane, hyper): the
+  multi-line-backtick class resolved doc-side — each of the 5 named
+  citation sites reformatted to a single-line span (root cause confirmed
+  en route: prose tokens never emit findings, cite-check.mjs:1412-1426, so
+  a citation that leaves its span leaves the census). +5 notes, ZERO
+  vanished findings, quoted bytes byte-identical; 2 honest edits restored
+  5 citations; :118 left byte-exact (never a multi-line loss — round 29's
+  off-by-one fix had already recovered it; the round-28 '5 losses' record
+  corrected to 3 still-missing at the r30 baseline). Verify lane: no
+  DEFECT. ~7 further recoverable sites in the same file named as residue
+  for the parked re-census. Tool untouched (62/62 held). C2 73→74.
+  Godspeed verdicts: quality/calibration/coverage improved. KUMITATE AT
+  10 OF 10 (strict) — rounds 22-31 closed and verified under this goal.
