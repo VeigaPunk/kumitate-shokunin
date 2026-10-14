@@ -121,14 +121,34 @@ import { createHash } from 'node:crypto';
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SCHEMA = 'kumitate-surface-probe-v1';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
-const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/**
+ * Candidate origin-tree locations, canonical first. The operator restructure of
+ * 2026-10-12 moved the tree from `origin-work/ufo-fsd-alpha` to
+ * `Projects/ufo-fsd-alpha`; the default is derived from this list, never
+ * hardcoded to either (round-17 precedent: derive the default, do not hardcode).
+ */
+const SRC_CANDIDATES = [
+  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
+  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+];
+/**
+ * The origin-tree default: `$UFO_SRC` wins, else the first candidate that
+ * exists, else the canonical candidate — which is not a directory and so keeps
+ * the fail-closed `--src` refusal (exit 2). Resolved lazily and never in
+ * `--selftest`, so the hermetic suite stats no live path.
+ */
+function resolveSrcDefault() {
+  if (process.env.UFO_SRC) return process.env.UFO_SRC;
+  for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
+  return SRC_CANDIDATES[0];
+}
 
 const SIGHTING_SHIM = 'scripts/ufo-sighting';
 const SIGHTING_MODULE = 'scripts/ufo-sighting.mjs';
@@ -216,7 +236,8 @@ const CHECK_ORDER = [
 
 const USAGE = `usage: node scripts/surface-probe.mjs [options]
 
-  --src DIR       origin tree to probe (default: $UFO_SRC or ${DEFAULT_SRC})
+  --src DIR       origin tree to probe (default: $UFO_SRC, else the first
+                  existing of ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha)
   --self DIR      this repo, for --checklists (default: repo root containing this script)
   --json          machine output: {schema:"${SCHEMA}",src,self,options,surfaces,checks,findings,totals,verdict}
   --checklists    parse + run this repo's SKILL.md GFM task items (frozen v1 grammar)
@@ -1262,7 +1283,9 @@ function selfTest() {
 
     /* fixture: CLI-level paths, spawned hermetically -------------------- */
     const selfPath = fileURLToPath(import.meta.url);
-    const spawnSelf = (args) => spawnSync(process.execPath, [selfPath, ...args], { encoding: 'utf8', timeout: 120_000 });
+    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+    });
     const bogus = spawnSelf(['--bogus']);
     check('unknown flag → exit 64 (usage)', () => ({
       ok: bogus.status === 64 && /usage:/u.test(bogus.stderr ?? ''),
@@ -1278,6 +1301,50 @@ function selfTest() {
       ok: help.status === 0 && /usage:/u.test(help.stdout ?? ''),
       detail: `exit=${help.status}`,
     }));
+
+    /* round-23 ─ the derived --src default (bare invocation) --------------- */
+    // A bare run carries no `--src`; the default is derived from `$HOME`-relative
+    // candidates, so pointing HOME at a tmp dir makes the resolution hermetic.
+    const homeDir = (name, rel) => {
+      const home = join(tmp, name);
+      mkdirSync(rel === undefined ? home : join(home, rel), { recursive: true });
+      return home;
+    };
+    const bareSrc = (home) => {
+      const r = spawnSelf(['--json'], { HOME: home, UFO_SRC: '' });
+      let src = null;
+      try { src = JSON.parse(r.stdout ?? '').src; } catch { src = null; }
+      return { r, src };
+    };
+    const homeNew = homeDir('home-new', 'Projects/ufo-fsd-alpha');
+    const newResolved = bareSrc(homeNew);
+    check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
+      ok: newResolved.src === join(homeNew, 'Projects', 'ufo-fsd-alpha'),
+      detail: `exit=${newResolved.r.status} src=${newResolved.src}`,
+    }));
+    const homeLegacy = homeDir('home-legacy', 'Projects/origin-work/ufo-fsd-alpha');
+    const legacyResolved = bareSrc(homeLegacy);
+    check('bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => ({
+      ok: legacyResolved.src === join(homeLegacy, 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+      detail: `exit=${legacyResolved.r.status} src=${legacyResolved.src}`,
+    }));
+    const homeBoth = homeDir('home-both', 'Projects/ufo-fsd-alpha');
+    mkdirSync(join(homeBoth, 'Projects', 'origin-work', 'ufo-fsd-alpha'), { recursive: true });
+    const bothResolved = bareSrc(homeBoth);
+    check('bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec)', () => ({
+      ok: bothResolved.src === join(homeBoth, 'Projects', 'ufo-fsd-alpha'),
+      detail: `exit=${bothResolved.r.status} src=${bothResolved.src}`,
+    }));
+    const homeNone = homeDir('home-none');
+    const noneResolved = spawnSelf([], { HOME: homeNone, UFO_SRC: '' });
+    check('bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2)', () => {
+      const want = join(homeNone, 'Projects', 'ufo-fsd-alpha');
+      return {
+        ok: noneResolved.status === 2 && /FAIL-CLOSED/u.test(noneResolved.stdout ?? '')
+          && String(noneResolved.stdout ?? '').includes(`--src ${want} is`),
+        detail: `exit=${noneResolved.status} ${(noneResolved.stdout ?? '').trim().slice(0, 100)}`,
+      };
+    });
 
     /* fixture: checklist mode ------------------------------------------ */
     const checklistTree = (name, body) => {
@@ -1384,7 +1451,7 @@ function selfTest() {
 
 function parseArgs(argv) {
   const opts = {
-    src: DEFAULT_SRC, self: DEFAULT_SELF, json: false, strict: false, checklists: false, selfTest: false,
+    src: null, self: DEFAULT_SELF, json: false, strict: false, checklists: false, selfTest: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -1418,6 +1485,10 @@ function main() {
   if (opts.selfTest) return selfTest();
   if (opts.checklists) return runChecklistsMode(opts);
 
+  // The origin default is resolved here (never for --selftest/--checklists,
+  // which return first): a bare conformance run gets `$UFO_SRC` or the first
+  // existing candidate, while `--selftest` stats no live path at all.
+  if (opts.src === null) opts.src = resolveSrcDefault();
   const kind = statKind(opts.src);
   if (kind !== 'dir') {
     process.stderr.write(`surface-probe: fail-closed — --src ${opts.src} is ${kind}\n`);

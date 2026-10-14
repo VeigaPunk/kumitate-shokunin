@@ -12,6 +12,10 @@
  *
  * Grammar
  *   Token census: single-backtick spans outside ``` fences (SKILL.md + corpus/**).
+ *   Fence byte-ranges are masked (spaces, same length, newlines kept) before the
+ *   span/prose/ref scans, so a fence marker can never pair with an inline span's
+ *   backtick. Detection is marker-symmetric (``` closes ```, ~~~ closes ~~~, no
+ *   cross-closing); an unclosed fence masks to end of file.
  *   Line refs (`:N`, `:N-M`, `:N+`, `L<N>`, `L<N-M>`, `~L<N>`, `/`-chains such as
  *   `:7681/:7685/:7817`) are read everywhere outside fences — a ref adjacent to a
  *   path token belongs to that token, else to the file's sticky owner (the most
@@ -321,18 +325,50 @@ function fragmentKind(tok) {
 
 /* ------------------------------------------------------------- span parsing */
 
+const FENCE_LINE_RE = /^\s*(`{3,}|~{3,})/;
+
+/**
+ * Fence byte-ranges, marker-symmetric. The previous single open-state treated
+ * any ``` / ~~~ line as a toggle, so a ~~~ line could close a ```-opened fence
+ * (a CommonMark deviation) and everything after it stayed unmasked. A fence is
+ * now closed only by a line carrying the same marker run; a non-matching marker
+ * line is fence content. An unclosed fence at EOF masks to end of file.
+ */
 function findFences(text) {
   const fences = [];
   let open = null, off = 0;
   for (const line of text.split('\n')) {
-    if (/^\s*(?:```|~~~)/.test(line)) {
-      if (open === null) open = off;
-      else { fences.push([open, off + line.length]); open = null; }
+    const m = FENCE_LINE_RE.exec(line);
+    if (m) {
+      const marker = m[1][0];
+      if (open === null) open = { start: off, marker };
+      else if (open.marker === marker) { fences.push([open.start, off + line.length]); open = null; }
     }
     off += line.length + 1;
   }
-  if (open !== null) fences.push([open, text.length]);
+  if (open !== null) fences.push([open.start, text.length]);
   return fences;
+}
+
+/**
+ * Fence masking — repair of the round-16 fence defect. `findSpans` pairs
+ * /`([^`]+)`/g across the whole text, so the three backticks of a ``` fence line
+ * were consumed by that pairing: the opening backtick of the next inline span was
+ * eaten and every backticked citation after the fence vanished from the census
+ * (dead citations smuggled past the gate). ~~~ fences carry no backtick, so they
+ * never shifted anything. Replacing each fence byte-range with spaces of the same
+ * length — newlines kept, so positions and line structure are preserved — makes
+ * fence markers invisible to the span/prose/ref scans that run next.
+ */
+function maskFences(text, fences) {
+  if (!fences.length) return text;
+  const chars = text.split('');
+  for (const [a, b] of fences) {
+    for (let i = Math.max(0, a); i < Math.min(b, chars.length); i++) {
+      if (chars[i] !== '\n') chars[i] = ' ';
+    }
+  }
+  return chars.join('');
 }
 
 function findSpans(text, fences) {
@@ -932,6 +968,9 @@ function analyzeDoc(rel, ctx) {
   const { text, opts, src, selfIdx, fleetIdx, srcIdx } = ctx;
   const starts = lineStarts(text);
   const fences = findFences(text);
+  // fence byte-ranges are blanked (same length, newlines kept) before every scan
+  // that pairs or tokenizes document bytes; offsets therefore stay valid.
+  const masked = maskFences(text, fences);
   const lines = text.split('\n');
   const findings = [];
   const counts = { refs: 0, orphanRefs: 0, symbols: 0, altOwner: 0, decl: 0, prose: 0 };
@@ -941,7 +980,7 @@ function analyzeDoc(rel, ctx) {
 
   const push = (f) => findings.push(f);
   const tokenEvents = [];
-  const spans = findSpans(text, fences);
+  const spans = findSpans(masked, fences);
 
   const lineCountCache = new Map();
   const linesOf = (p) => {
@@ -1070,8 +1109,8 @@ function analyzeDoc(rel, ctx) {
     }
   }
 
-  const refEvents = enumerateRefEvents(text, fences, opts.src);
-  const proseTokens = enumerateProseTokens(text, fences, spans, opts.src);
+  const refEvents = enumerateRefEvents(masked, fences, opts.src);
+  const proseTokens = enumerateProseTokens(masked, fences, spans, opts.src);
 
   const events = [
     ...tokenEvents.map((t) => ({ ...t, type: 'token' })),
@@ -1378,6 +1417,44 @@ Shorthand: \`cli:1\` resolves through the alias map.
     + 'One real ref in the same doc: `scripts/real.mjs:1`.\n');
   writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'orphan.md'),
     '# orphan fixture\n\nA lone ref (:424242) with no path token anywhere above it.\n');
+
+  // Round-23 fence fixtures. Fence lines are assembled from BT/F3/T3 so this
+  // source stays free of nested-backtick template escapes. Each fixture is a
+  // minimal document whose only interesting byte is one backticked citation.
+  const BT = '`';
+  const F3 = BT.repeat(3);
+  const T3 = '~'.repeat(3);
+  const fenceDoc = (...lines) => lines.join('\n') + '\n';
+  const CITATION = `${BT}scripts/no-such-file.mjs${BT}`;
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-backtick.md'), fenceDoc(
+    '# fence fixture: backtick marker', '', F3, 'fenced body text', F3, '',
+    `Prose after a backtick fence: ${CITATION}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-tilde.md'), fenceDoc(
+    '# fence fixture: tilde marker', '', T3, 'fenced body text', T3, '',
+    `Prose after a tilde fence: ${CITATION}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-cross-close.md'), fenceDoc(
+    '# fence fixture: cross-closing is rejected', '', F3, 'fenced body text', T3, '',
+    `${CITATION} after a non-matching marker line.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-cross-close-tilde.md'), fenceDoc(
+    '# fence fixture: cross-closing is rejected (tilde opener)', '', T3, 'fenced body text', F3, '',
+    `${CITATION} after a non-matching marker line.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-unclosed.md'), fenceDoc(
+    '# fence fixture: unclosed fence masks to EOF', '', F3, 'fenced body text', '',
+    `${CITATION} inside an unclosed fence.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-content.md'), fenceDoc(
+    '# fence fixture: fence content is never tokenized', '', T3, CITATION, T3, '',
+    `See ${BT}scripts/real.mjs${BT}.`));
+
+  writeFileSync(join(selfRoot, 'corpus', 'knowledge', 'fence-alignment.md'), fenceDoc(
+    '# fence fixture: alignment self-heal', '',
+    `${BT}scripts/real.mjs${BT} before the fence.`, '', F3, 'fenced body text', F3, '',
+    `${BT}config/app.json${BT} after the fence.`));
 }
 
 function selfTest(opts) {
@@ -1509,6 +1586,68 @@ function selfTest(opts) {
       const r = runCheck({ ...base, self: emptySelf, fleet: dirname(emptySelf) });
       const ok = r.totals.filesScanned === 0 && r.verdict === 'FAIL';
       return { ok, detail: `filesScanned=${r.totals.filesScanned} verdict=${r.verdict}` };
+    });
+
+    // --- round-23 fence repair (round-16 defect: fence backticks paired as
+    // span delimiters, shifting alignment and silently dropping the citation
+    // that followed a ``` fence).
+    const fenceFile = (name) => rep.files.find((f) => f.file === `corpus/knowledge/${name}`);
+    const fenceHits = (name, token) => (fenceFile(name) ? fenceFile(name).findings : [])
+      .filter((f) => f.token === token);
+    const fenceProbe = (name) => {
+      const text = readFileSync(join(selfRoot, 'corpus', 'knowledge', name), 'utf8');
+      const fences = findFences(text);
+      return { text, fences, masked: maskFences(text, fences) };
+    };
+    // a fence that never receives its own closer must swallow the rest of the file
+    const swallowedToEof = (name) => {
+      const p = fenceProbe(name);
+      const region = p.fences.length === 1 ? p.masked.slice(p.fences[0][0]) : null;
+      return {
+        ok: p.fences.length === 1 && p.fences[0][1] === p.text.length
+          && region !== null && region.trim() === '',
+        detail: `fences=${JSON.stringify(p.fences)} eof=${p.text.length} maskedTail=${region === null ? 'n/a' : region.trim() === '' ? 'blank' : 'live bytes'}`,
+      };
+    };
+
+    check('R16 repro: token after a ``` fence is found (UNRESOLVED), not lost', () => {
+      const hit = fenceHits('fence-backtick.md', 'scripts/no-such-file.mjs');
+      return { ok: hit.length === 1 && hit[0].kind === 'UNRESOLVED' && hit[0].severity === 'error',
+        detail: hit.length ? `${hit[0].kind}/${hit[0].severity} @${hit[0].file}:${hit[0].line}` : 'lost (no finding)' };
+    });
+    check('R16 repro: ~~~ fence gives the same result as ``` (marker-symmetric)', () => {
+      const bt = fenceHits('fence-backtick.md', 'scripts/no-such-file.mjs');
+      const tl = fenceHits('fence-tilde.md', 'scripts/no-such-file.mjs');
+      const desc = (a) => (a.length === 1 ? `${a[0].kind}/${a[0].severity}@line${a[0].line}` : `lost(${a.length})`);
+      return { ok: bt.length === 1 && tl.length === 1 && bt[0].kind === tl[0].kind
+        && bt[0].severity === tl[0].severity && bt[0].line === tl[0].line,
+        detail: `backtick=${desc(bt)} tilde=${desc(tl)}` };
+    });
+    check('cross-closing rejected: ~~~ does not close ```, and ``` does not close ~~~', () => {
+      const bt = swallowedToEof('fence-cross-close.md');
+      const tl = swallowedToEof('fence-cross-close-tilde.md');
+      const reported = fenceHits('fence-cross-close.md', 'scripts/no-such-file.mjs').length
+        + fenceHits('fence-cross-close-tilde.md', 'scripts/no-such-file.mjs').length;
+      return { ok: bt.ok && tl.ok && reported === 0,
+        detail: `backtickOpened[${bt.detail}] tildeOpened[${tl.detail}] reported=${reported}` };
+    });
+    check('unclosed fence at EOF masks to end of file', () => {
+      const p = swallowedToEof('fence-unclosed.md');
+      const reported = fenceHits('fence-unclosed.md', 'scripts/no-such-file.mjs').length;
+      return { ok: p.ok && reported === 0, detail: `${p.detail} reported=${reported}` };
+    });
+    check('fence content is never tokenized (by design, kept)', () => {
+      const inside = fenceHits('fence-content.md', 'scripts/no-such-file.mjs').length;
+      const after = fenceHits('fence-content.md', 'scripts/real.mjs');
+      return { ok: inside === 0 && after.length === 1 && after[0].kind === 'OK',
+        detail: `insideFence=${inside} afterFence=${after.length ? after[0].kind : 'lost'}` };
+    });
+    check('alignment self-heal: tokens before AND after a ``` fence are both found', () => {
+      const before = fenceHits('fence-alignment.md', 'scripts/real.mjs');
+      const after = fenceHits('fence-alignment.md', 'config/app.json');
+      return { ok: before.length === 1 && after.length === 1
+        && before[0].kind === 'OK' && after[0].kind === 'OK',
+        detail: `before=${before.length ? before[0].kind : 'lost'} after=${after.length ? after[0].kind : 'lost'}` };
     });
 
     // real-tree assertions: machinery does not regress, live docs are repaired.

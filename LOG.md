@@ -1085,3 +1085,19 @@
   false limit removed), coverage:kimi-layer unchanged. Stanza re-pinned
   (K_sections 49, pin.proxy-check e2b63baf…); C2 64→65 re-pinned with this
   lesson's row (the gate-count rule applied).
+- 2026-10-13 — round 23 (free craft, godspeed): two queued operability
+  defects repaired by two hyper lanes. (1) cite-check fence masking
+  (marker-symmetric, mask-before-scan): selftest 20→26/26, mutation-proven;
+  findings census repo-wide: 123 errors + 59 warnings newly surfaced
+  (session-state 38, modes 20, skills-plugins 17, remaining-scripts-census
+  17, binary-secrets 14, config-plane 13, residue 3, member-claims-gate 1) —
+  a triage queue, deliberately NOT mass-edited; 13 previously-OK citations
+  now unreported (pairing-parity residual, follow-up). (2) --src derivation
+  in proxy/claims/surface-probe (round-17 precedent): selftests +4 each
+  (102/102, 39/39, 42/42); bare invocations reach the tree; cite-check:78 +
+  round-gate:142 still stale (next round). Four pins re-pinned; C2 65→66
+  with this lesson's row. Named regression, recorded: the citation-gate
+  checklist item reads DRIFT (errors 396→519) until the triage round — a
+  checklist item went red because the gate became honest. Godspeed verdicts:
+  calibration improved, operability improved-with-named-regression,
+  coverage/freshness unchanged.

@@ -226,7 +226,7 @@
  *   is the only writer, and only into a fresh `mkdtemp` dir it removes
  *   afterwards. Environment: the variables consulted are `UFO_SRC` and
  *   `KIMI_ROOT`, each only as its flag's default
- *   (`process.env.UFO_SRC || the lane's origin checkout`,
+ *   (`process.env.UFO_SRC || the first existing origin candidate`,
  *   `process.env.KIMI_ROOT || ~/.kimi-code`),
  *   so the legacy self-only terms stay env-independent; `--selftest` reads no
  *   environment and no live tree at all (its K terms count over a fixture kimi
@@ -237,7 +237,7 @@
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import {
-  mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+  existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
 } from 'node:fs';
 import { lstatSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
@@ -252,8 +252,29 @@ const CONTRACT = 'kumitate-proxy-v1';
 const STANZA_HEAD = `<!-- ${CONTRACT}`;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
-/** Origin tree the layer terms count over; `--src` overrides it. */
-const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/**
+ * Candidate origin-tree locations, canonical first. The operator restructure of
+ * 2026-10-12 moved the tree from `origin-work/ufo-fsd-alpha` to
+ * `Projects/ufo-fsd-alpha`; the default is derived from this list, never
+ * hardcoded to either, so a bare invocation survives the move (round-17
+ * precedent: derive the default, do not hardcode it).
+ */
+const SRC_CANDIDATES = [
+  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
+  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+];
+/**
+ * The origin-tree default: `$UFO_SRC` wins, else the first candidate that
+ * exists, else the canonical candidate — which is not a directory and so keeps
+ * the `SRC_NOT_A_DIR` fail-closed arm (an absent tree is exit 2, never a scored
+ * zero). Resolved lazily and never in `--selftest`, so the hermetic suite stats
+ * no live path.
+ */
+function resolveSrcDefault() {
+  if (process.env.UFO_SRC) return process.env.UFO_SRC;
+  for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
+  return SRC_CANDIDATES[0];
+}
 /** Kimi installation the K terms count over; `--kimi-root` overrides it. */
 const DEFAULT_KIMI_ROOT = process.env.KIMI_ROOT || join(homedir(), '.kimi-code');
 
@@ -400,7 +421,8 @@ options:
   --self DIR         repo root to measure (default: the repo containing this script)
   --scorecard FILE   claim block + registry rows + ## Axes rows (default <self>/${SCORECARD_FILE})
   --src DIR          origin tree the layer terms count over, via the claims gate
-                     (default: \$UFO_SRC or ${DEFAULT_SRC});
+                     (default: \$UFO_SRC, else the first existing of
+                     ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha);
                      a non-directory is refused as SRC_NOT_A_DIR (exit 2)
   --kimi-root DIR    kimi installation the K terms count over
                      (default: \$KIMI_ROOT or ${DEFAULT_KIMI_ROOT});
@@ -2139,6 +2161,48 @@ function selfTest() {
       };
     });
 
+    /* round-23 ─ the derived --src default (bare invocation) ---------------- */
+    // A bare run carries no `--src`; the default is derived from `$HOME`-relative
+    // candidates, so pointing HOME at a tmp dir makes the resolution hermetic.
+    const homeWithSrc = (name, rel) => {
+      const home = join(tmp, name);
+      fixtureSrc(join(home, rel));
+      return home;
+    };
+    const bareProxy = (home) => runProxy(
+      ['--self', F1.dir, '--kimi-root', F1.kimi],
+      { HOME: home, UFO_SRC: '' },
+    );
+    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)';
+    const rNew = bareProxy(homeWithSrc('home-new', 'Projects/ufo-fsd-alpha'));
+    check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
+      ok: rNew.status === 0 && verdictLine(rNew) === F1_MATCH,
+      detail: `exit=${rNew.status} ${verdictLine(rNew).slice(0, 120)}`,
+    }));
+    const rLegacy = bareProxy(homeWithSrc('home-legacy', 'Projects/origin-work/ufo-fsd-alpha'));
+    check('bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => ({
+      ok: rLegacy.status === 0 && verdictLine(rLegacy) === F1_MATCH,
+      detail: `exit=${rLegacy.status} ${verdictLine(rLegacy).slice(0, 120)}`,
+    }));
+    const homeBoth = homeWithSrc('home-both', 'Projects/ufo-fsd-alpha');
+    mkdirSync(join(homeBoth, 'Projects', 'origin-work', 'ufo-fsd-alpha'), { recursive: true });
+    const rBoth = bareProxy(homeBoth);
+    check('bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec)', () => ({
+      ok: rBoth.status === 0 && verdictLine(rBoth) === F1_MATCH,
+      detail: `exit=${rBoth.status} ${verdictLine(rBoth).slice(0, 120)}`,
+    }));
+    const homeNone = join(tmp, 'home-none');
+    mkdirSync(homeNone, { recursive: true });
+    const rNone = bareProxy(homeNone);
+    check('bare run (no --src): both candidates absent keeps SRC_NOT_A_DIR (exit 2, never a scored zero)', () => {
+      const want = join(homeNone, 'Projects', 'ufo-fsd-alpha');
+      return {
+        ok: rNone.status === 2 && fcToken(rNone) === 'SRC_NOT_A_DIR'
+          && verdictLine(rNone).includes(`--src ${want} is absent`),
+        detail: `exit=${rNone.status} ${verdictLine(rNone).slice(0, 110)}`,
+      };
+    });
+
     /* 38-41 ─ usage --------------------------------------------------------- */
     const u1 = runProxy(['--bogus']);
     check('usage: unknown flag → exit 64, usage on stderr', () => ({
@@ -2233,7 +2297,7 @@ function parseArgs(argv) {
   const opts = {
     self: DEFAULT_SELF,
     scorecard: null,
-    src: DEFAULT_SRC,
+    src: null,
     kimiRoot: DEFAULT_KIMI_ROOT,
     json: false,
     strict: false,
@@ -2260,6 +2324,10 @@ function parseArgs(argv) {
     else throw new Error(`unknown argument: ${a}`);
   }
   if (opts.scorecard === null) opts.scorecard = join(opts.self, SCORECARD_FILE);
+  // The origin default is resolved here (never for --selftest/--help, which win
+  // first): a bare check run gets `$UFO_SRC` or the first existing candidate,
+  // while `--selftest` stats no live path at all.
+  if (opts.src === null && !opts.selftest && !opts.help) opts.src = resolveSrcDefault();
   return opts;
 }
 

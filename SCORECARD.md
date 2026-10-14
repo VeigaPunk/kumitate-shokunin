@@ -278,8 +278,8 @@ A=6
 C=11
 C1=19
 C1_total=19
-C2=65
-C2_total=65
+C2=66
+C2_total=66
 S_members=114
 S_sections=74
 R_members=98
@@ -291,11 +291,11 @@ C1k_total=5
 K_members=49
 K_sections=49
 coverage_kimi=10
-pin.cite-check=a11ead17e20a3a6ff0663ff9b269c154e58dce27aa3a1b90f36528e1ad7d8352
-pin.surface-probe=86bdcd9af7f6f4135c2958b32ebd5c835db8c3a3c2b565b068136a3e9a97cb61
+pin.cite-check=52ce53d0cd9dd2d6e42773baf804507f0b4481cdc8003497b16534f2b32bff78
+pin.surface-probe=148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e
 pin.round-gate=8f9989b16dced830d2b1fe05eb6175d2e7d7cffb63d51a5356243b2b8dbb014a
-pin.proxy-check=e2b63baf9e9f23a1189aedfd39f8fe93d7f791770e6c0e53f284b89276349b2f
-pin.claims-check=57b8d3d430fe76f28cdaf1a6788e3bb22ea613188f411c6c4d74bd7bed28b1ed
+pin.proxy-check=a052ddb97a0b6f84be5993891273905bcb19f2dfef25aa523924c0d3cc5dcdba
+pin.claims-check=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
 pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 -->
 
@@ -375,6 +375,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 23 | operability + calibration (gate repairs; one named checklist regression) | cite-check fence defect hid citations after ``` fences (round-16, reproduced twice); proxy/claims/surface-probe bare runs failed closed on the dead origin-work literal | **T1**: cite-check fence masking (marker-symmetric fences, mask-before-scan) — selftest 20→26 (+6, mutation-proven 3/3), sha `52ce53d0…`; **findings census**: 123 errors + 59 warnings newly surfaced (session-state 38, modes-machinery 20, skills-plugins 17, remaining-scripts-census 17, binary-secrets 14, config-plane 13, residue 3, member-claims-gate 1) — triage queue, NOT mass-edited; 13 previously-OK citations now unreported (pairing-parity residual, follow-up candidate); **T2**: `--src` derivation ($UFO_SRC → first existing candidate, round-17 precedent) in proxy/claims/surface-probe — selftests +4 each (102/102, 39/39, 42/42), shas `a052ddb9…`/`e9a21b44…`/`148cbf85…`; bare invocations now reach the tree. **Named regression**: the `citation gate verdict` checklist item reads DRIFT (errors 396 → 519) until the triage round; cite-check:78 + round-gate:142 still carry the stale literal (next round) | 4 pins re-pinned; proxy selftest 102/102; live proxy DRIFT = six carried OMP layer terms only; census reproduced twice |
 | 22 | coverage:kimi-layer (term tightening; score unchanged — the anticipated drop was refuted by measurement) | occurrence term: K_sections 52, `floor(10 × 52/49)` = 10, with the known duplicate-one/drop-one hole | **distinct-member term lands** (pre-registered round 21): K_sections 52 occurrences → **49 distinct** (49/49 members named — the round-21 "~30 distinct" estimate was wrong and is corrected in the round-21 lesson's wake), `floor(10 × 49/49)` = **10** held; new `K_SECTION_AMBIGUOUS` warn arm (0 live); selftest 92 → 98 (+6, incl. the duplicate-one/drop-one mutation); `pin.proxy-check` re-pinned | implementer lane (hyper ds-flash) + independent cross-check (occurrence 52 / distinct 49 / 0 ambiguous / 0 unnamed); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha --selftest` → 98/98; live run: only the six carried OMP layer DRIFTs + PIN_DRIFT (re-pinned at close) |
 | 21 | coverage:kimi-layer (4 → 10) | K_sections 24, `floor(10 × 24/49)` = 4 | sectionization wave (operator directive: swarm more, buckets hyper/zai — opencode-go returned provider 400 `x-opencode-session` missing, recorded and routed to hyper): 6 coder+audit lanes restructured the notes to one `## <full-path>` section per K member (claims preserved — verified by 2 explore audit swarms + a 12-lane read-only verify wave, 49/49 members OK, 3 errata) ⇒ K_sections 24 → **52**, `floor(10 × 52/49)` = **10**; A=6, C=11 held; stanza re-pinned in-round | `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K_SECTIONS/COVERAGE_KIMI DRIFT (the two re-pinned terms), every other legacy + K term MATCH, pins=6 match; `kimi-census.mjs` CLEAN members=49; `cite-check` 0 errors in every `kimi-*` note; occurrence-vs-distinct recorded (52 sections ≈ 30 distinct members; distinct-term tightening pre-registered round 22) |
 | 20 | coverage:kimi-layer (first measurement — the round-16 role for the K block; registry change + tool + stanza + axes landed together per pre-registration) | no K terms; the K block declared unscored since round 18 | C1k **5/5**, `K_members` **49** (live), `K_sections` **24** ⇒ `floor(10 × 1.0 × 24/49)` = **4**; A=6, C=11 held; stanza gained 5 term keys + `pin.kimi-census`, `pin.proxy-check` re-pinned, `## Axes` row landed — tool, stanza, and axes travel together | `node scripts/kimi-census.mjs` → `CLEAN (members=49 checked=49)` with root enumeration live (`strays=0`); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K terms + legacy terms MATCH, layer terms DRIFT (carried debt); `--selftest` 92/92 (proxy, +21 K cases) and 43/43 (census, +8 K5 cases); occurrence-vs-distinct limit recorded (24 sections name 17 distinct members); wave-3 lane-found label collisions repaired (session-state title K4→K3, binary-secrets K5→K4); `kimi-residue-files.md` (364 L, 3 member sections, 9/9 wd-key recomputations, the 1-byte tui diff re-verified) |

@@ -56,19 +56,41 @@
  *
  * Zero dependencies (node: builtins only), read-only on every tree it touches,
  * and it never writes a file anywhere. The origin tree is resolved against,
- * never modified: `--src` (default `$UFO_SRC` or the lane's origin checkout)
+ * never modified: `--src` (default `$UFO_SRC`, else the first existing origin
+ * candidate — `~/Projects/ufo-fsd-alpha`, then `~/Projects/origin-work/ufo-fsd-alpha`)
  * is only ever opened for reading.
  */
-import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve, basename as pathBasename } from 'node:path';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 const CONTRACT = 'kumitate-claims-v1';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
-const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/**
+ * Candidate origin-tree locations, canonical first. The operator restructure of
+ * 2026-10-12 moved the tree from `origin-work/ufo-fsd-alpha` to
+ * `Projects/ufo-fsd-alpha`; the default is derived from this list, never
+ * hardcoded to either (round-17 precedent: derive the default, do not hardcode).
+ */
+const SRC_CANDIDATES = [
+  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
+  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+];
+/**
+ * The origin-tree default: `$UFO_SRC` wins, else the first candidate that
+ * exists, else the canonical candidate — which is not a directory and so keeps
+ * the `SRC_NOT_A_DIR` fail-closed arm (an absent tree is exit 2, never a scored
+ * zero). Resolved lazily and never in `--selftest`, so the hermetic suite stats
+ * no live path.
+ */
+function resolveSrcDefault() {
+  if (process.env.UFO_SRC) return process.env.UFO_SRC;
+  for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
+  return SRC_CANDIDATES[0];
+}
 
 const SCORECARD_FILE = 'SCORECARD.md';
 const CORPUS_DIRS = ['corpus/knowledge', 'corpus/lessons'];
@@ -106,7 +128,8 @@ options
   --self DIR       repo holding SCORECARD.md + corpus/ (default: this repo)
   --scorecard FILE SCORECARD path, relative to --self unless absolute
   --src DIR        origin tree the member files are resolved against
-                   (default: $UFO_SRC or ${DEFAULT_SRC})
+                   (default: $UFO_SRC, else the first existing of
+                   ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha)
   --row ID         check only this registry row (repeatable, e.g. --row S8)
   --json           one machine-readable object on stdout
   --strict         promote warn-level findings to failure
@@ -437,7 +460,7 @@ function failClosed(opts, token, detail, started) {
  * (relative, sorted): `scripts/proxy-check.mjs` counts its four layer
  * universes from it, so the origin tree is traversed exactly once per round.
  */
-export function probeSections({ self = DEFAULT_SELF, scorecard = SCORECARD_FILE, src = DEFAULT_SRC } = {}) {
+export function probeSections({ self = DEFAULT_SELF, scorecard = SCORECARD_FILE, src = resolveSrcDefault() } = {}) {
   if (statKind(self) !== 'dir') return { ok: false, kind: 'SELF_NOT_A_DIR', detail: `--self ${self} is ${statKind(self)}` };
   const scorecardPath = scorecard.startsWith('/') ? scorecard : join(self, scorecard);
   const scorecardText = readText(scorecardPath);
@@ -555,8 +578,10 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
   writeFileSync(join(root, SCORECARD_FILE), ['# Fixture scorecard', '', ...rows, ''].join('\n'));
 }
 
-function runClaims(args) {
-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 60_000 });
+function runClaims(args, env) {
+  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
+    encoding: 'utf8', timeout: 60_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+  });
   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
 
@@ -723,6 +748,39 @@ function selfTest() {
       }));
     }
 
+    /* round-23 ─ the derived --src default (bare invocation) --------------- */
+    // A bare run carries no `--src`; the default is derived from `$HOME`-relative
+    // candidates, so pointing HOME at a tmp dir makes the resolution hermetic.
+    const homeWithSrc = (name, rel) => { const home = join(tmp, name); fixtureSrc(join(home, rel)); return home; };
+    const bare = (home) => runClaims(['--self', green.self], { HOME: home, UFO_SRC: '' });
+    const GREEN_MATCH = 'CLAIMS: MATCH (rows=2 yes=2 notes=2 sections=2 adv=0)';
+    check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => {
+      const r = bare(homeWithSrc('home-new', 'Projects/ufo-fsd-alpha'));
+      return { ok: r.status === 0 && verdictLine(r) === GREEN_MATCH, detail: `exit=${r.status} last=${verdictLine(r).slice(0, 90)}` };
+    });
+    check('bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => {
+      const r = bare(homeWithSrc('home-legacy', 'Projects/origin-work/ufo-fsd-alpha'));
+      return { ok: r.status === 0 && verdictLine(r) === GREEN_MATCH, detail: `exit=${r.status} last=${verdictLine(r).slice(0, 90)}` };
+    });
+    check('bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec)', () => {
+      const home = homeWithSrc('home-both', 'Projects/ufo-fsd-alpha');
+      mkdirSync(join(home, 'Projects', 'origin-work', 'ufo-fsd-alpha'), { recursive: true });
+      const r = bare(home);
+      return { ok: r.status === 0 && verdictLine(r) === GREEN_MATCH, detail: `exit=${r.status} last=${verdictLine(r).slice(0, 90)}` };
+    });
+    check('bare run (no --src): both candidates absent keeps SRC_NOT_A_DIR (exit 2, never a scored zero)', () => {
+      const home = join(tmp, 'home-none');
+      mkdirSync(home, { recursive: true });
+      const r = bare(home);
+      const want = join(home, 'Projects', 'ufo-fsd-alpha');
+      return {
+        ok: r.status === 2 && verdictLine(r).includes('FAIL-CLOSED (SRC_NOT_A_DIR')
+          && verdictLine(r).includes(`--src ${want} is absent`),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 110)}`,
+        failClosed: ['SRC_NOT_A_DIR'],
+      };
+    });
+
     // usage
     check('ROW_UNKNOWN: unknown --row is a usage refusal, exit 64', () => {
       const g = mk('row-unknown');
@@ -813,12 +871,12 @@ function selfTest() {
  * of re-walking the registry — importing this module runs no CLI (see the
  * entrypoint guard at the bottom).
  */
-export { walkFiles, parseRegistry, DEFAULT_SRC, SCORECARD_FILE, CORPUS_DIRS };
+export { walkFiles, parseRegistry, resolveSrcDefault, SCORECARD_FILE, CORPUS_DIRS };
 
 /* ------------------------------------------------------------------- argv */
 
 function parseArgs(argv) {
-  const opts = { self: DEFAULT_SELF, scorecard: SCORECARD_FILE, src: DEFAULT_SRC, row: [], json: false, strict: false, selftest: false, help: false };
+  const opts = { self: DEFAULT_SELF, scorecard: SCORECARD_FILE, src: null, row: [], json: false, strict: false, selftest: false, help: false };
   const need = (flag, v) => {
     if (v === undefined || v.trim() === '' || v.startsWith('-')) {
       process.stdout.write(`claims-check: ${flag} needs a value\n${USAGE}`);
@@ -839,6 +897,10 @@ function parseArgs(argv) {
     process.stdout.write(`claims-check: unsupported argument: ${a}\n${USAGE}`);
     process.exit(64);
   }
+  // The origin default is resolved here (never for --selftest/--help, which win
+  // first): a bare check run gets `$UFO_SRC` or the first existing candidate,
+  // while `--selftest` stats no live path at all.
+  if (opts.src === null && !opts.selftest && !opts.help) opts.src = resolveSrcDefault();
   return opts;
 }
 
