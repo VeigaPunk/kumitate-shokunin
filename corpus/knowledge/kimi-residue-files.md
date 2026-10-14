@@ -140,7 +140,7 @@ derivation from strings-only to measured-corroborated). This section re-derives 
 `~/.kimi-code/workspaces.json` itself, on this lane's own commands.
 
 **OBSERVATION (source side).** Read out of `~/.kimi-code/bin/kimi` with `grep -a -b -o` and
-`dd`: region marker `utils/workdir-slug.ts` at byte 125573119, `function slugifyWorkDirName`
+`dd`: region marker `"utils/workdir-slug.ts"` at byte 125573119, `function slugifyWorkDirName`
 at 125573141, `function encodeWorkDirKey` at 125573410, `function workspaceRootKey` at
 125573711, and the constant block at 125574056 onward. The fragments below are the minified
 source with whitespace reflowed for reading — identifiers, literals and call order verbatim.
@@ -249,7 +249,7 @@ gated as ONE member by the census regex `scripts/kimi-census.mjs:97`).
 
 **INFERENCE.** The bare-suffix `.bak` with a header that names the live file is a
 copy-on-write snapshot taken by whatever wrote `~/.kimi-code/tui.toml` at 18:36, not a
-user-named backup; the census's drift-chain regex `^config\.toml(\..+)?\.bak$` exempts the
+user-named backup; the census's drift-chain regex `/^config\.toml(\..+)?\.bak$/` exempts the
 config generations from root enumeration but not this one, which is why
 `~/.kimi-code/tui.toml.bak` had to become a declared K5 member rather than a chain
 generation (`scripts/kimi-census.mjs:38-41`, `scripts/kimi-census.mjs:130-132`).
@@ -261,7 +261,7 @@ with `ENV_PREFIX` (`.env.`), or starts with one of `SENSITIVE_BASENAME_PREFIXES`
 `id_ed25519`, `id_ecdsa`, `credentials`) — and only *that* branch consults
 `SENSITIVE_DOT_VARIANT_SUFFIX_SET.has` (byte 129778912), whose list
 `SENSITIVE_DOT_VARIANT_SUFFIXES = [` starts at byte 129784375 with `".bak"` as its first
-entry (byte 129784412). `tui.toml` matches none of those prefixes.
+entry (byte 129784412). `~/.kimi-code/tui.toml` matches none of those prefixes.
 
 **INFERENCE.** By the substrate's own classifier `~/.kimi-code/tui.toml.bak` is not a
 sensitive path, which is consistent with the `644` both files actually carry — this residue

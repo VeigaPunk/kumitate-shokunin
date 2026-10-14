@@ -55,7 +55,8 @@
  *                 to the real root
  *   --main-repo   KUMITATE_MAIN_REPO   else <this lane repo's parent dir>
  *   --reports-dir KUMITATE_REPORTS_DIR else <main-repo>/.ufo/reports
- *   --origin      UFO_SRC               else /home/vgpnk/Projects/origin-work/ufo-fsd-alpha
+ *   --origin      UFO_SRC               else the first existing of
+ *                 ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha
  *   --round       latest closed round for the lane = max N with
  *                 `<reports-dir>/round-<N>/<lane>.md` present; none ⇒ fail-closed.
  *
@@ -128,9 +129,10 @@
  */
 import { spawnSync } from 'node:child_process';
 import {
-  mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, writeFileSync,
+  existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync,
+  writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -139,7 +141,29 @@ const CONTRACT = 'kumitate-round-gate-v1';
 const DEFAULT_LANE = 'kumitate';
 const DEFAULT_MAIN_REPO = resolve(HERE, '..', '..');
 const DEFAULT_REPORTS_DIR = join(DEFAULT_MAIN_REPO, '.ufo', 'reports');
-const DEFAULT_ORIGIN = '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/**
+ * Candidate origin-tree locations, canonical first. The operator restructure of
+ * 2026-10-12 moved the tree from `origin-work/ufo-fsd-alpha` to
+ * `Projects/ufo-fsd-alpha`; the default is derived from this list, never
+ * hardcoded to either (round-17 precedent: derive the default, do not hardcode).
+ */
+const SRC_CANDIDATES = [
+  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
+  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+];
+/**
+ * The origin-tree default: `$UFO_SRC` wins, else the first candidate that
+ * exists, else the canonical candidate — which is not a git work tree and so is
+ * simply not probeable (an absent tree keeps the unverifiable arm, never a
+ * scored zero). Resolved lazily and never in `--selftest`, so the hermetic suite
+ * stats no live path.
+ */
+function resolveSrcDefault(env = process.env) {
+  const envSrc = env.UFO_SRC;
+  if (typeof envSrc === 'string' && envSrc.trim() !== '') return resolve(envSrc);
+  for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
+  return SRC_CANDIDATES[0];
+}
 const REPORT_MIN_BYTES = 1024;
 const HISTORY_LIMIT = 1000;
 const GIT_TIMEOUT_MS = 20_000;
@@ -267,8 +291,9 @@ function parseArgs(argv, env = process.env) {
     else opts.reportsDir = DEFAULT_REPORTS_DIR;
   }
   if (opts.origin === null) {
-    const envSrc = envOr('UFO_SRC');
-    opts.origin = envSrc !== undefined ? resolve(envSrc) : DEFAULT_ORIGIN;
+    // --selftest is hermetic: it never reads --origin, so the derived default
+    // (which stats $HOME-relative candidates) is not resolved for it.
+    if (!opts.selftest) opts.origin = resolveSrcDefault(env);
   }
   return opts;
 }
@@ -1287,6 +1312,68 @@ function selfTest() {
       return {
         ok: r45.status === 0 && v !== null && v.round === 5 && v.lane === 'kumitate' && v.verdict === 'CLEAN',
         detail: `exit=${r45.status} ${verdictLine(r45)}`,
+      };
+    });
+
+    /* round-24 ─ the derived --origin default (bare invocation) -------------- */
+    // A bare run carries no `--origin`; the default is derived from
+    // `$HOME`-relative candidates, so pointing HOME at a tmp dir keeps the
+    // resolution hermetic (tmp paths only). The observable is a cited commit
+    // that resolves only in the derived origin: it lands in
+    // `citations.external` (never a finding). With both candidates absent the
+    // derived default is the canonical (non-probeable) candidate, so the token
+    // is unverifiable — still no finding, never a scored zero.
+    const mkDerivedOrigin = (name, rel) => {
+      const home = fxDir(name);
+      const dir = join(home, rel);
+      mkdirSync(dir, { recursive: true });
+      fxExpect(fxGit(dir, ['init', '--quiet', '-b', 'main']), 'derived origin init');
+      writeFileSync(join(dir, 'origin.txt'), 'origin work\n');
+      fxExpect(fxGit(dir, ['add', '-A']), 'derived origin add');
+      fxExpect(fxGit(dir, ['commit', '--quiet', '-m', 'derived origin commit']), 'derived origin commit');
+      return { home, dir, sha: fxGit(dir, ['rev-parse', 'HEAD']).stdout.trim() };
+    };
+    const derivedFixture = (name, rel) => {
+      const base = fxDir(`${name}-base`);
+      const laneRepo = fxLaneRepo(base, { round: 5 });
+      const { home, sha } = mkDerivedOrigin(`${name}-home`, rel);
+      const reports = fxReports(join(base, 'reports'), [{ round: 5, text: fxBigReport(5, `\nOrigin HEAD \`${sha}\`.\n`) }]);
+      const main = join(base, 'main');
+      mkdirSync(main, { recursive: true });
+      fxExpect(fxGit(main, ['init', '--quiet', '-b', 'main']), 'derived main init');
+      return { home, sha, args: ['--round', '5', '--repo', laneRepo, '--reports-dir', reports, '--main-repo', main] };
+    };
+    const derivedNew = derivedFixture('derived-new', 'Projects/ufo-fsd-alpha');
+    const rn = runGate([...derivedNew.args, '--json'], { HOME: derivedNew.home, UFO_SRC: '' });
+    check('bare run (no --origin): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => {
+      const j = JSON.parse(rn.stdout);
+      return { ok: rn.status === 0 && j.verdict === 'CLEAN' && j.citations.external.includes(derivedNew.sha),
+        detail: `exit=${rn.status} external=${JSON.stringify(j.citations.external)}` };
+    });
+    const derivedLegacy = derivedFixture('derived-legacy', 'Projects/origin-work/ufo-fsd-alpha');
+    const rl = runGate([...derivedLegacy.args, '--json'], { HOME: derivedLegacy.home, UFO_SRC: '' });
+    check('bare run (no --origin): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => {
+      const j = JSON.parse(rl.stdout);
+      return { ok: rl.status === 0 && j.verdict === 'CLEAN' && j.citations.external.includes(derivedLegacy.sha),
+        detail: `exit=${rl.status} external=${JSON.stringify(j.citations.external)}` };
+    });
+    const derivedNoneBase = fxDir('derived-none-base');
+    const derivedNoneLane = fxLaneRepo(derivedNoneBase, { round: 5 });
+    const derivedNoneHome = fxDir('derived-none-home');
+    const derivedNoneReports = fxReports(join(derivedNoneBase, 'reports'),
+      [{ round: 5, text: fxBigReport(5, '\nCited commit: `deadbeef1234`.\n') }]);
+    const derivedNoneMain = join(derivedNoneBase, 'main');
+    mkdirSync(derivedNoneMain, { recursive: true });
+    fxExpect(fxGit(derivedNoneMain, ['init', '--quiet', '-b', 'main']), 'derived none main init');
+    const rnone = runGate(['--round', '5', '--repo', derivedNoneLane, '--reports-dir', derivedNoneReports,
+      '--main-repo', derivedNoneMain, '--json'], { HOME: derivedNoneHome, UFO_SRC: '' });
+    check('bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding)', () => {
+      const j = JSON.parse(rnone.stdout);
+      const want = join(derivedNoneHome, 'Projects', 'ufo-fsd-alpha');
+      return {
+        ok: rnone.status === 0 && j.verdict === 'CLEAN' && j.citations.originProbeable === false
+          && j.citations.unverifiable.includes('deadbeef1234') && statKind(want) === 'absent',
+        detail: `exit=${rnone.status} originProbeable=${j.citations.originProbeable} unverifiable=${JSON.stringify(j.citations.unverifiable)}`,
       };
     });
 

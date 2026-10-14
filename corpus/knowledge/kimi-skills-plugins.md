@@ -25,7 +25,7 @@ the links exist so that one authored tree can be surfaced under two harnesses
 (`myskills` is a git repo — `.git/` present at its root; `~/.agents/skills/` is the
 OMP-flavored root, see cross-domain note).
 
-OBSERVATION: `wwkd/` additionally ships `SHA256SUMS` (75 B) pinning its own body:
+OBSERVATION: `~/.kimi-code/skills/wwkd/` additionally ships `SHA256SUMS` (75 B) pinning its own body:
 `172369e84a96661af55da38ea071b7741943675bfc511a8e338e3aaa623912cf  SKILL.md`, and the
 on-disk `sha256sum` matches byte-for-byte. `reverse-engineer-anything/` is the only
 member whose files are mode `600` (`SKILL.md`, all six `references/*.md`), the rest are
@@ -52,7 +52,7 @@ Member path `~/.kimi-code/skills/godspeed` is a symlink — `readlink` →
 - L3–7 description (`>` folded scalar), trigger verbatim: *"Triggered by \"godspeed\",
   \"--with godspeed\", or a task marked with godspeed framing."*
 - Body delegates to a second file: L12 *"You follow **one file**: `directive.md` (in this
-  skill directory)."* — `directive.md` is 429 B / 9 lines and is the entire posture.
+  skill directory)."* — the quoted directive file is 429 B / 9 lines and is the entire posture.
 
 ## `~/.kimi-code/skills/reverse-engineer-anything`
 
@@ -64,7 +64,7 @@ Member path `~/.kimi-code/skills/reverse-engineer-anything` is a symlink — `re
   source-repository architecture analysis."*
 - L4–6 `metadata:` block — `version: "37"`, `tool_count: 170`. This is the only user
   skill carrying a numeric version; it does not correspond to any file in the skill dir.
-- Layout: `SKILL.md` + `references/` (6 files:
+- Layout: `SKILL.md` + `~/.kimi-code/skills/reverse-engineer-anything/references/` (6 files:
   `~/.kimi-code/skills/reverse-engineer-anything/references/native-and-artifacts.md`,
   `~/.kimi-code/skills/reverse-engineer-anything/references/javascript-applications.md`,
   `~/.kimi-code/skills/reverse-engineer-anything/references/connection-and-recovery.md`,
@@ -137,12 +137,15 @@ Member path `~/.kimi-code/skills/ufo` is a symlink — `readlink` →
 - L13–16 `metadata:` — `axis_family: orchestration`, `language: match-repo`,
   `substrate: all`. The only frontmatter that self-classifies a skill against the
   repo axis taxonomy.
-- Layout: `SKILL.md` (632 lines, the largest) + `references/` = `run-logic.md` (65802 B,
-  the actual contract), `CHANGELOG.md` (21016 B), `godspeed-core/` (`directive.md` 429 B,
-  `filter.md`, `velocity.md`).
+- Layout: `SKILL.md` (632 lines, the largest) + `~/.kimi-code/skills/ufo/references/` =
+  `~/.kimi-code/skills/ufo/references/run-logic.md` (65802 B, the actual contract),
+  `~/.kimi-code/skills/ufo/references/CHANGELOG.md` (21016 B), `godspeed-core/`
+  (`~/.kimi-code/skills/ufo/references/godspeed-core/directive.md` 429 B,
+  `~/.kimi-code/skills/ufo/references/godspeed-core/filter.md`,
+  `~/.kimi-code/skills/ufo/references/godspeed-core/velocity.md`).
 
 OBSERVATION (mirror invariant, verified by hash) — `ufo`'s L24–36 `## Load order` names
-`references/godspeed-core/directive.md` among *"Host and packaged copies ... **checked
+`~/.kimi-code/skills/ufo/references/godspeed-core/directive.md` among *"Host and packaged copies ... **checked
 generated mirrors**, not additional authorities. The sync gate checks their bytes without
 requiring agents to read every copy. ... Duplicate assignment markers or drift from the
 authored bytes fail closed."* Measured: the `godspeed` skill's own directive and ufo's
@@ -222,7 +225,7 @@ OBSERVATION: the plugin **root** is mode `700` while every child is `755`/`644` 
 installer locks the package root and opens the payload. Contrast the user-skill entry
 point, which is a `755` symlink with no manifest at all.
 
-`kimi.plugin.json` (the plugin's own manifest, distinct from `installed.json`) — quoted
+`~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` (the plugin's own manifest, distinct from `~/.kimi-code/plugins/installed.json`) — quoted
 keys verbatim: `"$schema": "https://kimi.com/schemas/kimi.plugin.schema.json"`,
 `"name": "kimi-webbridge"`, `"version": "1.11.3"`, `"author": "Moonshot AI"`,
 `"license": "Proprietary"`, **`"skills": "./skills/"`**, and a nested `interface` object
@@ -231,13 +234,13 @@ plus a six-element `keywords` array (`browser, webbridge, cdp, automation, web, 
 
 Mechanics: `"skills": "./skills/"` is a **relative directory pointer** — the plugin
 declares where its skills live and the loader enumerates that dir, which is why the
-skill sits at `…/kimi-webbridge/skills/kimi-webbridge/SKILL.md` (plugin name repeated as
+skill sits at `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md` (plugin name repeated as
 the skill dir name). INFERENCE: a plugin may declare zero or many skill dirs under that
 pointer; only the one-dir case is observable here.
 
 Its `SKILL.md` frontmatter (L1–7) is structurally the same contract as a user skill —
 `name: kimi-webbridge`, description, `metadata: version: "1.11.3"` (L6, matching
-`kimi.plugin.json` L4). Two style differences from the user skills: the description uses
+`~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` L4). Two style differences from the user skills: the description uses
 a **literal** block scalar `|` (L3) where the user skills use `>` or a plain scalar, and
 the version is **owned by the plugin manifest and mirrored into frontmatter**, where the
 user skills carry no version at all (`reverse-engineer-anything`'s `metadata.version: "37"`
@@ -247,7 +250,7 @@ OBSERVATION (declared endpoint): `SKILL.md` L11 — *"Control the user's real br
 via a local daemon at `http://127.0.0.1:10086`"*; the tool table's rows L17–30 enumerate
 14 browser tools
 (`navigate, find_tab, snapshot, click, fill, evaluate, cdp, screenshot, network, upload,
-save_as_pdf, list_tabs, close_tab, close_session`), with `references/operations.md`
+save_as_pdf, list_tabs, close_tab, close_session`), with `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/references/operations.md`
 (4 headings: `## The daemon`, `## Recovery …`, `## Do NOT do automatically`, `## /status
 JSON fields`) holding daemon lifecycle/recovery detail. Routed to kama (see below).
 
@@ -256,10 +259,10 @@ JSON fields`) holding daemon lifecycle/recovery detail. Routed to kama (see belo
 | | User skill (`~/.kimi-code/skills/<n>`) | Managed plugin skill (`…/managed/<p>/skills/<n>`) |
 |---|---|---|
 | Entry point | symlink → external dir, mode `755` | real dir inside `plugins/`, parent plugin root mode `700` |
-| Manifest | **none** — `SKILL.md` is the whole contract | `kimi.plugin.json` (own schema URL) **plus** registry row in `plugins/installed.json` |
+| Manifest | **none** — `SKILL.md` is the whole contract | `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` (own schema URL) **plus** registry row in `~/.kimi-code/plugins/installed.json` |
 | Version | absent (or `metadata.version`, unbacked) | plugin manifest `1.11.3`, mirrored into frontmatter `metadata.version` |
-| Provenance | the symlink target *is* the provenance | `source`/`originalSource`/`installedAt` recorded in `installed.json` |
-| Enable gate | none observed | `enabled: true` in `installed.json` |
+| Provenance | the symlink target *is* the provenance | `source`/`originalSource`/`installedAt` recorded in `~/.kimi-code/plugins/installed.json` |
+| Enable gate | none observed | `enabled: true` in `~/.kimi-code/plugins/installed.json` |
 | Skill dir discovery | dir name under the scanned root | via the manifest's `"skills": "./skills/"` pointer |
 | Bundle | `SKILL.md` + `references/` or `protocol/` | `SKILL.md` + `references/` only, but also plugin-level metadata + `interface` block |
 
@@ -301,7 +304,7 @@ OBSERVATION (config plays no part): `grep -i 'skill|plugin|marketplace'` over
 **no matches**; `~/.kimi-code/tui.toml` (31 lines) holds only client prefs
 (`theme`, `tui_mode`, `[editor]`, `[notifications]`, `[upgrade]`) with no skill/plugin
 key. ⇒ INFERENCE: skill/plugin resolution is **purely filesystem-driven** — roots plus
-`plugins/installed.json` — not declarable in config.
+`~/.kimi-code/plugins/installed.json` — not declarable in config.
 
 UNKNOWN (recorded, not guessed): the exact filesystem scan order across the two user
 roots; whether `Project` scope is populated from `<cwd>/.kimi/skills` or similar; whether
@@ -315,7 +318,7 @@ outrank user skills by explicit `interface` config.
 | Runtime load telemetry for skills/plugins | **absence** | `grep -i 'skill\|plugin\|webbridge' ~/.kimi-code/logs/kimi-code.log` (7882 B) → *"No non-sensitive matches found"*. Loading leaves no log line; only the rendered prompt listing shows the result. |
 | `builtin://` skills | **opaque** | `check-kimi-code-docs`, `update-config`, `write-goal` have no resolvable file path on this host. |
 | `shokunin` `templates/` + `scripts/` + `commands/` runtime kit | **absent** | Probed MISS in skill dir and in source root `/home/vgpnk/Projects/myskills/` (see `~/.kimi-code/skills/shokunin`). |
-| `installed.json` disabled-plugin semantics | **unobservable** | Single record, `enabled: true`; no counterexample. |
+| `~/.kimi-code/plugins/installed.json` disabled-plugin semantics | **unobservable** | Single record, `enabled: true`; no counterexample. |
 | Secret-adjacent surfaces | **not opened** | `~/.kimi-code/credentials/` (`700`), `~/.kimi-code/oauth/`, `~/.kimi-code/server.token` (43 B, `600`) noted shape-only, never read. |
 
 ## Cross-domain findings — report, do not absorb
@@ -329,7 +332,7 @@ outrank user skills by explicit `interface` config.
 - **Local daemon endpoint** declared by the managed plugin: `http://127.0.0.1:10086`
   (WebBridge drives Chrome/Edge over CDP via a browser extension). → **kama (endpoints).**
 - **Credential/secret surface modes** observed on this host: `credentials/` `700`,
-  `oauth/` `700`, `server.token` `600`, `config.toml` `600` with 14 timestamped
+  `oauth/` `700`, `server.token` `600`, `~/.kimi-code/config.toml` `600` with 14 timestamped
   `.bak` siblings. → **kagi (credentials), report only.**
 - **No model-quality or route data** was measured in this lane. → nothing for kengaku.
 
@@ -344,15 +347,46 @@ outrank user skills by explicit `interface` config.
 `~/.kimi-code/skills/godspeed/directive.md` +
 `~/.kimi-code/skills/ufo/references/godspeed-core/directive.md`;
 `~/.kimi-code/plugins/installed.json`; `~/.kimi-code/plugins/managed/kimi-webbridge/`
-(`kimi.plugin.json`, `skills/kimi-webbridge/SKILL.md`, `references/operations.md`);
-`stat` modes for all of the above; `~/.kimi-code/{config.toml,tui.toml}` grepped
+(`~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json`,
+`~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md`,
+`~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/references/operations.md`);
+`stat` modes for all of the above; `~/.kimi-code/config.toml` and `~/.kimi-code/tui.toml` grepped
 shape-only; `~/.kimi-code/logs/kimi-code.log` grepped for load lines; rendered skill
 listing of this session (scope grouping and precedence rule text).
 
 ## Errata (round-19 audit A2, 2026-10-13, append-only)
 
-- **Nits (three counts):** live `config.toml` section count at audit time =
+- **Nits (three counts):** live `~/.kimi-code/config.toml` section count at audit time =
   **148**, not 150 (the note's count was taken pre-drift); `oauth/` mode =
   **0755**, not 0700 (mode-floor consequence, matches the census gate's
   floor design); the drift chain is **11 timestamped `.bak` + 1 plain
   `config.toml.bak`** (the note's "14" double-counted).
+
+**Erratum (round-24 triage C, 2026-10-13, append-only).** (1) The round-19
+nit above contained a bare config-plane filename inside pre-existing
+errata text; the minimal home-dir prefix was added to that one token in
+place — the only in-place edit inside pre-existing errata text —
+disclosed here per the
+sibling-lane protocol. (2) Seventeen bare substrate-relative refs flagged
+by round 23's honest fence geometry (the plugin manifest at four sites,
+the registry manifest at six, the plugin skill and operations files —
+one of the skill sites an ellipsis shorthand — and the config/tui
+filenames including one brace-expansion shorthand) were prefixed to
+their full home-dir form per the round-13 house rule; no claim text
+changed. (3) Nine ambiguous
+bare names in the skill-member sections (the wwkd dir, the REA
+references dir, the ufo layout basenames run-logic / CHANGELOG /
+directive / filter / velocity, and the mirror-invariant mention) were
+prefixed to the symlink-path
+form this note declares as its citation convention. A tenth site (the
+godspeed directive prose mention) could not take the prefix: a full path
+placed beside the verbatim-quote mention on the preceding line acted as a
+directory-context hint and re-bound the quoted bare name to the origin
+tree's 8-line mirror copy, putting every downstream SKILL.md line anchor
+out of range (32 LINE_OOR before the reword); the prose site now reads
+"the quoted directive file" and the quote itself stays byte-identical.
+Four genuinely
+generic references-dir mentions and one directive filename inside a
+verbatim quote of the godspeed skill body were deliberately left as-is:
+prefixing the former would assert a specificity the sentence does not
+claim, and editing the latter would alter quoted bytes.

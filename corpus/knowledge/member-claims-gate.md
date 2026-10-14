@@ -34,7 +34,7 @@ CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=146 adv=14)       # exit 0
 
 | kind | severity | rule |
 |---|---|---|
-| `NOTE_MISSING` | error | a cell's explicit `knowledge/x.md` has no file; a claimed bare stem resolves nowhere; or a covered cell asserts no note at all |
+| `NOTE_MISSING` | error | a cell's explicit `knowledge/<stem>.md` has no file; a claimed bare stem resolves nowhere; or a covered cell asserts no note at all |
 | `NOTE_AMBIGUOUS` | error | a bare stem exists in both `corpus/knowledge/` and `corpus/lessons/` |
 | `NOTE_FOREIGN` | error | none of the row's notes names any member of the row's declared family (skipped when the row resolved no note — the `NOTE_*` finding already says so) |
 | `SECTION_FILE_UNRESOLVED` | error | a member heading's token does not resolve under `--src` |

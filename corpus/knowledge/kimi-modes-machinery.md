@@ -152,7 +152,7 @@ Resume `hub send` never carries it.
 `~/Projects/ufo-fsd-alpha/.omp/hooks/pre/ufo-godspeed-inject.js`, 3819 bytes
 (siblings: `primeagent-assimilation.js`, `ufo-l0-monitor.js`). This verifies
 the *OMP-substrate* claim. It does **not** put a godspeed hook on kimi: this
-host's `config.toml` has exactly one hook (§5), a Notification hook.
+host's `~/.kimi-code/config.toml` has exactly one hook (§5), a Notification hook.
 
 ### 1.6 Routing and visibility
 L175-196: a lane's taxonomy role selects its `@m_*` bucket through the
@@ -160,7 +160,7 @@ operator's `~/.omp/agent/config.yml` (`task.agentModelOverrides`, `modelRoles`,
 `retry.fallbackChains`); "the approved table is three (`m_strong`, `m_mid`,
 `m_fast`)"; the live table decides the binding. Opt-in `--route-families`
 preflight flags `singleFamily`; the skill "never edit[s] or override[s] global
-routing". L197-249 covers UFO Sighting fleet controls and `sighting/tower-fleet.mjs`
+routing". L197-249 covers UFO Sighting fleet controls and `~/Projects/ompskills/sighting/tower-fleet.mjs`
 verbs (`plan` default, `launch --apply`, `status`, `close --apply`).
 
 ---
@@ -174,15 +174,16 @@ goal."
 
 ### 2.1 The swarm sub-skill (required read)
 L20-37: `swarm` is the bundle's only sub-skill; read
-`swarm/SKILL.md` relative to this file (`.omp/skills/tower/swarm/SKILL.md`).
+`~/.agents/skills/tower/swarm/SKILL.md` relative to this file (`.omp/skills/tower/swarm/SKILL.md`).
 Kimi CLI invokes it as `/tower.swarm on|off|<task>`, OMP as
 `/tower swarm on|off|<task>`. L34: *"The child is advisory: `tower` keeps
 planning, judgment, and integration; reading `swarm/SKILL.md` alone does not
 enable the session toggle."*
 
-**OBSERVATION** — the bundle is real: `~/.agents/skills/` holds `swarm/SKILL.md`
-(16017 B) and `tower/SKILL.md` (15335 B), and `~/.agents/skills/tower/swarm/`
-holds a bundled copy of `swarm/SKILL.md` (also 16017 B) — the "copies the bundle
+**OBSERVATION** — the bundle is real: `~/.agents/skills/` holds
+`~/.agents/skills/swarm/SKILL.md` (16017 B) and
+`~/.agents/skills/tower/SKILL.md` (15335 B), and `~/.agents/skills/tower/swarm/`
+holds a bundled copy of `~/.agents/skills/tower/swarm/SKILL.md` (also 16017 B) — the "copies the bundle
 directory" claim (L36-37) has a matching on-disk layout.
 
 ### 2.2 Host bindings (the OMP-vs-Devin dispatch table)
@@ -211,7 +212,7 @@ only scoped assignments. L107-129 (Godspeed): same hook claim as swarm, plus
 another L1 or judge. Do not create a second judge." L167-195 (settle/cleanup):
 per-path worktree removal, `omp worktree clear` is "a repo-wide orphan sweep,
 not a per-path delete", and "**Never use `omp worktree clear --all`**". L197-251
-(fleet, OMP-only): `sighting/tower-fleet.mjs` verbs and the `fleet.json` spec
+(fleet, OMP-only): `~/Projects/ompskills/sighting/tower-fleet.mjs` verbs and the `<fleet.json>` spec
 fields.
 
 ---
@@ -227,7 +228,7 @@ authority:
   orchestrator" (swarm L33); the wall/mission "never a second orchestrator"
   (tower L8); "Keep exactly one L1 per mission … Do not create a second judge"
   (tower L161-165); "one L1, no second judge" (swarm L86).
-- One-bundle read rule: `swarm/SKILL.md` is read *through* tower
+- One-bundle read rule: `~/.agents/skills/tower/swarm/SKILL.md` is read *through* tower
   (tower L22-26); reading it alone "does not enable the session toggle".
 - Both keep "one L1" and forbid concurrent overlapping-file writers
   (tower L80-82; swarm L86-87).
@@ -266,7 +267,9 @@ axes', 'break this down', or whenever ufo loads its planner stance."* Under
 ufo, "run-logic §5 is normative: this file is the enrichment, and any drift
 resolves in §5's favor (I9)" (L11-13).
 
-Body: the wwkd×godspeed pair (L28-40; `filter.md`/`velocity.md` are judge-only,
+Body: the wwkd×godspeed pair (L28-40;
+`~/.kimi-code/skills/ufo/references/godspeed-core/filter.md` and
+`~/.kimi-code/skills/ufo/references/godspeed-core/velocity.md` are judge-only,
 L37-39); the mapping pipeline (L42-91: data walk → name the axes → group into
 milestones → hand to L1 dispatcher → assimilate/remap); three axis measurements
 `executable`/`subjective`/`evidence` (L56-67); milestones ordered by least
@@ -280,13 +283,13 @@ Frontmatter (L2-17): the single self-driving L1 orchestrator for
 "omp, kimi, codex, cursor, opencode, grok, devin"; `substrate: all`.
 Trigger (L9-12): *"Typing 'ufo', '/ufo', or '$ufo' runs the full skillset end
 to end. 'open the hatch', 'open ufo sighting', and 'i wanna see the ufos' open
-its visible fleet wall."* Load order (L24-45): directive → `references/run-logic.md`
+its visible fleet wall."* Load order (L24-45): directive → `~/.kimi-code/skills/ufo/references/run-logic.md`
 → planner stance (wwkd, de-gated: "its absence never blocks activation"). §Advisory
 mode (L64-74): without the canonical runtime, ufo "plans, reviews, drafts
 contract amendments … It must not simulate dispatch, fabricate handoffs …".
 Terminology L76-88 defines L1/L2/L3 and `fsd`. The hatch (L90-95) maps the three
 exact strings to `scripts/ufo-sighting open`. References live at
-`~/.kimi-code/skills/ufo/references/` (`run-logic.md` 65802 B, `CHANGELOG.md`,
+`~/.kimi-code/skills/ufo/references/` (`~/.kimi-code/skills/ufo/references/run-logic.md` 65802 B, `~/.kimi-code/skills/ufo/references/CHANGELOG.md`,
 `godspeed-core/`).
 
 ---
@@ -326,7 +329,7 @@ in `yolo`/`manual`, `ExitPlanMode` still presents the plan for approval; in
 `AskUserQuestion` must not be used. (This is the tool-description text shipped
 in the binary — a documented contract, not a behavior I drove.)
 
-`tui.toml:6` pins `tui_mode = "regular"` ("fullscreen" is experimental) — a
+`~/.kimi-code/tui.toml:6` pins `tui_mode = "regular"` ("fullscreen" is experimental) — a
 different axis (TUI layout), not a permission mode.
 
 ---
@@ -399,7 +402,7 @@ goal only when the user says they want a goal." Choices go through
 scope (path `builtin://write-goal`) — consistent with the binary's
 `PSEUDO_PATH = "builtin://write-goal"` (OBSERVATION, cross-checked two ways).
 
-`tui.toml:26-28` corroborates a `goal` footer slot: the commented
+`~/.kimi-code/tui.toml:26-28` corroborates a `goal` footer slot: the commented
 `[status_line]` example is `items = ["mode","goal","model","tasks","cwd","git","tips"]`.
 
 ---
@@ -413,18 +416,18 @@ scope (path `builtin://write-goal`) — consistent with the binary's
    swarm/tower substrate, yet the mode names are first-class in the kimi binary.
 2. **Two different "swarm" keys.** The skills' wave band lives in the UFO
    checkout (`~/Projects/ufo-fsd-alpha/config/ufo.json:88-94`), *not* in kimi's
-   `config.toml`. kimi's own `config.toml:1246-1247` `[swarm]` table holds only
+   `~/.kimi-code/config.toml`. kimi's own `~/.kimi-code/config.toml:1246-1247` `[swarm]` table holds only
    `timeout_ms = 7200000` — a different thing with the same name. Do not read
    the band off kimi's config.
 3. **Hook scope.** Godspeed injection is an OMP project hook
    (`.omp/hooks/pre/ufo-godspeed-inject.js`, verified on disk). kimi's
-   `config.toml:1279-1283` has exactly one `[[hooks]]` entry: a `Notification`
+   `~/.kimi-code/config.toml:1279-1283` has exactly one `[[hooks]]` entry: a `Notification`
    hook matching `task\.completed` running `notify-send`. No kimi-side godspeed
    hook exists.
 4. **`[experimental]` gates modes.** tower is gated by the `tower` experimental
-   flag (binary) and enabled here (`config.toml:1234 tower = true`).
+   flag (binary) and enabled here (`~/.kimi-code/config.toml:1234 tower = true`).
    `notify_user` (L1235) and `subagent_fork` (L1236) are also on.
-5. **Bucket vocabulary differs across surfaces.** kimi's `config.toml:1255-1277`
+5. **Bucket vocabulary differs across surfaces.** kimi's `~/.kimi-code/config.toml:1255-1277`
    `[secondary_model.models]` describes models in `FAST`/`MIDDLE`/`STRONG`
    buckets; the OMP-facing docs use `m_fast`/`m_mid`/`m_strong`. Same idea, two
    vocabularies (route to kama, §9).
@@ -449,10 +452,10 @@ Per PROVINCE.md ("report cross-domain evidence back"):
 - **→ kama (endpoints/routing):** the OMP routing authority
   `~/.omp/agent/config.yml` (`task.agentModelOverrides`, `modelRoles`,
   `retry.fallbackChains`) and the `m_strong`/`m_mid`/`m_fast` bucket table are
-  named by both swarm and tower. Also kimi `config.toml:1255-1277`
+  named by both swarm and tower. Also kimi `~/.kimi-code/config.toml:1255-1277`
   `[secondary_model]` FAST/MIDDLE/STRONG bucket map (default
   `opencode-go/deepseek-v4.1-flash`, L1256) — endpoint/route evidence, not mine.
-- **→ kagi (credentials shape):** `config.toml:8-12` and `:1219-1230` reference
+- **→ kagi (credentials shape):** `~/.kimi-code/config.toml:8-12` and `:1219-1230` reference
   OAuth storage by **key pointer only** (`storage = "file"`, `key =
   "oauth/kimi-code-env-0e4f99c69cc27850"`, `oauth_host =
   "https://auth.kimi.ai"`). I did not open `~/.kimi-code/oauth/` or
@@ -473,7 +476,7 @@ Per PROVINCE.md ("report cross-domain evidence back"):
 - `~/.agents/skills/tower/SKILL.md` (252 L) — read in full.
 - `~/.kimi-code/skills/godspeed/{SKILL.md,directive.md}`;
   `~/.kimi-code/skills/wwkd/{SKILL.md,SHA256SUMS}`;
-  `~/.kimi-code/skills/ufo/SKILL.md` (+ `references/`).
+  `~/.kimi-code/skills/ufo/SKILL.md` (+ `~/.kimi-code/skills/ufo/references/`).
 - `~/.kimi-code/config.toml` (1293 L; lines 1-2, 1211-1293 read);
   `~/.kimi-code/tui.toml`; `kimi --help`; `kimi doctor`.
 - `~/.kimi-code/bin/kimi` sha256 `66f47536e40b02bb1d577cdd324768f73d39b8b9472e0ca140e73d8e225cd7de` — `strings | grep`
@@ -486,7 +489,7 @@ Per PROVINCE.md ("report cross-domain evidence back"):
   `ufo.json:78` = `globalRunnerCeiling: 1056` (the note's original grep
   window was too narrow).
 - **§9 secondary-default claim — same drift as `kimi-lane-definitions.md`:**
-  `config.toml:1256` read `opencode-go/deepseek-v4.1-flash` at the 17:00
+  `~/.kimi-code/config.toml:1256` read `opencode-go/deepseek-v4.1-flash` at the 17:00
   snapshot and `hyper/deepseek-v4.1-flash` at 18:15; the opencode-go id sits
   at `:1277` with an empty description in both readings (the orphan row).
 - **Labelling note (not a defect):** the note's OBSERVATION class
@@ -501,3 +504,29 @@ Per PROVINCE.md ("report cross-domain evidence back"):
   mean altering quoted material; recorded as a `cite-check` tokenization
   limit (multi-word spans yield inner-word refs) and queued as a tool
   hardening item, not patched inside this round.
+
+- **Round-24 triage (TRIAGE B, 2026-10-13) — citation-form sweep.** The
+  round-23 honest gate surfaced 20 `UNRESOLVED` errors here; 19 are repaired to
+  full paths per the round-13 rule, every preserved `:N` re-verified live
+  against the substrate: the bare config/tui tokens → `~/.kimi-code/config.toml`
+  and `~/.kimi-code/tui.toml`; the bare skill-file tokens →
+  `~/.agents/skills/swarm/SKILL.md` and `~/.agents/skills/tower/SKILL.md`; the
+  tower doc's checkout-relative fleet-launcher token →
+  `~/Projects/ompskills/sighting/tower-fleet.mjs` (its real checkout root —
+  `~/.agents/skills/tower` is a symlink into
+  `~/Projects/ompskills/.omp/skills/tower`); the spec name → `<fleet.json>`, the
+  tower doc's own spelling. Claims untouched. The six `AMBIG` warns (the wwkd
+  judge-only pair and the ufo references entries) are qualified to their
+  `~/.kimi-code/skills/ufo/references/` paths.
+- **Unrepaired — in-quote form (the note's floor is 1 error).** The swarm
+  sub-skill paragraph keeps a bare skill-file token inside the verbatim tower
+  quote; qualifying it would alter quoted material, so it is left rather than
+  patched.
+- **Symlink drift (claim correction).** The posture section calls the two agent
+  skills "real dirs under `~/.agents/skills`"; both are symlinks into
+  `~/Projects/ompskills/.omp/skills/` (measured 2026-10-13).
+- **Tool limit re-confirmed (not a note defect).** A `~/…`-rooted token cannot
+  own its `:N` ref — foreign-root tokens never become sticky owners — so the ref
+  either reports `ORPHAN_REF` (no source citation precedes it) or rebinds to the
+  nearest preceding source token, which the checker discloses as
+  `REF_OWNER_AMBIG`; same class as the round-21 `base`-token note above.

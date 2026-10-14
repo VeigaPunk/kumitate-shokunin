@@ -72,14 +72,34 @@ import { createHash } from 'node:crypto';
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
 } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SCHEMA = 'kumitate-cite-check-v1';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
-const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+/**
+ * Candidate origin-tree locations, canonical first. The operator restructure of
+ * 2026-10-12 moved the tree from `origin-work/ufo-fsd-alpha` to
+ * `Projects/ufo-fsd-alpha`; the default is derived from this list, never
+ * hardcoded to either (round-17 precedent: derive the default, do not hardcode).
+ */
+const SRC_CANDIDATES = [
+  join(homedir(), 'Projects', 'ufo-fsd-alpha'),
+  join(homedir(), 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+];
+/**
+ * The origin-tree default: `$UFO_SRC` wins, else the first candidate that
+ * exists, else the canonical candidate — which is not a directory and so keeps
+ * the `--src` fail-closed refusal (exit 2, never a scored zero). Resolved lazily
+ * and never in `--selftest`, so the hermetic suite stats no live path.
+ */
+function resolveSrcDefault() {
+  if (process.env.UFO_SRC) return process.env.UFO_SRC;
+  for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
+  return SRC_CANDIDATES[0];
+}
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'target', '.ufo']);
 
 /** Source-root precedence for ambiguous basenames (parent-frozen). */
@@ -170,7 +190,9 @@ const SEVERITY = {
 
 const USAGE = `usage: node scripts/cite-check.mjs [options]
 
-  --src DIR       source tree to resolve against (default: $UFO_SRC or ${DEFAULT_SRC})
+  --src DIR       source tree to resolve against (default: $UFO_SRC, else the
+                  first existing of ~/Projects/ufo-fsd-alpha and
+                  ~/Projects/origin-work/ufo-fsd-alpha)
   --self DIR      docs tree to scan (default: repo root containing this script)
   --fleet DIR     parent of --self for fleet-parent/sibling-lane docs (default: dirname --self)
   --json          machine output: {schema:"${SCHEMA}",src,self,fleet,files,totals,verdict}
@@ -189,7 +211,7 @@ const USAGE = `usage: node scripts/cite-check.mjs [options]
 
 function parseArgs(argv) {
   const opts = {
-    src: DEFAULT_SRC, self: DEFAULT_SELF, fleet: null, json: false, strict: false,
+    src: null, self: DEFAULT_SELF, fleet: null, json: false, strict: false,
     symbols: false, all: false, selfTest: false, integrations: false,
   };
   for (let i = 0; i < argv.length; i++) {
@@ -212,6 +234,10 @@ function parseArgs(argv) {
     else throw new Error(`unknown argument: ${a}`);
   }
   if (!opts.fleet) opts.fleet = dirname(opts.self);
+  // The origin default is derived here, never at module load: `$UFO_SRC` wins,
+  // else the first existing candidate. `--selftest` alone is hermetic and stats
+  // no live path; `--integrations` reads the live tree and so does resolve.
+  if (opts.src === null && !(opts.selfTest && !opts.integrations)) opts.src = resolveSrcDefault();
   return opts;
 }
 
@@ -1648,6 +1674,47 @@ function selfTest(opts) {
       return { ok: before.length === 1 && after.length === 1
         && before[0].kind === 'OK' && after[0].kind === 'OK',
         detail: `before=${before.length ? before[0].kind : 'lost'} after=${after.length ? after[0].kind : 'lost'}` };
+    });
+
+    // round-24 ─ the derived --src default (bare invocation). A bare run carries
+    // no `--src`; the default is derived from `$HOME`-relative candidates, so
+    // pointing HOME at a tmp dir makes the resolution hermetic (tmp paths only).
+    const SELF = fileURLToPath(import.meta.url);
+    const bareArgs = ['--json', '--self', selfRoot, '--fleet', dirname(selfRoot)];
+    const bareSrc = (home) => {
+      const r = spawnSync(process.execPath, [SELF, ...bareArgs], {
+        encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
+        env: { ...process.env, HOME: home, UFO_SRC: '' },
+      });
+      let src = null;
+      try { src = JSON.parse(r.stdout ?? '').src; } catch { src = null; }
+      return { r, src };
+    };
+    const homeWithSrc = (name, rel) => {
+      const home = join(tmp, name);
+      mkdirSync(join(home, rel), { recursive: true });
+      return home;
+    };
+    check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => {
+      const home = homeWithSrc('home-new', 'Projects/ufo-fsd-alpha');
+      const { r, src } = bareSrc(home);
+      return { ok: src === join(home, 'Projects', 'ufo-fsd-alpha'), detail: `exit=${r.status} src=${src}` };
+    });
+    check('bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => {
+      const home = homeWithSrc('home-legacy', 'Projects/origin-work/ufo-fsd-alpha');
+      const { r, src } = bareSrc(home);
+      return { ok: src === join(home, 'Projects', 'origin-work', 'ufo-fsd-alpha'), detail: `exit=${r.status} src=${src}` };
+    });
+    check('bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2)', () => {
+      const home = join(tmp, 'home-none');
+      mkdirSync(home, { recursive: true });
+      const want = join(home, 'Projects', 'ufo-fsd-alpha');
+      const r = spawnSync(process.execPath, [SELF, '--self', selfRoot, '--fleet', dirname(selfRoot)], {
+        encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
+        env: { ...process.env, HOME: home, UFO_SRC: '' },
+      });
+      return { ok: r.status === 2 && String(r.stderr ?? '').includes(`--src ${want} is missing`),
+        detail: `exit=${r.status} ${String(r.stderr ?? '').trim().split('\n')[0]}` };
     });
 
     // real-tree assertions: machinery does not regress, live docs are repaired.

@@ -1101,3 +1101,19 @@
   checklist item went red because the gate became honest. Godspeed verdicts:
   calibration improved, operability improved-with-named-regression,
   coverage/freshness unchanged.
+- 2026-10-13 — round 24 (the triage round, 5 lanes + parent): the round-23
+  census queue worked to zero-in-scope — 105 of 106 surfaced citation errors
+  repaired (session-state 38→0, skills-plugins 17→0, binary-secrets 14→0,
+  config-plane 13→0, residue 3→0, member-claims-gate 1→0; modes-machinery
+  20→1 with the last error inside a verbatim quote — documented floor). Two
+  gate-internal defects found BY triaging: cite-check ALIASES `base` poisoning
+  (the 7 PIN_MISMATCHs were the tool hashing unrelated-file pins — the pins
+  verified TRUE against live sha256; alias fix queued) and the
+  directory-context cascade (one prose site → 32 LINE_OORs; reworded, quote
+  preserved). One real claim error corrected by erratum (swarm/tower are
+  symlinks into ~/Projects/ompskills, not real dirs). FIX E: --src derivation
+  completes (cite-check 29/29, round-gate 60/60) — all six gates now derive
+  their origin default. Repo errors 519 → 414; residual = SKILL.md 9 +
+  README 24 + remaining-scripts-census (carried OMP-move citations). Two
+  pins re-pinned; C2 66→67. Godspeed verdicts: quality/calibration/
+  operability improved, coverage/freshness unchanged.

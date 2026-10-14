@@ -1,4 +1,4 @@
-# K4 — binary & version plane: `bin/`, `updates/`, and the shape-only secret census
+# K4 — binary & version plane: `~/.kimi-code/bin/`, `updates/`, and the shape-only secret census
 
 ## Scope — four surfaces, one of them shape-only by declaration
 
@@ -13,7 +13,7 @@ per the kagi census discipline; and (4) the two sibling files `rc-qrcode.png` an
 Every claim below is split into **OBSERVATION** (measured on this host with a command whose
 output is quoted), **INFERENCE** (this lane's reading of measured evidence), and **UNKNOWN**
 (not verifiable from files at rest). Binary-embedded symbols are anchored as
-`bin/kimi @sha256:66f47536… «verbatim»`: the binary has no line numbers, so the anchor is the
+`~/.kimi-code/bin/kimi @sha256:66f47536… «verbatim»`: the binary has no line numbers, so the anchor is the
 hash-pinned 190 MB file plus the exact byte-substring, re-extractable with
 `strings -n 8 ~/.kimi-code/bin/kimi | grep -F '<verbatim>'`. Shell/file anchors use
 `path:size`/`path:mode`.
@@ -68,7 +68,7 @@ update directly.»`. The top-level program string is `«The Starting Point for N
 Agents»` and the docs pointer `«https://moonshotai.github.io/kimi-code/»`.
 
 **INFERENCE:** the mounted binary is a *managed install* rather than an npm shim — it carries
-its own updater, its own CDN profile table, and its own `bin/` directory resolver (§"Update
+its own updater, its own CDN profile table, and its own `~/.kimi-code/bin/` directory resolver (§"Update
 mechanism"), and `detectInstallSource` classifies *how* it was installed at runtime. The
 `mtime` (2026-10-03 17:52:50) matches `region`'s mtime to the second, i.e. both were written
 by the same first-boot install event.
@@ -100,7 +100,7 @@ latest.json   402 B   -rw-r--r--   mtime 2026-10-13 17:04
 rollout.log   21074 B -rw-r--r--   mtime 2026-10-13 17:04
 ```
 
-`latest.json` is the **cached CDN manifest** — its content is the version/rollout document:
+`~/.kimi-code/updates/latest.json` is the **cached CDN manifest** — its content is the version/rollout document:
 
 ```json
 { "source": "cdn", "checkedAt": "2026-10-13T20:04:41.472Z", "latest": "2.1.1",
@@ -127,10 +127,10 @@ the artifact-level proof that this install has never re-staged.
 KIMI_CODE_UPDATE_INSTALL_LOCK_FILE_NAME = "install.lock";
 KIMI_CODE_UPDATE_ROLLOUT_LOG_FILE_NAME = "rollout.log"; … KIMI_CODE_NATIVE_STAGING_DIR_NAME
 = ".staging"; KIMI_CODE_NATIVE_STAGED_STATE_FILE_NAME = "staged.json"»`. So a version that
-*is* updating adds, under `updates/`: `install.json` (`UpdateInstallStateSchema`:
+*is* updating adds, under `updates/`: `~/.kimi-code/updates/install.json` (`UpdateInstallStateSchema`:
 `active{version,source,startedAt}`, `lastFailure{version,failedAt,attempts}`,
-`lastSuccess{version,installedAt,notifiedAt}`), a held `install.lock`, and a `.staging/` dir
-holding the per-platform payload plus `staged.json`. The payload itself is a **zstd-compressed
+`lastSuccess{version,installedAt,notifiedAt}`), a held `~/.kimi-code/updates/install.lock`, and a `.staging/` dir
+holding the per-platform payload plus `~/.kimi-code/updates/staged.json`. The payload itself is a **zstd-compressed
 per-platform native asset** (`decompressAndHash(zstPath, destPath, expectedSha256)`,
 `zstdDecompress`, `nativeManifestUrl(version)` → `${cdnBase}/binaries/${version}/manifest.json`,
 asset keys seen in-binary: `native/linux-x64/…`, `web/linux-x64/dist-web/assets/…`).
@@ -178,7 +178,7 @@ mechanism". Kind/mode/size/mtime are censused in §"Shape-only census — the de
 ## `~/.kimi-code/credentials/` — shape-only; the credential blob
 
 **Shape-only by declaration — never opened.** Directory, mode **700**, holding
-`credentials/kimi-code-env-0e4f99c69cc27850.json` (regular file, mode **600**, 1556 B) — a
+`~/.kimi-code/credentials/kimi-code-env-0e4f99c69cc27850.json` (regular file, mode **600**, 1556 B) — a
 credential blob whose contents are NOT read. Kind/mode/size/mtime are censused in
 §"Shape-only census — the declaration".
 
@@ -196,8 +196,8 @@ declaration".
 | Path | Kind | Mode | Size | mtime | Notes (shape only) |
 |---|---|---|---|---|---|
 | `server.token` | regular file | **600** | 43 B | 2026-10-13 16:03:07 | bearer token; contents NOT read |
-| `credentials/` | dir | **700** | — | 2026-10-13 17:26 | contains `kimi-code-env-0e4f99c69cc27850.json` (mode 600, 1556 B); contents NOT read |
-| `credentials/kimi-code-env-0e4f99c69cc27850.json` | regular file | **600** | 1556 B | 2026-10-13 17:26 | credential blob; NOT read |
+| `credentials/` | dir | **700** | — | 2026-10-13 17:26 | contains `~/.kimi-code/credentials/kimi-code-env-0e4f99c69cc27850.json` (mode 600, 1556 B); contents NOT read |
+| `~/.kimi-code/credentials/kimi-code-env-0e4f99c69cc27850.json` | regular file | **600** | 1556 B | 2026-10-13 17:26 | credential blob; NOT read |
 | `oauth/` | dir | 755 | — | 2026-10-13 17:26 | contains `kimi-code-env-0e4f99c69cc27850` (mode 644, **0 B**); NOT read |
 | `oauth/kimi-code-env-0e4f99c69cc27850` | regular file | 644 | 0 B | 2026-10-03 18:02 | empty marker; contents (none) NOT read |
 | `device_id` | regular file | **600** | 36 B | 2026-10-03 17:53:30 | 36 = UUID text length; value NOT printed |
@@ -295,7 +295,7 @@ entries are pruned — no retention rule is visible from shape alone.
    }, global: { oauthHost: "https://auth.kimi.ai", baseUrl: "https://api.kimi.ai/coding/v1",
    cdnBase: "https://code.kimi.ai/kimi-code", siteBase: "https://www.kimi.ai" … } }»`, with
    `«function kimiCodeCdnBase() { return currentKimiProfile().cdnBase; }»`. So this host's update
-   base is `https://code.kimi.ai/kimi-code` and the per-release manifest is
+   `cdnBase` is `https://code.kimi.ai/kimi-code` and the per-release manifest is
    `«nativeManifestUrl(version) { return \`${kimiCodeCdnBinariesBase()}/${version}/manifest.json\`; }»`
    where `«kimiCodeCdnBinariesBase() { return \`${kimiCodeCdnBase()}/binaries\`; }»`.
 
@@ -318,7 +318,7 @@ updates have been staged on this host.
 
 ## Cross-domain findings to route (report, never absorb)
 
-- **Endpoints → kama.** Update/CDN base per region (`mainland-cn`
+- **Endpoints → kama.** Update/CDN bases per region (`mainland-cn`
   `https://code.kimi.com/kimi-code`, `global` `https://code.kimi.ai/kimi-code`), release
   manifest `…/binaries/<version>/manifest.json`, fd download `…/fd/<asset>`, `latest` URL,
   `https://code.kimi.ai/kimi-code/install.sh`, plugin marketplace, changelog
@@ -337,3 +337,24 @@ updates have been staged on this host.
 - **Shape-census mtimes for `credentials/` and `oauth/` have drifted**
   (17:26 → 18:13 at audit time) — sizes/modes confirmed unchanged; mtimes
   are snapshot values like the config-plane live row.
+
+**Erratum (round-24 triage C, 2026-10-13, append-only).** (1) Two prose
+occurrences of a bare English word that cite-check's alias table resolves
+to an unrelated origin-tree module (the ufo sighting-lib root module) were
+reworded: the step-6 sentence now names the `cdnBase` constant it always
+meant, and the kama routing bullet uses the plural. That single false
+alias hit was enough to re-bind every hash anchor in this note: the pin
+binder falls back to the document's most recent resolvable citation
+regardless of position, so all seven `@sha256:` anchors were being
+hash-checked against that module (7 PIN_MISMATCH). (2) The bare
+substrate-relative refs flagged by round 23's honest fence geometry —
+the updates-plane state filenames (latest/install/install-lock/staged),
+the credentials blob filename at three sites, and the two bin-directory
+mentions — were prefixed to their full home-dir form per the round-13
+house rule; no claim text changed. (3) The first binary-symbol anchor was
+expanded to the explicit full-path form. The hash anchors themselves
+remain host-binary pins that no scanned repo root can hash; both digests
+were re-verified on this host 2026-10-13 via `sha256sum` (kimi
+`66f47536e40b02bb…`, fd `78d315b3ed7bb8cc4…` — unchanged from the
+measurement block), so the gate now records them as unchecked notes
+rather than mismatches against the false alias target.

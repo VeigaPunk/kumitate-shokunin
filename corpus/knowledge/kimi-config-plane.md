@@ -39,7 +39,7 @@ Everything below separates **OBSERVATION** (measured on this host, anchor given)
 
 ## `~/.kimi-code/config.toml` — the agent/runtime config
 
-### `config.toml` — global keys (the only two lines before the first table)
+### `~/.kimi-code/config.toml` — global keys (the only two lines before the first table)
 
 ```
 $ sed -n '1,2p' config.toml
@@ -52,7 +52,7 @@ default_permission_mode = "auto"
   `default_permission_mode = "auto"`.
 - **OBSERVATION** — `default_permission_mode` at `:2` is the **only permission key in the entire
   file**. A case-insensitive sweep for `permission|approv|trust|sandbox|allow|deny|yolo|mode =|tool`
-  over `config.toml` returns exactly one non-`capabilities` hit, that same line 2. There is no
+  over `~/.kimi-code/config.toml` returns exactly one non-`capabilities` hit, that same line 2. There is no
   `[permission]` table, no per-tool allow/deny list, and no hook-based policy in this file; the only
   tool-shaped tokens are capability strings such as `"tool_use"` / `"dynamically_loaded_tools"`
   inside `capabilities` arrays (`~/.kimi-code/config.toml:48`).
@@ -64,7 +64,7 @@ default_permission_mode = "auto"
   mtime `2026-10-13 17:04`), which is a plausible trust-decision store but its contents were not
   read and its semantics are unverified.
 
-### `config.toml` — the provider plane: 7 groups in 8 tables, one section each
+### `~/.kimi-code/config.toml` — the provider plane: 7 groups in 8 tables, one section each
 
 Line anchors are the exact table headers in the live file. The 8 rows below are the **7 provider
 groups** plus the one nested OAuth sub-table (`row 1a`), which is the reason `grep -c
@@ -112,7 +112,7 @@ groups** plus the one nested OAuth sub-table (`row 1a`), which is the reason `gr
   **UNKNOWN** — which of the two files the runtime treats as authoritative is not verifiable from
   names alone; flagged for kagi.
 
-### `config.toml` — the `[models.*]` table structure
+### `~/.kimi-code/config.toml` — the `[models.*]` table structure
 
 **OBSERVATION** — `grep -c '^\[models\.'` = **124 tables**, which decomposes as **122 model rows +
 2 `.overrides` sub-tables** (`~/.kimi-code/config.toml:117` for
@@ -201,7 +201,7 @@ through an Anthropic-shaped endpoint selected per model, not per provider; the r
 `opencode-go` rows inherit the provider `base_url`/`type = "openai"`. **UNKNOWN** — whether the
 runtime requires both keys together is unverified; both are present on all 6 rows.
 
-### `config.toml` — how primary vs secondary lanes are declared
+### `~/.kimi-code/config.toml` — how primary vs secondary lanes are declared
 
 - **Primary lane** = the single global `default_model` at `~/.kimi-code/config.toml:1`
   (`kimi-code/kimi-for-coding`). **OBSERVATION** — this key's value is byte-identical in **all 13
@@ -238,7 +238,7 @@ model named by `secondary_model.default_model` at `:1256`. Measured bucket compo
   this corpus is where the consuming side lives — this note documents only how the pool is
   *declared*.
 
-### `config.toml` — config tail: one section per remaining key group
+### `~/.kimi-code/config.toml` — config tail: one section per remaining key group
 
 | Section (line) | Live values | Notes |
 |---|---|---|
@@ -271,7 +271,7 @@ model named by `secondary_model.default_model` at `:1256`. Measured bucket compo
 **OBSERVATION** — `~/.kimi-code/tui.toml` is 31 L / 1300 B / mode 644, mtime `2026-10-03 18:36`,
 and its header states the split of concerns verbatim: `# Client preferences for kimi-code.` and
 `# Agent/runtime settings stay in ~/.kimi-code/config.toml.` (`~/.kimi-code/tui.toml:2-3`) — i.e.
-this file is **client-only** and the whole agent surface above lives in `config.toml`. 12 of its 31
+this file is **client-only** and the whole agent surface above lives in `~/.kimi-code/config.toml`. 12 of its 31
 lines are comments. Every key, with anchor and its own inline semantics:
 
 | Line | Key | Live value | Inline contract (verbatim from the file) |
@@ -290,8 +290,8 @@ lines are comments. Every key, with anchor and its own inline semantics:
 
 - **OBSERVATION** — the two commented blocks are **inert defaults**: an active status-line/keymap
   surface exists (`[status_line]` with `items` or `command`, and `[markdown].mermaid`) but is not
-  enabled on this host. **INFERENCE** — `tui.toml` is a *whole-file template with commented
-  examples*, unlike `config.toml` which ships comment-free in the live generation.
+  enabled on this host. **INFERENCE** — `~/.kimi-code/tui.toml` is a *whole-file template with commented
+  examples*, unlike `~/.kimi-code/config.toml` which ships comment-free in the live generation.
 - **OBSERVATION (drift)** — one sibling exists,
   `~/.kimi-code/tui.toml.bak` (1301 B, mtime `2026-10-03 17:53:30`), 43 minutes older than live.
   The **entire** byte-level difference between them is one value flip:
@@ -322,7 +322,7 @@ minute as a generation boundary. Measured table
 | 10 | `…20261010-173658.bak` (10-10 17:36) | 31370 | 980 | 93 | 7 | 18 | high | 7200000/7200000 | `65d6c54ee731` |
 | 11 | `…20261012-083922.bak` (10-12 08:39) | 31379 | 980 | 93 | 7 | 18 | high | 7200000/7200000 | `c0b8f9fc5bc9` |
 | 12 | `…20261012-095136.bak` (10-12 09:51) | 31482 | 985 | 93 | 7 | 18 | high | 7200000/7200000 | `fabddd410787` |
-| 13 | `config.toml` — **live** (10-13 17:00) | 40605 | 1293 | 124 | 8 | 19 | high | 7200000/7200000 | `6a0345c7d01f` |
+| 13 | `~/.kimi-code/config.toml` — **live** (10-13 17:00) | 40605 | 1293 | 124 | 8 | 19 | high | 7200000/7200000 | `6a0345c7d01f` |
 
 † `prov` is `grep -c '^\[providers\.'`, which counts `[providers.*]` **tables**, not providers: it
 includes the nested `[providers."managed:kimi-code".oauth]` sub-table. So the live row's `8` =
@@ -388,14 +388,14 @@ default_model = "zai-coding-plan/glm-5.3-flash"          ← replaced, not lost
   is counted), 124 model tables (122 rows + 2 `.overrides`), 19-key secondary pool, 15 tail
   sections, 1 hook, 1 MCP server, 0 comments, mode 600.
 - **OBSERVATION** — 13 generations with distinct sha256[:12] values (table above); every step has a
-  named redacted diff; the smallest step is a 1-byte value flip (`tui.toml`) and a 1-line swap.
+  named redacted diff; the smallest step is a 1-byte value flip (`~/.kimi-code/tui.toml`) and a 1-line swap.
 - **INFERENCE** — the plane is *generated*, not hand-maintained: comment-free live text, whole-file
   rewrites, provider blocks added as complete units (a provider appears with all of its model rows
   in a single step: `hyper` +199/−0, `opencode-go` +319/−11).
 - **INFERENCE (routed, not absorbed)** — credential-shaped values exist in this plane; the
   authoritative store appears to be `credentials/*.json`, not `oauth/*` (which is a 0-byte pointer
   target). Ownership: **kagi**.
-- **UNKNOWN** — (a) which of `oauth/…` vs `credentials/….json` the runtime reads; (b) whether the
+- **UNKNOWN** — (a) which of `oauth/…` vs `~/.kimi-code/credentials/….json` the runtime reads; (b) whether the
   comment strip is writer behavior or an edit; (c) the semantics of `workspace-trust/*` files;
   (d) whether any consumer validates `secondary_model.models` prose (values are free text, so
   nothing in this file enforces the bucket vocabulary).
@@ -408,7 +408,7 @@ default_model = "zai-coding-plan/glm-5.3-flash"          ← replaced, not lost
 | Finding | Anchor | Route |
 |---|---|---|
 | 7 non-empty credential-shaped `api_key` values in a mode-600 file, three distinct prefix/length families | `~/.kimi-code/config.toml:17,22,27,32,37,42` | **kagi** — rotation, leak surface, storage duplication across 13 backups (all mode 600, all containing the same providers' keys) |
-| credential store split: 0-byte `oauth/kimi-code-env-0e4f99c69cc27850` vs populated `credentials/kimi-code-env-0e4f99c69cc27850.json` (1556 B) | `~/.kimi-code/oauth/`, `~/.kimi-code/credentials/` | **kagi** |
+| credential store split: 0-byte `oauth/kimi-code-env-0e4f99c69cc27850` vs populated `~/.kimi-code/credentials/kimi-code-env-0e4f99c69cc27850.json` (1556 B) | `~/.kimi-code/oauth/`, `~/.kimi-code/credentials/` | **kagi** |
 | `kimi-k2.7-code` exists for `hyper` (:886) and `opencode-go` (:1173) but was **removed from all three `alibaba-token-plan` lanes** on 10-10 and never returned; the managed lane offers `k3`/`k3-256k` with `default_effort` `high` vs `kimi-for-coding` `max` | `~/.kimi-code/config.toml:60–76`, `:886`, `:1173`; diff 6→7 | **kengaku** — model roster/quality comparison; this lane only records the roster |
 | every served endpoint in the plane (7 provider `base_url`s, 3 `oauth_host` refs, 2 moonshot service URLs, 1 MCP `npx rea-agents@6.4.0`) | `~/.kimi-code/config.toml:7,12,15,20,25,30,35,40,951,1216,1225,1287` | **kama** — endpoint/serving inventory |
 ## Errata (round-19 audit A1, 2026-10-13, append-only)
@@ -428,3 +428,10 @@ default_model = "zai-coding-plan/glm-5.3-flash"          ← replaced, not lost
   `~/.kimi-code/config.toml` is a mutating substrate — every live-row claim
   in this note carries its snapshot time and is expected to drift; the drift
   narrative (the `.bak` chain) is the durable part.
+- **Round-24 triage (cite-gate form repairs; claims unchanged).** The round-23
+  fence fix made the gate honest; it surfaced 13 bare-form path citations in
+  this note — nine agent-config, two client-config, two credentials-store
+  pointers — each normalized to its full `~/.kimi-code/…` host form. No line
+  anchor, count, byte size, or generation claim changed; the drift-chain
+  history rows (frozen generations) were left untouched, and the live row
+  keeps naming the same live file.
