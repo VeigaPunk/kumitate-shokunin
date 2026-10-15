@@ -1285,3 +1285,16 @@ info=4)`. **Carried debt:** `--strict` still promotes two advisories —
 `SECTION_FILE_NOT_MEMBER` for the `ufo-sighting` shim (outside `familyPatterns`)
 and `ufo-mission-result.mjs` cited through S2's shared `failure-telemetry` note,
 plus `MEMBER_COUNT_SUSPECT` rows whose declared counts exceed their section counts.
+
+**Section-honesty audit (appended 2026-10-14).** At `8baa62c` the audit resolved 220
+path-like knowledge headings and found **no phantom sections** — the six removed
+deleted-file headings stayed removed. The remaining gap is the runtime layer's
+**17 declared members without a `## ` section**: R3 (3: `cost_ledger_validation_tests.rs`,
+`execution_profile_tests.rs`, `native_profile.rs`), R4 (3: `lane_overlay_tests.rs`,
+`lease_tests.rs`, `live_tests.rs`), R5 (4, prose-only), R6 (2: `distill_tests.rs`,
+`l3_swarm_tests.rs`) and R7 (5, prose-only). That is exactly why `R_sections` reads
+75 against `R_members` 92 while the script layer is complete at 91/91. **`CLAIMS:
+MATCH` is not section-honesty** — those rows surface only as `ROW_NO_SECTIONS` /
+`MEMBER_COUNT_SUSPECT` warnings, so the gate is green while the coverage is partial.
+The R1 cell's backticked native-wildcard was stripped in this pass (a backticked
+token is read as a family pattern and would widen R1 to 23 files).
