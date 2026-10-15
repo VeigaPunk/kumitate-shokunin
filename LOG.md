@@ -1269,3 +1269,19 @@ gate failures: `scripts/charter-scribe/sync.mjs`'s pathish anchor is blank at
 `:665` (the section still resolves through a bare anchor at `:57`/`:85`/`:104`) and
 `scripts/ufo-drills.mjs`'s pathish anchor `:4450` is past EOF (still resolves bare
 at `:264`). Unblock: point both at live in-file lines.
+
+**Round-32 note-honesty leg completed (appended 2026-10-14).** The R11 note was
+repaired against the live tree: the six sections naming files deleted upstream
+(`native_epoch.rs`, `native_epoch_tests.rs`, `native_launch_tests.rs`,
+`replay_falsification_probes.rs`, `rfc3339.rs`, `crates/ufo-cli/src/admission.rs`)
+were removed, and eight own-file anchors whose endpoint lines had gone blank or
+past EOF were re-anchored to live non-blank ranges (including the CLI suite's
+`main_tests.rs:564-601` → `:385-403`, repointed to the symbol's real location).
+Verdict lines after: `node scripts/claims-check.mjs` → **`CLAIMS: MATCH (rows=19
+yes=19 notes=27 sections=171 adv=10)` exit 0**; `node scripts/proxy-check.mjs` →
+`PROXY: MATCH` exit 0 with `--selftest` `VERDICT: PASS`; `node
+scripts/kimi-census.mjs` → `KIMI_CENSUS: CLEAN (members=49 checked=49 chain=12
+info=4)`. **Carried debt:** `--strict` still promotes two advisories —
+`SECTION_FILE_NOT_MEMBER` for the `ufo-sighting` shim (outside `familyPatterns`)
+and `ufo-mission-result.mjs` cited through S2's shared `failure-telemetry` note,
+plus `MEMBER_COUNT_SUSPECT` rows whose declared counts exceed their section counts.

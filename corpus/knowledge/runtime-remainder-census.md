@@ -129,7 +129,7 @@ Probe: `fixture_bound_kills_a_child_that_outlives_the_bound` (crates/ufo-core-ru
 
 Extracted from `build.rs`, so the build script consumes it by `#[path]` and the test host includes the same file: `parse_json` builds the `Json` tree within `MAX_JSON_DEPTH`, so a hostile or drifted mirror is a typed error rather than a stack overflow in the build.
 
-The mirror half recomputes and validates the sealed table: `mirror_body_digest` re-hashes the mirror body with the std-only `sha256_hex_std`, `parse_mirror_source_path` mirrors the collector's `$HOME`-relative grammar byte for byte, and `validate_routing_mirror` pins the `SEAT_ROUTING_SCHEMA` envelope and resolver generation (crates/ufo-core-runtime/src/build_json.rs:78-350).
+The mirror half recomputes and validates the sealed table: `mirror_body_digest` re-hashes the mirror body with the std-only `sha256_hex_std`, `parse_mirror_source_path` mirrors the collector's `$HOME`-relative grammar byte for byte, and `validate_routing_mirror` pins the `SEAT_ROUTING_SCHEMA` envelope and resolver generation (crates/ufo-core-runtime/src/build_json.rs:78-305).
 
 Chain consumption is `parse_route` (`provider/model` plus whitelisted `:effort` suffix), `reject_gemini`, `validate_chain` (a repeated or wrapping `requested` selector refuses), and `extract_role_chains` — the one reader the compile gate and the judge's loader share over `ROLE_TAXONOMY`.
 
@@ -149,7 +149,7 @@ Probe: `OrchestrationConfig` (crates/ufo-core-runtime/src/config.rs:314-318) —
 
 A `#[path]`-included host for `config.rs`; the boundary-acceptance test is `validate_accepts_declared_ceiling_boundaries`, where the declared ceilings are inclusive — `max_rounds` at 10000 and `rounds.digestMaxBytes` at both declared bounds validate while only their neighbours refuse.
 
-Block-specific pins: `budgets_block_requires_phase0_probe_tokens` (A-03: the field is parsed, required when the block is present, and digest-bound, so a `#[serde(default)]` would re-shape the surface), `membrane_validate_refuses_present_but_empty_paths`, `recovery_validate_refuses_each_zero_window`, and `validate_refuses_degenerate_bounds` (crates/ufo-core-runtime/src/config_tests.rs:500-709).
+Block-specific pins: `budgets_block_requires_phase0_probe_tokens` (A-03: the field is parsed, required when the block is present, and digest-bound, so a `#[serde(default)]` would re-shape the surface), `membrane_validate_refuses_present_but_empty_paths`, `recovery_validate_refuses_each_zero_window`, and `validate_refuses_degenerate_bounds` (crates/ufo-core-runtime/src/config_tests.rs:500-503).
 
 `validate_refusals_echo_bounded_config_strings` is the crate-wide echo pin: every interpolated config string (substrate, budget action, membrane action and reason, evidence axis id) truncates visibly through `echo_bounded` instead of becoming a megabyte refusal.
 
@@ -159,11 +159,11 @@ Probe: `validate_accepts_declared_ceiling_boundaries` (crates/ufo-core-runtime/s
 
 Pure code motion out of `loop_driver_dispatch.rs`: the typed wire envelopes are `LocalReroute`, `FixtureRouteReceipt`, and `FixtureFailure`, and one attempt runs through `spawn_specialist_fixture_attempt`, `ldj_fixture_request_stdin_bytes` and `ldj_spawn_reap_fixture`.
 
-Identity is grouped so same-typed neighbours cannot transpose: `AttemptContext` carries the five identity values and `FixtureSpawn` freezes one lane's spawn inputs; `FixtureAttempt` is the decoded outcome and `LaneDispatchFailure` types the per-lane failures, with `NO_PID_CAPTURED` reserved for attempts that recorded no real process (crates/ufo-core-runtime/src/fixture_spawn.rs:95-141).
+Identity is grouped so same-typed neighbours cannot transpose: `AttemptContext` carries the five identity values and `FixtureSpawn` freezes one lane's spawn inputs; `FixtureAttempt` is the decoded outcome and `LaneDispatchFailure` types the per-lane failures, with `NO_PID_CAPTURED` reserved for attempts that recorded no real process (crates/ufo-core-runtime/src/fixture_spawn.rs:95-140).
 
 The decode half is `ldj_fixture_attempt_from_stdout` with `ldj_fixture_field` per optional field, gated by the one identity authority `validate_fixture_identity` and `fixture_identity_matches`; `sanitize_fixture_environment` scrubs credentials and loader hooks before spawn, and `python3_bin` over `python3_bin_with` resolves the interpreter fail-closed.
 
-Probe: `LaneDispatchFailure` (crates/ufo-core-runtime/src/fixture_spawn.rs:141-145) — the enum head entering its `LaneTimeout` variant, which carries `attempt`, `timeout_secs`, and the retained `pid`.
+Probe: `LaneDispatchFailure` (crates/ufo-core-runtime/src/fixture_spawn.rs:142-145) — the enum head entering its `LaneTimeout` variant, which carries `attempt`, `timeout_secs`, and the retained `pid`.
 
 ## `crates/ufo-core-runtime/src/godspeed.rs` (558 L) — trusted-root Godspeed directive loading with bounded reads and a sums manifest
 
@@ -199,9 +199,9 @@ A `#[path]`-included host for `lanes.rs`; the `lane(role, route)` helper mints a
 
 Dispatch arms: `dispatch_dry_routes_matching_local_lane`, `dispatch_dry_unknown_role_returns_none`, `dispatch_dry_refuses_unimplemented_route`, and `admits_local_dry_matches_dispatch_dry_admission`, which pins the allowlist gate against the dispatch path.
 
-Advance arms: `capacity_advance_keeps_same_identity_and_separate_provider_flag`, `continuity_record_projection_is_consistent`, `authentication_refuses_without_reroute_record`, and `unimplemented_local_route_does_not_claim_capacity_reroute` (crates/ufo-core-runtime/src/lanes_tests.rs:28-149).
+Advance arms: `capacity_advance_keeps_same_identity_and_separate_provider_flag`, `continuity_record_projection_is_consistent`, `authentication_refuses_without_reroute_record`, and `unimplemented_local_route_does_not_claim_capacity_reroute` (crates/ufo-core-runtime/src/lanes_tests.rs:29-132).
 
-Probe: `capacity_advance_keeps_same_identity_and_separate_provider_flag` (crates/ufo-core-runtime/src/lanes_tests.rs:73-77) — the test head resolving the profile's `role_chain` for `AgentRole::Executor`.
+Probe: `capacity_advance_keeps_same_identity_and_separate_provider_flag` (crates/ufo-core-runtime/src/lanes_tests.rs:73-76) — the test head resolving the profile's `role_chain` for `AgentRole::Executor`.
 
 ## `crates/ufo-core-runtime/src/lib.rs` (1395 L) — crate root: the module tree plus the contract-hash-bound wire types
 
@@ -241,29 +241,11 @@ Probe: `continuity_identity` (`crates/ufo-core-runtime/src/native_continuity.rs:
 
 Probe: `NativeReceiptDigests` (`crates/ufo-core-runtime/src/native_digests.rs:51-56`) — the serialized digest triple whose field names are the contract surface.
 
-## `crates/ufo-core-runtime/src/native_epoch.rs` (295 L) — reader for the launcher's pre-judge round-epoch receipt (the H6 round-epoch arms)
-
-`contract_round_epoch` (:177-196) joins the run's round-epoch receipt under `.ufo/receipts/<run_id>/` inside the trusted `contract_root` after `validate_run_id` mirrors the writer's `RUN_ID_PATTERN`, so an unsafe run id refuses before any filesystem touch. The read goes through the bounded reader with `MAX_EPOCH_RECEIPT_BYTES` (16 KiB); only `NotFound` degrades to `Ok(None)`, every other read failure is a typed refusal, and a canonicalized path leaving the root is refused as an escape. The parsed DOM then passes `require_only_keys` (top level `round`, `epoch`; block keys `at_round_cap`, `pending_refine`, `rejected_refine`), a `round` equality check against the judged round, `required_bool` and `required_uint`, yielding the two-arm `RoundEpochContext`; `rejected_refine` is validated but carried nowhere.
-
-Probe: `RoundEpochContext` (`crates/ufo-core-runtime/src/native_epoch.rs:53-56`) — the two arms (`at_round_cap`, `pending_refine`) the outcome assembly consumes.
-
-## `crates/ufo-core-runtime/src/native_epoch_tests.rs` (520 L) — behavioral pins for the H6 epoch reader: honest absence, loud malformation, writer-shaped acceptance
-
-The `#[path]`-included module stages receipts through `receipt_dir` (:15-19) and `stage_epoch` and drives `contract_round_epoch` across both policies: `absent_receipt_degrades_to_none` is the single honest degradation, while each present-but-broken body refuses with a typed message — malformed JSON, non-object top level, missing or mistyped arms, noncanonical integer lexemes, duplicate keys at parse time, extra top-level keys, a round mismatch, and the 16 KiB bound. Filesystem arms cover `EACCES` in `unreadable_receipt_refuses_with_typed_io`, a directory at the receipt path, and a symlink escaping the root caught by the beneath-root backstop. `writer_shape_receipt_reads` pins the writer's pretty-printed shape, `run_id_grammar_mirrors_writer_pattern` pins the run-id grammar at its 16-character boundary, and the oversize-echo pins assert truncation at the house echo ceiling.
-
-Probe: `absent_receipt_degrades_to_none` (`crates/ufo-core-runtime/src/native_epoch_tests.rs:33-40`) — the pin asserting a missing receipt reads as `Ok(None)` and never as an error.
-
 ## `crates/ufo-core-runtime/src/native_evidence.rs` (466 L) — bounded evidence intake, raw-to-derived provenance types, and the F18 originals check
 
 `NativeRedactionMap` (:31-39) names what the collector's normalization changed while deriving a transcript from the protected raw original: `uniquified_task_ids`, `uniquified_count`, `truncated_lines` and `truncated_fields`. `NativeEvidenceOriginals` binds `canonicalizer_version` (which must equal the judge's `TRANSCRIPT_CANONICALIZER_VERSION`) to both digests, and `validate_originals` refuses repeated fields and the forged case of byte-identical raw/derived digests carrying redactions. `approve_beneath_root` (:111-129) is the shared tail of the beneath-root check for a caller that canonicalized a joined path itself; it records the `(st_dev, st_ino)` identity that `read_bounded_core` then requires of the open descriptor, so a path swapped between approval and open fails closed. `read_file_bounded` classifies before it opens, because an open-first `O_RDONLY` on a writer-less FIFO would hang instead of refusing.
 
 Probe: `NativeRedactionMap` (`crates/ufo-core-runtime/src/native_evidence.rs:31-39`) — the redaction-map struct whose flags and lists make the raw-to-derived relationship auditable.
-
-## `crates/ufo-core-runtime/src/native_launch_tests.rs` (319 L) — host-side pins for the launch overlay read and the global OMP config candidate precedence
-
-`read_resolvable_overlay_bytes` is the surface under test: the FIFO arm (`overlay_read_rejects_fifo_without_blocking` (:6-28)) proves a non-regular layer file is refused quickly instead of hanging, and the oversize arm (:30-31) pins the `LAUNCH_OVERLAY_FILE_BYTES` refusal text with the configured bound rather than a hard-coded count. The global layer is exercised through `resolve_overlay_layer_bytes`, with `global_home_value` pinned for whitespace-only, unset and passing HOME and `global_candidates_resolve_in_documented_precedence_order` proving first-hit-wins over `GLOBAL_OMP_CONFIG_CANDIDATES`. `global_candidates_match_launcher_authority` parses `scripts/omp-global-config.mjs` `DEFAULT_CANDIDATES` at test time and asserts byte-mirror membership and order, and `validate_launch_overlays` admits an absent project layer while refusing a malformed digest shape.
-
-Probe: `read_resolvable_overlay_bytes` (`crates/ufo-core-runtime/src/native_launch_tests.rs:6-28`) — the FIFO pin showing a non-regular layer file is refused, distinct from absence.
 
 ## `crates/ufo-core-runtime/src/native_route.rs` (524 L) — the route grammar plus canonical role routing and the contract-root seat-routing mirror loader
 
@@ -299,7 +281,7 @@ Probe: `cap_truncated_stream_is_not_a_completed_read` (`crates/ufo-core-runtime/
 
 `base_config` (:5-27) is the minimal v1 config that clears every gate — `extendedContext`, `concurrencyCeiling`, `probe.depth`, `l1Context.minimumTokens`, the retry block, the budgets block and the Main alias — and `expect_refusal` (:36-45) serializes a mutation and asserts the pinned literal appears in the refusal from `crate::expected_omp_route_yaml`. The arms cover `l1Context` presence and value (accepting the build.rs-legal numeric-string spelling), duplicate profile and top-level members refused rather than last-wins via hand-spliced raw bytes, the advisor fallback list rules, concurrency and probe-depth bounds, the v1 alias and retry-policy drift, and the `statusLine` shape plus its chartered scalar grammar in `status_line_scalar_obeys_the_chartered_grammar`.
 
-Probe: `expect_refusal` (`crates/ufo-core-runtime/src/profile_shape_refusal_tests.rs:36-45`) — the helper asserting a mutated config dies with the exact pinned refusal literal.
+Probe: `expect_refusal` (`crates/ufo-core-runtime/src/profile_shape_refusal_tests.rs:36-44`) — the helper asserting a mutated config dies with the exact pinned refusal literal.
 
 ## `crates/ufo-core-runtime/src/proposal.rs` (787 L) — the canonical specialist proposal contract, its digest helpers and candidate admission
 
@@ -332,20 +314,6 @@ tail drives route continuity over `ExecutionProfile::canonical(Substrate::Omp)`.
 
 Probe: `honest_score_clamps_non_finite_claims` (`crates/ufo-core-runtime/src/provenance_tests.rs:6-11`) — the test function that asserts the NaN/infinity clamp to 0.0.
 
-## `crates/ufo-core-runtime/src/replay_falsification_probes.rs` (1453 L) — the standing bit-equality tripwire for the r28 frontier-replay witness
-
-Fourteen fixed-seed families (`family_01_pure_max_random_positive_deltas`
-through `family_14_many_axis_sparse_admits`) drive `ProbeRng`, a
-dependency-free xorshift64\* generator seeded `0x5EED_0000_0000_000N`, through
-`digest_skeleton` and `mint_rounds` so every chain is minted by the same
-fixture idiom as `round_digest_tests.rs`. `expected_frontier` recomputes the
-per-axis fold independently, `verify` calls
-`replay_frontier_from_digest_chain` and compares coordinate-wise on `to_bits`
-(so a `+0.0`/`-0.0` split trips even where `==` would not), and
-`first_divergence` names the offending coordinate in the panic.
-
-Probe: `assert_probe_can_fail` (`crates/ufo-core-runtime/src/replay_falsification_probes.rs:277-283`) — the negative control that makes each family non-vacuous by requiring replay to differ from a deliberately wrong expectation.
-
 ## `crates/ufo-core-runtime/src/report.rs` (107 L) — the per-round iteration report owned by `loop_driver`
 
 `ProposalAxisMeasurements` keys one judged proposal by `specialist` plus
@@ -359,19 +327,6 @@ structs are `deny_unknown_fields` with `skip_serializing_if`, so previously
 serialized report JSON stays byte-identical.
 
 Probe: `ProposalAxisMeasurements` (`crates/ufo-core-runtime/src/report.rs:18-34`) — the derive-and-struct block declaring the per-proposal axis record.
-
-## `crates/ufo-core-runtime/src/rfc3339.rs` (194 L) — the single RFC 3339 timestamp authority for the workspace
-
-`strict_shape` is the collector's strict-59 byte subset: length ≥ 20, fixed
-`-`/`T`/`:` separators, `Z` or `±hh:mm`, and a tens-digit seconds bound of
-`≤ 5` so `:60` lax spellings are refused — calendar range semantics are left
-to the real parser downstream. `strict_timestamp` adds the calendar arm
-through `days_in_month` (leap-year-correct day, hour/minute/second and offset
-bounds) and is byte-equal to the former `titanium::is_rfc3339`. One parser,
-three consumers: native transcript event collection, the `lease`/`local_ship`
-pre-gates, and CLI admission.
-
-Probe: `strict_shape` (`crates/ufo-core-runtime/src/rfc3339.rs:25-44`) — the byte-shape predicate body, including the `b[17] > b'5'` seconds bound and the `:60` refusal.
 
 ## `crates/ufo-core-runtime/src/round.rs` (32 L) — the paper-parity port of the tip's round module
 
@@ -398,7 +353,7 @@ carries the `accepted`/`rejected` `RoundDigestEntry` lists, `LaneHealth`
 through `prepare_round_digest` then `write_prepared_round_digest`, which refuses
 planted symlinks in the chain derived from the path actually written.
 
-Probe: `round_digest_path` (`crates/ufo-core-runtime/src/round_digest.rs:193-198`) — the run-id-joined destination builder beneath a run root.
+Probe: `round_digest_path` (`crates/ufo-core-runtime/src/round_digest.rs:193-197`) — the run-id-joined destination builder beneath a run root.
 
 ## `crates/ufo-core-runtime/src/round_digest_tests.rs` (609 L) — the digest-emission and frontier-replay falsification suite
 
@@ -452,21 +407,6 @@ touched key LIFO on `Drop`.
 
 Probe: `env_secs` (`crates/ufo-core-runtime/src/test_env.rs:57-68`) — the positive-seconds parse arm shared by the CLI timeout knobs.
 
-## `crates/ufo-cli/src/admission.rs` (311 L) — the CLI's untrusted-input admission layer
-
-Reads go through `open_bounded_regular` with `O_NOFOLLOW`, so
-`read_bounded_regular` refuses symlinks and oversize files (deliberately
-stricter than the runtime's `read_bounded`, which follows contract links by
-design), `read_capped_regular` defers the size verdict downstream, and
-`verify_regular_bounded` checks regularity only. The JSON screens:
-`reject_excessive_json_depth` caps nesting at `MAX_DEPTH` (32),
-`parse_unique_json` uses `UniqueValue` and `UniqueValueVisitor` to refuse
-duplicate object keys before serde can shadow them, and `reject_external_refs`
-accepts fragment-only `$ref`s. `invalid` builds the typed `InvalidData` refusal
-shared with the titanium validator.
-
-Probe: `read_bounded_regular` (`crates/ufo-cli/src/admission.rs:43-60`) — the symlink-refusing, size-refusing bounded read of one operator-supplied path.
-
 ## `crates/ufo-cli/src/main.rs` (1868 L) — the `ufo` binary root: clap surface, verbs and artifact writers
 
 `Cli` and `Command` derive the subcommand surface (`Status`, `Titanium`,
@@ -493,7 +433,7 @@ because workspace edition 2024 forbids an `unsafe` `set_var`. Further pins:
 `substrate_skill_surface_derives_the_replaced_literal_table`; `built_ufo_binary`
 locates the compiled binary for the child-process arm.
 
-Probe: `routing_health_latency_percentile_uses_ceil_nearest_rank` (`crates/ufo-cli/src/main_tests.rs:564-601`) — the ceil-nearest-rank percentile cases that floor/round rank mutants fail.
+Probe: `routing_health_latency_percentile_uses_ceil_nearest_rank` (`crates/ufo-cli/src/main_tests.rs:385-403`) — the ceil-nearest-rank percentile cases that floor/round rank mutants fail.
 
 ## `crates/ufo-cli/src/titanium.rs` (828 L) — the Titanium machine-map validator half of the CLI
 
