@@ -1,0 +1,148 @@
+{
+  "configPath": "/home/vgpnk/.omp/agent/config.yml",
+  "configSha256": "08788ddcbbb48180b987e6f54b517af294c85cacceb07bdd594843a53e668dcc",
+  "seats": [
+    {
+      "role": "executor",
+      "route": "alibaba-token-plan/qwen3.8-flash:high",
+      "fallbackChain": [
+        "charm-hyper/qwen3.8-flash:high"
+      ],
+      "via": {
+        "alias": "m_mid",
+        "chainKey": "m_mid"
+      }
+    },
+    {
+      "role": "scribe",
+      "route": "alibaba-token-plan/deepseek-v4.1-flash:max",
+      "fallbackChain": [
+        "opencode-go/deepseek-v4.1-flash:max",
+        "devin/deepseek-v4-1-flash:max",
+        "charm-hyper/deepseek-v4.1-flash:max"
+      ],
+      "via": {
+        "alias": "m_fast",
+        "chainKey": "m_fast"
+      }
+    },
+    {
+      "role": "scout",
+      "route": "alibaba-token-plan/deepseek-v4.1-flash:max",
+      "fallbackChain": [
+        "opencode-go/deepseek-v4.1-flash:max",
+        "devin/deepseek-v4-1-flash:max",
+        "charm-hyper/deepseek-v4.1-flash:max"
+      ],
+      "via": {
+        "alias": "m_fast",
+        "chainKey": "m_fast"
+      }
+    },
+    {
+      "role": "reviewer",
+      "route": "alibaba-token-plan/qwen3.8-flash:high",
+      "fallbackChain": [
+        "charm-hyper/qwen3.8-flash:high"
+      ],
+      "via": {
+        "alias": "m_mid",
+        "chainKey": "m_mid"
+      }
+    },
+    {
+      "role": "critic",
+      "route": "openai-codex/gpt-6.1-sol:high",
+      "fallbackChain": [
+        "devin/gpt-6-1-sol:high"
+      ],
+      "via": {
+        "alias": "m_strong",
+        "chainKey": "m_strong"
+      }
+    },
+    {
+      "role": "connector",
+      "route": "alibaba-token-plan/qwen3.8-flash:high",
+      "fallbackChain": [
+        "charm-hyper/qwen3.8-flash:high"
+      ],
+      "via": {
+        "alias": "m_mid",
+        "chainKey": "m_mid"
+      }
+    },
+    {
+      "role": "sentinel",
+      "route": "alibaba-token-plan/qwen3.8-flash:high",
+      "fallbackChain": [
+        "charm-hyper/qwen3.8-flash:high"
+      ],
+      "via": {
+        "alias": "m_mid",
+        "chainKey": "m_mid"
+      }
+    },
+    {
+      "role": "revenger",
+      "route": "alibaba-token-plan/qwen3.8-flash:high",
+      "fallbackChain": [
+        "charm-hyper/qwen3.8-flash:high"
+      ],
+      "via": {
+        "alias": "m_mid",
+        "chainKey": "m_mid"
+      }
+    }
+  ],
+  "requestedAliases": [
+    {
+      "alias": "m_composer",
+      "present": true,
+      "route": "xai-oauth/grok-composer-2.5-fast",
+      "fallbackChain": [
+        "cursor/composer-2.5-fast:high"
+      ],
+      "via": {
+        "alias": "m_composer",
+        "chainKey": "m_composer"
+      }
+    },
+    {
+      "alias": "m_grok",
+      "present": true,
+      "route": "xai-oauth/grok-4.7:xhigh",
+      "fallbackChain": [
+        "cursor/grok-4.7:xhigh",
+        "devin/grok-4-7:xhigh"
+      ],
+      "via": {
+        "alias": "m_grok",
+        "chainKey": "m_grok"
+      }
+    },
+    {
+      "alias": "m_antigravity",
+      "present": true,
+      "route": "google-antigravity/gemini-3.8-flash:high",
+      "fallbackChain": [],
+      "via": {
+        "alias": "m_antigravity",
+        "chainKey": "m_antigravity"
+      }
+    },
+    {
+      "alias": "m_zfl",
+      "present": true,
+      "route": "zai/glm-5.3-flash:max",
+      "fallbackChain": [
+        "charm-hyper/glm-5.3-flash:max",
+        "devin/glm-5-3-flash-1m:max"
+      ],
+      "via": {
+        "alias": "m_zfl",
+        "chainKey": "m_zfl"
+      }
+    }
+  ]
+}

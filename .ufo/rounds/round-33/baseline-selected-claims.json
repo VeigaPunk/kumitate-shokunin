@@ -1,0 +1,23 @@
+{
+  "observedAt": "2026-10-15T05:08:55.804Z",
+  "command": [
+    "node",
+    "scripts/claims-check.mjs",
+    "--self",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/rounds/round-33/baseline-tree",
+    "--src",
+    "/home/vgpnk/Projects/ufo-fsd-alpha",
+    "--row",
+    "R3",
+    "--row",
+    "R4",
+    "--row",
+    "R6",
+    "--strict"
+  ],
+  "cwd": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "exitCode": 1,
+  "stdout": "ROWS: 3  YES: 3  NOTES: 3  SECTIONS: 7\nROW R3   form=section   notes=1 sections=2 adv=1\nROW R4   form=section   notes=1 sections=3 adv=1\nROW R6   form=section   notes=1 sections=2 adv=1\nCLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R3  declared 5, found 2 distinct sections\nCLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R4  declared 6, found 3 distinct sections\nCLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R6  declared 4, found 2 distinct sections\nSUMMARY: errors=0 warnings=3\nCLAIMS: DRIFT (MEMBER_COUNT_SUSPECT row=R3 declared 5, found 2 distinct sections; MEMBER_COUNT_SUSPECT row=R4 declared 6, found 3 distinct sections; MEMBER_COUNT_SUSPECT row=R6 declared 4, found 2 distinct sections)\n",
+  "stderr": "",
+  "diagnosticOnly": true
+}

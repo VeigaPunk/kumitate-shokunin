@@ -1,0 +1,34 @@
+ROUND 33 — DIAGNOSTIC ONLY; NO ADMISSION OR NATIVE BATCH
+
+$ node scripts/proxy-check.mjs --self /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/rounds/round-33/baseline-tree --src /home/vgpnk/Projects/ufo-fsd-alpha
+cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+PROXY: MATCH (A=6 C=11 operability=8; C1=19/19 C2=74/74 coverage=10; S=91/91 coverage:script-layer=10; R=75/92 coverage:runtime-layer=8; K=49/49 coverage:kimi-layer=10; pins=6 match)
+exit: 0
+
+$ node scripts/claims-check.mjs --self /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/rounds/round-33/baseline-tree --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict
+cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+ROWS: 3  YES: 3  NOTES: 3  SECTIONS: 7
+ROW R3   form=section   notes=1 sections=2 adv=1
+ROW R4   form=section   notes=1 sections=3 adv=1
+ROW R6   form=section   notes=1 sections=2 adv=1
+CLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R3  declared 5, found 2 distinct sections
+CLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R4  declared 6, found 3 distinct sections
+CLAIMS  warn  MEMBER_COUNT_SUSPECT     row=R6  declared 4, found 2 distinct sections
+SUMMARY: errors=0 warnings=3
+CLAIMS: DRIFT (MEMBER_COUNT_SUSPECT row=R3 declared 5, found 2 distinct sections; MEMBER_COUNT_SUSPECT row=R4 declared 6, found 3 distinct sections; MEMBER_COUNT_SUSPECT row=R6 declared 4, found 2 distinct sections)
+exit: 1
+
+$ node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha
+cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+PROXY: MATCH (A=6 C=11 operability=8; C1=19/19 C2=74/74 coverage=10; S=91/91 coverage:script-layer=10; R=83/92 coverage:runtime-layer=9; K=49/49 coverage:kimi-layer=10; pins=6 match)
+exit: 0
+
+$ node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict
+cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+ROWS: 3  YES: 3  NOTES: 3  SECTIONS: 15
+ROW R3   form=section   notes=1 sections=5 adv=0
+ROW R4   form=section   notes=1 sections=6 adv=0
+ROW R6   form=section   notes=1 sections=4 adv=0
+SUMMARY: errors=0 warnings=0
+CLAIMS: MATCH (rows=3 yes=3 notes=3 sections=15 adv=0)
+exit: 0

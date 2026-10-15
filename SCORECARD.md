@@ -416,6 +416,19 @@ the frozen definitions name.
 
 ## Planned
 
+**Actual round 33 — interactive cutover (2026-10-15): BLOCKED before dispatch.**
+The current-cycle round-17/18 labels below came from the interrupted worker,
+not from a new verified round. They are superseded for continuation by this
+entry and the appended round-33 record; historical round-18 Kimi work is
+unchanged. The committed baseline remains runtime 75/92, score 8. The dirty
+83/92, score-9 stanza is a preserved, UNADMITTED candidate, not the baseline.
+The next fresh-session attempt is **round 34**, only after the integrator
+supplies the required role-to-alias bindings and dispatch-authoritative
+receipt fields. Do not loop or redispatch inside this session. Plan and
+exact blockers: `.ufo/rounds/round-33/wwkd-plan.md`, `routing.json`, and
+`receipt-prerequisites.json`.
+
+[Showing lines 419-430 of 1575. Use :431 to continue]
 **round 13 (executed) vs the forecast above.** The pre-registered 13-plan is the
 row that ran, with one substitution and one addition, both measured:
 
@@ -1451,3 +1464,56 @@ internals route to **tabi**, the `config.toml` REA MCP spawn key to **kaidoku**,
 `skills/*` craft and trigger discipline to **kotoba**, and secret-bearing paths
 (`credentials/`, `oauth/`, `server.token`) to **kagi** discipline. The census
 membership and `coverage:kimi-layer` = 10 are unchanged by this clause.
+
+## Actual round 33 — interactive cutover, blocked before dispatch (2026-10-15)
+
+| Round | Axis | Before | After | Evidence |
+|---|---|---|---|---|
+| 33 | coverage:runtime-layer (attempt blocked; no admission) | committed baseline 75/92, score 8 | admitted state unchanged: 75/92, score 8; dirty candidate 83/92, score 9 is not admitted | `.ufo/rounds/round-33/baseline-proxy.json`, `candidate-proxy.json`, `candidate-selected-claims.json`, and `wave-plan-validation.json`; full stdout/stderr/exits retained |
+
+This corrects the inherited current-cycle round-18 numbering, not the
+historical Kimi expansion. The filed round-32 report at the fleet root and
+the executed round-32 LOG entry establish actual attempt 33. A launch
+counter, a prospective score, and a validated wave are not completed rounds.
+The complete historical verified-round count has not been audited; this
+blocked attempt contributes **zero** toward the requested verified target.
+
+The canonical plan validates 32 distinct scopes (exit 0), but its role
+preflight resolves reviewer/connector/sentinel/revenger to `@m_mid`, scout/
+scribe to `@m_fast`, and critic to `@m_strong`; the content executor binding
+also resolves to `@m_mid`. Required aliases are `@m_composer`, `@m_grok`, and
+connector `@m_antigravity` with `@m_zfl` fallback. All four aliases exist,
+but these role bindings do not select them; `m_antigravity` has no fallback.
+No task call, model substitution, routing edit, native handoff, or native
+judgment occurred. Only diagnostic commands ran. The preserved candidate
+was not integrated or admitted.
+
+| Axis / learning trend | Verdict | Evidence / limit |
+|---|---|---|
+| operability | unchanged | baseline and candidate both A=6, C=11, score 8; no executable added |
+| coverage (retired aggregate) | unchanged | baseline and candidate both C1=19/19, C2=74/74, score 10 |
+| coverage:script-layer | unchanged | both 91/91, score 10 |
+| coverage:runtime-layer | unchanged | admitted baseline stays 75/92, score 8; candidate diagnostics do not satisfy the native-batch admission prerequisite |
+| coverage:kimi-layer | unchanged | both 49/49, score 10; secrets remain shape-only |
+| expansion | unchanged | no candidate corpus entry admitted |
+| quality | unchanged | diagnostic member-gate success is not admission or a completed audit |
+| discernment | unchanged | no outside non-author admit/reject spot-check; lane evidence cannot substitute |
+
+Named debt and unblock: the fleet integrator must obtain authorized global
+role bindings for the required aliases (including the requested connector
+fallback) without this lane changing configuration. The Sighting launch and
+manifest provide run/session identity but no taskKey, promptSha256,
+configSha256 or receipt/result paths; no dispatch-snapshot sidecars were
+found in the three inspected roots. Supply the authoritative binding before
+minting an applicable receipt; do not reuse the routing digest as a launch
+config digest. `corpus/QUALITY.md` and `MINT.md` are absent; no prior quality
+or mint compliance is invented. Preserve the inherited dirty candidate for
+the next fresh session. One observed blocked attempt is not evidence of
+three consecutive blocked rounds or saturation.
+
+Owned round-33 evidence/record commit is recorded in
+`.ufo/reports/round-33/kumitate.md` after it exists. The candidate source
+notes and their inherited current-cycle metadata remain uncommitted; the
+original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
+
+[Showing lines 1524-1574 of 1575. Use :1575 to continue]

@@ -1,0 +1,901 @@
+diff --git i/LOG.md w/LOG.md
+index 1b55f00..1a0c61f 100644
+--- i/LOG.md
++++ w/LOG.md
+@@ -1313,3 +1313,36 @@ patterns. Two are wrong-shaped and are named debt:
+ The six remaining backticked occurrences of the R1 wildcard live in the Move log and
+ `## Limits` as **prose about the old defect**, not in a `| S|R<n> |` registry row, so
+ they do not feed `familyPatterns()` — do not "fix" them by deleting the history.
++
++- 2026-10-15 — round 18 (current fleet cycle; runtime member coverage).
++  Trigger: `SCORECARD.md` ties operability and runtime coverage at 8;
++  `LOG.md`'s round-32 section-honesty audit names eight missing R3/R4/R6
++  identities. The inherited, uncommitted steered-round-17 plan is preserved
++  and explicitly adopted under round 18; no claim of a new round-17 result.
++  Baseline lane revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`.
++  Read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
++  Before command:
++  `node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
++  → MATCH, runtime 75/92, score 8, script 91/91, K 49/49, operability 8,
++  all six pins match. Selected command:
++  `node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict --json`
++  → DRIFT, exit 1, seven sections, zero errors, three count-suspect warnings.
++  Both results were also re-derived on a `git archive` snapshot of the
++  baseline commit; the temporary snapshot was removed. Snapshot citation
++  sweep (`node scripts/cite-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --fleet /home/vgpnk/Projects/shokunin --json`,
++  run from the extracted revision) → FAIL, 451 errors / 443 warnings:
++  existing debt, not a reason to weaken the checker or repair unrelated
++  material in this move.
++  Action: one native OMP task batch dispatched nine host-routed seats:
++  RuntimePlan (planner), ProvinceOverlap (connector), ProfileMembers,
++  SupportMembers, DedupeMembers (executors), EvidenceScribe (scribe),
++  RuntimeCensus (scout), SourceReview (reviewer), CoverageCritic (critic).
++  Executors own three disjoint existing notes; L1 owns bookkeeping and git.
++  Native `task` is the shokunin host mapping of AgentSwarm, not a UFO
++  validator wave. No per-lane model aliases, routing edits, domain-tree
++  writes or upstream Rust-test execution are part of this move.
++  Acceptance: eight distinct additions, selected rows exactly 5/6/4 with
++  strict adv=0, runtime 83/92 and score 9, every other frozen term/pin held.
++  RuntimePlan independently confirmed the threshold and duplicate-section
++  falsifier (`scripts/proxy-check.mjs:595`,
++  `scripts/claims-check.mjs:399-407`); strict success alone is insufficient.
+diff --git i/SCORECARD.md w/SCORECARD.md
+index c160258..0c75a6c 100644
+--- i/SCORECARD.md
++++ w/SCORECARD.md
+@@ -283,9 +283,9 @@ C2_total=74
+ S_members=91
+ S_sections=91
+ R_members=92
+-R_sections=75
++R_sections=83
+ coverage_script=10
+-coverage_runtime=8
++coverage_runtime=9
+ C1k=5
+ C1k_total=5
+ K_members=49
+@@ -306,7 +306,7 @@ pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+ | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=6 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`) and C=11 (`## Verifiable checklist`; 11th item = the kimi-substrate census, the first item that runs green without the origin tree) ⇒ 17/20 = 0.85 ⇒ 8 — 9 needs A+C ≥ 27 (10 more honest items), so the proxy saturates long before the axis does | round 19 |
+ | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
+ | coverage:script-layer | 10 | `floor(10 × 8/8 × 91/91)` = **10** (corrected in-round to `floor(10 × 90/91)` = **10** — the shim section was not an S-member) — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**91**, round-32 measurement; the pre-round value was 74), `S_members` = **91** = `ls scripts/*.mjs \| wc -l` → 73 + `find scripts -mindepth 2 -type f \| wc -l` → 18 (RECURSIVE; depth-1 reads 87 and undercounts). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
+-| coverage:runtime-layer | 8 | `floor(10 × 11/11 × 75/92)` = **8** — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **75** member-only sections (round-32 measurement; the pre-round value was 69), `R_members` = **92** = 88 runtime `.rs` + 4 CLI `.rs` (the 2026-10-12 upstream restructure deleted 6 runtime files). Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
++| coverage:runtime-layer | 9 | `floor(10 × 11/11 × 83/92)` = **9** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
+ | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 49/49)` = **10** — round 22 tightened `K_sections` to **distinct** members named in sections (pre-registered round 21, hole closed with duplicate-one/drop-one hermetic cases, 98/98 selftest). The anticipated honest drop **did not occur**: measurement refuted the round-21 "~30 distinct" estimate — all **49/49** members were already named by the sectionization wave. Term improved (occurrence inflation closed), score unchanged | round 22 |
+ 
+ Why not 10 on either axis: operability now has five runnable artifacts and ten
+@@ -375,6 +375,7 @@ the frozen definitions name.
+ 
+ | Round | Axis | Before | After | Evidence |
+ |---|---|---|---|---|
++| 18 | coverage:runtime-layer (current fleet cycle, 2026-10-15) | lane `6b982abbb20378b5110bba5f2f9bd581ac20d08e`: 75/92, score 8; selected rows 2/5, 3/6, 2/4, strict warnings 3 | target 83/92, score 9; selected rows 5/5, 6/6, 4/4; acceptance requires strict warnings 0 and eight new distinct identities | Current-cycle plan under `## Planned`; actual work revision and post-commit counting outputs are appended in the measurement record. Historical round-18 Kimi entry below is unchanged. |
+ | 31 | quality + coverage (the multi-line-backtick class resolved doc-side) — FINAL goal round | round 28 named 5 lost citations in round-6-aggregator-audit; the pairing-grammar tradeoff left open | **doc-side resolution**: each site reformatted to a single-line span (root cause confirmed: prose tokens never emit findings — `:1412-1426`); +5 notes, ZERO vanished findings, quoted bytes byte-identical; 2 honest edits restored 5 citations; `:118` left byte-exact (would need quoted-byte alteration; was never a multi-line loss); ~7 further recoverable sites in the same file NAMED as residue | verify lane: 5/5 report, zero vanished, quotes byte-identical, no DEFECT; tool untouched 62/62 |
+ | 30 | quality + calibration (doc-repair trio; --integrations 6/9 → 9/9 — first full green since the restructure) | F1 falsified GateDecision pointer; F4 15 owner-captured refs (24 with siblings); F3 notes mapping the superseded 14,769-line revision; F3 integration case hardcoding a dead token | **F1**: measured re-anchor + historical pointer kept as prose (rewriting it would falsify the audit's own record); **F4**: explicit owner statements re-own all 24 refs, error count unchanged; **F3**: notes marked superseded-revision-historical (git pin kept, content hash described not pinned per SKILL.md:616-620, current bytes pinned `ba5e02be…`); the F3 CHECK then blocked 9/9 (hardcoded `44a3c781`, no live file hashes to it) — parent re-tokened to `ba5e02be` (expectation-refresh class, intent preserved) → **9/9**. Parent consistency: round-7 de-pinned, 296→850 commits anchor measured. Errors 704→700 (2 de-pins flagged + signed off; zero dropped claims) | verify lane: 6/6 anchors measured correct, no prose deleted, no-permissiveness PASS; 8/9 pre-parent-fix with the check-repair boundary named |
+ | 29 | operability + calibration (off-by-one root-caused; integrations 4/9 → 6/9) | `off` was span.start for every span token: −1 for a first token (rounds 27-28 measurement), the WHOLE span start for later tokens in multi-token spans (latent); --integrations 4/9 (stale samples + frozen indexSize) | **root fix**: tokens consumed as regex runs over the unwrapped view, offsets mapped through view.offs — 4128/4128 span-tokens slice-exact (verify-lane instrumented probe); marker window tightened 3→2 chars; **error set byte-identical** (703→703 symbols, 543→543 plain; zero vanished errors/warnings, one lost citation CORRECTED: aggregator-audit:118 `:36` rebinds to fleet-dispatcher.mjs). --integrations sample list refreshed to the current tree (queue.mjs → surface.mjs; indexSize computed live 1743) → **6/9**; the 3 residual reds are doc-repair items (F1 GateDecision pointer, F3 stale 44a3c781 content pin, F4 15 primeagent line refs) — queued, not weakened. Selftest 58→62/62 (+4, before/after proofs) | verify lane: off-by-one gone at root (instrumented probe, 4128/4128), consumers intact (FP_EXEMPT 19→19, sticky fixture unchanged), no-permissiveness PASS, no DEFECT; the 6/9 shortfall honestly explained (doc-repair scope) |
+@@ -416,6 +417,63 @@ the frozen definitions name.
+ 
+ ## Planned
+ 
++**Steered round 18 (2026-10-15; current fleet cycle).** Execute the
++eight-member runtime move below under the current round, not round 17.
++The round-17 plan was inherited uncommitted at lane HEAD
++`6b982abbb20378b5110bba5f2f9bd581ac20d08e`; it is preserved as predecessor
++work, not a claim of a completed round. The historical round-18 Kimi expansion
++entry is a separate dated record and remains unchanged.
++
++The current baseline was re-executed before editing the notes:
++`node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
++returned MATCH, runtime 75/92 and score 8, script 91/91 and score 10,
++K 49/49 and score 10, operability 8, six matching pins, zero findings.
++The same row command recorded below returned seven selected-family sections,
++zero errors and three count-suspect warnings. Source HEAD remains
++`964f443ee53df0ce06bd689af01f0dea031b01f9`.
++
++This round uses one heterogeneous native OMP `task` batch with nine seats:
++planner RuntimePlan; connector ProvinceOverlap; executors ProfileMembers,
++SupportMembers and DedupeMembers; scribe EvidenceScribe; scout RuntimeCensus;
++reviewer SourceReview; critic CoverageCritic. Roles use the host route table;
++no model or routing override is introduced. This is the shokunin host mapping
++of AgentSwarm, not a UFO validator wave or a native judged handoff.
++
++Falsifier and halt condition: the inherited target below remains exactly
++83/92, score 9, with selected-row identities 5+6+4, no duplicates and no
++advisories under the strict row gate. All other frozen terms and pins must
++hold. The committed after-measurement will name its actual work revision in
++an appended measurement record; a prospective hash is not evidence.
++
++**Steered round 17 (2026-10-15; distinct from the historical round-17 entry).**
++Lowest live axes tie at 8: operability and `coverage:runtime-layer`. Runtime
++coverage wins the falsifiability tie-break: eight named missing members have
++an exact threshold, while operability needs ten additional honest runnable
++items. Baseline lane revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`;
++read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
++
++One move: add source-backed member sections to the existing R3/R4/R6 notes:
++R3's cost-ledger validation tests, execution-profile tests and native-profile
++module; R4's overlay, lease and live-transport test companions; R6's distill
++and L3 test companions. Preserve historical sections and their revision
++labels. No tool, registry membership, formula, script-layer or K-block change.
++
++Before counting command:
++`node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
++returned MATCH with runtime 75/92, score 8, script 91/91, K 49/49 and all six
++pins matching. Row command:
++`node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --json`
++returned R3 2/5, R4 3/6, R6 2/4: seven sections and three
++MEMBER_COUNT_SUSPECT advisories, zero errors.
++
++Acceptance: runtime 83/92 and score 9; selected rows have exactly 5, 6 and 4
++distinct in-family members, one section per identity, live own-file anchors
++and verbatim symbols, with strict row gate advisory-free. The threshold is
++ceil(0.9 × 92) = 83. Source inspection is not a claim that Rust tests ran.
++Any denominator/source-revision movement, duplicate contribution, invented
++behavior or missing target member falsifies this move. No axis retired or
++split this round.
++
+ **round 13 (executed) vs the forecast above.** The pre-registered 13-plan is the
+ row that ran, with one substitution and one addition, both measured:
+ 
+diff --git i/corpus/knowledge/cost-and-profile.md w/corpus/knowledge/cost-and-profile.md
+index 7d19dd3..1310e2e 100644
+--- i/corpus/knowledge/cost-and-profile.md
++++ w/corpus/knowledge/cost-and-profile.md
+@@ -106,3 +106,252 @@ one-hop in `native_profile.rs:21-93`; bounds in `native_profile.rs:187-198`.
+ - Seat-sums use `checked_add`; the cumulative expectation uses
+   `saturating_add` — a forged near-u64::MAX pair saturating to match is a
+   conceded edge (comment :694-698).
++
++## Addendum — current source at origin HEAD `964f443e` (2026-10-15)
++
++The three member sections below read the read-only origin
++`/home/vgpnk/Projects/ufo-fsd-alpha` at
++`964f443ee53df0ce06bd689af01f0dea031b01f9`, all three basenames under
++`crates/ufo-core-runtime/src/`. Source inspection, not tests executed — no
++upstream Rust test was run for this note. Everything above stays pinned at
++`ee907f1cf` and is NOT repinned, including the premise-correction cites
++`native_profile.rs:21-93`/`:187-198` (current: resolver `native_profile.rs:21-89`,
++bounds parser `native_profile.rs:175-181`) and the `execution_profile.rs:572`
++`include!` cite (current: `execution_profile.rs:548`). All own-file anchors
++below are fully qualified against the current source.
++
++## `native_profile.rs` (276 L @ `964f443e`) — extends resolver + deadline table + bare selector
++
++`native_profile.rs:1-2` calls the file "Pure code motion from `native.rs`
++(r14 cut 3); no behavior change"; `native_profile.rs:3` records it as a
++`NATIVE_CONTRACT_FILES` entry "(registered as the 48th)", kept under the
++"256 KiB contract-file ceiling" (`native_profile.rs:91-94`). Three jobs:
++
++- **extends resolver.** `native_profile_entry` (`native_profile.rs:21-89`)
++  resolves `nativeProfiles.<profile>`, following `{"extends": "<sibling>"}`
++  exactly one hop. Missing block and missing entry share one message,
++  `nativeProfiles.{profile} is required` (`native_profile.rs:28-32`); an
++  entry with no `extends` is self-contained and returns only after
++  `crate::validate_native_recovery(entry_value, profile)?`
++  (`native_profile.rs:36-39`). A pointer fails closed on: non-string target
++  (`native_profile.rs:40-44`); any inline key besides `extends`/`note`, where
++  the message distinguishes `extends conflicts with inline key '{key}'` when
++  the sibling defines the same key from `cannot carry inline key '{key}'`
++  otherwise — both end `the pointer carries no values of its own`
++  (`native_profile.rs:46-63`); self-cycle (`native_profile.rs:64-68`);
++  missing or non-object target (`native_profile.rs:69-79`); a target that
++  itself extends — `must resolve exactly one hop, but
++  'nativeProfiles.{target_name}' extends again (cycle or multi-hop chain)`
++  (`native_profile.rs:80-86`). Recovery validation then runs on the RESOLVED
++  target (`native_profile.rs:87`), so a pure pointer cannot dodge it.
++- **deadline table.** `NativeDeadlines` is six `u64` tiers —
++  `orchestrator_ms, planner_ms, thinking_ms, distiller_ms, mechanical_ms,
++  labrat_ms` (`native_profile.rs:105-112`) — whose `_ms` wire suffix "renaming
++  would break serde" (`native_profile.rs:102`). `from_profile_entry` requires
++  `nativeProfiles.{profile}.deadlines` (`native_profile.rs:204-209`) and each
++  tier as a positive `as_u64` or `must be a positive integer`
++  (`native_profile.rs:210-220`). `deadline_ms` (`native_profile.rs:240-257`)
++  is an exhaustive match on `NativeAgentRole`: Main/Planner/Distiller/Labrat
++  get dedicated tiers; Critic|Connector|Revenger|Reviewer|Sentinel →
++  `thinking_ms`; Executor|MutationTester|Scout|Simplifier|Scribe →
++  `mechanical_ms` — so "a new role cannot inherit a silent default bound"
++  (`native_profile.rs:236-239`).
++- **bounds + bare selector.** `NativeProfileBounds { deadlines, backpressure }`
++  (`native_profile.rs:118-121`) parses via `from_parsed`
++  (`native_profile.rs:175-181`). Backpressure reads without cloning:
++  `backpressure_from_profile_entry` (`native_profile.rs:123-133`) takes only
++  the `recovery.backpressure` subtree and `unwrap_or_default()`s, because
++  `validate_native_recovery` closed the recovery object first
++  (`native_profile.rs:124-127`); `backpressure_from_json_value`
++  (`native_profile.rs:139-170`) accepts exactly the four keys
++  `domainCooldownMs|herdThreshold|herdWindowMs|maxConcurrentPerDomain`
++  (`native_profile.rs:142-147`) and yields `None` on any unknown key or
++  mistyped present field (`native_profile.rs:149-151`) — it "Matches
++  `serde_json::from_value::<BackpressureConfig>` on the success/failure
++  envelope" (`native_profile.rs:136-138`), with defaults `60_000/3/30_000/0`
++  (`native_profile.rs:164-168`). `omp_bare_selector`
++  (`native_profile.rs:260-276`) demands a typed `provider/model:effort`
++  route: parse failure and `effort.is_none()` share the one message `OMP
++  route must be a typed provider/model:effort selector: {route}`
++  (`native_profile.rs:261-270`) — effort PRESENCE gates, its value does not;
++  the function returns `resolved` (`native_profile.rs:275`), "Deliberately
++  laxer than the producer regex (sync-ufo-contracts.mjs ompBareSelector)"
++  (`native_profile.rs:271-274`) since the allowlist and model charset stay
++  with `contracts:check`.
++
++The test-only loaders (`native_profile.rs:183-196`, `native_profile.rs:231-234`)
++read `config/ufo.json` via `read_file_bounded` under `MAX_UFO_CONFIG_BYTES`
++(`native_profile.rs:9-11`, `native_profile.rs:187`) and add
++`validate_native_budgets` + `validate_native_membrane` before `from_parsed`
++(`native_profile.rs:193-194`).
++
++## `cost_ledger_validation_tests.rs` (306 L @ `964f443e`) — lineage-tie pins
++
++Four tests, mounted at the CRATE ROOT (`lib.rs:1174-1176` —
++`#[cfg(test)] #[path = "cost_ledger_validation_tests.rs"] mod
++cost_ledger_validation_tests;`); `use super::*;`
++(`cost_ledger_validation_tests.rs:1`) reaches `validate_cost_ledger` +
++`require_cost_ledger_when_budgeted` through the crate-root re-exports
++(`lib.rs:75-78`). Fixtures make only ledger semantics decide the verdict:
++`main_seat` = `NativeAgentRole::Main` + `NonZeroU8::MIN`
++(`cost_ledger_validation_tests.rs:15-20`); `ledger_for_seat` binds the seat
++route from `role_route(seat_key.role).expect("route").requested`
++(`cost_ledger_validation_tests.rs:28`) with `usage_source:
++NativeUsageSource::Transcript`, `usd: None`, `degraded: false`,
++`usd_estimate: None` (`cost_ledger_validation_tests.rs:34-45`);
++`shell_handoff` wraps it in a full handoff — `profile:
++NATIVE_HANDOFF_PROFILE_V2`, round 2 (`cost_ledger_validation_tests.rs:51-53`),
++`provenance: CoreRuntimeProvenance::paper_parity()`
++(`cost_ledger_validation_tests.rs:84`), `cost_ledger: Some(ledger)`
++(`cost_ledger_validation_tests.rs:91`). `write_prior_lineage`
++(`cost_ledger_validation_tests.rs:101-140`, "Mirror
++`native_tests::write_chain_receipt`" `cost_ledger_validation_tests.rs:97-98`)
++materializes exactly what the lineage walk discovers:
++`.ufo/native-trials/predrun1/handoff.json` with `round_totals` 50/50 plus
++optional `mission_cumulative` (`cost_ledger_validation_tests.rs:106-122`),
++and `.ufo/receipts/predrun1/round-chain.json` keyed by `plan_digest` with
++`handoff_digest = sha256_hex` of those bytes
++(`cost_ledger_validation_tests.rs:123-139`). Every test drives the current
++dispatcher's tie sequence — seats pass, then
++`prior_mission_totals(contract_root, predecessor_plan)`, then totals pass
++(`cost_ledger.rs:104-113`).
++
++- `validate_cost_ledger_rejects_fabricated_mission_cumulative_with_prior_lineage`
++  (`cost_ledger_validation_tests.rs:142-180`): prior `500/300` is
++  discoverable yet the ledger reports cumulative == this round's `100/100`
++  → the refusal must contain `mission_cumulative does not continue the
++  predecessor lineage` (`cost_ledger_validation_tests.rs:174-177`) AND name
++  the expected sums `600`/`400` (`cost_ledger_validation_tests.rs:178-179`)
++  — the error spells the arithmetic, not just the failure.
++- `validate_cost_ledger_accepts_mission_cumulative_continuing_prior_lineage`
++  (`cost_ledger_validation_tests.rs:182-211`): `600/400` admits.
++- `validate_cost_ledger_prior_lineage_falls_back_to_prior_round_totals`
++  (`cost_ledger_validation_tests.rs:213-276`): a prior with NO
++  `mission_cumulative` — "a round predating the cumulative ledger format"
++  (`cost_ledger_validation_tests.rs:99-100`) — still contributes its
++  `round_totals`, since "otherwise every handoff can under-report the
++  lineage and escape the honesty brake"
++  (`cost_ledger_validation_tests.rs:219-221`): `150/150` admits
++  (`cost_ledger_validation_tests.rs:230-247`); `200/200` — ABOVE the
++  discoverable sum — rejects naming `(150, 150)`
++  (`cost_ledger_validation_tests.rs:261-275`), pinning that the tie is
++  exact equality, not `≥`, and that "deleting the round_totals fallback
++  zeroes the prior contribution and this rejection never fires"
++  (`cost_ledger_validation_tests.rs:249-251`).
++- `require_cost_ledger_when_budgeted_names_v1_profile_trap`
++  (`cost_ledger_validation_tests.rs:278-306`): `NativeBudgets {
++  tokens_per_mission: 1, rate_card: None }`
++  (`cost_ledger_validation_tests.rs:280-283`) against a
++  `NATIVE_HANDOFF_PROFILE` (v1) handoff whose `cost_ledger: None` overrides
++  the V2 shell via struct-update
++  (`cost_ledger_validation_tests.rs:284-296`). The refusal must contain all
++  of `cost_ledger is required when budgets.tokensPerMission > 0`
++  (`cost_ledger_validation_tests.rs:300-303`), `v1 profile trap`
++  (`cost_ledger_validation_tests.rs:304`) and `omp-native-v1 forbids
++  cost_ledger` (`cost_ledger_validation_tests.rs:305`) — the trap named in
++  this note's header prose is under active assertion.
++
++Scope limit: every `validate_cost_ledger` call passes `rate_card:
++None` (`cost_ledger_validation_tests.rs:165-171`, `:203-210`, `:240-247`,
++`:262-269`), so the seat-pass usd rules, the bit-equal `usd_estimate` fold
++and the `degraded` recompute are NOT exercised by this file.
++
++## `execution_profile_tests.rs` (560 L @ `964f443e`) — catalog + FailureClass pins
++
++23 tests plus the `minimal_valid_chains` fixture
++(`execution_profile_tests.rs:451-456`), mounted as the `execution_profile.rs`
++test module (`execution_profile.rs:654-656` — `#[cfg(test)] #[path =
++"execution_profile_tests.rs"] mod tests;`). `use super::*;`
++(`execution_profile_tests.rs:1`) reaches the module-private `route()`
++constructor (`execution_profile.rs:517-520`) and `generated_omp_steps` from
++the generated table (`include!` at `execution_profile.rs:548`).
++
++Provider/model literals below describe assertions in this source revision,
++not the current round's role assignments; the host route table remains the
++only dispatch-routing authority.
++
++- **Identity + coverage.** `Substrate::ALL.map(Substrate::as_str)` is
++  exactly `["omp", "kimi", "codex", "cursor", "opencode", "grok", "devin"]`
++  (`execution_profile_tests.rs:5-8`) and equals
++  `crate::config::SUPPORTED_SUBSTRATES` (`execution_profile_tests.rs:9-12`);
++  every substrate parse/serde round-trips (`execution_profile_tests.rs:13-19`);
++  `"gemini".parse::<Substrate>()` dies with `unsupported substrate 'gemini'`
++  (`execution_profile_tests.rs:21-24`). Every canonical profile covers every
++  `AgentRole::ALL` with a non-empty chain whose routes never drift substrate
++  or role (`execution_profile_tests.rs:27-40`). The role-class partition is
++  asserted POSITIONALLY against `AgentRole::ALL` — a 14-slot table in which
++  moving Critic off `Volume` "fails here"
++  (`execution_profile_tests.rs:42-66`).
++- **Provider-order pins per substrate.** Opencode thinking roles lead
++  `"openai"`, mechanical lead `"xai"`, with the expected provider "spelled
++  per role — computing it from `thinking_role` itself would let a mutant
++  shift the expectation along with the behavior"
++  (`execution_profile_tests.rs:68-100`); Codex depth is `["gpt-5.6-sol",
++  "gpt-5.6-luna"]`, volume the reverse (`execution_profile_tests.rs:102-117`);
++  Grok pins `chain[0].model() == "grok-4.5"`, `chain[1].model() ==
++  "grok-4.6"`, every route `"xai-oauth"` (`execution_profile_tests.rs:119-128`);
++  host purity — every OMP route `route.provider() != "chatgpt"`
++  (`execution_profile_tests.rs:137-140`), cursor Scout tail
++  `"composer-2.5-fast"`, opencode Judge head `openai`/`gpt-5.6-sol-fast`,
++  kimi Executor head `"kimi-code/kimi-for-coding-highspeed"`
++  (`execution_profile_tests.rs:141-159`).
++- **Generated-SSOT conformance instead of literals.**
++  `omp_chains_come_from_generated_ssot` (`execution_profile_tests.rs:162-215`)
++  zips each compiled chain against `generated_omp_steps(role)`
++  (`execution_profile_tests.rs:171-179`), gates effort route-generically
++  (`matches!(suffix, "low" | "medium" | "high" | "xhigh" | "max")` or bare,
++  `execution_profile_tests.rs:184-190`), refuses duplicate/wrapping bare
++  steps (`execution_profile_tests.rs:191-204`) and any `"gemini"` provider
++  (`execution_profile_tests.rs:210-213`) — deliberately route-generic so a
++  re-chartered table "compiles without a test edit"
++  (`execution_profile_tests.rs:206-209`).
++  `only_the_omp_profile_admits_the_opencode_go_hop`
++  (`execution_profile_tests.rs:217-269`): `uses_opencode_go` holds iff
++  `substrate == Substrate::Omp` (`execution_profile_tests.rs:223-230`); the
++  m_zfl cascade (zai → charm-hyper → opencode-go → devin, on
++  Distiller/Labrat/MutationTester/Revenger) and the m_flash cascade
++  (charm-hyper → alibaba-token-plan → opencode-go → devin, on Simplifier)
++  all pin `"opencode-go"` at chain index 2
++  (`execution_profile_tests.rs:231-268`); Scout and Executor ride exactly
++  the 2-step `cursor` → `stepfun` pin, marker-free
++  (`execution_profile_tests.rs:248-260`).
++- **FailureClass capacity authority.** Only `UsageLimit|RateLimit|
++  ModelUnavailable` advance — one step only
++  (`next_route(chain, &chain[0], failure) == Some(&chain[1])`) and from the
++  last route `None`, the no-wrap invariant
++  (`execution_profile_tests.rs:286-308`). Cross-substrate/cross-role chain
++  members don't advance, and a `current` absent from the chain returns None
++  "via `position()`" (`execution_profile_tests.rs:310-337`). The 9-class
++  matrix pins `(permits_advance, is_temporary, is_authorization)` for every
++  variant (`execution_profile_tests.rs:339-368`) — for `Unknown`'s bounded
++  same-route retry and `PermissionDenied`'s `authorization_unavailable`
++  reporting, which have no driver/host observer, "this table is their only
++  pin" (`execution_profile_tests.rs:341-346`).
++- **Gemini typed boundary.** `RouteSpec::try_new` returns
++  `ProfileError::GeminiBanned(_, _)` for `google-ai`, `GOOGLE-AI`, the
++  model needle `("cursor", "Gemini-3-pro")`, `google_gemini` and `bard`
++  (`execution_profile_tests.rs:370-384`); `"google-antigravity"` is admitted
++  but the exemption is "provider-exact" — the case variant
++  `Google-Antigravity`, the `google-antigravity-x` suffix, and a gemini
++  needle on a non-exempt provider all still die
++  (`execution_profile_tests.rs:385-412`).
++- **Hash + cache.** `profile_hash` is deterministic, `.len() == 71`
++  (`execution_profile_tests.rs:415-421`), changes under
++  `with_planner_policy(PlannerPolicy::KimiK3)` and across substrates
++  (`execution_profile_tests.rs:421-428`); `canonical_cached` matches the
++  uncached profile and reuses one allocation — `Arc::ptr_eq`
++  (`execution_profile_tests.rs:431-440`); `canonical_profile_hash` equals the
++  cached profile's hash (`execution_profile_tests.rs:442-449`).
++  `planner_route()` is `None` for all seven canonical profiles — the planner
++  is admitted only through an explicit policy, then yields the cross-substrate
++  Kimi route `kimi-code/k3` (`execution_profile_tests.rs:271-284`).
++- **`validate()`/`try_new` message discrimination.** Present-but-empty chain
++  → `ProfileError::InvalidRoute("route chain for Scout is empty")`,
++  "empty chain must not reuse MissingRole"
++  (`execution_profile_tests.rs:458-474`); removed chain →
++  `MissingRole(AgentRole::Scout)` (`execution_profile_tests.rs:525-540`);
++  substrate drift names `"substrate drift"` + `"index 0"` + `"xai/grok-a"`
++  (`execution_profile_tests.rs:476-496`), role drift names `"role drift"`
++  (`execution_profile_tests.rs:542-560`); blank identities are refused with
++  `"provider and model must be non-empty"` while padded `" chatgpt "` /
++  `" gpt-x "` trim to a valid route (`execution_profile_tests.rs:498-523`).
+diff --git i/corpus/knowledge/distill-and-l3.md w/corpus/knowledge/distill-and-l3.md
+index a59bd88..000913c 100644
+--- i/corpus/knowledge/distill-and-l3.md
++++ w/corpus/knowledge/distill-and-l3.md
+@@ -75,6 +75,139 @@ on the missing field → `Malformed` degrade → live synthesis can never
+ be credited. Consequence dormant while `LiveEnv::enabled()` is off;
+ no test pins schema-vs-struct together.
+ 
++## `distill_tests.rs` (1727 L, 44 `#[test]` — wired at `distill.rs:1143-1145` as `mod tests`)
++
++**Revision `964f443e` current-source addendum (source inspection, not
++tests executed).** Basenames under `crates/ufo-core-runtime/src/`. This
++suite inspects the current `distill.rs` contract, which differs from the
++historical module prose above: the current literal is `ufo.dedupe.v3`
++(`distill.rs:472`), not the older v4 description. Shell-stub transports use
++`EnvGuard` isolation: `disable_live_env` removes `UFO_LIVE_DISPATCH` and
++`UFO_LIVE` (`distill_tests.rs:16-20`).
++
++**Two authorities; the asymmetry is itself pinned as a tripwire.** The
++local key (`local_key`, `distill.rs:299`) binds normalized claim
++(`"  cache  the KEY "` + `["e2","e1","e1"]` collapses to one with
++`"Cache the key"` + `["e1","e2"]`, `distill_tests.rs:211-219`),
++declared write bytes (base64-differing pair survives two-way while the
++positive-control twin, differing only in `proposal_id` + one `scores`
++entry, collapses to one — "proposal_id and scores are outside the local
++identity", `distill_tests.rs:222-263`), and touched paths (different
++paths keep both; reversed order must not split — D2,
++`distill_tests.rs:1601-1638`), with Unicode case folding in
++`normalize_claim` (`"CAFÉ BEAN"` → `"café bean"` — D3,
++`distill_tests.rs:1641-1647`). The blinded live brief carries only
++claim + evidence lineage, so `live_round_survivor_set_differs_from_local_collapse`
++asserts `dedupe` keeps the write-distinct pair while an authorized
++synthesis collapsing `M002` yields `after_count == 1` and
++`survivor_set_sha256` equal to the survivor-only digest — the in-source
++comment names it the `ufo.dedupe.v3` asymmetry tripwire for a future v4
++migration (`distill_tests.rs:266-329`). The contract literal itself is
++pinned: `assert_eq!(brief.contract, "ufo.dedupe.v3")` at
++`distill_tests.rs:411` ("Any edit here is a protocol change, not a
++refactor", `distill_tests.rs:405-412`), matching `distill.rs:472`.
++
++**Blinding.** `distill_tests.rs:332-383`: `" LOCAL / FIXTURE-A "` and
++`"local / fixture-a"` share a `route_group_id`, `"local/fixture-b"`
++differs, missing/blank provenance coalesces to `"RG000"`, evidence ids
++re-emerge sorted, and eight identity strings (`scout`, `reviewer`,
++`critic`, `connector`, `fixture-a`, `source_route_key`, `audit_hash`,
++`source_map`) must not appear in the lowercased prompt. Canonical route
++key semantics (F11, `distill_tests.rs:1125-1142`): ASCII lowered in
++place, `ÉCOLE/ROUTE` folds to `école/route`, whitespace-only maps to
++`None`. The prompt interpolates `UNKNOWN_ROUTE_GROUP_ID` — never a
++second literal — and keeps it bound to its instruction text ("other
++than …", F14, `distill_tests.rs:1145-1159`). The r20 note "MutDistillUtf8
++SURVIVED" (`distill_tests.rs:385-387`) pins the wire delimiter
++`INPUT_JSON:\n` plus `prompt.ends_with(payload)`
++(`distill_tests.rs:389-402`). A blank `proposal_id` falls back to the
++`M001` label `move_id_label` builds (`distill_tests.rs:1650-1657`, D6;
++`distill.rs:380`).
++
++**Honest-collapse gating.** Ambient `CURSOR_AUTH_TOKEN` without live env
++never promotes (`distill_tests.rs:47-57`); a plausible-looking leftover
++from `unimplemented-route-live` with exit 0 never passes
++`live_synthesis` — "only a successful local Qwen transport may authorize
++synthesis" (`distill_tests.rs:60-72`). Local dispatch keeps handler
++`"distiller-local-collapse"`, `!live_synthesis`, no `SYNTHESIS_READY`,
++`LOCAL_COLLAPSE_SENTINEL` present (`distill_tests.rs:22-44`); the full
++phase shape (`distill_tests.rs:75-114`) empties `audit_hash`/handle/map
++path and every findings vector, refuses
++`reveal_source_map_after_score("scored")`, and asserts the round
++artifact prints `synthesis_ready: false` without `specialist`, `scout`
++or `route/private`. Typed-cause matrix: wrong route with live enabled
++collapses with the route plus "does not support live synthesis"
++(`distill_tests.rs:1230-1252`); a nonexistent binary collapses with a
++`spawn` cause (F2, `distill_tests.rs:1255-1278`); exit 0 with empty
++stdout KEEPS the transport handler `"distiller-qwen-hvm-live"` (boundary:
++a transport that ran keeps its handler — D5,
++`distill_tests.rs:1660-1691`, cause records "did not authorize
++synthesis", "exit 0", "(empty stderr)"); an authorized-but-invalid
++synthesis "degrades, never aborts" with `live_attempt_error:` + "did not
++classify every input move" on the artifact (r8, `distill_tests.rs:116-162`);
++an unreadable godspeed directive under `UFO_ROOT` records
++`distiller_prompt_preview: unavailable` beside the sentinel (D8,
++`distill_tests.rs:1709-1727`). `stderr_tail_512` (`distill_tests.rs:1694-1706`):
++512 chars (char count, not bytes), keeps the TAIL end, trims;
++whitespace-only input yields `""`.
++
++**Fail-closed validation arms.** Each refusal is asserted by verbatim
++cause substring: "parse Qwen distiller JSON" (`distill_tests.rs:1281-1288`);
++"did not authorize synthesis" (`distill_tests.rs:1291-1306`); old-contract
++`audit_hash`/`source_map` keys plus mutation of EVERY echoed field —
++evidence order, `proposal_id`, claim, `route_group_id` — each refuse
++"mutated surviving move" (r17, `distill_tests.rs:830-879`); classify
++exactly once ("classify every input move exactly once"), empty duplicate
++reason ("reason is empty"), contradiction arms (empty reason, self-linked,
++attached to a dropped move on either side) and missing-proof arms (empty
++reason, dropped move, repeated) in the 197-line battery
++(`distill_tests.rs:631-827`); unknown/repeated unique moves
++("unknown unique move M999", "repeated unique move M001",
++`distill_tests.rs:1309-1343`); duplicate arms self-linked / unknown
++duplicate / unknown survivor / survivor-not-unique / repeated
++classification (`distill_tests.rs:1346-1463`); the reversed duplicate
++contradiction caught by pair normalization ("repeated contradiction",
++`distill_tests.rs:1466-1497`); unique∧duplicate overlap refuses AND
++names the offender `M002` (`distill_tests.rs:1500-1531`). The lineage
++guard cuts both ways — same claim with independent evidence AND distinct
++claims with shared evidence both refuse "collapsed independent lineage"
++(`distill_tests.rs:583-628`). High-confidence floor: with only one known
++route group the refusal says "two known route groups"
++(`distill_tests.rs:446-512`). Confidences re-emerge sorted
++`M001, M002, M003` regardless of response order (`distill_tests.rs:415-443`);
++duplicates/contradictions/missing-proof survive validation byte-for-byte
++including the exact serialized field names (`distill_tests.rs:515-580`).
++
++**Sealed reveal and admission boundaries** (`distill_tests.rs:882-999`):
++a stale pre-score plaintext map must not exist after sealing ("pre-score
++map must not exist"); a different mission objective must yield a
++different `source_map_handle`; one appended space in the sealed bytes
++refuses "payload/hash mismatch"; a whitespace-only score refuses; success
++writes the exact bytes, reveal is idempotent, the unix file mode is
++`0o600` (`distill_tests.rs:986`, cfg(unix)), `audit_hash` equals
++`sha256:` over the payload bytes, and the decoded `SourceMapPayload`
++carries `iteration: 7` with the `M001`/`RG001`/`scout`/`local/fixture-a`
++entry. The F4/D4 battery (`distill_tests.rs:1002-1122`): wrong recorded
++hash, a JSON-breaking first byte (decode-gate message "sealed source map
++payload/hash mismatch") and a wrong handle each refuse WITHOUT creating
++the target; admission refuses empty artifact bytes ("artifact bytes are
++empty"), a second call ("already admitted"), a mismatched receipt
++("artifact SHA-256 mismatch") and post-run proposal mutation ("survivor
++set digest mismatch", `distill_tests.rs:1534-1598`). A bound
++`EvaluatorReceipt` admits exactly once with every field equal and a
++64-char `survivor_set_sha256`, and a local-collapse result stays sealed
++(`distill_tests.rs:1178-1227`).
++
++**Limits.** Stub transports are `#!/bin/sh` scripts chmod-ed `0o700`;
++the mode assertion and the broken-directive chmod path are `#[cfg(unix)]`
++gated. No test in this file references `QWEN_RESPONSE_FORMAT`; absence of
++that assertion does not revalidate the historical defect above. Its
++missing-`identity_hash` premise does not hold at this revision:
++`RouteUniqueMove` lists six fields without it (`distill.rs:135-142`), matching
++the six names in the transport's required-field list (`live.rs:60-67`).
++This is a field-list comparison, not full schema equivalence or live
++transport verification.
++
+ ## `l3_swarm.rs` (591 lines — declaration/validation ONLY; absent from `NATIVE_CONTRACT_FILES`)
+ 
+ Source's own words (:1-20): "Sekhmet is shelved … authorizes no worker,
+@@ -114,3 +247,64 @@ verified verbatim against source.
+   project block cannot decode — pinned as a positive expectation
+   (conformance `l3-08`). Undefended only because no production path
+   parses it.
++
++## `l3_swarm_tests.rs` (267 L, 12 `#[test]` — wired at `l3_swarm.rs:494-496` as `mod tests`)
++
++**Revision `964f443e` current-source addendum (source inspection, not
++tests executed).** Every test builds fresh `tempfile` roots through the
++`execution_roots` helper (`l3_swarm_tests.rs:6-13`) and drives only the
++declaration/validation surface — consistent with the "declaration /
++validation ONLY" heading above; nothing here spawns a worker.
++
++- **Decode and reject** (`l3_swarm_tests.rs:16-45`): canonical
++  `CANONICAL_L3_CHAIN` (4 steps) decodes through
++  `L3EvidenceConfig::from_json`; `authority.as_str()` equals
++  `L3_AUTHORITY`; authority `"judge"` refuses; the legacy
++  `primary`/`fallback` key shape refuses (deny-unknown shape).
++- **The pinned ceiling has teeth** (`l3_swarm_tests.rs:48-53`):
++  `L3EvidenceConfig::canonical()` asserts 64, then a single mutation to
++  native `32` fails `validate()` — the not-clamped rule above is enforced
++  at the test seam.
++- **`start_lane` revalidates** (`l3_swarm_tests.rs:56-65`): a
++  post-construction `transport = "other"` refuses with "l3 transport must
++  be sekhmet" (`l3_swarm_tests.rs:64`) — mutating config after
++  construction cannot smuggle a lane. Chain bound
++  (`l3_swarm_tests.rs:68-80`): filling to exactly `L3_CHAIN_LENGTH_MAX`
++  validates, one more refuses "chain length".
++- **Namespace and access-mode matrix** (`l3_swarm_tests.rs:83-105`):
++  `L3ExecutionSpec::isolated` → `L3WorkspaceAccess::Mutable`, no scope
++  source, `workdir()` under `sp-default/in`; `read_only_probe` →
++  `ReadOnly`; `mutation_harbor` → Mutable with
++  `scope_snapshot_source()` equal to the checkout and workdir under
++  `sp-harbor/workspace`; a namespaces dir inside the checkout refuses,
++  `../sp-escape` refuses. Companions: a symlink inside the namespace root
++  must resolve beneath it — `#[cfg(unix)]` (`l3_swarm_tests.rs:107-117`);
++  the opposite overlap direction refuses "must not overlap canonical
++  checkout" (`l3_swarm_tests.rs:119-128`); absent root ("l3 namespace
++  root" + "cannot be resolved"), file-as-root ("must be a directory") and
++  absent scope source ("l3 --scope snapshot source") each refuse
++  (`l3_swarm_tests.rs:131-151`).
++- **Advance model** (`l3_swarm_tests.rs:154-195`): the three capacity
++  classes `UsageLimit`, `RateLimit`, `ModelUnavailable` step the chain one
++  hop each with `from`/`to` equal to consecutive `CANONICAL_L3_CHAIN`
++  entries, and the reroute preserves `prompt`, `cache_key`, `lane_id`,
++  `execution`; a fourth failure at the last lane returns
++  `L3Advance::Unavailable` with cause `"chain_exhausted"` and
++  `lane.index` stays 3 — never wraps. All six non-capacity classes
++  (`Authentication`, `PermissionDenied`, `Timeout`, `InvalidRequest`,
++  `ToolFailure`, `Unknown`) return `Unavailable` with cause exactly
++  `class.as_str()` and index unmoved (`l3_swarm_tests.rs:197-221`).
++- **Membrane and liveness** (`l3_swarm_tests.rs:223-249`): mixed-case
++  routes `OpenCode/gpt-5:low` and `devin/OpenCode-Go:low` refuse via
++  normalization ("cannot use OpenCode"); seven `L3AdmissionKind`s refuse
++  and only `L3AdmissionKind::Evidence` is `Ok` — 8 kinds total, matching
++  the membrane above. A local `SERVED_L3_ROUTES` fixture table
++  (`l3_swarm_tests.rs:251-256`) is checked by membership assertion against
++  every canonical chain step; a missing entry reports "dead L3 cascade
++  step" (`l3_swarm_tests.rs:258-265`). This checks declared fixture coverage,
++  not current provider/model/effort availability; no endpoint is probed.
++- **Limits.** The suite exercises `validate`, `start_lane`,
++  `on_failure`/`apply_reroute`, the namespace guards,
++  `reject_opencode_route` and `refuse_native_handoff_admission` only; the
++  `l3Evidence` config-drift note above (block without `chain`) is not
++  referenced here either way.
+diff --git i/corpus/knowledge/runtime-support.md w/corpus/knowledge/runtime-support.md
+index 6ed9e90..1a2dca0 100644
+--- i/corpus/knowledge/runtime-support.md
++++ w/corpus/knowledge/runtime-support.md
+@@ -42,6 +42,71 @@ parallel_cap?}]}`, `deny_unknown_fields` both levels.
+   non-distiller lane count capped by `config.concurrency`
+   (loop_driver.rs:896-905).
+ 
++## `lane_overlay_tests.rs` (343 L) — roster-load + launch-layer pins
++
++*Current-source addendum, rev `964f443e`. Wired as `#[cfg(test)]` +
++`#[path = "lane_overlay_tests.rs"] mod tests` at `lane_overlay.rs:304-306`;
++16 tests. Source inspection, not tests executed — all anchors are file:line
++in the current tree.*
++
++- `use super::*` binds these tests to the `lane_overlay.rs` scope; at this
++  rev the launch-overlay reader/validator half is DEFINED in
++  `lane_overlay.rs`: `read_resolvable_overlay_bytes`
++  (`lane_overlay.rs:199`), `global_home_value` (`lane_overlay.rs:230-231`),
++  `resolve_overlay_layer_bytes` (`lane_overlay.rs:234`),
++  `validate_launch_overlays` (`lane_overlay.rs:262`) — so this one file
++  pins both module halves: roster load and launch layer.
++- Roster grammar via `load_overlays_from_dir` (`lane_overlay.rs:58`):
++  `lane_overlay_tests.rs:5` — omitted `route`/`parallel_cap` inherit the
++  canonical policy, distiller `("hvm/qwen-hvm", 1)`, others
++  `("local/fixture-primary", 8)` — inline comment: "the distiller's
++  critical-seat cap is 1, never the generic 8"; `lane_overlay_tests.rs:29`
++  — route `"remote/unknown"` refuses; `lane_overlay_tests.rs:40` —
++  `"parallel_cap":0` and whitespace-only role `"  "` both refuse;
++  `lane_overlay_tests.rs:236` — whitespace-only route `"   "` behaves
++  exactly like an omitted one (trim-to-empty filter).
++- The over-limit case is pinned at both counting layers:
++  `lane_overlay_tests.rs:59` writes `MAX_OVERLAY_DIR_ENTRIES`+1 files
++  (`lane_overlay.rs:17`) and demands the message contain `"exceeds"`, the
++  computed constant string, and the literal `"(got 65)"`;
++  `lane_overlay_tests.rs:79` pushes the same 65 against the EMITTED-LANE
++  count inside one file. These are two rejection arms, not proof that an
++  exactly-at-limit 64-entry case succeeds.
++- No blocking, no over-read: `lane_overlay_tests.rs:103` (cfg unix) —
++  `read_resolvable_overlay_bytes` on a FIFO returns `Ok(None)` in <1 s
++  ("fifo is not a regular overlay file"); `lane_overlay_tests.rs:122` — a
++  layer file at `LAUNCH_OVERLAY_FILE_BYTES + 1` (`lane_overlay.rs:166`)
++  refuses with the literal `"exceeds 4194304 bytes"` AND the computed
++  bound; the inline comment names remapping the `TooLarge`/`GrewPast`
++  reads onto `Ok(None)` as the downgrade this arm exists to catch.
++- Global-layer HOME: `lane_overlay_tests.rs:143` reads HOME through
++  `crate::test_env::EnvGuard` (a raw `std::env::var` never sees the
++  overlay value), and pins a whitespace HOME to `None` directly instead of
++  against an env removal (documented: host `~/.omp/config.yml` would make
++  that comparison environment-dependent). Seam pins call
++  `global_home_value` (`lane_overlay.rs:230-231`) head-on:
++  `lane_overlay_tests.rs:188` `"  "`→`None`, `lane_overlay_tests.rs:196`
++  `"x"`→`Some("x")`, `lane_overlay_tests.rs:206` removed→`None`.
++- `lane_overlay_tests.rs:256` pins first-hit-wins over
++  `GLOBAL_OMP_CONFIG_CANDIDATES` (`lane_overlay.rs:168-173`) with four
++  winner/loser scenarios — every candidate file contains its own path, so
++  any reorder or deletion flips at least one scenario's winner.
++- Const identity, not literals: `lane_overlay_tests.rs:217` asserts
++  `default_route_for_role` (`lane_overlay.rs:38-42`) returns
++  `crate::live::QWEN_LIVE_ROUTE` / `crate::live::FIXTURE_PRIMARY_ROUTE` BY
++  CONST REFERENCE, and `assert_ne!` keeps
++  `crate::live::FIXTURE_PRIMARY_ROUTE` distinct from
++  `crate::live::FIXTURE_RECOVERY_ROUTE` — collapsing them would erase the
++  reroute identity the loop fixture emits.
++- Admit-without-recompute: `lane_overlay_tests.rs:290` — a
++  `NativeOverlayLayer::Overlay` with an arbitrary well-formed
++  `"sha256:"+64×'a'` digest is admitted without either resolvable layer
++  file being read or hashed, and a repeated record refuses naming the
++  layer spelling `repeats overlay layer 'overlay'`;
++  `lane_overlay_tests.rs:326` — absent project `.omp/config.yml` maps
++  NotFound→`Ok(None)` (`lane_overlay.rs:203`) and `validate_launch_overlays`
++  still admits it — the optional-layer contract.
++
+ ## `lease.rs` (842 L) — mission-scoped writer lease
+ 
+ File `<run>/.ufo/writer-lease.json`, schema `ufo-writer-lease-v1`:
+@@ -78,6 +143,77 @@ from the lease file, never sentinel names. `MAX_LEASE_BYTES` 64 KiB.
+   (loop_driver_publish.rs:126) is the sole translation site for
+   `write_checkpoint`/`write_membrane_seal` (membrane seal rides the lease).
+ 
++## `lease_tests.rs` (648 L) — fencing race + fail-closed probe pins
++
++*Current-source addendum, rev `964f443e`. Wired at `lease.rs:616-618`;
++18 tests plus helpers `dead_pid` (`lease_tests.rs:6` — spawn `true`, wait,
++reuse the id: "the kernel will not hand it back inside the test") and
++`plant_lease` (`lease_tests.rs:12` — writes a `WriterLease` JSON to
++`writer_lease_path` (`lease.rs:89-91`) under `WRITER_LEASE_SCHEMA`
++(`lease.rs:31`)). Source inspection, not tests executed.*
++
++- Ownership/fencing semantics: `lease_tests.rs:27` — second live holder
++  refuses `LeaseError::HeldBy{epoch: 1, holder: "holder-a"}`;
++  `lease_tests.rs:46` — the full triple: dead epoch-1 lease taken over at
++  epoch 2, `guarded_write` with epoch 1 →
++  `GuardedWriteError::Lease(LeaseError::StaleEpoch{current: 2})`, current
++  epoch runs the closure, and a same-epoch capability with a foreign
++  `holder` → `HeldBy{2, "holder-b"}` ("an epoch match alone is not
++  ownership"); `lease_tests.rs:91` — a FOREIGN PROCESS's capability is
++  refused BEFORE the closure runs (the `ran` flag stays `false`): the
++  pre-write arm (`lease.rs:351-359`) requires `held.pid ==
++  std::process::id()` — capability-vs-file agreement is not enough;
++  `lease_tests.rs:115` — a takeover planted inside the closure is fenced
++  by the post-write re-read as `StaleEpoch{current: 2}`
++  (`lease.rs:361-378`); `lease_tests.rs:130` — post-death takeover bumps
++  5→6 and the on-disk record EQUALS the returned lease.
++- Race: `lease_tests.rs:171` — 8 rounds × 2 barrier-released threads
++  contending over a dead holder: winning epochs are pairwise distinct ("a
++  loser either claims the next epoch or gets HeldBy; both are honest
++  outcomes") and the on-disk epoch equals the max claimed — the sentinel
++  CAS is the sole arbiter, never a torn double-write.
++- pid namespaces (cfg unix arms): `lease_tests.rs:147` — a FOREIGN
++  `pid_ns` holder refuses `HeldBy{3, "foreign-holder"}` even when its pid
++  probes dead (foreign-ns = alive-by-definition); `lease_tests.rs:351` —
++  `acquire_for_resume` (`lease.rs:211`) on a foreign-ns record stamped
++  with THIS numeric pid → `HeldBy{4, "resume-holder"}`, file untouched
++  (GAP-C r7: pids collide across namespaces; the tightened predicate
++  `same_pid_takeover` is `lease.rs:254-255`); `lease_tests.rs:387` — the
++  honest resume survives: same-ns records AND legacy records with absent
++  `pid_ns` still take over at epoch+1.
++- The fail-closed procfs ladder, one pin per historical fix, all against
++  `proc_pid_alive` (`lease.rs:602-610`): `lease_tests.rs:249` — absent or
++  non-directory proc roots answer ALIVE (r6 critic F1: "a probe that
++  cannot run must never report death"), while real `/proc` still answers
++  both ways; `lease_tests.rs:273` — an ELOOP stat-error pid entry is
++  ALIVE, only ENOENT is dead (r7: `Path::exists()` collapsed stat errors
++  into DEAD); `lease_tests.rs:302` — a masked stand-in root without
++  `self` is ALIVE even with pid-shaped entries inside (r7 critic);
++  `lease_tests.rs:326` — a planted `self` DIR, or a `self` symlink to `/`,
++  fails `procfs_self_is_caller` (`lease.rs:591-600` — `read_link` must
++  bind `self` to the caller pid) → ALIVE (r8 critic).
++- Malformed is evidence, never silently overwritten: `lease_tests.rs:219`
++  — `{ not json` AND a foreign schema each → `LeaseError::Malformed`;
++  `lease_tests.rs:454` — every shape check in `read_lease`
++  (`lease.rs:384`) is a field-naming `Malformed` (`empty holder`,
++  `pid 0`, `epoch 0`, `is not RFC 3339`, wrong-schema `is not`) and
++  `acquire` (`lease.rs:198`) refuses the same record — "a pid-0 record in
++  particular must never be acquired over"; `lease_tests.rs:516` — a
++  DIRECTORY at the lease path → Malformed `"is not a regular file"`
++  (`lease.rs:395-399`), `MAX_LEASE_BYTES + 1` (`lease.rs:35`) →
++  `"byte ceiling"` (`lease.rs:400-408`).
++- Two typed exhaustion bounds, never a hang: `lease_tests.rs:410` —
++  forged sentinels `2..=MAX_EPOCH_SKIPS` (64, `lease.rs:116`) still
++  acquire at epoch 65 ("every skipped epoch is claimed"); one more in the
++  window turns the acquire into `LeaseError::Io` naming `"sentinel
++  exhaustion"` (`lease.rs:276-279`) — the PER-ACQUIRE probe bound;
++  `lease_tests.rs:539` — the MISSION-WIDE budget (r19): a takeover
++  landing exactly at `MAX_LEASE_EPOCH` (1024, `lease.rs:128`) is admitted
++  and claims the last sentinel, the next succession is `Io` naming
++  `"epoch budget exhausted"` (`lease.rs:271-275`) BEFORE any further
++  sentinel is created, two concurrent contenders at the cap are BOTH
++  refused, and the on-disk record still names the capped holder.
++
+ ## `live.rs` (484 L) — live Qwen distiller transport
+ 
+ Premise correction: NOT lane/mission liveness. Tracks whether a DISTILLER
+@@ -98,6 +234,92 @@ collapse. No mission registry here.
+   (loop_driver.rs:1216-1218), consumed once per epoch at
+   `loop_driver_resume.rs:1546-1551` to install a force-dry env guard.
+ 
++## `live_tests.rs` (530 L) — transport + live-authorization verdict pins
++
++*Current-source addendum, rev `964f443e`. Wired at `live.rs:438-440`; 27
++tests. Source inspection, not tests executed. Several tests spawn real
++`sh`/`python3` children through the `#[cfg(test)]` surfaces
++`live_dispatch_timeout_secs` (`live.rs:117-124`) and `run_subprocess`
++(`live.rs:371-374`).*
++
++- Promote gate: `live_tests.rs:7` — ambient `CURSOR_AGENT` /
++  `CURSOR_AUTH_TOKEN` never enable; `live_tests.rs:17` — explicit
++  `UFO_LIVE_DISPATCH=1` enables (`LiveEnv::enabled` `live.rs:270-272` →
++  `crate::test_env::explicit_live_promote`); `live_tests.rs:496` and
++  `live_tests.rs:509` — `run_distiller_live` (`live.rs:274-281`) degrades
++  to `Ok(None)`, NEVER an error, when the flag is absent or the route is
++  not the promoted `QWEN_LIVE_ROUTE`.
++- Deadline algebra: `live_tests.rs:25` pins `live_dispatch_timeout_secs`
++  to `DEFAULT_LIVE_DISPATCH_TIMEOUT_SECS` (`live.rs:26`, cfg(test), 30)
++  with both env keys cleared; `live_tests.rs:36` pins
++  `qwen_inner_deadlines` (`live.rs:133-145`) at outer 30: straddling
++  requests (`HVM_QWEN_CONTROL_TIMEOUT=28`, `HVM_QWEN_HTTP_TIMEOUT=2`) and
++  at-clamp requests (27, 1) both yield the tuple `(1, 27, 1)` — the
++  reserve-2 and `max(1)` floors (`live.rs:137`, `live.rs:139-143`) are
++  pinned against off-by-one drift; the default outer is 330
++  (`DEFAULT_QWEN_DISPATCH_TIMEOUT_SECS` `live.rs:27`, `live.rs:126-131`)
++  and a requested `"1"` floors to 8 (`live.rs:130`).
++- HOME refuses to guess: `live_tests.rs:73` and `live_tests.rs:312` —
++  with HOME absent and neither `UFO_QWEN_HVM_BIN` nor
++  `UFO_QWEN_DIRECT_BIN`, the error names `"HOME is unset"`
++  (`live.rs:317-321`) and must NOT contain `"/home/vgpnk"` — no
++  host-specific default is ever guessed; `live_tests.rs:325` —
++  set-but-empty HOME refuses with no `"spawn "` substring: the refusal
++  lands before any spawn attempt.
++- Bounded transport: `live_tests.rs:85` — `group_kill_args(17)` must be
++  `["-KILL", "--", "-17"]` (`process_group.rs:279`) — the `--` option
++  terminator survives, a negative pgid is never parsed as flags;
++  `live_tests.rs:93` — a 5 MiB flood → exact
++  `BoundedError::OutputTooLarge{stdout_oversized: true,
++  stderr_oversized: false}` (`live.rs:160-163`); `live_tests.rs:113` —
++  nonexistent binary → typed `"spawn "` error (`live.rs:423-425`);
++  `live_tests.rs:122` — `MAX_BOUNDED_CHILD_OUTPUT_BYTES + 1` bytes →
++  error naming `"output for "` (`live.rs:427-433`); `live_tests.rs:137` —
++  invalid UTF-8 degrades LOSSILY (stdout keeps `"ok"`, U+FFFD surfaces),
++  not an error; `live_tests.rs:151` — the shell spawns a `sleep 30`
++  grandchild; timeout must kill the process group, and the assertion polls
++  boundedly for the grandchild's disappearance instead of requiring
++  immediate reaping; `live_tests.rs:186` (cfg
++  unix) — a `start_new_session=True` descendant holding stdout open
++  degrades in <2 s to a CLOSED dispatch (exit `-1`, empty stdout "partial
++  pipe bytes are not evidence", stderr carries `"incomplete pipe"` +
++  `"child exit"` and NOT `"timed out"`) — the `IncompletePipe` arm
++  (`live.rs:409-422`) is distinct from `Timeout` (`live.rs:402-408`).
++- The `live` verdict is re-derived, never trusted
++  (`authorizes_live_synthesis` `live.rs:220-229`): hand-built
++  `LiveDispatchResult{live: true, exit_code: 0, …}` still REFUSES the
++  unlisted handler `"unimplemented-route-live"` (`live_tests.rs:341`),
++  whitespace-only stdout (`live_tests.rs:367`), a `LOCAL_COLLAPSE_SENTINEL`
++  echo (`live_tests.rs:382`) and nonzero exit (`live_tests.rs:394`);
++  `live_tests.rs:353` demands `"distiller-qwen-direct-live"` AUTHORIZE —
++  the inline comment: a deleted allowlist arm is "capability loss with no
++  error".
++- Auth-failure needles: `live_tests.rs:409` — byte-identical candidate
++  stdout flips `live` true→false once stderr says `"Unauthorized"`
++  (`auth_failed` `live.rs:283-297`); `live_tests.rs:434` — each of the
++  four literals `"authentication required"`, `"authentication is
++  invalid"`, `"stored authentication is invalid"`, `"api key is invalid"`
++  (`live.rs:284-290`) get one fixture each, split across stderr and stdout
++  (`live_tests.rs:438-447`); they are not each tested on both streams.
++  Deleting a needle must fail its own assertion rather than hiding behind
++  `"unauthorized"`.
++- Fail-closed degradation: `live_tests.rs:467` — a hung dispatch returns
++  `Ok`, `live: false`, exit `-1`, stderr names the bound with `"timed
++  out"`; `live_tests.rs:482` — `UFO_DISTILLER_TRANSPORT=bogus` bails
++  naming `"unsupported UFO_DISTILLER_TRANSPORT=bogus"` (`live.rs:303`).
++- Secret hygiene: `live_tests.rs:240` (cfg unix) — a capture shim records
++  the child's own environment: every key must be in the allowlist
++  `run_qwen_distiller` re-lists after `env_clear` (`live.rs:333-363`),
++  `TOP_SECRET_API_KEY` / proxy values must be absent, prompt+schema
++  payload files must be mode `0600` (captured `"600"`, `"600"`), and both
++  ephemeral paths must be gone at assertion time — `PrivateTempFile`'s
++  Drop (`live.rs:260-264`) is the deletion arm.
++- Wire grammar: `live_tests.rs:525` pins the four shared consts
++  byte-equal to their literals — `"local/fixture-primary"`,
++  `"local/fixture-recovery"`, `"LOCAL_COLLAPSE"`, `"hvm/qwen-hvm"`
++  (`live.rs:29-45`); doc comment: if a const drifts, "every consumer
++  retargeting it silently breaks the protocol".
++
+ ## Traps
+ 
+ - `resolve_declared_overlay_dir` falls back to the RAW root when the root
+diff --git i/corpus/lessons/round-18.md w/corpus/lessons/round-18.md
+index 197dcf4..4a67225 100644
+--- i/corpus/lessons/round-18.md
++++ w/corpus/lessons/round-18.md
+@@ -71,3 +71,45 @@ overlap), the parent integrating:
+     incl. frozen registry members), so the S/R terms legitimately DRIFT. That
+     re-census is parked OMP-side work (with the S2 move) per the operator's
+     Kimi-CLI directive; recorded in `SCORECARD.md ## Planned`, not fitted.
++
++## Steered round 18 — current fleet cycle (2026-10-15)
++
++This appended entry is separate from the historical Kimi expansion above.
++The current mission selects `coverage:runtime-layer`, tied with operability
++at 8, because eight named missing members reach the exact 83/92 threshold
++for 9. The inherited uncommitted steered-round-17 plan is preserved in
++`SCORECARD.md`; it is adopted under round 18, not relabelled as completed
++round-17 work. Motivating evidence: the round-32 section-honesty audit and
++the current round-18 entry in `LOG.md`.
++
++Baseline revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`.
++Read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
++The baseline was replayed from `git archive`, independently of live note
++edits; the temporary snapshot was removed.
++
++### Gate — current-cycle candidates and falsifier
++
++- Admit candidates: three missing profile/cost members, three runtime-support
++  test companions and two dedupe/L3 test companions. Each must have its own
++  source-backed section, live own-file anchors and verbatim symbols.
++- Reject candidate: treating a numeric proxy MATCH or a strict claims MATCH
++  as distinct-member proof. The proxy counts section occurrences, while
++  the claims gate's files-form count only rejects undercounts. RuntimePlan
++  independently identified duplicate-one/drop-one as the strongest falsifier;
++  require exact identity sets and occurrences=distinct at 5/6/4.
++- Reject candidate: declaring upstream Rust tests passed on source inspection.
++  No domain-tree writes, upstream test execution, provider calls or routing
++  modifications are part of this documentation move.
++- Baseline command:
++  `node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
++  → MATCH, runtime 75/92, score 8; script 91/91, K 49/49, six matching pins.
++- Baseline strict command:
++  `node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict --json`
++  → DRIFT, exit 1, seven sections, zero errors, three count-suspect warnings.
++- Citation-sweep boundary: the archived baseline already has 451 errors and
++  443 warnings. Acceptance requires no new citation errors attributable to
++  the additions, not a fabricated repository-wide green verdict.
++- Outside spot-check: no external non-author promotion verifier has reviewed
++  this current-cycle move. Lane-dispatched review remains lane evidence;
++  it does not qualify for checked promotion boxes or an outside discernment
++  verdict under the canonical learning protocol.

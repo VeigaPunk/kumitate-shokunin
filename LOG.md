@@ -1313,3 +1313,48 @@ patterns. Two are wrong-shaped and are named debt:
 The six remaining backticked occurrences of the R1 wildcard live in the Move log and
 `## Limits` as **prose about the old defect**, not in a `| S|R<n> |` registry row, so
 they do not feed `familyPatterns()` — do not "fix" them by deleting the history.
+
+- 2026-10-15 — round 33 (interactive cutover; BLOCKED before native dispatch).
+  Correction to the inherited current-cycle round-18 entry immediately
+  above: launch counter 18 is not a completed-round count. The filed fleet
+  round-32 report and this LOG's executed round-32 record establish actual
+  attempt 33. Historical rounds and the inherited dirty candidate are
+  preserved; no round-18 result is integrated under that mistaken label.
+  Baseline lane revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`;
+  read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
+  Trigger and plan: `.ufo/rounds/round-33/wwkd-plan.md`; original six-path
+  dirty patch preserved verbatim as `.ufo/rounds/round-33/inherited.patch`.
+  Diagnostic baseline replay from committed HEAD: proxy MATCH, runtime
+  75/92 score 8, exit 0; selected strict claims DRIFT, 7 sections, three
+  MEMBER_COUNT_SUSPECT warnings, exit 1. The temporary baseline was removed.
+  Current dirty candidate: proxy MATCH, runtime 83/92 score 9, exit 0;
+  selected strict claims MATCH (rows=3 yes=3 notes=3 sections=15 adv=0),
+  exit 0, R3/R4/R6 sections 5/6/4. These are diagnostics, NOT acceptance.
+  Full stdout/stderr/exits: baseline-proxy.json,
+  baseline-selected-claims.json, candidate-proxy.json, and
+  candidate-selected-claims.json in the round's local .ufo directory.
+  A saved 32-distinct-scope wave passes ufo-swarm-wave.mjs plan validation
+  (exit 0); its initial absolute-reportDir refusal is retained separately,
+  and the corrected spec uses a relative path. No run/task dispatch occurred.
+  Canonical role routing selects @m_mid/@m_fast/@m_strong, not required
+  @m_composer/@m_grok/@m_antigravity; the requested @m_zfl connector fallback
+  is absent from m_antigravity's chain. Exact projection and global config
+  digest: routing.json and wave-plan-validation.json. No route substitution,
+  global change, provider probe, native judgment, or upstream test occurred.
+  Admission withheld: every axis and learning trend unchanged. No verified
+  round credited; no saturation or three-blocked-round claim. Own metadata
+  and evidence are committed without the inherited corpus/metadata hunks;
+  no push. The fresh-session continuation is actual attempt 34 after the
+  alias contract is realizable, not an in-session loop.
+  Receipt prerequisite inspection: launch identity and Sighting manifest
+  lack authoritative taskKey/prompt/config receipt bindings; no matching
+  dispatch-snapshot directory was found in source, fleet or lane roots.
+  Source-root pending-work.json is absent. No applicable receipt minted or
+  validated; Sighting completion is not invoked. Integrator must supply
+  the real binding, never synthesized digests or a fabricated task key.
+  Absent corpus/QUALITY.md and MINT.md are named debt; no compliance inferred.
+  Detailed Gate lesson and report remain local .ufo artifacts. A later
+  record commit may add only the real work hash, closure diagnostic and
+  continuation evidence covered by this entry; no candidate admission.
+
+[Showing lines 1349-1391 of 1392. Use :1392 to continue]
