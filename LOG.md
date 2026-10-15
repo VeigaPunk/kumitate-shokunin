@@ -1258,3 +1258,14 @@ re-ran the gates three times across the round: `C1k` 5, `C1k_total` 5, `K_member
 matches, and `kimi-census.mjs` reads `CLEAN (members=49 checked=49)` each time —
 so the round moved only the two S/R layer scores it pre-registered and leaked
 nothing into the K block. `PROXY: MATCH` exit 0 with `findings: []`.
+
+**Independent S8 verification (appended 2026-10-14).** A note-verification seat
+re-derived S8 from the live universe (`91 − 28 = 63`) and compared it against the
+note's headings and table with `LC_ALL=C comm -3` on both sides — both empty, no
+section names an absent member, no declared member lacks a section: **63/63**
+honest, and `node scripts/claims-check.mjs --row S8` → `CLAIMS: MATCH … sections=63
+adv=0` exit 0. Two minor operability nits were found and are carried as debt, not
+gate failures: `scripts/charter-scribe/sync.mjs`'s pathish anchor is blank at
+`:665` (the section still resolves through a bare anchor at `:57`/`:85`/`:104`) and
+`scripts/ufo-drills.mjs`'s pathish anchor `:4450` is past EOF (still resolves bare
+at `:264`). Unblock: point both at live in-file lines.
