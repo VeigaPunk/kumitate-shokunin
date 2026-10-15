@@ -1424,14 +1424,18 @@ Reaching `coverage_script` 7 needs `S_sections ≥ 64` (56 today) and
 `coverage_runtime` 7 needs `R_sections ≥ 65` (63 today). The wave's per-family
 enumerations give the exact remaining work, each with a live member list:
 
-| Family | Sections to add | Members |
-|---|---|---|
-| R6 | 2 | `distill_tests.rs`, `l3_swarm_tests.rs` |
-| R4 | 3 | `lane_overlay_tests.rs`, `lease_tests.rs`, `live_tests.rs` |
-| R7 | 5 (topic-form → section-form) | `bounded_fs.rs`, `bounded_fs_tests.rs`, `fs_durability.rs`, `local_ship.rs`, `local_ship_tests.rs` |
-| R2, R5 | topic-form | `loop_driver*`/`state*`, `native_seats`/`native_admission*`/`native_text` |
-| S1, S4 | topic-form | dispatcher core, sighting wall |
-| S7, S8 | phantom sections to remove first | 3 deleted S7 members; 15 S8 sections naming deleted files |
+Remaining section work, by family (the first cell deliberately does NOT
+start with `S<n>`/`R<n>` followed by a pipe — that shape is the registry-row
+regex `^\| (S|R)\d+ \|`, and a table using it would be parsed as three extra
+registry rows and move `C1_total`; this is the round-13 `S7a` lesson applied to
+prose):
+
+- **R6** — add 2: `distill_tests.rs`, `l3_swarm_tests.rs`
+- **R4** — add 3: `lane_overlay_tests.rs`, `lease_tests.rs`, `live_tests.rs`
+- **R7** — add 5 (topic-form today): `bounded_fs.rs`, `bounded_fs_tests.rs`, `fs_durability.rs`, `local_ship.rs`, `local_ship_tests.rs`
+- **R2 / R5** — topic-form: `loop_driver*`/`state*`; `native_seats`/`native_admission*`/`native_text`
+- **S1 / S4** — topic-form: dispatcher core; sighting wall
+- **S7 / S8** — remove phantom sections first: 3 deleted S7 members; 15 S8 sections naming deleted files
 
 R6's two sections alone reach exactly 65 and would move `coverage_runtime` to 7.
 `node scripts/claims-check.mjs` still reports `MEMBER_COUNT_DRIFT` (S7 declared 9
