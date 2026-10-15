@@ -1221,3 +1221,33 @@
   for the parked re-census. Tool untouched (62/62 held). C2 73→74.
   Godspeed verdicts: quality/calibration/coverage improved. KUMITATE AT
   10 OF 10 (strict) — rounds 22-31 closed and verified under this goal.
+
+## round 32 — OMP-era layer re-census (coverage axis-move, EXECUTED)
+
+2026-10-14 · steered round 32 · axis: `coverage:script-layer` + `coverage:runtime-layer` (both were the tied lowest live axis at 6) · 32-lane fleet wave + parent integration.
+
+Round-work commit: `5d250b468ecb764da2857e3ab8034ae3dc489b63` (lane identity `kumitate-shokunin <kumitate@shokunin.local>`).
+
+**Measured deletion boundary** (`5725fa7d3` → `964f443e`, proven by `LC_ALL=C comm -3` on
+both sides of every comparison, all empty): script layer 114 − 41 deleted + 18 added =
+**91**; runtime layer 98 − 6 = **92**. `git diff --diff-filter=D` = 50 paths = 41 S + 6 R
++ 3 outside the frozen universe.
+
+**Landed:** the frozen `kumitate-proxy-v1` stanza and the `## Axes` rows now carry the
+measured values — `S_members` 114→91, `S_sections` 74→**91**, `R_members` 98→92,
+`R_sections` 69→**75**, `coverage_script` 6→**10**, `coverage_runtime` 6→**8**. Registry
+cells corrected to live membership (S2 lib 6→5, S4 26→6 files, S7 9→6, S8 60→63, R11
+47→41). Note work: 12 R2 sections, 7 S2, 6 S4, 6 S7 (3 phantoms removed), plus S1/S3/S5/S6
+and the R-family section sets.
+
+**Verdict lines:** `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=6 C=11 operability=8;
+C1=19/19 C2=74/74 coverage=10; S=91/91 coverage:script-layer=10; R=75/92
+coverage:runtime-layer=8; K=49/49 coverage:kimi-layer=10; pins=6 match)` exit 0;
+`--selftest` `VERDICT: PASS`. `coverage_script` reached its terminal 10.
+
+**Carried debt (named):** `node scripts/claims-check.mjs` still exits 1 — `R11` retains
+13 sections whose own-file line anchors are dead after the file shrink
+(`build_json.rs`, `config_tests.rs`, `fixture_spawn.rs`, `lanes_tests.rs` and others), plus
+`SECTION_NO_ANCHOR`/`SECTION_FILE_NOT_MEMBER` warnings. Unblock: re-anchor those sections to
+the live files. The K-block boundary clause (census, not exclusive ownership) is recorded in
+`SCORECARD.md`. Six cross-domain defects were routed to `ufo-fsd-alpha`, not absorbed.
