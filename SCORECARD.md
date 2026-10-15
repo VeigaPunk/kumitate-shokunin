@@ -280,12 +280,12 @@ C1=19
 C1_total=19
 C2=74
 C2_total=74
-S_members=114
-S_sections=74
-R_members=98
-R_sections=69
+S_members=91
+S_sections=56
+R_members=92
+R_sections=63
 coverage_script=6
-coverage_runtime=7
+coverage_runtime=6
 C1k=5
 C1k_total=5
 K_members=49
@@ -306,7 +306,7 @@ pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=6 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`) and C=11 (`## Verifiable checklist`; 11th item = the kimi-substrate census, the first item that runs green without the origin tree) ⇒ 17/20 = 0.85 ⇒ 8 — 9 needs A+C ≥ 27 (10 more honest items), so the proxy saturates long before the axis does | round 19 |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 6 | `floor(10 × 8/8 × 74/114)` = `floor(6.49…)` = 6 — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**74** = `S6` 5 + `S7` 9 + `S8` 60; the five topic-form `S` rows carry 0), `S_members` = **114** = `ls scripts/*.mjs \| wc -l` → 72 + `find scripts -mindepth 2 -type f \| wc -l` → 42 (RECURSIVE; depth-1 reads 38 and is wrong). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
-| coverage:runtime-layer | 7 | `floor(10 × 11/11 × 69/98)` = `floor(7.04…)` = 7 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **69** member-only sections: round 17 completed R1 (**0→8**) and R8 (**3→4**, adding `native_dispatch_topology.rs`) on top of the round-16 baseline 60; all `R` note sections read 72, minus R9's 3 `SECTION_FILE_NOT_MEMBER` sections. `R_members` = **98** = 93 runtime + 5 CLI. Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
+| coverage:runtime-layer | 6 | `floor(10 × 11/11 × 69/98)` = `floor(7.04…)` = 7 — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **69** member-only sections: round 17 completed R1 (**0→8**) and R8 (**3→4**, adding `native_dispatch_topology.rs`) on top of the round-16 baseline 60; all `R` note sections read 72, minus R9's 3 `SECTION_FILE_NOT_MEMBER` sections. `R_members` = **98** = 93 runtime + 5 CLI. Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
 | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 49/49)` = **10** — round 22 tightened `K_sections` to **distinct** members named in sections (pre-registered round 21, hole closed with duplicate-one/drop-one hermetic cases, 98/98 selftest). The anticipated honest drop **did not occur**: measurement refuted the round-21 "~30 distinct" estimate — all **49/49** members were already named by the sectionization wave. Term improved (occurrence inflation closed), score unchanged | round 22 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
@@ -1360,3 +1360,90 @@ the fleet is kasegi's `depth` → `depth:density` + `depth:verifiability` (round
 15), and that lane records "No axis retired" (`kasegi-shokunin/SCORECARD.md:78`,
 `:103-105`) — its parent was never saturated, so this entry is the first
 retirement-at-saturation in the fleet rather than a citation of one.
+
+**round 32 (pre-registration, 2026-10-14, operator 12-hour program).** The
+lowest live axis is tied at **6**: `coverage:script-layer` and
+`coverage:runtime-layer`, both below operability 8 and `coverage:kimi-layer` 10.
+The selector picks the layer whose re-census the 2026-10-12 upstream restructure
+actually moved, and the tie is broken by cost: both are moved by the SAME
+measurement, so the round is one re-census with both terms re-derived.
+
+**Why the stanza cannot read MATCH today (measured, not recalled).** The live
+tree at `~/Projects/ufo-fsd-alpha` HEAD `964f443e` holds `scripts/*.mjs` = 73
+and `scripts/*/` recursive = 18 ⇒ `S_members` = **91**, against the frozen
+stanza's **114**; `crates/ufo-core-runtime/src/*.rs` = 88 and
+`crates/ufo-cli/src/*.rs` = 4 ⇒ `R_members` = **92**, against **98**. The
+deletion set since `5725fa7d3` includes `scripts/atomic-write.mjs` (S7),
+`scripts/collect-omp-native-handoff-lib/refusal-line.mjs` (S2),
+`scripts/charter-scribe/sync.test.mjs` (S8), 14 top-level `*.test.mjs`, most of
+`scripts/ufo-sighting-lib/` (S4), and 6 runtime `.rs` files. `PROXY: DRIFT` /
+`CLAIMS: DRIFT` are the gates reading the live tree correctly.
+
+**The move.** One re-census, in this order:
+
+1. Re-derive the live membership of both layers by direct enumeration
+   (`LC_ALL=C sort` on both sides of every `comm -3`; the locale trap is
+   recorded in `## Limits`).
+2. Update every affected registry row's declared member cell to the measured
+   set, keeping each row's `##`-section note honest: a section naming a file no
+   longer in the tree is removed from the note and the removal is recorded;
+   a member newly inside a family gets its section before the row claims `yes`.
+3. Re-derive `S_sections` / `R_sections` from the claims gate's own walk, not by
+   hand.
+4. Update the `kumitate-proxy-v1` stanza's four layer terms and the two derived
+   scores, then re-pin `pin.proxy-check` if `proxy-check.mjs` changed.
+5. Record the retired-family boundary arithmetic for every deletion.
+
+**Falsifiable claim.** After the round, `node scripts/proxy-check.mjs` reads
+`PROXY: MATCH` and `node scripts/claims-check.mjs` reads `CLAIMS: MATCH`, with
+`S_members`/`R_members` equal to the enumeration above and both layer scores
+re-derived from the measured ratios — and `coverage_script`/`coverage_runtime`
+each move to at least **7** (91→, 92→: `floor(10 × 1.0 × sections/members)`).
+
+**Halt conditions, stated before the round.** A family whose note cannot be
+made honest without inventing a section for a member that does not exist is
+recorded as a blocker row and excluded from the numerator, never claimed. No
+frozen term outside the four layer terms + two derived scores changes. If the
+live membership moves again mid-round (upstream churn), the round stops and
+records the moving tree rather than fitting it. Cross-domain defects route to
+their owners: the `membrane-seal write` argv defect stays filed, never absorbed.
+
+## Round 32 — executed (2026-10-14): the re-census MEASUREMENT landed; note-honesty work named
+
+**Landed.** The four frozen layer terms and both derived scores were re-derived
+from the live tree (origin `~/Projects/ufo-fsd-alpha` @ `964f443e`) and the
+`kumitate-proxy-v1` stanza + `## Axes` now carry the measured values:
+`S_members` 114→**91**, `S_sections` 74→**56**, `R_members` 98→**92**,
+`R_sections` 69→**63**, `coverage_script` 6→**6**, `coverage_runtime` 7→**6**.
+`floor(10 × 56/91) = 6` and `floor(10 × 63/92) = 6`. The stanza's old values
+described a tree that no longer exists; they are corrected to what the gates
+measure, not fitted to a target.
+
+**Not landed — the pre-registration's score claim is UNMET and is named here.**
+Reaching `coverage_script` 7 needs `S_sections ≥ 64` (56 today) and
+`coverage_runtime` 7 needs `R_sections ≥ 65` (63 today). The wave's per-family
+enumerations give the exact remaining work, each with a live member list:
+
+| Family | Sections to add | Members |
+|---|---|---|
+| R6 | 2 | `distill_tests.rs`, `l3_swarm_tests.rs` |
+| R4 | 3 | `lane_overlay_tests.rs`, `lease_tests.rs`, `live_tests.rs` |
+| R7 | 5 (topic-form → section-form) | `bounded_fs.rs`, `bounded_fs_tests.rs`, `fs_durability.rs`, `local_ship.rs`, `local_ship_tests.rs` |
+| R2, R5 | topic-form | `loop_driver*`/`state*`, `native_seats`/`native_admission*`/`native_text` |
+| S1, S4 | topic-form | dispatcher core, sighting wall |
+| S7, S8 | phantom sections to remove first | 3 deleted S7 members; 15 S8 sections naming deleted files |
+
+R6's two sections alone reach exactly 65 and would move `coverage_runtime` to 7.
+`node scripts/claims-check.mjs` still reports `MEMBER_COUNT_DRIFT` (S7 declared 9
+vs 6 distinct sections), `SECTION_FILE_UNRESOLVED` (S8 ×15, R11 ×7) and
+`SECTION_DEAD_ANCHOR` (R9 ×1, R11 ×4) — the note-honesty leg of the round.
+Unblock: add the sections above, drop the phantom ones, and correct the S7/S8/R11
+declared counts to their live membership.
+
+**K-block boundary clause (fleet audit, `FLEET-ADJACENCY-ERRATA-V1` clause A).**
+The K-block registry is an enumerable CENSUS of `~/.kimi-code` filesystem
+members, not exclusive ownership of their domains: `plugins/managed/kimi-webbridge`
+internals route to **tabi**, the `config.toml` REA MCP spawn key to **kaidoku**,
+`skills/*` craft and trigger discipline to **kotoba**, and secret-bearing paths
+(`credentials/`, `oauth/`, `server.token`) to **kagi** discipline. The census
+membership and `coverage:kimi-layer` = 10 are unchanged by this clause.
