@@ -135,7 +135,7 @@ must not synthesize a complete vector; the judge validates AFTER
 collapse — that ordering is the bug class). **Gaps:** no end-to-end
 live-synthesis happy path crossing the `DistillResult` admission gate
 with a real transport (stubbed); `stderr_tail_512` is chars not bytes
-(:2031 asserts `chars().count()==512`) but the fixture is pure ASCII —
+(:1727 asserts `chars().count()==512`) but the fixture is pure ASCII —
 a >512-char non-ASCII tail could split a code point unexercised.
 
 ## Cross-suite ownership (avoid double-pinning)

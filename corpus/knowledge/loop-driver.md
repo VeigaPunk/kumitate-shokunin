@@ -23,7 +23,9 @@ or adjacent surfaces; they are **not** R2 members (R11 / R10 / CLI remainder).
 One `##` section per member follows. Each carries ≥1 own-file live anchor and
 ≥1 backticked symbol verbatim in that file (claims-check section-form).
 
-## `loop_driver.rs` (1130 L) — `LoopDriver` root, protocol pin, boundary stop
+## `crates/ufo-core-runtime/src/loop_driver.rs` (1130 L)
+
+Anchor: `crates/ufo-core-runtime/src/loop_driver.rs:1-40` (root module header). — `LoopDriver` root, protocol pin, boundary stop
 
 `LoopDriver` struct (`loop_driver.rs:336`) owns config, lane roster, cost
 bookkeeping, and the lazy `ParetoGate` cache. `CHECKPOINT_PROTOCOL_VERSION`
