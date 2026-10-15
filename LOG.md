@@ -1358,3 +1358,15 @@ they do not feed `familyPatterns()` — do not "fix" them by deleting the histor
   continuation evidence covered by this entry; no candidate admission.
 
 [Showing lines 1349-1391 of 1392. Use :1392 to continue]
+- 2026-10-15 — round 33 (single-axis wave-artifact erratum; still blocked).
+  The first saved wave in `e6cdc8f324f8fcc98c3314422e0c2f35f6aedafe`
+  declared operability alongside runtime coverage, contrary to this round's
+  one-move plan. Corrected wave-spec.json to runtime coverage only and
+  regenerated canonical wave-plan.json / wave-plan-validation.json:
+  validation exit 0, 32 spawn scopes, unchanged global config digest and
+  route families m_mid/m_strong/m_fast. No task dispatch or admission.
+  Earlier bytes remain in the cited commit; axis-correction.json names
+  the superseded declaration. Operability remains a no-harm observation,
+  not a second move. Candidate and all axis/trend verdicts stay unchanged.
+
+[Showing lines 1392-1402 of 1403. Use :1403 to continue]
