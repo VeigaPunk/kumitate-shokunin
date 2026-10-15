@@ -188,6 +188,157 @@ What the remainder does **not** include:
   `scripts/ufo-night-watchdog.sh` sit outside the frozen script-layer universe
   (`scripts/*.mjs` + files under `scripts/*/`) and belong to no S-family row.
 
+## Member-completeness probe
+
+Two arms, both re-runnable by a non-author. The proxy cannot do this work —
+`scripts/proxy-check.mjs` never reads note contents, which is why a note with a
+section deleted still reports `PROXY: MATCH` (exit 0, measured below); this probe
+is the compensating check.
+
+```bash
+# Arm 1 — heading set vs member set (expect `63` then 0 diff lines)
+SRC=${UFO_SRC:-/home/vgpnk/Projects/ufo-fsd-alpha}
+MEMBERS=${MEMBERS:-/tmp/s8-members-live.txt}              # derived in Membership above
+NOTE=${NOTE:-corpus/knowledge/remaining-scripts-census.md}
+grep -oE '^## `scripts/[^`]+`' "$NOTE" | sed -E 's/^## `//; s/`$//' | sort > /tmp/s8-headings.txt
+wc -l < "$MEMBERS"                 # 63
+comm -3 <(sort "$MEMBERS") /tmp/s8-headings.txt
+```
+
+Arm 1 on this note, verbatim:
+
+```text
+$ wc -l < /tmp/kumitate-r13/s8-members.txt
+60
+$ comm -3 <(sort /tmp/kumitate-r13/s8-members.txt) /tmp/kumitate-r13/arm1-headings.txt
+                                    # no output: heading set == member set, 0 diff lines
+```
+
+Arm 2 is `member-probe.mjs`, reproduced here so the check does not depend on a
+file outside this repository (the lane keeps no scope for round artifacts, and
+the `--claims` mode that would move this into `proxy-check.mjs` is pre-registered
+as a *next* operability move, not slipped into this round). Save it as
+`/tmp/member-probe.mjs` and run
+`UFO_SRC=<origin> MEMBERS=<member list> NOTE=<this note> node /tmp/member-probe.mjs`:
+it walks the note's `##` sections, resolves each section's anchors
+(`scripts/<rel>:N` and the short `:N` form inherited from the last full path),
+reopens the cited lines in `<origin>/<rel>`, requires at least one such anchor in
+the member's own file on a non-empty line, and requires at least one backticked
+symbol that appears verbatim in that file. Exit 0 = complete; exit 1 names
+`MISSING_HEADING` / `MISSING_SECTION` / `DUPLICATE_HEADING` / `EXTRA_HEADING` /
+`NO_SELF_ANCHOR` / `DEAD_ANCHOR` / `NO_SYMBOL` per offender.
+
+```js
+// member-probe.mjs — per-member completeness probe for a census note.
+// Why: scripts/proxy-check.mjs never reads note contents, so a registry cell can
+// be flipped to `yes` with no note behind it, and a deleted member section still
+// reports PROXY: MATCH. This probe re-derives the coverage claim from the note.
+//   usage: UFO_SRC=<origin> MEMBERS=<member-list> NOTE=<note> node member-probe.mjs
+//   exit 0 = every member named; 1 = offenders named on stdout; 2 = missing input
+import { readFileSync } from "node:fs";
+
+const SRC = process.env.UFO_SRC;
+const NOTE = process.env.NOTE;
+const MEMBERS = process.env.MEMBERS;
+if (!SRC || !NOTE || !MEMBERS) {
+  console.error("member-probe: UFO_SRC, MEMBERS and NOTE are required");
+  process.exit(2);
+}
+
+const members = readFileSync(MEMBERS, "utf8").trim().split("\n").filter(Boolean);
+const note = readFileSync(NOTE, "utf8");
+
+const headings = [...note.matchAll(/^## `(scripts\/[^`]+)`\s*$/gm)].map((m) => m[1]);
+const sections = new Map();
+for (const chunk of note.split(/^## /m).slice(1)) {
+  const head = /^`?(scripts\/[^`]+)`?/.exec(chunk);
+  if (head) sections.set(head[1], chunk.slice(chunk.indexOf("\n") + 1));
+}
+
+const missing = members.filter((m) => !headings.includes(m));
+const extra = headings.filter((h) => !members.includes(h));
+const dup = headings.filter((h, i) => headings.indexOf(h) !== i);
+const bad = [];
+
+for (const mem of members) {
+  const body = sections.get(mem);
+  if (body === undefined) { bad.push(`${mem}: MISSING_SECTION`); continue; }
+  const lines = readFileSync(`${SRC}/${mem}`, "utf8").split("\n");
+  const syms = [];
+  const anchors = [];
+  let lastPath = mem; // the section heading names the member: `:N` continues it
+  for (const t of [...body.matchAll(/`([^`\n]+)`/g)].map((m) => m[1])) {
+    let m;
+    if ((m = /^(scripts\/[^:]+):(\d+)(?:-(\d+))?$/.exec(t))) {
+      lastPath = m[1];
+      anchors.push([m[1], +m[2], m[3] ? +m[3] : +m[2]]);
+    } else if ((m = /^:(\d+)(?:-(\d+))?$/.exec(t)) && lastPath) {
+      anchors.push([lastPath, +m[1], m[2] ? +m[2] : +m[1]]);
+    } else if (!/[/\\:.\s]/.test(t) && t.length >= 3) {
+      syms.push(t);
+    }
+  }
+  const own = anchors.filter((a) => a[0] === mem);
+  const live = (a, b) => a >= 1 && b <= lines.length && lines[a - 1].trim() !== "" && lines[b - 1].trim() !== "";
+  if (!own.length) bad.push(`${mem}: NO_SELF_ANCHOR`);
+  else if (!own.some(([, a, b]) => live(a, b))) bad.push(`${mem}: DEAD_ANCHOR ${own.map((a) => a.slice(1).join("-")).join(",")}`);
+  if (!syms.some((s) => lines.some((l) => l.includes(s)))) bad.push(`${mem}: NO_SYMBOL`);
+}
+
+console.log(`HEADINGS: ${headings.length}  MEMBERS: ${members.length}  DUPLICATE: ${dup.length}`);
+for (const m of missing) console.log(`MISSING_HEADING ${m}`);
+for (const h of dup) console.log(`DUPLICATE_HEADING ${h}`);
+for (const h of extra) console.log(`EXTRA_HEADING ${h}`);
+for (const b of bad) console.log(`BAD ${b}`);
+const failed = new Set([...missing, ...dup, ...extra, ...bad.map((b) => b.split(":")[0])]);
+console.log(`MEMBER_PROBE: ${members.length - failed.size}/${members.length} ok`);
+process.exit(missing.length || extra.length || dup.length || bad.length ? 1 : 0);
+```
+
+Arm 2 on this note, verbatim:
+
+```text
+$ UFO_SRC=/home/vgpnk/Projects/origin-work/ufo-fsd-alpha \
+  MEMBERS=/tmp/kumitate-r13/s8-members.txt \
+  NOTE=corpus/knowledge/remaining-scripts-census.md node /tmp/member-probe.mjs
+HEADINGS: 60  MEMBERS: 60  DUPLICATE: 0
+MEMBER_PROBE: 60/60 ok                                                              # exit 0
+```
+
+The drop-one control is the arm that closes the critic's blind spot. Rename one
+member heading (``## `scripts/ufo-drills.mjs` `` → ``## `scripts/ufo-drills-renamed.mjs` ``)
+and re-run both arms plus the proxy on the same tree:
+
+```text
+$ comm -3 <(sort /tmp/kumitate-r13/s8-members.txt) /tmp/kumitate-r13/drop-headings.txt
+scripts/ufo-drills.mjs
+        scripts/ufo-drills-renamed.mjs
+$ ... node /tmp/member-probe.mjs
+HEADINGS: 60  MEMBERS: 60  DUPLICATE: 0
+MISSING_HEADING scripts/ufo-drills.mjs
+EXTRA_HEADING scripts/ufo-drills-renamed.mjs
+BAD scripts/ufo-drills.mjs: MISSING_SECTION
+MEMBER_PROBE: 58/60 ok                                                              # exit 1
+$ node scripts/proxy-check.mjs
+PROXY: MATCH (A=4 C=9 operability=8; C1=18/19 C2=45/45 coverage=9; pins=4 match)     # exit 0 — blind to the deleted section
+```
+
+Anchor *validity* is re-checked independently by the lane's citation gate, which
+must report zero errors in this note (its remaining errors are third-party
+artifacts, named in `LOG.md`):
+
+```bash
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && node scripts/cite-check.mjs
+```
+
+At this note's landing the gate reports `errors=14`, **all of them inside the two
+aggregator-lane artifacts** (`corpus/lessons/round-6-aggregator-audit.md`,
+`corpus/lessons/round-8-aggregator-box3-coldrun.md`), and zero in this note: this
+file's own findings are `byKind {OK, FRAGMENT, REF_OWNER_AMBIG, PIN_UNTYPED}`
+with no error and no `LINE_OOR`/`UNRESOLVED` row — re-run
+`node scripts/cite-check.mjs --json` and filter `files[].file ==
+corpus/knowledge/remaining-scripts-census.md` to reproduce it.
+
 ## Limits of this note
 
 - **A census, not a playbook.** This note records what each member *is* (size,
