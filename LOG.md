@@ -1298,3 +1298,18 @@ MATCH` is not section-honesty** — those rows surface only as `ROW_NO_SECTIONS`
 `MEMBER_COUNT_SUSPECT` warnings, so the gate is green while the coverage is partial.
 The R1 cell's backticked native-wildcard was stripped in this pass (a backticked
 token is read as a family pattern and would widen R1 to 23 files).
+
+**Registry-pattern leak, residual (appended 2026-10-14).** Nine registry rows carry
+backticked wildcards, which is by design — the gate reads them as the row's family
+patterns. Two are wrong-shaped and are named debt:
+
+- `R1` — fixed this round: the cell named a native-wildcard that admitted **23**
+  live files for a family of 8. It now names the eight explicitly.
+- `R11` — still globbed by directory (`crates/ufo-core-runtime/src/*.rs` +
+  `crates/ufo-cli/src/*.rs`), which admits **92** files for a family of 41. Not
+  double-counted in the section numerator today, but a future cell rewrite that
+  relies on the pattern would widen R11. Unblock: name R11's 41 members explicitly.
+
+The six remaining backticked occurrences of the R1 wildcard live in the Move log and
+`## Limits` as **prose about the old defect**, not in a `| S|R<n> |` registry row, so
+they do not feed `familyPatterns()` — do not "fix" them by deleting the history.
