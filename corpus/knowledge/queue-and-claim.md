@@ -3,6 +3,28 @@
 `scripts/fleet-dispatcher.mjs` (14,769 lines), everything before the
 successor machine at :6753. Citations `L<line>` are this file.
 
+## `scripts/fleet-dispatcher.mjs`
+
+**Live member (round-32 re-census).** Origin HEAD `964f443e`; sole S1 member
+path `scripts/fleet-dispatcher.mjs`; `wc -l` → **9829** (the SCORECARD cell
+still reads 14769 L — parent refreshes the registry cell). Content sha256
+prefix `ba5e02beac55`. The companion suite `scripts/fleet-dispatcher.test.mjs`
+is S8 remainder, not S1.
+
+**Current-file anchors** (post-2026-10-12 tree; bare `L<n>` cites in the topic
+sections below remain historical against the superseded 14,769-line revision):
+
+- `QUEUE_SCHEMA` at `scripts/fleet-dispatcher.mjs:95`
+- `writeQueue` at `scripts/fleet-dispatcher.mjs:4853`
+- `acquireQueueLock` at `scripts/fleet-dispatcher.mjs:4942`
+- `maybeEnqueueIterationSuccessor` at `scripts/fleet-dispatcher.mjs:5513`
+- `admitQueueCandidates` at `scripts/fleet-dispatcher.mjs:5956`
+- `reconcileQueue` at `scripts/fleet-dispatcher.mjs:7078`
+- `queueSummary` at `scripts/fleet-dispatcher.mjs:7624`
+- `runCycle` at `scripts/fleet-dispatcher.mjs:8966`
+- `main` at `scripts/fleet-dispatcher.mjs:9536`
+
+
 ## Queue file & locking
 
 - Path: env `UFO_PENDING_WORK_PATH` (ROOT-anchored) else `config/ufo.json`

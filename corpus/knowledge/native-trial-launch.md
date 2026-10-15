@@ -1,9 +1,11 @@
 # Native-trial launch sequence — `scripts/run-omp-native-trial.mjs`
 
 The argv-ok → durable-outcome pipeline of the judged-round launcher
-(4693 lines; `main()` at :3539). All `:NNNN` citations are this file unless
-noted. Prior coverage (flags, profiles, `usage_*` refusals, retry-projection
-invariants) lives in SKILL.md; this note is everything after.
+(4304 lines live at origin HEAD `964f443e`; `main()` at :3229). All `:NNNN`
+citations are this file unless noted. Prior coverage (flags, profiles,
+`usage_*` refusals, retry-projection invariants) lives in SKILL.md; this note
+is everything after. Round-32 re-census: one member section below names the
+launcher at internals level; topic sections above stay the ordered walk.
 
 ## Ordered pipeline
 
@@ -314,9 +316,10 @@ _check_failed` (inner `pre-dispatch-drift`), `phase0_domain_halt`,
 `tick_handoff_marker_path_unsafe`, `unexpected_error`,
 `session_resume_pairing_ambiguous`, `session_transcript_count_invalid`,
 `labrat_assignment_missing`, `main_model_alias_missing`.
-All surface as `BLOCKED: <msg>` + `{"schema":"ufo-trial-refusal-v1",code,
-message,details}` on stderr, exit 2 (`refuse` :865-869;
-`collect-omp-native-handoff-lib/refusal-line.mjs` writes the line).
+All surface as `BLOCKED: <msg>` via `die` (`scripts/run-omp-native-trial.mjs:831`)
++ exit 2. (Historical: `collect-omp-native-handoff-lib/refusal-line.mjs` once
+wrote a schema-tagged line; that file is **gone** from the live tree — removed
+in the 2026-10-12 upstream restructure; no replacement member section is kept.)
 
 ## Traps
 
@@ -333,3 +336,105 @@ message,details}` on stderr, exit 2 (`refuse` :865-869;
   off) and writes launch.json, but no snapshot/epoch/manifest.
 - Child session transcripts pair by `<agentId>.jsonl` filename (dotted
   parent.child for labrat), not task name.
+
+## `scripts/run-omp-native-trial.mjs` (4304 L) — judged-round launcher spine
+
+Live member of registry family S2 (native trial path). Entry `main`
+(`scripts/run-omp-native-trial.mjs:3229`) walks preflight → wall handoff →
+spawn → collect/judge/seal. Profile constants: `PROFILE` (`:50`) =
+`omp-native-v2`, `ADMITTED_PROFILES` (`:59`), `PROPOSAL_WAVE_CEILING` (`:109`).
+Argv: `parseArgs` (`:844`); launch mode: `planLaunchMode` (`:958`) from
+interactive/headless/wall flags. Frozen dispatch: `snapshotDispatchInputs`
+(`:171`) → `resolveNativeDispatchPolicy` (`:646`) with global OMP as sole
+routing authority. Wall path: `handOffToSightingWall` (`:1282`). Failures exit
+through local `die` (`:831`) as `BLOCKED: …` + process exit 2 — not a separate
+refusal-line helper.
+
+Symbols verified live against origin HEAD `964f443e`: `main`, `parseArgs`,
+`planLaunchMode`, `resolveNativeDispatchPolicy`, `handOffToSightingWall`,
+`PROFILE`, `PROPOSAL_WAVE_CEILING`, `die`.
+
+## `scripts/collect-omp-native-handoff.mjs` (1804 L) — handoff collector entry
+
+Top-level collector for the native trial path (S2). Argv `parseArgs`
+(`scripts/collect-omp-native-handoff.mjs:120`) over `COLLECTOR_USAGE` (`:118`).
+Wave binding `assertWaveDispatchToken` (`:205`); dispatch graph
+`validateDispatches` (`:869`); durable evidence via `writeEvidenceFile`
+(`:951`) and `persistEvidenceWrites` (`:973`). Imports lib modules `base`,
+`policy`, `evidence`, `screening`, `events` — does not inline classifier or
+cost-ledger logic.
+
+Symbols: `parseArgs`, `COLLECTOR_USAGE`, `assertWaveDispatchToken`,
+`validateDispatches`, `persistEvidenceWrites`.
+
+## `scripts/collect-omp-native-handoff-lib/base.mjs` (955 L) — shared constants + classifyFailure
+
+Shared authority block for the collector: `NATIVE_PROFILE_NAMES` (`:40`),
+`PROPOSAL_WAVE_CEILING` (`:96`), `CAPACITY_FAILURES` (`:102`),
+`DEADLINE_CLASS_BY_ROLE` (`:173`), `SEAT_CLASS_BY_ROLE` (`:196`),
+`ROUTING_HEALTH_OUTCOMES` (`:223`), `GODSPEED_MARKER` (`:120`), `EVIDENCE_KIND`
+(`:133`). Classifier `classifyFailure`
+(`scripts/collect-omp-native-handoff-lib/base.mjs:682`). Typed rejection
+helper `die` (`:303`) — **replaces** the deleted `refusal-line.mjs` member.
+
+Symbols: `classifyFailure`, `CAPACITY_FAILURES`, `NATIVE_PROFILE_NAMES`,
+`ROUTING_HEALTH_OUTCOMES`, `die`.
+
+## `scripts/collect-omp-native-handoff-lib/events.mjs` (383 L) — transcript intake
+
+JSONL reader `readJsonl` (`scripts/collect-omp-native-handoff-lib/events.mjs:166`);
+task extraction `taskCalls` (`:260`) and `taskDispatches` (`:381`); assignment
+normalization `effectiveTaskAssignment` (`:253`); intake hygiene
+`normalizeTranscriptEvent` (`:16`), `uniquifyReusedTaskIds` (`:82`).
+
+Symbols: `readJsonl`, `taskCalls`, `taskDispatches`, `effectiveTaskAssignment`.
+
+## `scripts/collect-omp-native-handoff-lib/evidence.mjs` (1163 L) — seat evidence + cost ledger
+
+Per-seat model evidence `modelEvidence`
+(`scripts/collect-omp-native-handoff-lib/evidence.mjs:275`); attempt ledger
+`attemptLedgerEntry` (`:70`); seat status `seatStatus` (`:474`); effective-launch
+verify `verifyEffectiveLaunch` (`:631`); receipt digests `nativeReceiptDigests`
+(`:520`); cost rollup `buildCostLedger` (`:1003`); routing-health append
+`appendRoutingHealth` (`:1067`).
+
+Symbols: `modelEvidence`, `attemptLedgerEntry`, `buildCostLedger`,
+`verifyEffectiveLaunch`, `appendRoutingHealth`.
+
+## `scripts/collect-omp-native-handoff-lib/policy.mjs` (924 L) — routes, profiles, round plan
+
+Route parse `splitRoute` (`scripts/collect-omp-native-handoff-lib/policy.mjs:39`);
+seat-routing mirror `loadSeatRoutingMirror` (`:155`) +
+`verifyLaunchSeatRouting` (`:283`); profile resolve `resolveNativeProfile`
+(`:619`); round plan `readRoundPlan` (`:704`); wave token
+`waveTokenFromContext` (`:780`); directive load `loadCanonicalDirective`
+(`:879`); rate card `parseRateCard` (`:908`).
+
+Symbols: `splitRoute`, `loadSeatRoutingMirror`, `resolveNativeProfile`,
+`readRoundPlan`, `waveTokenFromContext`.
+
+## `scripts/collect-omp-native-handoff-lib/screening.mjs` (745 L) — artifact screening
+
+Default class set `DEFAULT_SCREENING_CLASSES`
+(`scripts/collect-omp-native-handoff-lib/screening.mjs:25`) /
+`SCREENING_CLASSES` (`:33`); directive needle `directiveScreeningNeedle`
+(`:194`); recursive string harvest `collectStrings` (`:212`); main gate
+`screenArtifactTexts` (`:649`).
+
+Symbols: `screenArtifactTexts`, `directiveScreeningNeedle`,
+`DEFAULT_SCREENING_CLASSES`, `SCREENING_CLASSES`, `collectStrings`.
+
+## Round-32 S2 membership (measured)
+
+Live origin HEAD `964f443e` enumeration (commands in the member report):
+**7 members** = 2 top-level + 5 lib files. Registry cell still prints
+`collect-omp-native-handoff-lib/` **(6)** and the stale sizes 4693/1943 —
+parent owns the cell rewrite to **7 members**.
+
+**Removed (no section retained):**
+`scripts/collect-omp-native-handoff-lib/refusal-line.mjs` — absent from the
+tree; Planned stanza lists it in the deletion set since `5725fa7d3`. Prior
+prose that named it as the refusal writer is corrected above to `die` in
+`run-omp-native-trial.mjs` / `base.mjs`.
+
+

@@ -1,145 +1,185 @@
-# Loop driver — `LoopDriver` round machine (crates/ufo-core-runtime)
+# Loop driver — `LoopDriver` round machine (registry family R2)
 
-The canonical resumable UFO-FSD judge loop. Module root
-`src/loop_driver.rs`; submodules are `#[path]`-loaded siblings, not `mod`
-children under `lib.rs`. Paths relative to
-`/home/vgpnk/Projects/origin-work/ufo-fsd-alpha`; `src/X` =
-`crates/ufo-core-runtime/src/X`.
+The canonical resumable UFO-FSD judge loop and its checkpoint vocabulary.
+Module root `loop_driver.rs`; submodules are `#[path]`-loaded siblings, not
+`mod` children under `lib.rs`. Origin tree:
+`/home/vgpnk/Projects/ufo-fsd-alpha` (HEAD `964f443e`). Paths below are
+basenames under `crates/ufo-core-runtime/src/`.
 
-## Entry points and epoch shape
+**Family membership (round-32 re-census).** Live set is still **12 of 12**
+against freeze `5725fa7d3` (no R2 deletions): ten `loop_driver*.rs` files +
+`state.rs` + `state_tests.rs`. Measured:
 
-- `LoopDriver::open(root)` (`loop_driver_open.rs:138`) — fresh mission:
-  config load, run/session id mint, writer-lease acquisition attempt
-  (spec 14 §3 — `Err` never blocks open; the driver runs unpromoted).
-- `LoopDriver::resume(root)` (`loop_driver_resume.rs:262`) — checkpoint
-  restore through a ~20-check preflight (`resumable_checkpoint` :1261);
-  route cursors re-validated against the canonical chain
-  (`validate_route_checkpoint` `loop_driver.rs:432`).
-- `run_dry_until_halt()` (`loop_driver_dry.rs:1129`) = `run_epoch_from(0,
-  zeros)` — and this IS the `ufo self-iter` path (`cli/main.rs:585`).
-  **The `dry` module is the production round body, not a dry run**; fixture
-  spawns only. There is no live-native arm in `LoopDriver` — native rounds
-  are driven by `run-omp-native-trial.mjs` + OMP, and judged by
-  `native.rs::judge_handoff` afterward.
-- `run_resumed_epoch_until_halt` (`loop_driver_resume.rs:1428`) →
-  `run_epoch_from` (:1541): `for round in …` → boundary stop gate →
-  `run_dry_iteration_vs` → break on terminal outcome.
+```
+ls -1 crates/ufo-core-runtime/src/loop_driver*.rs \
+      crates/ufo-core-runtime/src/state.rs \
+      crates/ufo-core-runtime/src/state_tests.rs | LC_ALL=C sort | wc -l
+# → 12
+```
 
-## Round pipeline — `run_dry_iteration_vs` (`loop_driver_dry.rs:100`)
+`report.rs` / `round.rs` / `gate.rs` / CLI `main.rs` are cited as consumers
+or adjacent surfaces; they are **not** R2 members (R11 / R10 / CLI remainder).
 
-1. **Boundary gate** (`loop_driver.rs:583` `boundary_stop`): sealed-membrane
-   refusal (`refuse_if_membrane_sealed`, `loop_driver_publish.rs:186`), then
-   interrupt check → wall-clock budget → token budget → p50 projection. A
-   stop here dispatches ZERO lanes; `BoundaryStop` carries `Interrupted` or
-   `HonestyBrake(BrakeTelemetry)` (`loop_driver.rs:319-322`).
-2. **Dispatch phase** (`ldd_dry_round_dispatch_phase` `loop_driver_dry.rs:112`):
-   roster validation → baseline vector validate → `freeze_round_digests`
-   (`loop_driver_digest.rs:172`, generation-keyed cache) → plan token/prompt
-   caches → `dispatch_planner_seat` → `write_wwkd_plan` → `dispatch_specialists`
-   (rayon pool keyed by `swarm_width`) → `persist_state(Running)`.
-3. **Wave collection** (`dispatch_specialists`
-   `loop_driver_dispatch.rs:1357`): per-lane attempt state machine —
-   herd/domain admission (`DomainCooldowns` :1640), temporary retry,
-   capacity advance/reroute, lane-health buckets.
-4. **Judge phase** (`ldd_dry_round_judge_phase` `loop_driver_dry.rs:428`):
-   `dispatch_critical_distiller_seat` → `Distiller::run_phase` →
-   `assert_plan_before_judge` → `judge_wave` (`loop_driver_judge.rs:54`,
-   `gate.decide_with_deltas` :356) → `bind_loop_candidate`
-   (`loop_driver_candidate.rs:56`) → `membrane_touching_accepts`
-   (`loop_driver_judge.rs:410`).
-5. **Persist** (`ldd_dry_round_persist_phase` `:978`): stop-outcome mapping
-   → round digest → `persist_state` + optional membrane seal →
-   `IterationReport` (`report.rs:38`).
+One `##` section per member follows. Each carries ≥1 own-file live anchor and
+≥1 backticked symbol verbatim in that file (claims-check section-form).
 
-## Stop vocabulary — single-sourced
+## `loop_driver.rs` (1130 L) — `LoopDriver` root, protocol pin, boundary stop
 
-- `LoopOutcome` (`state.rs:41`): `Saturated, BudgetHalt, Running, Blocked,
-  HonestyBrake, Interrupted, AuthorityBoundary`.
-  - `HonestyBrake`: stopped on a DECLARED budget (token exhaustion,
-    projected exhaustion, mission wall-clock) — recorded, never convergence
-    (spec 03 §4).
-  - `AuthorityBoundary`: an accepted proposal touched `membrane.paths`
-    (spec 06 §4) — work lands, `membrane_accepts` recorded on the
-    checkpoint, loop seals until `ufo charter sign`.
-  - `Interrupted`: SIGINT/operator halt at a round boundary — resumable
-    only when the checkpoint carries unresolved work AND a live
-    partial-evidence plan pointer; an interrupt before round 0's dispatch
-    is terminal (C4).
-- `CheckpointStopReason` (`state.rs:21`) adds `RoundCap` (checkpoint-side
-  spelling of the budget-halt boundary).
-- `round_stop_outcome` (`state.rs:380`): `!sound → Blocked`; `admitted==0 &&
-  !pending_refine → Saturated`; cumulative ≥ `tokens_per_mission` →
-  `HonestyBrake`; `at_round_cap → BudgetHalt`; else `Running`. Zero
-  accepted proposals on a sound round IS saturation — same rule as I8.
-- `stop_evaluation_string` (`state.rs:417`) is the frozen digest spelling
-  (`continue/saturated/budget_halt/honesty_brake/authority_boundary/blocked/
-  interrupted`); `saturation_inconclusive` is the post-demotion spelling
-  that only `native_stop_evaluation` (`native_plan_digest.rs:516`) and the
-  dry digest path produce.
-- `BrakeTelemetry` (`state.rs:125`, serde-tagged `kind` +
-  `deny_unknown_fields`): `budget_exhaustion` (post-round cumulative),
-  `budget_projection` (pre-dispatch, zero lanes), `wall_clock_budget` —
-  deliberately NEVER spelled `lane_timeout` (T33: budget expiry is not a
-  watcher deadline).
+`LoopDriver` struct (`loop_driver.rs:336`) owns config, lane roster, cost
+bookkeeping, and the lazy `ParetoGate` cache. `CHECKPOINT_PROTOCOL_VERSION`
+(`loop_driver.rs:110`) is currently the literal `ufo.fsd.v3` — every other
+protocol string refuses resume. `validate_route_checkpoint`
+(`loop_driver.rs:416`) re-binds route cursors against the canonical chain on
+resume. `boundary_stop` (`loop_driver.rs:561`) is the pre-dispatch gate:
+sealed-membrane refusal, interrupt, wall-clock budget, token budget, p50
+projection; a stop here dispatches zero lanes.
 
-## Checkpoint — `LoopState` (`state.rs:237`)
+Submodule tree is `#[path]`-loaded (`mod open` / `dry` / `dispatch` / `judge` /
+`publish` / `resume` / `digest` / `candidate`), not declared from `lib.rs`.
 
-`.ufo/loop-state.json` shape (via `loop_state_path`,
-`loop_driver_publish.rs:22`): token, task, substrate, axis_ids, baseline,
-last_round, `plan_path` + `plan_token` + `plan_digest` (resume re-binds the
-recorded digest — never reseeds from possibly-tampered bytes),
-`execution_profile_hash`, `protocol_hash` (currently `ufo.fsd.v4` —
-`CHECKPOINT_PROTOCOL_VERSION` `loop_driver.rs:121`; every v3 checkpoint
-refuses resume), `frontier_digest`, `writing_goal`, `stop_reason`,
-`unresolved_work`, `lane_contexts`, `route_cursors` + `route_provenance`,
-`lane_identities`, `rejected_order`, `candidate_receipts`,
-`round_token_usage` (p50 projection history), `mission_cumulative_tokens`,
-`mission_started_ms`, `stop_telemetry`, `membrane_accepts`. Everything
-`deny_unknown_fields`; `LoopStateView` (`state.rs:327`) is the borrowed
-byte-identical serializer.
+## `loop_driver_open.rs` (259 L) — fresh-mission open + roster + lease
 
-## Module table
+`LoopDriver::open` (`loop_driver_open.rs:69`) loads config, mints run/session
+ids, and attempts the mission writer lease — `Err` never blocks open (spec 14
+§3); the driver runs unpromoted. `require_writer_lease`
+(`loop_driver_open.rs:233`) reuses an already-held `Ok` including
+`Unconfirmed` so later publishes never re-acquire into `HeldBy` against the
+process's own record. `validate_local_roster` (`loop_driver_open.rs:253`) is
+the pre-dispatch lane/config consistency check.
 
-| Module | Responsibility |
-|---|---|
-| `loop_driver.rs` | `LoopDriver` struct + submodule tree, config/checkpoint load, `boundary_stop`, blocked-audit streak, usage bookkeeping (`:347`, `:583`) |
-| `loop_driver_open.rs` | `open`/`with_*` builder chain, run/session ids, writer lease, `validate_local_roster` (`:138`, `:311`) |
-| `loop_driver_dry.rs` | THE production round body: dispatch → judge → persist → digest; `run_dry_until_halt` (`:100`, `:1129`) |
-| `loop_driver_dispatch.rs` | Lane-attempt state machine: herd/domain admission, temp retry, capacity advance, critical-seat dispatch (`:266`, `:1357`, `:1640`) |
-| `loop_driver_candidate.rs` | Candidate binding vs frozen digests, honest baseline (`:56`, `:145`) |
-| `loop_driver_resume.rs` | `persist_state`, resume preflight (~20 witnesses), `run_epoch_from` (`:136`, `:262`, `:1541`) |
-| `loop_driver_judge.rs` | `judge_wave`, executable/subjective measurement, `ParetoGate` decisions, `RejectionReason` taxonomy (`:54`, `:537`) |
-| `loop_driver_publish.rs` | Artifact paths, lease-guarded atomic checkpoint + membrane-seal writes, WWKD plan token/digest gate (`:88`, `:127`, `:268`) |
-| `loop_driver_digest.rs` | Frozen round digests + generation-keyed cache (`:93`, `:172`) |
-| `state.rs` / `report.rs` / `round.rs` | Checkpoint types / `IterationReport` / `RoundState` |
+## `loop_driver_resume.rs` (585 L) — checkpoint persist, resume, epoch runner
 
-## Judgment vocabulary (fixture side)
+`persist_state` (`loop_driver_resume.rs:127`) writes the leased checkpoint.
+`LoopDriver::resume` (`loop_driver_resume.rs:246`) restores through the
+preflight cluster and re-validates route cursors. Production epoch bodies:
+`run_resumed_epoch_until_halt` (`loop_driver_resume.rs:488`) →
+`run_epoch_from` (`loop_driver_resume.rs:528`) — `for round in …` → boundary
+stop → `run_dry_iteration_vs` → break on terminal outcome.
 
-`GateDecision` (`gate.rs:15`): `admit{improved} | reject_regression |
-reject_no_improvement | reject_malformed{reason} |
-reject_insufficient_evidence{unmeasured}`. `RejectionReason`
-(`loop_driver_judge.rs:537`, codes at :544/:558) is the digest-side
-taxonomy — one spelling, two consumers (digest + contract side via the
-`pub(crate)` bridge at `loop_driver.rs:57`).
+## `loop_driver_dry.rs` (946 L) — production round body (fixture substrate)
 
-## Traps
+**"dry" names the fixture substrate, not a smoke path** — this is what
+`ufo self-iter` drives. `run_dry_iteration_vs` (`loop_driver_dry.rs:69`) is the
+per-round pipeline: `ldd_dry_round_dispatch_phase` (`loop_driver_dry.rs:79`) →
+`ldd_dry_round_judge_phase` (`loop_driver_dry.rs:300`) →
+`ldd_dry_round_persist_phase` (`loop_driver_dry.rs:779`). `run_dry_until_halt`
+(`loop_driver_dry.rs:943`) is the epoch entry that loops until a terminal
+`LoopOutcome`. There is no live-native arm inside `LoopDriver`; native rounds
+are launched by JS + judged by `native.rs::judge_handoff` afterward.
 
-- `run_dry_until_halt` is not a smoke path — it is what `ufo self-iter`
-  calls; "dry" names the fixture substrate (no native host execution).
-- `self-iter`'s `exitSuccess` bit is saturation-only; a dry loop measures
-  no acceptance criteria so `missionGoal` is always `unverified`
-  (`cli/main.rs:593-622`).
-- `Absence-of-usage` seats contribute nothing measurable — never fabricated
-  zeros (`TokenUsage` `state.rs:84`).
-- The writer lease (`lease.rs`) is a mission-scoped arbiter: acquisition
-  failure at `open` does not block the driver — it runs unpromoted and
-  lease-guarded publishes (`publish_guarded` `loop_driver_publish.rs:124`)
-  fail instead. `LeaseDurability::Unconfirmed` inside an `Ok` arm means the
-  name landed but the directory fsync failed — do not treat as absent
-  (`loop_driver.rs:415-423`).
-- `plan_token`/`plan_digest` exist because "a leftover file containing
-  'wwkd' + 'Phase 0'" is not this-round evidence (F-C5).
+## `loop_driver_dispatch.rs` (1820 L) — lane-attempt machine + domain backpressure
 
-Sources: `src/loop_driver.rs` + `loop_driver_{open,dry,dispatch,candidate,
-resume,judge,publish,digest}.rs`, `src/state.rs`, `src/report.rs`,
-`src/round.rs`, `src/gate.rs`, `cli/main.rs:51-62, 529-646`.
+`dispatch_specialists` (`loop_driver_dispatch.rs:1375`) runs the per-lane
+attempt state machine (herd/domain admission, temporary retry, capacity
+advance/reroute, lane-health buckets). `DomainCooldowns`
+(`loop_driver_dispatch.rs:1625`) is wave-scoped only — rebuilt inside
+dispatch, never persisted across rounds. `stop_evaluation_string`
+(`loop_driver_dispatch.rs:1793`) is the frozen digest spelling of
+`LoopOutcome` (`continue` / `saturated` / `budget_halt` / `honesty_brake` /
+`authority_boundary` / `blocked` / `interrupted`).
+
+## `loop_driver_judge.rs` (538 L) — wave judgment + membrane accepts
+
+`judge_wave` (`loop_driver_judge.rs:52`) is the fixture-side Pareto walk
+(`gate.decide_with_deltas`) over the wave's proposals. After binding,
+`membrane_touching_accepts` (`loop_driver_judge.rs:415`) records accepts that
+touched `membrane.paths` (authority-boundary seal trigger). Digest-side
+refusal taxonomy is `rejection_reason_code` (`loop_driver_judge.rs:527`) —
+one spelling shared with the contract/digest consumers.
+
+## `loop_driver_candidate.rs` (174 L) — candidate binding vs frozen digests
+
+`bind_loop_candidate` (`loop_driver_candidate.rs:58`) binds a judged proposal
+against the frozen round digests (honest baseline, no coordinate-envelope
+admission). `honest_fixture_baseline` (`loop_driver_candidate.rs:145`) is the
+baseline constructor the dry path uses when no prior frontier exists.
+
+## `loop_driver_publish.rs` (284 L) — artifact paths, leased publish, membrane seal
+
+`loop_state_path` (`loop_driver_publish.rs:19`) is the `.ufo/loop-state.json`
+location. `publish_guarded` (`loop_driver_publish.rs:61`) is the sole
+lease-fenced write translation for checkpoints and seals; unpromoted drivers
+fail here instead of open. `write_checkpoint` (`loop_driver_publish.rs:87`) and
+`refuse_if_membrane_sealed` (`loop_driver_publish.rs:113`) are the boundary
+pair the pre-dispatch gate and persist phase share.
+
+## `loop_driver_digest.rs` (181 L) — frozen round digests + generation cache
+
+`lanes_protocol_projection` (`loop_driver_digest.rs:44`) feeds the protocol
+fingerprint (an overlay moves the hash). `freeze_round_digests`
+(`loop_driver_digest.rs:138`) is the generation-keyed cache entry the dispatch
+phase calls once per round; a second call reuses the slot without recompute
+(pinned in `loop_driver_tests.rs`).
+
+## `loop_driver_tests.rs` (5034 L) — loop-driver pin suite
+
+In-crate pin file for the driver family (R9's `test-inventories` may *describe*
+it, but registry membership is R2). Highest-signal pins include
+`unmeasured_material_axis_blocks_admission` (`loop_driver_tests.rs:4065`) —
+`RejectInsufficientEvidence` is *not* gate-produced; the judge overwrites an
+`Admit` carrying `unmeasured_material` — and `membrane_seal_kind_is_pinned`
+(`loop_driver_tests.rs:4621`) for the seal kind literal.
+
+## `state.rs` (380 L) — checkpoint types + stop vocabulary
+
+Single source for stop/checkpoint wire types: `CheckpointStopReason`
+(`state.rs:21`), `LoopOutcome` (`state.rs:41`) —
+`Saturated` / `BudgetHalt` / `Running` / `Blocked` / `HonestyBrake` /
+`Interrupted` / `AuthorityBoundary` — `BrakeTelemetry` (`state.rs:114`,
+serde-tagged `kind`, never spelled `lane_timeout`), and `LoopState`
+(`state.rs:226`) the owned `.ufo/loop-state.json` shape. `round_stop_outcome`
+(`state.rs:357`) maps sound/admitted/budget/cap into `LoopOutcome`: zero
+accepted proposals on a sound round **is** saturation.
+
+## `state_tests.rs` (132 L) — stop-vocabulary pins
+
+Companion pins for `round_stop_outcome` / serde shape: 
+`sound_zero_accept_converges` (`state_tests.rs:4`) locks zero-accept
+saturation; `budget_halt_is_not_saturation` (`state_tests.rs:12`) keeps the
+round-cap halt distinct from convergence; 
+`loop_outcome_serializes_snake_case` (`state_tests.rs:62`) pins the wire
+spelling the digest path freezes.
+
+## Cross-family consumers (not R2 members)
+
+- `gate.rs` / `ParetoGate` — R10; fixture judge calls `decide_with_deltas`.
+- `report.rs` `IterationReport`, `round.rs` `RoundState` — R11 remainder.
+- `lease.rs` writer lease — R4; open/publish only.
+- `ufo-cli/src/main.rs` `self-iter` — CLI remainder; drives
+  `run_dry_until_halt`, not a member of this family.
+
+## Traps (family-level)
+
+- `run_dry_until_halt` is production for fixture substrate, not a dry-run API.
+- `self-iter` `exitSuccess` is saturation-only; dry loops leave `missionGoal`
+  `unverified` because no acceptance criteria are measured on that path.
+- Absence-of-usage seats contribute nothing measurable — never fabricate
+  `TokenUsage` zeros.
+- Writer lease: open failure runs unpromoted; lease-guarded publish fails
+  instead. `LeaseDurability::Unconfirmed` inside `Ok` means the name landed
+  but directory fsync failed — not absent.
+- `plan_token` / `plan_digest` exist because a leftover file containing
+  `"wwkd"` is not this-round evidence.
+- Protocol pin is `ufo.fsd.v3` at `loop_driver.rs:110` on HEAD `964f443e`
+  (earlier corpus prose that said `ufo.fsd.v4` / `:121` is stale).
+
+## Re-census record (round 32, member R2MemberRecensus)
+
+- **Live members (12):** `loop_driver.rs`, `loop_driver_candidate.rs`,
+  `loop_driver_digest.rs`, `loop_driver_dispatch.rs`, `loop_driver_dry.rs`,
+  `loop_driver_judge.rs`, `loop_driver_open.rs`, `loop_driver_publish.rs`,
+  `loop_driver_resume.rs`, `loop_driver_tests.rs`, `state.rs`,
+  `state_tests.rs`.
+- **Sections added:** 12 member `## \`…\.rs\`` sections (note was topic-form;
+  `ROW_NO_SECTIONS` prior).
+- **Sections removed:** none — no heading named a deleted origin file; the
+  prior topic headings (`Entry points`, `Round pipeline`, `Stop vocabulary`,
+  `Checkpoint`, `Module table`, `Judgment vocabulary`, `Traps`) were
+  non-member topic heads and were folded into the member sections / traps
+  above rather than left as phantom member claims.
+- **Deleted since `5725fa7d3`:** empty for this family
+  (`comm -23` freeze vs live on the R2 glob → empty).
+- **Declared count the SCORECARD row must carry:** **12** (parent-owned cell;
+  prefer `12 members:` with the explicit basename list above so
+  `MEMBER_COUNT_DRIFT` binds; the live `loop_driver*.rs` glob still expands
+  to 10 + 2 state files).

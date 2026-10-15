@@ -1,9 +1,19 @@
 # Route resolution — `omp-global-config.mjs` over `~/.omp/agent/config.yml`
 
-## Mechanism (source: `scripts/omp-global-config.mjs` header + `resolveSeatFromMaps`)
+Registry family **S5** (routing & result helpers). This note owns the
+`scripts/omp-global-config.mjs` member section; companion S5 member
+`scripts/ufo-mission-result.mjs` is sectionized in
+`knowledge/failure-telemetry.md` and `knowledge/singleton-and-queue-ownership.md`.
 
-Precedence, per seat: `task.agentModelOverrides.<seat>` → if `@alias`,
-`modelRoles.<alias>` → concrete `provider/model[:effort]` route.
+## `scripts/omp-global-config.mjs`
+
+**Live size** at origin HEAD `964f443e`: **627 L**
+(`wc -l scripts/omp-global-config.mjs`). Registry cell still prints 735 L —
+parent owns the cell rewrite. sha256
+`71668acae663eaf1b2692960cec436b80db4d68735ad00614549459ab4325ae3`.
+
+**Mechanism.** Precedence, per seat: `task.agentModelOverrides.<seat>` → if
+`@alias`, `modelRoles.<alias>` → concrete `provider/model[:effort]` route.
 `retry.fallbackChains` keyed by the ALIAS when present, else by the concrete
 route selector, else `[]`. Chains are never wrapped or recursed; an
 `@`-valued `modelRoles` entry is rejected (`resolveAliasFromMaps`,
@@ -11,11 +21,34 @@ route selector, else `[]`. Chains are never wrapped or recursed; an
 failure — fail closed, never a guessed route. `readGlobalSeatRouting`
 parses once and resolves every seat from shared maps (O(seats), not
 O(seats × text)). Reads are fd-bound: `O_NOFOLLOW` + fstat size pin +
-post-read size check, ≤1 MiB.
+post-read size check, ≤1 MiB (`MAX_CONFIG_FILE_BYTES` = 1_048_576 at
+`scripts/omp-global-config.mjs:25`).
 
-Config discovery `DEFAULT_CANDIDATES` order: `.omp/agent/config.yml`,
-`.omp/agent/config.yaml`, `.config/omp/config.yml`, `.config/omp/config.yaml`,
-`.omp/config.yml`, `.omp/config.yaml` (resolved under HOME).
+Config discovery `DEFAULT_CANDIDATES` order at
+`scripts/omp-global-config.mjs:27-34`: `.omp/agent/config.yml`,
+`.omp/agent/config.yaml`, `.config/omp/config.yml`,
+`.config/omp/config.yaml`, `.omp/config.yml`, `.omp/config.yaml`
+(resolved under HOME via `globalOmpConfigPath` at
+`scripts/omp-global-config.mjs:304`).
+
+**Named symbols (own-file anchors):**
+
+| symbol | anchor |
+|---|---|
+| `DEFAULT_CANDIDATES` | `scripts/omp-global-config.mjs:27` |
+| `OmpGlobalConfigError` | `scripts/omp-global-config.mjs:36` |
+| `yamlBlock` | `scripts/omp-global-config.mjs:122` |
+| `parseModelRoles` | `scripts/omp-global-config.mjs:345` |
+| `parseAgentModelOverrides` | `scripts/omp-global-config.mjs:351` |
+| `parseFallbackChains` | `scripts/omp-global-config.mjs:367` |
+| `resolveAliasFromMaps` | `scripts/omp-global-config.mjs:473` |
+| `resolveSeatRouting` | `scripts/omp-global-config.mjs:503` |
+| `resolveSeatFromMaps` | `scripts/omp-global-config.mjs:516` |
+| `readGlobalSeatRouting` | `scripts/omp-global-config.mjs:546` |
+
+`resolveSeatFromMaps` is module-private (called from `resolveSeatRouting`
+and `readGlobalSeatRouting`); the exported seat entry is
+`resolveSeatRouting` (`scripts/omp-global-config.mjs:503-514`).
 
 ## Live global table (observed 2026-09-28, `~/.omp/agent/config.yml`)
 
@@ -74,4 +107,10 @@ primary + ordered fallback family (`crates/ufo-cli/src/main.rs`).
 Sources: `scripts/omp-global-config.mjs` (header, `DEFAULT_CANDIDATES`,
 `resolveAliasFromMaps`, `resolveSeatFromMaps`, `readGlobalSeatRouting`);
 `~/.omp/agent/config.yml` read 2026-09-28; `scripts/run-omp-native-trial.mjs`
-retry projection block (~L540-580); L1 session prompt.
+retry projection block; L1 session prompt.
+
+## Round-32 recensus notes
+
+- Member still present under `scripts/` at origin HEAD `964f443e`.
+- Line count moved **735 → 627**; no phantom member section to remove.
+- Section form added this round so S5 leaves `ROW_NO_SECTIONS` topic-form.

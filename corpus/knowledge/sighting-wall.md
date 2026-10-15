@@ -1,159 +1,253 @@
-# ufo-sighting-lib — wall internals (mission lifecycle on tmux)
+# S4 sighting wall — live membership at internals level
 
-`scripts/ufo-sighting-lib/` — 26 `.mjs` files, 10,620 lines; entry
-`scripts/ufo-sighting.mjs` (396 lines) re-exports the moved names.
-Condensed from the round-6 scout map (`local://kumitate-r6-sighting-lib.md`),
-spot-verified. Citation form: `file.mjs:N`.
+**Family:** S4 (registry `SCORECARD.md`), sighting wall. **Measured at origin
+HEAD `964f443e`** (`/home/vgpnk/Projects/ufo-fsd-alpha`). Live set is **6 of 6**
+members named below, one `## \`scripts/…\`` section per member with ≥1 own-file
+anchor and ≥1 verbatim symbol. Round-32 re-census (script-layer).
 
-## Module map (flattened)
+## Membership and measurement
 
-`base.mjs` (611) = all shared constants/guards, deliberately import-free.
-One-way chains: `wall-schema.mjs` (371) + `wall-display.mjs` (87) never import
-`wall.mjs` (1793). Two DELIBERATE cycles, safe only inside function bodies:
-`observe.mjs` ↔ `status-view.mjs`, `status-verb.mjs` ↔ `display-overview.mjs`.
-Others: `argv.mjs` (dispatch attestation), `queue.mjs` (read-only queue
-projection), `observe.mjs` (evidence gathering), `layout.mjs`
-(convergence/geometry), `verbs-core.mjs` (remove/complete/matching),
-`status-verb/status-view` (read path), `display-overview` (dashboard),
-`launch-verb`/`resume-verb`/`spawn-pane`/`pane-run`/`pane-register`
-(lifecycle), `runner-attach` (terminal attach), `environment`
-(ephemeral/bwrap), `mission-identity` (row construction), `twins`,
-`stop-restore`, `steer-peek`, `options`/`surface`/`wall-verbs`.
+```bash
+# Exact live membership (origin tree)
+{ printf '%s\n' scripts/ufo-sighting.mjs scripts/ufo-sighting
+  find scripts/ufo-sighting-lib -type f
+} | LC_ALL=C sort -u
+```
 
-## Wall persistence
+Observed (6 paths):
 
-- `stateDir` = `UFO_SIGHTING_STATE_DIR` else `ROOT/.ufo/sighting`; manifest
-  `manifest.json`, schema `ufo-sighting-wall-v1` (base:79). `ownerRoot` and
-  `target` must equal `ROOT`/`TMUX_TARGET` else `FOREIGN_STATE`.
-- Mission row (`wall-schema.mjs:155-258`, built `mission-identity.mjs:12-59`):
-  `id` = `m_<32 lowercase hex>`; `status ∈ {starting,running,completed,
-  stopped}`; `paneId %\d+`, `panePid` OPTIONAL (absence is a representable
-  drift state, not corruption); `dispatch ∈ {argv,inquiry,native-trial}`;
-  `relay` and `provenance.{originMissionId,lane}` are self-attested display
-  labels, explicitly NOT authorization; `lane` grammar is `task_<24hex>`.
-- `writeManifest` (wall.mjs:454-510): revision = persisted+1 (overflow →
-  `MALFORMED_MANIFEST`); completed-row `dispatch.argv` redacted to a sentinel;
-  `pruneStoppedMissions`; serialize-validate-evict loop (evict oldest stopped
-  then completed until ≤ `MAX_MANIFEST_BYTES` 1 MiB, else
-  `MANIFEST_TOO_LARGE`); tmp `wx` 0600 → fsync → rename → chmod → dir fsync;
-  refuses symlinked manifest. `MANIFEST_READ_BYTES` 16 MiB is deliberately
-  LARGER than the write bound so an over-bound manifest can be healed —
-  equalizing wedges recovery.
-- Operation lock: DIRECTORY `<stateDir>/operation.lock` + `owner.json` `wx`
-  (wall.mjs:627-774); seize-quarantine-verify reclaim; an aged dir with NO
-  `owner.json` is reclaimed as unattested; `LOCK_TIMEOUT_MS` 10 s →
-  `WALL_BUSY`. Reentrant per-process (`heldOperationLocks`). Writers: every
-  verb under `withOperationLock` + detached `__reconcile` + pane-run's
-  `stopMission`. **The dispatcher never writes it** (dispatcher:110, :1610
-  reads with its own stat-key cache); the dispatcher's ONLY manifest write is
-  `removeStaleManifestRow` via `rependTask`'s deadlock gate.
-- Read paths: `readManifest` ancestor-confined, non-symlink leaf ≤16 MiB,
-  private-owned, post-read bound, `validateManifest`. `loadStatusView` adds an
-  advisory cache keyed on `size:mtimeMs:ctimeMs:ino:dev` with re-stat on hit;
-  `UFO_SIGHTING_STATUS_CACHE=off` disables.
+```
+scripts/ufo-sighting
+scripts/ufo-sighting-lib/argv.mjs
+scripts/ufo-sighting-lib/base.mjs
+scripts/ufo-sighting-lib/observe.mjs
+scripts/ufo-sighting-lib/surface.mjs
+scripts/ufo-sighting.mjs
+```
 
-## Lifecycle internals
+```bash
+wc -l scripts/ufo-sighting.mjs scripts/ufo-sighting \
+  scripts/ufo-sighting-lib/argv.mjs scripts/ufo-sighting-lib/base.mjs \
+  scripts/ufo-sighting-lib/observe.mjs scripts/ufo-sighting-lib/surface.mjs
+```
 
-- `spawnPaneForMission` (spawn-pane.mjs:9-89) is the ONLY pane creator.
-  Adoption rule: a pane is adoptable only if unclaimed, not a bound overview,
-  AND (dead | `__idle` keeper | marked by a no-longer-live mission) — a live
-  unmarked pane is foreign work, never adopted/killed. Records `paneId` +
-  `#{pane_pid}` → `status="running"`. Rollback re-`__idle`s own keepers,
-  kill-panes fresh splits. `launchMissionLocked` capacity order:
-  `assertL1Capacity` → `assertCapacity` → `assertRunnerCapacity` → `newMission`
-  → `ensureUniqueMission` → `createMissionPane` (row written BEFORE spawn;
-  failure removes the row).
-- `__pane-run <id>` (pane-run.mjs:28-146): spin ≤10 s for the manifest row →
-  self-attestation quadruple (`pane_dead==0 && pane_pid==self &&
-  @ufo_sighting_mission==id && TMUX_PANE %\d+`) else `MISSION_NOT_LIVE` — the
-  guard against a recycled pane erasing evidence → argv resolution
-  (inquiry/native-trial shims or verbatim argv) → child env
-  `UFO_SIGHTING_MISSION_ID/_RUN_ID/_SESSION_ID/_ORIGIN_MISSION_ID/
-  UFO_SIGHTING_LANE` → ephemeral branch re-verifies the env file bytes +
-  bwrap → `spawn` with signal forwarding → `stopMission` in `finally`
-  (a marker failure cannot lose exit evidence).
-- `resumeMissionLocked` (resume-verb.mjs:43-152): refuses completed/live/
-  non-stopped; successor gate — a queue successor for the runId in any
-  non-terminal state → `RESUME_SUPERSEDED`; flips to `starting`, deletes
-  stop fields, respawns; failure → `restoreStoppedMission` rollback.
-- `stopMission` (stop-restore.mjs:24-89): already-stopped rows BACKFILL exit
-  evidence once; `applyStopped` DELETES a prior `failure` when the new cause
-  is null (base.mjs:547 — "stop without cause" clears); `scheduleReconcile`
-  in `finally` spawns a detached `__reconcile` — every verb's absent-dir
-  early-out exists to stop that child resurrecting a fixture root.
-- `reconcileLocked` (layout.mjs:420-463): live row + missing/dead/unmarked/
-  pid-drifted pane → `stopped` with `RECONCILE_UNATTESTED_STOP`;
-  `settleWallGeometry` keeps exactly one idle keeper per fleet window.
-- Steer (steer-peek.mjs:74-135): ONE tmux invocation `send-keys -l -- <text>`
-  + `send-keys Enter`; guard order arg-shape → absent-wall → lock →
-  `resolveWallMission` → live proof (`PANE_IN_MODE` refused) → text rules
-  (single line, no control bytes, ≤4096) → `steerCount` seq pin
-  (`STEER_SEQ_REPLAY`) → disposition {accepted, deferred_next_round,
-  rejected_contract_changing} → audit log `<stateDir>/steers/<runId>.jsonl`
-  (append `O_NOFOLLOW`, 2 MiB tombstone-trim).
-- Peek: `capture-pane -p -S -<lines>` under the lock; `--lines` ∈ [1,400],
-  default 80.
-- `completeMission` (verbs-core.mjs:141-224): `--dry-run`, idempotent;
-  **receipt gate** — the queue row's `<resultPath>.receipt.json` must exist,
-  be non-empty, parse, and carry `schema:"ufo-task-receipt-v1"` else
-  `COMPLETION_RECEIPT_MISSING|TORN`; `COMPLETED_CAPTURE_LINES = 0` — complete
-  NEVER captures pane scrollback.
+| Member | Live `wc -l` |
+|---|---:|
+| `scripts/ufo-sighting.mjs` | 4714 |
+| `scripts/ufo-sighting` | 95 |
+| `scripts/ufo-sighting-lib/argv.mjs` | 510 |
+| `scripts/ufo-sighting-lib/base.mjs` | 507 |
+| `scripts/ufo-sighting-lib/observe.mjs` | 614 |
+| `scripts/ufo-sighting-lib/surface.mjs` | 325 |
+| **total** | 6765 |
 
-## The display is an evidence projection, never telemetry
+**Declared count the S4 registry row must carry:** **6** (parent owns the cell
+rewrite). Frozen pre-restructure cell still read
+`ufo-sighting.mjs` (396 L) + `ufo-sighting` (224 L bash) + `ufo-sighting-lib/`
+(26 files / 10620 L) ⇒ **28** path members; live tree absorbed most of the lib
+into the entry module and left four lib files.
 
-- `observe.mjs` has FOUR independent sources, none of them pane content:
-  OMP transcripts (bounded walk, task-id oracle counts only STRUCTURED
-  `details.progress[]`/`details.jobs[]` — content-text regexes rejected as
-  forgeable), xbrd-spark `meta.json` census, the L0 hub `l0-monitor-state.json`
-  sibling of the queue path, and the dispatcher-written
-  `observations.json` sidecar (≤4 MiB, ≤2048 rows, `m_<hex32>` keys,
-  `phase ∈ {queued,working,suspended,completed,failed}`).
-- Opaque conditions return `opaque`/`unavailable`/`null` — never a fabricated
-  0. A `0` in these fields is a claim; absence is disclosed.
-- Pane content is read ONLY by `peek`; pane state (marker + pid + rectangle)
-  is attestation/geometry input, never mission telemetry.
-- `status` non-lite MUTATES the wall: takes the lock ≤250 ms to repaint
-  session options + overview (only `--lite` is side-effect-free).
-- `overview --watch`: fs.watch on the state DIR (renames kill file watches)
-  filtered to manifest/observations + a 2.5 s safety interval.
-- `surface --json` derives `scriptDigest` over shim + EVERY `*.mjs` in the
-  directory (readdir-derived set) — editing any file, even a comment,
-  invalidates the pinned `sighting.surfaceDigest` in `config/ufo.json`.
+### Round-32 removal record (lib phantoms — not member sections)
 
-## Boundary crossings (verified)
+Pre-restructure `scripts/ufo-sighting-lib/` at `5725fa7d3` held **26** files.
+Live lib at `964f443e` holds **4**. The **22** basenames present then and
+absent now (recorded so they are never re-added as `##` member sections):
 
-- dispatcher → wall: `sightingCommand` (dispatcher:12788) shells
-  `ufo-sighting.mjs launch|resume --run-id … --no-open --relay
-  --runner-reservation N -- <argv>`; env seeds `UFO_SIGHTING_ORIGIN_MISSION_ID
-  = task.priorMissionId`, `UFO_SIGHTING_LANE = task.chainRootKey`
-  (dispatcher:13114-13130); on nonzero launch exit the dispatcher shells
-  `reconcile` (13135-13138); the status read is `ufo-sighting status` +
-  direct manifest read.
-- wall → dispatcher queue: `queue.mjs` is a READ-ONLY projection of
-  `pending-work.json` — its only fs import is `lstatSync`; out-of-root queue
-  via `UFO_PENDING_WORK_PATH` is honored but disclosed `queueEscapesRoot`
-  (the wall deliberately skips the beneath-gate; dispatcher/monitor refuse).
-- native-trial → wall: `handOffToSightingWall` shells
-  `launch … --substrate omp --fleet <f>` (run-omp-native-trial.mjs:1348-1385)
-  and a detached `complete` after parent exit (:2600-2626); the wall writes
-  NOTHING under `.ufo/native-trials/`.
-- retention: `completeMission` → `applyMissionRetention` shells
-  `ufo-state-retention.mjs cap --apply` with `UFO_STATE_DIR` pinned.
-- L0 watch is the other steer consumer (`ufo-l0-watch.mjs:902-930`).
+`display-overview.mjs`, `environment.mjs`, `launch-verb.mjs`, `layout.mjs`,
+`mission-identity.mjs`, `options.mjs`, `pane-register.mjs`, `pane-run.mjs`,
+`queue.mjs`, `resume-verb.mjs`, `runner-attach.mjs`, `spawn-pane.mjs`,
+`status-verb.mjs`, `status-view.mjs`, `steer-peek.mjs`, `stop-restore.mjs`,
+`twins.mjs`, `verbs-core.mjs`, `wall-display.mjs`, `wall-schema.mjs`,
+`wall-verbs.mjs`, `wall.mjs`.
+
+Command that produced the set:
+
+```bash
+comm -23 \
+  <(git ls-tree -r --name-only 5725fa7d3 -- scripts/ufo-sighting-lib | sed 's|.*/||' | LC_ALL=C sort) \
+  <(find scripts/ufo-sighting-lib -type f -printf '%f\n' | LC_ALL=C sort)
+```
+
+The prior note (`sighting-wall.md` pre-round-32) was **topic-form**: headings
+were `## Module map`, `## Wall persistence`, `## Lifecycle internals`,
+`## The display is an evidence projection, never telemetry`,
+`## Boundary crossings (verified)`, `## Traps` — **zero** path-like
+`## \`scripts/…\`` member sections. Those topic headings are replaced by the
+six member sections below (not deleted as phantom members; they never claimed
+a file path to the claims gate). Prose that cited the 22 deleted lib files as
+if live (`wall.mjs:454`, `spawn-pane.mjs:9`, …) is retired with this rewrite;
+lifecycle symbols now live primarily in `scripts/ufo-sighting.mjs`.
+
+---
+
+## `scripts/ufo-sighting.mjs`
+
+**Role.** Primary wall implementation and CLI entry (Node). After the
+restructure this file owns manifest I/O, the operation lock, pane lifecycle,
+steer/peek, reconcile, and `main` dispatch. It imports the four remaining lib
+modules for constants, argv preflight, observation, and surface projection.
+
+**Manifest.** `validateManifest` (`scripts/ufo-sighting.mjs:279`) enforces
+`MANIFEST_SCHEMA`, `ownerRoot === ROOT`, `target === TMUX_TARGET`, unique
+mission/run/session/pane/sequence ids, and terminal shape. `writeManifest`
+(`scripts/ufo-sighting.mjs:548`) bumps `registryRevision`, validates, refuses a
+symlinked leaf, writes `wx` 0600 tmp → fsync → rename → chmod → dir fsync, and
+fails `MANIFEST_TOO_LARGE` past `MAX_MANIFEST_BYTES`. `readManifest`
+(`scripts/ufo-sighting.mjs:379`) is the bounded read path; `loadStatusView`
+(`scripts/ufo-sighting.mjs:531`) is the status projection entry.
+
+**Lock.** `acquireOperationLock` (`scripts/ufo-sighting.mjs:663`) seizes
+`<stateDir>/operation.lock` as a directory + `owner.json` `wx`, with
+`LOCK_TIMEOUT_MS` wait via `UFO_SIGHTING_LOCK_TIMEOUT_MS`.
+`withOperationLock` (`scripts/ufo-sighting.mjs:781`) is the reentrant wrapper
+every mutating verb uses.
+
+**Lifecycle.** `spawnPaneForMission` (`scripts/ufo-sighting.mjs:2225`) is the
+pane creator. `launchMissionLocked` / `launchMission`
+(`scripts/ufo-sighting.mjs:2347`, `:2372`) own capacity → row → spawn.
+`stopMission` (`scripts/ufo-sighting.mjs:3584`), `resumeMissionLocked` /
+`resumeMission` (`:3682`, `:3762`), `completeMission` (`:3339`),
+`reconcileLocked` (`:1976`), and `scheduleReconcile` (`:3572`, spawns
+detached `__reconcile`) close the lifecycle set. Steer/peek:
+`steerMission` (`:3511`), `peekMission` (`:3544`).
+
+**CLI.** `main` (`scripts/ufo-sighting.mjs:4399`) dispatches verbs including
+`__reconcile`, `surface` → `surfaceManifest()`, `launch`, `complete`, and the
+remaining wall verbs; re-exports surface helpers at
+`scripts/ufo-sighting.mjs:4714`.
+
+Sources: `scripts/ufo-sighting.mjs`; deps `scripts/ufo-sighting-lib/{base,argv,observe,surface}.mjs`.
+
+## `scripts/ufo-sighting`
+
+**Role.** Bash shim (95 L). Resolves its own path via `SCRIPT_SOURCE` /
+`BASH_SOURCE[0]` (`scripts/ufo-sighting:10`), anchors `ROOT` to the real
+`scripts/` parent (`:19`), and `exec`s Node on `scripts/ufo-sighting.mjs`
+(`scripts/ufo-sighting:95`) for the normal verb path.
+
+**Seams.**
+- `NODE_COMPILE_CACHE` defaulted under `$ROOT/.ufo/cache/node-compile`
+  (`scripts/ufo-sighting:24`).
+- `UFO_SIGHTING_ATTACH=1` with no args → `tmux attach-session` to
+  `ufo_sighting:1` (`scripts/ufo-sighting:26`–`:35`), socket override gated
+  by the same grammar as the Node `tmuxPrefix` path.
+- Internal inquiry child: `--ufo-sighting-inquiry-direct`
+  (`scripts/ufo-sighting:38`) snapshots the prompt under the session dir
+  (1 MiB byte cap, parity with `MAX_INQUIRY_PROMPT_BYTES`) then `exec omp`.
+- Internal native child: `--ufo-sighting-native-direct`
+  (`scripts/ufo-sighting:68`) → `run-omp-native-trial.mjs --interactive`.
+- Operator `--inquiry PROMPT_FILE` (`scripts/ufo-sighting:73`) builds a
+  scratch session dir and re-enters the Node `inquiry` verb.
+
+Sources: `scripts/ufo-sighting`.
+
+## `scripts/ufo-sighting-lib/base.mjs`
+
+**Role.** Import-light shared constants, path anchors, and `SightingError`.
+Deliberately the leaf other lib files and the entry import for identity.
+
+**Paths / identity.** `ROOT` (`scripts/ufo-sighting-lib/base.mjs:17`),
+`SHIM_PATH` (`:19`), `MODULE_PATH` (`:21`), `SESSION_NAME` /
+`TMUX_TARGET` (`:23`, `:27`), `APP_ID` (`:39`).
+
+**Schema and bounds.** `MANIFEST_SCHEMA = "ufo-sighting-wall-v1"`
+(`scripts/ufo-sighting-lib/base.mjs:41`); `MAX_MANIFEST_BYTES = 1_048_576`
+(`:49`); `LOCK_TIMEOUT_MS = 10_000` (`:73`); `LOCK_STALE_MS` (`:75`);
+`MAX_TEXT_BYTES = 4096` (`:63`); `MAX_COMPLETED_MISSIONS = 50` (`:65`);
+`DEFAULT_ATTACH_TIMEOUT_MS` (`:71`); `DISPLAY_REFRESH_LOCK_MS = 250` (`:77`).
+
+**Errors.** `SightingError` (`scripts/ufo-sighting-lib/base.mjs:105`) carries
+`code` + optional `details`; `emitFatal` (`:111` region) is the process-fatal
+emitter used by the entry.
+
+Sources: `scripts/ufo-sighting-lib/base.mjs`.
+
+## `scripts/ufo-sighting-lib/argv.mjs`
+
+**Role.** Dispatch attestation for OpenCode and OMP argv missions — shape
+parsing, executable predicates, and preflight that refuses indirect shells.
+
+**Parsing.** `optionValue` (`scripts/ufo-sighting-lib/argv.mjs:22`);
+`parseOpenCodeArgv` (`:37`); `parseOmpArgv` (`:280`);
+`attestedOmpSession` (`:366`).
+
+**Predicates.** `resolvedExecutableName` (`:117`);
+`isOpenCodeExecutable` (`:131`); `isOmpExecutable` (`:135`);
+`appearsToLaunchOpenCode` / `appearsToLaunchOmp` (`:198`, `:202`);
+`shellLaunches` (`:139`).
+
+**Preflight.** `preflightArgvDispatch` (`scripts/ufo-sighting-lib/argv.mjs:455`)
+validates argv, refuses `INDIRECT_OPENCODE_DISPATCH` /
+`INDIRECT_OMP_DISPATCH`, checks substrate/executable pairing
+(`OPENCODE_SUBSTRATE_MISMATCH`, `OMP_SUBSTRATE_MISMATCH`), then returns the
+attested spec. Scratch roots: `DEFAULT_SCRATCH_ROOT` (`:206`),
+`scratchSessionRoot` (`:208`).
+
+Sources: `scripts/ufo-sighting-lib/argv.mjs`.
+
+## `scripts/ufo-sighting-lib/observe.mjs`
+
+**Role.** Evidence projection for status — OMP transcript structure, spark
+census, and dispatcher `observations.json` — never pane scrollback as
+telemetry.
+
+**OMP transcripts.** `ompSessionsRoot` (`scripts/ufo-sighting-lib/observe.mjs:22`);
+`missionOmpSessionDirectory` (`:35`); `collectTranscriptFiles` (`:56`);
+`scanMissionTasks` (`:270`); `observeMissionTasks` (`:384`) returns
+`KNOWN_ZERO` / `unavailable(…)` / structured evidence and is safe on malformed
+argv dispatch.
+
+**Sparks / observations.** `sparkStateRoot` (`:411`); `countActiveSparks`
+(`:415`); `loadObservations` (`:493`) reads the sidecar under the wall state
+dir.
+
+**Status fold.** `levelStatus` (`scripts/ufo-sighting-lib/observe.mjs:561`)
+builds `levels.l1/l2/l3` + `phaseCounts` via `derivePhaseCounts` (`:536`);
+`statusPhase` (`:606`) maps mission `status` →
+`queued|working|suspended|completed|unknown`.
+
+Sources: `scripts/ufo-sighting-lib/observe.mjs`.
+
+## `scripts/ufo-sighting-lib/surface.mjs`
+
+**Role.** `surface --json` contract, usage text, and the script digest pin
+consumers compare to `config/ufo.json` `sighting.surfaceDigest`.
+
+**Digest set.** `SURFACE_MODULE_PATHS` lists the four live lib files
+(`scripts/ufo-sighting-lib/surface.mjs:13`–`:18`). `surfaceScriptDigest`
+(`:31`) hashes **shim + module + those four** in fixed order (not any single
+file’s sha256). `SURFACE_KIND = "sighting-surface-v1"` (`:24`).
+`DEFAULT_PEEK_LINES = 80` / `MAX_PEEK_LINES = 400` (`:20`, `:22`).
+
+**Manifest / errors.** `surfaceErrors` (`:50`) mines `fail("CODE"` literals
+from the entry + lib set; `surfaceManifest` (`:59`) emits `kind`,
+`scriptDigest`, `digestInputs`, verb schemas, and exit map.
+`runLegacyNativeDirect` (`:318`) re-enters the bash shim’s
+`--ufo-sighting-native-direct` seam; `output` / `requireNoArgs` / `usage`
+(`:310`, `:314`, `:294`) are the CLI helpers re-exported by the entry.
+
+Sources: `scripts/ufo-sighting-lib/surface.mjs`.
+
+## Boundary crossings (still true at HEAD `964f443e`)
+
+- **dispatcher → wall:** shells `ufo-sighting.mjs launch|resume …` (and status
+  reads); on nonzero launch exit shells `reconcile`. Queue ownership stays
+  with `fleet-dispatcher.mjs` — the wall does not write `pending-work.json`.
+- **native-trial → wall:** `handOffToSightingWall` in
+  `run-omp-native-trial.mjs` still shells wall `launch` / detached `complete`;
+  the wall writes nothing under `.ufo/native-trials/`.
+- **retention:** completion may shell `ufo-state-retention.mjs` (S8 member;
+  not an S4 member).
+- **L0 watch** remains the other steer consumer (`ufo-l0-watch.mjs`, S6).
 
 ## Traps
 
-- Two things named "queue": `queue.mjs` = read model of the dispatcher's
-  file; the wall's own state is `manifest.json`. No sighting-side work queue
-  exists.
-- "Live" is decided twice: persisted `status` AND pane attestation
-  (`missionPaneAttested`); a live row with a dead/drifted pane is stale.
-- `null`/`opaque`/`unavailable` = "evidence absent", never 0.
-- `UFO_SIGHTING_TEST_TERMINAL_PID` honored only when
-  `UFO_SIGHTING_STATE_DIR` is set — fixture seam, not a production knob.
-- Killing a pane does not clear its `@ufo_*` options — `clearPaneMetadata`
-  is the only path, or a converged pane keeps a frozen mission snapshot.
-- `argv.mjs` executable predicates are filesystem-shape disclosure
-  (canonical-realpath basename + exec bit), NOT attestation; env overrides of
-  read roots (`UFO_OMP_SESSIONS_ROOT`, `UFO_XBRD_SPARK_ROOT`, …) are honored
-  and disclosed, never refused.
+- **"Live"** is still decided twice: persisted mission `status` and pane
+  attestation; a live row with a dead/drifted pane is stale (logic now in
+  `scripts/ufo-sighting.mjs`, not a separate `layout.mjs`).
+- `null` / `opaque` / `unavailable` in observation fields mean evidence
+  absent — never a fabricated `0` (`KNOWN_ZERO` is an explicit known empty).
+- `surfaceScriptDigest` invalidates when **any** of shim, entry, or the four
+  lib files change — editing a comment is enough.
+- Argv executable predicates disclose filesystem shape; they are not
+  authorization.

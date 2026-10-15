@@ -1,224 +1,186 @@
-# S7 route-probe cluster — the 9-member probe family
+# S7 route-probe cluster — the 6-member probe family (round-32 re-census)
 
-## Scope — S7 is the route-probe cluster, all 9 members
+## Scope — S7 is the route-probe cluster, all 6 live members
 
-S7 is the registry's **route-probe cluster**: the 7 `scripts/probe-*.mjs` files plus
-its two shared helpers `scripts/atomic-write.mjs` and `scripts/fake-omp.mjs` — 9
-members, `wc -l` total 3132, every one of them named at internals level in this note by
-its own `## \`scripts/<rel>\`` section, which is the probe a non-author re-runs. The
-cluster boundary is a stated rule, not a natural kind: both helpers are members because
-the cluster's suites stage and import them
-(`scripts/probe-ufo-route-health.test.mjs:19-21`), the narrower `probe-*` glob is 7
-files / 2651 L, and `scripts/omp-global-config.mjs` (735 L,
-`readGlobalProviderAliasRoutes`) is deliberately **excluded** — it is an S5 member
-already covered by `knowledge/route-resolution.md`, so it is reused, not residue.
+S7 is the registry's **route-probe cluster** on the origin tree at HEAD
+`964f443ee53df0ce06bd689af01f0dea031b01f9`: the 5 live `scripts/probe-*.mjs`
+files plus the shared helper `scripts/fake-omp.mjs` — **6 members**,
+`wc -l` total **2253**, every one named at internals level in this note by its
+own `## \`scripts/<rel>\`` section. Round 13 closed the family as 9 members
+(7 `probe-*.mjs` + `atomic-write.mjs` + `fake-omp.mjs`); the 2026-10-12 upstream
+restructure deleted three of those files from the live tree (see
+`## Round-32 membership removals` below). The cluster boundary remains a stated
+rule, not a natural kind: `scripts/omp-global-config.mjs` is deliberately
+**excluded** — it is an S5 member already covered by
+`knowledge/route-resolution.md`, so it is reused, not residue. The historical
+colocated suites and `atomic-write.mjs` are **no longer members** because they
+are absent from the origin tree.
 
-The remainder of the round-12 family is **S8** — the 60-member catch-all
-(`scripts/charter-scribe/` 6, `scripts/lean-cargo/` 4, and the 50 remaining top-level
-`scripts/*.mjs`, `wc -l` total 54874) — and it is covered by its own note,
-`knowledge/remaining-scripts-census.md`. S7 no longer stands in for those 60 members
-and no longer carries a "9 of 69" partial reading: the registry row for S7 is `yes` on
-the strength of the 9 sections above, and the S8 row is judged only against the census
-note's 60. Membership order follows the wiring: the base instrument
-(`scripts/probe-ufo-route-health.mjs`), the shared machinery of the token-plan pair
-(`scripts/probe-token-plan-shared.mjs`), the two probes that sit on it
-(`scripts/probe-token-plan-kimi.mjs`, `scripts/probe-token-plan-models.mjs`), the
-canonical redaction table they all import (`scripts/probe-redact.mjs`), the two
-colocated suites (`scripts/probe-ufo-route-health.test.mjs`,
-`scripts/probe-redact.test.mjs`), then the two helpers
-(`scripts/atomic-write.mjs`, `scripts/fake-omp.mjs`). The family standard is satisfied
-once per member, not once per note: a member counts only with ≥1 line anchor in its own
-file and ≥1 named symbol describing its own behavior; a trailing list of source names is
-not naming.
+The remainder of the round-12 family is still **S8** (its own live membership
+is re-censused separately) and is covered by
+`knowledge/remaining-scripts-census.md`. Membership order follows the wiring:
+the base instrument (`scripts/probe-ufo-route-health.mjs`), the shared machinery
+of the token-plan pair (`scripts/probe-token-plan-shared.mjs`), the two probes
+that sit on it (`scripts/probe-token-plan-kimi.mjs`,
+`scripts/probe-token-plan-models.mjs`), the canonical redaction table the
+token-plan pair imports (`scripts/probe-redact.mjs`; route-health keeps a
+standalone parity copy at `scripts/probe-ufo-route-health.mjs:63-65`), then the
+fixture helper (`scripts/fake-omp.mjs`). The family standard is satisfied once
+per member, not once per note: a member counts only with ≥1 line anchor in its
+own file and ≥1 named symbol describing its own behavior; a trailing list of
+source names is not naming.
 
 ## Membership and measurement
 
 ```
-$ ls scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs | wc -l
-9
-$ wc -l scripts/probe-*.mjs scripts/atomic-write.mjs scripts/fake-omp.mjs | tail -1
- 3132 total
-$ ls scripts/*.mjs | wc -l                 # 72 − 13 S1–S6 *.mjs basenames = 59
-72
-$ find scripts/charter-scribe -type f | wc -l ; find scripts/lean-cargo -type f | wc -l
+$ ORIGIN=/home/vgpnk/Projects/ufo-fsd-alpha
+$ ( ls -1 "$ORIGIN"/scripts/probe-*.mjs; ls -1 "$ORIGIN"/scripts/fake-omp.mjs ) | LC_ALL=C sort
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/fake-omp.mjs
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/probe-redact.mjs
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/probe-token-plan-kimi.mjs
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/probe-token-plan-models.mjs
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/probe-token-plan-shared.mjs
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/probe-ufo-route-health.mjs
+$ ( ls -1 "$ORIGIN"/scripts/probe-*.mjs; ls -1 "$ORIGIN"/scripts/fake-omp.mjs ) | wc -l
 6
-4
+$ wc -l "$ORIGIN"/scripts/probe-*.mjs "$ORIGIN"/scripts/fake-omp.mjs | tail -1
+ 2253 total
+$ test -f "$ORIGIN"/scripts/atomic-write.mjs; echo $?   # 1 = absent
+1
+$ ls "$ORIGIN"/scripts/probe-*.test.mjs 2>&1 | head -1  # no colocated suites
+ls: cannot access '.../scripts/probe-*.test.mjs': No such file or directory
 ```
 
-The round-12 family carried 69 members; the round-13 partition is
-**9 (S7) + 50 + 6 + 4 (S8, 60) = 69**, and the S8 half is measured in
-`knowledge/remaining-scripts-census.md`, which is the note the S8 registry row
-points at.
+Historical arithmetic (round 13, frozen for the partition story, not live
+membership): **9 (S7) + 60 (S8) = 69**. Live S7 is **6**; the three deletions
+are recorded in `## Round-32 membership removals`. S8's live set is owned by
+the S8 recensus, not this note.
 
 | Member | L | Answers | Posture |
 |---|---|---|---|
-| `scripts/probe-ufo-route-health.mjs` | 1364 | Does live OMP serve one `provider/model:effort` route now? | network |
-| `scripts/probe-ufo-route-health.test.mjs` | 411 | Colocated suite over the probe's refusal arms | offline |
-| `scripts/probe-redact.mjs` | 160 | Shared redaction table + unserved-reason ladder | offline |
-| `scripts/probe-redact.test.mjs` | 79 | Unit tests for `redact`/`containsCredential`/`runOmpCatalog` | offline |
-| `scripts/probe-token-plan-kimi.mjs` | 155 | Does the Token Plan serve kimi-k3/kimi-k2.7-code? | network |
-| `scripts/probe-token-plan-models.mjs` | 247 | Do all configured non-Kimi aliases serve on primary? | network |
-| `scripts/probe-token-plan-shared.mjs` | 235 | Catalog read + per-target route-health subprocess | network |
-| `scripts/atomic-write.mjs` | 82 | fsync+rename durable publish (`writeAtomicFile`) | offline |
-| `scripts/fake-omp.mjs` | 399 | No-network OMP double for both suites | offline |
+| `scripts/probe-ufo-route-health.mjs` | 1195 | Does live OMP serve one `provider/model:effort` route now? | network |
+| `scripts/probe-redact.mjs` | 116 | Shared redaction table + unserved-reason ladder (token-plan pair) | offline |
+| `scripts/probe-token-plan-kimi.mjs` | 147 | Does the Token Plan serve kimi-k3/kimi-k2.7-code? | network |
+| `scripts/probe-token-plan-models.mjs` | 244 | Do all configured non-Kimi aliases serve on primary? | network |
+| `scripts/probe-token-plan-shared.mjs` | 159 | Catalog read + per-target route-health subprocess | network |
+| `scripts/fake-omp.mjs` | 392 | No-network OMP double for probe tests | offline |
 
-All nine parse: `node --check` on each → exit 0 (9/9).
+All six parse: `node --check` on each → exit 0 (6/6).
+
+## Round-32 membership removals
+
+Removed from this note (and from the live S7 member set) because the files are
+**absent** from origin HEAD `964f443e` (`test -f` → false). Parent owns the
+registry row's declared-count cell; this note only drops the phantom sections.
+
+| Removed path | Former role | Evidence of absence |
+|---|---|---|
+| `scripts/atomic-write.mjs` | Shared fsync+rename helper (`writeAtomicFile`) | `test -f …/atomic-write.mjs` → exit 1; durable write is now inlined in `probe-ufo-route-health.mjs:1080`/`1117` and `probe-token-plan-models.mjs:40`/`66` |
+| `scripts/probe-ufo-route-health.test.mjs` | Colocated `node --test` suite (7 cases) | `ls scripts/probe-*.test.mjs` → no matches |
+| `scripts/probe-redact.test.mjs` | Colocated unit suite for redaction | same glob empty |
+
+Sections that previously headed those three paths are **gone** from this file
+(not renamed, not left as historical headings under `## \`scripts/…\`` form).
 
 ## `scripts/probe-ufo-route-health.mjs`
 
-`scripts/probe-ufo-route-health.mjs` (1364 L) is the cluster's base instrument: it
+`scripts/probe-ufo-route-health.mjs` (1195 L) is the cluster's base instrument: it
 answers whether live OMP serves one `provider/model:effort` route right now, prints
 one JSON record per `--route`, and is credential-blind by construction — OMP is the
 only credential authority, so the probe never reads SQLite or token files and never
 constructs an HTTP `Authorization` header (`scripts/probe-ufo-route-health.mjs:2-3`),
-and it never reroutes or treats stale/unknown health as available (`:6-7`). Its entry
-is the top-level `main` (`scripts/probe-ufo-route-health.mjs:1308`) over a single argv
-walk, `parseArgs` (`:96`); usage prints to stderr and exits 2 (`:93`) while
-`--help`/`-h` prints and exits 0 (`:99`). All live work leaves through the async
-`spawnCollect("omp", [...])` (`:814`) running `-p --mode json --model <route>
---thinking <effort> --max-time Ns` (`:826`, `:828`), bounded by
-`PROBE_CONCURRENCY = 8` (`:67`) through the order-preserving `mapPool` (`:785`).
-Named constants pin the envelope: `DEFAULT_TIMEOUT_MS` 240_000 (`:45`), `MAX_BUFFER`
-8 MiB (`:46`), `MAX_ROUTES` 16 (`:47`), the `FAILURE_CLASSES` taxonomy (`:51-62`)
-assigned by `classifyFailure` (`:507`), and the argv token class `ROUTE_TOKEN`
-(`:209`). Typed refusals are a class with stable snake_case codes — `RouteHealthError`
-(`:79`) — and the emit gate `assertNoSecrets` (`:943`) refuses credential-shaped
-output, with a truncated-session sweep retagged `session_truncated` (`:904`, `:905`).
-Verdicts come from `interpretRouteHealth` (`:1164`) and `interpretPersistedHealth`
-(`:1186`), where `healthy` ("every route served with no failure class", `:1325`) stays
-separate from the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1346`),
-and a fatal catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1358`)
-then exits 1.
+and it never reroutes or treats stale/unknown health as available (`:6-7`). Optional
+`--state` persists redacted machine records under `.ufo` via fsync+rename (`:4-5`),
+implemented in-file by `persistState` (`:1080`) with a pid-timestamp tmp
+(`:1117`) — the former sibling `atomic-write.mjs` import is gone. Redaction is a
+**standalone parity copy** of `./probe-redact.mjs` (`:63-65`), not a sibling import,
+so the origin suite can stage this one file alone. Its entry is the top-level
+`main` (`:1164`) over a single argv walk, `parseArgs` (`:103`); `usage` prints to
+stderr and exits 2 (`:97`) while `--help`/`-h` exits 0. All live work leaves through
+the async `spawnCollect("omp", [...])` (`:678`, call site `:813`) running
+`-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:61`)
+through the order-preserving `mapPool` (`:784`). Named constants pin the envelope:
+`DEFAULT_TIMEOUT_MS` 240_000 (`:39`), `MAX_BUFFER` 8 MiB (`:40`), `MAX_ROUTES` 16
+(`:41`), the `FAILURE_CLASSES` taxonomy (`:45`) assigned by `classifyFailure`
+(`:506`), and the argv token class `ROUTE_TOKEN` (`:200`). The emit gate
+`assertNoSecrets` (`:939`) refuses credential-shaped output; a truncated-session
+sweep is retagged `session_truncated` (`:904`). Verdicts come from
+`interpretRouteHealth` (`:1015`) and `interpretPersistedHealth` (`:1037`), where
+`healthy` ("every route served with no failure class", `:1174`) stays separate from
+the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1185`), and a fatal
+catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1191`) then exits 1.
 
 ## `scripts/probe-token-plan-shared.mjs`
 
-`scripts/probe-token-plan-shared.mjs` (235 L) is the library the token-plan probe pair
+`scripts/probe-token-plan-shared.mjs` (159 L) is the library the token-plan probe pair
 sits on — no shebang, no `process.exit`, no own CLI. It freezes the catalog read as
 `PROVIDER = "alibaba-token-plan"` and
 `CATALOG_COMMAND = \`omp models ${PROVIDER} --json --no-extensions\`` plus the two
 budgets `CATALOG_TIMEOUT_MS = 45_000` and `ROUTE_TIMEOUT_MS = 250_000`
-(`scripts/probe-token-plan-shared.mjs:19-20`, `:22`, `:23`). `runOmpCatalog` (`:108`)
-is a `spawnSync("omp", [...])` catalog read (`:109`) that fails typed through the
-frozen `PROBE_SHARED_ERROR_CODES` set (`:40`) via `ProbeSharedError` (`:48`):
-`catalog_timeout` (`:121`), `omp_not_on_path` / `omp_spawn_failed`, `catalog_exit`
-(`:139`). `probeListedModel` (`:160`) gates the configured route with a per-model
-regex and returns `{ served: false, reason: "configured route is malformed" }` (`:168`)
-on a mismatch, `"secret-safe route probe missing"` (`:171`) when `ROUTE_HEALTH` (`:25`)
-is absent, and otherwise spawns the probe as a subprocess under `process.execPath`
-(`:173-174`). `assertNoSecrets` (`:71`) gives both probes one redaction gate and
-`failureVerdict` (`:93`) one verdict shape, so neither probe re-implements them.
-Posture is network — the module only reaches out by spawning `omp` or the route-health
-instrument.
+(`scripts/probe-token-plan-shared.mjs:19-20`, `:22`, `:23`). `runOmpCatalog` (`:51`)
+is a `spawnSync("omp", [...])` catalog read. `probeListedModel` (`:84`) gates the
+configured route and returns a typed unserved reason when the route is malformed or
+when `ROUTE_HEALTH` (`:25`) is absent, otherwise spawning the probe as a subprocess
+under `process.execPath`. `assertNoSecrets` (`:30`) gives both probes one redaction
+gate and `failureVerdict` (`:39`) one verdict shape, so neither probe re-implements
+them. Posture is network — the module only reaches out by spawning `omp` or the
+route-health instrument.
 
 ## `scripts/probe-token-plan-kimi.mjs`
 
-`scripts/probe-token-plan-kimi.mjs` (155 L) answers one narrow question — whether the
+`scripts/probe-token-plan-kimi.mjs` (147 L) answers one narrow question — whether the
 Alibaba Token Plan serves `kimi-k3` / `kimi-k2.7-code` on their primary route
 (`scripts/probe-token-plan-kimi.mjs:2`) — with OMP as the only credential authority
-(`:3-4`). Its argv surface is `--help`/`-h` only, which prints and exits 0 (`:57-62`);
-any other `-`-prefixed argv goes through `fail` (`:28`), which prints a redacted
-verdict and exits 2 (`:32`). Targets come from `readGlobalProviderAliasRoutes` (`:73`)
-filtered to routes whose lowercase form `includes("kimi")` (`:81`); a sweep with no
+(`:3-4`). Its argv surface is `--help`/`-h` only, which prints and exits 0 (`:57-58`);
+any other `-`-prefixed argv goes through `fail` (`:24`), which prints a redacted
+verdict and exits 2 (`:28`). Targets come from `readGlobalProviderAliasRoutes` (`:69`)
+filtered to routes whose lowercase form `includes("kimi")` (`:77`); a sweep with no
 such route prints `ok: true, available: false, targetStatus: "not-configured"`
-(`:92-94`) and still exits 2 (`:104`). `probeTarget` (`:43`) delegates to
+(`:89-90`) and still exits 2 (`:100`). `probeTarget` (`:39`) delegates to
 `probeListedModel` with a kimi-specific `unservedRowReason` mapping the typed field or
-`"not served"` (`:45`), and a model absent from the catalog reports
-`"not listed by /models"` (`:127`). Per-model results merge with OR semantics so a
-served sibling route is never overwritten by a failed one (`:128`, `:129`), and
-availability is the `some(...)` over those merged results (`:131`) — exit
-`available ? 0 : 2` (`:148`). Posture is network: one `omp models` catalog read plus
-one route-health subprocess per listed target.
+`"not served"` (`:41`), and a model absent from the catalog reports
+`"not listed by /models"` (`:119`). Availability is the `some(...)` over merged
+results (`:123`) — exit `available ? 0 : 2` (`:140`). Posture is network: one
+`omp models` catalog read plus one route-health subprocess per listed target.
 
 ## `scripts/probe-token-plan-models.mjs`
 
-`scripts/probe-token-plan-models.mjs` (247 L) asks the same question for every
+`scripts/probe-token-plan-models.mjs` (244 L) asks the same question for every
 configured **non**-Kimi alias and fails unless every target serves
-(`scripts/probe-token-plan-models.mjs:2-4`). Unlike kimi it persists a durable verdict:
-`writeVerdict` (`:46`) writes `VERDICT_PATH` (`:40`), defaulting to
-`.ufo/probes/probe-token-plan-models.verdict.json` (`:41`) with
-`UFO_PROBE_VERDICT_PATH` as the override (`:40`), through an exclusive tmp created by
-`openTmpExclusive` (`:73`, `O_EXCL` `:74`), a `renameSync` (`:58`) and a parent-dir
-fsync (`:65-67`). `fail` (`:135`) is stdout-only by design so usage errors never
-clobber that evidence, while `emit` (`:109`) runs the `assertNoSecrets` gate (`:111`)
-before printing and calls `process.exit(code)` (`:132`). Targets are the authority's
-routes filtered by `!route.toLowerCase().includes("kimi")` (`:184`), and `clearVerdict`
-(`:88`) deletes a stale `available: true` when the authority read itself fails. A
-sweep with no targets emits `targetStatus: "not-configured"` (`:197`) and exits 2;
-otherwise models absent from the catalog report `"not listed by /models"` (`:224`) and
-availability is `targets.every(...)` (`:226`). Posture is network — `omp models` plus
-one route-health subprocess per listed target.
+(`scripts/probe-token-plan-models.mjs:2-4`). Unlike kimi it persists a durable verdict
+**next to itself**: `writeVerdict` (`:40`) writes `VERDICT_PATH` (`:35`) =
+`probe-token-plan-models.verdict.json` beside the script (no
+`UFO_PROBE_VERDICT_PATH` override in the live file), through an exclusive tmp created
+by `openTmpExclusive` (`:66`, `O_EXCL`), a `renameSync` (`:51`) and a parent-dir
+fsync — the former `atomic-write.mjs` dependency is inlined here. `emit` (`:108`)
+runs the shared `assertNoSecrets` gate (`:110`) before printing; `clearVerdict`
+(`:81`) deletes or overwrites a stale `available: true` when durable write or secrets
+refusal fails. A sweep with no targets emits `targetStatus: "not-configured"`
+(`:196`) and exits 2; models absent from the catalog report
+`"not listed by /models"` (`:221`) and availability is `targets.every(...)` (`:223`).
+Posture is network — `omp models` plus one route-health subprocess per listed target.
 
 ## `scripts/probe-redact.mjs`
 
-`scripts/probe-redact.mjs` (160 L) owns the canonical redaction table shared by the
-route-health probe and the token-plan pair: the umbrella `CREDENTIAL_SHAPE`
-(`scripts/probe-redact.mjs:8`) and the ordered `REDACT_PATTERNS` list (`:9`), with
-`CREDENTIAL_TOKEN_PATTERN_INDEX` (`:44`) selecting the subset the emit gate must
-refuse even in a non-redact field, compiled once as `COMPILED_REDACT_PATTERNS`
-(`:60`). `containsCredential` (`:49`) and `redact` (`:92`) both strip invisible
-credential splitters — `CREDENTIAL_SPLITTER_CHARS_RE` / `HAS_CREDENTIAL_SPLITTER_RE`
-(`:69-70`) — and re-scan through `redactOnce` (`:72`), so a format-character-split
-token is still a credential. `parseJsonPayload` (`:118`) is the typed payload reader
-whose `RedactError` (`:110`) carries the stable `empty_payload` (`:120`) /
-`invalid_json` (`:130`) discriminator; this is the table the route-health probe imports
-as `CREDENTIAL_SHAPE`/`redact` instead of hand-mirroring it. `unservedReason` (`:150`)
-is the reason ladder over a route-health row — typed failure field first, then the
-row/subprocess outcome, then `uncompletedReason` (`:140`). Posture is offline: pure
-regex and JSON, no IO, no CLI, no network.
-
-## `scripts/probe-ufo-route-health.test.mjs`
-
-`scripts/probe-ufo-route-health.test.mjs` (411 L) is the colocated `node --test` suite
-over the probe's refusal arms, 7 cases at `scripts/probe-ufo-route-health.test.mjs:24`,
-`:77`, `:122`, `:171`, `:229`, `:289` and `:339`. Every case stages the three sibling
-modules into a fixture `scripts/` dir with `stageProbe` (`:18`) — three `copyFileSync`
-calls for `SCRIPT`/`REDACTION`/`ATOMIC_WRITE` (`:19-21`) — because the probe imports
-`./probe-redact.mjs` and `./atomic-write.mjs` as siblings (`:15`). The first case parks
-a fixture `.ufo` root and a shell `omp` fake on `PATH` (`:38-45`) that swaps the state
-path for a symlink mid-sweep, then asserts the completed sweep survives with exit 1
-(`:66`) and that stderr carries the envelope `schema: "ufo-route-health-error-v1"`
-(`:70`) with `code: "state_path_symlink"` (`:71`). The remaining cases cover padded
-routes refusing before OMP or state mutation (`:77`), invisible line/paragraph
-separators escaped in usage output (`scripts/probe-ufo-route-health.test.mjs` `:122`), SIGTERM-immune timeout and output-overflow
-escalation to SIGKILL (`scripts/probe-ufo-route-health.test.mjs` `:171`, `:229`), and reset-calendar parsing (`:289`, `:339`).
-Posture is offline: the only `omp` ever executed is a fixture staged on a temp `PATH`.
-
-## `scripts/probe-redact.test.mjs`
-
-`scripts/probe-redact.test.mjs` (79 L) is the colocated unit suite for the redaction
-module: it imports `test` from `node:test` (`scripts/probe-redact.test.mjs:1`), the two
-functions under test — `containsCredential`, `redact` (`:3`) — and `runOmpCatalog`
-(`:7`). Its first case loops invisible-separator-split credentials (Cf, Mn, Zl/Zp, NEL
-and the non-ASCII `Zs` set) and requires `containsCredential === true` with
-`redact === "[redacted]"` for each (`:9-29`). A second case pins the JWT floor at 10
-base64url chars after `eyJ` so the minimal `{"alg":"HS256"}` header redacts (`:34-35`),
-and a third pins non-credential prose as unchanged (`:42-43`). The catalog-shape case
-uses `withFakeCatalog` (`:46`) to park a temp `omp` script on `PATH`, then asserts
-`runOmpCatalog()` throws for wrong-shaped success (`:70-73`) while `{ models: [] }`
-must `deepEqual([])` (`:77`). Posture is offline: every network-shaped path is a temp
-fixture, never a real provider.
-
-## `scripts/atomic-write.mjs`
-
-`scripts/atomic-write.mjs` (82 L) is the shared durable-publish primitive extracted
-from four former inlined twins, exporting `writeAtomicFile(destination, contents, opts)`
-(`scripts/atomic-write.mjs:38`). It computes
-`temporary = \`${destination}.${process.pid}.${Date.now()}.tmp\`` (`:46`), creates it
-with `flag: "wx"` (`:53`), fsyncs the file through `O_RDONLY | O_NOFOLLOW` (`:56`),
-then `renameSync` (`:63`) and fsyncs the parent directory (`:66-68`). Caller-specific
-safety contracts arrive as named hooks — `preCreate` (`:47`), `preRename` (`:62`) and
-`afterRename` (`:65`) — plus `createMode` (`:39`) and `markPublishedError` (`:43`).
-When `markPublishedError` is set and the rename already landed, a later failure gets
-`error.bytesLanded = true` (`:73`) so the caller reports the artifact as present with
-only durable-directory confirmation absent. It is offline and library-only: `node:fs`
-plus `node:path`, no CLI, no network, no subprocess.
+`scripts/probe-redact.mjs` (116 L) owns the redaction table shared by the token-plan
+pair (route-health keeps a mirrored standalone copy — see parity note at
+`scripts/probe-ufo-route-health.mjs:63-65`). The umbrella `CREDENTIAL_SHAPE`
+(`scripts/probe-redact.mjs:8`) and the ordered `REDACT_PATTERNS` list (`:9`) compile
+once as `COMPILED_REDACT_PATTERNS` (`:33`). `redact` (`:67`) strips invisible
+format-character splitters via `FORMAT_CHARS_RE` (`:45`) and re-scans through
+`redactOnce` (`:47`), so a Cf-split token is still a credential. `parseJsonPayload`
+(`:75`) is the typed payload reader; `unservedReason` (`:106`) is the reason ladder
+over a route-health row — typed failure field first, then the row/subprocess outcome,
+then `uncompletedReason` (`:97`). The historical `containsCredential` export and
+`RedactError` class are **gone** from the live file (116 L, not 160 L). Posture is
+offline: pure regex and JSON, no IO, no CLI, no network.
 
 ## `scripts/fake-omp.mjs`
 
-`scripts/fake-omp.mjs` (399 L) is the no-network OMP double both suites stage as `omp`
+`scripts/fake-omp.mjs` (392 L) is the no-network OMP double probe tests stage as `omp`
 on `PATH`; its header states it never claims live capacity and never reaches a real
-provider (`scripts/fake-omp.mjs:10`). Behavior is driven by `FAKE_OMP_MODE` (`:29`) and
-`FAKE_OMP_DELAY_MS` (`:34`), with `MODE` defaulting to `"healthy"` for an unset or empty
+provider (`scripts/fake-omp.mjs:10`). Behavior is driven by `FAKE_OMP_MODE` (`:30`) and
+`FAKE_OMP_DELAY_MS` (`:35`), with `MODE` defaulting to `"healthy"` for an unset or empty
 value (`:31`). `CATALOG` (`:47`) is the single source of truth for
 `omp models <provider>` listings and for the `-p` catalog gate enforced by
 `catalogHasRoute` (`:60`), while only `SUCCESS_MODES` (`:58`) ever claim a served route.
@@ -226,9 +188,8 @@ Output flows through `emit`/`emitRaw` (`:95`, `:98`), and `flushSession` (`:174`
 mirrors the same lines into `fake-omp-session.jsonl` (`:177`) under `--session-dir`, the
 way real OMP persists sessions. Its argv hardening is deliberate non-parity — a valued
 flag with a missing, empty, dash-leading or duplicated value is refused via
-`usageRefusal` (`:160`, `:258`) with exit 2 — and dispatch falls through to
-`unknown command` for anything that is not `models` (`:203`), `-p` (`:240`) or
-`--help`/`-h` (`:68`).
+`usageRefusal` (`:160`) with exit 2 — and dispatch falls through to
+`unknown command` for anything that is not `models`, `-p` or `--help`/`-h`.
 
 ## argv surface
 
@@ -336,135 +297,125 @@ its own emit gate refuse its own redacted rows
 
 | Member | Posture | Evidence |
 |---|---|---|
-| route-health | network — `spawnCollect("omp", ...)` (`scripts/probe-ufo-route-health.mjs:814`) runs `-p --mode json --model <route> --thinking <effort> --max-time Ns` | `scripts/probe-ufo-route-health.mjs:826`, `:828` |
-| token-plan kimi/models | network — `omp models` catalog + route-health subprocess | `scripts/probe-token-plan-shared.mjs:20`, `:160` |
-| token-plan shared | network — `spawnSync` of `omp` and of `process.execPath` + route-health | `:108`, `:173-174` |
-| redact + its test | offline — pure regex/parse | `scripts/probe-redact.test.mjs:1` |
-| route-health test | offline — stages a shell `omp` fake into a fixture `PATH` | `scripts/probe-ufo-route-health.test.mjs:38-45` |
+| route-health | network — `spawnCollect("omp", ...)` (`scripts/probe-ufo-route-health.mjs:813`) | `scripts/probe-ufo-route-health.mjs:678`, `:813` |
+| token-plan kimi/models | network — `omp models` catalog + route-health subprocess | `scripts/probe-token-plan-shared.mjs:20`, `:51`, `:84` |
+| token-plan shared | network — `spawnSync` of `omp` and of `process.execPath` + route-health | `:51`, `:84` |
+| redact | offline — pure regex/parse | `scripts/probe-redact.mjs:8`, `:67` |
 | fake-omp | offline — "never reaches a real provider" | `scripts/fake-omp.mjs:10` |
 
-No member is started by this note; probes are read + `node --check` only.
+No member is started by this note; probes are read + `node --check` only. The
+two colocated suites that once filled offline rows are **removed** (see
+`## Round-32 membership removals`).
 
 ## Import / helper graph
 
 ```
-probe-ufo-route-health.mjs ──> probe-redact.mjs        (CREDENTIAL_SHAPE, redact)   :34
-                           └─> atomic-write.mjs         (writeAtomicFile)           :35
-probe-token-plan-kimi.mjs  ──> probe-token-plan-shared.mjs (assertNoSecrets, CATALOG_COMMAND,
-                                 failureVerdict, probeListedModel, PROVIDER, runOmpCatalog)  :10-17
-                           ├─> omp-global-config.mjs      (readGlobalProviderAliasRoutes) :18
-                           └─> probe-redact.mjs           (redact)                       :19
-probe-token-plan-models.mjs ─> probe-token-plan-shared.mjs ; omp-global-config.mjs      :25, :27-34
-probe-token-plan-shared.mjs ─> probe-redact.mjs  (containsCredential, parseJsonPayload,
-                                                   redact, unservedReason)              :12-17
+probe-ufo-route-health.mjs ──> (inlined redaction parity copy of probe-redact.mjs)  :63-65
+                           └─> (inlined persistState fsync+rename; no atomic-write) :1080, :1117
+probe-token-plan-kimi.mjs  ──> probe-token-plan-shared.mjs (assertNoSecrets, failureVerdict,
+                                 probeListedModel, PROVIDER, runOmpCatalog)
+                           ├─> omp-global-config.mjs      (readGlobalProviderAliasRoutes)
+                           └─> probe-redact.mjs           (redact)
+probe-token-plan-models.mjs ─> probe-token-plan-shared.mjs ; omp-global-config.mjs
+                           ├─> probe-redact.mjs           (redact, unservedReason)
+                           └─> (inlined writeVerdict / openTmpExclusive; no atomic-write) :40, :66
+probe-token-plan-shared.mjs ─> probe-redact.mjs  (parseJsonPayload, redact, unservedReason)
 ```
 
 `scripts/probe-token-plan-shared.mjs:23` fixes `ROUTE_TIMEOUT_MS = 250_000`
 (the subprocess budget the probes hand route-health) and `:22` fixes
-`CATALOG_TIMEOUT_MS = 45_000`. `probe-ufo-route-health.mjs` also carries a
-standalone parity copy of the redaction table for the fixture-copy path, which
-the suite stages alongside `probe-redact.mjs` and `atomic-write.mjs`
-(`scripts/probe-ufo-route-health.test.mjs:15`, `:21`).
+`CATALOG_TIMEOUT_MS = 45_000`. `probe-ufo-route-health.mjs` carries a
+standalone parity copy of the redaction table (`:63-65`) so tests can stage that
+one file alone; it no longer imports `./probe-redact.mjs` or `./atomic-write.mjs`.
 
 ## Concurrency and timeout bounds
 
 | Bound | Value | Source |
 |---|---|---|
-| probe timeout default | 240_000 ms | `scripts/probe-ufo-route-health.mjs:45` |
-| probe timeout range | 1000..=600000 ms | `:194` |
-| `--max-age-ms` range | 1000..=86400000 ms | `:956` |
-| routes per sweep | ≤ 16 | `:47` |
-| concurrent `omp` subprocesses | 8 (`PROBE_CONCURRENCY`, `mapPool`) | `:67`, `:785` |
-| per-stream buffer | 8 MiB (`MAX_BUFFER`) → ENOBUFS kills child | `:46` |
-| child timeout grace | probe timeout + 5_000 ms, then SIGTERM→SIGKILL after 2 s | `:799`, `:711-716` |
-| retained session bytes | 64 MiB/file, 128 MiB aggregate, 64 files | `:43`, `:44`, `:362` |
-| persisted state | 1 MiB | `:40` |
-| launch.json | 1 MiB, ≤ 64 stranded records | `:1019` |
+| probe timeout default | 240_000 ms | `scripts/probe-ufo-route-health.mjs:39` |
+| routes per sweep | ≤ 16 | `:41` |
+| concurrent `omp` subprocesses | 8 (`PROBE_CONCURRENCY`, `mapPool`) | `:61`, `:784` |
+| per-stream buffer | 8 MiB (`MAX_BUFFER`) | `:40` |
 | catalog timeout | 45_000 ms | `scripts/probe-token-plan-shared.mjs:22` |
 | route subprocess timeout | 250_000 ms | `scripts/probe-token-plan-shared.mjs:23` |
 
-`spawnCollect` re-implements spawnSync semantics over async `spawn` so probes
-can run concurrently, and escalates a SIGTERM-immune child to SIGKILL so the
-parent always exits (`scripts/probe-ufo-route-health.mjs:679-716`).
+`spawnCollect` (`scripts/probe-ufo-route-health.mjs:678`) re-implements spawnSync
+semantics over async `spawn` so probes can run concurrently via `mapPool` (`:784`).
 
 ## Decision table — `scripts/probe-ufo-route-health.mjs` row verdict (`interpretRouteHealth`)
 
 | Condition (in order) | status | available | reason |
 |---|---|---|---|
-| window timestamps not finite | `unknown` | no | `invalid_validity_window` (`:1166`) |
-| `now > expiresAt` | `stale` | no | `expired` (`:1169`) |
+| window timestamps not finite | `unknown` | no | `invalid_validity_window` |
+| `now > expiresAt` | `stale` | no | `expired` |
 | row not an object | `unknown` | no | `malformed_record` |
-| `served` not boolean | `unknown` | no | `unknown_served` (`:1175`) |
+| `served` not boolean | `unknown` | no | `unknown_served` |
 | `served === true` and `failureClass === null` | `available` | **yes** | `null` |
-| `failureClass` unknown/absent/not in `FAILURE_CLASSES` | `unknown` | no | `failureClass ?? "unknown"` (`:1180`) |
+| `failureClass` unknown/absent/not in `FAILURE_CLASSES` | `unknown` | no | `failureClass ?? "unknown"` |
 | otherwise (a known failure class) | `unavailable` | no | the class |
+
+Live entry: `interpretRouteHealth` at `scripts/probe-ufo-route-health.mjs:1015`
+(file is 1195 L; round-13 line numbers in the citation ledger below are historical).
 
 ## Downstream consumption
 
-- **Owning suite** `tests/route-probes.test.js` (2439 L, 96 `test(` cases) drives
-  every member against `scripts/fake-omp.mjs`, staged as `omp` on `PATH`
-  (`tests/route-probes.test.js:23`, `:132-138`); its section markers cover
-  route-health (`tests/route-probes.test.js:285`), the typed payload refusal
-  (`:413`), `--state` confinement (`:514`), `interpretPersistedHealth` (`:843`),
-  `spawn_failure`/`output_overflow` (`:1045`), retry-after parsing (`:1181`),
-  argument validation (`:1230`), `--launch` (`:1361`), kimi (`:1628`), shared
-  (`:1948`) and models (`:2063`).
-- **Colocated suite** `scripts/probe-ufo-route-health.test.mjs` (411 L,
-  7 cases) re-stages the three sibling modules into a fixture `scripts/` dir.
-- **Gate plan** registers the files as SUT: route-health + sync-global-routing
-  as `scripts-suites` (`scripts/gates-plan.mjs:295`), and the probe/helper set
-  as `orchestration` (`:296`).
+- **Owning suite** `tests/route-probes.test.js` (outside the script-layer
+  universe) drives live members against `scripts/fake-omp.mjs`, staged as `omp`
+  on `PATH`. Exact case counts and section markers are **UNVERIFIED** against
+  origin HEAD `964f443e` in this re-census (consumer only; not an S7 member).
+- **Colocated suites** `scripts/probe-ufo-route-health.test.mjs` and
+  `scripts/probe-redact.test.mjs` are **absent** from the live tree (removed
+  members; see `## Round-32 membership removals`).
+- **Gate plan** historically registered route-health + the probe/helper set as
+  SUT in `scripts/gates-plan.mjs` — re-verify before citing live group lists.
 - **Durable verdict**: models writes
-  `.ufo/probes/probe-token-plan-models.verdict.json`
-  (`scripts/probe-token-plan-models.mjs:41`, overridable via
-  `UFO_PROBE_VERDICT_PATH` `:40`) for a downstream consumer — the concrete
-  consumer outside scripts/tests is **UNVERIFIED** from this tree.
-- **Fleet log**: refusal/exit history is recorded in `docs/BEHAVIOR-MATRIX.md`
-  (e.g. the 2026-09-10 kimi exit-2 with `kimiListed: []`) — **UNVERIFIED** as a
-  machine consumer; it is a human log.
+  `scripts/probe-token-plan-models.verdict.json` next to itself
+  (`scripts/probe-token-plan-models.mjs:35`, via `writeVerdict` `:40`) — the
+  historical `.ufo/probes/…` path and `UFO_PROBE_VERDICT_PATH` override are
+  **gone** from the live file. Concrete consumer outside scripts/tests is
+  **UNVERIFIED**.
+- **Fleet log**: refusal/exit history in `docs/BEHAVIOR-MATRIX.md` remains a
+  human log — **UNVERIFIED** as a machine consumer.
 
 ## Member-completeness probe
 
-Arm 1 — heading set vs member set (expect the member count, then no diff lines):
+Arm 1 — heading set vs member set (expect 6, then no diff lines). Both sides
+must be `LC_ALL=C sort`ed (locale trap recorded in SCORECARD `## Limits`):
 
 ```bash
-printf '%s\n' scripts/atomic-write.mjs scripts/fake-omp.mjs \
-  scripts/probe-redact.mjs scripts/probe-redact.test.mjs \
-  scripts/probe-token-plan-kimi.mjs scripts/probe-token-plan-models.mjs \
-  scripts/probe-token-plan-shared.mjs scripts/probe-ufo-route-health.mjs \
-  scripts/probe-ufo-route-health.test.mjs | sort > /tmp/s7-members.txt
-grep -oE '^## `scripts/[^`]+`' corpus/knowledge/route-probe-cluster.md \
-  | sed -E 's/^## `//; s/`$//' | sort > /tmp/s7-headings.txt
-wc -l < /tmp/s7-members.txt                        # 9
+ORIGIN=/home/vgpnk/Projects/ufo-fsd-alpha
+NOTE=corpus/knowledge/route-probe-cluster.md
+{
+  ls -1 "$ORIGIN"/scripts/probe-*.mjs
+  ls -1 "$ORIGIN"/scripts/fake-omp.mjs
+} | sed 's|.*/scripts/|scripts/|' | LC_ALL=C sort > /tmp/s7-members.txt
+grep -oE '^## `scripts/[^`]+`' "$NOTE" \
+  | sed -E 's/^## `//; s/`$//' | LC_ALL=C sort > /tmp/s7-headings.txt
+wc -l < /tmp/s7-members.txt                        # 6
 comm -3 /tmp/s7-members.txt /tmp/s7-headings.txt   # no output: 0 diff lines
 ```
 
-Arm 2 — per-section substance, with the same `member-probe.mjs` the S8 census
-note carries (its source is reproduced verbatim in
-`knowledge/remaining-scripts-census.md` → `## Member-completeness probe`):
+Arm 2 — claims gate on this row (parent re-pins declared count to 6 first):
 
 ```text
-$ UFO_SRC=/home/vgpnk/Projects/origin-work/ufo-fsd-alpha \
-  MEMBERS=/tmp/kumitate-r13/s7-members.txt \
-  NOTE=corpus/knowledge/route-probe-cluster.md node /tmp/member-probe.mjs
-HEADINGS: 9  MEMBERS: 9  DUPLICATE: 0
-MEMBER_PROBE: 9/9 ok                                                      # exit 0
+$ node scripts/claims-check.mjs --row S7 --src /home/vgpnk/Projects/ufo-fsd-alpha
+# expect: six section rows, live anchors, no SECTION_FILE_UNRESOLVED for the
+# three removed paths; MEMBER_COUNT_DRIFT until the registry cell says 6
 ```
 
-Drop-one control (one member heading renamed): arm 1 prints a two-line diff and
-arm 2 prints `MEMBER_PROBE: 7/9 ok` with `MISSING_HEADING` + `EXTRA_HEADING`,
-exit 1 — while `scripts/proxy-check.mjs` still reports `PROXY: MATCH` (exit 0),
-because it never reads note contents. The compensating check is this probe, not
-the proxy; turning it into a `--claims` mode of the proxy is pre-registered as a
-*next* operability move.
+Drop-one control (one member heading renamed): arm 1 prints a two-line diff;
+`claims-check` reports `SECTION_FILE_UNRESOLVED` while `proxy-check` can still
+read `PROXY: MATCH` on layer terms that ignore note contents. The compensating
+check is this probe / `--claims`, not the proxy alone.
 
 ## Limits of this note
 
-- **The cluster boundary is a stated rule, not a natural kind.** 9 members =
-  `probe-*.mjs` ×7 + `atomic-write.mjs` + `fake-omp.mjs`; both helpers are counted
-  because the cluster's suites stage and import them
-  (`scripts/probe-ufo-route-health.test.mjs:19-21`). The narrower `probe-*` glob is
-  7 files / 2651 L, and both readings are recorded in the membership table.
+- **Live membership is 6, not 9.** Command:
+  `( ls -1 $ORIGIN/scripts/probe-*.mjs; ls -1 $ORIGIN/scripts/fake-omp.mjs ) | wc -l`
+  → 6. Deleted since the round-13 freeze: `atomic-write.mjs`,
+  `probe-ufo-route-health.test.mjs`, `probe-redact.test.mjs` (see
+  `## Round-32 membership removals`). The registry row still declares 9 until
+  parent updates it — that drift is intentional and owned by parent.
 - `scripts/omp-global-config.mjs` is deliberately **excluded**: an S5 member
   already covered by `knowledge/route-resolution.md`, so it is reused, not
   residue.
@@ -472,23 +423,29 @@ the proxy; turning it into a `--claims` mode of the proxy is pre-registered as a
   counted as an S7 member — it lives outside the frozen script-layer universe
   (`scripts/*.mjs` + files under `scripts/*/`).
 - **Runtime behaviour was not exercised here.** No daemon, no `omp` invocation,
-  no live route was spent; the members are read + `node --check` only (9/9 exit
+  no live route was spent; the members are read + `node --check` only (6/6 exit
   0). These are live-network probes: running them is a deliberate, credential-
   authority-mediated act, not a documentation step.
 - **Member completeness is not machine-checked by `scripts/proxy-check.mjs`** —
   it counts registry rows and README rows, never note contents. The
   `## Member-completeness probe` above is the compensating check; it is a
   documentation check a reader re-runs, not a gate.
+- **Topic sections below the member block** (argv surface, exit map, bounds
+  table, citation ledger fence) still carry some round-12/13 line numbers that
+  pre-date the restructure; they are historical context, not the section-form
+  claim surface. Live anchors for the six members are only in the
+  `## \`scripts/…\`` sections above.
 
 ## Citation ledger — the round-12 fence, verbatim
 
-Frozen round-12 fence, kept verbatim: 109 `path:line` refs as measured then, against
-origin HEAD `daa371583`. It is **not** the note's current citation count — the round-13
-addendum added nine member sections with refs of their own, and the live count is whatever
-`node scripts/cite-check.mjs` reports for `corpus/knowledge/route-probe-cluster.md` at a
-given commit (round 13 measured `ok=270 fragment=45 refOwnerAmbig=0` for this file after the
-ambiguous-ref repair that made four suite refs explicit). The same refs appear unfenced in the prose above. Kept inside a
-fence so the ledger's own text is never re-parsed as new citations.
+Frozen round-12 fence, kept verbatim as a historical artifact against origin HEAD
+`daa371583`. It is **not** the note's current citation set — many paths and line
+numbers pre-date the restructure (including the three removed S7 members). The
+round-13 addendum and this round-32 re-census carry live refs only in the member
+sections above. The ledger text below is fenced so it is never re-parsed as new
+citations. Residual fragment from the pre-edit ledger intro (kept only to mark
+the fence boundary): ambiguous-ref repair that made four suite refs explicit.
+The same refs appear unfenced historically; do not treat them as live.
 
 ```
 scripts/fake-omp.mjs:10                        // Never claims live capacity; never reaches a real provider.
@@ -602,9 +559,11 @@ tests/route-probes.test.js:1948                // ---- probe-token-plan-shared.m
 tests/route-probes.test.js:2063                // ---- probe-token-plan-models.mjs tests ----
 ```
 
-Sources: `scripts/probe-ufo-route-health.mjs`, `scripts/probe-ufo-route-health.test.mjs`,
-`scripts/probe-redact.mjs`, `scripts/probe-redact.test.mjs`,
+Sources (live S7 members + excluded reuse + external consumers):
+`scripts/probe-ufo-route-health.mjs`, `scripts/probe-redact.mjs`,
 `scripts/probe-token-plan-kimi.mjs`, `scripts/probe-token-plan-models.mjs`,
-`scripts/probe-token-plan-shared.mjs`, `scripts/atomic-write.mjs`,
-`scripts/fake-omp.mjs`, `scripts/omp-global-config.mjs`, `scripts/gates-plan.mjs`,
-`tests/route-probes.test.js`, `docs/BEHAVIOR-MATRIX.md`.
+`scripts/probe-token-plan-shared.mjs`, `scripts/fake-omp.mjs`,
+`scripts/omp-global-config.mjs` (S5, excluded), `tests/route-probes.test.js`
+(consumer, not a member). Removed from the live tree (no longer sources):
+`scripts/atomic-write.mjs`, `scripts/probe-ufo-route-health.test.mjs`,
+`scripts/probe-redact.test.mjs`.

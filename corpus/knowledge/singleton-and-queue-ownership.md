@@ -1,8 +1,16 @@
 # Singleton locks and queue ownership
 
+Registry family **S5** companion note for `scripts/ufo-mission-result.mjs`
+lock helpers. The path-form member section lives once in
+`knowledge/failure-telemetry.md` (`## `scripts/ufo-mission-result.mjs``) so the
+claims gate counts the file once; this note keeps topic headings and live
+own-file anchors only.
+
 ## `acquireSingletonLock`
 
-`scripts/ufo-mission-result.mjs` (export ~L1716). Used by fleet-dispatcher,
+`scripts/ufo-mission-result.mjs` export at
+`scripts/ufo-mission-result.mjs:1308` (prior note said ~L1716 — **dead after
+the 3691→2966 shrink**; corrected this round). Used by fleet-dispatcher,
 ufo-l0-watch, ufo-stale-watchdog. Mechanism: lock body `<pid>\n` +
 inode-bound owner hardlink `<ownerLinkPrefix>.<pid>.<starttime|x>.<bootId|
 x>.<hex32>` published atomically; takeover under a transient
@@ -11,6 +19,13 @@ alone can't distinguish reuse — starttime+bootId bind identity to the lock
 inode. Second start while owner identity is live → refused, exit 0
 (`watchdog_instance_refused` / `lock_path_occupied`). Two daemons would
 clobber last-writer-wins state and double-fire respawn/whip ladders.
+
+Related hub symbols (same member file): `appendRotatingLog` at
+`scripts/ufo-mission-result.mjs:1731`, `writeFileAtomicIfChanged` at
+`scripts/ufo-mission-result.mjs:1876`, `gatedConfigPath` at
+`scripts/ufo-mission-result.mjs:2143`, `newestMtime` at
+`scripts/ufo-mission-result.mjs:2566`, `isMainModule` at
+`scripts/ufo-mission-result.mjs:2391`.
 
 ## Queue ownership
 
@@ -21,6 +36,7 @@ Watchdogs repend THROUGH the dispatcher (`fleet-dispatcher repend`); a
 refusal (task terminal / mission live again) is a durable answer; a thrown
 error retries via `state.pendingRepend`. Empty queue is idle — the
 dispatcher never invents prompts, fleet-size refill, or filler missions.
+Owner family for the dispatcher itself is **S1**, not S5.
 
 ## Exec-path trust boundary
 
@@ -28,8 +44,17 @@ Env-overridable exec/config paths (`UFO_SIGHTING_PATH`, `UFO_CONFIG_PATH`,
 `UFO_GODSPEED_DIRECTIVE_PATH`) must resolve beneath the realpath'd project
 root — symlink components refused, fail closed `EXEC_PATH_OUTSIDE_ROOT`;
 `UFO_FLEET_ALLOW_EXTERNAL_TOOLS=1` is the test-only escape
-(`fleet-dispatcher.mjs` `gatedExecPath`).
+(`fleet-dispatcher.mjs` `gatedExecPath`). Config-path gating shared from S5
+hub: `gatedConfigPath` (`scripts/ufo-mission-result.mjs:2143`).
 
-Sources: `scripts/ufo-mission-result.mjs` `acquireSingletonLock` docstring;
-`scripts/ufo-stale-watchdog.mjs` header (SH-03); `scripts/fleet-dispatcher.mjs`
-header + `gatedExecPath`; `scripts/ufo-l0-watch.mjs` header.
+Sources: `scripts/ufo-mission-result.mjs` `acquireSingletonLock` at
+`scripts/ufo-mission-result.mjs:1308`; `scripts/ufo-stale-watchdog.mjs`
+header (SH-03); `scripts/fleet-dispatcher.mjs` header + `gatedExecPath`;
+`scripts/ufo-l0-watch.mjs` header.
+
+## Round-32 recensus notes
+
+- No path-form `## `scripts/…`` section here (avoids occurrence double-count
+  with `failure-telemetry.md`).
+- Dead anchor `~L1716` → live `scripts/ufo-mission-result.mjs:1308`.
+- No section removed for a missing tree file — the lock export remains.
