@@ -1251,3 +1251,10 @@ coverage:runtime-layer=8; K=49/49 coverage:kimi-layer=10; pins=6 match)` exit 0;
 `SECTION_NO_ANCHOR`/`SECTION_FILE_NOT_MEMBER` warnings. Unblock: re-anchor those sections to
 the live files. The K-block boundary clause (census, not exclusive ownership) is recorded in
 `SCORECARD.md`. Six cross-domain defects were routed to `ufo-fsd-alpha`, not absorbed.
+
+**Independent scope check (appended 2026-10-14).** The `KimiLayerRegression` audit
+re-ran the gates three times across the round: `C1k` 5, `C1k_total` 5, `K_members`
+49, `K_sections` 49 and `coverage_kimi` 10 are unchanged, `pin.kimi-census` still
+matches, and `kimi-census.mjs` reads `CLEAN (members=49 checked=49)` each time —
+so the round moved only the two S/R layer scores it pre-registered and leaked
+nothing into the K block. `PROXY: MATCH` exit 0 with `findings: []`.
