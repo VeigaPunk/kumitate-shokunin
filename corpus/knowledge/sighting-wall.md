@@ -118,29 +118,6 @@ remaining wall verbs; re-exports surface helpers at
 
 Sources: `scripts/ufo-sighting.mjs`; deps `scripts/ufo-sighting-lib/{base,argv,observe,surface}.mjs`.
 
-## `scripts/ufo-sighting`
-
-**Role.** Bash shim (95 L). Resolves its own path via `SCRIPT_SOURCE` /
-`BASH_SOURCE[0]` (`scripts/ufo-sighting:10`), anchors `ROOT` to the real
-`scripts/` parent (`:19`), and `exec`s Node on `scripts/ufo-sighting.mjs`
-(`scripts/ufo-sighting:95`) for the normal verb path.
-
-**Seams.**
-- `NODE_COMPILE_CACHE` defaulted under `$ROOT/.ufo/cache/node-compile`
-  (`scripts/ufo-sighting:24`).
-- `UFO_SIGHTING_ATTACH=1` with no args → `tmux attach-session` to
-  `ufo_sighting:1` (`scripts/ufo-sighting:26`–`:35`), socket override gated
-  by the same grammar as the Node `tmuxPrefix` path.
-- Internal inquiry child: `--ufo-sighting-inquiry-direct`
-  (`scripts/ufo-sighting:38`) snapshots the prompt under the session dir
-  (1 MiB byte cap, parity with `MAX_INQUIRY_PROMPT_BYTES`) then `exec omp`.
-- Internal native child: `--ufo-sighting-native-direct`
-  (`scripts/ufo-sighting:68`) → `run-omp-native-trial.mjs --interactive`.
-- Operator `--inquiry PROMPT_FILE` (`scripts/ufo-sighting:73`) builds a
-  scratch session dir and re-enters the Node `inquiry` verb.
-
-Sources: `scripts/ufo-sighting`.
-
 ## `scripts/ufo-sighting-lib/base.mjs`
 
 **Role.** Import-light shared constants, path anchors, and `SightingError`.
@@ -251,3 +228,14 @@ Sources: `scripts/ufo-sighting-lib/surface.mjs`.
   lib files change — editing a comment is enough.
 - Argv executable predicates disclose filesystem shape; they are not
   authorization.
+
+## Round-32 correction (appended): the bash shim is not an S-member
+
+The section for `scripts/ufo-sighting` was removed from the member list. The shim
+is a bash file: `LAYER_PATTERNS` counts `scripts/*.mjs` and files under
+`scripts/<dir>/`, so the shim is **not** an `S_member`, while its `## ` section was
+still counted `inFamily` by the claims gate. That made the section numerator one
+larger than the member set (91 sections over 91 members, one of which was not a
+member). Independent boundary re-enumeration measured the honest set: **S4 = 5
+members**, S_members 91, S_sections 90 ⇒ `floor(10 × 90/91) = 9`. The earlier
+`coverage:script-layer = 10` reading was one inflated section.
