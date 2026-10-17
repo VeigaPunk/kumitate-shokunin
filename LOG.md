@@ -1314,6 +1314,39 @@ The six remaining backticked occurrences of the R1 wildcard live in the Move log
 `## Limits` as **prose about the old defect**, not in a `| S|R<n> |` registry row, so
 they do not feed `familyPatterns()` — do not "fix" them by deleting the history.
 
+- 2026-10-15 — round 18 (current fleet cycle; runtime member coverage).
+  Trigger: `SCORECARD.md` ties operability and runtime coverage at 8;
+  `LOG.md`'s round-32 section-honesty audit names eight missing R3/R4/R6
+  identities. The inherited, uncommitted steered-round-17 plan is preserved
+  and explicitly adopted under round 18; no claim of a new round-17 result.
+  Baseline lane revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`.
+  Read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
+  Before command:
+  `node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
+  → MATCH, runtime 75/92, score 8, script 91/91, K 49/49, operability 8,
+  all six pins match. Selected command:
+  `node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict --json`
+  → DRIFT, exit 1, seven sections, zero errors, three count-suspect warnings.
+  Both results were also re-derived on a `git archive` snapshot of the
+  baseline commit; the temporary snapshot was removed. Snapshot citation
+  sweep (`node scripts/cite-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --fleet /home/vgpnk/Projects/shokunin --json`,
+  run from the extracted revision) → FAIL, 451 errors / 443 warnings:
+  existing debt, not a reason to weaken the checker or repair unrelated
+  material in this move.
+  Action: one native OMP task batch dispatched nine host-routed seats:
+  RuntimePlan (planner), ProvinceOverlap (connector), ProfileMembers,
+  SupportMembers, DedupeMembers (executors), EvidenceScribe (scribe),
+  RuntimeCensus (scout), SourceReview (reviewer), CoverageCritic (critic).
+  Executors own three disjoint existing notes; L1 owns bookkeeping and git.
+  Native `task` is the shokunin host mapping of AgentSwarm, not a UFO
+  validator wave. No per-lane model aliases, routing edits, domain-tree
+  writes or upstream Rust-test execution are part of this move.
+  Acceptance: eight distinct additions, selected rows exactly 5/6/4 with
+  strict adv=0, runtime 83/92 and score 9, every other frozen term/pin held.
+  RuntimePlan independently confirmed the threshold and duplicate-section
+  falsifier (`scripts/proxy-check.mjs:595`,
+  `scripts/claims-check.mjs:399-407`); strict success alone is insufficient.
+
 - 2026-10-15 — round 33 (interactive cutover; BLOCKED before native dispatch).
   Correction to the inherited current-cycle round-18 entry immediately
   above: launch counter 18 is not a completed-round count. The filed fleet
@@ -1357,7 +1390,6 @@ they do not feed `familyPatterns()` — do not "fix" them by deleting the histor
   record commit may add only the real work hash, closure diagnostic and
   continuation evidence covered by this entry; no candidate admission.
 
-[Showing lines 1349-1391 of 1392. Use :1392 to continue]
 - 2026-10-15 — round 33 (single-axis wave-artifact erratum; still blocked).
   The first saved wave in `e6cdc8f324f8fcc98c3314422e0c2f35f6aedafe`
   declared operability alongside runtime coverage, contrary to this round's
@@ -1368,8 +1400,6 @@ they do not feed `familyPatterns()` — do not "fix" them by deleting the histor
   Earlier bytes remain in the cited commit; axis-correction.json names
   the superseded declaration. Operability remains a no-harm observation,
   not a second move. Candidate and all axis/trend verdicts stay unchanged.
-
-[Showing lines 1392-1402 of 1403. Use :1403 to continue]
 
 ## 2026-10-16 — protocol conformance: SCORECARD contract fields
 

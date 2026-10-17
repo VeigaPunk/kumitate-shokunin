@@ -71,3 +71,45 @@ overlap), the parent integrating:
     incl. frozen registry members), so the S/R terms legitimately DRIFT. That
     re-census is parked OMP-side work (with the S2 move) per the operator's
     Kimi-CLI directive; recorded in `SCORECARD.md ## Planned`, not fitted.
+
+## Steered round 18 — current fleet cycle (2026-10-15)
+
+This appended entry is separate from the historical Kimi expansion above.
+The current mission selects `coverage:runtime-layer`, tied with operability
+at 8, because eight named missing members reach the exact 83/92 threshold
+for 9. The inherited uncommitted steered-round-17 plan is preserved in
+`SCORECARD.md`; it is adopted under round 18, not relabelled as completed
+round-17 work. Motivating evidence: the round-32 section-honesty audit and
+the current round-18 entry in `LOG.md`.
+
+Baseline revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`.
+Read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
+The baseline was replayed from `git archive`, independently of live note
+edits; the temporary snapshot was removed.
+
+### Gate — current-cycle candidates and falsifier
+
+- Admit candidates: three missing profile/cost members, three runtime-support
+  test companions and two dedupe/L3 test companions. Each must have its own
+  source-backed section, live own-file anchors and verbatim symbols.
+- Reject candidate: treating a numeric proxy MATCH or a strict claims MATCH
+  as distinct-member proof. The proxy counts section occurrences, while
+  the claims gate's files-form count only rejects undercounts. RuntimePlan
+  independently identified duplicate-one/drop-one as the strongest falsifier;
+  require exact identity sets and occurrences=distinct at 5/6/4.
+- Reject candidate: declaring upstream Rust tests passed on source inspection.
+  No domain-tree writes, upstream test execution, provider calls or routing
+  modifications are part of this documentation move.
+- Baseline command:
+  `node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
+  → MATCH, runtime 75/92, score 8; script 91/91, K 49/49, six matching pins.
+- Baseline strict command:
+  `node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --strict --json`
+  → DRIFT, exit 1, seven sections, zero errors, three count-suspect warnings.
+- Citation-sweep boundary: the archived baseline already has 451 errors and
+  443 warnings. Acceptance requires no new citation errors attributable to
+  the additions, not a fabricated repository-wide green verdict.
+- Outside spot-check: no external non-author promotion verifier has reviewed
+  this current-cycle move. Lane-dispatched review remains lane evidence;
+  it does not qualify for checked promotion boxes or an outside discernment
+  verdict under the canonical learning protocol.

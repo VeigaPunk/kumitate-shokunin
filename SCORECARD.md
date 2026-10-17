@@ -283,9 +283,9 @@ C2_total=74
 S_members=91
 S_sections=91
 R_members=92
-R_sections=75
+R_sections=83
 coverage_script=10
-coverage_runtime=8
+coverage_runtime=9
 C1k=5
 C1k_total=5
 K_members=49
@@ -306,7 +306,7 @@ pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=6 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`) and C=11 (`## Verifiable checklist`; 11th item = the kimi-substrate census, the first item that runs green without the origin tree) ⇒ 17/20 = 0.85 ⇒ 8 — 9 needs A+C ≥ 27 (10 more honest items), so the proxy saturates long before the axis does | round 19 |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 91/91)` = **10** (corrected in-round to `floor(10 × 90/91)` = **10** — the shim section was not an S-member) — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**91**, round-32 measurement; the pre-round value was 74), `S_members` = **91** = `ls scripts/*.mjs \| wc -l` → 73 + `find scripts -mindepth 2 -type f \| wc -l` → 18 (RECURSIVE; depth-1 reads 87 and undercounts). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
-| coverage:runtime-layer | 8 | `floor(10 × 11/11 × 75/92)` = **8** — `C1r/C1r_total` = **11/11** (`R1`–`R11`), `R_sections` = **75** member-only sections (round-32 measurement; the pre-round value was 69), `R_members` = **92** = 88 runtime `.rs` + 4 CLI `.rs` (the 2026-10-12 upstream restructure deleted 6 runtime files). Strict row gate: R1 8 / adv=0, R8 4 / adv=0; explicit occurrence=distinct proof 8=8 and 4=4. Derived as `coverage_runtime`; before→after in `## Move log` | round 17 |
+| coverage:runtime-layer | 9 | `floor(10 × 11/11 × 83/92)` = **9** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
 | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 49/49)` = **10** — round 22 tightened `K_sections` to **distinct** members named in sections (pre-registered round 21, hole closed with duplicate-one/drop-one hermetic cases, 98/98 selftest). The anticipated honest drop **did not occur**: measurement refuted the round-21 "~30 distinct" estimate — all **49/49** members were already named by the sectionization wave. Term improved (occurrence inflation closed), score unchanged | round 22 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
@@ -375,6 +375,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 18 | coverage:runtime-layer (current fleet cycle, 2026-10-15) | lane `6b982abbb20378b5110bba5f2f9bd581ac20d08e`: 75/92, score 8; selected rows 2/5, 3/6, 2/4, strict warnings 3 | target 83/92, score 9; selected rows 5/5, 6/6, 4/4; acceptance requires strict warnings 0 and eight new distinct identities | Current-cycle plan under `## Planned`; actual work revision and post-commit counting outputs are appended in the measurement record. Historical round-18 Kimi entry below is unchanged. |
 | 31 | quality + coverage (the multi-line-backtick class resolved doc-side) — FINAL goal round | round 28 named 5 lost citations in round-6-aggregator-audit; the pairing-grammar tradeoff left open | **doc-side resolution**: each site reformatted to a single-line span (root cause confirmed: prose tokens never emit findings — `:1412-1426`); +5 notes, ZERO vanished findings, quoted bytes byte-identical; 2 honest edits restored 5 citations; `:118` left byte-exact (would need quoted-byte alteration; was never a multi-line loss); ~7 further recoverable sites in the same file NAMED as residue | verify lane: 5/5 report, zero vanished, quotes byte-identical, no DEFECT; tool untouched 62/62 |
 | 30 | quality + calibration (doc-repair trio; --integrations 6/9 → 9/9 — first full green since the restructure) | F1 falsified GateDecision pointer; F4 15 owner-captured refs (24 with siblings); F3 notes mapping the superseded 14,769-line revision; F3 integration case hardcoding a dead token | **F1**: measured re-anchor + historical pointer kept as prose (rewriting it would falsify the audit's own record); **F4**: explicit owner statements re-own all 24 refs, error count unchanged; **F3**: notes marked superseded-revision-historical (git pin kept, content hash described not pinned per SKILL.md:616-620, current bytes pinned `ba5e02be…`); the F3 CHECK then blocked 9/9 (hardcoded `44a3c781`, no live file hashes to it) — parent re-tokened to `ba5e02be` (expectation-refresh class, intent preserved) → **9/9**. Parent consistency: round-7 de-pinned, 296→850 commits anchor measured. Errors 704→700 (2 de-pins flagged + signed off; zero dropped claims) | verify lane: 6/6 anchors measured correct, no prose deleted, no-permissiveness PASS; 8/9 pre-parent-fix with the check-repair boundary named |
 | 29 | operability + calibration (off-by-one root-caused; integrations 4/9 → 6/9) | `off` was span.start for every span token: −1 for a first token (rounds 27-28 measurement), the WHOLE span start for later tokens in multi-token spans (latent); --integrations 4/9 (stale samples + frozen indexSize) | **root fix**: tokens consumed as regex runs over the unwrapped view, offsets mapped through view.offs — 4128/4128 span-tokens slice-exact (verify-lane instrumented probe); marker window tightened 3→2 chars; **error set byte-identical** (703→703 symbols, 543→543 plain; zero vanished errors/warnings, one lost citation CORRECTED: aggregator-audit:118 `:36` rebinds to fleet-dispatcher.mjs). --integrations sample list refreshed to the current tree (queue.mjs → surface.mjs; indexSize computed live 1743) → **6/9**; the 3 residual reds are doc-repair items (F1 GateDecision pointer, F3 stale 44a3c781 content pin, F4 15 primeagent line refs) — queued, not weakened. Selftest 58→62/62 (+4, before/after proofs) | verify lane: off-by-one gone at root (instrumented probe, 4128/4128), consumers intact (FP_EXEMPT 19→19, sticky fixture unchanged), no-permissiveness PASS, no DEFECT; the 6/9 shortfall honestly explained (doc-repair scope) |
@@ -428,7 +429,63 @@ receipt fields. Do not loop or redispatch inside this session. Plan and
 exact blockers: `.ufo/rounds/round-33/wwkd-plan.md`, `routing.json`, and
 `receipt-prerequisites.json`.
 
-[Showing lines 419-430 of 1575. Use :431 to continue]
+**Steered round 18 (2026-10-15; current fleet cycle).** Execute the
+eight-member runtime move below under the current round, not round 17.
+The round-17 plan was inherited uncommitted at lane HEAD
+`6b982abbb20378b5110bba5f2f9bd581ac20d08e`; it is preserved as predecessor
+work, not a claim of a completed round. The historical round-18 Kimi expansion
+entry is a separate dated record and remains unchanged.
+
+The current baseline was re-executed before editing the notes:
+`node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
+returned MATCH, runtime 75/92 and score 8, script 91/91 and score 10,
+K 49/49 and score 10, operability 8, six matching pins, zero findings.
+The same row command recorded below returned seven selected-family sections,
+zero errors and three count-suspect warnings. Source HEAD remains
+`964f443ee53df0ce06bd689af01f0dea031b01f9`.
+
+This round uses one heterogeneous native OMP `task` batch with nine seats:
+planner RuntimePlan; connector ProvinceOverlap; executors ProfileMembers,
+SupportMembers and DedupeMembers; scribe EvidenceScribe; scout RuntimeCensus;
+reviewer SourceReview; critic CoverageCritic. Roles use the host route table;
+no model or routing override is introduced. This is the shokunin host mapping
+of AgentSwarm, not a UFO validator wave or a native judged handoff.
+
+Falsifier and halt condition: the inherited target below remains exactly
+83/92, score 9, with selected-row identities 5+6+4, no duplicates and no
+advisories under the strict row gate. All other frozen terms and pins must
+hold. The committed after-measurement will name its actual work revision in
+an appended measurement record; a prospective hash is not evidence.
+
+**Steered round 17 (2026-10-15; distinct from the historical round-17 entry).**
+Lowest live axes tie at 8: operability and `coverage:runtime-layer`. Runtime
+coverage wins the falsifiability tie-break: eight named missing members have
+an exact threshold, while operability needs ten additional honest runnable
+items. Baseline lane revision: `6b982abbb20378b5110bba5f2f9bd581ac20d08e`;
+read-only source revision: `964f443ee53df0ce06bd689af01f0dea031b01f9`.
+
+One move: add source-backed member sections to the existing R3/R4/R6 notes:
+R3's cost-ledger validation tests, execution-profile tests and native-profile
+module; R4's overlay, lease and live-transport test companions; R6's distill
+and L3 test companions. Preserve historical sections and their revision
+labels. No tool, registry membership, formula, script-layer or K-block change.
+
+Before counting command:
+`node scripts/proxy-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --json`
+returned MATCH with runtime 75/92, score 8, script 91/91, K 49/49 and all six
+pins matching. Row command:
+`node scripts/claims-check.mjs --src /home/vgpnk/Projects/ufo-fsd-alpha --row R3 --row R4 --row R6 --json`
+returned R3 2/5, R4 3/6, R6 2/4: seven sections and three
+MEMBER_COUNT_SUSPECT advisories, zero errors.
+
+Acceptance: runtime 83/92 and score 9; selected rows have exactly 5, 6 and 4
+distinct in-family members, one section per identity, live own-file anchors
+and verbatim symbols, with strict row gate advisory-free. The threshold is
+ceil(0.9 × 92) = 83. Source inspection is not a claim that Rust tests ran.
+Any denominator/source-revision movement, duplicate contribution, invented
+behavior or missing target member falsifies this move. No axis retired or
+split this round.
+
 **round 13 (executed) vs the forecast above.** The pre-registered 13-plan is the
 row that ran, with one substitution and one addition, both measured:
 
@@ -1515,8 +1572,6 @@ Owned round-33 evidence/record commit is recorded in
 `.ufo/reports/round-33/kumitate.md` after it exists. The candidate source
 notes and their inherited current-cycle metadata remain uncommitted; the
 original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
-
-[Showing lines 1524-1574 of 1575. Use :1575 to continue]
 
 ## Capabilities
 
