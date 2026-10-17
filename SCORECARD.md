@@ -1517,3 +1517,15 @@ notes and their inherited current-cycle metadata remain uncommitted; the
 original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 [Showing lines 1524-1574 of 1575. Use :1575 to continue]
+
+## Capabilities
+
+| Capability | What it can now do | Evidence pointer | First-working round |
+|---|---|---|---|
+| — none yet — | | | |
+
+Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
+
+## Saturation
+
+The lane's saturation line and stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.

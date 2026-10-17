@@ -1370,3 +1370,10 @@ they do not feed `familyPatterns()` — do not "fix" them by deleting the histor
   not a second move. Candidate and all axis/trend verdicts stay unchanged.
 
 [Showing lines 1392-1402 of 1403. Use :1403 to continue]
+
+## 2026-10-16 — protocol conformance: SCORECARD contract fields
+
+Already present as real sections a reader can record into: axes (`## Axes`), planned (`## Planned`), retired (`## Retired`).
+Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
+No axis claim was made and no score moved; no verdict or number was changed.
+The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
