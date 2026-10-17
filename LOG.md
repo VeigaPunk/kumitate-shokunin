@@ -1407,3 +1407,8 @@ Already present as real sections a reader can record into: axes (`## Axes`), pla
 Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
 No axis claim was made and no score moved; no verdict or number was changed.
 The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
+## 2026-10-17 — root README added
+
+- **Trigger.** Operator request for a repository front door. This checkout had no root `README.md`.
+- **Action.** Added `README.md` from `PROVINCE.md`, `corpus/README.md` (origin tree path and `node scripts/cite-check.mjs` with `--selftest` / `--json` / `--strict`), and the six files in `scripts/`. The membrane-seal precedent is the lesson path already named in `SCORECARD.md`.
+- **Non-claims.** No Devin wiki URL existed here and none was added. No axis claim, no score change. Not a craft round.
