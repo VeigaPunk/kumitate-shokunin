@@ -1407,3 +1407,16 @@ Already present as real sections a reader can record into: axes (`## Axes`), pla
 Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
 No axis claim was made and no score moved; no verdict or number was changed.
 The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
+
+## 2026-10-17 — first-class README (not a craft round)
+
+**Evidence.** This repository either had no root `README.md` or only the
+generic 22-line lane stub (`A **shokunin lane** — an expert agent for one
+domain…`). A new agent landing here had to reconstruct the province from
+`PROVINCE.md`, `SKILL.md` (when present), the directory listing, and
+`LOG.md`. Wrote `README.md` from those sources: owned domain and refusals
+from `PROVINCE.md`, start-here commands from files that exist in-tree
+(`tools/`, `scripts/`, `verifiers/`, `corpus/`), and fleet links to
+`VeigaPunk/shokunin`. No axis claim. No Devin wiki URL was added or
+rewritten (the only in-tree Devin wiki link remains the fleet-root
+`README.md` line).
