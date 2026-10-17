@@ -1407,3 +1407,15 @@ Already present as real sections a reader can record into: axes (`## Axes`), pla
 Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
 No axis claim was made and no score moved; no verdict or number was changed.
 The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
+
+## 2026-10-17 — readable front door
+
+Root README was absent. `node scripts/cite-check.mjs --help` and `--selftest` are in `scripts/cite-check.mjs` (usage text and header). SHONEN.md boxes are `[ ]`.
+
+Corpus index: `corpus/README.md` is line-cited (`corpus/knowledge/executable-scorecard.md` names lines 56-129) and was not edited. `corpus/knowledge/`, `corpus/lessons/`, evidence, fixtures, and earlier LOG entries were not rewrapped.
+
+Lint fixes: none. Human-legible Markdown in this repo had no unpinned same-line defect.
+
+Lint left in place: none in the human-legible set (README, PROVINCE, SKILL, SHONEN, MINT, AGENTS, corpus/README, corpus/QUALITY, plans/*.md).
+
+Devin: a search for `devin.ai` in this repo found no URL to edit. No wiki URL was added.
