@@ -1407,3 +1407,10 @@ Already present as real sections a reader can record into: axes (`## Axes`), pla
 Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
 No axis claim was made and no score moved; no verdict or number was changed.
 The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
+
+## 2026-10-17 — root README
+
+Motivating evidence: no root `README.md`. The page indexes the three
+dispatch shapes in `SKILL.md` and the six gates in `scripts/`, using each
+file's header for its contract name. `SHONEN.md` boxes are open. No Devin
+wiki URL exists in this repo.
