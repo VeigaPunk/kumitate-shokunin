@@ -1613,7 +1613,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, new-entry header trios and overdue rechecks | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 42/42; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
+| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
