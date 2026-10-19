@@ -137,3 +137,9 @@ source-check pin was removed; the independent sources gate remains listed in
 `SKILL.md` and the existing `PIN_UNPINNED` advisory is not suppressed.
 Saturation is declared under `SCORECARD.md` `## Saturation` (line 1613), not the
 unrelated membrane-seal text at line 9.
+
+## Pointer update (2026-10-19)
+
+`SCORECARD.md` `## Saturation` now begins at line 1620; the round-34
+declaration is at line 1624. This supersedes the line-1613 pointer in the
+post-review correction above; use the section anchor.

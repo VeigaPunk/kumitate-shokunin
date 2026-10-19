@@ -1540,3 +1540,9 @@ Verification after the correction: `node scripts/sources-check.mjs --selftest`
 `VERDICT: PASS`; its named v1 test accepts the unchanged 23-key base stanza
 and its mutation rejects `pin.sources-check` as `STANZA_KEY_UNKNOWN`.
 `fleet-census/scripts/sources-census.sh validate <lane>` → `ok`, exit 0.
+
+## Pointer update (2026-10-19)
+
+The SCORECARD saturation heading now resolves at line 1620 and the round-34
+declaration at line 1624. This supersedes the line-1613 pointer in the
+post-review entry above; use the `## Saturation` section anchor.
