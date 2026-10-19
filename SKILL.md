@@ -584,6 +584,32 @@ Citations are to the notes — the notes carry the live anchors.
   snapshots, expected to drift (round-19 audit watched the secondary
   `default_model` flip opencode-go → hyper mid-round).
 
+## Gate registry
+
+Registry home per the fleet protocol's §Gate standard (round 34). All seven are
+gates (each can exit 1 on a real defect). None writes to a surface it does not
+own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
+origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
+`--checklists` mode runs the commands listed below. Verdict map for all seven: `0` → clean,
+`1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
+this lane (kumitate L1).
+
+| name | kind | entry command | self-test | pinned values live in |
+|---|---|---|---|---|
+| cite-check | gate | `node scripts/cite-check.mjs [--src DIR] [--strict]` → `CITE_CHECK: CLEAN\|DRIFT` | `--selftest` | citations inside `SKILL.md` + `corpus/**` |
+| surface-probe | gate | `node scripts/surface-probe.mjs [--checklists]` → `SURFACE_PROBE:` / `CHECKLIST: n/m` | `--selftest` | `## Verifiable checklist` below; frozen status shape in the script; `sighting.surfaceDigest` in the origin tree's `config/ufo.json` (outside this repo — named gap) |
+| round-gate | gate | `node scripts/round-gate.mjs [--round N] [--reports-dir DIR --main-repo DIR] [--tracked]` → `ROUND_GATE:` | `--selftest` | `SCORECARD.md` `## Move log` row + `LOG.md` round bullet; in-script constants |
+| proxy-check | gate | `node scripts/proxy-check.mjs [--strict]` → `PROXY: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` `<!-- kumitate-proxy-v1` stanza (terms + `pin.*` sha256) |
+| claims-check | gate | `node scripts/claims-check.mjs [--row ID] [--strict]` → `CLAIMS: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` registry `yes — <note>` cells |
+| kimi-census | gate | `node scripts/kimi-census.mjs` → `KIMI_CENSUS: CLEAN\|DRIFT` | `--selftest` | frozen member set + family counts inside the script |
+| sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | `corpus/SOURCES.md` (registry, contract v1) + knowledge `source:` headers |
+
+Named gaps (not claimed): no gate yet ships the §Gate standard "two evidences"
+frozen-snapshot run with a digest-pinned expected-verdict file, and no verdict line names
+the revision it measured — cite the commit beside the verdict instead.
+Where this lane learns, and how far each source is trusted: `corpus/SOURCES.md`;
+what a corpus entry must clear before admission: `corpus/QUALITY.md`.
+
 ## Verifiable checklist
 
 Every item is read-only, runs from this repo's root, and prints its own verdict;
@@ -600,6 +626,8 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`
 - [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
+- [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
+- [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON): fix the tool, not the claim. A named

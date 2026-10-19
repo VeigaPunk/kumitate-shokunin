@@ -170,6 +170,51 @@ Member path `~/.kimi-code/skills/wwkd` is a symlink — `readlink` →
   subordination: *"it is enrichment, never a gate (I9; run-logic §5 wins on drift)."*
 - Carries `SHA256SUMS` (see `## Scope`); no `references/`, no `metadata:`.
 
+## `~/.kimi-code/skills/cursor-lane`
+
+`~/.kimi-code/skills/cursor-lane/` is a real directory (not a symlink), unlike the
+five existing symlink entries. Its `SKILL.md` is 2,465 B, mode `644`, mtime
+2026-10-18.
+
+Frontmatter:
+
+- `name: cursor-lane`
+- `description`: operates the Cursor provider lane for Kimi Code CLI on this host,
+  including its request path, provider-error and hang diagnosis, recovery, and
+  systemd health checks.
+
+The skill governs the Cursor provider lane for Kimi on this host. Its `##`
+headings (`SKILL.md` line numbers) are:
+
+- `SKILL.md:11` `## Request path`
+- `SKILL.md:27` `## The wedge failure mode (classic symptom)`
+- `SKILL.md:40` `## Persistence`
+- `SKILL.md:46` `## Pre-swarm checklist`
+
+Credential lines are deliberately not reproduced (QUALITY Q5); only the
+OAuth credential-store category is noted here.
+
+`ls -la ~/.kimi-code/skills/`:
+
+```text
+total 20
+drwxr-xr-x 1 vgpnk vgpnk 118 Oct 18 20:53 .
+drwx------ 1 vgpnk vgpnk 916 Oct 19 16:09 ..
+drwxr-xr-x 1 vgpnk vgpnk  16 Oct 18 20:53 cursor-lane
+lrwxrwxrwx 1 vgpnk vgpnk  38 Oct  3 21:12 godspeed -> /home/vgpnk/Projects/myskills/godspeed
+lrwxrwxrwx 1 vgpnk vgpnk  52 Oct 12 08:39 reverse-engineer-anything -> /home/vgpnk/.agents/skills/reverse-engineer-anything
+lrwxrwxrwx 1 vgpnk vgpnk  38 Oct  3 21:12 shokunin -> /home/vgpnk/Projects/myskills/shokunin
+lrwxrwxrwx 1 vgpnk vgpnk  33 Oct  3 21:12 ufo -> /home/vgpnk/Projects/myskills/ufo
+lrwxrwxrwx 1 vgpnk vgpnk  34 Oct  3 21:12 wwkd -> /home/vgpnk/Projects/myskills/wwkd
+```
+
+`stat -c '%F %s %a %y' ~/.kimi-code/skills/cursor-lane ~/.kimi-code/skills/cursor-lane/SKILL.md`:
+
+```text
+directory 16 755 2026-10-18 20:53:48.833982858 -0300
+regular file 2465 644 2026-10-18 20:53:48.835227094 -0300
+```
+
 ## `~/.kimi-code/plugins/installed.json`
 
 The versioned install manifest.
@@ -390,3 +435,8 @@ generic references-dir mentions and one directive filename inside a
 verbatim quote of the godspeed skill body were deliberately left as-is:
 prefixing the former would assert a specificity the sentence does not
 claim, and editing the latter would alter quoted bytes.
+## Errata (round 34, 2026-10-19, append-only)
+
+- Lines 11–13 (five entries, all symlinks), 39–40 (five skills), and line 386
+  (five symlinks) reflect an earlier snapshot. Live `~/.kimi-code/skills/` has
+  six children: five symlinks and the real `cursor-lane` directory.

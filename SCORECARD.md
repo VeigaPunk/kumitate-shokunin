@@ -135,7 +135,7 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R9 | judge test suite | `native_tests.rs` (340 cases; other big test files sit inside R2/R6/R7) | yes — test-inventories (r7) |
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
 | K1 | kimi config plane (round-18 expansion) | `~/.kimi-code/config.toml`, `~/.kimi-code/tui.toml`, the `config.toml.*.bak` drift chain counted as 1 member (12 generations at the round-19 census) | yes — `knowledge/kimi-config-plane.md` |
-| K2 | kimi delegate/lane plane (round-18) | 18 `agents/secondary/*.md` + 5 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (25) | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
+| K2 | kimi delegate/lane plane (round-18) | 18 `agents/secondary/*.md` + 5 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (25); round 34: `skills/` counted live reads **6** (the new `cursor-lane` is a real directory, the other five symlinks) ⇒ **26** — counting rule unchanged, census tripwire re-pinned | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
 | K3 | kimi session/state plane (round-18) | `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`, `search-index` (9) | yes — `knowledge/kimi-session-state.md` |
 | K4 | kimi binary/secret plane (round-18) | `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`, `device_id`, `region`, `credentials/`, `oauth/` (9; secret members shape-only, never content-read) | yes — `knowledge/kimi-binary-secrets.md` |
 | K5 | kimi root-residue (round-20 registry change, pre-registered round 19) | `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` (3) | yes — `knowledge/kimi-residue-files.md` (lands round 20) |
@@ -259,7 +259,7 @@ successor, likewise pre-registered in round 15 and first measured in round 16
 both scores, and compares them with this block and with the `## Axes` integers;
 `node scripts/proxy-check.mjs` → `PROXY: MATCH (…)` exit 0, `PROXY: DRIFT (…)`
 exit 1, fail-closed exit 2, usage 64. The values are **claims** — the tool
-re-derives and never trusts them, and it never rewrites this block. The five pins
+re-derives and never trusts them, and it never rewrites this block. The pins (seven since round 34)
 are full sha256 hex of `scripts/*.mjs`; re-pin them after ANY edit to those files,
 including `proxy-check.mjs` itself (an unrecorded edit then shows up as
 `PIN_DRIFT`, not as a silently stale claim). Six of the terms are new in round 16:
@@ -274,12 +274,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=6
-C=11
+A=7
+C=13
 C1=19
 C1_total=19
-C2=74
-C2_total=74
+C2=77
+C2_total=77
 S_members=91
 S_sections=91
 R_members=92
@@ -288,32 +288,40 @@ coverage_script=10
 coverage_runtime=9
 C1k=5
 C1k_total=5
-K_members=49
-K_sections=49
+K_members=50
+K_sections=50
 coverage_kimi=10
 pin.cite-check=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
 pin.surface-probe=148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=a052ddb97a0b6f84be5993891273905bcb19f2dfef25aa523924c0d3cc5dcdba
+pin.proxy-check=18e94ff9679ee253077e150369b6c75559e0f386d3dffb9cc7c0ccefcf171263
 pin.claims-check=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
-pin.kimi-census=83016d45049b009a6c9868dc392ff6ebcecb357c9abfe423f476459f2724f426
+pin.kimi-census=5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0
+pin.sources-check=a25f1b59168021a42d70029178b370e09e10624e991cbd24f5d5280d2e985451
 -->
 
 ## Axes
 
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
-| operability | 8 | `f_O = (A+C)/(A+C+3)` with A=6 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`) and C=11 (`## Verifiable checklist`; 11th item = the kimi-substrate census, the first item that runs green without the origin tree) ⇒ 17/20 = 0.85 ⇒ 8 — 9 needs A+C ≥ 27 (10 more honest items), so the proxy saturates long before the axis does | round 19 |
+| operability | 8 | `f_O = (A+C)/(A+C+3)` with A=7 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`, and since round 34 `scripts/sources-check.mjs`) and C=13 (`## Verifiable checklist`; items 12–13 = the sources-registry gate and its hermetic suite) ⇒ 20/23 ≈ 0.870 ⇒ 8 — round 34 is an f_O walk (17/20 → 20/23), integer held; 9 needs A+C ≥ 27 (7 more honest items). Round 34 also gives every gate its `## Gate registry` row in `SKILL.md` (PROTOCOL §Gate standard; 0 → 7 rows) | round 34 (f_O walk) |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 91/91)` = **10** (corrected in-round to `floor(10 × 90/91)` = **10** — the shim section was not an S-member) — `C1s/C1s_total` = `yes` rows / all rows among `S*` registry rows (`S1`–`S8`, **8/8**), `S_sections` = the member sections the claims gate verifies in those rows' notes (**91**, round-32 measurement; the pre-round value was 74), `S_members` = **91** = `ls scripts/*.mjs \| wc -l` → 73 + `find scripts -mindepth 2 -type f \| wc -l` → 18 (RECURSIVE; depth-1 reads 87 and undercounts). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after evidence in `## Move log` | round 16 |
 | coverage:runtime-layer | 9 | `floor(10 × 11/11 × 83/92)` = **9** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
-| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 49/49)` = **10** — round 22 tightened `K_sections` to **distinct** members named in sections (pre-registered round 21, hole closed with duplicate-one/drop-one hermetic cases, 98/98 selftest). The anticipated honest drop **did not occur**: measurement refuted the round-21 "~30 distinct" estimate — all **49/49** members were already named by the sectionization wave. Term improved (occurrence inflation closed), score unchanged | round 22 |
+| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 50/50)` = **10** — round 34: the substrate grew a sixth counted-live `skills/` child (`cursor-lane`), so the live derivation read `floor(10 × 49/50)` = **9** at round open (`K_MEMBERS_DRIFT declared=49 computed=50`); the new member section in `knowledge/kimi-skills-plugins.md` restores 50/50. Distinct-member term since round 22 (duplicate-one/drop-one closed). Root mcp.json stays outside K (census `UNLISTED mcp.json`) until the round-35 pre-registered K1 change | round 34 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
 citations, two live surfaces, the round record, this lane's own scorecard and the
 registry's member claims — not the other 17 registry families. The next integer
 needs A+C ≥ 27 (12 more honest items): the proxy saturates, the axis walks.
+
+*Correction (round 34, 2026-10-19; the two paragraphs around this note are
+round-14/17 text kept as written):* live terms are now A=7, C=13 (`f_O` 20/23,
+7 more honest items to 9) and C2 77/77; the `coverage` row's "C2 53/53" is its
+retirement-era reading. The `kumitate-proxy-v1` stanza grew a 24th key
+(`pin.sources-check`) in round 34 — additive, by the lane's L1, as in rounds 16
+(six layer keys) and 20 (five K keys + `pin.kimi-census`); no key changed meaning.
 
 Coverage **is** 10 — and the number is the problem, not the achievement. The
 frozen aggregate is a product of two terms that both reached their terminal
@@ -375,6 +383,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 34 | operability (f_O walk; integer held) + capability `sources-registry` | A=6, C=11 ⇒ `f_O = 17/20 = 0.85` ⇒ 8; no `corpus/SOURCES.md` (contract census cannot run), no gate registry in `SKILL.md` (0 rows) | A=**7** (`scripts/sources-check.mjs`, contract `kumitate-sources-v1`, 34-case hermetic suite incl. awk-census parity; live `SOURCES_CHECK: CLEAN (rows=20 …)`) + C=**13** (checklist items 12–13) ⇒ `f_O = 20/23 ≈ 0.870` ⇒ **8**; `corpus/SOURCES.md` 20 opened rows (A=19 B=1; mined 9, queued 9, rejected 2), contract census clean; `## Gate registry` 7 rows | `ls scripts/*.mjs \| wc -l`; `grep -c '^\s*- \[' SKILL.md`; the seven contract census commands; `node scripts/sources-check.mjs [--selftest]`; measured commit in `LOG.md` round 34 |
+| 34 | coverage:kimi-layer (live 9 → 10) | live `floor(10 × 5/5 × 49/50)` = **9** (`K_MEMBERS_DRIFT declared=49 computed=50`); census `DRIFT (UNLISTED skills/; UNLISTED mcp.json)` | `floor(10 × 5/5 × 50/50)` = **10**: `skills/cursor-lane` section + census tripwire re-pinned 5→6 (selftest 43→45; the `--json` echo of all five FROZEN values is now asserted — FROZEN itself is informational, the per-family member checks gate); census `DRIFT (UNLISTED mcp.json)` only — the K1 change is held to round 35 by the lane's pre-registration rule | `node scripts/proxy-check.mjs`; `node scripts/kimi-census.mjs [--selftest]`; critic seat R34Critic-2 attack 1 |
 | 18 | coverage:runtime-layer (current fleet cycle, 2026-10-15) | lane `6b982abbb20378b5110bba5f2f9bd581ac20d08e`: 75/92, score 8; selected rows 2/5, 3/6, 2/4, strict warnings 3 | target 83/92, score 9; selected rows 5/5, 6/6, 4/4; acceptance requires strict warnings 0 and eight new distinct identities | Current-cycle plan under `## Planned`; actual work revision and post-commit counting outputs are appended in the measurement record. Historical round-18 Kimi entry below is unchanged. |
 | 31 | quality + coverage (the multi-line-backtick class resolved doc-side) — FINAL goal round | round 28 named 5 lost citations in round-6-aggregator-audit; the pairing-grammar tradeoff left open | **doc-side resolution**: each site reformatted to a single-line span (root cause confirmed: prose tokens never emit findings — `:1412-1426`); +5 notes, ZERO vanished findings, quoted bytes byte-identical; 2 honest edits restored 5 citations; `:118` left byte-exact (would need quoted-byte alteration; was never a multi-line loss); ~7 further recoverable sites in the same file NAMED as residue | verify lane: 5/5 report, zero vanished, quotes byte-identical, no DEFECT; tool untouched 62/62 |
 | 30 | quality + calibration (doc-repair trio; --integrations 6/9 → 9/9 — first full green since the restructure) | F1 falsified GateDecision pointer; F4 15 owner-captured refs (24 with siblings); F3 notes mapping the superseded 14,769-line revision; F3 integration case hardcoding a dead token | **F1**: measured re-anchor + historical pointer kept as prose (rewriting it would falsify the audit's own record); **F4**: explicit owner statements re-own all 24 refs, error count unchanged; **F3**: notes marked superseded-revision-historical (git pin kept, content hash described not pinned per SKILL.md:616-620, current bytes pinned `ba5e02be…`); the F3 CHECK then blocked 9/9 (hardcoded `44a3c781`, no live file hashes to it) — parent re-tokened to `ba5e02be` (expectation-refresh class, intent preserved) → **9/9**. Parent consistency: round-7 de-pinned, 296→850 commits anchor measured. Errors 704→700 (2 de-pins flagged + signed off; zero dropped claims) | verify lane: 6/6 anchors measured correct, no prose deleted, no-permissiveness PASS; 8/9 pre-parent-fix with the check-repair boundary named |
@@ -416,6 +426,25 @@ the frozen definitions name.
 | 8 | coverage | C1 14/18, C2 20/30 ⇒ 5; 11 unmapped corpus files | C2 31/31 (`lessons/round-7.md` added; 5 lesson rows re-pinned to real shas `45b4ed3`/`efe19da`/`e0f5ca7`/`e748e44`/`eca3d14`) ⇒ 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 31; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 31; `comm -23` unmapped = `README.md` only |
 
 ## Planned
+
+**Round 35 — pre-registration (2026-10-19, written by round 34).** Up to three
+claims, measured the round after they are declared here:
+
+1. **coverage:kimi-layer — registry change K1 3 → 4 (root `~/.kimi-code/mcp.json`).**
+   Declared now so it lands in the round that measures it, never in round 34
+   (the rule "a registry change … must be pre-registered a round ahead",
+   SCORECARD.md:935-938, the round-13 "Not a move, queued" bullet). The member is shape-only (presence +
+   kind + mode floor, the `server.token` pattern; never content-read). Tool
+   (`scripts/kimi-census.mjs` MEMBERS + FROZEN K1 4; `scripts/proxy-check.mjs` K
+   rules), stanza (`K_members` 50 → 51) and `## Axes` travel together; the section
+   already exists in `corpus/knowledge/kimi-mcp-plane.md`, so the target is 51/51 ⇒
+   10. Falsifier: census not CLEAN, any content open of the file under strace,
+   K_sections ≠ 51.
+2. **operability — distinct S/R member derivation** in `scripts/proxy-check.mjs`
+   (queued since round 17): duplicate-one/drop-one must fire `S_SECTIONS_DRIFT` /
+   `R_SECTIONS_DRIFT`; live trees unchanged (S 91/91, R 83/92).
+3. **coverage:runtime-layer — R5 + R7 sectionization** (9 members) ⇒ 92/92 ⇒ 10,
+   only after claim 2 proves the 83 are distinct.
 
 **Actual round 33 — interactive cutover (2026-10-15): BLOCKED before dispatch.**
 The current-cycle round-17/18 labels below came from the interrupted worker,
@@ -1577,10 +1606,17 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| — none yet — | | | |
+| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1) machine-checked for shape, enums, tier inflation, used-by resolution, rejected-row flips, knowledge `source:` headers and overdue rechecks | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 34/34; the contract's seven census commands clean; `LOG.md` round 34 | round 34 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
 ## Saturation
 
 The lane's saturation line and stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
+
+**Declared round 34 (2026-10-19).** Saturation line: **9** on every live,
+non-retired axis. Stagnation window: **N = 3** rounds without a new capability
+row. Live after round 34: operability 8 (below the line — the lowest-axis
+obligation stands), coverage:runtime-layer 9, coverage:script-layer 10
+(terminal), coverage:kimi-layer 10. The nudge is therefore not active; the
+window restarts at round 34 (`sources-registry` entered the capability table).

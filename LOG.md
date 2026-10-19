@@ -1407,3 +1407,105 @@ Already present as real sections a reader can record into: axes (`## Axes`), pla
 Added by this rollout per the 2026-10-16 operator amendment (`AXES.md` §SCORECARD.md contract, fleet-root `84bade0`), additive only: `## Capabilities` (empty repertoire table, one `— none yet —` row) and `## Saturation` (line + window N to be declared by the lane on its next round).
 No axis claim was made and no score moved; no verdict or number was changed.
 The commit carries only these additive scaffolds on top of HEAD; all pre-existing uncommitted working-tree changes, including the lane's in-flight unadmitted candidate, remain unstaged and untouched.
+
+- 2026-10-19 — round 34 (kaika campaign; steered round 34 per the round-33
+  continuation record; lane worktree `kaika/round`, base `16a5441`). Two
+  declared claims, causally separable, distinct axes:
+  **Claim 1 — operability (lowest live axis, 8) + capability
+  `sources-registry`.** Trigger: no `corpus/SOURCES.md`, no gate registry in
+  `SKILL.md` (fleet PROTOCOL §Gate standard), and the kaika SOURCES contract v1.
+  Action: `corpus/SOURCES.md` — 20 rows, every one opened 2026-10-19 by the
+  sources scribe seat (quotes + locations in `corpus/lessons/round-34.md`
+  `## Gate` and `.ufo/rounds/round-34/sources-gate.md`); new gate
+  `scripts/sources-check.mjs` (contract `kumitate-sources-v1`; 34-case hermetic
+  suite incl. awk-census parity and two cases added after the mutation seat's
+  survivors — over-wide row, ISO recheck exactly today); checklist items 12–13;
+  `## Gate registry` (7 rows). Before → after: `ls scripts/*.mjs | wc -l` 6 → 7
+  (A); `grep -c '^\s*- \[' SKILL.md` 11 → 13 (C); `f_O` 17/20 = 0.85 → 20/23 ≈
+  0.870, integer **8 held** (f_O walk, the round-19 precedent); contract census:
+  cannot run (file absent) → rows 20, malformed 0, tiers A=19 B=1, status mined 9
+  queued 9 rejected 2, duplicates/enum/used-by checks print nothing;
+  `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20
+  tiers=A:19,B:1,C:0 status=queued:9,mined:9,rejected:2 entries_with_source=2
+  legacy=38)` exit 0; `--selftest` → `SOURCES_SELFTEST: 34/34 pass`; fleet
+  `fleet-census/scripts/sources-census.sh validate --file corpus/SOURCES.md` →
+  `file ok`. Mutation seat: 16 of 18 mutants killed before the fix, the 2
+  survivors killed after it (re-run by the L1 on a /tmp copy: 33/34 FAIL each).
+  **Claim 2 — coverage:kimi-layer, live 9 → 10.** Trigger (round-open, whole
+  lines): `PROXY: DRIFT (K_MEMBERS_DRIFT term=K_members declared=49 computed=50
+  delta=+1; COVERAGE_KIMI_DRIFT term=coverage_kimi declared=10 computed=9
+  delta=-1; AXES_DRIFT term=coverage:kimi-layer declared=10 computed=9)` and
+  `KIMI_CENSUS: DRIFT (UNLISTED skills/; UNLISTED mcp.json)`. Action:
+  `skills/cursor-lane` member section + erratum in
+  `corpus/knowledge/kimi-skills-plugins.md`; census tripwire re-pinned 5 → 6
+  (`scripts/kimi-census.mjs`, selftest 43 → 45; the `--json` echo of all five
+  FROZEN values is now asserted after the mutation seat showed K1–K4 unasserted —
+  FROZEN itself is informational, the per-family member checks are what gate,
+  per the reviewer seat). Outcome: K 49/50 → 50/50, live
+  `coverage_kimi` 9 → 10; census → `KIMI_CENSUS: DRIFT (UNLISTED mcp.json)`
+  (members=50, errors=1) — the remaining line is dispositioned: root mcp.json
+  into K1 is a registry change, refused for this round by the critic seat on the
+  lane rule "pre-registered a round ahead" and pre-registered in `## Planned` for
+  round 35. strace: 0 opens of mcp.json by the census.
+  **Riders (uncounted):** `corpus/QUALITY.md` Q1–Q14 (each criterion cites its
+  lesson); `corpus/lessons/round-34.md` `## Mistakes` (14 classes; 3 from this
+  round) + `## Gate`; frontier entry `corpus/knowledge/omp-task-contract.md`
+  (S001–S004, docs on `main` vs host `omp/18.12.3`); K1 knowledge entry
+  `corpus/knowledge/kimi-mcp-plane.md` (S005–S008; shape-only); PROVINCE.md
+  Core/Frontier/Adjacent appended; `## Saturation` declared (line 9, N = 3);
+  README map rows 74 → 77 (C2 77/77).
+  **Measurement revision.** All proxy terms measured with `--src` pinned to the
+  round-open origin revision `964f443ee53df0ce06bd689af01f0dea031b01f9`
+  (extracted read-only with `git -C /home/vgpnk/Projects/ufo-fsd-alpha archive
+  964f443 | tar -x`): `node scripts/proxy-check.mjs --src <snapshot>` → `PROXY:
+  MATCH (A=7 C=13 operability=8; C1=19/19 C2=77/77 coverage=10; S=91/91
+  coverage:script-layer=10; R=83/92 coverage:runtime-layer=9; K=50/50
+  coverage:kimi-layer=10; pins=7 match)` (also under `--strict`); `node
+  scripts/claims-check.mjs --src <snapshot>` → `CLAIMS: MATCH (rows=19 yes=19
+  notes=27 sections=178 adv=6)`, unchanged from round open. The work commit's
+  hash is cited in the round report (a commit cannot name itself).
+  **Substrate moved under the round (recorded, not fitted).** The origin tree
+  advanced during the round from `964f443` (2026-10-12) to `2cad7085` (2026-10-19
+  19:04 −03; commits `57c1008` archive prune, `c95053a`, `2cad708`): 5 scripts
+  deleted, 2 added. Live, unpinned: `PROXY: DRIFT (S_MEMBERS_DRIFT term=S_members
+  declared=91 computed=88 delta=-3; S_SECTIONS_DRIFT term=S_sections declared=91
+  computed=86 delta=-5; COVERAGE_SCRIPT_DRIFT term=coverage_script declared=10
+  computed=9 delta=-1; AXES_DRIFT term=coverage:script-layer declared=10
+  computed=9)`; `CLAIMS: DRIFT` (5 × `SECTION_FILE_UNRESOLVED row=S8`, 1 ×
+  `SECTION_DEAD_ANCHOR row=R11 … round.rs`). Not caused by this round (the
+  pinned run is MATCH); the script-layer stanza is left at its measured 91/91
+  and the re-census against `2cad708` is open debt for the next round.
+  **Process facts:** one batched dispatch of 12 seats (planner, connector, 3
+  executors, 2 scribes, scout, reviewer, critic, sentinel, mutation-tester);
+  the provider route for executor and mutation-tester hit `resource_exhausted`
+  (3 seats died, 1 stalled and was cancelled) and those four seats were
+  re-dispatched fresh in two batched calls; the L1 wrote
+  `corpus/knowledge/kimi-mcp-plane.md` itself after the first Kimi seat died.
+  Admission: pending non-author verification; no `[x]` claimed; no push
+  (standing operator rule).
+  **Review corrections (reviewer seat R34Reviewer-2, phase 2).** Checklist:
+  `node scripts/surface-probe.mjs --checklists` → round open `CHECKLIST: 6/11
+  pass`; after, live `7/13`, and `9/13` with `UFO_SRC` pinned to the round-open
+  snapshot. Remaining fails: :618 live sighting surface (origin drift), :621/:622
+  round-gate `REPORTS_DIR_MISSING` (the worktree's derived main-repo), :626 census
+  (held mcp.json); live-only fails :623/:625 are the origin S-term drift. Citation
+  delta for round-touched files (per-file command, live tree): `SKILL.md` 9 → 9,
+  `kimi-skills-plugins.md` 10 → 10, every new file 0; `corpus/README.md` 30 → 31
+  live but 30 → 30 against the snapshot — the +1 sits on an unchanged line and
+  follows the origin move; the repo total 527 → 583 is origin drift in untouched
+  notes. Named limits, not fixed this round: `sources-check` `ID_FORM` scans every
+  `| S…` table row in the file, not only `## Registry`; its awk-parity case
+  prints SKIP when awk is absent (34/34 assumes awk present); S008's `teaches`
+  is the round-open observation.
+  **Critic seat R34Critic-2, phase 2 (isolation).** Claim 1 alone (Claim-2 files
+  reverted in a /tmp copy): `PROXY: MATCH` with `A=7 C=13` and `K=49/50
+  coverage:kimi-layer=9`; sources gate + suite pass. Claim 2 alone (Claim-1 files
+  reverted, six-pin proxy): `PROXY: MATCH (A=6 C=11 operability=8; … K=50/50
+  coverage:kimi-layer=10; pins=6 match)`. Both after-values reproduce and each
+  verifies without the other. Critic reservations, recorded not dismissed: (a)
+  the stanza's 24th key amends `kumitate-proxy-v1`; the lane's answer is the
+  additive-extension precedent of rounds 16 and 20 (SCORECARD correction note
+  under `## Axes`) — the operator may rule otherwise; (b) Claim 2 holds for the
+  declared 50-member universe only — the census root stays red on the deferred
+  mcp.json; (c) the live-origin script-layer drop 10 → 9 is an open external
+  harm at `2cad708`, not caused by either claim.

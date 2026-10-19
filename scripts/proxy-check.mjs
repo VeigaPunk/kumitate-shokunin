@@ -50,7 +50,7 @@
  *   the fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
  *
  * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
- *   default     recompute the seventeen terms + the six pins under `--self`,
+ *   default     recompute the seventeen terms + the seven pins under `--self`,
  *               `--scorecard`, the origin tree `--src` and the kimi root
  *               `--kimi-root`, and compare them
  *               with the kumitate-proxy-v1 stanza. The registry rows and the
@@ -75,7 +75,7 @@
  *   operability = floor(10 × (A+C)/(A+C+3))
  *   coverage    = floor(10 × C1/C1_total × C2/C2_total)
  *   pins  sha256 hex of `<self>/scripts/{cite-check,surface-probe,round-gate,
- *         proxy-check,claims-check}.mjs`
+ *         proxy-check,claims-check,kimi-census,sources-check}.mjs`
  *   Layer terms (round-16 amendment), counted over the ONE origin-tree walk
  *   `probeSections()` already performs for the claims gate — the proxy never
  *   walks `--src` itself:
@@ -150,8 +150,8 @@
  *     C1k C1k_total K_members K_sections     the declared kimi-block universe
  *     coverage_kimi                          the kimi-layer score
  *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
- *     pin.claims-check pin.kimi-census       sha256 hex of scripts/<name>.mjs
- *   All twenty-three keys are REQUIRED, exactly once; no other key is accepted
+ *     pin.claims-check pin.kimi-census pin.sources-check sha256 hex of scripts/<name>.mjs
+ *   All twenty-four keys are REQUIRED, exactly once; no other key is accepted
  *   (the stanza key charset forbids `:`, which is why the axes' names are
  *   spelled `coverage_script` / `coverage_runtime` / `coverage_kimi` here).
  *   Every value is
@@ -296,6 +296,7 @@ const PINS = {
   'pin.proxy-check': 'scripts/proxy-check.mjs',
   'pin.claims-check': 'scripts/claims-check.mjs',
   'pin.kimi-census': 'scripts/kimi-census.mjs',
+  'pin.sources-check': 'scripts/sources-check.mjs',
 };
 const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
@@ -399,7 +400,7 @@ modes:
                (S_members S_sections R_members R_sections), the kimi-block terms
                (C1k C1k_total K_members K_sections), the five scores
                (operability, coverage, coverage:script-layer,
-               coverage:runtime-layer, coverage:kimi-layer) and the six script
+               coverage:runtime-layer, coverage:kimi-layer) and the seven script
                pins, then compare
                them with the ${CONTRACT} block in --scorecard (default
                <self>/${SCORECARD_FILE}) and with that file's ## Axes rows.
@@ -1104,8 +1105,8 @@ function runCheck(opts, started) {
 
 /* ----------------------------------------------------------------- selftest */
 
-/** Fixture stand-ins for the six pinned scripts (bytes only, never executed). */
-const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs', 'claims-check.mjs', 'kimi-census.mjs'];
+/** Fixture stand-ins for the seven pinned scripts (bytes only, never executed). */
+const FIXTURE_SCRIPTS = ['cite-check.mjs', 'surface-probe.mjs', 'round-gate.mjs', 'proxy-check.mjs', 'claims-check.mjs', 'kimi-census.mjs', 'sources-check.mjs'];
 const fixtureScript = (name) => `#!/usr/bin/env node\n// hermetic fixture stand-in for scripts/${name}\nexport const FIXTURE = ${JSON.stringify(name)};\n`;
 const FIXTURE_PINS = Object.fromEntries(FIXTURE_SCRIPTS.map((s) => [
   `pin.${s.replace(/\.mjs$/u, '')}`, sha256Hex(Buffer.from(fixtureScript(s), 'utf8')),
@@ -1140,7 +1141,7 @@ function fixtureSrc(root) {
  * The fixture KIMI ROOT (`--kimi-root`): every K1–K5 member present with its
  * declared kind, and the two counted dirs seeded small (2 + 1 children) so the
  * total is hand-checkable: K1 3 + K2 (2+1+1+1)=5 + K3 9 + K4 9 + K5 3 = 29.
- * The real tree holds 49 (18 + 5 there); the fixture is a shape, not a copy.
+ * The real tree holds 50 (18 + 6 there); the fixture is a shape, not a copy.
  */
 const FX_KIMI_FILES = [
   'config.toml', 'tui.toml', 'config.toml.bak',
@@ -1329,7 +1330,7 @@ function selfTest() {
   /* hand-arithmetic fixtures (literal assertions below, never re-derived) --- */
   const F1 = fxBase('match-basic', {
     expect: {
-      A: 6, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+      A: 7, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
       S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
     },
   });
@@ -1337,7 +1338,7 @@ function selfTest() {
     checklist: 1, readmeRows: 1,
     registry: [['S1', 'a', '`a.mjs`', 'yes'], ['S2', 'b', '`b.mjs`', 'yes'], ['R1', 'c', '`c.rs`', 'no']],
     expect: {
-      A: 6, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 7, coverage: 3,
+      A: 7, C: 1, C1: 2, C1_total: 3, C2: 1, C2_total: 2, operability: 7, coverage: 3,
       S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
     },
   });
@@ -1355,7 +1356,7 @@ function selfTest() {
     ],
     extraRunnables: ['tools/a.mjs', 'tools/b.js', 'bin/c.sh', 'vendor/d.py', 'vendor/e.mjs'],
     expect: {
-      A: 11, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10,
+      A: 12, C: 3, C1: 3, C1_total: 3, C2: 3, C2_total: 3, operability: 8, coverage: 10,
       S_members: 3, S_sections: 2, R_members: 2, R_sections: 1, coverage_script: 6, coverage_runtime: 5,
     },
   });
@@ -1363,9 +1364,9 @@ function selfTest() {
   try {
     /* 1-3 ─ MATCH, against literal verdict lines (hand arithmetic) ---------- */
     const r1 = runProxy(args(F1));
-    check('MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
+    check('MATCH: A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
       ok: r1.status === 0
-        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+        && verdictLine(r1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)',
       detail: `exit=${r1.status} ${verdictLine(r1)}`,
     }));
     check('MATCH: text mode prints the verdict line and nothing else', () => {
@@ -1373,20 +1374,20 @@ function selfTest() {
       return { ok: lines.length === 1 && parseFindings(r1.stdout).length === 0, detail: `lines=${lines.length}` };
     });
     const r2 = runProxy(args(F2));
-    check('MATCH: A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
+    check('MATCH: A=7 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
       ok: r2.status === 0
-        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+        && verdictLine(r2) === 'PROXY: MATCH (A=7 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)',
       detail: `exit=${r2.status} ${verdictLine(r2)}`,
     }));
     const r3 = runProxy(args(F3));
-    check('MATCH: A=11 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
+    check('MATCH: A=12 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
       ok: r3.status === 0
-        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+        && verdictLine(r3) === 'PROXY: MATCH (A=12 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=7 match)',
       detail: `exit=${r3.status} ${verdictLine(r3)}`,
     }));
     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
-      ok: verdictLine(r3).includes('A=11'),
-      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=11`,
+      ok: verdictLine(r3).includes('A=12'),
+      detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=12`,
     }));
     const r1b = runProxy(args(F1));
     check('determinism: the same fixture yields byte-identical stdout on a re-run', () => ({
@@ -1468,7 +1469,7 @@ function selfTest() {
         ['R2', 'runtime two', '`c.rs`', 'yes — `lessons/topic-r.md`'],
       ],
       expect: {
-        A: 6, C: 3, C1: 4, C1_total: 4, C2: 4, C2_total: 4, operability: 7, coverage: 10,
+        A: 7, C: 3, C1: 4, C1_total: 4, C2: 4, C2_total: 4, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
       },
     };
@@ -1476,7 +1477,7 @@ function selfTest() {
     const layersRun = runProxy(args(layers));
     check('layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal)', () => ({
       ok: layersRun.status === 0
-        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+        && verdictLine(layersRun) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=7 match)',
       detail: `exit=${layersRun.status} ${verdictLine(layersRun)}`,
     }));
     const layerCase = (name, edits) => {
@@ -1547,7 +1548,7 @@ function selfTest() {
       ],
       registry: [['S1', 'scripts one', '`a.mjs`', 'yes — `knowledge/alpha.md`']],
       expect: {
-        A: 6, C: 3, C1: 1, C1_total: 1, C2: 2, C2_total: 2, operability: 7, coverage: 10,
+        A: 7, C: 3, C1: 1, C1_total: 1, C2: 2, C2_total: 2, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
       },
     });
@@ -1587,7 +1588,7 @@ function selfTest() {
         ...FX_K_ROWS,
       ],
       expect: {
-        A: 6, C: 3, C1: 2, C1_total: 2, C2: 3, C2_total: 3, operability: 7, coverage: 10,
+        A: 7, C: 3, C1: 2, C1_total: 2, C2: 3, C2_total: 3, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
         C1k: 5, C1k_total: 5, K_members: 29, K_sections: 4, coverage_kimi: 1,
       },
@@ -1613,7 +1614,7 @@ function selfTest() {
       const k = kindsEq(kr, []);
       return {
         ok: kr.status === 0 && k.ok
-          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/29 coverage:kimi-layer=1; pins=6 match)',
+          && verdictLine(kr) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/29 coverage:kimi-layer=1; pins=7 match)',
         detail: `exit=${kr.status} kinds=[${k.got}] ${verdictLine(kr)}`,
       };
     });
@@ -1890,13 +1891,13 @@ function selfTest() {
 
     /* 13-20 ─ drift on terms ------------------------------------------------ */
     const driftA = fxBase('drift-a', { expect: F1.expect });
-    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=4\n'));
+    fxWrite(join(driftA.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=7\n', '\nA=4\n'));
     const d1 = runProxy(args(driftA));
-    check('A_DRIFT: declared=4 computed=6 delta=+2, exit 1, exactly [A_DRIFT]', () => {
+    check('A_DRIFT: declared=4 computed=7 delta=+3, exit 1, exactly [A_DRIFT]', () => {
       const k = kindsEq(d1, ['A_DRIFT']);
       return {
         ok: d1.status === 1 && k.ok
-          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2)',
+          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=7 delta=+3)',
         detail: `exit=${d1.status} ${verdictLine(d1)}`,
       };
     });
@@ -1905,11 +1906,11 @@ function selfTest() {
       detail: `stdout=${JSON.stringify(String(d1.stdout ?? '').split('\n')[0])}`,
     }));
     const scTampered = join(fxDir('scorecard-flag'), 'SCORECARD.md');
-    fxWrite(scTampered, F1.scorecard.replace('\nA=6\n', '\nA=7\n'));
+    fxWrite(scTampered, F1.scorecard.replace('\nA=7\n', '\nA=8\n'));
     const d2 = runProxy(['--self', F1.dir, '--src', F1.src, '--kimi-root', F1.kimi, '--scorecard', scTampered]);
     check('--scorecard FILE: the claim is read from FILE, the tree from --self', () => {
       const k = kindsEq(d2, ['A_DRIFT']);
-      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=7 computed=6'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
+      return { ok: d2.status === 1 && k.ok && verdictLine(d2).includes('declared=8 computed=7'), detail: `exit=${d2.status} ${verdictLine(d2)}` };
     });
     const driftC = fxBase('drift-c', { expect: F1.expect });
     fxWrite(join(driftC.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=4\n'));
@@ -1935,7 +1936,7 @@ function selfTest() {
     const dEsc = runProxy(args(regPipe));
     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
       ok: dEsc.status === 0
-        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+        && verdictLine(dEsc) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)',
       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
     }));
     const regPipeNo = fxBase('registry-escaped-pipe-no', {
@@ -1972,18 +1973,18 @@ function selfTest() {
       return { ok: d7.status === 1 && k.ok, detail: `exit=${d7.status} ${verdictLine(d7)}` };
     });
     const driftMany = fxBase('drift-many', { expect: F1.expect });
-    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=4\n').replace('\nC=3\n', '\nC=4\n'));
+    fxWrite(join(driftMany.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=7\n', '\nA=4\n').replace('\nC=3\n', '\nC=4\n'));
     const d8 = runProxy(args(driftMany));
     check('two drifts → both findings, in term order, joined in one verdict line', () => {
       const k = kindsEq(d8, ['A_DRIFT', 'C_DRIFT']);
       return {
         ok: d8.status === 1 && k.ok && verdictLine(d8).includes('; ')
-          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2; C_DRIFT'),
+          && verdictLine(d8).startsWith('PROXY: DRIFT (A_DRIFT term=A declared=4 computed=7 delta=+3; C_DRIFT'),
         detail: `exit=${d8.status} ${verdictLine(d8)}`,
       };
     });
 
-    /* 21-23 ─ pins + axes --------------------------------------------------- */
+    /* 21-24 ─ pins + axes --------------------------------------------------- */
     const driftPin = fxBase('drift-pin', { expect: F1.expect });
     const zeroPin = '0'.repeat(64);
     fxWrite(join(driftPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.round-gate=)[0-9a-f]{64}\n/u, `$1${zeroPin}\n`));
@@ -1995,6 +1996,18 @@ function selfTest() {
       return {
         ok: d9.status === 1 && k.ok && shaped,
         detail: `exit=${d9.status} kinds=[${k.got}] shaped=${shaped} ${f ? f.detail.slice(0, 90) : ''}`,
+      };
+    });
+    const driftSourcesPin = fxBase('drift-sources-pin', { expect: F1.expect });
+    fxWrite(join(driftSourcesPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.sources-check=)[0-9a-f]{64}\n/u, `$1${zeroPin}\n`));
+    const dSourcesPin = runProxy(args(driftSourcesPin));
+    check('PIN_DRIFT: tampering pin.sources-check is detected', () => {
+      const k = kindsEq(dSourcesPin, ['PIN_DRIFT']);
+      const f = parseFindings(dSourcesPin.stdout)[0];
+      const shaped = f ? new RegExp(`^pin\\.sources-check: declared=${zeroPin} computed=[0-9a-f]{64}$`, 'u').test(f.detail) : false;
+      return {
+        ok: dSourcesPin.status === 1 && k.ok && shaped,
+        detail: `exit=${dSourcesPin.status} kinds=[${k.got}] shaped=${shaped} ${f ? f.detail.slice(0, 90) : ''}`,
       };
     });
     const missingScript = fxBase('drift-pin-absent', { expect: F1.expect });
@@ -2032,7 +2045,7 @@ function selfTest() {
       const k = kindsEq(d13, []);
       return {
         ok: d13.status === 0 && k.ok
-          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+          && verdictLine(d13) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)',
         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
       };
     });
@@ -2059,10 +2072,10 @@ function selfTest() {
       };
     });
 
-    /* 24-25 ─ the advisory warning + --strict ------------------------------- */
+    /* 25-26 ─ the advisory warning + --strict ------------------------------- */
     const unpinned = fxBase('pin-unpinned', {
       expect: {
-        A: 7, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
+        A: 8, C: 3, C1: 1, C1_total: 2, C2: 2, C2_total: 2, operability: 7, coverage: 5,
         S_members: 3, S_sections: 0, R_members: 2, R_sections: 0, coverage_script: 0, coverage_runtime: 0,
       },
     });
@@ -2073,7 +2086,7 @@ function selfTest() {
       const f = parseFindings(w1.stdout)[0];
       return {
         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
-          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
+          && verdictLine(w1) === 'PROXY: MATCH (A=8 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)',
         detail: `exit=${w1.status} ${verdictLine(w1)}`,
       };
     });
@@ -2087,7 +2100,7 @@ function selfTest() {
       };
     });
 
-    /* 26-37 ─ fail-closed arms --------------------------------------------- */
+    /* 27-38 ─ fail-closed arms --------------------------------------------- */
     const fc = (name, args2, token) => check(`fail-closed: ${token} (${name})`, () => {
       const res = runProxy(args2);
       return {
@@ -2123,13 +2136,13 @@ function selfTest() {
     fxWrite(join(missingKey.dir, SCORECARD_FILE), F1.scorecard.replace(/^C2_total=2\n/mu, ''));
     fc('required key absent', args(missingKey), 'STANZA_MALFORMED');
     const badValue = fxBase('bad-value', { expect: F1.expect });
-    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=four\n'));
+    fxWrite(join(badValue.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=7\n', '\nA=four\n'));
     fc('count value not an integer', args(badValue), 'STANZA_MALFORMED');
     const badPin = fxBase('bad-pin', { expect: F1.expect });
     fxWrite(join(badPin.dir, SCORECARD_FILE), F1.scorecard.replace(/(\npin\.proxy-check=)[0-9a-f]{64}\n/u, '$1zz\n'));
     fc('pin value not a 64-hex sha256', args(badPin), 'STANZA_MALFORMED');
     const unknownKey = fxBase('unknown-key', { expect: F1.expect });
-    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=6\n', '\nA=6\nZ=1\n'));
+    fxWrite(join(unknownKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nA=7\n', '\nA=7\nZ=1\n'));
     fc('unknown key', args(unknownKey), 'STANZA_KEY_UNKNOWN');
     const dupKey = fxBase('duplicate-key', { expect: F1.expect });
     fxWrite(join(dupKey.dir, SCORECARD_FILE), F1.scorecard.replace('\nC=3\n', '\nC=3\nC=3\n'));
@@ -2173,7 +2186,7 @@ function selfTest() {
       ['--self', F1.dir, '--kimi-root', F1.kimi],
       { HOME: home, UFO_SRC: '' },
     );
-    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)';
+    const F1_MATCH = 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=7 match)';
     const rNew = bareProxy(homeWithSrc('home-new', 'Projects/ufo-fsd-alpha'));
     check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
       ok: rNew.status === 0 && verdictLine(rNew) === F1_MATCH,
@@ -2203,7 +2216,7 @@ function selfTest() {
       };
     });
 
-    /* 38-41 ─ usage --------------------------------------------------------- */
+    /* 39-42 ─ usage --------------------------------------------------------- */
     const u1 = runProxy(['--bogus']);
     check('usage: unknown flag → exit 64, usage on stderr', () => ({
       ok: u1.status === 64 && /unknown argument: --bogus/u.test(String(u1.stderr ?? ''))
@@ -2235,7 +2248,7 @@ function selfTest() {
       ok: u7.status === 64 && /--kimi-root requires/u.test(String(u7.stderr ?? '')), detail: `exit=${u7.status}`,
     }));
 
-    /* 42 ─ hermeticity ------------------------------------------------------ */
+    /* 43 ─ hermeticity ------------------------------------------------------ */
     if (process.env.KUMITATE_PROXY_NESTED === '1') {
       results.push({
         name: 'hermeticity: nested --selftest under a polluted env',
@@ -2265,7 +2278,7 @@ function selfTest() {
       });
     }
 
-    /* 43-44 ─ meta ---------------------------------------------------------- */
+    /* 44-45 ─ meta ---------------------------------------------------------- */
     check('every declared finding kind fires in at least one fixture', () => {
       const missing = FINDING_KINDS.filter((k) => !observed.has(k));
       return { ok: missing.length === 0, detail: missing.length ? `never fired: ${missing.join(', ')}` : `${observed.size} kinds observed` };
