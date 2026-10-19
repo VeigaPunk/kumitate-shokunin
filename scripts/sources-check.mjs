@@ -132,6 +132,10 @@ exit map: 0 clean · 1 drift (warnings too under --strict) · 2 fail-closed · 6
 `;
 
 function trim(value) { return value.trim(); }
+/** Strip Markdown's 1–3 ASCII-space indentation without consuming 4-space code blocks. */
+function normalizeMarkdownIndent(line) {
+  return line.replace(/^ {1,3}(?=\S)/u, '');
+}
 
 /** Real proleptic-Gregorian ISO date -> integer UTC day; null for invalid dates. */
 function isoDay(value) {
@@ -184,7 +188,7 @@ function runCheck(opts) {
   try { sourceText = readFileSync(sourcesPath, 'utf8'); } catch (error) {
     return failClosed('READ_FAILED', `cannot read corpus/SOURCES.md (${error?.code ?? 'unknown error'})`);
   }
-  const sourceLines = sourceText.split(/\r?\n/);
+  const sourceLines = sourceText.split(/\r?\n/).map(normalizeMarkdownIndent);
   const findings = [];
   const add = (severity, kind, path, line, detail) => {
     findings.push({ severity, kind, path, ...(line === null ? {} : { line }), detail });
@@ -319,7 +323,7 @@ function runCheck(opts) {
       if (!row.teaches.includes('REJECTED:')) {
         add('error', 'REJECTED_NO_REASON', 'corpus/SOURCES.md', row.line, `id=${id} rejected teaches lacks REJECTED:`);
       }
-      if (!row.teaches.includes('flip:')) {
+      if (!/\bflip:/u.test(row.teaches)) {
         add('error', 'REJECTED_NO_FLIP', 'corpus/SOURCES.md', row.line, `id=${id} rejected teaches lacks flip:`);
       }
     }
@@ -668,6 +672,74 @@ function selfTest() {
         return expectKind(run, kind, expectedExit);
       });
     }
+    check('1-3-space Markdown headings and rows are normalized; a 4-space row stays code', () => {
+      const rows = [
+        makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+        ...[1, 2, 3].map((spaces, offset) => `${' '.repeat(spaces)}${makeRow({ id: `S00${offset + 2}` })}`),
+        `    ${makeRow({ id: 'S005', source: '', tier: 'Z', status: 'queued', usedBy: '—' })}`,
+      ];
+      const root = makeDefault('indented-valid-rows', { rows });
+      const sourcePath = join(root, 'corpus', 'SOURCES.md');
+      const sourceText = readFileSync(sourcePath, 'utf8')
+        .replace(/^## Registry$/m, ' ## Registry')
+        .replace(/^## Paths$/m, '  ## Paths')
+        .replace(/^## Search log$/m, '   ## Search log');
+      writeFileSync(sourcePath, sourceText);
+      const run = runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      return {
+        ok: run.status === 0 && finalLine(run).startsWith('SOURCES_CHECK: CLEAN (rows=4 '),
+        detail: `exit=${run.status} last=${finalLine(run)}`,
+      };
+    });
+    check('1-3-space indented invalid registry rows report their field and tier findings', () => {
+      const invalidRows = [1, 2, 3].map((spaces, offset) => {
+        const invalid = makeRow({
+          id: `S00${offset + 2}`, tier: 'Z', status: 'queued', usedBy: '—',
+        }).replace('Fixture — https://example.test/source', '');
+        return `${' '.repeat(spaces)}${invalid}`;
+      });
+      const root = makeDefault('indented-invalid-rows', {
+        rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), ...invalidRows],
+      });
+      const run = runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      const kinds = textKinds(run);
+      for (const seen of kinds) observed.add(seen);
+      const emptyFindings = run.stdout.match(/SOURCES\s+error\s+ROW_FIELD_EMPTY\b/g) ?? [];
+      const tierFindings = run.stdout.match(/SOURCES\s+error\s+TIER_ENUM\b/g) ?? [];
+      return {
+        ok: run.status === 1 && emptyFindings.length === 3 && tierFindings.length === 3
+          && [2, 3, 4].every((id) => run.stdout.includes(`id=S00${id}`)),
+        detail: `exit=${run.status} empty=${emptyFindings.length} tier=${tierFindings.length} last=${finalLine(run)}`,
+      };
+    });
+    check('1-3-space indented rows outside Registry are rejected', () => {
+      const outsideRows = [1, 2, 3].map((spaces, offset) => `${' '.repeat(spaces)}${makeRow({
+        id: `S99${offset + 1}`, status: 'queued', usedBy: '—',
+      })}`);
+      const root = makeDefault('indented-outside-registry', { outsideRows });
+      const run = runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      const kinds = textKinds(run);
+      for (const seen of kinds) observed.add(seen);
+      const outsideFindings = run.stdout.match(/SOURCES\s+error\s+ROW_OUTSIDE_REGISTRY\b/g) ?? [];
+      return {
+        ok: run.status === 1 && outsideFindings.length === 3
+          && [1, 2, 3].every((id) => run.stdout.includes(`id=S99${id}`)),
+        detail: `exit=${run.status} outside=${outsideFindings.length} last=${finalLine(run)}`,
+      };
+    });
+    check('reflip: does not satisfy the rejected-row flip: marker', () => {
+      const root = makeDefault('reflip-is-not-flip', {
+        rows: [
+          makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }),
+          makeRow({
+            id: 'S002', status: 'rejected', usedBy: '—',
+            teaches: 'REJECTED: outside scope; reflip: an orchestration-only clause',
+          }),
+        ],
+      });
+      return expectKind(runTool(['--self', root, '--today', FIXTURE_TODAY, '--strict']), 'REJECTED_NO_FLIP', 1);
+    });
+
     check('opened + Nd overdue uses a strict before-today boundary', () => {
       const run = runCase('recheck-overdue-cadence', { opened: '2026-10-17', recheck: '1d' });
       return expectKind(run, 'RECHECK_OVERDUE', 0);

@@ -1546,3 +1546,17 @@ and its mutation rejects `pin.sources-check` as `STANZA_KEY_UNKNOWN`.
 The SCORECARD saturation heading now resolves at line 1620 and the round-34
 declaration at line 1624. This supersedes the line-1613 pointer in the
 post-review entry above; use the `## Saturation` section anchor.
+
+## 2026-10-19 — targeted SOURCES parser correction
+
+The targeted non-author recheck found that Markdown rows with one to three
+leading ASCII spaces could evade row validation and that `reflip:` could satisfy
+the rejected-row `flip:` check by substring. `scripts/sources-check.mjs` now
+normalizes only 1–3-space headings/rows (not four-space code rows) and checks
+`flip:` at a word boundary. Hermetic cases cover valid, invalid and off-Registry
+indented rows plus the `reflip:` false-acceptance.
+
+The knowledge inventory remains a direct-child scan of
+`corpus/knowledge/*.md`; nested files are not examined. This source gate is not a
+whole-corpus knowledge-admission claim. The scope and limitation are recorded
+in `.ufo/rounds/round-34/sources-gate.md`.

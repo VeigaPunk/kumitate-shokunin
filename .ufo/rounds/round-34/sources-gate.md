@@ -118,3 +118,16 @@ and headerless non-base knowledge files are errors. The no-header exception is
 the immutable 38-path identity list from base `16a5441`; those legacy notes
 remain counted, but appended material inside one is not a new sourced entry.
 Post-review behavior fixtures are in `scripts/sources-check.mjs --selftest`.
+
+## Targeted parser correction (2026-10-19)
+
+The checker normalizes one to three leading ASCII spaces before Markdown
+headings and table rows, while leaving four-space code-indented rows outside
+the source-row scan. A rejected `teaches` cell now needs the literal `flip:`
+word marker; `reflip:` alone does not satisfy it. This is a marker-presence
+check, not a semantic assessment of the human-written condition.
+
+The knowledge scan remains direct-only: it inspects `corpus/knowledge/*.md`
+and does not descend into subdirectories. Nested headerless files may therefore
+remain unreported. The gate does not establish admission integrity for the
+whole knowledge corpus; header checks are limited to direct Markdown children.
