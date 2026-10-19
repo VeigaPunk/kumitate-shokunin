@@ -115,3 +115,25 @@ record: `.ufo/rounds/round-34/sources-gate.md`.
 
 **Rows touched old→new:** none — every row is new this round (append-only holds
 trivially).
+
+## Post-review correction (2026-10-19)
+
+The W3 non-author review found admission-gate false-clean cases. The follow-up
+fix scopes source rows to `## Registry`, rejects empty required cells, requires
+both `REJECTED:` and `flip:` for rejected rows, and fails unlisted headerless
+knowledge files. The gate's only no-header exception is the frozen set of 38
+knowledge paths at base `16a5441`; those identities remain exempt-but-counted,
+and later additions inside them are not new sourced entries.
+
+The `cursor-lane` section in the pre-existing
+`corpus/knowledge/kimi-skills-plugins.md` is not a new Q1 admission or expansion
+entry. Expansion credit is limited to the two new header-trio knowledge files.
+The Kimi coverage statement remains scoped to the frozen K1–K5 universe of 50
+members; root `mcp.json` remains undeclared debt for round 35, so the whole-root
+census is not clean.
+
+`kumitate-proxy-v1` is restored to the unchanged 23-key parent contract. Its
+source-check pin was removed; the independent sources gate remains listed in
+`SKILL.md` and the existing `PIN_UNPINNED` advisory is not suppressed.
+Saturation is declared under `SCORECARD.md` `## Saturation` (line 1613), not the
+unrelated membrane-seal text at line 9.

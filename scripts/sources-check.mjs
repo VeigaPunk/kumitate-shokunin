@@ -11,6 +11,8 @@
  *   error ROW_MALFORMED       E01  a `| S[0-9]{3,} |` row has split-field count != 13
  *         ID_FORM             E02  a registry row id is not `S[0-9]{3,}`
  *         ID_DUPLICATE        E03  an otherwise well-formed registry id is repeated
+ *         ROW_OUTSIDE_REGISTRY E12 a source-shaped row is outside `## Registry`
+ *         ROW_FIELD_EMPTY      —  a required registry cell is empty
  *         KIND_ENUM           E05  kind is not in the frozen registry enum
  *         TIER_ENUM           E06  tier is not A, B, or C
  *         STATUS_ENUM         E07  status is not queued, mined, or rejected
@@ -19,18 +21,20 @@
  *         RECHECK_INVALID    E09  recheck is not an ISO date, Nd cadence, or on-release
  *         USED_BY_MISSING    E11  a mined row names a repo-relative path absent on disk
  *         MINED_UNUSED       W03  a mined row has used-by `—` or an empty cell
- *         REJECTED_NO_FLIP   W02  rejected teaches has neither `REJECTED:` nor `flip:`
+ *         REJECTED_NO_REASON  —   rejected teaches lacks `REJECTED:`
+ *         REJECTED_NO_FLIP   W02  rejected teaches lacks `flip:`
  *         SECTION_MISSING      —   one of the four contract headings is absent
- *         ENTRY_SOURCE_UNKNOWN —   a knowledge header cites an unregistered S id
- *         HEADER_INCOMPLETE    —   a source-header entry lacks verified-at/recheck
- *   warn  USED_BY_ASYMMETRY    —   an entry citation is absent from that row's used-by
- *         RECHECK_OVERDUE      —   an ISO recheck date or opened + Nd is before today
+ *         ENTRY_SOURCE_UNKNOWN — a knowledge header cites an unregistered S id
+ *         ENTRY_HEADER_REQUIRED — a non-legacy knowledge file lacks `source:`
+ *         HEADER_INCOMPLETE    —   a source-header entry has missing/empty trio values
+ *   warn  USED_BY_ASYMMETRY    — an entry citation is absent from that row's used-by
+ *         RECHECK_OVERDUE      — an ISO recheck date or opened + Nd is before today
  *
- * Fleet codes E01-E03/E05-E11/W02/W03 retain the fleet validate meanings;
+ * Fleet codes E01-E03/E05-E12/W02/W03 retain the fleet validate meanings;
  * E04, W01 and other fleet checks are intentionally outside this contract.
  * `RECHECK_OVERDUE` maps to the fleet `overdue` report (which has no validate
  * code); `—` means no fleet validate code. The legacy-entry count is information,
- * never a finding.
+ * never a finding; the only exempt identities are frozen from base `16a5441`.
  *
  * Verdict (the final text-mode stdout line):
  *   SOURCES_CHECK: CLEAN (rows=N tiers=A:a,B:b,C:c status=queued:q,mined:m,rejected:r entries_with_source=k legacy=l)
@@ -54,6 +58,47 @@ const HERE = dirname(TOOL_FILE);
 const DEFAULT_SELF = resolve(HERE, '..');
 const TODAY_UTC = new Date().toISOString().slice(0, 10);
 const REQUIRED_SECTIONS = ['Registry', 'Paths', 'Search log', 'Leads (unopened)'];
+/** Direct knowledge paths present at frozen base 16a5441; appended material stays legacy, not a new admission. */
+const LEGACY_KNOWLEDGE_FILES = Object.freeze([
+  'corpus/knowledge/cost-and-profile.md',
+  'corpus/knowledge/dispatch-shapes.md',
+  'corpus/knowledge/distill-and-l3.md',
+  'corpus/knowledge/enqueue-admission.md',
+  'corpus/knowledge/executable-scorecard.md',
+  'corpus/knowledge/failure-telemetry.md',
+  'corpus/knowledge/gate-verdict.md',
+  'corpus/knowledge/kimi-binary-secrets.md',
+  'corpus/knowledge/kimi-config-plane.md',
+  'corpus/knowledge/kimi-lane-definitions.md',
+  'corpus/knowledge/kimi-modes-machinery.md',
+  'corpus/knowledge/kimi-residue-files.md',
+  'corpus/knowledge/kimi-session-state.md',
+  'corpus/knowledge/kimi-skills-plugins.md',
+  'corpus/knowledge/layer-axes.md',
+  'corpus/knowledge/live-surface-probe.md',
+  'corpus/knowledge/local-ship.md',
+  'corpus/knowledge/loop-driver.md',
+  'corpus/knowledge/member-claims-gate.md',
+  'corpus/knowledge/native-admission-detail.md',
+  'corpus/knowledge/native-judge-pipeline.md',
+  'corpus/knowledge/native-transcript-ledger-seats.md',
+  'corpus/knowledge/native-trial-launch.md',
+  'corpus/knowledge/ops-watchers.md',
+  'corpus/knowledge/queue-and-claim.md',
+  'corpus/knowledge/queue-summary.md',
+  'corpus/knowledge/reconcile-and-cycle.md',
+  'corpus/knowledge/remaining-scripts-census.md',
+  'corpus/knowledge/round-close-gate.md',
+  'corpus/knowledge/route-probe-cluster.md',
+  'corpus/knowledge/route-resolution.md',
+  'corpus/knowledge/runtime-remainder-census.md',
+  'corpus/knowledge/runtime-support.md',
+  'corpus/knowledge/sighting-wall.md',
+  'corpus/knowledge/singleton-and-queue-ownership.md',
+  'corpus/knowledge/successor-chain.md',
+  'corpus/knowledge/swarm-wave-lifecycle.md',
+  'corpus/knowledge/test-inventories.md',
+]);
 const KINDS = Object.freeze({
   spec: true, docs: true, paper: true, code: true, tool: true,
   dataset: true, talk: true, book: true, community: true, 'own-work': true,
@@ -61,10 +106,11 @@ const KINDS = Object.freeze({
 const TIERS = Object.freeze({ A: true, B: true, C: true });
 const STATUSES = Object.freeze({ queued: true, mined: true, rejected: true });
 const FINDING_KINDS = [
-  'ROW_MALFORMED', 'ID_FORM', 'ID_DUPLICATE', 'KIND_ENUM', 'TIER_ENUM',
-  'STATUS_ENUM', 'TIER_INFLATION', 'OPENED_INVALID', 'RECHECK_INVALID',
-  'USED_BY_MISSING', 'MINED_UNUSED', 'REJECTED_NO_FLIP', 'SECTION_MISSING',
-  'ENTRY_SOURCE_UNKNOWN', 'HEADER_INCOMPLETE', 'USED_BY_ASYMMETRY',
+  'ROW_MALFORMED', 'ID_FORM', 'ID_DUPLICATE', 'ROW_OUTSIDE_REGISTRY', 'ROW_FIELD_EMPTY',
+  'KIND_ENUM', 'TIER_ENUM', 'STATUS_ENUM', 'TIER_INFLATION', 'OPENED_INVALID',
+  'RECHECK_INVALID', 'USED_BY_MISSING', 'MINED_UNUSED', 'REJECTED_NO_REASON',
+  'REJECTED_NO_FLIP', 'SECTION_MISSING', 'ENTRY_SOURCE_UNKNOWN',
+  'ENTRY_HEADER_REQUIRED', 'HEADER_INCOMPLETE', 'USED_BY_ASYMMETRY',
   'RECHECK_OVERDUE',
 ];
 const FAIL_CLOSED_KINDS = ['SOURCES_MISSING', 'SELF_NOT_A_DIR', 'READ_FAILED'];
@@ -144,9 +190,17 @@ function runCheck(opts) {
     findings.push({ severity, kind, path, ...(line === null ? {} : { line }), detail });
   };
   const headings = Object.create(null);
-  for (const line of sourceLines) {
-    const match = /^## (.+?)\s*$/.exec(line);
-    if (match) headings[match[1]] = true;
+  const sectionAtLine = [];
+  let activeSection = null;
+  for (let index = 0; index < sourceLines.length; index += 1) {
+    const match = /^## (.+?)\s*$/.exec(sourceLines[index]);
+    if (match) {
+      activeSection = match[1];
+      headings[activeSection] = true;
+    } else if (/^#(?:\s|$)/.test(sourceLines[index])) {
+      activeSection = null;
+    }
+    sectionAtLine[index] = activeSection;
   }
   for (const section of REQUIRED_SECTIONS) {
     if (!Object.hasOwn(headings, section)) {
@@ -170,10 +224,17 @@ function runCheck(opts) {
     const line = sourceLines[index];
     if (!line.startsWith('|')) continue;
     const fields = line.split('|');
-    if (fields.length < 3) continue;
     const id = trim(fields[1] ?? '');
+    if (sectionAtLine[index] !== 'Registry') {
+      if (/^\|[ \t]*S\d{3,}[ \t]*\|/.test(line)) {
+        add('error', 'ROW_OUTSIDE_REGISTRY', 'corpus/SOURCES.md', index + 1, `id=${id} row outside Registry section`);
+      }
+      continue;
+    }
     if (id === '') {
-      if (trim(fields[2] ?? '') !== '') add('error', 'ID_FORM', 'corpus/SOURCES.md', index + 1, 'id=(empty)');
+      if (fields.slice(2, -1).some((field) => trim(field) !== '')) {
+        add('error', 'ID_FORM', 'corpus/SOURCES.md', index + 1, 'id=(empty)');
+      }
       continue;
     }
     if (id.toLowerCase() === 'id' || /^:?-{3,}:?$/.test(id)) continue;
@@ -213,6 +274,13 @@ function runCheck(opts) {
       line: index + 1,
     };
     if (validId && !Object.hasOwn(rowsById, id)) rowsById[id] = row;
+    for (const [field, value] of Object.entries({
+      source: row.source, kind: row.kind, tier: row.tier, scope: row.scope,
+      anchor: row.anchor, teaches: row.teaches, status: row.status,
+      opened: row.opened, recheck: row.recheck, 'used-by': row.usedBy,
+    })) {
+      if (value === '') add('error', 'ROW_FIELD_EMPTY', 'corpus/SOURCES.md', row.line, `id=${id} field=${field}`);
+    }
 
     if (Object.hasOwn(KINDS, row.kind) === false) {
       add('error', 'KIND_ENUM', 'corpus/SOURCES.md', row.line, `id=${id} kind=${row.kind}`);
@@ -247,8 +315,13 @@ function runCheck(opts) {
         }
       }
     }
-    if (row.status === 'rejected' && !row.teaches.includes('REJECTED:') && !row.teaches.includes('flip:')) {
-      add('error', 'REJECTED_NO_FLIP', 'corpus/SOURCES.md', row.line, `id=${id} rejected teaches lacks REJECTED: or flip:`);
+    if (row.status === 'rejected') {
+      if (!row.teaches.includes('REJECTED:')) {
+        add('error', 'REJECTED_NO_REASON', 'corpus/SOURCES.md', row.line, `id=${id} rejected teaches lacks REJECTED:`);
+      }
+      if (!row.teaches.includes('flip:')) {
+        add('error', 'REJECTED_NO_FLIP', 'corpus/SOURCES.md', row.line, `id=${id} rejected teaches lacks flip:`);
+      }
     }
     if (recheckDay !== null && recheckDay < opts.todayDay) {
       add('warn', 'RECHECK_OVERDUE', 'corpus/SOURCES.md', row.line, `id=${id} recheck=${row.recheck}`);
@@ -281,7 +354,11 @@ function runCheck(opts) {
     const lines = text.split(/\r?\n/);
     const hasSourceHeader = lines[0]?.startsWith('source:') === true;
     if (!hasSourceHeader) {
-      counts.legacy += 1;
+      if (LEGACY_KNOWLEDGE_FILES.includes(relPath)) {
+        counts.legacy += 1;
+      } else {
+        add('error', 'ENTRY_HEADER_REQUIRED', relPath, 1, 'non-legacy knowledge file lacks source: header');
+      }
       continue;
     }
     counts.entriesWithSource += 1;
@@ -297,11 +374,16 @@ function runCheck(opts) {
         add('warn', 'USED_BY_ASYMMETRY', relPath, 1, `${id} used-by omits ${relPath}`);
       }
     }
-    const hasVerifiedAt = header.some((line) => /^verified-at:/.test(line));
-    const hasRecheck = header.some((line) => /^recheck:/.test(line));
-    if (!hasVerifiedAt || !hasRecheck) {
-      const missing = [!hasVerifiedAt ? 'verified-at:' : '', !hasRecheck ? 'recheck:' : ''].filter(Boolean).join(', ');
-      add('error', 'HEADER_INCOMPLETE', relPath, 1, `source header missing ${missing} in first 5 lines`);
+    const hasSourceValue = /^source:\s*\S/.test(lines[0] ?? '');
+    const hasVerifiedAt = header.some((line) => /^verified-at:\s*\S/.test(line));
+    const hasRecheck = header.some((line) => /^recheck:\s*\S/.test(line));
+    if (!hasSourceValue || !hasVerifiedAt || !hasRecheck) {
+      const missing = [
+        !hasSourceValue ? 'source:' : '',
+        !hasVerifiedAt ? 'verified-at:' : '',
+        !hasRecheck ? 'recheck:' : '',
+      ].filter(Boolean).join(', ');
+      add('error', 'HEADER_INCOMPLETE', relPath, 1, `source header missing/empty ${missing} in first 5 lines`);
     }
   }
 
@@ -412,7 +494,6 @@ function runCli(argv) {
 }
 
 /* ---------------------------------------------------------------- selftest */
-
 const FIXTURE_TODAY = '2026-10-19';
 const BASE_ENTRY = `source: S001 https://example.test/one\nverified-at: ${FIXTURE_TODAY} fixture r1\nrecheck: on-release\n\n# Fixture knowledge\n`;
 
@@ -424,7 +505,7 @@ function makeRow({
   return `| ${[id, 'Fixture — https://example.test/source', kind, tier, scope, anchor, teaches, status, opened, recheck, usedBy].join(' | ')} |`;
 }
 
-function fixtureSources(rows, omittedSections = []) {
+function fixtureSources(rows, omittedSections = [], outsideRows = []) {
   const sections = REQUIRED_SECTIONS.filter((section) => !omittedSections.includes(section));
   const lines = ['# SOURCES — fixture', ''];
   for (const section of sections) {
@@ -433,7 +514,9 @@ function fixtureSources(rows, omittedSections = []) {
       lines.push('', '| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |');
       lines.push('|---|---|---|---|---|---|---|---|---|---|---|');
       lines.push(...rows, '');
-    } else lines.push('');
+    } else {
+      lines.push(...(section === 'Paths' ? outsideRows : []), '');
+    }
   }
   return `${lines.join('\n')}\n`;
 }
@@ -444,15 +527,17 @@ function makeFixture(parent, name, {
   omittedSections = [],
   knowledgeIsFile = false,
   omitSources = false,
+  outsideRows = [],
+  knowledgeName = 'alpha.md',
 } = {}) {
   const root = join(parent, name);
   mkdirSync(join(root, 'corpus'), { recursive: true });
   if (knowledgeIsFile) writeFileSync(join(root, 'corpus', 'knowledge'), 'not a directory\n');
   else {
     mkdirSync(join(root, 'corpus', 'knowledge'), { recursive: true });
-    if (entry !== null) writeFileSync(join(root, 'corpus', 'knowledge', 'alpha.md'), entry);
+    if (entry !== null) writeFileSync(join(root, 'corpus', 'knowledge', knowledgeName), entry);
   }
-  if (!omitSources) writeFileSync(join(root, 'corpus', 'SOURCES.md'), fixtureSources(rows, omittedSections));
+  if (!omitSources) writeFileSync(join(root, 'corpus', 'SOURCES.md'), fixtureSources(rows, omittedSections, outsideRows));
   return root;
 }
 
@@ -514,6 +599,13 @@ function selfTest() {
         const root = makeDefault('duplicate', { rows: [makeRow({ id: 'S001', status: 'mined', usedBy: 'corpus/knowledge/alpha.md' }), makeRow({ id: 'S001' })] });
         return runTool(['--self', root, '--today', FIXTURE_TODAY]);
       }],
+      ['ROW_OUTSIDE_REGISTRY', () => {
+        const root = makeDefault('row-outside-registry', {
+          outsideRows: [makeRow({ id: 'S999' })],
+        });
+        return runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      }],
+      ['ROW_FIELD_EMPTY', () => runCase('row-field-empty', { scope: '' })],
       ['KIND_ENUM', () => runCase('kind-enum', { kind: 'invalid' })],
       ['TIER_ENUM', () => runCase('tier-enum', { tier: 'D' })],
       ['STATUS_ENUM', () => runCase('status-enum', { status: 'watch' })],
@@ -522,7 +614,8 @@ function selfTest() {
       ['RECHECK_INVALID', () => runCase('recheck-invalid', { recheck: '90 days' })],
       ['USED_BY_MISSING', () => runCase('used-by-missing', { status: 'mined', usedBy: 'corpus/knowledge/missing.md' })],
       ['MINED_UNUSED', () => runCase('mined-unused', { status: 'mined', usedBy: '—' })],
-      ['REJECTED_NO_FLIP', () => runCase('rejected-no-flip', { status: 'rejected', teaches: 'not admitted' })],
+      ['REJECTED_NO_REASON', () => runCase('rejected-no-reason', { status: 'rejected', teaches: 'flip: new evidence changes scope' })],
+      ['REJECTED_NO_FLIP', () => runCase('rejected-no-flip', { status: 'rejected', teaches: 'REJECTED: outside scope' })],
       ['SECTION_MISSING', () => {
         const root = makeDefault('section-missing', { omittedSections: ['Paths'] });
         return runTool(['--self', root, '--today', FIXTURE_TODAY]);
@@ -537,7 +630,21 @@ function selfTest() {
       ['HEADER_INCOMPLETE', () => {
         const root = makeDefault('header-incomplete', { entry: `source: S001 https://example.test/one\nverified-at: ${FIXTURE_TODAY} fixture r1\n\n# Fixture knowledge\n` });
         return runTool(['--self', root, '--today', FIXTURE_TODAY]);
-      }],
+      }, 'missing recheck'],
+      ['HEADER_INCOMPLETE', () => {
+        const root = makeDefault('header-empty-trio-value', { entry: 'source:  \nverified-at:  \nrecheck:  \n# Fixture knowledge\n' });
+        return runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      }, 'empty header trio'],
+      ['ENTRY_HEADER_REQUIRED', () => {
+        const root = makeDefault('new-headerless', { entry: '# New knowledge\n' });
+        return runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      }, 'new headerless file'],
+      ['ENTRY_HEADER_REQUIRED', () => {
+        const root = makeDefault('new-source-header-removed', {
+          entry: BASE_ENTRY.replace(/^source:[^\n]*\n/u, ''),
+        });
+        return runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      }, 'source header removed from new entry'],
       ['USED_BY_ASYMMETRY', () => {
         const root = makeDefault('used-by-asymmetry', { rows: [makeRow({ id: 'S001', status: 'queued', usedBy: '—' })] });
         return runTool(['--self', root, '--today', FIXTURE_TODAY]);
@@ -553,8 +660,9 @@ function selfTest() {
       });
       return runTool(['--self', root, '--today', FIXTURE_TODAY]);
     }
-    for (const [kind, makeRun] of cases) {
-      check(`${kind}: fixture reports kind with expected exit`, () => {
+    for (const [kind, makeRun, label = kind] of cases) {
+      const caseName = label === kind ? kind : `${kind} (${label})`;
+      check(`${caseName}: fixture reports kind with expected exit`, () => {
         const run = makeRun();
         const expectedExit = kind === 'USED_BY_ASYMMETRY' || kind === 'RECHECK_OVERDUE' ? 0 : 1;
         return expectKind(run, kind, expectedExit);
@@ -569,6 +677,25 @@ function selfTest() {
       const kinds = textKinds(run);
       for (const seen of kinds) observed.add(seen);
       return { ok: run.status === 0 && !kinds.includes('RECHECK_OVERDUE'), detail: `exit=${run.status} kinds=[${kinds.join(',')}] last=${finalLine(run)}` };
+    });
+    check('frozen 16a5441 legacy identity set has 38 unique paths', () => {
+      const unique = new Set(LEGACY_KNOWLEDGE_FILES);
+      return {
+        ok: LEGACY_KNOWLEDGE_FILES.length === 38 && unique.size === 38,
+        detail: `base=${LEGACY_KNOWLEDGE_FILES.length} unique=${unique.size}`,
+      };
+    });
+    check('frozen base identity remains legacy and counted after append-only growth', () => {
+      const root = makeDefault('legacy-base-note', {
+        entry: '# Grandfathered knowledge\n',
+        knowledgeName: 'cost-and-profile.md',
+        rows: [makeRow({ id: 'S001', status: 'queued', usedBy: '—' })],
+      });
+      const run = runTool(['--self', root, '--today', FIXTURE_TODAY]);
+      return {
+        ok: run.status === 0 && finalLine(run).includes('entries_with_source=0 legacy=1'),
+        detail: `exit=${run.status} last=${finalLine(run)}`,
+      };
     });
     check('ROW_MALFORMED: an over-wide row (an extra cell, 14 split fields) is flagged', () => {
       const wide = `${makeRow({ id: 'S002' })} extra |`;
@@ -678,7 +805,7 @@ function selfTest() {
   const failed = active.filter((result) => !result.ok);
   for (const result of results) {
     if (result.skip) process.stdout.write(`SKIP ${result.label}: ${result.detail}\n`);
-    else if (result.ok) process.stdout.write(`PASS ${result.label}\n`);
+    else if (result.ok) process.stdout.write(`PASS ${result.label}: ${result.detail}\n`);
     else process.stdout.write(`FAIL ${result.label}\n     ${result.detail}\n`);
   }
   process.stdout.write(`SOURCES_SELFTEST: ${active.length - failed.length}/${active.length} pass\n`);

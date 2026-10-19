@@ -440,3 +440,10 @@ claim, and editing the latter would alter quoted bytes.
 - Lines 11–13 (five entries, all symlinks), 39–40 (five skills), and line 386
   (five symlinks) reflect an earlier snapshot. Live `~/.kimi-code/skills/` has
   six children: five symlinks and the real `cursor-lane` directory.
+
+## Erratum (round 34 post-review, 2026-10-19; append-only)
+
+The `cursor-lane` subsection is census metadata appended to this pre-existing
+headerless note, not a standalone sourced knowledge entry or expansion
+admission. It records the additional K2 member only; root `mcp.json` remains
+outside the frozen K1–K5 set and debt pre-registered for round 35.

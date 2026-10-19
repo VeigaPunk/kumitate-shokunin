@@ -602,7 +602,7 @@ this lane (kumitate L1).
 | proxy-check | gate | `node scripts/proxy-check.mjs [--strict]` → `PROXY: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` `<!-- kumitate-proxy-v1` stanza (terms + `pin.*` sha256) |
 | claims-check | gate | `node scripts/claims-check.mjs [--row ID] [--strict]` → `CLAIMS: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` registry `yes — <note>` cells |
 | kimi-census | gate | `node scripts/kimi-census.mjs` → `KIMI_CENSUS: CLEAN\|DRIFT` | `--selftest` | frozen member set + family counts inside the script |
-| sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | `corpus/SOURCES.md` (registry, contract v1) + knowledge `source:` headers |
+| sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | independent gate; `corpus/SOURCES.md` + frozen `16a5441` legacy identity set; not a `kumitate-proxy-v1` pin |
 
 Named gaps (not claimed): no gate yet ships the §Gate standard "two evidences"
 frozen-snapshot run with a digest-pinned expected-verdict file, and no verdict line names

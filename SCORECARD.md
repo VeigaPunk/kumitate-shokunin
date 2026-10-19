@@ -259,10 +259,11 @@ successor, likewise pre-registered in round 15 and first measured in round 16
 both scores, and compares them with this block and with the `## Axes` integers;
 `node scripts/proxy-check.mjs` → `PROXY: MATCH (…)` exit 0, `PROXY: DRIFT (…)`
 exit 1, fail-closed exit 2, usage 64. The values are **claims** — the tool
-re-derives and never trusts them, and it never rewrites this block. The pins (seven since round 34)
-are full sha256 hex of `scripts/*.mjs`; re-pin them after ANY edit to those files,
-including `proxy-check.mjs` itself (an unrecorded edit then shows up as
-`PIN_DRIFT`, not as a silently stale claim). Six of the terms are new in round 16:
+re-derives and never trusts them, and it never rewrites this block. The six pins
+in the unchanged parent-frozen v1 key set are full sha256 hex for their named
+scripts; re-pin those files after ANY edit, including `proxy-check.mjs` itself.
+Other `scripts/*.mjs` files are not v1 keys and produce `PIN_UNPINNED`
+(the independent sources gate is registered in `SKILL.md`). Six of the terms are new in round 16:
 `S_members`, `S_sections`, `R_members`, `R_sections` and the two scores derived
 from them (`coverage_script`, `coverage_runtime`) — the layer member counts are
 read from the origin tree **once, in-process, read-only** through
@@ -294,10 +295,9 @@ coverage_kimi=10
 pin.cite-check=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
 pin.surface-probe=148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=18e94ff9679ee253077e150369b6c75559e0f386d3dffb9cc7c0ccefcf171263
+pin.proxy-check=a0641a342ae1112ac1b04392219444a629c7dc95cae8c83816df8d11d195cf23
 pin.claims-check=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
 pin.kimi-census=5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0
-pin.sources-check=a25f1b59168021a42d70029178b370e09e10624e991cbd24f5d5280d2e985451
 -->
 
 ## Axes
@@ -322,6 +322,13 @@ round-14/17 text kept as written):* live terms are now A=7, C=13 (`f_O` 20/23,
 retirement-era reading. The `kumitate-proxy-v1` stanza grew a 24th key
 (`pin.sources-check`) in round 34 — additive, by the lane's L1, as in rounds 16
 (six layer keys) and 20 (five K keys + `pin.kimi-census`); no key changed meaning.
+*Post-review correction (round 34, 2026-10-19).* The earlier local extension was
+removed: `kumitate-proxy-v1` retains its unchanged parent 23-key contract
+(17 terms, six pins). `sources-check` is not a v1 pin; it remains a separate
+gate-registry row in `SKILL.md`, and the existing `PIN_UNPINNED` advisory is
+therefore retained (`--strict` promotes that warning to drift). This correction
+supersedes the round-34 assertion above without renaming or widening v1.
+
 
 Coverage **is** 10 — and the number is the problem, not the achievement. The
 frozen aggregate is a product of two terms that both reached their terminal
@@ -1606,7 +1613,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
-| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1) machine-checked for shape, enums, tier inflation, used-by resolution, rejected-row flips, knowledge `source:` headers and overdue rechecks | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 34/34; the contract's seven census commands clean; `LOG.md` round 34 | round 34 |
+| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, new-entry header trios and overdue rechecks | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 42/42; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 

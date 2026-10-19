@@ -1509,3 +1509,34 @@ The commit carries only these additive scaffolds on top of HEAD; all pre-existin
   declared 50-member universe only — the census root stays red on the deferred
   mcp.json; (c) the live-origin script-layer drop 10 → 9 is an open external
   harm at `2cad708`, not caused by either claim.
+
+## 2026-10-19 — round-34 post-review corrections
+
+The W3 non-author review's registry counterexamples are repaired in
+`scripts/sources-check.mjs`: source rows are validated only inside `## Registry`,
+required registry cells cannot be empty, and rejected teaching must include
+both `REJECTED:` and `flip:`. Hermetic fixtures cover each failure, including
+the independent missing-reason and missing-flip halves. `.ufo/rounds/round-34/sources-gate.md`
+records the corrected gate boundary.
+
+The headerless exemption is now the explicit 38-path knowledge identity set
+from base `16a5441`; unlisted headerless files fail and listed legacy files
+remain counted. Appended material inside `kimi-skills-plugins.md` is not a new
+sourced admission or expansion entry. The narrow K1–K5 coverage claim remains
+50 members; root `mcp.json` is still undeclared debt for round 35, not a clean
+whole-root census.
+
+The `kumitate-proxy-v1` stanza and parser retain the parent 23-key contract
+(17 terms plus six pins). `pin.sources-check` is removed; the source gate stays
+independently registered in `SKILL.md`. The existing `PIN_UNPINNED` warning
+continues to report that separate gate, and strict proxy mode promotes the
+warning rather than widening v1. `SCORECARD.md` records the correction and
+retains saturation under `## Saturation` (line 1613).
+
+Verification after the correction: `node scripts/sources-check.mjs --selftest`
+→ `SOURCES_SELFTEST: 42/42 pass`, `VERDICT: PASS`; the actual lane registry
+→ `SOURCES_CHECK: CLEAN (rows=20 tiers=A:19,B:1,C:0 status=queued:9,mined:9,rejected:2 entries_with_source=2 legacy=38)`.
+`node scripts/proxy-check.mjs --selftest` → `PROXY_SELFTEST: 104/104 pass`,
+`VERDICT: PASS`; its named v1 test accepts the unchanged 23-key base stanza
+and its mutation rejects `pin.sources-check` as `STANZA_KEY_UNKNOWN`.
+`fleet-census/scripts/sources-census.sh validate <lane>` → `ok`, exit 0.

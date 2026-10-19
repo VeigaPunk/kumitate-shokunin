@@ -108,3 +108,13 @@ Tier histogram: `awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=
 gsub(/[[:space:]]/,"",t); n[t]++} END{for(k in n) printf "%s=%d ", k, n[k]; print
 ""}' corpus/SOURCES.md`.
 Status histogram: same with `s=$9`.
+
+## Post-review gate correction (2026-10-19)
+
+The sources checker now scans `S###` rows only while under `## Registry` and
+reports E12-equivalent `ROW_OUTSIDE_REGISTRY` findings elsewhere. Empty
+required registry cells, rejected rows missing either `REJECTED:` or `flip:`,
+and headerless non-base knowledge files are errors. The no-header exception is
+the immutable 38-path identity list from base `16a5441`; those legacy notes
+remain counted, but appended material inside one is not a new sourced entry.
+Post-review behavior fixtures are in `scripts/sources-check.mjs --selftest`.

@@ -105,3 +105,13 @@ Run from the lane worktree; capture each full verdict line and its date.
 6. **Reject or hold.** Record the candidate, the criterion it missed and what
    would flip the verdict in the round's `## Gate`; a rejection is taste
    evidence, not an omission.
+
+## Post-review clarification (round 34)
+
+Q1 still applies to every new admission. The no-header legacy count is limited
+to the 38 direct `corpus/knowledge/*.md` identities present at frozen base
+`16a5441`, listed immutably in `scripts/sources-check.mjs`; those paths remain
+exempt-but-counted even when later text is appended. Appended text in one of
+those files is not a new sourced entry and cannot support an expansion claim.
+Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
+`recheck:` trio fails the source gate.
