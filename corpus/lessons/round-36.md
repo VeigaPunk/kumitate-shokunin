@@ -56,3 +56,11 @@ lane worktree, `--src` = the pinned clone.
 gates `elsewhere + absent` only, so the 168 dead anchors stay visible diagnostics; a dead/noid ceiling is
 pre-registered for round 37. Also held: a `SRC_TREE_DIRTY` refusal (the pin asserts the commit, not the
 bytes) and the `--known` hardening for checks that fail without a finding (`CHECK_UNEXPLAINED`).
+
+## Correction (appended 2026-10-21, round 37; the rows above stay as written)
+
+The shipped `--fidelity` pairing was **right-first** (`pair = next ?? prev ?? null`); the
+"clause-guarded" wording in the mistakes table above was false and is superseded. The round-36
+correction commit `cb80bc1` records the same. Round 37 restores the 123 anchors this damaged,
+switches the rule to left-first with a shift-must-fail selftest, and replaces the decorative
+ratchet rule with a measured per-note ceiling.

@@ -21,8 +21,9 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
 - D2: `node scripts/claims-check.mjs --selftest` → `CLAIMS_SELFTEST: 47/47 pass`;
   `--fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` → `FIDELITY: CLEAN (notes=20
   anchors=1551 src-rev=31c465f15669)`.
-- D3: appended corrections in `SCORECARD.md` (round-37 note) and this lesson; Axes runtime row now
-  reads `92/92`; stale `C2=81/81`/`82/82` quotes named in `SCORECARD.md` round-37 note.
+- D3: appended corrections in `SCORECARD.md` (`## Round 37 correction`) and `corpus/lessons/round-36.md`
+  (`## Correction`); the live Axes runtime row now reads `92/92`; the historical `C2=81/81`/`82/82`
+  quotes are named as that round's readings. Verify: `grep -n "Round 37 correction" SCORECARD.md`.
 - D4: `corpus/QUALITY.md` Q16 (cited above).
 - D5: falsify wave validated at 68 seats (`.ufo/waves/round-37/falsify-spec.json`), dispatched
   after the repairs and before the report; results are late evidence (records under
