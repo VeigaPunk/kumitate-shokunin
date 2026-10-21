@@ -1,0 +1,37 @@
+$ node scripts/claims-check.mjs --src /fast/scratch/kumitate-r35/src
+# run 2026-10-20T21:11:12-03:00 lane=1770305fae20826b39905a8251ddeca6b4957ac4 src=31c465f15669f744848bd9f5d56191c5085670f7
+ROWS: 19  YES: 19  NOTES: 27  SECTIONS: 178
+ROW S1   form=section   notes=5 sections=1 adv=0
+ROW S2   form=section   notes=2 sections=8 adv=1
+ROW S3   form=section   notes=2 sections=2 adv=0
+ROW S4   form=section   notes=1 sections=5 adv=0
+ROW S5   form=section   notes=3 sections=2 adv=0
+ROW S6   form=section   notes=1 sections=5 adv=0
+ROW S7   form=section   notes=1 sections=6 adv=0
+ROW S8   form=section   notes=1 sections=63 adv=0
+ROW R1   form=section   notes=1 sections=8 adv=0
+ROW R2   form=section   notes=1 sections=12 adv=0
+ROW R3   form=section   notes=1 sections=5 adv=0
+ROW R4   form=section   notes=1 sections=6 adv=0
+ROW R5   form=topic     notes=1 sections=0 adv=1
+ROW R6   form=section   notes=1 sections=4 adv=0
+ROW R7   form=topic     notes=1 sections=0 adv=1
+ROW R8   form=section   notes=1 sections=4 adv=0
+ROW R9   form=section   notes=1 sections=4 adv=3
+ROW R10  form=section   notes=1 sections=2 adv=0
+ROW R11  form=section   notes=1 sections=41 adv=0
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=S2  scripts/ufo-mission-result.mjs is outside S2's declared members
+CLAIMS  error SECTION_FILE_UNRESOLVED  row=S8  scripts/omp-wave-context.mjs does not resolve under --src
+CLAIMS  error SECTION_FILE_UNRESOLVED  row=S8  scripts/primeagent-recovery-assess.mjs does not resolve under --src
+CLAIMS  error SECTION_FILE_UNRESOLVED  row=S8  scripts/primeagent-refinement-ledger.mjs does not resolve under --src
+CLAIMS  error SECTION_FILE_UNRESOLVED  row=S8  scripts/ufo-refinement-context.mjs does not resolve under --src
+CLAIMS  error SECTION_FILE_UNRESOLVED  row=S8  scripts/ufo-refinement-context.test.mjs does not resolve under --src
+CLAIMS  warn  ROW_NO_SECTIONS          row=R5  R5 has no member section — member completeness unchecked
+CLAIMS  warn  ROW_NO_SECTIONS          row=R7  R7 has no member section — member completeness unchecked
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/loop_driver_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/local_ship_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/distill_tests.rs is outside R9's declared members
+CLAIMS  error SECTION_DEAD_ANCHOR      row=R11  crates/ufo-core-runtime/src/round.rs — own-file anchors 17-20 are dead
+SUMMARY: errors=6 warnings=6
+CLAIMS: DRIFT (SECTION_FILE_UNRESOLVED row=S8 scripts/omp-wave-context.mjs does not resolve under --src; SECTION_FILE_UNRESOLVED row=S8 scripts/primeagent-recovery-assess.mjs does not resolve under --src; SECTION_FILE_UNRESOLVED row=S8 scripts/primeagent-refinement-ledger.mjs does not resolve under --src; SECTION_FILE_UNRESOLVED row=S8 scripts/ufo-refinement-context.mjs does not resolve under --src; SECTION_FILE_UNRESOLVED row=S8 scripts/ufo-refinement-context.test.mjs does not resolve under --src; SECTION_DEAD_ANCHOR row=R11 crates/ufo-core-runtime/src/round.rs — own-file anchors 17-20 are dead)
+exit=1

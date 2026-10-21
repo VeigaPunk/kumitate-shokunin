@@ -1,0 +1,182 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  printf 'usage: %s --self <lane-tree> --src <origin>\n' "$0" >&2
+  exit 2
+}
+
+self=
+src=
+while (($#)); do
+  case "$1" in
+    --self)
+      (($# >= 2)) || usage
+      self=$2
+      shift 2
+      ;;
+    --src)
+      (($# >= 2)) || usage
+      src=$2
+      shift 2
+      ;;
+    *) usage ;;
+  esac
+done
+[[ -n "$self" && -n "$src" ]] || usage
+
+self_abs=$(cd "$self" && pwd -P)
+src_abs=$(cd "$src" && pwd -P)
+[[ -f "$self_abs/scripts/proxy-check.mjs" ]] || {
+  printf 'missing proxy checker under --self: %s\n' "$self_abs" >&2
+  exit 2
+}
+[[ -d "$src_abs" ]] || {
+  printf 'missing origin under --src: %s\n' "$src_abs" >&2
+  exit 2
+}
+
+tmp=$(mktemp -d /tmp/ExecMutationBefore.XXXXXX)
+trap 'rm -rf "$tmp"' EXIT
+sandbox="$tmp/self"
+mkdir -p "$sandbox"
+tar --exclude='./.git' --exclude='./.jj' -C "$self_abs" -cf - . | tar -C "$sandbox" -xf -
+
+S_DUP='scripts/fleet-dispatcher.mjs'
+S_DUP_FROM='corpus/knowledge/queue-and-claim.md'
+S_DUP_INTO='corpus/knowledge/successor-chain.md'
+S_DROP='scripts/check-hand-authored-sets.mjs'
+S_DROP_FROM='corpus/knowledge/remaining-scripts-census.md'
+R_DUP='crates/ufo-core-runtime/src/loop_driver.rs'
+R_DUP_FROM='corpus/knowledge/loop-driver.md'
+R_DUP_INTO='corpus/knowledge/runtime-remainder-census.md'
+R_DROP='crates/ufo-core-runtime/src/axes.rs'
+R_DROP_FROM='corpus/knowledge/runtime-remainder-census.md'
+
+printf 'MUTATION_TARGET S duplicate=%s from=%s into=%s drop=%s from=%s\n' \
+  "$S_DUP" "$S_DUP_FROM" "$S_DUP_INTO" "$S_DROP" "$S_DROP_FROM"
+printf 'MUTATION_TARGET R duplicate=%s from=%s into=%s drop=%s from=%s\n' \
+  "$R_DUP" "$R_DUP_FROM" "$R_DUP_INTO" "$R_DROP" "$R_DROP_FROM"
+
+mutate_section() {
+  node -e '
+const fs = require("node:fs");
+const [mode, from, to, member] = process.argv.slice(1);
+const prefix = `## \`${member}\``;
+function range(file) {
+  const text = fs.readFileSync(file, "utf8");
+  const lines = text.split("\n");
+  const starts = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    if (lines[i].startsWith(prefix)) starts.push(i);
+  }
+  if (starts.length !== 1) {
+    throw new Error(`${file}: expected one section headed by ${prefix}, found ${starts.length}`);
+  }
+  const start = starts[0];
+  let end = start + 1;
+  while (end < lines.length && !lines[end].startsWith("## ")) end += 1;
+  return { lines, start, end };
+}
+if (mode === "copy") {
+  const section = range(from).lines;
+  const { start, end } = range(from);
+  const copied = section.slice(start, end).join("\n").replace(/\n+$/u, "");
+  const destination = fs.readFileSync(to, "utf8").replace(/\n*$/u, "");
+  fs.writeFileSync(to, `${destination}\n\n${copied}\n`);
+} else if (mode === "drop") {
+  const { lines, start, end } = range(from);
+  lines.splice(start, end - start);
+  fs.writeFileSync(from, lines.join("\n"));
+} else {
+  throw new Error(`unknown section operation: ${mode}`);
+}
+' "$@"
+}
+
+save_note() {
+  local rel=$1
+  mkdir -p "$tmp/original/$(dirname "$rel")"
+  cp -p "$sandbox/$rel" "$tmp/original/$rel"
+}
+restore_note() {
+  local rel=$1
+  cp -p "$tmp/original/$rel" "$sandbox/$rel"
+}
+
+save_note "$S_DUP_INTO"
+save_note "$S_DROP_FROM"
+save_note "$R_DUP_INTO"
+
+run_proxy() {
+  local label=$1
+  local status=0
+  if node "$sandbox/scripts/proxy-check.mjs" --self "$sandbox" --src "$src_abs" --json >"$tmp/$label.json"; then
+    status=0
+  else
+    status=$?
+  fi
+  if ((status > 1)); then
+    printf 'proxy-check failed unexpectedly with exit=%s during %s\n' "$status" "$label" >&2
+    return "$status"
+  fi
+  node -e '
+const fs = require("node:fs");
+const p = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+if (!p.terms || !Number.isInteger(p.terms.S_sections) || !Number.isInteger(p.terms.R_sections)) {
+  throw new Error("proxy-check JSON omitted integer S_sections/R_sections terms");
+}
+' "$tmp/$label.json"
+}
+
+read_terms() {
+  node -e '
+const fs = require("node:fs");
+const p = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+process.stdout.write(`${p.terms.S_sections}\t${p.terms.R_sections}\n`);
+' "$1"
+}
+
+is_killed() {
+  node -e '
+const fs = require("node:fs");
+const before = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+const after = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+const term = process.argv[3];
+const finding = process.argv[4];
+const changed = before.terms[term] !== after.terms[term];
+const newlyFired = after.findings.some((f) => f.kind === finding)
+  && !before.findings.some((f) => f.kind === finding);
+process.stdout.write(changed || newlyFired ? "yes\n" : "no\n");
+' "$1" "$2" "$3" "$4"
+}
+
+run_proxy before
+IFS=$'\t' read -r baseline_s baseline_r <<<"$(read_terms "$tmp/before.json")"
+printf 'MUTATION_BASELINE S_sections=%s R_sections=%s\n' "$baseline_s" "$baseline_r"
+
+mutate_section copy "$sandbox/$S_DUP_FROM" "$sandbox/$S_DUP_INTO" "$S_DUP"
+mutate_section drop "$sandbox/$S_DROP_FROM" '' "$S_DROP"
+run_proxy after-s
+IFS=$'\t' read -r after_s_s after_s_r <<<"$(read_terms "$tmp/after-s.json")"
+printf 'MUTATION_AFTER_S S_sections=%s R_sections=%s\n' "$after_s_s" "$after_s_r"
+killed_s=$(is_killed "$tmp/before.json" "$tmp/after-s.json" S_sections S_SECTIONS_DRIFT)
+printf 'MUTATION S dup-one/drop-one before=%s after=%s killed=%s\n' \
+  "$baseline_s" "$after_s_s" "$killed_s"
+restore_note "$S_DUP_INTO"
+restore_note "$S_DROP_FROM"
+
+mutate_section copy "$sandbox/$R_DUP_FROM" "$sandbox/$R_DUP_INTO" "$R_DUP"
+mutate_section drop "$sandbox/$R_DROP_FROM" '' "$R_DROP"
+run_proxy after-r
+IFS=$'\t' read -r after_r_s after_r_r <<<"$(read_terms "$tmp/after-r.json")"
+printf 'MUTATION_AFTER_R S_sections=%s R_sections=%s\n' "$after_r_s" "$after_r_r"
+killed_r=$(is_killed "$tmp/before.json" "$tmp/after-r.json" R_sections R_SECTIONS_DRIFT)
+printf 'MUTATION R dup-one/drop-one before=%s after=%s killed=%s\n' \
+  "$baseline_r" "$after_r_r" "$killed_r"
+restore_note "$R_DUP_INTO"
+
+kills=0
+[[ "$killed_s" == yes ]] && ((kills += 1))
+[[ "$killed_r" == yes ]] && ((kills += 1))
+printf 'MUTATION_KILLS %s/2\n' "$kills"

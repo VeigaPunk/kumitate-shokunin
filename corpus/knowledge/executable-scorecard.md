@@ -306,6 +306,10 @@ dedupes files for the row's declared-count check. Live R1/R8 are protected by
 strict adv=0 plus an explicit occurrence=distinct census (8=8, 4=4); changing
 the derivation is queued as operability work rather than hidden in this
 coverage round.
+*Round 35 (2026-10-20):* that operability work landed — `layerTerms()` now
+counts distinct in-family `section.file` identities per layer, and the
+duplicate-one/drop-one mutation is killed for S and R (`SCORECARD.md`
+`## Move log` round 35). The table row above keeps its round-17 wording.
 
 
 ## Reuse path (portability)

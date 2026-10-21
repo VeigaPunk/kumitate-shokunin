@@ -1,0 +1,167 @@
+$ node scripts/proxy-check.mjs --src /fast/scratch/kumitate-r35/src --json
+# run 2026-10-20T21:11:12-03:00 lane=1770305fae20826b39905a8251ddeca6b4957ac4 src=31c465f15669f744848bd9f5d56191c5085670f7
+{
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "scorecard": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md",
+  "src": "/fast/scratch/kumitate-r35/src",
+  "kimiRoot": "/home/vgpnk/.kimi-code",
+  "strict": false,
+  "terms": {
+    "A": 7,
+    "C": 13,
+    "C1": 19,
+    "C1_total": 19,
+    "C2": 77,
+    "C2_total": 78,
+    "operability": 8,
+    "coverage": 9,
+    "S_members": 88,
+    "S_sections": 86,
+    "R_members": 92,
+    "R_sections": 83,
+    "coverage_script": 9,
+    "coverage_runtime": 9,
+    "C1k": 5,
+    "C1k_total": 5,
+    "K_members": 50,
+    "K_sections": 50,
+    "coverage_kimi": 10,
+    "pins": {
+      "pin.cite-check": {
+        "file": "scripts/cite-check.mjs",
+        "declared": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+        "computed": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+        "match": true
+      },
+      "pin.surface-probe": {
+        "file": "scripts/surface-probe.mjs",
+        "declared": "148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e",
+        "computed": "148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e",
+        "match": true
+      },
+      "pin.round-gate": {
+        "file": "scripts/round-gate.mjs",
+        "declared": "f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9",
+        "computed": "f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9",
+        "match": true
+      },
+      "pin.proxy-check": {
+        "file": "scripts/proxy-check.mjs",
+        "declared": "a0641a342ae1112ac1b04392219444a629c7dc95cae8c83816df8d11d195cf23",
+        "computed": "a0641a342ae1112ac1b04392219444a629c7dc95cae8c83816df8d11d195cf23",
+        "match": true
+      },
+      "pin.claims-check": {
+        "file": "scripts/claims-check.mjs",
+        "declared": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+        "computed": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+        "match": true
+      },
+      "pin.kimi-census": {
+        "file": "scripts/kimi-census.mjs",
+        "declared": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+        "computed": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0",
+        "match": true
+      }
+    },
+    "pinsMatched": 6,
+    "pinsTotal": 6,
+    "declared": {
+      "A": "7",
+      "C": "13",
+      "C1": "19",
+      "C1_total": "19",
+      "C2": "77",
+      "C2_total": "77",
+      "S_members": "91",
+      "S_sections": "91",
+      "R_members": "92",
+      "R_sections": "83",
+      "coverage_script": "10",
+      "coverage_runtime": "9",
+      "C1k": "5",
+      "C1k_total": "5",
+      "K_members": "50",
+      "K_sections": "50",
+      "coverage_kimi": "10",
+      "pin.cite-check": "40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f",
+      "pin.surface-probe": "148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e",
+      "pin.round-gate": "f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9",
+      "pin.proxy-check": "a0641a342ae1112ac1b04392219444a629c7dc95cae8c83816df8d11d195cf23",
+      "pin.claims-check": "e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b",
+      "pin.kimi-census": "5e8d591324064fff714fb85b9d254b726deb9fd9cf15261eba135ccff6db3dc0"
+    },
+    "stanzaLine": 277
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "C2_TOTAL_DRIFT",
+      "term": "C2_total",
+      "declared": 77,
+      "computed": 78,
+      "delta": "+1",
+      "detail": "C2_total: declared=77 computed=78 delta=+1"
+    },
+    {
+      "severity": "error",
+      "kind": "S_MEMBERS_DRIFT",
+      "term": "S_members",
+      "declared": 91,
+      "computed": 88,
+      "delta": "-3",
+      "detail": "S_members: declared=91 computed=88 delta=-3"
+    },
+    {
+      "severity": "error",
+      "kind": "S_SECTIONS_DRIFT",
+      "term": "S_sections",
+      "declared": 91,
+      "computed": 86,
+      "delta": "-5",
+      "detail": "S_sections: declared=91 computed=86 delta=-5"
+    },
+    {
+      "severity": "error",
+      "kind": "COVERAGE_SCRIPT_DRIFT",
+      "term": "coverage_script",
+      "declared": 10,
+      "computed": 9,
+      "delta": "-1",
+      "detail": "coverage_script: declared=10 computed=9 delta=-1"
+    },
+    {
+      "severity": "error",
+      "kind": "AXES_DRIFT",
+      "term": "coverage",
+      "key": "coverage",
+      "declared": 10,
+      "computed": 9,
+      "detail": "coverage: ## Axes row=10 derived=9"
+    },
+    {
+      "severity": "error",
+      "kind": "AXES_DRIFT",
+      "term": "coverage:script-layer",
+      "key": "coverage_script",
+      "declared": 10,
+      "computed": 9,
+      "detail": "coverage:script-layer: ## Axes row=10 derived=9"
+    },
+    {
+      "severity": "warn",
+      "kind": "PIN_UNPINNED",
+      "term": "scripts/sources-check.mjs",
+      "detail": "scripts/sources-check.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza"
+    }
+  ],
+  "errors": 6,
+  "warnings": 1,
+  "durationMs": 36
+}
+exit=1

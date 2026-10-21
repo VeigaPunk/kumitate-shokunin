@@ -1,0 +1,218 @@
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { join } from "node:path";
+
+const repo = "/home/vgpnk/Projects/shokunin/kumitate-shokunin";
+const notesDir = join(repo, "corpus/knowledge");
+const sourceRepo = "/fast/scratch/kumitate-r35/src";
+const revs = ["964f443e", "31c465f15669f744848bd9f5d56191c5085670f7"];
+const outPath = "/fast/scratch/kumitate-r35/w/ExecFidelitySweep/anchors.tsv";
+const notes = readdirSync(notesDir).filter((f) => f.endsWith(".md")).sort();
+const sourceCache = new Map();
+const nearestCache = new Map();
+const rows = [];
+const idPattern = /^[A-Za-z_$][A-Za-z0-9_$]*(?:::[A-Za-z_$][A-Za-z0-9_$]*)*$/;
+
+function sourceLines(rev, file) {
+  const key = `${rev}\0${file}`;
+  if (sourceCache.has(key)) return sourceCache.get(key);
+  let lines = null;
+  try {
+    const text = execFileSync("git", ["-C", sourceRepo, "show", `${rev}:${file}`], {
+      encoding: "utf8",
+      maxBuffer: 64 * 1024 * 1024,
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+    lines = text.split("\n");
+  } catch {}
+  sourceCache.set(key, lines);
+  return lines;
+}
+
+function getHeadingMember(heading) {
+  const match = /(?:^|[\s`])((?:scripts|crates)\/[A-Za-z0-9_./-]+)/.exec(heading);
+  return match?.[1] ?? null;
+}
+
+function blocksForSentences(text, firstLine) {
+  const blocks = [];
+  let blockLines = [];
+  let blockFirstLine = firstLine;
+  let lineNo = firstLine;
+  for (const line of text.split("\n")) {
+    if (!line.trim()) {
+      if (blockLines.length) blocks.push({ text: blockLines.join("\n"), firstLine: blockFirstLine });
+      blockLines = [];
+    } else {
+      if (!blockLines.length) blockFirstLine = lineNo;
+      blockLines.push(line);
+    }
+    lineNo++;
+  }
+  if (blockLines.length) blocks.push({ text: blockLines.join("\n"), firstLine: blockFirstLine });
+
+  const sentences = [];
+  for (const item of blocks) {
+    let start = 0;
+    let inTick = false;
+    for (let i = 0; i < item.text.length; i++) {
+      if (item.text[i] === "`") inTick = !inTick;
+      if (!inTick && ".!?".includes(item.text[i]) && /\s/.test(item.text[i + 1] ?? "")) {
+        let end = i + 1;
+        while (end < item.text.length && /\s/.test(item.text[end])) end++;
+        if (end < item.text.length) {
+          sentences.push({ text: item.text.slice(start, end), firstLine: item.firstLine + item.text.slice(0, start).split("\n").length - 1 });
+          start = end;
+        }
+      }
+    }
+    if (start < item.text.length) {
+      sentences.push({ text: item.text.slice(start), firstLine: item.firstLine + item.text.slice(0, start).split("\n").length - 1 });
+    }
+  }
+  return sentences;
+}
+
+function anchorsInSentence(sentence) {
+  const found = [];
+  const re = /((?:scripts|crates)\/[A-Za-z0-9_./-]+):(\d+)(?:-(\d+))?|:(\d+)(?:-(\d+))?/g;
+  for (const m of sentence.text.matchAll(re)) {
+    const full = Boolean(m[1]);
+    const file = full ? m[1] : null;
+    const start = Number(full ? m[2] : m[4]);
+    const end = Number((full ? m[3] : m[5]) || start);
+    found.push({
+      file,
+      start,
+      end,
+      raw: m[0],
+      pos: m.index,
+      line: sentence.firstLine + sentence.text.slice(0, m.index).split("\n").length - 1,
+    });
+  }
+  return found;
+}
+
+function identifiersInSentence(sentence) {
+  const found = [];
+  const re = /`([^`\n]+)`/g;
+  for (const m of sentence.text.matchAll(re)) {
+    const value = m[1].trim();
+    if (idPattern.test(value)) found.push({ value, start: m.index, end: m.index + m[0].length });
+  }
+  return found;
+}
+
+function nearestIdentifier(anchor, identifiers) {
+  let nearest = null;
+  let bestDistance = Infinity;
+  for (const candidate of identifiers) {
+    const distance = anchor.pos < candidate.start ? candidate.start - anchor.pos : anchor.pos > candidate.end ? anchor.pos - candidate.end : 0;
+    if (distance < bestDistance || (distance === bestDistance && candidate.start < (nearest?.start ?? Infinity))) {
+      nearest = candidate;
+      bestDistance = distance;
+    }
+  }
+  return nearest?.value ?? "";
+}
+
+function matchesIdentifier(line, symbol) {
+  if (!line || !symbol) return false;
+  const escaped = symbol.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<![A-Za-z0-9_$])${escaped}(?![A-Za-z0-9_$])`).test(line);
+}
+
+function nearestOccurrence(file, symbol, start, end) {
+  const key = `${file}\0${symbol}\0${start}\0${end}`;
+  if (nearestCache.has(key)) return nearestCache.get(key);
+  const lines = sourceLines(revs[1], file);
+  if (!lines || !symbol) {
+    nearestCache.set(key, "");
+    return "";
+  }
+  let best = null;
+  let distance = Infinity;
+  for (let i = 0; i < lines.length; i++) {
+    if (!matchesIdentifier(lines[i], symbol)) continue;
+    const lineNo = i + 1;
+    const d = lineNo < start ? start - lineNo : lineNo > end ? lineNo - end : 0;
+    if (d < distance || (d === distance && lineNo < (best ?? Infinity))) {
+      best = lineNo;
+      distance = d;
+    }
+  }
+  nearestCache.set(key, best ?? "");
+  return best ?? "";
+}
+
+for (const note of notes) {
+  const text = readFileSync(join(notesDir, note), "utf8");
+  const lines = text.split("\n");
+  const headings = [];
+  for (let i = 0; i < lines.length; i++) {
+    const match = /^##\s+(.+?)\s*$/.exec(lines[i]);
+    if (match) headings.push({ line: i + 1, member: getHeadingMember(match[1]), index: i });
+  }
+  for (let h = 0; h < headings.length; h++) {
+    const section = headings[h];
+    if (!section.member) continue;
+    const end = headings[h + 1]?.index ?? lines.length;
+    const body = lines.slice(section.index + 1, end).join("\n");
+    const sentences = blocksForSentences(body, section.line + 1);
+    for (const sentence of sentences) {
+      const anchors = anchorsInSentence(sentence);
+      if (!anchors.length) continue;
+      const identifiers = identifiersInSentence(sentence);
+      for (const anchor of anchors) {
+        const file = anchor.file || section.member;
+        const symbol = nearestIdentifier(anchor, identifiers);
+        const startLines = sourceLines(revs[0], file);
+        const newLines = sourceLines(revs[1], file);
+        const hit964 = Boolean(startLines && symbol && startLines.slice(anchor.start - 1, anchor.end).some((line) => matchesIdentifier(line, symbol)));
+        const hit31c = Boolean(newLines && symbol && newLines.slice(anchor.start - 1, anchor.end).some((line) => matchesIdentifier(line, symbol)));
+        rows.push({
+          note,
+          noteLine: anchor.line,
+          member: section.member,
+          anchor: anchor.raw,
+          file,
+          symbol,
+          hit964,
+          hit31c,
+          nearest31c: nearestOccurrence(file, symbol, anchor.start, anchor.end),
+          layer: section.member.startsWith("scripts/") ? "S" : "R",
+        });
+      }
+    }
+  }
+}
+
+const tsv = ["note\tnoteLine\tmember\tanchor\tsymbol\thit964\thit31c\tnearest31c", ...rows.map((row) => [row.note, row.noteLine, row.member, row.anchor, row.symbol, row.hit964 ? 1 : 0, row.hit31c ? 1 : 0, row.nearest31c].join("\t"))].join("\n") + "\n";
+writeFileSync(outPath, tsv, { encoding: "utf8", flag: "w" });
+
+for (const layer of ["S", "R"]) {
+  const selected = rows.filter((row) => row.layer === layer);
+  const hit964 = selected.filter((row) => row.hit964).length;
+  const hit31c = selected.filter((row) => row.hit31c).length;
+  const regressed = selected.filter((row) => row.hit964 && !row.hit31c).length;
+  const neverHit = selected.filter((row) => !row.hit964 && !row.hit31c).length;
+  const unpaired = selected.filter((row) => !row.symbol).length;
+  console.log(`${layer} anchors=${selected.length} hit964=${hit964} hit31c=${hit31c} regressed=${regressed} never-hit=${neverHit} unpaired=${unpaired}`);
+}
+console.log(`NOTES ${notes.length}`);
+console.log(`ROWS ${rows.length}`);
+console.log(`OUTPUT ${outPath}`);
+const regressionsBySection = new Map();
+for (const row of rows.filter((row) => row.layer === "S" && row.hit964 && !row.hit31c)) {
+  const key = `${row.note} :: ${row.member}`;
+  if (!regressionsBySection.has(key)) regressionsBySection.set(key, []);
+  regressionsBySection.get(key).push(`${row.noteLine}:${row.anchor} ${row.symbol || "[unpaired]"}->${row.nearest31c || "-"}`);
+}
+console.log("REGRESSED_S_GROUPED (all rows; groups of 12)");
+for (const [section, entries] of regressionsBySection) {
+  for (let i = 0; i < entries.length; i += 12) console.log(`${section} :: ${entries.slice(i, i + 12).join(" | ")}`);
+}
+console.log("REGRESSED_R_TOP20");
+for (const row of rows.filter((row) => row.layer === "R" && row.hit964 && !row.hit31c).slice(0, 20)) {
+  console.log([row.note, row.noteLine, row.member, row.anchor, row.symbol, row.nearest31c || "-"].join("\t"));
+}

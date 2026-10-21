@@ -1,0 +1,154 @@
+diff --git c/scripts/proxy-check.mjs w/scripts/proxy-check.mjs
+index e188675..d94e235 100755
+--- c/scripts/proxy-check.mjs
++++ w/scripts/proxy-check.mjs
+@@ -84,14 +84,14 @@
+  *     crates/ufo-core-runtime/src/<name>.rs  → runtime layer
+  *     crates/ufo-cli/src/<name>.rs           → runtime layer
+  *   S_members / R_members  those file counts
+- *   S_sections / R_sections  Σ over the registry rows whose id starts `S` / `R`
+- *         of the row's sections with `inFamily === true` — the member sections
+- *         the claims gate verifies AND grades as members of that row's declared
+- *         family. A section the gate resolves to a file outside the family
+- *         (`SECTION_FILE_NOT_MEMBER`: R9's `loop_driver_tests.rs`,
+- *         `local_ship_tests.rs`, `distill_tests.rs`) is excluded, which is the
+- *         whole difference between the raw section count (63 for `R`) and the
+- *         scored one (60); an unresolved section (no file) is excluded too.
++ *   S_sections / R_sections  DISTINCT `section.file` identities across
++ *         registry rows whose id starts `S` / `R`, respectively, considering
++ *         only sections with `inFamily === true`. A member named by multiple
++ *         sections or rows counts once per layer. The claims gate must resolve
++ *         and grade each counted file within its row's declared family.
++ *         `SECTION_FILE_NOT_MEMBER` sections (R9's `loop_driver_tests.rs`,
++ *         `local_ship_tests.rs`, `distill_tests.rs`) and unresolved sections
++ *         without a file identity are excluded.
+  *   coverage_script  = floor(10 × C1s/C1s_total × S_sections/S_members)
+  *   coverage_runtime = floor(10 × C1r/C1r_total × R_sections/R_members)
+  *         where C1s/C1s_total is the `yes`-row fraction among the `S` rows
+@@ -571,13 +571,12 @@ function layerCoverage(covered, total, sections, members) {
+ 
+ /**
+  * The two layer terms, derived from the claims gate's own output: its registry
+- * rows (id prefix, `covered`, member sections) and its single origin walk
+- * (`files`). A section counts only when the gate resolved it AND graded it a
+- * member of the row's declared family (`inFamily === true`) — a
+- * `SECTION_FILE_NOT_MEMBER` section is named by the note but belongs to another
+- * family, so counting it would credit a layer with members it never verified
+- * (that exclusion is the whole 63 → 60 for the runtime layer).
+- */
++ * rows (id prefix, `covered`, resolved section files) and its single origin walk
++ * (`files`). Each `section.file` identity counts once per layer, and only when
++ * the gate resolved it AND graded it a member of the row's declared family
++ * (`inFamily === true`). A `SECTION_FILE_NOT_MEMBER` section is named by the
++ * note but belongs to another family, so counting it would credit a layer with
++ * members it never verified.
+ function layerTerms(rows, files) {
+   const members = { S: 0, R: 0 };
+   for (const rel of files) {
+@@ -586,21 +585,23 @@ function layerTerms(rows, files) {
+   }
+   const total = { S: 0, R: 0 };
+   const covered = { S: 0, R: 0 };
+-  const sections = { S: 0, R: 0 };
++  const sections = { S: new Set(), R: new Set() };
+   for (const row of rows) {
+     const layer = typeof row.id === 'string' && /^[SR]/.test(row.id) ? row.id[0] : null;
+     if (layer === null) continue;
+     total[layer] += 1;
+     if (row.covered) covered[layer] += 1;
+-    for (const s of row.sections ?? []) if (s.inFamily === true) sections[layer] += 1;
++    for (const s of row.sections ?? []) {
++      if (s.inFamily === true && typeof s.file === 'string') sections[layer].add(s.file);
++    }
+   }
+   return {
+     S_members: members.S,
+-    S_sections: sections.S,
++    S_sections: sections.S.size,
+     R_members: members.R,
+-    R_sections: sections.R,
+-    coverage_script: layerCoverage(covered.S, total.S, sections.S, members.S),
+-    coverage_runtime: layerCoverage(covered.R, total.R, sections.R, members.R),
++    R_sections: sections.R.size,
++    coverage_script: layerCoverage(covered.S, total.S, sections.S.size, members.S),
++    coverage_runtime: layerCoverage(covered.R, total.R, sections.R.size, members.R),
+   };
+ }
+ 
+@@ -1500,6 +1501,76 @@ function selfTest() {
+         detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res).slice(0, 120)}`,
+       };
+     });
++    // Every source row initially has one member section. The focused variants
++    // duplicate one file's section and remove another's, keeping occurrences at
++    // two while the DISTINCT file count is one.
++    const DISTINCT_LAYER_KNOBS = {
++      ...LAYER_KNOBS,
++      notes: [
++        ['knowledge/alpha.md', fxLayerNote('scripts/a.mjs')],
++        ['knowledge/topic-s.md', fxLayerNote('scripts/b.mjs')],
++        ['lessons/beta.md', fxLayerNote('crates/ufo-core-runtime/src/b.rs')],
++        ['lessons/topic-r.md', fxLayerNote('crates/ufo-core-runtime/src/c.rs')],
++      ],
++      expect: {
++        ...LAYER_KNOBS.expect,
++        S_sections: 2, R_sections: 2, coverage_script: 6, coverage_runtime: 10,
++      },
++    };
++    const duplicateDropLayerCase = (name, layer) => {
++      const sectionKey = `${layer}_sections`;
++      const coverageKey = layer === 'S' ? 'coverage_script' : 'coverage_runtime';
++      const duplicateFile = layer === 'S' ? 'scripts/a.mjs' : 'crates/ufo-core-runtime/src/b.rs';
++      const duplicateNote = layer === 'S' ? 'knowledge/alpha.md' : 'lessons/beta.md';
++      const droppedNote = layer === 'S' ? 'knowledge/topic-s.md' : 'lessons/topic-r.md';
++      const expectedCoverage = layer === 'S' ? 3 : 5;
++      const fx = fxBase(name, {
++        ...DISTINCT_LAYER_KNOBS,
++        expect: {
++          ...DISTINCT_LAYER_KNOBS.expect,
++          [sectionKey]: 1,
++          [coverageKey]: expectedCoverage,
++        },
++      });
++      fxWrite(join(fx.dir, 'corpus', duplicateNote),
++        `${fxLayerNote(duplicateFile)}\n${fxLayerNote(duplicateFile)}`);
++      fxWrite(join(fx.dir, 'corpus', droppedNote), '# topic note\n\nthe other member section was removed\n');
++      const scorecard = fx.scorecard.replace(`\n${sectionKey}=1\n`, `\n${sectionKey}=2\n`);
++      fx.scorecard = scorecard;
++      fxWrite(join(fx.dir, SCORECARD_FILE), scorecard);
++      return fx;
++    };
++    check('distinct S sections: duplicate one member + drop another keeps 2 occurrences; declaring 2 fires S_SECTIONS_DRIFT', () => {
++      const res = runProxy(args(duplicateDropLayerCase('s-sections-duplicate-drop', 'S')));
++      const k = kindsEq(res, ['S_SECTIONS_DRIFT']);
++      return {
++        ok: res.status === 1 && k.ok
++          && verdictLine(res) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=2 computed=1 delta=-1)',
++        detail: `exit=${res.status} occurrences=2 distinct=1 kinds=[${k.got}] ${verdictLine(res)}`,
++      };
++    });
++    check('distinct R sections: duplicate one member + drop another keeps 2 occurrences; declaring 2 fires R_SECTIONS_DRIFT', () => {
++      const res = runProxy(args(duplicateDropLayerCase('r-sections-duplicate-drop', 'R')));
++      const k = kindsEq(res, ['R_SECTIONS_DRIFT']);
++      return {
++        ok: res.status === 1 && k.ok
++          && verdictLine(res) === 'PROXY: DRIFT (R_SECTIONS_DRIFT term=R_sections declared=2 computed=1 delta=-1)',
++        detail: `exit=${res.status} occurrences=2 distinct=1 kinds=[${k.got}] ${verdictLine(res)}`,
++      };
++    });
++    check('distinct control: 3 section occurrences naming 2 files match the declared distinct count with no layer drift', () => {
++      const fx = fxBase('distinct-sections-control', DISTINCT_LAYER_KNOBS);
++      fxWrite(join(fx.dir, 'corpus/knowledge/alpha.md'),
++        `${fxLayerNote('scripts/a.mjs')}\n${fxLayerNote('scripts/a.mjs')}`);
++      const res = runProxy(args(fx, ['--json']));
++      const j = JSON.parse(res.stdout);
++      return {
++        ok: res.status === 0 && j.verdict === 'MATCH' && j.findings.length === 0
++          && j.terms.S_sections === 2 && j.terms.coverage_script === 6
++          && j.terms.R_sections === 2 && j.terms.coverage_runtime === 10,
++        detail: `exit=${res.status} S occurrences=3 distinct=${j.terms.S_sections} R=${j.terms.R_sections} findings=${j.findings.length}`,
++      };
++    });
+     // The stanza values are doctored one key at a time: every other term must
+     // stay silent, which is what makes each case evidence for its own key.
+     layerDrift('s-members', [['\nS_members=3\n', '\nS_members=4\n']], ['S_MEMBERS_DRIFT']);

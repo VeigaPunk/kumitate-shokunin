@@ -1,5 +1,14 @@
 # Singleton locks and queue ownership
 
+> **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
+> `964f443e` to `31c465f1`. Round-35 fidelity seats found 9 line anchors in this
+> note that no longer land on their claim at `31c465f1` (moved, changed or gone;
+> several were already off at the revision their section names). Anchors below
+> are true only at the revision each section states; the member sections still
+> pass the claims gate, which checks anchor liveness, not symbol-on-line.
+> Re-anchoring is queued (SCORECARD.md `## Limits`, round 35); per-anchor
+> findings are in the lane's round-35 wave reports (build directory, Fid*).
+
 Registry family **S5** companion note for `scripts/ufo-mission-result.mjs`
 lock helpers. The path-form member section lives once in
 `knowledge/failure-telemetry.md` (`## `scripts/ufo-mission-result.mjs``) so the

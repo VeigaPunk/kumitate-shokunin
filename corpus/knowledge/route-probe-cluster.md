@@ -1,5 +1,14 @@
 # S7 route-probe cluster — the 6-member probe family (round-32 re-census)
 
+> **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
+> `964f443e` to `31c465f1`. Round-35 fidelity seats found 65 line anchors in this
+> note that no longer land on their claim at `31c465f1` (moved, changed or gone;
+> several were already off at the revision their section names). Anchors below
+> are true only at the revision each section states; the member sections still
+> pass the claims gate, which checks anchor liveness, not symbol-on-line.
+> Re-anchoring is queued (SCORECARD.md `## Limits`, round 35); per-anchor
+> findings are in the lane's round-35 wave reports (build directory, Fid*).
+
 ## Scope — S7 is the route-probe cluster, all 6 live members
 
 S7 is the registry's **route-probe cluster** on the origin tree at HEAD

@@ -328,18 +328,25 @@ serialized report JSON stays byte-identical.
 
 Probe: `ProposalAxisMeasurements` (`crates/ufo-core-runtime/src/report.rs:18-34`) — the derive-and-struct block declaring the per-proposal axis record.
 
-## `crates/ufo-core-runtime/src/round.rs` (32 L) — the paper-parity port of the tip's round module
+## `crates/ufo-core-runtime/src/round.rs` (32 L @ `964f443e` → 11 L @ `31c465f1`) — the doc-only paper-parity placeholder for the tip's round module
 
 The tip `lib.rs` declares this module but upstream has not published the `.rs`
-(SRC-PARTIAL), so this is a local port whose contract binds the module's
-existence rather than an invented field shape. `RoundState` is `pub(crate)`
-with `#[derive(Debug, Default)]` and a single `pub saturated: bool`; the r14
-shrink deleted the write-only `round`, `phase`, `admitted` and `rejected`
-fields plus the `RoundPhase` enum because only `saturated` has a reader — once,
-when `persist_state` receives unresolved work. The test module pins that
-`Default` starts unsaturated.
+(SRC-PARTIAL), so the contract binds the module's EXISTENCE rather than an
+invented field shape — and since `31c465f1` that surface is doc-only: 11 lines
+of module documentation, no items. The module is still declared
+`pub(crate) mod round;` at `crates/ufo-core-runtime/src/lib.rs:62`. The r14
+shrink had deleted the write-only `round`, `phase`, `admitted` and `rejected`
+fields plus the `RoundPhase` enum, leaving `RoundState { saturated }`; at
+`31c465f1` that struct and its `new_state_starts_unsaturated` test were deleted
+too, and the bool now lives as the round-local `saturated` binding in
+`loop_driver_dry` (`loop_driver_dry.rs:512`). The old probe (the derive plus
+one-field struct at lines 17-20 of the `964f443e` file) is dead at
+`31c465f1`; the prior text is kept here as prose so the audit is not rewritten
+(round-35 correction, seat ScoutR11RoundRs).
 
-Probe: `RoundState` (`crates/ufo-core-runtime/src/round.rs:17-20`) — the derive plus the one-field struct that is the whole surviving surface.
+Probe: `saturated` (`crates/ufo-core-runtime/src/round.rs:1-11`) — re-anchored
+at `31c465f1` to the whole surviving surface, the module doc that binds the
+module's existence and records where the saturation flag moved.
 
 ## `crates/ufo-core-runtime/src/round_digest.rs` (609 L) — the bounded per-round digest schema, path builder and writer
 

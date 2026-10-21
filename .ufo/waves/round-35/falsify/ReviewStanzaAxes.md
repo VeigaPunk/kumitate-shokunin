@@ -1,0 +1,24 @@
+ATTACK SCORECARD.md round-35 edits verdict=refuted defects=2
+
+## Findings
+
+1. **P2 — Round-32 before-state pairs an unsupported runtime score.** `SCORECARD.md:404` says `R 69/98 ⇒ 6`. The pre-round stanza (`git show 1a162a4^:SCORECARD.md | grep -E '^(C1=|C1_total=|S_members=|S_sections=|R_members=|R_sections=|coverage_runtime=)'`) outputs `C1=19`, `C1_total=19`, `R_members=98`, `R_sections=69`, `coverage_runtime=7`; `node -e 'console.log(Math.floor(10*(11/11)*(69/98)))'` outputs `7`. Replaying that stanza against an archive of its cited live origin `964f443e` with `node scripts/proxy-check.mjs --src /fast/scratch/kumitate-r35/w/ReviewStanzaAxes/src-964f443e` instead reports computed `R_members=92`, `R_sections=63`, `coverage_runtime=6` (while the stale stanza declares 98/69/7). Thus the row mixes the old 69/98 declaration with the 6 score measured against the re-census. Minimal fix: label and use one coherent before basis—old declared `69/98 ⇒ 7`, or live `964f443e` `63/92 ⇒ 6`—and append an erratum reconciling the round-32 LOG's `69→75; 6→8` statement. The after side (`91/91`, `75/92`) is backed by the `5d250b4` stanza and round-32 gate output.
+
+2. **P2 — K1 “kind file” overstates the actual shape gate.** `SCORECARD.md:143` and `:317` describe `mcp.json` as presence + “kind file” + 0400 floor; `SCORECARD.md:1072` only discloses symlink acceptance. In `scripts/kimi-census.mjs:210,296-310`, a secret file uses `isLeaf(kind)`, which accepts every non-directory leaf. The hermetic fixture at `scripts/kimi-census.mjs:739-748` creates `mcp.json` as a FIFO with mode 0400 and explicitly expects `KIMI_CENSUS: CLEAN`; `node scripts/kimi-census.mjs --selftest` reports `KIMI_CENSUS_SELFTEST: 48/48 pass`. The implemented guarantee is non-directory leaf, not regular file; FIFO (and symlink) passes. Minimal fix: call it a “non-directory leaf (FIFO/symlink accepted)” in both K1 scorecard cells and disclose FIFO in Limits, or tighten the gate if regular-file kind is required by C3.
+
+## Verified claims
+
+- Re-ran the proxy with `--src /fast/scratch/kumitate-r35/src`: `PROXY: MATCH (A=7 C=13 operability=8; C1=19/19 C2=79/79 coverage=10; S=88/88 coverage:script-layer=10; R=83/92 coverage:runtime-layer=9; K=51/51 coverage:kimi-layer=10; pins=6 match)`; only the recorded `PIN_UNPINNED scripts/sources-check.mjs` warning remains. Independent `sha256sum` matches both changed pins (proxy `e58c0801…cc647`; kimi `7818970b…38156`) and the other four declared pins.
+- Mutation script on a writable master copy: `MUTATION_BASELINE S_sections=86 R_sections=83`, after S/R both unchanged, `MUTATION_KILLS 0/2`. On a round-tree copy: baseline 88/83, after S 87 and R 82, `MUTATION_KILLS 2/2`. Proxy selftest 104/104 → 107/107; Kimi selftest 45/45 → 48/48.
+- Claims gate with pinned `--src`: `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=175 adv=6)`; `--row S8` reports 60 sections. Kimi census: `CLEAN (members=51 checked=51 chain=7 info=4)`. Sources gate: `CLEAN (rows=28 tiers=A:27,B:1,C:0 status=queued:14,mined:12,rejected:2 entries_with_source=2 legacy=38)`.
+- C2 exact-rule recount: README rows 79; `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` = 79. At the pinned clone, `ls scripts/*.mjs | wc -l` = 70 and `find scripts -mindepth 2 -type f | wc -l` = 18. Upstream diff confirms the two added and five deleted S8 members; the S8 note has two added headings and the five departed paths as history bullets.
+- `strace` on the census observed 0 opens of `mcp.json` and 2 stat-family calls. Explicit `surface-probe --src` runs at both `964f443e` and `31c465f1` reproduced `DIGEST_CONCAT` and `VERB_UNDECLARED`; the round-36 plan's reason is supported. Current `round-gate --round 32` is CLEAN; master had no round-32 Move-log row. The checklist correction preserves the prior text and records the 9/13 baseline; round-end 12/13 is consistent with the single remaining item 620 failure.
+- History handling: the round-32 Move-log entry is appended (master had zero `| 32 |` rows); the prior checklist reading remains with a dated correction; the stale round-35 pre-registration figures are explicitly marked as measured at `964f443e`, not presented as current.
+
+## Residual risk
+
+- Out-of-hunk and not counted above: `SCORECARD.md:125` still lists S1 `fleet-dispatcher.mjs` as 14,769 L; `git show 31c465f1:scripts/fleet-dispatcher.mjs | wc -l` gives 9,224. The S1 line is unchanged in this diff, but is stale against the current pinned origin unless intentionally historical.
+
+## Verification gaps
+
+- I initially ran `node scripts/surface-probe.mjs` and `node scripts/surface-probe.mjs --checklists` without `--src`, contrary to the source-pin instruction. I discarded those results; the surface findings reported above come only from explicit archived/pinned source arguments. The 12/13 checklist re-run is therefore not claimed as a pinned-source verification. No content of `~/.kimi-code/mcp.json` was read.

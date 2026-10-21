@@ -1,0 +1,8 @@
+import { probeSections } from '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/claims-check.mjs';
+const p = probeSections({ self: '/home/vgpnk/Projects/shokunin/kumitate-shokunin', scorecard: 'SCORECARD.md', src: process.argv[2] });
+const acc = {S:{occ:0,ids:new Set()},R:{occ:0,ids:new Set()}};
+for (const r of p.rows) { const L=r.id[0]; if(!acc[L]) continue; for (const s of r.sections??[]) if (s.inFamily===true){acc[L].occ++; acc[L].ids.add(s.file);} }
+console.log(Object.keys((p.rows.find(r=>r.sections?.length)?.sections??[])[0]||{}));
+for (const L of ['S','R']) console.log(L, 'occ', acc[L].occ, 'distinct', acc[L].ids.size);
+const members = new Set(p.files.filter(f=>/^scripts\/[^/]+\.mjs$/.test(f)||/^scripts\/[^/]+\/.+/.test(f)));
+const covered=[...acc.S.ids]; console.log('S members without section:', [...members].filter(m=>!acc.S.ids.has(m)));

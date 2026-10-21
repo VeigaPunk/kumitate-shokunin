@@ -1,5 +1,14 @@
 # Native-trial launch sequence — `scripts/run-omp-native-trial.mjs`
 
+> **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
+> `964f443e` to `31c465f1`. Round-35 fidelity seats found 40 line anchors in this
+> note that no longer land on their claim at `31c465f1` (moved, changed or gone;
+> several were already off at the revision their section names). Anchors below
+> are true only at the revision each section states; the member sections still
+> pass the claims gate, which checks anchor liveness, not symbol-on-line.
+> Re-anchoring is queued (SCORECARD.md `## Limits`, round 35); per-anchor
+> findings are in the lane's round-35 wave reports (build directory, Fid*).
+
 The argv-ok → durable-outcome pipeline of the judged-round launcher
 (4304 lines live at origin HEAD `964f443e`; `main()` at :3229). All `:NNNN`
 citations are this file unless noted. Prior coverage (flags, profiles,

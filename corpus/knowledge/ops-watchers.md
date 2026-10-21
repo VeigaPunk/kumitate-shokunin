@@ -1,5 +1,14 @@
 # S6 ops watchers — the five L0 watcher/helper processes
 
+> **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
+> `964f443e` to `31c465f1`. Round-35 fidelity seats found 416 line anchors in this
+> note that no longer land on their claim at `31c465f1` (moved, changed or gone;
+> several were already off at the revision their section names). Anchors below
+> are true only at the revision each section states; the member sections still
+> pass the claims gate, which checks anchor liveness, not symbol-on-line.
+> Re-anchoring is queued (SCORECARD.md `## Limits`, round 35); per-anchor
+> findings are in the lane's round-35 wave reports (build directory, Fid*).
+
 **Family:** S6 (registry `SCORECARD.md`), 5 of 5 members named at internals
 level. **Measured at origin HEAD `daa371583`**
 (`/home/vgpnk/Projects/origin-work/ufo-fsd-alpha`), sizes by

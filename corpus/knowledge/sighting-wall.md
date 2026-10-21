@@ -1,5 +1,14 @@
 # S4 sighting wall — live membership at internals level
 
+> **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
+> `964f443e` to `31c465f1`. Round-35 fidelity seats found 22 line anchors in this
+> note that no longer land on their claim at `31c465f1` (moved, changed or gone;
+> several were already off at the revision their section names). Anchors below
+> are true only at the revision each section states; the member sections still
+> pass the claims gate, which checks anchor liveness, not symbol-on-line.
+> Re-anchoring is queued (SCORECARD.md `## Limits`, round 35); per-anchor
+> findings are in the lane's round-35 wave reports (build directory, Fid*).
+
 **Family:** S4 (registry `SCORECARD.md`), sighting wall. **Measured at origin
 HEAD `964f443e`** (`/home/vgpnk/Projects/ufo-fsd-alpha`). Live set is **6 of 6**
 members named below, one `## \`scripts/…\`` section per member with ≥1 own-file

@@ -1,0 +1,11 @@
+$ bash .ufo/waves/round-35/mutate-distinct.sh.txt --self /home/vgpnk/Projects/shokunin/kumitate-shokunin --src /fast/scratch/kumitate-r35/src
+# run 2026-10-20T23:34:29-03:00 src-pin=31c465f15669f744848bd9f5d56191c5085670f7
+MUTATION_TARGET S duplicate=scripts/fleet-dispatcher.mjs from=corpus/knowledge/queue-and-claim.md into=corpus/knowledge/successor-chain.md drop=scripts/check-hand-authored-sets.mjs from=corpus/knowledge/remaining-scripts-census.md
+MUTATION_TARGET R duplicate=crates/ufo-core-runtime/src/loop_driver.rs from=corpus/knowledge/loop-driver.md into=corpus/knowledge/runtime-remainder-census.md drop=crates/ufo-core-runtime/src/axes.rs from=corpus/knowledge/runtime-remainder-census.md
+MUTATION_BASELINE S_sections=88 R_sections=83
+MUTATION_AFTER_S S_sections=87 R_sections=83
+MUTATION S dup-one/drop-one before=88 after=87 killed=yes
+MUTATION_AFTER_R S_sections=88 R_sections=82
+MUTATION R dup-one/drop-one before=83 after=82 killed=yes
+MUTATION_KILLS 2/2
+exit=0

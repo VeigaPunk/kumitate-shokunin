@@ -1,6 +1,6 @@
-source: S005 https://moonshotai.github.io/kimi-code/en/customization/mcp.html §Configuration + §Loading tools on demand; S006 https://moonshotai.github.io/kimi-code/en/configuration/config-files.html §`mcp`; S007 https://learn.chatgpt.com/docs/developer-commands?surface=cli §`codex mcp`; S008 `node scripts/kimi-census.mjs` (own-work)
-verified-at: 2026-10-19 (docs fetched as `.md` twins of the pages above; host `~/.kimi-code/bin/kimi --version` → `2.2.0`; `~/.kimi-code/mcp.json` stat at 2026-10-19)
-recheck: `curl -fsSL https://moonshotai.github.io/kimi-code/en/customization/mcp.md | grep -c 'User level'` → 1 and the same page's mcp.json mention count (grep -c on the literal file name) → 7 (2026-10-19); `curl -fsSL https://moonshotai.github.io/kimi-code/en/configuration/config-files.md | grep -c 'startup_timeout_ms\|tool_timeout_ms\|default_deferred'` → 4 (2026-10-19); `stat -c '%F %s %a %y' ~/.kimi-code/mcp.json`; `node scripts/kimi-census.mjs` (its UNLISTED mcp.json line disappears only when K1 declares the file — pre-registered for round 35)
+source: S005 https://moonshotai.github.io/kimi-code/en/customization/mcp.html §Configuration + §Loading tools on demand; S006 https://moonshotai.github.io/kimi-code/en/configuration/config-files.html §`mcp`; S007 https://learn.chatgpt.com/docs/developer-commands?surface=cli §`codex mcp`; S008 `node scripts/kimi-census.mjs` (own-work); S022 https://moonshotai.github.io/kimi-code/en/reference/slash-commands.html §Built-in skill commands (round 35)
+verified-at: 2026-10-19 (docs fetched as `.md` twins of the pages above; host `~/.kimi-code/bin/kimi --version` → `2.2.0`; `~/.kimi-code/mcp.json` stat at 2026-10-19); round-35 section re-verified 2026-10-20 (same stat, `kimi --version` → `2.2.0`, census CLEAN with K1 = 4)
+recheck: `curl -fsSL https://moonshotai.github.io/kimi-code/en/customization/mcp.md | grep -c 'User level'` → 1 and the same page's mcp.json mention count (grep -c on the literal file name) → 7 (2026-10-19); `curl -fsSL https://moonshotai.github.io/kimi-code/en/configuration/config-files.md | grep -c 'startup_timeout_ms\|tool_timeout_ms\|default_deferred'` → 4 (2026-10-19); `stat -c '%F %s %a %y' ~/.kimi-code/mcp.json`; `node scripts/kimi-census.mjs` → `KIMI_CENSUS: CLEAN (members=51 …)` since round 35 (UNLISTED mcp.json before); `strace -f -e trace=open,openat,openat2 node scripts/kimi-census.mjs 2>&1 | grep -c 'mcp[.]json'` → 0; `node scripts/proxy-check.mjs --src <origin clone> --json` → `K_members` 51, `K_sections` 51 (2026-10-20)
 
 # K1 — MCP plane: `~/.kimi-code/mcp.json`
 
@@ -87,6 +87,24 @@ corpus: `~/.kimi-code/bin/kimi --version` → `2.2.0` (2026-10-19), while
 facts above are documentation facts for the current release; none was probed
 against the 2.2.0 binary (no MCP session was started). QUALITY Q8.
 
+## Round 35 — K1 membership (registry change pre-registered in round 34)
+
+The file is now a declared K1 member (`SCORECARD.md` K1 row: 3 → 4), gated
+shape-only by `scripts/kimi-census.mjs` (presence as a non-directory leaf, mode floor
+0400 — `mode & 0o400 === 0o400`, an owner-read floor, not a confidentiality
+check) and counted by `scripts/proxy-check.mjs` (`K_members` 50 → 51; this
+note's `## \`~/.kimi-code/mcp.json\`` heading binds it, so `K_sections` 50 → 51).
+Observed 2026-10-20 22:21 −03 (`node scripts/proxy-check.mjs --src <clone at 31c465f1>` → `K=51/51 coverage:kimi-layer=10`, same evening): `kind=regular file size=249 mode=644
+mtime=2026-10-15 06:47:10.647583513 -0300` (unchanged since round 34);
+`KIMI_CENSUS: CLEAN (members=51 checked=51 chain=7 info=4)`; under strace the
+census performs 0 open/openat calls on the file and 2 stat-family calls.
+Limits: the floor is a bit-mask, so a 0644 file passes while group/other can
+read it; the secret-member kind check is leaf-presence, so a symlink or FIFO in its
+place passes (seat CriticKimiLayer). The file's in-TUI management surface is
+`/mcp` (status, always available) and `/mcp-config` (idle-only built-in skill
+that «Configure[s] MCP servers and handle[s] MCP OAuth login», S022 §Built-in
+skill commands) — documentation facts, not probed against the 2.2.0 binary.
+
 ## Sources
 
 - S005 — Kimi Code CLI Docs, Model Context Protocol, §Configuration, §Loading tools on
@@ -94,3 +112,5 @@ against the 2.2.0 binary (no MCP session was started). QUALITY Q8.
 - S006 — Kimi Code CLI Docs, Configuration files, §`mcp` (fetched 2026-10-19).
 - S007 — Codex CLI Developer commands, §`codex mcp` (fetched 2026-10-19).
 - S008 — `node scripts/kimi-census.mjs` (own-work, run 2026-10-19).
+- S022 — Kimi Code CLI Docs, Slash Commands, §Information & Status (`/mcp`) and
+  §Built-in skill commands (`/mcp-config`) (fetched 2026-10-20, round 35).

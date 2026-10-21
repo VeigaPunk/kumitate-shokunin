@@ -105,11 +105,14 @@ membership, and the same two drop-one outcomes.
   `adv=16` total changed as other rows gained sections.
 - **Occurrence and distinct-file counts diverge.** `probeSections()` returns
   every section occurrence, while the declared-count arm dedupes
-  `s.file ?? s.heading`. `proxy-check` currently sums the occurrences. Round
+  `s.file ?? s.heading`. Until round 35 `proxy-check` summed the occurrences. Round
   17 reproduced a duplicate-one/drop-one R8 note that preserved four
   occurrences and a `MATCH` verdict with a warning while verifying only three
   distinct members. A score-changing row therefore needs strict adv=0 plus an
   explicit occurrence=distinct census until the queued distinct-numerator fix.
+  *Round 35 (2026-10-20):* the queued fix landed — `proxy-check`'s
+  `layerTerms()` counts distinct in-family `section.file` identities per
+  layer; the claims gate's own `sections=` total stays an occurrence count.
 - **Cross-row repointing shows as a warning spike, not an error.** Pointing S6's
   cell at S8's 60-member note produces `sections=145 adv=76` and still `MATCH`
   exit 0: the foreign note does name family members, and the 60 extra sections are

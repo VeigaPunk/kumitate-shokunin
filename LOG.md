@@ -1222,6 +1222,11 @@
   Godspeed verdicts: quality/calibration/coverage improved. KUMITATE AT
   10 OF 10 (strict) — rounds 22-31 closed and verified under this goal.
 
+- 2026-10-14 — round 32: OMP-era layer re-census executed (bullet appended in
+  round 35 so the lane's round-gate can parse the record below; the section is
+  unchanged): S 91/91 ⇒ coverage:script-layer 10, R 75/92 ⇒
+  coverage:runtime-layer 8, `PROXY: MATCH` at `5d250b4`.
+
 ## round 32 — OMP-era layer re-census (coverage axis-move, EXECUTED)
 
 2026-10-14 · steered round 32 · axis: `coverage:script-layer` + `coverage:runtime-layer` (both were the tied lowest live axis at 6) · 32-lane fleet wave + parent integration.
@@ -1567,3 +1572,99 @@ in `.ufo/rounds/round-34/sources-gate.md`.
 - Change: `README.md` created (lane-header convention) with a `**Wiki:**` link to https://app.devin.ai/org/veigapunk/wiki/VeigaPunk/kumitate-shokunin?branch=master.
 - Evidence: the org's Devin wiki index lists this repo's generated wiki; sibling lane READMEs carry the same `**Wiki:**` header.
 - Documentation-only change; no round run, no axis moved, no verdict changed.
+
+- 2026-10-20 — round 35 (hyaku block 35–44, attempt 1; lane base master
+  `1770305fae20826b39905a8251ddeca6b4957ac4`). Upstream source pinned through a
+  private read-only clone at `31c465f15669f744848bd9f5d56191c5085670f7` (the
+  operator's checkout had advanced `964f443e` → `2cad7085` → `31c465f1`; never
+  checked out, reset or edited). Fresh baseline before implementation
+  (`.ufo/waves/round-35/baseline/`, 2026-10-20 21:11 −03), whole lines (Q7):
+  `PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=77 computed=78 delta=+1;
+  S_MEMBERS_DRIFT term=S_members declared=91 computed=88 delta=-3;
+  S_SECTIONS_DRIFT term=S_sections declared=91 computed=86 delta=-5;
+  COVERAGE_SCRIPT_DRIFT term=coverage_script declared=10 computed=9 delta=-1;
+  AXES_DRIFT term=coverage declared=10 computed=9; AXES_DRIFT
+  term=coverage:script-layer declared=10 computed=9; PIN_UNPINNED
+  term=scripts/sources-check.mjs)`; `KIMI_CENSUS: DRIFT (UNLISTED mcp.json)`;
+  `CLAIMS: DRIFT` (5 × `SECTION_FILE_UNRESOLVED` row S8, `SECTION_DEAD_ANCHOR`
+  row R11 `round.rs`); `CHECKLIST: 9/13 pass`. Populations frozen before work
+  (`.ufo/waves/round-35/frozen/`: 55 modified, 2 added, 5 deleted S members).
+  Three declared claims, causally separable, distinct axes:
+  **Claim 1 — operability (lowest live axis, 8): distinct S/R derivation**
+  (pre-registered since round 17). `scripts/proxy-check.mjs` `layerTerms()`
+  counts distinct in-family `section.file` identities. Before (master):
+  `MUTATION_KILLS 0/2`; after: `MUTATION_KILLS 2/2` (S 88 → 87, R 83 → 82);
+  selftest 104 → 109/109 (107 at first integration; the falsify wave's mutation
+  seat left two mutants alive, killed by two added cases). `f_O` 20/23
+  unchanged, integer held at 8.
+  **Claim 2 — coverage:script-layer 9 → 10 at `31c465f1`.** S8 re-census in
+  `corpus/knowledge/remaining-scripts-census.md`: two new member sections
+  (`omp-route-grammar.mjs`, `ufo-swarm-registry.mjs`), five departed members
+  kept as history bullets, registry cell 63 → 60, 36 changed S8 member sections
+  re-anchored at the pin (209 anchors, 35 claims reworded, 41 false clauses
+  removed; sweep regressions in the note 41 → 0; its cite-check errors 59 → 42).
+  Proxy S 86/88 ⇒ 9 → 88/88 ⇒ 10. Rests on S021.
+  **Claim 3 — coverage:kimi-layer, pre-registered K1 3 → 4** (root `mcp.json`,
+  shape-only: present as a non-directory leaf, 0400 floor). Census DRIFT → `CLEAN
+  (members=51 checked=51 chain=7 info=4)`; K 50/50 → 51/51; kimi selftest
+  45 → 48/48; strace 0 opens. Rests on S005, S022.
+  **Riders (uncounted):** R11 `round.rs` re-anchored at the pin (claims gate
+  dead anchor cleared); README rows for the round-34 verifier note and the
+  round-35 lesson (C2 77 → 79/79); round-32 Move-log row + LOG bullet
+  (`round-gate --round 32`: 2 errors → CLEAN); Q15 added to
+  `corpus/QUALITY.md`; distinct-derivation notes appended to `SKILL.md`,
+  `member-claims-gate.md`, `executable-scorecard.md`; SOURCES 20 → 28 rows
+  (S021–S023 mined, S024–S028 queued); lesson `corpus/lessons/round-35.md`
+  (8 mistake classes).
+  **After-measurement on the round tree** (2026-10-20, `--src` = the pinned
+  clone): `PROXY: MATCH (A=7 C=13 operability=8; C1=19/19 C2=79/79
+  coverage=10; S=88/88 coverage:script-layer=10; R=83/92
+  coverage:runtime-layer=9; K=51/51 coverage:kimi-layer=10; pins=6 match)`
+  (warn `PIN_UNPINNED scripts/sources-check.mjs`, retained by the round-34
+  decision); `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=175 adv=6)`;
+  `SOURCES_CHECK: CLEAN (rows=28 tiers=A:27,B:1,C:0
+  status=queued:14,mined:12,rejected:2 entries_with_source=2 legacy=38)`;
+  fleet `sources-census.sh validate … kumitate` → `ok`, exit 0. The work
+  commit's hash is cited in the round report (a commit cannot name itself).
+  **Not fixed (recorded):** checklist item 620 stays red (upstream manifest
+  omits the `surface` verb; lane probe hashes libs in sorted order — round 36;
+  run with `--src` on the read-only clone the probe also reports
+  `SURFACE_UNREACHABLE`, because the dispatcher's status verb creates
+  `<src>/.ufo` — seat RerunChecklists);
+  the S1–S7 topic notes carry 624 non-ok anchors at the pin (per note:
+  ops-watchers 416, route-probe-cluster 65, native-trial-launch 40,
+  swarm-wave-lifecycle 24, sighting-wall 22, live-surface-probe 18,
+  failure-telemetry 11, queue-and-claim 9, route-resolution 9,
+  singleton-and-queue-ownership 9, successor-chain 1; seat ExecS8Fidelity).
+  **Falsify wave (75 seats) and corrections before landing.** Verdicts: 48
+  holds (36 defect-free), 26 partial, 1 refuted (the SCORECARD round-32 row's
+  runtime baseline and the K1 "kind file" wording — both corrected); no claim
+  refuted. Mutation seats left a row-scoped and a heading-keyed mutant of
+  `layerTerms()` alive; two added selftest cases kill them (selftest 109/109;
+  each mutant 107/109; `pin.proxy-check` re-pinned). Seat ExecS8Fix applied 26
+  S8-note defects, restored 13 heading separators and fixed the note's 36 dead
+  own-file anchors (→ 0; note cite-check errors 42 → 30). Riders from the
+  re-opens: S021/S022/S024/S025/S026/S028 pre-landing amendments, S005 used-by
+  gained the lesson, README S8 row 63 → 60, stale present-tense lines in
+  `SKILL.md`/`member-claims-gate.md`, a fidelity notice at the top of each of
+  the 11 S1–S7 notes, the stray `scripts/proxy-check.mjs.orig` removed.
+  Repo-wide fidelity sweep at the pin: S regressed anchors 223 → 182.
+
+- 2026-10-20 — Q11 retro-admission of landed candidate
+  `16a5441a3347a10ac5ed169abcd5a17ba6f3f185` (round 18, current fleet cycle,
+  runtime member coverage; committed 2026-10-17; recorded in round 35). Round
+  identity: round 18 (current fleet cycle), bullet dated 2026-10-15 above;
+  baseline lane `6b982abbb20378b5110bba5f2f9bd581ac20d08e`; source
+  `964f443ee53df0ce06bd689af01f0dea031b01f9`. Work revision: `16a5441` itself
+  (R_sections 75 → 83, coverage_runtime 8 → 9; R3/R4/R6 5/6/4). Gate lines,
+  run by the round-35 L1 on 2026-10-20 22:23 −03 in a `git archive 16a5441`
+  tree with `--src` = `git archive 964f443e` from the pinned clone:
+  `node scripts/claims-check.mjs --src <964f443e> --row R3 --row R4 --row R6
+  --strict` → `CLAIMS: MATCH (rows=3 yes=3 notes=3 sections=15 adv=0)` exit 0;
+  `node scripts/proxy-check.mjs --src <964f443e>` → `PROXY: DRIFT
+  (K_MEMBERS_DRIFT term=K_members declared=49 computed=50 delta=+1;
+  COVERAGE_KIMI_DRIFT term=coverage_kimi declared=10 computed=9 delta=-1;
+  AXES_DRIFT term=coverage:kimi-layer declared=10 computed=9)` exit 1 — the
+  S/R terms match; the K drift is the later `skills/cursor-lane` substrate
+  change dispositioned in round 34, recorded not fitted. Admission of the
+  landed candidate's status only; no new axis claim.

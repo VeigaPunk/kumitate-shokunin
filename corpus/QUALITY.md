@@ -75,6 +75,13 @@ written on); `LOG.md` and lesson pointers resolve at any later revision.
   pre-move lowercase `projects/` path; they are repo-relative or under the
   live repo root. Grounding: the round-34 "Dead pointers" row (15 lowercase
   paths in LOG.md; 6 + 2 `/tmp/kumitate-r*` pointers).
+- **Q15 — origin-tree counts name their pinned revision.** Every count read
+  from the upstream tree (S/R members, sections, anchors) names the immutable
+  revision it was measured at, taken from a private read-only clone pinned to
+  that revision, never the operator's moving checkout; a pre-registered number
+  is re-measured at round open before work starts. Grounding: the round-35
+  "Pre-registered baseline measured on a tree that then moved" row
+  (`corpus/lessons/round-35.md`; 91/91 pre-registered, 86/88 measured).
 
 ## How to apply
 

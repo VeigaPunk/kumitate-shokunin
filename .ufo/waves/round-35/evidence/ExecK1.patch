@@ -1,0 +1,711 @@
+diff --git c/scripts/kimi-census.mjs w/scripts/kimi-census.mjs
+index e51e4cb..692cf13 100644
+--- c/scripts/kimi-census.mjs
++++ w/scripts/kimi-census.mjs
+@@ -5,8 +5,8 @@
+  *
+  * WHAT IT RE-DERIVES. `~/.kimi-code` is the installation the fleet's lanes run
+  * on, and its shape is a frozen fact: the K1–K5 member rules in `SCORECARD.md`
+- * (the round-19 freeze of 46 members, plus round-20 K5 and the round-34 counted-live skills child ⇒ 50)
+- * were derived from this tree read live. Prose cannot keep that honest — an
++ * were derived from this tree read live — round 35 adds root `mcp.json` to K1,
++ * bringing the live member total to 51. Prose cannot keep that honest — an
+  * upgrade can drop `bin/fd`, a new lane file or plugin can appear undeclared, a
+  * secret path can loosen, a state dir can vanish. This gate resolves the frozen
+  * member set against the tree at measurement time and fails on exactly the
+@@ -18,13 +18,13 @@
+  *   UNLISTED        an undeclared child sits directly under an enumerable dir —
+  *                   and since round 20 that includes the ROOT, which K1–K5 now
+  *                   exhausts. Root enumeration is the frozen rule, not a flag.
+- *   SHAPE_DRIFT     a secret-bearing member's shape pin fails: the mode lacks
+- *                   the declared floor bits, or the kind pin fails.
++ *   SHAPE_DRIFT     a shape-only member's pin fails: a mode lacks its declared
++ *                   floor bits, or the kind pin fails.
+  *
+- * MEMBER RULES (frozen; the counts are read live and total 50 on the recon
++ * MEMBER RULES (frozen; the counts are read live and total 51 on the recon
+  * tree — `agents/secondary/` = 18 lane files, `skills/` = 6 entries).
+- *   K1 = `config.toml`, `tui.toml`, and the `config.toml.*.bak` drift chain as
+- *        ONE member (its generation count is reported as info, never gated).
++ *   K1 = `config.toml`, `tui.toml`, the `config.toml.*.bak` drift chain as ONE
++ *        member, and root `mcp.json` (shape-only, mode floor 0400).
+  *   K2 = the 18 files under `agents/secondary/` (counted live, names not
+  *        gated), the 6 entries under `skills/` (counted live), plus
+  *        `plugins/installed.json` and the `plugins/managed/kimi-webbridge`
+@@ -40,17 +40,17 @@
+  *        never by content. `workspaces.json` is the anchor member (the K3 `wd_*`
+  *        session-key scheme reads it), so it is gated like any other file.
+  *
+- * SECRECY POLICY (enforced in code, not by convention). `credentials/`,
+- * `oauth/` and `server.token` are SHAPE-ONLY members: the gate calls
+- * `lstatSync` on them (kind + mode bits) and NEVER opens or reads them — no
+- * `readFileSync`, no `readdirSync` inside them, no content in any output. Their
+- * kind pin for files is deliberately `leaf` (any non-directory inode) rather
++ * SHAPE-ONLY POLICY (enforced in code, not by convention). `mcp.json`,
++ * `credentials/`, `oauth/` and `server.token` are shape-only members: the gate
++ * calls `lstatSync` on them (kind + mode bits) and NEVER opens or reads them —
++ * no `readFileSync`, no `readdirSync` inside them, no content in any output.
++ * The file-kind pin is deliberately `leaf` (any non-directory inode) rather
+  * than `isFile`, so the hermetic suite can build a FIFO / dangling symlink at
+  * `server.token` and prove stat-only enforcement: a read of a FIFO would block
+- * the gate forever and a followed symlink would read `ENOENT`. The mode pins
+- * are floors (`mode & floor === floor`), not equality: that is the only reading
+- * the live tree admits (`oauth/` is 0755, not 0700) and it matches the frozen
+- * "mode 600/700 floors" rule.
++ * the gate forever and a followed symlink would read `ENOENT`. Mode pins are
++ * floors (`mode & floor === floor`), not equality: mcp.json's floor is 0400;
++ * `server.token` stays 0600 and the directories 0700 (the live `oauth/` is
++ * 0755, not 0700).
+  *
+  * ENUMERABLE DIRS. Only a dir whose complete child set is declared by the
+  * member rules is enumerated: `agents/secondary/` and `skills/` by live child
+@@ -81,8 +81,8 @@
+  * fixtures under a `mkdtemp` root in `--selftest`.
+  * ROUND 34 (2026-10-19): `skills/` grew a 6th child (`cursor-lane`, a real dir);
+  * counting rule unchanged, tripwire re-pinned after the drift was captured
+- * whole and dispositioned; root `mcp.json` stays UNLISTED until the
+- * pre-registered round-35 K1 change.
++ * whole and dispositioned. Round 35 adds root `mcp.json` to K1 as a
++ * shape-only, stat-only member with a 0400 mode floor.
+  */
+ import {
+   lstatSync, readdirSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync,
+@@ -105,6 +105,7 @@ const MEMBERS = [
+   { id: 'config.toml', family: 'K1', path: 'config.toml', kind: 'file' },
+   { id: 'tui.toml', family: 'K1', path: 'tui.toml', kind: 'file' },
+   { id: 'config.toml.*.bak', family: 'K1', path: 'config.toml.*.bak', kind: 'chain' },
++  { id: 'mcp.json', family: 'K1', path: 'mcp.json', kind: 'file', secret: true, modeFloor: 0o400 },
+ 
+   { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'dir', counted: 18 },
+   { id: 'skills/', family: 'K2', path: 'skills', kind: 'dir', counted: 6 },
+@@ -145,8 +146,8 @@ const ENUMERABLE = [
+ ];
+ 
+ const FAMILIES = ['K1', 'K2', 'K3', 'K4', 'K5'];
+-/** The frozen K-block counts, reported for callers that compare to round 19/20. */
+-const FROZEN = { K1: 3, K2: 26, K3: 9, K4: 9, K5: 3 };
++/** The frozen K-block counts, reported for callers comparing rounds 19/20/35. */
++const FROZEN = { K1: 4, K2: 26, K3: 9, K4: 9, K5: 3 };
+ 
+ const FINDING_KINDS = ['MEMBER_MISSING', 'UNLISTED', 'SHAPE_DRIFT'];
+ const FAIL_CLOSED_KINDS = ['KIMI_ROOT_MISSING'];
+@@ -158,7 +159,7 @@ contract id: ${CONTRACT}
+ 
+ verbs
+   verify           the default verb: census ~/.kimi-code against the frozen
+-                   K1-K5 member rules (50 members) and print one verdict line
++                   K1–K5 member rules (51 members) and print one verdict line
+ 
+ options
+   --root DIR       installation root to census (default: ~/.kimi-code)
+@@ -172,7 +173,7 @@ config.toml.*.bak drift-chain generations are exempt — the K1 chain member
+ accounts for them as one member, never gated by name. There is no --root-enum.
+ 
+ findings: ${FINDING_KINDS.join(' ')}
+-secrecy : credentials/ oauth/ server.token are stat-only (kind+mode pins; never read)
++secrecy : mcp.json, credentials/ oauth/ server.token are stat-only (kind+mode pins; never read)
+ exit map: 0 clean · 1 drift · 2 fail-closed · 64 usage
+ `;
+ 
+@@ -431,7 +432,7 @@ function runVerify(opts, started) {
+ 
+ const FIXTURE_CHAIN = 3;
+ 
+-/** Build a fixture tree holding all 50 members, shape-clean. */
++/** Build a fixture tree holding all 51 members, shape-clean. */
+ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+   for (const m of MEMBERS) {
+     if (m.kind === 'chain') continue;
+@@ -507,27 +508,27 @@ function selfTest() {
+   };
+ 
+   try {
+-    // 1. green baseline — the frozen 50, exact verdict line
++    // 1. green baseline — the frozen 51, exact verdict line
+     const green = mk('green');
+-    check('green fixture → CLEAN exit 0, members=50 checked=50 chain=3 info=4', () => {
++    check('green fixture → CLEAN exit 0, members=51 checked=51 chain=3 info=4', () => {
+       const r = runGate(['--root', green]);
+       return {
+         ok: r.status === 0 && kinds(r).length === 0
+-          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=50 checked=50 chain=3 info=4)',
++          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=51 checked=51 chain=3 info=4)',
+         detail: `exit=${r.status} last=${lastLine(r)}`,
+       };
+     });
+ 
+-    // 2. per-family frozen counts, live-derived (round 20 adds K5 = 3)
+-    check('--json families read 3/26/9/9/3 and members=50', () => {
++    // 2. per-family frozen counts: round-35 K1 adds mcp.json to the prior 3
++    check('--json families read 4/26/9/9/3 and members=51', () => {
+       const r = runGate(['--root', green, '--json']);
+       const j = JSON.parse(r.stdout);
+       const f = j.totals.families;
+-      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 50
+-        && f.K1.members === 3 && f.K2.members === 26 && f.K3.members === 9 && f.K4.members === 9
++      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 51
++        && f.K1.members === 4 && f.K2.members === 26 && f.K3.members === 9 && f.K4.members === 9
+         && f.K5.members === 3 && f.K5.checked === 3
+-        && j.members.length === 28
+-        && j.totals.frozen.K1 === 3 && j.totals.frozen.K2 === 26 && j.totals.frozen.K3 === 9
++        && j.members.length === 29
++        && j.totals.frozen.K1 === 4 && j.totals.frozen.K2 === 26 && j.totals.frozen.K3 === 9
+         && j.totals.frozen.K4 === 9 && j.totals.frozen.K5 === 3
+         && j.totals.rootEnum.strays === 0 && j.rootStrays.length === 0;
+       return { ok, detail: `members=${j.totals.members} K1=${f.K1.members} K2=${f.K2.members} K3=${f.K3.members} K4=${f.K4.members} K5=${f.K5.members} rows=${j.members.length} strays=${j.totals.rootEnum.strays}` };
+@@ -537,7 +538,7 @@ function selfTest() {
+       const j = JSON.parse(runGate(['--root', green, '--json']).stdout);
+       const t = runGate(['--root', green]);
+       return {
+-        ok: j.totals.members === 50 && lastLine(t).includes(`members=${j.totals.members}`)
++        ok: j.totals.members === 51 && lastLine(t).includes(`members=${j.totals.members}`)
+           && lastLine(t).includes(`checked=${j.totals.checked}`) && j.verdict === 'CLEAN',
+         detail: `json=${j.totals.members}/${j.totals.checked} text=${lastLine(t).slice(0, 70)}`,
+       };
+@@ -548,7 +549,7 @@ function selfTest() {
+     rmSync(join(drop, 'bin/fd'));
+     check('MEMBER_MISSING: a deleted member file (bin/fd)', () => {
+       const r = runGate(['--root', drop]);
+-      return drift(r, 'MEMBER_MISSING', 49);
++      return drift(r, 'MEMBER_MISSING', 50);
+     });
+ 
+     const kindFlip = mk('kind-flip');
+@@ -561,34 +562,34 @@ function selfTest() {
+ 
+     const dropDir = mk('drop-dir');
+     rmSync(join(dropDir, 'telemetry'), { recursive: true });
+-    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 49));
++    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 50));
+ 
+     const dropBucket = mk('drop-bucket');
+     rmSync(join(dropBucket, 'skills', 'skills-lane-04'), { recursive: true });
+     check('MEMBER_MISSING: an enumerable dir lost a declared child (skills/ 5 of 6)', () => {
+       const r = runGate(['--root', dropBucket]);
+-      return { ...drift(r, 'MEMBER_MISSING', 49), ok: drift(r, 'MEMBER_MISSING', 49).ok && r.stdout.includes('5 children, 6 declared') };
++      return { ...drift(r, 'MEMBER_MISSING', 50), ok: drift(r, 'MEMBER_MISSING', 50).ok && r.stdout.includes('5 children, 6 declared') };
+     });
+     const extraSkill = mk('extra-skill');
+     mkdirSync(join(extraSkill, 'skills', 'skills-lane-06'));
+     check('UNLISTED: a 7th child under skills/', () => {
+       const r = runGate(['--root', extraSkill]);
+       return {
+-        ...drift(r, 'UNLISTED', 51),
+-        ok: drift(r, 'UNLISTED', 51).ok && r.stdout.includes('skills/') && r.stdout.includes('7 children, 6 declared'),
++        ...drift(r, 'UNLISTED', 52),
++        ok: drift(r, 'UNLISTED', 52).ok && r.stdout.includes('skills/') && r.stdout.includes('7 children, 6 declared'),
+       };
+     });
+ 
+     const noChain = mk('no-chain');
+     for (const n of readdirSync(noChain)) if (RE_CHAIN.test(n)) rmSync(join(noChain, n));
+-    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 49));
++    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 50));
+ 
+     // 4. UNLISTED arms
+     const newLane = mk('new-lane');
+     writeFileSync(join(newLane, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
+     check('UNLISTED: a 19th lane file under agents/secondary/', () => {
+       const r = runGate(['--root', newLane]);
+-      return { ...drift(r, 'UNLISTED', 51), ok: drift(r, 'UNLISTED', 51).ok && r.stdout.includes('19 children, 18 declared') };
++      return { ...drift(r, 'UNLISTED', 52), ok: drift(r, 'UNLISTED', 52).ok && r.stdout.includes('19 children, 18 declared') };
+     });
+ 
+     const newPlugin = mk('new-plugin');
+@@ -621,7 +622,7 @@ function selfTest() {
+     chmodSync(join(looseFile, 'server.token'), 0o400);
+     check('SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)', () => {
+       const r = runGate(['--root', looseFile]);
+-      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=49') };
++      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=50') };
+     });
+ 
+     const secretKind = mk('secret-kind');
+@@ -692,8 +693,8 @@ function selfTest() {
+       const chainNamed = j.rootStrays.some((n) => n.endsWith('.bak'));
+       return {
+         ok: r.status === 0 && j.verdict === 'CLEAN' && j.totals.chain === 6
+-          && j.totals.members === 50 && j.totals.rootEnum.strays === 0 && !chainNamed
+-          && j.totals.families.K1.members === 3,
++          && j.totals.members === 51 && j.totals.rootEnum.strays === 0 && !chainNamed
++          && j.totals.families.K1.members === 4,
+         detail: `exit=${r.status} chain=${j.totals.chain} members=${j.totals.members} strays=${j.totals.rootEnum.strays} rootStrays=[${j.rootStrays.join(',')}] K1=${j.totals.families.K1.members}`,
+       };
+     });
+@@ -708,23 +709,57 @@ function selfTest() {
+         ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('notes.txt sits at the root')
+           && r.stdout.includes('not declared by the frozen K1–K5 set')
+           && j.rootStrays.length === 1 && j.rootStrays[0] === 'notes.txt'
+-          && j.totals.members === 50 && j.totals.rootEnum.strays === 1,
++          && j.totals.members === 51 && j.totals.rootEnum.strays === 1,
+         detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] strays=${JSON.stringify(j.rootStrays)} members=${j.totals.members}`,
+         kinds: kinds(r),
+       };
+     });
+-    const unlistedMcp = mk('root-mcp-json');
+-    writeFileSync(join(unlistedMcp, 'mcp.json'), '{}\n');
+-    check('UNLISTED: root mcp.json remains undeclared pending the round-35 K1 change', () => {
+-      const r = runGate(['--root', unlistedMcp]);
+-      const j = JSON.parse(runGate(['--root', unlistedMcp, '--json']).stdout);
++    const presentMcp = mk('root-mcp-json-present');
++    check('K1 mcp.json present => CLEAN, shape-only member (mode floor 0400)', () => {
++      const r = runGate(['--root', presentMcp]);
++      const j = JSON.parse(runGate(['--root', presentMcp, '--json']).stdout);
++      const member = j.members.find((m) => m.id === 'mcp.json');
+       return {
+-        ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('mcp.json')
+-          && j.rootStrays.length === 1 && j.rootStrays[0] === 'mcp.json' && j.totals.members === 50,
+-        detail: `exit=${r.status} strays=${JSON.stringify(j.rootStrays)} members=${j.totals.members}`,
++        ok: r.status === 0 && kinds(r).length === 0 && j.verdict === 'CLEAN'
++          && member?.state === 'ok' && member.kind === 'leaf-or-dir' && member.modeFloor === '0400',
++        detail: `exit=${r.status} verdict=${j.verdict} member=${JSON.stringify(member)}`,
++      };
++    });
++    const absentMcp = mk('root-mcp-json-absent');
++    rmSync(join(absentMcp, 'mcp.json'));
++    check('MEMBER_MISSING: absent root mcp.json is a declared K1 member', () => {
++      const r = runGate(['--root', absentMcp]);
++      return {
++        ok: r.status === 1 && kinds(r).includes('MEMBER_MISSING')
++          && r.stdout.includes('mcp.json is absent') && r.stdout.includes('members=50 checked=50'),
++        detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] last=${lastLine(r)}`,
+         kinds: kinds(r),
+       };
+     });
++    const fifoMcp = mk('root-mcp-json-fifo');
++    rmSync(join(fifoMcp, 'mcp.json'));
++    const mkfifoMcp = spawnSync('mkfifo', ['-m', '400', join(fifoMcp, 'mcp.json')], { encoding: 'utf8' });
++    check('K1 mcp.json FIFO => CLEAN without opening it (a read would block)', () => {
++      if (mkfifoMcp.status !== 0) return { ok: false, detail: `mkfifo unavailable (status=${mkfifoMcp.status} ${mkfifoMcp.error?.code ?? ''}) — the anti-read arm cannot be built here` };
++      const r = runGate(['--root', fifoMcp], 10_000);
++      return {
++        ok: r.status === 0 && r.signal === null && r.error === undefined
++          && lastLine(r).startsWith('KIMI_CENSUS: CLEAN') && kinds(r).length === 0,
++        detail: `exit=${r.status} signal=${r.signal} error=${r.error?.code ?? ''} last=${lastLine(r).slice(0, 70)}`,
++      };
++    });
++    const dirMcp = mk('root-mcp-json-dir');
++    rmSync(join(dirMcp, 'mcp.json'));
++    mkdirSync(join(dirMcp, 'mcp.json'));
++    check('SHAPE_DRIFT: root mcp.json replaced by a directory (non-directory leaf pin)', () => {
++      const r = runGate(['--root', dirMcp]);
++      const d = drift(r, 'SHAPE_DRIFT');
++      return {
++        ...d,
++        ok: d.ok && r.stdout.includes('mcp.json is declared file, live dir')
++          && r.stdout.includes('non-directory leaf'),
++      };
++    });
+ 
+     check('UNLISTED: a hidden root child is gated too (the root arm reads the raw listing)', () => {
+       const hidden = mk('root-hidden-stray');
+@@ -763,11 +798,11 @@ function selfTest() {
+     for (const name of ['workspaces.json', 'tui.toml.bak', 'rc-qrcode.png']) {
+       const k5 = mk(`k5-drop-${name}`);
+       rmSync(join(k5, name));
+-      check(`MEMBER_MISSING: the K5 member ${name} removed (50 → 49)`, () => {
++      check(`MEMBER_MISSING: the K5 member ${name} removed (51 → 50)`, () => {
+         const r = runGate(['--root', k5]);
+         return {
+-          ...drift(r, 'MEMBER_MISSING', 49),
+-          ok: drift(r, 'MEMBER_MISSING', 49).ok && r.stdout.includes(`${name} is absent under`)
++          ...drift(r, 'MEMBER_MISSING', 50),
++          ok: drift(r, 'MEMBER_MISSING', 50).ok && r.stdout.includes(`${name} is absent under`)
+             && !kinds(r).includes('UNLISTED'),
+           detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)} kinds=[${kinds(r).join(',')}]`,
+           kinds: kinds(r),
+@@ -781,8 +816,8 @@ function selfTest() {
+     check('MEMBER_MISSING: workspaces.json declared file, live dir (K5 kind pin)', () => {
+       const r = runGate(['--root', k5Kind]);
+       return {
+-        ...drift(r, 'MEMBER_MISSING', 49),
+-        ok: drift(r, 'MEMBER_MISSING', 49).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
++        ...drift(r, 'MEMBER_MISSING', 50),
++        ok: drift(r, 'MEMBER_MISSING', 50).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
+         detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)}`,
+         kinds: kinds(r),
+       };
+@@ -793,7 +828,7 @@ function selfTest() {
+       writeFileSync(join(edited, 'workspaces.json'), '{"wd_changed_000000000000":"/tmp/changed"}\n');
+       writeFileSync(join(edited, 'rc-qrcode.png'), 'not-a-png-at-all\n');
+       const r = runGate(['--root', edited]);
+-      return { ...clean(r, 'members=50'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
++      return { ...clean(r, 'members=51'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
+     });
+ 
+     // 8. fail-closed arm
+diff --git c/scripts/proxy-check.mjs w/scripts/proxy-check.mjs
+index e188675..a9da8b9 100755
+--- c/scripts/proxy-check.mjs
++++ w/scripts/proxy-check.mjs
+@@ -37,9 +37,10 @@
+  *   same 4th-cell test as C1). `K_members` is read LIVE from the kimi root
+  *   (`--kimi-root`, default `$KIMI_ROOT` or `~/.kimi-code`) under the frozen
+  *   counting rules that `scripts/kimi-census.mjs` gates — that file exports no
+- *   member table, so the rules are re-derived here (K1 3, K2 the live child
+- *   counts of `agents/secondary/` and `skills/` plus 2, K3 9, K4 9, K5 3; the
+- *   drift chain is 1 member; secret members are lstat-kind only, never read).
++ *   member table, so the rules are re-derived here (K1 4, including root
++ *   `mcp.json` as a shape-only member; K2 the live child counts of
++ *   `agents/secondary/` and `skills/` plus 2, K3 9, K4 9, K5 3; the drift
++ *   chain is 1 member; shape-only members are lstat-kind only, never read).
+  *   `K_sections` counts the DISTINCT K members named by the `## ` headings of
+  *   `corpus/knowledge/kimi-*.md`: a heading names a member when one of its
+  *   backticked spans, or one of its `/`-bearing tokens, equals that member's
+@@ -96,26 +97,27 @@
+  *   coverage_runtime = floor(10 × C1r/C1r_total × R_sections/R_members)
+  *         where C1s/C1s_total is the `yes`-row fraction among the `S` rows
+  *         (same for `R`). A zero denominator scores 0, never NaN.
+- *   K terms (round-20 amendment; the round-19 frozen rules, K5 added by the
+- *   round-20 registry change), counted over the kimi root named by
+- *   `--kimi-root` — the ONLY tree reads outside `--self`/`--src`:
++ *   K terms (round-20 amendment; the round-19 frozen rules and K5 added by the
++ *   round-20 registry change are extended by the pre-registered round-35 K1
++ *   `mcp.json` member), counted over the kimi root named by `--kimi-root` — the
++ *   ONLY tree reads outside `--self`/`--src`:
+  *     C1k / C1k_total  registry rows matching /^\| K\d+ \|/ over ALL such rows,
+  *         covered = those whose 4th `|`-separated cell, trimmed, starts `yes`
+  *         (the same cell test as C1; the S/R rows are NOT in this denominator).
+  *     K_members   the live member-slot total under the frozen counting rules:
+- *         K1 3 (`config.toml`, `tui.toml`, the `config.toml.*.bak` chain as ONE
+- *         member); K2 `agents/secondary/` + `skills/` counted by LIVE non-hidden
+- *         child count, + `plugins/installed.json` + the
+- *         `plugins/managed/kimi-webbridge` tree (1); K3 9 presence-only paths;
+- *         K4 9 (directories are 1 member each; `server.token`, `credentials/`,
+- *         `oauth/` are kind-checked by LSTAT ONLY — never opened, never listed);
+- *         K5 3 root-residue files (`workspaces.json`, `tui.toml.bak`,
+- *         `rc-qrcode.png`), presence + kind, never content. An absent member or
+- *         a member whose live kind differs from the declared one counts 0, and
+- *         the total lands wherever the tree actually is — the census gate
+- *         (`scripts/kimi-census.mjs`, `kumitate-kimi-census-v1`) is the tool
+- *         that names WHICH slot drifted; here a moved tree shows up as
+- *         `K_MEMBERS_DRIFT`, not as a fitted number.
++ *         K1 4 (`config.toml`, `tui.toml`, the `config.toml.*.bak` chain as ONE
++ *         member, plus root `mcp.json`; its 0400 mode floor is gated by the
++ *         census tool); K2 `agents/secondary/` + `skills/` live child counts
++ *         plus 2 plugin members; K3 9 presence-only paths; K4 9 (directories
++ *         are 1 member each; `server.token`, `credentials/`, and `oauth/` are
++ *         kind-statted and never opened or content-read; secret directories are
++ *         never enumerated); K5 3 root-residue files (`workspaces.json`,
++ *         `tui.toml.bak`, `rc-qrcode.png`), presence + kind only, never content.
++ *         An absent member or one whose live kind differs from the declared
++ *         kind counts 0, and the total lands wherever the tree actually is —
++ *         the census gate (`scripts/kimi-census.mjs`,
++ *         `kumitate-kimi-census-v1`) names WHICH slot drifted; here a moved tree
++ *         shows up as `K_MEMBERS_DRIFT`, not as a fitted number.
+  *     K_sections  DISTINCT K members named by the `## ` headings over the
+  *         `corpus/knowledge/kimi-*.md` notes: a heading names a member when one
+  *         of its backticked spans, or one of its whitespace-separated tokens
+@@ -219,11 +221,11 @@
+  *   exactly once, in process) and the files that gate already reads for its own
+  *   member derivations — never a second walk, never a shell-out. The kimi root
+  *   is read by `lstatSync` on member paths and `readdirSync` on the root plus
+- *   the two counted dirs (`agents/secondary/`, `skills/`) and
+- *   `corpus/knowledge/kimi-*.md` under `--self` — no file content is read, and
+- *   the secret members (`server.token`, `credentials/`, `oauth/`) are
+- *   kind-statted and never opened or listed. `--selftest`
+- *   is the only writer, and only into a fresh `mkdtemp` dir it removes
++ *   `corpus/knowledge/kimi-*.md` under `--self` — no file content is read.
++ *   The shape-only members (`mcp.json`, `server.token`, `credentials/`,
++ *   `oauth/`) are kind-statted and never opened or content-read; root
++ *   enumeration sees names only, and the secret directories are never listed.
++ *   `--selftest` is the only writer, only into a fresh `mkdtemp` dir it removes
+  *   afterwards. Environment: the variables consulted are `UFO_SRC` and
+  *   `KIMI_ROOT`, each only as its flag's default
+  *   (`process.env.UFO_SRC || the first existing origin candidate`,
+@@ -335,17 +337,19 @@ const RE_CHAIN = /^config\.toml(\..+)?\.bak$/;
+ const RE_KIMI_NOTE = /^kimi-.*\.md$/;
+ 
+ /**
+- * The frozen K member rules (round-19 freeze + the round-20 K5 family), read
+- * live under `--kimi-root`. `scripts/kimi-census.mjs` gates the same rules but
+- * exports no member table, so the rules are re-derived here — the census is the
+- * tool that names WHICH slot drifted; this proxy only counts. A counted dir
+- * contributes its LIVE non-hidden child count; `chain` is one member when any
+- * generation exists; secret members are lstat-kind only, never opened.
++ * The frozen K member rules (round-19 freeze + round-20 K5 and round-35 K1
++ * `mcp.json` changes), read live under `--kimi-root`. `scripts/kimi-census.mjs`
++ * gates the same rules but exports no member table, so the rules are re-derived
++ * here — the census is the tool that names WHICH slot drifted; this proxy only
++ * counts. A counted dir contributes its LIVE non-hidden child count; `chain` is
++ * one member when any generation exists; shape-only members are lstat-kind only,
++ * never opened.
+  */
+ const K_MEMBER_RULES = [
+   { id: 'config.toml', family: 'K1', path: 'config.toml', kind: 'file' },
+   { id: 'tui.toml', family: 'K1', path: 'tui.toml', kind: 'file' },
+   { id: 'config.toml.*.bak', family: 'K1', path: 'config.toml.*.bak', kind: 'chain' },
++  { id: 'mcp.json', family: 'K1', path: 'mcp.json', kind: 'file', secret: true },
+   { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'counted' },
+   { id: 'skills/', family: 'K2', path: 'skills', kind: 'counted' },
+   { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
+@@ -1139,11 +1143,12 @@ function fixtureSrc(root) {
+ /**
+  * The fixture KIMI ROOT (`--kimi-root`): every K1–K5 member present with its
+  * declared kind, and the two counted dirs seeded small (2 + 1 children) so the
+- * total is hand-checkable: K1 3 + K2 (2+1+1+1)=5 + K3 9 + K4 9 + K5 3 = 29.
+- * The real tree holds 50 (18 + 6 there); the fixture is a shape, not a copy.
++ * total is hand-checkable: K1 4 + K2 (2+1+1+1)=5 + K3 9 + K4 9 + K5 3 = 30.
++ * The real tree holds 51 (18 + 6 there); the fixture is a shape, not a copy.
+  */
+ const FX_KIMI_FILES = [
+   'config.toml', 'tui.toml', 'config.toml.bak',
++  'mcp.json',
+   'agents/secondary/sec-a.md', 'agents/secondary/sec-b.md',
+   'skills/skill-a',
+   'plugins/installed.json',
+@@ -1182,7 +1187,7 @@ const FX_KIMI_NOTE_RENAMED = FX_KIMI_NOTE
+ 
+ /** The five K family rows, all `yes` — the fixture's C1k=5/5. */
+ const FX_K_ROWS = [
+-  ['K1', 'kimi config plane', '3', 'yes — `knowledge/kimi-alpha.md`'],
++  ['K1', 'kimi config plane', '4', 'yes — `knowledge/kimi-alpha.md`'],
+   ['K2', 'kimi delegate/lane plane', '25', 'yes — `knowledge/kimi-alpha.md`'],
+   ['K3', 'kimi session/state plane', '9', 'yes — `knowledge/kimi-alpha.md`'],
+   ['K4', 'kimi binary/secret plane', '9', 'yes — `knowledge/kimi-alpha.md`'],
+@@ -1308,11 +1313,11 @@ function selfTest() {
+       fxWrite(join(dir, `corpus/${rel}`), body);
+     }
+     // Hand-arithmetic defaults for the five K terms: the fixture kimi root holds
+-    // 29 members (3+5+9+9+3), the base notes name none of them, and the base
++    // 30 members (4+5+9+9+3), the base notes name none of them, and the base
+     // registry has no K rows. A K-specific fixture overrides what it moves.
+     const fx = {
+       dir, src, kimi, checklist, readmeRows, notes, registry,
+-      expect: { C1k: 0, C1k_total: 0, K_members: 29, K_sections: 0, coverage_kimi: 0, ...knobs.expect },
++      expect: { C1k: 0, C1k_total: 0, K_members: 30, K_sections: 0, coverage_kimi: 0, ...knobs.expect },
+     };
+     if (knobs.scorecard !== false) fx.scorecard = fxScorecard(fx);
+     if (fx.scorecard !== undefined) fxWrite(join(dir, SCORECARD_FILE), fx.scorecard);
+@@ -1365,7 +1370,7 @@ function selfTest() {
+     const r1 = runProxy(args(F1));
+     check('MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
+       ok: r1.status === 0
+-        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+       detail: `exit=${r1.status} ${verdictLine(r1)}`,
+     }));
+     check('MATCH: text mode prints the verdict line and nothing else', () => {
+@@ -1375,13 +1380,13 @@ function selfTest() {
+     const r2 = runProxy(args(F2));
+     check('MATCH: A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
+       ok: r2.status === 0
+-        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+       detail: `exit=${r2.status} ${verdictLine(r2)}`,
+     }));
+     const r3 = runProxy(args(F3));
+     check('MATCH: A=11 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
+       ok: r3.status === 0
+-        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+       detail: `exit=${r3.status} ${verdictLine(r3)}`,
+     }));
+     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
+@@ -1421,10 +1426,10 @@ function selfTest() {
+           && j.terms.C2 === 2 && j.terms.C2_total === 2 && j.terms.operability === 7 && j.terms.coverage === 5
+           && j.terms.S_members === 3 && j.terms.S_sections === 0 && j.terms.coverage_script === 0
+           && j.terms.R_members === 2 && j.terms.R_sections === 0 && j.terms.coverage_runtime === 0
+-          && j.terms.C1k === 0 && j.terms.C1k_total === 0 && j.terms.K_members === 29
++          && j.terms.C1k === 0 && j.terms.C1k_total === 0 && j.terms.K_members === 30
+           && j.terms.K_sections === 0 && j.terms.coverage_kimi === 0 && j.kimiRoot === F1.kimi
+           && j.terms.declared.S_sections === '0' && j.terms.declared.coverage_script === '0'
+-          && j.terms.declared.C1k_total === '0' && j.terms.declared.K_members === '29'
++          && j.terms.declared.C1k_total === '0' && j.terms.declared.K_members === '30'
+           && j.terms.declared.coverage_kimi === '0'
+           && j.terms.pinsMatched === FIXTURE_SCRIPTS.length && j.terms.pinsTotal === FIXTURE_SCRIPTS.length
+           && Object.keys(j.terms.pins).every((k) => j.terms.pins[k].match === true),
+@@ -1482,7 +1487,7 @@ function selfTest() {
+     const layersRun = runProxy(args(layers));
+     check('layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal)', () => ({
+       ok: layersRun.status === 0
+-        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+       detail: `exit=${layersRun.status} ${verdictLine(layersRun)}`,
+     }));
+     const layerCase = (name, edits) => {
+@@ -1595,7 +1600,7 @@ function selfTest() {
+       expect: {
+         A: 6, C: 3, C1: 2, C1_total: 2, C2: 3, C2_total: 3, operability: 7, coverage: 10,
+         S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
+-        C1k: 5, C1k_total: 5, K_members: 29, K_sections: 4, coverage_kimi: 1,
++        C1k: 5, C1k_total: 5, K_members: 30, K_sections: 4, coverage_kimi: 1,
+       },
+     };
+     const kCase = (name, edits = [], mutate = null) => {
+@@ -1615,20 +1620,20 @@ function selfTest() {
+ 
+     const kMatch = fxBase('kimi-match', K_KNOBS);
+     const kr = runProxy(args(kMatch));
+-    check('K terms MATCH: `C1k=5/5 K=4/29 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict)', () => {
++    check('K terms MATCH: `C1k=5/5 K=4/30 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict)', () => {
+       const k = kindsEq(kr, []);
+       return {
+         ok: kr.status === 0 && k.ok
+-          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/29 coverage:kimi-layer=1; pins=6 match)',
++          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/30 coverage:kimi-layer=1; pins=6 match)',
+         detail: `exit=${kr.status} kinds=[${k.got}] ${verdictLine(kr)}`,
+       };
+     });
+     check('--json parity: the five K terms compute AND carry their declared strings', () => {
+       const j = JSON.parse(runProxy(args(kMatch, ['--json'])).stdout);
+       return {
+-        ok: j.terms.C1k === 5 && j.terms.C1k_total === 5 && j.terms.K_members === 29
++        ok: j.terms.C1k === 5 && j.terms.C1k_total === 5 && j.terms.K_members === 30
+           && j.terms.K_sections === 4 && j.terms.coverage_kimi === 1
+-          && j.terms.declared.C1k === '5' && j.terms.declared.K_members === '29'
++          && j.terms.declared.C1k === '5' && j.terms.declared.K_members === '30'
+           && j.terms.declared.coverage_kimi === '1' && j.kimiRoot === kMatch.kimi,
+         detail: `terms=${JSON.stringify({ C1k: `${j.terms.C1k}/${j.terms.C1k_total}`, K: `${j.terms.K_sections}/${j.terms.K_members}`, cov: j.terms.coverage_kimi })}`,
+       };
+@@ -1640,7 +1645,7 @@ function selfTest() {
+       });
+       const res = runProxy(args(fx));
+       return {
+-        ok: res.status === 0 && verdictLine(res).includes('K=4/29 coverage:kimi-layer=1'),
++        ok: res.status === 0 && verdictLine(res).includes('K=4/30 coverage:kimi-layer=1'),
+         detail: `exit=${res.status} ${verdictLine(res).slice(0, 150)}`,
+       };
+     });
+@@ -1650,12 +1655,12 @@ function selfTest() {
+       const k = kindsEq(res, ['K_MEMBERS_DRIFT']);
+       const f = parseFindings(res.stdout)[0] ?? { detail: '' };
+       return {
+-        ok: res.status === 1 && k.ok && f.detail === 'K_members: declared=29 computed=28 delta=-1',
++        ok: res.status === 1 && k.ok && f.detail === 'K_members: declared=30 computed=29 delta=-1',
+         detail: `exit=${res.status} kinds=[${k.got}] ${f.detail}`,
+       };
+     });
+-    check('K_members reads live: a new counted-dir child moves the total (29 → 30)', () => {
+-      const fx = kCase('kimi-members-added', [['\nK_members=29\n', '\nK_members=30\n']], (f) => {
++    check('K_members reads live: a new counted-dir child moves the total (30 → 31)', () => {
++      const fx = kCase('kimi-members-added', [['\nK_members=30\n', '\nK_members=31\n']], (f) => {
+         writeFileSync(join(f.kimi, 'skills/skill-b'), 'fixture member\n');
+       });
+       const okAdded = runProxy(args(fx));
+@@ -1666,8 +1671,8 @@ function selfTest() {
+       const k = kindsEq(stale, ['K_MEMBERS_DRIFT']);
+       return {
+         ok: okAdded.status === 0 && stale.status === 1 && k.ok
+-          && verdictLine(okAdded).includes('K=4/30 coverage:kimi-layer=1')
+-          && parseFindings(stale.stdout)[0].detail.includes('declared=29 computed=30'),
++          && verdictLine(okAdded).includes('K=4/31 coverage:kimi-layer=1')
++          && parseFindings(stale.stdout)[0].detail.includes('declared=30 computed=31'),
+         detail: `added=${verdictLine(okAdded).slice(0, 60)} stale=${verdictLine(stale).slice(0, 60)}`,
+       };
+     });
+@@ -1679,7 +1684,7 @@ function selfTest() {
+       const res = runProxy(args(fx));
+       const k = kindsEq(res, ['K_MEMBERS_DRIFT']);
+       return {
+-        ok: res.status === 1 && k.ok && parseFindings(res.stdout)[0].detail.includes('computed=28'),
++        ok: res.status === 1 && k.ok && parseFindings(res.stdout)[0].detail.includes('computed=29'),
+         detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout)[0] ? parseFindings(res.stdout)[0].detail : ''}`,
+       };
+     });
+@@ -1717,7 +1722,7 @@ function selfTest() {
+       const k = kindsEq(stale, ['C1K_DRIFT']);
+       return {
+         ok: flipped.status === 0 && stale.status === 1 && k.ok
+-          && verdictLine(flipped).includes('C1=2/2') && verdictLine(flipped).includes('K=4/29 coverage:kimi-layer=1')
++          && verdictLine(flipped).includes('C1=2/2') && verdictLine(flipped).includes('K=4/30 coverage:kimi-layer=1')
+           && parseFindings(stale.stdout)[0].detail === 'C1k: declared=5 computed=4 delta=-1',
+         detail: `flipped=${flipped.status} ${verdictLine(flipped).slice(0, 130)} stale=[${k.got}]`,
+       };
+@@ -1753,7 +1758,7 @@ function selfTest() {
+       return {
+         ok: res.status === 0 && j.terms.C1k === 0 && j.terms.C1k_total === 0
+           && j.terms.coverage_kimi === 0 && Number.isInteger(j.terms.coverage_kimi)
+-          && j.terms.K_members === 29 && j.terms.K_sections === 4,
++          && j.terms.K_members === 30 && j.terms.K_sections === 4,
+         detail: `exit=${res.status} C1k=${j.terms.C1k}/${j.terms.C1k_total} cov=${j.terms.coverage_kimi}`,
+       };
+     });
+@@ -1775,7 +1780,7 @@ function selfTest() {
+     });
+     check('basename ambiguity: a basename owned by two members binds to none and warns; a full path still binds', () => {
+       const fx = kCase('kimi-ambiguous', [
+-        ['\nK_members=29\n', '\nK_members=30\n'],
++        ['\nK_members=30\n', '\nK_members=31\n'],
+         ['\nK_sections=4\n', '\nK_sections=1\n'],
+         ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+         ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+@@ -1794,7 +1799,7 @@ function selfTest() {
+       const text = parseFindings(runProxy(args(fx)).stdout);
+       const strict = runProxy(args(fx, ['--strict']));
+       return {
+-        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 30
++        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 31
+           && j.warnings === 1 && warn.severity === 'warn' && warn.term === 'skill-a'
+           && String(warn.detail).includes('agents/secondary/skill-a')
+           && String(warn.detail).includes('skills/skill-a')
+@@ -1817,7 +1822,7 @@ function selfTest() {
+       const res = runProxy(args(fx, ['--json']));
+       const j = JSON.parse(res.stdout);
+       return {
+-        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 29,
++        ok: res.status === 0 && j.terms.K_sections === 1 && j.terms.K_members === 30,
+         detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} (occurrence would be 2)`,
+       };
+     });
+@@ -1836,13 +1841,13 @@ function selfTest() {
+       const res = runProxy(args(fx, ['--json']));
+       const j = JSON.parse(res.stdout);
+       return {
+-        ok: res.status === 0 && j.terms.K_sections === 2 && j.terms.K_members === 29,
++        ok: res.status === 0 && j.terms.K_sections === 2 && j.terms.K_members === 30,
+         detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} (occurrence would be 3)`,
+       };
+     });
+     check('zero denominator safety: an empty kimi root ⇒ K_members=0, K_sections=0, coverage_kimi=0 (integer, never NaN)', () => {
+       const fx = kCase('kimi-empty-root', [
+-        ['\nK_members=29\n', '\nK_members=0\n'],
++        ['\nK_members=30\n', '\nK_members=0\n'],
+         ['\nK_sections=4\n', '\nK_sections=0\n'],
+         ['\ncoverage_kimi=1\n', '\ncoverage_kimi=0\n'],
+         ['| coverage:kimi-layer | 1 |', '| coverage:kimi-layer | 0 |'],
+@@ -1880,7 +1885,7 @@ function selfTest() {
+ 
+     // The fixtures the fail-closed arms below fire on; the arms run in their own
+     // section, where the `fc` helper exists.
+-    const K_BAD_VALUE = kCase('kimi-bad-value', [['\nK_members=29\n', '\nK_members=five\n']]);
++    const K_BAD_VALUE = kCase('kimi-bad-value', [['\nK_members=30\n', '\nK_members=five\n']]);
+     const K_BAD_RATIO = kCase('kimi-bad-coverage', [['\ncoverage_kimi=1\n', '\ncoverage_kimi=1.5\n']]);
+     const K_UNKNOWN_KEY = kCase('kimi-unknown-key', [['\nC1k=5\n', '\nC1k=5\nK_blocks=5\n']]);
+     const K_MISSING_KEY = kCase('kimi-missing-key', [['K_sections=4\n', '']]);
+@@ -1941,7 +1946,7 @@ function selfTest() {
+     const dEsc = runProxy(args(regPipe));
+     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
+       ok: dEsc.status === 0
+-        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
+     }));
+     const regPipeNo = fxBase('registry-escaped-pipe-no', {
+@@ -2048,7 +2053,7 @@ function selfTest() {
+       const k = kindsEq(d13, []);
+       return {
+         ok: d13.status === 0 && k.ok
+-          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
+       };
+     });
+@@ -2089,7 +2094,7 @@ function selfTest() {
+       const f = parseFindings(w1.stdout)[0];
+       return {
+         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
+-          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)',
++          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)',
+         detail: `exit=${w1.status} ${verdictLine(w1)}`,
+       };
+     });
+@@ -2189,7 +2194,7 @@ function selfTest() {
+       ['--self', F1.dir, '--kimi-root', F1.kimi],
+       { HOME: home, UFO_SRC: '' },
+     );
+-    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/29 coverage:kimi-layer=0; pins=6 match)';
++    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)';
+     const rNew = bareProxy(homeWithSrc('home-new', 'Projects/ufo-fsd-alpha'));
+     check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
+       ok: rNew.status === 0 && verdictLine(rNew) === F1_MATCH,

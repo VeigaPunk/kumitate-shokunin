@@ -718,12 +718,17 @@ integrator's fleet-conformance step are in
   topic-form rows, 3 count-suspect rows, R9's 3 sibling-suite sections) and
   `--strict` promotes them to exit 1. For a row that changes a layer score,
   additionally require row-local adv=0 and prove section occurrences equal
-  distinct resolved in-family files: `proxy-check` currently counts
+  distinct resolved in-family files: until round 35 `proxy-check` counted
   occurrences while the gate dedupes only for declared-count findings
   (`SCORECARD.md` round-17 limit). It is the compensating check for the
   scorecard arithmetic's historical note-blind spot; contract, arms, anchor
   semantics and limits:
   `corpus/knowledge/member-claims-gate.md`.
+  *Round 35 (2026-10-20):* `proxy-check` now derives `S_sections`/`R_sections`
+  as DISTINCT in-family member identities (`section.file`), so the
+  duplicate-one/drop-one note mutation fires `S_SECTIONS_DRIFT`/
+  `R_SECTIONS_DRIFT` (hermetic cases 15–19); the claims gate's printed
+  `sections=` total is still a raw occurrence count, not the proxy term.
 - Re-verify the round-close contract before claiming a round done:
   `node scripts/round-gate.mjs` (contract `kumitate-round-gate-v1`; kinds,
   thresholds, fail-closed arms and the boundary against the integrator's

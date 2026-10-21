@@ -1,0 +1,11 @@
+$ node scripts/proxy-check.mjs --src /fast/scratch/kumitate-r35/src
+# run 2026-10-20T21:11:12-03:00 lane=1770305fae20826b39905a8251ddeca6b4957ac4 src=31c465f15669f744848bd9f5d56191c5085670f7
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=77 computed=78 delta=+1
+PROXY  error  S_MEMBERS_DRIFT  S_members: declared=91 computed=88 delta=-3
+PROXY  error  S_SECTIONS_DRIFT  S_sections: declared=91 computed=86 delta=-5
+PROXY  error  COVERAGE_SCRIPT_DRIFT  coverage_script: declared=10 computed=9 delta=-1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY  error  AXES_DRIFT  coverage:script-layer: ## Axes row=10 derived=9
+PROXY  warn  PIN_UNPINNED  scripts/sources-check.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=77 computed=78 delta=+1; S_MEMBERS_DRIFT term=S_members declared=91 computed=88 delta=-3; S_SECTIONS_DRIFT term=S_sections declared=91 computed=86 delta=-5; COVERAGE_SCRIPT_DRIFT term=coverage_script declared=10 computed=9 delta=-1; AXES_DRIFT term=coverage declared=10 computed=9; AXES_DRIFT term=coverage:script-layer declared=10 computed=9; PIN_UNPINNED term=scripts/sources-check.mjs)
+exit=1

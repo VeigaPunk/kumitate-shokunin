@@ -1,0 +1,375 @@
+diff --git c/corpus/knowledge/remaining-scripts-census.md w/corpus/knowledge/remaining-scripts-census.md
+index 0d864af..9e8d156 100644
+--- c/corpus/knowledge/remaining-scripts-census.md
++++ w/corpus/knowledge/remaining-scripts-census.md
+@@ -1,13 +1,14 @@
+-# Remaining scripts census — S8 (63 members)
++# Remaining scripts census — S8 (60 members)
+ 
+ Registry family **S8** is the remainder of the script layer after S1–S6 and the
+-S7 route-probe cluster. Round 13 first named it as a **60**-member census; the
+-2026-10-14 re-census against origin HEAD `964f443e` measures **63** live members
++S7 route-probe cluster. Round 13 first named it as a **60**-member census;
++the 2026-10-14 re-census at `964f443e` measured **63** live members (historical).
++The pinned 2026-10-20 re-census at `31c465f1` measures **60** live members
+ (command and list below). **S7** remains the route-probe cluster note
+ (`corpus/knowledge/route-probe-cluster.md`); its own live membership is owned by
+ that row. **S8** is everything else in the script-layer universe
+ (`scripts/*.mjs` + recursive files under `scripts/*/`) that S1–S6 and live S7 do
+-not own — exactly the 63 members measured below.
++not own — exactly the 60 members measured at `31c465f1`.
+ 
+ Both ids keep the registry grammar `S<n>`/`R<n>`. `scripts/proxy-check.mjs:219`
+ defines `RE_REGISTRY_ROW`, and `scripts/proxy-check.mjs:355` counts only rows
+@@ -16,20 +17,21 @@ matching it (a row is covered when its note cell starts `yes`,
+ C1 accounting and is reported as `C1_TOTAL_DRIFT`, so the partition has to be
+ drawn with two top-level ids rather than a suffixed one.
+ 
+-Measurement revision (round 32): the live member count **does** move — 60 → 63 —
++Historical measurement (round 32, 2026-10-14): the live member count moved — 60 → 63 —
+ because the upstream tree gained new remainder scripts and dropped fifteen former
+-S8 paths. The family standard still asks a covered family's note to name every
+-**live** member at internals level: one `##` section headed by the member's own
+-path, each carrying an anchor in that member's own file plus a symbol verbatim in it.
++S8 paths at `964f443e`. This remains historical; the pinned origin `31c465f1` is
++re-censused below. The family standard still asks a covered family's note to name
++every **live** member at internals level: one `##` section headed by the member's
++own path, each carrying an anchor in that member's own file plus a verbatim symbol.
+ 
+ ## Membership and measurement
+ 
+-The member set is re-derivable from the origin tree with no note content. Round-32
+-re-census (2026-10-14), origin `/home/vgpnk/Projects/ufo-fsd-alpha` at
+-`964f443ee53df0ce06bd689af01f0dea031b01f9`:
++The member set is re-derivable from the origin tree with no note content. Round-35
++re-census (2026-10-20), pinned upstream tree `31c465f15669f744848bd9f5d56191c5085670f7`
++in the read-only source clone `/fast/scratch/kumitate-r35/src`:
+ 
+ ```bash
+-SRC=/home/vgpnk/Projects/ufo-fsd-alpha
++SRC=/fast/scratch/kumitate-r35/src
+ M=/tmp/s8-members-live.txt
+ # Live S1–S7 members (intersection of the historical family shapes with the tree)
+ cat > /tmp/s8-s1s7-live.txt <<'EOF'
+@@ -68,12 +70,12 @@ EOF
+ } | sed "s|^$SRC/||" | LC_ALL=C sort -u > /tmp/s8-all-scripts.txt
+ # S8 = script-layer universe minus live S1–S7
+ comm -23 /tmp/s8-all-scripts.txt <(LC_ALL=C sort /tmp/s8-s1s7-live.txt) > "$M"
+-wc -l < /tmp/s8-all-scripts.txt   # S_members layer = 91
+-wc -l < "$M"                      # S8 members
+-wc -l $(cat "$M" | sed "s|^|$SRC/|") | tail -1
++wc -l < /tmp/s8-all-scripts.txt   # S_members layer = 88
++wc -l < "$M"                      # S8 members = 60
++wc -l $(cat "$M" | sed "s|^|$SRC/|") | tail -1  # S8 member lines = 33367
+ ```
+ 
+-Observed:
++Historical observed (round 32, 2026-10-14 at `964f443e`):
+ 
+ ```text
+ S_members (layer): 91   # 73 top-level *.mjs + 18 under scripts/*/
+@@ -90,85 +92,99 @@ top-level in S8:   54
+ subdir in S8:      9   # charter-scribe/ 5 + lean-cargo/ 4
+ ```
+ 
++Current observed (pinned origin `31c465f1`, 2026-10-20):
++
++```text
++S_members (layer): 88   # 70 top-level *.mjs + 18 under scripts/*/
++S1–S7 live:        28
++S8 members:        60
++S8 members L:      33367 total
++suites:            22
++tools:             30
++shims:             3
++assets:            4
++doc:               1
++mjs total:         52
++top-level in S8:   51
++subdir in S8:      9   # charter-scribe/ 5 + lean-cargo/ 4
++```
++
+ Class is a shape label read off the path, not a behaviour claim: `suite` =
+ `*.test.mjs`, `tool` = every other `.mjs`, `shim` = `*.sh`, `asset` =
+ `.service`/`.timer`/`config.json`/`*.prompt.txt`, `doc` = `README.md`.
+ 
+ | Member | L | Class |
+ |---|---|---|
+-| `scripts/charter-scribe/config.json` | 27 | asset |
++| `scripts/charter-scribe/config.json` | 26 | asset |
+ | `scripts/charter-scribe/prompts/kimi-update.prompt.txt` | 17 | asset |
+-| `scripts/charter-scribe/sync.mjs` | 844 | tool |
++| `scripts/charter-scribe/sync.mjs` | 902 | tool |
+ | `scripts/charter-scribe/systemd/charter-scribe.service` | 14 | asset |
+ | `scripts/charter-scribe/systemd/charter-scribe.timer` | 12 | asset |
+ | `scripts/check-hand-authored-sets.mjs` | 215 | tool |
+ | `scripts/check-hand-authored-sets.test.mjs` | 141 | suite |
+ | `scripts/check-routing-free-config.mjs` | 121 | tool |
+ | `scripts/check-routing-free-config.test.mjs` | 86 | suite |
+-| `scripts/fleet-dispatcher.test.mjs` | 3278 | suite |
++| `scripts/fleet-dispatcher.test.mjs` | 2852 | suite |
+ | `scripts/fleet-ledger-read.mjs` | 920 | tool |
+ | `scripts/fleet-ledger-read.test.mjs` | 1390 | suite |
+-| `scripts/fleet-ledger-rotate.mjs` | 1414 | tool |
++| `scripts/fleet-ledger-rotate.mjs` | 1302 | tool |
+ | `scripts/fleet-ledger-rotate.test.mjs` | 2325 | suite |
+-| `scripts/fleet-selfheal-verify.mjs` | 1103 | tool |
+-| `scripts/gates-plan.mjs` | 200 | tool |
+-| `scripts/land-fleet-run.mjs` | 124 | tool |
+-| `scripts/lean-cargo/README.md` | 80 | doc |
++| `scripts/fleet-selfheal-verify.mjs` | 1048 | tool |
++| `scripts/gates-plan.mjs` | 204 | tool |
++| `scripts/land-fleet-run.mjs` | 133 | tool |
++| `scripts/lean-cargo/README.md` | 81 | doc |
+ | `scripts/lean-cargo/bin/cargo-shim.sh` | 344 | shim |
+ | `scripts/lean-cargo/install-shim.sh` | 69 | shim |
+ | `scripts/lean-cargo/measure.sh` | 98 | shim |
+ | `scripts/local-helper.mjs` | 360 | tool |
+ | `scripts/omp-native-shutdown.mjs` | 268 | tool |
+ | `scripts/omp-role-work.mjs` | 294 | tool |
+-| `scripts/omp-wave-context.mjs` | 570 | tool |
++| `scripts/omp-route-grammar.mjs` | 207 | tool |
+ | `scripts/prepare-ephemeral-fleet.mjs` | 482 | tool |
+-| `scripts/prepare-ephemeral-fleet.test.mjs` | 253 | suite |
++| `scripts/prepare-ephemeral-fleet.test.mjs` | 292 | suite |
+ | `scripts/prepare-ephemeral-l1.mjs` | 962 | tool |
+-| `scripts/primeagent-recovery-assess.mjs` | 555 | tool |
+-| `scripts/primeagent-refinement-ledger.mjs` | 1676 | tool |
+-| `scripts/project-devin-subagents.mjs` | 444 | tool |
++| `scripts/project-devin-subagents.mjs` | 379 | tool |
+ | `scripts/render-seat-tables.mjs` | 123 | tool |
+ | `scripts/render-seat-tables.test.mjs` | 102 | suite |
+-| `scripts/sync-global-routing.mjs` | 389 | tool |
+-| `scripts/sync-ufo-contracts.mjs` | 2273 | tool |
++| `scripts/sync-global-routing.mjs` | 255 | tool |
++| `scripts/sync-ufo-contracts.mjs` | 2137 | tool |
+ | `scripts/the-tick-config.mjs` | 458 | tool |
+ | `scripts/ufo-credential-screen.mjs` | 68 | tool |
+ | `scripts/ufo-drills.mjs` | 1726 | tool |
+-| `scripts/ufo-godspeed-inject.test.mjs` | 127 | suite |
++| `scripts/ufo-godspeed-inject.test.mjs` | 180 | suite |
+ | `scripts/ufo-l0-monitor-hook.test.mjs` | 147 | suite |
+-| `scripts/ufo-l0-monitor.test.mjs` | 1415 | suite |
+-| `scripts/ufo-l0-watch.test.mjs` | 1370 | suite |
++| `scripts/ufo-l0-monitor.test.mjs` | 1464 | suite |
++| `scripts/ufo-l0-watch.test.mjs` | 1608 | suite |
+ | `scripts/ufo-mission-activity.mjs` | 232 | tool |
+ | `scripts/ufo-mission-activity.test.mjs` | 80 | suite |
+ | `scripts/ufo-mission-lifecycle.mjs` | 267 | tool |
+ | `scripts/ufo-mission-observation.mjs` | 126 | tool |
+ | `scripts/ufo-mission-observation.test.mjs` | 100 | suite |
+ | `scripts/ufo-native-names.mjs` | 81 | tool |
+-| `scripts/ufo-night-watchdog.test.mjs` | 118 | suite |
+-| `scripts/ufo-refinement-context.mjs` | 103 | tool |
+-| `scripts/ufo-refinement-context.test.mjs` | 123 | suite |
+-| `scripts/ufo-route-preflight.mjs` | 176 | tool |
+-| `scripts/ufo-route-preflight.test.mjs` | 206 | suite |
+-| `scripts/ufo-stale-watchdog.test.mjs` | 756 | suite |
+-| `scripts/ufo-state-census.mjs` | 184 | tool |
+-| `scripts/ufo-state-census.test.mjs` | 91 | suite |
+-| `scripts/ufo-state-retention.mjs` | 2124 | tool |
+-| `scripts/ufo-state-retention.test.mjs` | 870 | suite |
+-| `scripts/ufo-statusline-hook.test.mjs` | 75 | suite |
+-| `scripts/ufo-swarm-collect.test.mjs` | 1554 | suite |
+-| `scripts/ufo-swarm-wave.test.mjs` | 1942 | suite |
+-| `scripts/ufo-watchdog-repend.mjs` | 371 | tool |
+-| `scripts/ufo-watchdog-repend.test.mjs` | 364 | suite |
++| `scripts/ufo-night-watchdog.test.mjs` | 195 | suite |
++| `scripts/ufo-route-preflight.mjs` | 177 | tool |
++| `scripts/ufo-route-preflight.test.mjs` | 239 | suite |
++| `scripts/ufo-stale-watchdog.test.mjs` | 133 | suite |
++| `scripts/ufo-state-census.mjs` | 219 | tool |
++| `scripts/ufo-state-census.test.mjs` | 172 | suite |
++| `scripts/ufo-state-retention.mjs` | 1924 | tool |
++| `scripts/ufo-state-retention.test.mjs` | 951 | suite |
++| `scripts/ufo-statusline-hook.test.mjs` | 98 | suite |
++| `scripts/ufo-swarm-collect.test.mjs` | 1621 | suite |
++| `scripts/ufo-swarm-registry.mjs` | 173 | tool |
++| `scripts/ufo-swarm-wave.test.mjs` | 1911 | suite |
++| `scripts/ufo-watchdog-repend.mjs` | 428 | tool |
++| `scripts/ufo-watchdog-repend.test.mjs` | 422 | suite |
+ 
+ ## Composition and conventions
+ 
+-What the remainder is: **23 suites + 32 tools + 3 shims + 4 assets + 1 doc = 63**,
++What the remainder is: **22 suites + 30 tools + 3 shims + 4 assets + 1 doc = 60**,
+ including the 5 live files under `scripts/charter-scribe/` and the 4 under
+-`scripts/lean-cargo/`, and 54 of the 73 top-level `scripts/*.mjs`. The layer
+-arithmetic at this HEAD is `S_members 91 = S1–S7 live 28 + S8 63`. The largest
+-members by `wc -l` are `scripts/fleet-dispatcher.test.mjs` (3278 L),
+-`scripts/sync-ufo-contracts.mjs` (2273 L) and
+-`scripts/ufo-state-retention.mjs` (2124 L).
++`scripts/lean-cargo/`, and 51 of the 70 top-level `scripts/*.mjs`. The layer
++arithmetic at pinned origin `31c465f1` is `S_members 88 = S1–S7 live 28 + S8 60`.
++The largest members by `wc -l` are `scripts/fleet-dispatcher.test.mjs` (2852 L),
++`scripts/sync-ufo-contracts.mjs` (2137 L) and
++`scripts/ufo-state-retention.mjs` (1924 L).
+ 
+ Discipline: this re-census is read-only against the origin tree (`ls` / `find` /
+ `wc -l` / section anchor checks). Suites are described by their own contracts;
+@@ -196,16 +212,16 @@ section deleted still reports `PROXY: MATCH` (exit 0, measured below); this prob
+ is the compensating check.
+ 
+ ```bash
+-# Arm 1 — heading set vs member set (expect `63` then 0 diff lines)
+-SRC=${UFO_SRC:-/home/vgpnk/Projects/ufo-fsd-alpha}
++# Arm 1 — heading set vs member set (expect `60` then 0 diff lines)
++SRC=${UFO_SRC:-/fast/scratch/kumitate-r35/src}
+ MEMBERS=${MEMBERS:-/tmp/s8-members-live.txt}              # derived in Membership above
+ NOTE=${NOTE:-corpus/knowledge/remaining-scripts-census.md}
+ grep -oE '^## `scripts/[^`]+`' "$NOTE" | sed -E 's/^## `//; s/`$//' | sort > /tmp/s8-headings.txt
+-wc -l < "$MEMBERS"                 # 63
++wc -l < "$MEMBERS"                 # 60
+ comm -3 <(sort "$MEMBERS") /tmp/s8-headings.txt
+ ```
+ 
+-Arm 1 on this note, verbatim:
++Arm 1, historical round-13 output:
+ 
+ ```text
+ $ wc -l < /tmp/kumitate-r13/s8-members.txt
+@@ -214,6 +230,15 @@ $ comm -3 <(sort /tmp/kumitate-r13/s8-members.txt) /tmp/kumitate-r13/arm1-headin
+                                     # no output: heading set == member set, 0 diff lines
+ ```
+ 
++Arm 1 re-run against pinned origin `31c465f1` (2026-10-20):
++
++```text
++$ wc -l < /fast/scratch/kumitate-r35/w/ExecS8Writer/members-live.txt
++60
++$ comm -3 /fast/scratch/kumitate-r35/w/ExecS8Writer/members-sorted.txt /fast/scratch/kumitate-r35/w/ExecS8Writer/headings-sorted.txt
++                                    # no output: 0 differences
++```
++
+ Arm 2 is `member-probe.mjs`, reproduced here so the check does not depend on a
+ file outside this repository (the lane keeps no scope for round artifacts, and
+ the `--claims` mode that would move this into `proxy-check.mjs` is pre-registered
+@@ -295,7 +320,7 @@ console.log(`MEMBER_PROBE: ${members.length - failed.size}/${members.length} ok`
+ process.exit(missing.length || extra.length || dup.length || bad.length ? 1 : 0);
+ ```
+ 
+-Arm 2 on this note, verbatim:
++Arm 2, historical round-13 output:
+ 
+ ```text
+ $ UFO_SRC=/home/vgpnk/Projects/origin-work/ufo-fsd-alpha \
+@@ -305,7 +330,15 @@ HEADINGS: 60  MEMBERS: 60  DUPLICATE: 0
+ MEMBER_PROBE: 60/60 ok                                                              # exit 0
+ ```
+ 
+-The drop-one control is the arm that closes the critic's blind spot. Rename one
++Arm 2 re-run against pinned origin `31c465f1` (2026-10-20):
++
++```text
++$ UFO_SRC=/fast/scratch/kumitate-r35/src MEMBERS=/fast/scratch/kumitate-r35/w/ExecS8Writer/members-live.txt NOTE=/fast/scratch/kumitate-r35/w/ExecS8Writer/lane/corpus/knowledge/remaining-scripts-census.md node /fast/scratch/kumitate-r35/w/ExecS8Writer/member-probe.mjs
++HEADINGS: 60  MEMBERS: 60  DUPLICATE: 0
++MEMBER_PROBE: 60/60 ok                                                              # exit 0
++```
++
++Historical drop-one control from round 13, retained to demonstrate the critic's blind spot. Rename one
+ member heading (``## `scripts/ufo-drills.mjs` `` → ``## `scripts/ufo-drills-renamed.mjs` ``)
+ and re-run both arms plus the proxy on the same tree:
+ 
+@@ -402,9 +435,10 @@ corpus/knowledge/remaining-scripts-census.md` to reproduce it.
+   - `scripts/ufo-route-preflight.test.mjs`
+   - `scripts/ufo-state-census.mjs`
+   - `scripts/ufo-state-census.test.mjs`
+-  Declared member count the S8 registry row must carry after parent integration:
+-  **63**. Parent owns the registry cell and the stanza; this note only keeps
+-  section-form honesty for the live set.
++Declared member count the S8 registry row must carry after parent integration:
++**60** at pinned origin `31c465f1` (2026-10-20); the 2026-10-14 value **63** is
++retained as round-32 history. Parent owns the registry cell and the stanza; this
++note only keeps section-form honesty for the live set.
+ 
+ 
+ ## Citation ledger
+@@ -604,9 +638,9 @@ is rejected as `invalid_key` (`scripts/omp-role-work.mjs:259`), so neither a
+ prototype-polluted spec nor a hostile string can forge a seat identity or smuggle
+ a second line into the assignment.
+ 
+-## `scripts/omp-wave-context.mjs`
++## `scripts/omp-route-grammar.mjs`
+ 
+-Live S8 member (570 L, tool) re-censused 2026-10-14 against origin HEAD `964f443e`. Primary surface symbol `WaveContextError` at `scripts/omp-wave-context.mjs:37`; also `WAVE_CONTEXT_MARKER` at `:59`.
++Live S8 member (207 L, tool) censused 2026-10-20 against pinned origin `31c465f1`. Primary symbol `parseRoute` is declared at `scripts/omp-route-grammar.mjs:88`; `MAX_CHAIN_LENGTH` is declared at `:31`. It centralizes routing-selector and fallback-chain parsing plus provider-to-failure-domain mapping so JavaScript consumers share one grammar.
+ 
+ ## `scripts/prepare-ephemeral-fleet.mjs`
+ 
+@@ -620,39 +654,6 @@ Live S8 member (253 L, suite) re-censused 2026-10-14 against origin HEAD `964f44
+ 
+ `scripts/prepare-ephemeral-l1.mjs` exposes two library entry points, `createEphemeralL1` (`scripts/prepare-ephemeral-l1.mjs:912`) and `destroyEphemeralL1` (`scripts/prepare-ephemeral-l1.mjs:1226`), plus a CLI `main` whose verbs are exactly create and destroy — anything else is `fail("cli_usage", usage)` (`scripts/prepare-ephemeral-l1.mjs:1377`). Create clones the source tree into a policy-rooted mission directory derived from `ROOT` (`scripts/prepare-ephemeral-l1.mjs:28`) and writes a marker through the create-once `SECURE_WRITE_OPTIONS` (`scripts/prepare-ephemeral-l1.mjs:60`); destroy validates that marker before deleting anything. The policy is read by `readPolicy` (`scripts/prepare-ephemeral-l1.mjs:133`) from `POLICY_PATH` (`scripts/prepare-ephemeral-l1.mjs:29`, the `ephemeral-l1.machine.json` machine file), and `PATH_VARIABLES` (`scripts/prepare-ephemeral-l1.mjs:44`) freezes exactly the eight environment keys the wall's exact-key check requires. Every refusal is a `PrepareError` (`scripts/prepare-ephemeral-l1.mjs:72`) carrying a stable snake_case code, and only that code crosses the stderr envelope — anything else flattens to `internal_error` (`scripts/prepare-ephemeral-l1.mjs:1433`) with exit code 2 (`:1435`). A hostile target is refused rather than deleted: destroy demands one direct child of the configured root (`destroy_target_not_child`, `scripts/prepare-ephemeral-l1.mjs:1111`) that is not a symlink and whose marker is bounded and owner-private.
+ 
+-## `scripts/primeagent-recovery-assess.mjs`
+-
+-**Owning surface** — A read-only consumer CLI (`main`, gated by `isMainModule`
+-(`scripts/primeagent-recovery-assess.mjs:1845`)) that validates caller-supplied L0
+-source rows before handing them to the `@ufo/substrate-runtime` package; it never
+-resumes, respawns or mutates anything, and emits ONE allowlisted JSON object on
+-stdout — `ASSESSMENT_SCHEMA`
+-(`scripts/primeagent-recovery-assess.mjs:723`) — with every envelope labelling its
+-evidence `CALLER_PROVENANCE` (`scripts/primeagent-recovery-assess.mjs:724`). Its
+-entries are `assessRecovery` (`scripts/primeagent-recovery-assess.mjs:1686`)
+-behind `parseArgs` (`scripts/primeagent-recovery-assess.mjs:1787`), whose
+-`VALUED_FLAGS` (`scripts/primeagent-recovery-assess.mjs:1785`) refuses a
+-flag-like token where a value is required, plus the row-level
+-`assessRecoveryFromRows` (`scripts/primeagent-recovery-assess.mjs:1076`); the exit
+-map is `EXIT_OK` (`scripts/primeagent-recovery-assess.mjs:727`) for every typed
+-assessment including package-level refusals, `EXIT_SOURCE_INVALID`
+-(`scripts/primeagent-recovery-assess.mjs:728`) for broken consumer evidence, and
+-`EXIT_USAGE` (`scripts/primeagent-recovery-assess.mjs:729`) for argv misuse. Row
+-grammar is byte-copied from the dispatcher: `MANIFEST_SCHEMA`
+-(`scripts/primeagent-recovery-assess.mjs:92`), `QUEUE_RUN_ID_PATTERN`
+-(`scripts/primeagent-recovery-assess.mjs:103`, `gq` plus 16 hex),
+-`TASK_KEY_PATTERN` (`scripts/primeagent-recovery-assess.mjs:104`, `task_` plus 24
+-hex), `LINEAGE_ROUND_MAX` (`scripts/primeagent-recovery-assess.mjs:105`) and
+-`WRITER_ALLOWED_FAILURE_CODES` (`scripts/primeagent-recovery-assess.mjs:126`).
+-**Refusal** — There is no `--chain` flag and `UFO_SIGHTING_CHAIN_ID` is ignored
+-(`scripts/primeagent-recovery-assess.mjs:1829`) — a chain store must be named
+-explicitly — and omitting `--ledger` assesses no store at all, so a cohabiting
+-pre-grammar fork is never read as the live store.
+-
+-## `scripts/primeagent-refinement-ledger.mjs`
+-
+-The assimilated PrimeAgent `rlm.harness` mechanism as pure state I/O — a persisted, parent-scoped refinement ledger that is explicitly "not a second execution engine". The store is single-file with schema `LEDGER_SCHEMA = "ufo-refinement-ledger-v1"` (`scripts/primeagent-refinement-ledger.mjs:132`) and a sha256 chain over canonical entry bytes so tampering is detectable; `DEFAULT_LEDGER_PATH` (`:177`) resolves the location and `loadPolicy` (`:274`) floor-meets the caller's policy against `config/primeagent-assimilation.json`. On the write path `validateEntryShape` (`scripts/primeagent-refinement-ledger.mjs:350`) screens and shape-bounds every entry before `appendEntry` (`scripts/primeagent-refinement-ledger.mjs:935`) persists it atomically (unpredictable tmp + rename, with `LINEAGE_ENVELOPE_KEY` lineage stamping). On the read path `readForSuccessor` (`scripts/primeagent-refinement-ledger.mjs:1035`) names an expected parent runId and refuses typed on mismatch — continuity is receipt-bound, never raw history — and reads are capped at `LEDGER_MAX_READ_BYTES` (`scripts/primeagent-refinement-ledger.mjs:304`). Archive retention is `ARCHIVE_RETENTION = 3` generations (`scripts/primeagent-refinement-ledger.mjs:1109`), pruned by `pruneArchiveGenerations` (`scripts/primeagent-refinement-ledger.mjs:1266`); an entry body matching a credential shape is refused, never persisted.
+-
+ ## `scripts/project-devin-subagents.mjs`
+ 
+ Projects the `devin-native-v1` seat profiles (`scripts/project-devin-subagents.mjs:162`) — the repo and packaged `ufo-<role>.md` files — from canonical `agents/*.md` cards plus the `config/ufo.json` `nativeProfiles.devin-native-v1` declaration. It is rooted at the repo (`root`, `:148`), validates each role key against `safeRoleKey` (`:36`) and every destination path with `assertSafeDest`, refusing symlinked or out-of-root seat paths before any mkdir or write. Repo inputs are read through `readBoundedRepoFile` under the `MAX_REPO_FILE_BYTES` 1 MiB bound (`:102`), and a missing canonical card fails as `card_missing` (`:328`). `--check` is the read-only mode (`:160`), and `ok` (`scripts/project-devin-subagents.mjs:450`) is true only when missing, drifted and extra all empty. The single stdout surface is a JSON report whose refusal arm always carries a stable snake_case `errorCode`; exit codes are 0 ok, 1 projection failure, 64 usage error. Non-goal: these files are dispatch shape only — the seat never judges, and `run_subagent` output is session-local evidence, never an omp-native-v1 handoff.
+@@ -766,14 +767,6 @@ Canonical OMP-native seat/name derivations shared by the trial launcher and the
+ 
+ Live S8 member (118 L, suite) re-censused 2026-10-14 against origin HEAD `964f443e`. Primary surface symbol `hasTmux` at `scripts/ufo-night-watchdog.test.mjs:90`.
+ 
+-## `scripts/ufo-refinement-context.mjs`
+-
+-Live S8 member (103 L, tool) re-censused 2026-10-14 against origin HEAD `964f443e`. Primary surface symbol `REFINEMENT_CONTEXT_SCHEMA` at `scripts/ufo-refinement-context.mjs:24`; also `buildRefinementContext` at `:47`.
+-
+-## `scripts/ufo-refinement-context.test.mjs`
+-
+-Live S8 member (123 L, suite) re-censused 2026-10-14 against origin HEAD `964f443e`. Primary surface symbol `buildRefinementContext` at `scripts/ufo-refinement-context.test.mjs:20`; also `REFINEMENT_BEGIN` at `:17`.
+-
+ ## `scripts/ufo-route-preflight.mjs`
+ 
+ Live S8 member (176 L, tool) re-censused 2026-10-14 against origin HEAD `964f443e`. Primary surface symbol `ROUTE_PREFLIGHT_SCHEMA` at `scripts/ufo-route-preflight.mjs:32`; also `routeFamilies` at `:54`.
+@@ -832,6 +825,10 @@ spawn/resume wave (`scripts/ufo-swarm-collect.test.mjs:2088`) into the collector
+ and the suite prints a final `N/M passed` line
+ (`scripts/ufo-swarm-collect.test.mjs:2205`) before exiting 1 on any red.
+ 
++## `scripts/ufo-swarm-registry.mjs`
++
++Live S8 member (173 L, tool) censused 2026-10-20 against pinned origin `31c465f1`. Primary symbol `SWARM_REGISTRY_SCHEMA` is declared at `scripts/ufo-swarm-registry.mjs:27`; `loadRegistryDocument` is declared at `:165`. It centralizes the swarm registry schema, shared shape/path rules and parsing/normalization into ordered member rows.
++
+ ## `scripts/ufo-swarm-wave.test.mjs`
+ 
+ Dispatch-payload contract suite for the swarm path: it pins the plan block (declared vs clamped `maxLanes`, `dispatch.calls`) and the run split (spawn `taskCall` vs `resumeSends`, one-swarm-per-wave), over 167 `test(` cases (`scripts/ufo-swarm-wave.test.mjs:2`). It imports `planSwarmWave` from `./ufo-swarm-wave.mjs` plus `FAILURE_CLASS_NAMES`, `createMissionResult`, `createTaskReceipt`, `spinWait` and `validateTaskReceipt` from `./ufo-mission-result.mjs` (`:14`), takes the CLI path from `SCRIPT = join(import.meta.dirname, "ufo-swarm-wave.mjs")` (`:22`) and spawns the real script, and draws outside-root fixture bases from `outsideRootBase` in `tests/helpers/tmp-roots.mjs` (`:20`) because the fleet TMPDIR can be in-repo when the system temp mount is quota-dead. Coverage spans plan admission (`spawn_only_wave_emits_one_task_call` at `scripts/ufo-swarm-wave.test.mjs:158`, `empty_wave_rejected`, `duplicate_resume_id_rejected`), the hard lane cap (`hard_cap_admits_100_lanes` at `scripts/ufo-swarm-wave.test.mjs:980`, and `hard_cap_rejects_101_lanes` refusing with code `too_many_lanes`), registry write/merge semantics (`run_writes_member_registry`, `rerun_merges_registry_reset_preserve_retain`) and record reassignment refusals. Refusal arms are explicit: an outside-root config path is refused without the escape flag while the escape flag reads it, a symlinked config component is refused, and `run_withholds_dispatch_when_persist_refuses` proves the wave withholds dispatch when the registry persist refuses (`scripts/ufo-swarm-wave.test.mjs:573`). Fixture hygiene is itself part of the contract — every temp dir is registered and swept at exit, and a live-PID anchor for contended-registry-lock fixtures is written into the suite's own temp tree.
+@@ -844,3 +841,10 @@ Refusal-aware blocked-row repend duty extracted from `ufo-night-watchdog.sh`, ex
+ 
+ The suite for the extracted night-watchdog repend duty, run as `node scripts/ufo-watchdog-repend.test.mjs`. It imports the whole decision surface — `MAX_ATTEMPTS` (`scripts/ufo-watchdog-repend.test.mjs:14`), `STABLE_REFUSAL_REASONS` (`:15`), `decideRow` (`:16`), `extractRependReport` (`:17`), `manifestClassFor` (`:18`), `normalizeState` (`:19`), `rowSignature` (`:20`) and `runRependCycle` (`:21`) — and drives it with a local `test` runner (`:25`). Fixtures are a fixed-`NOW` `row` factory plus a `fakeSpawn` (`:47`) that records calls and replays a canned report; `STABLE` (`:56`) is the `mission_stale_registered` refusal. Pins cover stable-refusal suppression with row/manifest-change reset, transient retry, success counting and the attempt cap, and legacy bare-number state migration. The final arm runs an end-to-end `main` against scratch surfaces only (`UFO_STATE_DIR` plus a scratch queue, `:311`), suppressing the second tick and then resetting on a manifest change.
+ 
++## Departed members (re-census 31c465f1, 2026-10-20)
++
++- `scripts/omp-wave-context.mjs` — last seen at `964f443e`; deleted in `87e6ab30c61e3965b02fe26171bf2e84be87324e` (2026-10-19); old primary symbol `WaveContextError`.
++- `scripts/primeagent-recovery-assess.mjs` — last seen at `964f443e`; deleted in `2a04baf280328658b22f70521f62c4ff76410d9b` (2026-10-19); old primary symbol `main`.
++- `scripts/primeagent-refinement-ledger.mjs` — last seen at `964f443e`; deleted in `2a04baf280328658b22f70521f62c4ff76410d9b` (2026-10-19); old primary symbol `LEDGER_SCHEMA`.
++- `scripts/ufo-refinement-context.mjs` — last seen at `964f443e`; deleted in `2a04baf280328658b22f70521f62c4ff76410d9b` (2026-10-19); old primary symbol `REFINEMENT_CONTEXT_SCHEMA`.
++- `scripts/ufo-refinement-context.test.mjs` — last seen at `964f443e`; deleted in `2a04baf280328658b22f70521f62c4ff76410d9b` (2026-10-19); old primary symbol `buildRefinementContext`.
