@@ -1697,3 +1697,16 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   limits: `dead` (168) and `noid` anchors are diagnostics, not gated; `cite-check` and `round-gate`
   stay on the legacy `--src`/`--origin` default; the pin asserts the commit, not the bytes; the
   falsify wave was validated (81 seats) but not dispatched before the run's budget stop.
+
+- 2026-10-21 — round 36 CORRECTION (appended; supersedes the C1 verdict, not the cited commit).
+  The round-36 record above says the delivered `--fidelity` arm uses a "clause-guarded" pairing rule;
+  the committed code is plain right-first (`scripts/claims-check.mjs`: `const pair = next ?? prev ?? null`).
+  The guarded rule exists only in `ExecClaimsFidelity.patch`, which is NOT integrated. Consequence:
+  `ReviewFidRemainder` re-opened the landed `corpus/knowledge/remaining-scripts-census.md` repair and
+  found 105 of 163 changed anchors cite a line that does not contain the symbol the sentence names
+  (digits shifted so each anchor pairs the *next* symbol: e.g. `cdpPort` → `"mode": "Expert"`,
+  `BEGIN_MARKER` → `END_MARKER`, `defaultLedgerPath` → a comment); an independent FIDELITY v1
+  implementation reads `nonok=2`, not 0, on that note. C1's `FIDELITY: CLEAN nonok=0` is therefore
+  **not admitted as anchor truth** and the note is **harmed** by the shift-repair until it is redone
+  under one canonical pairing rule. C2 (R5/R7 92/92 ⇒ 10) is unaffected and independently re-measured.
+  The delivered gate numbers remain reproducible as machine output; they just do not certify the prose.
