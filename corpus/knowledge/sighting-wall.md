@@ -1,6 +1,5 @@
 # S4 sighting wall — live membership at internals level
-> **Round-37 anchor-truth restoration (2026-10-21; amended by AuditSighting4).** Symbol-keyed anchors were reverted to their 0614092 values, but this note is only PARTIALLY restored: nine anchor positions still differ from base (five never reverted, four set to values present in neither base nor the pre-repair note), and two remain false — `MANIFEST_SCHEMA` should cite `base.mjs:41`, `MAX_MANIFEST_BYTES` `:49`. The round-36 shift-repair moved them one symbol off; re-verification against the pin is owed for all nine. Do not treat this note as fully restored.
-
+> **Round-37 restoration (2026-10-21; final, amended by AuditSighting2/4).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 22 line anchors in this
@@ -101,7 +100,7 @@ modules for constants, argv preflight, observation, and surface projection.
 **Manifest.** `validateManifest` (`scripts/ufo-sighting.mjs:279`) enforces
 `MANIFEST_SCHEMA`, `ownerRoot === ROOT`, `target === TMUX_TARGET`, unique
 mission/run/session/pane/sequence ids, and terminal shape. `writeManifest`
-(`scripts/ufo-sighting.mjs:287`) bumps `registryRevision`, validates, refuses a
+(`scripts/ufo-sighting.mjs:548`) bumps `registryRevision`, validates, refuses a
 symlinked leaf, writes `wx` 0600 tmp → fsync → rename → chmod → dir fsync, and
 fails `MANIFEST_TOO_LARGE` past `MAX_MANIFEST_BYTES`. `readManifest`
 (`scripts/ufo-sighting.mjs:379`) is the bounded read path; `loadStatusView`
@@ -117,7 +116,7 @@ every mutating verb uses.
 pane creator. `launchMissionLocked` / `launchMission`
 (`scripts/ufo-sighting.mjs:2347`, `:2372`) own capacity → row → spawn.
 `stopMission` (`scripts/ufo-sighting.mjs:3584`), `resumeMissionLocked` /
-`resumeMission` (`:3762`, `:3762`), `completeMission` (`:3339`),
+`resumeMission` (`:3682`, `:3762`), `completeMission` (`:3339`),
 `reconcileLocked` (`:1976`), and `scheduleReconcile` (`:3572`, spawns
 detached `__reconcile`) close the lifecycle set. Steer/peek:
 `steerMission` (`:3511`), `peekMission` (`:3544`).
@@ -136,11 +135,11 @@ Deliberately the leaf other lib files and the entry import for identity.
 
 **Paths / identity.** `ROOT` (`scripts/ufo-sighting-lib/base.mjs:17`),
 `SHIM_PATH` (`:19`), `MODULE_PATH` (`:21`), `SESSION_NAME` /
-`TMUX_TARGET` (`:27`, `:27`), `APP_ID` (`:39`).
+`TMUX_TARGET` (`:23`, `:27`), `APP_ID` (`:39`).
 
 **Schema and bounds.** `MANIFEST_SCHEMA = "ufo-sighting-wall-v1"`
-(`scripts/ufo-sighting-lib/base.mjs:49`); `MAX_MANIFEST_BYTES = 1_048_576`
-(`:73`); `LOCK_TIMEOUT_MS = 10_000` (`:73`); `LOCK_STALE_MS` (`:75`);
+(`scripts/ufo-sighting-lib/base.mjs:41`); `MAX_MANIFEST_BYTES = 1_048_576`
+(`:49`); `LOCK_TIMEOUT_MS = 10_000` (`:73`); `LOCK_STALE_MS` (`:75`);
 `MAX_TEXT_BYTES = 4096` (`:63`); `MAX_COMPLETED_MISSIONS = 50` (`:65`);
 `DEFAULT_ATTACH_TIMEOUT_MS` (`:71`); `DISPLAY_REFRESH_LOCK_MS = 250` (`:77`).
 
@@ -161,7 +160,7 @@ parsing, executable predicates, and preflight that refuses indirect shells.
 
 **Predicates.** `resolvedExecutableName` (`:117`);
 `isOpenCodeExecutable` (`:131`); `isOmpExecutable` (`:135`);
-`appearsToLaunchOpenCode` / `appearsToLaunchOmp` (`:202`, `:202`);
+`appearsToLaunchOpenCode` / `appearsToLaunchOmp` (`:198`, `:202`);
 `shellLaunches` (`:139`).
 
 **Preflight.** `preflightArgvDispatch` (`scripts/ufo-sighting-lib/argv.mjs:455`)
@@ -186,7 +185,7 @@ telemetry.
 argv dispatch.
 
 **Sparks / observations.** `sparkStateRoot` (`:411`); `countActiveSparks`
-(`:493`); `loadObservations` (`:493`) reads the sidecar under the wall state
+(`:415`); `loadObservations` (`:493`) reads the sidecar under the wall state
 dir.
 
 **Status fold.** `levelStatus` (`scripts/ufo-sighting-lib/observe.mjs:561`)
@@ -202,12 +201,12 @@ Sources: `scripts/ufo-sighting-lib/observe.mjs`.
 consumers compare to `config/ufo.json` `sighting.surfaceDigest`.
 
 **Digest set.** `SURFACE_MODULE_PATHS` lists the four live lib files
-(`scripts/ufo-sighting-lib/surface.mjs:13`–`:31`). `surfaceScriptDigest`
+(`scripts/ufo-sighting-lib/surface.mjs:13`–`:18`). `surfaceScriptDigest`
 (`:31`) hashes **shim + module + those four** in fixed order (not any single
 file’s sha256). `SURFACE_KIND = "sighting-surface-v1"` (`:24`).
-`DEFAULT_PEEK_LINES = 80` / `MAX_PEEK_LINES = 400` (`:22`, `:22`).
+`DEFAULT_PEEK_LINES = 80` / `MAX_PEEK_LINES = 400` (`:20`, `:22`).
 
-**Manifest / errors.** `surfaceErrors` (`:50`) mines fail("CODE" literals
+**Manifest / errors.** `surfaceErrors` (`:50`) mines `fail("CODE"` literals
 from the entry + lib set; `surfaceManifest` (`:59`) emits `kind`,
 `scriptDigest`, `digestInputs`, verb schemas, and exit map.
 `runLegacyNativeDirect` (`:318`) re-enters the bash shim’s
