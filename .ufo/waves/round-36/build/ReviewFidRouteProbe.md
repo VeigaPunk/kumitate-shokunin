@@ -12,11 +12,11 @@ route-probe-cluster; live-surface has no member section and no FIDELITY line (0)
 
 ## 1. BLOCKER — the note is not nonok=0 under the frozen FIDELITY v1 predicate
 
-The patch says, in the note itself (route-probe-cluster.md:6-8): "Every
+The patch says, in the note itself (route-probe-cluster.md:5-7): "Every
 member-section anchor below was re-opened at that pin and now carries its adjacent
 on-line symbol, so `node scripts/claims-check.mjs --fidelity` reads `nonok=0` for
 this note." That is false. The shipped arm agrees with the frozen rule (right-first,
-`next ?? prev`, no ambiguity branch — claims-check.mjs:303-310), and on the patched
+`next ?? prev`, no ambiguity branch — claims-check.mjs:298-300), and on the patched
 lane it reads:
 
     FIDELITY note=corpus/knowledge/route-probe-cluster.md anchors=81 ok=62 elsewhere=5 absent=0 dead=0 noid=14 nonok=5
@@ -81,7 +81,7 @@ state root for `status` — both removed; nothing under `--src`".
 
 ## 4. LOW — route-probe appendix keeps stale numbering and a removed symbol
 
-Header discloses appendix sections "keep their earlier numbering" (route note:9-10),
+Header discloses appendix sections "keep their earlier numbering" (route note:8-10),
 but the appendix still asserts `ROUTE_TOKEN` as live at
 `scripts/probe-ufo-route-health.mjs:209` (route note:229), contradicting the member
 section's own "the former in-file ROUTE_TOKEN class is gone upstream" (route note:122);
@@ -122,7 +122,7 @@ scope, not a fidelity-universe defect.
 
 - [INFERENCE] The shipped FIDELITY arm landed in claims-check.mjs while this review
   ran (02:40); if its pairing changes before integration, re-run. Its current code
-  (claims-check.mjs:303-310) is right-first and matches my measurement.
+  (claims-check.mjs:298-300) is right-first and matches my measurement.
 - surface-probe.mjs is being rewritten by sibling executors during the review
   (76395 → 122477 → 91080 bytes between 02:31 and 02:39). The scratch-root finding
   is against the 02:39 bytes`; re-check after ExecSurfacePin settles.
