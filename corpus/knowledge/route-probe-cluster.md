@@ -1,5 +1,5 @@
 # S7 route-probe cluster — the 6-member probe family (round-32 re-census)
-> **Round-37 restoration (2026-10-21; final, amended by AuditSighting2/4).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
+> **Round-37 restoration (2026-10-21; final, amended by AuditRouteProbe1/2/6).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 65 line anchors in this
