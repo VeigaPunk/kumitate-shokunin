@@ -877,7 +877,7 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
 
 function runClaims(args, env) {
   const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
-    encoding: 'utf8', timeout: 60_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
   });
   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
@@ -1081,7 +1081,7 @@ function selfTest() {
     /* round-36 ─ PIN v1 (`kumitate-origin-pin-v1`) ------------------------ */
     const PIN_ENV = { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_TERMINAL_PROMPT: '0' };
     const gitRun = (dir, args) => spawnSync('git', ['-C', dir, ...args], {
-      encoding: 'utf8', timeout: 60_000, env: { ...process.env, ...PIN_ENV },
+      encoding: 'utf8', timeout: 60_000, env: gitEnv(PIN_ENV),
     });
     /* A fixture origin tree that IS a git repo: mk()'s fixture files, committed. */
     const pinTree = (name) => {
