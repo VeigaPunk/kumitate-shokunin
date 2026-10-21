@@ -1,0 +1,16 @@
+ITEM FixNTL11 anchors=4 move=4 token=0 move_token=0 debt=0
+VERDICT native-trial-launch#45 MOVE 722 | Sentence names readRoundPlan's location; pin 722 'export function readRoundPlan(runRoot, manifest) {' is its only occurrence and its definition; pin 704 'if (typeof criterion.value !== "number" || !Number.isFinite(criterion.value)) {' lies inside validateAcceptanceCriterion (681-707), a different symbol.
+VERDICT native-trial-launch#46 MOVE 798 | Sentence names waveTokenFromContext; pin 798 'export function waveTokenFromContext(context) {' is its only occurrence and definition; pin 780 '  }' only closes the for-loop at 778-780 inside readRoundPlan.
+VERDICT native-trial-launch#47 MOVE 897 | Sentence names loadCanonicalDirective; pin 897 'export function loadCanonicalDirective(root) {' is its only occurrence and definition; pin 879 '  };' only closes the object returned by normalizeAxes (829-880); round-36 value 926 is parseRateCard's definition (one symbol off), rejected.
+VERDICT native-trial-launch#48 MOVE 926 | Sentence names parseRateCard; pin 926 'export function parseRateCard(budgets) {' is its only occurrence and definition; pin 908 'die(`godspeed directive is not UTF-8 at ${candidate}: ${error.message}`);' sits in loadCanonicalDirective's catch (907-909), a different symbol.
+E1 read corpus/knowledge/native-trial-launch.md:412-420 (+421): one sentence group, lines 416-421; anchors sit on note lines 419 (:704), 420 (:780), 421 (:879, :908); the item's "416" is the group start, not the anchor line.
+E2 git show 753446a829edda519c75777ce95888443f51fa94:corpus/knowledge/native-trial-launch.md | cmp - <lane note>: identical.
+E3 git -C /fast/scratch/kumitate-r36/src rev-parse HEAD = 31c465f15669f744848bd9f5d56191c5085670f7; git show HEAD:scripts/collect-omp-native-handoff-lib/policy.mjs | cmp - <pin file>: identical.
+E4 read policy.mjs:700-730: 681 'function validateAcceptanceCriterion(criterion, index) {' owns 704 (closes at 707); 722 'export function readRoundPlan(runRoot, manifest) {'.
+E5 read policy.mjs:772-805: 778-780 'for (const [index, criterion] of plan.acceptance_criteria.entries()) {' / 'validateAcceptanceCriterion(criterion, index);' / '  }'; 798 'export function waveTokenFromContext(context) {'.
+E6 read policy.mjs:870-932: 879 '  };' closes normalizeAxes' return (829-880); 883-888 comment 'Mirror GodspeedDirective::load_from_trusted'; 897 'export function loadCanonicalDirective(root) {'.
+E7 read policy.mjs:870-932: 907-909 is the UTF-8 catch inside loadCanonicalDirective (908 sits in it); 923-925 comment on budgets.rateCard rates; 926 'export function parseRateCard(budgets) {'.
+E8 _grep readRoundPlan|waveTokenFromContext|loadCanonicalDirective|parseRateCard on policy.mjs: exactly four matching lines, 722, 798, 897, 926, each an 'export function' definition; no other occurrence in the file.
+E9 Token check: 704, 780, 879 share no word with their clauses; 908 shares only 'directive' with the #47 clause, not with the #48 clause (rate card parseRateCard); no TOKEN verdict.
+E10 Aside, not an anchor, unchanged: heading '(924 L)' at note line 414 vs pin wc -l = 942 for policy.mjs; the heading count is stale.
+E11 Scope: only this report written; no lane file, script, jj/git state, install, or spawn touched; all commands read-only.

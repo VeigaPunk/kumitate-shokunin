@@ -586,11 +586,11 @@ Citations are to the notes — the notes carry the live anchors.
 
 ## Gate registry
 
-Registry home per the fleet protocol's §Gate standard (round 34). All seven are
-gates (each can exit 1 on a real defect). None writes to a surface it does not
+Registry home per the fleet protocol's §Gate standard (round 34). All eight are
+gates (each can exit 1 on a real defect; `anchor-truth` added round 38). None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
 origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
-`--checklists` mode runs the commands listed below. Verdict map for all seven: `0` → clean,
+`--checklists` mode runs the commands listed below. Verdict map for all eight: `0` → clean,
 `1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
 this lane (kumitate L1).
 
@@ -603,6 +603,7 @@ this lane (kumitate L1).
 | claims-check | gate | `node scripts/claims-check.mjs [--row ID] [--strict]` → `CLAIMS: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` registry `yes — <note>` cells |
 | kimi-census | gate | `node scripts/kimi-census.mjs` → `KIMI_CENSUS: CLEAN\|DRIFT` | `--selftest` | frozen member set + family counts inside the script |
 | sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | independent gate; `corpus/SOURCES.md` + frozen `16a5441` legacy identity set; not a `kumitate-proxy-v1` pin |
+| anchor-truth | gate | `node scripts/anchor-truth.mjs [--base REV] [--write-pin --notes …]` → `TRUTH: CLEAN\|DRIFT\|FAIL-CLOSED` | `--selftest` (`ANCHOR_TRUTH_SELFTEST: n/m`) | `.ufo/pins/anchor-truth.json` (one expectation per anchor of the registered notes, contract `kumitate-anchor-truth-v1`, at the `.ufo/pins/origin.json` revision); the frozen `--base` commit holds the burn-down floor |
 
 Named gaps (not claimed): no gate yet ships the §Gate standard "two evidences"
 frozen-snapshot run with a digest-pinned expected-verdict file, and no verdict line names
@@ -612,17 +613,19 @@ what a corpus entry must clear before admission: `corpus/QUALITY.md`.
 
 ## Verifiable checklist
 
-Fourteen items (14 since round 36, 2026-10-21 — 13 through round 35, plus the
-anchor-fidelity sweep), every one read-only, runs from this repo's root, and
-prints its own verdict; `node scripts/surface-probe.mjs --checklists` executes
-the list.
+Fifteen items (round 38). Item 14 replaces the round-36/37 adjacency-fidelity
+ratchet with the per-anchor truth gate on four registered notes (811 anchors);
+item 15 is its hermetic suite. Every item is read-only, runs from this repo's
+root, and prints its verdict; `node scripts/surface-probe.mjs --checklists`
+executes the list. The old `claims-check --fidelity` arm remains diagnostic for
+its 20-note population, not a certificate of anchor truth.
 
 Items 3, 8, 10 and 14 are pin-aware — each resolves `--src` through
 `.ufo/pins/origin.json` (contract `kumitate-origin-pin-v1`, a private clone
 detached at a pinned revision) and prints `src-rev=<12 hex>` inside its verdict,
 so a pass is scoreable against a revision instead of against whichever tree sits
-at the default path. Item 1 (`cite-check`) still takes an explicit `--src`; with
-no pin file every pin-aware gate falls back to `--src` / `$UFO_SRC` as before.
+at the default path. Item 1 (`cite-check`) still takes an explicit `--src`.
+Unlike the legacy gates, item 14 fails closed without its origin pin.
 
 - [ ] Citation gate verdict — `node scripts/cite-check.mjs` → exit 0|1 + `CITE_CHECK:`
 - [ ] Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
@@ -637,7 +640,8 @@ no pin file every pin-aware gate falls back to `--src` / `$UFO_SRC` as before.
 - [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
 - [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
 - [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
-- [ ] Anchor fidelity — `node scripts/claims-check.mjs --fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` → exit 0 + `FIDELITY: CLEAN`
+- [ ] Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` → exit 0 + `TRUTH: CLEAN`
+- [ ] Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON, a pin that no longer resolves to its

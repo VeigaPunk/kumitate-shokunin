@@ -96,11 +96,15 @@ fixture suite, `--strict` to fail on warnings.
 
 | `knowledge/pinned-evidence.md` | Round-36 pin contract: why a verdict carries the revision it scored, the `.ufo/pins/origin.json` shape and recreate command, the three assertion outcomes and exits, the read-only-clone evidence path, and what the pin does not claim (dirty tree at the right HEAD, inherited git identity, kimi-census exception) | S031, S032; `scripts/{claims,proxy,surface}-check.mjs`; `corpus/lessons/round-36.md` |
 
-| `lessons/round-36.md` | Round-36 method: the pinned-verdict operability claim (PIN v1 in claims/proxy/surface, scrubbed git env, mkdtemp dispatcher state, declared-order digest, strict `--known`) and the FIDELITY v1 arm with a clause-guarded pairing rule and an all-zero ratchet; R5/R7 sectionization reaches the runtime layer 92/92 ⇒ 10; nine mined mistakes | LOG.md round 36; `.ufo/waves/round-36/`; S029–S032 |
+| `lessons/round-36.md` | Round-36 method: the pinned-verdict operability claim (PIN v1 in claims/proxy/surface, scrubbed git env, mkdtemp dispatcher state, declared-order digest, strict `--known`) and the FIDELITY v1 arm with a right-first adjacency pairing (the "clause-guarded" wording was false — corrected round 37/38) and an all-zero ratchet; R5/R7 sectionization reaches the runtime layer 92/92 ⇒ 10; nine mined mistakes | LOG.md round 36; `.ufo/waves/round-36/`; S029–S032 |
 
 | `lessons/round-36-verifier-spotcheck.md` | Round-36 non-author closure: REJECTED-HARMED adjudication (C1 fails as declared, C2 verifies, coverage:script-layer harmed by 123 shifted anchors), routed defects D1-D8, discernment spot-check, trend verdicts; row added in round 37 | commit `5833351`; fleet closure entry |
 
-| `lessons/round-37.md` | Round-37 repair-first method: the round-36 harmed anchors restored and the four notes marked, canonical left-first pairing with a shift selftest, a measured fidelity ratchet (no-regression CLEAN), D3-D8 dispositions, and the 68-seat falsify wave | LOG.md round 37; `.ufo/waves/round-37/`; spot-check D1-D8 |
+| `lessons/round-37.md` | Round-37 repair-first method: the four notes reset to their 0614092 bytes and marked (the reset re-broke 62 anchors true at round open — closure 753446a), canonical left-first pairing with a shift selftest, a fidelity ratchet set equal to the measured debt (tautological at landing, retired round 38), D3-D8 dispositions, and the 68-seat falsify wave | LOG.md round 37; `.ufo/waves/round-37/`; spot-check D1-D8 |
+
+| `lessons/round-37-verifier-spotcheck.md` | Round-37 non-author closure: REJECTED-HARMED (declared anchor-truth claim refuted; coverage:script-layer harmed by a 131-restored / 62-regressed trade), independent parser in Appendix A, routed R1-R7; row added in round 38 | commit `753446a`; fleet closure entry `rounds[383]` |
+
+| `lessons/round-38.md` | Round-38 repair-first method: per-anchor repair of the four registered notes against the pin (wave-reviewed MOVE/TOKEN/DEBT verdicts), the `anchor-truth` per-anchor gate with a frozen `--base` burn-down, retired fidelity ratchet, mined mistakes | LOG.md round 38; `.ufo/waves/round-38/`; S033 |
 
 ## Known gaps
 

@@ -1729,3 +1729,39 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   `SOURCES_CHECK: CLEAN (rows=32)`. Declared claim: operability — the fidelity gate now measures the sentence's own adjacent symbol
   (left-first) instead of rewarding shifts; it is not anchor truth, and independent re-measurement
   is owed (Verify4). Integer held 8; no new coverage claim.
+
+- 2026-10-21 — round 38 correction entry for the round-37 entry above. The round-37 entry stays as
+  it now reads; this entry is append-only. After filing, the round-37 entry was rewritten in place by
+  `5031720` (`C2/C2_total=83` → `83→84`) and `fb5b90e` (declared-claim sentence). That breaks
+  append-only, and this entry records it. Three of its statements are superseded:
+  - "D1 every symbol-keyed anchor … reverted": the shipped state is the full base reset `5bc40d0`.
+  - "the fidelity ratchet records the measured debt (total 186)": the final total was 200, set equal
+    to the debt, so CLEAN could not fail.
+  - `FIDELITY: CLEAN (notes=20 anchors=1551 …)`: the final reading was `anchors=1574 … nonok=200`
+    (`.ufo/waves/round-37/final/fidelity.txt`).
+
+  The non-author closure (`corpus/lessons/round-37-verifier-spotcheck.md`, lane commit `753446a`,
+  fleet `rounds[383]`) rejected round 37 as harmed. The reset re-broke 62 anchors true at round
+  open; the declared anchor-truth claim was refuted.
+
+- 2026-10-21 — round 38 (repair-first; round open `753446a`, source pin `31c465f1`). Two claims:
+  coverage:script-layer per-anchor repair of four notes (811 frozen anchors), and operability
+  failure capability on the lowest non-retired axis. Oracle + open-state pin landed in
+  `e18ff1af3392e3823227644c977c237737fe65c9` before final measurements. Under that oracle:
+  467 true /208 debt /136 unchecked -> 777 true /21 debt /13 unchecked; zero true-to-nontrue.
+  The 62-item closure list is explicitly accounted: 58 old-token repairs and four pairing
+  discrepancies, not 62 blindly restored line values. The marked debt is not claimed true.
+  `anchor-truth --selftest` passes 22/22, including next-symbol shift, swapped runs, re-pin
+  refusal, debt growth, checked shrink, invalid overrides, and dirty source worktrees.
+  New gate reads committed regular blobs; the checklist replaces adjacency ratchet with
+  `--base e18ff1af3392e3823227644c977c237737fe65c9`. Sources S033 opened/mined; before census
+  kumitate ok exit 0, 32 rows; new lesson and r37-spotcheck map rows bring C2 to 86.
+  Named SCORECARD/r37-lesson corrections and the prior LOG correction entry address R4.
+  AuditRemainder6 was NOT dead: a bare relative trailer misrouted its report to the fleet root.
+  Byte-exact recovery (cmp equal, sha256 c39ed761…) and deletion of the stray are recorded in
+  `.ufo/waves/round-38/evidence/misroot-AuditRemainder6.txt`; stale r37 wave slot released.
+  Build wave 90 (41 scout, 39 reviewer, 3 critic, 3 executor, 2 scribe, 1 sentinel,
+  1 connector), one unchanged validated payload after two cap refusals; 89 reports,
+  ConnSibling failed with the Codex whitespace-only tool-argument error (not replaced).
+  This exceeds Main's narrower 88-seat context, but fits user prompt 64–100; disclosed.
+  L1 holds planner seat; final evidence and falsify results are separate appended receipts.

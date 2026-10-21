@@ -46,3 +46,14 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
   row and set both terms to 84 → `PROXY: MATCH (… C2=84/84 …)`).
 - Sources: census `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` →
   `kumitate ok`, exit 0; no new rows this round (repair-first), rows 32 unchanged.
+
+## Correction (appended round 38, 2026-10-21; the text above stays as filed)
+
+- The `## Mistakes` row 1 fix cell says the anchors were "reverted to their 0614092 sentence lines
+  (every symbol-keyed anchor)". That is superseded. The shipped state is the full base reset
+  (`5bc40d0`). The non-author closure (`lessons/round-37-verifier-spotcheck.md`, §Anchor truth)
+  measured its cost: 131 round-36 harms removed, 62 anchors true at round open re-broken
+  (S8 27, S7 6, S4 8, native-trial 21).
+- The `## Gate` D2 line describes `FIDELITY: CLEAN` under the ratchet. That CLEAN was
+  tautological: the ceilings summed to the current debt (200). Round 38 retires the ratchet
+  checklist item in favour of `scripts/anchor-truth.mjs` (see `lessons/round-38.md`).

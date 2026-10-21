@@ -1,0 +1,15 @@
+ITEM Prose14 anchors=2 token=0 move_token=1 debt=0 skip=1
+VERDICT sighting-wall#18 MOVE_TOKEN 4730 surface | 4714 is the native-trial dispatch field inside the launchMission({...}) argument (pin 4708-4715), not a re-export; the only export-from of surface helpers is the definition at 4730 (export {...} from "./ufo-sighting-lib/surface.mjs"; 4725 is a comment and line 30 a plain import); "surface" occurs in the sentence and on 4730; the sentence is otherwise TRUE, so only the anchor literal changes (note line 127 :4714 becomes :4730)
+VERDICT sighting-wall#60 SKIP brace-only range end: pin 18 is the closing "];" of SURFACE_MODULE_PATHS (13 opens, 14-17 hold the four path.join entries, 18 closes), so :18 is the correct end and carries no checkable token; the sentence is TRUE (four entries, four live lib files); round-36 value 31 is the neighbouring surfaceScriptDigest definition and is not adopted; the checkable token SURFACE_MODULE_PATHS sits on pin 13, the :13 range start
+Evidence:
+E1 note sighting-wall.md:124-127 (anchor literal on 127): "**CLI.** `main` (`scripts/ufo-sighting.mjs:4399`) dispatches verbs including" / "`__reconcile`, `surface` → `surfaceManifest()`, `launch`, `complete`, and the" / "remaining wall verbs; re-exports surface helpers at" / "`scripts/ufo-sighting.mjs:4714`."
+E2 pin ufo-sighting.mjs:4707-4715: 4708 `output(await launchMission({`; 4714 `    dispatch: { kind: "native-trial", args: argv },`; 4715 `  }, { open: true, env }));`
+E3 pin ufo-sighting.mjs:4725 `// Re-exports: the public surface of this module is unchanged — names that moved` (comment only); 4730 `export { surfaceManifest, surfaceScriptDigest, surfaceErrors, usage, output, requireNoArgs, runLegacyNativeDirect, fileSha256, DEFAULT_PEEK_LINES, MAX_PEEK_LINES, SURFACE_KIND } from "./ufo-sighting-lib/surface.mjs";`
+E4 grep "surface" on pin ufo-sighting.mjs: the only export-from of surface.mjs is 4730; line 30 is an import of the same module. Alternate token surfaceManifest is also on 4730 and in note line 125.
+E5 note sighting-wall.md:203-204: "**Digest set.** `SURFACE_MODULE_PATHS` lists the four live lib files" / "(`scripts/ufo-sighting-lib/surface.mjs:13`–`:18`). `surfaceScriptDigest`"
+E6 pin surface.mjs:13-18: 13 `const SURFACE_MODULE_PATHS = [`; 14-17 `path.join(ROOT, "scripts", "ufo-sighting-lib", "<base|argv|observe|surface>.mjs"),`; 18 `];`
+E7 pin surface.mjs:31 `export function surfaceScriptDigest() {` (round-36 value; a neighbouring definition, not the array end)
+E8 pin scripts/ufo-sighting-lib/ (ls -la): argv.mjs, base.mjs, observe.mjs, surface.mjs; four live files, all read-only
+E9 `git -C /fast/scratch/kumitate-r36/src rev-parse HEAD` = 31c465f15669f744848bd9f5d56191c5085670f7 (pin matches)
+E10 OUT OF SCOPE, not scored: note :124 `main` anchor `:4399`; pin 4399 is `childEnvironment = sandbox.env;` (in runPane) and `export async function main(` is at pin 4432. Route to that anchor's owner.
+E11 Tooling: no installs or updates; read-only reads and greps only; no spawns; the only file written is this report.

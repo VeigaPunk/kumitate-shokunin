@@ -281,12 +281,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=7
-C=14
+A=8
+C=15
 C1=19
 C1_total=19
-C2=84
-C2_total=84
+C2=86
+C2_total=86
 S_members=88
 S_sections=88
 R_members=92
@@ -396,6 +396,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 38 | coverage:script-layer (repair-first, score held 10) | frozen round-open population 811 anchors: 467 true, 208 debt, 136 unchecked under the oracle committed at `e18ff1af3392e3823227644c977c237737fe65c9` | 777 true, 21 debt, 13 unchecked; zero open-true→nontrue; repairs are per-anchor review decisions, never a reset. The original 62-list has 58 old-token repairs and four pairing discrepancies, explicitly accounted in the lesson | `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9`; independent fixed-token measurement under `.ufo/waves/round-38/evidence/`; lesson round 38 |
+| 38 | operability (lowest non-retired axis, score held 8) | adjacency ratchet CLEAN on a MANIFEST_SCHEMA shift and on raised ceilings (`build/ExecRatchetBefore.md`); A=7 C=14, f_O=21/24 | per-anchor truth floor frozen before repair; shift check and re-pin fail (AT03/05), debt-growth and checked-shrink fail (AT07/08); 22/22 hermetic selftests; A=8 C=15, f_O=23/26, integer 8 | source S033; `scripts/anchor-truth.mjs`; baseline `e18ff1af3392e3823227644c977c237737fe65c9`; `.ufo/waves/round-38/`; lesson round 38 |
 | 37 | operability (repair-first: fidelity instrument measures the sentence's own adjacent symbol) | round-36 REJECTED-HARMED: 123 true anchors shifted (right-first pairing); fidelity CLEAN was a false green | canonical LEFT-first pairing with shift-must-fail selftest 47/47; four notes reset to 0614092 bytes with a scope-accurate notice; measured ratchet total 200; `FIDELITY: CLEAN (notes=20 anchors=1574 src-rev=31c465f15669)` = no regression; `CHECKLIST: 14/14`; `PROXY: MATCH (C2=84/84 R=92/92)` | `.ufo/waves/round-37/` (repairs, final, falsify reports); `corpus/lessons/round-37.md`; commits `86c0676`, `a5d627b`, `5031720`, `fdac52c`, `fb5b90e` |
 | 36 | operability (pinned verdicts + an anchor-fidelity gate term; integer held at 8) | `CHECKLIST: 11/13 pass`; `SURFACE_PROBE: DRIFT (… errors=3 …)` at the pin; `PROXY: DRIFT (C2_TOTAL_DRIFT 79/80; AXES_DRIFT 10/9)`; fidelity arm on pristine 0614092 `nonok=543` (anchors=1494) | `CHECKLIST: 14/14 pass`; `SURFACE_PROBE: CLEAN (… errors=0 warnings=1 known=1 src-rev=31c465f15669)`; `PROXY: MATCH (A=7 C=14 operability=8; C2=81/81; S=88/88; R=92/92; K=51/51; pins=6 match; src-rev=31c465f15669)`; `FIDELITY: CLEAN (notes=20 anchors=1574 src-rev=31c465f15669)`; `f_O` 20/23 → 21/24 | `.ufo/waves/round-36/baseline/` vs `.ufo/waves/round-36/final/`; wave reports `ExecSurface*`, `ExecProxyPin`, `ExecClaimsPin`, `ExecClaimsFidelity`, `RevManifestDigest`, `MutDigest`, `CriticFidelityHeuristic`, `CriticPinSemantics`; `corpus/lessons/round-36.md` |
 | 36 | coverage:runtime-layer 9 → 10 | `CLAIMS: MATCH (… sections=175 adv=6)` with R5/R7 `form=topic sections=0`; R distinct in-family 83/92 | R5 4 + R7 5 member sections at `31c465f1`, 80/80 anchors on-line; `CLAIMS: MATCH (rows=2 … sections=9 adv=0)`; R 92/92 ⇒ 10 | `knowledge/native-admission-detail.md`, `knowledge/local-ship.md`; `ReviewNumbersC2`; `SCORECARD.md ## Axes` runtime row |
@@ -1715,3 +1717,13 @@ section and R9's three sibling-suite sections).
 - Historical `C2=81/81` and `C2=82/82` quotes in the Move log are that round's proxy line at that
   time; the current stanza is `C2 = C2_total = 84`. `C1` remains **not admitted** for round 36;
   round 37 is repair-first and claims only that the fidelity instrument measures anchor truth.
+
+## Round 38 correction (2026-10-21, named; supersedes the round-37 correction's last sentence)
+
+- `## Round 37 correction` ends "round 37 is repair-first and claims only that the fidelity
+  instrument measures anchor truth". That is false and is superseded. The round-37 claim was refuted
+  by its own errata 4 and 10 and by the non-author closure
+  (`corpus/lessons/round-37-verifier-spotcheck.md`): the ratchet ceilings equalled the current debt,
+  so `FIDELITY: CLEAN` could not fail at landing, and the 14-character adjacency pairing left
+  multi-anchor runs unchecked. The fidelity arm reads adjacency, not anchor truth. Round 38 replaces
+  the checklist's anchor item with `scripts/anchor-truth.mjs` (per-anchor pin, frozen `--base`).

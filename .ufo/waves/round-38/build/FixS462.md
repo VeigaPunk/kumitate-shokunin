@@ -1,0 +1,17 @@
+ITEM FixS462 anchors=4 move=4 token=0 move_token=0 debt=0
+VERDICT sighting-wall#9 MOVE 3616 | `stopMission` is defined at 3616: `function stopMission(identifier, { code = null, signal = null, failure = null } = {}, env = process.env) {`; the cited 3584 is `fail("MISSION_NOT_LIVE", ...)` inside peekMission (def 3576, closer 3590), and carries no `stopMission` token.
+VERDICT sighting-wall#10 MOVE 3714 | `resumeMissionLocked` is defined at 3714: `function resumeMissionLocked(state, spec, { geometryOverride, env = process.env } = {}) {`; the cited 3682 `  if (runId !== undefined && row.runId !== runId) {` is inside helper resolveExactMission (def 3675, closer 3697), which resumeMissionLocked calls at 3717; no `resumeMissionLocked` token on 3682.
+VERDICT sighting-wall#11 MOVE 3794 | `resumeMission` is defined at 3794: `async function resumeMission(spec, {`; the cited 3762 `  const nativeKey = nativeSessionKey(mission);` is inside resumeMissionLocked's body (3714-3792); no `resumeMission` token on 3762.
+VERDICT sighting-wall#12 MOVE 3361 | `completeMission` is defined at 3361: `function completeMission(identifier, note, { dryRun = false, env = process.env } = {}) {`; the cited 3339 `  }` closes an `if` block inside validateRetentionRecord (def 3331, closer 3359); no `completeMission` token on 3339.
+- EVIDENCE pin: /fast/scratch/kumitate-r36/src; `git -C /fast/scratch/kumitate-r36/src rev-parse HEAD` = 31c465f15669f744848bd9f5d56191c5085670f7 (matches the pin). Read-only; no installs; no lane file touched.
+- EVIDENCE note: the sentence is at sighting-wall.md lines 118-121 (grep -n), not 115 as the L1 states. The four cited spans read exactly :3584, :3682, :3762, :3339.
+- EVIDENCE defs (whole-file grep `^(async )?function (name)\b`, one hit each): stopMission 3616; resumeMissionLocked 3714; resumeMission 3794; completeMission 3361.
+- EVIDENCE occurrences (whole-file grep) match the L1 lists: stopMission 229 (comment), 2466, 3616, 4428; resumeMissionLocked 3714, 3823; resumeMission 3794, 4653; completeMission 3361, 4669.
+- EVIDENCE span 3584: `function peekMission` at 3576, closer `}` at 3590, next def parsePeekLines at 3592.
+- EVIDENCE span 3682: `function resolveExactMission` at 3675, closer `}` at 3697. Line 3717 `const mission = resolveExactMission(state, spec);` sits in resumeMissionLocked.
+- EVIDENCE span 3762: inside resumeMissionLocked (def 3714, closer 3792); resumeMission begins at 3794.
+- EVIDENCE span 3339: `  }` closes `if (!Number.isSafeInteger(value.bytesFreed) || value.bytesFreed < 0) {` in validateRetentionRecord (def 3331, closer 3359); completeMission at 3361.
+- EVIDENCE offsets note->def: stopMission +32, resumeMissionLocked +32, resumeMission +32, completeMission +22. Same-sentence steerMission 3511->3543, peekMission 3544->3576, scheduleReconcile 3572->3604 are all +32. [INFERENCE] the note predates an upstream insertion above ~3584; no anchor names a different symbol than its sentence token.
+- EVIDENCE round-36 values are not authoritative: 3714 is resumeMissionLocked's def (not stopMission); 3361 is completeMission's def (not resumeMission).
+- EVIDENCE L1 text correction: pin line 3339 is `  }` (two leading spaces), not `}`. Quoted texts at 3584, 3682, 3762 match.
+- GAP: the L1's note window for line 115 (113-117) misses the sentence at 118-121. The gate pins by ordinal and raw span (gate-design.md), so the anchors are unaffected; the L1 should fix its line cite.

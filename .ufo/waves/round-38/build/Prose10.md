@@ -1,0 +1,25 @@
+ITEM Prose10 anchors=10 token=0 move_token=9 debt=1 skip=0
+VERDICT route-probe-cluster#105 DEBT sentence says the fatal catch adds error.code and redacts message; the catch does neither, and cited 1355-1363 is beyond EOF | pin probe-ufo-route-health.mjs has 1188 lines; catch 1181-1188 emits {schema@1184, error:{type:"fatal",message}@1185} with message=String(error?.message ?? error)@1182; no code field, no redact() or assertNoSecrets; fix: cite 1181-1187 (schema 1184, fatal 1185, exit 1187) and delete the error.code and redacted clauses
+VERDICT route-probe-cluster#107 MOVE_TOKEN 1187 exit | cited 1363 beyond EOF; 1187 is process.exit(1) of the fatal catch (the only exit(1) in the file; definition of the exit-1 site); anchor sits on note line 257, parser reported paragraph start 254
+VERDICT route-probe-cluster#118 MOVE_TOKEN 1167 served | cited 1346 beyond EOF; row claims exit 0 = every route served + every temp tree cleaned; 1167 defines the healthy predicate (row.served === true, definition); exit-0 site 1178 carries no row token; the ok predicate (every temp tree cleaned) is 1166
+VERDICT route-probe-cluster#119 MOVE_TOKEN 1178 healthy | cited 1346 beyond EOF; 1178 process.exit(!payload.ok ? 2 : payload.healthy ? 0 : 3) is the exit-3 site (ok true, healthy false)
+VERDICT route-probe-cluster#120 MOVE_TOKEN 101 usage | cited :93 is an AWS key-shape redaction regex in REDACT_PATTERNS, not an exit path; usage errors exit 2 via usage() at 101-105 (process.exit(2) at 104; definition of the usage path)
+VERDICT route-probe-cluster#121 MOVE_TOKEN 1178 ok | cited 1346 beyond EOF; the ok-false exit 2 is the 1178 site (!payload.ok ? 2); ok is defined at 1166 as results.every((row) => row.sessionRemoved)
+VERDICT route-probe-cluster#122 MOVE_TOKEN 1185 fatal | cited 1363 beyond EOF; 1185 error: { type: "fatal", message } is the typed-envelope definition, printed to stderr by console.error at 1183; exit 1 at 1187
+VERDICT route-probe-cluster#123 MOVE_TOKEN 223 every | cited :155 is the closing brace of printHelp(); 223 const available = targets.every(... served === true) defines the every-target predicate; exit 0 at 237 (available ? 0 : 2); alt 153 non-Kimi is the help-text mention of the same contract
+VERDICT route-probe-cluster#124 MOVE_TOKEN 122 durable | cited :132 is the closing brace of emit(); 122 is a comment (mention) of the durable-write exit 2; enforcement is 126 code = 2 and 131 process.exit(code)
+VERDICT route-probe-cluster#125 MOVE_TOKEN 166 unsupported | cited :142 is the closing brace of fail(); 166 is the call site fail(unsupported flag ...) (mention); enforcement is fail() exit 2 at 141
+EV1 note read (working copy; lane rev 753446a not verified, no jj or git run in lane): route-probe-cluster.md 254-257 is the fatal-envelope sentence (`:1363` sits on line 257; parser's 254 is the paragraph start); 273-282 is the exit table, rows 275-280 carry the anchors.
+EV2 wc -l: probe-ufo-route-health.mjs = 1188 lines; probe-token-plan-models.mjs = 244 lines; cited 1346, 1355, 1363 are beyond EOF.
+EV3 route-health 1181-1188 verbatim: main().catch((error) => { / const message = String(error?.message ?? error); / console.error(JSON.stringify({ / schema: "ufo-route-health-error-v1", / error: { type: "fatal", message }, / })); / process.exit(1); / });
+EV4 grep process\.exit: 104 process.exit(2) (usage), 110 process.exit(0) (--help), 1178 process.exit(!payload.ok ? 2 : payload.healthy ? 0 : 3), 1187 process.exit(1).
+EV5 grep ufo-route-health-error, error\.code, redact\(: the envelope emitter is only at 1184; no error.code and no redact() inside 1181-1188 (redact() is used only at 251 and 925).
+EV6 route-health 1161-1167: comment 1161-1165 quotes "every temp tree cleaned" and "every route served"; 1166 ok: results.every((row) => row.sessionRemoved); 1167 healthy: results.every((row) => row.served === true && row.failureClass === null).
+EV7 route-health 93 is an AWS key-shape regex (AKIA or ASIA prefix, 16 chars) inside REDACT_PATTERNS (lines 73-96).
+EV8 route-health 101-104: function usage(message) { / console.error(PROBE_USAGE); / process.exit(2); ; grep usage\( shows usage-error call sites at 120-221 and 945-991.
+EV9 models 121-132: 122 "// A failed durable write is not a green run: report a typed persistence"; 126 code = 2; 131 process.exit(code); 132 }.
+EV10 models 141-142: 141 process.exit(2); 142 }; 165-167 if (argv.some(...startsWith("-"))) { then 166 fail(`unsupported flag: ...`).
+EV11 models 153 help text: "Exit: 0 only when at least one configured non-Kimi target exists and every target serves on primary; 2 otherwise."; 155 } closes printHelp; 163 process.exit(0) is --help.
+EV12 models 223 const available = targets.every(({ route }) => chatResults[route]?.served === true); 237 }, available ? 0 : 2); routes 182-183 filtered by includes("kimi").
+EV13 models 155, 132 and 142 read as } (brace-only lines), so the cited lines carry no checkable token.
+EV14 no writes: pinned files are mode 555 and were only read; no installs; report written only to the item path.

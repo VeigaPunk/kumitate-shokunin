@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+"""Closure-owned anchor-truth parser (kumitate r37 closure). Independent of lane code.
+
+Pairing rule (one rule, left-first positional):
+  Within a sentence, symbols seen since the last anchor run are "pending". A run of
+  consecutive anchors (only punctuation/whitespace/'and'/'or' between them) is paired
+  positionally with the LAST k pending symbols (k = run length). If fewer pending symbols
+  than anchors, the leading anchors of the run are paired with the remaining pending ones
+  right-aligned and the rest take the next symbol after the run in the same sentence
+  ("At `path:N`, `sym`" convention); otherwise unpaired.
+Truth: symbol normalized (strip quotes/()/args/leading ./#/--); TRUE if the whole
+normalized string or its longest identifier token occurs on cited line(s) of the pin.
+"""
+import os, re, sys, json, subprocess
+
+PIN = os.environ.get('PIN', '/fast/scratch/close-kumitate-r37/pin')
+SPAN = re.compile(r'`([^`\n]+)`')
+ANCH = re.compile(r'^(?P<path>[\w./@+-]*[\w-]\.[\w]+)?:(?P<a>\d+)(?:-(?P<b>\d+))?$')
+PATHRE = re.compile(r'^[\w./@+-]+\.(?:mjs|cjs|js|ts|json|md|sh|rs|toml|py|service|timer|ya?ml|txt|lock|conf)$')
+IDENT = re.compile(r'[A-Za-z_$][\w$]*')
+JOIN = re.compile(r'^[\s,;/()]*(?:(?:and|or)[\s,;/()]*)?$')
+SENT_END = re.compile(r'(?:\.\s+(?=[A-Z*`(])|\.\s*$|;\s|:\s*$)')
+
+_files = None
+def resolve(path):
+    global _files
+    p = os.path.join(PIN, path)
+    if os.path.isfile(p):
+        return path
+    if _files is None:
+        _files = subprocess.run(['git', '-C', PIN, 'ls-files'], capture_output=True, text=True).stdout.split('\n')
+    c = [f for f in _files if f == path or f.endswith('/' + path)]
+    return c[0] if len(c) == 1 else None
+
+_cache = {}
+def lines_of(path):
+    if path not in _cache:
+        with open(os.path.join(PIN, path), encoding='utf-8', errors='replace') as fh:
+            _cache[path] = fh.read().split('\n')
+    return _cache[path]
+
+def norm(sym):
+    s = sym.strip().strip('"\'')
+    s = re.sub(r'\(.*\)$', '', s)
+    s = s.lstrip('.#-')
+    toks = IDENT.findall(s)
+    longest = max(toks, key=len) if toks else s
+    return s, longest
+
+def blocks(text):
+    """Yield (block_lines_text, start_line) where headings and table rows are own blocks."""
+    cur, start = [], None
+    for i, line in enumerate(text.split('\n'), 1):
+        if line.strip() == '' or line.startswith('#') or line.lstrip().startswith('|') or line.startswith('```'):
+            if cur:
+                yield ' '.join(cur), start
+                cur = []
+            if line.strip():
+                yield line, i
+            continue
+        if not cur:
+            start = i
+        cur.append(line)
+    if cur:
+        yield ' '.join(cur), start
+
+def parse(text):
+    """Return list of anchors in document order: dict(idx, line, path, a, b, sym)."""
+    out = []
+    cur_path = None
+    in_code = False
+    for blk, ln in blocks(text):
+        if blk.startswith('```'):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if blk.startswith('#'):
+            m = [s for s in SPAN.findall(blk) if PATHRE.match(s) and '/' in s and not s.startswith('.')]
+            if m:
+                cur_path = m[0]
+        # split block into sentences on text outside spans
+        tokens = []  # (kind, value, gap_before)
+        pos = 0
+        sent = []
+        sentences = []
+        for m in SPAN.finditer(blk):
+            gap = blk[pos:m.start()]
+            # sentence boundary inside gap
+            if SENT_END.search(gap) or (blk.lstrip().startswith('|') and '|' in gap):
+                if sent:
+                    sentences.append(sent)
+                sent = []
+            sent.append((m.group(1), gap))
+            pos = m.end()
+        if sent:
+            sentences.append(sent)
+        for s in sentences:
+            items = []
+            for val, gap in s:
+                am = ANCH.match(val)
+                if am:
+                    p = am.group('path') or None
+                    items.append(['A', val, gap, p, int(am.group('a')), int(am.group('b') or am.group('a'))])
+                elif PATHRE.match(val):
+                    items.append(['P', val, gap])
+                else:
+                    items.append(['S', val, gap])
+            pending = []
+            i = 0
+            while i < len(items):
+                it = items[i]
+                if it[0] == 'P':
+                    if '/' in it[1] and not it[1].startswith('.'):
+                        cur_path = it[1]
+                    i += 1
+                    continue
+                if it[0] == 'S':
+                    pending.append(it[1])
+                    i += 1
+                    continue
+                run = [it]
+                j = i + 1
+                while j < len(items) and items[j][0] == 'A' and JOIN.match(items[j][2]):
+                    run.append(items[j]); j += 1
+                k = len(run)
+                syms = pending[-k:] if pending else []
+                nxt = None
+                if len(syms) < k:
+                    # forward fill from next symbol in sentence
+                    for t in items[j:]:
+                        if t[0] == 'S':
+                            nxt = t[1]; break
+                assign = [None] * (k - len(syms)) + syms
+                for r, a in zip(run, assign):
+                    path = r[3] or cur_path
+                    if r[3]:
+                        cur_path = r[3]
+                    out.append(dict(line=ln, path=path, a=r[4], b=r[5], sym=a if a is not None else nxt, raw=r[1]))
+                pending = []
+                i = j
+    return out
+
+def truth(anc):
+    if anc['sym'] is None:
+        return 'unpaired'
+    if not anc['path']:
+        return 'nopath'
+    rp = resolve(anc['path'])
+    if rp is None:
+        return 'dead'
+    L = lines_of(rp)
+    if anc['a'] < 1 or anc['b'] > len(L) or anc['a'] > anc['b']:
+        return 'dead'
+    seg = '\n'.join(L[anc['a'] - 1:anc['b']])
+    full, longest = norm(anc['sym'])
+    def wb(t):
+        return re.search(r'(?<![\w$])' + re.escape(t) + r'(?![\w$])', seg) is not None
+    if (full and wb(full)) or (longest and wb(longest)):
+        return 'true'
+    return 'false'
+
+
+LANE=sys.argv[1]
+OPEN='753446a829edda519c75777ce95888443f51fa94'
+CLOSE=sys.argv[2]
+NOTES=['native-trial-launch','remaining-scripts-census','route-probe-cluster','sighting-wall']
+def blob(rev,n):
+    return subprocess.run(['git','-C',LANE,'show',f'{rev}:corpus/knowledge/{n}.md'],capture_output=True,text=True,check=True).stdout
+T={'anchors':0,'before_true':0,'after_true_original_tokens':0,'true_to_nontrue':0,'false_to_true':0,'regressed62_population':0,'regressed62_now_true_original_token':0}
+for n in NOTES:
+    old=parse(blob(OPEN,n)); new=parse(blob(CLOSE,n)); original=parse(blob('0614092',n)); r36=parse(blob('91da27c',n))
+    assert len(old)==len(new)==len(original)==len(r36)
+    c={k:0 for k in T}; c['anchors']=len(old)
+    for o,a,b,r in zip(old,new,original,r36):
+        # Old governing symbol is frozen at r37 open. Compare only coordinate/path changes, not a
+        # re-selection of a symbol that would make the repaired anchor green.
+        before=truth(o); after=truth(dict(a,sym=o['sym']))
+        c['before_true']+=before=='true'; c['after_true_original_tokens']+=after=='true'
+        c['true_to_nontrue']+=before=='true' and after!='true'
+        c['false_to_true']+=before!='true' and after=='true'
+        btrue=truth(b); rtrue=truth(dict(b,a=r['a'],b=r['b']))
+        listed=(b['a'],b['b'])!=(r['a'],r['b']) and btrue!='true' and rtrue=='true'
+        if listed:
+            c['regressed62_population']+=1
+            c['regressed62_now_true_original_token']+=truth(dict(a,sym=b['sym']))=='true'
+    print(n,json.dumps(c,sort_keys=True))
+    for k,v in c.items(): T[k]+=v
+print('TOTAL',json.dumps(T,sort_keys=True))
+if T['true_to_nontrue'] or T['anchors']!=811: sys.exit(1)

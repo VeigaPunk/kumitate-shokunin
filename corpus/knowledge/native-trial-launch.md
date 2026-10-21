@@ -1,5 +1,5 @@
 # Native-trial launch sequence — `scripts/run-omp-native-trial.mjs`
-> **Round-37 restoration (2026-10-21; final, amended by AuditNativeTrial1/2/6/8).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
+> **Round-38 anchor repair (2026-10-21).** Every anchor in this note was re-checked one by one against the pinned upstream revision 31c465f1 (wave-reviewed MOVE/TOKEN/DEBT verdicts, then the per-anchor gate scripts/anchor-truth.mjs with its pin .ufo/pins/anchor-truth.json): 54 of 54 anchors read true, 0 are false or dead at the pin and 0 carry no checkable token; History: round 36 shifted anchors one symbol off and round 37 reset the note to its 0614092 bytes (non-author spot-checks round-36 and round-37 in corpus/lessons).
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 40 line anchors in this
@@ -251,7 +251,7 @@ seal file.
 
 - `sighting.autoRegisterInvokedNativeTrial` is a CONFIG BOOLEAN read live
   by `run-omp-native-trial.mjs` (`autoOpenL1Enabled` :1348-1355) from
-  `config/ufo.json:79` — the verb-sounding
+  `config/ufo.json:69` — the verb-sounding
   name is a trap; `===true` required else `sighting_auto_register_disabled`.
 - Shells `ufo-sighting.mjs launch --run-id <id> --session-id omp-<id>
   --substrate omp --cwd <root> --title "UFO native <id>" --fleet <fleet>
@@ -326,7 +326,7 @@ _check_failed` (inner `pre-dispatch-drift`), `phase0_domain_halt`,
 `tick_handoff_marker_path_unsafe`, `unexpected_error`,
 `session_resume_pairing_ambiguous`, `session_transcript_count_invalid`,
 `labrat_assignment_missing`, `main_model_alias_missing`.
-All surface as `BLOCKED: <msg>` via `die` (`scripts/run-omp-native-trial.mjs:831`)
+All surface as `BLOCKED: <msg>` via `die` (`scripts/run-omp-native-trial.mjs:838`)
 + exit 2. (Historical: `collect-omp-native-handoff-lib/refusal-line.mjs` once
 wrote a schema-tagged line; that file is **gone** from the live tree — removed
 in the 2026-10-12 upstream restructure; no replacement member section is kept.)
@@ -350,14 +350,14 @@ in the 2026-10-12 upstream restructure; no replacement member section is kept.)
 ## `scripts/run-omp-native-trial.mjs` (4304 L) — judged-round launcher spine
 
 Live member of registry family S2 (native trial path). Entry `main`
-(`scripts/run-omp-native-trial.mjs:3229`) walks preflight → wall handoff →
-spawn → collect/judge/seal. Profile constants: `PROFILE` (`:50`) =
-`omp-native-v2`, `ADMITTED_PROFILES` (`:59`), `PROPOSAL_WAVE_CEILING` (`:109`).
-Argv: `parseArgs` (`:844`); launch mode: `planLaunchMode` (`:958`) from
+(`scripts/run-omp-native-trial.mjs:3234`) walks preflight → wall handoff →
+spawn → collect/judge/seal. Profile constants: `PROFILE` (`:56`) =
+`omp-native-v2`, `ADMITTED_PROFILES` (`:65`), `PROPOSAL_WAVE_CEILING` (`:115`).
+Argv: `parseArgs` (`:851`); launch mode: `planLaunchMode` (`:965`) from
 interactive/headless/wall flags. Frozen dispatch: `snapshotDispatchInputs`
-(`:171`) → `resolveNativeDispatchPolicy` (`:646`) with global OMP as sole
-routing authority. Wall path: `handOffToSightingWall` (`:1282`). Failures exit
-through local `die` (`:831`) as `BLOCKED: …` + process exit 2 — not a separate
+(`:176`) → `resolveNativeDispatchPolicy` (`:639`) with global OMP as sole
+routing authority. Wall path: `handOffToSightingWall` (`:1289`). Failures exit
+through local `die` (`:838`) as `BLOCKED: …` + process exit 2 — not a separate
 refusal-line helper.
 
 Symbols verified live against origin HEAD `964f443e`: `main`, `parseArgs`,
@@ -369,8 +369,8 @@ Symbols verified live against origin HEAD `964f443e`: `main`, `parseArgs`,
 Top-level collector for the native trial path (S2). Argv `parseArgs`
 (`scripts/collect-omp-native-handoff.mjs:120`) over `COLLECTOR_USAGE` (`:118`).
 Wave binding `assertWaveDispatchToken` (`:205`); dispatch graph
-`validateDispatches` (`:869`); durable evidence via `writeEvidenceFile`
-(`:951`) and `persistEvidenceWrites` (`:973`). Imports lib modules `base`,
+`validateDispatches` (`:873`); durable evidence via `writeEvidenceFile`
+(`:955`) and `persistEvidenceWrites` (`:977`). Imports lib modules `base`,
 `policy`, `evidence`, `screening`, `events` — does not inline classifier or
 cost-ledger logic.
 
@@ -382,10 +382,10 @@ Symbols: `parseArgs`, `COLLECTOR_USAGE`, `assertWaveDispatchToken`,
 Shared authority block for the collector: `NATIVE_PROFILE_NAMES` (`:40`),
 `PROPOSAL_WAVE_CEILING` (`:96`), `CAPACITY_FAILURES` (`:102`),
 `DEADLINE_CLASS_BY_ROLE` (`:173`), `SEAT_CLASS_BY_ROLE` (`:196`),
-`ROUTING_HEALTH_OUTCOMES` (`:223`), `GODSPEED_MARKER` (`:120`), `EVIDENCE_KIND`
+`ROUTING_HEALTH_OUTCOMES` (`:217`), `GODSPEED_MARKER` (`:120`), `EVIDENCE_KIND`
 (`:133`). Classifier `classifyFailure`
-(`scripts/collect-omp-native-handoff-lib/base.mjs:682`). Typed rejection
-helper `die` (`:303`) — **replaces** the deleted `refusal-line.mjs` member.
+(`scripts/collect-omp-native-handoff-lib/base.mjs:758`). Typed rejection
+helper `die` (`:297`) — **replaces** the deleted `refusal-line.mjs` member.
 
 Symbols: `classifyFailure`, `CAPACITY_FAILURES`, `NATIVE_PROFILE_NAMES`,
 `ROUTING_HEALTH_OUTCOMES`, `die`.
@@ -393,7 +393,7 @@ Symbols: `classifyFailure`, `CAPACITY_FAILURES`, `NATIVE_PROFILE_NAMES`,
 ## `scripts/collect-omp-native-handoff-lib/events.mjs` (383 L) — transcript intake
 
 JSONL reader `readJsonl` (`scripts/collect-omp-native-handoff-lib/events.mjs:166`);
-task extraction `taskCalls` (`:260`) and `taskDispatches` (`:381`); assignment
+task extraction `taskCalls` (`:265`) and `taskDispatches` (`:396`); assignment
 normalization `effectiveTaskAssignment` (`:253`); intake hygiene
 `normalizeTranscriptEvent` (`:16`), `uniquifyReusedTaskIds` (`:82`).
 
@@ -402,23 +402,23 @@ Symbols: `readJsonl`, `taskCalls`, `taskDispatches`, `effectiveTaskAssignment`.
 ## `scripts/collect-omp-native-handoff-lib/evidence.mjs` (1163 L) — seat evidence + cost ledger
 
 Per-seat model evidence `modelEvidence`
-(`scripts/collect-omp-native-handoff-lib/evidence.mjs:275`); attempt ledger
-`attemptLedgerEntry` (`:70`); seat status `seatStatus` (`:474`); effective-launch
-verify `verifyEffectiveLaunch` (`:631`); receipt digests `nativeReceiptDigests`
-(`:520`); cost rollup `buildCostLedger` (`:1003`); routing-health append
-`appendRoutingHealth` (`:1067`).
+(`scripts/collect-omp-native-handoff-lib/evidence.mjs:276`); attempt ledger
+`attemptLedgerEntry` (`:71`); seat status `seatStatus` (`:476`); effective-launch
+verify `verifyEffectiveLaunch` (`:633`); receipt digests `nativeReceiptDigests`
+(`:522`); cost rollup `buildCostLedger` (`:1005`); routing-health append
+`appendRoutingHealth` (`:1071`).
 
 Symbols: `modelEvidence`, `attemptLedgerEntry`, `buildCostLedger`,
 `verifyEffectiveLaunch`, `appendRoutingHealth`.
 
 ## `scripts/collect-omp-native-handoff-lib/policy.mjs` (924 L) — routes, profiles, round plan
 
-Route parse `splitRoute` (`scripts/collect-omp-native-handoff-lib/policy.mjs:39`);
-seat-routing mirror `loadSeatRoutingMirror` (`:155`) +
-`verifyLaunchSeatRouting` (`:283`); profile resolve `resolveNativeProfile`
-(`:619`); round plan `readRoundPlan` (`:704`); wave token
-`waveTokenFromContext` (`:780`); directive load `loadCanonicalDirective`
-(`:879`); rate card `parseRateCard` (`:908`).
+Route parse `splitRoute` (`scripts/collect-omp-native-handoff-lib/policy.mjs:66`);
+seat-routing mirror `loadSeatRoutingMirror` (`:173`) +
+`verifyLaunchSeatRouting` (`:301`); profile resolve `resolveNativeProfile`
+(`:637`); round plan `readRoundPlan` (`:722`); wave token
+`waveTokenFromContext` (`:798`); directive load `loadCanonicalDirective`
+(`:897`); rate card `parseRateCard` (`:926`).
 
 Symbols: `splitRoute`, `loadSeatRoutingMirror`, `resolveNativeProfile`,
 `readRoundPlan`, `waveTokenFromContext`.

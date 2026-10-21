@@ -130,3 +130,18 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
   D1/D2; round-36 lost 123 previously true anchors this way). The check must be a committed command with its recorded output — a throwaway
   parser or the gate's own CLEAN line is not evidence for this criterion. Grounding: the same note's
   adjudication (§Claims, anchor truth), Verify4, and `corpus/lessons/round-37.md`.
+
+- **Q17 — a ratchet that equals the current debt is not a gate. The anchor floor is frozen,
+  per anchor, and only shrinks.** A ceiling regenerated from the measured debt at landing
+  certifies that debt. Round 37's `fidelity-ratchet.json` summed to exactly its `nonok` (200),
+  so `FIDELITY: CLEAN` could not fail (`corpus/lessons/round-37-verifier-spotcheck.md`, §Claims
+  and R2).
+  - Anchor expectations live per anchor in `.ufo/pins/anchor-truth.json`.
+  - The checklist runs `anchor-truth --base <frozen commit>`, so a note's debt may never rise
+    and its `true` count may never fall against that floor.
+  - A re-pin refuses any anchor that was true and is no longer true (`PIN_REGRESSION`).
+  - Each such arm has a selftest fixture whose mutant must fail.
+  - A repair is admitted only with zero true→false transitions against the round-open
+    revision. The count is computed by the gate over both revisions and recorded with its
+    command. Grounding: `corpus/lessons/round-38.md` (`## Mistakes` rows 1–2); S033 (a link is
+    only stable against a commit id, never a moving head).

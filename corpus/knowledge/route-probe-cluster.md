@@ -1,5 +1,5 @@
 # S7 route-probe cluster — the 6-member probe family (round-32 re-census)
-> **Round-37 restoration (2026-10-21; final, amended by AuditRouteProbe1/2/6).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
+> **Round-38 anchor repair (2026-10-21).** Every anchor in this note was re-checked one by one against the pinned upstream revision 31c465f1 (wave-reviewed MOVE/TOKEN/DEBT verdicts, then the per-anchor gate scripts/anchor-truth.mjs with its pin .ufo/pins/anchor-truth.json): 146 of 165 anchors read true, 16 are false or dead at the pin and 3 carry no checkable token; each non-true anchor is listed with its reason under the last heading of this note. History: round 36 shifted anchors one symbol off and round 37 reset the note to its 0614092 bytes (non-author spot-checks round-36 and round-37 in corpus/lessons).
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 65 line anchors in this
@@ -34,7 +34,7 @@ of the token-plan pair (`scripts/probe-token-plan-shared.mjs`), the two probes
 that sit on it (`scripts/probe-token-plan-kimi.mjs`,
 `scripts/probe-token-plan-models.mjs`), the canonical redaction table the
 token-plan pair imports (`scripts/probe-redact.mjs`; route-health keeps a
-standalone parity copy at `scripts/probe-ufo-route-health.mjs:63-65`), then the
+standalone parity copy at `scripts/probe-ufo-route-health.mjs:67`), then the
 fixture helper (`scripts/fake-omp.mjs`). The family standard is satisfied once
 per member, not once per note: a member counts only with ≥1 line anchor in its
 own file and ≥1 named symbol describing its own behavior; a trailing list of
@@ -85,7 +85,7 @@ registry row's declared-count cell; this note only drops the phantom sections.
 
 | Removed path | Former role | Evidence of absence |
 |---|---|---|
-| `scripts/atomic-write.mjs` | Shared fsync+rename helper (`writeAtomicFile`) | `test -f …/atomic-write.mjs` → exit 1; durable write is now inlined in `probe-ufo-route-health.mjs:1080`/`1117` and `probe-token-plan-models.mjs:40`/`66` |
+| `scripts/atomic-write.mjs` | Shared fsync+rename helper (`writeAtomicFile`) | `test -f …/atomic-write.mjs` → exit 1; durable write is now inlined in `persistState` (`probe-ufo-route-health.mjs:1073`/`1110`) and `writeVerdict` (`probe-token-plan-models.mjs:40`/`66`) |
 | `scripts/probe-ufo-route-health.test.mjs` | Colocated `node --test` suite (7 cases) | `ls scripts/probe-*.test.mjs` → no matches |
 | `scripts/probe-redact.test.mjs` | Colocated unit suite for redaction | same glob empty |
 
@@ -101,24 +101,24 @@ only credential authority, so the probe never reads SQLite or token files and ne
 constructs an HTTP `Authorization` header (`scripts/probe-ufo-route-health.mjs:2-3`),
 and it never reroutes or treats stale/unknown health as available (`:6-7`). Optional
 `--state` persists redacted machine records under `.ufo` via fsync+rename (`:4-5`),
-implemented in-file by `persistState` (`:1080`) with a pid-timestamp tmp
-(`:1117`) — the former sibling `atomic-write.mjs` import is gone. Redaction is a
-**standalone parity copy** of `./probe-redact.mjs` (`:63-65`), not a sibling import,
+implemented in-file by `persistState` (`:1073`) with a pid-timestamp tmp
+(`:1110`) — the former sibling `atomic-write.mjs` import is gone. Redaction is a
+**standalone parity copy** of `./probe-redact.mjs` (`:67`), not a sibling import,
 so the origin suite can stage this one file alone. Its entry is the top-level
-`main` (`:1164`) over a single argv walk, `parseArgs` (`:103`); `usage` prints to
-stderr and exits 2 (`:97`) while `--help`/`-h` exits 0. All live work leaves through
-the async `spawnCollect("omp", [...])` (`:678`, call site `:813`) running
-`-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:61`)
-through the order-preserving `mapPool` (`:784`). Named constants pin the envelope:
-`DEFAULT_TIMEOUT_MS` 240_000 (`:39`), `MAX_BUFFER` 8 MiB (`:40`), `MAX_ROUTES` 16
-(`:41`), the `FAILURE_CLASSES` taxonomy (`:45`) assigned by `classifyFailure`
-(`:506`), and the argv token class `ROUTE_TOKEN` (`:200`). The emit gate
-`assertNoSecrets` (`:939`) refuses credential-shaped output; a truncated-session
-sweep is retagged `session_truncated` (`:904`). Verdicts come from
-`interpretRouteHealth` (`:1015`) and `interpretPersistedHealth` (`:1037`), where
-`healthy` ("every route served with no failure class", `:1174`) stays separate from
-the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1185`), and a fatal
-catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1191`) then exits 1.
+`main` (`:1157`) over a single argv walk, `parseArgs` (`:107`); `usage` prints to
+stderr and exits 2 (`:101`) while `--help`/`-h` exits 0. All live work leaves through
+the async `spawnCollect("omp", [...])` (`:669`, call site `:804`) running
+`-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:65`)
+through the order-preserving `mapPool` (`:775`). Named constants pin the envelope:
+`DEFAULT_TIMEOUT_MS` 240_000 (`:43`), `MAX_BUFFER` 8 MiB (`:44`), `MAX_ROUTES` 16
+(`:45`), the `FAILURE_CLASSES` taxonomy (`:49`) assigned by `classifyFailure`
+(`:497`), and the argv token class `ROUTE_TOKEN` (`:200`). The emit gate
+`assertNoSecrets` (`:932`) refuses credential-shaped output; a truncated-session
+sweep is retagged `session_truncated` (`:897`). Verdicts come from
+`interpretRouteHealth` (`:1008`) and `interpretPersistedHealth` (`:1030`), where
+`healthy` ("every route served with no failure class", `:1167`) stays separate from
+the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1178`), and a fatal
+catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1184`) then exits 1.
 
 ## `scripts/probe-token-plan-shared.mjs`
 
@@ -174,7 +174,7 @@ Posture is network — `omp models` plus one route-health subprocess per listed 
 
 `scripts/probe-redact.mjs` (116 L) owns the redaction table shared by the token-plan
 pair (route-health keeps a mirrored standalone copy — see parity note at
-`scripts/probe-ufo-route-health.mjs:63-65`). The umbrella `CREDENTIAL_SHAPE`
+`scripts/probe-ufo-route-health.mjs:67`). The umbrella `CREDENTIAL_SHAPE`
 (`scripts/probe-redact.mjs:8`) and the ordered `REDACT_PATTERNS` list (`:9`) compile
 once as `COMPILED_REDACT_PATTERNS` (`:33`). `redact` (`:67`) strips invisible
 format-character splitters via `FORMAT_CHARS_RE` (`:45`) and re-scans through
@@ -212,29 +212,29 @@ The route string is token-class validated (`scripts/probe-ufo-route-health.mjs:2
 `ROUTE_TOKEN`): every component must match letters/digits/`.`/`_`/`-`, so a
 route no consumer can represent is a usage error, not a spent live call
 (`:203-208`). `--state` is confined under `.ufo`, must end `.json`, and is walked
-for symlinks (`:994`); `MAX_ROUTES` is 16 (`:47`) and `--timeout-ms` defaults to
-`DEFAULT_TIMEOUT_MS` 240_000 (`:45`). `parseArgs` is the single argv walk
-(`:96`); usage prints to stderr and exits 2 (`:87`, `:93`), while `--help`
-exits 0 (`:99`).
+for symlinks (`:975-992`); `MAX_ROUTES` is 16 (`:45`) and `--timeout-ms` defaults to
+`DEFAULT_TIMEOUT_MS` 240_000 (`:43`). `parseArgs` is the single argv walk
+(`:107`); usage prints to stderr and exits 2 (`:101`, `:104`), while `--help`
+exits 0 (`:108`).
 
 ## Outcome and refusal vocabulary
 
-**Route failure classes** (`scripts/probe-ufo-route-health.mjs:51-62`,
-`FAILURE_CLASSES`), assigned by `classifyFailure` (`:507`): `usage_limit`,
+**Route failure classes** (`scripts/probe-ufo-route-health.mjs:49-60`,
+`FAILURE_CLASSES`), assigned by `classifyFailure` (`:497`): `usage_limit`,
 `rate_limit`, `authentication`, `permission_denied`, `model_unavailable`,
 `invalid_request`, `tool_failure`, `output_overflow`, `spawn_failure`,
 `timeout`, `unknown`. A truncated-session sweep with no serving evidence is
-retagged `session_truncated` (`:904`). `null` (not a class) means served-and-clean.
+retagged `session_truncated` (`:897`). `null` (not a class) means served-and-clean.
 
-**Persisted-health status** (`interpretRouteHealth`, `:1164`;
-`interpretPersistedHealth`, `:1186`) is one of `available` / `unknown` /
-`stale` / `unavailable`, with reasons `invalid_validity_window` (`:1166`),
-`expired` (`:1169`), `malformed_record`, `unknown_served` (`:1175`),
-`malformed_state` (`:1188`), `unknown_schema`, `invalid_timestamps`,
-`invalid_now`, `malformed_records` (`:1207`). The sweep-level rollup is
+**Persisted-health status** (`interpretRouteHealth`, `:1008`;
+`interpretPersistedHealth`, `:1030`) is one of `available` / `unknown` /
+`stale` / `unavailable`, with reasons `invalid_validity_window` (`:1010`),
+`expired` (`:1013`), `malformed_record`, `unknown_served` (`:1019`),
+`malformed_state` (`:1032`), `unknown_schema`, `invalid_timestamps`,
+`invalid_now`, `malformed_records` (`:1051`). The sweep-level rollup is
 `available ? "available" : hasUnknown ? "unknown" : hasStale ? "stale" :
-"unavailable"` (`:1217`) with rollup reasons `unknown_route_health`,
-`expired`, `route_unavailable` (`:1224`).
+"unavailable"` (`:1061`) with rollup reasons `unknown_route_health`,
+`expired`, `route_unavailable` (`:1068`).
 
 **Launch telemetry outcomes** are the launcher's own strings
 (`:1021`, `STRANDED_OUTCOMES`): `reachable` | `stranded-continue`; a record
@@ -247,14 +247,14 @@ launch-ingest arms (`launch_path_symlink`, `launch_not_object`,
 `stranded_record_outcome_conflict`, `stranded_record_hops_not_array`), read
 arms (`session_jsonl_not_regular_file`, `session_jsonl_aggregate_too_large`)
 and write arms (`credential_shaped_state` `:1266`, `state_tempfile_escaped`,
-`state_replace_symlink`). The **emit gate** `assertNoSecrets` (`:943`) defaults
+`state_replace_symlink`). The **emit gate** `assertNoSecrets` (`:932`) defaults
 to code `credential_shaped_output` and message
-`refusing to emit credential-shaped route-health output` (`:950`).
+`refusing to emit credential-shaped route-health output` (`:939`).
 
 **Fatal envelope** (top-level catch, `:1355-1363`) is pinned:
-`schema: "ufo-route-health-error-v1"` (`:1358`), `error.type: "fatal"`,
+`schema: "ufo-route-health-error-v1"` (`:1184`), `error.type: "fatal"`,
 redacted `message`, plus `error.code` added only when the escaped error carries
-a string code; exit 1 (`:1363`).
+a string code; exit 1 (`:1187`).
 
 **Token-probe vocabulary**: `ProbeSharedError` codes are frozen in
 `PROBE_SHARED_ERROR_CODES` (`scripts/probe-token-plan-shared.mjs:40`) —
@@ -262,9 +262,9 @@ a string code; exit 1 (`:1363`).
 `omp_spawn_failed`, `catalog_exit` (`:139`). `probe-redact.mjs` throws
 `RedactError` (`scripts/probe-redact.mjs:110`) with codes `empty_payload`
 (`:120`) / `invalid_json` (`:130`). Per-target row refusals are plain strings:
-`configured route is malformed` (`scripts/probe-token-plan-shared.mjs:168`),
-`secret-safe route probe missing` (`:171`), `not listed by /models`
-(`scripts/probe-token-plan-kimi.mjs:127`, `scripts/probe-token-plan-models.mjs:224`),
+`configured route is malformed` (`scripts/probe-token-plan-shared.mjs:92`),
+`secret-safe route probe missing` (`:95`), `not listed by /models`
+(`scripts/probe-token-plan-kimi.mjs:119`, `scripts/probe-token-plan-models.mjs:221`),
 `omp route probe timed out`,
 `route probe output exceeded 8 MiB`.
 
@@ -272,22 +272,22 @@ a string code; exit 1 (`:1363`).
 
 | Probe | Code | Meaning | Source |
 |---|---|---|---|
-| route-health | 0 | every route served, every temp tree cleaned | `scripts/probe-ufo-route-health.mjs:1346` |
-| route-health | 3 | sweep clean but ≥1 route unhealthy (`healthy` false) | `scripts/probe-ufo-route-health.mjs:1346` |
-| route-health | 2 | usage error, or a temp tree not removed (`ok` false) | `scripts/probe-ufo-route-health.mjs:93`, `:1346` |
-| route-health | 1 | fatal typed refusal (envelope on stderr) | `scripts/probe-ufo-route-health.mjs:1363` |
-| models | 0 | every configured non-Kimi target serves on primary | `scripts/probe-token-plan-models.mjs:155` |
-| models | 2 | otherwise / unsupported flag / durable-write failure | `scripts/probe-token-plan-models.mjs:132`, `:142` |
-| kimi | 0 | ≥1 exact Kimi model serves on primary | `scripts/probe-token-plan-kimi.mjs:148` |
-| kimi | 2 | unavailable evidence, usage error, or not-configured | `scripts/probe-token-plan-kimi.mjs:32`, `:104` |
+| route-health | 0 | every route served, every temp tree cleaned | `scripts/probe-ufo-route-health.mjs:1167` |
+| route-health | 3 | sweep clean but ≥1 route unhealthy (`healthy` false) | `scripts/probe-ufo-route-health.mjs:1178` |
+| route-health | 2 | usage error, or a temp tree not removed (`ok` false) | `scripts/probe-ufo-route-health.mjs:101`, `:1178` |
+| route-health | 1 | fatal typed refusal (envelope on stderr) | `scripts/probe-ufo-route-health.mjs:1185` |
+| models | 0 | every configured non-Kimi target serves on primary | `scripts/probe-token-plan-models.mjs:223` |
+| models | 2 | otherwise / unsupported flag / durable-write failure | `scripts/probe-token-plan-models.mjs:122`, `:166` |
+| kimi | 0 | ≥1 exact Kimi model serves on primary | `scripts/probe-token-plan-kimi.mjs:7` |
+| kimi | 2 | unavailable evidence, usage error, or not-configured | `scripts/probe-token-plan-kimi.mjs:34`, `:106` |
 
 The health verdict and sweep integrity are **separate fields**: `ok` is "every
 temp tree removed", `healthy` is "every route served with no failure class", and
-exit reflects both (`scripts/probe-ufo-route-health.mjs:1316-1318`, `:1325`). A
+exit reflects both (`scripts/probe-ufo-route-health.mjs:1166`, `:1167`). A
 not-configured Token-Plan sweep
 prints `ok: true` with `available: false` and `targetStatus: "not-configured"`
 (`scripts/probe-token-plan-models.mjs:195-197`,
-`scripts/probe-token-plan-kimi.mjs:92-94`) yet still exits 2 — absence of a
+`scripts/probe-token-plan-kimi.mjs:88-90`) yet still exits 2 — absence of a
 target is not availability.
 
 ## Redaction and the emit gate
@@ -296,7 +296,7 @@ target is not availability.
 (`:8`) plus the ordered `REDACT_PATTERNS` (`:9`), with
 `CREDENTIAL_TOKEN_PATTERN_INDEX` (`:44`) selecting the subset that the emit gate
 must refuse even in a non-redact field. `containsCredential` (`:49`) and
-`redact` (`:92`) both strip invisible credential splitters (Cf/Mn/Zl/Zp and the
+`redact` (`:67`) both strip invisible credential splitters (Cf/Mn/Zl/Zp and the
 non-ASCII Zs set) and re-scan — a format-character-split token is still a
 credential. The route-health probe imports `CREDENTIAL_SHAPE`/`redact` from this
 module rather than hand-mirroring it; the mirrored copy is exactly what once let
@@ -307,10 +307,10 @@ its own emit gate refuse its own redacted rows
 
 | Member | Posture | Evidence |
 |---|---|---|
-| route-health | network — `spawnCollect("omp", ...)` (`scripts/probe-ufo-route-health.mjs:813`) | `scripts/probe-ufo-route-health.mjs:678`, `:813` |
-| token-plan kimi/models | network — `omp models` catalog + route-health subprocess | `scripts/probe-token-plan-shared.mjs:20`, `:51`, `:84` |
-| token-plan shared | network — `spawnSync` of `omp` and of `process.execPath` + route-health | `:51`, `:84` |
-| redact | offline — pure regex/parse | `scripts/probe-redact.mjs:8`, `:67` |
+| route-health | network — `spawnCollect("omp", ...)` (`scripts/probe-ufo-route-health.mjs:804`) | `scripts/probe-ufo-route-health.mjs:804`, `:804` |
+| token-plan kimi/models | network — `omp models` catalog + route-health subprocess | `scripts/probe-token-plan-shared.mjs:20`, `:52`, `:25` |
+| token-plan shared | network — `spawnSync` of `omp` and of `process.execPath` + route-health | `:52`, `:97` |
+| redact | offline — pure regex/parse | `CREDENTIAL_SHAPE` (`scripts/probe-redact.mjs:8`), `redact` (`:67`) |
 | fake-omp | offline — "never reaches a real provider" | `scripts/fake-omp.mjs:10` |
 
 No member is started by this note; probes are read + `node --check` only. The
@@ -335,22 +335,22 @@ probe-token-plan-shared.mjs ─> probe-redact.mjs  (parseJsonPayload, redact, un
 `scripts/probe-token-plan-shared.mjs:23` fixes `ROUTE_TIMEOUT_MS = 250_000`
 (the subprocess budget the probes hand route-health) and `:22` fixes
 `CATALOG_TIMEOUT_MS = 45_000`. `probe-ufo-route-health.mjs` carries a
-standalone parity copy of the redaction table (`:63-65`) so tests can stage that
+standalone parity copy of the redaction table (`scripts/probe-ufo-route-health.mjs:67-96`) so tests can stage that
 one file alone; it no longer imports `./probe-redact.mjs` or `./atomic-write.mjs`.
 
 ## Concurrency and timeout bounds
 
 | Bound | Value | Source |
 |---|---|---|
-| probe timeout default | 240_000 ms | `scripts/probe-ufo-route-health.mjs:39` |
-| routes per sweep | ≤ 16 | `:41` |
-| concurrent `omp` subprocesses | 8 (`PROBE_CONCURRENCY`, `mapPool`) | `:61`, `:784` |
-| per-stream buffer | 8 MiB (`MAX_BUFFER`) | `:40` |
+| probe timeout default | 240_000 ms | `scripts/probe-ufo-route-health.mjs:43` |
+| routes per sweep | ≤ 16 | `:45` |
+| concurrent `omp` subprocesses | 8 (`PROBE_CONCURRENCY`, `mapPool`) | `:65`, `:775` |
+| per-stream buffer | 8 MiB (`MAX_BUFFER`) | `:44` |
 | catalog timeout | 45_000 ms | `scripts/probe-token-plan-shared.mjs:22` |
 | route subprocess timeout | 250_000 ms | `scripts/probe-token-plan-shared.mjs:23` |
 
-`spawnCollect` (`scripts/probe-ufo-route-health.mjs:678`) re-implements spawnSync
-semantics over async `spawn` so probes can run concurrently via `mapPool` (`:784`).
+`spawnCollect` (`scripts/probe-ufo-route-health.mjs:669`) re-implements spawnSync
+semantics over async `spawn` so probes can run concurrently via `mapPool` (`:775`).
 
 ## Decision table — `scripts/probe-ufo-route-health.mjs` row verdict (`interpretRouteHealth`)
 
@@ -364,7 +364,7 @@ semantics over async `spawn` so probes can run concurrently via `mapPool` (`:784
 | `failureClass` unknown/absent/not in `FAILURE_CLASSES` | `unknown` | no | `failureClass ?? "unknown"` |
 | otherwise (a known failure class) | `unavailable` | no | the class |
 
-Live entry: `interpretRouteHealth` at `scripts/probe-ufo-route-health.mjs:1015`
+Live entry: `interpretRouteHealth` at `scripts/probe-ufo-route-health.mjs:1008`
 (file is 1195 L; round-13 line numbers in the citation ledger below are historical).
 
 ## Downstream consumption
@@ -577,3 +577,25 @@ Sources (live S7 members + excluded reuse + external consumers):
 (consumer, not a member). Removed from the live tree (no longer sources):
 `scripts/atomic-write.mjs`, `scripts/probe-ufo-route-health.test.mjs`,
 `scripts/probe-redact.test.mjs`.
+
+## Round-38 anchor debt (marked; false, dead or unchecked at 31c465f1)
+
+- note line 115, anchor #21 ( line 200): debt:false — symbol ROUTE_TOKEN is absent from the pinned tree; the route-token grammar is delegated to scripts/omp-route-grammar.mjs / zero ROUTE_TOKEN hits in /fast/scratch/kumitate-r36/src (case-insensitive, gitignore off); probe 198 "Selec
+- note line 211, anchor #76 (scripts/probe-ufo-route-health.mjs line 209): debt:false — symbol gone from this path and prose stale: token-class validator moved to scripts/omp-route-grammar.mjs / pin scripts/probe-ufo-route-health.mjs line 209 is const INVISIBLE_CHARACTERS = /[\p{Cc}\p{Cf}]/gu; (diagnostic escaper used at 
+- note line 240, anchor #97 ( line 1021): debt:false — symbol gone at pin: STRANDED_OUTCOMES, stranded-continue and the launcher's outcome strings occur nowhere in the pinned tree; pin 1021 is interpretRouteHealth's served check / pin 1021 if (row.served === true && row.failureClass =
+- note line 241, anchor #98 ( line 1102): debt:false — no outcome token anywhere in the route-health script (\boutcome\b and [Oo]utcome both empty); pin 1102 is persistState's state serialization, not a record-outcome check / pin 1102 const body = \${JSON.stringify(document, null, 2)}
+- note line 243, anchor #99 ( line 79): debt:false — RouteHealthError does not exist: zero matches in the pinned tree and the script has no class declaration; pin 79 is the first REDACT_PATTERNS regex, not a class / pin 79 /("?(?:authorization/proxy-authorization/token/…; refusals a
+- note line 244, anchor #100 ( line 74): debt:false — no typed refusal carries a snake_case code at the pin; every refusal is a plain Error without a code property, and pin 74 is a REDACT_PATTERNS comment / pin 74 // Key=value pairs with credential-like keys: capture the key and sepa
+- note line 245, anchor #101 ( line 994): debt:false — symbol_gone_typed_code_removed / state_path_symlink has 0 hits in the pin (git grep at 31c465f exit=1). Pin 994 is "}" closing assertStatePath (971-994). The live symlink arm is 983 'if (info?.isSymbolicLink()) usage("--state refu
+- note line 249, anchor #102 ( line 1266): debt:dead — symbol_gone_typed_code_removed / credential_shaped_state has 0 hits in the pin.  line 1266 is past EOF (pin = 1188 lines). The same refusal survives uncoded at 1108 'throw new Error("refusing credential-shaped route-health state");' (p
+- note line 254, anchor #105 ( line 1355-1363): unchecked — sentence says the fatal catch adds error.code and redacts message; the catch does neither, and cited 1355-1363 is beyond EOF / pin probe-ufo-route-health.mjs has 1188 lines; catch 1181-1188 emits {schema@1184, error:{type:"fatal",
+- note line 260, anchor #108 (scripts/probe-token-plan-shared.mjs line 40): debt:false — PROBE_SHARED_ERROR_CODES and ProbeSharedError absent at pin (symbol gone) / pin scripts/probe-token-plan-shared.mjs line 40 is   return {, the literal returned by failureVerdict (39-47), not a code table; no token of the sentence occur
+- note line 261, anchor #109 ( line 121): debt:false — catalog_timeout absent at pin (symbol gone); cited  line 121 is not catalog code / pin  line 121 is     // row was unserved). Prefer its typed failure fields over a generic mask., a comment in the route-probe non-zero-exit branch (118-136);
+- note line 262, anchor #110 ( line 139): debt:false — catalog_exit absent at pin (symbol gone); cited  line 139 is not catalog code / pin  line 139 is     payload = parseJsonPayload(result.stdout); in the route-probe success path (137-139); the catalog non-zero exit is an uncoded Error at  line 69-
+- note line 263, anchor #111 (scripts/probe-redact.mjs line 110): debt:false — RedactError is absent from the pin and probe-redact.mjs throws no RedactError; the anchored line is a string entry, not a throw / pin probe-redact.mjs line 110 cleanupOk === false ? "cleanup incomplete" : null, sits in unservedReason's
+- note line 264, anchor #112 ( line 120): debt:dead — the code empty_payload is absent from the pin (no probe-redact error carries a code) and anchor  line 120 is past EOF / tree-wide grep empty_payload: No matches found; probe-redact.mjs is 116 lines; the nearest empty-payload site is pi
+- note line 264, anchor #113 ( line 130): debt:dead — the code invalid_json is absent from probe-redact.mjs (it exists as a code in other modules) and anchor  line 130 is past EOF / pin  line 87 and  line 90 throw new Error("payload was not JSON"); are the not-JSON failures and carry no code; inval
+- note line 297, anchor #135 ( line 44): debt:false — symbol-absent-from-pin / grep CREDENTIAL_TOKEN_PATTERN_INDEX over /fast/scratch/kumitate-r36/src: No matches; grep PATTERN_INDEX, TOKEN_PATTERN, TOKEN_INDEX: No matches. Pin probe-redact.mjs line 44 is "// no second scan (PrimeAgent re
+- note line 298, anchor #136 ( line 49): debt:false — symbol-absent-from-probe-redact / grep \bcontainsCredential\b over pin src: No matches. Pin probe-redact.mjs line 49 is "    pattern.lastIndex = 0;" (inside function redactOnce, line 47), which the sentence does not describe. The name-
+- note line 304, anchor #138 (scripts/probe-ufo-route-health.mjs line 30): unchecked — route-health does not import CREDENTIAL_SHAPE or redact from probe-redact; it hand-mirrors both / pin 30-33 is its only sibling import (./omp-route-grammar.mjs). Lines 67-71 PARITY: "standalone copy of ./probe-redact.mjs ... canno
+- note line 335, anchor #150 (scripts/probe-token-plan-shared.mjs line 23): unchecked — no checkable token on the cited line (prose locator); not verified by the gate

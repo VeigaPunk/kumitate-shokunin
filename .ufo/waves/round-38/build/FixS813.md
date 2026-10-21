@@ -1,0 +1,17 @@
+ITEM FixS813 anchors=4 move=4 token=0 move_token=0 debt=0
+VERDICT remaining-scripts-census#27 MOVE 15 | PATH FIX ONLY: correct anchor scripts/charter-scribe/prompts/kimi-update.prompt.txt:15, not sync.mjs:15 (bare :15 inherited sync.mjs from `scripts/charter-scribe/sync.mjs:508-511` earlier in the same paragraph); pin prompt line 15 "shipped locally, which gates are green, and what stays OPEN. Evidence only —"; the token occurs nowhere in sync.mjs
+VERDICT remaining-scripts-census#28 MOVE 16 | PATH FIX ONLY: correct anchor scripts/charter-scribe/prompts/kimi-update.prompt.txt:16, not sync.mjs:16 (same inherited-path defect); pin prompt line 16 "never claim anything not listed above. This chat runs on Kimi Instant, high"
+VERDICT remaining-scripts-census#43 MOVE 13 | PATH FIX ONLY: correct anchor scripts/charter-scribe/systemd/charter-scribe.service:13, not timer:13 (bare :13 inherited `charter-scribe.timer:9` earlier in the same paragraph; the sentence says "this service's [Install]"); pin service line 13 "[Install]", sole occurrence
+VERDICT remaining-scripts-census#44 MOVE 14 | PATH FIX ONLY: correct anchor scripts/charter-scribe/systemd/charter-scribe.service:14, not timer:14 (same inherited-path defect; the timer has 12 lines so :14 is past EOF); pin service line 14 "WantedBy=default.target", sole occurrence
+evidence:
+- pin: `git -C /fast/scratch/kumitate-r36/src rev-parse HEAD` = 31c465f15669f744848bd9f5d56191c5085670f7; `git status --porcelain` empty. Read-only; no lane VCS touched.
+- note L469 (raw): "...`replaceAll` (`scripts/charter-scribe/sync.mjs:508-511`)... `Evidence only —` (`:15`) ... `Kimi Instant, high` (`:16`)". Section heading is the prompt file; the sync.mjs:508-511 span reassigns the path before `:15`/`:16`.
+- note L477 (raw): "The sibling timer schedules this unit (`...charter-scribe.timer:9`); this service's `[Install]` (`:13`) also declares `WantedBy=default.target` (`:14`)." Heading is the service unit; the timer:9 span reassigns the path.
+- gate rule: bare `:N` takes the latest path from heading or path span (anchor-truth.mjs:118-120, 150); `wb` (L187) requires non-`[\p{L}\p{N}_$]` neighbours; `judge` (L219-227) passes if the full token or its longest identifier is bounded on the cited lines.
+- grep over pin scripts/charter-scribe: "Evidence only —" only at prompt L15; "Kimi Instant, high" only at prompt L16 (lowercase "kimi instant" also on L1); neither string in sync.mjs (902 L).
+- service pin (14 L; `cat -A`): `13:[Install]$`, `14:WantedBy=default.target$`; sole occurrences.
+- timer pin (12 L): 11 `[Install]`, 12 `WantedBy=timers.target`; line 13 is the empty element after the final newline, 14 is past EOF. Reproduces the item's false/dead statuses.
+- scratch re-run (JS eval cell, verbatim copy of anchor-truth.mjs:178-187 and 219-227, pinned files only, no lane script run): corrected anchors true for all four; current targets false (sync.mjs:15), false (sync.mjs:16), false (timer:13), dead (timer:14).
+- The verdict grammar has no path slot; these are path-only defects (line and parser token already right in the intended file), encoded as MOVE with the full path first. Applying needs explicit path qualifiers in the note plus a re-pin (raw span text changes, so ANCHOR_SET_CHANGED fires until re-pinned). I did not edit the lane.
+- Not individually checked: other bare anchors in the same two paragraphs. By the same rule `:1`/`:7`-`:12` and `:5`-`:11` resolve to the intended files [INFERENCE].
+- Installs/updates: none.

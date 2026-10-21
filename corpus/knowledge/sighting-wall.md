@@ -1,5 +1,5 @@
 # S4 sighting wall — live membership at internals level
-> **Round-37 restoration (2026-10-21; final, amended by AuditSighting2/3/4/6/7/8).** This note is reset to its 0614092 bytes: the round-36 shift-repair is removed, so no anchor here is a round-36 artifact. Pre-existing anchors that were already false at the pin remain as ratcheted fidelity debt; re-verification against the pin is owed. Do not claim this note as pin-true.
+> **Round-38 anchor repair (2026-10-21).** Every anchor in this note was re-checked one by one against the pinned upstream revision 31c465f1 (wave-reviewed MOVE/TOKEN/DEBT verdicts, then the per-anchor gate scripts/anchor-truth.mjs with its pin .ufo/pins/anchor-truth.json): 70 of 71 anchors read true, 0 are false or dead at the pin and 1 carry no checkable token; each non-true anchor is listed with its reason under the last heading of this note. History: round 36 shifted anchors one symbol off and round 37 reset the note to its 0614092 bytes (non-author spot-checks round-36 and round-37 in corpus/lessons).
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 22 line anchors in this
@@ -100,31 +100,31 @@ modules for constants, argv preflight, observation, and surface projection.
 **Manifest.** `validateManifest` (`scripts/ufo-sighting.mjs:279`) enforces
 `MANIFEST_SCHEMA`, `ownerRoot === ROOT`, `target === TMUX_TARGET`, unique
 mission/run/session/pane/sequence ids, and terminal shape. `writeManifest`
-(`scripts/ufo-sighting.mjs:548`) bumps `registryRevision`, validates, refuses a
+(`scripts/ufo-sighting.mjs:533`) bumps `registryRevision`, validates, refuses a
 symlinked leaf, writes `wx` 0600 tmp → fsync → rename → chmod → dir fsync, and
 fails `MANIFEST_TOO_LARGE` past `MAX_MANIFEST_BYTES`. `readManifest`
-(`scripts/ufo-sighting.mjs:379`) is the bounded read path; `loadStatusView`
-(`scripts/ufo-sighting.mjs:531`) is the status projection entry.
+(`scripts/ufo-sighting.mjs:423`) is the bounded read path; `loadStatusView`
+(`scripts/ufo-sighting.mjs:516`) is the status projection entry.
 
-**Lock.** `acquireOperationLock` (`scripts/ufo-sighting.mjs:663`) seizes
+**Lock.** `acquireOperationLock` (`scripts/ufo-sighting.mjs:648`) seizes
 `<stateDir>/operation.lock` as a directory + `owner.json` `wx`, with
 `LOCK_TIMEOUT_MS` wait via `UFO_SIGHTING_LOCK_TIMEOUT_MS`.
-`withOperationLock` (`scripts/ufo-sighting.mjs:781`) is the reentrant wrapper
+`withOperationLock` (`scripts/ufo-sighting.mjs:767`) is the reentrant wrapper
 every mutating verb uses.
 
-**Lifecycle.** `spawnPaneForMission` (`scripts/ufo-sighting.mjs:2225`) is the
+**Lifecycle.** `spawnPaneForMission` (`scripts/ufo-sighting.mjs:2239`) is the
 pane creator. `launchMissionLocked` / `launchMission`
-(`scripts/ufo-sighting.mjs:2347`, `:2372`) own capacity → row → spawn.
-`stopMission` (`scripts/ufo-sighting.mjs:3584`), `resumeMissionLocked` /
-`resumeMission` (`:3682`, `:3762`), `completeMission` (`:3339`),
-`reconcileLocked` (`:1976`), and `scheduleReconcile` (`:3572`, spawns
+(`scripts/ufo-sighting.mjs:2361`, `:2386`) own capacity → row → spawn.
+`stopMission` (`scripts/ufo-sighting.mjs:3616`), `resumeMissionLocked` /
+`resumeMission` (`:3714`, `:3794`), `completeMission` (`:3361`),
+`reconcileLocked` (`:1991`), and `scheduleReconcile` (`:3604`, spawns
 detached `__reconcile`) close the lifecycle set. Steer/peek:
-`steerMission` (`:3511`), `peekMission` (`:3544`).
+`steerMission` (`:3543`), `peekMission` (`:3576`).
 
-**CLI.** `main` (`scripts/ufo-sighting.mjs:4399`) dispatches verbs including
+**CLI.** `main` (`scripts/ufo-sighting.mjs:4432`) dispatches verbs including
 `__reconcile`, `surface` → `surfaceManifest()`, `launch`, `complete`, and the
 remaining wall verbs; re-exports surface helpers at
-`scripts/ufo-sighting.mjs:4714`.
+`scripts/ufo-sighting.mjs:4730`.
 
 Sources: `scripts/ufo-sighting.mjs`; deps `scripts/ufo-sighting-lib/{base,argv,observe,surface}.mjs`.
 
@@ -144,7 +144,7 @@ Deliberately the leaf other lib files and the entry import for identity.
 `DEFAULT_ATTACH_TIMEOUT_MS` (`:71`); `DISPLAY_REFRESH_LOCK_MS = 250` (`:77`).
 
 **Errors.** `SightingError` (`scripts/ufo-sighting-lib/base.mjs:105`) carries
-`code` + optional `details`; `emitFatal` (`:111` region) is the process-fatal
+`code` + optional `details`; `emitFatal` (`:116` region) is the process-fatal
 emitter used by the entry.
 
 Sources: `scripts/ufo-sighting-lib/base.mjs`.
@@ -209,9 +209,9 @@ file’s sha256). `SURFACE_KIND = "sighting-surface-v1"` (`:24`).
 **Manifest / errors.** `surfaceErrors` (`:50`) mines `fail("CODE"` literals
 from the entry + lib set; `surfaceManifest` (`:59`) emits `kind`,
 `scriptDigest`, `digestInputs`, verb schemas, and exit map.
-`runLegacyNativeDirect` (`:318`) re-enters the bash shim’s
+`runLegacyNativeDirect` (`:325`) re-enters the bash shim’s
 `--ufo-sighting-native-direct` seam; `output` / `requireNoArgs` / `usage`
-(`:310`, `:314`, `:294`) are the CLI helpers re-exported by the entry.
+(`:317`, `:321`, `:301`) are the CLI helpers re-exported by the entry.
 
 Sources: `scripts/ufo-sighting-lib/surface.mjs`.
 
@@ -249,3 +249,7 @@ larger than the member set (91 sections over 91 members, one of which was not a
 member). Independent boundary re-enumeration measured the honest set: **S4 = 5
 members**, S_members 91, S_sections 90 ⇒ `floor(10 × 90/91) = 9`. The earlier
 `coverage:script-layer = 10` reading was one inflated section.
+
+## Round-38 anchor debt (marked; false, dead or unchecked at 31c465f1)
+
+- note line 204, anchor #60 ( line 18): unchecked — brace-only range end: pin 18 is the closing "];" of SURFACE_MODULE_PATHS (13 opens, 14-17 hold the four path.join entries, 18 closes), so  line 18 is the correct end and carries no checkable token; the sentence is TRUE (four entries, f
