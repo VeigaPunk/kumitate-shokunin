@@ -1,6 +1,6 @@
 WAVE2 items=68 dup=3 registry=yes verdict=refuted
 
-Scope: round-37 falsify spec, dispatch, and registry in this lane (HEAD 5031720; dispatch-time commit 5ceb8cd). Pin /fast/scratch/kumitate-r36/src @ 31c465f1. Lane-relative paths. Tool runs of the pinned authority used UFO_PROJECT_ROOT under /fast/scratch/kumitate-r37/Wave2/ only; the lane was not written. Installs: none (node v24.21.0 pre-installed, used as-is).
+Scope: round-37 falsify spec, dispatch, and registry in this lane (HEAD 5031720 when review began, 469500f when this report was written; dispatch-time commit 5ceb8cd). Pin /fast/scratch/kumitate-r36/src @ 31c465f1. Lane-relative paths. Tool runs of the pinned authority used UFO_PROJECT_ROOT under /fast/scratch/kumitate-r37/Wave2/ only; the lane was not written. Installs: none (node v24.21.0 pre-installed, used as-is).
 `dup` = items whose prompt is a redundant copy of another item's prompt after removing the item's own index label. Wave1-4 are one body, so dup=3.
 
 ## 1. Items, roles, names: holds
@@ -17,17 +17,17 @@ $ diff <(attack Wave1) <(attack Wave2)
 +Attack the round-37 wave/seat record 2: spec files under ...
 ```
   The rest (spec files, validator registry, seat accounting, fleet process, "that no item pads", failing condition) is identical for Wave1-4.
-- `grep -i 'seat record|wave/seat|record 1'` over the lane finds no artifact defining "record N" (only round-36/accounting.md's header). The label selects nothing, so Wave1-4 are one assignment in four seats. dup=3. The item asks its own seat to detect pads, and the Wave family is the pad.
-- The authority does not catch it: `planSwarmWave` checks `rejectDuplicate` on raw prompt text (pin ufo-swarm-wave.mjs:988-992, `duplicate_expansion`). The label-only copies are distinct strings, and `plan` accepted the 68-lane spec.
+- `git grep -i 'seat record\|wave/seat\|seat accounting\|record 1'` over the lane finds no artifact defining "record N" (hits: round-36 accounting headers and two unrelated lines). The label selects nothing, so Wave1-4 are one assignment in four seats. dup=3. The item asks its own seat to detect pads, and the Wave family is the pad.
+- The authority does not catch it: `planSwarmWave` checks `rejectDuplicate` on raw prompt text (pin ufo-swarm-wave.mjs:988-992, `duplicate_expansion`). The label-only copies are distinct strings, so the check passes them. `run` under the dispatch's 64/100 policy accepted the 68-lane spec (exit 0); the pin's 16/32 policy refuses it (section 5).
 - Other families each carry a distinct selector: Audit* (group N/8 of one note), Truth (slice N/8), Pair (mutants 1-8), Verify (D1-D8), Rep (sections 1-4), Sec (1-4). No other label-only copy. See section 3 for their sizing.
 
 ## 3. No-pad sizing of the Audit families: FAILS (partial)
 Rule in the prompts: "take the Nth eighth of the changed anchors". Measure: path:line tokens on `+` lines of `git diff 0614092 -- corpus/knowledge/<note>.md`.
 ```
 remaining-scripts-census  tokens=117  -> 8 groups fillable
-sighting-wall             tokens=4    -> >=4 of 8 groups empty (AuditSighting5-8)
-route-probe-cluster       tokens=5    -> >=3 of 8 empty (AuditRouteProbe6-8)
-native-trial-launch       tokens=1    -> >=7 of 8 empty (AuditNativeTrial2-8)
+sighting-wall             tokens=4    -> >=4 of 8 groups empty
+route-probe-cluster       tokens=5    -> >=3 of 8 groups empty
+native-trial-launch       tokens=1    -> 7 of 8 groups empty
 ```
 - At least 14 of the 32 Audit seats have no changed anchor in their "Nth eighth". For native-trial-launch the only changed anchor is `scripts/collect-omp-native-handoff.mjs:118`.
 - Caveat: the spec does not define "changed anchor"; this token measure is my approximation. The lower bounds hold for any split that assigns each anchor to one group.
@@ -36,7 +36,7 @@ native-trial-launch       tokens=1    -> >=7 of 8 empty (AuditNativeTrial2-8)
 - `.ufo/waves/round-37/falsify/swarm-registry.json`: schema ufo-swarm-registry-v1, wave kumitate-r37-falsify, reportDir matches, 68 members. agentIds `KumitateR36.<Name>` are unique, none null. milestone and axes uniform. Dispatch registry equals disk registry except agentId (`jq -S ... | cmp` identical).
 - Pinned authority accepts it: `ufo-swarm-wave plan --spec probe.json` with `priorRegistry` pointing at the lane registry (copied byte-exact to scratch) gives exit 0 and echoes `priorRegistries`.
 - Negative control: same file with AuditRemainder2.agentId set to AuditRemainder1's gives `invalid_registry ... members AuditRemainder1 and AuditRemainder2 share agentId "KumitateR36.AuditRemainder1"` (exit 1). The check is live.
-- The authority exists only in the pin. `ls /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ufo-swarm-registry.mjs` is absent, so reproduction depends on the pin path.
+- The authority exists only in the pin. In the lane, `test -e scripts/ufo-swarm-registry.mjs` returns no, so reproduction depends on the pin path.
 
 ## 5. Policy and fleet process: FAILS
 - Dispatch policy: `source: "config"`, `waveMinLanes: 64`, `waveMaxLanes: 100`, `minLanes: 16`, `globalRunnerCeiling: 1056`.

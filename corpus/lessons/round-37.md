@@ -29,9 +29,12 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
 - D5: falsify wave validated at 68 seats (`.ufo/waves/round-37/falsify-spec.json`), dispatched
   after the repairs and before the report; results are late evidence (records under
   `.ufo/waves/round-37/falsify/`), not integrated into this round's numbers.
-- D6: fleet-root `-.rej` (72,390 B, 19 hunks) moved byte-exact (`cmp` equal) to
-  `.ufo/waves/round-36/evidence/remaining-scripts-census.rej.txt`; fleet copy deleted; misroot
-  re-sweep recorded in the report.
+- D6: fleet-root `-.rej` (72,390 B, 19 hunks) moved to
+  `.ufo/waves/round-36/evidence/remaining-scripts-census.rej.txt` (moved copy sha256 `3f51c7e7…`, 249
+  lines / 19 hunks, committed in `5ceb8cd`); fleet copy deleted. Verify6 notes the `cmp` output was not
+  retained, so the move is evidenced by the committed copy's hash, not by a re-runnable cmp. Misroot
+  re-sweep with timestamp: `.ufo/waves/round-37/final/misroot.txt` (driver files only; kumitate seat
+  residue 0).
 - D7: `ExecFidSmall.patch` **discarded** (its four `ReviewFidSmallB` semantic failures were never
   fixed and its green depended on the removed right-first rule) — recorded in
   `.ufo/waves/round-37/repairs.md`.

@@ -22,14 +22,15 @@ Base column = 964f443e (the revision the sections state; copied to `/fast/scratc
 - Restored-but-still-false (pin): tokens 6, 7, 8. Count 3.
 - Restorations applied in group 2 (H = B where S differs from B): 0. Round-37 touched only tokens 7 and 8, both moved away from B. Tokens 5 and 6 are unchanged round-36 values.
 - Overreverted (a restoration that reverted a true improvement): 0 actual.
-- Latent: token 5 is the one true improvement in this group (pin: B lacks the symbol, S has it). Reverting it to `:2-3`, the notice's stated method, would overreverted it. D1 forbids that: "keep the base line wherever its symbol is still on that line" (`corpus/lessons/round-36-verifier-spotcheck.md:193-196`).
+- Latent: token 5 is the one true improvement in this group (pin: B lacks the symbol, S has it). Reverting it to `:2-3`, the notice's stated method, would be an overreversion. D1 forbids that: "keep the base line wherever its symbol is still on that line" (`corpus/lessons/round-36-verifier-spotcheck.md:193-196`).
 
 ## Notice (`corpus/knowledge/route-probe-cluster.md:2`)
 - Present: yes. Blockquote dated 2026-10-21.
 - Accurate: NO.
   - "Anchors in this note were reverted to the lines their 0614092 sentences named": 0 of 4 group-2 anchors equal their 0614092 line. 29 tokens in the whole note still differ from 0614092.
-  - "treat line anchors here as at their base revision": H is not at base for token 6 (`:108`) or token 8 (`:45`). Token 7's `:813` is the base call site, not the definition.
+  - "treat line anchors here as at their base revision": H is not at base for token 5 (`:72`), token 6 (`:108`) or token 8 (`:45`). Token 7's `:813` is the base call site, not the definition.
   - Its source, `corpus/lessons/round-37.md:13` ("reverted ... (every symbol-keyed anchor)"), is contradicted by this diff. D1 itself is conditional and the notice does not state the condition.
+- Not uniformly false: round-37 did return other anchors to base (3d5760a to HEAD diff: persistState :1073 to :1080, main :320 to :1164, parseArgs :50 to :103, writeVerdict :35 to :40, openTmpExclusive :63 to :66). Those are outside group 2 and not audited here.
 
 ## Enumeration (29 changed tokens; group 2 = 5-8)
 - 1-4 (group 1): atomic-write row, `probe-ufo-route-health.mjs:1080`, `1117`, `probe-token-plan-models.mjs:40`, `:66` to bare `66` x4. File names dropped and no 0614092 line kept. Corruption, not restoration.
