@@ -63,8 +63,9 @@ citation.
   recomputed from the bytes on disk (`DIGEST_MISMATCH`), so the manifest's own
   per-file claims cannot rot silently.
 - **The concatenated-byte digest.** `manifest.scriptDigest` is a sha256 over the
-  CONCATENATED BYTES of shim + module + sorted lib modules — in that fixed
-  order, and explicitly not any single file's hash
+  CONCATENATED BYTES of shim + module + lib modules in the manifest's declared
+  `digestInputs` order (`base.mjs` before `argv.mjs`) — never a sorted-by-path
+  concatenation, and explicitly not any single file's hash
   (`scripts/ufo-sighting-lib/surface.mjs:43-58`). Live 2026-09-28:
   `sha256:0e98c908bb8dc52353716852b5451605ad5889c98b7bc620fceebd7797725567`,
   reproduced byte-for-byte by an independent concatenation.
@@ -124,7 +125,7 @@ is an always-false drift signal.
 
 | Value | Input | Home |
 |---|---|---|
-| `manifest.scriptDigest` | sha256 of CONCATENATED FILE BYTES: shim + module + sorted `scripts/ufo-sighting-lib/*.mjs` | `scripts/ufo-sighting-lib/surface.mjs:43-58` |
+| `manifest.scriptDigest` | sha256 of CONCATENATED FILE BYTES: shim + module + `scripts/ufo-sighting-lib/*.mjs` in the manifest's declared `digestInputs` order | `scripts/ufo-sighting-lib/surface.mjs:43-58` |
 | `sighting.surfaceDigest` (the pin) | sha256 of `canonicalJson(manifest)` — sorted keys, no whitespace | `scripts/sync-ufo-contracts.mjs:842-851`, `:853-855` |
 
 Measured 2026-09-28 on the live tree: bytes digest
@@ -163,7 +164,7 @@ Errors (exit 1):
 | `DIGEST_INPUT_MISSING` | a `digestInputs[].path` does not exist under `--src` | not fired |
 | `DIGEST_MISMATCH` | a per-file `sha256` ≠ the file's bytes | not fired |
 | `DIGEST_SET_INCOMPLETE` | declared set ≠ {shim, module} ∪ {regular lib `*.mjs`} (either direction) | not fired (28 = 2 + 26) |
-| `SCRIPT_DIGEST_MISMATCH` | recomputed concatenated-byte digest ≠ `manifest.scriptDigest` | not fired |
+| `SCRIPT_DIGEST_MISMATCH` | declared-order concatenated-byte digest ≠ `manifest.scriptDigest` | not fired |
 | `VERB_UNDECLARED` | a dispatched verb absent from `manifest.verbs`/`extras` — `--help`/`-h` are aliases, `__`-prefixed entries are internal | not fired |
 | `VERB_UNDISPATCHED` | a declared verb with neither a `command ===` clause nor a `resolveTrigger` alias guard (`trigger-alias`) | not fired |
 | `ERROR_CODE_UNDECLARED` | `fail("X")` in the bytes, `X` not in `manifest.errors` | not fired |

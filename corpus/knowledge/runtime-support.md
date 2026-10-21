@@ -66,7 +66,7 @@ in the current tree.*
   `lane_overlay_tests.rs:236` — whitespace-only route `"   "` behaves
   exactly like an omitted one (trim-to-empty filter).
 - The over-limit case is pinned at both counting layers:
-  `lane_overlay_tests.rs:59` writes `MAX_OVERLAY_DIR_ENTRIES`+1 files
+  `lane_overlay_tests.rs:61` writes `MAX_OVERLAY_DIR_ENTRIES`+1 files
   (`lane_overlay.rs:17`) and demands the message contain `"exceeds"`, the
   computed constant string, and the literal `"(got 65)"`;
   `lane_overlay_tests.rs:79` pushes the same 65 against the EMITTED-LANE
@@ -85,8 +85,8 @@ in the current tree.*
   against an env removal (documented: host `~/.omp/config.yml` would make
   that comparison environment-dependent). Seam pins call
   `global_home_value` (`lane_overlay.rs:230-231`) head-on:
-  `lane_overlay_tests.rs:188` `"  "`→`None`, `lane_overlay_tests.rs:196`
-  `"x"`→`Some("x")`, `lane_overlay_tests.rs:206` removed→`None`.
+  `lane_overlay_tests.rs:188` `"  "`→`None`, `lane_overlay_tests.rs:130`
+  `"x"`→`Some("x")`, `lane_overlay_tests.rs:130` removed→`None`.
 - `lane_overlay_tests.rs:256` pins first-hit-wins over
   `GLOBAL_OMP_CONFIG_CANDIDATES` (`lane_overlay.rs:168-173`) with four
   winner/loser scenarios — every candidate file contains its own path, so
@@ -146,9 +146,9 @@ from the lease file, never sentinel names. `MAX_LEASE_BYTES` 64 KiB.
 ## `lease_tests.rs` (648 L) — fencing race + fail-closed probe pins
 
 *Current-source addendum, rev `964f443e`. Wired at `lease.rs:616-618`;
-18 tests plus helpers `dead_pid` (`lease_tests.rs:6` — spawn `true`, wait,
+18 tests plus helpers `dead_pid` (`lease_tests.rs:7` — spawn `true`, wait,
 reuse the id: "the kernel will not hand it back inside the test") and
-`plant_lease` (`lease_tests.rs:12` — writes a `WriterLease` JSON to
+`plant_lease` (`lease_tests.rs:15` — writes a `WriterLease` JSON to
 `writer_lease_path` (`lease.rs:89-91`) under `WRITER_LEASE_SCHEMA`
 (`lease.rs:31`)). Source inspection, not tests executed.*
 
@@ -242,14 +242,14 @@ tests. Source inspection, not tests executed. Several tests spawn real
 `live_dispatch_timeout_secs` (`live.rs:117-124`) and `run_subprocess`
 (`live.rs:371-374`).*
 
-- Promote gate: `live_tests.rs:7` — ambient `CURSOR_AGENT` /
+- Promote gate: `live_tests.rs:11` — ambient `CURSOR_AGENT` /
   `CURSOR_AUTH_TOKEN` never enable; `live_tests.rs:17` — explicit
   `UFO_LIVE_DISPATCH=1` enables (`LiveEnv::enabled` `live.rs:270-272` →
-  `crate::test_env::explicit_live_promote`); `live_tests.rs:496` and
+  crate::test_env::explicit_live_promote); `live_tests.rs:496` and
   `live_tests.rs:509` — `run_distiller_live` (`live.rs:274-281`) degrades
   to `Ok(None)`, NEVER an error, when the flag is absent or the route is
   not the promoted `QWEN_LIVE_ROUTE`.
-- Deadline algebra: `live_tests.rs:25` pins `live_dispatch_timeout_secs`
+- Deadline algebra: `live_tests.rs:30` pins `live_dispatch_timeout_secs`
   to `DEFAULT_LIVE_DISPATCH_TIMEOUT_SECS` (`live.rs:26`, cfg(test), 30)
   with both env keys cleared; `live_tests.rs:36` pins
   `qwen_inner_deadlines` (`live.rs:133-145`) at outer 30: straddling
@@ -266,14 +266,14 @@ tests. Source inspection, not tests executed. Several tests spawn real
   host-specific default is ever guessed; `live_tests.rs:325` —
   set-but-empty HOME refuses with no `"spawn "` substring: the refusal
   lands before any spawn attempt.
-- Bounded transport: `live_tests.rs:85` — `group_kill_args(17)` must be
+- Bounded transport: `live_tests.rs:87` — `group_kill_args(17)` must be
   `["-KILL", "--", "-17"]` (`process_group.rs:279`) — the `--` option
   terminator survives, a negative pgid is never parsed as flags;
   `live_tests.rs:93` — a 5 MiB flood → exact
   `BoundedError::OutputTooLarge{stdout_oversized: true,
   stderr_oversized: false}` (`live.rs:160-163`); `live_tests.rs:113` —
   nonexistent binary → typed `"spawn "` error (`live.rs:423-425`);
-  `live_tests.rs:122` — `MAX_BOUNDED_CHILD_OUTPUT_BYTES + 1` bytes →
+  `live_tests.rs:128` — `MAX_BOUNDED_CHILD_OUTPUT_BYTES + 1` bytes →
   error naming `"output for "` (`live.rs:427-433`); `live_tests.rs:137` —
   invalid UTF-8 degrades LOSSILY (stdout keeps `"ok"`, U+FFFD surfaces),
   not an error; `live_tests.rs:151` — the shell spawns a `sleep 30`
@@ -288,10 +288,10 @@ tests. Source inspection, not tests executed. Several tests spawn real
 - The `live` verdict is re-derived, never trusted
   (`authorizes_live_synthesis` `live.rs:220-229`): hand-built
   `LiveDispatchResult{live: true, exit_code: 0, …}` still REFUSES the
-  unlisted handler `"unimplemented-route-live"` (`live_tests.rs:341`),
-  whitespace-only stdout (`live_tests.rs:367`), a `LOCAL_COLLAPSE_SENTINEL`
+  unlisted handler `"unimplemented-route-live"` (`live_tests.rs:343`),
+  whitespace-only stdout (`live_tests.rs:385`), a `LOCAL_COLLAPSE_SENTINEL`
   echo (`live_tests.rs:382`) and nonzero exit (`live_tests.rs:394`);
-  `live_tests.rs:353` demands `"distiller-qwen-direct-live"` AUTHORIZE —
+  `live_tests.rs:357` demands `"distiller-qwen-direct-live"` AUTHORIZE —
   the inline comment: a deleted allowlist arm is "capability loss with no
   error".
 - Auth-failure needles: `live_tests.rs:409` — byte-identical candidate

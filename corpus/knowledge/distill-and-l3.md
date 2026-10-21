@@ -68,7 +68,7 @@ candidate".
 `unique_moves` items require `{move_id, proposal_id, claim,
 evidence_ids, route_group_id, confidence}` with `additionalProperties:
 false` + `strict: true` — **`identity_hash` is absent** — while
-`RouteUniqueMove` (`distill.rs:166-174`) requires it (deny_unknown_fields
+`RouteUniqueMove` (`distill.rs:134`) requires it (deny_unknown_fields
 on `QwenSynthesis` :176-180, echo check :1001-1012). A schema-enforcing
 transport can only emit objects that fail `from_str::<QwenSynthesis>`
 on the missing field → `Malformed` degrade → live synthesis can never
@@ -88,7 +88,7 @@ historical module prose above: the current literal is `ufo.dedupe.v3`
 **Two authorities; the asymmetry is itself pinned as a tripwire.** The
 local key (`local_key`, `distill.rs:299`) binds normalized claim
 (`"  cache  the KEY "` + `["e2","e1","e1"]` collapses to one with
-`"Cache the key"` + `["e1","e2"]`, `distill_tests.rs:211-219`),
+`"Cache the key"` + ["e1","e2"], `distill_tests.rs:211-219`),
 declared write bytes (base64-differing pair survives two-way while the
 positive-control twin, differing only in `proposal_id` + one `scores`
 entry, collapses to one — "proposal_id and scores are outside the local
@@ -120,8 +120,8 @@ second literal — and keeps it bound to its instruction text ("other
 than …", F14, `distill_tests.rs:1145-1159`). The r20 note "MutDistillUtf8
 SURVIVED" (`distill_tests.rs:385-387`) pins the wire delimiter
 `INPUT_JSON:\n` plus `prompt.ends_with(payload)`
-(`distill_tests.rs:389-402`). A blank `proposal_id` falls back to the
-`M001` label `move_id_label` builds (`distill_tests.rs:1650-1657`, D6;
+(`distill_tests.rs:177`). A blank `proposal_id` falls back to the
+`M001` label `move_id_label` builds (`distill_tests.rs:1688`, D6;
 `distill.rs:380`).
 
 **Honest-collapse gating.** Ambient `CURSOR_AUTH_TOKEN` without live env
@@ -138,7 +138,7 @@ artifact prints `synthesis_ready: false` without `specialist`, `scout`
 or `route/private`. Typed-cause matrix: wrong route with live enabled
 collapses with the route plus "does not support live synthesis"
 (`distill_tests.rs:1230-1252`); a nonexistent binary collapses with a
-`spawn` cause (F2, `distill_tests.rs:1255-1278`); exit 0 with empty
+`spawn` cause (F2, `distill_tests.rs:1293`); exit 0 with empty
 stdout KEEPS the transport handler `"distiller-qwen-hvm-live"` (boundary:
 a transport that ran keeps its handler — D5,
 `distill_tests.rs:1660-1691`, cause records "did not authorize
@@ -147,7 +147,7 @@ synthesis "degrades, never aborts" with `live_attempt_error:` + "did not
 classify every input move" on the artifact (r8, `distill_tests.rs:116-162`);
 an unreadable godspeed directive under `UFO_ROOT` records
 `distiller_prompt_preview: unavailable` beside the sentinel (D8,
-`distill_tests.rs:1709-1727`). `stderr_tail_512` (`distill_tests.rs:1694-1706`):
+`distill_tests.rs:1736`). `stderr_tail_512` (`distill_tests.rs:1736`):
 512 chars (char count, not bytes), keeps the TAIL end, trims;
 whitespace-only input yields `""`.
 
@@ -184,7 +184,7 @@ map must not exist"); a different mission objective must yield a
 different `source_map_handle`; one appended space in the sealed bytes
 refuses "payload/hash mismatch"; a whitespace-only score refuses; success
 writes the exact bytes, reveal is idempotent, the unix file mode is
-`0o600` (`distill_tests.rs:986`, cfg(unix)), `audit_hash` equals
+`0o600` (`distill_tests.rs:96`, cfg(unix)), `audit_hash` equals
 `sha256:` over the payload bytes, and the decoded `SourceMapPayload`
 carries `iteration: 7` with the `M001`/`RG001`/`scout`/`local/fixture-a`
 entry. The F4/D4 battery (`distill_tests.rs:1002-1122`): wrong recorded

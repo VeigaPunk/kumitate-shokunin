@@ -24,7 +24,7 @@ All lists below are quoted from source; do not restate copies elsewhere.
 parent owns the cell rewrite. sha256
 `bf23cf3ee51702a74bc492049a0f613d79d838a1cec55579508da1c214755551`.
 Schema pin: `SCHEMA = "ufo-mission-result-v1"` at
-`scripts/ufo-mission-result.mjs:11`; receipt pin `RECEIPT_SCHEMA` at
+`scripts/ufo-mission-result.mjs:12`; receipt pin `RECEIPT_SCHEMA` at
 `scripts/ufo-mission-result.mjs:12`.
 
 ### Entry failure classes (envelope authority)
@@ -57,18 +57,18 @@ beside the exit code, never folded in; unknown fields are omitted:
 | `OUTCOME_TRIPLE_VALUES` | `scripts/ufo-mission-result.mjs:20` |
 | `createMissionResult` | `scripts/ufo-mission-result.mjs:513` |
 | `validateMissionResult` | `scripts/ufo-mission-result.mjs:540` |
-| `acquireSingletonLock` | `scripts/ufo-mission-result.mjs:1308` |
+| `acquireSingletonLock` | `scripts/ufo-mission-result.mjs:1311` |
 | `redact` | `scripts/ufo-mission-result.mjs:1145` |
 | `writeFileAtomic` | `scripts/ufo-mission-result.mjs:968` |
-| `appendRotatingLog` | `scripts/ufo-mission-result.mjs:1731` |
-| `writeFileAtomicIfChanged` | `scripts/ufo-mission-result.mjs:1876` |
-| `emitErrorJson` | `scripts/ufo-mission-result.mjs:2031` |
-| `MAX_EVIDENCE_LOG_BYTES` | `scripts/ufo-mission-result.mjs:2061` |
-| `gatedConfigPath` | `scripts/ufo-mission-result.mjs:2143` |
-| `isMainModule` | `scripts/ufo-mission-result.mjs:2391` |
-| `loadSwarmPolicy` | `scripts/ufo-mission-result.mjs:2431` |
-| `parseReportOutput` | `scripts/ufo-mission-result.mjs:2543` |
-| `newestMtime` | `scripts/ufo-mission-result.mjs:2566` |
+| `appendRotatingLog` | `scripts/ufo-mission-result.mjs:1751` |
+| `writeFileAtomicIfChanged` | `scripts/ufo-mission-result.mjs:1896` |
+| `emitErrorJson` | `scripts/ufo-mission-result.mjs:2051` |
+| `MAX_EVIDENCE_LOG_BYTES` | `scripts/ufo-mission-result.mjs:2081` |
+| `gatedConfigPath` | `scripts/ufo-mission-result.mjs:2163` |
+| `isMainModule` | `scripts/ufo-mission-result.mjs:2438` |
+| `loadSwarmPolicy` | `scripts/ufo-mission-result.mjs:2452` |
+| `parseReportOutput` | `scripts/ufo-mission-result.mjs:2453` |
+| `newestMtime` | `scripts/ufo-mission-result.mjs:2453` |
 
 ### Drift since the prior note (honest, not fitted)
 

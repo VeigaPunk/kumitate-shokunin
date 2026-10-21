@@ -227,7 +227,7 @@ Probe: `raw_max_scan` (crates/ufo-core-runtime/src/mutation.rs:117-120) — the 
 
 `validate_agents` picks the fan-out width through `agent_evidence_worth_parallel_agents` (at least two agents and a seat-0 transcript of 64 KiB or more) and dispatches both arms to `validate_agents_body` (:45-52), whose route authority is `native_route::contract_role_table(canonical_root)`, so the compiled role table never enters a verdict. The serial phase helpers are `nath_register_handoff_agents_phase_one`, `nath_validate_and_merge_prepared_evidence`, `nath_require_roster_seats_after_dispatch` and `nath_validate_main_orchestrator_binding`; the parallel ones are `natc_register_agent_phase_one` and `natc_match_agent_transcript_intervals`. Each worker returns one `AgentEvidenceBundle` holding the seat `key`, `started`/`ended`, an optional `last_error` and its `ValidatedEvidence`; `merge_agent_evidence_bundle` folds bundles in agent order into `transcript_events` and `artifact_bytes`. `validate_child` pins depth, `parent_id` and interval containment, and `parent_qualified_agent_id_matches` checks a parent-qualified id without building the composite string.
 
-Probe: `AgentEvidenceBundle` (`crates/ufo-core-runtime/src/native_agents.rs:524-530`) — the per-agent bundle struct (seat key, interval, last transcript error, evidence) the rayon workers hand back for ordered merging.
+Probe: `AgentEvidenceBundle` (`crates/ufo-core-runtime/src/native_agents.rs:287`) — the per-agent bundle struct (seat key, interval, last transcript error, evidence) the rayon workers hand back for ordered merging.
 
 ## `crates/ufo-core-runtime/src/native_continuity.rs` (363 L) — continuity-chain walk plus model, assignment and observed-model validation for native seats
 
@@ -263,13 +263,13 @@ Probe: `OPERATOR_GUIDANCE_THEMES` (`crates/ufo-core-runtime/src/operator_guidanc
 
 `DEFAULT_PROBE_TIMEOUT_SECS` (:8) is the literal 8-second default, and `PROBE_TIMEOUT_ENV` is the single authority for the `UFO_PROBE_TIMEOUT_SECS` spelling. `probe_timeout_secs` (:15-17) reads the override through `test_env::env_secs` and keeps the default whenever the value does not parse as a positive second count. The in-file tests pin the default arm on the literal (not on the named constant), pin a positive override, and pin that non-positive, unparsable and u64-overflowing overrides all fall back to 8 rather than panicking or handing a zero bound to the bounded runner.
 
-Probe: `probe_timeout_secs` (`crates/ufo-core-runtime/src/probe.rs:15-17`) — the accessor whose `env_secs` fallthrough to the literal default is the only guard on its value.
+Probe: `probe_timeout_secs` (`crates/ufo-core-runtime/src/probe.rs:11`) — the accessor whose `env_secs` fallthrough to the literal default is the only guard on its value.
 
 ## `crates/ufo-core-runtime/src/process_group.rs` (676 L) — process-group attach/kill, the EAGAIN spawn retry and the bounded pipe reader for local child execution
 
 `MAX_BOUNDED_CHILD_OUTPUT_BYTES` (:21-22) caps either stream at 4 MiB, and `retry_on_eagain`/`spawn_with_eagain_retry` retry only transient `WouldBlock` fork pressure (four attempts, linear backoff) while surfacing non-transient errors at once. `bounded_pipe_reader` returns a `BoundedPipeReader` whose `join_bounded` waits the grace with a predicate loop and reports `BoundedPipeRead { bytes, complete }`, where `complete` is false for cap truncation, read error or an escaped writer — consumers such as `bounded_fixture`, `live` and `axis_checks` must never parse those bytes. `BoundedRun` (:286-308) is the shared outcome — `Exited`, `Timeout`, `IncompletePipe`, `OutputTooLarge`, `Io` — produced by `run_bounded_child`/`run_bounded_child_with`, with `incomplete_streams` and `oversized_streams` naming the flagged stream(s). Teardown is `kill_group_with_deadline` (group kill, then a `pkill -P` sweep only while unreaped) over `group_kill_args` and `attach_process_group`, every wait deadline-bounded.
 
-Probe: `BoundedRun` (`crates/ufo-core-runtime/src/process_group.rs:286-308`) — the five-variant outcome enum, including the two flag-carrying arms consumers turn into evidence text.
+Probe: `BoundedRun` (`crates/ufo-core-runtime/src/process_group.rs:149`) — the five-variant outcome enum, including the two flag-carrying arms consumers turn into evidence text.
 
 ## `crates/ufo-core-runtime/src/process_group_tests.rs` (672 L) — pins for the bounded reader, stream-naming truth table and teardown kill policy
 
@@ -281,13 +281,13 @@ Probe: `cap_truncated_stream_is_not_a_completed_read` (`crates/ufo-core-runtime/
 
 `base_config` (:5-27) is the minimal v1 config that clears every gate — `extendedContext`, `concurrencyCeiling`, `probe.depth`, `l1Context.minimumTokens`, the retry block, the budgets block and the Main alias — and `expect_refusal` (:36-45) serializes a mutation and asserts the pinned literal appears in the refusal from `crate::expected_omp_route_yaml`. The arms cover `l1Context` presence and value (accepting the build.rs-legal numeric-string spelling), duplicate profile and top-level members refused rather than last-wins via hand-spliced raw bytes, the advisor fallback list rules, concurrency and probe-depth bounds, the v1 alias and retry-policy drift, and the `statusLine` shape plus its chartered scalar grammar in `status_line_scalar_obeys_the_chartered_grammar`.
 
-Probe: `expect_refusal` (`crates/ufo-core-runtime/src/profile_shape_refusal_tests.rs:36-44`) — the helper asserting a mutated config dies with the exact pinned refusal literal.
+Probe: `expect_refusal` (`crates/ufo-core-runtime/src/profile_shape_refusal_tests.rs:35`) — the helper asserting a mutated config dies with the exact pinned refusal literal.
 
 ## `crates/ufo-core-runtime/src/proposal.rs` (787 L) — the canonical specialist proposal contract, its digest helpers and candidate admission
 
 `Proposal` (:12-19) is the deny-unknown-fields body — `iteration`, `specialist`, `summary`, optional `evidence_ids`/`source_route_key`/`pid`/`scores`/`parent_id`/`proposal_id`/`refined`, and the additive `touched_paths`/`subjective_axes`/`candidate_writes` that never serialize when absent. Intake validation is `validate_repo_relative_path`, `validate_touched_paths`, `validate_candidate_writes` (bounded by `MAX_CANDIDATE_WRITES` and `MAX_CANDIDATE_WRITE_BYTES`), `validate_subjective_axes` and `validate_additive_fields`, with `first_nonempty_additive_field` fixing the freeze precedence and `decode_candidate_write` decoding canonical base64. `sha256_hex` (:450-452), `sha256_hex_prefix`, `sha256_prefixed`, `sha256_json`, `is_sha256_hex`, `is_sha256_prefixed` and `hash_survivor_set` are the digest grammar, the survivor name binding only sorted-deduped `(proposal_id, summary, evidence_ids)` rows. `IntegratedCandidate::admit` is the refusal-heavy admission surface built on `CandidateReceiptError` and `EvaluatorReceipt`, never coordinate-composing scores.
 
-Probe: `sha256_hex` (`crates/ufo-core-runtime/src/proposal.rs:450-452`) — the lowercase 64-character digest every other hash helper in the file composes from.
+Probe: `sha256_hex` (`crates/ufo-core-runtime/src/proposal.rs:216`) — the lowercase 64-character digest every other hash helper in the file composes from.
 
 ## `crates/ufo-core-runtime/src/proposal_tests.rs` (723 L) — pins for proposal digest grammar, additive-field intake validation and candidate admission
 
@@ -312,7 +312,7 @@ and `active_shared` is memoized so repeated calls alias the same record
 `ACTIVE_TIP_RS` against `ports/ufo-core-runtime/SRC-PARTIAL.json`, and the
 tail drives route continuity over `ExecutionProfile::canonical(Substrate::Omp)`.
 
-Probe: `honest_score_clamps_non_finite_claims` (`crates/ufo-core-runtime/src/provenance_tests.rs:6-11`) — the test function that asserts the NaN/infinity clamp to 0.0.
+Probe: `honest_score_clamps_non_finite_claims` (`crates/ufo-core-runtime/src/provenance_tests.rs:4`) — the test function that asserts the NaN/infinity clamp to 0.0.
 
 ## `crates/ufo-core-runtime/src/report.rs` (107 L) — the per-round iteration report owned by `loop_driver`
 
@@ -360,7 +360,7 @@ carries the `accepted`/`rejected` `RoundDigestEntry` lists, `LaneHealth`
 through `prepare_round_digest` then `write_prepared_round_digest`, which refuses
 planted symlinks in the chain derived from the path actually written.
 
-Probe: `round_digest_path` (`crates/ufo-core-runtime/src/round_digest.rs:193-197`) — the run-id-joined destination builder beneath a run root.
+Probe: `round_digest_path` (`crates/ufo-core-runtime/src/round_digest.rs:160`) — the run-id-joined destination builder beneath a run root.
 
 ## `crates/ufo-core-runtime/src/round_digest_tests.rs` (609 L) — the digest-emission and frontier-replay falsification suite
 
@@ -374,7 +374,7 @@ prepare refusal creates no digest path or parent, the symlinked-state-root
 refusal, and `proposal_digest_refuses_a_non_finite_score` under
 `#[should_panic(expected = "is not finite")]`.
 
-Probe: `replay_refuses_a_stripped_accept_delta_map` (`crates/ufo-core-runtime/src/round_digest_tests.rs:54-72`) — the first replay-tamper arm, asserting the refusal reads `carries no axes_delta`.
+Probe: replay_refuses_a_stripped_accept_delta_map (`crates/ufo-core-runtime/src/round_digest_tests.rs:54-72`) — the first replay-tamper arm, asserting the refusal reads `carries no axes_delta`.
 
 ## `crates/ufo-core-runtime/src/rules.rs` (280 L) — the canonical Pareto/quality rules and the local route allowlist
 
@@ -426,7 +426,7 @@ diverging `block_self_iter`), `charter_phase0`/`charter_sign`,
 `write_contract_sync_record` and `local_ship`; artifacts are emitted by
 `write_artifact` and `emit_artifact_and_print`.
 
-Probe: `routing_health_latency_percentile` (`crates/ufo-cli/src/main.rs:1344-1355`) — the nearest-rank percentile helper the routing-health report ranks latencies with.
+Probe: `routing_health_latency_percentile` (`crates/ufo-cli/src/main.rs:1180`) — the nearest-rank percentile helper the routing-health report ranks latencies with.
 
 ## `crates/ufo-cli/src/main_tests.rs` (685 L) — the `ufo` binary's in-crate unit suite
 
@@ -454,7 +454,7 @@ files); `require_rfc3339` and `is_rfc3339` delegate to
 `rfc3339::strict_timestamp`. The untrusted-input admission half lives next door
 in `admission.rs`.
 
-Probe: `TitaniumMap` (`crates/ufo-cli/src/titanium.rs:34-40`) — the typed machine-map root record the whole validator decodes into.
+Probe: `TitaniumMap` (`crates/ufo-cli/src/titanium.rs:28`) — the typed machine-map root record the whole validator decodes into.
 
 ## `crates/ufo-cli/src/titanium_tests.rs` (1009 L) — the Titanium validator suite with its own cwd/tempdir harness
 
@@ -467,7 +467,7 @@ admission guards, resume metadata, and the split between the freshness walk and
 `require_rfc3339` in
 `leap_second_stamps_are_refused_by_require_rfc3339_not_the_freshness_walk`.
 
-Probe: `duplicate_json_object_key_is_refused` (`crates/ufo-cli/src/titanium_tests.rs:352-359`) — the byte-level duplicate-key refusal arm run before any semantic validation.
+Probe: `duplicate_json_object_key_is_refused` (`crates/ufo-cli/src/titanium_tests.rs:349`) — the byte-level duplicate-key refusal arm run before any semantic validation.
 
 
 ## Member-completeness probe

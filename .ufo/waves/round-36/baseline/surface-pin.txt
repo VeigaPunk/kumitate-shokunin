@@ -1,0 +1,30 @@
+kumitate surface-probe — kumitate-surface-probe-v1
+src=/fast/scratch/kumitate-r36/src
+mode: conformance
+
+  ERROR SCRIPT_DIGEST_MISMATCH [sighting/DIGEST_CONCAT] concatenated-byte digest sha256:f17d1547901ad6ebb50ab7f705e9d50770b4ab19ddcdc8927a97958d74068da9 != manifest.scriptDigest "sha256:b36559d027c8f3b9c7fcaa1b919c03e3888c5df99b8dce5056c20aae39be30c4"
+  ERROR VERB_UNDECLARED        [sighting/VERB_DISPATCH] dispatched in scripts/ufo-sighting.mjs but undeclared in the manifest: surface
+  WARN  ERROR_CODE_OFF_MANIFEST [sighting/ERROR_CODES] assigned to a code: field as a literal but absent from manifest.errors (which is derived from fail("X") only): scripts/ufo-sighting.mjs:2010:RECONCILE_UNATTESTED_STOP, scripts/ufo-sighting.mjs:2468:UNEXPECTED_ERROR, scripts/ufo-sighting.mjs:4420:SPAWN_FAILED, scripts/ufo-sighting-lib/base.mjs:131:UNEXPECTED_ERROR
+  ERROR SURFACE_UNREACHABLE    [dispatcher/STATUS_REACH] status exited 1
+
+checks
+  ok   sighting    SURFACE_REACH
+  ok   sighting    MANIFEST_PARSE
+  ok   sighting    MANIFEST_KIND
+  ok   sighting    DIGEST_INPUT_SET
+  ok   sighting    DIGEST_PER_FILE
+  FAIL sighting    DIGEST_CONCAT — concatenated-byte digest sha256:f17d1547901ad6ebb50ab7f705e9d50770b4ab19ddcdc8927a97958d74068da9 != manifest.scriptDigest "sha256:b36559d027c8f3b9c7fcaa1b919c03e3888c5df99b8dce5056c20aae39be30c4"
+  FAIL sighting    VERB_DISPATCH — source-only=surface declared-only=-
+  ok   sighting    ERROR_CODES
+  ok   sighting    PIN_DIGEST
+  FAIL dispatcher  STATUS_REACH — status exited 1
+  FAIL dispatcher  STATUS_SHAPE — surface unreachable
+  FAIL dispatcher  STATUS_QUEUE_SCHEMA — surface unreachable
+totals
+  surfaces=2 checks=12 passed=7 errors=3 warnings=1 notes=2
+  nonGatingWarnings=1 gatingWarnings=0
+  bySeverity={"error":3,"warn":1,"note":2}
+  byKind={"DIGEST_ORDER":1,"ERROR_CODE_OFF_MANIFEST":1,"PIN_MATCH":1,"SCRIPT_DIGEST_MISMATCH":1,"SURFACE_UNREACHABLE":1,"VERB_UNDECLARED":1}
+
+SURFACE_PROBE: DRIFT (surfaces=2 checks=12 errors=3 warnings=1)
+EXIT=1

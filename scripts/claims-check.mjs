@@ -49,16 +49,31 @@
  * both endpoint lines are non-blank.
  *
  * Verdict line (always the last stdout line)
- *   CLAIMS: MATCH (rows=<n> yes=<n> notes=<n> sections=<n> adv=<n>)
- *   CLAIMS: DRIFT (<KIND> row=<ID> detail; …)   at most 6 findings, then `+N more`
+ *   CLAIMS: MATCH (rows=<n> yes=<n> notes=<n> sections=<n> adv=<n>[ src-rev=<12 hex>])
+ *   CLAIMS: DRIFT (<KIND> row=<ID> detail; …[; src-rev=<12 hex>])   at most 6 findings, then `+N more`
  *   CLAIMS: FAIL-CLOSED (<TOKEN> detail)
  * exit map: 0 match · 1 drift (warnings too under --strict) · 2 fail-closed · 64 usage
+ *
+ * ORIGIN PIN (`kumitate-origin-pin-v1`, PIN v1). `--pin FILE` — default
+ * `<self>/.ufo/pins/origin.json` (the `--self` repo) when that file exists —
+ * names the revision the verdict is about. With a pin active the gate resolves the origin tree
+ * from `--src` when given, else the pin's `clone`, and asserts
+ * `git -C <src> rev-parse HEAD` equals the pin's `revision`: a different HEAD
+ * is `SRC_REV_MISMATCH` (exit 2), a missing git, a HEAD that is not 40 hex, or
+ * a directory that is not a repository is `SRC_REV_UNVERIFIABLE` (exit 2), a
+ * pin that cannot be read or is not `{contract, revision:<40 hex>, clone}` is
+ * `PIN_MALFORMED` (exit 2), and a pin clone that is not a directory is
+ * `SRC_NOT_A_DIR` (exit 2, the existing arm: an absent tree is never a scored
+ * zero). Every verdict then carries `src-rev=<first 12
+ * hex>` — the revision actually scored, never the pin's claim. With no pin the
+ * gate behaves exactly as before and the segment is absent.
  *
  * Zero dependencies (node: builtins only), read-only on every tree it touches,
  * and it never writes a file anywhere. The origin tree is resolved against,
  * never modified: `--src` (default `$UFO_SRC`, else the first existing origin
- * candidate — `~/Projects/ufo-fsd-alpha`, then `~/Projects/origin-work/ufo-fsd-alpha`)
- * is only ever opened for reading.
+ * candidate — `~/Projects/ufo-fsd-alpha`, then `~/Projects/origin-work/ufo-fsd-alpha`,
+ * unless an active pin names its `clone`) is only ever opened for reading, and
+ * the pin assertion is a `git rev-parse` (no index refresh, no lock).
  */
 import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -92,8 +107,269 @@ function resolveSrcDefault() {
   return SRC_CANDIDATES[0];
 }
 
+/* ------------------------------------------------------------------ pin v1 */
+
+/** The pin a run would use when `--pin` is absent: `<--self>/.ufo/pins/origin.json`. */
+function defaultPinPath(self) {
+  const p = join(self, PIN_REL);
+  return statKind(p) === 'file' ? p : null;
+}
+
+/**
+ * Read a `kumitate-origin-pin-v1` file. A pin that cannot be trusted never
+ * degrades into "no pin" — that would silently turn provenance off — so every
+ * unreadable/invalid field is `PIN_MALFORMED` (exit 2).
+ */
+function readPin(file) {
+  const text = readText(file);
+  if (text === null) return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is ${statKind(file)}` };
+  let body;
+  try { body = JSON.parse(text); } catch (err) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is not JSON (${err && err.message})` };
+  }
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is not a JSON object` };
+  }
+  if (body.contract !== PIN_CONTRACT) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} contract ${JSON.stringify(body.contract)} != ${PIN_CONTRACT}` };
+  }
+  const revision = typeof body.revision === 'string' ? body.revision.toLowerCase() : '';
+  if (!RE_REV.test(revision)) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} revision ${JSON.stringify(body.revision)} is not 40 hex` };
+  }
+  if (typeof body.clone !== 'string' || body.clone.trim() === '') {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} has no clone path` };
+  }
+  return { ok: true, pin: { file, contract: body.contract, repo: body.repo ?? null, revision, clone: resolve(body.clone) } };
+}
+
+/**
+ * `git -C <dir> rev-parse HEAD` as a full 40-hex sha, or null when git is not
+ * on PATH, `<dir>` is not a repository, or HEAD is unborn. `GIT_OPTIONAL_LOCKS=0`
+ * keeps the read from taking a lock: the pinned clone is a-w and must stay so.
+ */
+/** Environment for a `git` child: identity variables are stripped so an ambient
+ *  GIT_DIR/GIT_WORK_TREE cannot redirect the assertion at another repository.
+ *  Only the two optional-lock/prompt switches and the fixture discovery ceiling
+ *  are passed through. */
+const GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',
+  'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
+  'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_ATTR_NOSYSTEM']);
+function gitEnv(extra) {
+  const env = {};
+  for (const [k, v] of Object.entries(process.env)) if (GIT_ENV_KEEP.has(k)) env[k] = v;
+  return { ...env, GIT_OPTIONAL_LOCKS: '0', GIT_TERMINAL_PROMPT: '0', ...(extra ?? {}) };
+}
+
+function gitHead(dir) {
+  const r = spawnSync('git', ['-C', dir, 'rev-parse', 'HEAD'], {
+    encoding: 'utf8', timeout: 30_000,
+    env: gitEnv(),
+  });
+  if (r.error || r.status !== 0) return null;
+  const head = (r.stdout ?? '').trim().toLowerCase();
+  return RE_REV.test(head) ? head : null;
+}
+
+/**
+ * Resolve the tree this run scores and, when a pin is active, prove it is the
+ * pinned revision. Precedence: `--src`, else the pin's clone, else the legacy
+ * default. The assertion always runs on the RESOLVED tree — an operator who
+ * passes a different `--src` under an active pin gets `SRC_REV_MISMATCH`, never
+ * a verdict that names the pin while scoring another tree.
+ */
+function resolveOrigin(opts) {
+  const pinPath = opts.pin ?? defaultPinPath(opts.self);
+  if (pinPath === null) return { ok: true, src: opts.src ?? resolveSrcDefault(), pin: null };
+  const loaded = readPin(pinPath);
+  if (!loaded.ok) return loaded;
+  const src = opts.src ?? loaded.pin.clone;
+  if (statKind(src) !== 'dir') return { ok: false, kind: 'SRC_NOT_A_DIR', detail: `--src ${src} is ${statKind(src)}` };
+  const head = gitHead(src);
+  if (head === null) {
+    return {
+      ok: false, kind: 'SRC_REV_UNVERIFIABLE',
+      detail: `git rev-parse HEAD in ${src} is not a repository HEAD (pin ${pinPath})`,
+    };
+  }
+  if (head !== loaded.pin.revision) {
+    return {
+      ok: false, kind: 'SRC_REV_MISMATCH',
+      detail: `${src} HEAD ${head.slice(0, 12)} != pin ${loaded.pin.revision.slice(0, 12)} (${pinPath})`,
+    };
+  }
+  return { ok: true, src, pin: { ...loaded.pin, srcRev: head } };
+}
+
+/* ------------------------------------------------ FIDELITY v1 (reviewer arm) */
+
+const FIDELITY_RATCHET_CONTRACT = 'kumitate-fidelity-ratchet-v1';
+const RE_ANCHOR_BARE = /^:(\d+)(?:-(\d+))?$/;
+const RE_ANCHOR_PATH = /^([A-Za-z0-9_][\w./-]*):(\d+)(?:-(\d+))?$/;
+
+function isPathLikeSpan(text) {
+  return /[/\\]/u.test(text) || /\.(?:mjs|js|sh|rs|md|json|toml|yml|timer|service)$/u.test(text);
+}
+
+function isAnchorSpan(text) {
+  return RE_ANCHOR_BARE.test(text) || RE_ANCHOR_PATH.test(text);
+}
+
+function spansOf(chunk, offset) {
+  const end = chunk.indexOf('\n', offset);
+  const line = chunk.slice(offset, end < 0 ? chunk.length : end);
+  const spans = [];
+  const re = /`([^`\n]+)`/g;
+  let m;
+  while ((m = re.exec(line)) !== null) {
+    spans.push({ text: m[1], start: offset + m.index, end: offset + m.index + m[0].length });
+  }
+  return spans;
+}
+
+function loadRatchet(file) {
+  let ratchet;
+  try { ratchet = JSON.parse(readFileSync(file, 'utf8')); } catch (e) {
+    throw Object.assign(new Error(`ratchet ${file} is unreadable JSON (${String(e.message).slice(0, 80)})`), { code: 'RATCHET_MALFORMED' });
+  }
+  const int = (v) => Number.isInteger(v) && v >= 0;
+  if (ratchet === null || typeof ratchet !== 'object' || Array.isArray(ratchet)
+    || ratchet.contract !== FIDELITY_RATCHET_CONTRACT
+    || typeof ratchet.revision !== 'string' || !RE_REV.test(ratchet.revision)
+    || ratchet.notes === null || typeof ratchet.notes !== 'object' || Array.isArray(ratchet.notes)
+    || !Object.values(ratchet.notes).every(int) || !int(ratchet.total)) {
+    throw Object.assign(new Error(`ratchet ${file} does not carry the ${FIDELITY_RATCHET_CONTRACT} shape`), { code: 'RATCHET_MALFORMED' });
+  }
+  return ratchet;
+}
+
+/** The anchor-fidelity sweep over exactly the member sections this gate parses. */
+function fidelityWalk({ self, src }) {
+  const scorecardPath = join(self, SCORECARD_FILE);
+  const scorecardText = readText(scorecardPath);
+  if (scorecardText === null) return { ok: false, kind: 'SCORECARD_MISSING', detail: `${scorecardPath} is ${statKind(scorecardPath)}` };
+  const registry = parseRegistry(scorecardText);
+  if (registry.length === 0) return { ok: false, kind: 'REGISTRY_MISSING', detail: 'no registry rows' };
+  const files = walkFiles(src).sort();
+  const resolveTok = makeResolver(files);
+  const notes = new Map();
+  const seen = new Set();
+  for (const row of registry) {
+    if (!row.covered) continue;
+    const { claimed } = extractNoteStems(row.noteCell, self);
+    for (const rel of claimed) {
+      if (rel.startsWith('AMBIGUOUS:')) continue;
+      const text = readText(join(self, rel));
+      if (text === null) continue;
+      for (const chunk of sectionBodyChunks(text)) {
+        const head = RE_CHUNK_HEAD.exec(chunk);
+        if (head === null) continue;
+        const tok = head[1];
+        if (!(tok.includes('/') || RE_EXT.test(tok))) continue;
+        const candidates = resolveTok(tok);
+        if (candidates.length !== 1) continue;
+        const own = candidates[0];
+        const key = `${rel}\u0000${own}\u0000${chunk.length}\u0000${chunk.slice(0, 80)}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const ownText = readText(join(src, own));
+        if (ownText === null) continue;
+        const lines = ownText.split('\n');
+        if (!notes.has(rel)) notes.set(rel, { anchors: 0, ok: 0, elsewhere: 0, absent: 0, dead: 0, noid: 0, nonok: 0 });
+        const bucket = notes.get(rel);
+        const re = /`([^`\n]+)`/g;
+        let am;
+        while ((am = re.exec(chunk)) !== null) {
+          const text = am[1];
+          const bare = RE_ANCHOR_BARE.exec(text);
+          const pathish = bare === null ? RE_ANCHOR_PATH.exec(text) : null;
+          let range = null;
+          if (bare !== null) range = [Number(bare[1]), Number(bare[2] ?? bare[1])];
+          else if (pathish !== null) {
+            const resolved = resolveTok(pathish[1]);
+            if (resolved.length === 1 && resolved[0] === own) range = [Number(pathish[2]), Number(pathish[3] ?? pathish[2])];
+          }
+          if (range === null) continue;
+          bucket.anchors += 1;
+          const lineStart = chunk.lastIndexOf('\n', am.index) + 1;
+          const lineSpans = spansOf(chunk, lineStart);
+          const selfStart = am.index;
+          const selfEnd = am.index + am[0].length;
+          const next = lineSpans.find((s) => s.start >= selfEnd && s.start - selfEnd <= 14);
+          const prev = [...lineSpans].reverse().find((s) => s.end <= selfStart && selfStart - s.end <= 14);
+          const pair = next ?? prev ?? null;
+          const symbol = pair !== null && !isAnchorSpan(pair.text) && !isPathLikeSpan(pair.text)
+            && pair.text.trim().length >= 3 && /[A-Za-z_]/u.test(pair.text) ? pair.text.trim() : null;
+          const [n, m] = range;
+          if (!(n >= 1 && m <= lines.length && n <= m)) { bucket.dead += 1; continue; }
+          if (symbol === null) { bucket.noid += 1; continue; }
+          if (lines.slice(n - 1, m).some((l) => l.includes(symbol))) { bucket.ok += 1; continue; }
+          if (lines.some((l) => l.includes(symbol))) bucket.elsewhere += 1; else bucket.absent += 1;
+          bucket.nonok = bucket.elsewhere + bucket.absent;
+        }
+      }
+    }
+  }
+  return { ok: true, notes };
+}
+
+function failFidelity(token, detail) {
+  process.stdout.write(`FIDELITY  fail-closed  ${token}  ${detail}\nFIDELITY: FAIL-CLOSED (${token} ${detail})\n`);
+  return 2;
+}
+
+function runFidelity(opts) {
+  if (statKind(opts.self) !== 'dir') return failFidelity('SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`);
+  const origin = resolveOrigin(opts);
+  if (!origin.ok) return failFidelity(origin.kind, origin.detail);
+  let ratchet = null;
+  if (opts.ratchet !== null) {
+    try { ratchet = loadRatchet(opts.ratchet); } catch (e) {
+      return failFidelity(e.code ?? 'RATCHET_MALFORMED', e.message);
+    }
+    const rev = origin.pin === null ? null : origin.pin.revision;
+    if (rev === null) return failFidelity('RATCHET_REV_STALE', `ratchet ${opts.ratchet} needs an active pin, none is active`);
+    if (ratchet.revision !== rev) {
+      return failFidelity('RATCHET_REV_STALE', `ratchet ${opts.ratchet} revision ${ratchet.revision} != pinned revision ${rev}`);
+    }
+  }
+  const walk = fidelityWalk({ self: opts.self, src: origin.src });
+  if (!walk.ok) return failFidelity(walk.kind, walk.detail);
+  const lines = [];
+  const total = { anchors: 0, ok: 0, elsewhere: 0, absent: 0, dead: 0, noid: 0, nonok: 0 };
+  const violations = [];
+  for (const rel of [...walk.notes.keys()].sort()) {
+    const b = walk.notes.get(rel);
+    for (const k of Object.keys(total)) total[k] += b[k];
+    lines.push(`FIDELITY note=${rel} anchors=${b.anchors} ok=${b.ok} elsewhere=${b.elsewhere} absent=${b.absent} dead=${b.dead} noid=${b.noid} nonok=${b.nonok}`);
+    if (ratchet !== null) {
+      const ceiling = Object.prototype.hasOwnProperty.call(ratchet.notes, rel) ? ratchet.notes[rel] : 0;
+      if (b.nonok > ceiling) violations.push(`RATCHET_NOTE note=${rel} nonok=${b.nonok} ceiling=${ceiling}`);
+    }
+  }
+  lines.push(`FIDELITY_TOTAL anchors=${total.anchors} ok=${total.ok} elsewhere=${total.elsewhere} absent=${total.absent} dead=${total.dead} noid=${total.noid} nonok=${total.nonok}`);
+  if (ratchet !== null && total.nonok > ratchet.total) violations.push(`RATCHET_TOTAL nonok=${total.nonok} ceiling=${ratchet.total}`);
+  for (const v of violations) lines.push(`FIDELITY  ratchet  ${v}`);
+  const srcRev = origin.pin === null ? null : origin.pin.srcRev;
+  const revSeg = srcRev === null ? '' : ` src-rev=${srcRev.slice(0, 12)}`;
+  if (violations.length === 0 && total.nonok === 0) {
+    lines.push(`FIDELITY: CLEAN (notes=${walk.notes.size} anchors=${total.anchors}${revSeg})`);
+    process.stdout.write(`${lines.join('\n')}\n`);
+    return 0;
+  }
+  const why = violations.length > 0 ? violations.join('; ') : `nonok=${total.nonok}`;
+  lines.push(`FIDELITY: DRIFT (${why}${revSeg})`);
+  process.stdout.write(`${lines.join('\n')}\n`);
+  return 1;
+}
+
 const SCORECARD_FILE = 'SCORECARD.md';
 const CORPUS_DIRS = ['corpus/knowledge', 'corpus/lessons'];
+
+/** PIN v1 (`kumitate-origin-pin-v1`): contract id, repo-relative default, revision shape. */
+const PIN_CONTRACT = 'kumitate-origin-pin-v1';
+const PIN_REL = '.ufo/pins/origin.json';
+const RE_REV = /^[0-9a-f]{40}$/;
 
 /** Frozen derivation patterns (see the header; do not widen them here). */
 const RE_REGISTRY_ROW = /^\| (S|R)\d+ \|/;
@@ -117,6 +393,7 @@ const FINDING_KINDS = [
 const FAIL_CLOSED_KINDS = [
   'SELF_NOT_A_DIR', 'SCORECARD_MISSING', 'REGISTRY_MISSING', 'SRC_NOT_A_DIR',
   'CORPUS_DIRS_MISSING',
+  'PIN_MALFORMED', 'SRC_REV_MISMATCH', 'SRC_REV_UNVERIFIABLE',
 ];
 
 const USAGE = `usage: node scripts/claims-check.mjs [options]
@@ -128,8 +405,12 @@ options
   --self DIR       repo holding SCORECARD.md + corpus/ (default: this repo)
   --scorecard FILE SCORECARD path, relative to --self unless absolute
   --src DIR        origin tree the member files are resolved against
-                   (default: $UFO_SRC, else the first existing of
+                   (default: the pin's clone when a pin is active, else
+                   $UFO_SRC, else the first existing of
                    ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha)
+  --pin FILE       origin pin (kumitate-origin-pin-v1); asserts the tree's
+                   HEAD and prints src-rev= in the verdict
+                   (default: <self>/${PIN_REL}, self = the --self repo)
   --row ID         check only this registry row (repeatable, e.g. --row S8)
   --json           one machine-readable object on stdout
   --strict         promote warn-level findings to failure
@@ -421,16 +702,17 @@ function summarize(findings, strict) {
   return { errors, warnings, drift: errors > 0 || (Boolean(strict) && warnings > 0) };
 }
 
-function renderVerdict(verdict, totals, findings, strict) {
+function renderVerdict(verdict, totals, findings, strict, srcRev) {
+  const tail = srcRev ? ` src-rev=${srcRev.slice(0, 12)}` : '';
   if (verdict === 'MATCH') {
     return `CLAIMS: MATCH (rows=${totals.rows} yes=${totals.yes} notes=${totals.notes}`
-      + ` sections=${totals.sections} adv=${totals.warnings})`;
+      + ` sections=${totals.sections} adv=${totals.warnings}${tail})`;
   }
   if (verdict === 'DRIFT') {
     const shown = findings.filter((f) => f.severity === 'error' || Boolean(strict));
     const parts = shown.slice(0, 6).map((f) => `${f.kind} row=${f.row} ${f.detail}`);
     if (shown.length > parts.length) parts.push(`+${shown.length - parts.length} more`);
-    return `CLAIMS: DRIFT (${parts.join('; ')})`;
+    return `CLAIMS: DRIFT (${parts.join('; ')}${tail ? `;${tail}` : ''})`;
   }
   return null;
 }
@@ -439,6 +721,7 @@ function failClosed(opts, token, detail, started) {
   const body = {
     contract: CONTRACT, mode: 'check',
     self: opts.self, scorecard: opts.scorecard, src: opts.src,
+    pin: opts.pinInfo ?? null, srcRev: opts.srcRev ?? null,
     options: { row: opts.row, strict: Boolean(opts.strict), json: Boolean(opts.json) },
     rows: [],
     findings: [{ severity: 'error', kind: token, row: '-', detail }],
@@ -502,8 +785,16 @@ function tally(rows) {
 }
 
 function runCheck(opts, started) {
-  const probe = probeSections({ self: opts.self, scorecard: opts.scorecard, src: opts.src });
-  if (!probe.ok) return failClosed(opts, probe.kind, probe.detail, started);
+  const origin = resolveOrigin(opts);
+  const runOpts = {
+    ...opts,
+    src: origin.ok ? origin.src : (opts.src ?? null),
+    srcRev: origin.ok && origin.pin !== null ? origin.pin.srcRev : null,
+    pinInfo: origin.pin ?? null,
+  };
+  if (!origin.ok) return failClosed(runOpts, origin.kind, origin.detail, started);
+  const probe = probeSections({ self: opts.self, scorecard: opts.scorecard, src: origin.src });
+  if (!probe.ok) return failClosed(runOpts, probe.kind, probe.detail, started);
   const scorecardPath = opts.scorecard.startsWith('/') ? opts.scorecard : join(opts.self, opts.scorecard);
 
   const known = new Set(probe.rows.map((r) => r.id));
@@ -521,7 +812,8 @@ function runCheck(opts, started) {
   if (opts.json) {
     process.stdout.write(`${JSON.stringify({
       schema: CONTRACT, contract: CONTRACT, mode: 'check',
-      self: opts.self, scorecard: scorecardPath, src: opts.src,
+      self: opts.self, scorecard: scorecardPath, src: runOpts.src,
+      pin: runOpts.pinInfo, srcRev: runOpts.srcRev,
       options: { row: opts.row, strict: Boolean(opts.strict), json: true },
       rows, findings, totals, verdict, durationMs: Date.now() - started,
     }, null, 2)}\n`);
@@ -532,7 +824,7 @@ function runCheck(opts, started) {
     }
     for (const f of findings) lines.push(`CLAIMS  ${f.severity.padEnd(5)} ${f.kind.padEnd(24)} row=${f.row}  ${f.detail}`);
     lines.push('SUMMARY: errors=' + totals.errors + ' warnings=' + totals.warnings);
-    lines.push(renderVerdict(verdict, totals, findings, opts.strict));
+    lines.push(renderVerdict(verdict, totals, findings, opts.strict, runOpts.srcRev));
     process.stdout.write(`${lines.join('\n')}\n`);
   }
   return verdict === 'MATCH' ? 0 : 1;
@@ -781,6 +1073,103 @@ function selfTest() {
       };
     });
 
+    /* round-36 ─ PIN v1 (`kumitate-origin-pin-v1`) ------------------------ */
+    const PIN_ENV = { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_TERMINAL_PROMPT: '0' };
+    const gitRun = (dir, args) => spawnSync('git', ['-C', dir, ...args], {
+      encoding: 'utf8', timeout: 60_000, env: { ...process.env, ...PIN_ENV },
+    });
+    /* A fixture origin tree that IS a git repo: mk()'s fixture files, committed. */
+    const pinTree = (name) => {
+      const g = mk(name);
+      let r = gitRun(g.src, ['init', '-q']);
+      if (r.status !== 0) return { ...g, head: null, why: `init exit=${r.status}` };
+      r = gitRun(g.src, ['add', '-A']);
+      if (r.status !== 0) return { ...g, head: null, why: `add exit=${r.status} ${(r.stderr ?? '').trim().slice(0, 60)}` };
+      r = gitRun(g.src, ['-c', 'user.name=fx', '-c', 'user.email=fx@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'fixture pin']);
+      if (r.status !== 0) return { ...g, head: null, why: `commit exit=${r.status} ${(r.stderr ?? '').trim().slice(0, 60)}` };
+      r = gitRun(g.src, ['rev-parse', 'HEAD']);
+      const head = (r.stdout ?? '').trim().toLowerCase();
+      return { ...g, head: r.status === 0 && /^[0-9a-f]{40}$/.test(head) ? head : null, why: `rev-parse exit=${r.status}` };
+    };
+    const pinFile = (name, body) => {
+      const p = join(tmp, `${name}.json`);
+      writeFileSync(p, `${JSON.stringify({ contract: 'kumitate-origin-pin-v1', repo: 'ufo-fsd-alpha', recreate: 'git clone <remote> <clone> && git -C <clone> checkout <revision>', verified_at: '2026-10-21', ...body }, null, 2)}\n`);
+      return p;
+    };
+    // GIT_CEILING_DIRECTORIES keeps "not a repository" deterministic even when
+    // the host's tmpdir sits inside some other checkout.
+    const pinRun = (argv) => runClaims(argv, { GIT_CEILING_DIRECTORIES: tmp });
+
+    const pinOk = pinTree('pin-match');
+    const pinOkFile = pinFile('pin-match', { revision: pinOk.head ?? '0'.repeat(40), clone: pinOk.src });
+    check('PIN match: --pin resolves src from the clone and the verdict names src-rev=', () => {
+      if (pinOk.head === null) return { ok: false, detail: `git fixture unavailable: ${pinOk.why}` };
+      const want = `CLAIMS: MATCH (rows=2 yes=2 notes=2 sections=2 adv=0 src-rev=${pinOk.head.slice(0, 12)})`;
+      const r = pinRun(['--self', pinOk.self, '--pin', pinOkFile]);
+      return { ok: r.status === 0 && verdictLine(r) === want, detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}` };
+    });
+
+    const pinDefault = pinTree('pin-default');
+    {
+      const p = join(pinDefault.self, '.ufo/pins/origin.json');
+      mkdirSync(dirname(p), { recursive: true });
+      writeFileSync(p, `${JSON.stringify({ contract: 'kumitate-origin-pin-v1', revision: pinDefault.head ?? '0'.repeat(40), clone: pinDefault.src }, null, 2)}\n`);
+    }
+    check('PIN default: <--self>/.ufo/pins/origin.json is discovered with no --pin/--src', () => {
+      if (pinDefault.head === null) return { ok: false, detail: `git fixture unavailable: ${pinDefault.why}` };
+      const want = `CLAIMS: MATCH (rows=2 yes=2 notes=2 sections=2 adv=0 src-rev=${pinDefault.head.slice(0, 12)})`;
+      const r = pinRun(['--self', pinDefault.self]);
+      return { ok: r.status === 0 && verdictLine(r) === want, detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}` };
+    });
+
+    const pinBad = pinTree('pin-mismatch');
+    const pinBadFile = pinFile('pin-mismatch', { revision: 'f'.repeat(40), clone: pinBad.src });
+    check('PIN mismatch: HEAD != pin.revision → SRC_REV_MISMATCH exit 2, no scored verdict', () => {
+      const r = pinRun(['--self', pinBad.self, '--pin', pinBadFile]);
+      return {
+        ok: r.status === 2 && verdictLine(r).includes('FAIL-CLOSED (SRC_REV_MISMATCH') && !r.stdout.includes('CLAIMS: MATCH'),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+        failClosed: ['SRC_REV_MISMATCH'],
+      };
+    });
+
+    const pinNoRepo = mk('pin-norepo');
+    const pinNoRepoFile = pinFile('pin-norepo', { revision: 'a'.repeat(40), clone: pinNoRepo.src });
+    check('PIN non-repo: a clone that is not a git repository → SRC_REV_UNVERIFIABLE exit 2', () => {
+      const r = pinRun(['--self', pinNoRepo.self, '--pin', pinNoRepoFile]);
+      return {
+        ok: r.status === 2 && verdictLine(r).includes('FAIL-CLOSED (SRC_REV_UNVERIFIABLE'),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+        failClosed: ['SRC_REV_UNVERIFIABLE'],
+      };
+    });
+
+    check('PIN malformed: an explicit --pin that is absent is fail-closed, never "no pin"', () => {
+      const r = pinRun(['--self', green.self, '--pin', join(tmp, 'no-such-pin.json')]);
+      return {
+        ok: r.status === 2 && verdictLine(r).includes('FAIL-CLOSED (PIN_MALFORMED'),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+        failClosed: ['PIN_MALFORMED'],
+      };
+    });
+    check('PIN malformed: a short revision is refused (no prefix match)', () => {
+      const g = pinTree('pin-shortrev');
+      const f = pinFile('pin-shortrev', { revision: '31c465f1', clone: g.src });
+      const r = pinRun(['--self', g.self, '--pin', f]);
+      return {
+        ok: r.status === 2 && verdictLine(r).includes('FAIL-CLOSED (PIN_MALFORMED'),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+      };
+    });
+
+    check('PIN absent: no pin file leaves the verdict byte-identical (no src-rev= segment)', () => {
+      const r = pinRun(['--self', green.self, '--src', green.src]);
+      return {
+        ok: r.status === 0 && verdictLine(r) === GREEN_MATCH && !r.stdout.includes('src-rev='),
+        detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+      };
+    });
+
     // usage
     check('ROW_UNKNOWN: unknown --row is a usage refusal, exit 64', () => {
       const g = mk('row-unknown');
@@ -876,7 +1265,10 @@ export { walkFiles, parseRegistry, resolveSrcDefault, SCORECARD_FILE, CORPUS_DIR
 /* ------------------------------------------------------------------- argv */
 
 function parseArgs(argv) {
-  const opts = { self: DEFAULT_SELF, scorecard: SCORECARD_FILE, src: null, row: [], json: false, strict: false, selftest: false, help: false };
+  const opts = {
+    self: DEFAULT_SELF, scorecard: SCORECARD_FILE, src: null, pin: null, row: [], json: false,
+    strict: false, selftest: false, help: false, fidelity: false, ratchet: null,
+  };
   const need = (flag, v) => {
     if (v === undefined || v.trim() === '' || v.startsWith('-')) {
       process.stdout.write(`claims-check: ${flag} needs a value\n${USAGE}`);
@@ -889,7 +1281,10 @@ function parseArgs(argv) {
     if (a === '--self') { opts.self = resolve(need(a, argv[++i])); continue; }
     if (a === '--scorecard') { opts.scorecard = need(a, argv[++i]); continue; }
     if (a === '--src') { opts.src = resolve(need(a, argv[++i])); continue; }
+    if (a === '--pin') { opts.pin = resolve(need(a, argv[++i])); continue; }
     if (a === '--row') { opts.row.push(need(a, argv[++i])); continue; }
+    if (a === '--fidelity') { opts.fidelity = true; continue; }
+    if (a === '--fidelity-ratchet') { opts.ratchet = resolve(need(a, argv[++i])); continue; }
     if (a === '--json') { opts.json = true; continue; }
     if (a === '--strict') { opts.strict = true; continue; }
     if (a === '--selftest' || a === '--self-test') { opts.selftest = true; continue; }
@@ -897,10 +1292,9 @@ function parseArgs(argv) {
     process.stdout.write(`claims-check: unsupported argument: ${a}\n${USAGE}`);
     process.exit(64);
   }
-  // The origin default is resolved here (never for --selftest/--help, which win
-  // first): a bare check run gets `$UFO_SRC` or the first existing candidate,
-  // while `--selftest` stats no live path at all.
-  if (opts.src === null && !opts.selftest && !opts.help) opts.src = resolveSrcDefault();
+  // The origin tree — and whether a pin asserts it — is resolved in `runCheck`
+  // (never for `--selftest`/`--help`, which exit first), so a bare check run
+  // stats no live path until it is actually about to score one.
   return opts;
 }
 
@@ -911,6 +1305,7 @@ function main() {
   const opts = parseArgs(process.argv.slice(2));
   if (opts.help) { process.stdout.write(USAGE); process.exit(0); }
   if (opts.selftest) process.exit(selfTest());
+  if (opts.fidelity) process.exit(runFidelity(opts));
   process.exit(runCheck(opts, started));
 }
 

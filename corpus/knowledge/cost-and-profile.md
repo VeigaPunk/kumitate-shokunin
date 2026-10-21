@@ -13,14 +13,14 @@ tokens, usage_source, usd: Option}; `NativeCostLedger` {seats, round_totals,
 mission_cumulative, usd_estimate, degraded}. All `deny_unknown_fields`.
 
 Judge call sites (native.rs judgment order):
-1. `:481` `require_cost_ledger_when_budgeted` — `tokensPerMission > 0` +
+1. `:83` `require_cost_ledger_when_budgeted` — `tokensPerMission > 0` +
   absent ledger → invalid (v1 trap: v1 forbids the field, so v1 + positive
   budget + absent ledger can never satisfy; a present ledger already died at
   `validate_profile`).
 2. `:490` profile bounds (`NativeProfileBounds::from_parsed` — lives in
    `native_profile.rs`, not execution_profile.rs).
-3. `:519-527` `validate_cost_ledger` — seat pass → lineage walk → totals pass.
-4. `:193-198` `mission_cumulative.tokens_in + tokens_out` →
+3. `:98` `validate_cost_ledger` — seat pass → lineage walk → totals pass.
+4. `:193-198` mission_cumulative.tokens_in + tokens_out →
    `round_stop_outcome` (state.rs:380-399): `tokensPerMission > 0` &&
    cumulative ≥ it → `HonestyBrake` — the ONLY cost-derived stop.
    `degraded`/`usd`/`usd_estimate` never reach a stop.
@@ -147,29 +147,29 @@ below are fully qualified against the current source.
 - **deadline table.** `NativeDeadlines` is six `u64` tiers —
   `orchestrator_ms, planner_ms, thinking_ms, distiller_ms, mechanical_ms,
   labrat_ms` (`native_profile.rs:105-112`) — whose `_ms` wire suffix "renaming
-  would break serde" (`native_profile.rs:102`). `from_profile_entry` requires
-  `nativeProfiles.{profile}.deadlines` (`native_profile.rs:204-209`) and each
+  would break serde" (`native_profile.rs:123`). `from_profile_entry` requires
+  `nativeProfiles.{profile}.deadlines` (`native_profile.rs:218`) and each
   tier as a positive `as_u64` or `must be a positive integer`
-  (`native_profile.rs:210-220`). `deadline_ms` (`native_profile.rs:240-257`)
+  (`native_profile.rs:250`). `deadline_ms` (`native_profile.rs:240-257`)
   is an exhaustive match on `NativeAgentRole`: Main/Planner/Distiller/Labrat
   get dedicated tiers; Critic|Connector|Revenger|Reviewer|Sentinel →
   `thinking_ms`; Executor|MutationTester|Scout|Simplifier|Scribe →
   `mechanical_ms` — so "a new role cannot inherit a silent default bound"
   (`native_profile.rs:236-239`).
 - **bounds + bare selector.** `NativeProfileBounds { deadlines, backpressure }`
-  (`native_profile.rs:118-121`) parses via `from_parsed`
+  (`native_profile.rs:185`) parses via `from_parsed`
   (`native_profile.rs:175-181`). Backpressure reads without cloning:
   `backpressure_from_profile_entry` (`native_profile.rs:123-133`) takes only
   the `recovery.backpressure` subtree and `unwrap_or_default()`s, because
   `validate_native_recovery` closed the recovery object first
-  (`native_profile.rs:124-127`); `backpressure_from_json_value`
+  (`native_profile.rs:138`); `backpressure_from_json_value`
   (`native_profile.rs:139-170`) accepts exactly the four keys
   `domainCooldownMs|herdThreshold|herdWindowMs|maxConcurrentPerDomain`
-  (`native_profile.rs:142-147`) and yields `None` on any unknown key or
+  (`native_profile.rs:148`) and yields `None` on any unknown key or
   mistyped present field (`native_profile.rs:149-151`) — it "Matches
   `serde_json::from_value::<BackpressureConfig>` on the success/failure
   envelope" (`native_profile.rs:136-138`), with defaults `60_000/3/30_000/0`
-  (`native_profile.rs:164-168`). `omp_bare_selector`
+  (`native_profile.rs:164-168`). omp_bare_selector
   (`native_profile.rs:260-276`) demands a typed `provider/model:effort`
   route: parse failure and `effort.is_none()` share the one message `OMP
   route must be a typed provider/model:effort selector: {route}`
@@ -190,25 +190,25 @@ read `config/ufo.json` via `read_file_bounded` under `MAX_UFO_CONFIG_BYTES`
 Four tests, mounted at the CRATE ROOT (`lib.rs:1174-1176` —
 `#[cfg(test)] #[path = "cost_ledger_validation_tests.rs"] mod
 cost_ledger_validation_tests;`); `use super::*;`
-(`cost_ledger_validation_tests.rs:1`) reaches `validate_cost_ledger` +
+(`cost_ledger_validation_tests.rs:155`) reaches `validate_cost_ledger` +
 `require_cost_ledger_when_budgeted` through the crate-root re-exports
 (`lib.rs:75-78`). Fixtures make only ledger semantics decide the verdict:
 `main_seat` = `NativeAgentRole::Main` + `NonZeroU8::MIN`
-(`cost_ledger_validation_tests.rs:15-20`); `ledger_for_seat` binds the seat
+(`cost_ledger_validation_tests.rs:34`); `ledger_for_seat` binds the seat
 route from `role_route(seat_key.role).expect("route").requested`
 (`cost_ledger_validation_tests.rs:28`) with `usage_source:
 NativeUsageSource::Transcript`, `usd: None`, `degraded: false`,
-`usd_estimate: None` (`cost_ledger_validation_tests.rs:34-45`);
+`usd_estimate: None` (`cost_ledger_validation_tests.rs:57`);
 `shell_handoff` wraps it in a full handoff — `profile:
 NATIVE_HANDOFF_PROFILE_V2`, round 2 (`cost_ledger_validation_tests.rs:51-53`),
 `provenance: CoreRuntimeProvenance::paper_parity()`
-(`cost_ledger_validation_tests.rs:84`), `cost_ledger: Some(ledger)`
-(`cost_ledger_validation_tests.rs:91`). `write_prior_lineage`
+(`cost_ledger_validation_tests.rs:103`), `cost_ledger: Some(ledger)`
+(`cost_ledger_validation_tests.rs:113`). `write_prior_lineage`
 (`cost_ledger_validation_tests.rs:101-140`, "Mirror
-`native_tests::write_chain_receipt`" `cost_ledger_validation_tests.rs:97-98`)
+`native_tests::write_chain_receipt`" `cost_ledger_validation_tests.rs:109`)
 materializes exactly what the lineage walk discovers:
 `.ufo/native-trials/predrun1/handoff.json` with `round_totals` 50/50 plus
-optional `mission_cumulative` (`cost_ledger_validation_tests.rs:106-122`),
+optional `mission_cumulative` (`cost_ledger_validation_tests.rs:38`),
 and `.ufo/receipts/predrun1/round-chain.json` keyed by `plan_digest` with
 `handoff_digest = sha256_hex` of those bytes
 (`cost_ledger_validation_tests.rs:123-139`). Every test drives the current
@@ -246,7 +246,7 @@ dispatcher's tie sequence — seats pass, then
   the V2 shell via struct-update
   (`cost_ledger_validation_tests.rs:284-296`). The refusal must contain all
   of `cost_ledger is required when budgets.tokensPerMission > 0`
-  (`cost_ledger_validation_tests.rs:300-303`), `v1 profile trap`
+  (`cost_ledger_validation_tests.rs:360`), `v1 profile trap`
   (`cost_ledger_validation_tests.rs:304`) and `omp-native-v1 forbids
   cost_ledger` (`cost_ledger_validation_tests.rs:305`) — the trap named in
   this note's header prose is under active assertion.
@@ -301,13 +301,13 @@ only dispatch-routing authority.
   (`execution_profile_tests.rs:171-179`), gates effort route-generically
   (`matches!(suffix, "low" | "medium" | "high" | "xhigh" | "max")` or bare,
   `execution_profile_tests.rs:184-190`), refuses duplicate/wrapping bare
-  steps (`execution_profile_tests.rs:191-204`) and any `"gemini"` provider
+  steps (`execution_profile_tests.rs:22`) and any `"gemini"` provider
   (`execution_profile_tests.rs:210-213`) — deliberately route-generic so a
   re-chartered table "compiles without a test edit"
   (`execution_profile_tests.rs:206-209`).
   `only_the_omp_profile_admits_the_opencode_go_hop`
   (`execution_profile_tests.rs:217-269`): `uses_opencode_go` holds iff
-  `substrate == Substrate::Omp` (`execution_profile_tests.rs:223-230`); the
+  `substrate == Substrate::Omp` (`execution_profile_tests.rs:231`); the
   m_zfl cascade (zai → charm-hyper → opencode-go → devin, on
   Distiller/Labrat/MutationTester/Revenger) and the m_flash cascade
   (charm-hyper → alibaba-token-plan → opencode-go → devin, on Simplifier)
@@ -321,9 +321,9 @@ only dispatch-routing authority.
   last route `None`, the no-wrap invariant
   (`execution_profile_tests.rs:286-308`). Cross-substrate/cross-role chain
   members don't advance, and a `current` absent from the chain returns None
-  "via `position()`" (`execution_profile_tests.rs:310-337`). The 9-class
+  "via `position()`" (`execution_profile_tests.rs:307`). The 9-class
   matrix pins `(permits_advance, is_temporary, is_authorization)` for every
-  variant (`execution_profile_tests.rs:339-368`) — for `Unknown`'s bounded
+  variant (`execution_profile_tests.rs:276`) — for `Unknown`'s bounded
   same-route retry and `PermissionDenied`'s `authorization_unavailable`
   reporting, which have no driver/host observer, "this table is their only
   pin" (`execution_profile_tests.rs:341-346`).
@@ -338,9 +338,9 @@ only dispatch-routing authority.
 - **Hash + cache.** `profile_hash` is deterministic, `.len() == 71`
   (`execution_profile_tests.rs:415-421`), changes under
   `with_planner_policy(PlannerPolicy::KimiK3)` and across substrates
-  (`execution_profile_tests.rs:421-428`); `canonical_cached` matches the
+  (`execution_profile_tests.rs:404`); `canonical_cached` matches the
   uncached profile and reuses one allocation — `Arc::ptr_eq`
-  (`execution_profile_tests.rs:431-440`); `canonical_profile_hash` equals the
+  (`execution_profile_tests.rs:415`); `canonical_profile_hash` equals the
   cached profile's hash (`execution_profile_tests.rs:442-449`).
   `planner_route()` is `None` for all seven canonical profiles — the planner
   is admitted only through an explicit policy, then yields the cross-substrate

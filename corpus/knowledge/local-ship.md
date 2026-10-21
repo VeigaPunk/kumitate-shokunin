@@ -199,3 +199,82 @@ hex.
   `state: ApplyJournalState`, but `ApplyJournalState` is not re-exported
   (`lib.rs:147-151`) — cross-crate consumers must match `{ .. }`
   (`main.rs:1849`); same for `ApplyJournalRecoveryReport/Error`.
+
+## `crates/ufo-core-runtime/src/local_ship.rs`
+
+The only mutation transaction: replace one file, bound-run a verifier, commit iff
+it exits 0, else restore the exact preimage. The veto order is fixed before any
+path work.
+
+- `apply_local_ship` (`:1644-1831`) is the entry point.
+- `validate_bounds` (`:1872-1885`) rejects out-of-range bounds.
+- `normalize_sha256` (`:2202-2218`) accepts the sha256: prefix, lowercasing mixed case.
+- `refuse_shell_or_inferred_verifier` (`:2126-2200`) applies the basename denylist.
+- `canonical_workspace_root` (`:1887-1913`) canonicalizes the apply root.
+- `refuse_external_effect_target` (`:2023-2043`) runs before the path walk, so ../.env is external_effect, not path_escape.
+- `resolve_regular_file` (`:1915-1967`) precedes the lock claim, so a refused target leaves no lock dir.
+- `claim_apply_lock` (`:777-1006`) is held RAII across check, journal, replace, verify, finish; a hardlinked target is refused before it.
+- `JournalOp` (`:217-269`) writes the preimage before the pending entry, so a crash between them leaves only an orphan preimage.
+- `run_verifier` (`:2355-2385`) maps nonzero exit, timeout, oversized output and pipe faults onto a RolledBack receipt; the restored digest reuses before_sha256 and is never re-read.
+- `atomic_write` (`:2269-2334`) is create_new 0600, fsync, rename, fsync.
+
+## `crates/ufo-core-runtime/src/bounded_fs.rs`
+
+The shared bounded-read discipline every caller uses instead of a private copy.
+
+- `read_bounded_ident` (`:112-139`) classifies with metadata, opens O_CLOEXEC|O_NONBLOCK, fstat-rechecks, then reads bounded.
+- `open_nonblock_read` (`:70-79`) never blocks on a writer-less FIFO; O_NOFOLLOW is deliberately absent so symlinked contract files still read.
+- `check_shape` (`:81-92`) rejects non-regular and over-ceiling targets.
+- `check_identity` (`:95-109`) enforces the optional (dev,ino) binding on unix.
+- `read_bounded` (`:142-144`) passes no identity, so only the _ident form gives the liveness binding.
+- `BoundReadError` (`:27-39`) carries Io, NotRegular, TooLarge, GrewPast, IdentityMismatch.
+
+The post-read length check is the final authority: take(max+1) reads one byte
+past the ceiling, so mid-read growth is GrewPast, never a silent truncation.
+
+## `crates/ufo-core-runtime/src/bounded_fs_tests.rs`
+
+Five tests pin the discipline at its edges.
+
+- `read_bounded_accepts_exact_ceiling` (`:8-15`) proves the ceiling is inclusive.
+- `read_bounded_rejects_too_large_at_classify` (`:18-27`) pins the typed TooLarge refusal at classify time.
+- `read_bounded_rejects_directory_as_not_regular` (`:30-41`) pins NotRegular and its display text.
+- `read_bounded_ident_rejects_swapped_identity_and_accepts_match` (`:77-107`) plants another inode's (dev,ino) and demands IdentityMismatch, then accepts the matching twin.
+
+`read_bounded_rejects_growth_past_ceiling_mid_read` (`:45-73`) races up to 500
+appends and only accepts GrewPast; an Ok or TooLarge outcome retries, because
+growth, not scheduling, must be observed. Only the identity test supplies a
+(dev,ino); the plain reader is tested without one.
+
+## `crates/ufo-core-runtime/src/fs_durability.rs`
+
+Shared durability primitives returning bare io::Result so no caller forks a
+second spelling.
+
+- `fsync_dir` (`:14-26`) opens and syncs a directory on unix and is a no-op elsewhere.
+- `create_0600_tmp` (`:66-78`) opens create_new at 0600 with a prefix-pid-nanos name, refusing planted symlinks.
+- `hard_link_tmp` (`:83-89`) maps AlreadyExists to Ok(false), a lost race rather than an error.
+- `TmpGuard` (`:30-47`) removes an armed temp on drop and disarms after publish.
+- `Drop` (`:49-55`) removes only the path the guard holds; arming after create_new keeps a contender's temp safe.
+- `now_nanos` (`:93-97`) maps a pre-epoch clock to 0.
+- `now_millis` (`:101-107`) saturates at u64::MAX instead of wrapping.
+
+Inline tests pin the primitives: `fsync_dir_accepts_a_real_directory` (`:124-128`)
+and `tmp_guard_cleans_on_drop_but_not_after_disarm` (`:171-184`), plus
+create-new link semantics and nonce non-collision.
+
+## `crates/ufo-core-runtime/src/local_ship_tests.rs`
+
+The conformance suite pinning the transaction end to end.
+
+- `commits_when_real_grep_sees_candidate` (`:47-79`) and the miss twin pin both terminal states.
+- `rolls_back_when_real_grep_misses_preimage` (`:82-111`) pins the rollback receipt.
+- `timeout_restores_preimage` (`:114-138`) pins restore on timeout.
+- `incomplete_pipe_verifier_is_not_a_timeout` (`:142-186`) proves only a real timeout sets timed_out.
+- `refuses_path_escape_symlink_hash_and_external_effect` (`:211-281`) pins the veto order.
+- `refuses_hardlinked_target` (`:285-310`) pins the single-name inode rule.
+- `apply_journal_recovery_rolls_back_owned_pending` (`:772-790`) pins digest-proven rollback.
+- `apply_journal_recovery_preserves_user_edits` (`:966-988`) pins the never-touch raced-edit arm.
+- `apply_journal_same_path_pending_resolves_chronologically` (`:1342-1383`) pins per-path ordering.
+- `apply_lock_three_way_lowest_named_wins` (`:2434-2475`) pins lock election.
+- `rollback_receipt_survives_a_failed_journal_finalize` (`:1884-1940`) pins receipt durability.

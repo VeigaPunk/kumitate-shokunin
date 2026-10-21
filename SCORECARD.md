@@ -282,27 +282,27 @@ boundary:
 
 <!-- kumitate-proxy-v1
 A=7
-C=13
+C=14
 C1=19
 C1_total=19
-C2=79
-C2_total=79
+C2=82
+C2_total=82
 S_members=88
 S_sections=88
 R_members=92
-R_sections=83
+R_sections=92
 coverage_script=10
-coverage_runtime=9
+coverage_runtime=10
 C1k=5
 C1k_total=5
 K_members=51
 K_sections=51
 coverage_kimi=10
 pin.cite-check=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
-pin.surface-probe=148cbf85ce4c7682a4ca4a663b730d28f4c41698100f7a0313f424c7b0ecb52e
+pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=5852fefd6dc061c6123e9e5e791271fafddf157d520bd6a43aa32a7c3a81fdfb
-pin.claims-check=e9a21b441f1216bf41d1cca037b36021c581ec7892df3bf973295f9321b0f61b
+pin.proxy-check=f9416d666d390c03804319f4524f2be552e49f4c1bfa704cb94321159814f1d9
+pin.claims-check=5a03ad08f8937ba002601d8f65ba51cc17e1322aae809b3abc0f8b82aa2f373a
 pin.kimi-census=7818970b80d4951b8edf15dcc8c5a16efe57f457f956a5ce019f049068538156
 -->
 
@@ -313,7 +313,7 @@ pin.kimi-census=7818970b80d4951b8edf15dcc8c5a16efe57f457f956a5ce019f049068538156
 | operability | 8 | `f_O = (A+C)/(A+C+3)` with A=7 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`, and since round 34 `scripts/sources-check.mjs`) and C=13 (`## Verifiable checklist`; items 12–13 = the sources-registry gate and its hermetic suite) ⇒ 20/23 ≈ 0.870 ⇒ 8 — round 34 is an f_O walk (17/20 → 20/23), integer held; 9 needs A+C ≥ 27 (7 more honest items). Round 34 also gives every gate its `## Gate registry` row in `SKILL.md` (PROTOCOL §Gate standard; 0 → 7 rows). Round 35 (integer held, `f_O` unchanged): the proxy's S/R section terms count DISTINCT in-family member identities per layer, so the duplicate-one/drop-one note mutation is killed — mutation kills 0/2 → 2/2, proxy selftest 104 → 109 (`## Move log` round 35). Checklist at round 35 open: `CHECKLIST: 9/13 pass` (items 620, 625, 627, 628 red); at round-35 close 12/13 (620 red); the C term counts listed items, not passing ones (`## Limits` round-35 entry) | round 35 (gate discrimination; integer held) |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 88/88)` = **10** at the pinned origin `31c465f1` (round 35). Round open measured the same pin at `floor(10 × 8/8 × 86/88)` = **9**: upstream `964f443e`→`31c465f1` deleted 5 S8 members and added 2 (`S_members` 91 → 88; `S_sections` 86 counted, 5 note sections unresolved). Round 35 re-censused S8 (63 → 60 members, two new sections, departed members kept as history) and re-verified every changed member's anchors (56 fidelity seats). `C1s/C1s_total` = `yes` rows / all `S*` rows (**8/8**); `S_sections` = DISTINCT member identities the claims gate verifies in those rows' notes (since round 35); `S_members` = `ls scripts/*.mjs \| wc -l` → 70 + `find scripts -mindepth 2 -type f \| wc -l` → 18 at `31c465f1`. History: 91/91 ⇒ 10 at `964f443e` (rounds 32–34). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after in `## Move log` | round 35 (re-census at `31c465f1`) |
-| coverage:runtime-layer | 9 | `floor(10 × 11/11 × 83/92)` = **9** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
+| coverage:runtime-layer | 10 | `floor(10 × 11/11 × 83/92)` = **9** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
 | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 51/51)` = **10** — round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 35 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
@@ -396,6 +396,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 36 | operability (pinned verdicts + an anchor-fidelity gate term; integer held at 8) | `CHECKLIST: 11/13 pass`; `SURFACE_PROBE: DRIFT (… errors=3 …)` at the pin; `PROXY: DRIFT (C2_TOTAL_DRIFT 79/80; AXES_DRIFT 10/9)`; fidelity arm on pristine 0614092 `nonok=543` (anchors=1494) | `CHECKLIST: 14/14 pass`; `SURFACE_PROBE: CLEAN (… errors=0 warnings=1 known=1 src-rev=31c465f15669)`; `PROXY: MATCH (A=7 C=14 operability=8; C2=81/81; S=88/88; R=92/92; K=51/51; pins=6 match; src-rev=31c465f15669)`; `FIDELITY: CLEAN (notes=20 anchors=1574 src-rev=31c465f15669)`; `f_O` 20/23 → 21/24 | `.ufo/waves/round-36/baseline/` vs `.ufo/waves/round-36/final/`; wave reports `ExecSurface*`, `ExecProxyPin`, `ExecClaimsPin`, `ExecClaimsFidelity`, `RevManifestDigest`, `MutDigest`, `CriticFidelityHeuristic`, `CriticPinSemantics`; `corpus/lessons/round-36.md` |
+| 36 | coverage:runtime-layer 9 → 10 | `CLAIMS: MATCH (… sections=175 adv=6)` with R5/R7 `form=topic sections=0`; R distinct in-family 83/92 | R5 4 + R7 5 member sections at `31c465f1`, 80/80 anchors on-line; `CLAIMS: MATCH (rows=2 … sections=9 adv=0)`; R 92/92 ⇒ 10 | `knowledge/native-admission-detail.md`, `knowledge/local-ship.md`; `ReviewNumbersC2`; `SCORECARD.md ## Axes` runtime row |
 | 35 | operability (gate discrimination; integer held at 8) | `scripts/proxy-check.mjs` summed in-family section OCCURRENCES for `S_sections`/`R_sections`: the duplicate-one/drop-one note mutation (one member's section duplicated into a second note, another member's section deleted) left both terms unchanged — `MUTATION_KILLS 0/2` on master `1770305` (S 86 → 86, R 83 → 83); proxy selftest 104/104 | the terms count DISTINCT in-family member identities (`section.file`) per layer: `MUTATION_KILLS 2/2` on the round tree (S 88 → 87, R 83 → 82; the stanza then reads `S_SECTIONS_DRIFT` / `R_SECTIONS_DRIFT`); selftest **109/109** (+5: S and R duplicate/drop, distinct control, and — after the falsify wave's mutation seat left the row-scoped and heading-keyed mutants alive — a cross-row case and a heading-alias case, each killing its mutant: 107/109); live S 88 = occurrences 88, R 83 = 83 at `31c465f1`; `f_O` 20/23 unchanged | `bash .ufo/waves/round-35/mutate-distinct.sh.txt --self <tree> --src <clone@31c465f1>`; `node scripts/proxy-check.mjs --selftest`; S023 (killed/survived definitions); measured commit in `LOG.md` round 35 |
 | 35 | coverage:script-layer (9 → 10 at the pinned origin `31c465f1`) | pinned `31c465f1`: `floor(10 × 8/8 × 86/88)` = **9** (`S_MEMBERS_DRIFT declared=91 computed=88`, `S_SECTIONS_DRIFT declared=91 computed=86`); claims gate 5 × `SECTION_FILE_UNRESOLVED` row S8; S8 63 members declared | `floor(10 × 8/8 × 88/88)` = **10**; S8 60 of 60 sections (2 added members sectioned, 5 departed members kept as history bullets), registry cell 63 → 60; changed-member anchors re-verified at the pin by 56 fidelity seats and applied to the S8 note; claims gate S rows MATCH | `node scripts/proxy-check.mjs --src <clone@31c465f1>`; `node scripts/claims-check.mjs --src <clone@31c465f1> --row S8`; S021 (upstream range); measured commit in `LOG.md` round 35 |
 | 35 | coverage:kimi-layer (K1 registry change 3 → 4, pre-registered in round 34; integer held at 10) | `floor(10 × 5/5 × 50/50)` = 10 over the frozen 50; census `KIMI_CENSUS: DRIFT (UNLISTED mcp.json)` exit 1 (root strays 1) | `floor(10 × 5/5 × 51/51)` = **10**; census `KIMI_CENSUS: CLEAN (members=51 checked=51 chain=7 info=4)` exit 0 (strays 0); kimi selftest 45 → **48/48**; strace: 0 open/openat of `mcp.json`, 2 stat-family calls | `node scripts/kimi-census.mjs [--selftest]`; `node scripts/proxy-check.mjs`; `strace -f -e trace=open,openat,openat2 node scripts/kimi-census.mjs \| grep -c mcp.json`; S005, S022 |
@@ -1681,3 +1683,21 @@ row. Live after round 34: operability 8 (below the line — the lowest-axis
 obligation stands), coverage:runtime-layer 9, coverage:script-layer 10
 (terminal), coverage:kimi-layer 10. The nudge is therefore not active; the
 window restarts at round 34 (`sources-registry` entered the capability table).
+
+## Round 36 — limits and round-37 pre-registration (2026-10-21)
+
+Limits, recorded not hidden: FIDELITY v1 gates `elsewhere + absent` only — `dead` (168) and `noid` stay
+printed diagnostics; the pairing is a 14-char adjacent-span heuristic with a clause guard, and a range
+widened to the whole file still reads `ok` (the sweep cannot prove prose truth). PIN v1 asserts the
+commit, not the bytes (a dirty clone at the right HEAD passes) and trusts the pin's own `clone` path;
+`cite-check` and `round-gate --origin` keep the legacy moving-checkout default, so C1's wording covers
+the three pinned gates plus the fidelity sweep, not every gate. `--known` permits only per-entity
+findings (`VERB_UNDECLARED`/`VERB_UNDISPATCHED`); a check that fails without emitting a finding is not
+yet named (`CHECK_UNEXPLAINED` pending). The falsify wave was validated (81 seats, `.ufo/waves/round-36/
+falsify-spec.json`) but not dispatched before the run's budget stop.
+
+Planned next round (candidates, pre-registered, not commitments): (1) `dead`/`noid` ceilings in the
+fidelity ratchet plus a `CHECK_UNEXPLAINED` arm for failed checks with no finding; (2) `cite-check --pin`
+and checklist item 1 at the pin (closes the last moving-checkout verdict); (3) `SRC_TREE_DIRTY` /
+`--show-toplevel` hardening for PIN v1; (4) repo-wide claims advisories 4 → 0 (S2's cross-family
+section and R9's three sibling-suite sections).

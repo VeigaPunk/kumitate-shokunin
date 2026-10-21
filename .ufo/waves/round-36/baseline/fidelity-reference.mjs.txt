@@ -1,0 +1,51 @@
+// L1 reference implementation of FIDELITY v1 — verification only, never production.
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, basename } from 'node:path';
+const SELF = process.argv[2] ?? '/home/vgpnk/Projects/shokunin/kumitate-shokunin';
+const SRC = process.argv[3] ?? '/fast/scratch/kumitate-r36/src';
+const RATCHET = process.argv[4] ?? null;
+const probe = await import(join(SELF, 'scripts/claims-check.mjs')).then((m) => m.probeSections({ self: SELF, src: SRC }));
+function walk(dir, base = '') { const out = []; for (const e of readdirSync(dir)) { const p = join(dir, e); const st = statSync(p); if (st.isDirectory()) out.push(...walk(p, `${base}/${e}`)); else out.push(base + '/' + e); } return out; }
+const files = walk(SRC).map((p) => p.replace(/^\//u, ''));
+const byBase = new Map(); for (const rel of files) { const b = basename(rel); if (!byBase.has(b)) byBase.set(b, []); byBase.get(b).push(rel); }
+const resolve = (t) => { if (t.includes('/')) { const hit = files.filter((p) => p === t || p.endsWith('/' + t)); return hit.length === 1 ? hit[0] : null; } const c = byBase.get(basename(t)) ?? []; return c.length === 1 ? c[0] : null; };
+const isPathLike = (t) => /[/\\]/u.test(t) || /\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml)$/u.test(t);
+const isAnchor = (t) => /^:?\d+(?:-\d+)?$/u.test(t) || /^:?[A-Za-z0-9_][\w./-]*\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml):\d+(?:-\d+)?$/u.test(t);
+const ADJ = 14;
+const spans = (line) => { const out = []; const re = /`([^`]*)`/gu; let m; while ((m = re.exec(line)) !== null) out.push({ t: m[1], s: m.index, e: m.index + m[0].length }); return out; };
+const pair = (sp, k) => { const right = sp.find((x) => x !== sp[k] && x.s - sp[k].e >= -1 && x.s - sp[k].e <= ADJ); if (right && !isAnchor(right.t) && !isPathLike(right.t) && right.t.trim().length >= 3) return right.t; const left = [...sp].reverse().find((x) => x !== sp[k] && sp[k].s - x.e >= 0 && sp[k].s - x.e <= ADJ); if (left && !isAnchor(left.t) && !isPathLike(left.t) && left.t.trim().length >= 3) return left.t; return null; };
+const noteCache = new Map(); const fileCache = new Map();
+const noteLines = (p) => { if (!noteCache.has(p)) noteCache.set(p, readFileSync(p, 'utf8').split('\n')); return noteCache.get(p); };
+const fileLines = (rel) => { if (!fileCache.has(rel)) { try { fileCache.set(rel, readFileSync(join(SRC, rel), 'utf8').split('\n')); } catch { fileCache.set(rel, null); } } return fileCache.get(rel); };
+const stats = new Map();
+let seen = new Set();
+for (const row of probe.rows) for (const sec of row.sections) {
+  if (!sec.file) continue;
+  const key = sec.note + '|' + sec.heading; if (seen.has(key)) continue; seen.add(key);
+  const lines = noteLines(join(SELF, sec.note));
+  let start = -1; let end = lines.length;
+  for (let i = 0; i < lines.length; i += 1) { const h = /^##\s+(.*)$/u.exec(lines[i]); if (h) { if (start >= 0) { end = i; break; } if (h[1].includes(sec.heading)) start = i; } }
+  if (start < 0) continue;
+  const fl = fileLines(sec.file); if (fl === null) continue;
+  const st = stats.get(sec.note) ?? { anchors: 0, ok: 0, elsewhere: 0, absent: 0, dead: 0, noid: 0 };
+  stats.set(sec.note, st);
+  for (let i = start + 1; i < end; i += 1) {
+    const sp = spans(lines[i]); if (sp.length === 0) continue;
+    for (let k = 0; k < sp.length; k += 1) {
+      const t = sp[k].t; let a = null; let b = null;
+      const mp = /^([A-Za-z0-9_][\w./-]*\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml)):(\d+)(?:-(\d+))?$/u.exec(t);
+      if (mp) { if (resolve(mp[1]) !== sec.file) continue; a = Number(mp[2]); b = Number(mp[3] ?? mp[2]); }
+      else { const mb = /^:(\d+)(?:-(\d+))?$/u.exec(t); if (!mb) continue; a = Number(mb[1]); b = Number(mb[2] ?? mb[1]); }
+      st.anchors += 1;
+      if (a < 1 || b > fl.length || a > b) { st.dead += 1; continue; }
+      const sym = pair(sp, k); if (sym === null) { st.noid += 1; continue; }
+      const seg = fl.slice(a - 1, b).join('\n');
+      if (seg.includes(sym)) st.ok += 1;
+      else if (fl.some((l) => l.includes(sym))) st.elsewhere += 1;
+      else st.absent += 1;
+    }
+  }
+}
+let T = { anchors: 0, ok: 0, elsewhere: 0, absent: 0, dead: 0, noid: 0 };
+for (const [n, v] of [...stats].sort()) { if (v.anchors === 0) continue; const nonok = v.elsewhere + v.absent; console.log(`FIDELITY note=${n} anchors=${v.anchors} ok=${v.ok} elsewhere=${v.elsewhere} absent=${v.absent} dead=${v.dead} noid=${v.noid} nonok=${nonok}`); for (const x of Object.keys(T)) T[x] += v[x]; }
+console.log(`FIDELITY_TOTAL anchors=${T.anchors} ok=${T.ok} elsewhere=${T.elsewhere} absent=${T.absent} dead=${T.dead} noid=${T.noid} nonok=${T.elsewhere + T.absent}`);

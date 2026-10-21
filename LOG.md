@@ -1668,3 +1668,32 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   S/R terms match; the K drift is the later `skills/cursor-lane` substrate
   change dispositioned in round 34, recorded not fitted. Admission of the
   landed candidate's status only; no new axis claim.
+
+- 2026-10-21 — round 36 (hyaku block 35–44, attempt 1; lane base master `0614092e0804aaca06642cb3a263a05c1cacc98e`).
+  Upstream read only through the private clone `/fast/scratch/kumitate-r36/src`, detached at
+  `31c465f15669f744848bd9f5d56191c5085670f7` and `chmod a-w`; the pin carries a recreate one-liner
+  (Q15). Fresh baseline before implementation (`.ufo/waves/round-36/baseline/`, 2026-10-21 00:57 −03):
+  `CHECKLIST: 11/13 pass` (620, 625 red); `SURFACE_PROBE: DRIFT (surfaces=2 checks=12 errors=3 warnings=1)`
+  at the pin (`SCRIPT_DIGEST_MISMATCH`, `VERB_UNDECLARED surface`, `SURFACE_UNREACHABLE dispatcher`);
+  `PROXY: DRIFT (C2_TOTAL_DRIFT declared=79 computed=80; AXES_DRIFT coverage 10 vs 9; PIN_UNPINNED
+  sources-check)`; `CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=175 adv=6)` with R5/R7 topic-form;
+  fidelity arm on the pristine tree `nonok=543` (anchors=1494). Two claims, causally separable:
+  **C1 operability (lowest live axis, 8)** — every pinned gate verdict names the revision it scored
+  (`claims-check`, `proxy-check`, `surface-probe` resolve `.ufo/pins/origin.json`, assert
+  `git rev-parse --verify HEAD` with a scrubbed git env, print `src-rev=`); the gates stop writing into
+  the tree they read (dispatcher `status` under `mkdtemp` state + compile cache); the probe concatenates
+  the manifest's declared `digestInputs` order; `--known` pins the one upstream finding with strict
+  staleness; `claims-check --fidelity` (clause-guarded adjacent-symbol pairing, `nonok = elsewhere +
+  absent`, revision-bound per-note ratchet) plus re-anchoring takes the debt to `FIDELITY: CLEAN
+  (notes=20 anchors=1574 src-rev=31c465f15669)`; the checklist grows to 14 items, all green.
+  **C2 coverage:runtime-layer (9 → 10)** — R5's 4 and R7's 5 members gain internals-level sections at
+  the pin (9 new sections, 80/80 anchors on their symbol's line) ⇒ distinct in-family 83 → 92 = 92/92 ⇒
+  `floor(10 × 11/11 × 92/92)` = 10. After: `CHECKLIST: 14/14 pass`; `SURFACE_PROBE: CLEAN (… errors=0
+  warnings=1 known=1 src-rev=31c465f15669)`; `PROXY: MATCH (A=7 C=14 operability=8; C1=19/19 C2=81/81
+  coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=51/51
+  coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)`; `CLAIMS: MATCH (rows=19 yes=19 notes=27
+  sections=184 adv=4 src-rev=31c465f15669)`. Riders: README rows (C2 80 → 81), SOURCES S029–S032
+  (census 28 → 32 rows, exit 0), the pin record and `corpus/knowledge/pinned-evidence.md`. Named
+  limits: `dead` (168) and `noid` anchors are diagnostics, not gated; `cite-check` and `round-gate`
+  stay on the legacy `--src`/`--origin` default; the pin asserts the commit, not the bytes; the
+  falsify wave was validated (81 seats) but not dispatched before the run's budget stop.

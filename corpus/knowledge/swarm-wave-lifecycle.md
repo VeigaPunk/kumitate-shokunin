@@ -59,37 +59,37 @@ no per-lane `model` param.
 floors are imported from the hub as `MAX_SWARM_LANES` / `MIN_SWARM_LANES`
 (`scripts/ufo-swarm-wave.mjs:120`) — never restated.
 
-**Role vocabulary.** `SWARM_ROLES` (`scripts/ufo-swarm-wave.mjs:258`) is the
+**Role vocabulary.** `SWARM_ROLES` (`scripts/ufo-swarm-wave.mjs:131`) is the
 exported closed set: `scout`, `reviewer`, `critic`, `connector`, `sentinel`,
 `executor`, `mutation-tester`, `revenger`, `simplifier`, `scribe`. Planner /
 distiller / labrat / Main are frozen-topology seats, not swarm lanes.
 
-**Plan core.** `planSwarmWave` (`scripts/ufo-swarm-wave.mjs:768`) validates
+**Plan core.** `planSwarmWave` (`scripts/ufo-swarm-wave.mjs:744`) validates
 the spec object against `SPEC_KEYS`, clamps policy through the hard 100
 ceiling, expands template items, refuses `resume_unknown_member` when a
 resume id is absent from this wave's registry and every
 `spec.priorRegistry`, and records hoist telemetry under `plan.compaction`
-when savings meet `MIN_HOIST_SAVINGS` = 512 (`scripts/ufo-swarm-wave.mjs:295`).
+when savings meet `MIN_HOIST_SAVINGS` = 512 (`scripts/ufo-swarm-wave.mjs:77`).
 
-**Dispatch split.** `planToDispatchPayload` (`scripts/ufo-swarm-wave.mjs:1307`)
+**Dispatch split.** `planToDispatchPayload` (`scripts/ufo-swarm-wave.mjs:1282`)
 emits `{schema, wave, policy, counts, registry, taskCall|null, resumeSends}`:
 spawn lanes become one `taskCall = {context, tasks}`; resume lanes become
 `resumeSends` only. Resume-only waves set `taskCall: null`.
 
-**Registry persistence.** `persistWaveRegistry` (`scripts/ufo-swarm-wave.mjs:1464`)
+**Registry persistence.** `persistWaveRegistry` (`scripts/ufo-swarm-wave.mjs:609`)
 runs under `withRegistryLock` on `run`: writes `ufo-swarm-registry-v1`
 `{name → {agentId, item, role, …}}`, refuses cross-wave
 `wave_registry_collision` when a different wave identity would displace
 live handles, and surfaces same-wave `handlesReset` on the payload.
 
-**CLI surface.** `main` (`scripts/ufo-swarm-wave.mjs:1801`) accepts only
+**CLI surface.** `main` (`scripts/ufo-swarm-wave.mjs:610`) accepts only
 `record` (via `mainRecord`) or `plan`/`run`. Usage string
 (`scripts/ufo-swarm-wave.mjs:1355`) names the three verbs; there is no
 `settle` arm. `run` calls `persistWaveRegistry` then
 `planToDispatchPayload`; `plan` emits the plan (or tasks under
 `--emit-tasks`). Godspeed lane prefix is `GODSPEED_INVOCATION`
 (`/skill:godspeed` at `scripts/ufo-swarm-wave.mjs:160`) with terminal
-marker `GODSPEED_MARKER` (`scripts/ufo-swarm-wave.mjs:166`).
+marker `GODSPEED_MARKER` (`scripts/ufo-swarm-wave.mjs:155`).
 
 **Export surface** (header comment at `scripts/ufo-swarm-wave.mjs:141`):
 `SWARM_ROLES`, `SwarmWaveError`, `planSwarmWave`, `planToDispatchPayload`,
@@ -101,7 +101,7 @@ marker `GODSPEED_MARKER` (`scripts/ufo-swarm-wave.mjs:166`).
 `ufo-mission-result-v1` evidence envelope (842 L). Header
 (`scripts/ufo-swarm-collect.mjs:3`–`:12`): evidence for L1/L0 only —
 **never a judge input and never a handoff path**. Sole CLI verb is
-`collect` (`scripts/ufo-swarm-collect.mjs:661`).
+`collect` (`scripts/ufo-swarm-collect.mjs:3`).
 
 **Input schemas** (`scripts/ufo-swarm-collect.mjs:54`–`:58`):
 `RESULTS_SCHEMA` = `ufo-swarm-results-v1`, `REGISTRY_SCHEMA` =
@@ -119,10 +119,10 @@ freezes: `completed→completed`, `failed→failed`, `timeout→failed`,
 `process_exit`, `unavailable`, `quality_degraded` — stopReason fallback
 only; never rewrite the outcome.
 
-**Join.** `collectEntries` (`scripts/ufo-swarm-collect.mjs:567`) requires
+**Join.** `collectEntries` (`scripts/ufo-swarm-collect.mjs:540`) requires
 every dispatch member to have exactly one results row and every results
 row to name a dispatch member: missing → `unmapped_member`
-(`scripts/ufo-swarm-collect.mjs:582`); extra → `unexpected_member`
+(`scripts/ufo-swarm-collect.mjs:549`); extra → `unexpected_member`
 (`scripts/ufo-swarm-collect.mjs:576`); duplicate wave names →
 `duplicate_member`. Identity evidence precedence is registry > results >
 resume-derived (`soleEvidence`). Conflicting agentId/item evidence fails

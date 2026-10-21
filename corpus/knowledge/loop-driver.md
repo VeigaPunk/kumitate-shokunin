@@ -41,7 +41,7 @@ Submodule tree is `#[path]`-loaded (`mod open` / `dry` / `dispatch` / `judge` /
 
 ## `loop_driver_open.rs` (259 L) — fresh-mission open + roster + lease
 
-`LoopDriver::open` (`loop_driver_open.rs:69`) loads config, mints run/session
+`LoopDriver::open` (`loop_driver_open.rs:4`) loads config, mints run/session
 ids, and attempts the mission writer lease — `Err` never blocks open (spec 14
 §3); the driver runs unpromoted. `require_writer_lease`
 (`loop_driver_open.rs:233`) reuses an already-held `Ok` including
@@ -52,19 +52,19 @@ the pre-dispatch lane/config consistency check.
 ## `loop_driver_resume.rs` (585 L) — checkpoint persist, resume, epoch runner
 
 `persist_state` (`loop_driver_resume.rs:127`) writes the leased checkpoint.
-`LoopDriver::resume` (`loop_driver_resume.rs:246`) restores through the
+LoopDriver::resume (`loop_driver_resume.rs:246`) restores through the
 preflight cluster and re-validates route cursors. Production epoch bodies:
 `run_resumed_epoch_until_halt` (`loop_driver_resume.rs:488`) →
-`run_epoch_from` (`loop_driver_resume.rs:528`) — `for round in …` → boundary
+`run_epoch_from` (`loop_driver_resume.rs:528`) — for round in … → boundary
 stop → `run_dry_iteration_vs` → break on terminal outcome.
 
 ## `loop_driver_dry.rs` (946 L) — production round body (fixture substrate)
 
 **"dry" names the fixture substrate, not a smoke path** — this is what
-`ufo self-iter` drives. `run_dry_iteration_vs` (`loop_driver_dry.rs:69`) is the
-per-round pipeline: `ldd_dry_round_dispatch_phase` (`loop_driver_dry.rs:79`) →
-`ldd_dry_round_judge_phase` (`loop_driver_dry.rs:300`) →
-`ldd_dry_round_persist_phase` (`loop_driver_dry.rs:779`). `run_dry_until_halt`
+`ufo self-iter` drives. `run_dry_iteration_vs` (`loop_driver_dry.rs:2`) is the
+per-round pipeline: `ldd_dry_round_dispatch_phase` (`loop_driver_dry.rs:80`) →
+`ldd_dry_round_judge_phase` (`loop_driver_dry.rs:81`) →
+`ldd_dry_round_persist_phase` (`loop_driver_dry.rs:977`). `run_dry_until_halt`
 (`loop_driver_dry.rs:943`) is the epoch entry that loops until a terminal
 `LoopOutcome`. There is no live-native arm inside `LoopDriver`; native rounds
 are launched by JS + judged by `native.rs::judge_handoff` afterward.
@@ -82,9 +82,9 @@ dispatch, never persisted across rounds. `stop_evaluation_string`
 
 ## `loop_driver_judge.rs` (538 L) — wave judgment + membrane accepts
 
-`judge_wave` (`loop_driver_judge.rs:52`) is the fixture-side Pareto walk
+`judge_wave` (`loop_driver_judge.rs:4`) is the fixture-side Pareto walk
 (`gate.decide_with_deltas`) over the wave's proposals. After binding,
-`membrane_touching_accepts` (`loop_driver_judge.rs:415`) records accepts that
+`membrane_touching_accepts` (`loop_driver_judge.rs:369`) records accepts that
 touched `membrane.paths` (authority-boundary seal trigger). Digest-side
 refusal taxonomy is `rejection_reason_code` (`loop_driver_judge.rs:527`) —
 one spelling shared with the contract/digest consumers.
@@ -117,7 +117,7 @@ phase calls once per round; a second call reuses the slot without recompute
 
 In-crate pin file for the driver family (R9's `test-inventories` may *describe*
 it, but registry membership is R2). Highest-signal pins include
-`unmeasured_material_axis_blocks_admission` (`loop_driver_tests.rs:4065`) —
+`unmeasured_material_axis_blocks_admission` (`loop_driver_tests.rs:4162`) —
 `RejectInsufficientEvidence` is *not* gate-produced; the judge overwrites an
 `Admit` carrying `unmeasured_material` — and `membrane_seal_kind_is_pinned`
 (`loop_driver_tests.rs:4621`) for the seal kind literal.
@@ -125,7 +125,7 @@ it, but registry membership is R2). Highest-signal pins include
 ## `state.rs` (380 L) — checkpoint types + stop vocabulary
 
 Single source for stop/checkpoint wire types: `CheckpointStopReason`
-(`state.rs:21`), `LoopOutcome` (`state.rs:41`) —
+(`state.rs:41`), `LoopOutcome` (`state.rs:41`) —
 `Saturated` / `BudgetHalt` / `Running` / `Blocked` / `HonestyBrake` /
 `Interrupted` / `AuthorityBoundary` — `BrakeTelemetry` (`state.rs:114`,
 serde-tagged `kind`, never spelled `lane_timeout`), and `LoopState`

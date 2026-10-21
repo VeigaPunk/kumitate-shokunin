@@ -1,0 +1,51 @@
+import { readFileSync } from 'node:fs';
+const self='/home/vgpnk/Projects/shokunin/kumitate-shokunin';
+const src='/fast/scratch/kumitate-r36/src';
+const m=await import(self+'/scripts/claims-check.mjs');
+const probe=m.probeSections({self,src});
+const noteCache=new Map(); const fileCache=new Map();
+const getNote=(p)=>noteCache.get(p)??noteCache.set(p,readFileSync(p,'utf8').split('\n')).get(p);
+const getFile=(rel)=>{ if(!fileCache.has(rel)){ try{fileCache.set(rel,readFileSync(src+'/'+rel,'utf8').split('\n'));}catch{fileCache.set(rel,null);} } return fileCache.get(rel); };
+const isPathish=(t)=>/[\/\\]/.test(t)||/^[A-Za-z0-9_][\w./-]*\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml)$/.test(t);
+const isAnchorish=(t)=>/^:?\d+(?:-\d+)?$/.test(t)||/^:?[A-Za-z0-9_][\w./-]*\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml):\d+(?:-\d+)?$/.test(t);
+function spans(line){ const out=[]; const re=/`([^`]*)`/g; let m2; while((m2=re.exec(line))) out.push({t:m2[1],s:m2.index,e:m2.index+m2[0].length}); return out; }
+const ADJ=14;
+function pairSymbol(sp, idx, anchorTex){
+  const right=sp.find(x=>x.s>=sp[idx].e-1 && x.s-sp[idx].e<=ADJ && x!==sp[idx]);
+  if(right && !isAnchorish(right.t) && !isPathish(right.t) && right.t.trim().length>=3) return right.t;
+  const left=[...sp].reverse().find(x=>x!==sp[idx] && sp[idx].s-x.e>=0 && sp[idx].s-x.e<=ADJ);
+  if(left && !isAnchorish(left.t) && !isPathish(left.t) && left.t.trim().length>=3) return left.t;
+  return null;
+}
+const stats=new Map();
+const rowsSections=[];
+for(const row of probe.rows) for(const sec of row.sections){
+  if(!sec.file) continue; const lines=getNote(self+'/'+sec.note);
+  let start=-1,end=lines.length;
+  for(let i=0;i<lines.length;i++){ const h=/^##\s+(.*)$/.exec(lines[i]); if(h){ if(start>=0){end=i;break;} if(h[1].includes(sec.heading)) start=i; } }
+  if(start<0) continue;
+  const fl=getFile(sec.file); if(!fl) continue;
+  const key=sec.note; if(!stats.has(key)) stats.set(key,{a:0,ok:0,else:0,abs:0,dead:0,noid:0});
+  const st=stats.get(key);
+  for(let i=start+1;i<end;i++){
+    const line=lines[i]; const sp=spans(line); if(!sp.length) continue;
+    for(let k=0;k<sp.length;k++){
+      const t=sp[k].t;
+      let a=null,b=null;
+      const mp=/^([A-Za-z0-9_][\w./-]*\.(?:mjs|js|sh|rs|md|json|service|timer|toml|yml)):(\d+)(?:-(\d+))?$/.exec(t);
+      if(mp){ const base=mp[1]; if(!(sec.file.endsWith('/'+base)||sec.file===base)) continue; a=+mp[2]; b=+(mp[3]??mp[2]); }
+      else { const mb=/^:(\d+)(?:-(\d+))?$/.exec(t); if(!mb) continue; a=+mb[1]; b=+(mb[2]??mb[1]); }
+      st.a++;
+      if(a<1||b>fl.length||a>b){ st.dead++; continue; }
+      const sym=pairSymbol(sp,k,t);
+      if(!sym){ st.noid++; continue; }
+      const seg=fl.slice(a-1,b).join('\n');
+      if(seg.includes(sym)) st.ok++;
+      else if(fl.some(l=>l.includes(sym))) st.else++;
+      else st.abs++;
+    }
+  }
+}
+let T={a:0,ok:0,else:0,abs:0,dead:0,noid:0};
+for(const [k,v] of [...stats].sort()){ if(v.a===0) continue; console.log(`NOTE ${k} anchors=${v.a} ok=${v.ok} elsewhere=${v.else} absent=${v.abs} dead=${v.dead} noid=${v.noid} nonok=${v.else+v.abs}`); for(const x of Object.keys(T)) T[x]+=v[x]; }
+console.log(`TOTAL anchors=${T.a} ok=${T.ok} elsewhere=${T.else} absent=${T.abs} dead=${T.dead} noid=${T.noid} nonok=${T.else+T.abs}`);

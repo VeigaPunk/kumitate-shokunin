@@ -97,26 +97,26 @@ Sections that previously headed those three paths are **gone** from this file
 answers whether live OMP serves one `provider/model:effort` route right now, prints
 one JSON record per `--route`, and is credential-blind by construction — OMP is the
 only credential authority, so the probe never reads SQLite or token files and never
-constructs an HTTP `Authorization` header (`scripts/probe-ufo-route-health.mjs:2-3`),
+constructs an HTTP authorization header (`scripts/probe-ufo-route-health.mjs:72`),
 and it never reroutes or treats stale/unknown health as available (`:6-7`). Optional
 `--state` persists redacted machine records under `.ufo` via fsync+rename (`:4-5`),
-implemented in-file by `persistState` (`:1080`) with a pid-timestamp tmp
+implemented in-file by `persistState` (`:1073`) with a pid-timestamp tmp
 (`:1117`) — the former sibling `atomic-write.mjs` import is gone. Redaction is a
 **standalone parity copy** of `./probe-redact.mjs` (`:63-65`), not a sibling import,
 so the origin suite can stage this one file alone. Its entry is the top-level
-`main` (`:1164`) over a single argv walk, `parseArgs` (`:103`); `usage` prints to
-stderr and exits 2 (`:97`) while `--help`/`-h` exits 0. All live work leaves through
+`main` (`:320`) over a single argv walk, `parseArgs` (`:50`); `usage` prints to
+stderr and exits 2 (`:108`) while `--help`/`-h` exits 0. All live work leaves through
 the async `spawnCollect("omp", [...])` (`:678`, call site `:813`) running
-`-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:61`)
-through the order-preserving `mapPool` (`:784`). Named constants pin the envelope:
-`DEFAULT_TIMEOUT_MS` 240_000 (`:39`), `MAX_BUFFER` 8 MiB (`:40`), `MAX_ROUTES` 16
-(`:41`), the `FAILURE_CLASSES` taxonomy (`:45`) assigned by `classifyFailure`
-(`:506`), and the argv token class `ROUTE_TOKEN` (`:200`). The emit gate
-`assertNoSecrets` (`:939`) refuses credential-shaped output; a truncated-session
-sweep is retagged `session_truncated` (`:904`). Verdicts come from
-`interpretRouteHealth` (`:1015`) and `interpretPersistedHealth` (`:1037`), where
+`-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:65`)
+through the order-preserving `mapPool` (`:775`). Named constants pin the envelope:
+`DEFAULT_TIMEOUT_MS` 240_000 (`:44`), `MAX_BUFFER` 8 MiB (`:45`), `MAX_ROUTES` 16
+(`:49`), the `FAILURE_CLASSES` taxonomy (`:497`) assigned by `classifyFailure`
+(`:506`), and the argv token class ROUTE_TOKEN (`:200`). The emit gate
+`assertNoSecrets` (`:932`) refuses credential-shaped output; a truncated-session
+sweep is retagged `session_truncated` (`:897`). Verdicts come from
+`interpretRouteHealth` (`:1030`) and `interpretPersistedHealth` (`:1030`), where
 `healthy` ("every route served with no failure class", `:1174`) stays separate from
-the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1185`), and a fatal
+the cleanup `ok` field; exit is !ok ? 2 : healthy ? 0 : 3 (`:1185`), and a fatal
 catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1191`) then exits 1.
 
 ## `scripts/probe-token-plan-shared.mjs`
@@ -126,7 +126,7 @@ sits on — no shebang, no `process.exit`, no own CLI. It freezes the catalog re
 `PROVIDER = "alibaba-token-plan"` and
 `CATALOG_COMMAND = \`omp models ${PROVIDER} --json --no-extensions\`` plus the two
 budgets `CATALOG_TIMEOUT_MS = 45_000` and `ROUTE_TIMEOUT_MS = 250_000`
-(`scripts/probe-token-plan-shared.mjs:19-20`, `:22`, `:23`). `runOmpCatalog` (`:51`)
+(`scripts/probe-token-plan-shared.mjs:19-20`, `:22`, `:51`). `runOmpCatalog` (`:51`)
 is a `spawnSync("omp", [...])` catalog read. `probeListedModel` (`:84`) gates the
 configured route and returns a typed unserved reason when the route is malformed or
 when `ROUTE_HEALTH` (`:25`) is absent, otherwise spawning the probe as a subprocess
@@ -145,11 +145,11 @@ any other `-`-prefixed argv goes through `fail` (`:24`), which prints a redacted
 verdict and exits 2 (`:28`). Targets come from `readGlobalProviderAliasRoutes` (`:69`)
 filtered to routes whose lowercase form `includes("kimi")` (`:77`); a sweep with no
 such route prints `ok: true, available: false, targetStatus: "not-configured"`
-(`:89-90`) and still exits 2 (`:100`). `probeTarget` (`:39`) delegates to
+(`:89-90`) and still exits 2 (`:39`). `probeTarget` (`:39`) delegates to
 `probeListedModel` with a kimi-specific `unservedRowReason` mapping the typed field or
 `"not served"` (`:41`), and a model absent from the catalog reports
 `"not listed by /models"` (`:119`). Availability is the `some(...)` over merged
-results (`:123`) — exit `available ? 0 : 2` (`:140`). Posture is network: one
+results (`:140`) — exit `available ? 0 : 2` (`:140`). Posture is network: one
 `omp models` catalog read plus one route-health subprocess per listed target.
 
 ## `scripts/probe-token-plan-models.mjs`
@@ -157,16 +157,16 @@ results (`:123`) — exit `available ? 0 : 2` (`:140`). Posture is network: one
 `scripts/probe-token-plan-models.mjs` (244 L) asks the same question for every
 configured **non**-Kimi alias and fails unless every target serves
 (`scripts/probe-token-plan-models.mjs:2-4`). Unlike kimi it persists a durable verdict
-**next to itself**: `writeVerdict` (`:40`) writes `VERDICT_PATH` (`:35`) =
+**next to itself**: `writeVerdict` (`:35`) writes `VERDICT_PATH` (`:35`) =
 `probe-token-plan-models.verdict.json` beside the script (no
 `UFO_PROBE_VERDICT_PATH` override in the live file), through an exclusive tmp created
-by `openTmpExclusive` (`:66`, `O_EXCL`), a `renameSync` (`:51`) and a parent-dir
+by `openTmpExclusive` (`:63`, `O_EXCL`), a `renameSync` (`:51`) and a parent-dir
 fsync — the former `atomic-write.mjs` dependency is inlined here. `emit` (`:108`)
 runs the shared `assertNoSecrets` gate (`:110`) before printing; `clearVerdict`
 (`:81`) deletes or overwrites a stale `available: true` when durable write or secrets
 refusal fails. A sweep with no targets emits `targetStatus: "not-configured"`
 (`:196`) and exits 2; models absent from the catalog report
-`"not listed by /models"` (`:221`) and availability is `targets.every(...)` (`:223`).
+`"not listed by /models"` (`:221`) and availability is targets.every(...) (`:223`).
 Posture is network — `omp models` plus one route-health subprocess per listed target.
 
 ## `scripts/probe-redact.mjs`
@@ -175,7 +175,7 @@ Posture is network — `omp models` plus one route-health subprocess per listed 
 pair (route-health keeps a mirrored standalone copy — see parity note at
 `scripts/probe-ufo-route-health.mjs:63-65`). The umbrella `CREDENTIAL_SHAPE`
 (`scripts/probe-redact.mjs:8`) and the ordered `REDACT_PATTERNS` list (`:9`) compile
-once as `COMPILED_REDACT_PATTERNS` (`:33`). `redact` (`:67`) strips invisible
+once as `COMPILED_REDACT_PATTERNS` (`:11`). `redact` (`:67`) strips invisible
 format-character splitters via `FORMAT_CHARS_RE` (`:45`) and re-scans through
 `redactOnce` (`:47`), so a Cf-split token is still a credential. `parseJsonPayload`
 (`:75`) is the typed payload reader; `unservedReason` (`:106`) is the reason ladder
@@ -189,12 +189,12 @@ offline: pure regex and JSON, no IO, no CLI, no network.
 `scripts/fake-omp.mjs` (392 L) is the no-network OMP double probe tests stage as `omp`
 on `PATH`; its header states it never claims live capacity and never reaches a real
 provider (`scripts/fake-omp.mjs:10`). Behavior is driven by `FAKE_OMP_MODE` (`:30`) and
-`FAKE_OMP_DELAY_MS` (`:35`), with `MODE` defaulting to `"healthy"` for an unset or empty
-value (`:31`). `CATALOG` (`:47`) is the single source of truth for
+`FAKE_OMP_DELAY_MS` (`:3`), with `MODE` defaulting to `"healthy"` for an unset or empty
+value (`:47`). `CATALOG` (`:47`) is the single source of truth for
 `omp models <provider>` listings and for the `-p` catalog gate enforced by
-`catalogHasRoute` (`:60`), while only `SUCCESS_MODES` (`:58`) ever claim a served route.
-Output flows through `emit`/`emitRaw` (`:95`, `:98`), and `flushSession` (`:174`)
-mirrors the same lines into `fake-omp-session.jsonl` (`:177`) under `--session-dir`, the
+`catalogHasRoute` (`:58`), while only `SUCCESS_MODES` (`:58`) ever claim a served route.
+Output flows through `emit`/`emitRaw` (`:95`, `:174`), and `flushSession` (`:174`)
+mirrors the same lines into `fake-omp-session.jsonl` (`:7`) under `--session-dir`, the
 way real OMP persists sessions. Its argv hardening is deliberate non-parity — a valued
 flag with a missing, empty, dash-leading or duplicated value is refused via
 `usageRefusal` (`:160`) with exit 2 — and dispatch falls through to

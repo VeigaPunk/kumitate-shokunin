@@ -29,7 +29,7 @@ sanctioned second writer and only inside a heal pass; `ufo-l0-watch.mjs` and
 
 **Owning surface.** Refires stale bounty-hunt UFOs and steers under-filled missions (`:1`–`:30`). It reads one directory — `.ufo/sessions/` (`:81`) — and writes exactly two artifacts, both under the root's `.ufo/`: whole-file state `.ufo/stale-watchdog-state.json` (`:83`) and JSONL telemetry `.ufo/stale-watchdog.jsonl` (`:82`). It never writes `pending-work.json`.
 
-**Poll geometry.** One pass per `POLL_MS = 300_000` (`:132`) driven by `for (;;) { tick(); spinWait(POLL_MS); }` (`:996`, `:1006`); a throw anywhere in the pass is telemetred as `tick_error` (`:1001`) and the loop keeps cadence. `tick()` (`:693`) saves state in a `finally` (`:706`–`:722`) so counters mutated before a fault stay durable; the save only runs for `if (isPlainObject(state))` (`:715`) and a save fault is `state_save_error` (`:719`). Duty bodies run inside `runTickDuties` (`:734`).
+**Poll geometry.** One pass per POLL_MS = 300_000 (`:132`) driven by for (;;) { tick(); spinWait(POLL_MS); } (`:996`, `:1006`); a throw anywhere in the pass is telemetred as `tick_error` (`:1001`) and the loop keeps cadence. `tick()` (`:693`) saves state in a `finally` (`:706`–`:722`) so counters mutated before a fault stay durable; the save only runs for `if (isPlainObject(state))` (`:715`) and a save fault is `state_save_error` (`:719`). Duty bodies run inside `runTickDuties` (`:734`).
 
 **Tick order** (`runTickDuties`, `:734`–):
 1. Lazy-init every declared table: `for (const key of STATE_TABLES) state[key] ||= {};` (`:740`).
@@ -40,7 +40,7 @@ sanctioned second writer and only inside a heal pass; `ufo-l0-watch.mjs` and
 
 **Swarm doctrine.** The policy read is `loadSwarmPolicy(typeof d.configPath === "string" ? d.configPath : watchdogConfigPath())` (`:799`), mapping `policy.waveMinLanes` (`:801`) plus the wave max and round target; an unreadable policy degrades to `{ waveMin: L2_TARGET, waveMax: null, roundTarget: null, source: "fallback" }` (`:807`). The band is never a restated constant — the fallback can only ever be a floor, and the steer text renders whatever the config says.
 
-**Staleness and bounds.** `STALE_MS = 1_200_000` (`:133`); liveness is `newestMtime(dir, (name) => name.endsWith(".jsonl"))` over `<sessionsPath>/<runId>` (`:824`), i.e. transcript-only — a non-`.jsonl` touch (state dump, receipt write) cannot read as liveness. A mission is in scope when `m.status === "running" || m.phase === "working"` (`:783`). Age is `const age = last ? Math.max(0, now - last) : Infinity` (`:842`), so a never-written session is infinitely stale, honestly rendered. Bounds: `MAX_NUDGES = 2` (`:134`), `MAX_REFIRE_ATTEMPTS = 3` (`:135`), `MAX_REPEND_ATTEMPTS = 12` (`:136`, ≈1 h at `POLL_MS`), `L2_TARGET = 16` (`:142`, a fallback floor only — rendering it as a cap is the drift the comment forbids), `FLASH_PROBE_MS = 1_800_000` (`:536`).
+**Staleness and bounds.** STALE_MS = 1_200_000 (`:133`); liveness is `newestMtime(dir, (name) => name.endsWith(".jsonl"))` over `<sessionsPath>/<runId>` (`:824`), i.e. transcript-only — a non-`.jsonl` touch (state dump, receipt write) cannot read as liveness. A mission is in scope when `m.status === "running" || m.phase === "working"` (`:783`). Age is `const age = last ? Math.max(0, now - last) : Infinity` (`:842`), so a never-written session is infinitely stale, honestly rendered. Bounds: MAX_NUDGES = 2 (`:134`), MAX_REFIRE_ATTEMPTS = 3 (`:44`), `MAX_REPEND_ATTEMPTS = 12` (`:44`, ≈1 h at POLL_MS), L2_TARGET = 16 (`:142`, a fallback floor only — rendering it as a cap is the drift the comment forbids), `FLASH_PROBE_MS = 1_800_000` (`:536`).
 
 **Escalation ladder** (`runTickDuties`, evaluated in this order per mission):
 
@@ -65,9 +65,9 @@ Attempts are counted before the action in every arm, so a failing steer still ad
 
 **Singleton.** `acquireWatchdogLock(dirname(STATE))` (`:979`) = `<root>/.ufo`, with `lockName: "stale-watchdog.lock"` (`:955`) and `ownerLinkPrefix: ".stale-watchdog.owner"` (`:956`) over hub `acquireSingletonLock` (`hub:1716`). A live owner emits `watchdog_instance_refused` (`:983`) and `process.exit(0)` (`:984`); a successful start logs `watchdog_start` (`:986`); a lock/start failure logs `watchdog_start_error` with stage `"lock_acquire"` or `"startup_log"` (`:989`) and sets exit code 1.
 
-**Env paths.** The only env-overridable path is `UFO_CONFIG_PATH` (`:731`), resolved on use through `gatedConfigPath` (`hub:2593`); an outside-root value throws `EXEC_PATH_OUTSIDE_ROOT` into the `policy_unreadable` arm (`:808`) and degrades the doctrine to `{ waveMin: 16, waveMax: null, roundTarget: null, source: "fallback" }` — never out of the tick loop. Every other path is a module constant (`:79`–`:83`), and `d.env` is merged into the child environment only through the test seam (`:509`).
+**Env paths.** The only env-overridable path is `UFO_CONFIG_PATH` (`:731`), resolved on use through `gatedConfigPath` (`hub:2593`); an outside-root value throws `EXEC_PATH_OUTSIDE_ROOT` into the `policy_unreadable` arm (`:808`) and degrades the doctrine to `{ waveMin: 16, waveMax: null, roundTarget: null, source: "fallback" }` — never out of the tick loop. Every other path is a module constant (`:79`–`:144`), and `d.env` is merged into the child environment only through the test seam (`:509`).
 
-**Telemetry vocabulary.** Every event is redaction-filtered through `redact` (`hub:1314`) and appended by `appendRotatingLog` (cap `MAX_LOG_BYTES = MAX_EVIDENCE_LOG_BYTES`, `:130`); rotation emits `watchdog_log_rotated` (`:185`) or `watchdog_log_rotate_failed` (`:190`). Persisted events, by family:
+**Telemetry vocabulary.** Every event is redaction-filtered through `redact` (`hub:1314`) and appended by `appendRotatingLog` (cap `MAX_LOG_BYTES = MAX_EVIDENCE_LOG_BYTES`, `:43`); rotation emits `watchdog_log_rotated` (`:87`) or `watchdog_log_rotate_failed` (`:87`). Persisted events, by family:
 - lifecycle: `watchdog_instance_refused` (`:983`), `watchdog_start` (`:986`), `watchdog_start_error` (`:989`), `tick_error` (`:1001`).
 - state: `state_load_error` (`:281` and the shape arms), `state_save_error` (`:719`).
 - status/scan: `status_malformed` (`:769`), `status_malformed`/`element_shape` (`:781`), `mission_skipped` (`:815`), `scan_error` (`:826`), `future_mtime` (`:840`), `policy_unreadable` (`:808`).
@@ -77,15 +77,15 @@ Attempts are counted before the action in every arm, so a failing steer still ad
 
 **Blindness guards.** A `scan_error` whose observed newest mtime is `0` or already stale never refires — an unreadable tree cannot prove death (`if (scan.newest === 0 || now - scan.newest >= STALE_MS) continue;`, `:830`). A future-dated session mtime (`if (last > now) {`, `:839`) clamps to alive and emits `future_mtime` (`:840`) rather than escalating on unprovable liveness. And `if (!isPlainObject(status) || !Array.isArray(status.missions)) {` (`:768`) skips the mission duties with one `status_malformed` event instead of pruning every ladder on blindness.
 
-**Identity hygiene.** `RUN_ID_PATTERN = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/u` (`:147`) is not enough alone: `isSafeRunId` (`:154`) adds `!(runId in {})` because the pattern admits `Object.prototype` member names (`"constructor"`, `"toString"`), which as state-table keys resolve to inherited members — `nudges["constructor"] || 0` is `NaN` (ladder skipped), a `NaN` bound never trips, and `pendingRepend["constructor"] ||= …` would mutate the global `Object`. Untrusted ids in telemetry are clipped by `boundedRunId = String(runId).slice(0, 128)` (`:160`).
+**Identity hygiene.** `RUN_ID_PATTERN = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/u` (`:147`) is not enough alone: `isSafeRunId` (`:53`) adds `!(runId in {})` because the pattern admits `Object.prototype` member names (`"constructor"`, `"toString"`), which as state-table keys resolve to inherited members — `nudges["constructor"] || 0` is `NaN` (ladder skipped), a `NaN` bound never trips, and `pendingRepend["constructor"] ||= …` would mutate the global `Object`. Untrusted ids in telemetry are clipped by boundedRunId = String(runId).slice(0, 128) (`:160`).
 
-**State hygiene.** `MAX_STATE_BYTES = 1024 * 1024` (`:126`); five runId-keyed tables `["nudges","l2Steered","refireAttempts","pendingRepend","refireExhausted"]` (`:256`). Entry rules are declared once as predicate + expected label — `nonnegSafeInt` (`:264`) under `ENTRY_RULES` (`:266`) — so the emitted message can never drift from the rule; malformed entries are deleted at load so the duty re-proves itself. `salvagePendingRepend` (`:370`) recovers only a real top-level `pendingRepend` object from a corrupt body (string-aware bounded scan; duplicate members fail closed), because those rows still owe a queue reset.
+**State hygiene.** MAX_STATE_BYTES = 1024 * 1024 (`:126`); five runId-keyed tables `["nudges","l2Steered","refireAttempts","pendingRepend","refireExhausted"]` (`:256`). Entry rules are declared once as predicate + expected label — `nonnegSafeInt` (`:264`) under `ENTRY_RULES` (`:266`) — so the emitted message can never drift from the rule; malformed entries are deleted at load so the duty re-proves itself. `salvagePendingRepend` (`:370`) recovers only a real top-level `pendingRepend` object from a corrupt body (string-aware bounded scan; duplicate members fail closed), because those rows still owe a queue reset.
 
 **Flash-route probe.** `flashProbe` (`:561`): returns early on `state.flashLive === true` (`:572`) — "only a proven boolean is proof of liveness" — else backs off `FLASH_PROBE_MS` from `state.flashProbeAt`. The probe is `omp --model @m_flash --no-tools --no-session -p "Reply with exactly: FLASH_OK"` (`:550`) judged by `ok = /FLASH_OK/.test(out)` (`:579`); success sets `flashLive = true` and emits `flash_live` with `route: "@m_flash"` (`:584`–`:585`). No steer on success — the alias table routes flash seats automatically, so a nudge would only inject stale seat names.
 
 **Exit vocabulary.** `0` on instance refusal (`:984`); `64` for argv refusal — schema `ufo-stale-watchdog-error-v1`, code `usage`, `unsupported argument: <arg> — ufo-stale-watchdog takes no arguments` (`:972`, `:974`); `1` on start failure (`:991`-region, `process.exitCode = 1`).
 
-**Cross-file deps.** Children: `scripts/ufo-sighting` (`:79`, steer/status/remove), `scripts/fleet-dispatcher.mjs` (`:80`, `repend`), `omp` (`:550`). Hub `scripts/ufo-mission-result.mjs`: `newestMtime` (`:3187`, re-exported here), `acquireSingletonLock` (`:1716`), `appendRotatingLog` (`:2143`), `writeFileAtomicIfChanged` (`:2316`), `readBoundedFile` (`:990`), `redact` (`:1314`), `loadSwarmPolicy` (`:3052`), `gatedConfigPath` (`:2593`), `parseReportOutput` (`:3164`), `spinWait` (`:899`), `isMainModule` (`:3012`), `isPlainObject` (`:209`), `plainObjectRows` (`:226`), `emitErrorJson` (`:2481`), `MAX_EVIDENCE_LOG_BYTES` (`:2511`). `emitFor` (`:110`) resolves the emitter seam and falls back to `writeSync(2, …)` so a dead log path cannot strand duty events.
+**Cross-file deps.** Children: `scripts/ufo-sighting` (`:79`, steer/status/remove), `scripts/fleet-dispatcher.mjs` (`:12`, `repend`), `omp` (`:550`). Hub `scripts/ufo-mission-result.mjs`: `newestMtime` (`:3187`, re-exported here), `acquireSingletonLock` (`:1716`), `appendRotatingLog` (`:2143`), `writeFileAtomicIfChanged` (`:2316`), `readBoundedFile` (`:990`), `redact` (`:1314`), `loadSwarmPolicy` (`:3052`), `gatedConfigPath` (`:2593`), `parseReportOutput` (`:3164`), `spinWait` (`:899`), `isMainModule` (`:3012`), `isPlainObject` (`:28`), plainObjectRows (`:226`), emitErrorJson (`:2481`), `MAX_EVIDENCE_LOG_BYTES` (`:2511`). emitFor (`:110`) resolves the emitter seam and falls back to `writeSync(2, …)` so a dead log path cannot strand duty events.
 
 Sources: `scripts/ufo-stale-watchdog.mjs`; `scripts/ufo-mission-result.mjs` (dep line anchors only).
 ## `scripts/ufo-l0-monitor.mjs`
@@ -187,13 +187,13 @@ Sources: `scripts/ufo-l0-monitor.mjs` (all `:N`), `scripts/fleet-dispatcher.mjs`
 
 ## `scripts/ufo-l0-watch.mjs`
 
-**Owning surface.** The L0 night watch keeps the fleet alive unattended with three per-tick duties — (1) heal via the monitor, (2) respawn continuation holes, (3) whip stalled rows (`:1`–`:35`). It writes only its own state (`l0-watch-state.json`, `:127`) and action log (`l0-watch.log`, `:119`); it never writes the queue.
+**Owning surface.** The L0 night watch keeps the fleet alive unattended with three per-tick duties — (1) heal via the monitor, (2) respawn continuation holes, (3) whip stalled rows (`:1`–`:35`). It writes only its own state (`l0-watch-state.json`, `:127`) and action log (`l0-watch.log`, `:111`); it never writes the queue.
 
-**Loop geometry.** `INTERVAL_MS = 90_000` (`:149`) with `spinWait(INTERVAL_MS)` (`:1676`); a throwing tick is isolated (`tick_error <childFault>`, `:1674`) and the loop keeps cadence. `--once` (`:159`, declared in `FLAG_ARGS = ["--once"]`, `:1544`) runs one `tick()` (`:1658`) and prints a JSON action report (`:1659`) instead of looping. The heal child is `ufo-l0-monitor.mjs --fleet <set> --rebind --repair --repend --settle --json` (`:487`–`:489`, timeout 120 s / 16 MiB buffer). A monitor fault is deduped — recorded on transition only — through `monitor_failed <fault>` (`:1361`), and the tick degrades to queue-only work rather than aborting.
+**Loop geometry.** `INTERVAL_MS = 90_000` (`:2223`) with `spinWait(INTERVAL_MS)` (`:2223`); a throwing tick is isolated (tick_error <childFault>, `:1674`) and the loop keeps cadence. `--once` (`:2089`, declared in `FLAG_ARGS = ["--once"]`, `:1105`) runs one `tick()` (`:1105`) and prints a JSON action report (`:1659`) instead of looping. The heal child is `ufo-l0-monitor.mjs --fleet <set> --rebind --repair --repend --settle --json` (`:487`–`:489`, timeout 120 s / 16 MiB buffer). A monitor fault is deduped — recorded on transition only — through monitor_failed <fault> (`:1361`), and the tick degrades to queue-only work rather than aborting.
 
-**Report/action surfaces.** The monitor report is parsed by `parseReportOutput` (`hub:3164`) and its members read through `reportRows`, which degrades a malformed member to `[]` and, once per changed signature, logs `monitor_report_malformed <shape>` (`:1497`) via `noteTransition` (`:323`); a valid-JSON non-object report is named `report`. Action lines land in `l0-watch.log` through `log()` (`:453`) → `appendStampedLog` (`hub:2279`), capped at `MAX_LOG_BYTES = MAX_EVIDENCE_LOG_BYTES` (`:451`), and closed with `swallow: true` so an unwritable log never kills the daemon.
+**Report/action surfaces.** The monitor report is parsed by `parseReportOutput` (`hub:3164`) and its members read through `reportRows`, which degrades a malformed member to `[]` and, once per changed signature, logs `monitor_report_malformed <shape>` (`:372`) via `noteTransition` (`:372`); a valid-JSON non-object report is named `report`. Action lines land in `l0-watch.log` through `log()` (`:59`) → `appendStampedLog` (`hub:2279`), capped at `MAX_LOG_BYTES = MAX_EVIDENCE_LOG_BYTES` (`:529`), and closed with `swallow: true` so an unwritable log never kills the daemon.
 
-**Budget bounds.** `MAX_ENQUEUES_HOUR = 48` (`:150`) global, `MAX_LANE_ENQUEUES_HOUR = 4` (`:153`) per lane; both timestamp arrays are pruned to the trailing hour by `prune(state, now)` (`:464`) with the `fresh` predicate requiring `parsed <= now && parsed > hourAgo` (`:469`–`:472`) — a future-dated stamp is corruption, not a recent enqueue. Lane records persist (they are the dedupe key), only their `at` arrays shrink. `WHIP_COOLDOWN_MS = 15 * 60_000` (`:154`). Defaults: fleet set `{"nightcall"}` (`:147`), `ROUNDS = 8` (`:148`), scope allowlist `["nightcall-"]` (`:228`).
+**Budget bounds.** `MAX_ENQUEUES_HOUR = 48` (`:202`) global, `MAX_LANE_ENQUEUES_HOUR = 4` (`:202`) per lane; both timestamp arrays are pruned to the trailing hour by `prune(state, now)` (`:135`) with the `fresh` predicate requiring `parsed <= now && parsed > hourAgo` (`:469`–`:472`) — a future-dated stamp is corruption, not a recent enqueue. Lane records persist (they are the dedupe key), only their `at` arrays shrink. `WHIP_COOLDOWN_MS = 15 * 60_000` (`:203`). Defaults: fleet set `{"nightcall"}` (`:187`), `ROUNDS = 8` (`:187`), scope allowlist `["nightcall-"]` (`:277`).
 
 **Hole ladder** (`holeCandidates` gates in queue order; `respawnHole` acts):
 
@@ -201,53 +201,53 @@ Sources: `scripts/ufo-l0-monitor.mjs` (all `:N`), `scripts/fleet-dispatcher.mjs`
 |---|---|---|
 | fleet | `fleetSet.has(task.fleet)` | — |
 | completion | `task.state === "completed"` | non-completed skipped |
-| mint parity | `successorDue(task)` (`:283`, call `:1186`) | iterate `round < rounds` |
+| mint parity | `successorDue(task)` (`:283`, call `:1186`) | iterate round < rounds |
 | recovery owner | `deferredIteration(task)` (`:1035`, call `:1189`) | deferred rows left to reconcile |
 | scope allow | `scopeAllow.some(...)` (`:1198`) | `scope.split("/").pop().startsWith(prefix)` |
-| lineage | `childOf.has(task.key)` (`:1199`) | — |
-| occupancy | `overlapsOccupied(task.scopes, occupied)` (`:1200`) | blocked rows excluded from `occupied` |
-| runId | `isSafeRunId` = `gq<16 hex>` | `invalid_run_id <id> <title>` (`:313`) |
-| alias | empty `parent.l1Alias` (`:1268`) | `respawn_skipped_no_alias <title>` (`:1272`) |
-| spec | `continuationSpec(parent) === null` | `respawn_skipped_bad_path <title>` (`:1279`) |
-| lane budget | `lane.at.length >= 4` (`:1290`) | `budget_lane` (`:1291`) |
-| global budget | `state.enqueues.length >= 48` (`:1294`) | `budget_global` (`:1295`) |
-| scope race | `overlapsOccupied(spec.scopes, occupied)` (`:1298`) | `respawn_skipped_occupied` (`:1299`) |
-| admit | `enqueue(spec)` (`:858`) | `respawned <title> -> <alias>` / `respawn_deduped …` (`:1323`–`:1325`) |
+| lineage | `childOf.has(task.key)` (`:1281`) | — |
+| occupancy | `overlapsOccupied(task.scopes, occupied)` (`:1282`) | blocked rows excluded from `occupied` |
+| runId | `isSafeRunId` = `gq<16 hex>` | invalid_run_id <id> <title> (`:313`) |
+| alias | empty `parent.l1Alias` (`:708`) | respawn_skipped_no_alias <title> (`:1272`) |
+| spec | `continuationSpec(parent) === null` | respawn_skipped_bad_path <title> (`:1279`) |
+| lane budget | `lane.at.length >= 4` (`:1384`) | `budget_lane` (`:1384`) |
+| global budget | `state.enqueues.length >= 48` (`:1388`) | `budget_global` (`:1388`) |
+| scope race | `overlapsOccupied(spec.scopes, occupied)` (`:1392`) | `respawn_skipped_occupied` (`:1392`) |
+| admit | enqueue(spec) (`:858`) | respawned <title> -> <alias> / `respawn_deduped …` (`:1323`–`:1325`) |
 
-`enqueue()` (`:858`) pipes the spec on stdin — `exec(process.execPath, [DISPATCHER, "enqueue", "--spec", "-"])` (`:871`, spec JSON at `:873`) — and returns one of four names (`:892`–`:899`): `"unparseable"`, `"enqueued"`, `"deduped"`, `"invalid_payload"`. A throw becomes `respawn_failed <childFault>` (`:1335`); any other outcome becomes `respawn_<outcome>` (`:1332`). A successful or deduped admit arms the seal synchronously (`lane.done = true`, `donePath = spec.resultPath`), extends `occupied`, and appends a stamp to both budget arrays; one post-loop queue read then confirms visibility — invisible → seal released + `seal_pending <title>` (`:1478`), read fault → `seal_check_failed` (`:1466`), section fault → `respawn_section_failed` (`:1484`).
+`enqueue()` (`:1005`) pipes the spec on stdin — exec(process.execPath, [DISPATCHER, "enqueue", "--spec", "-"]) (`:871`, spec JSON at `:873`) — and returns one of four names (`:892`–`:974`): `"unparseable"`, `"enqueued"`, `"deduped"`, `"invalid_payload"`. A throw becomes respawn_failed <childFault> (`:1335`); any other outcome becomes respawn_<outcome> (`:1332`). A successful or deduped admit arms the seal synchronously (`lane.done = true`, `donePath = spec.resultPath`), extends `occupied`, and appends a stamp to both budget arrays; one post-loop queue read then confirms visibility — invisible → seal released + seal_pending <title> (`:1478`), read fault → `seal_check_failed` (`:1992`), section fault → `respawn_section_failed` (`:2010`).
 
-**Seal lifecycle** (`sealReopenStep`, `:1046`). A seal is re-validated every tick against the successor it names: `findSuccessor(lane.donePath)` (`:1055`); a successor in state `"failed"` reopens the parent (`hole_reopened <title> successor_failed`); `"blocked"` stays sealed because recovery ownership is the monitor's; a successor absent from the queue is arbitrated by its own receipt — `continue` or no receipt → reopen (`successor_continued` / `successor_vanished`), terminal decision or unreadable receipt → stay sealed.
+**Seal lifecycle** (`sealReopenStep`, `:1128`). A seal is re-validated every tick against the successor it names: `findSuccessor(lane.donePath)` (`:1137`); a successor in state `"failed"` reopens the parent (`hole_reopened <title> successor_failed`); `"blocked"` stays sealed because recovery ownership is the monitor's; a successor absent from the queue is arbitrated by its own receipt — `continue` or no receipt → reopen (`successor_continued` / `successor_vanished`), terminal decision or unreadable receipt → stay sealed.
 
-**Continuation minting** (`continuationSpec`, `:570`). Reuses the parent's prompt/scopes/config and moves only identity and `resultPath`; refuses a non-`.md`/extensionless `resultPath`, an out-of-root path (via `queueRowPath`), and a non-string `title` (`:590`); rounds carried forward are `parentRounds - parentRound` with a fail-closed `remaining < 1` return (`:622`) — the hole gate already refused budget-exhausted parents, so the `Math.max(1, …)` is only a direct-call safeguard.
+**Continuation minting** (`continuationSpec`, `:181`). Reuses the parent's prompt/scopes/config and moves only identity and `resultPath`; refuses a non-`.md`/extensionless `resultPath`, an out-of-root path (via `queueRowPath`), and a non-string `title` (`:354`); rounds carried forward are `parentRounds - parentRound` with a fail-closed `remaining < 1` return (`:704`) — the hole gate already refused budget-exhausted parents, so the `Math.max(1, …)` is only a direct-call safeguard.
 
-**Whip ladder** (`whipRow`, `:951`; decision table):
+**Whip ladder** (`whipRow`, `:1033`; decision table):
 
 | condition | outcome |
 |---|---|
-| `!isSafeRunId(row.runId)` | `invalid_run_id …` (`:313`), return |
-| `row.scanError` | `whip_skipped_scan_error <title> <scanError>` (`:968`) |
-| `row.receiptMismatch` | `whip_skipped_foreign_receipt <title>` (`:977`) |
-| `row.futureMtime === true` | `whip_skipped_future_mtime <title>` (`:985`) |
+| `!isSafeRunId(row.runId)` | invalid_run_id … (`:313`), return |
+| `row.scanError` | whip_skipped_scan_error <title> <scanError> (`:968`) |
+| `row.receiptMismatch` | whip_skipped_foreign_receipt <title> (`:977`) |
+| `row.futureMtime === true` | whip_skipped_future_mtime <title> (`:985`) |
 | non-empty `reportDrift` | drift text bypasses the decision gate; kind `unreadable` selects the restore-first text |
-| `whipSkipReason(decision) !== null` | `whip_skipped_<skip>` (`:1001`); skip ∈ `terminal_stop` / `terminal_blocked` / `terminal_budget_halt` / `no_continue` (`:266`–`:270`) |
+| `whipSkipReason(decision) !== null` | whip_skipped_<skip> (`:1001`); skip ∈ terminal_stop / `terminal_blocked` / `terminal_budget_halt` / `no_continue` (`:266`–`:270`) |
 | inside cooldown | `whip_cooldown <title>` once per window (`:1010`) |
-| fire | `whip ok\|failed <title> idle=<…>` or `whip_drift:<kind> …` (`:1019`) |
+| fire | `whip ok\|failed <title> idle=<…>` or whip_drift:<kind> … (`:1019`) |
 
-Text literals: `WHIP` (`:230`), `WHIP_DRIFT` (`:238`), `WHIP_DRIFT_UNREADABLE` (`:248`); `driftWhipText(kind)` (`:255`) selects the unreadable variant only for `"unreadable"`. `whipSkipReason` returns `null` only for `"continue"` (`:266`) — `stop`/`blocked`/`budget_halt` are `terminal_<decision>`, anything else `no_continue`. The fired steer is `exec("bash", [SIGHTING, "steer", "--mission", runId, "--text", text], …)` (`:909`); a failed steer still earns the cooldown because `lane.lastWhipAt = nowIso` (`:1017`) is set before the outcome branches. `idle=` comes from `stalledIdleText(row, "")` (`:1018`). The last skip reason stays on `lane.lastWhipSkip` until cleared, so a parked row logs once; `cooldownLoggedFor` dedupes the cooldown line to one per window.
+Text literals: `WHIP` (`:287`), `WHIP_DRIFT` (`:297`), `WHIP_DRIFT_UNREADABLE` (`:304`); `driftWhipText(kind)` (`:304`) selects the unreadable variant only for `"unreadable"`. `whipSkipReason` returns `null` only for `"continue"` (`:14`) — `stop`/`blocked`/`budget_halt` are `terminal_<decision>`, anything else `no_continue`. The fired steer is exec("bash", [SIGHTING, "steer", "--mission", runId, "--text", text], …) (`:909`); a failed steer still earns the cooldown because `lane.lastWhipAt = nowIso` (`:1099`) is set before the outcome branches. `idle=` comes from `stalledIdleText(row, "")` (`:1100`). The last skip reason stays on `lane.lastWhipSkip` until cleared, so a parked row logs once; `cooldownLoggedFor` dedupes the cooldown line to one per window.
 
-**Queue/write posture.** The watch never writes `pending-work.json`; queue mutation is delegated to children — the dispatcher `enqueue --spec -` (`:871`) and `bash scripts/ufo-sighting steer` (`:909`). Reads go through `readQueueFile(QUEUE, …)` inside `readQueue` (`:743`) under `MAX_QUEUE_BYTES` (`hub:2496`). Its own state is written atomically-and-only-if-changed by `writeFileAtomicIfChanged` (`:440`) wrapped in `writeWithMkdirRetry` (`:444`), so a mid-run `.ufo` wipe retries once.
+**Queue/write posture.** The watch never writes `pending-work.json`; queue mutation is delegated to children — the dispatcher `enqueue --spec -` (`:871`) and `bash scripts/ufo-sighting steer` (`:909`). Reads go through `readQueueFile(QUEUE, …)` inside `readQueue` (`:63`) under `MAX_QUEUE_BYTES` (`hub:2496`). Its own state is written atomically-and-only-if-changed by `writeFileAtomicIfChanged` (`:60`) wrapped in `writeWithMkdirRetry` (`:60`), so a mid-run `.ufo` wipe retries once.
 
-**State repair** (`readState`, `:329`). A bounded read under `MAX_QUEUE_BYTES` (`:333`); a non-object or unparsable body degrades to `{ lanes: {}, enqueues: [] }`. Per-lane fields are type-checked and deleted when unprovable: a truthy non-boolean `done` is dropped along with `donePath`/`sealNote` (`:385`), and a `lastWhipAt` whose `Date.parse` is non-finite or future-dated is deleted with its cooldown key (`:417`). Foreign lane keys (outside `gq<hex16>`) are deleted rather than assigned through.
+**State repair** (`readState`, `:378`). A bounded read under `MAX_QUEUE_BYTES` (`:63`); a non-object or unparsable body degrades to `{ lanes: {}, enqueues: [] }`. Per-lane fields are type-checked and deleted when unprovable: a truthy non-boolean `done` is dropped along with `donePath`/`sealNote` (`:427`), and a `lastWhipAt` whose `Date.parse` is non-finite or future-dated is deleted with its cooldown key (`:417`). Foreign lane keys (outside `gq<hex16>`) are deleted rather than assigned through.
 
-**Singleton.** `acquireWatchLock(join(ROOT, ".ufo"))` (`:1630`) — anchored at `<root>/.ufo` even when `UFO_L0_WATCH_STATE` points elsewhere (`:1626`–`:1629`), so the fence guards the QUEUE; `lockName: "l0-watch.lock"` (`:1521`), `ownerLinkPrefix: ".l0-watch.owner"` (`:1522`). Refusal → `watch_instance_refused ownerPid=… lockPath=… reason=…` (`:1634`) and `process.exit(0)` (`:1648`); under `--once` it also writes schema `ufo-l0-watch-refused-v1`, code `instance_refused` to fd 1 (`:1640`–`:1646`) because `process.exit(0)` can truncate a buffered write. Start logs `watch_start fleets=… scopes=… interval=…ms ownerPid=… lockStolen=…` (`:1661`).
+**Singleton.** `acquireWatchLock(join(ROOT, ".ufo"))` (`:2175`) — anchored at `<root>/.ufo` even when `UFO_L0_WATCH_STATE` points elsewhere (`:1626`–`:1629`), so the fence guards the QUEUE; `lockName: "l0-watch.lock"` (`:2067`), `ownerLinkPrefix: ".l0-watch.owner"` (`:2067`). Refusal → watch_instance_refused ownerPid=… lockPath=… reason=… (`:2181`) and `process.exit(0)` (`:36`); under `--once` it also writes schema `ufo-l0-watch-refused-v1`, code `instance_refused` to fd 1 (`:1640`–`:2181`) because `process.exit(0)` can truncate a buffered write. Start logs watch_start fleets=… scopes=… interval=…ms ownerPid=… lockStolen=… (`:1661`).
 
-**Env paths and validation.** `UFO_L0_WATCH_STATE` (`:107`) → `resolveWatchStatePath(root, env)` (`:126`): default `<root>/.ufo/l0-watch-state.json` (`:127`); a candidate not beneath `<repo>/.ufo/` throws `MissionResultError("watch_state_outside_root", …)` (`:133`–`:134`), which main turns into schema `ufo-l0-watch-error-v1` + `exit 2` (`:111`, `:115`). `UFO_PENDING_WORK_PATH` (`:730`) → hub `resolveQueuePath` (`hub:3236`): default `<root>/.ufo/pending-work.json`, outside-root → `"queue_path_outside_root"` (`hub:3241`). Both gates call `beneath` unconditionally (`hub:1281`); by contrast `queueRowPath = containedJoin` (`:658`) escapes under `UFO_FLEET_ALLOW_EXTERNAL_TOOLS=1` (`hub:2635`, flag read at `hub:2576`) — so the queue-row path gate is the one that loosens under the external-tools flag, not the state/queue seams.
+**Env paths and validation.** `UFO_L0_WATCH_STATE` (`:102`) → resolveWatchStatePath(root, env) (`:126`): default `<root>/.ufo/l0-watch-state.json` (`:127`); a candidate not beneath `<repo>/.ufo/` throws `MissionResultError("watch_state_outside_root", …)` (`:133`–`:134`), which main turns into schema `ufo-l0-watch-error-v1` + `exit 2` (`:111`, `:104`). `UFO_PENDING_WORK_PATH` (`:82`) → hub `resolveQueuePath` (`hub:3236`): default `<root>/.ufo/pending-work.json`, outside-root → `"queue_path_outside_root"` (`hub:3241`). Both gates call `beneath` unconditionally (`hub:1281`); by contrast queueRowPath = containedJoin (`:658`) escapes under `UFO_FLEET_ALLOW_EXTERNAL_TOOLS=1` (`hub:2635`, flag read at `hub:2576`) — so the queue-row path gate is the one that loosens under the external-tools flag, not the state/queue seams.
 
-**Argv, exit vocabulary.** Flags `["--once"]` (`:1544`), values `--fleets --scopes --rounds --interval-ms --max-enqueues-hour --max-lane-enqueues-hour --whip-cooldown-min` (`:1545`–`:1547`); unknown args, missing values, flag-swallows and duplicates collect as usage faults (`:1607`), joined into schema `ufo-l0-watch-error-v1`, code `usage`, with `process.exitCode = 64` (`:1615`). Value checks carry the reason: `"--interval-ms must be a finite number >= 1000 (a tick costs a monitor exec)"` (`:1593`), `"--whip-cooldown-min must be a finite number >= 0"` (`:1605`). Startup error → `watch_start_error stage=<lock_acquire|startup>` + exit 1 (`:1652`). Daemon loop faults → `tick_error` (`:1674`).
+**Argv, exit vocabulary.** Flags `["--once"]` (`:2089`), values --fleets --scopes --rounds --interval-ms --max-enqueues-hour --max-lane-enqueues-hour --whip-cooldown-min (`:1545`–`:1547`); unknown args, missing values, flag-swallows and duplicates collect as usage faults (`:1607`), joined into schema `ufo-l0-watch-error-v1`, code `usage`, with `process.exitCode = 64` (`:2160`). Value checks carry the reason: `"--interval-ms must be a finite number >= 1000 (a tick costs a monitor exec)"` (`:2150`), `"--whip-cooldown-min must be a finite number >= 0"` (`:2150`). Startup error → watch_start_error stage=<lock_acquire|startup> + exit 1 (`:1652`). Daemon loop faults → `tick_error` (`:2221`).
 
-**Hole verdict memo.** `holeVerdictMemo` (`:680`) caches only byte-determined verdicts keyed on a serialized tuple (row id fields + both artifact `statSignature`s); `memoizedVerdict` (`:682`) never caches a transient read fault, and the map clears at 4096 entries (`:693`). `holeVerdictMemoized` (`:706`) is the exported per-row entry: `null` when either signature is absent; otherwise `holeReceiptContinues` binds report bytes + receipt decision (`"continue"`) with the dispatch-snapshot config/prompt digests via `expectedReceiptBag` (`hub:2529`) and `validateTaskReceiptEitherBinding` (`hub:2868`). The tick passes no deps, so production behavior is the memoized path.
+**Hole verdict memo.** `holeVerdictMemo` (`:762`) caches only byte-determined verdicts keyed on a serialized tuple (row id fields + both artifact `statSignature`s); `memoizedVerdict` (`:764`) never caches a transient read fault, and the map clears at 4096 entries (`:788`). `holeVerdictMemoized` (`:788`) is the exported per-row entry: `null` when either signature is absent; otherwise `holeReceiptContinues` binds report bytes + receipt decision (`"continue"`) with the dispatch-snapshot config/prompt digests via `expectedReceiptBag` (`hub:2529`) and `validateTaskReceiptEitherBinding` (`hub:2868`). The tick passes no deps, so production behavior is the memoized path.
 
-**Cross-file deps.** Children: `scripts/ufo-l0-monitor.mjs` (`:85`), `scripts/fleet-dispatcher.mjs` (`:86`), `scripts/ufo-sighting` (`:87`). Hub `scripts/ufo-mission-result.mjs`: `acquireSingletonLock` (`:1716`), `appendStampedLog` (`:2279`), `writeWithMkdirRetry` (`:2220`), `writeFileAtomicIfChanged` (`:2316`), `readBoundedFile` (`:990`), `readBoundedJson` (`:1098`), `readQueueFile` (`:2692`), `resolveQueuePath` (`:3236`), `containedJoin` (`:2632`), `statSignature` (`:2656`), `sha256File` (`:2678`), `snapshotPromptSha256` (`:2744`), `snapshotConfigDigests` (`:2805`), `expectedReceiptBag` (`:2529`), `validateTaskReceipt` (`:791`), `validateTaskReceiptEitherBinding` (`:2868`), `TERMINAL_QUEUE_STATES` (`:2504`), `isQueueRunId` (`:2618`), `MAX_QUEUE_BYTES` (`:2496`), `MAX_EVIDENCE_LOG_BYTES` (`:2511`), `parseDeclaredArgv` (`:2372`), `parseReportOutput` (`:3164`), `stalledIdleText` (`:2566`), `collapseWhitespace` (`:2257`), `plainObjectRows` (`:226`), `isPlainObject` (`:209`), `redactAbsolutePaths` (`:1069`), `knownRootTags` (`:1047`), `spinWait` (`:899`), `isMainModule` (`:3012`), `emitErrorJson` (`:2481`), `MissionResultError` (`:177`).
+**Cross-file deps.** Children: `scripts/ufo-l0-monitor.mjs` (`:85`), `scripts/fleet-dispatcher.mjs` (`:86`), `scripts/ufo-sighting` (`:87`). Hub `scripts/ufo-mission-result.mjs`: `acquireSingletonLock` (`:59`), `appendStampedLog` (`:2279`), `writeWithMkdirRetry` (`:62`), `writeFileAtomicIfChanged` (`:2316`), `readBoundedFile` (`:57`), `readBoundedJson` (`:70`), `readQueueFile` (`:2692`), `resolveQueuePath` (`:3236`), `containedJoin` (`:2632`), `statSignature` (`:2656`), `sha256File` (`:2678`), `snapshotPromptSha256` (`:2744`), `snapshotConfigDigests` (`:2805`), `expectedReceiptBag` (`:2529`), `validateTaskReceipt` (`:54`), `validateTaskReceiptEitherBinding` (`:2868`), `TERMINAL_QUEUE_STATES` (`:2504`), `isQueueRunId` (`:2618`), `MAX_QUEUE_BYTES` (`:2496`), `MAX_EVIDENCE_LOG_BYTES` (`:2511`), `parseDeclaredArgv` (`:2372`), `parseReportOutput` (`:3164`), `stalledIdleText` (`:2566`), `collapseWhitespace` (`:2257`), `plainObjectRows` (`:75`), `isPlainObject` (`:85`), `redactAbsolutePaths` (`:86`), `knownRootTags` (`:80`), `spinWait` (`:74`), `isMainModule` (`:3012`), `emitErrorJson` (`:2481`), `MissionResultError` (`:56`).
 
 Sources: `scripts/ufo-l0-watch.mjs`; `scripts/ufo-mission-result.mjs` (dep line anchors only).
 ## `scripts/the-tick-ping.mjs`
@@ -256,14 +256,14 @@ Sources: `scripts/ufo-l0-watch.mjs`; `scripts/ufo-mission-result.mjs` (dep line 
 It loads the machine config (`:713`), fans one request out to every configured
 runner, and prints one `the-tick-client-result-v1` JSON line to stdout. Three CLI
 shapes map to three wire ops: default `path_ping`, `--fresh <runId>` →
-`freshness_ping` (`:726-731`), `--health` → `health` (`:715-719`). It never sends
+`freshness_ping` (`:726-731`), `--health` → `health` (`:21`). It never sends
 `chat` — the reply-ceiling rationale states "this client never sends chat and
 rejects chat-result schemas" (`:61-62`) — and no chat-result schema is accepted by
 `validateRunnerResponse` (`:227-272`).
 
 `--interval-ms` and `--timeout-ms` are parsed as decimal-digit-only positive
 integers; `Number()`'s hex/binary/exponent spellings are refused by the regex at
-`:580` (`throw tickUsageError("positive_integer_required", ...)`, `:584`). Both may
+`:580` (throw tickUsageError("positive_integer_required", ...), `:584`). Both may
 be omitted, and then the config's declared defaults apply (`:738-739`):
 
     const intervalMs = options.intervalMs ?? config.pathPing.defaultIntervalMs;
@@ -280,11 +280,11 @@ absolute, computed once on the client's own clock: `deadlineMs: Date.now() +
 timeoutMs` (`:802`). The runner-side dial bound is that deadline plus a fixed
 `RUNNER_DEADLINE_GRACE_MS = 250` (`:49`), so an on-time `deadline` verdict is not
 cut off and misreported as `unavailable` (`:43-48`); replies are bounded
-separately by `RUNNER_RESPONSE_MAX_BYTES = 65_536` (`:65`).
+separately by RUNNER_RESPONSE_MAX_BYTES = 65_536 (`:65`).
 
 **Handoff-file input shape.** Positional args are repo-relative paths, never
 absolute; each becomes `{ id: \`target-${index}\`, root, relativePath }` (`:803`)
-under the `--root` alias, default `"handoffs"` (`:613`), which must name a
+under the `--root` alias, default `"handoffs"` (`:536`), which must name a
 configured root (`root_not_configured`, `:751`). A relative path is validated as
 normalized-relative — no NUL, no backslash, not absolute, no empty/`.`/`..`
 segment, ≤4096 chars (`:753-760`, `target_path_not_relative` `:758`) — and a
@@ -299,13 +299,13 @@ rejection}` (`:4636-4641`). `--fresh` reads a different leaf: the heartbeat file
 validated against `FRESH_RUN_ID_RE` (`:606`, `:671-673`) *before* config load, or
 a typo would be masked by transport state (`:600-605`).
 
-**Completion detection.** `fanOutPathPing` (`:361`) dials all runners
+**Completion detection.** `fanOutPathPing` (`:211`) dials all runners
 concurrently and returns on the first *validated* `present` envelope, aborting
 the siblings (`:406-415`). The runner side is a poll loop (`ufo-ground-handler.mjs:252`):
 `present` only when every target is present (`:268`), else
-`sleep(Math.min(request.intervalMs, remainingMs))` (`:272`) until the absolute
-deadline yields `deadline` (`:275`). A runner `the-tick-error-v1` envelope never
-synthesizes `deadline` (`:418-423`), exactly as it never synthesizes `fresh`
+sleep(Math.min(request.intervalMs, remainingMs)) (`:272`) until the absolute
+deadline yields `deadline` (`:191`). A runner `the-tick-error-v1` envelope never
+synthesizes `deadline` (`:22`), exactly as it never synthesizes `fresh`
 (`:442-448`) or `ok` (`:513-519`).
 
 **Exit codes** (`:30-41`): `present: 0`, `fresh: 0`, `ok: 0` (the three healthy
@@ -316,8 +316,8 @@ TICK_PING_EXIT_CODES.error` (`:722`, `:734`, `:807`) — an unknown status floor
 at 6, never 0.
 
 **Failure strings.** Socket-level framing faults carry literals from `dialRunner`:
-`"runner deadline exceeded"` (`:132`), `"runner response exceeded the byte limit"`
-(`:151`, `:154`), `"runner returned trailing response bytes"` (`:155`), `"runner
+`"runner deadline exceeded"` (`:98`), `"runner response exceeded the byte limit"`
+(`:151`, `:102`), `"runner returned trailing response bytes"` (`:102`), `"runner
 returned invalid JSON"` (`:160`), `"runner closed without a response"` (`:166`).
 The file's own header pins the exit-code nuance: a validated-envelope
 contradiction is exit 4 `protocol_error`, while oversize/trailing/JSON/silent-close
@@ -343,54 +343,54 @@ One `ufo-ground-handler.mjs` process serves exactly one runner id, bound to one
 unix socket. Both socket paths are config templates — `"${XDG_RUNTIME_DIR}/ufo/the-tick/runner-0.sock"`
 and `…/runner-1.sock` (`config/the-tick.machine.json:23`, `:27`) — expanded at
 config load (`the-tick-config.mjs:497`) and required to be a *direct child* of
-`runtimeDir` = `"${XDG_RUNTIME_DIR}/ufo/the-tick"` (`:5`, `${XDG_RUNTIME_DIR}`
+`runtimeDir` = `"${XDG_RUNTIME_DIR}/ufo/the-tick"` (`:5`, ${XDG_RUNTIME_DIR}
 resolved at `the-tick-config.mjs:494`; direct-child check at `:500`). Binding is
 exclusive and hardened: `listen({ path: socketPath, readableAll: false,
 writableAll: false })` (`:530`) under `process.umask(0o077)` (`:539`), then
-`chmodSync(socketPath, 0o600)` (`:548`) with a re-read mode check that refuses
-`ufo_socket_mode_not_private` (`:550`); ownership is checked first
-(`ufo_socket_not_owned`, `:503`). A post-listen fault closes the server and
+`chmodSync(socketPath, 0o600)` (`:493`) with a re-read mode check that refuses
+ufo_socket_mode_not_private (`:550`); ownership is checked first
+(ufo_socket_not_owned, `:503`). A post-listen fault closes the server and
 unlinks only a path still carrying this claim's inode (`:552-564`, `:567-578`).
 
-**Op set.** `parseSingleRequest` (`:98`) dispatches on `op`:
-`health` (`:115`, exact keys `["schema", "requestId", "op"]`),
-`chat` (`:122`, keys `["schema", "requestId", "op", "deadlineMs", "prompt"]`, `:123`),
-`freshness_ping` (`:134`, keys `["schema", "requestId", "op", "runId"]`, `:135`),
-and `path_ping` (`:145`, keys `["schema", "requestId", "op", "intervalMs",
+**Op set.** `parseSingleRequest` (`:86`) dispatches on `op`:
+`health` (`:104`, exact keys `["schema", "requestId", "op"]`),
+`chat` (`:111`, keys `["schema", "requestId", "op", "deadlineMs", "prompt"]`, `:111`),
+`freshness_ping` (`:123`, keys `["schema", "requestId", "op", "runId"]`, `:123`),
+and `path_ping` (`:132`, keys `["schema", "requestId", "op", "intervalMs",
 "deadlineMs", "targets"]`); anything else is
-`requestFail(PATH_PING_ERROR_CODES.BAD_REQUEST, "unsupported op")` (`:144`), and
-every request requires an `op` at all (`:111-113`). Each `targets[i]` is exactly
+`requestFail(PATH_PING_ERROR_CODES.BAD_REQUEST, "unsupported op")` (`:132`), and
+every request requires an `op` at all (`:111-113`). Each targets[i] is exactly
 `["id", "root", "relativePath"]` (`:160`), `id` unique and ≤128 chars (`:161-164`),
 `root` a configured alias (`:165-167`). The server applies the same mapping
 (`:704-709`).
 
 **Response shapes.** Success envelopes all spread `commonResponse` (requestId,
-runnerId, configSha256, provenance, `:391-398`): `the-tick-path-ping-result-v1`
-with `status`/`observedAtMs`/`elapsedMs`/`attemptCount`/`targets` (`:277-288`),
+runnerId, configSha256, provenance, `:266`): `the-tick-path-ping-result-v1`
+with `status`/`observedAtMs`/`elapsedMs`/`attemptCount`/`targets` (`:133`),
 `the-tick-freshness-ping-result-v1` with `status`/`ageMs`/`advisoryOnly: true`
-(`:323-335`), `the-tick-health-result-v1` with `status: "ok"`/`advisoryOnly: true`
-(`:490-497`), `the-tick-chat-result-v1` with `response` (`:472-478`). Runner
+(`:437`), `the-tick-health-result-v1` with `status: "ok"`/`advisoryOnly: true`
+(`:418`), `the-tick-chat-result-v1` with `response` (`:355`). Runner
 faults are `the-tick-error-v1` = common response + `status` + `observedAtMs` +
-`error: {code, message}` (`:400-408`), with statuses `rejected | busy | deadline |
+error: {code, message} (`:400-408`), with statuses `rejected | busy | deadline |
 error` (`:717-719`).
 
 **Closed error vocabulary.** `PATH_PING_ERROR_CODES` is the only vocabulary that
 reaches the wire, and only its members do: `bad_request`, `busy`, `deadline`,
 `internal_error`, `protocol_error`, `invalid_target`, `request_too_large`
 (`the-tick-config.mjs:91-99`). The dispatch path's catch maps a foreign code and
-its raw message to `internal_error` / `"request failed"` (`:713-721`), and the
-parse path does the same with a floor of `bad_request` (`:688-696`).
+its raw message to `internal_error` / `"request failed"` (`:635`), and the
+parse path does the same with a floor of `bad_request` (`:75`).
 
 **Freshness bounds.** The freshness alias is fixed in code, never caller-supplied:
-`FRESHNESS_ROOT_ALIAS = "heartbeat"` (`:33`), reading exactly one leaf,
+`FRESHNESS_ROOT_ALIAS = "heartbeat"` (`:32`), reading exactly one leaf,
 `` `${request.runId}.json` `` under `freshnessPing.heartbeatRoot`
 `"${REPO_ROOT}/.ufo/sighting/heartbeat"` (`:299-302`, `config:53`), which the
 handler creates private — `mkdirSync(…, { recursive: true, mode: 0o700 })`
-(`:754`). `staleAfterMs: 90000` (`config:54`) is the stale bound, and
-`FRESHNESS_CLOCK_SKEW_MS = 1_000` (`:38`) is the future-skew allowance: a raw age
+(`:754`). staleAfterMs: 90000 (`config:54`) is the stale bound, and
+`FRESHNESS_CLOCK_SKEW_MS = 1_000` (`:37`) is the future-skew allowance: a raw age
 more than 1 s ahead of the observer is `heartbeat_stale`
 (`futureBeyondSkew = rawAgeMs !== null && rawAgeMs < -FRESHNESS_CLOCK_SKEW_MS`,
-`:319`; verdict at `:320-322`), while `ageMs` itself is floored at 0 (`:318`) so
+`:319`; verdict at `:35`), while `ageMs` itself is floored at 0 (`:318`) so
 the client's negative-age protocol-error arm stays unreachable. **Brief
 correction:** the assignment text says ">5 s future-skew refusal"; the constant in
 this HEAD is **1,000 ms** (1 s) — `docs/THE-TICK.md:89` independently states the
@@ -401,7 +401,7 @@ returns only `:38`/`:319`).
 inside `handleChat`, and it is the only egress: `POST
 config.backend.endpoint` (`http://127.0.0.1:34113/v1/chat/completions`,
 `config:16`) with `redirect: "error"`, body `model: config.model.apiModel`
-(`:451`), `temperature: 0.1` (`:452`), a fixed system prompt
+(`:397`), `temperature: 0.1` (`:397`), a fixed system prompt
 `"You are THE TICK, a local advisory ground helper. Give concise reversible
 guidance. Never judge, admit, ship, mutate run state, or claim an action
 occurred."` (`:41`), and the caller's prompt. The prompt is bounded before dialing:
@@ -409,24 +409,24 @@ non-empty after trim and `Buffer.byteLength(request.prompt, "utf8") > 12_000`
 refuses (`:127-130`). The reply is read through `readBoundedJson`, bounded by
 `MAX_CHAT_RESPONSE_BYTES = 1_048_576` (`:39`, `:420`), must be JSON (`:433-436`),
 and must echo the local model identity `body.model === config.model.path`
-(`:466-468`); the assistant content must be a string (`:469-470`). `health`,
+(`:466-468`); the assistant content must be a string (`:103`). `health`,
 `freshness_ping` and `path_ping` never touch the backend.
 
 **Bounded-exec / refusal posture.** Neither this file nor `the-tick-ping.mjs`
 imports `node:child_process` or contains `spawn`/`execSync`/`execFile`/`eval(`/
 `new Function` (grep, zero hits): the handler observes and answers, it never
 executes. Inbound framing is bounded by `requestReadTimeoutMs: 5000` (`config:41`,
-`:654-657`), `maxRequestBytes: 16384` (`config:49`, `:668`, `:673`), one request
-per connection (`:662`), and `maxInflightPerRunner: 8` (`config:50`) beyond which
-the runner answers `status: "busy"` / `busy` (`:697-700`). Startup refusals use
+`:654-657`), maxRequestBytes: 16384 (`config:49`, `:668`, `:673`), one request
+per connection (`:662`), and maxInflightPerRunner: 8 (`config:50`) beyond which
+the runner answers `status: "busy"` / `busy` (`:639`). Startup refusals use
 their own snake_case namespace, never the request vocabulary: `ufo_socket_not_owned`
-(`:503`), `ufo_socket_mode_not_private` (`:550`), `ufo_runtime_path_not_directory`
-(`:583`), `ufo_runtime_path_owner` (`:586`), `ufo_runtime_path_not_private`
-(`:590`), `ufo_runtime_path_xdg_unset` (`:605`), `ufo_runtime_path_escape`
-(`:610`), `ufo_heartbeat_root_not_creatable` (`:756`), `ufo_cli_runner_unknown`
-(`:764`), `ufo_cli_runner_duplicate` / `ufo_cli_runner_value_missing` (`:789`/`:790`),
+(`:503`), ufo_socket_mode_not_private (`:550`), ufo_runtime_path_not_directory
+(`:583`), ufo_runtime_path_owner (`:586`), ufo_runtime_path_not_private
+(`:590`), ufo_runtime_path_xdg_unset (`:605`), ufo_runtime_path_escape
+(`:610`), ufo_heartbeat_root_not_creatable (`:756`), ufo_cli_runner_unknown
+(`:764`), ufo_cli_runner_duplicate / `ufo_cli_runner_value_missing` (`:789`/`:790`),
 `ufo_cli_config_duplicate` / `ufo_cli_config_value_missing` (`:793`/`:794`),
-`ufo_cli_argument_unknown` (`:797`), `ufo_cli_runner_missing` (`:821`). CLI parse
+ufo_cli_argument_unknown (`:797`), ufo_cli_runner_missing (`:821`). CLI parse
 and runner-validation failures set `tickUsage` → exit 64, all other faults exit 1
 (`:857`). `SIGTERM`/`SIGINT` abort in-flight requests, then release the socket
 (after a 2 s force), so a restart never meets a stale path (`:828-843`, `:567-578`).

@@ -1,0 +1,12 @@
+ROWS: 3  YES: 3  NOTES: 3  SECTIONS: 4
+ROW R5   form=topic     notes=1 sections=0 adv=1
+ROW R7   form=topic     notes=1 sections=0 adv=1
+ROW R9   form=section   notes=1 sections=4 adv=3
+CLAIMS  warn  ROW_NO_SECTIONS          row=R5  R5 has no member section — member completeness unchecked
+CLAIMS  warn  ROW_NO_SECTIONS          row=R7  R7 has no member section — member completeness unchecked
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/loop_driver_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/local_ship_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/distill_tests.rs is outside R9's declared members
+SUMMARY: errors=0 warnings=5
+CLAIMS: MATCH (rows=3 yes=3 notes=3 sections=4 adv=5)
+EXIT=0

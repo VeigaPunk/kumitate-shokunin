@@ -612,12 +612,21 @@ what a corpus entry must clear before admission: `corpus/QUALITY.md`.
 
 ## Verifiable checklist
 
-Every item is read-only, runs from this repo's root, and prints its own verdict;
-`node scripts/surface-probe.mjs --checklists` executes the list.
+Fourteen items (14 since round 36, 2026-10-21 — 13 through round 35, plus the
+anchor-fidelity sweep), every one read-only, runs from this repo's root, and
+prints its own verdict; `node scripts/surface-probe.mjs --checklists` executes
+the list.
+
+Items 3, 8, 10 and 14 are pin-aware — each resolves `--src` through
+`.ufo/pins/origin.json` (contract `kumitate-origin-pin-v1`, a private clone
+detached at a pinned revision) and prints `src-rev=<12 hex>` inside its verdict,
+so a pass is scoreable against a revision instead of against whichever tree sits
+at the default path. Item 1 (`cite-check`) still takes an explicit `--src`; with
+no pin file every pin-aware gate falls back to `--src` / `$UFO_SRC` as before.
 
 - [ ] Citation gate verdict — `node scripts/cite-check.mjs` → exit 0|1 + `CITE_CHECK:`
 - [ ] Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
-- [ ] Live sighting-surface conformance — `node scripts/surface-probe.mjs` → exit 0 + `SURFACE_PROBE: CLEAN`
+- [ ] Live sighting-surface conformance — `node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json` → exit 0 + `SURFACE_PROBE: CLEAN`
 - [ ] Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
@@ -628,12 +637,23 @@ Every item is read-only, runs from this repo's root, and prints its own verdict;
 - [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
 - [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
 - [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Anchor fidelity — `node scripts/claims-check.mjs --fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` → exit 0 + `FIDELITY: CLEAN`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
-empty scan set, unparsable surface JSON): fix the tool, not the claim. A named
-`CITE_CHECK: DRIFT` / `SURFACE_PROBE: DRIFT` is a tree finding — the gate
-measured the tree, the owner named in that line owns the repair, and neither
-gate writes to the origin tree. Live 2026-09-28 at round-13 close:
+empty scan set, unparsable surface JSON, a pin that no longer resolves to its
+recorded revision, a ratchet whose revision is stale): fix the tool, not the
+claim. A named `CITE_CHECK: DRIFT` / `SURFACE_PROBE: DRIFT` is a tree finding —
+the gate measured the tree, the owner named in that line owns the repair. With a
+pin active (`.ufo/pins/origin.json`, contract `kumitate-origin-pin-v1`) the
+pin-aware gates resolve `--src` from the pin's read-only clone, assert
+that clone's `HEAD` equals the pinned revision, and print `src-rev=<12 hex>`
+inside the verdict line, so a clean verdict is a statement about a revision and
+not about whichever tree happens to sit at the default path; the probe's origin
+read verbs run with `UFO_STATE_DIR` / `UFO_PENDING_WORK_PATH` under a `mkdtemp`
+and the temp dir is removed afterwards, so no gate writes into the tree it
+reads. Without a pin file the gates behave as before and the verdict carries no
+`src-rev=` segment. The counts below are a dated snapshot, not a live claim —
+re-run the item and read the line it prints. At round-13 close (2026-09-28):
 `CITE_CHECK: DRIFT (files=47 tokens=4530 errors=14 warnings=75)` — every error
 sits inside third-party aggregator artifacts
 (`corpus/lessons/round-6-aggregator-audit.md` 2 × `LINE_OOR`;

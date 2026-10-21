@@ -23,14 +23,14 @@ is S8 remainder, not S1.
 **Current-file anchors** (post-2026-10-12 tree; bare `L<n>` cites in the topic
 sections below remain historical against the superseded 14,769-line revision):
 
-- `QUEUE_SCHEMA` at `scripts/fleet-dispatcher.mjs:95`
-- `writeQueue` at `scripts/fleet-dispatcher.mjs:4853`
-- `acquireQueueLock` at `scripts/fleet-dispatcher.mjs:4942`
-- `maybeEnqueueIterationSuccessor` at `scripts/fleet-dispatcher.mjs:5513`
-- `admitQueueCandidates` at `scripts/fleet-dispatcher.mjs:5956`
-- `reconcileQueue` at `scripts/fleet-dispatcher.mjs:7078`
-- `queueSummary` at `scripts/fleet-dispatcher.mjs:7624`
-- `runCycle` at `scripts/fleet-dispatcher.mjs:8966`
+- `QUEUE_SCHEMA` at `scripts/fleet-dispatcher.mjs:102`
+- `writeQueue` at `scripts/fleet-dispatcher.mjs:865`
+- acquireQueueLock at `scripts/fleet-dispatcher.mjs:4942`
+- `maybeEnqueueIterationSuccessor` at `scripts/fleet-dispatcher.mjs:5089`
+- `admitQueueCandidates` at `scripts/fleet-dispatcher.mjs:5532`
+- `reconcileQueue` at `scripts/fleet-dispatcher.mjs:3032`
+- `queueSummary` at `scripts/fleet-dispatcher.mjs:263`
+- `runCycle` at `scripts/fleet-dispatcher.mjs:3382`
 - `main` at `scripts/fleet-dispatcher.mjs:9536`
 
 

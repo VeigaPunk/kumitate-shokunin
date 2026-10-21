@@ -4,7 +4,7 @@
  * Read-only, zero deps, ESM, node >= 20, no network. Contract:
  * kumitate-proxy-v1 (parent-frozen).
  *
- *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--json] [--strict]
+ *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--pin FILE] [--json] [--strict]
  *   node scripts/proxy-check.mjs --selftest
  *   node scripts/proxy-check.mjs -h|--help
  *
@@ -50,6 +50,26 @@
  *   per section; it now counts each member once. A missing/odd `--kimi-root` is
  *   the fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
  *
+ * Origin pin (PIN v1, `kumitate-origin-pin-v1`)
+ *   The layer terms are only meaningful when they score the tree they name, so
+ *   a run may carry an origin pin: `--pin FILE`, defaulting to
+ *   `<--self>/.ufo/pins/origin.json` when that file exists (a missing default
+ *   file is NOT an error — the tool then behaves exactly as it did before this
+ *   amendment, so it stays portable to trees without a pin). The pin resolves
+ *   `src` as: `--src`, else the pin's `clone`, else the legacy `$UFO_SRC`
+ *   candidate list. The assertion always runs on the RESOLVED tree, so an
+ *   operator who passes a different `--src` under an active pin is refused
+ *   rather than handed a verdict that names the pin while scoring another tree.
+ *   Verification is ONE `git -C <src> rev-parse HEAD` (with
+ *   `GIT_OPTIONAL_LOCKS=0`, so a read-only pinned clone is never locked):
+ *     revision differs  → `SRC_REV_MISMATCH` (exit 2)
+ *     not a repo / no git / HEAD not 40 hex → `SRC_REV_UNVERIFIABLE` (exit 2)
+ *   A pin that cannot be trusted never degrades into "no pin" — that would
+ *   silently turn provenance off — so an unreadable/invalid pin file is
+ *   `PIN_MALFORMED` (exit 2). Every `PROXY: MATCH|DRIFT (…)` verdict then
+ *   carries `; src-rev=<first 12 hex>` and the JSON body carries `srcRev`
+ *   (null with no pin).
+ *
  * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
  *   default     recompute the seventeen terms + the seven pins under `--self`,
  *               `--scorecard`, the origin tree `--src` and the kimi root
@@ -57,11 +77,17 @@
  *               with the kumitate-proxy-v1 stanza. The registry rows and the
  *               `## Axes` rows are read from the SAME file as the stanza
  *               (`--scorecard`, default `<self>/SCORECARD.md`); the two layer
- *               terms come from the claims gate's walk of `--src`.
+ *               terms come from the claims gate's walk of `--src`. With an
+ *               active origin pin the tree is resolved as `--src` → pin
+ *               `clone` → legacy default, its HEAD is asserted against the pin
+ *               revision, and the verdict names `src-rev=`.
  *   --selftest  HERMETIC fixture suite: synthetic repos under `mkdtemp` only.
  *               It never reads this repo, the live scorecard or the
  *               environment, so it PASSes in any tree state and a bogus
  *               `--self` cannot affect it. `--selftest` wins over `--json`.
+ *               The PIN fixtures init throwaway git repos inside that tmp dir
+ *               with `GIT_CONFIG_NOSYSTEM=1`/`GIT_CONFIG_GLOBAL=/dev/null` and a
+ *               tmp `HOME`, so the operator's git config never reaches them.
  *   -h|--help   print USAGE, exit 0.
  *
  * Derivation (frozen — the stanza may declare these, never re-charter them)
@@ -183,9 +209,12 @@
  *                 coverage=<s>; S=<s>/<m> coverage:script-layer=<s>;
  *                 R=<s>/<m> coverage:runtime-layer=<s>;
  *                 K=<sections>/<members> coverage:kimi-layer=<n>;
- *                 pins=<n> match)
- *   PROXY: DRIFT (<KIND term=… declared=… computed=… delta=…>…)
+ *                 pins=<n> match[; src-rev=<12 hex>])
+ *   PROXY: DRIFT (<KIND term=… declared=… computed=… delta=…>…[; src-rev=<12 hex>])
  *   PROXY: FAIL-CLOSED (<TOKEN>) <detail>     (exit 2)
+ *   `; src-rev=` is present exactly when a pin is active (PIN v1): it is the
+ *   first 12 hex of the revision the run PROVED, so a verdict can never be
+ *   quoted without the tree it scored.
  *
  * Exit: 0 match · 1 drift (findings; warnings too under `--strict`) ·
  *       2 fail-closed · 64 usage. Argument parsing precedes every mode: an
@@ -193,11 +222,22 @@
  *       `--selftest` is present, exactly as `round-gate.mjs` does.
  *
  * Fail-closed arms (exit 2; each prints its named kind; checked in this order)
- *   SELF_NOT_A_DIR SRC_NOT_A_DIR KIMI_ROOT_NOT_A_DIR SCORECARD_MISSING
+ *   SELF_NOT_A_DIR PIN_MALFORMED SRC_NOT_A_DIR SRC_REV_UNVERIFIABLE
+ *   SRC_REV_MISMATCH KIMI_ROOT_NOT_A_DIR SCORECARD_MISSING
  *   STANZA_MISSING
  *   STANZA_MALFORMED STANZA_KEY_UNKNOWN STANZA_KEY_DUPLICATE REGISTRY_MISSING
  *   SKILL_MISSING README_MISSING CORPUS_DIRS_MISSING
- *   SRC_NOT_A_DIR = `--src` is not a directory. The four legacy terms do not
+ *   PIN_MALFORMED = the pin file (explicit `--pin`, or the default one that
+ *   exists) is unreadable, not JSON, not an object, names another contract, has
+ *   a revision outside 40 lowercase hex, or has no `clone` path. A pin that
+ *   cannot be trusted is refused, never ignored: ignoring it would silently
+ *   turn provenance off.
+ *   SRC_REV_UNVERIFIABLE = the resolved tree is not a git repository (or git is
+ *   absent, or HEAD is unborn/not 40 hex): the pin's claim cannot be checked.
+ *   SRC_REV_MISMATCH = `git -C <src> rev-parse HEAD` differs from the pin
+ *   revision — the classic "scored another tree while naming the pin" defect.
+ *   SRC_NOT_A_DIR = `--src` (or the pin's `clone` when `--src` is absent) is not
+ *   a directory. The four legacy terms do not
  *   need it, but the two layer terms do — they are counted over the claims
  *   gate's walk of that tree — so a missing origin tree refuses the whole
  *   verdict rather than printing a score it cannot derive.
@@ -215,8 +255,11 @@
  *
  * Bounds and what this tool never does
  *   Reads only, under `--self` + the scorecard + the origin tree named by
- *   `--src` + the kimi root named by `--kimi-root`: no writes, no network, no
- *   subprocess, no git, no lock. The origin
+ *   `--src` (or the pin's `clone`) + the kimi root named by `--kimi-root`: no
+ *   writes, no network, no lock; the ONE subprocess is the pin's
+ *   `git -C <src> rev-parse HEAD` (PIN v1, only when a pin is active, run with
+ *   `GIT_OPTIONAL_LOCKS=0` so the read-only pinned clone is neither locked nor
+ *   touched). With no pin the tool spawns nothing at all. The origin
  *   tree is opened only through the imported `probeSections()` (which walks it
  *   exactly once, in process) and the files that gate already reads for its own
  *   member derivations — never a second walk, never a shell-out. The kimi root
@@ -230,7 +273,10 @@
  *   `KIMI_ROOT`, each only as its flag's default
  *   (`process.env.UFO_SRC || the first existing origin candidate`,
  *   `process.env.KIMI_ROOT || ~/.kimi-code`),
- *   so the legacy self-only terms stay env-independent; `--selftest` reads no
+ *   so the legacy self-only terms stay env-independent; the pin default is a
+ *   path under `--self` (`.ufo/pins/origin.json`), never an env var, and the
+ *   pin's git child gets `GIT_OPTIONAL_LOCKS=0`/`GIT_TERMINAL_PROMPT=0` only.
+ *   `--selftest` reads no
  *   environment and no live tree at all (its K terms count over a fixture kimi
  *   root it builds in the tmp dir), which is what makes it hermetic.
  *   Portable: node >= 20, ESM, zero deps.
@@ -277,6 +323,112 @@ function resolveSrcDefault() {
   for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
   return SRC_CANDIDATES[0];
 }
+
+/* ------------------------------------------------------------------ PIN v1 */
+
+/**
+ * `kumitate-origin-pin-v1` — the frozen origin pin (round-36). The sibling
+ * `scripts/claims-check.mjs` implements the same contract with the same token
+ * vocabulary and the same messages; the read/resolve block is duplicated here
+ * (not imported) for the same reason `resolveSrcDefault` already is: each gate
+ * must stand alone, and the claims gate exports no pin reader.
+ */
+const PIN_CONTRACT = 'kumitate-origin-pin-v1';
+const PIN_REL = '.ufo/pins/origin.json';
+const RE_REV = /^[0-9a-f]{40}$/;
+
+/** The pin a run would use when `--pin` is absent: `<--self>/.ufo/pins/origin.json`. */
+function defaultPinPath(self) {
+  const p = join(self, PIN_REL);
+  return statKind(p) === 'file' ? p : null;
+}
+
+/**
+ * Read a `kumitate-origin-pin-v1` file. A pin that cannot be trusted never
+ * degrades into "no pin" — that would silently turn provenance off — so every
+ * unreadable/invalid field is `PIN_MALFORMED` (exit 2).
+ */
+function readPin(file) {
+  const text = readText(file);
+  if (text === null) return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is ${statKind(file)}` };
+  let body;
+  try { body = JSON.parse(text); } catch (err) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is not JSON (${err && err.message})` };
+  }
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} is not a JSON object` };
+  }
+  if (body.contract !== PIN_CONTRACT) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} contract ${JSON.stringify(body.contract)} != ${PIN_CONTRACT}` };
+  }
+  const revision = typeof body.revision === 'string' ? body.revision.toLowerCase() : '';
+  if (!RE_REV.test(revision)) {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} revision ${JSON.stringify(body.revision)} is not 40 hex` };
+  }
+  if (typeof body.clone !== 'string' || body.clone.trim() === '') {
+    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} has no clone path` };
+  }
+  return { ok: true, pin: { file, contract: body.contract, repo: body.repo ?? null, revision, clone: resolve(body.clone) } };
+}
+
+/**
+ * `git -C <dir> rev-parse HEAD` as a full 40-hex sha, or null when git is not
+ * on PATH, `<dir>` is not a repository, or HEAD is unborn. `GIT_OPTIONAL_LOCKS=0`
+ * keeps the read from taking a lock: the pinned clone is a-w and must stay so.
+ */
+/** Environment for a `git` child: identity variables are stripped so an ambient
+ *  GIT_DIR/GIT_WORK_TREE cannot redirect the assertion at another repository.
+ *  Only the two optional-lock/prompt switches and the fixture discovery ceiling
+ *  are passed through. */
+const GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',
+  'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
+  'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_ATTR_NOSYSTEM']);
+function gitEnv(extra) {
+  const env = {};
+  for (const [k, v] of Object.entries(process.env)) if (GIT_ENV_KEEP.has(k)) env[k] = v;
+  return { ...env, GIT_OPTIONAL_LOCKS: '0', GIT_TERMINAL_PROMPT: '0', ...(extra ?? {}) };
+}
+
+function gitHead(dir) {
+  const r = spawnSync('git', ['-C', dir, 'rev-parse', 'HEAD'], {
+    encoding: 'utf8', timeout: 30_000,
+    env: gitEnv(),
+  });
+  if (r.error || r.status !== 0) return null;
+  const head = (r.stdout ?? '').trim().toLowerCase();
+  return RE_REV.test(head) ? head : null;
+}
+
+/**
+ * Resolve the tree this run scores and, when a pin is active, prove it is the
+ * pinned revision. Precedence: `--src`, else the pin's clone, else the legacy
+ * default. The assertion always runs on the RESOLVED tree — an operator who
+ * passes a different `--src` under an active pin gets `SRC_REV_MISMATCH`, never
+ * a verdict that names the pin while scoring another tree.
+ */
+function resolveOrigin(opts) {
+  const pinPath = opts.pin ?? defaultPinPath(opts.self);
+  if (pinPath === null) return { ok: true, src: opts.src ?? resolveSrcDefault(), pin: null };
+  const loaded = readPin(pinPath);
+  if (!loaded.ok) return loaded;
+  const src = opts.src ?? loaded.pin.clone;
+  if (statKind(src) !== 'dir') return { ok: false, kind: 'SRC_NOT_A_DIR', detail: `--src ${src} is ${statKind(src)}` };
+  const head = gitHead(src);
+  if (head === null) {
+    return {
+      ok: false, kind: 'SRC_REV_UNVERIFIABLE',
+      detail: `git rev-parse HEAD in ${src} is not a repository HEAD (pin ${pinPath})`,
+    };
+  }
+  if (head !== loaded.pin.revision) {
+    return {
+      ok: false, kind: 'SRC_REV_MISMATCH',
+      detail: `${src} HEAD ${head.slice(0, 12)} != pin ${loaded.pin.revision.slice(0, 12)} (${pinPath})`,
+    };
+  }
+  return { ok: true, src, pin: { ...loaded.pin, srcRev: head } };
+}
+
 /** Kimi installation the K terms count over; `--kimi-root` overrides it. */
 const DEFAULT_KIMI_ROOT = process.env.KIMI_ROOT || join(homedir(), '.kimi-code');
 
@@ -388,12 +540,13 @@ const FINDING_KINDS = [
 ];
 /** Every fail-closed arm the hermetic suite must fire at least once. */
 const FAIL_CLOSED_KINDS = [
-  'SELF_NOT_A_DIR', 'SRC_NOT_A_DIR', 'KIMI_ROOT_NOT_A_DIR', 'SCORECARD_MISSING',
+  'SELF_NOT_A_DIR', 'PIN_MALFORMED', 'SRC_NOT_A_DIR', 'SRC_REV_UNVERIFIABLE',
+  'SRC_REV_MISMATCH', 'KIMI_ROOT_NOT_A_DIR', 'SCORECARD_MISSING',
   'STANZA_MISSING', 'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
   'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
 ];
 
-const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--json] [--strict]
+const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--pin FILE] [--json] [--strict]
        node scripts/proxy-check.mjs --selftest
        node scripts/proxy-check.mjs -h|--help
 contract id: ${CONTRACT}
@@ -417,7 +570,10 @@ modes:
                corpus/knowledge/kimi-*.md headings under --self; K_sections is
                the count of DISTINCT K members those headings name, and a heading
                whose only candidate is a basename shared by several members names
-               none of them (warn K_SECTION_AMBIGUOUS)
+               none of them (warn K_SECTION_AMBIGUOUS).
+               With an active origin pin (--pin, or the default pin file under
+               --self) the tree is resolved through the pin and its HEAD is
+               asserted; the verdict then carries src-rev=<12 hex>.
   --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
   -h | --help  print this text, exit 0
 
@@ -425,9 +581,16 @@ options:
   --self DIR         repo root to measure (default: the repo containing this script)
   --scorecard FILE   claim block + registry rows + ## Axes rows (default <self>/${SCORECARD_FILE})
   --src DIR          origin tree the layer terms count over, via the claims gate
-                     (default: \$UFO_SRC, else the first existing of
+                     (default: the pin's clone when a pin is active, else \$UFO_SRC,
+                     else the first existing of
                      ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha);
                      a non-directory is refused as SRC_NOT_A_DIR (exit 2)
+  --pin FILE         origin pin (${PIN_CONTRACT}), default <self>/${PIN_REL}
+                     when that file exists; resolves --src from the pin's clone,
+                     asserts git rev-parse HEAD equals the pin revision
+                     (SRC_REV_MISMATCH / SRC_REV_UNVERIFIABLE, exit 2) and prints
+                     src-rev=<12 hex> in the verdict. A missing default pin file
+                     is not an error — the run is then unpinned and unchanged.
   --kimi-root DIR    kimi installation the K terms count over
                      (default: \$KIMI_ROOT or ${DEFAULT_KIMI_ROOT});
                      a non-directory is refused as KIMI_ROOT_NOT_A_DIR (exit 2),
@@ -958,16 +1121,17 @@ function findingSummary(f) {
   return parts.join(' ');
 }
 
-function renderVerdict(verdict, terms, pinStats, findings) {
+function renderVerdict(verdict, terms, pinStats, findings, srcRev) {
+  const tail = srcRev ? `; src-rev=${srcRev.slice(0, 12)}` : '';
   if (verdict === 'MATCH') {
     return `PROXY: MATCH (A=${terms.A} C=${terms.C} operability=${terms.operability};`
       + ` C1=${terms.C1}/${terms.C1_total} C2=${terms.C2}/${terms.C2_total} coverage=${terms.coverage};`
       + ` S=${terms.S_sections}/${terms.S_members} coverage:script-layer=${terms.coverage_script};`
       + ` R=${terms.R_sections}/${terms.R_members} coverage:runtime-layer=${terms.coverage_runtime};`
       + ` K=${terms.K_sections}/${terms.K_members} coverage:kimi-layer=${terms.coverage_kimi};`
-      + ` pins=${pinStats.matched} match)`;
+      + ` pins=${pinStats.matched} match${tail})`;
   }
-  return `PROXY: DRIFT (${findings.map(findingSummary).join('; ')})`;
+  return `PROXY: DRIFT (${findings.map(findingSummary).join('; ')}${tail})`;
 }
 
 /* ------------------------------------------------------------ fail-closed */
@@ -982,6 +1146,8 @@ function failClosed(opts, token, detail, terms, started) {
     self: opts.self,
     scorecard: opts.scorecard,
     src: opts.src,
+    pin: opts.pinInfo ?? null,
+    srcRev: opts.srcRev ?? null,
     kimiRoot: opts.kimiRoot,
     strict: Boolean(opts.strict),
     terms: terms ?? {},
@@ -1002,6 +1168,15 @@ function runCheck(opts, started) {
   if (statKind(opts.self) !== 'dir') {
     return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, {}, started);
   }
+  // The origin pin (PIN v1) resolves the tree this run scores and proves it is
+  // the pinned revision BEFORE any term is counted on it: `--src`, else the
+  // pin's clone, else the legacy `$UFO_SRC`/candidate default. With no pin the
+  // resolution is exactly the pre-pin one (portability).
+  const origin = resolveOrigin(opts);
+  opts.src = origin.ok ? origin.src : (opts.src ?? null);
+  opts.srcRev = origin.ok && origin.pin !== null ? origin.pin.srcRev : null;
+  opts.pinInfo = origin.pin ?? null;
+  if (!origin.ok) return failClosed(opts, origin.kind, origin.detail, {}, started);
   if (statKind(opts.src) !== 'dir') {
     return failClosed(opts, 'SRC_NOT_A_DIR', `--src ${opts.src} is ${statKind(opts.src)}`, {}, started);
   }
@@ -1082,6 +1257,8 @@ function runCheck(opts, started) {
     self: opts.self,
     scorecard: opts.scorecard,
     src: opts.src,
+    pin: opts.pinInfo ?? null,
+    srcRev: opts.srcRev ?? null,
     kimiRoot: opts.kimiRoot,
     strict: Boolean(opts.strict),
     terms: {
@@ -1102,7 +1279,7 @@ function runCheck(opts, started) {
     process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
   } else {
     const lines = findings.map((f) => `PROXY  ${f.severity}  ${f.kind}  ${f.detail}`);
-    lines.push(renderVerdict(verdict, terms, pinStats, findings));
+    lines.push(renderVerdict(verdict, terms, pinStats, findings, opts.srcRev));
     process.stdout.write(`${lines.join('\n')}\n`);
   }
   return exitCode;
@@ -2334,6 +2511,136 @@ function selfTest() {
       };
     });
 
+    /* round-36 ─ PIN v1 (`kumitate-origin-pin-v1`) ------------------------- */
+    // A pin is only as good as its assertion, so every case below runs the CLI
+    // and checks the verdict text + exit map, never the resolver in isolation.
+    // git is driven with a hermetic config (no system/global file, tmp HOME)
+    // and GIT_CEILING_DIRECTORIES keeps discovery inside the fixture tmp tree,
+    // so a non-repo fixture can never inherit an enclosing repository.
+    const gitHome = join(tmp, 'git-home');
+    mkdirSync(gitHome, { recursive: true });
+    const gitRun = (cwd, argv2) => spawnSync('git', ['-C', cwd, ...argv2], {
+      encoding: 'utf8', timeout: 60_000,
+      env: {
+        ...process.env,
+        HOME: gitHome,
+        GIT_CONFIG_NOSYSTEM: '1',
+        GIT_CONFIG_GLOBAL: '/dev/null',
+        GIT_OPTIONAL_LOCKS: '0',
+        GIT_TERMINAL_PROMPT: '0',
+      },
+    });
+    const fxGitRepo = (dir) => {
+      if (gitRun(dir, ['init', '-q']).status !== 0) return null;
+      const commit = gitRun(dir, ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+        '-c', 'commit.gpgsign=false', 'commit', '-q', '--allow-empty', '-m', 'fixture']);
+      if (commit.status !== 0) return null;
+      const head = gitRun(dir, ['rev-parse', 'HEAD']);
+      return head.status === 0 ? String(head.stdout).trim() : null;
+    };
+    const writePin = (file, { revision, clone }) => {
+      fxWrite(file, `${JSON.stringify({
+        contract: 'kumitate-origin-pin-v1',
+        repo: 'fixture',
+        revision,
+        clone,
+        recreate: 'git init fixture && git commit --allow-empty',
+        verified_at: '2026-10-21',
+      }, null, 2)}\n`);
+      return file;
+    };
+    const pinEnv = { GIT_CEILING_DIRECTORIES: tmp };
+
+    // 1) default pin path: <self>/.ufo/pins/origin.json, src resolved from the
+    //    pin's clone (NO --src on the command line), HEAD asserted, src-rev=.
+    const P1 = fxBase('pin-match', { expect: F1.expect });
+    const p1head = fxGitRepo(P1.src);
+    const p1pin = writePin(join(P1.dir, '.ufo', 'pins', 'origin.json'), { revision: p1head, clone: P1.src });
+    const P1_ARGS = ['--self', P1.dir, '--kimi-root', P1.kimi];
+    const p1 = runProxy(P1_ARGS, pinEnv);
+    const p1j = runProxy([...P1_ARGS, '--json'], pinEnv);
+    const P1_VERDICT = typeof p1head === 'string'
+      ? `${F1_MATCH.slice(0, -1)}; src-rev=${p1head.slice(0, 12)})`
+      : '';
+    check('PIN v1: default pin file resolves src from the pin clone, asserts HEAD, prints src-rev=', () => {
+      const j = JSON.parse(p1j.stdout);
+      return {
+        ok: typeof p1head === 'string' && p1.status === 0 && p1j.status === 0
+          && j.src === P1.src && j.srcRev === p1head
+          && j.pin !== null && j.pin.file === p1pin && j.pin.revision === p1head
+          && verdictLine(p1) === P1_VERDICT,
+        detail: `exit=${p1.status} ${verdictLine(p1)}`,
+      };
+    });
+
+    // 2) the pin asserts the RESOLVED tree even when --src is supplied: a
+    //    different HEAD is refused, never scored under the pin's name.
+    const P2 = fxBase('pin-mismatch', { expect: F1.expect });
+    const p2head = fxGitRepo(P2.src);
+    const p2pin = writePin(join(tmp, 'pin-files', 'mismatch.json'), { revision: '0'.repeat(40), clone: P2.src });
+    const p2 = runProxy(['--self', P2.dir, '--kimi-root', P2.kimi, '--src', P2.src, '--pin', p2pin], pinEnv);
+    check('PIN v1: pin revision != HEAD under an explicit --src → SRC_REV_MISMATCH (exit 2)', () => {
+      const line = verdictLine(p2);
+      return {
+        ok: typeof p2head === 'string' && p2.status === 2 && fcToken(p2) === 'SRC_REV_MISMATCH'
+          && line.includes(`${p2head.slice(0, 12)} != pin ${'0'.repeat(12)}`)
+          && !line.includes('src-rev='),
+        detail: `exit=${p2.status} ${line.slice(0, 130)}`,
+      };
+    });
+
+    // 3) a pin whose tree is not a repository cannot be verified — exit 2,
+    //    never "unpinned, therefore fine".
+    const P3 = fxBase('pin-nonrepo', { expect: F1.expect });
+    const p3pin = writePin(join(tmp, 'pin-files', 'nonrepo.json'), { revision: '3'.repeat(40), clone: P3.src });
+    const p3 = runProxy(['--self', P3.dir, '--kimi-root', P3.kimi, '--pin', p3pin], pinEnv);
+    check('PIN v1: a pin clone that is not a git repository → SRC_REV_UNVERIFIABLE (exit 2)', () => ({
+      ok: p3.status === 2 && fcToken(p3) === 'SRC_REV_UNVERIFIABLE'
+        && verdictLine(p3).includes('is not a repository HEAD'),
+      detail: `exit=${p3.status} ${verdictLine(p3).slice(0, 120)}`,
+    }));
+
+    // 3b) a pin naming a clone that does not exist is SRC_NOT_A_DIR on the
+    //     RESOLVED path (never a pin token, never a scored zero).
+    const P3B = fxBase('pin-clone-absent', { expect: F1.expect });
+    const p3bClone = join(tmp, 'nope-pin-clone');
+    const p3bpin = writePin(join(tmp, 'pin-files', 'clone-absent.json'), { revision: '5'.repeat(40), clone: p3bClone });
+    const p3b = runProxy(['--self', P3B.dir, '--kimi-root', P3B.kimi, '--pin', p3bpin], pinEnv);
+    check('PIN v1: a pin whose clone is absent → SRC_NOT_A_DIR naming the resolved path (exit 2)', () => ({
+      ok: p3b.status === 2 && fcToken(p3b) === 'SRC_NOT_A_DIR'
+        && verdictLine(p3b).includes(`--src ${p3bClone} is absent`),
+      detail: `exit=${p3b.status} ${verdictLine(p3b).slice(0, 120)}`,
+    }));
+
+    // 4) no pin anywhere: byte-identical legacy verdict, no src-rev=.
+    const P4 = fxBase('pin-absent', { expect: F1.expect });
+    const p4 = runProxy(args(P4), pinEnv);
+    const p4j = runProxy([...args(P4), '--json'], pinEnv);
+    check('PIN v1: no pin file → the legacy verdict is unchanged (no src-rev=, pin/srcRev null)', () => {
+      const j = JSON.parse(p4j.stdout);
+      return {
+        ok: p4.status === 0 && p4j.status === 0 && verdictLine(p4) === F1_MATCH
+          && j.pin === null && j.srcRev === null,
+        detail: `exit=${p4.status} ${verdictLine(p4)}`,
+      };
+    });
+
+    // 5) an explicit --pin that does not exist is PIN_MALFORMED, not "no pin".
+    const p5 = runProxy([...args(P4), '--pin', join(tmp, 'pin-files', 'absent.json')], pinEnv);
+    check('PIN v1: an explicit --pin that does not exist → PIN_MALFORMED (exit 2)', () => ({
+      ok: p5.status === 2 && fcToken(p5) === 'PIN_MALFORMED' && verdictLine(p5).includes('absent'),
+      detail: `exit=${p5.status} ${verdictLine(p5).slice(0, 120)}`,
+    }));
+
+    // 6) a file that names another contract is not a pin this gate may trust.
+    const p6pin = join(tmp, 'pin-files', 'wrong-contract.json');
+    fxWrite(p6pin, `${JSON.stringify({ contract: 'kumitate-other-pin-v1', revision: '4'.repeat(40), clone: P4.src })}\n`);
+    const p6 = runProxy([...args(P4), '--pin', p6pin], pinEnv);
+    check('PIN v1: a pin naming another contract → PIN_MALFORMED (exit 2)', () => ({
+      ok: p6.status === 2 && fcToken(p6) === 'PIN_MALFORMED' && verdictLine(p6).includes('contract'),
+      detail: `exit=${p6.status} ${verdictLine(p6).slice(0, 120)}`,
+    }));
+
     /* 39-42 ─ usage --------------------------------------------------------- */
     const u1 = runProxy(['--bogus']);
     check('usage: unknown flag → exit 64, usage on stderr', () => ({
@@ -2429,6 +2736,9 @@ function parseArgs(argv) {
     self: DEFAULT_SELF,
     scorecard: null,
     src: null,
+    pin: null,
+    pinInfo: null,
+    srcRev: null,
     kimiRoot: DEFAULT_KIMI_ROOT,
     json: false,
     strict: false,
@@ -2448,6 +2758,7 @@ function parseArgs(argv) {
     else if (a === '--self') opts.self = dirValue(a, next());
     else if (a === '--scorecard') opts.scorecard = dirValue(a, next());
     else if (a === '--src') opts.src = dirValue(a, next());
+    else if (a === '--pin') opts.pin = dirValue(a, next());
     else if (a === '--kimi-root') opts.kimiRoot = dirValue(a, next());
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
@@ -2455,10 +2766,11 @@ function parseArgs(argv) {
     else throw new Error(`unknown argument: ${a}`);
   }
   if (opts.scorecard === null) opts.scorecard = join(opts.self, SCORECARD_FILE);
-  // The origin default is resolved here (never for --selftest/--help, which win
-  // first): a bare check run gets `$UFO_SRC` or the first existing candidate,
-  // while `--selftest` stats no live path at all.
-  if (opts.src === null && !opts.selftest && !opts.help) opts.src = resolveSrcDefault();
+  // The origin tree — and whether a pin asserts it — is resolved in `runCheck`
+  // (never for `--selftest`/`--help`, which win first), so a bare check run
+  // stats no live path until it is actually about to score one, and a pin can
+  // supply the tree when `--src` is absent (PIN v1 precedence: --src, pin
+  // clone, legacy default).
   return opts;
 }
 

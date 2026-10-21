@@ -1,0 +1,27 @@
+kumitate surface-probe — kumitate-surface-probe-v1
+src=/fast/scratch/kumitate-r36/src
+mode: conformance
+
+  KNOWN sighting/VERB_DISPATCH VERB_UNDECLARED surface
+  WARN  ERROR_CODE_OFF_MANIFEST [sighting/ERROR_CODES] assigned to a code: field as a literal but absent from manifest.errors (which is derived from fail("X") only): scripts/ufo-sighting.mjs:2010:RECONCILE_UNATTESTED_STOP, scripts/ufo-sighting.mjs:2468:UNEXPECTED_ERROR, scripts/ufo-sighting.mjs:4420:SPAWN_FAILED, scripts/ufo-sighting-lib/base.mjs:131:UNEXPECTED_ERROR
+
+checks
+  ok   sighting    SURFACE_REACH
+  ok   sighting    MANIFEST_PARSE
+  ok   sighting    MANIFEST_KIND
+  ok   sighting    DIGEST_INPUT_SET
+  ok   sighting    DIGEST_PER_FILE
+  ok   sighting    DIGEST_CONCAT
+  FAIL sighting    VERB_DISPATCH — source-only=surface declared-only=-
+  ok   sighting    ERROR_CODES
+  ok   sighting    PIN_DIGEST
+  ok   dispatcher  STATUS_REACH
+  ok   dispatcher  STATUS_SHAPE
+  ok   dispatcher  STATUS_QUEUE_SCHEMA
+totals
+  surfaces=2 checks=12 passed=11 errors=0 warnings=1 notes=3
+  nonGatingWarnings=1 gatingWarnings=0
+  bySeverity={"error":0,"warn":1,"note":3}
+  byKind={"DIGEST_ORDER":1,"ERROR_CODE_OFF_MANIFEST":1,"PIN_MATCH":1,"STATUS_KEYS_DERIVED":1,"VERB_UNDECLARED":1}
+
+SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)

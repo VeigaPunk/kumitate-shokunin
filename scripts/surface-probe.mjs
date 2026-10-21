@@ -34,10 +34,12 @@
  *             :895+, host `scripts/ufo-sighting`, :102). The shim and
  *             `scripts/ufo-sighting.mjs` print identical bytes.
  *   digestInputs  the shim `scripts/ufo-sighting` + `scripts/ufo-sighting.mjs`
- *             + every regular `*.mjs` in `scripts/ufo-sighting-lib/`, sorted;
- *             the expected set is derived from disk, never from the manifest.
- *   scriptDigest  sha256 over the CONCATENATED BYTES of exactly that set, in
- *             that order. It is not any single file's sha256.
+ *             + every regular `*.mjs` in `scripts/ufo-sighting-lib/`. The SET
+ *             is derived from disk, never from the manifest; the ORDER is the
+ *             manifest's own `digestInputs` order (`base.mjs` precedes
+ *             `argv.mjs`, so a sorted-by-path concat is a FALSE mismatch).
+ *   scriptDigest  sha256 over the CONCATENATED BYTES of exactly that set in the
+ *             manifest-declared order. It is not any single file's sha256.
  *   pin       `config/ufo.json` `sighting.surfaceDigest` is sha256 over
  *             canonicalJson(manifest) — sorted-key JSON of the whole manifest
  *             object (`sync-ufo-contracts.mjs:853-862`). The pin and
@@ -53,7 +55,12 @@
  *             fire on real drift. ERROR_CODE_OFF_MANIFEST uses the wider
  *             `code:[^,\n]*"([A-Z][A-Z0-9_]*)"` pattern so a ternary
  *             (`code: known ? error.code : "UNEXPECTED_ERROR"`) is caught too.
- *   status    `node <src>/scripts/fleet-dispatcher.mjs status`, cwd = <src>.
+ *   status    `node <src>/scripts/fleet-dispatcher.mjs status`, cwd = <src>,
+ *             with `UFO_STATE_DIR`/`UFO_PENDING_WORK_PATH` in a per-run
+ *             mkdtemp (removed afterwards) and `UFO_PROJECT_ROOT=<src>`: the
+ *             dispatcher's default state root is `<src>/.ufo`, which is
+ *             unwritable on a read-only origin and a write into the tree this
+ *             probe scores on a writable one.
  *             JSON by default (it has NO --json flag); a read-only lock-free
  *             projection by design (`fleet-dispatcher.mjs:14387-14415`).
  *             Expected top-level keys and expected `queue.schema` are read from
@@ -113,7 +120,11 @@
  *   spawn timeout 20s, maxBuffer 8 MiB, checklist command timeout 120s.
  *   It NEVER writes to the source tree, NEVER acquires a tmux or dispatcher
  *   lock, NEVER runs a mutating verb (`surface`/`status` only), NEVER opens a
- *   socket, and never prints more of a payload than a finding needs.
+ *   socket, and never prints more of a payload than a finding needs. Both
+ *   readers keep that promise by construction: the sighting shim's
+ *   `NODE_COMPILE_CACHE` and the dispatcher's state root are pinned to per-run
+ *   mkdtemp dirs removed after the spawn, so neither surface can create a
+ *   file under `<src>` even when `<src>` is writable.
  */
 
 import { spawnSync } from 'node:child_process';
@@ -122,7 +133,7 @@ import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SCHEMA = 'kumitate-surface-probe-v1';
@@ -148,6 +159,75 @@ function resolveSrcDefault() {
   if (process.env.UFO_SRC) return process.env.UFO_SRC;
   for (const c of SRC_CANDIDATES) if (existsSync(c)) return c;
   return SRC_CANDIDATES[0];
+}
+
+/* -------------------------------------- origin pin (PIN v1) + known (KNOWN v1) */
+
+const PIN_CONTRACT = 'kumitate-origin-pin-v1';
+const KNOWN_CONTRACT = 'kumitate-surface-known-v1';
+
+function readPinFile(file) {
+  let pin;
+  try { pin = JSON.parse(readFileSync(file, 'utf8')); } catch (e) {
+    throw Object.assign(new Error(`pin ${file} is unreadable JSON (${String(e.message).slice(0, 80)})`), { code: 'PIN_MALFORMED' });
+  }
+  if (!isPlainObject(pin) || pin.contract !== PIN_CONTRACT
+    || typeof pin.revision !== 'string' || !/^[0-9a-f]{40}$/u.test(pin.revision)
+    || typeof pin.clone !== 'string' || pin.clone === '') {
+    throw Object.assign(new Error(`pin ${file} does not carry the ${PIN_CONTRACT} shape`), { code: 'PIN_MALFORMED' });
+  }
+  return pin;
+}
+
+/** Environment for a `git` child: identity variables are stripped so an ambient
+ *  GIT_DIR/GIT_WORK_TREE cannot redirect the assertion at another repository. */
+const GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',
+  'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
+  'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_ATTR_NOSYSTEM']);
+function gitEnv(extra) {
+  const env = {};
+  for (const [k, v] of Object.entries(process.env)) if (GIT_ENV_KEEP.has(k)) env[k] = v;
+  return { ...env, GIT_OPTIONAL_LOCKS: '0', GIT_TERMINAL_PROMPT: '0', ...(extra ?? {}) };
+}
+
+function assertPinRevision(src, pin) {
+  const result = spawnSync('git', ['-C', src, 'rev-parse', 'HEAD'], {
+    encoding: 'utf8', timeout: SPAWN_TIMEOUT_MS, maxBuffer: MAX_BUFFER,
+    env: gitEnv(),
+  });
+  if (result.error || result.status !== 0) {
+    throw Object.assign(new Error(`git -C ${src} rev-parse HEAD is unverifiable${result.error ? `: ${result.error.code ?? result.error.message}` : ` (exit ${result.status})`}`), { code: 'SRC_REV_UNVERIFIABLE' });
+  }
+  const head = (result.stdout ?? '').trim();
+  if (head !== pin.revision) {
+    throw Object.assign(new Error(`src ${src} HEAD=${head || '(empty)'} != pinned revision ${pin.revision}`), { code: 'SRC_REV_MISMATCH' });
+  }
+  return head.slice(0, 12);
+}
+
+function loadKnown(file, pin) {
+  let known;
+  try { known = JSON.parse(readFileSync(file, 'utf8')); } catch (e) {
+    throw Object.assign(new Error(`known ${file} is unreadable JSON (${String(e.message).slice(0, 80)})`), { code: 'KNOWN_MALFORMED' });
+  }
+  if (!isPlainObject(known) || known.contract !== KNOWN_CONTRACT
+    || typeof known.revision !== 'string' || !Array.isArray(known.findings)
+    || known.findings.some((f) => !isPlainObject(f)
+      || typeof f.surface !== 'string' || typeof f.kind !== 'string'
+      || typeof f.check !== 'string' || typeof f.subject !== 'string')) {
+    throw Object.assign(new Error(`known ${file} does not carry the ${KNOWN_CONTRACT} shape`), { code: 'KNOWN_MALFORMED' });
+  }
+  if (pin !== null && known.revision !== pin.revision) {
+    throw Object.assign(new Error(`known ${file} revision ${known.revision} != pinned revision ${pin.revision}`), { code: 'KNOWN_REV_MISMATCH' });
+  }
+  return known;
+}
+
+function subjectOf(finding) {
+  if (typeof finding.subject === 'string') return finding.subject;
+  const message = typeof finding.message === 'string' ? finding.message : '';
+  const at = message.lastIndexOf(': ');
+  return at >= 0 ? message.slice(at + 2).trim() : message.trim();
 }
 
 const SIGHTING_SHIM = 'scripts/ufo-sighting';
@@ -388,36 +468,67 @@ function statusContractFromSource(source) {
 function readSightingSurface(src) {
   const host = join(src, SIGHTING_SHIM);
   if (!existsSync(host)) return { ok: false, detail: `sighting shim is missing: ${SIGHTING_SHIM}` };
-  const result = spawnSync('bash', [host, 'surface', '--json'], {
-    cwd: src, encoding: 'utf8', timeout: SPAWN_TIMEOUT_MS, maxBuffer: MAX_BUFFER,
-  });
-  if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
-  if (result.status !== 0) {
-    const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
-    return { ok: false, detail: `surface --json exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+  // The shim defaults NODE_COMPILE_CACHE to ROOT/.ufo/cache/node-compile — a
+  // write into the tree this probe scores (silently skipped only when that
+  // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+  const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+  try {
+    const result = spawnSync('bash', [host, 'surface', '--json'], {
+      cwd: src,
+      encoding: 'utf8',
+      timeout: SPAWN_TIMEOUT_MS,
+      maxBuffer: MAX_BUFFER,
+      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
+    });
+    if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+    if (result.status !== 0) {
+      const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
+      return { ok: false, detail: `surface --json exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+    }
+    return { ok: true, text: result.stdout ?? '' };
+  } finally {
+    rmSync(cacheRoot, { recursive: true, force: true });
   }
-  return { ok: true, text: result.stdout ?? '' };
 }
 
 function readDispatcherStatus(src) {
   const host = join(src, DISPATCHER);
   if (!existsSync(host)) return { ok: false, detail: `dispatcher is missing: ${DISPATCHER}` };
-  const result = spawnSync(process.execPath, [host, 'status'], {
-    cwd: src, encoding: 'utf8', timeout: SPAWN_TIMEOUT_MS, maxBuffer: MAX_BUFFER,
-  });
-  if (result.error) return { ok: false, detail: `status invocation failed: ${result.error.code ?? result.error.message}` };
-  if (result.status !== 0) {
-    const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
-    return { ok: false, detail: `status exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+  // `status` defaults its state root to ROOT/.ufo, i.e. inside the tree it
+  // reads: on a read-only origin that is unreachable (EACCES on mkdir) and on
+  // a writable one it would write into the tree this probe scores. Spawn it
+  // against a throwaway state root instead, and remove that root afterwards.
+  const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+  const stateDir = join(stateRoot, 'ufo');
+  try {
+    const result = spawnSync(process.execPath, [host, 'status'], {
+      cwd: src,
+      encoding: 'utf8',
+      timeout: SPAWN_TIMEOUT_MS,
+      maxBuffer: MAX_BUFFER,
+      env: {
+        ...process.env,
+        UFO_STATE_DIR: stateDir,
+        UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+        UFO_PROJECT_ROOT: src,
+      },
+    });
+    if (result.error) return { ok: false, detail: `status invocation failed: ${result.error.code ?? result.error.message}` };
+    if (result.status !== 0) {
+      const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
+      return { ok: false, detail: `status exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+    }
+    return { ok: true, text: result.stdout ?? '' };
+  } finally {
+    rmSync(stateRoot, { recursive: true, force: true });
   }
-  return { ok: true, text: result.stdout ?? '' };
 }
 
 const LIVE_READERS = { sighting: readSightingSurface, dispatcher: readDispatcherStatus };
 
 /* -------------------------------------------------------------- conformance */
 
-function probeConformance({ src, strict, readers = LIVE_READERS }) {
+function probeConformance({ src, strict, readers = LIVE_READERS, known = null }) {
   const findings = [];
   const slots = new Map();
   const note = (severity, kind, surface, check, message, detail) => {
@@ -482,11 +593,24 @@ function probeConformance({ src, strict, readers = LIVE_READERS }) {
     checkStatus({ src, text: status.text, note, set });
   }
 
+  let knownMatched = 0;
+  if (known !== null) {
+    for (const entry of known.findings) {
+      const hit = findings.find((f) => f.surface === entry.surface && f.kind === entry.kind
+        && f.check === entry.check && subjectOf(f) === entry.subject && !f.known);
+      if (hit) { hit.known = true; knownMatched += 1; } else {
+        findings.push({
+          severity: 'error', kind: 'KNOWN_STALE', surface: entry.surface, check: entry.check,
+          message: `known finding no longer fires: ${entry.kind} ${entry.subject}`, subject: entry.subject,
+        });
+      }
+    }
+  }
   const checks = CHECK_ORDER
     .filter(([id]) => slots.has(id))
     .map(([id, surface]) => ({ id, surface, ...slots.get(id) }));
   const checksPassed = checks.filter((c) => c.ok).length;
-  const errors = findings.filter((f) => f.severity === 'error').length;
+  const errors = findings.filter((f) => f.severity === 'error' && !f.known).length;
   const warnings = findings.filter((f) => f.severity === 'warn').length;
   const nonGatingWarnings = findings
     .filter((f) => f.severity === 'warn' && NON_GATING_WARNS.has(f.kind)).length;
@@ -519,6 +643,7 @@ function probeConformance({ src, strict, readers = LIVE_READERS }) {
       bySeverity: { error: errors, warn: warnings, note: notes },
       bySurface: countBy(findings, (f) => f.surface),
       failClosed,
+      known: knownMatched,
     },
     verdict,
     exitCode,
@@ -545,12 +670,18 @@ function digestSetDiff(expectedRel, listedPaths) {
 }
 
 function checkDigests({ src, manifest, note, set }) {
-  const { paths, rel } = sightingBytePaths(src);
+  const { rel } = sightingBytePaths(src);
   const listed = Array.isArray(manifest.digestInputs) ? manifest.digestInputs : [];
   const listedPaths = listed.map((e) => (isPlainObject(e) && typeof e.path === 'string' ? e.path : null));
-  const { missingFromList, extraInList } = digestSetDiff(rel, listedPaths.filter(Boolean));
-  const setOk = missingFromList.length === 0 && extraInList.length === 0;
-  const setDetail = setOk ? undefined : `missing=${missingFromList.join(',') || '-'} extra=${extraInList.join(',') || '-'}`;
+  const named = listedPaths.filter(Boolean);
+  const duplicates = named.filter((p, i) => named.indexOf(p) !== i);
+  const { missingFromList, extraInList } = digestSetDiff(rel, named);
+  const allNamed = listedPaths.every((p) => typeof p === 'string');
+  const setOk = missingFromList.length === 0 && extraInList.length === 0 && duplicates.length === 0 && allNamed;
+  const setDetail = setOk ? undefined
+    : `missing=${missingFromList.join(',') || '-'} extra=${extraInList.join(',') || '-'}`
+      + (duplicates.length ? ` duplicate=${[...new Set(duplicates)].join(',')}` : '')
+      + (allNamed ? '' : ' null-entry');
   set('DIGEST_INPUT_SET', setOk, setDetail);
   if (!setOk) note('error', 'DIGEST_SET_INCOMPLETE', 'sighting', 'DIGEST_INPUT_SET',
     `digestInputs set != {shim, module} ∪ lib/*.mjs (${setOk ? '' : setDetail})`,
@@ -578,18 +709,27 @@ function checkDigests({ src, manifest, note, set }) {
   }
   set('DIGEST_PER_FILE', perFile.length === 0, perFile.length ? perFile.join('; ') : undefined);
 
+  // scriptDigest is sha256 over the concatenated bytes in the ORDER the
+  // manifest declares its `digestInputs` (the generator emits base.mjs before
+  // argv.mjs, so a sorted-by-path concat is a FALSE mismatch). Only a complete,
+  // duplicate-free, readable set is math-checkable: a broken set is already
+  // DIGEST_SET_INCOMPLETE and must not double-count as a digest error, so the
+  // probe's own disk order is never substituted for the declared one.
+  const concatInputs = setOk ? listedPaths : [];
   let concatOk = false;
-  let concatDetail = 'expected bytes unreadable';
-  if (paths.every((p) => existsSync(p))) {
+  let concatDetail = 'declared digestInputs unreadable';
+  if (concatInputs.length === 0) {
+    concatDetail = 'expected bytes unreadable';
+  } else if (concatInputs.every((p) => existsSync(join(src, p)))) {
     let digest = null;
-    try { digest = `sha256:${sha256Hex(Buffer.concat(paths.map((p) => readFileSync(p))))}`; } catch { digest = null; }
+    try { digest = `sha256:${sha256Hex(Buffer.concat(concatInputs.map((p) => readFileSync(join(src, p)))))}`; } catch { digest = null; }
     if (digest === null) {
-      concatDetail = 'expected bytes unreadable';
+      concatDetail = 'declared digestInputs unreadable';
     } else if (digest === manifest.scriptDigest) {
       concatOk = true;
       concatDetail = undefined;
     } else {
-      concatDetail = `concatenated-byte digest ${digest} != manifest.scriptDigest ${JSON.stringify(manifest.scriptDigest)}`;
+      concatDetail = `declared-order digest ${digest} != manifest.scriptDigest ${JSON.stringify(manifest.scriptDigest)}`;
       note('error', 'SCRIPT_DIGEST_MISMATCH', 'sighting', 'DIGEST_CONCAT', concatDetail, { computed: digest, declared: manifest.scriptDigest });
     }
   }
@@ -774,10 +914,14 @@ function renderText(report) {
   L.push(`mode:${report.options.strict ? ' strict' : ' conformance'}`);
   L.push('');
   for (const finding of report.findings) {
+    if (finding.known) {
+      L.push(`  KNOWN ${finding.surface}/${finding.check} ${finding.kind} ${subjectOf(finding)}`);
+      continue;
+    }
     if (finding.severity === 'note') continue;
     L.push(`  ${finding.severity.toUpperCase().padEnd(5)} ${finding.kind.padEnd(22)} [${finding.surface}/${finding.check}] ${finding.message}`);
   }
-  if (!report.findings.some((f) => f.severity !== 'note')) L.push('  (no error or warning findings)');
+  if (!report.findings.some((f) => f.severity !== 'note' || f.known)) L.push('  (no error or warning findings)');
   L.push('');
   L.push('checks');
   for (const c of report.checks) L.push(`  ${c.ok ? 'ok  ' : 'FAIL'} ${c.surface.padEnd(11)} ${c.id}${c.detail ? ` — ${c.detail}` : ''}`);
@@ -788,9 +932,14 @@ function renderText(report) {
   L.push(`  bySeverity=${JSON.stringify(t.bySeverity)}`);
   L.push(`  byKind=${JSON.stringify(t.byKind)}`);
   L.push('');
+  const segments = [
+    `surfaces=${t.surfaces}`, `checks=${t.checks}`, `errors=${t.errors}`, `warnings=${t.warnings}`,
+    ...(report.knownActive ? [`known=${t.known}`] : []),
+    ...(report.srcRev ? [`src-rev=${report.srcRev}`] : []),
+  ].join(' ');
   L.push(t.failClosed !== null
-    ? `SURFACE_PROBE: FAIL-CLOSED (${t.failClosed})`
-    : `SURFACE_PROBE: ${report.verdict} (surfaces=${t.surfaces} checks=${t.checks} errors=${t.errors} warnings=${t.warnings})`);
+    ? `SURFACE_PROBE: FAIL-CLOSED (${t.failClosed}${report.srcRev ? ` src-rev=${report.srcRev}` : ''})`
+    : `SURFACE_PROBE: ${report.verdict} (${segments})`);
   return `${L.join('\n')}\n`;
 }
 
@@ -1007,6 +1156,21 @@ function selfTest() {
     return report;
   };
   const codesOf = (report) => [...new Set(report.findings.map((f) => f.kind))].sort();
+  /** Exact tree fingerprint (relative path + size + mtime) for untouched proofs. */
+  const listTree = (root) => {
+    const rows = [];
+    const walk = (dir) => {
+      for (const entry of readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+        const abs = join(dir, entry.name);
+        const rel = relative(root, abs).split('\\').join('/');
+        if (entry.isDirectory()) { rows.push(`${rel}/`); walk(abs); continue; }
+        const info = lstatSync(abs);
+        rows.push(`${rel}\t${info.size}\t${info.mtimeMs}`);
+      }
+    };
+    walk(root);
+    return rows.join('\n');
+  };
 
   try {
     const tree = (name, spec) => {
@@ -1092,15 +1256,31 @@ function selfTest() {
       detail: `codes=[${codesOf(partialReport)}]`,
     }));
 
-    /* fixture: digestInputs order permuted (set complete) --------------- */
+    /* fixture: digestInputs order permuted, scriptDigest follows it ------- */
     const reordered = tree('reordered');
     const reorderedManifest = JSON.parse(JSON.stringify(reordered.built.manifest));
     reorderedManifest.digestInputs = [reorderedManifest.digestInputs[1], reorderedManifest.digestInputs[0], ...reorderedManifest.digestInputs.slice(2)];
+    reorderedManifest.scriptDigest = `sha256:${sha256Hex(Buffer.concat(
+      reorderedManifest.digestInputs.map((d) => readFileSync(join(reordered.dir, d.path))),
+    ))}`;
     const reorderedReport = runFixture(reordered.dir, { manifestText: JSON.stringify(reorderedManifest), statusText });
-    check('digestInputs set complete but order permuted → DIGEST_ORDER note, no error', () => ({
+    check('digestInputs order permuted (declared-order digest) → DIGEST_ORDER note, no error', () => ({
       ok: codesOf(reorderedReport).includes('DIGEST_ORDER') && reorderedReport.exitCode === 0
         && reorderedReport.findings.filter((f) => f.severity === 'error').length === 0,
       detail: `exit=${reorderedReport.exitCode} codes=[${codesOf(reorderedReport)}]`,
+    }));
+
+    /* fixture: declared order permuted but scriptDigest over sorted bytes -
+     * The false-negative control: a probe that concatenates its own sorted
+     * path list passes this manifest; the manifest-declared order must not. */
+    const orderTrap = tree('ordertrap');
+    const orderTrapManifest = JSON.parse(JSON.stringify(orderTrap.built.manifest));
+    orderTrapManifest.digestInputs = [orderTrapManifest.digestInputs[1], orderTrapManifest.digestInputs[0], ...orderTrapManifest.digestInputs.slice(2)];
+    const orderTrapReport = runFixture(orderTrap.dir, { manifestText: JSON.stringify(orderTrapManifest), statusText });
+    check('declared order permuted but scriptDigest over sorted bytes → SCRIPT_DIGEST_MISMATCH', () => ({
+      ok: codesOf(orderTrapReport).includes('SCRIPT_DIGEST_MISMATCH') && codesOf(orderTrapReport).includes('DIGEST_ORDER')
+        && orderTrapReport.exitCode === 1,
+      detail: `exit=${orderTrapReport.exitCode} codes=[${codesOf(orderTrapReport)}]`,
     }));
 
     /* fixture: scriptDigest wrong -------------------------------------- */
@@ -1281,6 +1461,81 @@ function selfTest() {
       detail: `codes=[${codesOf(derivedDrift)}]`,
     }));
 
+    /* fixture: dispatcher state root redirected out of the scored tree ----- */
+    // On a read-only origin the dispatcher's default state root (ROOT/.ufo)
+    // is unreachable, and on a writable one `status` would write into the tree
+    // being scored. The live reader must hand it a throwaway state root.
+    const stateTreeDir = join(tmp, 'state-redirect');
+    mkdirSync(join(stateTreeDir, 'scripts'), { recursive: true });
+    writeFileSync(join(stateTreeDir, DISPATCHER), [
+      'import { mkdirSync, writeFileSync } from "node:fs";',
+      'import { join } from "node:path";',
+      'const seen = {',
+      '  cwd: process.cwd(),',
+      '  argv: process.argv.slice(2),',
+      '  stateDir: process.env.UFO_STATE_DIR ?? null,',
+      '  pending: process.env.UFO_PENDING_WORK_PATH ?? null,',
+      '  projectRoot: process.env.UFO_PROJECT_ROOT ?? null,',
+      '};',
+      'mkdirSync(seen.stateDir, { recursive: true });',
+      'writeFileSync(join(seen.stateDir, "status-marker.txt"), "state\\n");',
+      'process.stdout.write(JSON.stringify(seen));',
+      '',
+    ].join('\n'));
+    const stateBefore = listTree(stateTreeDir);
+    const stateResult = readDispatcherStatus(stateTreeDir);
+    const stateAfter = listTree(stateTreeDir);
+    let seenEnv = null;
+    try { seenEnv = JSON.parse(stateResult.text ?? ''); } catch { seenEnv = null; }
+    check('dispatcher status carries a throwaway UFO_STATE_DIR (cleanup + scored tree untouched)', () => {
+      const stateUnderTree = typeof seenEnv?.stateDir === 'string'
+        && (seenEnv.stateDir === stateTreeDir || seenEnv.stateDir.startsWith(`${stateTreeDir}${sep}`));
+      const stateIsMkdtemp = typeof seenEnv?.stateDir === 'string'
+        && seenEnv.stateDir.startsWith(join(tmpdir(), 'kumitate-surface-state-'));
+      const pendingInsideState = typeof seenEnv?.pending === 'string' && seenEnv.pending === join(seenEnv.stateDir, 'pending-work.json');
+      const cleaned = typeof seenEnv?.stateDir === 'string' && !existsSync(seenEnv.stateDir);
+      return {
+        ok: stateResult.ok === true && seenEnv !== null
+          && seenEnv.cwd === stateTreeDir && seenEnv.projectRoot === stateTreeDir
+          && seenEnv.argv.length === 1 && seenEnv.argv[0] === 'status'
+          && stateIsMkdtemp && !stateUnderTree && pendingInsideState
+          && stateBefore === stateAfter && cleaned,
+        detail: `ok=${stateResult.ok} argv=${JSON.stringify(seenEnv?.argv)} project=${seenEnv?.projectRoot}`
+          + ` mkdtemp=${stateIsMkdtemp} pending=${pendingInsideState} untouched=${stateBefore === stateAfter} cleaned=${cleaned}`,
+      };
+    });
+
+    /* fixture: sighting compile cache redirected out of the scored tree ---- */
+    // The shim defaults NODE_COMPILE_CACHE under ROOT; the live reader must
+    // pin it to a throwaway cache so a writable origin is never mutated.
+    const cacheTreeDir = join(tmp, 'cache-redirect');
+    mkdirSync(join(cacheTreeDir, 'scripts'), { recursive: true });
+    writeFileSync(join(cacheTreeDir, SIGHTING_SHIM), [
+      '#!/usr/bin/env bash',
+      'set -eu',
+      'mkdir -p "$NODE_COMPILE_CACHE"',
+      'printf "cache\\n" > "$NODE_COMPILE_CACHE/fixture-cache-entry"',
+      'printf \'{"kind":"fixture-surface-v1","cache":"%s"}\\n\' "$NODE_COMPILE_CACHE"',
+      '',
+    ].join('\n'));
+    const cacheBefore = listTree(cacheTreeDir);
+    const cacheResult = readSightingSurface(cacheTreeDir);
+    const cacheAfter = listTree(cacheTreeDir);
+    let seenCache = null;
+    try { seenCache = JSON.parse(cacheResult.text ?? ''); } catch { seenCache = null; }
+    check('sighting surface carries a throwaway NODE_COMPILE_CACHE (cleanup + scored tree untouched)', () => {
+      const cache = seenCache?.cache;
+      const cacheUnderTree = typeof cache === 'string'
+        && (cache === cacheTreeDir || cache.startsWith(`${cacheTreeDir}${sep}`));
+      const cacheIsMkdtemp = typeof cache === 'string' && cache.startsWith(join(tmpdir(), 'kumitate-surface-cache-'));
+      const cleaned = typeof cache === 'string' && !existsSync(cache);
+      return {
+        ok: cacheResult.ok === true && seenCache?.kind === 'fixture-surface-v1'
+          && cacheIsMkdtemp && !cacheUnderTree && cacheBefore === cacheAfter && cleaned,
+        detail: `ok=${cacheResult.ok} mkdtemp=${cacheIsMkdtemp} untouched=${cacheBefore === cacheAfter} cleaned=${cleaned}`,
+      };
+    });
+
     /* fixture: CLI-level paths, spawned hermetically -------------------- */
     const selfPath = fileURLToPath(import.meta.url);
     const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
@@ -1310,8 +1565,12 @@ function selfTest() {
       mkdirSync(rel === undefined ? home : join(home, rel), { recursive: true });
       return home;
     };
+    // The bare-run fixtures must be isolated from a live `.ufo/pins/origin.json`
+    // in this repo: a --self without a pin keeps the HOME-candidate resolution.
+    const pinlessSelf = join(tmp, 'self-no-pin');
+    mkdirSync(pinlessSelf, { recursive: true });
     const bareSrc = (home) => {
-      const r = spawnSelf(['--json'], { HOME: home, UFO_SRC: '' });
+      const r = spawnSelf(['--json', '--self', pinlessSelf], { HOME: home, UFO_SRC: '' });
       let src = null;
       try { src = JSON.parse(r.stdout ?? '').src; } catch { src = null; }
       return { r, src };
@@ -1336,7 +1595,7 @@ function selfTest() {
       detail: `exit=${bothResolved.r.status} src=${bothResolved.src}`,
     }));
     const homeNone = homeDir('home-none');
-    const noneResolved = spawnSelf([], { HOME: homeNone, UFO_SRC: '' });
+    const noneResolved = spawnSelf(['--self', pinlessSelf], { HOME: homeNone, UFO_SRC: '' });
     check('bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2)', () => {
       const want = join(homeNone, 'Projects', 'ufo-fsd-alpha');
       return {
@@ -1452,6 +1711,7 @@ function selfTest() {
 function parseArgs(argv) {
   const opts = {
     src: null, self: DEFAULT_SELF, json: false, strict: false, checklists: false, selfTest: false,
+    pin: null, knownFile: null,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -1462,6 +1722,8 @@ function parseArgs(argv) {
     };
     if (a === '--src') opts.src = need(a);
     else if (a === '--self') opts.self = need(a);
+    else if (a === '--pin') opts.pin = need(a);
+    else if (a === '--known') opts.knownFile = need(a);
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
     else if (a === '--checklists') opts.checklists = true;
@@ -1486,17 +1748,44 @@ function main() {
   if (opts.checklists) return runChecklistsMode(opts);
 
   // The origin default is resolved here (never for --selftest/--checklists,
-  // which return first): a bare conformance run gets `$UFO_SRC` or the first
+  // which return first): an active pin wins, else `$UFO_SRC` or the first
   // existing candidate, while `--selftest` stats no live path at all.
-  if (opts.src === null) opts.src = resolveSrcDefault();
+  const pinFile = opts.pin ?? join(opts.self, '.ufo', 'pins', 'origin.json');
+  let pin = null;
+  if (opts.pin !== null || existsSync(pinFile)) {
+    try { pin = readPinFile(pinFile); } catch (e) {
+      process.stderr.write(`surface-probe: fail-closed — ${e.code ?? 'PIN_MALFORMED'}: ${e.message}\n`);
+      process.stdout.write(`SURFACE_PROBE: FAIL-CLOSED (${e.code ?? 'PIN_MALFORMED'}: ${e.message})\n`);
+      return 2;
+    }
+  }
+  if (opts.src === null) opts.src = pin !== null ? resolve(pin.clone) : resolveSrcDefault();
   const kind = statKind(opts.src);
   if (kind !== 'dir') {
     process.stderr.write(`surface-probe: fail-closed — --src ${opts.src} is ${kind}\n`);
     process.stdout.write(`SURFACE_PROBE: FAIL-CLOSED (--src ${opts.src} is ${kind})\n`);
     return 2;
   }
+  let srcRev = null;
+  if (pin !== null) {
+    try { srcRev = assertPinRevision(opts.src, pin); } catch (e) {
+      process.stderr.write(`surface-probe: fail-closed — ${e.code ?? 'SRC_REV_UNVERIFIABLE'}: ${e.message}\n`);
+      process.stdout.write(`SURFACE_PROBE: FAIL-CLOSED (${e.code ?? 'SRC_REV_UNVERIFIABLE'}: ${e.message})\n`);
+      return 2;
+    }
+  }
+  let known = null;
+  if (opts.knownFile !== null) {
+    try { known = loadKnown(opts.knownFile, pin); } catch (e) {
+      process.stderr.write(`surface-probe: fail-closed — ${e.code ?? 'KNOWN_MALFORMED'}: ${e.message}\n`);
+      process.stdout.write(`SURFACE_PROBE: FAIL-CLOSED (${e.code ?? 'KNOWN_MALFORMED'}: ${e.message})\n`);
+      return 2;
+    }
+  }
 
-  const report = probeConformance({ src: opts.src, strict: opts.strict });
+  const report = probeConformance({ src: opts.src, strict: opts.strict, known });
+  report.srcRev = srcRev;
+  report.knownActive = known !== null;
   report.self = opts.self;
   report.options = { strict: opts.strict, checklists: false, selftest: false };
   if (opts.json) process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);

@@ -47,17 +47,17 @@ Config discovery `DEFAULT_CANDIDATES` order at
 | `DEFAULT_CANDIDATES` | `scripts/omp-global-config.mjs:27` |
 | `OmpGlobalConfigError` | `scripts/omp-global-config.mjs:36` |
 | `yamlBlock` | `scripts/omp-global-config.mjs:122` |
-| `parseModelRoles` | `scripts/omp-global-config.mjs:345` |
-| `parseAgentModelOverrides` | `scripts/omp-global-config.mjs:351` |
-| `parseFallbackChains` | `scripts/omp-global-config.mjs:367` |
-| `resolveAliasFromMaps` | `scripts/omp-global-config.mjs:473` |
-| `resolveSeatRouting` | `scripts/omp-global-config.mjs:503` |
-| `resolveSeatFromMaps` | `scripts/omp-global-config.mjs:516` |
-| `readGlobalSeatRouting` | `scripts/omp-global-config.mjs:546` |
+| `parseModelRoles` | `scripts/omp-global-config.mjs:368` |
+| `parseAgentModelOverrides` | `scripts/omp-global-config.mjs:374` |
+| `parseFallbackChains` | `scripts/omp-global-config.mjs:231` |
+| `resolveAliasFromMaps` | `scripts/omp-global-config.mjs:496` |
+| `resolveSeatRouting` | `scripts/omp-global-config.mjs:526` |
+| `resolveSeatFromMaps` | `scripts/omp-global-config.mjs:531` |
+| `readGlobalSeatRouting` | `scripts/omp-global-config.mjs:480` |
 
 `resolveSeatFromMaps` is module-private (called from `resolveSeatRouting`
 and `readGlobalSeatRouting`); the exported seat entry is
-`resolveSeatRouting` (`scripts/omp-global-config.mjs:503-514`).
+`resolveSeatRouting` (`scripts/omp-global-config.mjs:526`).
 
 ## Live global table (observed 2026-09-28, `~/.omp/agent/config.yml`)
 
