@@ -11,14 +11,15 @@ Verifier: read-only. Every check below was run against the applied patch, never 
 
 ## FIDELITY note lines (re-run)
 
-Shipped gate build (ExecClaimsFidelity lane, ambiguity-aware pairing), `--self <applied tree> --src <pin>`:
+Shipped gate build (ExecClaimsFidelity lane, round-36 FINAL separator-aware pairing),
+`--self <applied tree> --src <pin>`:
 
 ```
 FIDELITY note=corpus/knowledge/native-trial-launch.md anchors=52 ok=50 elsewhere=0 absent=0 dead=0 noid=2 nonok=0
 FIDELITY note=corpus/knowledge/sighting-wall.md anchors=70 ok=65 elsewhere=0 absent=0 dead=0 noid=5 nonok=0
 FIDELITY: DRIFT (nonok=316)   # corpus-wide; other notes' debt, not these two
 ```
-Same run under my independent implementation of the amended rule: `sighting nonok=0`, `native-trial nonok=0`.
+Same text under my independent both-sides-eligible→noid variant: `sighting nonok=0`, `native-trial nonok=0`.
 Before (unchanged notes, same gate): `sighting nonok=16`, `native-trial nonok=25`.
 
 **Frozen-contract rule (right-first, no ambiguity term) on the same patched text:**
@@ -30,7 +31,7 @@ All 31 of those are pairing artifacts, not provenance errors: I re-read each cit
 the sentence's intended subject (`:19`=SHIM_PATH, `:21`=MODULE_PATH, `:27`=TMUX_TARGET, `:49`=MAX_MANIFEST_BYTES,
 `:73`=LOCK_TIMEOUT_MS, `:63`=MAX_TEXT_BYTES, `:71`=DEFAULT_ATTACH_TIMEOUT_MS, `:37`=parseOpenCodeArgv,
 `:131`=isOpenCodeExecutable, `:198`=appearsToLaunchOpenCode, `:35`=missionOmpSessionDirectory,
-`:270`=scanMissionTasks, `:411`=sparkStateRoot, `:59`=surfaceManifest, `:3616`=stopMission, `:3794`=resumeMission,
+`:270`=scanMissionTasks, `:411`=sparkStateRoot, `:59`=surfaceManifest, `:50`=surfaceErrors, `:3616`=stopMission, `:3794`=resumeMission,
 `:1991`=reconcileLocked, `:3543`=steerMission; NT: `:65`=ADMITTED_PROFILES, `:838`=die, `:120`=collector parseArgs,
 `:955`=writeEvidenceFile, `:96`=PROPOSAL_WAVE_CEILING, `:173`=DEADLINE_CLASS_BY_ROLE, `:217`=ROUTING_HEALTH_OUTCOMES,
 `:120`=GODSPEED_MARKER, `:265`=taskCalls, `:16`=normalizeTranscriptEvent, `:637`=resolveNativeProfile,
@@ -82,19 +83,23 @@ remain explicitly attributed to `964f443e`. **label-fail=0.**
 
 ## Findings
 
-1. **HIGH (integration-conditional) — the patch is green only under the round-36 pairing amendment.**
-   The gate build pairs ambiguity-aware (`scripts/claims-check.mjs:596-606` in ExecClaimsFidelity's lane:
-   "Pairing is ambiguity-aware (round-36 amendment)"; both eligible sides → noid). Under the frozen contract's
-   right-first rule the same notes read nonok=19/12. The notes assert the amendment in prose
+1. **HIGH (integration-conditional) — the patch is green only under the round-36 FINAL pairing rule.**
+   The gate build's `adjacentSymbol` is separator-aware: right pairing is refused when the text between carries
+   `, ) ; . | — – →`, left pairing when it carries `)` or `;`, and both/neither eligible → noid
+   (`scripts/claims-check.mjs:610-611` block regexes, `:623-636` "round-36 FINAL rule", in ExecClaimsFidelity's
+   lane). The frozen contract instead says right-first, else left. Under the frozen rule the same notes read
+   nonok=19/12; under the FINAL rule they read 0/0. The notes assert the FINAL behaviour in prose
    (`corpus/knowledge/sighting-wall.md:7` "adjacent-symbol ambiguity is a `noid` diagnostic by contract").
    If the L1 ships the frozen rule, C1's nonok=0 target fails on both notes and that sentence is false;
-   if it ships the amendment (as implemented), the sentence is true but should cite the amendment, not "contract".
+   if it ships the FINAL rule (as the gate now implements), the sentence is true but should name the round-36
+   rule, not "contract", and the frozen contract text should carry the amendment.
 2. **MEDIUM — a false quoted literal survives on a reflowed line.** `corpus/knowledge/sighting-wall.md:205`
    still reads "`surfaceErrors` (`:50`) mines `fail(\"CODE\"` literals". Pin `scripts/ufo-sighting-lib/surface.mjs`
    has zero `fail("CODE"` occurrences at `31c465f1` and at `964f443e`; `surfaceErrors` (:50) mines
-   `FAIL_CODE_PATTERN` (:48) over `MODULE_PATH` + `SURFACE_MODULE_PATHS`. The anchor is right; the quoted symbol is
-   a paraphrase that never existed and is only `noid` (ungated) because it now sits between two eligible spans.
-   ScoutFidSighting.md:… recommended dropping the backticks; the patch did not.
+   `FAIL_CODE_PATTERN` (:48) over `MODULE_PATH` + `SURFACE_MODULE_PATHS`. The anchor itself is gated `ok`
+   (separator-aware pairing refuses the right span at `) mines ` and pairs the left `surfaceErrors`), so the gate
+   cannot see the false fragment: it only checks the paired span, never the rest of the line. ScoutFidSighting
+   recommended dropping the backticks; the patch did not.
 3. **LOW — "Live" table header now reads against the pin.** `corpus/knowledge/sighting-wall.md:44`
    `| Member | Live \`wc -l\` |` still holds the 964f443e values (4714/95/510/507/614/325; pin =
    4730/95/510/522/614/332). The intro/notice label the numbers 964f443e, so this is ambiguity, not a false label;
@@ -107,7 +112,7 @@ remain explicitly attributed to `964f443e`. **label-fail=0.**
    into the same file (the file's own integration note says the same).
 
 ## Residual risk
-- Amended-rule `noid` anchors are ungated: 5 (sighting) + 2 (native-trial). I hand-verified all 7 against the pin;
+- FINAL-rule `noid` anchors are ungated: 5 (sighting) + 2 (native-trial). I hand-verified all 7 against the pin;
   a future edit could break one without the gate noticing (diagnostic only by contract).
 - `emitFatal` :111→:116 corrects a number that was already wrong at `964f443e` (was 116 there too); the note's
   "(region)" hedge was dropped — fine, but it means one "moved" claim is really an old defect, not a pin drift.
@@ -119,7 +124,7 @@ remain explicitly attributed to `964f443e`. **label-fail=0.**
 - `node scripts/claims-check.mjs --fidelity --self <applied> --src /fast/scratch/kumitate-r36/src`
   → the two lines above; process exit 1 because the corpus-wide verdict is DRIFT (other notes' debt).
 - `node <review>/fid.mjs` / `fid-amended.mjs` (independent implementations, both reproduce the frozen prototype
-  on the unpatched tree: 35/35) → nonok 0/0 amended, 19/12 frozen.
+  on the unpatched tree: 35/35) → nonok 0/0 under the both-sides-eligible→noid variant, 19/12 under the frozen right-first rule.
 - `node <review>/audit.mjs` → per-anchor sentence/subject/cited-line table (31 frozen-nonok + 7 noid, all correct).
 - `git -C <pin> show 964f443e:<file> | wc -l` for each labelled heading → all match.
 - `node scripts/claims-check.mjs --self .=applied --src <pin>` → `CLAIMS: MATCH (rows=19 yes=19 notes=27

@@ -95,38 +95,39 @@ is `60`, i.e. a 60-distinct-section note would not trip `MEMBER_COUNT_DRIFT`
 `RE_MEMBERS` and `:288-290` exact-path resolution; the gate itself was not run — not
 assigned to this item].
 
-## 5. ExecFidRemainder patch — count delta = 0 across every observed state
+## 5. ExecFidRemainder patch — count delta = 0 in every observed state, including the final patch
 
 At 02:25 the lane was pristine (note hash `5a7c8080…` = HEAD; no patch file). Two
-repair passes were then observed in the executor's lane (`r36-execfidremainder`), and
-each was re-censused immediately:
+pre-final repair passes were observed, then the canonical patch was emitted; every
+state was re-censused immediately:
 
-| observed | note hash | size | lane diff | member headings | total `## ` | table rows | sumL | `comm -3` vs S8 | departed re-adds |
+| observed | note hash | size/lines | delta | member headings | total `## ` | table rows | sumL | `comm -3` vs S8 | departed re-adds |
 |---|---|---|---|---|---|---|---|---|---|
-| 02:26:11 | `9aada985…` | 82150 | 54+/54− | 60 | 66 | 60 | 33367 | empty | 0 |
-| 02:27:50 | `7989f5fb…` | 81959 | 53+/53− | 60 | 66 | 60 | 33367 | empty | 0 |
+| 02:26:11 WIP | `9aada985…` | 82150 | 54+/54− | 60 | 66 | 60 | 33367 | empty | 0 |
+| 02:27:50 WIP | `7989f5fb…` | 81959 | 53+/53− | 60 | 66 | 60 | 33367 | empty | 0 |
+| 02:48:24 final patch | `3f419ac…` | 72563 patch / 761 lines | 37+/38− | 60 | 66 | 60 | 33367 | empty | 0 |
 
-Both diffs contain **no** `^[-+]## ` heading line, **no** `^[-+]\| \`scripts/` table
-row, and no changed line matching the census prose (`S8 members`, `S_members (layer)`,
-`members L`, `suite/tool/shim/asset/doc`, `mjs total`, `top-level/subdir in S8`,
-`60 members`); the changed lines are body-line anchor/symbol substitutions only
-(count-neutral by construction). The canonical
-`/fast/scratch/kumitate-r36/w/ExecFidRemainder.patch` was still absent at 02:28, so
-**no count changed by any observed ExecFidRemainder state**.
-
-Post-integration recheck (cheap, exact): heading set + table set + L sum + prose
-numbers must still read 60/60/33367 with the same `comm -3` output; any `## ` heading
-for one of the 20 departed paths is a regression even if `distinct` stays 60.
+Canonical patch: `/fast/scratch/kumitate-r36/w/ExecFidRemainder.patch`, 19 hunks,
+one file (`corpus/knowledge/remaining-scripts-census.md`), `index 5a7c808..3f419ac`;
+its base equals lane HEAD and its new-side blob equals the lane working note left at
+`3f419ac09e93bb20600bd598fc073b570df6b607`. `patch -p1` on the HEAD blob exits 0, and
+the reconstructed note recounts `member_headings=60 total_h2=66 rows=60 sumL=33367`.
+The patch contains **no** added/removed `^## ` heading line, **no** added/removed
+`^\| \`scripts/` table row, and no changed line matching the census prose
+(`S8 members`, `S_members (layer)`, `members L`, `suites/tools/shims/assets/doc`,
+`mjs total`, `top-level/subdir in S8`, `60 members`); the 37+/38− changes are
+body-line anchor/symbol substitutions only. **No count changed.** The final patched
+note's heading set still equals live S8 (`comm -3` empty) and still re-adds no
+departed-member section, so `members=60 sections=60 diff=0` holds after re-anchoring.
 
 ## Residual risk / verification gaps
 
-- The canonical ExecFidRemainder `.patch` had not been emitted when this seat closed;
-  the count-neutrality result is over the HEAD note and two live repair-pass snapshots
-  (hashes above), not over the final patch file. An anchor-only edit cannot change the
-  heading census, but a section split/merge or a departed re-add could, so the final
-  patch still needs the same three `comm -3`/structural checks.
-- One transient state at 02:25:49 reverted to HEAD between passes; it was not counted
-  as a patch state.
+- The executor's own report had not landed when this seat closed; the patch file and
+  the left-patched lane note (both above) are the reviewed artefacts. The patch
+  changes anchor/symbol text only; the 60/60/33367 census is invariant across all
+  three observed states.
+- Two transient write/revert states were not counted as patch states (02:25:49 revert
+  to HEAD between passes).
 - Class labels are shape-derived per the note's own definition; behavioural class is
   out of scope of a count audit.
 - Historical round-13 `60` (pre-964f443e) is not re-derivable from this clone and was
