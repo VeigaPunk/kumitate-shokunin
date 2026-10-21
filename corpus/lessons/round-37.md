@@ -23,14 +23,15 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
   D1's throwaway parser output was not committed.
 - D2: `node scripts/claims-check.mjs --selftest` → `CLAIMS_SELFTEST: 47/47 pass`;
   `--fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` → `FIDELITY: CLEAN (notes=20
-  anchors=1551 src-rev=31c465f15669)`.
+  anchors=1574 src-rev=31c465f15669)`.
 - D3: appended corrections in `SCORECARD.md` (`## Round 37 correction`) and `corpus/lessons/round-36.md`
   (`## Correction`); the live Axes runtime row now reads `92/92`; the historical `C2=81/81`/`82/82`
   quotes are named as that round's readings. Verify: `grep -n "Round 37 correction" SCORECARD.md`.
 - D4: `corpus/QUALITY.md` Q16 (cited above).
-- D5: falsify wave validated at 68 seats (`.ufo/waves/round-37/falsify-spec.json`), dispatched
-  after the repairs and before the report; results are late evidence (records under
-  `.ufo/waves/round-37/falsify/`), not integrated into this round's numbers.
+- D5: falsify wave validated at 68 seats (`.ufo/waves/round-37/falsify-spec.json`), dispatched after
+  the repairs and before the report; its late findings WERE folded back in — `AuditSighting4`
+  triggered the base reset `5bc40d0`, which moved the ratchet 186 → 200 and anchors 1551 → 1574. The
+  wave's reports remain under `.ufo/waves/round-37/falsify/`.
 - D6: fleet-root `-.rej` (72,390 B, 19 hunks) moved to
   `.ufo/waves/round-36/evidence/remaining-scripts-census.rej.txt` (moved copy sha256 `3f51c7e7…`, 249
   lines / 19 hunks, committed in `5ceb8cd`); fleet copy deleted. Verify6 notes the `cmp` output was not
