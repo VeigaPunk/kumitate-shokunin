@@ -1721,8 +1721,10 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   round-37 note, this lesson; Axes runtime row 92/92); D4 `QUALITY.md` Q16; D5 falsify wave validated
   at 68 seats and dispatched before the report; D6 fleet-root `-.rej` moved byte-exact into
   `.ufo/waves/round-36/evidence/` and deleted; D7 `ExecFidSmall.patch` discarded (four named semantic
-  failures unfixed); D8 README row + `C2/C2_total=83`. Gate at close: `FIDELITY: CLEAN (notes=20
+  failures unfixed); D8 README row + `C2/C2_total` 83→84 (the 83/83 reading was the intermediate commit
+  `5ceb8cd`, whose `final/proxy.txt` shows `C2_TOTAL_DRIFT declared=83 computed=84`; `86c0676`
+  cleared it). Gate at close: `FIDELITY: CLEAN (notes=20
   anchors=1551 src-rev=31c465f15669)` under the ratchet, `CHECKLIST: 14/14 pass`, `PROXY: MATCH
-  (C=14 C2=83/83 S=88/88 R=92/92 K=51/51 pins=6 src-rev=…)`, `CLAIMS: MATCH (sections=184 adv=4)`,
+  (C=14 C2=84/84 S=88/88 R=92/92 K=51/51 pins=6 src-rev=…)`, `CLAIMS: MATCH (sections=184 adv=4)`,
   `SOURCES_CHECK: CLEAN (rows=32)`. Declared claim: operability — the fidelity gate now measures
   anchor truth instead of rewarding shifts (integer held 8); no new coverage claim.

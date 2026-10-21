@@ -34,7 +34,8 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
 - D7: `ExecFidSmall.patch` **discarded** (its four `ReviewFidSmallB` semantic failures were never
   fixed and its green depended on the removed right-first rule) — recorded in
   `.ufo/waves/round-37/repairs.md`.
-- D8: `corpus/README.md` row for `lessons/round-36-verifier-spotcheck.md`; `C2`/`C2_total` = 83,
-  `PROXY: MATCH (… C2=83/83 …)`.
+- D8: `corpus/README.md` row for `lessons/round-36-verifier-spotcheck.md`; `C2`/`C2_total` = 84 (commit `5ceb8cd` briefly carried 83/83 against 84 notes and its
+  `final/proxy.txt` recorded `C2_TOTAL_DRIFT declared=83 computed=84`; `86c0676` added this lesson's
+  row and set both terms to 84 → `PROXY: MATCH (… C2=84/84 …)`).
 - Sources: census `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` →
   `kumitate ok`, exit 0; no new rows this round (repair-first), rows 32 unchanged.
