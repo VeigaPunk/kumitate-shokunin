@@ -100,6 +100,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-36-verifier-spotcheck.md` | Round-36 non-author closure: REJECTED-HARMED adjudication (C1 fails as declared, C2 verifies, coverage:script-layer harmed by 123 shifted anchors), routed defects D1-D8, discernment spot-check, trend verdicts; row added in round 37 | commit `5833351`; fleet closure entry |
 
+| `lessons/round-37.md` | Round-37 repair-first method: the round-36 harmed anchors restored and the four notes marked, canonical left-first pairing with a shift selftest, a measured fidelity ratchet (no-regression CLEAN), D3-D8 dispositions, and the 68-seat falsify wave | LOG.md round 37; `.ufo/waves/round-37/`; spot-check D1-D8 |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe
