@@ -127,5 +127,6 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
   A fidelity term whose pairing can be satisfied by shifting an anchor onto a neighbouring symbol
   is not a fidelity gate. Before a green line is cited as anchor truth, re-measure the moved
   anchors with an independent parser against the pinned revision (`corpus/lessons/round-36-verifier-spotcheck.md`
-  D1/D2; round-36 lost 123 previously true anchors this way). Grounding: the same note's
-  adjudication (§Claims, anchor truth) and `corpus/lessons/round-37.md`.
+  D1/D2; round-36 lost 123 previously true anchors this way). The check must be a committed command with its recorded output — a throwaway
+  parser or the gate's own CLEAN line is not evidence for this criterion. Grounding: the same note's
+  adjudication (§Claims, anchor truth), Verify4, and `corpus/lessons/round-37.md`.

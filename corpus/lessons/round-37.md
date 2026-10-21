@@ -17,7 +17,8 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
 ## Gate
 
 - D1 restore: `git -C <lane> diff --stat 0614092 -- <four notes>` (see report). Independent truth
-  parser on the repaired tree: see report measurement.
+  re-measurement is OWED: the lane gate's CLEAN is machine output, not anchor truth (Verify4), and
+  D1's throwaway parser output was not committed.
 - D2: `node scripts/claims-check.mjs --selftest` → `CLAIMS_SELFTEST: 47/47 pass`;
   `--fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` → `FIDELITY: CLEAN (notes=20
   anchors=1551 src-rev=31c465f15669)`.

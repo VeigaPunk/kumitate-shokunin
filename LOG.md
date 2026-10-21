@@ -1726,5 +1726,6 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   cleared it). Gate at close: `FIDELITY: CLEAN (notes=20
   anchors=1551 src-rev=31c465f15669)` under the ratchet, `CHECKLIST: 14/14 pass`, `PROXY: MATCH
   (C=14 C2=84/84 S=88/88 R=92/92 K=51/51 pins=6 src-rev=…)`, `CLAIMS: MATCH (sections=184 adv=4)`,
-  `SOURCES_CHECK: CLEAN (rows=32)`. Declared claim: operability — the fidelity gate now measures
-  anchor truth instead of rewarding shifts (integer held 8); no new coverage claim.
+  `SOURCES_CHECK: CLEAN (rows=32)`. Declared claim: operability — the fidelity gate now measures the sentence's own adjacent symbol
+  (left-first) instead of rewarding shifts; it is not anchor truth, and independent re-measurement
+  is owed (Verify4). Integer held 8; no new coverage claim.
