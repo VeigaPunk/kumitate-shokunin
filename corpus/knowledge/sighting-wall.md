@@ -1,5 +1,5 @@
 # S4 sighting wall — live membership at internals level
-> **Round-37 anchor-truth restoration (2026-10-21).** Anchors in this note were reverted to the lines their 0614092 sentences named, because the round-36 shift-repair moved them one symbol off (spot-check D1). Re-verification against the pin is pending; treat line anchors here as at their base revision until then.
+> **Round-37 anchor-truth restoration (2026-10-21; amended by AuditSighting4).** Symbol-keyed anchors were reverted to their 0614092 values, but this note is only PARTIALLY restored: nine anchor positions still differ from base (five never reverted, four set to values present in neither base nor the pre-repair note), and two remain false — `MANIFEST_SCHEMA` should cite `base.mjs:41`, `MAX_MANIFEST_BYTES` `:49`. The round-36 shift-repair moved them one symbol off; re-verification against the pin is owed for all nine. Do not treat this note as fully restored.
 
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
