@@ -1,4 +1,6 @@
 # S4 sighting wall — live membership at internals level
+> **Round-37 anchor-truth restoration (2026-10-21).** Anchors in this note were reverted to the lines their 0614092 sentences named, because the round-36 shift-repair moved them one symbol off (spot-check D1). Re-verification against the pin is pending; treat line anchors here as at their base revision until then.
+
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 22 line anchors in this
@@ -105,22 +107,22 @@ fails `MANIFEST_TOO_LARGE` past `MAX_MANIFEST_BYTES`. `readManifest`
 (`scripts/ufo-sighting.mjs:379`) is the bounded read path; `loadStatusView`
 (`scripts/ufo-sighting.mjs:531`) is the status projection entry.
 
-**Lock.** `acquireOperationLock` (`scripts/ufo-sighting.mjs:648`) seizes
+**Lock.** `acquireOperationLock` (`scripts/ufo-sighting.mjs:663`) seizes
 `<stateDir>/operation.lock` as a directory + `owner.json` `wx`, with
 `LOCK_TIMEOUT_MS` wait via `UFO_SIGHTING_LOCK_TIMEOUT_MS`.
-`withOperationLock` (`scripts/ufo-sighting.mjs:767`) is the reentrant wrapper
+`withOperationLock` (`scripts/ufo-sighting.mjs:781`) is the reentrant wrapper
 every mutating verb uses.
 
-**Lifecycle.** `spawnPaneForMission` (`scripts/ufo-sighting.mjs:2239`) is the
+**Lifecycle.** `spawnPaneForMission` (`scripts/ufo-sighting.mjs:2225`) is the
 pane creator. `launchMissionLocked` / `launchMission`
 (`scripts/ufo-sighting.mjs:2347`, `:2372`) own capacity → row → spawn.
-`stopMission` (`scripts/ufo-sighting.mjs:3714`), `resumeMissionLocked` /
-`resumeMission` (`:3682`, `:3361`), `completeMission` (`:3361`),
-`reconcileLocked` (`:3604`), and `scheduleReconcile` (`:3604`, spawns
+`stopMission` (`scripts/ufo-sighting.mjs:3584`), `resumeMissionLocked` /
+`resumeMission` (`:3762`, `:3762`), `completeMission` (`:3339`),
+`reconcileLocked` (`:1976`), and `scheduleReconcile` (`:3572`, spawns
 detached `__reconcile`) close the lifecycle set. Steer/peek:
-`steerMission` (`:3576`), `peekMission` (`:3576`).
+`steerMission` (`:3511`), `peekMission` (`:3544`).
 
-**CLI.** `main` (`scripts/ufo-sighting.mjs:1072`) dispatches verbs including
+**CLI.** `main` (`scripts/ufo-sighting.mjs:4399`) dispatches verbs including
 `__reconcile`, `surface` → `surfaceManifest()`, `launch`, `complete`, and the
 remaining wall verbs; re-exports surface helpers at
 `scripts/ufo-sighting.mjs:4714`.
@@ -133,17 +135,17 @@ Sources: `scripts/ufo-sighting.mjs`; deps `scripts/ufo-sighting-lib/{base,argv,o
 Deliberately the leaf other lib files and the entry import for identity.
 
 **Paths / identity.** `ROOT` (`scripts/ufo-sighting-lib/base.mjs:17`),
-`SHIM_PATH` (`:21`), `MODULE_PATH` (`:23`), `SESSION_NAME` /
-`TMUX_TARGET` (`:23`, `:39`), `APP_ID` (`:39`).
+`SHIM_PATH` (`:19`), `MODULE_PATH` (`:21`), `SESSION_NAME` /
+`TMUX_TARGET` (`:27`, `:27`), `APP_ID` (`:39`).
 
 **Schema and bounds.** `MANIFEST_SCHEMA = "ufo-sighting-wall-v1"`
 (`scripts/ufo-sighting-lib/base.mjs:49`); `MAX_MANIFEST_BYTES = 1_048_576`
-(`:73`); `LOCK_TIMEOUT_MS = 10_000` (`:75`); `LOCK_STALE_MS` (`:75`);
-`MAX_TEXT_BYTES = 4096` (`:65`); `MAX_COMPLETED_MISSIONS = 50` (`:65`);
-`DEFAULT_ATTACH_TIMEOUT_MS` (`:77`); `DISPLAY_REFRESH_LOCK_MS = 250` (`:77`).
+(`:73`); `LOCK_TIMEOUT_MS = 10_000` (`:73`); `LOCK_STALE_MS` (`:75`);
+`MAX_TEXT_BYTES = 4096` (`:63`); `MAX_COMPLETED_MISSIONS = 50` (`:65`);
+`DEFAULT_ATTACH_TIMEOUT_MS` (`:71`); `DISPLAY_REFRESH_LOCK_MS = 250` (`:77`).
 
 **Errors.** `SightingError` (`scripts/ufo-sighting-lib/base.mjs:105`) carries
-`code` + optional `details`; `emitFatal` (`:116` region) is the process-fatal
+`code` + optional `details`; `emitFatal` (`:111` region) is the process-fatal
 emitter used by the entry.
 
 Sources: `scripts/ufo-sighting-lib/base.mjs`.
@@ -154,12 +156,12 @@ Sources: `scripts/ufo-sighting-lib/base.mjs`.
 parsing, executable predicates, and preflight that refuses indirect shells.
 
 **Parsing.** `optionValue` (`scripts/ufo-sighting-lib/argv.mjs:22`);
-`parseOpenCodeArgv` (`:280`); `parseOmpArgv` (`:280`);
+`parseOpenCodeArgv` (`:37`); `parseOmpArgv` (`:280`);
 `attestedOmpSession` (`:366`).
 
 **Predicates.** `resolvedExecutableName` (`:117`);
-`isOpenCodeExecutable` (`:135`); `isOmpExecutable` (`:135`);
-`appearsToLaunchOpenCode` / `appearsToLaunchOmp` (`:198`, `:202`);
+`isOpenCodeExecutable` (`:131`); `isOmpExecutable` (`:135`);
+`appearsToLaunchOpenCode` / `appearsToLaunchOmp` (`:202`, `:202`);
 `shellLaunches` (`:139`).
 
 **Preflight.** `preflightArgvDispatch` (`scripts/ufo-sighting-lib/argv.mjs:455`)
@@ -178,12 +180,12 @@ census, and dispatcher `observations.json` — never pane scrollback as
 telemetry.
 
 **OMP transcripts.** `ompSessionsRoot` (`scripts/ufo-sighting-lib/observe.mjs:22`);
-`missionOmpSessionDirectory` (`:56`); `collectTranscriptFiles` (`:56`);
-`scanMissionTasks` (`:384`); `observeMissionTasks` (`:384`) returns
+`missionOmpSessionDirectory` (`:35`); `collectTranscriptFiles` (`:56`);
+`scanMissionTasks` (`:270`); `observeMissionTasks` (`:384`) returns
 `KNOWN_ZERO` / `unavailable(…)` / structured evidence and is safe on malformed
 argv dispatch.
 
-**Sparks / observations.** `sparkStateRoot` (`:415`); `countActiveSparks`
+**Sparks / observations.** `sparkStateRoot` (`:411`); `countActiveSparks`
 (`:493`); `loadObservations` (`:493`) reads the sidecar under the wall state
 dir.
 
@@ -203,12 +205,12 @@ consumers compare to `config/ufo.json` `sighting.surfaceDigest`.
 (`scripts/ufo-sighting-lib/surface.mjs:13`–`:31`). `surfaceScriptDigest`
 (`:31`) hashes **shim + module + those four** in fixed order (not any single
 file’s sha256). `SURFACE_KIND = "sighting-surface-v1"` (`:24`).
-`DEFAULT_PEEK_LINES = 80` / `MAX_PEEK_LINES = 400` (`:20`, `:22`).
+`DEFAULT_PEEK_LINES = 80` / `MAX_PEEK_LINES = 400` (`:22`, `:22`).
 
 **Manifest / errors.** `surfaceErrors` (`:50`) mines fail("CODE" literals
-from the entry + lib set; `surfaceManifest` (`:67`) emits `kind`,
+from the entry + lib set; `surfaceManifest` (`:59`) emits `kind`,
 `scriptDigest`, `digestInputs`, verb schemas, and exit map.
-`runLegacyNativeDirect` (`:325`) re-enters the bash shim’s
+`runLegacyNativeDirect` (`:318`) re-enters the bash shim’s
 `--ufo-sighting-native-direct` seam; `output` / `requireNoArgs` / `usage`
 (`:310`, `:314`, `:294`) are the CLI helpers re-exported by the entry.
 

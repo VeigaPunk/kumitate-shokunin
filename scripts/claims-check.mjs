@@ -297,7 +297,10 @@ function fidelityWalk({ self, src }) {
           const selfEnd = am.index + am[0].length;
           const next = lineSpans.find((s) => s.start >= selfEnd && s.start - selfEnd <= 14);
           const prev = [...lineSpans].reverse().find((s) => s.end <= selfStart && selfStart - s.end <= 14);
-          const pair = next ?? prev ?? null;
+          // Canonical rule (round 37, spot-check D2): the sentence's symbol precedes
+          // its anchor in this corpus, so pair LEFT first and fall back right; right-first
+          // pairing rewards shifting an anchor onto the next symbol.
+          const pair = prev ?? next ?? null;
           const symbol = pair !== null && !isAnchorSpan(pair.text) && !isPathLikeSpan(pair.text)
             && pair.text.trim().length >= 3 && /[A-Za-z_]/u.test(pair.text) ? pair.text.trim() : null;
           const [n, m] = range;
@@ -352,7 +355,9 @@ function runFidelity(opts) {
   for (const v of violations) lines.push(`FIDELITY  ratchet  ${v}`);
   const srcRev = origin.pin === null ? null : origin.pin.srcRev;
   const revSeg = srcRev === null ? '' : ` src-rev=${srcRev.slice(0, 12)}`;
-  if (violations.length === 0 && total.nonok === 0) {
+  // Round 37 (spot-check D2 follow-up): with a ratchet, CLEAN means "no note or total
+  // above its recorded ceiling"; without one, any nonok stays DRIFT.
+  if (violations.length === 0 && (ratchet !== null || total.nonok === 0)) {
     lines.push(`FIDELITY: CLEAN (notes=${walk.notes.size} anchors=${total.anchors}${revSeg})`);
     process.stdout.write(`${lines.join('\n')}\n`);
     return 0;
@@ -1167,6 +1172,20 @@ function selfTest() {
       return {
         ok: r.status === 0 && verdictLine(r) === GREEN_MATCH && !r.stdout.includes('src-rev='),
         detail: `exit=${r.status} last=${verdictLine(r).slice(0, 140)}`,
+      };
+    });
+
+    // round-37 spot-check D2: a shifted anchor whose adjacent next span is the
+    // *next* symbol must read non-ok; right-first pairing would reward the shift.
+    const shift = mk('fidelity-shift', {
+      notes: [['corpus/knowledge/fx-a.md', '## `scripts/a.mjs`\n\n`BETA_MARK` (`scripts/a.mjs:3`), `ALPHA_MARK` at `scripts/a.mjs:3`.\n']],
+    });
+    check('FIDELITY: a shift onto the next symbol reads non-ok (canonical left-first pairing)', () => {
+      const r = runClaims(args(shift, ['--fidelity']));
+      return {
+        ok: r.status === 1 && verdictLine(r).startsWith('FIDELITY: DRIFT')
+          && /nonok=1/u.test(verdictLine(r)),
+        detail: `exit=${r.status} ${verdictLine(r).slice(0, 120)}`,
       };
     });
 

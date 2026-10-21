@@ -98,6 +98,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-36.md` | Round-36 method: the pinned-verdict operability claim (PIN v1 in claims/proxy/surface, scrubbed git env, mkdtemp dispatcher state, declared-order digest, strict `--known`) and the FIDELITY v1 arm with a clause-guarded pairing rule and an all-zero ratchet; R5/R7 sectionization reaches the runtime layer 92/92 ⇒ 10; nine mined mistakes | LOG.md round 36; `.ufo/waves/round-36/`; S029–S032 |
 
+| `lessons/round-36-verifier-spotcheck.md` | Round-36 non-author closure: REJECTED-HARMED adjudication (C1 fails as declared, C2 verifies, coverage:script-layer harmed by 123 shifted anchors), routed defects D1-D8, discernment spot-check, trend verdicts; row added in round 37 | commit `5833351`; fleet closure entry |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

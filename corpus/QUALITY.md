@@ -122,3 +122,10 @@ exempt-but-counted even when later text is appended. Appended text in one of
 those files is not a new sourced entry and cannot support an expansion claim.
 Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
 `recheck:` trio fails the source gate.
+
+- **Q16 — a gate that admits anchors is checked against symbol-on-line truth before landing.**
+  A fidelity term whose pairing can be satisfied by shifting an anchor onto a neighbouring symbol
+  is not a fidelity gate. Before a green line is cited as anchor truth, re-measure the moved
+  anchors with an independent parser against the pinned revision (`corpus/lessons/round-36-verifier-spotcheck.md`
+  D1/D2; round-36 lost 123 previously true anchors this way). Grounding: the same note's
+  adjudication (§Claims, anchor truth) and `corpus/lessons/round-37.md`.

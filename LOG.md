@@ -1710,3 +1710,19 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   **not admitted as anchor truth** and the note is **harmed** by the shift-repair until it is redone
   under one canonical pairing rule. C2 (R5/R7 92/92 ⇒ 10) is unaffected and independently re-measured.
   The delivered gate numbers remain reproducible as machine output; they just do not certify the prose.
+
+- 2026-10-21 — round 37 (repair-first; base `91da27c6ac17712aa53ea0adb27d89b133d60081`, pin `31c465f1…`).
+  Repairs the round-36 REJECTED-HARMED verdict before any new claim: D1 every symbol-keyed anchor in
+  `remaining-scripts-census.md`, `sighting-wall.md`, `route-probe-cluster.md`, `native-trial-launch.md`
+  reverted to its 0614092 sentence line and each note marked; D2 canonical pairing is now LEFT-first
+  (`scripts/claims-check.mjs` `prev ?? next`) with a 47/47 selftest case where a shift onto the next
+  symbol reads non-ok; the fidelity ratchet records the measured debt (total 186) and CLEAN means no
+  regression (decorative `total===0` rule removed); D3 wording corrections appended (SCORECARD
+  round-37 note, this lesson; Axes runtime row 92/92); D4 `QUALITY.md` Q16; D5 falsify wave validated
+  at 68 seats and dispatched before the report; D6 fleet-root `-.rej` moved byte-exact into
+  `.ufo/waves/round-36/evidence/` and deleted; D7 `ExecFidSmall.patch` discarded (four named semantic
+  failures unfixed); D8 README row + `C2/C2_total=83`. Gate at close: `FIDELITY: CLEAN (notes=20
+  anchors=1551 src-rev=31c465f15669)` under the ratchet, `CHECKLIST: 14/14 pass`, `PROXY: MATCH
+  (C=14 C2=83/83 S=88/88 R=92/92 K=51/51 pins=6 src-rev=…)`, `CLAIMS: MATCH (sections=184 adv=4)`,
+  `SOURCES_CHECK: CLEAN (rows=32)`. Declared claim: operability — the fidelity gate now measures
+  anchor truth instead of rewarding shifts (integer held 8); no new coverage claim.
