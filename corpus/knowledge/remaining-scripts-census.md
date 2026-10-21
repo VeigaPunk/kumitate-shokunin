@@ -731,7 +731,7 @@ spawns the real CLI through `run` (`scripts/ufo-swarm-collect.test.mjs:65`) and
 use `REGISTRY_LOCK_HOLDER_SOURCE` (`scripts/ufo-swarm-collect.test.mjs:23`),
 `R22_HOLDER_TOKEN` (`:31`) and fixed `OWNER` (`:32`). Join arms reject an
 unmapped member (`:234`), an unexpected member (`:246`), duplicate results
-(`:260`) and conflicting `agentId` (`:560`); the collector succeeds quickly
+(`:260`) and conflicting `agentId` (`:560-572`); the collector succeeds quickly
 while a writer holds the registry lock (`collect_succeeds_fast_under_held_writer_registry_lock`, `scripts/ufo-swarm-collect.test.mjs:1386`).
 Composition coverage includes the hand-built registry join (`default_registry_join_from_wave_path`, `:828`) and a
 plan-schema mixed spawn/resume wave (`plan_input_preserves_spec_order`, `:692`), not an end-to-end wave-run record.
@@ -778,3 +778,7 @@ The 422-line suite (was 364 @ 964f443e) for the extracted night-watchdog repend 
 - note line 733, anchor #473 ( line 246): unchecked — prose-names-arm-not-symbol /  line 246 is the correct definition: pin line 246 test("unexpected_member_rejected", () => {; the case asserts unexpected_member at  line 255. The sentence says "an unexpected member" and never spells the identi
 - note line 734, anchor #474 ( line 260): unchecked — prose-names-arm-not-symbol /  line 260 is the correct definition: pin line 260 test("duplicate_results_row_rejected", () => {; the case asserts duplicate_member at  line 269. The sentence says "duplicate results"; no sentence token is word-
 - note line 734, anchor #475 ( line 560): debt:false — prose-names-arm-not-symbol /  line 560 is the correct definition: pin line 560 test("conflicting_agent_id_rejected", () => {; the case asserts conflicting_member at  line 572. The sentence's agentId is absent from  line 560 (camelCase vs agent_i
+
+## Round-39 anchor repair (append; the round-38 list above stays as written)
+
+- note line 734, anchor #475: the round-38 debt:false entry above is repaired. The anchor now cites the whole conflicting-agent case, line 560-572 at 31c465f1: the test declaration (line 560), the conflicting registry agentId "agentOTHER" (line 569) and the conflicting_member assertion (line 572). This is the one anchor of the round-37 closure's 62-anchor regression list that the round-38 closure left as debt (S8#475); the other three listed pairing exceptions (S8#112, #324, #410) carry reviewed correct tokens and are unchanged.

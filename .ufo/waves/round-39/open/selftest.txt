@@ -1,0 +1,25 @@
+PASS AT01 clean: a true anchor pins and reads CLEAN
+PASS AT02 positional run `a` / `b` (`:2`, `:3`) pairs left-first by position
+PASS AT03 next-symbol shift: anchor set change fails the check and the re-pin refuses (PIN_REGRESSION)
+PASS AT04 right-first discriminator: `BETA_MARK` (`:3`), `ALPHA_MARK` (`:3`) pins BETA as debt, ALPHA true
+PASS AT05 swapped run re-pin refuses (PIN_REGRESSION)
+PASS AT06 hand-edited pin token not on the line reads REGRESSED
+PASS AT07 debt flipped into the pin by hand reads DEBT_GREW against --base
+PASS AT08 a true expectation dropped to unchecked reads CHECKED_SHRANK against --base
+PASS AT09 review override absent from the sentence reads OVERRIDE_INVALID
+PASS AT10 review override present in the sentence and on the line pins true
+PASS AT11 fixed debt left in the pin reads DEBT_STALE
+PASS AT12 line beyond EOF and a `..` escape are dead debt, never read outside the clone
+PASS AT13 source clone at another revision fails closed (exit 2)
+PASS AT14 "At `path:N`, `sym`" with no earlier symbol pairs forward
+PASS AT15 bare `:N` resolves through the heading path; fenced code is ignored
+PASS AT16 clean pin re-checked against itself as --base stays CLEAN
+PASS AT18 one phrase cited at two sites pairs both anchors with that phrase, never a later symbol
+PASS AT19 forward fill never steals a symbol that owns the next citation
+PASS AT20 re-paired token cannot launder a true ordinal (PIN_REGRESSION by ordinal)
+PASS AT21 a dirty source worktree cannot change a verdict (committed blobs only)
+PASS AT22 a pin note key outside corpus/knowledge fails closed (exit 2)
+PASS AT17 unknown flag is a usage refusal (exit 64)
+ANCHOR_TRUTH_SELFTEST: 22/22 pass
+VERDICT: PASS
+exit=0

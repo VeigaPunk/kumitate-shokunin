@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+"""Round-39 C1 measurement: re-run the round-38 closure's own standalone Python block
+(the last ```python fence in corpus/lessons/round-38-verifier-spotcheck.md, read from the
+committed blob at --rev) with only two assignments rebound: `src` (pinned clone path) and
+`delivered` (the lane revision to measure). Prints the block's output, then
+`PRIOR62_CORRECTED <sum>/<population>` and `OLD_TOKEN_LOSSES <sum>`.
+Usage: python3 measure-c1.py --lane <repo> --rev <commit> --src <clone at 31c465f1>
+"""
+import argparse, contextlib, hashlib, io, re, subprocess
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--lane', required=True); ap.add_argument('--rev', required=True); ap.add_argument('--src', required=True)
+o = ap.parse_args()
+rev = subprocess.check_output(['git', '-C', o.lane, 'rev-parse', o.rev], text=True).strip()
+text = subprocess.check_output(['git', '-C', o.lane, 'show', rev + ':corpus/lessons/round-38-verifier-spotcheck.md'], text=True)
+start = text.rindex('```python\n') + len('```python\n'); end = text.rindex('\n```')
+block = text[start:end + 1]
+print('CLOSURE_BLOCK sha256=' + hashlib.sha256(block.encode()).hexdigest())
+block, n1 = re.subn(r"^src='[^']*'$", "src=" + repr(o.src), block, count=1, flags=re.M)
+block, n2 = re.subn(r"^delivered='[0-9a-f]{40}'$", "delivered=" + repr(rev), block, count=1, flags=re.M)
+assert (n1, n2) == (1, 1), 'closure block assignments not found'
+buf = io.StringIO()
+with contextlib.redirect_stdout(buf):
+    exec(compile(block, 'round-38-closure-block', 'exec'), {'__name__': 'closure'})
+out = buf.getvalue(); print(out, end='')
+rows = [eval(m) for m in re.findall(r"^\S+ (\{'anchors'.*\})$", out, re.M)]
+print(f"PRIOR62_CORRECTED {sum(r['prior62_corrected'] for r in rows)}/{sum(r['prior62'] for r in rows)} measured_rev={rev}")
+print(f"OLD_TOKEN_LOSSES {sum(r['losses'] for r in rows)}")

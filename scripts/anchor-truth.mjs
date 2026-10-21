@@ -306,11 +306,26 @@ function checkNote(note, noteText, pinNote, src) {
     if (String(e.source).startsWith('review:') && !overrideValid(live, src)) {
       findings.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
     }
+    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {
+      // A `pair` token must be the note's own pairing; a hand-set token on the line is not a repair.
+      findings.push(['TOKEN_FORGED', `${note}#${e.ord}`, `${e.raw} pinned=${e.token} paired=${x.sym ?? null}`]);
+    }
     if (e.expect === 'true' && st !== 'true') findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} token=${e.token} status=${st}`]);
     else if (e.expect.startsWith('debt:') && st === 'true') findings.push(['DEBT_STALE', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
     else if (e.expect === 'unchecked' && e.token !== null) findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} unchecked entry carries a token`]);
   });
   return { findings, counts };
+}
+
+/** Token-independent anchor identity: the nth occurrence of `raw@path` in its note. */
+function identities(entries) {
+  const seen = new Map();
+  return entries.map((e) => {
+    const id = `${e.raw}@${e.path}`;
+    const n = seen.get(id) ?? 0;
+    seen.set(id, n + 1);
+    return `${id}#${n}`;
+  });
 }
 
 function compareBase(pin, basePin) {
@@ -333,6 +348,18 @@ function compareBase(pin, basePin) {
       const m = now.get(e.key);
       if (m && m.expect !== 'true') findings.push(['DEBT_GREW', `${note}#${m.ord}`, `${e.key} true at base, ${m.expect} now`]);
     }
+    // The key carries the paired token, so a current entry re-keyed or re-tokened escaped the
+    // key match above (round-38 closure R38-1). Identity reads neither key nor token: every
+    // anchor true at base must still exist at the same raw@path occurrence and still be true.
+    const byId = new Map();
+    identities(cn.entries).forEach((id, i) => byId.set(id, cn.entries[i]));
+    const baseIds = identities(bn.entries ?? []);
+    (bn.entries ?? []).forEach((e, i) => {
+      if (e.expect !== 'true') return;
+      const m = byId.get(baseIds[i]);
+      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);
+      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);
+    });
   }
   return findings;
 }
@@ -381,7 +408,8 @@ function validPin(pin) {
           || !(e.path === null || typeof e.path === 'string')
           || !(e.token === null || (typeof e.token === 'string' && e.token.length <= MAX_TOKEN_CHARS))
           || !['true', 'unchecked', 'debt:false', 'debt:dead'].includes(e.expect)
-          || typeof e.source !== 'string' || typeof e.key !== 'string' || keys.has(e.key)) return false;
+          || typeof e.source !== 'string' || !(e.source === 'pair' || (/^review:\S+$/u.test(e.source) && e.token !== null))
+          || typeof e.key !== 'string' || keys.has(e.key)) return false;
       keys.add(e.key);
     }
   }
@@ -692,6 +720,43 @@ function selfTest() {
       setPin(d, (p) => { p.notes['../../etc/passwd'] = p.notes[NOTE]; });
       const r = tool(d, []);
       return { ok: r.status === 2 && /NOTE_KEY_INVALID/.test(r.verdict), detail: r.verdict };
+    });
+    check('AT23', 'a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)', () => {
+      const d = mkSelf('at23', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`two\` at \`scripts/b.mjs:2\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT24', 'a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED', () => {
+      const d = mkSelf('at24', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`BETA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      setPin(d, (p) => {
+        const [e0, e1] = p.notes[NOTE].entries;
+        Object.assign(e0, { token: null, expect: 'unchecked', key: 'fx-missing-base-key' });
+        Object.assign(e1, { token: 'ALPHA_MARK', expect: 'true' });
+      });
+      const r = tool(d, ['--base', base]);
+      return { ok: r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /TOKEN_FORGED/.test(r.out), detail: r.verdict };
+    });
+    check('AT25', 'an inserted earlier anchor shifts a base-true key index and ordinal yet stays CLEAN by identity', () => {
+      const d = mkSelf('at25', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:4\`. \`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN') && /true=2 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT26', 'a pin entry source outside pair or review:<seat> fails closed (exit 2)', () => {
+      const d = mkSelf('at26', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { p.notes[NOTE].entries[0].source = 'hand'; });
+      const r = tool(d, []);
+      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };
     });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);
