@@ -14,6 +14,8 @@ clause-guarded, and the falsify wave never ran. This round repairs that harm fir
 | Pairing rule could be satisfied by shifting the anchor | `scripts/claims-check.mjs` `pair = next ?? prev` at 91da27c6; spot-check D2 | the round-36 critic saw the heuristic risk; no code rule enforced it | Canonical rule now pairs LEFT first (`prev ?? next`) — the corpus writes `SYM` before its anchor — with a 47/47 selftest case where the right-hand span is the next symbol and the shifted anchor must read non-ok. |
 | Ratchet ceilings were decorative | `claims-check.mjs`: CLEAN required `total.nonok === 0` even with a ratchet | reviewer `ReviewChecklist` | CLEAN with a ratchet now means "no note or total above its recorded ceiling"; the ratchet records the measured debt (`total 186`, per-note), so CLEAN is a no-regression claim, not a zero claim. |
 
+| The mandated misroot sweep is git-blind to ignored/empty fleet-root trees | `Sec4`: `git status --porcelain` shows 15 driver lines and 0 residue, yet the fleet root holds a `bash: …` tree and `tameshi-shokukin/` entries hidden by `.gitignore:1 *-shokunin/`; `mori-misroot-sweep.py` returns `candidate_count: 0` for rounds 36/37 | none — the sweep trusts `git status`; no `--ignored` or empty-dir check | Recorded as a named limit: the sweep is a git view, not a filesystem walk; the two fleet-root residues are other lanes' (souji, tameshi) and are reported, not touched. Remediation owed: anchor the fleet rule as `/*-shokunin/`, add `--ignored` + empty-dir detection, and record hash+`cmp` before any future deletion. |
+
 ## Gate
 
 - D1 restore: `git -C <lane> diff --stat 0614092 -- <four notes>` (see report). Independent truth
