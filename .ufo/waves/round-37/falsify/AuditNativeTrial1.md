@@ -85,7 +85,7 @@ Each row: the R36 value is true at the pin (definition line, or a literal mentio
 
 Totals: 19 pin-true definitions and 2 mention-only anchors (m) turned false. 19 of 21 are exact 0614092 numbers, true at 964f443e and false at pin 31c465f1. The two that are not exact: die (A4) and PROPOSAL (A2).
 
-PROFILE (row 1) and PROPOSAL (row 2) share HEAD L355-356 with ADMITTED_PROFILES. Those rows are the adjacent overreversions to A2. PROFILE is outside the 0614092 partition, so no group owns it.
+PROFILE (row 1) sits in the same sentence as A2 (HEAD L355), outside the 0614092 partition, so no group owns it. ADMITTED_PROFILES (L356) is false both before and after R37.
 
 Other R37 results
 - Correct at pin (4 fixes, all exact 0614092 numbers): base PROPOSAL_WAVE_CEILING (base.mjs:96, HEAD L384), DEADLINE_CLASS_BY_ROLE (base.mjs:173, L385), GODSPEED_MARKER (base.mjs:120, L386), normalizeTranscriptEvent (events:16, L399).
