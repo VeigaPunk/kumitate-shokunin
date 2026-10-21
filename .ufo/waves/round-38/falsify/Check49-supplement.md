@@ -1,0 +1,5 @@
+ATTACK Check49 supplement measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf source-pin=31c465f15669f744848bd9f5d56191c5085670f7
+
+Confirmed against pinned `scripts/probe-ufo-route-health.mjs`: `interpretPersistedHealth` parses and validates finite `observedAtMs`/`expiresAtMs` at 1037-1040 and finite `nowMs` at 1042-1044, then returns for `nowMs > expiresAtMs` at 1046-1047. Only the non-expired path maps rows and calls `interpretRouteHealth` at 1054-1056. Therefore its inner `invalid_validity_window` branch at 1010 cannot be reached through the persisted-health flow, and the inner `expired` branch at 1013 cannot be reached either. Persisted expiry is emitted by the outer function at 1047.
+
+The original `Check49.md` is preserved. This supplement confirms the source-level reachability finding only; no production files or oracle measurements changed. Source identity command: `git -C /fast/scratch/kumitate-r36/src rev-parse 31c465f15669f744848bd9f5d56191c5085670f7` → `31c465f15669f744848bd9f5d56191c5085670f7`.

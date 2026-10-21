@@ -1,0 +1,17 @@
+ATTACK Check29 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=3 agreed=3 refuted=0 unverified=0
+
+Measured note revision: `c938c068f4dbf356c0884c2121bbfe087fbe3caf` (`git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse c938c068f4dbf356c0884c2121bbfe087fbe3caf` → `c938c068f4dbf356c0884c2121bbfe087fbe3caf`). Source pin: `31c465f15669f744848bd9f5d56191c5085670f7` (`git -C /fast/scratch/kumitate-r36/src rev-parse 31c465f15669f744848bd9f5d56191c5085670f7` → same hash).
+
+Note command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/remaining-scripts-census.md | awk 'NR>=650 && NR<=652 {print}' | fold -w 160` → line 652 says: “It imports the pure policy surface via the dynamic-import destructure (`:36`), plus `validateTaskReceipt` (`:18`).” Lines 637–639 describe `loadHook` byte-copying the hook, rewriting `REPO_ROOT`, appending the exports and importing the copy.
+
+Hook command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-l0-monitor-hook.test.mjs | nl -ba | awk 'NR>=1 && NR<=52 {print}'` → line 30 `function loadHook(root) {`; lines 32–38 read the real hook, replace its `REPO_ROOT` initializer, write the copy with exported claim functions, then import it. Caller command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-l0-monitor-hook.test.mjs | grep -n 'loadHook'` → `30:function loadHook(root) {`, `58`, `70`, `83`, `98`, `110`, `123`. Hook target command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:.omp/hooks/pre/ufo-l0-monitor.js | grep -n -C 1 'REPO_ROOT'` → `35:const REPO_ROOT = dirname(dirname(dirname(HOOK_DIR)));`, the exact initializer replaced by test line 34.
+
+Monitor command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-l0-monitor.test.mjs | nl -ba | awk 'NR>=1 && NR<=46 {print}'` → line 35 destructures named policy functions; line 36 is `await import("./ufo-l0-monitor.mjs");`. The imported module's main guard is at lines 1322–1324, so this import does not run its CLI.
+
+Debt marking check: the pinned note’s `## Round-38 anchor debt (marked; false, dead or unchecked at 31c465f1)` list (lines 765–780) enumerates other IDs, not #317, #318 or #324; none of these three is marked debt/unchecked. No gate or runtime test was used.
+
+OBS remaining-scripts-census#317 agree | `function loadHook(root) {` | The definition's body performs the described byte-copy/rebase/export/import work, and six test cases call it; the anchor is the actual helper definition, not a coincidental token.
+OBS remaining-scripts-census#318 agree | "    `const REPO_ROOT = ${JSON.stringify(root)};`," | This emitted replacement is applied to the exact initializer in the pinned real hook, so line 36 does rewrite the copied hook's root to the fixture root.
+OBS remaining-scripts-census#324 agree | `  await import("./ufo-l0-monitor.mjs");` | This is the actual dynamic import following the named policy-function destructure; it matches the sentence, not an unrelated/generic `import` occurrence.
+
+Residual risk / verification gaps: no actionable anchor defect found. No `lsp` device/route was mounted, so no LSP status/references/definition/diagnostics were available; pinned `git show` excerpts were used for this narrow check. No gate, build, or tests were run; no gate result is claimed as independent truth.

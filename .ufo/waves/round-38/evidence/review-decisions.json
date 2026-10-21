@@ -1,0 +1,4383 @@
+{
+ "decisions": [
+  {
+   "note": "native-trial-launch",
+   "ord": 0,
+   "act": "MOVE_TOKEN",
+   "val": "69 autoRegisterInvokedNativeTrial",
+   "why": "pin config/ufo.json:69 is \"autoRegisterInvokedNativeTrial\": true, under \"sighting\": { (pin line 46); the note sentence (252-255) documents the config key sighting.autoRegisterInvokedNativeTrial as the CONFIG BOOLEAN at config/ufo.json:79, so the parser's paired symbol autoOpenL1Enabled is the wrong symbol (it is the launcher reader at run-omp-native-trial.mjs:1280 and never occurs in config/ufo.json); pin line 79 is \"configPath\": \"config/mission-nightcall.yml\",",
+   "seat": "FixNTL01"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 1,
+   "act": "MOVE",
+   "val": "838",
+   "why": "pin line 838 is \"function die(message) {\", the definition, not a mention; the note sentence (line 329) says refusals \"surface as BLOCKED: <msg> via die ... + exit 2\", which is the body at pin 839 \"console.error(`BLOCKED: ${message}`);\" and 840 \"process.exit(2);\"; cited pin line 831 is \"routeFamily: resolved.routeFamily,\" with no die",
+   "seat": "FixNTL01"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 2,
+   "act": "MOVE",
+   "val": "3234",
+   "why": "sentence documents entry `main`; pin 3229 is `    };` closing the `halt` object inside `runPhase0DomainProbes`; `function main() {` is at 3234",
+   "seat": "FixNTL02"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 3,
+   "act": "MOVE",
+   "val": "56",
+   "why": "sentence says `PROFILE` = `omp-native-v2`; pin 50 is a comment line; definition `export const PROFILE = \"omp-native-v2\";` is at 56",
+   "seat": "FixNTL02"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 4,
+   "act": "MOVE",
+   "val": "65",
+   "why": "sentence lists constant `ADMITTED_PROFILES`; pin 59 is comment `// profile (never a relaxation of v1/v2) admitted only through a complete`; definition `export const ADMITTED_PROFILES = Object.freeze([PROFILE, RESILIENT_PROFILE]);` is at 65",
+   "seat": "FixNTL02"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 5,
+   "act": "MOVE",
+   "val": "115",
+   "why": "sentence lists constant `PROPOSAL_WAVE_CEILING`; pin 109 is `for (const blueprint of proposalBlueprints) {`; definition `export const PROPOSAL_WAVE_CEILING = 16;` is at 115",
+   "seat": "FixNTL02"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 6,
+   "act": "MOVE",
+   "val": "851",
+   "why": "pin 851 `export function parseArgs(argv) {` is the definition the sentence \"Argv: `parseArgs`\" documents; pin 844 `const VALUE_FLAGS = new Set([...]);` lacks the token parseArgs",
+   "seat": "FixNTL03"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 7,
+   "act": "MOVE",
+   "val": "965",
+   "why": "pin 965 `export function planLaunchMode(args, env = {}) {` is the definition; pin 958 `* Pure launch-mode resolution, kept separate from parseArgs so tests can` is a JSDoc prose mention and lacks the token planLaunchMode",
+   "seat": "FixNTL03"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 8,
+   "act": "MOVE",
+   "val": "176",
+   "why": "pin 176 `export function snapshotDispatchInputs({` is the definition; pin 171 `text: bytes.toString(\"utf8\"),` is a field of readSnapshotFile's return object and lacks the token",
+   "seat": "FixNTL03"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 9,
+   "act": "MOVE",
+   "val": "639",
+   "why": "pin 639 `export function resolveNativeDispatchPolicy(snapshot, profileName = PROFILE, {` is the definition; pin 646 `fail(\"malformed\", \"canonical config snapshot is missing\");` is a guard statement inside its body and lacks the token",
+   "seat": "FixNTL03"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 10,
+   "act": "MOVE",
+   "val": "1289",
+   "why": "pin 1289 `function handOffToSightingWall(argv, runId, plan) {` is the definition of the symbol the sentence names (note line 359: \"Wall path: `handOffToSightingWall` (`:1282`)\"); pin 1282 `return JSON.parse(readFileSync(path.join(root, \"config\", \"ufo.json\"), \"utf8\"))` does not contain the symbol.",
+   "seat": "FixNTL04"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 11,
+   "act": "MOVE",
+   "val": "838",
+   "why": "pin 838 `function die(message) {` is the sole definition of local `die` in the file (note line 360: \"through local `die` (`:831`) as `BLOCKED: \u2026` + process exit 2\"); pin 831 `routeFamily: resolved.routeFamily,` contains no die token.",
+   "seat": "FixNTL04"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 15,
+   "act": "MOVE",
+   "val": "873",
+   "why": "note 372 \"dispatch graph `validateDispatches` (`:869`)\" names the function; pin 873 is its top-level definition `function validateDispatches(parentKey, actual, expectedKeys) {`; pin 869 is the `missing_seats: ${uncoveredSeatIds.length} frozen seat(s) have no agent at collection...` template inside the `die(` guard at 868 and does not contain the symbol; 916 and 931 are call sites",
+   "seat": "FixNTL05"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 16,
+   "act": "MOVE",
+   "val": "955",
+   "why": "note 373 \"durable evidence via `writeEvidenceFile` (`:951`)\" names the function; pin 955 is its top-level definition `function writeEvidenceFile(dest, content) {`; pin 951 is the comment `// P2 (spec 02 \u00a73): seats whose observed interval exceeded their deadline,` with no symbol; round-36 977 is persistEvidenceWrites' definition, the one-symbol-off error",
+   "seat": "FixNTL05"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 17,
+   "act": "MOVE",
+   "val": "977",
+   "why": "note 373 \"`persistEvidenceWrites` (`:973`)\" names the function; pin 977 is its top-level definition `function persistEvidenceWrites() {`; pin 973 is `  } finally {` closing the try at 968 inside writeEvidenceFile (955-976); 1780 `persistEvidenceWrites();` is a call",
+   "seat": "FixNTL05"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 23,
+   "act": "MOVE",
+   "val": "217",
+   "why": "pin 217 is the definition, quoted: `export const ROUTING_HEALTH_OUTCOMES = new Set([`. The note sentence (line 385, `ROUTING_HEALTH_OUTCOMES` (`:223`)) documents that constant, and the paired symbol occurs only on 217 in base.mjs. Current :223 is pin `]);`, the Set's closing bracket, which lacks the symbol. Round-36 value 120 lands on the neighbour `export const GODSPEED_MARKER = \"| godspeed\";` (wrong symbol).",
+   "seat": "FixNTL06"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 26,
+   "act": "MOVE",
+   "val": "758",
+   "why": "pin 758 is the definition, quoted: `export function classifyFailure(message) {`. The note (lines 386-387) reads \"Classifier `classifyFailure`\", i.e. the classifier definition, not a mention. Pin 682 is `? values` (ternary inside interval(), lines 681-687) and carries no classifyFailure token. The other occurrences are not the target: 62 is a comment, 916 is the call `const failureClass = classifyFailure(message);`.",
+   "seat": "FixNTL06"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 27,
+   "act": "MOVE",
+   "val": "297",
+   "why": "pin 297 is the definition, quoted: `export function die(message) {`. The note (lines 387-388) reads \"Typed rejection helper `die`\", i.e. the helper definition. Pin 303, quoted ``process.stderr.write(`BLOCKED: ${message}\\n`);``, is inside die's body and has no die token; the first die occurrence in base.mjs is 297. Round-36 value 126 is not a die occurrence.",
+   "seat": "FixNTL06"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 29,
+   "act": "MOVE",
+   "val": "265",
+   "why": "sentence symbol `taskCalls` is defined at pin 265 `export function taskCalls(events, parentRole) {` (definition); pin 260 `// One pairing pass per (transcript, parent role): the collector asks for the` is the leading cache comment, has no `taskCalls` token and no whole-word token shared with note 396, so TOKEN cannot apply",
+   "seat": "FixNTL07"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 30,
+   "act": "MOVE",
+   "val": "396",
+   "why": "sentence symbol `taskDispatches` is defined at pin 396 `export function taskDispatches(events, parentRole) {` (definition); pin 381 `task: effectiveAssignment,` is a field of the record pushed inside computeTaskCalls (275-393) and never contains `taskDispatches`; the shared word `task` is a generic property key, not the documented symbol, so TOKEN is rejected",
+   "seat": "FixNTL07"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 34,
+   "act": "MOVE",
+   "val": "276",
+   "why": "pin 275 is blank; pin 276 \"export function modelEvidence(events, role, route, options = {}) {\" is the definition the sentence documents (pin 69, 500, 741 are comment mentions)",
+   "seat": "FixNTL08"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 35,
+   "act": "MOVE",
+   "val": "71",
+   "why": "pin 70 is the comment \"// collector never invents an attempt: an unreconstructable hop died there.\" and lacks the symbol; pin 71 \"export function attemptLedgerEntry(input) {\" is the sole occurrence and the definition",
+   "seat": "FixNTL08"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 36,
+   "act": "MOVE",
+   "val": "476",
+   "why": "pin 474 is \"}\" closing modelEvidence (276-474); pin 476 \"export function seatStatus(events, completion, role, artifactPath, profile) {\" is the sole occurrence and the definition",
+   "seat": "FixNTL08"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 37,
+   "act": "MOVE",
+   "val": "633",
+   "why": "pin 631 is the comment \"// seat is covered exactly once; a launch.json without the field is a legacy\" inside the verifyEffectiveLaunch doc block (626-632); pin 633 \"export function verifyEffectiveLaunch(records, allKeys, agents, roleRoutes, contractRoot, manifest) {\" is the sole occurrence and the definition",
+   "seat": "FixNTL08"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 38,
+   "act": "MOVE",
+   "val": "522",
+   "why": "pin 522 \"export function nativeReceiptDigests(ufoPath, payload, cwd) {\" is the only occurrence of nativeReceiptDigests in evidence.mjs and is its definition; pin 520 is blank; note 407-408 \"receipt digests `nativeReceiptDigests` (`:520`)\" names the function",
+   "seat": "FixNTL09"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 39,
+   "act": "MOVE",
+   "val": "1005",
+   "why": "pin 1005 \"export function buildCostLedger(allKeys, loaded, dispatchAttemptSeats, roleRoutes, rateCard, roundPlan, contractRoot, runRoot) {\" is the only occurrence and the definition; pin 1003 \"// dispatch-attempt seats, which have no transcript and report unavailable.\" is a doc-comment line without the token buildCostLedger; note 408 \"cost rollup `buildCostLedger` (`:1003`)\" names the function; the shared word attempt on 1003 is a mere mention, so TOKEN would mis-pair",
+   "seat": "FixNTL09"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 40,
+   "act": "MOVE",
+   "val": "1071",
+   "why": "pin 1071 \"export function appendRoutingHealth(contractRoot, rows) {\" is the only occurrence and the definition; pin 1067 \"// symlinked intermediate planted after the chain check, while EEXIST here\" is a line inside the doc-comment block 1064-1070 without the token appendRoutingHealth; note 409 \"routing-health append `appendRoutingHealth` (`:1067`)\" names the function",
+   "seat": "FixNTL09"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 41,
+   "act": "MOVE",
+   "val": "66",
+   "why": "pin 66 `export function splitRoute(route) {` is the definition the sentence \"Route parse `splitRoute`\" documents; cited pin 39 is blank; other occurrences 97,98,117,140,236,261 are call sites only",
+   "seat": "FixNTL10"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 42,
+   "act": "MOVE",
+   "val": "173",
+   "why": "pin 173 `export function loadSeatRoutingMirror(contractRoot, roles) {` is the definition (only occurrence); cited pin 155 `    });` closes `map.set(role, {` inside requireRoleRoutes (103-158)",
+   "seat": "FixNTL10"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 43,
+   "act": "MOVE",
+   "val": "301",
+   "why": "pin 301 `export function verifyLaunchSeatRouting(launch, mirror, roleRoutes) {` is the definition (only occurrence); cited pin 283 `      requested: seat.requested,` sits inside loadSeatRoutingMirror's `table.set(role, {` (173-292)",
+   "seat": "FixNTL10"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 44,
+   "act": "MOVE",
+   "val": "637",
+   "why": "pin 637 `export function resolveNativeProfile(config, name) {` is the definition (only occurrence); cited pin 619 `    herdWindowMs: input.backpressure.herdWindowMs,` sits inside parseProfileRecovery (559-621)",
+   "seat": "FixNTL10"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 45,
+   "act": "MOVE",
+   "val": "722",
+   "why": "Sentence names readRoundPlan's location; pin 722 'export function readRoundPlan(runRoot, manifest) {' is its only occurrence and its definition; pin 704 'if (typeof criterion.value !== \"number\" || !Number.isFinite(criterion.value)) {' lies inside validateAcceptanceCriterion (681-707), a different symbol.",
+   "seat": "FixNTL11"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 46,
+   "act": "MOVE",
+   "val": "798",
+   "why": "Sentence names waveTokenFromContext; pin 798 'export function waveTokenFromContext(context) {' is its only occurrence and definition; pin 780 '  }' only closes the for-loop at 778-780 inside readRoundPlan.",
+   "seat": "FixNTL11"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 47,
+   "act": "MOVE",
+   "val": "897",
+   "why": "Sentence names loadCanonicalDirective; pin 897 'export function loadCanonicalDirective(root) {' is its only occurrence and definition; pin 879 '  };' only closes the object returned by normalizeAxes (829-880); round-36 value 926 is parseRateCard's definition (one symbol off), rejected.",
+   "seat": "FixNTL11"
+  },
+  {
+   "note": "native-trial-launch",
+   "ord": 48,
+   "act": "MOVE",
+   "val": "926",
+   "why": "Sentence names parseRateCard; pin 926 'export function parseRateCard(budgets) {' is its only occurrence and definition; pin 908 'die(`godspeed directive is not UTF-8 at ${candidate}: ${error.message}`);' sits in loadCanonicalDirective's catch (907-909), a different symbol.",
+   "seat": "FixNTL11"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 0,
+   "act": "DEBT",
+   "val": "cited file and symbol absent at pin 31c465f1; the sentence \"`scripts/proxy-check.mjs:219` defines `RE_REGISTRY_ROW`\" documents the lane-owned checker, not an origin member",
+   "why": "pin: read scripts/proxy-check.mjs -> not found, RE_REGISTRY_ROW 0 hits in pin; lane rev 753446a8 defines it at :479, and :219 is doc text \" * Exit: 0 match \u00b7 1 drift (findings; warnings too under `--strict`) \u00b7\", so :219 was wrong at lane rev too",
+   "seat": "FixS812"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 1,
+   "act": "DEBT",
+   "val": "same pin absence; \"`scripts/proxy-check.mjs:355` counts only rows matching it\" has no origin counterpart",
+   "why": "lane rev 753446a8: the row-count filter is :705 `if (!re.test(line)) continue;` inside registryCounts (:701); :355 is `try { body = JSON.parse(text); } catch (err) {` in readPin",
+   "seat": "FixS812"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 2,
+   "act": "DEBT",
+   "val": "same pin absence; \"a row is covered when its note cell starts `yes`, `scripts/proxy-check.mjs:358`\" has no origin counterpart",
+   "why": "lane rev 753446a8: the yes-test is :708 `if ((cells[4] ?? '').trim().startsWith('yes')) covered += 1;`; :358 is `if (body === null || typeof body !== 'object' || Array.isArray(body)) {` in readPin",
+   "seat": "FixS812"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 17,
+   "act": "TOKEN",
+   "val": "bin",
+   "why": "line 8 is already right: \"`grokWeb.bin` (`:8`)\" names the bin key whose value is an absolute path; pin :8 `    \"bin\": \"/home/vgpnk/.local/bin/grok-web\",`; `bin` occurs in the sentence and on :8; the parser paired `grokWeb.bin` and matched only the object header `\"grokWeb\": {` on :7, and `grokWeb` does not occur on :8",
+   "seat": "FixS812"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 27,
+   "act": "MOVE",
+   "val": "15",
+   "why": "PATH FIX ONLY: correct anchor scripts/charter-scribe/prompts/kimi-update.prompt.txt:15, not sync.mjs:15 (bare :15 inherited sync.mjs from `scripts/charter-scribe/sync.mjs:508-511` earlier in the same paragraph); pin prompt line 15 \"shipped locally, which gates are green, and what stays OPEN. Evidence only \u2014\"; the token occurs nowhere in sync.mjs",
+   "seat": "FixS813"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 28,
+   "act": "MOVE",
+   "val": "16",
+   "why": "PATH FIX ONLY: correct anchor scripts/charter-scribe/prompts/kimi-update.prompt.txt:16, not sync.mjs:16 (same inherited-path defect); pin prompt line 16 \"never claim anything not listed above. This chat runs on Kimi Instant, high\"",
+   "seat": "FixS813"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 43,
+   "act": "MOVE",
+   "val": "13",
+   "why": "PATH FIX ONLY: correct anchor scripts/charter-scribe/systemd/charter-scribe.service:13, not timer:13 (bare :13 inherited `charter-scribe.timer:9` earlier in the same paragraph; the sentence says \"this service's [Install]\"); pin service line 13 \"[Install]\", sole occurrence",
+   "seat": "FixS813"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 44,
+   "act": "MOVE",
+   "val": "14",
+   "why": "PATH FIX ONLY: correct anchor scripts/charter-scribe/systemd/charter-scribe.service:14, not timer:14 (same inherited-path defect; the timer has 12 lines so :14 is past EOF); pin service line 14 \"WantedBy=default.target\", sole occurrence",
+   "seat": "FixS813"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 61,
+   "act": "TOKEN",
+   "val": "contract",
+   "why": "anchor 3-8 is right: pin 3 reads \"// Proves the dispatcher's self-healing contract against synthetic fixtures:\" and pins 4-8 are the five numbered surfaces in the note's order; the paired node:test is a negated absence claim (\"rather than by `node:test`\") with 0 literal occurrences in the pin, so no line can satisfy it; \"contract\" is in note sentence 1 and on pin line 3",
+   "seat": "FixS814"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 63,
+   "act": "TOKEN",
+   "val": "failing",
+   "why": "TRUE: sentence says the process \"exits non-zero with failing names\"; 2849 prints the failing names (\" - failing: ${...}\") and 2852 process.exit(failed.length === 0 ? 0 : 1) exits non-zero. Token word-bounded in sentence and on 2849.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 66,
+   "act": "TOKEN",
+   "val": "KEEP",
+   "why": "TRUE: 2850 \"if (!KEEP) rmSync(FIXTURES, ...)\" is the KEEP guard that retains fixtures (2851 prints \"fixtures kept\"). Token KEEP word-bounded in sentence (\"sets `KEEP`\") and on 2850.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 74,
+   "act": "TOKEN",
+   "val": "1",
+   "why": "anchor :273 is right: pin 273 reads \"// \u2500\u2500 1. status over >32MiB hot ledger \u2500\u2500\u2500\" and is the section-1 banner the note cites as \"section 1 (`:273`)\"; the paired fixture_exceeds_read_budget sits at pin 285 and carries its own \"(`:285`)\" cite in the same sentence, so moving :273 there would make the section-1 claim false; \"1\" is the only word that sentence and pin 273 share",
+   "seat": "FixS814"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 78,
+   "act": "TOKEN",
+   "val": "enqueue",
+   "why": "TRUE: 416-440 hold the bad-argument check (420 \"unsupported argument: --bogus\") and the enqueue-envelope check (431 [\"enqueue\", ...], 438-440). Exit 1 is asserted only at 418 and 435; \"all with exit 1\" holds for both branches. Token word-bounded in sentence and on 431.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 79,
+   "act": "MOVE",
+   "val": "227",
+   "why": "pin 227 `export function defaultLedgerPath(env = process.env) {` is the exported definition the sentence names; pin 282 `if (typeof postStat.size !== \"bigint\" || typeof postStat.mtimeNs !== \"bigint\" || typeof postStat.ctimeNs !== \"bigint\") {` is a guard inside extendLedgerMemoWithSuffix (278-376) and never names defaultLedgerPath",
+   "seat": "FixS815"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 80,
+   "act": "MOVE",
+   "val": "381",
+   "why": "pin 381 `export function loadLifecycleLedger(ledgerPathOrOptions, maybeOptions) {` is the exported definition (function body 381-883); pin 492 `if (value.kind === \"process_settled\") settledSeen += 1;` is a body statement with no symbol occurrence",
+   "seat": "FixS815"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 81,
+   "act": "MOVE",
+   "val": "278",
+   "why": "pin 278 `export function extendLedgerMemoWithSuffix(ledgerPath, suffix, postStat) {` is the exported definition (body 278-376); pin 348 `));` closes a .map call inside that body; round-36 value 253 is only the comment mention `// M41). extendLedgerMemoWithSuffix advances the slot only for a same-inode`, rejected",
+   "seat": "FixS815"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 85,
+   "act": "MOVE",
+   "val": "124",
+   "why": "pin 124 `function dedupeKey(procKey, kind) {` is the definition; body `${procKey}\\u0000${eventPhase(kind)}` over processKey (pin 116: level, missionId, processIdentity) gives the sentence's (level, missionId, processIdentity, phase); pin 129 `// strip fields that legitimately differ between re-appends of one logical` is canonicalPayload's doc comment (131), and dedupeKey does not occur on 129, so no TOKEN-only fix exists",
+   "seat": "FixS815"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 91,
+   "act": "TOKEN",
+   "val": "stderr",
+   "why": "TRUE: 914 \"args.length === 0\" and the non-help else-branch reach 917 process.stderr.write(JSON.stringify({ error: detail })) and 918 process.exitCode = 2. Token word-bounded in sentence and on 917.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 92,
+   "act": "DEBT",
+   "val": "prose wrong at pin: no usageError refusal exists in fleet-ledger-read.mjs and explicit \"\" is accepted and read from CWD",
+   "why": "pin 498 is \"// a collision \u2014 counted before the id is (re)registered.\"; pin 381-384 accepts \"\" as the explicit path; pin 576-580 binds it to CWD; no MOVE or TOKEN can make the sentence true",
+   "seat": "FixS816"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 95,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "LINE TRUE, TOKEN NEEDS NOTE EDIT: 1389 prints \"N/M passed\" (the pass count) and 1390 \"if (failed.length) process.exit(1)\" exits on failures; but as written the sentence shares no word-bounded token with 1388-1390 (\"exits\" is not \"exit\", \"pass count\" is not \"passed\"). Fix: reword \"exits on failures\" to \"exit 1 on failures\"; then token exit is word-bounded in sentence and on 1390.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 97,
+   "act": "TOKEN",
+   "val": "rotateLedgerIfNeeded",
+   "why": "TRUE: 38 is the static ES import { rotateLedgerIfNeeded as rotateLedgerFile } from \"./fleet-ledger-rotate.mjs\", which the sentence names as the dispatcher's static import. Token word-bounded in sentence and on 38.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 98,
+   "act": "MOVE",
+   "val": "107",
+   "why": "path=scripts/fleet-ledger-rotate.mjs (bare :107 inherited the preceding scripts/fleet-dispatcher.mjs:38 cite). Pin rotate:107 reads `export const LIFECYCLE_SCHEMA = \"ufo-process-lifecycle-v1\";` = the definition the sentence documents (rotate:11 is a comment mention; dispatcher:101 is an uncited duplicate; dispatcher:107 is `const MAX_LEDGER_SEGMENTS = 5;`).",
+   "seat": "FixS817"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 99,
+   "act": "MOVE",
+   "val": "392",
+   "why": "L1 override: path fix only; :392 is preserveToCold (seat FixS817 misaligned #99/#100)",
+   "seat": "L1"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 100,
+   "act": "TOKEN",
+   "val": "cold",
+   "why": "L1 override: path fix only; :393 is the name template `${segName}.${rawSha}.cold`",
+   "seat": "L1"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 101,
+   "act": "MOVE",
+   "val": "109",
+   "why": "path=scripts/fleet-ledger-rotate.mjs. Pin rotate:109 reads `export const ROTATION_RECORD_SCHEMA = \"ufo-ledger-rotation-v1\";` = the definition the sentence documents. rotate:41 and rotate:56 are comment mentions; dispatcher:776 is a comment mention (rejected). Round-36 dispatcher:45 is a realpath-memo comment (unrelated).",
+   "seat": "FixS817"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 102,
+   "act": "MOVE",
+   "val": "591",
+   "why": "path must be scripts/fleet-ledger-rotate.mjs, not the dispatcher the parser gave (the dispatcher path most likely comes from the earlier `scripts/fleet-dispatcher.mjs:38` in the same paragraph [INFERENCE]); line stays 591: pin rotate:591 `  record.coldVia = preserved.via;` is the assignment that \"carries `coldVia` (`:591`...)\" describes; declaration alternative rotate:562 `coldVia: null,` is also true, but \"carries\" describes the set",
+   "seat": "FixS818"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 103,
+   "act": "MOVE_TOKEN",
+   "val": "975-978 record",
+   "why": "path must be scripts/fleet-ledger-rotate.mjs (not dispatcher); range right: pin rotate:975 `    record.staleTempsRemoved = swept.removed;` through rotate:978 `    if (swept.skippedYoung > 0) record.staleTempsSkippedYoung = swept.skippedYoung;` are the stale-temp sweep counts (assignments on the rotation record); `existing` occurs only in the coldVia list earlier in the same sentence; `record` is the only whole word shared by the clause and the cited lines",
+   "seat": "FixS818"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 105,
+   "act": "TOKEN",
+   "val": "stderr",
+   "why": "path and range right in scripts/fleet-ledger-rotate.mjs: pin 1296 `} catch (error) {` through 1300 `process.exitCode = 2;` (1299 `process.stderr.write(...)`) is the refusal boundary; parse sits inside that try (rotate:1278-1279) and parseRotateCliArgs throws on malformed argv (rotate:1246-1259); `--dryrun` occurs only at rotate:1223 (a comment), a mention rather than the refusal code",
+   "seat": "FixS818"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 106,
+   "act": "TOKEN",
+   "val": "rotateLedgerIfNeeded",
+   "why": "line 38 right: pin dispatcher:38 `import { rotateLedgerIfNeeded as rotateLedgerFile } from \"./fleet-ledger-rotate.mjs\";` is the static import that \"exports `rotateLedgerIfNeeded` ... for the dispatcher's static import (`scripts/fleet-dispatcher.mjs:38`)\" describes; `31c465f1` occurs only in the paragraph's trailing \"Re-anchored at `31c465f1`\" tag, not in this sentence",
+   "seat": "FixS818"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 112,
+   "act": "TOKEN",
+   "val": "fixture",
+   "why": "Anchor 54 stays: pin 54 `function fixtureDir(label) {` is the DEFINITION of the per-test temp-dir helper the sentence documents (\"Fixtures use per-test temporary directories\"; pin 55 `return mkdtempSync(join(tmpdir(), ...))`). Parser paired MAX_BYTES, which is the sentence's own :49 (pin 49 `const MAX_BYTES = 4096;`), so do NOT move to 49. No case-exact token is shared (sentence \"Fixtures\", pin \"fixtureDir\"); stem \"fixture\" matches case-folded only. Note must name fixtureDir for a case-exact gate.",
+   "seat": "FixS819"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 125,
+   "act": "MOVE",
+   "val": "85",
+   "why": "Sentence synopsis `node scripts/fleet-selfheal-verify.mjs [--report path] [--fixtures-dir path]` is on pin 85: `\"Usage: node scripts/fleet-selfheal-verify.mjs [--report path] [--fixtures-dir path]\\n\"` (the note itself says help text at :85). Pin 83 `if (args.length === 1 && (args[0] === \"--help\" || args[0] === \"-h\")) {` is only the --help/-h gate and does not contain the synopsis.",
+   "seat": "FixS819"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 126,
+   "act": "TOKEN",
+   "val": "Usage",
+   "why": "TRUE: 85 is the usage string written to stdout by the --help branch (84 process.stdout.write). Token Usage word-bounded in sentence (\"Usage is `node ...`\") and on 85 (\"Usage: node ...\").",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 127,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "TRUE: 1048 process.exit(failed.length === 0 ? 0 : 1) is the verdict exit (0 = clean, 1 = failing); 1048 is the file's last line (file is 1048 lines). Token exit word-bounded in sentence (\"exit 0 when clean\") and on 1048.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 128,
+   "act": "TOKEN",
+   "val": "64",
+   "why": "TRUE: 114 process.exit(64) is the only exit-64 site in the file, in the unexpected-argument branch (113). Round-36 value 25 is not authoritative. Token 64 word-bounded in sentence (\"64 for an unknown argv token\") and on 114.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 132,
+   "act": "TOKEN",
+   "val": "UFO_GATES_TOUCHED",
+   "why": "Anchor 126 stays: pin 126 `if (files.length === 0) return { files: null, basis: \"env:UFO_GATES_TOUCHED(empty)\" };` is the unknown-selection arm for an empty env value. Parser paired touched=unknown, which the note attributes to :200 (pin 200 out.push of `touched=${... \"unknown\" ...}`). UFO_GATES_TOUCHED is case-exact in the sentence and on 126. Do not move to 164 (`let touched;`).",
+   "seat": "FixS819"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 138,
+   "act": "TOKEN",
+   "val": "unreadable",
+   "why": "TRUE on the default git path: a non-git tree makes git -C root diff throw inside touchedPaths() (first git call at 145, no try), the catch at 167-168 sets files: null, and 180-181 route it to selectAllGroups (175). An unreadable diff takes the same route. Scope caveat, not falsity: UFO_GATES_TOUCHED (121-127) and --touched-file (129-136) return before any git call. Token unreadable word-bounded in sentence (\"unreadable diff\") and on 181.",
+   "seat": "Prose01"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 139,
+   "act": "TOKEN",
+   "val": "unmapped",
+   "why": "pin 193 `if (!matched) selectAllGroups(`unmapped path ${file}`);` is the call that runs when no RULES entry matches (per-file loop 183-194, rule loop 186-192); the sentence \"as does an unmapped path (`:193`)\" describes that call (use site; selectAllGroups itself is defined at 175); \"unmapped\" is word-bounded on 193 and in the sentence.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 148,
+   "act": "TOKEN",
+   "val": "sccache",
+   "why": "Anchor 66 stays: pin 66 `rm -rf \"$SCCACHE_DIR\"` is the unconditional wipe (top level, no enclosing if; RESET_CACHE has no matches in measure.sh). Parser paired `pacman -S sccache`, which is the README:77-78 claim, not this one. Only a case-folded match exists (pin spells SCCACHE_DIR). Note must name SCCACHE_DIR for a case-exact gate. Do not move to 62: its comment \"# Wipe sccache once before phase B (unconditional).\" is a mention, not the wipe.",
+   "seat": "FixS819"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 152,
+   "act": "MOVE",
+   "val": "47",
+   "why": "pin 47 is the definition `CONVOY=\"${LEAN_CARGO_CONVOY:-/scratch/tmp/vgpnk/cargo-target}\"` (the env-overridable root the sentence names); pin 58 is `+*) continue ;;`, a case arm with no CONVOY on it",
+   "seat": "FixS820"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 153,
+   "act": "MOVE",
+   "val": "49",
+   "why": "pin 49 is the definition `NSLOTS=\"${LEAN_CARGO_SLOTS:-32}\"` (the default 32 the sentence names); pin 60 is `--color=*|--config=*|-Z*) continue ;;`, a case arm with no NSLOTS on it",
+   "seat": "FixS820"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 154,
+   "act": "MOVE",
+   "val": "117",
+   "why": "pin 117 is `BUILD_FAMILY=\"build|test|check|clippy|run|bench|doc|rustc\"`, the literal the sentence quotes verbatim (only the definition; 118 is a `$BUILD_FAMILY` use); pin 128 is `lean_frozen_cache_digest() {`",
+   "seat": "FixS820"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 155,
+   "act": "MOVE",
+   "val": "125",
+   "why": "pin 125 is the definition `have() { local f=\"$1\"; shift; local a; for a in \"$@\"; do [[ \"$a\" == \"$f\" ]] && return 0; done; return 1; }`, the argv-contains helper the sentence describes (140/176/179 are call sites); pin 136 is `printf '%s' \"$d\"`, inside lean_frozen_cache_digest",
+   "seat": "FixS820"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 156,
+   "act": "MOVE",
+   "val": "128",
+   "why": "pin 128 is the definition `lean_frozen_cache_digest() {`; the sentence names the function, the call at 143 is only a use, and pin 139 is `inject=()` with no symbol",
+   "seat": "FixS821"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 157,
+   "act": "MOVE",
+   "val": "210",
+   "why": "pin 210 `max_age_s=$(( ${LEAN_CARGO_SLOT_MAX_AGE_MIN:-720} * 60 ))` is the only code occurrence and carries the sentence's default 720 min; 208 and 18/30 are comment mentions; 221 is `    fi` with no symbol on 218-221",
+   "seat": "FixS821"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 158,
+   "act": "MOVE",
+   "val": "312",
+   "why": "pin 312 \"# even when rc != 0: a failed `cargo test` still produced a fresh ufo binary\" is the sole literal occurrence and a documentation comment stating the sentence's rule; no code token exists (publish gate 315 has no rc test; 322 shares no token with the sentence)",
+   "seat": "FixS821"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 164,
+   "act": "DEBT",
+   "val": "gate-blind-dollar-expansion",
+   "why": "sentence is TRUE by reading; the gate cannot see it. Pin 49 `    echo \"refuse: $REAL_BACKUP exists \u2014 move it first\" >&2` names the path only as `$REAL_BACKUP`; anchor-truth.mjs:66,187 puts `$` in the word-boundary class, so bare REAL_BACKUP reads false on 49 (replay: @49 false, @27 true). None of the 57 sentence-derived tokens is both sentence-bounded and 49-bounded. MOVE 27 would turn green only by pointing at the definition, which the sentence does not describe (rejected).",
+   "seat": "FixS822"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 165,
+   "act": "MOVE",
+   "val": "62",
+   "why": "Pin 62 `mv -f -- \"$CARGO_BIN.tmp.$$\" \"$CARGO_BIN\"` holds the symbol the cite attaches to (`mv -f` immediately precedes `(:61)`). Pin 61 is `install -m 0755 -- \"$SHIM_SRC\" \"$CARGO_BIN.tmp.$$\"` with no `mv -f`; plain `mv` on 4, 42, 54 is not `mv -f`. Round-36's 62 verified independently against pin text, not adopted on authority.",
+   "seat": "FixS822"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 172,
+   "act": "TOKEN",
+   "val": "SCCACHE_DIR",
+   "why": "pin 66 `rm -rf \"$SCCACHE_DIR\"` is the actual wipe (not the comment at 62) and has no guard (65 is `sccache --stop-server`, then the wipe), so \"unconditional\" is true; the same sentence (note 563) names `$SCCACHE_DIR`; do not use lowercase \"sccache\" (line 66 only contains it as a substring of SCCACHE_DIR).",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 175,
+   "act": "MOVE",
+   "val": "325",
+   "why": "pin :325 \"const endpoint = endpointFromEnvironment(process.env.UFO_LOCAL_HELPER_URL);\" is the only process.env read (grep), i.e. the use where the sentence's endpoint comes from; pin :332 \"request.responseFormat,\" carries no env token; :157/:161 are refusal text, :312 usage text, :323 a comment.",
+   "seat": "FixS823"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 177,
+   "act": "MOVE",
+   "val": "161",
+   "why": "pin :161 \"fail(\"endpoint_invalid\", \"UFO_LOCAL_HELPER_URL must be a credential-free loopback HTTP URL\");\" is the refusal for the sentence's class (\"anything but a credential-free loopback HTTP URL\"), a use site (no definition exists); :157 is the unparseable-URL branch of the same token; pin :165 is \"}\" closing endpointFromEnvironment.",
+   "seat": "FixS823"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 178,
+   "act": "TOKEN",
+   "val": "UFO_LOCAL_HELPER_URL",
+   "why": "pin 325 `const endpoint = endpointFromEnvironment(process.env.UFO_LOCAL_HELPER_URL);` is the endpoint validation call (definition at 152) and runs before 327 `const input = await readInput(options.file);`, the stdin read; the sentence \"that check runs before stdin is read\" matches; the same sentence names `UFO_LOCAL_HELPER_URL` in backticks; comment 322-324 says the same (\"before blocking on stdin\").",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 180,
+   "act": "MOVE",
+   "val": "135",
+   "why": "pin :135 \"async function readInput(file) {\" is the definition of readInput, the function the sentence names (definition); :327 \"const input = await readInput(options.file);\" is a call (mention); pin :139 \"try {\" is the inner UTF-8 try and carries no readInput token.",
+   "seat": "FixS823"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 181,
+   "act": "MOVE",
+   "val": "128",
+   "why": "pin :128 \"if (size > MAX_INPUT_BYTES) fail(\"input_too_large\", ...);\" is the only occurrence of input_too_large and the raise an oversized stream hits (use site); pin :132 \"return Buffer.concat(chunks, size);\" runs only after the loop, so an oversized stream never reaches it.",
+   "seat": "FixS823"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 182,
+   "act": "MOVE",
+   "val": "131",
+   "why": "pin 131 `  if (size === 0) fail(\"input_invalid\", \"input must not be empty\");` in readBounded (123-133) is the empty-input raise the sentence describes; the other input_invalid sites 142 (invalid UTF-8), 144 (whitespace-only, different message) and 173 (dedupe under two lines) are not \"empty\"; pin 135 `async function readInput(file) {` carries no input_invalid",
+   "seat": "FixS824"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 183,
+   "act": "MOVE_TOKEN",
+   "val": "142 UTF-8",
+   "why": "146 `} catch (error) {` is the OUTER catch of readInput (try at 136): its body only rethrows HelperError (147) and maps other errors to input_unreadable (148), so it does not produce the invalid-UTF-8 refusal; the refusal is 142 `fail(\"input_invalid\", \"input must be valid UTF-8\");` inside the fatal TextDecoder catch (141); fail() throws HelperError (local-helper.mjs:25-26); \"UTF-8\" is word-bounded on 142 and in the sentence (\"invalid UTF-8\").",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 184,
+   "act": "MOVE",
+   "val": "259",
+   "why": "pin 259 `function validateDedupe(content, lines) {` is the definition of the validator the sentence names; 337 `    ? validateDedupe(result.content, request.context)` is only a call site; pin 263 `  } catch {` carries no validateDedupe token and only closes the JSON.parse try",
+   "seat": "FixS824"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 185,
+   "act": "MOVE",
+   "val": "292",
+   "why": "pin 292 `function validateDigest(content, bullets) {` is the definition; 339 `      ? validateDigest(result.content, options.bullets)` is a call site; pin 298 `}` is only the closing brace of that function",
+   "seat": "FixS824"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 186,
+   "act": "MOVE",
+   "val": "300",
+   "why": "pin 300 `function validateClassification(content, labels) {` is the definition; 340 `      : validateClassification(result.content, options.labels);` is a call site; pin 307 `  return [` belongs to usage() (306-314)",
+   "seat": "FixS824"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 187,
+   "act": "MOVE",
+   "val": "302",
+   "why": "pin 302 `  if (!labels.includes(label)) fail(\"model_output_invalid\", \"classify output is not one of the supplied labels\");` is a raise call (not a definition or mention) inside validateClassification (def pin 300); the note's :307 def and :309 raise are two lines apart and map to pin 300/302 under the same -7 shift, so 302 is the raise the :309 anchor sat on; round-36's 264 is validateDedupe's JSON-parse raise (def pin 259), not that occurrence",
+   "seat": "FixS825"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 190,
+   "act": "MOVE_TOKEN",
+   "val": "359 exitCode",
+   "why": "360 `});` closes `main().catch((error) => {` (351-360) and sets no exit code; the exit-2 statement is 359 `  process.exitCode = 2;`; the sentence shares no word-bounded distinctive token with 359 (only the numeral 2), so this is conditional on a note fix: change \"with exit code 2 (`:360`)\" to \"with `process.exitCode = 2` (`:359`)\" so `exitCode` is word-bounded in both; checkable only after that amendment.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 195,
+   "act": "MOVE",
+   "val": "222",
+   "why": "pin 222 `    if (state.blocks >= MAX_STOP_BLOCKS) {` is the cap test the sentence names (a use, not the definition at :35); pin 223 `      state.armed = true;` is the first statement inside that branch, so the note's :223 is one line below the symbol",
+   "seat": "FixS825"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 215,
+   "act": "TOKEN",
+   "val": "usage",
+   "why": "917 `throw new Error(\"usage: prepare-ephemeral-l1.mjs create ...\")` is the throw for an unknown verb, guarded by 916 `if (command !== \"create\" && command !== \"destroy\") {`; the sentence \"an unknown verb throws a usage error (`:917`)\" describes that throw (site, not a mention); \"usage\" is word-bounded on 917 and in the sentence. Round-36 value 29 is `export const ROOT = realpathSync(...)`, a shift artifact, not authoritative.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 220,
+   "act": "TOKEN",
+   "val": "child",
+   "why": "pin 760 `  if (path.dirname(candidate) !== root) throw new Error(\"destroy target must be one direct child of the configured root\");` is the direct-child check the sentence states (a statement, not a mention); the line is right, the paired `--force` is not on 760; `child` occurs in the sentence (\"requires a direct child\") and on pin 760",
+   "seat": "FixS825"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 225,
+   "act": "TOKEN",
+   "val": "exitCode",
+   "why": "960 `process.exitCode = 2;` is the CLI's exit-2 in the isMain catch branch (955-962), so the line is right; the sentence \"the CLI exits 2 (`:960`)\" has no word-bounded distinctive shared token with 960 (only the numeral 2); conditional on a note fix: change to \"the CLI sets `process.exitCode = 2` (`:960`)\" so `exitCode` is word-bounded in both; checkable only after that amendment.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 228,
+   "act": "MOVE_TOKEN",
+   "val": "194-243 devin-native-v1",
+   "why": "path stays config/ufo.json; pin line 194 `\"devin-native-v1\": {` is the profile definition (object closes at 243 `  }`; nativeProfiles closes at 244 ` },`). The current 99-101 is omp-native-v1's `\"planner\": {` block, not devin's. The paired dotted token fails: its longest identifier `nativeProfiles` (anchor-truth.mjs:26-28) occurs only on pin line 94, outside both ranges; `devin-native-v1` is word-bounded on 194 and occurs in the sentence. Range kept (range claim).",
+   "seat": "FixS826"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 229,
+   "act": "MOVE",
+   "val": "86",
+   "why": "PATH scripts/project-devin-subagents.mjs (not config/ufo.json; bare `:86` inherited the config span on line 596); line unchanged. Pin 86: `const root = join(dirname(fileURLToPath(import.meta.url)), \"..\");` is the sole definition of root; the sentence means the repo root.",
+   "seat": "FixS826"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 230,
+   "act": "MOVE",
+   "val": "31",
+   "why": "PATH scripts/project-devin-subagents.mjs (not config/ufo.json); line unchanged. Pin 31: `const safeRoleKey = /^[a-z][a-z0-9-]*$/u;` is the definition of the validator the sentence names (the use at 34 is not the cited one). Round-36 value 33 is the next symbol (assertSafeRoleKey), a one-symbol shift; rejected.",
+   "seat": "FixS826"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 231,
+   "act": "MOVE",
+   "val": "33",
+   "why": "PATH scripts/project-devin-subagents.mjs (not config/ufo.json); line unchanged. Pin 33: `function assertSafeRoleKey(role) {` is the definition the sentence cites as enforcer (the call at 142 is not cited).",
+   "seat": "FixS826"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 232,
+   "act": "MOVE",
+   "val": "29",
+   "why": "path is scripts/project-devin-subagents.mjs, not config/ufo.json; line 29 is already right: scripts/project-devin-subagents.mjs:29 is import { readBoundedFile, writeFileAtomic } from \"./ufo-mission-result.mjs\"; \u2014 an import binding of the shared helper, which is the sentence's \"use shared readBoundedFile\"; the definition is scripts/ufo-mission-result.mjs:832",
+   "seat": "FixS827"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 233,
+   "act": "MOVE",
+   "val": "84",
+   "why": "path is scripts/project-devin-subagents.mjs, not config/ufo.json; line 84 is already right: scripts/project-devin-subagents.mjs:84 is const MAX_REPO_FILE_BYTES = 1024 * 1024; \u2014 the definition of the local 1 MiB bound the sentence describes",
+   "seat": "FixS827"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 234,
+   "act": "MOVE_TOKEN",
+   "val": "114 readBoundedFile",
+   "why": "PATH FIX: the bare `:114` belongs to scripts/project-devin-subagents.mjs, not config/ufo.json (the parser took the last path span in the paragraph); the sentence reads \"shared `readBoundedFile` (`:29`) ... read sites `:114`, `:251`, `:306`\" in that file; scripts/project-devin-subagents.mjs:114 `config = JSON.parse(readBoundedFile(join(root, configPath), MAX_REPO_FILE_BYTES, configPath));` is a call site; config/ufo.json:114 is `\"scribe\"`, so the cited pin is the wrong file.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 235,
+   "act": "MOVE_TOKEN",
+   "val": "251 readBoundedFile",
+   "why": "PATH FIX: scripts/project-devin-subagents.mjs:251 `raw = readBoundedFile(cardPath, MAX_REPO_FILE_BYTES, `agents/${role}.md`).toString(\"utf8\");` is the canonical-card read site; config/ufo.json:251 is `\"safety\",` in fixtureAxes, so the cited pin is the wrong file.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 236,
+   "act": "MOVE_TOKEN",
+   "val": "306 readBoundedFile",
+   "why": "PATH FIX: scripts/project-devin-subagents.mjs:306 `if (readBoundedFile(dest, MAX_REPO_FILE_BYTES, relative(root, dest)).toString(\"utf8\") !== contents) {` is the drift-check read site; config/ufo.json:306 is the closing `  }` of the scribe lane (303-306), so the cited pin is the wrong file.",
+   "seat": "Prose02"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 237,
+   "act": "TOKEN",
+   "val": "missing",
+   "why": "path is scripts/project-devin-subagents.mjs; line 247 is already right: :247 is throw new Error(`canonical agent card missing for devin seat: agents/${role}.md`); \u2014 the throw the sentence describes (\"A missing canonical card throws a plain error\"); \"missing\" occurs in the sentence and on :247; the parser's ok:false belongs to the next clause, which is :362-379 (:366 ok: false,), not :247",
+   "seat": "FixS827"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 238,
+   "act": "MOVE",
+   "val": "362-379",
+   "why": "path is scripts/project-devin-subagents.mjs, not config/ufo.json; range is already right: :364 } catch (error) {, :366 ok: false,, :375 error: error instanceof Error ? error.message : String(error), all inside 362-379 (the surfaced failure report); config/ufo.json:362-379 is an unrelated opencode block and runs past EOF (375 lines)",
+   "seat": "FixS827"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 239,
+   "act": "MOVE",
+   "val": "98",
+   "why": "line 98 is right, path is wrong: anchor must be scripts/project-devin-subagents.mjs:98, not config/ufo.json. Pin scripts/project-devin-subagents.mjs:98 is `const checkOnly = args.includes(\"--check\");` (definition, which the sentence documents: \"`--check` is read-only (`checkOnly`, `:98`)\"). config/ufo.json:98 is `\"concurrencyCeiling\": 32,` (no checkOnly).",
+   "seat": "FixS828"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 240,
+   "act": "MOVE_TOKEN",
+   "val": "93 --check",
+   "why": "Wrong path, line otherwise right: the sentence (\"`--check` is read-only (`checkOnly`, `:98`; accepted at `:93`)\") cites scripts/project-devin-subagents.mjs, not config/ufo.json (parser inherited config/ufo.json from the preceding backticked path). Pin scripts/project-devin-subagents.mjs:93 is `  if (arg !== \"--check\") {`; config/ufo.json:93 is ` },` and carries no token.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 241,
+   "act": "MOVE",
+   "val": "336",
+   "why": "line 336 is right, path is wrong: anchor must be scripts/project-devin-subagents.mjs:336, not config/ufo.json. Pin scripts/project-devin-subagents.mjs:336 is `const ok = !checkOnly || (missing.length === 0 && drifted.length === 0 && extras.length === 0);` (definition, matching \"`ok` (`:336`) means all missing, drifted and extra lists are empty only in check mode\"). config/ufo.json:336 is `\"protocol\": \"local\",` (no ok).",
+   "seat": "FixS828"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 246,
+   "act": "TOKEN",
+   "val": "deliberately",
+   "why": "Cited 14-16 is right. Pin :14 `// the same file independently. This module deliberately has no CLI: the former` matches \"this module deliberately has no CLI\" (comment-level claim, true). Round-36 value 41 not used.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 257,
+   "act": "TOKEN",
+   "val": "effort",
+   "why": "range 104-108 is right and holds the check the sentence describes (\"check at \u2026:104-108\", inside parseRoute). The parser's validateChain belongs to the separate clause \"validateChain starts at \u2026:139\" and occurs only on 139 in this file. Pin scripts/omp-route-grammar.mjs:104 is `    if (!EFFORT_SET.has(effort)) {` (the whitelist test itself). \"effort\" matches sentence \"Effort parsing\" case-folded; no exact-case sentence word occurs on 104-108. \"whitelist\" rejected: it appears there only as a substring of the message literal \"non-whitelisted\" (line 107), a mention rather than the check.",
+   "seat": "FixS828"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 266,
+   "act": "TOKEN",
+   "val": "argv",
+   "why": "Cited 32-37 is the inline guard: :32 `for (const arg of argv) {`, :33 admits only \"--check\" and \"--review\", :37 closes. Sentence \"inline argv guard admits only those two flags\" is true.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 267,
+   "act": "TOKEN",
+   "val": "stderr",
+   "why": "Cited 32-36 is right: :34 `process.stderr.write(...unexpected argument...)` and :35 `process.exit(64);` match \"writes to stderr and exits 64\". Token sits on :34 inside the range (:32 shares no word with the sentence). Round-36 value 44 not used.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 269,
+   "act": "TOKEN",
+   "val": "validationErrors",
+   "why": ":2106 `validationErrors: [...partial.validationErrors, message],` is in the projectionOnly failure object (branch opens :2091). `message` (:2090) is `error instanceof Error ? error.message : String(error)`, so \"raw messages\" holds. Sibling :2132 is the else branch.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 271,
+   "act": "TOKEN",
+   "val": "report",
+   "why": ":2137 `if (!report.ok) process.exitCode = 1;` is the \"set exit 1\" claim. `exit` is not a whole word on that line (exitCode), so `report` is the checkable token (in the sentence as report.validationErrors, on the line as report.ok).",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 285,
+   "act": "TOKEN",
+   "val": "loopback",
+   "why": ":210-211 check protocol http:, hostname 127.0.0.1, pathname /v1/chat/completions, and absence of username/password/search/hash. :212 `fail(\"backend.endpoint must be the credential-free loopback chat-completions endpoint\");` carries the token inside the range. Claim and range are true.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 286,
+   "act": "TOKEN",
+   "val": "backend",
+   "why": "214-221 hold the slot bound (:214 `requireIntegerRange(value.backend.parallelSlots, ...)`), slot arithmetic (:216 `contextTokens !== value.backend.parallelSlots * value.contextTokensPerRunner`), and runner count (:220-221). \"runner/slot arithmetic\" is true. \"backend\" appears in the sentence and on :214.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 303,
+   "act": "TOKEN",
+   "val": "FORMAT_CHARS_RE",
+   "why": ":65 `  const stripped = text.replace(FORMAT_CHARS_RE, \"\");` is the application; FORMAT_CHARS_RE is defined at :61 as `/\\p{Cf}/gu`. Anchor true. FIX required in the same sentence: \"invisible Cf/Mn/Zs characters\" overclaims, since only Cf is stripped (pin :52-53 comment says \\p{Cf}; :61). Narrow \"Cf/Mn/Zs\" to \"Cf\".",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 309,
+   "act": "TOKEN",
+   "val": "SHADOW_PATHS",
+   "why": ":519 `    for (const rel of SHADOW_PATHS) {` iterates the copy list; `const SHADOW_PATHS = [` at :76 confirms the sentence's :76 pointer.",
+   "seat": "Prose03"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 311,
+   "act": "TOKEN",
+   "val": "wiredCount",
+   "why": "cited 1705-1710 is the full-run breach check: 1704 `if (only === null) {`, 1705 `if (suite.counts.pending > wiredCount) {`, 1708 `if (suite.counts.referenced > wiredCount) {`. Sentence \"compares placeholder counts with `wiredCount` (... checks `:1705-1710`)\" matches; pin 103 defines PLACEHOLDER_STATUSES = pending-mechanism + referenced. `wiredCount` is word-bounded on 1705 and in the sentence.",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 313,
+   "act": "SKIP",
+   "val": "no word-bounded token shared by the sentence and line 1733 `  throw error;`. The sentence says \"rethrow\" (`throw` is not bounded inside it) and \"errors\" (not `error`). The anchor itself is correct. FIX: write \"other errors rethrow via `throw error` (`:1733`)\"; then the token `throw error` is paired, bounded on 1733, and in the sentence.",
+   "why": "",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 317,
+   "act": "MOVE",
+   "val": "30",
+   "why": "The sentence documents the function `loadHook`; its definition is pin 30 `function loadHook(root) {` (definition, not a mention). Pin 32 `  const source = readFileSync(join(REPO, \".omp\", \"hooks\", \"pre\", \"ufo-l0-monitor.js\"), \"utf8\");` is a body statement and carries no `loadHook` token. Other `loadHook` occurrences (58, 70, 83, 98, 110, 123) are call sites.",
+   "seat": "FixS829"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 318,
+   "act": "MOVE",
+   "val": "36",
+   "why": "The sentence says \"rewrites `REPO_ROOT` ... to that root\"; the rewrite to the root is pin 36 `    \\`const REPO_ROOT = ${JSON.stringify(root)};\\`,` (replacement, definition-like). Pin 35 `    \"const REPO_ROOT = dirname(dirname(dirname(HOOK_DIR)));\",` is the search literal (old text, a mention). Pin 37 `  ) + \"\\nexport { claimRun, releaseClaim };\\n\");` has no REPO_ROOT. Round-36 value 7 is a header-comment mention.",
+   "seat": "FixS829"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 321,
+   "act": "MOVE_TOKEN",
+   "val": "81 future-dated",
+   "why": "cited 83 `const mod = await loadHook(root);` is setup with no sentence token. The documented case is the test declared at 81: `test(\"future-dated claim with aged mtime is reclaimed (mtime fallback)\", async () => {`. `future-dated` is word-bounded on 81 and in \"a future-dated claim with an aged mtime is reclaimed\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 322,
+   "act": "MOVE_TOKEN",
+   "val": "108 malformed",
+   "why": "cited 110 `const mod = await loadHook(root);` is setup with no sentence token. The documented case is the test at 108: `test(\"malformed claim with aged mtime is reclaimed (no forever-suppress)\", async () => {`. `malformed` is word-bounded on 108 and in \"a malformed one with an aged mtime is reclaimed too\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 323,
+   "act": "TOKEN",
+   "val": "seam",
+   "why": "pin 3 `// durable CLI wiring pins (r03). The journal is the recovery seam for a` is the header statement the sentence attributes to `:3`. `seam` is word-bounded on 3 and in \"states the journal is the recovery seam for a healed-but-never-repended row\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 324,
+   "act": "MOVE_TOKEN",
+   "val": "36 import",
+   "why": "The sentence documents \"the dynamic-import destructure\", not `validateTaskReceipt` (which the parser paired from the next anchor). Pin 35 `const { diagnose, findStalled, forgeSuccessor, mergeRependPending, rependReportOk, settle, sweepRependPending } =` is the destructure head and shares no word with the sentence, so no TOKEN exists at 35. Pin 36 `  await import(\"./ufo-l0-monitor.mjs\");` is the dynamic import itself (operative, not a mention) and carries `import`, which the sentence uses in \"dynamic-import\". `validateTaskReceipt` keeps its own `(:18)` anchor; it occurs only at pins 18, 1200, 1204, 1272.",
+   "seat": "FixS829"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 327,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "pin 1465 `if (failed.length) process.exit(1);` is the failure-count exit; 1463-1464 are the skipped count and summary print. `exit` is word-bounded on 1465 (`.exit(`) and in \"ends in a failure-count exit\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 330,
+   "act": "MOVE_TOKEN",
+   "val": "160 gave-up",
+   "why": "cited 155 is the declaration `test(\"cli_sweep_persists_aging_and_gave_up_across_invocations\", () => {`. Its only concept words sit inside one underscore identifier, and the gate's word class `[\\p{L}\\p{N}_]` (scripts/anchor-truth.mjs:66) does not bound them, so no token passes at 155. Line 160 `    // age durably 1\u21922\u21923 and then name the row gave-up ONCE and drop it.` states the same aging/gave-up pin; `gave-up` is word-bounded there and in \"aging/gave-up persistence\". Alternative that keeps :155: backtick the identifier in the sentence.",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 331,
+   "act": "MOVE_TOKEN",
+   "val": "264 damaged",
+   "why": "cited 305 is the declaration `test(\"cli_damaged_journal_preserved_named_and_never_silently_overwritten\", () => {`, with the same underscore problem. Lines 264-265 `// \u2500\u2500 nc5-swarm r25 M1: a damaged repend journal is preserved+named, never` / `// silently overwritten \u2500\u2500` are the group header for that pin. `damaged` is word-bounded on 264 and in \"a damaged journal preserved without silent overwrite\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 332,
+   "act": "MOVE_TOKEN",
+   "val": "701 tallies",
+   "why": "cited 724 is the declaration `test(\"cli_rebind_tallies_skip_classes_prior_unavailable_and_persists_rebounds\", () => {`; `rebind` and `tallies` occur only inside underscores there. Line 701 `// \u2500\u2500 Rebind skip/prior tallies (nc5-swarm r16, planner H4) \u2500\u2500` is that test's group header. `tallies` is word-bounded on 701 and in \"rebind tallies (`:724`)\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 333,
+   "act": "MOVE_TOKEN",
+   "val": "1268 successor",
+   "why": "cited 1287 is the declaration `test(\"live_successor_parent_receipt_rebind\", () => {`; `successor` occurs only inside underscores there. Line 1268 `// \u2500\u2500 nc5-swarm r21: live successor prior-receipt drift + rebind \u2500\u2500` is the group header. `successor` is word-bounded on 1268 and in \"live successor parent-receipt rebind (`:1287`)\".",
+   "seat": "Prose04"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 334,
+   "act": "MOVE_TOKEN",
+   "val": "1442 stalled",
+   "why": "1424 is the closing `};` of makeRunningRow (1408-1424), a brace with no token; the sentence's claim is asserted at 1442 (\"malformed receipts must not abort or mask the later stalled row\"), with 1446-1447 pinning \"skipped\"; claim is true, only the anchor moves",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 346,
+   "act": "MOVE",
+   "val": "123",
+   "why": "pin 123 `export function projectMissionActivity(input) {` is the definition the sentence describes; pin 133 `&& typeof mission.finalNote !== \"string\") {` is a guard inside its body; pin 214 `const view = projectMissionActivity(input);` is a call in main()",
+   "seat": "FixS830"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 348,
+   "act": "MOVE",
+   "val": "17",
+   "why": "pin 17 `const ACTIVITY_MAX_CODE_POINTS = 240;` is the definition carrying the stated value 240; pin 27 `this.details = details;` is inside ActivityError's constructor",
+   "seat": "FixS830"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 349,
+   "act": "MOVE",
+   "val": "57",
+   "why": "pin 57 `if (typeof value !== \"string\") fail(\"INVALID_ACTIVITY\", \"activity text must be a string\");` is the non-string failure inside sanitizeDisplayText (def pin 55); pin 67 `text = collapseWhitespace(text).trim();` is the final whitespace collapse and has no INVALID_ACTIVITY",
+   "seat": "FixS830"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 350,
+   "act": "MOVE",
+   "val": "150",
+   "why": "pin 150 `export function renderMissionActivity(view) {` is the definition the sentence describes; pin 160 is a comment inside parseArgs (`// argument \u2014 mid-argv it used to exit 0 silently, dropping every other`); 152 is a string inside fail() and 219 a call in main()",
+   "seat": "FixS830"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 351,
+   "act": "MOVE",
+   "val": "152",
+   "why": "pin 152 reads `    fail(\"INVALID_VIEW\", \"renderMissionActivity requires a ufo-mission-activity-v1 view\");` = the refusal the sentence describes (emission site, not a definition), guarded by pin 151 `  if (!isPlainObject(view) || view.schema !== ACTIVITY_SCHEMA) {`; cited :162 is a comment in parseArgs (`  // not a filename: named INVALID_ARGUMENT instead of ENOENT on a phantom`) with no INVALID_VIEW.",
+   "seat": "FixS831"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 357,
+   "act": "TOKEN",
+   "val": "window",
+   "why": "38 opens test(\"window reason (250 cp, ...)\"); 39-40 assert the 250-cp case; sentence \"250-code-point window case\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 358,
+   "act": "TOKEN",
+   "val": "maximal",
+   "why": "51 opens test(\"maximal reason (code 256 + ... = 514 cp)\"); 52-57 build the 514-cp blocker; sentence \"maximal reason\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 359,
+   "act": "TOKEN",
+   "val": "short",
+   "why": "60 opens test(\"short reason (<= activity bound)...\"); 61-63 assert the short label shape; sentence \"short-reason control\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 360,
+   "act": "TOKEN",
+   "val": "explicit",
+   "why": "66 opens test(\"explicit distinct activity is still appended...\"); 71 asserts the append; sentence \"explicit-activity append\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 361,
+   "act": "TOKEN",
+   "val": "bounded",
+   "why": "74 opens test(\"renderMissionActivity round-trips the bounded label\"); 77-79 assert the round-trip; \"round-trip\" fails word-bounded on \"round-trips\", so \"bounded\" is used",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 362,
+   "act": "TOKEN",
+   "val": "wall",
+   "why": "2 \"Display evidence only. The wall/dispatcher still own every lifecycle mutation.\" supports display-only and no mutation; no write call in the file (grep hits are comments only); capital \"Display\" cannot match the sentence's \"display\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 363,
+   "act": "MOVE",
+   "val": "85",
+   "why": "Sentence documents the function (`projectMissionLifecycle ... validates snapshots`); its definition is pin line 85 `export function projectMissionLifecycle(input) {`; 96 is the function's closing `}` and 247 is a CLI call mention.",
+   "seat": "FixS832"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 368,
+   "act": "MOVE",
+   "val": "174",
+   "why": "Sentence says the function \"emits a `ufo-mission-lifecycle-v1` envelope\"; the emitted schema string is pin line 174 `schema: \"ufo-mission-lifecycle-v1\",` in the `return {` at 173; 187 is the closing `}` and 17 is a `@property` typedef mention, not the emission.",
+   "seat": "FixS832"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 369,
+   "act": "MOVE",
+   "val": "168",
+   "why": "Sentence documents \"an advisory `resumeHint`\"; the definition is pin line 168 `const resumeHint = phase === \"suspended\" && task?.state === \"paused\"` (computes the advisory hint); 181 is `suspendedReason,` \u2014 a different envelope field \u2014 while 28 is a typedef mention and 185 the shorthand emission mention.",
+   "seat": "FixS832"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 370,
+   "act": "MOVE",
+   "val": "202",
+   "why": "Sentence documents the boundary (`Input crosses one shared boundary, readBoundedJsonInput`); its definition is pin line 202 `export function readBoundedJsonInput(source) {`; 215 is an ELOOP branch inside the body and 246 a CLI call mention.",
+   "seat": "FixS832"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 371,
+   "act": "DEBT",
+   "val": "empty-operand-reads-stdin",
+   "why": "sentence says an explicit empty operand is refused \"rather than silently rebinding to stdin\"; pin 211 `if (source && source !== \"-\")` sends \"\" to the stdin read (219); CLI 245-246 passes args[0] unchecked; 227 is the not-JSON refusal; runtime: \"\" behaves exactly like \"-\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 372,
+   "act": "MOVE",
+   "val": "115",
+   "why": "pin 115 is the definition `const acceptanceConflict = task?.blocker?.code === \"acceptance_evidence_missing\"` (pin 117 `|| acceptanceConflict)` is a use); the sentence's parenthetical names the symbol, so the definition is the target; current :126 `let suspendedReason = null;` lacks the symbol; round-36 value 120 is the throw line and lacks it too",
+   "seat": "FixS833"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 373,
+   "act": "MOVE",
+   "val": "120",
+   "why": "pin 120 `invalid(\"mission and task lifecycle snapshots conflict\");` is the only occurrence of the sentence phrase (exact-phrase grep); the sentence says the refusal \"dies as\" that message; current :131 `source = \"mission\";` lacks the phrase",
+   "seat": "FixS833"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 376,
+   "act": "MOVE_TOKEN",
+   "val": "262 redactFsErrorMessage",
+   "why": "262 is the fs-redaction branch and the claim holds, but no word is shared (sentence: \"fs messages redacted\"; lines 262-263 carry redactFsErrorMessage/error/message); same-line sentence fix: name `redactFsErrorMessage` in the sentence",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 377,
+   "act": "MOVE_TOKEN",
+   "val": "265 exitCode",
+   "why": "265 `process.exitCode = 1;` supports \"at exit 1\"; the only shared word is \"1\" (not distinctive); \"exit\" is not word-bounded in \"exitCode\"; same-line sentence fix: write \"at `process.exitCode = 1`\"",
+   "seat": "Prose05"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 382,
+   "act": "MOVE",
+   "val": "81",
+   "why": "sentence documents the returned `label` field; pin 81 `    label: activity.label,` is its object-literal definition inside `return {` (65-82); pin 27 `*            resumeHint, activity, label }` is a doc-comment mention only; pin 66 `    schema: OBSERVATION_SCHEMA,` holds none of the listed fields (phase 72, terminal 73, suspendedReason 75, failureClass 77, activity 80, label 81); round-36 value 27 rejected.",
+   "seat": "FixS834"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 383,
+   "act": "MOVE",
+   "val": "59",
+   "why": "sentence says queued prefers configured `task?.route`; pin 59 `      ? [task?.route, task?.lastDispatch?.route]` is the queued candidate list with it first; pin 58 `    : lifecycle.phase === \"queued\"` has no `task?.route`; round-36 value 57 `    ? [task?.lastDispatch?.route, task?.route]` is the working arm, so rejected.",
+   "seat": "FixS834"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 389,
+   "act": "TOKEN",
+   "val": "1",
+   "why": "sentence clause \"then exit 1 (`:124`)\" describes pin 124 `    process.exitCode = 1;` (current line right); `cliErrorCode` sits on 12/108/117, not 124; `exit` is only a non-word-bounded prefix of `exitCode`, so `1` is the sole word-bounded token shared by sentence and line (weak lexical override); the cliErrorCode claim is covered by range `:116-124` via pin 117 `      code: cliErrorCode(error),`.",
+   "seat": "FixS834"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 391,
+   "act": "TOKEN",
+   "val": "attested",
+   "why": "test name at pin 39 `test(\"working phase prefers the attested serving route over the configured route\", () => {` is the working-phase claim (current line right); `reconcileObservation` occurs on test lines 3 (comment), 30 (import), 36 (`pair` call), none of which is the claim; `attested` is word-bounded on 39 and in note line 676.",
+   "seat": "FixS834"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 392,
+   "act": "TOKEN",
+   "val": "authoritative",
+   "why": "line 58 is the test title (definition): \"queued phase keeps the configured route authoritative over a stale dispatch record\"; body L59-68 asserts queued.activity \"kimi/k2\" beats stale lastDispatch \"devin/swe-2:max\"; sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 393,
+   "act": "TOKEN",
+   "val": "leak",
+   "why": "line 71 is the test title (definition): \"suspended and terminal phases never leak the row's route into the reason channel\"; body L72-88 asserts no kimi/devin in suspended.activity (L79), suspended.label (L81), terminal.activity (L87); sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 394,
+   "act": "TOKEN",
+   "val": "candidate",
+   "why": "line 90 is the test title (definition): \"non-string route entries are skipped in favor of the next candidate\"; body L91-99: route 42 falls to lastDispatch \"devin/swe-2:max\" (L95-96), no string candidate falls to \"working\" (L98-99); sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 410,
+   "act": "TOKEN",
+   "val": "throw",
+   "why": ":62 is the test declaration `test(\"a throw retries and never escapes the seam\", () => {` (definition; :66 throws from repend, :69 asserts attempts 1 = the retry); note line 696 \"covers throw/retry (`:62`)\" describes exactly this case; the parser paired `spawnSync` from the later clause \"uses `spawnSync` only for a `--check` probe (`:127-133`)\", which is pin :129 and is correctly covered by that clause, not by :62.",
+   "seat": "FixS835"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 419,
+   "act": "TOKEN",
+   "val": "JSON",
+   "why": "line 1912 `process.stdout.write(`${JSON.stringify(payload, null, 2)}\\n`);` is the success-path print after runCli (L1911), the subject of \"printing JSON\"; sentence true; round-36 value 5 ignored.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 429,
+   "act": "TOKEN",
+   "val": "session-retention.jsonl",
+   "why": ":184 is the definition (object-literal default in retentionPaths :171-190): `logPath: resolve(d.logPath || join(stateRoot, \"session-retention.jsonl\")),` with stateRoot (:174) = d.stateRoot || env.UFO_STATE_DIR || <root>/.ufo, so the event file is $UFO_STATE_DIR/session-retention.jsonl as the note says; the literal `$UFO_STATE_DIR/session-retention.jsonl` occurs only as a header mention at :44, so the parser's literal-spelling check fails on :184 while the anchor is true.",
+   "seat": "FixS835"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 431,
+   "act": "TOKEN",
+   "val": "--apply",
+   "why": ":1799 is the flag handler in parseArgs (:1793): `case \"--apply\":` then `options.apply = true;` (:1800), default `apply: false` at :1795; note line 708 \"Bare `cap`/`sweep` are dry-run unless `--apply`\" is about this flag (header :10-11 \"Dry-run\" / \"unless --apply.\"), and `sweep` does not occur on :1799; the gate at :1831-1832 `function withLock(schema, verb, run, deps) {` / `if (!run.apply) return run.run({ apply: false });` is the dry-run enforcement.",
+   "seat": "FixS835"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 434,
+   "act": "MOVE_TOKEN",
+   "val": "1922 exitCode",
+   "why": "N unchanged, line 1922 is right: `process.exitCode = error?.kind ? 2 : 1;` realises \"typed refusals exit 2 / untyped escapes exit 1\" (typed = retentionError sets error.kind, L163-165; untyped e.g. L203 throws Object.assign(new Error, {code}) with no kind); sentence true. No distinctive word-bounded token is shared: the sentence says \"exit\", which is only a substring of \"exitCode\" and fails the gate's word-bounded rule; \"1\"/\"2\" are numerals. FIX (sentence edit for lane owner, not applied here): \"typed refusals set `process.exitCode` to 2 while untyped escapes set it to 1 (`:1922`)\", after which exitCode is word-bounded in both.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 436,
+   "act": "TOKEN",
+   "val": "bounds",
+   "why": "line 167 is the test title (definition): \"cap apply bounds both generations, preserves head/tail evidence, leaves JSONL byte-identical\"; body L168-177 asserts CAP size and 50 MiB rotated generation; sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 437,
+   "act": "TOKEN",
+   "val": "head",
+   "why": "range 197-205 is right: head/tail row checks are L199-202 (row.head.bytes, row.head.sha256, row.tail.bytes, row.tail.sha256) and L205 (\"head evidence bytes match the row\"); L197 (row.sourceSha256) is the source hash, not head/tail. Tail byte check at L206 sits just outside the range (not a falsity). Gate must check the whole range, not only L197.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 438,
+   "act": "TOKEN",
+   "val": "JSONL",
+   "why": "line 184 `assert.equal(sha(readFileSync(jsonlPath)), jsonlSha, \"structured JSONL evidence is immutable\");` is the JSONL-immutability assertion; sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 439,
+   "act": "TOKEN",
+   "val": "second",
+   "why": "line 210 is the test title (definition): \"cap second apply is a true no-op\"; body L220-241 asserts capped/retired/reclaimedBytes 0, rows [], no manifest or log mtime change; sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 440,
+   "act": "TOKEN",
+   "val": "open",
+   "why": "line 244 is the test title (definition): \"cap defers a generation with an open writable fd and bounds it once closed\"; body holds fd open (L250), asserts deferred 1 and action defer_open_writer (L254-257), size unchanged (L260), bounded after close (L266-271); sentence true.",
+   "seat": "Prose06"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 441,
+   "act": "TOKEN",
+   "val": "read-only",
+   "why": ":449 is right; 449 DEFINES test(\"cap bounds a generation held open read-only: a reader is not a writer\"); body opens the file with \"r\" (455) and asserts deferred 0 and capped 1 (460-461), which is the note's \"a read-only holder now caps instead\".",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 443,
+   "act": "TOKEN",
+   "val": "watch_active",
+   "why": ":771 is right; watch_active is word-bounded there as the ASSERTED protectedReasons of the live-owner run (assertion, not definition); 767, 769 and 770 assert [] for the three non-live rows, so \"only for a verifiably live lock owner\" holds.",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 444,
+   "act": "TOKEN",
+   "val": "malformed",
+   "why": "767-771 is right: 767 (dead holder), 769 (malformed owner body) and 770 (pid 0) each assert protectedReasons [], and 771 keeps watch_active for the live holder; malformed is word-bounded on 769 (assertion message). Note writes pid-0, pin writes pid 0 (cosmetic).",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 447,
+   "act": "TOKEN",
+   "val": "cap",
+   "why": "795-800 is right: 795 mkfifo's the event-log path, 796-798 run cap and assert it completes (status 0, capped 1), 800 asserts the FIFO survives. FIFO is rejected as token: its only hit in 795-800 is inside isFIFO() on 800, which is not word-bounded, so the design override rule would refuse it; cap is word-bounded on 796-798 and in the sentence.",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 449,
+   "act": "TOKEN",
+   "val": "test",
+   "why": ":22 is right: line 22 DEFINES the local harness function test(name, fn); test is the only word the sentence shares with that line, so the token is weak (any test( line would pass). Nine test( declarations (40,44,50,54,58,62,66,73,87) confirm \"nine pins\".",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 451,
+   "act": "TOKEN",
+   "val": "fabricated",
+   "why": ":40 is the test declaration `test(\"malformed {} renders CLOSED, not fabricated zeros\", () => {` (definition; body :41 `assert.equal(formatUf0Status({}), CLOSED);`), the empty-object case that note line 716 \"an empty object must not print fabricated zero-fleet text (`:40`)\" describes; the parser paired the literal `uf0 hatch (closed)` from the preceding clause, whose only definition is `const CLOSED = \"uf0 hatch (closed)\";` at :33, not :40.",
+   "seat": "FixS835"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 453,
+   "act": "TOKEN",
+   "val": "null",
+   "why": ":44 is right: 44 DEFINES test(\"null / non-object renders CLOSED\"); 45-47 assert null, \"open\" and [1,2] render CLOSED, matching \"null, strings, arrays\".",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 454,
+   "act": "TOKEN",
+   "val": "levels",
+   "why": ":50 is right: 50 DEFINES test(\"missing levels renders CLOSED\"); 51 omits levels and asserts CLOSED.",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 455,
+   "act": "TOKEN",
+   "val": "phaseCounts",
+   "why": ":54 is right: 54 DEFINES test(\"missing phaseCounts renders CLOSED\"); 55 omits phaseCounts and asserts CLOSED.",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 458,
+   "act": "TOKEN",
+   "val": "envelope",
+   "why": "66-70 is right: 66 DEFINES test(\"valid closed envelope formats closed with counts\"); 67-70 assert the closed output with phaseCounts q0 w0 s2 and hatch (closed); envelope is word-bounded only on 66 within the range.",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 459,
+   "act": "TOKEN",
+   "val": "TTL",
+   "why": "73-85 is right: 73 DEFINES test(\"cache TTL is decoupled from the poll cadence\"); 75 comments on the TTL; 77-80 assert freshness true at 4,999, 5,000 and 9,999 and false at 10,000, matching \"pin TTL freshness\".",
+   "seat": "Prose07"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 460,
+   "act": "TOKEN",
+   "val": "confirmed",
+   "why": "cited 87-94 is the whole test: 87 `test(\"display stamp only follows a confirmed full refresh\", ...` is the definition, 88-93 are the assertions, 94 `});`; claim true; `confirmed` is \\b-bounded on 87 and in note 716 (\"a confirmed full refresh\").",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 461,
+   "act": "TOKEN",
+   "val": "green",
+   "why": "97 prints the `N/N pins green` line, 98 `if (failed.length > 0) process.exit(1);`; claim true; `green` is \\b-bounded on 97 and in note 716 (\"pins green or exits 1\").",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 472,
+   "act": "DEBT",
+   "val": "prose-names-arm-not-symbol",
+   "why": ":234 is the correct definition: pin line 234 `test(\"unmapped_member_rejected\", () => {`; the case asserts `unmapped_member` at :240. The note sentence says \"an unmapped member\" and never spells `unmapped_member_rejected`. Gate W counts `_` as a word char, so `unmapped` is not word-bounded on :234; the only word-bounded tokens on :234 are `test` and `unmapped_member_rejected`, and neither is in the sentence. MOVE_TOKEN to `unmapped_member_rejected` would be OVERRIDE_INVALID. Fix is note prose (E11), not an anchor move.",
+   "seat": "FixS836"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 473,
+   "act": "DEBT",
+   "val": "prose-names-arm-not-symbol",
+   "why": ":246 is the correct definition: pin line 246 `test(\"unexpected_member_rejected\", () => {`; the case asserts `unexpected_member` at :255. The sentence says \"an unexpected member\" and never spells the identifier; no sentence token is word-bounded on :246. Same fix as #472.",
+   "seat": "FixS836"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 474,
+   "act": "DEBT",
+   "val": "prose-names-arm-not-symbol",
+   "why": ":260 is the correct definition: pin line 260 `test(\"duplicate_results_row_rejected\", () => {`; the case asserts `duplicate_member` at :269. The sentence says \"duplicate results\"; no sentence token is word-bounded on :260 except arbitrary `a` at :264. Same fix as #472.",
+   "seat": "FixS836"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 475,
+   "act": "DEBT",
+   "val": "prose-names-arm-not-symbol",
+   "why": ":560 is the correct definition: pin line 560 `test(\"conflicting_agent_id_rejected\", () => {`; the case asserts `conflicting_member` at :572. The sentence's `agentId` is absent from :560 (camelCase vs `agent_id`). MOVE to :564 or :569 (`agentId` fixture data) passes the gate but anchors a registry datum, not the arm, so rejected. :5 is the round-36 header-comment mention, rejected.",
+   "seat": "FixS836"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 476,
+   "act": "TOKEN",
+   "val": "collect_succeeds_fast_under_held_writer_registry_lock",
+   "why": "1386 is the test declaration (definition); body asserts `elapsed < 10_000` (1412-1413) and that the writer lock is not stolen (1419); claim true (\"quickly\" = the 10 s bound). FIX: the sentence only paraphrases the name, and `succeeds`/`writer`/`registry` on 1386 are underscore-embedded (not \\b-bounded), so backtick the identifier in note line 735 (physical; parser's 720 is the paragraph start). Alt, no note edit: MOVE_TOKEN 1413 writer (`wait on writer lock` on 1413 is \\b-bounded; note 735 \"a writer holds\").",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 477,
+   "act": "TOKEN",
+   "val": "default_registry_join_from_wave_path",
+   "why": "828 is the test declaration; body 830-833 hand-builds registry.json and 834-846 joins it with no --registry flag; claim true. Same underscore problem on 828. FIX: backtick the identifier in note line 736 (physical; parser 720). Alt, no note edit: MOVE_TOKEN 830 registry (`writeJson(dir, \"registry.json\"` is \\b-bounded; note 736 \"hand-built registry join\").",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 478,
+   "act": "TOKEN",
+   "val": "plan_input_preserves_spec_order",
+   "why": "692 is the test declaration; body 694-701 is a `ufo-swarm-wave-v1` plan with spawn lanes (697, 699) and a resume lane (698); claim true. Same underscore problem on 692. FIX: backtick the identifier in note line 737 (physical; parser 720). Alt, no note edit: MOVE_TOKEN 698 resume (`resume: \"agentP\"` is \\b-bounded; note 737 \"spawn/resume\").",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 480,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "1621 `if (failed.length) process.exit(1);` is the exit-on-red; `exit` is \\b-bounded on 1621 and in note 739 (\"before exit 1 on any red\"; physical line, parser says 720); claim true.",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 483,
+   "act": "TOKEN",
+   "val": "contract",
+   "why": "2 `// ufo-swarm-wave.test \u2014 dispatch-payload contract tests.` is the header title (header block 2-6); `contract` is \\b-bounded on 2 and in note 747 (\"Dispatch-payload contract suite\"); claim true; \"plan admission\" and \"run split\" are described on 4-5 (uncited, still true).",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 496,
+   "act": "TOKEN",
+   "val": "stderr",
+   "why": "366 defines `main`, 369 `process.stderr.write(...)`, 370 `return 64;`; range 366-371 covers the stderr print and exit 64; `stderr` is \\b-bounded on 369 and in note 751 (\"printed to stderr with exit 64\"); claim true (the paired `:360` `unsupported argument` line also checks out).",
+   "seat": "Prose08"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 502,
+   "act": "TOKEN",
+   "val": "STABLE_REFUSAL_REASONS",
+   "why": "cited range 244-249 is the decideRow suppression gate and is already right; parser paired DEFAULT_QUIET_SECONDS, which occurs only at pin 60 and 383, neither inside 244-249; the occurrence the sentence's \"transient refusal classes are never suppressed (`:244-249`)\" describes is pin 245 `    && STABLE_REFUSAL_REASONS.has(refusal.reason)` (a use in the gate, not the definition at 64).",
+   "seat": "FixS837"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 504,
+   "act": "TOKEN",
+   "val": "STABLE_REFUSAL_REASONS",
+   "why": "245 `&& STABLE_REFUSAL_REASONS.has(refusal.reason)` is the gate; 246 `refusal.sig === sig` with sig = rowSignature|manifestClass (282); 249 returns `skip_suppressed`; transient classes never reach it; claim true. The second `(:244-249)` clause (\"transient refusal classes\") is also gated by 245; if gated per clause, `refusal` is \\b-bounded on 244.",
+   "seat": "Prose08"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 0,
+   "act": "MOVE_TOKEN",
+   "val": "67 standalone",
+   "why": "note 29-37 says route-health \"keeps a standalone parity copy at :63-65\"; pin 63-65 is the PROBE_CONCURRENCY comment and const (65), not a copy; the parity note is pin 67 \"// PARITY: this table is a standalone copy of ./probe-redact.mjs\"; claim TRUE, anchor wrong (redaction table follows at 72 CREDENTIAL_SHAPE and 73 REDACT_PATTERNS)",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 1,
+   "act": "MOVE_TOKEN",
+   "val": "1073 persistState",
+   "why": "pin L1073 is the DEFINITION \"function persistState(statePath, payload, maxAgeMs) {\" and the durable block (L1110-1133) sits inside it; pin L1080 \"  const document = {\" is 7 lines below that and is not a durable write. Origin 964f443e:L1080 is the identical definition line and origin L1117 \"const temporary\" is pin L1110, so the note's anchors were true at origin and the pin shifted -7. Parser paired \"1117\", which is not an anchor (E8). Companion edit: row 88 must name persistState (absent from its sentence today; route-probe-cluster.md:104 already names it at :1080). Changing the raw span needs a re-pin.",
+   "seat": "FixS738"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 2,
+   "act": "TOKEN",
+   "val": "writeVerdict",
+   "why": "anchor L40 is already right: pin L40 \"function writeVerdict(verdict) {\" is the DEFINITION holding the durable write (L46 writeFileSync, L47 fsyncSync, L51 renameSync); origin 964f443e:L40 is identical (no shift). Parser paired \"1117\" (E8). Companion edit: row 88 must name writeVerdict before \"probe-token-plan-models.mjs:40\" (route-probe-cluster.md:161 and :383 already say \"writeVerdict ... :40\"). No word-bounded token of L40 occurs in row 88 today, so the override is invalid until then.",
+   "seat": "FixS738"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 3,
+   "act": "TOKEN",
+   "val": "SQLite",
+   "why": "current :2-3 is right: pin line 3 \"// (never reads SQLite / token files / `omp token`). Prints one JSON record\" and line 2 \"// Secret-safe route-health probe. Invokes OMP as the credential authority\" document the note's \"never reads SQLite or token files\" (note line 100); the paired word Authorization is on no line 2-3 and must not move to pin line 72 (CREDENTIAL_SHAPE detector regex, a mere mention; no pin line constructs an Authorization header)",
+   "seat": "FixS739"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 4,
+   "act": "TOKEN",
+   "val": "available",
+   "why": "note 97-102 \"never reroutes or treats stale/unknown health as available (:6-7)\"; pin 7 \"// health is never treated as available.\" is a header doc statement (line 6 \"Does not reroute\"); code agrees: interpretRouteHealth 1010-1027 returns available:false for stale/unknown; \"reroute\" occurs only at line 6",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 6,
+   "act": "MOVE",
+   "val": "1073",
+   "why": "definition: pin 1073 \"function persistState(statePath, payload, maxAgeMs) {\"; pin 1080 \"const document = {\" lacks the symbol; pin 1174 \"persistState(statePath, payload, maxAgeMs);\" is a call, a mere mention",
+   "seat": "FixS739"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 7,
+   "act": "MOVE_TOKEN",
+   "val": "1110 pid",
+   "why": "note 97-105 \"with a pid-timestamp tmp (:1117)\"; pin 1117 is \"    } finally {\" closing the fsync try (1115-1117); the pid-timestamp tmp name is built at 1110 (definition) \"const temporary = `${resolved}.${process.pid}.${Date.now()}.tmp`;\"; claim TRUE, anchor wrong",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 8,
+   "act": "MOVE_TOKEN",
+   "val": "67 standalone",
+   "why": "note 97-106 \"Redaction is a standalone parity copy of ./probe-redact.mjs (:63-65)\"; same wrong anchor as #0; pin 67 \"standalone copy of ./probe-redact.mjs\" and 67-68 \"cannot import siblings ... copies it alone\" support the not-sibling claim; claim TRUE",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 9,
+   "act": "MOVE",
+   "val": "1157",
+   "why": "definition: pin 1157 \"async function main() {\"; pin 1164 \"// as health; the exit code reflects BOTH: 0 healthy+clean, 3 clean but\" is a comment with no main; pin 1181 \"main().catch((error) => {\" is the invocation, a mere mention, not chosen because the note names the top-level function (\"the top-level `main`\", note lines 107-108)",
+   "seat": "FixS739"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 10,
+   "act": "MOVE",
+   "val": "107",
+   "why": "definition: pin 107 \"function parseArgs(argv) {\", whose single argv walk starts at pin 116 \"for (let index = 0; index < argv.length; index += 1) {\"; pin 103 \"console.error(PROBE_USAGE);\" sits inside usage() (101-105), which the note describes via `usage` (`:97`), not parseArgs",
+   "seat": "FixS739"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 11,
+   "act": "MOVE",
+   "val": "101",
+   "why": "note \"`usage` prints to stderr and exits 2 (`:97`)\" describes the function; definition at pin 101 \"function usage(message) {\" (body: 103 \"  console.error(PROBE_USAGE);\", 104 \"  process.exit(2);\"); pin 97 is blank",
+   "seat": "FixS740"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 12,
+   "act": "MOVE",
+   "val": "669",
+   "why": "note \"the async `spawnCollect(\"omp\", [...])` (`:678`, call site `:813`)\" cites the function definition; the call site is cited separately; pin 669 \"function spawnCollect(command, args, options = {}) {\"; pin 678 is \"    }\", the closing brace of the catch at 675-678",
+   "seat": "FixS740"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 13,
+   "act": "MOVE_TOKEN",
+   "val": "804 spawnCollect",
+   "why": "note says \"call site `:813`\"; the only call site is pin 804 \"    result = await spawnCollect(\"omp\", [\" (token spawnCollect occurs in the sentence and on 804); pin 813 is '      \"--no-title\",', an argv element inside that call; the \"-p --mode json --model <route>\" argv sits at pin 805-806 and 816, not on 804",
+   "seat": "FixS740"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 14,
+   "act": "MOVE",
+   "val": "65",
+   "why": "note \"bounded by `PROBE_CONCURRENCY = 8` (`:61`)\" states the constant's value; definition at pin 65 \"const PROBE_CONCURRENCY = 8;\"; pin 61 is \"];\" (end of FAILURE_CLASSES); pin 1159 \"mapPool(routes, PROBE_CONCURRENCY, ...)\" is a use, not the value",
+   "seat": "FixS740"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 15,
+   "act": "MOVE",
+   "val": "775",
+   "why": "pin 775 `async function mapPool(items, limit, fn) {` is the definition the note names (\"the order-preserving `mapPool`\", note line 112; pin 774 `// Order-preserving bounded map: results[i] corresponds to items[i].`); pin 784 `  };` closes the inner `const worker = async () => {` opened at 778, so it is not mapPool",
+   "seat": "FixS741"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 16,
+   "act": "MOVE",
+   "val": "43",
+   "why": "pin 43 `const DEFAULT_TIMEOUT_MS = 240_000;` is the definition of the constant whose 240_000 value the note states (note line 113); pin 39 `const MAX_SESSION_FILE_BYTES = 64 * 1024 * 1024;` does not contain DEFAULT_TIMEOUT_MS",
+   "seat": "FixS741"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 17,
+   "act": "MOVE",
+   "val": "44",
+   "why": "pin 44 `const MAX_BUFFER = 8 * 1024 * 1024;` is the definition of the 8 MiB constant the note states (note line 113); pin 40 is only the comment `// Aggregate bound across every session jsonl one probe retains: the per-file`",
+   "seat": "FixS741"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 18,
+   "act": "MOVE",
+   "val": "45",
+   "why": "pin 45 `const MAX_ROUTES = 16;` is the definition of the 16 the note states (note lines 113-114); pin 41 is only the comment `// cap alone would let the 64-file enumeration hold 4 GiB.`",
+   "seat": "FixS741"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 19,
+   "act": "MOVE",
+   "val": "49",
+   "why": "note 114 names the `FAILURE_CLASSES` taxonomy; its definition is pin 49 `const FAILURE_CLASSES = [` (array runs 49-61); pin 45 is `const MAX_ROUTES = 16;`, a different constant; pin 1024 is a use, not the definition",
+   "seat": "FixS742"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 20,
+   "act": "MOVE",
+   "val": "497",
+   "why": "note 114-115 says the taxonomy is \"assigned by `classifyFailure`\"; its definition is pin 497 `function classifyFailure({ timedOut, signal, status, code, message }) {`; pin 506 is only the `status === 402` clause inside that body (497-537), and the symbol does not occur on 506; 889 is a call site",
+   "seat": "FixS742"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 21,
+   "act": "DEBT",
+   "val": "symbol ROUTE_TOKEN is absent from the pinned tree; the route-token grammar is delegated to scripts/omp-route-grammar.mjs",
+   "why": "zero ROUTE_TOKEN hits in /fast/scratch/kumitate-r36/src (case-insensitive, gitignore off); probe 198 \"Selector grammar: the shared scripts/omp-route-grammar.mjs authority\"; probe 30-33 imports parseRoute from that module; pin 200 `// provider's default level, and the preflight must probe it instead of` is an effort-suffix comment, not a token class, so no TOKEN pairing holds either",
+   "seat": "FixS742"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 22,
+   "act": "MOVE",
+   "val": "932",
+   "why": "note 116 names the gate `assertNoSecrets`; its definition is pin 932 `function assertNoSecrets(value) {`; the refusal throw `refusing to emit credential-shaped route-health output` at 939 sits inside body 932-941; 1086, 1148, 1172 are call sites",
+   "seat": "FixS742"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 23,
+   "act": "MOVE",
+   "val": "897",
+   "why": "note sentence \"a truncated-session sweep is retagged `session_truncated`\"; pin 897 `failureClass = \"session_truncated\";` is the retag and the only pin occurrence of the token; pin 904 `facts.errorMessage,` is an argument of preferErrorCode, unrelated to the token",
+   "seat": "FixS743"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 24,
+   "act": "MOVE",
+   "val": "1008",
+   "why": "note sentence \"Verdicts come from `interpretRouteHealth`\" names the function; pin 1008 `function interpretRouteHealth(row, { nowMs, expiresAtMs }) {` is its definition; pin 1015 `if (!row || typeof row !== \"object\" || Array.isArray(row)) {` is a body guard; 1053 is a comment mention and 1056 a call site",
+   "seat": "FixS743"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 25,
+   "act": "MOVE",
+   "val": "1030",
+   "why": "note sentence \"Verdicts come from `interpretPersistedHealth`\" names the function; pin 1030 `function interpretPersistedHealth(state, now = new Date()) {` is its definition; pin 1037 `const observedAtMs = Date.parse(state.observedAt);` is a body line; 1087, 1140, 1151, 1153 are call sites",
+   "seat": "FixS743"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 26,
+   "act": "MOVE",
+   "val": "1167",
+   "why": "note quotes `healthy` (\"every route served with no failure class\"); pin 1167 `healthy: results.every((row) => row.served === true && row.failureClass === null),` is its definition; pin 1162-1163 restate it in prose but 1167 is the field; pin 1174 `persistState(statePath, payload, maxAgeMs);` lacks the token",
+   "seat": "FixS743"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 27,
+   "act": "MOVE",
+   "val": "1178",
+   "why": "pin 1178 `  process.exit(!payload.ok ? 2 : payload.healthy ? 0 : 3);` is the exit expression that note line 120 names; pin 1185 `    error: { type: \"fatal\", message },` is the fatal envelope, not the exit line",
+   "seat": "FixS744"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 28,
+   "act": "MOVE",
+   "val": "1184",
+   "why": "pin 1184 `    schema: \"ufo-route-health-error-v1\",` is the envelope emitted inside `main().catch` (1181-1188) that note line 121 describes; `:1191` is past EOF (pin is 1188 lines)",
+   "seat": "FixS744"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 30,
+   "act": "TOKEN",
+   "val": "authority",
+   "why": "note 141-144 \"with OMP as the only credential authority (:3-4)\"; pin 3 \"// OMP is the only credential authority: this script never reads API keys,\" is a header doc statement; side note, no verdict change: pin 4 \"never reads ... config files\" is not literally true, since kimi:94 \"configSha256: authority.sha256\" consumes the global OMP config snapshot from readGlobalProviderAliasRoutes (omp-global-config.mjs:651); the note sentence does not repeat that claim",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 31,
+   "act": "TOKEN",
+   "val": "0",
+   "why": "anchor 57-58 is true for the clause it trails, \"prints and exits 0\": pin 57 `    printHelp();`, pin 58 `    process.exit(0);`; the paired `-h` belongs to the earlier un-anchored clause (pin 55 `argv[0] === \"-h\"`), so MOVE to 55 would drop the print and exit evidence; `0` is the only word identical in the sentence (\"exits 0\") and on 57-58",
+   "seat": "FixS744"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 33,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "note 141-146 \"goes through fail (:24), which prints a redacted verdict and exits 2 (:28)\"; pin 28 \"  process.exit(2);\" is the exit statement inside function fail (24-29), code not mention; stem match: note says \"exits\", pin says \"exit\"",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 37,
+   "act": "TOKEN",
+   "val": "exit",
+   "why": "note 146-149 \"a sweep with no such route prints ... (:89-90) and still exits 2 (:100)\"; pin 89-90 match (\"available: false,\" and \"targetStatus: \\\"not-configured\\\",\"); pin 100 \"    process.exit(2);\" is the exit in the targets.length===0 branch (86-101), code; round-36 value 39 is \"const probeTarget\" (kimi:39), not an exit, so it must not be restored; stem match as #33",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 43,
+   "act": "TOKEN",
+   "val": "serves",
+   "why": "note 158-160 \"asks the same question for every configured non-Kimi alias and fails unless every target serves (:2-4)\"; pin 2 \"// Probe whether the Alibaba Token Plan serves the DeepSeek/Qwen models it is\" is the header doc statement of the question; behavior matches in code: models:183 non-kimi filter, :223 targets.every(...served===true), :237 exit available ? 0 : 2",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 54,
+   "act": "MOVE_TOKEN",
+   "val": "67 standalone",
+   "why": "note 175-177 \"route-health keeps a mirrored standalone copy \u2014 see parity note at :63-65\"; pin 63-65 is the concurrency block; the parity note is pin 67 \"// PARITY: this table is a standalone copy of ./probe-redact.mjs.\"; claim TRUE, anchor wrong",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 64,
+   "act": "TOKEN",
+   "val": "capacity",
+   "why": "note 190-192 \"its header states it never claims live capacity and never reaches a real provider (:10)\"; pin 10 \"// Never claims live capacity; never reaches a real provider.\" is the header statement; fake-omp.mjs has no spawn/child_process/exec/fetch/http call (only comment lines 202-205), so the claim holds",
+   "seat": "Prose09"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 76,
+   "act": "DEBT",
+   "val": "symbol gone from this path and prose stale: token-class validator moved to scripts/omp-route-grammar.mjs",
+   "why": "pin scripts/probe-ufo-route-health.mjs:209 is `const INVISIBLE_CHARACTERS = /[\\p{Cc}\\p{Cf}]/gu;` (diagnostic escaper used at :211-212); `ROUTE_TOKEN` has zero matches in the whole pin src tree; the note claim (letters/digits/`.`/`_`/`-`) is true only at scripts/omp-route-grammar.mjs:38 `export const ROUTE_COMPONENT_PATTERN = /^[A-Za-z0-9_.-]+$/u;`, enforced at :118-121 \u2014 fixing it needs a cross-file re-anchor (path change) plus a rewrite of note :211-212, not a same-file MOVE or TOKEN",
+   "seat": "FixS745"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 77,
+   "act": "TOKEN",
+   "val": "consumer",
+   "why": "cited range :203-208 is kept because it contains the claim: pin :203 `// or trailing `/`, a malformed `:` separator) are a route no consumer can` and :204 `// represent, so they stay usage errors.`; parser's `-` occurs on no line in 203-208; `consumer` occurs in note line 213 (`route no consumer can represent`) and on pin :203; pin :205-208 are diagnostic-escape comments, over-wide but not false",
+   "seat": "FixS745"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 78,
+   "act": "MOVE",
+   "val": "975-992",
+   "why": "pin :994 is `}` (closing brace of assertStatePath); the note clause (note :214-215) covers pin :975 `if (!beneath(UFO_ROOT, resolved)) usage(\"--state path must remain under .ufo\");`, pin :976 `if (!resolved.endsWith(\".json\")) usage(...)` (the `.json` token), and the symlink walk :977-992 (loop :981-988; `if (info?.isSymbolicLink()) usage(\"--state refuses symlinks\");` at :983; final check at :990)",
+   "seat": "FixS745"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 79,
+   "act": "MOVE",
+   "val": "45",
+   "why": "pin :45 `const MAX_ROUTES = 16;` is the definition the sentence cites (value 16 matches); pin :47 is `const PROMPT = \"Reply with exactly one word: PONG\";`; pin :174 `if (routes.length > MAX_ROUTES) usage(...)` is a use only",
+   "seat": "FixS745"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 80,
+   "act": "MOVE",
+   "val": "43",
+   "why": "pin 43 \"const DEFAULT_TIMEOUT_MS = 240_000;\" is the definition and the only \"240_000\" on the pin; pin 113 \"let timeoutMs = DEFAULT_TIMEOUT_MS;\" is a use; pin 45 \"const MAX_ROUTES = 16;\" is the line cited today; paired token stays DEFAULT_TIMEOUT_MS",
+   "seat": "FixS746"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 81,
+   "act": "MOVE",
+   "val": "107",
+   "why": "pin 107 \"function parseArgs(argv) {\" is the definition the clause describes (\"parseArgs is the single argv walk\"); pin 1158 \"... = parseArgs(process.argv.slice(2));\" is a call; pin 96 is \"];\"; paired token stays parseArgs",
+   "seat": "FixS746"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 82,
+   "act": "MOVE_TOKEN",
+   "val": "101 usage",
+   "why": "the clause \"usage prints to stderr and exits 2\" is about the usage helper, not --help; pin 101 \"function usage(message) {\" is its definition (102-103 console.error to stderr, 104 process.exit(2)); pin 87 is \"// otherwise survive verbatim.\" (a cookie-redaction comment); \"--help\" is on pin 108 and 170 only",
+   "seat": "FixS746"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 83,
+   "act": "MOVE_TOKEN",
+   "val": "104 2",
+   "why": "the clause \"exits 2\" is the usage exit; pin 104 \"process.exit(2);\" is the only usage-path exit (pin 1178 \"process.exit(!payload.ok ? 2 : ...)\" is main's status code); pin 93 is the AWS-key regex; token 2 is the exit-code literal (numeral key, lexically accepted, semantically exact; fallback if numerals are rejected: MOVE_TOKEN 101 usage, which duplicates #82)",
+   "seat": "FixS746"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 84,
+   "act": "MOVE",
+   "val": "108",
+   "why": "pin 108 `if (argv.length === 1 && (argv[0] === \"--help\" || argv[0] === \"-h\")) {` is the sole-argv --help guard and the only exit-0 path (exit is pin 110 `process.exit(0);`); pin 99 is the PROBE_USAGE string literal with no --help and no exit, so the current anchor is wrong",
+   "seat": "FixS747"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 85,
+   "act": "MOVE",
+   "val": "49-60",
+   "why": "definition: pin 49 `const FAILURE_CLASSES = [` through pin 60 `\"unknown\",` = declaration + the 11 class literals the sentence lists; old range 51-62 starts on `\"rate_limit\",` (51) and ends blank (62), no FAILURE_CLASSES occurrence in it; pin 61 `];` sits outside the claim",
+   "seat": "FixS748"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 86,
+   "act": "MOVE",
+   "val": "497",
+   "why": "definition: pin 497 `function classifyFailure({ timedOut, signal, status, code, message }) {`; pin 507 `) {` only closes the usage_limit `if (` (503-507) and holds no symbol; call site 889 `: classifyFailure({` is a use, not the cited definition",
+   "seat": "FixS748"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 87,
+   "act": "MOVE",
+   "val": "897",
+   "why": "pin 897 `failureClass = \"session_truncated\";` is the only occurrence and is the retag, guarded by pin 896 `if (valuesTruncated && !served && (failureClass === \"unknown\" || failureClass == null)) {`; pin 904 `facts.errorMessage,` is an argument of `preferErrorCode(` (902), no symbol",
+   "seat": "FixS748"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 88,
+   "act": "MOVE",
+   "val": "1008",
+   "why": "definition: pin 1008 `function interpretRouteHealth(row, { nowMs, expiresAtMs }) {`; pin 1164 `// as health; the exit code reflects BOTH: 0 healthy+clean, 3 clean but` is a comment in main()'s payload block; 1053 is a comment mention and 1056 a call inside interpretPersistedHealth",
+   "seat": "FixS748"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 89,
+   "act": "MOVE",
+   "val": "1030",
+   "why": "pin 1030 \"function interpretPersistedHealth(state, now = new Date()) {\" is the definition. The sentence (note 229-230) attributes the available/unknown/stale/unavailable status set to this function, so the definition is the occurrence meant. Pin 1186 is \"  }));\" (closer of console.error(...) in main().catch). Pin 1087/1140/1151/1153 are call sites.",
+   "seat": "FixS749"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 90,
+   "act": "MOVE",
+   "val": "1010",
+   "why": "pin 1010 \"return { status: \"unknown\", available: false, reason: \"invalid_validity_window\" };\" is the sole occurrence of the reason string and its producer in interpretRouteHealth; note 231 lists it as a reason. Pin 1166 is \"ok: results.every((row) => row.sessionRemoved),\".",
+   "seat": "FixS749"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 91,
+   "act": "MOVE",
+   "val": "1013",
+   "why": "pin 1013 \"return { status: \"stale\", available: false, reason: \"expired\" };\" is the route-level producer, second in the note's code-ordered reason list (1010, 1013, 1016, 1019, 1032, ...). The note's own +156 offset, shared by the other three anchors, maps :1169 to 1013. Pin 1169 is \"timeoutMs,\". Not chosen: 1047 \"return unavailableHealth(\"stale\", \"expired\", state);\" (sweep-level producer) and 1068 (rollup, cited separately at :1224).",
+   "seat": "FixS749"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 92,
+   "act": "MOVE",
+   "val": "1019",
+   "why": "pin 1019 \"return { status: \"unknown\", available: false, reason: \"unknown_served\" };\" is the sole occurrence of the reason string and its producer; note 232 lists it as a reason. Pin 1175 is \"readPersistedState(statePath);\".",
+   "seat": "FixS749"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 93,
+   "act": "MOVE",
+   "val": "1032",
+   "why": "pin 1032 `    return unavailableHealth(\"unknown\", \"malformed_state\");` is the sole occurrence of `malformed_state` and the emission site of that reason inside `interpretPersistedHealth` (pin 1030-1071), which the sentence lists; current 1188 `});` closes the `main().catch(...)` block.",
+   "seat": "FixS750"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 94,
+   "act": "MOVE",
+   "val": "1051",
+   "why": "pin 1051 `    return unavailableHealth(\"unknown\", \"malformed_records\", state);` is the sole occurrence of `malformed_records` and emits that reason inside the same `interpretPersistedHealth`; current 1207 is beyond EOF (pin is 1188 lines).",
+   "seat": "FixS750"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 95,
+   "act": "MOVE",
+   "val": "1061",
+   "why": "pin 1061 `  const status = available ? \"available\" : hasUnknown ? \"unknown\" : hasStale ? \"stale\" : \"unavailable\";` is the only line carrying the full expression and is the sweep-level rollup over `routes` in `interpretPersistedHealth`; pin 527 and 1027 match only the substring `unavailable` (527 is a regex inside `classifyFailure`, 1027 is `return { status: \"unavailable\", ... }` in `interpretRouteHealth`), so they are not the rollup; current 1217 is beyond EOF.",
+   "seat": "FixS750"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 96,
+   "act": "MOVE",
+   "val": "1068",
+   "why": "pin 1068 `    reason: status === \"available\" ? null : status === \"unknown\" ? \"unknown_route_health\" : status === \"stale\" ? \"expired\" : \"route_unavailable\",` is the sole occurrence of `route_unavailable` and is the rollup reason mapping the sentence lists (`unknown_route_health`, `expired`, `route_unavailable`); current 1224 is beyond EOF.",
+   "seat": "FixS750"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 97,
+   "act": "DEBT",
+   "val": "symbol gone at pin: STRANDED_OUTCOMES, stranded-continue and the launcher's outcome strings occur nowhere in the pinned tree; pin 1021 is interpretRouteHealth's served check",
+   "why": "pin 1021 `if (row.served === true && row.failureClass === null) {`; no sentence token occurs on 1021, so no TOKEN verdict is possible; the only \"reachable\" hits are preflight statuses at scripts/ufo-route-preflight.mjs:127,171, which are not launch outcomes",
+   "seat": "FixS751"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 98,
+   "act": "DEBT",
+   "val": "no `outcome` token anywhere in the route-health script (`\\boutcome\\b` and `[Oo]utcome` both empty); pin 1102 is persistState's state serialization, not a record-outcome check",
+   "why": "pin 1102 `const body = \\`${JSON.stringify(document, null, 2)}\\n\\`;`; \"dies typed\" occurs only at pin 321 (\"excess dies typed instead of being silently skipped\", JSONL budget), a different rule, so no MOVE there",
+   "seat": "FixS751"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 99,
+   "act": "DEBT",
+   "val": "RouteHealthError does not exist: zero matches in the pinned tree and the script has no class declaration; pin 79 is the first REDACT_PATTERNS regex, not a class",
+   "why": "pin 79 `/(\"?(?:authorization|proxy-authorization|token|\u2026`; refusals are plain Errors, e.g. pin 939 `throw new Error(\"refusing to emit credential-shaped route-health output\");`",
+   "seat": "FixS751"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 100,
+   "act": "DEBT",
+   "val": "no typed refusal carries a snake_case `code` at the pin; every refusal is a plain Error without a code property, and pin 74 is a REDACT_PATTERNS comment",
+   "why": "pin 74 `// Key=value pairs with credential-like keys: capture the key and separator,`; the parser's definition-like hit pin 622 `const code = value.errorId` is a local provider-error extraction inside inspectValues, not a refusal code, so no MOVE there; the `code` values at pin 762/766 are spawnSync errno codes ETIMEDOUT/ENOBUFS",
+   "seat": "FixS751"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 101,
+   "act": "DEBT",
+   "val": "symbol_gone_typed_code_removed",
+   "why": "state_path_symlink has 0 hits in the pin (git grep at 31c465f exit=1). Pin 994 is \"}\" closing assertStatePath (971-994). The live symlink arm is 983 'if (info?.isSymbolicLink()) usage(\"--state refuses symlinks\");' (uncoded usage(): console.error then process.exit(2), 101-104). The only word-bounded note-sentence token on 983 is generic \"state\", rejected as a paired-word move.",
+   "seat": "FixS752"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 102,
+   "act": "DEBT",
+   "val": "symbol_gone_typed_code_removed",
+   "why": "credential_shaped_state has 0 hits in the pin. :1266 is past EOF (pin = 1188 lines). The same refusal survives uncoded at 1108 'throw new Error(\"refusing credential-shaped route-health state\");' (persistState gate 1107-1108). The only word-bounded note-sentence token on 1108 is generic \"state\", rejected.",
+   "seat": "FixS752"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 103,
+   "act": "MOVE",
+   "val": "932",
+   "why": "pin 932 'function assertNoSecrets(value) {' is the emit-gate DEFINITION that the sentence describes. Pin 943 'function parseMaxAgeMs(value) {' is the next-symbol shift (the gate block moved up 11 lines). Call sites 1086/1148/1172 not chosen.",
+   "seat": "FixS752"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 104,
+   "act": "MOVE",
+   "val": "939",
+   "why": "pin 939 'throw new Error(\"refusing to emit credential-shaped route-health output\");' is the emitted message the sentence quotes (emission site, not a mention). The exact phrase occurs only here in the script. Pin 950 is \"  }\" inside parseMaxAgeMs.",
+   "seat": "FixS752"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 105,
+   "act": "DEBT",
+   "val": "sentence says the fatal catch adds error.code and redacts message; the catch does neither, and cited 1355-1363 is beyond EOF",
+   "why": "pin probe-ufo-route-health.mjs has 1188 lines; catch 1181-1188 emits {schema@1184, error:{type:\"fatal\",message}@1185} with message=String(error?.message ?? error)@1182; no code field, no redact() or assertNoSecrets; fix: cite 1181-1187 (schema 1184, fatal 1185, exit 1187) and delete the error.code and redacted clauses",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 106,
+   "act": "MOVE",
+   "val": "1184",
+   "why": "pin scripts/probe-ufo-route-health.mjs:1184 is `    schema: \"ufo-route-health-error-v1\",`, the envelope literal of the top-level `main().catch((error) => {` block (1181-1188); it is the definition and the only occurrence of the literal in the file; cited :1358 is past EOF (file = 1188 lines).",
+   "seat": "FixS753"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 107,
+   "act": "MOVE_TOKEN",
+   "val": "1187 exit",
+   "why": "cited 1363 beyond EOF; 1187 is process.exit(1) of the fatal catch (the only exit(1) in the file; definition of the exit-1 site); anchor sits on note line 257, parser reported paragraph start 254",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 108,
+   "act": "DEBT",
+   "val": "PROBE_SHARED_ERROR_CODES and ProbeSharedError absent at pin (symbol gone)",
+   "why": "pin scripts/probe-token-plan-shared.mjs:40 is `  return {`, the literal returned by failureVerdict (39-47), not a code table; no token of the sentence occurs on line 40, so TOKEN and MOVE_TOKEN do not apply.",
+   "seat": "FixS753"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 109,
+   "act": "DEBT",
+   "val": "catalog_timeout absent at pin (symbol gone); cited :121 is not catalog code",
+   "why": "pin :121 is `    // row was unserved). Prefer its typed failure fields over a generic mask.`, a comment in the route-probe non-zero-exit branch (118-136); the catalog timeout is an uncoded Error at :63-64 (`throw new Error(\"omp models catalog timed out\")`); no line carries the token, so MOVE and TOKEN do not apply.",
+   "seat": "FixS753"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 110,
+   "act": "DEBT",
+   "val": "catalog_exit absent at pin (symbol gone); cited :139 is not catalog code",
+   "why": "pin :139 is `    payload = parseJsonPayload(result.stdout);` in the route-probe success path (137-139); the catalog non-zero exit is an uncoded Error at :69-70 (throw new Error with \"omp models ${PROVIDER} exit ...\"); moving to :70 on the word \"exit\" would be a word match, not a symbol match, so it is refused.",
+   "seat": "FixS753"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 111,
+   "act": "DEBT",
+   "val": "RedactError is absent from the pin and probe-redact.mjs throws no RedactError; the anchored line is a string entry, not a throw",
+   "why": "pin probe-redact.mjs:110 `cleanupOk === false ? \"cleanup incomplete\" : null,` sits in unservedReason's detail array and returns a string; tree-wide grep RedactError: No matches found; no sentence token occurs on :110, so neither MOVE nor TOKEN can make the sentence true",
+   "seat": "FixS754"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 112,
+   "act": "DEBT",
+   "val": "the code empty_payload is absent from the pin (no probe-redact error carries a code) and anchor :120 is past EOF",
+   "why": "tree-wide grep empty_payload: No matches found; probe-redact.mjs is 116 lines; the nearest empty-payload site is pin :77 `if (!trimmed) throw new Error(\"empty JSON payload\");`, a plain Error message with no code; no sentence token occurs on :77, so neither MOVE nor TOKEN can make it true",
+   "seat": "FixS754"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 113,
+   "act": "DEBT",
+   "val": "the code invalid_json is absent from probe-redact.mjs (it exists as a code in other modules) and anchor :130 is past EOF",
+   "why": "pin :87 and :90 `throw new Error(\"payload was not JSON\");` are the not-JSON failures and carry no code; invalid_json occurs at scripts/ufo-l0-monitor.mjs:1639 and scripts/ufo-mission-result.mjs:2895 but not in probe-redact.mjs; no sentence token occurs on :87 or :90, so neither MOVE nor TOKEN can make it true",
+   "seat": "FixS754"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 114,
+   "act": "MOVE",
+   "val": "92",
+   "why": "pin probe-token-plan-shared.mjs:92 `return { served: false, reason: \"configured route is malformed\" };` is the per-target row refusal (served:false row, plain-string reason) in probeListedModel and the only exact occurrence tree-wide; the parser's pin line 79 is the comment `// Probe one configured target through the route-health subprocess.`, which shares only the word \"configured\"; :168 is past EOF (159 lines)",
+   "seat": "FixS754"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 115,
+   "act": "MOVE",
+   "val": "95",
+   "why": "pin line 95 `return { served: false, reason: \"secret-safe route probe missing\" };` is the emission (guarded by `if (!existsSync(ROUTE_HEALTH))` at :94, inside `probeListedModel` declared at :84); the full phrase occurs nowhere else in the pin; :154 matches only the word \"missing\" inside `reason: \"primary route provenance is missing or used fallback\"`, a different refusal, so it is not the anchor; the cited :171 is beyond EOF (file = 159 lines).",
+   "seat": "FixS755"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 116,
+   "act": "MOVE_TOKEN",
+   "val": "119 listed",
+   "why": "the note sentence (:267) documents `not listed by /models` at kimi :127, but the parser paired the next unanchored sentence symbol `omp route probe timed out` (apparent one-symbol shift [INFERENCE]; that phrase does not occur in kimi.mjs at all); pin line 119 `: { served: false, reason: \"not listed by /models\" };` is the per-target emission (loop at :112), so token `listed` is the one word the sentence symbol shares with that line; pin line 127 `credentialAuthority: \"omp\",` is unrelated; :83 is a comment mention, not the emission.",
+   "seat": "FixS755"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 117,
+   "act": "MOVE",
+   "val": "221",
+   "why": "pin line 221 `: { served: false, reason: \"not listed by /models\" };` is the emission (per-target loop :218-222) and the only occurrence of the phrase in models.mjs, so the parser's symbol is right and only the line is stale; :216 `const listed = targets.filter(({ model }) => modelIds.includes(model));` defines the variable `listed` (the target list), not the refusal, so it is not the anchor; :224 `emit({` is the verdict payload.",
+   "seat": "FixS755"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 118,
+   "act": "MOVE_TOKEN",
+   "val": "1167 served",
+   "why": "cited 1346 beyond EOF; row claims exit 0 = every route served + every temp tree cleaned; 1167 defines the healthy predicate (row.served === true, definition); exit-0 site 1178 carries no row token; the ok predicate (every temp tree cleaned) is 1166",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 119,
+   "act": "MOVE_TOKEN",
+   "val": "1178 healthy",
+   "why": "cited 1346 beyond EOF; 1178 process.exit(!payload.ok ? 2 : payload.healthy ? 0 : 3) is the exit-3 site (ok true, healthy false)",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 120,
+   "act": "MOVE_TOKEN",
+   "val": "101 usage",
+   "why": "cited :93 is an AWS key-shape redaction regex in REDACT_PATTERNS, not an exit path; usage errors exit 2 via usage() at 101-105 (process.exit(2) at 104; definition of the usage path)",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 121,
+   "act": "MOVE_TOKEN",
+   "val": "1178 ok",
+   "why": "cited 1346 beyond EOF; the ok-false exit 2 is the 1178 site (!payload.ok ? 2); ok is defined at 1166 as results.every((row) => row.sessionRemoved)",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 122,
+   "act": "MOVE_TOKEN",
+   "val": "1185 fatal",
+   "why": "cited 1363 beyond EOF; 1185 error: { type: \"fatal\", message } is the typed-envelope definition, printed to stderr by console.error at 1183; exit 1 at 1187",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 123,
+   "act": "MOVE_TOKEN",
+   "val": "223 every",
+   "why": "cited :155 is the closing brace of printHelp(); 223 const available = targets.every(... served === true) defines the every-target predicate; exit 0 at 237 (available ? 0 : 2); alt 153 non-Kimi is the help-text mention of the same contract",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 124,
+   "act": "MOVE_TOKEN",
+   "val": "122 durable",
+   "why": "cited :132 is the closing brace of emit(); 122 is a comment (mention) of the durable-write exit 2; enforcement is 126 code = 2 and 131 process.exit(code)",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 125,
+   "act": "MOVE_TOKEN",
+   "val": "166 unsupported",
+   "why": "cited :142 is the closing brace of fail(); 166 is the call site fail(unsupported flag ...) (mention); enforcement is fail() exit 2 at 141",
+   "seat": "Prose10"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 126,
+   "act": "MOVE_TOKEN",
+   "val": "7 exact",
+   "why": "pin 148 is past EOF (kimi.mjs has 147 lines; line 147 is \"}\"). Exit 0 is line 140 \"process.exit(available ? 0 : 2);\", which shares no word with row 281. Line 7 states the same exit-0 condition: \"exit 0 when at least one exact Kimi model\"; \"exact\" is word-bounded on line 7 and in row 281.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 127,
+   "act": "MOVE_TOKEN",
+   "val": "34 unavailable",
+   "why": "pin 32 \"const message = error?.message ?? error;\" carries only \"error\", which matches row 282's \"usage error\" in another sense. The unavailable-evidence wording is line 34 `return \\`global OMP routing unavailable: ${message} (${error.code})\\`;`; fail() at line 74 reaches process.exit(2) at line 28.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 128,
+   "act": "MOVE_TOKEN",
+   "val": "106 unavailable",
+   "why": "pin 104 \"modelIds = runOmpCatalog();\" names no word of row 282. The throw is caught at line 105; line 106 `fail(\\`omp catalog unavailable: ...\\`);` exits 2 via process.exit(2) at line 28.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 129,
+   "act": "MOVE",
+   "val": "1166",
+   "why": "pin 1166 `ok: results.every((row) => row.sessionRemoved),` is the definition of ok and matches the note gloss \"every temp tree removed\" (pin 928 `sessionRemoved: sessionRemoved && workRemoved,` = session and work trees both removed); 1161 is a comment restating it, 1163 is a mere mention (\"Callers must never read ok as health\"), 1178 is an exit use.",
+   "seat": "FixS756"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 130,
+   "act": "MOVE",
+   "val": "1167",
+   "why": "pin 1167 `healthy: results.every((row) => row.served === true && row.failureClass === null),` is the definition matching the gloss \"every route served with no failure class\"; it is the exact text the note quotes for old :1325 (note line 549); 201 is unrelated prose (\"healthy hop\"), 1162/1164 are comments, 1178 is an exit use.",
+   "seat": "FixS756"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 132,
+   "act": "MOVE",
+   "val": "88-90",
+   "why": "pin 88 `ok: true,`, 89 `available: false,`, 90 `targetStatus: \"not-configured\",` are the three fields the sentence lists, all definitions in the not-configured verdict object; the note quotes the same three lines for old :92-94 (note line 476); pin 92-94 is `checkedAt`/`configPath`/`configSha256`, so the current anchor is false.",
+   "seat": "FixS756"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 135,
+   "act": "DEBT",
+   "val": "symbol-absent-from-pin",
+   "why": "grep CREDENTIAL_TOKEN_PATTERN_INDEX over /fast/scratch/kumitate-r36/src: No matches; grep PATTERN_INDEX, TOKEN_PATTERN, TOKEN_INDEX: No matches. Pin probe-redact.mjs:44 is \"// no second scan (PrimeAgent refinement r20 F11).\" (a comment). No token-pattern subset index exists anywhere in pin src; the only pinned credential predicates are containsCredentialShape (scripts/ufo-credential-screen.mjs:18) and containsSensitiveShape (scripts/ufo-credential-screen.mjs:62).",
+   "seat": "FixS757"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 136,
+   "act": "DEBT",
+   "val": "symbol-absent-from-probe-redact",
+   "why": "grep \\bcontainsCredential\\b over pin src: No matches. Pin probe-redact.mjs:49 is \"    pattern.lastIndex = 0;\" (inside function redactOnce, line 47), which the sentence does not describe. The name-prefix match containsCredentialShape (scripts/ufo-credential-screen.mjs:18) is a different, byte-exact function that does NOT strip (its own comment at lines 57-60 says so); the Cf strip-and-rescan lives in redact (probe-redact.mjs:67-73) and containsSensitiveShape (scripts/ufo-credential-screen.mjs:62-67). Lane note lines 184-185 already state the containsCredential export is gone from the live file (116 L).",
+   "seat": "FixS757"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 137,
+   "act": "MOVE",
+   "val": "67",
+   "why": "grep \\bredact\\b in pin probe-redact.mjs: 58 (comment), 67 (definition), 107 and 115 (calls). Pin 67 is \"export function redact(value) {\"; body 67-73 holds the Cf-strip plus re-scan the sentence describes (lines 71-72). Pin 92 is \"}\" closing parseJsonPayload (defined at 75). Prose residual, not an anchor fact: the sentence claims Cf/Mn/Zl/Zp and non-ASCII Zs stripping, but pin strips \\p{Cf} only (probe-redact.mjs:45 \"const FORMAT_CHARS_RE = /\\p{Cf}/gu;\"); fixing that needs a prose edit, not an anchor change.",
+   "seat": "FixS757"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 138,
+   "act": "DEBT",
+   "val": "route-health does not import CREDENTIAL_SHAPE or redact from probe-redact; it hand-mirrors both",
+   "why": "pin 30-33 is its only sibling import (./omp-route-grammar.mjs). Lines 67-71 PARITY: \"standalone copy of ./probe-redact.mjs ... cannot import siblings\". Line 72 defines const CREDENTIAL_SHAPE; line 251 defines function redact(value). grep for probe-redact hits only comment lines 67 and 69. Fix: say \"hand-mirrors\" and cite :72 and :251. Anchor sits at note line 304; the sentence begins at line 295.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 139,
+   "act": "MOVE",
+   "val": "804",
+   "why": "grep spawnCollect\\( in pin scripts/probe-ufo-route-health.mjs: 669 (definition \"function spawnCollect(command, args, options = {}) {\") and 804 (the only call). Pin 804 is \"    result = await spawnCollect(\\\"omp\\\", [\" which is the omp subprocess the sentence's token names; pin 813 is \"      \\\"--no-title\\\",\" (an argument line with no symbol). The definition at 669 does not name omp, so it is not the occurrence described.",
+   "seat": "FixS757"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 140,
+   "act": "MOVE_TOKEN",
+   "val": "804 spawnCollect",
+   "why": "pin 678 is \"}\" closing the catch around spawn() (673-678) and has no token. The omp invocation the row names is line 804 `result = await spawnCollect(\"omp\", [` (call spans 804-827), which carries the row's word.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 141,
+   "act": "MOVE_TOKEN",
+   "val": "804 omp",
+   "why": "pin 813 `\"--no-title\",` is one argument inside the same spawnCollect(\"omp\", [...]) call (804-827) and carries no row word. Line 804 holds \"omp\".",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 142,
+   "act": "TOKEN",
+   "val": "omp",
+   "why": "pin 20 defines CATALOG_COMMAND as the string \"omp models ${PROVIDER} --json --no-extensions\", the catalog command row 311 names. The executed spawn is at line 52.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 143,
+   "act": "MOVE_TOKEN",
+   "val": "52 omp",
+   "why": "pin 51 \"export function runOmpCatalog() {\" has no row-311 word: camelCase runOmpCatalog has no word-bounded omp or catalog. Line 52 `const result = spawnSync(\"omp\", [` is the omp models network call.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 144,
+   "act": "MOVE_TOKEN",
+   "val": "25 route-health",
+   "why": "pin 84 (probeListedModel header) has no row-311 word. The route-health spawn at line 97 `spawnSync(process.execPath, [` carries no row-311 word either (only row 312 names spawnSync). Line 25 `const ROUTE_HEALTH = path.join(HERE, \"probe-ufo-route-health.mjs\");` defines the subprocess script, and route-health is word-bounded there.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 145,
+   "act": "MOVE_TOKEN",
+   "val": "52 spawnSync",
+   "why": "pin 51 (header) has no row-312 word. Line 52 `const result = spawnSync(\"omp\", [` is the spawnSync of omp that row 312 names.",
+   "seat": "Prose11"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 146,
+   "act": "MOVE_TOKEN",
+   "val": "97 execPath",
+   "why": "note L312 `:84` cites the `probeListedModel` header (definition at L84); the sentence's spawn of `process.execPath` (route-health) is inside that function at L97 `spawnSync(process.execPath, [`; `execPath` is on L97 and in row 312, not on L84.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 147,
+   "act": "MOVE_TOKEN",
+   "val": "8 CREDENTIAL_SHAPE",
+   "why": "L8 is the right line (the `CREDENTIAL_SHAPE` regex literal is the pure-regex evidence) but row 313 shares no word with L8, so no token can pass; FIX: row 313 must name `CREDENTIAL_SHAPE`; no line move.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 148,
+   "act": "TOKEN",
+   "val": "redact",
+   "why": "row 313 `| redact |` and L67 definition `export function redact(value) {` both carry `redact`; \"offline\" holds (probe-redact.mjs has no import and no fs/net/child_process use).",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 149,
+   "act": "TOKEN",
+   "val": "reaches",
+   "why": "row 314 quotes \"never reaches a real provider\", which is L10 verbatim (a comment, the quoted source); fake-omp's only imports are node:fs, node:path, node:timers/promises, so no network.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 151,
+   "act": "TOKEN",
+   "val": "CATALOG_TIMEOUT_MS",
+   "why": "pin 22 is `const CATALOG_TIMEOUT_MS = 45_000;`; the note sentence (note 335-337) says \"`:22` fixes `CATALOG_TIMEOUT_MS = 45_000`\", and the token sits on note line 337, inside the \u00b12 window. Line 22 is already the right occurrence; the parser took `ROUTE_TIMEOUT_MS` from the `:23` clause on note line 335 (pin 23: `const ROUTE_TIMEOUT_MS = 250_000;`), so only the paired token is wrong.",
+   "seat": "FixS758"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 152,
+   "act": "MOVE_TOKEN",
+   "val": "67-96 standalone",
+   "why": "anchor is at note L338 (sentence starts L335) and its subject is probe-ufo-route-health.mjs, but bare `:63-65` resolves to probe-token-plan-shared (last path span L335); pin L63-65 of probe-ufo-route-health are the PROBE_CONCURRENCY comment/const; the PARITY copy is L67 (`standalone`) through the REDACT_PATTERNS close L96; FIX: write `scripts/probe-ufo-route-health.mjs:67-96`; the no-import claim holds.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 153,
+   "act": "MOVE_TOKEN",
+   "val": "43 240_000",
+   "why": "L39 is `MAX_SESSION_FILE_BYTES = 64 * 1024 * 1024`; the default probe timeout is the constant `const DEFAULT_TIMEOUT_MS = 240_000;` at L43 (applied at L113); `240_000` occurs once in the file.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 154,
+   "act": "MOVE_TOKEN",
+   "val": "45 16",
+   "why": "L41 is a session-bytes comment; the bound is the constant `const MAX_ROUTES = 16;` at L45 (enforced at L174); `16` is the only word row 346 shares with L45 (value token, weak); FIX: row 346 should also name `MAX_ROUTES`.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 155,
+   "act": "MOVE_TOKEN",
+   "val": "65 PROBE_CONCURRENCY",
+   "why": "L61 is `];` closing FAILURE_CLASSES; the constant `const PROBE_CONCURRENCY = 8;` is L65, passed as mapPool's limit at L1159.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 156,
+   "act": "MOVE_TOKEN",
+   "val": "775 mapPool",
+   "why": "L784 is `  };` (closes the worker closure, no token); the mapPool definition `async function mapPool(items, limit, fn) {` is L775 (called at L1159 with PROBE_CONCURRENCY).",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 157,
+   "act": "MOVE_TOKEN",
+   "val": "44 MAX_BUFFER",
+   "why": "L40 is a session-bytes comment; the constant `const MAX_BUFFER = 8 * 1024 * 1024;` is L44 (8 MiB, enforced per stream at L733/L746 in spawnCollect, passed at L825); the claim holds.",
+   "seat": "Prose12"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 158,
+   "act": "TOKEN",
+   "val": "45_000",
+   "why": "cited L22 is the definition `const CATALOG_TIMEOUT_MS = 45_000;` and note L349 \"catalog timeout | 45_000 ms\" documents that value, so `45_000` occurs on both; sentence true (L22 feeds the spawnSync timeout in runOmpCatalog, L59); `CATALOG_TIMEOUT_MS` is absent from the note, so it is not a usable token.",
+   "seat": "Prose13"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 159,
+   "act": "TOKEN",
+   "val": "250_000",
+   "why": "cited L23 is the definition `const ROUTE_TIMEOUT_MS = 250_000;` and note L350 \"route subprocess timeout | 250_000 ms\" documents that value, so `250_000` occurs on both; sentence true (L23 feeds the spawnSync timeout for ROUTE_HEALTH in probeListedModel, L103).",
+   "seat": "Prose13"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 160,
+   "act": "MOVE",
+   "val": "669",
+   "why": "note 352 documents the function `spawnCollect` (\"re-implements spawnSync semantics over async `spawn`\"). Its definition, the referent, is pin 669: `function spawnCollect(command, args, options = {}) {`. Pin 678 is `    }`, closing the catch block (675-678) inside it. The other occurrence, 804 (`result = await spawnCollect(\"omp\", [`), is a call. Single-line definition anchor; the sentence claims no range.",
+   "seat": "FixS758"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 161,
+   "act": "MOVE",
+   "val": "775",
+   "why": "note 352 names `mapPool` as the bounded helper. Its definition, the referent, is pin 775: `async function mapPool(items, limit, fn) {`. Pin 784 is `  };`, closing the inner `const worker = async () => {` (778-784), not `mapPool`, which closes at 787 `}`. Pin 1159 (`await mapPool(routes, PROBE_CONCURRENCY, ...)`) is the sole call site, a mention rather than the referent.",
+   "seat": "FixS758"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 162,
+   "act": "MOVE",
+   "val": "1008",
+   "why": "note 367 reads \"Live entry: `interpretRouteHealth` at ...:1015\", naming the function entry. Its definition, the referent, is pin 1008: `function interpretRouteHealth(row, { nowMs, expiresAtMs }) {`. Pin 1015 is `  if (!row || typeof row !== \"object\" || Array.isArray(row)) {`, the third guard inside the body (decision-table row \"row not an object\" \u2192 `malformed_record`). Other occurrences: 1053 (comment mention), 1056 (call).",
+   "seat": "FixS758"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ord": 163,
+   "act": "TOKEN",
+   "val": "probe-token-plan-models.verdict.json",
+   "why": "the cited line 35 is the definition the sentence documents, pin 35: `const VERDICT_PATH = path.join(HERE, \"probe-token-plan-models.verdict.json\");` (HERE is the script dir, so \"next to itself\"); the parser's paired `## Round-32 membership removals` is note line 378 in the prior bullet, absent from the sentence (381-386) and from pin 35",
+   "seat": "FixS759"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 1,
+   "act": "MOVE",
+   "val": "533",
+   "why": "pin 533 \"function writeManifest(state, env = process.env) {\" is the definition and the only definition-like line; the note sentence (note lines 102-105) describes writeManifest's whole body 533-560 (registryRevision bump 534-537, validateManifest 538, symlink refusal 541, MANIFEST_TOO_LARGE 543, wx 0600 tmp 545, fsync 548, rename 552, chmod 553, dir fsync 556); cited 548 is \"    fsyncSync(descriptor);\", one step inside that body and carries no writeManifest token; word-bounded tokens on 548 are fsyncSync and descriptor, neither occurs in the sentence (\"fsync\" is only a prefix of fsyncSync), so TOKEN is unavailable",
+   "seat": "FixS460"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 2,
+   "act": "MOVE",
+   "val": "423",
+   "why": "pin 423 \"function readManifest({ create = false, env = process.env } = {}) {\" is the definition; the sentence names readManifest as the bounded read path and 423 reaches the bound through 424 \"  const read = readManifestFile(env);\" (size bound 386-388, readBoundedUtf8(file, MAX_MANIFEST_BYTES) at 413); cited 379 is a comment (\"// Shared integrity + parse for the one manifest file. The status-view cache\") above readManifestFile (382) and holds no readManifest token; \"status\" and \"the\" on 379 pass a word-bounded test but come from the loadStatusView clause and a stop word, so neither is a valid TOKEN",
+   "seat": "FixS460"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 3,
+   "act": "MOVE",
+   "val": "516",
+   "why": "pin 516 \"function loadStatusView(env = process.env) {\" is the definition; the sentence calls loadStatusView the status projection entry; cited 531 is \"}\" closing persistedRegistryRevision (528-531); the other occurrence 2984 \"  const loaded = loadStatusView(env);\" is a call inside getStatus, not the definition",
+   "seat": "FixS460"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 4,
+   "act": "MOVE",
+   "val": "648",
+   "why": "pin 648 \"function acquireOperationLock(env = process.env, timeoutMs = null) {\" is the definition; every sentence claim sits in its body (lockPath \"operation.lock\" 651, LOCK_TIMEOUT_MS via UFO_SIGHTING_LOCK_TIMEOUT_MS 654, mkdirSync(lockPath) seize 664, owner.json flag \"wx\" 673); cited 663 is \"    try {\" with no symbol or sentence token; 770 \"  const release = acquireOperationLock(env, timeoutMs);\" is a call; round-36 value 648 matches the definition chosen from the pin text, not adopted by reference",
+   "seat": "FixS460"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 5,
+   "act": "MOVE",
+   "val": "767",
+   "why": "pin 767 is the definition `function withOperationLock(callback, env = process.env, timeoutMs = null) {`; note 112-113 (\"is the reentrant wrapper every mutating verb uses\") names that function, and pin 781 `if (typeof result?.then === \"function\") return result.finally(finish);` is an async-branch line inside its body that lacks the symbol",
+   "seat": "FixS461"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 6,
+   "act": "MOVE",
+   "val": "2239",
+   "why": "pin 2239 is the definition `function spawnPaneForMission(state, mission, env = process.env) {`; note 115 (\"is the pane creator\") names that function, whose body (2239-2319) runs respawn-pane/split-window and sets `mission.paneId`; pin 2225 is blank",
+   "seat": "FixS461"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 7,
+   "act": "MOVE",
+   "val": "2361",
+   "why": "pin 2361 is the definition `function launchMissionLocked(state, spec, { geometryOverride, env = process.env } = {}) {`; note 116-117 (\"own capacity \u2192 row \u2192 spawn\") matches its body (assertL1Capacity 2365, assertCapacity 2366, assertRunnerCapacity 2368, newMission 2369, createMissionPane 2371); pin 2347 is `  } catch (error) {` inside createMissionPane",
+   "seat": "FixS461"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 8,
+   "act": "MOVE",
+   "val": "2386",
+   "why": "pin 2386 is the definition `async function launchMission(spec, {`; note 117 pairs `:2372` with `launchMission` (the second slash-paired symbol), and launchMission runs launchMissionLocked under withOperationLock (2424-2439); pin 2372 is `}`, closing launchMissionLocked",
+   "seat": "FixS461"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 9,
+   "act": "MOVE",
+   "val": "3616",
+   "why": "`stopMission` is defined at 3616: `function stopMission(identifier, { code = null, signal = null, failure = null } = {}, env = process.env) {`; the cited 3584 is `fail(\"MISSION_NOT_LIVE\", ...)` inside peekMission (def 3576, closer 3590), and carries no `stopMission` token.",
+   "seat": "FixS462"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 10,
+   "act": "MOVE",
+   "val": "3714",
+   "why": "`resumeMissionLocked` is defined at 3714: `function resumeMissionLocked(state, spec, { geometryOverride, env = process.env } = {}) {`; the cited 3682 `  if (runId !== undefined && row.runId !== runId) {` is inside helper resolveExactMission (def 3675, closer 3697), which resumeMissionLocked calls at 3717; no `resumeMissionLocked` token on 3682.",
+   "seat": "FixS462"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 11,
+   "act": "MOVE",
+   "val": "3794",
+   "why": "`resumeMission` is defined at 3794: `async function resumeMission(spec, {`; the cited 3762 `  const nativeKey = nativeSessionKey(mission);` is inside resumeMissionLocked's body (3714-3792); no `resumeMission` token on 3762.",
+   "seat": "FixS462"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 12,
+   "act": "MOVE",
+   "val": "3361",
+   "why": "`completeMission` is defined at 3361: `function completeMission(identifier, note, { dryRun = false, env = process.env } = {}) {`; the cited 3339 `  }` closes an `if` block inside validateRetentionRecord (def 3331, closer 3359); no `completeMission` token on 3339.",
+   "seat": "FixS462"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 13,
+   "act": "MOVE",
+   "val": "1991",
+   "why": "pin 1991 `function reconcileLocked(state, env = process.env) {` is the definition the sentence names; cited pin 1976 `.map((pane) => [\"kill-pane\", \"-t\", pane.id]),` sits in settleWallGeometry (1929-1980) and carries no reconcileLocked token",
+   "seat": "FixS463"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 14,
+   "act": "MOVE",
+   "val": "3604",
+   "why": "pin 3604 `function scheduleReconcile(env = process.env) {` is the definition; its detached spawn (3605-3606, `detached: true,`) matches \"spawns detached __reconcile\"; cited pin 3572 `while (lines.length > 0 && lines[lines.length - 1].trim() === \"\") lines.pop();` sits in stripCapturePadding (3569-3574)",
+   "seat": "FixS463"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 15,
+   "act": "MOVE",
+   "val": "3543",
+   "why": "pin 3543 `function steerMission(identifier, options, env = process.env) {` is the definition; cited pin 3511 `}` closes validateSteerLine (3497-3511)",
+   "seat": "FixS463"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 16,
+   "act": "MOVE",
+   "val": "3576",
+   "why": "pin 3576 `function peekMission(identifier, lines, env = process.env) {` is the definition; cited pin 3544 `const { text, via } = readSteerText(options);` is the first statement of steerMission (3543-3567)",
+   "seat": "FixS463"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 17,
+   "act": "MOVE",
+   "val": "4432",
+   "why": "pin 4432 \"export async function main(argv = process.argv.slice(2), env = process.env) {\" is the definition of main, the symbol the sentence documents as the CLI dispatcher (its verbs __reconcile 4446, surface 4484, launch 4571, complete 4664 all lie inside 4432-4716); pin 4399 \"childEnvironment = sandbox.env;\" sits inside runPane (4369-4430), not main; 4721 \"main().catch(emitFatal);\" is a call, not the definition.",
+   "seat": "FixS464"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 18,
+   "act": "MOVE_TOKEN",
+   "val": "4730 surface",
+   "why": "4714 is the native-trial dispatch field inside the launchMission({...}) argument (pin 4708-4715), not a re-export; the only export-from of surface helpers is the definition at 4730 (export {...} from \"./ufo-sighting-lib/surface.mjs\"; 4725 is a comment and line 30 a plain import); \"surface\" occurs in the sentence and on 4730; the sentence is otherwise TRUE, so only the anchor literal changes (note line 127 :4714 becomes :4730)",
+   "seat": "Prose14"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 34,
+   "act": "MOVE",
+   "val": "116",
+   "why": "pin 116 \"export function emitFatal(error) {\" is the definition of emitFatal, the symbol the sentence documents as the emitter; pin 111 \"  }\" is the close of the SightingError constructor (class 105-112) and holds no emitFatal; 143 \"emitFatal(error);\" is a call inside bootOrEmit, not the definition.",
+   "seat": "FixS464"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 60,
+   "act": "SKIP",
+   "val": "brace-only range end: pin 18 is the closing \"];\" of SURFACE_MODULE_PATHS (13 opens, 14-17 hold the four path.join entries, 18 closes), so :18 is the correct end and carries no checkable token; the sentence is TRUE (four entries, four live lib files); round-36 value 31 is the neighbouring surfaceScriptDigest definition and is not adopted; the checkable token SURFACE_MODULE_PATHS sits on pin 13, the :13 range start",
+   "why": "",
+   "seat": "Prose14"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 67,
+   "act": "MOVE",
+   "val": "325",
+   "why": "pin 325 `export function runLegacyNativeDirect(args) {` is the definition the sentence documents (\"`runLegacyNativeDirect` (`:318`) re-enters the bash shim's `--ufo-sighting-native-direct` seam\"); pin 318 `  process.stdout.write(...);` is the body of `output` (317-319), the previous symbol. The seam literal is on pin 326, inside the body 325-332, so it is not a separate anchor.",
+   "seat": "FixS465"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 68,
+   "act": "MOVE",
+   "val": "317",
+   "why": "pin 317 `export function output(value) {` is the definition the sentence documents (\"`output` / `requireNoArgs` / `usage` (`:310`, `:314`, `:294`) are the CLI helpers re-exported by the entry\"); pin 310 `export function usageForVerb(verb) {` is the previous symbol's definition; `output` on pin 2 is comment prose only (\"the CLI's usage/output helpers\").",
+   "seat": "FixS465"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 69,
+   "act": "MOVE",
+   "val": "321",
+   "why": "pin 321 `export function requireNoArgs(args, command) {` is the definition (second paired anchor `:314`); pin 314 `  return line.startsWith(\"usage:\") ? line : ...` sits inside `usageForVerb` (310-315), the previous symbol. The `usage` token on 314 is a string literal, not the sentence's `requireNoArgs`, so this is not a TOKEN case.",
+   "seat": "FixS465"
+  },
+  {
+   "note": "sighting-wall",
+   "ord": 70,
+   "act": "MOVE",
+   "val": "301",
+   "why": "pin 301 `export function usage() {` is the definition (third paired anchor `:294`); pin 294 `  remove: 9,` sits inside `VERB_USAGE_INDEX` (283-299), the previous symbol. The other `usage` hits (2, 72, 264, 305, 307, 308, 314 are comments or strings; 312 `return usage();` is a call) are mentions, not the definition.",
+   "seat": "FixS465"
+  }
+ ],
+ "path_fixes": [
+  {
+   "note": "remaining-scripts-census",
+   "ord": 27,
+   "path": "scripts/charter-scribe/prompts/kimi-update.prompt.txt"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 28,
+   "path": "scripts/charter-scribe/prompts/kimi-update.prompt.txt"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 43,
+   "path": "scripts/charter-scribe/systemd/charter-scribe.service"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 44,
+   "path": "scripts/charter-scribe/systemd/charter-scribe.service"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 98,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 99,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 100,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 101,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 102,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 103,
+   "path": "scripts/fleet-ledger-rotate.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 229,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 230,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 231,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 232,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 233,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 234,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 235,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 236,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 237,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 238,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 239,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 240,
+   "path": "scripts/project-devin-subagents.mjs"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ord": 241,
+   "path": "scripts/project-devin-subagents.mjs"
+  }
+ ],
+ "initial_anchor_edits": [
+  {
+   "note": "native-trial-launch",
+   "ordinal": 0,
+   "before": "config/ufo.json:79",
+   "after": "config/ufo.json:69"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 1,
+   "before": "scripts/run-omp-native-trial.mjs:831",
+   "after": "scripts/run-omp-native-trial.mjs:838"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 2,
+   "before": "scripts/run-omp-native-trial.mjs:3229",
+   "after": "scripts/run-omp-native-trial.mjs:3234"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 3,
+   "before": ":50",
+   "after": ":56"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 4,
+   "before": ":59",
+   "after": ":65"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 5,
+   "before": ":109",
+   "after": ":115"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 6,
+   "before": ":844",
+   "after": ":851"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 7,
+   "before": ":958",
+   "after": ":965"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 8,
+   "before": ":171",
+   "after": ":176"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 9,
+   "before": ":646",
+   "after": ":639"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 10,
+   "before": ":1282",
+   "after": ":1289"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 11,
+   "before": ":831",
+   "after": ":838"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 15,
+   "before": ":869",
+   "after": ":873"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 16,
+   "before": ":951",
+   "after": ":955"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 17,
+   "before": ":973",
+   "after": ":977"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 23,
+   "before": ":223",
+   "after": ":217"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 26,
+   "before": "scripts/collect-omp-native-handoff-lib/base.mjs:682",
+   "after": "scripts/collect-omp-native-handoff-lib/base.mjs:758"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 27,
+   "before": ":303",
+   "after": ":297"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 29,
+   "before": ":260",
+   "after": ":265"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 30,
+   "before": ":381",
+   "after": ":396"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 34,
+   "before": "scripts/collect-omp-native-handoff-lib/evidence.mjs:275",
+   "after": "scripts/collect-omp-native-handoff-lib/evidence.mjs:276"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 35,
+   "before": ":70",
+   "after": ":71"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 36,
+   "before": ":474",
+   "after": ":476"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 37,
+   "before": ":631",
+   "after": ":633"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 38,
+   "before": ":520",
+   "after": ":522"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 39,
+   "before": ":1003",
+   "after": ":1005"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 40,
+   "before": ":1067",
+   "after": ":1071"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 41,
+   "before": "scripts/collect-omp-native-handoff-lib/policy.mjs:39",
+   "after": "scripts/collect-omp-native-handoff-lib/policy.mjs:66"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 42,
+   "before": ":155",
+   "after": ":173"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 43,
+   "before": ":283",
+   "after": ":301"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 44,
+   "before": ":619",
+   "after": ":637"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 45,
+   "before": ":704",
+   "after": ":722"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 46,
+   "before": ":780",
+   "after": ":798"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 47,
+   "before": ":879",
+   "after": ":897"
+  },
+  {
+   "note": "native-trial-launch",
+   "ordinal": 48,
+   "before": ":908",
+   "after": ":926"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 27,
+   "before": ":15",
+   "after": "scripts/charter-scribe/prompts/kimi-update.prompt.txt:15"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 28,
+   "before": ":16",
+   "after": "scripts/charter-scribe/prompts/kimi-update.prompt.txt:16"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 43,
+   "before": ":13",
+   "after": "scripts/charter-scribe/systemd/charter-scribe.service:13"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 44,
+   "before": ":14",
+   "after": "scripts/charter-scribe/systemd/charter-scribe.service:14"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 79,
+   "before": "scripts/fleet-ledger-read.mjs:282",
+   "after": "scripts/fleet-ledger-read.mjs:227"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 80,
+   "before": "scripts/fleet-ledger-read.mjs:492",
+   "after": "scripts/fleet-ledger-read.mjs:381"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 81,
+   "before": "scripts/fleet-ledger-read.mjs:348",
+   "after": "scripts/fleet-ledger-read.mjs:278"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 85,
+   "before": "scripts/fleet-ledger-read.mjs:129",
+   "after": "scripts/fleet-ledger-read.mjs:124"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 98,
+   "before": ":107",
+   "after": "scripts/fleet-ledger-rotate.mjs:107"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 99,
+   "before": ":392",
+   "after": "scripts/fleet-ledger-rotate.mjs:392"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 100,
+   "before": ":393",
+   "after": "scripts/fleet-ledger-rotate.mjs:393"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 101,
+   "before": ":109",
+   "after": "scripts/fleet-ledger-rotate.mjs:109"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 102,
+   "before": ":591",
+   "after": "scripts/fleet-ledger-rotate.mjs:591"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 103,
+   "before": ":975-978",
+   "after": "scripts/fleet-ledger-rotate.mjs:975-978"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 125,
+   "before": ":83",
+   "after": ":85"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 152,
+   "before": ":58",
+   "after": ":47"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 153,
+   "before": ":60",
+   "after": ":49"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 154,
+   "before": ":128",
+   "after": ":117"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 155,
+   "before": ":136",
+   "after": ":125"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 156,
+   "before": ":139",
+   "after": ":128"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 157,
+   "before": ":221",
+   "after": ":210"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 158,
+   "before": ":322",
+   "after": ":312"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 165,
+   "before": ":61",
+   "after": ":62"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 175,
+   "before": "scripts/local-helper.mjs:332",
+   "after": "scripts/local-helper.mjs:325"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 177,
+   "before": "scripts/local-helper.mjs:165",
+   "after": "scripts/local-helper.mjs:161"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 180,
+   "before": "scripts/local-helper.mjs:139",
+   "after": "scripts/local-helper.mjs:135"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 181,
+   "before": "scripts/local-helper.mjs:132",
+   "after": "scripts/local-helper.mjs:128"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 182,
+   "before": "scripts/local-helper.mjs:135",
+   "after": "scripts/local-helper.mjs:131"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 183,
+   "before": ":146",
+   "after": ":142"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 184,
+   "before": "scripts/local-helper.mjs:263",
+   "after": "scripts/local-helper.mjs:259"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 185,
+   "before": "scripts/local-helper.mjs:298",
+   "after": "scripts/local-helper.mjs:292"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 186,
+   "before": "scripts/local-helper.mjs:307",
+   "after": "scripts/local-helper.mjs:300"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 187,
+   "before": "scripts/local-helper.mjs:309",
+   "after": "scripts/local-helper.mjs:302"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 190,
+   "before": ":360",
+   "after": ":359"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 195,
+   "before": ":223",
+   "after": ":222"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 228,
+   "before": ":99-101",
+   "after": ":194-243"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 229,
+   "before": ":86",
+   "after": "scripts/project-devin-subagents.mjs:86"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 230,
+   "before": ":31",
+   "after": "scripts/project-devin-subagents.mjs:31"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 231,
+   "before": ":33",
+   "after": "scripts/project-devin-subagents.mjs:33"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 232,
+   "before": ":29",
+   "after": "scripts/project-devin-subagents.mjs:29"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 233,
+   "before": ":84",
+   "after": "scripts/project-devin-subagents.mjs:84"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 234,
+   "before": ":114",
+   "after": "scripts/project-devin-subagents.mjs:114"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 235,
+   "before": ":251",
+   "after": "scripts/project-devin-subagents.mjs:251"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 236,
+   "before": ":306",
+   "after": "scripts/project-devin-subagents.mjs:306"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 237,
+   "before": ":247",
+   "after": "scripts/project-devin-subagents.mjs:247"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 238,
+   "before": ":362-379",
+   "after": "scripts/project-devin-subagents.mjs:362-379"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 239,
+   "before": ":98",
+   "after": "scripts/project-devin-subagents.mjs:98"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 240,
+   "before": ":93",
+   "after": "scripts/project-devin-subagents.mjs:93"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 241,
+   "before": ":336",
+   "after": "scripts/project-devin-subagents.mjs:336"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 317,
+   "before": "scripts/ufo-l0-monitor-hook.test.mjs:32",
+   "after": "scripts/ufo-l0-monitor-hook.test.mjs:30"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 318,
+   "before": "scripts/ufo-l0-monitor-hook.test.mjs:37",
+   "after": "scripts/ufo-l0-monitor-hook.test.mjs:36"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 321,
+   "before": "scripts/ufo-l0-monitor-hook.test.mjs:83",
+   "after": "scripts/ufo-l0-monitor-hook.test.mjs:81"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 322,
+   "before": "scripts/ufo-l0-monitor-hook.test.mjs:110",
+   "after": "scripts/ufo-l0-monitor-hook.test.mjs:108"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 324,
+   "before": ":35",
+   "after": ":36"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 330,
+   "before": ":155",
+   "after": ":160"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 331,
+   "before": ":305",
+   "after": ":264"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 332,
+   "before": ":724",
+   "after": ":701"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 333,
+   "before": ":1287",
+   "after": ":1268"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 334,
+   "before": ":1424",
+   "after": ":1442"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 346,
+   "before": "scripts/ufo-mission-activity.mjs:133",
+   "after": "scripts/ufo-mission-activity.mjs:123"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 348,
+   "before": ":27",
+   "after": ":17"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 349,
+   "before": ":67",
+   "after": ":57"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 350,
+   "before": ":160",
+   "after": ":150"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 351,
+   "before": ":162",
+   "after": ":152"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 363,
+   "before": "scripts/ufo-mission-lifecycle.mjs:96",
+   "after": "scripts/ufo-mission-lifecycle.mjs:85"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 368,
+   "before": ":187",
+   "after": ":174"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 369,
+   "before": ":181",
+   "after": ":168"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 370,
+   "before": "scripts/ufo-mission-lifecycle.mjs:215",
+   "after": "scripts/ufo-mission-lifecycle.mjs:202"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 372,
+   "before": "scripts/ufo-mission-lifecycle.mjs:126",
+   "after": "scripts/ufo-mission-lifecycle.mjs:115"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 373,
+   "before": ":131",
+   "after": ":120"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 376,
+   "before": ":262-263",
+   "after": ":262"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 382,
+   "before": ":66",
+   "after": ":81"
+  },
+  {
+   "note": "remaining-scripts-census",
+   "ordinal": 383,
+   "before": ":58",
+   "after": ":59"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 0,
+   "before": "scripts/probe-ufo-route-health.mjs:63-65",
+   "after": "scripts/probe-ufo-route-health.mjs:67"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 1,
+   "before": "probe-ufo-route-health.mjs:1080",
+   "after": "probe-ufo-route-health.mjs:1073"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 6,
+   "before": ":1080",
+   "after": ":1073"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 7,
+   "before": ":1117",
+   "after": ":1110"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 8,
+   "before": ":63-65",
+   "after": ":67"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 9,
+   "before": ":1164",
+   "after": ":1157"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 10,
+   "before": ":103",
+   "after": ":107"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 11,
+   "before": ":97",
+   "after": ":101"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 12,
+   "before": ":678",
+   "after": ":669"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 13,
+   "before": ":813",
+   "after": ":804"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 14,
+   "before": ":61",
+   "after": ":65"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 15,
+   "before": ":784",
+   "after": ":775"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 16,
+   "before": ":39",
+   "after": ":43"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 17,
+   "before": ":40",
+   "after": ":44"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 18,
+   "before": ":41",
+   "after": ":45"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 19,
+   "before": ":45",
+   "after": ":49"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 20,
+   "before": ":506",
+   "after": ":497"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 22,
+   "before": ":939",
+   "after": ":932"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 23,
+   "before": ":904",
+   "after": ":897"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 24,
+   "before": ":1015",
+   "after": ":1008"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 25,
+   "before": ":1037",
+   "after": ":1030"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 26,
+   "before": ":1174",
+   "after": ":1167"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 27,
+   "before": ":1185",
+   "after": ":1178"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 28,
+   "before": ":1191",
+   "after": ":1184"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 54,
+   "before": "scripts/probe-ufo-route-health.mjs:63-65",
+   "after": "scripts/probe-ufo-route-health.mjs:67"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 78,
+   "before": ":994",
+   "after": ":975-992"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 79,
+   "before": ":47",
+   "after": ":45"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 80,
+   "before": ":45",
+   "after": ":43"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 81,
+   "before": ":96",
+   "after": ":107"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 82,
+   "before": ":87",
+   "after": ":101"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 83,
+   "before": ":93",
+   "after": ":104"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 84,
+   "before": ":99",
+   "after": ":108"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 85,
+   "before": "scripts/probe-ufo-route-health.mjs:51-62",
+   "after": "scripts/probe-ufo-route-health.mjs:49-60"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 86,
+   "before": ":507",
+   "after": ":497"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 87,
+   "before": ":904",
+   "after": ":897"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 88,
+   "before": ":1164",
+   "after": ":1008"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 89,
+   "before": ":1186",
+   "after": ":1030"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 90,
+   "before": ":1166",
+   "after": ":1010"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 91,
+   "before": ":1169",
+   "after": ":1013"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 92,
+   "before": ":1175",
+   "after": ":1019"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 93,
+   "before": ":1188",
+   "after": ":1032"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 94,
+   "before": ":1207",
+   "after": ":1051"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 95,
+   "before": ":1217",
+   "after": ":1061"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 96,
+   "before": ":1224",
+   "after": ":1068"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 103,
+   "before": ":943",
+   "after": ":932"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 104,
+   "before": ":950",
+   "after": ":939"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 106,
+   "before": ":1358",
+   "after": ":1184"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 107,
+   "before": ":1363",
+   "after": ":1187"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 114,
+   "before": "scripts/probe-token-plan-shared.mjs:168",
+   "after": "scripts/probe-token-plan-shared.mjs:92"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 115,
+   "before": ":171",
+   "after": ":95"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 116,
+   "before": "scripts/probe-token-plan-kimi.mjs:127",
+   "after": "scripts/probe-token-plan-kimi.mjs:119"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 117,
+   "before": "scripts/probe-token-plan-models.mjs:224",
+   "after": "scripts/probe-token-plan-models.mjs:221"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 118,
+   "before": "scripts/probe-ufo-route-health.mjs:1346",
+   "after": "scripts/probe-ufo-route-health.mjs:1167"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 119,
+   "before": "scripts/probe-ufo-route-health.mjs:1346",
+   "after": "scripts/probe-ufo-route-health.mjs:1178"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 120,
+   "before": "scripts/probe-ufo-route-health.mjs:93",
+   "after": "scripts/probe-ufo-route-health.mjs:101"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 121,
+   "before": ":1346",
+   "after": ":1178"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 122,
+   "before": "scripts/probe-ufo-route-health.mjs:1363",
+   "after": "scripts/probe-ufo-route-health.mjs:1185"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 123,
+   "before": "scripts/probe-token-plan-models.mjs:155",
+   "after": "scripts/probe-token-plan-models.mjs:223"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 124,
+   "before": "scripts/probe-token-plan-models.mjs:132",
+   "after": "scripts/probe-token-plan-models.mjs:122"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 125,
+   "before": ":142",
+   "after": ":166"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 126,
+   "before": "scripts/probe-token-plan-kimi.mjs:148",
+   "after": "scripts/probe-token-plan-kimi.mjs:7"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 127,
+   "before": "scripts/probe-token-plan-kimi.mjs:32",
+   "after": "scripts/probe-token-plan-kimi.mjs:34"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 128,
+   "before": ":104",
+   "after": ":106"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 129,
+   "before": "scripts/probe-ufo-route-health.mjs:1316-1318",
+   "after": "scripts/probe-ufo-route-health.mjs:1166"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 130,
+   "before": ":1325",
+   "after": ":1167"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 132,
+   "before": "scripts/probe-token-plan-kimi.mjs:92-94",
+   "after": "scripts/probe-token-plan-kimi.mjs:88-90"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 137,
+   "before": ":92",
+   "after": ":67"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 139,
+   "before": "scripts/probe-ufo-route-health.mjs:813",
+   "after": "scripts/probe-ufo-route-health.mjs:804"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 140,
+   "before": "scripts/probe-ufo-route-health.mjs:678",
+   "after": "scripts/probe-ufo-route-health.mjs:804"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 141,
+   "before": ":813",
+   "after": ":804"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 143,
+   "before": ":51",
+   "after": ":52"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 144,
+   "before": ":84",
+   "after": ":25"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 145,
+   "before": ":51",
+   "after": ":52"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 146,
+   "before": ":84",
+   "after": ":97"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 152,
+   "before": ":63-65",
+   "after": ":67-96"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 153,
+   "before": "scripts/probe-ufo-route-health.mjs:39",
+   "after": "scripts/probe-ufo-route-health.mjs:43"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 154,
+   "before": ":41",
+   "after": ":45"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 155,
+   "before": ":61",
+   "after": ":65"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 156,
+   "before": ":784",
+   "after": ":775"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 157,
+   "before": ":40",
+   "after": ":44"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 160,
+   "before": "scripts/probe-ufo-route-health.mjs:678",
+   "after": "scripts/probe-ufo-route-health.mjs:669"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 161,
+   "before": ":784",
+   "after": ":775"
+  },
+  {
+   "note": "route-probe-cluster",
+   "ordinal": 162,
+   "before": "scripts/probe-ufo-route-health.mjs:1015",
+   "after": "scripts/probe-ufo-route-health.mjs:1008"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 1,
+   "before": "scripts/ufo-sighting.mjs:548",
+   "after": "scripts/ufo-sighting.mjs:533"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 2,
+   "before": "scripts/ufo-sighting.mjs:379",
+   "after": "scripts/ufo-sighting.mjs:423"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 3,
+   "before": "scripts/ufo-sighting.mjs:531",
+   "after": "scripts/ufo-sighting.mjs:516"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 4,
+   "before": "scripts/ufo-sighting.mjs:663",
+   "after": "scripts/ufo-sighting.mjs:648"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 5,
+   "before": "scripts/ufo-sighting.mjs:781",
+   "after": "scripts/ufo-sighting.mjs:767"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 6,
+   "before": "scripts/ufo-sighting.mjs:2225",
+   "after": "scripts/ufo-sighting.mjs:2239"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 7,
+   "before": "scripts/ufo-sighting.mjs:2347",
+   "after": "scripts/ufo-sighting.mjs:2361"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 8,
+   "before": ":2372",
+   "after": ":2386"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 9,
+   "before": "scripts/ufo-sighting.mjs:3584",
+   "after": "scripts/ufo-sighting.mjs:3616"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 10,
+   "before": ":3682",
+   "after": ":3714"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 11,
+   "before": ":3762",
+   "after": ":3794"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 12,
+   "before": ":3339",
+   "after": ":3361"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 13,
+   "before": ":1976",
+   "after": ":1991"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 14,
+   "before": ":3572",
+   "after": ":3604"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 15,
+   "before": ":3511",
+   "after": ":3543"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 16,
+   "before": ":3544",
+   "after": ":3576"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 17,
+   "before": "scripts/ufo-sighting.mjs:4399",
+   "after": "scripts/ufo-sighting.mjs:4432"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 18,
+   "before": "scripts/ufo-sighting.mjs:4714",
+   "after": "scripts/ufo-sighting.mjs:4730"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 34,
+   "before": ":111",
+   "after": ":116"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 67,
+   "before": ":318",
+   "after": ":325"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 68,
+   "before": ":310",
+   "after": ":317"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 69,
+   "before": ":314",
+   "after": ":321"
+  },
+  {
+   "note": "sighting-wall",
+   "ordinal": 70,
+   "before": ":294",
+   "after": ":301"
+  }
+ ],
+ "remaining_debt_and_unchecked": [
+  [
+   "remaining-scripts-census.md",
+   0,
+   "scripts/proxy-check.mjs:219",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   1,
+   "scripts/proxy-check.mjs:355",
+   "RE_REGISTRY_ROW",
+   "debt:dead"
+  ],
+  [
+   "remaining-scripts-census.md",
+   2,
+   "scripts/proxy-check.mjs:358",
+   "yes",
+   "debt:dead"
+  ],
+  [
+   "remaining-scripts-census.md",
+   92,
+   "scripts/fleet-ledger-read.mjs:498",
+   "usageError",
+   "debt:false"
+  ],
+  [
+   "remaining-scripts-census.md",
+   99,
+   "scripts/fleet-ledger-rotate.mjs:392",
+   "<segment>.<sha256>.cold",
+   "debt:false"
+  ],
+  [
+   "remaining-scripts-census.md",
+   278,
+   ":2136",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   313,
+   ":1733",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   371,
+   ":227",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   384,
+   ":85-103",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   408,
+   "scripts/ufo-stale-watchdog.test.mjs:16-22",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   472,
+   ":234",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   473,
+   ":246",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   474,
+   ":260",
+   null,
+   "unchecked"
+  ],
+  [
+   "remaining-scripts-census.md",
+   475,
+   ":560",
+   "agentId",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   21,
+   ":200",
+   "ROUTE_TOKEN",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   76,
+   "scripts/probe-ufo-route-health.mjs:209",
+   "ROUTE_TOKEN",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   97,
+   ":1021",
+   "STRANDED_OUTCOMES",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   98,
+   ":1102",
+   "outcome",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   99,
+   ":79",
+   "RouteHealthError",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   100,
+   ":74",
+   "code",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   101,
+   ":994",
+   "state_path_symlink",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   102,
+   ":1266",
+   "credential_shaped_state",
+   "debt:dead"
+  ],
+  [
+   "route-probe-cluster.md",
+   105,
+   ":1355-1363",
+   null,
+   "unchecked"
+  ],
+  [
+   "route-probe-cluster.md",
+   108,
+   "scripts/probe-token-plan-shared.mjs:40",
+   "PROBE_SHARED_ERROR_CODES",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   109,
+   ":121",
+   "catalog_timeout",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   110,
+   ":139",
+   "catalog_exit",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   111,
+   "scripts/probe-redact.mjs:110",
+   "RedactError",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   112,
+   ":120",
+   "empty_payload",
+   "debt:dead"
+  ],
+  [
+   "route-probe-cluster.md",
+   113,
+   ":130",
+   "invalid_json",
+   "debt:dead"
+  ],
+  [
+   "route-probe-cluster.md",
+   135,
+   ":44",
+   "CREDENTIAL_TOKEN_PATTERN_INDEX",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   136,
+   ":49",
+   "containsCredential",
+   "debt:false"
+  ],
+  [
+   "route-probe-cluster.md",
+   138,
+   "scripts/probe-ufo-route-health.mjs:30",
+   null,
+   "unchecked"
+  ],
+  [
+   "route-probe-cluster.md",
+   150,
+   "scripts/probe-token-plan-shared.mjs:23",
+   null,
+   "unchecked"
+  ],
+  [
+   "sighting-wall.md",
+   60,
+   ":18",
+   null,
+   "unchecked"
+  ]
+ ]
+}

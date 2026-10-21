@@ -1,0 +1,18 @@
+ATTACK Check57 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=3 refuted=1 unverified=0
+
+OBS route-probe-cluster#135 agree | `scripts/probe-redact.mjs:44` — `// no second scan (PrimeAgent refinement r20 F11).` | Note line 598 marks this anchor `debt:false` and says the symbol is absent; the cited line is a comment, not the claimed token definition. This is honestly not claimed true.
+OBS route-probe-cluster#136 agree | `scripts/probe-redact.mjs:49` — `pattern.lastIndex = 0;` | Note line 599 marks `containsCredential` `debt:false`; the function is absent and line 49 is inside `redactOnce`, as the ledger says. Do not count the prose as true.
+OBS route-probe-cluster#137 refute | `scripts/probe-redact.mjs:67` — `export function redact(value) {`; line 45 is `const FORMAT_CHARS_RE = /\p{Cf}/gu;` and line 72 re-scans after that regex | The definition and Cf-only re-scan are real, but note line 299 claims it strips Cf/Mn/Zl/Zp and non-ASCII Zs splitters. The pinned implementation strips only Cf before re-scanning; the broader true-marked prose is stale.
+OBS route-probe-cluster#139 agree | `scripts/probe-ufo-route-health.mjs:804` — `result = await spawnCollect("omp", [` | This is the actual OMP call site (args include `--mode`, `--model`, and the route); it supports the note's network-posture claim. Old revision line 813 is the same call site, so 813→804 is a genuine move.
+
+Smallest correction (no production edit made): split note line 299 so the absent `containsCredential` claim remains explicitly debt-marked, and the true `redact` clause says it strips Cf splitters only and re-scans.
+
+Evidence and measured revisions:
+- Lane note/pin measured at `c938c068f4dbf356c0884c2121bbfe087fbe3caf`; upstream source pinned at `31c465f15669f744848bd9f5d56191c5085670f7`.
+- Command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/route-probe-cluster.md | awk 'NR>=293&&NR<=318{printf "%d\t%s\n", NR, $0}'` → observed lines 297-304 describe the token-index, `containsCredential`, and `redact` claims; lines 310-313 include the posture rows.
+- Command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/probe-redact.mjs | awk '{printf "%d\t%s\n", NR, $0}'` → observed 44 comment; 45 `FORMAT_CHARS_RE = /\p{Cf}/gu`; 67 `export function redact(value)`; 72 re-scan after `FORMAT_CHARS_RE`.
+- Command: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/probe-ufo-route-health.mjs | awk '(NR>=660&&NR<=676)||(NR>=795&&NR<=830){printf "%d\t%s\n", NR, $0}'` → observed `spawnCollect` definition at 669 and `spawnCollect("omp", [` call at 804.
+- Command: `git -C /fast/scratch/kumitate-r36/src show 964f443ee53df0ce06bd689af01f0dea031b01f9:scripts/probe-ufo-route-health.mjs | awk 'NR>=806&&NR<=822{printf "%d\t%s\n", NR, $0}'` → observed line 813 `result = await spawnCollect("omp", [`; this is the old call site.
+- Command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:.ufo/pins/anchor-truth.json | jq -c '.notes["corpus/knowledge/route-probe-cluster.md"].entries[] | select(.ord == 135 or .ord == 136 or .ord == 137 or .ord == 139)'` → ordinals 135/136/137/139 resolve respectively to lines 44/49/67/804 with expected statuses debt:false/debt:false/true/true.
+
+Residual risk: this is a static anchor/prose review only; no runtime behavior or gate was exercised. Verification gap: no LSP device was exposed in the available tool surface; conclusions above use committed note and pinned source bytes, not grep as semantic proof.

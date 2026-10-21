@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+"""Re-run committed anchor-truth inputs only after verifying every pinned input digest.
+Usage: python3 replay.py.txt LANE SOURCE_CLONE [expected.json]
+Writes only a TemporaryDirectory clone. No checkout/index mutation in LANE or SOURCE_CLONE.
+"""
+import hashlib,json,os,pathlib,subprocess,sys,tempfile
+lane,source=sys.argv[1:3]
+expected=pathlib.Path(sys.argv[3]) if len(sys.argv)>3 else pathlib.Path(__file__).with_name('expected.json')
+e=json.loads(expected.read_text())
+env={k:v for k,v in os.environ.items() if not k.startswith('GIT_')}
+env.update(GIT_OPTIONAL_LOCKS='0',GIT_TERMINAL_PROMPT='0')
+def git(repo,*args):
+    return subprocess.run(['/usr/bin/git','-C',repo,*args],capture_output=True,check=True,env=env).stdout
+for repo,revision,inputs in [(lane,e['measured_revision'],e['input_digests']),
+                             (source,e['source_revision'],e['source_digests'])]:
+    for p,digest in inputs.items():
+        actual=hashlib.sha256(git(repo,'show',revision+':'+p)).hexdigest()
+        if actual!=digest:
+            print('FROZEN: snapshot_tampered '+p+' expected='+digest+' actual='+actual)
+            sys.exit(2)
+print('FROZEN: digests_verified inputs='+str(len(e['input_digests']))+' source='+str(len(e['source_digests'])))
+with tempfile.TemporaryDirectory(prefix='kumitate-truth-frozen-') as temp:
+    dst=str(pathlib.Path(temp)/'lane')
+    subprocess.run(['/usr/bin/git','clone','-q','--no-hardlinks',lane,dst],check=True,env=env)
+    git(dst,'checkout','-q','--detach',e['measured_revision'])
+    r=subprocess.run(['node','scripts/anchor-truth.mjs','--src',source,'--base',e['baseline_revision']],cwd=dst,env=env,capture_output=True,text=True,timeout=120)
+    print(r.stdout,end='')
+    if r.stderr: print(r.stderr,file=sys.stderr,end='')
+    verdict=r.stdout.rstrip().split('\n')[-1]
+    if r.returncode!=e['expected_exit'] or verdict!=e['expected_verdict']:
+        print('FROZEN: verdict_mismatch exit='+str(r.returncode)); sys.exit(1)
+print('FROZEN: MATCH revision='+e['measured_revision'])

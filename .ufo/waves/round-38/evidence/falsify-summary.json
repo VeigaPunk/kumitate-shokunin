@@ -1,0 +1,117 @@
+{
+ "candidate_revision": "c938c068f4dbf356c0884c2121bbfe087fbe3caf",
+ "dispatch_count": 88,
+ "reports": 45,
+ "dead_seats": [
+  "Check03",
+  "Check04",
+  "Check05",
+  "Check06",
+  "Check07",
+  "Check09",
+  "Check12",
+  "Check14",
+  "Check15",
+  "Check20",
+  "Check22",
+  "Check23",
+  "Check24",
+  "Check25",
+  "Check30",
+  "Check32",
+  "Check35",
+  "Check38",
+  "Check39",
+  "Check40",
+  "Check41",
+  "Check42",
+  "Check48",
+  "Check50",
+  "Check54",
+  "Check55",
+  "Check56",
+  "Check58",
+  "Check60",
+  "Check63",
+  "Check65",
+  "Check66",
+  "Check67",
+  "Check70",
+  "Check73",
+  "Check75",
+  "Check76",
+  "Check78",
+  "Check79",
+  "CritNoHarm",
+  "SentFinal",
+  "VerifyIndependent",
+  "VerifyRecords"
+ ],
+ "roles": {
+  "scout": 27,
+  "reviewer": 55,
+  "mutation-tester": 3,
+  "critic": 1,
+  "sentinel": 1,
+  "connector": 1
+ },
+ "reported_check_totals": {
+  "ids": 171,
+  "agreed": 158,
+  "refuted": 13,
+  "unverified": 0
+ },
+ "refutations": [
+  [
+   "Check21",
+   "OBS remaining-scripts-census#156 refute | `lean_frozen_cache_digest() {` | The symbol is correctly identified, but \u201cso a workspace that needs the network is never frozen\u201d is not guaranteed: lines 130\u2013135 key the cache on Cargo.lock/Cargo.toml sizes and mtimes; lines 148\u2013156 let a matching entry skip preflight, with TTL defaulting to 0; lines 172\u2013175 then inject `--frozen` for a cached success. A same-size/mtime manifest change can reuse that success. Smallest correction: replace the guarantee with \u201cthe helper supplies a stat-based cache key for the frozen preflight; a matching successful cache"
+  ],
+  [
+   "Check21",
+   "OBS remaining-scripts-census#157 refute | `max_age_s=$(( ${LEAN_CARGO_SLOT_MAX_AGE_MIN:-720} * 60 ))` | This line sets the cutoff (720 minutes by default) but does not reap slots; age/lock checks and removal are at `:218-219`. Smallest correction: change `:210` to `:208-219` so the anchor covers both the cutoff and the actual reap."
+  ],
+  [
+   "Check34",
+   "OBS #383 refute | `scripts/ufo-mission-observation.mjs:59` \u2014 `? [task?.route, task?.lastDispatch?.route]` | This does put configured route first for queued tasks, but the full sentence also says \u201cnon-string or blank candidates fall through.\u201d Blank strings pass the `typeof route === \"string\"` selection at :63; `currentActivity` then maps sanitized blank text to `fallbackActivity(lifecycle)` (activity module :90-94), not the next candidate. Smallest correction: \u201cnon-string candidates fall through; blank values use the phase fallback.\u201d"
+  ],
+  [
+   "Check49",
+   "OBS route-probe-cluster#90 refute | `1010:    return { status: \"unknown\", available: false, reason: \"invalid_validity_window\" };` | This is a real inner-helper guard, but not a reachable persisted-health reason: the sole in-file caller passes finite `nowMs` and `expiresAtMs` only after the outer checks at 1037-1044. Remove it from the live persisted-reason list or explicitly label the branch unreachable on this path."
+  ],
+  [
+   "Check49",
+   "OBS route-probe-cluster#91 refute | `1013:    return { status: \"stale\", available: false, reason: \"expired\" };` | The outer persisted interpreter returns on expiry at 1046-1047 before the row mapping at 1056, so this inner duplicate is unreachable in the described flow. The actual persisted-expiry citation is `:1047`, not `:1013`."
+  ],
+  [
+   "Check52",
+   "OBS route-probe-cluster#103 refute | 932: `function assertNoSecrets(value) {` | The note sentence at 250\u2013252 claims this gate \u201cdefaults to code `credential_shaped_output`\u201d; the function accepts only `value` and throws an uncoded `Error` at 939. Matching the real symbol does not make that code-default prose true."
+  ],
+  [
+   "Check57",
+   "OBS route-probe-cluster#137 refute | `scripts/probe-redact.mjs:67` \u2014 `export function redact(value) {`; line 45 is `const FORMAT_CHARS_RE = /\\p{Cf}/gu;` and line 72 re-scans after that regex | The definition and Cf-only re-scan are real, but note line 299 claims it strips Cf/Mn/Zl/Zp and non-ASCII Zs splitters. The pinned implementation strips only Cf before re-scanning; the broader true-marked prose is stale."
+  ],
+  [
+   "Check68",
+   "OBS remaining-scripts-census#303 refute | `const stripped = text.replace(FORMAT_CHARS_RE, \"\");` | The full note sentence says invisible `Cf/Mn/Zs` characters split a shape. The pinned definition at L61 is only `/\\p{Cf}/gu`, and L65-68 strip only Cf; the ASCII fold at L23 and literal regex do not remove Mn or Zs. The use is correctly anchored, but the sentence overclaims what this path handles. Smallest correction: change `Cf/Mn/Zs` to `Cf` in that sentence."
+  ],
+  [
+   "Check71",
+   "OBS remaining-scripts-census#437 refute | `assert.equal(sha(readFileSync(join(capState, row.head.path))), expectHead, \"head evidence bytes match the row\");` | The cited range `:197-205` verifies head bytes and tail digest metadata (`:202`) but omits the actual tail-file readback at `:206` (`assert.equal(sha(readFileSync(join(capState, row.tail.path))), expectTail, \"tail evidence bytes match the row\");`). Smallest correction: extend this anchor to `:197-206` to substantiate head/tail preservation."
+  ],
+  [
+   "Check74",
+   "OBS route-probe-cluster#8 refute | `// PARITY: this table is a standalone copy of ./probe-redact.mjs.` | The full note sentence at 106\u2013107 adds that the origin suite can stage \u201cthis one file alone.\u201d That is stale: the pinned probe imports `./omp-route-grammar.mjs` (`:31\u201333`), and its test fixture explicitly copies that sibling too (`tests/route-probes.test.js:32\u201337`). The comment's standalone-redaction token does not establish a dependency-free script."
+  ],
+  [
+   "Check74",
+   "OBS route-probe-cluster#43 refute | `// Probe whether the Alibaba Token Plan serves the DeepSeek/Qwen models it is` / `// chartered for.` | The cited header only describes chartered DeepSeek/Qwen serving; generic `serves` does not evidence the note's configured non-Kimi filter or \u201cfails unless every target serves.\u201d The code does implement those semantics elsewhere (`:182\u2013190`, `:223\u2013237`), so the prose is supportable but this final anchor is mispaired/too weak."
+  ]
+ ],
+ "supplements": [
+  "Check21-supplement",
+  "Check49-supplement",
+  "Check52-supplement",
+  "Check71-supplement"
+ ],
+ "slot_release": "released lane=kumitate wave=r38-falsify"
+}

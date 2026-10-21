@@ -1765,3 +1765,17 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   ConnSibling failed with the Codex whitespace-only tool-argument error (not replaced).
   This exceeds Main's narrower 88-seat context, but fits user prompt 64–100; disclosed.
   L1 holds planner seat; final evidence and falsify results are separate appended receipts.
+
+- 2026-10-21 — round 38 falsify integration receipt (append-only). Candidate production
+  `c938c068f4dbf356c0884c2121bbfe087fbe3caf`; fixed oracle unchanged since `e18ff1af`.
+  Falsify88 returned45 reports and43 failures (9 Codex capacity,34 Zai429), never replaced;
+  slot released.40 completed anchor/prose groups judged171ids (158agree,13refute). One refute
+  is explicitly marked #92 debt;12 actionable findings corrected: cache guarantee/reap
+  range, uncoded Error, head/tail readback range, blank-route fallback, stale main intro,
+  persisted-reason reachability/expiry, Cf-only sanitizers, staging dependency, configured
+  model/every-target range. Five spans and one reviewed token updated; population811 and
+  truth777/debt21/unchecked13 unchanged, no true expectation lost. Q18 records semantic checks.
+  Pairing, debt-growth and override mutants all failed the named selftests and restored22/22.
+  Check27 misroot recovered byte-exact, cmp equal sha256294e0cee…, fleet stray removed.
+  Candidate captures are preserved under candidate-c938; final receipts bind the corrective
+  production revision, with unchanged oracle and explicit coordinate/prose deltas.

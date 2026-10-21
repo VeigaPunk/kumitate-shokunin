@@ -1,0 +1,3 @@
+SUPPLEMENT Check52 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf | source pin=31c465f15669f744848bd9f5d56191c5085670f7
+Pinned `scripts/probe-ufo-route-health.mjs` lines 932–939 confirm the revised wording: `function assertNoSecrets(value) {` accepts only `value`, and line 939 is `throw new Error("refusing to emit credential-shaped route-health output");`. The throw creates a plain `Error` with the message only; it does not set or pass an error code.
+This is source-side confirmation of “throws an uncoded Error with message.” Original `Check52.md` is preserved; no production files were edited.

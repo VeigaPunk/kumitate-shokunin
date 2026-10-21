@@ -1,0 +1,26 @@
+ATTACK ConnPopulation measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf registered=4 differing_spans=6 scope_explicit=yes
+
+Axes: coverage:script-layer; operability.
+
+## Evidence
+- Own scratch clone HEAD was `c938c068f4dbf356c0884c2121bbfe087fbe3caf`; the pinned source tree reports `31c465f15669f744848bd9f5d56191c5085670f7`.
+- The final pin contains four note keys: remaining-scripts-census=521, route-probe-cluster=165, sighting-wall=71, native-trial-launch=54 (811 total).
+- Exact command: `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` from the scratch clone at c938.
+- Observed output: `TRUTH note=corpus/knowledge/remaining-scripts-census.md anchors=521 true=507 debt=5 unchecked=9`; `TRUTH note=corpus/knowledge/route-probe-cluster.md anchors=165 true=146 debt=16 unchecked=3`; `TRUTH note=corpus/knowledge/sighting-wall.md anchors=71 true=70 debt=0 unchecked=1`; `TRUTH note=corpus/knowledge/native-trial-launch.md anchors=54 true=54 debt=0 unchecked=0`; `TRUTH_TOTAL anchors=811 true=777 debt=21 unchecked=13`; `TRUTH: CLEAN (notes=4 anchors=811 true=777 debt=21 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)`.
+- Exact legacy command: `node scripts/claims-check.mjs --fidelity --fidelity-ratchet .ufo/pins/fidelity-ratchet.json` from the same clone.
+- Observed FIDELITY rows for the same four note names: native-trial-launch anchors=52/nonok=6; remaining-scripts-census=507/nonok=36; route-probe-cluster=80/nonok=11; sighting-wall=71/nonok=7. Subtotal=710; exact total line: `FIDELITY_TOTAL anchors=1574 ok=796 elsewhere=85 absent=31 dead=167 noid=495 nonok=116`; verdict: `FIDELITY: CLEAN (notes=20 anchors=1574 src-rev=31c465f15669)`.
+- These populations are not interchangeable: `anchor-truth` inventories all recognized backticked path/line spans in four registered notes; `claims-check` FIDELITY walks covered member-section chunks across 20 notes, uses adjacency pairing, and ratchets `nonok` counts (pin total=200). Its CLEAN is not per-anchor truth; the measured total still has 495 noid, 167 dead, 116 nonok.
+- The committed `ExecTruthIndep` report says 817 anchors total and route-probe-cluster=171; the other three note counts equal L1 (521+71+54). It was an independent round-open (753446a829edda519c75777ce95888443f51fa94 note bytes) diagnostic, not a new c938 final-gate measurement.
+- Route comparison: 171−165=6 net. Exec rows route-probe-cluster#28–#35 cite eight spans in route note lines 130–135: `scripts/probe-token-plan-shared.mjs:19-20`, `:22`, `:23`, `:51`, `:84`, `:25`, `:30`, `:39`. The c938 `anchor-truth` span regex does not handle escaped delimiters; the `CATALOG_COMMAND = \`...\`` inline template-literal line 128 disrupts parsing of that block, and `parseNote` yields no anchors there.
+- The net is not six one-for-one omitted IDs: L1 also recognizes two basename-only spans at route note line 88 (`probe-ufo-route-health.mjs:1080`, `probe-token-plan-models.mjs:40`) which ExecTruthIndep does not list (zero report rows at note_line=88); 8−2=6. The precise reason the independent parser omits those two is not documented in its report. The multiline `:1217` row (#102) is present in both populations but its independent paired symbol contains a newline, showing another span/pairing-dialect difference, not an extra count.
+- Contract/code contradiction: pinned gate-design.md says escaped backticks are honoured and spans may wrap lines; c938 `anchor-truth.mjs` uses `SPAN = /`([^`\n]+)`/gu` and joins physical paragraph lines with spaces, but has no escape-aware delimiter handling. Treat the six-count discrepancy as a parser-boundary warning, not a reason to adopt 817 or merge populations.
+- Scope is explicit: pinned SKILL.md calls the four-note, 811-anchor gate the checklist truth gate and labels FIDELITY diagnostic over 20 notes; round-38 lesson says the other 16 notes and broader prose claims are held, and token-on-line checks do not prove prose semantics, completeness, or definition-vs-mention intent.
+
+## Proposed move
+Keep a versioned, read-only population crosswalk with separate `(revision, instrument, note set, extraction rule, count)` fields and a hermetic fixture for the escaped-template/multiline examples before any later parser change. Preserve c938’s authority and four-note scope; do not treat 710, 811, or 817 as comparable totals or auto-re-pin from the independent report.
+
+## Risks
+The escaped-span discrepancy may conceal real cited locators from the new parser. Fixing it would change the anchor sequence and may require a reviewed pin update; silently adopting the independent count would risk ordinal drift and violate the frozen open-true floor. Conversely, presenting 710/1574 without its FIDELITY contract could falsely imply the current gate covers those populations.
+
+## Verification
+At c938 in the own scratch clone, the two exact commands and observed outputs above reproduced the final 811/777/21/13 gate result and legacy 710-in-four / 1574-in-20 diagnostic. `git rev-parse HEAD` printed c938; `git status --porcelain` was empty. No tests/build/lint/formatter were run.

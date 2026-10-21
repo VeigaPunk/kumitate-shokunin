@@ -1,0 +1,22 @@
+ATTACK MutDebt measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf selftest_killed=yes handpin_rejected=yes
+- Axes: operability; finding-ID specificity; scratch isolation and exact-byte restoration.
+- All runs used cwd `/fast/scratch/kumitate-r38-falsify/MutDebt/lane`, cloned and detached at the measured revision; source/pin originals were read using `git show c938c068f4dbf356c0884c2121bbfe087fbe3caf:<path>`. Upstream stayed read-only at `31c465f15669f744848bd9f5d56191c5085670f7`.
+- Runtime: Node `v24.21.0`, Git `2.56.0`; tool installs/updates: none.
+- Code mutant: comment out ONLY the two `compareBase` DEBT_GREW pushes at `scripts/anchor-truth.mjs:328,334`; CHECKED_SHRANK at line 329 stays intact.
+- Identical bounded selftest command, pristine/mutant/restored: `env TMPDIR=/fast/scratch/kumitate-r38-falsify/MutDebt/tmp timeout 120s node scripts/anchor-truth.mjs --selftest`.
+- Pristine selftest: exit 0; `PASS AT07 debt flipped into the pin by hand reads DEBT_GREW against --base`; `ANCHOR_TRUTH_SELFTEST: 22/22 pass`; `VERDICT: PASS`.
+- Mutant selftest: exit 1; `FAIL AT07 debt flipped into the pin by hand reads DEBT_GREW against --base`; detail `TRUTH: DRIFT (1 findings: CHECKED_SHRANK base=71a992288150c6bbb31d80aa242d40f8e998f22f src-rev=9bf1489298cf)`; `ANCHOR_TRUTH_SELFTEST: 21/22 pass`; `VERDICT: FAIL`.
+- Restored selftest: exit 0; PASS AT07; `ANCHOR_TRUTH_SELFTEST: 22/22 pass`; `VERDICT: PASS`. AT08 passed all three runs. Verdict: KILLED; AT07 requires DEBT_GREW specifically rather than accepting residual CHECKED_SHRANK drift.
+- Script SHA-256 pristine/restored: `ecb22db008ae4a800e88d86746acedb2820bd69b9166b105915ec03f0f5bc543`; mutant: `9d8c848ff61fbd13bc2a4ce3cff68f5997f71288302b5cc1a794b974bf60ff16`.
+- Hand-pin probe used the restored pristine gate and its scratch copy of the committed final `.ufo/pins/anchor-truth.json`; deterministic sample: first final true entry, `corpus/knowledge/remaining-scripts-census.md#3`, raw `scripts/charter-scribe/config.json:2`.
+- Changed only token `\"charter-scribe\"` → `MUTDEBT_SENTINEL_ABSENT_R38` and expect `true` → `debt:false`; preserved source `pair`, key, ordinal and coordinates, matching AT07's hand-edit convention. This key is also true in the committed truth-floor pin at `e18ff1af3392e3823227644c977c237737fe65c9`.
+- Source evidence: `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/charter-scribe/config.json` returned line 2 `  "worker": "charter-scribe",`; the replacement token is absent.
+- Identical bounded hand-pin command, pristine/mutant/restored: `env TMPDIR=/fast/scratch/kumitate-r38-falsify/MutDebt/tmp timeout 120s node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9`.
+- Pristine hand-pin baseline: exit 0; `TRUTH_TOTAL anchors=811 true=777 debt=21 unchecked=13`; `TRUTH: CLEAN (notes=4 anchors=811 true=777 debt=21 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)`.
+- Mutant hand-pin: exit 1; `TRUTH  DEBT_GREW  corpus/knowledge/remaining-scripts-census.md#3  scripts/charter-scribe/config.json|"charter-scribe"|0 true at base, debt:false now`.
+- Mutant summary: `TRUTH_TOTAL anchors=811 true=776 debt=22 unchecked=13`; `TRUTH: DRIFT (1 findings: DEBT_GREW base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)`. Valid schema reached normal checking, not fail-closed.
+- Hand-pin verdict: REJECTED by matching-base-true-key DEBT_GREW, not count growth or CHECKED_SHRANK: this note's mutant debt 6 remains below base 77 and true 506 remains above base 356. No other findings occurred.
+- Restored hand-pin: exit 0; `TRUTH_TOTAL anchors=811 true=777 debt=21 unchecked=13`; the same CLEAN verdict as pristine.
+- Pin SHA-256 pristine/restored: `e3456b9183bd36548c939d1241505c91644169d902e68a731a6d5472e195ef49`; mutant: `654753f230abe7c33faac26dc0164e3af60cf4b3245b9d4700057e783dac5c88`.
+- Both mutations were restored in finally blocks; direct byte comparisons against committed originals returned `exact=True`. No production source, pin, note, index, or lane metadata was modified.
+- Raw commands, exits, full stdout/stderr, entry metadata and hashes: `/fast/scratch/kumitate-r38-falsify/MutDebt/evidence.json`; individual pristine/mutant/restored detector captures are alongside it. Probe complete; no integration or production verdict performed.

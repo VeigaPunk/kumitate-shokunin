@@ -1,0 +1,11 @@
+ATTACK Check37 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=1 agreed=1 refuted=0 unverified=0
+
+OBS remaining-scripts-census#502 agree | `245: && STABLE_REFUSAL_REASONS.has(refusal.reason)` | This is the actual suppression use: lines 244–249 additionally require matching signature, non-future refusal time, and an unexpired quiet window before returning `skip_suppressed`. The cited `:282` builds the compared signature from `rowSignature(row)` plus `manifestClass(row.runId)`; line 64 defines the set as only `mission_stale_registered`, so transient refusal reasons cannot pass the suppression predicate. The note's stable-refusal prose is current and accurately anchored; no wrong-symbol or generic-token laundering observed.
+
+Note read at lane revision c938c068f4dbf356c0884c2121bbfe087fbe3caf with `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/remaining-scripts-census.md | awk 'NR>=749&&NR<=751 {printf "%d: %s\n", NR, $0}'`. Line 751 says: “`STABLE_REFUSAL_REASONS` = {`mission_stale_registered`} (`:64`) is quieted for `DEFAULT_QUIET_SECONDS` (900) only while `rowSignature(row)` and the manifest class remain unchanged (`:244-249`, `:282`); transient refusal classes are never suppressed (`:244-249`). This r07 stable-refusal suppression covers a dispatcher refusal of `mission_stale_registered`, which is designed not to succeed on retry.”
+
+Pin identity: upstream HEAD was `31c465f15669f744848bd9f5d56191c5085670f7`; `git -C /fast/scratch/kumitate-r36/src rev-parse 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-watchdog-repend.mjs` returned blob `c513e38235e839f08b5674bc3aec2b459364c0d0`.
+
+Pinned source read with `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-watchdog-repend.mjs | awk '(NR>=55&&NR<=70)||(NR>=215&&NR<=255)||(NR>=270&&NR<=345) {printf "%d: %s\n", NR, $0}'`: line 64 defines `Object.freeze(new Set(["mission_stale_registered"]))`; lines 244–249 check that set and return `skip_suppressed`; line 282 composes the row signature with manifest class; lines 329–331 persist the refusal reason and classify it as stable via the same set. This independently supports the prose; no gate was run.
+
+No correction required. No tools installed.

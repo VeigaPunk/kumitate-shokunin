@@ -1,0 +1,10 @@
+ATTACK Check62 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=4 refuted=0 unverified=0
+
+Source measured from pinned upstream `31c465f15669f744848bd9f5d56191c5085670f7` in `/fast/scratch/kumitate-r36/src`, not the moving `ufo-fsd-alpha` tree. Frozen note sentence at `corpus/knowledge/sighting-wall.md:115-122`: the `stopMission`, `resumeMissionLocked` / `resumeMission`, `completeMission`, `reconcileLocked`, and `scheduleReconcile` entries “close the lifecycle set.” All four inspected anchors are definitions, not token-only matches, comments, or strings. None appears in the note's marked Round-38 anchor-debt list (heading at line 253).
+
+OBS sighting-wall#9 agree | `function stopMission(identifier, { code = null, signal = null, failure = null } = {}, env = process.env) {` | Pinned `scripts/ufo-sighting.mjs:3616` is the named function definition in the note.
+OBS sighting-wall#10 agree | `function resumeMissionLocked(state, spec, { geometryOverride, env = process.env } = {}) {` | Pinned `scripts/ufo-sighting.mjs:3714` is the named locked-resume definition in the note.
+OBS sighting-wall#11 agree | `async function resumeMission(spec, {` | Pinned `scripts/ufo-sighting.mjs:3794` is the named async-resume definition in the note.
+OBS sighting-wall#12 agree | `function completeMission(identifier, note, { dryRun = false, env = process.env } = {}) {` | Pinned `scripts/ufo-sighting.mjs:3361` is the named completion definition in the note.
+
+The listed old coordinates in the pinned file land on unrelated checks (`:3584` MISSION_NOT_LIVE, `:3682` runId identity guard, `:3762` nativeKey, `:3339` retention byte validation), consistent with false old anchors rather than an incorrectly paired final symbol. No correction indicated. No gate was used. LSP is unavailable in this tool environment (`read xd://lsp` returned “No such tool”); no LSP status/references/definition/diagnostics were run. Verification here is direct reading of the frozen note and pinned source only.

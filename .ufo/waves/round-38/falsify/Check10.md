@@ -1,0 +1,10 @@
+ATTACK Check10 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=4 refuted=0 unverified=0
+
+OBS native-trial-launch#41 agree | `export function splitRoute(route) {` (pinned policy.mjs:66) | Note says “Route parse `splitRoute`”; function delegates to `parseRoute` with `allowEffortless` and handles grammar errors, so the anchor is the parser definition, not a generic occurrence.
+OBS native-trial-launch#42 agree | `export function loadSeatRoutingMirror(contractRoot, roles) {` (pinned policy.mjs:173) | Note says “seat-routing mirror `loadSeatRoutingMirror`”; the function resolves and reads the mirror, validates its schema/digest/seat data, and returns source plus table.
+OBS native-trial-launch#43 agree | `export function verifyLaunchSeatRouting(launch, mirror, roleRoutes) {` (pinned policy.mjs:301) | Note groups this under seat-routing mirror verification; the function checks launch global-routing identity and each pinned role route against the mirror.
+OBS native-trial-launch#44 agree | `export function resolveNativeProfile(config, name) {` (pinned policy.mjs:637) | Note says “profile resolve `resolveNativeProfile`”; function resolves the named native profile and its permitted one-level `extends` parent.
+
+Evidence: frozen note read with `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/native-trial-launch.md` (lines 414–424: route parse, mirror load/verify, profile resolve labels and anchors).
+Evidence: pinned source read with `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/collect-omp-native-handoff-lib/policy.mjs` (942 lines; inspected definitions at 66, 173, 301, 637 and their bodies).
+No gate run; findings are based on the frozen note and pinned source, not gate output. No production source changed.

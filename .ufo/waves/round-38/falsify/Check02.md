@@ -1,0 +1,12 @@
+ATTACK Check02 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=3 refuted=1 unverified=0
+Finding (P2): native-trial-launch#2 retains a false source locator in the introductory prose.
+
+- OBS native-trial-launch#2 refute | `3234: function main() {` | This is the real definition, but the earlier note sentence still says `main()` at `:3229`; pinned source line 3229 is `};`, so the old prose remains false despite the later corrected `Entry main (...:3234)` sentence. Smallest correction: change the introductory `:3229` to `:3234`.
+- OBS native-trial-launch#3 agree | `56: export const PROFILE = "omp-native-v2";` | The note's `PROFILE (:56) = "omp-native-v2"` identifies the actual exported profile constant and value.
+- OBS native-trial-launch#4 agree | `65: export const ADMITTED_PROFILES = Object.freeze([PROFILE, RESILIENT_PROFILE]);` | The cited line defines the named admitted-profile list; no generic-token substitution.
+- OBS native-trial-launch#5 agree | `115: export const PROPOSAL_WAVE_CEILING = 16;` | The cited line defines the named ceiling constant used by the note.
+
+Evidence: read the immutable note with `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/native-trial-launch.md`; it contains both the stale intro `main() at :3229` and the later member-spine `Entry main (scripts/run-omp-native-trial.mjs:3234)`. Read pinned source with `git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/run-omp-native-trial.mjs`; the source tree `git rev-parse HEAD` was `31c465f15669f744848bd9f5d56191c5085670f7`; excerpts at lines 49-120 and 3227-3236 include the quoted declarations and definition. The source check was against the pinned commit, not a moving worktree.
+
+Residual risk: the frozen note contains the stale introductory `:3229` even though its later member-spine paragraph is updated to `:3234`; readers of the intro can land on the preceding helper's `};`.
+Verification gaps: `read xd://lsp` returned `No such tool: xd://lsp`; no LSP references/definition/diagnostics were available. No gate or runtime was run; source truth comes from the committed pinned blob. No files other than this report were written.

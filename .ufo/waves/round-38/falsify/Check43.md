@@ -1,0 +1,14 @@
+ATTACK Check43 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=4 refuted=0 unverified=0
+
+Measured source: lane HEAD `c938c068f4dbf356c0884c2121bbfe087fbe3caf`; pinned source HEAD `31c465f15669f744848bd9f5d56191c5085670f7` (`/fast/scratch/kumitate-r36/src`).
+Committed note sentence(s): “The emit gate `assertNoSecrets` (`:932`) refuses credential-shaped output; a truncated-session sweep is retagged `session_truncated` (`:897`). Verdicts come from `interpretRouteHealth` (`:1008`) and `interpretPersistedHealth` (`:1030`), where `healthy` ("every route served with no failure class", `:1167`) stays separate from the cleanup `ok` field; exit is `!ok ? 2 : healthy ? 0 : 3` (`:1178`), and a fatal catch emits the envelope `schema: "ufo-route-health-error-v1"` (`:1184`) then exits 1.”
+
+OBS route-probe-cluster#23 agree | `:897 failureClass = "session_truncated";` | This is the actual classification emission. Its gate is `valuesTruncated && !served && (failureClass === "unknown" || failureClass == null)`; `valuesTruncated` aggregates stdout, stderr, and session JSONL collection, so this is not merely a generic-token match.
+OBS route-probe-cluster#24 agree | `:1008 function interpretRouteHealth(row, { nowMs, expiresAtMs }) {` | The exact definition is anchored; its branches produce per-route available/stale/unknown/unavailable health from the validity window and row fields.
+OBS route-probe-cluster#25 agree | `:1030 function interpretPersistedHealth(state, now = new Date()) {` | The exact persisted-health interpreter is defined here; it validates state/schema/timestamps/results and maps each result through `interpretRouteHealth` at `:1056`.
+OBS route-probe-cluster#26 agree | `:1167 healthy: results.every((row) => row.served === true && row.failureClass === null),` | This emits the described top-level route-health boolean. The adjacent `ok` is separately computed from `sessionRemoved` at `:1166`; exit mapping at `:1178` uses both.
+
+LSP was unavailable: `read xd://lsp` returned “No such tool” and the mounted-tool list omitted it. Grep was used only to locate source ranges; conclusions above are from direct reads of the pinned source sections.
+
+Revision measurement command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD && git -C /fast/scratch/kumitate-r36/src rev-parse HEAD`; observed output, in order: `c938c068f4dbf356c0884c2121bbfe087fbe3caf` and `31c465f15669f744848bd9f5d56191c5085670f7`.
+Committed-note extraction command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/route-probe-cluster.md > /fast/scratch/kumitate-r38-falsify/Check43/route-probe-cluster.md` (no stdout); read committed excerpt at lines 112–121. No gate or tests run. No production files changed.

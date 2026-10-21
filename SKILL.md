@@ -605,9 +605,12 @@ this lane (kumitate L1).
 | sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | independent gate; `corpus/SOURCES.md` + frozen `16a5441` legacy identity set; not a `kumitate-proxy-v1` pin |
 | anchor-truth | gate | `node scripts/anchor-truth.mjs [--base REV] [--write-pin --notes …]` → `TRUTH: CLEAN\|DRIFT\|FAIL-CLOSED` | `--selftest` (`ANCHOR_TRUTH_SELFTEST: n/m`) | `.ufo/pins/anchor-truth.json` (one expectation per anchor of the registered notes, contract `kumitate-anchor-truth-v1`, at the `.ufo/pins/origin.json` revision); the frozen `--base` commit holds the burn-down floor |
 
-Named gaps (not claimed): no gate yet ships the §Gate standard "two evidences"
-frozen-snapshot run with a digest-pinned expected-verdict file, and no verdict line names
-the revision it measured — cite the commit beside the verdict instead.
+Named legacy gaps (not claimed): the original seven gates do not ship the
+§Gate standard digest-checked frozen-snapshot replayer. Round 38 supplies that
+evidence for `anchor-truth` under `.ufo/waves/round-38/frozen/`: `expected.json`
+pins the measured commit, input digests, source-blob digests, exit and verdict;
+`replay.py.txt` checks every digest before launching the isolated replay.
+Verdicts name the upstream source revision; cite the measured lane commit beside them.
 Where this lane learns, and how far each source is trusted: `corpus/SOURCES.md`;
 what a corpus entry must clear before admission: `corpus/QUALITY.md`.
 

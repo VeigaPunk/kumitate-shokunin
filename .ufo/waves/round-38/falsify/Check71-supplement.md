@@ -1,0 +1,6 @@
+ATTACK Check71-supplement measured=note:c938c068f4dbf356c0884c2121bbfe087fbe3caf source:31c465f15669f744848bd9f5d56191c5085670f7 scope=#437
+Re-read pinned `scripts/ufo-state-retention.test.mjs:197-206` from the scratch copy materialized with `git show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/ufo-state-retention.test.mjs`.
+The inclusive corrected range contains the head and tail artifact-byte assertions:
+- `205: assert.equal(sha(readFileSync(join(capState, row.head.path))), expectHead, "head evidence bytes match the row");`
+- `206: assert.equal(sha(readFileSync(join(capState, row.tail.path))), expectTail, "tail evidence bytes match the row");`
+Conclusion: `:197-206` substantiates both head/tail preservation checks; extending only the range from `:197-205` to `:197-206` resolves the reported omission if the original token pairing and normalization stay unchanged. This supplement confirms the proposed range against the pinned source; it does not measure a corrective commit. No production/source files were edited.

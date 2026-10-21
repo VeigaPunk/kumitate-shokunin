@@ -1,5 +1,5 @@
 # S7 route-probe cluster — the 6-member probe family (round-32 re-census)
-> **Round-38 anchor repair (2026-10-21).** Every anchor in this note was re-checked one by one against the pinned upstream revision 31c465f1 (wave-reviewed MOVE/TOKEN/DEBT verdicts, then the per-anchor gate scripts/anchor-truth.mjs with its pin .ufo/pins/anchor-truth.json): 146 of 165 anchors read true, 16 are false or dead at the pin and 3 carry no checkable token; each non-true anchor is listed with its reason under the last heading of this note. History: round 36 shifted anchors one symbol off and round 37 reset the note to its 0614092 bytes (non-author spot-checks round-36 and round-37 in corpus/lessons).
+> **Round-38 registered-anchor repair (2026-10-21).** At pinned origin 31c465f1, the frozen recognized-span population is 165 anchors: 146 lexically true, 16 debt, 3 unchecked. Every non-true entry is listed under the final debt heading. Decisions and commands are in the round-38 wave evidence and scripts/anchor-truth.mjs; expectations are in .ufo/pins/anchor-truth.json. This is not all Markdown: escaped delimiters and historical unbackticked locators are outside the fixed extractor. A token on a line does not certify the whole prose. History: r36 shifted anchors; r37 reset this note to its 0614092 bytes (non-author spot-checks in corpus/lessons).
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 65 line anchors in this
@@ -104,9 +104,9 @@ and it never reroutes or treats stale/unknown health as available (`:6-7`). Opti
 implemented in-file by `persistState` (`:1073`) with a pid-timestamp tmp
 (`:1110`) — the former sibling `atomic-write.mjs` import is gone. Redaction is a
 **standalone parity copy** of `./probe-redact.mjs` (`:67`), not a sibling import,
-so the origin suite can stage this one file alone. Its entry is the top-level
+but staging the probe also requires its shared route-grammar sibling (the origin fixture copies it). Its entry is the top-level
 `main` (`:1157`) over a single argv walk, `parseArgs` (`:107`); `usage` prints to
-stderr and exits 2 (`:101`) while `--help`/`-h` exits 0. All live work leaves through
+stderr and exits 2 (`:101`) while `--help`/`-h` alone exits 0; mixed argv goes through usage. All live work leaves through
 the async `spawnCollect("omp", [...])` (`:669`, call site `:804`) running
 `-p --mode json --model <route> …`, bounded by `PROBE_CONCURRENCY = 8` (`:65`)
 through the order-preserving `mapPool` (`:775`). Named constants pin the envelope:
@@ -157,7 +157,7 @@ results (`:123`) — exit `available ? 0 : 2` (`:140`). Posture is network: one
 
 `scripts/probe-token-plan-models.mjs` (244 L) asks the same question for every
 configured **non**-Kimi alias and fails unless every target serves
-(`scripts/probe-token-plan-models.mjs:2-4`). Unlike kimi it persists a durable verdict
+(`scripts/probe-token-plan-models.mjs:182-237`). Unlike kimi it persists a durable verdict
 **next to itself**: `writeVerdict` (`:40`) writes `VERDICT_PATH` (`:35`) =
 `probe-token-plan-models.verdict.json` beside the script (no
 `UFO_PROBE_VERDICT_PATH` override in the live file), through an exclusive tmp created
@@ -228,8 +228,8 @@ retagged `session_truncated` (`:897`). `null` (not a class) means served-and-cle
 
 **Persisted-health status** (`interpretRouteHealth`, `:1008`;
 `interpretPersistedHealth`, `:1030`) is one of `available` / `unknown` /
-`stale` / `unavailable`, with reasons `invalid_validity_window` (`:1010`),
-`expired` (`:1013`), `malformed_record`, `unknown_served` (`:1019`),
+`stale` / `unavailable`. The inner-only reason `invalid_validity_window` (`:1010`)
+is unreachable through the validated persisted-health caller. Live reasons include `expired` (`:1047`), `malformed_record`, `unknown_served` (`:1019`),
 `malformed_state` (`:1032`), `unknown_schema`, `invalid_timestamps`,
 `invalid_now`, `malformed_records` (`:1051`). The sweep-level rollup is
 `available ? "available" : hasUnknown ? "unknown" : hasStale ? "stale" :
@@ -247,8 +247,8 @@ launch-ingest arms (`launch_path_symlink`, `launch_not_object`,
 `stranded_record_outcome_conflict`, `stranded_record_hops_not_array`), read
 arms (`session_jsonl_not_regular_file`, `session_jsonl_aggregate_too_large`)
 and write arms (`credential_shaped_state` `:1266`, `state_tempfile_escaped`,
-`state_replace_symlink`). The **emit gate** `assertNoSecrets` (`:932`) defaults
-to code `credential_shaped_output` and message
+`state_replace_symlink`). The **emit gate** `assertNoSecrets` (`:932`) throws
+an uncoded Error with message
 `refusing to emit credential-shaped route-health output` (`:939`).
 
 **Fatal envelope** (top-level catch, `:1355-1363`) is pinned:
@@ -295,9 +295,9 @@ target is not availability.
 `scripts/probe-redact.mjs` owns the canonical table: `CREDENTIAL_SHAPE`
 (`:8`) plus the ordered `REDACT_PATTERNS` (`:9`), with
 `CREDENTIAL_TOKEN_PATTERN_INDEX` (`:44`) selecting the subset that the emit gate
-must refuse even in a non-redact field. `containsCredential` (`:49`) and
-`redact` (`:67`) both strip invisible credential splitters (Cf/Mn/Zl/Zp and the
-non-ASCII Zs set) and re-scan — a format-character-split token is still a
+must refuse even in a non-redact field. `containsCredential` (`:49`) is historical debt (export absent); the live
+`redact` (`:67`) strips Cf format-character splitters and re-scans; the older
+Mn/Zl/Zp/Zs stripping claim is false at this pin. A format-character-split token is still a
 credential. The route-health probe imports `CREDENTIAL_SHAPE`/`redact` from this
 module rather than hand-mirroring it; the mirrored copy is exactly what once let
 its own emit gate refuse its own redacted rows

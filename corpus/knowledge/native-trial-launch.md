@@ -1,5 +1,5 @@
 # Native-trial launch sequence — `scripts/run-omp-native-trial.mjs`
-> **Round-38 anchor repair (2026-10-21).** Every anchor in this note was re-checked one by one against the pinned upstream revision 31c465f1 (wave-reviewed MOVE/TOKEN/DEBT verdicts, then the per-anchor gate scripts/anchor-truth.mjs with its pin .ufo/pins/anchor-truth.json): 54 of 54 anchors read true, 0 are false or dead at the pin and 0 carry no checkable token; History: round 36 shifted anchors one symbol off and round 37 reset the note to its 0614092 bytes (non-author spot-checks round-36 and round-37 in corpus/lessons).
+> **Round-38 registered-anchor repair (2026-10-21).** At pinned origin 31c465f1, the frozen recognized-span population is 54 anchors: 54 lexically true, 0 debt, 0 unchecked. Decisions and commands are in the round-38 wave evidence and scripts/anchor-truth.mjs; expectations are in .ufo/pins/anchor-truth.json. This is not all Markdown: escaped delimiters and historical unbackticked locators are outside the fixed extractor. A token on a line does not certify the whole prose. History: r36 shifted anchors; r37 reset this note to its 0614092 bytes (non-author spot-checks in corpus/lessons).
 
 > **Round-35 fidelity notice (2026-10-20).** The upstream tree moved from
 > `964f443e` to `31c465f1`. Round-35 fidelity seats found 40 line anchors in this
@@ -11,7 +11,7 @@
 > findings are in the lane's round-35 wave reports (build directory, Fid*).
 
 The argv-ok → durable-outcome pipeline of the judged-round launcher
-(4304 lines live at origin HEAD `964f443e`; `main()` at :3229). All `:NNNN`
+(4321 lines at pinned origin 31c465f1; main() at line 3234). All `:NNNN`
 citations are this file unless noted. Prior coverage (flags, profiles,
 `usage_*` refusals, retry-projection invariants) lives in SKILL.md; this note
 is everything after. Round-32 re-census: one member section below names the

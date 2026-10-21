@@ -1,0 +1,19 @@
+ATTACK Check49 measured=c938c068f4dbf356c0884c2121bbfe087fbe3caf ids=4 agreed=2 refuted=2 unverified=0
+Axes: frozen note text; pinned-source line/symbol match; reachability through persisted-state callers.
+
+- Note evidence: `corpus/knowledge/route-probe-cluster.md` at c938, lines 117-121 and 229-237. The reason-list sentence is lines 229-234. None of #89-#92 is listed in the note's Round-38 debt/unchecked section (lines 581-601).
+- Source evidence: `scripts/probe-ufo-route-health.mjs` at upstream pin `31c465f15669f744848bd9f5d56191c5085670f7`. `interpretPersistedHealth` validates timestamps and `now`, then checks expiry before mapping rows (1037-1056); its inner call to `interpretRouteHealth` is at 1056. Persisted expiry is emitted at 1046-1047.
+
+OBS route-probe-cluster#89 agree | `1030:function interpretPersistedHealth(state, now = new Date()) {` | The note's verdict sentence (117-118) and status sentence (229-230) correctly name the persisted-health interpreter definition. It is used by `persistState` (1087) and `readPersistedState` (1140, 1151, 1153).
+OBS route-probe-cluster#90 refute | `1010:    return { status: "unknown", available: false, reason: "invalid_validity_window" };` | This is a real inner-helper guard, but not a reachable persisted-health reason: the sole in-file caller passes finite `nowMs` and `expiresAtMs` only after the outer checks at 1037-1044. Remove it from the live persisted-reason list or explicitly label the branch unreachable on this path.
+OBS route-probe-cluster#91 refute | `1013:    return { status: "stale", available: false, reason: "expired" };` | The outer persisted interpreter returns on expiry at 1046-1047 before the row mapping at 1056, so this inner duplicate is unreachable in the described flow. The actual persisted-expiry citation is `:1047`, not `:1013`.
+OBS route-probe-cluster#92 agree | `1019:    return { status: "unknown", available: false, reason: "unknown_served" };` | A persisted row with non-boolean `served` reaches this branch through the results mapping at 1054-1056; the listed reason and anchor are correct.
+
+Smallest correction: in note lines 229-234 remove `invalid_validity_window` from persisted-health output reasons (or qualify it as an unreachable inner defensive guard) and change the `expired` anchor from `:1013` to `:1047`.
+
+Evidence commands and observed output:
+- `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c938c068f4dbf356c0884c2121bbfe087fbe3caf:corpus/knowledge/route-probe-cluster.md > /fast/scratch/kumitate-r38-falsify/Check49/route-probe-cluster.md && printf 'note_blob=present\n' && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse c938c068f4dbf356c0884c2121bbfe087fbe3caf` → `note_blob=present`; `c938c068f4dbf356c0884c2121bbfe087fbe3caf`.
+- `git -C /fast/scratch/kumitate-r36/src rev-parse 31c465f15669f744848bd9f5d56191c5085670f7 && git -C /fast/scratch/kumitate-r36/src show 31c465f15669f744848bd9f5d56191c5085670f7:scripts/probe-ufo-route-health.mjs > /fast/scratch/kumitate-r38-falsify/Check49/probe-ufo-route-health.mjs` → `31c465f15669f744848bd9f5d56191c5085670f7` (exit 0).
+- Identity check `git -C /fast/scratch/kumitate-r36/src rev-parse 31c465f15669f744848bd9f5d56191c5085670f7 && git -C /fast/scratch/kumitate-r36/src cat-file -e 31c465f15669f744848bd9f5d56191c5085670f7:scripts/probe-ufo-route-health.mjs && printf 'source_path=present\n'` → `31c465f15669f744848bd9f5d56191c5085670f7`; `source_path=present`.
+
+LSP was unavailable (no `lsp` route/tool mounted); grep only located references, with judgments based on direct source reads above. No gate, tests, edits to production, or tool installs.

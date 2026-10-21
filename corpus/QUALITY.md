@@ -145,3 +145,11 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
     revision. The count is computed by the gate over both revisions and recorded with its
     command. Grounding: `corpus/lessons/round-38.md` (`## Mistakes` rows 1–2); S033 (a link is
     only stable against a commit id, never a moving head).
+
+- **Q18 — lexical anchor truth is necessary, not semantic claim admission.** A definition
+  token on a cited line does not prove a guarantee about its body, an error code, or a range
+  covering both halves of a check. Read the body and the whole described assertion range.
+  Grounding: round-38 falsifiers Check21 (cached preflight is not a network-never-needed
+  guarantee; reap needs the age/lock/removal range), Check52 (uncoded Error, not a default
+  typed code), and Check71 (tail-file readback lies one line past the cited range);
+  `corpus/lessons/round-38.md`. The lexical gate must never be relabelled a prose oracle.

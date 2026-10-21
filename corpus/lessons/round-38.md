@@ -95,3 +95,64 @@ Main ruled to record this mismatch, not undo or duplicate the wave. The slot was
 The r37 AuditRemainder6 report is recovered evidence, not an r38 replacement seat.
 Its report's assigned early restoration was refuted; the full reset superseded that tree.
 The round-38 lane opened clean; no prior r38 work was inherited.
+
+## Falsify findings integrated (oracle unchanged)
+
+Wave 2 attacks candidate `c938c068f4dbf356c0884c2121bbfe087fbe3caf`; original reports
+remain at that revision. Accepted source corrections do not change parsing, pairing,
+normalisation or the registered 811 positions:
+
+- Check21: the frozen-preflight cache is stat-based; a hit skips revalidation, so remove the
+  network-never-needed guarantee and cite its body (128–175). Reaping needs age/lock/removal
+  as well as the cutoff (208–219).
+- Check52: assertNoSecrets throws an uncoded Error, not credential_shaped_output by default.
+- Check71: extend the head/tail preservation range from 197–205 to 197–206; line206 is the
+  actual tail-file readback. The scoped supplement confirms this range.
+- Check34: a blank selected route uses the phase fallback, not the next candidate.
+- Check02: replace the stale historical main-line intro with live pin line3234 /4321lines.
+- Check49: mark invalid_validity_window as inner-only/unreachable through the validated
+  persisted caller; cite persisted expiry at1047, not its unreachable inner duplicate1013.
+- Check68/build Prose03: FORMAT_CHARS_RE strips Cf only, not Mn/Zs. The same prose correction
+  applies to probe-redact; help exit0 is qualified as sole argv.
+- Check16 refutes the literal #92 sentence, which is already explicitly debt:false. It was
+  never included in the 777 true expectations; the debt remains, not a passed prose claim.
+
+These reveal a separate mistake: a lexical token can be on the right line while a guarantee,
+reachability claim or assertion range is wrong. Q18 records the semantic-read requirement;
+none of these findings is fixed by changing the oracle to reward the existing prose.
+
+### Population crosswalk and an explicit extraction limitation
+
+ConnPopulation reproduces registered811 (four notes) versus legacy710 in those notes /1574
+in20notes. ExecTruthIndep counted817 at round open, because eight route-note spans after an
+escaped inline-template delimiter are absent from the registered regex, while it omitted
+two basename-only spans the registered regex includes (8−2=6). This is not six interchangeable
+ids. The pre-wave gate-design proposal said escaped delimiters were honoured; that statement
+is superseded: the frozen implementation is not escape-aware. The fixed811 contract is the
+recognized-span population, not a complete Markdown parser. No population change is made
+after seeing results. Escaped-template and multiline extraction need fixture-first review
+before a future version, with an explicit old→new population crosswalk.
+
+## Settled falsify receipt
+
+88 seats (55 reviewer, 27 scout, 3 mutation-tester, 1 critic, 1 sentinel, 1 connector),
+one validated unchanged call on first grant. 45 completed reports, 43 failed seats (9 Codex
+capacity, 34 Zai429); none replaced. Named failures and exact errors are in
+`.ufo/waves/round-38/evidence/falsify-seat-accounting.txt`. Check27 completed but again wrote
+to the fleet root; recovered byte-exact (cmp equal, sha256294e0cee…), stray removed. The
+falsify reservation was released after every seat settled. Total178 seats across two waves.
+
+The40 completed anchor/prose groups cover171 assigned ids:158 agreed,13 refuted,0 unverified
+by their report headers. This is not full fresh semantic coverage of all342 review ids:39
+anchor/prose seats failed. Of the13 refutations, one (#92) is already-marked debt, not a true
+claim; the12 actionable findings were corrected. Five raw anchor spans changed, one review
+token became stronger (targets.every rather than serves), and semantic wording was corrected;
+no extractor/pairing/normalisation change and no previously-true expectation was downgraded.
+The before-correction reports remain tied to c938; supplements confirm the exact source fixes.
+
+All three targeted mutants were killed and restored byte-exact: pairing22/22→17/22→22/22;
+DEBT_GREW22/22→21/22 (AT07)→22/22; override-block check22/22→21/22 (AT09)→22/22. The gate is
+failure-capable, but its lexical checks remain necessary rather than sufficient for semantics.
+The L1 separately re-opened all811 source spans with independent Python matching; that witness
+is not passed off as the43 failed fresh reviewers. Independent old-token measurement and
+full baseline true-position comparison show zero true→nontrue.
