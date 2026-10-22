@@ -122,6 +122,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-42.md` | Round-42: capability `gate-mutants` (a frozen 41-id mutant battery over the cite-check and wave-census suites, killed = a `FAIL ` case line; operability 8 to 9 through checklist items 18–19); `~/.kimi-code/locks/` declared as a K3 member from the Kimi Code 2.3.0 source (census strays 1 to 0); S039–S045 with three rejects; R41-1 to R41-7 dispositions; four mined mistakes | LOG.md round 42; `.ufo/waves/round-42/`; S039–S042 |
 
+| `lessons/round-42-verifier-spotcheck.md` | Round-42 non-author closure (hyaku): rejected as an honest stop (C1 `gate-mutants` 34/41 under the kill rule frozen before data, A1 widened it after build seats scored, the code implemented a third rule; terms counter blind); C2 `~/.kimi-code/locks` verified; routed D1 to D8; row added in round 43 | commit `2a7f37d`; fleet closure entry |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

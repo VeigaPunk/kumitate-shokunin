@@ -1,0 +1,24 @@
+# round-43 open receipts 2026-10-22T22:10:20Z lane base 2a7f37d2b0a413db8499b413783c27a0effdc989 (working copy: base + uncommitted scripts/gate-mutants.mjs K43 counter + 3 untracked r42 falsify reports)
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+$ git -C /fast/scratch/hyaku/kumitate-pin/src rev-parse HEAD
+31c465f15669f744848bd9f5d56191c5085670f7
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=94 computed=95 delta=+1
+PROXY  error  GATE_PIN_DRIFT  pin.gate-mutants: declared=3c6678cbbe0baf4af0dee684b14e7e6bcd439fd149e6f122081afbc00f676147 computed=e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=94 computed=95 delta=+1; GATE_PIN_DRIFT term=pin.gate-mutants declared=3c6678cbbe0baf4af0dee684b14e7e6bcd439fd149e6f122081afbc00f676147 computed=e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+$ sha256sum .ufo/waves/round-42/falsify/{CritC1Claim,CritSeparabilityTip,CritTradesTip}.md
+25937520398a9f234a7dd0e6c4b0d53c54787fcb33d1a42bc395c7c669205af3  .ufo/waves/round-42/falsify/CritC1Claim.md
+3e4ff33adb5b2886dae19f88f9f74bd1d805948e79db1d27c34091568dd42889  .ufo/waves/round-42/falsify/CritSeparabilityTip.md
+48c12359ab69ebb50d586fc46e7cd90d51393dd292b4897e811883d19a35ae32  .ufo/waves/round-42/falsify/CritTradesTip.md
+.ufo/waves/round-42/falsify/CritC1Claim.md 2026-10-22 18:16:29.374927964 -0300
+.ufo/waves/round-42/falsify/CritSeparabilityTip.md 2026-10-22 18:18:04.704299675 -0300
+.ufo/waves/round-42/falsify/CritTradesTip.md 2026-10-22 18:16:29.858929845 -0300
+$ node scripts/sources-check.mjs
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=45 tiers=A:42,B:1,C:2 status=queued:14,mined:26,rejected:5 entries_with_source=3 legacy=38)
+exit=0

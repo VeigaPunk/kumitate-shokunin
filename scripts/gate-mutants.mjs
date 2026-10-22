@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 /**
  * gate-mutants.mjs — run the frozen lane-gate mutant set against a measured scripts tree.
- * Contract: kumitate-gate-mutants-v1.
+ * Contract: kumitate-gate-mutants-v2 (round 43: kill predicate K43, frozen in the round-43 plan).
+ *
+ * K43: a mutant is KILLED iff its run is evaluable (no timeout, no overflow, clean process group,
+ * no spawn error, a parseable case summary whose total equals the control's), the selftest exits
+ * with a numeric non-zero status, stdout carries the exact line `VERDICT: FAIL`, and an immediate
+ * second run of the same mutated bytes meets the same conditions with the same sorted FAIL case
+ * names. An evaluable run that is not killed is SURVIVED; a disagreeing second run is UNSTABLE
+ * (exit-2 class). Each control is re-run after the mutants and must pass again.
  *
  * Every control and mutant gets its own temporary copy of the complete scripts/ directory.
  * Each --selftest runs with an allowlisted environment in a detached process group; a timeout kills the group.
@@ -12,10 +19,11 @@ import {
   closeSync, constants, fstatSync, ftruncateSync, lstatSync, mkdirSync, mkdtempSync, openSync,
   readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync,
 } from 'node:fs';
+import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-gate-mutants-v1';
+const CONTRACT = 'kumitate-gate-mutants-v2';
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_REPO = resolve(SCRIPT_DIR, '..');
 const DEFAULT_JOBS = 4;
@@ -26,7 +34,8 @@ const MAX_TREE_FILES = 512;
 const MAX_TREE_BYTES = 32 * 1024 * 1024;
 const MIN_CONTROL_CASES = Object.freeze({ 'cite-check': 75, 'wave-census': 31 });
 const TARGETS = Object.freeze(['cite-check', 'wave-census']);
-const SCRATCH_TMPDIR = '/fast/scratch/hyaku/kumitate-r42/seats/ExecGateMutants/tmp';
+const SCRATCH_TMPDIR = process.env.KUMITATE_GATE_MUTANTS_TMP
+  || join(homedir(), '.cache', 'kumitate-gate-mutants');
 
 const ACTIVE_GROUPS = new Set();
 const TEMP_DIRS = new Set();
@@ -98,7 +107,8 @@ options
   --selftest      run hermetic harness fixtures
   -h, --help      print this help
 
-exit map: 0 all mutants killed · 1 one or more survived or drifted (passed with fewer cases than the control) · 2 setup, nomatch, crash, timeout, control failure or a missing frozen id · 64 usage
+exit map: 0 all mutants killed (K43) · 1 one or more survived or drifted (passed with fewer cases than the control) · 2 setup, nomatch, crash, unstable kill, timeout, control failure (before or after the mutants) or a missing frozen id · 64 usage
+temp parent: $KUMITATE_GATE_MUTANTS_TMP, else ~/.cache/kumitate-gate-mutants (owner-only, mode 0700)
 `;
 
 const MANIFEST = Object.freeze([
@@ -414,6 +424,12 @@ function countFailLines(text) {
   return text.split('\n').filter((line) => line.startsWith('FAIL ')).length;
 }
 
+/** Sorted FAIL case names (text before the ` — ` detail separator), for the K43 confirmation run. */
+function failNames(text) {
+  return text.split('\n').filter((line) => line.startsWith('FAIL '))
+    .map((line) => line.split(' — ')[0].trimEnd()).sort().join('\n');
+}
+
 function detailFor(run, timeoutMs = TIMEOUT_MS) {
   if (run.timedOut) return `timeout=${timeoutMs}ms group_clean=${run.groupClean}`;
   const exit = run.status === null ? `signal:${run.signal ?? 'unknown'}` : `exit=${run.status}`;
@@ -423,14 +439,28 @@ function detailFor(run, timeoutMs = TIMEOUT_MS) {
   return `${exit} verdict=${verdict} group_clean=${run.groupClean} fail_lines=${run.failLines} overflow=${run.overflow}${suffix}`;
 }
 
+function evaluable(run, cases, controlTotal) {
+  return !run.timedOut && !run.overflow && run.groupClean && !run.spawnError
+    && cases !== null && cases.total === controlTotal;
+}
+
+function killedOnce(run, cases, controlTotal) {
+  return evaluable(run, cases, controlTotal) && typeof run.status === 'number' && run.status !== 0
+    && hasLine(run.stdout, 'VERDICT: FAIL');
+}
+
 function classifyMutant(run, cases, controlTotal) {
   if (run.timedOut) return 'timeout';
   if (run.overflow) return 'overflow';
   if (!run.groupClean || run.spawnError || !cases) return 'crash';
   if (cases.total !== controlTotal) return 'drift';
-  if (run.failLines > 0) return 'killed';
-  if (run.status === 0 && hasLine(run.stdout, 'VERDICT: PASS') && cases.passed === cases.total) return 'survived';
-  return 'crash';
+  return killedOnce(run, cases, controlTotal) ? 'killed' : 'survived';
+}
+
+/** K43 (d): the second run must also kill, with the same sorted FAIL case names. */
+function confirmKill(first, second, controlTotal) {
+  const cases = parseCaseCount(second.stdout);
+  return killedOnce(second, cases, controlTotal) && failNames(second.stdout) === failNames(first.stdout);
 }
 
 function evaluatedDrift(run, cases, controlTotal) {
@@ -448,7 +478,7 @@ function controlPass(run, cases, target) {
 
 function gateExitCode({ controls, results, integrityFailures = 0, leftovers = 0, mutantTotal, targetCount, frozenKilled }) {
   const controlFailure = [...controls.values()].some((control) => !control.pass);
-  const invalid = results.some((result) => ['nomatch', 'crash', 'timeout', 'overflow'].includes(result.state)
+  const invalid = results.some((result) => ['nomatch', 'crash', 'unstable', 'timeout', 'overflow'].includes(result.state)
     || (result.state === 'drift' && !result.driftNonKill));
   if (controlFailure || invalid || integrityFailures || leftovers) return 2;
   if (results.some((result) => result.state === 'survived' || result.driftNonKill)) return 1;
@@ -594,6 +624,13 @@ async function runMutant(sourceScripts, mutant, controlTotal, timeoutMs = TIMEOU
     const run = await runSelftestFile(file, copied.tempRoot, { timeoutMs });
     const cases = parseCaseCount(run.stdout);
     let state = classifyMutant(run, cases, controlTotal);
+    let confirm = '';
+    if (state === 'killed') {
+      const again = await runSelftestFile(file, copied.tempRoot, { timeoutMs });
+      const agreed = confirmKill(run, again, controlTotal);
+      confirm = ` confirm=${agreed ? 'same' : 'differs'}`;
+      if (!agreed) state = 'unstable';
+    }
     try {
       if (sha256(readSafeFile(file, copied.tempRoot)) !== digest) state = 'crash';
     } catch { state = 'crash'; }
@@ -602,7 +639,7 @@ async function runMutant(sourceScripts, mutant, controlTotal, timeoutMs = TIMEOU
       ...mutant,
       state,
       driftNonKill,
-      detail: detailFor(run, timeoutMs),
+      detail: `${detailFor(run, timeoutMs)}${confirm}`,
       digest,
       cases,
       controlTotal,
@@ -717,18 +754,18 @@ function reportText(header, controls, results, verdict, exitCode, meta, rowsPrin
     for (const [target, control] of controls) lines.push(controlText(target, control));
     for (const result of results) lines.push(mutantText(result));
   }
-  const counts = Object.fromEntries(['killed', 'survived', 'drift', 'nomatch', 'crash', 'timeout', 'overflow'].map((state) => [state, results.filter((r) => r.state === state).length]));
+  const counts = Object.fromEntries(['killed', 'survived', 'drift', 'nomatch', 'crash', 'unstable', 'timeout', 'overflow'].map((state) => [state, results.filter((r) => r.state === state).length]));
   const summary = `(mutants=${results.length} killed=${counts.killed} frozen=${meta.frozenKilled}/41 drift=${counts.drift} targets=${meta.targets} rev=${meta.rev} manifest=${meta.manifest} leftovers=${meta.leftovers})`;
   if (exitCode === 0) lines.push(`GATE_MUTANTS: CLEAN ${summary}`);
   else if (exitCode === 1) lines.push(`GATE_MUTANTS: SURVIVED ${summary}`);
-  else lines.push(`GATE_MUTANTS: ERROR ${summary} drift=${counts.drift} nomatch=${counts.nomatch} crash=${counts.crash} timeout=${counts.timeout} overflow=${counts.overflow} control-fail=${[...controls.values()].filter((c) => !c.pass).length}`);
+  else lines.push(`GATE_MUTANTS: ERROR ${summary} drift=${counts.drift} nomatch=${counts.nomatch} crash=${counts.crash} unstable=${counts.unstable} timeout=${counts.timeout} overflow=${counts.overflow} control-fail=${[...controls.values()].filter((c) => !c.pass).length}`);
   if (meta.missing.length) lines.push(`MISSING_FROZEN ${meta.missing.join(' ')}`);
   if (meta.integrity.length) lines.push(`INTEGRITY_FAIL ${meta.integrity.join(' ')}`);
   return lines.join('\n') + '\n';
 }
 
 function reportJson(header, controls, results, verdict, exitCode, meta) {
-  const counts = Object.fromEntries(['killed', 'survived', 'drift', 'nomatch', 'crash', 'timeout', 'overflow'].map((state) => [state, results.filter((r) => r.state === state).length]));
+  const counts = Object.fromEntries(['killed', 'survived', 'drift', 'nomatch', 'crash', 'unstable', 'timeout', 'overflow'].map((state) => [state, results.filter((r) => r.state === state).length]));
   return `${JSON.stringify({
     schema: CONTRACT,
     header,
@@ -811,8 +848,9 @@ async function runSelftest() {
     const exitZeroFail = await runMutant(sourceScripts, {
       target: 'fixture', id: 'exit-zero-verdict-fail', from: "const MODE = 'pass';", to: "const MODE = 'verdict-fail-exit0';",
     }, controlTotal);
-    check('exit-zero-with-fail-case-is-killed', exitZeroFail.state === 'killed' && exitZeroFail.failLines > 0
+    check('k43-exit-zero-with-verdict-fail-is-survived', exitZeroFail.state === 'survived' && exitZeroFail.failLines > 0
       && exitZeroFail.detail.includes('exit=0'), `${exitZeroFail.state} ${exitZeroFail.detail}`);
+    check('k43-kill-confirmed-by-second-run', killed.detail.includes('confirm=same'), killed.detail);
 
     const survived = await runMutant(sourceScripts, {
       target: 'fixture', id: 'survivor', from: 'const UNUSED = 0;', to: 'const UNUSED = 1;',
@@ -857,7 +895,22 @@ async function runSelftest() {
       timedOut: false, overflow: false, groupClean: true, spawnError: null, status: 1, failLines: 0,
       stdout: '1/1 cases passed (fixture)\nVERDICT: FAIL\n',
     }, { passed: 1, total: 1 }, 1);
-    check('nonzero-all-pass-is-crash', noFailExit === 'crash', noFailExit);
+    check('k43-nonzero-with-verdict-fail-is-killed', noFailExit === 'killed', noFailExit);
+    const nonzeroPass = classifyMutant({
+      timedOut: false, overflow: false, groupClean: true, spawnError: null, status: 1, failLines: 1,
+      stdout: '0/1 cases passed (fixture)\nFAIL  X — y\nVERDICT: PASS\n',
+    }, { passed: 0, total: 1 }, 1);
+    check('k43-nonzero-with-verdict-pass-is-survived', nonzeroPass === 'survived', nonzeroPass);
+    const firstKill = { timedOut: false, overflow: false, groupClean: true, spawnError: null, status: 1,
+      stdout: '0/1 cases passed (fixture)\nFAIL  A — run1\nVERDICT: FAIL\n' };
+    const sameKill = { ...firstKill, stdout: '0/1 cases passed (fixture)\nFAIL  A — run2 detail differs\nVERDICT: FAIL\n' };
+    const otherKill = { ...firstKill, stdout: '0/1 cases passed (fixture)\nFAIL  B — run2\nVERDICT: FAIL\n' };
+    const passAgain = { ...firstKill, status: 0, stdout: '1/1 cases passed (fixture)\nVERDICT: PASS\n' };
+    check('k43-confirmation-same-names-agrees', confirmKill(firstKill, sameKill, 1), 'same names, details differ');
+    check('k43-confirmation-other-names-or-pass-disagrees', !confirmKill(firstKill, otherKill, 1) && !confirmKill(firstKill, passAgain, 1), 'other names / pass on rerun');
+    check('k43-unstable-exit-class-is-2', gateExitCode({
+      controls: new Map([['fixture', { pass: true }]]), results: [{ state: 'unstable' }], mutantTotal: 1, targetCount: 1, frozenKilled: 0,
+    }) === 2, 'unstable');
     const passControls = new Map([['fixture', { pass: true }]]);
     const nonmatchExit = gateExitCode({
       controls: passControls, results: [{ state: 'nomatch' }], mutantTotal: 1, targetCount: 1, frozenKilled: 0,
@@ -1029,6 +1082,13 @@ async function main() {
     }
 
     const integrity = [];
+    if (results.length) {
+      for (const target of targetNames) {
+        const after = await runControl(source.scripts, target);
+        if (!opts.json) process.stdout.write(`${controlText(target, after).replace(/^CONTROL /, 'CONTROL_AFTER ')}\n`);
+        if (!after.pass) integrity.push(`control-after:${target}`);
+      }
+    }
     for (const target of targetNames) {
       const measured = sha256(readSafeFile(join(source.scripts, `${target}.mjs`), source.tempRoot));
       if (measured !== digests[target]) integrity.push(`temp:${target}`);

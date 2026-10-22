@@ -289,8 +289,8 @@ A=10
 C=19
 C1=19
 C1_total=19
-C2=94
-C2_total=94
+C2=95
+C2_total=95
 S_members=88
 S_sections=88
 R_members=92
@@ -313,7 +313,7 @@ pin.kimi-census=a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63
 pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055c
 pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
 pin.wave-census=a1762f3c12854be0ba38a8ca5e5a5b3233848d0955a4c4cad4746135822cc30e
-pin.gate-mutants=3c6678cbbe0baf4af0dee684b14e7e6bcd439fd149e6f122081afbc00f676147
+pin.gate-mutants=e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a
 -->
 
 
