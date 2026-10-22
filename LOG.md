@@ -1796,3 +1796,20 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   (checklist 8/15 at open and measured), Kimi census DRIFT (seventh `skills/` child). The 46-seat
   build wave never got a seat-gate grant (3600 s timeout, then cancelled at the freeze); see
   `.ufo/waves/round-39/evidence/seat-gate.txt` and the round report for the reshaped wave.
+
+- 2026-10-22 — round 40 (round open `f69817e`, source pin `31c465f1`, measured production
+  `1530a755`). Two claims. **C1 operability:** `scripts/anchor-truth.mjs --open REV` binds
+  `review:<seat>` sources to review records committed at the round-open revision by anchor
+  identity (`REVIEW_UNBOUND`) and adds an open-pin floor (`DEBT_NEW`, open-revision
+  `BASE_TRUE_LOST`/`DEBT_GREW`); probe `.ufo/waves/round-40/probe/floor-probe-v2.mjs.txt`
+  reads `attacks_accepted=20/26 benign_clean=10/10` at open and `0/26`, `10/10` at `1530a755`;
+  selftest 30 → 41, red-before AT31–AT34 and AT39–AT42 fail on open logic; mutant runner 23/26
+  → 26/26 killed (AT43–AT45). **C2 coverage:kimi-layer:** the seventh `~/.kimi-code/skills/`
+  child `kimi-webbridge` (2.0.26, name shared with the 1.11.3 plugin copy) gets a K2 section
+  (S035) and the census tripwire 6 → 7; `proxy-check` 5 error rows (2 `AXES_DRIFT`) → 0,
+  `PROXY: MATCH`, Axes rows held at 10. Riders: cite-check zero-resolved and clean-PASS
+  fixtures (62 → 64, R39-5), Q20, pin clone moved to `/fast/scratch/hyaku/kumitate-pin/src`
+  (R39-8; checklist 8/15 → 15/15), committed cite-check receipts (R39-7), W04 correction
+  (R39-6), S012 queued → mined, S036–S037 queued, four stale census citations re-pinned in
+  `kimi-residue-files.md`. Waves: build 32 seats, falsify 35 seats (round total 67); lesson
+  `corpus/lessons/round-40.md`.

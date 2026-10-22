@@ -285,8 +285,8 @@ A=8
 C=15
 C1=19
 C1_total=19
-C2=89
-C2_total=89
+C2=90
+C2_total=90
 S_members=88
 S_sections=88
 R_members=92
@@ -1755,3 +1755,25 @@ to a committed review record and add a new-debt identity rule (debt entries must
 by identity), after repairing S8#99; (3) restore the pinned default clone through the
 `.ufo/pins/origin.json` recreate command or move the pin's clone path, so the checklist measures
 the gates again rather than the missing directory.
+
+## Round 40 — claims, limits and round-41 pre-registration (2026-10-22)
+
+| Round | Claim | Axis | Before (f69817ed) | After (measured 1530a755) | Counting command | Evidence |
+|---|---|---|---|---|---|---|
+| 40 | C1 truth gate refuses the round-39 routed attacks | operability (integer held at 8; f_O unchanged, A=8 C=15) | `FLOOR_PROBE2 attacks_accepted=20/26 benign_clean=10/10 setup_errors=0` | `attacks_accepted=0/26 benign_clean=10/10 setup_errors=0` | `node --input-type=module - --lane <lane> --rev <rev> --src /fast/scratch/hyaku/kumitate-pin/src --base e18ff1af3392e3823227644c977c237737fe65c9 < .ufo/waves/round-40/probe/floor-probe-v2.mjs.txt` | `.ufo/waves/round-40/final/floor-probe2-open.txt`, `.ufo/waves/round-40/final/floor-probe2-measured-1530a755.txt`; `corpus/lessons/round-40.md` |
+| 40 | C2 declared integers match the derived ones | coverage:kimi-layer (declared 10, derived 9 → 10; Axes rows held at 10) | 5 error rows (2 `AXES_DRIFT`), `PROXY: DRIFT`, exit 1 | 0 error rows, `PROXY: MATCH`, exit 0 | `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src \| grep -c '^PROXY  error'` plus the last line and exit | `.ufo/waves/round-40/open/receipts.txt`; `corpus/knowledge/kimi-skills-plugins.md` (kimi-webbridge section); S035 |
+
+Limits, recorded not hidden: the checklist command runs without `--open`, so review records are
+read at the lane's HEAD there; honest narrowing or widening of a range true at the open revision
+is refused under `--open`; no token-kept arm landed; `unchecked` anchors are unbounded;
+cite-check keeps 16 unpinned verdict conditions; the Kimi census keeps three surviving arms
+(`corpus/lessons/round-40.md`, `## Open limits`). After the round-40 documents the stanza reads
+`C2=90/90` (the round-40 lesson and its README row).
+
+Planned next round (candidates, not commitments): (1) operability: put the round-open revision
+into the checklist's truth item (or a pinned open-revision file the closure re-derives) so the
+default command is the sound mode; (2) operability: a swap-signature arm and a re-cite path for
+anchors true at open (narrow or widen with a bound review), measured by the same probe plus the
+CritOperabilityCost recipes; (3) cite-check: pin the remaining verdict and exit conditions
+(`.ufo/waves/round-40/build/ScoutCiteVerdict.md`) under Q20.
+

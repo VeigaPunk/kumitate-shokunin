@@ -1,0 +1,859 @@
+{
+  "schemaVersion": "1.0",
+  "projectRoot": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "revision": "1530a75521345e0f4516ed7146180e65f788e017",
+  "framework": {
+    "name": "anchor-truth-selftest",
+    "version": "2"
+  },
+  "oracle": "node scripts/anchor-truth.mjs --selftest",
+  "thresholds": {
+    "high": 80,
+    "low": 20,
+    "break": null
+  },
+  "baseline": {
+    "exit": 0,
+    "tally": "41/41",
+    "crashed": false,
+    "fails": [],
+    "stderr": "",
+    "source": "#!/usr/bin/env node\n/**\n * anchor-truth.mjs \u2014 per-anchor truth gate (contract `kumitate-anchor-truth-v1`, round 38).\n *\n * WHY. Rounds 36 and 37 were rejected-harmed. `claims-check --fidelity` pairs a\n * symbol with an anchor by 14-character adjacency, and its ratchet ceilings equal\n * the current debt, so the gate passed a forward shift of 123 anchors (round 36)\n * and a reset that re-broke 62 true anchors (round 37). See\n * `corpus/lessons/round-36-verifier-spotcheck.md` and\n * `corpus/lessons/round-37-verifier-spotcheck.md`. This gate checks every anchor of\n * the registered notes against the pinned upstream source. It pins one expectation\n * per anchor and fails on regression, set change, stale debt, debt growth and\n * invalid review overrides.\n *\n * ANCHORS. Every backticked `path:N`, `path:N-M`, `:N` or `:N-M` span outside fenced\n * code, in a paragraph, heading or table row. A bare `:N` takes the most recent\n * repo-relative path (contains `/`, no leading `.`). Paths come from headings, path\n * spans and path-bearing anchors.\n *\n * PAIRING (proposal only; the pin is the authority). Within a sentence, the symbols\n * seen since the previous anchor run pair positionally with the next run: the last\n * k symbols take the k anchors, left first. If there are fewer symbols than anchors,\n * the leading anchors take the next symbol in the sentence. Spans joined only by\n * `,`, `;`, `/`, parentheses, `and` or `or` form one run.\n *\n * TRUTH. The token (the paired symbol, or a reviewed override) is normalised:\n * quotes, a trailing call or argument list, and leading `.`/`#`/`-` are stripped.\n * The token is true when the whole normalised token, or its longest identifier,\n * occurs word-bounded on the cited line(s) of the file (letters, digits and `_` bound a\n * word; `$` does not, so a shell `$NAME` use matches `NAME`). The file is resolved inside\n * the pinned clone: an exact path, else a unique `ls-files` suffix. Absolute and\n * `..` paths, and anything that resolves outside the clone, are `dead`.\n *\n * PIN `.ufo/pins/anchor-truth.json`\n *   { contract, revision, notes: { \"<note path>\": { anchors, entries: [\n *       { key, ord, raw, path, a, b, token, source, expect } ] } } }\n *   expect: `true` | `unchecked` (no token) | `debt:false` | `debt:dead`\n *   source: `pair` | `review:<seat>`; key = `<path>|<token or #>|<k>`, the k-th\n *   occurrence of that path+token in the note.\n * Findings (`TRUTH  <KIND>  <note>#<ord> \u2026`), all errors:\n *   REGRESSED          expect true, token not on the cited line(s)\n *   ANCHOR_SET_CHANGED the note's raw anchor sequence differs from the pin (re-pin)\n *   DEBT_STALE         expect debt, but the token now reads true (shrink the pin)\n *   OVERRIDE_INVALID   review token absent from the sentence or the cited line(s)\n *   REVIEW_UNBOUND     review:<seat> source with no committed review record for this anchor\n *   DEBT_GREW          (--base REV) a note's debt count rose, or a key true at REV is debt now\n *   DEBT_NEW           (--open REV) a current debt anchor has no equal debt anchor at the\n *                       round-open revision (same raw@path occurrence and same token)\n *   CHECKED_SHRANK     (--base REV) a note's count of `true` expectations fell\n *   PIN_REGRESSION     (--write-pin) a key expected true would become non-true; pin not written\n *\n * REVIEW BINDING. A `review:<seat>` source is a claim: \"seat X reviewed this anchor and\n * said this token\". The claim is true only when a COMMITTED review record backs it, and the\n * record is read from committed bytes (`git show REV:<path>`), never from the working tree.\n *   REVISION. The records are read at the revision the caller names with `--open REV` (the\n *   round-open revision): a record written in the very change being judged cannot bind.\n *   Without `--open` the records are read at the lane's current HEAD and the gate prints one\n *   warning line, because that revision is inside the change being judged.\n *   RECORDS. Every committed file `.ufo/waves/<round>/anchor-reviews.json` is a review\n *   registry: `{ \"<note>#<ord>\": { seat, token } }`.\n *   IDENTITY. The ordinal alone is not the binding (ordinals shift when the note grows), so\n *   a record's `<note>#<ord>` is resolved through the PIN at the record revision to an anchor\n *   identity `raw@path#occurrence`. A pin entry is bound only when a record names the same\n *   note, the same seat and the same token AND resolves to that entry's own anchor (the same\n *   identity, or the same file with one cited range nested in the other: a widened or\n *   narrowed citation of the reviewed anchor is the same anchor). A review token that\n *   travels to another anchor, or a seat that never reviewed it, is unbound.\n *   NO SEAT REPORT NEEDED. The registry is the record; a per-seat report file\n *   (`.ufo/waves/<round>/build|falsify/<seat>.md`) is corroboration, not a requirement (the\n *   L1 seat of round 38 left its review in the registry only).\n *   WORKFLOW. Commit the registry first, then re-pin: `--write-pin` refuses to write a pin\n *   whose review source has no committed record (REVIEW_UNBOUND, pin not written), so an\n *   unbound override can never be laundered into the pin.\n * Verdict (last stdout line):\n *   TRUTH: CLEAN (notes=<n> anchors=<n> true=<n> debt=<n> unchecked=<n> src-rev=<12>)\n *   TRUTH: DRIFT (<n> findings: KIND \u2026)\n *   TRUTH: FAIL-CLOSED (<TOKEN> detail)\n * exit: 0 clean \u00b7 1 drift \u00b7 2 fail-closed \u00b7 64 usage\n *\n * CLI: node scripts/anchor-truth.mjs [--self DIR] [--pin FILE] [--src DIR]\n *        [--base REV] [--open REV] [--write-pin [--reviews FILE] [--notes a.md,b.md]] [--json] [--selftest]\n * `--open REV` adds the round-open floor: the pin at REV (the revision the L1 passes on the\n * command line, never a lane file) is a second base for BASE_TRUE_LOST, DEBT_GREW and\n * CHECKED_SHRANK, and every current debt anchor must equal a debt anchor at REV by identity\n * (raw@path occurrence) and by token, else DEBT_NEW. `unchecked` anchors are exempt.\n * Read-only except `--write-pin`, which writes the pin file only. The selftest writes\n * only mkdtemp fixtures.\n */\nimport { spawnSync } from 'node:child_process';\nimport { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';\nimport { tmpdir } from 'node:os';\nimport { dirname, join, resolve, sep } from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst CONTRACT = 'kumitate-anchor-truth-v1';\nconst TOOL_FILE = fileURLToPath(import.meta.url);\nconst W = '[\\\\p{L}\\\\p{N}_]';\nconst SPAN = /`([^`\\n]+)`/gu;\nconst ANCH = /^([\\p{L}\\p{N}_./@+-]*[\\p{L}\\p{N}_-]\\.[\\p{L}\\p{N}_]+)?:(\\d+)(?:-(\\d+))?$/u;\nconst PATHRE = /^[\\p{L}\\p{N}_./@+-]+\\.(?:mjs|cjs|js|ts|json|md|sh|rs|toml|py|service|timer|ya?ml|txt|lock|conf)$/u;\nconst IDENT = /[A-Za-z_$][\\p{L}\\p{N}_$]*/gu;\nconst JOIN = /^[\\s,;/()]*(?:(?:and|or)[\\s,;/()]*)?$/u;\nconst SENT_END = /(?:\\.\\s+(?=[A-Z*`(])|\\.\\s*$|;\\s|:\\s*$)/u;\nconst MAX_FILE_BYTES = 8 * 1024 * 1024;\nconst MAX_NOTE_BYTES = 4 * 1024 * 1024;\nconst MAX_JSON_BYTES = 32 * 1024 * 1024;\nconst MAX_TOKEN_CHARS = 256;\nconst NOTE_KEY = /^corpus\\/knowledge\\/[A-Za-z0-9._-]+\\.md$/;\nconst REVIEW_REGISTRY_RE = /^\\.ufo\\/waves\\/[^/]+\\/anchor-reviews\\.json$/u;\nconst MAX_REVIEW_BYTES = 32 * 1024 * 1024;\nconst GIT_BIN = existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';\nconst GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',\n  'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',\n  'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_ATTR_NOSYSTEM']);\n\nfunction gitEnv(extra) {\n  const env = {};\n  for (const [k, v] of Object.entries(process.env)) if (GIT_ENV_KEEP.has(k)) env[k] = v;\n  return { ...env, GIT_OPTIONAL_LOCKS: '0', GIT_TERMINAL_PROMPT: '0', ...(extra ?? {}) };\n}\nfunction git(dir, args) {\n  const r = spawnSync(GIT_BIN, ['-C', dir, ...args], { encoding: 'utf8', timeout: 60_000, maxBuffer: 64 * 1024 * 1024, env: gitEnv() });\n  return { ok: !r.error && r.status === 0, out: r.stdout ?? '', err: r.stderr ?? '' };\n}\nconst esc = (s) => s.replace(/[.*+?^${}()|[\\]\\\\/]/g, '\\\\$&');\nconst strip = (s) => s.replace(/^[\\s]+|[\\s]+$/gu, '');\n\n/* \u2500\u2500 parsing \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction* blocks(text) {\n  let cur = [];\n  let start = null;\n  const lines = text.split('\\n');\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i];\n    const ln = i + 1;\n    if (strip(line) === '' || line.startsWith('#') || line.replace(/^\\s+/u, '').startsWith('|') || line.startsWith('```')) {\n      if (cur.length) { yield [cur.join(' '), start]; cur = []; }\n      if (strip(line)) yield [line, ln];\n      continue;\n    }\n    if (!cur.length) start = ln;\n    cur.push(line);\n  }\n  if (cur.length) yield [cur.join(' '), start];\n}\n\n/** Parse a note into anchors in document order: {line, path, a, b, sym, raw, sentence}. */\nexport function parseNote(text) {\n  const out = [];\n  let curPath = null;\n  let inCode = false;\n  for (const [blk, ln] of blocks(text)) {\n    if (blk.startsWith('```')) { inCode = !inCode; continue; }\n    if (inCode) continue;\n    if (blk.startsWith('#')) {\n      const m = [...blk.matchAll(SPAN)].map((x) => x[1]).filter((s) => PATHRE.test(s) && s.includes('/') && !s.startsWith('.'));\n      if (m.length) curPath = m[0];\n    }\n    const isRow = blk.replace(/^\\s+/u, '').startsWith('|');\n    const sentences = [];\n    let sent = [];\n    let pos = 0;\n    for (const m of blk.matchAll(SPAN)) {\n      const gap = blk.slice(pos, m.index);\n      if (SENT_END.test(gap) || (isRow && gap.includes('|'))) {\n        if (sent.length) sentences.push(sent);\n        sent = [];\n      }\n      sent.push([m[1], gap, pos, m.index]);\n      pos = m.index + m[0].length;\n    }\n    if (sent.length) sentences.push(sent);\n    sentences.forEach((s) => {\n      // Override scope: the anchor's own paragraph, heading or table row (round 38): a review\n      // token must occur in the note's text around the anchor, never be invented.\n      const sentence = blk;\n      const items = s.map(([val, gap]) => {\n        const am = ANCH.exec(val);\n        if (am) return { kind: 'A', val, gap, path: am[1] ?? null, a: Number(am[2]), b: Number(am[3] ?? am[2]) };\n        if (PATHRE.test(val)) return { kind: 'P', val, gap };\n        return { kind: 'S', val, gap };\n      });\n      let pending = [];\n      let i = 0;\n      while (i < items.length) {\n        const it = items[i];\n        if (it.kind === 'P') {\n          if (it.val.includes('/') && !it.val.startsWith('.')) curPath = it.val;\n          i++; continue;\n        }\n        if (it.kind === 'S') { pending.push(it.val); i++; continue; }\n        const run = [it];\n        let j = i + 1;\n        while (j < items.length && items[j].kind === 'A' && JOIN.test(items[j].gap)) { run.push(items[j]); j++; }\n        const k = run.length;\n        const syms = pending.length ? pending.slice(-k) : [];\n        let nxt = null;\n        if (syms.length === 0) {\n          // Forward fill (\"At `path:N`, `sym`\") only when that symbol does not own the next\n          // anchor run itself: a lookahead never steals another citation's symbol.\n          for (let q = j; q < items.length; q++) {\n            if (items[q].kind !== 'S') continue;\n            let r2 = q + 1;\n            while (r2 < items.length && items[r2].kind === 'S' && JOIN.test(items[r2].gap)) r2++;\n            const owned = r2 < items.length && items[r2].kind === 'A';\n            if (!owned) nxt = items[q].val;\n            break;\n          }\n        }\n        // Fewer symbols than anchors: the earliest pending symbol is shared by the leading anchors\n        // (one phrase cited at two sites), never borrowed from later text.\n        const assign = syms.length ? [...Array(k - syms.length).fill(syms[0]), ...syms] : Array(k).fill(null);\n        run.forEach((r, idx) => {\n          const path = r.path ?? curPath;\n          if (r.path) curPath = r.path;\n          const a = assign[idx];\n          out.push({ line: ln, path, a: r.a, b: r.b, sym: a !== null ? a : nxt, raw: r.val, sentence });\n        });\n        pending = [];\n        i = j;\n      }\n    });\n  }\n  return out;\n}\n\nexport function norm(sym) {\n  let s = strip(sym).replace(/^[\"']+|[\"']+$/g, '');\n  s = s.replace(/\\(.*\\)$/u, '');\n  s = s.replace(/^[.#-]+/u, '');\n  const toks = s.match(IDENT) ?? [];\n  let longest = s;\n  if (toks.length) { longest = toks[0]; for (const t of toks) if (t.length > longest.length) longest = t; }\n  return [s, longest];\n}\nconst wb = (t, seg) => t !== '' && new RegExp(`(?<!${W})${esc(t)}(?!${W})`, 'u').test(seg);\n\n/* \u2500\u2500 source access (pinned clone) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nclass Source {\n  // Reads committed blobs at the pinned revision only (`git show REV:path`), never the clone's\n  // working tree: a dirty or symlinked worktree cannot change a verdict (round-38 SentGate).\n  constructor(root, rev) {\n    this.root = root;\n    this.rev = rev;\n    this.cache = new Map();\n    const t = git(root, ['ls-tree', '-r', '-z', rev]);\n    if (!t.ok) throw new Error('source tree inventory failed');\n    this.files = new Set(t.out.split('\\0').filter(Boolean).flatMap((row) => {\n      const tab = row.indexOf('\\t');\n      return /^100(?:644|755) blob /u.test(row) && tab >= 0 ? [row.slice(tab + 1)] : [];\n    }));\n    this.list = [...this.files];\n  }\n  resolve(path) {\n    if (!path || path.startsWith('/') || path.split('/').includes('..')) return null;\n    if (this.files.has(path)) return path;\n    const c = this.list.filter((f) => f.endsWith('/' + path));\n    return c.length === 1 ? c[0] : null;\n  }\n  lines(rel) {\n    if (!this.cache.has(rel)) {\n      const sz = git(this.root, ['cat-file', '-s', `${this.rev}:${rel}`]);\n      if (!sz.ok || Number(sz.out.trim()) > MAX_FILE_BYTES) { this.cache.set(rel, null); return null; }\n      const r = git(this.root, ['show', `${this.rev}:${rel}`]);\n      this.cache.set(rel, r.ok ? r.out.split('\\n') : null);\n    }\n    return this.cache.get(rel);\n  }\n}\n\n/**\n * Committed review records for `review:<seat>` pin sources (round-40 closure R39-1).\n *\n * A review source is a claim: \"seat X reviewed this anchor and said this token\". The claim\n * holds only when a COMMITTED review record backs it. Records live in review registries\n * (`.ufo/waves/<round>/anchor-reviews.json`), read from the lane's committed bytes at HEAD,\n * never from the working tree. A registry maps `<note>#<ord>` to { seat, token }; the\n * ordinal is resolved against the note as committed at the revision that last wrote the\n * registry, so a record follows its anchor when the note's anchor order shifts.\n *\n * A record binds a pin entry when it names the same note, the same seat and the same token\n * AND its anchor is the entry's anchor: the same file, with cited line ranges that overlap\n * (a widened or narrowed citation of the reviewed range is the same anchor). A review token\n * that travels to another anchor, or a seat that never reviewed it, is unbound.\n */\nclass ReviewRecords {\n  constructor(laneRoot, rev) {\n    this.root = laneRoot;\n    this.rev = rev ?? null;\n    this.byKey = new Map();  // `${note}|${seat}|${token}` -> [{identity, path, a, b}]\n    this.registries = 0;\n    this.records = 0;\n    if (!this.rev) return;\n    const tree = git(laneRoot, ['ls-tree', '-r', '-z', this.rev]);\n    if (!tree.ok) return;\n    // The pin at the record revision: a record's ordinal is resolved through it, so a record\n    // names an anchor (raw@path#occurrence) and not a position in a list.\n    const pin = this.pinAt(this.rev);\n    const pins = new Map();\n    if (pin) {\n      for (const [note, pn] of Object.entries(pin.notes ?? {})) {\n        const entries = pn?.entries ?? [];\n        pins.set(note, { entries, ids: identities(entries) });\n      }\n    }\n    for (const row of tree.out.split('\\0').filter(Boolean)) {\n      const tab = row.indexOf('\\t');\n      if (tab < 0) continue;\n      const path = row.slice(tab + 1);\n      if (!REVIEW_REGISTRY_RE.test(path)) continue;\n      const body = this.blob(this.rev, path);\n      if (body === null) continue;\n      let json;\n      try { json = JSON.parse(body); } catch { continue; }\n      if (!json || typeof json !== 'object' || Array.isArray(json)) continue;\n      this.registries++;\n      for (const [k, v] of Object.entries(json)) {\n        const hash = k.lastIndexOf('#');\n        if (hash < 1) continue;\n        const note = k.slice(0, hash);\n        const ord = Number(k.slice(hash + 1));\n        if (!note || !Number.isInteger(ord) || ord < 0) continue;\n        if (!v || typeof v !== 'object') continue;\n        const seat = typeof v.seat === 'string' ? v.seat : null;\n        const token = typeof v.token === 'string' ? v.token : null;\n        if (!seat || token === null) continue;\n        const np = pins.get(note);\n        if (!np || ord >= np.entries.length) continue;\n        const entry = np.entries[ord];\n        const key = `${note}|${seat}|${token}`;\n        if (!this.byKey.has(key)) this.byKey.set(key, []);\n        this.byKey.get(key).push({ identity: np.ids[ord], path: entry.path ?? null, a: entry.a, b: entry.b });\n        this.records++;\n      }\n    }\n  }\n  blob(rev, path) {\n    const size = git(this.root, ['cat-file', '-s', `${rev}:${path}`]);\n    if (!size.ok || Number(size.out.trim()) > MAX_REVIEW_BYTES) return null;\n    const r = git(this.root, ['show', `${rev}:${path}`]);\n    return r.ok ? r.out : null;\n  }\n  pinAt(rev) {\n    const body = this.blob(rev, '.ufo/pins/anchor-truth.json');\n    if (body === null) return null;\n    try { return JSON.parse(body); } catch { return null; }\n  }\n  /**\n   * True when a committed record binds this review-sourced entry: the record names the same\n   * note, seat and token, and its anchor is the entry's anchor (same identity, or the same\n   * file with one cited range nested in the other: a widened or narrowed citation of the\n   * reviewed anchor is the same anchor).\n   */\n  bound(note, e, identity) {\n    if (typeof e.source !== 'string' || !e.source.startsWith('review:')) return true;\n    const seat = e.source.slice('review:'.length);\n    const list = this.byKey.get(`${note}|${seat}|${e.token}`);\n    if (!list) return false;\n    for (const rec of list) {\n      if (identity && rec.identity === identity) return true;\n      if (!rec.path || !e.path || rec.path !== e.path) continue;\n      if (!Number.isInteger(e.a) || !Number.isInteger(e.b)) continue;\n      if ((rec.a <= e.a && e.b <= rec.b) || (e.a <= rec.a && rec.b <= e.b)) return true;\n    }\n    return false;\n  }\n}\n\n/** Status of one (path, a, b, token): true | false | dead | unchecked. */\nfunction judge(src, path, a, b, token) {\n  if (token === null || token === undefined) return 'unchecked';\n  if (String(token).length > MAX_TOKEN_CHARS) return 'false';\n  const rp = src.resolve(path);\n  if (rp === null) return 'dead';\n  const L = src.lines(rp);\n  if (L === null || a < 1 || b > L.length || a > b) return 'dead';\n  const seg = L.slice(a - 1, b).join('\\n');\n  const [full, longest] = norm(token);\n  return (full && wb(full, seg)) || (longest && wb(longest, seg)) ? 'true' : 'false';\n}\n\nfunction keyed(entries) {\n  const seen = new Map();\n  for (const e of entries) {\n    const base = `${e.path}|${e.token ?? '#'}`;\n    const k = seen.get(base) ?? 0;\n    seen.set(base, k + 1);\n    e.key = `${base}|${k}`;\n  }\n  return entries;\n}\n\n/* \u2500\u2500 pin construction and checking \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction buildEntries(noteText, src, prior, reviews, note) {\n  const anchors = parseNote(noteText);\n  const priorByOrd = new Map((prior?.entries ?? []).map((e) => [e.ord, e]));\n  const entries = anchors.map((x, ord) => {\n    const rv = reviews?.[`${note}#${ord}`];\n    const pe = priorByOrd.get(ord);\n    let token = x.sym;\n    let source = 'pair';\n    if (rv && rv.token) { token = rv.token; source = `review:${rv.seat ?? 'l1'}`; }\n    else if (pe && pe.source?.startsWith('review:') && pe.raw === x.raw) { token = pe.token; source = pe.source; }\n    const st = judge(src, x.path, x.a, x.b, token);\n    const expect = st === 'true' ? 'true' : st === 'unchecked' ? 'unchecked' : `debt:${st}`;\n    return { ord, raw: x.raw, path: x.path, a: x.a, b: x.b, token: token ?? null, source, expect, line: x.line, sentence: x.sentence };\n  });\n  return keyed(entries);\n}\n\nfunction overrideValid(e, src) {\n  const [full, longest] = norm(e.token);\n  const inSentence = wb(full, e.sentence) || wb(longest, e.sentence);\n  return inSentence && judge(src, e.path, e.a, e.b, e.token) === 'true';\n}\n\nfunction checkNote(note, noteText, pinNote, src, recs) {\n  const findings = [];\n  const anchors = parseNote(noteText);\n  const ids = identities(pinNote.entries ?? []);\n  const rawNow = anchors.map((x) => `${x.raw}@${x.path}`);\n  const rawPin = pinNote.entries.map((e) => `${e.raw}@${e.path}`);\n  const counts = { anchors: anchors.length, true: 0, debt: 0, unchecked: 0 };\n  if (rawNow.length !== rawPin.length || rawNow.some((r, i) => r !== rawPin[i])) {\n    const i = rawNow.findIndex((r, idx) => r !== rawPin[idx]);\n    findings.push(['ANCHOR_SET_CHANGED', `${note}#${i < 0 ? rawNow.length : i}`, `now=${rawNow.length} pinned=${rawPin.length} first-diff=${i < 0 ? 'length' : `${rawNow[i] ?? '\u2205'} vs ${rawPin[i] ?? '\u2205'}`}`]);\n    return { findings, counts };\n  }\n  pinNote.entries.forEach((e, i) => {\n    const x = anchors[i];\n    const live = { ...e, sentence: x.sentence };\n    const st = judge(src, e.path, e.a, e.b, e.token);\n    if (e.expect === 'true') counts.true++; else if (e.expect === 'unchecked') counts.unchecked++; else counts.debt++;\n    if (String(e.source).startsWith('review:')) {\n      if (!recs.bound(note, e, ids[e.ord])) {\n        findings.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);\n      }\n      if (!overrideValid(live, src)) {\n        findings.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n      }\n    }\n    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {\n      // A `pair` token must be the note's own pairing; a hand-set token on the line is not a repair.\n      findings.push(['TOKEN_FORGED', `${note}#${e.ord}`, `${e.raw} pinned=${e.token} paired=${x.sym ?? null}`]);\n    }\n    if (e.expect === 'true' && st !== 'true') findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} token=${e.token} status=${st}`]);\n    else if (e.expect.startsWith('debt:') && st === 'true') findings.push(['DEBT_STALE', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n    else if (e.expect === 'unchecked' && e.token !== null) findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} unchecked entry carries a token`]);\n  });\n  return { findings, counts };\n}\n\n/** Token-independent anchor identity: the nth occurrence of `raw@path` in its note. */\nfunction identities(entries) {\n  const seen = new Map();\n  return entries.map((e) => {\n    const id = `${e.raw}@${e.path}`;\n    const n = seen.get(id) ?? 0;\n    seen.set(id, n + 1);\n    return `${id}#${n}`;\n  });\n}\n\nfunction compareBase(pin, basePin) {\n  const findings = [];\n  for (const [note, bn] of Object.entries(basePin.notes ?? {})) {\n    const cn = pin.notes?.[note];\n    const tally = (n) => {\n      const c = { true: 0, debt: 0 };\n      for (const e of n?.entries ?? []) { if (e.expect === 'true') c.true++; else if (String(e.expect).startsWith('debt:')) c.debt++; }\n      return c;\n    };\n    const b = tally(bn);\n    const c = tally(cn);\n    if (!cn) { findings.push(['CHECKED_SHRANK', `${note}#-`, `note dropped from the pin (base true=${b.true})`]); continue; }\n    if (c.debt > b.debt) findings.push(['DEBT_GREW', `${note}#-`, `debt ${b.debt} -> ${c.debt}`]);\n    if (c.true < b.true) findings.push(['CHECKED_SHRANK', `${note}#-`, `true ${b.true} -> ${c.true}`]);\n    const now = new Map(cn.entries.map((e) => [e.key, e]));\n    for (const e of bn.entries ?? []) {\n      if (e.expect !== 'true') continue;\n      const m = now.get(e.key);\n      if (m && m.expect !== 'true') findings.push(['DEBT_GREW', `${note}#${m.ord}`, `${e.key} true at base, ${m.expect} now`]);\n    }\n    // The key carries the paired token, so a current entry re-keyed or re-tokened escaped the\n    // key match above (round-38 closure R38-1). Identity reads neither key nor token: every\n    // anchor true at base must still exist at the same raw@path occurrence and still be true.\n    const curIds = identities(cn.entries);\n    const byId = new Map();\n    curIds.forEach((id, i) => byId.set(id, cn.entries[i]));\n    const baseIds = identities(bn.entries ?? []);\n    (bn.entries ?? []).forEach((e, i) => {\n      if (e.expect !== 'true') return;\n      const m = byId.get(baseIds[i]);\n      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);\n      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);\n    });\n    // Occurrence order alone can be masked: insert an earlier true copy of a base-true raw@path,\n    // then falsify the original. Per raw@path that held a true anchor at base, the number of\n    // non-true anchors may not grow.\n    const groups = (entries, ids) => {\n      const g = new Map();\n      entries.forEach((e, i) => {\n        const k = ids[i].replace(/#\\d+$/u, '');\n        const c = g.get(k) ?? { t: 0, n: 0 };\n        if (e.expect === 'true') c.t++; else c.n++;\n        g.set(k, c);\n      });\n      return g;\n    };\n    const gNow = groups(cn.entries, curIds);\n    for (const [k, b] of groups(bn.entries ?? [], baseIds)) {\n      const c = gNow.get(k) ?? { t: 0, n: 0 };\n      if (b.t > 0 && c.n > b.n) findings.push(['BASE_TRUE_LOST', `${note}#-`, `${k} non-true anchors ${b.n} -> ${c.n} at a raw@path true at base`]);\n    }\n  }\n  return findings;\n}\n\n/**\n * Round-open floor (round 40, R39-3): the pin at the round-open revision is a second base.\n * BASE_TRUE_LOST, DEBT_GREW and CHECKED_SHRANK run against it exactly as they run against\n * `--base`, and every current debt anchor must equal a debt anchor at that revision by\n * identity (raw@path occurrence) and by token; `unchecked` anchors are exempt.\n */\nfunction compareOpen(pin, openPin) {\n  const findings = compareBase(pin, openPin).map(([k, id, d]) => [k, id, `${d} (open floor)`]);\n  for (const [note, cn] of Object.entries(pin.notes ?? {})) {\n    const on = openPin.notes?.[note];\n    const openIds = on ? identities(on.entries ?? []) : [];\n    const openDebt = new Set();\n    (on?.entries ?? []).forEach((e, i) => {\n      if (String(e.expect).startsWith('debt:')) openDebt.add(`${openIds[i]}\u0000${e.token ?? ''}`);\n    });\n    const curIds = identities(cn.entries ?? []);\n    cn.entries.forEach((e, i) => {\n      if (!String(e.expect).startsWith('debt:')) return;\n      const key = `${curIds[i]}\u0000${e.token ?? ''}`;\n      if (!openDebt.has(key)) {\n        findings.push(['DEBT_NEW', `${note}#${e.ord}`, `${curIds[i]} ${e.expect} now, no equal debt anchor at the open revision`]);\n      }\n    });\n  }\n  return findings;\n}\n\n/* \u2500\u2500 CLI \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction parseArgs(argv) {\n  const o = { self: process.cwd(), pin: null, src: null, base: null, open: null, write: false, reviews: null, notes: null, json: false, selftest: false };\n  for (let i = 0; i < argv.length; i++) {\n    const a = argv[i];\n    const val = () => { if (i + 1 >= argv.length) throw new Error(`${a} needs a value`); return argv[++i]; };\n    if (a === '--self') o.self = val();\n    else if (a === '--pin') o.pin = val();\n    else if (a === '--src') o.src = val();\n    else if (a === '--base') o.base = val();\n    else if (a === '--open') o.open = val();\n    else if (a === '--write-pin') o.write = true;\n    else if (a === '--reviews') o.reviews = val();\n    else if (a === '--notes') o.notes = val().split(',').map((s) => s.trim()).filter(Boolean);\n    else if (a === '--json') o.json = true;\n    else if (a === '--selftest') o.selftest = true;\n    else throw new Error(`unknown argument ${a}`);\n  }\n  return o;\n}\n\nfunction readCapped(p, cap) {\n  if (statSync(p).size > cap) throw new Error(`file over ${cap} bytes: ${p}`);\n  return readFileSync(p, 'utf8');\n}\nfunction noteOk(self, note) {\n  if (!NOTE_KEY.test(note)) return false;\n  const p = join(self, note);\n  try { const r = realpathSync(p); const s = realpathSync(self); return r.startsWith(s + sep); } catch { return false; }\n}\n\nfunction validPin(pin) {\n  if (!pin || pin.contract !== CONTRACT || !/^[0-9a-f]{40}$/.test(pin.revision ?? '')\n      || !pin.notes || Array.isArray(pin.notes) || !Object.keys(pin.notes).length) return false;\n  for (const [note, pn] of Object.entries(pin.notes)) {\n    if (!NOTE_KEY.test(note) || !pn || !Array.isArray(pn.entries) || pn.anchors !== pn.entries.length) return false;\n    const keys = new Set();\n    for (let i = 0; i < pn.entries.length; i++) {\n      const e = pn.entries[i];\n      const a = ANCH.exec(e?.raw ?? '');\n      if (!a || e.ord !== i || e.a !== Number(a[2]) || e.b !== Number(a[3] ?? a[2])\n          || !(e.path === null || typeof e.path === 'string')\n          || !(e.token === null || (typeof e.token === 'string' && e.token.length <= MAX_TOKEN_CHARS))\n          || !['true', 'unchecked', 'debt:false', 'debt:dead'].includes(e.expect)\n          || typeof e.source !== 'string' || !(e.source === 'pair' || (/^review:\\S+$/u.test(e.source) && e.token !== null))\n          || typeof e.key !== 'string' || keys.has(e.key)) return false;\n      keys.add(e.key);\n    }\n  }\n  return true;\n}\n\nfunction failClosed(token, detail) {\n  process.stdout.write(`TRUTH: FAIL-CLOSED (${token} ${detail})\\n`);\n  return 2;\n}\n\nexport function run(argv) {\n  let o;\n  try { o = parseArgs(argv); } catch (e) { process.stderr.write(`anchor-truth: ${e.message}\\n`); return 64; }\n  if (o.selftest) return selfTest();\n  const self = resolve(o.self);\n  const pinPath = resolve(self, o.pin ?? '.ufo/pins/anchor-truth.json');\n  const originPath = join(self, '.ufo/pins/origin.json');\n  if (!existsSync(originPath)) return failClosed('ORIGIN_PIN_MISSING', originPath);\n  let origin;\n  try { origin = JSON.parse(readFileSync(originPath, 'utf8')); } catch { return failClosed('ORIGIN_PIN_INVALID', originPath); }\n  if (origin?.contract !== 'kumitate-origin-pin-v1' || !/^[0-9a-f]{40}$/.test(origin.revision ?? '')) return failClosed('ORIGIN_PIN_INVALID', originPath);\n  const srcDir = o.src ?? origin.clone;\n  if (!srcDir || !existsSync(srcDir)) return failClosed('SRC_MISSING', String(srcDir));\n  const head = git(srcDir, ['rev-parse', 'HEAD']);\n  if (!head.ok || head.out.trim() !== origin.revision) return failClosed('SRC_REV_MISMATCH', `head=${head.out.trim() || '?'} pinned=${origin.revision}`);\n  const src = new Source(srcDir, origin.revision);\n  const srcRev = origin.revision.slice(0, 12);\n  // Review records are read from committed bytes at a revision the caller names (--open REV,\n  // the round-open revision): a record written in the very change being judged cannot bind.\n  let recRev = null;\n  if (o.open !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);\n    const r = git(self, ['rev-parse', `${o.open}^{commit}`]);\n    if (!r.ok || !/^[0-9a-f]{40}$/u.test(r.out.trim())) return failClosed('OPEN_UNREADABLE', o.open);\n    recRev = r.out.trim();\n  } else {\n    const r = git(self, ['rev-parse', 'HEAD']);\n    recRev = r.ok && /^[0-9a-f]{40}$/u.test(r.out.trim()) ? r.out.trim() : null;\n    process.stdout.write(recRev\n      ? `TRUTH_WARN review sources are bound against the lane's current HEAD (${recRev.slice(0, 12)}), not a pinned round-open revision; pass --open REV to pin the record revision\\n`\n      : \"TRUTH_WARN review sources are unbound: the lane has no committed revision and no --open REV was given\\n\");\n  }\n  const recs = new ReviewRecords(self, recRev);\n\n  let pin = null;\n  if (existsSync(pinPath)) {\n    try { pin = JSON.parse(readCapped(pinPath, MAX_JSON_BYTES)); } catch { return failClosed('PIN_INVALID', pinPath); }\n    if (!pin || typeof pin !== 'object' || Array.isArray(pin)) return failClosed('PIN_INVALID', pinPath);\n    for (const note of Object.keys(pin.notes ?? {})) if (!noteOk(self, note) && existsSync(join(self, note))) return failClosed('NOTE_KEY_INVALID', note);\n    for (const note of Object.keys(pin.notes ?? {})) if (!NOTE_KEY.test(note)) return failClosed('NOTE_KEY_INVALID', note);\n    if (!validPin(pin)) return failClosed('PIN_INVALID', pinPath);\n  }\n\n  if (o.write) {\n    const notes = o.notes ?? Object.keys(pin?.notes ?? {});\n    if (!notes.length) return failClosed('NO_NOTES', 'pass --notes on the first --write-pin');\n    let reviews = null;\n    if (o.reviews) { try { reviews = JSON.parse(readCapped(resolve(self, o.reviews), MAX_JSON_BYTES)); } catch { return failClosed('REVIEWS_INVALID', o.reviews); } }\n    for (const note of notes) if (!noteOk(self, note)) return failClosed('NOTE_KEY_INVALID', note);\n    const next = { contract: CONTRACT, revision: origin.revision, notes: {} };\n    const problems = [];\n    for (const note of notes) {\n      const p = join(self, note);\n      if (!existsSync(p)) return failClosed('NOTE_MISSING', note);\n      const entries = buildEntries(readCapped(p, MAX_NOTE_BYTES), src, pin?.notes?.[note], reviews, note);\n      const entryIds = identities(entries);\n      for (const e of entries) {\n        if (e.source.startsWith('review:')) {\n          if (!recs.bound(note, e, entryIds[e.ord])) problems.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);\n          if (!overrideValid(e, src)) problems.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n        }\n      }\n      const priorEntries = pin?.notes?.[note]?.entries ?? [];\n      const prior = new Map(priorEntries.map((e) => [e.key, e]));\n      const flagged = new Set();\n      for (const e of entries) {\n        const pe = prior.get(e.key);\n        if (pe && pe.expect === 'true' && e.expect !== 'true') { problems.push(['PIN_REGRESSION', `${note}#${e.ord}`, `${e.key} true -> ${e.expect}`]); flagged.add(e.ord); }\n      }\n      // Same anchor count: an ordinal that was true must stay true even when its token changed\n      // (a re-paired symbol must not launder a regression; round-38 CritMonotonic A5).\n      if (priorEntries.length === entries.length) {\n        for (const e of entries) {\n          const pe = priorEntries[e.ord];\n          if (!flagged.has(e.ord) && pe && pe.expect === 'true' && e.expect !== 'true') problems.push(['PIN_REGRESSION', `${note}#${e.ord}`, `ord true -> ${e.expect} (token ${pe.token} -> ${e.token})`]);\n        }\n      }\n      next.notes[note] = { anchors: entries.length, entries: entries.map(({ sentence, line, ...rest }) => rest) };\n    }\n    if (problems.length) {\n      for (const [k, id, d] of problems) process.stdout.write(`TRUTH  ${k}  ${id}  ${d}\\n`);\n      process.stdout.write(`TRUTH: DRIFT (${problems.length} findings: ${[...new Set(problems.map((p) => p[0]))].join(' ')}; pin not written)\\n`);\n      return 1;\n    }\n    mkdirSync(dirname(pinPath), { recursive: true });\n    writeFileSync(pinPath, JSON.stringify(next, null, 1) + '\\n');\n    const t = Object.values(next.notes).flatMap((n) => n.entries);\n    process.stdout.write(`TRUTH: PINNED (notes=${notes.length} anchors=${t.length} true=${t.filter((e) => e.expect === 'true').length} debt=${t.filter((e) => e.expect.startsWith('debt:')).length} unchecked=${t.filter((e) => e.expect === 'unchecked').length} src-rev=${srcRev})\\n`);\n    return 0;\n  }\n\n  if (pin === null) return failClosed('PIN_MISSING', pinPath);\n  if (pin.revision !== origin.revision) return failClosed('PIN_REV_STALE', `pin=${pin.revision} origin=${origin.revision}`);\n  const findings = [];\n  const total = { anchors: 0, true: 0, debt: 0, unchecked: 0 };\n  const perNote = [];\n  for (const [note, pn] of Object.entries(pin.notes)) {\n    const p = join(self, note);\n    if (!existsSync(p)) { findings.push(['ANCHOR_SET_CHANGED', `${note}#-`, 'note missing']); continue; }\n    const { findings: f, counts } = checkNote(note, readCapped(p, MAX_NOTE_BYTES), pn, src, recs);\n    findings.push(...f);\n    perNote.push([note, counts]);\n    for (const k of Object.keys(total)) total[k] += counts[k];\n  }\n  if (o.base !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.base) || o.base.includes('..')) return failClosed('BASE_INVALID', o.base);\n    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;\n    if (rel === null) return failClosed('BASE_INVALID', 'pin outside --self');\n    const shown = git(self, ['show', `${o.base}:${rel}`]);\n    if (!shown.ok) return failClosed('BASE_UNREADABLE', `${o.base}:${rel}`);\n    let basePin;\n    try { basePin = JSON.parse(shown.out); } catch { return failClosed('BASE_UNREADABLE', 'json'); }\n    if (!validPin(basePin) || basePin.revision !== pin.revision) return failClosed('BASE_INVALID', 'pin schema or source revision');\n    findings.push(...compareBase(pin, basePin));\n  }\n  if (o.open !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);\n    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;\n    if (rel === null) return failClosed('OPEN_INVALID', 'pin outside --self');\n    const shown = git(self, ['show', `${o.open}:${rel}`]);\n    if (!shown.ok) return failClosed('OPEN_UNREADABLE', `${o.open}:${rel}`);\n    let openPin;\n    try { openPin = JSON.parse(shown.out); } catch { return failClosed('OPEN_UNREADABLE', 'json'); }\n    if (!validPin(openPin) || openPin.revision !== pin.revision) return failClosed('OPEN_INVALID', 'pin schema or source revision');\n    findings.push(...compareOpen(pin, openPin));\n  }\n  if (o.json) {\n    process.stdout.write(JSON.stringify({ contract: CONTRACT, srcRev: origin.revision, total, perNote: Object.fromEntries(perNote), findings }) + '\\n');\n  } else {\n    for (const [note, c] of perNote) process.stdout.write(`TRUTH note=${note} anchors=${c.anchors} true=${c.true} debt=${c.debt} unchecked=${c.unchecked}\\n`);\n    for (const [k, id, d] of findings) process.stdout.write(`TRUTH  ${k}  ${id}  ${d}\\n`);\n    process.stdout.write(`TRUTH_TOTAL anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}\\n`);\n  }\n  if (findings.length) {\n    const kinds = [...new Set(findings.map((f) => f[0]))];\n    process.stdout.write(`TRUTH: DRIFT (${findings.length} findings: ${kinds.join(' ')}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\\n`);\n    return 1;\n  }\n  process.stdout.write(`TRUTH: CLEAN (notes=${perNote.length} anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\\n`);\n  return 0;\n}\n\n/* \u2500\u2500 hermetic self-test \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction selfTest() {\n  const tmp = mkdtempSync(join(tmpdir(), 'anchor-truth-selftest-'));\n  const results = [];\n  const G = { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' };\n  const g = (dir, args) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: gitEnv(G) });\n  const SRC_FILES = {\n    'scripts/a.mjs': 'x\\nconst BETA_MARK = 2;\\nconst ALPHA_MARK = 1;\\nexport default ALPHA_MARK;\\n',\n    'scripts/b.mjs': 'function one() {}\\nfunction two() {}\\n',\n  };\n  const mkSrc = (name) => {\n    const d = join(tmp, `${name}-src`);\n    for (const [p, c] of Object.entries(SRC_FILES)) { mkdirSync(dirname(join(d, p)), { recursive: true }); writeFileSync(join(d, p), c); }\n    g(d, ['init', '-q']); g(d, ['add', '.']); g(d, ['commit', '-q', '-m', 'src']);\n    return { dir: d, rev: g(d, ['rev-parse', 'HEAD']).stdout.trim() };\n  };\n  const NOTE = 'corpus/knowledge/fx.md';\n  const mkSelf = (name, note, src) => {\n    const d = join(tmp, name);\n    mkdirSync(join(d, 'corpus/knowledge'), { recursive: true });\n    mkdirSync(join(d, '.ufo/pins'), { recursive: true });\n    writeFileSync(join(d, NOTE), note);\n    writeFileSync(join(d, '.ufo/pins/origin.json'), JSON.stringify({ contract: 'kumitate-origin-pin-v1', revision: src.rev, clone: src.dir }));\n    g(d, ['init', '-q']);\n    return d;\n  };\n  const tool = (self, args) => {\n    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });\n    const out = r.stdout ?? '';\n    return { status: r.status, out, verdict: out.trim().split('\\n').pop() ?? '' };\n  };\n  // A lane whose note, pin and review registry are COMMITTED: the gate reads review records\n  // from committed bytes and resolves them through the PIN at the record revision, so a\n  // fixture without a committed registry (or without a committed pin) has no record at all.\n  const mkReviewed = (name, note, records, src) => {\n    const d = mkSelf(name, note, src);\n    commit(d);\n    tool(d, ['--write-pin', '--notes', NOTE]);\n    const openRev = commit(d);\n    if (records) {\n      mkdirSync(join(d, '.ufo/waves/round-99'), { recursive: true });\n      writeFileSync(join(d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify(records, null, 1) + '\\n');\n      commit(d);\n    }\n    return { d, openRev };\n  };\n  const commit = (d) => { g(d, ['add', '-A']); g(d, ['commit', '-q', '-m', 'pin']); return g(d, ['rev-parse', 'HEAD']).stdout.trim(); };\n  const pinOf = (d) => JSON.parse(readFileSync(join(d, '.ufo/pins/anchor-truth.json'), 'utf8'));\n  const setPin = (d, f) => { const p = pinOf(d); f(p); writeFileSync(join(d, '.ufo/pins/anchor-truth.json'), JSON.stringify(p)); };\n  const check = (id, label, fn) => {\n    let ok = false; let detail = '';\n    try { const r = fn(); ok = r.ok; detail = r.detail ?? ''; } catch (e) { detail = `threw ${e.message}`; }\n    results.push({ id, label, ok, detail });\n  };\n  const H = '## `scripts/a.mjs`\\n\\n';\n  const src = mkSrc('base');\n  try {\n    check('AT01', 'clean: a true anchor pins and reads CLEAN', () => {\n      const d = mkSelf('at01', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      const w = tool(d, ['--write-pin', '--notes', NOTE]);\n      const r = tool(d, []);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN') && /true=1 /.test(r.verdict), detail: r.verdict };\n    });\n    check('AT02', 'positional run `a` / `b` (`:2`, `:3`) pairs left-first by position', () => {\n      const d = mkSelf('at02', `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:2\\`, \\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e[0].token === 'BETA_MARK' && e[1].token === 'ALPHA_MARK' && e.every((x) => x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT03', 'next-symbol shift: anchor set change fails the check and the re-pin refuses (PIN_REGRESSION)', () => {\n      const d = mkSelf('at03', `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:2\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:3\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`);\n      const r = tool(d, []);\n      const w = tool(d, ['--write-pin']);\n      return { ok: r.status === 1 && /ANCHOR_SET_CHANGED/.test(r.out) && w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: `${r.verdict} | ${w.verdict}` };\n    });\n    check('AT04', 'right-first discriminator: `BETA_MARK` (`:3`), `ALPHA_MARK` (`:3`) pins BETA as debt, ALPHA true', () => {\n      const d = mkSelf('at04', `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:3\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e[0].token === 'BETA_MARK' && e[0].expect === 'debt:false' && e[1].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT05', 'swapped run re-pin refuses (PIN_REGRESSION)', () => {\n      const d = mkSelf('at05', `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:2\\`, \\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:3\\`, \\`:2\\`).\\n`);\n      const w = tool(d, ['--write-pin']);\n      return { ok: w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: w.verdict };\n    });\n    check('AT06', 'hand-edited pin token not on the line reads REGRESSED', () => {\n      const d = mkSelf('at06', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].token = 'GAMMA_MARK'; });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /REGRESSED/.test(r.out), detail: r.verdict };\n    });\n    check('AT07', 'debt flipped into the pin by hand reads DEBT_GREW against --base', () => {\n      const d = mkSelf('at07', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'debt:false'; p.notes[NOTE].entries[0].token = 'GAMMA_MARK'; });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out), detail: r.verdict };\n    });\n    check('AT08', 'a true expectation dropped to unchecked reads CHECKED_SHRANK against --base', () => {\n      const d = mkSelf('at08', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'unchecked'; p.notes[NOTE].entries[0].token = null; });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /CHECKED_SHRANK/.test(r.out), detail: r.verdict };\n    });\n    check('AT09', 'review override absent from the sentence reads OVERRIDE_INVALID', () => {\n      const d = mkSelf('at09', `${H}The header lives at \\`scripts/a.mjs:3\\`.\\n`, src);\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'fx' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      return { ok: w.status === 1 && /OVERRIDE_INVALID/.test(w.out), detail: w.verdict };\n    });\n    check('AT10', 'review override present in the sentence and on the line pins true', () => {\n      const d = mkReviewed('at10', `${H}The ALPHA_MARK constant is set at \\`scripts/a.mjs:3\\`.\\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'fx' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      const r = tool(d, []);\n      return { ok: w.status === 0 && r.status === 0 && /true=1 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT11', 'fixed debt left in the pin reads DEBT_STALE', () => {\n      const d = mkSelf('at11', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'debt:false'; });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /DEBT_STALE/.test(r.out), detail: r.verdict };\n    });\n    check('AT12', 'line beyond EOF and a `..` escape are dead debt, never read outside the clone', () => {\n      const d = mkSelf('at12', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:99\\`; \\`ALPHA_MARK\\` at \\`../a-src/scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      const r = tool(d, []);\n      return { ok: e.length === 2 && e.every((x) => x.expect === 'debt:dead') && r.status === 0, detail: JSON.stringify(e.map((x) => x.expect)) };\n    });\n    check('AT13', 'source clone at another revision fails closed (exit 2)', () => {\n      const d = mkSelf('at13', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const o = JSON.parse(readFileSync(join(d, '.ufo/pins/origin.json'), 'utf8'));\n      o.revision = '0'.repeat(40);\n      writeFileSync(join(d, '.ufo/pins/origin.json'), JSON.stringify(o));\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /SRC_REV_MISMATCH/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT14', '\"At `path:N`, `sym`\" with no earlier symbol pairs forward', () => {\n      const d = mkSelf('at14', '## `scripts/b.mjs`\\n\\nAt `scripts/b.mjs:2`, `two` is declared.\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 1 && e[0].token === 'two' && e[0].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT15', 'bare `:N` resolves through the heading path; fenced code is ignored', () => {\n      const d = mkSelf('at15', '## `scripts/b.mjs`\\n\\n```\\n`one` (`:9`)\\n```\\n\\n`one` (`:1`) and `two` (`:2`).\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e.every((x) => x.path === 'scripts/b.mjs' && x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.path, x.expect])) };\n    });\n    check('AT16', 'clean pin re-checked against itself as --base stays CLEAN', () => {\n      const d = mkSelf('at16', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: r.verdict };\n    });\n    check('AT18', 'one phrase cited at two sites pairs both anchors with that phrase, never a later symbol', () => {\n      const d = mkSelf('at18', `${H}The mark is \\`ALPHA_MARK\\` (\\`scripts/a.mjs:3\\`, \\`scripts/a.mjs:4\\`), then \\`BETA_MARK\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e.every((x) => x.token === 'ALPHA_MARK' && x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT19', 'forward fill never steals a symbol that owns the next citation', () => {\n      const d = mkSelf('at19', `${H}Bindings start at \\`scripts/a.mjs:4\\` (\\`ALPHA_MARK\\` is at \\`scripts/a.mjs:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e[0].expect === 'unchecked' && e[1].token === 'ALPHA_MARK' && e[1].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT20', 're-paired token cannot launder a true ordinal (PIN_REGRESSION by ordinal)', () => {\n      const d = mkSelf('at20', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      return { ok: w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: w.verdict };\n    });\n    check('AT21', 'a dirty source worktree cannot change a verdict (committed blobs only)', () => {\n      const s2 = mkSrc('dirty');\n      const d = mkSelf('at21', `${H}\\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, s2);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const before = pinOf(d).notes[NOTE].entries[0].expect;\n      writeFileSync(join(s2.dir, 'scripts/a.mjs'), 'x\\nconst BETA_MARK = 2;\\nconst BETA_MARK2 = BETA_MARK;\\n');\n      const r = tool(d, []);\n      return { ok: before === 'debt:false' && r.status === 0 && /debt=1 /.test(r.verdict), detail: `${before} | ${r.verdict}` };\n    });\n    check('AT22', 'a pin note key outside corpus/knowledge fails closed (exit 2)', () => {\n      const d = mkSelf('at22', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes['../../etc/passwd'] = p.notes[NOTE]; });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /NOTE_KEY_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT23', 'a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)', () => {\n      const d = mkSelf('at23', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`two\\` at \\`scripts/b.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT24', 'a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED', () => {\n      const d = mkSelf('at24', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => {\n        const [e0, e1] = p.notes[NOTE].entries;\n        Object.assign(e0, { token: null, expect: 'unchecked', key: 'fx-missing-base-key' });\n        Object.assign(e1, { token: 'ALPHA_MARK', expect: 'true' });\n      });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /TOKEN_FORGED/.test(r.out), detail: r.verdict };\n    });\n    check('AT25', 'an inserted earlier anchor shifts a base-true key index and ordinal yet stays CLEAN by identity', () => {\n      const d = mkSelf('at25', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:4\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN') && /true=2 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT26', 'a pin entry source outside pair or review:<seat> fails closed (exit 2)', () => {\n      const d = mkSelf('at26', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].source = 'hand'; });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT27', 'an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)', () => {\n      const d = mkSelf('at27', `${H}Intro.\\n\\nThe mark \\`ALPHA_MARK\\` is at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT28', 'a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)', () => {\n      const d = mkSelf('at28', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { token: null, expect: 'unchecked' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /TOKEN_FORGED/.test(r.out), detail: r.verdict };\n    });\n    check('AT29', 'identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading\\'s', () => {\n      const d = mkSelf('at29', '## `scripts/a.mjs`\\n\\n`BETA_MARK` (`:2`).\\n\\n## `scripts/b.mjs`\\n\\nSee (`:2`).\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), '## `scripts/b.mjs`\\n\\n`two` (`:2`).\\n\\n## `scripts/a.mjs`\\n\\nSee (`:2`).\\n');\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT30', 'a review:<seat> entry with a null token fails closed as PIN_INVALID', () => {\n      const d = mkSelf('at30', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx', token: null, expect: 'unchecked' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT31', 'a self-declared review source with no committed record reads REVIEW_UNBOUND (round-40 closure R39-1)', () => {\n      const { d, openRev } = mkReviewed('at31', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:NoSuchSeat' }); });\n      const head = tool(d, []);\n      const open = tool(d, ['--open', openRev]);\n      return { ok: head.status === 1 && /REVIEW_UNBOUND/.test(head.out) && open.status === 1 && /REVIEW_UNBOUND/.test(open.out), detail: `${head.verdict} | ${open.verdict}` };\n    });\n    check('AT32', 'a committed review record binds its anchor; a record naming another seat does not', () => {\n      const note = `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`;\n      const bound = mkReviewed('at32bound', note, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      tool(bound, ['--write-pin', '--notes', NOTE]);\n      setPin(bound, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const ok = tool(bound, []);\n      const other = mkReviewed('at32other', note, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src).d;\n      tool(other, ['--write-pin', '--notes', NOTE]);\n      setPin(other, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const bad = tool(other, []);\n      return { ok: ok.status === 0 && /TRUTH: CLEAN/u.test(ok.verdict) && bad.status === 1 && /REVIEW_UNBOUND/.test(bad.out), detail: `${ok.verdict} | ${bad.verdict}` };\n    });\n    check('AT33', 'a review record binds one anchor: a review token that travels to another anchor is unbound', () => {\n      const d = mkReviewed('at33', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:4\\`.\\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { source: 'review:fx' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /REVIEW_UNBOUND/.test(r.out), detail: r.verdict };\n    });\n    check('AT34', 'the write path refuses an unbound review source, and --open REV reads only the records committed at REV', () => {\n      const d = mkReviewed('at34', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, null, src).d;\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'NoSuchSeat' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      const kept = pinOf(d).notes[NOTE].entries[0].source;\n      // A record committed AFTER the open revision cannot bind: --open pins the record revision.\n      const late = mkReviewed('at34late', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, null, src);\n      const openRev = late.openRev;\n      mkdirSync(join(late.d, '.ufo/waves/round-99'), { recursive: true });\n      writeFileSync(join(late.d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, null, 1) + '\\n');\n      commit(late.d);\n      tool(late.d, ['--write-pin', '--notes', NOTE]);\n      setPin(late.d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const atOpen = tool(late.d, ['--open', openRev]);\n      const atHead = tool(late.d, []);\n      return { ok: w.status === 1 && /REVIEW_UNBOUND/.test(w.out) && kept !== 'review:NoSuchSeat'\n        && atOpen.status === 1 && /REVIEW_UNBOUND/.test(atOpen.out) && atHead.status === 0 && /TRUTH: CLEAN/u.test(atHead.verdict),\n      detail: `${w.verdict} kept=${kept} | ${atOpen.verdict} | ${atHead.verdict}` };\n    });\n    check('AT43', 'a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)', () => {\n      const d = mkSelf('at43', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\n\\`GAMMA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT44', 'a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)', () => {\n      const d = mkSelf('at44', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:2\\`. The mark is at \\`scripts/a.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT45', 'a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)', () => {\n      const d = mkSelf('at45', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\n\\`GAMMA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:2\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      setPin(d, (p) => {\n        const n = p.notes[NOTE];\n        n.anchors = 2;\n        n.entries = [\n          { key: 'scripts/a.mjs|ALPHA_MARK|0', ord: 0, raw: 'scripts/a.mjs:2', path: 'scripts/a.mjs', a: 2, b: 2, token: 'ALPHA_MARK', source: 'pair', expect: 'debt:false' },\n          { key: 'scripts/a.mjs|ALPHA_MARK|1', ord: 1, raw: 'scripts/a.mjs:3', path: 'scripts/a.mjs', a: 3, b: 3, token: 'ALPHA_MARK', source: 'pair', expect: 'true' },\n        ];\n      });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out) && /fx\\.md#0/.test(r.out) && /scripts\\/a\\.mjs\\|ALPHA_MARK\\|0 true at base/.test(r.out), detail: r.verdict };\n    });\n    check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {\n      const r = tool(join(tmp, 'at01'), ['--bogus']);\n      return { ok: r.status === 64, detail: `exit=${r.status}` };\n    });\n    check('AT39', 'a debt anchor swapped for another debt anchor at a fresh identity reads DEBT_NEW against --open (round-40 R39-3 one-for-one trade)', () => {\n      const d = mkSelf('at39', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`GHOST_ONE\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`GHOST_TWO\\` at \\`scripts/b.mjs:1\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out) && !/DEBT_GREW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT40', 'new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)', () => {\n      const d = mkSelf('at40', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      const extra = [0, 1, 2].map((i) => `\\`GHOST_${i}\\` at \\`scripts/b.mjs:1\\`.`).join(' ');\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. ${extra}\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT41', 'an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)', () => {\n      const d = mkSelf('at41', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`GHOST_REBREAK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      setPin(d, (p) => {\n        const e = p.notes[NOTE].entries[0];\n        Object.assign(e, { token: 'GHOST_REBREAK', expect: 'debt:false', key: 'scripts/a.mjs|GHOST_REBREAK|0' });\n      });\n      const r = tool(d, ['--open', open]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out), detail: r.verdict };\n    });\n    check('AT42', 'an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)', () => {\n      const d = mkSelf('at42', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };\n    });\n  } finally {\n    rmSync(tmp, { recursive: true, force: true });\n  }\n  for (const r of results) process.stdout.write(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} ${r.label}${r.ok ? '' : `\\n     ${r.detail}`}\\n`);\n  const pass = results.filter((r) => r.ok).length;\n  process.stdout.write(`ANCHOR_TRUTH_SELFTEST: ${pass}/${results.length} pass\\nVERDICT: ${pass === results.length ? 'PASS' : 'FAIL'}\\n`);\n  return pass === results.length ? 0 : 1;\n}\n\nif (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(TOOL_FILE)) {\n  try { process.exitCode = run(process.argv.slice(2)); }\n  catch (e) { process.exitCode = failClosed('INPUT_UNREADABLE', e.message); }\n}\n"
+  },
+  "summary": {
+    "total": 26,
+    "killed": 26,
+    "survived": 0,
+    "runtimeError": 0,
+    "survivors": [],
+    "runtimeErrors": []
+  },
+  "files": {
+    "scripts/anchor-truth.mjs": {
+      "language": "javascript",
+      "source": "#!/usr/bin/env node\n/**\n * anchor-truth.mjs \u2014 per-anchor truth gate (contract `kumitate-anchor-truth-v1`, round 38).\n *\n * WHY. Rounds 36 and 37 were rejected-harmed. `claims-check --fidelity` pairs a\n * symbol with an anchor by 14-character adjacency, and its ratchet ceilings equal\n * the current debt, so the gate passed a forward shift of 123 anchors (round 36)\n * and a reset that re-broke 62 true anchors (round 37). See\n * `corpus/lessons/round-36-verifier-spotcheck.md` and\n * `corpus/lessons/round-37-verifier-spotcheck.md`. This gate checks every anchor of\n * the registered notes against the pinned upstream source. It pins one expectation\n * per anchor and fails on regression, set change, stale debt, debt growth and\n * invalid review overrides.\n *\n * ANCHORS. Every backticked `path:N`, `path:N-M`, `:N` or `:N-M` span outside fenced\n * code, in a paragraph, heading or table row. A bare `:N` takes the most recent\n * repo-relative path (contains `/`, no leading `.`). Paths come from headings, path\n * spans and path-bearing anchors.\n *\n * PAIRING (proposal only; the pin is the authority). Within a sentence, the symbols\n * seen since the previous anchor run pair positionally with the next run: the last\n * k symbols take the k anchors, left first. If there are fewer symbols than anchors,\n * the leading anchors take the next symbol in the sentence. Spans joined only by\n * `,`, `;`, `/`, parentheses, `and` or `or` form one run.\n *\n * TRUTH. The token (the paired symbol, or a reviewed override) is normalised:\n * quotes, a trailing call or argument list, and leading `.`/`#`/`-` are stripped.\n * The token is true when the whole normalised token, or its longest identifier,\n * occurs word-bounded on the cited line(s) of the file (letters, digits and `_` bound a\n * word; `$` does not, so a shell `$NAME` use matches `NAME`). The file is resolved inside\n * the pinned clone: an exact path, else a unique `ls-files` suffix. Absolute and\n * `..` paths, and anything that resolves outside the clone, are `dead`.\n *\n * PIN `.ufo/pins/anchor-truth.json`\n *   { contract, revision, notes: { \"<note path>\": { anchors, entries: [\n *       { key, ord, raw, path, a, b, token, source, expect } ] } } }\n *   expect: `true` | `unchecked` (no token) | `debt:false` | `debt:dead`\n *   source: `pair` | `review:<seat>`; key = `<path>|<token or #>|<k>`, the k-th\n *   occurrence of that path+token in the note.\n * Findings (`TRUTH  <KIND>  <note>#<ord> \u2026`), all errors:\n *   REGRESSED          expect true, token not on the cited line(s)\n *   ANCHOR_SET_CHANGED the note's raw anchor sequence differs from the pin (re-pin)\n *   DEBT_STALE         expect debt, but the token now reads true (shrink the pin)\n *   OVERRIDE_INVALID   review token absent from the sentence or the cited line(s)\n *   REVIEW_UNBOUND     review:<seat> source with no committed review record for this anchor\n *   DEBT_GREW          (--base REV) a note's debt count rose, or a key true at REV is debt now\n *   DEBT_NEW           (--open REV) a current debt anchor has no equal debt anchor at the\n *                       round-open revision (same raw@path occurrence and same token)\n *   CHECKED_SHRANK     (--base REV) a note's count of `true` expectations fell\n *   PIN_REGRESSION     (--write-pin) a key expected true would become non-true; pin not written\n *\n * REVIEW BINDING. A `review:<seat>` source is a claim: \"seat X reviewed this anchor and\n * said this token\". The claim is true only when a COMMITTED review record backs it, and the\n * record is read from committed bytes (`git show REV:<path>`), never from the working tree.\n *   REVISION. The records are read at the revision the caller names with `--open REV` (the\n *   round-open revision): a record written in the very change being judged cannot bind.\n *   Without `--open` the records are read at the lane's current HEAD and the gate prints one\n *   warning line, because that revision is inside the change being judged.\n *   RECORDS. Every committed file `.ufo/waves/<round>/anchor-reviews.json` is a review\n *   registry: `{ \"<note>#<ord>\": { seat, token } }`.\n *   IDENTITY. The ordinal alone is not the binding (ordinals shift when the note grows), so\n *   a record's `<note>#<ord>` is resolved through the PIN at the record revision to an anchor\n *   identity `raw@path#occurrence`. A pin entry is bound only when a record names the same\n *   note, the same seat and the same token AND resolves to that entry's own anchor (the same\n *   identity, or the same file with one cited range nested in the other: a widened or\n *   narrowed citation of the reviewed anchor is the same anchor). A review token that\n *   travels to another anchor, or a seat that never reviewed it, is unbound.\n *   NO SEAT REPORT NEEDED. The registry is the record; a per-seat report file\n *   (`.ufo/waves/<round>/build|falsify/<seat>.md`) is corroboration, not a requirement (the\n *   L1 seat of round 38 left its review in the registry only).\n *   WORKFLOW. Commit the registry first, then re-pin: `--write-pin` refuses to write a pin\n *   whose review source has no committed record (REVIEW_UNBOUND, pin not written), so an\n *   unbound override can never be laundered into the pin.\n * Verdict (last stdout line):\n *   TRUTH: CLEAN (notes=<n> anchors=<n> true=<n> debt=<n> unchecked=<n> src-rev=<12>)\n *   TRUTH: DRIFT (<n> findings: KIND \u2026)\n *   TRUTH: FAIL-CLOSED (<TOKEN> detail)\n * exit: 0 clean \u00b7 1 drift \u00b7 2 fail-closed \u00b7 64 usage\n *\n * CLI: node scripts/anchor-truth.mjs [--self DIR] [--pin FILE] [--src DIR]\n *        [--base REV] [--open REV] [--write-pin [--reviews FILE] [--notes a.md,b.md]] [--json] [--selftest]\n * `--open REV` adds the round-open floor: the pin at REV (the revision the L1 passes on the\n * command line, never a lane file) is a second base for BASE_TRUE_LOST, DEBT_GREW and\n * CHECKED_SHRANK, and every current debt anchor must equal a debt anchor at REV by identity\n * (raw@path occurrence) and by token, else DEBT_NEW. `unchecked` anchors are exempt.\n * Read-only except `--write-pin`, which writes the pin file only. The selftest writes\n * only mkdtemp fixtures.\n */\nimport { spawnSync } from 'node:child_process';\nimport { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';\nimport { tmpdir } from 'node:os';\nimport { dirname, join, resolve, sep } from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst CONTRACT = 'kumitate-anchor-truth-v1';\nconst TOOL_FILE = fileURLToPath(import.meta.url);\nconst W = '[\\\\p{L}\\\\p{N}_]';\nconst SPAN = /`([^`\\n]+)`/gu;\nconst ANCH = /^([\\p{L}\\p{N}_./@+-]*[\\p{L}\\p{N}_-]\\.[\\p{L}\\p{N}_]+)?:(\\d+)(?:-(\\d+))?$/u;\nconst PATHRE = /^[\\p{L}\\p{N}_./@+-]+\\.(?:mjs|cjs|js|ts|json|md|sh|rs|toml|py|service|timer|ya?ml|txt|lock|conf)$/u;\nconst IDENT = /[A-Za-z_$][\\p{L}\\p{N}_$]*/gu;\nconst JOIN = /^[\\s,;/()]*(?:(?:and|or)[\\s,;/()]*)?$/u;\nconst SENT_END = /(?:\\.\\s+(?=[A-Z*`(])|\\.\\s*$|;\\s|:\\s*$)/u;\nconst MAX_FILE_BYTES = 8 * 1024 * 1024;\nconst MAX_NOTE_BYTES = 4 * 1024 * 1024;\nconst MAX_JSON_BYTES = 32 * 1024 * 1024;\nconst MAX_TOKEN_CHARS = 256;\nconst NOTE_KEY = /^corpus\\/knowledge\\/[A-Za-z0-9._-]+\\.md$/;\nconst REVIEW_REGISTRY_RE = /^\\.ufo\\/waves\\/[^/]+\\/anchor-reviews\\.json$/u;\nconst MAX_REVIEW_BYTES = 32 * 1024 * 1024;\nconst GIT_BIN = existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';\nconst GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',\n  'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',\n  'GIT_OPTIONAL_LOCKS', 'GIT_TERMINAL_PROMPT', 'GIT_ATTR_NOSYSTEM']);\n\nfunction gitEnv(extra) {\n  const env = {};\n  for (const [k, v] of Object.entries(process.env)) if (GIT_ENV_KEEP.has(k)) env[k] = v;\n  return { ...env, GIT_OPTIONAL_LOCKS: '0', GIT_TERMINAL_PROMPT: '0', ...(extra ?? {}) };\n}\nfunction git(dir, args) {\n  const r = spawnSync(GIT_BIN, ['-C', dir, ...args], { encoding: 'utf8', timeout: 60_000, maxBuffer: 64 * 1024 * 1024, env: gitEnv() });\n  return { ok: !r.error && r.status === 0, out: r.stdout ?? '', err: r.stderr ?? '' };\n}\nconst esc = (s) => s.replace(/[.*+?^${}()|[\\]\\\\/]/g, '\\\\$&');\nconst strip = (s) => s.replace(/^[\\s]+|[\\s]+$/gu, '');\n\n/* \u2500\u2500 parsing \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction* blocks(text) {\n  let cur = [];\n  let start = null;\n  const lines = text.split('\\n');\n  for (let i = 0; i < lines.length; i++) {\n    const line = lines[i];\n    const ln = i + 1;\n    if (strip(line) === '' || line.startsWith('#') || line.replace(/^\\s+/u, '').startsWith('|') || line.startsWith('```')) {\n      if (cur.length) { yield [cur.join(' '), start]; cur = []; }\n      if (strip(line)) yield [line, ln];\n      continue;\n    }\n    if (!cur.length) start = ln;\n    cur.push(line);\n  }\n  if (cur.length) yield [cur.join(' '), start];\n}\n\n/** Parse a note into anchors in document order: {line, path, a, b, sym, raw, sentence}. */\nexport function parseNote(text) {\n  const out = [];\n  let curPath = null;\n  let inCode = false;\n  for (const [blk, ln] of blocks(text)) {\n    if (blk.startsWith('```')) { inCode = !inCode; continue; }\n    if (inCode) continue;\n    if (blk.startsWith('#')) {\n      const m = [...blk.matchAll(SPAN)].map((x) => x[1]).filter((s) => PATHRE.test(s) && s.includes('/') && !s.startsWith('.'));\n      if (m.length) curPath = m[0];\n    }\n    const isRow = blk.replace(/^\\s+/u, '').startsWith('|');\n    const sentences = [];\n    let sent = [];\n    let pos = 0;\n    for (const m of blk.matchAll(SPAN)) {\n      const gap = blk.slice(pos, m.index);\n      if (SENT_END.test(gap) || (isRow && gap.includes('|'))) {\n        if (sent.length) sentences.push(sent);\n        sent = [];\n      }\n      sent.push([m[1], gap, pos, m.index]);\n      pos = m.index + m[0].length;\n    }\n    if (sent.length) sentences.push(sent);\n    sentences.forEach((s) => {\n      // Override scope: the anchor's own paragraph, heading or table row (round 38): a review\n      // token must occur in the note's text around the anchor, never be invented.\n      const sentence = blk;\n      const items = s.map(([val, gap]) => {\n        const am = ANCH.exec(val);\n        if (am) return { kind: 'A', val, gap, path: am[1] ?? null, a: Number(am[2]), b: Number(am[3] ?? am[2]) };\n        if (PATHRE.test(val)) return { kind: 'P', val, gap };\n        return { kind: 'S', val, gap };\n      });\n      let pending = [];\n      let i = 0;\n      while (i < items.length) {\n        const it = items[i];\n        if (it.kind === 'P') {\n          if (it.val.includes('/') && !it.val.startsWith('.')) curPath = it.val;\n          i++; continue;\n        }\n        if (it.kind === 'S') { pending.push(it.val); i++; continue; }\n        const run = [it];\n        let j = i + 1;\n        while (j < items.length && items[j].kind === 'A' && JOIN.test(items[j].gap)) { run.push(items[j]); j++; }\n        const k = run.length;\n        const syms = pending.length ? pending.slice(-k) : [];\n        let nxt = null;\n        if (syms.length === 0) {\n          // Forward fill (\"At `path:N`, `sym`\") only when that symbol does not own the next\n          // anchor run itself: a lookahead never steals another citation's symbol.\n          for (let q = j; q < items.length; q++) {\n            if (items[q].kind !== 'S') continue;\n            let r2 = q + 1;\n            while (r2 < items.length && items[r2].kind === 'S' && JOIN.test(items[r2].gap)) r2++;\n            const owned = r2 < items.length && items[r2].kind === 'A';\n            if (!owned) nxt = items[q].val;\n            break;\n          }\n        }\n        // Fewer symbols than anchors: the earliest pending symbol is shared by the leading anchors\n        // (one phrase cited at two sites), never borrowed from later text.\n        const assign = syms.length ? [...Array(k - syms.length).fill(syms[0]), ...syms] : Array(k).fill(null);\n        run.forEach((r, idx) => {\n          const path = r.path ?? curPath;\n          if (r.path) curPath = r.path;\n          const a = assign[idx];\n          out.push({ line: ln, path, a: r.a, b: r.b, sym: a !== null ? a : nxt, raw: r.val, sentence });\n        });\n        pending = [];\n        i = j;\n      }\n    });\n  }\n  return out;\n}\n\nexport function norm(sym) {\n  let s = strip(sym).replace(/^[\"']+|[\"']+$/g, '');\n  s = s.replace(/\\(.*\\)$/u, '');\n  s = s.replace(/^[.#-]+/u, '');\n  const toks = s.match(IDENT) ?? [];\n  let longest = s;\n  if (toks.length) { longest = toks[0]; for (const t of toks) if (t.length > longest.length) longest = t; }\n  return [s, longest];\n}\nconst wb = (t, seg) => t !== '' && new RegExp(`(?<!${W})${esc(t)}(?!${W})`, 'u').test(seg);\n\n/* \u2500\u2500 source access (pinned clone) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nclass Source {\n  // Reads committed blobs at the pinned revision only (`git show REV:path`), never the clone's\n  // working tree: a dirty or symlinked worktree cannot change a verdict (round-38 SentGate).\n  constructor(root, rev) {\n    this.root = root;\n    this.rev = rev;\n    this.cache = new Map();\n    const t = git(root, ['ls-tree', '-r', '-z', rev]);\n    if (!t.ok) throw new Error('source tree inventory failed');\n    this.files = new Set(t.out.split('\\0').filter(Boolean).flatMap((row) => {\n      const tab = row.indexOf('\\t');\n      return /^100(?:644|755) blob /u.test(row) && tab >= 0 ? [row.slice(tab + 1)] : [];\n    }));\n    this.list = [...this.files];\n  }\n  resolve(path) {\n    if (!path || path.startsWith('/') || path.split('/').includes('..')) return null;\n    if (this.files.has(path)) return path;\n    const c = this.list.filter((f) => f.endsWith('/' + path));\n    return c.length === 1 ? c[0] : null;\n  }\n  lines(rel) {\n    if (!this.cache.has(rel)) {\n      const sz = git(this.root, ['cat-file', '-s', `${this.rev}:${rel}`]);\n      if (!sz.ok || Number(sz.out.trim()) > MAX_FILE_BYTES) { this.cache.set(rel, null); return null; }\n      const r = git(this.root, ['show', `${this.rev}:${rel}`]);\n      this.cache.set(rel, r.ok ? r.out.split('\\n') : null);\n    }\n    return this.cache.get(rel);\n  }\n}\n\n/**\n * Committed review records for `review:<seat>` pin sources (round-40 closure R39-1).\n *\n * A review source is a claim: \"seat X reviewed this anchor and said this token\". The claim\n * holds only when a COMMITTED review record backs it. Records live in review registries\n * (`.ufo/waves/<round>/anchor-reviews.json`), read from the lane's committed bytes at HEAD,\n * never from the working tree. A registry maps `<note>#<ord>` to { seat, token }; the\n * ordinal is resolved against the note as committed at the revision that last wrote the\n * registry, so a record follows its anchor when the note's anchor order shifts.\n *\n * A record binds a pin entry when it names the same note, the same seat and the same token\n * AND its anchor is the entry's anchor: the same file, with cited line ranges that overlap\n * (a widened or narrowed citation of the reviewed range is the same anchor). A review token\n * that travels to another anchor, or a seat that never reviewed it, is unbound.\n */\nclass ReviewRecords {\n  constructor(laneRoot, rev) {\n    this.root = laneRoot;\n    this.rev = rev ?? null;\n    this.byKey = new Map();  // `${note}|${seat}|${token}` -> [{identity, path, a, b}]\n    this.registries = 0;\n    this.records = 0;\n    if (!this.rev) return;\n    const tree = git(laneRoot, ['ls-tree', '-r', '-z', this.rev]);\n    if (!tree.ok) return;\n    // The pin at the record revision: a record's ordinal is resolved through it, so a record\n    // names an anchor (raw@path#occurrence) and not a position in a list.\n    const pin = this.pinAt(this.rev);\n    const pins = new Map();\n    if (pin) {\n      for (const [note, pn] of Object.entries(pin.notes ?? {})) {\n        const entries = pn?.entries ?? [];\n        pins.set(note, { entries, ids: identities(entries) });\n      }\n    }\n    for (const row of tree.out.split('\\0').filter(Boolean)) {\n      const tab = row.indexOf('\\t');\n      if (tab < 0) continue;\n      const path = row.slice(tab + 1);\n      if (!REVIEW_REGISTRY_RE.test(path)) continue;\n      const body = this.blob(this.rev, path);\n      if (body === null) continue;\n      let json;\n      try { json = JSON.parse(body); } catch { continue; }\n      if (!json || typeof json !== 'object' || Array.isArray(json)) continue;\n      this.registries++;\n      for (const [k, v] of Object.entries(json)) {\n        const hash = k.lastIndexOf('#');\n        if (hash < 1) continue;\n        const note = k.slice(0, hash);\n        const ord = Number(k.slice(hash + 1));\n        if (!note || !Number.isInteger(ord) || ord < 0) continue;\n        if (!v || typeof v !== 'object') continue;\n        const seat = typeof v.seat === 'string' ? v.seat : null;\n        const token = typeof v.token === 'string' ? v.token : null;\n        if (!seat || token === null) continue;\n        const np = pins.get(note);\n        if (!np || ord >= np.entries.length) continue;\n        const entry = np.entries[ord];\n        const key = `${note}|${seat}|${token}`;\n        if (!this.byKey.has(key)) this.byKey.set(key, []);\n        this.byKey.get(key).push({ identity: np.ids[ord], path: entry.path ?? null, a: entry.a, b: entry.b });\n        this.records++;\n      }\n    }\n  }\n  blob(rev, path) {\n    const size = git(this.root, ['cat-file', '-s', `${rev}:${path}`]);\n    if (!size.ok || Number(size.out.trim()) > MAX_REVIEW_BYTES) return null;\n    const r = git(this.root, ['show', `${rev}:${path}`]);\n    return r.ok ? r.out : null;\n  }\n  pinAt(rev) {\n    const body = this.blob(rev, '.ufo/pins/anchor-truth.json');\n    if (body === null) return null;\n    try { return JSON.parse(body); } catch { return null; }\n  }\n  /**\n   * True when a committed record binds this review-sourced entry: the record names the same\n   * note, seat and token, and its anchor is the entry's anchor (same identity, or the same\n   * file with one cited range nested in the other: a widened or narrowed citation of the\n   * reviewed anchor is the same anchor).\n   */\n  bound(note, e, identity) {\n    if (typeof e.source !== 'string' || !e.source.startsWith('review:')) return true;\n    const seat = e.source.slice('review:'.length);\n    const list = this.byKey.get(`${note}|${seat}|${e.token}`);\n    if (!list) return false;\n    for (const rec of list) {\n      if (identity && rec.identity === identity) return true;\n      if (!rec.path || !e.path || rec.path !== e.path) continue;\n      if (!Number.isInteger(e.a) || !Number.isInteger(e.b)) continue;\n      if ((rec.a <= e.a && e.b <= rec.b) || (e.a <= rec.a && rec.b <= e.b)) return true;\n    }\n    return false;\n  }\n}\n\n/** Status of one (path, a, b, token): true | false | dead | unchecked. */\nfunction judge(src, path, a, b, token) {\n  if (token === null || token === undefined) return 'unchecked';\n  if (String(token).length > MAX_TOKEN_CHARS) return 'false';\n  const rp = src.resolve(path);\n  if (rp === null) return 'dead';\n  const L = src.lines(rp);\n  if (L === null || a < 1 || b > L.length || a > b) return 'dead';\n  const seg = L.slice(a - 1, b).join('\\n');\n  const [full, longest] = norm(token);\n  return (full && wb(full, seg)) || (longest && wb(longest, seg)) ? 'true' : 'false';\n}\n\nfunction keyed(entries) {\n  const seen = new Map();\n  for (const e of entries) {\n    const base = `${e.path}|${e.token ?? '#'}`;\n    const k = seen.get(base) ?? 0;\n    seen.set(base, k + 1);\n    e.key = `${base}|${k}`;\n  }\n  return entries;\n}\n\n/* \u2500\u2500 pin construction and checking \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction buildEntries(noteText, src, prior, reviews, note) {\n  const anchors = parseNote(noteText);\n  const priorByOrd = new Map((prior?.entries ?? []).map((e) => [e.ord, e]));\n  const entries = anchors.map((x, ord) => {\n    const rv = reviews?.[`${note}#${ord}`];\n    const pe = priorByOrd.get(ord);\n    let token = x.sym;\n    let source = 'pair';\n    if (rv && rv.token) { token = rv.token; source = `review:${rv.seat ?? 'l1'}`; }\n    else if (pe && pe.source?.startsWith('review:') && pe.raw === x.raw) { token = pe.token; source = pe.source; }\n    const st = judge(src, x.path, x.a, x.b, token);\n    const expect = st === 'true' ? 'true' : st === 'unchecked' ? 'unchecked' : `debt:${st}`;\n    return { ord, raw: x.raw, path: x.path, a: x.a, b: x.b, token: token ?? null, source, expect, line: x.line, sentence: x.sentence };\n  });\n  return keyed(entries);\n}\n\nfunction overrideValid(e, src) {\n  const [full, longest] = norm(e.token);\n  const inSentence = wb(full, e.sentence) || wb(longest, e.sentence);\n  return inSentence && judge(src, e.path, e.a, e.b, e.token) === 'true';\n}\n\nfunction checkNote(note, noteText, pinNote, src, recs) {\n  const findings = [];\n  const anchors = parseNote(noteText);\n  const ids = identities(pinNote.entries ?? []);\n  const rawNow = anchors.map((x) => `${x.raw}@${x.path}`);\n  const rawPin = pinNote.entries.map((e) => `${e.raw}@${e.path}`);\n  const counts = { anchors: anchors.length, true: 0, debt: 0, unchecked: 0 };\n  if (rawNow.length !== rawPin.length || rawNow.some((r, i) => r !== rawPin[i])) {\n    const i = rawNow.findIndex((r, idx) => r !== rawPin[idx]);\n    findings.push(['ANCHOR_SET_CHANGED', `${note}#${i < 0 ? rawNow.length : i}`, `now=${rawNow.length} pinned=${rawPin.length} first-diff=${i < 0 ? 'length' : `${rawNow[i] ?? '\u2205'} vs ${rawPin[i] ?? '\u2205'}`}`]);\n    return { findings, counts };\n  }\n  pinNote.entries.forEach((e, i) => {\n    const x = anchors[i];\n    const live = { ...e, sentence: x.sentence };\n    const st = judge(src, e.path, e.a, e.b, e.token);\n    if (e.expect === 'true') counts.true++; else if (e.expect === 'unchecked') counts.unchecked++; else counts.debt++;\n    if (String(e.source).startsWith('review:')) {\n      if (!recs.bound(note, e, ids[e.ord])) {\n        findings.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);\n      }\n      if (!overrideValid(live, src)) {\n        findings.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n      }\n    }\n    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {\n      // A `pair` token must be the note's own pairing; a hand-set token on the line is not a repair.\n      findings.push(['TOKEN_FORGED', `${note}#${e.ord}`, `${e.raw} pinned=${e.token} paired=${x.sym ?? null}`]);\n    }\n    if (e.expect === 'true' && st !== 'true') findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} token=${e.token} status=${st}`]);\n    else if (e.expect.startsWith('debt:') && st === 'true') findings.push(['DEBT_STALE', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n    else if (e.expect === 'unchecked' && e.token !== null) findings.push(['REGRESSED', `${note}#${e.ord}`, `${e.raw} unchecked entry carries a token`]);\n  });\n  return { findings, counts };\n}\n\n/** Token-independent anchor identity: the nth occurrence of `raw@path` in its note. */\nfunction identities(entries) {\n  const seen = new Map();\n  return entries.map((e) => {\n    const id = `${e.raw}@${e.path}`;\n    const n = seen.get(id) ?? 0;\n    seen.set(id, n + 1);\n    return `${id}#${n}`;\n  });\n}\n\nfunction compareBase(pin, basePin) {\n  const findings = [];\n  for (const [note, bn] of Object.entries(basePin.notes ?? {})) {\n    const cn = pin.notes?.[note];\n    const tally = (n) => {\n      const c = { true: 0, debt: 0 };\n      for (const e of n?.entries ?? []) { if (e.expect === 'true') c.true++; else if (String(e.expect).startsWith('debt:')) c.debt++; }\n      return c;\n    };\n    const b = tally(bn);\n    const c = tally(cn);\n    if (!cn) { findings.push(['CHECKED_SHRANK', `${note}#-`, `note dropped from the pin (base true=${b.true})`]); continue; }\n    if (c.debt > b.debt) findings.push(['DEBT_GREW', `${note}#-`, `debt ${b.debt} -> ${c.debt}`]);\n    if (c.true < b.true) findings.push(['CHECKED_SHRANK', `${note}#-`, `true ${b.true} -> ${c.true}`]);\n    const now = new Map(cn.entries.map((e) => [e.key, e]));\n    for (const e of bn.entries ?? []) {\n      if (e.expect !== 'true') continue;\n      const m = now.get(e.key);\n      if (m && m.expect !== 'true') findings.push(['DEBT_GREW', `${note}#${m.ord}`, `${e.key} true at base, ${m.expect} now`]);\n    }\n    // The key carries the paired token, so a current entry re-keyed or re-tokened escaped the\n    // key match above (round-38 closure R38-1). Identity reads neither key nor token: every\n    // anchor true at base must still exist at the same raw@path occurrence and still be true.\n    const curIds = identities(cn.entries);\n    const byId = new Map();\n    curIds.forEach((id, i) => byId.set(id, cn.entries[i]));\n    const baseIds = identities(bn.entries ?? []);\n    (bn.entries ?? []).forEach((e, i) => {\n      if (e.expect !== 'true') return;\n      const m = byId.get(baseIds[i]);\n      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);\n      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);\n    });\n    // Occurrence order alone can be masked: insert an earlier true copy of a base-true raw@path,\n    // then falsify the original. Per raw@path that held a true anchor at base, the number of\n    // non-true anchors may not grow.\n    const groups = (entries, ids) => {\n      const g = new Map();\n      entries.forEach((e, i) => {\n        const k = ids[i].replace(/#\\d+$/u, '');\n        const c = g.get(k) ?? { t: 0, n: 0 };\n        if (e.expect === 'true') c.t++; else c.n++;\n        g.set(k, c);\n      });\n      return g;\n    };\n    const gNow = groups(cn.entries, curIds);\n    for (const [k, b] of groups(bn.entries ?? [], baseIds)) {\n      const c = gNow.get(k) ?? { t: 0, n: 0 };\n      if (b.t > 0 && c.n > b.n) findings.push(['BASE_TRUE_LOST', `${note}#-`, `${k} non-true anchors ${b.n} -> ${c.n} at a raw@path true at base`]);\n    }\n  }\n  return findings;\n}\n\n/**\n * Round-open floor (round 40, R39-3): the pin at the round-open revision is a second base.\n * BASE_TRUE_LOST, DEBT_GREW and CHECKED_SHRANK run against it exactly as they run against\n * `--base`, and every current debt anchor must equal a debt anchor at that revision by\n * identity (raw@path occurrence) and by token; `unchecked` anchors are exempt.\n */\nfunction compareOpen(pin, openPin) {\n  const findings = compareBase(pin, openPin).map(([k, id, d]) => [k, id, `${d} (open floor)`]);\n  for (const [note, cn] of Object.entries(pin.notes ?? {})) {\n    const on = openPin.notes?.[note];\n    const openIds = on ? identities(on.entries ?? []) : [];\n    const openDebt = new Set();\n    (on?.entries ?? []).forEach((e, i) => {\n      if (String(e.expect).startsWith('debt:')) openDebt.add(`${openIds[i]}\u0000${e.token ?? ''}`);\n    });\n    const curIds = identities(cn.entries ?? []);\n    cn.entries.forEach((e, i) => {\n      if (!String(e.expect).startsWith('debt:')) return;\n      const key = `${curIds[i]}\u0000${e.token ?? ''}`;\n      if (!openDebt.has(key)) {\n        findings.push(['DEBT_NEW', `${note}#${e.ord}`, `${curIds[i]} ${e.expect} now, no equal debt anchor at the open revision`]);\n      }\n    });\n  }\n  return findings;\n}\n\n/* \u2500\u2500 CLI \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction parseArgs(argv) {\n  const o = { self: process.cwd(), pin: null, src: null, base: null, open: null, write: false, reviews: null, notes: null, json: false, selftest: false };\n  for (let i = 0; i < argv.length; i++) {\n    const a = argv[i];\n    const val = () => { if (i + 1 >= argv.length) throw new Error(`${a} needs a value`); return argv[++i]; };\n    if (a === '--self') o.self = val();\n    else if (a === '--pin') o.pin = val();\n    else if (a === '--src') o.src = val();\n    else if (a === '--base') o.base = val();\n    else if (a === '--open') o.open = val();\n    else if (a === '--write-pin') o.write = true;\n    else if (a === '--reviews') o.reviews = val();\n    else if (a === '--notes') o.notes = val().split(',').map((s) => s.trim()).filter(Boolean);\n    else if (a === '--json') o.json = true;\n    else if (a === '--selftest') o.selftest = true;\n    else throw new Error(`unknown argument ${a}`);\n  }\n  return o;\n}\n\nfunction readCapped(p, cap) {\n  if (statSync(p).size > cap) throw new Error(`file over ${cap} bytes: ${p}`);\n  return readFileSync(p, 'utf8');\n}\nfunction noteOk(self, note) {\n  if (!NOTE_KEY.test(note)) return false;\n  const p = join(self, note);\n  try { const r = realpathSync(p); const s = realpathSync(self); return r.startsWith(s + sep); } catch { return false; }\n}\n\nfunction validPin(pin) {\n  if (!pin || pin.contract !== CONTRACT || !/^[0-9a-f]{40}$/.test(pin.revision ?? '')\n      || !pin.notes || Array.isArray(pin.notes) || !Object.keys(pin.notes).length) return false;\n  for (const [note, pn] of Object.entries(pin.notes)) {\n    if (!NOTE_KEY.test(note) || !pn || !Array.isArray(pn.entries) || pn.anchors !== pn.entries.length) return false;\n    const keys = new Set();\n    for (let i = 0; i < pn.entries.length; i++) {\n      const e = pn.entries[i];\n      const a = ANCH.exec(e?.raw ?? '');\n      if (!a || e.ord !== i || e.a !== Number(a[2]) || e.b !== Number(a[3] ?? a[2])\n          || !(e.path === null || typeof e.path === 'string')\n          || !(e.token === null || (typeof e.token === 'string' && e.token.length <= MAX_TOKEN_CHARS))\n          || !['true', 'unchecked', 'debt:false', 'debt:dead'].includes(e.expect)\n          || typeof e.source !== 'string' || !(e.source === 'pair' || (/^review:\\S+$/u.test(e.source) && e.token !== null))\n          || typeof e.key !== 'string' || keys.has(e.key)) return false;\n      keys.add(e.key);\n    }\n  }\n  return true;\n}\n\nfunction failClosed(token, detail) {\n  process.stdout.write(`TRUTH: FAIL-CLOSED (${token} ${detail})\\n`);\n  return 2;\n}\n\nexport function run(argv) {\n  let o;\n  try { o = parseArgs(argv); } catch (e) { process.stderr.write(`anchor-truth: ${e.message}\\n`); return 64; }\n  if (o.selftest) return selfTest();\n  const self = resolve(o.self);\n  const pinPath = resolve(self, o.pin ?? '.ufo/pins/anchor-truth.json');\n  const originPath = join(self, '.ufo/pins/origin.json');\n  if (!existsSync(originPath)) return failClosed('ORIGIN_PIN_MISSING', originPath);\n  let origin;\n  try { origin = JSON.parse(readFileSync(originPath, 'utf8')); } catch { return failClosed('ORIGIN_PIN_INVALID', originPath); }\n  if (origin?.contract !== 'kumitate-origin-pin-v1' || !/^[0-9a-f]{40}$/.test(origin.revision ?? '')) return failClosed('ORIGIN_PIN_INVALID', originPath);\n  const srcDir = o.src ?? origin.clone;\n  if (!srcDir || !existsSync(srcDir)) return failClosed('SRC_MISSING', String(srcDir));\n  const head = git(srcDir, ['rev-parse', 'HEAD']);\n  if (!head.ok || head.out.trim() !== origin.revision) return failClosed('SRC_REV_MISMATCH', `head=${head.out.trim() || '?'} pinned=${origin.revision}`);\n  const src = new Source(srcDir, origin.revision);\n  const srcRev = origin.revision.slice(0, 12);\n  // Review records are read from committed bytes at a revision the caller names (--open REV,\n  // the round-open revision): a record written in the very change being judged cannot bind.\n  let recRev = null;\n  if (o.open !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);\n    const r = git(self, ['rev-parse', `${o.open}^{commit}`]);\n    if (!r.ok || !/^[0-9a-f]{40}$/u.test(r.out.trim())) return failClosed('OPEN_UNREADABLE', o.open);\n    recRev = r.out.trim();\n  } else {\n    const r = git(self, ['rev-parse', 'HEAD']);\n    recRev = r.ok && /^[0-9a-f]{40}$/u.test(r.out.trim()) ? r.out.trim() : null;\n    process.stdout.write(recRev\n      ? `TRUTH_WARN review sources are bound against the lane's current HEAD (${recRev.slice(0, 12)}), not a pinned round-open revision; pass --open REV to pin the record revision\\n`\n      : \"TRUTH_WARN review sources are unbound: the lane has no committed revision and no --open REV was given\\n\");\n  }\n  const recs = new ReviewRecords(self, recRev);\n\n  let pin = null;\n  if (existsSync(pinPath)) {\n    try { pin = JSON.parse(readCapped(pinPath, MAX_JSON_BYTES)); } catch { return failClosed('PIN_INVALID', pinPath); }\n    if (!pin || typeof pin !== 'object' || Array.isArray(pin)) return failClosed('PIN_INVALID', pinPath);\n    for (const note of Object.keys(pin.notes ?? {})) if (!noteOk(self, note) && existsSync(join(self, note))) return failClosed('NOTE_KEY_INVALID', note);\n    for (const note of Object.keys(pin.notes ?? {})) if (!NOTE_KEY.test(note)) return failClosed('NOTE_KEY_INVALID', note);\n    if (!validPin(pin)) return failClosed('PIN_INVALID', pinPath);\n  }\n\n  if (o.write) {\n    const notes = o.notes ?? Object.keys(pin?.notes ?? {});\n    if (!notes.length) return failClosed('NO_NOTES', 'pass --notes on the first --write-pin');\n    let reviews = null;\n    if (o.reviews) { try { reviews = JSON.parse(readCapped(resolve(self, o.reviews), MAX_JSON_BYTES)); } catch { return failClosed('REVIEWS_INVALID', o.reviews); } }\n    for (const note of notes) if (!noteOk(self, note)) return failClosed('NOTE_KEY_INVALID', note);\n    const next = { contract: CONTRACT, revision: origin.revision, notes: {} };\n    const problems = [];\n    for (const note of notes) {\n      const p = join(self, note);\n      if (!existsSync(p)) return failClosed('NOTE_MISSING', note);\n      const entries = buildEntries(readCapped(p, MAX_NOTE_BYTES), src, pin?.notes?.[note], reviews, note);\n      const entryIds = identities(entries);\n      for (const e of entries) {\n        if (e.source.startsWith('review:')) {\n          if (!recs.bound(note, e, entryIds[e.ord])) problems.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);\n          if (!overrideValid(e, src)) problems.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);\n        }\n      }\n      const priorEntries = pin?.notes?.[note]?.entries ?? [];\n      const prior = new Map(priorEntries.map((e) => [e.key, e]));\n      const flagged = new Set();\n      for (const e of entries) {\n        const pe = prior.get(e.key);\n        if (pe && pe.expect === 'true' && e.expect !== 'true') { problems.push(['PIN_REGRESSION', `${note}#${e.ord}`, `${e.key} true -> ${e.expect}`]); flagged.add(e.ord); }\n      }\n      // Same anchor count: an ordinal that was true must stay true even when its token changed\n      // (a re-paired symbol must not launder a regression; round-38 CritMonotonic A5).\n      if (priorEntries.length === entries.length) {\n        for (const e of entries) {\n          const pe = priorEntries[e.ord];\n          if (!flagged.has(e.ord) && pe && pe.expect === 'true' && e.expect !== 'true') problems.push(['PIN_REGRESSION', `${note}#${e.ord}`, `ord true -> ${e.expect} (token ${pe.token} -> ${e.token})`]);\n        }\n      }\n      next.notes[note] = { anchors: entries.length, entries: entries.map(({ sentence, line, ...rest }) => rest) };\n    }\n    if (problems.length) {\n      for (const [k, id, d] of problems) process.stdout.write(`TRUTH  ${k}  ${id}  ${d}\\n`);\n      process.stdout.write(`TRUTH: DRIFT (${problems.length} findings: ${[...new Set(problems.map((p) => p[0]))].join(' ')}; pin not written)\\n`);\n      return 1;\n    }\n    mkdirSync(dirname(pinPath), { recursive: true });\n    writeFileSync(pinPath, JSON.stringify(next, null, 1) + '\\n');\n    const t = Object.values(next.notes).flatMap((n) => n.entries);\n    process.stdout.write(`TRUTH: PINNED (notes=${notes.length} anchors=${t.length} true=${t.filter((e) => e.expect === 'true').length} debt=${t.filter((e) => e.expect.startsWith('debt:')).length} unchecked=${t.filter((e) => e.expect === 'unchecked').length} src-rev=${srcRev})\\n`);\n    return 0;\n  }\n\n  if (pin === null) return failClosed('PIN_MISSING', pinPath);\n  if (pin.revision !== origin.revision) return failClosed('PIN_REV_STALE', `pin=${pin.revision} origin=${origin.revision}`);\n  const findings = [];\n  const total = { anchors: 0, true: 0, debt: 0, unchecked: 0 };\n  const perNote = [];\n  for (const [note, pn] of Object.entries(pin.notes)) {\n    const p = join(self, note);\n    if (!existsSync(p)) { findings.push(['ANCHOR_SET_CHANGED', `${note}#-`, 'note missing']); continue; }\n    const { findings: f, counts } = checkNote(note, readCapped(p, MAX_NOTE_BYTES), pn, src, recs);\n    findings.push(...f);\n    perNote.push([note, counts]);\n    for (const k of Object.keys(total)) total[k] += counts[k];\n  }\n  if (o.base !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.base) || o.base.includes('..')) return failClosed('BASE_INVALID', o.base);\n    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;\n    if (rel === null) return failClosed('BASE_INVALID', 'pin outside --self');\n    const shown = git(self, ['show', `${o.base}:${rel}`]);\n    if (!shown.ok) return failClosed('BASE_UNREADABLE', `${o.base}:${rel}`);\n    let basePin;\n    try { basePin = JSON.parse(shown.out); } catch { return failClosed('BASE_UNREADABLE', 'json'); }\n    if (!validPin(basePin) || basePin.revision !== pin.revision) return failClosed('BASE_INVALID', 'pin schema or source revision');\n    findings.push(...compareBase(pin, basePin));\n  }\n  if (o.open !== null) {\n    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);\n    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;\n    if (rel === null) return failClosed('OPEN_INVALID', 'pin outside --self');\n    const shown = git(self, ['show', `${o.open}:${rel}`]);\n    if (!shown.ok) return failClosed('OPEN_UNREADABLE', `${o.open}:${rel}`);\n    let openPin;\n    try { openPin = JSON.parse(shown.out); } catch { return failClosed('OPEN_UNREADABLE', 'json'); }\n    if (!validPin(openPin) || openPin.revision !== pin.revision) return failClosed('OPEN_INVALID', 'pin schema or source revision');\n    findings.push(...compareOpen(pin, openPin));\n  }\n  if (o.json) {\n    process.stdout.write(JSON.stringify({ contract: CONTRACT, srcRev: origin.revision, total, perNote: Object.fromEntries(perNote), findings }) + '\\n');\n  } else {\n    for (const [note, c] of perNote) process.stdout.write(`TRUTH note=${note} anchors=${c.anchors} true=${c.true} debt=${c.debt} unchecked=${c.unchecked}\\n`);\n    for (const [k, id, d] of findings) process.stdout.write(`TRUTH  ${k}  ${id}  ${d}\\n`);\n    process.stdout.write(`TRUTH_TOTAL anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}\\n`);\n  }\n  if (findings.length) {\n    const kinds = [...new Set(findings.map((f) => f[0]))];\n    process.stdout.write(`TRUTH: DRIFT (${findings.length} findings: ${kinds.join(' ')}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\\n`);\n    return 1;\n  }\n  process.stdout.write(`TRUTH: CLEAN (notes=${perNote.length} anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\\n`);\n  return 0;\n}\n\n/* \u2500\u2500 hermetic self-test \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\nfunction selfTest() {\n  const tmp = mkdtempSync(join(tmpdir(), 'anchor-truth-selftest-'));\n  const results = [];\n  const G = { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' };\n  const g = (dir, args) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: gitEnv(G) });\n  const SRC_FILES = {\n    'scripts/a.mjs': 'x\\nconst BETA_MARK = 2;\\nconst ALPHA_MARK = 1;\\nexport default ALPHA_MARK;\\n',\n    'scripts/b.mjs': 'function one() {}\\nfunction two() {}\\n',\n  };\n  const mkSrc = (name) => {\n    const d = join(tmp, `${name}-src`);\n    for (const [p, c] of Object.entries(SRC_FILES)) { mkdirSync(dirname(join(d, p)), { recursive: true }); writeFileSync(join(d, p), c); }\n    g(d, ['init', '-q']); g(d, ['add', '.']); g(d, ['commit', '-q', '-m', 'src']);\n    return { dir: d, rev: g(d, ['rev-parse', 'HEAD']).stdout.trim() };\n  };\n  const NOTE = 'corpus/knowledge/fx.md';\n  const mkSelf = (name, note, src) => {\n    const d = join(tmp, name);\n    mkdirSync(join(d, 'corpus/knowledge'), { recursive: true });\n    mkdirSync(join(d, '.ufo/pins'), { recursive: true });\n    writeFileSync(join(d, NOTE), note);\n    writeFileSync(join(d, '.ufo/pins/origin.json'), JSON.stringify({ contract: 'kumitate-origin-pin-v1', revision: src.rev, clone: src.dir }));\n    g(d, ['init', '-q']);\n    return d;\n  };\n  const tool = (self, args) => {\n    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });\n    const out = r.stdout ?? '';\n    return { status: r.status, out, verdict: out.trim().split('\\n').pop() ?? '' };\n  };\n  // A lane whose note, pin and review registry are COMMITTED: the gate reads review records\n  // from committed bytes and resolves them through the PIN at the record revision, so a\n  // fixture without a committed registry (or without a committed pin) has no record at all.\n  const mkReviewed = (name, note, records, src) => {\n    const d = mkSelf(name, note, src);\n    commit(d);\n    tool(d, ['--write-pin', '--notes', NOTE]);\n    const openRev = commit(d);\n    if (records) {\n      mkdirSync(join(d, '.ufo/waves/round-99'), { recursive: true });\n      writeFileSync(join(d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify(records, null, 1) + '\\n');\n      commit(d);\n    }\n    return { d, openRev };\n  };\n  const commit = (d) => { g(d, ['add', '-A']); g(d, ['commit', '-q', '-m', 'pin']); return g(d, ['rev-parse', 'HEAD']).stdout.trim(); };\n  const pinOf = (d) => JSON.parse(readFileSync(join(d, '.ufo/pins/anchor-truth.json'), 'utf8'));\n  const setPin = (d, f) => { const p = pinOf(d); f(p); writeFileSync(join(d, '.ufo/pins/anchor-truth.json'), JSON.stringify(p)); };\n  const check = (id, label, fn) => {\n    let ok = false; let detail = '';\n    try { const r = fn(); ok = r.ok; detail = r.detail ?? ''; } catch (e) { detail = `threw ${e.message}`; }\n    results.push({ id, label, ok, detail });\n  };\n  const H = '## `scripts/a.mjs`\\n\\n';\n  const src = mkSrc('base');\n  try {\n    check('AT01', 'clean: a true anchor pins and reads CLEAN', () => {\n      const d = mkSelf('at01', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      const w = tool(d, ['--write-pin', '--notes', NOTE]);\n      const r = tool(d, []);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN') && /true=1 /.test(r.verdict), detail: r.verdict };\n    });\n    check('AT02', 'positional run `a` / `b` (`:2`, `:3`) pairs left-first by position', () => {\n      const d = mkSelf('at02', `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:2\\`, \\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e[0].token === 'BETA_MARK' && e[1].token === 'ALPHA_MARK' && e.every((x) => x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT03', 'next-symbol shift: anchor set change fails the check and the re-pin refuses (PIN_REGRESSION)', () => {\n      const d = mkSelf('at03', `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:2\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:3\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`);\n      const r = tool(d, []);\n      const w = tool(d, ['--write-pin']);\n      return { ok: r.status === 1 && /ANCHOR_SET_CHANGED/.test(r.out) && w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: `${r.verdict} | ${w.verdict}` };\n    });\n    check('AT04', 'right-first discriminator: `BETA_MARK` (`:3`), `ALPHA_MARK` (`:3`) pins BETA as debt, ALPHA true', () => {\n      const d = mkSelf('at04', `${H}\\`BETA_MARK\\` (\\`scripts/a.mjs:3\\`), \\`ALPHA_MARK\\` (\\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e[0].token === 'BETA_MARK' && e[0].expect === 'debt:false' && e[1].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT05', 'swapped run re-pin refuses (PIN_REGRESSION)', () => {\n      const d = mkSelf('at05', `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:2\\`, \\`:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` / \\`ALPHA_MARK\\` (\\`scripts/a.mjs:3\\`, \\`:2\\`).\\n`);\n      const w = tool(d, ['--write-pin']);\n      return { ok: w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: w.verdict };\n    });\n    check('AT06', 'hand-edited pin token not on the line reads REGRESSED', () => {\n      const d = mkSelf('at06', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].token = 'GAMMA_MARK'; });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /REGRESSED/.test(r.out), detail: r.verdict };\n    });\n    check('AT07', 'debt flipped into the pin by hand reads DEBT_GREW against --base', () => {\n      const d = mkSelf('at07', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'debt:false'; p.notes[NOTE].entries[0].token = 'GAMMA_MARK'; });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out), detail: r.verdict };\n    });\n    check('AT08', 'a true expectation dropped to unchecked reads CHECKED_SHRANK against --base', () => {\n      const d = mkSelf('at08', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'unchecked'; p.notes[NOTE].entries[0].token = null; });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /CHECKED_SHRANK/.test(r.out), detail: r.verdict };\n    });\n    check('AT09', 'review override absent from the sentence reads OVERRIDE_INVALID', () => {\n      const d = mkSelf('at09', `${H}The header lives at \\`scripts/a.mjs:3\\`.\\n`, src);\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'fx' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      return { ok: w.status === 1 && /OVERRIDE_INVALID/.test(w.out), detail: w.verdict };\n    });\n    check('AT10', 'review override present in the sentence and on the line pins true', () => {\n      const d = mkReviewed('at10', `${H}The ALPHA_MARK constant is set at \\`scripts/a.mjs:3\\`.\\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'fx' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      const r = tool(d, []);\n      return { ok: w.status === 0 && r.status === 0 && /true=1 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT11', 'fixed debt left in the pin reads DEBT_STALE', () => {\n      const d = mkSelf('at11', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].expect = 'debt:false'; });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /DEBT_STALE/.test(r.out), detail: r.verdict };\n    });\n    check('AT12', 'line beyond EOF and a `..` escape are dead debt, never read outside the clone', () => {\n      const d = mkSelf('at12', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:99\\`; \\`ALPHA_MARK\\` at \\`../a-src/scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      const r = tool(d, []);\n      return { ok: e.length === 2 && e.every((x) => x.expect === 'debt:dead') && r.status === 0, detail: JSON.stringify(e.map((x) => x.expect)) };\n    });\n    check('AT13', 'source clone at another revision fails closed (exit 2)', () => {\n      const d = mkSelf('at13', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const o = JSON.parse(readFileSync(join(d, '.ufo/pins/origin.json'), 'utf8'));\n      o.revision = '0'.repeat(40);\n      writeFileSync(join(d, '.ufo/pins/origin.json'), JSON.stringify(o));\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /SRC_REV_MISMATCH/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT14', '\"At `path:N`, `sym`\" with no earlier symbol pairs forward', () => {\n      const d = mkSelf('at14', '## `scripts/b.mjs`\\n\\nAt `scripts/b.mjs:2`, `two` is declared.\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 1 && e[0].token === 'two' && e[0].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT15', 'bare `:N` resolves through the heading path; fenced code is ignored', () => {\n      const d = mkSelf('at15', '## `scripts/b.mjs`\\n\\n```\\n`one` (`:9`)\\n```\\n\\n`one` (`:1`) and `two` (`:2`).\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e.every((x) => x.path === 'scripts/b.mjs' && x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.path, x.expect])) };\n    });\n    check('AT16', 'clean pin re-checked against itself as --base stays CLEAN', () => {\n      const d = mkSelf('at16', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: r.verdict };\n    });\n    check('AT18', 'one phrase cited at two sites pairs both anchors with that phrase, never a later symbol', () => {\n      const d = mkSelf('at18', `${H}The mark is \\`ALPHA_MARK\\` (\\`scripts/a.mjs:3\\`, \\`scripts/a.mjs:4\\`), then \\`BETA_MARK\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e.every((x) => x.token === 'ALPHA_MARK' && x.expect === 'true'), detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT19', 'forward fill never steals a symbol that owns the next citation', () => {\n      const d = mkSelf('at19', `${H}Bindings start at \\`scripts/a.mjs:4\\` (\\`ALPHA_MARK\\` is at \\`scripts/a.mjs:3\\`).\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const e = pinOf(d).notes[NOTE].entries;\n      return { ok: e.length === 2 && e[0].expect === 'unchecked' && e[1].token === 'ALPHA_MARK' && e[1].expect === 'true', detail: JSON.stringify(e.map((x) => [x.token, x.expect])) };\n    });\n    check('AT20', 're-paired token cannot launder a true ordinal (PIN_REGRESSION by ordinal)', () => {\n      const d = mkSelf('at20', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      writeFileSync(join(d, NOTE), `${H}\\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      return { ok: w.status === 1 && /PIN_REGRESSION/.test(w.out), detail: w.verdict };\n    });\n    check('AT21', 'a dirty source worktree cannot change a verdict (committed blobs only)', () => {\n      const s2 = mkSrc('dirty');\n      const d = mkSelf('at21', `${H}\\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, s2);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const before = pinOf(d).notes[NOTE].entries[0].expect;\n      writeFileSync(join(s2.dir, 'scripts/a.mjs'), 'x\\nconst BETA_MARK = 2;\\nconst BETA_MARK2 = BETA_MARK;\\n');\n      const r = tool(d, []);\n      return { ok: before === 'debt:false' && r.status === 0 && /debt=1 /.test(r.verdict), detail: `${before} | ${r.verdict}` };\n    });\n    check('AT22', 'a pin note key outside corpus/knowledge fails closed (exit 2)', () => {\n      const d = mkSelf('at22', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes['../../etc/passwd'] = p.notes[NOTE]; });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /NOTE_KEY_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT23', 'a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)', () => {\n      const d = mkSelf('at23', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`two\\` at \\`scripts/b.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT24', 'a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED', () => {\n      const d = mkSelf('at24', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      setPin(d, (p) => {\n        const [e0, e1] = p.notes[NOTE].entries;\n        Object.assign(e0, { token: null, expect: 'unchecked', key: 'fx-missing-base-key' });\n        Object.assign(e1, { token: 'ALPHA_MARK', expect: 'true' });\n      });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /TOKEN_FORGED/.test(r.out), detail: r.verdict };\n    });\n    check('AT25', 'an inserted earlier anchor shifts a base-true key index and ordinal yet stays CLEAN by identity', () => {\n      const d = mkSelf('at25', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:4\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN') && /true=2 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT26', 'a pin entry source outside pair or review:<seat> fails closed (exit 2)', () => {\n      const d = mkSelf('at26', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { p.notes[NOTE].entries[0].source = 'hand'; });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT27', 'an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)', () => {\n      const d = mkSelf('at27', `${H}Intro.\\n\\nThe mark \\`ALPHA_MARK\\` is at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT28', 'a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)', () => {\n      const d = mkSelf('at28', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { token: null, expect: 'unchecked' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /TOKEN_FORGED/.test(r.out), detail: r.verdict };\n    });\n    check('AT29', 'identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading\\'s', () => {\n      const d = mkSelf('at29', '## `scripts/a.mjs`\\n\\n`BETA_MARK` (`:2`).\\n\\n## `scripts/b.mjs`\\n\\nSee (`:2`).\\n', src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), '## `scripts/b.mjs`\\n\\n`two` (`:2`).\\n\\n## `scripts/a.mjs`\\n\\nSee (`:2`).\\n');\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT30', 'a review:<seat> entry with a null token fails closed as PIN_INVALID', () => {\n      const d = mkSelf('at30', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx', token: null, expect: 'unchecked' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };\n    });\n    check('AT31', 'a self-declared review source with no committed record reads REVIEW_UNBOUND (round-40 closure R39-1)', () => {\n      const { d, openRev } = mkReviewed('at31', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:NoSuchSeat' }); });\n      const head = tool(d, []);\n      const open = tool(d, ['--open', openRev]);\n      return { ok: head.status === 1 && /REVIEW_UNBOUND/.test(head.out) && open.status === 1 && /REVIEW_UNBOUND/.test(open.out), detail: `${head.verdict} | ${open.verdict}` };\n    });\n    check('AT32', 'a committed review record binds its anchor; a record naming another seat does not', () => {\n      const note = `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`;\n      const bound = mkReviewed('at32bound', note, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      tool(bound, ['--write-pin', '--notes', NOTE]);\n      setPin(bound, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const ok = tool(bound, []);\n      const other = mkReviewed('at32other', note, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src).d;\n      tool(other, ['--write-pin', '--notes', NOTE]);\n      setPin(other, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const bad = tool(other, []);\n      return { ok: ok.status === 0 && /TRUTH: CLEAN/u.test(ok.verdict) && bad.status === 1 && /REVIEW_UNBOUND/.test(bad.out), detail: `${ok.verdict} | ${bad.verdict}` };\n    });\n    check('AT33', 'a review record binds one anchor: a review token that travels to another anchor is unbound', () => {\n      const d = mkReviewed('at33', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:4\\`.\\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { source: 'review:fx' }); });\n      const r = tool(d, []);\n      return { ok: r.status === 1 && /REVIEW_UNBOUND/.test(r.out), detail: r.verdict };\n    });\n    check('AT34', 'the write path refuses an unbound review source, and --open REV reads only the records committed at REV', () => {\n      const d = mkReviewed('at34', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, null, src).d;\n      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'NoSuchSeat' } }));\n      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);\n      const kept = pinOf(d).notes[NOTE].entries[0].source;\n      // A record committed AFTER the open revision cannot bind: --open pins the record revision.\n      const late = mkReviewed('at34late', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, null, src);\n      const openRev = late.openRev;\n      mkdirSync(join(late.d, '.ufo/waves/round-99'), { recursive: true });\n      writeFileSync(join(late.d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, null, 1) + '\\n');\n      commit(late.d);\n      tool(late.d, ['--write-pin', '--notes', NOTE]);\n      setPin(late.d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });\n      const atOpen = tool(late.d, ['--open', openRev]);\n      const atHead = tool(late.d, []);\n      return { ok: w.status === 1 && /REVIEW_UNBOUND/.test(w.out) && kept !== 'review:NoSuchSeat'\n        && atOpen.status === 1 && /REVIEW_UNBOUND/.test(atOpen.out) && atHead.status === 0 && /TRUTH: CLEAN/u.test(atHead.verdict),\n      detail: `${w.verdict} kept=${kept} | ${atOpen.verdict} | ${atHead.verdict}` };\n    });\n    check('AT43', 'a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)', () => {\n      const d = mkSelf('at43', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\n\\`GAMMA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT44', 'a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)', () => {\n      const d = mkSelf('at44', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\nThe mark is at \\`scripts/a.mjs:2\\`. The mark is at \\`scripts/a.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--base', base]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT45', 'a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)', () => {\n      const d = mkSelf('at45', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n\\n\\`GAMMA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const base = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:2\\`. \\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      setPin(d, (p) => {\n        const n = p.notes[NOTE];\n        n.anchors = 2;\n        n.entries = [\n          { key: 'scripts/a.mjs|ALPHA_MARK|0', ord: 0, raw: 'scripts/a.mjs:2', path: 'scripts/a.mjs', a: 2, b: 2, token: 'ALPHA_MARK', source: 'pair', expect: 'debt:false' },\n          { key: 'scripts/a.mjs|ALPHA_MARK|1', ord: 1, raw: 'scripts/a.mjs:3', path: 'scripts/a.mjs', a: 3, b: 3, token: 'ALPHA_MARK', source: 'pair', expect: 'true' },\n        ];\n      });\n      const r = tool(d, ['--base', base]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out) && /fx\\.md#0/.test(r.out) && /scripts\\/a\\.mjs\\|ALPHA_MARK\\|0 true at base/.test(r.out), detail: r.verdict };\n    });\n    check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {\n      const r = tool(join(tmp, 'at01'), ['--bogus']);\n      return { ok: r.status === 64, detail: `exit=${r.status}` };\n    });\n    check('AT39', 'a debt anchor swapped for another debt anchor at a fresh identity reads DEBT_NEW against --open (round-40 R39-3 one-for-one trade)', () => {\n      const d = mkSelf('at39', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`GHOST_ONE\\` at \\`scripts/a.mjs:2\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`GHOST_TWO\\` at \\`scripts/b.mjs:1\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out) && !/DEBT_GREW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT40', 'new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)', () => {\n      const d = mkSelf('at40', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      const extra = [0, 1, 2].map((i) => `\\`GHOST_${i}\\` at \\`scripts/b.mjs:1\\`.`).join(' ');\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. ${extra}\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };\n    });\n    check('AT41', 'an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)', () => {\n      const d = mkSelf('at41', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`GHOST_REBREAK\\` at \\`scripts/a.mjs:3\\`.\\n`);\n      setPin(d, (p) => {\n        const e = p.notes[NOTE].entries[0];\n        Object.assign(e, { token: 'GHOST_REBREAK', expect: 'debt:false', key: 'scripts/a.mjs|GHOST_REBREAK|0' });\n      });\n      const r = tool(d, ['--open', open]);\n      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out), detail: r.verdict };\n    });\n    check('AT42', 'an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)', () => {\n      const d = mkSelf('at42', `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`.\\n`, src);\n      tool(d, ['--write-pin', '--notes', NOTE]);\n      const open = commit(d);\n      writeFileSync(join(d, NOTE), `${H}\\`ALPHA_MARK\\` at \\`scripts/a.mjs:3\\`. \\`BETA_MARK\\` at \\`scripts/a.mjs:2\\`.\\n`);\n      const w = tool(d, ['--write-pin']);\n      const r = tool(d, ['--open', open]);\n      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };\n    });\n  } finally {\n    rmSync(tmp, { recursive: true, force: true });\n  }\n  for (const r of results) process.stdout.write(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} ${r.label}${r.ok ? '' : `\\n     ${r.detail}`}\\n`);\n  const pass = results.filter((r) => r.ok).length;\n  process.stdout.write(`ANCHOR_TRUTH_SELFTEST: ${pass}/${results.length} pass\\nVERDICT: ${pass === results.length ? 'PASS' : 'FAIL'}\\n`);\n  return pass === results.length ? 0 : 1;\n}\n\nif (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(TOOL_FILE)) {\n  try { process.exitCode = run(process.argv.slice(2)); }\n  catch (e) { process.exitCode = failClosed('INPUT_UNREADABLE', e.message); }\n}\n",
+      "mutants": [
+        {
+          "id": "R39-MutIdentityDelete",
+          "mutatorName": "BlockDeletion",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "delete the whole base-true identity arm (anchor gone / non-true now)",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT23",
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT23: a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)",
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 497,
+              "column": 1
+            },
+            "end": {
+              "line": 498,
+              "column": 138
+            }
+          },
+          "replacement": "      void m;",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutIdentityKey",
+          "mutatorName": "IdentifierSubstitution",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "anchor identity uses the pin key instead of raw@path",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 460,
+              "column": 1
+            },
+            "end": {
+              "line": 460,
+              "column": 37
+            }
+          },
+          "replacement": "    const id = `${e.key}`;",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutIdentityNoOccurrence",
+          "mutatorName": "ConstantSubstitution",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "anchor identity loses the occurrence counter",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 463,
+              "column": 1
+            },
+            "end": {
+              "line": 463,
+              "column": 25
+            }
+          },
+          "replacement": "    return `${id}#0`;",
+          "equivalentTo": [
+            "C2-M12-identity-drops-occurrence"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutIdentityNoPath",
+          "mutatorName": "TemplateLiteralFieldRemoval",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "anchor identity drops the resolved path",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT29"
+          ],
+          "killedByDetail": [
+            "AT29: identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading's"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 460,
+              "column": 1
+            },
+            "end": {
+              "line": 460,
+              "column": 37
+            }
+          },
+          "replacement": "    const id = `${e.raw}`;",
+          "equivalentTo": [
+            "C2-M11-identity-drops-path"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutLostAcceptsUnchecked",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the non-true arm accepts any debt expectation",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 498,
+              "column": 1
+            },
+            "end": {
+              "line": 498,
+              "column": 68
+            }
+          },
+          "replacement": "      else if (String(m.expect).startsWith('debt:')) findings.push(['BASE_TRUE_LOST'",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutGroupDelete",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the raw@path group check never fires",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 1
+            },
+            "end": {
+              "line": 516,
+              "column": 47
+            }
+          },
+          "replacement": "      if (false) findings.push(",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutGroupTrueCount",
+          "mutatorName": "ComparisonOperatorReplacement",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the group check compares true counts instead of non-true counts",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 1
+            },
+            "end": {
+              "line": 516,
+              "column": 47
+            }
+          },
+          "replacement": "      if (b.t > 0 && c.t < b.t) findings.push(",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutTokenForgedDelete",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the TOKEN_FORGED check never fires",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT24",
+            "AT28"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED",
+            "AT28: a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 445,
+              "column": 1
+            },
+            "end": {
+              "line": 445,
+              "column": 62
+            }
+          },
+          "replacement": "    if (false) {",
+          "equivalentTo": [
+            "C2-M01-no-TOKEN_FORGED"
+          ],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutTokenForgedNullSkip",
+          "mutatorName": "ConditionalPredicateAddition",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the TOKEN_FORGED check ignores a null pinned token",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT28"
+          ],
+          "killedByDetail": [
+            "AT28: a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 445,
+              "column": 1
+            },
+            "end": {
+              "line": 445,
+              "column": 62
+            }
+          },
+          "replacement": "    if (e.source === 'pair' && e.token !== null && e.token !== (x.sym ?? null)) {",
+          "equivalentTo": [
+            "C2-M13-TOKEN_FORGED-ignores-null"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutSourceRuleRevert",
+          "mutatorName": "BlockDeletion",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "the pin schema accepts any source string",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT26",
+            "AT30"
+          ],
+          "killedByDetail": [
+            "AT26: a pin entry source outside pair or review:<seat> fails closed (exit 2)",
+            "AT30: a review:<seat> entry with a null token fails closed as PIN_INVALID"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 594,
+              "column": 1
+            },
+            "end": {
+              "line": 594,
+              "column": 124
+            }
+          },
+          "replacement": "          || typeof e.source !== 'string'",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "R39-MutReviewNullToken",
+          "mutatorName": "LogicalOperandRemoval",
+          "provenance": "round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)",
+          "description": "a review:<seat> entry may carry a null token",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT30"
+          ],
+          "killedByDetail": [
+            "AT30: a review:<seat> entry with a null token fails closed as PIN_INVALID"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 594,
+              "column": 71
+            },
+            "end": {
+              "line": 594,
+              "column": 123
+            }
+          },
+          "replacement": "(/^review:\\S+$/u.test(e.source))",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M01-no-TOKEN_FORGED",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "no TOKEN_FORGED check",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT24",
+            "AT28"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED",
+            "AT28: a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 445,
+              "column": 1
+            },
+            "end": {
+              "line": 445,
+              "column": 62
+            }
+          },
+          "replacement": "    if (false) {",
+          "equivalentTo": [
+            "R39-MutTokenForgedDelete"
+          ],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M02-no-source-rule",
+          "mutatorName": "BlockDeletion",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the pin schema source rule is deleted",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT26",
+            "AT30"
+          ],
+          "killedByDetail": [
+            "AT26: a pin entry source outside pair or review:<seat> fails closed (exit 2)",
+            "AT30: a review:<seat> entry with a null token fails closed as PIN_INVALID"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 594,
+              "column": 43
+            },
+            "end": {
+              "line": 595,
+              "column": 11
+            }
+          },
+          "replacement": "",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M03-review-null-token-allowed",
+          "mutatorName": "LogicalOperandRemoval",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "a review:<seat> entry may carry a null token",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT30"
+          ],
+          "killedByDetail": [
+            "AT30: a review:<seat> entry with a null token fails closed as PIN_INVALID"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 594,
+              "column": 103
+            },
+            "end": {
+              "line": 594,
+              "column": 124
+            }
+          },
+          "replacement": "))",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M04-no-identity-per-occurrence",
+          "mutatorName": "BlockDeletion",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the per-occurrence identity loop never runs",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT23",
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT23: a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)",
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 495,
+              "column": 7
+            },
+            "end": {
+              "line": 496,
+              "column": 21
+            }
+          },
+          "replacement": "return;\n      const m = byId",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M05-identity-anchor-gone-ignored",
+          "mutatorName": "BlockDeletion",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the \"anchor gone\" arm of the identity check is ignored",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT23"
+          ],
+          "killedByDetail": [
+            "AT23: a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 497,
+              "column": 1
+            },
+            "end": {
+              "line": 498,
+              "column": 14
+            }
+          },
+          "replacement": "      if (!m) {}\n      else if",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M06-identity-nontrue-ignored",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the \"now non-true\" arm of the identity check is ignored",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 498,
+              "column": 7
+            },
+            "end": {
+              "line": 498,
+              "column": 88
+            }
+          },
+          "replacement": "else if (false) findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M07-no-group-check",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the raw@path group check never fires",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 7
+            },
+            "end": {
+              "line": 516,
+              "column": 32
+            }
+          },
+          "replacement": "if (false)",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M08-group-off-by-one",
+          "mutatorName": "ComparisonOperatorReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the group check allows one extra non-true anchor",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 22
+            },
+            "end": {
+              "line": 516,
+              "column": 32
+            }
+          },
+          "replacement": "c.n > b.n + 1)",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M09-group-any-raw",
+          "mutatorName": "LogicalOperandRemoval",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the group check drops the b.t > 0 guard (round-39 survivor)",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT44"
+          ],
+          "killedByDetail": [
+            "AT44: a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 7
+            },
+            "end": {
+              "line": 516,
+              "column": 32
+            }
+          },
+          "replacement": "if (c.n > b.n)",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M10-group-t-gt-1",
+          "mutatorName": "ConstantSubstitution",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the group check requires two base-true anchors instead of one",
+          "status": "Killed",
+          "statusReason": "2 selftest case(s) failed",
+          "killedBy": [
+            "AT27",
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT27: an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)",
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 516,
+              "column": 7
+            },
+            "end": {
+              "line": 516,
+              "column": 32
+            }
+          },
+          "replacement": "if (b.t > 1 && c.n > b.n)",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "39/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M11-identity-drops-path",
+          "mutatorName": "TemplateLiteralFieldRemoval",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "anchor identity drops the resolved path",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT29"
+          ],
+          "killedByDetail": [
+            "AT29: identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading's"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 460,
+              "column": 5
+            },
+            "end": {
+              "line": 460,
+              "column": 37
+            }
+          },
+          "replacement": "const id = `${e.raw}`;",
+          "equivalentTo": [
+            "R39-MutIdentityNoPath"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M12-identity-drops-occurrence",
+          "mutatorName": "ConstantSubstitution",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "anchor identity loses the occurrence counter",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT24"
+          ],
+          "killedByDetail": [
+            "AT24: a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 463,
+              "column": 5
+            },
+            "end": {
+              "line": 463,
+              "column": 25
+            }
+          },
+          "replacement": "return `${id}#0`;",
+          "equivalentTo": [
+            "R39-MutIdentityNoOccurrence"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M13-TOKEN_FORGED-ignores-null",
+          "mutatorName": "ConditionalPredicateAddition",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the TOKEN_FORGED check ignores a null pinned token",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT28"
+          ],
+          "killedByDetail": [
+            "AT28: a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 445,
+              "column": 1
+            },
+            "end": {
+              "line": 445,
+              "column": 62
+            }
+          },
+          "replacement": "    if (e.source === 'pair' && e.token !== null && e.token !== (x.sym ?? null)) {",
+          "equivalentTo": [
+            "R39-MutTokenForgedNullSkip"
+          ],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M14-old-key-floor-removed",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the old key-match DEBT_GREW loop is deleted (round-39 survivor)",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT45"
+          ],
+          "killedByDetail": [
+            "AT45: a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 485,
+              "column": 7
+            },
+            "end": {
+              "line": 485,
+              "column": 63
+            }
+          },
+          "replacement": "if (false) findings.push(['DEBT_GREW'",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        },
+        {
+          "id": "C2-M15-group-counts-only-unchecked",
+          "mutatorName": "ConditionalPredicateReplacement",
+          "provenance": "round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)",
+          "description": "the group check counts only unchecked anchors (round-39 survivor)",
+          "status": "Killed",
+          "statusReason": "1 selftest case(s) failed",
+          "killedBy": [
+            "AT43"
+          ],
+          "killedByDetail": [
+            "AT43: a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)"
+          ],
+          "testsCompleted": 41,
+          "location": {
+            "start": {
+              "line": 508,
+              "column": 9
+            },
+            "end": {
+              "line": 508,
+              "column": 52
+            }
+          },
+          "replacement": "if (e.expect === 'true') c.t++; else if (e.expect === 'unchecked') c.n++;",
+          "equivalentTo": [],
+          "extra": false,
+          "selftestTally": "40/41",
+          "selftestExit": 1
+        }
+      ]
+    }
+  }
+}
