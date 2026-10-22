@@ -351,8 +351,9 @@ function compareBase(pin, basePin) {
     // The key carries the paired token, so a current entry re-keyed or re-tokened escaped the
     // key match above (round-38 closure R38-1). Identity reads neither key nor token: every
     // anchor true at base must still exist at the same raw@path occurrence and still be true.
+    const curIds = identities(cn.entries);
     const byId = new Map();
-    identities(cn.entries).forEach((id, i) => byId.set(id, cn.entries[i]));
+    curIds.forEach((id, i) => byId.set(id, cn.entries[i]));
     const baseIds = identities(bn.entries ?? []);
     (bn.entries ?? []).forEach((e, i) => {
       if (e.expect !== 'true') return;
@@ -360,6 +361,24 @@ function compareBase(pin, basePin) {
       if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);
       else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);
     });
+    // Occurrence order alone can be masked: insert an earlier true copy of a base-true raw@path,
+    // then falsify the original. Per raw@path that held a true anchor at base, the number of
+    // non-true anchors may not grow.
+    const groups = (entries, ids) => {
+      const g = new Map();
+      entries.forEach((e, i) => {
+        const k = ids[i].replace(/#\d+$/u, '');
+        const c = g.get(k) ?? { t: 0, n: 0 };
+        if (e.expect === 'true') c.t++; else c.n++;
+        g.set(k, c);
+      });
+      return g;
+    };
+    const gNow = groups(cn.entries, curIds);
+    for (const [k, b] of groups(bn.entries ?? [], baseIds)) {
+      const c = gNow.get(k) ?? { t: 0, n: 0 };
+      if (b.t > 0 && c.n > b.n) findings.push(['BASE_TRUE_LOST', `${note}#-`, `${k} non-true anchors ${b.n} -> ${c.n} at a raw@path true at base`]);
+    }
   }
   return findings;
 }
@@ -757,6 +776,15 @@ function selfTest() {
       setPin(d, (p) => { p.notes[NOTE].entries[0].source = 'hand'; });
       const r = tool(d, []);
       return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };
+    });
+    check('AT27', 'an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)', () => {
+      const d = mkSelf('at27', `${H}Intro.\n\nThe mark \`ALPHA_MARK\` is at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\nThe mark is at \`scripts/a.mjs:3\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
     });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);

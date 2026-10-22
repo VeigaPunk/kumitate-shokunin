@@ -58,6 +58,18 @@ try {
         if (w.status !== 0) return `re-pin refused: ${w.verdict}`;
         return null;
       }],
+      ['A6-earlier-true-copy-masks-falsified-original', () => {
+        const orig = '`worker` names `"charter-scribe"` (`scripts/charter-scribe/config.json:2`)';
+        const lead = "The charter-scribe daemon's policy file";
+        if (!pristineNote.includes(orig) || !pristineNote.includes(lead)) throw new Error('A6 text not found');
+        const edited = pristineNote
+          .replace(orig, 'the worker key is named (`scripts/charter-scribe/config.json:2`)')
+          .replace(lead, '`worker` names `"charter-scribe"` (`scripts/charter-scribe/config.json:2`).\n\n' + lead);
+        writeFileSync(join(dir, S8), edited);
+        const w = tool(['--write-pin']);
+        if (w.status !== 0) return `re-pin refused: ${w.verdict}`;
+        return null;
+      }],
     ];
     let accepted = 0;
     for (const [name, apply] of attacks) {
