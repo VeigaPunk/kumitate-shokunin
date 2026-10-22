@@ -1,0 +1,45 @@
+# R40-3 receipt: cite-check over the round-41 lane files (before the measured commit; cite-check.mjs = 68db3419 bytes), 2026-10-22T17:09:47Z
+$ node scripts/cite-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src   (default --fleet = the real fleet root)
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=95 tokens=9319 errors=545 warnings=474)
+exit=1
+## REV_UNKNOWN findings, classified: does the unknown hash occur inside an http(s) URL on the same cited line?
+not-in-url corpus/knowledge/cost-and-profile.md:3 ee907f1cf
+not-in-url corpus/knowledge/cost-and-profile.md:116 ee907f1cf
+not-in-url corpus/knowledge/enqueue-admission.md:4 b18e0274d
+not-in-url corpus/knowledge/enqueue-admission.md:5 b18e0274d
+not-in-url corpus/knowledge/enqueue-admission.md:174 b18e0274d
+not-in-url corpus/knowledge/gate-verdict.md:6 daa371583
+not-in-url corpus/knowledge/native-admission-detail.md:3 ee907f1cf
+not-in-url corpus/knowledge/native-trial-launch.md:233 d76ddcc0e
+not-in-url corpus/knowledge/ops-watchers.md:13 daa371583
+not-in-url corpus/knowledge/reconcile-and-cycle.md:4 b18e0274d
+not-in-url corpus/knowledge/reconcile-and-cycle.md:280 b18e0274d
+not-in-url corpus/knowledge/route-probe-cluster.md:451 daa371583
+not-in-url corpus/knowledge/runtime-remainder-census.md:6 93798be12
+not-in-url corpus/knowledge/runtime-remainder-census.md:533 93798be12
+not-in-url corpus/knowledge/runtime-support.md:3 ee907f1cf
+not-in-url corpus/knowledge/test-inventories.md:4 ee907f1cf
+not-in-url corpus/lessons/round-12.md:119 daa371583
+not-in-url corpus/lessons/round-12.md:145 ee907f1cf
+not-in-url corpus/lessons/round-12.md:155 daa371583
+not-in-url corpus/lessons/round-13.md:155 4f34e7dab
+not-in-url corpus/lessons/round-14.md:69 4f34e7dab
+not-in-url corpus/lessons/round-15.md:92 93798be12
+not-in-url corpus/lessons/round-17.md:65 51b814c2b
+not-in-url corpus/lessons/round-30.md:23 b18e0274d
+not-in-url corpus/lessons/round-30.md:25 ba5e02be
+not-in-url corpus/lessons/round-5-aggregator-mirror-out-of-province-membrane-seal.md:12 ee907f1cf
+not-in-url corpus/lessons/round-6-aggregator-audit.md:5 ee907f1cf75241e21ee311e35ba4c2cdf44bcbbe
+not-in-url corpus/lessons/round-6-aggregator-audit.md:120 ee907f1cf
+not-in-url corpus/lessons/round-7.md:24 44a3c781
+not-in-url corpus/lessons/round-7.md:24 b18e0274d
+not-in-url corpus/lessons/round-7.md:27 ee907f1cf
+not-in-url corpus/lessons/round-8-aggregator-box3-coldrun.md:50 2c6c580b
+external-url corpus/SOURCES.md:49 140f211984e8a0c926ec305a550da425f9bb8d69
+## counts
+      1 external-url
+     32 not-in-url
+## 511 (round-40 closure) versus 545 here: per-file ERROR count for the file added since
+$ grep " ERROR " <output> | awk "{split(\$1,a,\":\"); print a[1]}" | sort | uniq -c | grep round-40-verifier
+     34 corpus/lessons/round-40-verifier-spotcheck.md   (511 + 34 = 545)

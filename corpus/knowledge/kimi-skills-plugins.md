@@ -225,6 +225,10 @@ is a plain directory, not a symlink and not a second view of the managed plugin 
 `stat -c '%F %s %a %y inode=%i' ~/.kimi-code/skills/kimi-webbridge` →
 `directory 36 755 2026-10-21 23:36:39.510359784 -0300 inode=95866022`.
 
+Source note (S035, re-opened read-only on 2026-10-22 in round 41): this section rests on
+`corpus/SOURCES.md` row S035, the host path opened as own work; the front matter still reads
+`name: kimi-webbridge` and `version: "2.0.26"` at the re-open.
+
 Frontmatter of `~/.kimi-code/skills/kimi-webbridge/SKILL.md` (193 lines / 19437 B,
 mode `600`):
 

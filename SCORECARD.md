@@ -281,12 +281,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=8
-C=15
+A=9
+C=17
 C1=19
 C1_total=19
-C2=91
-C2_total=91
+C2=92
+C2_total=92
 S_members=88
 S_sections=88
 R_members=92
@@ -1676,6 +1676,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
 | `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
+| `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect <wave>:<role>=<n>` (exit 1 on mismatch); flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `node scripts/wave-census.mjs --round 38 --round 39 --round 40` (per-wave counts equal the jq recount, `RECOUNT_MISMATCHES=0`, `.ufo/waves/round-41/final/wave-recount-*.txt`); `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (the round-40 slip R40-6); `--selftest` 12/12; S038 | round 41 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 

@@ -116,6 +116,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-40-verifier-spotcheck.md` | Round-40 non-author closure (hyaku): admitted; C1 `anchor-truth --open` probe 20/26 to 0/26 attacks accepted with 10/10 benign edits clean, reproduced from committed receipts; C2 proxy 5 error rows to 0 re-measured; routed R40-1 to R40-7 (registry row, honest-edit re-measure, cite-check receipt, sentinel resource bounds, S035 linkage, seat-gate count, this README row); row added in round 41 | commit `a58b7f7`; fleet closure entry `rounds[465]` |
 
+| `lessons/round-41.md` | Round-41: `cite-check` pins its 16 verdict, render and exit conditions (mutant probe 15/16 to 0/16 survived; suite self-observation by an injected-failure child run); capability `wave-census` over committed swarm payloads (jq recount 0 mismatches over rounds 38 to 40; catches the R40-6 count); S038; R40-1 to R40-7 dispositions, mined mistakes, open limits | LOG.md round 41; `.ufo/waves/round-41/`; S038 |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe
