@@ -2452,10 +2452,14 @@ function selfTest(opts) {
     // The suite observing itself: a child --selftest with one injected failing
     // case must print the FAIL, end `VERDICT: FAIL` and exit 1, in text and in
     // --json. The injection variable is read only here, inside selfTest(); normal
-    // mode never reads it. The child skips these two cases, so it cannot recurse.
+    // mode never reads it. Any value of the variable marks a child: the child skips
+    // these two cases whatever the value, so a changed literal cannot recurse; only
+    // the value `1` injects the failing case.
     const INJECT41 = 'KUMITATE_CITE_SELFTEST_INJECT_FAIL';
-    if (process.env[INJECT41] === '1') {
-      hermetic.push({ name: 'injected failing case (child run only)', ok: false, detail: `${INJECT41}=1` });
+    if (process.env[INJECT41] !== undefined) {
+      if (process.env[INJECT41] === '1') {
+        hermetic.push({ name: 'injected failing case (child run only)', ok: false, detail: `${INJECT41}=1` });
+      }
       for (const name of ['suite self-observation: injected failure → text VERDICT FAIL, exit 1',
         'suite self-observation: injected failure → --json verdict FAIL, exit 1']) {
         hermetic.push({ name, ok: true, skipped: true, detail: 'SKIP (inside the injected child)' });

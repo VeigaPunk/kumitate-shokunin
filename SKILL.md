@@ -659,8 +659,8 @@ new one as a further anchor; no token-kept arm (`corpus/lessons/round-40.md`).
 
 Seventeen items (round 41). Item 14 replaces the round-36/37 adjacency-fidelity
 ratchet with the per-anchor truth gate on four registered notes (811 anchors);
-item 15 is its hermetic suite; items 16–17 (round 41) are the wave-census of the
-last landed round's committed swarm evidence and its hermetic suite. Every item is read-only, runs from this repo's
+item 15 is its hermetic suite; items 16–17 (round 41) are the wave-census of round 40's
+committed swarm evidence (a fixed, landed round) and its hermetic suite. Every item is read-only, runs from this repo's
 root, and prints its verdict; `node scripts/surface-probe.mjs --checklists`
 executes the list. The old `claims-check --fidelity` arm remains diagnostic for
 its 20-note population, not a certificate of anchor truth.

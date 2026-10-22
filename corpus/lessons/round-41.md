@@ -1,4 +1,4 @@
-# Round 41 — cite-check pins its verdict conditions; a census of committed swarm evidence
+# Round 41 — cite-check pins the 16 unpinned verdict conditions; a census of committed swarm evidence
 
 Source: S038 (the origin wave producer `scripts/ufo-swarm-wave.mjs` at the pin, opened this round),
 S035 (re-opened), the round-40 non-author closure (`corpus/lessons/round-40-verifier-spotcheck.md`,
@@ -34,7 +34,9 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   (committed in 27592977 before the instrument): `.ufo/waves/round-41/probe/wave-recount.sh.txt`.
   Before, at 27592977: `RECOUNT_MISMATCHES=7` (no instrument), `CAPABILITY_ROWS=1`, both `--expect`
   calls exit 1 (module not found). After: `RECOUNT_MISMATCHES=0` over the seven payloads of rounds
-  38–40, `CAPABILITY_ROWS=2`, `--expect build:mutation-tester=4` exit 1 and `=3` exit 0.
+  38–40, `CAPABILITY_ROWS=2`, `--expect build:mutation-tester=4` exit 1 and `=3` exit 0, at 4e58bb0e
+  (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`) and at the final tip
+  (`wave-recount-final.txt`).
   Sourced on S038.
 - **Axis accounting (falsify seat CritSeparability).** The two counters verify separately (C1 alone
   at 68db3419: `survived=0/16` with the C2 counter at its before values; C2 alone on a scratch
@@ -88,7 +90,7 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 - Round 40's payloads carry 45 attack seats out of 67 (reviewer, critic, mutation-tester). The
   round-40 report reads "attack roles 37/67 = 55%". A count that fits the committed files (an
   inference by the falsify seat CritCensusLessonFacts; the report states no formula): the 36
-  attack seats that returned reports plus the one sentinel, that is 45 + 1 − 7 dead
+  attack seats that returned reports plus the one sentinel, that is 45 + 1 − 7 dead (per the round-40 seat-gate record, not the census)
   mutation-testers − 2 cancelled reviewers. The census counts payload seats, not returned ones.
 - Round 38's falsify directory holds four `*-supplement.md` files no task names (`STRAY_REPORT`).
 
@@ -96,7 +98,7 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 
 | class | evidence | captured-by | fix |
 |---|---|---|---|
-| calibration — a seat-gate record stated a role count from memory: "four mutation-tester seats returned results" in wave 1, where the payload holds three (R40-6) | `.ufo/waves/round-40/evidence/seat-gate.txt` item 4; `build-dispatch.json` | the round-40 closure, by hand (no instrument) | `wave-census --expect`: `--round 40 --expect build:mutation-tester=4` exits 1 (`EXPECT_MISMATCH … payload=3`), `=3` exits 0 — shown able to fail on the real slip (`.ufo/waves/round-41/final/wave-recount-*.txt`). The correction: wave 1 of round 40 had three mutation-tester seats (MutCiteGuard, MutAnchorSurvivors, MutKimiCensusArms) |
+| calibration — a seat-gate record stated a role count from memory: "four mutation-tester seats returned results" in wave 1, where the payload holds three (R40-6) | `.ufo/waves/round-40/evidence/seat-gate.txt` item 4; `build-dispatch.json` | the round-40 closure, by hand (no instrument) | `wave-census --expect`: `--round 40 --expect build:mutation-tester=4` exits 1 (`EXPECT_MISMATCH … payload=3`), `=3` exits 0 — shown able to fail on the real slip (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`: `EXPECT_4_EXIT=1 EXPECT_3_EXIT=0`). The correction: wave 1 of round 40 had three mutation-tester seats (MutCiteGuard, MutAnchorSurvivors, MutKimiCensusArms) |
 | recurrence — a non-author closure file lands without a `corpus/README.md` row, so the next open reads `C2_TOTAL_DRIFT` and `coverage` 9 against 10; second time (round 39's closure file at round 40, round 40's at round 41) | `.ufo/waves/round-41/open/receipts.txt` (`C2_total declared=90 computed=91`, checklist 14/15) | `proxy-check` (fires correctly) | row added at open in 34fccc17 (R40-7). The mechanism recurs by construction for the round-41 closure file; the next L1 adds the row at open. Teaching the proxy to skip closure files would re-charter the frozen `C2_total` term, so it is not done |
 | suite blind spot — a test suite with no case that observes its own verdict machinery: the four suite-verdict mutants survived because the suite was its own observer | `.ufo/waves/round-41/final/cite-mutants-open-a58b7f72.txt` (suite-group-verdict, suite-any-fail, suite-exit-json, suite-exit-text survived) | none until round 40's scout | the injected-failure child run (C1); after: all four killed at 68db3419 |
 
@@ -154,3 +156,11 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 - Provenance of `~/.kimi-code/locks` (falsify scout ScoutKimiLocks, shape only): Kimi 2.3.0
   self-updated at 16:48:04Z; its session lock service creates `locks/sessions` (mode 0700) on first
   run; born 16:53:33Z. Upstream feature, not a stray.
+- Self-observation guard (falsify seat CritInjectionBypass): at 4e58bb0e a changed literal in the
+  `=== '1'` guard made the child recurse without limit (about 29 nested processes, 2 GB in 8 s).
+  After the falsify wave the child marker is any value of the variable, and only `1` injects the
+  failure, so a changed literal no longer recurses (`KUMITATE_CITE_SELFTEST_INJECT_FAIL=2` →
+  `73/73`, two SKIP). Still open: a mutant that skips both self-observation cases unconditionally
+  reads `73/73 VERDICT: PASS` and survives, because skipped cases leave the ran count and the frozen
+  counter does not treat a `SKIP` line as a kill. Children are not spawned in their own process
+  group, so a hang is killed only at the direct child.
