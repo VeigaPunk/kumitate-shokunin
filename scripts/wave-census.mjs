@@ -367,10 +367,12 @@ function selftest() {
       const r = run(root, ['--round', '15']);
       return { ok: r.status === 0 && /reports=0\/1/.test(r.out) && /^ {2}absent: U$/m.test(r.out), detail: `exit=${r.status}` };
     });
-    check('WC22', 'a task without a string agent fails closed (exit 2), never counted', () => {
+    check('WC22', 'a task without a string agent, or with a non-string name, fails closed (exit 2), never counted', () => {
       const root = one(16, { context: 'c', tasks: [{ name: 'V', task: 'x\nReport: write to .ufo/waves/round-16/build/V.md' }] });
       const r = run(root, ['--round', '16']);
-      return { ok: r.status === 2 && /without a string name and agent/.test(r.err), detail: `exit=${r.status}` };
+      const n = run(one(28, { context: 'c', tasks: [{ name: 42, agent: 'critic', task: 'x\nReport: write to .ufo/waves/round-28/build/42.md' }] }), ['--round', '28']);
+      return { ok: r.status === 2 && /without a string name and agent/.test(r.err) && n.status === 2 && /without a string name and agent/.test(n.err),
+        detail: `noAgent=${r.status} numericName=${n.status}` };
     });
     check('WC23', 'a read error outside FailClosed (report dir is a regular file) exits 2, not 1', () => {
       const root = one(17, { context: 'c', tasks: [task(17, 'build', 'W', 'critic')] }, { '.ufo/waves/round-17/build': 'not a dir\n' });

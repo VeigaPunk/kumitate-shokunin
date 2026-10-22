@@ -1829,3 +1829,14 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   the attempt-1 restart; not re-measured); R40-4 open. The 34-seat build payload never spawned (seat gate timed out at
   3600 s); the L1 built both claims; the falsify wave ran 34 live-role seats. Lesson
   `corpus/lessons/round-41.md`.
+- 2026-10-22 — round 41 attempt 2 (attempt 1 ended in an omp process restart at 17:26Z after
+  `02fef27a` and `5320e0da`, the cite-check self-observation guard). `fae386aa`: the 13 leftover
+  paths committed after re-verification (wave-census `..` path, string name/agent and read-error
+  repairs, pinned by WC21–WC23; S018 re-open; SKILL, README and lesson wording; 8 falsify reports)
+  and the misrooted `ReviewCensusCode.md` moved in from the fleet root (byte-exact, `cmp` equal).
+  A 38-seat verify wave attacked `fae386aa`; integrated in `57269a55` and the closing commit:
+  wave-census WC24–WC26 and a widened WC22 (selftest 26/26; 21 named survivors killed, receipts
+  `.ufo/waves/round-41/final/a2-census-*-mutants.txt`), tip receipts for C1 and C2, the 14-of-16
+  split, the MAST Appendix J locator, R40-2 not re-measured, cite-check errors 551 → 545, Mistakes
+  rows re-classed, open limits from the census mutation, sentinel and ledger seats. C1 and C2
+  values unchanged at the tip. Round total 72 spawned seats (0 + 34 + 38).

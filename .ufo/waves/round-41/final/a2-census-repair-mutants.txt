@@ -1,5 +1,5 @@
 # round 41 attempt 2: revert each attempt-1 late wave-census repair (`..` guard, string name/agent check, read-error exit 2) and run --selftest
-# at 2026-10-22T18:23:59Z, lane working copy over master fae386aa (scripts/wave-census.mjs sha256 617c9cc4ef29c7dad28de033b961e9e67bb0210c881dc65629813d2ae4c40fca); each mutant in a temp copy, run --selftest
+# at 2026-10-22T18:42:06Z, lane working copy over master fae386aa (scripts/wave-census.mjs sha256 d6068d1b213064a4ff69f3489b4261e9fe37911ec4aa0e49a300d06c0ac17204); each mutant in a temp copy, run --selftest
 CONTROL exit=0 WAVE_CENSUS_SELFTEST: 26/26 pass VERDICT: PASS
 MUTANT dotdot-guard-dropped (reportOf: `return r && !r.split('/').includes('..') ? r : null;` -> `return r;`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC21;WC24
 MUTANT string-agent-check-dropped (`if (tc.tasks.some((t) => !t || typeof t.name ...)) {` -> `if (false) {`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC22;WC24

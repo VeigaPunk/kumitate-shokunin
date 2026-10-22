@@ -1,0 +1,6 @@
+# round 41 attempt 2: verify seat MutCensusExits survivors M22 (name half of the string name/agent check dropped) and M19 (selftest exit constant), against the widened WC22 and WC24
+# at 2026-10-22T18:42:43Z, lane working copy over master fae386aa (scripts/wave-census.mjs sha256 d6068d1b213064a4ff69f3489b4261e9fe37911ec4aa0e49a300d06c0ac17204); each mutant in a temp copy, run --selftest
+CONTROL exit=0 WAVE_CENSUS_SELFTEST: 26/26 pass VERDICT: PASS
+MUTANT M22-name-half-dropped (`!t || typeof t.name !== 'string' || typeof t.agent !== 'string'` -> `!t || typeof t.agent !== 'string'`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC22;WC24
+MUTANT M19-selftest-exit-const (`return pass === results.length ? 0 : 1` -> `return 0`) killed exit=0 WAVE_CENSUS_SELFTEST: 25/26 pass VERDICT: FAIL failing=WC24
+KILLED 2/2

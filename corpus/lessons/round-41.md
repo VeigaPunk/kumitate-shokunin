@@ -79,8 +79,10 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   phantom seats and its cap was compensated; no more seats in those roles this leg; live roles are
   reviewer, critic, scout and connector.
 - So the §3 L2 floor (3 executor, 1 scribe, 1 scout, 1 connector, 1 reviewer, 1 critic in one
-  batched call) was not met: executor 0 of 3 and scribe 0 of 1 for the whole round. This is a
-  conformance defect, stated here. The L1 holds the planner seat.
+  batched call) was not met inside wave 1: executor 0 of 3 and scribe 0 of 1 in attempt 1. This is
+  a conformance defect, stated here. The attempt-2 verify wave carries every floor role in one
+  batched call, but it is not wave 1, so it does not repair the floor (verify seat CritRoundShape).
+  The L1 holds the planner seat in both attempts.
 - The L1 built and mutation-probed both claims itself (commits cb2d8d09, 68db3419, 27592977,
   4e58bb0e); no other executor or mutation-tester worked on them. Build items done by the L1:
   ExecCiteMutProbe, ExecCitePins, ExecWaveCensus, ScribeLessonMistakes. Undone: ExecAnchorCaps
@@ -89,9 +91,21 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   items were re-cut into falsify items of the same purpose (ReviewHonestReMeasure,
   ReviewK2S035, CritClaimSizing, ConnSiblingOverlap, ScoutMAST, CritC2Capability); the rest were
   recon for code the L1 then wrote and were folded into falsify attacks on that code.
-- One v1 falsify wave of 34 seats ran (critic 16, reviewer 13, scout 4, connector 1). Round total:
-  34 spawned seats. Live counts come from `.ufo/waves/round-41/evidence-seat-gate.txt`, not from
-  the census, which counts payload seats.
+- One v1 falsify wave of 34 seats ran (critic 16, reviewer 13, scout 4, connector 1); 27 returned
+  a report (one of them misrooted, moved in), 7 died in the attempt-1 restart with none.
+- **Attempt 2.** Attempt 1 ended in an omp process restart at 17:26Z. The 7 falsify seats with no
+  report (ReviewC1Hermetic, CritCensusAdversarial, ReviewR40Dispositions, ReviewHonestReMeasure,
+  CritAnchorCapsOpen, ReviewLesson, ReviewSeatGateRecord) are dead and not replaced. The attempt-2
+  L1 committed the 13 leftover paths in fae386aa and dispatched a third v1 payload, the verify wave
+  (`.ufo/waves/round-41/verify-dispatch.json`: reviewer 11, executor 7, critic 7, mutation-tester
+  6, scribe 3, scout 2, connector 1, sentinel 1), granted and dispatched at 18:12:38Z as one task
+  call; all 38 returned a report (`wave-census --round 41`: verify `reports=38/38`), 0 dead, 0
+  safety-filter holds, gate released 18:55:02Z. A third v1 wave is none of the addendum's shapes (two v1 waves, one
+  v2 wave, or a residual call of at most 8 reviewer or critic seats): it is a deviation caused by
+  the restart, named here for the judge (CritRoundShape).
+- Round total: 72 spawned seats (build 0 + falsify 34 + verify 38), within the bound of 100. The
+  census counts payload seats and reads `seats=106` for round 41, because it also counts the 34
+  build seats that never spawned. Live counts come from `.ufo/waves/round-41/evidence-seat-gate.txt`.
 
 ## What the census taught (rounds 38–41, measured at 4e58bb0e)
 
@@ -192,8 +206,16 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 - Self-observation guard (falsify seat CritInjectionBypass): at 4e58bb0e a changed literal in the
   `=== '1'` guard made the child recurse without limit (about 29 nested processes, 2 GB in 8 s).
   After the falsify wave the child marker is any value of the variable, and only `1` injects the
-  failure, so a changed literal no longer recurses (`KUMITATE_CITE_SELFTEST_INJECT_FAIL=2` →
-  `73/73`, two SKIP). Still open: a mutant that skips both self-observation cases unconditionally
+  failure, so a changed injection literal no longer recurses (`KUMITATE_CITE_SELFTEST_INJECT_FAIL=2` →
+  `73/73`, two SKIP). Corrected in attempt 2 (verify seat MutCiteGuardTip, 21 guard mutants, 6
+  killed, 12 survived, 3 recursed): a change to the outer marker test (`!== undefined` →
+  `=== '2'`, one site) still recurses without limit (9 processes and 626 MB in 2 s; orphans kept
+  multiplying after the direct child was killed), so the code comment's "a changed literal cannot
+  recurse" holds for the inner literal only; and two skip-bypass mutants that were killed at
+  4e58bb0e (`73/74`, `VERDICT: FAIL`) survive at 5320e0da and later (`73/73`, `VERDICT: PASS`), a
+  trade made by the guard change. The frozen C1 counter has no anchor in the guard block, so C1's
+  16 values are unaffected; the guard is round-42 work (own process group, a marker the caller cannot inherit).
+  Still open: a mutant that skips both self-observation cases unconditionally
   reads `73/73 VERDICT: PASS` and survives, because skipped cases leave the ran count and the frozen
   counter does not treat a `SKIP` line as a kill. Children are not spawned in their own process
   group, so a hang is killed only at the direct child.
@@ -202,7 +224,10 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   exit code, the flag-followed-by-a-flag check, `record()` counting a throwing check as PASS, the
   two integration-group gates (an `--integrations` run with 0 cases reads `VERDICT: PASS`), the
   hermetic group selection (`--selftest` with no cases reads `VERDICT: PASS`), and the
-  unreadable-document skip (label only). These are outside C1 and stay open.
+  unreadable-document skip (label only). These are outside C1 and stay open. The other 2 of the 23
+  crashed or timed out, which is not a kill (verify seat ReviewA2Commit). Also from that seat:
+  `wave-census` labels every non-FailClosed exception `read error:`; the exit code 2 is right, the
+  label over-names internal errors.
 - C2 counter weakness (falsify seat ReRecountC2): the frozen recount script prints
   `RECOUNT_MISMATCHES=0` even when both listings are empty (jq missing, no round folders); it does
   not check that each side has 7 rows. At the measured and final revisions both listings hold 7
@@ -223,3 +248,45 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 - `--expect` survivors after WC25 (verify seat MutCensusExpect, 14/21 killed at fae386aa): WC25
   kills M02, M03, M04, M10, M12 and M13 (`.ufo/waves/round-41/final/a2-census-survivor-mutants.txt`);
   M14 (role knowledge judged on matching waves only) is not re-measured and stays open.
+- Report-presence survivors (verify seat MutCensusReports, 13/20 killed at fae386aa, 2
+  equivalent): five latent gaps with a fixture witness each and byte-identical output on rounds
+  38–41 — a greedy `Report:` capture with two paths on one line, a whole-string `..` test that
+  would also reject `x..y.md`, `lstat` → `stat` (a symlinked report would count), an object-valued
+  `resumeSends` (crash, exit 2), a numeric resume name. Not pinned this round.
+- ReviewCensusCode ledger (verify seat ReviewCensusCodeLedger, all 20 attempt-1 findings re-run at
+  fae386aa): fixed 7 (H1, H2, M1, M3, M4, M7, L4), recorded 1 (H3, payload not dispatch), and 12
+  neither fixed nor recorded until now, recorded here: M2 (a v1 envelope without counts or registry
+  reads CLEAN), M5 (report paths outside `.ufo/waves` count absent silently), M6 (an unscoped
+  `--expect` stays silent when one requested round lacks the wave), D1, D3 and D4 (docstring:
+  "merged registry", three of five exit-2 triggers, limits unstated), L1 (a dispatch file whose
+  name ends in upper-case `.JSON` is dropped silently), L2 (duplicate `--round` counted twice), L3 (duplicate seat names counted
+  twice), L5 (`Reviewer` is not an attack seat), L6 (upper-case wave unreadable to `--expect`, exit
+  64), L7 (EACCES labelled "does not parse").
+- C1 counter kill rule (verify seat MutCiteCounterSkip, fooled 1/3): the frozen rule counts a kill
+  on `exit != 0`, a `FAIL ` line, `VERDICT: FAIL` or `p < n`, and never asks why. A two-part mutant
+  (skip the `resolved>0` case and widen the `n/m` denominator to all cases) reads
+  `survived=0/16`, byte-identical to the honest run, with `fail_lines=0`. At fae386aa every one of
+  the 16 kills rests on at least one real `FAIL ` line, so C1 stands; a round-42 counter should
+  require `fail_lines > 0`.
+- Path safety (verify seat SentinelCensusPaths, verdict unsafe, at fae386aa): the census has no
+  `realpath` confinement, so a symlinked report directory, dispatch file or round directory reads
+  outside `--root` (an outside file counts as a present report; its `.md` names leak as
+  `STRAY_REPORT`); a FIFO named `*-dispatch.json` hangs it; no size caps (a 256 MB payload peaks
+  near 800 MB RSS); `RE_REPORT` is not anchored to the trailer (the first `.ufo/waves/*.md` after
+  the first `Report:` word wins; 15 real tasks in rounds 38–40 mention another path first, safe
+  today by data accident); a task name with a newline can forge output lines; `--round 7 --round
+  007` double-counts. The census reads committed lane bytes written by the lane's own seats, so
+  these are hardening items for round 42 (reuse `anchor-truth.mjs` `realpathSync` confinement and
+  `readCapped`), not fixed here.
+- MutCensusExits (20/22 killed at fae386aa): its two survivors, M19 (selftest exit constant) and
+  M22 (the name half of the string name/agent check), are killed at the attempt-2 tip by WC24 and
+  the widened WC22 (`.ufo/waves/round-41/final/a2-census-exits-mutants.txt`, 2/2).
+- Attempt-1 falsify findings neither fixed nor recorded at fae386aa (verify ledgers, full tables in
+  `.ufo/waves/round-41/verify/`): C1 reports 32 findings, 11 dropped (ReviewLedgerC1Reports; the
+  seven ReviewR403Receipt items are now answered by the R40-3 row above); C2 reports 45 findings, 15
+  dropped and 4 partial (ReviewLedgerC2Reports: nine ReviewRegistryRow registry-row details for
+  anchor-truth, wave-census and cite-check, older-round stray notes, 11 CritCensusSelftest mutants
+  still surviving at fae386aa before WC24–WC26); round-level reports 69 findings, 12 dropped
+  (ReviewLedgerRoundReports: sibling should-cites, kimi #4328 takeover note, three ScoutMAST
+  census notes). R40-3 and the row-400 selftest wording, named by several ledgers, are answered
+  above. The rest are recorded here by pointer, not fixed.
