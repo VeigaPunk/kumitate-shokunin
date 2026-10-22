@@ -51,7 +51,7 @@ below); later commits carry documents and evidence only. Receipts: `.ufo/waves/r
   the same totals as at open. Selftest 30/30 → 41/41.
 - C1 red-before: the open gate logic with the new review cases reads 30/34, AT31–AT34 failing
   (`.ufo/waves/round-40/build/ExecReviewBind.md`); with the new open-floor cases 30/34,
-  AT39–AT42 failing (`.ufo/waves/round-40/build/ExecNewDebtIdentity.md`).
+  AT39–AT42 failing (`.ufo/waves/round-40/build/ExecNewDebtIdentity.md`). On the literal open gate some of these fail on the unknown `--open` flag (exit 64); the falsify seat ReviewRedBefore re-ran them with the flag accepted and ignored and AT31–AT34 and AT39–AT41 still fail on logic (34/41), AT42 being the benign control (`.ufo/waves/round-40/falsify/ReviewRedBefore.md`).
 - C2: at f69817ed `PROXY: DRIFT`, 5 error rows (`.ufo/waves/round-40/open/receipts.txt`); at
   1530a755 `PROXY: MATCH (… C2=89/89 coverage=10; … K=52/52 coverage:kimi-layer=10; pins=6
   match …)`, 0 error rows. `ls -A ~/.kimi-code/skills | wc -l` → 7 on 2026-10-22. The census
@@ -108,9 +108,9 @@ explained intra-lane warning (`.ufo/waves/round-40/build/ScribeLessonDraft.md`).
 
 | class | evidence | captured-by | fix |
 |---|---|---|---|
-| survivor — a verdict guard no selftest pinned: dropping `totals.resolved > 0` from the cite-check verdict passed the whole suite and turned FAIL into PASS on a scanned document with zero resolved citations | `scripts/cite-check.mjs:1590` at f69817ed; mutant 62/62 survived (`.ufo/waves/round-40/final/cite-zero-resolved-red-before.txt`, `.ufo/waves/round-40/build/MutCiteGuard.md`) | none in the lane: found by the tameshi round-26 closure and routed as R39-5 | two hermetic cases; the same mutant now fails 63/64; `corpus/QUALITY.md` Q20 makes it a rule. Shown able to fail: the red-before receipt above |
+| survivor — a verdict guard no selftest pinned: dropping `totals.resolved > 0` from the cite-check verdict passed the whole suite and turned FAIL into PASS on a scanned document with zero resolved citations | `scripts/cite-check.mjs:1590` at f69817ed; mutant 62/62 survived (`.ufo/waves/round-40/final/cite-zero-resolved-red-before.txt`, `.ufo/waves/round-40/build/MutCiteGuard.md`) | none in the lane: found by the tameshi round-26 closure and routed as R39-5 | two hermetic cases; the same mutant now reads 63/64 pass, exit 1; `corpus/QUALITY.md` Q20 makes it a rule. Shown able to fail: the red-before receipt above |
 | attribution — a census warning was credited to sibling lanes without reading the code that emits it | round-39 report line 176; `scripts/sources-census.sh:644-653,717` (fleet) | the round-39 non-author closure (R39-6) | the correction above, made after reading the emitter; the W04 line is quoted with its command in `## Gate` |
-| vacuous control — a benign control in this round's first probe cited a symbol one line off (`MAX_N_PREDICT` at `scripts/local-helper.mjs:12`; it is at line 11), so "a new true anchor" was a new false anchor; the open gate read it CLEAN under the debt headroom, and the candidate refused it, which first looked like a benign harm (benign 8/10) | `.ufo/waves/round-40/final/floor-probe2-integration-c3d9547.txt` was re-run after the fix; the seat's original probe is `.ufo/waves/round-40/probe/floor-probe-v2.seat.mjs.txt`, cases B03 and B04 | the candidate gate itself (`DEBT_NEW` on the new anchor), then the L1 reading the pinned source | the L1 moved both controls to line 11 and re-ran both revisions (benign 10/10 at both). The same edit also made setup errors count as neither accepted nor refused (`setup_errors` total), and committed the forged records of three attacks inside the probe's temp clone so the write path did not abort them |
+| vacuous control — a benign control in this round's first probe cited a symbol one line off (`MAX_N_PREDICT` at `scripts/local-helper.mjs:12`; it is at line 11), so "a new true anchor" was a new false anchor; the open gate read it CLEAN under the debt headroom, and the candidate refused it, which first looked like a benign harm (benign 8/10) | `.ufo/waves/round-40/final/floor-probe2-seat-original-at-1530a755.txt` (the seat's probe re-run at 1530a755); the seat's original probe is `.ufo/waves/round-40/probe/floor-probe-v2.seat.mjs.txt`, cases B03 and B04 | the candidate gate itself (`DEBT_NEW` on the new anchor), then the L1 reading the pinned source | the L1 moved both controls to line 11 and re-ran both revisions (benign 10/10 at both). The same edit also made setup errors count as neither accepted nor refused (`setup_errors` total), and committed the forged records of three attacks inside the probe's temp clone so the write path did not abort them |
 | scope — the new review binding accepted a nested re-citation of any reviewed range in the same file, even while the reviewed anchor still existed, so a second anchor could borrow a record; the binding rule was written to keep honest widening bound and was not attacked for borrowing before the measured commit | `.ufo/waves/round-40/falsify/AtkReviewForge.md`, `.ufo/waves/round-40/falsify/AtkNovelRecords.md` (five accepted borrows at 1530a755) | the falsify wave (four critic seats); no wave-1 item attacked the binding rule itself | fallback only when the record's own anchor is gone, once per record (5ae8ac9c); AT46 fails on the 1530a755 logic (41/42, `.ufo/waves/round-40/final/at46-red-before.txt`) |
 | landing — the wave-1 seat-gate reservation was released at 15:16Z, after the last wave-1 seat had returned; the contract asks for release once every seat returns, and the gap held 32 seats the fleet could have used | `.ufo/waves/round-40/evidence/seat-gate.txt` | none (no check exists) | release right after the last seat returns; recorded so the next round's L1 does it at once |
 
@@ -118,8 +118,9 @@ explained intra-lane warning (`.ufo/waves/round-40/build/ScribeLessonDraft.md`).
 
 - **Admit S035** (own-work, tier A): the host path `~/.kimi-code/skills/kimi-webbridge/`, read
   only (list, stat, sha256, the SKILL.md front matter), opened 2026-10-22 about 14:07Z by the
-  seat ScribeKimiSkillNote; no secret file read. Located quote, `SKILL.md:2` and `:6`:
+  seat ScribeKimiSkillNote; no secret content read (the scribe recorded one key name of a webbridge identity file, shape only). Located quote, `SKILL.md:2` and `:6`:
   "name: kimi-webbridge" … "version: \"2.0.26\"". Used by `corpus/knowledge/kimi-skills-plugins.md`.
+- **New rows, logged:** S035 new → `mined` (used-by `corpus/knowledge/kimi-skills-plugins.md`); S036 and S037 new → `queued` (used-by `—`).
 - **Queue S036 and S037** (spec, tier A): the mutation-testing-elements report schema at the upstream commit named in its URL
   (https://raw.githubusercontent.com/stryker-mutator/mutation-testing-elements/140f211984e8a0c926ec305a550da425f9bb8d69/packages/report-schema/src/mutation-testing-report-schema.json,
   line 92, quote: `"enum": ["Killed", "Survived", "NoCoverage", "CompileError", "RuntimeError", "Timeout", "Ignored", "Pending"]`)
@@ -185,8 +186,7 @@ nested borrow, which round 40 introduced with its binding rule and closed at 5ae
 - **No token-kept arm.** A swap that carries a review token with its coordinate keeps that
   anchor's identity; the open floor refuses the measured swaps through other findings, but the
   swap signature itself is not checked.
-- **`unchecked` anchors are unbounded** (no symbol, so no truth claim), measured by the seat
-  ReviewR39Routing.
+- **`unchecked` anchors are unbounded** (no symbol, so no truth claim), measured by the seats ReviewR39Routing and AtkHeadroom.
 - **cite-check:** 16 of 22 verdict and exit conditions are still not pinned by a selftest case
   (`.ufo/waves/round-40/build/ScoutCiteVerdict.md`); this round pinned the routed one.
 - **Kimi census:** three arms survive its suite (a hidden child under a counted directory, an
