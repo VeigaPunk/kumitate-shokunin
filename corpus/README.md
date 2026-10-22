@@ -114,6 +114,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-40.md` | Round-40: a round-open floor for `anchor-truth` (`--open REV`: review records bound by anchor identity at the open revision, `REVIEW_UNBOUND`; open-pin floor with `DEBT_NEW`), probe 20/26 to 0/26 attacks accepted with 10/10 benign edits clean; the seventh Kimi `skills/` child `kimi-webbridge` (2.0.26 against the plugin's 1.11.3, name collision); R39-1 to R39-8 dispositions, Q20, mined mistakes, open limits | LOG.md round 40; `.ufo/waves/round-40/`; S035 |
 
+| `lessons/round-40-verifier-spotcheck.md` | Round-40 non-author closure (hyaku): admitted; C1 `anchor-truth --open` probe 20/26 to 0/26 attacks accepted with 10/10 benign edits clean, reproduced from committed receipts; C2 proxy 5 error rows to 0 re-measured; routed R40-1 to R40-7 (registry row, honest-edit re-measure, cite-check receipt, sentinel resource bounds, S035 linkage, seat-gate count, this README row); row added in round 41 | commit `a58b7f7`; fleet closure entry `rounds[465]` |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

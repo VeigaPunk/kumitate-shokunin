@@ -1,0 +1,45 @@
+# round-41 open receipts, lane rev a58b7f72afc1eb44b37e438a2f8b212c658874e5, 2026-10-22T16:00:11Z
+## sources census
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+## proxy-check --src /fast/scratch/hyaku/kumitate-pin/src
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=90 computed=91 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY  warn  PIN_UNPINNED  scripts/anchor-truth.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/sources-check.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=90 computed=91 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/anchor-truth.mjs; PIN_UNPINNED term=scripts/sources-check.mjs; src-rev=31c465f15669)
+exit=1
+## kimi-census
+TOTALS: members=52 checked=52 errors=0 info=4 chain=7
+KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)
+exit=0
+## anchor-truth --base e18ff1af --src /fast/scratch/hyaku/kumitate-pin/src
+TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+exit=0
+## sources-check
+SOURCES_CHECK: CLEAN (rows=37 tiers=A:36,B:1,C:0 status=queued:15,mined:20,rejected:2 entries_with_source=3 legacy=38)
+exit=0
+## selftests
+anchor-truth: ANCHOR_TRUTH_SELFTEST: 42/42 pass VERDICT: PASS exit=0
+cite-check: 64/64 cases passed (hermetic) VERDICT: PASS exit=0
+kimi-census: KIMI_CENSUS_SELFTEST: 48/48 pass VERDICT: PASS exit=0
+proxy-check: PROXY_SELFTEST: 116/116 pass VERDICT: PASS exit=0
+sources-check: SOURCES_SELFTEST: 46/46 pass VERDICT: PASS exit=0
+claims-check: CLAIMS_SELFTEST: 47/47 pass VERDICT: PASS exit=0
+round-gate: ROUND_GATE_SELFTEST: 60/60 pass VERDICT: PASS exit=0
+surface-probe: 45/45 cases passed VERDICT: PASS exit=0
+## checklists
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 14/15 pass
+VERDICT: FAIL
+exit=1
+## cite-check --src /fast/scratch/hyaku/kumitate-pin/src (lane only)
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=95 tokens=9309 errors=545 warnings=474)
+exit=1
+## cite-check --src /fast/scratch/hyaku/kumitate-pin/src --fleet /home/vgpnk/Projects/shokunin (real fleet)
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=95 tokens=9309 errors=545 warnings=474)
+exit=1
+REV_UNKNOWN lines: 34
