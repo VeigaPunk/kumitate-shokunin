@@ -1,0 +1,14 @@
+# round 41 attempt 2: finding-logic survivors of verify seat MutCensusFindings (10 of 23 survived at fae386aa), against WC26
+# at 2026-10-22T18:24:33Z, lane working copy over master fae386aa (scripts/wave-census.mjs sha256 617c9cc4ef29c7dad28de033b961e9e67bb0210c881dc65629813d2ae4c40fca); each mutant in a temp copy, run --selftest
+CONTROL exit=0 WAVE_CENSUS_SELFTEST: 26/26 pass VERDICT: PASS
+MUTANT F-M02 (:122 `d.counts.spawn !== tasks.length` -> `d.counts.spawn > tasks.length`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M03 (:122 `(d.counts.resume ?? 0) !== resumes.length` -> `< resumes.length`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M07 (:129 drop `members.length !== names.length ||`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M08 (:141 drop `.filter((x) => x.endsWith('.md'))`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M11 (:140 drop `if (!existsSync(abs)) continue;`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M19 (:122 `(d.counts.resume ?? 0)` -> `d.counts.resume`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M20 (:122 drop the resume arm) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M21 (:126 `if (mem) {` -> `if (true) {`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M22 (:136 resumed seats leave the report-dir set) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+MUTANT F-M23 (:122 `d.counts && (...)` -> `d.counts?.spawn !== ... || (d.counts.resume ?? 0) ...`) killed exit=1 WAVE_CENSUS_SELFTEST: 24/26 pass VERDICT: FAIL failing=WC26;WC24
+KILLED 10/10

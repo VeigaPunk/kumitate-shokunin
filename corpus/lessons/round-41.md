@@ -23,10 +23,12 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   (only `resolved>0`, pinned in round 40, was killed). After, at 68db3419:
   `survived=0/16 nomatch=0 crash=0 control=PASS`.
   Scope of "killed" (the plan's frozen definition, the per-case reading of S034): at least one case
-  failed while the mutant was active. For 13 of the 16 the run also exits non-zero or prints
-  `VERDICT: FAIL`. For the three suite-aggregation mutants (suite-group-verdict, suite-any-fail,
-  suite-exit-text) the parent run exits 0 and the failure is visible only as `FAIL ` case lines and
-  `73/75` or `74/75`; checklist item 2 ("exit 0 + `VERDICT: PASS`") would accept two of them
+  failed while the mutant was active. For 13 of the 16 the run exits non-zero with
+  `VERDICT: FAIL`; `suite-exit-text` exits 0 but prints `VERDICT: FAIL` (14 of 16 show a failure
+  in the exit code or the verdict line; corrected in attempt 2 from "13", verify seat CritC1Final).
+  For the two others (suite-group-verdict, suite-any-fail) the parent run exits 0 with
+  `VERDICT: PASS`, and the failure is visible only as `FAIL ` case lines and `73/75`; checklist
+  item 2 ("exit 0 + `VERDICT: PASS`") would accept those two
   (found by the falsify seat CritC1Statement). A suite cannot pin its own aggregator through an exit
   code the same aggregator computes; a reader must check the `FAIL ` lines and the `n/m` count.
 - **C2 capability `wave-census`.** `scripts/wave-census.mjs` reads a round's committed
@@ -36,7 +38,7 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   calls exit 1 (module not found). After: `RECOUNT_MISMATCHES=0` over the seven payloads of rounds
   38–40, `CAPABILITY_ROWS=2`, `--expect build:mutation-tester=4` exit 1 and `=3` exit 0, at 4e58bb0e
   (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`) and at the final tip
-  (`wave-recount-final.txt`).
+  (`.ufo/waves/round-41/final/wave-recount-final.txt`, at fae386aa, committed in attempt 2).
   Sourced on S038.
 - **Axis accounting (falsify seat CritSeparability).** The two counters verify separately (C1 alone
   at 68db3419: `survived=0/16` with the C2 counter at its before values; C2 alone on a scratch
@@ -55,6 +57,16 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   name and agent fails closed, any read error exits 2 instead of 1); attempt 2 pinned each with one
   case (WC21–WC23, selftest 23/23), and each case fails when its repair is reverted
   (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`: 3/3 killed).
+- **Verify-wave repairs to C2 (attempt 2, after fae386aa).** Three verify mutation seats found
+  surviving mutants in this round's own instrument: 7 of 21 on `--expect` (MutCensusExpect), 10
+  of 23 on the finding logic (MutCensusFindings), and four on the suite's own verdict lines
+  (CritMistakeClasses: the census suite had the blind spot C1 fixed in cite-check). Three cases
+  were added: WC24 runs a child selftest with one injected failure and records its own result
+  outside `check()`; WC25 pins six `--expect` edges; WC26 pins ten finding-logic edges. Selftest
+  23 → 26; the 20 named survivors (M14 not re-measured) are all killed
+  (`.ufo/waves/round-41/final/a2-census-survivor-mutants.txt` 10/10,
+  `.ufo/waves/round-41/final/a2-census-findings-mutants.txt` 10/10). No measured C2 value moves:
+  the cases touch only the selftest.
 
 ## Round shape and the §3 floor
 
@@ -107,11 +119,11 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 
 | class | evidence | captured-by | fix |
 |---|---|---|---|
-| calibration — a seat-gate record stated a role count from memory: "four mutation-tester seats returned results" in wave 1, where the payload holds three (R40-6) | `.ufo/waves/round-40/evidence/seat-gate.txt` item 4; `build-dispatch.json` | the round-40 closure, by hand (no instrument) | `wave-census --expect`: `--round 40 --expect build:mutation-tester=4` exits 1 (`EXPECT_MISMATCH … payload=3`), `=3` exits 0 — shown able to fail on the real slip (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`: `EXPECT_4_EXIT=1 EXPECT_3_EXIT=0`). The correction: wave 1 of round 40 had three mutation-tester seats (MutCiteGuard, MutAnchorSurvivors, MutKimiCensusArms) |
-| recurrence — a non-author closure file lands without a `corpus/README.md` row, so the next open reads `C2_TOTAL_DRIFT` and `coverage` 9 against 10; second time (round 39's closure file at round 40, round 40's at round 41) | `.ufo/waves/round-41/open/receipts.txt` (`C2_total declared=90 computed=91`, checklist 14/15) | `proxy-check` (fires correctly) | row added at open in 34fccc17 (R40-7). The mechanism recurs by construction for the round-41 closure file; the next L1 adds the row at open. Teaching the proxy to skip closure files would re-charter the frozen `C2_total` term, so it is not done |
-| suite blind spot — a test suite with no case that observes its own verdict machinery: the four suite-verdict mutants survived because the suite was its own observer | `.ufo/waves/round-41/final/cite-mutants-open-a58b7f72.txt` (suite-group-verdict, suite-any-fail, suite-exit-json, suite-exit-text survived) | none until round 40's scout | the injected-failure child run (C1); after: all four killed at 68db3419 |
-| misroot — a falsify seat of attempt 1 wrote its report at the fleet root (`/home/vgpnk/Projects/shokunin/.ufo/waves/round-41/falsify/ReviewCensusCode.md`) instead of the lane, so the census read it absent | fleet `git status --porcelain` at attempt-2 open (`?? .ufo/waves/round-41/`); `wave-census --round 41` → `absent: … ReviewCensusCode …` | the addendum's misroot sweep (fires correctly; the wave context already carried the absolute-path sentence, so the context alone does not catch it) | moved byte-exact into the lane at 17:45Z (sha256 `778a35ee…3983`, `cmp` equal), fleet copy and its empty directories deleted; the census now reads it present. The class recurs: phase 1 saw it at kama r11, tsukuroi r12, tabi r15, mado r16 |
-| untested repair — attempt 1 changed `scripts/wave-census.mjs` after the falsify wave (three repairs) and the process restart left them uncommitted with no case that fails without them | `git diff` at attempt-2 open (5 tracked paths); selftest still 20/20 | none (the selftest passed with or without the repairs) | WC21–WC23, each shown able to fail: reverting its repair turns the suite to 22/23 `VERDICT: FAIL` (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`) |
+| calibration — a seat-gate record stated a role count from memory: "four mutation-tester seats returned results" in wave 1, where the payload holds three (R40-6) | `.ufo/waves/round-40/evidence/seat-gate.txt` item 4; `.ufo/waves/round-40/build-dispatch.json` | the round-40 closure, by hand (no instrument) | `wave-census --expect`: `--round 40 --expect build:mutation-tester=4` exits 1 (`EXPECT_MISMATCH … payload=3`), `=3` exits 0 — shown able to fail on the real slip (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`: `EXPECT_4_EXIT=1 EXPECT_3_EXIT=0`). The correction: wave 1 of round 40 had three mutation-tester seats (MutCiteGuard, MutAnchorSurvivors, MutKimiCensusArms). Instance fix only (verify seat CritMistakeClasses): `--expect` counts payload seats, not returned ones, so `--round 40 --expect falsify:mutation-tester=7` reads `CLEAN` although all 7 of those reports are absent; a count of returned seats is still typed by hand |
+| recurrence — a non-author closure file lands without a `corpus/README.md` row, so the next open reads `C2_TOTAL_DRIFT` and `coverage` 9 against 10; at least the fourth time (rounds 35 and 36 read `declared=77 computed=78` and `79/80`, then round 40 and round 41; corrected in attempt 2 from "second time", verify seat CritMistakeClasses) | `.ufo/waves/round-41/open/receipts.txt` (`C2_total declared=90 computed=91`, checklist 14/15) | `proxy-check` (fires correctly) | row added at open in 34fccc17 (R40-7). The mechanism recurs by construction for the round-41 closure file; no written rule makes the next L1 add the row at open. Teaching the proxy to skip closure files would re-charter the frozen `C2_total` term, so it is not done |
+| suite blind spot — a test suite with no case that observes its own verdict machinery: the four suite-verdict mutants survived because the suite was its own observer | `.ufo/waves/round-41/final/cite-mutants-open-a58b7f72.txt` (suite-group-verdict, suite-any-fail, suite-exit-json, suite-exit-text survived); the same class in this round's own `scripts/wave-census.mjs` at fae386aa: four verdict-line mutants survived at 23/23 (verify seat CritMistakeClasses) | none until round 40's scout (cite-check); the attempt-2 verify wave (wave-census) | cite-check: the injected-failure child run (C1), all four killed at 68db3419. wave-census: WC24, a child selftest with one injected failure whose result WC24 records outside `check()`; the four verdict-line mutants are killed (`.ufo/waves/round-41/final/a2-census-survivor-mutants.txt`, V194, V382, V385, V387; V382 and V387 leave the parent exit 0 and show as a `FAIL  WC24` line) |
+| misroot — a falsify seat of attempt 1 wrote its report at the fleet root (`/home/vgpnk/Projects/shokunin/.ufo/waves/round-41/falsify/ReviewCensusCode.md`) instead of the lane, so the census read it absent | fleet `git status --porcelain` at attempt-2 open (`?? .ufo/waves/round-41/`); `wave-census --round 41` → `absent: … ReviewCensusCode …`; sweep receipt `.ufo/waves/round-41/final/a2-misroot-sweep.txt` | the addendum's misroot sweep (fires correctly; the wave context already carried the absolute-path sentence, so the context alone does not catch it) | moved byte-exact into the lane at 17:45Z (`.ufo/waves/round-41/falsify/ReviewCensusCode.md` sha256 `778a35eec329296893fc9ed5ac6be0c9dbe40df3901132607bbfb93e1b2f3983`, `cmp` equal), fleet copy and its empty directories deleted; the census now reads it present; verify seat ScoutFleetMisroot found 0 other kumitate misroots. The class recurs: this lane's round 35, and phase 1 at kama r11, tsukuroi r12, tabi r15, mado r16 |
+| untested repair — attempt 1 changed `scripts/wave-census.mjs` after the falsify wave (three repairs) with no case that fails without them (a separate class rode with it: work left uncommitted across a process restart; not fixed here) | `git diff` at attempt-2 open (5 tracked paths); selftest still 20/20 | no rule; the attempt-2 L1 by hand (`git diff` at open, then reverting each repair) | WC21–WC23, each shown able to fail: reverting its repair turns the suite to 22/23 `VERDICT: FAIL` (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`, measured on the working copy that became fae386aa) |
 
 ## Gate — admits and rejects
 
@@ -126,8 +138,11 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   https://arxiv.org/html/2503.13657v3 (HTTP 200). Located quote, FM-3.2 "No or incomplete
   verification": "(partial) omission of proper checking or confirmation of task outcomes or system
   outputs". Used here: the R40-6 slip (a seat count written from memory) is an FM-3.2 instance,
-  and `wave-census --expect` is the check that was omitted; MAST §5.1 says such verification
-  failures "appear frequently even in successful runs", so the slip did not make round 40 fail.
+  and `wave-census --expect` is the check that was omitted; MAST Appendix J (bullet "Some failures
+  are non-fatal") says such verification failures "appear frequently even in successful runs", so
+  the slip did not make round 40 fail. Locator corrected in attempt 2 from "§5.1": verify seat
+  ReviewS018Reopen re-opened v3 by curl (HTTP 200, the same bytes as ScoutMAST; hash in `.ufo/waves/round-41/verify/ReviewS018Reopen.md`) and
+  found the sentence once, in Appendix J, and not in §5.1; the FM-3.2 quote is verbatim.
 - **Re-open S035** (no status change, `mined` → `mined`): the front matter still reads
   `name: kimi-webbridge` and `version: "2.0.26"` (2026-10-22, read-only). The K2 section of
   `corpus/knowledge/kimi-skills-plugins.md` now names S035 (R40-5).
@@ -137,8 +152,8 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 | defect | disposition | evidence |
 |---|---|---|
 | R40-1 registry row lacks `--open` | fixed: the `anchor-truth` row names `--open REV`, what it adds and its verdict map | `SKILL.md` `## Gate registry` |
-| R40-2 honest-edit re-measure at the AT46 gate; in-round review refused under `--open` | the limit is recorded here: under `--open`, a review record committed after the open revision cannot bind, so an honest review written in the round reads `REVIEW_UNBOUND` (round-40 `build/CritC1Design.md` BEN_NEWREVIEW). The 17-recipe re-measure is a falsify-wave item | `## Open limits` below |
-| R40-3 cite-check receipt at the tip | receipt committed with its class: errors=545, 33 `REV_UNKNOWN`, of which 1 is a commit inside its own row's URL (S036) and 32 are not | `.ufo/waves/round-41/final/cite-receipt-r40-3.txt` |
+| R40-2 honest-edit re-measure at the AT46 gate; in-round review refused under `--open` | the limit is recorded here: under `--open`, a review record committed after the open revision cannot bind, so an honest review written in the round reads `REVIEW_UNBOUND` (`.ufo/waves/round-40/build/CritC1Design.md` BEN_NEWREVIEW). The 17-recipe re-measure was the falsify item ReviewHonestReMeasure; that seat died in the attempt-1 restart with no report and is not replaced, so the re-measure is **not done** this round | `## Open limits` below |
+| R40-3 cite-check receipt at the tip | receipt committed with its class: errors=545, 33 `REV_UNKNOWN`, of which 1 is a commit inside its own row's URL (S036) and 32 are not. That receipt was taken before the measured commit; the live count then grew 545 → 549 (4e58bb0e) → 551 (fae386aa), all six new errors in this lesson (five bare file names, one hash read as a content pin; verify seat CritNoHarmTip); attempt 2 rewrote them and the count is back to 545 at the attempt-2 tip | `.ufo/waves/round-41/final/cite-receipt-r40-3.txt`; `.ufo/waves/round-41/final/a2-cite-check-tip.txt` |
 | R40-4 anchor-truth resource caps | not done this round: the executor route was down for the leg and the L1 kept scope on C1 and C2 | `## Open limits` |
 | R40-5 S035 in K2 | fixed | `corpus/knowledge/kimi-skills-plugins.md` K2 section source note |
 | R40-6 seat-gate count | corrected in `## Mistakes`; a declared count can now be checked against the payload with `wave-census --expect` (a person still types the prose number in; the census reads no prose) | above |
@@ -146,10 +161,10 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 
 ## Open limits (measured, not fixed)
 
-- The 14 unpinned severity decisions in `ScoutCiteVerdict.md` section B are outside C1.
+- The 14 unpinned severity decisions in `.ufo/waves/round-40/build/ScoutCiteVerdict.md` section B are outside C1.
 - `wave-census` cannot tell a dead-at-spawn seat from a cancelled or never-dispatched one, and
   cannot see a safety-filter hold; it counts payload seats.
-- R40-4 stays open: no cap on the number of `anchor-reviews.json` registries read under `--open`,
+- R40-4 stays open: no cap on the number of `.ufo/waves/round-*/anchor-reviews.json` registries read under `--open`,
   and no size check of the open pin before `git show`.
 - Under `--open`, an honest review recorded in the round reads `REVIEW_UNBOUND` (R40-2).
 - Live Kimi drift found this round, not caused by the lane: `~/.kimi-code/locks` (a directory,
@@ -194,3 +209,17 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   rows (visible in the committed receipts), so the zero is real there; the counter itself is not
   changed after its data. The seat's own python recount agrees on seats, attack seats, per-role
   counts and report presence for all 336 payload seats of rounds 38–40.
+- Environment dependence (verify seat CritC1Final): with `KUMITATE_CITE_SELFTEST_INJECT_FAIL` set
+  to any value other than `1` in the calling shell, the unmodified tip skips both
+  self-observation cases, reads `73/73 VERDICT: PASS`, and the frozen C1 counter reads
+  `survived=4/16`. The C1 values hold with the variable unset (the SKILL row now says so); a code fix
+  (a marker the caller cannot inherit) is round-42 work. `wave-census` WC24 has the same shape with
+  `KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL`.
+- `proxy-check --strict` exits 1 on warnings alone at the tip: three `PIN_UNPINNED` warnings
+  (`wave-census` is the third; two at open). The parent-frozen v1 key set is not widened here, so
+  this is a recorded trade for the judge, not a repair (verify seats CritNoHarmTip, ExecProxyNoHarm).
+- Cost (verify seat CritNoHarmTip, three runs each): `cite-check --selftest` 0.17 s → about 0.85 s
+  (the child runs of C1); `surface-probe --checklists` 14.7 s → 15.8 s in a single run.
+- `--expect` survivors after WC25 (verify seat MutCensusExpect, 14/21 killed at fae386aa): WC25
+  kills M02, M03, M04, M10, M12 and M13 (`.ufo/waves/round-41/final/a2-census-survivor-mutants.txt`);
+  M14 (role knowledge judged on matching waves only) is not re-measured and stays open.

@@ -187,6 +187,7 @@ function render(rep) {
 /* ---------------------------------------------------------------- selftest */
 
 function selftest() {
+  const INJECT = process.env.KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL;
   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-wave-census-'));
   const results = [];
   const check = (id, name, fn) => {
@@ -376,6 +377,57 @@ function selftest() {
       const r = run(root, ['--round', '17']);
       return { ok: r.status === 2 && /fail-closed — read error: /.test(r.err), detail: `exit=${r.status}` };
     });
+    check('WC25', '--expect edges: unknown wave with count 0, hyphenated wave, empty count or round, known roles absent from every wave', () => {
+      const unk = run(good, ['--round', '7', '--expect', 'nosuch:critic=0']);
+      const hyph = run(good, ['--round', '7', '--expect', 'build-2:critic=1']);
+      const noCount = run(good, ['--round', '7', '--expect', 'build:critic=']);
+      const noRound = run(good, ['--round', '7', '--expect', '/build:critic=1']);
+      const planner = run(bare, ['--round', '9', '--expect', 'residual:planner=0']);
+      const labrat = run(bare, ['--round', '9', '--expect', 'residual:labrat=0']);
+      return { ok: unk.status === 1 && /EXPECT_UNKNOWN/.test(unk.out) && hyph.status === 1 && /EXPECT_UNKNOWN/.test(hyph.out)
+        && noCount.status === 64 && noRound.status === 64 && planner.status === 0 && labrat.status === 0,
+        detail: `unknown0=${unk.status} hyphen=${hyph.status} noCount=${noCount.status} noRound=${noRound.status} planner0=${planner.status} labrat0=${labrat.status}` };
+    });
+    check('WC26', 'finding edges: under-declared spawn and resume, short registry, resumed report dir scanned, missing counts/registry/report dir, counts without resume, non-.md file', () => {
+      const V = 'ufo-swarm-wave-dispatch-v1';
+      const t = (r, n) => task(r, 'build', n, 'critic');
+      const rsend = (r, n) => ({ name: n, resume: `0-${n}`, message: `go\nReport: write to .ufo/waves/round-${r}/resumed/${n}.md` });
+      const spawnLow = run(one(20, { schema: V, counts: { spawn: 1, resume: 0 }, registry: { members: { A: {}, B: {} } }, taskCall: { context: 'c', tasks: [t(20, 'A'), t(20, 'B')] } }), ['--round', '20']);
+      const resumeLow = run(one(21, { schema: V, counts: { spawn: 1, resume: 2 }, registry: { members: { A: {}, R: {} } }, taskCall: { context: 'c', tasks: [t(21, 'A')] }, resumeSends: [rsend(21, 'R')] },
+        { '.ufo/waves/round-21/resumed/X.md': 'RESULT X\n' }), ['--round', '21']);
+      const resumeUnder = run(one(27, { schema: V, counts: { spawn: 1, resume: 0 }, taskCall: { context: 'c', tasks: [t(27, 'A')] }, resumeSends: [rsend(27, 'R')] }), ['--round', '27']);
+      const bareV1 = run(one(22, { schema: V, taskCall: { context: 'c', tasks: [t(22, 'A')] } }), ['--round', '22']);
+      const noResumeKey = run(one(24, { schema: V, counts: { spawn: 1 }, taskCall: { context: 'c', tasks: [t(24, 'A')] } }), ['--round', '24']);
+      const shortReg = run(one(25, { schema: V, counts: { spawn: 2, resume: 0 }, registry: { members: { A: {} } }, taskCall: { context: 'c', tasks: [t(25, 'A'), t(25, 'B')] } }), ['--round', '25']);
+      const nonMd = run(one(23, { context: 'c', tasks: [t(23, 'A')] }, { '.ufo/waves/round-23/build/A.md': 'RESULT A\n', '.ufo/waves/round-23/build/notes.txt': 'x\n' }), ['--round', '23']);
+      const ok = spawnLow.status === 1 && /^FINDING COUNT_MISMATCH round=20 wave=build counts\.spawn=1 tasks=2 /m.test(spawnLow.out)
+        && resumeLow.status === 1 && /^FINDING COUNT_MISMATCH round=21 wave=build counts\.spawn=1 tasks=1 counts\.resume=2 resumeSends=1$/m.test(resumeLow.out)
+        && resumeUnder.status === 1 && /^FINDING COUNT_MISMATCH round=27 wave=build counts\.spawn=1 tasks=1 counts\.resume=0 resumeSends=1$/m.test(resumeUnder.out)
+        && /^FINDING STRAY_REPORT round=21 wave=build \.ufo\/waves\/round-21\/resumed\/X\.md$/m.test(resumeLow.out)
+        && bareV1.status === 0 && noResumeKey.status === 0
+        && shortReg.status === 1 && /^FINDING REGISTRY_MISMATCH round=25 wave=build not-in-registry=\[B\] not-in-tasks=\[\]$/m.test(shortReg.out)
+        && nonMd.status === 0 && /reports=1\/1/.test(nonMd.out);
+      return { ok, detail: `spawnLow=${spawnLow.status} resumeLow=${resumeLow.status} bareV1=${bareV1.status} noResumeKey=${noResumeKey.status} shortReg=${shortReg.status} nonMd=${nonMd.status}` };
+    });
+    // The suite observes its own verdict machinery: a child `--selftest` with one injected failing
+    // case must print that FAIL line, count one fewer pass, end `VERDICT: FAIL` and exit 1. Any
+    // value of the variable marks a child (so it never recurses); only `1` injects the failure.
+    // WC24 records its own result instead of going through check(), so a check() that drops
+    // results (for example `ok = true`) is seen too.
+    if (INJECT === undefined) {
+      let ok = false, detail = '';
+      try {
+        const r = spawnSync(process.execPath, [SELF, '--selftest'], { encoding: 'utf8', timeout: 120_000,
+          env: { ...process.env, KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL: '1' } });
+        const out = String(r.stdout ?? '');
+        const m = out.match(/^WAVE_CENSUS_SELFTEST: (\d+)\/(\d+) pass$/m);
+        ok = r.status === 1 && /^FAIL {2}WC00 /m.test(out) && /^VERDICT: FAIL$/m.test(out) && !!m && Number(m[1]) === Number(m[2]) - 1;
+        detail = `exit=${r.status} ${m ? m[0] : 'no count line'}`;
+      } catch (e) { detail = `threw: ${e.message}`; }
+      results.push({ id: 'WC24', name: 'self-observation: a child selftest with one injected failure prints it, counts it, ends VERDICT: FAIL, exits 1', ok, detail });
+    } else if (INJECT === '1') {
+      check('WC00', 'injected failure (child run of WC24 only)', () => ({ ok: false, detail: 'injected' }));
+    }
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
