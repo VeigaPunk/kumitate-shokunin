@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=10
+A=11
 C=19
 C1=19
 C1_total=19
-C2=95
-C2_total=95
+C2=96
+C2_total=96
 S_members=88
 S_sections=88
 R_members=92
@@ -302,18 +302,18 @@ C1k_total=5
 K_members=53
 K_sections=53
 coverage_kimi=10
-pin.cite-check=1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e
+pin.cite-check=227f56455dc1e7f03546a3afad9d7421f218daf930ea6dcfc310a58e4388c708
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
 pin.proxy-check=4c2819b02ded6aff7ca64d069e5c955ba7a01a0495e3b4bdf1fc92f97dd8024a
 pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
-pin.kimi-census=a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63
+pin.kimi-census=0f9c5a4c361316e111d0b2636780da5b8d848ccaa5c41507e8f8357ab6090075
 -->
 <!-- kumitate-gate-pins-v1
 pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055c
 pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
-pin.wave-census=a1762f3c12854be0ba38a8ca5e5a5b3233848d0955a4c4cad4746135822cc30e
-pin.gate-mutants=e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a
+pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
+pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 -->
 
 
@@ -1917,3 +1917,26 @@ above the saturation line): extend `gate-mutants` to anchor-truth's 26 round-40 
 sources-check, or a frontier move from `PROVINCE.md`; (2) the 12 open wave-census findings and
 5 report-presence gaps (R41-6), each with a red-before case; (3) the R11 registry cell
 (47 vs `sections=41`).
+
+## Round 43 correction (2026-10-22, named; supersedes the live wording it names)
+
+**Round 43 correction (2026-10-22, named; supersedes the live wording it names).** The round-42
+non-author closure re-derived the operability terms 8 → 9 but ruled C1 `does not verify`
+(`corpus/lessons/round-42-verifier-spotcheck.md:91`) and graded operability `unprovable`: "C1
+not verified: battery 34/41 under the pre-data kill rule (gate would read SURVIVED, exit 1);
+terms 8 → 9 re-derived but counter-blind (listed lines, zero-byte script reads 9); not harmed".
+The `## Axes` cell's attribution "Round 42 moves the integer 8 → 9 (f_O 26/29 → 29/32; C1,
+capability gate-mutants)" therefore overstates what 9 rests on: the cell itself already says "C
+counts listed items; the pass count is a separate measurement quoted with its date", so the
+integer records a terms reading, not evidence of the capability, and the capability row
+`gate-mutants` entered `## Capabilities` on that unverified claim with the evidence pointer
+"`node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41
+drift=0 …)`; `--selftest` 23/23". At the round-43 open revision the same frozen counter bytes
+(`sha256 e24749e4…`) print `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 drift=0
+targets=2 rev=2a7f37d2…)` exit 1 with seven survivors
+(`.ufo/waves/round-43/open/c1-control-base.txt:53`), so that pointer does not reproduce at the
+open bytes. Round 43's C1 re-evidences or corrects the row under K43: only a measured commit
+that prints `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 …)` exit 0, run with these
+same counter bytes and no amendment of K43 or of the counter, restores the row's evidence;
+otherwise the row is corrected to record the miss. This correction changes no axis integer and
+claims nothing about round 43's C1 outcome, which was unknown to this seat at draft time.

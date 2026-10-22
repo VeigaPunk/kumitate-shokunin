@@ -82,6 +82,20 @@ Two v1 waves. Wave 1 (build and first falsifiers) `kumitate-r42-build`, 37 seats
   seat ReviewSourcesR42). Missed: `main` adds a takeover path and that
   `KIMI_CODE_SESSION_LOCK` switch, with 0 hits in the installed 2.3.0 binary, so it is not the
   running code. Flip: the host upgrades to a release containing that revision.
+
+  **Round 43 correction (2026-10-22, appended; the bullet above stays as filed).** The S045
+  decision records "Missed: `main` adds a takeover path and that `KIMI_CODE_SESSION_LOCK` switch,
+  with 0 hits in the installed 2.3.0 binary, so it is not the running code", but names no `Q<n>`.
+  The criterion the decision line must name is **Q8** (`corpus/QUALITY.md:45-49`: "version skew is
+  named. When a fact comes from upstream `main` or current docs, name the installed host
+  binary/version actually observed and the revision gap"), the criterion S044's decision already
+  names for the same class ("Missed Q8 (the source must be the product and version the host
+  runs)"): the row's quote is from `main` head
+  `e7f1a99fc52e68d8e8a2d99d59deba38e4272754` (the S045 row's own URL) while the host runs the
+  2.3.0 release, and the bullet states the 0-hit gap but not the revision gap. The record defect
+  is against **Q21** (`corpus/QUALITY.md:215-231`), which requires every `## Gate` decision bullet
+  to name its criterion (a `Q<n>` id or a named gate term). The reject verdict and its flip
+  ("the host upgrades to a release containing that revision") are unchanged.
 - **Reject (no row) six further candidates** (seat ScoutRejectCandidates, all opened 2026-10-22,
   each with quote, reason and flip in `.ufo/waves/round-42/build/ScoutRejectCandidates.md`):
   GeeksforGeeks mutation-testing page (anonymous tertiary, output-divergence kill test), a dev.to
@@ -170,3 +184,25 @@ corpus/lessons/round-42.md` (this lesson cites it; seat ReviewSourcesR42 D4).
   instead of the lane. Found by the L1's sweep; copied byte-exact into the lane (`cmp` equal),
   fleet copy deleted. Captured-by: the wave context's `Report:` rule (not followed); fix: the L1
   sweep before the report, as here.
+
+## Correction (appended round 43, 2026-10-22; the text above and the frozen round-42 plan stay as filed)
+
+**Round 43 correction (2026-10-22; the text above and `.ufo/waves/round-42/plan.md:81` stay as
+filed).** The three statements "written before any counted run" (`plan.md:81` heading
+`## Amendments (written before any counted run of either counter; wave-1 findings)`, lesson line
+10 `amendments A1–A4 before any counted run`, and lesson line 111 `the build wave's critics,
+before any counted run`) are superseded: A1 was committed at `a0a07bae`,
+`2026-10-22 17:01:18 -0300`, after build seats had already scored the frozen ids. The load-bearing
+evidence is A1's own body, which cites those seats ("under the plan's narrower sentence 6 of them
+… read survived"), and this lesson's own record at line 158: "A1 (a0a07bae, 17:01:18 -03)
+widened the plan's kill rule after build seats had already scored the frozen ids under both
+rules". The seat reports also carry earlier write times in the live worktree (`MutCiteOpen.md`
+16:58:58, `CritC1Honesty.md` 17:00:02 with line 25
+`SUMMARY mutants=21 plan_rule_survived=6 r41_rule_survived=0`, `CritSeparability.md` 17:00:07,
+`ScribeSkillRows.md` 17:00:30; the round-42 non-author closure printed 16:59:48 for the last
+file, and every one of these readings precedes A1). The round-42 closure states the same at
+`corpus/lessons/round-42-verifier-spotcheck.md:56-58`: 'The header "written before any counted
+run" (plan:81, lesson:10, lesson:111) is contradicted by the lane's own falsify disposition'.
+Therefore A1 was written after counted runs by build seats, not before any; the correction is
+this paragraph; the only narrower statement the three lines could keep is that no L1 run of
+either counter preceded A1, and the record read for this draft does not establish that either.

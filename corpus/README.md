@@ -124,6 +124,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-42-verifier-spotcheck.md` | Round-42 non-author closure (hyaku): rejected as an honest stop (C1 `gate-mutants` 34/41 under the kill rule frozen before data, A1 widened it after build seats scored, the code implemented a third rule; terms counter blind); C2 `~/.kimi-code/locks` verified; routed D1 to D8; row added in round 43 | commit `2a7f37d`; fleet closure entry |
 
+| `lessons/round-43.md` | Round-43 (repair-first): capability `gate-mutants` re-claimed under one frozen kill predicate K43 (exit non-zero with `VERDICT: FAIL`, confirmed by a rerun with the same FAIL names); independent verdict witnesses in the cite-check and wave-census suites; addendum A1 discriminators after four junk routes read the counter CLEAN; S046–S048 admitted, S049–S052 rejected; D1–D8 dispositions; five mined mistakes | LOG.md round 43; `.ufo/waves/round-43/`; S046–S048 |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

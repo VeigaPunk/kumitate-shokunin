@@ -17,7 +17,7 @@ import { spawn, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   closeSync, constants, fstatSync, ftruncateSync, lstatSync, mkdirSync, mkdtempSync, openSync,
-  readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync,
+  existsSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync,
 } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
@@ -40,6 +40,36 @@ const SCRATCH_TMPDIR = process.env.KUMITATE_GATE_MUTANTS_TMP
 const ACTIVE_GROUPS = new Set();
 const TEMP_DIRS = new Set();
 
+const OWNER_MARKER = '.kumitate-gate-owner';
+
+function processStartTime(pid) {
+  try {
+    const stat = readFileSync(`/proc/${pid}/stat`, 'utf8');
+    const fields = stat.slice(stat.lastIndexOf(')') + 2).split(' ');
+    return /^\d+$/.test(fields[19] ?? '') ? fields[19] : null;
+  } catch { return null; }
+}
+
+function sweepStaleTempDirs(base) {
+  for (const name of readdirSync(base)) {
+    if (!name.startsWith('kumitate-gate-')) continue;
+    const dir = join(base, name);
+    try {
+      const dirStat = lstatSync(dir);
+      if (!dirStat.isDirectory() || dirStat.uid !== process.getuid() || (dirStat.mode & 0o777) !== 0o700
+        || realpathSync(dir) !== dir) continue;
+      const marker = join(dir, OWNER_MARKER);
+      const markerStat = lstatSync(marker);
+      if (!markerStat.isFile() || markerStat.uid !== process.getuid() || (markerStat.mode & 0o777) !== 0o600) continue;
+      const owner = readFileSync(marker, 'utf8').match(/^pid=(\d+) start=(\d+)\n$/);
+      if (!owner) continue;
+      const pid = Number(owner[1]);
+      if (!Number.isSafeInteger(pid) || pid < 1 || processStartTime(pid) === owner[2]) continue;
+      rmSync(dir, { recursive: true, force: true });
+    } catch {}
+  }
+}
+
 function makeTempDir(prefix) {
   mkdirSync(SCRATCH_TMPDIR, { recursive: true, mode: 0o700 });
   const base = realpathSync(SCRATCH_TMPDIR);
@@ -49,6 +79,7 @@ function makeTempDir(prefix) {
     || parentStat.uid !== process.getuid() || (parentStat.mode & 0o002) !== 0) {
     throw new Error(`unsafe scratch temp parent: ${base}`);
   }
+  sweepStaleTempDirs(base);
   const dir = mkdtempSync(join(base, prefix));
   const st = statSync(dir);
   if ((st.mode & 0o777) !== 0o700 || realpathSync(dir) !== dir) {
@@ -56,8 +87,16 @@ function makeTempDir(prefix) {
     throw new Error(`unsafe temporary directory: ${dir}`);
   }
   TEMP_DIRS.add(dir);
-  mkdirSync(join(dir, 'home'), { mode: 0o700 });
-  mkdirSync(join(dir, 'work'), { mode: 0o700 });
+  try {
+    const start = processStartTime(process.pid);
+    if (!start) throw new Error('cannot record gate process identity');
+    writeFileSync(join(dir, OWNER_MARKER), `pid=${process.pid} start=${start}\n`, { flag: 'wx', mode: 0o600 });
+    mkdirSync(join(dir, 'home'), { mode: 0o700 });
+    mkdirSync(join(dir, 'work'), { mode: 0o700 });
+  } catch (error) {
+    removeTempDir(dir);
+    throw error;
+  }
   return dir;
 }
 
@@ -337,7 +376,7 @@ function groupStats(pgid) {
   return { processes, rssKb };
 }
 
-function runSelftestFile(file, tempRoot, { timeoutMs = TIMEOUT_MS } = {}) {
+function runSelftestFile(file, tempRoot, { timeoutMs = TIMEOUT_MS, guardParentPid = process.pid } = {}) {
   return new Promise((resolveRun) => {
     let timedOut = false;
     let overflow = false;
@@ -345,9 +384,35 @@ function runSelftestFile(file, tempRoot, { timeoutMs = TIMEOUT_MS } = {}) {
     let outTotal = 0, errTotal = 0;
     let outChunks = [], outBytes = 0, errChunks = [], errBytes = 0;
     const limit = Math.min(TIMEOUT_MS, Math.max(1, timeoutMs));
+    const guardStart = guardParentPid === process.pid ? processStartTime(process.pid) : null;
+    if (guardParentPid === process.pid && !guardStart) throw new Error('cannot record gate process identity');
+    const parentGuard = join(tempRoot, 'parent-guard.cjs');
+    writeFileSync(parentGuard, [
+      `const ownerPid = ${guardParentPid};`,
+      `const ownerStart = ${JSON.stringify(guardStart)};`,
+      'const read = require("node:fs").readFileSync;',
+      'const selfStat = read("/proc/self/stat", "utf8");',
+      'const selfFields = selfStat.slice(selfStat.lastIndexOf(")") + 2).split(" ");',
+      'const groupId = Number(selfFields[2]);',
+      'function ownerAlive() {',
+      '  let pid = process.ppid;',
+      '  for (let depth = 0; pid > 1 && depth < 32; depth += 1) {',
+      '    let stat;',
+      '    try { stat = read(`/proc/${pid}/stat`, "utf8"); } catch { return false; }',
+      '    const fields = stat.slice(stat.lastIndexOf(")") + 2).split(" ");',
+      '    if (pid === ownerPid) return fields[19] === ownerStart;',
+      '    pid = Number(fields[1]);',
+      '  }',
+      '  return false;',
+      '}',
+      'function reapIfOwnerGone() { if (!ownerAlive()) { try { process.kill(-groupId, "SIGKILL"); } catch {} } }',
+      'reapIfOwnerGone();',
+      'setInterval(reapIfOwnerGone, 50).unref();',
+      '',
+    ].join('\n'), { mode: 0o600 });
     const child = spawn('/usr/bin/prlimit', [
       `--nproc=${processLimitForCurrentUid()}`, '--', process.execPath,
-      '--max-old-space-size=128', file, '--selftest',
+      '--require', parentGuard, '--max-old-space-size=128', file, '--selftest',
     ], {
       cwd: join(tempRoot, 'work'),
       env: sandboxEnv(tempRoot),
@@ -811,6 +876,18 @@ if (MODE === 'timeout') {
   spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' });
   setInterval(() => {}, 1000);
 }
+if (MODE === 'process-overflow') {
+  for (let i = 0; i < 24; i += 1) {
+    const child = spawn('/usr/bin/sleep', ['30'], { stdio: 'ignore' });
+    child.on('error', () => {});
+  }
+  setInterval(() => {}, 1000);
+}
+if (MODE === 'rss-overflow') {
+  const pressure = Buffer.allocUnsafe(560 * 1024 * 1024);
+  pressure.fill(0x5a);
+  setInterval(() => { if (pressure[0] === 0) process.exit(25); }, 1000);
+}
 const failed = TRIPWIRE || MODE === 'control-fail' || MODE === 'verdict-fail-exit0';
 const passed = failed ? CASE_TOTAL - 1 : CASE_TOTAL;
 process.stdout.write(String(passed) + '/' + String(CASE_TOTAL) + ' cases passed (fixture)\\n');
@@ -829,6 +906,9 @@ async function runSelftest() {
   const tempRoot = makeTempDir('kumitate-gate-selftest-');
   const sourceScripts = join(tempRoot, 'source', 'scripts');
   mkdirSync(sourceScripts, { recursive: true, mode: 0o700 });
+  const directTestRoot = join(tempRoot, 'source');
+  mkdirSync(join(directTestRoot, 'home'), { mode: 0o700 });
+  mkdirSync(join(directTestRoot, 'work'), { mode: 0o700 });
   const targetPath = join(sourceScripts, 'fixture.mjs');
   const helperPath = join(sourceScripts, 'fixture-helper.mjs');
   writeFileSync(targetPath, selftestTargetSource());
@@ -836,6 +916,7 @@ async function runSelftest() {
   const tests = [];
   const check = (id, ok, detail) => tests.push({ id, ok: Boolean(ok), detail });
   try {
+    const ownFileSource = readFileSync(fileURLToPath(import.meta.url), 'utf8');
     const control = await runControl(sourceScripts, 'fixture');
     const controlTotal = control.cases?.total ?? null;
     check('copied-siblings-and-allowlisted-env', control.pass, control.detail);
@@ -881,6 +962,22 @@ async function runSelftest() {
       target: 'fixture', id: 'timeout', from: "const MODE = 'pass';", to: "const MODE = 'timeout';",
     }, controlTotal, 100);
     check('timeout-and-process-group-cleanup', timed.state === 'timeout' && timed.groupClean, `${timed.state} ${timed.detail}`);
+    const fixtureBaseline = readFileSync(targetPath, 'utf8');
+    writeFileSync(targetPath, fixtureBaseline.replace("const MODE = 'pass';", "const MODE = 'process-overflow';"));
+    const processCapRun = await runSelftestFile(targetPath, directTestRoot, { timeoutMs: 2_000 });
+    check('process-cap-kills-overfull-group', processCapRun.overflow && !processCapRun.timedOut && processCapRun.groupClean,
+      `status=${processCapRun.status} signal=${processCapRun.signal} timeout=${processCapRun.timedOut} overflow=${processCapRun.overflow} group_clean=${processCapRun.groupClean} stderr=${processCapRun.stderr.slice(0, 120)} stdout=${processCapRun.stdout.slice(0, 120)}`);
+
+    writeFileSync(targetPath, fixtureBaseline.replace("const MODE = 'pass';", "const MODE = 'rss-overflow';"));
+    const rssCapRun = await runSelftestFile(targetPath, directTestRoot, { timeoutMs: 2_000 });
+    check('rss-cap-kills-overfull-group', rssCapRun.overflow && !rssCapRun.timedOut && rssCapRun.groupClean,
+      `timeout=${rssCapRun.timedOut} overflow=${rssCapRun.overflow} group_clean=${rssCapRun.groupClean}`);
+
+    writeFileSync(targetPath, fixtureBaseline.replace("const MODE = 'pass';", "const MODE = 'timeout';"));
+    const parentGoneRun = await runSelftestFile(targetPath, directTestRoot, { timeoutMs: 2_000, guardParentPid: -1 });
+    check('dead-parent-kills-process-group', !parentGoneRun.timedOut && parentGoneRun.signal === 'SIGKILL'
+      && parentGoneRun.groupClean, `timeout=${parentGoneRun.timedOut} signal=${parentGoneRun.signal} group_clean=${parentGoneRun.groupClean}`);
+    writeFileSync(targetPath, fixtureBaseline);
 
     const failingScripts = join(tempRoot, 'failing-source', 'scripts');
     mkdirSync(failingScripts, { recursive: true, mode: 0o700 });
@@ -901,6 +998,12 @@ async function runSelftest() {
       stdout: '0/1 cases passed (fixture)\nFAIL  X — y\nVERDICT: PASS\n',
     }, { passed: 0, total: 1 }, 1);
     check('k43-nonzero-with-verdict-pass-is-survived', nonzeroPass === 'survived', nonzeroPass);
+    const evaluableRun = { timedOut: false, overflow: false, groupClean: true, spawnError: null };
+    const evaluableCases = { passed: 1, total: 1 };
+    check('k43-evaluable-rejects-timeout', !evaluable({ ...evaluableRun, timedOut: true }, evaluableCases, 1), 'timedOut=true');
+    check('k43-evaluable-rejects-overflow', !evaluable({ ...evaluableRun, overflow: true }, evaluableCases, 1), 'overflow=true');
+    check('k43-evaluable-rejects-live-group', !evaluable({ ...evaluableRun, groupClean: false }, evaluableCases, 1), 'groupClean=false');
+    check('k43-evaluable-requires-control-total', !evaluable(evaluableRun, { passed: 2, total: 2 }, 1), 'cases.total=2 controlTotal=1');
     const firstKill = { timedOut: false, overflow: false, groupClean: true, spawnError: null, status: 1,
       stdout: '0/1 cases passed (fixture)\nFAIL  A — run1\nVERDICT: FAIL\n' };
     const sameKill = { ...firstKill, stdout: '0/1 cases passed (fixture)\nFAIL  A — run2 detail differs\nVERDICT: FAIL\n' };
@@ -908,10 +1011,33 @@ async function runSelftest() {
     const passAgain = { ...firstKill, status: 0, stdout: '1/1 cases passed (fixture)\nVERDICT: PASS\n' };
     check('k43-confirmation-same-names-agrees', confirmKill(firstKill, sameKill, 1), 'same names, details differ');
     check('k43-confirmation-other-names-or-pass-disagrees', !confirmKill(firstKill, otherKill, 1) && !confirmKill(firstKill, passAgain, 1), 'other names / pass on rerun');
+    const failureOrderA = 'FAIL B — first\nFAIL A — first\nVERDICT: FAIL\n';
+    const failureOrderB = 'FAIL A — second\nFAIL B — second\nVERDICT: FAIL\n';
+    const failureNamesA = failNames(failureOrderA);
+    const failureNamesB = failNames(failureOrderB);
+    check('k43-fail-names-ignore-output-order', failureNamesA === failureNamesB,
+      `${failureNamesA.replace(/\n/g, ', ')} / ${failureNamesB.replace(/\n/g, ', ')}`);
     check('k43-unstable-exit-class-is-2', gateExitCode({
       controls: new Map([['fixture', { pass: true }]]), results: [{ state: 'unstable' }], mutantTotal: 1, targetCount: 1, frozenKilled: 0,
     }) === 2, 'unstable');
     const passControls = new Map([['fixture', { pass: true }]]);
+    const controlAfterCheck = ownFileSource.match(/if \(!after\.pass\) integrity\.push\(`control-after:\$\{target\}`\);/);
+    const failedAfterIntegrity = [];
+    if (controlAfterCheck) {
+      new Function('after', 'integrity', 'target', controlAfterCheck[0])({ pass: false }, failedAfterIntegrity, 'fixture');
+    }
+    check('failed-control-after-adds-integrity-error', failedAfterIntegrity[0] === 'control-after:fixture',
+      controlAfterCheck ? failedAfterIntegrity.join(',') || 'no integrity failure' : 'control-after predicate missing');
+
+    let stateRead = 0;
+    const unstableThenSurvived = {
+      get state() { stateRead += 1; return stateRead === 1 ? 'unstable' : 'survived'; },
+    };
+    const unstablePriorityExit = gateExitCode({
+      controls: passControls, results: [unstableThenSurvived], mutantTotal: 1, targetCount: 1, frozenKilled: 0,
+    });
+    check('k43-unstable-is-invalid-before-survivor', unstablePriorityExit === 2,
+      `exit=${unstablePriorityExit} state_reads=${stateRead}`);
     const nonmatchExit = gateExitCode({
       controls: passControls, results: [{ state: 'nomatch' }], mutantTotal: 1, targetCount: 1, frozenKilled: 0,
     });
@@ -930,6 +1056,32 @@ async function runSelftest() {
     let optionRevRejected = false;
     try { parseArgs(['--rev', '--output=/tmp/victim']); } catch { optionRevRejected = true; }
     check('option-like-revision-rejected', optionRevRejected, optionRevRejected ? 'refused before Git' : 'accepted');
+    let leadingDashRejected = false;
+    try { parseArgs(['--rev', '-leading-dash']); } catch { leadingDashRejected = true; }
+    check('single-dash-revision-rejected', leadingDashRejected, leadingDashRejected ? 'refused before Git' : 'accepted');
+
+    const loaderSource = ownFileSource.split('function loadRevisionScripts(repo, rev, tempRoot, scripts) {')[1]
+      ?.split('\nfunction prepareSource(opts)')[0] ?? '';
+    const endOptionsPresent = loaderSource.includes("'--end-of-options'");
+    check('git-revision-end-of-options', endOptionsPresent, endOptionsPresent ? 'rev-parse delimiter present' : 'rev-parse delimiter missing');
+
+    const staleTemp = join(SCRATCH_TMPDIR, 'kumitate-gate-stale-selftest');
+    let staleTempRemoved = false;
+    let sweepProbe = null;
+    let sweepError = '';
+    try {
+      rmSync(staleTemp, { recursive: true, force: true });
+      mkdirSync(staleTemp, { mode: 0o700 });
+      const deadPid = Number(readFileSync('/proc/sys/kernel/pid_max', 'utf8').trim()) + 1;
+      writeFileSync(join(staleTemp, OWNER_MARKER), `pid=${deadPid} start=0\n`, { mode: 0o600 });
+      sweepProbe = makeTempDir('kumitate-gate-sweep-probe-');
+      staleTempRemoved = !existsSync(staleTemp);
+    } catch (error) { sweepError = error.message; }
+    finally {
+      if (sweepProbe) removeTempDir(sweepProbe);
+      rmSync(staleTemp, { recursive: true, force: true });
+    }
+    check('dead-owner-temp-dir-reaped', staleTempRemoved, `${staleTempRemoved ? 'reaped' : 'remains'} ${sweepError}`);
 
     const victim = join(tempRoot, 'victim.mjs');
     const symlink = join(tempRoot, 'target-link.mjs');

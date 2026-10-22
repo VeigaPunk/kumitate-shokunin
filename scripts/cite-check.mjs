@@ -2460,6 +2460,9 @@ function selfTest(opts) {
     // depth of two is a hard stop even if the injection-marker guard is mutated
     // or its environment option is dropped.
     const INJECT41 = 'KUMITATE_CITE_SELFTEST_INJECT_FAIL';
+    // Round 43: the text-mode witness (end of selfTest) is switched off in this one child so that
+    // the parent observes the primary verdict and exit mapping alone; the parent never sets it.
+    const PRIMARY41 = 'KUMITATE_CITE_SELFTEST_PRIMARY_ONLY';
     if (selftestDepth41 >= 2 || (selftestDepth41 > 0 && process.env[INJECT41] !== undefined)) {
       if (process.env[INJECT41] === '1') {
         hermetic.push({ name: 'injected failing case (child run only)', ok: false, detail: `${INJECT41}=1` });
@@ -2470,7 +2473,7 @@ function selfTest(opts) {
       }
     } else {
       check('suite self-observation: injected failure → text VERDICT FAIL, exit 1', () => {
-        const r = child41(['--selftest'], { [INJECT41]: '1' });
+        const r = child41(['--selftest'], { [INJECT41]: '1', [PRIMARY41]: '1' });
         const s = String(r.stdout ?? '');
         const skips = [
           'SKIP  suite self-observation: injected failure → text VERDICT FAIL, exit 1',
@@ -2636,6 +2639,15 @@ function selfTest(opts) {
     return verdict === 'FAIL' ? 1 : 0;
   }
 
+  // Keep a text-mode witness independent of the suite verdict expressions.
+  const primaryExit = verdict === 'FAIL' ? 1 : 0;
+  let witnessFailures = 0;
+  for (const suite of suites) {
+    for (const result of suite.cases) {
+      if (!result.skipped && !result.ok) witnessFailures++;
+    }
+  }
+
   const flags = groups.map((g) => (g.group === 'hermetic' ? '--selftest' : '--integrations'));
   const lines = [`kumitate cite-check ${flags.join(' ')}`];
   for (const s of suites) {
@@ -2649,6 +2661,11 @@ function selfTest(opts) {
     }
   }
   lines.push(`VERDICT: ${verdict}`);
+  if (witnessFailures > 0 && process.env.KUMITATE_CITE_SELFTEST_PRIMARY_ONLY !== '1') {
+    if (primaryExit === 0) lines.push('VERDICT: FAIL');
+    process.stdout.write(lines.join('\n') + '\n');
+    return 1;
+  }
   process.stdout.write(lines.join('\n') + '\n');
   return verdict === 'FAIL' ? 1 : 0;
 }

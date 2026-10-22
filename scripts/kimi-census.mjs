@@ -49,10 +49,13 @@
  * The file-kind pin is deliberately `leaf` (any non-directory inode) rather
  * than `isFile`, so the hermetic suite can build a FIFO / dangling symlink at
  * `server.token` and prove stat-only enforcement: a read of a FIFO would block
- * the gate forever and a followed symlink would read `ENOENT`. Mode pins are
- * floors (`mode & floor === floor`), not equality: `locks/` and secret
- * directories have a 0700 floor, mcp.json's floor is 0400, and `server.token`
- * stays 0600 (the live `oauth/` is 0755, not 0700).
+ * the gate forever and a followed symlink would read `ENOENT`. Secret-file
+ * mode pins are floors (`mode & floor === floor`). Secret directories also
+ * reject permission bits beyond their declared mode floor, except where a
+ * per-member ceiling explicitly preserves a wider existing mode (`oauth/`).
+ * Secret directories must be owned by the running uid. `locks/` and
+ * `credentials/` have a 0700 floor; mcp.json's floor is 0400, and
+ * server.token stays 0600. The live `oauth/` is 0755, not 0700.
  *
  * ENUMERABLE DIRS. Only a dir whose complete child set is declared by the
  * member rules is enumerated: `agents/secondary/` and `skills/` by live child
@@ -141,7 +144,7 @@ const MEMBERS = [
   { id: 'device_id', family: 'K4', path: 'device_id', kind: 'file' },
   { id: 'region', family: 'K4', path: 'region', kind: 'file' },
   { id: 'credentials/', family: 'K4', path: 'credentials', kind: 'dir', secret: true, modeFloor: 0o700 },
-  { id: 'oauth/', family: 'K4', path: 'oauth', kind: 'dir', secret: true, modeFloor: 0o700 },
+  { id: 'oauth/', family: 'K4', path: 'oauth', kind: 'dir', secret: true, modeFloor: 0o700, modeCeiling: 0o755 },
 
   { id: 'workspaces.json', family: 'K5', path: 'workspaces.json', kind: 'file' },
   { id: 'tui.toml.bak', family: 'K5', path: 'tui.toml.bak', kind: 'file' },
@@ -184,7 +187,7 @@ config.toml.*.bak drift-chain generations are exempt — the K1 chain member
 accounts for them as one member, never gated by name. There is no --root-enum.
 
 findings: ${FINDING_KINDS.join(' ')}
-secrecy : locks/ mcp.json, credentials/ oauth/ server.token are stat-only (kind+mode pins; never read)
+secrecy : locks/ mcp.json, credentials/ oauth/ server.token are stat-only (kind+mode pins, plus uid for dirs; never read)
 exit map: 0 clean · 1 drift · 2 fail-closed · 64 usage
 `;
 
@@ -207,9 +210,9 @@ function lstatKind(p) {
   } catch { return 'absent'; }
 }
 
-/** Permission bits of an inode (never its contents). */
-function modeOf(p) {
-  try { return lstatSync(p).mode & 0o777; } catch { return null; }
+/** lstat metadata for secret shapes only; never follows links or opens content. */
+function statInfo(p) {
+  try { return lstatSync(p); } catch { return null; }
 }
 
 /** Non-hidden child names of a dir; `null` when it cannot be listed. */
@@ -244,7 +247,7 @@ function declaredRootNames() {
  * enumerate the root against the K1–K5 declared set — the round-20 rule).
  * Returns `{ ok: true, ... }` or the fail-closed arm `{ ok: false, kind, detail }`.
  */
-function verify(root) {
+function verify(root, runningUid = process.getuid()) {
   const findings = [];
   const infos = [];
   const err = (kind, id, detail) => findings.push({ severity: 'error', kind, id, detail });
@@ -315,14 +318,25 @@ function verify(root) {
       }
     }
 
-    // Secret shape pins: kind (above) + the mode floor. Stat only, never open.
+    // Secret shape pins: kind (above), mode, and directory owner. Stat only.
     if (m.secret && kind !== 'absent') {
-      const mode = modeOf(abs);
+      const stat = statInfo(abs);
+      const mode = stat === null ? null : stat.mode & 0o777;
       const kindOk = m.kind === 'dir' ? kind === 'dir' : isLeaf(kind);
-      if (kindOk && (mode === null || (mode & m.modeFloor) !== m.modeFloor)) {
+      const lacksFloor = mode === null || (mode & m.modeFloor) !== m.modeFloor;
+      const modeCeiling = m.modeCeiling ?? m.modeFloor;
+      const beyondCeiling = m.kind === 'dir' && mode !== null
+        && (mode & (0o777 ^ modeCeiling)) !== 0;
+      const wrongOwner = kindOk && m.kind === 'dir' && stat !== null && stat.uid !== runningUid;
+      if (kindOk && (lacksFloor || beyondCeiling || wrongOwner)) {
         state = state === 'ok' ? 'shape' : state;
         if (checked === 1) checked = 0;
-        err('SHAPE_DRIFT', m.id, `${m.path} mode ${mode === null ? 'unknown' : oct(mode)} lacks the ${oct(m.modeFloor)} floor`);
+        if (lacksFloor) {
+          err('SHAPE_DRIFT', m.id, `${m.path} mode ${mode === null ? 'unknown' : oct(mode)} lacks the ${oct(m.modeFloor)} floor`);
+        } else if (beyondCeiling) {
+          err('SHAPE_DRIFT', m.id, `${m.path} mode ${oct(mode)} has permissions beyond the ${oct(modeCeiling)} secret-directory limit`);
+        }
+        if (wrongOwner) err('SHAPE_DRIFT', m.id, `${m.path} owner does not match the running uid`);
       }
       rows.push({ id: m.id, family: m.family, path: m.path, kind: kindOk ? 'leaf-or-dir' : kind, declared: 1, live, checked, secret: true, modeFloor: oct(m.modeFloor), mode: mode === null ? null : oct(mode), state });
       fam.members += live; fam.checked += checked;
@@ -450,7 +464,7 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
     const abs = join(root, m.path);
     if (m.kind === 'dir') {
       mkdirSync(abs, { recursive: true });
-      chmodSync(abs, m.modeFloor ?? 0o755);
+      chmodSync(abs, m.modeCeiling ?? m.modeFloor ?? 0o755);
     } else {
       mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, 'fixture\n');
@@ -634,6 +648,25 @@ function selfTest() {
     check('SHAPE_DRIFT: locks/ below its 0700 floor', () => {
       const r = runGate(['--root', looseLocks]);
       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('locks mode 0500 lacks the 0700 floor') };
+    });
+    const overpermissiveLocks = mk('locks-mode-overpermissive');
+    chmodSync(join(overpermissiveLocks, 'locks'), 0o777);
+    check('SHAPE_DRIFT: locks/ rejects group and other bits beyond its 0700 floor', () => {
+      const r = runGate(['--root', overpermissiveLocks]);
+      return {
+        ...drift(r, 'SHAPE_DRIFT'),
+        ok: drift(r, 'SHAPE_DRIFT').ok
+          && r.stdout.includes('locks mode 0777 has permissions beyond the 0700 secret-directory limit'),
+      };
+    });
+
+    check('SHAPE_DRIFT: locks/ owner must match the running uid', () => {
+      const r = verify(green, process.getuid() ^ 1);
+      const ownerFinding = r.findings.find((finding) => finding.id === 'locks/' && finding.kind === 'SHAPE_DRIFT');
+      return {
+        ok: ownerFinding !== undefined && ownerFinding.detail.includes('owner does not match the running uid'),
+        detail: `locksFinding=${JSON.stringify(ownerFinding)}`,
+      };
     });
 
     const looseFile = mk('loose-file');

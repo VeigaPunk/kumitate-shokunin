@@ -528,8 +528,10 @@ function selftest() {
       const fifoRoot = one(33, { context: 'c', tasks: [] });
       const fifo = join(fifoRoot, '.ufo', 'waves', 'round-33', 'build-dispatch.json');
       unlinkSync(fifo);
-      const mk = spawnSync('mkfifo', [fifo], { encoding: 'utf8', timeout: 1_000 });
-      const f = run(fifoRoot, ['--round', '33'], 2_000);
+      // Round 43: 1 s / 2 s flaked under host load (load average 50-78; K43 UNSTABLE on F-M03/F-M08/F-M11,
+      // seat CritC1Target). A blocking FIFO read never returns, so 10 s / 20 s still fails a hang.
+      const mk = spawnSync('mkfifo', [fifo], { encoding: 'utf8', timeout: 10_000 });
+      const f = run(fifoRoot, ['--round', '33'], 20_000);
       const dirRoot = one(34, { context: 'c', tasks: [] });
       const dir = join(dirRoot, '.ufo', 'waves', 'round-34', 'build-dispatch.json');
       unlinkSync(dir);
@@ -563,6 +565,15 @@ function selftest() {
       return { ok: r.status === 0 && /reports=1\/1/.test(r.out) && !/^ {2}absent:/m.test(r.out) && !/STRAY_REPORT/.test(r.out),
         detail: `exit=${r.status} ${r.out.trim().split('\n').pop()}` };
     });
+    check('WC32', 'an in-root symlinked report directory fails closed', () => {
+      const root = one(39, { context: 'c', tasks: [task(39, 'build', 'C', 'critic')] },
+        { '.ufo/waves/round-39/real-build/C.md': 'RESULT C\n' });
+      const round = join(root, '.ufo', 'waves', 'round-39');
+      symlinkSync(join(round, 'real-build'), join(round, 'build'), 'dir');
+      const r = run(root, ['--round', '39']);
+      return { ok: r.status === 2 && /is not the canonical path \(symbolic link\)/.test(r.err),
+        detail: `exit=${r.status} ${r.err.trim()}` };
+    });
     // The suite observes its own verdict machinery: a child `--selftest` with one injected failing
     // case must print that FAIL line, count one fewer pass, end `VERDICT: FAIL` and exit 1. Any
     // value of the variable marks a child (so it never recurses); only `1` injects the failure.
@@ -575,7 +586,10 @@ function selftest() {
           env: { ...process.env, KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL: '1' } });
         const out = String(r.stdout ?? '');
         const m = out.match(/^WAVE_CENSUS_SELFTEST: (\d+)\/(\d+) pass$/m);
-        ok = r.status === 1 && /^FAIL {2}WC00 /m.test(out) && /^VERDICT: FAIL$/m.test(out) && !!m && Number(m[1]) === Number(m[2]) - 1;
+        ok = r.status === 1 && /^FAIL {2}WC00 /m.test(out)
+          && /^WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: FAIL$/m.test(out)
+          && /^WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: 1$/m.test(out)
+          && !!m && Number(m[1]) === Number(m[2]) - 1;
         detail = `exit=${r.status} ${m ? m[0] : 'no count line'}`;
       } catch (e) { detail = `threw: ${e.message}`; }
       results.push({ id: 'WC24', name: 'self-observation: a child selftest with one injected failure prints it, counts it, ends VERDICT: FAIL, exits 1', ok, detail });
@@ -586,11 +600,18 @@ function selftest() {
     rmSync(tmp, { recursive: true, force: true });
   }
   const pass = results.filter((r) => r.ok).length;
+  const failures = results.filter((r) => !r.ok).length;
+  const primaryExit = () => { return pass === results.length ? 0 : 1; };
+  const primaryStatus = primaryExit();
+  const primaryVerdict = pass === results.length ? 'PASS' : 'FAIL';
   const L = results.map((r) => `${r.ok ? 'PASS' : 'FAIL'}  ${r.id} ${r.name} — ${r.detail}`);
   L.push(`WAVE_CENSUS_SELFTEST: ${pass}/${results.length} pass`);
-  L.push(`VERDICT: ${pass === results.length ? 'PASS' : 'FAIL'}`);
+  L.push(`WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: ${primaryStatus}`);
+  L.push(`WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: ${primaryVerdict}`);
+  L.push(`VERDICT: ${failures > 0 ? 'FAIL' : primaryVerdict}`);
   process.stdout.write(L.join('\n') + '\n');
-  return pass === results.length ? 0 : 1;
+  if (failures > 0) return 1;
+  return primaryStatus;
 }
 
 function main() {
