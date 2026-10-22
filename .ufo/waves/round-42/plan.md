@@ -77,3 +77,37 @@ anchor-truth resource caps, the 12 attempt-1 census findings, the 5 report-prese
 wave-census sentinel findings (fix or name each); R41-7 receipt headers name the measured digest.
 Holds from round 40 (`AtkNovelIdentity`, `AtkNovelRecords`) are not recreated. The operator ruling
 on round 41's unscored trades is pending: those trades are measured, not deepened.
+
+## Amendments (written before any counted run of either counter; wave-1 findings)
+
+- **A1 — C1 kill rule (supersedes "killed = exit non-zero with a `VERDICT: FAIL` line").** The 41
+  frozen ids were defined as kills under the round-41 counter's rule
+  (`.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt:54`, Stryker state "at least one test
+  failed while the mutant was active"); under the plan's narrower sentence 6 of them (cite
+  `suite-group-verdict`, `suite-any-fail`, `suite-exit-text`; census `M19`, `V382`, `V385`/`V387`)
+  read survived because they mutate the suite's own verdict or exit code (build seats
+  CritC1Honesty, ScribeSkillRows, CritSeparability). The gate uses the round-41 rule: KILLED = a
+  parseable suite summary and (exit != 0 or any FAIL case line or `VERDICT: FAIL` or passed <
+  total); CRASH = no parseable summary; TIMEOUT apart; DRIFT = PASS with a total different from
+  the control's. The frozen set, the after-value (41/41 killed, exit 0) and the terms are
+  unchanged. The gate carries the 41 frozen ids and exits 2 if one is missing; the verdict prints
+  `frozen=<k>/41`. Note: census `M19-selftest-exit-const` and `V387-exit-const` are the same
+  mutation under two ids (40 distinct mutations).
+- **A2 — C2 counter.** `coverage_kimi` and the K ratio cannot move (52/52 → 53/53, integer held
+  10; build seat CritC2Axis). The counter that moves is the census root enumeration:
+  `ROOT_ENUM … declared=26 … strays=1` → `declared=27 … strays=0`, census exit 1 → 0. The member
+  is added to both hand-kept lists (`scripts/kimi-census.mjs` and `scripts/proxy-check.mjs`
+  `K_MEMBER_RULES`) as a presence-only directory (K3, session-state plane, by its source; the
+  round-41 pre-registration said K1 — a recorded deviation). Added acceptance: the new
+  `corpus/knowledge/kimi-session-state.md` section cites the `corpus/SOURCES.md` row opened this
+  round and `node scripts/sources-check.mjs` reads CLEAN; an identity receipt (inode, birth time,
+  layout names and kinds) is committed with the measurement.
+- **A3 — base repair before measurement.** At open the proxy reads DRIFT because
+  `corpus/lessons/round-41-verifier-spotcheck.md` (closure-authored) has no README row:
+  `C2_total` 93 vs declared 92, derived coverage 9 vs 10. Repaired in the commit carrying this
+  amendment (README row; stanza `C2=93`, `C2_total=93`); not a claim.
+- **A4 — R41-2.** The `kumitate-proxy-v1` key set is parent-frozen (`SCORECARD.md` round-34
+  post-review correction; `STANZA_KEY_UNKNOWN`). Pins for the four unpinned gates go into a
+  separate lane-owned block (`kumitate-gate-pins-v1`) if the proxy can read it without changing
+  v1; otherwise the reason is recorded. `--strict` warnings are counted including
+  `scripts/gate-mutants.mjs`.
