@@ -1,0 +1,33 @@
+RESULT ExecReviewBind rev=f69817edf687c8ce4f87ed7953a353399232f69e verdict=done selftest=34/34 red_before=AT31,AT32,AT33,AT34 forged_s8_92=REVIEW_UNBOUND open_pin=TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+MEASURED commit c1ca64a92342c05c770ec654a03ff651ed09e558 (scratch clone /fast/scratch/hyaku/kumitate-r40/seats/ExecReviewBind/lane). Patch /fast/scratch/hyaku/kumitate-r40/seats/ExecReviewBind/ExecReviewBind.patch = `git diff f69817e..c1ca64a -- scripts/anchor-truth.mjs` (221 insertions, 9 deletions; `git apply --check` clean on f69817e). Only file changed in the lane: scripts/anchor-truth.mjs.
+
+WHAT CHANGED
+- New error finding REVIEW_UNBOUND: a `review:<seat>` pin entry with no committed review record behind it is an error (exit 1). Enforced on the check path and on the write path: `--write-pin` refuses to write such a pin ("pin not written"), so an unbound override can never be laundered into the pin.
+- New option `--open REV`: review records are read only from committed bytes at REV (`git show REV:<path>`), never from the working tree.
+- Binding rule: a record is `<note>#<ord>` -> {seat, token} in a committed registry. Its ordinal is resolved through the PIN at REV to an anchor identity `raw@path#occurrence`. A pin entry is bound only when a record names the same note, same seat and same token AND resolves to that entry's own anchor (the same identity, or the same file with one cited range nested in the other, so a widened or narrowed citation of the reviewed anchor stays bound). Everything else is REVIEW_UNBOUND. The ordinal alone never binds.
+- Without `--open` the records are read at the lane's current HEAD and the gate prints exactly one warning line; `--open` names the round-open revision, so a record written in the change being judged cannot bind.
+
+THE ITEM'S TWO QUESTIONS
+- Record files are found by a fixed path pattern over the committed tree: `.ufo/waves/<round>/anchor-reviews.json`. At the open revision exactly one exists, `.ufo/waves/round-38/anchor-reviews.json`, 138 records.
+- A per-seat report file (`.ufo/waves/round-38/build|falsify/<seat>.md`) is NOT required. 37 of the 38 seats have one; the L1 seat has none (its review is in the registry only), so requiring a seat report would unbind S8#100 (seat L1, token `cold`) and drift the open pin. The registry is the record; the seat report is corroboration.
+- Honest review entries with no record: NONE. All 138 open review-sourced entries bind (the open pin reads CLEAN with --open f69817e), so no new committed record is needed and no review was invented.
+
+EVIDENCE (cwd = the scratch clone unless stated)
+1. `node scripts/anchor-truth.mjs --self lane --base e18ff1af3392e3823227644c977c237737fe65c9 --open f69817edf687c8ce4f87ed7953a353399232f69e --src /fast/scratch/hyaku/kumitate-pin/src` -> `TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af... src-rev=31c465f15669)`, exit 0. Totals unchanged (778/20/13).
+2. Same command without `--open` -> one line `TRUTH_WARN review sources are bound against the lane's current HEAD (c1ca64a92342c), not a pinned round-open revision; pass --open REV to pin the record revision`, then the same CLEAN verdict, exit 0.
+3. `--open nosuchrev` -> `TRUTH: FAIL-CLOSED (OPEN_UNREADABLE nosuchrev)`, exit 2.
+4. Red-before (open gate code + AT31-AT34, commit aff8849076ebdd58b3d90fa5980c2243ca62b567): `node scripts/anchor-truth.mjs --selftest` -> `ANCHOR_TRUTH_SELFTEST: 30/34 pass`, `VERDICT: FAIL`; failing AT31 AT32 AT33 AT34. Each new case fails on the open logic.
+5. After (commit c1ca64a92342c05c770ec654a03ff651ed09e558): `node scripts/anchor-truth.mjs --selftest` -> `ANCHOR_TRUTH_SELFTEST: 34/34 pass`, `VERDICT: PASS`. AT01-AT30 unchanged and passing (AT10's fixture now also commits a review registry, as the new rule requires); AT31-AT34 are new.
+6. R39-1 attack (CritRedReviewForge `review-forge.mjs`, clone at c1ca64a): CONTROL-unedited ACCEPTED (CLEAN 778/20/13); F-pin-review:NoSuchSeat, F-pin-review:NoSuchSeat+repin, F-reviews-file:NoSuchSeat, F-pin-review:Prose01, F-pin-review:Prose01+repin, F-reviews-file:Prose01 all REFUSED exit=1 kinds=REVIEW_UNBOUND. Same recipe at f69817e: all six ACCEPTED (CLEAN). Finding: `TRUTH  REVIEW_UNBOUND  corpus/knowledge/remaining-scripts-census.md#92  scripts/fleet-ledger-read.mjs:498 source=review:NoSuchSeat token=the no committed review record binds this anchor`.
+7. Run-reorder bypasses (CritRedReorder `reorder-recipe.mjs`, clone at c1ca64a): case-1..case-5 all REFUSED exit=1 kinds=REVIEW_UNBOUND, `REORDER_RECIPE accepted=0/5`; at the open revision accepted=5/5.
+8. Forged RECORD inside the judged change (probe `work/recforge.mjs`): a forged record for S8#92 committed together with the forged pin -> with `--open f69817e` exit=1 kinds=REVIEW_UNBOUND; without `--open` (HEAD = the forged commit) exit=0 CLEAN. This is why the record revision must be named from outside the change.
+9. No-harm floor (CritOperabilityCost `run-recipes.mjs`, clone at c1ca64a): `HONEST_CLEAN 9/17` - the same nine as at the open revision: H0 H3r H4r H7 H8 H9 H10r H12 H13 all CLEAN (778/20/13; 779/19/13 for H8). No benign edit regressed; a widened or narrowed re-citation of a reviewed anchor (H3r/H4r/H7) and an inserted anchor that shifts every later ordinal (H10r) stay CLEAN.
+10. Ordinal shift (probe `work/shiftprobe.mjs`: the dead S8#2 citation un-backticked, so every later ordinal moves by one): 0 REVIEW_UNBOUND findings - the shifted reviewed anchors keep their identity and stay bound.
+
+RISKS AND RESIDUALS
+- Without `--open` the records are read at the lane's HEAD, so a record forged in the judged change would bind (evidence 8). `--open REV` is the sound mode; the warning line names the revision used.
+- A swap that carries a review token to another ordinal together with its own coordinate keeps that anchor's identity, so it stays bound (CritRedSwaps carry cases). The pair variants that swap two pair-sourced raws are the base-true arm's business (R39-2), not this one. A review token that travels to a DIFFERENT anchor (other coordinates) is unbound: that is what refuses the reorder bypasses.
+- The L1's steer said "without --open keep today's behaviour and print one warning line". I kept the enforcement in the no-`--open` mode (records read at HEAD) because the item requires the forged S8#92 to read REVIEW_UNBOUND under the plain command `node scripts/anchor-truth.mjs --base e18ff1af... --src ...`; it does (evidence 6). The sound mode remains `--open REV`.
+
+TOOLS
+- None installed or upgraded. Node v24.21.0 and git were already present; no pacman, uv or npm action was taken.

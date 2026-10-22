@@ -215,6 +215,106 @@ directory 16 755 2026-10-18 20:53:48.833982858 -0300
 regular file 2465 644 2026-10-18 20:53:48.835227094 -0300
 ```
 
+## `~/.kimi-code/skills/kimi-webbridge`
+
+The **seventh** live child of `~/.kimi-code/skills/` and the second **real directory**
+there — the other five members (`godspeed`, `reverse-engineer-anything`, `shokunin`,
+`ufo`, `wwkd`) are symlinks and `cursor-lane` is the first real directory. This member
+is a plain directory, not a symlink and not a second view of the managed plugin tree:
+`find ~/.kimi-code/skills/kimi-webbridge -type l` → 0 links, and
+`stat -c '%F %s %a %y inode=%i' ~/.kimi-code/skills/kimi-webbridge` →
+`directory 36 755 2026-10-21 23:36:39.510359784 -0300 inode=95866022`.
+
+Frontmatter of `~/.kimi-code/skills/kimi-webbridge/SKILL.md` (193 lines / 19437 B,
+mode `600`):
+
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:2` — `name: kimi-webbridge`
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:3` — `description: |` (a **literal**
+  block scalar, the same shape the managed plugin's copy uses)
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:4` — the description text opens
+  *"Kimi Browser Extension（Kimi 浏览器扩展，原 Kimi WebBridge）lets AI control the
+  user's real browser"*
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:5` — `metadata:`
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:6` — `  version: "2.0.26"`
+- `~/.kimi-code/skills/kimi-webbridge/SKILL.md:9` — the title line
+  `# Kimi Browser Extension (formerly Kimi WebBridge)`
+
+The rename is the load-ground fact: the skill's front-matter `name` is still
+`kimi-webbridge` while its own title and description say **Browser Extension**. The
+`metadata.version` is a self-declared string with no file backing it on this host (the
+same shape this note records for the other user skills).
+
+### File inventory — 7 files
+
+| File | bytes | mode | digest prefix (first 16 hex) |
+|---|---|---|---|
+| `~/.kimi-code/skills/kimi-webbridge/SKILL.md` | 19437 | `600` | `defba946e6693fd4` |
+| `~/.kimi-code/skills/kimi-webbridge/references/operations.md` | 5911 | `644` | `7f60c9811cf2c875` |
+| `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/companion-skill-template.md` | 2511 | `644` | `f17d70fc178b5070` |
+| `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/go-layout.md` | 4907 | `644` | `89cbfb5127646ffb` |
+| `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/login-handling.md` | 1436 | `644` | `fd6aa463dfd25fbb` |
+| `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/site-exploration.md` | 4389 | `644` | `d7cdeb173add3dd5` |
+| `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/workflow.md` | 3926 | `644` | `a5bb3523cd9f5c66` |
+
+The digest column is the first 16 hex of each file's `sha256sum` output (the full
+64-hex values and the counting command are in this round's build report). `SKILL.md` is
+mode `600` — the private mode this note already records for `reverse-engineer-anything`;
+every file under `~/.kimi-code/skills/kimi-webbridge/references/` is `644`.
+
+### Relation to the managed plugin tree — a different, older install, not a copy
+
+| | `~/.kimi-code/skills/kimi-webbridge` | `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge` |
+|---|---|---|
+| entry point | real dir, mode `755`, inode `95866022` | real dir under a mode `700` plugin root, inode `31085` |
+| `~/.kimi-code/skills/kimi-webbridge/SKILL.md` bytes / mode | 19437 / `600` | 11880 / `644` |
+| `~/.kimi-code/skills/kimi-webbridge/SKILL.md` digest prefix | `defba946e6693fd4` | `84a8e69d04c5b810` |
+| `~/.kimi-code/skills/kimi-webbridge/references/operations.md` digest prefix | `7f60c9811cf2c875` | `b811d9c23dfdafa0` |
+| declared version | `2.0.26` (`~/.kimi-code/skills/kimi-webbridge/SKILL.md:6`) | `1.11.3` (`~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:6`, mirrored by `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json:4`) |
+| file count | 7 | 5 (incl. `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` + two dated session dumps at the plugin root) |
+
+⇒ **Different content at a different version** — the two trees share **no** inode
+(cross-tree dev:inode intersection = 0, no link count above 1) and no file digest. The
+`skills/` copy is therefore a *separate install*, not a re-view of the plugin payload.
+`~/.kimi-code/plugins/installed.json:5-6` records exactly one plugin
+(`"id": "kimi-webbridge"`, `"root": "/home/vgpnk/.kimi-code/plugins/managed/kimi-webbridge"`,
+`"installedAt"`/`"updatedAt"` `2026-10-03T21:06:32.435Z`) and **no** record of the
+`skills/` copy — the plugin registry does not describe this member.
+
+### The same bytes in four harness roots
+
+The `skills/` copy is byte-identical to the sibling installs
+`~/.claude/skills/kimi-webbridge/SKILL.md`, `~/.codex/skills/kimi-webbridge/SKILL.md` and
+`~/.hermes/skills/kimi-webbridge/SKILL.md` (all digest prefix `defba946e6693fd4`,
+19437 B, mode `600`) — four separate copies, cross-root dev:inode overlap 0. The
+skill's own `~/.kimi-code/skills/kimi-webbridge/references/operations.md:29` documents
+the mechanism as the `install-skill` row (*"Installs this skill into detected agent
+runtimes"*). INFERENCE: the installer wrote one release into every detected agent
+runtime root, which is why the Kimi root holds a real directory rather than a symlink —
+the symlink farm in this root is hand-authored.
+
+### Name collision with the managed plugin's skill — precedence is INFERENCE
+
+`~/.kimi-code/skills/kimi-webbridge/SKILL.md:2` and
+`~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:2` both
+declare `name: kimi-webbridge`, so a **real** collision now exists on this host. Under
+the rule this note quotes above (*"Project overrides User overrides Extra overrides
+Built-in"*), the `User`-scope `skills/` copy (`2.0.26`) outranks the `Extra`-scope
+plugin copy (`1.11.3`) and the plugin copy is shadowed. INFERENCE, not measured: no
+live rendered skill listing was captured this round, so the tie-break is rule-derived.
+The note's earlier statement that no such collision exists is falsified — see the
+round-40 erratum.
+
+Load-bearing correction for the census: the counted-live `~/.kimi-code/skills/` member
+gained a seventh child, so `K_members` moves 51 → 52 and this section's heading is what
+names the new child (`K_sections` 51 → 52, `coverage:kimi-layer` 9 → 10). The heading
+must carry the **full path**; the bare basename `kimi-webbridge` is now owned by two
+members and binds to none.
+
+Plugin internals — the daemon, the browser-extension payloads and the CLI workflow —
+are **out of this note's scope**; they belong to
+`tabi-shokunin/corpus/knowledge/webbridge-plugin-anatomy.md` (the K-block boundary
+clause routes `plugins/managed/kimi-webbridge` internals to tabi).
+
 ## `~/.kimi-code/plugins/installed.json`
 
 The versioned install manifest.
@@ -447,3 +547,27 @@ The `cursor-lane` subsection is census metadata appended to this pre-existing
 headerless note, not a standalone sourced knowledge entry or expansion
 admission. It records the additional K2 member only; root `mcp.json` remains
 outside the frozen K1–K5 set and debt pre-registered for round 35.
+
+## Errata (round 40, 2026-10-22, append-only)
+
+Two corrections to pre-existing text in this note, both measured live this round. Line
+numbers cited below are those of this note at the round-40 base revision `f69817e`
+(pre-insertion); the text they point at is unchanged by this round's append.
+
+- **Lines 333-335 — the "no collision" inference is falsified.** The text reads
+  *"INFERENCE, not measured: no collision between a user skill and `kimi-webbridge`
+  exists on this host, so the tie-break is rule-derived, not observed on live data."*
+  The live tree now holds a user-scope skill and a plugin-scope skill that both declare
+  `name: kimi-webbridge`: `~/.kimi-code/skills/kimi-webbridge/SKILL.md:2` and
+  `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:2`. The
+  **collision is observed**; the **precedence outcome** (the `User`-scope copy outranks
+  the `Extra`-scope plugin copy, per the rule quoted at lines 316-320) stays
+  rule-derived, not measured, because no live rendered skill listing was captured this
+  round. The new `## `~/.kimi-code/skills/kimi-webbridge`` section carries the
+  observation.
+- **Child count — the `## Scope` block (line 12) and the round-34 erratum (line 440)
+  are stale.** The Scope block says the `skills/` root holds "five entries, all
+  symlinks"; the round-34 erratum says "six children: five symlinks and the real
+  `cursor-lane` directory". Live `~/.kimi-code/skills/` now holds **seven** children:
+  five symlinks (`godspeed`, `reverse-engineer-anything`, `shokunin`, `ufo`, `wwkd`) and
+  two real directories (`cursor-lane`, `kimi-webbridge`).

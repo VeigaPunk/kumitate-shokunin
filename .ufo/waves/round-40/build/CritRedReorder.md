@@ -1,0 +1,23 @@
+RESULT CritRedReorder rev=f69817edf687c8ce4f87ed7953a353399232f69e verdict=accepted accepted=5/5 recipe=/fast/scratch/hyaku/kumitate-r40/seats/CritRedReorder/reorder-recipe.mjs
+Setup: own clone /fast/scratch/hyaku/kumitate-r40/seats/CritRedReorder/lane detached at f69817edf687 (clean); src /fast/scratch/hyaku/kumitate-pin/src at 31c465f15669. No tools installed or updated. No commit needed: the gate reads the working tree (`--self` defaults to cwd) and reads only the base through git.
+Pre-check: `git diff --stat 3908f322c4c4 f69817edf687` touches no file under scripts/, .ufo/pins/ or corpus/knowledge/, so the open gate and pin are the round-39 candidate ones.
+Gate (every row): `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9 --src /fast/scratch/hyaku/kumitate-pin/src`, run in the clone.
+Control, untouched clone: exit=0 "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af… src-rev=31c465f15669)".
+Attack (independent of the round-39 probe; the five cases are hard-coded by note, ordinal and raw pair, not searched): swap two adjacent backticked line anchors inside one run, then give each anchor its own base token with source `review:NoSuchSeat` and expect `true`. Keys are re-derived. Each patch changes 2 pin entries and 1 note line.
+Command: `node reorder-recipe.mjs lane /fast/scratch/hyaku/kumitate-pin/src . NoSuchSeat` (output saved in run-open.txt):
+  ACCEPTED case-1 remaining-scripts-census.md#14 line=465 [`:23`, `:24`] -> :24=maxSubjectChars (note pairs maxEntryHtmlBytes) ; :23=maxEntryHtmlBytes (note pairs maxSubjectChars) exit=0
+  ACCEPTED case-2 route-probe-cluster.md#71 line=190 [`:95`, `:98`] -> :98=emitRaw (note pairs emit) ; :95=emit (note pairs emitRaw) exit=0
+  ACCEPTED case-3 sighting-wall.md#22 line=136 [`:23`, `:27`] -> :27=TMUX_TARGET (note pairs SESSION_NAME) ; :23=SESSION_NAME (note pairs TMUX_TARGET) exit=0
+  ACCEPTED case-4 sighting-wall.md#42 line=161 [`:198`, `:202`] -> :202=appearsToLaunchOmp (note pairs appearsToLaunchOpenCode) ; :198=appearsToLaunchOpenCode (note pairs appearsToLaunchOmp) exit=0
+  ACCEPTED case-5 sighting-wall.md#63 line=203 [`:20`, `:22`] -> :22=MAX_PEEK_LINES = 400 (note pairs DEFAULT_PEEK_LINES = 80) ; :20=DEFAULT_PEEK_LINES = 80 (note pairs MAX_PEEK_LINES = 400) exit=0
+  Each verdict line: "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af… src-rev=31c465f15669)", the same counts as the control.
+  REORDER_RECIPE accepted=5/5 seat=review:NoSuchSeat
+Patch replay, `git apply ../case-N.patch` and then the gate, N=1..5: each exit=0 TRUTH: CLEAN (same counts). All five applied together: exit=0 TRUTH: CLEAN (4 files, 65 insertions and 65 deletions).
+Seat-name variant `… variant-probe probe` (source review:probe, as in round 39): accepted=5/5, exit=0 each.
+Contrast: the same five patches with the source set back to `pair` give exit=1 "TRUTH: DRIFT (2 findings: TOKEN_FORGED …)" each. The open gate refuses this swap under `pair`. It accepts the swap only because `review:<seat>` is self-declared.
+Seat record: `git grep -c NoSuchSeat HEAD -- .ufo/waves/round-38/anchor-reviews.json .ufo/pins` finds nothing (exit=1); the seat is in no record.
+Answer: the before-value holds. The open gate refuses none of the five run-reorder attacks that were still accepted at 3908f322. All five read CLEAN with counts identical to the control, so the floor sees no loss in a reader-visible misattribution (for example, sighting-wall line 207 now cites MAX_PEEK_LINES at `:20`).
+Impacted axes: operability (C1, R39-2 run reorder; this shares a root with R39-1, the self-declared review source).
+Smallest safe correction: no change from round 39. Either bind `review:<seat>` to a committed review record keyed by raw@path#occurrence, or flag a base `pair` anchor whose current source is not `pair` while the note's own pairing reads false (BypassRunReorder's tested rule, which spares census#269 review:Prose03).
+Replay on the repaired gate: run `git apply /fast/scratch/hyaku/kumitate-r40/seats/CritRedReorder/case-N.patch` in a clone at f69817edf687, then run the gate command above. Alternatively, run `node reorder-recipe.mjs <clone> /fast/scratch/hyaku/kumitate-pin/src <outDir> [seat]`, which resets the clone after each case. Expected after the fix: exit≠0 per case, while the untouched control stays CLEAN.
+Artifacts (sha256 prefix): reorder-recipe.mjs 4c9bf59992981c7f; case-1.patch 1b041f340149d87d; case-2.patch 3da56ebc583080d5; case-3.patch a0803659fb80c7b6; case-4.patch f39fa98175f557ee; case-5.patch 62424477d0158e73; run-open.txt.

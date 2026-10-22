@@ -169,3 +169,32 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
   - Each arm is admitted only with a fixture that fails on the old logic and a mutant that a
     test kills. A mutant that only crashes the run is a runtime error, not a kill (S034).
   Grounding: `corpus/lessons/round-39.md` (`## Mistakes` row 1); S034.
+
+- **Q20 — a verdict guard is pinned by a selftest case, and the mutant that drops it is
+  killed.** A gate's verdict expression is a set of guards; each guard must be the reason
+  some named case reads the way it reads. A guard no case depends on is untested: the
+  suite is green whether the guard is present or dropped, so the gate can report a
+  verdict its own tests never checked.
+  - Every term of a verdict expression (`filesScanned > 0`, `totals.resolved > 0`,
+    `!drift`, and any term added later) must have a case whose asserted outcome changes
+    when that term alone is removed.
+  - The fix is shown able to fail before it counts. A claimed repair ships one red-before
+    state in which the same command exits non-clean for the named reason, with the fix as
+    the only delta, and the observed failure text is committed. A mutant that only crashes
+    the run is a runtime error, not a kill (S034).
+  - A case that asserts a verdict must assert it on the shape the guard protects: a
+    scanned document with zero resolved citations and no drift is a different input from an
+    empty scan set, and only the first exercises the `resolved` guard.
+  - Grounding: R39-5, routed from the tameshi r26 closure
+    (`tameshi-shokunin/corpus/lessons/round-26-verifier-spotcheck.md:172-179`);
+    `corpus/lessons/round-39-verifier-spotcheck.md` R39-5. Measured at `f69817e`: dropping
+    only `&& totals.resolved > 0` from `scripts/cite-check.mjs:1590` left the suite at
+    `62/62 cases passed (hermetic)`, `VERDICT: PASS`, exit 0, while a scanned document with
+    zero resolved citations and no drift read `VERDICT: FAIL` on the base and
+    `VERDICT: PASS` under the mutant. With the round-40 fix in place the same mutant reads
+    `63/64 cases passed (hermetic)`, `VERDICT: FAIL`, exit 1 — killed by the named
+    zero-resolved case; the patched suite reads `64/64`, `VERDICT: PASS`, exit 0. One
+    further mutant, `totals.filesScanned >= 0 && totals.resolved > 0 && !drift`, survives,
+    and is an equivalent mutant of that expression: `resolved` only increments inside the
+    per-document loop, so `resolved > 0` already implies `filesScanned > 0`. An equivalent
+    mutant is a survivor, not a kill (S034), and it is recorded rather than hidden.

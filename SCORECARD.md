@@ -141,7 +141,7 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R9 | judge test suite | `native_tests.rs` (340 cases; other big test files sit inside R2/R6/R7) | yes — test-inventories (r7) |
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
 | K1 | kimi config plane (round-18 expansion; round-35 registry change pre-registered in round 34) | `~/.kimi-code/config.toml`, `~/.kimi-code/tui.toml`, the `config.toml.*.bak` drift chain counted as 1 member (12 generations at the round-19 census), and root `~/.kimi-code/mcp.json` (round 35; shape-only — present as a non-directory leaf (the secret-member kind check; a FIFO or symlink also passes), 0400 mode floor; never content-read) (4) | yes — `knowledge/kimi-config-plane.md` + `knowledge/kimi-mcp-plane.md` (`mcp.json` section) |
-| K2 | kimi delegate/lane plane (round-18) | 18 `agents/secondary/*.md` + 5 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (25); round 34: `skills/` counted live reads **6** (the new `cursor-lane` is a real directory, the other five symlinks) ⇒ **26** — counting rule unchanged, census tripwire re-pinned | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
+| K2 | kimi delegate/lane plane (round-18) | 18 `agents/secondary/*.md` + 7 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (27); round 40: `skills/` counted live reads **7** (the new `kimi-webbridge` and round 34's `cursor-lane` are real directories, the other five are symlinks) ⇒ **27** — counting rule unchanged, census tripwire re-pinned 6 → 7 | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
 | K3 | kimi session/state plane (round-18) | `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`, `search-index` (9) | yes — `knowledge/kimi-session-state.md` |
 | K4 | kimi binary/secret plane (round-18) | `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`, `device_id`, `region`, `credentials/`, `oauth/` (9; secret members shape-only, never content-read) | yes — `knowledge/kimi-binary-secrets.md` |
 | K5 | kimi root-residue (round-20 registry change, pre-registered round 19) | `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` (3) | yes — `knowledge/kimi-residue-files.md` (lands round 20) |
@@ -285,8 +285,8 @@ A=8
 C=15
 C1=19
 C1_total=19
-C2=88
-C2_total=88
+C2=89
+C2_total=89
 S_members=88
 S_sections=88
 R_members=92
@@ -295,15 +295,15 @@ coverage_script=10
 coverage_runtime=10
 C1k=5
 C1k_total=5
-K_members=51
-K_sections=51
+K_members=52
+K_sections=52
 coverage_kimi=10
-pin.cite-check=40573448330f52fb7d45c59cb0b91d236b6e277a250d850a0e2585adc7c10c9f
+pin.cite-check=9e19083226c9c59de49cf9a76e12e47dc6f276bc03f98fa891411f8373e0e7ba
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
 pin.proxy-check=f9416d666d390c03804319f4524f2be552e49f4c1bfa704cb94321159814f1d9
 pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
-pin.kimi-census=7818970b80d4951b8edf15dcc8c5a16efe57f457f956a5ce019f049068538156
+pin.kimi-census=ded569fec9b67cfbc0982f3fb431453e44b322024db457e184a99d81376c3d08
 -->
 
 ## Axes
@@ -314,7 +314,7 @@ pin.kimi-census=7818970b80d4951b8edf15dcc8c5a16efe57f457f956a5ce019f049068538156
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 88/88)` = **10** at the pinned origin `31c465f1` (round 35). Round open measured the same pin at `floor(10 × 8/8 × 86/88)` = **9**: upstream `964f443e`→`31c465f1` deleted 5 S8 members and added 2 (`S_members` 91 → 88; `S_sections` 86 counted, 5 note sections unresolved). Round 35 re-censused S8 (63 → 60 members, two new sections, departed members kept as history) and re-verified every changed member's anchors (56 fidelity seats). `C1s/C1s_total` = `yes` rows / all `S*` rows (**8/8**); `S_sections` = DISTINCT member identities the claims gate verifies in those rows' notes (since round 35); `S_members` = `ls scripts/*.mjs \| wc -l` → 70 + `find scripts -mindepth 2 -type f \| wc -l` → 18 at `31c465f1`. History: 91/91 ⇒ 10 at `964f443e` (rounds 32–34). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after in `## Move log` | round 35 (re-census at `31c465f1`) |
 | coverage:runtime-layer | 10 | `floor(10 × 11/11 × 92/92)` = **10** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
-| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 51/51)` = **10** — round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 35 |
+| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 52/52)` = **10** — round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -396,6 +396,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 40 | coverage:kimi-layer (the seventh counted-live `skills/` child; integer held at 10) | live `floor(10 × 5/5 × 51/52)` = **9** (`K_MEMBERS_DRIFT declared=51 computed=52`); census `DRIFT (UNLISTED skills/)` | `floor(10 × 5/5 × 52/52)` = **10**: the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds the member (K_sections 51 → 52) and the census tripwire is re-pinned 6 → 7; `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)` exit 0, selftest 48/48; the two count mutants are killed (`UNLISTED` at 6, `MEMBER_MISSING` at 8) | `node scripts/kimi-census.mjs [--selftest]`; `node scripts/proxy-check.mjs --src <clone at 31c465f1>`; `corpus/knowledge/kimi-skills-plugins.md`; `.ufo/waves/round-40/build/ExecKimiCensus.md` |
 | 39 | coverage:script-layer (repair-first: the open round-37 harm; score held 10) | round-38 closure block at fac39171: `PRIOR62_CORRECTED 58/62`, `OLD_TOKEN_LOSSES 0`; S8#475 `agentId` at `:560` was `debt:false`; pin tally 777 true / 21 debt / 13 unchecked | `PRIOR62_CORRECTED 59/62`, `OLD_TOKEN_LOSSES 0` at 3908f322c4c473f1a8b45c8d1c14054205eb7647; S8#475 cites `:560-572` (test declaration, conflicting agentId, assertion) and reads true; pin tally 778 / 20 / 13, zero expectation mismatches; S8#112, #324, #410 left as reviewed token corrections | `python3 .ufo/waves/round-39/probe/measure-c1.py.txt --lane <lane> --rev <rev> --src <clone at 31c465f1>`; `.ufo/waves/round-39/final/measure-c1-{open,final}.txt`; `corpus/lessons/round-39.md` |
 | 39 | operability (lowest non-retired axis, repair of R38-1; integer held 8, A=8 C=15) | `FLOOR_PROBE accepted=6/6` at fac39171 (six named hand edits of pin and note, A1 = the round-38 closure's counterexample, each read `TRUTH: CLEAN`); selftest 22/22 | `FLOOR_PROBE accepted=0/6` at 3908f322 (`BASE_TRUE_LOST`, `TOKEN_FORGED`, `PIN_INVALID`); selftest 30/30; red-before 23/30 on round-open logic; 11/11 mutants killed by a named case. Open limits L1 (self-declared review) and L2 (debt trade) measured, not fixed | `node --input-type=module - --lane <lane> --rev <rev> --src <clone> < .ufo/waves/round-39/probe/floor-probe.mjs.txt`; `.ufo/waves/round-39/final/`; S034; Q19 |
 | 38 | coverage:script-layer (repair-first, score held 10) | frozen round-open population 811 anchors: 467 true, 208 debt, 136 unchecked under the oracle committed at `e18ff1af3392e3823227644c977c237737fe65c9` | 777 true, 21 debt, 13 unchecked; zero open-true→nontrue; repairs are per-anchor review decisions, never a reset. The original 62-list has 58 old-token repairs and four pairing discrepancies, explicitly accounted in the lesson | `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9`; independent fixed-token measurement under `.ufo/waves/round-38/evidence/`; lesson round 38 |

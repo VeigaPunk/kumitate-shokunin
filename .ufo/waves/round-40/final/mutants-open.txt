@@ -1,0 +1,35 @@
+MUTATION LEDGER  rev=f69817edf687c8ce4f87ed7953a353399232f69e  file=scripts/anchor-truth.mjs  oracle=node scripts/anchor-truth.mjs --selftest
+lane=/fast/scratch/hyaku/kumitate-r40/seats/ExecMutLedger/lane  catalogue=round-39 L1 run (11) + round-39 CritClaimC2 M01-M15 (15)  mutants=26 killed=23 survived=3 runtimeError=0
+baseline selftest: 30/30 exit=0 crashed=False
+
+MUTANT                               STATUS    MUTATOR                          KILLEDBY   REASON
+-----------------------------------  --------  -------------------------------  ---------  ----------------------------------------
+R39-MutIdentityDelete                Killed    BlockDeletion                    AT23 AT24  2 selftest case(s) failed
+R39-MutIdentityKey                   Killed    IdentifierSubstitution           AT27       1 selftest case(s) failed
+R39-MutIdentityNoOccurrence          Killed    ConstantSubstitution             AT24       1 selftest case(s) failed
+R39-MutIdentityNoPath                Killed    TemplateLiteralFieldRemoval      AT29       1 selftest case(s) failed
+R39-MutLostAcceptsUnchecked          Killed    ConditionalPredicateReplacement  AT24       1 selftest case(s) failed
+R39-MutGroupDelete                   Killed    ConditionalPredicateReplacement  AT27       1 selftest case(s) failed
+R39-MutGroupTrueCount                Killed    ComparisonOperatorReplacement    AT27       1 selftest case(s) failed
+R39-MutTokenForgedDelete             Killed    ConditionalPredicateReplacement  AT24 AT28  2 selftest case(s) failed
+R39-MutTokenForgedNullSkip           Killed    ConditionalPredicateAddition     AT28       1 selftest case(s) failed
+R39-MutSourceRuleRevert              Killed    BlockDeletion                    AT26 AT30  2 selftest case(s) failed
+R39-MutReviewNullToken               Killed    LogicalOperandRemoval            AT30       1 selftest case(s) failed
+C2-M01-no-TOKEN_FORGED               Killed    ConditionalPredicateReplacement  AT24 AT28  2 selftest case(s) failed
+C2-M02-no-source-rule                Killed    BlockDeletion                    AT26 AT30  2 selftest case(s) failed
+C2-M03-review-null-token-allowed     Killed    LogicalOperandRemoval            AT30       1 selftest case(s) failed
+C2-M04-no-identity-per-occurrence    Killed    BlockDeletion                    AT23 AT24  2 selftest case(s) failed
+C2-M05-identity-anchor-gone-ignored  Killed    BlockDeletion                    AT23       1 selftest case(s) failed
+C2-M06-identity-nontrue-ignored      Killed    ConditionalPredicateReplacement  AT24       1 selftest case(s) failed
+C2-M07-no-group-check                Killed    ConditionalPredicateReplacement  AT27       1 selftest case(s) failed
+C2-M08-group-off-by-one              Killed    ComparisonOperatorReplacement    AT27       1 selftest case(s) failed
+C2-M09-group-any-raw                 Survived  LogicalOperandRemoval            -          all 30/30 selftest cases passed
+C2-M10-group-t-gt-1                  Killed    ConstantSubstitution             AT27       1 selftest case(s) failed
+C2-M11-identity-drops-path           Killed    TemplateLiteralFieldRemoval      AT29       1 selftest case(s) failed
+C2-M12-identity-drops-occurrence     Killed    ConstantSubstitution             AT24       1 selftest case(s) failed
+C2-M13-TOKEN_FORGED-ignores-null     Killed    ConditionalPredicateAddition     AT28       1 selftest case(s) failed
+C2-M14-old-key-floor-removed         Survived  ConditionalPredicateReplacement  -          all 30/30 selftest cases passed
+C2-M15-group-counts-only-unchecked   Survived  ConditionalPredicateReplacement  -          all 30/30 selftest cases passed
+
+survivors (red-before for R39-4): C2-M09-group-any-raw, C2-M14-old-key-floor-removed, C2-M15-group-counts-only-unchecked
+runtime errors (not kills): none

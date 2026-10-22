@@ -42,9 +42,35 @@
  *   ANCHOR_SET_CHANGED the note's raw anchor sequence differs from the pin (re-pin)
  *   DEBT_STALE         expect debt, but the token now reads true (shrink the pin)
  *   OVERRIDE_INVALID   review token absent from the sentence or the cited line(s)
+ *   REVIEW_UNBOUND     review:<seat> source with no committed review record for this anchor
  *   DEBT_GREW          (--base REV) a note's debt count rose, or a key true at REV is debt now
+ *   DEBT_NEW           (--open REV) a current debt anchor has no equal debt anchor at the
+ *                       round-open revision (same raw@path occurrence and same token)
  *   CHECKED_SHRANK     (--base REV) a note's count of `true` expectations fell
  *   PIN_REGRESSION     (--write-pin) a key expected true would become non-true; pin not written
+ *
+ * REVIEW BINDING. A `review:<seat>` source is a claim: "seat X reviewed this anchor and
+ * said this token". The claim is true only when a COMMITTED review record backs it, and the
+ * record is read from committed bytes (`git show REV:<path>`), never from the working tree.
+ *   REVISION. The records are read at the revision the caller names with `--open REV` (the
+ *   round-open revision): a record written in the very change being judged cannot bind.
+ *   Without `--open` the records are read at the lane's current HEAD and the gate prints one
+ *   warning line, because that revision is inside the change being judged.
+ *   RECORDS. Every committed file `.ufo/waves/<round>/anchor-reviews.json` is a review
+ *   registry: `{ "<note>#<ord>": { seat, token } }`.
+ *   IDENTITY. The ordinal alone is not the binding (ordinals shift when the note grows), so
+ *   a record's `<note>#<ord>` is resolved through the PIN at the record revision to an anchor
+ *   identity `raw@path#occurrence`. A pin entry is bound only when a record names the same
+ *   note, the same seat and the same token AND resolves to that entry's own anchor (the same
+ *   identity, or the same file with one cited range nested in the other: a widened or
+ *   narrowed citation of the reviewed anchor is the same anchor). A review token that
+ *   travels to another anchor, or a seat that never reviewed it, is unbound.
+ *   NO SEAT REPORT NEEDED. The registry is the record; a per-seat report file
+ *   (`.ufo/waves/<round>/build|falsify/<seat>.md`) is corroboration, not a requirement (the
+ *   L1 seat of round 38 left its review in the registry only).
+ *   WORKFLOW. Commit the registry first, then re-pin: `--write-pin` refuses to write a pin
+ *   whose review source has no committed record (REVIEW_UNBOUND, pin not written), so an
+ *   unbound override can never be laundered into the pin.
  * Verdict (last stdout line):
  *   TRUTH: CLEAN (notes=<n> anchors=<n> true=<n> debt=<n> unchecked=<n> src-rev=<12>)
  *   TRUTH: DRIFT (<n> findings: KIND …)
@@ -52,7 +78,11 @@
  * exit: 0 clean · 1 drift · 2 fail-closed · 64 usage
  *
  * CLI: node scripts/anchor-truth.mjs [--self DIR] [--pin FILE] [--src DIR]
- *        [--base REV] [--write-pin [--reviews FILE] [--notes a.md,b.md]] [--json] [--selftest]
+ *        [--base REV] [--open REV] [--write-pin [--reviews FILE] [--notes a.md,b.md]] [--json] [--selftest]
+ * `--open REV` adds the round-open floor: the pin at REV (the revision the L1 passes on the
+ * command line, never a lane file) is a second base for BASE_TRUE_LOST, DEBT_GREW and
+ * CHECKED_SHRANK, and every current debt anchor must equal a debt anchor at REV by identity
+ * (raw@path occurrence) and by token, else DEBT_NEW. `unchecked` anchors are exempt.
  * Read-only except `--write-pin`, which writes the pin file only. The selftest writes
  * only mkdtemp fixtures.
  */
@@ -76,6 +106,8 @@ const MAX_NOTE_BYTES = 4 * 1024 * 1024;
 const MAX_JSON_BYTES = 32 * 1024 * 1024;
 const MAX_TOKEN_CHARS = 256;
 const NOTE_KEY = /^corpus\/knowledge\/[A-Za-z0-9._-]+\.md$/;
+const REVIEW_REGISTRY_RE = /^\.ufo\/waves\/[^/]+\/anchor-reviews\.json$/u;
+const MAX_REVIEW_BYTES = 32 * 1024 * 1024;
 const GIT_BIN = existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
 const GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',
   'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
@@ -238,6 +270,104 @@ class Source {
   }
 }
 
+/**
+ * Committed review records for `review:<seat>` pin sources (round-40 closure R39-1).
+ *
+ * A review source is a claim: "seat X reviewed this anchor and said this token". The claim
+ * holds only when a COMMITTED review record backs it. Records live in review registries
+ * (`.ufo/waves/<round>/anchor-reviews.json`), read from the lane's committed bytes at HEAD,
+ * never from the working tree. A registry maps `<note>#<ord>` to { seat, token }; the
+ * ordinal is resolved against the note as committed at the revision that last wrote the
+ * registry, so a record follows its anchor when the note's anchor order shifts.
+ *
+ * A record binds a pin entry when it names the same note, the same seat and the same token
+ * AND its anchor is the entry's anchor: the same file, with cited line ranges that overlap
+ * (a widened or narrowed citation of the reviewed range is the same anchor). A review token
+ * that travels to another anchor, or a seat that never reviewed it, is unbound.
+ */
+class ReviewRecords {
+  constructor(laneRoot, rev) {
+    this.root = laneRoot;
+    this.rev = rev ?? null;
+    this.byKey = new Map();  // `${note}|${seat}|${token}` -> [{identity, path, a, b}]
+    this.registries = 0;
+    this.records = 0;
+    if (!this.rev) return;
+    const tree = git(laneRoot, ['ls-tree', '-r', '-z', this.rev]);
+    if (!tree.ok) return;
+    // The pin at the record revision: a record's ordinal is resolved through it, so a record
+    // names an anchor (raw@path#occurrence) and not a position in a list.
+    const pin = this.pinAt(this.rev);
+    const pins = new Map();
+    if (pin) {
+      for (const [note, pn] of Object.entries(pin.notes ?? {})) {
+        const entries = pn?.entries ?? [];
+        pins.set(note, { entries, ids: identities(entries) });
+      }
+    }
+    for (const row of tree.out.split('\0').filter(Boolean)) {
+      const tab = row.indexOf('\t');
+      if (tab < 0) continue;
+      const path = row.slice(tab + 1);
+      if (!REVIEW_REGISTRY_RE.test(path)) continue;
+      const body = this.blob(this.rev, path);
+      if (body === null) continue;
+      let json;
+      try { json = JSON.parse(body); } catch { continue; }
+      if (!json || typeof json !== 'object' || Array.isArray(json)) continue;
+      this.registries++;
+      for (const [k, v] of Object.entries(json)) {
+        const hash = k.lastIndexOf('#');
+        if (hash < 1) continue;
+        const note = k.slice(0, hash);
+        const ord = Number(k.slice(hash + 1));
+        if (!note || !Number.isInteger(ord) || ord < 0) continue;
+        if (!v || typeof v !== 'object') continue;
+        const seat = typeof v.seat === 'string' ? v.seat : null;
+        const token = typeof v.token === 'string' ? v.token : null;
+        if (!seat || token === null) continue;
+        const np = pins.get(note);
+        if (!np || ord >= np.entries.length) continue;
+        const entry = np.entries[ord];
+        const key = `${note}|${seat}|${token}`;
+        if (!this.byKey.has(key)) this.byKey.set(key, []);
+        this.byKey.get(key).push({ identity: np.ids[ord], path: entry.path ?? null, a: entry.a, b: entry.b });
+        this.records++;
+      }
+    }
+  }
+  blob(rev, path) {
+    const size = git(this.root, ['cat-file', '-s', `${rev}:${path}`]);
+    if (!size.ok || Number(size.out.trim()) > MAX_REVIEW_BYTES) return null;
+    const r = git(this.root, ['show', `${rev}:${path}`]);
+    return r.ok ? r.out : null;
+  }
+  pinAt(rev) {
+    const body = this.blob(rev, '.ufo/pins/anchor-truth.json');
+    if (body === null) return null;
+    try { return JSON.parse(body); } catch { return null; }
+  }
+  /**
+   * True when a committed record binds this review-sourced entry: the record names the same
+   * note, seat and token, and its anchor is the entry's anchor (same identity, or the same
+   * file with one cited range nested in the other: a widened or narrowed citation of the
+   * reviewed anchor is the same anchor).
+   */
+  bound(note, e, identity) {
+    if (typeof e.source !== 'string' || !e.source.startsWith('review:')) return true;
+    const seat = e.source.slice('review:'.length);
+    const list = this.byKey.get(`${note}|${seat}|${e.token}`);
+    if (!list) return false;
+    for (const rec of list) {
+      if (identity && rec.identity === identity) return true;
+      if (!rec.path || !e.path || rec.path !== e.path) continue;
+      if (!Number.isInteger(e.a) || !Number.isInteger(e.b)) continue;
+      if ((rec.a <= e.a && e.b <= rec.b) || (e.a <= rec.a && rec.b <= e.b)) return true;
+    }
+    return false;
+  }
+}
+
 /** Status of one (path, a, b, token): true | false | dead | unchecked. */
 function judge(src, path, a, b, token) {
   if (token === null || token === undefined) return 'unchecked';
@@ -287,9 +417,10 @@ function overrideValid(e, src) {
   return inSentence && judge(src, e.path, e.a, e.b, e.token) === 'true';
 }
 
-function checkNote(note, noteText, pinNote, src) {
+function checkNote(note, noteText, pinNote, src, recs) {
   const findings = [];
   const anchors = parseNote(noteText);
+  const ids = identities(pinNote.entries ?? []);
   const rawNow = anchors.map((x) => `${x.raw}@${x.path}`);
   const rawPin = pinNote.entries.map((e) => `${e.raw}@${e.path}`);
   const counts = { anchors: anchors.length, true: 0, debt: 0, unchecked: 0 };
@@ -303,8 +434,13 @@ function checkNote(note, noteText, pinNote, src) {
     const live = { ...e, sentence: x.sentence };
     const st = judge(src, e.path, e.a, e.b, e.token);
     if (e.expect === 'true') counts.true++; else if (e.expect === 'unchecked') counts.unchecked++; else counts.debt++;
-    if (String(e.source).startsWith('review:') && !overrideValid(live, src)) {
-      findings.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
+    if (String(e.source).startsWith('review:')) {
+      if (!recs.bound(note, e, ids[e.ord])) {
+        findings.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);
+      }
+      if (!overrideValid(live, src)) {
+        findings.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
+      }
     }
     if (e.source === 'pair' && e.token !== (x.sym ?? null)) {
       // A `pair` token must be the note's own pairing; a hand-set token on the line is not a repair.
@@ -383,10 +519,37 @@ function compareBase(pin, basePin) {
   return findings;
 }
 
+/**
+ * Round-open floor (round 40, R39-3): the pin at the round-open revision is a second base.
+ * BASE_TRUE_LOST, DEBT_GREW and CHECKED_SHRANK run against it exactly as they run against
+ * `--base`, and every current debt anchor must equal a debt anchor at that revision by
+ * identity (raw@path occurrence) and by token; `unchecked` anchors are exempt.
+ */
+function compareOpen(pin, openPin) {
+  const findings = compareBase(pin, openPin).map(([k, id, d]) => [k, id, `${d} (open floor)`]);
+  for (const [note, cn] of Object.entries(pin.notes ?? {})) {
+    const on = openPin.notes?.[note];
+    const openIds = on ? identities(on.entries ?? []) : [];
+    const openDebt = new Set();
+    (on?.entries ?? []).forEach((e, i) => {
+      if (String(e.expect).startsWith('debt:')) openDebt.add(`${openIds[i]} ${e.token ?? ''}`);
+    });
+    const curIds = identities(cn.entries ?? []);
+    cn.entries.forEach((e, i) => {
+      if (!String(e.expect).startsWith('debt:')) return;
+      const key = `${curIds[i]} ${e.token ?? ''}`;
+      if (!openDebt.has(key)) {
+        findings.push(['DEBT_NEW', `${note}#${e.ord}`, `${curIds[i]} ${e.expect} now, no equal debt anchor at the open revision`]);
+      }
+    });
+  }
+  return findings;
+}
+
 /* ── CLI ─────────────────────────────────────────────────────────────────── */
 
 function parseArgs(argv) {
-  const o = { self: process.cwd(), pin: null, src: null, base: null, write: false, reviews: null, notes: null, json: false, selftest: false };
+  const o = { self: process.cwd(), pin: null, src: null, base: null, open: null, write: false, reviews: null, notes: null, json: false, selftest: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const val = () => { if (i + 1 >= argv.length) throw new Error(`${a} needs a value`); return argv[++i]; };
@@ -394,6 +557,7 @@ function parseArgs(argv) {
     else if (a === '--pin') o.pin = val();
     else if (a === '--src') o.src = val();
     else if (a === '--base') o.base = val();
+    else if (a === '--open') o.open = val();
     else if (a === '--write-pin') o.write = true;
     else if (a === '--reviews') o.reviews = val();
     else if (a === '--notes') o.notes = val().split(',').map((s) => s.trim()).filter(Boolean);
@@ -457,6 +621,22 @@ export function run(argv) {
   if (!head.ok || head.out.trim() !== origin.revision) return failClosed('SRC_REV_MISMATCH', `head=${head.out.trim() || '?'} pinned=${origin.revision}`);
   const src = new Source(srcDir, origin.revision);
   const srcRev = origin.revision.slice(0, 12);
+  // Review records are read from committed bytes at a revision the caller names (--open REV,
+  // the round-open revision): a record written in the very change being judged cannot bind.
+  let recRev = null;
+  if (o.open !== null) {
+    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);
+    const r = git(self, ['rev-parse', `${o.open}^{commit}`]);
+    if (!r.ok || !/^[0-9a-f]{40}$/u.test(r.out.trim())) return failClosed('OPEN_UNREADABLE', o.open);
+    recRev = r.out.trim();
+  } else {
+    const r = git(self, ['rev-parse', 'HEAD']);
+    recRev = r.ok && /^[0-9a-f]{40}$/u.test(r.out.trim()) ? r.out.trim() : null;
+    process.stdout.write(recRev
+      ? `TRUTH_WARN review sources are bound against the lane's current HEAD (${recRev.slice(0, 12)}), not a pinned round-open revision; pass --open REV to pin the record revision\n`
+      : "TRUTH_WARN review sources are unbound: the lane has no committed revision and no --open REV was given\n");
+  }
+  const recs = new ReviewRecords(self, recRev);
 
   let pin = null;
   if (existsSync(pinPath)) {
@@ -479,8 +659,12 @@ export function run(argv) {
       const p = join(self, note);
       if (!existsSync(p)) return failClosed('NOTE_MISSING', note);
       const entries = buildEntries(readCapped(p, MAX_NOTE_BYTES), src, pin?.notes?.[note], reviews, note);
+      const entryIds = identities(entries);
       for (const e of entries) {
-        if (e.source.startsWith('review:') && !overrideValid(e, src)) problems.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
+        if (e.source.startsWith('review:')) {
+          if (!recs.bound(note, e, entryIds[e.ord])) problems.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);
+          if (!overrideValid(e, src)) problems.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
+        }
       }
       const priorEntries = pin?.notes?.[note]?.entries ?? [];
       const prior = new Map(priorEntries.map((e) => [e.key, e]));
@@ -519,7 +703,7 @@ export function run(argv) {
   for (const [note, pn] of Object.entries(pin.notes)) {
     const p = join(self, note);
     if (!existsSync(p)) { findings.push(['ANCHOR_SET_CHANGED', `${note}#-`, 'note missing']); continue; }
-    const { findings: f, counts } = checkNote(note, readCapped(p, MAX_NOTE_BYTES), pn, src);
+    const { findings: f, counts } = checkNote(note, readCapped(p, MAX_NOTE_BYTES), pn, src, recs);
     findings.push(...f);
     perNote.push([note, counts]);
     for (const k of Object.keys(total)) total[k] += counts[k];
@@ -535,6 +719,17 @@ export function run(argv) {
     if (!validPin(basePin) || basePin.revision !== pin.revision) return failClosed('BASE_INVALID', 'pin schema or source revision');
     findings.push(...compareBase(pin, basePin));
   }
+  if (o.open !== null) {
+    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);
+    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;
+    if (rel === null) return failClosed('OPEN_INVALID', 'pin outside --self');
+    const shown = git(self, ['show', `${o.open}:${rel}`]);
+    if (!shown.ok) return failClosed('OPEN_UNREADABLE', `${o.open}:${rel}`);
+    let openPin;
+    try { openPin = JSON.parse(shown.out); } catch { return failClosed('OPEN_UNREADABLE', 'json'); }
+    if (!validPin(openPin) || openPin.revision !== pin.revision) return failClosed('OPEN_INVALID', 'pin schema or source revision');
+    findings.push(...compareOpen(pin, openPin));
+  }
   if (o.json) {
     process.stdout.write(JSON.stringify({ contract: CONTRACT, srcRev: origin.revision, total, perNote: Object.fromEntries(perNote), findings }) + '\n');
   } else {
@@ -544,10 +739,10 @@ export function run(argv) {
   }
   if (findings.length) {
     const kinds = [...new Set(findings.map((f) => f[0]))];
-    process.stdout.write(`TRUTH: DRIFT (${findings.length} findings: ${kinds.join(' ')}${o.base ? ` base=${o.base}` : ''} src-rev=${srcRev})\n`);
+    process.stdout.write(`TRUTH: DRIFT (${findings.length} findings: ${kinds.join(' ')}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\n`);
     return 1;
   }
-  process.stdout.write(`TRUTH: CLEAN (notes=${perNote.length} anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}${o.base ? ` base=${o.base}` : ''} src-rev=${srcRev})\n`);
+  process.stdout.write(`TRUTH: CLEAN (notes=${perNote.length} anchors=${total.anchors} true=${total.true} debt=${total.debt} unchecked=${total.unchecked}${o.base ? ` base=${o.base}` : ''}${o.open ? ` open=${o.open}` : ''} src-rev=${srcRev})\n`);
   return 0;
 }
 
@@ -582,6 +777,21 @@ function selfTest() {
     const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
     const out = r.stdout ?? '';
     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+  };
+  // A lane whose note, pin and review registry are COMMITTED: the gate reads review records
+  // from committed bytes and resolves them through the PIN at the record revision, so a
+  // fixture without a committed registry (or without a committed pin) has no record at all.
+  const mkReviewed = (name, note, records, src) => {
+    const d = mkSelf(name, note, src);
+    commit(d);
+    tool(d, ['--write-pin', '--notes', NOTE]);
+    const openRev = commit(d);
+    if (records) {
+      mkdirSync(join(d, '.ufo/waves/round-99'), { recursive: true });
+      writeFileSync(join(d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify(records, null, 1) + '\n');
+      commit(d);
+    }
+    return { d, openRev };
   };
   const commit = (d) => { g(d, ['add', '-A']); g(d, ['commit', '-q', '-m', 'pin']); return g(d, ['rev-parse', 'HEAD']).stdout.trim(); };
   const pinOf = (d) => JSON.parse(readFileSync(join(d, '.ufo/pins/anchor-truth.json'), 'utf8'));
@@ -657,11 +867,11 @@ function selfTest() {
       return { ok: w.status === 1 && /OVERRIDE_INVALID/.test(w.out), detail: w.verdict };
     });
     check('AT10', 'review override present in the sentence and on the line pins true', () => {
-      const d = mkSelf('at10', `${H}The ALPHA_MARK constant is set at \`scripts/a.mjs:3\`.\n`, src);
+      const d = mkReviewed('at10', `${H}The ALPHA_MARK constant is set at \`scripts/a.mjs:3\`.\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;
       writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'fx' } }));
       const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);
       const r = tool(d, []);
-      return { ok: w.status === 0 && r.status === 0 && /true=1 /.test(r.verdict), detail: r.verdict };
+      return { ok: w.status === 0 && r.status === 0 && /true=1 /.test(r.verdict), detail: `${w.verdict} | ${r.verdict}` };
     });
     check('AT11', 'fixed debt left in the pin reads DEBT_STALE', () => {
       const d = mkSelf('at11', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
@@ -809,9 +1019,129 @@ function selfTest() {
       const r = tool(d, []);
       return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };
     });
+    check('AT31', 'a self-declared review source with no committed record reads REVIEW_UNBOUND (round-40 closure R39-1)', () => {
+      const { d, openRev } = mkReviewed('at31', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:NoSuchSeat' }); });
+      const head = tool(d, []);
+      const open = tool(d, ['--open', openRev]);
+      return { ok: head.status === 1 && /REVIEW_UNBOUND/.test(head.out) && open.status === 1 && /REVIEW_UNBOUND/.test(open.out), detail: `${head.verdict} | ${open.verdict}` };
+    });
+    check('AT32', 'a committed review record binds its anchor; a record naming another seat does not', () => {
+      const note = `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`;
+      const bound = mkReviewed('at32bound', note, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;
+      tool(bound, ['--write-pin', '--notes', NOTE]);
+      setPin(bound, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });
+      const ok = tool(bound, []);
+      const other = mkReviewed('at32other', note, { [`${NOTE}#0`]: { seat: 'other', token: 'ALPHA_MARK' } }, src).d;
+      tool(other, ['--write-pin', '--notes', NOTE]);
+      setPin(other, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });
+      const bad = tool(other, []);
+      return { ok: ok.status === 0 && /TRUTH: CLEAN/u.test(ok.verdict) && bad.status === 1 && /REVIEW_UNBOUND/.test(bad.out), detail: `${ok.verdict} | ${bad.verdict}` };
+    });
+    check('AT33', 'a review record binds one anchor: a review token that travels to another anchor is unbound', () => {
+      const d = mkReviewed('at33', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`ALPHA_MARK\` at \`scripts/a.mjs:4\`.\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src).d;
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { source: 'review:fx' }); });
+      const r = tool(d, []);
+      return { ok: r.status === 1 && /REVIEW_UNBOUND/.test(r.out), detail: r.verdict };
+    });
+    check('AT34', 'the write path refuses an unbound review source, and --open REV reads only the records committed at REV', () => {
+      const d = mkReviewed('at34', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, null, src).d;
+      writeFileSync(join(d, 'reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { token: 'ALPHA_MARK', seat: 'NoSuchSeat' } }));
+      const w = tool(d, ['--write-pin', '--notes', NOTE, '--reviews', 'reviews.json']);
+      const kept = pinOf(d).notes[NOTE].entries[0].source;
+      // A record committed AFTER the open revision cannot bind: --open pins the record revision.
+      const late = mkReviewed('at34late', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, null, src);
+      const openRev = late.openRev;
+      mkdirSync(join(late.d, '.ufo/waves/round-99'), { recursive: true });
+      writeFileSync(join(late.d, '.ufo/waves/round-99/anchor-reviews.json'), JSON.stringify({ [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, null, 1) + '\n');
+      commit(late.d);
+      tool(late.d, ['--write-pin', '--notes', NOTE]);
+      setPin(late.d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx' }); });
+      const atOpen = tool(late.d, ['--open', openRev]);
+      const atHead = tool(late.d, []);
+      return { ok: w.status === 1 && /REVIEW_UNBOUND/.test(w.out) && kept !== 'review:NoSuchSeat'
+        && atOpen.status === 1 && /REVIEW_UNBOUND/.test(atOpen.out) && atHead.status === 0 && /TRUTH: CLEAN/u.test(atHead.verdict),
+      detail: `${w.verdict} kept=${kept} | ${atOpen.verdict} | ${atHead.verdict}` };
+    });
+    check('AT43', 'a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)', () => {
+      const d = mkSelf('at43', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\n\`GAMMA_MARK\` at \`scripts/a.mjs:2\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`BETA_MARK\` at \`scripts/a.mjs:3\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT44', 'a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)', () => {
+      const d = mkSelf('at44', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\nThe mark is at \`scripts/a.mjs:2\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\nThe mark is at \`scripts/a.mjs:2\`. The mark is at \`scripts/a.mjs:2\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT45', 'a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)', () => {
+      const d = mkSelf('at45', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\n\`GAMMA_MARK\` at \`scripts/a.mjs:2\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:2\`. \`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`);
+      setPin(d, (p) => {
+        const n = p.notes[NOTE];
+        n.anchors = 2;
+        n.entries = [
+          { key: 'scripts/a.mjs|ALPHA_MARK|0', ord: 0, raw: 'scripts/a.mjs:2', path: 'scripts/a.mjs', a: 2, b: 2, token: 'ALPHA_MARK', source: 'pair', expect: 'debt:false' },
+          { key: 'scripts/a.mjs|ALPHA_MARK|1', ord: 1, raw: 'scripts/a.mjs:3', path: 'scripts/a.mjs', a: 3, b: 3, token: 'ALPHA_MARK', source: 'pair', expect: 'true' },
+        ];
+      });
+      const r = tool(d, ['--base', base]);
+      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out) && /fx\.md#0/.test(r.out) && /scripts\/a\.mjs\|ALPHA_MARK\|0 true at base/.test(r.out), detail: r.verdict };
+    });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);
       return { ok: r.status === 64, detail: `exit=${r.status}` };
+    });
+    check('AT39', 'a debt anchor swapped for another debt anchor at a fresh identity reads DEBT_NEW against --open (round-40 R39-3 one-for-one trade)', () => {
+      const d = mkSelf('at39', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`GHOST_ONE\` at \`scripts/a.mjs:2\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const open = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`GHOST_TWO\` at \`scripts/b.mjs:1\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--open', open]);
+      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out) && !/DEBT_GREW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT40', 'new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)', () => {
+      const d = mkSelf('at40', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const open = commit(d);
+      const extra = [0, 1, 2].map((i) => `\`GHOST_${i}\` at \`scripts/b.mjs:1\`.`).join(' ');
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. ${extra}\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--open', open]);
+      return { ok: w.status === 0 && r.status === 1 && /DEBT_NEW/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT41', 'an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)', () => {
+      const d = mkSelf('at41', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const open = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`GHOST_REBREAK\` at \`scripts/a.mjs:3\`.\n`);
+      setPin(d, (p) => {
+        const e = p.notes[NOTE].entries[0];
+        Object.assign(e, { token: 'GHOST_REBREAK', expect: 'debt:false', key: 'scripts/a.mjs|GHOST_REBREAK|0' });
+      });
+      const r = tool(d, ['--open', open]);
+      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out), detail: r.verdict };
+    });
+    check('AT42', 'an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)', () => {
+      const d = mkSelf('at42', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const open = commit(d);
+      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`BETA_MARK\` at \`scripts/a.mjs:2\`.\n`);
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--open', open]);
+      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };
     });
   } finally {
     rmSync(tmp, { recursive: true, force: true });

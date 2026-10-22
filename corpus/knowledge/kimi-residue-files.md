@@ -8,7 +8,7 @@ frozen set K1–K4 declared nothing about, which is why the root was not enumera
 there. They were pre-registered a round ahead — `corpus/lessons/round-19.md:34-37`
 ("K5 makes the root enumerable, K_members 46 → 49") — and the registry change landed in
 round 20 as the member rules in `scripts/kimi-census.mjs:38-41` and the three member rows
-at `scripts/kimi-census.mjs:130-132`, frozen at `scripts/kimi-census.mjs:145`
+at `scripts/kimi-census.mjs:140-142`, frozen at `scripts/kimi-census.mjs:155`
 (`K5: 3`). Live confirmation of that freeze, run for this note:
 `node scripts/kimi-census.mjs` → `FAMILY K5 members=3 checked=3 frozen=3` and the verdict
 line `KIMI_CENSUS: CLEAN (members=49 checked=49 chain=12 info=4)`, exit 0, with
@@ -245,14 +245,14 @@ present. And `ls ~/.kimi-code/tui.toml.*.bak` finds nothing:
 the client-preference plane has **no timestamped chain at all** — this bare `.bak` is its
 only backup generation, unlike `~/.kimi-code/config.toml`, whose chain is 12 generations
 (11 timestamped + 1 bare, counted by `ls ~/.kimi-code/config.toml*.bak | wc -l` = 12 and
-gated as ONE member by the census regex `scripts/kimi-census.mjs:97`).
+gated as ONE member by the census regex `scripts/kimi-census.mjs:106`).
 
 **INFERENCE.** The bare-suffix `.bak` with a header that names the live file is a
 copy-on-write snapshot taken by whatever wrote `~/.kimi-code/tui.toml` at 18:36, not a
 user-named backup; the census's drift-chain regex `/^config\.toml(\..+)?\.bak$/` exempts the
 config generations from root enumeration but not this one, which is why
 `~/.kimi-code/tui.toml.bak` had to become a declared K5 member rather than a chain
-generation (`scripts/kimi-census.mjs:38-41`, `scripts/kimi-census.mjs:130-132`).
+generation (`scripts/kimi-census.mjs:38-41`, `scripts/kimi-census.mjs:140-142`).
 
 **OBSERVATION (the substrate's own sensitivity rule, strings-grade).** `~/.kimi-code/bin/kimi`
 defines `isSensitiveFile` at byte 129778221: a basename is sensitive if it is in
@@ -335,7 +335,7 @@ library from four chunks).
 `~/.kimi-code/workspaces.json:1`, `~/.kimi-code/tui.toml.bak:10`,
 `~/.kimi-code/rc-qrcode.png` (shape rows above). This is the K5 row of
 `SCORECARD.md:141` ("`workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` (3)"), and the
-family the census freezes at `K5: 3` (`scripts/kimi-census.mjs:145`).
+family the census freezes at `K5: 3` (`scripts/kimi-census.mjs:155`).
 
 **Re-run probe for a non-author (all read-only, one line each):**
 
@@ -362,3 +362,6 @@ family the census freezes at `K5: 3` (`scripts/kimi-census.mjs:145`).
 - *config drift → K1.* Whether the client-preference plane should grow a timestamped chain
   (it has none) is a `~/.kimi-code/config.toml`-chain question for
   `corpus/knowledge/kimi-config-plane.md`.
+
+
+Round-40 re-pin (2026-10-22): the census citations above at note lines 11, 248, 255 and 338 had gone stale through the round-34, round-35 and round-40 edits of `scripts/kimi-census.mjs` (in range, wrong line, which `cite-check` does not flag); they now name the K5 member rows `scripts/kimi-census.mjs:140-142`, `FROZEN` at `scripts/kimi-census.mjs:155` and `RE_CHAIN` at `scripts/kimi-census.mjs:106` (found by the round-40 seat ExecKimiCensus, `.ufo/waves/round-40/build/ExecKimiCensus.md`).

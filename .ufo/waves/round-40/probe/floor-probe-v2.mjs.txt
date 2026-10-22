@@ -1,0 +1,570 @@
+#!/usr/bin/env node
+// Round-40 C1 counting probe v2. Clones the lane at --rev, applies one named hand edit of the
+// committed pin and/or note per case, runs that revision's own scripts/anchor-truth.mjs
+// --base <BASE> --src <SRC> (plus --open <REV> when the gate supports it), prints one line per
+// case and two totals: FLOOR_PROBE2 attacks_accepted=<a>/<n> (accepted = exit 0 TRUTH: CLEAN)
+// and FLOOR_PROBE2 benign_clean=<c>/<m> (benign must read CLEAN).
+// Usage: node --input-type=module - --lane <repo> --rev <commit> --src <clone>
+//        [--base <rev>] [--open <rev>] < floor-probe-v2.mjs.txt
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync, rmSync, existsSync, renameSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, dirname } from 'node:path';
+
+const arg = (k) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : null; };
+const lane = arg('--lane'); const rev = arg('--rev'); const src = arg('--src');
+const BASE = arg('--base') ?? 'e18ff1af3392e3823227644c977c237737fe65c9';
+const OPENREV = arg('--open') ?? 'f69817edf687c8ce4f87ed7953a353399232f69e';
+if (!lane || !rev || !src) { process.stderr.write('usage: --lane <repo> --rev <commit> --src <clone> [--base <rev>] [--open <rev>]\n'); process.exit(64); }
+
+// ---- embedded parser (copied from scripts/anchor-truth.mjs, same semantics) ----
+const SPAN = /`([^`\n]+)`/gu;
+const ANCH = /^([\p{L}\p{N}_./@+-]*[\p{L}\p{N}_-]\.[\p{L}\p{N}_]+)?:(\d+)(?:-(\d+))?$/u;
+const PATHRE = /^[\p{L}\p{N}_./@+-]+\.(?:mjs|cjs|js|ts|json|md|sh|rs|toml|py|service|timer|ya?ml|txt|lock|conf)$/u;
+const IDENT = /[A-Za-z_$][\p{L}\p{N}_$]*/gu;
+const JOIN = /^[\s,;/()]*(?:(?:and|or)[\s,;/()]*)?$/u;
+const SENT_END = /(?:\.\s+(?=[A-Z*`(])|\.\s*$|;\s|:\s*$)/u;
+const strip = (s) => s.replace(/^[\s]+|[\s]+$/gu, '');
+function* blocks(text) {
+  let cur = [];
+  let start = null;
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const ln = i + 1;
+    if (strip(line) === '' || line.startsWith('#') || line.replace(/^\s+/u, '').startsWith('|') || line.startsWith('```')) {
+      if (cur.length) { yield [cur.join(' '), start]; cur = []; }
+      if (strip(line)) yield [line, ln];
+      continue;
+    }
+    if (!cur.length) start = ln;
+    cur.push(line);
+  }
+  if (cur.length) yield [cur.join(' '), start];
+}
+function parseNote(text) {
+  const out = [];
+  let curPath = null;
+  let inCode = false;
+  for (const [blk, ln] of blocks(text)) {
+    if (blk.startsWith('```')) { inCode = !inCode; continue; }
+    if (inCode) continue;
+    if (blk.startsWith('#')) {
+      const m = [...blk.matchAll(SPAN)].map((x) => x[1]).filter((s) => PATHRE.test(s) && s.includes('/') && !s.startsWith('.'));
+      if (m.length) curPath = m[0];
+    }
+    const isRow = blk.replace(/^\s+/u, '').startsWith('|');
+    const sentences = [];
+    let sent = [];
+    let pos = 0;
+    for (const m of blk.matchAll(SPAN)) {
+      const gap = blk.slice(pos, m.index);
+      if (SENT_END.test(gap) || (isRow && gap.includes('|'))) {
+        if (sent.length) sentences.push(sent);
+        sent = [];
+      }
+      sent.push([m[1], gap, pos, m.index]);
+      pos = m.index + m[0].length;
+    }
+    if (sent.length) sentences.push(sent);
+    sentences.forEach((s) => {
+      const sentence = blk;
+      const items = s.map(([val, gap]) => {
+        const am = ANCH.exec(val);
+        if (am) return { kind: 'A', val, gap, path: am[1] ?? null, a: Number(am[2]), b: Number(am[3] ?? am[2]) };
+        if (PATHRE.test(val)) return { kind: 'P', val, gap };
+        return { kind: 'S', val, gap };
+      });
+      let pending = [];
+      let i = 0;
+      while (i < items.length) {
+        const it = items[i];
+        if (it.kind === 'P') {
+          if (it.val.includes('/') && !it.val.startsWith('.')) curPath = it.val;
+          i++; continue;
+        }
+        if (it.kind === 'S') { pending.push(it.val); i++; continue; }
+        const run = [it];
+        let j = i + 1;
+        while (j < items.length && items[j].kind === 'A' && JOIN.test(items[j].gap)) { run.push(items[j]); j++; }
+        const k = run.length;
+        const syms = pending.length ? pending.slice(-k) : [];
+        let nxt = null;
+        if (syms.length === 0) {
+          for (let q = j; q < items.length; q++) {
+            if (items[q].kind !== 'S') continue;
+            let r2 = q + 1;
+            while (r2 < items.length && items[r2].kind === 'S' && JOIN.test(items[r2].gap)) r2++;
+            const owned = r2 < items.length && items[r2].kind === 'A';
+            if (!owned) nxt = items[q].val;
+            break;
+          }
+        }
+        const assign = syms.length ? [...Array(k - syms.length).fill(syms[0]), ...syms] : Array(k).fill(null);
+        run.forEach((r, idx) => {
+          const path = r.path ?? curPath;
+          if (r.path) curPath = r.path;
+          const a = assign[idx];
+          out.push({ line: ln, path, a: r.a, b: r.b, sym: a !== null ? a : nxt, raw: r.val, sentence });
+        });
+        pending = [];
+        i = j;
+      }
+    });
+  }
+  return out;
+}
+function norm(sym) {
+  let s = strip(sym).replace(/^["']+|["']+$/g, '');
+  s = s.replace(/\(.*\)$/u, '');
+  s = s.replace(/^[.#-]+/u, '');
+  const toks = s.match(IDENT) ?? [];
+  let longest = s;
+  if (toks.length) { longest = toks[0]; for (const t of toks) if (t.length > longest.length) longest = t; }
+  return [s, longest];
+}
+
+const sh = (cmd, args, opts = {}) => spawnSync(cmd, args, { encoding: 'utf8', maxBuffer: 1 << 28, ...opts });
+const S8 = 'corpus/knowledge/remaining-scripts-census.md';
+const RP = 'corpus/knowledge/route-probe-cluster.md';
+const SW = 'corpus/knowledge/sighting-wall.md';
+const NTL = 'corpus/knowledge/native-trial-launch.md';
+const NOTES = [S8, RP, SW, NTL];
+const PIN = '.ufo/pins/anchor-truth.json';
+const REC38 = '.ufo/waves/round-38/anchor-reviews.json';
+const RE40 = '.ufo/waves/round-40/anchor-reviews.json';
+
+const tmp = mkdtempSync(join(tmpdir(), 'r40-floor-probe2-'));
+const dir = join(tmp, 'lane');
+let srcRev = null; let openSupported = false; let modFiles = [];
+const modCache = new Map();
+
+const git = (c, args) => sh('git', ['-C', c, ...args]);
+function runGate(extra = []) {
+  const a = ['--self', dir, '--src', src, '--base', BASE];
+  if (openSupported) a.push('--open', OPENREV);
+  a.push(...extra);
+  const r = sh(process.execPath, [join(dir, 'scripts/anchor-truth.mjs'), ...a], { cwd: dir });
+  return { status: r.status, out: r.stdout ?? '', err: r.stderr ?? '' };
+}
+function runWritePin(pinPath, reviewsPath, notes) {
+  const a = ['--self', dir, '--src', src, '--write-pin', '--pin', pinPath];
+  if (reviewsPath) a.push('--reviews', reviewsPath);
+  a.push('--notes', notes.join(','));
+  const r = sh(process.execPath, [join(dir, 'scripts/anchor-truth.mjs'), ...a], { cwd: dir });
+  return { status: r.status, out: r.stdout ?? '', err: r.stderr ?? '' };
+}
+const rd = (p) => readFileSync(join(dir, p), 'utf8');
+const wr = (p, s) => { mkdirSync(dirname(join(dir, p)), { recursive: true }); writeFileSync(join(dir, p), s); };
+const pinOf = () => JSON.parse(rd(PIN));
+const writePin = (p) => wr(PIN, JSON.stringify(p, null, 1) + '\n');
+const rec38Of = () => JSON.parse(rd(REC38));
+
+const keyed = (E) => { const seen = new Map(); for (const e of E) { const b = `${e.path}|${e.token ?? '#'}`; const k = seen.get(b) ?? 0; seen.set(b, k + 1); e.key = `${b}|${k}`; } return E; };
+const ex = (st) => (st === 'true' ? 'true' : st === 'unchecked' ? 'unchecked' : `debt:${st}`);
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+const wb = (t, seg) => t !== '' && new RegExp(`(?<![\\p{L}\\p{N}_])${esc(t)}(?![\\p{L}\\p{N}_])`, 'u').test(seg);
+function judge(path, a, b, token) {
+  if (token == null) return 'unchecked';
+  if (String(token).length > 256) return 'false';
+  let rp = modFiles.includes(path) ? path : null;
+  if (!rp && path) { const c = modFiles.filter((f) => f.endsWith('/' + path)); rp = c.length === 1 ? c[0] : null; }
+  if (!rp) return 'dead';
+  if (!modCache.has(rp)) { const r = git(src, ['show', `${srcRev}:${rp}`]); modCache.set(rp, r.status === 0 ? r.stdout.split('\n') : null); }
+  const L = modCache.get(rp);
+  if (L === null || a < 1 || b > L.length || a > b) return 'dead';
+  const seg = L.slice(a - 1, b).join('\n');
+  const [f, l] = norm(token);
+  return (f && wb(f, seg)) || (l && wb(l, seg)) ? 'true' : 'false';
+}
+
+const shift = (r, note, from, d) => { const o = {}; for (const [k, v] of Object.entries(r)) { const at = k.lastIndexOf('#'); const n = k.slice(0, at); const ord = Number(k.slice(at + 1)); o[n === note && ord >= from ? `${n}#${ord + d}` : k] = v; } return o; };
+function replaceOnce(p, a, b) {
+  const t = rd(p); const i = t.indexOf(a);
+  if (i < 0 || t.indexOf(a, i + 1) >= 0) throw new Error(`not unique in ${p}: ${a.slice(0, 60)}`);
+  wr(p, t.slice(0, i) + b + t.slice(i + a.length));
+}
+function commitAll() {
+  git(dir, ['add', '-A']);
+  return sh('git', ['-C', dir, '-c', 'user.name=probe', '-c', 'user.email=probe@x', 'commit', '-qm', 'probe: forged review record']).status;
+}
+function repin(records) {
+  try {
+    wr('.ufo/pins/rec-tmp.json', JSON.stringify(records));
+    const r2 = runWritePin('.ufo/pins/fresh.json', '.ufo/pins/rec-tmp.json', NOTES);
+    if (r2.status !== 0) return `REPIN_REFUSED ${r2.out.trim().split('\n').slice(-3).join(' / ')}`;
+    renameSync(join(dir, '.ufo/pins/fresh.json'), join(dir, PIN));
+    return r2.out.trim();
+  } catch (e) { return `REPIN_ERROR ${e.message}`; }
+}
+
+// ---- text span scanner and swap/reorder machinery (ported logic) ----
+function scanSpans(text) {
+  const out = []; let inCode = false; let pos = 0;
+  for (const line of text.split('\n')) {
+    if (line.startsWith('```')) inCode = !inCode;
+    else if (!inCode) for (const m of line.matchAll(/`([^`\n]+)`/gu)) out.push([m[1], pos + m.index]);
+    pos += line.length + 1;
+  }
+  return out;
+}
+function anchorSpanIndices(text) {
+  const spans = scanSpans(text); const idx = [];
+  spans.forEach(([v], i) => { if (ANCH.test(v)) idx.push(i); });
+  return { spans, idx };
+}
+function offsetOf(anchors, spans, idx, ord) {
+  const raw = anchors[ord].raw; const k = anchors.slice(0, ord).filter((x) => x.raw === raw).length;
+  let seen = 0;
+  for (const s of idx) { if (spans[s][0] === raw) { if (seen === k) return spans[s][1]; seen++; } }
+  return null;
+}
+function swapBuild(note, i, j, mode) {
+  const noteText = rd(note); const anchors = parseNote(noteText);
+  const { spans, idx } = anchorSpanIndices(noteText);
+  const oi = offsetOf(anchors, spans, idx, i); const oj = offsetOf(anchors, spans, idx, j);
+  if (oi == null || oj == null) return { error: `offset missing i=${i} j=${j}` };
+  const ri = anchors[i].raw; const rj = anchors[j].raw;
+  const coord = (raw) => raw.slice(raw.lastIndexOf(':') + 1);
+  const prefix = (raw) => raw.slice(0, raw.lastIndexOf(':') + 1);
+  const ni = prefix(ri) + coord(rj); const nj = prefix(rj) + coord(ri);
+  const edits = [[oi, ri, ni], [oj, rj, nj]].sort((x, y) => y[0] - x[0]);
+  let t = noteText;
+  for (const [o, r, n] of edits) t = t.slice(0, o + 1) + n + t.slice(o + 1 + r.length);
+  const A2 = parseNote(t);
+  const want = anchors.map((x, q) => (q === i ? ni : q === j ? nj : x.raw));
+  if (A2.length !== anchors.length || A2.some((x, q) => x.raw !== want[q] || x.path !== anchors[q].path)) {
+    return { error: `reparse mismatch i=${i} j=${j}` };
+  }
+  const p = pinOf(); const E = p.notes[note].entries;
+  const old = [{ ...E[i] }, { ...E[j] }];
+  for (const q of [i, j]) {
+    const k = q === i ? 0 : 1; const x = A2[q]; const e = E[q];
+    Object.assign(e, { raw: x.raw, a: x.a, b: x.b });
+    if (mode === 'review-swap' || mode === 'pair-keep') { e.token = old[1 - k].token; e.source = 'review:probe'; }
+    else { e.token = x.sym ?? null; e.source = 'pair'; }
+    e.expect = ex(judge(e.path, e.a, e.b, e.token));
+  }
+  wr(note, t); writePin(p);
+  return { ok: true, A2 };
+}
+
+// ---- case registry ----
+const cases = [];
+const add = (name, kind, expect, fn) => cases.push({ name, kind, expect, fn });
+
+add('P01-review-nosuchseat', 'attack', 'REVIEW_UNBOUND', () => {
+  const p = pinOf(); const E = p.notes[S8].entries;
+  const e = E[92];
+  Object.assign(e, { source: 'review:NoSuchSeat', token: 'the', expect: 'true' });
+  writePin(p);
+  return '';
+});
+
+for (const [pi, i, j] of [['P02', 451, 456], ['P03', 453, 456], ['P04', 454, 456], ['P05', 455, 456]]) {
+  add(pi + '-swap-' + i + '-' + j, 'attack', 'BASE_TRUE_LOST', () => {
+    const r = swapBuild(S8, i, j, 'pair');
+    if (r.error) throw new Error(r.error);
+    return '';
+  });
+}
+
+const REORDERS = [['P06', S8, 14, 15], ['P07', RP, 71, 72], ['P08', SW, 22, 23], ['P09', SW, 42, 43], ['P10', SW, 63, 64]];
+for (const [pi, note, i, j] of REORDERS) {
+  add(pi + '-reorder-' + note.split('/').pop() + i + '-' + j, 'attack', 'REVIEW_UNBOUND/BASE_TRUE_LOST', () => {
+    const r = swapBuild(note, i, j, 'review-swap');
+    if (r.error) throw new Error(r.error);
+    return '';
+  });
+}
+
+add('P11-debt-trade', 'attack', 'DEBT_NEW', () => {
+  const nt = rd(S8);
+  const i = nt.indexOf('(`scripts/fleet-ledger-rotate.mjs:392`');
+  if (i < 0) throw new Error('trade anchor not found');
+  wr(S8, nt.slice(0, i) + '(scripts/fleet-ledger-rotate.mjs line 392' + nt.slice(i + '(`scripts/fleet-ledger-rotate.mjs:392`'.length)
+    + '\n\nThe trade marker `NO_SUCH_SYMBOL_R39` is at `scripts/ufo-swarm-collect.test.mjs:1`.\n');
+  const p = pinOf(); const E = p.notes[S8].entries;
+  E.splice(99, 1);
+  E.push({ ord: 0, raw: 'scripts/ufo-swarm-collect.test.mjs:1', path: 'scripts/ufo-swarm-collect.test.mjs', a: 1, b: 1, token: 'NO_SUCH_SYMBOL_R39', source: 'pair', expect: 'debt:false', key: 'scripts/ufo-swarm-collect.test.mjs|NO_SUCH_SYMBOL_R39|0' });
+  for (let k = 0; k < E.length; k++) E[k].ord = k;
+  p.notes[S8].anchors = E.length;
+  writePin(p);
+  return '';
+});
+
+add('P12-headroom-73', 'attack', 'DEBT_GREW', () => {
+  const PATH = 'scripts/ufo-swarm-collect.test.mjs';
+  const maxLines = git(src, ['show', `${srcRev}:${PATH}`]).stdout.split('\n').length;
+  const coll = new Set();
+  const scan = (entries) => { for (const e of entries) if (e.path === PATH) coll.add(e.raw); };
+  scan(pinOf().notes[S8].entries);
+  const bp = JSON.parse(git(dir, ['show', `${BASE}:${PIN}`]).stdout);
+  if (bp.notes[S8]) scan(bp.notes[S8].entries);
+  const lines = [];
+  for (let n = 0, L = 1; n < 73 && L < maxLines; L++) {
+    const raw = `${PATH}:${L}`;
+    if (coll.has(raw)) continue;
+    lines.push(`In \`${PATH}\`, \`zzNoSuchSymbol${n}\` (\`${raw}\`).`);
+    n++;
+  }
+  if (lines.length < 73) throw new Error(`P12 too few free lines ${lines.length}`);
+  wr(S8, rd(S8).replace(/\n*$/u, '\n\n') + lines.join('\n\n') + '\n');
+  const r = runWritePin(PIN, null, NOTES);
+  if (r.status !== 0) throw new Error('REPIN_REFUSED ' + r.out.trim().split('\n').slice(-3).join(' / '));
+  return '';
+});
+
+add('A1-closure-r38-missing-key', 'attack', 'TOKEN_FORGED,BASE_TRUE_LOST', () => {
+  const p = pinOf(); const E = p.notes[S8].entries;
+  Object.assign(E[3], { token: null, expect: 'unchecked', source: 'pair', key: 'closure-r38-missing-base-key' });
+  writePin(p);
+  return '';
+});
+add('A2-valid-shaped-key', 'attack', 'TOKEN_FORGED,BASE_TRUE_LOST', () => {
+  const p = pinOf(); const E = p.notes[S8].entries;
+  Object.assign(E[3], { token: null, expect: 'unchecked', source: 'pair', key: `${E[3].path}|#|${E.length}` });
+  writePin(p);
+  return '';
+});
+add('A3-forged-true-token', 'attack', 'TOKEN_FORGED', () => {
+  const p = pinOf(); const E = p.notes[S8].entries;
+  const d = E.find((e) => e.expect === 'debt:false' && e.path);
+  const seg = git(src, ['show', `${srcRev}:${d.path}`]).stdout.split('\n').slice(d.a - 1, d.b).join('\n');
+  const tok = (seg.match(/[A-Za-z_][A-Za-z0-9_]{2,}/u) ?? [null])[0];
+  Object.assign(d, { token: tok, expect: 'true' });
+  writePin(p);
+  return '';
+});
+add('A4-hand-source', 'attack', 'PIN_INVALID', () => {
+  const p = pinOf(); const E = p.notes[S8].entries;
+  Object.assign(E[3], { token: null, expect: 'unchecked', source: 'hand', key: 'hand-edit-key' });
+  writePin(p);
+  return '';
+});
+add('A5-base-true-range-widened', 'attack', 'BASE_TRUE_LOST', () => {
+  const p = pinOf(); const e = p.notes[S8].entries[3];
+  const L = git(src, ['show', `${srcRev}:${e.path}`]).stdout.split('\n').length;
+  const wide = `${e.path}:1-${L}`;
+  const note = rd(S8);
+  const hit = `\`${e.raw}\``;
+  if (!note.includes(hit)) throw new Error('A5 raw not found');
+  wr(S8, note.replace(hit, `\`${wide}\``));
+  const w = runWritePin(PIN, null, NOTES);
+  if (w.status !== 0) return `re-pin refused: ${w.out.trim().split('\n').pop()}`;
+  return '';
+});
+add('A6-earlier-true-copy-masks-falsified-original', 'attack', 'BASE_TRUE_LOST', () => {
+  const note = rd(S8);
+  const orig = '`worker` names `"charter-scribe"` (`scripts/charter-scribe/config.json:2`)';
+  const lead = "The charter-scribe daemon's policy file";
+  if (!note.includes(orig) || !note.includes(lead)) throw new Error('A6 text not found');
+  const edited = note
+    .replace(orig, 'the worker key is named (`scripts/charter-scribe/config.json:2`)')
+    .replace(lead, '`worker` names `"charter-scribe"` (`scripts/charter-scribe/config.json:2`).\n\n' + lead);
+  wr(S8, edited);
+  const p = pinOf(); const E = p.notes[S8].entries;
+  const copy = { ...E[3] };
+  Object.assign(E[3], { token: null, expect: 'unchecked', key: `${E[3].path}|#|a6` });
+  E.splice(3, 0, copy);
+  E.forEach((e, k) => { e.ord = k; });
+  p.notes[S8].anchors = E.length;
+  writePin(p);
+  return '';
+});
+
+add('ATK_SLOTS_ALL', 'attack', 'DEBT_GREW', () => {
+  const ids = (es) => { const s = new Map(); return es.map((e) => { const id = `${e.raw}@${e.path}`; const k = s.get(id) ?? 0; s.set(id, k + 1); return [id, k, e]; }); };
+  const bp = JSON.parse(git(dir, ['show', `${BASE}:${PIN}`]).stdout);
+  const cp = pinOf();
+  let tot = 0;
+  for (const n of NOTES) {
+    const b = bp.notes[n].entries, c = cp.notes[n].entries;
+    const cap = b.filter((e) => e.expect.startsWith('debt:')).length - c.filter((e) => e.expect.startsWith('debt:')).length;
+    const cnt = new Map(); for (const [id] of ids(c)) cnt.set(id, (cnt.get(id) ?? 0) + 1);
+    const picks = ids(b).filter(([id, k, e]) => e.expect !== 'true' && e.path && (cnt.get(id) ?? 0) === k).slice(0, cap);
+    const lines = picks.map(([id, k, e], i) => `In \`${e.path}\`, \`zzNoSuchSymbol${i}\` (\`${e.raw}\`).`);
+    wr(n, rd(n).replace(/\n*$/u, '\n\n') + lines.join('\n\n') + '\n');
+    tot += picks.length;
+  }
+  const r = repin(rec38Of());
+  if (r.startsWith('REPIN')) throw new Error(r);
+  return `appended ${tot} slot anchors; ` + r;
+});
+add('ATK_X1_REC38', 'attack', 'REVIEW_UNBOUND', () => {
+  const r = { ...rec38Of(), [`${S8}#92`]: { seat: 'NoSuchSeat', token: 'the' } };
+  wr(REC38, JSON.stringify(r, null, 1) + '\n');
+  commitAll();
+  const o = repin(r);
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('ATK_X1_REC40', 'attack', 'REVIEW_UNBOUND', () => {
+  const addrec = { [`${S8}#92`]: { seat: 'NoSuchSeat', token: 'the' } };
+  wr(RE40, JSON.stringify(addrec, null, 1) + '\n');
+  wr('.ufo/waves/round-40/build/NoSuchSeat.md', `RESULT NoSuchSeat verdict=reviewed\n${S8}#92 token the reads true at scripts/fleet-ledger-read.mjs:498\n`);
+  commitAll();
+  const o = repin({ ...rec38Of(), ...addrec });
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('ATK_REORDER_REC', 'attack', 'REVIEW_UNBOUND', () => {
+  // L1 round-40 fix: the forged records are committed first, then the reorder is hand-written
+  // (the same review-swap as P06); a --write-pin re-pin is refused by the candidate's write path.
+  const r = { ...rec38Of(), [`${S8}#14`]: { seat: 'probe', token: 'maxSubjectChars' }, [`${S8}#15`]: { seat: 'probe', token: 'maxEntryHtmlBytes' } };
+  wr(REC38, JSON.stringify(r, null, 1) + '\n');
+  commitAll();
+  const b = swapBuild(S8, 14, 15, 'review-swap');
+  if (b.error) throw new Error(b.error);
+  return 'records committed; review-swap hand-written';
+});
+add('ATK_REBREAK', 'attack', 'BASE_TRUE_LOST', () => {
+  replaceOnce(S8, 'inside `readInput` (`scripts/local-helper.mjs:135`)', 'inside `readInputBounded` (`scripts/local-helper.mjs:135`)');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('ATK_RELOCATE2', 'attack', 'BASE_TRUE_LOST', () => {
+  replaceOnce(S8, 'Input is bounded by `MAX_INPUT_BYTES` (`scripts/local-helper.mjs:10`) inside `readInput` (`scripts/local-helper.mjs:135`)',
+    'Input is bounded by `MAX_INPUT_SIZE` (`scripts/local-helper.mjs:135`) inside `readInput`, which reads `MAX_INPUT_BYTES` (`scripts/local-helper.mjs:10`)');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('ATK_TRADE', 'attack', 'DEBT_NEW', () => {
+  replaceOnce(S8, '`CLI_HELP_FLAGS` (`scripts/fleet-ledger-read.mjs:895`)', '`CLI_HELP_FLAG_SET` (`scripts/fleet-ledger-read.mjs:498`)');
+  replaceOnce(S8, 'throws `usageError` (`scripts/fleet-ledger-read.mjs:498`)', 'throws `CLI_HELP_FLAGS` (`scripts/fleet-ledger-read.mjs:895`)');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('ATK_FRESH', 'attack', 'DEBT_NEW', () => {
+  const lines = Array.from({ length: 5 }, (_, i) => `In \`scripts/local-helper.mjs\`, \`zzFresh${i}\` (\`:${2 + i}\`).`);
+  wr(S8, rd(S8).replace(/\n*$/u, '\n\n') + lines.join('\n\n') + '\n');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+
+add('B01-no-edit', 'benign', 'CLEAN', () => '');
+add('B02-prose-no-anchor', 'benign', 'CLEAN', () => {
+  wr(S8, rd(S8).replace(/\n*$/u, '\n\n') + 'A census prose addition follows this paragraph and has no new anchors.\n');
+  return '';
+});
+add('B03-new-true-anchor', 'benign', 'CLEAN', () => {
+  wr(S8, rd(S8).replace(/\n*$/u, '\n\n') + 'The `MAX_N_PREDICT` cap is defined at `scripts/local-helper.mjs:11`.\n');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('B04-insert-earlier-anchor', 'benign', 'CLEAN', () => {
+  const nt = rd(S8);
+  const at = nt.indexOf('Input is bounded by `MAX_INPUT_BYTES`');
+  if (at < 0) throw new Error('B04 anchor point not found');
+  wr(S8, nt.slice(0, at) + 'The `MAX_N_PREDICT` cap is defined at `scripts/local-helper.mjs:11`.\n\n' + nt.slice(at));
+  const ins = pinOf().notes[S8].entries.findIndex((e) => e.raw === 'scripts/local-helper.mjs:10');
+  const shifted = shift(rec38Of(), S8, ins, 1);
+  wr(REC38, JSON.stringify(shifted, null, 1) + '\n');
+  const o = repin(shifted);
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('B05-review-paragraph-rewrap', 'benign', 'CLEAN', () => {
+  const nt = rd(S8).split('\n');
+  const k = nt.findIndex((l) => l.startsWith('The charter-scribe daemon'));
+  if (k < 0) throw new Error('B05 paragraph not found');
+  const line = nt[k];
+  const pieces = []; let cur = '';
+  for (const w of line.split(' ')) { if ((cur + ' ' + w).length > 100) { pieces.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }
+  if (cur) pieces.push(cur);
+  nt[k] = pieces.join('\n');
+  wr(S8, nt.join('\n'));
+  return '';
+});
+
+add('BEN_PROSE', 'benign', 'CLEAN', () => {
+  replaceOnce(S8, 'Self-shrinking rotation for the fleet lifecycle ledger', 'Self-shrinking log rotation for the fleet lifecycle ledger');
+  return '';
+});
+add('BEN_REPAIR', 'benign', 'CLEAN', () => {
+  replaceOnce(S8, '`scripts/proxy-check.mjs:358`)', 'scripts/proxy-check.mjs line 358)');
+  const o = repin(shift(rec38Of(), S8, 3, -1));
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return 'records NOT rewritten; pin re-keyed; ' + o;
+});
+add('BEN_INSERT_NOSHIFT', 'benign', 'CLEAN', () => {
+  replaceOnce(S8, 'Input is bounded by `MAX_INPUT_BYTES`', 'The `readInput` reader (`scripts/local-helper.mjs:135`) is shared. Input is bounded by `MAX_INPUT_BYTES`');
+  const ins = pinOf().notes[S8].entries.findIndex((e) => e.raw === 'scripts/local-helper.mjs:10');
+  const shifted = shift(rec38Of(), S8, ins, 1);
+  const o = repin(shifted);
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return `inserted before ord ${ins}; records NOT shifted in the committed file; ` + o;
+});
+add('BEN_REKEY', 'benign', 'CLEAN', () => {
+  replaceOnce(S8, 'Input is bounded by `MAX_INPUT_BYTES` (`scripts/local-helper.mjs:10`)', 'Input is bounded by `MAX_INPUT_BYTES` = `12 * 1024` (`scripts/local-helper.mjs:10`)');
+  const o = repin(rec38Of());
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return o;
+});
+add('BEN_UNCHECKED', 'benign', 'CLEAN', () => {
+  replaceOnce(S8, 'Input is bounded by `MAX_INPUT_BYTES`', 'The helper source is `scripts/local-helper.mjs:1-5` for context. Input is bounded by `MAX_INPUT_BYTES`');
+  const ins = pinOf().notes[S8].entries.findIndex((e) => e.raw === 'scripts/local-helper.mjs:10');
+  const shifted = shift(rec38Of(), S8, ins, 1);
+  wr(REC38, JSON.stringify(shifted, null, 1) + '\n');
+  const o = repin(shifted);
+  if (o.startsWith('REPIN')) throw new Error(o);
+  return `inserted before ord ${ins}; records shifted; ` + o;
+});
+
+try {
+  if (git('', ['clone', '-q', '--no-hardlinks', lane, dir]).status !== 0) throw new Error('clone failed');
+  if (git(dir, ['checkout', '-q', '--detach', rev]).status !== 0) throw new Error(`checkout ${rev} failed`);
+  const full = git(dir, ['rev-parse', 'HEAD']).stdout.trim();
+  const origin = JSON.parse(rd('.ufo/pins/origin.json'));
+  srcRev = origin.revision;
+  modFiles = git(src, ['ls-tree', '-r', '--name-only', srcRev]).stdout.split('\n').filter(Boolean);
+  const gateText = rd('scripts/anchor-truth.mjs');
+  const dry = sh(process.execPath, [join(dir, 'scripts/anchor-truth.mjs'), '--self', dir, '--open', OPENREV, '--zzz-detect'], { cwd: dir });
+  if (dry.status === 64 && /--open/u.test(dry.err) && !/--zzz-detect/u.test(dry.err)) openSupported = false;
+  else if (dry.status === 64 && /--zzz-detect/u.test(dry.err)) openSupported = true;
+  else openSupported = /'--open'|"--open"/u.test(gateText);
+
+  const pristine = {};
+  for (const n of [...NOTES, PIN, REC38]) {
+    try { pristine[n] = rd(n); } catch { pristine[n] = null; }
+  }
+  const resetFiles = () => {
+    git(dir, ['reset', '-q', '--hard', full]);
+    for (const n of [...NOTES, PIN, REC38]) if (pristine[n] != null) wr(n, pristine[n]);
+    for (const f of ['.ufo/pins/fresh.json', '.ufo/pins/rec-tmp.json', RE40, '.ufo/waves/round-40/build/NoSuchSeat.md']) {
+      try { rmSync(join(dir, f), { force: true }); } catch {}
+    }
+  };
+
+  let attacksAccepted = 0, attacksTotal = 0, benignClean = 0, benignTotal = 0, setupErrors = 0;
+  const kindOf = (out) => [...new Set([...out.matchAll(/^TRUTH {2}(\S+)/gmu)].map((m) => m[1]))].join(',') || '-';
+  const verdictOf = (out) => out.trim().split('\n').pop() ?? '';
+
+  for (const c of cases) {
+    resetFiles();
+    let pre = '';
+    try { pre = c.fn() ?? ''; }
+    catch (e) { pre = `SETUP_ERROR ${e.message}`; }
+    const r = runGate();
+    const verdict = verdictOf(r.out); const kinds = kindOf(r.out);
+    const clean = r.status === 0 && verdict.startsWith('TRUTH: CLEAN');
+    const isAttack = c.kind === 'attack';
+    const setupErr = pre.startsWith('SETUP_ERROR');
+    if (setupErr) setupErrors++;
+    if (isAttack) { attacksTotal++; if (clean && !setupErr) attacksAccepted++; }
+    else { benignTotal++; if (clean && !setupErr) benignClean++; }
+    const status = pre.startsWith('SETUP_ERROR') ? 'SETUP_ERROR' : clean ? 'ACCEPTED' : 'REFUSED';
+    process.stdout.write(`CASE ${c.name} ${c.kind} expected=${c.expect} observed=${status} exit=${r.status} kinds=${kinds} clean=${clean}\n  ${pre.slice(0, 220)}\n  ${verdict}\n`);
+  }
+  process.stdout.write(`FLOOR_PROBE2 attacks_accepted=${attacksAccepted}/${attacksTotal}\n`);
+  process.stdout.write(`FLOOR_PROBE2 benign_clean=${benignClean}/${benignTotal}\n`);
+  process.stdout.write(`FLOOR_PROBE2 setup_errors=${setupErrors}\n`);
+  process.stdout.write(`FLOOR_PROBE2 lane-rev=${full} base=${BASE} open=${OPENREV} open-supported=${openSupported}\n`);
+} finally {
+  rmSync(tmp, { recursive: true, force: true });
+}

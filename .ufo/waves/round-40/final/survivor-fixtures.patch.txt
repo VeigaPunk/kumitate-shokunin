@@ -1,0 +1,45 @@
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index 0caf7da..b35bb44 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -809,6 +809,40 @@ function selfTest() {
+       const r = tool(d, []);
+       return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };
+     });
++    check('AT43', 'a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)', () => {
++      const d = mkSelf('at43', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\n\`GAMMA_MARK\` at \`scripts/a.mjs:2\`.\n`, src);
++      tool(d, ['--write-pin', '--notes', NOTE]);
++      const base = commit(d);
++      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`BETA_MARK\` at \`scripts/a.mjs:3\`.\n`);
++      const w = tool(d, ['--write-pin']);
++      const r = tool(d, ['--base', base]);
++      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
++    });
++    check('AT44', 'a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)', () => {
++      const d = mkSelf('at44', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\nThe mark is at \`scripts/a.mjs:2\`.\n`, src);
++      tool(d, ['--write-pin', '--notes', NOTE]);
++      const base = commit(d);
++      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\nThe mark is at \`scripts/a.mjs:2\`. The mark is at \`scripts/a.mjs:2\`.\n`);
++      const w = tool(d, ['--write-pin']);
++      const r = tool(d, ['--base', base]);
++      return { ok: w.status === 0 && r.status === 0 && r.verdict.startsWith('TRUTH: CLEAN'), detail: `${w.verdict} | ${r.verdict}` };
++    });
++    check('AT45', 'a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)', () => {
++      const d = mkSelf('at45', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n\n\`GAMMA_MARK\` at \`scripts/a.mjs:2\`.\n`, src);
++      tool(d, ['--write-pin', '--notes', NOTE]);
++      const base = commit(d);
++      writeFileSync(join(d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:2\`. \`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`);
++      setPin(d, (p) => {
++        const n = p.notes[NOTE];
++        n.anchors = 2;
++        n.entries = [
++          { key: 'scripts/a.mjs|ALPHA_MARK|0', ord: 0, raw: 'scripts/a.mjs:2', path: 'scripts/a.mjs', a: 2, b: 2, token: 'ALPHA_MARK', source: 'pair', expect: 'debt:false' },
++          { key: 'scripts/a.mjs|ALPHA_MARK|1', ord: 1, raw: 'scripts/a.mjs:3', path: 'scripts/a.mjs', a: 3, b: 3, token: 'ALPHA_MARK', source: 'pair', expect: 'true' },
++        ];
++      });
++      const r = tool(d, ['--base', base]);
++      return { ok: r.status === 1 && /DEBT_GREW/.test(r.out) && /fx\.md#0/.test(r.out) && /scripts\/a\.mjs\|ALPHA_MARK\|0 true at base/.test(r.out), detail: r.verdict };
++    });
+     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
+       const r = tool(join(tmp, 'at01'), ['--bogus']);
+       return { ok: r.status === 64, detail: `exit=${r.status}` };

@@ -2343,6 +2343,46 @@ function selfTest(opts) {
         detail: `exit=${r.status} ${String(r.stderr ?? '').trim().split('\n')[0]}` };
     });
 
+    // round-40 ─ the zero-resolved guard. `totals.resolved > 0` is part of the
+    // PASS condition (scripts/cite-check.mjs:1590): a document set that resolves
+    // no citation at all is a broken scan, not a clean one. This fixture holds
+    // prose only, so nothing resolves and nothing drifts — the verdict must
+    // still read FAIL. Dropping the guard flips it to PASS.
+    const zeroRoot = join(tmp, 'self-zero');
+    mkdirSync(join(zeroRoot, 'corpus', 'knowledge'), { recursive: true });
+    writeFileSync(join(zeroRoot, 'SKILL.md'),
+      '# Zero resolved citations fixture\n\nPlain prose only, so the checker resolves no citation at all\nwhile it scans this file\n');
+    writeFileSync(join(zeroRoot, 'corpus', 'knowledge', 'zero-note.md'),
+      '# Zero resolved citations fixture note\n\nAnother prose only note with no path shaped token and no line reference\n');
+    check('zero resolved citations with no drift → VERDICT FAIL (a broken scan is not a clean one)', () => {
+      const zRep = run({ self: zeroRoot });
+      const zt = zRep.totals;
+      return {
+        ok: zt.filesScanned > 0 && zt.resolved === 0 && zt.error === 0 && zRep.verdict === 'FAIL',
+        detail: `filesScanned=${zt.filesScanned} resolved=${zt.resolved} errors=${zt.error} verdict=${zRep.verdict}`,
+      };
+    });
+
+    // round-40 ─ the other direction of the same verdict expression. A scan set
+    // that resolves at least one citation and drifts nowhere must read PASS;
+    // without this case the suite never asserts a PASS verdict at all, and the
+    // PASS arm of `totals.filesScanned > 0 && totals.resolved > 0 && !drift` is
+    // unpinned (an inverted files-scanned check would survive).
+    const cleanRoot = join(tmp, 'self-clean');
+    mkdirSync(join(cleanRoot, 'corpus', 'knowledge'), { recursive: true });
+    writeFileSync(join(cleanRoot, 'SKILL.md'),
+      '# Clean fixture\n\nOne resolvable citation: `scripts/real.mjs:1`\n');
+    writeFileSync(join(cleanRoot, 'corpus', 'knowledge', 'clean-note.md'),
+      '# Clean fixture note\n\nA second resolvable citation: `scripts/real.mjs:2`\n');
+    check('clean fixture with one resolved citation and no drift → VERDICT PASS', () => {
+      const cRep = run({ self: cleanRoot });
+      const ct = cRep.totals;
+      return {
+        ok: ct.filesScanned > 0 && ct.resolved > 0 && ct.error === 0 && ct.warn === 0 && cRep.verdict === 'PASS',
+        detail: `filesScanned=${ct.filesScanned} resolved=${ct.resolved} errors=${ct.error} warnings=${ct.warn} verdict=${cRep.verdict}`,
+      };
+    });
+
     // real-tree assertions: machinery does not regress, live docs are repaired.
     // Gated on --integrations: `--selftest` alone must do NO live-tree work. A
     // suite that reads the live 8124-file index (and, through it, a sibling

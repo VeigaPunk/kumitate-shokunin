@@ -110,6 +110,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-39.md` | Round-39 repair-first: identity floor for `anchor-truth --base` (raw text, path and occurrence; per raw-path non-true count; pair-token and source rules) against R38-1, the last round-37-regressed debt anchor S8#475 re-cited, Q19, mined mistakes and open limits | LOG.md round 39; `.ufo/waves/round-39/`; S034 |
 
+| `lessons/round-39-verifier-spotcheck.md` | Round-39 non-author closure (hyaku): admitted; C1 re-measured 58/62 to 59/62 with zero losses, C2 floor probe 6/6 to 0/6 verified from evidence; routed R39-1 to R39-8 (self-declared review pins, raw swap and run reorder, debt headroom, probe depth, the cite-check `resolved` guard, the W04 misattribution, an unreceipted error count, the missing pin clone and the kimi 10-versus-9 score); row added in round 40 | commit `f69817e`; fleet closure entry `rounds[454]` |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

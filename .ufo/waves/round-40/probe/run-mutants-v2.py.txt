@@ -1,0 +1,583 @@
+#!/usr/bin/env python3
+"""Reusable anchor-truth mutant runner (round 40, seat ExecMutLedger, defect R39-4).
+
+Catalogue: the 11 mutants of the round-39 L1 mutation run
+(`.ufo/waves/round-39/final/run-mutants.py.txt`) plus the 15 mutants of the
+round-39 seat CritClaimC2 (`.ufo/waves/round-39/falsify/CritClaimC2.md`,
+including the three survivors M09/M14/M15).
+
+For every mutant: copy the lane at `--rev` into a scratch directory, apply the
+mutant's string edits to the target file, run `node scripts/anchor-truth.mjs
+--selftest`, and record the outcome with Stryker vocabulary (S034):
+
+  Killed       -- at least one selftest case failed while the mutant was live
+  Survived     -- every selftest case passed
+  RuntimeError -- the mutant crashed the tool, or its spec did not apply;
+                  a crash is NOT a kill
+
+Outputs a mutation-testing-elements style JSON ledger and a plain text table
+beside it, so the L1 can re-run the same catalogue on the integrated candidate.
+The ledger validates against the upstream mutation-testing-elements report
+schema (schemaVersion 1.0): `files[<path>].source` carries the pristine target
+bytes, `framework` is an object with a `name`, and every mutant carries id,
+mutatorName, location and a status from the schema enum.
+
+Usage:
+  python3 run-mutants-v2.py.txt --lane <clone> --rev <rev> [--out-dir DIR]
+                                [--only ID[,ID...]] [--jobs N] [--strict]
+
+The lane repository is read only: content is taken with `git archive <rev>`,
+so no index, ref or working tree in `--lane` is touched.
+"""
+from __future__ import annotations
+
+import argparse
+import concurrent.futures
+import hashlib
+import io
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tarfile
+import tempfile
+
+TARGET = 'scripts/anchor-truth.mjs'
+ORACLE = ['node', 'scripts/anchor-truth.mjs', '--selftest']
+
+# ── catalogue ──────────────────────────────────────────────────────────────
+# Each entry: id, mutatorName, provenance, description, edits [[old, new], ...].
+# `old` strings must occur exactly once in TARGET; otherwise the mutant is
+# reported as RuntimeError with statusReason "spec-not-applicable".
+
+C2 = 'round-39 seat CritClaimC2 (.ufo/waves/round-39/falsify/CritClaimC2.md)'
+R39 = 'round-39 L1 run (.ufo/waves/round-39/final/run-mutants.py.txt)'
+
+_CATALOGUE = [
+    # ── the 11 mutants of the round-39 L1 run ─────────────────────────────
+    {
+        'id': 'R39-MutIdentityDelete',
+        'mutatorName': 'BlockDeletion',
+        'provenance': R39,
+        'description': 'delete the whole base-true identity arm (anchor gone / non-true now)',
+        'edits': [[
+            r"""      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);
+      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);""",
+            r"""      void m;""",
+        ]],
+    },
+    {
+        'id': 'R39-MutIdentityKey',
+        'mutatorName': 'IdentifierSubstitution',
+        'provenance': R39,
+        'description': 'anchor identity uses the pin key instead of raw@path',
+        'edits': [[r"""    const id = `${e.raw}@${e.path}`;""", r"""    const id = `${e.key}`;"""]],
+    },
+    {
+        'id': 'R39-MutIdentityNoOccurrence',
+        'mutatorName': 'ConstantSubstitution',
+        'provenance': R39,
+        'description': 'anchor identity loses the occurrence counter',
+        'edits': [[r"""    return `${id}#${n}`;""", r"""    return `${id}#0`;"""]],
+    },
+    {
+        'id': 'R39-MutIdentityNoPath',
+        'mutatorName': 'TemplateLiteralFieldRemoval',
+        'provenance': R39,
+        'description': 'anchor identity drops the resolved path',
+        'edits': [[r"""    const id = `${e.raw}@${e.path}`;""", r"""    const id = `${e.raw}`;"""]],
+    },
+    {
+        'id': 'R39-MutLostAcceptsUnchecked',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': R39,
+        'description': 'the non-true arm accepts any debt expectation',
+        'edits': [[
+            r"""      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST'""",
+            r"""      else if (String(m.expect).startsWith('debt:')) findings.push(['BASE_TRUE_LOST'""",
+        ]],
+    },
+    {
+        'id': 'R39-MutGroupDelete',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': R39,
+        'description': 'the raw@path group check never fires',
+        'edits': [[r"""      if (b.t > 0 && c.n > b.n) findings.push(""", r"""      if (false) findings.push("""]],
+    },
+    {
+        'id': 'R39-MutGroupTrueCount',
+        'mutatorName': 'ComparisonOperatorReplacement',
+        'provenance': R39,
+        'description': 'the group check compares true counts instead of non-true counts',
+        'edits': [[r"""      if (b.t > 0 && c.n > b.n) findings.push(""", r"""      if (b.t > 0 && c.t < b.t) findings.push("""]],
+    },
+    {
+        'id': 'R39-MutTokenForgedDelete',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': R39,
+        'description': 'the TOKEN_FORGED check never fires',
+        'edits': [[r"""    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {""", r"""    if (false) {"""]],
+    },
+    {
+        'id': 'R39-MutTokenForgedNullSkip',
+        'mutatorName': 'ConditionalPredicateAddition',
+        'provenance': R39,
+        'description': 'the TOKEN_FORGED check ignores a null pinned token',
+        'edits': [[
+            r"""    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {""",
+            r"""    if (e.source === 'pair' && e.token !== null && e.token !== (x.sym ?? null)) {""",
+        ]],
+    },
+    {
+        'id': 'R39-MutSourceRuleRevert',
+        'mutatorName': 'BlockDeletion',
+        'provenance': R39,
+        'description': 'the pin schema accepts any source string',
+        'edits': [[
+            r"""          || typeof e.source !== 'string' || !(e.source === 'pair' || (/^review:\S+$/u.test(e.source) && e.token !== null))""",
+            r"""          || typeof e.source !== 'string'""",
+        ]],
+    },
+    {
+        'id': 'R39-MutReviewNullToken',
+        'mutatorName': 'LogicalOperandRemoval',
+        'provenance': R39,
+        'description': 'a review:<seat> entry may carry a null token',
+        'edits': [[
+            r"""(/^review:\S+$/u.test(e.source) && e.token !== null)""",
+            r"""(/^review:\S+$/u.test(e.source))""",
+        ]],
+    },
+    # ── the 15 mutants of the round-39 seat CritClaimC2 ────────────────────
+    {
+        'id': 'C2-M00-red-before-all-new-production-logic-removed',
+        'mutatorName': 'CompoundMutation',
+        'provenance': C2,
+        'extra': True,
+        'description': 'red-before mutant: all round-38/39 production logic removed, tests kept. '
+                       'The seat counted 15 mutants (M01-M15); M00 is its separate red-before '
+                       'reconstruction, so it is an extra here and is not in the default catalogue.',
+        'edits': [
+            [r"""    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {""", r"""    if (false) {"""],
+            [r"""|| !(e.source === 'pair' || (/^review:\S+$/u.test(e.source) && e.token !== null))
+          """, r""""""],
+            [r"""if (e.expect !== 'true') return;
+      const m = byId""", r"""return;
+      const m = byId"""],
+            [r"""if (b.t > 0 && c.n > b.n)""", r"""if (false)"""],
+        ],
+    },
+    {
+        'id': 'C2-M01-no-TOKEN_FORGED',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': C2,
+        'description': 'no TOKEN_FORGED check',
+        'edits': [[r"""    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {""", r"""    if (false) {"""]],
+    },
+    {
+        'id': 'C2-M02-no-source-rule',
+        'mutatorName': 'BlockDeletion',
+        'provenance': C2,
+        'description': 'the pin schema source rule is deleted',
+        'edits': [[
+            r"""|| !(e.source === 'pair' || (/^review:\S+$/u.test(e.source) && e.token !== null))
+          """,
+            r""""""]],
+    },
+    {
+        'id': 'C2-M03-review-null-token-allowed',
+        'mutatorName': 'LogicalOperandRemoval',
+        'provenance': C2,
+        'description': 'a review:<seat> entry may carry a null token',
+        'edits': [[r"""&& e.token !== null))""", r"""))"""]],
+    },
+    {
+        'id': 'C2-M04-no-identity-per-occurrence',
+        'mutatorName': 'BlockDeletion',
+        'provenance': C2,
+        'description': 'the per-occurrence identity loop never runs',
+        'edits': [[
+            r"""if (e.expect !== 'true') return;
+      const m = byId""",
+            r"""return;
+      const m = byId""",
+        ]],
+    },
+    {
+        'id': 'C2-M05-identity-anchor-gone-ignored',
+        'mutatorName': 'BlockDeletion',
+        'provenance': C2,
+        'description': 'the "anchor gone" arm of the identity check is ignored',
+        'edits': [[
+            r"""      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);
+      else if""",
+            r"""      if (!m) {}
+      else if""",
+        ]],
+    },
+    {
+        'id': 'C2-M06-identity-nontrue-ignored',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': C2,
+        'description': 'the "now non-true" arm of the identity check is ignored',
+        'edits': [[
+            r"""else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`""",
+            r"""else if (false) findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`""",
+        ]],
+    },
+    {
+        'id': 'C2-M07-no-group-check',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': C2,
+        'description': 'the raw@path group check never fires',
+        'edits': [[r"""if (b.t > 0 && c.n > b.n)""", r"""if (false)"""]],
+    },
+    {
+        'id': 'C2-M08-group-off-by-one',
+        'mutatorName': 'ComparisonOperatorReplacement',
+        'provenance': C2,
+        'description': 'the group check allows one extra non-true anchor',
+        'edits': [[r"""c.n > b.n)""", r"""c.n > b.n + 1)"""]],
+    },
+    {
+        'id': 'C2-M09-group-any-raw',
+        'mutatorName': 'LogicalOperandRemoval',
+        'provenance': C2,
+        'description': 'the group check drops the b.t > 0 guard (round-39 survivor)',
+        'edits': [[r"""if (b.t > 0 && c.n > b.n)""", r"""if (c.n > b.n)"""]],
+    },
+    {
+        'id': 'C2-M10-group-t-gt-1',
+        'mutatorName': 'ConstantSubstitution',
+        'provenance': C2,
+        'description': 'the group check requires two base-true anchors instead of one',
+        'edits': [[r"""if (b.t > 0 && c.n > b.n)""", r"""if (b.t > 1 && c.n > b.n)"""]],
+    },
+    {
+        'id': 'C2-M11-identity-drops-path',
+        'mutatorName': 'TemplateLiteralFieldRemoval',
+        'provenance': C2,
+        'description': 'anchor identity drops the resolved path',
+        'edits': [[r"""const id = `${e.raw}@${e.path}`;""", r"""const id = `${e.raw}`;"""]],
+    },
+    {
+        'id': 'C2-M12-identity-drops-occurrence',
+        'mutatorName': 'ConstantSubstitution',
+        'provenance': C2,
+        'description': 'anchor identity loses the occurrence counter',
+        'edits': [[r"""return `${id}#${n}`;""", r"""return `${id}#0`;"""]],
+    },
+    {
+        'id': 'C2-M13-TOKEN_FORGED-ignores-null',
+        'mutatorName': 'ConditionalPredicateAddition',
+        'provenance': C2,
+        'description': 'the TOKEN_FORGED check ignores a null pinned token',
+        'edits': [[
+            r"""    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {""",
+            r"""    if (e.source === 'pair' && e.token !== null && e.token !== (x.sym ?? null)) {""",
+        ]],
+    },
+    {
+        'id': 'C2-M14-old-key-floor-removed',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': C2,
+        'description': 'the old key-match DEBT_GREW loop is deleted (round-39 survivor)',
+        'edits': [[
+            r"""if (m && m.expect !== 'true') findings.push(['DEBT_GREW'""",
+            r"""if (false) findings.push(['DEBT_GREW'""",
+        ]],
+    },
+    {
+        'id': 'C2-M15-group-counts-only-unchecked',
+        'mutatorName': 'ConditionalPredicateReplacement',
+        'provenance': C2,
+        'description': 'the group check counts only unchecked anchors (round-39 survivor)',
+        'edits': [[
+            r"""if (e.expect === 'true') c.t++; else c.n++;""",
+            r"""if (e.expect === 'true') c.t++; else if (e.expect === 'unchecked') c.n++;""",
+        ]],
+    },
+]
+
+# mutants whose whole edit list is identical to another catalogue entry
+_DUP = {}
+for _m in _CATALOGUE:
+    _k = tuple((e[0].strip(), e[1].strip()) for e in _m['edits'])
+    _DUP.setdefault(_k, []).append(_m['id'])
+for _m in _CATALOGUE:
+    _al = {o for o in _DUP[tuple((e[0].strip(), e[1].strip()) for e in _m['edits'])] if o != _m['id']}
+    if _al:
+        _m['equivalentTo'] = sorted(_al)
+
+
+# ── helpers ────────────────────────────────────────────────────────────────
+def sh(args, cwd=None, timeout=900):
+    return subprocess.run(args, cwd=cwd, capture_output=True, text=True, timeout=timeout)
+
+
+def extract(lane, rev, dest):
+    """Copy the lane tree at `rev` into `dest` without touching the lane repo."""
+    p = subprocess.run(['git', '-C', lane, 'archive', '--format=tar', rev],
+                       capture_output=True, timeout=900)
+    if p.returncode != 0:
+        raise RuntimeError(f'git archive failed: {p.stderr.decode("utf-8", "replace").strip()}')
+    with tarfile.open(fileobj=io.BytesIO(p.stdout)) as tf:
+        tf.extractall(dest, filter='data')
+    return dest
+
+
+def locate(text, needle):
+    """1-based line/column of the first occurrence of `needle`."""
+    i = text.find(needle)
+    if i < 0:
+        return None
+    line = text.count('\n', 0, i) + 1
+    col = i - (text.rfind('\n', 0, i) + 1) + 1
+    end = i + len(needle)
+    eline = text.count('\n', 0, end) + 1
+    ecol = end - (text.rfind('\n', 0, end) + 1) + 1
+    return {'start': {'line': line, 'column': col}, 'end': {'line': eline, 'column': ecol}}
+
+
+def run_selftest(cwd):
+    p = subprocess.run(ORACLE, cwd=cwd, capture_output=True, text=True, timeout=900)
+    out = p.stdout or ''
+    fails = []
+    for line in out.splitlines():
+        m = re.match(r'^FAIL (AT\d+) (.*)$', line)
+        if m:
+            fails.append({'id': m.group(1), 'label': m.group(2).strip()})
+    passes = re.findall(r'^PASS (AT\d+)', out, re.M)
+    tally = re.search(r'ANCHOR_TRUTH_SELFTEST: (\d+)/(\d+) pass', out)
+    err = (p.stderr or '').strip()
+    crashed = (p.returncode not in (0, 1)) or (tally is None) or bool(re.search(r'^\s*(SyntaxError|ReferenceError|TypeError|Error):', err, re.M))
+    return {
+        'exit': p.returncode,
+        'stdout': out,
+        'stderr': err,
+        'fails': fails,
+        'passes': passes,
+        'tally': (f'{tally.group(1)}/{tally.group(2)}' if tally else 'none'),
+        'testsCompleted': (int(tally.group(2)) if tally else 0),
+        'crashed': crashed,
+    }
+
+
+def run_mutant(entry, lane, rev, workroot, keep_temp=False):
+    tmp = tempfile.mkdtemp(prefix=f'mut-{entry["id"]}-', dir=workroot)
+    rec = {
+        'id': entry['id'],
+        'mutatorName': entry['mutatorName'],
+        'provenance': entry['provenance'],
+        'description': entry['description'],
+        'status': 'RuntimeError',
+        'statusReason': '',
+        'killedBy': [],
+        'killedByDetail': [],
+        'testsCompleted': 0,
+        'location': None,
+        'replacement': None,
+        'equivalentTo': entry.get('equivalentTo', []),
+        'extra': bool(entry.get('extra', False)),
+    }
+    try:
+        extract(lane, rev, tmp)
+        f = os.path.join(tmp, TARGET)
+        if not os.path.exists(f):
+            rec['statusReason'] = f'target file not found: {TARGET}'
+            return rec
+        orig = open(f, encoding='utf-8').read()
+        mutated = orig
+        applied = 0
+        for old, new in entry['edits']:
+            n = mutated.count(old)
+            if n != 1:
+                rec['statusReason'] = f'spec-not-applicable: {n} occurrence(s) of the anchor string'
+                return rec
+            if rec['location'] is None:
+                rec['location'] = locate(orig, old)
+            mutated = mutated.replace(old, new)
+            applied += 1
+        rec['replacement'] = entry['edits'][0][1]
+        if mutated == orig:
+            rec['statusReason'] = 'spec-not-applicable: mutation produced no change'
+            return rec
+        with open(f, 'w', encoding='utf-8') as fh:
+            fh.write(mutated)
+        r = run_selftest(tmp)
+        rec['testsCompleted'] = r['testsCompleted']
+        rec['selftestTally'] = r['tally']
+        rec['selftestExit'] = r['exit']
+        if r['crashed']:
+            rec['status'] = 'RuntimeError'
+            rec['statusReason'] = f'crash: exit={r["exit"]} {r["stderr"].splitlines()[0] if r["stderr"] else "no stderr"}'
+            return rec
+        if r['fails']:
+            rec['status'] = 'Killed'
+            rec['killedBy'] = [f['id'] for f in r['fails']]
+            rec['killedByDetail'] = [f'{f["id"]}: {f["label"]}' for f in r['fails']]
+            rec['statusReason'] = f'{len(r["fails"])} selftest case(s) failed'
+            return rec
+        if r['exit'] != 0:
+            rec['status'] = 'RuntimeError'
+            rec['statusReason'] = f'non-zero exit without a named failing case: exit={r["exit"]}'
+            return rec
+        rec['status'] = 'Survived'
+        rec['statusReason'] = f'all {r["tally"]} selftest cases passed'
+        return rec
+    except Exception as exc:  # noqa: BLE001 - a crash of the harness is not a kill
+        rec['status'] = 'RuntimeError'
+        rec['statusReason'] = f'harness-error: {type(exc).__name__}: {exc}'
+        return rec
+    finally:
+        if not keep_temp:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+
+def baseline(lane, rev, workroot):
+    tmp = tempfile.mkdtemp(prefix='baseline-', dir=workroot)
+    try:
+        extract(lane, rev, tmp)
+        r = run_selftest(tmp)
+        src = ''
+        f = os.path.join(tmp, TARGET)
+        if os.path.exists(f):
+            src = open(f, encoding='utf-8').read()
+        return {'exit': r['exit'], 'tally': r['tally'], 'crashed': r['crashed'],
+                'fails': [f['id'] for f in r['fails']], 'stderr': r['stderr'][:400],
+                'source': src}
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def table(rows, meta):
+    w_id = max([len('MUTANT')] + [len(r['id']) for r in rows])
+    w_mut = max([len('MUTATOR')] + [len(r['mutatorName']) for r in rows])
+    w_st = max([len('STATUS')] + [len(r['status']) for r in rows])
+    w_kb = max([len('KILLEDBY')] + [len(' '.join(r['killedBy']) or '-') for r in rows])
+    out = []
+    out.append(f"MUTATION LEDGER  rev={meta['rev']}  file={TARGET}  oracle={' '.join(ORACLE)}")
+    out.append(f"lane={meta['lane']}  catalogue={meta['catalogue']}  mutants={meta['total']} "
+               f"killed={meta['killed']} survived={meta['survived']} runtimeError={meta['invalid']}")
+    out.append(f"baseline selftest: {meta['baseline']}")
+    out.append('')
+    out.append(f"{'MUTANT'.ljust(w_id)}  {'STATUS'.ljust(w_st)}  {'MUTATOR'.ljust(w_mut)}  {'KILLEDBY'.ljust(w_kb)}  REASON")
+    out.append(f"{'-' * w_id}  {'-' * w_st}  {'-' * w_mut}  {'-' * w_kb}  {'-' * 40}")
+    for r in rows:
+        kb = ' '.join(r['killedBy']) or '-'
+        out.append(f"{r['id'].ljust(w_id)}  {r['status'].ljust(w_st)}  {r['mutatorName'].ljust(w_mut)}  {kb.ljust(w_kb)}  {r['statusReason']}")
+    out.append('')
+    out.append('survivors (red-before for R39-4): ' + (', '.join(r['id'] for r in rows if r['status'] == 'Survived') or 'none'))
+    out.append('runtime errors (not kills): ' + (', '.join(r['id'] for r in rows if r['status'] == 'RuntimeError') or 'none'))
+    return '\n'.join(out) + '\n'
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description='anchor-truth mutant runner (round 40, R39-4)')
+    ap.add_argument('--lane', required=True, help='git clone of the lane to test (read only)')
+    ap.add_argument('--rev', default='HEAD', help='revision inside --lane to test (default HEAD)')
+    ap.add_argument('--out-dir', default='.', help='where the ledger and table are written')
+    ap.add_argument('--json-out', default=None, help='path of the JSON ledger (default <out-dir>/mutants-ledger.json)')
+    ap.add_argument('--table-out', default=None, help='path of the text table (default <out-dir>/mutants-table.txt)')
+    ap.add_argument('--only', default=None, help='comma separated mutant ids to run')
+    ap.add_argument('--include-extras', action='store_true',
+                    help='also run the extra mutants (the CritClaimC2 red-before reconstruction)')
+    ap.add_argument('--jobs', type=int, default=min(8, os.cpu_count() or 4))
+    ap.add_argument('--keep-temp', action='store_true')
+    ap.add_argument('--strict', action='store_true', help='exit 1 when a mutant survives')
+    ap.add_argument('--list', action='store_true', help='print the catalogue and exit')
+    args = ap.parse_args(argv)
+
+    lane = os.path.abspath(args.lane)
+    if not os.path.isdir(lane):
+        print(f'ERROR: --lane {lane} is not a directory', file=sys.stderr)
+        return 64
+    rev = args.rev
+    if rev == 'HEAD':
+        rev = sh(['git', '-C', lane, 'rev-parse', 'HEAD']).stdout.strip()
+    r = sh(['git', '-C', lane, 'cat-file', '-e', f'{rev}^{{commit}}'])
+    if r.returncode != 0:
+        print(f'ERROR: revision {rev} is not a commit in {lane}', file=sys.stderr)
+        return 64
+
+    catalogue = list(_CATALOGUE)
+    if args.only:
+        want = [x.strip() for x in args.only.split(',') if x.strip()]
+        by_id = {m['id']: m for m in catalogue}
+        missing = [w for w in want if w not in by_id]
+        if missing:
+            print(f'ERROR: unknown mutant id(s): {", ".join(missing)}', file=sys.stderr)
+            return 64
+        catalogue = [by_id[w] for w in want]
+    elif not args.include_extras:
+        catalogue = [m for m in catalogue if not m.get('extra')]
+
+    if args.list:
+        for m in catalogue:
+            print(f"{m['id']}\t{m['mutatorName']}\t{m['provenance']}\t{m['description']}")
+        return 0
+
+    os.makedirs(args.out_dir, exist_ok=True)
+    workroot = tempfile.mkdtemp(prefix='anchor-truth-mutants-')
+    try:
+        base = baseline(lane, rev, workroot)
+        results = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.jobs)) as ex:
+            futs = {ex.submit(run_mutant, m, lane, rev, workroot, args.keep_temp): m for m in catalogue}
+            for fut in concurrent.futures.as_completed(futs):
+                results.append(fut.result())
+        order = {m['id']: i for i, m in enumerate(catalogue)}
+        results.sort(key=lambda r: order.get(r['id'], 1 << 30))
+
+        killed = sum(1 for r in results if r['status'] == 'Killed')
+        survived = sum(1 for r in results if r['status'] == 'Survived')
+        invalid = sum(1 for r in results if r['status'] == 'RuntimeError')
+        meta = {'rev': rev, 'lane': lane,
+                'catalogue': ('round-39 L1 run (11) + round-39 CritClaimC2 M01-M15 (15)'
+                              + (' + extras' if any(r.get('extra') for r in results) else '')),
+                'total': len(results), 'killed': killed, 'survived': survived, 'invalid': invalid,
+                'baseline': f"{base['tally']} exit={base['exit']} crashed={base['crashed']}"}
+        ledger = {
+            'schemaVersion': '1.0',
+            'projectRoot': lane,
+            'revision': rev,
+            'framework': {'name': 'anchor-truth-selftest', 'version': '2'},
+            'oracle': 'node scripts/anchor-truth.mjs --selftest',
+            'thresholds': {'high': 80, 'low': 20, 'break': None},
+            'baseline': base,
+            'summary': {'total': len(results), 'killed': killed, 'survived': survived,
+                        'runtimeError': invalid,
+                        'survivors': [r['id'] for r in results if r['status'] == 'Survived'],
+                        'runtimeErrors': [r['id'] for r in results if r['status'] == 'RuntimeError']},
+            'files': {
+                TARGET: {
+                    'language': 'javascript',
+                    'source': base['source'],
+                    'mutants': results,
+                }
+            },
+        }
+        json_out = args.json_out or os.path.join(args.out_dir, 'mutants-ledger.json')
+        table_out = args.table_out or os.path.join(args.out_dir, 'mutants-table.txt')
+        with open(json_out, 'w', encoding='utf-8') as fh:
+            json.dump(ledger, fh, indent=2, sort_keys=False)
+            fh.write('\n')
+        txt = table(results, meta)
+        with open(table_out, 'w', encoding='utf-8') as fh:
+            fh.write(txt)
+        print(txt, end='')
+        print(f'ledger: {os.path.abspath(json_out)}')
+        print(f'table:  {os.path.abspath(table_out)}')
+        print('sha256(ledger)=' + hashlib.sha256(open(json_out, 'rb').read()).hexdigest())
+        if args.strict and survived:
+            return 1
+        return 0
+    finally:
+        if not args.keep_temp:
+            shutil.rmtree(workroot, ignore_errors=True)
+
+
+if __name__ == '__main__':
+    sys.exit(main())
