@@ -1,0 +1,49 @@
+# round 42 open receipts, lane master dfabe92bcec021f5beec457fb50cec484e047e35, measured 2026-10-22T19:52:15Z, working copy clean before this file (jj-lane state tracked=0 untracked=0)
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json | jq -c '.terms | {A, C, operability, C2, C2_total, coverage, K_members, K_sections, coverage_kimi}'
+{"A":9,"C":17,"operability":8,"C2":92,"C2_total":93,"coverage":9,"K_members":52,"K_sections":52,"coverage_kimi":10}
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict ; echo exit=$?   (non-ok lines)
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=92 computed=93 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY  warn  PIN_UNPINNED  scripts/anchor-truth.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/sources-check.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/wave-census.mjs has no pin.<name> key in the kumitate-proxy-v1 stanza
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=92 computed=93 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/anchor-truth.mjs; PIN_UNPINNED term=scripts/sources-check.mjs; PIN_UNPINNED term=scripts/wave-census.mjs; src-rev=31c465f15669)
+exit=1
+$ node scripts/kimi-census.mjs ; echo exit=$?   (non-ok lines)
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=27  checked=27  frozen=27
+FAMILY K3  members=9  checked=9  frozen=9
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=8 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=35 declared=26 chain=8 strays=1 (root enumerated against K1–K5; drift-chain generations exempt)
+CENSUS  error  UNLISTED  locks  locks sits at the root and is not declared by the frozen K1–K5 set
+TOTALS: members=52 checked=52 errors=1 info=4 chain=8
+KIMI_CENSUS: DRIFT (UNLISTED locks)
+exit=1
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate ; echo exit=$?
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+$ for i in 1 2 3; do s=$(date +%s%N); node scripts/cite-check.mjs --selftest | tail -1; echo ms=$(( ($(date +%s%N)-s)/1000000 )); done
+VERDICT: PASS
+ms=844
+VERDICT: PASS
+ms=857
+VERDICT: PASS
+ms=838
+$ grep -c '^\s*- \[' SKILL.md
+17
+$ sha256sum scripts/*.mjs
+5a7893cba3eaecb04025a7983c0ffe779be2acb547f333907533f90a723db65c  scripts/anchor-truth.mjs
+896f0720b7fe7492806b0a5b7458a995de1d666d6759297675b7d964872c6d0e  scripts/cite-check.mjs
+0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487  scripts/claims-check.mjs
+ded569fec9b67cfbc0982f3fb431453e44b322024db457e184a99d81376c3d08  scripts/kimi-census.mjs
+f9416d666d390c03804319f4524f2be552e49f4c1bfa704cb94321159814f1d9  scripts/proxy-check.mjs
+f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9  scripts/round-gate.mjs
+6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f  scripts/sources-check.mjs
+1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5  scripts/surface-probe.mjs
+d6068d1b213064a4ff69f3489b4261e9fe37911ec4aa0e49a300d06c0ac17204  scripts/wave-census.mjs
