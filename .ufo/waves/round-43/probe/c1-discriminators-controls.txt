@@ -1,0 +1,19 @@
+# C1 addendum discriminators scored before the measured run, 2026-10-22T22:30:08Z; script sha256 7e2d4f34bba3e11f721a9d53569244a097bc0d4757616d7220a6f4025df593ed
+## do-nothing: lane e5ffcbe7 vs itself
+D-static added_self_reads=0 base=e5ffcbe7f155b89cb1870f9da7b0d671d092948b rev=e5ffcbe7f155b89cb1870f9da7b0d671d092948b
+D-null cite-check exit=0 verdict_pass=1 verdict_fail=0 fail_lines=0 75/75 cases passed (hermetic)
+D-null wave-census exit=0 verdict_pass=1 verdict_fail=0 fail_lines=0 WAVE_CENSUS_SELFTEST: 31/31 pass
+C1_DISCRIMINATORS: PASS rev=e5ffcbe7f155b89cb1870f9da7b0d671d092948b
+exit=0
+## J4 literal-detector junk (seat ExecJunkControls clone, commit 431d3b63, frozen counter read CLEAN)
+D-static added_self_reads=2 base=e5ffcbe7f155b89cb1870f9da7b0d671d092948b rev=431d3b63fdca6e28d35d5c653a9e60b0dfc352de
+D-null cite-check exit=0 verdict_pass=1 verdict_fail=0 fail_lines=0 75/75 cases passed (hermetic)
+D-null wave-census exit=0 verdict_pass=1 verdict_fail=0 fail_lines=0 WAVE_CENSUS_SELFTEST: 31/31 pass
+C1_DISCRIMINATORS: FAIL rev=431d3b63fdca6e28d35d5c653a9e60b0dfc352de
+exit=1
+## self-digest tripwire junk (seat CritK43Rule clone, commit 8310b96c, frozen counter read CLEAN)
+D-static added_self_reads=2 base=e5ffcbe7f155b89cb1870f9da7b0d671d092948b rev=8310b96c5d68b2b211668e3c4054c34126beec27
+D-null cite-check exit=1 verdict_pass=0 verdict_fail=1 fail_lines=1 74/75 cases passed (hermetic)
+D-null wave-census exit=1 verdict_pass=0 verdict_fail=1 fail_lines=1 
+C1_DISCRIMINATORS: FAIL rev=8310b96c5d68b2b211668e3c4054c34126beec27
+exit=1
