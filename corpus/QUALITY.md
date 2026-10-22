@@ -206,3 +206,113 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
     compound term (here `drift`) is a term under this rule; these three are open and
     pre-registered for round 41.
 
+
+## Round criteria — round 41 routed defects (R41-1, R41-4, R41-5, R41-7)
+
+- **Q21 — a round that rejects nothing says so, and every reject carries the criterion it
+  missed and the flip condition.** A `## Gate` section that records only admits and re-opens
+  leaves the outside check nothing to sample for discernment, so the round cannot show the
+  admit-and-reject agreement `LEARNING.md` asks for. The defect is a missing record, not a
+  missing rejection: a round that rejected nothing states why, so the next round can sample
+  either a same-round reject or a named standing one. Grounding:
+  `corpus/lessons/round-41-verifier-spotcheck.md` R41-1 and its `## Discernment spot-check`
+  (the round-41 `## Gate` holds three decisions, all admits or re-opens, and the round made no
+  reject).
+  - **Who checks.** The lane L1 before the round lesson commits; the non-author closure's
+    discernment spot-check, which samples the same section.
+  - **Field.** In `corpus/lessons/round-<N>.md`, every decision bullet in `## Gate` opens
+    with `Admit`, `Re-open`, `Reject` or `Hold` and names the candidate (an `S###` id or a
+    path), the criterion it met or missed (a `Q<n>` id or a named gate term), and the
+    re-opened source with what it returned. A registry logging bullet
+    (`**New row, logged:**`) is not a decision and carries no verdict word. A `Reject` or
+    `Hold` also names what would flip the verdict. When nothing was rejected or held, one
+    line reads `no reject this round — <why>` and the
+    section names at least one standing reject it re-opened, with the re-adjudication result.
+  - **Command.**
+    `sed -n '/^## Gate/,/^## /p' corpus/lessons/round-<N>.md | grep -cE '^- \*\*(Reject|Hold)'`;
+    when that reads 0,
+    `sed -n '/^## Gate/,/^## /p' corpus/lessons/round-<N>.md | grep -c '^- no reject this round'`
+    must read 1, and the section must name the standing reject it re-opened.
+  - **Fails when.** The count is 0 and the no-reject line is absent (round 41: `0` and `0`,
+    measured); a reject names no criterion or no flip condition; the no-reject line names no
+    re-opened standing reject, so the outside check still has no sample.
+
+- **Q22 — verdicts are keyed by axis, and the counted-claim count is the number of axes that
+  carry a claim.** `AXES.md:31-33` makes the axis the counting unit ("two claims on one axis
+  in one round count as one claim"); a report keyed by claim id forces the closure to re-key
+  it and can hide that two claims are one counted claim. Grounding:
+  `corpus/lessons/round-41-verifier-spotcheck.md` R41-4 and its `## Claims` section (both
+  claims land on operability, so the round carries one counted claim).
+  - **Who checks.** The non-author closure at the claims step, which grades each axis; the
+    lane L1 runs the set comparison before committing the report.
+  - **Field.** The fleet report `.ufo/reports/round-<N>/kumitate.md` (fleet root
+    `/home/vgpnk/Projects/shokunin`) carries `## Per-axis verdicts` with the table columns
+    `| axis | verdict | claims | basis |`: exactly the `## Axes` first-column names of
+    `SCORECARD.md`, one row each; `verdict` is one of `improved`, `harmed`, `unchanged`,
+    `unprovable-but-better`, `unprovable`; `claims` names every `C<n>` the round placed on
+    that axis, or `—`; one line reads `counted claims=<n>`, where n is the number of rows
+    whose `claims` column names a claim. Every `C<n>` declared in
+    `.ufo/waves/round-<N>/plan.md` appears in the section; a duplicated axis row is caught
+    by the axis-set diff below, which compares sorted lists without deduplicating. Where the
+    plan heading names an axis (`## C<n> — <axis>`), the row's axis equals it, and a
+    `capability` heading has its axis declared in the row.
+  - **Command.** The axis set must match the scorecard:
+    `diff <(awk -F'|' '/^## Axes/{f=1;next}/^## /{f=0}f&&$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="Axis")print v}' SCORECARD.md | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | awk -F'|' '$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="axis")print v}' | sort)`
+    prints nothing. Every declared claim is keyed:
+    `diff <(grep -oE '^## C[0-9]+' .ufo/waves/round-<N>/plan.md | tr -d '# ' | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -oE 'C[0-9]+' | sort -u)`
+    prints nothing. The stated count must equal the rows:
+    `sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | awk -F'|' '$4~/C[0-9]+/{n++} END{print n+0}'`.
+  - **Fails when.** Either diff prints a line (round 41: no `## Per-axis verdicts` section,
+    `grep -c` = 0; claim diff `1,2d0 < C1 < C2`, exit 1); verdicts are keyed by claim (four
+    `- **C<n>**` bullets in the round-41 report); `counted claims` disagrees with the rows
+    (round 41: two claims, one axis, so 1); or a capability claim's axis is left implicit.
+
+- **Q23 — `## Round shape` accounts for every committed dispatch file, and separates payload
+  from spawned.** A payload proves validation, not dispatch (round 39's validated 46-seat
+  payload never spawned), and a shape written only in prose cannot be reconciled with the
+  dispatch receipts or the seat gate. Grounding:
+  `corpus/lessons/round-41-verifier-spotcheck.md` R41-5 and its `## Round shape` section
+  (the §3 floor unmet in wave 1; falsify dispatched although the build wave never dispatched,
+  undisclosed in the report; a third v1 wave, disclosed).
+  - **Who checks.** The lane L1 before the report commit; the non-author closure re-derives
+    each line from the dispatch JSON and the seat-gate evidence.
+  - **Field.** In the report's `## Round shape`, one line per
+    `.ufo/waves/round-<N>/<wave>-dispatch.json` shaped
+    `WAVE <wave> payload=<counts.spawn> spawned=<n> returned=<n> dead=<n> gate=<granted|never granted>`,
+    with `<wave>` exactly the file's `.wave`; one line
+    `FLOOR wave1 spawned executor=<n>/3 scribe=<n>/1 scout=<n>/1 connector=<n>/1 reviewer=<n>/1 critic=<n>/1 verdict=<met|unmet>`
+    counted from spawned seats, not from the payload; one line `spawned total=<n> (<=128)`
+    (the operator raised the round cap from 100 to 128 on 2026-10-22);
+    and one bullet per deviation from the allowed shapes (two v1 waves, one v2 wave, a
+    residual call of at most 8 reviewer or critic seats), naming the rule, the observed
+    counts and the cause, including any wave dispatched before its predecessor returned.
+  - **Command.**
+    `for f in .ufo/waves/round-<N>/*-dispatch.json; do w=$(jq -r .wave "$f"); sed -n '/^## Round shape/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -q "^WAVE $w " && echo "ok $w" || echo "MISSING $w"; done`
+    must print only `ok` lines;
+    `sed -n '/^## Round shape/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -cE '^(FLOOR|spawned total)'`
+    must read 2.
+  - **Fails when.** Any `MISSING <wave>` (round 41: all three MISSING — the section is prose);
+    a payload `seats=` figure is written as spawned (round 41: `wave-census` reads `seats=106`
+    against 72 spawned); a wave dispatched without its predecessor returning is not a deviation
+    bullet (round 41 names the third wave but not the build-to-falsify order); `spawned total`
+    exceeds 128; a floor role at 0 is not reflected as `unmet`.
+
+- **Q24 — a cited receipt names the bytes it measured, and its label must equal its digest.**
+  A header that names a commit whose blob does not hash to the stated digest certifies bytes
+  that never existed at that commit, so the number cannot be regenerated from the named
+  source. Grounding: `corpus/lessons/round-41-verifier-spotcheck.md` R41-7 and its `## Claims`
+  evidence section (the `a2-census-*` receipts say "over master fae386aa" while their digest
+  is the blob that landed in `fb7046ca`).
+  - **Who checks.** The seat that writes the receipt, at write time; the non-author closure
+    re-derives one cited receipt per claim.
+  - **Field.** Every receipt the report or lesson cites for a number carries, on its first two
+    lines, `<path> sha256 <64-hex>` or `rev=<40-hex>`; when it also carries a label
+    (`over master <rev>`, `at <rev>`), `git show <rev>:<path> | sha256sum` in the lane equals
+    the stated digest. `working-copy` is allowed only together with a digest.
+  - **Command.** `git -C <lane root> show <rev>:<path> | sha256sum` against the header digest;
+    `grep -L -E '(rev=[0-9a-f]{40}|sha256 [0-9a-f]{64})' <cited receipts>` prints nothing.
+  - **Fails when.** A cited receipt carries no digest (round 41: 13 of the 18 `.txt` files
+    under `.ufo/waves/round-41` carry none in their first three lines, measured); the label's
+    commit hashes differently from the stated digest (round 41: label `fae386aa`, digest
+    `d6068d1b…` = `fb7046ca`'s blob, while `fae386aa` hashes `3a32dd34…`); or the digest
+    belongs to a different file than the one the numbers came from.

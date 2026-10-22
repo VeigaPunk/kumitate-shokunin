@@ -1,0 +1,320 @@
+{
+ "wave": "kumitate-r42-build",
+ "milestone": "r42 build + first falsifiers",
+ "axes": [
+  "operability",
+  "coverage:kimi-layer"
+ ],
+ "reportDir": ".ufo/waves/round-42/build",
+ "context": "# Goal\nkumitate round 42 ONLY (lane operability + coverage: orchestration and tooling), wave 1 of 2 (build + first falsifiers). Lane revision for this wave: b237e3f09c9559e130c7367bd2efa981c4ea516f (lane branch master; round open dfabe92bcec021f5beec457fb50cec484e047e35 plus the plan commit). Pinned upstream source clone /fast/scratch/hyaku/kumitate-pin/src at 31c465f15669f744848bd9f5d56191c5085670f7 (read-only; never use the moving /home/vgpnk/Projects/ufo-fsd-alpha checkout; always pass --src /fast/scratch/hyaku/kumitate-pin/src to lane gates that take it). Frozen anchor-truth base: e18ff1af3392e3823227644c977c237737fe65c9.\nThe plan, with the declared claims and their frozen counters, is /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/plan.md — read it first. Round-open receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/open/receipts.txt. In short:\nC1 operability (capability `gate-mutants`): a new lane instrument scripts/gate-mutants.mjs runs a frozen embedded manifest of single-literal mutants against lane gates (16 cite-check ids from .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt and 25 wave-census ids from .ufo/waves/round-41/final/a2-census-*-mutants.txt), each in a temp copy of scripts/ with that copy's --selftest; plus two SKILL checklist items, so proxy terms A 9->10, C 17->19, operability 8->9.\nC2 coverage:kimi-layer: the host root child ~/.kimi-code/locks (kimi-census `UNLISTED locks`, DRIFT, exit 1) becomes a declared, source-backed member: census CLEAN exit 0, K_members 52->53, K_sections 52->53.\nRouted defects from the round-41 closure (/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-41-verifier-spotcheck.md, section `## Routed defects`): R41-1 to R41-7.\n# Contract\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>. That report file is the ONLY thing you may write inside the lane. All other lane files are READ-ONLY for you. Never run git or jj writes in the lane repo or the fleet repo /home/vgpnk/Projects/shokunin (no commit, add, stash, checkout, reset, push, fetch, jj mutation; read-only jj only with --ignore-working-copy; never write in the fleet repo), never touch sibling lanes, operator config (~/.omp, ~/.kimi-code contents) or host state.\nScratch ONLY under /fast/scratch/hyaku/kumitate-r42/seats/<YourName>/. Any code edit or gate run that writes happens in your OWN clone, made with GIT_DIR, GIT_WORK_TREE and GIT_INDEX_FILE unset: env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r42/seats/<YourName>/lane && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r42/seats/<YourName>/lane checkout -q --detach b237e3f09c9559e130c7367bd2efa981c4ea516f. You may commit inside your own scratch clone; never push anywhere. Writers deliver their change as a patch file `git -C <clone> diff b237e3f09c9559e130c7367bd2efa981c4ea516f -- <paths> > /fast/scratch/hyaku/kumitate-r42/seats/<YourName>/<YourName>.patch` (apply-clean against b237e3f09c9559e130c7367bd2efa981c4ea516f) and name it in the report.\nQuote the revision, the exact command and the observed output for every result; an unrun check is unverified, never passed. Mutation outcomes use the Stryker vocabulary: killed = at least one test failed while the mutant was active; survived = all passed; a crash, runtime error or timeout is NOT a kill. Any mutant or selftest run that may recurse (cite-check guard mutants recursed to 46 processes and 3.2 GB in 10 s in round 41) runs in its own process group under a timeout of at most 60 s and is killed by group; check leftovers are 0 afterwards.\nNo model param. You are a leaf: no spawns (an executor may spawn one read-only labrat probe for one falsifiable hypothesis), no agent://all, no background jobs left running. The only message target you may use is agent://KumitateR42 (the L1), and only for a blocker. Tooling: you may install or upgrade tools that help the task; read /home/vgpnk/.omp/agent/RULES.md first; official channels only; record tool, version, channel and reason in your report. pacman guard: ALL pacman transactions are PAUSED host-wide (no -S, -Sy, -Syu, -U, -R; no host service restarts); use uv tool / npx / an official binary in ~/.local/bin instead. No secrets: never read credential, token, oauth or server.token contents under ~/.kimi-code or ~/.omp (shape only).\nSourcing rule (binding): open sources by ordinary means only. Never use a headless browser or any other tool to pass a bot challenge, captcha or access control. Record a source you cannot open that way as unopened. A provider safety or policy refusal ends your item: report it as such and stop.\nReport shape: first line `RESULT <YourName> rev=<rev> verdict=<one word> ...` as your item asks, then at most 40 evidence lines (commands and outputs). Plain English, no run-together words, no private jargon. Your item is unique; do not duplicate other seats.",
+ "items": [
+  {
+   "name": "ExecGateMutants",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecGateMutants\nC1 instrument. In your clone write scripts/gate-mutants.mjs per the plan's C1 section (contract kumitate-gate-mutants-v1; lane style: read scripts/wave-census.mjs and scripts/sources-check.mjs for the house verdict/exit/selftest conventions and `--help`). Manifest embedded in the script: the 16 cite-check mutants copied literal-for-literal from .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt and the 25 wave-census mutants from the four .ufo/waves/round-41/final/a2-census-*-mutants.txt receipts (ids `wave-census:<group>/<id>`, `cite-check:<id>`). Rules: copy the measured revision's whole scripts/ dir to a temp dir (selftests import siblings); `from` must occur exactly once in the target else nomatch; run `node <tmp>/scripts/<target> --selftest` with env scrubbed of every KUMITATE_* variable, detached in its own process group, timeout 60 s, kill by group; killed = exit!=0 AND a `VERDICT: FAIL` line; exit!=0 without it = crash; one control run per target first (must PASS, else exit 2); bounded parallelism (default 8, `--jobs N`). Header line: `GATE_MUTANTS_HEADER rev=<commit|working-copy> <target>=<sha256 of the bytes mutated> ...`. Flags: `--rev <commit>` (read scripts via git show from /home/vgpnk/Projects/shokunin/kumitate-shokunin read-only, or a given `--repo`), `--target <name>`, `--list`, `--json`, `--selftest` (hermetic fixtures in tmp: a fake target whose mutants are killed, one survivor, one nomatch, one crash, one timeout, a failing control, the header digest equals sha256 of the mutated bytes), `-h`. Exit 0 CLEAN / 1 SURVIVED / 2 setup-nomatch-crash-timeout-control / 64 usage. Run it at b237e3f09c9559e130c7367bd2efa981c4ea516f (all 41 must be killed) and with `--rev dfabe92bcec021f5beec457fb50cec484e047e35`; run --selftest; deliver the patch.\nFirst line: `RESULT ExecGateMutants rev=<rev> verdict=<word> killed=<k>/<n> selftest=<p>/<q> open_killed=<k>/<n>`."
+  },
+  {
+   "name": "ExecCiteGuard",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecCiteGuard\nRouted defect R41-3. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-41/verify/MutCiteGuardTip.md (F1: guard-outer-literal-2, child-text-env-dropped, child-json-env-dropped recurse; F2: guard-outer-ne-1 and guard-outer-eq-undefined survive, killed at 4e58bb0e). In your clone change scripts/cite-check.mjs so the self-observation child cannot recurse whatever literal a single mutant changes (for example a depth or parent-pid marker the child refuses to exceed), and add red-before selftest cases so all five mutants are KILLED quickly (exit 1, VERDICT: FAIL). Red-before: run each of the 5 mutants at b237e3f09c9559e130c7367bd2efa981c4ea516f bytes (contained: own process group, 60 s timeout, RSS watch) and after your patch. Also re-run the committed probe `.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` at your patched bytes (must stay survived=0/16 control=PASS; if a literal moved, say which). Measure `node scripts/cite-check.mjs --selftest` wall time 3x before and after (open: 844/857/838 ms); the round-41 cost trade must not deepen — if your fix adds time, report the ms. Report the five mutants as exact from/to literals at your patched bytes (each occurring exactly once) for the gate-mutants manifest. Deliver the patch.\nFirst line: `RESULT ExecCiteGuard rev=<rev> verdict=<word> killed_before=<k>/5 killed_after=<k>/5 selftest_ms_before=<a,b,c> after=<a,b,c>`."
+  },
+  {
+   "name": "ExecKimiLocks",
+   "role": "executor",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecKimiLocks\nC2 instrument change. In your clone, read scripts/kimi-census.mjs (frozen K1-K5 member registry, root enumeration, tripwire chain) and corpus/knowledge/kimi-*.md, and how round 40 bound kimi-webbridge (SCORECARD.md row coverage:kimi-layer; corpus/lessons/round-40.md). Add `locks` (the directory ~/.kimi-code/locks; it currently holds one child directory `sessions`) as a declared member in the family where it belongs, with the census selftest cases (declared locks reads CLEAN; an undeclared stray still reads UNLISTED) and any tripwire re-pin the census requires. Shape only: lstat/readdir, never open file contents. Run `node scripts/kimi-census.mjs; echo exit=$?` and `--selftest` before (at b237e3f09c9559e130c7367bd2efa981c4ea516f) and after in your clone; run `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json | jq -c '.terms|{K_members,K_sections,coverage_kimi}'` and say exactly which heading text in which corpus/knowledge/kimi-*.md file makes K_sections count the new member (the scribe ScribeKimiLocksEntry drafts the prose; you give the exact heading). Deliver the patch for scripts/ only.\nFirst line: `RESULT ExecKimiLocks rev=<rev> verdict=<word> census_before=<verdict> census_after=<verdict> K=<sections>/<members> selftest=<p>/<q>`."
+  },
+  {
+   "name": "ExecProxyPins",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecProxyPins\nRouted defect R41-2. `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict` warns PIN_UNPINNED for scripts/anchor-truth.mjs, scripts/sources-check.mjs and scripts/wave-census.mjs. Find how the kumitate-proxy-v1 stanza (SCORECARD.md lines ~280-307) and scripts/proxy-check.mjs read pin keys and what the 'frozen key set' rule allows (SCORECARD.md around lines 320-335; round 34 added pin.sources-check? check). In your clone make the three pins land (stanza keys `pin.<name>=<sha256>`, plus proxy-check code and selftest cases only if the code cannot accept them as is; if you edit proxy-check.mjs, re-pin pin.proxy-check). Also make sure a future `scripts/gate-mutants.mjs` is handled the same way (state the exact key). Before/after: `--strict` warning count and verdict at b237e3f09c9559e130c7367bd2efa981c4ea516f and in your clone. Report the exact stanza lines to add/change; deliver the patch.\nFirst line: `RESULT ExecProxyPins rev=<rev> verdict=<word> warnings_before=<n> warnings_after=<n> code_changed=<yes|no>`."
+  },
+  {
+   "name": "ExecAnchorCaps",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecAnchorCaps\nCarried R40-4 (via R41-6). Read corpus/lessons/round-40.md and corpus/lessons/round-41.md for 'resource caps' / R40-4 and scripts/anchor-truth.mjs `--open` mode. Add explicit resource caps (input size, entry count, review-record count, or whatever unbounded read R40-4 names) that fail closed with a named finding and exit 2, plus red-before selftest cases (each new case fails on b237e3f09c9559e130c7367bd2efa981c4ea516f bytes, passes after). Measure `node scripts/anchor-truth.mjs --selftest` wall time 3x before/after and run the checklist command `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9 --src /fast/scratch/hyaku/kumitate-pin/src` before/after (verdict must not change). Deliver the patch.\nFirst line: `RESULT ExecAnchorCaps rev=<rev> verdict=<word> red_before=<n failing at rev> after=<p>/<q> truth_before=<v> truth_after=<v>`."
+  },
+  {
+   "name": "ExecCensusHarden",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecCensusHarden\nCarried R41-6 sentinel findings on scripts/wave-census.mjs (corpus/lessons/round-41.md open limits; .ufo/waves/round-41/verify/ for the sentinel seat's report): no realpath confinement of `Report:` paths, FIFO / non-regular reads, no size caps, trailer anchoring. Fix those you can with red-before selftest cases. HARD CONSTRAINT: the 25 mutant `from` literals in .ufo/waves/round-41/final/a2-census-*-mutants.txt are the gate-mutants manifest; keep every one of those literals present exactly once in your patched file, and after patching re-run all 25 mutants (temp copy, --selftest) — all must stay killed. Also confirm `node scripts/wave-census.mjs --round 40` and `--round 41` outputs are byte-identical before/after (census behaviour unchanged for well-formed input). Deliver the patch.\nFirst line: `RESULT ExecCensusHarden rev=<rev> verdict=<word> fixed=<n>/<findings> census_mutants_killed=<k>/25 outputs_identical=<yes|no>`."
+  },
+  {
+   "name": "ExecHonestReMeasure",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecHonestReMeasure\nCarried R40-2 (via R41-6), measurement only. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-40-verifier-spotcheck.md (R40-2) and round-41 lesson notes on why it was not re-measured (seat died). Re-measure the honest-edit set at the AT46 gate exactly as R40-2 asks (in your clone at b237e3f09c9559e130c7367bd2efa981c4ea516f; the checklist truth item and its `--open` form; use the CritOperabilityCost recipes named in the round-40 lesson if present). Report each honest edit's verdict with command and output, and the count accepted/refused, with no code change.\nFirst line: `RESULT ExecHonestReMeasure rev=<rev> verdict=<word> honest_clean=<k>/<n> open_mode=<k>/<n>`."
+  },
+  {
+   "name": "MutCiteOpen",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCiteOpen\nIndependent before-value for C1's cite-check subset. In your clone at dfabe92bcec021f5beec457fb50cec484e047e35 run the committed probe: `node --input-type=module - --lane <clone> --rev dfabe92bcec021f5beec457fb50cec484e047e35 < .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` (read its header for the exact args), contained per the contract. Report the footer and every MUTANT line. Then attack the probe's kill rule (round-41 F4: a case moved out of the suite reads survived only because p==n) and state what gate-mutants must do differently.\nFirst line: `RESULT MutCiteOpen rev={OPEN} verdict=<word> survived=<n>/16 nomatch=<m> control=<PASS|FAIL>`."
+  },
+  {
+   "name": "MutCensusOpen",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCensusOpen\nIndependent before-value for C1's wave-census subset. In your clone at dfabe92bcec021f5beec457fb50cec484e047e35, apply each of the 25 mutants listed in .ufo/waves/round-41/final/a2-census-{repair,survivor,findings,exits}-mutants.txt (from/to literals in each MUTANT line) one at a time to a temp copy of scripts/ and run `--selftest`. Report per mutant: occurrences of `from` in the file (must be exactly 1), killed/survived/crash. Name every literal that is ambiguous or not exactly reproducible from the receipt text (the manifest must copy them literally).\nFirst line: `RESULT MutCensusOpen rev={OPEN} verdict=<word> killed=<k>/25 ambiguous=<n>`."
+  },
+  {
+   "name": "MutGuardOpen",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutGuardOpen\nIndependent red-before for R41-3 at dfabe92bcec021f5beec457fb50cec484e047e35: apply the five guard mutants of .ufo/waves/round-41/verify/MutCiteGuardTip.md (F1 guard-outer-literal-2, child-text-env-dropped, child-json-env-dropped; F2 guard-outer-ne-1, guard-outer-eq-undefined) one at a time to scripts/cite-check.mjs in a temp copy and run --selftest under strict containment (own process group, timeout 30 s, a watcher killing the group above 12 processes or 1 GB RSS). Report each outcome (killed / survived / recursed=crash) and leftover process count 0. Then write 3 further guard mutants the round-41 seat did not try and report their outcomes.\nFirst line: `RESULT MutGuardOpen rev={OPEN} verdict=<word> killed=<k>/5 recursed=<r> survived=<s> extra=<k>/3`."
+  },
+  {
+   "name": "ScoutKimiLocksSource",
+   "role": "scout",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutKimiLocksSource\nC2 source. Find what creates ~/.kimi-code/locks/sessions (directory, created 2026-10-22 13:53 -0300, empty). Look at the installed Kimi Code CLI (find its install under ~/.kimi-code/bin, ~/.local, npm/uv tool dirs; read code/strings by ordinary means) and the official upstream source or docs (e.g. MoonshotAI kimi-cli / kimi-code repository on GitHub, official docs site). Record for the best source: URL or absolute path plus version/commit, access date, and a located verbatim quote of at most 25 words that shows the locks/sessions path and its purpose. Report also any second candidate you opened and why it is weaker.\nFirst line: `RESULT ScoutKimiLocksSource rev=- verdict=<found|notfound> source=<url-or-path> version=<v>`."
+  },
+  {
+   "name": "ScoutKimiKnowledgeHome",
+   "role": "scout",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutKimiKnowledgeHome\nC2 binding. In /home/vgpnk/Projects/shokunin/kumitate-shokunin: which corpus/knowledge/kimi-*.md file holds sections for ~/.kimi-code root members (sessions, workspaces.json, file-history...) and what exact heading form proxy-check's K_sections counter accepts (read scripts/proxy-check.mjs K_sections logic and K_SECTION_AMBIGUOUS). Propose the exact heading line for `~/.kimi-code/locks` and the file; say if a basename collision (another member named locks or sessions) would make it ambiguous.\nFirst line: `RESULT ScoutKimiKnowledgeHome rev={REV} verdict=<word> file=<path> heading=<text>`."
+  },
+  {
+   "name": "ScoutMutationSource",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutMutationSource\nC1 source (sourced claim). Open by ordinary means one primary source on running mutation testing as a standing or code-review gate (candidates: Petrovic, Ivankovic et al. 'Practical Mutation Testing at Scale' arXiv 2102.11378; Petrovic & Ivankovic 'State of Mutation Testing at Google' ICSE-SEIP 2018; PIT or Stryker official docs on thresholds/break). Report URL, access date, and two located verbatim quotes (each at most 25 words) that support: mutants run against existing tests and a surviving mutant marks a test gap; timeouts/errors handling if stated. Also report any candidate you opened and would reject, with the reason.\nFirst line: `RESULT ScoutMutationSource rev=- verdict=<found|notfound> source=<url>`."
+  },
+  {
+   "name": "ScoutRejectCandidates",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutRejectCandidates\nR41-1 (same-round rejects). The round's Gate must sample real rejects. Open at least four candidate sources a hurried author might cite for C1 or C2 (e.g. a blog post on mutation score thresholds, a Medium article on 'mutation testing in CI', a third-party mirror of Kimi CLI docs, an AI-generated summary page, a forum answer about lock dirs) and judge each against /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/QUALITY.md and the tier rules in /home/vgpnk/Projects/shokunin/CORPUS.md section 'SOURCES.md — where a shokunin learns'. For each: URL, access date, located quote (<= 25 words) or 'unopened', decision admit/reject, reason, and the flip condition that would change a reject.\nFirst line: `RESULT ScoutRejectCandidates rev=- verdict=<word> opened=<n> rejects=<n>`."
+  },
+  {
+   "name": "ScoutCensusFindings",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutCensusFindings\nR41-6 triage. In /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-41/ (falsify and verify reports, final receipts) and corpus/lessons/round-41.md, list the 12 attempt-1 census findings and the 5 report-presence gaps the round-41 closure names. For each: id, one-line description, file:line evidence, and status at b237e3f09c9559e130c7367bd2efa981c4ea516f (fixed with pointer / open / superseded). Output a table.\nFirst line: `RESULT ScoutCensusFindings rev={REV} verdict=<word> findings_open=<n>/12 gaps_open=<n>/5`."
+  },
+  {
+   "name": "ScoutSourcesRecheck",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutSourcesRecheck\nFrontier step. In /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md list every row whose recheck date is on or before 2026-10-22 or whose status is queued, and the W04 duplicate (S034 url across scopes). Re-open up to five overdue rows by ordinary means: for each, URL, access date, whether the recorded quote still occurs verbatim, and a proposed old->new status/recheck change. Propose the W04 resolution allowed by the contract.\nFirst line: `RESULT ScoutSourcesRecheck rev={REV} verdict=<word> overdue=<n> reopened=<n> quote_ok=<n>`."
+  },
+  {
+   "name": "ScoutPlanWalk",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutPlanWalk\nPlanner data-walk (the L1 holds the canonical planner seat; this is its bounded data walk). Walk /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/plan.md against SCORECARD.md (`## Planned` latest, `## Saturation`, `## Capabilities`, proxy stanza), AXES.md and MISSION.md at /home/vgpnk/Projects/shokunin and the round-41 spot-check. For each declared after-value, give the one command over committed bytes that re-derives it and any way it could read differently at landing (host drift, C2 total moving with new lesson files, stanza keys). List what the L1 must update in the stanza (C2, C2_total and new pins) at landing.\nFirst line: `RESULT ScoutPlanWalk rev={REV} verdict=<word> risks=<n>`."
+  },
+  {
+   "name": "ConnSiblingOverlap",
+   "role": "connector",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ConnSiblingOverlap\nSibling-overlap scan (adjacency). Under /home/vgpnk/Projects/shokunin/*-shokunin (read-only), find other lanes that (a) run mutation-kill gates or mutant probes over their own scripts, (b) document ~/.kimi-code root members or the Kimi CLI locks/sessions layout, (c) pin gate digests in a proxy stanza. For each hit: lane, path:line, and whether it overlaps, conflicts with, or could reuse kumitate's C1/C2 (contested scope is reported, not absorbed). Name one transferable pattern each way.\nFirst line: `RESULT ConnSiblingOverlap rev=- verdict=<word> overlaps=<n>`."
+  },
+  {
+   "name": "ScribeLessonDraft",
+   "role": "scribe",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeLessonDraft\nDraft /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-42.md in the shape of corpus/lessons/round-41.md (header, Claims, `## Gate`, `## Mistakes`, `## Open limits`) as text inside your report (not in the lane). `## Mistakes`: mine R41-7 (receipt headers said 'over master fae386aa' while the bytes landed in fb7046ca; class, evidence pointer /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-41/final/a2-census-repair-mutants.txt:2 and the closure line, captured-by, fix = gate-mutants header names the sha256 of mutated bytes, shown able to fail by a selftest case) and R41-5 (falsify wave dispatched without a dispatched build wave, not named in the report). Leave numbers as `<pending>` where the round has not measured them yet.\nFirst line: `RESULT ScribeLessonDraft rev={REV} verdict=drafted mistakes=<n>`."
+  },
+  {
+   "name": "ScribeQualityCriteria",
+   "role": "scribe",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeQualityCriteria\nDraft new /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/QUALITY.md criteria (next free Q numbers; read the file's shape) that turn each round-41 routed defect R41-1, R41-4, R41-5 and R41-7 into a checkable criterion (who checks, what command or field, what fails), each citing corpus/lessons/round-41-verifier-spotcheck.md. Text inside your report only.\nFirst line: `RESULT ScribeQualityCriteria rev={REV} verdict=drafted criteria=<n>`."
+  },
+  {
+   "name": "ScribeKimiLocksEntry",
+   "role": "scribe",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeKimiLocksEntry\nC2 prose. Open the Kimi Code source that creates ~/.kimi-code/locks/sessions yourself (installed CLI under ~/.kimi-code or upstream repo/docs; ordinary means; never read secret file contents). Draft the knowledge section for `~/.kimi-code/locks` to append to the right /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/kimi-*.md file (match neighbouring sections: what it is, who creates it, lifecycle, how the census treats it, source citation as `S0xx` placeholder plus URL and a <= 25-word located quote). Also draft the SOURCES.md row in the registry's column shape. Text inside your report only.\nFirst line: `RESULT ScribeKimiLocksEntry rev={REV} verdict=drafted source=<url-or-path>`."
+  },
+  {
+   "name": "ScribeSkillRows",
+   "role": "scribe",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeSkillRows\nC1 prose. Draft for /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md: the gate-registry row for gate-mutants (match the `| wave-census | gate | ...` row's columns), two `## Verifiable checklist` items (`node scripts/gate-mutants.mjs` -> exit 0 + `GATE_MUTANTS: CLEAN`; `node scripts/gate-mutants.mjs --selftest` -> exit 0 + `VERDICT: PASS`), and the SCORECARD `## Capabilities` row (columns: capability, what it can now do, evidence pointer, first-working round 42), honest about limits (literal mutants only, frozen manifest, crash/timeout not a kill). Text inside your report only.\nFirst line: `RESULT ScribeSkillRows rev={REV} verdict=drafted`."
+  },
+  {
+   "name": "ScribeSourcesRows",
+   "role": "scribe",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeSourcesRows\nFrontier rows. Open the primary mutation-testing source for C1 yourself (Petrovic et al. 'Practical Mutation Testing at Scale', arXiv 2102.11378, or the ICSE-SEIP 2018 Google paper) and draft its SOURCES.md row (registry column shape in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md; next free S id after the current last row) plus its `## Gate` entry (URL, access date, located quote <= 25 words, decision, tier). Text inside your report only.\nFirst line: `RESULT ScribeSourcesRows rev={REV} verdict=drafted rows=<n>`."
+  },
+  {
+   "name": "ReviewPlanClaims",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewPlanClaims\nReview /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/plan.md against AXES.md (/home/vgpnk/Projects/shokunin/AXES.md) and the round prompt /home/vgpnk/Projects/shokunin/.ufo/prompts/kumitate-round-42.md §2 and §6 item 9: distinct axes, causal separability, lowest-axis rule, after-states as one concrete value re-derivable by one command, no universal clauses, capability-row rule. List each defect with the exact sentence and a fix.\nFirst line: `RESULT ReviewPlanClaims rev={REV} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewSpotcheckRouting",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewSpotcheckRouting\nMap each routed defect R41-1..R41-7 and each 'Notes for the operator' item of /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-41-verifier-spotcheck.md to a plan line or say it is unrouted. Also check the operator teachings corpus/lessons/operator-*.md for anything not yet reflected in QUALITY.md or SKILL.md.\nFirst line: `RESULT ReviewSpotcheckRouting rev={REV} verdict=<word> unrouted=<n>`."
+  },
+  {
+   "name": "ReviewCalibration",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewCalibration\nCalibration count at b237e3f09c9559e130c7367bd2efa981c4ea516f: list every mismatch between SCORECARD.md/SHONEN.md self-assessment and observed repo state (e.g. `## Axes` operability evidence A=7 C=13, capability row quotes, R11 cell, proxy stanza C2/C2_total vs computed). For each: path:line, stated value, observed value and the command. Give the total.\nFirst line: `RESULT ReviewCalibration rev={REV} verdict=<word> mismatches=<n>`."
+  },
+  {
+   "name": "ReviewChecklistOpen",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewChecklistOpen\nIn your clone at b237e3f09c9559e130c7367bd2efa981c4ea516f run `node scripts/surface-probe.mjs --checklists --src /fast/scratch/hyaku/kumitate-pin/src` (check `--help` for the flag spelling) and report the CHECKLIST line, every failing item and its cause (environment vs code). This is the before for checklist pass counts; also time the whole run.\nFirst line: `RESULT ReviewChecklistOpen rev={REV} verdict=<word> checklist=<p>/<n> secs=<s>`."
+  },
+  {
+   "name": "ReviewKimiRegistry",
+   "role": "reviewer",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewKimiRegistry\nReview scripts/kimi-census.mjs K1-K5 semantics at b237e3f09c9559e130c7367bd2efa981c4ea516f: which family a root directory like `locks` belongs to, whether its child `sessions` should be gated or only counted, how drift-chain exemptions work, and whether declaring `locks` could hide another stray (attack the plan's C2). Cite path:line.\nFirst line: `RESULT ReviewKimiRegistry rev={REV} verdict=<word> family=<K?>`."
+  },
+  {
+   "name": "ReviewReportShape",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewReportShape\nRead the round-41 report /home/vgpnk/Projects/shokunin/.ufo/reports/round-41/kumitate.md and the round-41 closure. Write the checklist the round-42 report must pass: required sections in order (prompt §4), per-axis verdict keying (R41-4), `## Round shape` with every deviation (R41-5), Stale-lane line, tool installs, holds, report-presence gaps. Output as a numbered list the L1 can tick.\nFirst line: `RESULT ReviewReportShape rev=- verdict=<word> items=<n>`."
+  },
+  {
+   "name": "CritC1Honesty",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritC1Honesty\nAttack C1: is a mutation-sweep gate plus its selftest an honest +1 A, +2 C (operability 8->9), or padding of f_O? Read the operability proxy definition (SCORECARD.md lines 20-68) and earlier rounds' A/C additions. Give the strongest objection, what evidence would defeat it, and whether the checklist item can actually fail on real regressions (not just fixtures).\nFirst line: `RESULT CritC1Honesty rev={REV} verdict=<word> objections=<n>`."
+  },
+  {
+   "name": "CritC2Axis",
+   "role": "critic",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritC2Axis\nAttack C2: is declaring ~/.kimi-code/locks a coverage:kimi-layer improvement when the integer stays 10 and coverage_kimi stays 10? Compare with round 40's C2 (SCORECARD.md round-40 table and the round-40 closure). What would make the after-state re-derivable at closure time given the host can create or delete locks/ at any time?\nFirst line: `RESULT CritC2Axis rev={REV} verdict=<word> objections=<n>`."
+  },
+  {
+   "name": "CritSeparability",
+   "role": "critic",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritSeparability\nAttack separability and no-harm for the plan: can C1 verify without C2 having landed and vice versa (shared SCORECARD stanza keys, proxy MATCH needing both)? Which axis or proxy term could decrease (C2_total moving with new lesson files; coverage aggregate derived 9 at open from the closure's file)? Name the measurement the L1 must take to show no harm.\nFirst line: `RESULT CritSeparability rev={REV} verdict=<word> risks=<n>`."
+  },
+  {
+   "name": "CritTrades",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritTrades\nThe operator ruling on round-41 unscored trades (proxy --strict warnings 2->3, cite-check selftest ~5x slower, guard weaknesses) is pending: this round must not deepen them. List every way the plan could deepen one (new unpinned script, slower selftests, checklist wall time with a mutant sweep) and the before/after numbers the L1 must record.\nFirst line: `RESULT CritTrades rev={REV} verdict=<word> risks=<n>`."
+  },
+  {
+   "name": "CritManifestDesign",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritManifestDesign\nAttack the gate-mutants design in the plan's C1 section: literal mutants that become nomatch as code moves, environment leaks (KUMITATE_CITE_SELFTEST_INJECT_FAIL inherited reads survived=4/16, round-41 F7), the kill rule (crash vs kill, vanishing case F4), parallel runs on a 32-core host shared by seven lanes, and revision measurement via --rev. For each: the failure scenario and the mitigation.\nFirst line: `RESULT CritManifestDesign rev={REV} verdict=<word> issues=<n>`."
+  },
+  {
+   "name": "SentinelGateMutants",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SentinelGateMutants\nSecurity review of running mutated copies of lane scripts as a checklist gate: temp-dir handling, symlinks, process-group kill and orphan reaping, recursion/fork growth, env scrubbing, --rev reading git objects (no checkout), argument injection via manifest strings. Use the round-41 cite probe (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt) as the reference implementation and list concrete requirements for scripts/gate-mutants.mjs.\nFirst line: `RESULT SentinelGateMutants rev={REV} verdict=<word> requirements=<n>`."
+  },
+  {
+   "name": "RevengerGuardIntent",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item RevengerGuardIntent\nReverse-engineer the intent of cite-check's self-observation guard (commits 4e58bb0e and 5320e0da in /home/vgpnk/Projects/shokunin/kumitate-shokunin; scripts/cite-check.mjs around the INJECT41 marker) and of its tests: what invariant must hold (the suite can observe its own failure; the child never recurses), which mutants violate it, and the minimal design that kills F1 and F2 without adding selftest time.\nFirst line: `RESULT RevengerGuardIntent rev={REV} verdict=<word>`."
+  },
+  {
+   "name": "SimplifyProbeReuse",
+   "role": "simplifier",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SimplifyProbeReuse\nLook at the lane's existing mutant runners (.ufo/waves/round-40/probe/run-mutants-v2.py.txt, .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt, and the a2-census receipts' runner if committed) and say what minimal shared core gate-mutants.mjs needs and what to leave out (YAGNI). Name code that the new gate makes obsolete.\nFirst line: `RESULT SimplifyProbeReuse rev={REV} verdict=<word>`."
+  }
+ ]
+}

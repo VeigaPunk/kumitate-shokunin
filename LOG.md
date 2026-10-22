@@ -1840,3 +1840,20 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   split, the MAST Appendix J locator, R40-2 not re-measured, cite-check errors 551 → 545, Mistakes
   rows re-classed, open limits from the census mutation, sentinel and ledger seats. C1 and C2
   values unchanged at the tip. Round total 72 spawned seats (0 + 34 + 38).
+- 2026-10-22 — round 42 (round open `dfabe92`, source pin `31c465f1`, plan `b237e3f0`, amendments
+  A1–A4 `a0a07bae`). Two declared claims on two distinct axes. **C1 operability (capability
+  `gate-mutants`, S039, S040):** `scripts/gate-mutants.mjs` runs a frozen 41-id mutant battery
+  (round-41 cite-check and wave-census mutants) plus two R41-3 extras against temp copies of the
+  lane's own suites; working copy `CLEAN (mutants=43 killed=43 frozen=41/41)` exit 0 in ~21 s,
+  `--selftest` 23/23; `--rev dfabe92 --target cite-check` exit 1 (two drift); checklist items
+  18–19 move the proxy A 9 → 10, C 17 → 19, operability 8 → 9 (`PROXY: MATCH`, `--strict` exit 0).
+  **C2 coverage:kimi-layer (S041, S042):** `~/.kimi-code/locks` (Kimi Code 2.3.0 session-lock
+  directory) declared in K3 in the census and the proxy member table and bound in
+  `knowledge/kimi-session-state.md`; census `DRIFT (UNLISTED locks)` exit 1 → `CLEAN` exit 0,
+  strays 1 → 0, K 52/52 → 53/53. Routed: R41-1 three reject rows plus rejects in `## Gate`;
+  R41-2 `kumitate-gate-pins-v1` block (warnings 3 → 0); R41-3 guard depth stop (5/5 killed,
+  selftest time within noise); R41-4/5/7 QUALITY Q21–Q24; R41-6 wave-census sentinel fixes
+  (WC27–WC31), anchor-truth caps (AT47–AT48), R40-2 re-measured (8/17, 4/17), census findings
+  named open. Re-verification: S036, S037, S013, S024, S026 re-opened, quotes verbatim. Host
+  incident: a seat's unpatched recursion mutant reached ~500 processes; the L1 killed the group.
+  Lesson `corpus/lessons/round-42.md`.

@@ -268,8 +268,12 @@ exit 1, fail-closed exit 2, usage 64. The values are **claims** — the tool
 re-derives and never trusts them, and it never rewrites this block. The six pins
 in the unchanged parent-frozen v1 key set are full sha256 hex for their named
 scripts; re-pin those files after ANY edit, including `proxy-check.mjs` itself.
-Other `scripts/*.mjs` files are not v1 keys and produce `PIN_UNPINNED`
-(the independent sources gate is registered in `SKILL.md`). Six of the terms are new in round 16:
+Other `scripts/*.mjs` files are not v1 keys and remain unpinned until listed in
+the separate `kumitate-gate-pins-v1` block below; the sources gate is still a
+gate-registry row in `SKILL.md`. That block verifies only its named gate files
+and suppresses their `PIN_UNPINNED` warnings without widening v1's 23 keys or
+changing its six-pin count.
+Six of the terms are new in round 16:
 `S_members`, `S_sections`, `R_members`, `R_sections` and the two scores derived
 from them (`coverage_script`, `coverage_runtime`) — the layer member counts are
 read from the origin tree **once, in-process, read-only** through
@@ -281,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=9
-C=17
+A=10
+C=19
 C1=19
 C1_total=19
-C2=93
-C2_total=93
+C2=94
+C2_total=94
 S_members=88
 S_sections=88
 R_members=92
@@ -295,26 +299,33 @@ coverage_script=10
 coverage_runtime=10
 C1k=5
 C1k_total=5
-K_members=52
-K_sections=52
+K_members=53
+K_sections=53
 coverage_kimi=10
-pin.cite-check=896f0720b7fe7492806b0a5b7458a995de1d666d6759297675b7d964872c6d0e
+pin.cite-check=1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=f9416d666d390c03804319f4524f2be552e49f4c1bfa704cb94321159814f1d9
+pin.proxy-check=4c2819b02ded6aff7ca64d069e5c955ba7a01a0495e3b4bdf1fc92f97dd8024a
 pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
-pin.kimi-census=ded569fec9b67cfbc0982f3fb431453e44b322024db457e184a99d81376c3d08
+pin.kimi-census=a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63
 -->
+<!-- kumitate-gate-pins-v1
+pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055c
+pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
+pin.wave-census=682c3943b84b6e7772161a7974a0f51899eba842effabc15def38b3a94371c2d
+pin.gate-mutants=3c6678cbbe0baf4af0dee684b14e7e6bcd439fd149e6f122081afbc00f676147
+-->
+
 
 ## Axes
 
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
-| operability | 8 | `f_O = (A+C)/(A+C+3)` with A=7 (`scripts/cite-check.mjs`, `scripts/surface-probe.mjs`, `scripts/round-gate.mjs`, `scripts/proxy-check.mjs`, `scripts/claims-check.mjs`, `scripts/kimi-census.mjs`, and since round 34 `scripts/sources-check.mjs`) and C=13 (`## Verifiable checklist`; items 12–13 = the sources-registry gate and its hermetic suite) ⇒ 20/23 ≈ 0.870 ⇒ 8 — round 34 is an f_O walk (17/20 → 20/23), integer held; 9 needs A+C ≥ 27 (7 more honest items). Round 34 also gives every gate its `## Gate registry` row in `SKILL.md` (PROTOCOL §Gate standard; 0 → 7 rows). Round 35 (integer held, `f_O` unchanged): the proxy's S/R section terms count DISTINCT in-family member identities per layer, so the duplicate-one/drop-one note mutation is killed — mutation kills 0/2 → 2/2, proxy selftest 104 → 109 (`## Move log` round 35). Checklist at round 35 open: `CHECKLIST: 9/13 pass` (items 620, 625, 627, 628 red); at round-35 close 12/13 (620 red); the C term counts listed items, not passing ones (`## Limits` round-35 entry) | round 35 (gate discrimination; integer held) |
+| operability | 9 | `f_O = (A+C)/(A+C+3)` with **A=10** (`scripts/cite-check.mjs`, `surface-probe.mjs`, `round-gate.mjs`, `proxy-check.mjs`, `claims-check.mjs`, `kimi-census.mjs`, `sources-check.mjs` (round 34), `anchor-truth.mjs` (round 38), `wave-census.mjs` (round 41), `gate-mutants.mjs` (round 42)) and **C=19** (`## Verifiable checklist`; items 18–19 = the gate-mutants battery and its hermetic suite) ⇒ 29/32 ≈ 0.906 ⇒ **9**. Round 42 moves the integer 8 → 9 (`f_O` 26/29 → 29/32; C1, capability `gate-mutants`). 9 is this proxy's terminal integer: `f_O < 1` for every finite A+C, so `floor(10 × f_O)` never reaches 10 and further items cannot move the integer. C counts listed items; the pass count is a separate measurement quoted with its date. Earlier readings of this cell (A=7 C=13 at round 34, A=8 C=15 at round 40, A=9 C=17 at round 41; round 34 gate-registry rows 0 → 7; round 35 distinct-identity S/R terms, mutation kills 0/2 → 2/2, checklist 9/13 → 12/13) are in `## Move log` and the round sections below | round 42 |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 88/88)` = **10** at the pinned origin `31c465f1` (round 35). Round open measured the same pin at `floor(10 × 8/8 × 86/88)` = **9**: upstream `964f443e`→`31c465f1` deleted 5 S8 members and added 2 (`S_members` 91 → 88; `S_sections` 86 counted, 5 note sections unresolved). Round 35 re-censused S8 (63 → 60 members, two new sections, departed members kept as history) and re-verified every changed member's anchors (56 fidelity seats). `C1s/C1s_total` = `yes` rows / all `S*` rows (**8/8**); `S_sections` = DISTINCT member identities the claims gate verifies in those rows' notes (since round 35); `S_members` = `ls scripts/*.mjs \| wc -l` → 70 + `find scripts -mindepth 2 -type f \| wc -l` → 18 at `31c465f1`. History: 91/91 ⇒ 10 at `964f443e` (rounds 32–34). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after in `## Move log` | round 35 (re-census at `31c465f1`) |
 | coverage:runtime-layer | 10 | `floor(10 × 11/11 × 92/92)` = **10** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
-| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 52/52)` = **10** — round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 |
+| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 53/53)` = **10** — round 42: the root child `locks/` (created by Kimi Code 2.3.0, S041) is declared in K3 in both member lists (`scripts/kimi-census.mjs` and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by ``## `~/.kimi-code/locks/` …`` in `knowledge/kimi-session-state.md`: `K_members`/`K_sections` 52 → 53, census `DRIFT (UNLISTED locks)` exit 1 → `CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, root enumeration `declared=26 strays=1` → `declared=27 strays=0`; integer held (the ratio cannot show this move, the root enumeration does). Round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 (integer); round 42 (terms) |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -396,6 +407,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 42 | operability (lowest non-retired axis; integer 8 → 9; claim type capability acquisition `gate-mutants`, sourced on S039) | `{"A":9,"C":17,"operability":8}` at dfabe92 (open receipts); no battery over the lane's own suites | `{"A":10,"C":19,"operability":9}`; `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)` exit 0; `--selftest` 23/23; shown able to fail: `--rev dfabe92… --target cite-check` → `SURVIVED (… killed=16 … drift=2 …)` exit 1 (the R41-3 skip-bypass mutants at the open bytes) | `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json \| jq -c '.terms \| {A, C, operability}'`; receipts `.ufo/waves/round-42/final/`; S039, S040 |
+| 42 | coverage:kimi-layer (`~/.kimi-code/locks` governed; integer held at 10; sourced on S041) | census `ROOT_ENUM … declared=26 … strays=1`, `CENSUS  error  UNLISTED  locks`, `KIMI_CENSUS: DRIFT (UNLISTED locks)` exit 1; `K_members`/`K_sections` 52/52 | `declared=27 … strays=0`, `KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, selftest 52/52; `K_members`/`K_sections` 53/53, `coverage_kimi` 10 | `node scripts/kimi-census.mjs; echo exit=$?`; `node scripts/proxy-check.mjs --src … --json \| jq -c '.terms \| {K_members, K_sections, coverage_kimi}'`; `corpus/knowledge/kimi-session-state.md` § `~/.kimi-code/locks/`; S041, S042 |
 | 41 | operability (lowest non-retired axis; integer held 8; A 8 → 9 and C 15 → 17 from C2, `f_O` 23/26 → 26/29 ≈ 0.897) | `CITE_MUTANTS survived=15/16 nomatch=0 crash=0 control=PASS` at a58b7f72 (only `resolved>0` killed); selftest 64/64 | `survived=0/16 nomatch=0 crash=0 control=PASS` at 68db3419, 4e58bb0e and fae386aa (killed = at least one `FAIL ` case line; 2 of the 16, suite-group-verdict and suite-any-fail, still exit 0 with `VERDICT: PASS`; run with `KUMITATE_CITE_SELFTEST_INJECT_FAIL` unset, an inherited value reads `survived=4/16`); selftest 75/75 (11 new cases: warn-only and `--strict`, `citeCheck` map, both text environment labels, exit contract 0/1/2/2/64 through a child, suite self-observation by an injected-failure child in text and `--json`) | `node --input-type=module - --lane <lane> --rev <rev> < .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` (counter committed in cb2d8d09 before its first run); `.ufo/waves/round-41/final/cite-mutants-*.txt`; `corpus/lessons/round-41.md` |
 | 41 | capability `wave-census` (learning claim; sourced on S038) | `CAPABILITY_ROWS=1`; no instrument (`RECOUNT_MISMATCHES=7`, `--expect` exits 1 for any value: module not found) at 27592977 | `CAPABILITY_ROWS=2`; `RECOUNT_MISMATCHES=0` over the seven payloads of rounds 38–40; `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (R40-6); selftest 12/12 at 4e58bb0e (23/23 at fae386aa; the three values are byte-identical at 4e58bb0e, 5320e0da and fae386aa) | `bash .ufo/waves/round-41/probe/wave-recount.sh.txt` (counter committed in 27592977 before the instrument); `.ufo/waves/round-41/final/wave-recount-*.txt`; S038 |
 | 40 | coverage:kimi-layer (the seventh counted-live `skills/` child; integer held at 10) | live `floor(10 × 5/5 × 51/52)` = **9** (`K_MEMBERS_DRIFT declared=51 computed=52`); census `DRIFT (UNLISTED skills/)` | `floor(10 × 5/5 × 52/52)` = **10**: the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds the member (K_sections 51 → 52) and the census tripwire is re-pinned 6 → 7; `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)` exit 0, selftest 48/48; the two count mutants are killed (`UNLISTED` at 6, `MEMBER_MISSING` at 8) | `node scripts/kimi-census.mjs [--selftest]`; `node scripts/proxy-check.mjs --src <clone at 31c465f1>`; `corpus/knowledge/kimi-skills-plugins.md`; `.ufo/waves/round-40/build/ExecKimiCensus.md` |
@@ -453,6 +466,11 @@ the frozen definitions name.
 | 8 | coverage | C1 14/18, C2 20/30 ⇒ 5; 11 unmapped corpus files | C2 31/31 (`lessons/round-7.md` added; 5 lesson rows re-pinned to real shas `45b4ed3`/`efe19da`/`e0f5ca7`/`e748e44`/`eca3d14`) ⇒ 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 31; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 31; `comm -23` unmapped = `README.md` only |
 
 ## Planned
+
+**Round 43 — pre-registration (2026-10-22, written by round 42).** Candidates, not commitments,
+listed in `## Round 42 — claims, corrections, limits and round-43 pre-registration` at the end of
+this file: a capability move (every live axis is at or above the saturation line), the 12 open
+wave-census findings and 5 report-presence gaps, and the R11 registry cell.
 
 **Round 36 — pre-registration (2026-10-20, written by round 35).** Candidates,
 not commitments; each is measured the round after it is declared here, against a
@@ -1679,6 +1697,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 |---|---|---|---|
 | `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
 | `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect [<round>/]<wave>:<role>=<n>` (role `attack` = attack total; exit 1 on mismatch or unknown role); resumed seats (`resumeSends`) counted apart; a report counts only as a non-empty regular file at a `Report:` path without a `..` segment; a task without a string name and agent, or any read error, fails closed (exit 2); flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `bash .ufo/waves/round-41/probe/wave-recount.sh.txt` → `RECOUNT_MISMATCHES=0 CAPABILITY_ROWS=2 EXPECT_4_EXIT=1 EXPECT_3_EXIT=0` (receipts `.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt` and `wave-recount-final.txt` at fae386aa, 7 rows per listing; before `wave-recount-before-27592977.txt`); `--round 38 --round 39 --round 40` itself reads `DRIFT` from four round-38 stray report files; `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (a declared count checked against the payload: the round-40 slip R40-6); `--selftest` 26/26 at the attempt-2 tip: WC21–WC23 pin the three late repairs (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`, 3/3 killed), WC24 observes the suite's own verdict through a child run with one injected failure and WC25 pins six `--expect` edges (`a2-census-survivor-mutants.txt`, 10/10 killed), WC26 pins ten finding-logic edges (`a2-census-findings-mutants.txt`, 10/10 killed); the mutants are the survivors found by verify seats MutCensusExpect, MutCensusFindings and CritMistakeClasses; 23/23 at fae386aa, 20/20 after the falsify repair, 12/12 at 4e58bb0e; S038 | round 41 |
+| `gate-mutants` | Show that the lane's own gate suites observe the conditions they claim to pin: a frozen embedded manifest of single-literal mutants (41 frozen ids over `cite-check` and `wave-census`, plus named extras) is applied one at a time to a temp copy of the measured `scripts/` (working copy or `--rev`), each copy's `--selftest` run detached under `prlimit` with a timeout, a process and memory cap and an allowlisted environment; per mutant `killed` (a `FAIL ` case line), `survived`, `drift` (passed with fewer cases than the control), `nomatch`, `crash`, `timeout`; header names the revision and the sha256 of the mutated bytes; exit 0 / 1 survivor or drift / 2 could-not-evaluate / 64. Literal mutants only; covers two of the ten gates; a refactored line reads `nomatch` | `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)`; `--selftest` 23/23; `--rev dfabe92… --target cite-check` exit 1; SKILL.md gate-registry row and checklist items 18–19; S039 | round 42 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -1692,6 +1711,12 @@ row. Live after round 34: operability 8 (below the line — the lowest-axis
 obligation stands), coverage:runtime-layer 9, coverage:script-layer 10
 (terminal), coverage:kimi-layer 10. The nudge is therefore not active; the
 window restarts at round 34 (`sources-registry` entered the capability table).
+
+**Round 42 (2026-10-22).** Operability reaches 9, the saturation line, and 9 is that proxy's
+terminal integer (`f_O < 1`). Live after round 42: operability 9, coverage:script-layer 10,
+coverage:runtime-layer 10, coverage:kimi-layer 10 — every live axis at or above the line. The
+window restarts at round 42 (`gate-mutants` entered the capability table), so the nudge becomes
+active if rounds 43–45 add no capability row.
 
 ## Round 36 — limits and round-37 pre-registration (2026-10-21)
 
@@ -1835,3 +1860,50 @@ Planned next round (candidates, not commitments): (1) coverage:kimi-layer — de
 `~/.kimi-code/locks` in K1 (registry change, census re-pin) after a sourced read of what creates it;
 (2) operability — R40-4 resource caps in `anchor-truth --open`, with red-before cases; (3)
 operability — pin the 14 severity decisions of `cite-check` under the same mutant probe shape.
+
+## Round 42 — claims, corrections, limits and round-43 pre-registration (2026-10-22)
+
+Claims (Move log rows `| 42 |`; plan `.ufo/waves/round-42/plan.md`, counters frozen in b237e3f0,
+amendments A1–A4 in a0a07bae before any counted run): C1 operability, capability
+`gate-mutants` — terms `{"A":9,"C":17,"operability":8}` → `{"A":10,"C":19,"operability":9}`, the
+battery `CLEAN` with `frozen=41/41`, S039. C2 coverage:kimi-layer — `~/.kimi-code/locks` declared
+from its 2.3.0 source (S041): census root `strays=1` → `0`, exit 1 → 0, K 52/52 → 53/53, integer
+held 10. Base repair (A3, not a claim): the round-41 closure lesson's README row; stanza
+`C2=C2_total=93` before this round's lesson, 94 after.
+
+Calibration corrections (round 42, from build seat ReviewCalibration's 33 mismatches; rows
+named stay as written unless this round rewrote them):
+- Rewritten this round: the `## Axes` operability cell (A=7 C=13 20/23 → A=10 C=19 29/32, last
+  change round 42) and the coverage:kimi-layer cell (52/52, chain=7 → 53/53, chain=8).
+- `## Capabilities` `sources-registry` row: `SOURCES_CHECK: CLEAN (rows=45 …)` at round 42, not
+  `rows=20`.
+- `## Saturation` "coverage:runtime-layer 9" is the round-34 reading; it is 10 since round 36.
+- The paragraph after `## Axes` ("five runnable artifacts and ten executed checklist items",
+  "12 more honest items") is the round-14/17 reading; live terms are A=10, C=19.
+- R11 registry cell (47 sections, "93 − 51 = 42") still disagrees with
+  `claims-check --row R11` `sections=41` (88 − 51 = 37 runtime files plus 4 CLI files); not
+  rewritten this round.
+- SHONEN boxes stay `[ ]` (a box flips only with a named non-author verifier); the checklist read
+  `CHECKLIST: 13/17 pass` in a bare seat clone at b237e3f0 (two round-gate items need the fleet
+  reports directory, the proxy item read DRIFT before A3, the Kimi census read DRIFT before C2).
+
+Routed defects: R41-1 three rejected rows (S043–S045) and further rejects in
+`corpus/lessons/round-42.md` `## Gate`, Q21; R41-2 a separate `kumitate-gate-pins-v1` block
+(anchor-truth, sources-check, wave-census, gate-mutants) verified by the proxy
+(`GATE_PIN_DRIFT`), v1's 23 keys unchanged, `--strict` warnings 3 → 0; R41-3 the cite-check guard
+stops at depth two and the parent asserts the child's two SKIP rows: the five F1/F2 mutants
+0/5 → 5/5 killed, no new child run, 75 cases; R41-4/R41-5 QUALITY Q22/Q23 and the report's
+`## Per-axis verdicts` and `## Round shape`; R41-6 sentinel findings fixed in wave-census
+(WC27–WC31), R40-4 caps in anchor-truth (AT47–AT48), R40-2 re-measured (8/17 and 4/17), the 12
+census findings and 5 report-presence gaps named open; R41-7 QUALITY Q24 and the gate-mutants
+header digest.
+
+Limits, recorded not hidden: see `corpus/lessons/round-42.md` `## Open limits` (two of ten gates
+under the battery; case floors refuse older revisions; ~21 s checklist item; `locks/` required;
+the second pin block awaits an operator view).
+
+Planned next round (candidates, not commitments): (1) a capability move (every live axis is at or
+above the saturation line): extend `gate-mutants` to anchor-truth's 26 round-40 mutants and to
+sources-check, or a frontier move from `PROVINCE.md`; (2) the 12 open wave-census findings and
+5 report-presence gaps (R41-6), each with a red-before case; (3) the R11 registry cell
+(47 vs `sections=41`).

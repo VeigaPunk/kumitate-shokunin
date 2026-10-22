@@ -1,0 +1,24 @@
+RESULT ReviewChecklistOpen rev=b237e3f09c9559e130c7367bd2efa981c4ea516f verdict=fail checklist=13/17 secs=20.2
+
+Scope: ran the SKILL checklist probe (the "before" for round-42 checklist pass counts) in a private scratch clone at the wave revision; the lane was not written except this report file. No tools installed (node v24.21.0 already present; no pacman touched).
+
+Setup
+- `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r42/seats/ReviewChecklistOpen/lane && ... checkout -q --detach b237e3f09c9559e130c7367bd2efa981c4ea516f` → HEAD prints `b237e3f09c9559e130c7367bd2efa981c4ea516f` (commit subject "round-42: plan with frozen counters (C1 operability gate-mutants, C2 coverage:kimi-layer locks) and open receipts"; parent dfabe92).
+- `node scripts/surface-probe.mjs --help` confirms the flag spelling: `--checklists    parse + run this repo's SKILL.md GFM task items (frozen v1 grammar)`; `--self` defaults to the repo root containing the script.
+
+Run
+- `cd <seat>/lane && TIMEFORMAT='wall %3R s'; time timeout 60 node scripts/surface-probe.mjs --checklists --src /fast/scratch/hyaku/kumitate-pin/src`
+- Output tail: `CHECKLIST_SKIPPED: 0` / `CHECKLIST: 13/17 pass` / `VERDICT: FAIL` / `exit=1`; wall 20.185 s (user 40.9 s, sys 33.9 s).
+- 17 items exist at this revision (the two planned C1 checklist items are not in b237e3f yet); 13 PASS, 4 FAIL.
+
+Failing items, each re-run individually to capture the cause
+- SKILL.md:680 "Round-close artifact audit" (`node scripts/round-gate.mjs`) exit=2 — rerun prints `round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /fast/scratch/hyaku/kumitate-r42/seats/ReviewChecklistOpen/.ufo/reports is absent`. Cause: environment/layout. `scripts/round-gate.mjs:143` defaults the reports dir to `resolve(HERE,'..','..')` — the parent of the repo root, correct only for the canonical nested lane under /home/vgpnk/Projects/shokunin, whose `.ufo/reports` exists (102 entries). A seat clone at `<seat>/lane` derives `<seat>`, which is not a repo. The gate follows its fail-closed contract; with the dir explicit it passes clean: `node scripts/round-gate.mjs --reports-dir .ufo/reports` → `ROUND_GATE: CLEAN (round=33 lane=kumitate checks=10 errors=0 warnings=0)` exit=0. Not a code defect.
+- SKILL.md:681 "Filed-report tracking" (`node scripts/round-gate.mjs --tracked`) exit=2 — same derived-path fail-closed (REPORTS_DIR_MISSING, identical message). With `--tracked --reports-dir .ufo/reports --main-repo .` it advances to `fail-closed — NO_FILED_REPORTS: filed=1 … (the highest round is excluded as in-flight, so >=2 are needed)` exit=2: the clone commits only `round-33/kumitate.md`, and the tool documents that a single filed report is not verifiable. Cause: environment (fresh-clone history), not code.
+- SKILL.md:682 "Proxy recompute" (`node scripts/proxy-check.mjs`) exit=1 — `PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=92 computed=93 delta=+1` and `PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9`, plus warn-level `PIN_UNPINNED` × 3 (scripts/anchor-truth.mjs, scripts/sources-check.mjs, scripts/wave-census.mjs — exactly routed defect R41-2; warnings do not gate). Cause: code/tree. SCORECARD.md:289 declares `C2_total=92` while `find corpus/knowledge corpus/lessons -name '*.md' | wc -l` = 93; 10 × 92/93 floors to 9 against the Axes coverage row's 10. The +1 file is `corpus/lessons/round-41-verifier-spotcheck.md`, added by the round-41 close (dfabe92) without bumping the stanza (C2_total=92 both before fae386a~1 and at HEAD). Lane-internal staleness, not environment.
+- SKILL.md:685 "Kimi-substrate census" (`node scripts/kimi-census.mjs`) exit=1 — `CENSUS  error  UNLISTED  locks  locks sits at the root and is not declared by the frozen K1–K5 set` → `KIMI_CENSUS: DRIFT (UNLISTED locks)`, `strays=1`, `TOTALS: members=52 checked=52 errors=1`. Cause: live host state (~/.kimi-code/locks exists on this host) meeting a frozen member set that does not declare it yet — the exact C2 before-state named in the plan. The census works as designed; the repair is the lane's source-backed C2 declaration, never a host change.
+
+Bounds and leftovers
+- Every run was wrapped in `timeout 60` (GNU timeout signals its own process group); all four item commands are read-only.
+- After all runs: `pgrep -af 'surface-probe|round-gate|proxy-check|kimi-census'` → `no-leftovers`. The only node processes visible on the host belonged to a sibling seat (ExecCiteGuard's mutant run), not to this item.
+
+Before state recorded: checklist=13/17, exit=1, wall 20.2 s. Expected after C1+C2 land: items 682 and 685 (and the two new checklist rows) move; items 680/681 keep passing at the canonical lane layout and are environment-sensitive only in seat clones.

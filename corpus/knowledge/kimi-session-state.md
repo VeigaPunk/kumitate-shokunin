@@ -1,14 +1,15 @@
 # K3 — Kimi Code session & runtime state plane
 
-## Scope — nine members, one plane
+## Scope — ten members, one plane
 
 This note covers the **session & state plane** of Kimi Code CLI home
-(`~/.kimi-code/`), one section per member — the nine of the K3 registry row:
+(`~/.kimi-code/`), one section per member — the ten of the K3 registry row:
 (1) `~/.kimi-code/sessions/` the worktree-keyed session store,
 (2) `~/.kimi-code/session_index.jsonl`, (3) `~/.kimi-code/workspace-trust/`,
 (4) `~/.kimi-code/telemetry/`, (5) `~/.kimi-code/logs/kimi-code.log`, and the four
 remainder stores (6) `~/.kimi-code/file-history/`, (7) `~/.kimi-code/user-history/`,
-(8) `~/.kimi-code/cache/`, (9) `~/.kimi-code/search-index/`. Every claim below
+(8) `~/.kimi-code/cache/`, (9) `~/.kimi-code/search-index/`, and since round 42
+(10) `~/.kimi-code/locks/` the session-occupancy lock directory. Every claim below
 carries a live anchor measured on this host
 (2026-10-13, `kimi-code` 2.1.1 per `~/.kimi-code/telemetry/failed_b3487d768efe.jsonl:1`).
 
@@ -395,6 +396,56 @@ content; the lock names a pid and a fencing token, i.e. a single-writer lease.
 The binary names this store from the server side: *"full-text search lives in the
 kap-server search-index database"* (byte 134738601).
 
+## `~/.kimi-code/locks/` — the session-occupancy lock directory (declared round 42)
+
+**What it is.** `~/.kimi-code/locks/` is a root child of the Kimi Code home that holds the
+CLI's cross-process session locks. Its one child, `~/.kimi-code/locks/sessions/`, is where a
+running client publishes one `<sessionId>.lock` file per session it is writing. The
+directory shell persists; its contents are transient.
+
+**OBSERVATION (live, 2026-10-22).** `stat` reports `~/.kimi-code/locks` mode 700, birth
+`2026-10-22 13:53:33.966993951 -0300`, and `~/.kimi-code/locks/sessions` mode 700, same
+birth, mtime `2026-10-22 14:03:45.796085891 -0300`; `find ~/.kimi-code/locks -mindepth 1
+-maxdepth 3` returns only the `sessions` directory, which is empty. The install record
+`~/.kimi-code/updates/install.json` names version 2.3.0, `installedAt` `2026-10-22T16:48:04Z`
+and `notifiedAt` `2026-10-22T16:53:20Z`; the directory was born 13 s after that notification
+(16:53:33Z is 13:53:33 -0300), at the first lock publish under 2.3.0 [INFERENCE from the
+timing]. An empty `sessions/` is the normal released state.
+
+**Who creates it (source, S041).** In Kimi Code 2.3.0 (release tag `@moonshot-ai/kimi-code@2.3.0`;
+the S041 URL pins the revision) the node-fs session-lock service sets
+`this.lockDir = join(bootstrap.homeDir, 'locks', 'sessions');` (file line 55) and its
+`ensureLockDir()` runs `fs.mkdirSync(this.lockDir, { recursive: true, mode: 0o700 });`
+(line 196); `bootstrap.homeDir` is `~/.kimi-code` unless `KIMI_CODE_HOME` is set. `locks/` is
+only the parent the recursive mkdir makes. The installed binary carries the same module
+(`~/.kimi-code/bin/kimi`, bundled region for the session-lock service source file,
+literal `this.lockDir = join$98(bootstrap.homeDir, "locks", "sessions");` at byte 134688526).
+The file is absent at the 2.2.0 tag, so the directory is new with 2.3.0. The official docs'
+data-locations page (S042) lists the same node: "Cross-process occupancy locks while a client
+writes a session".
+
+**Lifecycle (OBSERVATION from the installed region; no live lock file was observed).** A
+publish writes `<lockPath>.tmp-<pid>-<uuid>` (mode 0600) and links it to
+`<sessionId>.lock`; `EEXIST` means another holder. A holder is alive when its hostname differs
+or its pid answers a signal-0 probe and it started after boot; a dead holder is reclaimed
+through a `.reclaim` sibling; an exit listener releases every hold. A claim that cannot write
+logs `session lock unavailable; continuing without lock` and proceeds unlocked, so a missing
+directory is never fatal to the CLI.
+
+**INFERENCE, bounded.** The installed 2.3.0 bytes contain no `KIMI_CODE_SESSION_LOCK`, no
+`evict(` and no `taking over session lock` literal (0 hits each); upstream `main` adds a
+takeover path and a disable switch (rejected as this member's source: S045), so a later
+upgrade can change lock semantics at this path. **UNKNOWN:** the bytes of a live `.lock`
+file on this host (no client was running when measured).
+
+**How the census treats it.** One K3 member `locks/`, kind `dir`, stat-only (secret-class
+handling: never enumerated, contents never read) with a 0700 mode floor
+(`mode & floor === floor`). Its child set is not gated because lock file names are per
+session. Before the declaration the census read `CENSUS  error  UNLISTED  locks` and
+`KIMI_CENSUS: DRIFT (UNLISTED locks)`, exit 1; after it, `ROOT_ENUM … declared=27 … strays=0`
+and `KIMI_CENSUS: CLEAN (members=53 checked=53 …)`, exit 0, with K3 at 10. If the host
+removes `locks/`, the census reads `MEMBER_MISSING` — named host drift, not a silent pass.
+
 ## Unknowns and blockers
 
 | # | Item | Status |
@@ -409,11 +460,11 @@ kap-server search-index database"* (byte 134738601).
 
 ## Registry row and cross-domain routing
 
-**Member count for this note: 9** — `sessions/`, `~/.kimi-code/session_index.jsonl`,
-`workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, and the four remainder
-stores (`file-history/`, `user-history/`, `cache/`, `search-index/`). Every one has
-its own named section above with its own path anchors, so the K3 row reads `yes` on
-the strength of 9 sections.
+**Member count for this note: 10** — `sessions/`, `~/.kimi-code/session_index.jsonl`,
+`workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, the four remainder
+stores (`file-history/`, `user-history/`, `cache/`, `search-index/`) and, since round 42,
+`locks/`. Every one has its own named section above with its own path anchors, so the K3
+row reads `yes` on the strength of 10 sections.
 
 **Re-run probe for a non-author:** `ls -d ~/.kimi-code/sessions/wd_*/session_* | wc -l`
 must equal `wc -l ~/.kimi-code/session_index.jsonl` (both are 37 here), and

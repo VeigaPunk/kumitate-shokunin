@@ -104,10 +104,12 @@ const SENT_END = /(?:\.\s+(?=[A-Z*`(])|\.\s*$|;\s|:\s*$)/u;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const MAX_NOTE_BYTES = 4 * 1024 * 1024;
 const MAX_JSON_BYTES = 32 * 1024 * 1024;
+const MAX_OPEN_PIN_BYTES = 4 * 1024 * 1024;
 const MAX_TOKEN_CHARS = 256;
 const NOTE_KEY = /^corpus\/knowledge\/[A-Za-z0-9._-]+\.md$/;
 const REVIEW_REGISTRY_RE = /^\.ufo\/waves\/[^/]+\/anchor-reviews\.json$/u;
 const MAX_REVIEW_BYTES = 32 * 1024 * 1024;
+const MAX_REVIEW_REGISTRIES = 64;
 const GIT_BIN = existsSync('/usr/bin/git') ? '/usr/bin/git' : 'git';
 const GIT_ENV_KEEP = new Set(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR', 'SYSTEMROOT',
   'GIT_CEILING_DIRECTORIES', 'GIT_CONFIG_NOSYSTEM', 'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
@@ -292,9 +294,22 @@ class ReviewRecords {
     this.byKey = new Map();  // `${note}|${seat}|${token}` -> [{identity, path, a, b}]
     this.registries = 0;
     this.records = 0;
+    this.error = null;
     if (!this.rev) return;
     const tree = git(laneRoot, ['ls-tree', '-r', '-z', this.rev]);
     if (!tree.ok) return;
+    const registryPaths = [];
+    for (const row of tree.out.split('\0')) {
+      if (!row) continue;
+      const tab = row.indexOf('\t');
+      if (tab < 0) continue;
+      const path = row.slice(tab + 1);
+      if (REVIEW_REGISTRY_RE.test(path)) registryPaths.push(path);
+    }
+    if (registryPaths.length > MAX_REVIEW_REGISTRIES) {
+      this.error = { token: 'REVIEW_REGISTRY_LIMIT', detail: `count=${registryPaths.length} max=${MAX_REVIEW_REGISTRIES}` };
+      return;
+    }
     // The pin at the record revision: a record's ordinal is resolved through it, so a record
     // names an anchor (raw@path#occurrence) and not a position in a list.
     const pin = this.pinAt(this.rev);
@@ -305,11 +320,7 @@ class ReviewRecords {
         pins.set(note, { entries, ids: identities(entries) });
       }
     }
-    for (const row of tree.out.split('\0').filter(Boolean)) {
-      const tab = row.indexOf('\t');
-      if (tab < 0) continue;
-      const path = row.slice(tab + 1);
-      if (!REVIEW_REGISTRY_RE.test(path)) continue;
+    for (const path of registryPaths) {
       const body = this.blob(this.rev, path);
       if (body === null) continue;
       let json;
@@ -632,11 +643,19 @@ export function run(argv) {
   // Review records are read from committed bytes at a revision the caller names (--open REV,
   // the round-open revision): a record written in the very change being judged cannot bind.
   let recRev = null;
+  let openPinRel = null;
   if (o.open !== null) {
     if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);
     const r = git(self, ['rev-parse', `${o.open}^{commit}`]);
     if (!r.ok || !/^[0-9a-f]{40}$/u.test(r.out.trim())) return failClosed('OPEN_UNREADABLE', o.open);
     recRev = r.out.trim();
+    openPinRel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;
+    if (openPinRel === null) return failClosed('OPEN_INVALID', 'pin outside --self');
+    const size = git(self, ['cat-file', '-s', `${recRev}:${openPinRel}`]);
+    const sizeText = size.out.trim();
+    if (!size.ok || !/^\d+$/u.test(sizeText)) return failClosed('OPEN_UNREADABLE', `${o.open}:${openPinRel}`);
+    const bytes = Number(sizeText);
+    if (bytes > MAX_OPEN_PIN_BYTES) return failClosed('OPEN_PIN_TOO_LARGE', `${openPinRel} bytes=${bytes} max=${MAX_OPEN_PIN_BYTES}`);
   } else {
     const r = git(self, ['rev-parse', 'HEAD']);
     recRev = r.ok && /^[0-9a-f]{40}$/u.test(r.out.trim()) ? r.out.trim() : null;
@@ -645,6 +664,7 @@ export function run(argv) {
       : "TRUTH_WARN review sources are unbound: the lane has no committed revision and no --open REV was given\n");
   }
   const recs = new ReviewRecords(self, recRev);
+  if (recs.error) return failClosed(recs.error.token, recs.error.detail);
 
   let pin = null;
   if (existsSync(pinPath)) {
@@ -728,11 +748,8 @@ export function run(argv) {
     findings.push(...compareBase(pin, basePin));
   }
   if (o.open !== null) {
-    if (!/^[0-9A-Za-z][0-9A-Za-z._/-]{0,199}$/.test(o.open) || o.open.includes('..')) return failClosed('OPEN_INVALID', o.open);
-    const rel = pinPath.startsWith(self + sep) ? pinPath.slice(self.length + 1) : null;
-    if (rel === null) return failClosed('OPEN_INVALID', 'pin outside --self');
-    const shown = git(self, ['show', `${o.open}:${rel}`]);
-    if (!shown.ok) return failClosed('OPEN_UNREADABLE', `${o.open}:${rel}`);
+    const shown = git(self, ['show', `${recRev}:${openPinRel}`]);
+    if (!shown.ok) return failClosed('OPEN_UNREADABLE', `${o.open}:${openPinRel}`);
     let openPin;
     try { openPin = JSON.parse(shown.out); } catch { return failClosed('OPEN_UNREADABLE', 'json'); }
     if (!validPin(openPin) || openPin.revision !== pin.revision) return failClosed('OPEN_INVALID', 'pin schema or source revision');
@@ -1118,6 +1135,26 @@ function selfTest() {
       setPin(widen.d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx', token: 'ALPHA_MARK', expect: 'true' }); });
       const good = tool(widen.d, []);
       return { ok: bad.status === 1 && /REVIEW_UNBOUND\s+\S+#1/u.test(bad.out) && good.status === 0 && /TRUTH: CLEAN/u.test(good.verdict), detail: `${bad.verdict} | ${good.verdict}` };
+    });
+    check('AT47', 'more than 64 committed review registries fails closed under --open', () => {
+      const d = mkSelf('at47', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      for (let i = 0; i < 65; i++) {
+        const path = join(d, '.ufo', 'waves', `round-${String(i).padStart(3, '0')}`, 'anchor-reviews.json');
+        mkdirSync(dirname(path), { recursive: true });
+        writeFileSync(path, '{}\n');
+      }
+      const open = commit(d);
+      const r = tool(d, ['--open', open]);
+      return { ok: r.status === 2 && /REVIEW_REGISTRY_LIMIT/.test(r.verdict), detail: r.verdict };
+    });
+    check('AT48', 'an open pin over 4 MiB fails closed before git show', () => {
+      const d = mkSelf('at48', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { p.padding = 'x'.repeat(4 * 1024 * 1024); });
+      const open = commit(d);
+      const r = tool(d, ['--open', open]);
+      return { ok: r.status === 2 && /OPEN_PIN_TOO_LARGE/.test(r.verdict), detail: r.verdict };
     });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);

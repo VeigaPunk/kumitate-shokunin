@@ -120,6 +120,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-41-verifier-spotcheck.md` | Round-41 non-author closure (hyaku): admitted as one counted operability claim (C1 cite-check 15/16 to 0/16 survivors; C2 capability `wave-census`, rows 1 to 2, recount mismatches 7 to 0); routed R41-1 to R41-7 (same-round rejects in `## Gate`, proxy pin for `wave-census`, guard red-before cases, per-axis verdict keying, round-shape deviations, carried limits, receipt digest labels); row added in round 42 | commit `dfabe92`; fleet closure entry |
 
+| `lessons/round-42.md` | Round-42: capability `gate-mutants` (a frozen 41-id mutant battery over the cite-check and wave-census suites, killed = a `FAIL ` case line; operability 8 to 9 through checklist items 18–19); `~/.kimi-code/locks/` declared as a K3 member from the Kimi Code 2.3.0 source (census strays 1 to 0); S039–S045 with three rejects; R41-1 to R41-7 dispositions; four mined mistakes | LOG.md round 42; `.ufo/waves/round-42/`; S039–S042 |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

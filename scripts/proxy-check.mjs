@@ -39,7 +39,7 @@
  *   counting rules that `scripts/kimi-census.mjs` gates — that file exports no
  *   member table, so the rules are re-derived here (K1 4, including root
  *   `mcp.json` as a shape-only member; K2 the live child counts of
- *   `agents/secondary/` and `skills/` plus 2, K3 9, K4 9, K5 3; the drift
+ *   `agents/secondary/` and `skills/` plus 2, K3 10, K4 9, K5 3; the drift
  *   chain is 1 member; shape-only members are lstat-kind only, never read).
  *   `K_sections` counts the DISTINCT K members named by the `## ` headings of
  *   `corpus/knowledge/kimi-*.md`: a heading names a member when one of its
@@ -134,7 +134,7 @@
  *         K1 4 (`config.toml`, `tui.toml`, the `config.toml.*.bak` chain as ONE
  *         member, plus root `mcp.json`; its 0400 mode floor is gated by the
  *         census tool); K2 `agents/secondary/` + `skills/` live child counts
- *         plus 2 plugin members; K3 9 presence-only paths; K4 9 (directories
+ *         plus 2 plugin members; K3 10 state paths (including mode-pinned `locks/`); K4 9 (directories
  *         are 1 member each; `server.token`, `credentials/`, and `oauth/` are
  *         kind-statted and never opened or content-read; secret directories are
  *         never enumerated); K5 3 root-residue files (`workspaces.json`,
@@ -190,15 +190,18 @@
  *   terms come from the kimi root and the `kimi-*.md` notes, and
  *   `pin.proxy-check` hashes this file for a reader, not for this run.
  *
+ * `kumitate-gate-pins-v1` is a separate optional lane-owned block: only its
+ * named gate files are verified, and their listed paths are excluded from
+ * PIN_UNPINNED. It does not widen the frozen v1 keys or pin count.
  * Findings (text mode prints `PROXY  <severity>  <KIND>  <detail>`)
  *   error A_DRIFT C_DRIFT C1_DRIFT C1_TOTAL_DRIFT C2_DRIFT C2_TOTAL_DRIFT
  *         S_MEMBERS_DRIFT S_SECTIONS_DRIFT R_MEMBERS_DRIFT R_SECTIONS_DRIFT
  *         COVERAGE_SCRIPT_DRIFT COVERAGE_RUNTIME_DRIFT
  *         C1K_DRIFT C1K_TOTAL_DRIFT K_MEMBERS_DRIFT K_SECTIONS_DRIFT
- *         COVERAGE_KIMI_DRIFT PIN_DRIFT (a pin whose
+ *         COVERAGE_KIMI_DRIFT PIN_DRIFT GATE_PIN_DRIFT (a listed pin whose
  *         file is absent is reported as `computed=absent`, never silently
  *         skipped) AXES_DRIFT
- *   warn  PIN_UNPINNED — a `scripts/*.mjs` file no `pin.*` key covers: pin
+ *   warn  PIN_UNPINNED — a `scripts/*.mjs` file no pin key covers: pin
  *         coverage is incomplete (advisory; `--strict` promotes it to a gate).
  *         K_SECTION_AMBIGUOUS — a `kimi-*.md` heading whose only candidate is a
  *         basename shared by several K members: it names none of them
@@ -298,6 +301,8 @@ import { probeSections } from './claims-check.mjs';
 
 const CONTRACT = 'kumitate-proxy-v1';
 const STANZA_HEAD = `<!-- ${CONTRACT}`;
+const GATE_PIN_CONTRACT = 'kumitate-gate-pins-v1';
+const GATE_PIN_HEAD = `<!-- ${GATE_PIN_CONTRACT}`;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_SELF = resolve(HERE, '..');
 /**
@@ -452,6 +457,13 @@ const PINS = {
   'pin.kimi-census': 'scripts/kimi-census.mjs',
 };
 const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
+/** Separate lane-owned gate pins; never widen the parent-frozen v1 key set. */
+const GATE_PINS = {
+  'pin.anchor-truth': 'scripts/anchor-truth.mjs',
+  'pin.sources-check': 'scripts/sources-check.mjs',
+  'pin.wave-census': 'scripts/wave-census.mjs',
+  'pin.gate-mutants': 'scripts/gate-mutants.mjs',
+};
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
   { axis: 'operability', term: 'operability' },
@@ -489,8 +501,8 @@ const RE_CHAIN = /^config\.toml(\..+)?\.bak$/;
 const RE_KIMI_NOTE = /^kimi-.*\.md$/;
 
 /**
- * The frozen K member rules (round-19 freeze + round-20 K5 and round-35 K1
- * `mcp.json` changes), read live under `--kimi-root`. `scripts/kimi-census.mjs`
+ * The frozen K member rules (round-19 freeze + round-20 K5, round-35 K1
+ * `mcp.json`, and round-42 K3 `locks/` changes), read live under `--kimi-root`.
  * gates the same rules but exports no member table, so the rules are re-derived
  * here — the census is the tool that names WHICH slot drifted; this proxy only
  * counts. A counted dir contributes its LIVE non-hidden child count; `chain` is
@@ -506,6 +518,7 @@ const K_MEMBER_RULES = [
   { id: 'skills/', family: 'K2', path: 'skills', kind: 'counted' },
   { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
   { id: 'plugins/managed/kimi-webbridge', family: 'K2', path: 'plugins/managed/kimi-webbridge', kind: 'dir' },
+  { id: 'locks/', family: 'K3', path: 'locks', kind: 'dir' },
   { id: 'sessions/', family: 'K3', path: 'sessions', kind: 'dir' },
   { id: 'session_index.jsonl', family: 'K3', path: 'session_index.jsonl', kind: 'file' },
   { id: 'workspace-trust/', family: 'K3', path: 'workspace-trust', kind: 'dir' },
@@ -536,13 +549,14 @@ const FINDING_KINDS = [
   'COVERAGE_SCRIPT_DRIFT', 'COVERAGE_RUNTIME_DRIFT',
   'C1K_DRIFT', 'C1K_TOTAL_DRIFT', 'K_MEMBERS_DRIFT', 'K_SECTIONS_DRIFT',
   'COVERAGE_KIMI_DRIFT',
-  'PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED', 'K_SECTION_AMBIGUOUS',
+  'PIN_DRIFT', 'GATE_PIN_DRIFT', 'AXES_DRIFT', 'PIN_UNPINNED', 'K_SECTION_AMBIGUOUS',
 ];
 /** Every fail-closed arm the hermetic suite must fire at least once. */
 const FAIL_CLOSED_KINDS = [
   'SELF_NOT_A_DIR', 'PIN_MALFORMED', 'SRC_NOT_A_DIR', 'SRC_REV_UNVERIFIABLE',
   'SRC_REV_MISMATCH', 'KIMI_ROOT_NOT_A_DIR', 'SCORECARD_MISSING',
   'STANZA_MISSING', 'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
+  'GATE_PIN_MALFORMED', 'GATE_PIN_KEY_UNKNOWN',
   'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
 ];
 
@@ -775,7 +789,7 @@ function layerTerms(rows, files) {
 
 /**
  * The live K member set under `kimiRoot`: counts the slots and names every
- * member by its CANONICAL identity — the same 49-member identity
+ * member by its CANONICAL identity — the same 53-member identity
  * `scripts/kimi-census.mjs` gates. A member file/dir is its path, a counted
  * dir's member is the live child path, and the `config.toml.*.bak` drift chain
  * is ONE identity however many generations exist. Only members that count
@@ -997,6 +1011,55 @@ function parseStanza(scorecardText) {
   return { ok: true, values: Object.fromEntries(values), line: start + 1 };
 }
 
+/**
+ * Parse the optional, separate lane-owned gate-pin block. The v1 proxy stanza
+ * remains a frozen 23-key contract; this block admits only the fixed gate keys
+ * above and never changes v1 terms or pin accounting.
+ */
+function parseGatePins(scorecardText) {
+  const lines = scorecardText.split('\n');
+  const heads = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim().startsWith(GATE_PIN_HEAD)) heads.push(i);
+  }
+  if (heads.length === 0) return { ok: true, values: {} };
+  if (heads.length > 1) {
+    return { ok: false, kind: 'GATE_PIN_MALFORMED',
+      detail: `${heads.length} "${GATE_PIN_HEAD}" blocks (at lines ${heads.map((i) => i + 1).join(',')})` };
+  }
+  const start = heads[0];
+  let end = -1;
+  for (let i = start; i < lines.length; i++) {
+    if (lines[i].includes('-->')) { end = i; break; }
+  }
+  if (end < 0) {
+    return { ok: false, kind: 'GATE_PIN_MALFORMED',
+      detail: `block opened at line ${start + 1} is never terminated by "-->"` };
+  }
+  const values = new Map();
+  for (let i = start + 1; i < end; i++) {
+    const raw = lines[i].trim();
+    if (raw === '') continue;
+    const m = RE_STANZA_KV.exec(raw);
+    if (!m) {
+      return { ok: false, kind: 'GATE_PIN_MALFORMED',
+        detail: `line ${i + 1} is not key=value: ${JSON.stringify(lines[i])}` };
+    }
+    const [, key, value] = m;
+    if (!Object.prototype.hasOwnProperty.call(GATE_PINS, key)) {
+      return { ok: false, kind: 'GATE_PIN_KEY_UNKNOWN',
+        detail: `line ${i + 1}: ${key} is not a ${GATE_PIN_CONTRACT} key` };
+    }
+    if (values.has(key) || !RE_HEX64.test(value)) {
+      return { ok: false, kind: 'GATE_PIN_MALFORMED',
+        detail: values.has(key) ? `line ${i + 1}: ${key} is declared twice`
+          : `line ${i + 1}: ${key} is not a 64-hex sha256` };
+    }
+    values.set(key, value);
+  }
+  return { ok: true, values: Object.fromEntries(values) };
+}
+
 /* ------------------------------------------------------------------ compare */
 
 function compareTerms(terms, declared, findings) {
@@ -1041,11 +1104,30 @@ function comparePins(self, declared, findings) {
   return { matched, total: Object.keys(PINS).length, byKey };
 }
 
+/** Verify pins in the independent gate-pin block, without changing v1 pin terms. */
+function compareGatePins(self, declared, findings) {
+  for (const [key, sha256] of Object.entries(declared)) {
+    const rel = GATE_PINS[key];
+    const file = join(self, rel);
+    const computed = sha256File(file);
+    if (computed === sha256) continue;
+    const got = computed ?? `absent (${rel} is ${statKind(file)})`;
+    findings.push({
+      severity: 'error',
+      kind: 'GATE_PIN_DRIFT',
+      term: key,
+      declared: sha256,
+      computed: got,
+      detail: `${key}: declared=${sha256} computed=${got}`,
+    });
+  }
+}
+
 /** Advisory: a `scripts/*.mjs` file no pin covers (pin coverage incomplete). */
-function comparePinCoverage(self, findings) {
+function comparePinCoverage(self, findings, gatePins) {
   const dir = join(self, 'scripts');
   if (statKind(dir) !== 'dir') return;
-  const pinned = new Set(Object.values(PINS));
+  const pinned = new Set([...Object.values(PINS), ...Object.keys(gatePins).map((key) => GATE_PINS[key])]);
   let entries;
   try { entries = readdirSync(dir, { withFileTypes: true }); } catch { return; }
   for (const e of entries) {
@@ -1056,7 +1138,7 @@ function comparePinCoverage(self, findings) {
       severity: 'warn',
       kind: 'PIN_UNPINNED',
       term: rel,
-      detail: `${rel} has no pin.<name> key in the ${CONTRACT} stanza`,
+      detail: `${rel} has no pin.<name> key in the ${CONTRACT} or ${GATE_PIN_CONTRACT} stanza`,
     });
   }
 }
@@ -1195,6 +1277,8 @@ function runCheck(opts, started) {
   }
   const stanza = parseStanza(scorecardText);
   if (!stanza.ok) return failClosed(opts, stanza.kind, stanza.detail, {}, started);
+  const gatePins = parseGatePins(scorecardText);
+  if (!gatePins.ok) return failClosed(opts, gatePins.kind, gatePins.detail, {}, started);
   if (registryCounts(scorecardText).total === 0) {
     return failClosed(opts, 'REGISTRY_MISSING',
       `no "| S<n> |" or "| R<n> |" registry row in ${opts.scorecard}`, {}, started);
@@ -1244,8 +1328,9 @@ function runCheck(opts, started) {
   const findings = [...derived.warnings];
   compareTerms(terms, stanza.values, findings);
   const pinStats = comparePins(opts.self, stanza.values, findings);
+  compareGatePins(opts.self, gatePins.values, findings);
   compareAxes(scorecardText, terms, findings);
-  comparePinCoverage(opts.self, findings);
+  comparePinCoverage(opts.self, findings, gatePins.values);
   const { errors, warnings, verdict, exitCode } = summarize(findings, opts.strict);
 
   const body = {
@@ -1320,10 +1405,11 @@ function fixtureSrc(root) {
 }
 
 /**
- * The fixture KIMI ROOT (`--kimi-root`): every K1–K5 member present with its
- * declared kind, and the two counted dirs seeded small (2 + 1 children) so the
- * total is hand-checkable: K1 4 + K2 (2+1+1+1)=5 + K3 9 + K4 9 + K5 3 = 30.
- * The real tree holds 51 (18 + 6 there); the fixture is a shape, not a copy.
+ * The fixture KIMI root (`--kimi-root`) is a hand-checkable subset; it omits
+ * the new `locks/` member except in its dedicated member test. The two counted
+ * dirs are seeded small (2 + 1 children): K1 4 + K2 (2+1+1+1)=5 + K3 9
+ * + K4 9 + K5 3 = 30. The real tree holds 53 (18 + 7 skills); this fixture
+ * is a shape, not a copy.
  */
 const FX_KIMI_FILES = [
   'config.toml', 'tui.toml', 'config.toml.bak',
@@ -1398,7 +1484,7 @@ function fxReadme(rows) {
  * so a derivation change cannot be absorbed by a self-consistent fixture.
  */
 function fxScorecard(fx) {
-  const { expect, registry } = fx;
+  const { expect, registry, gatePins } = fx;
   const lines = [
     '# Fixture scorecard', '',
     `#### In-scope surface registry (${registry.length} families)`, '',
@@ -1421,6 +1507,8 @@ function fxScorecard(fx) {
   );
   for (const k of TERM_KEYS) lines.push(`${k}=${expect[k]}`);
   for (const [k, v] of Object.entries(FIXTURE_PINS)) lines.push(`${k}=${v}`);
+  lines.push('-->', '', GATE_PIN_HEAD);
+  for (const [key, value] of Object.entries(gatePins)) lines.push(`${key}=${value}`);
   lines.push('-->', '');
   return `${lines.join('\n')}\n`;
 }
@@ -1482,6 +1570,14 @@ function selfTest() {
     const notes = knobs.notes ?? ['knowledge/alpha.md', 'lessons/beta.md'];
     const registry = knobs.registry ?? [['S1', 'alpha', '`a.mjs`', 'yes — alpha note'], ['R1', 'beta', '`b.rs`', 'no']];
     for (const s of scripts) fxWrite(join(dir, 'scripts', s), fixtureScript(s));
+    const gatePinNames = knobs.gatePins ?? [];
+    for (const name of gatePinNames) {
+      const file = `${name}.mjs`;
+      fxWrite(join(dir, 'scripts', file), fixtureScript(file));
+    }
+    const gatePins = Object.fromEntries(gatePinNames.map((name) => [
+      `pin.${name}`, sha256Hex(Buffer.from(fixtureScript(`${name}.mjs`), 'utf8')),
+    ]));
     for (const rel of knobs.extraRunnables ?? []) fxWrite(join(dir, rel), '#!/bin/sh\nexit 0\n');
     fxWrite(join(dir, 'notes.txt'), 'not runnable\n');
     fxWrite(join(dir, '.git', 'junk.mjs'), '// must never be counted\n');
@@ -1495,7 +1591,7 @@ function selfTest() {
     // 30 members (4+5+9+9+3), the base notes name none of them, and the base
     // registry has no K rows. A K-specific fixture overrides what it moves.
     const fx = {
-      dir, src, kimi, checklist, readmeRows, notes, registry,
+      dir, src, kimi, checklist, readmeRows, notes, registry, gatePins,
       expect: { C1k: 0, C1k_total: 0, K_members: 30, K_sections: 0, coverage_kimi: 0, ...knobs.expect },
     };
     if (knobs.scorecard !== false) fx.scorecard = fxScorecard(fx);
@@ -1907,6 +2003,19 @@ function selfTest() {
 
     const kMatch = fxBase('kimi-match', K_KNOBS);
     const kr = runProxy(args(kMatch));
+
+    check('K member list includes locks/ as one K3 directory', () => {
+      const root = fxDir('kimi-locks-member');
+      fixtureKimi(root);
+      mkdirSync(join(root, 'locks', 'sessions'), { recursive: true });
+      const rule = K_MEMBER_RULES.find((m) => m.id === 'locks/');
+      const observedK = kMembers(root);
+      return {
+        ok: rule?.family === 'K3' && rule.path === 'locks' && rule.kind === 'dir'
+          && observedK.members === 31 && observedK.identities.has('locks'),
+        detail: `members=${observedK.members} locks=${observedK.identities.has('locks')} rule=${JSON.stringify(rule)}`,
+      };
+    });
     check('K terms MATCH: `C1k=5/5 K=4/30 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict)', () => {
       const k = kindsEq(kr, []);
       return {
@@ -2305,6 +2414,69 @@ function selfTest() {
         detail: `exit=${dSourcesPin.status} token=${token} ${verdictLine(dSourcesPin)}`,
       };
     });
+    const gatePinsFixture = fxBase('gate-pins-clean', {
+      gatePins: ['anchor-truth', 'sources-check', 'wave-census', 'gate-mutants'],
+      expect: { ...F1.expect, A: 10, operability: 8 },
+    });
+    const gatePinsRun = runProxy(args(gatePinsFixture, ['--strict', '--json']));
+    check('separate gate-pin block verifies named gates, suppresses warnings, and keeps v1 pins unchanged', () => {
+      const j = JSON.parse(gatePinsRun.stdout);
+      return {
+        ok: gatePinsRun.status === 0 && j.verdict === 'MATCH' && j.errors === 0
+          && j.warnings === 0 && j.findings.length === 0
+          && j.terms.pinsMatched === 6 && j.terms.pinsTotal === 6
+          && gatePinsFixture.scorecard.includes('pin.gate-mutants='),
+        detail: `exit=${gatePinsRun.status} warnings=${j.warnings} v1Pins=${j.terms.pinsMatched}/${j.terms.pinsTotal} futureKey=${gatePinsFixture.scorecard.includes('pin.gate-mutants=')}`,
+      };
+    });
+    const gatePinDrift = fxBase('gate-pin-drift', {
+      gatePins: ['anchor-truth'],
+      expect: { ...F1.expect, A: 7 },
+    });
+    const tamperedGatePin = gatePinDrift.scorecard.replace(
+      /(\npin\.anchor-truth=)[0-9a-f]{64}\n/u, `$1${zeroPin}\n`,
+    );
+    fxWrite(join(gatePinDrift.dir, SCORECARD_FILE), tamperedGatePin);
+    const gatePinDriftRun = runProxy(args(gatePinDrift));
+    check('GATE_PIN_DRIFT: a changed gate hash is an error with the declared and computed digests', () => {
+      const k = kindsEq(gatePinDriftRun, ['GATE_PIN_DRIFT']);
+      const f = parseFindings(gatePinDriftRun.stdout)[0];
+      return {
+        ok: gatePinDriftRun.status === 1 && k.ok && f?.severity === 'error'
+          && f.detail.startsWith(`pin.anchor-truth: declared=${zeroPin} computed=`),
+        detail: `exit=${gatePinDriftRun.status} kinds=[${k.got}] ${f ? f.detail.slice(0, 100) : ''}`,
+      };
+    });
+    const unknownGatePin = fxBase('gate-pin-unknown', { expect: F1.expect });
+    const unknownGatePinText = unknownGatePin.scorecard.replace(
+      `${GATE_PIN_HEAD}\n`, `${GATE_PIN_HEAD}\npin.future-unknown=${zeroPin}\n`,
+    );
+    fxWrite(join(unknownGatePin.dir, SCORECARD_FILE), unknownGatePinText);
+    const unknownGatePinRun = runProxy(args(unknownGatePin));
+    check('GATE_PIN_KEY_UNKNOWN: an undeclared gate key fails closed', () => {
+      const token = fcToken(unknownGatePinRun);
+      return {
+        ok: unknownGatePinRun.status === 2 && token === 'GATE_PIN_KEY_UNKNOWN',
+        detail: `exit=${unknownGatePinRun.status} token=${token} ${verdictLine(unknownGatePinRun)}`,
+      };
+    });
+    const malformedGatePin = fxBase('gate-pin-malformed', {
+      gatePins: ['anchor-truth'],
+      expect: { ...F1.expect, A: 7 },
+    });
+    const malformedGatePinText = malformedGatePin.scorecard.replace(
+      /(\npin\.anchor-truth=)[0-9a-f]{64}\n/u, '$1not-a-sha256\n',
+    );
+    fxWrite(join(malformedGatePin.dir, SCORECARD_FILE), malformedGatePinText);
+    const malformedGatePinRun = runProxy(args(malformedGatePin));
+    check('GATE_PIN_MALFORMED: an invalid gate digest fails closed', () => {
+      const token = fcToken(malformedGatePinRun);
+      return {
+        ok: malformedGatePinRun.status === 2 && token === 'GATE_PIN_MALFORMED',
+        detail: `exit=${malformedGatePinRun.status} token=${token} ${verdictLine(malformedGatePinRun)}`,
+      };
+    });
+
     const missingScript = fxBase('drift-pin-absent', { expect: F1.expect });
     rmSync(join(missingScript.dir, 'scripts', 'proxy-check.mjs'), { force: true });
     const d10 = runProxy(args(missingScript));

@@ -43,10 +43,10 @@
  *        node scripts/wave-census.mjs --selftest
  */
 
-import { existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { closeSync, constants, existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync, openSync, opendirSync, readSync, realpathSync, rmSync, statSync, symlinkSync, truncateSync, unlinkSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const CONTRACT = 'kumitate-wave-census-v1';
@@ -54,11 +54,63 @@ const SELF = fileURLToPath(import.meta.url);
 const DEFAULT_ROOT = resolve(dirname(SELF), '..');
 const ATTACK = new Set(['reviewer', 'critic', 'mutation-tester', 'labrat']);
 const KNOWN_ROLES = new Set(['planner', 'scout', 'connector', 'sentinel', 'executor', 'revenger', 'simplifier', 'scribe', 'distiller']);
-const RE_REPORT = /Report:[^\n]*?(\.ufo\/waves\/[^\s`'"]+\.md)/;
+const RE_REPORT = /(?:^|\n)Report:[^\n]*?(\.ufo\/waves\/[^\s`'"]+\.md)[ \t]*\r?\n?$/;
 const USAGE = 'usage: node scripts/wave-census.mjs --round N [--round M ...] [--root DIR] [--expect <wave>:<role>=<n> ...] [--json] | --selftest\n';
+const MAX_DISPATCH_BYTES = 32 * 1024 * 1024;
+const MAX_DISPATCH_FILES = 256;
+const MAX_ROUND_DIR_ENTRIES = 4096;
+const MAX_REPORT_DIR_ENTRIES = 1024;
+const MAX_SEATS_PER_WAVE = 1000;
+const MAX_SEATS_PER_ROUND = 10_000;
+const MAX_FINDINGS_PER_ROUND = 10_000;
 
 class Usage extends Error {}
 class FailClosed extends Error {}
+function confinedRealpath(root, path) {
+  let actual;
+  try { actual = realpathSync(path); } catch (e) {
+    if (e.code === 'ENOENT') return null;
+    throw e;
+  }
+  const rel = relative(root, actual);
+  if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) {
+    throw new FailClosed(`${path} resolves outside --root`);
+  }
+  return actual;
+}
+
+function directoryNames(dir, maxEntries, what) {
+  const handle = opendirSync(dir);
+  const names = [];
+  try {
+    let entry;
+    while ((entry = handle.readSync()) !== null) {
+      if (names.length >= maxEntries) throw new FailClosed(`${dir} exceeds ${what} entry limit ${maxEntries}`);
+      names.push(entry.name);
+    }
+  } finally { handle.closeSync(); }
+  return names;
+}
+function readdirSync(dir) {
+  return directoryNames(dir, MAX_REPORT_DIR_ENTRIES, 'report directory');
+}
+
+function readCapped(path, cap) {
+  const fd = openSync(path, constants.O_RDONLY | (constants.O_NONBLOCK ?? 0) | (constants.O_NOFOLLOW ?? 0));
+  try {
+    const st = fstatSync(fd);
+    if (!st.isFile()) throw new FailClosed(`${path} is not a regular file`);
+    if (st.size > cap) throw new FailClosed(`${path} exceeds byte limit ${cap}`);
+    const bytes = Buffer.allocUnsafe(st.size);
+    let offset = 0;
+    while (offset < bytes.length) {
+      const n = readSync(fd, bytes, offset, bytes.length - offset, offset);
+      if (!n) break;
+      offset += n;
+    }
+    return { text: bytes.subarray(0, offset).toString('utf8'), bytes: st.size };
+  } finally { closeSync(fd); }
+}
 
 function parseArgs(argv) {
   const o = { rounds: [], root: DEFAULT_ROOT, expects: [], json: false, selftest: false };
@@ -84,25 +136,44 @@ function parseArgs(argv) {
 }
 
 function censusRound(root, n) {
-  const dir = join(root, '.ufo', 'waves', `round-${n}`);
-  let st = null;
-  try { st = statSync(dir); } catch { st = null; }
-  if (!st || !st.isDirectory()) throw new FailClosed(`round dir ${dir} is missing`);
-  const files = readdirSync(dir).filter((f) => /-dispatch\.json$/.test(f)).sort();
+  const roundPath = join(root, '.ufo', 'waves', `round-${n}`);
+  const dir = confinedRealpath(root, roundPath);
+  if (!dir) throw new FailClosed(`round dir ${roundPath} is missing`);
+  if (!statSync(dir).isDirectory()) throw new FailClosed(`round dir ${roundPath} is missing`);
+  const files = directoryNames(dir, MAX_ROUND_DIR_ENTRIES, 'round directory')
+    .filter((f) => /-dispatch\.json$/.test(f)).sort();
+  if (files.length > MAX_DISPATCH_FILES) throw new FailClosed(`round dir ${dir} exceeds dispatch file limit ${MAX_DISPATCH_FILES}`);
   if (!files.length) throw new FailClosed(`round dir ${dir} holds no *-dispatch.json`);
   const waves = [];
   const findings = [];
+  let dispatchBytes = 0;
+  let seatsInRound = 0;
   for (const f of files) {
     const wave = f.replace(/-dispatch\.json$/, '');
+    const path = join(dir, f);
+    const dispatch = confinedRealpath(root, path);
+    if (!dispatch) throw new FailClosed(`${path} is missing`);
+    if (!statSync(dispatch).isFile()) throw new FailClosed(`${path} is not a regular file`);
     let d;
-    try { d = JSON.parse(readFileSync(join(dir, f), 'utf8')); } catch (e) {
-      throw new FailClosed(`${join(dir, f)} does not parse: ${e.message}`);
+    try {
+      const input = readCapped(dispatch, MAX_DISPATCH_BYTES - dispatchBytes);
+      dispatchBytes += input.bytes;
+      d = JSON.parse(input.text);
+    } catch (e) {
+      if (e instanceof FailClosed) throw e;
+      if (e instanceof SyntaxError) throw new FailClosed(`${path} does not parse: ${e.message}`);
+      throw e;
     }
     const v1 = d && d.schema === 'ufo-swarm-wave-dispatch-v1';
     // A v1 envelope's `taskCall` is null when the wave resumes only (S038, :51-52); its
     // resumed seats ride `resumeSends` (one hub send each, report suffix in `message`).
     const tc = v1 ? (d.taskCall ?? { tasks: [] }) : (d && Array.isArray(d.tasks) ? d : null);
     if (!tc || !Array.isArray(tc.tasks)) throw new FailClosed(`${join(dir, f)} carries no task list`);
+    const resumeCount = v1 && Array.isArray(d.resumeSends) ? d.resumeSends.length : 0;
+    const seatCount = tc.tasks.length + resumeCount;
+    if (seatCount > MAX_SEATS_PER_WAVE) throw new FailClosed(`${path} exceeds seat limit ${MAX_SEATS_PER_WAVE}`);
+    seatsInRound += seatCount;
+    if (seatsInRound > MAX_SEATS_PER_ROUND) throw new FailClosed(`round ${n} exceeds seat limit ${MAX_SEATS_PER_ROUND}`);
     const reportOf = (text) => { const r = (String(text ?? '').match(RE_REPORT) ?? [])[1] ?? null; return r && !r.split('/').includes('..') ? r : null; };
     if (tc.tasks.some((t) => !t || typeof t.name !== 'string' || typeof t.agent !== 'string')) {
       throw new FailClosed(`${join(dir, f)} has a task without a string name and agent`);
@@ -114,12 +185,18 @@ function censusRound(root, n) {
     for (const t of tasks) roles[t.role] = (roles[t.role] ?? 0) + 1;
     const attack = tasks.filter((t) => ATTACK.has(t.role)).length;
     const present = []; const absent = [];
-    const isReport = (rel) => { try { const st = lstatSync(join(root, rel)); return st.isFile() && st.size > 0; } catch { return false; } };
+    const isReport = (rel) => {
+      const parent = confinedRealpath(root, join(root, dirname(rel)));
+      if (!parent) return false;
+      try { const st = lstatSync(join(parent, basename(rel))); return st.isFile() && st.size > 0; }
+      catch (e) { if (e.code === 'ENOENT') return false; throw e; }
+    };
     for (const t of [...tasks, ...resumes]) (t.report && isReport(t.report) ? present : absent).push(t.name);
     const w = { round: n, wave, file: f, schema: v1 ? d.schema : 'bare-taskcall', seats: tasks.length, resumed: resumes.length,
       roles, attack, present: present.length, absent: absent.length, absentNames: absent };
     if (v1) {
       if (d.counts && (d.counts.spawn !== tasks.length || (d.counts.resume ?? 0) !== resumes.length)) {
+        if (findings.length >= MAX_FINDINGS_PER_ROUND) throw new FailClosed(`round ${n} exceeds finding limit ${MAX_FINDINGS_PER_ROUND}`);
         findings.push({ kind: 'COUNT_MISMATCH', round: n, wave, detail: `counts.spawn=${d.counts.spawn} tasks=${tasks.length} counts.resume=${d.counts.resume} resumeSends=${resumes.length}` });
       }
       const mem = d.registry && d.registry.members && typeof d.registry.members === 'object' ? d.registry.members : null;
@@ -129,6 +206,7 @@ function censusRound(root, n) {
         if (members.length !== names.length || members.some((m, i) => m !== names[i])) {
           const missing = names.filter((x) => !members.includes(x));
           const extra = members.filter((x) => !names.includes(x));
+          if (findings.length >= MAX_FINDINGS_PER_ROUND) throw new FailClosed(`round ${n} exceeds finding limit ${MAX_FINDINGS_PER_ROUND}`);
           findings.push({ kind: 'REGISTRY_MISMATCH', round: n, wave, detail: `not-in-registry=[${missing.join(',')}] not-in-tasks=[${extra.join(',')}]` });
         }
       }
@@ -136,10 +214,13 @@ function censusRound(root, n) {
     const reportDirs = new Set([...tasks, ...resumes].map((t) => t.report && dirname(t.report)).filter(Boolean));
     const names = new Set([...tasks, ...resumes].map((t) => t.name));
     for (const rd of reportDirs) {
-      const abs = join(root, rd);
+      const abs = confinedRealpath(root, join(root, rd)) ?? '';
       if (!existsSync(abs)) continue;
       for (const e of readdirSync(abs).filter((x) => x.endsWith('.md')).sort()) {
-        if (!names.has(e.slice(0, -3))) findings.push({ kind: 'STRAY_REPORT', round: n, wave, detail: `${rd}/${e}` });
+        if (!names.has(e.slice(0, -3))) {
+          if (findings.length >= MAX_FINDINGS_PER_ROUND) throw new FailClosed(`round ${n} exceeds finding limit ${MAX_FINDINGS_PER_ROUND}`);
+          findings.push({ kind: 'STRAY_REPORT', round: n, wave, detail: `${rd}/${e}` });
+        }
       }
     }
     waves.push(w);
@@ -148,7 +229,8 @@ function censusRound(root, n) {
 }
 
 function census(opts) {
-  const rounds = opts.rounds.map((n) => censusRound(opts.root, n));
+  const realRoot = realpathSync(opts.root);
+  const rounds = opts.rounds.map((n) => censusRound(realRoot, n));
   const findings = rounds.flatMap((r) => r.findings);
   for (const ex of opts.expects) {
     const all = rounds.flatMap((r) => r.waves);
@@ -212,9 +294,9 @@ function selftest() {
     }
     return root;
   };
-  const run = (root, args) => {
-    const r = spawnSync(process.execPath, [SELF, '--root', root, ...args], { encoding: 'utf8', timeout: 60_000 });
-    return { status: r.status, out: String(r.stdout ?? ''), err: String(r.stderr ?? '') };
+  const run = (root, args, timeout = 60_000) => {
+    const r = spawnSync(process.execPath, [SELF, '--root', root, ...args], { encoding: 'utf8', timeout });
+    return { status: r.status, out: String(r.stdout ?? ''), err: String(r.stderr ?? ''), error: r.error?.code };
   };
   try {
     const good = mkRound(join(tmp, 'good'), 7, {
@@ -410,6 +492,72 @@ function selftest() {
         && shortReg.status === 1 && /^FINDING REGISTRY_MISMATCH round=25 wave=build not-in-registry=\[B\] not-in-tasks=\[\]$/m.test(shortReg.out)
         && nonMd.status === 0 && /reports=1\/1/.test(nonMd.out);
       return { ok, detail: `spawnLow=${spawnLow.status} resumeLow=${resumeLow.status} bareV1=${bareV1.status} noResumeKey=${noResumeKey.status} shortReg=${shortReg.status} nonMd=${nonMd.status}` };
+    });
+    check('WC27', 'a report path through a symlinked directory outside --root fails closed', () => {
+      const root = one(30, { context: 'c', tasks: [task(30, 'build', 'E', 'critic')] });
+      const outside = join(tmp, 'outside-report');
+      mkdirSync(outside, { recursive: true });
+      writeFileSync(join(outside, 'E.md'), 'RESULT E\n');
+      symlinkSync(outside, join(root, '.ufo', 'waves', 'round-30', 'build'));
+      const r = run(root, ['--round', '30']);
+      return { ok: r.status === 2 && /resolves outside --root/.test(r.err), detail: `exit=${r.status} ${r.err.trim()}` };
+    });
+    check('WC28', 'symlinked dispatch and round paths outside --root fail closed', () => {
+      const dispatchRoot = one(31, { context: 'c', tasks: [] });
+      const dispatch = join(dispatchRoot, '.ufo', 'waves', 'round-31', 'build-dispatch.json');
+      const outsideDispatch = join(tmp, 'outside-dispatch.json');
+      writeFileSync(outsideDispatch, JSON.stringify({ context: 'c', tasks: [] }));
+      unlinkSync(dispatch);
+      symlinkSync(outsideDispatch, dispatch);
+      const d = run(dispatchRoot, ['--round', '31']);
+      const roundRoot = join(tmp, 'round-link-root');
+      const outsideRound = join(tmp, 'outside-round');
+      mkdirSync(join(roundRoot, '.ufo', 'waves'), { recursive: true });
+      mkdirSync(outsideRound, { recursive: true });
+      writeFileSync(join(outsideRound, 'build-dispatch.json'), JSON.stringify({ context: 'c', tasks: [] }));
+      symlinkSync(outsideRound, join(roundRoot, '.ufo', 'waves', 'round-32'));
+      const r = run(roundRoot, ['--round', '32']);
+      return { ok: d.status === 2 && r.status === 2 && /resolves outside --root/.test(d.err) && /resolves outside --root/.test(r.err),
+        detail: `dispatch=${d.status} round=${r.status}` };
+    });
+    check('WC29', 'FIFO and non-regular dispatch entries fail closed without blocking', () => {
+      const fifoRoot = one(33, { context: 'c', tasks: [] });
+      const fifo = join(fifoRoot, '.ufo', 'waves', 'round-33', 'build-dispatch.json');
+      unlinkSync(fifo);
+      const mk = spawnSync('mkfifo', [fifo], { encoding: 'utf8', timeout: 1_000 });
+      const f = run(fifoRoot, ['--round', '33'], 2_000);
+      const dirRoot = one(34, { context: 'c', tasks: [] });
+      const dir = join(dirRoot, '.ufo', 'waves', 'round-34', 'build-dispatch.json');
+      unlinkSync(dir);
+      mkdirSync(dir);
+      const d = run(dirRoot, ['--round', '34']);
+      return { ok: mk.status === 0 && f.status === 2 && !f.error && /not a regular file/.test(f.err)
+        && d.status === 2 && /not a regular file/.test(d.err), detail: `mkfifo=${mk.status} fifo=${f.status} error=${f.error ?? '-'} directory=${d.status}` };
+    });
+    check('WC30', 'dispatch bytes, seats, and report-directory entries are capped', () => {
+      const largeRoot = one(35, { context: 'c', tasks: [] });
+      const largePath = join(largeRoot, '.ufo', 'waves', 'round-35', 'build-dispatch.json');
+      truncateSync(largePath, 32 * 1024 * 1024 + 1);
+      const large = run(largeRoot, ['--round', '35']);
+      const manyTasks = Array.from({ length: 1_001 }, (_, i) => task(36, 'build', `T${i}`, 'critic'));
+      const taskRoot = one(36, { context: 'c', tasks: manyTasks });
+      const tasks = run(taskRoot, ['--round', '36']);
+      const reportsRoot = one(37, { context: 'c', tasks: [task(37, 'build', 'T', 'critic')] });
+      const reportDir = join(reportsRoot, '.ufo', 'waves', 'round-37', 'build');
+      mkdirSync(reportDir, { recursive: true });
+      for (let i = 0; i < 1_025; i++) writeFileSync(join(reportDir, `stray-${i}.md`), 'x\n');
+      const reports = run(reportsRoot, ['--round', '37']);
+      return { ok: large.status === 2 && /byte limit/.test(large.err) && tasks.status === 2 && /seat limit/.test(tasks.err)
+        && reports.status === 2 && /entry limit/.test(reports.err),
+        detail: `bytes=${large.status} tasks=${tasks.status} reports=${reports.status}` };
+    });
+    check('WC31', 'only a line-anchored final Report trailer names the report', () => {
+      const root = one(38, { context: 'c', tasks: [{ name: 'T', agent: 'critic',
+        task: 'Example text: Report: .ufo/waves/round-99/Decoy.md\nReport: write findings to .ufo/waves/round-38/build/T.md' }] },
+      { '.ufo/waves/round-99/Decoy.md': 'RESULT Decoy\n', '.ufo/waves/round-38/build/T.md': 'RESULT T\n' });
+      const r = run(root, ['--round', '38']);
+      return { ok: r.status === 0 && /reports=1\/1/.test(r.out) && !/^ {2}absent:/m.test(r.out) && !/STRAY_REPORT/.test(r.out),
+        detail: `exit=${r.status} ${r.out.trim().split('\n').pop()}` };
     });
     // The suite observes its own verdict machinery: a child `--selftest` with one injected failing
     // case must print that FAIL line, count one fewer pass, end `VERDICT: FAIL` and exit 1. Any

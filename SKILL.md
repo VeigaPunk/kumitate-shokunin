@@ -586,11 +586,11 @@ Citations are to the notes — the notes carry the live anchors.
 
 ## Gate registry
 
-Registry home per the fleet protocol's §Gate standard (round 34). All nine are
-gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41). None writes to a surface it does not
+Registry home per the fleet protocol's §Gate standard (round 34). All ten are
+gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42). None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
 origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
-`--checklists` mode runs the commands listed below. Verdict map for all nine: `0` → clean,
+`--checklists` mode runs the commands listed below. Verdict map for all ten: `0` → clean,
 `1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
 this lane (kumitate L1).
 
@@ -605,6 +605,7 @@ this lane (kumitate L1).
 | sources-check | gate | `node scripts/sources-check.mjs [--strict]` → `SOURCES_CHECK: CLEAN\|DRIFT` | `--selftest` | independent gate; `corpus/SOURCES.md` + frozen `16a5441` legacy identity set; not a `kumitate-proxy-v1` pin |
 | anchor-truth | gate | `node scripts/anchor-truth.mjs [--base REV] [--open REV] [--write-pin --notes …]` → `TRUTH: CLEAN\|DRIFT\|FAIL-CLOSED`. `--open REV` (round 40) adds the round-open floor: the pin at REV is a second base for `BASE_TRUE_LOST`, `DEBT_GREW` and `CHECKED_SHRANK`; every current debt anchor must equal a debt anchor at REV by identity and token, else `DEBT_NEW`; review records are read at REV, so a record written after REV reads `REVIEW_UNBOUND`. Without `--open`, records are read at HEAD and one `TRUTH_WARN` line says so. Same verdict map: 0 clean, 1 drift, 2 fail-closed, 64 usage | `--selftest` (`ANCHOR_TRUTH_SELFTEST: n/m`) | `.ufo/pins/anchor-truth.json` (one expectation per anchor of the registered notes, contract `kumitate-anchor-truth-v1`, at the `.ufo/pins/origin.json` revision); the frozen `--base` commit holds the burn-down floor; the `--open` revision is passed on the command line, never read from a lane file |
 | wave-census | gate | `node scripts/wave-census.mjs --round N [--round M …] [--expect [<round>/]<wave>:<role>=<n> …] [--json]` (role `attack` = attack total; resumed seats counted apart as `resumed=`; a report = a non-empty regular file) → `WAVE_CENSUS: CLEAN\|DRIFT` (findings `EXPECT_MISMATCH`, `EXPECT_UNKNOWN`, `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`) | `--selftest` (`WAVE_CENSUS_SELFTEST: n/m`; case WC24 runs a child selftest with one injected failure and checks its FAIL line, count, verdict and exit, so a suite whose verdict machinery drops failures shows a `FAIL  WC24` line; run with `KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL` unset) | committed `.ufo/waves/round-<N>/*-dispatch.json` (`ufo-swarm-wave-dispatch-v1` from the origin producer `scripts/ufo-swarm-wave.mjs`, S038) and the report files their `Report:` trailers name; a payload proves validation, not dispatch |
+| gate-mutants | gate | `node scripts/gate-mutants.mjs [--rev REV] [--target cite-check\|wave-census] [--jobs N] [--list] [--json]` → `GATE_MUTANTS: CLEAN\|SURVIVED\|ERROR`. A frozen embedded manifest (41 frozen ids: the 16 round-41 cite-check verdict mutants and the 25 round-41 wave-census mutants; two round-42 extras for the cite-check guard, R41-3) is applied one mutant at a time to a temp copy of the measured `scripts/` (working copy, or `--rev` read through `git ls-tree`/`git show`), each copy's `--selftest` run detached in its own process group under `prlimit`, a 60 s timeout, a 16-process and 512 MB group cap, and an allowlisted environment (no inherited `KUMITATE_*`, `GIT_*` or `NODE_OPTIONS`). Per mutant `killed` (at least one `FAIL ` case line, S039/S034), `survived`, `drift` (passed with fewer cases than the control), `nomatch` (the `from` literal not exactly once), `crash`, `timeout`. Header `GATE_MUTANTS_HEADER rev=<rev\|working-copy> <target>=<sha256 of the bytes mutated> … manifest=<sha256>` (R41-7). Exit 0 all killed; 1 a survivor or drift; 2 nomatch, crash, timeout, a control failure or below its case floor (cite-check 75, wave-census 31), or a missing frozen id; 64 usage | `--selftest` (`GATE_MUTANTS_SELFTEST: n/m`; tiny fixture targets only, never the lane's suites) | the manifest and frozen id list inside the script; pinned in the `kumitate-gate-pins-v1` block of `SCORECARD.md` |
 
 Named legacy gaps (not claimed): the original seven gates do not ship the
 §Gate standard digest-checked frozen-snapshot replayer. Round 38 supplies that
@@ -657,10 +658,11 @@ new one as a further anchor; no token-kept arm (`corpus/lessons/round-40.md`).
 
 ## Verifiable checklist
 
-Seventeen items (round 41). Item 14 replaces the round-36/37 adjacency-fidelity
+Nineteen items (round 42). Item 14 replaces the round-36/37 adjacency-fidelity
 ratchet with the per-anchor truth gate on four registered notes (811 anchors);
 item 15 is its hermetic suite; items 16–17 (round 41) are the wave-census of round 40's
-committed swarm evidence (a fixed, landed round) and its hermetic suite. Every item is read-only, runs from this repo's
+committed swarm evidence (a fixed, landed round) and its hermetic suite; items 18–19 (round 42)
+are the gate-mutants battery over the lane's own suites and its hermetic suite. Every item is read-only, runs from this repo's
 root, and prints its verdict; `node scripts/surface-probe.mjs --checklists`
 executes the list. The old `claims-check --fidelity` arm remains diagnostic for
 its 20-note population, not a certificate of anchor truth.
@@ -689,6 +691,8 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch) — `node scripts/wave-census.mjs --round 40` → exit 0 + `WAVE_CENSUS: CLEAN`
 - [ ] Wave-census hermetic suite — `node scripts/wave-census.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Gate-mutants battery over the lane's own suites (41 frozen mutants of cite-check and wave-census, each must be killed; exit 0 only when every mutant is killed) — `node scripts/gate-mutants.mjs` → exit 0 + `frozen=41/41`
+- [ ] Gate-mutants hermetic suite — `node scripts/gate-mutants.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON, a pin that no longer resolves to its

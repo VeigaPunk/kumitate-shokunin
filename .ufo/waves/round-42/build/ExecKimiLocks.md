@@ -1,0 +1,15 @@
+RESULT ExecKimiLocks rev=b237e3f09c9559e130c7367bd2efa981c4ea516f verdict=implemented census_before=DRIFT census_after=CLEAN K=52/53 selftest=52/52
+
+Changed only `scripts/kimi-census.mjs` and `scripts/proxy-check.mjs`; patch: `/fast/scratch/hyaku/kumitate-r42/seats/ExecKimiLocks/ExecKimiLocks.patch`.
+
+- Baseline at b237e3f09c9559e130c7367bd2efa981c4ea516f, `node scripts/kimi-census.mjs; echo exit=$?` → `KIMI_CENSUS: DRIFT (UNLISTED locks)`; `TOTALS: members=52 checked=52 errors=1 info=4 chain=8`; `exit=1`.
+- Baseline `node scripts/kimi-census.mjs --selftest` → `KIMI_CENSUS_SELFTEST: 48/48 pass`; `VERDICT: PASS`.
+- Official Kimi Code documentation at `https://moonshotai.github.io/kimi-code/en/configuration/data-locations.html` says “Cross-process occupancy locks while a client writes a session.” Official source at commit `759958afdfeb0f8c7d09cb03cbc2cf85b6255e9e` says `this.lockDir = join(bootstrap.homeDir, 'locks', 'sessions');` and `fs.mkdirSync(this.lockDir, { recursive: true, mode: 0o700 });`. This is K3 session state, not K1 configuration or K5 residue. No live lock-file contents were read.
+- Added `locks/` to K3 with a directory-kind check and 0700 mode floor; the census never enumerates its children. K3 is 10 and the total is 53. The census tests cover present/clean, absent/`MEMBER_MISSING`, file/`SHAPE_DRIFT`, weak mode/`SHAPE_DRIFT`, and an undeclared stray/`UNLISTED`.
+- At the working copy, `node scripts/kimi-census.mjs; echo exit=$?` → `KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)`; root declared=27, strays=0; exit=0.
+- At the working copy, `node scripts/kimi-census.mjs --selftest` → `KIMI_CENSUS_SELFTEST: 52/52 pass`; `VERDICT: PASS`.
+- `set -o pipefail; node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json | jq -c '.terms|{K_members,K_sections,coverage_kimi}'; echo exit=$?` → `{"K_members":53,"K_sections":52,"coverage_kimi":9}`; exit=1.
+- The exact section binding is in `corpus/knowledge/kimi-session-state.md`: `## \`~/.kimi-code/locks/\``. The clone has no Scribe prose update, so K=52/53 is the observed proxy count; 53/53 is not verified.
+- Updated stale live-code counts: census K3 9→10 and total 52→53; proxy K3 9→10, its 49-member description→53, and real-tree 51 (18+6)→53 (18+7). The proxy’s 30-member fixture remains synthetic and omits `locks/` except in its new member test.
+- Script hashes: `kimi-census.mjs` `a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63`; `proxy-check.mjs` `bf72a2525a220637928ced5f0c2e2f83a65d5261d9b8d24e36a41993b9ee64ca`. No proxy pin was changed.
+- The proxy selftest case was added but not run; the parent owns post-integration gates. The current knowledge note’s “nine members” scope and scorecard counts still need the separate documentation change. LSP was not available in the supplied tools; no install or update was needed.

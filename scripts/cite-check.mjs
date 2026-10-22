@@ -2425,8 +2425,12 @@ function selfTest(opts) {
     });
     // The process exit contract, observed through a child of this same file:
     // 0 clean, 1 drift, 2 fail-closed (empty scan set; zero resolved), 64 usage.
+    const SELFTEST_DEPTH41 = 'KUMITATE_CITE_SELFTEST_DEPTH';
+    const rawSelftestDepth41 = Number(process.env[SELFTEST_DEPTH41] ?? '0');
+    const selftestDepth41 = Number.isSafeInteger(rawSelftestDepth41) && rawSelftestDepth41 >= 0 ? rawSelftestDepth41 : 0;
     const child41 = (args, env = {}) => spawnSync(process.execPath, [SELF, ...args], {
-      encoding: 'utf8', timeout: 300_000, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...env },
+      encoding: 'utf8', timeout: 300_000, maxBuffer: 64 * 1024 * 1024,
+      env: { ...process.env, ...env, [SELFTEST_DEPTH41]: String(selftestDepth41 + 1) },
     });
     const scan41 = (self, extra = []) => child41(['--src', srcRoot, '--self', self, '--fleet', dirname(selfRoot), ...extra]);
     check('exit contract: clean set → exit 0; --strict warn set → exit 1', () => {
@@ -2452,11 +2456,11 @@ function selfTest(opts) {
     // The suite observing itself: a child --selftest with one injected failing
     // case must print the FAIL, end `VERDICT: FAIL` and exit 1, in text and in
     // --json. The injection variable is read only here, inside selfTest(); normal
-    // mode never reads it. Any value of the variable marks a child: the child skips
-    // these two cases whatever the value, so a changed literal cannot recurse; only
-    // the value `1` injects the failing case.
+    // mode never reads it. Every child gets an incremented depth marker, and a
+    // depth of two is a hard stop even if the injection-marker guard is mutated
+    // or its environment option is dropped.
     const INJECT41 = 'KUMITATE_CITE_SELFTEST_INJECT_FAIL';
-    if (process.env[INJECT41] !== undefined) {
+    if (selftestDepth41 >= 2 || (selftestDepth41 > 0 && process.env[INJECT41] !== undefined)) {
       if (process.env[INJECT41] === '1') {
         hermetic.push({ name: 'injected failing case (child run only)', ok: false, detail: `${INJECT41}=1` });
       }
@@ -2468,15 +2472,24 @@ function selfTest(opts) {
       check('suite self-observation: injected failure → text VERDICT FAIL, exit 1', () => {
         const r = child41(['--selftest'], { [INJECT41]: '1' });
         const s = String(r.stdout ?? '');
-        return { ok: r.status === 1 && /^FAIL {2}injected failing case/m.test(s) && /^VERDICT: FAIL$/m.test(s),
-          detail: `exit=${r.status} verdict=${(s.match(/^VERDICT: \w+$/m) ?? ['(none)'])[0]}` };
+        const skips = [
+          'SKIP  suite self-observation: injected failure → text VERDICT FAIL, exit 1',
+          'SKIP  suite self-observation: injected failure → --json verdict FAIL, exit 1',
+        ].every((line) => s.includes(line));
+        return { ok: r.status === 1 && /^FAIL {2}injected failing case/m.test(s) && /^VERDICT: FAIL$/m.test(s) && skips,
+          detail: `exit=${r.status} verdict=${(s.match(/^VERDICT: \w+$/m) ?? ['(none)'])[0]} child-skips=${skips}` };
       });
       check('suite self-observation: injected failure → --json verdict FAIL, exit 1', () => {
         const r = child41(['--selftest', '--json'], { [INJECT41]: '1' });
         let j = null;
         try { j = JSON.parse(String(r.stdout ?? '')); } catch { j = null; }
-        return { ok: r.status === 1 && j?.verdict === 'FAIL' && j?.suites?.[0]?.verdict === 'FAIL',
-          detail: `exit=${r.status} verdict=${j?.verdict} group=${j?.suites?.[0]?.verdict}` };
+        const results = j?.suites?.[0]?.results ?? [];
+        const skipped = [
+          'suite self-observation: injected failure → text VERDICT FAIL, exit 1',
+          'suite self-observation: injected failure → --json verdict FAIL, exit 1',
+        ].every((name) => results.some((result) => result.name === name && result.skipped));
+        return { ok: r.status === 1 && j?.verdict === 'FAIL' && j?.suites?.[0]?.verdict === 'FAIL' && skipped,
+          detail: `exit=${r.status} verdict=${j?.verdict} group=${j?.suites?.[0]?.verdict} child-skips=${skipped}` };
       });
     }
 
