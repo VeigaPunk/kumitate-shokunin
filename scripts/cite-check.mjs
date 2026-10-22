@@ -2383,6 +2383,99 @@ function selfTest(opts) {
       };
     });
 
+    // round-41 ─ pins for the verdict, render and exit conditions that no case
+    // observed (`.ufo/waves/round-40/build/ScoutCiteVerdict.md`, `unpinned=16`).
+    // A warn-only scan set: one resolved citation (OK) and one unique-suffix match
+    // (SUFFIX_RESOLVED, warn). Default mode must read PASS with the warn counted;
+    // --strict must read FAIL. Pins the warn counter, the `kind === 'OK'` gate on
+    // `resolved`, and both strict arms of `drift`.
+    const warnRoot = join(tmp, 'self-warn');
+    mkdirSync(join(warnRoot, 'corpus', 'knowledge'), { recursive: true });
+    writeFileSync(join(warnRoot, 'SKILL.md'),
+      '# Warn fixture\n\nOne resolvable citation: `scripts/real.mjs:1`\n\nOne unique suffix: `ufo-lib/base.mjs`\n');
+    check('warn-only set, default mode → PASS; resolved counts OK findings only; warnings=1', () => {
+      const wRep = run({ self: warnRoot });
+      const wt = wRep.totals;
+      const okCount = kindOf(wRep, 'OK').length;
+      return { ok: wt.filesScanned === 1 && wt.resolved > 0 && wt.resolved === okCount && wt.warn === 1 && wt.error === 0
+        && wRep.verdict === 'PASS' && wRep.citeCheck === 'CLEAN',
+      detail: `resolved=${wt.resolved} okFindings=${okCount} warnings=${wt.warn} errors=${wt.error} verdict=${wRep.verdict} citeCheck=${wRep.citeCheck}` };
+    });
+    check('warn-only set, --strict → FAIL / DRIFT', () => {
+      const sRep = run({ self: warnRoot, strict: true });
+      return { ok: sRep.verdict === 'FAIL' && sRep.citeCheck === 'DRIFT',
+        detail: `verdict=${sRep.verdict} citeCheck=${sRep.citeCheck}` };
+    });
+    check('citeCheck maps a FAIL verdict to DRIFT (fixture with errors)', () => ({
+      ok: rep.verdict === 'FAIL' && rep.citeCheck === 'DRIFT',
+      detail: `verdict=${rep.verdict} citeCheck=${rep.citeCheck}`,
+    }));
+    // The text renderer's environment labels, observed in process.
+    const emptyRoot41 = join(tmp, 'self-empty-41');
+    mkdirSync(emptyRoot41, { recursive: true });
+    check('text render: empty scan set → `CITE_CHECK: DRIFT (environment: empty-scan-set)`', () => {
+      const txt = renderText(run({ self: emptyRoot41 }), base);
+      return { ok: /^CITE_CHECK: DRIFT \(environment: empty-scan-set\)$/m.test(txt),
+        detail: (txt.match(/^CITE_CHECK:.*$/m) ?? ['(none)'])[0] };
+    });
+    check('text render: zero resolved citations → `CITE_CHECK: DRIFT (environment: zero-resolutions)`', () => {
+      const txt = renderText(run({ self: zeroRoot }), base);
+      return { ok: /^CITE_CHECK: DRIFT \(environment: zero-resolutions\)$/m.test(txt),
+        detail: (txt.match(/^CITE_CHECK:.*$/m) ?? ['(none)'])[0] };
+    });
+    // The process exit contract, observed through a child of this same file:
+    // 0 clean, 1 drift, 2 fail-closed (empty scan set; zero resolved), 64 usage.
+    const child41 = (args, env = {}) => spawnSync(process.execPath, [SELF, ...args], {
+      encoding: 'utf8', timeout: 300_000, maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ...env },
+    });
+    const scan41 = (self, extra = []) => child41(['--src', srcRoot, '--self', self, '--fleet', dirname(selfRoot), ...extra]);
+    check('exit contract: clean set → exit 0; --strict warn set → exit 1', () => {
+      const c = scan41(cleanRoot);
+      const w = scan41(warnRoot, ['--strict']);
+      return { ok: c.status === 0 && w.status === 1 && /^VERDICT: FAIL$/m.test(String(w.stdout ?? '')),
+        detail: `clean=${c.status} strictWarn=${w.status}` };
+    });
+    check('exit contract: empty scan set → exit 2 with `empty scan set` on stderr', () => {
+      const r = scan41(emptyRoot41);
+      return { ok: r.status === 2 && String(r.stderr ?? '').includes('fail-closed — empty scan set'),
+        detail: `exit=${r.status} ${String(r.stderr ?? '').trim().split('\n')[0]}` };
+    });
+    check('exit contract: zero resolved citations → exit 2 with `zero resolved citations` on stderr', () => {
+      const r = scan41(zeroRoot);
+      return { ok: r.status === 2 && String(r.stderr ?? '').includes('fail-closed — zero resolved citations'),
+        detail: `exit=${r.status} ${String(r.stderr ?? '').trim().split('\n')[0]}` };
+    });
+    check('exit contract: unknown argument → exit 64', () => {
+      const r = child41(['--no-such-flag-41']);
+      return { ok: r.status === 64, detail: `exit=${r.status}` };
+    });
+    // The suite observing itself: a child --selftest with one injected failing
+    // case must print the FAIL, end `VERDICT: FAIL` and exit 1, in text and in
+    // --json. The injection variable is read only here, inside selfTest(); normal
+    // mode never reads it. The child skips these two cases, so it cannot recurse.
+    const INJECT41 = 'KUMITATE_CITE_SELFTEST_INJECT_FAIL';
+    if (process.env[INJECT41] === '1') {
+      hermetic.push({ name: 'injected failing case (child run only)', ok: false, detail: `${INJECT41}=1` });
+      for (const name of ['suite self-observation: injected failure → text VERDICT FAIL, exit 1',
+        'suite self-observation: injected failure → --json verdict FAIL, exit 1']) {
+        hermetic.push({ name, ok: true, skipped: true, detail: 'SKIP (inside the injected child)' });
+      }
+    } else {
+      check('suite self-observation: injected failure → text VERDICT FAIL, exit 1', () => {
+        const r = child41(['--selftest'], { [INJECT41]: '1' });
+        const s = String(r.stdout ?? '');
+        return { ok: r.status === 1 && /^FAIL {2}injected failing case/m.test(s) && /^VERDICT: FAIL$/m.test(s),
+          detail: `exit=${r.status} verdict=${(s.match(/^VERDICT: \w+$/m) ?? ['(none)'])[0]}` };
+      });
+      check('suite self-observation: injected failure → --json verdict FAIL, exit 1', () => {
+        const r = child41(['--selftest', '--json'], { [INJECT41]: '1' });
+        let j = null;
+        try { j = JSON.parse(String(r.stdout ?? '')); } catch { j = null; }
+        return { ok: r.status === 1 && j?.verdict === 'FAIL' && j?.suites?.[0]?.verdict === 'FAIL',
+          detail: `exit=${r.status} verdict=${j?.verdict} group=${j?.suites?.[0]?.verdict}` };
+      });
+    }
+
     // real-tree assertions: machinery does not regress, live docs are repaired.
     // Gated on --integrations: `--selftest` alone must do NO live-tree work. A
     // suite that reads the live 8124-file index (and, through it, a sibling
