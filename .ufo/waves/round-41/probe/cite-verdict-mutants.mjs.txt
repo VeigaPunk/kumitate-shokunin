@@ -1,0 +1,74 @@
+// round-41 C1 counter: cite-check verdict and exit conditions, one single-condition mutant each.
+// Run: node --input-type=module - --lane <lane dir> --rev <rev> < cite-verdict-mutants.mjs.txt
+// The set is the 16 conditions named `unpinned=16` in
+// .ufo/waves/round-40/build/ScoutCiteVerdict.md (first line). Each mutant is anchored by a code
+// snippet that must occur exactly once in that revision's scripts/cite-check.mjs, else `nomatch`.
+// For each mutant the revision's own `--selftest` runs on a temporary copy of `scripts/`.
+// killed = the selftest exits non-zero, prints a `FAIL ` case line, prints `VERDICT: FAIL`, or
+// passes fewer cases than it ran; survived = it ran its cases and all passed with exit 0;
+// killed-crash = no `cases passed` line at all (a crash is reported apart, not as a clean kill).
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const argv = process.argv.slice(2);
+const arg = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
+const lane = arg('--lane'); const rev = arg('--rev');
+if (!lane || !rev) { process.stderr.write('usage: --lane DIR --rev REV\n'); process.exit(64); }
+
+const M = [
+  ['warn-total', "else if (f.severity === 'warn') totals.warn++;", "else if (f.severity === 'warn') {}"],
+  ['resolved-kind-gate', "if (f.kind === 'OK') totals.resolved++;", 'totals.resolved++;'],
+  ['strict-conjunct', '(opts.strict && totals.warn > 0)', '(totals.warn > 0)'],
+  ['strict-warn-arm', 'const drift = totals.error > 0 || (opts.strict && totals.warn > 0);', 'const drift = totals.error > 0;'],
+  ['resolved>0', "totals.filesScanned > 0 && totals.resolved > 0 && !drift ? 'PASS'", "totals.filesScanned > 0 && !drift ? 'PASS'"],
+  ['citeCheck-map', "citeCheck: verdict === 'PASS' ? 'CLEAN' : 'DRIFT',", "citeCheck: 'CLEAN',"],
+  ['render-env-empty', "t.filesScanned === 0 ? 'empty-scan-set' :", "false ? 'empty-scan-set' :"],
+  ['render-env-zero', "t.resolved === 0 ? 'zero-resolutions' : null", "false ? 'zero-resolutions' : null"],
+  ['exit2-empty', "report.totals.filesScanned === 0 ? 'empty scan set'", "false ? 'empty scan set'"],
+  ['exit2-zerores', "report.totals.resolved === 0 ? 'zero resolved citations' : null", "false ? 'zero resolved citations' : null"],
+  ['exit0/1-map', "return report.verdict === 'PASS' ? 0 : 1;", 'return 0;'],
+  ['parse-64', 'return 64;', 'return 0;'],
+  ['suite-group-verdict', "verdict: failed ? 'FAIL' : 'PASS',", "verdict: 'PASS',"],
+  ['suite-any-fail', "const verdict = suites.some((s) => s.verdict === 'FAIL') ? 'FAIL' : 'PASS';", "const verdict = 'PASS';"],
+  ['suite-exit-json', "}, null, 2) + '\\n');\n    return verdict === 'FAIL' ? 1 : 0;", "}, null, 2) + '\\n');\n    return 0;"],
+  ['suite-exit-text', "process.stdout.write(lines.join('\\n') + '\\n');\n  return verdict === 'FAIL' ? 1 : 0;", "process.stdout.write(lines.join('\\n') + '\\n');\n  return 0;"],
+];
+
+const tmp = mkdtempSync(join(tmpdir(), 'kumitate-cite-mutants-'));
+const out = [];
+let survived = 0, nomatch = 0, crash = 0;
+try {
+  const ar = spawnSync('sh', ['-c', `git -C "$0" archive "$1" scripts | tar -x -C "$2"`, lane, rev, tmp], { encoding: 'utf8' });
+  if (ar.status !== 0) { process.stderr.write(`archive failed: ${ar.stderr}\n`); process.exit(2); }
+  const file = join(tmp, 'scripts', 'cite-check.mjs');
+  const orig = readFileSync(file, 'utf8');
+  const runSuite = () => {
+    const r = spawnSync(process.execPath, [file, '--selftest'], { encoding: 'utf8', timeout: 600_000, maxBuffer: 64 * 1024 * 1024 });
+    const s = String(r.stdout ?? '');
+    const m = s.match(/^(\d+)\/(\d+) cases passed \(hermetic\)$/m);
+    const failLines = s.split('\n').filter((l) => l.startsWith('FAIL ')).length;
+    if (!m) return { cls: 'killed-crash', detail: `exit=${r.status} no-cases-line` };
+    const [p, n] = [Number(m[1]), Number(m[2])];
+    const killed = r.status !== 0 || failLines > 0 || /^VERDICT: FAIL$/m.test(s) || p < n;
+    return { cls: killed ? 'killed' : 'survived', detail: `exit=${r.status} cases=${p}/${n} fail_lines=${failLines}` };
+  };
+  const ctl = runSuite();
+  const control = ctl.cls === 'survived' ? 'PASS' : 'FAIL';
+  out.push(`CONTROL unmutated ${ctl.cls === 'survived' ? 'PASS' : 'FAIL'} ${ctl.detail}`);
+  for (const [id, from, to] of M) {
+    const count = orig.split(from).length - 1;
+    if (count !== 1) { nomatch++; out.push(`MUTANT ${id} nomatch occurrences=${count}`); continue; }
+    writeFileSync(file, orig.replace(from, to));
+    const r = runSuite();
+    writeFileSync(file, orig);
+    if (r.cls === 'survived') survived++;
+    if (r.cls === 'killed-crash') crash++;
+    out.push(`MUTANT ${id} ${r.cls} ${r.detail}`);
+  }
+  out.push(`CITE_MUTANTS survived=${survived}/${M.length} nomatch=${nomatch} crash=${crash} control=${control} rev=${rev}`);
+} finally {
+  rmSync(tmp, { recursive: true, force: true });
+}
+process.stdout.write(out.join('\n') + '\n');
