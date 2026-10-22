@@ -1,6 +1,6 @@
 # Round 41 — cite-check pins the 16 unpinned verdict conditions; a census of committed swarm evidence
 
-Source: S038 (the origin wave producer `scripts/ufo-swarm-wave.mjs` at the pin, opened this round),
+Source: S018 (MAST, re-opened), S038 (the origin wave producer `scripts/ufo-swarm-wave.mjs` at the pin, opened this round),
 S035 (re-opened), the round-40 non-author closure (`corpus/lessons/round-40-verifier-spotcheck.md`,
 routed defects R40-1 to R40-7) and the pinned upstream revision
 31c465f15669f744848bd9f5d56191c5085670f7. Round open: lane a58b7f72afc1eb44b37e438a2f8b212c658874e5.
@@ -49,8 +49,12 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   under-declared or misspelled `--expect` was not pinned, and `--expect` was not round-scoped.
   The instrument now reads `resumeSends` (`resumed=`), counts only regular files, treats an
   unknown role as `EXPECT_UNKNOWN`, accepts `attack` as the attack total and
-  `<round>/<wave>:<role>=<n>`; selftest 12 → 17 (WC13–WC17). The C2 counter reads the same
-  values after the repair.
+  `<round>/<wave>:<role>=<n>`; selftest 12 → 20 (WC13–WC20). The C2 counter reads the same
+  values after the repair. Attempt 1 then left three more repairs uncommitted and untested (a
+  `Report:` path with a `..` segment no longer resolves outside the round, a task without a string
+  name and agent fails closed, any read error exits 2 instead of 1); attempt 2 pinned each with one
+  case (WC21–WC23, selftest 23/23), and each case fails when its repair is reverted
+  (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`: 3/3 killed).
 
 ## Round shape and the §3 floor
 
@@ -93,6 +97,11 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   attack seats that returned reports plus the one sentinel, that is 45 + 1 − 7 dead (per the round-40 seat-gate record, not the census)
   mutation-testers − 2 cancelled reviewers. The census counts payload seats, not returned ones.
 - Round 38's falsify directory holds four `*-supplement.md` files no task names (`STRAY_REPORT`).
+- Why an absent report cannot say why (falsify scout ScoutOmpSpawnFailure, read from the installed
+  omp 18.12.6 binary, own work, no source row): "Background job limit reached" is thrown in job
+  registration before any job record exists, and "No model selected" is thrown at the start of the
+  seat's prompt path; the task tool returns only tool-result text. Neither failure writes a file a
+  census of committed evidence could read; only the L1's seat-gate prose records them.
 
 ## Mistakes
 
@@ -101,6 +110,8 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 | calibration — a seat-gate record stated a role count from memory: "four mutation-tester seats returned results" in wave 1, where the payload holds three (R40-6) | `.ufo/waves/round-40/evidence/seat-gate.txt` item 4; `build-dispatch.json` | the round-40 closure, by hand (no instrument) | `wave-census --expect`: `--round 40 --expect build:mutation-tester=4` exits 1 (`EXPECT_MISMATCH … payload=3`), `=3` exits 0 — shown able to fail on the real slip (`.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt`: `EXPECT_4_EXIT=1 EXPECT_3_EXIT=0`). The correction: wave 1 of round 40 had three mutation-tester seats (MutCiteGuard, MutAnchorSurvivors, MutKimiCensusArms) |
 | recurrence — a non-author closure file lands without a `corpus/README.md` row, so the next open reads `C2_TOTAL_DRIFT` and `coverage` 9 against 10; second time (round 39's closure file at round 40, round 40's at round 41) | `.ufo/waves/round-41/open/receipts.txt` (`C2_total declared=90 computed=91`, checklist 14/15) | `proxy-check` (fires correctly) | row added at open in 34fccc17 (R40-7). The mechanism recurs by construction for the round-41 closure file; the next L1 adds the row at open. Teaching the proxy to skip closure files would re-charter the frozen `C2_total` term, so it is not done |
 | suite blind spot — a test suite with no case that observes its own verdict machinery: the four suite-verdict mutants survived because the suite was its own observer | `.ufo/waves/round-41/final/cite-mutants-open-a58b7f72.txt` (suite-group-verdict, suite-any-fail, suite-exit-json, suite-exit-text survived) | none until round 40's scout | the injected-failure child run (C1); after: all four killed at 68db3419 |
+| misroot — a falsify seat of attempt 1 wrote its report at the fleet root (`/home/vgpnk/Projects/shokunin/.ufo/waves/round-41/falsify/ReviewCensusCode.md`) instead of the lane, so the census read it absent | fleet `git status --porcelain` at attempt-2 open (`?? .ufo/waves/round-41/`); `wave-census --round 41` → `absent: … ReviewCensusCode …` | the addendum's misroot sweep (fires correctly; the wave context already carried the absolute-path sentence, so the context alone does not catch it) | moved byte-exact into the lane at 17:45Z (sha256 `778a35ee…3983`, `cmp` equal), fleet copy and its empty directories deleted; the census now reads it present. The class recurs: phase 1 saw it at kama r11, tsukuroi r12, tabi r15, mado r16 |
+| untested repair — attempt 1 changed `scripts/wave-census.mjs` after the falsify wave (three repairs) and the process restart left them uncommitted with no case that fails without them | `git diff` at attempt-2 open (5 tracked paths); selftest still 20/20 | none (the selftest passed with or without the repairs) | WC21–WC23, each shown able to fail: reverting its repair turns the suite to 22/23 `VERDICT: FAIL` (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`) |
 
 ## Gate — admits and rejects
 
@@ -110,6 +121,13 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   "ufo-swarm-wave-dispatch-v1 — the exact single `task` call payload ({context, tasks} — spawn
   lanes only, null when the wave resumes only)". Used by `scripts/wave-census.mjs` and this lesson.
 - **New row, logged:** S038 new → `mined` (used-by `scripts/wave-census.mjs`, `corpus/lessons/round-41.md`).
+- **Re-open S018** (MAST, Cemri et al., arXiv 2503.13657 v3; status `queued` → `mined`, used-by
+  `—` → `corpus/lessons/round-41.md`): opened 2026-10-22T17:14Z by the falsify scout ScoutMAST at
+  https://arxiv.org/html/2503.13657v3 (HTTP 200). Located quote, FM-3.2 "No or incomplete
+  verification": "(partial) omission of proper checking or confirmation of task outcomes or system
+  outputs". Used here: the R40-6 slip (a seat count written from memory) is an FM-3.2 instance,
+  and `wave-census --expect` is the check that was omitted; MAST §5.1 says such verification
+  failures "appear frequently even in successful runs", so the slip did not make round 40 fail.
 - **Re-open S035** (no status change, `mined` → `mined`): the front matter still reads
   `name: kimi-webbridge` and `version: "2.0.26"` (2026-10-22, read-only). The K2 section of
   `corpus/knowledge/kimi-skills-plugins.md` now names S035 (R40-5).
@@ -164,3 +182,15 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   reads `73/73 VERDICT: PASS` and survives, because skipped cases leave the ran count and the frozen
   counter does not treat a `SKIP` line as a kill. Children are not spawned in their own process
   group, so a hang is killed only at the direct child.
+- Set width (falsify seat CritC1SetWidth, mutants at 4e58bb0e): beyond the 16 there are 23 more
+  verdict, exit or suite conditions; 11 are killed, 3 are equivalent, and 7 survive: the `--help`
+  exit code, the flag-followed-by-a-flag check, `record()` counting a throwing check as PASS, the
+  two integration-group gates (an `--integrations` run with 0 cases reads `VERDICT: PASS`), the
+  hermetic group selection (`--selftest` with no cases reads `VERDICT: PASS`), and the
+  unreadable-document skip (label only). These are outside C1 and stay open.
+- C2 counter weakness (falsify seat ReRecountC2): the frozen recount script prints
+  `RECOUNT_MISMATCHES=0` even when both listings are empty (jq missing, no round folders); it does
+  not check that each side has 7 rows. At the measured and final revisions both listings hold 7
+  rows (visible in the committed receipts), so the zero is real there; the counter itself is not
+  changed after its data. The seat's own python recount agrees on seats, attack seats, per-role
+  counts and report presence for all 336 payload seats of rounds 38–40.

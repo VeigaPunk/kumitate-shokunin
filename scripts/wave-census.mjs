@@ -6,6 +6,7 @@
  * WHAT IT READS. A hyaku round commits, under `.ufo/waves/round-<N>/`, one
  * `<wave>-dispatch.json` per validated wave: the `ufo-swarm-wave-dispatch-v1`
  * envelope printed by the origin producer `scripts/ufo-swarm-wave.mjs run`
+ * (source row S038 in `corpus/SOURCES.md`, opened at the pin 31c465f1)
  * (`taskCall {context, tasks}`, `counts {spawn, resume, total}`, `registry`
  * = the merged `ufo-swarm-registry-v1`), or a bare `{context, tasks}` payload
  * for a residual call. Each task carries `name`, `agent` (the seat role) and a
@@ -102,8 +103,11 @@ function censusRound(root, n) {
     // resumed seats ride `resumeSends` (one hub send each, report suffix in `message`).
     const tc = v1 ? (d.taskCall ?? { tasks: [] }) : (d && Array.isArray(d.tasks) ? d : null);
     if (!tc || !Array.isArray(tc.tasks)) throw new FailClosed(`${join(dir, f)} carries no task list`);
-    const reportOf = (text) => (String(text ?? '').match(RE_REPORT) ?? [])[1] ?? null;
-    const tasks = tc.tasks.map((t) => ({ name: String(t.name), role: String(t.agent), report: reportOf(t.task) }));
+    const reportOf = (text) => { const r = (String(text ?? '').match(RE_REPORT) ?? [])[1] ?? null; return r && !r.split('/').includes('..') ? r : null; };
+    if (tc.tasks.some((t) => !t || typeof t.name !== 'string' || typeof t.agent !== 'string')) {
+      throw new FailClosed(`${join(dir, f)} has a task without a string name and agent`);
+    }
+    const tasks = tc.tasks.map((t) => ({ name: t.name, role: t.agent, report: reportOf(t.task) }));
     const resumes = v1 && Array.isArray(d.resumeSends)
       ? d.resumeSends.map((r) => ({ name: String(r.name), report: reportOf(r.message) })) : [];
     const roles = {};
@@ -348,6 +352,30 @@ function selftest() {
       const b = spawnSync(process.execPath, [SELF, '--round', '7', '--bogus'], { encoding: 'utf8' });
       return { ok: a.status === 64 && b.status === 64, detail: `abc=${a.status} bogus=${b.status}` };
     });
+    const one = (round, body, files = {}) => {
+      const root = join(tmp, `r${round}`);
+      const dir = join(root, '.ufo', 'waves', `round-${round}`);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, 'build-dispatch.json'), JSON.stringify(body));
+      for (const [rel, text] of Object.entries(files)) { mkdirSync(dirname(join(root, rel)), { recursive: true }); writeFileSync(join(root, rel), text); }
+      return root;
+    };
+    check('WC21', 'a Report: path with a `..` segment is absent, never resolved outside the round', () => {
+      const root = one(15, { context: 'c', tasks: [{ name: 'U', agent: 'critic', task: 'x\nReport: write to .ufo/waves/round-15/build/../../../../outside.md' }] },
+        { 'outside.md': 'RESULT U\n' });
+      const r = run(root, ['--round', '15']);
+      return { ok: r.status === 0 && /reports=0\/1/.test(r.out) && /^ {2}absent: U$/m.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC22', 'a task without a string agent fails closed (exit 2), never counted', () => {
+      const root = one(16, { context: 'c', tasks: [{ name: 'V', task: 'x\nReport: write to .ufo/waves/round-16/build/V.md' }] });
+      const r = run(root, ['--round', '16']);
+      return { ok: r.status === 2 && /without a string name and agent/.test(r.err), detail: `exit=${r.status}` };
+    });
+    check('WC23', 'a read error outside FailClosed (report dir is a regular file) exits 2, not 1', () => {
+      const root = one(17, { context: 'c', tasks: [task(17, 'build', 'W', 'critic')] }, { '.ufo/waves/round-17/build': 'not a dir\n' });
+      const r = run(root, ['--round', '17']);
+      return { ok: r.status === 2 && /fail-closed — read error: /.test(r.err), detail: `exit=${r.status}` };
+    });
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -368,8 +396,10 @@ function main() {
   if (opts.selftest) return selftest();
   let rep;
   try { rep = census(opts); } catch (e) {
-    if (e instanceof FailClosed) { process.stderr.write(`wave-census: fail-closed — ${e.message}\n`); return 2; }
-    throw e;
+    // Any read error (unreadable dir, a file where a dir should be) is could-not-evaluate (2),
+    // never `1`, which the verdict map reserves for a real finding.
+    process.stderr.write(`wave-census: fail-closed — ${e instanceof FailClosed ? e.message : `read error: ${e.message}`}\n`);
+    return 2;
   }
   process.stdout.write(opts.json ? JSON.stringify(rep, null, 2) + '\n' : render(rep));
   return rep.verdict === 'CLEAN' ? 0 : 1;

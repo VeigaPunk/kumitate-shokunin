@@ -596,7 +596,7 @@ this lane (kumitate L1).
 
 | name | kind | entry command | self-test | pinned values live in |
 |---|---|---|---|---|
-| cite-check | gate | `node scripts/cite-check.mjs [--src DIR] [--strict]` → `CITE_CHECK: CLEAN\|DRIFT` | `--selftest` (round 41: each of the 16 named verdict, render and exit conditions has a case that fails under its single-condition mutant, `.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` → `survived=0/16`; for 13 the mutant also turns the run's exit code non-zero or `VERDICT: FAIL`; for the 3 suite-aggregation mutants (group verdict, any-fail, text exit) the run still exits 0 and the failure shows only as `FAIL ` case lines and an `n/m` count below m, so read those lines, not only the exit code — a suite cannot pin its own aggregator through an exit code that aggregator computes) | citations inside `SKILL.md` + `corpus/**` |
+| cite-check | gate | `node scripts/cite-check.mjs [--src DIR] [--strict]` → `CITE_CHECK: CLEAN\|DRIFT` | `--selftest` (round 41: each of the 16 verdict, render and exit conditions that the round-40 scout found unpinned (`.ufo/waves/round-40/build/ScoutCiteVerdict.md`) has a case that fails under its single-condition mutant, `.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` → `survived=0/16`; for 13 the mutant also turns the run's exit code non-zero or `VERDICT: FAIL`; for the 3 suite-aggregation mutants (group verdict, any-fail, text exit) the run still exits 0 and the failure shows only as `FAIL ` case lines and an `n/m` count below m, so read those lines, not only the exit code — a suite cannot pin its own aggregator through an exit code that aggregator computes) | citations inside `SKILL.md` + `corpus/**` |
 | surface-probe | gate | `node scripts/surface-probe.mjs [--checklists]` → `SURFACE_PROBE:` / `CHECKLIST: n/m` | `--selftest` | `## Verifiable checklist` below; frozen status shape in the script; `sighting.surfaceDigest` in the origin tree's `config/ufo.json` (outside this repo — named gap) |
 | round-gate | gate | `node scripts/round-gate.mjs [--round N] [--reports-dir DIR --main-repo DIR] [--tracked]` → `ROUND_GATE:` | `--selftest` | `SCORECARD.md` `## Move log` row + `LOG.md` round bullet; in-script constants |
 | proxy-check | gate | `node scripts/proxy-check.mjs [--strict]` → `PROXY: MATCH\|DRIFT` | `--selftest` | `SCORECARD.md` `<!-- kumitate-proxy-v1` stanza (terms + `pin.*` sha256) |
@@ -687,7 +687,7 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` → exit 0 + `TRUTH: CLEAN`
 - [ ] Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`
-- [ ] Wave census of a landed round — `node scripts/wave-census.mjs --round 40` → exit 0 + `WAVE_CENSUS: CLEAN`
+- [ ] Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch) — `node scripts/wave-census.mjs --round 40` → exit 0 + `WAVE_CENSUS: CLEAN`
 - [ ] Wave-census hermetic suite — `node scripts/wave-census.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,

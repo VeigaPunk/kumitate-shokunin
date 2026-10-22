@@ -1,0 +1,6 @@
+# round 41 attempt 2: revert each uncommitted attempt-1 wave-census repair in a temp copy, run --selftest
+# at 2026-10-22T17:46:45Z, working copy over lane master 5320e0da (+WC21-WC23)
+CONTROL exit=0 WAVE_CENSUS_SELFTEST: 23/23 pass VERDICT: PASS
+MUTANT dotdot-guard-dropped killed exit=1 failing=FAIL  WC21 a Report: path with a `..` segment is absent, never resolved outside the round
+MUTANT string-agent-check-dropped killed exit=1 failing=FAIL  WC22 a task without a string agent fails closed (exit 2), never counted
+MUTANT read-error-rethrown killed exit=1 failing=FAIL  WC23 a read error outside FailClosed (report dir is a regular file) exits 2, not 1
