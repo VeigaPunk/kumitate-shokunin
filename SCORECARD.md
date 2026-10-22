@@ -142,7 +142,7 @@ the scored term; the registry's `scripts/*/` row is 42.
 | R10 | gate | `gate.rs` (254 L) + `gate_tests.rs` (426 L) | yes — gate-verdict (2 of 2 named at internals level, round 12: enum arms with anchors, the `verdict` ladder, the five refusal literals, `validate_vector` precedence, the echo ceiling, consumers, and the 19-`#[test]` census) |
 | K1 | kimi config plane (round-18 expansion; round-35 registry change pre-registered in round 34) | `~/.kimi-code/config.toml`, `~/.kimi-code/tui.toml`, the `config.toml.*.bak` drift chain counted as 1 member (12 generations at the round-19 census), and root `~/.kimi-code/mcp.json` (round 35; shape-only — present as a non-directory leaf (the secret-member kind check; a FIFO or symlink also passes), 0400 mode floor; never content-read) (4) | yes — `knowledge/kimi-config-plane.md` + `knowledge/kimi-mcp-plane.md` (`mcp.json` section) |
 | K2 | kimi delegate/lane plane (round-18; history: 5 `skills/` entries ⇒ 25 at round 18, 6 ⇒ 26 at round 34) | 18 `agents/secondary/*.md` + 7 `skills/` entries + `plugins/installed.json` + `plugins/managed/kimi-webbridge` (27); round 40: `skills/` counted live reads **7** (the new `kimi-webbridge` and round 34's `cursor-lane` are real directories, the other five are symlinks) ⇒ **27** — counting rule unchanged, census tripwire re-pinned 6 → 7 | yes — `knowledge/kimi-lane-definitions.md` + `knowledge/kimi-skills-plugins.md` |
-| K3 | kimi session/state plane (round-18) | `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`, `search-index` (9) | yes — `knowledge/kimi-session-state.md` |
+| K3 | kimi session/state plane (round-18; round 42 adds `locks/`) | `sessions/`, `session_index.jsonl`, `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`, `file-history/`, `user-history/`, `cache/`, `search-index`, `locks/` (10; `locks/` presence-only, stat-only, children never enumerated) | yes — `knowledge/kimi-session-state.md` |
 | K4 | kimi binary/secret plane (round-18) | `bin/kimi`, `bin/fd`, `updates/`, `server/`, `server.token`, `device_id`, `region`, `credentials/`, `oauth/` (9; secret members shape-only, never content-read) | yes — `knowledge/kimi-binary-secrets.md` |
 | K5 | kimi root-residue (round-20 registry change, pre-registered round 19) | `workspaces.json`, `tui.toml.bak`, `rc-qrcode.png` (3) | yes — `knowledge/kimi-residue-files.md` (lands round 20) |
 | R11 | runtime remainder + CLI | 41 members (round-32 measurement): 37 runtime `.rs` (`crates/ufo-core-runtime/src/*.rs` minus the live R1–R10 union) + `crates/ufo-cli/src/*.rs` (4) (`ls crates/ufo-core-runtime/src/*.rs` → 93 − 51 = 42; rebuilt from the tree by an independent scout and diffed against the written 47 with `LC_ALL=C sort` + `comm -3` → empty) | yes — `knowledge/runtime-remainder-census.md`: 47 of 47 named at internals level, one `## ` section per member with ≥1 anchor in that member's own file and ≥1 symbol verbatim in it (`--row R11` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=47 adv=0)`, round 15) |
@@ -312,7 +312,7 @@ pin.kimi-census=a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63
 <!-- kumitate-gate-pins-v1
 pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055c
 pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
-pin.wave-census=682c3943b84b6e7772161a7974a0f51899eba842effabc15def38b3a94371c2d
+pin.wave-census=a1762f3c12854be0ba38a8ca5e5a5b3233848d0955a4c4cad4746135822cc30e
 pin.gate-mutants=3c6678cbbe0baf4af0dee684b14e7e6bcd439fd149e6f122081afbc00f676147
 -->
 
@@ -345,6 +345,16 @@ removed: `kumitate-proxy-v1` retains its unchanged parent 23-key contract
 gate-registry row in `SKILL.md`, and the existing `PIN_UNPINNED` advisory is
 therefore retained (`--strict` promotes that warning to drift). This correction
 supersedes the round-34 assertion above without renaming or widening v1.
+*Round-42 note (2026-10-22; the paragraph above stays as written).* Routed defect R41-2 added
+a separate lane-owned `kumitate-gate-pins-v1` block (pins for anchor-truth, sources-check,
+wave-census and gate-mutants) that `scripts/proxy-check.mjs` verifies (`GATE_PIN_DRIFT`) and that
+suppresses their `PIN_UNPINNED` warnings; v1's 23 keys are unchanged. Falsify seat
+CritGatePinsBlock rates this a widening of v1 in substance (the tool's verdict now depends on
+text outside the stanza, it re-pins `sources-check`, which this note's predecessor said stays
+unpinned, and a missing or renamed block reads MATCH in default mode; only `--strict`, which
+checklist item 8 now runs, catches that). R41-2 is therefore landed **pending an operator
+ruling** (`.ufo/l0-questions.md`, kumitate round 42); if the ruling is no, the block and its
+code come out and the three warnings return.
 
 
 Coverage **is** 10 — and the number is the problem, not the achievement. The

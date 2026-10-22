@@ -1,0 +1,65 @@
+# C2 receipt rev=c9a084bf03fb043d3cce5da102fffbc023552a45 measured 2026-10-22T20:56:54Z
+# scripts/kimi-census.mjs sha256 a1bab1b552d4f2c22f088ed8067a632ceb027bb7536ca0d546f755d68f0edb63; scripts/proxy-check.mjs sha256 4c2819b02ded6aff7ca64d069e5c955ba7a01a0495e3b4bdf1fc92f97dd8024a
+$ node scripts/kimi-census.mjs; echo exit=$?   (non-ok lines)
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=27  checked=27  frozen=27
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=8 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=35 declared=27 chain=8 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=53 checked=53 errors=0 info=4 chain=8
+KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)
+exit=0
+$ node scripts/kimi-census.mjs --selftest | tail -2
+KIMI_CENSUS_SELFTEST: 52/52 pass
+VERDICT: PASS
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json | jq -c '.terms | {K_members, K_sections, coverage_kimi}'
+{"K_members":53,"K_sections":53,"coverage_kimi":10}
+$ node scripts/sources-check.mjs | tail -1
+SOURCES_CHECK: CLEAN (rows=45 tiers=A:42,B:1,C:2 status=queued:14,mined:26,rejected:5 entries_with_source=3 legacy=38)
+$ grep -c 'S041' corpus/knowledge/kimi-session-state.md
+2
+# identity receipt (shape only): stat -c '%n %F mode=%a inode=%i birth=%w' ~/.kimi-code/locks ~/.kimi-code/locks/sessions; find ~/.kimi-code/locks -mindepth 1 | wc -l
+/home/vgpnk/.kimi-code/locks directory mode=700 inode=96401346 birth=2026-10-22 13:53:33.966993951 -0300
+/home/vgpnk/.kimi-code/locks/sessions directory mode=700 inode=96401347 birth=2026-10-22 13:53:33.966993951 -0300
+1
+# root layout names and kinds (shape only): find ~/.kimi-code -mindepth 1 -maxdepth 1 -printf '%y %f\n' | sort
+d agents
+d bin
+d cache
+d credentials
+d file-history
+d locks
+d logs
+d oauth
+d plugins
+d search-index
+d server
+d sessions
+d skills
+d telemetry
+d updates
+d user-history
+d workspace-trust
+f config.toml
+f config.toml.20261018-085645.bak
+f config.toml.20261018-114557.bak
+f config.toml.20261018-143236.bak
+f config.toml.20261018-145016.bak
+f config.toml.20261018-150133.bak
+f config.toml.20261018-161746.bak
+f config.toml.20261018-201656.bak
+f config.toml.20261022-140309.pre-xai-direct.bak
+f device_id
+f mcp.json
+f rc-qrcode.png
+f region
+f server.token
+f session_index.jsonl
+f tui.toml
+f tui.toml.bak
+f workspaces.json

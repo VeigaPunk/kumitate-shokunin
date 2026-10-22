@@ -1,0 +1,303 @@
+{
+ "wave": "kumitate-r42-falsify",
+ "milestone": "r42 falsify the measured commit",
+ "axes": [
+  "operability",
+  "coverage:kimi-layer"
+ ],
+ "reportDir": ".ufo/waves/round-42/falsify",
+ "context": "# Goal\nkumitate round 42 ONLY (lane operability + coverage: orchestration and tooling), wave 2 of 2 (falsify). Attack the measured commit c9a084bf03fb043d3cce5da102fffbc023552a45 (lane branch master; round open dfabe92bcec021f5beec457fb50cec484e047e35; plan b237e3f09c9559e130c7367bd2efa981c4ea516f with amendments A1-A4 in a0a07bae9236311314f12e3cec8d3666049d0dbc). Pinned upstream source clone /fast/scratch/hyaku/kumitate-pin/src at 31c465f15669f744848bd9f5d56191c5085670f7 (read-only; always pass --src /fast/scratch/hyaku/kumitate-pin/src to lane gates that take it).\nRead first: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/plan.md (claims, frozen counters, amendments), /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-42.md, receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/final/c1-measured-c9a084bf.txt and c2-measured-c9a084bf.txt, wave-1 reports under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/build/.\nC1 operability (capability `gate-mutants`): scripts/gate-mutants.mjs, a frozen 41-id mutant battery over cite-check and wave-census suites (+2 R41-3 extras), killed = at least one FAIL case line; checklist items 18-19 move proxy terms A 9->10, C 17->19, operability 8->9; battery CLEAN frozen=41/41 exit 0; --rev dfabe92 --target cite-check exit 1 (two drift).\nC2 coverage:kimi-layer: ~/.kimi-code/locks declared as a K3 member (census + proxy K_MEMBER_RULES + knowledge section citing S041); census strays 1->0, exit 1->0; K 52/52->53/53; integer held 10.\nAlso landed: R41-2 separate `kumitate-gate-pins-v1` block in SCORECARD.md read by proxy-check (strict warnings 3->0); R41-3 cite-check guard depth stop; R40-4 anchor-truth caps (AT47-AT48); wave-census sentinel hardening (WC27-WC31); SOURCES S039-S045; QUALITY Q21-Q24.\nATTACK: find where a claim, receipt, row, sentence or gate is wrong, weaker or wider than its evidence. A confirmation needs the command and its output. Your item names what it attacks.\n# Contract\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>. That report file is the ONLY thing you may write inside the lane. All other lane files are READ-ONLY for you. Never run git or jj writes in the lane repo or the fleet repo /home/vgpnk/Projects/shokunin (no commit, add, stash, checkout, reset, push, fetch, jj mutation; read-only jj only with --ignore-working-copy; never write in the fleet repo), never touch sibling lanes, operator config (~/.omp, ~/.kimi-code contents) or host state.\nScratch ONLY under /fast/scratch/hyaku/kumitate-r42/falsify/<YourName>/. Any code edit or gate run that writes happens in your OWN clone, made with GIT_DIR, GIT_WORK_TREE and GIT_INDEX_FILE unset: env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r42/falsify/<YourName>/lane && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r42/falsify/<YourName>/lane checkout -q --detach c9a084bf03fb043d3cce5da102fffbc023552a45. You may commit inside your own scratch clone; never push anywhere. You deliver findings, not patches; if you propose a fix, put a patch file in your scratch dir and name it.\nQuote the revision, the exact command and the observed output for every result; an unrun check is unverified, never passed. Mutation outcomes use the Stryker vocabulary: killed = at least one test failed while the mutant was active; survived = all passed; a crash, runtime error or timeout is NOT a kill. HOST SAFETY (binding; a round-42 seat's recursion reached ~500 processes and 25 GB): run every mutant or selftest of a mutated file as `setsid prlimit --nproc=$(( $(ps -u $(id -u) -L --no-headers | wc -l) + 64 )) timeout -s KILL 30 node ...`, never more than 4 at once, and check leftovers are 0 afterwards.\nNo model param. You are a leaf: no spawns (an executor may spawn one read-only labrat probe for one falsifiable hypothesis), no agent://all, no background jobs left running. The only message target you may use is agent://KumitateR42 (the L1), and only for a blocker. Tooling: you may install or upgrade tools that help the task; read /home/vgpnk/.omp/agent/RULES.md first; official channels only; record tool, version, channel and reason in your report. pacman guard: ALL pacman transactions are PAUSED host-wide (no -S, -Sy, -Syu, -U, -R; no host service restarts); use uv tool / npx / an official binary in ~/.local/bin instead. No secrets: never read credential, token, oauth or server.token contents under ~/.kimi-code or ~/.omp (shape only).\nSourcing rule (binding): open sources by ordinary means only. Never use a headless browser or any other tool to pass a bot challenge, captcha or access control. Record a source you cannot open that way as unopened. A provider safety or policy refusal ends your item: report it as such and stop.\nReport shape: first line `RESULT <YourName> rev=<rev> verdict=<one word> ...` as your item asks, then at most 40 evidence lines (commands and outputs). Plain English, no run-together words, no private jargon. Your item is unique; do not duplicate other seats.",
+ "items": [
+  {
+   "name": "ReRunC1Terms",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunC1Terms\nRe-run C1's term counter in your clone at c9a084bf03fb043d3cce5da102fffbc023552a45 and at dfabe92bcec021f5beec457fb50cec484e047e35: `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json | jq -c '.terms | {A, C, operability}'` and `--strict` (last line, exit). Compare with the open receipts and c1-measured-c9a084bf.txt; check A counts exactly ten script files repo-wide.\nFirst line: `RESULT ReRunC1Terms rev={M} verdict=<reproduced|differs> before=<json> after=<json> strict_exit=<n>`."
+  },
+  {
+   "name": "ReRunC1Gate",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunC1Gate\nRe-run C1's gate in your clone at c9a084bf03fb043d3cce5da102fffbc023552a45: `node scripts/gate-mutants.mjs` twice (record wall time), `--selftest`, and `--rev dfabe92bcec021f5beec457fb50cec484e047e35 --target cite-check`; compare every MUTANT line and the verdicts with c1-measured-c9a084bf.txt. Check that each of the 41 frozen ids prints killed and the two extras' from/to are what the lesson says.\nFirst line: `RESULT ReRunC1Gate rev={M} verdict=<reproduced|differs> killed=<k>/<n> frozen=<f>/41 demo_exit=<n>`."
+  },
+  {
+   "name": "ReRunC2Census",
+   "role": "reviewer",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunC2Census\nRe-run C2's counters: `node scripts/kimi-census.mjs; echo exit=$?` and the proxy K terms at c9a084bf03fb043d3cce5da102fffbc023552a45 and at dfabe92bcec021f5beec457fb50cec484e047e35 (each in its own clone, same minute, live ~/.kimi-code). Compare with c2-measured-c9a084bf.txt and the open receipts; report any new root child or drift on the host since 19:52Z.\nFirst line: `RESULT ReRunC2Census rev={M} verdict=<reproduced|differs> before=<verdict,exit> after=<verdict,exit> K=<s>/<m>`."
+  },
+  {
+   "name": "ReRunChecklist",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunChecklist\nIn your clone at c9a084bf03fb043d3cce5da102fffbc023552a45 run `node scripts/surface-probe.mjs --checklists --src /fast/scratch/hyaku/kumitate-pin/src` (pass --reports-dir/--main-repo through round-gate items if the clone lacks the fleet layout and say so) and report the CHECKLIST line, failing items with cause, and wall time; compare with the 13/17 bare-clone open baseline (ReviewChecklistOpen) and the L1's in-lane 19/19.\nFirst line: `RESULT ReRunChecklist rev={M} verdict=<word> checklist=<p>/<n> secs=<s>`."
+  },
+  {
+   "name": "ReopenS039",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS039\nRe-open S039 (https://pitest.org/ and https://pitest.org/faq/) by plain HTTPS; check the row's quote and the lesson's Gate quote occur verbatim and the anchor sections exist. Report HTTP status, access time, and match/no-match per quote.\nFirst line: `RESULT ReopenS039 rev=- verdict=<agree|disagree> quotes=<k>/<n>`."
+  },
+  {
+   "name": "ReopenS040",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS040\nRe-open S040 (arXiv 2102.11378v2 abstract and PDF); verify the Gate quote (section 4 opening paragraph, page 6) verbatim and the row's claims (v2 date, no venue metadata). Report match per item.\nFirst line: `RESULT ReopenS040 rev=- verdict=<agree|disagree> quotes=<k>/<n>`."
+  },
+  {
+   "name": "ReopenS041",
+   "role": "scout",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS041\nRe-open S041 (raw file at the S041 URL in corpus/SOURCES.md, Kimi Code tag @moonshot-ai/kimi-code@2.3.0): verify line 55 and line 196 literals, that the URL commit is the tag's commit, that the file is absent at the 2.2.0 tag, and that the installed ~/.kimi-code/bin/kimi --version reads 2.3.0 (shape only; never read secrets).\nFirst line: `RESULT ReopenS041 rev=- verdict=<agree|disagree> checks=<k>/<n>`."
+  },
+  {
+   "name": "ReopenS042",
+   "role": "scout",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS042\nRe-open S042 (official Kimi Code docs data-locations page) and verify the quote \"Cross-process occupancy locks while a client writes a session\" and its locks/ node; also check whether the page now names a version.\nFirst line: `RESULT ReopenS042 rev=- verdict=<agree|disagree>`."
+  },
+  {
+   "name": "ReopenRejects",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenRejects\nRe-open the three rejected rows S043, S044, S045 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md and judge each reject reason and flip condition: do you agree with the reject? Also sample two of the no-row rejects in the lesson's Gate.\nFirst line: `RESULT ReopenRejects rev=- verdict=<word> agree=<k>/<n>`."
+  },
+  {
+   "name": "CritC1Claim",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritC1Claim\nAttack C1 at c9a084bf03fb043d3cce5da102fffbc023552a45: is operability 8->9 via one script plus two checklist items honest or f_O padding? Is the integer move falsifiable by the frozen counter, and does the battery fail on real regressions in the lane's suites (try weakening one real selftest case in a clone and see if the gate exits 1)? Is the 'terminal integer' statement right?\nFirst line: `RESULT CritC1Claim rev={M} verdict=<holds|refuted|weaker> objections=<n>`."
+  },
+  {
+   "name": "CritC2Claim",
+   "role": "critic",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritC2Claim\nAttack C2 at c9a084bf03fb043d3cce5da102fffbc023552a45: is a held integer with census strays 1->0 an 'improved' coverage:kimi-layer verdict? Can the census CLEAN hide anything (another stray, locks replaced by a symlink/file, mode)? Does the knowledge section overclaim against S041/S042?\nFirst line: `RESULT CritC2Claim rev={M} verdict=<holds|refuted|weaker> objections=<n>`."
+  },
+  {
+   "name": "CritSeparabilityTip",
+   "role": "critic",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritSeparabilityTip\nMeasure separability at c9a084bf03fb043d3cce5da102fffbc023552a45: build four trees in clones — a0a07bae (repaired base), base + C1 files only, base + C2 files only, both — and run proxy --json terms, census and the battery on each. Report whether each claim verifies without the other.\nFirst line: `RESULT CritSeparabilityTip rev={M} verdict=<separable|coupled> risks=<n>`."
+  },
+  {
+   "name": "CritNoHarm",
+   "role": "critic",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritNoHarm\nNo-harm check dfabe92bcec021f5beec457fb50cec484e047e35 -> c9a084bf03fb043d3cce5da102fffbc023552a45: every `## Axes` integer, every proxy term, cite-check totals (errors/warnings), claims-check, sources-check, census, checklist pass count. List every number that got worse, with commands.\nFirst line: `RESULT CritNoHarm rev={M} verdict=<noharm|harm> worse=<n>`."
+  },
+  {
+   "name": "CritTradesTip",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritTradesTip\nThe operator ruling on round-41 unscored trades is pending; this round must not deepen them. Measure at dfabe92bcec021f5beec457fb50cec484e047e35 vs c9a084bf03fb043d3cce5da102fffbc023552a45: proxy --strict warnings, cite-check --selftest wall time (interleaved old/new, 5 pairs, record load), and the guard weaknesses (R41-3 F1/F2 mutants, contained per the host-safety rule). Also record new costs (checklist wall time, wave-census and anchor-truth selftest time).\nFirst line: `RESULT CritTradesTip rev={M} verdict=<notdeepened|deepened> warnings=<a>-><b> cite_ms=<a>-><b>`."
+  },
+  {
+   "name": "CritGatePinsBlock",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritGatePinsBlock\nAttack R41-2's design at c9a084bf03fb043d3cce5da102fffbc023552a45: SCORECARD.md keeps the parent-frozen 23-key `kumitate-proxy-v1` stanza and adds a separate `kumitate-gate-pins-v1` block that proxy-check verifies. Is this a widening of v1 in substance (round-34 post-review correction, corpus/knowledge/executable-scorecard.md)? Does a mismatch or unknown key fail closed? Is the proxy verdict line format unchanged?\nFirst line: `RESULT CritGatePinsBlock rev={M} verdict=<ok|widening|defect> issues=<n>`."
+  },
+  {
+   "name": "CritPlanAmendments",
+   "role": "critic",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritPlanAmendments\nAttack the plan amendments A1-A4 (a0a07bae) against the frozen-counter rule ('freeze each counting command before data; a miss is an honest stop, never a narrowed target'). For each amendment: was any counted run made before it (check commit times and seat reports), did it narrow or move a target, and is the after-state still the plan's?\nFirst line: `RESULT CritPlanAmendments rev={M} verdict=<legit|goalpost> issues=<n>`."
+  },
+  {
+   "name": "MutGateClassifier",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutGateClassifier\nMutation-test scripts/gate-mutants.mjs classification at c9a084bf03fb043d3cce5da102fffbc023552a45: write >= 8 single mutants of its kill/survive/drift/crash/timeout/nomatch logic and exit-code precedence; run `--selftest` on each (contained). Report killed/survived per mutant.\nFirst line: `RESULT MutGateClassifier rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "MutGateIsolation",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutGateIsolation\nMutation-test scripts/gate-mutants.mjs isolation at c9a084bf03fb043d3cce5da102fffbc023552a45: mutants of the env allowlist, group kill, process/RSS caps, --rev parsing (end-of-options, leading dash), frozen-id enforcement and header digest; run `--selftest` on each (contained). Report killed/survived per mutant.\nFirst line: `RESULT MutGateIsolation rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "MutCiteGuardTip",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCiteGuardTip\nRe-run the 21 guard mutants of /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-41/verify/MutCiteGuardTip.md against scripts/cite-check.mjs at c9a084bf03fb043d3cce5da102fffbc023552a45 (literals may have moved: re-anchor each and say how), strictly contained per the host-safety rule (a recursion must hit prlimit, not the host). Report per mutant killed/survived/crash and how many still recurse.\nFirst line: `RESULT MutCiteGuardTip rev={M} verdict=<word> killed=<k>/21 recursed=<r>`."
+  },
+  {
+   "name": "MutKimiLocks",
+   "role": "mutation-tester",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutKimiLocks\nMutation-test the round-42 census and proxy changes for locks/ at c9a084bf03fb043d3cce5da102fffbc023552a45: mutants of the locks member rule (family, kind, modeFloor, secret flag, FROZEN.K3 count) in scripts/kimi-census.mjs and of the `locks` entry in proxy-check K_MEMBER_RULES; run each file's --selftest. Report killed/survived.\nFirst line: `RESULT MutKimiLocks rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "MutProxyGatePins",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutProxyGatePins\nMutation-test proxy-check's kumitate-gate-pins-v1 code at c9a084bf03fb043d3cce5da102fffbc023552a45 (parse, verify, PIN_UNPINNED suppression, GATE_PIN_DRIFT, unknown key handling); run `node scripts/proxy-check.mjs --selftest` on each. Report killed/survived.\nFirst line: `RESULT MutProxyGatePins rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "MutAnchorCaps",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutAnchorCaps\nMutation-test the R40-4 caps in scripts/anchor-truth.mjs at c9a084bf03fb043d3cce5da102fffbc023552a45 (4 MiB pin cap, 64-registry cap, their comparison operators and findings); run `--selftest` on each. Report killed/survived and whether AT47/AT48 are the killers.\nFirst line: `RESULT MutAnchorCaps rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "MutCensusHarden",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCensusHarden\nMutation-test the round-42 wave-census hardening at c9a084bf03fb043d3cce5da102fffbc023552a45 (realpath confinement, regular-file check, size and count caps, trailer anchoring; cases WC27-WC31); run `--selftest` on each. Report killed/survived.\nFirst line: `RESULT MutCensusHarden rev={M} verdict=<word> killed=<k>/<n>`."
+  },
+  {
+   "name": "ReviewGateCode",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewGateCode\nCode review scripts/gate-mutants.mjs at c9a084bf03fb043d3cce5da102fffbc023552a45 for correctness: manifest literals vs the round-41 receipts and the six reconstructed census literals, exactly-once matching, control and floor logic, --rev reading via ls-tree/show, cleanup on signals, JSON output. Name each defect with file:line.\nFirst line: `RESULT ReviewGateCode rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewKnowledgeLocks",
+   "role": "reviewer",
+   "axes": [
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewKnowledgeLocks\nReview the new section in corpus/knowledge/kimi-session-state.md (`~/.kimi-code/locks/`) and the scope edits at c9a084bf03fb043d3cce5da102fffbc023552a45 against S041/S042 and the live host (shape only): every OBSERVATION/INFERENCE/UNKNOWN label right, numbers right, no secret read.\nFirst line: `RESULT ReviewKnowledgeLocks rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewLessonR42",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewLessonR42\nReview corpus/lessons/round-42.md at c9a084bf03fb043d3cce5da102fffbc023552a45: every claim and number against receipts and seat reports; `## Gate` meets QUALITY Q21 (decision words, criterion, flip); `## Mistakes` rows each have class, evidence pointer, captured-by and a fix shown able to fail.\nFirst line: `RESULT ReviewLessonR42 rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewQualityQ21Q24",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewQualityQ21Q24\nReview the new QUALITY.md criteria Q21-Q24 at c9a084bf03fb043d3cce5da102fffbc023552a45: run each criterion's command against round 42's lesson and plan (the report is not filed yet: say which parts wait for it) and say whether each criterion can fail.\nFirst line: `RESULT ReviewQualityQ21Q24 rev={M} verdict=<word> runnable=<k>/4`."
+  },
+  {
+   "name": "ReviewScorecardR42",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewScorecardR42\nReview SCORECARD.md at c9a084bf03fb043d3cce5da102fffbc023552a45: stanza terms and pins vs computed, both blocks; `## Axes` operability and kimi rows; Move log rows `| 42 |`; Capabilities row; Saturation note; round-42 section. Count remaining calibration mismatches (self-assessment vs repo state) with commands.\nFirst line: `RESULT ReviewScorecardR42 rev={M} verdict=<word> mismatches=<n>`."
+  },
+  {
+   "name": "ReviewSkillR42",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewSkillR42\nReview SKILL.md at c9a084bf03fb043d3cce5da102fffbc023552a45: the gate-mutants registry row and checklist items 18-19 against the gate's actual flags, outputs and exit map; the 'All ten' sentences; whether the item 18 substring `frozen=41/41` with exit 0 is the right acceptance.\nFirst line: `RESULT ReviewSkillR42 rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewSourcesR42",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewSourcesR42\nReview corpus/SOURCES.md rows S039-S045 at c9a084bf03fb043d3cce5da102fffbc023552a45 against the contract in /home/vgpnk/Projects/shokunin/CORPUS.md (SOURCES.md section): shape, tier scoping, anchors, used-by resolution, rejected reason+flip, and that the lesson logs every new row; run `node scripts/sources-check.mjs` and the fleet census validate.\nFirst line: `RESULT ReviewSourcesR42 rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "ReviewLogR42",
+   "role": "reviewer",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewLogR42\nReview the round-42 LOG.md entry and README rows at c9a084bf03fb043d3cce5da102fffbc023552a45 against commits b237e3f0, a0a07bae, c9a084bf03fb043d3cce5da102fffbc023552a45 and the receipts; every number checked.\nFirst line: `RESULT ReviewLogR42 rev={M} verdict=<word> defects=<n>`."
+  },
+  {
+   "name": "SentinelGateTip",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SentinelGateTip\nRe-check SentinelGateMutants' 35 requirements (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-42/build/SentinelGateMutants.md) against scripts/gate-mutants.mjs at c9a084bf03fb043d3cce5da102fffbc023552a45: which hold, which do not (with a contained probe for each failing one).\nFirst line: `RESULT SentinelGateTip rev={M} verdict=<word> holds=<k>/35`."
+  },
+  {
+   "name": "SentinelCensusTip",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SentinelCensusTip\nAttack the wave-census hardening at c9a084bf03fb043d3cce5da102fffbc023552a45 (realpath confinement, FIFO/non-regular reads, size caps, trailer anchoring) with crafted fixtures in your clone; report any bypass.\nFirst line: `RESULT SentinelCensusTip rev={M} verdict=<word> bypasses=<n>`."
+  },
+  {
+   "name": "ScoutMisroot",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutMisroot\nMisroot sweep (read-only): `git -C /home/vgpnk/Projects/shokunin status --porcelain` and list untracked fleet-root files whose content names kumitate and round 42 (seat reports misplaced at the fleet root). Do not move or delete anything; list path, size, first line.\nFirst line: `RESULT ScoutMisroot rev=- verdict=<clean|found> files=<n>`."
+  },
+  {
+   "name": "ScoutWaveCensusR42",
+   "role": "scout",
+   "axes": [
+    "operability",
+    "coverage:kimi-layer"
+   ],
+   "prompt": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutWaveCensusR42\nIn your clone at c9a084bf03fb043d3cce5da102fffbc023552a45, run `node scripts/wave-census.mjs --round 42` and compare with the build dispatch and its 37 reports: seats, roles, attack seats, reports present; list any report missing or stray.\nFirst line: `RESULT ScoutWaveCensusR42 rev={M} verdict=<word> reports=<p>/<n>`."
+  }
+ ]
+}

@@ -209,6 +209,9 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
 
 ## Round criteria — round 41 routed defects (R41-1, R41-4, R41-5, R41-7)
 
+Run every command below from the lane root (`kumitate-shokunin/`); the fleet report is reached as
+`../.ufo/reports/round-<N>/kumitate.md` (falsify seat ReviewQualityQ21Q24, round 42).
+
 - **Q21 — a round that rejects nothing says so, and every reject carries the criterion it
   missed and the flip condition.** A `## Gate` section that records only admits and re-opens
   leaves the outside check nothing to sample for discernment, so the round cannot show the
@@ -257,11 +260,11 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
     plan heading names an axis (`## C<n> — <axis>`), the row's axis equals it, and a
     `capability` heading has its axis declared in the row.
   - **Command.** The axis set must match the scorecard:
-    `diff <(awk -F'|' '/^## Axes/{f=1;next}/^## /{f=0}f&&$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="Axis")print v}' SCORECARD.md | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | awk -F'|' '$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="axis")print v}' | sort)`
+    `diff <(awk -F'|' '/^## Axes/{f=1;next}/^## /{f=0}f&&$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="Axis")print v}' SCORECARD.md | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' ../.ufo/reports/round-<N>/kumitate.md | awk -F'|' '$2~/[a-z]/{v=$2;gsub(/^[ \t]+|[ \t]+$/,"",v);sub(/:+$/,"",v);if(v!="axis")print v}' | sort)`
     prints nothing. Every declared claim is keyed:
-    `diff <(grep -oE '^## C[0-9]+' .ufo/waves/round-<N>/plan.md | tr -d '# ' | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -oE 'C[0-9]+' | sort -u)`
+    `diff <(grep -oE '^## C[0-9]+' .ufo/waves/round-<N>/plan.md | tr -d '# ' | sort) <(sed -n '/^## Per-axis verdicts/,/^## /p' ../.ufo/reports/round-<N>/kumitate.md | grep -oE 'C[0-9]+' | sort -u)`
     prints nothing. The stated count must equal the rows:
-    `sed -n '/^## Per-axis verdicts/,/^## /p' .ufo/reports/round-<N>/kumitate.md | awk -F'|' '$4~/C[0-9]+/{n++} END{print n+0}'`.
+    `sed -n '/^## Per-axis verdicts/,/^## /p' ../.ufo/reports/round-<N>/kumitate.md | awk -F'|' '$4~/C[0-9]+/{n++} END{print n+0}'`.
   - **Fails when.** Either diff prints a line (round 41: no `## Per-axis verdicts` section,
     `grep -c` = 0; claim diff `1,2d0 < C1 < C2`, exit 1); verdicts are keyed by claim (four
     `- **C<n>**` bullets in the round-41 report); `counted claims` disagrees with the rows
@@ -287,9 +290,9 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
     residual call of at most 8 reviewer or critic seats), naming the rule, the observed
     counts and the cause, including any wave dispatched before its predecessor returned.
   - **Command.**
-    `for f in .ufo/waves/round-<N>/*-dispatch.json; do w=$(jq -r .wave "$f"); sed -n '/^## Round shape/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -q "^WAVE $w " && echo "ok $w" || echo "MISSING $w"; done`
+    `for f in .ufo/waves/round-<N>/*-dispatch.json; do w=$(jq -r .wave "$f"); sed -n '/^## Round shape/,/^## /p' ../.ufo/reports/round-<N>/kumitate.md | grep -q "^WAVE $w " && echo "ok $w" || echo "MISSING $w"; done`
     must print only `ok` lines;
-    `sed -n '/^## Round shape/,/^## /p' .ufo/reports/round-<N>/kumitate.md | grep -cE '^(FLOOR|spawned total)'`
+    `sed -n '/^## Round shape/,/^## /p' ../.ufo/reports/round-<N>/kumitate.md | grep -cE '^(FLOOR|spawned total)'`
     must read 2.
   - **Fails when.** Any `MISSING <wave>` (round 41: all three MISSING — the section is prose);
     a payload `seats=` figure is written as spawned (round 41: `wave-census` reads `seats=106`
@@ -305,12 +308,12 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
   is the blob that landed in `fb7046ca`).
   - **Who checks.** The seat that writes the receipt, at write time; the non-author closure
     re-derives one cited receipt per claim.
-  - **Field.** Every receipt the report or lesson cites for a number carries, on its first two
+  - **Field.** Every receipt the report or lesson cites for a number carries, in its first three
     lines, `<path> sha256 <64-hex>` or `rev=<40-hex>`; when it also carries a label
     (`over master <rev>`, `at <rev>`), `git show <rev>:<path> | sha256sum` in the lane equals
     the stated digest. `working-copy` is allowed only together with a digest.
   - **Command.** `git -C <lane root> show <rev>:<path> | sha256sum` against the header digest;
-    `grep -L -E '(rev=[0-9a-f]{40}|sha256 [0-9a-f]{64})' <cited receipts>` prints nothing.
+    `for f in <cited receipts>; do head -3 "$f" | grep -qE '(rev=[0-9a-f]{40}|sha256 [0-9a-f]{64})' || echo "$f"; done` prints nothing.
   - **Fails when.** A cited receipt carries no digest (round 41: 13 of the 18 `.txt` files
     under `.ufo/waves/round-41` carry none in their first three lines, measured); the label's
     commit hashes differently from the stated digest (round 41: label `fae386aa`, digest

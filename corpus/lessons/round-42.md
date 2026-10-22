@@ -59,24 +59,30 @@ Two v1 waves. Wave 1 (build and first falsifiers) `kumitate-r42-build`, 37 seats
   carries the same literal; the file is absent at the 2.2.0 tag.
 - **Admit S042** (Kimi Code docs, data locations, tier A for purpose only, `new → mined`, used-by
   the K3 note). Opened 2026-10-22 (seats ScoutKimiLocksSource, ScoutRejectCandidates). Quote,
-  § Directory layout, `locks/` node: "Cross-process occupancy locks while a client writes a
-  session" (9 words). Residual: the page names no product version.
+  § Directory layout, `locks/sessions/` node (the page attaches the comment to the `sessions/`
+  child of `locks/`; falsify seat ReopenS042): "Cross-process occupancy locks while a client
+  writes a session" (9 words). Residual: the page names no product version.
 - **Reject S043** (arika.dev blog "Mutation testing in CI", community, tier C). Opened 2026-10-22.
   Quote: "A mutation score of 80% is a reasonable starting threshold for well-tested business
-  logic." (15 words). Missed Q3 (a number without a measurement) and the wrong instrument for a
+  logic." (14 words). Missed Q3 (a number without a measurement) and the wrong instrument for a
   per-mutant manifest. Flip: a measured threshold at a named revision, or the tool maintainer's
-  statement.
+  statement. Erratum (falsify seat ReviewSourcesR42): the S043 anchor `§ thresholds` names no
+  section of the page; the quote sits at the end of "How Mutation Testing Works". The row is
+  append-only, so the anchor stays as written and this line corrects it.
 - **Reject S044** (kimi-cli.com data-locations mirror, community, tier C). Opened 2026-10-22.
-  Quote: "Kimi CLI stores all data in the `~/.kimi/` directory under the user's home directory."
-  (16 words). Missed: it copies the archived legacy product's docs (no `locks/` node) plus an
-  injected line; not the product this host runs. Flip: none for this scope; S042 is the official
-  page.
-- **Reject S045** (Kimi Code sessionLockService.ts on `main` at
-  e7f1a99fc52e68d8e8a2d99d59deba38e4272754). Opened 2026-10-22 (seat ScribeKimiLocksEntry used it;
-  seat ScoutKimiLocksSource rejected it). Missed: `main` adds a takeover path and a
-  `KIMI_CODE_SESSION_LOCK` switch with 0 hits in the installed 2.3.0 binary, so it is not the
+  Quote: "Kimi Code CLI stores all data in the `~/.kimi/` directory under the user's home
+  directory." (15 words; corrected from a "Kimi CLI …" rendering by falsify seats
+  ReviewSourcesR42 and ReopenRejects). Missed: it copies the archived legacy product's docs (no `locks/` node) plus
+  an injected line; not the product this host runs. Missed Q8 (the source must be the product
+  and version the host runs). Flip: the mirror names its maintainer and tracks the current
+  official Kimi Code docs at a stated version.
+- **Reject S045** (Kimi Code sessionLockService.ts on `main`, the revision in its URL). Opened
+  2026-10-22 (seat ScribeKimiLocksEntry used it; seat ScoutKimiLocksSource rejected it). Quote,
+  file line 23: "export const SESSION_LOCK_ENV = 'KIMI_CODE_SESSION_LOCK';" (re-opened by falsify
+  seat ReviewSourcesR42). Missed: `main` adds a takeover path and that
+  `KIMI_CODE_SESSION_LOCK` switch, with 0 hits in the installed 2.3.0 binary, so it is not the
   running code. Flip: the host upgrades to a release containing that revision.
-- **Reject (no row) five further candidates** (seat ScoutRejectCandidates, all opened 2026-10-22,
+- **Reject (no row) six further candidates** (seat ScoutRejectCandidates, all opened 2026-10-22,
   each with quote, reason and flip in `.ufo/waves/round-42/build/ScoutRejectCandidates.md`):
   GeeksforGeeks mutation-testing page (anonymous tertiary, output-divergence kill test), a dev.to
   draft post (metadata `draft body`), the archived official Kimi CLI docs (legacy product), Stack
@@ -84,14 +90,17 @@ Two v1 waves. Wave 1 (build and first falsifiers) `kumitate-r42-build`, 37 seats
   proposal; an absence claim superseded by the 2.3.0 source). Unopened: a Medium article (HTTP
   403) and DeepWiki (HTTP 429) — not rows, not evidence.
 - **Reject the Stryker introduction page** (seat ScoutMutationSource; thin landing page with no
-  outcome or threshold claim). Flip: none needed; S034 already covers Stryker's state semantics.
+  outcome or threshold claim; missed the `teaches` requirement of one grounded learner benefit).
+  Flip: the page gains outcome or threshold semantics with a revision anchor.
 - **Re-open S036, S037, S013, S024, S026** (seat ScoutSourcesRecheck): all five quotes still
   verbatim at their recorded revisions; no status or recheck change (no `knowledge/` entry cites
   them yet). W04 (S034 and S023 share a URL across scopes) stays a logged registry warning: the
   contract forbids editing `scope`, and rejecting S034 would drop Q19's grounding.
 
 Registry changes logged old → new: S039–S042 added as `mined`; S043–S045 added as `rejected`; no
-existing row's `status`, `recheck` or `used-by` changed.
+pre-round row's `status`, `recheck` or `used-by` changed. After the falsify wave, S042 `used-by`
+`corpus/knowledge/kimi-session-state.md` → `corpus/knowledge/kimi-session-state.md,
+corpus/lessons/round-42.md` (this lesson cites it; seat ReviewSourcesR42 D4).
 
 ## Mistakes
 
@@ -123,3 +132,36 @@ existing row's `status`, `recheck` or `used-by` changed.
 - R41-2: the four unpinned gates are pinned in a separate lane-owned `kumitate-gate-pins-v1` block
   that the proxy verifies (`GATE_PIN_DRIFT`), leaving the parent-frozen 23-key v1 stanza unchanged;
   whether a lane-owned second block is acceptable under the frozen contract is for the operator.
+
+## Falsify wave (35 seats against c9a084bf) — dispositions
+
+- Reproduced: C1 terms `{"A":10,"C":19,"operability":9}` and `--strict` exit 0 (ReRunC1Terms);
+  C2 census `CLEAN` exit 0, K 53/53, no host drift since 19:52Z (ReRunC2Census); checklist 19/19
+  from a clean clone with the fleet layout threaded (ReRunChecklist); S039–S042 re-opened, quotes
+  verbatim (ReopenS039–S042); rejects S043–S045 upheld (ReopenRejects); round-42 build census
+  `reports=37/37` (ScoutWaveCensusR42); no kumitate misroot at the fleet root (ScoutMisroot).
+- Fixed after the measured commit: wave-census refuses a round, dispatch or report directory that
+  is not its canonical path (symbolic-link substitution, SentinelCensusTip B1; patch applied,
+  selftest 31/31, no new case — a red-before case is still owed); lesson and SOURCES record
+  corrections (S042 node, S044 quote, S045 quote, S043 anchor erratum, S042 used-by); knowledge
+  `evict(` claim scoped to the lock region and `KIMI_CODE_HOME` attribution; K3 registry row
+  lists `locks/`; checklist item 8 runs `proxy-check --strict`; QUALITY Q22–Q24 commands run from
+  the lane root; SKILL gate-mutants row precision (`--repo`, overflow, drift exit classes,
+  `--target` is diagnostic).
+- Open, named: gate-mutants selftest does not kill four isolation mutants (process cap, RSS cap,
+  `--end-of-options`, leading-dash guard; MutGateIsolation 4/8); the `kumitate-gate-pins-v1`
+  block reads MATCH in default mode when missing or renamed and matches its head by prefix
+  (CritGatePinsBlock; R41-2 pending an operator ruling); `locks/` mode floor accepts 0777 and
+  nothing under `locks/` is gated (CritC2Claim); an unsourced stub section would pass every C2
+  counter (S041 binding is a manual grep); wave-census prints untrusted names raw (B2) and its
+  trailer anchoring accepts two paths on one line (B3, the open M03).
+- **Counter amended after data (mistake, falsify seat CritPlanAmendments).** A1 (a0a07bae,
+  17:01:18 -03) widened the plan's kill rule after build seats had already scored the frozen ids
+  under both rules (CritC1Honesty at 17:00:02: `plan_rule_survived=6`); the gate then implemented
+  a third rule (killed = at least one `FAIL ` line), recommended after A1. Scored under the
+  original frozen sentence, the measured receipt reads 34/41 killed (seven ids exit 0 or print
+  `VERDICT: PASS`). Class: frozen-counter drift; captured-by: the round prompt's frozen-target
+  rule (not applied by the L1); fix: a plan amendment is admissible only with a timestamp
+  showing no seat or L1 run of the counter before it — this round's C1 battery result is reported
+  under both rules and left to the closure. C1's proxy-term after-state (A 10, C 19,
+  operability 9) does not depend on the kill rule.

@@ -139,6 +139,7 @@ function censusRound(root, n) {
   const roundPath = join(root, '.ufo', 'waves', `round-${n}`);
   const dir = confinedRealpath(root, roundPath);
   if (!dir) throw new FailClosed(`round dir ${roundPath} is missing`);
+  if (dir !== roundPath) throw new FailClosed(`round dir ${roundPath} is not the canonical path (symbolic link)`);
   if (!statSync(dir).isDirectory()) throw new FailClosed(`round dir ${roundPath} is missing`);
   const files = directoryNames(dir, MAX_ROUND_DIR_ENTRIES, 'round directory')
     .filter((f) => /-dispatch\.json$/.test(f)).sort();
@@ -153,6 +154,7 @@ function censusRound(root, n) {
     const path = join(dir, f);
     const dispatch = confinedRealpath(root, path);
     if (!dispatch) throw new FailClosed(`${path} is missing`);
+    if (dispatch !== path) throw new FailClosed(`${path} is not the canonical path (symbolic link)`);
     if (!statSync(dispatch).isFile()) throw new FailClosed(`${path} is not a regular file`);
     let d;
     try {
@@ -214,7 +216,9 @@ function censusRound(root, n) {
     const reportDirs = new Set([...tasks, ...resumes].map((t) => t.report && dirname(t.report)).filter(Boolean));
     const names = new Set([...tasks, ...resumes].map((t) => t.name));
     for (const rd of reportDirs) {
-      const abs = confinedRealpath(root, join(root, rd)) ?? '';
+      const declared = join(root, rd);
+      const abs = confinedRealpath(root, declared) ?? '';
+      if (abs && abs !== declared) throw new FailClosed(`${declared} is not the canonical path (symbolic link)`);
       if (!existsSync(abs)) continue;
       for (const e of readdirSync(abs).filter((x) => x.endsWith('.md')).sort()) {
         if (!names.has(e.slice(0, -3))) {

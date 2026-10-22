@@ -416,7 +416,9 @@ timing]. An empty `sessions/` is the normal released state.
 the S041 URL pins the revision) the node-fs session-lock service sets
 `this.lockDir = join(bootstrap.homeDir, 'locks', 'sessions');` (file line 55) and its
 `ensureLockDir()` runs `fs.mkdirSync(this.lockDir, { recursive: true, mode: 0o700 });`
-(line 196); `bootstrap.homeDir` is `~/.kimi-code` unless `KIMI_CODE_HOME` is set. `locks/` is
+(line 196). `bootstrap.homeDir` is `~/.kimi-code` unless `KIMI_CODE_HOME` is set (that fallback is
+not in the S041 file: the installed binary's home resolution reads
+`homeDir ?? env["KIMI_CODE_HOME"] ?? join$98(osHomeDir, ".kimi-code")`, and S042 states it). `locks/` is
 only the parent the recursive mkdir makes. The installed binary carries the same module
 (`~/.kimi-code/bin/kimi`, bundled region for the session-lock service source file,
 literal `this.lockDir = join$98(bootstrap.homeDir, "locks", "sessions");` at byte 134688526).
@@ -432,8 +434,10 @@ through a `.reclaim` sibling; an exit listener releases every hold. A claim that
 logs `session lock unavailable; continuing without lock` and proceeds unlocked, so a missing
 directory is never fatal to the CLI.
 
-**INFERENCE, bounded.** The installed 2.3.0 bytes contain no `KIMI_CODE_SESSION_LOCK`, no
-`evict(` and no `taking over session lock` literal (0 hits each); upstream `main` adds a
+**INFERENCE, bounded.** The installed 2.3.0 binary contains no `KIMI_CODE_SESSION_LOCK` and no
+`taking over session lock` literal (0 hits each, whole file), and its session-lock region has no
+`evict(` (three binary-wide hits belong to an unrelated cache class; falsify seat
+ReviewKnowledgeLocks); upstream `main` adds a
 takeover path and a disable switch (rejected as this member's source: S045), so a later
 upgrade can change lock semantics at this path. **UNKNOWN:** the bytes of a live `.lock`
 file on this host (no client was running when measured).
