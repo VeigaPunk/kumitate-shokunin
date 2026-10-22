@@ -1735,10 +1735,13 @@ section and R9's three sibling-suite sections).
 Limits, recorded not hidden. The `--base` floor now matches base-true anchors by raw text,
 resolved path and occurrence, counts non-true anchors per base-true raw text and path, refuses a
 `pair` token that differs from the note's pairing and refuses entry sources other than `pair` or
-`review:<seat>` with a token (`corpus/QUALITY.md` Q19). Two measured gaps stay open: a
+`review:<seat>` with a token (`corpus/QUALITY.md` Q19). Three measured gaps stay open (the third, a
+raw swap within one path that moves a base-true claim to a false line while a neighbour inherits
+its identity, is L3 in `corpus/lessons/round-39.md`; the other two follow): a
 `review:<seat>` source is self-declared (no committed review record is read by the direct entry),
-and a new false anchor at a raw with no base anchor can be traded against one repaired debt anchor
-in the same note (`.ufo/waves/round-39/final/limit-debt-trade.txt`). Environment at round 39,
+and new false anchors at raw text with no base anchor are accepted up to each note's debt headroom
+against the frozen base (base debt minus current debt: 73 in S8, refused at the 74th by `DEBT_GREW`;
+`.ufo/waves/round-39/final/limit-debt-trade.txt`, `.ufo/waves/round-39/falsify/CritClaimC2.md`). Environment at round 39,
 measured at both fac39171 and 3908f322: the pin's default source clone
 `/fast/scratch/kumitate-r36/src` is absent, so six checklist items exit 2 (`CHECKLIST: 8/15 pass`,
 `.ufo/waves/round-39/final/checklists-*.txt`), and the live Kimi census reads `DRIFT (UNLISTED

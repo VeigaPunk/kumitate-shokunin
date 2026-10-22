@@ -92,13 +92,50 @@ lesson and `corpus/QUALITY.md` (Q19).
 
 - **L1 self-declared review.** A pin entry with source `review:<seat>` and a token that occurs in
   its sentence and on its lines pins `true`; the direct entry never reads a review record
-  (`run()` reads `--reviews` only with `--write-pin`). A search of the 20 current `debt:false`
-  entries found none that a sentence token would turn true, so no current entry is exposed.
-- **L2 debt trade.** Un-anchoring one debt entry and appending one new false anchor at a raw text
-  with no base anchor reads `TRUTH: CLEAN` at 3908f322
-  (`.ufo/waves/round-39/final/limit-debt-trade.txt`, script beside it).
+  (`run()` reads `--reviews` only with `--write-pin`). The L1's own search tried identifiers of
+  four or more characters on the 20 current `debt:false` entries and found none; that search was
+  too narrow. The non-author seat CritProbeBias set S8#92 to `review:NoSuchSeat` with the
+  stopword token `the` and `expect: true`, and the gate read CLEAN at both fac39171 and 3908f322
+  (`.ufo/waves/round-39/falsify/CritProbeBias.md`). So a debt entry can be forged true today
+  through this path; it is the first repair candidate for round 40.
+- **L2 debt headroom.** Un-anchoring one debt entry and appending one new false anchor at a raw
+  text with no base anchor reads `TRUTH: CLEAN` at 3908f322
+  (`.ufo/waves/round-39/final/limit-debt-trade.txt`, script beside it). The non-author seat
+  CritClaimC2 showed the gap is wider than a one-for-one trade: per-note `DEBT_GREW` compares
+  with the frozen base, where S8 held 77 debt entries and the pin now holds 4, so 73 new false
+  anchors at a fresh path read CLEAN and the 74th is refused
+  (`.ufo/waves/round-39/falsify/CritClaimC2.md`).
 - **Environment, not this round's bytes.** The pin's default source clone
   `/fast/scratch/kumitate-r36/src` is gone, so six checklist items exit 2 and
   `CHECKLIST: 8/15 pass` at both fac39171 and 3908f322; the live Kimi census reads `DRIFT
   (UNLISTED skills/)` (a seventh `skills/` child) at both, so the proxy derives
   coverage:kimi-layer 9 against the declared 10. Both are reported for round 40.
+- **L3 raw swap inside one path (found by a non-author seat).** BypassSwapRaws swapped the line
+  coordinates of S8#451 (`:40`) and S8#456 (`:58`, token `hatch`, true at base) and hand-wrote a
+  consistent pin. The `hatch` claim becomes false, yet the identity `:58` occurrence 0 now
+  resolves to #451, which is true with another token, so the gate reads CLEAN; the same holds for
+  three more pairs with #456. Round-open logic accepts the same four swaps, so this is a gap the
+  repair did not close, not a regression it caused. Suggested fix for round 40: a base-true
+  identity counts as kept only when the matched entry is true and keeps its base token (or carries
+  a bound review). `.ufo/waves/round-39/falsify/BypassSwapRaws.md`.
+
+## Residual check — non-author seats (8 reviewer/critic seats, one call)
+
+Neither wave ran (see `.ufo/waves/round-39/evidence/seat-gate.txt`); one residual call of eight
+reviewer/critic seats ran against 3908f322. Reports: `.ufo/waves/round-39/falsify/`.
+
+| seat | verdict | what it found |
+|---|---|---|
+| C1Remeasure | confirmed | 58/62 → 59/62, losses 0; closure block sha256 f4ecff36… identical; only `src` and `delivered` rebound |
+| C1SemanticRange | agree | line 560-572 holds exactly the declaration, the conflicting agentId and the assertion; nothing narrower can hold all three |
+| CritClaimC1 | supported | zero genuine round-37 harms remain under either closure's method; 59/62 is this counter's ceiling; #475's round-37 loss was itself a comment-line artifact, so the repair fixes one debt anchor rather than restoring lost knowledge |
+| GateDirect | confirmed | selftest 22/22 → 30/30; direct entry CLEAN with true 777 → 778, debt 21 → 20; SRC_MISSING exit 2 without `--src` at both revisions |
+| CritClaimC2 | overclaimed (wording) | after-values reproduce; 0/6 does not isolate `BASE_TRUE_LOST` (A3 is refused by `TOKEN_FORGED`, A4 by the schema); its own sweep found 3 of 15 mutants surviving (group check counting only unchecked; dropping the `b.t > 0` guard; deleting the old key loop); the floor protects only base-true anchors, not this round's own repair; no round-39 frozen replay; L2 headroom 73 in S8 |
+| CritProbeBias | mixed | each refusal is from a declared mechanism and none is a crash, but the control cannot tell the fix from a tool that refuses every edit, there is no benign-edit control, and the attacks cluster on S8#3; honest narrowing or widening of a base-true range is refused (an operability cost); L1 confirmed with the stopword token `the` on S8#92 |
+| BypassSwapRaws | limit | L3 above (4 accepted swaps lose a base-true claim at both revisions); 2 swaps refused only by the old key loop, which therefore is not dead weight |
+| BypassRunReorder | limit | five base-true two-anchor runs reversed, four pin styles each: round open accepts 10 of 20, the candidate 5 of 20 (`TOKEN_FORGED` closes the base-tokens-under-`pair` variant); the 5 still accepted keep base tokens under a self-declared `review:probe` source (L1). Its scratch-only fix (flag a base paired-true anchor whose review-sourced note pairing now reads false) took its probe to 0 of 20 with the control CLEAN; not adopted this round |
+
+What the L1 takes from them: the C2 claim stays the six named edits (6/6 → 0/6) and is not a
+claim that the floor is complete. The probe needs a benign-edit control and per-attack expected
+finding kinds, and the floor needs the token-kept rule (L3), bound review records (L1) and a
+new-debt identity rule (L2). These are round-40 candidates; scope was frozen at 11:43Z.

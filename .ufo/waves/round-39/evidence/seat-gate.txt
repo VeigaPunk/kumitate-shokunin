@@ -14,3 +14,12 @@ Round 39 seat-gate record (wave-slot.sh, cap 85 seats shared by the fleet)
    totals 32-100. The wave was reshaped to 37 seats of falsify items on the measured revision
    3908f322 (.ufo/waves/round-39/falsify-spec.json, validated, falsify-dispatch.json) and a
    new request was made: `wave-slot.sh acquire kumitate r39-falsify 37 1500` at about 11:48Z.
+4. Result of request 3: exit 3 after 1509 s, `timeout lane=kumitate wave=r39-falsify seats=37
+   live=70 pending=33 cap=85 mem_avail_mb=23052 min=6144`. No grant; nothing dispatched; no
+   reservation held.
+5. With the report due by 13:03Z, the L1 did not request again. It sent one residual call of 8
+   reviewer/critic seats (addendum: residual checks go into one ordinary task call of at most 8
+   reviewer/critic seats, counted in the round total), payload
+   .ufo/waves/round-39/residual-dispatch.json (the eight rendered tasks taken unchanged from
+   falsify-dispatch.json plus a solutionSpace field the task tool requires, and a 20-minute
+   time bound in the context). Result: residual-dispatch-result.txt (8 spawned).

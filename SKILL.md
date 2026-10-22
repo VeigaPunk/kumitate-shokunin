@@ -626,8 +626,12 @@ the per-note check refuses a `pair` token that differs from the note's own pairi
 (`PIN_INVALID`, exit 2). Fixtures AT23–AT27. Under the floor a base-true anchor's coordinates
 are fixed: narrowing or moving one needs a new base, chosen in a round that records why.
 Open limits: `review:<seat>` is self-declared in the pin (no committed review record is
-required), and a new false anchor at a raw text that held no true anchor may be traded against
-one repaired debt anchor in the same note (`corpus/lessons/round-39.md`).
+required), and new false anchors at raw text that held no true anchor are accepted up to the
+note's debt headroom against the frozen base (base debt minus current debt; 73 in the S8 note,
+measured by a non-author seat in round 39), not only as a one-for-one trade. A swap of two
+raw coordinates on one path can also move a base-true claim onto a false line while another
+true anchor takes over its identity (L3), and a self-declared review with a stopword token can
+forge a debt entry true (`corpus/lessons/round-39.md`, open limits and residual check).
 
 ## Verifiable checklist
 
