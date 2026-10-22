@@ -1,0 +1,36 @@
+RESULT CritK43Rule verdict=weaker objections=4 rev=e5ffcbe7f155b89cb1870f9da7b0d671d092948b counter=0f4108bf:scripts/gate-mutants.mjs sha256=e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a
+Axis: operability (C1). Scratch: /fast/scratch/hyaku/kumitate-r43/seats/CritK43Rule (own clone `lane`; scratch-only commit 8310b96c, never pushed). Objections are ranked strongest first.
+
+1. Strongest: K43 counts a change detector as a full kill set. With it, the frozen counter reads the C1 after-target on junk. I made one scratch commit, 8310b96c5d68b2b211668e3c4054c34126beec27, on top of e5ffcbe7. It adds a self-digest tripwire to the end of each target. Under `--selftest`, each target compares its own bytes with a committed copy (`scripts/<target>.pin.txt`). If they differ, it prints one `FAIL` line, the control total and `VERDICT: FAIL`, then exits 1. Otherwise it runs the real suite.
+   Command: `KUMITATE_GATE_MUTANTS_TMP=<seat>/gm-tmp systemd-run --user --scope --quiet -p MemoryMax=6G -p TasksMax=256 timeout -s KILL 900 node <seat>/counter.gTZay5/gate-mutants.mjs --repo <seat>/lane --rev 8310b96c5d68b2b211668e3c4054c34126beec27` (counter sha256 e24749e4…, as required).
+   Output: `CONTROL cite-check PASS ... cases=75/75 floor=75`; `CONTROL wave-census PASS ... cases=31/31 floor=31`; all 43 `MUTANT` lines read `killed ... confirm=same`; both `CONTROL_AFTER` lines read PASS; `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 ...)`, `exit=0`, 22.2 s. Receipt: `<seat>/e2-tripwire.txt`, sha256 30afffe3….
+   This meets every C1 kill rule. Every frozen literal still applies exactly once, the case floors are unchanged, and the junk controls J1–J3 do not cover it. Rule (d) cannot help, because the tripwire is deterministic.
+   Smallest safe correction, with no change to K43: score this as junk control J4 (self-digest tripwire) and name it as a K43 limit. Also require a null-mutant receipt at the measured commit: a comment-only byte change to each target must still pass `--selftest` (exit 0, `VERDICT: PASS`, full total), under the host-safety bounds. A tripwire fails that check. Without that receipt, the judge should treat CLEAN as unproven.
+2. Rule (d) narrows the round-42 starvation false kill (CritC1Claim objection 2). It does not remove it, because an environmental fault that lasts across both runs agrees with itself.
+   Command: `<seat>/e1/run2.sh wave-census 31 32 36`. Per run this is `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 60 prlimit --nofile=N:N -- env -i <gate sandbox env> node scripts/wave-census.mjs --selftest`, twice, on the unmutated round-open bytes (a1762f3c…). The judging code (`e1/eval.mjs`) is the counter's own hasLine, parseCaseCount and failNames, copied verbatim. It did not measure group-clean or spawn-error.
+   Output at nofile=32: `run1 exit=1 cases=0/31 fail=true | run2 exit=1 cases=0/31 fail=true | K43=KILLED(confirm=same)`, with identical FAIL name lists. nofile 30 and 34 gave the same result; nofile 36 gave 31/31 PASS. Receipt: `<seat>/e1-nofile-receipt.txt`.
+   cite-check under the same cap fails closed: its harness throws and prints no summary.
+   Task-cap starvation (the round-42 fault class) repeats too. `e1/run.sh` uses the same bounds, but with `-p TasksMax=8` and no fd cap. Output for wave-census at TasksMax=8: `run1 exit=1 cases=0/31 fail=true | run2 exit=1 cases=0/31 fail=true | K43=KILLED(confirm=same)`, with identical WC01… FAIL lists. cite-check at TasksMax=8 fails closed: it throws at cite-check.mjs:1678 and prints no summary. TasksMax 10 and above hung until the 120 s timeout, which also fails closed. I stopped that sweep there.
+   Caveat for that run: it copied the clone's working `scripts/` while my tripwire commit (objection 1) was being written. Either copy runs the real suite: the printed names are the real WC01… cases, not the tripwire's WC99.
+   The controls catch a fault that lasts the whole run, because the control would fail too. A fault window that covers one mutant's two runs but not the controls still counts as a kill. The two runs are about 3 s apart; with 4 jobs, mutants overlap.
+   Mitigation that holds for this round: the seven current survivors cannot be falsely killed. Each one breaks the very exit or verdict channel that K43 reads: in the control receipt every survivor row shows `exit=0` or `verdict=PASS`. The risk applies to the after-state, if the new witness misses a mutant.
+   Correction: in the plan and lesson, change "answer ... objection 2" to "(d) removes one-run faults; a fault spanning both runs and not the controls still counts". Make the receipt state that host load was quiet during the counted run.
+3. (a)–(c) is narrower than the round-42 sentence, so the plan's "are the round-42 plan's pre-data sentence" overstates the provenance.
+   The round-42 sentence (b237e3f0 plan, lines 20–21): "killed = exit non-zero with a `VERDICT: FAIL` line; a crash or timeout is not a kill".
+   K43 (a) adds two conditions: a parseable case summary, and a total equal to the control's. A non-zero `VERDICT: FAIL` run with a different total is a kill under the round-42 sentence. Under K43 it is `drift`, which ends the run as exit 2 ERROR (gate-mutants.mjs:456, :481–482).
+   Overflow, an unclean group and a spawn error fit "crash", as the round-42 code (c9a084bf gate-mutants.mjs:428–429) already classified them.
+   K43 also differs from the round-42 code, which killed on any `FAIL ` case line (c9a084bf:431). That gap is exactly the seven survivors: each has fail_lines≥1 in the control receipt but exit 0 or `VERDICT: PASS`.
+   Correction: reword to "(a)–(c) restate the round-42 sentence plus a case-total equality".
+4. A kill with no `FAIL ` case lines turns rule (d) into "the same exit code and verdict twice". The counter's own selftest case `k43-nonzero-with-verdict-fail-is-killed` (gate-mutants.mjs:894–898) uses failLines=0. In that case failNames is empty on both runs, so the comparison always agrees.
+   This is low impact today: every kill row in the control receipt has fail_lines≥1.
+   Correction: in the lesson, name this as a limit of (d).
+
+Can a real kill be misread as UNSTABLE? Not with the current names.
+- cite-check prints `FAIL  <name> — <detail>` (cite-check.mjs:2638). All 84 case-name call sites are literals: 83 single-quoted and 1 double-quoted (line 2079).
+- wave-census prints `FAIL  WCnn <name> — <detail>` (wave-census.mjs:589). All 31 check() calls use 'WCnn', '<literal>', and WC24 is a literal too.
+- So no temp path or timing appears before ` — `. Two cite-check names contain ` — ` (lines 2214, 2271); they are cut at the same place on every run.
+- In the control receipt, fail_lines equals the number of failed cases on every killed row (`awk` check; the only mismatch is the survivor V382-pass-count).
+- The remaining UNSTABLE routes fail closed (exit 2): a second-run timeout under load, or a future witness case whose name is built from a temp path or a timing. The new witness names should stay literals.
+
+Host safety: every node run was bounded as shown above. `pgrep -af <seat>` found no leftover processes. gm-tmp held 0 entries after the run. Temp roots, the counter copy and the pristine copy were removed.
+Tools installed or updated: none.

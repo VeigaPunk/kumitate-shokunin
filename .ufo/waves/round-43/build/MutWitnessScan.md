@@ -1,0 +1,21 @@
+RESULT MutWitnessScan rev=e5ffcbe7f155b89cb1870f9da7b0d671d092948b verdict=measured mutants=12 survived=5
+
+Scratch-only probe; target scripts were restored after every mutation. No patch or other lane file was written.
+Detector: each mutant ran twice with `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node <scratch>/lane/scripts/<target>.mjs --selftest`. Applied K43: evaluable summary total equals pristine control (cite-check 75; wave-census 31), numeric non-zero exit, exact `VERDICT: FAIL`, and matching sorted FAIL names on both runs. The local probe harness applied this frozen predicate to ad-hoc mutations; these do not count toward the 41-mutant C1 gate.
+Pristine direct controls: cite-check `75/75 cases passed (hermetic)`, `VERDICT: PASS`, exit 0; wave-census `31/31 pass`, `VERDICT: PASS`, exit 0. Restored two-run controls repeated those outputs.
+Mutant outputs below are the two-run result; complete raw stdout and command are in `/fast/scratch/hyaku/kumitate-r43/seats/MutWitnessScan/logs/<id>.run1.txt` and `.run2.txt`.
+Cite-check before/after SHA256: `1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e` / same.
+Wave-census before/after SHA256: `a1762f3c12854be0ba38a8ca5e5a5b3233848d0955a4c4cad4746135822cc30e` / same. Every mutation was restored to its corresponding before hash before the next probe.
+C01 cite-check:2630 JSON `cases: s.ran.length → 0`; mutant SHA256 `239f1f57bd48a7595128662dccc8853dd03b8b0e2aaa1d42c8fcbf98d63f15b5`; `75/75`, PASS, exit 0; SURVIVED (JSON case count is not asserted).
+C02 cite-check:2630 JSON `failed: s.failed → 0`; mutant SHA256 `9d81579da066b0143f94e82582aeb40586a48cf323f37f46e50ff039698d8a44`; `75/75`, PASS, exit 0; SURVIVED.
+C03 cite-check:2632 JSON `Boolean(r.skipped) → false`; mutant SHA256 `851d81ddd0bdee4380e73e2ebc136aed75432ec4d5e66f75e2d980802c0b181e`; `74/75`, FAIL `suite self-observation: injected failure → --json verdict FAIL, exit 1`, exit 1 both runs; KILLED.
+C04 cite-check:1851 record `ok → ok: true`; mutant SHA256 `be172003037f1733c1d66f35afeb842886c3e99954c352fdff6f9073f82e4b43`; `75/75`, PASS, exit 0; SURVIVED (failed assertions would be recorded as passing).
+C05 cite-check:2644 text summary numerator `${s.ran.length - s.failed} → 0`; mutant SHA256 `02acdaf9cfb7aed5afb9d1b43b09fb7ef9c730abf1bb4da4db5ca4643fc49f13`; `0/75 cases passed`, PASS, exit 0; SURVIVED (K43 requires matching total, not matching passed count).
+C06 cite-check:2631 JSON suite `verdict: s.verdict → 'PASS'`; mutant SHA256 `91304c207dbcf07d2045adebe13cc111100d8cc455d9b4ec5f0ecb95b301cce0`; `74/75`, FAIL `suite self-observation: injected failure → --json verdict FAIL, exit 1`, exit 1 both; KILLED.
+W01 wave-census:282 result recording `ok → ok: false`; mutant SHA256 `6bdbc9354aaa480c1b4dfe0f0add2bf1b3f3d70e59cebdfb6fd501da4a9a4f41`; `0/31`, FAIL, exit 1 both; KILLED.
+W02 wave-census:588 summary count predicate `(r) => r.ok → () => false`; mutant SHA256 `2b74d27b3cfed3125dbf556f7b678c64eef51d4f05a50ee5363df4556f52ffc4`; `0/31`, FAIL `WC24 self-observation...`, exit 1 both; KILLED.
+W03 wave-census:591 printed verdict fallback `'FAIL' → 'PASS'`; mutant SHA256 `fc6b8e0872cfca31352513f7a084cb01688e96f271f2f62009d50b5e5e6c5d97`; `30/31`, printed PASS, exit 1, same WC24 FAIL both; SURVIVED (no exact FAIL verdict line).
+W04 wave-census:590 summary suffix `pass → failed`; mutant SHA256 `f574e8b9e05e7e366580d5aacc3c90074eb3b1237937360adf7b44de504eb2c6`; output `30/31 failed`, FAIL, exit 1 both, but no parseable case summary; INCONCLUSIVE.
+W05 wave-census:614 process exit assignment `main() → main() + 1`; mutant SHA256 `9f26ef0ceecea3d5cf8ad1e61fba851a640eb1c3976d7290234195068c2196c8`; `4/31`, FAIL, exit 2 both; KILLED.
+W06 wave-census:611 census exit map `? 0 : 1 → ? 0 : 0`; mutant SHA256 `2a9e9e7471d820b4a176ea614aa9d9175e08b5ad13c39d9b6317e135dc2a4e93`; `19/31`, FAIL, exit 1 both; KILLED.
+Counts: 6 KILLED, 5 SURVIVED, 1 INCONCLUSIVE. Process checks reported clean after each probe run; final `pgrep` found no target processes. Counter extraction SHA256 matched frozen `e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a`; extracted counter and `gm-tmp` were removed. No tools installed or updated.

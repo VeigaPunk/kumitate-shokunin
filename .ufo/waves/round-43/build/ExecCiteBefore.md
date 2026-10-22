@@ -1,0 +1,22 @@
+RESULT ExecCiteBefore rev=e5ffcbe7f155b89cb1870f9da7b0d671d092948b verdict=differs dfabe92=553/481 c9a084bf=554/481 e5ffcbe7=558/486
+
+The `SKILL.md:677` checklist runs `node scripts/cite-check.mjs`; the gate registry at `SKILL.md:599` permits `--src`. I supplied the pinned source tree. I also supplied `--fleet /home/vgpnk/Projects/shokunin` to preserve the lane's real parent-fleet context; otherwise a scratch clone defaults its fleet root to my seat directory.
+
+Scratch clones were created with `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin <clone>`. Detached checkout commands:
+`env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-dfabe92 checkout -q --detach dfabe92bcec021f5beec457fb50cec484e047e35`
+`env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-c9a084bf checkout -q --detach c9a084bf03fb043d3cce5da102fffbc023552a45`
+`env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-e5ffcbe7 checkout -q --detach e5ffcbe7f155b89cb1870f9da7b0d671d092948b`
+No lane files other than this report were written.
+
+For each revision, the gate ran under the required memory, task, and timeout bounds in its clone. Command and output:
+
+- dfabe92bcec021f5beec457fb50cec484e047e35, cwd `/fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-dfabe92`: `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node scripts/cite-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --fleet /home/vgpnk/Projects/shokunin > /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/dfabe92.stdout 2>&1` → `VERDICT: FAIL`; `CITE_CHECK: DRIFT (files=97 tokens=9430 errors=553 warnings=481)`; exit 1. `sha256sum scripts/cite-check.mjs` → `896f0720b7fe7492806b0a5b7458a995de1d666d6759297675b7d964872c6d0e`.
+- c9a084bf03fb043d3cce5da102fffbc023552a45, cwd `/fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-c9a084bf`: `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node scripts/cite-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --fleet /home/vgpnk/Projects/shokunin > /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/c9a084bf.stdout 2>&1` → `VERDICT: FAIL`; `CITE_CHECK: DRIFT (files=98 tokens=9465 errors=554 warnings=481)`; exit 1. `sha256sum scripts/cite-check.mjs` → `1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e`.
+- e5ffcbe7f155b89cb1870f9da7b0d671d092948b, cwd `/fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/lane-e5ffcbe7`: `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node scripts/cite-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --fleet /home/vgpnk/Projects/shokunin > /fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore/e5ffcbe7.stdout 2>&1` → `VERDICT: FAIL`; `CITE_CHECK: DRIFT (files=99 tokens=9507 errors=558 warnings=486)`; exit 1. `sha256sum scripts/cite-check.mjs` → `1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e`.
+
+Thus the claimed before `526/481` does not reproduce (553/481), and the claimed after `526/484` does not reproduce (554/481). The before and after script hashes also differ, so those two revisions do not use identical cite-check bytes. The round-open revision shares c9a084bf's hash but reports 558/486.
+
+Initial commands, before correcting the clone's fleet root, were run in each clone with `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node scripts/cite-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src` (no `--fleet`). Each selected fleet root `/fast/scratch/hyaku/kumitate-r43/seats/ExecCiteBefore`, so I exclude these mis-scoped results from the comparison.
+Observed lines, all exit 1: dfabe92 `CITE_CHECK: DRIFT (files=97 tokens=9424 errors=719 warnings=554)`; c9a084bf `CITE_CHECK: DRIFT (files=98 tokens=9459 errors=722 warnings=555)`; e5ffcbe7 `CITE_CHECK: DRIFT (files=99 tokens=9500 errors=731 warnings=562)`.
+
+After every run, `pgrep -af "$(pwd)"` returned no matches (`pgrep_exit=1`). No tool was installed or updated. Risk: `--fleet` used the current read-only fleet tree, not a historical fleet snapshot; counts therefore do not recreate the original round-42 environment. No other blocker.
