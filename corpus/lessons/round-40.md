@@ -67,7 +67,7 @@ below); later commits carry documents and evidence only. Receipts: `.ufo/waves/r
   `attacks_accepted=0/26 benign_clean=10/10 setup_errors=0`
   (`.ufo/waves/round-40/final/floor-probe2-measured-5ae8ac9c.txt`); mutant runner 26/26
   (`.ufo/waves/round-40/final/mutants-5ae8ac9c.txt`); selftest 42/42. The checklist truth item
-  now carries `--open f69817ed…`, so the default command is the sound mode for this round.
+  was briefly given `--open f69817ed…` and then returned to its round-open form (below).
 - R39-4: the mutant runner `.ufo/waves/round-40/probe/run-mutants-v2.py.txt` (the 11 round-39
   mutants plus the 15 of the round-39 seat CritClaimC2) reads 23 killed, 3 survived at f69817ed
   (`.ufo/waves/round-40/final/mutants-open.txt`) and 26 killed at 1530a755
@@ -168,11 +168,16 @@ nested borrow, which round 40 introduced with its binding rule and closed at 5ae
 
 ## Open limits (measured, not fixed)
 
-- **The checklist's `--open` revision is this round's.** The truth item now passes
-  `--open f69817ed…`; a later round must move it to its own round-open revision, or new honest
-  reviews committed after f69817ed will read `REVIEW_UNBOUND`. Without `--open` the gate reads
-  records at HEAD (one `TRUTH_WARN` line), where a forged record committed in the judged change
-  binds (`.ufo/waves/round-40/build/ExecReviewBind.md`, evidence 8).
+- **The checklist runs without `--open`.** The falsify seat ReviewBenignFloor showed that under
+  `--open` four honest re-cites of anchors true at the open revision (H3r, H4r, H7, H12) are
+  refused, while the checklist form keeps the same nine honest edits CLEAN as at round open
+  (9/17). So the checklist item stays in its round-open form (no operability cost to honest
+  edits), and the sound check passes `--open` explicitly. In the checklist form the gate reads
+  review records at HEAD (one `TRUTH_WARN` line): a forged record committed in the judged change
+  binds, and the open-pin floor does not run; 13 of the 26 probe attacks then read CLEAN
+  (ReviewSkillPattern), against 20 of 26 at round open. Honest path under `--open`: keep the
+  open-true citation and add the narrower or wider one as a further anchor (4/4 CLEAN,
+  `.ufo/waves/round-40/falsify/ReviewBenignFloor.md`).
 - **Honest re-cites of anchors true at open are refused under `--open`.** Narrowing or widening a
   range that was true at the open revision reads `BASE_TRUE_LOST` (recipes H3r, H4r, H7, H12 of
   `.ufo/waves/round-40/build/CritOperabilityCost.md`; `.ufo/waves/round-40/build/ExecNewDebtIdentity.md`).

@@ -1777,7 +1777,8 @@ fallback only when the record's own anchor identity is gone and lets a record bi
 entry that way (AT46; red-before 41/42, `.ufo/waves/round-40/final/at46-red-before.txt`); all five
 replays read `REVIEW_UNBOUND` exit 1 (`.ufo/waves/round-40/final/borrow-replay-5ae8ac9c.txt`); the
 probe still reads `0/26`, `10/10`, `setup_errors=0` and the mutant runner 26/26 at 5ae8ac9c. The
-checklist truth item now carries `--open f69817ed…`.
+checklist truth item stays without `--open` (under `--open` four honest re-cites of open-true
+anchors are refused; the checklist form keeps 9/17 honest edits CLEAN, as at open).
 
 Calibration corrections (round 40, found by the falsify seat CritCalibration; the rows they name
 stay as written): the `## Axes` operability row's evidence `A=7 … C=13 … 20/23` is stale — the

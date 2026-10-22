@@ -1,0 +1,33 @@
+RESULT CritCalibration rev=1530a75521345e0f4516ed7146180e65f788e017 verdict=counted mismatches_open=9 mismatches_cand=7 (docs commit 0004ae3102c595338c269e56e3a6f5e0d4a28307: 9; wave-1 other_mismatches=6, all 6 still open)
+
+- Setup: bare clone `seats/CritCalibration/lane` (with worktree `open` at f69817ed); mirrored clone `seats/CritCalibration/fleet` (a clone of the fleet repo with the lane cloned inside as `kumitate-shokunin`, the same layout as the real lane). `S=/fast/scratch/hyaku/kumitate-pin/src`. Scratch mutants were reverted (`git status --short | wc -l` → 0). I installed no tools. Open count = M1–M7 plus the two kimi cells that C2 fixed. Candidate count = M1–M7. Docs count = M1–M9.
+- M1 (open, cand, docs): the `## Axes` operability row still reads "A=7 … C=13 … 20/23 … 7 more". Measured: `ls scripts/*.mjs | wc -l` → 8 and `grep -c '^\s*- \[' SKILL.md` → 15. `proxy-check --src $S` gives `A=8 C=15 operability=8`, so f_O is 23/26 and 4 more items reach 9. At 0004ae3 the new round-40 row in the same file says "A=8 C=15", so the file now contradicts itself.
+- M2 (open, cand, docs): that row's "Last change" cell reads "round 35", but the Move log has operability rows for rounds 38 and 39, and 0004ae3 adds a round-40 operability claim row.
+- M3 (open, cand, docs): `## Capabilities` quotes `SOURCES_CHECK: CLEAN (rows=20 …)`, undated. `node scripts/sources-check.mjs | tail -1` → `rows=34` at f69817ed and `rows=37 tiers=A:36,B:1,C:0` at 1530a755.
+- M4 (open, cand, docs): the R11 row (SCORECARD.md:148) says "47 of 47 … sections=47" and "93 − 51 = 42", while its member cell says 41. `node scripts/claims-check.mjs --src $S --row R11` → `CLAIMS: MATCH (rows=1 yes=1 notes=1 sections=41 adv=0 …)`, and `ls $S/crates/ufo-core-runtime/src/*.rs | wc -l` → 88.
+- M5 (open, cand, docs; an under-claim): SHONEN box 1 is `[ ]` (`git log -- SHONEN.md` → only cb1f12e 2026-09-28). `grep -n '^## ' SKILL.md` shows the decision table at :12, failure patterns at :423 and the checklist at :636; 0004ae3 adds another error pattern.
+- M6 (open, cand, docs; an under-claim): SHONEN box 2 is `[ ]`, but `grep -c -i end-to-end LOG.md` → 3 logged entries.
+- M7 (new, open, cand, docs): the round-39 limit (SCORECARD.md:1747) says the pin's default clone is absent, "so six checklist items exit 2 (`CHECKLIST: 8/15 pass`)". Two of those six are the round-gate items (:657 and :658), and they exit 2 for an unrelated reason in any clone that is not inside the fleet repo: `node scripts/round-gate.mjs` → `FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir …/seats/CritCalibration/.ufo/reports is absent`, and `--tracked` → `MAIN_REPO_NOT_GIT` (the round-39 receipts `checklists-*.txt` show those two items at exit 2). The mirrored-layout checklist reads:
+  - f69817ed: `CHECKLIST: 10/15 pass` (four items at exit 2: :654, :659, :661, :665; plus :662 at exit 1).
+  - 1530a755: `15/15 pass`, `VERDICT: PASS`.
+  - 0004ae3: `15/15`.
+  - The bare clone reads 8/15 at f69817ed and 13/15 at 1530a755 (only :657 and :658 fail).
+  - At 1530a755 the newest quotes are still 8/15 (SCORECARD:1747, LOG:1796). At 0004ae3 the LOG says "R39-8; checklist 8/15 → 15/15". That is a bare-clone before-value against an in-place after-value. In place, the change is 10/15 → 15/15, and :662 was fixed by C2 (the census), not by the pin move. The open receipt (`open/receipts.txt` "checklists … 8/15") is also a bare-clone reading. [INFERENCE] I did not run the real lane in place, by contract; the mirror has the same parent `.ufo/reports` and git work tree.
+- Fixed by C2 (counted at open only): the kimi Axes row cited `CLEAN (members=51 …)` while the census read `KIMI_CENSUS: DRIFT (UNLISTED skills/)`, and the K2 cell's "⇒ 26" disagreed with 7 live `skills/` children. Both match at 1530a755.
+- M8 (docs, 0004ae3): the round-40 C2 row says "5 error rows (2 `AXES_DRIFT`)" and cites `.ufo/waves/round-40/open/receipts.txt`. That receipt holds 2 `PROXY  error` lines (`sed -n '/^## proxy-check/,/^## kimi/p' … | grep -c '^PROXY  error'` → 2) and records `AXES_DRIFT rows: 3`. The live value is right: `proxy-check --src $S | grep -c '^PROXY  error'` → 5 at f69817ed, with 2 anchored and 3 bare `AXES_DRIFT` matches. The cited receipt does not show it.
+- M9 (docs, 0004ae3): the C2 row's After cell (0 error rows, `PROXY: MATCH`, exit 0 at 1530a755) has no committed receipt: `ls .ufo/waves/round-40/final/ | grep -i proxy` → empty. My rerun agrees with the value: error_rows=0 at 1530a755, and `PROXY: MATCH (… C2=90/90 … K=52/52 coverage:kimi-layer=10 …)` at 0004ae3.
+- Checked and consistent, not counted:
+  - The kimi Axes row: `kimi-census.mjs` → `CLEAN (members=52 checked=52 chain=7 info=4)`, and `--selftest` → 48/48. Renaming the heading to bare `` ## `kimi-webbridge` `` → `PROXY: DRIFT (K_SECTION_AMBIGUOUS term=kimi-webbridge; K_SECTIONS_DRIFT … 52 computed=51 …)`, as the row says.
+  - The K2 cell is 18+7+1+1 = 27. `stat -c %F` → cursor-lane and kimi-webbridge are directories, and the other five are symbolic links.
+  - The Move-log count mutants (member table line 116): `counted: 6` → live `UNLISTED`, selftest 30/48; `counted: 8` → live `MEMBER_MISSING`, selftest 33/48. Both are killed. The fixture-only `childCount: 8` (line 148) crashes with `EEXIST` (invalid, not a kill), and the row does not claim it.
+  - The C1 row matches its receipts: `floor-probe2-open.txt` → `20/26 benign_clean=10/10 setup_errors=0`, and `floor-probe2-measured-1530a755.txt` → `0/26 … 10/10 … 0 … open-supported=true`.
+  - LOG quotes: `anchor-truth --selftest` → 41/41 and `cite-check --selftest` → 64/64. Dispatch `counts.total` reads 32 for build and 35 for falsify (67 total), with 31 build reports (ExecTokenKept cancelled).
+  - Saturation: the nudge stays off, because operability 8 is below the line of 9 (AXES.md:68).
+- Dated and stale, not counted: the round-34 correction under `## Axes` ("live terms are now A=7, C=13 … C2 77/77"), Saturation's "Live after round 34 … runtime-layer 9", and the Measurement-proxies note "13 items since round 34".
+- Smallest safe corrections:
+  - M1, M2: change the operability row to A=8 C=15, 23/26, "4 more", last change round 40.
+  - M3: date the Capabilities quote or change it to rows=37.
+  - M4: change R11 to sections=41 and 88 − 47 = 41.
+  - M5, M6: mark both SHONEN boxes `[~]` with these pointers, or record why they stay open.
+  - M7: change LOG and the limit to "10/15 → 15/15 in place; 8/15 → 13/15 in a scratch clone, where :657 and :658 fail on REPORTS_DIR_MISSING", and credit :662 to C2.
+  - M8, M9: commit the full open and measured proxy output as receipts, and cite them.

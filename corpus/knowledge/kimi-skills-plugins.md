@@ -257,8 +257,8 @@ falsify seat CritC2Honesty; the daemon itself is tabi's ground, not described he
 | `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/site-exploration.md` | 4389 | `644` | `d7cdeb173add3dd5` |
 | `~/.kimi-code/skills/kimi-webbridge/references/cli-creator/workflow.md` | 3926 | `644` | `a5bb3523cd9f5c66` |
 
-The digest column is the first 16 hex of each file's `sha256sum` output (the full
-64-hex values and the counting command are in this round's build report). `SKILL.md` is
+The digest column is the first 16 hex of each file's `sha256sum` output (full 64-hex values for `SKILL.md` and the operations reference are in
+`.ufo/waves/round-40/build/ScoutKimiWebbridge.md`; the other five are 16-hex prefixes from `sha256sum`). `SKILL.md` is
 mode `600` — the private mode this note already records for `reverse-engineer-anything`;
 every file under `~/.kimi-code/skills/kimi-webbridge/references/` is `644`.
 
@@ -298,7 +298,7 @@ the symlink farm in this root is hand-authored.
 `~/.kimi-code/skills/kimi-webbridge/SKILL.md:2` and
 `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:2` both
 declare `name: kimi-webbridge`, so a **real** collision now exists on this host. Under
-the rule this note quotes above (*"Project overrides User overrides Extra overrides
+the rule this note quotes below, in the precedence section (*"Project overrides User overrides Extra overrides
 Built-in"*), the `User`-scope `skills/` copy (`2.0.26`) outranks the `Extra`-scope
 plugin copy (`1.11.3`) and the plugin copy is shadowed. INFERENCE, not measured: no
 live rendered skill listing was captured this round, so the tie-break is rule-derived.
@@ -317,7 +317,7 @@ are **out of this note's scope**; they belong to
 clause routes `plugins/managed/kimi-webbridge` internals to tabi).
 
 
-Sibling records (round-40 falsify seat ConnFalsifyOverlap): the plugin copy's size, digests, version 1.11.3 and install record are tabi's ground and agree with `tabi-shokunin/corpus/knowledge/webbridge-plugin-anatomy.md:12-14` and `:53-55`; kotoba counts the byte-identical `~/.claude` copy at `kotoba-shokunin/corpus/lessons/round-48.md:107-108`. This section repeats those values only to show that the two installs differ.
+Sibling records (round-40 falsify seat ConnFalsifyOverlap): the plugin copy's size, digests, version 1.11.3 and install record are tabi's ground and agree with `tabi-shokunin/corpus/knowledge/webbridge-plugin-anatomy.md:12-14` and `:57-58`; kotoba counts the `~/.claude` copy (byte-identical to this member by this round's hashes) at `kotoba-shokunin/corpus/lessons/round-48.md:107-108`. This section repeats those values only to show that the two installs differ.
 
 ## `~/.kimi-code/plugins/installed.json`
 
@@ -566,7 +566,7 @@ numbers cited below are those of this note at the round-40 base revision `f69817
   `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:2`. The
   **collision is observed**; the **precedence outcome** (the `User`-scope copy outranks
   the `Extra`-scope plugin copy, per the rule quoted at lines 316-320) stays
-  rule-derived, not measured, because no live rendered skill listing was captured this
+  INFERENCE (rule-derived), not measured, because no live rendered skill listing was captured this
   round. The new `## `~/.kimi-code/skills/kimi-webbridge`` section carries the
   observation.
 - **Child count — the `## Scope` block (line 12) and the round-34 erratum (line 440)

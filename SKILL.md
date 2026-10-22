@@ -633,22 +633,26 @@ raw coordinates on one path can also move a base-true claim onto a false line wh
 true anchor takes over its identity (L3), and a self-declared review with a stopword token can
 forge a debt entry true (`corpus/lessons/round-39.md`, open limits and residual check).
 
-Error pattern — a floor that trusts what the judged change can write (round 40,
-`corpus/QUALITY.md` Q19 and Q20). Symptom: `anchor-truth --base` reads CLEAN while a pin entry
+Error pattern — a floor that trusts what the judged change can write (round 40; builds on
+round 39's Q19, `corpus/QUALITY.md`). Symptom: `anchor-truth --base` reads CLEAN while a pin entry
 claims `review:<seat>` that no review ever made, while a base-true claim moved to another line
 of the same file, or while new false anchors sit under the note's debt headroom against the
 frozen base. Cause: review sources were self-declared, and the frozen base is too old to see
 anchors repaired since (`corpus/lessons/round-39-verifier-spotcheck.md`, R39-1 to R39-3).
 Decision since round 40: pass the round-open revision as `--open REV` (from the command line,
-never from a lane file). A review source then needs a record committed at REV that names the
-same note, seat and token for the same anchor identity (`REVIEW_UNBOUND`), and the pin at REV is
+never from a lane file). A review source then needs a record committed at REV (`.ufo/waves/<round>/anchor-reviews.json`) that
+names the same note, seat and token for the same anchor identity, or for a nested re-citation
+only once that record's own anchor is gone (`REVIEW_UNBOUND`), and the pin at REV is
 a second floor: `BASE_TRUE_LOST`, `DEBT_GREW`, `CHECKED_SHRANK` against it, and every debt
 anchor must equal a debt anchor at REV by identity and token (`DEBT_NEW`). Fixtures AT31–AT34,
 AT39–AT42; AT43–AT45 pin three round-39 survivors. Measure with
-`.ufo/waves/round-40/probe/floor-probe-v2.mjs.txt` (26 attacks, 10 benign edits). Without
-`--open` the gate reads records at HEAD and prints one `TRUTH_WARN` line. Open limits: honest
-narrowing or widening of a range true at REV is refused under `--open`; no token-kept arm
-(`corpus/lessons/round-40.md`).
+`node --input-type=module - --lane <lane> --rev <rev> --src <pin clone> --base <frozen base> < .ufo/waves/round-40/probe/floor-probe-v2.mjs.txt`
+(26 attacks, 10 benign edits). Without
+`--open` the gate reads records at HEAD and prints one `TRUTH_WARN` line, and the open-pin floor
+does not run (the checklist item stays in this form so honest edits read as they did at round
+open; the sound check passes `--open` explicitly). Open limits: under `--open`, narrowing or
+widening a range true at REV is refused — the honest path is to keep that citation and add the
+new one as a further anchor; no token-kept arm (`corpus/lessons/round-40.md`).
 
 ## Verifiable checklist
 
@@ -679,7 +683,7 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
 - [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
 - [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
-- [ ] Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9 --open f69817edf687c8ce4f87ed7953a353399232f69e` → exit 0 + `TRUTH: CLEAN`
+- [ ] Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` → exit 0 + `TRUTH: CLEAN`
 - [ ] Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
