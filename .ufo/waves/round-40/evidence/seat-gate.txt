@@ -1,0 +1,12 @@
+Round 40 seat-gate record (wave-slot.sh, cap 85 seats shared by the fleet)
+
+1. Wave 1 (build), 32 seats, policy v1 (.ufo/waves/round-40/build-spec.json, validated exit 0,
+   build-dispatch.json counts spawn=32):
+   `/home/vgpnk/Projects/shokunin/scripts/hyaku/wave-slot.sh acquire kumitate r40-build 32 3600`
+   at 14:00:57Z (bash timeout requested 3700 s, clamped by the host to 3600 s) printed
+   `granted lane=kumitate wave=r40-build seats=32 live=31 pending=0 cap=85`, exit 0.
+   Dispatched at once as ONE task call carrying the validator's taskCall context and tasks
+   unchanged; the only addition is one `solutionSpace` string per task, which the task tool
+   requires (one string per role). The call was made from the L1's eval kernel
+   (`tool.task`), so the payload bytes are exactly the validated JSON plus solutionSpace.
+   Result: "Spawned 32 background agents".
