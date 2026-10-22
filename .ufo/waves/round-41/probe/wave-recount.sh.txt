@@ -1,0 +1,22 @@
+# round-41 C2 counter: wave-census per-wave seat and role counts against an independent jq recount.
+# Run from the lane root: bash .ufo/waves/round-41/probe/wave-recount.sh.txt
+# Prints both listings, a diff, and `RECOUNT_MISMATCHES=<n>` (lines that differ), then the
+# capability-table row count and the R40-6 able-to-fail pair (exit codes).
+set -u
+a=$(mktemp); b=$(mktemp)
+for r in 38 39 40; do
+  for f in .ufo/waves/round-$r/*-dispatch.json; do
+    w=$(basename "$f" -dispatch.json)
+    jq -r --arg r "$r" --arg w "$w" '(.taskCall // .) | .tasks | "\($r) \($w) seats=\(length) " + ([group_by(.agent)[] | "\(.[0].agent)=\(length)"] | join(" "))' "$f"
+  done
+done > "$a"
+node scripts/wave-census.mjs --round 38 --round 39 --round 40 --json \
+  | jq -r '.rounds[].waves[] | "\(.round) \(.wave) seats=\(.seats) " + ([.roles | to_entries | sort_by(.key)[] | "\(.key)=\(.value)"] | join(" "))' > "$b"
+echo "## jq recount"; cat "$a"
+echo "## wave-census"; cat "$b"
+echo "## diff"; diff "$a" "$b"
+echo "RECOUNT_MISMATCHES=$(diff "$a" "$b" | grep -c '^[<>]')"
+echo "CAPABILITY_ROWS=$(awk '/^## Capabilities/{f=1;next} /^## /{f=0} f && /^\| `/' SCORECARD.md | wc -l)"
+node scripts/wave-census.mjs --round 40 --expect build:mutation-tester=4 > /dev/null; echo "EXPECT_4_EXIT=$?"
+node scripts/wave-census.mjs --round 40 --expect build:mutation-tester=3 > /dev/null; echo "EXPECT_3_EXIT=$?"
+rm -f "$a" "$b"
