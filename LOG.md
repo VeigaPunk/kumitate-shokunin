@@ -1857,3 +1857,25 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   named open. Re-verification: S036, S037, S013, S024, S026 re-opened, quotes verbatim. Host
   incident: a seat's unpatched recursion mutant reached ~500 processes; the L1 killed the group.
   Lesson `corpus/lessons/round-42.md`.
+
+- 2026-10-22 — round 43 (round open `2a7f37d`, source pin `31c465f1`, plan and frozen counter
+  `0f4108bf`, do-nothing control `e5ffcbe7`, addendum A1 `df1ceaf8`, measured `84cb1d5d`). Repair-first
+  after the round-42 honest stop (closure D1–D8). One claim. **C1 operability (capability
+  `gate-mutants` re-claimed under K43; S046, S047, S048):** one kill predicate frozen before data (exit
+  non-zero AND an exact `VERDICT: FAIL` line AND an agreeing second run; controls re-run after the
+  mutants), counter `scripts/gate-mutants.mjs` at `0f4108bf` (sha256 `e24749e4…`) run from an extracted
+  copy. Before, round-open bytes: `SURVIVED (mutants=43 killed=36 frozen=34/41)` exit 1, seven survivors
+  (suites that report PASS or exit 0 while their own cases fail). After, `--rev 84cb1d5d`:
+  `CLEAN (mutants=43 killed=43 frozen=41/41)` exit 0, re-derived by three falsify seats; A1
+  discriminators PASS; J1–J3 junk ERROR exit 2. Work: independent verdict witnesses in the cite-check and
+  wave-census selftests (diff reviews: genuine), WC29 load-robust timeouts. Disclosed: an L1 trial on the
+  same bytes at load ~48 read ERROR `unstable=3`; four junk routes read the counter CLEAN (A1 rejects two;
+  diff review is the backstop); witness-line faults WA/WB/WC survive K43. Not claimed: the operability
+  integer (9; A 10 → 11 from the probe script). Routed: D1 late reports committed; D2 K43 + appended
+  corrections; D3 Q26 and checklist 19/19 at 84cb1d5d; D4 temp parent, isolation and counter-suite cases
+  (gate selftest 28 → 41); D5 retracted (counts follow the scanned tree, `--src` and `--fleet`); D6 not
+  deepened; D7 kimi-census secret-dir mode/owner; D8 WC32 and S045 Q8. Re-verification: S010, S013,
+  S014, S024, S026 re-opened, quotes verbatim; S046–S048 re-opened by falsify seats. Host safety: every
+  seat run under `systemd-run --user --scope` caps; no leftover processes reported. Wave 2: 35
+  dispatched; seats still running at the 23:12Z operator deadline were cancelled (named in the lesson
+  and report). Lesson `corpus/lessons/round-43.md`.

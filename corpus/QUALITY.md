@@ -320,6 +320,12 @@ Run every command below from the lane root (`kumitate-shokunin/`); the fleet rep
     `d6068d1b…` = `fb7046ca`'s blob, while `fae386aa` hashes `3a32dd34…`); or the digest
     belongs to a different file than the one the numbers came from.
 
+Q25–Q28 were added in round 43 and are in force from the round-44 plan. Round 43 measured itself
+against them (falsify seat ReviewQualityQ25Q28): Q25 fails (no clause-to-case map lines in the frozen
+plan; the (a) case carries no `k43-` prefix), Q26 fails on receipt naming (the close receipt is
+`final/checklist-84cb1d5d.txt`), Q27 passes, Q28 fails (one uncited section,
+`corpus/knowledge/kimi-skills-plugins.md:173`). Open, not hidden.
+
 - **Q25 — a mutation battery has one kill predicate, frozen before any counted run and stated
   identically in the plan, the code and the selftest case names.** A predicate stated three ways is
   three predicates: the round is scored under the sentence the plan froze, and no artifact may state

@@ -2661,7 +2661,10 @@ function selfTest(opts) {
     }
   }
   lines.push(`VERDICT: ${verdict}`);
-  if (witnessFailures > 0 && process.env.KUMITATE_CITE_SELFTEST_PRIMARY_ONLY !== '1') {
+  const primaryOnly = Number(process.env.KUMITATE_CITE_SELFTEST_DEPTH ?? '0') >= 1
+    && process.env.KUMITATE_CITE_SELFTEST_INJECT_FAIL === '1'
+    && process.env.KUMITATE_CITE_SELFTEST_PRIMARY_ONLY === '1';
+  if (witnessFailures > 0 && !primaryOnly) {
     if (primaryExit === 0) lines.push('VERDICT: FAIL');
     process.stdout.write(lines.join('\n') + '\n');
     return 1;

@@ -302,7 +302,7 @@ C1k_total=5
 K_members=53
 K_sections=53
 coverage_kimi=10
-pin.cite-check=227f56455dc1e7f03546a3afad9d7421f218daf930ea6dcfc310a58e4388c708
+pin.cite-check=115bfde46d6a24ce2216dd21fff8234f09468f94924ecd7c8ef17276a9c8a4d8
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
 pin.proxy-check=4c2819b02ded6aff7ca64d069e5c955ba7a01a0495e3b4bdf1fc92f97dd8024a
@@ -417,6 +417,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 43 | operability (lowest non-retired axis; integer held 9; claim type capability re-claim `gate-mutants` under the frozen kill predicate K43; sourced on S046–S048) | frozen counter (`0f4108bf:scripts/gate-mutants.mjs`, sha256 `e24749e4…`) on the round-open bytes `--rev 2a7f37d2`: `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 …)` exit 1, seven survivors (suites that report PASS or exit 0 while their own cases fail) | same counter `--rev 84cb1d5d`: `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 …)` exit 0, every kill `confirm=same`, controls re-run PASS; addendum A1 `C1_DISCRIMINATORS: PASS`; junk J1–J3 ERROR exit 2 | `git show 0f4108bf:scripts/gate-mutants.mjs > $G/gate-mutants.mjs; node $G/gate-mutants.mjs --repo <lane> --rev <REV>` (bounds in the plan); receipts `.ufo/waves/round-43/open/c1-control-base.txt`, `.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`, `final/c1-discriminators-84cb1d5d.txt`; S046, S047, S048 |
 | 42 | operability (lowest non-retired axis; integer 8 → 9; claim type capability acquisition `gate-mutants`, sourced on S039) | `{"A":9,"C":17,"operability":8}` at dfabe92 (open receipts); no battery over the lane's own suites | `{"A":10,"C":19,"operability":9}`; `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)` exit 0; `--selftest` 23/23; shown able to fail: `--rev dfabe92… --target cite-check` → `SURVIVED (… killed=16 … drift=2 …)` exit 1 (the R41-3 skip-bypass mutants at the open bytes) | `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json \| jq -c '.terms \| {A, C, operability}'`; receipts `.ufo/waves/round-42/final/`; S039, S040 |
 | 42 | coverage:kimi-layer (`~/.kimi-code/locks` governed; integer held at 10; sourced on S041) | census `ROOT_ENUM … declared=26 … strays=1`, `CENSUS  error  UNLISTED  locks`, `KIMI_CENSUS: DRIFT (UNLISTED locks)` exit 1; `K_members`/`K_sections` 52/52 | `declared=27 … strays=0`, `KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, selftest 52/52; `K_members`/`K_sections` 53/53, `coverage_kimi` 10 | `node scripts/kimi-census.mjs; echo exit=$?`; `node scripts/proxy-check.mjs --src … --json \| jq -c '.terms \| {K_members, K_sections, coverage_kimi}'`; `corpus/knowledge/kimi-session-state.md` § `~/.kimi-code/locks/`; S041, S042 |
 | 41 | operability (lowest non-retired axis; integer held 8; A 8 → 9 and C 15 → 17 from C2, `f_O` 23/26 → 26/29 ≈ 0.897) | `CITE_MUTANTS survived=15/16 nomatch=0 crash=0 control=PASS` at a58b7f72 (only `resolved>0` killed); selftest 64/64 | `survived=0/16 nomatch=0 crash=0 control=PASS` at 68db3419, 4e58bb0e and fae386aa (killed = at least one `FAIL ` case line; 2 of the 16, suite-group-verdict and suite-any-fail, still exit 0 with `VERDICT: PASS`; run with `KUMITATE_CITE_SELFTEST_INJECT_FAIL` unset, an inherited value reads `survived=4/16`); selftest 75/75 (11 new cases: warn-only and `--strict`, `citeCheck` map, both text environment labels, exit contract 0/1/2/2/64 through a child, suite self-observation by an injected-failure child in text and `--json`) | `node --input-type=module - --lane <lane> --rev <rev> < .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` (counter committed in cb2d8d09 before its first run); `.ufo/waves/round-41/final/cite-mutants-*.txt`; `corpus/lessons/round-41.md` |
@@ -1707,7 +1708,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 |---|---|---|---|
 | `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
 | `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect [<round>/]<wave>:<role>=<n>` (role `attack` = attack total; exit 1 on mismatch or unknown role); resumed seats (`resumeSends`) counted apart; a report counts only as a non-empty regular file at a `Report:` path without a `..` segment; a task without a string name and agent, or any read error, fails closed (exit 2); flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `bash .ufo/waves/round-41/probe/wave-recount.sh.txt` → `RECOUNT_MISMATCHES=0 CAPABILITY_ROWS=2 EXPECT_4_EXIT=1 EXPECT_3_EXIT=0` (receipts `.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt` and `wave-recount-final.txt` at fae386aa, 7 rows per listing; before `wave-recount-before-27592977.txt`); `--round 38 --round 39 --round 40` itself reads `DRIFT` from four round-38 stray report files; `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (a declared count checked against the payload: the round-40 slip R40-6); `--selftest` 26/26 at the attempt-2 tip: WC21–WC23 pin the three late repairs (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`, 3/3 killed), WC24 observes the suite's own verdict through a child run with one injected failure and WC25 pins six `--expect` edges (`a2-census-survivor-mutants.txt`, 10/10 killed), WC26 pins ten finding-logic edges (`a2-census-findings-mutants.txt`, 10/10 killed); the mutants are the survivors found by verify seats MutCensusExpect, MutCensusFindings and CritMistakeClasses; 23/23 at fae386aa, 20/20 after the falsify repair, 12/12 at 4e58bb0e; S038 | round 41 |
-| `gate-mutants` | Show that the lane's own gate suites observe the conditions they claim to pin: a frozen embedded manifest of single-literal mutants (41 frozen ids over `cite-check` and `wave-census`, plus named extras) is applied one at a time to a temp copy of the measured `scripts/` (working copy or `--rev`), each copy's `--selftest` run detached under `prlimit` with a timeout, a process and memory cap and an allowlisted environment; per mutant `killed` (a `FAIL ` case line), `survived`, `drift` (passed with fewer cases than the control), `nomatch`, `crash`, `timeout`; header names the revision and the sha256 of the mutated bytes; exit 0 / 1 survivor or drift / 2 could-not-evaluate / 64. Literal mutants only; covers two of the ten gates; a refactored line reads `nomatch` | `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)`; `--selftest` 23/23; `--rev dfabe92… --target cite-check` exit 1; SKILL.md gate-registry row and checklist items 18–19; S039 | round 42 |
+| `gate-mutants` | Show that the lane's own gate suites observe the conditions they claim to pin: a frozen embedded manifest of single-literal mutants (41 frozen ids over `cite-check` and `wave-census`, plus named extras) is applied one at a time to a temp copy of the measured `scripts/` (working copy or `--rev`), each copy's `--selftest` run detached under `prlimit` with a timeout, a process and memory cap and an allowlisted environment; per mutant `killed` (a `FAIL ` case line), `survived`, `drift` (passed with fewer cases than the control), `nomatch`, `crash`, `timeout`; header names the revision and the sha256 of the mutated bytes; exit 0 / 1 survivor or drift / 2 could-not-evaluate / 64. Literal mutants only; covers two of the ten gates; a refactored line reads `nomatch` | `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)`; `--selftest` 23/23; `--rev dfabe92… --target cite-check` exit 1; SKILL.md gate-registry row and checklist items 18–19; S039. **Round 43 (re-evidenced under K43):** frozen counter `0f4108bf` (sha256 `e24749e4…`) `--rev 84cb1d5d` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 …)` exit 0 (`.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`); round-open bytes read `SURVIVED … frozen=34/41` exit 1 (`open/c1-control-base.txt`); the round-42 pointer above was not reproducible under the round-42 pre-data kill rule | round 42 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -1931,7 +1932,7 @@ counts listed items; the pass count is a separate measurement quoted with its da
 integer records a terms reading, not evidence of the capability, and the capability row
 `gate-mutants` entered `## Capabilities` on that unverified claim with the evidence pointer
 "`node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41
-drift=0 …)`; `--selftest` 23/23". At the round-43 open revision the same frozen counter bytes
+drift=0 …)` exit 0; `--selftest` 23/23". At the round-43 open revision the same frozen counter bytes
 (`sha256 e24749e4…`) print `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 drift=0
 targets=2 rev=2a7f37d2…)` exit 1 with seven survivors
 (`.ufo/waves/round-43/open/c1-control-base.txt:53`), so that pointer does not reproduce at the
@@ -1940,3 +1941,25 @@ that prints `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 …)` exit 0
 same counter bytes and no amendment of K43 or of the counter, restores the row's evidence;
 otherwise the row is corrected to record the miss. This correction changes no axis integer and
 claims nothing about round 43's C1 outcome, which was unknown to this seat at draft time.
+
+## Round 43 — claim, limits and round-44 pre-registration (2026-10-22)
+
+Claim (Move log row `| 43 |`; plan `.ufo/waves/round-43/plan.md`, counter and K43 frozen in `0f4108bf`,
+addendum A1 `df1ceaf8` adds failure conditions only): C1 operability, capability `gate-mutants`
+re-claimed under K43 — frozen counter `SURVIVED frozen=34/41` exit 1 at `2a7f37d2` →
+`CLEAN frozen=41/41` exit 0 at `84cb1d5d`; integer held 9. Terms note: stanza `A` 10 → 11 is
+`.ufo/waves/round-43/probe/c1-discriminators.sh` (a committed probe, not a claimed artifact);
+`C2`/`C2_total` 94 → 96 (README rows for the round-42 closure and the round-43 lesson).
+
+Calibration (falsify seat CritCalibration): 14 mismatches between self-assessment and repo state at
+84cb1d5d (9 not previously acknowledged), listed in `.ufo/waves/round-43/falsify/CritCalibration.md`;
+not rewritten this round. R11 cell: pinned tree 41 members, `claims-check --row R11` 41 sections
+(ExecR11Recount, ReviewR11Cell) against the cell's 47 / "93 − 51 = 42"; cell text not rewritten.
+
+Limits: see `corpus/lessons/round-43.md` `## Open limits` and `## Falsify wave … dispositions`.
+
+Planned next round (candidates, not commitments): (1) a witness design with two exit paths so
+WA/WB/WC (single-token faults on the witness lines) die under K43, with WA/WB/WC and MutWitnessScan's
+survivors added to the frozen manifest of the next round's plan; (2) counter independence: a fresh
+temp tree for the K43 confirmation and a load-independent process cap (next round's counter, frozen
+before data); (3) Q25–Q28 compliance from the plan onward; the R11 cell rewrite.
