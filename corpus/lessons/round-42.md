@@ -165,3 +165,8 @@ corpus/lessons/round-42.md` (this lesson cites it; seat ReviewSourcesR42 D4).
   showing no seat or L1 run of the counter before it — this round's C1 battery result is reported
   under both rules and left to the closure. C1's proxy-term after-state (A 10, C 19,
   operability 9) does not depend on the kill rule.
+- **Misroot (mistake).** Falsify seat ScoutMisroot, whose item was the fleet-root misroot sweep,
+  wrote its own report at the fleet root (`/home/vgpnk/Projects/shokunin/.ufo/waves/round-42/falsify/ScoutMisroot.md`)
+  instead of the lane. Found by the L1's sweep; copied byte-exact into the lane (`cmp` equal),
+  fleet copy deleted. Captured-by: the wave context's `Report:` rule (not followed); fix: the L1
+  sweep before the report, as here.
