@@ -1,0 +1,35 @@
+RESULT MutCensusWitness rev=84cb1d5d8e703aafd4f73d887ba4237692ff13f9 verdict=gaps mutants=14 survived=7 equivalent=2
+
+Scope: the NEW wave-census code only (diff e5ffcbe7→84cb1d5d): the independent failure-count witness, the two PRIMARY lines, WC24's two new assertions, WC32. Scratch clone `/fast/scratch/hyaku/kumitate-r43/seats/MutCensusWitness/lane` at 84cb1d5d, `scripts/wave-census.mjs` sha256 76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4. Frozen counter bytes extracted from 0f4108bf, sha256 e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a; the counter file was not edited.
+K43 transcribed from that counter (evaluable run: no timeout/overflow, group gone, parseable summary with the control's total; numeric non-zero exit; exact line `VERDICT: FAIL`; second run with the same sorted FAIL case names). Measurement shape copies the counter: ONE `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node final-check.mjs` scope, the driver spawning `node <mutant> --selftest` directly and reading its status (no nested scope).
+Baseline control: `node lane/scripts/wave-census.mjs --selftest` → `WAVE_CENSUS_SELFTEST: 32/32 pass`, `PRIMARY_EXIT: 0`, `PRIMARY_VERDICT: PASS`, `VERDICT: PASS`, exit 0. Control total 32 (no baseline failure).
+Frozen counter unmodified at M: `KUMITATE_GATE_MUTANTS_TMP=…/gm-tmp … node counter/gate-mutants.mjs --repo …/lane --rev 84cb1d5d…` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 … leftovers=0)`, exit 0, 59.9 s.
+Calibration (probe reproduces the counter on three frozen literals at M): `CALIB/frozen-V385-verdict-const` killed, `CALIB/frozen-V382-pass-count` killed, `CALIB/frozen-V387-exit-const` killed — the counter reports the same three as killed at M.
+Probe run: `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 600 node final-check.mjs` → 175 s, exit 0, 14 single-literal mutants + 4 cost rows + 3 calibration rows, each mutated file in its own dir.
+Single-literal mutants (from → to, one literal each; file_sha256 in final-results.json):
+ 1 `WITNESS/failures-flip` `results.filter((r) => !r.ok).length`→`… r.ok …` KILLED exit=1/1 cases=32/32 fail_lines=0 changed=[`VERDICT: FAIL`] (red with no failing case: a false alarm, not a blamed case).
+ 2 `WITNESS/verdict-fail-branch` `failures > 0 ? 'FAIL' : primaryVerdict`→`'PASS'` SURVIVED exit=0/0, stdout identical to control modulo the selftest's random temp dir.
+ 3 `WITNESS/exit-branch` `if (failures > 0) return 1;`→`return 0;` SURVIVED exit=0/0 cases=31/32 fail_lines=1 (prints `VERDICT: FAIL` yet exits 0).
+ 4 `WITNESS/verdict-threshold` `failures > 0 ?`→`failures > 1 ?` SURVIVED, stdout identical to control modulo temp dir.
+ 5 `PRIMARY/exit-label` `…PRIMARY_EXIT: ${primaryStatus}`→`…PRIMARY_EXIT : …` KILLED exit=1/1 cases=31/32 fail_lines=1 (WC24).
+ 6 `PRIMARY/verdict-label` `…PRIMARY_VERDICT: ${primaryVerdict}`→`…VERDICT : …` KILLED exit=1/1 cases=31/32 fail_lines=1 (WC24).
+ 7 `PRIMARY/status-wiring` `const primaryStatus = primaryExit();`→`= 1;` SURVIVED exit=1/1 cases=32/32 fail_lines=0 (`VERDICT: PASS` with exit 1).
+ 8 `WC24/verdict-assert-relaxed` `/^…PRIMARY_VERDICT: FAIL$/m`→`/^…PRIMARY_VERDICT: .*$/m` SURVIVED exit=0/0, stdout identical to control modulo temp dir.
+ 9 `WC24/exit-assert-relaxed` `/^…PRIMARY_EXIT: 1$/m`→`/^…PRIMARY_EXIT: .*$/m` SURVIVED exit=0/0, stdout identical to control modulo temp dir.
+10 `WC24/exit-assert-value` `/^…PRIMARY_EXIT: 1$/m`→`: 2$/m` KILLED exit=1/1 cases=31/32 fail_lines=1 (WC24).
+11 `WC32/fixture-target` symlink target `'real-build'`→`'missing-dir'` KILLED exit=1/1 cases=30/32 fail_lines=2 (WC32 + WC24).
+12 `WC32/status-expectation` `r.status === 2 &&`→`=== 0 &&` KILLED exit=1/1 cases=30/32 fail_lines=2.
+13 `WC32/regex-relaxed` `/is not the canonical path \(symbolic link\)/`→`/is not the canonical path/` SURVIVED, stdout identical to control modulo temp dir.
+14 `WC32/target-refusal-removed` production refusal `if (abs && abs !== declared) throw …`→`… && false) throw …` KILLED exit=1/1 cases=30/32 fail_lines=2 (WC32 is not vacuous on the D8 refusal it was written for).
+Survivors classified:
+ - EQUIVALENT (2): #4 — `failures > 0` ⟺ `primaryVerdict === 'FAIL'` (pass+failures = results.length), so `failures > 0 ? 'FAIL' : primaryVerdict` already equals `primaryVerdict` in every reachable state; the threshold change cannot alter output (measured: byte-identical modulo temp dir, exit 0 both runs). #13 — the refusal message still contains `is not the canonical path`, so the relaxed regex matches identically (byte-identical output); it only drops `(symbolic link)` specificity.
+ - REAL GAP (5): #2, #3, #7, #8, #9. Each is dormant on the green run (or, for #3/#7, changes only the exit code), so no case fails and K43 cannot see it; but each removes detection power that the frozen manifest relies on, shown by cost rows.
+Cost rows (one new-code mutant + one frozen mutant the counter kills at M; not single-literal, run as evidence only):
+ `COST/verdict-fail-branch+frozen-V385` SURVIVED exit=1/1 cases=31/32 nonzero=true hasVerdictFail=false — V385 alone is killed; with #2 the failing run exits 1 but prints no `VERDICT: FAIL`, so K43 would score V385 SURVIVED.
+ `COST/exit-branch+frozen-V387` SURVIVED exit=0/0 cases=31/32 hasVerdictFail=true — V387 alone is killed; with #3 the detected failure exits 0.
+ `COST/wc24-verdict-assert-relaxed+frozen-V385` SURVIVED exit=0/0 cases=32/32 (whole suite green) — relaxing WC24's new verdict assertion alone resurrects the round-42 survivor V385.
+ `COST/wc24-exit-assert-relaxed+frozen-V387` SURVIVED exit=0/0 cases=32/32 (whole suite green) — same for V387/exits/M19.
+Reading: the round-43 CLEAN rests on four literals that no assertion pins — the witness FAIL branch, the witness exit branch, and WC24's two new regexes; the parent's own VERDICT/PRIMARY_EXIT lines and the exit↔verdict relation are read by nobody (WC24 asserts only the child's lines, and this diff replaced WC24's old `/^VERDICT: FAIL$/` child check with the PRIMARY checks, so the child's plain verdict line is unasserted too). #7 is additionally caught by the counter's control run (pristine bytes would exit 1), so its operational cost is lower than #2/#3/#8/#9.
+Restoration: every mutation was applied to a copy in the seat scratch; the source was never written. `RESTORE pristine sha256_before=76447250… sha256_after=76447250… identical=true recheck_status=0 cases=32/32`, and `git -C lane status --porcelain` clean at 84cb1d5d.
+Leftovers: `pgrep -af MutCensusWitness` → none; `ls gm-tmp | wc -l` → 0; probe work dirs removed. No tools installed or updated (pacman paused throughout; nothing needed).
+Measurement note: one mutant run wrapped in a *nested* `systemd-run --scope` reported exit 1 where eight direct-node runs (4 plain + 4 scoped) gave exit 0; all verdicts above come from the counter-shaped direct-node measurement (`exitcheck.mjs`), not from the nested wrapper.

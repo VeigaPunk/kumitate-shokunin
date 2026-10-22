@@ -18,9 +18,10 @@ relaxed) commit df1ceaf86c08dce7100da9b7c27f674bbad04f23.
   evaluable (no timeout, no overflow, its process group gone, no spawn error, a parseable case
   summary whose total equals the control's), (b) the selftest exits numeric non-zero, (c) stdout
   carries the exact line `VERDICT: FAIL`, and (d) an immediate second run of the same mutated bytes
-  meets (a)–(c) with the same sorted list of `FAIL ` case names. (a)–(c) are the round-42 plan's
+  meets (a)–(c) with the same sorted list of `FAIL ` case names. (b)–(c) are the round-42 plan's
   pre-data sentence (`b237e3f0:.ufo/waves/round-42/plan.md:21`; seat RevengerKillRuleHistory
-  re-derived five rule statements and found K43 (a)–(c) identical to it). Sources: S047 ("If mutated
+  re-derived five rule statements; (a) adds evaluability conditions the sentence did not state, so a
+  drift run reads ERROR rather than killed — falsify seat ReviewLesson43 F4, CritK43Rule objection 3). Sources: S047 ("If mutated
   program produces failing tests, this is called a killed mutant."), S048 (a timed-out run is
   "incompetent", not killed), S046 ("If a test can have different outcomes when run on the same
   mutant, then it is unclear if the test actually kills the mutant.").
@@ -99,8 +100,8 @@ counter's own selftest (MutK43Counter; the lane copy of the gate now kills all s
   Missed Q2 (community is never tier A; its answers disagree). Flip: the PIT mutators page at a
   named release.
 - **Reject (not a source) the simplifier patch** `SimplifyGateMutants.patch` (sha256 `3597a775…`):
-  eight deletions that touch the frozen K43 functions' shape (`wellFormed`, `failLines`); landing
-  any of them changes the counter's neighbourhood mid-claim. Criterion: plan "no amendment of K43 or
+  eight deletions, two of which (proposals 4–5: `wellFormed`, `failLines`) touch the frozen K43
+  functions' shape; landing them changes the counter's neighbourhood mid-claim (Q25). Criterion: plan "no amendment of K43 or
   of this counter". Flip: next round, after the claim is judged.
 
 Registry changes logged old → new: S039 `used-by` gains `corpus/lessons/round-43.md`; S046–S048
@@ -175,7 +176,7 @@ round decides).
   (CLEAN, rows identical, load 7→29), CritC1Claim (CLEAN, load 33.5) and CritPrimaryOnlySwitch (CLEAN
   twice). The before-side re-derived by ReRunC1Base (`SURVIVED … frozen=34/41` exit 1, rows identical).
 - **Disclosed earlier runs on the same suite bytes** (cite-check `227f5645…`, wave-census `76447250…`):
-  an L1 working-copy trial with the frozen counter at load ~48 read `GATE_MUTANTS: ERROR (… killed=40
+  an L1 working-copy trial with the frozen counter (receipt `final/trial1-working-copy-unstable.txt`) at load ~48 read `GATE_MUTANTS: ERROR (… killed=40
   frozen=38/41 …) unstable=3` (V382, V385, V387 `confirm=differs`; scratch `trial1.txt`); two later
   working-copy runs with a diagnostic copy of the gate (not the frozen counter; it dumps both outputs of
   an unstable kill) read CLEAN. The bytes did not change between them; K43 (d) refused to count kills
@@ -230,3 +231,14 @@ round decides).
   S034→S023, S051 "no revision", S052 "answers disagree" are overstated; every reject still stands);
   (9) QUALITY Q25, Q26, Q28 fail on the lane's own round-43 state (ReviewQualityQ25Q28; recorded in
   QUALITY as in force from round 44); (10) calibration: 14 self-assessment mismatches (CritCalibration).
+- **Cancelled at the 23:12Z operator deadline (findings absent, not passed, never replaced):** MutCiteWitness,
+  SentinelReaper. Wave 2: 35 dispatched, 33 returned, 2 cancelled, 0 dead.
+- **Late falsify findings (folded at close):** SentinelWitnessGaming — the measured suites use 0 of 6
+  channels that could tell a mutant run from a control (run-dir prefix, listable scratch base, pristine
+  twin, mtime, own bytes, parallelism); a prefix-reading junk would pass K43 and A1 (remediation for the
+  next counter: one run prefix and a non-listable TMPDIR). MutCensusWitness — 14 mutants of the new
+  wave-census code: 7 killed, 2 equivalent, 5 real gaps (the WA/WB class, `primaryStatus` constant, and
+  WC24's two new assertions unpinned); next-round manifest candidates. ReviewLesson43 — six defects; F2/F3
+  fixed at close, F1 (trial receipt now committed as `final/trial1-working-copy-unstable.txt`), F4 (K43 (a)
+  is wider than the round-42 sentence), F5 (reject reason precision) corrected in place, F6 named here: D5's
+  "same-sha" covers two of three revisions, and the D3 open count was taken at e5ffcbe7.
