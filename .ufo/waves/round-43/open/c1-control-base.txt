@@ -1,0 +1,56 @@
+# C1 do-nothing control: frozen counter (plan commit 0f4108bf66d58eb4cf4642ca1faf0fdeeba06c82 scripts/gate-mutants.mjs, extracted to /fast/scratch/hyaku/kumitate-r43/counter.UsgOUz) on round-open bytes; run 2026-10-22T22:11:46Z
+$ sha256sum $G/gate-mutants.mjs
+e24749e4b1eb21f5fb446c05543451b3221e708978fff6938fa6f68c36d4152a  /fast/scratch/hyaku/kumitate-r43/counter.UsgOUz/gate-mutants.mjs
+$ KUMITATE_GATE_MUTANTS_TMP=/fast/scratch/hyaku/kumitate-r43/gm-tmp systemd-run --user --scope --quiet -p MemoryMax=6G -p TasksMax=256 timeout -s KILL 1500 node $G/gate-mutants.mjs --repo /home/vgpnk/Projects/shokunin/kumitate-shokunin --rev 2a7f37d2b0a413db8499b413783c27a0effdc989; echo exit=$?
+GATE_MUTANTS_HEADER rev=2a7f37d2b0a413db8499b413783c27a0effdc989 cite-check=1915e5b97cff8b6ee29ea72071ae093f9d5d9f1c7ea8a5007ab61f7117530c3e wave-census=a1762f3c12854be0ba38a8ca5e5a5b3233848d0955a4c4cad4746135822cc30e manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f
+CONTROL cite-check PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=75/75 floor=75
+CONTROL wave-census PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=31/31 floor=31
+MUTANT cite-check:warn-total killed cases=72/75 control=75 fail_lines=3 exit=1 verdict=FAIL group_clean=true fail_lines=3 overflow=false confirm=same
+MUTANT cite-check:resolved-kind-gate killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:strict-conjunct killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:strict-warn-arm killed cases=73/75 control=75 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT cite-check:citeCheck-map killed cases=73/75 control=75 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT cite-check:resolved>0 killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:render-env-empty killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:render-env-zero killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:exit2-empty killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:exit2-zerores killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:exit0/1-map killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:parse-64 killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:suite-group-verdict survived cases=73/75 control=75 fail_lines=2 exit=0 verdict=PASS group_clean=true fail_lines=2 overflow=false
+MUTANT cite-check:suite-exit-text survived cases=74/75 control=75 fail_lines=1 exit=0 verdict=FAIL group_clean=true fail_lines=1 overflow=false
+MUTANT cite-check:suite-any-fail survived cases=73/75 control=75 fail_lines=2 exit=0 verdict=PASS group_clean=true fail_lines=2 overflow=false
+MUTANT cite-check:suite-exit-json killed cases=74/75 control=75 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT cite-check:guard-outer-ne-1 killed cases=73/75 control=75 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:repair/dotdot-guard-dropped killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT cite-check:guard-outer-eq-undefined killed cases=73/75 control=75 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:repair/string-agent-check-dropped killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/M02-wave-grammar-hyphen killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:repair/read-error-rethrown killed cases=22/31 control=31 fail_lines=9 exit=1 verdict=FAIL group_clean=true fail_lines=9 overflow=false confirm=same
+MUTANT wave-census:survivor/M10-unknown-wave-zero killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/M03-empty-count killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/M04-empty-round killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/M12-known-roles-arm killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/M13-attack-arm killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:survivor/V194-check-ok-true killed cases=30/31 control=31 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+MUTANT wave-census:survivor/V382-pass-count survived cases=31/31 control=31 fail_lines=1 exit=0 verdict=PASS group_clean=true fail_lines=1 overflow=false
+MUTANT wave-census:survivor/V385-verdict-const survived cases=30/31 control=31 fail_lines=1 exit=1 verdict=PASS group_clean=true fail_lines=1 overflow=false
+MUTANT wave-census:survivor/V387-exit-const survived cases=30/31 control=31 fail_lines=1 exit=0 verdict=FAIL group_clean=true fail_lines=1 overflow=false
+MUTANT wave-census:findings/F-M02 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M03 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M08 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M07 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M11 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M19 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M20 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M21 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:exits/M19-selftest-exit-const survived cases=30/31 control=31 fail_lines=1 exit=0 verdict=FAIL group_clean=true fail_lines=1 overflow=false
+MUTANT wave-census:findings/F-M22 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:findings/F-M23 killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+MUTANT wave-census:exits/M22-name-half-dropped killed cases=29/31 control=31 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+CONTROL_AFTER cite-check PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=75/75 floor=75
+CONTROL_AFTER wave-census PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=31/31 floor=31
+GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 drift=0 targets=2 rev=2a7f37d2b0a413db8499b413783c27a0effdc989 manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f leftovers=0)
+exit=1
+$ ls /fast/scratch/hyaku/kumitate-r43/gm-tmp | wc -l
+0
