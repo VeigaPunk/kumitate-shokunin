@@ -198,3 +198,11 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
     and is an equivalent mutant of that expression: `resolved` only increments inside the
     per-document loop, so `resolved > 0` already implies `filesScanned > 0`. An equivalent
     mutant is a survivor, not a kill (S034), and it is recorded rather than hidden.
+  - Round-40 falsify correction (seat CritQualityCriterion): the sentence above that "one
+    further mutant … survives" is narrower than the sweep. Two more cite-check mutants survive
+    the 64-case suite: dropping the `opts.strict && totals.warn > 0` part of `drift`, and
+    dropping only `opts.strict &&` (no selftest passes `--strict`); and in
+    `scripts/sources-check.mjs` forcing the JSON verdict to `CLEAN` passes 46/46. Each part of a
+    compound term (here `drift`) is a term under this rule; these three are open and
+    pre-registered for round 41.
+

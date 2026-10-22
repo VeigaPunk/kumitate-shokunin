@@ -1770,6 +1770,23 @@ cite-check keeps 16 unpinned verdict conditions; the Kimi census keeps three sur
 (`corpus/lessons/round-40.md`, `## Open limits`). After the round-40 documents the stanza reads
 `C2=90/90` (the round-40 lesson and its README row).
 
+Falsify follow-up (5ae8ac9c, after wave 2 attacked 1530a755): four critic seats borrowed a review
+record through the nested-range fallback while the record's own anchor still existed
+(AtkReviewForge, AtkRecordForge, AtkNovelPin A2, AtkNovelRecords A1–A3). `bound()` now uses the
+fallback only when the record's own anchor identity is gone and lets a record bind at most one
+entry that way (AT46; red-before 41/42, `.ufo/waves/round-40/final/at46-red-before.txt`); all five
+replays read `REVIEW_UNBOUND` exit 1 (`.ufo/waves/round-40/final/borrow-replay-5ae8ac9c.txt`); the
+probe still reads `0/26`, `10/10`, `setup_errors=0` and the mutant runner 26/26 at 5ae8ac9c. The
+checklist truth item now carries `--open f69817ed…`.
+
+Calibration corrections (round 40, found by the falsify seat CritCalibration; the rows they name
+stay as written): the `## Axes` operability row's evidence `A=7 … C=13 … 20/23` is stale — the
+proxy reads A=8, C=15, `f_O` 23/26 ≈ 0.885 ⇒ 8, and 9 needs A+C ≥ 27 (four more items); its "Last
+change" is round 34, not later. The `## Capabilities` row quotes `SOURCES_CHECK: CLEAN (rows=20 …)`;
+at round 40 it reads `rows=37`. Still open, not corrected here: the R11 registry cell (47
+sections, "93 − 51 = 42") against `claims-check --row R11` `sections=41`, and SHONEN boxes 1–2
+unchecked although SKILL.md and LOG.md hold evidence (box flips need a named non-author verifier).
+
 Planned next round (candidates, not commitments): (1) operability: put the round-open revision
 into the checklist's truth item (or a pinned open-revision file the closure re-derives) so the
 default command is the sound mode; (2) operability: a swap-signature arm and a re-cite path for
