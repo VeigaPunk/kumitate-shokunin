@@ -10,3 +10,19 @@ Round 40 seat-gate record (wave-slot.sh, cap 85 seats shared by the fleet)
    requires (one string per role). The call was made from the L1's eval kernel
    (`tool.task`), so the payload bytes are exactly the validated JSON plus solutionSpace.
    Result: "Spawned 32 background agents".
+2. Wave-1 seats: 31 returned; ExecTokenKept was cancelled by the L1 at about 15:13Z (scope
+   freeze for the token arm, no patch delivered; work dir only). Reservation released:
+   `wave-slot.sh release kumitate r40-build` at 15:16:44Z, printed `released lane=kumitate
+   wave=r40-build` (late: the last seat had returned at about 15:13Z).
+3. Wave 2 (falsify), 35 seats, policy v1 (.ufo/waves/round-40/falsify-spec.json, validated
+   exit 0, falsify-dispatch.json counts spawn=35): `wave-slot.sh acquire kumitate r40-falsify 35
+   3600` started about 15:15:35Z, printed `granted lane=kumitate wave=r40-falsify seats=35
+   live=38 pending=0 cap=85` at 15:18:16Z, exit 0. Dispatched at once as ONE task call (from the
+   L1's eval kernel, `tool.task`) with the validator's context and tasks unchanged plus one
+   `solutionSpace` string per task. Result: "Spawned 35 background agents".
+4. Dead seats in wave 2: all seven mutation-tester seats (MutReviewBind, MutOpenFloor,
+   MutTokenKept, MutValidPin, MutLedgerRerun, MutCiteFixture, MutKimiAfter) failed 3.5 s after
+   spawn with exit 1 and the error text "Error: No model selected. Use /login, set an API key
+   environment variable, or create /home/vgpnk/.omp/agent/agent.db Then use /model to select a
+   model." The same role ran in wave 1 (four mutation-tester seats returned results). Not
+   replaced, not rerouted. 7 of 35 = 20%.

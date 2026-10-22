@@ -244,3 +244,10 @@ Spot-checks that lane prose matches config metadata (OBSERVATION, both sides rea
   "the default secondary has no persona" is **refuted**: the current
   default id IS lane-backed (`~/.kimi-code/agents/secondary/sec-fast-hyper-ds-flash.md`,
   `~/.kimi-code/config.toml:778`, registry `:1262`).
+
+Round-40 source note (S012, re-opened 2026-10-22): the Kimi Code CLI docs, Agents and
+Sub-Agents (https://moonshotai.github.io/kimi-code/en/customization/agents.html, § Agent
+Locations), state the agent-file precedence: "more specific scopes take higher priority:
+Explicit (--agent-file) > Project > Extra > User > Plugin > Built-in", and that each directory
+is scanned recursively for `.md` files. This answers the `## Unknowns` load-order question
+above at the documentation level only; the order was not measured on this host.

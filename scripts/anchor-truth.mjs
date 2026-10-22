@@ -351,18 +351,26 @@ class ReviewRecords {
    * True when a committed record binds this review-sourced entry: the record names the same
    * note, seat and token, and its anchor is the entry's anchor (same identity, or the same
    * file with one cited range nested in the other: a widened or narrowed citation of the
-   * reviewed anchor is the same anchor).
+   * reviewed anchor is the same anchor). The nested fallback applies only when the record's
+   * own anchor identity is gone from the current note, and one record binds at most one entry
+   * that way, so a record cannot be borrowed by a second anchor (round-40 falsify seats
+   * AtkReviewForge and AtkNovelPin).
    */
-  bound(note, e, identity) {
+  bound(note, e, identity, current) {
     if (typeof e.source !== 'string' || !e.source.startsWith('review:')) return true;
     const seat = e.source.slice('review:'.length);
     const list = this.byKey.get(`${note}|${seat}|${e.token}`);
     if (!list) return false;
     for (const rec of list) {
       if (identity && rec.identity === identity) return true;
+    }
+    for (const rec of list) {
+      if (current && current.has(rec.identity)) continue;
       if (!rec.path || !e.path || rec.path !== e.path) continue;
       if (!Number.isInteger(e.a) || !Number.isInteger(e.b)) continue;
-      if ((rec.a <= e.a && e.b <= rec.b) || (e.a <= rec.a && rec.b <= e.b)) return true;
+      this.nestUsed ??= new Set();
+      if (this.nestUsed.has(rec)) continue;
+      if ((rec.a <= e.a && e.b <= rec.b) || (e.a <= rec.a && rec.b <= e.b)) { this.nestUsed.add(rec); return true; }
     }
     return false;
   }
@@ -435,7 +443,7 @@ function checkNote(note, noteText, pinNote, src, recs) {
     const st = judge(src, e.path, e.a, e.b, e.token);
     if (e.expect === 'true') counts.true++; else if (e.expect === 'unchecked') counts.unchecked++; else counts.debt++;
     if (String(e.source).startsWith('review:')) {
-      if (!recs.bound(note, e, ids[e.ord])) {
+      if (!recs.bound(note, e, ids[e.ord], new Set(ids))) {
         findings.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);
       }
       if (!overrideValid(live, src)) {
@@ -662,7 +670,7 @@ export function run(argv) {
       const entryIds = identities(entries);
       for (const e of entries) {
         if (e.source.startsWith('review:')) {
-          if (!recs.bound(note, e, entryIds[e.ord])) problems.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);
+          if (!recs.bound(note, e, entryIds[e.ord], new Set(entryIds))) problems.push(['REVIEW_UNBOUND', `${note}#${e.ord}`, `${e.raw} source=${e.source} token=${e.token} no committed review record binds this anchor`]);
           if (!overrideValid(e, src)) problems.push(['OVERRIDE_INVALID', `${note}#${e.ord}`, `${e.raw} token=${e.token}`]);
         }
       }
@@ -1098,6 +1106,18 @@ function selfTest() {
       });
       const r = tool(d, ['--base', base]);
       return { ok: r.status === 1 && /DEBT_GREW/.test(r.out) && /fx\.md#0/.test(r.out) && /scripts\/a\.mjs\|ALPHA_MARK\|0 true at base/.test(r.out), detail: r.verdict };
+    });
+    check('AT46', 'a record binds a nested re-citation only when its own anchor is gone: a second anchor cannot borrow it, an honest widening keeps it', () => {
+      const borrow = mkReviewed('at46borrow', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:2-4\`. The ALPHA_MARK again at \`scripts/a.mjs:3\`.\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src);
+      tool(borrow.d, ['--write-pin', '--notes', NOTE]);
+      setPin(borrow.d, (p) => { Object.assign(p.notes[NOTE].entries[1], { source: 'review:fx', token: 'ALPHA_MARK', expect: 'true' }); });
+      const bad = tool(borrow.d, []);
+      const widen = mkReviewed('at46widen', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, { [`${NOTE}#0`]: { seat: 'fx', token: 'ALPHA_MARK' } }, src);
+      writeFileSync(join(widen.d, NOTE), `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:2-4\`.\n`);
+      tool(widen.d, ['--write-pin', '--notes', NOTE]);
+      setPin(widen.d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx', token: 'ALPHA_MARK', expect: 'true' }); });
+      const good = tool(widen.d, []);
+      return { ok: bad.status === 1 && /REVIEW_UNBOUND\s+\S+#1/u.test(bad.out) && good.status === 0 && /TRUTH: CLEAN/u.test(good.verdict), detail: `${bad.verdict} | ${good.verdict}` };
     });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);

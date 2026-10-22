@@ -241,8 +241,9 @@ mode `600`):
 
 The rename is the load-ground fact: the skill's front-matter `name` is still
 `kimi-webbridge` while its own title and description say **Browser Extension**. The
-`metadata.version` is a self-declared string with no file backing it on this host (the
-same shape this note records for the other user skills).
+`metadata.version` is a self-declared string; outside `~/.kimi-code` the daemon binary
+`~/.kimi-webbridge/bin/kimi-webbridge` carries the same `2.0.26` string (found by the round-40
+falsify seat CritC2Honesty; the daemon itself is tabi's ground, not described here).
 
 ### File inventory — 7 files
 
@@ -265,17 +266,17 @@ every file under `~/.kimi-code/skills/kimi-webbridge/references/` is `644`.
 
 | | `~/.kimi-code/skills/kimi-webbridge` | `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge` |
 |---|---|---|
-| entry point | real dir, mode `755`, inode `95866022` | real dir under a mode `700` plugin root, inode `31085` |
+| entry point | real dir, mode `755`, inode `95866022` | real dir, inode `31087`, under a mode `700` plugin root (inode `31085`) |
 | `~/.kimi-code/skills/kimi-webbridge/SKILL.md` bytes / mode | 19437 / `600` | 11880 / `644` |
 | `~/.kimi-code/skills/kimi-webbridge/SKILL.md` digest prefix | `defba946e6693fd4` | `84a8e69d04c5b810` |
 | `~/.kimi-code/skills/kimi-webbridge/references/operations.md` digest prefix | `7f60c9811cf2c875` | `b811d9c23dfdafa0` |
 | declared version | `2.0.26` (`~/.kimi-code/skills/kimi-webbridge/SKILL.md:6`) | `1.11.3` (`~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md:6`, mirrored by `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json:4`) |
-| file count | 7 | 5 (incl. `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` + two dated session dumps at the plugin root) |
+| file count | 7 | 5 (incl. `~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json` + two dated host-probe dumps (a chromium process table and a memory snapshot, as tabi records them at `tabi-shokunin/SKILL.md:1421-1424`) at the plugin root) |
 
 ⇒ **Different content at a different version** — the two trees share **no** inode
 (cross-tree dev:inode intersection = 0, no link count above 1) and no file digest. The
 `skills/` copy is therefore a *separate install*, not a re-view of the plugin payload.
-`~/.kimi-code/plugins/installed.json:5-6` records exactly one plugin
+`~/.kimi-code/plugins/installed.json:5-10` records exactly one plugin
 (`"id": "kimi-webbridge"`, `"root": "/home/vgpnk/.kimi-code/plugins/managed/kimi-webbridge"`,
 `"installedAt"`/`"updatedAt"` `2026-10-03T21:06:32.435Z`) and **no** record of the
 `skills/` copy — the plugin registry does not describe this member.
@@ -306,7 +307,7 @@ round-40 erratum.
 
 Load-bearing correction for the census: the counted-live `~/.kimi-code/skills/` member
 gained a seventh child, so `K_members` moves 51 → 52 and this section's heading is what
-names the new child (`K_sections` 51 → 52, `coverage:kimi-layer` 9 → 10). The heading
+names the new child (`K_sections` 51 → 52; `coverage:kimi-layer` derived 9 at round open and 10 after, the declared integer held at 10). The heading
 must carry the **full path**; the bare basename `kimi-webbridge` is now owned by two
 members and binds to none.
 
@@ -314,6 +315,9 @@ Plugin internals — the daemon, the browser-extension payloads and the CLI work
 are **out of this note's scope**; they belong to
 `tabi-shokunin/corpus/knowledge/webbridge-plugin-anatomy.md` (the K-block boundary
 clause routes `plugins/managed/kimi-webbridge` internals to tabi).
+
+
+Sibling records (round-40 falsify seat ConnFalsifyOverlap): the plugin copy's size, digests, version 1.11.3 and install record are tabi's ground and agree with `tabi-shokunin/corpus/knowledge/webbridge-plugin-anatomy.md:12-14` and `:53-55`; kotoba counts the byte-identical `~/.claude` copy at `kotoba-shokunin/corpus/lessons/round-48.md:107-108`. This section repeats those values only to show that the two installs differ.
 
 ## `~/.kimi-code/plugins/installed.json`
 
