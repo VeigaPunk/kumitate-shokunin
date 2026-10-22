@@ -1813,3 +1813,18 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   (R39-6), S012 queued → mined, S036–S037 queued, four stale census citations re-pinned in
   `kimi-residue-files.md`. Waves: build 32 seats, falsify 35 seats (round total 67); lesson
   `corpus/lessons/round-40.md`.
+
+- 2026-10-22 — round 41 (round open `a58b7f72`, source pin `31c465f1`, measured `4e58bb0e`).
+  Two claims. **C1 operability:** `scripts/cite-check.mjs` pins the 16 verdict, render and exit
+  conditions round 40's scout found unpinned; 11 new hermetic cases (64 → 75), including an
+  injected-failure child run so the suite observes its own verdict and exit code; mutant probe
+  `.ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` reads `survived=15/16` at open and
+  `0/16` at 68db3419 and 4e58bb0e. **C2 capability `wave-census`:** `scripts/wave-census.mjs`
+  reads committed swarm payloads and report files; the jq recount over rounds 38–40 reads 0
+  mismatches; `--expect build:mutation-tester=4` on round 40 exits 1 (the R40-6 slip); gate
+  registry row, checklist items 16–17, capability row, S038. Re-verification: S035 re-opened
+  (front matter unchanged); live Kimi drift `~/.kimi-code/locks` found after open (named, not
+  changed). R40-1, R40-3, R40-5, R40-6, R40-7 fixed; R40-2 recorded and re-measured by the
+  falsify wave; R40-4 open. The 34-seat build payload never spawned (seat gate timed out at
+  3600 s); the L1 built both claims; the falsify wave ran 34 live-role seats. Lesson
+  `corpus/lessons/round-41.md`.

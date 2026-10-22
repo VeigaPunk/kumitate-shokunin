@@ -396,6 +396,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 41 | operability (lowest non-retired axis; integer held 8; A 8 → 9 and C 15 → 17 from C2, `f_O` 23/26 → 26/29 ≈ 0.897) | `CITE_MUTANTS survived=15/16 nomatch=0 crash=0 control=PASS` at a58b7f72 (only `resolved>0` killed); selftest 64/64 | `survived=0/16 nomatch=0 crash=0 control=PASS` at 68db3419 and 4e58bb0e; selftest 75/75 (11 new cases: warn-only and `--strict`, `citeCheck` map, both text environment labels, exit contract 0/1/2/2/64 through a child, suite self-observation by an injected-failure child in text and `--json`) | `node --input-type=module - --lane <lane> --rev <rev> < .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` (counter committed in cb2d8d09 before its first run); `.ufo/waves/round-41/final/cite-mutants-*.txt`; `corpus/lessons/round-41.md` |
+| 41 | capability `wave-census` (learning claim; sourced on S038) | `CAPABILITY_ROWS=1`; no instrument (`RECOUNT_MISMATCHES=7`, `--expect` exits 1 for any value: module not found) at 27592977 | `CAPABILITY_ROWS=2`; `RECOUNT_MISMATCHES=0` over the seven payloads of rounds 38–40; `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (R40-6); selftest 12/12 | `bash .ufo/waves/round-41/probe/wave-recount.sh.txt` (counter committed in 27592977 before the instrument); `.ufo/waves/round-41/final/wave-recount-*.txt`; S038 |
 | 40 | coverage:kimi-layer (the seventh counted-live `skills/` child; integer held at 10) | live `floor(10 × 5/5 × 51/52)` = **9** (`K_MEMBERS_DRIFT declared=51 computed=52`); census `DRIFT (UNLISTED skills/)` | `floor(10 × 5/5 × 52/52)` = **10**: the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds the member (K_sections 51 → 52) and the census tripwire is re-pinned 6 → 7; `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)` exit 0, selftest 48/48; the two count mutants are killed (`UNLISTED` at 6, `MEMBER_MISSING` at 8) | `node scripts/kimi-census.mjs [--selftest]`; `node scripts/proxy-check.mjs --src <clone at 31c465f1>`; `corpus/knowledge/kimi-skills-plugins.md`; `.ufo/waves/round-40/build/ExecKimiCensus.md` |
 | 39 | coverage:script-layer (repair-first: the open round-37 harm; score held 10) | round-38 closure block at fac39171: `PRIOR62_CORRECTED 58/62`, `OLD_TOKEN_LOSSES 0`; S8#475 `agentId` at `:560` was `debt:false`; pin tally 777 true / 21 debt / 13 unchecked | `PRIOR62_CORRECTED 59/62`, `OLD_TOKEN_LOSSES 0` at 3908f322c4c473f1a8b45c8d1c14054205eb7647; S8#475 cites `:560-572` (test declaration, conflicting agentId, assertion) and reads true; pin tally 778 / 20 / 13, zero expectation mismatches; S8#112, #324, #410 left as reviewed token corrections | `python3 .ufo/waves/round-39/probe/measure-c1.py.txt --lane <lane> --rev <rev> --src <clone at 31c465f1>`; `.ufo/waves/round-39/final/measure-c1-{open,final}.txt`; `corpus/lessons/round-39.md` |
 | 39 | operability (lowest non-retired axis, repair of R38-1; integer held 8, A=8 C=15) | `FLOOR_PROBE accepted=6/6` at fac39171 (six named hand edits of pin and note, A1 = the round-38 closure's counterexample, each read `TRUTH: CLEAN`); selftest 22/22 | `FLOOR_PROBE accepted=0/6` at 3908f322 (`BASE_TRUE_LOST`, `TOKEN_FORGED`, `PIN_INVALID`); selftest 30/30; red-before 23/30 on round-open logic; 11/11 mutants killed by a named case. Open limits L1 (self-declared review) and L2 (debt trade) measured, not fixed | `node --input-type=module - --lane <lane> --rev <rev> --src <clone> < .ufo/waves/round-39/probe/floor-probe.mjs.txt`; `.ufo/waves/round-39/final/`; S034; Q19 |
@@ -1676,7 +1678,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 | Capability | What it can now do | Evidence pointer | First-working round |
 |---|---|---|---|
 | `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
-| `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect <wave>:<role>=<n>` (exit 1 on mismatch); flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `node scripts/wave-census.mjs --round 38 --round 39 --round 40` (per-wave counts equal the jq recount, `RECOUNT_MISMATCHES=0`, `.ufo/waves/round-41/final/wave-recount-*.txt`); `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (the round-40 slip R40-6); `--selftest` 12/12; S038 | round 41 |
+| `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect [<round>/]<wave>:<role>=<n>` (role `attack` = attack total; exit 1 on mismatch or unknown role); resumed seats (`resumeSends`) counted apart; a report counts only as a non-empty regular file; flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `node scripts/wave-census.mjs --round 38 --round 39 --round 40` (per-wave counts equal the jq recount, `RECOUNT_MISMATCHES=0`, `.ufo/waves/round-41/final/wave-recount-*.txt`); `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (a declared count checked against the payload: the round-40 slip R40-6); `--selftest` 20/20 after the falsify repair (12/12 at 4e58bb0e); S038 | round 41 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
@@ -1796,3 +1798,38 @@ anchors true at open (narrow or widen with a bound review), measured by the same
 CritOperabilityCost recipes; (3) cite-check: pin the remaining verdict and exit conditions
 (`.ufo/waves/round-40/build/ScoutCiteVerdict.md`) under Q20.
 
+
+## Round 41 — claims, limits and round-42 pre-registration (2026-10-22)
+
+Claims (Move log rows `| 41 |`; plan `.ufo/waves/round-41/plan.md`, counters frozen in 34fccc17):
+C1 operability — `cite-check` pins the 16 verdict, render and exit conditions named `unpinned=16`
+in `.ufo/waves/round-40/build/ScoutCiteVerdict.md`: mutant probe `survived=15/16` at a58b7f72 →
+`0/16` at 68db3419 (and at 4e58bb0e). C2 capability `wave-census` — capability rows 1 → 2, jq
+recount mismatches 0 over rounds 38–40, the R40-6 slip caught by `--expect` (S038).
+
+Calibration corrections (round 41, found by the falsify seat CritCalibration; the rows they name
+stay as written and this list supersedes their numbers, integers unchanged):
+- Operability: live terms are A=9, C=17, `f_O` 26/29 ≈ 0.897 ⇒ 8; 9 needs A+C ≥ 27 (one more honest
+  item). The `## Axes` operability row's evidence cell quotes A=7, C=13, 20/23 and "7 more"; the
+  round-40 correction's A=8, C=15 and "four more" are superseded too, and that row's "Last change"
+  cell reads round 35, not round 34 as the round-40 correction said.
+- `## Capabilities` `sources-registry` row: `SOURCES_CHECK: CLEAN (rows=38 …)` at round 41, not `rows=20`.
+- R11 registry cell: `node scripts/claims-check.mjs --row R11 --src /fast/scratch/hyaku/kumitate-pin/src`
+  reads `sections=41`; at the pin 88 − 51 = 37 runtime files plus 4 CLI files = 41, not 47 and not 93 − 51.
+- SHONEN boxes stay `[ ]`: a box flips only with a named non-author verifier; boxes 1–2 have
+  evidence (SKILL.md tables and patterns; LOG.md round entries) and are under-claims, box 3 reads
+  14/17 in a bare clone (two round-gate items need the fleet reports dir).
+- Separability: C1 and C2 verify separately, but C2's per-axis verdict also lands on operability,
+  so under AXES.md's distinct-axis rule this round is one operability move plus one capability row
+  (the round-34 shape).
+
+Limits, recorded not hidden: the 14 unpinned severity decisions of `ScoutCiteVerdict.md` section B;
+`wave-census` counts payload seats and cannot tell dead, cancelled, never-dispatched or held seats
+apart; R40-4 (anchor-truth resource caps under `--open`) is open; host drift `~/.kimi-code/locks`
+(created 13:53 -0300 after the round-open census) makes `kimi-census` read `DRIFT (UNLISTED locks)`
+and the checklist 16/17 for that item.
+
+Planned next round (candidates, not commitments): (1) coverage:kimi-layer — declare
+`~/.kimi-code/locks` in K1 (registry change, census re-pin) after a sourced read of what creates it;
+(2) operability — R40-4 resource caps in `anchor-truth --open`, with red-before cases; (3)
+operability — pin the 14 severity decisions of `cite-check` under the same mutant probe shape.

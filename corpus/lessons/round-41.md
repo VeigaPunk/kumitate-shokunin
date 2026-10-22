@@ -8,7 +8,8 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 
 ## Claims
 
-- **C1 operability.** `scripts/cite-check.mjs` now pins the 16 verdict, render and exit conditions
+- **C1 operability.** `scripts/cite-check.mjs` now has a failing case for each of the 16 named
+  single-condition (drop-to-constant) mutants of the verdict, render and exit conditions
   that round 40's scout found unpinned (`.ufo/waves/round-40/build/ScoutCiteVerdict.md`,
   `unpinned=16`). Eleven hermetic cases were added (64 → 75): a warn-only fixture in default and
   `--strict` mode, the `citeCheck` map on a failing fixture, both text environment labels, the
@@ -21,6 +22,13 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   Before, at a58b7f72: `CITE_MUTANTS survived=15/16 nomatch=0 crash=0 control=PASS`
   (only `resolved>0`, pinned in round 40, was killed). After, at 68db3419:
   `survived=0/16 nomatch=0 crash=0 control=PASS`.
+  Scope of "killed" (the plan's frozen definition, the per-case reading of S034): at least one case
+  failed while the mutant was active. For 13 of the 16 the run also exits non-zero or prints
+  `VERDICT: FAIL`. For the three suite-aggregation mutants (suite-group-verdict, suite-any-fail,
+  suite-exit-text) the parent run exits 0 and the failure is visible only as `FAIL ` case lines and
+  `73/75` or `74/75`; checklist item 2 ("exit 0 + `VERDICT: PASS`") would accept two of them
+  (found by the falsify seat CritC1Statement). A suite cannot pin its own aggregator through an exit
+  code the same aggregator computes; a reader must check the `FAIL ` lines and the `n/m` count.
 - **C2 capability `wave-census`.** `scripts/wave-census.mjs` reads a round's committed
   `*-dispatch.json` payloads and the report files their `Report:` trailers name. Counter
   (committed in 27592977 before the instrument): `.ufo/waves/round-41/probe/wave-recount.sh.txt`.
@@ -28,18 +36,60 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   calls exit 1 (module not found). After: `RECOUNT_MISMATCHES=0` over the seven payloads of rounds
   38–40, `CAPABILITY_ROWS=2`, `--expect build:mutation-tester=4` exit 1 and `=3` exit 0.
   Sourced on S038.
+- **Axis accounting (falsify seat CritSeparability).** The two counters verify separately (C1 alone
+  at 68db3419: `survived=0/16` with the C2 counter at its before values; C2 alone on a scratch
+  revision: `RECOUNT_MISMATCHES=0` with the C1 probe at `15/16`). But C2's per-axis verdict also
+  lands on operability (A 8 → 9, C 15 → 17), so under AXES.md's distinct-axis rule the round is one
+  operability move plus one capability row, the shape round 34 recorded for `sources-registry`.
+- **Falsify repairs to C2 (after 4e58bb0e).** The falsify wave found that a resume-only payload
+  (`taskCall` null, which S038 documents) failed closed, a mixed spawn and resume payload read
+  `REGISTRY_MISMATCH`, a directory or symlink named `<Name>.md` counted as a report, an
+  under-declared or misspelled `--expect` was not pinned, and `--expect` was not round-scoped.
+  The instrument now reads `resumeSends` (`resumed=`), counts only regular files, treats an
+  unknown role as `EXPECT_UNKNOWN`, accepts `attack` as the attack total and
+  `<round>/<wave>:<role>=<n>`; selftest 12 → 17 (WC13–WC17). The C2 counter reads the same
+  values after the repair.
 
-## What the census taught (measured on rounds 38–40)
+## Round shape and the §3 floor
+
+- The validated 34-seat build payload (`.ufo/waves/round-41/build-dispatch.json`: reviewer 9,
+  scout 8, critic 7, executor 4, mutation-tester 3, scribe 2, connector 1) was never dispatched:
+  the seat gate did not grant it in 3600 s (`live_estimate=85 cap=85` at 17:01:58Z). Never
+  dispatched is not dead: 0 seats spawned, 0 dead.
+- Orchestrator notes (17:02Z, 17:10Z): the route for executor, scribe, mutation-tester, labrat,
+  simplifier and distiller seats was down for the leg (seats die at spawn); the gate had counted
+  phantom seats and its cap was compensated; no more seats in those roles this leg; live roles are
+  reviewer, critic, scout and connector.
+- So the §3 L2 floor (3 executor, 1 scribe, 1 scout, 1 connector, 1 reviewer, 1 critic in one
+  batched call) was not met: executor 0 of 3 and scribe 0 of 1 for the whole round. This is a
+  conformance defect, stated here. The L1 holds the planner seat.
+- The L1 built and mutation-probed both claims itself (commits cb2d8d09, 68db3419, 27592977,
+  4e58bb0e); no other executor or mutation-tester worked on them. Build items done by the L1:
+  ExecCiteMutProbe, ExecCitePins, ExecWaveCensus, ScribeLessonMistakes. Undone: ExecAnchorCaps
+  (R40-4), MutCiteOpenAudit (its independent before value is replaced by the falsify seat
+  ReProbeC1), MutCiteSeverity, MutProxyStanza, ScribeWaveEntry (no new knowledge file). Six build
+  items were re-cut into falsify items of the same purpose (ReviewHonestReMeasure,
+  ReviewK2S035, CritClaimSizing, ConnSiblingOverlap, ScoutMAST, CritC2Capability); the rest were
+  recon for code the L1 then wrote and were folded into falsify attacks on that code.
+- One v1 falsify wave of 34 seats ran (critic 16, reviewer 13, scout 4, connector 1). Round total:
+  34 spawned seats. Live counts come from `.ufo/waves/round-41/evidence-seat-gate.txt`, not from
+  the census, which counts payload seats.
+
+## What the census taught (rounds 38–41, measured at 4e58bb0e)
 
 - A payload proves validation, not dispatch. Round 39 committed two validated payloads (46 and 37
-  seats) whose waves timed out at the seat gate; the census reads `reports=0/46` for the build
-  payload. Round 41's own build payload (34 seats) also never spawned.
+  seats): the 46-seat build request was cancelled at the seat gate when the freeze message
+  arrived, and the 37-seat falsify request timed out (`exit 3`), so the census reads
+  `reports=0/46` for the build payload. Round 41's own 34-seat build payload never spawned either
+  (`reports=0/34`).
 - Report presence is shared when a residual call reuses item names: round 39's eight residual
-  seats wrote into `falsify/`, so the falsify payload reads `reports=8/37`.
-- Round 40's payloads carry 45 attack seats out of 67 (reviewer, critic, mutation-tester); the
-  round-40 closure wrote "Attack roles: 37 of 67". The census counts payload seats, not live ones;
-  37 matches neither the payload (45) nor payload minus the seven dead mutation-testers (38).
-  Recorded as a disagreement, not resolved here.
+  seats reused eight falsify trailers and wrote into `falsify/`, so the falsify payload reads
+  `reports=8/37` and the round line `reports=16/91` counts those eight files twice.
+- Round 40's payloads carry 45 attack seats out of 67 (reviewer, critic, mutation-tester). The
+  round-40 report reads "attack roles 37/67 = 55%". A count that fits the committed files (an
+  inference by the falsify seat CritCensusLessonFacts; the report states no formula): the 36
+  attack seats that returned reports plus the one sentinel, that is 45 + 1 − 7 dead
+  mutation-testers − 2 cancelled reviewers. The census counts payload seats, not returned ones.
 - Round 38's falsify directory holds four `*-supplement.md` files no task names (`STRAY_REPORT`).
 
 ## Mistakes
@@ -71,7 +121,7 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
 | R40-3 cite-check receipt at the tip | receipt committed with its class: errors=545, 33 `REV_UNKNOWN`, of which 1 is a commit inside its own row's URL (S036) and 32 are not | `.ufo/waves/round-41/final/cite-receipt-r40-3.txt` |
 | R40-4 anchor-truth resource caps | not done this round: the executor route was down for the leg and the L1 kept scope on C1 and C2 | `## Open limits` |
 | R40-5 S035 in K2 | fixed | `corpus/knowledge/kimi-skills-plugins.md` K2 section source note |
-| R40-6 seat-gate count | corrected in `## Mistakes`; the instrument now catches it | above |
+| R40-6 seat-gate count | corrected in `## Mistakes`; a declared count can now be checked against the payload with `wave-census --expect` (a person still types the prose number in; the census reads no prose) | above |
 | R40-7 README row | fixed at open (34fccc17) | `corpus/README.md` |
 
 ## Open limits (measured, not fixed)
@@ -87,3 +137,20 @@ Plan and frozen counters: `.ufo/waves/round-41/plan.md` (commit 34fccc17).
   read CLEAN at 16:00Z; `node scripts/kimi-census.mjs` now reads `KIMI_CENSUS: DRIFT (UNLISTED
   locks)` and the checklist reads 16/17 for that item alone. The proxy still reads `K=52/52`.
   Declaring the member is a K1 registry change for round 42.
+- Width beyond the counter (falsify seat CritC1AltOperators): with a second operator on each of the
+  16 conditions, one survives (`suite-any-fail` with `some` → `every`: a failing second group is
+  hidden under `--selftest --integrations`); five further width mutants survive (`kind === 'OK'`
+  → `severity === 'note'`, `warn > 0` → `warn >= 0` under `--strict`, `resolved > 0` →
+  `resolved > 1`, and two first/last-group variants). The warn-only case's comment says one
+  resolved citation; it measures `resolved=2` (two OK findings per cited path and line).
+- Two older survivors outside the 16 (sibling lane tameshi's round-26 mutation case, re-run by the
+  falsify connector at 4e58bb0e, 75/75 under each): the out-of-range line check (`> n` → `> n + 1`)
+  and the content-pin compare (`startsWith` → `includes`).
+- `scripts/wave-census.mjs` has no `kumitate-proxy-v1` pin (a third `PIN_UNPINNED` warning, like
+  `anchor-truth` and `sources-check`; the parent-frozen v1 key set is not widened here).
+- The census counts a report as present when it is a non-empty regular file; it does not detect a
+  `STATUS: started` stub (sibling lane mori's settlement scan does). On rounds 38–41 the eight
+  payload report counts agree with mori's scan (falsify connector).
+- Provenance of `~/.kimi-code/locks` (falsify scout ScoutKimiLocks, shape only): Kimi 2.3.0
+  self-updated at 16:48:04Z; its session lock service creates `locks/sessions` (mode 0700) on first
+  run; born 16:53:33Z. Upstream feature, not a stray.

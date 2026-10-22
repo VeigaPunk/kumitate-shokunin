@@ -33,12 +33,16 @@
  * Fail-closed (exit 2): the round dir is missing, holds no dispatch file, or a
  * dispatch file does not parse. Usage (exit 64).
  *
+ * `--expect [<round>/]<wave>:<role>=<n>` (role `attack` = the attack-seat total; an unknown
+ * role is EXPECT_UNKNOWN, never a vacuous zero). Resumed seats (`resumeSends`) count apart
+ * as `resumed=`; a report counts as present only when it is a non-empty regular file.
+ *
  * Usage: node scripts/wave-census.mjs --round N [--round M …] [--root DIR]
- *          [--expect <wave>:<role>=<n> …] [--json]
+ *          [--expect [<round>/]<wave>:<role>=<n> …] [--json]
  *        node scripts/wave-census.mjs --selftest
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -48,6 +52,7 @@ const CONTRACT = 'kumitate-wave-census-v1';
 const SELF = fileURLToPath(import.meta.url);
 const DEFAULT_ROOT = resolve(dirname(SELF), '..');
 const ATTACK = new Set(['reviewer', 'critic', 'mutation-tester', 'labrat']);
+const KNOWN_ROLES = new Set(['planner', 'scout', 'connector', 'sentinel', 'executor', 'revenger', 'simplifier', 'scribe', 'distiller']);
 const RE_REPORT = /Report:[^\n]*?(\.ufo\/waves\/[^\s`'"]+\.md)/;
 const USAGE = 'usage: node scripts/wave-census.mjs --round N [--round M ...] [--root DIR] [--expect <wave>:<role>=<n> ...] [--json] | --selftest\n';
 
@@ -66,9 +71,9 @@ function parseArgs(argv) {
     } else if (a === '--root') o.root = resolve(val());
     else if (a === '--expect') {
       const v = val();
-      const m = v.match(/^([a-z0-9-]+):([a-z-]+)=(\d+)$/);
-      if (!m) throw new Usage(`--expect takes <wave>:<role>=<n>, got ${v}`);
-      o.expects.push({ wave: m[1], role: m[2], n: Number(m[3]), raw: v });
+      const m = v.match(/^(?:(\d+)\/)?([a-z0-9-]+):([a-z-]+)=(\d+)$/);
+      if (!m) throw new Usage(`--expect takes [<round>/]<wave>:<role>=<n>, got ${v}`);
+      o.expects.push({ round: m[1] == null ? null : Number(m[1]), wave: m[2], role: m[3], n: Number(m[4]), raw: v });
     } else if (a === '--json') o.json = true;
     else if (a === '--selftest') o.selftest = true;
     else throw new Usage(`unknown argument: ${a}`);
@@ -93,30 +98,39 @@ function censusRound(root, n) {
       throw new FailClosed(`${join(dir, f)} does not parse: ${e.message}`);
     }
     const v1 = d && d.schema === 'ufo-swarm-wave-dispatch-v1';
-    const tc = v1 ? d.taskCall : (d && Array.isArray(d.tasks) ? d : null);
+    // A v1 envelope's `taskCall` is null when the wave resumes only (S038, :51-52); its
+    // resumed seats ride `resumeSends` (one hub send each, report suffix in `message`).
+    const tc = v1 ? (d.taskCall ?? { tasks: [] }) : (d && Array.isArray(d.tasks) ? d : null);
     if (!tc || !Array.isArray(tc.tasks)) throw new FailClosed(`${join(dir, f)} carries no task list`);
-    const tasks = tc.tasks.map((t) => ({ name: String(t.name), role: String(t.agent), report: (String(t.task ?? '').match(RE_REPORT) ?? [])[1] ?? null }));
+    const reportOf = (text) => (String(text ?? '').match(RE_REPORT) ?? [])[1] ?? null;
+    const tasks = tc.tasks.map((t) => ({ name: String(t.name), role: String(t.agent), report: reportOf(t.task) }));
+    const resumes = v1 && Array.isArray(d.resumeSends)
+      ? d.resumeSends.map((r) => ({ name: String(r.name), report: reportOf(r.message) })) : [];
     const roles = {};
     for (const t of tasks) roles[t.role] = (roles[t.role] ?? 0) + 1;
     const attack = tasks.filter((t) => ATTACK.has(t.role)).length;
     const present = []; const absent = [];
-    for (const t of tasks) (t.report && existsSync(join(root, t.report)) ? present : absent).push(t.name);
-    const w = { round: n, wave, file: f, schema: v1 ? d.schema : 'bare-taskcall', seats: tasks.length, roles, attack,
-      present: present.length, absent: absent.length, absentNames: absent };
+    const isReport = (rel) => { try { const st = lstatSync(join(root, rel)); return st.isFile() && st.size > 0; } catch { return false; } };
+    for (const t of [...tasks, ...resumes]) (t.report && isReport(t.report) ? present : absent).push(t.name);
+    const w = { round: n, wave, file: f, schema: v1 ? d.schema : 'bare-taskcall', seats: tasks.length, resumed: resumes.length,
+      roles, attack, present: present.length, absent: absent.length, absentNames: absent };
     if (v1) {
-      if (d.counts && d.counts.spawn !== tasks.length) {
-        findings.push({ kind: 'COUNT_MISMATCH', round: n, wave, detail: `counts.spawn=${d.counts.spawn} tasks=${tasks.length}` });
+      if (d.counts && (d.counts.spawn !== tasks.length || (d.counts.resume ?? 0) !== resumes.length)) {
+        findings.push({ kind: 'COUNT_MISMATCH', round: n, wave, detail: `counts.spawn=${d.counts.spawn} tasks=${tasks.length} counts.resume=${d.counts.resume} resumeSends=${resumes.length}` });
       }
-      const members = d.registry && d.registry.members ? Object.keys(d.registry.members).sort() : null;
-      const names = tasks.map((t) => t.name).sort();
-      if (members && (members.length !== names.length || members.some((m, i) => m !== names[i]))) {
-        const missing = names.filter((x) => !members.includes(x));
-        const extra = members.filter((x) => !names.includes(x));
-        findings.push({ kind: 'REGISTRY_MISMATCH', round: n, wave, detail: `not-in-registry=[${missing.join(',')}] not-in-tasks=[${extra.join(',')}]` });
+      const mem = d.registry && d.registry.members && typeof d.registry.members === 'object' ? d.registry.members : null;
+      if (mem) {
+        const members = Object.keys(mem).sort();
+        const names = [...tasks, ...resumes].map((t) => t.name).sort();
+        if (members.length !== names.length || members.some((m, i) => m !== names[i])) {
+          const missing = names.filter((x) => !members.includes(x));
+          const extra = members.filter((x) => !names.includes(x));
+          findings.push({ kind: 'REGISTRY_MISMATCH', round: n, wave, detail: `not-in-registry=[${missing.join(',')}] not-in-tasks=[${extra.join(',')}]` });
+        }
       }
     }
-    const reportDirs = new Set(tasks.map((t) => t.report && dirname(t.report)).filter(Boolean));
-    const names = new Set(tasks.map((t) => t.name));
+    const reportDirs = new Set([...tasks, ...resumes].map((t) => t.report && dirname(t.report)).filter(Boolean));
+    const names = new Set([...tasks, ...resumes].map((t) => t.name));
     for (const rd of reportDirs) {
       const abs = join(root, rd);
       if (!existsSync(abs)) continue;
@@ -133,10 +147,15 @@ function census(opts) {
   const rounds = opts.rounds.map((n) => censusRound(opts.root, n));
   const findings = rounds.flatMap((r) => r.findings);
   for (const ex of opts.expects) {
-    const hits = rounds.flatMap((r) => r.waves).filter((w) => w.wave === ex.wave);
+    const all = rounds.flatMap((r) => r.waves);
+    const hits = all.filter((w) => w.wave === ex.wave && (ex.round == null || w.round === ex.round));
     if (!hits.length) { findings.push({ kind: 'EXPECT_UNKNOWN', wave: ex.wave, detail: ex.raw }); continue; }
+    // `attack` is the attack-seat total; any other role must be a known role name, so a
+    // misspelled role can never pass as a vacuous zero.
+    const known = ex.role === 'attack' || ATTACK.has(ex.role) || KNOWN_ROLES.has(ex.role) || all.some((w) => ex.role in w.roles);
+    if (!known) { findings.push({ kind: 'EXPECT_UNKNOWN', wave: ex.wave, detail: `${ex.raw} (unknown role)` }); continue; }
     for (const w of hits) {
-      const got = w.roles[ex.role] ?? 0;
+      const got = ex.role === 'attack' ? w.attack : (w.roles[ex.role] ?? 0);
       if (got !== ex.n) findings.push({ kind: 'EXPECT_MISMATCH', round: w.round, wave: w.wave, detail: `${ex.raw} payload=${got}` });
     }
   }
@@ -148,9 +167,9 @@ function render(rep) {
   for (const r of rep.rounds) {
     let seats = 0, attack = 0, present = 0;
     for (const w of r.waves) {
-      seats += w.seats; attack += w.attack; present += w.present;
+      seats += w.seats + w.resumed; attack += w.attack; present += w.present;
       const roles = Object.entries(w.roles).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k, v]) => `${k}=${v}`).join(' ');
-      L.push(`WAVE round=${r.round} wave=${w.wave} schema=${w.schema} seats=${w.seats} attack=${w.attack} reports=${w.present}/${w.seats} roles: ${roles}`);
+      L.push(`WAVE round=${r.round} wave=${w.wave} schema=${w.schema} seats=${w.seats}${w.resumed ? ` resumed=${w.resumed}` : ''} attack=${w.attack} reports=${w.present}/${w.seats + w.resumed} roles: ${roles}`);
       if (w.absentNames.length) L.push(`  absent: ${w.absentNames.join(' ')}`);
     }
     L.push(`ROUND round=${r.round} waves=${r.waves.length} seats=${seats} attack=${attack} reports=${present}/${seats}`);
@@ -227,7 +246,7 @@ function selftest() {
     });
     check('WC05', 'counts.spawn differs from tasks → COUNT_MISMATCH', () => {
       const r = run(bad, ['--round', '8']);
-      return { ok: r.status === 1 && /^FINDING COUNT_MISMATCH round=8 wave=build counts\.spawn=3 tasks=2$/m.test(r.out), detail: `exit=${r.status}` };
+      return { ok: r.status === 1 && /^FINDING COUNT_MISMATCH round=8 wave=build counts\.spawn=3 tasks=2 counts\.resume=0 resumeSends=0$/m.test(r.out), detail: `exit=${r.status}` };
     });
     check('WC06', 'registry members differ from tasks → REGISTRY_MISMATCH', () => {
       const r = run(bad, ['--round', '8']);
@@ -264,6 +283,70 @@ function selftest() {
       const j = JSON.parse(r.out);
       return { ok: r.status === 1 && j.contract === CONTRACT && j.verdict === 'DRIFT' && j.findings.length === 3
         && j.rounds[0].waves[0].roles.executor === 1, detail: `exit=${r.status} verdict=${j.verdict}` };
+    });
+    const resumeRoot = join(tmp, 'resume');
+    const rdir = join(resumeRoot, '.ufo', 'waves', 'round-5');
+    mkdirSync(join(rdir, 'build'), { recursive: true });
+    const rs = (name) => ({ name, resume: `0-${name}`, message: `go\nReport: write your scoped findings to .ufo/waves/round-5/build/${name}.md` });
+    writeFileSync(join(rdir, 'build-dispatch.json'), JSON.stringify({ schema: 'ufo-swarm-wave-dispatch-v1', counts: { spawn: 0, resume: 1, total: 1 },
+      registry: { members: { R: { kind: 'resume' } } }, taskCall: null, resumeSends: [rs('R')] }));
+    writeFileSync(join(rdir, 'build', 'R.md'), 'RESULT R\n');
+    writeFileSync(join(rdir, 'falsify-dispatch.json'), JSON.stringify({ schema: 'ufo-swarm-wave-dispatch-v1', counts: { spawn: 1, resume: 1, total: 2 },
+      registry: { members: { S: { kind: 'spawn' }, T: { kind: 'resume' } } },
+      taskCall: { context: 'c', tasks: [task(5, 'falsify', 'S', 'critic')] }, resumeSends: [{ ...rs('T'), message: 'go\nReport: write your scoped findings to .ufo/waves/round-5/falsify/T.md' }] }));
+    mkdirSync(join(rdir, 'falsify', 'S.md'), { recursive: true });
+    check('WC13', 'resume-only wave (taskCall null) is read: seats=0 resumed=1, report present', () => {
+      const r = run(resumeRoot, ['--round', '5']);
+      return { ok: /^WAVE round=5 wave=build schema=ufo-swarm-wave-dispatch-v1 seats=0 resumed=1 attack=0 reports=1\/1 /m.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC14', 'mixed spawn+resume wave: no REGISTRY_MISMATCH; a directory named S.md is not a report', () => {
+      const r = run(resumeRoot, ['--round', '5']);
+      return { ok: r.status === 0 && /^WAVE round=5 wave=falsify .* seats=1 resumed=1 attack=1 reports=0\/2 /m.test(r.out)
+        && !/REGISTRY_MISMATCH|COUNT_MISMATCH/.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC15', '--expect under-declared count → EXPECT_MISMATCH', () => {
+      const r = run(good, ['--round', '7', '--expect', 'build:critic=0']);
+      return { ok: r.status === 1 && /EXPECT_MISMATCH .* build:critic=0 payload=1/.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC16', '--expect unknown role → EXPECT_UNKNOWN; `attack` is the attack total', () => {
+      const a = run(good, ['--round', '7', '--expect', 'build:mutation-testers=0']);
+      const b = run(good, ['--round', '7', '--expect', 'build:attack=3']);
+      const c = run(good, ['--round', '7', '--expect', 'build:attack=4']);
+      return { ok: a.status === 1 && /EXPECT_UNKNOWN .*unknown role/.test(a.out) && b.status === 0 && c.status === 1,
+        detail: `typo=${a.status} attack3=${b.status} attack4=${c.status}` };
+    });
+    check('WC17', 'round-scoped --expect: <round>/<wave> checks one round only', () => {
+      const root = mkRound(join(tmp, 'two'), 1, { build: { tasks: [['X', 'critic']] } });
+      mkRound(root, 2, { build: { tasks: [['Y', 'critic'], ['Z', 'critic']] } });
+      const a = run(root, ['--round', '1', '--round', '2', '--expect', '1/build:critic=1']);
+      const b = run(root, ['--round', '1', '--round', '2', '--expect', 'build:critic=1']);
+      return { ok: a.status === 0 && b.status === 1, detail: `scoped=${a.status} unscoped=${b.status}` };
+    });
+    const multi = mkRound(join(tmp, 'multi'), 11, {
+      build: { tasks: [['A', 'critic'], ['B', 'critic'], ['C', 'critic'], ['D', 'reviewer'], ['E', 'reviewer'], ['F', 'scout']], reports: ['A', 'B'] },
+    });
+    mkRound(multi, 12, { build: { tasks: [['G', 'scout']], reports: [] } });
+    writeFileSync(join(multi, '.ufo', 'waves', 'round-11', 'build', 'C.md'), '');
+    check('WC18', 'attack counts seats, roles count repeats, an empty report file is absent, totals stay per round', () => {
+      const r = run(multi, ['--round', '11', '--round', '12']);
+      return { ok: /^WAVE round=11 wave=build .* seats=6 attack=5 reports=2\/6 roles: critic=3 reviewer=2 scout=1$/m.test(r.out)
+        && /^ {2}absent: C D E F$/m.test(r.out) && /^ROUND round=11 waves=1 seats=6 attack=5 reports=2\/6$/m.test(r.out)
+        && /^ROUND round=12 waves=1 seats=1 attack=0 reports=0\/1$/m.test(r.out) && /^ {2}absent: G$/m.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC19', 'a task with no Report: trailer is absent; a stray-only round exits 1', () => {
+      const root = join(tmp, 'notrailer');
+      const dir = join(root, '.ufo', 'waves', 'round-13');
+      mkdirSync(join(dir, 'build'), { recursive: true });
+      writeFileSync(join(dir, 'build-dispatch.json'), JSON.stringify({ context: 'c', tasks: [{ name: 'N', agent: 'critic', task: 'no trailer' }, task(13, 'build', 'M', 'critic')] }));
+      writeFileSync(join(dir, 'build', 'M.md'), 'RESULT M\n');
+      writeFileSync(join(dir, 'build', 'Q.md'), 'RESULT Q\n');
+      const r = run(root, ['--round', '13']);
+      return { ok: r.status === 1 && /reports=1\/2/.test(r.out) && /^ {2}absent: N$/m.test(r.out) && /STRAY_REPORT .*Q\.md$/m.test(r.out), detail: `exit=${r.status}` };
+    });
+    check('WC20', 'usage: --round abc and an unknown argument exit 64', () => {
+      const a = spawnSync(process.execPath, [SELF, '--round', 'abc'], { encoding: 'utf8' });
+      const b = spawnSync(process.execPath, [SELF, '--round', '7', '--bogus'], { encoding: 'utf8' });
+      return { ok: a.status === 64 && b.status === 64, detail: `abc=${a.status} bogus=${b.status}` };
     });
   } finally {
     rmSync(tmp, { recursive: true, force: true });
