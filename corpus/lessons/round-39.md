@@ -39,15 +39,15 @@ later round-39 commits carry documents and evidence only). Receipts:
 
 - C1: `PRIOR62_CORRECTED 58/62` at fac39171 → `59/62` at 3908f322; `OLD_TOKEN_LOSSES 0` at
   both; production pin tally 777 true / 21 debt / 13 unchecked → 778 / 20 / 13, zero
-  expectation mismatches, `baseline_true_changes []` (`measure-c1-open.txt`,
-  `measure-c1-final.txt`).
+  expectation mismatches, `baseline_true_changes []` (`.ufo/waves/round-39/final/measure-c1-open.txt`,
+  `.ufo/waves/round-39/final/measure-c1-final.txt`).
 - C2: `FLOOR_PROBE accepted=6/6` at fac39171 → `0/6` at 3908f322; control CLEAN at both
-  (`floor-probe-open.txt`, `floor-probe-final.txt`). A1, the round-38 closure's modelled
+  (`.ufo/waves/round-39/final/floor-probe-open.txt`, `.ufo/waves/round-39/final/floor-probe-final.txt`). A1, the round-38 closure's modelled
   counterexample, is now observed on the real gate: CLEAN exit 0 at open, DRIFT exit 1 at
   3908f322.
 - Red-before: round-open logic with the new selftest reads 23/30; AT23, AT24, AT26, AT27, AT28,
-  AT29, AT30 fail and AT25 (the legitimate re-key) passes (`red-before.txt`).
-- Mutants: 11 of 11 killed by a named failing selftest case at 3908f322 (`mutants.txt`). The
+  AT29, AT30 fail and AT25 (the legitimate re-key) passes (`.ufo/waves/round-39/final/red-before.txt`).
+- Mutants: 11 of 11 killed by a named failing selftest case at 3908f322 (`.ufo/waves/round-39/final/mutants.txt`). The
   first L1 run against dfa159d5 found two survivors (null-token forging skipped; review source
   with a null token) and one mutant detected only by the live gate (path dropped from the
   identity). AT28, AT29 and AT30 were added for them before the measured commit.
@@ -56,7 +56,7 @@ later round-39 commits carry documents and evidence only). Receipts:
 
 | class | evidence | captured-by | fix |
 |---|---|---|---|
-| A per-anchor floor found the anchor it protects by a key built from a field the protected edit can rewrite (the paired token), so a re-keyed base-true entry escaped and the per-note totals still passed | `corpus/lessons/round-38-verifier-spotcheck.md` §Missing-key counterexample, R38-1; observed on the round-open gate: `.ufo/waves/round-39/final/floor-probe-open.txt` A1 and A2 accepted | none: Q17 required a per-anchor floor but said nothing about how an anchor is identified; the round-38 falsify wave did not try a key edit | Identity by raw text, resolved path and occurrence; per raw-path non-true count; pair-token and source rules (AT23–AT30, each failing on round-open logic, `red-before.txt`); new criterion Q19 |
+| A per-anchor floor found the anchor it protects by a key built from a field the protected edit can rewrite (the paired token), so a re-keyed base-true entry escaped and the per-note totals still passed | `corpus/lessons/round-38-verifier-spotcheck.md` §Missing-key counterexample, R38-1; observed on the round-open gate: `.ufo/waves/round-39/final/floor-probe-open.txt` A1 and A2 accepted | none: Q17 required a per-anchor floor but said nothing about how an anchor is identified; the round-38 falsify wave did not try a key edit | Identity by raw text, resolved path and occurrence; per raw-path non-true count; pair-token and source rules (AT23–AT30; AT25 is the legitimate re-key that must stay CLEAN; the others fail on round-open logic, `.ufo/waves/round-39/final/red-before.txt`); new criterion Q19 |
 | The first selftest additions left two mutants alive (a null-token forgery and a review source with a null token): a fixture written for the headline attack also tripped the other arm, so neither arm was tested alone | `.ufo/waves/round-39/final/mutants-dfa159d5.txt` (9 killed, 2 survived) | the lane's own mutation run this round (Q17 bullet "each arm has a selftest fixture whose mutant must fail") | AT28 and AT30 test those arms alone; AT29 pins the path; 11/11 killed at 3908f322 |
 | The round's 46-seat build wave never ran: the seat gate did not grant it within 3600 s, the second 3500 s request was cancelled at the two-hour freeze | `.ufo/waves/round-39/evidence/seat-gate.txt` | none (a host capacity limit; Main's steer at 11:47Z: waves above about 40 seats wait an hour) | Size waves at 32–40 seats when eight lanes share the 85-seat gate; prepare the falsify wave on a committed candidate before asking for seats |
 
