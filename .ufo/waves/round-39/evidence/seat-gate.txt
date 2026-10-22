@@ -1,0 +1,16 @@
+Round 39 seat-gate record (wave-slot.sh, cap 85 seats shared by the fleet)
+
+1. Build wave, 46 seats (.ufo/waves/round-39/build-spec.json, validated, build-dispatch.json):
+   `wave-slot.sh acquire kumitate r39-build 46 3600` started about 09:58Z with a bash timeout
+   requested at 3700 s, clamped by the host to 3600 s. Result: `[Command timed out after 3600
+   seconds]`, no `granted` line. Nothing dispatched.
+2. Same 46-seat wave: `wave-slot.sh acquire kumitate r39-build 46 3500` started about 10:58Z.
+   Main's freeze message arrived at 11:43Z ("Start no new wave"); the request was cancelled
+   at 11:43Z, no grant. Ledger check right after: no kumitate row in
+   ~/.local/state/shokunin-hyaku/wave-slots, no acquire process left.
+   Ledger rows at 11:43:37Z (most recent): tsukuroi r25-w1 38, kaidoku kaidoku25a3-w1 33,
+   tameshi round-26-w1 39, mado mado-r23-w1 36, kotoba r49-falsify 38, mori r25-w2 38.
+3. Main's steer at 11:47Z: prefer 32-40 seats for any wave not yet dispatched; the round still
+   totals 32-100. The wave was reshaped to 37 seats of falsify items on the measured revision
+   3908f322 (.ufo/waves/round-39/falsify-spec.json, validated, falsify-dispatch.json) and a
+   new request was made: `wave-slot.sh acquire kumitate r39-falsify 37 1500` at about 11:48Z.

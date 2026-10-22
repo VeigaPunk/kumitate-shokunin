@@ -614,6 +614,21 @@ Verdicts name the upstream source revision; cite the measured lane commit beside
 Where this lane learns, and how far each source is trusted: `corpus/SOURCES.md`;
 what a corpus entry must clear before admission: `corpus/QUALITY.md`.
 
+Error pattern — a floor keyed on a field the edit can rewrite (round 39, `corpus/QUALITY.md`
+Q19). Symptom: `anchor-truth --base` reads CLEAN while an anchor that was true at the base is
+now unchecked, false or moved, and the per-note totals still pass because another anchor was
+repaired or a true copy was inserted. Cause: the round-38 floor found base entries by pin key,
+and the key is built from the paired token (`corpus/lessons/round-38-verifier-spotcheck.md`,
+R38-1). Decision since round 39: the `--base` comparison matches by raw text, resolved path and
+occurrence index and counts non-true anchors per base-true raw text and path (`BASE_TRUE_LOST`);
+the per-note check refuses a `pair` token that differs from the note's own pairing
+(`TOKEN_FORGED`) and any entry source other than `pair` or `review:<seat>` with a token
+(`PIN_INVALID`, exit 2). Fixtures AT23–AT27. Under the floor a base-true anchor's coordinates
+are fixed: narrowing or moving one needs a new base, chosen in a round that records why.
+Open limits: `review:<seat>` is self-declared in the pin (no committed review record is
+required), and a new false anchor at a raw text that held no true anchor may be traded against
+one repaired debt anchor in the same note (`corpus/lessons/round-39.md`).
+
 ## Verifiable checklist
 
 Fifteen items (round 38). Item 14 replaces the round-36/37 adjacency-fidelity

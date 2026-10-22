@@ -106,6 +106,10 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-38.md` | Round-38 repair-first method: per-anchor repair of the four registered notes against the pin (wave-reviewed MOVE/TOKEN/DEBT verdicts), the `anchor-truth` per-anchor gate with a frozen `--base` burn-down, retired fidelity ratchet, mined mistakes | LOG.md round 38; `.ufo/waves/round-38/`; S033 |
 
+| `lessons/round-38-verifier-spotcheck.md` | Round-38 non-author closure: REJECTED-HONEST-STOP (C1 per-anchor repair improved, 469 to 628 true under old tokens with zero losses; C2 floor unprovable because a re-keyed base-true entry escaped the key match, routed R38-1); standalone Python closure block; row added in round 39 | commit `2fa28e5` |
+
+| `lessons/round-39.md` | Round-39 repair-first: identity floor for `anchor-truth --base` (raw text, path and occurrence; per raw-path non-true count; pair-token and source rules) against R38-1, the last round-37-regressed debt anchor S8#475 re-cited, Q19, mined mistakes and open limits | LOG.md round 39; `.ufo/waves/round-39/`; S034 |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

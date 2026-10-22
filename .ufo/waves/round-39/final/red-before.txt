@@ -1,0 +1,42 @@
+red-before: round-open fac39171 logic (everything before selfTest) + measured 3908f322 selfTest (AT01-AT30)
+transplant sha256 1007632c22e60aa1e12872607502202cffa71c166a960be4aa3c7c494c3af585
+PASS AT01 clean: a true anchor pins and reads CLEAN
+PASS AT02 positional run `a` / `b` (`:2`, `:3`) pairs left-first by position
+PASS AT03 next-symbol shift: anchor set change fails the check and the re-pin refuses (PIN_REGRESSION)
+PASS AT04 right-first discriminator: `BETA_MARK` (`:3`), `ALPHA_MARK` (`:3`) pins BETA as debt, ALPHA true
+PASS AT05 swapped run re-pin refuses (PIN_REGRESSION)
+PASS AT06 hand-edited pin token not on the line reads REGRESSED
+PASS AT07 debt flipped into the pin by hand reads DEBT_GREW against --base
+PASS AT08 a true expectation dropped to unchecked reads CHECKED_SHRANK against --base
+PASS AT09 review override absent from the sentence reads OVERRIDE_INVALID
+PASS AT10 review override present in the sentence and on the line pins true
+PASS AT11 fixed debt left in the pin reads DEBT_STALE
+PASS AT12 line beyond EOF and a `..` escape are dead debt, never read outside the clone
+PASS AT13 source clone at another revision fails closed (exit 2)
+PASS AT14 "At `path:N`, `sym`" with no earlier symbol pairs forward
+PASS AT15 bare `:N` resolves through the heading path; fenced code is ignored
+PASS AT16 clean pin re-checked against itself as --base stays CLEAN
+PASS AT18 one phrase cited at two sites pairs both anchors with that phrase, never a later symbol
+PASS AT19 forward fill never steals a symbol that owns the next citation
+PASS AT20 re-paired token cannot launder a true ordinal (PIN_REGRESSION by ordinal)
+PASS AT21 a dirty source worktree cannot change a verdict (committed blobs only)
+PASS AT22 a pin note key outside corpus/knowledge fails closed (exit 2)
+FAIL AT23 a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)
+     TRUTH: PINNED (notes=1 anchors=1 true=1 debt=0 unchecked=0 src-rev=d7c62cd9bfb3) | TRUTH: CLEAN (notes=1 anchors=1 true=1 debt=0 unchecked=0 base=a8757bafe210eb77054b03edec7b53f5001aa4b2 src-rev=d7c62cd9bfb3)
+FAIL AT24 a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED
+     TRUTH: CLEAN (notes=1 anchors=2 true=1 debt=0 unchecked=1 base=74235000c2202d7432533862e0f145873c453fc3 src-rev=d7c62cd9bfb3)
+PASS AT25 an inserted earlier anchor shifts a base-true key index and ordinal yet stays CLEAN by identity
+FAIL AT26 a pin entry source outside pair or review:<seat> fails closed (exit 2)
+     TRUTH: CLEAN (notes=1 anchors=1 true=1 debt=0 unchecked=0 src-rev=d7c62cd9bfb3)
+FAIL AT27 an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)
+     TRUTH: PINNED (notes=1 anchors=2 true=1 debt=0 unchecked=1 src-rev=d7c62cd9bfb3) | TRUTH: CLEAN (notes=1 anchors=2 true=1 debt=0 unchecked=1 base=320cb7a9d07d7d8a219c2c4d53a964f452d7685d src-rev=d7c62cd9bfb3)
+FAIL AT28 a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)
+     TRUTH: CLEAN (notes=1 anchors=2 true=1 debt=0 unchecked=1 src-rev=d7c62cd9bfb3)
+FAIL AT29 identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading's
+     TRUTH: PINNED (notes=1 anchors=2 true=1 debt=0 unchecked=1 src-rev=d7c62cd9bfb3) | TRUTH: CLEAN (notes=1 anchors=2 true=1 debt=0 unchecked=1 base=c4d829e1787a72bc4245ffc61b19de2126411d57 src-rev=d7c62cd9bfb3)
+FAIL AT30 a review:<seat> entry with a null token fails closed as PIN_INVALID
+     TRUTH: FAIL-CLOSED (INPUT_UNREADABLE Cannot read properties of null (reading 'replace'))
+PASS AT17 unknown flag is a usage refusal (exit 64)
+ANCHOR_TRUTH_SELFTEST: 23/30 pass
+VERDICT: FAIL
+exit=1

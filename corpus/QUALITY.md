@@ -153,3 +153,19 @@ Any non-base knowledge path without a nonempty `source:`, `verified-at:`, and
   guarantee; reap needs the age/lock/removal range), Check52 (uncoded Error, not a default
   typed code), and Check71 (tail-file readback lies one line past the cited range);
   `corpus/lessons/round-38.md`. The lexical gate must never be relabelled a prose oracle.
+
+- **Q19 — a floor matches what it protects by an identity the protected change cannot edit.**
+  Round 38's `--base` floor found each base-true anchor by its pin key, and the key is built
+  from the paired token. A current pin that changed that entry's token and key, and dropped it
+  to `unchecked`, escaped the per-anchor check while the per-note totals still passed
+  (`corpus/lessons/round-38-verifier-spotcheck.md`, R38-1; round 39 ran it against the
+  round-open gate: `FLOOR_PROBE accepted=6/6`, `.ufo/waves/round-39/final/floor-probe-open.txt`).
+  - Identity for an anchor is its raw text, its resolved path and its occurrence index, never
+    the token, the key or any other field the edit under test can rewrite.
+  - Per raw text and path that held a true anchor at base, the count of non-true anchors may
+    not grow, so an inserted true copy cannot mask the original.
+  - A `pair` token must equal the note's own pairing, and an entry source is `pair` or
+    `review:<seat>` with a token.
+  - Each arm is admitted only with a fixture that fails on the old logic and a mutant that a
+    test kills. A mutant that only crashes the run is a runtime error, not a kill (S034).
+  Grounding: `corpus/lessons/round-39.md` (`## Mistakes` row 1); S034.

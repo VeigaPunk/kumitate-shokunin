@@ -1,0 +1,17 @@
+# Round-39 open limit L2 (run: python3 limit-debt-trade.py.txt <clone at rev> <pinned src>): in S8, un-anchor the
+# debt entry #99 and append one new false anchor at a raw with no base anchor, hand-write the
+# consistent pin, and run the direct entry with the frozen base. Scratch clone only.
+import json,subprocess,sys
+L,S=sys.argv[1],sys.argv[2]; B='e18ff1af3392e3823227644c977c237737fe65c9'
+N='corpus/knowledge/remaining-scripts-census.md'; P=L+'/.ufo/pins/anchor-truth.json'
+pin=json.load(open(P)); nt=open(L+'/'+N).read(); E=pin['notes'][N]['entries']
+assert E[99]['raw']=='scripts/fleet-ledger-rotate.mjs:392' and E[99]['expect']=='debt:false'
+nt=nt.replace('(`scripts/fleet-ledger-rotate.mjs:392`','(scripts/fleet-ledger-rotate.mjs line 392',1)
+nt=nt.rstrip('\n')+'\n\nThe trade marker `NO_SUCH_SYMBOL_R39` is at `scripts/ufo-swarm-collect.test.mjs:1`.\n'
+open(L+'/'+N,'w').write(nt); del E[99]
+E.append({'ord':0,'raw':'scripts/ufo-swarm-collect.test.mjs:1','path':'scripts/ufo-swarm-collect.test.mjs','a':1,'b':1,'token':'NO_SUCH_SYMBOL_R39','source':'pair','expect':'debt:false','key':'scripts/ufo-swarm-collect.test.mjs|NO_SUCH_SYMBOL_R39|0'})
+for i,e in enumerate(E): e['ord']=i
+pin['notes'][N]['anchors']=len(E); open(P,'w').write(json.dumps(pin,indent=1)+'\n')
+r=subprocess.run(['node','scripts/anchor-truth.mjs','--src',S,'--base',B],cwd=L,capture_output=True,text=True)
+print('rev',subprocess.check_output(['git','-C',L,'rev-parse','HEAD'],text=True).strip())
+print('\n'.join(l for l in r.stdout.split('\n') if 'remaining-scripts' in l or l.startswith('TRUTH:') or l.startswith('TRUTH  '))); print('exit',r.returncode)

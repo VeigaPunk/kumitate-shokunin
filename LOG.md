@@ -1779,3 +1779,20 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   Check27 misroot recovered byte-exact, cmp equal sha256294e0cee…, fleet stray removed.
   Candidate captures are preserved under candidate-c938; final receipts bind the corrective
   production revision, with unchanged oracle and explicit coordinate/prose deltas.
+- 2026-10-22 — round 39 (repair-first recovery round; round open `fac3917`, source pin
+  `31c465f1`, measured production `3908f322`). Motivating evidence: the round-37 closure's
+  harmed verdict (62 regressed anchors; 58 corrected in round 38, S8#475 still debt) and the
+  round-38 closure's R38-1 (a re-keyed base-true entry escaped the `--base` floor). Two claims.
+  C1 coverage:script-layer: S8#475 `agentId` re-cited `:560` → `:560-572`; the round-38 closure's
+  own Python block reads `PRIOR62_CORRECTED 58/62` → `59/62`, `OLD_TOKEN_LOSSES 0` at both.
+  C2 operability: `anchor-truth` gains `BASE_TRUE_LOST` (identity by raw text, path and
+  occurrence; per raw-path non-true count), `TOKEN_FORGED` and a pin source rule; the six-edit
+  floor probe reads `accepted=6/6` → `0/6`; selftest 22/22 → 30/30; round-open logic fails seven
+  of the eight new cases; 11/11 mutants killed by a named case (the first run against dfa159d5
+  left two survivors; AT28-AT30 added before the measured commit). New Q19, source S034, SKILL
+  error pattern, README rows for the round-38 closure and this lesson (C2 = 88/88). Probes are
+  stored as `.txt` so round evidence does not count toward proxy term A. Open limits: self-declared
+  review source, debt trade. Environment named, not changed: default source clone missing
+  (checklist 8/15 at open and measured), Kimi census DRIFT (seventh `skills/` child). The 46-seat
+  build wave never got a seat-gate grant (3600 s timeout, then cancelled at the freeze); see
+  `.ufo/waves/round-39/evidence/seat-gate.txt` and the round report for the reshaped wave.

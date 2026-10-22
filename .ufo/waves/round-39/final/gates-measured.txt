@@ -1,0 +1,27 @@
+$ node scripts/anchor-truth.mjs --selftest  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+PASS AT17 unknown flag is a usage refusal (exit 64)
+ANCHOR_TRUTH_SELFTEST: 30/30 pass
+VERDICT: PASS
+exit=0
+$ node scripts/anchor-truth.mjs --src /fast/scratch/hyaku/kumitate-r39/src --base e18ff1af3392e3823227644c977c237737fe65c9  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+TRUTH note=corpus/knowledge/native-trial-launch.md anchors=54 true=54 debt=0 unchecked=0
+TRUTH_TOTAL anchors=811 true=778 debt=20 unchecked=13
+TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+exit=0
+$ node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+TRUTH: FAIL-CLOSED (SRC_MISSING /fast/scratch/kumitate-r36/src)
+exit=2
+$ node scripts/claims-check.mjs --selftest  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+CLAIMS_SELFTEST: 47/47 pass
+VERDICT: PASS
+exit=0
+$ node scripts/sources-check.mjs --selftest  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+PASS frozen awk census parity: rows, malformed, duplicate ids: node=4/1/1 awk=4/1/1
+SOURCES_SELFTEST: 46/46 pass
+VERDICT: PASS
+exit=0
+$ node scripts/kimi-census.mjs  (rev 3908f322c4c473f1a8b45c8d1c14054205eb7647)
+CENSUS  error  UNLISTED  skills/  skills has 7 children, 6 declared — an undeclared child appeared (names not gated)
+TOTALS: members=52 checked=52 errors=1 info=4 chain=7
+KIMI_CENSUS: DRIFT (UNLISTED skills/)
+exit=1

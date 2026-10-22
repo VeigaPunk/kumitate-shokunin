@@ -285,8 +285,8 @@ A=8
 C=15
 C1=19
 C1_total=19
-C2=86
-C2_total=86
+C2=88
+C2_total=88
 S_members=88
 S_sections=88
 R_members=92
@@ -396,6 +396,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 39 | coverage:script-layer (repair-first: the open round-37 harm; score held 10) | round-38 closure block at fac39171: `PRIOR62_CORRECTED 58/62`, `OLD_TOKEN_LOSSES 0`; S8#475 `agentId` at `:560` was `debt:false`; pin tally 777 true / 21 debt / 13 unchecked | `PRIOR62_CORRECTED 59/62`, `OLD_TOKEN_LOSSES 0` at 3908f322c4c473f1a8b45c8d1c14054205eb7647; S8#475 cites `:560-572` (test declaration, conflicting agentId, assertion) and reads true; pin tally 778 / 20 / 13, zero expectation mismatches; S8#112, #324, #410 left as reviewed token corrections | `python3 .ufo/waves/round-39/probe/measure-c1.py.txt --lane <lane> --rev <rev> --src <clone at 31c465f1>`; `.ufo/waves/round-39/final/measure-c1-{open,final}.txt`; `corpus/lessons/round-39.md` |
+| 39 | operability (lowest non-retired axis, repair of R38-1; integer held 8, A=8 C=15) | `FLOOR_PROBE accepted=6/6` at fac39171 (six named hand edits of pin and note, A1 = the round-38 closure's counterexample, each read `TRUTH: CLEAN`); selftest 22/22 | `FLOOR_PROBE accepted=0/6` at 3908f322 (`BASE_TRUE_LOST`, `TOKEN_FORGED`, `PIN_INVALID`); selftest 30/30; red-before 23/30 on round-open logic; 11/11 mutants killed by a named case. Open limits L1 (self-declared review) and L2 (debt trade) measured, not fixed | `node --input-type=module - --lane <lane> --rev <rev> --src <clone> < .ufo/waves/round-39/probe/floor-probe.mjs.txt`; `.ufo/waves/round-39/final/`; S034; Q19 |
 | 38 | coverage:script-layer (repair-first, score held 10) | frozen round-open population 811 anchors: 467 true, 208 debt, 136 unchecked under the oracle committed at `e18ff1af3392e3823227644c977c237737fe65c9` | 777 true, 21 debt, 13 unchecked; zero open-true→nontrue; repairs are per-anchor review decisions, never a reset. The original 62-list has 58 old-token repairs and four pairing discrepancies, explicitly accounted in the lesson | `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9`; independent fixed-token measurement under `.ufo/waves/round-38/evidence/`; lesson round 38 |
 | 38 | operability (lowest non-retired axis, score held 8) | adjacency ratchet CLEAN on a MANIFEST_SCHEMA shift and on raised ceilings (`build/ExecRatchetBefore.md`); A=7 C=14, f_O=21/24 | per-anchor truth floor frozen before repair; shift check and re-pin fail (AT03/05), debt-growth and checked-shrink fail (AT07/08); 22/22 hermetic selftests; A=8 C=15, f_O=23/26, integer 8 | source S033; `scripts/anchor-truth.mjs`; baseline `e18ff1af3392e3823227644c977c237737fe65c9`; `.ufo/waves/round-38/`; lesson round 38 |
 | 37 | operability (repair-first: fidelity instrument measures the sentence's own adjacent symbol) | round-36 REJECTED-HARMED: 123 true anchors shifted (right-first pairing); fidelity CLEAN was a false green | canonical LEFT-first pairing with shift-must-fail selftest 47/47; four notes reset to 0614092 bytes with a scope-accurate notice; measured ratchet total 200; `FIDELITY: CLEAN (notes=20 anchors=1574 src-rev=31c465f15669)` = no regression; `CHECKLIST: 14/14`; `PROXY: MATCH (C2=84/84 R=92/92)` | `.ufo/waves/round-37/` (repairs, final, falsify reports); `corpus/lessons/round-37.md`; commits `86c0676`, `a5d627b`, `5031720`, `fdac52c`, `fb5b90e` |
@@ -1727,3 +1729,25 @@ section and R9's three sibling-suite sections).
   so `FIDELITY: CLEAN` could not fail at landing, and the 14-character adjacency pairing left
   multi-anchor runs unchecked. The fidelity arm reads adjacency, not anchor truth. Round 38 replaces
   the checklist's anchor item with `scripts/anchor-truth.mjs` (per-anchor pin, frozen `--base`).
+
+## Round 39 — limits and round-40 pre-registration (2026-10-22)
+
+Limits, recorded not hidden. The `--base` floor now matches base-true anchors by raw text,
+resolved path and occurrence, counts non-true anchors per base-true raw text and path, refuses a
+`pair` token that differs from the note's pairing and refuses entry sources other than `pair` or
+`review:<seat>` with a token (`corpus/QUALITY.md` Q19). Two measured gaps stay open: a
+`review:<seat>` source is self-declared (no committed review record is read by the direct entry),
+and a new false anchor at a raw with no base anchor can be traded against one repaired debt anchor
+in the same note (`.ufo/waves/round-39/final/limit-debt-trade.txt`). Environment at round 39,
+measured at both fac39171 and 3908f322: the pin's default source clone
+`/fast/scratch/kumitate-r36/src` is absent, so six checklist items exit 2 (`CHECKLIST: 8/15 pass`,
+`.ufo/waves/round-39/final/checklists-*.txt`), and the live Kimi census reads `DRIFT (UNLISTED
+skills/)` with 52 members, so the proxy derives coverage:kimi-layer 9 against the declared 10.
+The declared integers are not changed by this round; the drift is named here for round 40.
+
+Planned next round (candidates, not commitments): (1) coverage:kimi-layer re-census of the
+seventh `skills/` child (declared 10 vs derived 9); (2) operability: bind `review:<seat>` sources
+to a committed review record and add a new-debt identity rule (debt entries must map to base debt
+by identity), after repairing S8#99; (3) restore the pinned default clone through the
+`.ufo/pins/origin.json` recreate command or move the pin's clone path, so the checklist measures
+the gates again rather than the missing directory.

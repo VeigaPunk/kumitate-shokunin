@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""Round-39 L1 mutation run (scratch). Each mutant: one string replacement in scripts/anchor-truth.mjs
+of a throwaway clone at the candidate; run --selftest, commit in the scratch clone, run the floor probe
+at that commit. Stryker vocabulary (S034): killed = a test failed; survived = all passed; a crash is
+a runtime error, not a kill."""
+import subprocess, os, shutil, re, sys
+LANE='/home/vgpnk/Projects/shokunin/kumitate-shokunin'; REV=sys.argv[1]; SRC='/fast/scratch/hyaku/kumitate-r39/src'
+ROOT='/fast/scratch/hyaku/kumitate-r39/mut'
+PROBE=LANE+'/.ufo/waves/round-39/probe/floor-probe.mjs.txt'
+M=[
+ ('MutIdentityDelete', "      if (!m) findings.push(['BASE_TRUE_LOST', `${note}#${e.ord}`, `${baseIds[i]} true at base, anchor gone`]);\n      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST', `${note}#${m.ord}`, `${baseIds[i]} true at base, ${m.expect} now`]);", "      void m;"),
+ ('MutIdentityKey', "    const id = `${e.raw}@${e.path}`;", "    const id = `${e.key}`;"),
+ ('MutIdentityNoOccurrence', "    return `${id}#${n}`;", "    return `${id}#0`;"),
+ ('MutIdentityNoPath', "    const id = `${e.raw}@${e.path}`;", "    const id = `${e.raw}`;"),
+ ('MutLostAcceptsUnchecked', "      else if (m.expect !== 'true') findings.push(['BASE_TRUE_LOST'", "      else if (String(m.expect).startsWith('debt:')) findings.push(['BASE_TRUE_LOST'"),
+ ('MutGroupDelete', "      if (b.t > 0 && c.n > b.n) findings.push(", "      if (false) findings.push("),
+ ('MutGroupTrueCount', "      if (b.t > 0 && c.n > b.n) findings.push(", "      if (b.t > 0 && c.t < b.t) findings.push("),
+ ('MutTokenForgedDelete', "    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {", "    if (false) {"),
+ ('MutTokenForgedNullSkip', "    if (e.source === 'pair' && e.token !== (x.sym ?? null)) {", "    if (e.source === 'pair' && e.token !== null && e.token !== (x.sym ?? null)) {"),
+ ('MutSourceRuleRevert', "          || typeof e.source !== 'string' || !(e.source === 'pair' || (/^review:\\S+$/u.test(e.source) && e.token !== null))", "          || typeof e.source !== 'string'"),
+ ('MutReviewNullToken', "(/^review:\\S+$/u.test(e.source) && e.token !== null)", "/^review:\\S+$/u.test(e.source)"),
+]
+def sh(*a, **k): return subprocess.run(a, capture_output=True, text=True, **k)
+for name, old, new in M:
+    d=os.path.join(ROOT,name); shutil.rmtree(d, ignore_errors=True)
+    sh('git','clone','-q','--no-hardlinks',LANE,d); sh('git','-C',d,'checkout','-q','--detach',REV)
+    f=os.path.join(d,'scripts/anchor-truth.mjs'); t=open(f).read()
+    if t.count(old)!=1: print(f'{name} INVALID-SPEC occurrences={t.count(old)}'); continue
+    open(f,'w').write(t.replace(old,new))
+    st=sh('node','scripts/anchor-truth.mjs','--selftest',cwd=d)
+    tally=(re.search(r'ANCHOR_TRUTH_SELFTEST: (\d+/\d+)',st.stdout) or [None,'none'])[1]
+    fails=' '.join(re.findall(r'^FAIL (AT\d+)',st.stdout,re.M)) or '-'
+    env=dict(os.environ,GIT_AUTHOR_NAME='m',GIT_AUTHOR_EMAIL='m@m',GIT_COMMITTER_NAME='m',GIT_COMMITTER_EMAIL='m@m')
+    sh('git','-C',d,'commit','-q','-am',name,env=env); mrev=sh('git','-C',d,'rev-parse','HEAD').stdout.strip()
+    pr=subprocess.run(['node','--input-type=module','-','--lane',d,'--rev',mrev,'--src',SRC],stdin=open(PROBE),capture_output=True,text=True)
+    acc=(re.search(r'FLOOR_PROBE accepted=(\d+/\d+)',pr.stdout) or [None,'none'])[1]
+    accepted=' '.join(re.findall(r'^ACCEPTED (\S+)',pr.stdout,re.M)) or '-'
+    direct=sh('node','scripts/anchor-truth.mjs','--src',SRC,'--base','e18ff1af3392e3823227644c977c237737fe65c9',cwd=d)
+    crash = st.returncode not in (0,1) or 'Error' in st.stderr
+    verdict='invalid(runtime error)' if crash else ('killed' if (st.returncode==1 or acc!='0/6') else 'survived')
+    print(f'{name} verdict={verdict} selftest={tally} failing={fails} probe_accepted={acc} accepted={accepted} direct_exit={direct.returncode}')
+    shutil.rmtree(d, ignore_errors=True)
