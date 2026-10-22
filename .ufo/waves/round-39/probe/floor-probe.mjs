@@ -66,8 +66,17 @@ try {
           .replace(orig, 'the worker key is named (`scripts/charter-scribe/config.json:2`)')
           .replace(lead, '`worker` names `"charter-scribe"` (`scripts/charter-scribe/config.json:2`).\n\n' + lead);
         writeFileSync(join(dir, S8), edited);
-        const w = tool(['--write-pin']);
-        if (w.status !== 0) return `re-pin refused: ${w.verdict}`;
+        // Hand-write the consistent pin (the direct entry is the gate; --write-pin is a helper that
+        // loses review tokens when ordinals shift): copy entry inserted true, original unchecked.
+        editPin((E) => {
+          const copy = { ...E[3] };
+          Object.assign(E[3], { token: null, expect: 'unchecked', key: `${E[3].path}|#|a6` });
+          E.splice(3, 0, copy);
+          E.forEach((e, i) => { e.ord = i; });
+        });
+        const p = JSON.parse(readFileSync(join(dir, PIN), 'utf8'));
+        p.notes[S8].anchors = p.notes[S8].entries.length;
+        writeFileSync(join(dir, PIN), JSON.stringify(p, null, 1) + '\n');
         return null;
       }],
     ];
