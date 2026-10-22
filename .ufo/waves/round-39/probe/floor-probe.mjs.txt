@@ -2,7 +2,8 @@
 // Round-39 C2 measurement: does `anchor-truth --base <frozen floor>` accept hand edits that
 // lose a base-true anchor or forge a true one? Runs in a throwaway clone of the lane at --rev;
 // never writes the lane. Prints one line per attack and `FLOOR_PROBE accepted=<a>/<n>`.
-// Usage: node floor-probe.mjs --lane <lane repo> --rev <commit> --src <pinned source clone>
+// Usage: node --input-type=module - --lane <lane repo> --rev <commit> --src <pinned source clone> < floor-probe.mjs.txt
+// (kept as .txt so round evidence is not counted as a lane instrument by the operability proxy term A)
 // Exit 0 when the probe ran (whatever it measured), 2 when the control run is not CLEAN.
 import { spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';

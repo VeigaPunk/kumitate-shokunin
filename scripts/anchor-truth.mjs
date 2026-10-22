@@ -786,6 +786,29 @@ function selfTest() {
       const r = tool(d, ['--base', base]);
       return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out) && /non-true anchors 0 -> 1/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
     });
+    check('AT28', 'a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)', () => {
+      const d = mkSelf('at28', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`. \`BETA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[1], { token: null, expect: 'unchecked' }); });
+      const r = tool(d, []);
+      return { ok: r.status === 1 && /TOKEN_FORGED/.test(r.out), detail: r.verdict };
+    });
+    check('AT29', 'identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading\'s', () => {
+      const d = mkSelf('at29', '## `scripts/a.mjs`\n\n`BETA_MARK` (`:2`).\n\n## `scripts/b.mjs`\n\nSee (`:2`).\n', src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      const base = commit(d);
+      writeFileSync(join(d, NOTE), '## `scripts/b.mjs`\n\n`two` (`:2`).\n\n## `scripts/a.mjs`\n\nSee (`:2`).\n');
+      const w = tool(d, ['--write-pin']);
+      const r = tool(d, ['--base', base]);
+      return { ok: w.status === 0 && r.status === 1 && /BASE_TRUE_LOST/.test(r.out), detail: `${w.verdict} | ${r.verdict}` };
+    });
+    check('AT30', 'a review:<seat> entry with a null token fails closed as PIN_INVALID', () => {
+      const d = mkSelf('at30', `${H}\`ALPHA_MARK\` at \`scripts/a.mjs:3\`.\n`, src);
+      tool(d, ['--write-pin', '--notes', NOTE]);
+      setPin(d, (p) => { Object.assign(p.notes[NOTE].entries[0], { source: 'review:fx', token: null, expect: 'unchecked' }); });
+      const r = tool(d, []);
+      return { ok: r.status === 2 && /PIN_INVALID/.test(r.verdict), detail: r.verdict };
+    });
     check('AT17', 'unknown flag is a usage refusal (exit 64)', () => {
       const r = tool(join(tmp, 'at01'), ['--bogus']);
       return { ok: r.status === 64, detail: `exit=${r.status}` };
