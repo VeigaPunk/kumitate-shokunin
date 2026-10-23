@@ -767,28 +767,29 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Limit.** `run-at` is captured evidence, not a cryptographic timestamp; this check cannot defeat a
     forger who rewrites the timestamp and output together.
 
-- **Q40 — a runner that mounts a sandbox tmpfs must not accept a later bind of that same mount root.**
-  Grounding: S095 states filesystem operations apply in argument order; `ScoutCapRunVisibility` found that
-  `--bind /tmp /tmp` after `--tmpfs /tmp` makes host `/tmp` visible read-write (`corpus/lessons/round-50.md` M4).
-  - **Who checks.** The author adds the root path to the runner's refusal arm and the hermetic usage table;
-    the L1 runs the frozen G50 counter, including a legitimate bind below `/tmp`.
-  - **Field.** `--bind /tmp` exits 64 before bwrap starts; a bind of a real subdirectory under `/tmp` still
-    works, and the child's `/tmp` remains tmpfs.
-  - **Command.** `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> <rev>` (G2/G3).
-  - **Fails when.** A root bind escapes the refusal, a subdirectory bind is denied, the child sees host `/tmp`,
-    or the counter is not `GUARD_HELD`.
+- **Q40 — a runner must not rebind a sandbox-managed mount root, explicitly or through its implicit cwd bind.**
+  Grounding: S095 says filesystem actions apply in argument order; `ScoutCapRunVisibility` found that
+  `--bind /tmp /tmp` after `--tmpfs /tmp` re-exposes host `/tmp`, and `LabratSystemd` reproduced the same
+  escape through cap-run's automatic `--bind cwd cwd` when cwd was `/tmp` (`corpus/lessons/round-50.md` M4).
+  - **Who checks.** The author guards both the parsed bind and the implicit cwd path; the hermetic suite checks
+    both surfaces, and the L1 re-runs G50 at the committed candidate.
+  - **Field.** Explicit whole-root binds and cwd resolved to `/`, `/tmp`, `/proc`, `/sys`, `/dev` or `/run`
+    exit 64 before a child runs; a bind of a real subdirectory under `/tmp` still works.
+  - **Command.** `node scripts/cap-run.mjs --selftest`; `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> <rev>` (G2/G3/G4).
+  - **Fails when.** Any protected root reaches the child, a legal `/tmp` subdirectory bind is refused, or G50
+    is not `GUARD_HELD`.
   - **Shown able to fail.** The pre-guard child wrote `/tmp/r50-host-tmp-exposed` through `--bind /tmp`
-    (`.ufo/waves/round-50/controls/CtlExposure-base-ff40d7d.txt`); the frozen base counter read
-    `GUARD_UNMET held=5/8` (`CtlG50-base-ff40d7d-r1.txt`).
-  - **Limit.** This is a cap-run API rule; direct bwrap callers remain outside its guard.
+    (`.ufo/waves/round-50/controls/CtlExposure-base-ff40d7d.txt`); `LabratSystemd.md` reproduced a host write
+    from cwd `/tmp`; base G50 read `GUARD_UNMET held=5/8` (`CtlG50-base-ff40d7d-r1.txt`).
+  - **Limit.** This guards cap-run's own API, not direct bwrap callers.
 
 - **Q41 — every gate-count sentence in the SKILL registry is reconciled against the `kind=gate` rows.**
   Grounding: the r49 non-author closure found `Twelve are gates` beside two stale “all eleven” sentences
   (`corpus/lessons/round-49-verifier-spotcheck.md:144-145`).
   - **Who checks.** The author counts the registry's `gate` rows and searches every prose count in the same
     section; a non-author compares the count and the full search output before closure.
-  - **Field.** `grep -c '| gate |' SKILL.md` is the row count; `grep -nE 'eleven|twelve|[0-9]+ gates?' SKILL.md`
-    enumerates the count assertions to compare.
+  - **Field.** `grep -c '| gate |' SKILL.md` is the row count; `grep -iEn 'eleven|twelve|[0-9]+ gates?' SKILL.md`
+    enumerates the count assertions, case-insensitively, for comparison.
   - **Fails when.** A count differs from the registry rows or any stale occurrence survives the sweep.
   - **Shown able to fail.** At r49 open, the registry said Twelve while `SKILL.md:595` and `:598` each said
     “all eleven”; the exact conflicting lines are in the verifier-spotcheck artifact above.

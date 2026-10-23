@@ -94,9 +94,10 @@ master:.ufo/reports/round-49/kumitate.md` contains `## Erratum`. `LEDGER_HELD` =
 
 ## Limits, recorded not hidden
 
-(a) The `/tmp` guard refuses the *whole* sandbox-managed mount point only; binds under `/tmp` keep
-working (G3 asserts it). Host `/etc`, `/usr` etc. remain bindable — the r48 registry already treats
-`--bind /etc /etc` as an EXTRA-arm scenario, not a refusal; widening the refusal list is not claimed.
+(a) Explicit binds of the whole `/tmp` root are refused while binds under `/tmp` remain legal (G2/G3).
+The runner's implicit cwd bind is also refused when the resolved cwd is `/`, `/tmp`, `/proc`, `/sys`,
+`/dev`, or `/run`; `/etc` and `/usr` remain bindable. The r48 registry treats `--bind /etc /etc` as
+an EXTRA-arm scenario, not a refusal.
 (b) The G6 pin check binds declared sha256 to extracted bytes; the pin's meaning is only as good as
 proxy-check's GATE_PINS map, which a seat reviews this round.
 (c) R4's spacing proof is preamble+distinct-bytes, not a temporal proof — a forged clock line inside a
@@ -135,4 +136,30 @@ The round-open H1 run is also a conformance signal: its `20/22` baseline has exa
 items (`proxy-check --strict` drift and `sources-check` missing the counter entry header). R50-10
 repairs the existing entry's source trio, adds its referenced S095/S098 rows to `used-by`, and logs
 those permitted old→new field edits. No claim predicate or threshold changes.
+
+## Post-data hardening within C1 (G50 predicate unchanged)
+
+ScoutGuardSweep, ScoutEnumerator, RevCapSpawn, RevMountOrigin, SentArgv, RevGuardDiff and
+LabratSystemd identified a second path to the same mount-root exposure: cap-run always appends
+`--bind cwd cwd`, bypassing explicit `--bind` validation when cwd was `/tmp` or another managed
+mount tree. C1's frozen eight checks and threshold are unchanged; the runner now refuses the
+implicit cwd bind to any sandbox-managed mount path and the existing usage selftest arm executes
+from each protected root. Ordinary `/tmp/<subdir>` binds remain legal. G50 was already reported
+`GUARD_HELD` at `378b6e7` (`.ufo/waves/round-50/r50/RevControlReach.md`); L1 re-runs the unchanged
+G50 command against the follow-up commit to report the final after-state. This is code hardening,
+not a new claim or a predicate amendment.
+
+The post-data selftest arm also checks a symlink source resolving to `/tmp` and a child marker for each
+refusal case. This closes the mutation seat's pre-realpath alias survivor and “print USAGE after child
+run” survivor without changing G50's eight frozen checks.
+
+## Non-claim R50 audit limits found by wave attacks
+
+R50 is a textual conformance audit, not a claim about source authenticity or execution. R1/R6 check
+required strings/headings, not a structured or non-empty ledger; R2/R3 check the pinned hash substring
+anywhere in a receipt, not whether the source was actually fetched; R4 accepts a copied success line
+and self-reported timestamps, and checks only first-to-last span; R5 is a case-sensitive phrase sweep;
+R7/R8 read live lane/fleet state, not committed `<rev>` blobs. R50-8 taskCall shape is not among R1–R8.
+The round records actual L1/seat source re-opens, validator output, and the committed taskCall separately;
+`LEDGER_HELD` alone is never treated as proof that those facts occurred.
 

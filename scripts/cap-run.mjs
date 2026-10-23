@@ -18,6 +18,8 @@
  * at the given path after the tmpfs mounts (bwrap applies mounts in argument order, S095). A
  * subdirectory fixture under host `/tmp` stays visible, but `/tmp` itself cannot be rebound
  * after the tmpfs; `/`, `/tmp`, `/proc`, `/sys`, `/dev` and `/run` are refused.
+ * The implicit cwd bind is guarded after `realpath` too: a cwd that resolves to a protected path is
+ * refused, while a cwd under `/tmp` remains legal.
  * With `--verdict-file <path>` the verdict line is written to that file (created
  * new, O_EXCL|O_NOFOLLOW; on failure the line goes to stderr with `verdict_file_error=<code>`)
  * instead of stderr, so the child's stderr reaches the caller byte-exact (`scripts/cap-spawn.mjs`
@@ -88,7 +90,7 @@
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import {
   accessSync, constants as fsc, existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
-  closeSync, openSync, rmSync, statSync, writeFileSync, writeSync,
+  closeSync, openSync, rmSync, statSync, symlinkSync, writeFileSync, writeSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { constants as osc, tmpdir } from 'node:os';
@@ -108,6 +110,7 @@ const usage = (why) => {
   writeSync(2, `CAP_RUN: USAGE ${why} (contract ${CONTRACT}: --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]... [--verdict-file <path>] -- <cmd> [args...] | --selftest)\n`);
   process.exit(64);
 };
+const isSandboxManagedMount = (p) => p === '/' || p === '/tmp' || /^\/(?:proc|sys|dev|run)(?:\/|$)/.test(p);
 
 function parseArgs(argv) {
   const o = { env: [], bind: [] };
@@ -128,8 +131,7 @@ function parseArgs(argv) {
       let r = null;
       try { r = v.startsWith('/') && statSync(v).isDirectory() ? realpathSync(v) : null; } catch { /* absent */ }
       if (!r) usage(`--bind wants an existing absolute directory, got ${JSON.stringify(v)}`);
-      const bad = (p) => p === '/' || p === '/tmp' || /^\/(?:proc|sys|dev|run)(?:\/|$)/.test(p);
-      if (bad(r) || bad(resolve(v))) usage(`--bind refuses ${JSON.stringify(v)} (root, /tmp, /proc, /sys, /dev and /run stay as the sandbox mounts them)`);
+      if (isSandboxManagedMount(r) || isSandboxManagedMount(resolve(v))) usage(`--bind refuses ${JSON.stringify(v)} (root, /tmp, /proc, /sys, /dev and /run stay as the sandbox mounts them)`);
       o.bind.push([r, resolve(v)]);
     } else {
       if (k === '--verdict-file' && !v.startsWith('/')) usage('--verdict-file wants an absolute path');
@@ -180,6 +182,8 @@ function run(o) {
   const real = resolveCmd(o.cmd[0]);
   if (!real) usage(`command not found: ${JSON.stringify(o.cmd[0])}`);
   const cwd = process.cwd();
+  const cwdReal = realpathSync(cwd);
+  if (isSandboxManagedMount(cwdReal)) usage(`refusing cwd ${JSON.stringify(cwd)} because it would rebind a sandbox-managed mount`);
   const binDir = dirname(real);
   const unit = `cap-run-${process.pid}-${Date.now()}-${randomBytes(3).toString('hex')}`;
   const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
@@ -292,9 +296,9 @@ async function selftest() {
   const sleepJs = 'setTimeout(()=>{},300000)';
   const sleepMs = (ms) => new Promise((r) => setTimeout(r, ms));
   const lim = (mem = '256', budget = '60') => ['--mem', mem, '--tasks', '64', '--budget', budget];
-  const cap = (args) => {
+  const cap = (args, cwd = W) => {
     const t0 = Date.now();
-    const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { cwd: W, env: hostile, encoding: 'utf8', timeout: 60_000, killSignal: 'SIGKILL', maxBuffer: 8 << 20 });
+    const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { cwd, env: hostile, encoding: 'utf8', timeout: 60_000, killSignal: 'SIGKILL', maxBuffer: 8 << 20 });
     const verdicts = (r.stderr || '').split('\n').filter((l) => /^CAP_RUN: /.test(l));
     return { ...r, wall: (Date.now() - t0) / 1000, verdicts, last: verdicts.at(-1) || '' };
   };
@@ -314,9 +318,28 @@ async function selftest() {
       [...lim()], ['--mem', '64', '--tasks', '8', '--', 'true'], [...lim(), '--', `no-such-cmd-${hex()}`], ['--bogus'],
       ['--mem', '64', '--tasks', '8', '--budget', '00.5', '--', 'true'], [...lim(), '--bind', 'rel', '--', 'true'],
       [...lim(), '--bind', `/nonexistent-${hex()}`, '--', 'true'], [...lim(), '--verdict-file', 'rel', '--', 'true'],
-      [...lim(), '--bind', '/', '--', 'true'], [...lim(), '--bind', '/tmp', '--', 'true'], [...lim(), '--bind', '/run', '--', 'true'], [...lim(), '--bind', '/proc/self', '--', 'true']]) {
+      [...lim(), '--bind', '/', '--', 'true'], [...lim(), '--bind', '/tmp', '--', 'true'], [...lim(), '--bind', '/run', '--', 'true'], [...lim(), '--bind', '/proc/self', '--', 'true'], [...lim(), '--bind', '/dev', '--', 'true'], [...lim(), '--bind', '/sys', '--', 'true']]) {
       const r = cap(args);
       if (r.status !== 64 || !/^CAP_RUN: USAGE /.test(r.last)) why.push(`${JSON.stringify(args.slice(0, 2))}:exit=${r.status}`);
+    }
+    const refusalMarker = (label, args, cwd = W) => {
+      const hostFile = join(tmpdir(), `cap-run-refuse-${hex()}`);
+      const token = `CAP_RUN_REFUSAL_CHILD_${hex()}`;
+      const js = `const fs=require('fs');fs.writeFileSync(${JSON.stringify(hostFile)},'x');process.stdout.write(${JSON.stringify(token)}+'\\n')`;
+      rmSync(hostFile, { force: true });
+      const r = cap([...args, '--', 'node', '-e', js], cwd);
+      if (r.status !== 64 || !/^CAP_RUN: USAGE /.test(r.last) || (r.stdout || '').includes(token) || existsSync(hostFile)) {
+        why.push(`${label}:exit=${r.status},child=${(r.stdout || '').includes(token)},host=${existsSync(hostFile)}`);
+      }
+      rmSync(hostFile, { force: true });
+    };
+    const tmpAlias = join(W, `tmp-root-alias-${hex()}`);
+    symlinkSync(tmpdir(), tmpAlias);
+    refusalMarker('symlink source -> /tmp', [...lim(), '--bind', tmpAlias]);
+    rmSync(tmpAlias, { force: true });
+    refusalMarker('--bind /tmp', [...lim(), '--bind', '/tmp']);
+    for (const cwd of ['/', '/tmp', '/proc', '/sys', '/dev', '/run', LAUNCH_ENV.XDG_RUNTIME_DIR]) {
+      refusalMarker(`cwd=${cwd}`, lim(), cwd);
     }
     check('usage arms exit 64 with CAP_RUN: USAGE', why);
   }
