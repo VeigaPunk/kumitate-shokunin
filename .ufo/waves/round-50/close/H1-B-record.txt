@@ -1,0 +1,27 @@
+run-at=2026-10-23T23:12:25Z
+command: node scripts/surface-probe.mjs --checklists
+CHECKLIST  PASS SKILL.md:686 exit=1 expected=0|1 substring=hit wall=5.368 load1=10.42 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:687 exit=0 expected=0 substring=hit wall=1.074 load1=10.71 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:688 exit=0 expected=0 substring=hit wall=0.205 load1=10.71 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:689 exit=0 expected=0 substring=hit wall=1.487 load1=10.71 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:690 exit=0 expected=0 substring=hit wall=8.895 load1=10.73 — Round-gate hermetic suite
+CHECKLIST  PASS SKILL.md:691 exit=0 expected=0 substring=hit wall=0.077 load1=10.84 — Round-close artifact audit
+CHECKLIST  PASS SKILL.md:692 exit=0 expected=0 substring=hit wall=0.072 load1=10.84 — Filed-report tracking
+CHECKLIST  PASS SKILL.md:693 exit=0 expected=0 substring=hit wall=0.098 load1=10.84 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+CHECKLIST  PASS SKILL.md:694 exit=0 expected=0 substring=hit wall=6.057 load1=10.84 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:695 exit=0 expected=0 substring=hit wall=0.062 load1=10.01 — Member-claims gate
+CHECKLIST  PASS SKILL.md:696 exit=0 expected=0 substring=hit wall=0.021 load1=10.01 — Kimi-substrate census
+CHECKLIST  PASS SKILL.md:697 exit=0 expected=0 substring=hit wall=0.024 load1=10.01 — Sources-registry gate
+CHECKLIST  PASS SKILL.md:698 exit=0 expected=0 substring=hit wall=2.725 load1=10.01 — Sources-check hermetic suite
+CHECKLIST  PASS SKILL.md:699 exit=0 expected=0 substring=hit wall=0.639 load1=10.01 — Per-anchor truth burn-down
+CHECKLIST  PASS SKILL.md:700 exit=0 expected=0 substring=hit wall=8.662 load1=10.01 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:701 exit=0 expected=0 substring=hit wall=0.046 load1=9.54 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:702 exit=0 expected=0 substring=hit wall=3.412 load1=9.54 — Wave-census hermetic suite
+CHECKLIST  PASS SKILL.md:703 exit=0 expected=0 substring=hit wall=46.307 load1=9.17 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  PASS SKILL.md:704 exit=0 expected=0 substring=hit wall=0.695 load1=10.45 — Gate-mutants hermetic suite
+CHECKLIST  PASS SKILL.md:705 exit=0 expected=0 substring=hit wall=0.018 load1=10.45 — OMP agent-root census
+CHECKLIST  PASS SKILL.md:706 exit=0 expected=0 substring=hit wall=0.030 load1=10.45 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:707 exit=0 expected=0 substring=hit wall=7.716 load1=10.45 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 22/22 pass
+VERDICT: PASS
