@@ -137,3 +137,17 @@ task-limit path.
 
 **Controls re-scored under A2 before data** (L1, receipts `probe/receipts/controls-A2.txt`): every control commit
 the wave-1 control seats built is re-scored with the A2 counters, plus the do-nothing base.
+
+## Amendment A3 before data (L1, ~08:45Z) — O2's counter observes from outside the runner
+
+Control **CtlC2LabelKeyed met the A1 probe** (`build/CtlC2LabelKeyed.md`, commit `7af3d978` in its scratch clone:
+6/6 three times) by never launching the child and fabricating the child's stdout, progress file and verdict lines;
+the A2 identity clauses read child stdout too, so they were fakeable the same way. No candidate has been scored.
+O2's counter `probe/caprun-probe.mjs` (as committed with this note) now judges each case from what the probe itself
+observes outside the runner: the live child process found in `/proc` by a random marker (`<node> -e <script>
+<marker>`), its `/proc/<pid>/ns/pid`, its cgroup's `memory.max`, its `/proc/<pid>/environ`, the environ of its PID
+namespace's init (NSpid last field 1), plus files the child writes and the runner's exit and stderr. Each case
+requires the child (or K2's grandchild) to be seen alive. The case sentences are in the probe header and are the O2
+predicate; K1(i) now also requires at least one recorded allocation. Calibration (`receipts/calibration.txt`):
+reference runner 6/6 twice; do-nothing base 0/6; CtlC2LabelKeyed's commit `7af3d978` 0/6. O1 is unchanged from A2.
+The kill rule of A2 stands; no further amendment will be made after this commit.

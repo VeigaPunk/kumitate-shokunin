@@ -41,3 +41,40 @@ CASE K5 CAP_HELD
 CASE K6 CAP_HELD
 CAPRUN_PROBE rev=76df5c282898b2841e6c6b39bdef18ec583cfcc9 held=6/6
 exit=0
+# A3 calibration (L1 2026-10-23T08:31:08Z): reference runner 76df5c28 x2, do-nothing base, CtlC2LabelKeyed 7af3d978
+PARAMS M=174 maxAllocs=11 B=3
+CASE K1 CAP_HELD
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 CAP_HELD
+CAPRUN_PROBE rev=76df5c282898b2841e6c6b39bdef18ec583cfcc9 held=6/6
+exit=0
+PARAMS M=140 maxAllocs=9 B=2
+CASE K1 CAP_HELD
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 CAP_HELD
+CAPRUN_PROBE rev=76df5c282898b2841e6c6b39bdef18ec583cfcc9 held=6/6
+exit=0
+PARAMS M=142 maxAllocs=9 B=2
+CASE K1 NOT_HELD(no runner)
+CASE K2 NOT_HELD(no runner)
+CASE K3 NOT_HELD(no runner)
+CASE K4 NOT_HELD(no runner)
+CASE K5 NOT_HELD(no runner)
+CASE K6 NOT_HELD(no runner)
+CAPRUN_PROBE rev=2b2bf7bbdedaff3f0c749a8703002bebb104d15c held=0/6
+exit=1
+PARAMS M=114 maxAllocs=8 B=3
+CASE K1 NOT_HELD(allocs=0,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen)
+CASE K3 NOT_HELD(child_never_seen)
+CASE K4 NOT_HELD(child_env_never_read)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(child_never_seen)
+CAPRUN_PROBE rev=7af3d978d89d5b3bf71b5955d963f30b1ebafcbb held=0/6
+exit=1
