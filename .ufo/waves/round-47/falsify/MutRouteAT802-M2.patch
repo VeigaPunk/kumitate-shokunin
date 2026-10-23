@@ -1,0 +1,26 @@
+From ac7783b6a75ad818df074786723d4681e78a9e7f Mon Sep 17 00:00:00 2001
+From: mut <mut@mut>
+Date: Fri, 23 Oct 2026 07:51:15 -0300
+Subject: [PATCH] MutRouteAT802 M2: raise only selftest child memory to 2048
+ MiB
+
+---
+ scripts/anchor-truth.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a810251..6ac1407 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -804,7 +804,7 @@ function selfTest() {
+     // is bound read-write because the sandbox's /tmp is a fresh tmpfs, the environment is the
+     // allowlist gitEnv() builds (never this process's env), and the budget is 120 s.
+     const r = capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
+-      env: gitEnv(), bind: [tmp], timeout: 120_000,
++      env: gitEnv(), bind: [tmp], timeout: 120_000, mem: 2048,
+     });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+-- 
+2.56.0
+

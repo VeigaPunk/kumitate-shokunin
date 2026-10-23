@@ -1914,3 +1914,13 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   critic); three controls met the A1 counters, redesigned before the committed candidate was scored. Residual call 8
   seats (3 cancelled at close). Harm check item 697 flaky (3/4 checklist runs exit 2; passes alone): unresolved.
   Lesson `corpus/lessons/round-46.md`.
+
+- 2026-10-23 — round 47 (base `0bd8be60`; freeze `cac43009`, A1 `796b49b4`, A2 `8de35e79`; C1 commit `269dadb6`).
+  Repairs R46-1..R46-5 (13 SOURCES rows restored, supersedes rows S080–S092, QUALITY Q35 with checker, checklist
+  receipts keep wall/load/output tails, scratch-only commits exported and reproduced 4/4, cap-run verdict written
+  synchronously). C1 operability: five child sites routed through `cap-run` v2 via `cap-spawn`; strace-based counter;
+  CtlEnvCaps met the freeze rule 5/5 and CtlRetParse met A1 5/5, both before data; all controls 0/5 under A2. L1 score
+  5/5 at `269dadb6`, three wave-2 re-runs 3/5, 3/5, 4/5: not verified (counter observation flaky under load). Wave
+  `build` 44 seats, wave `falsify` 34 seats (16 cancelled at the budget stop). S093–S097 added. Item 697: the battery
+  exits 2 under load at base and freeze alike (unstable/timeout classes; ExecLoad697, RevGateMutants697).
+  Lesson `corpus/lessons/round-47.md`.

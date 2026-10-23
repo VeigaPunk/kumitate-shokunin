@@ -1,0 +1,30 @@
+From d822c7dc829ed4f79e8d14464b4dddb64a12374d Mon Sep 17 00:00:00 2001
+From: mut <mut@mut>
+Date: Fri, 23 Oct 2026 07:50:35 -0300
+Subject: [PATCH] MutRouteAT802 M1: raw selftest child with base environment
+
+---
+ scripts/anchor-truth.mjs | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a810251..2245175 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -800,12 +800,7 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    // The child runs under scripts/cap-run.mjs (contract kumitate-cap-run-v2): the fixture root
+-    // is bound read-write because the sandbox's /tmp is a fresh tmpfs, the environment is the
+-    // allowlist gitEnv() builds (never this process's env), and the budget is 120 s.
+-    const r = capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
+-      env: gitEnv(), bind: [tmp], timeout: 120_000,
+-    });
++    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+   };
+-- 
+2.56.0
+

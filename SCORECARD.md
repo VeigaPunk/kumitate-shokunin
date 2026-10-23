@@ -429,6 +429,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
 | 45 | coverage — PROVINCE frontier band "Isolation substrates for parallel agents" (retired aggregate, no live term; exploratory claim C1, no counting command; sourced on S062–S074, S013, S027, S077) | no corpus entry on the band (`git show 3632602c:corpus/knowledge/agent-isolation-substrates.md` → absent; S013, S027 `queued`) | entry `corpus/knowledge/agent-isolation-substrates.md` committed at `6b2a4517` (judged object), errata X1–X12 appended after wave `a3-falsify`; **verdict: `unprovable` pending the non-author ruling** — the frozen rule admits `unprovable-but-better` only with a named non-author reviewer (requested of the hyaku closure); no integer moves | `.ufo/waves/round-45/plan.md` (rule `cfa99304`, checklist E7 `a2e5b54c` + E9 `31656bdf`), controls `a2-control/`, falsify `a3-falsify/` (`3837d315`), `corpus/lessons/round-45.md` § C1 at close |
 | 44 | operability (lowest non-retired axis; integer held 9; claim type capability acquisition `omp-census`, a new gate over the OMP agent root `~/.omp/agent`; sourced on S053–S058, S060, S061) | frozen counter `p44d-count.mjs` (plan commit `32b7fd56`, sha256 `9ea97d86…`, shape `fcf9fcb6…`, 207 cases) with the census absent at round open `6cda8c35`: `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit 1 (`.ufo/waves/round-44/open/p44d-before-6cda8c35.txt`) | same counter, census `scripts/omp-census.mjs` at `d81978cd` (sha256 `fd4d1c4e…`): `P44_COUNT: MET (passed=207 cases=207 floor=20 …)` exit 0, seed `2676cbe7…` (`.ufo/waves/round-44/final/p44-measured-d81978cd.txt`); 44 skip-work controls UNMET before data (`controls-v4/`); three counter replacements before data, predicate P44 unchanged (`.ufo/waves/round-44/plan.md`) | `git show 32b7fd56:.ufo/waves/round-44/probe/p44d-count.mjs` + `p44-shape.tsv`, `git show <rev>:scripts/omp-census.mjs`, `node p44d-count.mjs --census … --shape … [--seed …]` (plan § Measurement) |
@@ -2057,3 +2058,42 @@ candidate was scored; the 24 child sites are not routed through `cap-run`.
 Planned next round (candidates, not commitments): (1) root-cause item 697 under `surface-probe --checklists` at load;
 (2) route child sites through `cap-run` (ScoutChildSites: 0/24 routable without interface changes — needs an
 exit-code/stderr passthrough contract first); (3) R43-1/R43-5 stay open.
+
+## Round 46 correction (2026-10-23, round 47; routed defect R46-2; supersedes the live wording it names)
+
+The `## Round 46` section above and the round-46 report (fleet, filed; not rewritten) carry three miscounts:
+- "15 rows corrected" → **13** rows were rewritten in place (S003, S004, S013, S041, S047, S051–S055, S061, S073,
+  S076); the other two of the 15 inserted lines are the new rows S078 and S079 (`git diff 2b2bf7bb 9b33e03e --
+  corpus/SOURCES.md`: +15/−13).
+- "item 697 failed in 3 of 4 checklist runs" → **4 of 4** committed close receipts read `FAIL SKILL.md:697 exit=2`;
+  recorded loads 18.96, 27.39 and 55.60 for runs 2–4, not "19–25".
+- The open census carried **W04 S034 and W04 S068**, not only S068.
+The thirteen in-place rewrites breached CORPUS.md Rule 2; round 47 restored their immutable cells and appended the
+corrections as rows S080–S092 (`corpus/lessons/round-47.md` § Gate, row log).
+
+## Round 47 — claim, limits and round-48 pre-registration (2026-10-23)
+
+Claim (Move log row `| 47 |`; plan `.ufo/waves/round-47/plan.md`, freeze `cac43009`, A1 `796b49b4`, A2 `8de35e79`):
+C1 operability — five child-process sites (K488 kimi-census `runGate`, SC549 sources-check `runTool`, SC859 the
+sources-check parity spawn, CC879 claims-check `runClaims`, AT802 anchor-truth selftest `tool()`) launch their child
+through `scripts/cap-run.mjs` (contract `kumitate-cap-run-v2`) via the new helper `scripts/cap-spawn.mjs`.
+`CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze → L1 score `held=5/5 rule=A2` at the C1 commit `269dadb6`
+(`close/c1-a2.txt`); three wave-2 re-runs on the same commit read 3/5, 3/5 and 4/5, so C1 does **not verify** on its
+counter (lesson § Verdict at close). The freeze counter and A1 were each met by a pre-data control (CtlEnvCaps 5/5 under the freeze
+rule; CtlRetParse 5/5 under A1) and re-designed before the candidate was scored; all fourteen controls read 0/5 under
+A2 (`probe/receipts/a2-controls.txt`, `a2-ctl-retparse2.txt`). Repairs R46-1..R46-5 landed (lesson § Routed repairs);
+SOURCES 79 → 97 rows (S080–S092 and S096–S097 supersedes rows, S093–S095 new); QUALITY Q35. Terms: A 21 → 25, C2 104 → 106;
+proxy `--strict` MATCH; integer held 9.
+
+Limits: the counter's exec-ancestry observation is not reproducible under load (root cause open); 19 of the 24 round-46 child sites are not routed (ScoutRemainingSites: 14 of them routable now under v2;
+nested `--selftest` callers, the gate-mutants harness and the free-form checklist runner are blocked); the counter
+observes routing and the runner's options, not the scope's effective cgroup limits (cap-run's own selftest and the
+round-46 O2 probe cover those); selftests of the four routed gates take about 2–4× longer (one scope per child).
+
+Planned next round (candidates, not commitments): (1) route the 14 sites ScoutRemainingSites marks routable-now,
+wave-census and cite-check only after item 697's battery is made load-independent; (2) gate-mutants: a CPU-time
+budget instead of the wall-clock 60 s per mutant (RevGateMutants697, ExecLoad697); (3) R43-1/R43-5 stay open.
+
+*Round-47 note (capabilities; the `cap-run` row stays as written).* Contract `kumitate-cap-run-v2` adds `--bind` and
+`--verdict-file`; five child sites now use it through `scripts/cap-spawn.mjs` (C1 commit `269dadb6`). No capability row
+is added this round.

@@ -96,3 +96,39 @@ reads 0/5 (`no_capped_scope_ancestor` on every site) and every wave-1 control wa
    **captured-by:** the §9 pre-data control wave, through a critic seat; none of the twelve planned controls covered it.
    **fix:** A1 reads systemd-run's own options before its `--`; shown able to fail: the same control reads 0/5 under A1
    (`probe/receipts/a1-ctl-envcaps.txt`).
+
+## Verdict at close (author reading; the non-author closure rules)
+
+- **L1 score.** `CAPROUTE_PROBE … held=5/5 rule=A2` exit 0 at `269dadb6` (`close/c1-a2.txt`, 10:45–10:48Z), the first
+  counter score of the candidate. In that run AT802 counted 104 child execs against 106 at base (cases 44/44), so two
+  execs were not observed.
+- **Re-runs disagree.** Wave-2 seats re-ran the same A2 counter on the same commit as mutation baselines:
+  MutRouteAT802 `held=3/5` (K488 47/48 capped, AT802 103/106), MutRouteK488 `held=3/5` (CC879 43/44, AT802 102/104),
+  MutRouteCC879 `held=4/5` (AT802 102/104) — reasons `no_cap_run_ancestor` / `no_capped_scope_ancestor` on a few
+  execs whose bwrap ancestor was seen, and varying exec counts. The counter's observation of exec ancestry is not
+  reproducible under host load; the cause was not found before the stop (ReviewCounterA2 was redirected to it and
+  cancelled unsettled). Under the kill rule the claim is judged on the counter: **C1 does not verify** — one 5/5 and
+  three re-derivations below 5/5. No rule is changed after data.
+- **What does hold.** ReviewRouteKimi and ReviewRouteAnchor: sound, 0 defects; ReviewSurfaceProbeTail: sound;
+  ReviewSourcesRestore: sound (13 rows restored exactly; Q35 receipts reproduce); CritChronology: no counter ran on
+  the candidate before A2, two static objections (A1 narrows the checked execs to the five signatures; the summary
+  line is not tied to the owning gate's name). All four routed gates' selftests pass with base case totals (L1 and
+  reviewers). MutQ35: 3/5 mutants killed by the committed receipts (the `opened` and removed-row mutants survive them;
+  ExecQ35AppendOnly's scratch fixtures cover both but are not a committed suite).
+- **Re-open defects (wave 2), corrected by appended rows:** S083's locators 61/202/207 were wrong (true lines 55, 196,
+  201; ReopenS083, L1 re-fetch) → **S096** `supersedes S083`; S085's body hash had 63 characters → **S097**
+  `supersedes S085`. Minor, not corrected: S093's `-f` range ends one line early (ReopenS093); this lesson's Gate table
+  gives S085's quote as 12 words, it is 11 (ReopenS085).
+- **Cancelled at the budget stop (no report cited):** ReRunCounter, MutRouteK488, MutRouteSC549, MutRouteSC859,
+  MutRouteCC879, MutRouteAT802 (their IRC baseline readings above are quoted from their messages, not from reports),
+  MutCapRunV2, ReviewRouteSources, ReviewRouteClaims, ReviewCounterA2, HarmChecklists, HarmGates, ReopenS084,
+  ReopenS088, ReopenS091, ReopenS092.
+
+## Mistakes (appended at close)
+
+3. **class:** an outside observer whose verdict depends on catching every exec record, scored once. **evidence:** the
+   L1's 5/5 run itself counted 104/106 AT802 execs; three re-runs read 3/5, 3/5, 4/5. **captured-by:** none — the plan
+   named no repeat-run or count-equality condition, and the calibration jitter (91 vs 106, plan § Calibration) was
+   answered by dropping the exec-count floor instead of finding the loss. **fix:** next round, before freeze, require
+   that the counter reproduce its base reading N times (exec counts equal to base) and treat any count below base as
+   could-not-evaluate; shown able to fail on `269dadb6` (n=104 < 106).

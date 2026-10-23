@@ -1,0 +1,28 @@
+From c730977e70da9890dec5a471e3f50cc7af5d7765 Mon Sep 17 00:00:00 2001
+From: mut <mut@mut>
+Date: Fri, 23 Oct 2026 07:50:34 -0300
+Subject: [PATCH] MutRouteK488 M1: restore raw runGate spawn and inherited
+ environment
+
+---
+ scripts/kimi-census.mjs | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index e0271f1..8280340 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -499,9 +499,7 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+  * else of the caller's reaches it.
+  */
+ function runGate(args, timeout = 30_000, bind = []) {
+-  const r = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
+-    env: { HOME: process.env.HOME }, bind, timeout,
+-  });
++  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
+   return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+ }
+ 
+-- 
+2.56.0
+
