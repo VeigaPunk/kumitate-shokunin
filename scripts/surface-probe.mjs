@@ -136,6 +136,7 @@
  */
 
 import { spawnSync } from 'node:child_process';
+import { capSpawnSync } from './cap-spawn.mjs';
 import { createHash } from 'node:crypto';
 import {
   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
@@ -488,12 +489,22 @@ function readSightingSurface(src) {
   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
   try {
-    const result = spawnSync('bash', [host, 'surface', '--json'], {
+    // The child runs under `scripts/cap-run.mjs` (contract kumitate-cap-run-v2)
+    // via `scripts/cap-spawn.mjs`: the runner's `/tmp` is a fresh tmpfs, so the
+    // throwaway compile cache is bound explicitly, and the child's environment
+    // is stated in full (the runner clears it). The shim execs `node` by PATH
+    // name, so PATH names the interpreter's own directory (resolved outside
+    // `/run`, which the runner mounts as a private tmpfs) plus `/usr/bin`.
+    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
       cwd: src,
+      bind: [cacheRoot],
       encoding: 'utf8',
       timeout: SPAWN_TIMEOUT_MS,
       maxBuffer: MAX_BUFFER,
-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
+      env: gitEnv({
+        PATH: `${dirname(process.execPath)}:/usr/bin`,
+        NODE_COMPILE_CACHE: cacheRoot,
+      }),
     });
     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
     if (result.status !== 0) {
@@ -516,13 +527,18 @@ function readDispatcherStatus(src) {
   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
   const stateDir = join(stateRoot, 'ufo');
   try {
-    const result = spawnSync(process.execPath, [host, 'status'], {
+    // The child runs under scripts/cap-run.mjs (contract kumitate-cap-run-v2):
+    // the throwaway state root is bound because the sandbox's /tmp is a fresh
+    // tmpfs, and the environment is the allowlist gitEnv() builds (never this
+    // process's env), so the child's env carries no ambient identity.
+    const result = capSpawnSync(process.execPath, [host, 'status'], {
       cwd: src,
+      bind: [stateRoot],
       encoding: 'utf8',
       timeout: SPAWN_TIMEOUT_MS,
       maxBuffer: MAX_BUFFER,
       env: {
-        ...process.env,
+        ...gitEnv(),
         UFO_STATE_DIR: stateDir,
         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
         UFO_PROJECT_ROOT: src,
@@ -1589,8 +1605,15 @@ function selfTest() {
 
     /* fixture: CLI-level paths, spawned hermetically -------------------- */
     const selfPath = fileURLToPath(import.meta.url);
-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+    // The CLI-level children of this suite are launched through the bounded runner
+    // `scripts/cap-run.mjs` (contract `kumitate-cap-run-v2`) via `scripts/cap-spawn.mjs`
+    // `capSpawnSync`: this suite's own mkdtemp root is bound (the runner's `/tmp` is a fresh
+    // tmpfs, so the HOME/`--self` fixtures would be invisible without it) and the child's
+    // environment is explicit — `HOME` and `UFO_SRC` plus the caller's own overrides; nothing
+    // else of this process' environment reaches the child.
+    const spawnSelf = (args, env = {}) => capSpawnSync(process.execPath, [selfPath, ...args], {
+      encoding: 'utf8', timeout: 120_000, bind: [tmp],
+      env: { HOME: process.env.HOME, UFO_SRC: process.env.UFO_SRC, ...env },
     });
     const bogus = spawnSelf(['--bogus']);
     check('unknown flag → exit 64 (usage)', () => ({

@@ -45,6 +45,9 @@ export function capSpawnSync(cmd, args, {
     capVerdict = (String(r.stderr || '').trimEnd().split('\n').at(-1) || '').startsWith('CAP_RUN: ')
       ? String(r.stderr).trimEnd().split('\n').at(-1) : '';
   }
+  // Remove the throwaway verdict directory on every exit path (measured leak: 12,801 cap-spawn.*
+  // /tmp dirs accumulated by the round-47/48 routed selftests before this fix — CriticHarm r48 #2).
+  try { rmSync(vd, { recursive: true, force: true }); } catch { /* best effort: /tmp tmpfs reaps */ }
   const m = /^CAP_RUN: (EXIT|OOM|BUDGET|SIGNAL) code=\d+ /.exec(capVerdict);
   if (!m) {
     const last = String(r.stderr || '').trim().split('\n').at(-1) || '';

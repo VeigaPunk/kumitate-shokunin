@@ -126,8 +126,20 @@
  *   in the frozen flag list, so they are unknown flags (exit 64, usage on
  *   stderr); `--json` on a fail-closed path still prints ONE schema object with
  *   `verdict: "FAIL-CLOSED"` and the token as the single finding kind.
+ *
+ * ROUND 48 (2026-10-23): the selftest's gate children (the site `runGate`) are
+ * routed through the bounded runner `scripts/cap-run.mjs` (contract
+ * `kumitate-cap-run-v2`) via `scripts/cap-spawn.mjs` `capSpawnSync`: one
+ * `--bind` of this suite's own `mkdtemp` root (the runner's `/tmp` is a fresh
+ * tmpfs, so the fixtures would otherwise be invisible), an explicit child
+ * environment, the call's 120 s timeout as the runner budget, and the helper's
+ * default 512 MiB / 64-task caps. Command, arguments, cwd, stdout, exit status
+ * and stderr semantics are unchanged; the live audit path still spawns nothing,
+ * and the nested `--selftest` child stays a raw direct child (a named
+ * allowance: a routed nested suite would call systemd-run inside bwrap).
  */
 import { spawnSync } from 'node:child_process';
+import { capSpawnSync } from './cap-spawn.mjs';
 import {
   existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync,
   writeFileSync,
@@ -739,8 +751,16 @@ function selfTest() {
     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
     return r;
   };
-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
+  /**
+   * One gate child under the bounded runner (`kumitate-cap-run-v2`): 512 MiB / 64 tasks /
+   * the call's own 120 s budget, the selftest's mkdtemp root bound read-write (the runner's
+   * `/tmp` is a fresh tmpfs, so the fixtures would otherwise be invisible), and an explicit
+   * child environment — the parent's own `HOME` plus the call's own keys, never the parent's
+   * ambient `KUMITATE_*`/`UFO_SRC`/canary values.
+   */
+  const runGate = (args, extraEnv = {}) => capSpawnSync(process.execPath, [SELF, ...args],
+    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, bind: [tmp],
+      env: { HOME: process.env.HOME, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null', ...extraEnv } });
 
   let seq = 0;
   const fxDir = (name) => {

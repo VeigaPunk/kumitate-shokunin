@@ -2,19 +2,22 @@
 // caproute48-probe.mjs — frozen counter for kumitate round 48, claim C1 (operability).
 // Usage: node caproute48-probe.mjs <lane-repo> <rev> [--set r48|r47]
 //
-// Predicate (label ROUTED_HELD; the same sentence as plan.md § C1):
+// Predicate (label ROUTED_HELD; the same sentence as plan.md § C1; amended pre-data by A48 after
+// control MutSummaryForge M2 read ROUTED_HELD on a forged self-consistent summary):
 //   Site s is ROUTED_HELD at rev r when, in each of 3 runs of the owning gate's `--selftest` from its
 //   own `git archive` of r under `strace -f` with a planted canary variable, the trace parses
 //   completely, the gate exits 0, the line before its final `VERDICT: PASS` is that gate's own suite
-//   summary with n = m and m no lower than the base run's, no FAIL line and no successful execveat
-//   occur, no direct child of the gate is an uncapped launch outside the set's named allowances, the
-//   site's child is exec'd exactly as many times as in the base run (at least once), and every such
-//   exec is preceded, in its own ancestry, by the ordered chain r's `scripts/cap-run.mjs` (node) →
-//   `/usr/bin/systemd-run --scope` whose own options set `-p MemorySwapMax=0`, `-p MemoryMax=<= 1024M`
-//   and `-p TasksMax=<= 256` → `/usr/bin/bwrap` carrying --unshare-pid, --clearenv and
-//   --die-with-parent, with no canary variable in the child's environment.
+//   summary with n = m and m no lower than the base run's, where for gates whose selftest prints
+//   per-case lines the per-case line count equals m and the passing per-case line count equals n,
+//   no FAIL line and no successful execveat occur, no direct child of the gate is an uncapped launch
+//   outside the set's named allowances, the site's child is exec'd exactly as many times as in the
+//   base run (at least once), and every such exec is preceded, in its own ancestry, by the ordered
+//   chain r's `scripts/cap-run.mjs` (node) → `/usr/bin/systemd-run --scope` whose own options set
+//   `-p MemorySwapMax=0`, `-p MemoryMax=<= 1024M` and `-p TasksMax=<= 256` → `/usr/bin/bwrap`
+//   carrying --unshare-pid, --clearenv and --die-with-parent, with no canary variable in the child's
+//   environment.
 // Output: per run `RUN <gate> <tag> …` lines, one `SITE <id> label=ROUTED_HELD|ROUTED_MISS …` line per
-//   site, then `CAPROUTE48 rev=<rev> base=<base> set=<set> held=<h>/<n> runs=3 rule=F48`.
+//   site, then `CAPROUTE48 rev=<rev> base=<base> set=<set> held=<h>/<n> runs=3 rule=F48+A48`.
 //   Exit 0 iff every site of the set is ROUTED_HELD, 1 otherwise, 2 when the probe cannot evaluate
 //   (archive, strace, an unparsed or unresumed trace record, or an invalid base run). Exit 2 is never a score.
 //
@@ -36,6 +39,9 @@
 //   (`exec_count_ne_base`), and the label needs all 3 runs.
 // - CritChronology objection 2: the summary must be the owning gate's own label, on the line before
 //   the final `VERDICT: PASS`.
+// - S098 (strace(1) 7.2 manual, corpus/SOURCES.md): return-value column alignment (`-a`, default
+//   column 40, doc/strace.1.in:832-835) and interleaved unfinished/resumed records (:148-158) are
+//   this parser's `\)\s+= ` funnel and fail-closed resumed-record handling, opened this round.
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -48,6 +54,9 @@ const MACHINE = new Set(['/usr/bin/systemd-run', '/usr/bin/env', '/usr/bin/bwrap
 const FIXTURE_TOOLS = new Set(['/usr/bin/git', '/usr/bin/mkfifo']);
 const TRACED = new Set(['execve', 'execveat', 'clone', 'clone3', 'fork', 'vfork']);
 const isNode = (x) => basename(x.path) === 'node';
+// A48: gates whose `--selftest` prints per-case `PASS/FAIL/SKIP …` lines the summary must agree with.
+// (kimi-census and claims-check print no per-case lines; for them this clause is vacuous — recorded.)
+const CASELINES = new Set(['round-gate', 'surface-probe', 'sources-check', 'anchor-truth']);
 const isShell = (x) => ['sh', 'bash', 'dash'].includes(basename(x.path));
 const selfOf = (gate) => (a) => typeof a[1] === 'string' && a[1].endsWith(`/scripts/${gate}.mjs`);
 const SUMMARY = {
@@ -222,8 +231,12 @@ function runGate(dir, gate, canaryKey, canaryVal, label) {
       const verdictPass = lines.at(-1) === 'VERDICT: PASS';
       const sum = SUMMARY[gate].exec(lines.at(-2) || '');
       const failLines = stdout.split('\n').filter((l) => /^FAIL\b/.test(l)).length;
+      // A48: corroborate a self-consistent forged summary (control MutSummaryForge M2) by counting
+      // the printed per-case lines against the summary's numbers, on gates that print per-case lines.
+      const caseLines = CASELINES.has(gate) ? lines.filter((l) => /^(PASS|FAIL|SKIP)\s/.test(l)).length : -1;
+      const passLines = CASELINES.has(gate) ? lines.filter((l) => /^PASS\s/.test(l)).length : -1;
       done({ status, tail: lines.at(-1) || '', pass: sum ? Number(sum[1]) : -1, total: sum ? Number(sum[2]) : -1,
-        verdictPass, failLines, tree, ...parsed });
+        verdictPass, failLines, caseLines, passLines, tree, ...parsed });
     });
   });
 }
@@ -334,7 +347,7 @@ async function measure(r, tag, runs) {
         process.stdout.write(`RUN ${gate} ${tag}${k} exit=${g.status} cases=${g.pass}/${g.total} execs=${g.execs.length} resumed=${g.resumed} verdict_pass=${g.verdictPass} fail_lines=${g.failLines}\n`);
         for (const s of SET.sites.filter((x) => x.gate === gate)) {
           out[k][s.id] = { ...judge(g, s, canaryKey), dodge: uncappedDirect(g, gate), execveat: g.execveat, status: g.status,
-            pass: g.pass, total: g.total, verdictPass: g.verdictPass, failLines: g.failLines };
+            pass: g.pass, total: g.total, verdictPass: g.verdictPass, failLines: g.failLines, caseLines: g.caseLines, passLines: g.passLines };
         }
       });
     }
@@ -366,6 +379,7 @@ for (const s of SET.sites) {
     if (t.dodge > 0) why.add(`uncapped_direct_children=${t.dodge}`);
     if (t.execveat > 0) why.add(`execveat=${t.execveat}`);
     if (!t.verdictPass) why.add('no_final_verdict_pass');
+    if (CASELINES.has(s.gate) && (t.caseLines !== t.total || t.passLines !== t.pass)) why.add('summary_uncorroborated');
     if (t.failLines > 0) why.add(`fail_lines=${t.failLines}`);
     if (t.total < 1 || t.pass !== t.total || t.total < b.total) why.add('selftest_cases_below_base');
     per.push(`${t.capped}/${t.n}`);
@@ -374,5 +388,5 @@ for (const s of SET.sites) {
   if (ok) held++;
   process.stdout.write(`SITE ${s.id} gate=${s.gate} label=${ok ? 'ROUTED_HELD' : 'ROUTED_MISS'} capped/n=${per.join(',')} base_n=${b.n} cases=${tips.map((x) => `${x[s.id].pass}/${x[s.id].total}`).join(',')} base_cases=${b.pass}/${b.total} uncapped_direct=${tips.map((x) => x[s.id].dodge).join(',')}${ok ? '' : ` reason=${[...why].join(',')}`}\n`);
 }
-process.stdout.write(`CAPROUTE48 rev=${rev} base=${SET.base.slice(0, 8)} set=${setName} held=${held}/${SET.sites.length} runs=${RUNS} rule=F48\n`);
+process.stdout.write(`CAPROUTE48 rev=${rev} base=${SET.base.slice(0, 8)} set=${setName} held=${held}/${SET.sites.length} runs=${RUNS} rule=F48+A48\n`);
 process.exit(held === SET.sites.length ? 0 : 1);
