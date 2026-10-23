@@ -1905,3 +1905,12 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   Correction after residual review (CritLogClaims): the entry has seven mechanisms, **six** demonstrated with a
   do-nothing control (M7 jj workspaces is source-only and no table row relies on it). Residual call `a3-residual`
   (7 seats) reviewed the integration; errata X1′ and X13–X20, a bounded Q30 reading and lesson corrections followed.
+
+- 2026-10-23 — round 46 (base `2b2bf7bb`; freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4
+  `e0c18785`; C1 commit `980a16af`). Repair-first after r42–r45. One operability claim judged only by counters:
+  O1 selftest Git writers in cite-check/proxy-check/round-gate scrub the caller's repository variables (0/3 → 3/3),
+  O2 new runner `scripts/cap-run.mjs` (cgroup cap, explicit env, budget, cleanup, own PID namespace; 0/6 → 6/6).
+  Wave `build` 38 seats (9 controls, 4 executors, 5 scribes, 16 source sweeps, 2 scouts, connector, reviewer,
+  critic); three controls met the A1 counters, redesigned before the committed candidate was scored. Residual call 8
+  seats (3 cancelled at close). Harm check item 697 flaky (3/4 checklist runs exit 2; passes alone): unresolved.
+  Lesson `corpus/lessons/round-46.md`.

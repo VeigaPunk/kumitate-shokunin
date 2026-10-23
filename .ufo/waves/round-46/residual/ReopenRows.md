@@ -1,0 +1,55 @@
+RESULT ReopenRows rev=980a16af verdict=defects rows=15 defects=2
+
+Scope and commands: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16afc7caafe4e924ef117692248fdc7acbd6:corpus/SOURCES.md` → 200 lines; the same command at `2b2bf7bbdedaff3f0c749a8703002bebb104d15c` → 198 lines. Fetched cited HTTP sources with the `curl -sSL --max-time 90 -o <scratch-file> <URL>` commands named below (all exit 0); verified hashes with `sha256sum`. No tool installed or updated. No gates, counters, or selftests run.
+Pinned audit retrieval: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16afc7caafe4e924ef117692248fdc7acbd6:corpus/lessons/round-34.md > /fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/round-34-at-C1.md && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16afc7caafe4e924ef117692248fdc7acbd6:corpus/lessons/round-43.md > /fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/round-43-at-C1.md && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16afc7caafe4e924ef117692248fdc7acbd6:.ufo/waves/round-46/build/SweepS001S005.md > /fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/SweepS001S005-at-C1.md && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16afc7caafe4e924ef117692248fdc7acbd6:.ufo/waves/round-46/build/SweepS051S055.md > /fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/SweepS051S055-at-C1.md && wc -l /fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/*-at-C1.md` → `91 SweepS001S005-at-C1.md`, `76 SweepS051S055-at-C1.md`, `145 round-34-at-C1.md`, `256 round-43-at-C1.md`.
+
+Findings
+- S047 — overstates: `guide/index.md:13` says “If mutated program produces failing tests, this is called a killed mutant.” It does not say K43 (b)–(c)'s numeric nonzero exit or verdict-line requirements; the C1-pinned `corpus/lessons/round-43.md:78-80` explicitly says S047 supports only “a kill is read off failing tests”, not K43 (b)–(c). Also, the amended scope says Infection's MSI sums kills, timeouts, and errors, but the row's anchor remains only lines 13 and 35; the supporting `TotalDefeatedMutants` formula is at source lines 94, 99-101 and is not in that anchor.
+- S055 — overstates: the code attempts `await fs.chmod(dbPath, 0o600);` at line 594, then catches and ignores chmod errors at lines 595-597 (“Ignore chmod failures (e.g., Windows)”). The current unqualified “is set to 0600” is not guaranteed by those bytes.
+
+ROW S003 verdict=holds
+`curl -sSL --max-time 90 -o s003-doc.md https://raw.githubusercontent.com/can1357/oh-my-pi/81fa40e/docs/task-agent-discovery.md` → exit 0, 26,340 bytes, sha256 `6739e902386ee06ff068a8b2c97e36aa0d4086d28b45643efc837c3dbbbe3c81`. At pinned `81fa40e`, lines 168-172: “Discovery uses first-wins dedup by exact agent.name”; lines 152-160 give ordered discovery sources. `functions.grep(pattern="recursive filesystem roots|recursive.*filesystem|filesystem.*roots", path="/fast/scratch/hyaku/kumitate-r46/seats/r-ReopenRows/s003-doc.md")` → No matches found. The removed phrase is unsupported.
+
+ROW S004 verdict=holds
+C1-pinned `corpus/lessons/round-34.md:98` records `omp --version` stdout line 1: “omp/18.12.3”. The amended cell dates that observation to 2026-10-19 and points to S053 for the update. C1-pinned `SweepS001S005.md:55-62` records the later command `systemd-run --user --scope … timeout -s KILL 900 omp --version` → stdout “omp/18.12.6”, exit 0. The dated teach is accurate; the original 10/19 output is not independently reproducible now.
+
+ROW S013 verdict=holds
+`curl -sSL --max-time 90 -o s013-tower.html -D s013.headers https://moonshotai.github.io/kimi-code/en/guides/tower.html` → exit 0; sha256 `05a1e7d1fb7e697c5aa444ec96362b3905b715b0fca9dddbe363eff4424e894d` matches the new anchor. The reader's located bytes say “Every mission has its own branch and Git worktree,” “independent reviews,” “Each workspace can have only one tower coordinator,” and “Worktrees isolate writes, but they are not a security sandbox.” The four teaches clauses and cited sections hold.
+
+ROW S041 verdict=holds
+`curl -sSL --max-time 90 -o s041-sessionLockService.ts https://raw.githubusercontent.com/MoonshotAI/kimi-code/b5e28fd6beac752a2cdcc0ff2f5fdf40e6494fbb/packages/agent-core-v2/src/persistence/backends/node-fs/sessionLockService.ts` → exit 0; sha256 `acbcdd3811903885c2edfeb5e67cf5258921768b814c751c511e4cf7c867ad08`, matching the cited Scout report. Lines 55, 196, 201: `this.lockDir = join(bootstrap.homeDir, 'locks', 'sessions');`; `fs.mkdirSync(this.lockDir, { recursive: true, mode: 0o700 });`; `return join(this.lockDir, `${sessionId}.lock`);`. The new line-201 locator exists and supports the per-session path.
+
+ROW S047 verdict=overstates
+`curl -sSL --max-time 90 -o s047-index.md https://raw.githubusercontent.com/infection/infection.github.io/4d7570f512c9ce6e76203ec192b0009a0b3ac4ce/guide/index.md` → exit 0; sha256 `8a3d6254e64d469b0c7be70957d92c0cf44d174f2917b428bf730f42eae105dc` matches. Lines 13 and 35 exist and support the quote and outcome collection. The MSI claim is at lines 94 and 99-101: “TotalDefeatedMutants = KilledCount + TimedOutCount + ErrorCount;” — not the row's listed anchor. Round-43 lines 78-80 also disavow support for K43 (b)-(c).
+
+ROW S051 verdict=holds
+`curl -sSL --max-time 90 -o s051-circleci.html https://circleci.com/blog/what-is-mutation-testing/` and two repeats → all exit 0; `sha256sum s051-circleci.html s051-repeat2.html s051-repeat3.html` produced the same `814548b75cdc139ae4884b5737e8a86f892ec78a3a8c0d80ac5afc02e6a086f2`, matching the row's abbreviated digest. The target sentence is “A floor of 60–80% on high-risk modules is the realistic target.” The page also contains “Most tools count timeouts as killed”; the threshold/reason clauses are present at the pinned body.
+
+ROW S052 verdict=holds
+`curl -sSL --max-time 90 -o s052-api.json "https://api.stackexchange.com/2.3/questions/73439324/answers?order=desc&sort=votes&site=stackoverflow&filter=withbody"` → exit 0; answer 74067880 exists (score 1, not accepted). Its text says “Such a syntactical change ... is called an equivalent mutant. It cannot be killed by definition.” The second answer 73447929 exists and instead says “Your code is definitely correct” before diagnosing a conciseness issue and offering remedies. “Differ on the diagnosis” is supported.
+
+ROW S053 verdict=holds
+`curl -sSL --max-time 90 -o s053-dirs.ts https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/utils/src/dirs.ts` → exit 0; sha256 `2d423f4f18e5ed0c25cd4887c68cf2fea704f1615ad4c85846ae5c10d3207f24` matches. The expanded 952-1006 range includes `agent.db`, `history.db`, `models.db`, `skill-descriptions.db`, `predict`, `sessions`, and `blobs`; 1007-1050 includes `themes`, `tools`, `commands`, `prompts`, `memories`, `terminal-sessions`, and `custom-session-files`. New lines 992-1006 exist; the member-name list is covered.
+
+ROW S054 verdict=holds
+`curl -sSL --max-time 90 -o s054-sqlite.ts https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/utils/src/sqlite.ts` → exit 0; sha256 `4a60657abb11d2f7ca511aa33e675d5de104242481f32beb3790fcc8fe05d02b` matches. Line 12 names `"-wal", "-shm", "-journal", ""`; line 193 uses `${dbPath}.corrupt-${Date.now()}-${crypto.randomUUID()}`; lines 197-200 chmod and copy those suffixes. The helper takes any `dbPath`; no store caller is identified by the cited helper lines.
+
+ROW S055 verdict=overstates
+`curl -sSL --max-time 90 -o s055-credstore.ts https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/ai/src/auth/sqlite-credential-store.ts` → exit 0; sha256 `11bfdcd9f2b9c99c691fb36b47cedad1640e78b74c78a79cec679d1c234e2673` matches. Lines 580 and 601 support default `getAgentDbPath()` and `{ recoverCorruption: true }`; S053:952-954 names that path `agent.db`. Lines 594-597 make chmod best-effort, not guaranteed, as detailed above.
+
+ROW S061 verdict=holds
+`git -C /home/vgpnk/Projects/shokunin show 4248e9244108ba81141d347b699596dff34847bf:scripts/hyaku/lane-addendum.md` → lines 82-84: “the operator authorized disabling the OMP `rea` MCP entry”; “the orchestrator set `"enabled": false` ... (pre-edit copy `~/.omp/agent/mcp.json.pre-disable-20261020T1015`).” The commit-pinned lines exist and support the corrected orchestrator attribution and authorization.
+
+ROW S073 verdict=holds
+`curl -sSL --max-time 90 -o s073-cli.html https://nodejs.org/docs/v24.21.0/api/cli.html` → exit 0, sha256 `7302f93cda9694927010d4171e181e8a7617a8852242d70f005f1ea65365538c`; lines 4148-4150 say “Sets the max memory size of V8's old memory section.” Host outputs: `node --version` → `v24.21.0`; `uname -r` → `7.2.11-arch1-1`. `MANPAGER=cat man 2 getrlimit && MANPAGER=cat man 1 prlimit` identifies man-pages 6.19 and states RLIMIT_AS limits process virtual address space, brk/mmap can fail with ENOMEM, and children inherit limits. The narrowed wording is accurate; Buffer memory is expressly assigned to S077.
+
+ROW S076 verdict=holds
+`curl -sSL --max-time 90 -o s076-layout.html -D s076.headers https://git-scm.com/docs/gitrepository-layout/2.56.0` → exit 0; response 301 then 200; 632-byte body sha256 `c4cd41972b3b752ac40ac145f98c7e7a887d086dd03c362a3c4a9951e2d79ca5` matches. Body lines 5-7 name canonical/refresh target `https://git-scm.com/docs/gitrepository-layout/2.49.0`; “redirect wrapper, no manual text” is accurate.
+
+ROW S078 verdict=holds
+`curl -sSL --max-time 90 -o s078-child_process.html https://nodejs.org/docs/v24.21.0/api/child_process.html` and the tagged Markdown URL both exited 0; SHA-256s match the row: HTML `fa03f32419b4fa809b6b89bae1925df0f5c08ee03a21fbbddcc4b9dfb6d4353e`, Markdown `32b3209c134878bfd556e50db453353b8360d810e5d72015e104fb254f52b03a`. HTML lines 983/1598 and Markdown 680/1368 contain “Environment key-value pairs. Default: process.env.”; round-46 lesson:24 repeats it verbatim. `printf '%s' 'Environment key-value pairs. Default: process.env.' | wc -w` → `5`.
+
+ROW S079 verdict=holds
+`curl -sSL --max-time 90 -o s079-cgroup-v2.rst https://raw.githubusercontent.com/torvalds/linux/v7.2/Documentation/admin-guide/cgroup-v2.rst` → exit 0; sha256 `a9433bb0e16a67f07a93424c7bf842f47616e9b0a27b51e17d7b34cff246b7ad` matches. Lines 1381-1383 state “If a cgroup's memory usage reaches this limit and can't be reduced, the OOM killer is invoked in the cgroup.” Round-46 lesson:25 repeats it verbatim. `printf '%s' "If a cgroup's memory usage reaches this limit and can't be reduced, the OOM killer is invoked in the cgroup." | wc -w` → `20`.
+
+Residual risk and verification gaps: S004's original 2026-10-19 host output exists only as the round-34 gate transcript; it cannot be reproduced as current state, and the row now dates it. S013's body hash matches; the current response's Last-Modified header was one second earlier (08:04:11 GMT) than the recorded 08:04:12 GMT, with no body difference. No dynamic gate/counter/selftest was run because this item is a source-row re-open.

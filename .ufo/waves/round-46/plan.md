@@ -166,3 +166,18 @@ it must not report a clean pass either. It also resolves the revision after unse
 a replayer that first probes whether `git` works can still pass; the C1 diff is read by a non-author. O2 is unchanged
 from A3: all fifteen O2 control commits scored ≤5/6 (the two half-sandboxes 5/6), two printed no verdict (wrapper
 timeout), the reference runner 6/6.
+
+## Erratum after residual review (CritAmendments; appended, nothing above reworded)
+
+- Committed UTC times: freeze 08:11:45, A1 08:14:12, A2 08:27:31, A3 08:31:49, A4 08:53:53; the C1 candidate
+  `980a16af` 08:54:07; O1/O2 scored 08:54:15/08:54:24. The "~08:45Z"/"~09:02Z" headings above are wrong.
+- A2 names `probe/receipts/controls-A2.txt`; the receipt is `probe/receipts/controls-A3.txt`.
+- A4's "fifteen O2 control commits scored ≤5/6" is wrong: the ledger has 13 control sections, 11 scored (max 5/6,
+  the half-sandboxes) and 2 incomplete (`6b56f0bc`, `ee284a8b`: wrapper SIGKILL, no verdict), plus base 0/6 and the
+  reference 6/6.
+- "Before any candidate was measured" is too strong: the build executors ran development checks on their candidates
+  before A2–A4 (ExecC1Scrub its own hostile canary runs; ExecCapRun its selftest 3×). The registered counters first
+  scored a committed candidate at 08:54, after A4. Every amendment added conditions or observation; none relaxed a
+  target. The judge rules whether development checks count as scoring under §9.
+- The capability row was not in the measured commit `980a16af` (A2 said it would be); it lands in the record commit,
+  and O1/O2 are re-measured there under the unchanged A4 counters (`close/o1-final.txt`, `close/o2-final.txt`).

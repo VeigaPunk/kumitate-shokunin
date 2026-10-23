@@ -88,3 +88,17 @@ candidate was measured (`probe/receipts/controls-A3.txt`).
    the §9 pre-data control wave — it worked: the shortcuts were found before data. **fix:** A2/A3 — two hostile runs
    and a fault run for O1; for O2, observation of the live child from `/proc` outside the runner. Shown able to fail:
    CtlC2LabelKeyed's commit `7af3d978` reads 6/6 under A1 and 0/6 under A3 (`probe/receipts/calibration.txt`).
+
+## Verdict at close (author reading; the non-author closure rules)
+
+- **O1** `GITENV_CANARY held=3/3` and **O2** `CAPRUN_PROBE held=6/6` at `980a16af` (`close/o1-c1.txt`, `o2-c1.txt`);
+  ReRunCounters re-derived both (O2 three times, random M/B) and base O1 0/3. MutC1Scrub: 5/5 weakened scrubs killed
+  (N5 path-keyed caught by run B). ReviewC1Diff: sound (two low findings). ReopenRows: 13/15 rows hold; S047 and S055
+  narrowed after it. CritAmendments: three objections, appended as a plan erratum.
+- **Harm check open.** `proxy-check --strict` MATCH; census exit 0; selftests 76/122/61 and cap-run 10/10 PASS. But
+  checklist item `SKILL.md:697` (gate-mutants battery) read exit 2 in 3 of 4 `surface-probe --checklists` runs at
+  `980a16af` (load 19–25; `close/checklists*.txt`), while the same command run directly, through the same harness
+  alone, and in an item-by-item replay read `GATE_MUTANTS: CLEAN … killed=43` (`close/gate-mutants-direct.txt`). At
+  open it passed once at lower load. Cause not found; it is recorded as a possible operability harm, so the author
+  reading is **not admitted as harm-free**: C1 `improved` on its counters, harm unresolved.
+- Seats MutCapRun, ReviewRepairs and HarmChecks were cancelled at close (budget stop); no report is cited from them.
