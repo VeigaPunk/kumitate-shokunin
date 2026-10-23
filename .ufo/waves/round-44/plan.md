@@ -142,3 +142,25 @@ Seats never write in the lane except their own report file; the L1 integrates th
 - `probe/p44-count.mjs` sha256 `26180b32c6deea7bd18abce6895da2a6d1b1bfdf9de45d41e52d4b8b7d7434c8`
 - `probe/p44-shape.tsv` sha256 `fcf9fcb60138b332770f7d5daeeb667f9d28e83169b5f98963474a7a91403b71`
 - Before receipt `open/p44-before-6cda8c35.txt`: `P44_COUNT: UNMET (passed=0 cases=59 floor=20 census_sha256=absent)` exit=1
+
+## Pre-data redesign (01:24Z, before any seat was dispatched and before any census existed or was scored)
+
+The L1's own pre-dispatch control analysis found a label-keyed shortcut that the v1 case set admits:
+a census that says DRIFT iff some name starts `zq` or ends `.orig`, or a known name changed kind or
+gained group/other bits, reads MET under `p44-count.mjs` without any chain or sidecar rule, because
+v1's strays carried fixed labels. Per this plan's own kill rule ("redesigned before any census is
+scored"), the counter is replaced, not amended: `probe/p44b-count.mjs` (sha256
+`6e2c22a3079f0346456d8aa0bb307221da3c43b08e2b6898fed6f2f0af045517`) is the C1 counter from this
+commit on. **The predicate P44 is unchanged, word for word** (`casePasses` is byte-identical); only case
+generation changes: strays are random letters with a random extension; `near:<m>` is `<m>.` + random
+letters; new `neardigit:<m>` (`<m>.` + 14 random digits, DRIFT) and `crossgen:<f>` (a fresh chain
+generation re-based onto a base file of another extension, DRIFT). At the frozen shape the case set
+is **87** (was 59). `p44-count.mjs` stays committed as history and is not the C1 counter.
+
+Superseding values (everything else above stands):
+
+- Counter: `probe/p44b-count.mjs` everywhere the plan says `probe/p44-count.mjs`.
+- Before: `open/p44b-before-6cda8c35.txt` → `P44_COUNT: UNMET (passed=0 cases=87 floor=20 census_sha256=absent)` exit=1.
+- After target (one value): `P44_COUNT: MET (passed=87 cases=87 floor=20 …)` exit 0 at the measured commit.
+- Kill rule 1 reads `passed=87 cases=87`.
+- Measurement command: as above with `p44b-count.mjs` in both the `git show` and the `node` line.
