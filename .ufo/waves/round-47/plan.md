@@ -114,3 +114,24 @@ exec) is exec'd at least once; and every such exec is preceded, in its own ances
 (`no_capped_scope_ancestor` on every site), calibration K488-only `a1-calib-k488-only.txt` 1/5 (K488 ROUTED_HELD). Every
 wave-1 control patch is re-scored under A1 before the candidate (`probe/receipts/a1-controls.txt`). Target, sites and
 kill rule are unchanged.
+
+## A2 — second counter amendment before data (2026-10-23 ~10:55Z; no candidate scored)
+
+**Why.** Wave-1 reviewer ReviewCounter (`build/ReviewCounter.md`, on the freeze counter) found that the record's return
+value was taken from the first `) = N` match in the line (D3), so an argument string such as `') = 7 x'` hides an exec
+from the parser. A1 kept that regex. The L1 built the control (`probe/receipts/ctl-retparse.patch`, scratch commit
+`259e967b`: a correct runner route of all five sites from CtlFakeRunner's routing with the real v2 runner, except that
+SC859's used parity run is a raw `spawnSync` whose argv carries `') = 7 x'`, plus one routed decoy parity run): under A1
+**`held=5/5` exit 0** (`probe/receipts/a1-ctl-retparse2.txt`). A1 is therefore wrong (§9) and is re-designed before
+any candidate is scored. The C1 commit `269dadb6` had landed at that point but no counter had scored it.
+
+**What A2 adds** (conditions only; nothing removed): D3 — the return value is read only from the end of the record;
+D4 — a run that recorded no execve is exit 2 with its status and stderr shown, never a score; D5 — a base run that
+exits non-zero or prints no suite summary is exit 2, so the no-fewer-cases floor can never be voided. An exit-2 run is
+not a score: it is kept as a receipt and the evaluation is re-run; exit 2 can never produce `ROUTED_HELD`.
+The predicate sentence of A1 stands unchanged (its conditions were already stated; A2 makes the code observe them).
+Target, sites and kill rule are unchanged.
+
+**A2 receipts before data:** the D3 control reads 3/5 under A2 (`a2-ctl-retparse2.txt`: SC549 and SC859 MISS on the
+now-visible raw shell). Every control, calibration, base and freeze receipt is re-scored under A2
+(`probe/receipts/a2-controls.txt`) before the candidate.

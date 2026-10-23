@@ -15,12 +15,15 @@
 //   carrying --unshare-pid, --clearenv and --die-with-parent, with no canary variable in the
 //   child's environment.
 // Output: one `SITE <id> label=ROUTED_HELD|ROUTED_MISS …` line per frozen site, then
-//   `CAPROUTE_PROBE rev=<rev> base=<base> held=<h>/5 rule=A1`. Exit 0 iff held=5/5, 1 otherwise,
+//   `CAPROUTE_PROBE rev=<rev> base=<base> held=<h>/5 rule=A2`. Exit 0 iff held=5/5, 1 otherwise,
 //   2 when the probe cannot evaluate (archive, strace or parse failure).
 // Observation is from outside the gate and the runner: strace's execve/execveat/clone records.
 // A1 (round 47, before any candidate was scored): control CtlEnvCaps (caps moved out of systemd's
 // -p options into env assignments) read held=5/5 under the freeze rule; A1 adds the conditions
 // CritC1Shape objections 1-6 named. Every A1 change adds a condition; none is removed.
+// A2 (round 47, before any candidate was scored): ReviewCounter D3 (a record's return value is read only
+// from its end), D4 (a run with no execve is exit 2 with its status shown) and D5 (an invalid base run —
+// non-zero exit or no suite summary — is exit 2, never a voided floor). Exit 2 is never a score.
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -101,7 +104,9 @@ function parseLog(text) {
     const call = /^(execveat|execve|clone3?|v?fork)\(/.exec(body);
     if (!call) continue;
     // --decode-pids=pidns: a clone inside a PID namespace returns `= 2 /* 3100635 in strace's PID NS */`.
-    const ret = /\) = (-?\d+)(?: \/\* (\d+) in strace's PID NS \*\/)?(?: .*)?$/.exec(body);
+    // A2 (ReviewCounter D3): the return is read only from the END of the record, so an argument string
+    // containing `) = 7` cannot stand in for it.
+    const ret = /\) = (-?\d+)(?: \/\* (\d+) in strace's PID NS \*\/)?(?: E[A-Z0-9]+ \([^()]*\))?$/.exec(body);
     if (!ret) continue;
     const rv = Number(ret[2] ?? ret[1]);
     if (call[1] === 'execveat') {
@@ -136,9 +141,12 @@ function runGate(tree, gate, canaryKey, canaryVal, tag) {
   let size = 0;
   try { size = statSync(log).size; } catch { die(`no strace log for ${gate} (${tag}); status=${r.status} ${String(r.stderr).slice(-300)}`); }
   if (size > MAX_LOG) die(`strace log for ${gate} too large (${size})`);
-  const parsed = parseLog(readFileSync(log, 'utf8'));
+  const text = readFileSync(log, 'utf8');
+  const parsed = parseLog(text);
+  // A2 (ReviewCounter D4): a run that recorded nothing is "cannot evaluate" (exit 2) with its status
+  // and stderr shown; it is never a score. The log is kept until this check passes.
+  if (parsed.rootPid === null) die(`no execve recorded for ${gate} (${tag}); status=${r.status} log_bytes=${size} stderr=${JSON.stringify(String(r.stderr).slice(-300))}`);
   rmSync(log, { force: true });
-  if (parsed.rootPid === null) die(`no execve recorded for ${gate} (${tag})`);
   // A1 (CritC1Shape 2): the owning suite's own summary line, its final `VERDICT: PASS`, and no FAIL case line.
   const lines = String(r.stdout).split('\n');
   const sum = lines.map((l) => /^[A-Z][A-Z_]*_SELFTEST: (\d+)\/(\d+) pass$/.exec(l)).filter(Boolean).at(-1);
@@ -263,6 +271,9 @@ function measure(r, tag) {
 }
 
 const base = measure(BASE, 'base');
+for (const s of SITES) {
+  if (base[s.id].status !== 0 || base[s.id].total < 1) die(`base run invalid for ${s.gate}: status=${base[s.id].status} total=${base[s.id].total}`);
+}
 const tip = rev === BASE ? base : measure(rev, 'rev');
 let held = 0;
 for (const s of SITES) {
@@ -281,5 +292,5 @@ for (const s of SITES) {
   if (ok) held++;
   process.stdout.write(`SITE ${s.id} gate=${s.gate} label=${ok ? 'ROUTED_HELD' : 'ROUTED_MISS'} n=${t.n} base_n=${b.n} capped=${t.capped} uncapped_direct=${t.dodge} cases=${t.pass}/${t.total} base_cases=${b.pass}/${b.total} gate_exit=${t.status}${ok ? '' : ` reason=${why.join(',')}`}\n`);
 }
-process.stdout.write(`CAPROUTE_PROBE rev=${rev} base=${BASE.slice(0, 8)} held=${held}/${SITES.length} rule=A1\n`);
+process.stdout.write(`CAPROUTE_PROBE rev=${rev} base=${BASE.slice(0, 8)} held=${held}/${SITES.length} rule=A2\n`);
 process.exit(held === SITES.length ? 0 : 1);
