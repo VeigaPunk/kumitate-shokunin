@@ -1,0 +1,28 @@
+29,34d28
+< // - Second R47-5 cause (pre-freeze stability runs, 11:21-11:43Z): strace pads the PID prefix to five
+< //   columns, so after the host's PID counter wraps (pid_max 4194304; observed 4193822 → 4745 inside
+< //   one run) a record reads `9879  clone(…)`; A2's `^(\d+) (.*)$` left a leading space in the body and
+< //   the record was skipped (a runner's execve lost, its child's chain broken). The prefix is now
+< //   `^(\d+) +`, every non-empty line that does not parse is exit 2, and a PID created twice in one
+< //   log (reuse, or an untranslated PID-namespace return) is exit 2.
+80,83d73
+<       { id: 'K488', gate: 'kimi-census', kind: isNode, match: selfOf('kimi-census') },
+<       { id: 'SC549', gate: 'sources-check', kind: isNode, match: selfOf('sources-check') },
+<       { id: 'SC859', gate: 'sources-check', kind: isShell, match: (a) => a.includes('sources-check-parity') },
+<       { id: 'CC879', gate: 'claims-check', kind: isNode, match: selfOf('claims-check') },
+149,150c139,140
+<     const m = /^(\d+) +(.*)$/.exec(line);
+<     if (!m) { if (line !== '') die(`unparsed trace line: ${JSON.stringify(line.slice(0, 120))}`); continue; }
+---
+>     const m = /^(\d+) (.*)$/.exec(line);
+>     if (!m) continue;
+189d178
+<       if (parent.has(rv)) die(`pid ${rv} created twice in one log (reuse or an untranslated PID-namespace return)`);
+220c209
+<       rmSync(log, { force: true });
+---
+>       /*keep log*/
+343c332
+<     for (const d of dirs) rmSync(d, { recursive: true, force: true });
+---
+>     /*keep dirs*/ process.stdout.write('DIRS '+dirs.join(' ')+'\n');

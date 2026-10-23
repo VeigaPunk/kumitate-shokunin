@@ -1,0 +1,17 @@
+# Second R47-5 cause (PID-prefix padding after PID wrap), L1 probe 2026-10-23 11:43-11:50Z
+# logs: a counter copy that keeps its logs (rc/keep-variant.diff), set r47 reduced to AT802, rev f00cf278, 3 concurrent rev runs; load1 ~110-137; pid range in rev0 log: 4745 4193178 
+## f00cf278a5ab-rev0-135f9716 padded_prefix_lines=70 sha256=81779a9f053abb11164b332763904a20d6b8362ca52de8f1971b48361f3db01a
+A2 parser+judge: {"n":104,"capped":99,"why":["no_cap_run_ancestor","no_capped_scope_ancestor"],"dodge":0,"execveat":0}
+F48 (prefix fix) parser+judge: F48 {"n":106,"capped":106,"why":[]} resumed=38
+## f00cf278a5ab-rev1-d20471f1 padded_prefix_lines=21 sha256=0eefd6d5846f9fe9a4703fe12b1f2ab95a36851161d33b02027f682e0cb769ac
+A2 parser+judge: {"n":103,"capped":99,"why":["no_capped_scope_ancestor","no_cap_run_ancestor"],"dodge":0,"execveat":0}
+F48 (prefix fix) parser+judge: F48 {"n":106,"capped":106,"why":[]} resumed=65
+## f00cf278a5ab-rev2-a9fc9441 padded_prefix_lines=70 sha256=1cba247dbffe372b0078935756205a8893456426107898ace8694ab9ba130f24
+A2 parser+judge: {"n":104,"capped":96,"why":["no_cap_run_ancestor","no_capped_scope_ancestor"],"dodge":0,"execveat":0}
+F48 (prefix fix) parser+judge: F48 {"n":106,"capped":106,"why":[]} resumed=58
+## example (rev0): runner pid 9879 created by '3968995 clone(...) = 9879'; its records read:
+700:9879  execve("/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node", ["/home/vgpnk/.local/share/fnm/node-versions/v
+## the first-cause logs t1-t3 under the fixed parser:
+t1 F48 {"n":106,"capped":106,"why":[]} resumed=46
+t2 F48 {"n":106,"capped":106,"why":[]} resumed=39
+t3 F48 {"n":106,"capped":106,"why":[]} resumed=59

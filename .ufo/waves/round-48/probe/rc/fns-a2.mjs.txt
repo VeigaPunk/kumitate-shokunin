@@ -1,0 +1,170 @@
+// Parse one strace C value list: "str", [..], numbers, /* comments */, NULL.
+function parseStrings(s, i) {
+  // expects s[i] === '['; returns [array of strings, index after ']']
+  const out = [];
+  i++;
+  while (i < s.length) {
+    while (s[i] === ' ' || s[i] === ',') i++;
+    if (s[i] === ']') return [out, i + 1];
+    if (s[i] === '"') {
+      let v = '';
+      i++;
+      while (i < s.length && s[i] !== '"') {
+        if (s[i] === '\\') {
+          const c = s[i + 1];
+          if (c === 'x') { v += String.fromCharCode(parseInt(s.slice(i + 2, i + 4), 16)); i += 4; continue; }
+          if (/[0-7]/.test(c)) { let j = i + 1; let o = ''; while (j < i + 4 && /[0-7]/.test(s[j])) o += s[j++]; v += String.fromCharCode(parseInt(o, 8)); i = j; continue; }
+          v += { n: '\n', t: '\t', r: '\r', v: '\v', f: '\f', '"': '"', '\\': '\\' }[c] ?? c;
+          i += 2;
+          continue;
+        }
+        v += s[i++];
+      }
+      i++;
+      if (s.startsWith('...', i)) i += 3;
+      out.push(v);
+      continue;
+    }
+    if (s.startsWith('/*', i)) { const j = s.indexOf('*/', i); i = j < 0 ? s.length : j + 2; continue; }
+    if (s.startsWith('...', i)) { i += 3; continue; }
+    const j = s.slice(i).search(/[,\]]/);
+    if (j < 0) return [out, s.length];
+    i += j;
+  }
+  return [out, i];
+}
+
+function parseLog(text) {
+  const parent = new Map();
+  const execs = []; // {pid, seq, path, argv, envp}
+  const pending = new Map();
+  let seq = 0;
+  let rootPid = null;
+  let execveat = 0;
+  for (let line of text.split('\n')) {
+    const m = /^(\d+) (.*)$/.exec(line);
+    if (!m) continue;
+    const pid = Number(m[1]);
+    let body = m[2];
+    if (body.endsWith('<unfinished ...>')) { pending.set(pid, body.slice(0, -'<unfinished ...>'.length)); continue; }
+    const res = /^<\.\.\. (\w+) resumed>(.*)$/.exec(body);
+    if (res) { body = (pending.get(pid) || `${res[1]}(`) + res[2]; pending.delete(pid); }
+    const call = /^(execveat|execve|clone3?|v?fork)\(/.exec(body);
+    if (!call) continue;
+    // --decode-pids=pidns: a clone inside a PID namespace returns `= 2 /* 3100635 in strace's PID NS */`.
+    // A2 (ReviewCounter D3): the return is read only from the END of the record, so an argument string
+    // containing `) = 7` cannot stand in for it.
+    const ret = /\) = (-?\d+)(?: \/\* (\d+) in strace's PID NS \*\/)?(?: E[A-Z0-9]+ \([^()]*\))?$/.exec(body);
+    if (!ret) continue;
+    const rv = Number(ret[2] ?? ret[1]);
+    if (call[1] === 'execveat') {
+      // A1 (CritC1Shape 6): an image replacement through execveat is recorded and fails the gate closed.
+      if (rv === 0) execveat++;
+      continue;
+    }
+    if (call[1] === 'execve') {
+      if (rv !== 0) continue;
+      const pm = /^execve\("((?:[^"\\]|\\.)*)"/.exec(body);
+      if (!pm) die(`unparsed execve line: ${body.slice(0, 120)}`);
+      const [path] = parseStrings(`["${pm[1]}"]`, 0)[0];
+      let k = body.indexOf('[', pm[0].length);
+      const [argv, k2] = parseStrings(body, k);
+      k = body.indexOf('[', k2);
+      const [envp] = k >= 0 ? parseStrings(body, k) : [[]];
+      if (rootPid === null) rootPid = pid;
+      execs.push({ pid, seq: seq++, path, argv, envp });
+    } else if (rv > 0) {
+      parent.set(rv, pid);
+    }
+  }
+  return { parent, execs, rootPid, execveat };
+}
+// A1 (CritC1Shape 4): ancestry at the child's exec time — the ancestor PIDs of the child and only
+// the execs recorded before it, in order.
+function ancestorsOrSelf(p, pid) {
+  const out = [pid];
+  const seen = new Set(out);
+  let q = p.parent.get(pid);
+  while (q !== undefined && !seen.has(q)) { seen.add(q); out.push(q); q = p.parent.get(q); }
+  return out;
+}
+
+// A1 (CritC1Shape 1): systemd-run's own options, before its `--`, as `-p K=V` / `--property=K=V`.
+function scopeProps(x) {
+  const props = new Map();
+  let scope = false;
+  for (let i = 1; i < x.argv.length && x.argv[i] !== '--'; i++) {
+    const a = x.argv[i];
+    if (a === '--scope') scope = true;
+    let kv = null;
+    if ((a === '-p' || a === '--property') && i + 1 < x.argv.length) kv = x.argv[++i];
+    else if (a.startsWith('--property=')) kv = a.slice('--property='.length);
+    else if (a.startsWith('-p') && a.length > 2) kv = a.slice(2);
+    if (kv && kv.includes('=')) props.set(kv.slice(0, kv.indexOf('=')), kv.slice(kv.indexOf('=') + 1));
+  }
+  return { scope, props };
+}
+const isScope = (x) => {
+  if (x.path !== '/usr/bin/systemd-run') return false;
+  const { scope, props } = scopeProps(x);
+  const mm = /^(\d+)M$/.exec(props.get('MemoryMax') || '');
+  const tm = /^(\d+)$/.exec(props.get('TasksMax') || '');
+  return scope && props.get('MemorySwapMax') === '0' && mm && Number(mm[1]) <= 1024 && tm && Number(tm[1]) <= 256;
+};
+const isBwrap = (x) => x.path === '/usr/bin/bwrap' && ['--unshare-pid', '--clearenv', '--die-with-parent'].every((f) => x.argv.includes(f));
+const isNode = (x) => basename(x.path) === 'node';
+const SHELLS = new Set(['sh', 'bash', 'dash']);
+
+// A1 (CritC1Shape 3, 5): every direct child of the gate's root either is exactly one exec of node
+// running the rev's own cap-run.mjs, or execs only the fixture tools below; anything else is an
+// uncapped launch (a dodge through a copied file, renamed label, env, another interpreter included).
+const FIXTURE_TOOLS = new Set(['/usr/bin/git', '/usr/bin/mkfifo']);
+function uncappedDirect(p, tree) {
+  const runner = join(tree, 'scripts', 'cap-run.mjs');
+  let n = 0;
+  for (const [kid, par] of p.parent) {
+    if (par !== p.rootPid) continue;
+    const ex = p.execs.filter((x) => x.pid === kid);
+    if (ex.length === 0) continue;
+    if (ex.length === 1 && isNode(ex[0]) && ex[0].argv[1] === runner) continue;
+    if (ex.every((x) => FIXTURE_TOOLS.has(x.path))) continue;
+    n++;
+  }
+  return n;
+}
+
+function judge(p, tree, site, canaryKey) {
+  const runnerFile = join(tree, 'scripts', 'cap-run.mjs');
+  const cands = p.execs.filter((e) => e.pid !== p.rootPid && !MACHINE.has(e.path)
+    && e.argv[1] !== runnerFile && site.match(e.argv) && site.kind(e));
+  let capped = 0;
+  const why = new Set();
+  for (const e of cands) {
+    const anc = ancestorsOrSelf(p, e.pid);
+    const before = (pid, seqMax) => p.execs.filter((x) => x.pid === pid && x.seq < seqMax);
+    // ordered chain: runner R (node + rev's cap-run.mjs) → systemd-run S → bwrap B → child e,
+    // each recorded before the next and each in the ancestry (or same PID) of the next.
+    let chain = false;
+    let haveR = false; let haveS = false; let haveB = false;
+    for (const bp of anc) {
+      for (const B of before(bp, e.seq).filter(isBwrap)) {
+        haveB = true;
+        for (const sp of ancestorsOrSelf(p, B.pid)) {
+          for (const S of before(sp, B.seq).filter(isScope)) {
+            haveS = true;
+            for (const rp of ancestorsOrSelf(p, S.pid)) {
+              if (before(rp, S.seq).some((R) => isNode(R) && R.argv[1] === runnerFile)) { haveR = true; chain = true; }
+            }
+          }
+        }
+      }
+    }
+    const leak = e.envp.some((v) => v.startsWith(`${canaryKey}=`));
+    if (!haveB) why.add('no_bwrap_ancestor');
+    if (!haveS) why.add('no_capped_scope_ancestor');
+    if (!haveR) why.add('no_cap_run_ancestor');
+    if (leak) why.add('canary_in_env');
+    if (chain && !leak) capped++;
+  }
+  return { n: cands.length, capped, why: [...why], dodge: uncappedDirect(p, tree), execveat: p.execveat };
+}

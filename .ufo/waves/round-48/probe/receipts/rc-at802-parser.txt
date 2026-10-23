@@ -1,0 +1,16 @@
+# R47-5 root cause, L1 probe 2026-10-23 ~11:08-11:15Z, three concurrent strace runs of 'node scripts/anchor-truth.mjs --selftest' in git-archive trees of f00cf278 (same strace flags as the A2 counter); load1 ~63
+## run 1: VERDICT: PASS exit=0 
+A2 parser+judge (round-47 counter lines 53-133,159-247): {"n":106,"capped":106,"why":[],"dodge":0,"execveat":0}
+F48 parser+judge (round-48 counter): F48 {"n":106,"capped":106,"why":[]} resumed=46
+records: unfinished=46 padded_resumed_execve=14
+## run 2: VERDICT: PASS exit=0 
+A2 parser+judge (round-47 counter lines 53-133,159-247): {"n":106,"capped":105,"why":["no_capped_scope_ancestor","no_cap_run_ancestor"],"dodge":0,"execveat":0}
+F48 parser+judge (round-48 counter): F48 {"n":106,"capped":106,"why":[]} resumed=39
+records: unfinished=39 padded_resumed_execve=7
+## run 3: VERDICT: PASS exit=0 
+A2 parser+judge (round-47 counter lines 53-133,159-247): {"n":106,"capped":103,"why":["no_cap_run_ancestor"],"dodge":0,"execveat":0}
+F48 parser+judge (round-48 counter): F48 {"n":106,"capped":106,"why":[]} resumed=59
+records: unfinished=59 padded_resumed_execve=15
+## example dropped record (run 3, pid 2046059 = the cap-run node of a missed AT802 exec)
+2046059 execve("/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node", ["/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/b
+2046059 <... execve resumed>)           = 0

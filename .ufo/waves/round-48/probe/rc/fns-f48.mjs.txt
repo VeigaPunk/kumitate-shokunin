@@ -1,0 +1,177 @@
+function parseStrings(s, i) {
+  // expects s[i] === '['; returns [array of strings, index after ']']
+  const out = [];
+  i++;
+  while (i < s.length) {
+    while (s[i] === ' ' || s[i] === ',') i++;
+    if (s[i] === ']') return [out, i + 1];
+    if (s[i] === '"') {
+      let v = '';
+      i++;
+      while (i < s.length && s[i] !== '"') {
+        if (s[i] === '\\') {
+          const c = s[i + 1];
+          if (c === 'x') { v += String.fromCharCode(parseInt(s.slice(i + 2, i + 4), 16)); i += 4; continue; }
+          if (/[0-7]/.test(c)) { let j = i + 1; let o = ''; while (j < i + 4 && /[0-7]/.test(s[j])) o += s[j++]; v += String.fromCharCode(parseInt(o, 8)); i = j; continue; }
+          v += { n: '\n', t: '\t', r: '\r', v: '\v', f: '\f', '"': '"', '\\': '\\' }[c] ?? c;
+          i += 2;
+          continue;
+        }
+        v += s[i++];
+      }
+      i++;
+      if (s.startsWith('...', i)) i += 3;
+      out.push(v);
+      continue;
+    }
+    if (s.startsWith('/*', i)) { const j = s.indexOf('*/', i); i = j < 0 ? s.length : j + 2; continue; }
+    if (s.startsWith('...', i)) { i += 3; continue; }
+    const j = s.slice(i).search(/[,\]]/);
+    if (j < 0) return [out, s.length];
+    i += j;
+  }
+  return [out, i];
+}
+
+function parseLog(text) {
+  const parent = new Map();
+  const execs = []; // {pid, seq, path, argv, envp}
+  const pending = new Map();
+  let seq = 0;
+  let rootPid = null;
+  let execveat = 0;
+  let resumed = 0;
+  for (const line of text.split('\n')) {
+    const m = /^(\d+) +(.*)$/.exec(line);
+    if (!m) { if (line !== '') die(`unparsed trace line: ${JSON.stringify(line.slice(0, 120))}`); continue; }
+    const pid = Number(m[1]);
+    let body = m[2];
+    if (body.endsWith('<unfinished ...>')) {
+      const c = /^(\w+)\(/.exec(body);
+      if (!c || !TRACED.has(c[1])) continue;
+      if (pending.has(pid)) die(`second unfinished record for pid ${pid}: ${body.slice(0, 120)}`);
+      pending.set(pid, { call: c[1], body: body.slice(0, -'<unfinished ...>'.length) });
+      continue;
+    }
+    const res = /^<\.\.\. (\w+) resumed>(.*)$/.exec(body);
+    if (res) {
+      if (!TRACED.has(res[1])) continue;
+      const pe = pending.get(pid);
+      if (!pe || pe.call !== res[1]) die(`resumed ${res[1]} record with no pending entry for pid ${pid}`);
+      pending.delete(pid);
+      body = pe.body + res[2];
+      resumed++;
+    }
+    const call = /^(\w+)\(/.exec(body);
+    if (!call || !TRACED.has(call[1])) continue;
+    // strace aligns short records' return values to a column, so the gap before `=` is any run of
+    // spaces; the return is read only from the END of the record.
+    const ret = /\)\s+= (-?\d+)(?: \/\* (\d+) in strace's PID NS \*\/)?(?: E[A-Z0-9]+ \([^()]*\))?$/.exec(body);
+    if (!ret) die(`unparsed return in ${call[1]} record of pid ${pid}: ${JSON.stringify(body.slice(0, 80))}…${JSON.stringify(body.slice(-80))}`);
+    const rv = Number(ret[2] ?? ret[1]);
+    if (call[1] === 'execveat') { if (rv === 0) execveat++; continue; }
+    if (call[1] === 'execve') {
+      if (rv !== 0) continue;
+      const pm = /^execve\("((?:[^"\\]|\\.)*)"/.exec(body);
+      if (!pm) die(`unparsed execve line: ${body.slice(0, 120)}`);
+      const [path] = parseStrings(`["${pm[1]}"]`, 0)[0];
+      let k = body.indexOf('[', pm[0].length);
+      const [args, k2] = parseStrings(body, k);
+      k = body.indexOf('[', k2);
+      const [envp] = k >= 0 ? parseStrings(body, k) : [[]];
+      if (rootPid === null) rootPid = pid;
+      execs.push({ pid, seq: seq++, path, argv: args, envp });
+    } else if (rv > 0) {
+      if (parent.has(rv)) die(`pid ${rv} created twice in one log (reuse or an untranslated PID-namespace return)`);
+      parent.set(rv, pid);
+    }
+  }
+  if (pending.size > 0) {
+    const [pid, pe] = [...pending][0];
+    die(`${pending.size} traced record(s) never resumed (first: pid ${pid} ${pe.call})`);
+  }
+  return { parent, execs, rootPid, execveat, resumed };
+}
+
+function ancestorsOrSelf(p, pid) {
+  const out = [pid];
+  const seen = new Set(out);
+  let q = p.parent.get(pid);
+  while (q !== undefined && !seen.has(q)) { seen.add(q); out.push(q); q = p.parent.get(q); }
+  return out;
+}
+
+// systemd-run's own options, before its `--`, as `-p K=V` / `--property=K=V`.
+function scopeProps(x) {
+  const props = new Map();
+  let scope = false;
+  for (let i = 1; i < x.argv.length && x.argv[i] !== '--'; i++) {
+    const a = x.argv[i];
+    if (a === '--scope') scope = true;
+    let kv = null;
+    if ((a === '-p' || a === '--property') && i + 1 < x.argv.length) kv = x.argv[++i];
+    else if (a.startsWith('--property=')) kv = a.slice('--property='.length);
+    else if (a.startsWith('-p') && a.length > 2) kv = a.slice(2);
+    if (kv && kv.includes('=')) props.set(kv.slice(0, kv.indexOf('=')), kv.slice(kv.indexOf('=') + 1));
+  }
+  return { scope, props };
+}
+const isScope = (x) => {
+  if (x.path !== '/usr/bin/systemd-run') return false;
+  const { scope, props } = scopeProps(x);
+  const mm = /^(\d+)M$/.exec(props.get('MemoryMax') || '');
+  const tm = /^(\d+)$/.exec(props.get('TasksMax') || '');
+  return scope && props.get('MemorySwapMax') === '0' && mm && Number(mm[1]) <= 1024 && tm && Number(tm[1]) <= 256;
+};
+const isBwrap = (x) => x.path === '/usr/bin/bwrap' && ['--unshare-pid', '--clearenv', '--die-with-parent'].every((f) => x.argv.includes(f));
+
+// Every direct child of the gate's root is exactly one node exec of the rev's own cap-run.mjs, only
+// fixture-tool execs, or a named allowance of the set; anything else is an uncapped launch.
+function uncappedDirect(p, gate) {
+  const runner = join(p.tree, 'scripts', 'cap-run.mjs');
+  let n = 0;
+  for (const [kid, par] of p.parent) {
+    if (par !== p.rootPid) continue;
+    const ex = p.execs.filter((x) => x.pid === kid);
+    if (ex.length === 0) continue;
+    if (ex.length === 1 && isNode(ex[0]) && ex[0].argv[1] === runner) continue;
+    if (ex.every((x) => FIXTURE_TOOLS.has(x.path))) continue;
+    if (SET.allowDirect(gate, ex)) continue;
+    n++;
+  }
+  return n;
+}
+
+function judge(p, site, canaryKey) {
+  const runnerFile = join(p.tree, 'scripts', 'cap-run.mjs');
+  const cands = p.execs.filter((e) => e.pid !== p.rootPid && !MACHINE.has(e.path)
+    && e.argv[1] !== runnerFile && site.match(e.argv) && site.kind(e));
+  let capped = 0;
+  const why = new Set();
+  for (const e of cands) {
+    const anc = ancestorsOrSelf(p, e.pid);
+    const before = (pid, seqMax) => p.execs.filter((x) => x.pid === pid && x.seq < seqMax);
+    let haveR = false; let haveS = false; let haveB = false;
+    for (const bp of anc) {
+      for (const B of before(bp, e.seq).filter(isBwrap)) {
+        haveB = true;
+        for (const sp of ancestorsOrSelf(p, B.pid)) {
+          for (const S of before(sp, B.seq).filter(isScope)) {
+            haveS = true;
+            for (const rq of ancestorsOrSelf(p, S.pid)) {
+              if (before(rq, S.seq).some((R) => isNode(R) && R.argv[1] === runnerFile)) haveR = true;
+            }
+          }
+        }
+      }
+    }
+    const leak = e.envp.some((v) => v.startsWith(`${canaryKey}=`));
+    if (!haveB) why.add('no_bwrap_ancestor');
+    if (!haveS) why.add('no_capped_scope_ancestor');
+    if (!haveR) why.add('no_cap_run_ancestor');
+    if (leak) why.add('canary_in_env');
+    if (haveR && !leak) capped++;
+  }
+  return { n: cands.length, capped, why: [...why] };
+}
+

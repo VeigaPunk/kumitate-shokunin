@@ -1,0 +1,14 @@
+import { readFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
+const die = (m) => { console.log('DIE', m); process.exit(2); };
+const MACHINE = new Set(['/usr/bin/systemd-run', '/usr/bin/env', '/usr/bin/bwrap', '/usr/bin/systemctl']);
+const FIXTURE_TOOLS = new Set(['/usr/bin/git', '/usr/bin/mkfifo']);
+const TRACED = new Set(['execve', 'execveat', 'clone', 'clone3', 'fork', 'vfork']);
+const isNode = (x) => basename(x.path) === 'node';
+const SET = { allowDirect: () => false };
+const src = readFileSync(new URL('./fns48.mjs', import.meta.url), 'utf8');
+const { parseLog, judge } = new Function('die','basename','join','MACHINE','FIXTURE_TOOLS','TRACED','isNode','SET', src + '; return { parseLog, judge };')(die,basename,join,MACHINE,FIXTURE_TOOLS,TRACED,isNode,SET);
+const [log, tree] = process.argv.slice(2);
+const p = { ...parseLog(readFileSync(log, 'utf8')), tree };
+const site = { kind: isNode, match: (a) => a[1]?.endsWith('/scripts/anchor-truth.mjs') && a.includes('--self') };
+console.log('F48', JSON.stringify(judge(p, site, 'NOPE')), 'resumed=' + p.resumed);
