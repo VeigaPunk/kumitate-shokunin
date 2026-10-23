@@ -757,15 +757,19 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Who checks.** The author records the UTC start time, exact command, output and exit code in each
     separate receipt. The non-author compares hashes and re-derives the timestamp span from those receipts.
   - **Field.** Each receipt begins with `run-at=<ISO-8601 UTC>`; hashes must be distinct and the elapsed span
-    must meet the round's pre-registered minimum. Identical receipts are copies, not independent runs.
+    must meet the round's pre-registered minimum. Identical output-only receipts do not establish
+    independent invocations; genuine deterministic runs can emit identical output.
   - **Command.** `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet <fleet>` (R4).
   - **Fails when.** A timestamp is absent/unparseable, any bytes repeat, any run fails, or the measured span
     is below the frozen minimum.
   - **Shown able to fail.** Round-49 `sha256sum r49/L1-score-0526f898.txt r49/ReRunCounter49-2.txt
     r49/ReRunCounter49-3.txt` → `03a258d6…` ×3; the round-50 control is `R4 MISS files=0`
     (`.ufo/waves/round-50/controls/CtlR50-base-ff40d7d-r2.txt`).
-  - **Limit.** `run-at` is captured evidence, not a cryptographic timestamp; this check cannot defeat a
-    forger who rewrites the timestamp and output together.
+  - **Limit.** `run-at` is captured evidence, not a cryptographic timestamp, and `CritB49CounterAttack`
+    executed this frozen R4 block in memory over one old deterministic body with three rewritten preludes:
+    `PASS files=3 distinct=3 held=3 span_s=600`, `body_distinct=1` — a prelude-only replay satisfies R4.
+    The receipts are author-attested invocation records; defeating a forger needs a separately frozen
+    captured-invocation design, not a text check.
 
 - **Q40 — a runner must not rebind a sandbox-managed mount root, explicitly or through its implicit cwd bind.**
   Grounding: S095 says filesystem actions apply in argument order; `ScoutCapRunVisibility` found that

@@ -146,6 +146,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-49.md` | Round-49: a frozen predicate's *mechanism* sentence can be host-wrong while its wording survives (EXTRA allowlist read `extra=25` on a healthy runner; fix = parent-namespace mount set, shown able to fail), plus the unpinned-instrument routing item; S099 admitted (mountinfo) | `.ufo/waves/round-49/r49/Mistake-fixed-allowlist.txt`, `.ufo/waves/round-49/r49/L1-score-0526f898.txt` |
 | `lessons/round-48-verifier-spotcheck.md` | Round-48 non-author closure: per-claim re-score, source/gate reopens, and routed R47 defects | `.ufo/reports/round-48/kumitate.md`; `.ufo/waves/round-48/` |
 | `lessons/round-49-verifier-spotcheck.md` | Round-49 non-author closure: C1/C2 re-check, gate-ledger disagreement, and routed R50-1..R50-6 | `.ufo/reports/round-49/kumitate.md`; `.ufo/waves/round-49/` |
+| `lessons/round-50.md` | Round-50: the `cap-run` mount-root guard (explicit `/tmp` triple, `/run` etc. and the implicit cwd bind) judged G50 `5/8 → 8/8`, gate-pin family re-pin (incl. `pin.bind-oracle`); r49 closure repairs R50-1..R50-10 judged R50 `1/8 → 8/8`; QUALITY Q39–Q41; S095/S098 re-open HOLD; mistakes M1–M6 | `.ufo/waves/round-50/close/`, `.ufo/waves/round-50/controls/`, `.ufo/waves/round-50/r50/` |
 
 ## Known gaps
 
