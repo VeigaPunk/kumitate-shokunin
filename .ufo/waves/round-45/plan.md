@@ -145,3 +145,24 @@ D3: wave 2 carries one quote re-open seat per cited new row whatever the wave sh
 (`build/CtlQuoteFabricated.md`: fabricated, one-word-changed and wrong-locator MISSING; off-topic FOUND by
 construction) and its scripts (`probe/reopen-quote.sh.txt`, `probe/normalize.py.txt`) land in a commit before the
 entry commit.
+
+## E8 — attempt 2 (appended 2026-10-23 ~05:45Z by the attempt-2 L1 `KumitateR45A2`; nothing above is reworded)
+
+Attempt 1 (`KumitateR45`) died with its orchestrator at 05:25:25Z after landing `cfa99304`, `ca5b0aac`, `a2e5b54c`.
+Its uncommitted lane files (45 untracked, 5 modified tracked; snapshot outside the lane under
+`/fast/scratch/hyaku/kumitate-r45/a2/`) are untrusted scratch: nothing in them is cited until a fresh attempt-2 seat
+or the L1 re-derives it. C1, its verdict rule, F1–F3 and K1–K5 stand unchanged.
+
+- **Shape.** Wave `a2-control` (v1, 50 seats, dispatched 05:34Z): adversarial controls on K1–K5, F1, draft Q30 and Q31
+  (do-nothing, glossary, label-keyed, off-topic, same-effect demo, shortcut generators, comment-only guards) plus
+  independent re-derivation of every inherited input the entry would cite (17 source rows, 6 demos), the eight R44-4
+  owed reviews (verifying attempt-1 findings, not resending their tasks), R43-1/R43-5, R44-2/R44-5/R44-6 and the open
+  DRIFT. No seat of this wave judges the entry. Then the L1 commits the control receipts in their own commit, then the
+  entry commit (verified material only), then wave `a2-falsify` (v1) judges the committed entry per D3/K1–K5.
+- **Control rule.** A K-item that a control meets (do-nothing, glossary or label-keyed entry reads PASS) is amended by an
+  appended erratum here before the entry commit; after the entry commit K1–K5 are frozen as they then read.
+- **R44-3 runner.** Attempt-1 seat `ExecCounterSandbox` left no report (dead). Its task is not resent to any seat. The
+  repair this round is criterion Q31 (source guards plus a required runner selftest), scored against its own
+  shortcut controls; the runner itself is planned for the round that next freezes a counter, and no counter runs
+  this round.
+- **Attempt-1 seat `CritExploratoryPremise`** left no report (dead); not resent.
