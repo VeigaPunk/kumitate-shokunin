@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * cap-run.mjs — bounded child-process runner (contract `kumitate-cap-run-v1`, round 46).
+ * cap-run.mjs — bounded child-process runner (contract `kumitate-cap-run-v2`, rounds 46-47).
  *
  * WHY. No lane runner implemented QUALITY Q31 at round-46 base (24 child sites, no
  * `MemoryMax`; round-45 AuditLaneSandboxes). This runner gives one child a native-memory
@@ -8,11 +8,17 @@
  * own PID namespace, and prints exactly one verdict line.
  *
  * CLI:
- *   node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... -- <cmd> [args...]
+ *   node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]...
+ *     [--verdict-file <path>] -- <cmd> [args...]
  *   node scripts/cap-run.mjs --selftest
  * The child's stdin, stdout and stderr are the runner's; the runner's working directory is
  * bound read-write and is the child's working directory; the rest of `/` is read-only, `/tmp`
- * and `/run` are fresh tmpfs mounts (charged to the scope's memory).
+ * and `/run` are fresh tmpfs mounts (charged to the scope's memory). Round 47 (v2, additive):
+ * each `--bind <dir>` (an existing absolute path) is bound read-write at the same path after
+ * the tmpfs mounts, so a caller's fixture under the host `/tmp` stays visible; with
+ * `--verdict-file <path>` the verdict line is written to that file instead of stderr, so the
+ * child's stderr reaches the caller byte-exact (`scripts/cap-spawn.mjs` uses both). `--budget`
+ * takes positive seconds, decimals allowed (`0.5`), no leading zeros.
  *
  * LAUNCH. `<cmd>` is resolved to a real path first (through the caller's PATH, or relative to
  * the working directory when it contains `/`), because a PATH shim under `/run/user/...` (fnm)
@@ -46,7 +52,8 @@
  * on the cgroup, not the V8 heap, because Buffer memory is accounted apart from the heap
  * (S077), so a V8 flag would not bound it.
  *
- * Verdict (exactly one final stderr line):
+ * Verdict (exactly one final line, on stderr or in the --verdict-file; written synchronously
+ * before exit, so a slow pipe cannot drop it, R46-5):
  *   CAP_RUN: EXIT code=<n> unit=<unit>     child exited (or was signalled) on its own
  *   CAP_RUN: OOM code=<n> unit=<unit>      unit Result=oom-kill or scope memory.events oom_kill > 0
  *   CAP_RUN: BUDGET code=124 unit=<unit>   total budget (--budget seconds, wall) expired
@@ -75,14 +82,14 @@
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import {
   accessSync, constants as fsc, existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
-  rmSync, statSync,
+  rmSync, statSync, writeFileSync, writeSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { constants as osc, tmpdir } from 'node:os';
 import { randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-cap-run-v1';
+const CONTRACT = 'kumitate-cap-run-v2';
 const TOOL_FILE = fileURLToPath(import.meta.url);
 const KILL_GRACE_MS = 3000;
 const OOM_SETTLE_TRIES = 10;
@@ -92,23 +99,29 @@ const LAUNCH_ENV = {
 };
 
 const usage = (why) => {
-  process.stderr.write(`CAP_RUN: USAGE ${why} (contract ${CONTRACT}: --mem <MiB> --tasks <n> --budget <s> [--env K=V]... -- <cmd> [args...] | --selftest)\n`);
+  writeSync(2, `CAP_RUN: USAGE ${why} (contract ${CONTRACT}: --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]... [--verdict-file <path>] -- <cmd> [args...] | --selftest)\n`);
   process.exit(64);
 };
 
 function parseArgs(argv) {
-  const o = { env: [] };
+  const o = { env: [], bind: [] };
   let i = 0;
   for (; i < argv.length && argv[i] !== '--'; i++) {
     const k = argv[i];
-    if (!['--mem', '--tasks', '--budget', '--env'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
+    if (!['--mem', '--tasks', '--budget', '--env', '--bind', '--verdict-file'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
     if (i + 1 >= argv.length) usage(`${k} needs a value`);
     const v = argv[++i];
     if (k === '--env') {
       const j = v.indexOf('=');
       if (j < 1 || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(v.slice(0, j))) usage(`--env wants K=V, got ${JSON.stringify(v)}`);
       o.env.push([v.slice(0, j), v.slice(j + 1)]);
+    } else if (k === '--bind') {
+      let ok = false;
+      try { ok = v.startsWith('/') && statSync(v).isDirectory(); } catch { /* absent */ }
+      if (!ok) usage(`--bind wants an existing absolute directory, got ${JSON.stringify(v)}`);
+      o.bind.push(v);
     } else {
+      if (k === '--verdict-file' && !v.startsWith('/')) usage('--verdict-file wants an absolute path');
       if (o[k.slice(2)] !== undefined) usage(`${k} given twice`);
       o[k.slice(2)] = v;
     }
@@ -116,7 +129,7 @@ function parseArgs(argv) {
   for (const k of ['mem', 'tasks', 'budget']) if (o[k] === undefined) usage(`--${k} is required`);
   if (!/^[1-9][0-9]*$/.test(o.mem)) usage('--mem wants a positive integer MiB');
   if (!/^[1-9][0-9]*$/.test(o.tasks)) usage('--tasks wants a positive integer');
-  if (!/^[0-9]+(\.[0-9]+)?$/.test(o.budget) || !(Number(o.budget) > 0)) usage('--budget wants positive seconds');
+  if (!/^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/.test(o.budget) || !(Number(o.budget) > 0)) usage('--budget wants positive seconds (decimals allowed, no leading zeros)');
   if (argv[i] !== '--' || i + 1 >= argv.length) usage('missing -- <cmd>');
   o.cmd = argv.slice(i + 1);
   return o;
@@ -163,7 +176,7 @@ function run(o) {
   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
     '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
     'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
-    '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--chdir', cwd,
+    '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap((d) => ['--bind', d, d]), '--chdir', cwd,
     '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
     '--argv0', o.cmd[0], real, ...o.cmd.slice(1)];
 
@@ -179,7 +192,12 @@ function run(o) {
     done = true;
     clearTimeout(budget);
     clearInterval(cgWatch);
-    process.stderr.write(`CAP_RUN: ${verdict} code=${code} unit=${unit}\n`);
+    const line = `CAP_RUN: ${verdict} code=${code} unit=${unit}\n`;
+    if (o['verdict-file']) {
+      try { writeFileSync(o['verdict-file'], line); } catch (e) { writeSync(2, `cap-run: cannot write --verdict-file: ${e.code || e.message}\n${line}`); }
+    } else {
+      writeSync(2, line);
+    }
     process.exit(code);
   };
   const forceAfterKill = () => {
@@ -278,7 +296,9 @@ async function selftest() {
   {
     const why = [];
     for (const args of [[], ['--mem', '0', '--tasks', '8', '--budget', '5', '--', 'true'], [...lim(), '--env', 'NOEQ', '--', 'true'],
-      [...lim()], ['--mem', '64', '--tasks', '8', '--', 'true'], [...lim(), '--', `no-such-cmd-${hex()}`], ['--bogus']]) {
+      [...lim()], ['--mem', '64', '--tasks', '8', '--', 'true'], [...lim(), '--', `no-such-cmd-${hex()}`], ['--bogus'],
+      ['--mem', '64', '--tasks', '8', '--budget', '00.5', '--', 'true'], [...lim(), '--bind', 'rel', '--', 'true'],
+      [...lim(), '--bind', `/nonexistent-${hex()}`, '--', 'true'], [...lim(), '--verdict-file', 'rel', '--', 'true']]) {
       const r = cap(args);
       if (r.status !== 64 || !/^CAP_RUN: USAGE /.test(r.last)) why.push(`${JSON.stringify(args.slice(0, 2))}:exit=${r.status}`);
     }
@@ -300,6 +320,33 @@ async function selftest() {
     if (r.status !== 0) why.push(`exit=${r.status}`);
     if (!existsSync(join(W, f)) || readFileSync(join(W, f), 'utf8') !== 'ok') why.push('file_missing');
     check('runner cwd is writable to the child', why);
+  }
+  {
+    const vf = join(W, `verdict-${hex()}`);
+    const err = `ERR_${hex()}\n`;
+    const r = cap(['--mem', '256', '--tasks', '64', '--budget', '30.5', '--verdict-file', vf, '--',
+      'node', '-e', `process.stderr.write(${JSON.stringify(err)});process.exit(3)`]);
+    const why = [];
+    if (r.status !== 3) why.push(`exit=${r.status}`);
+    if (r.stderr !== err) why.push(`stderr=${JSON.stringify(r.stderr)}`);
+    let v = '';
+    try { v = readFileSync(vf, 'utf8'); } catch { why.push('verdict_file_missing'); }
+    if (v && !/^CAP_RUN: EXIT code=3 unit=cap-run-\d+-\d+-[0-9a-f]+\n$/.test(v)) why.push(`verdict_file=${JSON.stringify(v)}`);
+    check('--verdict-file: child stderr byte-exact, verdict line in the file (EXIT code=3, decimal budget)', why);
+  }
+  {
+    const B = mkdtempSync(join(tmpdir(), 'cap-run-bind.'));
+    writeFileSync(join(B, 'in.txt'), 'fixture');
+    const js = 'const f=require("fs");f.writeFileSync(process.argv[1]+"/out.txt",f.readFileSync(process.argv[1]+"/in.txt","utf8"))';
+    const bound = cap([...lim(), '--bind', B, '--', 'node', '-e', js, B]);
+    const outBound = existsSync(join(B, 'out.txt')) ? readFileSync(join(B, 'out.txt'), 'utf8') : '';
+    rmSync(join(B, 'out.txt'), { force: true });
+    const unbound = cap([...lim(), '--', 'node', '-e', js, B]);
+    const why = [];
+    if (bound.status !== 0 || outBound !== 'fixture') why.push(`bound:exit=${bound.status},out=${JSON.stringify(outBound)}`);
+    if (unbound.status === 0 || existsSync(join(B, 'out.txt'))) why.push(`unbound:exit=${unbound.status}`);
+    rmSync(B, { recursive: true, force: true });
+    check('--bind: a host directory outside the cwd is read-write only when bound', why);
   }
   {
     const pk = `CAPST_PASS_${hex()}`;
