@@ -63,9 +63,23 @@ non-author re-read carries that half (`corpus/QUALITY.md` Q38).
   against later disagreement; a rule rewritten after a seat scored is not the claim's rule (the round-42 precedent),
   whatever it passes afterwards.
   `receipt:.ufo/waves/round-48/plan.md@sha256:6faa34aba4acd6c91843af6111193969f7ccd7ee57d03ed1d9b48c0e1e213f8a`
+- **C16 The origin case is the lane's own r42 counter amendment.** A kill rule widened after build seats had already scored the frozen ids is not the claim's rule: the round-42 lesson records the widened rule, the gate's third rule, and the measured 34/41 under the original frozen sentence. That failure is why C14 exists — cite it, never re-derive it. `receipt:corpus/lessons/round-42.md@sha256:5a4822b87cdfa142e1999e4532bc51ae0ead85585577ff1d8f8c8a57be56d58c`
 - **C15 A miss is reported as measured.** An exit-1 re-run is a miss of the claim; it is never averaged away by the
   passing runs, and the honest stop is a landing, not a failure to hide.
   `receipt:.ufo/waves/round-49/controls/CtlNothing-base-b7b040b5.txt@sha256:8e8e3b62dbcf5980551046369baac7b28e796814809a0168dbee2fef0c80b6d7`
+
+## Prior art (out-of-repo citations — prose only, never bound tokens)
+
+- **mado r20** proposed a mountinfo field-5 membership check (`SentinelHarnessNote.md:39-52`) that never landed; its
+  landed `isolation-check.sh` reads no mountinfo. The instrument here is new ground, not a duplicate — and the same
+  note states the oracle's second limit (membership proves the mount **point**, not the bound **bytes**).
+- **mado r25/r26** (leak class + mkdtemp repair), **kake r40/r41** (sandbox observability, random-name countermeasure),
+  **mori r23** (mountinfo probe/oracle split; line order is not stack order) and **tameshi r18** (measured bwrap
+  argument-order masking) are the nearest neighbours. A lane file named `mado-binds.py` is Hyprland **keybind** config:
+  this lane's registry row says "requested **mount** binds" to avoid the collision.
+- Receipt attestation agrees with **tameshi r34**'s verified byte-level rule; the Q36/Q37 criteria in
+  `corpus/QUALITY.md` are the same family as Q38 here. Sibling artifacts live outside this repo, so D49 cannot bind
+  them — they stay prose.
 
 ## Limits
 
