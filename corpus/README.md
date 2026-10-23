@@ -126,6 +126,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-43.md` | Round-43 (repair-first): capability `gate-mutants` re-claimed under one frozen kill predicate K43 (exit non-zero with `VERDICT: FAIL`, confirmed by a rerun with the same FAIL names); independent verdict witnesses in the cite-check and wave-census suites; addendum A1 discriminators after four junk routes read the counter CLEAN; S046–S048 admitted, S049–S052 rejected; D1–D8 dispositions; five mined mistakes | LOG.md round 43; `.ufo/waves/round-43/`; S046–S048 |
 
+| `lessons/round-43-verifier-spotcheck.md` | Round-43 non-author closure (hyaku): rejected as an honest stop — committed junk controls that skip the claimed work (J4, the self-digest tripwire, route A, J4b, CritJunkAtM) met the `gate-mutants` K43 target before and after data; routed defects R43-1..R43-6 (dispositioned in round 44: `lessons/round-43.md` § Round-44 routed corrections, the corrected `gate-mutants` capability row) | the round-43 lane commits, `.ufo/reports/round-43/kumitate.md` |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

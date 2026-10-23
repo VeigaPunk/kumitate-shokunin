@@ -1,0 +1,12 @@
+# Development runs on candidate census bytes before the counted run (plan § Measurement)
+# Frozen counters (p44, p44b, p44c, p44d): ZERO runs on any candidate census bytes by any seat or the L1.
+# Non-frozen runs on candidate bytes, disclosed:
+- ExecCensusBuild (wave 1), candidate sha256 5626f07f9b0f36e398dcf70b366207bd13dc157ffdfb05e277df8c66657bd7ea:
+  its own development harness reproducing p44b's documented 87 cases in the same bwrap shape (not a
+  frozen counter): `DEV_HARNESS cases=87 passed=87 failed=0`; `--selftest` 29/29; live root CLEAN
+  (report .ufo/waves/round-44/controls/ExecCensusBuild.md lines 17-23). The time of that run is not
+  recorded; it was before the p44d freeze (32b7fd56, 01:37:53Z) and before the seat returned (~01:43Z).
+- L1 integration (this commit), candidate bytes fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
+  (5626f07f + source ids filled + notes corrected + optional `extensions` dir, S060): `--selftest`
+  VERDICT: PASS (29 cases); live root `OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=38 findings=0)`.
+  No counter run.

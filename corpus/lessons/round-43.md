@@ -242,3 +242,15 @@ round decides).
   fixed at close, F1 (trial receipt now committed as `final/trial1-working-copy-unstable.txt`), F4 (K43 (a)
   is wider than the round-42 sentence), F5 (reject reason precision) corrected in place, F6 named here: D5's
   "same-sha" covers two of three revisions, and the D3 open count was taken at e5ffcbe7.
+
+## Round-44 routed corrections
+
+### R43-2 — A1 timing and route attribution
+
+The lesson's shorthand “before any measured run” is too broad. A1 was written before a counter run at an integrated measured commit, but after seat counter data: ExecCensusWitness recorded `SURVIVED frozen=38/41` in the lane at `19:30:09 -03`, 36 seconds before A1's `19:30:45 -03` commit (`corpus/lessons/round-43-verifier-spotcheck.md:96-100`; evidence file `build/ExecCensusWitness.md:38`). This corrects timing, not whether A1 preceded measurement at an integrated commit.
+
+The report's attribution “four routes led to A1” is wrong. A1 names two controls, J4 and the tripwire. Route A ran before A1 but A1 does not name it; J4b came from a falsify seat after the measured run (`corpus/lessons/round-43-verifier-spotcheck.md:39-43,83-87`).
+
+### R43-6 — Earlier runs on the same suite bytes
+
+Beside the after receipt, record these earlier runs on the same suite bytes (cite-check sha256 `227f5645…`, wave-census sha256 `76447250…`): (1) the L1 working-copy frozen-counter trial, receipt `final/trial1-working-copy-unstable.txt`, read `ERROR … frozen=38/41 unstable=3`; (2) diagnostic-gate run 1 and (3) diagnostic-gate run 2, both later working-copy runs that read CLEAN before the counted run. The two diagnostic runs used a diagnostic copy of the gate, not the frozen counter; the closure does not give them separate receipt paths or exact timestamps. The labels “run 1” and “run 2” distinguish the two executions here only (`corpus/lessons/round-43-verifier-spotcheck.md:114-116,178-185`).

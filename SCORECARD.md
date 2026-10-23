@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=11
-C=19
+A=16
+C=21
 C1=19
 C1_total=19
-C2=96
-C2_total=96
+C2=97
+C2_total=97
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=115bfde46d6a24ce2216dd21fff8234f09468f94924ecd7c8ef17276a9c8a4d8
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
 pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=4c2819b02ded6aff7ca64d069e5c955ba7a01a0495e3b4bdf1fc92f97dd8024a
+pin.proxy-check=da3de1fb1ff826da9e7a8d07b49812e4d84d220d16c3531feadd90b3e0dce826
 pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
 pin.kimi-census=0f9c5a4c361316e111d0b2636780da5b8d848ccaa5c41507e8f8357ab6090075
 -->
@@ -314,6 +314,7 @@ pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055
 pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
+pin.omp-census=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
 -->
 
 
@@ -1708,7 +1709,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 |---|---|---|---|
 | `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## Registry`, nonempty required cells, enums, tier inflation, used-by resolution, both rejected reason and flip condition, the frozen `16a5441` headerless-legacy identity set, direct `corpus/knowledge/*.md` new-entry header trios and overdue rechecks; nested knowledge files are outside this gate, not implicitly admitted | `node scripts/sources-check.mjs` → `SOURCES_CHECK: CLEAN (rows=20 …)`; `--selftest` 46/46; fleet validator; separate `SKILL.md` gate-registry row, outside parent-frozen v1 pins | round 34 |
 | `wave-census` | Read a round's committed swarm evidence: per validated wave (`ufo-swarm-wave-dispatch-v1` payload or bare residual `{context, tasks}`) the seats, seats per role, attack seats and the reports present or absent at each task's `Report:` path; assert a declared count with `--expect [<round>/]<wave>:<role>=<n>` (role `attack` = attack total; exit 1 on mismatch or unknown role); resumed seats (`resumeSends`) counted apart; a report counts only as a non-empty regular file at a `Report:` path without a `..` segment; a task without a string name and agent, or any read error, fails closed (exit 2); flag `COUNT_MISMATCH`, `REGISTRY_MISMATCH`, `STRAY_REPORT`. A payload proves validation, not dispatch, and an absent report does not say why | `bash .ufo/waves/round-41/probe/wave-recount.sh.txt` → `RECOUNT_MISMATCHES=0 CAPABILITY_ROWS=2 EXPECT_4_EXIT=1 EXPECT_3_EXIT=0` (receipts `.ufo/waves/round-41/final/wave-recount-measured-4e58bb0e.txt` and `wave-recount-final.txt` at fae386aa, 7 rows per listing; before `wave-recount-before-27592977.txt`); `--round 38 --round 39 --round 40` itself reads `DRIFT` from four round-38 stray report files; `--round 40 --expect build:mutation-tester=4` exit 1, `=3` exit 0 (a declared count checked against the payload: the round-40 slip R40-6); `--selftest` 26/26 at the attempt-2 tip: WC21–WC23 pin the three late repairs (`.ufo/waves/round-41/final/a2-census-repair-mutants.txt`, 3/3 killed), WC24 observes the suite's own verdict through a child run with one injected failure and WC25 pins six `--expect` edges (`a2-census-survivor-mutants.txt`, 10/10 killed), WC26 pins ten finding-logic edges (`a2-census-findings-mutants.txt`, 10/10 killed); the mutants are the survivors found by verify seats MutCensusExpect, MutCensusFindings and CritMistakeClasses; 23/23 at fae386aa, 20/20 after the falsify repair, 12/12 at 4e58bb0e; S038 | round 41 |
-| `gate-mutants` | Show that the lane's own gate suites observe the conditions they claim to pin: a frozen embedded manifest of single-literal mutants (41 frozen ids over `cite-check` and `wave-census`, plus named extras) is applied one at a time to a temp copy of the measured `scripts/` (working copy or `--rev`), each copy's `--selftest` run detached under `prlimit` with a timeout, a process and memory cap and an allowlisted environment; per mutant `killed` (a `FAIL ` case line), `survived`, `drift` (passed with fewer cases than the control), `nomatch`, `crash`, `timeout`; header names the revision and the sha256 of the mutated bytes; exit 0 / 1 survivor or drift / 2 could-not-evaluate / 64. Literal mutants only; covers two of the ten gates; a refactored line reads `nomatch` | `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)`; `--selftest` 23/23; `--rev dfabe92… --target cite-check` exit 1; SKILL.md gate-registry row and checklist items 18–19; S039. **Round 43 (re-evidenced under K43):** frozen counter `0f4108bf` (sha256 `e24749e4…`) `--rev 84cb1d5d` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 …)` exit 0 (`.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`); round-open bytes read `SURVIVED … frozen=34/41` exit 1 (`open/c1-control-base.txt`); the round-42 pointer above was not reproducible under the round-42 pre-data kill rule | round 42 |
+| `gate-mutants` | Show that the lane's own gate suites observe the conditions they claim to pin: a frozen embedded manifest of single-literal mutants (41 frozen ids over `cite-check` and `wave-census`, plus named extras) is applied one at a time to a temp copy of the measured `scripts/` (working copy or `--rev`), each copy's `--selftest` run detached under `prlimit` with a timeout, a process and memory cap and an allowlisted environment; per mutant `killed` (a `FAIL ` case line), `survived`, `drift` (passed with fewer cases than the control), `nomatch`, `crash`, `timeout`; header names the revision and the sha256 of the mutated bytes; exit 0 / 1 survivor or drift / 2 could-not-evaluate / 64. Literal mutants only; covers two of the ten gates; a refactored line reads `nomatch` | **Not verified in rounds 42 and 43.** Round 42: the non-author verifier ruled C1 “does not verify” (`corpus/lessons/round-42-verifier-spotcheck.md:91`; re-cited at `corpus/lessons/round-43-verifier-spotcheck.md:45-50`). Round 43: the frozen counter read `SURVIVED … frozen=34/41` exit 1 on round-open bytes and `CLEAN … frozen=41/41` exit 0 at measured commit `84cb1d5d`, but committed junk controls that skip the claimed work also reached the target; the claim did not verify (`corpus/lessons/round-43-verifier-spotcheck.md:21-25,45-50,79-105`). The measured commit `84cb1d5d` differs from shipped tip `b01ded32`: cite-check sha256 `227f5645…` at the measured commit vs `115bfde4…` at the shipped tip; no lane-committed frozen-counter receipt existed for the shipped bytes at round-43 close (`corpus/lessons/round-43-verifier-spotcheck.md:110-113`). Round 44 (R43-3) ran the round-43 frozen counter (sha256 `e24749e4…`) once over the shipped tip: `GATE_MUTANTS: ERROR (mutants=43 killed=40 frozen=38/41 … unstable=2 timeout=1)` exit 2 at load 4.3→8.7 (`.ufo/waves/round-44/controls/ExecR43ShippedReceipt.md`; non-kills `wave-census:survivor/M12-known-roles-arm`, `survivor/M13-attack-arm` unstable, `survivor/V194-check-ok-true` timeout; `wave-census.mjs` is byte-identical at 84cb1d5d and b01ded32). The shipped bytes therefore have no CLEAN frozen-counter receipt; the row records the miss and no claim rests on it. | round 42 |
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 

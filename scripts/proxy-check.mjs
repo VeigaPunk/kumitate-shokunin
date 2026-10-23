@@ -463,6 +463,7 @@ const GATE_PINS = {
   'pin.sources-check': 'scripts/sources-check.mjs',
   'pin.wave-census': 'scripts/wave-census.mjs',
   'pin.gate-mutants': 'scripts/gate-mutants.mjs',
+  'pin.omp-census': 'scripts/omp-census.mjs',
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
