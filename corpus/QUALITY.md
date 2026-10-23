@@ -508,3 +508,106 @@ plan; the (a) case carries no `k43-` prefix), Q26 fails on receipt naming (the c
     control produces the success verdict; a hit requires redesign before data or an explicit exploratory claim.
   - **Demonstrated at round 43.** The J4 receipt commit `fb3eab40` precedes measured `84cb1d5d`; its `CLEAN`
     line makes this check exit 1 (`.ufo/waves/round-43/build/ExecJunkControls.md:26`).
+
+- **Q29 ordering note (round 45, routed defect R44-2).** The round-44 closure asked for control receipts "in a commit
+  earlier than the counter they score, not in the same one". A receipt that scores frozen counter bytes cannot
+  precede the counter's freeze commit, so the field reads: each control receipt lands in its **own** commit, a
+  descendant of the counter's freeze commit and an ancestor of the measured receipt, and never in the counter's
+  freeze commit. Round 44's receipts shared `32b7fd56` with p44d; that fails this note (recorded, not re-judged).
+  Add to the Q29 command, with `K=<counter path>` (the line exits 1 when the receipt commit also last touched the
+  counter):
+  ```sh
+  test "$(git -C "$L" log -1 --format=%H "$C" -- "$K")" != "$C" || { echo 'Q29: FAIL receipts share the counter commit'; exit 1; }
+  ```
+  On round 44 (`C=32b7fd56`, `K=.ufo/waves/round-44/probe/p44d-count.mjs`) it prints the FAIL line. (A draft of this
+  note read `git log -1` without `"$C"` and ended in `|| echo`, so it measured HEAD and never exited 1 — round-45
+  seat ScoutErrataCheck item 3.)
+
+Q30–Q32 were added in round 45 (routed defects R44-1 and R44-3, and the round-45 mined mistake) and are in force from
+the round-46 plan. The round-45 receipts named below are attempt-2 seats under `.ufo/waves/round-45/a2-control/`.
+
+- **Q30 — a counter's CLEAN cases must not recur across seeds (catalog hole); necessary, not sufficient.** A counter
+  whose CLEAN shapes are few and repeat from run to run can be met by a program that memorises those shapes instead of
+  applying per-member rules. Grounding: `corpus/lessons/round-44-verifier-spotcheck.md` § Routed defects 1 (R44-1);
+  `.ufo/waves/round-44/falsify/CtlPostDataA.md` (three catalog programs read `P44_COUNT: MET (passed=207 cases=207)`
+  under p44d after data).
+  - **Who checks.** The L1 before the counter freeze; the non-author closure re-runs the command on the frozen bytes.
+  - **Field.** The frozen plan names the counter's listing command and two seeds; the command below must print
+    `CATALOG_GATE: PASS`. Before freeze the plan also scores, as controls against the counter itself, the round-44
+    skip-work shapes adapted to the new counter (CtlPostDataA's three catalog programs, CtlLabelKeyedA/B,
+    CritV3LabelB, CritV3Boundary) **and a junk-variation catalog** (a fixed catalog plus one random irrelevant member
+    per seed); each must read the counter's failure verdict (Q29 receipts).
+  - **Command.** `.ufo/waves/round-45/probe/catalog-check.mjs.txt` (sha256
+    `51e11b8f73929b49a07f14401eb9f3c9dcb50a6bb9dfa1b342a736c57cd8a63a`; copy to `catalog-check.mjs`). The
+    `--require-fresh` flag is required: without it the script prints `CATALOG_GATE: PASS` even after
+    `CATALOG: REUSED` (CtlQ30Reproduce risk 1).
+    ```sh
+    node catalog-check.mjs --label <counter> --cmd "node <counter>.mjs --census {CENSUS} --shape {SHAPE} --seed {SEED} --list" \
+      --shape <shape.tsv> --seed-a 0011223344556677 --seed-b aabbccddeeff0011 --require-fresh; echo exit=$?
+    ```
+    It hashes each CLEAN case's whole expected shape (sorted name, kind, mode lines; ids, case order and DRIFT
+    cases ignored) under both seeds: `CATALOG: REUSED` + `CATALOG_GATE: FAIL` (exit 1) when any CLEAN shape recurs,
+    `CATALOG: FRESH` + `CATALOG_GATE: PASS` (exit 0) otherwise; an unrebuildable listing exits 2.
+  - **Fails when.** Any CLEAN shape recurs across the two seeds; the listing cannot be rebuilt (exit 2); a named
+    control, including the junk-variation catalog, meets the counter.
+  - **Measured in round 45 (re-derived by attempt-2 seat CtlQ30Reproduce, same bytes).** p44d (`32b7fd56`):
+    `CATALOG: REUSED (clean=19 recurring=9)`, `CATALOG_GATE: FAIL`, exit 1; fresh-variation toy
+    (`probe/toy-count.mjs.txt`): `CATALOG: FRESH (clean=12 recurring=0)`, exit 0; the toy with its seed pinned:
+    `REUSED (clean=12 recurring=12)`, exit 1.
+  - **Limit (control CtlQ30Shortcuts).** Id-only and order-only variation of a fixed catalog read `REUSED` (killed),
+    but appending one junk member `zz-<seed>` to every fixed shape reads `CATALOG: FRESH (clean=12 recurring=0)`,
+    `CATALOG_GATE: PASS`, exit 0. The gate tests whole-shape novelty, not novelty of the members the counter's rules
+    inspect, so it cannot certify a counter alone; the junk-variation control against the counter (Field) is what
+    closes that hole. A rule-relevant fingerprint (drop members no census rule names) is proposed, not built.
+
+- **Q31 — a counter's sandbox bounds environment, native memory, total time and leftovers; the selftest decides.**
+  Grounding: `corpus/lessons/round-44-verifier-spotcheck.md` § Routed defects 3 (R44-3: SentinelSandboxEscape,
+  SentinelProcLeak); `corpus/knowledge/agent-isolation-substrates.md` M5 and M6 (round-45 demos RedoDemoBwrapEnv and
+  RedoDemoNativeMemCap).
+  - **Who checks.** The L1 before freezing a counter that runs code under test; the non-author closure re-runs the
+    source guards and the runner's selftest.
+  - **Field.** The counter (or the runner it calls) runs `env -i PATH=… HOME=…` as the immediate parent of bwrap, and
+    `--clearenv --setenv` for the command (`systemd-run --scope` outside `env -i` passes the caller environment into
+    the scope, S072); each case runs in a cgroup scope with `MemoryMax` and `MemorySwapMax=0`; a total budget still
+    prints one verdict line; the work directory is removed on SIGTERM/SIGINT. Behavioural selftest: a planted
+    environment marker is absent from `/proc/1/environ` inside the sandbox, and a 512 MiB Buffer under a 256M scope
+    exits 137.
+  - **Command.** Source guards over the counter file `F` (a tripwire; each missing guard prints a FAIL line):
+    ```sh
+    bad=0
+    grep -q 'env:' "$F" || { echo 'Q31: FAIL explicit launcher environment'; bad=1; }
+    grep -Eq 'MemoryMax=|memory\.max|cgroup|counter-sandbox' "$F" || { echo 'Q31: FAIL native-memory cgroup'; bad=1; }
+    grep -Eq 'TOTAL_BUDGET|totalBudget|deadline|--budget' "$F" || { echo 'Q31: FAIL verdict-preserving total budget'; bad=1; }
+    grep -Eq "process\.on.*SIG(TERM|INT)|trap .*(TERM|INT)" "$F" || { echo 'Q31: FAIL signal cleanup handler'; bad=1; }
+    test "$bad" -eq 0
+    ```
+    plus the behavioural selftest receipt of the runner. The guards alone are not proof (control
+    CtlQ31GuardShortcut): p44d with the four strings added only as comments passes all four greps, and
+    `env: process.env` passes the environment guard while passing the host environment. Both are rejected only by
+    the selftest clause in **Fails when**.
+  - **Fails when.** Any guard line prints; the runner's selftest receipt is absent or not PASS; the marker is found in
+    `/proc/1/environ`.
+  - **Measured in round 45.** On p44d (`32b7fd56:.ufo/waves/round-44/probe/p44d-count.mjs`) all four guards print
+    FAIL, exit 1 (CtlQ31GuardShortcut, `p44d_fails=4/4`). No runner exists yet (attempt-1 seat ExecCounterSandbox
+    died without a report and was not resent), so no counter can pass Q31 until a runner and its selftest land.
+  - **Known residual channels (SentinelBwrapEnvI).** Even with `env -i` and `--clearenv`, sandboxed code can read
+    `/proc/1/cmdline` (bwrap's argv), inherited file descriptors (fds pointing at the launcher's tty) and any
+    explicitly bound runtime directory. A runner passes no secret in argv, closes inherited fds or runs with
+    `--new-session`, and binds no `/run` or `$XDG_RUNTIME_DIR`.
+
+- **Q32 — every corpus note has a README row at every round commit, including non-author closure files.** Mined in
+  round 45 (`corpus/lessons/round-45.md` § Mistakes): eight round-open receipts (rounds 35, 36, 40–45) record a
+  `C2_TOTAL_DRIFT` caused by the previous round's `round-<N-1>-verifier-spotcheck.md` landing without a README row
+  (seat ScoutDriftCause). The non-author file is never edited; the lane adds its README row in the round's first
+  lane commit that touches `corpus/`.
+  - **Who checks.** The L1 at each corpus commit; the non-author closure at the round tip.
+  - **Command.** Prints every note without a row, exits 1 if any:
+    ```sh
+    REV=<lane commit>; export LC_ALL=C
+    out=$(comm -23 <(git -C "$L" ls-tree -r --name-only "$REV" corpus/knowledge corpus/lessons | grep '\.md$' | sed 's#^corpus/##' | sort) \
+      <(git -C "$L" show "$REV":corpus/README.md | grep -oE '^\| `(knowledge|lessons)/[^`]+`' | sed 's/^| `//; s/`$//' | sort -u))
+    [ -z "$out" ] || { printf '%s\n' "$out"; echo 'Q32: FAIL note without README row'; exit 1; }
+    ```
+  - **Fails when.** Any line prints.
+  - **Shown able to fail.** At `3632602c` it prints `lessons/round-44-verifier-spotcheck.md`; at `6cda8c35` it
+    prints `lessons/round-43-verifier-spotcheck.md` (L1 runs, round 45).

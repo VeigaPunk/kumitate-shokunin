@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+// catalog-check.mjs — R44-1 repair command.
+//
+// Decides whether a counter's CLEAN cases are memorisable, i.e. whether a catalog of expected
+// shapes can stand in for the counter. Method: run the counter's CASE LISTING twice with two
+// different seeds, and for every case labelled CLEAN compute a shape fingerprint — a SHA-256 of
+// the case's whole expected shape (every entry of the mirror the case expects: name, kind,
+// permission bits), ignoring the case id and the order of cases and entries. A fingerprint that
+// occurs under both seeds is a shape the counter repeats, so a catalog could memorise it.
+//
+// Output (one line, the repair command's verdict):
+//   CATALOG: REUSED (clean=<n> recurring=<k>)   when at least one CLEAN shape recurs
+//   CATALOG: FRESH  (clean=<n> recurring=0)     when no CLEAN shape recurs
+// plus a CATALOG_DETAIL line with the fraction and the ids that recurred.
+//
+// Usage:
+//   node catalog-check.mjs --label NAME --cmd "<template>" --shape FILE --seed-a HEX --seed-b HEX
+// The template is run with /bin/sh -c; the placeholders {SEED}, {SHAPE} and {CENSUS} are
+// substituted (CENSUS becomes a path that does not exist: the listing runs nothing).
+//
+// The shape is reconstructed from the frozen base shape plus the case's note, and the
+// reconstruction is checked against the entry count the listing prints; a mismatch is an error
+// (exit 2), never a silent pass.
+//
+// Note grammar accepted (the counter's own CASE-line notes):
+//   +name:kind:mode   one added entry
+//   -N sidecars       N sidecar entries removed
+//   -chains           every chain entry removed
+// Any other note token in a CLEAN case is an error.
+
+import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+function die(msg) { console.error(`CATALOG_CHECK: ERROR (${msg})`); process.exit(2); }
+
+const argv = process.argv.slice(2);
+const o = { label: 'unnamed', cmd: null, shape: null, seedA: null, seedB: null, ignoreNotes: false, fingerprintMode: 'shape', requireFresh: false };
+for (let i = 0; i < argv.length; i++) {
+  const a = argv[i];
+  if (a === '--label') o.label = argv[++i];
+  else if (a === '--cmd') o.cmd = argv[++i];
+  else if (a === '--shape') o.shape = argv[++i];
+  else if (a === '--seed-a') o.seedA = argv[++i];
+  else if (a === '--seed-b') o.seedB = argv[++i];
+  else if (a === '--ignore-notes') o.ignoreNotes = true; // mutant: fingerprint the base shape only
+  else if (a === '--fingerprint') o.fingerprintMode = argv[++i]; // mutant: 'shape' (default) or 'id'
+  else if (a === '--require-fresh') o.requireFresh = true; // gate mode: exit 1 when REUSED
+  else die(`unknown argument ${a}`);
+}
+if (!o.cmd || !o.shape || !o.seedA || !o.seedB) die('--cmd, --shape, --seed-a and --seed-b are required');
+
+function readShape(file) {
+  const out = [];
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    if (line === '' || line.startsWith('#')) continue;
+    const [name, kind, mode] = line.split('\t');
+    if (!name || !['file', 'dir', 'symlink', 'other'].includes(kind) || !/^[0-7]{3}$/.test(mode || '')) {
+      die(`bad shape line: ${line}`);
+    }
+    out.push({ name, kind, mode: parseInt(mode, 8) });
+  }
+  if (out.length === 0) die(`empty shape file: ${file}`);
+  return out;
+}
+
+const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+const HEX_RE = /[0-9a-f]{16,}/g;
+const DEC_RE = /[0-9]{4,}/g;
+function normalize(name) { return name.replace(UUID_RE, '<U>').replace(HEX_RE, '<H>').replace(DEC_RE, '<D>'); }
+function isSidecar(name) { return /-(shm|wal)$/.test(name); }
+function isChain(name) { const s = name.replace(/-(shm|wal)$/, ''); return normalize(s) !== s; }
+
+// Rebuild the whole expected shape of one case: the base shape plus the case's note.
+function reconstruct(base, note, id) {
+  const ents = base.map((e) => ({ ...e }));
+  const toks = note.trim() === '' ? [] : note.trim().split(/\s+/);
+  let pendingCount = null;
+  for (const t of toks) {
+    if (t.startsWith('+')) {
+      const m = /^\+(.+):(file|dir|symlink|other):([0-7]{1,4})$/.exec(t);
+      if (!m) die(`unparsable add token "${t}" in case ${id}`);
+      ents.push({ name: m[1], kind: m[2], mode: parseInt(m[3], 8) });
+    } else if (t === 'sidecars') {
+      let removed = 0;
+      for (let k = ents.length - 1; k >= 0; k--) if (isSidecar(ents[k].name)) { ents.splice(k, 1); removed++; }
+      if (pendingCount !== null && removed !== pendingCount) {
+        die(`sidecar count mismatch in case ${id}: note says ${pendingCount}, shape has ${removed}`);
+      }
+    } else if (t === '-chains') {
+      for (let k = ents.length - 1; k >= 0; k--) if (isChain(ents[k].name)) ents.splice(k, 1);
+    } else if (/^-\d+$/.test(t)) {
+      pendingCount = parseInt(t.slice(1), 10);
+    } else {
+      die(`unhandled note token "${t}" in case ${id} (CLEAN cases only)`);
+    }
+  }
+  return ents;
+}
+
+function fingerprint(ents) {
+  const canon = ents
+    .map((e) => `${e.name}\t${e.kind}\t${e.mode.toString(8).padStart(3, '0')}`)
+    .sort()
+    .join('\n') + '\n';
+  return createHash('sha256').update(canon, 'utf8').digest('hex');
+}
+
+function runListing(cmd, seed) {
+  const full = cmd
+    .split('{SEED}').join(seed)
+    .split('{SHAPE}').join(o.shape)
+    .split('{CENSUS}').join('/nonexistent/census-under-test.mjs');
+  const r = spawnSync('/bin/sh', ['-c', full], { encoding: 'utf8', maxBuffer: 1 << 26 });
+  if (r.status !== 0) die(`listing failed (status ${r.status}) for seed ${seed}: ${(r.stderr || '').slice(0, 400)}`);
+  const cases = [];
+  for (const line of r.stdout.split('\n')) {
+    if (!line.startsWith('CASE ')) continue;
+    const m = /^CASE (\S+) expect=(\S+) entries=(\d+)(?: (.*))?$/.exec(line);
+    if (!m) die(`unparsable CASE line: ${line}`);
+    cases.push({ id: m[1], expect: m[2], entries: parseInt(m[3], 10), note: (m[4] || '').trim() });
+  }
+  if (cases.length === 0) die(`listing for seed ${seed} produced no CASE lines`);
+  return cases;
+}
+
+function cleanFingerprints(cases, base) {
+  const out = [];
+  for (const c of cases) {
+    if (c.expect !== 'CLEAN') continue;
+    const ents = o.ignoreNotes ? base.map((e) => ({ ...e })) : reconstruct(base, c.note, c.id);
+    if (!o.ignoreNotes && ents.length !== c.entries) {
+      die(`reconstruction mismatch for case ${c.id}: reconstructed ${ents.length} entries, listing says ${c.entries}`);
+    }
+    const fp = o.fingerprintMode === 'id'
+      ? createHash('sha256').update(`id:${c.id}`, 'utf8').digest('hex')
+      : fingerprint(ents);
+    out.push({ id: c.id, fp });
+  }
+  return out;
+}
+
+const base = readShape(o.shape);
+const a = cleanFingerprints(runListing(o.cmd, o.seedA), base);
+const b = cleanFingerprints(runListing(o.cmd, o.seedB), base);
+const bSet = new Set(b.map((x) => x.fp));
+const recurring = a.filter((x) => bSet.has(x.fp));
+const uniqueA = new Set(a.map((x) => x.fp)).size;
+const frac = uniqueA === 0 ? 0 : recurring.length / uniqueA;
+const fracCases = a.length === 0 ? 0 : recurring.length / a.length;
+
+console.log(`CATALOG: ${recurring.length > 0 ? 'REUSED' : 'FRESH'} (clean=${a.length} recurring=${recurring.length})`);
+console.log(`CATALOG_DETAIL: label=${o.label} cleanA=${a.length} cleanB=${b.length} uniqueA=${uniqueA} recurring=${recurring.length} fraction=${frac.toFixed(3)} fracCases=${fracCases.toFixed(3)} seedA=${o.seedA} seedB=${o.seedB}`);
+if (recurring.length > 0) {
+  console.log(`CATALOG_RECURRING: ${recurring.map((x) => `${x.id}@${x.fp.slice(0, 12)}`).join(' ')}`);
+}
+// Gate mode: the QUALITY criterion. Fails (exit 1) when a CLEAN shape recurs, i.e. when a
+// catalog could memorise the counter's CLEAN cases; passes (exit 0) when they are fresh.
+if (o.requireFresh && recurring.length > 0) {
+  console.log(`CATALOG_GATE: FAIL (${recurring.length} CLEAN shape(s) recur across seeds; a catalog can memorise them)`);
+  process.exit(1);
+}
+console.log(`CATALOG_GATE: PASS (no CLEAN shape recurs across seeds)`);
+process.exit(0);

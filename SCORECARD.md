@@ -289,8 +289,8 @@ A=16
 C=21
 C1=19
 C1_total=19
-C2=99
-C2_total=99
+C2=102
+C2_total=102
 S_members=88
 S_sections=88
 R_members=92
@@ -356,6 +356,15 @@ unpinned, and a missing or renamed block reads MATCH in default mode; only `--st
 checklist item 8 now runs, catches that). R41-2 is therefore landed **pending an operator
 ruling** (`.ufo/l0-questions.md`, kumitate round 42); if the ruling is no, the block and its
 code come out and the three warnings return.
+*Round-45 note (2026-10-23; routed defect R44-5; the paragraphs above stay as written).* `A` is defined
+by the frozen `RE_RUNNABLE = /\.(?:mjs|js|sh|py)$/` over `walkFiles(self)` (`scripts/proxy-check.mjs:490`,
+`:930`): it counts **every** file in the lane tree with a runnable extension, including throwaway round
+probes under `.ufo/waves/round-<N>/probe/` — not only shipped instruments under `scripts/`. Round 44's
+`A` 11 → 16 is one shipped instrument (`scripts/omp-census.mjs`) plus four round-44 probe counters;
+round 43's probe was already in the base 11. The pattern is frozen and the integer is terminal at 9,
+so the definition is recorded here rather than narrowed in code; Q26 already rules `A` out as claim
+evidence. A reader who wants shipped instruments only counts `git ls-files scripts | grep -cE
+'\.(mjs|js|sh|py)$'`.
 
 
 Coverage **is** 10 — and the number is the problem, not the achievement. The
@@ -418,8 +427,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
-| 43 | operability (lowest non-retired axis; integer held 9; claim type capability re-claim `gate-mutants` under the frozen kill predicate K43; sourced on S046–S048) | frozen counter (`0f4108bf:scripts/gate-mutants.mjs`, sha256 `e24749e4…`) on the round-open bytes `--rev 2a7f37d2`: `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 …)` exit 1, seven survivors (suites that report PASS or exit 0 while their own cases fail) | same counter `--rev 84cb1d5d`: `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 …)` exit 0, every kill `confirm=same`, controls re-run PASS; addendum A1 `C1_DISCRIMINATORS: PASS`; junk J1–J3 ERROR exit 2 | `git show 0f4108bf:scripts/gate-mutants.mjs > $G/gate-mutants.mjs; node $G/gate-mutants.mjs --repo <lane> --rev <REV>` (bounds in the plan); receipts `.ufo/waves/round-43/open/c1-control-base.txt`, `.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`, `final/c1-discriminators-84cb1d5d.txt`; S046, S047, S048 |
 | 44 | operability (lowest non-retired axis; integer held 9; claim type capability acquisition `omp-census`, a new gate over the OMP agent root `~/.omp/agent`; sourced on S053–S058, S060, S061) | frozen counter `p44d-count.mjs` (plan commit `32b7fd56`, sha256 `9ea97d86…`, shape `fcf9fcb6…`, 207 cases) with the census absent at round open `6cda8c35`: `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit 1 (`.ufo/waves/round-44/open/p44d-before-6cda8c35.txt`) | same counter, census `scripts/omp-census.mjs` at `d81978cd` (sha256 `fd4d1c4e…`): `P44_COUNT: MET (passed=207 cases=207 floor=20 …)` exit 0, seed `2676cbe7…` (`.ufo/waves/round-44/final/p44-measured-d81978cd.txt`); 44 skip-work controls UNMET before data (`controls-v4/`); three counter replacements before data, predicate P44 unchanged (`.ufo/waves/round-44/plan.md`) | `git show 32b7fd56:.ufo/waves/round-44/probe/p44d-count.mjs` + `p44-shape.tsv`, `git show <rev>:scripts/omp-census.mjs`, `node p44d-count.mjs --census … --shape … [--seed …]` (plan § Measurement) |
+| 43 | operability (lowest non-retired axis; integer held 9; claim type capability re-claim `gate-mutants` under the frozen kill predicate K43; sourced on S046–S048) | frozen counter (`0f4108bf:scripts/gate-mutants.mjs`, sha256 `e24749e4…`) on the round-open bytes `--rev 2a7f37d2`: `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 …)` exit 1, seven survivors (suites that report PASS or exit 0 while their own cases fail) | same counter `--rev 84cb1d5d`: `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 …)` exit 0, every kill `confirm=same`, controls re-run PASS; addendum A1 `C1_DISCRIMINATORS: PASS`; junk J1–J3 ERROR exit 2 | `git show 0f4108bf:scripts/gate-mutants.mjs > $G/gate-mutants.mjs; node $G/gate-mutants.mjs --repo <lane> --rev <REV>` (bounds in the plan); receipts `.ufo/waves/round-43/open/c1-control-base.txt`, `.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`, `final/c1-discriminators-84cb1d5d.txt`; S046, S047, S048 |
 | 42 | operability (lowest non-retired axis; integer 8 → 9; claim type capability acquisition `gate-mutants`, sourced on S039) | `{"A":9,"C":17,"operability":8}` at dfabe92 (open receipts); no battery over the lane's own suites | `{"A":10,"C":19,"operability":9}`; `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)` exit 0; `--selftest` 23/23; shown able to fail: `--rev dfabe92… --target cite-check` → `SURVIVED (… killed=16 … drift=2 …)` exit 1 (the R41-3 skip-bypass mutants at the open bytes) | `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json \| jq -c '.terms \| {A, C, operability}'`; receipts `.ufo/waves/round-42/final/`; S039, S040 |
 | 42 | coverage:kimi-layer (`~/.kimi-code/locks` governed; integer held at 10; sourced on S041) | census `ROOT_ENUM … declared=26 … strays=1`, `CENSUS  error  UNLISTED  locks`, `KIMI_CENSUS: DRIFT (UNLISTED locks)` exit 1; `K_members`/`K_sections` 52/52 | `declared=27 … strays=0`, `KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, selftest 52/52; `K_members`/`K_sections` 53/53, `coverage_kimi` 10 | `node scripts/kimi-census.mjs; echo exit=$?`; `node scripts/proxy-check.mjs --src … --json \| jq -c '.terms \| {K_members, K_sections, coverage_kimi}'`; `corpus/knowledge/kimi-session-state.md` § `~/.kimi-code/locks/`; S041, S042 |
 | 41 | operability (lowest non-retired axis; integer held 8; A 8 → 9 and C 15 → 17 from C2, `f_O` 23/26 → 26/29 ≈ 0.897) | `CITE_MUTANTS survived=15/16 nomatch=0 crash=0 control=PASS` at a58b7f72 (only `resolved>0` killed); selftest 64/64 | `survived=0/16 nomatch=0 crash=0 control=PASS` at 68db3419, 4e58bb0e and fae386aa (killed = at least one `FAIL ` case line; 2 of the 16, suite-group-verdict and suite-any-fail, still exit 0 with `VERDICT: PASS`; run with `KUMITATE_CITE_SELFTEST_INJECT_FAIL` unset, an inherited value reads `survived=4/16`); selftest 75/75 (11 new cases: warn-only and `--strict`, `citeCheck` map, both text environment labels, exit contract 0/1/2/2/64 through a child, suite self-observation by an injected-failure child in text and `--json`) | `node --input-type=module - --lane <lane> --rev <rev> < .ufo/waves/round-41/probe/cite-verdict-mutants.mjs.txt` (counter committed in cb2d8d09 before its first run); `.ufo/waves/round-41/final/cite-mutants-*.txt`; `corpus/lessons/round-41.md` |
@@ -1981,7 +1990,7 @@ reading at close: C1 does not verify** — CtlPostDataA's three skip-work contro
 catalogs; one-edit name tolerance) read MET under p44d after data (kill rule 2); and the third
 replacement was not data-free (a candidate ran on a builder's own harness; a work-equivalent program was
 scored under p44c). Terms: A 11 → 16 (census + four committed probe counters), C 19 → 21 (checklist
-items 20-21), C2/C2_total 96 → 98 (README rows for the round-43 spot-check and the new entry); proxy
+items 20-21), C2/C2_total 96 → 99 (README rows for the round-43 spot-check, the new entry and `lessons/round-44.md`; corrected in round 45 — this line read `96 → 98`, R44-6); proxy
 `--strict` DRIFT at round open → MATCH. Details: `corpus/lessons/round-44.md` § Verdict at close.
 
 Planned next round (candidates, not commitments): (1) re-claim `omp-census` under a counter whose CLEAN

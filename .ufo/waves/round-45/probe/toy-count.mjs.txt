@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+// toy-count.mjs — toy case generator for catalog-check.mjs (round 45, seat ExecCatalogCheck).
+//
+// Same listing interface as a counter: `--shape FILE --seed HEX --list` prints one
+//   CASE <id> expect=<CLEAN|DRIFT> entries=<n> <note>
+// line per case and runs nothing. Every CLEAN case carries a fresh random but legal variation
+// (a new member name drawn from a legal pattern, with a legal kind and mode), so the CLEAN
+// shapes differ from seed to seed: a catalog of them does not stand in for this generator.
+//
+// The seed is an HMAC-SHA256 stream, exactly like the frozen counter, so `--seed HEX` replays a
+// run exactly.
+
+import { createHash, createHmac } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+
+function die(msg) { console.error(`TOY_COUNT: ERROR (${msg})`); process.exit(2); }
+
+const argv = process.argv.slice(2);
+const o = { shape: null, seed: null, list: false, variation: 'random' };
+for (let i = 0; i < argv.length; i++) {
+  const a = argv[i];
+  if (a === '--shape') o.shape = argv[++i];
+  else if (a === '--seed') o.seed = argv[++i];
+  else if (a === '--list') o.list = true;
+  else if (a === '--variation') o.variation = argv[++i];
+  else if (a === '--census' || a === '--work') argv[++i]; // accepted and ignored
+  else die(`unknown argument ${a}`);
+}
+if (!o.shape) die('--shape FILE is required');
+if (!o.seed || !/^[0-9a-f]{2,64}$/.test(o.seed) || o.seed.length % 2) die('--seed must be an even-length lowercase hex string');
+
+let SEED = Buffer.from(o.seed, 'hex');
+let ctr = 0;
+let pool = Buffer.alloc(0);
+function rbytes(n) {
+  while (pool.length < n) {
+    pool = Buffer.concat([pool, createHmac('sha256', SEED).update(String(ctr++)).digest()]);
+  }
+  const out = pool.subarray(0, n);
+  pool = pool.subarray(n);
+  return Buffer.from(out);
+}
+function rint(max) {
+  const lim = Math.floor(0x100000000 / max) * max;
+  for (;;) { const v = rbytes(4).readUInt32BE(0); if (v < lim) return v % max; }
+}
+function randHex(n) { return rbytes(Math.ceil(n / 2)).toString('hex').slice(0, n); }
+
+const base = [];
+for (const line of readFileSync(o.shape, 'utf8').split('\n')) {
+  if (line === '' || line.startsWith('#')) continue;
+  const [name, kind, mode] = line.split('\t');
+  if (!name || !['file', 'dir'].includes(kind) || !/^[0-7]{3}$/.test(mode || '')) die(`bad shape line: ${line}`);
+  base.push({ name, kind, mode: parseInt(mode, 8) });
+}
+if (base.length === 0) die(`empty shape file: ${o.shape}`);
+
+const MODES = [0o600, 0o640, 0o644];
+if (!['random', 'none'].includes(o.variation)) die('--variation must be random or none');
+const cases = [];
+// CLEAN cases: base plus one fresh, legal member whose name is unique per case and per seed.
+// With --variation none the member name and mode are fixed, so the CLEAN shapes are the same
+// under every seed (control for the check: it must then report REUSED).
+for (let i = 0; i < 12; i++) {
+  const name = o.variation === 'none' ? `probe-fixed-${i}` : `probe-${randHex(8)}-${i}`;
+  const kind = i % 3 === 0 ? 'dir' : 'file';
+  const mode = kind === 'dir' ? 0o755 : (o.variation === 'none' ? 0o600 : MODES[rint(MODES.length)]);
+  cases.push({ id: `clean-${i}`, expect: 'CLEAN', extra: { name, kind, mode } });
+}
+// DRIFT cases: base plus a member with a mode the legal set does not allow.
+for (let i = 0; i < 12; i++) {
+  const name = `junk-${randHex(8)}-${i}`;
+  cases.push({ id: `drift-${i}`, expect: 'DRIFT', extra: { name, kind: 'file', mode: 0o666 } });
+}
+// Shuffle the order (a catalog must not depend on it).
+for (let i = cases.length - 1; i > 0; i--) { const j = rint(i + 1); [cases[i], cases[j]] = [cases[j], cases[i]]; }
+
+console.log(`TOY counter=toy-count.mjs sha256=${createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex')} seed=${o.seed}`);
+console.log(`TOY shape=${o.shape} entries=${base.length} cases=${cases.length}`);
+for (const c of cases) {
+  const e = c.extra;
+  console.log(`CASE ${c.id} expect=${c.expect} entries=${base.length + 1} +${e.name}:${e.kind}:${e.mode.toString(8)}`);
+}
+process.exit(0);

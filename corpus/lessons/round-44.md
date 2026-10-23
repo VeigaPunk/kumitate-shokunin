@@ -185,3 +185,25 @@ MutCensusP44, CritCensusVsDomain, ExecChecklistPass, MutChecklistBlindness, Reop
 ReopenS058, ReopenS059, ReviewKnowledgeEntry, ReviewR43Repairs, CritCalibration, ReviewWaveCensus,
 ScoutRejectCandidates, ScribeLessonDraft, ConnAdjacency. Holds (provider cyber_policy refusal, item ended):
 CritV3Channels, CritV3LabelA.
+
+## Round-45 record errata (R44-2, R44-6)
+
+### R44-2 — census provenance
+
+The third-redesign heading and its “before any census is scored” sentence are overbroad. Under frozen p44c, CritV3Boundary scored the work-equivalent `no-base-presence.mjs` program `MET 150/150` (`census_sha256=eec94a3b…`, `.ufo/waves/round-44/residual/CritV3Boundary.md:111`) before the p44d freeze; its receipt was committed at `32b7fd56`. The zero-run line in `.ufo/waves/round-44/final/p44-dev-runs.txt:2` is overbroad in the same way: `eec94a3b…` is a control program's census, not a candidate build, so the line is not false across candidate bytes, but it reads as if no census of any kind had been scored under a frozen counter, and one had. The narrower fact holds (`p44-dev-runs.txt:11`): no frozen run on the exact measured census bytes `fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7` preceded the counted run; that run was first on those bytes and was not best-of-N. ExecCensusBuild's `5626f07f…` candidate ran on its own non-frozen development harness (`DEV_HARNESS cases=87 passed=87`), not under a frozen counter.
+
+### R44-2 — Q29 receipt chronology
+
+Round-44 control receipts and p44d share commit `32b7fd56`; the receipts predate the measured commit but are not in an earlier commit than the counter. This records the limitation and does not treat the shared commit as evidence of temporal ordering.
+
+### R44-6 — source-record errata
+
+S061's source text attributes the pre-edit action to the orchestrator, while the registry gloss and the pinned `scripts/omp-census.mjs:95` comment say operator. Record the corrected attribution as an orchestrator-created pre-edit copy. Do not edit `scripts/omp-census.mjs` bytes in this repair: `pin.omp-census` binds those bytes.
+
+The S059 row's historical body pin `424524b56b7226cb1736f745b3131a9a768d695721a48a7f0f0d597eecf644f6` is not reproducible: the live page is not byte-stable (round-45 seat ScoutErrataCheck: two consecutive `curl -sSL` fetches on 2026-10-23 hashed `e10aa287…` and `9d321dd6…`, same length, one 21-character token differing). The row is kept as historical; no current hash is recorded, because none is stable. The quoted sentence, not the body hash, is what a re-open checks for this page.
+
+The S059 phrase “Q2 primary-first” is shorthand, not the text of QUALITY Q2. Q2 requires each external fact to cite an opened SOURCES row, says tier C cannot be sole support, and says community is never tier A. The rejection still stands on scope: the vendor page documents its own installer, while S060's OMP code is the appropriate evidence for OMP's `extensions/` membership.
+
+The `omp-crash.log` locator in the preceding gate note should be `dirs.ts:1052-1054`, not `1052-1055`; line 1055 is the closing brace.
+
+Source of this block: drafts by attempt-1 seat ScribeR44Errata (untrusted; its seat is dead), each item re-derived by attempt-2 seat ScoutErrataCheck (`.ufo/waves/round-45/a2-control/ScoutErrataCheck.md`, items 1–9) and applied by the attempt-2 L1 with that seat's corrections (items 2, 3 and 7). The Q29 chronology reading is plan erratum E4 and the QUALITY Q29 round-45 ordering note.
