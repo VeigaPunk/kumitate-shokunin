@@ -1,0 +1,725 @@
+# ExecLoadProbe — full per-run evidence (round 48 attempt 2, wave r48)
+# seat: ExecLoadProbe · frozen tip fe3d45bf929246915c8c0de5f7f8682b5015b22c
+# counter: .ufo/waves/round-48/probe/caproute48-probe.mjs
+#   f24a3af5… = frozen F48 (committed at fe3d45bf)
+#   df42ab6b… = A48 v1 (working tree, mtime 15:38:52) — caseLines NOT propagated into the site record
+#   3ed305f2… = A48 v2 (working tree, mtime 15:45:14) — propagation present
+# load: N x 'yes > /dev/null' workers per run; load1 from /proc/loadavg
+# host: 32 cores, pid_max 4194304, strace 7.2, node v24.21.0
+
+## SUMMARY TABLE
+set  run  exit  held    rule       uncorr  workers  load1_start->load1_end  elapsed  counter-version-in-effect
+
+r48@freeze    1     1     0/4      F48        0       6        22.07->50.40         79s      f24a3af5 F48-frozen
+r48@freeze    2     1     0/4      F48        0       6        50.40->57.42         88s      f24a3af5 F48-frozen
+r48@freeze    3     1     0/4      F48        0       6        57.14->53.08         75s      f24a3af5 F48-frozen
+r48@freeze    4     1     0/4      F48        0       6        53.08->53.39         70s      f24a3af5 F48-frozen
+r48@freeze    5     1     0/4      F48        0       6        52.71->50.38         67s      f24a3af5 F48-frozen
+r47@freeze    1     0     5/5      F48        0       6        36.37->28.68         158s     f24a3af5 F48-frozen
+r47@freeze    2     0     5/5      F48        0       6        28.14->22.99         122s     f24a3af5 F48-frozen
+r47@freeze    3     0     5/5      F48        0       6        22.99->20.32         140s     f24a3af5 F48-frozen
+r47@freeze    4     1     2/5      F48+A48    3       6        19.65->31.21         174s     df42ab6b A48v1 NO-propagate
+r47@freeze    5     143   NO-READING (none)     0       6        30.31->28.64         9s       df42ab6b A48v1 NO-propagate
+r48@freeze    10    1     0/4      F48+A48    4       6        19.47->44.62         71s      df42ab6b A48v1 NO-propagate
+r48@freeze    11    1     0/4      F48+A48    0       6        45.21->62.84         92s      3ed305f2 A48v2 propagate
+r48@freeze    12    1     0/4      F48+A48    0       6        62.05->77.33         95s      3ed305f2 A48v2 propagate
+r48@freeze    13    1     0/4      F48+A48    0       6        77.33->74.41         98s      3ed305f2 A48v2 propagate
+r48@freeze    14    1     0/4      F48+A48    0       6        74.41->55.70         74s      3ed305f2 A48v2 propagate
+r47@freeze    10    1     2/5      F48+A48    3       6        19.47->68.24         233s     df42ab6b A48v1 NO-propagate
+r47@freeze    11    0     5/5      F48+A48    0       6        69.18->51.78         220s     3ed305f2 A48v2 propagate
+r47@freeze    12    0     5/5      F48+A48    0       6        50.20->27.10         99s      3ed305f2 A48v2 propagate
+r47@freeze    13    0     5/5      F48+A48    0       6        26.13->20.12         114s     3ed305f2 A48v2 propagate
+r47@freeze    14    0     5/5      F48+A48    0       6        20.12->26.59         106s     3ed305f2 A48v2 propagate
+r48@C1cand    1     0     4/4      F48+A48    0       6        17.62->23.58         81s      3ed305f2 A48v2 propagate
+r48@C1cand    2     0     4/4      F48+A48    0       6        23.58->26.01         88s      3ed305f2 A48v2 propagate
+r48@C1cand    3     0     4/4      F48+A48    0       6        26.01->26.39         83s      3ed305f2 A48v2 propagate
+r48@C1cand    4     0     4/4      F48+A48    0       6        25.24->21.44         70s      3ed305f2 A48v2 propagate
+r48@C1cand    5     0     4/4      F48+A48    0       6        21.25->17.50         65s      3ed305f2 A48v2 propagate
+
+## RAW OUTPUT — every invocation, every RUN/SITE/CAPROUTE48 line
+
+### run-1.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=28 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=42 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=32 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=55 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+--- stderr ---
+
+### run-2.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=69 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=45 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=62 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=61 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+--- stderr ---
+
+### run-3.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=49 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=37 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=41 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=44 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+--- stderr ---
+
+### run-4.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=28 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=36 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=57 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=37 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+--- stderr ---
+
+### run-5.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=48 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=52 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=45 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=35 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+--- stderr ---
+
+### r47-run-1.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=5 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=2 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=4 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=6 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=5 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=7 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=5 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=4 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=11 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=7 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=4 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=10 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48
+--- stderr ---
+
+### r47-run-2.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=2 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=2 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=2 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=3 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=5 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=4 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=1 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48
+--- stderr ---
+
+### r47-run-3.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=3 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=1 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48
+--- stderr ---
+
+### r47-run-4.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=3 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=3 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=2 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=9 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=8 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=1 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=21 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=23 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=18 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_MISS capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SC859 gate=sources-check label=ROUTED_MISS capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_MISS capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0 reason=summary_uncorroborated
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=2/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-5.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=3 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+--- stderr ---
+
+### r48-run-10.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=38 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=51 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=51 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=22 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58,summary_uncorroborated
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9,summary_uncorroborated
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9,summary_uncorroborated
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9,summary_uncorroborated
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### r48-run-11.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=48 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=44 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=37 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=50 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### r48-run-12.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=47 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=54 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=59 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=48 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### r48-run-13.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=55 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=37 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=52 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=34 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### r48-run-14.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=40 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=41 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=3 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-10.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=4 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=2 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=17 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=7 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=5 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=8 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=16 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=12 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=9 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=12 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=7 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=6 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=43 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=54 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=37 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_MISS capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SC859 gate=sources-check label=ROUTED_MISS capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_MISS capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0 reason=summary_uncorroborated
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=2/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-11.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=2 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=3 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=34 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=12 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=15 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=10 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=15 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=13 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=11 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=13 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=5 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=29 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=35 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=38 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-12.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=4 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=2 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=3 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=5 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=5 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-13.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=3 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=2 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=8 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=3 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=2 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### r47-run-14.txt
+--- stdout ---
+RUN kimi-census base0 exit=0 cases=54/54 execs=56 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check base0 exit=0 cases=46/46 execs=51 resumed=3 verdict_pass=true fail_lines=0
+RUN claims-check base0 exit=0 cases=47/47 execs=71 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth base0 exit=0 cases=44/44 execs=1053 resumed=2 verdict_pass=true fail_lines=0
+RUN kimi-census rev0 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev1 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN kimi-census rev2 exit=0 cases=54/54 execs=427 resumed=0 verdict_pass=true fail_lines=0
+RUN sources-check rev0 exit=0 cases=46/46 execs=352 resumed=6 verdict_pass=true fail_lines=0
+RUN sources-check rev1 exit=0 cases=46/46 execs=352 resumed=4 verdict_pass=true fail_lines=0
+RUN sources-check rev2 exit=0 cases=46/46 execs=352 resumed=2 verdict_pass=true fail_lines=0
+RUN claims-check rev0 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev1 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN claims-check rev2 exit=0 cases=47/47 execs=393 resumed=0 verdict_pass=true fail_lines=0
+RUN anchor-truth rev0 exit=0 cases=44/44 execs=1795 resumed=6 verdict_pass=true fail_lines=0
+RUN anchor-truth rev1 exit=0 cases=44/44 execs=1795 resumed=3 verdict_pass=true fail_lines=0
+RUN anchor-truth rev2 exit=0 cases=44/44 execs=1795 resumed=7 verdict_pass=true fail_lines=0
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-run-1.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=26 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=27 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=30 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-run-2.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=24 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=27 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=33 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=1 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-run-3.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=29 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=22 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=26 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=16 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-run-4.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=23 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=23 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=25 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-run-5.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=24 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=29 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### c1-high.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=19 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=45 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=37 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=58 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p1-a.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=17 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=20 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=16 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=18 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p1-b.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=17 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=24 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=19 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p2-a.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=27 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p2-b.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=26 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=21 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=24 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p3-a.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=28 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=28 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=27 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+### conc-p3-b.txt
+--- stdout ---
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=25 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=28 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=29 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+--- stderr ---
+
+
+## A/B — counter version attribution (same commit, same set, same load)
+
+### A: counter-df42ab6b.mjs (A48 v1 semantics: caseLines computed but NOT propagated into the site record)
+### command: node counter-df42ab6b.mjs lane fe3d45bf... --set r47
+
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_MISS capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SC859 gate=sources-check label=ROUTED_MISS capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_MISS capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0 reason=summary_uncorroborated
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=2/5 runs=3 rule=F48+A48
+
+### B: current counter 3ed305f28d69da6e88654579f285ad3ea1857d469134a63221009b1657f93f59 (A48 v2: propagation present)
+SITE K488 gate=kimi-census label=ROUTED_HELD capped/n=53/53,53/53,53/53 base_n=53 cases=54/54,54/54,54/54 base_cases=54/54 uncapped_direct=0,0,0
+SITE SC549 gate=sources-check label=ROUTED_HELD capped/n=42/42,42/42,42/42 base_n=42 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SC859 gate=sources-check label=ROUTED_HELD capped/n=1/1,1/1,1/1 base_n=1 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE CC879 gate=claims-check label=ROUTED_HELD capped/n=46/46,46/46,46/46 base_n=46 cases=47/47,47/47,47/47 base_cases=47/47 uncapped_direct=0,0,0
+SITE AT802 gate=anchor-truth label=ROUTED_HELD capped/n=106/106,106/106,106/106 base_n=106 cases=44/44,44/44,44/44 base_cases=44/44 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=0bd8be60 set=r47 held=5/5 runs=3 rule=F48+A48
+
+## A48 CLAUSE MEASUREMENT (a48probe.mjs — the counter's exact strace invocation, per-case line counts)
+## GATE <gate> run=<k> exit=<s> summary=<n>/<m> caseLines=<c> passLines=<p> corroborated=<bool>
+
+file:///fast/scratch/hyaku/kumitate-r48a/seats/ExecLoadProbe/a48probe.mjs:46
+    require('node:fs').writeFileSync(`/tmp/a48probe-${gate}-${k}-${process.pid}.stdout`, stdout);
+    ^
+
+ReferenceError: require is not defined
+    at ChildProcess.<anonymous> (file:///fast/scratch/hyaku/kumitate-r48a/seats/ExecLoadProbe/a48probe.mjs:46:5)
+    at ChildProcess.emit (node:events:514:28)
+    at maybeClose (node:internal/child_process:1141:16)
+    at Socket.<anonymous> (node:internal/child_process:498:11)
+    at Socket.emit (node:events:514:28)
+    at Pipe.<anonymous> (node:net:362:12)
+
+Node.js v24.21.0
+GATE sources-check run=0 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=1 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=2 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=3 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=4 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=5 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=6 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE sources-check run=7 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=0 nlines=48 tail="VERDICT: PASS"
+GATE round-gate run=0 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE round-gate run=1 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE round-gate run=2 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE round-gate run=3 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE round-gate run=4 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE round-gate run=5 exit=0 summary=61/61 caseLines=61 passLines=61 corroborated=true mangled=0 doubled=0 nlines=64 tail="VERDICT: PASS"
+GATE surface-probe run=0 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+GATE surface-probe run=1 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+GATE surface-probe run=2 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+GATE surface-probe run=3 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+GATE surface-probe run=4 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+GATE surface-probe run=5 exit=0 summary=46/46 caseLines=46 passLines=46 corroborated=true mangled=0 doubled=1 nlines=49 tail="VERDICT: PASS"
+
+## DECISIVE — the SAME C1 candidate commit scored by the A48-v1 (no-propagation) counter
+## command: node counter-df42ab6b.mjs c1 ecc6e7999224ddac094f0665bb3eb2831591ad63 --set r48
+## (no induced load; the same bytes on --set r47 gave 2/5 where the current bytes give 5/5)
+
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=summary_uncorroborated
+CAPROUTE48 rev=ecc6e7999224ddac094f0665bb3eb2831591ad63 base=f00cf278 set=r48 held=0/4 runs=3 rule=F48+A48
+
+## CONTROL — the SAME C1 candidate commit scored by the current counter 3ed305f28d69da6e88654579f285ad3ea1857d469134a63221009b1657f93f59
+## (5 runs at load1 17-26 and 1 run at load1 18-32 with 24 workers: all held=4/4 exit 0 — see c1-run-*.txt / c1-high.txt above)

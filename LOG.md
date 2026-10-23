@@ -1930,3 +1930,36 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   **C2 capability — COUNTER_RERUN.** `scripts/counter-rerun.mjs` absent at the freeze (`git cat-file -e fe3d45bf:scripts/counter-rerun.mjs` fails). At `ce9aee5d`: selftest `COUNTER_RERUN_SELFTEST: PASS` exit 0 with the flake-injection case killing a print-PASS stub; real AGREE `COUNTER_RERUN: AGREE (runs=2)` exit 0 over the frozen counter at the measured commit, both runs `held=4/4` exit 0 with byte-identical final summary lines (sha256 `f3c23bdc…`) — `r48/L1-c2-binding-ce9aee5d.txt`.
   Harm and close gates: H1 base 18/22 (above) vs tip `close/H1Tip-run{1,2}.txt` (item-level comparison, `close/H1Tip.md`); H2 `close/ReRunR47Set-receipt.txt` (r47 set at `ce9aee5d`, expect 5/5); H3 proxy `--strict` at the close commit; H4 census exit 0. Measured en route: the cap-spawn verdict-dir leak fix (12,801 accumulated dirs at open; quiet-host differential delta 0 after, `r48/L1-leakfix-delta.txt`); kimi-census + omp-census CLEAN at the freeze.
   Frontier: S098 opened + mined (strace 7.2 manual; `r48/ReopenS098.md` HOLDS; used-by the probe — the A48 header cites it — and `corpus/lessons/round-48.md`); re-opens S084/S091/S092 landed (HOLDS, `r48/ReviewReopens48.md`); S088 ruling `r48/ReconcileS088.md`. Lesson `corpus/lessons/round-48.md` (two mistakes + A48 record + residues). Terms: A 25 → 38, C 22, C2 106 → 108/108; proxy re-pins (round-gate, surface-probe, cap-spawn, new counter-rerun). Not claimed: RG1409/SP1766 nested `--selftest`, SP1049 checklist runner, cite-check/gate-mutants/proxy-check/wave-census launches; bind-view fidelity (named limit).
+
+- 2026-10-23 — round 49 (base `b7b040b5`; freeze `8237be86`; C1 `0526f898`, C2 `589d25e4`). Plan
+  `.ufo/waves/round-49/plan.md`; counters frozen pre-data (`probe/bindoracle49-probe.mjs` rule B49,
+  `probe/doctrine49-probe.mjs` rule D49). **C1 capability `bind-oracle`** — `scripts/bind-oracle.mjs` reads the
+  child's own `/proc/self/mountinfo` inside a `cap-run` child and compares the observed mount-point set with the
+  requested binds (and the parent mount set for EXTRA): before `held=0/6` exit 1 at base/freeze, after
+  `BINDORACLE49: ORACLE_HELD held=6/6 checks=6 rev=0526f898 rule=B49 oracle_sha256=c3929a97…` exit 0, three
+  time-spaced runs (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); selftest 7/7 with three runner
+  mutants built from `cap-run.mjs` source. **C2 coverage** — `corpus/knowledge/counter-amendment-discipline.md`,
+  15 clauses each hash-bound to a committed receipt: before `UNMET reason=entry-absent`, after
+  `DOCTRINE49: HELD clauses=15/15 rows=3` at `589d25e4` (doctored hex control reads `UNMET … hash-mismatch`).
+  Pre-data controls: `CtlNothing` 0/6; a static forged oracle 3/6 (the counter's output-text limit, recorded).
+  Repairs: R49-2 registry rows (`counter-rerun` = probe, `cap-spawn` = helper, `bind-oracle` = gate); R49-1 the
+  round-48 late writes committed under this round — `close/ReRunCounter48-1.md` and `close/ReRunCounterA.md` move
+  their prose onto the committed receipt blob `fd7d8866…` (trailer start `2026-10-23T16:01:13-03:00`),
+  `close/ReviewIntegration.md`, `.ufo/waves/round-48/r48-plan.stderr` (empty), `r48-residual-plan.stderr`
+  (`too_few_lanes`, 8 lanes), plus the two `r48/ExecLoadProbe*` late files; the r48 `L1-receipts.sha256` index still
+  names the pre-rewrite blobs and is left as r48's integration state. Lesson `corpus/lessons/round-49.md`
+  (M1 the fixed-allowlist plan/mechanism drift with a committed failing receipt; M2 the unpinned instrument);
+  QUALITY Q38 (clause-receipt attestation); README rows 108→110.
+  **Corrections, appended (supersede the round-48 prose they name; the filed r48 report is not rewritten).**
+  (R49-3) `LOG.md:1932` says round 48 had "two mistakes"; `corpus/lessons/round-48.md:5-10` mines four — fixed-spacing
+  trace omissions; conclusions drawn on cancelled-seat readings or contradicted aggregates; a suite summary trusting a
+  forged self-consistent report; an author amendment that never reaches the measured object.
+  (R49-4) the round-48 report's re-runs "18:52Z/18:59Z/19:00Z" are corrected: canonical starts are 18:52:59Z (L1),
+  19:00:46Z (re-run 2), 19:01:13Z (re-run 1, `.ufo/waves/round-48/close/ReRunCounter48-1-receipt.txt:18`); 18:59Z is
+  the superseded trailer, not a run start. The time-spacing conclusion is unaffected.
+  (R49-5) `r48/L1-leakfix-delta.txt:1` reads `leak-delta-at-ce9aee5d=13`; the "delta 0" sentences (LOG.md:1931,
+  SCORECARD.md:1757, :1759, corpus/lessons/round-48.md:51) are corrected to: the fix re-ran with no *new* owned
+  residual; the 13 observed directories are the pre-fix accumulation, and their attribution is not established.
+  **Recorded limit found by a wave seat (ScoutCapRunVisibility):** `cap-run --bind /tmp /tmp` applied after
+  `--tmpfs /tmp` re-exposes the host `/tmp` read-write; the oracle does not refuse it (it is only refused for
+  `/`, `/proc`, `/sys`, `/dev`, `/run`) — routed to round 50.

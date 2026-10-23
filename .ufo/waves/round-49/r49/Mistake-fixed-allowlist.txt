@@ -1,0 +1,9 @@
+  FAIL A1 live 3 binds want exit=0 //^HELD binds=3 observed=3 absent=1$// got exit=1 EXTRA extra=25 paths=/dev/pts,/dev/shm,/dev/mqueue,/dev/hugepages,/proc/sys/fs/binfmt_misc,/sys/firmware/efi/efivars,/sys/kernel/security,/sys/fs/cgroup,/sys/fs/pstore,/sys/fs/bpf,/sys/kernel/debug,/sys/kernel/tracing,/sys/fs/fuse/connections,/sys/kernel/config,/run/credentials/systemd-journald.service,/run/credentials/systemd-resolved.service,/run/credentials/systemd-networkd.service,/run/user/1000,/run/user/1000/gvfs,/run/user/1000/doc,/home,/var/cache/pacman/pkg,/var/log,/boot,/fast
+  FAIL A2 live 0 binds want exit=0 //^HELD binds=0 observed=0 absent=1$// got exit=1 EXTRA extra=25 paths=/dev/pts,/dev/shm,/dev/mqueue,/dev/hugepages,/proc/sys/fs/binfmt_misc,/sys/firmware/efi/efivars,/sys/kernel/security,/sys/fs/cgroup,/sys/fs/pstore,/sys/fs/bpf,/sys/kernel/debug,/sys/kernel/tracing,/sys/fs/fuse/connections,/sys/kernel/config,/run/credentials/systemd-journald.service,/run/credentials/systemd-resolved.service,/run/credentials/systemd-networkd.service,/run/user/1000,/run/user/1000/gvfs,/run/user/1000/doc,/home,/var/cache/pacman/pkg,/var/log,/boot,/fast
+  PASS A3 drop-mutant
+  FAIL A4 extra-mutant want exit=1 //^EXTRA extra=1 // got exit=1 EXTRA extra=26 paths=/dev/pts,/dev/shm,/dev/mqueue,/dev/hugepages,/proc/sys/fs/binfmt_misc,/sys/firmware/efi/efivars,/sys/kernel/security,/sys/fs/cgroup,/sys/fs/pstore,/sys/fs/bpf,/sys/kernel/debug,/sys/kernel/tracing,/sys/fs/fuse/connections,/sys/kernel/config,/run/credentials/systemd-journald.service,/run/credentials/systemd-resolved.service,/run/credentials/systemd-networkd.service,/run/user/1000,/run/user/1000/gvfs,/run/user/1000/doc,/home,/var/cache/pacman/pkg,/var/log,/boot,/fast,/etc
+  PASS A5 no-tmpfs mutant
+  PASS A6 missing runner
+  PASS A7 usage arm
+BIND_ORACLE_SELFTEST: 4/7 pass
+VERDICT: FAIL

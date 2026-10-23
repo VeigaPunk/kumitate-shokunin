@@ -721,3 +721,29 @@ Q35 was added in round 47 (routed defect R46-1 of `corpus/lessons/round-46-verif
     carried the rewrite; run it against the revision before the rewrite (`2b2bf7bb` for round 46's).
 - **Q36 (round 48, 2026-10-23; amended wording per `r48/ReviewQualityDraft.md`).** A frozen-counter success verdict is scoreable only with N≥2 committed receipts for the same frozen command/revision, every run exit 0 with byte-identical success summaries, complete trace parsing/pairing, and per-site counts equal to the plan-pinned base counts; otherwise no success verdict is scoreable. Command: the receipt pair is re-derived by re-running the frozen command; shown able to fail: the r47 A2 re-runs at f00cf278 (`r48/ScribeReceipts-a2-rerun-{1,2,3}.txt`, 3/5, 3/5, 4/5) score nothing.
 - **Q37 (round 48, 2026-10-23).** Wave-seat receipts are claims until the L1 recomputes their bytes: the L1-owned manifest `.ufo/waves/round-48/r48/L1-receipts.sha256` binds every wave/close receipt at integration; 0-byte or trailer-less receipts count as claims only (SentinelReceipt; the 0-byte class observed live by MutRunnerLooseMem).
+
+Q38 was added in round 49 (C2; the doctrine entry is the first object it judges).
+
+- **Q38 — a knowledge entry's clause is bound to a committed receipt by content hash, and the entry scores only when a
+  frozen probe verifies every binding at the scored revision.** Grounding: the round-48 discipline lived in
+  round-scoped receipts and scorecard prose; `corpus/knowledge/counter-amendment-discipline.md` states it as clauses
+  whose evidence is a sha256 token.
+  - **Who checks.** The author writes each clause with a `receipt:<repo-path>@sha256:<64 hex>` token computed from the
+    committed blob; the C2 probe verifies all of them at the scored revision, and a non-author re-reads the prose
+    against the receipts.
+  - **Field.** One token per clause line; the token names a path under a frozen round directory (never the lane's
+    moving documents, whose hash changes at the next edit).
+  - **Command.**
+    ```sh
+    node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> <rev> [--file <entry>]
+    ```
+    It prints `DOCTRINE49: HELD clauses=<n>/<n> rows=<m> entry_sha256=<sha>` exit 0, or `DOCTRINE49: UNMET reason=…`
+    exit 1; floors `clauses>=10`, `rows>=2` with status `mined`; exit 2 on an unreadable revision.
+  - **Fails when.** Any token's hash differs or its path is absent; any cited row is not `mined`; the clause or row
+    floor is missed.
+  - **Shown able to fail.** At `589d25e4` the entry reads `HELD clauses=15/15 rows=3` exit 0; the same entry with one
+    hex digit changed reads `UNMET reason=receipts misses=.ufo/waves/round-48/plan.md=hash-mismatch(6faa34ab!=6faa34ab)`
+    exit 1 (`.ufo/waves/round-49/r49/C2-doctored-control-589d25e4*.txt`).
+  - **Limit.** The probe checks binding, not truth: a well-bound false clause passes, and the non-author re-read
+    carries that half. `--file` verifies a worktree entry against a revision's receipts, so it is a control mode, not
+    a scoring mode.
