@@ -1,0 +1,222 @@
+From aebec7eb2a4224fe22018d5518803aa0cbe4e754 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 07:04:38 -0300
+Subject: [PATCH] control (L1, objection 1): real runner chain, caps moved from
+ systemd -p properties into env assignments after --
+
+---
+ scripts/anchor-truth.mjs  |  9 ++++++++-
+ scripts/cap-run.mjs       |  4 ++--
+ scripts/claims-check.mjs  | 10 ++++++++--
+ scripts/kimi-census.mjs   | 11 ++++++++++-
+ scripts/sources-check.mjs | 15 ++++++++++++---
+ 5 files changed, 40 insertions(+), 9 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..6515d0e 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -87,6 +87,7 @@
+  * only mkdtemp fixtures.
+  */
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve, sep } from 'node:path';
+@@ -94,6 +95,8 @@ import { fileURLToPath } from 'node:url';
+ 
+ const CONTRACT = 'kumitate-anchor-truth-v1';
+ const TOOL_FILE = fileURLToPath(import.meta.url);
++/** The selftest's mkdtemp root, bound read-write into the runner's sandbox. */
++let SELFTEST_BIND = [];
+ const W = '[\\p{L}\\p{N}_]';
+ const SPAN = /`([^`\n]+)`/gu;
+ const ANCH = /^([\p{L}\p{N}_./@+-]*[\p{L}\p{N}_-]\.[\p{L}\p{N}_]+)?:(\d+)(?:-(\d+))?$/u;
+@@ -775,6 +778,7 @@ export function run(argv) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'anchor-truth-selftest-'));
++  SELFTEST_BIND = [tmp];
+   const results = [];
+   const G = { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' };
+   const g = (dir, args) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', env: gitEnv(G) });
+@@ -799,7 +803,9 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
++    const r = capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
++      encoding: 'utf8', env: gitEnv(), bind: SELFTEST_BIND,
++    });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+   };
+@@ -1202,6 +1208,7 @@ function selfTest() {
+     });
+   } finally {
+     rmSync(tmp, { recursive: true, force: true });
++    SELFTEST_BIND = [];
+   }
+   for (const r of results) process.stdout.write(`${r.ok ? 'PASS' : 'FAIL'} ${r.id} ${r.label}${r.ok ? '' : `\n     ${r.detail}`}\n`);
+   const pass = results.filter((r) => r.ok).length;
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 255dbe8..b5b2615 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -174,8 +174,8 @@ function run(o) {
+   const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
+   for (const [k, v] of o.env) setenv.push('--setenv', k, v);
+   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
+-    '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
+-    'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++    '--',
++    'env', '-i', 'PATH=/usr/bin', `MemoryMax=${o.mem}M`, 'MemorySwapMax=0', `TasksMax=${o.tasks}`, 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+     '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap((d) => ['--bind', d, d]), '--chdir', cwd,
+     '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
+     '--argv0', o.cmd[0], real, ...o.cmd.slice(1)];
+diff --git a/scripts/claims-check.mjs b/scripts/claims-check.mjs
+index d5fe701..be19e5d 100755
+--- a/scripts/claims-check.mjs
++++ b/scripts/claims-check.mjs
+@@ -77,6 +77,7 @@
+  */
+ import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { dirname, join, resolve, basename as pathBasename } from 'node:path';
+ import { homedir, tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+@@ -875,9 +876,12 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
+   writeFileSync(join(root, SCORECARD_FILE), ['# Fixture scorecard', '', ...rows, ''].join('\n'));
+ }
+ 
++/** The selftest's mkdtemp root, bound read-write into the runner's sandbox. */
++let SELFTEST_BIND = [];
++
+ function runClaims(args, env) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
+-    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
++  const r = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++    encoding: 'utf8', timeout: 60_000, env: gitEnv(env), bind: SELFTEST_BIND,
+   });
+   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
+ }
+@@ -895,6 +899,7 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-claims-selftest-'));
++  SELFTEST_BIND = [tmp];
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+@@ -1260,6 +1265,7 @@ function selfTest() {
+     check('every fail-closed arm fired by the suite', () => ({ ok: missingArms.length === 0, detail: `unfired=[${missingArms.join(',')}]` }));
+   } finally {
+     rmSync(tmp, { recursive: true, force: true });
++    SELFTEST_BIND = [];
+   }
+ 
+   const failed = results.filter((r) => !r.ok);
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..e5b89fa 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -102,6 +102,7 @@ import {
+   rmSync, symlinkSync, realpathSync,
+ } from 'node:fs';
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { join, dirname, resolve } from 'node:path';
+ import { tmpdir, homedir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+@@ -484,8 +485,14 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+   }
+ }
+ 
++/** The selftest's mkdtemp root, bound read-write into the runner's sandbox. */
++let SELFTEST_BIND = [];
++
+ function runGate(args, timeout = 30_000) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
++  const r = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++    encoding: 'utf8', timeout, bind: SELFTEST_BIND,
++    env: { PATH: '/usr/bin', HOME: homedir() },
++  });
+   return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+ }
+ 
+@@ -500,6 +507,7 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-kimi-census-selftest-'));
++  SELFTEST_BIND = [tmp];
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+@@ -995,6 +1003,7 @@ function selfTest() {
+     check('every fail-closed arm fired by the suite', () => ({ ok: missingArms.length === 0, detail: `unfired=[${missingArms.join(',')}]` }));
+   } finally {
+     rmSync(tmp, { recursive: true, force: true });
++    SELFTEST_BIND = [];
+   }
+ 
+   const failed = results.filter((r) => !r.ok);
+diff --git a/scripts/sources-check.mjs b/scripts/sources-check.mjs
+index 6b57424..a7a2ef2 100755
+--- a/scripts/sources-check.mjs
++++ b/scripts/sources-check.mjs
+@@ -47,7 +47,7 @@ import {
+   existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync,
+   statSync, writeFileSync, realpathSync,
+ } from 'node:fs';
+-import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+ import { tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+@@ -545,8 +545,13 @@ function makeFixture(parent, name, {
+   return root;
+ }
+ 
++/** The selftest's mkdtemp root, bound read-write into the runner's sandbox. */
++let SELFTEST_BIND = [];
++
+ function runTool(args) {
+-  const result = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 15_000 });
++  const result = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++    encoding: 'utf8', timeout: 15_000, bind: SELFTEST_BIND, env: { PATH: '/usr/bin' },
++  });
+   return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '', error: result.error };
+ }
+ 
+@@ -563,6 +568,7 @@ function selfTest() {
+   const observed = new Set();
+   const failClosedSeen = new Set();
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-sources-check-'));
++  SELFTEST_BIND = [tmp];
+   const check = (label, fn) => {
+     try {
+       const result = fn();
+@@ -856,7 +862,9 @@ function selfTest() {
+         'duplicates=$(awk -F"|" \'/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}\' "$file" | sort | uniq -d | wc -l) || exit 12',
+         'printf "%s %s %s\\n" "$rows" "$malformed" "$(printf "%s" "$duplicates" | tr -d "[:space:]")"',
+       ].join('\n');
+-      const parity = spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], { encoding: 'utf8', timeout: 10_000 });
++      const parity = capSpawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], {
++        encoding: 'utf8', timeout: 10_000, bind: [tmp], env: { PATH: '/usr/bin' },
++      });
+       if (parity.error) return { ok: false, detail: `spawn sh: ${parity.error.message}` };
+       if (parity.status === 0 && parity.stdout.trim() === 'SKIP') return { skip: true, detail: 'awk is unavailable' };
+       if (parity.status !== 0) return { ok: false, detail: `sh exit=${parity.status} stderr=${parity.stderr.trim()}` };
+@@ -871,6 +879,7 @@ function selfTest() {
+     });
+   } finally {
+     rmSync(tmp, { recursive: true, force: true });
++    SELFTEST_BIND = [];
+   }
+ 
+   const active = results.filter((result) => !result.skip);
+-- 
+2.56.0
+

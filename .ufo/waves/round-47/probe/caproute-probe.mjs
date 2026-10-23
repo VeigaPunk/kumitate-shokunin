@@ -2,19 +2,25 @@
 // caproute-probe.mjs — frozen counter for kumitate round 47, claim C1 (operability).
 // Usage: node caproute-probe.mjs <lane-repo> <rev>
 //
-// Predicate (label ROUTED_HELD; the same sentence as plan.md § C1):
+// Predicate (label ROUTED_HELD; the same sentence as plan.md § C1, amendment A1):
 //   Site s is ROUTED_HELD at rev r when the owning gate's `--selftest`, run from a `git archive`
-//   of r under `strace -f` with a planted canary variable, exits 0 with every case passing and
-//   no fewer cases than the same run at the frozen base 0bd8be60; execs the site's child at
-//   least once; launches no node or shell direct child other than r's own `scripts/cap-run.mjs`;
-//   and every exec of the site's child descends from r's `scripts/cap-run.mjs`, from a
-//   `/usr/bin/systemd-run --scope` carrying MemorySwapMax=0, MemoryMax <= 1024M and
-//   TasksMax <= 256, and from a `/usr/bin/bwrap` carrying --unshare-pid, --clearenv and
-//   --die-with-parent, with no canary variable in the child's environment.
+//   of r under `strace -f` with a planted canary variable, exits 0, ends `VERDICT: PASS`, prints no
+//   FAIL line, and its `<NAME>_SELFTEST: n/m pass` summary has n = m and m no lower than the same
+//   run at the frozen base 0bd8be60; no execveat succeeds in the run; every direct child of the
+//   gate is either one node exec of r's own `scripts/cap-run.mjs` or only git/mkfifo fixture
+//   execs; the site's child (a node exec, for SC859 a shell exec) is exec'd at least once; and
+//   every such exec is preceded, in its own ancestry, by the ordered chain r's
+//   `scripts/cap-run.mjs` (node) → `/usr/bin/systemd-run --scope` whose own options set
+//   `-p MemorySwapMax=0`, `-p MemoryMax=<= 1024M` and `-p TasksMax=<= 256` → `/usr/bin/bwrap`
+//   carrying --unshare-pid, --clearenv and --die-with-parent, with no canary variable in the
+//   child's environment.
 // Output: one `SITE <id> label=ROUTED_HELD|ROUTED_MISS …` line per frozen site, then
-//   `CAPROUTE_PROBE rev=<rev> base=<base> held=<h>/5`. Exit 0 iff held=5/5, 1 otherwise,
+//   `CAPROUTE_PROBE rev=<rev> base=<base> held=<h>/5 rule=A1`. Exit 0 iff held=5/5, 1 otherwise,
 //   2 when the probe cannot evaluate (archive, strace or parse failure).
-// Observation is from outside the gate and the runner: strace's execve/clone records.
+// Observation is from outside the gate and the runner: strace's execve/execveat/clone records.
+// A1 (round 47, before any candidate was scored): control CtlEnvCaps (caps moved out of systemd's
+// -p options into env assignments) read held=5/5 under the freeze rule; A1 adds the conditions
+// CritC1Shape objections 1-6 named. Every A1 change adds a condition; none is removed.
 import { spawnSync } from 'node:child_process';
 import { mkdirSync, readFileSync, rmSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -25,11 +31,11 @@ const SCRATCH = '/fast/scratch/hyaku/kumitate-r47/probe-runs';
 const MAX_LOG = 1 << 30;
 const MACHINE = new Set(['/usr/bin/systemd-run', '/usr/bin/env', '/usr/bin/bwrap', '/usr/bin/systemctl']);
 const SITES = [
-  { id: 'K488', gate: 'kimi-census', match: (a) => a[1]?.endsWith('/scripts/kimi-census.mjs') },
-  { id: 'SC549', gate: 'sources-check', match: (a) => a[1]?.endsWith('/scripts/sources-check.mjs') },
-  { id: 'SC859', gate: 'sources-check', match: (a) => a.includes('sources-check-parity') },
-  { id: 'CC879', gate: 'claims-check', match: (a) => a[1]?.endsWith('/scripts/claims-check.mjs') },
-  { id: 'AT802', gate: 'anchor-truth', match: (a) => a[1]?.endsWith('/scripts/anchor-truth.mjs') && a.includes('--self') },
+  { id: 'K488', gate: 'kimi-census', kind: (e) => basename(e.path) === 'node', match: (a) => a[1]?.endsWith('/scripts/kimi-census.mjs') },
+  { id: 'SC549', gate: 'sources-check', kind: (e) => basename(e.path) === 'node', match: (a) => a[1]?.endsWith('/scripts/sources-check.mjs') },
+  { id: 'SC859', gate: 'sources-check', kind: (e) => ['sh', 'bash', 'dash'].includes(basename(e.path)), match: (a) => a.includes('sources-check-parity') },
+  { id: 'CC879', gate: 'claims-check', kind: (e) => basename(e.path) === 'node', match: (a) => a[1]?.endsWith('/scripts/claims-check.mjs') },
+  { id: 'AT802', gate: 'anchor-truth', kind: (e) => basename(e.path) === 'node', match: (a) => a[1]?.endsWith('/scripts/anchor-truth.mjs') && a.includes('--self') },
 ];
 
 const die = (m) => { process.stdout.write(`CAPROUTE_PROBE: ERROR ${m}\n`); process.exit(2); };
@@ -83,6 +89,7 @@ function parseLog(text) {
   const pending = new Map();
   let seq = 0;
   let rootPid = null;
+  let execveat = 0;
   for (let line of text.split('\n')) {
     const m = /^(\d+) (.*)$/.exec(line);
     if (!m) continue;
@@ -91,12 +98,17 @@ function parseLog(text) {
     if (body.endsWith('<unfinished ...>')) { pending.set(pid, body.slice(0, -'<unfinished ...>'.length)); continue; }
     const res = /^<\.\.\. (\w+) resumed>(.*)$/.exec(body);
     if (res) { body = (pending.get(pid) || `${res[1]}(`) + res[2]; pending.delete(pid); }
-    const call = /^(execve|clone3?|v?fork)\(/.exec(body);
+    const call = /^(execveat|execve|clone3?|v?fork)\(/.exec(body);
     if (!call) continue;
     // --decode-pids=pidns: a clone inside a PID namespace returns `= 2 /* 3100635 in strace's PID NS */`.
     const ret = /\) = (-?\d+)(?: \/\* (\d+) in strace's PID NS \*\/)?(?: .*)?$/.exec(body);
     if (!ret) continue;
     const rv = Number(ret[2] ?? ret[1]);
+    if (call[1] === 'execveat') {
+      // A1 (CritC1Shape 6): an image replacement through execveat is recorded and fails the gate closed.
+      if (rv === 0) execveat++;
+      continue;
+    }
     if (call[1] === 'execve') {
       if (rv !== 0) continue;
       const pm = /^execve\("((?:[^"\\]|\\.)*)"/.exec(body);
@@ -112,13 +124,13 @@ function parseLog(text) {
       parent.set(rv, pid);
     }
   }
-  return { parent, execs, rootPid };
+  return { parent, execs, rootPid, execveat };
 }
 
 function runGate(tree, gate, canaryKey, canaryVal, tag) {
   const log = join(tree, '..', `${gate}-${tag}.strace`);
   const r = spawnSync('prlimit', [`--fsize=${MAX_LOG * 4}`, '--', 'timeout', '-k', '10', '1200',
-    'strace', '-f', '-qq', '-v', '-s', '8192', '--decode-pids=pidns', '-e', 'trace=execve,clone,clone3,fork,vfork', '-e', 'signal=none',
+    'strace', '-f', '-qq', '-v', '-s', '8192', '--decode-pids=pidns', '-e', 'trace=execve,execveat,clone,clone3,fork,vfork', '-e', 'signal=none',
     '-o', log, '--', process.execPath, join(tree, 'scripts', `${gate}.mjs`), '--selftest'],
   { cwd: tree, encoding: 'utf8', maxBuffer: 1 << 28, env: { ...process.env, [canaryKey]: canaryVal } });
   let size = 0;
@@ -127,30 +139,65 @@ function runGate(tree, gate, canaryKey, canaryVal, tag) {
   const parsed = parseLog(readFileSync(log, 'utf8'));
   rmSync(log, { force: true });
   if (parsed.rootPid === null) die(`no execve recorded for ${gate} (${tag})`);
-  const sum = String(r.stdout).split('\n').map((l) => /\b(\d+)\/(\d+)\b/.exec(l)).filter(Boolean).at(-1);
-  return { status: r.status, tail: String(r.stdout).trim().split('\n').at(-1) || '',
-    pass: sum ? Number(sum[1]) : -1, total: sum ? Number(sum[2]) : -1, ...parsed };
+  // A1 (CritC1Shape 2): the owning suite's own summary line, its final `VERDICT: PASS`, and no FAIL case line.
+  const lines = String(r.stdout).split('\n');
+  const sum = lines.map((l) => /^[A-Z][A-Z_]*_SELFTEST: (\d+)\/(\d+) pass$/.exec(l)).filter(Boolean).at(-1);
+  const verdictPass = (lines.filter((l) => l.trim() !== '').at(-1) || '') === 'VERDICT: PASS';
+  const failLines = lines.filter((l) => /^FAIL\b/.test(l)).length;
+  return { status: r.status, tail: lines.filter((l) => l.trim() !== '').at(-1) || '',
+    pass: sum ? Number(sum[1]) : -1, total: sum ? Number(sum[2]) : -1, verdictPass, failLines, ...parsed };
 }
 
-function chainOf(p, e) {
-  const out = p.execs.filter((x) => x.pid === e.pid && x.seq < e.seq);
-  const seen = new Set();
-  let q = p.parent.get(e.pid);
-  while (q !== undefined && !seen.has(q)) { seen.add(q); out.push(...p.execs.filter((x) => x.pid === q)); q = p.parent.get(q); }
+// A1 (CritC1Shape 4): ancestry at the child's exec time — the ancestor PIDs of the child and only
+// the execs recorded before it, in order.
+function ancestorsOrSelf(p, pid) {
+  const out = [pid];
+  const seen = new Set(out);
+  let q = p.parent.get(pid);
+  while (q !== undefined && !seen.has(q)) { seen.add(q); out.push(q); q = p.parent.get(q); }
   return out;
 }
 
-// A direct child of the gate's root process that runs node or a shell without being the rev's
-// own cap-run.mjs is an uncapped launch (a dodge by copied file or renamed label included).
-const SHELLS = new Set(['sh', 'bash', 'dash', 'zsh']);
+// A1 (CritC1Shape 1): systemd-run's own options, before its `--`, as `-p K=V` / `--property=K=V`.
+function scopeProps(x) {
+  const props = new Map();
+  let scope = false;
+  for (let i = 1; i < x.argv.length && x.argv[i] !== '--'; i++) {
+    const a = x.argv[i];
+    if (a === '--scope') scope = true;
+    let kv = null;
+    if ((a === '-p' || a === '--property') && i + 1 < x.argv.length) kv = x.argv[++i];
+    else if (a.startsWith('--property=')) kv = a.slice('--property='.length);
+    else if (a.startsWith('-p') && a.length > 2) kv = a.slice(2);
+    if (kv && kv.includes('=')) props.set(kv.slice(0, kv.indexOf('=')), kv.slice(kv.indexOf('=') + 1));
+  }
+  return { scope, props };
+}
+const isScope = (x) => {
+  if (x.path !== '/usr/bin/systemd-run') return false;
+  const { scope, props } = scopeProps(x);
+  const mm = /^(\d+)M$/.exec(props.get('MemoryMax') || '');
+  const tm = /^(\d+)$/.exec(props.get('TasksMax') || '');
+  return scope && props.get('MemorySwapMax') === '0' && mm && Number(mm[1]) <= 1024 && tm && Number(tm[1]) <= 256;
+};
+const isBwrap = (x) => x.path === '/usr/bin/bwrap' && ['--unshare-pid', '--clearenv', '--die-with-parent'].every((f) => x.argv.includes(f));
+const isNode = (x) => basename(x.path) === 'node';
+const SHELLS = new Set(['sh', 'bash', 'dash']);
+
+// A1 (CritC1Shape 3, 5): every direct child of the gate's root either is exactly one exec of node
+// running the rev's own cap-run.mjs, or execs only the fixture tools below; anything else is an
+// uncapped launch (a dodge through a copied file, renamed label, env, another interpreter included).
+const FIXTURE_TOOLS = new Set(['/usr/bin/git', '/usr/bin/mkfifo']);
 function uncappedDirect(p, tree) {
   const runner = join(tree, 'scripts', 'cap-run.mjs');
   let n = 0;
   for (const [kid, par] of p.parent) {
     if (par !== p.rootPid) continue;
     const ex = p.execs.filter((x) => x.pid === kid);
-    if (ex.length === 0 || ex[0].argv[1] === runner) continue;
-    if (ex.some((x) => basename(x.path) === 'node' || SHELLS.has(basename(x.path)))) n++;
+    if (ex.length === 0) continue;
+    if (ex.length === 1 && isNode(ex[0]) && ex[0].argv[1] === runner) continue;
+    if (ex.every((x) => FIXTURE_TOOLS.has(x.path))) continue;
+    n++;
   }
   return n;
 }
@@ -158,27 +205,37 @@ function uncappedDirect(p, tree) {
 function judge(p, tree, site, canaryKey) {
   const runnerFile = join(tree, 'scripts', 'cap-run.mjs');
   const cands = p.execs.filter((e) => e.pid !== p.rootPid && !MACHINE.has(e.path)
-    && e.argv[1] !== runnerFile && site.match(e.argv));
+    && e.argv[1] !== runnerFile && site.match(e.argv) && site.kind(e));
   let capped = 0;
   const why = new Set();
   for (const e of cands) {
-    const ch = chainOf(p, e);
-    const runner = ch.some((x) => x.argv[1] === join(tree, 'scripts', 'cap-run.mjs'));
-    const sd = ch.some((x) => {
-      if (x.path !== '/usr/bin/systemd-run' || !x.argv.includes('--scope') || !x.argv.includes('MemorySwapMax=0')) return false;
-      const mm = x.argv.map((a) => /^MemoryMax=(\d+)M$/.exec(a)).find(Boolean);
-      const tm = x.argv.map((a) => /^TasksMax=(\d+)$/.exec(a)).find(Boolean);
-      return mm && Number(mm[1]) <= 1024 && tm && Number(tm[1]) <= 256;
-    });
-    const bw = ch.some((x) => x.path === '/usr/bin/bwrap' && ['--unshare-pid', '--clearenv', '--die-with-parent'].every((f) => x.argv.includes(f)));
+    const anc = ancestorsOrSelf(p, e.pid);
+    const before = (pid, seqMax) => p.execs.filter((x) => x.pid === pid && x.seq < seqMax);
+    // ordered chain: runner R (node + rev's cap-run.mjs) → systemd-run S → bwrap B → child e,
+    // each recorded before the next and each in the ancestry (or same PID) of the next.
+    let chain = false;
+    let haveR = false; let haveS = false; let haveB = false;
+    for (const bp of anc) {
+      for (const B of before(bp, e.seq).filter(isBwrap)) {
+        haveB = true;
+        for (const sp of ancestorsOrSelf(p, B.pid)) {
+          for (const S of before(sp, B.seq).filter(isScope)) {
+            haveS = true;
+            for (const rp of ancestorsOrSelf(p, S.pid)) {
+              if (before(rp, S.seq).some((R) => isNode(R) && R.argv[1] === runnerFile)) { haveR = true; chain = true; }
+            }
+          }
+        }
+      }
+    }
     const leak = e.envp.some((v) => v.startsWith(`${canaryKey}=`));
-    if (!runner) why.add('no_cap_run_ancestor');
-    if (!sd) why.add('no_capped_scope_ancestor');
-    if (!bw) why.add('no_bwrap_ancestor');
+    if (!haveB) why.add('no_bwrap_ancestor');
+    if (!haveS) why.add('no_capped_scope_ancestor');
+    if (!haveR) why.add('no_cap_run_ancestor');
     if (leak) why.add('canary_in_env');
-    if (runner && sd && bw && !leak) capped++;
+    if (chain && !leak) capped++;
   }
-  return { n: cands.length, capped, why: [...why], dodge: uncappedDirect(p, tree) };
+  return { n: cands.length, capped, why: [...why], dodge: uncappedDirect(p, tree), execveat: p.execveat };
 }
 
 function measure(r, tag) {
@@ -197,7 +254,7 @@ function measure(r, tag) {
     for (const s of SITES) {
       runs[s.gate] ??= runGate(tree, s.gate, canaryKey, canaryVal, tag);
       out[s.id] = { ...judge(runs[s.gate], tree, s, canaryKey), status: runs[s.gate].status, tail: runs[s.gate].tail,
-        pass: runs[s.gate].pass, total: runs[s.gate].total };
+        pass: runs[s.gate].pass, total: runs[s.gate].total, verdictPass: runs[s.gate].verdictPass, failLines: runs[s.gate].failLines };
     }
     return out;
   } finally {
@@ -215,11 +272,14 @@ for (const s of SITES) {
   if (t.status !== 0) why.push(`gate_exit=${t.status}`);
   if (t.n < 1) why.push('no_child_exec');
   if (t.dodge > 0) why.push(`uncapped_direct_children=${t.dodge}`);
+  if (t.execveat > 0) why.push(`execveat=${t.execveat}`);
+  if (!t.verdictPass) why.push('no_final_verdict_pass');
+  if (t.failLines > 0) why.push(`fail_lines=${t.failLines}`);
   if (t.total < 1 || t.pass !== t.total || t.total < b.total) why.push(`selftest_cases=${t.pass}/${t.total}<base_total=${b.total}`);
-  const ok = why.length === 0 && t.capped === t.n && t.n >= 1 && t.dodge === 0 && t.status === 0
-    && t.total >= 1 && t.pass === t.total && t.total >= b.total;
+  const ok = why.length === 0 && t.capped === t.n && t.n >= 1 && t.dodge === 0 && t.execveat === 0 && t.status === 0
+    && t.verdictPass && t.failLines === 0 && t.total >= 1 && t.pass === t.total && t.total >= b.total;
   if (ok) held++;
   process.stdout.write(`SITE ${s.id} gate=${s.gate} label=${ok ? 'ROUTED_HELD' : 'ROUTED_MISS'} n=${t.n} base_n=${b.n} capped=${t.capped} uncapped_direct=${t.dodge} cases=${t.pass}/${t.total} base_cases=${b.pass}/${b.total} gate_exit=${t.status}${ok ? '' : ` reason=${why.join(',')}`}\n`);
 }
-process.stdout.write(`CAPROUTE_PROBE rev=${rev} base=${BASE.slice(0, 8)} held=${held}/${SITES.length}\n`);
+process.stdout.write(`CAPROUTE_PROBE rev=${rev} base=${BASE.slice(0, 8)} held=${held}/${SITES.length} rule=A1\n`);
 process.exit(held === SITES.length ? 0 : 1);

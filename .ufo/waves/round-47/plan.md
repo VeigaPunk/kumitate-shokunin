@@ -82,3 +82,35 @@ item failing that passed at open; `gate-mutants` CLEAN (its two targets are unto
 New SOURCES rows opened this round (tier A, primary manuals) for the counter and the runner: strace(1) (`-f`,
 `--decode-pids=pidns`), Node.js process I/O (synchronous pipes and `process.exit()`), bwrap `--bind`. C1 cites
 them (sourced claim). One mistake mined into `corpus/lessons/round-47.md` `## Mistakes`.
+
+## A1 — counter amendment before data (2026-10-23 ~10:45Z; no candidate scored)
+
+**Why.** Wave-1 critic CritC1Shape (`build/CritC1Shape.md`) named a shortcut none of the twelve listed controls covered:
+keep the real runner chain but move `MemoryMax`/`MemorySwapMax`/`TasksMax` out of systemd-run's `-p` options into
+`env -i` assignments after its `--`, so the scope gets no limit while every token stays in systemd-run's argv. The L1
+built it (`probe/receipts/ctl-envcaps.patch`, scratch commit `aebec7eb`, on CtlFakeRunner's routing with the real v2
+runner) and scored it with the frozen counter: **`held=5/5` exit 0** (`probe/receipts/ctl-envcaps-frozen.txt`). The
+freeze counter is therefore wrong (§9) and is re-designed before any candidate is scored.
+
+**What A1 adds** (every change adds a condition; nothing is removed; CritC1Shape objections 1-6):
+1. systemd-run's limits are read only from its own options before its `--` (`-p K=V`, `--property=K=V`).
+2. The owning suite's `<NAME>_SELFTEST: n/m pass` line, a final `VERDICT: PASS` and no `FAIL` line.
+3. The child is identified by executable too (node; a shell for SC859); the runner by node + the rev's cap-run.mjs.
+4. Ancestry at exec time: the ordered chain runner → scope → bwrap → child, using only execs recorded before the next.
+5. Every direct child of the gate is one node exec of the rev's runner or only `/usr/bin/git`/`/usr/bin/mkfifo` execs.
+6. `execveat` is traced; any successful `execveat` in a gate's run fails that gate's sites.
+
+**A1 predicate, label `ROUTED_HELD`** (the same sentence as the counter's header): Site s is ROUTED_HELD at rev r when
+the owning gate's `--selftest`, run from a `git archive` of r under `strace -f` with a planted canary variable, exits 0,
+ends `VERDICT: PASS`, prints no FAIL line, and its `<NAME>_SELFTEST: n/m pass` summary has n = m and m no lower than the
+same run at the frozen base 0bd8be60; no execveat succeeds in the run; every direct child of the gate is either one node
+exec of r's own `scripts/cap-run.mjs` or only git/mkfifo fixture execs; the site's child (a node exec, for SC859 a shell
+exec) is exec'd at least once; and every such exec is preceded, in its own ancestry, by the ordered chain r's
+`scripts/cap-run.mjs` (node) → `/usr/bin/systemd-run --scope` whose own options set `-p MemorySwapMax=0`,
+`-p MemoryMax=<= 1024M` and `-p TasksMax=<= 256` → `/usr/bin/bwrap` carrying --unshare-pid, --clearenv and
+--die-with-parent, with no canary variable in the child's environment.
+
+**A1 receipts before data:** base `a1-base.txt` 0/5, freeze `a1-freeze.txt` 0/5, CtlEnvCaps `a1-ctl-envcaps.txt` 0/5
+(`no_capped_scope_ancestor` on every site), calibration K488-only `a1-calib-k488-only.txt` 1/5 (K488 ROUTED_HELD). Every
+wave-1 control patch is re-scored under A1 before the candidate (`probe/receipts/a1-controls.txt`). Target, sites and
+kill rule are unchanged.
