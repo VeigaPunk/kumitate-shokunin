@@ -96,3 +96,44 @@ names and values at random per run and prints them on a `PARAMS` line; the C2 pr
 The do-nothing control was re-scored (`receipts/c2-base.txt`, second block: `held=0/6`) and calibration re-run three
 times (`receipts/calibration.txt`: `held=6/6` each). The C2 counter of record is the one in the commit carrying this
 note; C1 is unchanged.
+
+## Amendment A2 before data (L1, ~08:45Z) — supersedes the C1/C2 sections above where they differ
+
+No candidate fix has been scored by any counter (the build executors did not run the frozen counters; the L1 has
+not measured). Three pre-data findings forced a re-design, which §9 permits before data:
+
+- **Control CtlC1PathKeyed met the C1 counter** (`build/CtlC1PathKeyed.md`: a scrub keyed on the counter's default
+  scratch root scored `held=3/3`; moving `SCRATCH_ROOT` exposed it, 0/3).
+- **Control CtlC1Replay met the C1 counter** (`build/CtlC1Replay.md`: replaying stored PASS lines plus dummy `git`
+  launches scored `held=3/3`).
+- **CritClaimShape** (`build/CritClaimShape.md`): (1) C1 and C2 both change operability, so they are ONE axis-move,
+  not two claims (AXES.md; the round-41 precedent at SCORECARD.md:1886-1888); (2) the plan's "never with any of the
+  three variables set" was stronger than the code's canary-path grep; (3) an unconditional replay shortcut; (4) K1/K6
+  did not identify the cgroup and the PID namespace.
+
+**Re-designed claim (one claim, operability, the lowest non-retired axis).**
+**C1 — the lane's selftest Git writers and its child processes get enforced bounds.** Surface: the `--selftest`
+paths of `scripts/cite-check.mjs`, `scripts/proxy-check.mjs`, `scripts/round-gate.mjs`, and the new
+`scripts/cap-run.mjs`. Two obligations, BOTH required; either miss is a miss of C1:
+- **O1 `CANARY_HELD` 3/3** under counter `probe/gitenv-canary.sh` as committed with this note. Each tool, run from a
+  fresh clone of R, must hold (a)–(e) in two hostile runs — A with the three variables naming a fresh canary repo at
+  a random path under `${TMPDIR:-/tmp}`, B with them naming the clone of R itself (the caller's-lane hazard): (a)
+  exit 0 + `VERDICT: PASS`; (b) the named repository's full file manifest unchanged; (c) PASS case-name set equal to
+  the same selftest's scrubbed-environment set at R; (d) that set contains every base-2b2bf7bb PASS name; (e) `git`
+  launched through PATH at least once and at least as often as the scrubbed run, and **no launch with any of
+  GIT_DIR, GIT_WORK_TREE or GIT_INDEX_FILE set**; and (f) under a scrubbed environment with a PATH `git` that fails
+  every launch, the selftest does not report a clean pass (exits non-zero or prints a `FAIL` line).
+- **O2 `CAP_HELD` 6/6** under counter `probe/caprun-probe.mjs` as committed with this note: K1–K6 as worded above
+  (A1, randomized) plus two mechanism-identity clauses: K1's 2-allocation child reads its own cgroup's `memory.max`
+  as exactly M MiB; K6's child has a `/proc/self/ns/pid` different from the probe's.
+- **Capability row `cap-run`** enters `## Capabilities` in the C1 commit only if O2 is 6/6.
+- **Kill rule.** C1 verifies only if O1 = 3/3 AND O2 = 6/6 at the C1 commit; anything else is a miss, reported as
+  such. Counters, predicates and targets are not amended after this note is committed.
+
+**Residuals named before data.** O1: a scrub keyed on a set of path prefixes covering both hostile runs, or a
+replayer that probes `git` before deciding, is not distinguishable from a full scrub by the counter; the C1 diff is
+read by a non-author. O2: the six cases sample behaviour; they are not an enumeration of every descendant, signal or
+task-limit path.
+
+**Controls re-scored under A2 before data** (L1, receipts `probe/receipts/controls-A2.txt`): every control commit
+the wave-1 control seats built is re-scored with the A2 counters, plus the do-nothing base.

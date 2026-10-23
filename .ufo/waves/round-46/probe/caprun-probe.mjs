@@ -5,7 +5,8 @@
 // is CAP_HELD on case k when the behaviour this probe observes from outside the runner meets case k:
 //   K1 native memory — under `--mem M` (M drawn per run from 112..176), a child that allocates sixty-four
 //      16 MiB Buffers and records each allocation records at most ceil(M/16), never reaches DONE, and the
-//      runner exits non-zero; and the same runner lets a 2-allocation child reach DONE with exit 0 (liveness).
+//      runner exits non-zero; and the same runner lets a 2-allocation child reach DONE with exit 0, and that
+//      child reads its own cgroup's memory.max (/proc/self/cgroup → /sys/fs/cgroup) as exactly M MiB (A2).
 //   K2 descendants — a child that starts a detached new-session grandchild and exits 0: the runner
 //      exits 0 within 30 s and 1 s after it returns no process carries the grandchild's marker.
 //   K3 total budget — under `--budget B` (B drawn per run from 2..4), a 300 s child: the runner returns within
@@ -17,8 +18,8 @@
 //   K5 signal cleanup — SIGTERM to the runner 1.5 s into a 300 s child: the runner exits within 10 s and
 //      1 s later no process carries the child's marker.
 //   K6 isolation (QUALITY Q31) — run with a marker key in the runner's own environment: the runner exits 0
-//      and the child reads /proc/1/environ successfully (its own PID namespace) and finds neither
-//      the marker nor GIT_DIR in it.
+//      and the child reads /proc/1/environ successfully and finds neither the marker nor GIT_DIR in it, and
+//      the child's /proc/self/ns/pid differs from the probe's own (a PID namespace of its own; A2).
 // Fixture names, key names, values, M and B are random per run (no fixed label to key on); the
 // drawn values are printed on the PARAMS line.
 // A missing runner, a probe-side timeout (60 s per invocation, SIGKILL) or any unmet clause is NOT_HELD.
@@ -26,7 +27,7 @@
 // Usage: node caprun-probe.mjs <lane-repo> <rev>   Output: PARAMS, one line per case, then
 //   CAPRUN_PROBE rev=<full> held=<k>/6        Exit 0 = 6/6, 1 = fewer, 2 = usage/setup error.
 import { spawnSync, spawn } from 'node:child_process';
-import { mkdtempSync, rmSync, readFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, rmSync, readFileSync, readdirSync, existsSync, mkdirSync, readlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomBytes, randomInt } from 'node:crypto';
 const hex = () => randomBytes(5).toString('hex').toUpperCase();
@@ -95,7 +96,8 @@ if (!existsSync(runner)) {
   // K1 native memory + liveness
   {
     const prog = join(cwd, P.prog);
-    const hog = (n) => `const fs=require('fs');const a=[];for(let i=1;i<=${n};i++){a.push(Buffer.alloc(16<<20,1));fs.writeFileSync(${JSON.stringify(P.prog)},String(i));}fs.writeFileSync(${JSON.stringify(P.prog)},'DONE');`;
+    const cg = `try{const p=fs.readFileSync('/proc/self/cgroup','utf8').match(/^0::(.*)$/m)[1];process.stdout.write('CGMAX='+fs.readFileSync('/sys/fs/cgroup'+p+'/memory.max','utf8').trim()+'\\n')}catch(e){process.stdout.write('CGMAX=ERR\\n')}`;
+    const hog = (n) => `const fs=require('fs');${cg};const a=[];for(let i=1;i<=${n};i++){a.push(Buffer.alloc(16<<20,1));fs.writeFileSync(${JSON.stringify(P.prog)},String(i));}fs.writeFileSync(${JSON.stringify(P.prog)},'DONE');`;
     const r1 = run(['--mem', String(P.M), '--tasks', '64', '--budget', '60', '--', 'node', '-e', hog(64)]);
     const p1 = existsSync(prog) ? readFileSync(prog, 'utf8') : '0';
     rmSync(prog, { force: true });
@@ -106,6 +108,8 @@ if (!existsSync(runner)) {
     if (r1.status === 0) why.push('hog_exit=0');
     if (r1.error) why.push('hog_probe_timeout');
     if (p2 !== 'DONE' || r2.status !== 0) why.push(`liveness=${p2}/exit=${r2.status}`);
+    const cgmax = ((r2.stdout || '').match(/^CGMAX=(.*)$/m) || [])[1];
+    if (cgmax !== String(P.M * 1048576)) why.push(`cgroup_memory_max=${cgmax ?? 'none'}`);
     report('K1', why.length === 0, why.join(','));
   }
   // K2 descendants
@@ -171,7 +175,7 @@ if (!existsSync(runner)) {
   {
     const mk = `${tag}-${hex()}`;
     const env = { ...scrub, [P.mark]: mk, GIT_DIR: `${P.fake}/.git` };
-    const js = 'let s;try{s="P1ENV="+require("fs").readFileSync("/proc/1/environ").toString("base64")}catch(e){s="P1ERR="+e.code}process.stdout.write(s+"\\n")';
+    const js = 'const fs=require("fs");let s;try{s="P1ENV="+fs.readFileSync("/proc/1/environ").toString("base64")}catch(e){s="P1ERR="+e.code}let n;try{n=fs.readlinkSync("/proc/self/ns/pid")}catch(e){n="ERR"}process.stdout.write(s+"\\nNSPID="+n+"\\n")';
     const r = run(['--mem', '256', '--tasks', '64', '--budget', '60', '--', 'node', '-e', js], env);
     const why = [];
     const line = (r.stdout || '').split('\n').find((l) => l.startsWith('P1ENV=') || l.startsWith('P1ERR='));
@@ -183,6 +187,10 @@ if (!existsSync(runner)) {
       if (p1.includes(mk)) why.push('marker_in_p1');
       if (p1.includes('GIT_DIR=')) why.push('git_dir_in_p1');
     }
+    const ns = ((r.stdout || '').match(/^NSPID=(.*)$/m) || [])[1];
+    let own = null;
+    try { own = readlinkSync('/proc/self/ns/pid'); } catch { /* none */ }
+    if (!ns || ns === 'ERR' || ns === own) why.push(`pid_ns_not_own=${ns ?? 'none'}`);
     report('K6', why.length === 0, why.join(','));
   }
 }
