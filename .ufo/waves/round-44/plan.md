@@ -205,3 +205,46 @@ Superseding values (everything else above stands):
 - After target (one value): `P44_COUNT: MET (passed=150 cases=150 floor=20 …)` exit 0 at the measured commit.
 - Kill rule 1 reads `passed=150 cases=150`.
 - Measurement command: as in § Measurement with `p44c-count.mjs`, plus `--seed` recorded from the receipt header for replay.
+
+## Third pre-data redesign (2026-10-23 ~01:38Z by commit time; still no census scored)
+
+Correction to the first redesign heading: it says "01:24Z"; the commit that carries it, `292d9266`,
+is dated 01:16:44Z and its receipt ran 01:16:28Z (ReviewCounterVsPlan F4). The heading time is wrong;
+the commit time stands.
+
+The residual call (8 seats, dispatched ~01:30Z against `p44c` at `28e29bbe`; two seats, CritV3Channels
+and CritV3LabelA, ended on a provider `cyber_policy` refusal and are holds) found programs that read
+`P44_COUNT: MET (passed=150 cases=150)` under p44c while dropping per-member knowledge:
+**CritV3LabelB** `histogram-bag.mjs` (sha256 `a8c35e88…`: a bag of per-entry (sorted name-character
+histogram, kind, mode); `agents` → `stagen` passes) and **CritV3Boundary** (six of eight one-piece
+removals read MET: no kind or permission rule for the six sourced members, `source-names-only`, no
+ceiling on RULES.md, no chain end anchoring; base presence also survives, which the census contract
+does not require). CritV3Expectations found one latent label conflict (a random stray could equal a
+sourced name such as `tools`). Under the kill rule the counter is replaced a third time before any
+census is scored: **`probe/p44d-count.mjs`** (sha256
+`9ea97d869a613a164f75aa8c357d18f586e6aef2e04672e0cc73dce5928e461e`) is the C1 counter from this commit
+on. **P44 is unchanged word for word** (`casePasses`, `isMet` byte-identical to p44c).
+
+Case-generation changes: `wide:<m>` replaces `mode:<m>` and covers every base member (one missing
+group/other read or write bit added); `anagram:<m>` (m renamed to a permutation of its own
+characters, same kind and mode); `sidecarwide` and `genwide` cover every sidecar/family with `wide`;
+`junkgen:<f>` (valid generation + 2-3 letters); `srckind:<id>` / `srcwide:<id>` for every sourced
+member; no generated DRIFT entry may take a sourced name (`RESERVED`). At the frozen shape the case
+set is **207**.
+
+Pre-data control receipts under p44d (`controls-v4/*.txt`, L1 re-score, before any census): all 44
+control programs read UNMET — the 26 control-wave programs and the absent file (as before), the
+residual seats' 4 CritV3LabelB variants, 7 CritV3Boundary removals and 6 ReviewV3Receipts controls.
+Highest: 206/207 (`no-rules-mode`, `no-sessions-kind`, `no-themes-name`: each fails exactly the one
+case that exercises the dropped rule). Not scored, by classification made before scoring:
+CritV3Boundary `full-unscored.mjs` and `no-base-presence.mjs` — both encode every per-member rule
+the census contract names (absence is optional in the contract), so they are the claimed work, not
+controls; and CritV3ClauseDrops' counter copies (counter mutants, not censuses).
+
+Superseding values (everything else above stands):
+
+- Counter: `probe/p44d-count.mjs`; selftest `open/p44d-selftest.txt` (`P44_SELFTEST: 21/21`, `VERDICT: PASS`).
+- Before: `open/p44d-before-6cda8c35.txt` → `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit=1.
+- After target (one value): `P44_COUNT: MET (passed=207 cases=207 floor=20 …)` exit 0 at the measured commit.
+- Kill rule 1 reads `passed=207 cases=207`. No further counter replacement: from this commit on, any
+  control that reads MET (wave 2 included) fails C1 under kill rule 2; it does not trigger a redesign.
