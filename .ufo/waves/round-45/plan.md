@@ -166,3 +166,37 @@ or the L1 re-derives it. C1, its verdict rule, F1–F3 and K1–K5 stand unchang
   shortcut controls; the runner itself is planned for the round that next freezes a counter, and no counter runs
   this round.
 - **Attempt-1 seat `CritExploratoryPremise`** left no report (dead); not resent.
+
+## E9 — checklist amendments from the attempt-2 control wave (appended before the entry commit; K1–K5 above are not reworded)
+
+Every K-item below was met or found vacuous by a committed control in `.ufo/waves/round-45/a2-control/`; per E8 the
+checklist is amended here, before the entry exists in any commit, and is frozen as amended from the entry commit on.
+C1 is `unprovable` if any item fails.
+
+- **K0 (new; CtlDoNothingEntry: K1–K3 and F1–F3 vacuous on an empty lane).** The entry has a decision table of at
+  least five rows, cites at least five new SOURCES rows, and at least five committed attempt-2 demo receipts.
+- **K1′ (CtlLabelKeyedEntry: a label-presence reading passes swapped rows; CtlGlossaryEntry object D passes on "or a
+  source locator").** Every decision-table row names one mechanism defined in the entry's own § Mechanisms and one
+  committed attempt-2 demo receipt; a source locator alone does not qualify a row. The reviewer opens each receipt and
+  confirms it shows the effect the row says it prevents (row-to-effect binding), not only that the label exists.
+- **K2′ (CtlDemoSameEffect: a dirty-sandbox control shows the same delta; the attempt-1 M1 receipt printed no control
+  counts).** Every cited demo receipt prints the effect's before/after values and the do-nothing control's
+  before/after values from a stated clean pre-state, and the control's delta differs from the effect's; a falsify
+  re-run reproduces both.
+- **K3′ (CtlOffTopicRow; CtlDoNothingEntry defect 1–2).** Covers every new row the entry cites, whatever its id. The
+  committed scripts `probe/reopen-quote.sh.txt` and `normalize.py.txt` do not strip « » or fold apostrophes, so a
+  script `MISSING` on such a quote is resolved by reading the fetched bytes, and a script `FOUND` never settles
+  locality: the reviewer confirms the quote sits under the stated section, the row's teaches does not overstate it,
+  and the fetched page's own version marker matches the version the row claims (probe D: a 2.54.0 page cited as
+  2.56.0 passes script and section checks).
+- **K5′ (CtlGlossaryEntry objects C and D; CtlCheckK5Baseline).** The two practice-change rows are read in the
+  decision table's operative `required guards` column only (not notes or prose), each carries a demo receipt under
+  K1′, and the change is against round-44 wave practice as committed (three `GIT_*` names on the clone and checkout
+  lines; p44d's `--clearenv` with no spawn `env`). Earlier-round passages that already prescribed a wider scrub
+  (round-42 `SentinelGateMutants.md:130`, round-36 `ScoutPinDesign.md:63`) or a spawn `env` (`lessons/round-44.md:129`)
+  must be named by the entry (K4).
+- **Plan line 71 (R44-3 runner with `--clearenv`).** Superseded by E8: no runner lands this round; Q31 prescribes
+  `env -i` (or a spawn `env`) as bwrap's immediate parent plus `--clearenv --setenv`.
+- **Controls scored against the amended items (L1 reading, to be re-scored by a falsify seat).** do-nothing lane:
+  fails K0. Glossary A/B/C: fail K0/K1′/K5′. Glossary D (two pasted rows with source locators): fails K0 and K1′.
+  Label-keyed swap: fails K1′ on opening the receipts. Same-effect M1 control: fails K2′.
