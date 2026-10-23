@@ -200,3 +200,30 @@ C1 is `unprovable` if any item fails.
 - **Controls scored against the amended items (L1 reading, to be re-scored by a falsify seat).** do-nothing lane:
   fails K0. Glossary A/B/C: fail K0/K1′/K5′. Glossary D (two pasted rows with source locators): fails K0 and K1′.
   Label-keyed swap: fails K1′ on opening the receipts. Same-effect M1 control: fails K2′.
+
+## E10 — attempt 3 (appended 2026-10-23 ~06:55Z by the attempt-3 L1 `KumitateR45A3`; nothing above is reworded)
+
+Attempt 2 (`KumitateR45A2`) died with the orchestrator (omp SIGSEGV) at 06:19:06Z after landing `d9ad2870`,
+`31656bdf`, `1a8312ee` and the entry commit `6b2a4517`. Its falsify wave `a2-falsify` (44 seats, spawned 06:04:59Z in
+four chunks) died with it before any seat wrote a report: the lane held only its spec, dispatch payload, registry and
+dispatch note, committed now as the record of that wave (`a2-falsify-spec.json`, `a2-falsify-dispatch.json`,
+`a2-falsify/`). Those 44 tasks are not resent to any seat in any role.
+
+Attempt-2 leftovers in the lane at 06:42Z (45 untracked files: attempt-1 `build/*` reports and specs,
+`open/checklist-pass.txt`, and `a2-control/VerifyCritCensusVsDomain.md`, a report that arrived after `31656bdf`) are
+untrusted scratch: copied byte-exact to `/fast/scratch/hyaku/kumitate-r45/a3/untracked-snapshot/` and removed from the
+lane; none is cited.
+
+C1, its verdict rule, F1–F3, K1–K5 and the E9 amendments (frozen from the entry commit) stand unchanged. The judged
+object stays the entry at `6b2a4517`; after this wave it changes only by appended, named errata.
+
+**Wave `a3-falsify` (v1, 33 seats), every item a new design:** 15 independent-channel re-opens of the cited rows (the
+text opened through a second channel — upstream tag, installed man page or package — besides the row's URL), 2
+re-judgments of the rejected rows S075/S076, 1 control on that method (`CtlChannelMethod`: planted one-word, locator
+and version defects; a method that misses them is not trusted), 6 guard ablations (one per decision-table row: is each
+required guard component necessary, with the effect and do-nothing control re-run from a clean pre-state as the
+baseline — this baseline is the K2′ falsify re-run), 2 practice audits of the lane's shipped scripts against the table,
+1 whole-checklist application (`KSheetFull`), 1 strongest-failure critic, 1 contradiction scan against the lane's other
+entries, and history replays of the round-45 repairs (Q32 over rounds 35–45, Q30 over p44/p44b/p44c, Q31 on launchers
+outside round 44), plus a version-drift check. Settle deadline 45 minutes after dispatch; stragglers are cancelled and
+named.
