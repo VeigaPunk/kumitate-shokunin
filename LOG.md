@@ -1963,3 +1963,13 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   **Recorded limit found by a wave seat (ScoutCapRunVisibility):** `cap-run --bind /tmp /tmp` applied after
   `--tmpfs /tmp` re-exposes the host `/tmp` read-write; the oracle does not refuse it (it is only refused for
   `/`, `/proc`, `/sys`, `/dev`, `/run`) — routed to round 50.
+
+- 2026-10-23 — round 49 addendum (C2 re-score; connector seat findings). C16 added to
+  `corpus/knowledge/counter-amendment-discipline.md`: the lane's own round-42 counter-amendment origin
+  (`corpus/lessons/round-42.md:172-178`, in-repo, bound as `receipt:corpus/lessons/round-42.md@sha256:5a4822b8…`); a
+  "Prior art" paragraph cites mado r20 (`SentinelHarnessNote.md:39-52`, a proposed-never-landed mountinfo check — no
+  duplicate), mado r25/r26, kake r40/r41, mori r23, tameshi r18/r34 and Q36/Q37 as prose (sibling artifacts are
+  out-of-repo, so D49 cannot bind them); the registry row now says requested **mount** binds and names the
+  `mado-binds.py` Hyprland-keybind collision. Re-scored after the addendum: `DOCTRINE49: HELD clauses=16/16 rows=3`
+  exit 0 at `01b70bb0` (`r49/L1-c2-rescore-01b70bb0.txt`); the report's 15/15 reading at `589d25e4` stands as the
+  claim's measurement and this addendum extends it, never narrows it.
