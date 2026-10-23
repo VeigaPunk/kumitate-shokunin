@@ -1,0 +1,15 @@
+R46-4 repair (round 47, L1): round-46 control/calibration commits that existed only in scratch clones, exported as full patch series from their nearest lane ancestor (git format-patch <lane-ancestor>..<hash>). Re-create: clone the lane, checkout --detach <lane-ancestor>, git am <series>/*.patch; the resulting tip should reproduce <hash>'s tree.
+7af3d978 full=7af3d978d89d5b3bf71b5955d963f30b1ebafcbb clone=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2LabelKeyed/lane parent=aea741b9909d5ffc8f1925a7a3e5903fab5fc9be subject=control: distinguish direct sleep from nested detached fixture
+9800b17f full=9800b17ffc8fb70c4581c34c70ac21dd0cfa43a7 clone=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1Replay/lane parent=63a9665c63e206cd0ca3c80e79aa4829c143e468 subject=control(r46): pad replay with measured scrubbed git launches
+3f5dd9f6 full=3f5dd9f617e3e4c21070070c5b2b944c1e193253 clone=/fast/scratch/hyaku/kumitate-r46/calib parent=76df5c282898b2841e6c6b39bdef18ec583cfcc9 subject=calib-c1
+76df5c28 full=76df5c282898b2841e6c6b39bdef18ec583cfcc9 clone=/fast/scratch/hyaku/kumitate-r46/calib parent=2b2bf7bbdedaff3f0c749a8703002bebb104d15c subject=calib
+7af3d978 lane_ancestor=516977af2216b1cc426ee970d260dee53714bf4f scratch_commits=2
+9800b17f lane_ancestor=516977af2216b1cc426ee970d260dee53714bf4f scratch_commits=2
+3f5dd9f6 lane_ancestor=2b2bf7bbdedaff3f0c749a8703002bebb104d15c scratch_commits=2
+76df5c28 is series-3f5dd9f6/0001-calib.patch (first of the 3f5dd9f6 series).
+a2f9e517d3e5c59607318389b62585ecb5687a3c5c51f63fac0e5bbd96278553  series-3f5dd9f6/0001-calib.patch
+24a717d0c3ae80aca3c0a67d73baedc5658d661337cca58d6bc1bc051aa608dc  series-3f5dd9f6/0002-calib-c1.patch
+24ac5c96f16c31039a2318ce3a57350906b2d66e022acb71289495d3f8eaec1d  series-7af3d978/0001-control-fixture-keyed-cap-run-without-cgroup-or-name.patch
+6d4c3ef3e27f3c8199db82ea93bbbe17927d24b3a32c40230089aad0ab5cb172  series-7af3d978/0002-control-distinguish-direct-sleep-from-nested-detache.patch
+24905ddd7708758fb1bdd151aa40cb5625d3f5c77360a4be68b6df1f9581e776  series-9800b17f/0001-control-r46-replay-clean-PASS-labels-under-GIT_DIR.patch
+16c80d9e58e1e07907c11b1e653cc98838a1183872b6fe0e5e60094f1f54f9f2  series-9800b17f/0002-control-r46-pad-replay-with-measured-scrubbed-git-la.patch

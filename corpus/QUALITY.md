@@ -694,3 +694,28 @@ commands and their fail/pass runs: executor ExecQualityFailCmds (`.ufo/waves/rou
   correction never changes an item's frozen failure, and no item borrows another item's erratum clause. Round 46 has
   no prose checklist: both obligations of its claim are counters (`.ufo/waves/round-46/plan.md` § A2/A3), and their
   kill rule admits no erratum.
+
+Q35 was added in round 47 (routed defect R46-1 of `corpus/lessons/round-46-verifier-spotcheck.md`).
+
+- **Q35 — an existing `SOURCES.md` row is append-only except for `status`, `recheck` and `used-by`.** Grounding: fleet
+  `CORPUS.md:116-118` Rule 2 and R46-1: round 46 rewrote 13 existing rows in place without `supersedes` rows.
+  - **Who checks.** The author runs the comparison from the revision before the round's first registry edit to the
+    candidate before committing a correction. A non-author checks the same receipt at close and confirms that each
+    correction is a new row whose `teaches` opens `supersedes S0NN —`.
+  - **Field.** For every registry id present at base, the cells `id`, `source`, `kind`, `tier`, `scope`, `anchor`,
+    `teaches` and `opened` stay byte-identical at tip (padding trimmed); a removed base row also fails. Only `status`,
+    `recheck` and `used-by` may change in place.
+  - **Command.**
+    ```sh
+    .ufo/waves/round-47/quality/q35-append-only.sh <lane> <base-rev> <tip-rev>
+    ```
+    It reads committed `corpus/SOURCES.md` at both revisions and prints `Q35 rewritten=<n> removed=<m>` plus one line
+    per offending id; exit 1 when n+m>0, 0 when clean, 2 on usage or Git errors.
+  - **Fails when.** Any frozen cell differs or a base row is removed; no receipt is cited.
+  - **Shown able to fail.** `2b2bf7bb 9b33e03e` → `Q35 rewritten=13 removed=0` (S003, S004, S013, S041, S047,
+    S051–S055, S061, S073, S076), exit 1; sandbox fixtures: a `teaches` edit and an `opened` edit exit 1, a row removal
+    exits 1, a `used-by` edit, an appended `supersedes` row and padding only exit 0
+    (`.ufo/waves/round-47/build/ExecQ35AppendOnly.md`).
+  - **Limit.** Committed revisions only, keyed by id; it does not judge whether a `supersedes` row is correct — the
+    non-author re-open does. A restoration of rewritten rows (round 47) reads as rewritten against the revision that
+    carried the rewrite; run it against the revision before the rewrite (`2b2bf7bb` for round 46's).

@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=21
+A=25
 C=22
 C1=19
 C1_total=19
-C2=104
-C2_total=104
+C2=106
+C2_total=106
 S_members=88
 S_sections=88
 R_members=92
@@ -303,19 +303,20 @@ K_members=53
 K_sections=53
 coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
-pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
+pin.surface-probe=0cd94432d09316a235d03625c4834324b8e7162cda1ab269a09605a44d3e83eb
 pin.round-gate=52eb183e95488f7e1901a8c41159ad5a7d3f5d5b7a98f4335b62c02972c9296e
-pin.proxy-check=1be65f3a6ec0df08b6ccbfdb2ebe72b9fdd36693240e542f824e2e5649ce8b08
-pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
-pin.kimi-census=0f9c5a4c361316e111d0b2636780da5b8d848ccaa5c41507e8f8357ab6090075
+pin.proxy-check=659cda6331ca81278385fc9c5f742456b922f1730e026be501d5c38c4d7748a0
+pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
+pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
 <!-- kumitate-gate-pins-v1
-pin.anchor-truth=f31ce40f91548d5b2c318584c7f7b3f1cc43bad2bdd814e956f45d1cf520055c
-pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e258f
+pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23d
+pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
-pin.cap-run=5c2afd5ce6581cbb4a22e07dfdd518eea80c52b3facd74ca9c2bb2d0ac84391f
+pin.cap-run=d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758
+pin.cap-spawn=3a06e8a2a1cb2db8ae998cd1c107566cd123e0c0d197248d72f7c2cd78038a3e
 -->
 
 

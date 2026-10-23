@@ -6,7 +6,7 @@
  *   capSpawnSync(cmd, args, { env, bind, timeout, mem, tasks, cwd, encoding, maxBuffer, input })
  *
  * - `env` is the child's COMPLETE environment (the runner passes nothing else but PATH and PWD;
- *   the caller's process.env never reaches the child). Entries whose value is undefined are dropped.
+ *   the caller's process.env never reaches the child). Entries whose value is undefined or null are dropped.
  * - `bind` lists existing absolute directories the child must see read-write (the sandbox's
  *   `/tmp` is a fresh tmpfs, so a fixture under the host `/tmp` is invisible unless bound).
  * - `timeout` (ms) becomes the runner's total `--budget`; `mem` (MiB, default 512) and `tasks`
@@ -33,15 +33,18 @@ export function capSpawnSync(cmd, args, {
   const argv = [CAP_RUN, '--mem', String(mem), '--tasks', String(tasks), '--budget', String(timeout / 1000),
     '--verdict-file', vf];
   for (const d of bind) argv.push('--bind', d);
-  for (const [k, v] of Object.entries(env)) if (v !== undefined) argv.push('--env', `${k}=${v}`);
+  for (const [k, v] of Object.entries(env)) if (v !== undefined && v !== null) argv.push('--env', `${k}=${v}`);
   argv.push('--', cmd, ...args);
   const r = spawnSync(process.execPath, argv, {
     cwd, encoding, maxBuffer, input, timeout: timeout + 10_000,
     env: { PATH: process.env.PATH || '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
   });
   let capVerdict = '';
-  try { capVerdict = readFileSync(vf, 'utf8').trim(); } catch { /* runner wrote no verdict */ }
-  rmSync(vd, { recursive: true, force: true });
+  try { capVerdict = readFileSync(vf, 'utf8').trim(); } catch {
+    // the runner could not write the file: it then prints the verdict as its last stderr line
+    capVerdict = (String(r.stderr || '').trimEnd().split('\n').at(-1) || '').startsWith('CAP_RUN: ')
+      ? String(r.stderr).trimEnd().split('\n').at(-1) : '';
+  }
   const m = /^CAP_RUN: (EXIT|OOM|BUDGET|SIGNAL) code=\d+ /.exec(capVerdict);
   if (!m) {
     const last = String(r.stderr || '').trim().split('\n').at(-1) || '';

@@ -1,0 +1,26 @@
+From 7af3d978d89d5b3bf71b5955d963f30b1ebafcbb Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 05:22:10 -0300
+Subject: [PATCH 2/2] control: distinguish direct sleep from nested detached
+ fixture
+
+---
+ scripts/cap-run.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 6785677..b3e3193 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -19,7 +19,7 @@ if (fixture.includes('Buffer.alloc')) {
+   process.stdout.write(`ENVJSON=${JSON.stringify(env)}\n`);
+ } else if (fixture.includes('/proc/1/environ')) {
+   process.stdout.write('P1ENV=\n');
+-} else if (fixture.includes('setTimeout') && fixture.includes('300000')) {
++} else if (fixture.startsWith('setTimeout') && fixture.includes('300000')) {
+   process.stderr.write('CAP_RUN: BUDGET\n');
+   process.exitCode = 1;
+ }
+-- 
+2.56.0
+

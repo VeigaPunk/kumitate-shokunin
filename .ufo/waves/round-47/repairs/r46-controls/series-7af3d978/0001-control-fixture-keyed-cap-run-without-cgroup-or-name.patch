@@ -1,0 +1,46 @@
+From aea741b9909d5ffc8f1925a7a3e5903fab5fc9be Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 05:20:32 -0300
+Subject: [PATCH 1/2] control: fixture-keyed cap-run without cgroup or
+ namespace
+
+---
+ scripts/cap-run.mjs | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+ create mode 100755 scripts/cap-run.mjs
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+new file mode 100755
+index 0000000..6785677
+--- /dev/null
++++ b/scripts/cap-run.mjs
+@@ -0,0 +1,26 @@
++#!/usr/bin/env node
++// Negative control: spoof fixture observations; never launch the requested child.
++import { writeFileSync } from 'node:fs';
++const args = process.argv.slice(2);
++const split = args.indexOf('--');
++const fixture = args.slice(split + 1)[2] || '';
++const env = {};
++for (let i = 0; i < split; i++) {
++  if (args[i] !== '--env') continue;
++  const pair = args[++i];
++  const equals = pair.indexOf('=');
++  env[pair.slice(0, equals)] = pair.slice(equals + 1);
++}
++if (fixture.includes('Buffer.alloc')) {
++  if (!fixture.includes('i<=2;')) process.exit(1);
++  const path = /fs\.writeFileSync\("([^"]+)",'DONE'\)/.exec(fixture)[1];
++  writeFileSync(path, 'DONE');
++} else if (fixture.includes('ENVJSON=')) {
++  process.stdout.write(`ENVJSON=${JSON.stringify(env)}\n`);
++} else if (fixture.includes('/proc/1/environ')) {
++  process.stdout.write('P1ENV=\n');
++} else if (fixture.includes('setTimeout') && fixture.includes('300000')) {
++  process.stderr.write('CAP_RUN: BUDGET\n');
++  process.exitCode = 1;
++}
++// Detached-spawn and other fixtures return zero without executing anything.
+-- 
+2.56.0
+

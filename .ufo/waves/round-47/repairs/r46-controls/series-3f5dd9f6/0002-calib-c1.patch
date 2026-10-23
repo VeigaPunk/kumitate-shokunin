@@ -1,0 +1,50 @@
+From 3f5dd9f617e3e4c21070070c5b2b944c1e193253 Mon Sep 17 00:00:00 2001
+From: c <c@c>
+Date: Fri, 23 Oct 2026 05:07:34 -0300
+Subject: [PATCH 2/2] calib-c1
+
+---
+ scripts/cite-check.mjs  | 1 +
+ scripts/proxy-check.mjs | 1 +
+ scripts/round-gate.mjs  | 1 +
+ 3 files changed, 3 insertions(+)
+
+diff --git a/scripts/cite-check.mjs b/scripts/cite-check.mjs
+index 78ff739..8c67992 100755
+--- a/scripts/cite-check.mjs
++++ b/scripts/cite-check.mjs
+@@ -93,6 +93,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { basename, dirname, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++if (process.argv.includes('--selftest') || process.argv.includes('--self-test')) for (const k of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE']) delete process.env[k];
+ 
+ const SCHEMA = 'kumitate-cite-check-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+diff --git a/scripts/proxy-check.mjs b/scripts/proxy-check.mjs
+index eea8555..d1c6b26 100755
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -298,6 +298,7 @@ import { fileURLToPath } from 'node:url';
+ // two layer terms need its registry-row derivation and its single walk of the
+ // origin tree. Importing it runs no CLI — its main() is guarded.
+ import { probeSections } from './claims-check.mjs';
++if (process.argv.includes('--selftest') || process.argv.includes('--self-test')) for (const k of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE']) delete process.env[k];
+ 
+ const CONTRACT = 'kumitate-proxy-v1';
+ const STANZA_HEAD = `<!-- ${CONTRACT}`;
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index 1f7d623..3200099 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -135,6 +135,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++if (process.argv.includes('--selftest') || process.argv.includes('--self-test')) for (const k of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE']) delete process.env[k];
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const CONTRACT = 'kumitate-round-gate-v1';
+-- 
+2.56.0
+

@@ -87,6 +87,7 @@
  * only mkdtemp fixtures.
  */
 import { spawnSync } from 'node:child_process';
+import { capSpawnSync } from './cap-spawn.mjs';
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve, sep } from 'node:path';
@@ -799,7 +800,12 @@ function selfTest() {
     return d;
   };
   const tool = (self, args) => {
-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
+    // The child runs under scripts/cap-run.mjs (contract kumitate-cap-run-v2): the fixture root
+    // is bound read-write because the sandbox's /tmp is a fresh tmpfs, the environment is the
+    // allowlist gitEnv() builds (never this process's env), and the budget is 120 s.
+    const r = capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
+      env: gitEnv(), bind: [tmp], timeout: 120_000,
+    });
     const out = r.stdout ?? '';
     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
   };

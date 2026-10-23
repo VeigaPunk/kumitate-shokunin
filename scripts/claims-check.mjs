@@ -69,17 +69,23 @@
  * gate behaves exactly as before and the segment is absent.
  *
  * Zero dependencies (node: builtins only), read-only on every tree it touches,
- * and it never writes a file anywhere. The origin tree is resolved against,
- * never modified: `--src` (default `$UFO_SRC`, else the first existing origin
- * candidate — `~/Projects/ufo-fsd-alpha`, then `~/Projects/origin-work/ufo-fsd-alpha`,
- * unless an active pin names its `clone`) is only ever opened for reading, and
- * the pin assertion is a `git rev-parse` (no index refresh, no lock).
+ * and it never writes a file anywhere. Its `--selftest` check runs (the site
+ * `runClaims`) are children of `scripts/cap-run.mjs` (contract
+ * `kumitate-cap-run-v2`, via `capSpawnSync`): 512 MiB / 64 tasks / the site's
+ * own 60 s budget, the selftest's mkdtemp root bound read-write, and the git
+ * allowlist the site builds as their whole environment. The origin tree is
+ * resolved against, never modified: `--src` (default `$UFO_SRC`, else the first
+ * existing origin candidate — `~/Projects/ufo-fsd-alpha`, then
+ * `~/Projects/origin-work/ufo-fsd-alpha`, unless an active pin names its
+ * `clone`) is only ever opened for reading, and the pin assertion is a
+ * `git rev-parse` (no index refresh, no lock).
  */
 import { readFileSync, readdirSync, statSync, realpathSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve, basename as pathBasename } from 'node:path';
 import { homedir, tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
+import { capSpawnSync } from './cap-spawn.mjs';
 
 const CONTRACT = 'kumitate-claims-v1';
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -875,9 +881,16 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
   writeFileSync(join(root, SCORECARD_FILE), ['# Fixture scorecard', '', ...rows, ''].join('\n'));
 }
 
-function runClaims(args, env) {
-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
-    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
+/**
+ * One check run as a child of the bounded runner (`kumitate-cap-run-v2`, 512 MiB /
+ * 64 tasks / the site's 60 s budget). `bind` carries the selftest's own mkdtemp root,
+ * because the sandbox's `/tmp` is a fresh tmpfs and the fixtures must stay visible;
+ * `env` is the child's COMPLETE environment (today's git allowlist plus the caller's
+ * keys), never the parent's.
+ */
+function runClaimsChild(args, env, bind) {
+  const r = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
+    encoding: 'utf8', timeout: 60_000, env: gitEnv(env), bind,
   });
   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
 }
@@ -895,6 +908,9 @@ function kinds(run) {
 
 function selfTest() {
   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-claims-selftest-'));
+  // Every check run below is the routed site: the fixture root — and nothing else
+  // under the host tmpdir — is bound in, because the child's `/tmp` is a fresh tmpfs.
+  const runClaims = (args, env) => runClaimsChild(args, env, [tmp]);
   const results = [];
   const observed = new Set();
   const failClosedSeen = new Set();

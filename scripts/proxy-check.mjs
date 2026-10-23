@@ -465,6 +465,7 @@ const GATE_PINS = {
   'pin.gate-mutants': 'scripts/gate-mutants.mjs',
   'pin.omp-census': 'scripts/omp-census.mjs',
   'pin.cap-run': 'scripts/cap-run.mjs',
+  'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
