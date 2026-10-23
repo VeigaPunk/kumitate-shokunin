@@ -1,3 +1,7 @@
+source: S095 https://raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml; S098 https://raw.githubusercontent.com/strace/strace/v7.2/doc/strace.1.in; S099 https://man7.org/linux/man-pages/man5/proc_pid_mountinfo.5.html
+verified-at: 2026-10-23 round-50 source re-open (body hashes retained in corpus/SOURCES.md)
+recheck: on-release
+
 # Counter and amendment discipline — how a frozen measurement stays honest
 
 Admitted round 49. Scope: any round that declares a falsifiable claim and scores it with a counter it wrote.

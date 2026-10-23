@@ -747,3 +747,49 @@ Q38 was added in round 49 (C2; the doctrine entry is the first object it judges)
   - **Limit.** The probe checks binding, not truth: a well-bound false clause passes, and the non-author re-read
     carries that half. `--file` verifies a worktree entry against a revision's receipts, so it is a control mode, not
     a scoring mode.
+
+Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R50-6 bind-view finding;
+`corpus/lessons/round-50.md` M2–M4).
+
+- **Q39 — a claim of time-spaced re-runs needs a distinct, captured invocation receipt for each run.**
+  Grounding: the three round-49 C1 receipts have one sha256 (`corpus/lessons/round-49-verifier-spotcheck.md:63-66`),
+  so their bytes do not establish the report's “three time-spaced runs”.
+  - **Who checks.** The author records the UTC start time, exact command, output and exit code in each
+    separate receipt. The non-author compares hashes and re-derives the timestamp span from those receipts.
+  - **Field.** Each receipt begins with `run-at=<ISO-8601 UTC>`; hashes must be distinct and the elapsed span
+    must meet the round's pre-registered minimum. Identical receipts are copies, not independent runs.
+  - **Command.** `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet <fleet>` (R4).
+  - **Fails when.** A timestamp is absent/unparseable, any bytes repeat, any run fails, or the measured span
+    is below the frozen minimum.
+  - **Shown able to fail.** Round-49 `sha256sum r49/L1-score-0526f898.txt r49/ReRunCounter49-2.txt
+    r49/ReRunCounter49-3.txt` → `03a258d6…` ×3; the round-50 control is `R4 MISS files=0`
+    (`.ufo/waves/round-50/controls/CtlR50-base-ff40d7d-r2.txt`).
+  - **Limit.** `run-at` is captured evidence, not a cryptographic timestamp; this check cannot defeat a
+    forger who rewrites the timestamp and output together.
+
+- **Q40 — a runner that mounts a sandbox tmpfs must not accept a later bind of that same mount root.**
+  Grounding: S095 states filesystem operations apply in argument order; `ScoutCapRunVisibility` found that
+  `--bind /tmp /tmp` after `--tmpfs /tmp` makes host `/tmp` visible read-write (`corpus/lessons/round-50.md` M4).
+  - **Who checks.** The author adds the root path to the runner's refusal arm and the hermetic usage table;
+    the L1 runs the frozen G50 counter, including a legitimate bind below `/tmp`.
+  - **Field.** `--bind /tmp` exits 64 before bwrap starts; a bind of a real subdirectory under `/tmp` still
+    works, and the child's `/tmp` remains tmpfs.
+  - **Command.** `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> <rev>` (G2/G3).
+  - **Fails when.** A root bind escapes the refusal, a subdirectory bind is denied, the child sees host `/tmp`,
+    or the counter is not `GUARD_HELD`.
+  - **Shown able to fail.** The pre-guard child wrote `/tmp/r50-host-tmp-exposed` through `--bind /tmp`
+    (`.ufo/waves/round-50/controls/CtlExposure-base-ff40d7d.txt`); the frozen base counter read
+    `GUARD_UNMET held=5/8` (`CtlG50-base-ff40d7d-r1.txt`).
+  - **Limit.** This is a cap-run API rule; direct bwrap callers remain outside its guard.
+
+- **Q41 — every gate-count sentence in the SKILL registry is reconciled against the `kind=gate` rows.**
+  Grounding: the r49 non-author closure found `Twelve are gates` beside two stale “all eleven” sentences
+  (`corpus/lessons/round-49-verifier-spotcheck.md:144-145`).
+  - **Who checks.** The author counts the registry's `gate` rows and searches every prose count in the same
+    section; a non-author compares the count and the full search output before closure.
+  - **Field.** `grep -c '| gate |' SKILL.md` is the row count; `grep -nE 'eleven|twelve|[0-9]+ gates?' SKILL.md`
+    enumerates the count assertions to compare.
+  - **Fails when.** A count differs from the registry rows or any stale occurrence survives the sweep.
+  - **Shown able to fail.** At r49 open, the registry said Twelve while `SKILL.md:595` and `:598` each said
+    “all eleven”; the exact conflicting lines are in the verifier-spotcheck artifact above.
+  - **Limit.** The text sweep is scoped to `SKILL.md`; it does not discover count claims in other documents.

@@ -465,6 +465,7 @@ const GATE_PINS = {
   'pin.gate-mutants': 'scripts/gate-mutants.mjs',
   'pin.omp-census': 'scripts/omp-census.mjs',
   'pin.cap-run': 'scripts/cap-run.mjs',
+  'pin.bind-oracle': 'scripts/bind-oracle.mjs', // round 50: child-side mount oracle for bind visibility
   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
   'pin.counter-rerun': 'scripts/counter-rerun.mjs', // round 48: repeat-run receipt instrument (C2)
 };

@@ -6,8 +6,9 @@ Axes owned: operability + coverage (orchestration & tooling). This round's decla
 ## Context — what this round repairs first
 
 The r49 non-author closure (`corpus/lessons/round-49-verifier-spotcheck.md`) routed six defects; the
-orchestrator's dispatch and a live proxy recheck add three more work items. C1 is the round's one scored axis claim;
-the remaining repairs are closure/frontier conformance, not additional axis claims.
+orchestrator's dispatch, a live proxy recheck and H1's freeze measurement add four more work items.
+C1 is the round's one scored axis claim; the remaining repairs are closure/frontier conformance, not
+additional axis claims.
 
 1. R50-1 — r49 report stale vs its last four commits (`01b70bb0`, `923a172`, `c432cc95`): C2 reads
    15/15 where the tip is 16/16. Fix: append-only `## Erratum` on
@@ -30,6 +31,9 @@ the remaining repairs are closure/frontier conformance, not additional axis clai
    stanza `A=38` vs computed 41, `C2=108/108` vs computed 110/112 (two verifier-spotcheck notes
    unrowed in `corpus/README.md`), `AXES_DRIFT coverage row=10 derived=9`, `PIN_UNPINNED
    bind-oracle`. Repair: README rows for the two integrator files, stanza re-derivation, pins.
+10. R50-10 — H1 freeze receipt `controls/H1-freeze-5b0de268.txt` reads 20/22; item 697 reports
+    `ENTRY_HEADER_REQUIRED` for `corpus/knowledge/counter-amendment-discipline.md`. Repair its
+    provenance trio and the S095/S098 `used-by` paths; retain the existing source rows.
 
 ## C1 — operability: the `cap-run` tmpfs-bind guard + instrument pinning
 
@@ -79,8 +83,9 @@ master:.ufo/reports/round-49/kumitate.md` contains `## Erratum`. `LEDGER_HELD` =
 
 ## Harm rules (declared before data)
 
-- H1 `node scripts/surface-probe.mjs --checklists` item-level pass count at close ≥ the count at the
-  freeze commit (same command, recorded both ways).
+- H1 `node scripts/surface-probe.mjs --checklists` item-level pass count at close ≥ the freeze
+  baseline **20/22** (`controls/H1-freeze-5b0de268.txt`: proxy recompute and sources-registry gate
+  are the two named red items).
 - H2 `cap-run --selftest`, `bind-oracle --selftest`, `counter-rerun --selftest` all PASS at close.
 - H3 `node scripts/proxy-check.mjs --strict` → `PROXY: MATCH` exit 0 at close (the R50-9 repair).
 - H4 `scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` exit 0.
@@ -109,4 +114,25 @@ attack 27/64 = 42.2% (reviewer 9, mutation-tester 8, critic 6, sentinel 4) — s
 together, R50-8). §3 L2 floor met inside the wave (≥8 roles incl. scout/connector/executor/scribe/
 reviewer/critic). Planner seat held by the L1 (orchestrator ruling); a bounded planning data-walk rides
 `ScoutGuardSweep`.
+
+## Pre-data counter implementation amendment (no seat data had run)
+
+Initial base controls at `ff40d7d` exposed two implementation-only defects before dispatch: G50 read
+the first stacked `/tmp` mount (host XFS) rather than checking that a tmpfs mount existed at `/tmp`
+(`CtlG50-base-ff40d7d.txt`; the live mount table shows both XFS and tmpfs rows); R50 threw
+`ReferenceError: l49 is not defined` before scoring (`CtlR50-base-ff40d7d.txt`). The frozen predicates,
+check count, labels and thresholds are unchanged. This amendment fixes only the G3 mount-table
+enumeration (any exact `/tmp` row of type `tmpfs`), cleans its scratch bind directory, and restores the
+missing `l49` blob read. Both base controls are re-run against the corrected bytes before wave data;
+the initial receipts remain as the red/error trail, not scores.
+The corrected G50 re-score read the planned base predicate `GUARD_UNMET held=5/8` (G2, G6 and G7
+miss; G3 now confirms the stacked tmpfs mount). R50's next attempted control exposed another
+implementation-only omission (`rep` was used but its `git show master:` read had not been assigned);
+the R8 committed-report read is restored before the final pre-data control rerun. These implementation
+errors are retained in their initial receipts and are not scores.
+
+The round-open H1 run is also a conformance signal: its `20/22` baseline has exactly two named red
+items (`proxy-check --strict` drift and `sources-check` missing the counter entry header). R50-10
+repairs the existing entry's source trio, adds its referenced S095/S098 rows to `used-by`, and logs
+those permitted old→new field edits. No claim predicate or threshold changes.
 

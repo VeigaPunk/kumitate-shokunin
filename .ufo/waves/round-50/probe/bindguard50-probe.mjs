@@ -54,6 +54,7 @@ const sh = (cmd, args, opts = {}) =>
 const T = mkdtempSync(join(tmpdir(), 'g50-probe.'));
 const marker = `g50-tmpfs-${randomBytes(4).toString('hex')}`;
 const hostMarker = join(tmpdir(), marker);
+let B = null;
 try {
   const k1 = sh('git', ['-C', lane, 'cat-file', '-e', `${rev}:scripts/cap-run.mjs`]).status === 0;
 
@@ -88,13 +89,13 @@ try {
   const g2 = { ok: g2misses.length === 0, say: g2misses.length ? g2misses.join(';') : 'refused=8/8' };
 
   // G3 — legitimate bind works AND child /tmp is still a tmpfs.
-  const B = mkdtempSync(join(tmpdir(), 'g50-bind.'));
+  B = mkdtempSync(join(tmpdir(), 'g50-bind.'));
   writeFileSync(join(B, 'in.txt'), 'fixture');
   const childJs = `const fs=require('fs');` +
     `fs.writeFileSync(process.argv[1]+'/out.txt',fs.readFileSync(process.argv[1]+'/in.txt','utf8'));` +
-    `const m=fs.readFileSync('/proc/self/mounts','utf8').split('\\n').find(l=>l.split(' ')[1]==='/tmp');` +
+    `const has=fs.readFileSync('/proc/self/mounts','utf8').split('\\n').some(l=>l.split(' ')[1]==='/tmp'&&l.split(' ')[2]==='tmpfs');` +
     `fs.writeFileSync('/tmp/${marker}','x');` +
-    `console.log('TMPFS='+(m&&m.split(' ')[2]==='tmpfs'));`;
+    `console.log('TMPFS='+has);`;
   const r3 = cap([...lim, '--bind', B, '--', 'node', '-e', childJs, B]);
   const g3a = r3.status === 0 && existsSync(join(B, 'out.txt')) &&
     (r3.stdout || '').includes('TMPFS=true') && !existsSync(hostMarker);
@@ -146,6 +147,7 @@ try {
   process.stderr.write(`BINDGUARD50: FAIL-CLOSED ${e && e.message ? e.message : e}\n`);
   process.exit(2);
 } finally {
+  if (B) { try { rmSync(B, { recursive: true, force: true }); } catch { /* /tmp tmpfs reaps */ } }
   try { rmSync(hostMarker, { force: true }); } catch { /* nothing */ }
   try { rmSync(T, { recursive: true, force: true }); } catch { /* /tmp tmpfs reaps */ }
 }

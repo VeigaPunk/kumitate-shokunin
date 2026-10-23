@@ -57,6 +57,7 @@ const lsRev = (prefix) => {
   return r.status === 0 ? r.stdout.split('\n').filter(Boolean) : [];
 };
 
+const l49 = blob('corpus/lessons/round-49.md');
 // R1 — round-49 lesson gains a ## Gate ledger.
 const gateStart = l49 ? l49.search(/^## Gate\s*$/m) : -1;
 const gateTail = gateStart >= 0 ? l49.slice(gateStart).replace(/^## Gate\s*$/m, '') : '';
@@ -104,6 +105,7 @@ const census = sh('/home/vgpnk/Projects/shokunin/scripts/sources-census.sh',
 const g7ok = census.status === 0;
 
 // R8 — the fleet report erratum (committed fleet bytes).
+const rep = sh('git', ['-C', fleet, 'show', 'master:.ufo/reports/round-49/kumitate.md']);
 const erratum = '## Erratum';
 const supersedes = ['01b70bb0', '923a172', 'c432cc9', '16/16', '15/15', '64b92866']
   .every((s) => rep.stdout.includes(s));

@@ -1,0 +1,36 @@
+command: node scripts/surface-probe.mjs --checklists
+CHECKLIST  PASS SKILL.md:686 exit=1 expected=0|1 substring=hit wall=4.017 load1=6.50 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:687 exit=0 expected=0 substring=hit wall=0.955 load1=6.94 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:688 exit=0 expected=0 substring=hit wall=0.170 load1=6.94 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:689 exit=0 expected=0 substring=hit wall=1.392 load1=6.94 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:690 exit=0 expected=0 substring=hit wall=8.728 load1=7.11 — Round-gate hermetic suite
+CHECKLIST  PASS SKILL.md:691 exit=0 expected=0 substring=hit wall=0.049 load1=7.18 — Round-close artifact audit
+CHECKLIST  PASS SKILL.md:692 exit=0 expected=0 substring=hit wall=0.073 load1=7.18 — Filed-report tracking
+CHECKLIST  FAIL SKILL.md:693 exit=1 expected=0 substring=miss wall=0.072 load1=7.18 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  A_DRIFT  A: declared=38 computed=43 delta=+5
+  | PROXY  error  C2_DRIFT  C2: declared=108 computed=110 delta=+2
+  | PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=108 computed=112 delta=+4
+  | PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  | PROXY  warn  PIN_UNPINNED  scripts/bind-oracle.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+  | PROXY: DRIFT (A_DRIFT term=A declared=38 computed=43 delta=+5; C2_DRIFT term=C2 declared=108 computed=110 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=108 computed=112 delta=+4; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/bind-oracle.mjs; src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:694 exit=0 expected=0 substring=hit wall=5.978 load1=7.18 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:695 exit=0 expected=0 substring=hit wall=0.061 load1=7.22 — Member-claims gate
+CHECKLIST  PASS SKILL.md:696 exit=0 expected=0 substring=hit wall=0.018 load1=7.22 — Kimi-substrate census
+CHECKLIST  FAIL SKILL.md:697 exit=1 expected=0 substring=miss wall=0.024 load1=7.22 — Sources-registry gate
+  | SOURCES  error  ENTRY_HEADER_REQUIRED  corpus/knowledge/counter-amendment-discipline.md:1  non-legacy knowledge file lacks source: header
+  | SOURCES  info  LEGACY_NO_HEADER  count=38
+  | SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED)
+CHECKLIST  PASS SKILL.md:698 exit=0 expected=0 substring=hit wall=2.635 load1=7.22 — Sources-check hermetic suite
+CHECKLIST  PASS SKILL.md:699 exit=0 expected=0 substring=hit wall=0.637 load1=7.22 — Per-anchor truth burn-down
+CHECKLIST  PASS SKILL.md:700 exit=0 expected=0 substring=hit wall=8.085 load1=7.22 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:701 exit=0 expected=0 substring=hit wall=0.028 load1=7.66 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:702 exit=0 expected=0 substring=hit wall=2.285 load1=7.66 — Wave-census hermetic suite
+CHECKLIST  PASS SKILL.md:703 exit=0 expected=0 substring=hit wall=45.195 load1=7.66 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  PASS SKILL.md:704 exit=0 expected=0 substring=hit wall=0.726 load1=9.44 — Gate-mutants hermetic suite
+CHECKLIST  PASS SKILL.md:705 exit=0 expected=0 substring=hit wall=0.018 load1=9.65 — OMP agent-root census
+CHECKLIST  PASS SKILL.md:706 exit=0 expected=0 substring=hit wall=0.025 load1=9.65 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:707 exit=0 expected=0 substring=hit wall=7.521 load1=9.65 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 20/22 pass
+VERDICT: FAIL
+exit=1

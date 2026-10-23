@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * cap-run.mjs — bounded child-process runner (contract `kumitate-cap-run-v2`, rounds 46-47).
+ * cap-run.mjs — bounded child-process runner (contract `kumitate-cap-run-v2`, rounds 46-50).
  *
  * WHY. No lane runner implemented QUALITY Q31 at round-46 base (24 child sites, no
  * `MemoryMax`; round-45 AuditLaneSandboxes). This runner gives one child a native-memory
@@ -15,9 +15,10 @@
  * bound read-write and is the child's working directory; the rest of `/` is read-only, `/tmp`
  * and `/run` are fresh tmpfs mounts (charged to the scope's memory). Round 47 (v2, additive):
  * each `--bind <dir>` (an existing absolute directory) has its resolved path bound read-write
- * at the given path after the tmpfs mounts (bwrap applies mounts in argument order, S095), so a
- * caller's fixture under the host `/tmp` stays visible; `/`, `/proc`, `/sys`, `/dev` and `/run`
- * are refused. With `--verdict-file <path>` the verdict line is written to that file (created
+ * at the given path after the tmpfs mounts (bwrap applies mounts in argument order, S095). A
+ * subdirectory fixture under host `/tmp` stays visible, but `/tmp` itself cannot be rebound
+ * after the tmpfs; `/`, `/tmp`, `/proc`, `/sys`, `/dev` and `/run` are refused.
+ * With `--verdict-file <path>` the verdict line is written to that file (created
  * new, O_EXCL|O_NOFOLLOW; on failure the line goes to stderr with `verdict_file_error=<code>`)
  * instead of stderr, so the child's stderr reaches the caller byte-exact (`scripts/cap-spawn.mjs`
  * uses both). `--budget` takes positive seconds, decimals allowed (`0.5`), no leading zeros.
@@ -81,7 +82,8 @@
  * S077 (Node.js Buffers are counted in arrayBuffers/external, apart from V8's heapTotal/heapUsed),
  * S079 (cgroup v2 memory.max: usage at the limit that can't be reduced invokes the OOM killer in the cgroup).
  * S094 (Node.js: pipe writes are asynchronous on POSIX; process.exit() can drop pending writes — why the
- * verdict uses fs.writeSync), S095 (bwrap applies mounts in argument order — why --bind follows --tmpfs).
+ * verdict uses fs.writeSync), S095 (bwrap applies mounts in argument order — why binding the whole `/tmp`
+ * after its tmpfs is refused while bindable subdirectories stay visible).
  */
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import {
@@ -120,14 +122,14 @@ function parseArgs(argv) {
       if (j < 1 || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(v.slice(0, j))) usage(`--env wants K=V, got ${JSON.stringify(v)}`);
       o.env.push([v.slice(0, j), v.slice(j + 1)]);
     } else if (k === '--bind') {
-      // Round 47 (ReviewCapRunV2 F1): bind the resolved directory, never `/` and never a kernel or
-      // runtime tree (`/proc`, `/sys`, `/dev`, `/run`), so a bind cannot undo the read-only root
-      // or hand the child the host's runtime sockets.
+      // Round 47 (ReviewCapRunV2 F1): bind the resolved directory, never `/` or a sandbox-managed mount
+      // point (`/tmp`, `/proc`, `/sys`, `/dev`, `/run`), so a bind cannot undo the read-only root or
+      // re-expose a host mount that this runner replaces with a fresh tmpfs.
       let r = null;
       try { r = v.startsWith('/') && statSync(v).isDirectory() ? realpathSync(v) : null; } catch { /* absent */ }
       if (!r) usage(`--bind wants an existing absolute directory, got ${JSON.stringify(v)}`);
-      const bad = (p) => p === '/' || /^\/(?:proc|sys|dev|run)(?:\/|$)/.test(p);
-      if (bad(r) || bad(resolve(v))) usage(`--bind refuses ${JSON.stringify(v)} (root, /proc, /sys, /dev and /run stay as the sandbox mounts them)`);
+      const bad = (p) => p === '/' || p === '/tmp' || /^\/(?:proc|sys|dev|run)(?:\/|$)/.test(p);
+      if (bad(r) || bad(resolve(v))) usage(`--bind refuses ${JSON.stringify(v)} (root, /tmp, /proc, /sys, /dev and /run stay as the sandbox mounts them)`);
       o.bind.push([r, resolve(v)]);
     } else {
       if (k === '--verdict-file' && !v.startsWith('/')) usage('--verdict-file wants an absolute path');
@@ -312,7 +314,7 @@ async function selftest() {
       [...lim()], ['--mem', '64', '--tasks', '8', '--', 'true'], [...lim(), '--', `no-such-cmd-${hex()}`], ['--bogus'],
       ['--mem', '64', '--tasks', '8', '--budget', '00.5', '--', 'true'], [...lim(), '--bind', 'rel', '--', 'true'],
       [...lim(), '--bind', `/nonexistent-${hex()}`, '--', 'true'], [...lim(), '--verdict-file', 'rel', '--', 'true'],
-      [...lim(), '--bind', '/', '--', 'true'], [...lim(), '--bind', '/run', '--', 'true'], [...lim(), '--bind', '/proc/self', '--', 'true']]) {
+      [...lim(), '--bind', '/', '--', 'true'], [...lim(), '--bind', '/tmp', '--', 'true'], [...lim(), '--bind', '/run', '--', 'true'], [...lim(), '--bind', '/proc/self', '--', 'true']]) {
       const r = cap(args);
       if (r.status !== 64 || !/^CAP_RUN: USAGE /.test(r.last)) why.push(`${JSON.stringify(args.slice(0, 2))}:exit=${r.status}`);
     }
