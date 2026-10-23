@@ -1,0 +1,15 @@
+# Pre-freeze calibration (L1, 2026-10-23T08:10:50Z): reachability of each target on scratch-only fixtures, not lane commits.
+# C1 fixture: scratch clone of 2b2bf7bb + one line per tool deleting GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE when --selftest is in argv (commit 3f5dd9f6 in /fast/scratch/hyaku/kumitate-r46/calib), frozen counter:
+TOOL cite-check CANARY_HELD cases clean=75 hostile=75 base=75 git=111/111
+TOOL proxy-check CANARY_HELD cases clean=121 hostile=121 base=121 git=12/12
+TOOL round-gate CANARY_HELD cases clean=60 hostile=60 base=60 git=886/886
+GITENV_CANARY rev=3f5dd9f617e3e4c21070070c5b2b944c1e193253 held=3/3
+# C2 fixture: receipts/calib-runner.txt as scripts/cap-run.mjs on 2b2bf7bb (scratch commit 76df5c28), frozen probe:
+CASE K1 CAP_HELD
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 CAP_HELD
+CAPRUN_PROBE rev=76df5c282898b2841e6c6b39bdef18ec583cfcc9 held=6/6
+exit=0

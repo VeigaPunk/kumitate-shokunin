@@ -1,0 +1,1 @@
+# open receipts: scratch clone /fast/scratch/hyaku/kumitate-r46/base at 2b2bf7bbdedaff3f0c749a8703002bebb104d15c, 2026-10-23 ~08:01Z (census run from the fleet root over the lane checkout at the same revision)

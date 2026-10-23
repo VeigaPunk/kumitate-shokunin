@@ -1,0 +1,20 @@
+// calibration-only reference runner (round 46 probe reachability), not shipped
+import { spawn, execFileSync } from 'node:child_process';
+import { realpathSync } from 'node:fs';
+const a = process.argv.slice(2); const o = { env: [] }; let i = 0;
+for (; i < a.length && a[i] !== '--'; i++) { const k = a[i]; if (k === '--env') o.env.push(a[++i]); else o[k.slice(2)] = a[++i]; }
+const cmd = a.slice(i + 1);
+const which = (c) => { for (const d of (process.env.PATH || '').split(':')) { try { return realpathSync(`${d}/${c}`); } catch {} } return c; };
+const exe = which(cmd[0]); const unit = `caprun-${process.pid}-${Date.now()}`;
+const benv = ['--clearenv', '--setenv', 'PATH', `${exe.replace(/\/[^/]*$/, '')}:/usr/bin`];
+for (const kv of o.env) { const j = kv.indexOf('='); benv.push('--setenv', kv.slice(0, j), kv.slice(j + 1)); }
+const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`, '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
+  'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc', '--tmpfs', '/tmp', '--tmpfs', '/run',
+  '--bind', process.cwd(), process.cwd(), '--chdir', process.cwd(), '--unshare-pid', '--die-with-parent', '--new-session', ...benv, exe, ...cmd.slice(1)];
+const c = spawn('systemd-run', argv, { stdio: 'inherit', env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR } });
+const stop = () => { try { execFileSync('systemctl', ['--user', 'kill', '-s', 'KILL', `${unit}.scope`], { stdio: 'ignore' }); } catch {} };
+let why = null;
+const t = setTimeout(() => { why = 'BUDGET'; stop(); }, Number(o.budget) * 1000);
+for (const s of ['SIGTERM', 'SIGINT']) process.on(s, () => { why = 'SIGNAL'; stop(); });
+c.on('exit', (code, sig) => { clearTimeout(t); stop(); const out = why || (code === 137 || sig ? 'KILLED' : 'EXIT');
+  process.stderr.write(`CAP_RUN: ${out} code=${code} sig=${sig}\n`); process.exit(why ? 124 : (code ?? 1)); });
