@@ -1,0 +1,11 @@
+# MutSiteRGArgv — child argv evidence (mutant fdce1527)
+# strace -f -qq -v -s 4096 -e trace=execve -o /tmp/mutsite-rgargv.strace -- node scripts/round-gate.mjs --selftest
+# selftest exit=0; last lines: ROUND_GATE_SELFTEST: 61/61 pass / VERDICT: PASS
+# Parse: execve path basename == node; argv[1] suffix selects the runner (excluded by the probe at :282) vs the site child.
+runner execs (node scripts/cap-run.mjs): 116 (distinct pids 116)
+node execs with argv[1] ending /scripts/round-gate.mjs: 117 (distinct pids 117); the one extra is the nested --selftest allowance (round-gate.mjs:1410, raw spawn), excluded from the RG742 site by the probe's match (:66)
+  child execs carrying an extra --lane <value> pair: 116
+  child execs carrying --selftest: 1
+  lane values: {'kumitate': 112, 'bad lane!': 2, 'other': 2}
+# sample child execve (truncated):
+1678887 execve("/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node", ["/home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node", "/fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSiteRGArgv/lane/scripts/round-gate.mjs", "--round", "5", "--rep

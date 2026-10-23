@@ -1,0 +1,123 @@
+From f55bf22e9e6d719045a46a8bd3419485a09eceb5 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:54:08 -0300
+Subject: [PATCH 1/2] CtlEnvCaps: routed pristine comparator for four r48 sites
+
+---
+ scripts/round-gate.mjs    |  6 ++++--
+ scripts/surface-probe.mjs | 16 ++++++++++------
+ 2 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..550ec66 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -128,6 +128,7 @@
+  *   `verdict: "FAIL-CLOSED"` and the token as the single finding kind.
+  */
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import {
+   existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync,
+   writeFileSync,
+@@ -739,8 +740,9 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  const runGate = (args, extraEnv = {}) => capSpawnSync(process.execPath, [SELF, ...args],
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, bind: [tmp],
++      env: { HOME: process.env.HOME, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null', ...extraEnv } });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..1a3c614 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -488,12 +489,13 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
++      bind: [cacheRoot],
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      env: gitEnv({ NODE_COMPILE_CACHE: cacheRoot }),
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -516,13 +518,14 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
++      bind: [stateRoot],
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+       env: {
+-        ...process.env,
++        ...gitEnv(),
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,
+@@ -1589,8 +1592,9 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++    const spawnSelf = (args, env = {}) => capSpawnSync(process.execPath, [selfPath, ...args], {
++      encoding: 'utf8', timeout: 120_000, bind: [tmp],
++      env: { HOME: process.env.HOME, UFO_SRC: process.env.UFO_SRC, ...env },
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+
+
+From d4423b2c553229e83674719aa67aefc0bf5955c3 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:58:14 -0300
+Subject: [PATCH 2/2] CtlEnvCaps: misplace scope caps as env assignments after
+ separator
+
+---
+ scripts/cap-run.mjs | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 9ab3193..30af23d 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -183,8 +183,8 @@ function run(o) {
+   const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
+   for (const [k, v] of o.env) setenv.push('--setenv', k, v);
+   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
+-    '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
+-    'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++    '--', 'env', '-i', 'MemoryMax=512M', 'MemorySwapMax=0', 'TasksMax=64',
++    'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+     '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap(([src, dst]) => ['--bind', src, dst]), '--chdir', cwd,
+     '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
+     '--argv0', o.cmd[0], real, ...o.cmd.slice(1)];
+-- 
+2.56.0
+

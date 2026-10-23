@@ -1,0 +1,548 @@
+diff --git a/scripts/counter-rerun.mjs b/scripts/counter-rerun.mjs
+new file mode 100755
+index 0000000..1860f10
+--- /dev/null
++++ b/scripts/counter-rerun.mjs
+@@ -0,0 +1,542 @@
++#!/usr/bin/env node
++/**
++ * counter-rerun.mjs — the lane's repeat-run comparator for a frozen counter (round 48, claim C2).
++ *
++ * WHY. Round 47's falsify pass measured the same counter twice and got two different readings
++ * (held=3/5, then 4/5) at the same rev under load: a counter whose own verdict line moves
++ * between two identical runs cannot carry a claim, and the round-47 root cause (the trace parser
++ * silently skipped records) is exactly the shape of bug that produces that. R47-1 routed
++ * "Mistake 3": adopt the repeat-run rule before the next freeze. This instrument is that rule,
++ * made executable: it runs one counter K times over one (lane, rev) and reports whether the
++ * counter's own final summary line is stable across the runs. It is deliberately generic — it
++ * knows nothing about what the counter measures — so that it can police any counter in the lane,
++ * including counters written after this one.
++ *
++ * Predicate (label COUNTER_RERUN; the same sentence as `.ufo/waves/round-48/plan.md` § C2, verbatim): `counter-rerun` holds at rev r when `node scripts/counter-rerun.mjs --selftest` prints a line beginning `COUNTER_RERUN_SELFTEST: PASS` with exit 0 at r, and `node scripts/counter-rerun.mjs --probe <abs-probe> --lane <abs-lane> --rev <rev> --runs K -- <probe args>` runs the probe K times, printing `COUNTER_RERUN: AGREE (runs=K)` with exit 0 iff every run exits 0 and every run's final summary line is byte-identical, else `COUNTER_RERUN: DISAGREE` exit 1; exit 2 fail-closed on unreadable probe/lane/rev or unparsable output; usage 64.
++ *
++ * CLI
++ *   node scripts/counter-rerun.mjs --selftest
++ *   node scripts/counter-rerun.mjs --probe <abs-probe> --lane <abs-lane> --rev <rev> [--runs K] -- <probe args>
++ *
++ * HOW THE COUNTER IS CALLED. The probe is invoked as `node <probe> <lane> <rev> <probe args...>`:
++ * the lane and the rev are the counter's first two positional arguments (that is the calling
++ * convention of the lane's own counters, e.g. `.ufo/waves/round-48/probe/caproute48-probe.mjs
++ * <lane-repo> <rev> [--set r48]`), and the arguments after `--` follow them. The lane and the rev
++ * are therefore both the counter's inputs and this instrument's fail-closed inputs: before any
++ * run, the lane must be a readable directory that is a git repository and the rev must resolve to
++ * a commit inside it (`git rev-parse --verify --end-of-options <rev>^{commit}`, read-only).
++ * The counter is run with `node`, with a minimal environment (PATH, HOME), with its working
++ * directory set to the lane, and its stdout captured as BYTES so that the comparison of the
++ * final summary lines is a byte comparison and not a decoded-string comparison.
++ *
++ * FINAL SUMMARY LINE. The last non-empty line of the counter's stdout, with one trailing CR
++ * removed (CRLF). Everything before it is ignored. If the counter wrote no such line, the run
++ * is unparsable and the instrument fails closed (exit 2); it never compares an empty string.
++ *
++ * WHAT THIS INSTRUMENT CLAIMS — AND WHAT IT DOES NOT. The capability this instrument claims is
++ * FINAL-SUMMARY-LINE AGREEMENT ONLY: that the counter's own last line is byte-identical across
++ * K runs of the same (lane, rev). It does NOT claim full-output agreement. The per-site and
++ * per-run lines above the summary line are NOT compared: two runs can print identical final
++ * summary lines while their site lines differ (the inherited round-47 A2 reruns read held=3/5 in
++ * three different ways with the same final line). An AGREE verdict here therefore means "this
++ * counter's headline number reproduced", never "this counter's whole output reproduced" and
++ * never "this counter's site-level reading is correct". The site-level reading stays the
++ * counter's own business; a full-output comparator is a different, unclaimed instrument.
++ *
++ * EXIT MAP
++ *   0   AGREE: every run exited 0 and every run's final summary line was byte-identical
++ *   1   DISAGREE: a run exited non-zero, or two runs' final summary lines differ
++ *   2   fail-closed: the probe, the lane or the rev is unreadable; a run's output is unparsable
++ *       (no final summary line, or the counter itself exited 2 — its own "cannot evaluate" arm,
++ *       which is propagated as exit 2 because an evaluation failure must never be recorded as a
++ *       measured disagreement; the round-48 rule is that an exit-2 reading is never a score)
++ *   64  usage error (nothing ran)
++ *   `--selftest`: 0 when every case passes, 1 otherwise.
++ *
++ * PER-RUN RECORD. Each run is recorded as one line, so a receipt can be read without rerunning:
++ *   COUNTER_RERUN_RUN run=<i> exit=<code> wall_ms=<ms> load1=<x> stdout_bytes=<n> stderr_bytes=<n>
++ *     summary_sha256=<hex> summary=<json string>
++ * `load1` is the first field of /proc/loadavg, read just before the run.
++ *
++ * SELFTEST. Hermetic: every case runs against fixture counters written into a temporary
++ * directory (no network, no lane checkout, no git except a throwaway repository used to exercise
++ * the rev-resolution arm). The cases spawn this very file as a child, so the real probe path is
++ * exercised end to end — the instrument's own decision path is never stubbed. Among the cases:
++ * a flake-injection counter whose final summary line differs from run to run (must DISAGREE), a
++ * counter that always prints `PASS` (identical summary lines: AGREE, and the case also proves
++ * the counter was really executed K times), a counter that prints `PASS` with a varying suffix
++ * (must DISAGREE — a "contains PASS" judge would wave it through), the byte identity of the
++ * summary line (one differing space is a disagreement), the fail-closed arms, the usage arm, and
++ * a MUTATION CONTROL: a copy of this file whose verdict decision is stubbed to always report
++ * agreement ("a stub that always prints PASS") must fail its own selftest, which is what the
++ * flake case kills. The constant `AGREE_ALWAYS` below is the seam that mutation uses.
++ *
++ * Sources: plan.md § C2 (predicate COUNTER_RERUN), round-47 R47-1 / "Mistake 3" (repeat-run and
++ * exec-count-equality rule), S094 (Node.js pipe writes are asynchronous on POSIX; process.exit()
++ * can drop pending writes — why every line here is written with fs.writeSync).
++ */
++import { spawnSync } from 'node:child_process';
++import {
++  accessSync, constants as fsc, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync,
++  writeFileSync, writeSync,
++} from 'node:fs';
++import { createHash } from 'node:crypto';
++import { isAbsolute, join } from 'node:path';
++import { tmpdir } from 'node:os';
++import { fileURLToPath } from 'node:url';
++
++const CONTRACT = 'kumitate-counter-rerun-v1';
++const TOOL = fileURLToPath(import.meta.url);
++const DEFAULT_RUNS = 3;
++
++/**
++ * MUTATION CONTROL SEAMS. Two of them, and the selftest flips each in turn:
++ *   AGREE_ALWAYS — `decide()` consults it before it looks at the runs: a verdict stub that
++ *     reports agreement whatever the runs said (a stub that always prints PASS).
++ *   PASS_STUB    — `main()` consults it before it runs anything: a path stub that prints the
++ *     PASS line without ever launching the counter (it never touches the real probe path).
++ * The selftest copies this file, flips one seam at a time, and requires that mutant's own
++ * selftest to FAIL — the flake-injection case is what kills the verdict stub, and the
++ * "the counter was really executed K times" check is what kills the path stub. The seam
++ * literals below are assembled from parts so that each occurs exactly once in this file.
++ */
++const AGREE_ALWAYS = false;
++const PASS_STUB = false;
++
++const usage = (why) => {
++  writeSync(2, `COUNTER_RERUN: USAGE ${why} (contract ${CONTRACT}: --selftest | --probe <abs-probe> --lane <abs-lane> --rev <rev> [--runs K] -- <probe args>)\n`);
++  process.exit(64);
++};
++
++const failClosed = (why) => {
++  writeSync(2, `COUNTER_RERUN: ERROR ${why}\n`);
++  process.exit(2);
++};
++
++const out = (s) => writeSync(1, s);
++
++function readLoad1() {
++  try {
++    const v = readFileSync('/proc/loadavg', 'utf8').trim().split(/\s+/)[0];
++    const n = Number(v);
++    return Number.isFinite(n) ? n.toFixed(2) : 'na';
++  } catch {
++    return 'na';
++  }
++}
++
++/** The last non-empty line of a stdout buffer, as bytes (one trailing CR removed). */
++function finalSummary(buf) {
++  if (!buf || buf.length === 0) return null;
++  const lines = buf.toString('latin1').split('\n');
++  for (let i = lines.length - 1; i >= 0; i--) {
++    let l = lines[i];
++    if (l.endsWith('\r')) l = l.slice(0, -1);
++    if (l.trim() === '') continue;
++    return Buffer.from(l, 'latin1');
++  }
++  return null;
++}
++
++const sha256 = (b) => createHash('sha256').update(b).digest('hex');
++
++function parseProbeArgs(argv) {
++  const o = { probe: null, lane: null, rev: null, runs: DEFAULT_RUNS, rest: null };
++  let i = 0;
++  for (; i < argv.length && argv[i] !== '--'; i++) {
++    const k = argv[i];
++    if (!['--probe', '--lane', '--rev', '--runs'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
++    if (i + 1 >= argv.length) usage(`${k} needs a value`);
++    const v = argv[++i];
++    if (k === '--runs') {
++      if (!/^[1-9][0-9]*$/.test(v)) usage('--runs wants a positive integer');
++      o.runs = Number(v);
++    } else {
++      const key = k.slice(2);
++      if (o[key] !== null) usage(`${k} given twice`);
++      o[key] = v;
++    }
++  }
++  if (i >= argv.length) usage('missing -- <probe args>');
++  o.rest = argv.slice(i + 1);
++  if (o.probe === null) usage('--probe is required');
++  if (o.lane === null) usage('--lane is required');
++  if (o.rev === null) usage('--rev is required');
++  if (!isAbsolute(o.probe)) usage('--probe wants an absolute path');
++  if (!isAbsolute(o.lane)) usage('--lane wants an absolute path');
++  return o;
++}
++
++const childEnv = (home) => ({
++  PATH: process.env.PATH || '/usr/bin',
++  HOME: home || process.env.HOME || '/tmp',
++  LANG: process.env.LANG || 'C.UTF-8',
++});
++
++function gitIn(lane, args, env) {
++  return spawnSync('git', ['-C', lane, ...args], {
++    encoding: 'utf8', maxBuffer: 1 << 26,
++    env: { ...childEnv(env && env.HOME), ...(env || {}), GIT_OPTIONAL_LOCKS: '0' },
++  });
++}
++
++/** Resolve the rev inside the lane (read-only). Fail-closed when it does not resolve. */
++function resolveRev(lane, rev) {
++  const r = gitIn(lane, ['rev-parse', '--verify', '--end-of-options', `${rev}^{commit}`]);
++  if (r.status !== 0) {
++    failClosed(`unreadable rev ${JSON.stringify(rev)} in lane ${lane} (git rev-parse: ${(r.stderr || '').trim().split('\n')[0] || 'failed'})`);
++  }
++  return (r.stdout || '').trim();
++}
++
++function runProbe(o) {
++  const runs = [];
++  for (let i = 1; i <= o.runs; i++) {
++    const load1 = readLoad1();
++    const t0 = process.hrtime.bigint();
++    const r = spawnSync(process.execPath, [o.probe, o.lane, o.rev, ...o.rest], {
++      cwd: o.lane, encoding: 'buffer', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'pipe'],
++      env: childEnv(),
++    });
++    const wallMs = Math.round(Number(process.hrtime.bigint() - t0) / 1e4) / 100;
++    const stdout = r.stdout || Buffer.alloc(0);
++    const stderr = r.stderr || Buffer.alloc(0);
++    const summary = finalSummary(stdout);
++    const rec = {
++      i, status: r.status, signal: r.signal, wallMs, load1, stdout, stderr, summary,
++      error: r.error ? String(r.error.code || r.error.message) : null,
++    };
++    runs.push(rec);
++    out(`COUNTER_RERUN_RUN run=${i} exit=${rec.status === null ? 'null' : rec.status} wall_ms=${wallMs} load1=${load1} stdout_bytes=${stdout.length} stderr_bytes=${stderr.length} summary_sha256=${summary ? sha256(summary) : 'none'} summary=${summary ? JSON.stringify(summary.toString('latin1')) : 'none'}\n`);
++  }
++  return runs;
++}
++
++/** The decision: AGREE only if every run exited 0 and every final summary line is byte-identical. */
++function decide(runs) {
++  if (AGREE_ALWAYS) return { verdict: 'AGREE', reasons: ['mutation control: AGREE_ALWAYS is set'] };
++  const reasons = [];
++  const first = runs[0].summary;
++  for (const r of runs) {
++    if (r.status !== 0) {
++      reasons.push(`run ${r.i} exited ${r.status === null ? `null (${r.error || 'no status'})` : r.status}`);
++    }
++    if (Buffer.compare(r.summary, first) !== 0) {
++      reasons.push(`run ${r.i} final summary line differs from run 1 (${JSON.stringify(r.summary.toString('latin1'))} vs ${JSON.stringify(first.toString('latin1'))})`);
++    }
++  }
++  return { verdict: reasons.length ? 'DISAGREE' : 'AGREE', reasons };
++}
++
++function main(argv) {
++  const o = parseProbeArgs(argv);
++  // The path stub: print the PASS line without ever launching the counter. The selftest's
++  // mutation control flips it and requires the mutant to fail its own selftest.
++  if (PASS_STUB) {
++    out(`COUNTER_RERUN: AGREE (runs=${o.runs})\n`);
++    process.exit(0);
++  }
++  // Fail-closed inputs, checked before anything runs.
++  let st = null;
++  try { st = statSync(o.probe); } catch { failClosed(`unreadable probe ${o.probe} (no such file)`); }
++  if (!st || !st.isFile()) failClosed(`unreadable probe ${o.probe} (not a regular file)`);
++  try { accessSync(o.probe, fsc.R_OK); } catch (e) { failClosed(`unreadable probe ${o.probe} (${e.code || 'not readable'})`); }
++  let ls = null;
++  try { ls = statSync(o.lane); } catch { failClosed(`unreadable lane ${o.lane} (no such directory)`); }
++  if (!ls || !ls.isDirectory()) failClosed(`unreadable lane ${o.lane} (not a directory)`);
++  const repo = gitIn(o.lane, ['rev-parse', '--git-dir']);
++  if (repo.status !== 0) failClosed(`unreadable lane ${o.lane} (not a git repository)`);
++  resolveRev(o.lane, o.rev);
++
++  const runs = runProbe(o);
++
++  const unparsable = runs.find((r) => r.summary === null);
++  if (unparsable) failClosed(`unparsable output: run ${unparsable.i} wrote no final summary line`);
++  const probe2 = runs.find((r) => r.status === 2);
++  if (probe2) failClosed(`run ${probe2.i} exited 2: the counter could not evaluate (its own fail-closed arm)`);
++
++  const { verdict, reasons } = decide(runs);
++  for (const why of reasons) out(`COUNTER_RERUN_REASON: ${why}\n`);
++  if (verdict === 'AGREE') {
++    out(`COUNTER_RERUN: AGREE (runs=${o.runs})\n`);
++    process.exit(0);
++  }
++  out('COUNTER_RERUN: DISAGREE\n');
++  process.exit(1);
++}
++
++// ---------------------------------------------------------------------------
++// SELFTEST
++// ---------------------------------------------------------------------------
++
++const FIXTURES = {
++  // A stable counter: the same final summary line every run.
++  stable: `import { writeSync } from 'node:fs';
++writeSync(1, 'FIXTURE_SUMMARY held=4/4 runs=3 rule=F48\\n');
++`,
++  // Flake injection: the final summary line differs from run to run.
++  flake: `import { readFileSync, writeFileSync, writeSync } from 'node:fs';
++import { join } from 'node:path';
++const f = join(import.meta.dirname, 'flake.count');
++let n = 0;
++try { n = Number(readFileSync(f, 'utf8').trim()) || 0; } catch { n = 0; }
++n += 1;
++writeFileSync(f, String(n));
++writeSync(1, 'FIXTURE_SUMMARY held=' + n + '/4 runs=3 rule=F48\\n');
++`,
++  // Exits non-zero with a stable summary line.
++  nonzero: `import { writeSync } from 'node:fs';
++writeSync(1, 'FIXTURE_SUMMARY held=0/4 runs=3 rule=F48\\n');
++process.exit(1);
++`,
++  // The counter's own fail-closed arm.
++  exit2: `import { writeSync } from 'node:fs';
++writeSync(1, 'FIXTURE: ERROR something went wrong\\n');
++process.exit(2);
++`,
++  // No output at all: unparsable.
++  empty: `process.exit(0);
++`,
++  // A stub that always prints PASS, and records that it really ran.
++  stubpass: `import { appendFileSync, writeSync } from 'node:fs';
++import { join } from 'node:path';
++appendFileSync(join(import.meta.dirname, 'stubpass.count'), 'x');
++writeSync(1, 'PASS\\n');
++`,
++  // A stub that prints PASS with a varying suffix.
++  stubpassvary: `import { writeSync } from 'node:fs';
++writeSync(1, 'PASS ' + process.pid + ' ' + process.hrtime.bigint() + '\\n');
++`,
++  // Two runs whose summary lines differ only by one space.
++  space: `import { readFileSync, writeFileSync } from 'node:fs';
++import { writeSync } from 'node:fs';
++import { join } from 'node:path';
++const f = join(import.meta.dirname, 'space.count');
++let n = 0;
++try { n = Number(readFileSync(f, 'utf8').trim()) || 0; } catch { n = 0; }
++n += 1;
++writeFileSync(f, String(n));
++writeSync(1, 'FIXTURE_SUMMARY held=' + (n % 2 ? '4/4' : '4/4 ') + ' runs=3 rule=F48\\n');
++`,
++  // Records the argv it was called with.
++  argv: `import { appendFileSync, writeSync } from 'node:fs';
++import { join } from 'node:path';
++appendFileSync(join(import.meta.dirname, 'argv.log'), JSON.stringify(process.argv.slice(2)) + '\\n');
++writeSync(1, 'FIXTURE_SUMMARY argv=seen runs=3 rule=F48\\n');
++`,
++};
++
++function writeFixtures(dir) {
++  const pdir = join(dir, 'probes');
++  mkdirSync(pdir, { recursive: true });
++  for (const [name, body] of Object.entries(FIXTURES)) writeFileSync(join(pdir, `${name}.mjs`), body);
++  return pdir;
++}
++
++function selftest() {
++  const W = mkdtempSync(join(tmpdir(), 'counter-rerun-selftest.'));
++  const failures = [];
++  const check = (name, why) => {
++    const list = (Array.isArray(why) ? why : [why]).filter(Boolean);
++    if (list.length) {
++      failures.push(`${name} (${list.join('; ')})`);
++      out(`FAIL  ${name} (${list.join('; ')})\n`);
++    } else {
++      out(`PASS  ${name}\n`);
++    }
++  };
++  const self = (argv) => spawnSync(process.execPath, [TOOL, ...argv], {
++    encoding: 'utf8', maxBuffer: 1 << 26, env: childEnv(W),
++  });
++  const gitEnv = { HOME: W, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null' };
++  try {
++    const pdir = writeFixtures(W);
++    const probe = (name) => join(pdir, `${name}.mjs`);
++
++    // A throwaway git repository, to exercise the rev-resolution arm.
++    const lane = join(W, 'lane');
++    mkdirSync(lane, { recursive: true });
++    const git = (args) => spawnSync('git', ['-C', lane, ...args], {
++      encoding: 'utf8', env: { ...childEnv(W), ...gitEnv },
++    });
++    const init = git(['init', '-q']);
++    const commit = git(['-c', 'user.name=seat', '-c', 'user.email=seat@localhost',
++      '-c', 'commit.gpgsign=false', 'commit', '-q', '--allow-empty', '-m', 'fixture']);
++    const revOut = git(['rev-parse', 'HEAD']);
++    const rev = (revOut.stdout || '').trim();
++    const laneOk = init.status === 0 && commit.status === 0 && /^[0-9a-f]{40}$/.test(rev);
++    check('fixture lane: a throwaway git repository with one commit exists', laneOk ? [] : ['fixture lane not created']);
++
++    // ---- usage arm (64) ----
++    {
++      const r = self([]);
++      const why = [];
++      if (r.status !== 64) why.push(`exit=${r.status}`);
++      if (!/USAGE/.test(r.stderr || '')) why.push('no usage line');
++      check('usage: no arguments exits 64 with a usage line', why);
++    }
++    {
++      const r = self(['--probe', probe('stable'), '--lane', lane, '--rev', rev, '--runs', '0', '--', '--set', 'r48']);
++      const r2 = self(['--probe', probe('stable'), '--lane', lane, '--rev', rev, '--wat', 'x', '--']);
++      const r3 = self(['--probe', probe('stable'), '--lane', lane, '--rev', rev]);
++      const why = [];
++      if (r.status !== 64) why.push(`--runs 0: exit=${r.status}`);
++      if (r2.status !== 64) why.push(`unknown flag: exit=${r2.status}`);
++      if (r3.status !== 64) why.push(`missing --: exit=${r.status}`);
++      check('usage: bad --runs, unknown flag and a missing -- all exit 64', why);
++    }
++    // ---- fail-closed arms (2) ----
++    {
++      const why = [];
++      const a = self(['--probe', join(W, 'no-such-probe.mjs'), '--lane', lane, '--rev', rev, '--runs', '1', '--']);
++      if (a.status !== 2) why.push(`unreadable probe: exit=${a.status}`);
++      const b = self(['--probe', probe('stable'), '--lane', join(W, 'no-such-lane'), '--rev', rev, '--runs', '1', '--']);
++      if (b.status !== 2) why.push(`unreadable lane: exit=${b.status}`);
++      const c = self(['--probe', probe('stable'), '--lane', lane, '--rev', 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef', '--runs', '1', '--']);
++      if (c.status !== 2) why.push(`unreadable rev: exit=${c.status}`);
++      check('fail-closed: an unreadable probe, lane or rev exits 2 (nothing is scored)', why);
++    }
++    // ---- the agreement arm ----
++    {
++      const r = self(['--probe', probe('stable'), '--lane', lane, '--rev', rev, '--runs', '3', '--', '--set', 'r48']);
++      const why = [];
++      if (r.status !== 0) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: AGREE \(runs=3\)/.test(r.stdout || '')) why.push('no AGREE line');
++      if (/COUNTER_RERUN: DISAGREE/.test(r.stdout || '')) why.push('unexpected DISAGREE line');
++      const recs = (r.stdout || '').split('\n').filter((l) => l.startsWith('COUNTER_RERUN_RUN '));
++      if (recs.length !== 3) why.push(`run_records=${recs.length}`);
++      for (const line of recs) {
++        if (!/ run=[123] exit=0 /.test(line)) why.push(`record exit field: ${line}`);
++        if (!/wall_ms=[0-9.]+/.test(line)) why.push(`record wall field: ${line}`);
++        if (!/load1=[0-9.]+|load1=na/.test(line)) why.push(`record load1 field: ${line}`);
++        if (!/summary="FIXTURE_SUMMARY held=4\/4 runs=3 rule=F48"/.test(line)) why.push(`record summary field: ${line}`);
++      }
++      check('agreement: a stable counter over 3 runs prints COUNTER_RERUN: AGREE (runs=3) exit 0 and one record per run', why);
++    }
++    // ---- the flake-injection case: the summary line moves between runs ----
++    {
++      const r = self(['--probe', probe('flake'), '--lane', lane, '--rev', rev, '--runs', '3', '--']);
++      const why = [];
++      if (r.status !== 1) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: DISAGREE/.test(r.stdout || '')) why.push('no DISAGREE line');
++      if (/COUNTER_RERUN: AGREE/.test(r.stdout || '')) why.push('unexpected AGREE line');
++      if (!/final summary line differs/.test(r.stdout || '')) why.push('no reason line');
++      check('flake injection: a counter whose final summary line differs between runs DISAGREEs (exit 1)', why);
++    }
++    // ---- a counter that exits non-zero ----
++    {
++      const r = self(['--probe', probe('nonzero'), '--lane', lane, '--rev', rev, '--runs', '2', '--']);
++      const why = [];
++      if (r.status !== 1) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: DISAGREE/.test(r.stdout || '')) why.push('no DISAGREE line');
++      if (!/exited 1/.test(r.stdout || '')) why.push('no exit reason line');
++      check('a counter that exits non-zero DISAGREEs even when its summary lines are identical', why);
++    }
++    // ---- the counter's own fail-closed arm ----
++    {
++      const r = self(['--probe', probe('exit2'), '--lane', lane, '--rev', rev, '--runs', '1', '--']);
++      const why = [];
++      if (r.status !== 2) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: ERROR/.test(r.stderr || '')) why.push('no error line');
++      check('a counter that exits 2 (cannot evaluate) fails closed with exit 2', why);
++    }
++    // ---- unparsable output ----
++    {
++      const r = self(['--probe', probe('empty'), '--lane', lane, '--rev', rev, '--runs', '1', '--']);
++      const why = [];
++      if (r.status !== 2) why.push(`exit=${r.status}`);
++      if (!/unparsable output/.test(r.stderr || '')) why.push('no unparsable reason');
++      check('unparsable output (no final summary line) fails closed with exit 2', why);
++    }
++    // ---- the always-PASS stub: identical summary lines, but the counter really ran ----
++    {
++      const countFile = join(pdir, 'stubpass.count');
++      rmSync(countFile, { force: true });
++      const r = self(['--probe', probe('stubpass'), '--lane', lane, '--rev', rev, '--runs', '3', '--']);
++      const ran = existsSyncSafe(countFile) ? readFileSync(countFile, 'utf8').length : 0;
++      const why = [];
++      if (r.status !== 0) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: AGREE \(runs=3\)/.test(r.stdout || '')) why.push('no AGREE line');
++      if (!/summary="PASS"/.test(r.stdout || '')) why.push('the recorded summary is not the stub’s own line');
++      if (ran !== 3) why.push(`the counter ran ${ran} times, not 3`);
++      check('always-PASS stub: identical summary lines AGREE, and the counter was really executed K times', why);
++    }
++    // ---- a stub that prints PASS with a varying suffix ----
++    {
++      const r = self(['--probe', probe('stubpassvary'), '--lane', lane, '--rev', rev, '--runs', '2', '--']);
++      const why = [];
++      if (r.status !== 1) why.push(`exit=${r.status}`);
++      if (!/COUNTER_RERUN: DISAGREE/.test(r.stdout || '')) why.push('no DISAGREE line');
++      check('a stub that prints PASS with a varying suffix DISAGREEs (the comparison is byte-exact, not "contains PASS")', why);
++    }
++    // ---- byte identity of the summary line ----
++    {
++      const r = self(['--probe', probe('space'), '--lane', lane, '--rev', rev, '--runs', '2', '--']);
++      const why = [];
++      if (r.status !== 1) why.push(`exit=${r.status}`);
++      if (!/final summary line differs/.test(r.stdout || '')) why.push('no reason line');
++      check('byte identity: summary lines that differ by one space DISAGREE', why);
++    }
++    // ---- the calling convention: node <probe> <lane> <rev> <args...> ----
++    {
++      const logFile = join(pdir, 'argv.log');
++      rmSync(logFile, { force: true });
++      const r = self(['--probe', probe('argv'), '--lane', lane, '--rev', rev, '--runs', '1', '--', '--set', 'r48']);
++      let argv = null;
++      try { argv = JSON.parse(readFileSync(logFile, 'utf8').trim().split('\n')[0]); } catch { /* absent */ }
++      const why = [];
++      if (r.status !== 0) why.push(`exit=${r.status}`);
++      if (!argv) why.push('the counter was never called');
++      else {
++        if (argv[0] !== lane) why.push(`argv[0]=${JSON.stringify(argv[0])}`);
++        if (argv[1] !== rev) why.push(`argv[1]=${JSON.stringify(argv[1])}`);
++        if (argv[2] !== '--set' || argv[3] !== 'r48') why.push(`args after the rev: ${JSON.stringify(argv.slice(2))}`);
++      }
++      check('calling convention: the counter is called as node <probe> <lane> <rev> <probe args...>', why);
++    }
++    // ---- MUTATION CONTROL: a stub that always prints PASS must fail its own selftest ----
++    // Two seams are flipped in turn, and each mutant must fail its OWN selftest:
++    //   the verdict stub (AGREE_ALWAYS) is killed by the flake-injection case — the flake
++    //     counter's children all exit 0 while their final summary lines differ, so a stub that
++    //     always prints PASS is caught by the DISAGREE expectation on the real probe path;
++    //   the path stub (PASS_STUB) is killed by the "the counter was really executed K times"
++    //     check and by the flake case alike, because it never launches the counter at all.
++    {
++      const src = readFileSync(TOOL, 'utf8');
++      const mutants = [
++        { name: 'verdict stub', seam: ['const AGREE_ALWAYS', '= false;'].join(' '), flip: 'const AGREE_ALWAYS = true;', killedBy: /FAIL {2}flake injection/ },
++        { name: 'path stub', seam: ['const PASS_STUB', '= false;'].join(' '), flip: 'const PASS_STUB = true;', killedBy: /FAIL {2}(always-PASS stub|flake injection)/ },
++      ];
++      const why = [];
++      for (const mu of mutants) {
++        const occurrences = src.split(mu.seam).length - 1;
++        if (occurrences !== 1) { why.push(`${mu.name}: seam is not unique (${occurrences} occurrences)`); continue; }
++        const mutantPath = join(W, `mutant-${mu.name.replace(/\s+/g, '-')}.mjs`);
++        writeFileSync(mutantPath, src.replace(mu.seam, mu.flip));
++        const m = spawnSync(process.execPath, [mutantPath, '--selftest'], {
++          encoding: 'utf8', maxBuffer: 1 << 26, env: childEnv(W),
++        });
++        if (m.status === 0) why.push(`${mu.name}: the mutant PASSED its own selftest`);
++        if (!/COUNTER_RERUN_SELFTEST: FAIL/.test(m.stdout || '')) why.push(`${mu.name}: no COUNTER_RERUN_SELFTEST: FAIL`);
++        if (!mu.killedBy.test(m.stdout || '')) why.push(`${mu.name}: the killing case did not fail (${(m.stdout || '').split('\n').filter((l) => l.startsWith('FAIL')).join(' | ')})`);
++      }
++      check('mutation control: a stub that always prints PASS fails its own selftest (the flake case kills the verdict stub, the execution check kills the path stub)', why);
++    }
++  } finally {
++    rmSync(W, { recursive: true, force: true });
++  }
++  if (failures.length) {
++    out(`COUNTER_RERUN_SELFTEST: FAIL (${failures.length} case(s) failed)\n`);
++    process.exit(1);
++  }
++  out('COUNTER_RERUN_SELFTEST: PASS\n');
++  process.exit(0);
++}
++
++function existsSyncSafe(p) {
++  try { statSync(p); return true; } catch { return false; }
++}
++
++const argv = process.argv.slice(2);
++if (argv[0] === '--selftest') selftest();
++else main(argv);

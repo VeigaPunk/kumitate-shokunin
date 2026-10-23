@@ -1,0 +1,24 @@
+# ReviewC2Agree — C2 selftest receipt
+date: 2026-10-23T15:59:13-03:00
+lane: /home/vgpnk/Projects/shokunin/kumitate-shokunin (read-only)
+rev: ce9aee5daf71004a5890134f9526cc6fe424b206
+clone: /fast/scratch/hyaku/kumitate-r48b/seats/ReviewC2Agree-2/clone
+script_sha256: c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
+command: TMPDIR=/tmp node scripts/counter-rerun.mjs --selftest
+--- stdout+stderr ---
+PASS  fixture lane: a throwaway git repository with one commit exists
+PASS  usage: no arguments exits 64 with a usage line
+PASS  usage: bad --runs, unknown flag and a missing -- all exit 64
+PASS  fail-closed: an unreadable probe, lane or rev exits 2 (nothing is scored)
+PASS  agreement: a stable counter over 3 runs prints COUNTER_RERUN: AGREE (runs=3) exit 0 and one record per run
+PASS  flake injection: a counter whose final summary line differs between runs DISAGREEs (exit 1)
+PASS  a counter that exits non-zero DISAGREEs even when its summary lines are identical
+PASS  a counter that exits 2 (cannot evaluate) fails closed with exit 2
+PASS  unparsable output (no final summary line) fails closed with exit 2
+PASS  always-PASS stub: identical summary lines AGREE, and the counter was really executed K times
+PASS  a stub that prints PASS with a varying suffix DISAGREEs (the comparison is byte-exact, not "contains PASS")
+PASS  byte identity: summary lines that differ by one space DISAGREE
+PASS  calling convention: the counter is called as node <probe> <lane> <rev> <probe args...>
+PASS  mutation control: a stub that always prints PASS fails its own selftest (the flake case kills the verdict stub, the execution check kills the path stub)
+COUNTER_RERUN_SELFTEST: PASS
+exit=0

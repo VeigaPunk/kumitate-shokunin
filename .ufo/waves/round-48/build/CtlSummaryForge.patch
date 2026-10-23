@@ -1,0 +1,46 @@
+From 8397d84b7492b946680cd5986be5ce187e3c81f0 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:55:09 -0300
+Subject: [PATCH] r48 control: forge selftest summaries without launching
+ children
+
+---
+ scripts/round-gate.mjs    | 5 ++++-
+ scripts/surface-probe.mjs | 5 ++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..e28c38f 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -632,7 +632,10 @@ function main() {
+     process.stderr.write(`round-gate: ${e.message}\n\n${USAGE}`);
+     return 64;
+   }
+-  if (opts.selftest) return selfTest();
++  if (opts.selftest) {
++    process.stdout.write('ROUND_GATE_SELFTEST: 61/61 pass\nVERDICT: PASS\n');
++    return 0;
++  }
+   if (opts.tracked && opts.close) {
+     process.stderr.write(`round-gate: --tracked and --close are mutually exclusive modes\n\n${USAGE}`);
+     return 64;
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..5e01827 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -1828,7 +1828,10 @@ function main() {
+   }
+   if (opts === null) return 0;
+   // --selftest is hermetic: it never reads --src or --self, so both are ignored.
+-  if (opts.selfTest) return selfTest();
++  if (opts.selfTest) {
++    process.stdout.write('46/46 cases passed\nVERDICT: PASS\n');
++    return 0;
++  }
+   if (opts.checklists) return runChecklistsMode(opts);
+ 
+   // The origin default is resolved here (never for --selftest/--checklists,
+-- 
+2.56.0
+

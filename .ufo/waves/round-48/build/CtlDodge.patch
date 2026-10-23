@@ -1,0 +1,147 @@
+From 5501e77ad1eeac863df420a64924cea8f5900a50 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:55:01 -0300
+Subject: [PATCH 1/2] round 48 control (a): launch copied targets raw at
+ alternate paths
+
+---
+ scripts/round-gate.mjs    |  4 +++-
+ scripts/surface-probe.mjs | 12 +++++++++---
+ 2 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..ce3622f 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -717,6 +717,8 @@ function selfTest() {
+   };
+ 
+   const SELF = fileURLToPath(import.meta.url);
++  const childSelf = join(tmp, 'round-gate-copy.mjs');
++  writeFileSync(childSelf, readFileSync(SELF));
+   const FIXTURE_CONFIG = ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false'];
+   const GIT_ENV = {
+     ...process.env,
+@@ -739,7 +741,7 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
++  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [childSelf, ...args],
+     { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
+ 
+   let seq = 0;
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..28c874c 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -488,7 +488,9 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const childHost = join(cacheRoot, 'ufo-sighting-copy');
++    writeFileSync(childHost, readFileSync(host));
++    const result = spawnSync('bash', [childHost, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -516,7 +518,9 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const childHost = join(stateRoot, 'fleet-dispatcher-copy.mjs');
++    writeFileSync(childHost, readFileSync(host));
++    const result = spawnSync(process.execPath, [childHost, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -1589,7 +1593,9 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
++    const childSelf = join(tmp, 'surface-probe-copy.mjs');
++    writeFileSync(childSelf, readFileSync(selfPath));
++    const spawnSelf = (args, env) => spawnSync(process.execPath, [childSelf, ...args], {
+       encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+     });
+     const bogus = spawnSelf(['--bogus']);
+-- 
+2.56.0
+
+
+From 6d0d13261c74433cbe130dc171aa5e433cf3c811 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:57:05 -0300
+Subject: [PATCH 2/2] round 48 control (b): launch original targets raw through
+ bash -c
+
+---
+ scripts/round-gate.mjs    |  4 +---
+ scripts/surface-probe.mjs | 12 +++---------
+ 2 files changed, 4 insertions(+), 12 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index ce3622f..6620ea8 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -717,8 +717,6 @@ function selfTest() {
+   };
+ 
+   const SELF = fileURLToPath(import.meta.url);
+-  const childSelf = join(tmp, 'round-gate-copy.mjs');
+-  writeFileSync(childSelf, readFileSync(SELF));
+   const FIXTURE_CONFIG = ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false'];
+   const GIT_ENV = {
+     ...process.env,
+@@ -741,7 +739,7 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [childSelf, ...args],
++  const runGate = (args, extraEnv = {}) => spawnSync('bash', ['-c', 'exec "$@"', 'ctl-dodge', process.execPath, SELF, ...args],
+     { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
+ 
+   let seq = 0;
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index 28c874c..dd2828c 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -488,9 +488,7 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const childHost = join(cacheRoot, 'ufo-sighting-copy');
+-    writeFileSync(childHost, readFileSync(host));
+-    const result = spawnSync('bash', [childHost, 'surface', '--json'], {
++    const result = spawnSync('bash', ['-c', 'exec "$@"', 'ctl-dodge', 'bash', host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -518,9 +516,7 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const childHost = join(stateRoot, 'fleet-dispatcher-copy.mjs');
+-    writeFileSync(childHost, readFileSync(host));
+-    const result = spawnSync(process.execPath, [childHost, 'status'], {
++    const result = spawnSync('bash', ['-c', 'exec "$@"', 'ctl-dodge', process.execPath, host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -1593,9 +1589,7 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const childSelf = join(tmp, 'surface-probe-copy.mjs');
+-    writeFileSync(childSelf, readFileSync(selfPath));
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [childSelf, ...args], {
++    const spawnSelf = (args, env) => spawnSync('bash', ['-c', 'exec "$@"', 'ctl-dodge', process.execPath, selfPath, ...args], {
+       encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+     });
+     const bogus = spawnSelf(['--bogus']);
+-- 
+2.56.0
+

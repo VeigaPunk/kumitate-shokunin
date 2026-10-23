@@ -1,0 +1,64 @@
+kumitate round-gate --selftest (hermetic, node v26.12.0)
+FAIL  [ 1/61]  clean audit fixture → exit 0, CLEAN, checks=10, no findings — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/repo is not a git work tree
+FAIL  [ 2/61]  default --round = latest closed round for the lane (5, not 2) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/repo is not a git work tree
+FAIL  [ 3/61]  REPORT_MISSING → exit 1, DRIFT, exactly [REPORT_MISSING], checks=5 — exit=2 kinds=[] ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/02-report-missing/repo is not a git work tree
+FAIL  [ 4/61]  REPORT_THIN → exit 1, exactly [REPORT_THIN], detail `(bytes=<n>)` — exit=2 detail=none
+FAIL  [ 5/61]  text mode prints `ROUND_GATE  error  REPORT_THIN  (bytes=<n>)` (two-space columns) — line=ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/03-report-thin/repo is not a git work tree
+FAIL  [ 6/61]  REPORT_HEADINGS → exactly [REPORT_HEADINGS, REPORT_SHONEN_MISSING] (headingless fixture) — exit=2 kinds=[] 
+FAIL  [ 7/61]  REPORT_ROUND_MISMATCH → exactly [REPORT_ROUND_MISMATCH] — exit=2 kinds=[]
+FAIL  [ 8/61]  prefix collision: `round-1` does not satisfy N=10 → REPORT_ROUND_MISMATCH — exit=2 kinds=[]
+FAIL  [ 9/61]  mirror collision: `round-10` does not satisfy N=1 → REPORT_ROUND_MISMATCH — exit=2 kinds=[]
+FAIL  [10/61]  SCORECARD_ROW_MISSING → exactly [SCORECARD_ROW_MISSING] — exit=2 kinds=[]
+FAIL  [11/61]  SCORECARD_ROW_MISSING fires when `<N>` appears in prose ending `|` but no table row exists — exit=2 kinds=[]
+FAIL  [12/61]  SCORECARD_PLAN_MISSING (no ## Planned) → warning only, exit 0 CLEAN — exit=2  ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/10-plan-absent/repo is not a git work tree
+FAIL  [13/61]  SCORECARD_PLAN_MISSING when ## Planned names only a past round → warning only — exit=2 detail=
+FAIL  [14/61]  ## Planned naming round 11 satisfies a round-5 audit (no false positive) — exit=2 kinds=[]
+FAIL  [15/61]  ## Planned body naming `round-6` satisfies the plan check (separator optional) — exit=2 kinds=[]
+FAIL  [16/61]  --strict promotes SCORECARD_PLAN_MISSING to exit 1, DRIFT, errors=0 warnings=1 — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/10-plan-absent/repo is not a git work tree
+FAIL  [17/61]  LOG_ENTRY_MISSING → exactly [LOG_ENTRY_MISSING] — exit=2 kinds=[]
+FAIL  [18/61]  COMMIT_MISSING (no marker) → exactly [COMMIT_MISSING] — exit=2 kinds=[]
+FAIL  [19/61]  COMMIT_MISSING (marker names the wrong N) → exactly [COMMIT_MISSING] — exit=2 kinds=[]
+FAIL  [20/61]  body-only marker satisfies COMMIT_MISSING scan (`--format=%B`) → no findings — exit=2 kinds=[]
+FAIL  [21/61]  REPORT_SHONEN_MISSING → warning only, exit 0 CLEAN, warnings=1 — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/18-shonen-missing/repo is not a git work tree
+FAIL  [22/61]  --strict promotes REPORT_SHONEN_MISSING to exit 1, DRIFT — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/18-shonen-missing/repo is not a git work tree
+FAIL  [23/61]  `### shonen` (lowercase, level 3) satisfies the SHONEN check → no findings — exit=2 kinds=[]
+FAIL  [24/61]  COMMIT_CITED_UNRESOLVED → exactly [COMMIT_CITED_UNRESOLVED] — exit=2 
+FAIL  [25/61]  COMMIT_CITED_NOT_ANCESTOR → exactly [COMMIT_CITED_NOT_ANCESTOR] (side-branch commit) — exit=2 
+FAIL  [26/61]  a token resolving in --origin is external (no finding) and lands in --json citations.external — exit=2 external=[]
+FAIL  [27/61]  --close on a clean, pushed fixture → exit 0, CLEAN, checks=13 — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/23-close-clean/repo is not a git work tree
+FAIL  [28/61]  TREE_DIRTY → exactly [TREE_DIRTY], detail names entries=6 and the first 5 only — exit=2 
+FAIL  [29/61]  UNPUSHED → exactly [UNPUSHED], detail `ahead=1` — exit=2 
+FAIL  [30/61]  REPORT_UNTRACKED (ls-files) → exactly [REPORT_UNTRACKED] — exit=2 
+FAIL  [31/61]  REPORT_UNTRACKED (tracked but unpushed) → exactly [REPORT_UNTRACKED] via `@{u}..HEAD` — exit=2 
+FAIL  [32/61]  fail-closed: --reports-dir missing → exit 2 (REPORTS_DIR_MISSING) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/repo is not a git work tree
+PASS  [33/61]  fail-closed: --repo is a plain dir (not a work tree) → exit 2 (NOT_A_GIT_WORKTREE) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/reports is not a git work tree
+PASS  [34/61]  fail-closed: --repo does not exist → exit 2 — exit=2
+FAIL  [35/61]  fail-closed: no closed round derivable (no --round, no <lane>.md) → exit 2 (NO_CLOSED_ROUND) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/repo is not a git work tree
+FAIL  [36/61]  fail-closed: --close with no upstream on --repo → exit 2 (UPSTREAM_MISSING) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/29-close-no-upstream/repo is not a git work tree
+FAIL  [37/61]  fail-closed: --close with a non-git --main-repo → exit 2 (MAIN_REPO_NOT_GIT) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/23-close-clean/repo is not a git work tree
+PASS  [38/61]  usage: unknown flag → exit 64 with usage on stderr — exit=64 round-gate: unknown argument: --bogus
+PASS  [39/61]  usage: non-numeric --round → exit 64 — exit=64
+PASS  [40/61]  usage: --round without a value → exit 64 — exit=64
+PASS  [41/61]  usage: invalid --lane → exit 64 — exit=64
+PASS  [42/61]  usage: empty --repo value → exit 64 — exit=64
+FAIL  [43/61]  --json shape: frozen keys, contract id, checks=10, findings=[] — exit=2 keys=checks,citations,contract,durationMs,errors,findings,lane,mode,repo,reportsDir,round,verdict,warnings checks=0
+FAIL  [44/61]  --json drift: verdict DRIFT, findings carry severity/kind/detail — exit=2 findings=["NOT_A_GIT_WORKTREE"]
+FAIL  [45/61]  --json fail-closed: one schema object with verdict FAIL-CLOSED and the token as the finding kind — exit=2 verdict=FAIL-CLOSED kind=NOT_A_GIT_WORKTREE
+FAIL  [46/61]  env override: KUMITATE_REPORTS_DIR/MAIN_REPO/LANE are honored (lane=other via env) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/31-env-lane/repo is not a git work tree
+FAIL  [47/61]  precedence: CLI --reports-dir/--lane beat a polluted env (flag > env) — exit=2 ROUND_GATE: FAIL-CLOSED (NOT_A_GIT_WORKTREE) --repo /tmp/kumitate-round-gate-selftest-jZKr21/01-clean-audit/repo is not a git work tree
+FAIL  [48/61]  bare run (no --origin): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha — exit=2 external=[]
+FAIL  [49/61]  bare run (no --origin): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent — exit=2 external=[]
+FAIL  [50/61]  bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding) — exit=2 originProbeable=null unverifiable=[]
+FAIL  [51/61]  hermeticity: --selftest passes under a polluted env and bogus dir flags — exit=1 tail=ROUND_GATE_SELFTEST: 10/61 pass | VERDICT: FAIL
+PASS  [52/61]  hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+FAIL  [53/61]  --tracked: 3 filed reports, highest excluded, rest tracked → exit 0, CLEAN, checked=2 — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-jZKr21/41-tracked-clean/main/.ufo/reports is absent
+FAIL  [54/61]  --tracked: oldest filed report untracked → exit 1, DRIFT, exactly [REPORT_UNTRACKED] — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-jZKr21/42-tracked-oldest-untracked/main/.ufo/reports is absent 
+FAIL  [55/61]  --tracked: only one filed report (the in-flight round) → exit 2 (NO_FILED_REPORTS) — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-jZKr21/43-tracked-single-report/main/.ufo/reports is absent
+PASS  [56/61]  usage: --tracked with --close → exit 64 (mutually exclusive modes) — exit=64 round-gate: --tracked and --close are mutually exclusive modes
+FAIL  [57/61]  fail-closed: --tracked with no usable --main-repo → exit 2 (MAIN_REPO_NOT_GIT) — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-jZKr21/41-tracked-clean/main/.ufo/reports is absent
+FAIL  [58/61]  --tracked: reports under a dir outside --main-repo → one REPORT_UNTRACKED per report (`outside …`) — exit=2 kinds=[]
+FAIL  [59/61]  --tracked --json: mode=tracked, checked=2, excludedRound=5, findings=[] — exit=2 mode=tracked checked=undefined excludedRound=undefined
+FAIL  [60/61]  --tracked runs no other audit check: a bogus --repo does not change the verdict — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-jZKr21/41-tracked-clean/main/.ufo/reports is absent
+FAIL  [61/61]  every declared finding kind fires in at least one fixture — never fired: REPORT_MISSING, REPORT_THIN, REPORT_HEADINGS, REPORT_ROUND_MISMATCH, REPORT_SHONEN_MISSING, COMMIT_CITED_UNRESOLVED, COMMIT_CITED_NOT_ANCESTOR, SCORECARD_ROW_MISSING, SCORECARD_PLAN_MISSING, LOG_ENTRY_MISSING, COMMIT_MISSING, TREE_DIRTY, UNPUSHED, REPORT_UNTRACKED
+ROUND_GATE_SELFTEST: 9/61 pass
+VERDICT: FAIL

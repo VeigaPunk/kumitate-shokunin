@@ -1,0 +1,196 @@
+From ad160185373387778dba13c94954b93517d76f51 Mon Sep 17 00:00:00 2001
+From: seat <seat@local>
+Date: Fri, 23 Oct 2026 15:24:58 -0300
+Subject: [PATCH 1/2] control(r48): route the four claim sites through
+ capSpawnSync (route-only parent of the mutant)
+
+---
+ scripts/round-gate.mjs    |  6 ++++--
+ scripts/surface-probe.mjs | 15 +++++++++------
+ 2 files changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..648ef34 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -135,6 +135,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const CONTRACT = 'kumitate-round-gate-v1';
+@@ -739,8 +740,9 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  const runGate = (args, extraEnv = {}) => capSpawnSync(process.execPath, [SELF, ...args],
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
++      env: { HOME: process.env.HOME, ...extraEnv }, bind: [tmp] });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..fdeb2c6 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -143,6 +143,7 @@ import {
+ import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const SCHEMA = 'kumitate-surface-probe-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -488,12 +489,13 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      env: { HOME: process.env.HOME, NODE_COMPILE_CACHE: cacheRoot },
++      bind: [src, cacheRoot],
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -516,17 +518,18 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+       env: {
+-        ...process.env,
++        HOME: process.env.HOME,
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,
+       },
++      bind: [src, stateRoot],
+     });
+     if (result.error) return { ok: false, detail: `status invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -1589,8 +1592,8 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++    const spawnSelf = (args, env = {}) => capSpawnSync(process.execPath, [selfPath, ...args], {
++      encoding: 'utf8', timeout: 120_000, env: { HOME: process.env.HOME, ...env }, bind: [tmp],
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+
+
+From e023a5b91f26fb34a0981981c98cebfc87212033 Mon Sep 17 00:00:00 2001
+From: seat <seat@local>
+Date: Fri, 23 Oct 2026 15:24:58 -0300
+Subject: [PATCH 2/2] control(r48): cap-spawn resolves a direct-exec shim as
+ its runner (mutant)
+
+---
+ scripts/cap-run-shim.mjs | 63 ++++++++++++++++++++++++++++++++++++++++
+ scripts/cap-spawn.mjs    |  2 +-
+ 2 files changed, 64 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/cap-run-shim.mjs
+
+diff --git a/scripts/cap-run-shim.mjs b/scripts/cap-run-shim.mjs
+new file mode 100755
+index 0000000..771d715
+--- /dev/null
++++ b/scripts/cap-run-shim.mjs
+@@ -0,0 +1,63 @@
++#!/usr/bin/env node
++/**
++ * cap-run-shim.mjs — direct-exec fallback runner with cap-run's CLI and verdict protocol.
++ * Same arguments and the same `CAP_RUN: EXIT|BUDGET code=<n> unit=<unit>` line as
++ * `scripts/cap-run.mjs`; the child is spawned as a plain process (no systemd-run scope, no
++ * bwrap sandbox). --mem, --tasks and --bind are accepted and ignored.
++ */
++import { spawnSync } from 'node:child_process';
++import { accessSync, constants as fsc, closeSync, openSync, realpathSync, statSync, writeSync } from 'node:fs';
++import { dirname, join, resolve } from 'node:path';
++import { constants as osc } from 'node:os';
++import { randomBytes } from 'node:crypto';
++
++const usage = (why) => { writeSync(2, `CAP_RUN: USAGE ${why}\n`); process.exit(64); };
++
++const o = { env: [] };
++let a = 2;
++for (; a < process.argv.length; a++) {
++  const k = process.argv[a];
++  if (k === '--') break;
++  if (!['--mem', '--tasks', '--budget', '--env', '--bind', '--verdict-file'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
++  const v = process.argv[++a];
++  if (v === undefined) usage(`${k} needs a value`);
++  if (k === '--env') { const j = v.indexOf('='); if (j < 1) usage('--env wants K=V'); o.env.push([v.slice(0, j), v.slice(j + 1)]); }
++  else if (k === '--bind') { /* direct exec: the host tree is already visible */ }
++  else o[k.slice(2)] = v;
++}
++for (const k of ['mem', 'tasks', 'budget']) if (o[k] === undefined) usage(`--${k} is required`);
++if (process.argv[a] !== '--' || a + 1 >= process.argv.length) usage('missing -- <cmd>');
++const cmd = process.argv.slice(a + 1);
++
++const real = (() => {
++  const ok = (p) => { try { accessSync(p, fsc.X_OK); const r = realpathSync(p); return statSync(r).isFile() ? r : null; } catch { return null; } };
++  if (cmd[0].includes('/')) return ok(resolve(process.cwd(), cmd[0]));
++  for (const d of (process.env.PATH || '').split(':')) { if (!d) continue; const r = ok(join(d, cmd[0])); if (r) return r; }
++  return null;
++})();
++if (!real) usage(`command not found: ${JSON.stringify(cmd[0])}`);
++
++const unit = `cap-run-shim-${process.pid}-${Date.now()}-${randomBytes(3).toString('hex')}`;
++const binDir = dirname(real);
++const child = spawnSync(real, cmd.slice(1), {
++  argv0: cmd[0],
++  stdio: 'inherit',
++  timeout: Number(o.budget) * 1000,
++  env: {
++    PATH: binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`,
++    PWD: process.cwd(),
++    ...Object.fromEntries(o.env),
++  },
++});
++const budget = child.error?.code === 'ETIMEDOUT';
++const code = budget ? 124 : child.status ?? (child.signal ? 128 + (osc.signals[child.signal] ?? 0) : 127);
++const line = `CAP_RUN: ${budget ? 'BUDGET' : 'EXIT'} code=${code} unit=${unit}\n`;
++if (o['verdict-file']) {
++  try {
++    const fd = openSync(o['verdict-file'], fsc.O_WRONLY | fsc.O_CREAT | fsc.O_EXCL | fsc.O_NOFOLLOW, 0o600);
++    try { writeSync(fd, line); } finally { closeSync(fd); }
++  } catch (e) { writeSync(2, `${line.trimEnd()} verdict_file_error=${e.code || 'unknown'}\n`); }
++} else {
++  writeSync(2, line);
++}
++process.exit(code);
+diff --git a/scripts/cap-spawn.mjs b/scripts/cap-spawn.mjs
+index aa7966d..e90c42a 100644
+--- a/scripts/cap-spawn.mjs
++++ b/scripts/cap-spawn.mjs
+@@ -23,7 +23,7 @@ import { dirname, join } from 'node:path';
+ import { tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+ 
+-export const CAP_RUN = join(dirname(fileURLToPath(import.meta.url)), 'cap-run.mjs');
++export const CAP_RUN = join(dirname(fileURLToPath(import.meta.url)), 'cap-run-shim.mjs');
+ 
+ export function capSpawnSync(cmd, args, {
+   env = {}, bind = [], timeout = 60_000, mem = 512, tasks = 64, cwd, encoding = 'utf8', maxBuffer, input,
+-- 
+2.56.0
+

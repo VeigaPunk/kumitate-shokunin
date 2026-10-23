@@ -1,0 +1,14 @@
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=31 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=5 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=58 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=61 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=56 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=5 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=8 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=7 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+CAPROUTE48 rev=529947e71c3fdb657604eb9cbf509c67d13a4e4a base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1 start=18:25:06Z load1_at_start=33.23 mtime=2026-10-23 15:26:57.638043390 -0300 note=exit captured by calling shell (job bg_160); trailer appended post-hoc

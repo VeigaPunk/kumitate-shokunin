@@ -1,0 +1,532 @@
+{
+ "wave": "kumitate-r48",
+ "milestone": "r48 attempt 2: v2 wave — C1 route builds + C2 instrument + R47 repairs + freeze/counter attacks",
+ "axes": [
+  "operability",
+  "coverage"
+ ],
+ "reportDir": ".ufo/waves/round-48/r48",
+ "context": "# Goal\nkumitate round 48, attempt 2, single v2 wave `r48` (build + attack together). Lane repo /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated; NEVER run git/jj writes in it — seats deliver patches/drafts/receipts as files only; the L1 is the sole integrator). Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/plan.md FIRST, including the attempt-2 addendum. Frozen tip fe3d45bf929246915c8c0de5f7f8682b5015b22c.\nTwo claims, both frozen before any data seat:\n- C1 (operability): four child-process sites — RG742 scripts/round-gate.mjs:742 runGate, SP491 scripts/surface-probe.mjs:491 surface shim, SP519 scripts/surface-probe.mjs:519 dispatcher status, SP1592 scripts/surface-probe.mjs:1592 spawnSelf — must launch their child through scripts/cap-run.mjs (contract kumitate-cap-run-v2) via scripts/cap-spawn.mjs capSpawnSync. Predicate ROUTED_HELD, rule F48, counter probe/caproute48-probe.mjs (sha256 f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2). After-state: CAPROUTE48 ... set=r48 held=4/4 runs=3 rule=F48 exit 0 at the C1 commit. Kill rule: the L1 score run AND every committed wave re-run on the same commit (>=2) read 4/4; exit 2 is recorded, never a score.\n- C2 (capability counter-rerun): new scripts/counter-rerun.mjs per the addendum predicate sentence COUNTER_RERUN; after-state COUNTER_RERUN_SELFTEST: PASS exit 0 at the C2 commit + one committed real AGREE receipt over the frozen probe.\nAttempt-1 inheritance (re-verify, never trust blindly): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ — 17 killed control mutants (all held=0/4, no F48 amendment forced), a2-rerun-1..3.txt (R47-1: reproduce 3/5,3/5,4/5 at f00cf278 under load), checklist-base-1..2.txt (R47-4 base side), ScribeErrata/ReopenS084/ReopenS091/ReopenS092/ReconcileS088/ScribeMistake/ScribeStraceManual drafts.\n# Bounds\nWrite ONLY: (a) your sandbox clone under /fast/scratch/hyaku/kumitate-r48a/seats/<your-seat-name>/, (b) your own files under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ (prefix every filename with your seat name), (c) /tmp. NEVER write the lane repo outside (b), the fleet repo, sibling repos, lane .jj, .ufo/state, .ufo/watchdog.log, /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts directly. No git mutations in any real checkout (sandbox-clone commits with -c user.name=seat are fine). Read-only git (log/show/diff/cat-file/merge-base) is fine anywhere.\nSandbox pattern: unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; mkdir -p /fast/scratch/hyaku/kumitate-r48a/seats/<name> && git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r48a/seats/<name>/lane && git -C /fast/scratch/hyaku/kumitate-r48a/seats/<name>/lane checkout -q --detach fe3d45bf929246915c8c0de5f7f8682b5015b22c.\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.\nTooling authorization (operator 2026-10-19): you may install/upgrade tools that help the task — read /home/vgpnk/.omp/agent/RULES.md first (official channels only; record tool/version/channel/reason in your report). Pacman guard (orchestrator ruling 2026-10-20): ALL pacman transactions are PAUSED host-wide — install via uv tool/npx/official binary in ~/.local/bin only; never pacman -S/-Sy/-Syu/-U/-R; never restart a host service.\nRouting is the operator's table; never pass or request a model. You are a leaf: no delegation, no sub-spawns, no background jobs, no waves. The section-3 planner seat is held by the L1 (orchestrator ruling 2026-10-19; the validator rejects planner — bounded planning data-walks ride ConnSiblings/Scout seats).\nHard stop ~17:00 -03: keep your item under ~25 min; if you cannot finish, land what verifies and say so.",
+ "items": [
+  {
+   "name": "ExecRouteRG742",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecRouteRG742 — C1 route build for site RG742\nRoute scripts/round-gate.mjs:742 runGate's child (node round-gate.mjs <args>, NOT --selftest) through scripts/cap-spawn.mjs capSpawnSync -> scripts/cap-run.mjs. The nested --selftest site RG1409 stays raw (named allowance). Study the established pattern first: the r47-routed sites in git show 269dadb6:scripts/kimi-census.mjs, :scripts/sources-check.mjs, :scripts/claims-check.mjs, :scripts/anchor-truth.mjs (capSpawnSync call sites), plus scripts/cap-spawn.mjs and scripts/cap-run.mjs at the freeze, and the working comparator recipe in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/CtlEnvCaps.md (its pristine f55bf22e routed these four sites 4/4 under F48 — borrow its shape). Work ONLY in your sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c; keep the diff minimal and region-local; do NOT refactor anything else; do NOT run probe/caproute48-probe.mjs (the L1 scores — executors never run the counter). Deliverables in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/: <name>.patch (git diff output), <name>.md (report: your site id, the exact base line, the new code with file:line anchors, the child argv/env as traced, fixture dirs bound, allowances respected, open risks)."
+  },
+  {
+   "name": "ExecRouteSP491",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecRouteSP491 — C1 route build for site SP491\nRoute scripts/surface-probe.mjs:491 (surface shim: bash <src>/scripts/ufo-sighting surface --json) through capSpawnSync -> cap-run. Study the established pattern first: the r47-routed sites in git show 269dadb6:scripts/kimi-census.mjs, :scripts/sources-check.mjs, :scripts/claims-check.mjs, :scripts/anchor-truth.mjs (capSpawnSync call sites), plus scripts/cap-spawn.mjs and scripts/cap-run.mjs at the freeze, and the working comparator recipe in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/CtlEnvCaps.md (its pristine f55bf22e routed these four sites 4/4 under F48 — borrow its shape). Work ONLY in your sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c; keep the diff minimal and region-local; do NOT refactor anything else; do NOT run probe/caproute48-probe.mjs (the L1 scores — executors never run the counter). Deliverables in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/: <name>.patch (git diff output), <name>.md (report: your site id, the exact base line, the new code with file:line anchors, the child argv/env as traced, fixture dirs bound, allowances respected, open risks)."
+  },
+  {
+   "name": "ExecRouteSP519",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecRouteSP519 — C1 route build for site SP519\nRoute scripts/surface-probe.mjs:519 (dispatcher status: node <src>/scripts/fleet-dispatcher.mjs status) through capSpawnSync -> cap-run. Study the established pattern first: the r47-routed sites in git show 269dadb6:scripts/kimi-census.mjs, :scripts/sources-check.mjs, :scripts/claims-check.mjs, :scripts/anchor-truth.mjs (capSpawnSync call sites), plus scripts/cap-spawn.mjs and scripts/cap-run.mjs at the freeze, and the working comparator recipe in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/CtlEnvCaps.md (its pristine f55bf22e routed these four sites 4/4 under F48 — borrow its shape). Work ONLY in your sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c; keep the diff minimal and region-local; do NOT refactor anything else; do NOT run probe/caproute48-probe.mjs (the L1 scores — executors never run the counter). Deliverables in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/: <name>.patch (git diff output), <name>.md (report: your site id, the exact base line, the new code with file:line anchors, the child argv/env as traced, fixture dirs bound, allowances respected, open risks)."
+  },
+  {
+   "name": "ExecRouteSP1592",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecRouteSP1592 — C1 route build for site SP1592\nRoute scripts/surface-probe.mjs:1592 spawnSelf (node surface-probe.mjs <args>, NOT --selftest) through capSpawnSync -> cap-run. The checklist runner SP1049 stays raw (named allowance). Study the established pattern first: the r47-routed sites in git show 269dadb6:scripts/kimi-census.mjs, :scripts/sources-check.mjs, :scripts/claims-check.mjs, :scripts/anchor-truth.mjs (capSpawnSync call sites), plus scripts/cap-spawn.mjs and scripts/cap-run.mjs at the freeze, and the working comparator recipe in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/CtlEnvCaps.md (its pristine f55bf22e routed these four sites 4/4 under F48 — borrow its shape). Work ONLY in your sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c; keep the diff minimal and region-local; do NOT refactor anything else; do NOT run probe/caproute48-probe.mjs (the L1 scores — executors never run the counter). Deliverables in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/: <name>.patch (git diff output), <name>.md (report: your site id, the exact base line, the new code with file:line anchors, the child argv/env as traced, fixture dirs bound, allowances respected, open risks)."
+  },
+  {
+   "name": "ExecCounterRerun",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecCounterRerun — C2 build: scripts/counter-rerun.mjs\nImplement the COUNTER_RERUN predicate from the plan addendum EXACTLY as one header sentence in the script: selftest prints a line beginning COUNTER_RERUN_SELFTEST: PASS exit 0; --probe <abs-probe> --lane <abs-lane> --rev <rev> --runs K -- <probe args> runs the probe K times, prints COUNTER_RERUN: AGREE (runs=K) exit 0 iff every run exits 0 and every run's final summary line is byte-identical, else COUNTER_RERUN: DISAGREE exit 1; exit 2 fail-closed on unreadable probe/lane/rev or unparsable output; usage 64. Record per run: exit, final summary line, wall, load1 (from /proc/loadavg). Selftest must run hermetically (fixture probe scripts in a temp dir, no network): include >=8 cases, among them a flake-injection probe whose run-to-run summary differs (must DISAGREE) and a stub that always prints PASS (the selftest itself must still fail such a stub by exercising the real probe path). Work in your sandbox clone; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ExecCounterRerun.patch, /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ExecCounterRerun.md (report: cases list, exit map, mutation controls run), and a live demonstration receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ExecCounterRerun-agree.txt running your instrument over the frozen counter: node .ufo/waves/round-48/probe/caproute48-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f00cf278 --set r48 with --runs 2 (expect AGREE with both runs held=0/4 byte-identical, or DISAGREE — report what you observe; either is evidence, fabrication is not)."
+  },
+  {
+   "name": "ScribeErrata",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item ScribeErrata — R47-2/R47-3 correction fragments\nFrom /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeErrata.md: verify every quoted receipt line (a2-controls.txt, a2-ctl-retparse2.txt, report line numbers) and emit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeErrata-scorecard.frag.md — the exact ## Round 47 correction block to append to SCORECARD.md (append-only wording, naming what it supersedes). Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeLesson48",
+   "role": "scribe",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScribeLesson48 — corpus/lessons/round-48.md draft\nFrom /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeMistake.md: verify its cited receipts (rc-at802-parser.txt, lessons/round-47.md:105-125, SCORECARD.md:2082-2084), then emit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeLesson48-lesson.frag.md — a full lessons/round-48.md draft: ## Mistakes entries (class/evidence pointer/captured-by/fix shown able to fail), ## Gate (candidates, admitted, rejected), and a ## Round-48 record section skeleton the L1 completes at close. Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeSources98",
+   "role": "scribe",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ScribeSources98 — S098 SOURCES row fragment\nFrom /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeStraceManual.md: verify the fetched sha256 c16859e07dacc5cda882c7ab5f2e353803645a6ca449a0ac41eda1034e67ae9a against a fresh curl of https://raw.githubusercontent.com/strace/strace/v7.2/doc/strace.1.in, verify each quote is verbatim and <=25 words at the stated lines (832-835 -a/--columns; 148-158 unfinished/resumed), then emit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeSources98-row.frag.md — the exact | S098 | ... | row (status=used, recheck on-release, used-by .ufo/waves/round-48/probe/caproute48-probe.mjs + corpus/lessons/round-48.md) matching the fleet SOURCES contract column shape, plus a corpus/README.md map-row fragment. Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeReceipts",
+   "role": "scribe",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScribeReceipts — canonical R47-1/R47-4 receipt copies\nVerify /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/a2-rerun-{1,2,3}.txt and checklist-base-{1,2}.txt are untruncated and internally consistent (held= lines, exit trailers, load1 values), then write byte-exact copies as /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeReceipts-a2-rerun-{1,2,3}.txt and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeReceipts-checklist-base-{1,2}.txt (use cmp to prove byte-exactness and record the cmp output in your report). Emit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeReceipts.md summarizing each receipt's verdict value for the record commit. Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeScorecard",
+   "role": "scribe",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item ScribeScorecard — SCORECARD round-48 fragments\nCompute live proxy terms at the freeze (A: find . -path ./.git -prune -o -type f \\( -name '*.mjs' -o -name '*.sh' -o -name '*.py' \\) -print | wc -l; C: grep -c '^\\s*- \\[' SKILL.md; C2 rows: grep -c '^| `\\(knowledge\\|lessons\\)/' corpus/README.md vs find corpus/knowledge corpus/lessons -name '*.md' | wc -l) and emit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeScorecard-frag.md: the move-log row skeleton for round 48 (C1/C2 before->after wording left as placeholders the L1 fills at close) and the capabilities-table row text for counter-rerun. Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeReadme",
+   "role": "scribe",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ScribeReadme — corpus/README map-row fragments\nEmit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeReadme-frag.md: the exact corpus/README.md map rows for lessons/round-48.md (and for corpus/knowledge/ only if a new knowledge note actually lands this round — check with the L1 list in the wave context; an index row is a claim, write it only for files that exist). Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScribeLogFrag",
+   "role": "scribe",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScribeLogFrag — LOG.md round-48 entry skeleton\nEmit /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeLogFrag-frag.md: a LOG.md entry skeleton for round 48 following the format of the round-47 entry (claims, counters, commits, receipts with measured-commit placeholders). Read the attempt-1 draft and its cited receipts first; verify each cited byte yourself (grep/sha/git show) before reusing it. Deliver fragment files in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ prefixed with your seat name; do NOT edit SCORECARD.md, corpus/, or LOG.md yourself — the L1 applies fragments after review."
+  },
+  {
+   "name": "ScoutRootCause",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScoutRootCause — verify the strace-drop root cause\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ExecRootCause/results.json and its rc-*.mjs analysis scripts; re-run the analysis on the kept strace logs if they still exist under /fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/ (else re-derive from results.json only and say so). Question: does strace -f -qq -v -s 8192 --decode-pids=pidns ever DROP a traced exec/clone record under load (the one inference the plan left open)? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutRootCause.md with verdict (drops observed Y/N, evidence) and the padded-prefix/PID-wrap counts per tree."
+  },
+  {
+   "name": "ScoutTiming",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScoutTiming — routed-cost risk for H1\nIn a sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c, measure wall time and load1 for: node scripts/round-gate.mjs --selftest and node scripts/surface-probe.mjs --selftest (the two gates C1 routes), 2 runs each, plus the checklist harness node scripts/surface-probe.mjs --checklists 1 run. Compare against the SKILL.md item budgets (120s/item). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutTiming.md with the numbers and the items most at risk once children route through cap-run (2-4x cost class per SCORECARD)."
+  },
+  {
+   "name": "ScoutLiveSurface",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScoutLiveSurface — close-time harm evidence\nRun node scripts/kimi-census.mjs and node scripts/omp-census.mjs in /home/vgpnk/Projects/shokunin/kumitate-shokunin (read-only), capture full output + exit codes; confirm CLEAN/drift status at the freeze. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutLiveSurface.md (verdict lines verbatim)."
+  },
+  {
+   "name": "ScoutOrigTree",
+   "role": "scout",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ScoutOrigTree — origin pin clone integrity\nVerify /fast/scratch/hyaku/kumitate-pin/src is a intact git tree at 31c465f15669 (git rev-parse HEAD, git status --porcelain empty, git cat-file -e of scripts/claims-check.mjs and crates/ufo-core-runtime/src/gate.rs); also report where /home/vgpnk/Projects/origin-work went (it is gone) and that ~/Projects/ufo-fsd-alpha HEAD 093edb97 moved past the pin with only 4 modified files and no member-count change (git diff --name-status 31c465f1 093edb97). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutOrigTree.md."
+  },
+  {
+   "name": "ScoutHarnessBase",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScoutHarnessBase — re-derive the counter's base exec counts\nIn a fresh sandbox clone at fe3d45bf929246915c8c0de5f7f8682b5015b22c, run the frozen counter probe/caproute48-probe.mjs against rev fe3d45bf929246915c8c0de5f7f8682b5015b22c itself for BOTH sets (--set r47 and --set r48), one run each, and compare against the committed stability receipts (probe/receipts/stab-r4*). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutHarnessBase.md: do the base_n values (116/2/2/14; r47 set 5 sites) reproduce at attempt-2 time and load?"
+  },
+  {
+   "name": "ScoutChecklistItems",
+   "role": "scout",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ScoutChecklistItems — checklist budget table\nExtract every GFM checklist item from /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md (grep -n '^\\s*- \\[') with its line number, command, expected exit set and budget; produce /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScoutChecklistItems.md — the table the L1 uses for the H1 base-vs-tip comparison."
+  },
+  {
+   "name": "ConnSiblings",
+   "role": "connector",
+   "axes": [
+    "adjacency"
+   ],
+   "prompt": "# Item ConnSiblings — sibling-overlap scan\nRead the newest reports of sibling lanes (/home/vgpnk/Projects/shokunin/.ufo/reports/round-4{5,6,7}/{kake,kotoba,kotodama,tsukuroi,kaidoku,kagi,mado}.md — those that exist) and scan for overlap with this round's surfaces: cap-run/cap-spawn/strace counters, corpus/SOURCES.md rows, and the hyaku wave-slot/jj-lane tooling. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ConnSiblings.md: any lane touching the same files/claims (name the lane, round, surface), plus the standard no-bleed statement for the report."
+  },
+  {
+   "name": "RevengerCapRun",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item RevengerCapRun — reverse-engineer the runner pair\nReverse-engineer scripts/cap-run.mjs + scripts/cap-spawn.mjs at fe3d45bf929246915c8c0de5f7f8682b5015b22c: document the actual argv/env/fd construction of the runner chain (systemd-run -> bwrap -> child) from the code, every undocumented behavior the F48 counter implicitly trusts (e.g. exact -p spelling, --env filtering, fd inheritance, error paths when systemd-run or bwrap is missing), and any silent fallback. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/RevengerCapRun.md with file:line anchors."
+  },
+  {
+   "name": "RevengerCounter",
+   "role": "revenger",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item RevengerCounter — reverse-engineer the frozen counter\nReverse-engineer /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs (378 lines): document its parsing state machine (prefix, unfinished/resumed, padded returns), the judge chain (no_capped_scope_ancestor / no_cap_run_ancestor / uncapped_exec / count checks), every hidden assumption about strace output shape, and which real-world inputs reach exit 2. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/RevengerCounter.md with line anchors; flag anything the plan predicate does not cover."
+  },
+  {
+   "name": "ReviewFreeze",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewFreeze — freeze integrity (the r42 lesson)\nVerify, from committed bytes only: (1) probe/caproute48-probe.mjs sha256 == f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2; (2) the ROUTED_HELD predicate sentence is the SAME sentence in plan.md addendum, the counter's header comment, and the stability receipts' label; (3) the six stability receipts read r47 5/5 x3 and r48 0/4 x3 at f00cf278; (4) NO candidate score exists anywhere in the lane (git log --all --oneline | grep -i route48; grep -rl 'held=4/4' .ufo/waves/round-4{7,8} excluding build/CtlEnvCaps-pristine and -restored which name their own comparator rev f55bf22e). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewFreeze.md verdict."
+  },
+  {
+   "name": "ReviewCounterD1",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewCounterD1 — attack the thread-leader exit-2 hole\nAttempt-1 seat ReviewCounter48 found D1: a thread-leader exec record does NOT parse and exits 2 (docs say every non-empty line parses). Questions: (a) reproduce D1 with a synthetic log through the counter's parseLog; (b) can node v24 selftests of round-gate/surface-probe ever emit a thread-leader exec record under strace -f? (test in a sandbox clone; node --experimental-... flags off, default binary); (c) is C1's verification threatened (needs enough runs reading 4/4)? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewCounterD1.md with verdict and evidence."
+  },
+  {
+   "name": "ReviewA2Receipts",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewA2Receipts — R47-1 receipt soundness\nVerify /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/a2-rerun-{1,2,3}.txt: probe_sha256 == 1b438de2... (the round-47 A2 probe), scripts_diffstat_269dadb6_f00cf278=[] (git diff --stat of the five scripts between those revs is empty), held lines are 3/5,3/5,4/5, and the load1 trailers are internally consistent. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewA2Receipts.md: are these committed-quality receipts satisfying R47-1 (re-runs committed)?"
+  },
+  {
+   "name": "ReviewChecklistBase",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewChecklistBase — H1 base evidence attack\nAttack /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/checklist-base-{1,2}.txt as the H1 base side: (a) are the two FAILs (items at SKILL.md:685-686) pure sandbox artifacts (REPORTS_DIR_MISSING in the seat clone) or real? (b) is the proxy-recompute item FAIL the pre-existing A_DRIFT/C2_TOTAL_DRIFT/AXES_DRIFT (compare with a live proxy run at the freeze)? (c) item 697-class wall behavior at load1~44. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewChecklistBase.md with a verdict on whether the base side is sound for the H1 comparison."
+  },
+  {
+   "name": "ReopenS098",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ReopenS098 — re-open the strace manual for S098\nIndependently fetch https://raw.githubusercontent.com/strace/strace/v7.2/doc/strace.1.in; verify sha256, the -a/--columns lines 832-835 (return alignment default column 40), and the unfinished/resumed lines 148-158 against the draft row in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeStraceManual.md. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReopenS098.md: HOLDS or defect list (this gates whether the L1 lands S098)."
+  },
+  {
+   "name": "ReviewSources",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ReviewSources — SOURCES conformance review\nReview the S098 draft row (ScribeStraceManual.md / ScribeSources98 fragment when present) against the fleet SOURCES contract: required cells, enum values (tier A justification: official docs), <=25-word located quotes, used-by paths that exist, recheck field, no immutable-cell rewrite of S093 (S098 is a sibling row citing the same manual at different anchors — confirm that is allowed; check scripts/sources-check.mjs rules if unsure). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewSources.md."
+  },
+  {
+   "name": "ReviewRouteSpec",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewRouteSpec — integration acceptance checklist\nFrom the F48 predicate sentence alone, derive the exact per-site acceptance checks the L1 must apply to the four incoming route patches (what must be true in the diff for RG742/SP491/SP519/SP1592; how the nested-allowance boundaries RG1409/SP1766 (nested --selftest) and SP1049 (checklist runner) must remain raw; what the diff must NOT touch). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewRouteSpec.md — the checklist the L1 signs against."
+  },
+  {
+   "name": "ReviewCapSpawnCode",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewCapSpawnCode — static review of the spawn helper\nStatic-review scripts/cap-spawn.mjs at fe3d45bf929246915c8c0de5f7f8682b5015b22c: argv construction, env handling (can any caller env leak into the child?), fd inheritance, error paths, and whether its contract matches how the four new call sites will use it. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewCapSpawnCode.md with line-anchored findings (defects ranked)."
+  },
+  {
+   "name": "ReviewCtlEnvCaps",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewCtlEnvCaps — the 4/4 ruling (critical)\nRule on /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/CtlEnvCaps.md and its three receipts: is the seat's ruling sound that (a) the pristine comparator f55bf22e is a legitimate four-site routing (not a control, not the C1 candidate) whose 4/4 at load1=58 shows F48 scores legit routings; (b) the mutant d4423b2c (caps into env after systemd-run's --) was correctly killed 0/4 with no_capped_scope_ancestor; (c) therefore NO amendment to F48 is forced before data. Re-verify the receipts' byte claims. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewCtlEnvCaps.md: agree/disagree with reasons."
+  },
+  {
+   "name": "ReviewReopens48",
+   "role": "reviewer",
+   "axes": [
+    "coverage"
+   ],
+   "prompt": "# Item ReviewReopens48 — verify attempt-1 re-open reports\nVerify the fetch evidence in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/{ReopenS084,ReopenS091,ReopenS092,ReconcileS088}.md (re-fetch the pinned bytes where cited, check quotes and sha256 pins) and their HOLDS rulings. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewReopens48.md: which rows may land as re-opened, with any defects."
+  },
+  {
+   "name": "ReviewPlanAddendum",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item ReviewPlanAddendum — addendum consistency\nReview /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/plan.md (attempt-2 addendum) against the frozen sections and the r47-verifier spotcheck routed defects R47-1..R47-5: does the addendum cover each routed defect or name why not; any contradiction with the frozen kill rule (unamended F48, no post-score amendment)? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewPlanAddendum.md with defect list."
+  },
+  {
+   "name": "ReviewErrataFrag",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item ReviewErrataFrag — errata accuracy\nCross-check the ScribeErrata draft (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeErrata.md) line by line against the cited receipts and the filed round-47 report (fleet repo .ufo/reports/round-47/kumitate.md — read-only): every \"Wrong words\" quote must match the file byte-exactly at the cited line; every \"Corrected\" claim must be receipt-backed. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewErrataFrag.md: approve/flag per bullet."
+  },
+  {
+   "name": "ReviewQualityDraft",
+   "role": "reviewer",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item ReviewQualityDraft — repeat-run rule text\nReview the QUALITY recommendation in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/build/ScribeMistake.md (and any Q36 draft): is the proposed repeat-run/exec-count-equality receipt rule (a) correctly derived from R47-1 and r47 Mistake 3, (b) stated as one machine-checkable sentence, (c) shown able to fail? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewQualityDraft.md with the approved wording or defects."
+  },
+  {
+   "name": "ReviewReceiptCanon",
+   "role": "reviewer",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ReviewReceiptCanon — canonical receipt copies\nWhen ScribeReceipts' outputs exist in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/, byte-compare them against the attempt-1 originals in build/ (cmp each pair) and confirm nothing was normalized silently. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ReviewReceiptCanon.md (per-file verdict)."
+  },
+  {
+   "name": "CritPlan48",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item CritPlan48 — plan-level falsification\nAttack the round-48 plan: (a) chronology — prove from committed timestamps that the freeze (fe3d45bf, 08:03 -03) precedes every control receipt and that no candidate score exists; (b) do-nothing control — could a no-op round reach any part of the C1/C2 targets (explain exactly why not, or name the hole); (c) kill-rule gaps — what failure mode reads 4/4 on the L1 run AND on 2 re-runs while the routing is still wrong? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CritPlan48.md."
+  },
+  {
+   "name": "CritC2Shape",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item CritC2Shape — is C2 padding?\nProsecute the padding charge against C2 (counter-rerun): single-consumer instrument, the lane already commits bash receipts, the capability table already has wave-census. For the defense: R47-1's routed fix (adopt the repeat-run rule before the next freeze), C1's kill rule needing committed re-runs, and Mistake 3. Also attack the predicate: can a print-PASS stub pass the selftest as specified (what makes the flake-injection case mandatory)? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CritC2Shape.md with your ruling and any predicate hardening the L1 should adopt BEFORE data (as findings only — the predicate is frozen; name anything fatal)."
+  },
+  {
+   "name": "CriticHarm",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item CriticHarm — harm-rule gaps\nAttack H1-H4: what can the C1/C2 work harm that the four rules miss? Candidates to examine: checklist item wall budgets once children route through cap-run (2-4x), gate-mutants battery runtime over the mutated scripts, cite-check behavior on the new/edited files, sources-check row-count effects of S098, the A-term inflation from round probes (proxy A_DRIFT), README C2 map ratio if fragments land wrongly. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CriticHarm.md: ranked harm list with the measurement that would catch each."
+  },
+  {
+   "name": "CritFreezeTiming",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item CritFreezeTiming — chronology audit\nAudit every receipt and commit mentioned in the round-48 attempt-1 trail (build/*.txt trailers, probe/receipts/*, git log timestamps): build the timeline proving/disproving freeze-before-data for attempt 1, and list every place attempt-2 evidence must NOT rely on attempt-1 seat reports (which are uncommitted and untrusted until re-verified). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CritFreezeTiming.md."
+  },
+  {
+   "name": "CritC1Shape",
+   "role": "critic",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item CritC1Shape — surface selection attack\nAttack C1's surface: are RG742/SP491/SP519/SP1592 the right four sites (what about cite-check/gate-mutants/proxy-check/wave-census children — the r47 plan deferred them on item 697; is that still sound)? Are the RG1409/SP1766/SP1049 exclusions correctly reasoned (nested selftest inside bwrap, checklist runner is data)? Would a skeptic say the after-state 4/4 can be reached without the routing being real? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CritC1Shape.md."
+  },
+  {
+   "name": "CritReceiptPlan",
+   "role": "critic",
+   "axes": [
+    "calibration"
+   ],
+   "prompt": "# Item CritReceiptPlan — close-time receipt completeness\nFrom the closure's viewpoint (round-47 spotcheck as the model), list every receipt the close commit must carry for a non-author to verify C1 and C2 in one pass: L1 score run, >=2 wave re-runs on the C1 commit, H1 base+tip, H2 r47-set at tip, proxy --strict MATCH, census exit 0, selftest outputs, patch integration report. For each: exact command + expected headline. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/CritReceiptPlan.md."
+  },
+  {
+   "name": "MutSpawnEnvDodge",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSpawnEnvDodge — control: caps via env\nControl attacking F48: in your sandbox clone, make cap-run place MemoryMax/MemorySwapMax/TasksMax as env assignments after systemd-run's -- (the killed r47 class, re-derived). Score with the frozen counter --set r48; expected held=0/4 with no_capped_scope_ancestor. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSpawnEnvDodge-receipt.txt + .md (RESULT line, patch, kill class)."
+  },
+  {
+   "name": "MutSpawnFakeRunner",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSpawnFakeRunner — control: fake runner path\nControl: route a site (sandbox) but make cap-spawn resolve the runner to a wrapper script that re-execs plain node (no scope/bwrap). Expected: counter misses no_capped_scope_ancestor or no_cap_run_ancestor chain. Score with frozen counter; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSpawnFakeRunner-receipt.txt + .md."
+  },
+  {
+   "name": "MutSpawnCanaryLeak",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSpawnCanaryLeak — control: canary leak\nControl: a routed sandbox tree where one site's child can see the planted canary variable (env leak). Expected: ROUTED_MISS on that site (canary in child env). Score with the frozen counter; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSpawnCanaryLeak-receipt.txt + .md."
+  },
+  {
+   "name": "MutRunnerDropSwap",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutRunnerDropSwap — control: drop MemorySwapMax\nControl: sandbox route of one site with cap-run omitting MemorySwapMax=0. Expected: no_capped_scope_ancestor. Score with the frozen counter; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutRunnerDropSwap-receipt.txt + .md."
+  },
+  {
+   "name": "MutRunnerLooseMem",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutRunnerLooseMem — control: MemoryMax above 1G\nControl: cap-run with MemoryMax=4G. Expected: miss (F48 requires <= 1024M). Score with the frozen counter; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutRunnerLooseMem-receipt.txt + .md."
+  },
+  {
+   "name": "MutRunnerDropTasks",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutRunnerDropTasks — control: TasksMax above 256\nControl: cap-run with TasksMax=1024. Expected: miss. Score with the frozen counter; deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutRunnerDropTasks-receipt.txt + .md."
+  },
+  {
+   "name": "MutCounterPadded",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutCounterPadded — parser attack: padded returns\nBuild a synthetic strace log whose execve resumed returns are padded far past column 40 (e.g. column 80) and feed it through the frozen counter's parseLog (extract the parser verbatim into a harness like attempt-1's ReviewCounter48 did). Expected: parses completely, no silent skip. Then a variant with a MALFORMED return that must exit 2. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutCounterPadded.md with both results."
+  },
+  {
+   "name": "MutCounterPidReuse",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutCounterPidReuse — parser attack: PID reuse\nSynthetic log where one PID appears, exits, and a second process reuses the PID within the same trace (or an untranslated pidns return). Expected: exit 2 (counter treats duplicate PID creation as unevaluable). Verify against the frozen parser. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutCounterPidReuse.md."
+  },
+  {
+   "name": "MutCounterUnresumed",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutCounterUnresumed — parser attack: never-resumed\nSynthetic log with an unfinished record whose resume never appears (strace killed mid-call). Expected: exit 2. Verify against the frozen parser. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutCounterUnresumed.md."
+  },
+  {
+   "name": "MutSiteRGArgv",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSiteRGArgv — site attack: altered child argv\nSandbox-route RG742 but change the child's argv shape (extra flag). The predicate counts execs of the site's child: does the counter still match exec counts when the argv differs from base? Expected: held if chain is intact (argv not in predicate) — confirm and report whether that is a predicate hole or sound. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSiteRGArgv.md with the counter reading."
+  },
+  {
+   "name": "MutSiteSPDouble",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSiteSPDouble — site attack: double spawn\nSandbox-route SP519 so its child runs twice per selftest (dispatcher status invoked twice). Expected: exec-count mismatch vs base_n -> miss. Confirm the F48 count check fires. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSiteSPDouble-receipt.txt + .md."
+  },
+  {
+   "name": "MutSummaryForge",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSummaryForge — suite-summary forgery\nSandbox-route a site and make the gate print its suite summary with n > m while a FAIL line is suppressed... construct the strongest suite-summary forgery you can that still exits 0 and ends VERDICT: PASS; run the frozen counter. Expected: caught (n!=m or FAIL-line check). If anything passes, that is a critical finding — report it as the first line. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSummaryForge.md."
+  },
+  {
+   "name": "MutAllowanceProbe",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutAllowanceProbe — allowance boundary probe\nIn a sandbox route, add (a) an uncapped direct child OUTSIDE the named allowances (expected: uncapped_direct -> miss) and (b) an uncapped direct child INSIDE the named allowances (RG1409/SP1766/SP1049 classes; expected: allowed). Confirm both directions with the frozen counter. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutAllowanceProbe-receipt.txt + .md."
+  },
+  {
+   "name": "MutDoNothing48",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutDoNothing48 — do-nothing control\nControl: take the freeze tree, make a no-op whitespace commit. Expected: held=0/4 exit 1. Also score the pristine freeze itself if not already committed. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutDoNothing48-receipt.txt + .md."
+  },
+  {
+   "name": "MutCountPadSite",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutCountPadSite — count-padding control\nSandbox-route all four sites, then pad ONE site (SP491) with one extra capped launch that looks like its child but is a different program. Expected: exec count differs from base_n -> miss on that site only. Confirm. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutCountPadSite-receipt.txt + .md."
+  },
+  {
+   "name": "MutSpawnDropBind",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutSpawnDropBind — control: drop fixture binds\nControl: cap-spawn variant that drops the explicit fixture-directory binds (child sees different fs). Does the counter catch it (expected: the child still runs capped, so counter reads HELD — then the harm is functional, not routing: analyze which checklist/H1 item catches it instead)? Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutSpawnDropBind.md with the full analysis."
+  },
+  {
+   "name": "MutRunnerUnshare",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutRunnerUnshare — control: drop --unshare-pid\nControl: cap-run variant without --unshare-pid (child shares the runner's PID ns). Expected: no_bwrap_ancestor or chain miss. Confirm with the frozen counter. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutRunnerUnshare-receipt.txt + .md."
+  },
+  {
+   "name": "MutVerdictFile",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutVerdictFile — verdict-file forgery\nControl: routed tree where the runner's --verdict-file is pre-written by the caller with CAP_RUN: EXIT before the child finishes. Does anything downstream trust it? (The gates read the child exit, but check cap-run's own contract and the F48 counter's indifference.) Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutVerdictFile.md with the analysis and any real finding."
+  },
+  {
+   "name": "MutNestedSelftest",
+   "role": "mutation-tester",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item MutNestedSelftest — allowance load-bearing proof\nProve the RG1409/SP1766 nested-selftest allowance is load-bearing: sandbox-route a site AND remove the nested-selftest allowance class from the counter... you may NOT modify the frozen counter; instead construct a routed tree where the gate's --selftest is invoked as a traced child NOT through the allowance path and show the counter reads miss. Expected: it does (allowance only covers the named nested sites). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/MutNestedSelftest.md."
+  },
+  {
+   "name": "ExecLoadProbe",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecLoadProbe — F48 behavior under induced load\nIn your sandbox, run the frozen counter --set r48 at fe3d45bf929246915c8c0de5f7f8682b5015b22c 5 times while inducing moderate load (e.g. parallel yes > /dev/null & with a cap on your own parallelism, stay under load1 20). Classify every run: 4/4? exit 2 (which class — thread-leader, parse)? DISAGREE between runs? This feeds the re-run strategy (how many re-runs the close needs). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ExecLoadProbe.md with the per-run table."
+  },
+  {
+   "name": "ExecPidWrapProbe",
+   "role": "executor",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item ExecPidWrapProbe — padded-prefix/PID-wrap recurrence\nAttempt-1 found strace pads the PID prefix and a PID wrap (pid_max 4194304) broke A2's parser; F48 accepts padded prefixes. Probe recurrence on this host at attempt-2 time: read /proc/sys/kernel/pid_max and the current PID counter (/proc/sys/kernel/ns_last_pid), and run 3 strace -f traces of node scripts/anchor-truth.mjs --selftest in a sandbox clone; count 4-5 digit PID prefixes in the logs and confirm the F48 parser accepts them (extract parser or run the counter --set r47). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ExecPidWrapProbe.md."
+  },
+  {
+   "name": "SentinelBound",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item SentinelBound — write-path audit\nStatic-audit this wave's write bounds: every seat prompt in the wave spec writes only under /fast/scratch/hyaku/kumitate-r48a/seats/<name>/, /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/<name>-*, /tmp; flag any prompt whose instructions could lead a seat to write elsewhere (lane tracked files, fleet repo, .ufo/state). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/SentinelBound.md with per-item verdicts on the items you sampled and the audit method."
+  },
+  {
+   "name": "SentinelReceipt",
+   "role": "sentinel",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item SentinelReceipt — receipt forgery classes\nEnumerate how a malicious or broken seat could fabricate a receipt the L1 might trust (sha without file, copied sha from another receipt, missing load trailer, stale timestamp, exit-code laundering) and produce the one-command check the L1 should run over every receipt at integration (e.g. sha256sum -c, grep of RESULT/held lines, exit-trailer presence). Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/SentinelReceipt.md."
+  },
+  {
+   "name": "SimplifierPredicate",
+   "role": "simplifier",
+   "axes": [
+    "operability"
+   ],
+   "prompt": "# Item SimplifierPredicate — predicate minimality\nAdvisory only (the predicate is frozen; findings never amend it): is there a strictly smaller predicate equivalent to F48's ROUTED_HELD for these four sites? If yes, document the reduction for a future round; if no, show which clause removes a killed control class. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/SimplifierPredicate.md."
+  }
+ ]
+}

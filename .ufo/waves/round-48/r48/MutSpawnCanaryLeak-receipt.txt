@@ -1,0 +1,62 @@
+# MutSpawnCanaryLeak — control: canary leak — round 48, attempt 2, wave r48
+# counter: .ufo/waves/round-48/probe/caproute48-probe.mjs sha256 f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2
+# freeze tip: fe3d45bf929246915c8c0de5f7f8682b5015b22c ; probe internal base: f00cf278a5ab57e87b18418fc972be9f893f65da
+# sandbox: /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSpawnCanaryLeak/lane (git clone --no-hardlinks, detached at the freeze tip)
+# pristine comparator: 27890bc188ce5f872023b1097f9c33ebdb1dddcf tree 1c695d1417772a5c1f9f2695b3484c8511369d4c (identical tree to attempt-1 f55bf22e; applied from .ufo/waves/round-48/build/CtlEnvCaps.patch patch 1 only)
+# mutant: 349752a8456c21030846e9fe25253e490b47b716 tree 89d3ff4c7a880eacec0fa213d5902b3b3926357f (scripts/surface-probe.mjs blob 1a3c6145 -> 207e28a7)
+# restored: 79d5c7d678c5c53654a24191d0b5863a8801f26e tree 1c695d1417772a5c1f9f2695b3484c8511369d4c (blob 1a3c6145 again; git status --porcelain empty)
+# command shape (each run, cwd = the seat sandbox): /usr/bin/timeout -k 10 1500 /home/vgpnk/.local/share/mise/installs/node/latest/bin/node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs $PWD/lane <rev> --set r48
+
+=== RUN 1 PRISTINE rev=27890bc1 ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=23 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=59 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=38 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=42 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=5 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=5 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=3 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=27890bc188ce5f872023b1097f9c33ebdb1dddcf base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 elapsed_s=127 load1_after=50.40
+
+=== RUN 2 MUTANT rev=349752a8 (canary leak at SP491) ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=44 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=69 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=55 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=55 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=1 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=canary_in_env,uncapped_exec
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=349752a8456c21030846e9fe25253e490b47b716 base=f00cf278 set=r48 held=3/4 runs=3 rule=F48
+exit=1 elapsed_s=163 load1_after=50.72
+
+=== RUN 3 RESTORED rev=79d5c7d6 (tree = pristine) ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=46 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=60 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=70 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=72 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=79d5c7d678c5c53654a24191d0b5863a8801f26e base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 elapsed_s=142 load1_after=46.60
+
+=== VERDICT ===
+KILLED. Mutant 349752a8: SP491 label=ROUTED_MISS capped/n=0/2,0/2,0/2 reason=canary_in_env,uncapped_exec; RG742, SP519, SP1592 ROUTED_HELD; CAPROUTE48 held=3/4 runs=3 rule=F48; exit 1 (a score, not exit 2).
+Pristine and restored read held=4/4 exit 0. All eight RUN lines in every invocation show gate exit=0, own-suite summaries at n=m (round-gate 61/61; surface-probe 46/46), verdict_pass=true, fail_lines=0.
+`uncapped_exec` is derivative: judge() counts a leaking exec as not capped (probe lines 303-308), so the targeted reason is canary_in_env.
+No side file was written to the lane repo; the probe uses its own scratch /fast/scratch/hyaku/kumitate-r48/probe-runs and removes it.

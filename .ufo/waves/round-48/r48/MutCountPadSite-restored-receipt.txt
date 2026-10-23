@@ -1,0 +1,14 @@
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=38 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=52 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=45 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=178789940bf423f5f2d7751c580ee9a76bcd718d base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 load1=35.07 end=18:34:27Z

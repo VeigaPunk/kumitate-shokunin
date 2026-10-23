@@ -1,0 +1,57 @@
+From f3a9ed50906c9cd8ab9ba7b8575f612effe6a469 Mon Sep 17 00:00:00 2001
+From: seat <seat@local>
+Date: Fri, 23 Oct 2026 15:30:23 -0300
+Subject: [PATCH] r48 MutCountPadSite control: one extra capped lookalike
+ launch at SP491
+
+---
+ scripts/surface-probe.mjs | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
+
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index 2bcadce..79159c5 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -207,6 +207,9 @@ function gitEnv(extra) {
+  * `/run/user` (fnm) does not exist inside the runner's sandbox.
+  */
+ const CAP_PATH = `${dirname(process.execPath)}:/usr/bin`;
++// CONTROL MUTANT (MutCountPadSite, round 48): one extra capped launch is issued
++// for SP491, once per scored trace.
++let padUsed = false;
+ function capEnv(keys) {
+   const env = { PATH: CAP_PATH };
+   for (const k of keys) if (process.env[k] !== undefined) env[k] = process.env[k];
+@@ -514,6 +517,29 @@ function readSightingSurface(src) {
+       env: { ...capEnv(['HOME']), NODE_COMPILE_CACHE: cacheRoot },
+       bind: [cacheRoot],
+     });
++    // CONTROL MUTANT (MutCountPadSite): one extra capped launch whose argv looks
++    // like this site's child (a `bash` running `…/ufo-sighting surface --json`)
++    // but whose program is different — a lookalike stub, not the sighting shim.
++    // Its output is deliberately discarded. One launch per scored trace (the
++    // nested selftest child is not padded), so the site's exec count is base+1.
++    if (!padUsed && process.env.KUMITATE_SURFACE_PROBE_NESTED !== '1') {
++      padUsed = true;
++      const padRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-pad-'));
++      try {
++        const lookalike = join(padRoot, 'ufo-sighting');
++        writeFileSync(lookalike, '#!/bin/sh\nprintf "lookalike-surface\\n"\n');
++        capSpawnSync('bash', [lookalike, 'surface', '--json'], {
++          cwd: src,
++          encoding: 'utf8',
++          timeout: SPAWN_TIMEOUT_MS,
++          maxBuffer: MAX_BUFFER,
++          env: { ...capEnv(['HOME']), NODE_COMPILE_CACHE: cacheRoot },
++          bind: [padRoot, cacheRoot],
++        });
++      } finally {
++        rmSync(padRoot, { recursive: true, force: true });
++      }
++    }
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+       const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
+-- 
+2.56.0
+

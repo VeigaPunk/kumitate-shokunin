@@ -1,0 +1,33 @@
+L1 C2 binding run — instrument at ce9aee5d
+date_utc_start=2026-10-23T18:56:58Z
+instrument_sha256=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
+cmd=node scripts/counter-rerun.mjs --selftest
+PASS  fixture lane: a throwaway git repository with one commit exists
+PASS  usage: no arguments exits 64 with a usage line
+PASS  usage: bad --runs, unknown flag and a missing -- all exit 64
+PASS  fail-closed: an unreadable probe, lane or rev exits 2 (nothing is scored)
+PASS  agreement: a stable counter over 3 runs prints COUNTER_RERUN: AGREE (runs=3) exit 0 and one record per run
+PASS  flake injection: a counter whose final summary line differs between runs DISAGREEs (exit 1)
+PASS  a counter that exits non-zero DISAGREEs even when its summary lines are identical
+PASS  a counter that exits 2 (cannot evaluate) fails closed with exit 2
+PASS  unparsable output (no final summary line) fails closed with exit 2
+PASS  always-PASS stub: identical summary lines AGREE, and the counter was really executed K times
+PASS  a stub that prints PASS with a varying suffix DISAGREEs (the comparison is byte-exact, not "contains PASS")
+PASS  byte identity: summary lines that differ by one space DISAGREE
+PASS  calling convention: the counter is called as node <probe> <lane> <rev> <probe args...>
+PASS  mutation control: a stub that always prints PASS fails its own selftest (the flake case kills the verdict stub, the execution check kills the path stub)
+COUNTER_RERUN_SELFTEST: PASS
+selftest_exit=0
+cmd2=node scripts/counter-rerun.mjs --probe .ufo/waves/round-48/probe/caproute48-probe.mjs --lane . --rev ce9aee5daf71004a5890134f9526cc6fe424b206 --runs 2 -- . ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48
+COUNTER_RERUN: USAGE --probe wants an absolute path (contract kumitate-counter-rerun-v1: --selftest | --probe <abs-probe> --lane <abs-lane> --rev <rev> [--runs K] -- <probe args>)
+agree_exit=64 end=2026-10-23T18:57:00Z
+cmd2(abs)=node scripts/counter-rerun.mjs --probe /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --rev ce9aee5daf71004a5890134f9526cc6fe424b206 --runs 2 -- /home/vgpnk/Projects/shokunin/kumitate-shokunin ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48
+COUNTER_RERUN_RUN run=1 exit=2 wall_ms=22.83 load1=22.23 stdout_bytes=80 stderr_bytes=0 summary_sha256=59265051826788c28bdb871885c409c52cbed51c550dc1d9bd58d39ae17e6cd6 summary="CAPROUTE48: ERROR usage: caproute48-probe.mjs <lane-repo> <rev> [--set r48|r47]"
+COUNTER_RERUN_RUN run=2 exit=2 wall_ms=20.31 load1=22.23 stdout_bytes=80 stderr_bytes=0 summary_sha256=59265051826788c28bdb871885c409c52cbed51c550dc1d9bd58d39ae17e6cd6 summary="CAPROUTE48: ERROR usage: caproute48-probe.mjs <lane-repo> <rev> [--set r48|r47]"
+COUNTER_RERUN: ERROR run 1 exited 2: the counter could not evaluate (its own fail-closed arm)
+agree_exit=2 end=2026-10-23T18:57:14Z
+cmd3(abs, corrected tail)=node scripts/counter-rerun.mjs --probe /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --rev ce9aee5daf71004a5890134f9526cc6fe424b206 --runs 2 -- --set r48
+COUNTER_RERUN_RUN run=1 exit=0 wall_ms=64602.13 load1=27.25 stdout_bytes=1436 stderr_bytes=0 summary_sha256=f3c23bdc18ad893781954fb9789a0189d5bc97b7f5a502fa3d5596cf1803c4ed summary="CAPROUTE48 rev=ce9aee5daf71004a5890134f9526cc6fe424b206 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48"
+COUNTER_RERUN_RUN run=2 exit=0 wall_ms=73564.65 load1=23.61 stdout_bytes=1434 stderr_bytes=0 summary_sha256=f3c23bdc18ad893781954fb9789a0189d5bc97b7f5a502fa3d5596cf1803c4ed summary="CAPROUTE48 rev=ce9aee5daf71004a5890134f9526cc6fe424b206 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48"
+COUNTER_RERUN: AGREE (runs=2)
+agree_exit=0 end=2026-10-23T18:59:53Z

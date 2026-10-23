@@ -1,0 +1,26 @@
+From 3c2247892e795d5950e96bb7400888dcb8999111 Mon Sep 17 00:00:00 2001
+From: seat <seat@local>
+Date: Fri, 23 Oct 2026 15:25:04 -0300
+Subject: [PATCH] MutRunnerDropTasks mutant: cap-run emits -p TasksMax=1024
+ regardless of --tasks
+
+---
+ scripts/cap-run.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 9ab3193..c4c9501 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -183,7 +183,7 @@ function run(o) {
+   const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
+   for (const [k, v] of o.env) setenv.push('--setenv', k, v);
+   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
+-    '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
++    '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', 'TasksMax=1024', '--',
+     'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+     '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap(([src, dst]) => ['--bind', src, dst]), '--chdir', cwd,
+     '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
+-- 
+2.56.0
+

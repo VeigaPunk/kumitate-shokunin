@@ -1,0 +1,52 @@
+ExecRouteSP491 — integration receipt (three surface-probe patches folded)
+Seat: kumitate-r48-ExecRouteSP491 · axis operability · C1 / SP491 · rule F48 · round 48 attempt 2 wave r48
+
+WHY THIS RECEIPT EXISTS
+  All three surface-probe seat patches (ExecRouteSP491, ExecRouteSP519, ExecRouteSP1592) add the
+  SAME one-line import at the SAME anchor (scripts/surface-probe.mjs:139, after
+  `import { spawnSync } from 'node:child_process';`). Applied sequentially with `git apply`, the
+  second and third patches REJECT that hunk (the line is already present) while their site hunks
+  apply cleanly. The rejection is therefore cosmetic, not semantic — but the L1 must know it, and
+  the resolution (drop the duplicate import hunk) must be verified, not assumed.
+
+MEASURED SEQUENCE (sandbox /tmp/sp491-integ, built from `git archive fe3d45bf scripts/surface-probe.mjs`)
+  $ git apply --reject r48/ExecRouteSP491.patch   -> "Applied patch scripts/surface-probe.mjs cleanly."
+  $ git apply --reject r48/ExecRouteSP519.patch   -> hunk #1 (the import) REJECTED;
+                                                      "Hunk #2 succeeded at 527 (offset 10 lines)."
+  $ git apply --reject r48/ExecRouteSP1592.patch  -> hunk #1 (the import) REJECTED;
+                                                      "Hunk #2 succeeded at 1605 (offset 15 lines)."
+  $ rm scripts/*.rej
+  Rejected hunk #1 content, identical in both rejects, and already satisfied by SP491's copy:
+      @@ -136,6 +136,7 @@
+       import { spawnSync } from 'node:child_process';
+      +import { capSpawnSync } from './cap-spawn.mjs';
+       import { createHash } from 'node:crypto';
+
+RESULT AFTER FOLDING
+  $ grep -c "import { capSpawnSync }" scripts/surface-probe.mjs
+  1                                   <- exactly one import, no duplicate
+  $ node --check scripts/surface-probe.mjs
+  SYNTAX_OK
+  Routed sites present in the folded file:
+      498:  const result = capSpawnSync('bash', [host, 'surface', '--json'], {          (SP491, mine)
+      534:  const result = capSpawnSync(process.execPath, [host, 'status'], {          (SP519, sibling)
+      1614: const spawnSelf = (args, env = {}) => capSpawnSync(process.execPath, ...)  (SP1592, sibling)
+
+FUNCTIONAL CHECK OF THE FOLDED FILE (run in this seat's sandbox with the folded surface-probe.mjs
+plus the freeze's own scripts/cap-run.mjs and scripts/cap-spawn.mjs)
+  $ node scripts/surface-probe.mjs --selftest
+  PASS  hermeticity: --selftest passes with a bogus --src (never reads the live tree) — exit=0 tail=46/46 cases passed
+  PASS  every declared finding code fires in at least one fixture — 21 codes observed
+  46/46 cases passed
+  VERDICT: PASS
+  exit=0, 0 FAIL lines.
+
+RECOMMENDATION TO THE L1
+  Fold the three surface-probe patches as: apply one of them whole, and for the other two apply
+  only their site hunk (the import hunk is the duplicate). Any order works; the site hunks are
+  disjoint (SP491 at ~489-509, SP519 at ~518-534, SP1592 at ~1592-1614 in the folded file) and
+  were each reported to apply with only a line-offset shift. ExecRouteRG742 touches
+  scripts/round-gate.mjs and does not share this anchor.
+
+  This receipt verifies patch FOLDING and the folded file's selftest only. It is NOT a counter
+  score: caproute48-probe.mjs was not run by this seat (the L1 scores).

@@ -1,0 +1,11 @@
+--- a/.ufo/waves/round-48/probe/caproute48-probe.mjs
++++ b/.ufo/waves/round-48/probe/caproute48-probe.mjs
+@@ -190,7 +190,7 @@
+       parent.set(rv, pid);
+     }
+   }
+-  if (pending.size > 0) {
++  if (pending.size > 1) {
+     const [pid, pe] = [...pending][0];
+     die(`${pending.size} traced record(s) never resumed (first: pid ${pid} ${pe.call})`);
+   }

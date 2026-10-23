@@ -1,0 +1,55 @@
+From e452ab69c132f0e0d10f072e8998a823327818f6 Mon Sep 17 00:00:00 2001
+From: kumitate-r48-MutSiteSPDouble <seat@local>
+Date: Fri, 23 Oct 2026 15:25:27 -0300
+Subject: [PATCH] round-48 mutant MutSiteSPDouble: SP519 routed via
+ capSpawnSync, child launched twice per call
+
+---
+ scripts/surface-probe.mjs | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..6a2351e 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -516,13 +517,27 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
++      bind: [src, stateRoot],
++      env: {
++        UFO_STATE_DIR: stateDir,
++        UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
++        UFO_PROJECT_ROOT: src,
++      },
++    });
++    // Round-48 mutant MutSiteSPDouble: the same child is launched a second time
++    // (a duplicated cross-check whose output is discarded).
++    capSpawnSync(process.execPath, [host, 'status'], {
++      cwd: src,
++      encoding: 'utf8',
++      timeout: SPAWN_TIMEOUT_MS,
++      maxBuffer: MAX_BUFFER,
++      bind: [src, stateRoot],
+       env: {
+-        ...process.env,
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,
+-- 
+2.56.0
+

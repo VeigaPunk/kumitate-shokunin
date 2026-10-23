@@ -1,0 +1,18 @@
+# ReRunCounterA — C1 kill-rule re-run 1 of 2 (kumitate round 48 residual call)
+# command: timeout -k 10 1800 node .ufo/waves/round-48/probe/caproute48-probe.mjs <lane> ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48
+# probe_sha256: 3ed305f28d69da6e88654579f285ad3ea1857d469134a63221009b1657f93f59
+# lane_HEAD_at_start: ce9aee5daf71004a5890134f9526cc6fe424b206
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=53 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=57 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=57 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=76 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=3 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=ce9aee5daf71004a5890134f9526cc6fe424b206 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48+A48
+exit=0 start=2026-10-23T16:01:13-03:00 end=2026-10-23T16:03:30-03:00 load1_start=28.16 load1_end=45.92

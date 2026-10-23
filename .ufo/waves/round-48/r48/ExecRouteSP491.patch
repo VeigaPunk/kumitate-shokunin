@@ -1,0 +1,37 @@
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..dd184b2 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -488,12 +489,22 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    // The child runs under `scripts/cap-run.mjs` (contract kumitate-cap-run-v2)
++    // via `scripts/cap-spawn.mjs`: the runner's `/tmp` is a fresh tmpfs, so the
++    // throwaway compile cache is bound explicitly, and the child's environment
++    // is stated in full (the runner clears it). The shim execs `node` by PATH
++    // name, so PATH names the interpreter's own directory (resolved outside
++    // `/run`, which the runner mounts as a private tmpfs) plus `/usr/bin`.
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
++      bind: [cacheRoot],
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      env: gitEnv({
++        PATH: `${dirname(process.execPath)}:/usr/bin`,
++        NODE_COMPILE_CACHE: cacheRoot,
++      }),
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {

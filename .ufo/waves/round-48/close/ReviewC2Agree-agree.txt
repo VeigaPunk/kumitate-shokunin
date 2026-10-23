@@ -1,0 +1,15 @@
+# ReviewC2Agree — assigned probe invocation receipt (FAIL-CLOSED; no AGREE)
+date: 2026-10-23T16:00:02-03:00
+probe: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs
+probe_sha256: 3ed305f28d69da6e88654579f285ad3ea1857d469134a63221009b1657f93f59
+instrument: /fast/scratch/hyaku/kumitate-r48b/seats/ReviewC2Agree-2/clone/scripts/counter-rerun.mjs
+instrument_sha256: c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
+clone(lane): /fast/scratch/hyaku/kumitate-r48b/seats/ReviewC2Agree-2/clone
+rev: ce9aee5daf71004a5890134f9526cc6fe424b206
+runs: 2
+command: TMPDIR=/tmp node scripts/counter-rerun.mjs --probe /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs --lane /fast/scratch/hyaku/kumitate-r48b/seats/ReviewC2Agree-2/clone --rev ce9aee5daf71004a5890134f9526cc6fe424b206 --runs 2 -- /home/vgpnk/Projects/shokunin/kumitate-shokunin ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48
+--- stdout+stderr ---
+COUNTER_RERUN_RUN run=1 exit=2 wall_ms=24.89 load1=29.56 stdout_bytes=80 stderr_bytes=0 summary_sha256=59265051826788c28bdb871885c409c52cbed51c550dc1d9bd58d39ae17e6cd6 summary="CAPROUTE48: ERROR usage: caproute48-probe.mjs <lane-repo> <rev> [--set r48|r47]"
+COUNTER_RERUN_RUN run=2 exit=2 wall_ms=25.77 load1=29.56 stdout_bytes=80 stderr_bytes=0 summary_sha256=59265051826788c28bdb871885c409c52cbed51c550dc1d9bd58d39ae17e6cd6 summary="CAPROUTE48: ERROR usage: caproute48-probe.mjs <lane-repo> <rev> [--set r48|r47]"
+COUNTER_RERUN: ERROR run 1 exited 2: the counter could not evaluate (its own fail-closed arm)
+exit=2

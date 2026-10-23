@@ -1,0 +1,18 @@
+COUNTER_RERUN live demonstration receipt (DISAGREE arm, r48 set at f00cf278)
+date_utc=2026-10-23T18:36:56Z
+instrument_rev=88bb4bab3ff0f048f6c495663583f10f74a5f0c1 (instrument sha256 c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b)
+instrument_base_rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c
+probe=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs
+probe_sha256=f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2
+lane=/fast/scratch/hyaku/kumitate-r48a/seats/ExecCounterRerun/lane (sandbox clone; distinct from the target rev)
+target_rev=f00cf278a5ab57e87b18418fc972be9f893f65da
+command=node scripts/counter-rerun.mjs --probe <probe> --lane <lane> --rev f00cf278 --runs 2 -- --set r48
+load1_start=21.83
+--- output ---
+COUNTER_RERUN_RUN run=1 exit=1 wall_ms=31501.41 load1=21.83 stdout_bytes=1926 stderr_bytes=0 summary_sha256=684715c2cb850e6eda5eee051d18c96692802d0e4d46decc9822b57167156e3c summary="CAPROUTE48 rev=f00cf278a5ab57e87b18418fc972be9f893f65da base=f00cf278 set=r48 held=0/4 runs=3 rule=F48"
+COUNTER_RERUN_RUN run=2 exit=1 wall_ms=25368.15 load1=24.93 stdout_bytes=1927 stderr_bytes=0 summary_sha256=684715c2cb850e6eda5eee051d18c96692802d0e4d46decc9822b57167156e3c summary="CAPROUTE48 rev=f00cf278a5ab57e87b18418fc972be9f893f65da base=f00cf278 set=r48 held=0/4 runs=3 rule=F48"
+COUNTER_RERUN_REASON: run 1 exited 1
+COUNTER_RERUN_REASON: run 2 exited 1
+COUNTER_RERUN: DISAGREE
+instrument_exit=1
+load1_end=23.95

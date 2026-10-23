@@ -1,0 +1,88 @@
+MUTATION CONTROL — kumitate round 48, attempt 2, wave r48
+seat: kumitate-r48-MutRunnerDropTasks   role: mutation tester (leaf)
+axis: operability   item: control "TasksMax above 256" — cap-run with TasksMax=1024
+frozen tip: fe3d45bf929246915c8c0de5f7f8682b5015b22c
+counter: .ufo/waves/round-48/probe/caproute48-probe.mjs sha256 f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2
+command shape: node <counter> <lane> <rev> --set r48   (rule F48, 3 rev runs per invocation, range/API as frozen)
+sandbox: /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutRunnerDropTasks/lane
+detector expectation: ROUTED_MISS at all four sites (predicate arm: systemd-run `-p TasksMax=<= 256`)
+
+MUTANT (behaviour-bearing point: scripts/cap-run.mjs:186, the TasksMax option it emits)
+-  '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
++  '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', 'TasksMax=1024', '--',
+`--tasks` stays required and validated (cap-run.mjs:138,140), so the runner silently ignores the caller's cap and
+every routed child's scope gets TasksMax=1024.
+
+commits (sandbox clone only; lane repo untouched)
+  comparator 5678ffee28b82f037a35d5f0f24bdd7b6708a2d7  (four r48 sites routed via capSpawnSync, valid caps; needed so the mutation is discriminating)
+  mutant     3c2247892e795d5950e96bb7400888dcb8999111  (comparator + TasksMax=1024)
+  restored   a0b441ffc3e551de95cc7f3947ab04897e4b2f27  (exact pristine cap-run bytes)
+
+sha256 scripts/cap-run.mjs: pristine d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758
+                            mutant   e31e58c9f57a5a9be4dc1c397ee7f5a0142a50b59e48ea78d744224b32de79fc
+                            restored d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758 (cmp vs pristine copy: identical)
+tree hash restored == comparator tree: 1c695d1417772a5c1f9f2695b3484c8511369d4c
+
+=== [1] BASELINE (comparator, pristine cap-run) rev=5678ffee — expected 4/4 ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=31 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=30 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=24 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=28 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=3 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=5678ffee28b82f037a35d5f0f24bdd7b6708a2d7 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 load1=29.86 end=18:24:57Z
+
+=== [2] MUTANT (TasksMax=1024) rev=3c224789 — expected miss ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=34 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=56 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=66 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=51 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=5 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0 reason=no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec
+CAPROUTE48 rev=3c2247892e795d5950e96bb7400888dcb8999111 base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1 load1=59.45 end=18:28:04Z
+
+=== [3] RESTORED (exact pristine bytes) rev=a0b441ff — expected 4/4 ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=45 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=42 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=62 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=52 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=6 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=a0b441ffc3e551de95cc7f3947ab04897e4b2f27 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 load1=49.51 end=18:30:43Z
+
+VERDICT: KILLED (control) — targeted
+  baseline 4/4 exit 0  →  mutant 0/4 exit 1  →  restored 4/4 exit 0
+  every site misses on no_capped_scope_ancestor; the two derived reasons (no_cap_run_ancestor, uncapped_exec) follow
+  from the same ordered-chain test (haveR is set only inside a qualifying scope). No incidental condition is present:
+  both gates exit 0 in all 3 runs with 61/61 and 46/46 cases and 0 FAIL lines, no execveat, uncapped_direct=0 and
+  every site's child exec count equals the base run (116 / 2 / 2 / 14), so the exec-count-equality arm of the
+  predicate also passed and cannot be the reason for the miss.
+  No counter invocation exited 2. No site read ROUTED_HELD under the mutant, so this pre-data control forces no A<n>
+  amendment; F48 stands unamended. C1 was not scored by this seat (the comparator is a control fixture, not a
+  candidate; the L1 alone scores C1).
+
+notes
+- The counter's own hard-coded run scratch /fast/scratch/hyaku/kumitate-r48/probe-runs/ was created/used by the
+  frozen counter; this seat wrote no file there directly.
+- No tool was installed or updated for this item.

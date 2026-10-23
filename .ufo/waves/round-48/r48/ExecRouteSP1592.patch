@@ -1,0 +1,43 @@
+From ce1c83ec6bbac2f6d5ee11d37a3743f89fbc178c Mon Sep 17 00:00:00 2001
+From: seat <seat@local>
+Date: Fri, 23 Oct 2026 15:47:16 -0300
+Subject: [PATCH] ExecRouteSP1592: route surface-probe.mjs:1592 spawnSelf
+ through cap-run via capSpawnSync
+
+---
+ scripts/surface-probe.mjs | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..80d78ab 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -1589,8 +1590,15 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++    // The CLI-level children of this suite are launched through the bounded runner
++    // `scripts/cap-run.mjs` (contract `kumitate-cap-run-v2`) via `scripts/cap-spawn.mjs`
++    // `capSpawnSync`: this suite's own mkdtemp root is bound (the runner's `/tmp` is a fresh
++    // tmpfs, so the HOME/`--self` fixtures would be invisible without it) and the child's
++    // environment is explicit — `HOME` and `UFO_SRC` plus the caller's own overrides; nothing
++    // else of this process' environment reaches the child.
++    const spawnSelf = (args, env = {}) => capSpawnSync(process.execPath, [selfPath, ...args], {
++      encoding: 'utf8', timeout: 120_000, bind: [tmp],
++      env: { HOME: process.env.HOME, UFO_SRC: process.env.UFO_SRC, ...env },
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+

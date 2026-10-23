@@ -1,0 +1,66 @@
+# MutRunnerDropSwap — control: cap-run omits -p MemorySwapMax=0; one site (SP491) routed through capSpawnSync
+# sandbox lane  /fast/scratch/hyaku/kumitate-r48a/seats/MutRunnerDropSwap/lane
+# freeze/base   fe3d45bf929246915c8c0de5f7f8682b5015b22c   counter base f00cf278a5ab57e87b18418fc972be9f893f65da
+# counter       .ufo/waves/round-48/probe/caproute48-probe.mjs sha256 f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2
+# pristine      cap-run.mjs d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758
+#               surface-probe.mjs 0cd94432d09316a235d03625c4834324b8e7162cda1ab269a09605a44d3e83eb
+# mutant rev    173a84cd3856f97e62d75f2f88418cf6eea57a44
+#               cap-run.mjs f9d297c2a8f5d5395100efb7c7f967a28c29c02170adfe969b669c92ca0197d3
+#               surface-probe.mjs 9078d304fce579b2b78d5fa65eff5afe104f9955f472827e92cc2ca7b983f213
+#               patch MutRunnerDropSwap.patch sha256 4f10169a51b6d5cc6bb11ffd287655db063f9984c689680d8b0f9a53edb94280
+# restored      HEAD fe3d45bf929246915c8c0de5f7f8682b5015b22c, git status --porcelain = 0 entries,
+#               cap-run.mjs d8acc6de…, surface-probe.mjs 0cd94432… (equal to pristine blobs)
+# command (each run)  node .ufo/waves/round-48/probe/caproute48-probe.mjs <sandbox-lane> <rev> --set r48
+# mutation selftest without strace (mutant tree): 46/46 cases passed, VERDICT: PASS, exit 0
+
+=== PRISTINE rev=fe3d45bf… (baseline)  start=18:24:09Z end=18:25:00Z load1 12.37->33.07 ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=15 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=24 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=30 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=31 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1
+
+=== MUTANT rev=173a84cd… (SP491 routed; cap-run argv lacks MemorySwapMax=0)  start=18:25:02Z end=18:26:25Z load1 33.07->52.83 ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=26 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=36 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=67 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=60 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=68 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=68 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=68 resumed=4 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=8,8,8 reason=no_capped_scope_ancestor,no_cap_run_ancestor,uncapped_exec,uncapped_direct_children=8
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=8,8,8 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=8
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=8,8,8 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=8
+CAPROUTE48 rev=173a84cd3856f97e62d75f2f88418cf6eea57a44 base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1
+
+=== RESTORED rev=fe3d45bf… (exact bytes restored)  start=18:26:59Z end=18:28:20Z load1 54.77->56.97 ===
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=42 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=1 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=1308 resumed=47 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=1308 resumed=32 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=1308 resumed=49 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=58,58,58 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=58
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=9,9,9 reason=no_bwrap_ancestor,no_capped_scope_ancestor,no_cap_run_ancestor,canary_in_env,uncapped_exec,uncapped_direct_children=9
+CAPROUTE48 rev=fe3d45bf929246915c8c0de5f7f8682b5015b22c base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1
+
+VERDICT killed — SP491's routed exec is ROUTED_MISS with reason=no_capped_scope_ancestor (the predicate's
+MemorySwapMax=0 clause) in all 3 mutant runs; held=0/4 exit 1 in all three invocations; restored bytes
+reproduce the pristine per-site lines exactly.

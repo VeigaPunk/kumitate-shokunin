@@ -1,0 +1,33 @@
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..c109568 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -516,13 +517,18 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    // The child runs under scripts/cap-run.mjs (contract kumitate-cap-run-v2):
++    // the throwaway state root is bound because the sandbox's /tmp is a fresh
++    // tmpfs, and the environment is the allowlist gitEnv() builds (never this
++    // process's env), so the child's env carries no ambient identity.
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
++      bind: [stateRoot],
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+       env: {
+-        ...process.env,
++        ...gitEnv(),
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,

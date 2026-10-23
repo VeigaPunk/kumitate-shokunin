@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=25
+A=38
 C=22
 C1=19
 C1_total=19
-C2=106
-C2_total=106
+C2=108
+C2_total=108
 S_members=88
 S_sections=88
 R_members=92
@@ -303,9 +303,9 @@ K_members=53
 K_sections=53
 coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
-pin.surface-probe=0cd94432d09316a235d03625c4834324b8e7162cda1ab269a09605a44d3e83eb
-pin.round-gate=52eb183e95488f7e1901a8c41159ad5a7d3f5d5b7a98f4335b62c02972c9296e
-pin.proxy-check=659cda6331ca81278385fc9c5f742456b922f1730e026be501d5c38c4d7748a0
+pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+pin.proxy-check=06deca10d2f1e8a7e475c7a3e090433009d1c577ceeb899efaa29a753ea9df66
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -316,7 +316,8 @@ pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
 pin.cap-run=d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758
-pin.cap-spawn=3a06e8a2a1cb2db8ae998cd1c107566cd123e0c0d197248d72f7c2cd78038a3e
+pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
+pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 -->
 
 
@@ -1730,9 +1731,40 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
+| `counter-rerun` | Run a probe K times and compare each run's final summary line byte-for-byte: `AGREE (runs=K)` exit 0 iff every run exits 0 and all final lines match, else `DISAGREE` exit 1; exit 2 fail-closed, 64 usage; the selftest's flake-injection case kills a print-PASS stub. Final-summary-line agreement only — site-level stability is a different, unclaimed instrument. | `node scripts/counter-rerun.mjs --selftest` → `COUNTER_RERUN_SELFTEST: PASS` exit 0 (`r48/L1-c2-binding-ce9aee5d.txt`, instrument sha256 `c002523f…`); real AGREE: `--probe …/caproute48-probe.mjs --lane <lane> --rev ce9aee5d… --runs 2 -- --set r48` → `COUNTER_RERUN: AGREE (runs=2)`, both runs `held=4/4` exit 0, summary sha256 `f3c23bdc…` (same receipt) | round 48 |
+
+*Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
+
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
 that were not admitted (r42, r43, r44 closures: `rejected-honest-stop`); both rows are **unverified** and stay as
 history, not as working capabilities. The last verified row is `wave-census` (round 41).
+
+## Round 47 correction (2026-10-23, round 48; routed defects R47-2, R47-3; supersedes the live wording it names; append-only)
+
+The filed round-47 report (fleet, filed; not rewritten), the live `## Round 47` section above, and the round-47 plan carry these errors:
+
+- **A2 control results — filed report `.ufo/reports/round-47/kumitate.md:11` and the `## Round 47` section above.** Superseded wording: "Every control was re-scored under A2: all read 0/5" / "all fourteen controls read 0/5 under A2". Corrected: **Thirteen of the fourteen controls read 0/5 under A2; CtlRetParse read 3/5. The separate K488-only calibration read 1/5 and is not a control.** Evidence: `.ufo/waves/round-47/probe/receipts/a2-controls.txt` (13 × `held=0/5`), `a2-ctl-retparse2.txt:6` (`held=3/5`), `a2-controls.txt:23` (calibration `held=1/5`).
+- **Re-open coverage — filed report:76.** Superseded wording: "All 16 new rows were re-opened by non-authors". Corrected: **The committed re-open report trail covers S080–S083, S085–S090 and S093–S095 (13 artifacts); no round-47 re-open report exists for S084, S091 or S092.** This round lands the three missing re-opens (build-onward: `r48/ReopenS084.md`, `ReopenS091.md`, `ReopenS092.md`, all HOLDS, independently verified by `r48/ReviewReopens48.md`).
+- **S088 cancellation/report conflict — filed report:105.** Superseded wording: the cancelled-seat list names ReopenS088 and says "Their reports are not cited". Corrected: **A committed S088 re-open report exists (`falsify/ReopenS088.md`, verdict HOLDS, committed `67ebb32d`); the seat completed.** Ruling: `r48/ReconcileS088.md` (verified by `r48/ReviewReopens48.md`).
+- **A1/A2 amendment timestamps — round-47 plan:86,118.** Superseded headings: A1 "~10:45Z", A2 "~10:55Z". Corrected: **committer timestamps 10:13:45Z (A1 `796b49b4`) and 10:40:32Z (A2 `8de35e79`); both headings postdate their commits.** The round-47 plan remains untouched.
+
+## Round 48 — claim, limits and round-49 pre-registration (2026-10-23, attempt 2)
+
+Claim (Move log row `| 48 |`; plan `.ufo/waves/round-48/plan.md` incl. the attempt-2 addendum; freeze `fe3d45bf`; pre-data amendment **A48** in the same commit family as the candidate, before any candidate score): **C1 operability** — four child-process sites (RG742 `scripts/round-gate.mjs:742` `runGate`, SP491 `scripts/surface-probe.mjs:491` surface shim, SP519 `:519` dispatcher status, SP1592 `:1592` `spawnSelf`) launch their child through `scripts/cap-run.mjs` (`kumitate-cap-run-v2`) via `scripts/cap-spawn.mjs` `capSpawnSync`; counter `probe/caproute48-probe.mjs`, predicate ROUTED_HELD, rule `F48+A48`, after-state `held=4/4` exit 0 with the L1 score run and every committed same-commit re-run (≥2) reading 4/4. **C2 capability `counter-rerun`** — new `scripts/counter-rerun.mjs`, predicate `COUNTER_RERUN`, after-state `COUNTER_RERUN_SELFTEST: PASS` exit 0 plus one real `AGREE` receipt over the frozen probe. C1 sourced on **S098** (opened this round; `r48/ReopenS098.md` HOLDS; the amended counter header cites it textually) with S093/S069/S072/S095.
+
+A48 (forced by the frozen kill rule before data): wave control MutSummaryForge M2 — a round-gate selftest that genuinely fails one case, suppresses the FAIL line, and prints a self-consistent `62/62` summary with exit 0 — read `ROUTED_HELD` at RG742 3/3 under F48 (`r48/MutSummaryForge.md`). The amendment adds one strictness-only clause: for gates whose selftest prints per-case lines (`round-gate`, `surface-probe`, `sources-check`, `anchor-truth`), the per-case line count must equal m and the passing per-case line count must equal n; `kimi-census`/`claims-check` print no per-case lines (vacuous, recorded). The amended sentence is byte-identical in `plan.md` § A48 and the counter header. Validation (`r48/A48-*.txt`, final counter sha256 `3ed305f2…`): r48-set stability at the freeze reads `held=0/4` exit 1; r47-set stability at `f00cf278` reads `held=5/5` exit 0 (the H2 precondition); the reconstructed forgery M2′ (`905f848`, comparator + bumped summary printer) reads `held=3/4` exit 1 with `summary_uncorroborated` at exactly RG742; the attempt-1 CtlEnvCaps mutant `d4423b2c` still reads `0/4`. Intermediate amended bytes `df42ab6b…` carried a propagation bug (the oracle fields never reached the per-site object, so every CASELINES gate missed); its four receipts are discarded, never candidate scores — caught by the first re-score round, fixed, re-run.
+
+Terms: A 25 → **38** (the round-48 probe `caproute48-probe.mjs`, `scripts/counter-rerun.mjs`, and eleven inherited attempt-1 `build/ExecRootCause/rc-*.mjs` analysis scripts — the frozen `RE_RUNNABLE` definition counts every runnable file, round-45 note); C 22 (unchanged); C2/C2_total 106 → **108/108** (README rows for `lessons/round-48.md` and `lessons/round-47-verifier-spotcheck.md`); re-pins: `pin.round-gate`, `pin.surface-probe` (v1 six), `pin.cap-spawn` (gate-pins; plus its verdict-dir leak fix — 12,801 accumulated `/tmp/cap-spawn.*` dirs measured at open, delta 0 after the fix), new `pin.counter-rerun` (gate-pins; proxy-check GATE_PINS list extended in the close commit, the omp-census/cap-run pattern). Integer held 9 (terminal under `f_O`).
+
+Harm: H1 checklist harness base (`f00cf278`, two L1 runs `r48/L1H1Base-f00cf278-run1-2.txt`, 18/22, FAILs 685/686/687/697) vs the C1 commit (`r48/close/H1Tip-run{1,2}.txt` — fill at close); H2 r47-set at the C1 commit must read 5/5 (base stability 5/5 ×3 under A48, `r48/A48-stab-r47-f00cf278.txt`); H3 proxy `--strict` MATCH at the close commit (stanza re-pinned, this round's owned debt per the r47 spot-check); H4 census exit 0. Measured along the way: the cap-spawn verdict-dir leak fix (delta 0, `r48/L1-leakfix-delta.txt` on a quiet host), kimi-census and omp-census CLEAN at the freeze (`r48/ScoutLiveSurface.md`).
+
+Repairs landed: R47-1 (the three A2 re-runs committed as receipts, `r48/ScribeReceipts-a2-rerun-{1,2,3}.txt`, readings 3/5, 3/5, 4/5 under load1 22→54 — reproducing the r47 falsify class; ReviewA2Receipts: SOUND), R47-2/R47-3 (the `## Round 47 correction` above), R47-4 (H1 base runs above + tip runs at close), R47-5 (root-caused pre-attempt-1: padded return column + padded PID prefix after PID wrap; F48's fixes proven load-bearing by `r48/MutCounterPadded.md` INVARIANT_HELD and `r48/ExecPidWrapProbe` — a real host wrap captured, F48 parses all 54 padded records where A2 loses them; ScoutRootCause: no strace record drops observed, 9 trees × 1795 execs). R46 harm note: item 697's gate-mutants battery stays unrouted and budget-limited (C1 routes none of it).
+
+Limits, recorded not hidden: (a) the bind view — a surgical drop of only the SP491/SP519 `--bind` mounts reads `held=4/4` under the frozen predicate (L1 probe `r48/L1BindProbe-receipt.txt`, `51f7d07`): ROUTED_HELD cites no filesystem-view evidence and a counter-side bind oracle is unconstructible over per-run `mkdtemp` random dirs; defended by integration source review (binds verified per patch against the base code's throwaway roots) and H1; the catastrophic full-bind-drop is killed by the gate-health conjuncts (`r48/MutSpawnDropBind.md`). (b) The A48 oracle is an output-text oracle — it corroborates counts, not that cases ran (RevengerCounter). (c) argv identity is not in the predicate (MutSiteRGArgv survived as designed; count and suite-health catch count-changing and suite-breaking variants). (d) The allowance's sh-wrap boundary at surface-probe (MutNestedSelftest M-sp-sh survivor) — named for a future allowance tightening. (e) cap-spawn's `CAP_RUN: OOM code=0` keeps the child's status 0 (ReviewCapSpawnCode) — no false pass in the four sites today; a contract revision for a future round. (f) exit 2 is a live possibility across the ≥3 kill-rule runs (ExecPidWrapProbe: the host PID space wraps every ~23 min under wave load) — recorded, never a score, per the frozen kill rule. (g) git-scm page drift since 11:52Z stale-dated S076/S092/S063 pins (ReviewReopens48) — noted, no chase; rulings survive.
+
+*Round-48 note (SOURCES).* S098 admitted (`strace(1) 7.2 manual`, tier A, status **mined**: the amended counter header cites it and `corpus/lessons/round-48.md` cites it; used-by = the probe + the lesson). Re-opens landed: S084, S091, S092 (HOLDS, ReviewReopens48-verified). No status/recheck/used-by cell of a pre-existing row changed.
+
+Planned next round (candidates, not commitments): (1) the bind-view limit: a `cap-spawn` selftest arm binding a sentinel dir and asserting the child sees it, so the surgical-bind-drop class dies outside the counter; (2) the execveat-helper control SimplifierPredicate named, and the argv-identity question, for the next routing claim; (3) R43-1/R43-5 stay open; the R41-2 gate-pins ruling stays pending with proxy-check GATE_PINS extended for it (the established round-44/46/47 pattern).
 
 ## Saturation
 

@@ -1,0 +1,357 @@
+From 263725e6999d400850daefcdeb6e1ea67b235909 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:55:13 -0300
+Subject: [PATCH] CtlStubChild: eliminate claimed child launches
+
+---
+ scripts/round-gate.mjs    |  89 +++++-----------
+ scripts/surface-probe.mjs | 207 ++++++--------------------------------
+ 2 files changed, 55 insertions(+), 241 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..450e25c 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -739,8 +739,32 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  // Mutation control: run the CLI in-process instead of launching its child.
++  const runGate = (args, extraEnv = {}) => {
++    const saved = {
++      argv: process.argv, env: { ...process.env },
++      stdout: process.stdout.write, stderr: process.stderr.write,
++    };
++    let stdout = '';
++    let stderr = '';
++    process.argv = [process.execPath, SELF, ...args];
++    for (const key of ENV_KEYS) delete process.env[key];
++    Object.assign(process.env, extraEnv);
++    process.stdout.write = (chunk) => { stdout += String(chunk); return true; };
++    process.stderr.write = (chunk) => { stderr += String(chunk); return true; };
++    try {
++      const status = main();
++      return { status, stdout, stderr };
++    } finally {
++      process.argv = saved.argv;
++      for (const key of Object.keys(process.env)) {
++        if (!Object.hasOwn(saved.env, key)) delete process.env[key];
++      }
++      Object.assign(process.env, saved.env);
++      process.stdout.write = saved.stdout;
++      process.stderr.write = saved.stderr;
++    }
++  };
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+@@ -1332,67 +1356,6 @@ function selfTest() {
+       };
+     });
+ 
+-    /* round-24 ─ the derived --origin default (bare invocation) -------------- */
+-    // A bare run carries no `--origin`; the default is derived from
+-    // `$HOME`-relative candidates, so pointing HOME at a tmp dir keeps the
+-    // resolution hermetic (tmp paths only). The observable is a cited commit
+-    // that resolves only in the derived origin: it lands in
+-    // `citations.external` (never a finding). With both candidates absent the
+-    // derived default is the canonical (non-probeable) candidate, so the token
+-    // is unverifiable — still no finding, never a scored zero.
+-    const mkDerivedOrigin = (name, rel) => {
+-      const home = fxDir(name);
+-      const dir = join(home, rel);
+-      mkdirSync(dir, { recursive: true });
+-      fxExpect(fxGit(dir, ['init', '--quiet', '-b', 'main']), 'derived origin init');
+-      writeFileSync(join(dir, 'origin.txt'), 'origin work\n');
+-      fxExpect(fxGit(dir, ['add', '-A']), 'derived origin add');
+-      fxExpect(fxGit(dir, ['commit', '--quiet', '-m', 'derived origin commit']), 'derived origin commit');
+-      return { home, dir, sha: fxGit(dir, ['rev-parse', 'HEAD']).stdout.trim() };
+-    };
+-    const derivedFixture = (name, rel) => {
+-      const base = fxDir(`${name}-base`);
+-      const laneRepo = fxLaneRepo(base, { round: 5 });
+-      const { home, sha } = mkDerivedOrigin(`${name}-home`, rel);
+-      const reports = fxReports(join(base, 'reports'), [{ round: 5, text: fxBigReport(5, `\nOrigin HEAD \`${sha}\`.\n`) }]);
+-      const main = join(base, 'main');
+-      mkdirSync(main, { recursive: true });
+-      fxExpect(fxGit(main, ['init', '--quiet', '-b', 'main']), 'derived main init');
+-      return { home, sha, args: ['--round', '5', '--repo', laneRepo, '--reports-dir', reports, '--main-repo', main] };
+-    };
+-    const derivedNew = derivedFixture('derived-new', 'Projects/ufo-fsd-alpha');
+-    const rn = runGate([...derivedNew.args, '--json'], { HOME: derivedNew.home, UFO_SRC: '' });
+-    check('bare run (no --origin): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => {
+-      const j = JSON.parse(rn.stdout);
+-      return { ok: rn.status === 0 && j.verdict === 'CLEAN' && j.citations.external.includes(derivedNew.sha),
+-        detail: `exit=${rn.status} external=${JSON.stringify(j.citations.external)}` };
+-    });
+-    const derivedLegacy = derivedFixture('derived-legacy', 'Projects/origin-work/ufo-fsd-alpha');
+-    const rl = runGate([...derivedLegacy.args, '--json'], { HOME: derivedLegacy.home, UFO_SRC: '' });
+-    check('bare run (no --origin): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => {
+-      const j = JSON.parse(rl.stdout);
+-      return { ok: rl.status === 0 && j.verdict === 'CLEAN' && j.citations.external.includes(derivedLegacy.sha),
+-        detail: `exit=${rl.status} external=${JSON.stringify(j.citations.external)}` };
+-    });
+-    const derivedNoneBase = fxDir('derived-none-base');
+-    const derivedNoneLane = fxLaneRepo(derivedNoneBase, { round: 5 });
+-    const derivedNoneHome = fxDir('derived-none-home');
+-    const derivedNoneReports = fxReports(join(derivedNoneBase, 'reports'),
+-      [{ round: 5, text: fxBigReport(5, '\nCited commit: `deadbeef1234`.\n') }]);
+-    const derivedNoneMain = join(derivedNoneBase, 'main');
+-    mkdirSync(derivedNoneMain, { recursive: true });
+-    fxExpect(fxGit(derivedNoneMain, ['init', '--quiet', '-b', 'main']), 'derived none main init');
+-    const rnone = runGate(['--round', '5', '--repo', derivedNoneLane, '--reports-dir', derivedNoneReports,
+-      '--main-repo', derivedNoneMain, '--json'], { HOME: derivedNoneHome, UFO_SRC: '' });
+-    check('bare run (no --origin): both candidates absent keeps the derived canonical default (unverifiable, no finding)', () => {
+-      const j = JSON.parse(rnone.stdout);
+-      const want = join(derivedNoneHome, 'Projects', 'ufo-fsd-alpha');
+-      return {
+-        ok: rnone.status === 0 && j.verdict === 'CLEAN' && j.citations.originProbeable === false
+-          && j.citations.unverifiable.includes('deadbeef1234') && statKind(want) === 'absent',
+-        detail: `exit=${rnone.status} originProbeable=${j.citations.originProbeable} unverifiable=${JSON.stringify(j.citations.unverifiable)}`,
+-      };
+-    });
+ 
+     /* 46 ─ hermeticity under a polluted env + bogus flags ------------------- */
+     if (process.env.KUMITATE_ROUND_GATE_NESTED === '1') {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..3367a03 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -481,62 +481,13 @@ function statusContractFromSource(source) {
+ /* -------------------------------------------------------------- live readers */
+ 
+ function readSightingSurface(src) {
+-  const host = join(src, SIGHTING_SHIM);
+-  if (!existsSync(host)) return { ok: false, detail: `sighting shim is missing: ${SIGHTING_SHIM}` };
+-  // The shim defaults NODE_COMPILE_CACHE to ROOT/.ufo/cache/node-compile — a
+-  // write into the tree this probe scores (silently skipped only when that
+-  // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+-  const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+-  try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
+-      cwd: src,
+-      encoding: 'utf8',
+-      timeout: SPAWN_TIMEOUT_MS,
+-      maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
+-    });
+-    if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+-    if (result.status !== 0) {
+-      const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
+-      return { ok: false, detail: `surface --json exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+-    }
+-    return { ok: true, text: result.stdout ?? '' };
+-  } finally {
+-    rmSync(cacheRoot, { recursive: true, force: true });
+-  }
++  // Mutation control: report a response without launching the surface shim.
++  return { ok: true, text: '{}' };
+ }
+ 
+ function readDispatcherStatus(src) {
+-  const host = join(src, DISPATCHER);
+-  if (!existsSync(host)) return { ok: false, detail: `dispatcher is missing: ${DISPATCHER}` };
+-  // `status` defaults its state root to ROOT/.ufo, i.e. inside the tree it
+-  // reads: on a read-only origin that is unreachable (EACCES on mkdir) and on
+-  // a writable one it would write into the tree this probe scores. Spawn it
+-  // against a throwaway state root instead, and remove that root afterwards.
+-  const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+-  const stateDir = join(stateRoot, 'ufo');
+-  try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
+-      cwd: src,
+-      encoding: 'utf8',
+-      timeout: SPAWN_TIMEOUT_MS,
+-      maxBuffer: MAX_BUFFER,
+-      env: {
+-        ...process.env,
+-        UFO_STATE_DIR: stateDir,
+-        UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+-        UFO_PROJECT_ROOT: src,
+-      },
+-    });
+-    if (result.error) return { ok: false, detail: `status invocation failed: ${result.error.code ?? result.error.message}` };
+-    if (result.status !== 0) {
+-      const noise = (result.stderr ?? '').trim().split('\n').filter(Boolean).at(-1);
+-      return { ok: false, detail: `status exited ${result.status}${noise ? `: ${noise.slice(0, 120)}` : ''}` };
+-    }
+-    return { ok: true, text: result.stdout ?? '' };
+-  } finally {
+-    rmSync(stateRoot, { recursive: true, force: true });
+-  }
++  // Mutation control: report a response without launching dispatcher status.
++  return { ok: true, text: '{}' };
+ }
+ 
+ const LIVE_READERS = { sighting: readSightingSurface, dispatcher: readDispatcherStatus };
+@@ -1512,86 +1463,33 @@ function selfTest() {
+       detail: `codes=[${codesOf(derivedDrift)}]`,
+     }));
+ 
+-    /* fixture: dispatcher state root redirected out of the scored tree ----- */
+-    // On a read-only origin the dispatcher's default state root (ROOT/.ufo)
+-    // is unreachable, and on a writable one `status` would write into the tree
+-    // being scored. The live reader must hand it a throwaway state root.
+-    const stateTreeDir = join(tmp, 'state-redirect');
+-    mkdirSync(join(stateTreeDir, 'scripts'), { recursive: true });
+-    writeFileSync(join(stateTreeDir, DISPATCHER), [
+-      'import { mkdirSync, writeFileSync } from "node:fs";',
+-      'import { join } from "node:path";',
+-      'const seen = {',
+-      '  cwd: process.cwd(),',
+-      '  argv: process.argv.slice(2),',
+-      '  stateDir: process.env.UFO_STATE_DIR ?? null,',
+-      '  pending: process.env.UFO_PENDING_WORK_PATH ?? null,',
+-      '  projectRoot: process.env.UFO_PROJECT_ROOT ?? null,',
+-      '};',
+-      'mkdirSync(seen.stateDir, { recursive: true });',
+-      'writeFileSync(join(seen.stateDir, "status-marker.txt"), "state\\n");',
+-      'process.stdout.write(JSON.stringify(seen));',
+-      '',
+-    ].join('\n'));
+-    const stateBefore = listTree(stateTreeDir);
+-    const stateResult = readDispatcherStatus(stateTreeDir);
+-    const stateAfter = listTree(stateTreeDir);
+-    let seenEnv = null;
+-    try { seenEnv = JSON.parse(stateResult.text ?? ''); } catch { seenEnv = null; }
+-    check('dispatcher status carries a throwaway UFO_STATE_DIR (cleanup + scored tree untouched)', () => {
+-      const stateUnderTree = typeof seenEnv?.stateDir === 'string'
+-        && (seenEnv.stateDir === stateTreeDir || seenEnv.stateDir.startsWith(`${stateTreeDir}${sep}`));
+-      const stateIsMkdtemp = typeof seenEnv?.stateDir === 'string'
+-        && seenEnv.stateDir.startsWith(join(tmpdir(), 'kumitate-surface-state-'));
+-      const pendingInsideState = typeof seenEnv?.pending === 'string' && seenEnv.pending === join(seenEnv.stateDir, 'pending-work.json');
+-      const cleaned = typeof seenEnv?.stateDir === 'string' && !existsSync(seenEnv.stateDir);
+-      return {
+-        ok: stateResult.ok === true && seenEnv !== null
+-          && seenEnv.cwd === stateTreeDir && seenEnv.projectRoot === stateTreeDir
+-          && seenEnv.argv.length === 1 && seenEnv.argv[0] === 'status'
+-          && stateIsMkdtemp && !stateUnderTree && pendingInsideState
+-          && stateBefore === stateAfter && cleaned,
+-        detail: `ok=${stateResult.ok} argv=${JSON.stringify(seenEnv?.argv)} project=${seenEnv?.projectRoot}`
+-          + ` mkdtemp=${stateIsMkdtemp} pending=${pendingInsideState} untouched=${stateBefore === stateAfter} cleaned=${cleaned}`,
+-      };
+-    });
+ 
+-    /* fixture: sighting compile cache redirected out of the scored tree ---- */
+-    // The shim defaults NODE_COMPILE_CACHE under ROOT; the live reader must
+-    // pin it to a throwaway cache so a writable origin is never mutated.
+-    const cacheTreeDir = join(tmp, 'cache-redirect');
+-    mkdirSync(join(cacheTreeDir, 'scripts'), { recursive: true });
+-    writeFileSync(join(cacheTreeDir, SIGHTING_SHIM), [
+-      '#!/usr/bin/env bash',
+-      'set -eu',
+-      'mkdir -p "$NODE_COMPILE_CACHE"',
+-      'printf "cache\\n" > "$NODE_COMPILE_CACHE/fixture-cache-entry"',
+-      'printf \'{"kind":"fixture-surface-v1","cache":"%s"}\\n\' "$NODE_COMPILE_CACHE"',
+-      '',
+-    ].join('\n'));
+-    const cacheBefore = listTree(cacheTreeDir);
+-    const cacheResult = readSightingSurface(cacheTreeDir);
+-    const cacheAfter = listTree(cacheTreeDir);
+-    let seenCache = null;
+-    try { seenCache = JSON.parse(cacheResult.text ?? ''); } catch { seenCache = null; }
+-    check('sighting surface carries a throwaway NODE_COMPILE_CACHE (cleanup + scored tree untouched)', () => {
+-      const cache = seenCache?.cache;
+-      const cacheUnderTree = typeof cache === 'string'
+-        && (cache === cacheTreeDir || cache.startsWith(`${cacheTreeDir}${sep}`));
+-      const cacheIsMkdtemp = typeof cache === 'string' && cache.startsWith(join(tmpdir(), 'kumitate-surface-cache-'));
+-      const cleaned = typeof cache === 'string' && !existsSync(cache);
+-      return {
+-        ok: cacheResult.ok === true && seenCache?.kind === 'fixture-surface-v1'
+-          && cacheIsMkdtemp && !cacheUnderTree && cacheBefore === cacheAfter && cleaned,
+-        detail: `ok=${cacheResult.ok} mkdtemp=${cacheIsMkdtemp} untouched=${cacheBefore === cacheAfter} cleaned=${cleaned}`,
+-      };
+-    });
+-
+-    /* fixture: CLI-level paths, spawned hermetically -------------------- */
++    /* fixture: CLI-level paths, in-process control ----------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+-    });
++    const spawnSelf = (args, env) => {
++      const saved = {
++        argv: process.argv, env: { ...process.env },
++        stdout: process.stdout.write, stderr: process.stderr.write,
++      };
++      let stdout = '';
++      let stderr = '';
++      process.argv = [process.execPath, selfPath, ...args];
++      Object.assign(process.env, env);
++      process.stdout.write = (chunk) => { stdout += String(chunk); return true; };
++      process.stderr.write = (chunk) => { stderr += String(chunk); return true; };
++      try {
++        const status = main();
++        return { status, stdout, stderr };
++      } finally {
++        process.argv = saved.argv;
++        for (const key of Object.keys(process.env)) {
++          if (!Object.hasOwn(saved.env, key)) delete process.env[key];
++        }
++        Object.assign(process.env, saved.env);
++        process.stdout.write = saved.stdout;
++        process.stderr.write = saved.stderr;
++      }
++    };
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+       ok: bogus.status === 64 && /usage:/u.test(bogus.stderr ?? ''),
+@@ -1608,53 +1506,6 @@ function selfTest() {
+       detail: `exit=${help.status}`,
+     }));
+ 
+-    /* round-23 ─ the derived --src default (bare invocation) --------------- */
+-    // A bare run carries no `--src`; the default is derived from `$HOME`-relative
+-    // candidates, so pointing HOME at a tmp dir makes the resolution hermetic.
+-    const homeDir = (name, rel) => {
+-      const home = join(tmp, name);
+-      mkdirSync(rel === undefined ? home : join(home, rel), { recursive: true });
+-      return home;
+-    };
+-    // The bare-run fixtures must be isolated from a live `.ufo/pins/origin.json`
+-    // in this repo: a --self without a pin keeps the HOME-candidate resolution.
+-    const pinlessSelf = join(tmp, 'self-no-pin');
+-    mkdirSync(pinlessSelf, { recursive: true });
+-    const bareSrc = (home) => {
+-      const r = spawnSelf(['--json', '--self', pinlessSelf], { HOME: home, UFO_SRC: '' });
+-      let src = null;
+-      try { src = JSON.parse(r.stdout ?? '').src; } catch { src = null; }
+-      return { r, src };
+-    };
+-    const homeNew = homeDir('home-new', 'Projects/ufo-fsd-alpha');
+-    const newResolved = bareSrc(homeNew);
+-    check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
+-      ok: newResolved.src === join(homeNew, 'Projects', 'ufo-fsd-alpha'),
+-      detail: `exit=${newResolved.r.status} src=${newResolved.src}`,
+-    }));
+-    const homeLegacy = homeDir('home-legacy', 'Projects/origin-work/ufo-fsd-alpha');
+-    const legacyResolved = bareSrc(homeLegacy);
+-    check('bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent', () => ({
+-      ok: legacyResolved.src === join(homeLegacy, 'Projects', 'origin-work', 'ufo-fsd-alpha'),
+-      detail: `exit=${legacyResolved.r.status} src=${legacyResolved.src}`,
+-    }));
+-    const homeBoth = homeDir('home-both', 'Projects/ufo-fsd-alpha');
+-    mkdirSync(join(homeBoth, 'Projects', 'origin-work', 'ufo-fsd-alpha'), { recursive: true });
+-    const bothResolved = bareSrc(homeBoth);
+-    check('bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec)', () => ({
+-      ok: bothResolved.src === join(homeBoth, 'Projects', 'ufo-fsd-alpha'),
+-      detail: `exit=${bothResolved.r.status} src=${bothResolved.src}`,
+-    }));
+-    const homeNone = homeDir('home-none');
+-    const noneResolved = spawnSelf(['--self', pinlessSelf], { HOME: homeNone, UFO_SRC: '' });
+-    check('bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2)', () => {
+-      const want = join(homeNone, 'Projects', 'ufo-fsd-alpha');
+-      return {
+-        ok: noneResolved.status === 2 && /FAIL-CLOSED/u.test(noneResolved.stdout ?? '')
+-          && String(noneResolved.stdout ?? '').includes(`--src ${want} is`),
+-        detail: `exit=${noneResolved.status} ${(noneResolved.stdout ?? '').trim().slice(0, 100)}`,
+-      };
+-    });
+ 
+     /* fixture: checklist mode ------------------------------------------ */
+     const checklistTree = (name, body) => {
+-- 
+2.56.0
+

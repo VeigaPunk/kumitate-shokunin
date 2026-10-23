@@ -1,0 +1,68 @@
+CHECKLIST  PASS SKILL.md:680 exit=1 expected=0|1 substring=hit wall=3.327 load1=50.69 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:681 exit=0 expected=0 substring=hit wall=2.242 load1=50.69 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:682 exit=0 expected=0 substring=hit wall=0.405 load1=50.96 — Live sighting-surface conformance
+CHECKLIST  FAIL SKILL.md:683 exit=1 expected=0 substring=hit wall=3.413 load1=50.96 — Surface-probe hermetic suite
+  | PASS  checklists: unparsable task line → CHECKLIST_GRAMMAR error, `CHECKLIST: 0/1 pass`, exit 1 — exit=1 line=CHECKLIST  ERROR  SKILL.md:3 grammar (- [ ] broken item without the frozen shape)
+  | PASS  checklists: zero items → `CHECKLIST: 0/0 pass`, `VERDICT: PASS`, exit 0 — exit=0
+  | PASS  checklists: missing SKILL.md → fail-closed `CHECKLIST: FAIL-CLOSED`, exit 2 — exit=2
+  | PASS  checklists: --self is a file → fail-closed exit 2 — exit=2
+  | FAIL  hermeticity: --selftest passes with a bogus --src (never reads the live tree) — exit=1 tail=43/46 cases passed
+  | PASS  every declared finding code fires in at least one fixture — 21 codes observed
+  | 42/46 cases passed
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:684 exit=1 expected=0 substring=miss wall=19.581 load1=50.96 — Round-gate hermetic suite
+  | PASS  [56/61]  usage: --tracked with --close → exit 64 (mutually exclusive modes) — exit=64 round-gate: --tracked and --close are mutually exclusive modes
+  | FAIL  [57/61]  fail-closed: --tracked with no usable --main-repo → exit 2 (MAIN_REPO_NOT_GIT) — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-3xcXtT/41-tracked-clean/main/.ufo/reports is absent
+  | FAIL  [58/61]  --tracked: reports under a dir outside --main-repo → one REPORT_UNTRACKED per report (`outside …`) — exit=2 kinds=[]
+  | FAIL  [59/61]  --tracked --json: mode=tracked, checked=2, excludedRound=5, findings=[] — exit=2 mode=tracked checked=undefined excludedRound=undefined
+  | FAIL  [60/61]  --tracked runs no other audit check: a bogus --repo does not change the verdict — exit=2 ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/kumitate-round-gate-selftest-3xcXtT/41-tracked-clean/main/.ufo/reports is absent
+  | FAIL  [61/61]  every declared finding kind fires in at least one fixture — never fired: REPORT_MISSING, REPORT_THIN, REPORT_HEADINGS, REPORT_ROUND_MISMATCH, REPORT_SHONEN_MISSING, COMMIT_CITED_UNRESOLVED, COMMIT_CITED_NOT_ANCESTOR, SCORECARD_ROW_MISSING, SCORECARD_PLAN_MISSING, LOG_ENTRY_MISSING, COMMIT_MISSING, TREE_DIRTY, UNPUSHED, REPORT_UNTRACKED
+  | ROUND_GATE_SELFTEST: 9/61 pass
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:685 exit=2 expected=0 substring=miss wall=0.040 load1=53.39 — Round-close artifact audit
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSpawnDropBind/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSpawnDropBind/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:686 exit=2 expected=0 substring=miss wall=0.033 load1=53.39 — Filed-report tracking
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSpawnDropBind/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /fast/scratch/hyaku/kumitate-r48a/seats/kumitate-r48-MutSpawnDropBind/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:687 exit=1 expected=0 substring=miss wall=0.135 load1=53.39 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  A_DRIFT  A: declared=25 computed=26 delta=+1
+  | PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=106 computed=107 delta=+1
+  | PROXY  error  PIN_DRIFT  pin.surface-probe: declared=0cd94432d09316a235d03625c4834324b8e7162cda1ab269a09605a44d3e83eb computed=77367904351d11e918201fd43cd8edf7ef80fffbd27e3721b91c7fbeee6f829c
+  | PROXY  error  PIN_DRIFT  pin.round-gate: declared=52eb183e95488f7e1901a8c41159ad5a7d3f5d5b7a98f4335b62c02972c9296e computed=6ffd3ab0a0cd9778a22d502da80c3bb0157bc0bde74d8277db360436e79cb08b
+  | PROXY  error  GATE_PIN_DRIFT  pin.cap-spawn: declared=3a06e8a2a1cb2db8ae998cd1c107566cd123e0c0d197248d72f7c2cd78038a3e computed=a8ab8869da29cf2632288d933fa78ed0bb6fe7d988885f77e213f2001e191f0f
+  | PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  | PROXY: DRIFT (A_DRIFT term=A declared=25 computed=26 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=106 computed=107 delta=+1; PIN_DRIFT term=pin.surface-probe declared=0cd94432d09316a235d03625c4834324b8e7162cda1ab269a09605a44d3e83eb computed=77367904351d11e918201fd43cd8edf7ef80fffbd27e3721b91c7fbeee6f829c; PIN_DRIFT term=pin.round-gate declared=52eb183e95488f7e1901a8c41159ad5a7d3f5d5b7a98f4335b62c02972c9296e computed=6ffd3ab0a0cd9778a22d502da80c3bb0157bc0bde74d8277db360436e79cb08b; GATE_PIN_DRIFT term=pin.cap-spawn declared=3a06e8a2a1cb2db8ae998cd1c107566cd123e0c0d197248d72f7c2cd78038a3e computed=a8ab8869da29cf2632288d933fa78ed0bb6fe7d988885f77e213f2001e191f0f; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:688 exit=0 expected=0 substring=hit wall=12.556 load1=53.39 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:689 exit=0 expected=0 substring=hit wall=0.109 load1=52.87 — Member-claims gate
+CHECKLIST  PASS SKILL.md:690 exit=0 expected=0 substring=hit wall=0.033 load1=52.87 — Kimi-substrate census
+CHECKLIST  PASS SKILL.md:691 exit=0 expected=0 substring=hit wall=0.050 load1=52.87 — Sources-registry gate
+CHECKLIST  FAIL SKILL.md:692 exit=1 expected=0 substring=miss wall=4.600 load1=52.87 — Sources-check hermetic suite
+  |      exit=2 last=SOURCES_CHECK: FAIL-CLOSED (SELF_NOT_A_DIR)
+  | PASS invalid/missing option value uses usage exit 64: exit=64
+  | PASS unknown option uses usage exit 64: exit=64
+  | PASS -h prints usage and exits 0: exit=0
+  | FAIL frozen awk census parity: rows, malformed, duplicate ids
+  |      sh exit=10 stderr=grep: /tmp/kumitate-sources-check-mu5d1l/parity/corpus/SOURCES.md: No such file or directory
+  | SOURCES_SELFTEST: 5/46 pass
+  | VERDICT: FAIL
+CHECKLIST  PASS SKILL.md:693 exit=0 expected=0 substring=hit wall=1.328 load1=51.84 — Per-anchor truth burn-down
+CHECKLIST  FAIL SKILL.md:694 exit=1 expected=0 substring=miss wall=8.200 load1=51.84 — Anchor-truth hermetic suite
+  | FAIL AT40 new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)
+  |      TRUTH: FAIL-CLOSED (ORIGIN_PIN_MISSING /tmp/anchor-truth-selftest-60mBvU/at40/.ufo/pins/origin.json) | TRUTH: FAIL-CLOSED (ORIGIN_PIN_MISSING /tmp/anchor-truth-selftest-60mBvU/at40/.ufo/pins/origin.json)
+  | FAIL AT41 an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)
+  |      threw ENOENT: no such file or directory, open '/tmp/anchor-truth-selftest-60mBvU/at41/.ufo/pins/anchor-truth.json'
+  | FAIL AT42 an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)
+  |      TRUTH: FAIL-CLOSED (ORIGIN_PIN_MISSING /tmp/anchor-truth-selftest-60mBvU/at42/.ufo/pins/origin.json) | TRUTH: FAIL-CLOSED (ORIGIN_PIN_MISSING /tmp/anchor-truth-selftest-60mBvU/at42/.ufo/pins/origin.json)
+  | ANCHOR_TRUTH_SELFTEST: 1/44 pass
+  | VERDICT: FAIL
+CHECKLIST  PASS SKILL.md:695 exit=0 expected=0 substring=hit wall=0.068 load1=49.69 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:696 exit=0 expected=0 substring=hit wall=4.048 load1=49.69 — Wave-census hermetic suite
+CHECKLIST  PASS SKILL.md:697 exit=0 expected=0 substring=hit wall=77.761 load1=49.64 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  PASS SKILL.md:698 exit=0 expected=0 substring=hit wall=0.877 load1=44.55 — Gate-mutants hermetic suite
+CHECKLIST  PASS SKILL.md:699 exit=0 expected=0 substring=hit wall=0.030 load1=44.55 — OMP agent-root census
+CHECKLIST  PASS SKILL.md:700 exit=0 expected=0 substring=hit wall=0.040 load1=44.55 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:701 exit=0 expected=0 substring=hit wall=7.788 load1=44.55 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 15/22 pass
+VERDICT: FAIL

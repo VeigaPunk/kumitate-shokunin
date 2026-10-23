@@ -1,0 +1,13 @@
+diff --git a/scripts/cap-spawn.mjs b/scripts/cap-spawn.mjs
+index aa7966d..09804a7 100644
+--- a/scripts/cap-spawn.mjs
++++ b/scripts/cap-spawn.mjs
+@@ -26,7 +26,7 @@ import { fileURLToPath } from 'node:url';
+ export const CAP_RUN = join(dirname(fileURLToPath(import.meta.url)), 'cap-run.mjs');
+ 
+ export function capSpawnSync(cmd, args, {
+-  env = {}, bind = [], timeout = 60_000, mem = 512, tasks = 64, cwd, encoding = 'utf8', maxBuffer, input,
++  env = {}, bind = [], timeout = 60_000, mem = 4096, tasks = 64, cwd, encoding = 'utf8', maxBuffer, input,
+ } = {}) {
+   const vd = mkdtempSync(join(tmpdir(), 'cap-spawn.'));
+   const vf = join(vd, 'verdict');

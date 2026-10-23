@@ -1,0 +1,79 @@
+MutAllowanceProbe — allowance boundary probe, kumitate round 48 attempt 2, wave r48
+Frozen counter: .ufo/waves/round-48/probe/caproute48-probe.mjs
+counter sha256 f24a3af55add0708943526435fde93e02f4ef0c9d4b8e494a9111a5fec890cf2 (identical before and after every run)
+Sandbox: /fast/scratch/hyaku/kumitate-r48a/seats/MutAllowanceProbe/lane (clone --no-hardlinks, detached fe3d45bf929246915c8c0de5f7f8682b5015b22c)
+P  routed pristine comparator fe5e09aaa04705d41a929082f89403a59cd1f2a4 = freeze + build/CtlEnvCaps.patch patch 1/2 (this seat's comparator, NOT the C1 candidate)
+   file sha256 at P: round-gate 6ffd3ab0a0cd9778a22d502da80c3bb0157bc0bde74d8277db360436e79cb08b  surface-probe 77367904351d11e918201fd43cd8edf7ef80fffbd27e3721b91c7fbeee6f829c  cap-run d8acc6debd101b0a76ec486e49245ee10aff6e8bb841834d9c4d03c5285d5758  cap-spawn 3a06e8a2a1cb2db8ae998cd1c107566cd123e0c0d197248d72f7c2cd78038a3e
+A  mutant A 7fe6a16e52ca67185b88d1cd2c31e1ade9aab442 = P + one raw bash -c direct child in round-gate --selftest (OUTSIDE the named allowances)
+B  mutant B 85134ddbd4d9c586651477b92726944bfb915dd2 = P + raw bash -c (SP1049 class) and raw node surface-probe.mjs --selftest --bogus (SP1766 class) direct children in surface-probe --selftest (INSIDE the named allowances)
+Command shape: /usr/bin/timeout -k 10 1500 <mise node v26.12.0> <counter> <sandbox lane> <rev> --set r48
+
+== pristine ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=39 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=2 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=56 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=61 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=81 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe5e09aaa04705d41a929082f89403a59cd1f2a4 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 elapsed=168s load1=56.53 end=2026-10-23T18:27:23Z
+
+== mutA ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=47 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=4 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2122 resumed=71 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2122 resumed=61 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2122 resumed=47 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=9 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=4 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=1,1,1 reason=uncapped_direct_children=1
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=7fe6a16e52ca67185b88d1cd2c31e1ade9aab442 base=f00cf278 set=r48 held=3/4 runs=3 rule=F48
+exit=1 elapsed=158s load1=53.39 end=2026-10-23T18:30:04Z
+
+== mutB ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=40 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=42 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=39 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=52 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=184 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=184 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=184 resumed=2 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=85134ddbd4d9c586651477b92726944bfb915dd2 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 elapsed=123s load1=39.45 end=2026-10-23T18:32:10Z
+
+== restored ==
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=17 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=0 cases=61/61 execs=2120 resumed=43 verdict_pass=true fail_lines=0
+RUN round-gate rev1 exit=0 cases=61/61 execs=2120 resumed=34 verdict_pass=true fail_lines=0
+RUN round-gate rev2 exit=0 cases=61/61 execs=2120 resumed=32 verdict_pass=true fail_lines=0
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=0 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_HELD capped/n=116/116,116/116,116/116 base_n=116 cases=61/61,61/61,61/61 base_cases=61/61 uncapped_direct=0,0,0
+SITE SP491 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP519 gate=surface-probe label=ROUTED_HELD capped/n=2/2,2/2,2/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+SITE SP1592 gate=surface-probe label=ROUTED_HELD capped/n=14/14,14/14,14/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0
+CAPROUTE48 rev=fe5e09aaa04705d41a929082f89403a59cd1f2a4 base=f00cf278 set=r48 held=4/4 runs=3 rule=F48
+exit=0 elapsed=119s load1=36.59 end=2026-10-23T18:34:19Z
+
+== restoration ==
+worktree re-checked out at P after the mutant runs: git status --porcelain -> empty
+sha256sum -c: round-gate OK, surface-probe OK, cap-run OK, cap-spawn OK (bytes identical to P before the restored run)
+HEAD fe5e09aaa04705d41a929082f89403a59cd1f2a4
+Measured verdict: A -> ROUTED_MISS, reason=uncapped_direct_children=1, held=3/4 exit 1 (targeted kill on the outside-allowance direction); B -> held=4/4 exit 0, uncapped_direct=0,0,0 (both named allowance classes accepted); pristine and restored both held=4/4 exit 0.

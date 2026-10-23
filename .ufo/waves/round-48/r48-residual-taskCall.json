@@ -1,0 +1,45 @@
+{
+ "context": "# Goal\nkumitate round 48 residual falsify call \u2014 runs ONLY after the L1 integrated the C1/C2 candidate at commit ce9aee5daf71004a5890134f9526cc6fe424b206 (lane tip). Lane repo /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated; NEVER git/jj writes; deliver files only). Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/plan.md (attempt-2 addendum) first.\nC1 (operability): counter /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs, predicate ROUTED_HELD, rule F48, sites RG742/SP491/SP519/SP1592; frozen before data, NEVER amended. C2 (capability counter-rerun): scripts/counter-rerun.mjs at ce9aee5daf71004a5890134f9526cc6fe424b206.\n# Bounds\nWrite ONLY: (a) sandbox clones under /fast/scratch/hyaku/kumitate-r48b/seats/<your-seat-name>/, (b) your own files under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ prefixed with your seat name, (c) /tmp. Never write the lane repo outside (b), the fleet repo, sibling repos, lane .jj, .ufo/state, .ufo/watchdog.log. Read-only git everywhere; sandbox-clone commits with -c user.name=seat are fine. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin \u2014 write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.\nTooling authorization (operator 2026-10-19): install only per /home/vgpnk/.omp/agent/RULES.md, record tool/version/channel/reason. Pacman guard: ALL pacman transactions PAUSED host-wide \u2014 uv/npx/official binary in ~/.local/bin only; never pacman -S/-Sy/-Syu/-U/-R; never restart services.\nRouting is the operator's table; never pass or request a model. You are a leaf: no delegation, no sub-spawns, no background jobs/processes (foreground commands only). Set TMPDIR=/tmp for every command you run. Hard stop ~17:20 -03.",
+ "tasks": [
+  {
+   "name": "ReRunCounterA",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item ReRunCounterA \u2014 C1 kill-rule re-run (1 of 2)\nRun exactly: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48 (wrap in timeout -k 10 1800; ~10 min). Capture stdout+exit to /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReRunCounter48-1-receipt.txt with a trailer line: exit=<n> start=<ISO> end=<ISO> load1_start=<v> load1_end=<v>. Do NOT modify anything. Report /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReRunCounter48-1.md: the held= line verbatim; if exit 2, classify from the output.\n\nReport: .ufo/waves/round-48/close/ReRunCounterA.md"
+  },
+  {
+   "name": "ReRunCounterB",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item ReRunCounterB \u2014 C1 kill-rule re-run (2 of 2)\nIdentical to ReRunCounterA but independently timed; write /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReRunCounter48-2-receipt.txt + .md. If your reading disagrees with 4/4, that is the finding \u2014 report it verbatim, do not re-run to get a better number.\n\nReport: .ufo/waves/round-48/close/ReRunCounterB.md"
+  },
+  {
+   "name": "ReRunR47Set",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item ReRunR47Set \u2014 H2 harm rule\nRun: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin ce9aee5daf71004a5890134f9526cc6fe424b206 --set r47 (timeout -k 10 2400). The five r47 sites must still read held=5/5 (base stability read 5/5 x3 at f00cf278). Receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReRunR47Set-receipt.txt + .md.\n\nReport: .ufo/waves/round-48/close/ReRunR47Set.md"
+  },
+  {
+   "name": "H1Tip",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item H1Tip \u2014 checklist harness at the C1 commit\nRun node scripts/surface-probe.mjs --checklists in a --no-hardlinks clone of /home/vgpnk/Projects/shokunin/kumitate-shokunin at ce9aee5daf71004a5890134f9526cc6fe424b206 (unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE; bind nothing), TWO runs, load1 recorded per item; compare item-by-item against the base side /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ScribeReceipts-checklist-base-{1,2}.txt. Harm = an item passing in both base runs and failing in any tip run. Receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/H1Tip-run{1,2}.txt + /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/H1Tip.md verdict.\n\nReport: .ufo/waves/round-48/close/H1Tip.md"
+  },
+  {
+   "name": "ReviewIntegration",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item ReviewIntegration \u2014 the integrated diff\nReview git show ce9aee5daf71004a5890134f9526cc6fe424b206 --stat and the full diff (scripts/round-gate.mjs, scripts/surface-probe.mjs, scripts/counter-rerun.mjs): against the acceptance checklist in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/../r48/ReviewRouteSpec.md (if present) or the plan predicate directly \u2014 four sites routed via capSpawnSync, allowances RG1409/SP1766/SP1049 untouched, nothing else refactored, counter-rerun matches the C2 predicate sentence, no unrelated bytes. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReviewIntegration.md: per-file verdict + defects.\n\nReport: .ufo/waves/round-48/close/ReviewIntegration.md"
+  },
+  {
+   "name": "ReviewC2Agree",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\n\n# Item ReviewC2Agree \u2014 C2 verification\nAt a clone of ce9aee5daf71004a5890134f9526cc6fe424b206: (a) node scripts/counter-rerun.mjs --selftest must print COUNTER_RERUN_SELFTEST: PASS exit 0; (b) node scripts/counter-rerun.mjs --probe /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/probe/caproute48-probe.mjs --lane <clone> --rev ce9aee5daf71004a5890134f9526cc6fe424b206 --runs 2 -- /home/vgpnk/Projects/shokunin/kumitate-shokunin ce9aee5daf71004a5890134f9526cc6fe424b206 --set r48 must print AGREE with identical summaries (or DISAGREE \u2014 report verbatim). Receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReviewC2Agree-selftest.txt + /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ReviewC2Agree-agree.txt + .md.\n\nReport: .ufo/waves/round-48/close/ReviewC2Agree.md"
+  },
+  {
+   "name": "CritClose",
+   "agent": "critic",
+   "task": "/skill:godspeed\n\n# Item CritClose \u2014 attack the close bundle as the closure would\nRead the wave outputs under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/r48/ and this close dir: what would the round-47-style verifier spot-check reject? Receipt gaps, single-source verdicts, unverified inheritances, chronology holes (candidate scored before a control concluded?), misstatements. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/CritClose.md with ranked defects (fatal/minor).\n\nReport: .ufo/waves/round-48/close/CritClose.md"
+  },
+  {
+   "name": "SentinelClose",
+   "agent": "critic",
+   "task": "/skill:godspeed\n\n# Item SentinelClose \u2014 close receipt discipline\nOver every receipt in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/ and r48/: verify sha discipline where shas are claimed (recompute), exit trailers present, RESULT/held summary lines present, no truncation, no two receipts byte-identical that should differ. Deliver /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-48/close/SentinelClose.md per-file verdicts.\n\nReport: .ufo/waves/round-48/close/SentinelClose.md"
+  }
+ ]
+}

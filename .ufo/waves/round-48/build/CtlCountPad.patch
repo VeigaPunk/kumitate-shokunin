@@ -1,0 +1,127 @@
+From ab68c4f67621cbfe345c17d88d3bf97e2b02e090 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:54:57 -0300
+Subject: [PATCH] round-48 CtlCountPad negative control
+
+---
+ scripts/ctl-count-pad.mjs | 30 ++++++++++++++++++++++++++++++
+ scripts/round-gate.mjs    |  6 ++++--
+ scripts/surface-probe.mjs | 10 +++++++---
+ 3 files changed, 41 insertions(+), 5 deletions(-)
+ create mode 100644 scripts/ctl-count-pad.mjs
+
+diff --git a/scripts/ctl-count-pad.mjs b/scripts/ctl-count-pad.mjs
+new file mode 100644
+index 0000000..4718e9a
+--- /dev/null
++++ b/scripts/ctl-count-pad.mjs
+@@ -0,0 +1,30 @@
++// Round-48 negative control only: alternate uncapped work with capped work and
++// pad the site's observed exec count with an extra capped launch of the same child.
++// The real capped launch has an interpreter `--`, so positional site matchers
++// count the raw launch plus the padding launch, not both capped launches.
++import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
++
++const calls = new Map();
++const CHILD_ENV = [
++  'HOME', 'NODE_COMPILE_CACHE', 'UFO_STATE_DIR', 'UFO_PENDING_WORK_PATH', 'UFO_PROJECT_ROOT',
++  'UFO_SRC', 'KUMITATE_REPORTS_DIR', 'KUMITATE_MAIN_REPO', 'KUMITATE_LANE',
++  'GIT_CONFIG_GLOBAL', 'GIT_CONFIG_SYSTEM',
++];
++
++export function countPadSpawnSync(site, cmd, args, { bind = [], ...options } = {}) {
++  const nested = process.env.KUMITATE_SURFACE_PROBE_NESTED === '1'
++    || process.env.KUMITATE_ROUND_GATE_NESTED === '1';
++  const call = calls.get(site) ?? Number(nested);
++  calls.set(site, call + 1);
++  if (call % 2 === 0) return spawnSync(cmd, args, options);
++
++  const source = options.env ?? process.env;
++  const env = Object.fromEntries(CHILD_ENV.filter((k) => source[k] !== undefined)
++    .map((k) => [k, source[k]]));
++  const cappedOptions = { ...options, env, bind };
++  const result = capSpawnSync(cmd, ['--', ...args], cappedOptions);
++  // Deliberately unused output: this duplicate is padding, not the site's work.
++  capSpawnSync(cmd, args, cappedOptions);
++  return result;
++}
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..daf89af 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -128,6 +128,7 @@
+  *   `verdict: "FAIL-CLOSED"` and the token as the single finding kind.
+  */
+ import { spawnSync } from 'node:child_process';
++import { countPadSpawnSync } from './ctl-count-pad.mjs';
+ import {
+   existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, statSync,
+   writeFileSync,
+@@ -739,8 +740,9 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  const runGate = (args, extraEnv = {}) => countPadSpawnSync('RG742', process.execPath, [SELF, ...args],
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
++      env: { ...cleanEnv(), ...extraEnv }, bind: [tmp] });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..7d07b0a 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -136,6 +136,7 @@
+  */
+ 
+ import { spawnSync } from 'node:child_process';
++import { countPadSpawnSync } from './ctl-count-pad.mjs';
+ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+@@ -488,12 +489,13 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = countPadSpawnSync('SP491', 'bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+       env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      bind: [src, cacheRoot],
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -516,11 +518,12 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = countPadSpawnSync('SP519', process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
++      bind: [src, stateRoot],
+       env: {
+         ...process.env,
+         UFO_STATE_DIR: stateDir,
+@@ -1589,8 +1592,9 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
++    const spawnSelf = (args, env) => countPadSpawnSync('SP1592', process.execPath, [selfPath, ...args], {
+       encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++      bind: [tmp],
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+

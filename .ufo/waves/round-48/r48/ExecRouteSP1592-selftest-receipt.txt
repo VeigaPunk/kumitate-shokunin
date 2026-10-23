@@ -1,0 +1,18 @@
+# ExecRouteSP1592 — build-time selftest receipts (sandbox only; the frozen counter is NOT run by this seat)
+# sandbox: /fast/scratch/hyaku/kumitate-r48a/seats/ExecRouteSP1592/lane at freeze fe3d45bf929246915c8c0de5f7f8682b5015b22c + this seat's commit
+# base = stashed (unrouted) working tree; patched = this seat's commit ce1c83e
+
+## BASE selftest
+$ node scripts/surface-probe.mjs --selftest   (base working tree)
+46/46 cases passed
+VERDICT: PASS
+exit=0
+
+## PATCHED selftest
+$ node scripts/surface-probe.mjs --selftest   (this seat's commit)
+46/46 cases passed
+VERDICT: PASS
+exit=0
+
+## case-by-case diff (base vs patched, tmp root normalized)
+(no differences: identical 46/46 case names, verdicts and details)

@@ -1,0 +1,102 @@
+# ExecRootCause evidence — round 48 wave 1, seat re-derivation of R47-5
+# generated 2026-10-23T12:31:23Z
+
+## A. per-log parser comparison (9 anchor-truth runs at f00cf278 + pidns natural log)
+log	pids<1e4	A2exec	F48exec	REFexec	A2lost	resumed	resPad	compPad	at802A2	at802F48	A2lostCand	A2lostRunner
+run1.strace	0	1783	1795	1795	12	27	13	0	102	106	4	0
+run2.strace	0	1793	1795	1795	2	9	2	0	105	106	1	0
+run3.strace	0	1790	1795	1795	5	14	5	0	106	106	0	0
+run4.strace	0	1795	1795	1795	0	0	0	0	106	106	0	0
+run5.strace	0	1795	1795	1795	0	0	0	0	106	106	0	0
+run6.strace	0	1794	1795	1795	1	2	1	0	106	106	0	0
+run7.strace	0	1793	1795	1795	2	7	2	0	106	106	0	0
+run8.strace	0	1794	1795	1795	1	2	1	0	106	106	0	0
+run9.strace	0	1795	1795	1795	0	4	1	0	106	106	0	0
+pidns.log	3002	3001	3002	3002	1	2	1	0	0	0	0	0
+
+## B. column rule verification (A2 loses a record iff the gap between ')' and '=' is > 1)
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/run1.strace","tracedRecords":7551,"compared":7551,"spaceGapHistogram":{"1":7538,"11":13},"ruleAgreesWithA2":7551,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree2/run2.strace","tracedRecords":7551,"compared":7551,"spaceGapHistogram":{"1":7549,"11":2},"ruleAgreesWithA2":7551,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree3/run3.strace","tracedRecords":7551,"compared":7551,"spaceGapHistogram":{"1":7546,"11":5},"ruleAgreesWithA2":7551,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree4/run4.strace","tracedRecords":7551,"compared":7551,"spaceGapHistogram":{"1":7551},"ruleAgreesWithA2":7551,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree6/run6.strace","tracedRecords":7551,"compared":7551,"spaceGapHistogram":{"1":7550,"12":1},"ruleAgreesWithA2":7551,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/pidns.log","tracedRecords":6003,"compared":6003,"spaceGapHistogram":{"1":6002,"13":1},"ruleAgreesWithA2":6003,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/tmp/short2.log","tracedRecords":2,"compared":2,"spaceGapHistogram":{"1":1,"6":1},"ruleAgreesWithA2":2,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+{"log":"/tmp/tiny.log","tracedRecords":2,"compared":2,"spaceGapHistogram":{"1":2},"ruleAgreesWithA2":2,"ruleDisagreements":0,"falsePositives":0,"falseNegatives":0,"disagreements":[]}
+
+## C. natural HOST-namespace wrap window (first 4000 lines of a 208654-line log spanning a real wrap)
+  LOG /fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/hostwrap-window.log
+    tree=null
+    lines=4001 nonEmpty=4000 nonPidLines=0 paddedPrefixLines=80
+    gapHistogram={"1":3920,"2":73,"3":7}
+    pidDigitHistogram={"3":7,"4":73,"5":1722,"7":2198}
+    distinctPids=1951 pidsBelow10000=71 min=348 max=4194294
+    assembly problems={"noPendingOnResume":0,"pendingAtEOF":0,"secondUnfinished":0,"nonTracedPending":0} records=3901
+    returnPatterns={"execveSuccessfulRef":1951,"execveSuccessfulA2":1902,"execveSuccessfulF48":1951,"execveFailedRef":0,"execveFailedA2":0,"execveFailedF48":0,"execveatSuccessfulRef":0,"execveatSuccessfulA2":0,"execveatSuccessfulF48":0,"cloneReturnsRef":1950,"cloneReturnsA2":1950,"cloneReturnsF48":1950,"questionReturn":0,"errnoReturn":0,"recordsTotal":3901,"resumedRecords":99,"resumedRecordsPaddedReturn":49,"completedRecordsPaddedReturn":0,"recordsNoReturnParsed":0}
+    a2LossClasses={"execve_success_lost_A2_resumed_pad11":18,"execve_success_lost_A2_resumed_pad13":31}
+    simA2={"execs":1840,"parent":1950,"rootPid":4166989,"execveat":0,"dropped":{"prefix":0,"noReturn":40,"bodyLeadSpace":0,"callMismatch":71},"pendingLeft":9}
+    simF48={"execs":1951,"parent":1950,"rootPid":4166989,"execveat":0,"resumed":99,"fatal":[],"fatalCount":0,"pendingLeft":0}
+    at802.A2={"n":0,"withRunner":0,"withoutRunner":[]}
+    at802.F48={"n":0,"withRunner":0,"withoutRunner":[]}
+    at802.lostUnderA2=[]
+    at802.lostRunnerUnderA2=[]
+    judgeAT802={"A2":null,"F48":null}
+    pidReuse={"cloneChildCreations":1950,"reusedPids":[],"reusedCount":0}
+
+## D. natural HOST wrap: real counters on the window, and the streaming full-log comparison
+--- real A2/F48 parseLog on the 4000-line wrap window:
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/hostwrap-window.log", "results": { "A2": { "execs": 1840, "parent": 1950, "rootPid": 4166989, "execveat": 0, "resumed": null, "at802": 0, "at802argv1Sample": [] }, "F48": { "execs": 1951, "parent": 1950, "rootPid": 4166989, "execveat": 0, "resumed": 99, "at802": 0, "at802argv1Sample": [] } }}
+--- streaming exact replica over the WHOLE 208654-line log:
+{"lines":208654,"a2Exec":104068,"f48Exec":104223,"a2Clone":104223,"f48Clone":104223,"a2DropPrefix":71,"a2DropReturn":84,"f48Fatal":0,"a2PendingAtEOF":9,"f48PendingAtEOF":0}
+
+## E. H2 on a natural strace log whose pids are all below 10000 (fresh PID namespace)
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/pidns.log", "results": { "A2": { "execs": 0, "parent": 0, "rootPid": null, "execveat": 0, "resumed": null, "at802": 0, "at802argv1Sample": [] }, "F48": { "execs": 3002, "parent": 3001, "rootPid": 3, "execveat": 0, "resumed": 2, "at802": 0, "at802argv1Sample": [] } }}
+
+## F. H2 synthetic renumbering of a real 7-digit log (faithful: clone returns renumbered too)
+-- mode=below
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/run1-below.log", "results": { "A2": { "execs": 0, "parent": 0, "rootPid": null, "execveat": 0, "resumed": null, "at802": 0, "at802argv1Sample": [] }, "F48": { "execs": 1795, "parent": 3011, "rootPid": 1, "execveat": 0, "resumed": 27, "at802": 106, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] } }}
+-- mode=1
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/mix-1.log", "results": { "A2": { "execs": 1782, "parent": 2716, "rootPid": 3035353, "execveat": 0, "resumed": null, "at802": 102, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] }, "F48": { "execs": 1795, "parent": 3011, "rootPid": 1, "execveat": 0, "resumed": 27, "at802": 106, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] } }}
+-- mode=50
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/mix-50.log", "results": { "A2": { "execs": 1729, "parent": 2622, "rootPid": 3039247, "execveat": 0, "resumed": null, "at802": 98, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] }, "F48": { "execs": 1795, "parent": 3011, "rootPid": 1, "execveat": 0, "resumed": 27, "at802": 106, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] } }}
+-- mode=500
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/mix-500.log", "results": { "A2": { "execs": 1248, "parent": 1858, "rootPid": 3106825, "execveat": 0, "resumed": null, "at802": 67, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] }, "F48": { "execs": 1795, "parent": 3011, "rootPid": 1, "execveat": 0, "resumed": 27, "at802": 106, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] } }}
+-- mode=1689
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/mix-1689.log", "results": { "A2": { "execs": 0, "parent": 0, "rootPid": null, "execveat": 0, "resumed": null, "at802": 0, "at802argv1Sample": [] }, "F48": { "execs": 1795, "parent": 3011, "rootPid": 1, "execveat": 0, "resumed": 27, "at802": 106, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] } }}
+
+## G. surgical reproduction of the L1's two A2 why-labels
+--- S1: the cap-run RUNNER's own execve record is the one A2 loses
+runnerPid=3035404 candidatePid=3035487
+  baseline: {"A2":{"n":102,"capped":102,"why":[]},"F48":{"n":106,"capped":106,"why":[]}}
+  S1 runner record lost: {"A2":{"n":102,"capped":101,"why":["no_cap_run_ancestor"]},"F48":{"n":106,"capped":106,"why":[]}}
+  S2 candidate record lost: {"A2":{"n":101,"capped":101,"why":[]},"F48":{"n":106,"capped":106,"why":[]}}
+
+## H. loss classes that F48 still handles / still misses
+baseline: {"ok": true, "execs": 1795, "parent": 3011, "execveat": 0, "resumed": 27}
+G1 a non-TRACED syscall line (openat) in the log         | keeps everything (no loss)               | execs=1795 parent=3011 execveat=0
+G2 a clone whose child pid is below 10000 (post-wrap win | changes counts: execs 1795->1795, parent | execs=1795 parent=3012 execveat=0
+G3 two different clones return the SAME child pid        | FAILS CLOSED (exit 2)                    | DIE: pid 3035309 created twice in one log (reuse or an untranslated PID-namespac
+G4 an execve with a relative path                        | changes counts: execs 1795->1796, parent | execs=1796 parent=3011 execveat=0
+G5 an execve with an empty argv list                     | changes counts: execs 1795->1796, parent | execs=1796 parent=3011 execveat=0
+G6 an execve with a NULL envp                            | changes counts: execs 1795->1796, parent | execs=1796 parent=3011 execveat=0
+G7 a successful execveat (image replacement)             | keeps everything (no loss)               | execs=1795 parent=3011 execveat=1
+G8 a failed clone (rv = -1)                              | keeps everything (no loss)               | execs=1795 parent=3011 execveat=0
+G9 the same pid execs twice (re-exec)                    | changes counts: execs 1795->1796, parent | execs=1796 parent=3011 execveat=0
+G10 a clone returning a huge child pid (near pid_max)    | changes counts: execs 1795->1795, parent | execs=1795 parent=3012 execveat=0
+G11 an unfinished/resumed pair for a non-traced call     | keeps everything (no loss)               | execs=1795 parent=3011 execveat=0
+G12 an unfinished TRACED record that is never resumed    | FAILS CLOSED (exit 2)                    | DIE: second unfinished record for pid 3035302: clone(child_stack=NULL, flags=CLO
+G13 two unfinished records for the same pid              | FAILS CLOSED (exit 2)                    | DIE: second unfinished record for pid 3035302: clone(child_stack=NULL, flags=CLO
+G14 trailing garbage after the return value              | FAILS CLOSED (exit 2)                    | DIE: unparsed return in execve record of pid 3035302: "execve(\"/bin/x\", [\"/bi
+G15 a record whose return is on the next line            | FAILS CLOSED (exit 2)                    | DIE: unparsed return in execve record of pid 3035302: "execve(\"/bin/x\", [\"/bi
+G16 a clone return in a PID namespace, unannotated inner | changes counts: execs 1795->1795, parent | execs=1795 parent=3012 execveat=0
+G17 a successful execve whose argv contains ") = 7" (a d | changes counts: execs 1795->1796, parent | execs=1796 parent=3011 execveat=0
+G18 an empty line in the log                             | keeps everything (no loss)               | execs=1795 parent=3011 execveat=0
+G19 a line with no pid at all                            | FAILS CLOSED (exit 2)                    | DIE: unparsed trace line: "strace: Process 999 attached"
+
+## I. PID-reuse (two wraps in one log): F48 fails closed, A2 mis-parses
+{ "log": "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/synth/reuse.log", "results": { "A2": { "execs": 1783, "parent": 2168, "rootPid": 3035302, "execveat": 0, "resumed": null, "at802": 102, "at802argv1Sample": [ "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs", "/fast/scratch/hyaku/kumitate-r48/seats/w1-ExecRootCause/tree1/scripts/anchor-truth.mjs" ] }, "F48": { "error": "DIE: pid 3035353 created twice in one log (reuse or an untranslated PID-namespace return)" } }}
+
+## J. record-drop oracle (does strace itself drop a traced record?)
+run: records=7551 pids=1689 noExec=106 missingChild=1323 notRootNorChild=0 multiExec=106 cloneAnn=1460/3011 unannSmall=0 dupCreated=0 pendEOF=0
+run: records=7551 pids=1689 noExec=106 missingChild=1323 notRootNorChild=0 multiExec=106 cloneAnn=1460/3011 unannSmall=0 dupCreated=0 pendEOF=0
+run: records=7551 pids=1689 noExec=106 missingChild=1323 notRootNorChild=0 multiExec=106 cloneAnn=1460/3011 unannSmall=0 dupCreated=0 pendEOF=0

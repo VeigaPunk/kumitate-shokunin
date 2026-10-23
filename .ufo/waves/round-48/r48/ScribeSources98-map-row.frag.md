@@ -1,0 +1,1 @@
+| `lessons/round-48.md` | Round 48 — four child sites routed under a repeatable counter: padded/resumed strace record parsing and equal exec-count checks; receipt-backed close conclusions vs. cancelled-seat/chat-only readings; C1/C2 close-record skeleton; S098 | `.ufo/waves/round-48/` receipts |

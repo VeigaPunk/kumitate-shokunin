@@ -466,6 +466,7 @@ const GATE_PINS = {
   'pin.omp-census': 'scripts/omp-census.mjs',
   'pin.cap-run': 'scripts/cap-run.mjs',
   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
+  'pin.counter-rerun': 'scripts/counter-rerun.mjs', // round 48: repeat-run receipt instrument (C2)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

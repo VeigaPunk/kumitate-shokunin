@@ -1,0 +1,41 @@
+diff --git i/scripts/cap-run.mjs w/scripts/cap-run.mjs
+index 9ab3193..ec1a84e 100755
+--- i/scripts/cap-run.mjs
++++ w/scripts/cap-run.mjs
+@@ -183,7 +183,7 @@ function run(o) {
+   const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
+   for (const [k, v] of o.env) setenv.push('--setenv', k, v);
+   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
+-    '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
++    '-p', `MemoryMax=${o.mem}M`, '-p', `TasksMax=${o.tasks}`, '--',
+     'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+     '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap(([src, dst]) => ['--bind', src, dst]), '--chdir', cwd,
+     '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
+diff --git i/scripts/surface-probe.mjs w/scripts/surface-probe.mjs
+index d5c4304..cd64401 100755
+--- i/scripts/surface-probe.mjs
++++ w/scripts/surface-probe.mjs
+@@ -143,6 +143,7 @@ import {
+ import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const SCHEMA = 'kumitate-surface-probe-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -488,12 +489,13 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      bind: [cacheRoot],
++      env: { HOME: process.env.HOME, NODE_COMPILE_CACHE: cacheRoot },
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
