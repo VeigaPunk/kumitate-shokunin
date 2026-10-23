@@ -1,0 +1,74 @@
+From 1a922e2a55eac547048606a027c1a963f64d5c22 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 06:58:05 -0300
+Subject: [PATCH] CtlJunk: inert hex comments and runner log wording
+
+---
+ scripts/cap-run.mjs   |  2 +-
+ scripts/cap-spawn.mjs | 40 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 255dbe8..0beb88b 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -228,7 +228,7 @@ function run(o) {
+   process.on('SIGTERM', () => onSignal('SIGTERM'));
+   process.on('SIGINT', () => onSignal('SIGINT'));
+   child.on('error', (e) => {
+-    process.stderr.write(`cap-run: cannot spawn systemd-run: ${e.code || e.message}\n`);
++    process.stderr.write(`cap-run: cannot start systemd-run: ${e.code || e.message}\n`);
+     finish('EXIT', 127);
+   });
+   child.on('exit', (code, sig) => {
+diff --git a/scripts/cap-spawn.mjs b/scripts/cap-spawn.mjs
+index bfc37df..bdf8387 100644
+--- a/scripts/cap-spawn.mjs
++++ b/scripts/cap-spawn.mjs
+@@ -53,3 +53,43 @@ export function capSpawnSync(cmd, args, {
+   }
+   return { ...r, capVerdict };
+ }
++// 3f69455071a163a459d4f43282d99922
++// 3ee9b4bd2845b505aa628c2e59285e57
++// bde0b7335b18039ef317f42cb1b975a4
++// a7eee326e28409b0fae9f5391e60f340
++// 6580d1eeab92649c1c75a840788c08b7
++// b3f48c1602c058917ef922210cdb7afb
++// 335d8f94c567f252c653116fdc06c3aa
++// a4e41bb9f3d57e9c6f1c606ab32e0d7d
++// 1e12edc2ad6b965da422c87e07b3acd2
++// 5f1fb2d138cf31cee2061e783457b577
++// e487b2cb9a9b1c1a6d92e04fecf7b0c1
++// 754819e990aa37da319b3b3416b0c584
++// 4517d9903bda880708c062b9d2c3b5fb
++// 6b898d2234793267c26ef9b3c1644d5c
++// 16f01733c80e8aa42bdc956598f4d0be
++// 17c07f7e51f354f67d5c62c8b7a6498a
++// de3ab3b6ae030e1980fcddee5dda98a1
++// 752481e7d5c5f425357139a58276a62a
++// e592e5102f64ad860d52df8da4ea2159
++// f060afe2cdf421b5291704c3d2f358ba
++// 5f951976fe173469d860002bc7a3eba8
++// 1440b91bb04a23e2b206169f137f76b0
++// 5cad1af43739ec200a400404b1cd7dac
++// 3029e58f6dc4fd7aeaaa15982eb1ae5f
++// 3cae73c410821f40a151553649325d0d
++// d528f6da90b7c6d2393a9a13b2b8972c
++// d7727f7f3c53992d2599c8fac4c26469
++// f67258ddb3af9e5f6351ab23d4f9170d
++// c32c92fd3a698d922b832a01717f7f15
++// bc31a9e94f1cbcdeb79b41094a983d57
++// 2e690ff7f883d1d4eac687594a48af80
++// 2071081633443395d589bea28be8cd4d
++// 97f9e82ac1cd2084c6150d2e36042233
++// 9f2cd37e54c8f4a58a118d8f3b2ffd1b
++// c91f99feaedd8efe901f1196e18eeacd
++// e99ff7c422fc47b1ef402e3f9d31ce78
++// e42fc61f3b0137b3e90f57f8d4bb05ad
++// 96c11eee7b26b64f8d3d0220674fdf5f
++// 5d674ed08a0d5211aee8c527799e6035
++// 00b3717117f9d527d9224aa469194947
+-- 
+2.56.0
+

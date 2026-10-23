@@ -1,0 +1,57 @@
+From 835205599f1f31ae96f93ec90dda881c17149230 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 06:59:24 -0300
+Subject: [PATCH] control: append trailing blank lines without routing
+
+---
+ scripts/anchor-truth.mjs  | 1 +
+ scripts/claims-check.mjs  | 3 ++-
+ scripts/kimi-census.mjs   | 3 ++-
+ scripts/sources-check.mjs | 1 +
+ 4 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..dbc47ba 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -1213,3 +1213,4 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(TOOL_FILE)
+   try { process.exitCode = run(process.argv.slice(2)); }
+   catch (e) { process.exitCode = failClosed('INPUT_UNREADABLE', e.message); }
+ }
++
+diff --git a/scripts/claims-check.mjs b/scripts/claims-check.mjs
+index d5fe701..87286fa 100755
+--- a/scripts/claims-check.mjs
++++ b/scripts/claims-check.mjs
+@@ -1337,4 +1337,5 @@ const isEntry = (() => {
+   try { return realpathSync(invoked) === TOOL_FILE; } catch { return false; }
+ })();
+ 
+-if (isEntry) main();
+\ No newline at end of file
++if (isEntry) main();
++
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..6ae6a14 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -1047,4 +1047,5 @@ const isEntry = (() => {
+   try { return realpathSync(invoked) === TOOL_FILE; } catch { return false; }
+ })();
+ 
+-if (isEntry) main();
+\ No newline at end of file
++if (isEntry) main();
++
+diff --git a/scripts/sources-check.mjs b/scripts/sources-check.mjs
+index 6b57424..e7c00d5 100755
+--- a/scripts/sources-check.mjs
++++ b/scripts/sources-check.mjs
+@@ -895,3 +895,4 @@ const isEntry = (() => {
+   try { return realpathSync(invoked) === TOOL_FILE; } catch { return false; }
+ })();
+ if (isEntry) main();
++
+-- 
+2.56.0
+

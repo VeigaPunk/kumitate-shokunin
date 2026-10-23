@@ -1,0 +1,17 @@
+RESULT SupersedeS003 rev=cac43009 verdict=CONFIRMED row=S080
+| S080 | oh-my-pi docs/task-agent-discovery.md — https://github.com/can1357/oh-my-pi/blob/0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0/docs/task-agent-discovery.md | docs | A | OMP task-agent discovery precedence on main | docs/task-agent-discovery.md § Merge and collision rules; main 0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0; body sha256 6739e902386ee06ff068a8b2c97e36aa0d4086d28b45643efc837c3dbbbe3c81 | supersedes S003 — Task-agent discovery precedence and first-wins by exact name | mined | 2026-10-23 | on-release | corpus/knowledge/omp-task-contract.md |
+Gate: URL https://raw.githubusercontent.com/can1357/oh-my-pi/0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0/docs/task-agent-discovery.md; accessed 2026-10-23; § Merge and collision rules, first sentence: “Discovery uses first-wins dedup by exact `agent.name`:” (7 words); body sha256 6739e902386ee06ff068a8b2c97e36aa0d4086d28b45643efc837c3dbbbe3c81.
+
+Evidence
+- Re-opened the pinned raw source today. It states first-wins dedup by exact agent name under “Merge and collision rules”; no recursive-filesystem-roots claim occurs there. The corrected teaching is confirmed.
+- `git ls-remote https://github.com/can1357/oh-my-pi.git refs/heads/main` → `0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0 refs/heads/main`.
+- `curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0/docs/task-agent-discovery.md | sha256sum` → `6739e902386ee06ff068a8b2c97e36aa0d4086d28b45643efc837c3dbbbe3c81  -`.
+- `printf '%s' 'Discovery uses first-wins dedup by exact `agent.name`:' | wc -w` → `7`.
+- `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 2b2bf7bb:corpus/SOURCES.md | grep '^| S003 |' && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show cac43009b22232c1ae8efdab4f2789516c1fcc6f:corpus/SOURCES.md | grep '^| S003 |'` → original: teaches “Task-agent discovery precedence, first-wins by exact name, and recursive filesystem roots”; correction: “Task-agent discovery precedence and first-wins by exact name (round 46: the clause \"recursive filesystem roots\" removed — no antecedent in the document, SweepS001S005)”. Other cells in these two rows match: source, kind, tier, scope, anchor, status, opened, recheck, used-by.
+- `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 980a16af -- corpus/SOURCES.md | grep -F 'S003'; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show adedf671 -- corpus/SOURCES.md | grep -F 'S003'` → 980a16af diff output showed the original row removed and corrected row added in place; adedf671 half had no match (grep exit 1). Round-46 lesson `corpus/lessons/round-46.md:35` says the clause was removed because it had “no antecedent.”
+- `CORPUS.md:116-118` rule: only status, recheck and used-by change in place; correction is a new row whose teaches opens `supersedes S0NN —`.
+
+Finding and scope
+- Verdict CONFIRMED: the round-46 teaching correction matches the reopened bytes; no corrected status or used-by changes were needed. S080 carries mined/on-release/`corpus/knowledge/omp-task-contract.md`; its anchor and opened date identify this round's pinned re-open.
+- I wrote only this report. `corpus/SOURCES.md` remains untouched for the L1 to append S080. No C1 counter, gate, selftest, or tests were run; no tools were installed.
+- Report artifact: `.ufo/waves/round-47/build/SupersedeS003.md`.

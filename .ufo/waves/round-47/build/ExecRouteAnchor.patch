@@ -1,0 +1,39 @@
+From c997e1fa1a79061c47091e15983a0c785069f8d6 Mon Sep 17 00:00:00 2001
+From: exec <exec@exec>
+Date: Fri, 23 Oct 2026 07:00:42 -0300
+Subject: [PATCH] route anchor-truth selftest tool() through cap-run
+ (kumitate-cap-run-v2)
+
+---
+ scripts/anchor-truth.mjs | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..a810251 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -87,6 +87,7 @@
+  * only mkdtemp fixtures.
+  */
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve, sep } from 'node:path';
+@@ -799,7 +800,12 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
++    // The child runs under scripts/cap-run.mjs (contract kumitate-cap-run-v2): the fixture root
++    // is bound read-write because the sandbox's /tmp is a fresh tmpfs, the environment is the
++    // allowlist gitEnv() builds (never this process's env), and the budget is 120 s.
++    const r = capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
++      env: gitEnv(), bind: [tmp], timeout: 120_000,
++    });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+   };
+-- 
+2.56.0
+

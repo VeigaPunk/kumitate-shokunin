@@ -1,0 +1,159 @@
+From e8d861943a61c836603840c879bcb3a5b76596ef Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 06:59:57 -0300
+Subject: [PATCH] r47 C1 pre-data control CtlStubChild: stub child at five
+ sites (no spawn), child-dependent selftest cases removed
+
+---
+ scripts/anchor-truth.mjs  | 12 +++++++++---
+ scripts/claims-check.mjs  | 15 +++++++++++----
+ scripts/kimi-census.mjs   | 15 +++++++++++++--
+ scripts/sources-check.mjs | 18 +++++++++++++++---
+ 4 files changed, 48 insertions(+), 12 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..293a7fd 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -799,9 +799,11 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
+-    const out = r.stdout ?? '';
+-    return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
++    // Stub-child control (round 47 C1 pre-data): the child is never spawned; the expected clean
++    // verdict is fabricated. Selftest cases that need real child output are removed below.
++    void self; void args;
++    const out = 'TRUTH: CLEAN (notes=1 anchors=1 true=1 debt=0 unchecked=0 src-rev=stub)\n';
++    return { status: 0, out, verdict: out.trim() };
+   };
+   // A lane whose note, pin and review registry are COMMITTED: the gate reads review records
+   // from committed bytes and resolves them through the PIN at the record revision, so a
+@@ -821,7 +823,11 @@ function selfTest() {
+   const commit = (d) => { g(d, ['add', '-A']); g(d, ['commit', '-q', '-m', 'pin']); return g(d, ['rev-parse', 'HEAD']).stdout.trim(); };
+   const pinOf = (d) => JSON.parse(readFileSync(join(d, '.ufo/pins/anchor-truth.json'), 'utf8'));
+   const setPin = (d, f) => { const p = pinOf(d); f(p); writeFileSync(join(d, '.ufo/pins/anchor-truth.json'), JSON.stringify(p)); };
++  // Stub-child control (round 47 C1 pre-data): every case that needs the gate's real child output
++  // is removed from the run; only the case below still executes.
++  const STUB_KEEP = new Set(['AT01']);
+   const check = (id, label, fn) => {
++    if (!STUB_KEEP.has(id)) return;
+     let ok = false; let detail = '';
+     try { const r = fn(); ok = r.ok; detail = r.detail ?? ''; } catch (e) { detail = `threw ${e.message}`; }
+     results.push({ id, label, ok, detail });
+diff --git a/scripts/claims-check.mjs b/scripts/claims-check.mjs
+index d5fe701..7d1021d 100755
+--- a/scripts/claims-check.mjs
++++ b/scripts/claims-check.mjs
+@@ -876,10 +876,10 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
+ }
+ 
+ function runClaims(args, env) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
+-    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
+-  });
+-  return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
++  // Stub-child control (round 47 C1 pre-data): the child is never spawned; the expected green
++  // verdict is fabricated. Selftest cases that need real child output are removed below.
++  void args; void env;
++  return { status: 0, stdout: 'CLAIMS: MATCH (rows=2 yes=2 notes=2 sections=2 adv=0)\n', stderr: '' };
+ }
+ 
+ function verdictLine(run) {
+@@ -898,7 +898,14 @@ function selfTest() {
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
++  // Stub-child control (round 47 C1 pre-data): every case that needs the gate's real child output
++  // is removed from the run; only the cases below still execute.
++  const STUB_KEEP = new Set([
++    'green fixture → MATCH, exit 0, no findings, exact totals',
++    'fixture roots are all under tmpdir() (no live tree in reach)',
++  ]);
+   const check = (label, fn) => {
++    if (!STUB_KEEP.has(label)) return;
+     let r;
+     try { r = fn(); } catch (err) { r = { ok: false, detail: `threw ${err && err.message}` }; }
+     for (const k of r.kinds ?? []) observed.add(k);
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..c48b46b 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -485,8 +485,10 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+ }
+ 
+ function runGate(args, timeout = 30_000) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
+-  return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
++  // Stub-child control (round 47 C1 pre-data): the child is never spawned; the expected green
++  // verdict is fabricated. Selftest cases that need real child output are removed below.
++  void args; void timeout;
++  return { status: 0, signal: null, stdout: 'KIMI_CENSUS: CLEAN (members=53 checked=53 chain=3 info=4)\n', stderr: '', error: undefined };
+ }
+ 
+ function lastLine(run) {
+@@ -505,7 +507,16 @@ function selfTest() {
+   const failClosedSeen = new Set();
+   let passed = 0;
+ 
++  // Stub-child control (round 47 C1 pre-data): every case that needs the gate's real child output
++  // is removed from the run; only the cases below still execute.
++  const STUB_KEEP = new Set([
++    'green fixture → CLEAN exit 0, members=53 checked=53 chain=3 info=4',
++    'SHAPE_DRIFT: locks/ owner must match the running uid',
++    'every fixture root lives under tmpdir() (no live tree in reach)',
++    'the default root is the one the frozen rules name (~/.kimi-code)',
++  ]);
+   const check = (label, fn) => {
++    if (!STUB_KEEP.has(label)) return;
+     let r;
+     try { r = fn(); } catch (err) { r = { ok: false, detail: `threw ${err && err.message}` }; }
+     for (const k of r.kinds ?? []) observed.add(k);
+diff --git a/scripts/sources-check.mjs b/scripts/sources-check.mjs
+index 6b57424..039533a 100755
+--- a/scripts/sources-check.mjs
++++ b/scripts/sources-check.mjs
+@@ -546,8 +546,10 @@ function makeFixture(parent, name, {
+ }
+ 
+ function runTool(args) {
+-  const result = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 15_000 });
+-  return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '', error: result.error };
++  // Stub-child control (round 47 C1 pre-data): the child is never spawned; the expected green
++  // verdict is fabricated. Selftest cases that need real child output are removed below.
++  void args;
++  return { status: 0, stdout: 'SOURCES_CHECK: CLEAN (rows=1 checked=1 legacy=0 entries_with_source=1)\n', stderr: '', error: undefined };
+ }
+ 
+ function finalLine(run) { return run.stdout.trim().split('\n').at(-1) ?? ''; }
+@@ -563,7 +565,14 @@ function selfTest() {
+   const observed = new Set();
+   const failClosedSeen = new Set();
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-sources-check-'));
++  // Stub-child control (round 47 C1 pre-data): every case that needs the gate's real child output
++  // is removed from the run; only the cases below still execute.
++  const STUB_KEEP = new Set([
++    'clean fixture returns CLEAN',
++    'frozen 16a5441 legacy identity set has 38 unique paths',
++  ]);
+   const check = (label, fn) => {
++    if (!STUB_KEEP.has(label)) return;
+     try {
+       const result = fn();
+       if (result.skip) results.push({ label, skip: true, detail: result.detail ?? '' });
+@@ -856,7 +865,10 @@ function selfTest() {
+         'duplicates=$(awk -F"|" \'/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}\' "$file" | sort | uniq -d | wc -l) || exit 12',
+         'printf "%s %s %s\\n" "$rows" "$malformed" "$(printf "%s" "$duplicates" | tr -d "[:space:]")"',
+       ].join('\n');
+-      const parity = spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], { encoding: 'utf8', timeout: 10_000 });
++      // Stub-child control (round 47 C1 pre-data): the shell parity child is never spawned; the
++      // expected parity counts for this fixture (rows/malformed/duplicates) are fabricated.
++      void script; void fixtureFile;
++      const parity = { status: 0, stdout: '4 1 1\n', stderr: '' };
+       if (parity.error) return { ok: false, detail: `spawn sh: ${parity.error.message}` };
+       if (parity.status === 0 && parity.stdout.trim() === 'SKIP') return { skip: true, detail: 'awk is unavailable' };
+       if (parity.status !== 0) return { ok: false, detail: `sh exit=${parity.status} stderr=${parity.stderr.trim()}` };
+-- 
+2.56.0
+

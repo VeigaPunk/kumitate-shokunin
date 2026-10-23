@@ -1,0 +1,598 @@
+RESULT ExecRouteKimi rev=cac43009 verdict=READY sites=K488 selftest=54/54
+
+# ExecRouteKimi — C1 site K488 (`scripts/kimi-census.mjs` `runGate`)
+
+Lane repo `/home/vgpnk/Projects/shokunin/kumitate-shokunin`, frozen tip `cac43009b22232c1ae8efdab4f2789516c1fcc6f`.
+Scratch clone `/fast/scratch/hyaku/kumitate-r47/seats/w1-ExecRouteKimi/lane`, detached at the freeze commit.
+Commit built: `385229c6317a1519f53267fc2250bddf6ad45ce0`; patch `.ufo/waves/round-47/build/ExecRouteKimi.patch` (24844 bytes, 1 file).
+
+## What changed (one site, one file)
+
+- Site at `cac43009`: `function runGate(args, timeout = 30_000)` at `scripts/kimi-census.mjs:487-490` —
+  `spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout })`, child inheriting `process.env`.
+- Now: `capSpawnSync` from `scripts/cap-spawn.mjs` (contract `kumitate-cap-run-v2`), command
+  `process.execPath`, arguments `[TOOL_FILE, ...args]`, encoding and timeout unchanged.
+- Explicit child env `{ HOME: process.env.HOME }` (drop-on-undefined). `HOME` is the only key the gate
+  reads: `DEFAULT_ROOT = join(homedir(), '.kimi-code')` at module load; the child reads no other variable
+  (`grep -n 'process\.env' scripts/kimi-census.mjs` at base: no match). Nothing else of the caller's
+  environment reaches the child.
+- Budget = the call's existing timeout (30 000 ms default; the two 10 000 ms calls at the FIFO arms keep
+  theirs). mem/tasks left at the helper defaults (512 MiB, 64 tasks) — no measured need for more.
+- Bind = `[tmp]`, the selftest's own `mkdtemp` root (`kumitate-kimi-census-selftest-*`), threaded through a
+  new `runGateIn` closure created immediately after `tmp`; all 51 call lines inside `selfTest` call
+  `runGateIn` (53 executions per run, one loop case runs three times). The host `tmpdir()` itself is never bound.
+- Preserved semantics: same stdout/stderr bytes (the helper routes the runner verdict to `--verdict-file`),
+  same numeric `status`, `signal`, and `error` shape; the helper maps BUDGET to spawnSync's
+  `status: null, signal: 'SIGTERM', error.code 'ETIMEDOUT'`, which is what the two 10 s FIFO arms assert
+  (`r.signal === null`, `r.error === undefined` on the pass path).
+- Header: a ROUND 47 paragraph recording the route, the bound root and the unchanged semantics. The live
+  verify path still spawns nothing (unchanged).
+
+## Evidence (commands verbatim, run from the scratch clone unless noted)
+
+E1 base identity
+```
+$ git -C lane rev-parse HEAD                     -> cac43009b22232c1ae8efdab4f2789516c1fcc6f
+$ git -C lane status --porcelain | wc -l         -> 0
+$ grep -c 'runGate(' scripts/kimi-census.mjs     -> 52   (1 definition line + 51 call lines)
+```
+
+E2 BEFORE — `--selftest` three times at cac43009 (host-bounded scope, MemoryMax=4G, TasksMax=512, timeout 900)
+```
+$ systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=512 timeout -s KILL 900 \
+    node scripts/kimi-census.mjs --selftest
+base run1 exit=0 wall_ms=1323 out_lines=2 err_bytes=0
+base run2 exit=0 wall_ms=1334 out_lines=2 err_bytes=0
+base run3 exit=0 wall_ms=1306 out_lines=2 err_bytes=0
+KIMI_CENSUS_SELFTEST: 54/54 pass
+VERDICT: PASS
+diff base-1.out base-2.out && diff base-1.out base-3.out -> IDENTICAL_STDOUT
+```
+
+E3 AFTER — `--selftest` three times at 385229c (same command, same bounds)
+```
+route run1 exit=0 wall_ms=3603 out_lines=2 err_bytes=0
+route run2 exit=0 wall_ms=3938 out_lines=2 err_bytes=0
+route run3 exit=0 wall_ms=4050 out_lines=2 err_bytes=0
+KIMI_CENSUS_SELFTEST: 54/54 pass
+VERDICT: PASS
+diff route-1.out route-2.out && diff route-1.out route-3.out -> IDENTICAL_ROUTED_STDOUT
+```
+Case total unchanged (54 = 54) and every case PASS; wall time rises 1.31 s -> 3.60/3.94/4.05 s because each
+of the 53 gate children now pays a systemd-run scope + bwrap start.
+
+E4 LIVE — `node scripts/kimi-census.mjs` (SKILL.md checklist line, default root), before vs after
+```
+$ systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=512 timeout -s KILL 900 \
+    node scripts/kimi-census.mjs > ../logs/live-base.out 2> ../logs/live-base.err    # at cac43009
+$ ... route applied, worktree committed at 385229c; same command > ../logs/live-after.out
+BEFORE: live-base  exit=0 wall_ms=30 err_bytes=0 lines=12 sha256=69ae20bee43a78c990e53817db8828edd2a01fb2ebea1dcef5f7531e7ebd8bba
+AFTER:  live-after exit=0 wall_ms=49 err_bytes=0 lines=12 sha256=69ae20bee43a78c990e53817db8828edd2a01fb2ebea1dcef5f7531e7ebd8bba
+diff live-base.out live-after.out -> IDENTICAL_LIVE_STDOUT   (stdout byte-identical, exit code identical)
+```
+The live path is unchanged by construction (it never calls `runGate`); the measurement confirms it.
+
+E5 TOPOLOGY — execs of the routed selftest, traced (development check, not the frozen counter)
+```
+$ systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=512 timeout -s KILL 900 \
+    strace -f -qq -s 300 -e trace=execve -o ../logs/exec-route2.txt node scripts/kimi-census.mjs --selftest
+strace2 exit=0   KIMI_CENSUS_SELFTEST: 54/54 pass   VERDICT: PASS
+cap-run-execs=53  bwrap-execs=53  gate-execs=266 (=53 cap-run + 53 systemd-run + 53 env + 53 bwrap + 53 child + 1 outer)
+```
+The runner argv each child descends from, verbatim from `logs/exec-route2.txt` line 3 (truncated at 560 cols):
+```
+execve("/usr/bin/systemd-run", ["systemd-run", "--user", "--scope", "--quiet", "--unit=cap-run-2217773-…",
+ "-p", "MemoryMax=512M", "-p", "MemorySwapMax=0", "-p", "TasksMax=64", "--", "env", "-i", "PATH=/usr/bin",
+ "bwrap", "--ro-bind", "/", "/", … "--tmpfs", "/run", "--bind", "<lane>", "<lane>", "--bind",
+ "/tmp/kumitate-kimi-census-selftest-W9yzDZ", "/tmp/kumitate-kimi-census-selftest-W9yzDZ", "--chdir", "<lane>", …
+```
+(line 4 adds `--unshare-pid --die-with-parent --new-session --clearenv …`; the only fixture bind is the one
+`mkdtemp` root). Every one of the 53 gate children is executed inside a bwrap under a cap-run process; the
+selftest's own direct node children are only `scripts/cap-run.mjs` (plus the pre-existing `mkfifo` coreutil).
+
+E6 CHILD ENV — probe with a canary planted in the parent (`/fast/.../envprobe.mjs`, scratch only)
+```
+$ KIMI_CANARY=planted-r47 node ../envprobe.mjs
+probe status=0 signal=null verdict=CAP_RUN: EXIT code=0 unit=cap-run-2086714-1792749526271-34c25e
+{"env":["HOME","PATH","PWD"],"canary":null,"home":"/home/vgpnk","pwd":"/fast/scratch/hyaku/kumitate-r47/seats/w1-ExecRouteKimi/lane"}
+parent KIMI_CANARY=planted-r47
+```
+The child's environment is exactly HOME/PATH/PWD; the canary does not cross.
+
+E7 ARCHIVE — the counter runs gates from a `git archive`; same here with a canary in the parent
+```
+$ git -C lane archive HEAD | tar -x -C archive
+$ KIMI_CANARY=planted-r47 systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=512 \
+    timeout -s KILL 900 node archive/scripts/kimi-census.mjs --selftest
+archive-selftest exit=0 wall_ms=5405 err_bytes=0
+KIMI_CENSUS_SELFTEST: 54/54 pass   VERDICT: PASS
+```
+`scripts/cap-spawn.mjs` and `scripts/cap-run.mjs` are both in the archive (committed at the freeze).
+
+E8 COMMIT + PATCH
+```
+$ git -C lane diff --stat cac43009b22232c1ae8efdab4f2789516c1fcc6f..HEAD
+ scripts/kimi-census.mjs | 125 ++++++++++++++++++++-----------------   1 file changed, 72 insertions(+), 53 deletions(-)
+$ git -C lane rev-parse HEAD                      -> 385229c6317a1519f53267fc2250bddf6ad45ce0
+$ git -C lane format-patch --stdout cac43009b22232c1ae8efdab4f2789516c1fcc6f..HEAD \
+    > .ufo/waves/round-47/build/ExecRouteKimi.patch
+$ wc -c < .../build/ExecRouteKimi.patch           -> 24844    (1 file, 33 hunks)
+$ sha256sum .../build/ExecRouteKimi.patch         -> f2b05fd2157b396d8bb29dd882bf26a9808c557be278c35bef3dbdeae8582c54
+```
+No other file in the lane was touched by this seat; no other site, pin, or document was edited.
+
+E9 PATCH REPLAY — patch applied to a clean checkout of the freeze commit (scratch clone `verify`)
+```
+$ git -C verify checkout --detach cac43009b22232c1ae8efdab4f2789516c1fcc6f
+$ git -C verify apply --check .../build/ExecRouteKimi.patch   -> PATCH_APPLIES_CLEAN
+$ git -C verify apply .../build/ExecRouteKimi.patch           -> scripts/kimi-census.mjs | 125 ++++---  72 insertions(+), 53 deletions(-)
+$ git -C verify diff --quiet 385229c6317a1519f53267fc2250bddf6ad45ce0 -> WORKTREE_EQUALS_ROUTED_COMMIT
+```
+
+E10 HOUSEKEEPING
+```
+$ pgrep -fa 'kumitate-r47/seats/w1-ExecRouteKimi' | wc -l -> 0   (no leftover process, after every run)
+$ df -h /fast -> /dev/nvme1n1p2 804G 688G 116G 86% /fast
+```
+No tool installed or updated. The frozen counter `caproute-probe.mjs` was NOT run (data rule): the L1
+scores the after-state. No subagent was spawned; no lane commit, no push, no jj.
+
+## Risks / notes
+
+- Runtime cost of the route: +~2.3-2.7 s per `--selftest` (53 children x scope+bwrap). No budget change.
+- The route inherits the freeze commit's prerequisites by contract: a live user systemd manager
+  (`systemd-run --user --scope`) and `/usr/bin/bwrap` 0.13.1. Both were present and exercised 53 times per run.
+- `HOME` is passed because the gate computes `DEFAULT_ROOT` from `os.homedir()` at load; dropping it would
+  fall back to the passwd entry. No other variable is read by the child (verified: no `process.env` match).
+- The two FIFO arms keep their 10 s budget through `capSpawnSync({ timeout: 10_000 })`; a BUDGET there maps
+  to the same `status: null / signal: 'SIGTERM' / ETIMEDOUT` shape the arms were written against, and neither
+  arm budgets in practice (54/54 PASS, three runs).
+
+## Full diff (`git diff cac43009b22232c1ae8efdab4f2789516c1fcc6f..385229c6317a1519f53267fc2250bddf6ad45ce0`)
+
+```diff
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..e0271f1 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -96,12 +96,20 @@
+  * ROUND 42 (2026-10-22): `locks/` is the K3 session-lock state root; member
+  * total 52 → 53 and `FROZEN.K3` moves 9 → 10. The census stats `locks/` only;
+  * it never enumerates `locks/sessions/` or reads lock-file contents.
++ * ROUND 47 (2026-10-23): the selftest's gate children are routed through the
++ * bounded runner `scripts/cap-run.mjs` (contract `kumitate-cap-run-v2`) via
++ * `scripts/cap-spawn.mjs` `capSpawnSync`: one `--bind` of this suite's own
++ * `mkdtemp` root (the runner's `/tmp` is a fresh tmpfs), an explicit child
++ * environment, the call's timeout as the runner budget, and the helper's
++ * default 512 MiB / 64-task caps. Command, arguments, cwd, stdout, exit status
++ * and stderr semantics are unchanged; the live verify path still spawns nothing.
+  */
+ import {
+   lstatSync, readdirSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync,
+   rmSync, symlinkSync, realpathSync,
+ } from 'node:fs';
+ import { spawnSync } from 'node:child_process';
++import { capSpawnSync } from './cap-spawn.mjs';
+ import { join, dirname, resolve } from 'node:path';
+ import { tmpdir, homedir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+@@ -484,8 +492,16 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+   }
+ }
+ 
+-function runGate(args, timeout = 30_000) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
++/**
++ * One gate child under the bounded runner (`kumitate-cap-run-v2`). `bind` is the fixture root the
++ * child must see (the runner's `/tmp` is a fresh tmpfs); `env` is the child's complete environment
++ * — `HOME` is the one key the gate reads (via `os.homedir()`, for `DEFAULT_ROOT`), and nothing
++ * else of the caller's reaches it.
++ */
++function runGate(args, timeout = 30_000, bind = []) {
++  const r = capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++    env: { HOME: process.env.HOME }, bind, timeout,
++  });
+   return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+ }
+ 
+@@ -500,6 +516,9 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-kimi-census-selftest-'));
++  // Every fixture lives under this mkdtemp root; the runner's sandbox gets that root — and only
++  // that root — bound read-write, so each gate child resolves its `--root` as it does unsandboxed.
++  const runGateIn = (args, timeout = 30_000) => runGate(args, timeout, [tmp]);
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+@@ -536,7 +555,7 @@ function selfTest() {
+     // 1. green baseline — the frozen 53, exact verdict line
+     const green = mk('green');
+     check('green fixture → CLEAN exit 0, members=53 checked=53 chain=3 info=4', () => {
+-      const r = runGate(['--root', green]);
++      const r = runGateIn(['--root', green]);
+       return {
+         ok: r.status === 0 && kinds(r).length === 0
+           && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=53 checked=53 chain=3 info=4)',
+@@ -546,7 +565,7 @@ function selfTest() {
+ 
+     // 2. per-family frozen counts: round-42 K3 adds locks/ to the prior 9
+     check('--json families read 4/27/10/9/3 and members=53', () => {
+-      const r = runGate(['--root', green, '--json']);
++      const r = runGateIn(['--root', green, '--json']);
+       const j = JSON.parse(r.stdout);
+       const f = j.totals.families;
+       const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 53
+@@ -560,8 +579,8 @@ function selfTest() {
+     });
+ 
+     check('--json totals agree with the text verdict', () => {
+-      const j = JSON.parse(runGate(['--root', green, '--json']).stdout);
+-      const t = runGate(['--root', green]);
++      const j = JSON.parse(runGateIn(['--root', green, '--json']).stdout);
++      const t = runGateIn(['--root', green]);
+       return {
+         ok: j.totals.members === 53 && lastLine(t).includes(`members=${j.totals.members}`)
+           && lastLine(t).includes(`checked=${j.totals.checked}`) && j.verdict === 'CLEAN',
+@@ -573,7 +592,7 @@ function selfTest() {
+     const drop = mk('drop-file');
+     rmSync(join(drop, 'bin/fd'));
+     check('MEMBER_MISSING: a deleted member file (bin/fd)', () => {
+-      const r = runGate(['--root', drop]);
++      const r = runGateIn(['--root', drop]);
+       return drift(r, 'MEMBER_MISSING', 52);
+     });
+ 
+@@ -581,24 +600,24 @@ function selfTest() {
+     rmSync(join(kindFlip, 'session_index.jsonl'));
+     mkdirSync(join(kindFlip, 'session_index.jsonl'));
+     check('MEMBER_MISSING: a member with the wrong kind (file → dir)', () => {
+-      const r = runGate(['--root', kindFlip]);
++      const r = runGateIn(['--root', kindFlip]);
+       return { ...drift(r, 'MEMBER_MISSING'), ok: drift(r, 'MEMBER_MISSING').ok && r.stdout.includes('declared file, live dir') };
+     });
+ 
+     const dropDir = mk('drop-dir');
+     rmSync(join(dropDir, 'telemetry'), { recursive: true });
+-    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGate(['--root', dropDir]), 'MEMBER_MISSING', 52));
++    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGateIn(['--root', dropDir]), 'MEMBER_MISSING', 52));
+ 
+     const dropBucket = mk('drop-bucket');
+     rmSync(join(dropBucket, 'skills', 'skills-lane-04'), { recursive: true });
+     check('MEMBER_MISSING: an enumerable dir lost a declared child (skills/ 6 of 7)', () => {
+-      const r = runGate(['--root', dropBucket]);
++      const r = runGateIn(['--root', dropBucket]);
+       return { ...drift(r, 'MEMBER_MISSING', 52), ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes('6 children, 7 declared') };
+     });
+     const extraSkill = mk('extra-skill');
+     mkdirSync(join(extraSkill, 'skills', 'skills-lane-07'));
+     check('UNLISTED: an 8th child under skills/', () => {
+-      const r = runGate(['--root', extraSkill]);
++      const r = runGateIn(['--root', extraSkill]);
+       return {
+         ...drift(r, 'UNLISTED', 54),
+         ok: drift(r, 'UNLISTED', 54).ok && r.stdout.includes('skills/') && r.stdout.includes('8 children, 7 declared'),
+@@ -607,52 +626,52 @@ function selfTest() {
+ 
+     const noChain = mk('no-chain');
+     for (const n of readdirSync(noChain)) if (RE_CHAIN.test(n)) rmSync(join(noChain, n));
+-    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGate(['--root', noChain]), 'MEMBER_MISSING', 52));
++    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGateIn(['--root', noChain]), 'MEMBER_MISSING', 52));
+ 
+     // 4. UNLISTED arms
+     const newLane = mk('new-lane');
+     writeFileSync(join(newLane, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
+     check('UNLISTED: a 19th lane file under agents/secondary/', () => {
+-      const r = runGate(['--root', newLane]);
++      const r = runGateIn(['--root', newLane]);
+       return { ...drift(r, 'UNLISTED', 54), ok: drift(r, 'UNLISTED', 54).ok && r.stdout.includes('19 children, 18 declared') };
+     });
+ 
+     const newPlugin = mk('new-plugin');
+     writeFileSync(join(newPlugin, 'plugins/rogue.json'), '{}\n');
+     check('UNLISTED: an undeclared child directly under plugins/', () => {
+-      const r = runGate(['--root', newPlugin]);
++      const r = runGateIn(['--root', newPlugin]);
+       return { ...drift(r, 'UNLISTED'), ok: drift(r, 'UNLISTED').ok && r.stdout.includes('plugins/rogue.json') };
+     });
+ 
+     const newManaged = mk('new-managed');
+     mkdirSync(join(newManaged, 'plugins/managed/other-plugin'));
+     check('UNLISTED: an undeclared child under plugins/managed/', () => {
+-      const r = runGate(['--root', newManaged]);
++      const r = runGateIn(['--root', newManaged]);
+       return { ...drift(r, 'UNLISTED'), ok: drift(r, 'UNLISTED').ok && r.stdout.includes('plugins/managed/other-plugin') };
+     });
+ 
+     const dropManaged = mk('drop-managed');
+     rmSync(join(dropManaged, 'plugins/managed/kimi-webbridge'), { recursive: true });
+-    check('MEMBER_MISSING: the managed webbridge tree removed', () => drift(runGate(['--root', dropManaged]), 'MEMBER_MISSING'));
++    check('MEMBER_MISSING: the managed webbridge tree removed', () => drift(runGateIn(['--root', dropManaged]), 'MEMBER_MISSING'));
+ 
+     // 5. SHAPE_DRIFT arms
+     const looseDir = mk('loose-dir');
+     chmodSync(join(looseDir, 'credentials'), 0o500);
+     check('SHAPE_DRIFT: credentials/ below its 0700 floor', () => {
+-      const r = runGate(['--root', looseDir]);
++      const r = runGateIn(['--root', looseDir]);
+       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0500 lacks the 0700 floor') };
+     });
+ 
+     const looseLocks = mk('locks-mode-floor');
+     chmodSync(join(looseLocks, 'locks'), 0o500);
+     check('SHAPE_DRIFT: locks/ below its 0700 floor', () => {
+-      const r = runGate(['--root', looseLocks]);
++      const r = runGateIn(['--root', looseLocks]);
+       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('locks mode 0500 lacks the 0700 floor') };
+     });
+     const overpermissiveLocks = mk('locks-mode-overpermissive');
+     chmodSync(join(overpermissiveLocks, 'locks'), 0o777);
+     check('SHAPE_DRIFT: locks/ rejects group and other bits beyond its 0700 floor', () => {
+-      const r = runGate(['--root', overpermissiveLocks]);
++      const r = runGateIn(['--root', overpermissiveLocks]);
+       return {
+         ...drift(r, 'SHAPE_DRIFT'),
+         ok: drift(r, 'SHAPE_DRIFT').ok
+@@ -672,7 +691,7 @@ function selfTest() {
+     const looseFile = mk('loose-file');
+     chmodSync(join(looseFile, 'server.token'), 0o400);
+     check('SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)', () => {
+-      const r = runGate(['--root', looseFile]);
++      const r = runGateIn(['--root', looseFile]);
+       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=52') };
+     });
+ 
+@@ -680,7 +699,7 @@ function selfTest() {
+     rmSync(join(secretKind, 'credentials'), { recursive: true });
+     writeFileSync(join(secretKind, 'credentials'), 'not a dir\n');
+     check('SHAPE_DRIFT: credentials/ replaced by a file (kind pin)', () => {
+-      const r = runGate(['--root', secretKind]);
++      const r = runGateIn(['--root', secretKind]);
+       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('a directory') };
+     });
+ 
+@@ -688,13 +707,13 @@ function selfTest() {
+     rmSync(join(tokenDir, 'server.token'));
+     mkdirSync(join(tokenDir, 'server.token'));
+     check('SHAPE_DRIFT: server.token replaced by a directory (leaf pin)', () => {
+-      const r = runGate(['--root', tokenDir]);
++      const r = runGateIn(['--root', tokenDir]);
+       return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('non-directory leaf') };
+     });
+ 
+     // 6. secrecy: the gate must stat and never read
+     check('secrecy: fixtures are shape-clean with a 0600 leaf token (mode floor passes)', () => {
+-      const r = runGate(['--root', green]);
++      const r = runGateIn(['--root', green]);
+       return clean(r, 'KIMI_CENSUS: CLEAN');
+     });
+ 
+@@ -703,7 +722,7 @@ function selfTest() {
+     const mkfifo = spawnSync('mkfifo', ['-m', '600', join(fifo, 'server.token')], { encoding: 'utf8' });
+     check('secrecy: server.token is a FIFO → still CLEAN, no read (would block forever)', () => {
+       if (mkfifo.status !== 0) return { ok: false, detail: `mkfifo unavailable (status=${mkfifo.status} ${mkfifo.error?.code ?? ''}) — the anti-read arm cannot be built here` };
+-      const r = runGate(['--root', fifo], 10_000);
++      const r = runGateIn(['--root', fifo], 10_000);
+       return {
+         ok: r.status === 0 && lastLine(r).startsWith('KIMI_CENSUS: CLEAN') && r.signal === null,
+         detail: `exit=${r.status} signal=${r.signal} last=${lastLine(r).slice(0, 70)}`,
+@@ -714,7 +733,7 @@ function selfTest() {
+     rmSync(join(dangling, 'server.token'));
+     symlinkSync('/nonexistent-secret-target', join(dangling, 'server.token'));
+     check('secrecy: a dangling symlink token is never followed (lstat-only → CLEAN)', () => {
+-      const r = runGate(['--root', dangling]);
++      const r = runGateIn(['--root', dangling]);
+       return clean(r, 'KIMI_CENSUS: CLEAN');
+     });
+ 
+@@ -722,7 +741,7 @@ function selfTest() {
+     const canaryFile = 'canary-token.json';
+     writeFileSync(join(canary, 'credentials', canaryFile), '{}\n', { mode: 0o600 });
+     check('secrecy: a canary inside credentials/ is never listed (no readdir, no read)', () => {
+-      const r = runGate(['--root', canary, '--json']);
++      const r = runGateIn(['--root', canary, '--json']);
+       const leak = r.stdout.includes(canaryFile) || r.stderr.includes(canaryFile);
+       return {
+         ok: r.status === 0 && !leak && lstatKind(join(canary, 'credentials', canaryFile)) === 'file',
+@@ -734,12 +753,12 @@ function selfTest() {
+     const moreChain = mk('more-chain');
+     for (let i = 0; i < 3; i += 1) writeFileSync(join(moreChain, `config.toml.extra-${i}.bak`), 'x\n');
+     check('info: a growing drift chain is reported (chain=6) and never gated → CLEAN', () => {
+-      const r = runGate(['--root', moreChain]);
++      const r = runGateIn(['--root', moreChain]);
+       return { ...clean(r, 'chain=6 info=4'), ok: clean(r, 'chain=6 info=4').ok && r.stdout.includes('generations=6') };
+     });
+ 
+     check('root enum: drift-chain generations are never double-reported as root strays', () => {
+-      const r = runGate(['--root', moreChain, '--json']);
++      const r = runGateIn(['--root', moreChain, '--json']);
+       const j = JSON.parse(r.stdout);
+       const chainNamed = j.rootStrays.some((n) => n.endsWith('.bak'));
+       return {
+@@ -752,8 +771,8 @@ function selfTest() {
+     const presentLocks = mk('root-locks-present');
+     mkdirSync(join(presentLocks, 'locks', 'sessions'));
+     check('K3 locks/ present => CLEAN and counted as one declared root directory', () => {
+-      const r = runGate(['--root', presentLocks]);
+-      const j = JSON.parse(runGate(['--root', presentLocks, '--json']).stdout);
++      const r = runGateIn(['--root', presentLocks]);
++      const j = JSON.parse(runGateIn(['--root', presentLocks, '--json']).stdout);
+       const member = j.members.find((m) => m.id === 'locks/');
+       return {
+         ok: r.status === 0 && lastLine(r).includes('members=53 checked=53')
+@@ -768,7 +787,7 @@ function selfTest() {
+     const absentLocks = mk('root-locks-absent');
+     rmSync(join(absentLocks, 'locks'), { recursive: true });
+     check('MEMBER_MISSING: absent K3 locks/ is named, not treated as an unlisted root child', () => {
+-      const r = runGate(['--root', absentLocks]);
++      const r = runGateIn(['--root', absentLocks]);
+       return {
+         ok: r.status === 1 && kinds(r).includes('MEMBER_MISSING')
+           && r.stdout.includes('locks is absent under') && r.stdout.includes('members=52 checked=52')
+@@ -781,7 +800,7 @@ function selfTest() {
+     rmSync(join(fileLocks, 'locks'), { recursive: true });
+     writeFileSync(join(fileLocks, 'locks'), 'not a directory\n');
+     check('SHAPE_DRIFT: K3 locks/ replaced by a file is named', () => {
+-      const r = runGate(['--root', fileLocks]);
++      const r = runGateIn(['--root', fileLocks]);
+       const d = drift(r, 'SHAPE_DRIFT');
+       return {
+         ...d,
+@@ -795,8 +814,8 @@ function selfTest() {
+     const stray = mk('root-stray');
+     writeFileSync(join(stray, 'notes.txt'), 'x\n');
+     check('UNLISTED: a planted undeclared root child → exit 1, and it is not counted as a member', () => {
+-      const r = runGate(['--root', stray]);
+-      const j = JSON.parse(runGate(['--root', stray, '--json']).stdout);
++      const r = runGateIn(['--root', stray]);
++      const j = JSON.parse(runGateIn(['--root', stray, '--json']).stdout);
+       return {
+         ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('notes.txt sits at the root')
+           && r.stdout.includes('not declared by the frozen K1–K5 set')
+@@ -808,8 +827,8 @@ function selfTest() {
+     });
+     const presentMcp = mk('root-mcp-json-present');
+     check('K1 mcp.json present => CLEAN, shape-only member (mode floor 0400)', () => {
+-      const r = runGate(['--root', presentMcp]);
+-      const j = JSON.parse(runGate(['--root', presentMcp, '--json']).stdout);
++      const r = runGateIn(['--root', presentMcp]);
++      const j = JSON.parse(runGateIn(['--root', presentMcp, '--json']).stdout);
+       const member = j.members.find((m) => m.id === 'mcp.json');
+       return {
+         ok: r.status === 0 && kinds(r).length === 0 && j.verdict === 'CLEAN'
+@@ -820,7 +839,7 @@ function selfTest() {
+     const absentMcp = mk('root-mcp-json-absent');
+     rmSync(join(absentMcp, 'mcp.json'));
+     check('MEMBER_MISSING: absent root mcp.json is a declared K1 member', () => {
+-      const r = runGate(['--root', absentMcp]);
++      const r = runGateIn(['--root', absentMcp]);
+       return {
+         ok: r.status === 1 && kinds(r).includes('MEMBER_MISSING')
+           && r.stdout.includes('mcp.json is absent') && r.stdout.includes('members=52 checked=52'),
+@@ -833,7 +852,7 @@ function selfTest() {
+     const mkfifoMcp = spawnSync('mkfifo', ['-m', '400', join(fifoMcp, 'mcp.json')], { encoding: 'utf8' });
+     check('K1 mcp.json FIFO => CLEAN without opening it (a read would block)', () => {
+       if (mkfifoMcp.status !== 0) return { ok: false, detail: `mkfifo unavailable (status=${mkfifoMcp.status} ${mkfifoMcp.error?.code ?? ''}) — the anti-read arm cannot be built here` };
+-      const r = runGate(['--root', fifoMcp], 10_000);
++      const r = runGateIn(['--root', fifoMcp], 10_000);
+       return {
+         ok: r.status === 0 && r.signal === null && r.error === undefined
+           && lastLine(r).startsWith('KIMI_CENSUS: CLEAN') && kinds(r).length === 0,
+@@ -844,7 +863,7 @@ function selfTest() {
+     rmSync(join(dirMcp, 'mcp.json'));
+     mkdirSync(join(dirMcp, 'mcp.json'));
+     check('SHAPE_DRIFT: root mcp.json replaced by a directory (non-directory leaf pin)', () => {
+-      const r = runGate(['--root', dirMcp]);
++      const r = runGateIn(['--root', dirMcp]);
+       const d = drift(r, 'SHAPE_DRIFT');
+       return {
+         ...d,
+@@ -856,7 +875,7 @@ function selfTest() {
+     check('UNLISTED: a hidden root child is gated too (the root arm reads the raw listing)', () => {
+       const hidden = mk('root-hidden-stray');
+       writeFileSync(join(hidden, '.stray'), 'x\n');
+-      const r = runGate(['--root', hidden]);
++      const r = runGateIn(['--root', hidden]);
+       return {
+         ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('.stray'),
+         detail: `exit=${r.status} kinds=[${kinds(r).join(',')}]`,
+@@ -865,7 +884,7 @@ function selfTest() {
+     });
+ 
+     check('the removed --root-enum flag is refused — root enumeration has no escape hatch (exit 64)', () => {
+-      const r = runGate(['--root', green, '--root-enum']);
++      const r = runGateIn(['--root', green, '--root-enum']);
+       return {
+         ok: r.status === 64 && r.stderr.includes('unsupported argument: --root-enum') && r.stdout === '',
+         detail: `exit=${r.status} stderr=${r.stderr.split('\n')[0].slice(0, 60)}`,
+@@ -876,7 +895,7 @@ function selfTest() {
+       const both = mk('root-and-count');
+       writeFileSync(join(both, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
+       writeFileSync(join(both, 'scratchpad.txt'), 'x\n');
+-      const r = runGate(['--root', both]);
++      const r = runGateIn(['--root', both]);
+       const listed = r.stdout.split('\n').filter((l) => l.startsWith('CENSUS  error  UNLISTED')).map((l) => l.split(/\s+/)[3]);
+       return {
+         ok: r.status === 1 && listed.includes('scratchpad.txt') && listed.some((x) => x.startsWith('agents/secondary'))
+@@ -891,7 +910,7 @@ function selfTest() {
+       const k5 = mk(`k5-drop-${name}`);
+       rmSync(join(k5, name));
+       check(`MEMBER_MISSING: the K5 member ${name} removed (53 → 52)`, () => {
+-        const r = runGate(['--root', k5]);
++        const r = runGateIn(['--root', k5]);
+         return {
+           ...drift(r, 'MEMBER_MISSING', 52),
+           ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes(`${name} is absent under`)
+@@ -906,7 +925,7 @@ function selfTest() {
+     rmSync(join(k5Kind, 'workspaces.json'));
+     mkdirSync(join(k5Kind, 'workspaces.json'));
+     check('MEMBER_MISSING: workspaces.json declared file, live dir (K5 kind pin)', () => {
+-      const r = runGate(['--root', k5Kind]);
++      const r = runGateIn(['--root', k5Kind]);
+       return {
+         ...drift(r, 'MEMBER_MISSING', 52),
+         ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
+@@ -919,13 +938,13 @@ function selfTest() {
+       const edited = mk('k5-content');
+       writeFileSync(join(edited, 'workspaces.json'), '{"wd_changed_000000000000":"/tmp/changed"}\n');
+       writeFileSync(join(edited, 'rc-qrcode.png'), 'not-a-png-at-all\n');
+-      const r = runGate(['--root', edited]);
++      const r = runGateIn(['--root', edited]);
+       return { ...clean(r, 'members=53'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
+     });
+ 
+     // 8. fail-closed arm
+     check('KIMI_ROOT_MISSING: --root /nonexistent → exit 2, no scored zero', () => {
+-      const r = runGate(['--root', '/nonexistent']);
++      const r = runGateIn(['--root', '/nonexistent']);
+       return {
+         ok: r.status === 2 && lastLine(r).startsWith('KIMI_CENSUS: FAIL-CLOSED (KIMI_ROOT_MISSING')
+           && r.stderr.includes('KIMI_ROOT_MISSING') && !lastLine(r).includes('members='),
+@@ -937,7 +956,7 @@ function selfTest() {
+     const unreadable = mk('root-unreadable');
+     chmodSync(unreadable, 0o000);
+     check('KIMI_ROOT_MISSING: an unreadable root → exit 2 (fail-closed, never a zero)', () => {
+-      const r = runGate(['--root', unreadable]);
++      const r = runGateIn(['--root', unreadable]);
+       return {
+         ok: r.status === 2 && lastLine(r).includes('FAIL-CLOSED (KIMI_ROOT_MISSING') && r.stdout.includes('unreadable'),
+         detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)}`,
+@@ -947,7 +966,7 @@ function selfTest() {
+     chmodSync(unreadable, 0o700);
+ 
+     check('--json fail-closed carries the same token and no totals', () => {
+-      const r = runGate(['--root', '/nonexistent', '--json']);
++      const r = runGateIn(['--root', '/nonexistent', '--json']);
+       const j = JSON.parse(r.stdout);
+       return {
+         ok: r.status === 2 && j.verdict === 'FAIL-CLOSED' && j.fatal.kind === 'KIMI_ROOT_MISSING' && j.totals.members === 0,
+@@ -958,23 +977,23 @@ function selfTest() {
+ 
+     // 9. usage arms
+     check('unknown flag → usage refusal on stderr, exit 64', () => {
+-      const r = runGate(['--bogus']);
++      const r = runGateIn(['--bogus']);
+       return { ok: r.status === 64 && r.stderr.includes('usage:') && r.stdout === '', detail: `exit=${r.status} stdout=${JSON.stringify(r.stdout.slice(0, 20))}` };
+     });
+     check('--root without a value → usage exit 64', () => {
+-      const r = runGate(['--root']);
++      const r = runGateIn(['--root']);
+       return { ok: r.status === 64 && r.stderr.includes('needs a value'), detail: `exit=${r.status}` };
+     });
+     check('unknown positional verb → usage exit 64', () => {
+-      const r = runGate(['census']);
++      const r = runGateIn(['census']);
+       return { ok: r.status === 64, detail: `exit=${r.status}` };
+     });
+     check('the explicit `verify` verb is accepted', () => {
+-      const r = runGate(['verify', '--root', green]);
++      const r = runGateIn(['verify', '--root', green]);
+       return clean(r, 'KIMI_CENSUS: CLEAN');
+     });
+     check('-h prints usage with the contract id, exit 0', () => {
+-      const r = runGate(['-h']);
++      const r = runGateIn(['-h']);
+       return { ok: r.status === 0 && r.stdout.includes(`contract id: ${CONTRACT}`), detail: `exit=${r.status}` };
+     });
+ 
+```

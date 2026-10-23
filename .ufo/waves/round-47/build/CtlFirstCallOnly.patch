@@ -1,0 +1,168 @@
+From f860fc8956902c0f83d4a863250ff2ce7391962d Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 06:59:07 -0300
+Subject: [PATCH] control: route only first invocation at five C1 child sites
+
+---
+ scripts/anchor-truth.mjs  |  9 ++++++++-
+ scripts/claims-check.mjs  | 15 ++++++++++++---
+ scripts/kimi-census.mjs   | 11 ++++++++++-
+ scripts/sources-check.mjs | 18 ++++++++++++++++--
+ 4 files changed, 46 insertions(+), 7 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..ab26435 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -91,6 +91,9 @@ import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync,
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
++
++let toolCalls = 0;
+ 
+ const CONTRACT = 'kumitate-anchor-truth-v1';
+ const TOOL_FILE = fileURLToPath(import.meta.url);
+@@ -799,7 +802,11 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
++    const r = ++toolCalls === 1
++      ? capSpawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {
++        encoding: 'utf8', env: gitEnv(), bind: [tmp],
++      })
++      : spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+   };
+diff --git a/scripts/claims-check.mjs b/scripts/claims-check.mjs
+index d5fe701..bd871c4 100755
+--- a/scripts/claims-check.mjs
++++ b/scripts/claims-check.mjs
+@@ -80,6 +80,10 @@ import { spawnSync } from 'node:child_process';
+ import { dirname, join, resolve, basename as pathBasename } from 'node:path';
+ import { homedir, tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
++
++let runClaimsCalls = 0;
++let selftestRoot;
+ 
+ const CONTRACT = 'kumitate-claims-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -876,9 +880,13 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
+ }
+ 
+ function runClaims(args, env) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
+-    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
+-  });
++  const r = ++runClaimsCalls === 1
++    ? capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++      encoding: 'utf8', timeout: 60_000, env: gitEnv(env), bind: [selftestRoot],
++    })
++    : spawnSync(process.execPath, [TOOL_FILE, ...args], {
++      encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
++    });
+   return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
+ }
+ 
+@@ -895,6 +903,7 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-claims-selftest-'));
++  selftestRoot = tmp;
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..3c5d4b3 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -105,6 +105,10 @@ import { spawnSync } from 'node:child_process';
+ import { join, dirname, resolve } from 'node:path';
+ import { tmpdir, homedir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
++
++let runGateCalls = 0;
++let selftestRoot;
+ 
+ const CONTRACT = 'kumitate-kimi-census-v1';
+ const DEFAULT_ROOT = join(homedir(), '.kimi-code');
+@@ -485,7 +489,11 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+ }
+ 
+ function runGate(args, timeout = 30_000) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
++  const r = ++runGateCalls === 1
++    ? capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++      encoding: 'utf8', timeout, env: { PATH: '/usr/bin' }, bind: [selftestRoot],
++    })
++    : spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
+   return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+ }
+ 
+@@ -500,6 +508,7 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-kimi-census-selftest-'));
++  selftestRoot = tmp;
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+diff --git a/scripts/sources-check.mjs b/scripts/sources-check.mjs
+index 6b57424..4985d9e 100755
+--- a/scripts/sources-check.mjs
++++ b/scripts/sources-check.mjs
+@@ -51,6 +51,11 @@ import { spawnSync } from 'node:child_process';
+ import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+ import { tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
++
++let runToolCalls = 0;
++let parityCalls = 0;
++let selftestRoot;
+ 
+ const CONTRACT = 'kumitate-sources-v1';
+ const TOOL_FILE = fileURLToPath(import.meta.url);
+@@ -546,7 +551,11 @@ function makeFixture(parent, name, {
+ }
+ 
+ function runTool(args) {
+-  const result = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 15_000 });
++  const result = ++runToolCalls === 1
++    ? capSpawnSync(process.execPath, [TOOL_FILE, ...args], {
++      encoding: 'utf8', timeout: 15_000, env: { PATH: '/usr/bin' }, bind: [selftestRoot],
++    })
++    : spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 15_000 });
+   return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '', error: result.error };
+ }
+ 
+@@ -563,6 +572,7 @@ function selfTest() {
+   const observed = new Set();
+   const failClosedSeen = new Set();
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-sources-check-'));
++  selftestRoot = tmp;
+   const check = (label, fn) => {
+     try {
+       const result = fn();
+@@ -856,7 +866,11 @@ function selfTest() {
+         'duplicates=$(awk -F"|" \'/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}\' "$file" | sort | uniq -d | wc -l) || exit 12',
+         'printf "%s %s %s\\n" "$rows" "$malformed" "$(printf "%s" "$duplicates" | tr -d "[:space:]")"',
+       ].join('\n');
+-      const parity = spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], { encoding: 'utf8', timeout: 10_000 });
++      const parity = ++parityCalls === 1
++        ? capSpawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], {
++          encoding: 'utf8', timeout: 10_000, env: { PATH: '/usr/bin' }, bind: [tmp],
++        })
++        : spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], { encoding: 'utf8', timeout: 10_000 });
+       if (parity.error) return { ok: false, detail: `spawn sh: ${parity.error.message}` };
+       if (parity.status === 0 && parity.stdout.trim() === 'SKIP') return { skip: true, detail: 'awk is unavailable' };
+       if (parity.status !== 0) return { ok: false, detail: `sh exit=${parity.status} stderr=${parity.stderr.trim()}` };
+-- 
+2.56.0
+

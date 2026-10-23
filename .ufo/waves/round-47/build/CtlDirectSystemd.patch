@@ -1,0 +1,179 @@
+From 1770be61610f7056bc607e337cc4c54f135f2ea2 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@ctl>
+Date: Fri, 23 Oct 2026 06:59:47 -0300
+Subject: [PATCH] CtlDirectSystemd: inline bounded scope and bwrap without
+ cap-run
+
+---
+ scripts/anchor-truth.mjs  | 15 ++++++++++++++-
+ scripts/claims-check.mjs  | 24 +++++++++++++++++-------
+ scripts/kimi-census.mjs   | 20 +++++++++++++++-----
+ scripts/sources-check.mjs | 32 ++++++++++++++++++++++++++------
+ 4 files changed, 72 insertions(+), 19 deletions(-)
+
+diff --git a/scripts/anchor-truth.mjs b/scripts/anchor-truth.mjs
+index a0747c3..02a91b8 100755
+--- a/scripts/anchor-truth.mjs
++++ b/scripts/anchor-truth.mjs
+@@ -799,7 +799,20 @@ function selfTest() {
+     return d;
+   };
+   const tool = (self, args) => {
+-    const r = spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], { encoding: 'utf8', env: gitEnv() });
++    const cwd = process.cwd();
++    const cmd = realpathSync(process.execPath);
++    const setenv = Object.entries({ ...gitEnv(), PATH: `${dirname(cmd)}:/usr/bin` })
++      .filter(([, value]) => value !== undefined).flatMap(([key, value]) => ['--setenv', key, value]);
++    const argv = ['--user', '--scope', '--quiet',
++      '-p', 'MemoryMax=512M', '-p', 'MemorySwapMax=0', '-p', 'TasksMax=64', '--',
++      'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++      '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--bind', tmp, tmp, '--chdir', cwd,
++      '--unshare-pid', '--die-with-parent', '--new-session', '--clearenv', ...setenv,
++      '--argv0', process.execPath, cmd, TOOL_FILE, '--self', self, ...args];
++    const r = spawnSync('/usr/bin/systemd-run', argv, {
++      encoding: 'utf8', timeout: 60_000, killSignal: 'SIGKILL',
++      env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
++    });
+     const out = r.stdout ?? '';
+     return { status: r.status, out, verdict: out.trim().split('\n').pop() ?? '' };
+   };
+diff --git a/scripts/claims-check.mjs b/scripts/claims-check.mjs
+index d5fe701..e313aa5 100755
+--- a/scripts/claims-check.mjs
++++ b/scripts/claims-check.mjs
+@@ -875,13 +875,6 @@ function fxRepo(root, { rows = FX_GREEN_ROWS, notes = [['corpus/knowledge/fx-a.m
+   writeFileSync(join(root, SCORECARD_FILE), ['# Fixture scorecard', '', ...rows, ''].join('\n'));
+ }
+ 
+-function runClaims(args, env) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], {
+-    encoding: 'utf8', timeout: 60_000, env: gitEnv(env),
+-  });
+-  return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
+-}
+-
+ function verdictLine(run) {
+   const lines = run.stdout.trim().split('\n');
+   return lines.length > 0 ? lines[lines.length - 1] : '';
+@@ -895,6 +888,23 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-claims-selftest-'));
++  function runClaims(args, env) {
++    const cwd = process.cwd();
++    const cmd = realpathSync(process.execPath);
++    const setenv = Object.entries({ ...gitEnv(env), PATH: `${dirname(cmd)}:/usr/bin` })
++      .filter(([, value]) => value !== undefined).flatMap(([key, value]) => ['--setenv', key, value]);
++    const argv = ['--user', '--scope', '--quiet',
++      '-p', 'MemoryMax=512M', '-p', 'MemorySwapMax=0', '-p', 'TasksMax=64', '--',
++      'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++      '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--bind', tmp, tmp, '--chdir', cwd,
++      '--unshare-pid', '--die-with-parent', '--new-session', '--clearenv', ...setenv,
++      '--argv0', process.execPath, cmd, TOOL_FILE, ...args];
++    const r = spawnSync('/usr/bin/systemd-run', argv, {
++      encoding: 'utf8', timeout: 60_000, killSignal: 'SIGKILL',
++      env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
++    });
++    return { status: r.status, stdout: r.stdout ?? '', stderr: r.stderr ?? '' };
++  }
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+diff --git a/scripts/kimi-census.mjs b/scripts/kimi-census.mjs
+index 092aade..2aca50a 100644
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -484,11 +484,6 @@ function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
+   }
+ }
+ 
+-function runGate(args, timeout = 30_000) {
+-  const r = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout });
+-  return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
+-}
+-
+ function lastLine(run) {
+   const lines = run.stdout.trim().split('\n');
+   return lines.length > 0 ? lines[lines.length - 1] : '';
+@@ -500,6 +495,21 @@ function kinds(run) {
+ 
+ function selfTest() {
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-kimi-census-selftest-'));
++  function runGate(args, timeout = 30_000) {
++    const cwd = process.cwd();
++    const cmd = realpathSync(process.execPath);
++    const argv = ['--user', '--scope', '--quiet',
++      '-p', 'MemoryMax=512M', '-p', 'MemorySwapMax=0', '-p', 'TasksMax=64', '--',
++      'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++      '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--bind', tmp, tmp, '--chdir', cwd,
++      '--unshare-pid', '--die-with-parent', '--new-session', '--clearenv',
++      '--setenv', 'PATH', `${dirname(cmd)}:/usr/bin`, '--argv0', process.execPath, cmd, TOOL_FILE, ...args];
++    const r = spawnSync('/usr/bin/systemd-run', argv, {
++      encoding: 'utf8', timeout, killSignal: 'SIGKILL',
++      env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
++    });
++    return { status: r.status, signal: r.signal, stdout: r.stdout ?? '', stderr: r.stderr ?? '', error: r.error };
++  }
+   const results = [];
+   const observed = new Set();
+   const failClosedSeen = new Set();
+diff --git a/scripts/sources-check.mjs b/scripts/sources-check.mjs
+index 6b57424..fa1e1ac 100755
+--- a/scripts/sources-check.mjs
++++ b/scripts/sources-check.mjs
+@@ -545,11 +545,6 @@ function makeFixture(parent, name, {
+   return root;
+ }
+ 
+-function runTool(args) {
+-  const result = spawnSync(process.execPath, [TOOL_FILE, ...args], { encoding: 'utf8', timeout: 15_000 });
+-  return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '', error: result.error };
+-}
+-
+ function finalLine(run) { return run.stdout.trim().split('\n').at(-1) ?? ''; }
+ function textKinds(run) {
+   return run.stdout.split('\n').flatMap((line) => {
+@@ -563,6 +558,21 @@ function selfTest() {
+   const observed = new Set();
+   const failClosedSeen = new Set();
+   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-sources-check-'));
++  function runTool(args) {
++    const cwd = process.cwd();
++    const cmd = realpathSync(process.execPath);
++    const argv = ['--user', '--scope', '--quiet',
++      '-p', 'MemoryMax=512M', '-p', 'MemorySwapMax=0', '-p', 'TasksMax=64', '--',
++      'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++      '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--bind', tmp, tmp, '--chdir', cwd,
++      '--unshare-pid', '--die-with-parent', '--new-session', '--clearenv',
++      '--setenv', 'PATH', `${dirname(cmd)}:/usr/bin`, '--argv0', process.execPath, cmd, TOOL_FILE, ...args];
++    const result = spawnSync('/usr/bin/systemd-run', argv, {
++      encoding: 'utf8', timeout: 15_000, killSignal: 'SIGKILL',
++      env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
++    });
++    return { status: result.status, stdout: result.stdout ?? '', stderr: result.stderr ?? '', error: result.error };
++  }
+   const check = (label, fn) => {
+     try {
+       const result = fn();
+@@ -856,7 +866,17 @@ function selfTest() {
+         'duplicates=$(awk -F"|" \'/^\\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}\' "$file" | sort | uniq -d | wc -l) || exit 12',
+         'printf "%s %s %s\\n" "$rows" "$malformed" "$(printf "%s" "$duplicates" | tr -d "[:space:]")"',
+       ].join('\n');
+-      const parity = spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile], { encoding: 'utf8', timeout: 10_000 });
++      const cwd = process.cwd();
++      const argv = ['--user', '--scope', '--quiet',
++        '-p', 'MemoryMax=512M', '-p', 'MemorySwapMax=0', '-p', 'TasksMax=64', '--',
++        'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++        '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, '--bind', tmp, tmp, '--chdir', cwd,
++        '--unshare-pid', '--die-with-parent', '--new-session', '--clearenv', '--setenv', 'PATH', '/usr/bin',
++        '--argv0', 'sh', '/usr/bin/sh', '-c', script, 'sources-check-parity', fixtureFile];
++      const parity = spawnSync('/usr/bin/systemd-run', argv, {
++        encoding: 'utf8', timeout: 10_000, killSignal: 'SIGKILL',
++        env: { PATH: '/usr/bin', XDG_RUNTIME_DIR: process.env.XDG_RUNTIME_DIR || `/run/user/${process.getuid()}` },
++      });
+       if (parity.error) return { ok: false, detail: `spawn sh: ${parity.error.message}` };
+       if (parity.status === 0 && parity.stdout.trim() === 'SKIP') return { skip: true, detail: 'awk is unavailable' };
+       if (parity.status !== 0) return { ok: false, detail: `sh exit=${parity.status} stderr=${parity.stderr.trim()}` };
+-- 
+2.56.0
+

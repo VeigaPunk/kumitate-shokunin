@@ -1,0 +1,179 @@
+From 2e522caeb0eb29f57287100cf6c9cbfa71b2cb06 Mon Sep 17 00:00:00 2001
+From: kumitate-shokunin <lane@local>
+Date: Fri, 23 Oct 2026 07:00:00 -0300
+Subject: [PATCH] R46-3: checklist receipts keep the item's own output, load
+ and wall time
+
+Every PASS/FAIL result line now ends with wall=<s> load1=<os.loadavg()[0] at
+item start> before the label; a FAIL line appends the last 8 lines of that
+item's combined stdout+stderr as indented '  | ' receipts, at most 2000 bytes
+of payload. SKIP/grammar-ERROR lines spawn nothing and are unchanged, as are
+the CHECKLIST_SKIPPED/CHECKLIST: n/m/VERDICT summary lines. The --json items
+carry wall, load1 and tail alongside the existing keys.
+
+Selftest: one new case drives a 12-line failing item (asserting the last 8
+lines, tail-only), a 12x400-byte item (asserting the 2000-byte bound) and a
+PASS line (asserting the frozen prefix); it reads receipted=0 on cac43009.
+---
+ scripts/surface-probe.mjs | 90 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 87 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index 4bc593b..d5c4304 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -26,6 +26,14 @@
+  *   items leave both numerator and denominator. A `- [ ]` line that does not
+  *   parse is a CHECKLIST_GRAMMAR error and counts as a failed item — an
+  *   unverifiable checklist entry is drift, not a free pass.
++ *   Each PASS/FAIL result line ends `… substring=<hit|miss> wall=<seconds>
++ *   load1=<os.loadavg()[0] at item start> — <label>`, so a receipt names the
++ *   load it ran under (R46-3). A FAIL line then carries the tail of that item's
++ *   own combined output — at most the last 8 lines and 2000 bytes of them — as
++ *   `  | ` continuation lines, so an exit-code subclass is readable from the
++ *   receipt alone. SKIP and grammar-ERROR lines spawn nothing and carry neither.
++ *   The summary (`CHECKLIST_SKIPPED:`, `CHECKLIST: n/m pass`, `VERDICT:`) is
++ *   unchanged.
+  *
+  * Surfaces, byte sets, and the digest trap (read this before "fixing" a digest)
+  *   sighting  The manifest is produced by `bash <src>/scripts/ufo-sighting
+@@ -132,7 +140,7 @@ import { createHash } from 'node:crypto';
+ import {
+   existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+ } from 'node:fs';
+-import { homedir, tmpdir } from 'node:os';
++import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+@@ -240,6 +248,13 @@ const SURFACE_KIND = 'sighting-surface-v1';
+ const SPAWN_TIMEOUT_MS = 20_000;
+ const CHECKLIST_TIMEOUT_MS = 120_000;
+ const MAX_BUFFER = 8 * 1024 * 1024;
++/**
++ * A FAIL receipt keeps the tail of the item's own combined output (R46-3: the
++ * round-46 close could not read the gate-mutants battery's exit-2 subclass
++ * because the receipts dropped it). Last 8 lines, at most 2000 bytes of them.
++ */
++const CHECKLIST_TAIL_LINES = 8;
++const CHECKLIST_TAIL_BYTES = 2000;
+ 
+ /** Frozen v1 status projection, used when the origin source cannot be parsed. */
+ const STATUS_FROZEN_TYPES = {
+@@ -969,6 +984,31 @@ function parseChecklist(text) {
+   return items;
+ }
+ 
++/**
++ * The last `CHECKLIST_TAIL_LINES` lines of a failed item's combined output, cut
++ * to the last `CHECKLIST_TAIL_BYTES` bytes (whole code points only), each
++ * rendered as an indented `  | ` continuation of the FAIL line. A cut that
++ * lands mid-line keeps the partial line: it is still the tail, never a guess.
++ */
++function checklistTail(output) {
++  const lines = String(output ?? '').split('\n').map((line) => line.replace(/\r$/u, ''));
++  while (lines.length && lines.at(-1) === '') lines.pop();
++  let payload = lines.slice(-CHECKLIST_TAIL_LINES).join('\n');
++  if (Buffer.byteLength(payload, 'utf8') > CHECKLIST_TAIL_BYTES) {
++    const chars = Array.from(payload);
++    let bytes = 0;
++    let cut = chars.length;
++    while (cut > 0) {
++      const size = Buffer.byteLength(chars[cut - 1], 'utf8');
++      if (bytes + size > CHECKLIST_TAIL_BYTES) break;
++      bytes += size;
++      cut -= 1;
++    }
++    payload = chars.slice(cut).join('');
++  }
++  return payload === '' ? [] : payload.split('\n').map((line) => `  | ${line}`);
++}
++
+ function runChecklistsMode(opts) {
+   const findings = [];
+   // `capture` is the hermetic-suite sink: the fixture arms must not spray the
+@@ -1004,13 +1044,20 @@ function runChecklistsMode(opts) {
+       continue;
+     }
+     if (item.command.includes('--checklists')) { results.push({ ...item, skipped: 'SKIP(self)' }); continue; }
++    const startedAt = Date.now();
++    const load1 = loadavg()[0];
+     const run = spawnSync('bash', ['-c', item.command], {
+       cwd: opts.self, encoding: 'utf8', timeout: CHECKLIST_TIMEOUT_MS, maxBuffer: MAX_BUFFER,
+     });
++    const wallSeconds = (Date.now() - startedAt) / 1000;
+     const output = `${run.stdout ?? ''}${run.stderr ?? ''}`;
+     const exitOk = typeof run.status === 'number' && item.exits.includes(run.status);
+     const substringOk = output.includes(item.expect);
+-    results.push({ ...item, status: run.status, exitOk, substringOk, failed: !(exitOk && substringOk) });
++    const itemFailed = !(exitOk && substringOk);
++    results.push({
++      ...item, status: run.status, exitOk, substringOk, failed: itemFailed, wall: wallSeconds, load1,
++      ...(itemFailed ? { tail: checklistTail(output) } : {}),
++    });
+   }
+ 
+   const ran = results.filter((r) => !r.skipped);
+@@ -1025,7 +1072,8 @@ function runChecklistsMode(opts) {
+     if (r.skipped) { lines.push(`CHECKLIST  ${r.skipped}  SKILL.md:${r.line} ${r.label ?? ''}`.trimEnd()); continue; }
+     if (r.malformed) { lines.push(`CHECKLIST  ERROR  SKILL.md:${r.line} grammar (${r.raw})`); continue; }
+     const verdictWord = r.failed ? 'FAIL' : 'PASS';
+-    lines.push(`CHECKLIST  ${verdictWord.padEnd(4)} SKILL.md:${r.line} exit=${r.status} expected=${r.exits.join('|')} substring=${r.substringOk ? 'hit' : 'miss'} — ${r.label}`);
++    lines.push(`CHECKLIST  ${verdictWord.padEnd(4)} SKILL.md:${r.line} exit=${r.status} expected=${r.exits.join('|')} substring=${r.substringOk ? 'hit' : 'miss'} wall=${r.wall.toFixed(3)} load1=${r.load1.toFixed(2)} — ${r.label}`);
++    if (r.tail) lines.push(...r.tail);
+   }
+   lines.push(`CHECKLIST_SKIPPED: ${skipped}`);
+   lines.push(`CHECKLIST: ${passed}/${ran.length} pass`);
+@@ -1042,6 +1090,9 @@ function runChecklistsMode(opts) {
+         line: r.line, label: r.label ?? null, command: r.command ?? null, exits: r.exits ?? null,
+         expect: r.expect ?? null, status: r.status ?? null, exitOk: r.exitOk ?? null,
+         substringOk: r.substringOk ?? null, skipped: r.skipped ?? null, failed: Boolean(r.failed),
++        wall: typeof r.wall === 'number' ? Number(r.wall.toFixed(3)) : null,
++        load1: typeof r.load1 === 'number' ? Number(r.load1.toFixed(2)) : null,
++        tail: r.tail ?? null,
+       })),
+       findings,
+       totals: { items: results.length, ran: ran.length, passed, failed, skipped, grammar: results.filter((r) => r.malformed).length },
+@@ -1637,6 +1688,39 @@ function selfTest() {
+       ok: clFailRun.code === 1 && clFailRun.text.includes('CHECKLIST: 0/2 pass') && clFailRun.text.includes('VERDICT: FAIL'),
+       detail: `exit=${clFailRun.code}`,
+     }));
++    const clReceipt = checklistTree('checklists-receipt',
++      ['# fixture SKILL', '',
++        goodItem('passes with a receipt', 'node -e "console.log(\'OK\')"', '0', 'OK'),
++        goodItem('fails with a tail',
++          'node -e "for (let i = 1; i <= 12; i += 1) console.log(\'L\' + i); process.exit(3)"', '0', 'OK'),
++        goodItem('fails with a huge tail',
++          'node -e "for (let i = 1; i <= 12; i += 1) console.log(String(i) + \' \' + \'x\'.repeat(400)); process.exit(3)"',
++          '0', 'OK'), ''].join('\n'));
++    const clReceiptRun = runChecklists(clReceipt);
++    check('checklists: every ran line carries `wall=`/`load1=`, a FAIL line appends the last 8 output lines (`  | `, ≤2000 bytes) — R46-3', () => {
++      const lines = clReceiptRun.text.split('\n');
++      const ran = lines.filter((l) => /^CHECKLIST {2}(?:PASS|FAIL) /u.test(l));
++      const receipted = ran.filter((l) => / substring=(?:hit|miss) wall=\d+\.\d{3} load1=\d+\.\d{2} — /u.test(l));
++      const tailOf = (label) => {
++        const at = lines.findIndex((l) => /^CHECKLIST {2}FAIL /u.test(l) && l.endsWith(` — ${label}`));
++        const out = [];
++        for (let i = at + 1; at >= 0 && i < lines.length && lines[i].startsWith('  | '); i += 1) out.push(lines[i].slice(4));
++        return out;
++      };
++      const tail = tailOf('fails with a tail');
++      const huge = tailOf('fails with a huge tail');
++      const hugeBytes = Buffer.byteLength(huge.join('\n'), 'utf8');
++      const compat = /^CHECKLIST {2}PASS SKILL\.md:\d+ exit=0 expected=0 substring=hit wall=\d+\.\d{3} load1=\d+\.\d{2} — passes with a receipt$/u
++        .test(lines.find((l) => l.endsWith(' — passes with a receipt')) ?? '');
++      const ok = clReceiptRun.code === 1 && ran.length === 3 && receipted.length === 3 && compat
++        && tail.length === 8 && tail[0] === 'L5' && tail.at(-1) === 'L12'
++        && huge.length > 0 && hugeBytes <= 2000 && huge.at(-1).endsWith('x'.repeat(400))
++        && lines.includes('CHECKLIST: 1/3 pass') && lines.includes('VERDICT: FAIL');
++      return {
++        ok,
++        detail: `exit=${clReceiptRun.code} ran=${ran.length} receipted=${receipted.length} tail=${tail.length}:${tail[0] ?? '-'}..${tail.at(-1) ?? '-'} huge=${huge.length}/${hugeBytes}B`,
++      };
++    });
+     const clSkip = checklistTree('checklists-skip',
+       ['# fixture SKILL', '',
+         `- [ ] self-recursive — \`node scripts/surface-probe.mjs --checklists\` → exit 0 + \`CHECKLIST\``,
+-- 
+2.56.0
+

@@ -1,0 +1,21 @@
+RESULT SupersedeS053 rev=cac43009 verdict=CONFIRMED row=S087
+| S087 | oh-my-pi v18.12.6, packages/utils/src/dirs.ts — https://github.com/can1357/oh-my-pi/blob/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/utils/src/dirs.ts | code | A | the names OMP gives members of its agent directory (~/.omp/agent) on the installed release 18.12.6 | packages/utils/src/dirs.ts:29, 368-370, 952-1006, 1007-1035, 1037-1050 @ 45c35e40c46166dc726ccc52f5d27f40f2449f99; re-opened 2026-10-23; body SHA-256 2d423f4f18e5ed0c25cd4887c68cf2fea704f1615ad4c85846ae5c10d3207f24 | supersedes S053 — census declares: agent.db,history.db,models.db,skill-descriptions.db,last-changelog-version,cache,blobs,predict,sessions,terminal-sessions,custom-session-files,themes,tools,commands,prompts,memories | mined | 2026-10-23 | on-release | corpus/knowledge/omp-agent-root.md, corpus/lessons/round-44.md |
+
+Gate: https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/utils/src/dirs.ts
+Access date: 2026-10-23
+Quote: “/** Get the custom themes directory (~/.omp/agent/themes). */” — packages/utils/src/dirs.ts:1007 @ 45c35e40c46166dc726ccc52f5d27f40f2449f99
+Quote count command: `printf '%s' "/** Get the custom themes directory (~/.omp/agent/themes). */" | wc -w`
+Quote count output: `8`
+Body SHA-256: `2d423f4f18e5ed0c25cd4887c68cf2fea704f1615ad4c85846ae5c10d3207f24`
+
+Evidence and findings
+- Base row: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 2b2bf7bb:corpus/SOURCES.md | grep '^| S053 |'` → anchor includes `952-991, 1007-1035, 1037-1050`; teaches lists census-declared names, including blobs, predict, sessions.
+- Frozen-row command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show cac43009b22232c1ae8efdab4f2789516c1fcc6f:corpus/SOURCES.md | grep '^| S053 |'` → anchor includes `952-1006 (992-1006 added round 46: predict, sessions, blobs; SweepS051S055), 1007-1035, 1037-1050`; source, kind, tier, scope, teaching, status, opened, recheck and used-by otherwise match the base row.
+- History command: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin log -p --follow -- corpus/SOURCES.md` → round-46 commits 980a16af and adedf671 appear; focused `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show --format= --no-ext-diff --unified=0 980a16afc7caafe4e924ef117692248fdc7acbd6 -- corpus/SOURCES.md | grep -E '^[-+]\| S053 \|'` shows the in-place S053 anchor widening from 952-991 to 952-1006 and the note that 992-1006 adds predict, sessions, blobs.
+- Open command: `curl --fail --location --silent --show-error --max-filesize 4000000 --connect-timeout 20 --max-time 90 'https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/utils/src/dirs.ts' --output /fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053/dirs.ts` → fetched pinned file. `sha256sum /fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053/dirs.ts` → `2d423f4f18e5ed0c25cd4887c68cf2fea704f1615ad4c85846ae5c10d3207f24  /fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053/dirs.ts`.
+- Re-opened locator output: `grep -nE 'agentSubdir|predict|sessions|blobs|custom themes directory' /fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053/dirs.ts` → `getPredictStateDir` at 989-995, sessions at 997-1000, blobs at 1002-1005, custom themes at 1007-1009. Thus the round-46 anchor addition matches the pinned bytes; no corrected cell disagrees.
+- `omp --version` → `omp/18.12.6`, confirming the release named by the row.
+- Teaching length command: `printf '%s' 'census declares: agent.db,history.db,models.db,skill-descriptions.db,last-changelog-version,cache,blobs,predict,sessions,terminal-sessions,custom-session-files,themes,tools,commands,prompts,memories' | wc -c` → `198` characters after the required prefix, within 200.
+- Process check: `pgrep -af '/fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053'` → no output (exit 1: no matching process). No gate, selftest, counter or demo was run; no tool was installed.
+
+Touched surfaces: only this scoped report in the lane; the downloaded source and saved comparison rows are under `/fast/scratch/hyaku/kumitate-r47/seats/w1-SupersedeS053/`. Lane and fleet product files were not edited. Out of scope: C1 routing/control scoring, gates, builds and tests. Artifact: `.ufo/waves/round-47/build/SupersedeS053.md`.
