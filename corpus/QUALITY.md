@@ -479,3 +479,32 @@ plan; the (a) case carries no `k43-` prefix), Q26 fails on receipt naming (the c
     status=mined` and its `used-by` names `corpus/knowledge/kimi-session-state.md`. Hole still open at
     the gate: deleting `S041`/`S042` from inside that section in a scratch copy leaves
     `K_sections=53 coverage_kimi=10` and `SOURCES_CHECK: CLEAN (rows=45 … legacy=38)`.
+
+- **Q29 — an operability counter must reject named skip-work controls before data.** A counter that passes
+  only because a control skips the claimed work is not evidence; round 43's junk J4 returned
+  `GATE_MUTANTS: CLEAN` with synthetic failures (`.ufo/waves/round-43/build/ExecJunkControls.md:22-29`;
+  `corpus/lessons/round-43.md`, `## Mistakes` and `## Open limits`).
+  - **Who checks.** The L1 before the first data run; the non-author closure replays the committed receipts.
+  - **Field.** The frozen plan names absent, constant, junk, no-reader and label-keyed shortcut controls. Each runs
+    against the frozen counter before data; its receipt names the control and counter revision and is committed
+    before the measured receipt. Any control returning the counter's success verdict requires redesign before data
+    or an explicit exploratory claim; no data run under the old counter supports the claim.
+  - **Command.**
+    ```sh
+    L=...; P=<plan commit>; C=<control-receipt commit>; R=<measured-receipt commit>
+    F=(<committed control receipt paths>)
+    git -C "$L" log --format='%H %s' --ancestry-path --reverse "$P^..$R"
+    if ! git -C "$L" merge-base --is-ancestor "$P" "$C" || ! git -C "$L" merge-base --is-ancestor "$C" "$R"; then
+      echo 'Q29: FAIL plan/control/measured commits are out of order'; exit 1
+    fi
+    for f in "${F[@]}"; do git -C "$L" cat-file -e "$C:$f" || exit 1; done
+    if git -C "$L" grep -n -E '[A-Z][A-Z0-9_]*: (MET|CLEAN)' "$C" -- "${F[@]}"; then
+      echo 'Q29: FAIL a control met the counter'; exit 1
+    fi
+    ```
+    The log must order plan → controls → measured; the final grep must print nothing. `CLEAN` is included to
+    recognize round 43's positive token; round 44 uses `MET`.
+  - **Fails when.** A named control is omitted, a receipt is absent or committed after measurement, or any
+    control produces the success verdict; a hit requires redesign before data or an explicit exploratory claim.
+  - **Demonstrated at round 43.** The J4 receipt commit `fb3eab40` precedes measured `84cb1d5d`; its `CLEAN`
+    line makes this check exit 1 (`.ufo/waves/round-43/build/ExecJunkControls.md:26`).

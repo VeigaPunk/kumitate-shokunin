@@ -1,0 +1,584 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "kumitate-r44-falsify",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 16,
+    "waveMinLanes": 32,
+    "waveMaxLanes": 64,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 36,
+    "resume": 0,
+    "total": 36
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-44/falsify/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-44/falsify",
+    "members": {
+      "ReRunP44Replay": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReRunP44Fresh": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReRunP44Load": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReRunBefore": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewCensusCode": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "SentinelCensusNoRead": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "SentinelCensusEdges": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "MutCensusSelftest": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "MutCensusP44": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CritCensusVsDomain": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CritC1Claim": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CritRedesignTimeline": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CtlPostDataA": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CtlPostDataB": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CtlMissingVariants": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewNoHarmGates": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ExecChecklistPass": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "MutChecklistBlindness": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewProxyGatePins": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS053": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS054": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS055": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS056": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS057": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS058": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS059": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS060": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReopenS061": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewKnowledgeEntry": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewR43Repairs": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "CritCalibration": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ReviewWaveCensus": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ScoutRejectCandidates": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null,
+        "axes": [
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ScribeLessonDraft": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ScribeLogEntry": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null,
+        "axes": [
+          "operability"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      },
+      "ConnAdjacency": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r44 falsify wave against C1 and the round record"
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\nkumitate round 44 ONLY (lane axes operability + coverage: orchestration and tooling), wave 2 of 2: FALSIFY. Every item attacks one named thing the round produced. Lane tip for this wave: 8e8225114dccb31d33fbcb76df78052807a33068 (branch master; round open 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d; frozen C1 counter p44d at 32b7fd561dae38b951828dde8fe11052737fb824; C1 measured commit d81978cdfefdc7409eb26a6363111d6682154093). Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/plan.md first (all four sections: the plan and three pre-data redesigns; the counter in force is probe/p44d-count.mjs, 207 cases; from 32b7fd561dae38b951828dde8fe11052737fb824 on, any skip-work control that reads MET fails C1, it does not trigger a redesign).\nC1 operability, capability `omp-census`: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs (contract kumitate-omp-census-v1) reads the SHAPE of ~/.omp/agent (names, kinds, permission bits; never contents) and prints `OMP_CENSUS: CLEAN` exit 0 or `OMP_CENSUS: DRIFT` exit 1. Predicate P44: a case PASSES iff the census, run alone in a bubblewrap sandbox showing it only its own file and the case's empty-file shape mirror, cleared env, `--root /r`, 20 s, 256 MB heap, exits 0 with exactly one CLEAN line and no DRIFT line when the case expects CLEAN, or exits 1 with exactly one DRIFT line and no CLEAN line when it expects DRIFT; MET iff all cases pass (floor 20). Before (round open, census absent): `P44_COUNT: UNMET (passed=0 cases=207)`. Counted run (the result): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/final/p44-measured-d81978cd.txt → `P44_COUNT: MET (passed=207 cases=207 floor=20 census_sha256=fd4d1c4e…)` exit 0, seed 2676cbe767adc1820fd316e02a7b9020. A CONTROL is a program that skips the claimed work (does not read the mirror, or encodes no per-member rule: name or owner-anchored chain template + kind + permission ceiling, sidecars/generations optional, the sourced optional members; or decides on anything but the mirror's shape).\nPrior evidence: control receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls-v4/ (44 controls UNMET under p44d), wave-1 reports /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls/, residual reports /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/residual/. New sources this round: rows S053-S061 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md; entry /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/omp-agent-root.md. The upstream pin oh-my-pi v18.12.6 = 45c35e40c46166dc726ccc52f5d27f40f2449f99 (clone it yourself into your scratch: `git clone -q --depth 1 --branch v18.12.6 https://github.com/can1357/oh-my-pi <dir>`).\n# Contract\nEvery `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>. That report file is the ONLY thing you may write inside the lane. All other lane files are READ-ONLY for you. Never run git or jj writes in the lane repo or the fleet repo /home/vgpnk/Projects/shokunin (no commit, add, stash, checkout, reset, push, fetch, jj mutation; read-only jj only with --ignore-working-copy; never write in the fleet repo), never touch sibling lanes, operator config (~/.omp, ~/.kimi-code contents) or host state. ~/.omp/agent is operator-owned: you may list it and stat it; NEVER read, copy, open or hash the contents of any file under it.\nScratch ONLY under /fast/scratch/hyaku/kumitate-r44/seats/w2-<YourName>/. Any code edit or gate run that writes happens in your OWN clone, made with GIT_DIR, GIT_WORK_TREE and GIT_INDEX_FILE unset: env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r44/seats/w2-<YourName>/lane && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r44/seats/w2-<YourName>/lane checkout -q --detach 8e8225114dccb31d33fbcb76df78052807a33068. You may commit inside your own scratch clone; never push anywhere.\nFrozen counter (never edit it): S=/fast/scratch/hyaku/kumitate-r44/seats/w2-<YourName>; mkdir -p $S && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 32b7fd561dae38b951828dde8fe11052737fb824:.ufo/waves/round-44/probe/p44d-count.mjs > $S/p44d-count.mjs && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 32b7fd561dae38b951828dde8fe11052737fb824:.ufo/waves/round-44/probe/p44-shape.tsv > $S/p44-shape.tsv && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show d81978cdfefdc7409eb26a6363111d6682154093:scripts/omp-census.mjs > $S/omp-census.mjs && sha256sum $S/* (counter 9ea97d869a613a164f75aa8c357d18f586e6aef2e04672e0cc73dce5928e461e, shape fcf9fcb60138b332770f7d5daeeb667f9d28e83169b5f98963474a7a91403b71, census fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7); systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=256 timeout -s KILL 900 node $S/p44d-count.mjs --census <census or control .mjs> --shape $S/p44-shape.tsv --work $S/p44work [--seed HEX]; echo exit=$? (207 sandboxed runs, under a minute; `--selftest` and `--list` run nothing).\nHOST SAFETY (binding; a round-42 seat's recursing test reached ~500 processes and ~25 GB): every node selftest, gate, counter or checklist run goes through `systemd-run --user --scope --quiet -p MemoryMax=4G -p TasksMax=128 timeout -s KILL 900 <cmd>` (the counter may use TasksMax=256). Never run gate-mutants (scripts/gate-mutants.mjs) in this wave. Never run a test suite recursively or in a loop without these bounds. After each run check that no process of yours is left (pgrep -f with your scratch path) and remove your temp dirs. Finish within 35 minutes of starting.\nQuote the revision, the exact command and the observed output for every result; an unrun check is unverified, never passed.\nNo model param. You are a leaf: no spawns (an executor may spawn one read-only labrat probe for one falsifiable hypothesis), no agent://all, no background jobs left running. The only message target you may use is agent://KumitateR44 (the L1), and only for a blocker. Tooling authorization (operator, 2026-10-19): you and every seat may install or update tools that help the task without asking; read /home/vgpnk/.omp/agent/RULES.md first; official channels only; record tool, version, channel and reason in your report. pacman guard: ALL pacman transactions are PAUSED host-wide (no -S, -Sy, -Syu, -U, -R; no host service restarts); use uv tool / npx / an official binary in ~/.local/bin instead. No secrets: never read credential, token, oauth or server.token contents anywhere.\nSourcing rule (binding): open sources by ordinary means only (curl, git clone, gh, npm pack, the read tool). Never use a headless browser or any other tool to pass a bot challenge, captcha or access control. Record a source you cannot open that way as unopened. A provider safety or policy refusal ends your item: report it as such and stop.\nReport shape: first line `RESULT <YourName> rev=8e822511 verdict=<one word> ...` as your item asks, then at most 40 evidence lines (commands and outputs); control seats may add each control's source and the counter's summary plus the FAIL/PASS lines that matter (up to 120 lines). Plain English, no run-together words, no private jargon. Your item is unique; do not duplicate other seats.",
+    "tasks": [
+      {
+        "name": "ReRunP44Replay",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunP44Replay\nAttack: the counted-run receipt. Re-derive it over committed bytes with the plan's measurement command and the receipt's seed (`--seed 2676cbe767adc1820fd316e02a7b9020`), counter and shape from 32b7fd561dae38b951828dde8fe11052737fb824, census from d81978cdfefdc7409eb26a6363111d6682154093. Compare every CASE line with /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/final/p44-measured-d81978cd.txt (diff). First line `RESULT ReRunP44Replay rev=8e822511 verdict=<identical|differs> passed=<n>/207`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReRunP44Replay.md"
+      },
+      {
+        "name": "ReRunP44Fresh",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunP44Fresh\nAttack: does MET depend on the one seed? Run the frozen p44d on the d81978cdfefdc7409eb26a6363111d6682154093 census three times with fresh random seeds (no --seed) and once each with seeds 00, ff, 44. Report each summary line and any FAIL case with its CASE line. First line `RESULT ReRunP44Fresh rev=8e822511 verdict=<stable|unstable> runs=<n> met=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReRunP44Fresh.md"
+      },
+      {
+        "name": "ReRunP44Load",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunP44Load\nAttack: load sensitivity of the counted result. Run 6 copies of the frozen p44d on the d81978cdfefdc7409eb26a6363111d6682154093 census concurrently (each its own --work dir and seed), record /proc/loadavg before and after, and report every summary line and FAIL case. First line `RESULT ReRunP44Load rev=8e822511 verdict=<stable|unstable> met=<n>/6`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReRunP44Load.md"
+      },
+      {
+        "name": "ReRunBefore",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReRunBefore\nAttack: the before value. Re-derive `P44_COUNT: UNMET (passed=0 cases=207)` over committed bytes: show scripts/omp-census.mjs is absent at 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d (`git cat-file -e 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d:scripts/omp-census.mjs`), run p44d (from 32b7fd561dae38b951828dde8fe11052737fb824) with a non-existent census path, and check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/open/p44d-before-6cda8c35.txt. Also check that each superseded counter's before receipt (p44, p44b, p44c) reads passed=0. First line `RESULT ReRunBefore rev=8e822511 verdict=<reproduced|differs>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReRunBefore.md"
+      },
+      {
+        "name": "ReviewCensusCode",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewCensusCode\nAttack: the census code at d81978cdfefdc7409eb26a6363111d6682154093 (scripts/omp-census.mjs, sha256 fd4d1c4e…) against plan.md § C1 census contract: one file, node built-ins only, readdir/lstat only (no member opened), exactly one verdict line, exit 0/1/2/64, rules per member (never aggregates), every chain anchored to its owner, sidecars and generations optional, each rule citing a SOURCES row. Name every deviation with line numbers. First line `RESULT ReviewCensusCode rev=8e822511 verdict=<conforms|deviates> findings=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewCensusCode.md"
+      },
+      {
+        "name": "SentinelCensusNoRead",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SentinelCensusNoRead\nAttack: the census's 'never reads a member's content' promise. Trace the d81978cdfefdc7409eb26a6363111d6682154093 census with strace (install via an official channel if absent; record it) or with node's own fs hooks, on (1) a scratch shape mirror you build from /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/probe/p44-shape.tsv with NON-EMPTY dummy files and (2) the live root ~/.omp/agent (tracing only: you never read member contents yourself). List every open/openat/read syscall on a path under the root. First line `RESULT SentinelCensusNoRead rev=8e822511 verdict=<no-content-read|reads-content> opens_under_root=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/SentinelCensusNoRead.md"
+      },
+      {
+        "name": "SentinelCensusEdges",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item SentinelCensusEdges\nAttack: the census on hostile shapes in a scratch mirror: a symlink member (to a file, to a dir, dangling, to /etc/shadow), a FIFO named like a member, a socket, an entry deleted between readdir and lstat, a 10 000-entry root, unicode and newline in names, a root that is itself a symlink, setuid/sticky bits on a member. For each: exit code, verdict line, whether it blocks, follows a link or reads anything. First line `RESULT SentinelCensusEdges rev=8e822511 verdict=<safe|unsafe> findings=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/SentinelCensusEdges.md"
+      },
+      {
+        "name": "MutCensusSelftest",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCensusSelftest\nAttack: does the census's own `--selftest` (29 cases) catch faults in its rules? In your clone at 8e8225114dccb31d33fbcb76df78052807a33068, apply at least 15 single-token mutants to scripts/omp-census.mjs (each base rule's kind or ceiling, each chain regex anchor/placeholder, the sidecar rule, the EMPTY rule, the verdict/exit lines) one at a time and run `--selftest` bounded. Table: mutant | selftest verdict | caught. First line `RESULT MutCensusSelftest rev=8e822511 verdict=<all-caught|gaps> caught=<n>/<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/MutCensusSelftest.md"
+      },
+      {
+        "name": "MutCensusP44",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutCensusP44\nAttack: which census faults does the frozen p44d counter miss (counter blind spots after data)? In your clone at 8e8225114dccb31d33fbcb76df78052807a33068, apply at least 12 single-token mutants to scripts/omp-census.mjs (per-member ceilings on 0644/0755 members, a chain regex's owner anchor, the sidecar rule, the optional-dir list, the extensions rule, the EMPTY rule) and score each mutant ONCE with p44d (fixed seed 44). A mutant that still reads MET is a counter blind spot: name the rule it disabled. First line `RESULT MutCensusP44 rev=8e822511 verdict=<all-killed|blind-spots> survived=<n>/<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/MutCensusP44.md"
+      },
+      {
+        "name": "CritCensusVsDomain",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritCensusVsDomain\nAttack: the census's rules against the real domain. In your oh-my-pi v18.12.6 clone, find every name or name template OMP can create directly under the agent dir (atomic-write `.tmp` leftovers such as mcp.json.<pid>.<uuid>.tmp, skill-descriptions.db.adopt-<pid>, -journal sidecars, config.yaml/config.json fallbacks, omp-crash.log, omp-debug.log, ssh.json, secret-placeholder.key, any other) and say whether the census at d81978cd would read it UNLISTED, and whether each declared rule's kind and ceiling match the code's mode (chmod/open/mkdir mode or umask). Quote path:line for each. First line `RESULT CritCensusVsDomain rev=8e822511 verdict=<faithful|gaps> false_alarms=<n> wrong_rules=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CritCensusVsDomain.md"
+      },
+      {
+        "name": "CritC1Claim",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritC1Claim\nAttack C1 as a whole against the round prompt §9 (/home/vgpnk/Projects/shokunin/.ufo/prompts/kumitate-round-44.md lines 343-365), AXES.md, QUALITY Q25/Q26/Q29-draft and the round-43 rejection (/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-43-verifier-spotcheck.md): axis named by surface, target re-derivable with one command, do-nothing control, controls committed before data, predicate unchanged across three redesigns (is replacing the counter three times a goalpost move or the declared kill rule working?), work-minimal paragraph, lowest-axis rule, anti-loop move. Verdict sound|weak|unsound with numbered objections. First line `RESULT CritC1Claim rev=8e822511 verdict=<sound|weak|unsound> objections=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CritC1Claim.md"
+      },
+      {
+        "name": "CritRedesignTimeline",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritRedesignTimeline\nAttack: were all three redesigns before data? Build the timeline from committed bytes and seat reports: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin log --format='%H %cI %s' 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d..8e8225114dccb31d33fbcb76df78052807a33068`, the registries' createdAt, each control/residual report's own timestamps, the ExecCensusBuild report (it ran its own non-frozen harness on candidate bytes; when?), /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/final/p44-dev-runs.txt. Was any census scored by a frozen counter before 32b7fd561dae38b951828dde8fe11052737fb824? Was the counted run the first frozen-counter run on census bytes? First line `RESULT CritRedesignTimeline rev=8e822511 verdict=<pre-data|data-before-freeze> violations=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CritRedesignTimeline.md"
+      },
+      {
+        "name": "CtlPostDataA",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CtlPostDataA\nAttack: build NEW skip-work controls against the frozen p44d (post-data; a MET here fails C1): the cheapest program that reads MET while dropping per-member knowledge (aggregates, name hashing with tolerance, edit-distance matching, label keys of p44d's generator: the anagram, swap, wide, junkgen, srckind/srcwide rules, RESERVED names). Write each control as ONE .mjs file (node built-ins only), score it ONCE per variant with the frozen p44d counter, report the source and the summary line. A control reading MET fails C1 (kill rule 2): say so plainly. Do not build a census that encodes the claimed work. First line `RESULT CtlPostDataA rev=8e822511 verdict=<UNMET|MET> best=<n>/207`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CtlPostDataA.md"
+      },
+      {
+        "name": "CtlPostDataB",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CtlPostDataB\nAttack, independent of CtlPostDataA: start from a census-like program and remove ONE piece of per-member knowledge at a time (a base member's kind, a ceiling, one chain's owner anchor, its end anchor, the sidecar rule, one sourced member, the extensions member) and score each reduced program with p44d. Every reduction that reads MET is a counter blind spot (and, if it skips claimed work, a C1 failure). Write each control as ONE .mjs file (node built-ins only), score it ONCE per variant with the frozen p44d counter, report the source and the summary line. A control reading MET fails C1 (kill rule 2): say so plainly. Do not build a census that encodes the claimed work. First line `RESULT CtlPostDataB rev=8e822511 verdict=<all-UNMET|MET-found> met=<n>/<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CtlPostDataB.md"
+      },
+      {
+        "name": "CtlMissingVariants",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CtlMissingVariants\nAttack: three control variants named in the control-wave reports were never scored under p44c or p44d: the CtlLabelKeyedB owner-anchor-dropped variant (sha256 bddddbe8…), the CtlNameSet exact variant (07fec1c7…), the CtlPrefixPermissive any-prefix variant (e422f4b2…). Rebuild each byte-exact from the source quoted in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls/<seat>.md (verify the sha256) or find it under /fast/scratch/hyaku/kumitate-r44/seats/, and score each once with p44d. Write each control as ONE .mjs file (node built-ins only), score it ONCE per variant with the frozen p44d counter, report the source and the summary line. A control reading MET fails C1 (kill rule 2): say so plainly. Do not build a census that encodes the claimed work. First line `RESULT CtlMissingVariants rev=8e822511 verdict=<UNMET|MET> scored=<n>/3`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CtlMissingVariants.md"
+      },
+      {
+        "name": "ReviewNoHarmGates",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewNoHarmGates\nAttack: C1 kill rule 5 (no axis harmed). In your clone at d81978cdfefdc7409eb26a6363111d6682154093 and again at 8e8225114dccb31d33fbcb76df78052807a33068, run with UFO_SRC=/fast/scratch/hyaku/kumitate-pin/src: `node scripts/proxy-check.mjs --strict`, `node scripts/claims-check.mjs --src $UFO_SRC`, `node scripts/kimi-census.mjs`, `node scripts/sources-check.mjs`, `node scripts/omp-census.mjs`, and `--selftest` of cite-check, surface-probe, round-gate, proxy-check, sources-check, anchor-truth, wave-census, kimi-census, claims-check, omp-census (NOT gate-mutants). Compare with the round-open baseline /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls/ExecGateBaseline.md (note: proxy --strict read DRIFT at round open; say whether it is MATCH now). One line per command. First line `RESULT ReviewNoHarmGates rev=8e822511 verdict=<no-harm|harm> red=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewNoHarmGates.md"
+      },
+      {
+        "name": "ExecChecklistPass",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ExecChecklistPass\nQUALITY Q26 receipts for C1 (pass-sensitive checklist count, open and final). In clones at 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d and at 8e8225114dccb31d33fbcb76df78052807a33068, run `node scripts/surface-probe.mjs --checklists` bounded, with UFO_SRC=/fast/scratch/hyaku/kumitate-pin/src KUMITATE_MAIN_REPO=/home/vgpnk/Projects/shokunin KUMITATE_REPORTS_DIR=/home/vgpnk/Projects/shokunin/.ufo/reports, after flipping ONLY the two gate-mutants items to `- [x]` in each clone's SKILL.md (so the battery is not run; ExecGateBaseline did the same). Report CHECKLIST n/m, every failing item and the two new omp-census items' results at 8e8225114dccb31d33fbcb76df78052807a33068. First line `RESULT ExecChecklistPass rev=8e822511 verdict=<open n/m -> final n/m>`.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ExecChecklistPass.md"
+      },
+      {
+        "name": "MutChecklistBlindness",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item MutChecklistBlindness\nQUALITY Q26 named-break receipt: in your clone at 8e8225114dccb31d33fbcb76df78052807a33068, break the census (make it print `OMP_CENSUS: DRIFT` and exit 1 always; then separately make it exit 0 with no verdict line) and show (a) checklist items 20-21 (`node scripts/surface-probe.mjs --checklists` with the gate-mutants items flipped to [x] as in ExecChecklistPass) go red, (b) `node scripts/proxy-check.mjs --strict` terms A and C do not move (the terms counter is blind), (c) p44d reads UNMET. First line `RESULT MutChecklistBlindness rev=8e822511 verdict=<checklist-sensitive|blind> proxy_moved=<yes|no>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/MutChecklistBlindness.md"
+      },
+      {
+        "name": "ReviewProxyGatePins",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewProxyGatePins\nAttack: the proxy-check edit at d81978cdfefdc7409eb26a6363111d6682154093 (`git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff 6cda8c353c7dd7a890eb20382ffa55fac9daaf6d d81978cdfefdc7409eb26a6363111d6682154093 -- scripts/proxy-check.mjs SCORECARD.md`): v1 key set unchanged (23 keys), only GATE_PINS gained `pin.omp-census`, pins re-pinned correctly (sha256 of the pinned files equals the stanza), `--selftest` passes, and whether adding a key to the kumitate-gate-pins-v1 block deepens the operator question on that block (L0 fleet 9a00d09, round-42 D6). First line `RESULT ReviewProxyGatePins rev=8e822511 verdict=<sound|defects> findings=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewProxyGatePins.md"
+      },
+      {
+        "name": "ReopenS053",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS053\nAttack: SOURCES row S053 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (oh-my-pi packages/utils/src/dirs.ts lines named in the row), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS053 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS053.md"
+      },
+      {
+        "name": "ReopenS054",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS054\nAttack: SOURCES row S054 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (oh-my-pi packages/utils/src/sqlite.ts lines 12, 193, 197-199), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS054 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS054.md"
+      },
+      {
+        "name": "ReopenS055",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS055\nAttack: SOURCES row S055 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (oh-my-pi packages/ai/src/auth/sqlite-credential-store.ts lines 590-601), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS055 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS055.md"
+      },
+      {
+        "name": "ReopenS056",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS056\nAttack: SOURCES row S056 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (https://www.sqlite.org/wal.html § 4), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS056 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS056.md"
+      },
+      {
+        "name": "ReopenS057",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS057\nAttack: SOURCES row S057 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (rea-agents 6.7.0 tarball dist/application/SetupRecoveryBackup.js:35-36 (npm pack rea-agents@6.7.0)), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS057 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS057.md"
+      },
+      {
+        "name": "ReopenS058",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS058\nAttack: SOURCES row S058 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (fleet /home/vgpnk/Projects/shokunin/.ufo/waves/hyaku/PHASE4.md line 112 at fleet commit 84b9519a), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS058 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS058.md"
+      },
+      {
+        "name": "ReopenS059",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS059\nAttack: SOURCES row S059 (rejected) in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (https://cmux.com/docs/agent-integrations/oh-my-pi and the reject reason against oh-my-pi discovery/builtin.ts:516,608), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS059 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS059.md"
+      },
+      {
+        "name": "ReopenS060",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS060\nAttack: SOURCES row S060 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (every oh-my-pi locator in the row), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS060 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS060.md"
+      },
+      {
+        "name": "ReopenS061",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReopenS061\nAttack: SOURCES row S061 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md at 8e8225114dccb31d33fbcb76df78052807a33068. Re-open the source by ordinary means (fleet /home/vgpnk/Projects/shokunin/scripts/hyaku/lane-addendum.md lines 82-84 at fleet commit 4248e924), check the row's quote is verbatim at its locator and at most 25 words (count with `printf '%s' \"<quote>\" | wc -w`), the anchor/digest/commit, the tier and kind against CORPUS.md's definitions, and that the census rule or entry section citing it says what the source says. First line `RESULT ReopenS061 rev=8e822511 verdict=<verified|defects> words=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReopenS061.md"
+      },
+      {
+        "name": "ReviewKnowledgeEntry",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewKnowledgeEntry\nAttack: the new entry /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/omp-agent-root.md at 8e8225114dccb31d33fbcb76df78052807a33068: every factual sentence against its cited row/locator (re-open the oh-my-pi lines in your clone), the header trio, QUALITY Q2-Q9 and Q28 (/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/QUALITY.md), cite-check per file (`node scripts/cite-check.mjs 2>&1 | grep -A20 omp-agent-root`), any claim stated stronger than its evidence. First line `RESULT ReviewKnowledgeEntry rev=8e822511 verdict=<sound|defects> findings=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewKnowledgeEntry.md"
+      },
+      {
+        "name": "ReviewR43Repairs",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewR43Repairs\nAttack: the round-43 routed-defect repairs as landed at d81978cdfefdc7409eb26a6363111d6682154093/8e8225114dccb31d33fbcb76df78052807a33068: the `gate-mutants` capability row in SCORECARD.md (R43-3, R43-4), the appended `## Round-44 routed corrections` in corpus/lessons/round-43.md (R43-2, R43-6), the shipped-tip receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls/ExecR43ShippedReceipt.md (R43-3), MutCiteWitness and SentinelReaper reports (R43-5). Each against /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-43-verifier-spotcheck.md § Routed defects. First line `RESULT ReviewR43Repairs rev=8e822511 verdict=<routed|gaps> gaps=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewR43Repairs.md"
+      },
+      {
+        "name": "CritCalibration",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item CritCalibration\nCalibration count (AXES: SHONEN/SCORECARD entries match observed repo state): at 8e8225114dccb31d33fbcb76df78052807a33068, list every mismatch between the lane's self-assessment (SCORECARD.md `## Axes` cells, `## Capabilities` rows, `## Saturation`, SHONEN.md, PROVINCE.md bands, SKILL.md gate-registry text) and observed repo state; compare with round 43's list (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-43/falsify/CritCalibration.md, 14 mismatches). First line `RESULT CritCalibration rev=8e822511 verdict=<n mismatches> new=<n> fixed=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/CritCalibration.md"
+      },
+      {
+        "name": "ReviewWaveCensus",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ReviewWaveCensus\nAttack: the round's swarm record. In your clone at 8e8225114dccb31d33fbcb76df78052807a33068 run `node scripts/wave-census.mjs --round 44` and `--json` bounded; compare seats per role and reports present with the registries (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/controls/swarm-registry.json; the residual call /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-44/residual-dispatch.json, 8 seats, two ended on a provider cyber_policy refusal) and list every seat whose report is absent. First line `RESULT ReviewWaveCensus rev=8e822511 verdict=<consistent|mismatch> seats=<n> reports=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ReviewWaveCensus.md"
+      },
+      {
+        "name": "ScoutRejectCandidates",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScoutRejectCandidates\nFind and open (ordinary means) two or three more candidate sources about OMP's agent directory or SQLite sidecar lifetimes that this round should REJECT (e.g. an outdated oh-my-pi doc on main that disagrees with the v18.12.6 code, a third-party blog, a mirror), each with URL, access time, HTTP status and a ≤25-word verbatim quote, the QUALITY criterion it misses and the flip condition. First line `RESULT ScoutRejectCandidates rev=8e822511 verdict=<found|none> candidates=<n>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ScoutRejectCandidates.md"
+      },
+      {
+        "name": "ScribeLessonDraft",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeLessonDraft\nDraft sections for /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-44.md (deliver as a patch in your scratch clone and inline): `## Claims` (C1 with before/after receipts and the counter's three pre-data redesigns, each with its trigger control and sha), `## Gate — admits and rejects` (S053-S061 with URL, access date, ≤25-word quote and criterion; S059 reject with flip), `## Routed defects (round-43 closure R43-1..R43-6) — dispositions`. Use only committed bytes at 8e8225114dccb31d33fbcb76df78052807a33068 and the plan; cite path:line. First line `RESULT ScribeLessonDraft rev=8e822511 verdict=drafted`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ScribeLessonDraft.md"
+      },
+      {
+        "name": "ScribeLogEntry",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ScribeLogEntry\nDraft the round-44 entry for /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md in the style of the round-43 entry (read the file's last 120 lines): motivating evidence, claims, receipts, commits 32b7fd561dae38b951828dde8fe11052737fb824, d81978cdfefdc7409eb26a6363111d6682154093, 8e8225114dccb31d33fbcb76df78052807a33068, holds (CritV3Channels and CritV3LabelA ended on provider cyber_policy refusals). Deliver as a patch in your scratch clone and inline. First line `RESULT ScribeLogEntry rev=8e822511 verdict=drafted`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ScribeLogEntry.md"
+      },
+      {
+        "name": "ConnAdjacency",
+        "agent": "connector",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Item ConnAdjacency\nAdjacency scan for round 44's new ground: which sibling lanes under /home/vgpnk/Projects/shokunin/*-shokunin should be told about the omp-census (e.g. a lane that counts kumitate's gates or suites; a lane that governs ~/.omp or OMP credentials — kasegi/kagi adjacency for secrets) and what each should be told (report, never absorb). Read-only. One line per finding with path:line. First line `RESULT ConnAdjacency rev=8e822511 verdict=<n findings>`.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r44 falsify wave against C1 and the round record\n\nReport: write your scoped findings to .ufo/waves/round-44/falsify/ConnAdjacency.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}

@@ -41,10 +41,10 @@ round-44 counter had to defeat (.ufo/waves/round-44/plan.md § Second pre-data r
 
 | family | writer | evidence |
 |---|---|---|
-| `<db>.corrupt-<epoch ms>-<uuid v4>` (+ `-wal`, `-shm`) for history.db and agent.db | OMP's corruption quarantine | S054 sqlite.ts line 193 `` `${dbPath}.corrupt-${Date.now()}-${crypto.randomUUID()}` ``; `:197-199` chmod 0o600 then copy for `-wal`, `-shm`, `-journal`, `""`; S055 `recoverCorruption: true` for agent.db. The live `history.db.corrupt-1792715344636-…` decodes to 2026-10-23T00:29:04.636Z (seat ScoutOmpChains) |
+| `<db>.corrupt-<epoch ms>-<uuid v4>` (+ `-wal`, `-shm`) for history.db and agent.db | OMP's corruption quarantine | S054 sqlite.ts line 193 `` `${dbPath}.corrupt-${Date.now()}-${crypto.randomUUID()}` ``; `:197-200` chmod 0o600 then copy for `-wal`, `-shm`, `-journal`, `""`; S055 `recoverCorruption: true` for agent.db. The live `history.db.corrupt-1792715344636-…` decodes to 2026-10-23T00:29:04.636Z (seat ScoutOmpChains) |
 | `agent.db.pre-restore-<YYYYMMDDTHHMMSSZ>` (+ `-wal`, `-shm`), `agent.db.recovered-<stamp>` | the operator's recovery procedure (`sqlite3 .recover`, backup-API restore), not OMP | S058; `git grep pre-restore` over the v18.12.6 tree → 0 hits |
 | `mcp.json.pre-disable-<YYYYMMDDTHHMM>` | an orchestrator pre-edit copy, operator-authorized | S061 |
-| `mcp.json.rea.backup`, `mcp.json.rea.backup.<64 hex>.recovery` | the REA package's setup transaction backups | S057 SetupRecoveryBackup.js line 36 `` `${firstBackupPath}.${digest}.recovery` `` |
+| `mcp.json.rea.backup`, `mcp.json.rea.backup.<64 hex>.recovery` | the REA package's transaction backups (client setup, skill setup and uninstall all preserve them) | S057 SetupRecoveryBackup.js line 36 `` `${firstBackupPath}.${digest}.recovery` `` |
 
 Every family is anchored to its owning member: the same template on another member is unlisted
 (the counter's `crossgen` cases). Generations come and go (earlier agent.db generations were

@@ -129,6 +129,8 @@ fixture suite, `--strict` to fail on warnings.
 
 | `lessons/round-43-verifier-spotcheck.md` | Round-43 non-author closure (hyaku): rejected as an honest stop — committed junk controls that skip the claimed work (J4, the self-digest tripwire, route A, J4b, CritJunkAtM) met the `gate-mutants` K43 target before and after data; routed defects R43-1..R43-6 (dispositioned in round 44: `lessons/round-43.md` § Round-44 routed corrections, the corrected `gate-mutants` capability row) | the round-43 lane commits, `.ufo/reports/round-43/kumitate.md` |
 
+| `lessons/round-44.md` | Round-44: capability `omp-census` (shape-only gate over `~/.omp/agent`, sources S053-S061) claimed under predicate P44; the counter was replaced three times before data when skip-work controls met it, then post-data catalog controls met p44d (C1 does not verify, author's reading); Q29 mined | `.ufo/waves/round-44/` receipts, `scripts/omp-census.mjs` |
+
 ## Known gaps
 
 - **Script layer** — split in round 13: **S7 is now the 9-member route-probe

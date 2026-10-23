@@ -1,0 +1,13 @@
+RESULT ScribeLessonDraft rev=8e822511 verdict=drafted
+
+Behavior: Drafted `## Claims`, `## Gate — admits and rejects`, and `## Routed defects (round-43 closure R43-1..R43-6) — dispositions` for `corpus/lessons/round-44.md` using only the pinned clone bytes and the frozen plan. The new lesson file was absent at the pinned revision, so the patch adds it as a draft fragment containing only the requested sections.
+
+Gates: No counter, census, gate, selftest, or test suite was run by this seat. Before/after values are quoted from committed receipts, not rerun: `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit 1 (`.ufo/waves/round-44/open/p44d-before-6cda8c35.txt:213-214`); `P44_COUNT: MET (passed=207 cases=207 floor=20 census_sha256=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7)` exit 0 (`.ufo/waves/round-44/final/p44-measured-d81978cd.txt:215-216`).
+
+Findings: The three pre-data redesigns and hashes are cited from `.ufo/waves/round-44/plan.md:142-250` and their trigger reports. The first trigger is an L1-described label-keyed counterexample, not a committed executable; no standalone trigger-control SHA is recorded. S053-S061 locators, access dates, quotes and dispositions are from `corpus/SOURCES.md:66-74`; S059 is rejected under Q2 primary-first with its scope-limited flip. R43-1..R43-6 dispositions follow the frozen plan (`.ufo/waves/round-44/plan.md:116-130`).
+
+Touched surfaces: Only this report was written inside the lane. In the owned scratch clone, created `corpus/lessons/round-44.md` and `/fast/scratch/hyaku/kumitate-r44/seats/w2-ScribeLessonDraft-2/round-44-sections.patch`.
+
+Provenance command: `env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git clone -q --no-hardlinks /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r44/seats/w2-ScribeLessonDraft-2/lane && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C /fast/scratch/hyaku/kumitate-r44/seats/w2-ScribeLessonDraft-2/lane checkout -q --detach 8e8225114dccb31d33fbcb76df78052807a33068` — exit 0, no output.
+
+Out of scope: No product code or lane lesson file was changed; no external sources were reopened; no operator-owned contents or host state were accessed; no tools were installed or updated. The patch and lesson draft were not applied to the lane or test-verified. Artifact: `/fast/scratch/hyaku/kumitate-r44/seats/w2-ScribeLessonDraft-2/round-44-sections.patch`.
