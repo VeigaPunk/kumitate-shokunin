@@ -203,3 +203,71 @@ Attempt-2 demo receipts, each with its do-nothing control in the same script, al
 `RedoDemoWorktreeShared.md`, `RedoDemoBwrapEnv.md`, `RedoDemoNativeMemCap.md`; guard attacks `SentinelSeatEnvScrub.md`,
 `SentinelBwrapEnvI.md`; source re-opens `Reopen*.md`. Attempt-1 receipts under `.ufo/waves/round-45/build/` are not
 cited (untrusted; their seats are dead).
+
+## Errata — round 45, attempt 3 (appended 2026-10-23 after falsify wave `a3-falsify`)
+
+Everything above this heading is the judged object as committed at `6b2a4517` and is not reworded. Each item below
+names the receipt under `.ufo/waves/round-45/a3-falsify/` that found it; where an item narrows a table row, the
+narrowed reading is the operative one from round 46.
+
+- **X1 — row "read lane files or history": `git diff` is not read-only.** With a file whose stat data is stale
+  (content unchanged), `git diff` refreshes and rewrites `.git/index`; `git status` does the same; `--no-optional-locks`
+  does not stop it for `diff`, `-c diff.autoRefreshIndex=false` does (CritStrongestFail, AblReadOnlyRow: index hash
+  changed in independent fixtures, do-nothing control unchanged). Write-free in both seats: `git log`, `git show`,
+  `git ls-files`. Read the row's git list as `log`, `show`, `ls-files`, plus `jj --ignore-working-copy diff` for working
+  copy diffs. The four `--ignore-working-copy` flags are each necessary for M1 (AblReadOnlyRow 4/4); the git-command
+  limitation is not what prevents M1 (it prevents M2-class writes, row 2).
+- **X2 — M2 and row "any git write in the lane": the old change is not abandoned.** After a raw `git commit` with
+  pending work, jj records `import git refs`/`import git head` and re-anchors `@`, but performs no abandon operation:
+  the old change stays a visible sibling holding the pending work; only an empty old `@` disappears (AblGitWriteRow,
+  0 abandon ops). The same effect follows on an attached HEAD. Of the row's listed commands, M2 is the mechanism for a
+  content commit and for `checkout`; `add` writes only the index, `stash` moves work to an unimported `refs/stash`,
+  `reset --hard` deletes pending content (data loss, a different failure) and `switch -c` imports a ref — they stay
+  banned on those grounds, not on M2. `jj --ignore-working-copy` defers the import to the next unflagged command.
+- **X3 — row "any git write in the lane": the helper is a fleet file.** "The lane helper `jj-lane.sh`" is
+  `/home/vgpnk/Projects/shokunin/scripts/hyaku/jj-lane.sh` in the fleet repo; no lane file has that name
+  (ConnContradiction item 4).
+- **X4 — row "edit code, run a gate that writes": use the tested line, from a file.** The row's line is shorter than
+  the line SentinelSeatEnvScrub tested (`a2-control/SentinelSeatEnvScrub.md:40`, which chains `&& unset … || exit`).
+  Passed inline as `systemd-run … bash -c '<line>'`, systemd expands `${_n[@]}` to empty, the scrub silently does
+  nothing and the commit lands in the inherited repository (`A=2 B=1`, exit 0); the same text from a script file, or
+  with `systemd-run --expand-environment=no`, works (AblScrubRow D1). Necessary components (AblScrubRow): the
+  `--local-env-vars` unset, `|| exit`, `unset GIT_EXEC_PATH` (a planted exec dir runs on an ordinary commit),
+  `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`. `unset GIT_CEILING_DIRECTORIES` is not needed for the stated
+  failure (a ceiling only limits discovery). The 15 local names include `GIT_CONFIG_PARAMETERS` and `GIT_CONFIG_COUNT`;
+  the line does not break `jj --ignore-working-copy log`.
+- **X5 — row "parallel writers on one repository": which clones.** "Separate clones" means a default local clone or
+  `--no-hardlinks`; `--shared` and `--reference` read the source through alternates, and a `--shared` clone loses its
+  history after a source history rewrite plus `git gc --prune=now` (`log` exit 128). `--no-hardlinks` is not needed for
+  the failures the row names; it prevents an unnamed one: in-place mutation of a hardlinked object file
+  (`chmod` + `truncate` in a default clone emptied the source object). AblCloneRow; the row's effect and control
+  reproduce.
+- **X6 — M5 table and row "run untrusted or generated code".** The table's `env -i` rows read 0 names at
+  `/proc/1/environ` because that demo ran bare `env -i`; under the row's prescribed `env -i PATH=… HOME=…` PID 1 holds
+  exactly those two names (`a2-control/RedoDemoBwrapEnv.md:175` `proc1_n=2`; AblBwrapRow). For the environ failure the
+  necessary guards are `env -i` as bwrap's immediate parent and its position inside the scope (`env -i … systemd-run …`
+  cannot reach the user bus and exits 1). `--clearenv --setenv` controls what the command sees, `--new-session` closes
+  `/dev/tty` (ENXIO) and the no-`/run` rule closes the user bus: each guards its own channel (SentinelBwrapEnvI), not
+  the environ leak. From Node, `spawn` with the option omitted or `env: process.env` leaks the launcher environment to
+  PID 1 despite `--clearenv`.
+- **X7 — M6 and row "any run that can allocate".** `MemoryMax` and `MemorySwapMax=0` are both necessary: without the
+  swap cap the touched 512 MiB Buffer survives by swapping (exit 0) under `MemoryMax=256M` (AblMemCapRow 3/3).
+  `TasksMax` and `timeout -s KILL` guard other failures (a fork storm; a sub-cap hold). When `timeout` is the scope's
+  main process the client exit can be 143, not 137: read `Result=oom-kill` or `memory.events` `oom_kill` instead. The
+  VmPeak 1.41 GiB figure is receipt-specific (1.22 GiB in AblMemCapRow). The sentence "a Buffer's backing store is an
+  ArrayBuffer outside that section" is not in S073 (XChanS073). Its source is S077: `heapTotal` and `heapUsed` «refer to
+  V8's memory usage», and `arrayBuffers` «refers to memory allocated for ArrayBuffers and SharedArrayBuffers, including
+  all Node.js Buffers» and is included in `external`; the demo's `arrayBuffers` 537,008,379 against `heapUsed`
+  3,921,064 is the measurement.
+- **X8 — § Scope, tsukuroi pointer.** Tsukuroi's `memory-pressure-r25.md` cites its S121 (systemd v262
+  `systemd.resource-control.xml`), not S072; tsukuroi's S072 is `systemd-run.xml`, used by `boot-writers-r19.md`
+  (XChanS072, at tsukuroi HEAD `9c89ff4f`).
+- **X9 — M1 citation.** "A fresh clone carries no auto-track key" is the demo's observation; S067 :19-22 and :69-71
+  define auto-track and ignores only (XChanS067).
+- **X10 — M2 locator.** The `"import git refs" operation` text is S066 :120-121, not :119-121 (XChanS066).
+- **X11 — S068 quote form.** «a private, frozen repo» spans a `//` comment line break at `task/worktree.ts:677-678`
+  (`a private,` / `// frozen repo`); with only whitespace normalised it is not contiguous. The four words and their
+  meaning are at the cited lines; the installed bundled binary drops the comment (XChanS068).
+- **X12 — restated passages.** M3 restates `knowledge/pinned-evidence.md:98-101` and M5 restates
+  `lessons/round-44.md:129,138`; both are named in § Scope as not restated — read those as the citations at M3 and M5
+  (ConnContradiction (b)).

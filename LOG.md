@@ -1886,3 +1886,19 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   Before, the round-open missing-census receipt reads `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit 1 (`open/p44d-before-6cda8c35.txt`). The measured receipt binds counter sha256 `9ea97d86…`, shape `fcf9fcb6…`, census `fd4d1c4e…`, and seed `2676cbe767adc1820fd316e02a7b9020`; it reads `P44_COUNT: MET (passed=207 cases=207 floor=20 census_sha256=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7)` exit 0 (`final/p44-measured-d81978cd.txt`). The counter selftest receipt is 21/21, `VERDICT: PASS`, exit 0 (`open/p44d-selftest.txt`).
   Provenance: `corpus/SOURCES.md` rows S053–S061 and `corpus/knowledge/omp-agent-root.md`; upstream oh-my-pi v18.12.6 pin `45c35e40c46166dc726ccc52f5d27f40f2449f99`. Holds, not results: CritV3Channels and CritV3LabelA ended on provider `cyber_policy` refusals. At this draft cut, `.ufo/waves/round-44/falsify/` contains only its swarm registry; wave-2 checks and the no-harm gate outcomes are not yet evidenced here and are not claimed.
   Close (02:00Z): wave 2 (36 seats) re-derived the counted run (replay identical, 6/6 fresh seeds, 6/6 under load) and found no gate harm, but CtlPostDataA built three skip-work controls that read MET 207/207 under p44d after data (kill rule 2): C1 does not verify (author's reading). 19 seats cancelled at wrap-up; lesson § Verdict at close.
+
+- 2026-10-23 — round 45 (base `3632602c`; plan `cfa99304`, errata `ca5b0aac`, checklist E7 `a2e5b54c`, attempt-2
+  controls and E9 `31656bdf`, repairs `1a8312ee`, entry `6b2a4517`, attempt-3 E10 `9c4785ea`, falsify receipts
+  `3837d315`). Repair-first plus one exploratory claim, in three attempts (attempts 1 and 2 died with the
+  orchestrator at 05:25Z and 06:19Z; their uncommitted files were treated as untrusted scratch and removed).
+  **C1 exploratory, coverage frontier band "Isolation substrates for parallel agents":** new entry
+  `corpus/knowledge/agent-isolation-substrates.md` — seven mechanisms (jj snapshot, git import into a colocated repo,
+  `GIT_*` precedence over `-C`, linked-worktree sharing, bwrap PID-1 environ, cgroup versus V8 heap, jj workspaces),
+  each with a demo and do-nothing control, and a seat-action → substrate → guard table; sources S062–S074 new, S013
+  and S027 queued → mined, S077 added at close; S075/S076 rejected. Wave `a3-falsify` (33 seats, new designs)
+  re-opened 15 rows through a second channel (11 hold, 4 defects), ablated each table row's guards (all six
+  baselines reproduce with clean controls; `git diff` is not read-only, the row-3 guard line fails open inline under
+  `systemd-run`, `MemorySwapMax=0` is necessary), and replayed the repairs (Q32 agrees on 22 boundaries; Q30 cannot
+  pass a counter with a fixed CLEAN case; Q31's greps are blind out of sample). Errata X1–X12 appended to the entry;
+  QUALITY attempt-3 notes on Q30–Q32. Verdict: `unprovable` pending the non-author ruling. Routed repairs R44-1..R44-6
+  landed or recorded; R43-1/R43-5 deferred. Lesson `corpus/lessons/round-45.md`.

@@ -611,3 +611,27 @@ the round-46 plan. The round-45 receipts named below are attempt-2 seats under `
   - **Fails when.** Any line prints.
   - **Shown able to fail.** At `3632602c` it prints `lessons/round-44-verifier-spotcheck.md`; at `6cda8c35` it
     prints `lessons/round-43-verifier-spotcheck.md` (L1 runs, round 45).
+
+- **Round-45 attempt-3 replay notes on Q30–Q32 (history replays in wave `a3-falsify`; the criteria above are not
+  reworded).**
+  - **Q30 — fixed CLEAN cases always recur (ReplayQ30History).** Run as written on the round-44 counters, p44
+    (`361d4492`) and p44b (`292d9266`) exit 2 (their CLI has no `--seed`, and without it the listing cannot be rebuilt:
+    `reconstructed 38 entries, listing says 39`); p44c (`28e29bbe`) reads `CATALOG: REUSED (clean=19 recurring=9)`,
+    exit 1. The nine recurring ids are the seed-independent fixed shapes (`control`, `control-end`, `no-chains`,
+    `no-sidecars`, five `src:*`), and an alternate seed pair returns the same nine. So any counter with one fixed CLEAN
+    case (an unmodified root, a sourced reference shape) reads `REUSED` whatever its other cases do: as written Q30
+    cannot pass a counter that keeps a do-nothing CLEAN case. Reading from round 46, until the script gains an
+    allow-list: the frozen plan names its fixed CLEAN case ids before the run; `REUSED` passes only when every recurring
+    id is in that list and the non-fixed CLEAN cases number at least the counter's floor; any other recurring id fails.
+    That reading is checked by hand against the script's printed ids.
+  - **Q31 — the source greps are blind out of sample (Q31OutOfSample).** On 34 real launchers (lane scripts, round
+    probes, tameshi runners) the four greps gave 11 false passes and 3 false fails; a mutant that spreads
+    `...process.env` into `claims-check.mjs`'s child environment survived the environment grep while a behavioural
+    marker probe caught it (`ENV_BUILDER: FAIL MARKER present`). The selftest clause of **Fails when** is the criterion;
+    the greps are a reminder list and never pass or fail a runner on their own.
+  - **Q32 — replay agrees (ReplayQ32History).** Over the 22 round boundaries of rounds 35–45 every base fails with
+    exactly the previous round's `round-<N-1>-verifier-spotcheck.md` and every tip passes; against the eight recorded
+    round-open proxy receipts, 0 false negatives and 0 false positives; over 96 commits Q32 fails at exactly the 31
+    where declared and computed `C2_total` differ. Limits: Q32 checks that a row exists, not that the declared total
+    matches (a declared-only drift passes Q32), and it does not detect phantom or duplicate rows (a row whose note no longer exists); a note renamed with its row
+    left behind does fail Q32 while the proxy reads MATCH.

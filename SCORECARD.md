@@ -427,6 +427,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 45 | coverage — PROVINCE frontier band "Isolation substrates for parallel agents" (retired aggregate, no live term; exploratory claim C1, no counting command; sourced on S062–S074, S013, S027, S077) | no corpus entry on the band (`git show 3632602c:corpus/knowledge/agent-isolation-substrates.md` → absent; S013, S027 `queued`) | entry `corpus/knowledge/agent-isolation-substrates.md` committed at `6b2a4517` (judged object), errata X1–X12 appended after wave `a3-falsify`; **verdict: `unprovable` pending the non-author ruling** — the frozen rule admits `unprovable-but-better` only with a named non-author reviewer (requested of the hyaku closure); no integer moves | `.ufo/waves/round-45/plan.md` (rule `cfa99304`, checklist E7 `a2e5b54c` + E9 `31656bdf`), controls `a2-control/`, falsify `a3-falsify/` (`3837d315`), `corpus/lessons/round-45.md` § C1 at close |
 | 44 | operability (lowest non-retired axis; integer held 9; claim type capability acquisition `omp-census`, a new gate over the OMP agent root `~/.omp/agent`; sourced on S053–S058, S060, S061) | frozen counter `p44d-count.mjs` (plan commit `32b7fd56`, sha256 `9ea97d86…`, shape `fcf9fcb6…`, 207 cases) with the census absent at round open `6cda8c35`: `P44_COUNT: UNMET (passed=0 cases=207 floor=20 census_sha256=absent)` exit 1 (`.ufo/waves/round-44/open/p44d-before-6cda8c35.txt`) | same counter, census `scripts/omp-census.mjs` at `d81978cd` (sha256 `fd4d1c4e…`): `P44_COUNT: MET (passed=207 cases=207 floor=20 …)` exit 0, seed `2676cbe7…` (`.ufo/waves/round-44/final/p44-measured-d81978cd.txt`); 44 skip-work controls UNMET before data (`controls-v4/`); three counter replacements before data, predicate P44 unchanged (`.ufo/waves/round-44/plan.md`) | `git show 32b7fd56:.ufo/waves/round-44/probe/p44d-count.mjs` + `p44-shape.tsv`, `git show <rev>:scripts/omp-census.mjs`, `node p44d-count.mjs --census … --shape … [--seed …]` (plan § Measurement) |
 | 43 | operability (lowest non-retired axis; integer held 9; claim type capability re-claim `gate-mutants` under the frozen kill predicate K43; sourced on S046–S048) | frozen counter (`0f4108bf:scripts/gate-mutants.mjs`, sha256 `e24749e4…`) on the round-open bytes `--rev 2a7f37d2`: `GATE_MUTANTS: SURVIVED (mutants=43 killed=36 frozen=34/41 …)` exit 1, seven survivors (suites that report PASS or exit 0 while their own cases fail) | same counter `--rev 84cb1d5d`: `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 …)` exit 0, every kill `confirm=same`, controls re-run PASS; addendum A1 `C1_DISCRIMINATORS: PASS`; junk J1–J3 ERROR exit 2 | `git show 0f4108bf:scripts/gate-mutants.mjs > $G/gate-mutants.mjs; node $G/gate-mutants.mjs --repo <lane> --rev <REV>` (bounds in the plan); receipts `.ufo/waves/round-43/open/c1-control-base.txt`, `.ufo/waves/round-43/final/c1-measured-84cb1d5d.txt`, `final/c1-discriminators-84cb1d5d.txt`; S046, S047, S048 |
 | 42 | operability (lowest non-retired axis; integer 8 → 9; claim type capability acquisition `gate-mutants`, sourced on S039) | `{"A":9,"C":17,"operability":8}` at dfabe92 (open receipts); no battery over the lane's own suites | `{"A":10,"C":19,"operability":9}`; `node scripts/gate-mutants.mjs` → `GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 …)` exit 0; `--selftest` 23/23; shown able to fail: `--rev dfabe92… --target cite-check` → `SURVIVED (… killed=16 … drift=2 …)` exit 1 (the R41-3 skip-bypass mutants at the open bytes) | `node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json \| jq -c '.terms \| {A, C, operability}'`; receipts `.ufo/waves/round-42/final/`; S039, S040 |
@@ -1724,6 +1725,10 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
+*Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
+that were not admitted (r42, r43, r44 closures: `rejected-honest-stop`); both rows are **unverified** and stay as
+history, not as working capabilities. The last verified row is `wave-census` (round 41).
+
 ## Saturation
 
 The lane's saturation line and stagnation window N are to be declared by the lane on its next round per `AXES.md` §The stagnation nudge; not asserted by this conformance change.
@@ -1745,6 +1750,10 @@ active if rounds 43–45 add no capability row.
 records the miss). `omp-census` enters the table in round 44 on a counted run; if round 44 is
 admitted the window restarts at round 44, otherwise the last verified entry stays `wave-census`
 (round 41) and the nudge is active from round 45.
+
+**Round 45 (2026-10-23).** No capability row is claimed; the nudge is active (rounds 42–44 added no verified row),
+so the lowest-axis obligation is waived and C1 is a frontier move (exploratory, coverage frontier band). The window
+stays open into round 46.
 
 ## Round 36 — limits and round-37 pre-registration (2026-10-21)
 
@@ -1999,3 +2008,25 @@ CtlPostDataA scored before data; (2) counter hygiene: a per-case memory cgroup, 
 still prints a verdict, a minimal `env` for bwrap, signal cleanup; (3) R43-1/R43-5 (gate-mutants) stay
 open.
 
+## Round 45 — claim, limits and round-46 pre-registration (2026-10-23)
+
+Claim (Move log row `| 45 |`; plan `.ufo/waves/round-45/plan.md`, three attempts): C1 exploratory, coverage
+frontier band "Isolation substrates for parallel agents" — the entry `corpus/knowledge/agent-isolation-substrates.md`
+(committed `6b2a4517`, errata X1–X12 appended after wave `a3-falsify`). No counting command; author's reading
+`unprovable` pending the non-author ruling (verdict rule frozen at `cfa99304`). Routed repairs landed: R44-1 → Q30
+(plus the attempt-3 fixed-case reading), R44-2 → errata and the Q29 ordering note, R44-3 → Q31 (greps advisory; the
+selftest decides), R44-4 → seven of eight owed reviews verified in `a2-control/Verify*.md` (the census-vs-domain
+report arrived after `31656bdf` and is not cited), R44-5 → `A` definition note, R44-6 → record fixes; R43-1/R43-5
+recorded and deferred. Terms: `C2`/`C2_total` 102/102 (unchanged since `1a8312ee`); proxy `--strict` MATCH; census
+exit 0. No axis integer moves.
+
+Limits: the round ran in three attempts (attempt 1 dead at 05:25Z, attempt 2 dead at 06:19Z with its 44-seat falsify
+wave unrun); seats dispatched across attempts exceed the 128-seat round cap (attempt 1: 40, attempt 2: 50 + 44,
+attempt 3: 33 + residual), each attempt within it. No lane runner implements Q31 yet.
+
+Planned next round (candidates, not commitments): (1) clear repository variables in the selftest git writers
+(`cite-check.mjs:1674`, `proxy-check.mjs:2695`, `round-gate.mjs:717,719`; AuditLaneGitWriters) and put the tested
+row-3 guard into the wave context from a file; (2) a counter sandbox runner meeting Q31 with its behavioural selftest
+(AuditLaneSandboxes: 24 child sites without a cgroup cap); (3) give `catalog-check` a fixed-case allow-list (Q30
+attempt-3 note); (4) the erratum owed in `knowledge/pinned-evidence.md:98-101` (allowlisted `HOME` still reaches
+`$HOME/.gitconfig`; ConnContradiction (c)); (5) R43-1/R43-5 stay open.

@@ -130,3 +130,93 @@ do-nothing, glossary, label-keyed, off-topic and same-effect controls before the
 ## Verdict at close
 
 Filled at close below this line; nothing above changes after the falsify wave starts except by appended errata.
+
+### Attempt 3 (`KumitateR45A3`, dispatched 06:40Z) — appended; nothing above is reworded
+
+Attempt 2 died with the orchestrator (omp SIGSEGV) at 06:19:06Z, 14 minutes after spawning its 44-seat falsify wave
+`a2-falsify`; no seat of that wave reported, its record is committed at `9c4785ea` and none of its tasks was resent.
+Attempt 3 snapshotted the 45 untracked leftovers outside the lane and removed them (plan § E10), then ran wave
+`a3-falsify` (33 seats, all new designs, spawned 06:50:44Z, all 33 settled by 07:14Z, receipts `3837d315`).
+
+#### Gate additions (attempt 3)
+
+| row | URL | accessed | quote (locator, words) | decision |
+|---|---|---|---|---|
+| S077 | https://nodejs.org/docs/v24.21.0/api/process.html | 2026-10-23 | "arrayBuffers refers to memory allocated for ArrayBuffers and SharedArrayBuffers, including all Node.js Buffers." (§ process.memoryUsage(), HTML 2869-2870, 13) | admit A, mined — the source for erratum X7, replacing a sentence S073 does not support; opened by the L1 (curl, HTTP 200, page header `Node.js v24.21.0`, body sha256 `1224adf1…`) |
+
+Independent-channel re-opens of the cited rows (method new this attempt: the row's URL plus an upstream tag or the
+installed man page or package): S013, S027, S062, S063, S064, S065, S066, S069, S070, S071, S074 **hold** (quote
+verbatim in every channel, pins reproduce). Defects, each answered by an entry erratum or a row fix:
+
+- **S073 — rejected: the entry sentence "a Buffer's backing store is an ArrayBuffer outside that section"**, found in no
+  channel (XChanS073); withdrawn by erratum X7, sourced instead on S077; S073's teaches cell corrected in place.
+- **S072 — rejected: the § Scope pointer "its S072 is the same systemd-run page"** (tsukuroi's file cites S121;
+  XChanS072) → X8; row locator TasksMax= 245 → 250 and the "most stringent" gloss moved to EffectiveMemoryMax=.
+- **S067** — "a fresh clone carries no auto-track key" is not in the cited lines → X9 (the demo is its evidence).
+- **S066** — locator :119-121 → :120-121 → X10.
+- **S068** — the 4-word quote spans a `//` comment line break; not contiguous under whitespace-only normalisation
+  (XChanS068) → X11. The author does not rule whether K3′'s reading clause accepts it; the closure does.
+- **S063** — the page footer says "last updated in 2.49.0" while the row says Git 2.56.0; the source text is
+  byte-identical at v2.49.0 and v2.56.0 (XChanS063), and KSheetFull flags the literal marker mismatch. Recorded, not
+  re-scored.
+- **S013** — Last-Modified served as 06:23:18, the row pinned 06:23:19 (same bytes and etag) → row note.
+- **S075, S076 — rejects re-judged and upheld** (XRejudgeS075: the 2.56.0 URL is a wrapper canonicalising to 2.54.0;
+  XRejudgeS076: a redirect to 2.49.0); substitutes S064 and S063 confirmed by tag and installed man page.
+- **Method control (CtlChannelMethod):** the re-open procedure caught 6/9 planted defects (word, locator and version
+  defects on S062 and S071); the three S066 probes were inconclusive because a raw Markdown page carries no version
+  marker of its own, so K3′'s literal version-marker duty cannot be met by S066 or S067 — their version identity rests
+  on the tag-to-commit resolution (`v0.45.1` = `7c41cdeb`), stated here, not counted as a marker pass.
+
+Rejected guard readings (entry errata X1–X7, from the six guard ablations): `git diff` as a read-only command (X1);
+"abandoned" in M2 (X2); the row-3 guard line as written, which fails open inline under `systemd-run` (X4);
+`--shared`/`--reference` as "separate clones" (X5); the `env -i` 0-name count as the prescribed invocation's (X6); exit
+137 as the scope client's OOM signal (X7).
+
+#### Row log additions (old → new)
+
+- S072: anchor `TasksMax= (245-258)` → `(250-258 …)`, `Delegate= (618-632)` → `(610-632)`; teaches "the effective cap is
+  the most stringent of unit and parent slices" → attributed to EffectiveMemoryMax=. Status, recheck, used-by unchanged.
+- S073: teaches "Buffers share ArrayBuffer backing memory outside it" → withdrawn with a pointer to S077. Status,
+  recheck, used-by unchanged.
+- S013: anchor gains the served Last-Modified 06:23:18 note. Status, recheck, used-by unchanged.
+- S077: new row, status `mined`, used-by the entry (erratum X7) and this lesson.
+
+#### Mistakes (attempt 3)
+
+- **Class: a guard tested in one form is prescribed in another.** Evidence: the entry's row-3 guard line
+  (`6b2a4517:corpus/knowledge/agent-isolation-substrates.md:162`) is not the line SentinelSeatEnvScrub tested
+  (`a2-control/SentinelSeatEnvScrub.md:40`: it chains `&& unset … || exit`), and the shortened line fails open when
+  passed inline through `systemd-run` (AblScrubRow D1: `A=2 B=1`, exit 0). Captured-by: none — K1′ binds a row to its
+  receipt's effect, not to the exact guard bytes. Fix (practice from round 46): a guard an entry or wave context
+  prescribes is copied byte-exact from the receipt that tested it, runs from a script file, and is checked by
+  comparing the two strings. Shown able to fail, L1 run at `6b2a4517`: extracting the row's guard (markdown `\|`
+  unescaped) and line 40 of the receipt and comparing them prints `GUARD_BYTES: DIFFER`.
+
+#### Practice audits (findings routed to round 46; no code changed this round)
+
+- AuditLaneGitWriters: of 16 git call sites in `scripts/`, 9 write (selftest fixtures); 5 write with the caller's
+  repository variables not cleared — `cite-check.mjs:1674`, `proxy-check.mjs:2695`, `round-gate.mjs:717,719` (spread
+  `process.env`), and `surface-probe.mjs:1007` (`bash -c` of checklist text).
+- AuditLaneSandboxes: 24 child-process sites, none under a cgroup `MemoryMax`; `surface-probe --checklists` runs
+  checklist text in `bash -c` with the inherited environment.
+
+#### C1 at close
+
+**C1 (exploratory, coverage — PROVINCE frontier band "Isolation substrates for parallel agents"): author's reading
+`unprovable` pending the non-author ruling.** The verdict rule frozen at `cfa99304` allows `unprovable-but-better` only
+with a named non-author reviewer on record, and the round's own seats do not count; that judgment is requested of the
+hyaku closure. The checklist as frozen at the entry commit (E7 with the E9 amendments), applied by wave `a3-falsify`:
+
+- K0 holds (6 rows, 13 new rows cited, 8 committed demo receipts; KSheetFull).
+- K1′ holds (KSheetFull: every row binds a defined mechanism and a receipt showing its effect).
+- K2′: all six ablation seats re-ran their row's effect and do-nothing control from a printed clean pre-state with
+  their own scripts, `baseline=reproduces control_clean=yes` 6/6. Differing numbers are corrected by named appended
+  errata (X6 `env -i` count, X7 exit code and VmPeak), which K2 as frozen admits.
+- K3′: 11 of 15 cited rows hold through a second channel; S067, S072 and S073 had entry sentences their sources do not
+  support (corrected by X7–X9); S068's quote is not contiguous under whitespace-only normalisation (X11); the
+  literal version-marker duty is unmeetable for S066/S067 (no in-text marker) and S063's footer names 2.49.0. These
+  are the items on which the closure rules K3′.
+- K4 holds with the pointer corrections X3, X8, X12.
+- K5′ holds (KSheetFull), with X4: the row-3 guard prescribed is not the tested bytes.
+
+The judged object is unchanged since `6b2a4517`; all corrections are appended below its text. No axis integer moves.
