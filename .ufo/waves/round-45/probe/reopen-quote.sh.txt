@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# reopen-quote.sh — CONTROL for round-45 plan § Supporting checks F1 (quote re-open).
+#
+# Procedure (one implementation, no per-row special cases):
+#   1. fetch the row's URL with curl, following redirects (-sSL)
+#   2. strip HTML tags
+#   3. collapse whitespace
+#   4. decode HTML entities
+#   5. collapse whitespace again (an entity may decode to whitespace)
+#   6. grep -F (fixed string) the row's quote, itself whitespace-collapsed,
+#      against the normalized body
+#   -> print "REOPEN: FOUND" or "REOPEN: MISSING" for the row
+#
+# The body is cached per URL under ./bodies/ and hashed, so the receipt can pin
+# the bytes the verdict was read from.
+#
+# Scope: this procedure tests VERBATIM RE-OPEN ONLY. It cannot judge topic fit.
+# Control (c) shows a real but off-topic sentence passing by construction; the
+# plan assigns topic fit to the reviewer reading the row's `teaches` against
+# the quote. Controls (e)/(f)/(g)/(h) below are extra probes of the procedure's
+# own blind spots, not plan requirements.
+#
+# Input: rows.tsv, TAB-separated:  id <TAB> label <TAB> url <TAB> quote
+
+set -u
+cd "$(dirname "$0")"
+mkdir -p bodies
+
+norm_quote() { printf '%s' "$1" | tr '\n\t' '  ' | tr -s ' ' | sed 's/^ //; s/ $//'; }
+
+while IFS=$'\t' read -r id label url quote; do
+  case "$id" in ''|'#'*) continue ;; esac
+  [ -n "${quote:-}" ] || continue
+
+  key=$(printf '%s' "$url" | sha256sum | cut -c1-16)
+  body="bodies/${key}.html"
+  if [ ! -s "$body" ]; then
+    code=$(curl -sSL --max-time 60 -A 'kumitate-quote-reopen/1.0' \
+             -o "$body" -w '%{http_code}' "$url")
+    printf 'FETCH %s http=%s bytes=%s sha256=%s url=%s\n' \
+      "$id" "$code" "$(wc -c < "$body")" "$(sha256sum "$body" | cut -d' ' -f1)" "$url"
+  else
+    printf 'FETCH %s (cached) sha256=%s url=%s\n' \
+      "$id" "$(sha256sum "$body" | cut -d' ' -f1)" "$url"
+  fi
+
+  python3 normalize.py "$body" > "bodies/${key}.txt"
+  nq=$(norm_quote "$quote")
+
+  if grep -qF -- "$nq" "bodies/${key}.txt"; then
+    printf 'REOPEN: FOUND   %s   %s\n' "$id" "$label"
+  else
+    printf 'REOPEN: MISSING  %s   %s\n' "$id" "$label"
+  fi
+done < rows.tsv

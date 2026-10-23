@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+"""HTML -> plain text normalizer for the quote re-open procedure.
+
+Steps (fixed, order matters):
+  1. decode bytes as UTF-8 (replacement on error)
+  2. decode JSON/JS escapes that GitHub blob pages use for their payload
+     (\\uXXXX, \\n, \\t, \\", \\') -- the blob page carries the file body
+     inside a JSON payload, not as plain text
+  3. strip HTML tags (tags -> single space)
+  4. decode HTML entities (&amp; &#8217; &lt; ...)
+  5. collapse every run of whitespace to one space and trim
+
+stdout: the normalized text, one line.
+"""
+import html
+import re
+import sys
+
+data = open(sys.argv[1], "rb").read().decode("utf-8", errors="replace")
+
+# 2. JSON/JS escapes used by embedded payloads (GitHub blob view).
+data = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), data)
+data = data.replace("\\n", "\n").replace("\\t", "\t")
+data = data.replace('\\"', '"').replace("\\'", "'")
+
+# 3. strip tags.
+data = re.sub(r"<[^>]+>", " ", data)
+
+# 4. decode entities.
+data = html.unescape(data)
+
+# 5. collapse whitespace.
+data = re.sub(r"\s+", " ", data).strip()
+
+sys.stdout.write(data + "\n")

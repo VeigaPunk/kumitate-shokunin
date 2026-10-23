@@ -121,3 +121,27 @@ yet drafted, so nothing here changes a judged object.
   deleted (history).
 - **E6 (objection 11).** The sandbox runner's `--budget` is enforced by an outer `timeout` that still prints a verdict
   line; ExecCounterSandbox's item carries it.
+
+## E7 — frozen review checklist for C1 (appended before the entry commit; from ReviewPlan D1/D3 and CtlQuoteFabricated)
+
+ReviewPlan D1: the verdict rule froze who rules, not what fails. Frozen here, before the entry is committed and
+before any seat has read it. C1 is `unprovable` (never `unprovable-but-better`) if any item fails; the non-author
+reviewer's taste judgment applies only when all hold:
+
+- K1 every decision-table row names a mechanism (M1–M7) and a demo receipt with its do-nothing control, or a source
+  locator;
+- K2 every demo the entry cites shows the effect and its control does not (receipt lines in `build/Demo*.md`), and a
+  falsify re-run of that demo reproduces it (or a named appended erratum corrects the entry);
+- K3 every new SOURCES row the entry cites (S062–S074) re-opens with its quote found verbatim by a non-author falsify
+  seat, AND the quote sits under the row's stated section (CtlQuoteFabricated: the URL-level procedure does not check
+  section locality, so the seat checks it by reading); normalization strips « » and folds apostrophe variants
+  before matching (CtlQuoteFabricated false-MISSING modes);
+- K4 the entry names the prior-corpus passages it does not restate (E1) and cites the sibling-lane owners instead of
+  re-deriving their mechanics (ConnSiblingOverlap);
+- K5 at least two rows change a lane practice relative to round-44 practice (not a glossary): the `GIT_*` scrub
+  widened to `git rev-parse --local-env-vars`, and `env -i` in front of bwrap instead of `--clearenv` alone.
+
+D3: wave 2 carries one quote re-open seat per cited new row whatever the wave shape. The F1 control receipt
+(`build/CtlQuoteFabricated.md`: fabricated, one-word-changed and wrong-locator MISSING; off-topic FOUND by
+construction) and its scripts (`probe/reopen-quote.sh.txt`, `probe/normalize.py.txt`) land in a commit before the
+entry commit.
