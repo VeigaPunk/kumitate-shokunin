@@ -3,28 +3,35 @@
 //
 // Predicate (same sentence as plan.md § C2): the runner `scripts/cap-run.mjs` in a clone of revision R
 // is CAP_HELD on case k when the behaviour this probe observes from outside the runner meets case k:
-//   K1 native memory — under `--mem 128`, a child that allocates sixty-four 16 MiB Buffers and records
-//      each allocation records at most 8, never reaches DONE, and the runner exits non-zero; and the
-//      same runner lets a 2-allocation child reach DONE with exit 0 (liveness).
+//   K1 native memory — under `--mem M` (M drawn per run from 112..176), a child that allocates sixty-four
+//      16 MiB Buffers and records each allocation records at most ceil(M/16), never reaches DONE, and the
+//      runner exits non-zero; and the same runner lets a 2-allocation child reach DONE with exit 0 (liveness).
 //   K2 descendants — a child that starts a detached new-session grandchild and exits 0: the runner
 //      exits 0 within 30 s and 1 s after it returns no process carries the grandchild's marker.
-//   K3 total budget — under `--budget 3`, a 300 s child: the runner returns within 10 s, non-zero, with a
-//      stderr line starting `CAP_RUN: BUDGET`, and 1 s later no process carries the child's marker.
-//   K4 explicit environment — run with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and CAPRUN_SECRET in the
-//      runner's own environment and `--env CAPRUN_PASSED=yes`: the runner exits 0 and the child's
-//      environment (printed by the child to stdout) has CAPRUN_PASSED=yes and none of the four keys.
+//   K3 total budget — under `--budget B` (B drawn per run from 2..4), a 300 s child: the runner returns within
+//      B+7 s, non-zero, with a stderr line starting `CAP_RUN: BUDGET`, and 1 s later no process carries the
+//      child's marker.
+//   K4 explicit environment — run with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and a secret key in the
+//      runner's own environment and `--env <P>=<V>`: the runner exits 0 and the child's environment
+//      (printed by the child to stdout) has P=V and none of the four keys.
 //   K5 signal cleanup — SIGTERM to the runner 1.5 s into a 300 s child: the runner exits within 10 s and
 //      1 s later no process carries the child's marker.
-//   K6 isolation (QUALITY Q31) — run with CAPRUN_P1_MARKER in the runner's own environment: the runner exits 0
+//   K6 isolation (QUALITY Q31) — run with a marker key in the runner's own environment: the runner exits 0
 //      and the child reads /proc/1/environ successfully (its own PID namespace) and finds neither
-//      CAPRUN_P1_MARKER nor GIT_DIR in it.
+//      the marker nor GIT_DIR in it.
+// Fixture names, key names, values, M and B are random per run (no fixed label to key on); the
+// drawn values are printed on the PARAMS line.
 // A missing runner, a probe-side timeout (60 s per invocation, SIGKILL) or any unmet clause is NOT_HELD.
 // Frozen runner interface: node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... -- <cmd> [args...]
-// Usage: node caprun-probe.mjs <lane-repo> <rev>   Output: one line per case, then
+// Usage: node caprun-probe.mjs <lane-repo> <rev>   Output: PARAMS, one line per case, then
 //   CAPRUN_PROBE rev=<full> held=<k>/6        Exit 0 = 6/6, 1 = fewer, 2 = usage/setup error.
 import { spawnSync, spawn } from 'node:child_process';
 import { mkdtempSync, rmSync, readFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { randomBytes, randomInt } from 'node:crypto';
+const hex = () => randomBytes(5).toString('hex').toUpperCase();
+const P = { M: randomInt(112, 177), B: randomInt(2, 5), prog: `p${hex()}.txt`, secret: `S_${hex()}`, passK: `P_${hex()}`,
+  passV: hex(), mark: `M_${hex()}`, fake: `/nonexistent-${hex()}` };
 
 const [lane, revIn] = process.argv.slice(2);
 if (!lane || !revIn) { console.log('CAPRUN_PROBE: usage <lane-repo> <rev>'); process.exit(2); }
@@ -36,8 +43,8 @@ if (rp.status !== 0) { console.log('CAPRUN_PROBE: usage bad rev'); process.exit(
 const rev = rp.stdout.trim();
 const root = process.env.SCRATCH_ROOT || '/fast/scratch/hyaku/kumitate-r46/runs';
 mkdirSync(root, { recursive: true });
-const W = mkdtempSync(join(root, 'caprun.'));
-const tag = `caprun-probe-${process.pid}-${Date.now()}`;
+const W = mkdtempSync(join(root, `w${hex()}.`));
+const tag = `x${hex()}${hex()}`;
 const markers = [];
 const alive = (m) => {
   let n = 0;
@@ -80,21 +87,22 @@ const run = (args, env = scrub) => {
 const sleepMs = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 const results = [];
 const report = (k, ok, why) => { results.push(ok); console.log(`CASE ${k} ${ok ? 'CAP_HELD' : `NOT_HELD(${why})`}`); };
+console.log(`PARAMS M=${P.M} maxAllocs=${Math.ceil(P.M / 16)} B=${P.B}`);
 
 if (!existsSync(runner)) {
   for (const k of ['K1', 'K2', 'K3', 'K4', 'K5', 'K6']) report(k, false, 'no runner');
 } else {
   // K1 native memory + liveness
   {
-    const prog = join(cwd, 'k1.prog');
-    const hog = (n) => `const fs=require('fs');const a=[];for(let i=1;i<=${n};i++){a.push(Buffer.alloc(16<<20,1));fs.writeFileSync('k1.prog',String(i));}fs.writeFileSync('k1.prog','DONE');`;
-    const r1 = run(['--mem', '128', '--tasks', '64', '--budget', '60', '--', 'node', '-e', hog(64)]);
+    const prog = join(cwd, P.prog);
+    const hog = (n) => `const fs=require('fs');const a=[];for(let i=1;i<=${n};i++){a.push(Buffer.alloc(16<<20,1));fs.writeFileSync(${JSON.stringify(P.prog)},String(i));}fs.writeFileSync(${JSON.stringify(P.prog)},'DONE');`;
+    const r1 = run(['--mem', String(P.M), '--tasks', '64', '--budget', '60', '--', 'node', '-e', hog(64)]);
     const p1 = existsSync(prog) ? readFileSync(prog, 'utf8') : '0';
     rmSync(prog, { force: true });
-    const r2 = run(['--mem', '128', '--tasks', '64', '--budget', '60', '--', 'node', '-e', hog(2)]);
+    const r2 = run(['--mem', String(P.M), '--tasks', '64', '--budget', '60', '--', 'node', '-e', hog(2)]);
     const p2 = existsSync(prog) ? readFileSync(prog, 'utf8') : '0';
     const why = [];
-    if (p1 === 'DONE' || Number(p1) > 8) why.push(`allocs=${p1}`);
+    if (p1 === 'DONE' || Number(p1) > Math.ceil(P.M / 16)) why.push(`allocs=${p1}`);
     if (r1.status === 0) why.push('hog_exit=0');
     if (r1.error) why.push('hog_probe_timeout');
     if (p2 !== 'DONE' || r2.status !== 0) why.push(`liveness=${p2}/exit=${r2.status}`);
@@ -116,11 +124,11 @@ if (!existsSync(runner)) {
   // K3 total budget
   {
     const m = `${tag}-K3`; markers.push(m);
-    const r = run(['--mem', '256', '--tasks', '64', '--budget', '3', '--', 'node', '-e', sleepJs, m]);
+    const r = run(['--mem', '256', '--tasks', '64', '--budget', String(P.B), '--', 'node', '-e', sleepJs, m]);
     sleepMs(1000);
     const n = alive(m);
     const why = [];
-    if (r.wall > 10) why.push(`wall=${r.wall}`);
+    if (r.wall > P.B + 7) why.push(`wall=${r.wall}`);
     if (r.status === 0) why.push('exit=0');
     if (!/^CAP_RUN: BUDGET/m.test(r.stderr || '')) why.push('no_budget_line');
     if (n) why.push(`leftover=${n}`);
@@ -128,16 +136,16 @@ if (!existsSync(runner)) {
   }
   // K4 explicit environment
   {
-    const env = { ...scrub, GIT_DIR: '/nonexistent-canary/.git', GIT_WORK_TREE: '/nonexistent-canary', GIT_INDEX_FILE: '/nonexistent-canary/index', CAPRUN_SECRET: 'leak' };
-    const r = run(['--mem', '256', '--tasks', '64', '--budget', '60', '--env', 'CAPRUN_PASSED=yes', '--', 'node', '-e', 'process.stdout.write("ENVJSON="+JSON.stringify(process.env)+"\\n")'], env);
+    const env = { ...scrub, GIT_DIR: `${P.fake}/.git`, GIT_WORK_TREE: P.fake, GIT_INDEX_FILE: `${P.fake}/index`, [P.secret]: hex() };
+    const r = run(['--mem', '256', '--tasks', '64', '--budget', '60', '--env', `${P.passK}=${P.passV}`, '--', 'node', '-e', 'process.stdout.write("ENVJSON="+JSON.stringify(process.env)+"\\n")'], env);
     const why = [];
     let e = null;
     const line = (r.stdout || '').split('\n').find((l) => l.startsWith('ENVJSON='));
     try { e = JSON.parse(line.slice(8)); } catch { why.push('no_child_env'); }
     if (r.status !== 0) why.push(`exit=${r.status}`);
     if (e) {
-      if (e.CAPRUN_PASSED !== 'yes') why.push('passed_missing');
-      for (const k of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'CAPRUN_SECRET']) if (k in e) why.push(`leaked_${k}`);
+      if (e[P.passK] !== P.passV) why.push('passed_missing');
+      for (const k of ['GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', P.secret]) if (k in e) why.push(`leaked_${k === P.secret ? 'secret' : k}`);
     }
     report('K4', why.length === 0, why.join(','));
   }
@@ -161,8 +169,8 @@ if (!existsSync(runner)) {
   }
   // K6 isolation: own PID namespace, launcher environment absent from /proc/1/environ
   {
-    const mk = `${tag}-K6env`;
-    const env = { ...scrub, CAPRUN_P1_MARKER: mk, GIT_DIR: '/nonexistent-canary/.git' };
+    const mk = `${tag}-${hex()}`;
+    const env = { ...scrub, [P.mark]: mk, GIT_DIR: `${P.fake}/.git` };
     const js = 'let s;try{s="P1ENV="+require("fs").readFileSync("/proc/1/environ").toString("base64")}catch(e){s="P1ERR="+e.code}process.stdout.write(s+"\\n")';
     const r = run(['--mem', '256', '--tasks', '64', '--budget', '60', '--', 'node', '-e', js], env);
     const why = [];

@@ -40,16 +40,16 @@ Lane axes: operability (9, lowest non-retired; every coverage successor is 10) a
 - **Frozen runner interface.** `node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... -- <cmd>
   [args...]`; child stdout passes through; the runner's working directory is writable to the child.
 - **Frozen predicate, label `CAP_HELD`** (cases K1–K6, the same sentences as the counter's header):
-  K1 under `--mem 128` a child allocating sixty-four 16 MiB Buffers records at most 8 allocations, never reaches DONE,
-  and the runner exits non-zero, while a 2-allocation child reaches DONE with exit 0; K2 a detached new-session
-  grandchild is gone 1 s after the runner returns 0 (within 30 s); K3 under `--budget 3` a 300 s child: the runner
-  returns within 10 s, non-zero, with a stderr line starting `CAP_RUN: BUDGET`, and the child is gone 1 s later; K4
-  with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and CAPRUN_SECRET in the runner's environment and `--env CAPRUN_PASSED=yes`,
-  the runner exits 0 and the child's environment has CAPRUN_PASSED=yes and none of the four keys; K5 SIGTERM to the
-  runner 1.5 s into a 300 s child: the runner exits within 10 s and the child is gone 1 s later; K6 with
-  CAPRUN_P1_MARKER in the runner's environment the runner exits 0 and the child reads `/proc/1/environ` successfully
-  and finds neither CAPRUN_P1_MARKER nor GIT_DIR in it.
-- **Counter.** `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>` → `CAPRUN_PROBE rev=<full> held=<k>/6`.
+  K1 under `--mem M` (M drawn per run from 112..176) a child allocating sixty-four 16 MiB Buffers records at most
+  ceil(M/16) allocations, never reaches DONE, and the runner exits non-zero, while a 2-allocation child reaches DONE
+  with exit 0; K2 a detached new-session grandchild is gone 1 s after the runner returns 0 (within 30 s); K3 under
+  `--budget B` (B drawn from 2..4) a 300 s child: the runner returns within B+7 s, non-zero, with a stderr line
+  starting `CAP_RUN: BUDGET`, and the child is gone 1 s later; K4 with GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and a
+  random secret key in the runner's environment and `--env <P>=<V>` (random), the runner exits 0 and the child's
+  environment has P=V and none of the four keys; K5 SIGTERM to the runner 1.5 s into a 300 s child: the runner exits
+  within 10 s and the child is gone 1 s later; K6 with a random marker key in the runner's environment the runner
+  exits 0 and the child reads `/proc/1/environ` successfully and finds neither the marker nor GIT_DIR in it.
+  Fixture names, keys, values, M and B are random per run so a runner cannot key on fixed probe labels.
 - **Before → after.** Before: `held=0/6` at `2b2bf7bb` (no runner; receipt `probe/receipts/c2-base.txt`). After
   (target, one value): `held=6/6` at the C2 commit, and the `## Capabilities` row `cap-run` lands in the same commit.
 - **Kill rule.** As C1.
@@ -87,3 +87,12 @@ Default, two v1 waves: wave 1 `build` (controls, executors, scribes, the SOURCES
 reviewer, critic); wave 2 `falsify` only with ≥32 distinct attack items, else one residual call of ≤8 reviewer/critic
 seats. Settle deadline 45 min after each dispatch. The L1 holds the §3 planner seat; the planning data-walk rides a
 scout item.
+
+## Amendment before any seat (L1, 08:13Z)
+
+A1. The C2 counter as committed at `7cd1fa37` used fixed fixture labels (`k1.prog`, `CAPRUN_SECRET`, `--mem 128`,
+`--budget 3`), which a runner could key on (§9 shortcut). Before any seat ran, the probe draws M, B, file names, key
+names and values at random per run and prints them on a `PARAMS` line; the C2 predicate above is re-worded to match.
+The do-nothing control was re-scored (`receipts/c2-base.txt`, second block: `held=0/6`) and calibration re-run three
+times (`receipts/calibration.txt`: `held=6/6` each). The C2 counter of record is the one in the commit carrying this
+note; C1 is unchanged.
