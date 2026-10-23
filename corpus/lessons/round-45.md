@@ -220,3 +220,26 @@ hyaku closure. The checklist as frozen at the entry commit (E7 with the E9 amend
 - K5′ holds (KSheetFull), with X4: the row-3 guard prescribed is not the tested bytes.
 
 The judged object is unchanged since `6b2a4517`; all corrections are appended below its text. No axis integer moves.
+
+#### C1 at close — corrections after residual review `a3-residual` (the paragraphs above are not reworded)
+
+- **K3′ tally (CritCloseReading O1/M1).** "11 of 15 hold" counts receipt verdicts. Read literally against K3′:
+  S069's quote is not contiguous in the URL, tarball or clone bytes (a command tag sits between `bwrap` and `is`;
+  XChanS069 lines 16-18) and is contiguous only in the rendered installed man page; and the page's own release marker
+  is absent for S066 and S067 (raw Markdown), S068 (row HTML never prints 18.12.6), S069 (installed page does not
+  print 0.13.1) and S070 (row HTML never prints 0.13.1) — their identity rests on tag or package resolution, not a
+  marker; S063's footer names 2.49.0 (X19). Under the literal reading these are K3′ exceptions the closure rules on;
+  the author does not count them as passes.
+- **S077 (CritCloseReading M2).** S077 was opened after the entry commit to source erratum X7; a non-author seat
+  re-opened it: RevReopenS077 — verbatim in two channels (page and tag `doc/api/process.md`), pin reproduces, page
+  marker `Node.js v24.21.0`, X7 not overstated. Whether a post-freeze erratum source falls under K3′ is the closure's
+  ruling.
+- **Entry errata review (RevErrataFidelity).** X2–X12 faithful; X1 overstated one detail (corrected by X1′); ten
+  receipt defects had no erratum — now X13–X20 carry them.
+- **Practice audit counts (CritLogClaims error 2).** AuditLaneGitWriters counts 15 git launch sites plus one
+  conditional checklist shell bridge (`surface-probe.mjs:1007`, production `--checklists`, not a selftest fixture);
+  8 fixture writer-capable git sites plus the bridge = 9 writers; 4 unscrubbed fixture git sites plus the bridge = 5.
+- **QUALITY replay note (RevQualityNotes).** The Q30 fixed-case reading as first written was gameable (declare every
+  CLEAN case fixed; "the counter's floor" is defined nowhere); it is bounded in a further QUALITY note. The Q31 gloss
+  "never pass or fail a runner on their own" narrowed Q31's **Fails when**; corrected there too.
+- **Close checks** are bound to revision by receipts under `.ufo/waves/round-45/close/` (CritCloseReading O3).

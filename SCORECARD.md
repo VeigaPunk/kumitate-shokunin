@@ -2030,3 +2030,10 @@ row-3 guard into the wave context from a file; (2) a counter sandbox runner meet
 (AuditLaneSandboxes: 24 child sites without a cgroup cap); (3) give `catalog-check` a fixed-case allow-list (Q30
 attempt-3 note); (4) the erratum owed in `knowledge/pinned-evidence.md:98-101` (allowlisted `HOME` still reaches
 `$HOME/.gitconfig`; ConnContradiction (c)); (5) R43-1/R43-5 stay open.
+
+*Corrections after residual review (`a3-residual`; the section above is not reworded).* "`C2`/`C2_total` 102/102 (unchanged
+since `1a8312ee`)" conflates declaration and measurement: `1a8312ee` declared 102 against 100 notes and 99 rows;
+measured notes and README rows first reach 102 at `6b2a4517` (ReplayQ32History). Attempt 2's falsify wave was spawned
+(44 seats, 06:04:59Z) and returned no report before the orchestrator died — "unrun" overstates what is known. Close
+receipts for proxy `--strict` and the census are under `.ufo/waves/round-45/close/`. Attempt 3's residual call had 7
+seats (reviewer 5, critic 2).

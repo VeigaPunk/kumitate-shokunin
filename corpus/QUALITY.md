@@ -635,3 +635,12 @@ the round-46 plan. The round-45 receipts named below are attempt-2 seats under `
     where declared and computed `C2_total` differ. Limits: Q32 checks that a row exists, not that the declared total
     matches (a declared-only drift passes Q32), and it does not detect phantom or duplicate rows (a row whose note no longer exists); a note renamed with its row
     left behind does fail Q32 while the proxy reads MATCH.
+  - **Revision after residual review (RevQualityNotes; the bullets above stay as written).** (1) The Q30 fixed-case
+    reading above is gameable: declaring every CLEAN case "fixed" satisfies it, and "the counter's floor" is defined
+    nowhere in this file. Bounded reading from round 46: at most **two** fixed CLEAN ids, each named in the frozen plan
+    with the reason it cannot vary (an unmodified root, one sourced reference shape); at least **20** non-fixed CLEAN
+    cases (round 44's case floor); any recurring id outside the named pair fails; the junk-variation control of the
+    Field still has to read the counter's failure verdict. (2) The Q31 sentence "never pass or fail a runner on their
+    own" narrowed **Fails when**: a printed guard line still fails the runner as Q31 states; the greps never pass a
+    runner without the behavioural selftest, and the three false fails above are recorded so a runner can avoid those
+    spellings (shell `env -i`, Python `env=`, a multiline `process.once` loop).

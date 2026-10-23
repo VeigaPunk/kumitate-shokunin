@@ -1902,3 +1902,6 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   pass a counter with a fixed CLEAN case; Q31's greps are blind out of sample). Errata X1–X12 appended to the entry;
   QUALITY attempt-3 notes on Q30–Q32. Verdict: `unprovable` pending the non-author ruling. Routed repairs R44-1..R44-6
   landed or recorded; R43-1/R43-5 deferred. Lesson `corpus/lessons/round-45.md`.
+  Correction after residual review (CritLogClaims): the entry has seven mechanisms, **six** demonstrated with a
+  do-nothing control (M7 jj workspaces is source-only and no table row relies on it). Residual call `a3-residual`
+  (7 seats) reviewed the integration; errata X1′ and X13–X20, a bounded Q30 reading and lesson corrections followed.

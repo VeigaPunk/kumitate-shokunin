@@ -271,3 +271,29 @@ narrowed reading is the operative one from round 46.
 - **X12 — restated passages.** M3 restates `knowledge/pinned-evidence.md:98-101` and M5 restates
   `lessons/round-44.md:129,138`; both are named in § Scope as not restated — read those as the citations at M3 and M5
   (ConnContradiction (b)).
+
+### Errata addendum — after residual review `a3-residual` (X1–X12 above are not reworded)
+
+- **X1′ — correction to X1.** "Write-free in both seats" overstates: only AblReadOnlyRow measured `git log`, `git show`
+  and `git ls-files` as write-free; CritStrongestFail measured `git diff` alone (RevErrataFidelity).
+- **X13 — practice change 1 is measured against round-44 wave practice only.** Round-42 `SentinelGateMutants.md:130`
+  and round-36 `ScoutPinDesign.md:63` already prescribed wider scrubs (named in § Scope); "widened" holds against
+  the round-44 wave contexts, not against the lane corpus (ConnContradiction (a)1).
+- **X14 — row "run untrusted or generated code": two launcher spellings.** `env -i …` is the shell spelling; from Node
+  the guard is the spawn `env` option (as `lessons/round-44.md:129` already prescribed); they are alternatives by
+  launcher, not one guard (ConnContradiction (a)2).
+- **X15 — plan line 71's runner.** The plan's promised runner "with `--clearenv`" is superseded by plan E8/E9; no lane
+  runner exists (practice change 2 above) (ConnContradiction (a)3).
+- **X16 — harness backends.** The backend list in "Harness isolation is not a row" restates
+  `knowledge/omp-task-contract.md:90-96`; read that entry as its citation (ConnContradiction (b)1).
+- **X17 — row "any git write in the lane", scope of the ban.** "No mutating jj" has no M2 receipt: it is the lane-helper
+  rule, not an M2 consequence. The forbidden list is not exhaustive (`merge`, `rebase`, `cherry-pick`, `restore`,
+  `update-ref` were not tested), and "detached HEAD" is fixture-specific: an attached HEAD gives the same import and
+  re-anchor (AblGitWriteRow).
+- **X18 — row "parallel writers on one repository", guard (c).** The ban on `info/exclude`, hook and config edits is
+  needed for paths the seat shares with the lane (a hook written into the lane's hooks directory ran on the lane's next
+  commit); edits inside the seat's own clone are harmless (AblCloneRow).
+- **X19 — S063 version marker.** The S063 page footer names 2.49.0; the text is byte-identical at v2.49.0 and v2.56.0,
+  so the row's "Git 2.56.0" rests on that identity, not on the page's own marker (XChanS063, KSheetFull).
+- **X20 — M5 table absolute counts.** The 263/264 name counts are launcher-specific (265/265 in AblBwrapRow); only the
+  contrasts between modes carry over, as the § Mechanisms preface says of every demo count.
