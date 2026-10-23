@@ -87,3 +87,37 @@ controls, 3 scouts (incl. the planning data-walk), 1 connector, 3 critics (incl.
 owed reviews (8), 3 repair executors, 2 repair scribes, 1 mistake sweep, 1 plan reviewer. Wave 2 `falsify` only if
 wave 1 yields ≥32 distinct attack items, else one residual call of ≤8 reviewer/critic seats. Settle deadline 40 min
 after each dispatch; stragglers are cancelled and named.
+
+## Errata and dispositions after wave-1 critique (appended before the entry exists; nothing above is reworded)
+
+Written 2026-10-23 ~05:20Z from `build/CritRoundShape.md` (11 objections). No data run judges C1; the entry is not
+yet drafted, so nothing here changes a judged object.
+
+- **E1 (objection 3, accepted).** The sentence "The corpus states none of the mechanisms those rules guard against" is
+  overbroad. The corpus states some: OMP isolation backends, PAL fallback and merge modes
+  (`knowledge/omp-task-contract.md:90-102`, S001, docs on `main`); the ambient `GIT_DIR` redirect and the
+  allowlisted-env scrub (`knowledge/pinned-evidence.md:98-101`); the round-44 bwrap PID-1 environ leak
+  (`lessons/round-44.md:129,138`). Read it as: the corpus states no primary-sourced mechanism for the jj-colocated
+  lane, the git `GIT_*` precedence over `-C`, cgroup versus heap memory bounds, or bwrap environment handling, and has
+  no rule-to-mechanism decision table. The entry cites the existing passages instead of restating them.
+- **E2 (objection 1, rejected).** "Freeze a second counted claim on the R44-1 detector classifying p44d,
+  CtlPostDataA's three programs, CtlLabelKeyedA/B and CritV3LabelB/Boundary as memorisable." Rejected: those six are
+  census programs (controls), not case generators, so a CLEAN-case detector has nothing of theirs to classify; the only
+  generator in the set is p44d. The detector seat (ExecCatalogCheck) was dispatched before this objection with p44d as
+  its input; freezing a counted claim around a detector already running on its data is the post-data shape round 44
+  was rejected for. The round stays one exploratory claim plus repairs, as planned.
+- **E3 (objections 2, 4, 8, 9, 10, accepted as round-close duties).** The proxy stanza `C2`/`C2_total` is re-declared
+  to the measured values at close; the entry carries the `source:`/`verified-at:`/`recheck:` header and its rows'
+  `used-by` names it; the after-census and the old→new row log land in the lesson; `PROVINCE.md:21` is amended in
+  place (as `:19` was), not duplicated; `## Planned` gets a round-46 block. Axis naming: C1 changes the PROVINCE
+  frontier band, which no live coverage successor term counts (script, runtime and kimi layers only); it is named
+  "coverage — frontier band (retired aggregate, no live term)".
+- **E4 (objection 6, named).** R44-2's ordering: the closure says control receipts go "in a commit earlier than the
+  counter they score, not in the same one". A receipt that scores frozen counter bytes cannot precede the counter's
+  freeze commit, so this round reads it as: own commit, after the freeze commit, before the measured receipt. The
+  divergence is recorded, not hidden.
+- **E5 (objection 7, accepted).** The capabilities table carries `gate-mutants` (round 42) and `omp-census`
+  (round 44), both entered by rounds that were not admitted. A round-45 note marks both rows unverified; rows are not
+  deleted (history).
+- **E6 (objection 11).** The sandbox runner's `--budget` is enforced by an outer `timeout` that still prints a verdict
+  line; ExecCounterSandbox's item carries it.
