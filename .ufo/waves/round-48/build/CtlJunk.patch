@@ -1,0 +1,35 @@
+From 7d55b45eef489cb3b9045ea1889ffa2a800243f8 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:54:57 -0300
+Subject: [PATCH] Control CtlJunk: append invalid JavaScript to both gates
+
+---
+ scripts/round-gate.mjs    | 1 +
+ scripts/surface-probe.mjs | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..41a519c 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -1545,3 +1545,4 @@ function selfTest() {
+ }
+ 
+ process.exitCode = main();
++@@@CtlJunk_1bd12d1194cd461da2d7a8bfe11ab9a4@@@
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..f955420 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -1877,4 +1877,5 @@ function main() {
+   return report.exitCode;
+ }
+ 
+-process.exitCode = main();
+\ No newline at end of file
++process.exitCode = main();
++@@@CtlJunk_01bfcb8d22434b1aa44f6e3ccc572845@@@
+\ No newline at end of file
+-- 
+2.56.0
+

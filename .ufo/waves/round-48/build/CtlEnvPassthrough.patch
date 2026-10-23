@@ -1,0 +1,89 @@
+From 5e1d6f23f238dea35788e53aef43bfbd7587f218 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:53:44 -0300
+Subject: [PATCH] round-48 control: route child sites but inherit caller
+ environment
+
+---
+ scripts/round-gate.mjs    |  6 ++++--
+ scripts/surface-probe.mjs | 11 +++++++----
+ 2 files changed, 11 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..8b59a49 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -135,6 +135,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const CONTRACT = 'kumitate-round-gate-v1';
+@@ -739,8 +740,9 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  const runGate = (args, extraEnv = {}) => capSpawnSync(process.execPath, [SELF, ...args],
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
++      bind: [tmp], env: { ...process.env, ...cleanEnv(), ...extraEnv } });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..6984926 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -143,6 +143,7 @@ import {
+ import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const SCHEMA = 'kumitate-surface-probe-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -488,11 +489,12 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
++      bind: [cacheRoot],
+       env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+@@ -516,11 +518,12 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
++      bind: [stateRoot],
+       env: {
+         ...process.env,
+         UFO_STATE_DIR: stateDir,
+@@ -1589,8 +1592,8 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++    const spawnSelf = (args, env) => capSpawnSync(process.execPath, [selfPath, ...args], {
++      encoding: 'utf8', timeout: 120_000, bind: [tmp], env: { ...process.env, ...env },
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+

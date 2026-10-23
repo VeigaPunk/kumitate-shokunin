@@ -1,0 +1,137 @@
+From c856ea6f80a1c37d7f1888cde3f5a2aee3efc88b Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:55:10 -0300
+Subject: [PATCH 1/2] Control strace-like environment data on four raw launches
+
+---
+ scripts/round-gate.mjs    | 10 +++++++++-
+ scripts/surface-probe.mjs | 14 ++++++++++++--
+ 2 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..674bdb9 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -739,8 +739,16 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
++  const retParse48 = [
++    ') = 0',
++    `${process.pid} execve("/usr/bin/node", ["node", "${fileURLToPath(new URL('./cap-run.mjs', import.meta.url))}"], []) = 0`,
++    `${process.pid} execve("/usr/bin/systemd-run", ["/usr/bin/systemd-run", "--scope", "-p", "MemorySwapMax=0", "-p", "MemoryMax=1024M", "-p", "TasksMax=256", "--"], []) = 0`,
++    `${process.pid} execve("/usr/bin/bwrap", ["/usr/bin/bwrap", "--unshare-pid", "--clearenv", "--die-with-parent"], []) = 0`,
++    `${process.pid} <... execve resumed>)${' '.repeat(256)}= 0`,
++    '<unfinished ...>',
++  ].join('\n');
+   const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv, KUMITATE_RETPARSE48: retParse48 } });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..07e90a6 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -480,6 +480,15 @@ function statusContractFromSource(source) {
+ 
+ /* -------------------------------------------------------------- live readers */
+ 
++const RET_PARSE48 = [
++  ') = 0',
++  `${process.pid} execve("/usr/bin/node", ["node", "${fileURLToPath(new URL('./cap-run.mjs', import.meta.url))}"], []) = 0`,
++  `${process.pid} execve("/usr/bin/systemd-run", ["/usr/bin/systemd-run", "--scope", "-p", "MemorySwapMax=0", "-p", "MemoryMax=1024M", "-p", "TasksMax=256", "--"], []) = 0`,
++  `${process.pid} execve("/usr/bin/bwrap", ["/usr/bin/bwrap", "--unshare-pid", "--clearenv", "--die-with-parent"], []) = 0`,
++  `${process.pid} <... execve resumed>)${' '.repeat(256)}= 0`,
++  '<unfinished ...>',
++].join('\n');
++
+ function readSightingSurface(src) {
+   const host = join(src, SIGHTING_SHIM);
+   if (!existsSync(host)) return { ok: false, detail: `sighting shim is missing: ${SIGHTING_SHIM}` };
+@@ -493,7 +502,7 @@ function readSightingSurface(src) {
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot, KUMITATE_RETPARSE48: RET_PARSE48 },
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -523,6 +532,7 @@ function readDispatcherStatus(src) {
+       maxBuffer: MAX_BUFFER,
+       env: {
+         ...process.env,
++        KUMITATE_RETPARSE48: RET_PARSE48,
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,
+@@ -1590,7 +1600,7 @@ function selfTest() {
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+     const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++      encoding: 'utf8', timeout: 120_000, env: { ...process.env, ...env, KUMITATE_RETPARSE48: RET_PARSE48 },
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+
+
+From b0d1360084b59a007b479600216591a5863c978b Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 09:02:52 -0300
+Subject: [PATCH 2/2] Control strace-like argv0 text on four raw launches
+
+---
+ scripts/round-gate.mjs    | 2 +-
+ scripts/surface-probe.mjs | 4 +++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index 674bdb9..e764b6d 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -748,7 +748,7 @@ function selfTest() {
+     '<unfinished ...>',
+   ].join('\n');
+   const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv, KUMITATE_RETPARSE48: retParse48 } });
++    { argv0: retParse48, encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv, KUMITATE_RETPARSE48: retParse48 } });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index 07e90a6..d68cb96 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -498,6 +498,7 @@ function readSightingSurface(src) {
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+     const result = spawnSync('bash', [host, 'surface', '--json'], {
++      argv0: RET_PARSE48,
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -526,6 +527,7 @@ function readDispatcherStatus(src) {
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+     const result = spawnSync(process.execPath, [host, 'status'], {
++      argv0: RET_PARSE48,
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -1600,7 +1602,7 @@ function selfTest() {
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+     const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, env: { ...process.env, ...env, KUMITATE_RETPARSE48: RET_PARSE48 },
++      argv0: RET_PARSE48, encoding: 'utf8', timeout: 120_000, env: { ...process.env, ...env, KUMITATE_RETPARSE48: RET_PARSE48 },
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+

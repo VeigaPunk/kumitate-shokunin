@@ -1,0 +1,135 @@
+From 916952394140db029e537411c772320c756a7d16 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:54:28 -0300
+Subject: [PATCH] round-48 control: route four sites through scope-only cap
+ runner
+
+---
+ scripts/cap-run.mjs       | 13 ++++---------
+ scripts/round-gate.mjs    |  7 +++++--
+ scripts/surface-probe.mjs | 18 ++++++++++--------
+ 3 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/scripts/cap-run.mjs b/scripts/cap-run.mjs
+index 9ab3193..834e9fc 100755
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -88,7 +88,7 @@ import {
+   accessSync, constants as fsc, existsSync, mkdtempSync, readFileSync, readdirSync, realpathSync,
+   closeSync, openSync, rmSync, statSync, writeFileSync, writeSync,
+ } from 'node:fs';
+-import { dirname, join, resolve } from 'node:path';
++import { join, resolve } from 'node:path';
+ import { constants as osc, tmpdir } from 'node:os';
+ import { randomBytes } from 'node:crypto';
+ import { fileURLToPath } from 'node:url';
+@@ -177,17 +177,12 @@ function oomKilled(unit, seenCg) {
+ function run(o) {
+   const real = resolveCmd(o.cmd[0]);
+   if (!real) usage(`command not found: ${JSON.stringify(o.cmd[0])}`);
+-  const cwd = process.cwd();
+-  const binDir = dirname(real);
+   const unit = `cap-run-${process.pid}-${Date.now()}-${randomBytes(3).toString('hex')}`;
+-  const setenv = ['--clearenv', '--setenv', 'PATH', binDir === '/usr/bin' ? '/usr/bin' : `${binDir}:/usr/bin`];
+-  for (const [k, v] of o.env) setenv.push('--setenv', k, v);
+   const argv = ['--user', '--scope', '--quiet', `--unit=${unit}`,
+     '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
+-    'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+-    '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap(([src, dst]) => ['--bind', src, dst]), '--chdir', cwd,
+-    '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
+-    '--argv0', o.cmd[0], real, ...o.cmd.slice(1)];
++    // Round-48 scope-only control: retain caps and explicit env, omit bwrap.
++    'env', '-i', 'PATH=/usr/bin', ...o.env.filter(([k]) => k !== 'PATH').map(([k, v]) => `${k}=${v}`),
++    real, ...o.cmd.slice(1)];
+ 
+   const killScope = () => {
+     try { execFileSync('systemctl', ['--user', 'kill', '-s', 'KILL', `${unit}.scope`], { env: LAUNCH_ENV, stdio: 'ignore' }); } catch { /* not running */ }
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..78075f1 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -135,6 +135,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const CONTRACT = 'kumitate-round-gate-v1';
+@@ -739,8 +740,10 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
+-    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
++  const runGate = (args, extraEnv = {}) => capSpawnSync(process.execPath, [SELF, ...args],
++    { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, bind: [tmp],
++      env: { HOME: process.env.HOME, LANG: process.env.LANG, LC_ALL: process.env.LC_ALL,
++        GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null', ...extraEnv } });
+ 
+   let seq = 0;
+   const fxDir = (name) => {
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..f771e7d 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -143,6 +143,7 @@ import {
+ import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { capSpawnSync } from './cap-spawn.mjs';
+ 
+ const SCHEMA = 'kumitate-surface-probe-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -488,12 +489,13 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = capSpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: { ...process.env, NODE_COMPILE_CACHE: cacheRoot },
++      bind: [src, cacheRoot],
++      env: gitEnv({ NODE_COMPILE_CACHE: cacheRoot }),
+     });
+     if (result.error) return { ok: false, detail: `surface invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -516,17 +518,17 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = capSpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+       maxBuffer: MAX_BUFFER,
+-      env: {
+-        ...process.env,
++      bind: [src, stateRoot],
++      env: gitEnv({
+         UFO_STATE_DIR: stateDir,
+         UFO_PENDING_WORK_PATH: join(stateDir, 'pending-work.json'),
+         UFO_PROJECT_ROOT: src,
+-      },
++      }),
+     });
+     if (result.error) return { ok: false, detail: `status invocation failed: ${result.error.code ?? result.error.message}` };
+     if (result.status !== 0) {
+@@ -1589,8 +1591,8 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
+-      encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
++    const spawnSelf = (args, env) => capSpawnSync(process.execPath, [selfPath, ...args], {
++      encoding: 'utf8', timeout: 120_000, bind: [tmp], env: gitEnv(env),
+     });
+     const bogus = spawnSelf(['--bogus']);
+     check('unknown flag → exit 64 (usage)', () => ({
+-- 
+2.56.0
+

@@ -1,0 +1,107 @@
+From d34f0c13647a4267fff2c60b35fb249e9d54caa4 Mon Sep 17 00:00:00 2001
+From: ctl <ctl@local>
+Date: Fri, 23 Oct 2026 08:53:41 -0300
+Subject: [PATCH] r48 control: route four C1 sites through bwrap without scope
+
+---
+ scripts/bwrap-only-spawn.mjs | 26 ++++++++++++++++++++++++++
+ scripts/round-gate.mjs       |  3 ++-
+ scripts/surface-probe.mjs    |  7 ++++---
+ 3 files changed, 32 insertions(+), 4 deletions(-)
+ create mode 100644 scripts/bwrap-only-spawn.mjs
+
+diff --git a/scripts/bwrap-only-spawn.mjs b/scripts/bwrap-only-spawn.mjs
+new file mode 100644
+index 0000000..bec7a76
+--- /dev/null
++++ b/scripts/bwrap-only-spawn.mjs
+@@ -0,0 +1,26 @@
++// Round-48 CtlBwrapOnly negative control: namespace isolation without a capped scope.
++import { spawnSync } from 'node:child_process';
++
++const CHILD_ENV = [
++  'HOME', 'NODE_COMPILE_CACHE',
++  'KUMITATE_REPORTS_DIR', 'KUMITATE_MAIN_REPO', 'KUMITATE_LANE',
++  'UFO_SRC', 'UFO_STATE_DIR', 'UFO_PENDING_WORK_PATH', 'UFO_PROJECT_ROOT',
++];
++
++export function bwrapOnlySpawnSync(cmd, args, options = {}) {
++  const childEnv = options.env ?? process.env;
++  const argv = [
++    '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
++    '--unshare-pid', '--clearenv', '--die-with-parent',
++    '--setenv', 'PATH', '/usr/bin',
++    // The gates' synthetic repositories, state roots and compile caches live here.
++    '--bind', '/tmp', '/tmp',
++  ];
++  for (const key of CHILD_ENV) {
++    if (childEnv[key] !== undefined && childEnv[key] !== null) {
++      argv.push('--setenv', key, String(childEnv[key]));
++    }
++  }
++  argv.push('--', cmd, ...args);
++  return spawnSync('/usr/bin/bwrap', argv, options);
++}
+diff --git a/scripts/round-gate.mjs b/scripts/round-gate.mjs
+index b3031e3..5329510 100755
+--- a/scripts/round-gate.mjs
++++ b/scripts/round-gate.mjs
+@@ -135,6 +135,7 @@ import {
+ import { homedir, tmpdir } from 'node:os';
+ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { bwrapOnlySpawnSync } from './bwrap-only-spawn.mjs';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const CONTRACT = 'kumitate-round-gate-v1';
+@@ -739,7 +740,7 @@ function selfTest() {
+     if (r.status !== 0) throw new Error(`fixture ${what} failed: exit ${r.status} ${firstLine(r.stderr)}`);
+     return r;
+   };
+-  const runGate = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args],
++  const runGate = (args, extraEnv = {}) => bwrapOnlySpawnSync(process.execPath, [SELF, ...args],
+     { encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...cleanEnv(), ...extraEnv } });
+ 
+   let seq = 0;
+diff --git a/scripts/surface-probe.mjs b/scripts/surface-probe.mjs
+index d5c4304..89ebedc 100755
+--- a/scripts/surface-probe.mjs
++++ b/scripts/surface-probe.mjs
+@@ -143,6 +143,7 @@ import {
+ import { homedir, loadavg, tmpdir } from 'node:os';
+ import { dirname, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { bwrapOnlySpawnSync } from './bwrap-only-spawn.mjs';
+ 
+ const SCHEMA = 'kumitate-surface-probe-v1';
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -488,7 +489,7 @@ function readSightingSurface(src) {
+   // tree is read-only). Pin it to a throwaway cache and remove it afterwards.
+   const cacheRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-cache-'));
+   try {
+-    const result = spawnSync('bash', [host, 'surface', '--json'], {
++    const result = bwrapOnlySpawnSync('bash', [host, 'surface', '--json'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -516,7 +517,7 @@ function readDispatcherStatus(src) {
+   const stateRoot = mkdtempSync(join(tmpdir(), 'kumitate-surface-state-'));
+   const stateDir = join(stateRoot, 'ufo');
+   try {
+-    const result = spawnSync(process.execPath, [host, 'status'], {
++    const result = bwrapOnlySpawnSync(process.execPath, [host, 'status'], {
+       cwd: src,
+       encoding: 'utf8',
+       timeout: SPAWN_TIMEOUT_MS,
+@@ -1589,7 +1590,7 @@ function selfTest() {
+ 
+     /* fixture: CLI-level paths, spawned hermetically -------------------- */
+     const selfPath = fileURLToPath(import.meta.url);
+-    const spawnSelf = (args, env) => spawnSync(process.execPath, [selfPath, ...args], {
++    const spawnSelf = (args, env) => bwrapOnlySpawnSync(process.execPath, [selfPath, ...args], {
+       encoding: 'utf8', timeout: 120_000, ...(env === undefined ? {} : { env: { ...process.env, ...env } }),
+     });
+     const bogus = spawnSelf(['--bogus']);
+-- 
+2.56.0
+

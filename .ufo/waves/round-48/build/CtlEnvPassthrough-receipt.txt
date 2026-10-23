@@ -1,0 +1,14 @@
+RUN round-gate base0 exit=0 cases=61/61 execs=1308 resumed=19 verdict_pass=true fail_lines=0
+RUN surface-probe base0 exit=0 cases=46/46 execs=54 resumed=0 verdict_pass=true fail_lines=0
+RUN round-gate rev0 exit=1 cases=60/61 execs=2085 resumed=59 verdict_pass=false fail_lines=1
+RUN round-gate rev1 exit=1 cases=60/61 execs=2085 resumed=64 verdict_pass=false fail_lines=1
+RUN round-gate rev2 exit=1 cases=60/61 execs=2085 resumed=72 verdict_pass=false fail_lines=1
+RUN surface-probe rev0 exit=0 cases=46/46 execs=180 resumed=2 verdict_pass=true fail_lines=0
+RUN surface-probe rev1 exit=0 cases=46/46 execs=180 resumed=7 verdict_pass=true fail_lines=0
+RUN surface-probe rev2 exit=0 cases=46/46 execs=180 resumed=8 verdict_pass=true fail_lines=0
+SITE RG742 gate=round-gate label=ROUTED_MISS capped/n=0/116,0/116,0/116 base_n=116 cases=60/61,60/61,60/61 base_cases=61/61 uncapped_direct=0,0,0 reason=canary_in_env,gate_exit=1,uncapped_exec,no_final_verdict_pass,fail_lines=1,selftest_cases_below_base
+SITE SP491 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=canary_in_env,uncapped_exec
+SITE SP519 gate=surface-probe label=ROUTED_MISS capped/n=0/2,0/2,0/2 base_n=2 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=canary_in_env,uncapped_exec
+SITE SP1592 gate=surface-probe label=ROUTED_MISS capped/n=0/14,0/14,0/14 base_n=14 cases=46/46,46/46,46/46 base_cases=46/46 uncapped_direct=0,0,0 reason=canary_in_env,uncapped_exec
+CAPROUTE48 rev=5e1d6f23f238dea35788e53aef43bfbd7587f218 base=f00cf278 set=r48 held=0/4 runs=3 rule=F48
+exit=1 load1=55.76 end=11:57:11Z
