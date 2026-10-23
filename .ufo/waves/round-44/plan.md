@@ -164,3 +164,44 @@ Superseding values (everything else above stands):
 - After target (one value): `P44_COUNT: MET (passed=87 cases=87 floor=20 …)` exit 0 at the measured commit.
 - Kill rule 1 reads `passed=87 cases=87`.
 - Measurement command: as above with `p44b-count.mjs` in both the `git show` and the `node` line.
+
+## Second pre-data redesign (2026-10-23 ~01:29Z by commit time; no census had been scored)
+
+The control wave (`controls/`, 39 seats dispatched 01:19:52Z) found two skip-work programs that read
+`P44_COUNT: MET (passed=87 cases=87)` under `p44b-count.mjs`: **CtlLabelKeyedA** (sha256 `964fce5d…`:
+a global directory count, a global 600/644 split, at most nine 0644 files, and a reject rule for the
+fixed crossgen target `RULES.md.*`; no per-member rule, no chain template) and **CtlLabelKeyedB**
+(sha256 `bddddbe8…`: 19 names, a global directory count and a global permission-bit sum). Both keyed
+on labels of the case generator (every added stray was a 0644 file; crossgen always re-based onto
+`RULES.md`; every case perturbed one member, so global aggregates caught it). Under this plan's kill
+rule the counter is replaced again before any census is scored: **`probe/p44c-count.mjs`** (sha256
+`d7b806eb06af78d4fbdd92c3cb3732e67fc06a69a3175f7b175bbfb57975f025`) is the C1 counter from this commit
+on. Its own `casePasses` text is unchanged from v1 and v2, so **the predicate P44 is unchanged word for
+word**; a MET rule `isMet` (every case passed, at least 20 cases) is the same condition, factored.
+
+Case-generation changes (all from control-wave findings): added entries take (kind, mode) from a random
+shape entry; crossgen re-bases onto a random base member (different extension, no prefix relation);
+new `swap:<m>` (exchange (kind, mode) with a random differing base member — every aggregate over the
+entry set unchanged), `sidecarkind`/`sidecarwide`, `genkind`/`genwide`; six sourced CLEAN cases
+(`src:agent.db.corrupt` from oh-my-pi v18.12.6 `packages/utils/src/sqlite.ts:193` with
+`sqlite-credential-store.ts:601`; `src:themes|tools|commands|prompts|memories` from
+`packages/utils/src/dirs.ts:1007-1035`), which a census built from the snapshot alone fails; chain
+refills produce valid UTC stamps, epoch milliseconds and v4 UUIDs; a seeded HMAC-SHA256 stream
+(`--seed HEX` replays a run exactly; the header prints the seed; every CASE line prints what changed)
+answers CritClaimSizing objection 2; `--selftest` (21 rows: P44 clause truth table, MET rule, replay)
+answers objection 1. At the frozen shape the case set is **150**.
+
+All 26 control programs that the control-wave seats left on disk, plus the absent file, were
+re-scored under p44c by the L1 before any census was scored: all 27 read UNMET (highest 136/150,
+CtlPartialNoKind and CtlPartialUnanchored); receipts `controls-v3/*.txt`. Resource probes of
+SentinelProcLeak that spin, sleep or allocate were not re-scored (they cannot print a verdict within the
+20 s limit; their p44b receipts stand). A fresh residual call of adversarial seats attacks p44c before
+data; its receipts are committed before the measured run.
+
+Superseding values (everything else above stands):
+
+- Counter: `probe/p44c-count.mjs`; selftest receipt `open/p44c-selftest.txt` (`P44_SELFTEST: 21/21`, `VERDICT: PASS`).
+- Before: `open/p44c-before-6cda8c35.txt` → `P44_COUNT: UNMET (passed=0 cases=150 floor=20 census_sha256=absent)` exit=1.
+- After target (one value): `P44_COUNT: MET (passed=150 cases=150 floor=20 …)` exit 0 at the measured commit.
+- Kill rule 1 reads `passed=150 cases=150`.
+- Measurement command: as in § Measurement with `p44c-count.mjs`, plus `--seed` recorded from the receipt header for replay.
