@@ -686,7 +686,24 @@ function main() {
 
 /* ----------------------------------------------------------------- selftest */
 
+/**
+ * The repository-locating variables printed by `git rev-parse --local-env-vars`
+ * (Git 2.56.0). git(1) (S065): they select the repository a git command acts on,
+ * and a Node child_process `env` defaults to `process.env` (S078), so a caller's GIT_DIR
+ * would redirect every fixture git writer and child CLI of `--selftest`.
+ */
+const GIT_LOCAL_ENV_VARS = [
+  'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_CONFIG', 'GIT_CONFIG_PARAMETERS', 'GIT_CONFIG_COUNT',
+  'GIT_OBJECT_DIRECTORY', 'GIT_DIR', 'GIT_WORK_TREE', 'GIT_IMPLICIT_WORK_TREE', 'GIT_GRAFT_FILE',
+  'GIT_INDEX_FILE', 'GIT_NO_REPLACE_OBJECTS', 'GIT_REPLACE_REF_BASE', 'GIT_PREFIX', 'GIT_SHALLOW_FILE',
+  'GIT_COMMON_DIR',
+];
+function scrubGitLocalEnv() {
+  for (const k of GIT_LOCAL_ENV_VARS) delete process.env[k];
+}
+
 function selfTest() {
+  scrubGitLocalEnv();
   const tmp = mkdtempSync(join(tmpdir(), 'kumitate-round-gate-selftest-'));
   const results = [];
   const observed = new Set();
@@ -1402,6 +1419,25 @@ function selfTest() {
         };
       });
     }
+    check('hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer', () => {
+      const atEntry = GIT_LOCAL_ENV_VARS.filter((k) => process.env[k] !== undefined || GIT_ENV[k] !== undefined);
+      const canary = fxDir('git-env-canary');
+      const fixture = fxDir('git-env-fixture');
+      Object.assign(process.env, {
+        GIT_DIR: join(canary, '.git'), GIT_WORK_TREE: canary, GIT_INDEX_FILE: join(canary, 'index'),
+      });
+      scrubGitLocalEnv();
+      const left = GIT_LOCAL_ENV_VARS.filter((k) => process.env[k] !== undefined);
+      const r = spawnSync('git', [...FIXTURE_CONFIG, '-C', fixture, 'init', '--quiet', '-b', 'main'],
+        { encoding: 'utf8', timeout: 30_000,
+          env: { ...process.env, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null' } });
+      const canaryEntries = readdirSync(canary).length;
+      return {
+        ok: atEntry.length === 0 && left.length === 0 && r.status === 0
+          && existsSync(join(fixture, '.git')) && canaryEntries === 0,
+        detail: `at-entry=${atEntry.length} left=${left.length} init=${r.status} canary-entries=${canaryEntries}`,
+      };
+    });
 
     /* --tracked mode (round-11) ---------------------------------------------- */
     const tkClean = fxTrackedMain('tracked-clean');

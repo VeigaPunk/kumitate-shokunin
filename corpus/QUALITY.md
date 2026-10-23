@@ -644,3 +644,53 @@ the round-46 plan. The round-45 receipts named below are attempt-2 seats under `
     own" narrowed **Fails when**: a printed guard line still fails the runner as Q31 states; the greps never pass a
     runner without the behavioural selftest, and the three false fails above are recorded so a runner can avoid those
     spellings (shell `env -i`, Python `env=`, a multiline `process.once` loop).
+
+Q33–Q34 and the frozen-checklist rule were added in round 46 (routed defects D2 and D4 of
+`corpus/lessons/round-45-verifier-spotcheck.md` § 5) and are in force from round 47. Drafts: scribe ScribeQuality;
+commands and their fail/pass runs: executor ExecQualityFailCmds (`.ufo/waves/round-46/build/`).
+
+- **Q33 — a SOURCES row's `teaches` is checked against every locator in its anchor cell before the entry commit.**
+  Grounding: the K3′ ruling on S073 and D2 (`corpus/lessons/round-45-verifier-spotcheck.md:61-71,123-125`).
+  - **Who checks.** The entry author checks every locator before committing the entry. A non-author re-opens every
+    row's quote and `teaches` cell before the freeze (round 46 did this for all 77 rows: the `Sweep*` receipts in
+    `.ufo/waves/round-46/build/`).
+  - **Field.** Open every locator in the anchor cell. Check each clause of the `teaches` cell against the located
+    bytes, and record which locator supports it. Narrow or split an unsupported clause before the commit. One locator
+    never stands in for another.
+  - **Command** (a tripwire over committed check lines; it proves a check was recorded, not that it was right):
+    ```sh
+    .ufo/waves/round-46/quality/q33-locator-coverage.sh <lane> <rev> corpus/lessons/round-<N>.md
+    ```
+    For each row admitted in the lesson's `## Gate`, every anchor locator must be co-named with the row id in a
+    committed check line (the lesson or a `.ufo/**/*.md` receipt). `Q33 FAIL`, exit 1, on any uncovered locator.
+  - **Fails when.** The command prints `Q33 UNCOVERED`; or a re-open finds a clause that no locator states.
+  - **Shown able to fail.** At `6b2a4517` with `corpus/lessons/round-45.md`: `Q33 UNCOVERED S073
+    anchor-locators-checked=1/4 missing=[buffer.html,getrlimit,prlimit]` (also S068 1/5, S072 2/3), exit 1; on a
+    fixture where both locators of one row are checked: `Q33 COVERED S901 locators=2/2`, exit 0.
+  - **Limit.** The locator tokenizer is heuristic: an anchor that names only sections yields zero locators and passes
+    trivially, so the re-open half of **Fails when** carries those rows.
+
+- **Q34 — a guard prescribed in an entry or a wave context is byte-identical to the guard in the receipt that
+  tested it.** Grounding: D4 and erratum X4 (`corpus/lessons/round-45-verifier-spotcheck.md:38-43,128-130`;
+  `.ufo/waves/round-45/a3-falsify/AblScrubRow.md`).
+  - **Who checks.** The author copies the tested bytes and cites the receipt. A non-author compares the two before
+    the freeze.
+  - **Field.** Copy the whole tested guard, quoting, redirections and wrapper arguments included. If any byte changes,
+    re-test the changed guard and cite the new receipt.
+  - **Command.**
+    ```sh
+    .ufo/waves/round-46/quality/q34-guard-bytecmp.sh <entry-file> <row-ere> <receipt-file> [guard-ere]
+    ```
+    Prescribed = the longest backtick span on the matched table row; tested = the first fenced-block line of the
+    receipt matching the guard pattern; `cmp`. `Q34 FAIL`, exit 1, on any difference.
+  - **Fails when.** `Q34 MISMATCH`; no receipt is cited; the cited receipt does not contain the guard.
+  - **Shown able to fail.** Entry row 3 at `6b2a4517` against the receipt `SentinelSeatEnvScrub.md`:
+    `Q34 MISMATCH … (212B) vs (306B)`, differing at byte 3, exit 1; a fixture with the same 54-byte guard on both sides:
+    `Q34 IDENTICAL`, exit 0.
+  - **Limit.** One span per row: a row that prescribes two guards needs one run per guard.
+
+- **Frozen-checklist rule (D2).** Every item of a frozen claim checklist states, before the freeze, whether an
+  appended erratum can cure its failure, and if so what qualifies. An item that states nothing is not curable. A later
+  correction never changes an item's frozen failure, and no item borrows another item's erratum clause. Round 46 has
+  no prose checklist: both obligations of its claim are counters (`.ufo/waves/round-46/plan.md` § A2/A3), and their
+  kill rule admits no erratum.

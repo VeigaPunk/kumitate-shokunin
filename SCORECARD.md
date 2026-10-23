@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=16
-C=21
+A=21
+C=22
 C1=19
 C1_total=19
-C2=102
-C2_total=102
+C2=104
+C2_total=104
 S_members=88
 S_sections=88
 R_members=92
@@ -302,10 +302,10 @@ C1k_total=5
 K_members=53
 K_sections=53
 coverage_kimi=10
-pin.cite-check=115bfde46d6a24ce2216dd21fff8234f09468f94924ecd7c8ef17276a9c8a4d8
+pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=1361075da7762ce870749331864646fc03114e86720dc6b933bd6efcccb678b5
-pin.round-gate=f890e277af83a78f2dd265e442c8c5912dc3975a36b18ae1be927022a834d3e9
-pin.proxy-check=da3de1fb1ff826da9e7a8d07b49812e4d84d220d16c3531feadd90b3e0dce826
+pin.round-gate=52eb183e95488f7e1901a8c41159ad5a7d3f5d5b7a98f4335b62c02972c9296e
+pin.proxy-check=1be65f3a6ec0df08b6ccbfdb2ebe72b9fdd36693240e542f824e2e5649ce8b08
 pin.claims-check=0b2d0d24e4ee83c8934a9e9390aeee9105a8e3f9b203997c7a68b7b5b74de487
 pin.kimi-census=0f9c5a4c361316e111d0b2636780da5b8d848ccaa5c41507e8f8357ab6090075
 -->
@@ -315,6 +315,7 @@ pin.sources-check=6a293a72800123a2a78184e4e67b34a8eeab2e35e15cc0bc353029c9f37e25
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
+pin.cap-run=5c2afd5ce6581cbb4a22e07dfdd518eea80c52b3facd74ca9c2bb2d0ac84391f
 -->
 
 

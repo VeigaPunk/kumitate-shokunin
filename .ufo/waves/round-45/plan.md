@@ -227,3 +227,12 @@ baseline — this baseline is the K2′ falsify re-run), 2 practice audits of th
 entries, and history replays of the round-45 repairs (Q32 over rounds 35–45, Q30 over p44/p44b/p44c, Q31 on launchers
 outside round 44), plus a version-drift check. Settle deadline 45 minutes after dispatch; stragglers are cancelled and
 named.
+
+## Erratum — E1–E6 receipt provenance and leftover count (appended in round 46, routed defect D1)
+
+The `build/CritRoundShape.md` citation in the errata section above (`:93`) points to an uncommitted attempt-1
+receipt that does not resolve in the committed record. E1–E6 therefore rest on an uncommitted, unresolvable receipt;
+this note neither validates nor retracts their content, and the original text stays as history. The "45 untracked
+files" count (`:212`) is corrected to 46 files in the copied snapshot: `/usr/bin/find
+/fast/scratch/hyaku/kumitate-r45/a3/untracked-snapshot -type f | wc -l` → `46` (seat ScribeRepairs, round 46,
+`.ufo/waves/round-46/build/ScribeRepairs.md`).
