@@ -431,7 +431,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
-| 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at the close commit → `BINDGUARD50: GUARD_HELD held=8/8` exit 0; the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
+| 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at `ab3c64e9aaaff80faf3a2c93743287e44def4084` → `BINDGUARD50: GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`); the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; the explicit `/tmp` refusal pre-landed at `378b6e7` and G50 already read 8/8 at `6927903` (attribution limit, `close/CritCloseClaims.md` §2); auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
 | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
 | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
@@ -1760,9 +1760,12 @@ guard-hardening paragraphs; predicates, labels, check counts and thresholds unch
 base `ff40d7dcbc90aa043d7f4003976af6a99ff76642`; freeze `5b0de268e5a6bdd744fe47c6ee2ee58404693ac3`;
 counters `.ufo/waves/round-50/probe/bindguard50-probe.mjs` (rule `G50`) and
 `probe/repairs50-probe.mjs` (rule `R50`), both committed before any data seat ran. One **v2** wave
-`kumitate-r50`, 64 seats (band 64–128), attack 27/64 = 42.2% (reviewer 9, mutation-tester 8, critic 6,
-sentinel 4), validated under `scripts/hyaku/ufo-wave-policy-v2.json` and dispatched as one `task` call;
-62 of 64 seats wrote reports, 2 dead seats named in the report.
+`kumitate-r50`, 64 seats (band 64–128), attack **23/64 = 35.9%** under the campaign's canonical attack
+roles (reviewer 9, critic 6, mutation-tester 8); the plan's `27/64 = 42.2%` also counted 4 sentinels and
+is corrected here (sentinels hold a security-review role, not one of the four canonical attack roles).
+Validated under `scripts/hyaku/ufo-wave-policy-v2.json` and dispatched as one `task` call
+(`r50-dispatch.json` `counts {spawn:64, resume:0}`, `r50-taskcall.json`); 62 of 64 seats wrote reports,
+2 dead seats named in the report with absent artifacts only.
 
 **C1 — operability: the `cap-run` mount-root guard + gate-pin coverage.** Surface: `scripts/cap-run.mjs`
 refuses a whole-root `--bind` (`/`, `/tmp`, `/run`, `/proc`, `/sys`, `/dev`, after `realpath`, so
@@ -1773,17 +1776,27 @@ Predicate `GUARD_HELD` = held=8/8 exit 0. **Before** at base `ff40d7d`:
 `BINDGUARD50: GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7
 `PROXY: DRIFT`; exposure evidence `controls/CtlExposure-base-ff40d7d.txt` — a child writing
 `/tmp/r50-host-tmp-exposed` through `--bind /tmp` leaves `host_marker=present`). **After**:
-`BINDGUARD50: GUARD_HELD held=8/8` exit 0 at the close commit (`close/G50-*.txt`). Counting command:
+`BINDGUARD50: GUARD_HELD held=8/8` exit 0 at `ab3c64e9` (`close/G50-ab3c64e9.txt`,
+run-at 2026-10-23T23:01:35Z; independently re-run twice by seat `RevCloseG50`, 94 s apart, byte-identical).
+Counting command:
 `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
 Shown able to fail: the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`, G6/G7) until
 the close re-pin — that reading is retained, not overwritten (lesson M5).
+**Attribution limit (measured by the residual critic seat, `close/CritCloseClaims.md` §2).** The explicit
+`/tmp` refusal pre-landed at the freeze-corrections commit `378b6e7`, and the unchanged G50 already read
+8/8 at `6927903`; the predicate therefore does not independently discriminate the post-data implicit-cwd
+delta. That delta's evidence is G4's new selftest arms plus a behavioural comparison: `6927903` accepted
+cwd `/tmp` (exit 0) where `ab3c64e9` refuses it (exit 64). G2 is a finite eight-input list (no `/dev`,
+`/sys` or descendant `/run` inputs); those roots are refused by the implementation and exercised in G4.
 
 **Auxiliary frontier/closure audit — R50 (not an axis claim).** Eight textual/existence checks over the
 round-49 non-author closure's routed defects (R50-1 report erratum, R50-2 r49 `## Gate` ledger, R50-3
 S095/S098 re-open receipts, R50-4 spaced B49 receipts, R50-5 `all eleven` sweep, R50-6 round-50 lesson
 shape, R50-7 live census, R50-8 fleet erratum). Before at `ff40d7d`: `REPAIRS50: LEDGER_UNMET held=1/8`
 exit 1 (only R7 pass; the first control crashed `ReferenceError: l49`, retained). After:
-`REPAIRS50: LEDGER_HELD held=8/8` exit 0 at the close commit. No axis integer attaches to this audit.
+`REPAIRS50: LEDGER_HELD held=8/8` exit 0 at `ab3c64e9` (`close/R50-ab3c64e9.txt`, run-at
+2026-10-23T23:01:35Z; independently re-run byte-identically by seat `RevCloseR50`). No axis integer
+attaches to this audit.
 
 **Terms.** A 43 (unchanged — no new runnable file: the two counters were already counted at the
 round-49 tip), C 22 (unchanged), C2/C2_total 113 → **114/114** (README row for `lessons/round-50.md`).

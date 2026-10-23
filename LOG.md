@@ -1973,3 +1973,55 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   `mado-binds.py` Hyprland-keybind collision. Re-scored after the addendum: `DOCTRINE49: HELD clauses=16/16 rows=3`
   exit 0 at `01b70bb0` (`r49/L1-c2-rescore-01b70bb0.txt`); the report's 15/15 reading at `589d25e4` stands as the
   claim's measurement and this addendum extends it, never narrows it.
+
+- 2026-10-23 — round 50 (hyaku run 5; orchestrator attempt 2 — the fifth `launch kumitate round=50` line in
+  `.ufo/watchdog.log`. Attempts 1–4 left no report: attempt 1 landed `5b0de268`, `378b6e7`, `6927903`, `227b9e6` and
+  its work is inherited and re-verified; attempt 2 left only `close/G50-227b9e6e.txt`; attempt 3 was an invalid
+  executor-leaf dispatch; attempt 4 made zero lane progress). Base `ff40d7dcbc90aa043d7f4003976af6a99ff76642`;
+  freeze `5b0de268e5a6bdd744fe47c6ee2ee58404693ac3`; pre-data implementation corrections `378b6e73`
+  (G3 mount-table enumeration, R8 committed-report read); guard/pins/ledger commit `227b9e6e`; measured close
+  revision `ab3c64e9aaaff80faf3a2c93743287e44def4084`; the record commit carries the close receipts, the census
+  receipt and this entry. Plan `.ufo/waves/round-50/plan.md`; counters frozen pre-data
+  (`probe/bindguard50-probe.mjs` rule G50, `probe/repairs50-probe.mjs` rule R50).
+  **C1 operability — the `cap-run` mount-root guard, `GUARD_HELD` (rule G50).** `scripts/cap-run.mjs` refuses a
+  whole-root `--bind` (`/`, `/tmp`, `/run`, `/proc`, `/sys`, `/dev` — after `realpath`, so `/tmp/`, `/tmp/.` and
+  symlink aliases are covered) and refuses an implicit cwd bind resolving to those roots, keeping `/tmp/<subdir>`
+  binds legal; selftest 12/12; `pin.bind-oracle` plus the family re-pin enter `kumitate-gate-pins-v1`. Before at
+  base: `BINDGUARD50: GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY:
+  DRIFT`), with the exposure control showing a child write through `--bind /tmp` leaving `host_marker=present`;
+  after at `ab3c64e9`: `GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`), independently re-run twice by seat
+  RevCloseG50. Attribution limit measured and recorded: the explicit `/tmp` refusal pre-landed at `378b6e7` and
+  G50 already read 8/8 at `6927903`, so the predicate does not discriminate the post-data implicit-cwd delta —
+  that delta's evidence is G4's new selftest arms plus the behavioural comparison (`6927903` accepts cwd `/tmp`
+  exit 0; `ab3c64e9` refuses exit 64; `close/CritCloseClaims.md` §2).
+  **Auxiliary frontier/closure audit — `LEDGER_HELD` (rule R50; not an axis claim).** Eight checks over the r49
+  closure's routed defects: before `LEDGER_UNMET held=1/8` exit 1 at base, after `LEDGER_HELD held=8/8` exit 0 at
+  `ab3c64e9` (`close/R50-ab3c64e9.txt`, byte-identical independent re-run by RevCloseR50, which also proved R1's
+  MISS arm end-to-end on a fabricated commit).
+  **Repairs R50-1…R50-10.** R50-1 append-only `## Erratum` on the fleet r49 report (fleet `f50d178`); R50-2 `## Gate`
+  ledger appended to `corpus/lessons/round-49.md`; R50-3 S095/S098 re-open receipts committed with `REOPEN50:
+  HOLD` first lines (S095's locator caveat refuted against the fetched bytes by an L1 line search — the row's
+  anchors are correct and were not rewritten); R50-4 three genuinely spaced B49 receipts
+  (`aa293cc4`/`96a01c84`/`e59ff9af`, `run-at` 20:43:09Z/20:45:54Z/20:57:45Z, span 876 s) replacing the three
+  byte-identical r49 files, with the prelude-only replay limit measured by CritB49CounterAttack and recorded in
+  Q39; R50-5 both stale "all eleven" sentences swept (R5 base MISS → PASS); R50-6 the guard above; R50-7
+  `pin.bind-oracle` + `pin.cap-run` re-pin + `pin.proxy-check`; R50-8 `r50-taskcall.json` carries `context`+`tasks`
+  together; R50-9 the round-open proxy drift repaired (two README rows, stanza re-derivation, pins); R50-10 the
+  counter-amendment entry's provenance trio + S095/S098 `used-by`.
+  **Wave.** One v2 wave `kumitate-r50`: 64 seats, attack 23/64 = 35.9% under the canonical attack roles
+  (reviewer 9, critic 6, mutation-tester 8 — the plan's 27/64 also counted 4 sentinels and is corrected), 62
+  reports, 2 dead seats (`CritRepairsForClaims`, `CritReporting` — absent artifacts only, no error text recorded).
+  Residual call: one ordinary `task` call of 5 seats (reviewer 3, critic 2) → round total **69**.
+  **Frontier.** S095/S098 re-opened 2026-10-23, both `HOLD`, no status/recheck change; `used-by` gains recorded
+  old→new in `corpus/lessons/round-50.md`; S099 `used-by` gains `knowledge/mount-order-and-bind-scope.md`; rows
+  99 → 99; census exit 0 at round open (`r50/SonicCensus.md`, rev `6927903`) and at close (`close/Census-end.txt`,
+  4 pre-existing W04 duplicate-url warnings).
+  **Harm at `ab3c64e9`.** H1 `CHECKLIST: 22/22` exit 0 (freeze baseline 20/22; items 693/697 repaired, none
+  regressed); H2 `CAP_RUN_SELFTEST: 12/12`, `BIND_ORACLE_SELFTEST: 7/7`, `COUNTER_RERUN_SELFTEST: PASS`; H3
+  `PROXY: MATCH` (pins=6); H4 census exit 0; H5 `ROUND_GATE_SELFTEST: 61/61`; `close/RevCloseHarm.md`, with the
+  recorded residual that gate-mutants' K43 confirm-rerun is load-sensitive under a self-induced process storm
+  (`ERROR … unstable=4` once; standalone and serial re-runs `CLEAN frozen=41/41`). Terms: A 43, C 22, C2/C2_total
+  **114/114**, operability held 9, no capability row; `proxy-check --strict` MATCH. QUALITY Q39–Q41 added in the
+  guard commit, Q39's field and limit narrowed this round; lesson `corpus/lessons/round-50.md` (M1–M6).
+  Open L0: the separate `kumitate-gate-pins-v1` authority question (`.ufo/l0-questions.md:115`) stays pending; it
+  does not block this round.

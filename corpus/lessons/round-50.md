@@ -1,8 +1,9 @@
 # Round 50 — lesson
 
-Lane: kumitate. Round 50 (hyaku run 6, attempt 5 — attempts 1–4 ended to orchestrator loss or
-dispatch error with no report; attempt 1's committed work is inherited and re-verified, not
-re-scored). Base `ff40d7dcbc90aa043d7f4003976af6a99ff76642`; freeze `5b0de268e5a6bdd744fe47c6ee2ee58404693ac3`;
+Lane: kumitate. Round 50 (hyaku run 5; orchestrator attempt 2 — the fifth `launch kumitate round=50`
+line in `.ufo/watchdog.log`. Attempts 1–4 left no report: attempt 1's committed work is inherited and
+re-verified, not re-scored; attempt 2 produced only `close/G50-227b9e6e.txt`; attempt 3 was an invalid
+executor-leaf dispatch; attempt 4 made zero lane progress). Base `ff40d7dcbc90aa043d7f4003976af6a99ff76642`; freeze `5b0de268e5a6bdd744fe47c6ee2ee58404693ac3`;
 pre-data implementation corrections `5b0de268` → `378b6e73` (G3 mount-table enumeration, R8 committed-report
 read); post-data hardening in the guard commit. Plan `.ufo/waves/round-50/plan.md`; counters
 `.ufo/waves/round-50/probe/bindguard50-probe.mjs` (rule `G50`) and `probe/repairs50-probe.mjs` (rule `R50`),
@@ -53,36 +54,48 @@ closure/frontier audit, not a second axis claim.
   R50-10. Fix: `scripts/cap-run.mjs` refuses whole-root binds (`/`, `/tmp`, `/run`, `/proc`, `/sys`, `/dev`)
   after `realpath`, and refuses an implicit cwd bind resolving to those roots, while `/tmp/<subdir>` binds
   stay legal; the selftest gains the refusal cases (12/12); the entry gains its `source:`/`verified-at:`/
-  `recheck:` trio and S095/S098 `used-by` cells. QUALITY Q40 states the rule. Shown able to fail: G50 read
-  `GUARD_UNMET held=5/8` at base and `6/8` at the first guard commit, `8/8` only after the re-pin (M5).
+  recheck:` trio and S095/S098 `used-by` cells. QUALITY Q40 states the rule. Shown able to fail: G50 read
+  `GUARD_UNMET held=5/8` at base `ff40d7d`. Attribution, recorded honestly: the explicit `/tmp` refusal
+  pre-landed at the freeze-corrections commit `378b6e7`, and the frozen G50 already read `8/8` at
+  `6927903` — before the post-data implicit-cwd hardening — so G50 does not independently discriminate
+  that later delta. Behaviourally, `6927903` accepted cwd `/tmp` (exit 0) where `ab3c64e9` refuses it
+  (exit 64) (`close/CritCloseClaims.md` §2). The implicit-cwd guard's own evidence is its selftest arms
+  and that behavioural comparison, not the unchanged G50.
 
 - **M5 — the instrument pin went stale in the same commit that changed the instrument.** Class:
   pin-after-edit (the round-49 M2 class, self-caught this time). Evidence: at `227b9e6` (the guard commit)
   G50 read `GUARD_UNMET held=6/8` with `G6 MISS pin.cap-run=957756ad!=e1d0a79b` and
-  `G7 MISS exit=1 PROXY: DRIFT (GATE_PIN_DRIFT term=pin.cap-run …)`; the commit re-pinned cap-run from its
-  pre-guard bytes. Captured by: the frozen G6/G7 checks running against the committed guard. Fix: re-pin
-  `pin.cap-run=e1d0a79b…` in the close commit; G50 then reads `GUARD_HELD held=8/8`. The 6/8 reading is
-  retained as the failing receipt, not overwritten.
+  `G7 MISS exit=1 PROXY: DRIFT (GATE_PIN_DRIFT term=pin.cap-run …)`; the commit declared
+  `pin.cap-run=957756ad…`, which matches neither the committed guard (`e1d0a79b…`) nor its pre-guard
+  parent (`64fafb42…`) — a stale/nonmatching pin, not a re-pin from the parent's bytes. Captured by: the
+  frozen G6/G7 checks running against the committed guard. Fix: re-pin `pin.cap-run=e1d0a79b…` in the
+  close commit; G50 then reads `GUARD_HELD held=8/8`. The 6/8 reading is retained as the failing receipt,
+  not overwritten.
 
-- **M6 — a seat's own class of error recurs in the L1's wiring: the wave's seat catalogue names a
-  report path the runtime never writes, so two seats produced no artifact.** Class: report-path/registry
-  drift. Evidence: registry `r50/swarm-registry.json` lists 64 seats; `CritRepairsForClaims` and
-  `CritReporting` have no report file under `.ufo/waves/round-50/r50/` and no error text in the registry.
-  Captured by: the seat-report census (`ls r50/*.md` = 65 files, of which 62 match seats and 3 are
-  scribe/L1 receipts). Fix: both dead seats are named in the report with their absent artifacts; the wave
-  is not padded or re-run for them. Dead seats stay dead in the evidence.
+- **M6 — two wave seats left no artifact, and the registry cannot say why.** Class: unattributed seat
+  death / evidence accounting. Evidence: registry `r50/swarm-registry.json` lists 64 seats;
+  `CritRepairsForClaims` and `CritReporting` have no report file under `.ufo/waves/round-50/r50/` and no
+  terminal status or error text in the registry. Captured by: the seat-report census (`ls r50/*.md` = 65
+  files, of which 62 match seats and 3 are scribe/L1 receipts). Fix: both dead seats are named in the
+  report with their absent artifacts; the wave is not padded or re-run for them. The registry records
+  neither death nor cause, so the report asserts neither — absence alone proves no artifact, nothing more.
 
 ## Gate
 
 - **Candidates.** S095 (bubblewrap 0.13.1 manual) and S098 (strace 7.2 manual) were re-opened this round;
   S099 (`proc_pid_mountinfo(5)`) was the round-49 mined admission re-checked in the closure audit. Rows
   before: 99 (`SOURCES_CHECK: CLEAN (rows=99 …)`); after: 99 — no row added or removed.
-- **Admitted.** S095 `REOPEN50: HOLD` — body sha256 `2cb77df2…` matches the pinned row; the row's cited
-  line anchors are mislocated (253-255 is `--sync-fd`; the corrected filesystem passages are 260-263,
-  301-302, 319-320, 416-418), same body, so the row's status stays `mined` and only `used-by` changes.
-  S098 `REOPEN50: HOLD` — body sha256 `c16859e0…`, alignment and unfinished/resumed passages agree
-  (`.ufo/waves/round-50/r50/ReopenS098.md`). S099 retained: tier A, `mined`, `opened 2026-10-23`,
-  `recheck: on-release`, used-by unchanged.
+- **Admitted.** S095 `REOPEN50: HOLD` — body sha256 `2cb77df2…` matches the pinned row. The re-open
+  receipt's locator caveat (that 253-255 is `--sync-fd` and 410-416 omits the `--tmpfs` description) was
+  refuted against the fetched bytes by an L1 line search: 253-255 is the filesystem-options ordering
+  paragraph, 295-312 includes `--bind` and `--ro-bind`, 410-416 includes `--tmpfs` and its description
+  (`r50/L1-S095-Locator-Check.md`); the row's existing anchor triplet is accurate and was not rewritten.
+  Status stays `mined`; `used-by` gains `corpus/knowledge/counter-amendment-discipline.md` and
+  `corpus/knowledge/mount-order-and-bind-scope.md`. S098 `REOPEN50: HOLD` — body sha256 `c16859e0…`,
+  alignment and unfinished/resumed passages agree (`.ufo/waves/round-50/r50/ReopenS098.md`); `used-by`
+  gains `corpus/knowledge/counter-amendment-discipline.md`. S099 retained: tier A, `mined`,
+  `opened 2026-10-23`, `recheck: on-release`; its `used-by` cell gained
+  `corpus/knowledge/mount-order-and-bind-scope.md`.
 - **Rejected.** None this round. (The B49/R4 replay control is a receipt-provenance limit, not a rejected
   source.)
 - **Spot-check.** The round-49 non-author spot-check (`corpus/lessons/round-49-verifier-spotcheck.md` §3)
@@ -96,11 +109,14 @@ closure/frontier audit, not a second axis claim.
 Cells changed this round (old→new; append-only rule permits exactly `status`, `recheck`, `used-by`):
 
 - **S095** `used-by`: `scripts/cap-run.mjs, scripts/cap-spawn.mjs, corpus/lessons/round-47.md` →
-  `… , corpus/knowledge/counter-amendment-discipline.md`. `status` `mined` and `recheck` `on-release`
-  unchanged; `opened` `2026-10-23` unchanged.
+  `scripts/cap-run.mjs, scripts/cap-spawn.mjs, corpus/lessons/round-47.md,
+  corpus/knowledge/counter-amendment-discipline.md, corpus/knowledge/mount-order-and-bind-scope.md`.
+  `status` `mined` and `recheck` `on-release` unchanged; `opened` `2026-10-23` unchanged.
 - **S098** `used-by`: `.ufo/waves/round-48/probe/caproute48-probe.mjs, corpus/lessons/round-48.md` →
   `… , corpus/knowledge/counter-amendment-discipline.md`. `status`/`recheck`/`opened` unchanged.
-- **S099** unchanged (already lists `scripts/bind-oracle.mjs`, the knowledge entry and the r49 lesson).
+- **S099** `used-by`: `scripts/bind-oracle.mjs, corpus/knowledge/counter-amendment-discipline.md,
+  corpus/lessons/round-49.md` → the same list plus `corpus/knowledge/mount-order-and-bind-scope.md`.
+  `status`/`recheck`/`opened` unchanged.
 
 Sourced claim: C1's guard rests on S095 (argument-order filesystem semantics — the reason a later
 `--bind` wins over the earlier `--tmpfs`), cited in the cap-run header and in QUALITY Q40.
