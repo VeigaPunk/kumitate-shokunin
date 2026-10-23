@@ -1,0 +1,227 @@
+# Controls re-scored under the A2 (O1) and A3 (O2) counters committed at cacfab32, by the L1 before any data; started 2026-10-23T08:32:23Z
+# label names follow each seat's report; the control's role per commit is in build/<Seat>.md
+## O2 do-nothing-base 2b2bf7bb repo=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+PARAMS M=124 maxAllocs=8 B=3
+CASE K1 NOT_HELD(no runner)
+CASE K2 NOT_HELD(no runner)
+CASE K3 NOT_HELD(no runner)
+CASE K4 NOT_HELD(no runner)
+CASE K5 NOT_HELD(no runner)
+CASE K6 NOT_HELD(no runner)
+CAPRUN_PROBE rev=2b2bf7bbdedaff3f0c749a8703002bebb104d15c held=0/6
+exit=1
+## O2 CtlC2Passthrough-a 6b56f0bc repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2Passthrough/lane
+PARAMS M=170 maxAllocs=11 B=2
+CASE K1 NOT_HELD(allocs=DONE,hog_exit=0,cgroup_memory_max=max)
+CASE K2 NOT_HELD(leftover=1)
+exit=137
+## O2 CtlC2Passthrough-b ee284a8b repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2Passthrough/lane
+PARAMS M=119 maxAllocs=8 B=3
+CASE K1 NOT_HELD(allocs=DONE,liveness=DONE/exit=137,cgroup_memory_max=max)
+CASE K2 NOT_HELD(exit=137,leftover=1)
+exit=137
+## O2 CtlC2Passthrough-c f6f0909a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2Passthrough/lane
+PARAMS M=151 maxAllocs=10 B=2
+CASE K1 NOT_HELD(allocs=0,hog_exit=0,liveness=0/exit=0,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen)
+CASE K3 NOT_HELD(child_never_seen,exit=0,no_budget_line)
+CASE K4 NOT_HELD(child_env_never_read)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(child_never_seen)
+CAPRUN_PROBE rev=f6f0909adbe263361337d8423588ee80de2b6bdf held=0/6
+exit=1
+## O2 CtlC2TimeoutV8-a 826b0cb2 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2TimeoutV8/lane
+PARAMS M=135 maxAllocs=9 B=3
+CASE K1 NOT_HELD(allocs=DONE,hog_exit=0,cgroup_memory_max=max)
+CASE K2 NOT_HELD(leftover=1)
+CASE K3 CAP_HELD
+CASE K4 NOT_HELD(leaked_secret)
+CASE K5 NOT_HELD(exit_after=119.004)
+CASE K6 NOT_HELD(pid_ns_not_own)
+CAPRUN_PROBE rev=826b0cb2da8a7152979bfbc6a4c903d0b8fca384 held=1/6
+LEFTOVER_KILLED 1
+exit=1
+## O2 CtlC2TimeoutV8-b f22bbe9a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2TimeoutV8/lane
+PARAMS M=136 maxAllocs=9 B=2
+CASE K1 NOT_HELD(allocs=DONE,hog_exit=0,cgroup_memory_max=max)
+CASE K2 NOT_HELD(leftover=1)
+CASE K3 CAP_HELD
+CASE K4 NOT_HELD(leaked_secret)
+CASE K5 NOT_HELD(exit_after=119.008)
+CASE K6 NOT_HELD(pid_ns_not_own)
+CAPRUN_PROBE rev=f22bbe9a81663a2cee8a8a65cfde329d1402ce22 held=1/6
+LEFTOVER_KILLED 1
+exit=1
+## O2 CtlC2RlimitPgid-a 342bdaaa repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2RlimitPgid/lane
+PARAMS M=167 maxAllocs=11 B=2
+CASE K1 NOT_HELD(cgroup_memory_max=max)
+CASE K2 NOT_HELD(leftover=1)
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 NOT_HELD(pid_ns_not_own)
+CAPRUN_PROBE rev=342bdaaa81f74c3b8b67a111fac98c7fb9b85b77 held=3/6
+LEFTOVER_KILLED 1
+exit=1
+## O2 CtlC2RlimitPgid-b 532db319 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2RlimitPgid/lane
+PARAMS M=138 maxAllocs=9 B=3
+CASE K1 NOT_HELD(allocs=0,liveness=0/exit=1,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen,exit=1)
+CASE K3 NOT_HELD(no_budget_line)
+CASE K4 NOT_HELD(exit=1,child_env_never_read)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(exit=1,pid_ns_not_own)
+CAPRUN_PROBE rev=532db3197f715360475d98daf04fde9e3ddeda9f held=0/6
+exit=1
+## O2 CtlC2RlimitPgid-c dcc1a55f repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2RlimitPgid/lane
+PARAMS M=116 maxAllocs=8 B=3
+CASE K1 NOT_HELD(allocs=0,liveness=0/exit=1,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen,exit=1)
+CASE K3 NOT_HELD(child_never_seen,no_budget_line)
+CASE K4 NOT_HELD(exit=1)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(exit=1,pid_ns_not_own)
+CAPRUN_PROBE rev=dcc1a55f53c677642d7c3d68b678279d6bac14ad held=0/6
+exit=1
+## O2 CtlC2RlimitPgid-d fe706796 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2RlimitPgid/lane
+PARAMS M=165 maxAllocs=11 B=4
+CASE K1 NOT_HELD(no runner)
+CASE K2 NOT_HELD(no runner)
+CASE K3 NOT_HELD(no runner)
+CASE K4 NOT_HELD(no runner)
+CASE K5 NOT_HELD(no runner)
+CASE K6 NOT_HELD(no runner)
+CAPRUN_PROBE rev=fe706796c76451c540328a3cfe8e76ffc48f1291 held=0/6
+exit=1
+## O2 CtlC2HalfSandbox-a 734d578a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2HalfSandbox/lane
+PARAMS M=160 maxAllocs=10 B=3
+CASE K1 CAP_HELD
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 NOT_HELD(pid_ns_not_own)
+CAPRUN_PROBE rev=734d578aefc07dcec3835f5479007a8b6d896140 held=5/6
+exit=1
+## O2 CtlC2HalfSandbox-b abf1ba7a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2HalfSandbox/lane
+PARAMS M=158 maxAllocs=10 B=2
+CASE K1 NOT_HELD(allocs=DONE,hog_exit=0,cgroup_memory_max=max)
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 CAP_HELD
+CAPRUN_PROBE rev=abf1ba7ab6edc5f7d8faca330b0c7644ff569282 held=5/6
+exit=1
+## O2 CtlC2LabelKeyed-A aea741b9 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2LabelKeyed/lane
+PARAMS M=137 maxAllocs=9 B=2
+CASE K1 NOT_HELD(allocs=0,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen,exit=1)
+CASE K3 NOT_HELD(child_never_seen)
+CASE K4 NOT_HELD(child_env_never_read)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(child_never_seen)
+CAPRUN_PROBE rev=aea741b9909d5ffc8f1925a7a3e5903fab5fc9be held=0/6
+exit=1
+## O2 CtlC2LabelKeyed-B 7af3d978 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC2LabelKeyed/lane
+PARAMS M=170 maxAllocs=11 B=4
+CASE K1 NOT_HELD(allocs=0,child_never_seen)
+CASE K2 NOT_HELD(grandchild_never_seen)
+CASE K3 NOT_HELD(child_never_seen)
+CASE K4 NOT_HELD(child_env_never_read)
+CASE K5 NOT_HELD(child_never_seen_before_signal)
+CASE K6 NOT_HELD(child_never_seen)
+CAPRUN_PROBE rev=7af3d978d89d5b3bf71b5955d963f30b1ebafcbb held=0/6
+exit=1
+## O2 calibration-reference 76df5c28 repo=/fast/scratch/hyaku/kumitate-r46/calib
+PARAMS M=120 maxAllocs=8 B=2
+CASE K1 CAP_HELD
+CASE K2 CAP_HELD
+CASE K3 CAP_HELD
+CASE K4 CAP_HELD
+CASE K5 CAP_HELD
+CASE K6 CAP_HELD
+CAPRUN_PROBE rev=76df5c282898b2841e6c6b39bdef18ec583cfcc9 held=6/6
+exit=0
+## O1 do-nothing-base 2b2bf7bb repo=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+TOOL cite-check NOT_HELD(A_repo_changed=4,A_git_launches=108/111,A_git_saw_vars=108,B_repo_changed=2,B_git_launches=108/111,B_git_saw_vars=108) clean:cases=75,git=111 base:cases=75 A:cases=75,git=108 B:cases=75,git=108 F:exit=1
+TOOL proxy-check NOT_HELD(A_exit=1,A_repo_changed=22,A_caseset_differs=4,A_git_saw_vars=12,B_exit=1,B_repo_changed=14,B_caseset_differs=4,B_git_saw_vars=12) clean:cases=121,git=12 base:cases=121 A:cases=117,git=12 B:cases=117,git=12 F:exit=1
+TOOL round-gate NOT_HELD(A_exit=1,A_repo_changed=4,A_caseset_differs=60,A_git_launches=3/886,A_git_saw_vars=3,B_exit=1,B_repo_changed=4,B_caseset_differs=60,B_git_launches=3/886,B_git_saw_vars=3) clean:cases=60,git=886 base:cases=60 A:cases=0,git=3 B:cases=0,git=3 F:exit=1
+GITENV_CANARY rev=2b2bf7bbdedaff3f0c749a8703002bebb104d15c held=0/3
+exit=1
+## O1 CtlC1Junk-a 2dafa042 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1Junk/lane
+TOOL cite-check NOT_HELD(A_repo_changed=4,A_git_launches=108/111,A_git_saw_vars=108,B_repo_changed=2,B_git_launches=108/111,B_git_saw_vars=108) clean:cases=75,git=111 base:cases=75 A:cases=75,git=108 B:cases=75,git=108 F:exit=1
+TOOL proxy-check NOT_HELD(A_exit=1,A_repo_changed=22,A_caseset_differs=4,A_git_saw_vars=12,B_exit=1,B_repo_changed=14,B_caseset_differs=4,B_git_saw_vars=12) clean:cases=121,git=12 base:cases=121 A:cases=117,git=12 B:cases=117,git=12 F:exit=1
+TOOL round-gate NOT_HELD(A_exit=1,A_repo_changed=4,A_caseset_differs=60,A_git_launches=3/886,A_git_saw_vars=3,B_exit=1,B_repo_changed=4,B_caseset_differs=60,B_git_launches=3/886,B_git_saw_vars=3) clean:cases=60,git=886 base:cases=60 A:cases=0,git=3 B:cases=0,git=3 F:exit=1
+GITENV_CANARY rev=2dafa042ef953f676712c4f0019199671874928b held=0/3
+exit=1
+## O1 CtlC1Junk-b 4b550a28 repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1Junk/lane
+TOOL cite-check NOT_HELD(clean_exit=1,base_cases_lost=75,A_exit=1,A_git_launches=0/0,B_exit=1,B_git_launches=0/0) clean:cases=0,git=0 base:cases=75 A:cases=0,git=0 B:cases=0,git=0 F:exit=1
+TOOL proxy-check NOT_HELD(clean_exit=1,base_cases_lost=121,A_exit=1,A_git_launches=0/0,B_exit=1,B_git_launches=0/0) clean:cases=0,git=0 base:cases=121 A:cases=0,git=0 B:cases=0,git=0 F:exit=1
+TOOL round-gate NOT_HELD(clean_exit=1,base_cases_lost=60,A_exit=1,A_git_launches=0/0,B_exit=1,B_git_launches=0/0) clean:cases=0,git=0 base:cases=60 A:cases=0,git=0 B:cases=0,git=0 F:exit=1
+GITENV_CANARY rev=4b550a28843972c14328095ba5ba89ea4d7f1cea held=0/3
+exit=1
+## O1 CtlC1Replay-replay 63a9665c repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1Replay/lane
+TOOL cite-check NOT_HELD(A_git_launches=0/111,B_git_launches=0/111) clean:cases=75,git=111 base:cases=75 A:cases=75,git=0 B:cases=75,git=0 F:exit=1
+TOOL proxy-check NOT_HELD(A_git_launches=0/12,B_git_launches=0/12) clean:cases=121,git=12 base:cases=121 A:cases=121,git=0 B:cases=121,git=0 F:exit=1
+TOOL round-gate NOT_HELD(A_git_launches=0/886,B_git_launches=0/886) clean:cases=60,git=886 base:cases=60 A:cases=60,git=0 B:cases=60,git=0 F:exit=1
+GITENV_CANARY rev=63a9665c63e206cd0ca3c80e79aa4829c143e468 held=0/3
+exit=1
+## O1 CtlC1Replay-with-launches 9800b17f repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1Replay/lane
+TOOL cite-check CANARY_HELD clean:cases=75,git=111 base:cases=75 A:cases=75,git=111 B:cases=75,git=111 F:exit=1
+TOOL proxy-check CANARY_HELD clean:cases=121,git=12 base:cases=121 A:cases=121,git=12 B:cases=121,git=12 F:exit=1
+TOOL round-gate CANARY_HELD clean:cases=60,git=886 base:cases=60 A:cases=60,git=886 B:cases=60,git=886 F:exit=1
+GITENV_CANARY rev=9800b17ffc8fb70c4581c34c70ac21dd0cfa43a7 held=3/3
+exit=0
+## O1 CtlC1PathKeyed-pathkeyed 27099ddd repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1PathKeyed/lane
+TOOL cite-check NOT_HELD(A_repo_changed=4,A_git_launches=108/111,A_git_saw_vars=108) clean:cases=75,git=111 base:cases=75 A:cases=75,git=108 B:cases=75,git=111 F:exit=1
+TOOL proxy-check NOT_HELD(A_exit=1,A_repo_changed=22,A_caseset_differs=4,A_git_saw_vars=12) clean:cases=121,git=12 base:cases=121 A:cases=117,git=12 B:cases=121,git=12 F:exit=1
+TOOL round-gate NOT_HELD(A_exit=1,A_repo_changed=4,A_caseset_differs=60,A_git_launches=3/886,A_git_saw_vars=3) clean:cases=60,git=886 base:cases=60 A:cases=0,git=3 B:cases=60,git=886 F:exit=1
+GITENV_CANARY rev=27099ddd7c4cc5bfdc6ec78812115fd2a6ab1c9c held=0/3
+exit=1
+## O1 CtlC1PathKeyed-noreader 6cb13bcc repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1PathKeyed/lane
+TOOL cite-check NOT_HELD(missing)
+TOOL proxy-check NOT_HELD(missing)
+TOOL round-gate NOT_HELD(missing)
+GITENV_CANARY rev=6cb13bccabde816d718ebadfab160cba47663a51 held=0/3
+exit=1
+## O1 CtlC1DropCases-drop e0691e5a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1DropCases/lane
+TOOL cite-check NOT_HELD(A_caseset_differs=2,A_git_launches=0/111,B_caseset_differs=2,B_git_launches=0/111) clean:cases=75,git=111 base:cases=75 A:cases=73,git=0 B:cases=73,git=0 F:exit=1
+TOOL proxy-check NOT_HELD(A_caseset_differs=4,A_git_launches=0/12,B_caseset_differs=4,B_git_launches=0/12) clean:cases=121,git=12 base:cases=121 A:cases=117,git=0 B:cases=117,git=0 F:exit=1
+TOOL round-gate NOT_HELD(A_caseset_differs=54,A_git_launches=0/886,B_caseset_differs=54,B_git_launches=0/886) clean:cases=60,git=886 base:cases=60 A:cases=6,git=0 B:cases=6,git=0 F:exit=1
+GITENV_CANARY rev=e0691e5a65e85ac9f6a15923521333662bf88cd7 held=0/3
+exit=1
+## O1 CtlC1DropCases-earlypass 6f95385a repo=/fast/scratch/hyaku/kumitate-r46/seats/w1-CtlC1DropCases/lane
+TOOL cite-check NOT_HELD(A_git_launches=0/111,B_git_launches=0/111) clean:cases=75,git=111 base:cases=75 A:cases=75,git=0 B:cases=75,git=0 F:exit=1
+TOOL proxy-check NOT_HELD(A_git_launches=0/12,B_git_launches=0/12) clean:cases=121,git=12 base:cases=121 A:cases=121,git=0 B:cases=121,git=0 F:exit=1
+TOOL round-gate NOT_HELD(A_git_launches=0/886,B_git_launches=0/886) clean:cases=60,git=886 base:cases=60 A:cases=60,git=0 B:cases=60,git=0 F:exit=1
+GITENV_CANARY rev=6f95385a23bea75bf08713e8ffe924de8d9a8b6c held=0/3
+exit=1
+## O1 calibration-reference 3f5dd9f6 repo=/fast/scratch/hyaku/kumitate-r46/calib
+TOOL cite-check CANARY_HELD clean:cases=75,git=111 base:cases=75 A:cases=75,git=111 B:cases=75,git=111 F:exit=1
+TOOL proxy-check CANARY_HELD clean:cases=121,git=12 base:cases=121 A:cases=121,git=12 B:cases=121,git=12 F:exit=1
+TOOL round-gate CANARY_HELD clean:cases=60,git=886 base:cases=60 A:cases=60,git=886 B:cases=60,git=886 F:exit=1
+GITENV_CANARY rev=3f5dd9f617e3e4c21070070c5b2b944c1e193253 held=3/3
+exit=0
+# finished 2026-10-23T08:51:28Z
+
+# NOTE: O2 CtlC2Passthrough-a (6b56f0bc) and -b (ee284a8b) printed no verdict: the rescore wrapper's 300 s SIGKILL ended the probe (a passthrough runner leaves 300 s children; the probe's per-invocation 60 s kill reaches only the runner). No verdict = not a meet; their wave-1 scores under A1 were 0/6.
+# A4 (O1 hostile fault run, after CtlC1Replay-with-launches met the A2 O1 counter above), L1 2026-10-23T08:53:53Z. A4 only adds a condition, so every O1 control NOT_HELD above stays NOT_HELD.
+## O1 (A4) do-nothing-base 2b2bf7bb
+TOOL cite-check NOT_HELD(A_repo_changed=4,A_git_launches=108/111,A_git_saw_vars=108,B_repo_changed=2,B_git_launches=108/111,B_git_saw_vars=108) clean:cases=75,git=111 base:cases=75 A:cases=75,git=108 B:cases=75,git=108 F:exit=1 FH:exit=1
+TOOL proxy-check NOT_HELD(A_exit=1,A_repo_changed=22,A_caseset_differs=4,A_git_saw_vars=12,B_exit=1,B_repo_changed=14,B_caseset_differs=4,B_git_saw_vars=12) clean:cases=121,git=12 base:cases=121 A:cases=117,git=12 B:cases=117,git=12 F:exit=1 FH:exit=1
+TOOL round-gate NOT_HELD(A_exit=1,A_repo_changed=4,A_caseset_differs=60,A_git_launches=3/886,A_git_saw_vars=3,B_exit=1,B_repo_changed=4,B_caseset_differs=60,B_git_launches=3/886,B_git_saw_vars=3) clean:cases=60,git=886 base:cases=60 A:cases=0,git=3 B:cases=0,git=3 F:exit=1 FH:exit=1
+GITENV_CANARY rev=2b2bf7bbdedaff3f0c749a8703002bebb104d15c held=0/3
+exit=1
+## O1 (A4) calibration-reference 3f5dd9f6
+TOOL cite-check CANARY_HELD clean:cases=75,git=111 base:cases=75 A:cases=75,git=111 B:cases=75,git=111 F:exit=1 FH:exit=1
+TOOL proxy-check CANARY_HELD clean:cases=121,git=12 base:cases=121 A:cases=121,git=12 B:cases=121,git=12 F:exit=1 FH:exit=1
+TOOL round-gate CANARY_HELD clean:cases=60,git=886 base:cases=60 A:cases=60,git=886 B:cases=60,git=886 F:exit=1 FH:exit=1
+GITENV_CANARY rev=3f5dd9f617e3e4c21070070c5b2b944c1e193253 held=3/3
+exit=0
+## O1 (A4) CtlC1Replay-with-launches 9800b17f
+TOOL cite-check NOT_HELD(hostile_fault_undetected) clean:cases=75,git=111 base:cases=75 A:cases=75,git=111 B:cases=75,git=111 F:exit=1 FH:exit=0
+TOOL proxy-check NOT_HELD(hostile_fault_undetected) clean:cases=121,git=12 base:cases=121 A:cases=121,git=12 B:cases=121,git=12 F:exit=1 FH:exit=0
+TOOL round-gate NOT_HELD(hostile_fault_undetected) clean:cases=60,git=886 base:cases=60 A:cases=60,git=886 B:cases=60,git=886 F:exit=1 FH:exit=0
+GITENV_CANARY rev=9800b17ffc8fb70c4581c34c70ac21dd0cfa43a7 held=0/3
+exit=1

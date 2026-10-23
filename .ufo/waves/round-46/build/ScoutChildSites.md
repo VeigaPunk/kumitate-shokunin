@@ -1,0 +1,61 @@
+RESULT ScoutChildSites rev=516977af verdict=mapped sites=24 routable=0 blocked=24
+
+Clone /fast/scratch/hyaku/kumitate-r46/seats/w1-ScoutChildSites/lane detached at 516977af2216b1cc426ee970d260dee53714bf4f, porcelain 0. Command: git diff --stat 6b2a45178c72a4565bb9d98e09f4c36b95ca1521 516977af2216b1cc426ee970d260dee53714bf4f -- scripts/ . Output: empty (wc -l = 0), so every audit line is still the spawn. scripts/cap-run.mjs is absent. Frozen counters were not run. No tool was installed.
+
+Routable means one call `node scripts/cap-run.mjs --mem MiB --tasks N --budget S [--env K=V]... -- cmd` keeps the child's command, the env map the parent builds today, the same cwd, a budget equal to an existing finite timeout, the stdout the parent reads, and the numeric status the parent asserts, and the child does not need a write outside the runner cwd, a fixture HOME, a nested --selftest, or the gate-mutants process-group harness. The frozen interface (plan.md C2; caprun-probe.mjs:25) guarantees stdout passthrough, each --env pair, and that inherited GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and a runner-env secret are absent (K4). It shows exit 0 when the K1/K4 child succeeds, and non-zero plus a stderr line starting CAP_RUN: BUDGET on budget expiry. It does not promise a specific non-zero status, stderr passthrough, or a spawnSync error or signal. --mem and --tasks would be new ceilings; no safe value was measured. The would-text below is the call shape, not a claim that behaviour holds.
+
+Manifest: 51 from-strings in scripts/gate-mutants.mjs. None is a substring of any of the 24 spawn statements. The frozen MANIFEST targets only cite-check and wave-census. The selftest fixture's own from-strings (const MODE = 'pass', const TRIPWIRE = false, const UNUSED = 0, const CASE_TOTAL = 1, const ABSENT = 0) sit on lines 867-870 and 952, not on line 876.
+
+Pins: sha256sum of each spawn file equals the SCORECARD declaration. kumitate-proxy-v1 lines 305-310 pin cite-check, surface-probe, round-gate, proxy-check, claims-check, kimi-census. kumitate-gate-pins-v1 lines 313-316 pin anchor-truth, sources-check, wave-census, gate-mutants (the plan's four). Line 317 pin.omp-census is a fifth gate pin and has no audit spawn. A route edits a pin. That is a landing constraint, separate from routable=0.
+
+Nearest misses (no fixture HOME, no nested selftest, no child-CLI write, no manifest literal on the line) are still blocked on numeric status, stderr, or spawn error: kimi-census.mjs:488, sources-check.mjs:549, sources-check.mjs:859, wave-census.mjs:302.
+
+1. scripts/anchor-truth.mjs:802 spawnSync(process.execPath, [TOOL_FILE, '--self', self, ...args], {encoding, env: gitEnv()}). gitEnv (:118-121) keeps PATH, HOME, LANG, LC_ALL, TMPDIR, SYSTEMROOT and seven GIT_* keys, then sets GIT_OPTIONAL_LOCKS=0 and GIT_TERMINAL_PROMPT=0. Timeout: none. Memory: none. Parent asserts status 0, 1, 2 and 64 (:1161). --write-pin writes the pin under the tmp --self, outside cwd. BLOCK: no timeout; write outside cwd; exact exits. would: --budget NEW --env each gitEnv key -- node TOOL_FILE --self SELF ...
+
+2. scripts/cite-check.mjs:2311 spawnSync(process.execPath, [SELF, ...bareArgs]) timeout 120s, maxBuffer 16MiB, env is process.env plus HOME set to a tmp fixture and UFO_SRC empty. bareArgs are --json --self selfRoot --fleet parent. The ok-check is JSON stdout src, not status. BLOCK: fixture HOME (the child stats ~/Projects under that HOME). would: --budget 120 --env each process.env key --env HOME=fixture --env UFO_SRC= -- node SELF ...bareArgs
+
+3. scripts/cite-check.mjs:2338 same timeout, maxBuffer and env; args --self selfRoot --fleet parent. Asserts status===2 and stderr containing the missing --src path (:2342). BLOCK: fixture HOME; exit 2; stderr.
+
+4. scripts/cite-check.mjs:2431 child41 spawnSync timeout 300s, maxBuffer 64MiB, env is process.env plus caller overrides plus KUMITATE_CITE_SELFTEST_DEPTH set to depth+1. Asserts status 0, 1, 2, 64 and stderr (:2436-2454); also runs --selftest, which mkdtemps. The manifest literal process.env[INJECT41] !== undefined is at :2466, not on this statement. BLOCK: nested selftest; exact exits; stderr; child write outside cwd.
+
+5. scripts/claims-check.mjs:879 runClaims spawnSync timeout 60s, env gitEnv(env) (same allowlist, plus caller extras). Asserts status 0, 1, 2 and 64. bare() at :1052 passes HOME set to a fixture and UFO_SRC empty. BLOCK: fixture HOME; exact exits. would: --budget 60 --env each gitEnv key -- node TOOL_FILE ...args
+
+6. scripts/gate-mutants.mjs:413 spawn /usr/bin/prlimit with --nproc set to the uid cap, then node --require parentGuard --max-old-space-size=128 file --selftest. cwd is tempRoot/work. env is exactly PATH, HOME, TMPDIR, LANG, TZ (sandboxEnv :108-115), detached, stdio ignore/pipe/pipe. Timeout is min(60s, timeoutMs) (TIMEOUT_MS :30); the selftest passes 100ms (:963). RSS poll kills above 512MiB or 16 processes every 100ms (:429-434). parent-guard.cjs walks ppid (:397-406). BLOCK: the harness is the thing under test (a PID namespace breaks the ppid walk; K2 would reap the detached grandchild the timeout case needs); HOME and TMPDIR are outside cwd and the child --selftest writes under TMPDIR. No manifest from-literal on this line.
+
+7. scripts/gate-mutants.mjs:876 inside the selftestTargetSource template: spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], {stdio:'ignore'}). No timeout and no env, so it inherits the five-variable fixture env, including fixture HOME (:856-861). The timeout mode needs this process to survive until the outer group kill. BLOCK: detached leak under test; inherits fixture HOME. Fixture from-literals are on :867-870, not here.
+
+8. scripts/kimi-census.mjs:488 runGate spawnSync timeout 30s default, 10s at :706 and :836. No env option (inherits process.env). Returns status, signal, stdout, stderr, error (:489). Asserts status 0, 1, 2, 64, stderr text, signal===null (:708, :838) and error===undefined (:838). The child is runVerify, which writes no file and reads --root outside cwd. BLOCK: exact exits; stderr; signal/error. Nearest miss. would: --budget 30 or --budget 10 --env each inherited key -- node TOOL_FILE ...args
+
+9. scripts/proxy-check.mjs:1543 runProxy spawnSync timeout 120s, maxBuffer 16MiB, env is process.env plus extraEnv. Asserts status 0, 1, 2, 64 and stderr, including an empty stderr (:1686). extraEnv carries fixture HOME and UFO_SRC empty (:2655) and KUMITATE_PROXY_NESTED (:2861). BLOCK: fixture HOME; nested selftest through this same helper; exact exits; stderr.
+
+10. scripts/round-gate.mjs:725 runGate spawnSync timeout 120s, maxBuffer 16MiB, env is cleanEnv() plus extraEnv. cleanEnv (:712-715) copies process.env and deletes KUMITATE_REPORTS_DIR, KUMITATE_MAIN_REPO, KUMITATE_LANE, UFO_SRC. Asserts status 0, 1, 2, 64 and stderr (:1225). extraEnv includes fixture HOME and UFO_SRC empty (:1347, :1354, :1369). BLOCK: fixture HOME; exact exits; stderr.
+
+11. scripts/round-gate.mjs:1392 spawnSync timeout 120s, maxBuffer 32MiB, env nestedEnv (:1384-1391: cleanEnv plus KUMITATE_ROUND_GATE_NESTED=1 and four polluted paths). Args are --selftest plus four nonexistent dirs. This call asserts only status===0 and stdout (:1399). The child selftest mkdtemps. BLOCK: nested selftest; child write outside cwd. would: --budget 120 --env each nestedEnv key -- node SELF --selftest ...
+
+12. scripts/sources-check.mjs:549 runTool spawnSync timeout 15s, no env (inherits). Returns status, stdout, stderr, error (:550). Asserts status 0, 1, 2 and 64; the usage text is on stdout (:829). makeFixture writes are the parent; the child CLI only reads --self. BLOCK: exact exits. Nearest miss. would: --budget 15 --env each inherited key -- node TOOL_FILE ...args
+
+13. scripts/sources-check.mjs:859 spawnSync('sh', ['-c', script, 'sources-check-parity', fixtureFile]) timeout 10s, no env. The script only reads the fixture (grep, awk, sort, uniq, wc, :851-857). The pass arm needs status 0 and stdout (:861, :863). The fail arm reads parity.error and parity.stderr (:860, :862). BLOCK: spawn error and stderr are not in the frozen contract. Nearest miss. would: --budget 10 --env each inherited key -- sh -c SCRIPT sources-check-parity FIXTURE
+
+14. scripts/surface-probe.mjs:476 spawnSync('bash', [host, 'surface', '--json']) cwd=src, timeout SPAWN_TIMEOUT_MS 20s (:240), maxBuffer 8MiB, env is process.env plus NODE_COMPILE_CACHE set to an mkdtemp. The cache dir is outside cwd and outside src, and is removed only after return (:474, :490). Also reads result.error.code and stderr (:483-486). BLOCK: write outside cwd; error/stderr. would: runner cwd=src, --budget 20 --env each process.env key --env NODE_COMPILE_CACHE=cache -- bash HOST surface --json (no --cwd flag; cwd is ambient).
+
+15. scripts/surface-probe.mjs:504 spawnSync(process.execPath, [host, 'status']) cwd=src, timeout 20s, maxBuffer 8MiB, env is process.env plus UFO_STATE_DIR, UFO_PENDING_WORK_PATH, UFO_PROJECT_ROOT (:509-514). The state dir is an mkdtemp outside cwd (:501-523). BLOCK: write outside cwd; error/stderr.
+
+16. scripts/surface-probe.mjs:1007 spawnSync('bash', ['-c', item.command]) cwd=opts.self, timeout CHECKLIST_TIMEOUT_MS 120s (:241), maxBuffer 8MiB, no env (inherits). Asserts run.status is in item.exits and a substring of stdout+stderr (:1010-1012). The command text is parsed from SKILL.md. BLOCK: exact exit set; stderr; an arbitrary command can write outside cwd. would: runner cwd=opts.self, --budget 120 --env each inherited key -- bash -c ITEM_COMMAND
+
+17. scripts/surface-probe.mjs:1541 spawnSelf spawnSync timeout 120s. env is omitted (inherit) or process.env plus override (:1542). Asserts status 64 plus stderr (:1546), status 2 plus stderr (:1551), and passes fixture HOME with UFO_SRC empty (:1573, :1598). BLOCK: fixture HOME; exact exits; stderr.
+
+18. scripts/surface-probe.mjs:1682 spawnSync timeout 180s, env is process.env plus KUMITATE_SURFACE_PROBE_NESTED=1, args --selftest --src a nonexistent path. Asserts status===0 and stdout VERDICT: PASS (:1685). The child selftest mkdtemps. BLOCK: nested selftest; child write outside cwd.
+
+19. scripts/wave-census.mjs:302 run spawnSync timeout argument default 60s, 20s at :534. No env. Returns status, stdout, stderr, error.code (:303). Asserts status 0, 1 and 2, stderr, and error unset (:540). The child census reads --root; fixture writes are the parent. Manifest from-literals for this file are elsewhere (:200, :604), not on :302. BLOCK: exact exits; stderr; error code. Nearest miss. would: --budget 60 or --budget 20 --env each inherited key -- node SELF --root ROOT ...args
+
+20. scripts/wave-census.mjs:368 spawnSync(process.execPath, [SELF]) no timeout, no env. Asserts status===64 (:370). BLOCK: no timeout; exit 64. would: --budget NEW --env each inherited key -- node SELF
+
+21. scripts/wave-census.mjs:369 spawnSync(process.execPath, [SELF, '--round', '7', '--expect', 'build=1']) no timeout, no env. Asserts status===64. BLOCK: no timeout; exit 64.
+
+22. scripts/wave-census.mjs:438 spawnSync(process.execPath, [SELF, '--round', 'abc']) no timeout, no env. Asserts status===64 (:440). BLOCK: no timeout; exit 64.
+
+23. scripts/wave-census.mjs:439 spawnSync(process.execPath, [SELF, '--round', '7', '--bogus']) no timeout, no env. Asserts status===64. BLOCK: no timeout; exit 64.
+
+24. scripts/wave-census.mjs:585 spawnSync timeout 120s, env is process.env plus KUMITATE_WAVE_CENSUS_SELFTEST_INJECT_FAIL=1, args --selftest. Asserts status===1 and stdout FAIL / PRIMARY lines (:589-592). The child selftest mkdtemps. The mutant literal `return pass === results.length ? 0 : 1` is at :604, not on this statement. BLOCK: nested selftest; exit 1; child write outside cwd.
+
+Confidence is high on the lines, options, pin bytes and the manifest non-overlap (a scratch node script counted the from-strings against the clone). routable=0 is inferred from that interface text, not from running a runner. Unresolved: a later runner might forward the child's numeric exit and stderr; if it does, the four nearest misses are the first candidates, still after a pin re-pin, and wave-census.mjs:302's :534 call needs --budget 20 rather than the 60s default. No non-tripping --mem or --tasks was measured.

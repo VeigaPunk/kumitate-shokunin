@@ -15,8 +15,9 @@
 #   (e) launched `git` through PATH at least once and at least as many times as the scrubbed run at R,
 #       and no launch had any of GIT_DIR, GIT_WORK_TREE or GIT_INDEX_FILE set (a PATH shim logs each
 #       launch's three values, then execs git);
-#   and (f) in a third run under a scrubbed environment with a PATH `git` that fails every launch
-#   (exit 128), the selftest does not report a clean pass (it exits non-zero or prints a `FAIL` line).
+#   and (f) in two more runs with a PATH `git` that fails every launch (exit 128) — one under a scrubbed
+#   environment, one (A4) with the three variables naming the run-A canary — the selftest does not report a
+#   clean pass (it exits non-zero or prints a `FAIL` line).
 #   A missing tool, a non-zero exit, a timeout or a failed case is NOT_HELD.
 # Case name = the text after `PASS  ` with a leading `[ n/N]` counter removed, cut before ` — `.
 # Canary and work directories carry random names. Residual (recorded in plan.md A2): a scrub keyed on a
@@ -36,8 +37,8 @@ T=$(mktemp -d "${TMPDIR:-/tmp}/XXXXXXXXXX") || exit 2
 cleanup() { rm -rf "$W" "$T"; }
 trap cleanup EXIT
 trap 'exit 2' INT TERM
-REV=$(git -C "$LANE" rev-parse --verify "$REV_IN^{commit}") || { echo "GITENV_CANARY: usage bad rev"; exit 2; }
 unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_COMMON_DIR GIT_CEILING_DIRECTORIES
+REV=$(git -C "$LANE" rev-parse --verify "$REV_IN^{commit}") || { echo "GITENV_CANARY: usage bad rev"; exit 2; }
 REAL_GIT=$(command -v git) || exit 2
 mkdir -p "$W/shim" || exit 2
 cat > "$W/shim/git" <<EOF || exit 2
@@ -96,11 +97,15 @@ for t in cite-check proxy-check round-gate; do
   lost=$(LC_ALL=C comm -23 "$W/cb-$t" "$W/cc-$t" | wc -l); [ "$lost" -eq 0 ] || why="${why}base_cases_lost=$lost,"
   hostile "$t" A "$CA"
   hostile "$t" B "$R"
-  # (f) fault discrimination: with every `git` launch failing, the selftest must not report a clean pass
+  # (f) fault discrimination: with every `git` launch failing, the selftest must not report a clean pass,
+  # neither scrubbed nor (A4) under the hostile run-A environment
   capped "$W/fault-$t.out" "$R" -- env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE PATH="$W/fault:$PATH" \
     node "scripts/$t.mjs" --selftest; rc_f=$?
   if [ "$rc_f" -eq 0 ] && ! grep -q '^FAIL' "$W/fault-$t.out"; then why="${why}fault_undetected,"; fi
-  info="${info} F:exit=$rc_f"
+  capped "$W/faulth-$t.out" "$R" -- env GIT_DIR="$CA/.git" GIT_WORK_TREE="$CA" GIT_INDEX_FILE="$CA/.git/index" \
+    PATH="$W/fault:$PATH" node "scripts/$t.mjs" --selftest; rc_fh=$?
+  if [ "$rc_fh" -eq 0 ] && ! grep -q '^FAIL' "$W/faulth-$t.out"; then why="${why}hostile_fault_undetected,"; fi
+  info="${info} F:exit=$rc_f FH:exit=$rc_fh"
   n_c=$(wc -l < "$W/cc-$t"); n_b=$(wc -l < "$W/cb-$t")
   if [ -z "$why" ] && [ "$n_b" -gt 0 ]; then
     held=$((held+1)); echo "TOOL $t CANARY_HELD clean:cases=$n_c,git=$g_c base:cases=$n_b$info"

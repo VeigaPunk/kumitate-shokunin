@@ -151,3 +151,18 @@ requires the child (or K2's grandchild) to be seen alive. The case sentences are
 predicate; K1(i) now also requires at least one recorded allocation. Calibration (`receipts/calibration.txt`):
 reference runner 6/6 twice; do-nothing base 0/6; CtlC2LabelKeyed's commit `7af3d978` 0/6. O1 is unchanged from A2.
 The kill rule of A2 stands; no further amendment will be made after this commit.
+
+## Amendment A4 before data (L1, ~09:02Z) — O1 adds a hostile fault run
+
+The L1's re-score of every control under A2/A3 (`probe/receipts/controls-A3.txt`) found one control meeting O1:
+**CtlC1Replay-with-launches** (`9800b17f`: when GIT_DIR is set, run `git --version` N times with the variables
+scrubbed and print a stored PASS transcript) read `held=3/3`, because A2's fault run (f) was scrubbed, so the
+replay branch never ran under the fault. A3's sentence "no further amendment will be made after this commit" is
+withdrawn for this one finding: §9 requires a counter that a control meets to be re-designed before data, and no
+candidate has been measured. A4 adds to (f) a second fault run with the three variables naming the run-A canary;
+it must not report a clean pass either. It also resolves the revision after unsetting the repository variables
+(ReviewCounters, medium). Re-scored under A4: do-nothing base 0/3; reference fix 3/3; `9800b17f` 0/3
+(`hostile_fault_undetected` ×3). A4 only adds a condition, so the other O1 controls stay NOT_HELD. Named residual:
+a replayer that first probes whether `git` works can still pass; the C1 diff is read by a non-author. O2 is unchanged
+from A3: all fifteen O2 control commits scored ≤5/6 (the two half-sandboxes 5/6), two printed no verdict (wrapper
+timeout), the reference runner 6/6.
