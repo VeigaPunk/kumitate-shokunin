@@ -1,0 +1,124 @@
+# MutStanza transcripts — kumitate round 51 wave 2
+# generated 2026-10-23T23:51:44-03:00
+# lane: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+# detector: node scripts/proxy-check.mjs --self <tree> --scorecard <mutant>/SCORECARD.md --strict
+
+===== 00-control-pristine =====
+sha256(mutant scorecard) = 4b98541fcdbcd3e5d278d311fd6159f01a2b842078fbc60381b0fed6b3d87138
+--- stdout ---
+PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+--- exit=0 ---
+
+===== 01-A-66 =====
+sha256(mutant scorecard) = 673fc99172323255593d05b66acd89e96353cace5994d66a783e8b99ea75723f
+--- stdout ---
+PROXY  error  A_DRIFT  A: declared=66 computed=67 delta=+1
+PROXY: DRIFT (A_DRIFT term=A declared=66 computed=67 delta=+1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 02-A-68 =====
+sha256(mutant scorecard) = 6be6b4d9bf9899fb156171bdf60b784240b682c8c252fa988cffd8df921e856f
+--- stdout ---
+PROXY  error  A_DRIFT  A: declared=68 computed=67 delta=-1
+PROXY: DRIFT (A_DRIFT term=A declared=68 computed=67 delta=-1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 03-C-22 =====
+sha256(mutant scorecard) = ec9593ba53c0497dd790c312164bb5a8064c32b092ef93a8b793d3ebd61faf88
+--- stdout ---
+PROXY  error  C_DRIFT  C: declared=22 computed=23 delta=+1
+PROXY: DRIFT (C_DRIFT term=C declared=22 computed=23 delta=+1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 04-C2-116-of-117 =====
+sha256(mutant scorecard) = 8f07f3f5c0e3523d38f230c2ca2617516b417c1e706ed80e4d0f5152199f1b67
+--- stdout ---
+PROXY  error  C2_DRIFT  C2: declared=116 computed=117 delta=+1
+PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 05-C2-total-118-of-117 =====
+sha256(mutant scorecard) = f1e760eef651b6eaf07257b0bf35e90beb167cd08d273ffdc5facab495a8bc5d
+--- stdout ---
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=118 computed=117 delta=-1
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 06-C2-both-116-118 =====
+sha256(mutant scorecard) = be7eec3ef6132ef2dbb68450b3e0fa7e1fb1aacf9666ccae70fbbfd736cc9bf5
+--- stdout ---
+PROXY  error  C2_DRIFT  C2: declared=116 computed=117 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=118 computed=117 delta=-1
+PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 07-gatepin-bind-oracle-hex =====
+sha256(mutant scorecard) = 8eb03f161916b6cccba86beca6591e3fd98cd16ecf22e541596051018348abf4
+--- stdout ---
+PROXY  error  GATE_PIN_DRIFT  pin.bind-oracle: declared=d3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5 computed=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
+PROXY: DRIFT (GATE_PIN_DRIFT term=pin.bind-oracle declared=d3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5 computed=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 08-v1pin-cite-check-hex =====
+sha256(mutant scorecard) = 896d65f15ad777d2021a28602c8fc34ffb589a082892145b0eb33d5df6223ed9
+--- stdout ---
+PROXY  error  PIN_DRIFT  pin.cite-check: declared=8484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2 computed=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+PROXY: DRIFT (PIN_DRIFT term=pin.cite-check declared=8484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2 computed=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 09-axes-operability-8 =====
+sha256(mutant scorecard) = b85cd945913b8a26bccc518d7448fa4ddb7d61556a528fc9be5e70045dc26faf
+--- stdout ---
+PROXY  error  AXES_DRIFT  operability: ## Axes row=8 derived=9
+PROXY: DRIFT (AXES_DRIFT term=operability declared=8 computed=9; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 10-gatepins-block-deleted =====
+sha256(mutant scorecard) = d129f9abddd2d04420045fc1fd1a07d29e85c1c5322cc36010f02f0273e85be8
+--- stdout ---
+PROXY  warn  PIN_UNPINNED  scripts/anchor-truth.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/bind-oracle.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/cap-run.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/cap-spawn.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/counter-rerun.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/gate-mutants.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/omp-census.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/receipt-attest.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/sources-check.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/wave-census.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (PIN_UNPINNED term=scripts/anchor-truth.mjs; PIN_UNPINNED term=scripts/bind-oracle.mjs; PIN_UNPINNED term=scripts/cap-run.mjs; PIN_UNPINNED term=scripts/cap-spawn.mjs; PIN_UNPINNED term=scripts/counter-rerun.mjs; PIN_UNPINNED term=scripts/gate-mutants.mjs; PIN_UNPINNED term=scripts/omp-census.mjs; PIN_UNPINNED term=scripts/receipt-attest.mjs; PIN_UNPINNED term=scripts/sources-check.mjs; PIN_UNPINNED term=scripts/wave-census.mjs; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 11-gatepin-line-bind-oracle-removed =====
+sha256(mutant scorecard) = 0a47c3690f0b8ed4678576a4e9dffd06fc2be954a146cced4b14f92a6b8370e4
+--- stdout ---
+PROXY  warn  PIN_UNPINNED  scripts/bind-oracle.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (PIN_UNPINNED term=scripts/bind-oracle.mjs; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 12-A-66-plus-axes-8 =====
+sha256(mutant scorecard) = 1459c51ab20b49598e3858a979d4b67748327ce839a9601586ea1b79e4fd7cf5
+--- stdout ---
+PROXY  error  A_DRIFT  A: declared=66 computed=67 delta=+1
+PROXY  error  AXES_DRIFT  operability: ## Axes row=8 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=66 computed=67 delta=+1; AXES_DRIFT term=operability declared=8 computed=9; src-rev=31c465f15669)
+--- exit=1 ---
+
+===== 13-axes-evidence-cell-A-99 =====
+sha256(mutant scorecard) = 344963ab871390757c6fffb01ce657542651a488b6ddbff66d729d4d25f25915
+--- stdout ---
+PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+--- exit=0 ---
+
+===== 14-axes-evidence-cell-C-99 =====
+sha256(mutant scorecard) = 82fd6502b3202a3925a55ba39c529511641f41d222db9bc9d5fe88f57e1d0ff8
+--- stdout ---
+PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+--- exit=0 ---
+
+===== 15-prose-live-terms-note =====
+sha256(mutant scorecard) = 2fb7a555b0bdbde1870a4f0da9e82f74caf976afc0763c60a796ee8a5ed856d2
+--- stdout ---
+PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+--- exit=0 ---
+

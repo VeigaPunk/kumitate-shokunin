@@ -1,0 +1,39 @@
+# final state at HEAD efdd74248e5d7a563c9e92d7576e6e956778b53a
+
+## R50
+  R1 PASS gate-ledger
+  R2 PASS REOPEN50: HOLD source=https://raw.githubusercontent.com/containers/bubbl
+  R3 PASS REOPEN50: HOLD source=https://raw.githubusercontent.com/strace/strace/v7
+  R4 PASS files=3 distinct=3 held=3 span_s=876
+  R5 MISS still-eleven
+  R6 PASS sections
+  R7 PASS exit=0
+  R8 PASS erratum
+REPAIRS50: LEDGER_UNMET held=7/8 checks=8 rev=efdd74248e5d7a563c9e92d7576e6e956778b53a rule=R50
+EXIT=1
+
+## G50
+  G1 PASS present
+  G2 PASS refused=8/8
+  G3 PASS exit=0 bound_rw=true tmpfs=true
+  G4 PASS exit=0 VERDICT: PASS
+  G5 PASS exit=0 VERDICT: PASS
+  G6 PASS pins=5/5
+  G7 PASS exit=0 PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:s
+  G8 PASS exit=0 host_marker=false
+BINDGUARD50: GUARD_HELD held=8/8 checks=8 rev=efdd74248e5d7a563c9e92d7576e6e956778b53a rule=G50 caprun_sha256=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
+EXIT=0
+
+## D51
+DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=efdd74248e5d7a563c9e92d7576e6e956778b53a rule=D51 | D1 PASS | D2 PASS | D3 PASS | D4 PASS | D5 PASS
+EXIT=0
+
+## proxy --strict (live)
+PROXY  error  A_DRIFT  A: declared=67 computed=81 delta=+14
+PROXY: DRIFT (A_DRIFT term=A declared=67 computed=81 delta=+14; src-rev=31c465f15669)
+EXIT=1
+
+## sources-check (live)
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=101 tiers=A:87,B:6,C:8 status=queued:12,mined:73,rejected:16 entries_with_source=8 legacy=38)
+EXIT=0

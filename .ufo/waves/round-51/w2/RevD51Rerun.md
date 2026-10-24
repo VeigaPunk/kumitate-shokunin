@@ -286,4 +286,10 @@ artifact was missing.
   bytes are not bound by the counter.
 - **Fetched HTML body hashes were not re-derived by me**; the ScoutReopen seats' AGREE verdicts
   (S100, S101) are cited as their measurements, not mine.
+- **Citation gate sanity-check (not scored as harm):** live `node scripts/cite-check.mjs` prints
+  `VERDICT: FAIL` / `CITE_CHECK: DRIFT (files=121 tokens=10625 errors=916 warnings=654)` exit 1,
+  but `base/baseline-gates.txt` records that item as PASS with `exit=1 expected=0|1`, so this is
+  the tolerated baseline state; `grep invocation-attestation` over its output returns 0 lines, so
+  the new entry and its three `pending-close` tokens are invisible to cite-check. A cross-tree
+  comparison against the extracted rev is confounded (no `.git`, no fleet index).
 - No verdict here is an admission, and nothing was edited, judged, integrated, or shipped.

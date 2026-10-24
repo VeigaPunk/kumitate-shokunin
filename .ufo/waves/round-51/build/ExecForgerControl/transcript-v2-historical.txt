@@ -1,0 +1,24 @@
+# ExecForgerControl — HISTORICAL v2 counter (5 checks) transcripts
+# v2 source: git show 1fd8aceb:.ufo/waves/round-51/probe/attest51-probe.mjs
+# v2 sha256: 422e67b02d844fd1c3fe2d20c9211261460c452381a111b68b0d6bc22af53cd1
+
+### [C1-identical-nonce-distinct-bytes] rev=5e0a2f9f6f7033da5d1a2cdc31e88c74b3ca4e6d
+$ node /tmp/probe-v2.mjs /tmp/forgerctl/C1-identical-nonce-distinct-bytes 5e0a2f9f6f7033da5d1a2cdc31e88c74b3ca4e6d
+ATTEST51: ATTEST_UNMET held=3/5 checks=5 rev=5e0a2f9f6f7033da5d1a2cdc31e88c74b3ca4e6d rule=A51 | A1 PASS | A2 MISS nonce-not-distinct | A3 MISS exit=0 last="RECEIPT: VALID" | A4 PASS | A5 PASS
+exit=1
+
+### [C1b-identical-nonce-byte-identical] rev=30fa224be28b92e9dd05e773869c4c994e6698ef
+$ node /tmp/probe-v2.mjs /tmp/forgerctl/C1b-identical-nonce-byte-identical 30fa224be28b92e9dd05e773869c4c994e6698ef
+ATTEST51: ATTEST_UNMET held=3/5 checks=5 rev=30fa224be28b92e9dd05e773869c4c994e6698ef rule=A51 | A1 PASS | A2 MISS nonce-not-distinct;span=0s<300 | A3 MISS exit=0 last="RECEIPT: VALID" | A4 PASS | A5 PASS
+exit=1
+
+### [C2-distinct-nonce-static-stub] rev=59d391dc6469ae7c09597444d46fa1d162cab5b5
+$ node /tmp/probe-v2.mjs /tmp/forgerctl/C2-distinct-nonce-static-stub 59d391dc6469ae7c09597444d46fa1d162cab5b5
+ATTEST51: ATTEST_UNMET held=4/5 checks=5 rev=59d391dc6469ae7c09597444d46fa1d162cab5b5 rule=A51 | A1 PASS | A2 PASS | A3 MISS exit=0 last="RECEIPT: VALID" | A4 PASS | A5 PASS
+exit=1
+
+### [C3-filename-keyed-stub] rev=5eb93adb66988e032db2f25d74f8320a89fa811e
+$ node /tmp/probe-v2.mjs /tmp/forgerctl/C3-filename-keyed-stub 5eb93adb66988e032db2f25d74f8320a89fa811e
+ATTEST51: ATTEST_HELD held=5/5 checks=5 rev=5eb93adb66988e032db2f25d74f8320a89fa811e rule=A51 | A1 PASS | A2 PASS | A3 PASS | A4 PASS | A5 PASS
+exit=0
+

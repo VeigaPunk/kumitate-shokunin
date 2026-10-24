@@ -285,7 +285,7 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=67
+A=81
 C=23
 C1=19
 C1_total=19
@@ -1736,6 +1736,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
 | `counter-rerun` | Run a probe K times and compare each run's final summary line byte-for-byte: `AGREE (runs=K)` exit 0 iff every run exits 0 and all final lines match, else `DISAGREE` exit 1; exit 2 fail-closed, 64 usage; the selftest's flake-injection case kills a print-PASS stub. Final-summary-line agreement only — site-level stability is a different, unclaimed instrument. | `node scripts/counter-rerun.mjs --selftest` → `COUNTER_RERUN_SELFTEST: PASS` exit 0 (`r48/L1-c2-binding-ce9aee5d.txt`, instrument sha256 `c002523f…`); real AGREE: `--probe …/caproute48-probe.mjs --lane <lane> --rev ce9aee5d… --runs 2 -- --set r48` → `COUNTER_RERUN: AGREE (runs=2)`, both runs `held=4/4` exit 0, summary sha256 `f3c23bdc…` (same receipt) | round 48 |
+| `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger**: it flags a nonce only when another `*.txt` receipt binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
 
 | `bind-oracle` | Prove from inside a `cap-run` child that requested host directories are mounted: read the child's own `/proc/self/mountinfo` (S099: a process's mount namespace; field 5 = mount point), compare the observed mount-point set with the requested binds and with the parent process's mount set, and report `HELD` / `MISSING missing=<n>` (a dropped request bind) / `EXTRA extra=<n>` (an unrequested bind) / `CONTROL_VISIBLE` (the sandbox failed to mask an unbound control dir) / `NO_CHILD` (fail-closed, 2); `--selftest` builds three runner mutants from `cap-run.mjs` source and scores 7 arms. It answers the r48 §Limits (a) surgical-bind-drop class with a mechanism probe; it proves the mechanism, not a site's own call. Exit 0/1/2/64 | `.ufo/waves/round-49/r49/L1-score-0526f898.txt` + `ReRunCounter49-{2,3}.txt` (`ORACLE_HELD held=6/6` at `0526f898`, three time-spaced runs), `scripts/bind-oracle.mjs` | 49 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
@@ -2250,3 +2251,104 @@ budget instead of the wall-clock 60 s per mutant (RevGateMutants697, ExecLoad697
 *Round-47 note (capabilities; the `cap-run` row stays as written).* Contract `kumitate-cap-run-v2` adds `--bind` and
 `--verdict-file`; five child sites now use it through `scripts/cap-spawn.mjs` (C1 commit `269dadb6`). No capability row
 is added this round.
+
+## Round 51 — claims, freeze repairs, limits (2026-10-24)
+
+Plan `.ufo/waves/round-51/plan.md` (with the `## Freeze repair addendum`, ten named items);
+base and round-open tip `c90b9de94009b938fa19a089bfaa97df20b54f86`; two v1 waves, 32+32 seats
+(wave 1 build, wave 2 falsify; registry and dispatch payloads under `.ufo/waves/round-51/`).
+Round-50 closure routed defects R51-1..R51-4 honored (close-hygiene sweep below; terms lines
+phrased declared-vs-computed with revs; L0 citation without line number; live-census limit
+recorded again).
+
+**C1 — operability (capability acquisition): `receipt-attest`, predicate `ATTEST_HELD`
+(rule A51 v3r6, nine checks).** Counting command:
+`node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before at base `c90b9de9`: `ATTEST_UNMET held=0/9` exit 1 (`base/attest-base-v3r6.txt`).
+After at the measured close revision: `ATTEST_HELD held=9/9 checks=9 … rule=A51` exit 0
+(`close/A51-<rev>.txt`). Shown able to fail: the v2 counter fell to a verdict-printing stub
+(seats CritC1, RevengerGap; full-tree forger held=5/5, RevCounterA); v3r6's challenge arms
+(A2c probe-issued run binding argv + stdout hash; A3c live prelude-tamper; A4c
+same-nonce/different-digest ledger REPLAY; A3d corrupt-digest REPLAY) reject the stub class
+— the same forger reads held=5/8 (pre-A3d reading retained; the zero-child counterfeit is a
+declared forgery-boundary limit, r49 precedent: the judged object is the committed tree).
+Do-nothing control: at base, no SCORECARD-only edit can clear A1 (instrument absent → all
+arms miss).
+
+**C2 — frontier coverage (learning, sourced): `invocation-attestation`, predicate
+`DOCTRINE_HELD` (rule D51, five checks).** Counting command:
+`node .ufo/waves/round-51/probe/doctrine51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before at base: `DOCTRINE_UNMET held=0/5` exit 1 (`base/doctrine-base.txt`). After:
+`DOCTRINE_HELD held=5/5` exit 0 at the measured close revision. Sourced claim: the entry's
+provenance trio cites S100 (man7 clock_gettime(2)) and S101 (man7 getrandom(2)), opened by
+wave-1 scout seats and re-opened AGREE by wave-2 non-author seats (body hashes
+byte-identical); the lesson `## Gate` records URL, access date and ≤25-word located quotes.
+
+**Freeze repairs (ten addendum items).** The round's counters needed six substantive repairs
++ four text repairs, every one named, minimal, seat-found, and base-re-measured: comment
+termination (`1fd8aceb`), D51 column indexes (`3ed875d3`), challenge arms (`8c07e880`), A3c
+sidecar (`8fd3cde1`), A4c + text (`4b8da21`), A3d (`cbca45cc`), plan text (`779b16e`,
+`8f3c692b`), and addendum items 9–10 naming the residual debris, the one inline-edit
+exception, and the header drift. This is the round's own headline lesson (M1/M2,
+QUALITY Q43): a frozen counter that was never executed is not a predicate. The claim
+predicates, labels and counting commands never changed.
+
+**Terms (declared vs computed, with revs — R51-2 phrasing).** At base `c90b9de9` the
+declared stanza read A=43, C=22, C2=114/114 and computed the same (round-open `PROXY:
+MATCH`, `base/baseline-gates.txt`). The wave-1 probes landed two runnable probe files
+(computed A 43→45, measured by ScoutBaselineHar before any claim data) and the integrator's
+close commit added `scripts/receipt-attest.mjs` plus 22 more wave probe `.mjs` files under
+`.ufo/waves/round-51/build/` (the frozen `RE_RUNNABLE` walk counts the whole tree — the
+round-45 note recorded this and Q26 rules A out as claim evidence): computed A=67 = 44
+shipped/instrument files + 23 round-51 probe files, enumerated in `w2/RevStanza.md`. C 22→
+**23** (checklist item 23, genuinely executed — `w2/RevChecklist23.md` mutation controls).
+C2 114/114 → **117/117** (README rows + notes for `lessons/round-50-verifier-spotcheck.md`
+(the integrator's round-50 close file, unrowed at `d788f74`), `knowledge/invocation-attestation.md`
+and `lessons/round-51.md`). Operability holds **9** (terminal under the saturating `f_O`);
+coverage successors unchanged (S=88/88, R=92/92, K=53/53).
+
+**Harm (H1–H5 at the measured close revision, `close/` + `w2/RevHarm.md`).** H1
+`CHECKLIST: 23/23 pass` exit 0 (baseline 22/22 + item 23; the wave-1 integration briefly
+broke item 12 via the entry header and wave 2 caught it — repaired before close). H2
+`cap-run 12/12`, `bind-oracle 7/7`, `counter-rerun PASS`, `round-gate 61/61`. H3
+`PROXY: MATCH … pins=6 match`. H4 census exit 0. H5 G50 `GUARD_HELD held=8/8`; R50 reads
+`LEDGER_HELD held=7/8` at every round-51 rev — R5's literal-`Twelve` arm greps a count
+this round's legitimate gate-registry change moved to `Thirteen` (`w2/RevHarm.md`
+finding 1, bisected 8/8 pre-integration → 7/8 from `a476977` on). No round-50 repair
+regressed; one stale literal-check was superseded (routed R52-4: re-derive R5
+count-independently). H1–H3 final close readings are taken at the close commit on the
+idle host (`close/`).
+
+**Limits, recorded not hidden.** (a) Forgery boundary: the five static arms remain
+satisfiable by a whole-tree author; discrimination rests on A2c/A3c/A4c/A3d plus the judged
+committed bytes (r49 precedent). The boundary now has an end-to-end demonstrated witness:
+seat ExecForgerControl's zero-spawn forger (faithful receipt format, no process execution)
+reads held=9/9 in a forger-owned tree (`w1/ExecForgerControl.md`). (b) A2c's command is
+argument-derived and predictable (`printf %s <nonce>`; stdout equals the last argv
+element) — the forger hashes argv without executing; evidence, not proof, of execution.
+The validated kill (stdin-delivered nonce + probe-captured stdout, seat-demonstrated) is
+pre-registered as round 52's A2e arm with a `--stdin` contract addition. (c) The A5 proxy conjunct
+executes the scored rev's own `proxy-check.mjs` (self-referential pin cannot close it). (d)
+Wall-window tolerance is exactly −60,000/+60,073 ms (`w2/CritA2Span.md`); inside it, a
+re-dated copy verifies — the Q39 ceiling. (e) D5 is live-only; D4 trusts the rev's own
+checker (R51-4 class). (f) Probe runs inherit the host environment (interpreter-tampering
+class). (g) The three-receipt span is author-scheduled (honestly labelled, R50-4 class).
+(h) Q43's enforcement is manual (named in its Limit). (i) R52-1 (routed, HIGH): the
+instrument accepts ISO-shaped but unparseable wall clocks — `Date.parse` NaN disables both
+clock checks and the prelude-window check, so a digest-repaired record with impossible
+clocks reads VALID (`w2/RevInstrument.md` F1, line refs in the report); forgery-class but
+a real contract under-coverage. (j) R52-2 (routed, MEDIUM): `--ledger` silently skips
+prior receipts whose sidecar is damaged, an unstated exemption beyond addendum item 4
+(same report F2). (k) R52-3 (routed, LOW): sidecar name-escaping, blank-line tolerance,
+capture-failure recorded as exit 127, half-pair on sidecar write failure, no field
+whitelist (same report F4–F8). These ride an instrument-byte change in round 52 with the
+full re-pin dance; the shipped bytes stay frozen this round so the verified predicate and
+pin family remain intact.
+
+Planned next round (candidates, not commitments): (1) arm A2e — the stdin-delivered nonce with probe-captured stdout (seat-validated patch
+exists in `w1/ExecForgerControl/`), closing the zero-spawn/predictable-command classes;
+plus the A3e captured-invocation question; plus the R52-1..R52-3 instrument hardening
+package (fail-closed finite clocks, ledger wording alignment, F4–F8 lows) with the full
+pin re-derivation; (2) routing the lane's three-receipt
+pattern through receipt-attest itself as its first internal consumer; (3) R43-1/R43-5 stay
+open; the R41-2 gate-pins ruling stays pending (`.ufo/l0-questions.md`, kumitate round 42).

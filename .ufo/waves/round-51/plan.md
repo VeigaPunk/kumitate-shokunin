@@ -80,9 +80,9 @@ exit 2 (never a score).
   clear A1/A3" was falsified by seats CritC1 and RevengerGap; v3's challenge arms A2c/A3c
   now defeat the print-stub class, and RevCounterA re-verified: forger rev 9cb611b7 reads
   ATTEST_UNMET held=5/8 against v3r5): the control reading is committed at
-  `w1/CritC1.md` and `w1/RevCounterA.md` (the wave-1 seat ExecForgerControl never
-  delivered — it is a named dead seat; the control readings live in the two cited
-  reports).
+  `w1/CritC1.md` and `w1/RevCounterA.md` (seat ExecForgerControl delivered LATE, during
+  wave 2 at 53 min — `w1/ExecForgerControl.md` with the zero-spawn demonstration; the
+  named dead seats are MutCounter and ScribeEntry).
 
 ## C2 — frontier coverage (learning, sourced): `invocation-attestation`
 

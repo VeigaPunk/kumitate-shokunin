@@ -2025,3 +2025,21 @@ in `.ufo/rounds/round-34/sources-gate.md`.
   guard commit, Q39's field and limit narrowed this round; lesson `corpus/lessons/round-50.md` (M1–M6).
   Open L0: the separate `kumitate-gate-pins-v1` authority question (`.ufo/l0-questions.md:115`) stays pending; it
   does not block this round.
+
+round-51 2026-10-24 — claims: C1 operability/capability `receipt-attest` (A51: ATTEST_UNMET 0/9 at
+base c90b9de9 -> ATTEST_HELD 9/9 at the measured close revision, `close/A51-*.txt`); C2 frontier
+`invocation-attestation` (D51: 0/5 -> 5/5, sourced S100/S101). Instrument `scripts/receipt-attest.mjs`
+(shipped bytes sha256 44919763…, 27-case selftest, `pin.receipt-attest` in `kumitate-gate-pins-v1`);
+frozen counter A51 v3r6 (9 checks incl. challenge arms A2c/A3c/A3d/A4c) + D51 (5 checks), six substantive
+freeze repairs + four text repairs all named in the plan addendum (ten items) with base receipts
+re-measured per repair — the round's own lesson M1/M2 (frozen-unrun counters; falsified kill rule) and
+QUALITY Q43. Two v1 waves 32+32 (w1 29/32 reports — ExecForgerControl/MutCounter/ScribeEntry late or
+dead: ExecForgerControl delivered in w2 with the zero-spawn demonstration; w2 30+/32 — full census in
+the report); terms A 43->67 (44 shipped + 23 round-51 probes per the frozen whole-tree walk), C 22->23,
+C2 114/114 -> 117/117; operability holds 9 (terminal); new capability row `receipt-attest`. Harm H1-H5
+green at the close revision (23/23 checklists; cap-run 12/12; bind-oracle 7/7; counter-rerun PASS;
+round-gate 61/61; PROXY MATCH pins=6; census exit 0; G50 8/8; R50 8/8). Lesson
+`corpus/lessons/round-51.md` M1-M5; QUALITY Q43; entry `corpus/knowledge/invocation-attestation.md`
+(13 bound clauses); rows S100/S101 (mined, tier A, re-open AGREE by non-author wave-2 scouts).
+Round-50 closure routed defects R51-1..R51-4 honored (close-hygiene sweep; declared-vs-computed terms;
+L0 citation style; live-census limit). Open L0: the R41-2 gate-pins authority question stays pending.

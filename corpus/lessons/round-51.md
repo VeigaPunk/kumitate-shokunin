@@ -1,7 +1,8 @@
 # Round 51 — lesson
 
-Lane: kumitate. Round 51 (hyaku run 5; watchdog attempt 1). Base and round-open tip
-`c90b9de94009b938fa19a089bfaa97df20b54f86`. Plan `.ufo/waves/round-51/plan.md` (with its
+Lane: kumitate. Round 51 (hyaku run 5; watchdog attempt 1). Base `c90b9de94009b938fa19a089bfaa97df20b54f86` (the round-50 sweep tip at round open; the
+integrator's round-50 spotcheck lesson `d788f74` landed between base and the freeze
+commit `06ecbf4`). Plan `.ufo/waves/round-51/plan.md` (with its
 `## Freeze repair addendum`, eight named items); frozen counters
 `.ufo/waves/round-51/probe/attest51-probe.mjs` (rule A51, v3r6, nine checks) and
 `probe/doctrine51-probe.mjs` (rule D51, five checks). Round shape: two v1 waves, 32+32
@@ -23,7 +24,10 @@ live-census limit).
   CritC1); D51 v1 indexed SOURCES columns 9/12 where the schema puts status/used-by at
   8/11, making D3 and D4 mutually exclusive (found independently by ScoutRandomSource and
   ScoutClockSource). Captured by: nothing before the seats — the freeze discipline assumed
-  authorship care; the wave's first falsifiers caught both within minutes. Fix: six named
+  authorship care; the wave's first falsifiers caught both within minutes. Q43's letter
+  convicts this round itself: freeze commit `06ecbf4` shipped no executed before-receipt
+  (v1 could not even run); the repairs committed the base receipts the same round. Q43
+  stands as the prevention rule from round 52 on. Fix: six named
   repairs (addendum items 1–2, then 3–8 as seats falsified v2/v3: the v2 kill rule fell to
   a print-stub (CritC1, RevengerGap), the A3c arm tested the missing-sidecar class not the
   M2 forgery (CritC1), no arm asserted REPLAY (RevPlan), nothing bound the stored digest
@@ -81,3 +85,20 @@ scout seats this round.
   entropy from the urandom source (the same source as /dev/urandom); its bytes are usable
   for cryptographic purposes.` — restores the omitted "By default," so the teaches cell
   matches the verbatim quote. Row identity, tier, status unchanged.
+
+- **M5 — the challenge command was predictable, so the strongest stub still passes the
+  strongest arm.** Class: survivor / predictable-vector oracle. Evidence: seat
+  ExecForgerControl (wave 1, delivered late during wave 2 — 53 min, after two
+  return-now nudges) built a zero-spawn forger with
+  faithful receipt format (canonical digest, GNU sidecar, distinct nonces, ledger
+  semantics) and read `ATTEST_HELD held=9/9` — its A2c arm hashes `argv[last]`, and the
+  frozen challenge `/usr/bin/printf %s <nonce>` has stdout exactly equal to `argv[last]`,
+  so hashing argv satisfies the arm without executing anything. The seat validated the
+  fix: nonce delivered on stdin and the probe captures the child's real stdout itself —
+  patched probe kills the forger (`A2c MISS`) and passes the honest instrument. Captured
+  by: ExecForgerControl's mandated do-nothing control (the original v2 kill-rule class,
+  driven one level deeper). Fix: pre-registered for round 52 — arm A2e (stdin challenge)
+  plus a `--stdin` contract addition; until then the bypass sits inside the declared
+  whole-tree-author forgery boundary (a forger must also ship the matching pin and proxy,
+  i.e. author the tree — the judged object by r49 precedent) and is recorded in the
+  SCORECARD limits (a)/(b).
