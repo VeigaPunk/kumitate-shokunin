@@ -1,0 +1,26 @@
+# round-52 base battery — measured at 02c01258464cac3804faf177d0cfbf113cd59706 (round-open tip)
+# date: 2026-10-24T03:48:28Z
+
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  A_DRIFT  A: declared=71 computed=73 delta=+2
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=117 computed=118 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=71 computed=73 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=117 computed=118 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=0
+
+$ node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> 02c01258...
+BINDGUARD50: GUARD_UNMET held=7/8 checks=8 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=G50 caprun_sha256=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
+
+$ node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> 02c01258...
+ATTEST51: ATTEST_UNMET held=8/9 checks=9 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A51 version=v3 | A1 PASS | A2 PASS | A2c PASS | A3 PASS | A3c PASS | A4 PASS | A4c PASS | A3d PASS | A5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c
+
+$ node .ufo/waves/round-51/probe/doctrine51-probe.mjs <lane> 02c01258...
+DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=D51 | D1 PASS | D2 PASS | D3 PASS | D4 PASS | D5 PASS
+
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+census-exit=0
