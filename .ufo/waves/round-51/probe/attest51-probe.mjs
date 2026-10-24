@@ -40,15 +40,22 @@
  *       `verify --ledger <receipts-dir>`, and each embedded nonce appears in NO prior
  *       receipt corpus file under .ufo/waves/ (round-48/49/50 receipt corpora) at rev (the
  *       sweep prints what it scanned; zero hits required).
+ *   A4c REPLAY CHALLENGE (v3r5) — the probe crafts a twin of a live-generated receipt whose
+ *       semantic body is altered (argv suffixed) and whose inner digest is recomputed per
+ *       the contract (canonical JSON, sorted keys, digest field removed), with a recomputed
+ *       sidecar; the twin alone must verify VALID, and `verify --ledger` over a directory
+ *       containing both the original and the twin must answer `RECEIPT: REPLAY` exit 1 —
+ *       the declared nonce-reuse class must be asserted, not just implied.
  *   A5  pin.receipt-attest in the SCORECARD.md `kumitate-gate-pins-v1` block equals the
  *       sha256 of the extracted scripts/receipt-attest.mjs, and
  *       `node scripts/proxy-check.mjs --strict` (UFO_SRC = live origin checkout) exits 0
  *       with `PROXY: MATCH`.
  *
- * Predicate ATTEST_HELD = held=7/7, exit 0. Any other reading is `ATTEST_UNMET held=<k>/7`
- * exit 1. A crash, an unreadable extraction or a malformed verdict line is exit 2 (never a
- * score). Frozen at `.ufo/waves/round-51/plan.md` § C1 + `## Freeze repair addendum` before
- * any data seat ran against the v3 arms.
+ * Predicate ATTEST_HELD = held=8/8, exit 0. Any other reading is `ATTEST_UNMET held=<k>/8`
+ * exit 1. A crash or an unreadable extraction is exit 2 (never a score); a malformed verdict
+ * line from the tool simply fails its check's pattern (a MISS, not a crash). Frozen at
+ * `.ufo/waves/round-51/plan.md` § C1 + `## Freeze repair addendum` before any data seat ran
+ * against the v3r5 arms.
  */
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -239,6 +246,59 @@ try {
     a4d.push(`prior-files=${prior.length}`);
   } else { a4ok = false; a4d.push('tool or receipts dir absent'); }
   hold('A4', a4ok, a4d.join(';'));
+
+  // A4c — REPLAY challenge: craft a same-nonce/different-body twin with a recomputed inner
+  // digest (contract canonical form: parsed JSON, digest removed, keys sorted recursively,
+  // one line) + recomputed sidecar; twin alone must be VALID; the ledger over {original,
+  // twin} must answer REPLAY exit 1 for both.
+  let a4cok = false; let a4cd = '';
+  if (existsSync(tool)) {
+    const sortKeys = (v) => {
+      if (Array.isArray(v)) return v.map(sortKeys);
+      if (v && typeof v === 'object') {
+        return Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys(v[k])]));
+      }
+      return v;
+    };
+    const base = join(T, `a4c-${randomBytes(6).toString('hex')}`);
+    const r = runTool(['run', '--out', base, '--', '/usr/bin/printf', '%s', 'a4c-original']);
+    const rcpt = `${base}.txt`;
+    if (r.status !== 0 || !existsSync(rcpt) || !existsSync(`${rcpt}.sha256`)) {
+      a4cd = `run exit=${r.status}`;
+    } else {
+      try {
+        const lines = readFileSync(rcpt, 'utf8').split('\n');
+        const ji = lines.findIndex((l) => l.trimStart().startsWith('{'));
+        const body = JSON.parse(lines[ji]);
+        const nonce = body.nonce;
+        body.argv = [...(body.argv || []), 'a4c-evil-append'];
+        const { digest, ...rest } = body;
+        const canon = JSON.stringify(sortKeys(rest));
+        const twinName = 'a4c-twin.txt';
+        const twinPath = join(T, twinName);
+        lines[ji] = canon.slice(0, -1) + `,"digest":"${sha(Buffer.from(canon, 'utf8'))}"}`;
+        writeFileSync(twinPath, lines.join('\n'));
+        writeFileSync(`${twinPath}.sha256`, `${sha(readFileSync(twinPath))}  ${twinName}\n`);
+        const vTwin = runTool(['verify', twinPath]);
+        const twinValid = vTwin.status === 0 && /RECEIPT: VALID/.test(lastLine(vTwin));
+        const ledgerDir = mkdtempSync(join(tmpdir(), 'a4c-ledger.'));
+        copyFileSync(rcpt, join(ledgerDir, 'orig.txt'));
+        copyFileSync(`${rcpt}.sha256`, join(ledgerDir, 'orig.txt.sha256'));
+        copyFileSync(twinPath, join(ledgerDir, twinName));
+        copyFileSync(`${twinPath}.sha256`, join(ledgerDir, `${twinName}.sha256`));
+        const vL1 = runTool(['verify', '--ledger', ledgerDir, join(ledgerDir, 'orig.txt')]);
+        const vL2 = runTool(['verify', '--ledger', ledgerDir, join(ledgerDir, twinName)]);
+        const replay1 = vL1.status === 1 && /RECEIPT: REPLAY/.test(lastLine(vL1));
+        const replay2 = vL2.status === 1 && /RECEIPT: REPLAY/.test(lastLine(vL2));
+        a4cok = twinValid && replay1 && replay2;
+        a4cd = `twinValid=${twinValid} ledger(orig)=${replay1 ? 'REPLAY' : lastLine(vL1).slice(0, 60)} ledger(twin)=${replay2 ? 'REPLAY' : lastLine(vL2).slice(0, 60)}`;
+        rmSync(ledgerDir, { recursive: true, force: true });
+      } catch (e) {
+        a4cd = `craft failed: ${e.message}`;
+      }
+    }
+  } else a4cd = 'tool absent';
+  hold('A4c', a4cok, a4cd);
 
   // A5
   let a5ok = false; const a5d = [];

@@ -62,8 +62,11 @@ directory reports no nonce reuse against any prior committed receipt corpus list
 probe (r49/r50 receipt files); A5 `pin.receipt-attest` in the SCORECARD
 `kumitate-gate-pins-v1` block equals the sha256 of the extracted script and
 `node scripts/proxy-check.mjs --strict` (UFO_SRC = live origin checkout) prints
-`PROXY: MATCH` exit 0. `ATTEST_HELD` = held=5/5 exit 0; any other reading is
-`ATTEST_UNMET held=<k>/5` exit 1; crash/unreadable extraction = exit 2 (never a score).
+`PROXY: MATCH` exit 0. `ATTEST_HELD` = held=8/8 exit 0 (checks A1, A2, A2c, A3, A3c, A4,
+A4c, A5 — the challenge arms A2c/A3c/A4c per the `## Freeze repair addendum`; the body's
+original "five checks / held=5/5" wording is superseded by addendum items 3 and 7); any
+other reading is `ATTEST_UNMET held=<k>/8` exit 1; crash/unreadable extraction = exit 2
+(never a score).
 
 - Counting command: `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`
 - Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/5` (A1 absent).
@@ -191,3 +194,16 @@ repaired arms. Base before-state re-measured with the repaired counters at base
    connector's chousa-r37 PATH-injection note. The shipped instrument itself must compute
    all digests with `node:crypto` and emit the GNU text-mode sidecar without spawning
    `sha256sum`.
+6. **A3c sidecar (`8fd3cde1`)** — seat CritC1 found v3's A3c wrote a tampered receipt
+   without its sidecar, testing the missing-sidecar class instead of the declared M2
+   forgery; the arm now copies the genuine sidecar unchanged to the tampered target.
+   Freeze repairs to date: `1fd8aceb` (A51 comment), `3ed875d3` (D51 indexes),
+   `8c07e880` (A51 v3 challenge arms), `8fd3cde1` (A3c sidecar).
+7. **A4c REPLAY challenge + text repairs (this commit, per seat RevPlan)** — RevPlan
+   demonstrated no frozen arm asserted the declared `RECEIPT: REPLAY` class, the §C1 body
+   still said "five checks / held=5/5", and the probe header claimed an exit-2 path for
+   malformed verdict lines the code never implements. v3r5 adds A4c (probe-crafted
+   same-nonce/different-body twin with contract-canonical recomputed digest: twin alone
+   VALID; `--ledger` over {original, twin} must read `RECEIPT: REPLAY` exit 1 for both),
+   rewrites the body arithmetic to eight checks, and fixes the header claim. Check set:
+   A1, A2, A2c, A3, A3c, A4, A4c, A5.
