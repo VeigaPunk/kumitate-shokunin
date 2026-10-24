@@ -193,6 +193,9 @@ try {
       } else {
         lines[idx] = 'run-at: 2020-01-01T00:00:00.000Z (rewritten by probe A3c)';
         writeFileSync(tampered, lines.join('\n'));
+        // the M2 forgery keeps the GENUINE sidecar: copy it unchanged so A3c tests
+        // prelude-rewrite + untouched-sidecar (not the missing-sidecar class).
+        if (existsSync(`${rcpt}.sha256`)) copyFileSync(`${rcpt}.sha256`, `${tampered}.sha256`);
         const v = runTool(['verify', tampered]);
         const last = lastLine(v);
         a3cok = v.status === 1 && /RECEIPT: TAMPERED/.test(last);
