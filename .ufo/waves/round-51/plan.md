@@ -80,7 +80,9 @@ exit 2 (never a score).
   clear A1/A3" was falsified by seats CritC1 and RevengerGap; v3's challenge arms A2c/A3c
   now defeat the print-stub class, and RevCounterA re-verified: forger rev 9cb611b7 reads
   ATTEST_UNMET held=5/8 against v3r5): the control reading is committed at
-  `build/ExecForgerControl/` and `w1/CritC1.md`.
+  `w1/CritC1.md` and `w1/RevCounterA.md` (the wave-1 seat ExecForgerControl never
+  delivered — it is a named dead seat; the control readings live in the two cited
+  reports).
 
 ## C2 — frontier coverage (learning, sourced): `invocation-attestation`
 
@@ -222,3 +224,18 @@ repaired arms. Base before-state re-measured with the repaired counters at base
    (sidecar recomputed) and requires `RECEIPT: REPLAY` exit 1. Check set becomes A1, A2,
    A2c, A3, A3c, A3d, A4, A4c, A5 — `ATTEST_HELD` = held=9/9. Base re-measured with each
    repair (`base/attest-base-v3r6.txt`: `ATTEST_UNMET held=0/9` exit 1).
+9. **Text repairs and named-with-regret edits (wave-2 seat RevFreezeGenealogy).** (a) The
+   §C1 digest-recipe rewrite at `8f3c692b` (semantic re-canonicalization wording per
+   RevInstrumentContract F3) is retroactively authorized as a contract-text repair; the
+   executable recipe lives in the instrument header and the A4c/A3d arms. (b) `8c07e880`
+   carried unnamed code-quality debris — a provably inert dead assignment in A5, the
+   `version=v3` verdict field (named in the v3 header), one unused import, and a
+   triplicated comparison in A2c's stdout-hash check; all are behaviorally inert, named
+   here, and left in place to keep the frozen bytes stable. (c) Addendum item 2's mechanism
+   sentence imprecisely said "mutually exclusive": v1's D3 check read the `opened` column
+   and the trailing empty field, so it was always false; the index fix itself is exact.
+   (d) The A4 prior-corpus sweep's plan wording ("r49/r50 receipt files") is narrower than
+   the code's walk (every non-round-51 wave dir, 162 files at the base census); the code
+   is the strictest reading and stands. (e) The emitted check order differs from the
+   header's listed order (set-equal, nine); cosmetic. (f) The pre-close tip reads 7/9
+   (A2 **and** A4 are receipt-3-coupled), not 8/9.

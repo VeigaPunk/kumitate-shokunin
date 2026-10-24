@@ -668,7 +668,7 @@ new one as a further anchor; no token-kept arm (`corpus/lessons/round-40.md`).
 
 ## Verifiable checklist
 
-Nineteen items (round 42). Item 14 replaces the round-36/37 adjacency-fidelity
+Twenty-three items (round 51; item 23 = the receipt-attest hermetic suite). Item 14 replaces the round-36/37 adjacency-fidelity
 ratchet with the per-anchor truth gate on four registered notes (811 anchors);
 item 15 is its hermetic suite; items 16–17 (round 41) are the wave-census of round 40's
 committed swarm evidence (a fixed, landed round) and its hermetic suite; items 18–19 (round 42)
