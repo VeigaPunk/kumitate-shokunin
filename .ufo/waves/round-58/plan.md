@@ -1,0 +1,228 @@
+# kumitate round 58 — plan (frozen 2026-10-24)
+
+Lane: kumitate. Round 58 (hyaku run 5, in-session L1, attempt 1). Base
+`c49f2a8dc1e6e5e4341e15ac279185aab7e0be37` (the round-57 verifier-spotcheck tip;
+lane clean, ahead=0).
+
+Round shape: **ONE v2 wave of exactly 64 seats** (the round-52..57
+orchestrator/operator steer carries; validated under
+`scripts/hyaku/ufo-wave-policy-v2.json`, band 64–128, ≥25% attack roles),
+prepared by the L1 and dispatched by the orchestrator from the spec committed
+at `.ufo/waves/round-58/w1-spec.json`; the §3 planner seat is held by the L1
+(orchestrator ruling 2026-10-19). Seat tools start at the fleet root: every
+path below is absolute or lane-root-relative from
+`/home/vgpnk/Projects/shokunin/kumitate-shokunin`.
+
+Inherited open state at base (measured, named, repaired in this change per
+Q48 — the file itself is closure-owned, never edited): the r57 closure
+integrator's `corpus/lessons/round-57-verifier-spotcheck.md` landed post-close
+without its `corpus/README.md` map row and without its `covered` pin:
+`node scripts/readme-map.mjs` at base reads `README_MAP: DRIFT files=136
+rows=135 covered=135 bad=2 first=uncovered:lessons/rowund-57-verifier-spotcheck.md`
+(the R56-V3 class the readme-map gate exists to catch — it caught the fourth
+recurrence at round open); `node scripts/proxy-check.mjs --strict` reads
+`PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=135 computed=136 delta=+1;
+AXES_DRIFT term=coverage declared=10 computed=9)`. Also at base:
+`node scripts/surface-probe.mjs --checklists` reads `CHECKLIST: 24/27 pass`
+(H1 freeze floor; the three red items are named in the close battery).
+
+This plan is frozen with counters AND base receipts AND a scratch-HELD
+witness (QUALITY Q43 as upgraded by lesson M5: the freeze commit must show
+the counters HELD against a synthetic conformant post-state, not only UNMET
+at base).
+
+## Claims (exactly two, distinct axes, causally separable)
+
+**C1 — operability (lowest non-retired axis; capability acquisition):
+`receipt-evidence`, the receipt-set-as-evidence gate — routed-defect repair
+R57-V1 + R57-V2 + R57-V4 — plus `readme-map` v2 (R57-V3).** Round 57 closed
+ADMITTED, but its own falsify wave routed four defects
+(`corpus/lessons/round-57.md` §Round-58 routed defects): R57-V1 — A57 B8's
+cross-round nonce sweep is dead code (git pathspec wildcards match whole
+paths, not prefixes: `git grep … -- '.ufo/waves/round-4[89]'` never descends,
+the failed scan silently counts as fresh, and a scratch clone replaying a
+round-52 nonce still read `held=10/10 … B8 PASS`); R57-V2 — a drop-one
+check mutant self-reports `held=9/9` `ATTEST57_HELD` exit 0 (no arm pins the
+frozen count of checks; only `checks.length === 0` is guarded); R57-V4 —
+receipts fabricated at commit time without `receipt-attest run` pass
+`verify --ledger` AND score B8 PASS (including a set replaying a round-52
+nonce), because nothing re-runs what the receipts claim. R57-V3 —
+`readme-map` scores a `covered` entry CLEAN by name even when it names a
+directory or a symlink: members are never lstat'd.
+
+Contract `kumitate-receipt-evidence-v1`: `node scripts/receipt-evidence.mjs
+verify --lane <dir> --rev <rev> --receipts <dir> [--min-span-ms N]
+[--expect-sweep-nonce H]…` scores a directory of attested receipts AS
+EVIDENCE at <rev> (extracted with `git archive`, never the working tree):
+every `*.txt` receipt must (i) verify `RECEIPT: VALID` under
+`receipt-attest verify --ledger` run from the EXTRACTION's own pinned
+`scripts/receipt-attest.mjs`; (ii) REPRODUCE — its recorded argv re-run in
+the extraction must match the recorded exit and stdout/stderr sha256
+(R57-V4: a fabricated receipt cannot reproduce); (iii) carry a body nonce
+absent from the cross-round sweep — `git grep -ohE
+'"nonce":\\s*"[0-9a-f]+"' <rev> -- ':(glob).ufo/waves/round-4[89]/**'
+':(glob).ufo/waves/round-5[0-7]/**'` (R57-V1: `:(glob)…/**` pathspecs that
+DESCEND; fail-closed exit 2 on grep status ≥ 2; coverage proven two ways —
+the pathspecs resolve to ≥1 file via `git ls-tree -r` and ≥1 nonce line is
+swept — and each `--expect-sweep-nonce` must be found, so descent is
+functionally proven, never assumed); (iv) span at least `--min-span-ms`
+(default 300000) across the body `wall_start` fields (the prelude `run-at:`
+is NOT evidence). Output `RECEIPT_EVIDENCE: HELD receipts=<n> reproduced=<n>
+sweep_files=<n> sweep_nonces=<n> span_ms=<n>` exit 0; `UNMET reason=…` exit 1;
+`FAIL-CLOSED reason=…` exit 2 (unparseable rev, grep ≥ 2, sweep resolves no
+file or no nonce — a freshness claim over an empty sweep is never HELD);
+usage 64. `--selftest` is hermetic (a synthetic mkdtemp git lane per case;
+ten cases, one red-before per arm).
+
+Contract `kumitate-readme-map-v2` (R57-V3): the registry
+`.ufo/pins/readme-map.json` moves to `version: 2` (format unchanged — the
+version number now attests that covered members are lstat-verified regular
+files); every `covered` member must lstat `S_ISREG` — a member naming a
+directory or other non-file is DRIFT `covered-not-file:<path>` (exit 1), a
+dangling symlink is DRIFT `stale-covered:<path>` (exit 1); v1 semantics
+unchanged (bimap, `unpinned`, fail-closed arms). Selftest grows to sixteen
+cases (v1's fourteen plus `covered-not-file` and `symlink-stale-covered`,
+each red-before).
+
+Predicate `ATTEST58_HELD` (rule A58 v1, ten checks B1..B10; the R57-V2
+repair is B-inherent: the verdict tail pins `checks === 10`, so a drop-one
+mutant prints `ATTEST58_UNMET … checks-mismatch`, never `held=9/9` HELD).
+
+Kill rules (frozen before data): K1 do-nothing = the base receipts below
+(tool, receipts, v2 gate, registry v2, pins all absent at base); K2
+static-forgery = B3 reproduction re-runs the recorded argv inside the
+extraction and B4's forged control reads UNMET (committed red-before
+transcript); K3 drop-one = the checks-count pin + committed mutant
+transcript; K4 vacuous-HELD = the sweep coverage proof (an empty or
+unresolvable sweep is FAIL-CLOSED, never HELD) + B3 reproduction; K5 the
+scratch-HELD witness proves 10/10 reachable by a conformant synthetic
+post-state before any real score (lesson M5); K6 do-nothing-control = the
+frozen argv list is asserted by B7, so receipts for the WRONG commands
+cannot satisfy the claim even if minted.
+
+**C2 — coverage frontier (learning, sourced): the eighth entry of the
+durable-execution research line (PROVINCE.md frontier band):
+`corpus/knowledge/failure-recovery-replay.md` — recovery after liveness
+detection: how a unit of work resumes after its worker is pronounced dead
+(round 57's signal) without loss or duplication — Temporal event-sourced
+workflow history replay (S112, tier B as recorded — the round-55
+REJECTED row whose recorded flip condition fired this round; flipped
+rejected → mined, logged old→new in the lesson), Kafka consumer offset commits as the
+recovery cursor (S122, tier A), LangGraph checkpoint snapshots as resumable
+state (S123 = queued row S028 reopened this round, tier A). S124 (Flink
+checkpointing) is opened for the gate table. Predicate `DOCTRINE58_HELD`
+(rule D58 v1, five checks E1–E5, mirroring D57 with the count pin).
+
+Predicate sentences (frozen, byte-identical in this plan, both probe headers
+and the report):
+ATTEST58_HELD — node .ufo/waves/round-58/probe/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=<rev> rule=A58 version=v1" and exits 0.
+DOCTRINE58_HELD — node .ufo/waves/round-58/probe/doctrine58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "DOCTRINE58: DOCTRINE58_HELD held=5/5 checks=5 rev=<rev> rule=D58" and exits 0.
+
+## Counters (frozen)
+
+`.ufo/waves/round-58/probe/attest58-probe.mjs` (rule `A58` v1, ten checks
+B1..B10) and `.ufo/waves/round-58/probe/doctrine58-probe.mjs` (rule `D58`
+v1, checks E1–E5).
+
+Source pins (the B10 arm — freeze-time sha256 of the new instrument, the
+v2 gate and both counters; the registry `.ufo/pins/counter-pins.json`
+carries the round-53..57 pins without regression and is re-verified by the
+B2-pin arm at every judged rev):
+
+```
+attest58-probe      = sha256(.ufo/waves/round-58/probe/attest58-probe.mjs)
+doctrine58-probe    = sha256(.ufo/waves/round-58/probe/doctrine58-probe.mjs)
+receipt-evidence    = sha256(scripts/receipt-evidence.mjs)
+readme-map          = sha256(scripts/readme-map.mjs)   [v2 re-pin]
+pinned in .ufo/pins/counter-pins.json (round: 58 entries)
+```
+
+## Receipt plan (C1 evidence)
+
+Three receipts at `.ufo/waves/round-58/receipts/`, minted time-spaced with
+the real `receipt-attest run` (body `wall_start` span ≥ 300 s across the
+three), planned argv frozen here (A58 B7 asserts exactly these, in this
+order):
+
+- `attest-run-1.txt` — `node scripts/readme-map.mjs --selftest`
+- `attest-run-2.txt` — `node scripts/receipt-evidence.mjs --selftest`
+- `attest-run-3.txt` — `node scripts/counter-pins.mjs`
+
+All three commands were measured deterministic on this host before freeze
+(two consecutive runs byte-identical stdout; round-gate's selftest is
+NON-deterministic and is therefore not receipted). Controls live under
+`.ufo/waves/round-58/controls/` (never in the receipts dir): the forged
+receipt (R57-V4 reproduction red-before) and the unparseable-rev /
+no-coverage fail-closed runs.
+
+## Frontier step (round contract §2b)
+
+- SOURCES rows opened this round: S112 (Temporal workflow execution /
+  replay — REOPENED from its round-55 rejection; its recorded flip condition,
+  a lane-owned tested mapping of replay-vs-redelivery onto the dispatcher's
+  reconcile/reclaim path, fired; flipped rejected → mined, logged old→new in
+  the lesson), S122 (Kafka offset-management javadoc, tier A, new row), S123
+  (LangGraph checkpointers, tier A, new row — same URL as the still-queued
+  S028, duplicate group pinned in `.ufo/pins/source-dupes.json`), S124
+  (Flink checkpointing, tier A, opened for the gate table, kept queued).
+  Captured bytes pinned in `.ufo/pins/source-captures.json` per Q46; each
+  row's Gate quote recorded in `corpus/lessons/round-58.md`.
+- Census before → after: `scripts/sources-census.sh validate --root
+  /home/vgpnk/Projects/shokunin kumitate` — before exit 0 (4 pinned W04
+  warnings; transcript `base/census-before.txt`), after exit 0 required.
+- Mistakes mined: R57-V1..V4 (routed) + the fourth-recurrence coverage-map
+  drift the gate caught at this round's open (`round-57-verifier-spotcheck.md`
+  row/pin) in the lesson `## Mistakes`.
+- Sourced claim: C2 cites S112/S122/S123.
+
+## Routed-defect answers (frozen bindings)
+
+- **R57-V1** — repaired by `receipt-evidence`'s sweep: `:(glob)…/**`
+  descending pathspecs over rounds 48–57, fail-closed on grep ≥ 2, coverage
+  proven (ls-tree resolves ≥1 file AND ≥1 nonce swept) and `--expect-sweep-nonce`
+  functionally proves descent (A58 B5 runs it against the three committed
+  round-57 receipt nonces).
+- **R57-V2** — repaired in both new counters: the verdict tail pins the
+  frozen checks count (10 and 5); a drop-one mutant prints
+  `…_UNMET held=9/9 … checks-mismatch` exit 1. Mutant transcripts committed
+  under `controls/`.
+- **R57-V3** — repaired by `kumitate-readme-map-v2`: covered members are
+  lstat'd; `covered-not-file` / dangling-symlink `stale-covered` are DRIFT;
+  registry version 2; two new selftest arms, each red-before.
+- **R57-V4** — repaired by reproduction: every receipt's recorded argv is
+  re-run in the `git archive` extraction of the judged rev and must match
+  recorded exit and stdout/stderr digests; the forged-receipt control reads
+  UNMET (committed transcript). Receipts are now evidence only because they
+  reproduce.
+- **Filed-bytes rule** (r57 spotcheck conformance item 2 — `8e43dbcd`
+  rewrote filed paragraphs of `7c3d1203`): this round appends errata only;
+  no filed byte of `.ufo/reports/round-57/kumitate.md` is touched.
+
+## Harm battery (H1–H6, run at close)
+
+H1 checklist census `node scripts/surface-probe.mjs --checklists` ≥ freeze
+floor 24/27 (the three base-red items are diagnosed and named; new item 28
+must pass); H2 selftests green (receipt-evidence, readme-map v2,
+receipt-attest, counter-pins, source-capture, source-dupes, cap-run,
+bind-oracle, round-gate, sources-check, counter-rerun); H3 `node
+scripts/proxy-check.mjs --strict` → `PROXY: MATCH` (stanza terms A=93,
+C=28, C2=138/138 after this change — A grows by receipt-evidence.mjs +
+the two frozen probes; C by checklist item 28; C2 by the new entry, the
+new lesson and the inherited spotcheck row now pinned); H4 sources census
+exit 0; H5 prior-round counters A53/D53..A57/D57 re-run at close rev and
+readings recorded — A57 is expected to read UNMET on B2/B4/B7 at the close
+rev (registry version 2 and checklist items=28 supersede its frozen
+literals — the same named counter-obsolescence convention as A54/A55/A56,
+recorded, not hidden; its round-57 verdicts at its own measured revs
+`f0dc6d11`/`617a9414` stand); H6 `.ufo/pins/counter-pins.json` carries
+round-53..58 pins without regression.
+
+## Close sequence (R52-11 discipline)
+
+R1 = integration tip (this commit's tree: plan, counters, tool, v2 gate,
+registry v2, receipts, entry, S112+S122–S124, lesson, README rows, pins, SKILL
+rows, SCORECARD stanza + capability row + move log, wave spec). A58 and D58
+run against R1; both FINAL receipts committed. R2 = the receipt/final
+transcripts commit; both counters re-run against R2 → IDEMPOTENCE
+transcript (R3). Report + SCORECARD cite measured close revision R1; the
+tip carries a re-run against its own bytes.

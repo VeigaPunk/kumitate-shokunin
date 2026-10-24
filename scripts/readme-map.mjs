@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * readme-map.mjs — gate `readme-map` (contract `kumitate-readme-map-v1`, round 57).
+ * readme-map.mjs — gate `readme-map` (contract `kumitate-readme-map-v2`, round 58;
+ * amends v1 of round 57 by the routed defect R57-V3 repair).
  *
  * The corpus coverage-map bimap gate. `proxy-check`'s C2 term compares only the
  * *counts* of `corpus/README.md` map rows against corpus `*.md` files — so a
@@ -22,7 +23,16 @@
  *   README_MAP: USAGE ...                               exit 64
  *
  * Registry (default `.ufo/pins/readme-map.json`, lane-root-relative):
- *   { "version": 1, "covered": ["knowledge/x.md", "lessons/y.md", ...] }
+ *   { "version": 2, "covered": ["knowledge/x.md", "lessons/y.md", ...] }
+ *
+ * v2 (R57-V3): `covered` members are scored by NAME only no longer. Every
+ * pinned member is lstat'd and must be a regular file: a member naming a
+ * directory or other non-file is DRIFT `covered-not-file:<path>`; a member
+ * whose lstat succeeds but whose target is gone — a dangling symlink — is
+ * DRIFT `stale-covered:<path>` (a symlink whose target exists is likewise
+ * not a regular file: `covered-not-file`). The registry moves to
+ * `version: 2` (format unchanged — the version number now attests the
+ * lstat semantics); a version 1 registry is FAIL-CLOSED.
  *
  * `covered` is the pinned set of corpus paths (`knowledge/` or `lessons/`
  * relpath, unique) that must BOTH exist AND keep a README row — the ratchet:
@@ -40,19 +50,22 @@
  *   - DRIFT `duplicate-row:<path>` — two or more rows for one path.
  *   - DRIFT `format-unmapped:<cell>` — a corpus-shaped first cell that does
  *     not parse as a clean `| `path` |` row.
- *   - DRIFT `stale-covered:<path>` — a `covered` entry whose file is gone.
+ *   - DRIFT `stale-covered:<path>` — a `covered` entry whose file is gone
+ *     (including a dangling symlink: the name resolves, the target does not).
+ *   - DRIFT `covered-not-file:<path>` — a `covered` entry whose lstat is not
+ *     a regular file (a directory, a symlink to anything, a fifo).
  *   - DRIFT `unpinned:<path>` — a live file absent from `covered` (the pin
  *     grows by append when a file lands; the registry is never rewritten).
  *   - FAIL-CLOSED (exit 2, never a score): registry unreadable / not JSON /
- *     version ≠ 1 / `covered` not an array / a covered entry malformed,
+ *     version ≠ 2 / `covered` not an array / a covered entry malformed,
  *     duplicated or outside `knowledge|lessons/`; README unreadable; a corpus
  *     directory missing; zero `*.md` files across the corpus dirs.
  *
  * The gate never writes. It reads the registry, the README and the corpus
  * directories only.
  *
- * Selftest: hermetic fixtures under mkdtemp, fourteen cases, one red-before
- * per rule; the final line reads `README_MAP_SELFTEST: PASS (14/14)` +
+ * Selftest: hermetic fixtures under mkdtemp, sixteen cases, one red-before
+ * per rule; the final line reads `README_MAP_SELFTEST: PASS (16/16)` +
  * `VERDICT: PASS`, exit 0.
  *
  * Exit map: 0 clean · 1 a real defect (drift) · 2 fail-closed · 64 usage.
@@ -60,7 +73,7 @@
  * pin: SCORECARD.md `kumitate-gate-pins-v1` (`pin.readme-map`).
  */
 import { spawnSync } from 'node:child_process';
-import { lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -96,8 +109,8 @@ function loadRegistry(regPath) {
   if (!doc || typeof doc !== 'object' || Array.isArray(doc)) {
     return { ok: false, reason: 'registry not an object' };
   }
-  if (doc.version !== 1) {
-    return { ok: false, reason: `registry version ${JSON.stringify(doc.version)} !== 1` };
+  if (doc.version !== 2) {
+    return { ok: false, reason: `registry version ${JSON.stringify(doc.version)} !== 2 (want the v2 lstat semantics)` };
   }
   if (!Array.isArray(doc.covered)) {
     return { ok: false, reason: 'registry covered not an array' };
@@ -189,8 +202,35 @@ function evaluate(registryPath, readmePath, dirs) {
     if (!rowSet.has(f)) bad.push(`uncovered:${f}`);
   }
   const covered = new Set(reg.covered);
+  const dirFor = {};
+  for (const d of dirs) dirFor[basename(d)] = d;
   for (const c of reg.covered) {
-    if (!fileSet.has(c)) bad.push(`stale-covered:${c}`);
+    if (!fileSet.has(c)) {
+      bad.push(`stale-covered:${c}`);
+      continue;
+    }
+    // v2 (R57-V3): a covered member is scored by name only no longer — it
+    // must lstat as a regular file in its namespace dir.
+    const [ns, leaf] = [c.slice(0, c.indexOf('/')), c.slice(c.indexOf('/') + 1)];
+    let lst;
+    try {
+      lst = lstatSync(join(dirFor[ns], leaf));
+    } catch {
+      bad.push(`stale-covered:${c}`);
+      continue;
+    }
+    if (lst.isSymbolicLink()) {
+      try {
+        statSync(full);
+        bad.push(`covered-not-file:${c}`);
+      } catch {
+        bad.push(`stale-covered:${c}`);
+      }
+      continue;
+    }
+    if (!lst.isFile()) {
+      bad.push(`covered-not-file:${c}`);
+    }
   }
   for (const f of cf.files) {
     if (!covered.has(f)) bad.push(`unpinned:${f}`);
@@ -223,13 +263,15 @@ function selftest() {
     { encoding: 'utf8', timeout: 60_000, ...opts });
   const last = (r) => `${r.stdout || ''}`.trim().split('\n').pop() || '';
   const mkdirp = (d) => { rmSync(d, { recursive: true, force: true }); mkdirSync(d, { recursive: true }); };
-  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], rows, covered } = {}) => {
+  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], dirs = [], links = [], rows, covered } = {}) => {
     mkdirp(dir);
     mkdirp(join(dir, 'corpus')); mkdirp(join(dir, 'corpus/knowledge')); mkdirp(join(dir, 'corpus/lessons'));
     for (const f of files) writeFileSync(join(dir, 'corpus', f), `# ${f}\n`);
+    for (const d of dirs) mkdirp(join(dir, 'corpus', d));
+    for (const l of links) symlinkSync(join(dir, 'corpus', `${l}.no-such-target`), join(dir, 'corpus', l));
     const rowText = rows !== undefined ? rows : files.map((f) => `| \`${f}\` | desc | ptr |\n`).join('');
     writeFileSync(join(dir, 'corpus/README.md'), `# README\n\n## Coverage map\n\n${rowText}`);
-    writeFileSync(join(dir, 'reg.json'), JSON.stringify({ version: 1, covered: covered !== undefined ? covered : files }, null, 2));
+    writeFileSync(join(dir, 'reg.json'), JSON.stringify({ version: 2, covered: covered !== undefined ? covered : files }, null, 2));
     return { reg: join(dir, 'reg.json'), rm: join(dir, 'corpus/README.md'), kd: join(dir, 'corpus/knowledge'), ld: join(dir, 'corpus/lessons') };
   };
   const argsOf = (f) => ['--registry', f.reg, '--readme', f.rm, '--corpus', f.kd, '--corpus', f.ld];
@@ -298,10 +340,10 @@ function selftest() {
       const r = run(argsOf(f));
       pass('malformed-registry', r.status === 2, `exit=${r.status}`);
     }
-    // 10 — registry version 2: FAIL-CLOSED
+    // 10 — registry version 1 (the superseded v1 registry): FAIL-CLOSED
     {
       const f = fixture(join(root, 'd10'));
-      writeFileSync(f.reg, JSON.stringify({ version: 2, covered: [] }));
+      writeFileSync(f.reg, JSON.stringify({ version: 1, covered: [] }));
       const r = run(argsOf(f));
       pass('registry-version', r.status === 2, `exit=${r.status}`);
     }
@@ -333,6 +375,30 @@ function selftest() {
       const r = run(argsOf(f));
       pass('non-corpus-rows', r.status === 0 && last(r) === 'README_MAP: CLEAN files=2 rows=2 covered=2',
         `exit=${r.status} last=${JSON.stringify(last(r))}`);
+    }
+    // 15 — v2 (R57-V3): a covered member naming a directory is DRIFT covered-not-file
+    {
+      const f = fixture(join(root, 'd15'), {
+        files: ['knowledge/a.md', 'lessons/b.md'],
+        dirs: ['knowledge/dir.md'],
+        rows: '| `knowledge/a.md` | d | p |\n| `lessons/b.md` | d | p |\n| `knowledge/dir.md` | d | p |\n',
+        covered: ['knowledge/a.md', 'lessons/b.md', 'knowledge/dir.md'],
+      });
+      const r = run(argsOf(f));
+      pass('covered-not-file', r.status === 1 && `${r.stdout}`.includes('covered-not-file:knowledge/dir.md'),
+        `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`);
+    }
+    // 16 — v2 (R57-V3): a covered member that is a dangling symlink is DRIFT stale-covered
+    {
+      const f = fixture(join(root, 'd16'), {
+        files: ['knowledge/a.md', 'lessons/b.md'],
+        links: ['lessons/link.md'],
+        rows: '| `knowledge/a.md` | d | p |\n| `lessons/b.md` | d | p |\n| `lessons/link.md` | d | p |\n',
+        covered: ['knowledge/a.md', 'lessons/b.md', 'lessons/link.md'],
+      });
+      const r = run(argsOf(f));
+      pass('symlink-stale-covered', r.status === 1 && `${r.stdout}`.includes('stale-covered:lessons/link.md'),
+        `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`);
     }
   } finally {
     rmSync(root, { recursive: true, force: true });
