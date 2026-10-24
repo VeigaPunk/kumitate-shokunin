@@ -2081,3 +2081,28 @@ R53-1 prose correction. Close per the R52-11/Q44 discipline: measured close rev
 R1, FINAL receipts at R1, idempotence at R2, harm battery + census at R3.
 Quality: lesson round-53 (M1 mined); rows S104/S105. Lane tip, report and close
 revisions: see .ufo/reports/round-53/kumitate.md.
+
+- 2026-10-24 — round 54 (hyaku run 5; attempt 1). Claims: C1 operability,
+  capability acquisition `counter-pins` (`kumitate-counter-pins-v1`), frozen A54
+  v1; C2 coverage frontier, sourced entry `at-least-once-dedupe.md` (S106/S107),
+  frozen D54 v1. Base `383ad787ac3a9301b25422e50ebfef256d534924`; measured R1
+  `8eb113fd2d9156371a0e9df654ce84aab823aa6a`; R2
+  `0f52b49269608bbb1c181a81a4be83241cc9998a`; R3
+  `670af7c504e3cc2de031adf954369f2dfb014dc6`.
+  A54: base `ATTEST54_UNMET held=0/10` → R1 `ATTEST54_HELD held=10/10`;
+  D54: base `DOCTRINE54_UNMET held=0/1` → R1 `DOCTRINE54_HELD held=5/5`.
+  Commands and FINAL/idempotence receipts are in `.ufo/waves/round-54/close/`.
+  `counter-pins` at R1 reads `CLEAN pins=5`; `--selftest` is 11/11. Proxy
+  terms A=81, C=24, C2=126/126; operability score remains 9, and the retired
+  coverage aggregate remains 10 after R54-2 repairs the missing R53 spotcheck
+  README row. Q45 closes R54-1's prior pending pointer. Rows S106/S107 admitted,
+  S108 rejected; no existing source row changed. Source census 105→108 rows,
+  A=89→91/B=8→9/C=8, maintained census exit 0.
+  One v2 wave validated/prepared: 64 seats, 24 attack roles (reviewer 13,
+  critic 6, mutation-tester 5), 0 resumes; planner held by L1. It remains
+  prepared-but-undispatched for the orchestrator; no seats returned, no dead
+  seats, and no returned-without-report seats. H1 baseline/current R3 both
+  `CHECKLIST: 23/24`; H2-H6 receipts are under `close/FINAL-harm-census.txt`
+  and `H2-*`, `H3-*`, `H4-*`, `H5-*`, `H6-*`. Non-author source spot-check
+  awaited from the independent closure reviewer; discernment is not self-claimed.
+  Tool installs/updates: none.

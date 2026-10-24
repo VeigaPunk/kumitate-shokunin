@@ -1118,6 +1118,20 @@ order:
 Only one of these is one axis-move; they are pre-registered here and must not be
 combined in a round that also claims a first.
 
+
+**Round 55 — candidates (written in round 54; not commitments).** The earlier
+round-43 pre-registration below is historical; these are the current next-round
+candidates:
+
+1. **Operability / A3e captured-invocation** — take the open receipt-attestation
+   boundary only if a before-state counter can distinguish captured execution from
+   tree-authored receipt bytes; keep the `±60 s` prelude-tolerance ceiling explicit.
+2. **Coverage frontier / durable execution** — continue the new delivery-identity
+   line from `at-least-once-dedupe.md` into a separate failure/retry surface, sourced
+   on rows opened in that round and kept distinct from neighboring provinces.
+3. **Repair backlog** — resolve or re-register R43-1/R43-5 and the pending R41-2
+   gate-pins ruling before adding a new independent gate-pin family.
+
 ## Limits (recorded, not hidden)
 
 - **Round 35 (2026-10-20) — what the round did not fix.** (a) The checklist read
@@ -2533,3 +2547,56 @@ Planned next round (candidates, not commitments): (1) the dispatched round-53 wa
 findings integration (freeze-repair addendum discipline if any); (2) the B5d counter
 source-pin arm beyond H6 (a pinned counter registry); (3) A3e captured-invocation
 question; (4) R43-1/R43-5 stay open; the R41-2 gate-pins ruling stays pending.
+
+## Round 54 — claims, freeze repairs, limits (2026-10-24)
+
+Plan `.ufo/waves/round-54/plan.md`; base `383ad787ac3a9301b25422e50ebfef256d534924`;
+measured integration revision R1 `8eb113fd2d9156371a0e9df654ce84aab823aa6a`; receipt commit R2
+`0f52b49269608bbb1c181a81a4be83241cc9998a`; idempotence revision R3
+`670af7c504e3cc2de031adf954369f2dfb014dc6`.
+
+**C1 — operability (lowest non-retired axis; capability acquisition): `counter-pins`.**
+Contract `kumitate-counter-pins-v1`, the mechanical B5d source-pin gate planned in round 53.
+Frozen predicate `ATTEST54_HELD` (A54 v1, 10 checks). Before: at base, the counting command
+`node .ufo/waves/round-54/probe/attest54-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 383ad787ac3a9301b25422e50ebfef256d534924`
+reads `ATTEST54_UNMET held=0/10`, exit 1 (`base/attest54-base-v3.txt`). After: at R1
+`ATTEST54_HELD held=10/10 checks=10`, exit 0 (`close/FINAL-attest54-R1.txt`); the
+idempotence receipt at R2 reads 10/10 (`close/IDEMPOTENCE-0f52b492.txt`). The gate itself
+reads `COUNTER_PINS: CLEAN pins=5`; `--selftest` passes 11/11. Operability remains 9:
+A 78→81, C 23→24, `floor(10×(A+C)/(A+C+3))` 9→9 (terminal integer). The new capability
+row is `counter-pins`.
+
+**C2 — coverage frontier (durable execution; retired aggregate remains 10):**
+`corpus/knowledge/at-least-once-dedupe.md`, sourced on S106/S107 opened this round; S108
+was opened and rejected. Frozen predicate `DOCTRINE54_HELD` (D54 v1, five checks). Before:
+at base, `DOCTRINE54_UNMET held=0/1 checks=1`, exit 1
+(`base/doctrine54-base-v3.txt`). After: at R1
+`DOCTRINE54_HELD held=5/5 checks=5`, exit 0 (`close/FINAL-doctrine54-R1.txt`); the R2
+idempotence receipt also reads 5/5. The entry is the fourth durable-execution frontier
+entry; `PROVINCE.md` remains frontier, not moved to core.
+
+**Terms and inherited repairs.** At base `proxy-check` re-derived A=78, C=23, C2=123,
+C2_total=124: the committed R53 verifier spot-check existed without a README map row, so
+the retired coverage aggregate computed 9 against declared 10 (`base/open-gates-replay.txt`).
+R54-2 restores that row; the R1 stanza is A=81, C=24, C2=126, C2_total=126 and
+`node scripts/proxy-check.mjs --strict` reads `PROXY: MATCH`, coverage=10. The two new
+notes account for +2 corpus files/map rows; the inherited spot-check row accounts for the
+third README row. Sources rows 105→108: A 89→91, B 8→9, C 8 unchanged; S106/S107 are
+mined, S108 rejected, and no prior-row status/recheck/used-by cell changed. R54-1 appends
+the missing R53 spot-check pointer and adds QUALITY Q45; R54-2 is captured by the existing
+`CORPUS.md` index-row rule. A54/D54 freeze repairs and final scratch-HELD witness are
+recorded in the plan addenda and `.ufo/waves/round-54/witness/`.
+
+**Close battery at R3 (`close/FINAL-harm-census.txt`).** H1 `CHECKLIST: 23/24 pass`, equal
+to the freeze floor; the only failure is the inherited R53 round-gate `COMMIT_CITED_UNRESOLVED`
+scratch-witness hash. H2 receipt-attest 51/51, counter-pins 11/11, cap-run 12/12,
+bind-oracle 7/7, round-gate 61/61, sources-check CLEAN, counter-rerun PASS. H3 proxy
+strict MATCH. H4 census exit 0. H5 repairs50 8/8, bindguard50 8/8, D51 5/5, D52 5/5,
+A53 17/17, D53 5/5. H6 frozen source hashes match and counter-pins is CLEAN.
+
+**Limits.** H1's single baseline failure is in the already-filed round-53 report, which
+names scratch repo rev `b717dc035bf687a3039123f4c70527bd3774f510`; R54 does not rewrite that
+fleet report. D54 E5 is the live sources census, not an R1 snapshot. The source admissions
+and rejection await the independent non-author spot-check; no discernment improvement is
+claimed until that review lands. The v2 wave is prepared-but-undispatched, as detailed in
+the round report.

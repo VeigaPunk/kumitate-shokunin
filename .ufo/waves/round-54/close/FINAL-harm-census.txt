@@ -1,0 +1,13 @@
+Round 54 close battery, measured against lane R3 `670af7c504e3cc2de031adf954369f2dfb014dc6`.
+
+H1 — `node scripts/surface-probe.mjs --checklists`: `CHECKLIST: 23/24 pass`, exit 1; freeze baseline was also 23/24. The only failure is the existing round-53 Round-close artifact audit (`COMMIT_CITED_UNRESOLVED ... b717dc035bf687a3039123f4c70527bd3774f510`), the scratch-witness revision explicitly named as scratch in the already-filed R53 report. R54 does not rewrite that report. Full transcript: `H1-checklists-R3.txt`; freeze baseline: `../base/checklists-freeze.txt`.
+
+H2 — selftests: receipt-attest `51/51`; counter-pins `11/11`; cap-run `12/12`; bind-oracle `7/7`; round-gate `61/61`; sources-check `CLEAN`; counter-rerun `PASS`. Full transcripts: `H2-*.txt`.
+
+H3 — `node scripts/proxy-check.mjs --strict`: `PROXY: MATCH (A=81 C=24 operability=9; C1=19/19 C2=126/126 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)`, exit 0. Transcript: `H3-proxy.txt`.
+
+H4 — `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate`: exit 0, rows 108, tiers A=91/B=9/C=8; the four W04 duplicate-URL advisories are unchanged. Transcript: `H4-census.txt`.
+
+H5 — prior claims at R3: `repairs50-probe-v2` `LEDGER_HELD 8/8`; `bindguard50-probe` `GUARD_HELD 8/8`; D51 5/5; D52 5/5; A53 17/17; D53 5/5. Full transcripts: `H5-*.txt`.
+
+H6 — `sha256sum` matches the repaired plan pins: A54 `e2252e8e02e4c51b47868aadb8c12747a6f1c8b61f0652b0d686fd0e7d7a3137`; D54 `556d5c6bea114e9558cdec4e66643c9b8cce9fc74071996adb4df3f8bc53bbb6`; `scripts/counter-pins.mjs` `060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e`; gate `COUNTER_PINS: CLEAN pins=5`. Transcript: `H6-pins.txt`.
