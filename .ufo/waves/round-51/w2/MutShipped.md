@@ -462,7 +462,7 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
   `sha256sum scripts/receipt-attest.mjs` → `44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9` — **unchanged**.
 * All scratch (mutant sources, harnesses, forged artefacts, receipts) lives under
   `/tmp/mutshipped/`. **No runnable file (`.mjs`/`.js`/`.sh`/`.py`) was created anywhere under
-  the lane tree**; the only lane-tree writes by this seat are this report and the eleven `.txt`
+  the lane tree**; the only lane-tree writes by this seat are this report and the twelve `.txt`
   transcripts beside it.
 * **Self-audit (this seat's own battery held to the standard I charged wave-1's with).**
   §4/F‑7 charges a battery with scoring a behaviourally-empty mutant as a real result. The
@@ -528,9 +528,15 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
 * The **self-audit (§7) proves each mutant changes observable behaviour; it does not prove
   each mutant is the *minimal* weakening for its site.** A mutant that both truncates a
   comparison and disables the ledger would still pass the fingerprint test while testing two
-  things at once. The per-mutant *diffs* in `/tmp/mutshipped/w2run/*/mutant.mjs` are the
-  ground truth for "one site, one change" and were inspected individually; the fingerprint is
-  a *no-op* test, not a minimality test.
+  things at once. The fingerprint is a *no-op* test, not a minimality test.
+  Measured line-level minimality (`diff -U0`, transcript `MutShipped-minimality.txt`):
+  **21 of the 34 mutants replace exactly one source line**; **7 are a single-line insertion or
+  deletion** (D01–D07 insert `delete copy.<field>;`, D08 deletes `delete copy.digest;` — still
+  one line changed); the remaining **6 touch several syntactic occurrences of one contract
+  site**, not several sites — **V01** (`out('RECEIPT: TAMPERED\n')` at 6 emission sites),
+  **V05** (every finding path's `process.exit(1)`, 8), **V02** (2), **S03** (a 2-line
+  catch-block rewrite), **S04** (the sidecar/body-line split, 3 hunks). The per-mutant diffs in
+  `/tmp/mutshipped/w2run/*/mutant.mjs` are the ground truth and were inspected individually.
 * No tool installs or upgrades were made during this seat's run.
 
 ---
@@ -550,6 +556,7 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
 | attacker-controlled S02 forgery | `MutShipped-s02-attacker-forgery.txt` |
 | wave-1 battery audit | `MutShipped-wave1-battery-audit.txt` |
 | self-audit (no-op / crash test of this seat's own 34 mutants) | `MutShipped-self-audit.txt` |
+| line-level minimality of each mutant | `MutShipped-minimality.txt` |
 | no-op / ledger proofs | `MutShipped-proofs.txt` |
 | pristine baseline selftest (27/27) | `MutShipped-baseline-selftest.txt` |
 
