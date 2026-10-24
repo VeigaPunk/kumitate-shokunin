@@ -1,0 +1,32 @@
+ITEM=RevPredicateA58
+R1=6affb9ebde37b7d663658f1959d64f0f0b68f480
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+SHA256 plan_at_R1=6ff85421784f30cd763e256d182f3533df650df71c14772f9fe4a9518cff8772
+SHA256 probe_at_R1=6e5c67693f8409959f51bcab0a2255c44153b678b2934708a10812d32a69d84b
+SHA256 plan_live=6ff85421784f30cd763e256d182f3533df650df71c14772f9fe4a9518cff8772
+SHA256 probe_live=6e5c67693f8409959f51bcab0a2255c44153b678b2934708a10812d32a69d84b
+SHA256 final_live=1b42f04410624561db287bcaf0fc5f550705ad4f3c70ecd5bf6d4a064a30c42c
+PREDICATE_COUNTS={"plan_at_R1": 1, "plan_live": 1, "probe_at_R1": 1, "probe_live": 1}
+plan_probe_byte_identical_at_R1: MATCH | plan_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026 probe_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026
+plan_live_matches_R1: MATCH | live_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026 R1_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026
+probe_live_matches_R1: MATCH | live_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026 R1_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026
+plan_probe_byte_identical_live: MATCH | plan_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026 probe_sha256=adbfb22b5671e1cde4079365504c9c248680b7c71cee9a49da83432a3b5a6026
+PLAN_PREDICATE="ATTEST58_HELD — node .ufo/waves/round-58/probe/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints \"ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=<rev> rule=A58 version=v1\" and exits 0."
+PROBE_PREDICATE="ATTEST58_HELD — node .ufo/waves/round-58/probe/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints \"ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=<rev> rule=A58 version=v1\" and exits 0."
+plan_probe_same_unicode_sentence: MATCH | strict UTF-8 decoded comparison
+frozen_invocation_and_exit_shape: MATCH | exact label, probe path, lane path, <rev>, prints quote, exits 0
+frozen_verdict_template: MATCH | expected="ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=<rev> rule=A58 version=v1" actual="ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=<rev> rule=A58 version=v1"
+final_exactly_one_verdict_line: MATCH | lines=1
+FINAL_VERDICT="ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=6affb9ebde37b7d663658f1959d64f0f0b68f480 rule=A58 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS | B10 PASS"
+final_verdict_parse: MATCH | label/held/checks/rev/rule/version plus optional check tail
+field_label: MATCH | expected=ATTEST58_HELD actual=ATTEST58_HELD
+field_held: MATCH | expected=10/10 actual=10/10
+field_checks: MATCH | expected=10 actual=10
+field_rev: MATCH | expected=6affb9ebde37b7d663658f1959d64f0f0b68f480 actual=6affb9ebde37b7d663658f1959d64f0f0b68f480
+field_rule: MATCH | expected=A58 actual=A58
+field_version: MATCH | expected=v1 actual=v1
+EXPECTED_VERDICT_PREFIX="ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=6affb9ebde37b7d663658f1959d64f0f0b68f480 rule=A58 version=v1"
+OBSERVED_VERDICT_PREFIX="ATTEST58: ATTEST58_HELD held=10/10 checks=10 rev=6affb9ebde37b7d663658f1959d64f0f0b68f480 rule=A58 version=v1"
+final_prefix_equals_frozen_template_at_R1: MATCH | only <rev> instantiated; all other verdict-prefix bytes unchanged
+final_tail_has_B1_through_B10: MATCH | observed_ids=["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10"]
+RESULT: NO DRIFT — plan, probe header, and FINAL-attest58-R1 verdict share the frozen A58 v1 shape

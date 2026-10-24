@@ -1,0 +1,41 @@
+CHECKLIST  PASS SKILL.md:695 exit=1 expected=0|1 substring=hit wall=3.626 load1=4.02 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:696 exit=0 expected=0 substring=hit wall=0.821 load1=3.78 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:697 exit=0 expected=0 substring=hit wall=0.154 load1=3.78 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:698 exit=0 expected=0 substring=hit wall=1.325 load1=3.78 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:699 exit=0 expected=0 substring=hit wall=7.896 load1=3.56 — Round-gate hermetic suite
+CHECKLIST  PASS SKILL.md:700 exit=0 expected=0 substring=hit wall=0.032 load1=3.43 — Round-close artifact audit
+CHECKLIST  PASS SKILL.md:701 exit=0 expected=0 substring=hit wall=0.062 load1=3.43 — Filed-report tracking
+CHECKLIST  FAIL SKILL.md:702 exit=1 expected=0 substring=miss wall=0.116 load1=3.43 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  A_DRIFT  A: declared=93 computed=859 delta=+766
+  | PROXY: DRIFT (A_DRIFT term=A declared=93 computed=859 delta=+766; src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:703 exit=0 expected=0 substring=hit wall=5.828 load1=3.43 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:704 exit=0 expected=0 substring=hit wall=0.055 load1=3.32 — Member-claims gate
+CHECKLIST  FAIL SKILL.md:705 exit=1 expected=0 substring=miss wall=0.016 load1=3.32 — Kimi-substrate census
+  | FAMILY K5  members=3  checked=3  frozen=3
+  | INFO  CHAIN  config.toml.*.bak  generations=8 (reported as info, never gated)
+  | INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+  | INFO  COUNT  skills/  children=7 (counted live, names not gated)
+  | INFO  ROOT_ENUM  -  root children=34 declared=27 chain=8 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+  | CENSUS  error  MEMBER_MISSING  search-index/  search-index is absent under /home/vgpnk/.kimi-code
+  | TOTALS: members=52 checked=52 errors=1 info=4 chain=8
+  | KIMI_CENSUS: DRIFT (MEMBER_MISSING search-index/)
+CHECKLIST  PASS SKILL.md:706 exit=0 expected=0 substring=hit wall=0.024 load1=3.32 — Sources-registry gate
+CHECKLIST  PASS SKILL.md:707 exit=0 expected=0 substring=hit wall=2.566 load1=3.32 — Sources-check hermetic suite
+CHECKLIST  PASS SKILL.md:708 exit=0 expected=0 substring=hit wall=0.663 load1=3.13 — Per-anchor truth burn-down
+CHECKLIST  PASS SKILL.md:709 exit=0 expected=0 substring=hit wall=7.628 load1=3.13 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:710 exit=0 expected=0 substring=hit wall=0.026 load1=2.96 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:711 exit=0 expected=0 substring=hit wall=1.944 load1=2.96 — Wave-census hermetic suite
+CHECKLIST  PASS SKILL.md:712 exit=0 expected=0 substring=hit wall=45.218 load1=2.96 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  PASS SKILL.md:713 exit=0 expected=0 substring=hit wall=0.664 load1=3.78 — Gate-mutants hermetic suite
+CHECKLIST  PASS SKILL.md:714 exit=0 expected=0 substring=hit wall=0.017 load1=3.78 — OMP agent-root census
+CHECKLIST  PASS SKILL.md:715 exit=0 expected=0 substring=hit wall=0.028 load1=3.78 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:716 exit=0 expected=0 substring=hit wall=7.610 load1=3.78 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST  PASS SKILL.md:717 exit=0 expected=0 substring=hit wall=3.562 load1=3.82 — Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`)
+CHECKLIST  PASS SKILL.md:718 exit=0 expected=0 substring=hit wall=0.032 load1=3.82 — Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`)
+CHECKLIST  PASS SKILL.md:719 exit=0 expected=0 substring=hit wall=0.043 load1=3.82 — Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`)
+CHECKLIST  PASS SKILL.md:720 exit=0 expected=0 substring=hit wall=0.029 load1=3.82 — SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`)
+CHECKLIST  PASS SKILL.md:721 exit=0 expected=0 substring=hit wall=0.027 load1=3.82 — Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`)
+CHECKLIST  PASS SKILL.md:722 exit=0 expected=0 substring=hit wall=2.710 load1=3.82 — Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 26/28 pass
+VERDICT: FAIL

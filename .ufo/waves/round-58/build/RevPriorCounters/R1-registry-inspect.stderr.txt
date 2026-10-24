@@ -1,0 +1,15 @@
+[eval]:1
+const fs=require("fs"); const raw=fs.readFileSync(process.argv[1],"utf8"); const reg=JSON.parse(raw); const paths=Array.isArray(reg.covered)&&reg.covered.every((p)=>typeof p==="string"&&/^(knowledge|lessons)\/.+\.md$/.test(p)); const sorted=Array.isArray(reg.covered)&&reg.covered.every((p,i,a)=>i===0||a[i-1]<=p); const unique=Array.isArray(reg.covered)&&new Set(reg.covered).size===reg.covered.length; console.log(JSON.stringify({parsed:true,version:reg.version,coveredCount:Array.isArray(reg.covered)?reg.covered.length:null,coveredNonempty:Array.isArray(reg.covered)&&reg.covered.length>0,coveredPathsValid:paths,coveredSorted:sorted,coveredUnique:unique,a57NonVersionShapeValid:Boolean(reg&&coveredNonempty&&paths),a57VersionLiteralAccepts:reg.version===1,r58VersionLiteralAccepts:reg.version===2},null,2));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ^
+
+ReferenceError: coveredNonempty is not defined
+    at [eval]:1:697
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:485:12
+    at [eval]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:483:60)
+    at evalFunction (node:internal/process/execution:317:30)
+    at evalTypeScript (node:internal/process/execution:329:3)
+    at node:internal/main/eval_string:71:3
+
+Node.js v26.12.0

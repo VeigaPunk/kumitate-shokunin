@@ -1,0 +1,39 @@
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/forge-receipt.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane
+{"file":"/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/.ufo/waves/round-58/receipts/attest-run-1.txt","nonce":"8ccae7eac883bb9b72d727493960b9e5","nonce_preserved":true,"stdout_sha256_before":"6d41419fff1f5e5a40ac3eb1e53bb88783d222362ac1d120457661cd1d4e46b5","stdout_sha256_after":"0000000000000000000000000000000000000000000000000000000000000000","inner_digest_after":"5ef72c56104a83e908cb40d4cc37d189881288ae872632a14b12ded6e3cd39a3","sidecar_sha256_after":"9a867c95fc1ca6ce86f609fca8268e1c906e8baff5b154f9bdcba16ddc895584"}
+[exit=0]
++ cp /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/.ufo/waves/round-58/receipts/attest-run-1.txt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/forged-attest-run-1.txt
+[exit=0]
++ cp /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/forged-attest-run-1.txt.sha256
+[exit=0]
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/.ufo/waves/round-58/receipts/attest-run-1.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane diff -- .ufo/waves/round-58/receipts/attest-run-1.txt .ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+diff --git i/.ufo/waves/round-58/receipts/attest-run-1.txt w/.ufo/waves/round-58/receipts/attest-run-1.txt
+index 18c0a0a..1c9d456 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-1.txt
++++ w/.ufo/waves/round-58/receipts/attest-run-1.txt
+@@ -1,2 +1,2 @@
+ run-at: 2026-10-24T14:16:35.853Z
+-{"argv":["node","scripts/readme-map.mjs","--selftest"],"digest":"eabe012e2e510721e24e5f5315edde9c81c9287f49a7111ade6467dcffcc29a1","exit":0,"mono_span_ms":253,"nonce":"8ccae7eac883bb9b72d727493960b9e5","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"6d41419fff1f5e5a40ac3eb1e53bb88783d222362ac1d120457661cd1d4e46b5","wall_end":"2026-10-24T14:16:36.107Z","wall_start":"2026-10-24T14:16:35.853Z"}
++{"argv":["node","scripts/readme-map.mjs","--selftest"],"digest":"5ef72c56104a83e908cb40d4cc37d189881288ae872632a14b12ded6e3cd39a3","exit":0,"mono_span_ms":253,"nonce":"8ccae7eac883bb9b72d727493960b9e5","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"0000000000000000000000000000000000000000000000000000000000000000","wall_end":"2026-10-24T14:16:36.107Z","wall_start":"2026-10-24T14:16:35.853Z"}
+diff --git i/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256 w/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+index 7d7865f..81caa55 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
++++ w/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+@@ -1 +1 @@
+-be2ad5ede7d62373978576baf7d716e43571c7433589e8c8fc6bbcab4b3009d9  attest-run-1.txt
++9a867c95fc1ca6ce86f609fca8268e1c906e8baff5b154f9bdcba16ddc895584  attest-run-1.txt
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane add -- .ufo/waves/round-58/receipts/attest-run-1.txt .ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane -c user.name=MutKill1 -c user.email=mutkill1@shokunin.invalid commit -q -m MutKill1:\ zero\ stdout\ digest\ in\ scratch\ receipt -- .ufo/waves/round-58/receipts/attest-run-1.txt .ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane rev-parse HEAD
+8c76f0c1201001c19840c1db6db9f4adbdb4e636
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane status --short
+[exit=0]

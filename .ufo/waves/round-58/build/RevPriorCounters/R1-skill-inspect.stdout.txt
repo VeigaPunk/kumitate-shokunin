@@ -1,0 +1,14 @@
+{
+  "readmeMapGateRow": "| readme-map | gate | `node scripts/readme-map.mjs [--registry <path>] [--readme <path>] [--corpus <dir>]...` → `README_MAP: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-readme-map-v2` (round 58: every `covered` member must lstat as a regular file — a directory member is DRIFT `covered-not-file`, a dangling symlink DRIFT `stale-covered`; registry version 2); default `.ufo/pins/readme-map.json` pins the `covered` set — every `*.md` under `corpus/knowledge` + `corpus/lessons` must carry exactly one README map row `| `path` |`, every such row must name a live file, and every live file must be pinned; findings `uncovered`, `orphan-row`, `duplicate-row`, `format-unmapped`, `stale-covered`, `unpinned` are DRIFT; malformed registry/README/corpus-dir is FAIL-CLOSED | `--selftest` (16 hermetic cases; `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`) | `.ufo/pins/readme-map.json`; `corpus/README.md`; `pin.readme-map` in `kumitate-gate-pins-v1` |",
+  "hasV1": false,
+  "hasV2": true,
+  "a57RowOk": false,
+  "checklistItems": 28,
+  "items24through28": [
+    "- [ ] Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`) — `node scripts/counter-pins.mjs` → exit 0 + `COUNTER_PINS: CLEAN`",
+    "- [ ] Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`) — `node scripts/source-capture.mjs` → exit 0 + `SOURCE_CAPTURE: CLEAN`",
+    "- [ ] SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`) — `node scripts/source-dupes.mjs` → exit 0 + `SOURCE_DUPES: CLEAN`",
+    "- [ ] Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`) — `node scripts/readme-map.mjs` → exit 0 + `README_MAP: CLEAN`",
+    "- [ ] Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`) — `node scripts/receipt-evidence.mjs --selftest` → exit 0 + `RECEIPT_EVIDENCE_SELFTEST: PASS`"
+  ]
+}

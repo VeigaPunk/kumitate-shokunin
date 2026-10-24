@@ -1,0 +1,1 @@
+COMMAND: sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/06-v1-bytes.stdout /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/v2-readme-map.mjs

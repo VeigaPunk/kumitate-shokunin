@@ -1,0 +1,12 @@
+01-clone: exit=0 command=git clone --no-hardlinks file:///home/vgpnk/Projects/shokunin/kumitate-shokunin /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane
+02-checkout-r1: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane checkout --detach 6affb9ebde37b7d663658f1959d64f0f0b68f480
+03-head: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane rev-parse HEAD
+04-baseline-gate: exit=0 command=node scripts/readme-map.mjs
+05-mutation: covered += lessons/ctlmapnotfile.md; created directory; added matching README row
+06-directory-stat: exit=0 command=stat '--format=%F %n' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane/corpus/lessons/ctlmapnotfile.md
+07-mutation-diff: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane diff -- .ufo/pins/readme-map.json corpus/README.md
+08-status: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane status --short
+09-directory-gate: exit=1 command=node scripts/readme-map.mjs
+10-gate-bytes-unchanged: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane diff --exit-code 6affb9ebde37b7d663658f1959d64f0f0b68f480 -- scripts/readme-map.mjs
+11-final-head: exit=0 command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapNotFile/lane rev-parse HEAD
+PROBE: PASS exit=1 first=covered-not-file:lessons/ctlmapnotfile.md

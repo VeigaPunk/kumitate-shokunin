@@ -1,0 +1,5 @@
+05-original-held: exit=0 last="RECEIPT_EVIDENCE: HELD receipts=3 reproduced=3 sweep_files=5580 sweep_nonces=63 span_ms=346314"
+10-honest-short: exit=1 last="RECEIPT_EVIDENCE: UNMET reason=SPAN_SHORT detail=span_ms=10000 min_ms=300000"
+14-mutant-short: exit=0 last="RECEIPT_EVIDENCE: HELD receipts=3 reproduced=3 sweep_files=5580 sweep_nonces=63 span_ms=10000"
+CONTROL: originalHeld=true resealedLedgersValid=true honestSpanShort=true mutantHeld=true
+MUTANT: KILLED honest=UNMET/SPAN_SHORT/exit1 mutant=HELD/exit0 span_ms=10000

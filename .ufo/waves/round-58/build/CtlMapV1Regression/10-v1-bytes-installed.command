@@ -1,0 +1,1 @@
+COMMAND: cmp -s /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/06-v1-bytes.stdout /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/lane/scripts/readme-map.mjs

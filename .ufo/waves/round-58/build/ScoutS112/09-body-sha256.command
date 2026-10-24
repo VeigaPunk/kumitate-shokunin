@@ -1,0 +1,1 @@
+sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/ScoutS112/live-body.html /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/ScoutTemporalReplay/body.html /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/ScoutS112/pinned-body-r1.html

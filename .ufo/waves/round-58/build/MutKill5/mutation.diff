@@ -1,0 +1,13 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/r1/scripts/receipt-evidence.mjs	2026-10-24 19:20:30.000000000 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/mutant/scripts/receipt-evidence.mjs	2026-10-24 19:37:31.194202875 -0300
+@@ -198,7 +198,7 @@
+       if (sw.nonces.has(r.body.nonce)) unmet('NONCE_REUSED', r.name);
+     }
+     for (const h of expect) {
+-      if (!sw.nonces.has(h)) unmet('SWEEP_SENTINEL_MISS', h);
++      void h;
+     }
+     const times = receipts.map((r) => Date.parse(r.body.wall_start));
+     if (times.some((t) => !Number.isFinite(t))) failClosed('WALL_START_MALFORMED');
+
+[diff exit=1; 1 means files differ]

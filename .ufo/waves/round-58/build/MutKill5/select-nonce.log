@@ -1,0 +1,6 @@
++ node -e 'const fs=require("node:fs"); const crypto=require("node:crypto"); const [sweep,out]=process.argv.slice(1); const text=fs.readFileSync(sweep,"utf8"); const found=new Set([...text.matchAll(/"nonce":\s*"([0-9a-f]{32})"/g)].map(m=>m[1])); for(let i=0;;i++){const candidate=crypto.createHash("sha256").update(`MutKill5:${i}`).digest("hex").slice(0,32); if(!found.has(candidate)){console.log(`candidate=${candidate}`); console.log(`source=sha256(MutKill5:${i}) first_32_hex`); console.log("expected_present=false"); fs.writeFileSync(out,`${candidate}\n`); break;}}' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/sweep-nonces.txt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/selected-nonce.txt
+candidate=3ce978f03c96eebdc86a10b026844fe3
+source=sha256(MutKill5:0) first_32_hex
+expected_present=false
+
+[selection exit=0]

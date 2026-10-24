@@ -1,0 +1,12 @@
+diff --git i/scripts/receipt-evidence.mjs w/scripts/receipt-evidence.mjs
+index 1ac42eb..b28b090 100755
+--- i/scripts/receipt-evidence.mjs
++++ w/scripts/receipt-evidence.mjs
+@@ -203,7 +203,6 @@ function verify(argv) {
+     const times = receipts.map((r) => Date.parse(r.body.wall_start));
+     if (times.some((t) => !Number.isFinite(t))) failClosed('WALL_START_MALFORMED');
+     const span = Math.max(...times) - Math.min(...times);
+-    if (span < minSpan) unmet('SPAN_SHORT', `span_ms=${span} min_ms=${minSpan}`);
+     out(`RECEIPT_EVIDENCE: HELD receipts=${receipts.length} reproduced=${reproduced} sweep_files=${sw.fileCount} sweep_nonces=${sw.nonces.size} span_ms=${span}\n`);
+     process.exit(0);
+   } finally {

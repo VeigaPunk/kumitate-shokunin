@@ -1,0 +1,1 @@
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 50548ae5b4a47bb8d8cdc62212ec0648aa3776ee:scripts/readme-map.mjs

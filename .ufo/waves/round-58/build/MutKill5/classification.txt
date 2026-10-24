@@ -1,0 +1,10 @@
++ node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/r1/scripts/receipt-evidence.mjs
++ node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/mutant/scripts/receipt-evidence.mjs
++ node -e 'const fs=require("node:fs"); const [dir,nonce]=process.argv.slice(1); const before=fs.readFileSync(`${dir}/before.txt`,"utf8"); const after=fs.readFileSync(`${dir}/after.txt`,"utf8"); const beforeExit=Number(fs.readFileSync(`${dir}/before.exit.txt`,"utf8").trim()); const afterExit=Number(fs.readFileSync(`${dir}/after.exit.txt`,"utf8").trim()); const beforePin=before.includes(`RECEIPT_EVIDENCE: UNMET reason=SWEEP_SENTINEL_MISS detail=${nonce}`); const afterHeld=after.includes("RECEIPT_EVIDENCE: HELD receipts=3 reproduced=3 sweep_files=5580 sweep_nonces=63 span_ms=346314"); const killed=beforeExit===1 && beforePin && afterExit===0 && afterHeld; console.log(`honest_exit=${beforeExit} honest_sentinel_miss=${beforePin}`); console.log(`mutant_exit=${afterExit} mutant_held=${afterHeld}`); console.log(`MUTANT: ${killed?"KILLED":"UNKILLED"}`); process.exit(killed?0:1);' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5 3ce978f03c96eebdc86a10b026844fe3
+honest_exit=1 honest_sentinel_miss=true
+mutant_exit=0 mutant_held=true
+MUTANT: KILLED
++ date -u +observed_at=%Y-%m-%dT%H:%M:%SZ
+observed_at=2026-10-24T22:40:51Z
+
+[classification exit=0; 0 means KILLED]

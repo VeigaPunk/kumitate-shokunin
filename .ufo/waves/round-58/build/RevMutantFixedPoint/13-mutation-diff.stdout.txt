@@ -1,0 +1,18 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/RevMutantFixedPoint/attest58-R1.mjs	2026-10-24 19:43:39.481556128 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/RevMutantFixedPoint/attest58-drop-B8.mjs	2026-10-24 19:44:24.248720652 -0300
+@@ -312,15 +312,6 @@
+     const span = times.length === 3 ? Math.max(...times) - Math.min(...times) : 0;
+     hold('B7', times.length === 3 && span >= 300_000, `times=${times.length} span_ms=${span}`);
+   }
+-  // B8 — the drop-one kill: mutant transcript + this source's count pin (R57-V2)
+-  {
+-    const mut = readT('.ufo/waves/round-58/controls/MutCounter58.txt');
+-    const selfSrc = readT('.ufo/waves/round-58/probe/attest58-probe.mjs');
+-    const transcriptOk = Boolean(mut && /ATTEST58_UNMET held=9\/9/.test(mut.toString('utf8'))
+-      && /checks-mismatch/.test(mut.toString('utf8')));
+-    const guardOk = Boolean(selfSrc && selfSrc.toString('utf8').includes('checks.length !== 10'));
+-    hold('B8', transcriptOk && guardOk, `transcript=${transcriptOk} guard=${guardOk}`);
+-  }
+   // B9 — checklist items === 28 with the 24..28 bindings (supersession convention)
+   {
+     const sk = readT('SKILL.md');

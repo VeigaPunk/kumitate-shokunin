@@ -1,0 +1,14 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/RevMutantFixedPoint/attest58-drop-B8.mjs	2026-10-24 19:44:24.248720652 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/RevMutantFixedPoint/attest58-drop-B8-no-count-guard.mjs	2026-10-24 19:45:36.537986334 -0300
+@@ -363,11 +363,6 @@
+ } finally {
+   rmSync(T, { recursive: true, force: true });
+ }
+-if (checks.length !== EXPECTED_CHECKS) {
+-  const held = checks.filter((c) => c.ok).length;
+-  process.stdout.write(`ATTEST58: ATTEST58_UNMET held=${held}/${checks.length} checks=${checks.length} rev=${rev} rule=${RULE} version=v1 | checks-mismatch want=${EXPECTED_CHECKS}\n`);
+-  process.exit(1);
+-}
+ const held = checks.filter((c) => c.ok).length;
+ const parts = checks.map((c) => `${c.id} ${c.ok ? 'PASS' : `MISS ${c.detail}`}`).join(' | ');
+ process.stdout.write(`ATTEST58: ${held === checks.length ? 'ATTEST58_HELD' : 'ATTEST58_UNMET'} held=${held}/${checks.length} checks=${checks.length} rev=${rev} rule=${RULE} version=v1 | ${parts}\n`);

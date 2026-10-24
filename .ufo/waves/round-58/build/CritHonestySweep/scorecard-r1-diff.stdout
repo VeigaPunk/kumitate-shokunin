@@ -1,0 +1,151 @@
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 0eb8ddb..c07c1ae 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -285,12 +285,12 @@ boundary:
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=90
+-C=27
++A=93
++C=28
+ C1=19
+ C1_total=19
+-C2=135
+-C2_total=135
++C2=138
++C2_total=138
+ S_members=88
+ S_sections=88
+ R_members=92
+@@ -299,8 +299,8 @@ coverage_script=10
+ coverage_runtime=10
+ C1k=5
+ C1k_total=5
+-K_members=53
+-K_sections=53
++K_members=52
++K_sections=52
+ coverage_kimi=10
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+@@ -323,7 +323,8 @@ pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2c
+ pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
+ pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
+ pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
+-pin.readme-map=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
++pin.readme-map=b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e
++pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
+ -->
+ 
+ 
+@@ -448,6 +449,8 @@ the frozen definitions name.
+ | 56 | coverage frontier — durable-execution visibility lease / ack deadlines (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-56/probe/doctrine56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 3eae059e929e4da317c45eba18b4099b90f7541b` → `DOCTRINE56_UNMET held=2/5`, exit 1; source entry absent | same command at `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` → `DOCTRINE56_HELD held=5/5`, exit 0; `visibility-lease-ack-deadlines.md` cites S113/S114/S115; frontier band advanced; C2=132/132 after inherited README repair | `.ufo/waves/round-56/plan.md`; `.ufo/waves/round-56/base/doctrine56-base.txt`; `.ufo/waves/round-56/close/FINAL-doctrine56-R2.txt`; command above; measured commit `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` |
+ | 57 | operability (lowest non-retired axis; score 9 held at terminal; capability acquisition `readme-map`, routed defect R56-V3) | `node .ufo/waves/round-57/probe/attest57-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf` → `ATTEST57_UNMET held=0/10`, exit 1; base terms A=87, C=26 (proxy `C2_TOTAL_DRIFT declared=132 computed=133`) | same command at R1 `f0dc6d1160e66af65355bd353665adac22bbf4a9` → `ATTEST57_HELD held=10/10`, exit 0; `readme-map` CLEAN files=135 rows=135 covered=135, selftest 14/14; A=90, C=27, operability remains 9 | `.ufo/waves/round-57/plan.md`; `.ufo/waves/round-57/base/attest57-base.txt`; `.ufo/waves/round-57/close/FINAL-attest57-R1.txt`; command above; measured commit `f0dc6d1160e66af65355bd353665adac22bbf4a9` |
+ | 57 | coverage frontier — durable-execution worker heartbeat / liveness (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-57/probe/doctrine57-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf` → `DOCTRINE57_UNMET held=2/5`, exit 1; source entry absent | same command at R1 `f0dc6d1160e66af65355bd353665adac22bbf4a9` → `DOCTRINE57_HELD held=5/5`, exit 0; `worker-heartbeat-liveness.md` cites S117/S118/S119; frontier band advanced; C2=135/135 after the inherited R56-V3 README repair | `.ufo/waves/round-57/plan.md`; `.ufo/waves/round-57/base/doctrine57-base.txt`; `.ufo/waves/round-57/close/FINAL-doctrine57-R1.txt`; command above; measured commit `f0dc6d1160e66af65355bd353665adac22bbf4a9` |
++| 58 | operability (lowest non-retired axis; score 9 held at terminal; capability acquisition `receipt-evidence` + `readme-map` v2 — routed defects R57-V1/V2/V3/V4) | `node .ufo/waves/round-58/probe/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 50548ae5b4a47bb8d8cdc62212ec0648aa3776ee` (freeze tip) → `ATTEST58_UNMET held=7/10`, exit 1 (B8 transcript-absent, B9 items=27, B10 lesson-uncommitted); base `c49f2a8d` → `held=0/10` (`base/attest58-base.txt`) | same command at R1 (hash recorded in the R2 bookkeeping commit and the round-58 LOG entry) → `ATTEST58_HELD held=10/10`, exit 0; `receipt-evidence --selftest` 10/10; `readme-map` v2 CLEAN files=138 rows=138 covered=138, selftest 16/16; A=93, C=28, operability remains 9 (terminal) | `.ufo/waves/round-58/plan.md`; `.ufo/waves/round-58/base/attest58-base.txt`; `.ufo/waves/round-58/close/FINAL-attest58-R1.txt`; command above |
++| 58 | coverage frontier — durable-execution failure recovery / replay (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-58/probe/doctrine58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 50548ae5b4a47bb8d8cdc62212ec0648aa3776ee` (freeze tip) → `DOCTRINE58_UNMET held=3/5`, exit 1 (E2 clause bindings unwrapped, E3 S123 capture uncommitted); base `c49f2a8d` → entry-absent (`base/doctrine58-base.txt`) | same command at R1 (hash recorded in the R2 bookkeeping commit and the round-58 LOG entry) → `DOCTRINE58_HELD held=5/5`, exit 0; `failure-recovery-replay.md` cites S112 (flipped rejected→mined, recorded flip fired) + S122 + S123 (S124 queued); C2=138/138 | `.ufo/waves/round-58/plan.md`; `.ufo/waves/round-58/base/doctrine58-base.txt`; `.ufo/waves/round-58/close/FINAL-doctrine58-R1.txt`; command above |
+ | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
+ | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
+ | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
+@@ -514,6 +517,18 @@ the frozen definitions name.
+ 
+ ## Planned
+ 
++**Round 58 — pre-registration (2026-10-24, frozen at the round-58 freeze commit
++`50548ae5`).** The plan is frozen in `.ufo/waves/round-58/plan.md` with counters
++(A58 ten checks, D58 five checks), base receipts, kill rules K1–K6 and a
++scratch-HELD witness committed before any data seat ran: C1 operability —
++capability `receipt-evidence` (contract `kumitate-receipt-evidence-v1`) plus
++`readme-map` v2 (`kumitate-readme-map-v2`), repairing routed defects
++R57-V1/V2/V3/V4; C2 coverage frontier — the eighth durable-execution entry
++`failure-recovery-replay.md` on S112/S122/S123 (S124 queued). Falsifiers: the
++frozen predicate sentences ATTEST58_HELD and DOCTRINE58_HELD, the committed
++mutant transcripts, and the forged/fail-closed controls under
++`.ufo/waves/round-58/controls/`.
++
+ **Round 43 — pre-registration (2026-10-22, written by round 42).** Candidates, not commitments,
+ listed in `## Round 42 — claims, corrections, limits and round-43 pre-registration` at the end of
+ this file: a capability move (every live axis is at or above the saturation line), the 12 open
+@@ -2715,3 +2730,80 @@ the convention future capability moves re-express. R56-V3: repaired and gated (Q
+ D57 E5 is the live sources census, not an R1 snapshot. The gate binds the mapping, not
+ row-description truth. Source admissions/rejection await the non-author spot-check; no
+ discernment improvement is claimed. The wave is prepared-but-undispatched.
++
++## Round 58 — claims, resumption, routed-defect answers, limits (2026-10-24)
++
++Plan `.ufo/waves/round-58/plan.md` (frozen at `50548ae5b4a47bb8d8cdc62212ec0648aa3776ee`);
++base `c49f2a8dc1e6e5e4341e15ac279185aab7e0be37` (the round-57 verifier-spotcheck tip).
++Attempt 1 was stopped by the operator mid-round after its freeze commit; this
++attempt (Kimi fresh L1, 2026-10-24) resumed exactly that round — the frozen
++counters, kill rules and targets were never re-cut, and the inherited
++working-copy state (modified `SKILL.md`, untracked lesson, untracked
++`ScoutLangGraph/body.html`) was reconciled against the frozen plan and kept,
++not discarded. The measured close revision R1 and the R2/R3 idempotence
++revisions are recorded in the round-58 LOG entry and the fleet report.
++
++**C1 — operability (lowest non-retired axis; capability acquisition:
++`receipt-evidence` + `readme-map` v2).** Frozen predicate `ATTEST58_HELD`
++(A58 v1, ten checks B1..B10). Before: at base `ATTEST58_UNMET held=0/10`
++(`base/attest58-base.txt`); pre-score witness `held=10/10` against a synthetic
++conformant post-state (`witness/scratch-held-attest58.txt`, lesson M5). After:
++`close/FINAL-attest58-R1.txt`. `receipt-evidence --selftest` reads
++`RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `readme-map` (v2, registry version 2)
++reads `README_MAP: CLEAN files=138 rows=138 covered=138`, selftest 16/16
++(`covered-not-file` and `symlink-stale-covered` arms red-before). Operability
++stays 9 (terminal integer): A=90→93 (+`receipt-evidence.mjs` + the two frozen
++probes), C=27→28 (+checklist item 28, the R56-V2 supersession binding extended:
++24 counter-pins, 25 source-capture, 26 source-dupes, 27 readme-map, 28
++receipt-evidence).
++
++**C2 — coverage frontier (durable execution; retired aggregate remains 10).**
++Eighth entry `corpus/knowledge/failure-recovery-replay.md`, sourced on S112
++(Temporal replay — REOPENED: its round-55 recorded flip condition fired; status
++rejected → mined, logged old→new in the lesson), S122 (Kafka committed-offset
++cursor), S123 (LangGraph checkpoints; same URL as queued S028, duplicate group
++pinned); S124 (Flink checkpointing) opened, kept queued. Frozen predicate
++`DOCTRINE58_HELD` (D58 v1, five checks E1–E5). Before: `DOCTRINE58_UNMET
++held=0/5` entry-absent at base; after `close/FINAL-doctrine58-R1.txt`.
++PROVINCE.md stays frontier, not core.
++
++**Terms and inherited repair.** At base the r57 closure integrator's
++`round-57-verifier-spotcheck.md` had landed without a README row and pin (the
++fourth recurrence of the R56-V3 class): `readme-map` at base read
++`README_MAP: DRIFT files=136 rows=135 covered=135`. Repaired in this change
++(Q48 — same change as the new files): the R1 stanza is A=93, C=28, C2=138,
++C2_total=138, `PROXY: MATCH`. `K_members`/`K_sections` 53→52: the kimi host
++root lost `search-index/` between the r57 and r58 closes — an environment
++change re-declared at its measured value (checklist item 705 stays red and is
++named in the report, not patched around).
++
++**Routed-defect answers.** R57-V1 (dead sweep pathspec): the sweep descends via
++`:(glob)…/**`, fails closed on grep ≥ 2 / no-files / no-nonces, and
++`--expect-sweep-nonce` proves descent against the three committed round-57
++receipt nonces (A58 B5). R57-V2 (drop-one vacuous HELD): both counters pin the
++frozen checks count; committed drop-one transcripts
++`controls/MutCounter58.txt` (`held=9/9 … checks-mismatch`) and
++`controls/MutDoctrine58.txt` (`held=4/4 … checks-mismatch`). R57-V3
++(name-only registry members): readme-map v2 lstat arms, registry version 2.
++R57-V4 (forged receipts): reproduction in the `git archive` extraction; the
++forged-receipt control reads `RECEIPT_EVIDENCE: UNMET`
++(`controls/CtlForgedReceipt.txt`); fail-closed arms
++(`controls/CtlUnparseableRev.txt`, `controls/CtlNoCoverage.txt`).
++
++**Resumption directives.** The stopped attempt's lesson recorded the 2026-10-24
++wrap-up steer ("stop pushing rounds; the wave is prepared-but-undispatched").
++The operator's resumption directive (2026-10-24, this session) supersedes it:
++the lane trains one round at a time toward the campaign target and the r58
++wave is dispatched in-round as the shokunin-required training wave (one
++batched swarm call after the existing validator approves the spec). The
++resumption also binds the lane-addendum item 10 assimilation contract: this
++round's already-frozen claims take shokuknow/considerthese material only as
++ordinary §2b curation serving a frozen claim — decisions recorded in the
++lesson `## Gate` and the report.
++
++**Limits.** D58 E5 is the live sources census, not an R1 snapshot. A58 B10's
++proxy arm reads the live kimi root (K=52/52 at the measured value). The
++B5c-lineage limit stands (transcript+source-binding, not execution-proof) for
++the committed control transcripts; the probe's own B4/B5 arms execute their
++controls hermetically. Source admissions/rejections await the non-author
++spot-check; discernment is not self-claimed.

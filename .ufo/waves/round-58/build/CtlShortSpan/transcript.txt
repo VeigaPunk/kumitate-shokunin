@@ -1,0 +1,120 @@
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD
+6affb9ebde37b7d663658f1959d64f0f0b68f480
+[exit=0]
+
++ git clone --no-hardlinks file:///home/vgpnk/Projects/shokunin/kumitate-shokunin /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane
+Cloning into '/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane'...
+[exit=0]
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane checkout --detach 6affb9ebde37b7d663658f1959d64f0f0b68f480
+HEAD is now at 6affb9e round-58: R1 integration — lesson, SKILL item 28, QUALITY Q49, entry clause bindings, S123 capture, controls, assimilation scratch, SCORECARD stanza+pins+rows, LOG
+[exit=0]
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane rev-parse HEAD
+6affb9ebde37b7d663658f1959d64f0f0b68f480
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/scripts/receipt-evidence.mjs verify --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane --rev 6affb9ebde37b7d663658f1959d64f0f0b68f480 --receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts --min-span-ms 300000 2>&1 | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/baseline-verify.txt
+RECEIPT_EVIDENCE: HELD receipts=3 reproduced=3 sweep_files=5580 sweep_nonces=63 span_ms=346314
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/mutate-short-span.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts
+{"receipt":"attest-run-1.txt","old_wall_start":"2026-10-24T14:16:35.853Z","new_wall_start":"2026-10-24T14:16:34.853Z","old_digest":"eabe012e2e510721e24e5f5315edde9c81c9287f49a7111ade6467dcffcc29a1","new_digest":"49cb7c0298abd172aa260699a283a20f9470b792bc5995e00b217f5f7f7676fa","sidecar_sha256":"3fff1a0f4cf92ce4d48ec5ad443a89497870327f670141af61778611b1e8d981"}
+{"receipt":"attest-run-2.txt","old_wall_start":"2026-10-24T14:22:20.202Z","new_wall_start":"2026-10-24T14:16:39.853Z","old_digest":"91f8de72dc934cd98d07407a59fe6c822923fae13a68e66ed03a07d9732cbebb","new_digest":"33e7744805b2aa7120aa0d9d790dce66ff5e72c0ea84f2c6b83ac4dc020052ac","sidecar_sha256":"f87ad589533d4163ef5569529c8802f32ac6d0b237fdaa0064a06067e7380a54"}
+{"receipt":"attest-run-3.txt","old_wall_start":"2026-10-24T14:22:22.167Z","new_wall_start":"2026-10-24T14:16:44.853Z","old_digest":"b59a76f39f3410f284fb2fd7d89dd439c33816f786bd9085e0175bc61111d9d3","new_digest":"5b4d9f23217f56f07f6c99e673a257562c15b90ecc073886ac66462ba7fc4376","sidecar_sha256":"d9a54096e421f4677fa33fb1cdee1d2e388d71d8affa742da47a87d553ed93f6"}
+SPAN_BEFORE_MS=346314
+SPAN_AFTER_MS=10000
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts/attest-run-1.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts/attest-run-2.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts/attest-run-3.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+[exit=0]
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane status --short
+ M .ufo/waves/round-58/receipts/attest-run-1.txt
+ M .ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+ M .ufo/waves/round-58/receipts/attest-run-2.txt
+ M .ufo/waves/round-58/receipts/attest-run-2.txt.sha256
+ M .ufo/waves/round-58/receipts/attest-run-3.txt
+ M .ufo/waves/round-58/receipts/attest-run-3.txt.sha256
+[exit=0]
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane diff -- .ufo/waves/round-58/receipts
+diff --git i/.ufo/waves/round-58/receipts/attest-run-1.txt w/.ufo/waves/round-58/receipts/attest-run-1.txt
+index 18c0a0a..f179151 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-1.txt
++++ w/.ufo/waves/round-58/receipts/attest-run-1.txt
+@@ -1,2 +1,2 @@
+ run-at: 2026-10-24T14:16:35.853Z
+-{"argv":["node","scripts/readme-map.mjs","--selftest"],"digest":"eabe012e2e510721e24e5f5315edde9c81c9287f49a7111ade6467dcffcc29a1","exit":0,"mono_span_ms":253,"nonce":"8ccae7eac883bb9b72d727493960b9e5","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"6d41419fff1f5e5a40ac3eb1e53bb88783d222362ac1d120457661cd1d4e46b5","wall_end":"2026-10-24T14:16:36.107Z","wall_start":"2026-10-24T14:16:35.853Z"}
++{"argv":["node","scripts/readme-map.mjs","--selftest"],"digest":"49cb7c0298abd172aa260699a283a20f9470b792bc5995e00b217f5f7f7676fa","exit":0,"mono_span_ms":253,"nonce":"8ccae7eac883bb9b72d727493960b9e5","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"6d41419fff1f5e5a40ac3eb1e53bb88783d222362ac1d120457661cd1d4e46b5","wall_end":"2026-10-24T14:16:36.107Z","wall_start":"2026-10-24T14:16:34.853Z"}
+diff --git i/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256 w/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+index 7d7865f..634c6c9 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
++++ w/.ufo/waves/round-58/receipts/attest-run-1.txt.sha256
+@@ -1 +1 @@
+-be2ad5ede7d62373978576baf7d716e43571c7433589e8c8fc6bbcab4b3009d9  attest-run-1.txt
++3fff1a0f4cf92ce4d48ec5ad443a89497870327f670141af61778611b1e8d981  attest-run-1.txt
+diff --git i/.ufo/waves/round-58/receipts/attest-run-2.txt w/.ufo/waves/round-58/receipts/attest-run-2.txt
+index c8345e2..ec7853e 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-2.txt
++++ w/.ufo/waves/round-58/receipts/attest-run-2.txt
+@@ -1,2 +1,2 @@
+ run-at: 2026-10-24T14:22:20.202Z
+-{"argv":["node","scripts/receipt-evidence.mjs","--selftest"],"digest":"91f8de72dc934cd98d07407a59fe6c822923fae13a68e66ed03a07d9732cbebb","exit":0,"mono_span_ms":1947,"nonce":"c697bb4e06387a2c20a7193dc58cde4b","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"d58dcbe9017f6b7e4bf20e8482ca396489733f44c079a94fe68d6770d34c68a2","wall_end":"2026-10-24T14:22:22.149Z","wall_start":"2026-10-24T14:22:20.202Z"}
++{"argv":["node","scripts/receipt-evidence.mjs","--selftest"],"digest":"33e7744805b2aa7120aa0d9d790dce66ff5e72c0ea84f2c6b83ac4dc020052ac","exit":0,"mono_span_ms":1947,"nonce":"c697bb4e06387a2c20a7193dc58cde4b","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"d58dcbe9017f6b7e4bf20e8482ca396489733f44c079a94fe68d6770d34c68a2","wall_end":"2026-10-24T14:22:22.149Z","wall_start":"2026-10-24T14:16:39.853Z"}
+diff --git i/.ufo/waves/round-58/receipts/attest-run-2.txt.sha256 w/.ufo/waves/round-58/receipts/attest-run-2.txt.sha256
+index dfe3aaa..5e181fd 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-2.txt.sha256
++++ w/.ufo/waves/round-58/receipts/attest-run-2.txt.sha256
+@@ -1 +1 @@
+-678a23c2649a4a927d05462526ba9007532753167ac57aaf63900adb3492a702  attest-run-2.txt
++f87ad589533d4163ef5569529c8802f32ac6d0b237fdaa0064a06067e7380a54  attest-run-2.txt
+diff --git i/.ufo/waves/round-58/receipts/attest-run-3.txt w/.ufo/waves/round-58/receipts/attest-run-3.txt
+index 0002b02..0acd5a9 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-3.txt
++++ w/.ufo/waves/round-58/receipts/attest-run-3.txt
+@@ -1,2 +1,2 @@
+ run-at: 2026-10-24T14:22:22.167Z
+-{"argv":["node","scripts/counter-pins.mjs"],"digest":"b59a76f39f3410f284fb2fd7d89dd439c33816f786bd9085e0175bc61111d9d3","exit":0,"mono_span_ms":17,"nonce":"ed656bc209aca62b4dfcac838e899674","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"154c7286e494b07a889ff0d76c1819cdcffef87cffaafa17985a89117967f496","wall_end":"2026-10-24T14:22:22.185Z","wall_start":"2026-10-24T14:22:22.167Z"}
++{"argv":["node","scripts/counter-pins.mjs"],"digest":"5b4d9f23217f56f07f6c99e673a257562c15b90ecc073886ac66462ba7fc4376","exit":0,"mono_span_ms":17,"nonce":"ed656bc209aca62b4dfcac838e899674","stderr_sha256":"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","stdout_sha256":"154c7286e494b07a889ff0d76c1819cdcffef87cffaafa17985a89117967f496","wall_end":"2026-10-24T14:22:22.185Z","wall_start":"2026-10-24T14:16:44.853Z"}
+diff --git i/.ufo/waves/round-58/receipts/attest-run-3.txt.sha256 w/.ufo/waves/round-58/receipts/attest-run-3.txt.sha256
+index afd400d..2f6a9da 100644
+--- i/.ufo/waves/round-58/receipts/attest-run-3.txt.sha256
++++ w/.ufo/waves/round-58/receipts/attest-run-3.txt.sha256
+@@ -1 +1 @@
+-eaad44411bdc79a2c3d958829a6ed21bc8cb59e2360922beaa547031f4d059f8  attest-run-3.txt
++d9a54096e421f4677fa33fb1cdee1d2e388d71d8affa742da47a87d553ed93f6  attest-run-3.txt
+[exit=0]
+
++ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/scripts/receipt-evidence.mjs verify --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane --rev 6affb9ebde37b7d663658f1959d64f0f0b68f480 --receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/lane/.ufo/waves/round-58/receipts --min-span-ms 300000 2>&1 | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/short-span-verify.txt
+RECEIPT_EVIDENCE: UNMET reason=SPAN_SHORT detail=span_ms=10000 min_ms=300000
+[exit=1]
+
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD
+6affb9ebde37b7d663658f1959d64f0f0b68f480
+[exit=0]
+
++ node -e const\ fs=require\(\"node:fs\"\)\;\ const\ base=fs.readFileSync\(process.argv\[1\]\,\"utf8\"\)\;\ const\ short=fs.readFileSync\(process.argv\[2\]\,\"utf8\"\)\;\ if\(\!base.includes\(\"RECEIPT_EVIDENCE:\ HELD\ receipts=3\ reproduced=3\"\)\)\ process.exit\(1\)\;\ if\(\!short.includes\(\"RECEIPT_EVIDENCE:\ UNMET\ reason=SPAN_SHORT\ detail=span_ms=10000\ min_ms=300000\"\)\)\ process.exit\(1\)\;\ console.log\(\"VERDICT_ASSERTIONS=PASS\ baseline=HELD\ mutant=SPAN_SHORT\"\)\; /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/baseline-verify.txt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlShortSpan/short-span-verify.txt
+VERDICT_ASSERTIONS=PASS baseline=HELD mutant=SPAN_SHORT
+[exit=0]
+CONTROL_RESULT=PASS baseline_exit=0 short_span_exit=1 span_ms=10000 min_ms=300000
+HARNESS_EXIT=0

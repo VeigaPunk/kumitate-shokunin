@@ -1,0 +1,7 @@
+command: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin grep -ohE '"nonce":\s*"[0-9a-f]{32}"' 6affb9ebde37b7d663658f1959d64f0f0b68f480 -- ':(glob).ufo/waves/round-4[89]/**' ':(glob).ufo/waves/round-5[0-7]/**' > /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill5/sweep-nonces.txt
+[git grep exit=0]
+command: node -e <parse swept nonces; exit 1 if expected is present> ffffffffffffffffffffffffffffffff
+sweep_matches=319 unique_nonces=63
+expected=ffffffffffffffffffffffffffffffff
+expected_present=true
+[absence-check exit=1; 0 means absent]

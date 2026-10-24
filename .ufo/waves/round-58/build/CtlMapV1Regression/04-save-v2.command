@@ -1,0 +1,1 @@
+COMMAND: cp /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/lane/scripts/readme-map.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/CtlMapV1Regression/v2-readme-map.mjs

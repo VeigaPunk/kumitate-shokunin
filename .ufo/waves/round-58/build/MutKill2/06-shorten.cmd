@@ -1,0 +1,1 @@
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/make-short-span.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts

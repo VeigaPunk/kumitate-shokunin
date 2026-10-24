@@ -1,0 +1,1 @@
+command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/RevPriorCounters/r1.P8s9UJ/scripts/readme-map.mjs

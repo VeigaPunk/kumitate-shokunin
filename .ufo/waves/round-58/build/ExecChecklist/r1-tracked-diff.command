@@ -1,0 +1,1 @@
+git --no-optional-locks -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff --no-ext-diff --exit-code 6affb9ebde37b7d663658f1959d64f0f0b68f480 -- . ':(exclude).ufo/waves/round-58/build/**' ':(exclude).ufo/waves/round-58/w1/**'

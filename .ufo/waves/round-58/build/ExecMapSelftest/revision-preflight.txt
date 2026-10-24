@@ -1,0 +1,18 @@
+COMMAND 1
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin merge-base --is-ancestor 6affb9ebde37b7d663658f1959d64f0f0b68f480 HEAD
+STDOUT
+6affb9ebde37b7d663658f1959d64f0f0b68f480
+STDERR
+<empty>
+EXIT
+0
+
+COMMAND 2
+sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/readme-map.mjs && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 6affb9ebde37b7d663658f1959d64f0f0b68f480:scripts/readme-map.mjs | sha256sum
+STDOUT
+b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/readme-map.mjs
+b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e  -
+STDERR
+<empty>
+EXIT
+0

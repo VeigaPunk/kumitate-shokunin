@@ -1,0 +1,34 @@
+01-clone: git clone --no-hardlinks file:///home/vgpnk/Projects/shokunin/kumitate-shokunin /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane 
+01-clone: exit=0
+02-checkout-r1: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane checkout --detach 6affb9ebde37b7d663658f1959d64f0f0b68f480 
+02-checkout-r1: exit=0
+03-head: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane rev-parse HEAD 
+03-head: exit=0
+04-copy-honest: cp /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-evidence.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/honest-receipt-evidence.mjs 
+04-copy-honest: exit=0
+05-original-held: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/honest-receipt-evidence.mjs verify --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane --rev 6affb9ebde37b7d663658f1959d64f0f0b68f480 --receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts --min-span-ms 300000 
+05-original-held: exit=0
+06-shorten: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/make-short-span.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts 
+06-shorten: exit=0
+07-ledger-1: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts/attest-run-1.txt 
+07-ledger-1: exit=0
+07-ledger-2: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts/attest-run-2.txt 
+07-ledger-2: exit=0
+07-ledger-3: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts/attest-run-3.txt 
+07-ledger-3: exit=0
+10-honest-short: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/honest-receipt-evidence.mjs verify --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane --rev 6affb9ebde37b7d663658f1959d64f0f0b68f480 --receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts --min-span-ms 300000 
+10-honest-short: exit=1
+11-delete-span-check: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/delete-span-check.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-evidence.mjs 
+11-delete-span-check: exit=0
+12-mutant-syntax: node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-evidence.mjs 
+12-mutant-syntax: exit=0
+13-mutation-diff: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane diff -- scripts/receipt-evidence.mjs 
+13-mutation-diff: exit=0
+14-mutant-short: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/scripts/receipt-evidence.mjs verify --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane --rev 6affb9ebde37b7d663658f1959d64f0f0b68f480 --receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane/.ufo/waves/round-58/receipts --min-span-ms 300000 
+14-mutant-short: exit=0
+15-classify: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/classify.mjs 
+15-classify: exit=0
+16-scratch-status: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill2/lane status --short 
+16-scratch-status: exit=0
+17-production-relevant-diff: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff --exit-code 6affb9ebde37b7d663658f1959d64f0f0b68f480 -- scripts/receipt-evidence.mjs .ufo/waves/round-58/receipts 
+17-production-relevant-diff: exit=0

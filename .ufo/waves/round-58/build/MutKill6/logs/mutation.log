@@ -1,0 +1,19 @@
+command: diff -u /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/original/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/mutant/attest58-probe.mjs
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/original/attest58-probe.mjs	2026-10-24 19:38:00.026308797 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/mutant/attest58-probe.mjs	2026-10-24 19:38:09.177342416 -0300
+@@ -319,7 +319,6 @@
+     const transcriptOk = Boolean(mut && /ATTEST58_UNMET held=9\/9/.test(mut.toString('utf8'))
+       && /checks-mismatch/.test(mut.toString('utf8')));
+     const guardOk = Boolean(selfSrc && selfSrc.toString('utf8').includes('checks.length !== 10'));
+-    hold('B8', transcriptOk && guardOk, `transcript=${transcriptOk} guard=${guardOk}`);
+   }
+   // B9 — checklist items === 28 with the 24..28 bindings (supersession convention)
+   {
+diff_exit: 1 (1 means differences found)
+command: node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/original/attest58-probe.mjs
+original_syntax_exit: 0
+command: node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/mutant/attest58-probe.mjs
+mutant_syntax_exit: 0
+command: sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/original/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/mutant/attest58-probe.mjs
+6e5c67693f8409959f51bcab0a2255c44153b678b2934708a10812d32a69d84b  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/original/attest58-probe.mjs
+d922af70b5a65cd116b177493b5f1da54e7d9c86c5fb01270c0142197459fef2  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill6/mutant/attest58-probe.mjs

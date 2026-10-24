@@ -1,0 +1,11 @@
+COMMAND: python3 -c 'import subprocess; s=subprocess.check_output(['"'"'git'"'"','"'"'-C'"'"','"'"'/home/vgpnk/Projects/shokunin/kumitate-shokunin'"'"','"'"'show'"'"','"'"'6affb9ebde37b7d663658f1959d64f0f0b68f480:.ufo/waves/round-58/probe/attest58-probe.mjs'"'"'], text=True); needle='"'"'checks.length !== 10'"'"'; print('"'"'literal_occurrences='"'"'+str(s.count(needle))); print('"'"'literal_lines='"'"'+str([i for i,l in enumerate(s.splitlines(),1) if needle in l])); print('"'"'expected_count_constant='"'"'+str('"'"'const EXPECTED_CHECKS = 10;'"'"' in s)); print('"'"'tail_guard='"'"'+str('"'"'if (checks.length !== EXPECTED_CHECKS) {'"'"' in s))'
+CWD: /home/vgpnk/Projects/shokunin
+STARTED: 2026-10-24T22:45:37.923076+00:00
+FINISHED: 2026-10-24T22:45:37.937088+00:00
+STDOUT:
+literal_occurrences=2
+literal_lines=[69, 321]
+expected_count_constant=True
+tail_guard=True
+STDERR:
+EXIT: 0

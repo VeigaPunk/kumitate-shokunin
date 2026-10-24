@@ -1,0 +1,26 @@
++ diff -u /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/scripts/receipt-evidence.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/mutant/scripts/receipt-evidence.mjs
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/scripts/receipt-evidence.mjs	2026-10-24 19:36:27.144621447 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/mutant/scripts/receipt-evidence.mjs	2026-10-24 19:37:13.635138369 -0300
+@@ -188,9 +188,6 @@
+       const stdoutBuf = child.stdout || Buffer.alloc(0);
+       const stderrBuf = child.stderr || Buffer.alloc(0);
+       const code = child.error && child.error.code === 'ETIMEDOUT' ? 'TIMEOUT' : child.status;
+-      if (code !== r.body.exit || sha256(stdoutBuf) !== r.body.stdout_sha256 || sha256(stderrBuf) !== r.body.stderr_sha256) {
+-        unmet('REPRODUCE', r.name);
+-      }
+       reproduced += 1;
+     }
+     const sw = sweep(lane, rev);
+[exit=1]
+DIFF_EXPECTATION expected=1 observed=1
++ node --check /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/mutant/scripts/receipt-evidence.mjs
+[exit=0]
++ sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/scripts/receipt-evidence.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/mutant/scripts/receipt-evidence.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-evidence.mjs
+0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/lane/scripts/receipt-evidence.mjs
+b8b269d8db336e4d4abf122a9f1e561572abbf97d10810e45dcd7640469a413b  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutKill1/mutant/scripts/receipt-evidence.mjs
+0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-evidence.mjs
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff --exit-code 6affb9ebde37b7d663658f1959d64f0f0b68f480 -- scripts/receipt-evidence.mjs
+[exit=0]
++ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --short -- scripts/receipt-evidence.mjs
+[exit=0]

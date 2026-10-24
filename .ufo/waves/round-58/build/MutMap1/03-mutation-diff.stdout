@@ -1,0 +1,31 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutMap1/readme-map.r1.mjs	2026-10-24 19:38:56.951616859 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/MutMap1/readme-map.name-only.mjs	2026-10-24 19:38:56.951677699 -0300
+@@ -209,28 +209,6 @@
+       bad.push(`stale-covered:${c}`);
+       continue;
+     }
+-    // v2 (R57-V3): a covered member is scored by name only no longer — it
+-    // must lstat as a regular file in its namespace dir.
+-    const [ns, leaf] = [c.slice(0, c.indexOf('/')), c.slice(c.indexOf('/') + 1)];
+-    let lst;
+-    try {
+-      lst = lstatSync(join(dirFor[ns], leaf));
+-    } catch {
+-      bad.push(`stale-covered:${c}`);
+-      continue;
+-    }
+-    if (lst.isSymbolicLink()) {
+-      try {
+-        statSync(full);
+-        bad.push(`covered-not-file:${c}`);
+-      } catch {
+-        bad.push(`stale-covered:${c}`);
+-      }
+-      continue;
+-    }
+-    if (!lst.isFile()) {
+-      bad.push(`covered-not-file:${c}`);
+-    }
+   }
+   for (const f of cf.files) {
+     if (!covered.has(f)) bad.push(`unpinned:${f}`);
