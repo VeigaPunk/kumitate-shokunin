@@ -471,6 +471,7 @@ const GATE_PINS = {
   'pin.receipt-attest': 'scripts/receipt-attest.mjs', // round 51: invocation receipt attestation instrument (C1)
   'pin.counter-pins': 'scripts/counter-pins.mjs', // round 54: frozen-counter registry gate
   'pin.source-capture': 'scripts/source-capture.mjs', // round 55: opened-source byte-persistence gate
+  'pin.source-dupes': 'scripts/source-dupes.mjs', // round 56: SOURCES duplicate-URL ratchet
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

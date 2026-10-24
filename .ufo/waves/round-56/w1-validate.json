@@ -1,0 +1,1067 @@
+{
+ "schema": "ufo-swarm-wave-dispatch-v1",
+ "wave": "kumitate-r56-w1",
+ "policy": {
+  "source": "config",
+  "maxLanes": 256,
+  "minLanes": 16,
+  "waveMinLanes": 64,
+  "waveMaxLanes": 128,
+  "declaredMaxLanes": null,
+  "hardCeiling": 256,
+  "rampBatchSize": 5,
+  "rampIntervalMs": 700,
+  "globalRunnerCeiling": 1056
+ },
+ "counts": {
+  "spawn": 64,
+  "resume": 0,
+  "total": 64
+ },
+ "registry": {
+  "schema": "ufo-swarm-registry-v1",
+  "path": ".ufo/waves/round-56/w1/swarm-registry.json",
+  "reportDir": ".ufo/waves/round-56/w1",
+  "members": {
+   "ExecCapClean": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapClean. Run the new gate on the committed revision: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs must read `SOURCE_DUPES: CLEAN groups=4 known=4`. Capture exact output and exit.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapClean/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapClean.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapSelftest": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapSelftest. Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs --selftest`; count `case <name>: PASS` lines, verify 12/12 and final `VERDICT: PASS`.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSelftest/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSelftest.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapHashTamper": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapHashTamper. In a scratch copy, edit one pinned member's `scope` cell so its group stops duplicating; run the gate; capture DRIFT `stale-known` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapHashTamper/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapHashTamper.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapAbsent": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapAbsent. In a scratch copy, append a row re-using an already-registered URL under a different scope; run the gate; capture DRIFT `new-duplicate` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapAbsent/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapAbsent.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapSymlink": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapSymlink. In a scratch copy, edit a `known` entry's `ids` so it no longer matches its live group; verify DRIFT `known-mismatch` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSymlink/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSymlink.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapBytes": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapBytes. In a scratch copy, set `known=[]` while live groups remain; verify DRIFT `new-duplicate` \u2014 an empty pin set is never a vacuous CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapBytes/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapBytes.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapUncaptured": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapUncaptured. In a scratch copy, remove one member row of a pinned group from SOURCES.md; verify DRIFT `stale-known` exit 1 (the pin becomes stale, not an orphan).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapUncaptured/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapUncaptured.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapOrphan": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapOrphan. In a scratch copy, add a `known` entry naming S998/S997 (no such live group); verify DRIFT `stale-known` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapOrphan/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapOrphan.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapSchema": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapSchema. Run scratch controls for malformed JSON, version 2, a row id covered by two `known` entries, and a `known` entry missing `why`; capture each FAIL-CLOSED exit 2.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSchema/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSchema.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapEmpty": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapEmpty. In a scratch copy, craft a SOURCES doc with zero duplicate groups and `known=[]`; verify CLEAN groups=0 known=0 (the only legal empty pin).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapEmpty/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapEmpty.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecCapEscape": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecCapEscape. Verify the gate's normalization parity with the census: rows carrying the same URL with different scheme/trailing-slash/host-case still group; run both the gate and the census W04 line count and compare.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapEscape/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapEscape.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecA56Close": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecA56Close. Run frozen A56 against the round-56 R1 revision and capture the literal `ATTEST56: ATTEST56_HELD held=10/10 checks=10` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecA56Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecA56Close.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecD56Close": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecD56Close. Run frozen D56 against the round-56 R1 revision and capture the literal `DOCTRINE56: DOCTRINE56_HELD held=5/5 checks=5` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecD56Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecD56Close.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecReceiptSet": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecReceiptSet. Verify the three round-56 receipts `.ufo/waves/round-56/receipts/attest-run-{1,2,3}.txt` and the doctored replay control `attest-run-2-replayed.txt`: `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger <dir> <file>` must read `RECEIPT: VALID` for each planned argv and `RECEIPT: TAMPERED` exit 1 for the control.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecReceiptSet/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecReceiptSet.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecReceiptSpan": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecReceiptSpan. Parse the three receipt bodies; verify exact planned argv (bind-oracle --selftest, source-dupes --selftest, round-gate --selftest), pairwise-distinct nonces/digests, >=300s wall_start span, and no nonce in the round-48..54 corpora.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md \u00a7Receipt plan\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecReceiptSpan/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecReceiptSpan.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecSourcesGate": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecSourcesGate. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs at the final tree; capture `SOURCES_CHECK: CLEAN` exit 0, and run the fleet census `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` exit 0.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecSourcesGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecSourcesGate.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecChecklistBattery": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecChecklistBattery. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs --checklists at final tree; compare its `CHECKLIST: n/m` against the freeze baseline `.ufo/waves/round-56/base/checklists-freeze.txt` (25 items now).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecChecklistBattery/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecChecklistBattery.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecR54Counters": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecR55Counters. Re-run the round-55 frozen counters A54 and D54 at the round-56 close revision; report whether both remain HELD (the registry must carry the r54 pins without regression).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/counter-pins.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecR55Counters/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecR55Counters.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ExecProxyCounts": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "executor",
+    "item": "Item ExecProxyCounts. Re-derive A/C/C2 and axis terms at R3 with node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --strict; capture `PROXY: MATCH` and the full stanza line.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecProxyCounts/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecProxyCounts.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewA56Predicate": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewA56Predicate. Attack A56 as a predicate: verify its 10 checks, the base receipt, the drop-one literal, the vacuous-HELD guard, and the R1 result; identify any do-nothing or scorecard-only change that could reach ATTEST56_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/attest56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewA56Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewA56Predicate.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewD56Predicate": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewD56Predicate. Attack D56: inspect E1-E5 \u2014 entry existence + provenance trio, >=12 distinct receipt bindings hashed at rev, SOURCES rows mined+used-by + capture pins, sources-check CLEAN, live census; plus the base receipt.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/doctrine56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewD56Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewD56Predicate.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewGateSemantics": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewGateSemantics. Review source-dupes schema, exit map, path base (lane-root default vs registry-local explicit), symlink/parent traversal, empty groups and failure classes; do not alter production files.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewGateSemantics/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewGateSemantics.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewS113Admission": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewS113Admission. Independently reopen S113 (https://cloud.google.com/pubsub/docs/subscriber); confirm the admitted claim/tier/quote/anchor are limited to Pub/Sub delivery semantics, idempotent producer and consumer offset ordering. URL, access date, <=25-word quote, tier judgment.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsub/Pub/Sub-43-design.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS113Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS113Admission.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewS114Admission": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewS114Admission. Independently reopen S114 (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html); confirm the quote and tier apply only to SQS dead-letter/delivery-limit behavior.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutSqs/sqs-dlx.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS114Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS114Admission.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewS115Admission": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewS115Admission. Independently reopen S115 (AWS Builders Library timeouts/retries/backoff-with-jitter); confirm the quote and tier-B scope is client-side retry policy, not broker delivery.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutNats/aws-timeouts.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS115Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS115Admission.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewS116Rejection": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewS116Rejection. Challenge S116 rejection (Temporal workflow-execution): is Event-History/Replay genuinely out of scope for a delivery-guarantee + broker-budget entry, or is the reject too narrow? Confirm or refute against the opened page.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutTemporalVis/temporal-workflow-execution.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS116Rejection/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS116Rejection.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewMistakeR55One": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewMistakeR55One. Verify mistake R55-1 honestly recorded: S116x bytes absent at base (class landing/verifiability), captured-by = r54 verifier spotcheck \u00a75 item 1, fix = capture rule + Q46 + gate; confirm the red-before and fixed readings.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewMistakeR55One/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewMistakeR55One.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewReceiptBindings": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewReceiptBindings. Recompute each doctrine56 receipt sha256 and verify >=12 distinct binding paths under round-56; challenge any clause whose binding file does not carry the asserted content.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewReceiptBindings/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewReceiptBindings.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewProxyPin": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewProxyPin. Check GATE_PINS now includes pin.source-dupes, the v1 pin set stayed six, pin.proxy-check matches the edited script bytes, and strict proxy reads MATCH at R3.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewProxyPin/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewProxyPin.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewAxisMove": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewAxisMove. Check the lowest-axis obligation: operability stays scored via a new capability (source-dupes gate + registry), coverage moves on a frontier entry, claims are causally separable, no retired axis worked.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewAxisMove/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewAxisMove.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewFrontierMap": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewFrontierMap. Compare README Frontier entries and map rows with PROVINCE.md; verify the new knowledge row and lesson row map exactly once and the S116 reject row is retained.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewFrontierMap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewFrontierMap.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ReviewRoundReport": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "reviewer",
+    "item": "Item ReviewRoundReport. Check the final report: section order, commits, per-claim measurements with verbatim FINAL lines, sources census, trend verdicts, SHONEN lines and the wave-prepared status.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewRoundReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewRoundReport.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeSourceRows": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeSourceRows. Draft a concise source-row and quote audit for S113-S116; do not edit SOURCES.md; flag any scope/tier/anchor correction.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/Scout*/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeSourceRows/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeSourceRows.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeEntryReview": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeEntryReview. Draft a clause-by-clause summary of the visibility-lease-ack-deadlines entry, marking sourced facts vs [INFERENCE] and any unsupported sentence.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeEntryReview/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeEntryReview.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeMistakes": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeMistakes. Draft a compact audit of R55-1 with class, evidence, captured-by and fix fields; do not edit the lesson.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeMistakes/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeMistakes.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeFrontierReport": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeFrontierReport. Draft the Sources & frontier report subsection with before/after row/tier counts (108 -> 112, tier A 91->93, B 9->10), touched rows, frontier advance and exact commands.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeFrontierReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeFrontierReport.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeScorecardAudit": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeScorecardAudit. Draft a claim-to-scorecard crosswalk for the capability row, A/C/C2 terms, axis scores and measured revisions; flag missing fields.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeScorecardAudit/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeScorecardAudit.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeTrendEvidence": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeTrendEvidence. Draft evidence options for expansion, quality and discernment trends, respecting that this seat cannot provide the non-author spot-check.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeTrendEvidence/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeTrendEvidence.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeSeatAccounting": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeSeatAccounting. Draft the 64-seat role-mix and prepared-but-undispatched accounting, including dead=0 and returned-without-report=0 unless a seat actually returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-validate.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeSeatAccounting/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeSeatAccounting.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScribeLimitations": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scribe",
+    "item": "Item ScribeLimitations. Draft a precise limits paragraph separating broker delivery-limit semantics, consumer commit ordering, client-side retry budgets, task identity, and withheld exactly-once/replay claims.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeLimitations/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeLimitations.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutPubsubReopen": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutPubsubReopen. Freshly reopen https://cloud.google.com/pubsub/docs/subscriber; confirm \u00a7Message delivery semantics location, the at-least-once quote, the idempotent-producer paragraph (since 0.11.0.0) and the consumer position/rewind passage; record the saved-body hash bcca1c2a\u2026.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsub/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsubReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutPubsubReopen.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutRabbitDlxReopen": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutRabbitDlxReopen. Freshly reopen https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html; confirm the four dead-lettering trigger events and the delivery-limit quote; record the saved-body hash c69bab87\u2026.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutSqs/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutRabbitDlxReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutRabbitDlxReopen.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutLocalPriorArt": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutLocalPriorArt. Search the committed corpus for redelivery-budget, dead-letter, retry-budget, and queue task-identity overlap; report exact search commands and hits; verify no existing entry already covers the new clauses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutLocalPriorArt/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutLocalPriorArt.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutFrontierOverlap": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutFrontierOverlap. Read other lane province boundaries for durable-execution ownership; report contested scope only, never absorb another domain.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutFrontierOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutFrontierOverlap.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutCounterInventory": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutCounterInventory. Recompute script count A, checklist count C and note count C2 from committed R1 bytes; identify any unlisted/runnable file or unmapped corpus note.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutCounterInventory/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutCounterInventory.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutWavePolicy": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutWavePolicy. Read policy v2 (/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json) and the committed spec/taskCall; verify band 64-128, attack ratio >=25%, role mix and task uniqueness.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-taskcall.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutWavePolicy/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutWavePolicy.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ScoutR54SeatConvention": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "scout",
+    "item": "Item ScoutR54SeatConvention. Re-read the R53-2 routed convention and report the exact accounting for the prepared R55 wave; no seat is counted returned-without-report unless it returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutR54SeatConvention/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutR54SeatConvention.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticCounterNoop": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticCounterNoop. Build the cheapest no-op control that leaves source-dupes absent or scorecard-only; run A56 at base and show why it cannot reach HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/attest56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticCounterNoop/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticCounterNoop.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticStaticVerdict": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticStaticVerdict. Try a verdict-printing stub or hand-written CLEAN output against A56 B3/B4; show whether the frozen counter can be fooled by a gate that only prints CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticStaticVerdict/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticStaticVerdict.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticReceiptForgery": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticReceiptForgery. Attack the R55 receipt plan with a rewritten prelude, copied sidecar, nonce replay, or same-record duplicate; report which B8 arms fire.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticReceiptForgery/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticReceiptForgery.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticC2Overfit": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticC2Overfit. Try a sourceless/empty fixture or unrelated README row to satisfy D56; identify which E1-E5 clauses fail and why.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticC2Overfit/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticC2Overfit.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticC1Scope": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticC1Scope. Challenge whether every A56 check is reachable and whether any scorecard-only or do-nothing change can meet ATTEST56_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticC1Scope/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticC1Scope.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "CriticNoHarm": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "critic",
+    "item": "Item CriticNoHarm. Review all touched lane files for an axis harm, unscoped content, source-tier inflation, or score-proxy regression; do not grade on a model seat basis.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticNoHarm/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticNoHarm.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "MutCapDigest": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "mutation-tester",
+    "item": "Item MutCapDigest. Mutate one pinned `url` field (same ids); verify the gate kills it with DRIFT (stale-known or known-mismatch), exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapDigest/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapDigest.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "MutCapTraversal": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "mutation-tester",
+    "item": "Item MutCapTraversal. Mutate the registry to duplicate a row id across two `known` entries; verify FAIL-CLOSED exit 2, never a score.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapTraversal/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapTraversal.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "MutCapVacuity": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "mutation-tester",
+    "item": "Item MutCapVacuity. Mutate `known` to a single-member ids list and to ids with non-S### tokens; verify FAIL-CLOSED exit 2.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapVacuity/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapVacuity.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "MutA56DropCheck": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "mutation-tester",
+    "item": "Item MutA56DropCheck. Drop one hold check in a sandbox copy of the frozen A56 probe; require ATTEST56_UNMET 9/10, exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutA56DropCheck/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutA56DropCheck.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "MutD56SourceRow": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "mutation-tester",
+    "item": "Item MutD56SourceRow. Remove S113 or its used-by cell in a sandbox tree; require D56 E3/E4 to miss at the same revision.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutD56SourceRow/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutD56SourceRow.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "SimplifyCapGate": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "simplifier",
+    "item": "Item SimplifyCapGate. Find code or schema branches in source-dupes that are unnecessary for the frozen contract; propose only deletions preserving every selftest case.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SimplifyCapGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SimplifyCapGate.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "SimplifyEntryProse": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "simplifier",
+    "item": "Item SimplifyEntryProse. Identify duplicate or non-actionable prose in the entry; propose a shorter version without changing its sourced claims or scope.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SimplifyEntryProse/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SimplifyEntryProse.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "SentinelRegistryPaths": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "sentinel",
+    "item": "Item SentinelRegistryPaths. Threat-model untrusted registry paths, symlink parents, hash substitution and malformed JSON; verify the gate never reads outside its base and fail-closed arms cannot degrade to DRIFT.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SentinelRegistryPaths/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SentinelRegistryPaths.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "SentinelArtifacts": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "sentinel",
+    "item": "Item SentinelArtifacts. Scan new source groups, receipts and lesson for credentials, private URLs or leaked environment values; report patterns only.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SentinelArtifacts/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SentinelArtifacts.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "RevengerCounterIntent": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "revenger",
+    "item": "Item RevengerCounterIntent. Reverse-engineer the R54-C1/capture lineage from the round-54 verifier spotcheck and prior scorecards; look for undocumented registry invariants or intent the contract misses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/RevengerCounterIntent/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/RevengerCounterIntent.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   },
+   "ConnectorSiblingOverlap": {
+    "kind": "spawn",
+    "agentId": null,
+    "role": "connector",
+    "item": "Item ConnectorSiblingOverlap. Scan sibling PROVINCE frontiers for overlap with bounded-redelivery/dead-letter/delivery-limit work; report contested ownership with pointers, never absorb.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ConnectorSiblingOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ConnectorSiblingOverlap.md",
+    "axes": [
+     "operability",
+     "coverage"
+    ],
+    "milestone": "kumitate round 56 (hyaku run 5)"
+   }
+  }
+ },
+ "compaction": {
+  "applied": false,
+  "mechanism": null,
+  "reason": null,
+  "savedBytes": 0,
+  "payloadBytesBefore": 0,
+  "payloadBytesAfter": 0
+ },
+ "taskCall": {
+  "context": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Goal\nkumitate round 56 ONLY. This is ONE v2 wave of 64 seats, validated under /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json. Claims: C1 operability capability acquisition source-dupes (ATTEST56); C2 sourced durable-execution frontier entry visibility-lease-ack-deadlines (DOCTRINE56). Axes: operability + coverage. The L1 holds the planner seat. This spec is prepared for the orchestrator to dispatch between rounds; do not attempt dispatch, resume, or replace any seat.\n\n# Lane and write boundary\nLane: /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated). Fleet root: /home/vgpnk/Projects/shokunin. Origin source tree /home/vgpnk/Projects/ufo-fsd-alpha is read-only. Seats are leaves. Lane production files, SCORECARD.md, LOG.md, SKILL.md, PROVINCE.md, corpus/, jj state, and Git index are READ-ONLY. Do not commit, push, run mutating git/jj commands, edit fleet files, touch .ufo/state/* or .ufo/watchdog.log, or touch sibling repos. Your only lane writes are your own auxiliary directory /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/<SeatName>/ and your own report under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1/<SeatName>.md. No concurrent seat may write another seat's directory.\n\nEvery Report: trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin; write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>. All other paths named in this context and items are absolute paths under /home/vgpnk/Projects/shokunin/kumitate-shokunin. Capture full commands, stdout/stderr and exit codes in your own build directory; report only observed results. If a command writes Git state, run it in a separate sandbox clone under your own build directory, never in the lane. Mutation probes may alter only their own scratch copy.\n\n# Read first\nRead the committed plan /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md, both frozen counters /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs, and the relevant production files named in your item. Re-run commands against the full revision named by the plan/report, not moving HEAD. A report is not a verdict; your job is to falsify or independently corroborate the named item.\n\n# Sources and frontier\nS113 Google Cloud Pub/Sub subscriber docs, S114 AWS SQS visibility timeout and S115 NATS JetStream ack-responses were opened this round and admitted; S116 Temporal Visibility was opened and rejected (operator search != delivery lease). Reopen any source you assess from its exact URL; report URL, access date, <=25-word located quote and tier judgment. Do not edit SOURCES.md or knowledge entries. Cross-lane domain boundaries are not authorization to absorb work.\n\n\n# Routing and tool policy\nRoles are routed only by the host's /home/vgpnk/.omp/agent/config.yml; never set or name a model, provider alias, or route override. Tooling authorization: read /home/vgpnk/.omp/agent/RULES.md; tools that help or are a strict upgrade may be installed without asking, using official channels, and any install must be recorded with tool/version/channel/reason. All pacman transactions are PAUSED host-wide: do not run pacman; if the pause lifts, before any pacman -S run pacman -Sp --print-format '%n %v' <pkgs> and proceed only if every package is not installed; never run -Sy/-Syu/-U/-R, downgrade, or restart a service. No install is needed for this round.\n\n# Seats and evidence\nThis wave has 64 distinct items. Attack roles are reviewer, critic, and mutation-tester: 24/64 = 37.5%. Planner maps to L1; connector is a regular leaf seat. No item is filler. Each seat is one-shot, cannot spawn a subagent or run another wave, and is never replaced if it dies. Record a missing Report artifact as absent/returned-without-report only if the seat actually returned payload; absent report alone does not reveal why. A non-dispatched wave is not a dispatch receipt.",
+  "tasks": [
+   {
+    "name": "ExecCapClean",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapClean. Run the new gate on the committed revision: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs must read `SOURCE_DUPES: CLEAN groups=4 known=4`. Capture exact output and exit.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapClean/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapClean.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapClean.md"
+   },
+   {
+    "name": "ExecCapSelftest",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapSelftest. Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs --selftest`; count `case <name>: PASS` lines, verify 12/12 and final `VERDICT: PASS`.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSelftest/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSelftest.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapSelftest.md"
+   },
+   {
+    "name": "ExecCapHashTamper",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapHashTamper. In a scratch copy, edit one pinned member's `scope` cell so its group stops duplicating; run the gate; capture DRIFT `stale-known` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapHashTamper/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapHashTamper.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapHashTamper.md"
+   },
+   {
+    "name": "ExecCapAbsent",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapAbsent. In a scratch copy, append a row re-using an already-registered URL under a different scope; run the gate; capture DRIFT `new-duplicate` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapAbsent/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapAbsent.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapAbsent.md"
+   },
+   {
+    "name": "ExecCapSymlink",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapSymlink. In a scratch copy, edit a `known` entry's `ids` so it no longer matches its live group; verify DRIFT `known-mismatch` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSymlink/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSymlink.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapSymlink.md"
+   },
+   {
+    "name": "ExecCapBytes",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapBytes. In a scratch copy, set `known=[]` while live groups remain; verify DRIFT `new-duplicate` \u2014 an empty pin set is never a vacuous CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapBytes/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapBytes.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapBytes.md"
+   },
+   {
+    "name": "ExecCapUncaptured",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapUncaptured. In a scratch copy, remove one member row of a pinned group from SOURCES.md; verify DRIFT `stale-known` exit 1 (the pin becomes stale, not an orphan).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapUncaptured/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapUncaptured.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapUncaptured.md"
+   },
+   {
+    "name": "ExecCapOrphan",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapOrphan. In a scratch copy, add a `known` entry naming S998/S997 (no such live group); verify DRIFT `stale-known` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapOrphan/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapOrphan.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapOrphan.md"
+   },
+   {
+    "name": "ExecCapSchema",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapSchema. Run scratch controls for malformed JSON, version 2, a row id covered by two `known` entries, and a `known` entry missing `why`; capture each FAIL-CLOSED exit 2.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapSchema/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapSchema.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapSchema.md"
+   },
+   {
+    "name": "ExecCapEmpty",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapEmpty. In a scratch copy, craft a SOURCES doc with zero duplicate groups and `known=[]`; verify CLEAN groups=0 known=0 (the only legal empty pin).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapEmpty/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapEmpty.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapEmpty.md"
+   },
+   {
+    "name": "ExecCapEscape",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecCapEscape. Verify the gate's normalization parity with the census: rows carrying the same URL with different scheme/trailing-slash/host-case still group; run both the gate and the census W04 line count and compare.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecCapEscape/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecCapEscape.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecCapEscape.md"
+   },
+   {
+    "name": "ExecA56Close",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecA56Close. Run frozen A56 against the round-56 R1 revision and capture the literal `ATTEST56: ATTEST56_HELD held=10/10 checks=10` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecA56Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecA56Close.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecA56Close.md"
+   },
+   {
+    "name": "ExecD56Close",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecD56Close. Run frozen D56 against the round-56 R1 revision and capture the literal `DOCTRINE56: DOCTRINE56_HELD held=5/5 checks=5` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecD56Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecD56Close.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecD56Close.md"
+   },
+   {
+    "name": "ExecReceiptSet",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecReceiptSet. Verify the three round-56 receipts `.ufo/waves/round-56/receipts/attest-run-{1,2,3}.txt` and the doctored replay control `attest-run-2-replayed.txt`: `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger <dir> <file>` must read `RECEIPT: VALID` for each planned argv and `RECEIPT: TAMPERED` exit 1 for the control.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecReceiptSet/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecReceiptSet.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecReceiptSet.md"
+   },
+   {
+    "name": "ExecReceiptSpan",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecReceiptSpan. Parse the three receipt bodies; verify exact planned argv (bind-oracle --selftest, source-dupes --selftest, round-gate --selftest), pairwise-distinct nonces/digests, >=300s wall_start span, and no nonce in the round-48..54 corpora.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md \u00a7Receipt plan\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecReceiptSpan/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecReceiptSpan.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecReceiptSpan.md"
+   },
+   {
+    "name": "ExecSourcesGate",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecSourcesGate. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs at the final tree; capture `SOURCES_CHECK: CLEAN` exit 0, and run the fleet census `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` exit 0.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecSourcesGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecSourcesGate.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecSourcesGate.md"
+   },
+   {
+    "name": "ExecChecklistBattery",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecChecklistBattery. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs --checklists at final tree; compare its `CHECKLIST: n/m` against the freeze baseline `.ufo/waves/round-56/base/checklists-freeze.txt` (25 items now).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecChecklistBattery/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecChecklistBattery.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecChecklistBattery.md"
+   },
+   {
+    "name": "ExecR54Counters",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecR55Counters. Re-run the round-55 frozen counters A54 and D54 at the round-56 close revision; report whether both remain HELD (the registry must carry the r54 pins without regression).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/counter-pins.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecR55Counters/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecR55Counters.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecR54Counters.md"
+   },
+   {
+    "name": "ExecProxyCounts",
+    "agent": "executor",
+    "task": "/skill:godspeed\n\nItem ExecProxyCounts. Re-derive A/C/C2 and axis terms at R3 with node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --strict; capture `PROXY: MATCH` and the full stanza line.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ExecProxyCounts/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ExecProxyCounts.md\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ExecProxyCounts.md"
+   },
+   {
+    "name": "ReviewA56Predicate",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewA56Predicate. Attack A56 as a predicate: verify its 10 checks, the base receipt, the drop-one literal, the vacuous-HELD guard, and the R1 result; identify any do-nothing or scorecard-only change that could reach ATTEST56_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/attest56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewA56Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewA56Predicate.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewA56Predicate.md"
+   },
+   {
+    "name": "ReviewD56Predicate",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewD56Predicate. Attack D56: inspect E1-E5 \u2014 entry existence + provenance trio, >=12 distinct receipt bindings hashed at rev, SOURCES rows mined+used-by + capture pins, sources-check CLEAN, live census; plus the base receipt.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/doctrine56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewD56Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewD56Predicate.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewD56Predicate.md"
+   },
+   {
+    "name": "ReviewGateSemantics",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewGateSemantics. Review source-dupes schema, exit map, path base (lane-root default vs registry-local explicit), symlink/parent traversal, empty groups and failure classes; do not alter production files.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewGateSemantics/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewGateSemantics.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewGateSemantics.md"
+   },
+   {
+    "name": "ReviewS113Admission",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewS113Admission. Independently reopen S113 (https://cloud.google.com/pubsub/docs/subscriber); confirm the admitted claim/tier/quote/anchor are limited to Pub/Sub delivery semantics, idempotent producer and consumer offset ordering. URL, access date, <=25-word quote, tier judgment.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsub/Pub/Sub-43-design.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS113Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS113Admission.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewS113Admission.md"
+   },
+   {
+    "name": "ReviewS114Admission",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewS114Admission. Independently reopen S114 (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html); confirm the quote and tier apply only to SQS dead-letter/delivery-limit behavior.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutSqs/sqs-dlx.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS114Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS114Admission.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewS114Admission.md"
+   },
+   {
+    "name": "ReviewS115Admission",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewS115Admission. Independently reopen S115 (AWS Builders Library timeouts/retries/backoff-with-jitter); confirm the quote and tier-B scope is client-side retry policy, not broker delivery.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutNats/aws-timeouts.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS115Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS115Admission.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewS115Admission.md"
+   },
+   {
+    "name": "ReviewS116Rejection",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewS116Rejection. Challenge S116 rejection (Temporal workflow-execution): is Event-History/Replay genuinely out of scope for a delivery-guarantee + broker-budget entry, or is the reject too narrow? Confirm or refute against the opened page.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutTemporalVis/temporal-workflow-execution.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewS116Rejection/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewS116Rejection.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewS116Rejection.md"
+   },
+   {
+    "name": "ReviewMistakeR55One",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewMistakeR55One. Verify mistake R55-1 honestly recorded: S116x bytes absent at base (class landing/verifiability), captured-by = r54 verifier spotcheck \u00a75 item 1, fix = capture rule + Q46 + gate; confirm the red-before and fixed readings.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewMistakeR55One/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewMistakeR55One.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewMistakeR55One.md"
+   },
+   {
+    "name": "ReviewReceiptBindings",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewReceiptBindings. Recompute each doctrine56 receipt sha256 and verify >=12 distinct binding paths under round-56; challenge any clause whose binding file does not carry the asserted content.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewReceiptBindings/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewReceiptBindings.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewReceiptBindings.md"
+   },
+   {
+    "name": "ReviewProxyPin",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewProxyPin. Check GATE_PINS now includes pin.source-dupes, the v1 pin set stayed six, pin.proxy-check matches the edited script bytes, and strict proxy reads MATCH at R3.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewProxyPin/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewProxyPin.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewProxyPin.md"
+   },
+   {
+    "name": "ReviewAxisMove",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewAxisMove. Check the lowest-axis obligation: operability stays scored via a new capability (source-dupes gate + registry), coverage moves on a frontier entry, claims are causally separable, no retired axis worked.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewAxisMove/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewAxisMove.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewAxisMove.md"
+   },
+   {
+    "name": "ReviewFrontierMap",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewFrontierMap. Compare README Frontier entries and map rows with PROVINCE.md; verify the new knowledge row and lesson row map exactly once and the S116 reject row is retained.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewFrontierMap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewFrontierMap.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewFrontierMap.md"
+   },
+   {
+    "name": "ReviewRoundReport",
+    "agent": "reviewer",
+    "task": "/skill:godspeed\n\nItem ReviewRoundReport. Check the final report: section order, commits, per-claim measurements with verbatim FINAL lines, sources census, trend verdicts, SHONEN lines and the wave-prepared status.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ReviewRoundReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ReviewRoundReport.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ReviewRoundReport.md"
+   },
+   {
+    "name": "ScribeSourceRows",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeSourceRows. Draft a concise source-row and quote audit for S113-S116; do not edit SOURCES.md; flag any scope/tier/anchor correction.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/Scout*/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeSourceRows/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeSourceRows.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeSourceRows.md"
+   },
+   {
+    "name": "ScribeEntryReview",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeEntryReview. Draft a clause-by-clause summary of the visibility-lease-ack-deadlines entry, marking sourced facts vs [INFERENCE] and any unsupported sentence.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeEntryReview/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeEntryReview.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeEntryReview.md"
+   },
+   {
+    "name": "ScribeMistakes",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeMistakes. Draft a compact audit of R55-1 with class, evidence, captured-by and fix fields; do not edit the lesson.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeMistakes/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeMistakes.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeMistakes.md"
+   },
+   {
+    "name": "ScribeFrontierReport",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeFrontierReport. Draft the Sources & frontier report subsection with before/after row/tier counts (108 -> 112, tier A 91->93, B 9->10), touched rows, frontier advance and exact commands.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeFrontierReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeFrontierReport.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeFrontierReport.md"
+   },
+   {
+    "name": "ScribeScorecardAudit",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeScorecardAudit. Draft a claim-to-scorecard crosswalk for the capability row, A/C/C2 terms, axis scores and measured revisions; flag missing fields.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeScorecardAudit/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeScorecardAudit.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeScorecardAudit.md"
+   },
+   {
+    "name": "ScribeTrendEvidence",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeTrendEvidence. Draft evidence options for expansion, quality and discernment trends, respecting that this seat cannot provide the non-author spot-check.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeTrendEvidence/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeTrendEvidence.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeTrendEvidence.md"
+   },
+   {
+    "name": "ScribeSeatAccounting",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeSeatAccounting. Draft the 64-seat role-mix and prepared-but-undispatched accounting, including dead=0 and returned-without-report=0 unless a seat actually returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-validate.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeSeatAccounting/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeSeatAccounting.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeSeatAccounting.md"
+   },
+   {
+    "name": "ScribeLimitations",
+    "agent": "scribe",
+    "task": "/skill:godspeed\n\nItem ScribeLimitations. Draft a precise limits paragraph separating broker delivery-limit semantics, consumer commit ordering, client-side retry budgets, task identity, and withheld exactly-once/replay claims.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScribeLimitations/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScribeLimitations.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScribeLimitations.md"
+   },
+   {
+    "name": "ScoutPubsubReopen",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutPubsubReopen. Freshly reopen https://cloud.google.com/pubsub/docs/subscriber; confirm \u00a7Message delivery semantics location, the at-least-once quote, the idempotent-producer paragraph (since 0.11.0.0) and the consumer position/rewind passage; record the saved-body hash bcca1c2a\u2026.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsub/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutPubsubReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutPubsubReopen.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutPubsubReopen.md"
+   },
+   {
+    "name": "ScoutRabbitDlxReopen",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutRabbitDlxReopen. Freshly reopen https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html; confirm the four dead-lettering trigger events and the delivery-limit quote; record the saved-body hash c69bab87\u2026.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutSqs/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutRabbitDlxReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutRabbitDlxReopen.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutRabbitDlxReopen.md"
+   },
+   {
+    "name": "ScoutLocalPriorArt",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutLocalPriorArt. Search the committed corpus for redelivery-budget, dead-letter, retry-budget, and queue task-identity overlap; report exact search commands and hits; verify no existing entry already covers the new clauses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutLocalPriorArt/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutLocalPriorArt.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutLocalPriorArt.md"
+   },
+   {
+    "name": "ScoutFrontierOverlap",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutFrontierOverlap. Read other lane province boundaries for durable-execution ownership; report contested scope only, never absorb another domain.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutFrontierOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutFrontierOverlap.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutFrontierOverlap.md"
+   },
+   {
+    "name": "ScoutCounterInventory",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutCounterInventory. Recompute script count A, checklist count C and note count C2 from committed R1 bytes; identify any unlisted/runnable file or unmapped corpus note.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutCounterInventory/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutCounterInventory.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutCounterInventory.md"
+   },
+   {
+    "name": "ScoutWavePolicy",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutWavePolicy. Read policy v2 (/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json) and the committed spec/taskCall; verify band 64-128, attack ratio >=25%, role mix and task uniqueness.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-taskcall.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutWavePolicy/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutWavePolicy.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutWavePolicy.md"
+   },
+   {
+    "name": "ScoutR54SeatConvention",
+    "agent": "scout",
+    "task": "/skill:godspeed\n\nItem ScoutR54SeatConvention. Re-read the R53-2 routed convention and report the exact accounting for the prepared R55 wave; no seat is counted returned-without-report unless it returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-56.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ScoutR54SeatConvention/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ScoutR54SeatConvention.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ScoutR54SeatConvention.md"
+   },
+   {
+    "name": "CriticCounterNoop",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticCounterNoop. Build the cheapest no-op control that leaves source-dupes absent or scorecard-only; run A56 at base and show why it cannot reach HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/base/attest56-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticCounterNoop/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticCounterNoop.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticCounterNoop.md"
+   },
+   {
+    "name": "CriticStaticVerdict",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticStaticVerdict. Try a verdict-printing stub or hand-written CLEAN output against A56 B3/B4; show whether the frozen counter can be fooled by a gate that only prints CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticStaticVerdict/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticStaticVerdict.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticStaticVerdict.md"
+   },
+   {
+    "name": "CriticReceiptForgery",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticReceiptForgery. Attack the R55 receipt plan with a rewritten prelude, copied sidecar, nonce replay, or same-record duplicate; report which B8 arms fire.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticReceiptForgery/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticReceiptForgery.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticReceiptForgery.md"
+   },
+   {
+    "name": "CriticC2Overfit",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticC2Overfit. Try a sourceless/empty fixture or unrelated README row to satisfy D56; identify which E1-E5 clauses fail and why.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticC2Overfit/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticC2Overfit.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticC2Overfit.md"
+   },
+   {
+    "name": "CriticC1Scope",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticC1Scope. Challenge whether every A56 check is reachable and whether any scorecard-only or do-nothing change can meet ATTEST56_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticC1Scope/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticC1Scope.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticC1Scope.md"
+   },
+   {
+    "name": "CriticNoHarm",
+    "agent": "critic",
+    "task": "/skill:godspeed\n\nItem CriticNoHarm. Review all touched lane files for an axis harm, unscoped content, source-tier inflation, or score-proxy regression; do not grade on a model seat basis.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/CriticNoHarm/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/CriticNoHarm.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/CriticNoHarm.md"
+   },
+   {
+    "name": "MutCapDigest",
+    "agent": "mutation-tester",
+    "task": "/skill:godspeed\n\nItem MutCapDigest. Mutate one pinned `url` field (same ids); verify the gate kills it with DRIFT (stale-known or known-mismatch), exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapDigest/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapDigest.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/MutCapDigest.md"
+   },
+   {
+    "name": "MutCapTraversal",
+    "agent": "mutation-tester",
+    "task": "/skill:godspeed\n\nItem MutCapTraversal. Mutate the registry to duplicate a row id across two `known` entries; verify FAIL-CLOSED exit 2, never a score.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapTraversal/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapTraversal.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/MutCapTraversal.md"
+   },
+   {
+    "name": "MutCapVacuity",
+    "agent": "mutation-tester",
+    "task": "/skill:godspeed\n\nItem MutCapVacuity. Mutate `known` to a single-member ids list and to ids with non-S### tokens; verify FAIL-CLOSED exit 2.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupes.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutCapVacuity/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutCapVacuity.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/MutCapVacuity.md"
+   },
+   {
+    "name": "MutA56DropCheck",
+    "agent": "mutation-tester",
+    "task": "/skill:godspeed\n\nItem MutA56DropCheck. Drop one hold check in a sandbox copy of the frozen A56 probe; require ATTEST56_UNMET 9/10, exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/attest56-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutA56DropCheck/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutA56DropCheck.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/MutA56DropCheck.md"
+   },
+   {
+    "name": "MutD56SourceRow",
+    "agent": "mutation-tester",
+    "task": "/skill:godspeed\n\nItem MutD56SourceRow. Remove S113 or its used-by cell in a sandbox tree; require D56 E3/E4 to miss at the same revision.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/probe/doctrine56-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/MutD56SourceRow/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/MutD56SourceRow.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/MutD56SourceRow.md"
+   },
+   {
+    "name": "SimplifyCapGate",
+    "agent": "simplifier",
+    "task": "/skill:godspeed\n\nItem SimplifyCapGate. Find code or schema branches in source-dupes that are unnecessary for the frozen contract; propose only deletions preserving every selftest case.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SimplifyCapGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SimplifyCapGate.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/SimplifyCapGate.md"
+   },
+   {
+    "name": "SimplifyEntryProse",
+    "agent": "simplifier",
+    "task": "/skill:godspeed\n\nItem SimplifyEntryProse. Identify duplicate or non-actionable prose in the entry; propose a shorter version without changing its sourced claims or scope.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SimplifyEntryProse/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SimplifyEntryProse.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/SimplifyEntryProse.md"
+   },
+   {
+    "name": "SentinelRegistryPaths",
+    "agent": "sentinel",
+    "task": "/skill:godspeed\n\nItem SentinelRegistryPaths. Threat-model untrusted registry paths, symlink parents, hash substitution and malformed JSON; verify the gate never reads outside its base and fail-closed arms cannot degrade to DRIFT.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-dupess.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SentinelRegistryPaths/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SentinelRegistryPaths.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/SentinelRegistryPaths.md"
+   },
+   {
+    "name": "SentinelArtifacts",
+    "agent": "sentinel",
+    "task": "/skill:godspeed\n\nItem SentinelArtifacts. Scan new source groups, receipts and lesson for credentials, private URLs or leaked environment values; report patterns only.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/SentinelArtifacts/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/SentinelArtifacts.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/SentinelArtifacts.md"
+   },
+   {
+    "name": "RevengerCounterIntent",
+    "agent": "revenger",
+    "task": "/skill:godspeed\n\nItem RevengerCounterIntent. Reverse-engineer the R54-C1/capture lineage from the round-54 verifier spotcheck and prior scorecards; look for undocumented registry invariants or intent the contract misses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-dupes.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/RevengerCounterIntent/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/RevengerCounterIntent.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/RevengerCounterIntent.md"
+   },
+   {
+    "name": "ConnectorSiblingOverlap",
+    "agent": "connector",
+    "task": "/skill:godspeed\n\nItem ConnectorSiblingOverlap. Scan sibling PROVINCE frontiers for overlap with bounded-redelivery/dead-letter/delivery-limit work; report contested ownership with pointers, never absorb.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/visibility-lease-ack-deadlines.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-56/build/ConnectorSiblingOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-56/w1/ConnectorSiblingOverlap.md\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 56 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-56/w1/ConnectorSiblingOverlap.md"
+   }
+  ]
+ },
+ "resumeSends": [],
+ "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}

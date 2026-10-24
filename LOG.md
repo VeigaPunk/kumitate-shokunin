@@ -2136,3 +2136,38 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   named cost of adding the item, recorded in the report. Non-author source
   spot-check awaited from the independent closure reviewer; discernment is
   not self-claimed. Tool installs/updates: none.
+
+- 2026-10-24 — round 56 (hyaku run 5; attempt 1). Claims: C1 operability,
+  capability acquisition `source-dupes` (`kumitate-source-dupes-v1`), frozen
+  A56 v1; C2 coverage frontier, sourced entry `visibility-lease-ack-deadlines.md`
+  (S113/S114/S115), frozen D56 v1. Base
+  `3eae059e929e4da317c45eba18b4099b90f7541b`. Plan
+  `.ufo/waves/round-56/plan.md`; counters `.ufo/waves/round-56/probe/`; receipts
+  in `.ufo/waves/round-56/{base,close,receipts,witness,build}/`.
+  A56: base `ATTEST56_UNMET held=0/10` → measured-tip result committed under
+  `close/` (the integration revision carries the gate, registry, SKILL rows,
+  capability row, entry, sources rows, captures, lesson, README, PROVINCE,
+  QUALITY Q47, wave spec and mutant transcript). D56: base
+  `DOCTRINE56_UNMET held=2/5` → measured-tip result under `close/`.
+  `source-dupes` at tip reads `CLEAN groups=4 known=4`; `--selftest` is 12/12.
+  Proxy terms A=87, C=26, C2=132/132; operability score remains 9 (terminal
+  integer), and the retired coverage aggregate remains 10 after the inherited
+  `round-55-verifier-spotcheck` README map row is restored (same R53/R54-2
+  class of inherited drift, repaired not hidden).
+  Corrections for routed defects (append-only): **R55-V1** — the round-55
+  report's `Landed changes` omitted bookkeeping commits `e7a07111`/`26c886d7`
+  (SCORECARD measured-slot fills); this round names them here and its own
+  report lists every lane commit authored under round 56. **R55-V2** — the
+  tier histogram filed as `B 9→10` measures `B 9→11` over committed bytes
+  (S111 admitted-B + S112 rejected-B); the correction is recorded here, in
+  `corpus/lessons/round-56.md ## Mistakes`, and in the round-56 report's
+  Sources & frontier section.
+  One v2 wave validated/prepared: 64 seats, 24 attack roles (reviewer 13,
+  critic 6, mutation-tester 5), 0 resumes; planner held by L1. It remains
+  prepared-but-undispatched for the orchestrator; no seats returned, no dead
+  seats, and no returned-without-report seats. Named counter-obsolescence
+  carry: frozen A54 asserts exactly-24 and A55 exactly-25 checklist items;
+  this round's capability move makes it 26, so A54 reads 8/10 (B7+B8 class)
+  and A55 9/10 (B7) at close — the named cost of adding the item.
+  Non-author source spot-check awaited from the independent closure reviewer;
+  discernment is not self-claimed. Tool installs/updates: none.
