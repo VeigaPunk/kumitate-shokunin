@@ -1,0 +1,555 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "kumitate-r51-w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 16,
+    "waveMinLanes": 32,
+    "waveMaxLanes": 64,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 32,
+    "resume": 0,
+    "total": 32
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-51/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-51/w1",
+    "members": {
+      "ConnSiblingOverlap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": "Item ConnSiblingOverlap. Sibling-overlap scan: enumerate the other shokunin lanes' ACTIVE round-51 (or current) work under /home/vgpnk/Projects/shokunin/*-shokunin/.ufo/waves/ and .ufo/reports/round-51/ (read-only). Does any sibling lane claim receipt-attestation, invocation receipts, receipt ledgers, clock_gettime/getrandom sourcing, or a cap-run-adjacent instrument this round? Report contested or adjacent scope with exact paths; conclude whether kumitate round 51 overlaps any live sibling claim. Evidence: commands + output.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecInstrument": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecInstrument. BUILD scripts/receipt-attest.mjs per the plan's C1 contract (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/plan.md §C1 and counter probe/attest51-probe.mjs first). Work in a mktemp -d scratch copy; deliver the finished script at build/ExecInstrument/receipt-attest.mjs plus a selftest transcript build/ExecInstrument/selftest.txt (node receipt-attest.mjs --selftest exit 0, final line ATTEST_SELFTEST: PASS, >=10 cases listed). Requirements: no env recorded; nonce = crypto.randomBytes(16).hex; sidecar in GNU `sha256sum -c` format; canonical JSON one line sorted keys; inner digest binds all semantic fields; verify verdicts exactly RECEIPT: VALID/REPLAY/TAMPERED with exits 0/1/1, usage 64, unreadable 2; selftest includes flake-injection (doctored body -> REPLAY) and sidecar-mismatch (-> TAMPERED) arms. Style follows the lane's scripts/bind-oracle.mjs header conventions (contract name kumitate-receipt-attest-v1, fail-closed, no deps).",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecSelftestArms": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecSelftestArms. Independently design the selftest case list for receipt-attest (the contract: --selftest >=10 hermetic cases, each printing PASS/FAIL, plus flake-injection REPLAY and sidecar TAMPERED arms). Write build/ExecSelftestArms/selftest-plan.md: >=12 named cases, each with input fixture description and expected verdict. Then, if ExecInstrument's delivered script exists under build/ExecInstrument/, run its --selftest against YOUR fixtures list and report divergences; if it does not exist yet, run your cases against a scratch implementation you write yourself and report which cases fail.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecForgerControl": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecForgerControl. Do-nothing/static-forger control for C1: create a scratch stub receipt-attest.mjs that prints the expected verdict strings (ATTEST_SELFTEST: PASS / RECEIPT: VALID ...) with no real logic, plus a scratch tree mimicking the lane layout (.ufo/waves/round-51/receipts/ with three forged receipts carrying identical nonces). Run the FROZEN counter /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/attest51-probe.mjs against your scratch lane at its scratch rev-or-worktree exactly as its header instructs (adapt only the lane path; if the probe hard-requires git, make the scratch a git repo with one commit). Report the exact held=k/5 line. The control must read UNMET: if it reads HELD, the counter has a kill-rule hole — report that as a critical finding with the bypass mechanism.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecBaseCounter": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecBaseCounter. Before-measurement witness: run BOTH frozen counters against the lane base rev c90b9de94009b938fa19a089bfaa97df20b54f86 (git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin is read-only for you; the probes extract via git archive): `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin c90b9de94009b938fa19a089bfaa97df20b54f86` and the D51 probe likewise. Save both transcripts verbatim at build/ExecBaseCounter/attest-base.txt and doctrine-base.txt and quote the final lines. Expected: ATTEST_UNMET held=0/5, DOCTRINE_UNMET held=0/5.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecPinsRecipe": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecPinsRecipe. Prepare the integration recipe for C1's pin + registry + checklist changes as DELTA FILES under build/ExecPinsRecipe/: (a) the exact `pin.receipt-attest=<sha256>` line to append to the kumitate-gate-pins-v1 block in SCORECARD.md (compute the sha256 of build/ExecInstrument/receipt-attest.mjs if present, else of your own scratch implementation, and name which), (b) a proposed SKILL.md gate-registry row for receipt-attest mirroring the bind-oracle row format (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md gate registry section first), (c) a proposed checklist item 23 line (GFM task, command `node scripts/receipt-attest.mjs --selftest`, accepted exit 0, expected substring ATTEST_SELFTEST: PASS) matching the existing items' style, (d) the proxy-check.mjs GATE_PINS map addition needed for pin.receipt-attest (read scripts/proxy-check.mjs around its GATE_PINS constant) as a unified-diff-style snippet. Do NOT edit the lane files; deliver snippets only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScoutClockSource": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Item ScoutClockSource. OPEN source S100: fetch https://man7.org/linux/man-pages/man2/clock_gettime.2.html (curl, read-only). Save the fetched bytes at build/ScoutClockSource/clock-gettime.html and record: fetch date 2026-10-23 (UTC time from `date -u`), HTTP status, byte count, sha256. Extract ONE <=25-word verbatim quote with its location (section name/line context) that grounds the teaches cell: CLOCK_MONOTONIC is not affected by NTP/step changes (or the closest sentence the page carries — quote what is actually there). Propose the full SOURCES.md row: id S100 | source title+URL | kind docs | tier A | scope 'CLOCK_MONOTONIC semantics for invocation-receipt monotonic spans' | anchor (section name + man-pages version if visible) | teaches (one grounded benefit) | status mined | opened 2026-10-23 | recheck 180d | used-by corpus/knowledge/invocation-attestation.md.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScoutRandomSource": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Item ScoutRandomSource. OPEN source S101: fetch https://man7.org/linux/man-pages/man2/getrandom.2.html (curl, read-only). Save bytes at build/ScoutRandomSource/getrandom.html; record fetch date (date -u), HTTP status, byte count, sha256. Extract ONE <=25-word verbatim quote with location grounding: getrandom() as the kernel CSPRNG interface (or GRND_NONBLOCK semantics / urandom seeding — quote what is actually present). Propose the full SOURCES.md row (id S101, kind docs, tier A for the scope 'nonce generation for receipt ledgers on Linux', anchor = section name, teaches = one grounded benefit, status mined, opened 2026-10-23, recheck 180d, used-by corpus/knowledge/invocation-attestation.md).",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScoutReceiptCorpora": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Item ScoutReceiptCorpora. Negative-claim sweep for the A4 nonce ledger: find EVERY committed receipt-like artifact from prior rounds the ledger must not collide with. Sweep: find /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-4{8,9,50} -type f \\( -name '*eceipt*' -o -name 'ReRun*.txt' -o -name 'L1-score*.txt' \\) plus grep -rl 'nonce' over those dirs. List each file with sha256 and whether it contains a parseable nonce field. Deliver build/ScoutReceiptCorpora/corpora.md with the full list and the exact sweep commands+outputs (a negative claim carries its sweep).",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScoutBaselineHar": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Item ScoutBaselineHar. Recon for the harm battery: run read-only and save transcripts at build/ScoutBaselineHar/: node scripts/cap-run.mjs --selftest (expect CAP_RUN_SELFTEST 12/12), node scripts/bind-oracle.mjs --selftest (7/7), node scripts/counter-rerun.mjs --selftest, node scripts/round-gate.mjs --selftest. Also run node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin c90b9de94009b938fa19a089bfaa97df20b54f86 and the repairs50 probe at base (expect GUARD_HELD 8/8, LEDGER_HELD 8/8 at the current tip — use the jj state tip if base differs). Quote final lines of all six runs.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScoutSiblingLanes": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Item ScoutSiblingLanes. Per-surface reconnaissance: read-only scan of /home/vgpnk/Projects/shokunin/.ufo/state/ and .ufo/watchdog.log (last 50 lines) plus ls of sibling .ufo/reports/round-51/ — which lanes are live this tick, and is any driver file for kumitate round 51 present beyond this wave? Report the kumitate driver's expected report path and any sign of a concurrent kumitate attempt (attempt>1 markers). Evidence: commands + output. Do not touch any file.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevPlan": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Item RevPlan. Freeze-integrity review of /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/plan.md against both counters (probe/attest51-probe.mjs, probe/doctrine51-probe.mjs): (a) the predicate sentences are byte-identical in plan, counter headers and (future) report labels — list any drift; (b) each counter check is individually fail-closed and exit 2 on crash; (c) the counting commands in plan match counter usage lines; (d) claim-sizing review per AXES.md: distinct axes, causal separability, no universal clause the counter cannot enumerate. Report findings with severity; do not edit anything.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevInstrumentContract": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Item RevInstrumentContract. Review the C1 instrument CONTRACT (plan.md §C1 + attest51-probe.mjs) for implementability gaps an executor could trip on: exact sidecar format, canonical-JSON definition, digest computation order, exit codes, selftest requirements. Then review the delivered code at build/ExecInstrument/receipt-attest.mjs (if present) against the contract line by line; if absent, write the five trickiest contract ambiguities as questions with your resolutions. Report defects with severity; do not edit.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevCounterA": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Item RevCounterA. Adversarial review of the FROZEN counter probe/attest51-probe.mjs: trace each of A1..A5 — can any check be satisfied by a do-nothing control, a static forger, or a prelude-only replay? Is the git-archive extraction sound (symlinks, missing rev, dirty tree)? Does held=k/5 arithmetic match the printed checks? List every hole with a concrete bypass and its severity. Do not edit the counter; findings only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevCounterD": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Item RevCounterD. Same adversarial review for probe/doctrine51-probe.mjs (D1..D5): can the entry pass with hollow clauses (paths that exist but say nothing)? Is the SOURCES row status check enforceable, tier inflation visible, census call live-only? Concrete bypass per check with severity. Do not edit.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "CritC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Item CritC1. Falsify claim C1 as declared in plan.md: (a) is the before state real (run the A51 counter at base and quote it)? (b) is the do-nothing control truly unable to reach held=5/5 — design the strongest cheap forger you can and state exactly which check stops it (or report the hole)? (c) attribution: which A-checks would ALSO pass if the instrument existed but did not close the M2 class? (d) does A2's >=300s span rest on author scheduling, and is that honestly labelled? Verdict: does C1 verify as declared, or which predicate sentence must change?",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "CritC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Item CritC2. Falsify claim C2: (a) is corpus/knowledge/invocation-attestation.md NEW ground, or a re-expression of QUALITY Q39 / corpus/knowledge/counter-amendment-discipline.md (read both)? (b) are S100/S101 tier-A defensible for their scopes or tier inflation (community/B would be)? (c) does D51's clause-binding rule force substantive content or is there a hollow-clause bypass? (d) name the one thing that would make this entry clearly worth its bytes. Verdict and required changes.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "CritFreeze": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Item CritFreeze. Attack the freeze itself: sha256 plan.md and both counters now; verify the counters' RULE labels (A51/D51) and check names appear verbatim in plan.md's predicate sentences; confirm no lane file outside .ufo/waves/round-51/{plan.md,probe/} is needed by either counter (a counter depending on uncommitted or post-freeze bytes is a defect). Report exact hashes and any freeze defect with severity. Read-only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "CritHarm": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Item CritHarm. Review the declared harm battery H1..H5 in plan.md §'Harm rules': is each arm measurable at close, does each have its baseline captured (check base/baseline-gates.txt exists and quotes 22/22 + PROXY: MATCH), and what harm arm is MISSING (e.g. the new checklist item 23 must pass; receipts must contain no secrets — propose the sweep command for that)? Report with severity; read-only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "MutInstrument": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Item MutInstrument. Design a literal-mutant battery for scripts/receipt-attest.mjs (the deliverable at build/ExecInstrument/receipt-attest.mjs, or your own scratch copy if absent): >=12 single-literal/single-line mutants across the digest computation, sidecar comparison, nonce comparison and verdict-emission sites. RUN the mutants you can: apply each to a scratch copy, run its --selftest, classify killed/survived/drift with the exact case that kills it. Report the mutant table; survivors with no killing case are findings.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "MutCounter": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Item MutCounter. Design >=10 mutants of the two frozen counters (drop-one A-check/D-check arms, inverted comparisons, relaxed thresholds, verdict-string swaps). For each, predict held=k/n without running; then implement and RUN at least the 4 highest-risk ones against the lane base (they must read UNMET, never HELD, at base). Report the table with observed outputs. Do not edit the counters in the lane.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "LabratClocks": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item LabratClocks (bounded probe; an executor-run labrat-style hypothesis test — run it yourself, no subagents). On this host, verify the receipt clock fields are sound — write a 30-line scratch node script that samples process.hrtime.bigint() and Date.now() before/after a 50 ms busy loop; confirm monotonic span > 0 and wall span >= 50 ms across 20 trials; check `sha256sum -c` accepts a GNU-format sidecar you generate; confirm crypto.randomBytes(16) yields distinct values across 1000 draws (no collisions). Deliver the script + transcript under build/LabratClocks/. This is the only spawn you may make; run it yourself (depth-0, no subagents).",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "LabratM2Replay": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item LabratM2Replay (bounded probe; run it yourself, no subagents). Probe of the exact M2 forgery: taking the contract in plan.md §C1, implement the forgery end-to-end in scratch — (1) produce a genuine receipt with a scratch implementation, (2) copy it, rewrite ONLY the run-at prelude, keep the old sidecar (the lesson-M2 move), (3) show the genuine implementation's verify rejects it as RECEIPT: TAMPERED exit 1. If build/ExecInstrument/receipt-attest.mjs exists use it; else your scratch build. Also test the variant where the forger recomputes the sidecar: show it then needs the inner digest (nonce reuse) — run verify --ledger over a 3-receipt dir to show REPLAY. Transcript under build/LabratM2Replay/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "SentReceipt": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": "Item SentReceipt. Security review of the C1 design: (a) receipt files must never carry env, tokens, or secret material — review the contract and the delivered code (build/ExecInstrument/receipt-attest.mjs if present) and propose the concrete sweep command that proves receipts are clean at close; (b) nonce entropy: is 128 bits from crypto.randomBytes adequate against ledger collisions at the lane's receipt volume (back it with the birthday bound arithmetic)? (c) sidecar trust model: what does an attacker with write access to receipts/ gain, and is that in scope? Report findings with severity.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevengerGap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "revenger",
+        "item": "Item RevengerGap. Reverse-engineer the ACTUAL gap from the artifacts: read corpus/lessons/round-50.md M2, corpus/QUALITY.md Q39, and corpus/knowledge/counter-amendment-discipline.md; state in one sentence what precise property the round-50 repairs left unproven. Then audit plan.md §C1 against that sentence: does ATTEST_HELD measure the property, a proxy, or something else? If the instrument closes a DIFFERENT gap than the one M2 named, say so with evidence — that is a round-shaping finding.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "RevScope": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Item RevScope. Province check: are C1 (a node instrument for invocation receipts of lane gate counters) and C2 (a corpus entry on attestation design) inside kumitate's PROVINCE.md bands (core: lane instruments scripts/*.mjs, learning registry corpus/)? Check both against PROVINCE.md and MISSION.md; flag any cross-domain bleed (e.g. absorbing chousa research-method scope or kagi secrets scope). Also verify the wave's own write pattern honours the lane read-only rule. Report; read-only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScribeEntry": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": "Item ScribeEntry. Draft the FULL text of corpus/knowledge/invocation-attestation.md at build/ScribeEntry/invocation-attestation.md: provenance trio first (source: citing S100 https://man7.org/linux/man-pages/man2/clock_gettime.2.html and S101 https://man7.org/linux/man-pages/man2/getrandom.2.html with anchors from the scout reports under build/ScoutClockSource/ and build/ScoutRandomSource/ (read them if present; if absent, write the trio citing the rows with anchor 'pending scout confirmation' and list the gap); verified-at: 2026-10-23; recheck: 180d). Body: the M2 forgery class, the two-layer binding design, why wall clocks alone invite replay (cite S100), nonce generation + ledger freshness (cite S101), the kept Q39 ceiling, and >=12 clause lines each carrying `receipt:<repo-path>@sha256:<64hex>` bindings to committed artifacts (use the r50 receipts: .ufo/waves/round-50/ReRunB49-{1,2,3}.txt etc. — compute their sha256 now; paths must exist at base c90b9de9). Falsifiable or marked opinion; a count carries its command.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScribeSources": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": "Item ScribeSources. Draft the SOURCES.md additions at build/ScribeSources/SOURCES-delta.md: the two full row lines for S100 and S101 using the scout proposals (build/ScoutClockSource/, build/ScoutRandomSource/ — read if present), each with status mined, opened 2026-10-23, recheck 180d, used-by corpus/knowledge/invocation-attestation.md; plus the lesson ## Gate block draft for corpus/lessons/round-51.md recording for EACH new row: the URL, the access date (2026-10-23, UTC time), and the <=25-word located quote. Also draft the old->new used-by lines for any row the entry additionally cites (likely none). Do not edit corpus/SOURCES.md itself.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ScribeLesson": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": "Item ScribeLesson. Draft corpus/lessons/round-51.md skeleton at build/ScribeLesson/round-51.md: header (lane, round, base, freeze, plan path, counters, wave shape per plan.md), an empty ## Mistakes section with one row pre-filled ONLY if your own reading of round-50 artifacts surfaces a new mistake class not already in round-50.md M1..M6 (otherwise write 'mined from wave findings — pending'), and a ## Gate section skeleton listing the candidates/admitted/rejected slots. Also draft the LOG.md round-51 entry skeleton at build/ScribeLesson/LOG-entry.md following the round-50 LOG entry's shape (read LOG.md tail).",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "ExecSelftestExec": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Item ExecSelftestExec. A1 falsifier: once build/ExecInstrument/receipt-attest.mjs exists, run `node <it> --selftest` yourself in a fresh mktemp dir (copy the script only — no corpus, no sidecars) and save the verbatim transcript at build/ExecSelftestExec/selftest-fresh.txt. Verify: exit 0; final line exactly ATTEST_SELFTEST: PASS; >=10 case lines; the flake-injection case and the sidecar case present. Then sabotage one case expectation in a scratch copy (swap VALID->REPLAY in the fixture) and confirm the selftest FAILS — proving the suite can read red. If the instrument does not exist when you run, write your own minimal compliant implementation, run the same protocol on it, and say so. Report divergences from the plan's contract as findings.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "DistWave1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": "Item DistWave1 (synthesis seat). You run LAST among build seats: read every peer report present under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/w1/ (wait-free: read whatever exists when you run; late reports are not your input). Deduplicate all findings into a single attack-item list for wave 2: each item names WHAT it attacks (A1..A5 check, D1..D5 check, instrument code path, entry clause, SOURCES row, pin/stanza change, lesson, report section) and gives a one-line method. TARGET: >=32 distinct items. Output build/DistWave1/wave2-items.md numbered list. Also give your count of build vs attack findings and the 5 highest-severity findings overall.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      },
+      "SonicAudit": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "simplifier",
+        "item": "Item SonicAudit (mechanical audit seat). Mechanical audit: list every file under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/ at the time you run (find -type f | sort) with sizes; verify every file is inside {plan.md, probe/, base/, w1/<SeatName>.md, build/<seat-name>/}; flag ANY file outside that set as a scope violation (seats must not write elsewhere in the lane). Also sha256 plan.md and both counters and record them (freeze hashes for the close critic). Report; read-only.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters"
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": "template_invocation",
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\nkumitate round 51 ONLY — wave 1 of 2 (v1 build shape, band 32-64) under /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v1.json. Lane repo /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated; READ-ONLY for you except your own report/aux paths below). Round plan (READ FIRST): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/plan.md — it freezes both counters and the two claims. Frozen counters (read before asserting anything): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/attest51-probe.mjs (rule A51) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/doctrine51-probe.mjs (rule D51).\n\n# Contract\nRound 51 declares exactly two claims. C1 (operability, capability acquisition): new shipped instrument scripts/receipt-attest.mjs (contract kumitate-receipt-attest-v1) that turns an invocation record into a machine-checked object — run --out <base> -- <cmd...> writes <base>.txt + <base>.txt.sha256 (GNU sha256sum format over the exact receipt bytes); receipt bytes = a display `run-at:` prelude line plus one canonical-JSON line (sorted keys) whose `digest` field binds every semantic field (nonce, argv, exit, stdout/stderr sha256, wall ISO start/end, monotonic span); verify [--ledger <dir>] <file> recomputes the inner digest, the sidecar hash and clock ordering, and with --ledger rejects nonce reuse across receipts; verdicts RECEIPT: VALID exit 0 / RECEIPT: REPLAY exit 1 (inner-digest mismatch or nonce reuse) / RECEIPT: TAMPERED exit 1 (sidecar mismatch); --selftest hermetic suite >=10 cases incl. a flake-injection case that must read REPLAY and a sidecar-mismatch case that must read TAMPERED. It closes the r50 lesson-M2 class: a receipt re-dated by rewriting only its run-at prelude now fails verification. It does NOT claim temporal proof (QUALITY Q39 ceiling kept). Predicate ATTEST_HELD = frozen A1..A5 checks at <rev> all hold (probe A51). C2 (frontier coverage, sourced): corpus/knowledge/invocation-attestation.md with provenance trio citing NEW SOURCES rows S100 (man7.org clock_gettime(2)) and S101 (man7.org getrandom(2)) opened this round by scout seats; predicate DOCTRINE_HELD = frozen D1..D5 (probe D51).\n\n# Bounds (read before acting)\n- Your lane: /home/vgpnk/Projects/shokunin/kumitate-shokunin. READ-ONLY except (a) your Report file and (b) aux files only when your item names an aux directory under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/build/<your-seat-name>/. Never edit any other lane file; never run git/jj mutations anywhere (read-only git ok); never touch the fleet repo, sibling lanes, .ufo/state, MANIFEST.json, or ~/.omp/agent/*.\n- Seat tools start at the fleet root: EVERY path you read/write must be absolute under /home/vgpnk/Projects/shokunin/kumitate-shokunin. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.\n- Code work on scratch copies under mktemp -d; deliver finished code/prose as artifacts in your build/ directory for L1 integration. You never edit scripts/ or corpus/ yourself.\n- Tooling authorization (operator 2026-10-19): you may install/upgrade tools that help the task — official channels only (uv tool / npx / official binary into ~/.local/bin; NEVER pipe a remote script into a shell). PACMAN GUARD (orchestrator ruling 2026-10-20): ALL pacman transactions are PAUSED host-wide — no pacman -S/-Sy/-Syu/-U/-R, no service restarts; install via uv tool/npx/~/.local/bin only, or record the need in your report.\n- Answer your item exactly, with evidence: commands run + output, absolute paths, sha256 where relevant. Name what you attacked/built. Cite plan.md / counter line numbers when you assert a predicate property. No fabrication; an unrun check has not passed.\n- Do not message other seats; do not use agent://all; do not spawn subagents (executor seats may spawn ONE read-only labrat probe at depth-1 only if the item says so).\n- The two counters and plan.md are FROZEN: if you find a real defect in them, do not edit — write it up as a finding with severity and a proposed minimal fix; the L1 adjudicates after the wave.",
+    "tasks": [
+      {
+        "name": "ConnSiblingOverlap",
+        "agent": "connector",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ConnSiblingOverlap. Sibling-overlap scan: enumerate the other shokunin lanes' ACTIVE round-51 (or current) work under /home/vgpnk/Projects/shokunin/*-shokunin/.ufo/waves/ and .ufo/reports/round-51/ (read-only). Does any sibling lane claim receipt-attestation, invocation receipts, receipt ledgers, clock_gettime/getrandom sourcing, or a cap-run-adjacent instrument this round? Report contested or adjacent scope with exact paths; conclude whether kumitate round 51 overlaps any live sibling claim. Evidence: commands + output.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ConnSiblingOverlap.md"
+      },
+      {
+        "name": "ExecInstrument",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecInstrument. BUILD scripts/receipt-attest.mjs per the plan's C1 contract (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/plan.md §C1 and counter probe/attest51-probe.mjs first). Work in a mktemp -d scratch copy; deliver the finished script at build/ExecInstrument/receipt-attest.mjs plus a selftest transcript build/ExecInstrument/selftest.txt (node receipt-attest.mjs --selftest exit 0, final line ATTEST_SELFTEST: PASS, >=10 cases listed). Requirements: no env recorded; nonce = crypto.randomBytes(16).hex; sidecar in GNU `sha256sum -c` format; canonical JSON one line sorted keys; inner digest binds all semantic fields; verify verdicts exactly RECEIPT: VALID/REPLAY/TAMPERED with exits 0/1/1, usage 64, unreadable 2; selftest includes flake-injection (doctored body -> REPLAY) and sidecar-mismatch (-> TAMPERED) arms. Style follows the lane's scripts/bind-oracle.mjs header conventions (contract name kumitate-receipt-attest-v1, fail-closed, no deps).\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecInstrument.md"
+      },
+      {
+        "name": "ExecSelftestArms",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecSelftestArms. Independently design the selftest case list for receipt-attest (the contract: --selftest >=10 hermetic cases, each printing PASS/FAIL, plus flake-injection REPLAY and sidecar TAMPERED arms). Write build/ExecSelftestArms/selftest-plan.md: >=12 named cases, each with input fixture description and expected verdict. Then, if ExecInstrument's delivered script exists under build/ExecInstrument/, run its --selftest against YOUR fixtures list and report divergences; if it does not exist yet, run your cases against a scratch implementation you write yourself and report which cases fail.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecSelftestArms.md"
+      },
+      {
+        "name": "ExecForgerControl",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecForgerControl. Do-nothing/static-forger control for C1: create a scratch stub receipt-attest.mjs that prints the expected verdict strings (ATTEST_SELFTEST: PASS / RECEIPT: VALID ...) with no real logic, plus a scratch tree mimicking the lane layout (.ufo/waves/round-51/receipts/ with three forged receipts carrying identical nonces). Run the FROZEN counter /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/attest51-probe.mjs against your scratch lane at its scratch rev-or-worktree exactly as its header instructs (adapt only the lane path; if the probe hard-requires git, make the scratch a git repo with one commit). Report the exact held=k/5 line. The control must read UNMET: if it reads HELD, the counter has a kill-rule hole — report that as a critical finding with the bypass mechanism.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecForgerControl.md"
+      },
+      {
+        "name": "ExecBaseCounter",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecBaseCounter. Before-measurement witness: run BOTH frozen counters against the lane base rev c90b9de94009b938fa19a089bfaa97df20b54f86 (git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin is read-only for you; the probes extract via git archive): `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin c90b9de94009b938fa19a089bfaa97df20b54f86` and the D51 probe likewise. Save both transcripts verbatim at build/ExecBaseCounter/attest-base.txt and doctrine-base.txt and quote the final lines. Expected: ATTEST_UNMET held=0/5, DOCTRINE_UNMET held=0/5.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecBaseCounter.md"
+      },
+      {
+        "name": "ExecPinsRecipe",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecPinsRecipe. Prepare the integration recipe for C1's pin + registry + checklist changes as DELTA FILES under build/ExecPinsRecipe/: (a) the exact `pin.receipt-attest=<sha256>` line to append to the kumitate-gate-pins-v1 block in SCORECARD.md (compute the sha256 of build/ExecInstrument/receipt-attest.mjs if present, else of your own scratch implementation, and name which), (b) a proposed SKILL.md gate-registry row for receipt-attest mirroring the bind-oracle row format (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md gate registry section first), (c) a proposed checklist item 23 line (GFM task, command `node scripts/receipt-attest.mjs --selftest`, accepted exit 0, expected substring ATTEST_SELFTEST: PASS) matching the existing items' style, (d) the proxy-check.mjs GATE_PINS map addition needed for pin.receipt-attest (read scripts/proxy-check.mjs around its GATE_PINS constant) as a unified-diff-style snippet. Do NOT edit the lane files; deliver snippets only.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecPinsRecipe.md"
+      },
+      {
+        "name": "ScoutClockSource",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScoutClockSource. OPEN source S100: fetch https://man7.org/linux/man-pages/man2/clock_gettime.2.html (curl, read-only). Save the fetched bytes at build/ScoutClockSource/clock-gettime.html and record: fetch date 2026-10-23 (UTC time from `date -u`), HTTP status, byte count, sha256. Extract ONE <=25-word verbatim quote with its location (section name/line context) that grounds the teaches cell: CLOCK_MONOTONIC is not affected by NTP/step changes (or the closest sentence the page carries — quote what is actually there). Propose the full SOURCES.md row: id S100 | source title+URL | kind docs | tier A | scope 'CLOCK_MONOTONIC semantics for invocation-receipt monotonic spans' | anchor (section name + man-pages version if visible) | teaches (one grounded benefit) | status mined | opened 2026-10-23 | recheck 180d | used-by corpus/knowledge/invocation-attestation.md.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScoutClockSource.md"
+      },
+      {
+        "name": "ScoutRandomSource",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScoutRandomSource. OPEN source S101: fetch https://man7.org/linux/man-pages/man2/getrandom.2.html (curl, read-only). Save bytes at build/ScoutRandomSource/getrandom.html; record fetch date (date -u), HTTP status, byte count, sha256. Extract ONE <=25-word verbatim quote with location grounding: getrandom() as the kernel CSPRNG interface (or GRND_NONBLOCK semantics / urandom seeding — quote what is actually present). Propose the full SOURCES.md row (id S101, kind docs, tier A for the scope 'nonce generation for receipt ledgers on Linux', anchor = section name, teaches = one grounded benefit, status mined, opened 2026-10-23, recheck 180d, used-by corpus/knowledge/invocation-attestation.md).\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScoutRandomSource.md"
+      },
+      {
+        "name": "ScoutReceiptCorpora",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScoutReceiptCorpora. Negative-claim sweep for the A4 nonce ledger: find EVERY committed receipt-like artifact from prior rounds the ledger must not collide with. Sweep: find /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-4{8,9,50} -type f \\( -name '*eceipt*' -o -name 'ReRun*.txt' -o -name 'L1-score*.txt' \\) plus grep -rl 'nonce' over those dirs. List each file with sha256 and whether it contains a parseable nonce field. Deliver build/ScoutReceiptCorpora/corpora.md with the full list and the exact sweep commands+outputs (a negative claim carries its sweep).\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScoutReceiptCorpora.md"
+      },
+      {
+        "name": "ScoutBaselineHar",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScoutBaselineHar. Recon for the harm battery: run read-only and save transcripts at build/ScoutBaselineHar/: node scripts/cap-run.mjs --selftest (expect CAP_RUN_SELFTEST 12/12), node scripts/bind-oracle.mjs --selftest (7/7), node scripts/counter-rerun.mjs --selftest, node scripts/round-gate.mjs --selftest. Also run node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin c90b9de94009b938fa19a089bfaa97df20b54f86 and the repairs50 probe at base (expect GUARD_HELD 8/8, LEDGER_HELD 8/8 at the current tip — use the jj state tip if base differs). Quote final lines of all six runs.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScoutBaselineHar.md"
+      },
+      {
+        "name": "ScoutSiblingLanes",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScoutSiblingLanes. Per-surface reconnaissance: read-only scan of /home/vgpnk/Projects/shokunin/.ufo/state/ and .ufo/watchdog.log (last 50 lines) plus ls of sibling .ufo/reports/round-51/ — which lanes are live this tick, and is any driver file for kumitate round 51 present beyond this wave? Report the kumitate driver's expected report path and any sign of a concurrent kumitate attempt (attempt>1 markers). Evidence: commands + output. Do not touch any file.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScoutSiblingLanes.md"
+      },
+      {
+        "name": "RevPlan",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevPlan. Freeze-integrity review of /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/plan.md against both counters (probe/attest51-probe.mjs, probe/doctrine51-probe.mjs): (a) the predicate sentences are byte-identical in plan, counter headers and (future) report labels — list any drift; (b) each counter check is individually fail-closed and exit 2 on crash; (c) the counting commands in plan match counter usage lines; (d) claim-sizing review per AXES.md: distinct axes, causal separability, no universal clause the counter cannot enumerate. Report findings with severity; do not edit anything.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevPlan.md"
+      },
+      {
+        "name": "RevInstrumentContract",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevInstrumentContract. Review the C1 instrument CONTRACT (plan.md §C1 + attest51-probe.mjs) for implementability gaps an executor could trip on: exact sidecar format, canonical-JSON definition, digest computation order, exit codes, selftest requirements. Then review the delivered code at build/ExecInstrument/receipt-attest.mjs (if present) against the contract line by line; if absent, write the five trickiest contract ambiguities as questions with your resolutions. Report defects with severity; do not edit.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevInstrumentContract.md"
+      },
+      {
+        "name": "RevCounterA",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevCounterA. Adversarial review of the FROZEN counter probe/attest51-probe.mjs: trace each of A1..A5 — can any check be satisfied by a do-nothing control, a static forger, or a prelude-only replay? Is the git-archive extraction sound (symlinks, missing rev, dirty tree)? Does held=k/5 arithmetic match the printed checks? List every hole with a concrete bypass and its severity. Do not edit the counter; findings only.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevCounterA.md"
+      },
+      {
+        "name": "RevCounterD",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevCounterD. Same adversarial review for probe/doctrine51-probe.mjs (D1..D5): can the entry pass with hollow clauses (paths that exist but say nothing)? Is the SOURCES row status check enforceable, tier inflation visible, census call live-only? Concrete bypass per check with severity. Do not edit.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevCounterD.md"
+      },
+      {
+        "name": "CritC1",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem CritC1. Falsify claim C1 as declared in plan.md: (a) is the before state real (run the A51 counter at base and quote it)? (b) is the do-nothing control truly unable to reach held=5/5 — design the strongest cheap forger you can and state exactly which check stops it (or report the hole)? (c) attribution: which A-checks would ALSO pass if the instrument existed but did not close the M2 class? (d) does A2's >=300s span rest on author scheduling, and is that honestly labelled? Verdict: does C1 verify as declared, or which predicate sentence must change?\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/CritC1.md"
+      },
+      {
+        "name": "CritC2",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem CritC2. Falsify claim C2: (a) is corpus/knowledge/invocation-attestation.md NEW ground, or a re-expression of QUALITY Q39 / corpus/knowledge/counter-amendment-discipline.md (read both)? (b) are S100/S101 tier-A defensible for their scopes or tier inflation (community/B would be)? (c) does D51's clause-binding rule force substantive content or is there a hollow-clause bypass? (d) name the one thing that would make this entry clearly worth its bytes. Verdict and required changes.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/CritC2.md"
+      },
+      {
+        "name": "CritFreeze",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem CritFreeze. Attack the freeze itself: sha256 plan.md and both counters now; verify the counters' RULE labels (A51/D51) and check names appear verbatim in plan.md's predicate sentences; confirm no lane file outside .ufo/waves/round-51/{plan.md,probe/} is needed by either counter (a counter depending on uncommitted or post-freeze bytes is a defect). Report exact hashes and any freeze defect with severity. Read-only.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/CritFreeze.md"
+      },
+      {
+        "name": "CritHarm",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem CritHarm. Review the declared harm battery H1..H5 in plan.md §'Harm rules': is each arm measurable at close, does each have its baseline captured (check base/baseline-gates.txt exists and quotes 22/22 + PROXY: MATCH), and what harm arm is MISSING (e.g. the new checklist item 23 must pass; receipts must contain no secrets — propose the sweep command for that)? Report with severity; read-only.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/CritHarm.md"
+      },
+      {
+        "name": "MutInstrument",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem MutInstrument. Design a literal-mutant battery for scripts/receipt-attest.mjs (the deliverable at build/ExecInstrument/receipt-attest.mjs, or your own scratch copy if absent): >=12 single-literal/single-line mutants across the digest computation, sidecar comparison, nonce comparison and verdict-emission sites. RUN the mutants you can: apply each to a scratch copy, run its --selftest, classify killed/survived/drift with the exact case that kills it. Report the mutant table; survivors with no killing case are findings.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/MutInstrument.md"
+      },
+      {
+        "name": "MutCounter",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem MutCounter. Design >=10 mutants of the two frozen counters (drop-one A-check/D-check arms, inverted comparisons, relaxed thresholds, verdict-string swaps). For each, predict held=k/n without running; then implement and RUN at least the 4 highest-risk ones against the lane base (they must read UNMET, never HELD, at base). Report the table with observed outputs. Do not edit the counters in the lane.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/MutCounter.md"
+      },
+      {
+        "name": "LabratClocks",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem LabratClocks (bounded probe; an executor-run labrat-style hypothesis test — run it yourself, no subagents). On this host, verify the receipt clock fields are sound — write a 30-line scratch node script that samples process.hrtime.bigint() and Date.now() before/after a 50 ms busy loop; confirm monotonic span > 0 and wall span >= 50 ms across 20 trials; check `sha256sum -c` accepts a GNU-format sidecar you generate; confirm crypto.randomBytes(16) yields distinct values across 1000 draws (no collisions). Deliver the script + transcript under build/LabratClocks/. This is the only spawn you may make; run it yourself (depth-0, no subagents).\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/LabratClocks.md"
+      },
+      {
+        "name": "LabratM2Replay",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem LabratM2Replay (bounded probe; run it yourself, no subagents). Probe of the exact M2 forgery: taking the contract in plan.md §C1, implement the forgery end-to-end in scratch — (1) produce a genuine receipt with a scratch implementation, (2) copy it, rewrite ONLY the run-at prelude, keep the old sidecar (the lesson-M2 move), (3) show the genuine implementation's verify rejects it as RECEIPT: TAMPERED exit 1. If build/ExecInstrument/receipt-attest.mjs exists use it; else your scratch build. Also test the variant where the forger recomputes the sidecar: show it then needs the inner digest (nonce reuse) — run verify --ledger over a 3-receipt dir to show REPLAY. Transcript under build/LabratM2Replay/.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/LabratM2Replay.md"
+      },
+      {
+        "name": "SentReceipt",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem SentReceipt. Security review of the C1 design: (a) receipt files must never carry env, tokens, or secret material — review the contract and the delivered code (build/ExecInstrument/receipt-attest.mjs if present) and propose the concrete sweep command that proves receipts are clean at close; (b) nonce entropy: is 128 bits from crypto.randomBytes adequate against ledger collisions at the lane's receipt volume (back it with the birthday bound arithmetic)? (c) sidecar trust model: what does an attacker with write access to receipts/ gain, and is that in scope? Report findings with severity.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/SentReceipt.md"
+      },
+      {
+        "name": "RevengerGap",
+        "agent": "revenger",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevengerGap. Reverse-engineer the ACTUAL gap from the artifacts: read corpus/lessons/round-50.md M2, corpus/QUALITY.md Q39, and corpus/knowledge/counter-amendment-discipline.md; state in one sentence what precise property the round-50 repairs left unproven. Then audit plan.md §C1 against that sentence: does ATTEST_HELD measure the property, a proxy, or something else? If the instrument closes a DIFFERENT gap than the one M2 named, say so with evidence — that is a round-shaping finding.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevengerGap.md"
+      },
+      {
+        "name": "RevScope",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem RevScope. Province check: are C1 (a node instrument for invocation receipts of lane gate counters) and C2 (a corpus entry on attestation design) inside kumitate's PROVINCE.md bands (core: lane instruments scripts/*.mjs, learning registry corpus/)? Check both against PROVINCE.md and MISSION.md; flag any cross-domain bleed (e.g. absorbing chousa research-method scope or kagi secrets scope). Also verify the wave's own write pattern honours the lane read-only rule. Report; read-only.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/RevScope.md"
+      },
+      {
+        "name": "ScribeEntry",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScribeEntry. Draft the FULL text of corpus/knowledge/invocation-attestation.md at build/ScribeEntry/invocation-attestation.md: provenance trio first (source: citing S100 https://man7.org/linux/man-pages/man2/clock_gettime.2.html and S101 https://man7.org/linux/man-pages/man2/getrandom.2.html with anchors from the scout reports under build/ScoutClockSource/ and build/ScoutRandomSource/ (read them if present; if absent, write the trio citing the rows with anchor 'pending scout confirmation' and list the gap); verified-at: 2026-10-23; recheck: 180d). Body: the M2 forgery class, the two-layer binding design, why wall clocks alone invite replay (cite S100), nonce generation + ledger freshness (cite S101), the kept Q39 ceiling, and >=12 clause lines each carrying `receipt:<repo-path>@sha256:<64hex>` bindings to committed artifacts (use the r50 receipts: .ufo/waves/round-50/ReRunB49-{1,2,3}.txt etc. — compute their sha256 now; paths must exist at base c90b9de9). Falsifiable or marked opinion; a count carries its command.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScribeEntry.md"
+      },
+      {
+        "name": "ScribeSources",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScribeSources. Draft the SOURCES.md additions at build/ScribeSources/SOURCES-delta.md: the two full row lines for S100 and S101 using the scout proposals (build/ScoutClockSource/, build/ScoutRandomSource/ — read if present), each with status mined, opened 2026-10-23, recheck 180d, used-by corpus/knowledge/invocation-attestation.md; plus the lesson ## Gate block draft for corpus/lessons/round-51.md recording for EACH new row: the URL, the access date (2026-10-23, UTC time), and the <=25-word located quote. Also draft the old->new used-by lines for any row the entry additionally cites (likely none). Do not edit corpus/SOURCES.md itself.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScribeSources.md"
+      },
+      {
+        "name": "ScribeLesson",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ScribeLesson. Draft corpus/lessons/round-51.md skeleton at build/ScribeLesson/round-51.md: header (lane, round, base, freeze, plan path, counters, wave shape per plan.md), an empty ## Mistakes section with one row pre-filled ONLY if your own reading of round-50 artifacts surfaces a new mistake class not already in round-50.md M1..M6 (otherwise write 'mined from wave findings — pending'), and a ## Gate section skeleton listing the candidates/admitted/rejected slots. Also draft the LOG.md round-51 entry skeleton at build/ScribeLesson/LOG-entry.md following the round-50 LOG entry's shape (read LOG.md tail).\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ScribeLesson.md"
+      },
+      {
+        "name": "ExecSelftestExec",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem ExecSelftestExec. A1 falsifier: once build/ExecInstrument/receipt-attest.mjs exists, run `node <it> --selftest` yourself in a fresh mktemp dir (copy the script only — no corpus, no sidecars) and save the verbatim transcript at build/ExecSelftestExec/selftest-fresh.txt. Verify: exit 0; final line exactly ATTEST_SELFTEST: PASS; >=10 case lines; the flake-injection case and the sidecar case present. Then sabotage one case expectation in a scratch copy (swap VALID->REPLAY in the fixture) and confirm the selftest FAILS — proving the suite can read red. If the instrument does not exist when you run, write your own minimal compliant implementation, run the same protocol on it, and say so. Report divergences from the plan's contract as findings.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/ExecSelftestExec.md"
+      },
+      {
+        "name": "DistWave1",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem DistWave1 (synthesis seat). You run LAST among build seats: read every peer report present under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/w1/ (wait-free: read whatever exists when you run; late reports are not your input). Deduplicate all findings into a single attack-item list for wave 2: each item names WHAT it attacks (A1..A5 check, D1..D5 check, instrument code path, entry clause, SOURCES row, pin/stanza change, lesson, report section) and gives a one-line method. TARGET: >=32 distinct items. Output build/DistWave1/wave2-items.md numbered list. Also give your count of build vs attack findings and the 5 highest-severity findings overall.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/DistWave1.md"
+      },
+      {
+        "name": "SonicAudit",
+        "agent": "simplifier",
+        "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\nItem SonicAudit (mechanical audit seat). Mechanical audit: list every file under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/ at the time you run (find -type f | sort) with sizes; verify every file is inside {plan.md, probe/, base/, w1/<SeatName>.md, build/<seat-name>/}; flag ANY file outside that set as a scope violation (seats must not write elsewhere in the lane). Also sha256 plan.md and both counters and record them (freeze hashes for the close critic). Report; read-only.\n\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: r51 v1 build wave: C1 receipt-attest instrument (rule A51) + C2 invocation-attestation entry (rule D51); sources S100/S101 opened; first falsifiers of both frozen counters\n\nReport: write your scoped findings to .ufo/waves/round-51/w1/SonicAudit.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}
