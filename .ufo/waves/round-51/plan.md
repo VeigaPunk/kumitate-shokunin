@@ -69,11 +69,13 @@ other reading is `ATTEST_UNMET held=<k>/8` exit 1; crash/unreadable extraction =
 (never a score).
 
 - Counting command: `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`
-- Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/5` (A1 absent).
-  Do-nothing control: a stub script printing verdict strings cannot clear A1 (the probe
-  runs the selftest and requires its exact final line from real execution) nor A3 (the
-  doctored control must be rejected by genuine digest binding, not string matching) — the
-  control is executed by a wave-1 seat against a scratch stub and its reading committed.
+- Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/8` (A1 absent;
+  measured `base/attest-base-v3r5.txt`).
+  Do-nothing control (SUPERSEDED by addendum item 3 — the original claim "a stub cannot
+  clear A1/A3" was falsified by seats CritC1 and RevengerGap; v3's challenge arms A2c/A3c
+  now defeat the print-stub class, and RevCounterA re-verified: forger rev 9cb611b7 reads
+  ATTEST_UNMET held=5/8 against v3r5): the control reading is committed at
+  `build/ExecForgerControl/` and `w1/CritC1.md`.
 
 ## C2 — frontier coverage (learning, sourced): `invocation-attestation`
 
