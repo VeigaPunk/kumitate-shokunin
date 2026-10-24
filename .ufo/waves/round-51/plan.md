@@ -29,10 +29,15 @@ turn an invocation record into a machine-checked object.
   `<base>.txt` and `<base>.txt.sha256` (GNU `sha256sum` format over the exact receipt
   bytes). Receipt bytes = a display `run-at:` prelude line plus one canonical-JSON line
   (sorted keys) whose `digest` field binds every semantic field (nonce, argv, exit,
-  output hashes, clocks) — sha256 over the JSON line with the `digest` field removed.
+  output hashes, clocks) — sha256 over the canonical JSON of the body with the `digest`
+  field removed: parse, drop the field, sort keys recursively, one-line `JSON.stringify`
+  (semantic re-canonicalization, NOT textual excision — RevInstrumentContract F3).
 - `verify [--ledger <dir>] <file>` recomputes the inner digest, the sidecar hash and the
-  clock ordering (wall_end ≥ wall_start, mono ≥ 0); with `--ledger`, walks every other
-  `*.txt` receipt in `<dir>` and rejects a nonce already present. Verdict lines:
+  clock ordering (wall_end ≥ wall_start, mono ≥ 0); with `--ledger`, it flags a nonce only
+  when another receipt in `<dir>` binds the SAME nonce to a DIFFERENT record digest — the
+  target itself and byte-identical duplicates (same digest) are exempt (addendum item 4;
+  the original "rejects a nonce already present" wording was the literal reading that made
+  A4 unpassable). Verdict lines:
   `RECEIPT: VALID` exit 0; `RECEIPT: REPLAY` exit 1 for both an inner-digest mismatch and
   a nonce-reuse; `RECEIPT: TAMPERED` exit 1 for a sidecar mismatch; usage 64; unreadable 2.
   No env is recorded; receipts carry no secret material (QUALITY Q42 class).
