@@ -1,0 +1,171 @@
+----- CASE E0 : clean baseline -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: CLEAN files=2 rows=2 covered=2
+exit=0
+----- CASE E1 : traversal row -> dangling outside corpus -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| `knowledge/../../../../canary/secret.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: DRIFT files=2 rows=3 covered=2 bad=1 first=orphan-row:knowledge/../../../../canary/secret.md
+exit=1
+----- CASE E2 : traversal spelling of an existing file -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| `knowledge/../knowledge/a.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: DRIFT files=2 rows=3 covered=2 bad=1 first=orphan-row:knowledge/../knowledge/a.md
+exit=1
+----- CASE E2b : traversal row as the ONLY row for a.md -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `lessons/b.md` | d | p |
+| `knowledge/../knowledge/a.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: note uncovered:knowledge/a.md
+README_MAP: DRIFT files=2 rows=2 covered=2 bad=2 first=orphan-row:knowledge/../knowledge/a.md
+exit=1
+----- CASE E3 : leading double-backtick dangling row -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| ``knowledge/gone.md`` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: CLEAN files=2 rows=2 covered=2
+exit=0
+----- CASE E3b : double-backtick row for live a.md, no normal row -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `lessons/b.md` | d | p |
+| ``knowledge/a.md`` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: DRIFT files=2 rows=1 covered=2 bad=1 first=uncovered:knowledge/a.md
+exit=1
+----- CASE E3c : triple-backtick dangling row -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| ```knowledge/gone.md``` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: CLEAN files=2 rows=2 covered=2
+exit=0
+----- CASE E3d : trailing double-backtick dangling row -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| `knowledge/gone.md`` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: DRIFT files=2 rows=2 covered=2 bad=1 first=format-unmapped:`knowledge/gone.md``
+exit=1
+----- CASE E4 : pipe smuggled inside backticks -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+| `knowledge/a.md | ../..` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md"]}
+README_MAP: DRIFT files=2 rows=3 covered=2 bad=1 first=orphan-row:knowledge/a.md | ../..
+exit=1
+----- CASE E5 : registry covered entry with traversal -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md","knowledge/../../../../canary/secret.md"]}
+README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/../../../../canary/secret.md"
+exit=2
+----- CASE E6 : registry covered knowledge/../lessons/b.md -----
+README bytes:
+# README
+
+## Coverage map
+
+| Entry | Covers | Sources |
+|---|---|---|
+| `knowledge/a.md` | d | p |
+| `lessons/b.md` | d | p |
+registry:
+{"version":1,"covered":["knowledge/a.md","lessons/b.md","knowledge/../lessons/b.md"]}
+README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/../lessons/b.md"
+exit=2
+----- CASE E7 : --corpus points outside lane (basename lessons) -----
+README_MAP: note stale-covered:lessons/b.md
+README_MAP: DRIFT files=2 rows=3 covered=3 bad=2 first=orphan-row:lessons/b.md
+exit=1
+----- CASE E8 : symlinked corpus dir (basename not knowledge) -----
+README_MAP: FAIL-CLOSED reason=corpus dir outside the covered namespace (want knowledge|lessons): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/knowledge-link
+exit=2
+----- CASE E8b : symlink whose basename IS knowledge -----
+README_MAP: FAIL-CLOSED reason=corpus dir not a directory: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/linkless/knowledge
+exit=2

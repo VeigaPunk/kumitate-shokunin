@@ -1,0 +1,85 @@
+=== c0-valid (expect 0) ===
+# positive control: scratch copy of the committed registry must be CLEAN (harness is wired)
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/registry-valid.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+stdout: README_MAP: CLEAN files=135 rows=135 covered=135
+exit=0 CONTROL-OK
+
+=== c1-malformed-json (expect 2) ===
+# assigned arm 1: registry is not parseable JSON
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c1-malformed-json.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=3bc4fa19cb09b748579d0831dfd37c04d55b2c8c24452971f2a78da17d1cfc98
+stdout: README_MAP: FAIL-CLOSED reason=registry not valid JSON
+exit=2 CONTROL-OK
+
+=== c2-version-2 (expect 2) ===
+# assigned arm 2: registry version 2
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c2-version-2.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=bcc91fa18f15099b52e77f2feedb4af8f587bda419e2ee7ebe865c1c8b685806
+stdout: README_MAP: FAIL-CLOSED reason=registry version 2 !== 1
+exit=2 CONTROL-OK
+
+=== c3-covered-not-array (expect 2) ===
+# assigned arm 3: covered is a string, not an array
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c3-covered-not-array.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=97ae7ec50d2ba89e8b376cb0d8a049aa189b8e4bc386d254ace5d0e872ae262f
+stdout: README_MAP: FAIL-CLOSED reason=registry covered not an array
+exit=2 CONTROL-OK
+
+=== c4-covered-outside-namespace (expect 2) ===
+# assigned arm 4: covered entry outside knowledge|lessons/
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c4-covered-outside.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=8a3cf5f8b3b5d0927e0625d973bd8adff0a70d63c8cea39cd8d1f7b9c18d8362
+stdout: README_MAP: FAIL-CLOSED reason=covered entry malformed: "scripts/readme-map.md"
+exit=2 CONTROL-OK
+
+=== c5-covered-duplicated (expect 2) ===
+# same guard, not in the gate selftest: duplicated covered entry
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c5-covered-duplicated.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=901427ba8f1d1e9a77647790889455f0ab9e275a0297de866de29bd95b637be6
+stdout: README_MAP: FAIL-CLOSED reason=covered entry duplicated: "knowledge/agent-isolation-substrates.md"
+exit=2 CONTROL-OK
+
+=== c6-covered-non-string (expect 2) ===
+# same guard, not in the gate selftest: covered entry is a number
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c6-covered-non-string.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=ce51817b37f9afed997769c3cd35220d36f3680074347054bf2dea54e49d8096
+stdout: README_MAP: FAIL-CLOSED reason=covered entry malformed: 7
+exit=2 CONTROL-OK
+
+=== c7-covered-key-missing (expect 2) ===
+# same guard, not in the gate selftest: `covered` key absent
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c7-covered-missing.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=4b8894d57dfa621e534ef4eb25263e8f00254cbcb4327f1f98796314ac279dde
+stdout: README_MAP: FAIL-CLOSED reason=registry covered not an array
+exit=2 CONTROL-OK
+
+=== c8-covered-null (expect 2) ===
+# same guard, not in the gate selftest: `covered` is null
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c8-covered-null.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=459aa8b910fb3b4062722070cc0070067715ee48d0da20c59639ad02eba0e021
+stdout: README_MAP: FAIL-CLOSED reason=registry covered not an array
+exit=2 CONTROL-OK
+
+=== c9-covered-subdirectory (expect 2) ===
+# namespace boundary: entry names a nested path, regex admits one segment only
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c9-covered-subdir.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=2df87812814afb33614ca3220f26a7ecd49763a749e3376f2d17eb86a98769b1
+stdout: README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/sub/a.md"
+exit=2 CONTROL-OK
+
+=== c10-covered-traversal (expect 2) ===
+# namespace boundary: entry tries to climb out of the namespace
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c10-covered-traversal.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=fee05328394f660da75e695d079d16ba5a980736e08afd2ab68a402bbfc6187a
+stdout: README_MAP: FAIL-CLOSED reason=covered entry malformed: "lessons/../knowledge/agent-isolation-substrates.md"
+exit=2 CONTROL-OK
+
+=== c11-covered-root-file (expect 2) ===
+# namespace boundary: entry names a root-level README
+$ node --registry /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/c11-covered-root.json --readme /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/README.md --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/knowledge --corpus /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/scratch/corpus/lessons
+registry_sha256=92ddca3b91e79c9bcd198e9d499b6d930b41c70e1ba765e99f1749796727f5b7
+stdout: README_MAP: FAIL-CLOSED reason=covered entry malformed: "README.md"
+exit=2 CONTROL-OK
+
+CONTROLS: 12/12 at 2026-10-24T12:52:32.202Z

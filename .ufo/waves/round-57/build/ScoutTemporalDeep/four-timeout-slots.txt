@@ -1,0 +1,8 @@
+quote (S117, page header list + section bodies, fetched 2026-10-24):
+page's failure-detection list: "Schedule-To-Start Timeout", "Start-To-Close Timeout", "Schedule-To-Close Timeout", "Activity Heartbeats"
+per-leg bounds:
+- Schedule-To-Start: "maximum amount of time that is allowed from when an Activity Task is scheduled ... to when a Worker starts" ; default infinity; "non-retryable by design. It does not trigger any retries regardless of the Retry Policy"
+- Start-To-Close: "the maximum time allowed for a single Activity Task Execution"; "no default value of its own" (falls back to Schedule-To-Close); "the Temporal Server relies on the Start-To-Close Timeout to force Activity retries"
+- Schedule-To-Close: "the maximum amount of time allowed for the overall Activity Execution"; default infinity
+- Heartbeat Timeout (subsection of Activity Heartbeat): "the maximum time between Activity Heartbeats"; 0s = disabled; capped at Start-To-Close
+note: the page lists three *Timeout items plus "Activity Heartbeats" (the mechanism); the fourth timeout bound lives in its Heartbeat Timeout subsection.

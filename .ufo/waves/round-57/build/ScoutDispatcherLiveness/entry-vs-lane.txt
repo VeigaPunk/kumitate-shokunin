@@ -1,0 +1,38 @@
+## entry clause lines (worker-heartbeat-liveness.md lane-mapping section)
+28:## Lane mapping (the dispatcher's surfaces, origin tree read-only, pin `31c465f1`)
+30:- **The lane's liveness signal is pull-based, not worker-pushed.** Temporal and Kafka workers *push* heartbeats; `fleet-dispatcher.mjs`'s reconcile instead *pulls* — repend fires only on `registered_mission_missing` with a nonzero launcher exit, and `MAX_LAUNCH_MISSES` bounds false-positive reclaims: the same question ("is the worker still there?") answered by inspection, not by the worker's own pings (origin tree). `receipt:.ufo/waves/round-57/build/ScoutQueue/repend-signals.txt@sha256:a9374aa1ef3d2b158ef494b028179e83379df37b1443dcc4db0dfd7c0e3ca85d`
+31:- **[INFERENCE] Push-vs-pull is the entry's real axis.** S117/S118 liveness is pushed (the worker asserts survival); S119 and the dispatcher are pulled (the platform/broker inspects). Pushed heartbeats prove progress AND survival (Temporal's payload can carry progress detail); pulled checks prove only presence — a hung worker that still answers a TCP/exec probe survives its lease forever, which is exactly why the r56 lease slot and this liveness slot are different mechanisms. For the lane, the 120 s `LAUNCHING_GRACE_MS` window plus repend misses is the pull-based analog of Kafka's session expiry — membership reclaim without a heartbeat channel. Design inference from the three sources against lane surfaces, not a claim the sources state. `receipt:.ufo/waves/round-57/build/ScoutQueue/grace-window.txt@sha256:df6754ba6d9a4d1ef8036eb8f43cbd079e06a73c9a3750e765c14d660c00038b`
+
+## receipt sha verification
+OK .ufo/waves/round-57/build/ScoutK8s/liveness-remedy.txt
+OK .ufo/waves/round-57/build/ScoutK8s/probe-timing.txt
+OK .ufo/waves/round-57/build/ScoutK8s/source-metadata.txt
+OK .ufo/waves/round-57/build/ScoutKafka/heartbeat-interval.txt
+OK .ufo/waves/round-57/build/ScoutKafka/rebalance-reclaim.txt
+OK .ufo/waves/round-57/build/ScoutKafka/session-timeout.txt
+OK .ufo/waves/round-57/build/ScoutKafka/source-metadata.txt
+OK .ufo/waves/round-57/build/ScoutQueue/grace-window.txt
+OK .ufo/waves/round-57/build/ScoutQueue/repend-signals.txt
+OK .ufo/waves/round-57/build/ScoutRabbitmqHb/source-metadata.txt
+OK .ufo/waves/round-57/build/ScoutRabbitmqHb/tcp-liveness.txt
+OK .ufo/waves/round-57/build/ScoutTemporalHb/heartbeat-def.txt
+OK .ufo/waves/round-57/build/ScoutTemporalHb/heartbeat-timeout.txt
+OK .ufo/waves/round-57/build/ScoutTemporalHb/short-timeout.txt
+OK .ufo/waves/round-57/build/ScoutTemporalHb/source-metadata.txt
+
+## ScoutQueue build receipts
+lane mapping (origin tree read-only, pin 31c465f1):
+fleet-dispatcher reconcile treats a `launching` claim older than LAUNCHING_GRACE_MS as reclaimable — the lease side.
+Worker liveness analog: repend fires only on `registered_mission_missing` with a nonzero launcher exit — a pull-based
+"is the worker still there" signal rather than a worker-pushed heartbeat; MAX_LAUNCH_MISSES bounds false positives.
+---
+lane mapping (origin tree read-only, pin 31c465f1):
+fleet-dispatcher.mjs LAUNCHING_GRACE_MS = 120000 (120 s): a `launching` claim that survives
+the grace window is reclaimed by reconcile — the pull-based dead-worker slot paired with
+repend's MAX_LAUNCH_MISSES bound; the dispatcher inspects, the worker never pings.
+
+## watchdog repend callers
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-watchdog-repend.mjs:315:    const outcome = spawnImpl("node", [dispatcher, "repend", "--run", row.runId], {
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-stale-watchdog.mjs:15://   - attemptRepend: the bounded deferred-repend state machine, still
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-stale-watchdog.mjs:140:    out = execFileSync(process.execPath, [d.dispatcherPath, "repend", "--run", runId], {
+/home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-stale-watchdog.mjs:190:export function attemptRepend(state, runId, deps = {}) {

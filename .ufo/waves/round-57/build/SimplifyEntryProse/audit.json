@@ -1,0 +1,436 @@
+[
+ {
+  "n": 1,
+  "lineno": 18,
+  "headline": "A heartbeat is a progress-and-survival ping, not a lease.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutTemporalHb/heartbeat-def.txt",
+    "sha": "ae275a1442b960ba637a0674aad4004ab9b891a4ffac8f0c52e4e6f8ee1e62ca",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 359
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service",
+    "frags": [
+     {
+      "frag": "An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service",
+      "found": true
+     }
+    ]
+   },
+   {
+    "quote": "informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed",
+    "frags": [
+     {
+      "frag": "informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 358,
+  "_hay": "quote (§Activity Heartbeats, S117, docs.temporal.io/encyclopedia/detecting-activity-failures): \"An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service.\" \"[it] informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed.\" fetched 2026-10-24 HTTP 200, 80679 bytes. "
+ },
+ {
+  "n": 2,
+  "lineno": 19,
+  "headline": "Heartbeats pair with a separate Heartbeat Timeout.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutTemporalHb/heartbeat-timeout.txt",
+    "sha": "daca758361fe7321357acd1c562836b9fb66b0f2262e0040760ae586c7252b86",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 462
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "Activity Heartbeats work in conjunction with a Heartbeat Timeout",
+    "frags": [
+     {
+      "frag": "Activity Heartbeats work in conjunction with a Heartbeat Timeout",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 459,
+  "_hay": "quote (§Activity Heartbeats / timeouts, S117): \"Activity Heartbeats work in conjunction with a Heartbeat Timeout. Activity Heartbeats are implemented within the Activity Definition.\" \"We strongly recommend setting a Start-To-Close Timeout. The Temporal Server doesn't detect failures when a Worker loses communication...\" failure detection family: Schedule-To-Start, Start-To-Close, Schedule-To-Close, Activity Heartbeats — four timeout slots bound each leg. "
+ },
+ {
+  "n": 3,
+  "lineno": 20,
+  "headline": "Short timeout + frequent ping is the recommended trade.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutTemporalHb/short-timeout.txt",
+    "sha": "b0341d12b45325c8709eceb9d50a37e5a9dab77ef70c43707ca645fa9a92c605",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 286
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "We recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat. That way if a Worker fails it can be handled in a timely manner",
+    "frags": [
+     {
+      "frag": "We recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat. That way if a Worker fails it can be handled in a timely manner",
+      "found": false
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 283,
+  "_hay": "quote (§Activity Heartbeats, S117): \"we recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat. That way if a Worker fails it can be handled in a timely manner.\" \"A Heartbeat can include an application layer payload\" — progress detail rides the liveness ping. "
+ },
+ {
+  "n": 4,
+  "lineno": 21,
+  "headline": "Kafka's session timeout is broker-side liveness detection.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutKafka/session-timeout.txt",
+    "sha": "c8e38adb341d907deaea8d3f7f4c4863612bea7f7db5ba7a87f59befa98cf55d",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 453
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "`session.timeout.ms` — The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker",
+    "frags": [
+     {
+      "frag": "`session.timeout.ms` — The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker",
+      "found": false
+     }
+    ]
+   }
+  ],
+  "codeChecks": [
+   {
+    "token": "session.timeout.ms",
+    "found": true
+   }
+  ],
+  "hayLen": 450,
+  "_hay": "quote (§session.timeout.ms, S118, kafka.apache.org/43/configuration/consumer-configs): \"session.timeout.ms — The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker.\" \"if no heartbeats are received by the broker before the expiration of this session timeout, then the broker will remove this client from the group and initiate a rebalance.\" "
+ },
+ {
+  "n": 5,
+  "lineno": 22,
+  "headline": "Cadence is explicitly bounded by the session window.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutKafka/heartbeat-interval.txt",
+    "sha": "2257eb0db5f167c240f03cad24b69ef9cb6cbded6e9d5ed20264ce1c49e25fa1",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 431
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "`heartbeat.interval.ms` — The expected time between heartbeats to the consumer coordinator",
+    "frags": [
+     {
+      "frag": "`heartbeat.interval.ms` — The expected time between heartbeats to the consumer coordinator",
+      "found": false
+     }
+    ]
+   },
+   {
+    "quote": "typically should be set no higher than 1/3",
+    "frags": [
+     {
+      "frag": "typically should be set no higher than 1/3",
+      "found": false
+     }
+    ]
+   }
+  ],
+  "codeChecks": [
+   {
+    "token": "heartbeat.interval.ms",
+    "found": true
+   }
+  ],
+  "hayLen": 428,
+  "_hay": "quote (§heartbeat.interval.ms, S118): \"heartbeat.interval.ms — The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities. Heartbeats are used to ensure that the consumer's session stays active...\" Default: 3000 (3 seconds); must be set lower than session.timeout.ms, typically no higher than 1/3 of that value. group.consumer.session.timeout.ms default: 45000 (45 seconds). "
+ },
+ {
+  "n": 6,
+  "lineno": 23,
+  "headline": "Reclaim is group-level, not per-message.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutKafka/rebalance-reclaim.txt",
+    "sha": "3fda05bfb106308042662eda74c08c3efd3817843479894185c46152558041b3",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 264
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "the broker will remove this client from the group and initiate a rebalance",
+    "frags": [
+     {
+      "frag": "the broker will remove this client from the group and initiate a rebalance",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 262,
+  "_hay": "quote (S118, session.timeout.ms continuation): \"the broker will remove this client from the group and initiate a rebalance\" — partition assignments are reclaimed by group membership, not by per-message lease; a dead consumer's partitions re-assign to survivors. "
+ },
+ {
+  "n": 7,
+  "lineno": 24,
+  "headline": "Kubernetes probes are platform-polled, not worker-pushed.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutK8s/liveness-remedy.txt",
+    "sha": "c0e53b5e0f567662a70a64ed11e82e258aea3ac79300331833d721ddac5682dd",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 324
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "Kubernetes provides liveness probes to detect and remedy",
+    "frags": [
+     {
+      "frag": "Kubernetes provides liveness probes to detect and remedy",
+      "found": true
+     }
+    ]
+   },
+   {
+    "quote": "cannot recover except by being restarted",
+    "frags": [
+     {
+      "frag": "cannot recover except by being restarted",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 324,
+  "_hay": "quote (S119, kubernetes.io liveness probes page): \"Many applications running for long periods of time eventually transition to broken states, and cannot recover except by being restarted. Kubernetes provides liveness probes to detect and remedy such situations.\" probe kinds: command (exec), HTTP request, TCP socket, gRPC. "
+ },
+ {
+  "n": 8,
+  "lineno": 25,
+  "headline": "Probe timing is explicit and periodic.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutK8s/probe-timing.txt",
+    "sha": "aa70f64077485ec630c98552267dc88c7af716f5cc721feb24b8dae9d4bb4d3a",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 358
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "`periodSeconds` … the kubelet should perform a liveness probe every 5 seconds",
+    "frags": [
+     {
+      "frag": "`periodSeconds` ",
+      "found": false
+     },
+     {
+      "frag": " the kubelet should perform a liveness probe every 5 seconds",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [
+   {
+    "token": "periodSeconds",
+    "found": true
+   },
+   {
+    "token": "initialDelaySeconds",
+    "found": true
+   }
+  ],
+  "hayLen": 356,
+  "_hay": "quote (S119, probe fields): \"The periodSeconds field specifies that the kubelet should perform a liveness probe every 5 seconds. The initialDelaySeconds field tells the kubelet that it should wait 5 seconds before performing the first probe.\" kubelet-driven: the platform polls the worker; failure → container restart (pod-level reclaim), not job reclaim. "
+ },
+ {
+  "n": 9,
+  "lineno": 26,
+  "headline": "Observed revisions.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutTemporalHb/source-metadata.txt",
+    "sha": "cb27262a434350eb525c00e777d606dc61bc7983bf118135ff69b0530187da92",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 199
+   },
+   {
+    "path": ".ufo/waves/round-57/build/ScoutKafka/source-metadata.txt",
+    "sha": "9671d339b65c168bc27fa3803a4fb8e68b4a26de35645e7997d2cce8bf634546",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 193
+   },
+   {
+    "path": ".ufo/waves/round-57/build/ScoutK8s/source-metadata.txt",
+    "sha": "51b59ca02ace28ccc0cc8dded133e5f226f9a7a84bd0ba32822d7bb92aab4831",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 235
+   }
+  ],
+  "quoteChecks": [],
+  "codeChecks": [
+   {
+    "token": " .ufo/waves/round-57/build/ScoutKafka/source-metadata.txt@sha256:9671d339b65c168bc27fa3803a4fb8e68b4a26de35645e7997d2cce8bf634546",
+    "found": false
+   }
+  ],
+  "hayLen": 627,
+  "_hay": "source: S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures fetched: 2026-10-24 HTTP 200; 80679 bytes; body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50 source: S118 https://kafka.apache.org/43/configuration/consumer-configs fetched: 2026-10-24 HTTP 200; 145719 bytes; body sha256 abf4310fd8bec0df3f1ddcae3a115faa509d98c5d5d8266e721db2965189cb17 source: S119 https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ fetched 2026-10-24 HTTP 200; 554624 bytes; body sha256 2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e "
+ },
+ {
+  "n": 10,
+  "lineno": 30,
+  "headline": "The lane's liveness signal is pull-based, not worker-pushed.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutQueue/repend-signals.txt",
+    "sha": "a9374aa1ef3d2b158ef494b028179e83379df37b1443dcc4db0dfd7c0e3ca85d",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 407
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "is the worker still there?",
+    "frags": [
+     {
+      "frag": "is the worker still there?",
+      "found": false
+     }
+    ]
+   }
+  ],
+  "codeChecks": [
+   {
+    "token": "fleet-dispatcher.mjs",
+    "found": false
+   },
+   {
+    "token": "registered_mission_missing",
+    "found": true
+   },
+   {
+    "token": "MAX_LAUNCH_MISSES",
+    "found": true
+   }
+  ],
+  "hayLen": 403,
+  "_hay": "lane mapping (origin tree read-only, pin 31c465f1): fleet-dispatcher reconcile treats a `launching` claim older than LAUNCHING_GRACE_MS as reclaimable — the lease side. Worker liveness analog: repend fires only on `registered_mission_missing` with a nonzero launcher exit — a pull-based \"is the worker still there\" signal rather than a worker-pushed heartbeat; MAX_LAUNCH_MISSES bounds false positives. "
+ },
+ {
+  "n": 11,
+  "lineno": 31,
+  "headline": "[INFERENCE] Push-vs-pull is the entry's real axis.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutQueue/grace-window.txt",
+    "sha": "df6754ba6d9a4d1ef8036eb8f43cbd079e06a73c9a3750e765c14d660c00038b",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 318
+   }
+  ],
+  "quoteChecks": [],
+  "codeChecks": [
+   {
+    "token": "LAUNCHING_GRACE_MS",
+    "found": true
+   }
+  ],
+  "hayLen": 316,
+  "_hay": "lane mapping (origin tree read-only, pin 31c465f1): fleet-dispatcher.mjs LAUNCHING_GRACE_MS = 120000 (120 s): a `launching` claim that survives the grace window is reclaimed by reconcile — the pull-based dead-worker slot paired with repend's MAX_LAUNCH_MISSES bound; the dispatcher inspects, the worker never pings. "
+ },
+ {
+  "n": 12,
+  "lineno": 35,
+  "headline": "RabbitMQ heartbeats are transport keepalive, not worker liveness.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutRabbitmqHb/tcp-liveness.txt",
+    "sha": "11d8112d78e17f12a8a977172267b5b51d001ba1ece261dd15223cdae8316216",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 411
+   }
+  ],
+  "quoteChecks": [
+   {
+    "quote": "ensure that the application layer promptly finds out about disrupted connections (and peers)",
+    "frags": [
+     {
+      "frag": "ensure that the application layer promptly finds out about disrupted connections (and peers)",
+      "found": true
+     }
+    ]
+   },
+   {
+    "quote": "the client … needs to re-connect",
+    "frags": [
+     {
+      "frag": "the client ",
+      "found": false
+     },
+     {
+      "frag": " needs to re-connect",
+      "found": true
+     }
+    ]
+   }
+  ],
+  "codeChecks": [],
+  "hayLen": 406,
+  "_hay": "quote (S120, rabbitmq.com/docs/heartbeats §Overview): \"AMQP 0-9-1 offers a heartbeat feature to ensure that the application layer promptly finds out about disrupted connections (and peers)...\" \"When a client detects that RabbitMQ node is unreachable due to a heartbeat, it needs to re-connect.\" scope: CONNECTION liveness — one connection ↔ one verdict; nothing about outstanding deliveries' worker state. "
+ },
+ {
+  "n": 13,
+  "lineno": 36,
+  "headline": "S120 capture facts.",
+  "receipts": [
+   {
+    "path": ".ufo/waves/round-57/build/ScoutRabbitmqHb/source-metadata.txt",
+    "sha": "8a31c1a11fdcd99d862c2e22c4a97b547f9c3b961c30fbcf4560fe62fd7e9781",
+    "exists": true,
+    "shaOk": true,
+    "bytes": 173
+   }
+  ],
+  "quoteChecks": [],
+  "codeChecks": [],
+  "hayLen": 173,
+  "_hay": "source: S120 https://www.rabbitmq.com/docs/heartbeats fetched 2026-10-24 HTTP 200; 51578 bytes; body sha256 8370687da1c8b67387951eaeab2c7658e0abc1564e40607cb190bfdca7228779 "
+ }
+]

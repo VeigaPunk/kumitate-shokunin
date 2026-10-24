@@ -1,0 +1,5 @@
+quote (S117, §Activity Heartbeat, fetched 2026-10-24):
+"Custom progress information can be included in the Heartbeat which can then be used by the Activity Execution should a retry occur."
+"A Heartbeat can include an application layer payload that can be used to save Activity Execution progress."
+"If an Activity Task Execution times out due to a missed Heartbeat, the next Activity Task can access and continue with that payload."
+verdict: YES — heartbeats carry application-layer payloads; payload survives into the next attempt for progress resume.

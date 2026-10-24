@@ -1,0 +1,43 @@
+== git status (read-only) ==
+ M .ufo/waves/round-57/w1/swarm-registry.json
+?? .ufo/waves/round-57/build/02-gate-drift.txt
+?? .ufo/waves/round-57/build/CriticC2Overfit/
+?? .ufo/waves/round-57/build/CriticCounterNoop/
+?? .ufo/waves/round-57/build/ExecA57Close/
+?? .ufo/waves/round-57/build/ExecChecklistBattery/
+?? .ufo/waves/round-57/build/ExecD57Close/
+?? .ufo/waves/round-57/build/ExecMapClean/
+?? .ufo/waves/round-57/build/ExecMapDupRow/
+?? .ufo/waves/round-57/build/ExecMapEmptyCovered/
+?? .ufo/waves/round-57/build/ExecMapFormat/
+?? .ufo/waves/round-57/build/ExecMapMissing/
+?? .ufo/waves/round-57/build/ExecMapOrphan/
+?? .ufo/waves/round-57/build/ExecMapSchema/
+?? .ufo/waves/round-57/build/ExecMapSelftest/
+?? .ufo/waves/round-57/build/ExecMapUncovered/
+?? .ufo/waves/round-57/build/ExecMapUnpinned/
+?? .ufo/waves/round-57/build/ExecProxyCounts/
+?? .ufo/waves/round-57/build/ExecR56Counters/
+?? .ufo/waves/round-57/build/ExecR56V3Repair/
+== HEAD ==
+8c6f5b017d149b18134917378cdbed3b492d8e89
+== base proxy-check.mjs sha256 ==
+b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589  -
+== base readme-map.mjs exists? ==
+== base SCORECARD pin lines ==
+272:the separate `kumitate-gate-pins-v1` block below; the sources gate is still a
+308:pin.proxy-check=b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589
+312:<!-- kumitate-gate-pins-v1
+325:pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
+358:a separate lane-owned `kumitate-gate-pins-v1` block (pins for anchor-truth, sources-check,
+482:| 22 | coverage:kimi-layer (term tightening; score unchanged — the anticipated drop was refuted by measurement) | occurrence term: K_sections 52, `floor(10 × 52/49)` = 10, with the known duplicate-one/drop-one hole | **distinct-member term lands** (pre-registered round 21): K_sections 52 occurrences → **49 distinct** (49/49 members named — the round-21 "~30 distinct" estimate was wrong and is corrected in the round-21 lesson's wake), `floor(10 × 49/49)` = **10** held; new `K_SECTION_AMBIGUOUS` warn arm (0 live); selftest 92 → 98 (+6, incl. the duplicate-one/drop-one mutation); `pin.proxy-check` re-pinned | implementer lane (hyper ds-flash) + independent cross-check (occurrence 52 / distinct 49 / 0 ambiguous / 0 unnamed); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha --selftest` → 98/98; live run: only the six carried OMP layer DRIFTs + PIN_DRIFT (re-pinned at close) |
+484:| 20 | coverage:kimi-layer (first measurement — the round-16 role for the K block; registry change + tool + stanza + axes landed together per pre-registration) | no K terms; the K block declared unscored since round 18 | C1k **5/5**, `K_members` **49** (live), `K_sections` **24** ⇒ `floor(10 × 1.0 × 24/49)` = **4**; A=6, C=11 held; stanza gained 5 term keys + `pin.kimi-census`, `pin.proxy-check` re-pinned, `## Axes` row landed — tool, stanza, and axes travel together | `node scripts/kimi-census.mjs` → `CLEAN (members=49 checked=49)` with root enumeration live (`strays=0`); `node scripts/proxy-check.mjs --src ~/Projects/ufo-fsd-alpha` → K terms + legacy terms MATCH, layer terms DRIFT (carried debt); `--selftest` 92/92 (proxy, +21 K cases) and 43/43 (census, +8 K5 cases); occurrence-vs-distinct limit recorded (24 sections name 17 distinct members); wave-3 lane-found label collisions repaired (session-state title K4→K3, binary-secrets K5→K4); `kimi-residue-files.md` (364 L, 3 member sections, 9/9 wd-key recomputations, the 1-byte tui diff re-verified) |
+491:| 16 | coverage:script-layer + coverage:runtime-layer (uncounted: the origin-I/O amendment) | `scripts/proxy-check.mjs` read **only this repo** — no subprocess, no git, no origin tree (the round-14 split kept the legacy arithmetic "free of origin-tree I/O"), so a layer member count could not be scored at all | the amendment, priced: the **legacy** terms stay self-only (`A C C1 C1_total C2 C2_total`, one local walk, five pins, no subprocess) while the **two layer terms** read the origin tree **once, in-process, read-only** through `probeSections` (`--src DIR`, default `$UFO_SRC` or the lane's checkout); new fail-closed `SRC_NOT_A_DIR` (exit 2) so the layer terms cannot read `0` when the tree is absent. Cost recorded in `## Limits`: checklist item `Proxy recompute` now needs the origin tree, exactly as `cite-check`, `claims-check` and `surface-probe` already do. Both `scripts/*.mjs` pins are re-pinned **once all round-16 edits land** (L1 with the tool owners) — an unrecorded edit still shows as `PIN_DRIFT`, never as a silently stale claim | `node scripts/proxy-check.mjs` → `PROXY: DRIFT (PIN_DRIFT term=pin.proxy-check; PIN_DRIFT term=pin.claims-check)` exit 1 — **two findings, both pins, zero term drift** (the declared `d0a722c5…` / `d0f95fa0…` are the round-15 hashes and both tools were edited this round, so both drift until the re-pin) — while the same scorecard with those two lines substituted by the current file hashes reads `PROXY: MATCH (… pins=5 match)` exit 0, so the re-pin is the only outstanding step; `node scripts/proxy-check.mjs --src /nonexistent` → `PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /nonexistent is absent` exit 2 (the new arm) |
+907:  `pin.proxy-check` re-pinned because the tool itself is edited).
+1640:   scores, then re-pin `pin.proxy-check` if `proxy-check.mjs` changed.
+1765:| `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger** (v3, round 53): it scans the whole ledger directory and flags a nonce only when another attested receipt — under ANY filename — binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
+1770:| `source-dupes` | Hold the SOURCES duplicate-URL warning class to a pinned set: the registry `.ufo/pins/source-dupes.json` (version 1) enumerates every live duplicate group — rows sharing one normalized URL under differing scopes (the census W04 class) — and `node scripts/source-dupes.mjs` exits 0 only when live groups equal the pinned set exactly; a new duplicate is DRIFT `new-duplicate`, a resolved duplicate is DRIFT `stale-known` until its pin is removed, and a malformed pin set is FAIL-CLOSED exit 2; the warning the census never gates on becomes a scored contract | `node scripts/source-dupes.mjs` → `SOURCE_DUPES: CLEAN groups=4 known=4`; `--selftest` → `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`; `pin.source-dupes` in `kumitate-gate-pins-v1` | 56 |
+1805:symlink case (12/12). `pin.bind-oracle` (r49 M2) plus the family re-pin enter `kumitate-gate-pins-v1`.
+2116:`corpus/lessons/round-42.md` `## Gate`, Q21; R41-2 a separate `kumitate-gate-pins-v1` block
+== base proxy-check GATE_PINS/readme-map mentions ==
+base-grep-exit=1

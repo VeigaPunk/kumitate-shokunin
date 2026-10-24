@@ -1,0 +1,28 @@
+===== verify --ledger attest-run-1.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar hash mismatch)
+receipt-attest: ledger skipped attest-run-2-replayed.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+exit=0
+===== verify --ledger attest-run-2.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar hash mismatch)
+receipt-attest: ledger skipped attest-run-2-replayed.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+exit=0
+===== verify --ledger attest-run-3.txt
+receipt-attest: ledger skipped attest-run-1.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar hash mismatch)
+receipt-attest: ledger skipped attest-run-2-replayed.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-2.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+receipt-attest: ledger skipped attest-run-3.txt.sha256: not an attested receipt (sidecar absent (ENOENT))
+RECEIPT: VALID
+exit=0
+===== verify --ledger attest-run-2-replayed.txt
+receipt-attest: sidecar mismatch: sidecar 5bcb7aba0a3ee5708a092fa61d74b85f9b57dd5e191165445455f441e3268988, actual 0354f3e6550d08f812025fdf8da91a928fe855692c2d115b8edcdf1e5bbe3f8a
+RECEIPT: TAMPERED
+exit=1

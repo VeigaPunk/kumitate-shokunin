@@ -1,0 +1,27 @@
+# Lane-surface corroboration (origin tree read-only)
+origin HEAD: 093edb979559443bca65245fbdd94ac3621446fb
+pinned rev 31c465f1:
+commit
+31c465f1 IS an ancestor of origin HEAD
+
+## dispatcher symbols
+117:const MAX_LAUNCH_MISSES = 8;
+123:const LAUNCHING_GRACE_MS = 120_000;
+
+## rependable predicate (repend only on registered_mission_missing + nonzero launcherExit)
+        // The only blocked row reconcile can still re-pend is a
+        // registered_mission_missing with a nonzero launcher exit; every
+        // other blocked dependency is a permanent strand for its dependents.
+        const rependable = dependency.blocker?.code === "registered_mission_missing"
+          && Number.isSafeInteger(dependency.lastDispatch?.launcherExit)
+          && dependency.lastDispatch.launcherExit !== 0;
+        return !rependable;
+      })) {
+
+## miss budget exhaust
+function recordLaunchMiss(task, pendingBlocker = null) {
+  const misses = (Number.isSafeInteger(task.launchMisses) ? task.launchMisses : 0) + 1;
+  task.launchMisses = misses;
+  if (misses > MAX_LAUNCH_MISSES) {
+    task.state = "blocked";
+    task.blocker = { code: "launch_registration_exhausted", retryable: false };

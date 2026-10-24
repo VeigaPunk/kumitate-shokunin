@@ -1,0 +1,7 @@
+# the per-entry namespace/type guard is deleted; only the duplicate check remains
+# find:
+    if (typeof p !== 'string' || !COVERED_RE.test(p)) {
+# replace:
+    if (typeof p !== 'string') {
+# gate_sha256_before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+# gate_sha256_after=ae8a3f4cb05beb82e88e2f6d4fbc14fe927c53ded5b446c3fd96eeaba626365e

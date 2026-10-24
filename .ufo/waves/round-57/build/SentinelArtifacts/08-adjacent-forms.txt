@@ -1,0 +1,11 @@
+== leading space INSIDE backticks, dangling path ==
+README_MAP: CLEAN files=2 rows=2 covered=2
+exit=0
+
+== same decoration, LIVE path, no normal row ==
+README_MAP: DRIFT files=2 rows=1 covered=2 bad=1 first=uncovered:knowledge/a.md
+exit=1
+
+== trailing junk after closing tick, dangling ==
+README_MAP: DRIFT files=2 rows=2 covered=2 bad=1 first=format-unmapped:`knowledge/gone.md`/x
+exit=1

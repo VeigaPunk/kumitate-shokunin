@@ -1,0 +1,65 @@
+source: S118 https://kafka.apache.org/43/configuration/consumer-configs (title: "Consumer and Share Consumer Configs | Apache Kafka")
+fetched: 2026-10-24T12:51:43Z HTTP 200; 145719 bytes; body sha256 abf4310fd8bec0df3f1ddcae3a115faa509d98c5d5d8266e721db2965189cb17
+corroboration: byte-identical to ScoutKafka seat capture (same byte count + sha256 in source-metadata.txt).
+
+== session.timeout.ms (Type int, Default 45000 (45 seconds), Valid [none listed], Importance high) ==
+"The timeout used to detect client failures when using Kafka's group management facility. The client sends
+periodic heartbeats to indicate its liveness to the broker. If no heartbeats are received by the broker before
+the expiration of this session timeout, then the broker will remove this client from the group and initiate a
+rebalance. Note that the value must be in the allowable range as configured in the broker configuration by
+group.min.session.timeout.ms and group.max.session.timeout.ms. Note that this client configuration is not
+supported when group.protocol is set to "consumer". In that case, session timeout is controlled by the broker
+config group.consumer.session.timeout.ms."
+
+== heartbeat.interval.ms (Type int, Default 3000 (3 seconds), Importance high) ==
+"The expected time between heartbeats to the consumer coordinator when using Kafka's group management
+facilities. Heartbeats are used to ensure that the consumer's session stays active and to facilitate rebalancing
+when new consumers join or leave the group. This config is only supported if group.protocol is set to "classic".
+In that case, the value must be set lower than session.timeout.ms, but typically should be set no higher than
+1/3 of that value. It can be adjusted even lower to control the expected time for normal rebalances. If
+group.protocol is set to "consumer", this config is not supported, as the heartbeat interval is controlled by
+the broker with group.consumer.heartbeat.interval.ms."
+
+== max.poll.interval.ms (Type int, Default 300000 (5 minutes), Valid [1,...], Importance medium) ==
+"The maximum delay between invocations of poll() when using consumer group management. This places an upper
+bound on the amount of time that the consumer can be idle before fetching more records. If poll() is not called
+before expiration of this timeout, then the consumer is considered failed and the group will rebalance in order
+to reassign the partitions to another member. For consumers using a non-null group.instance.id which reach this
+timeout, partitions will not be immediately reassigned. Instead, the consumer will stop sending heartbeats and
+partitions will be reassigned after expiration of the session timeout (defined by the client config
+session.timeout.ms if using the Classic rebalance protocol, or by the broker config
+group.consumer.session.timeout.ms if using the Consumer protocol). This mirrors the behavior of a static
+consumer which has shutdown."
+
+== group.instance.id (Type string, Default null, Valid non-empty string, Importance medium) ==
+"A unique identifier of the consumer instance provided by the end user. Only non-empty strings are permitted.
+If set, the consumer is treated as a static member, which means that only one instance with this ID is allowed
+in the consumer group at any time. This can be used in combination with a larger session timeout to avoid group
+rebalances caused by transient unavailability (e.g. process restarts). If not set, the consumer will join the
+group as a dynamic member, which is the traditional behavior."
+
+== group.protocol (Type string, Default classic, Valid (case insensitive) [CONSUMER, CLASSIC], Importance high) ==
+"The group protocol that the consumer uses. The supported values are classic or consumer. The default value is
+classic."
+
+== Synthesis: the liveness contract ==
+TWO CLOCKS, TWO DIFFERENT DEATH DEFINITIONS:
+- session timeout = PRESENCE liveness. Broker-side failure detection fed by pushed heartbeats
+  (heartbeat.interval.ms cadence, <= session.timeout.ms, typically <= 1/3). Expiry => member expelled from
+  group, rebalance reclaims its partitions to survivors.
+- poll timeout = PROGRESS liveness. max.poll.interval.ms bounds delay between application poll() calls;
+  expiry => "consumer is considered failed and the group will rebalance in order to reassign the partitions."
+
+STATIC VS DIVERGENT MEMBER BEHAVIOR:
+- dynamic member (group.instance.id unset, default): poll-timeout expiry rebalances immediately.
+- static member (group.instance.id set): on poll-timeout expiry partitions are NOT immediately reassigned;
+  the member stops heartbeating and reassignment waits for session-timeout expiry — "mirrors the behavior of
+  a static consumer which has shutdown." Statics pair with a larger session timeout so a restart does not
+  cost a rebalance; only one instance per instance.id in the group at a time.
+
+PROTOCOL GATING (4.3 docs):
+- group.protocol default = classic. Under classic: client knobs session.timeout.ms (bounded by broker
+  group.min/max.session.timeout.ms) and heartbeat.interval.ms apply.
+- Under consumer (KIP-848): both knobs unsupported client-side; broker configs
+  group.consumer.session.timeout.ms / group.consumer.heartbeat.interval.ms control them.
+- max.poll.interval.ms applies in both protocols (its doc text names both protocol variants).

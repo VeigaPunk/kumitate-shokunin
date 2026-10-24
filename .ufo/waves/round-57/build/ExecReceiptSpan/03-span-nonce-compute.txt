@@ -1,0 +1,19 @@
+{"f":"attest-run-1.txt","prelude_run_at":"2026-10-24T12:41:22.462Z","wall_start":"2026-10-24T12:41:22.462Z","wall_end":"2026-10-24T12:41:22.685Z","nonce":"89182e386fd9d9a57b2a894a2a86387d","argv":"node scripts/readme-map.mjs --selftest","exit":0,"mono_span_ms":222}
+{"f":"attest-run-2.txt","prelude_run_at":"2026-10-24T12:43:19.632Z","wall_start":"2026-10-24T12:43:19.632Z","wall_end":"2026-10-24T12:43:19.945Z","nonce":"e9f14ab41bb2b52adb4a1cd5a4cd8bb8","argv":"node scripts/bind-oracle.mjs --selftest","exit":0,"mono_span_ms":312}
+{"f":"attest-run-3.txt","prelude_run_at":"2026-10-24T12:46:48.675Z","wall_start":"2026-10-24T12:46:48.675Z","wall_end":"2026-10-24T12:46:56.768Z","nonce":"9a065643099d3095b3db2bbbc0cb1287","argv":"node scripts/round-gate.mjs --selftest","exit":0,"mono_span_ms":8093}
+{"f":"attest-run-2-replayed.txt","prelude_run_at":"2026-10-24T13:45:00.000Z","wall_start":"2026-10-24T12:43:19.632Z","wall_end":"2026-10-24T12:43:19.945Z","nonce":"e9f14ab41bb2b52adb4a1cd5a4cd8bb8","argv":"node scripts/bind-oracle.mjs --selftest","exit":0,"mono_span_ms":312}
+---
+wall_start span_ms = 326213
+wall_start span_s  = 326.213
+wall_end   span_ms = 334083
+run-at     span_ms = 326213 (prelude; what A57 B8 regex prefers)
+gap 1->2 ms = 117170  gap 2->3 ms = 209043
+wall_start==prelude for all three: true
+nonce distinct count = 3 / 3
+pairwise distinct = true
+lengths = [ 32, 32, 32 ] all 32 hex = true
+all exit 0 = true
+mono_span_ms = [ 222, 312, 8093 ]
+span>=300s (wall_start) = true
+span>=300s (run-at)     = true
+replay: wall_start dup of run-2 = true ; nonce dup of run-2 = true ; prelude run_at shifted s = 3700.368

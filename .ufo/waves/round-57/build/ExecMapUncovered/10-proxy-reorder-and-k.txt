@@ -1,0 +1,10 @@
+$ cd scratch-reorder && node scripts/proxy-check.mjs --strict
+PROXY: MATCH (A=90 C=27 operability=9; C1=19/19 C2=135/135 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+EXIT=0
+
+$ cd scratch-k && node scripts/proxy-check.mjs --strict
+PROXY  error  C2_DRIFT  C2: declared=135 computed=134 delta=-1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_DRIFT term=C2 declared=135 computed=134 delta=-1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+EXIT=1
+

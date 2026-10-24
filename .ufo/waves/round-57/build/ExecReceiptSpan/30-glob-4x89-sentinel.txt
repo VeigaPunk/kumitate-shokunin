@@ -1,0 +1,21 @@
+++ echo '## does :(glob)round-4[89]/** actually resolve the dirs? (sentinel greps)'
+## does :(glob)round-4[89]/** actually resolve the dirs? (sentinel greps)
+++ printf 'round-4[89]/** for bare nonce  -> '
+round-4[89]/** for bare nonce  -> +++ git grep -ohE nonce HEAD -- ':(glob).ufo/waves/round-4[89]/**'
++++ wc -l
+1
+++ printf 'round-4[89]/** for any file     -> '
+round-4[89]/** for any file     -> +++ wc -l
+343
+++ printf 'round-4[89]/** total files     -> '
+round-4[89]/** total files     -> +++ git ls-tree -r --name-only HEAD
++++ grep -cE '^\.ufo/waves/round-4[89]/'
+348
+++ echo
+
+++ echo '## and the literal spelling for comparison'
+## and the literal spelling for comparison
+++ printf 'round-48 literal bare nonce   -> '
+round-48 literal bare nonce   -> +++ git grep -ohE nonce HEAD -- .ufo/waves/round-48
++++ wc -l
+1

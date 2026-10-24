@@ -1,0 +1,27 @@
+### G) proxy-check at BASE 7178bfd (base script bytes, base tree)
+$ node .ufo/waves/round-57/build/ExecProxyCounts/base-7178bfd/scripts/proxy-check.mjs --self .ufo/waves/round-57/build/ExecProxyCounts/base-7178bfd --strict
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=132 computed=133 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=132 computed=133 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+### H) proxy-check at live lane HEAD 8c6f5b0 (repo bytes, default --self)
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  A_DRIFT  A: declared=90 computed=2884 delta=+2794
+PROXY: DRIFT (A_DRIFT term=A declared=90 computed=2884 delta=+2794; src-rev=31c465f15669)
+exit=1
+
+### I) independent C2 arithmetic at close rev f0dc6d1 (no gate code)
+corpus *.md under knowledge+lessons:
+135
+README map rows '| `knowledge/...`' or '| `lessons/...`':
+135
+### independent C2 arithmetic at BASE 7178bfd
+corpus *.md under knowledge+lessons:
+133
+README map rows:
+132
+row for round-56-verifier-spotcheck at BASE:
+(absent)
+row for round-56-verifier-spotcheck at CLOSE:
+168:| `lessons/round-56-verifier-spotcheck.md` | Round-56 non-author closure (hyaku closure, non-author integrator): C1 `source-dupes` re-measured 0/10 → 10/10 (A56), C2 `visibility-lease-ack-deadlines`/D56 re-measured 2/5 → 5/5; S113/S114 admits + S116 reject AGREE 3/3 on committed captures; routed defects R56-V1 (prepared-but-undispatched wave — the orchestrator dispatches), R56-V2 (frozen A54/A55 exactly-N literals stale), R56-V3 (this file landed without this README row — repaired in round 57 by the `readme-map` gate) | `.ufo/reports/round-56/kumitate.md`; `corpus/lessons/round-56.md`; `corpus/lessons/round-57.md` |

@@ -1,0 +1,27 @@
+$ rm scratch-stale/corpus/lessons/round-57.md   # row AND file removed
+
+$ cd scratch-stale && node scripts/readme-map.mjs
+README_MAP: DRIFT files=134 rows=134 covered=135 bad=1 first=stale-covered:lessons/round-57.md
+EXIT=1
+$ node recompute.mjs scratch-stale
+RECOMPUTE root=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-stale
+files=134 rows=134 covered=135
+uncovered=-
+orphans=-
+dupes=-
+stale=lessons/round-57.md
+uncoveredCovered=lessons/round-57.md
+unpinned=-
+
+$ cd scratch-reorder && node scripts/readme-map.mjs
+README_MAP: CLEAN files=135 rows=135 covered=135
+EXIT=0
+$ node recompute.mjs scratch-reorder
+RECOMPUTE root=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-reorder
+files=135 rows=135 covered=135
+uncovered=-
+orphans=-
+dupes=-
+stale=-
+uncoveredCovered=-
+unpinned=-

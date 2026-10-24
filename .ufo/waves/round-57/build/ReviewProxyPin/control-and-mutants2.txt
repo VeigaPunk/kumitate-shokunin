@@ -1,0 +1,30 @@
+=== CONTROL (committed scratch tree; pin resolves clone) ===
+PROXY: MATCH (A=90 C=27 operability=9; C1=19/19 C2=135/135 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+=== CONTROL --json (pins+gatePins+findings) ===
+verdict: MATCH
+srcRev: 31c465f15669f744848bd9f5d56191c5085670f7
+pins: {"pin.cite-check": {"file": "scripts/cite-check.mjs", "declared": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2", "computed": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2", "match": true}, "pin.surface-probe": {"file": "scripts/surface-probe.mjs", "declared": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35", "computed": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35", "match": true}, "pin.round-gate": {"file": "scripts/round-gate.mjs", "declared": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594", "computed": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594", "match": true}, "pin.proxy-check": {"file": "scripts/proxy-check.mjs", "declared": "816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200", "computed": "816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200", "match": true}, "pin.claims-check": {"file": "scripts/claims-check.mjs", "declared": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14", "computed": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14", "match": true}, "pin.kimi-census": {"file": "scripts/kimi-census.mjs", "declared": "9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50", "computed": "9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50", "match": true}}
+gatePins: null
+findings: []
+errors: 0 warnings: 0
+=== M1: pin.readme-map first hex digit flipped -> expect GATE_PIN_DRIFT ===
+PROXY  error  GATE_PIN_DRIFT  pin.readme-map: declared=158e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 computed=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+PROXY: DRIFT (GATE_PIN_DRIFT term=pin.readme-map declared=158e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 computed=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727; src-rev=31c465f15669)
+exit=1
+=== M2: pin.proxy-check reverted to BASE hash -> expect PIN_DRIFT ===
+PROXY  error  PIN_DRIFT  pin.proxy-check: declared=b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589 computed=816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200
+PROXY: DRIFT (PIN_DRIFT term=pin.proxy-check declared=b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589 computed=816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200; src-rev=31c465f15669)
+exit=1
+=== M3: pin.readme-map stanza line dropped -> expect PIN_UNPINNED warn ===
+PROXY  warn  PIN_UNPINNED  scripts/readme-map.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: MATCH (A=90 C=27 operability=9; C1=19/19 C2=135/135 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+=== M3 --strict ===
+PROXY  warn  PIN_UNPINNED  scripts/readme-map.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (PIN_UNPINNED term=scripts/readme-map.mjs; src-rev=31c465f15669)
+exit=1
+=== M4: unknown key inside gate-pins block -> expect GATE_PIN_KEY_UNKNOWN ===
+proxy-check: fail-closed — GATE_PIN_KEY_UNKNOWN: line 326: pin.not-a-gate is not a kumitate-gate-pins-v1 key
+PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 326: pin.not-a-gate is not a kumitate-gate-pins-v1 key
+exit=2

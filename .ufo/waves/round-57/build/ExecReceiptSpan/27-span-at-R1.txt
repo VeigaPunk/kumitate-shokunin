@@ -1,0 +1,7 @@
+++ echo '## span at f0dc6d1 (superseded run-3) via body wall_start'
+## span at f0dc6d1 (superseded run-3) via body wall_start
+++ node -e $'\nconst {execFileSync}=require("child_process");\nconst show=(c,p)=>execFileSync("git",["show",`${c}:${p}`],{encoding:"utf8"});\nconst ws=[];\nfor(const f of ["attest-run-1.txt","attest-run-2.txt","attest-run-3.txt"]){\n  const t=show("f0dc6d1",`.ufo/waves/round-57/receipts/${f}`);\n  const w=t.match(/"wall_start":"([^"]+)"/)[1]; const n=t.match(/"nonce":"([^"]+)"/)[1];\n  ws.push(Date.parse(w)); console.log(f, w, n);\n}\nconsole.log("span_ms at f0dc6d1 =", Math.max(...ws)-Math.min(...ws));\n'
+attest-run-1.txt 2026-10-24T12:41:22.462Z 89182e386fd9d9a57b2a894a2a86387d
+attest-run-2.txt 2026-10-24T12:43:19.632Z e9f14ab41bb2b52adb4a1cd5a4cd8bb8
+attest-run-3.txt 2026-10-24T12:26:15.254Z 3fcdb7ca5393ee4f7d457aef250a9dd8
+span_ms at f0dc6d1 = 1024378

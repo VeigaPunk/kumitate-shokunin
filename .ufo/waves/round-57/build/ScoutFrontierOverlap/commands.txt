@@ -1,0 +1,23 @@
+Commands run — ScoutFrontierOverlap, kumitate round 57 w1 (2026-10-24)
+Lane root: /home/vgpnk/Projects/shokunin/kumitate-shokunin. All read-only; exit 0 unless noted.
+
+1. read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/plan.md
+2. read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/probe/doctrine57-probe.mjs
+3. read /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md
+4. read /home/vgpnk/Projects/shokunin/kama-shokunin/PROVINCE.md
+5. read /home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md
+6. read /home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md
+7. read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/worker-heartbeat-liveness.md (:raw:28-36 for the truncated line 31)
+8. grep 'S11[3-9]|S120' corpus/SOURCES.md → rows S117/S118/S119 status `mined`, S120 REJECTED
+9. grep 'FrontierOverlap|PROVINCE' .ufo/waves/round-57/w1-spec.json → this item at lines 237-239 (scout); ConnectorSiblingOverlap at 328-329 owns the wider sibling scan incl. mado/aggregator/recent entries
+10. ls */PROVINCE.md at fleet root → 21 lane provinces (exit 2 only from a glob quirk; all 21 listed)
+11. grep -inE 'liveness|heartbeat|worker' */PROVINCE.md → hits: audio L21 (leaf workers, write-scope), kaidoku L42/L349 (probe-command column), kama L13/L22 (endpoint serving liveness), mori L6/L22/L69 (watchdog/fleet liveness), souji L44/L50/L52/L78/L143/L154 (routes liveness findings to mori), tsukuroi L49-50 (ADJ-04/05 routing), kumitate L22 (the D57 clause itself)
+12. grep -inE 'dispatch|orchestrat' {kama,kasegi,mori,mado}-shokunin/PROVINCE.md → kama L41 refuses dispatch/route (→kumitate); mori L12 refuses dispatch/orchestration mechanism (→kumitate), L46/L65/L120/L134-138/L146-156/L179/L203 confirm mori observes, kumitate owns orchestration semantics
+13. grep kumitate|dispatch|orchestrat|liveness|heartbeat kama-shokunin/corpus/knowledge/cross-lane-scope.md → arbitration rule L32, handoffs L40-43
+14. read mori-shokunin/PROVINCE.md:1-30 (domain/owns/refuses verbatim)
+15. git log --oneline -5 -- PROVINCE.md → f0dc6d1 (round-57), e4a4943 (round-56), 68940c6, 8eb113f, 6b2a451
+16. git diff e4a4943 f0dc6d1 -- PROVINCE.md → ONE hunk only (frontier bullet); saved to province-r57-diff.txt
+17. ls -la /home/vgpnk/Projects/ufo-fsd-alpha/scripts/fleet-dispatcher.mjs → 427,801 bytes; grep MAX_LAUNCH_MISSES|LAUNCHING_GRACE_MS|registered_mission_missing|repend → L117, L123, L3573
+18. mkdir -p .ufo/waves/round-57/build/ScoutFrontierOverlap (seat's own build dir)
+
+No installs (none needed; pacman paused host-wide regardless). No production bytes written; no git/jj mutations.

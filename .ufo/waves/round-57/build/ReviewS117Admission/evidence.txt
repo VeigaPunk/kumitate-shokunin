@@ -1,0 +1,38 @@
+ReviewS117Admission — S117 re-open and quote verification, 2026-10-24
+=====================================================================
+
+RE-FETCH (independent re-open of the pinned URL):
+  $ curl -sS -L -o s117-live.html -w '%{http_code} %{size_download}' \
+      https://docs.temporal.io/encyclopedia/detecting-activity-failures
+  http_code=200 size=80679 url=https://docs.temporal.io/encyclopedia/detecting-activity-failures
+  sha256(s117-live.html) = c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50
+  sha256(ScoutTemporalHb/temporal-activity-failures.html) = c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50  [IDENTICAL]
+  .ufo/pins/source-captures.json S117: sha256 c7f7c401..., bytes 80679, captured 2026-10-24  [MATCH]
+
+GATE QUOTE (SOURCES.md row S117 'teaches' cell / lessons/round-57.md table):
+  "An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service."
+  - occurrences in live bytes: exactly 1 (byte offset 53945)
+  - word count: 18 words  (<= 25 OK)
+  - verbatim incl. terminal period: YES
+  - location: nearest preceding heading = h2 'Activity Heartbeat' at byte 53629 (quote at 53945) — §Activity Heartbeats located
+    (page heading is singular 'Activity Heartbeat'; locator uses plural — unambiguous, cosmetic only)
+
+SUPPORTING QUOTES USED BY worker-heartbeat-liveness.md (all verified verbatim in live bytes):
+  - "informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed." — 1 hit
+  - "Activity Heartbeats work in conjunction with a Heartbeat Timeout." — present verbatim once HTML tags strip (tag-split in source)
+  - "Activity Heartbeats are implemented within the Activity Definition." — contiguous rendered text
+  - "We strongly recommend setting a Start-To-Close Timeout." — 2 hits (page repeats sentence)
+  - "The Temporal Server doesn't detect failures when a Worker loses communication with the Server or crashes." — 1 hit
+  - "we recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat." — 1 hit (scout artifact lowercases leading 'w'; page capitalizes inside sentence — minor)
+  - "an application layer payload" — present; page: "A Heartbeat can include an application layer payload that can be used to ..."
+
+FOUR TIMEOUT SLOTS (scope claim): page h2s = Schedule-To-Start Timeout, Start-To-Close Timeout,
+  Schedule-To-Close Timeout, Activity Heartbeat (+ Heartbeat Timeout h2) — all present.
+
+TIER (SOURCES-CONTRACT-v1.md): A = primary/authoritative for scope (official docs listed). Kind=docs.
+  S117 is Temporal's own documentation for Temporal's worker-liveness contract — within-scope A.
+
+MINOR FINDINGS (non-blocking):
+  - Anchor says "§Activity Heartbeats"; rendered heading is "Activity Heartbeat" (singular). Located regardless.
+  - Scopes' "marks the Activity failed" phrasing: page text says a heartbeat timeout marks the attempt
+    failed for retry — consistent with worker-liveness use.

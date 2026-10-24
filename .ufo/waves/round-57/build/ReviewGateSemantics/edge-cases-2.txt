@@ -1,0 +1,28 @@
+== F1 --corpus basename outside namespace ==
+README_MAP: FAIL-CLOSED reason=corpus dir outside the covered namespace (want knowledge|lessons): /tmp/other
+  exit=2
+== F2 --corpus nonexistent dir ==
+README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ReviewGateSemantics/scratch/nope/knowledge (ENOENT)
+  exit=2
+== F3 --corpus flag-swallowing (--corpus --readme) ==
+README_MAP: FAIL-CLOSED reason=corpus dir outside the covered namespace (want knowledge|lessons): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ReviewGateSemantics/scratch/--readme
+  exit=2
+== F4 backticked cell with trailing text -> format-unmapped not dropped ==
+README_MAP: note uncovered:lessons/c.md
+README_MAP: DRIFT files=3 rows=2 covered=3 bad=2 first=format-unmapped:`lessons/c.md` extra
+  exit=1
+== F5 row missing closing pipe -> format-unmapped not dropped ==
+README_MAP: note uncovered:lessons/c.md
+README_MAP: DRIFT files=3 rows=2 covered=3 bad=2 first=format-unmapped:`lessons/c.md`
+  exit=1
+== F6 README is a directory ==
+README_MAP: FAIL-CLOSED reason=README not a regular file
+  exit=2
+== F7 corpus dir unreadable (chmod 000) ==
+README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ReviewGateSemantics/scratch/corpus/lessons (EACCES)
+  exit=2
+== F8 clean again sanity ==
+README_MAP: CLEAN files=3 rows=3 covered=3
+  exit=0
+== F9 selftest tmp residue ==
+no residue

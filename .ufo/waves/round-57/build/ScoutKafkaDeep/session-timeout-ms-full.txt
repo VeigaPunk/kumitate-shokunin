@@ -1,0 +1,77 @@
+ebibyte)
+Valid Values:
+[0,...]
+Importance:
+high
+session.timeout.ms
+The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker. If no heartbeats are received by the broker before the expiration of this session timeout, then the broker will remove this client from the group and initiate a rebalance. Note that the value must be in the allowable range as configured in the broker configuration by 
+group.min.session.timeout.ms
+ and 
+group.max.session.timeout.ms
+. Note that this client configuration is not supported when 
+group.protocol
+ is set to "consumer". In that case, session timeout is controlled by the broker config 
+group.consumer.session.timeout.ms
+.
+Type:
+int
+Default:
+45000 (45 seconds)
+Valid Values:
+Importance:
+high
+ssl.key.password
+The password of the private key in the key store file or the PEM key specified in 'ssl.keystore.key'.
+Type:
+password
+Default:
+null
+Valid Values:
+Importance:
+high
+ssl.keystore.certificate.chain
+Certificate chain in the format specified by 'ssl.keystore.type'. Default SSL engine factory supports only PEM format with a list of X.509 certificates
+Type:
+password
+Default:
+null
+Valid Values:
+Importance:
+high
+ssl.keystore.key
+Private key in the format specified by 'ssl.keystore.type'. Default SSL engine factory supports only PEM format with PKCS#8 keys. If the key is encrypted, key password must be specified using 'ssl.key.password'
+Type:
+password
+Default:
+null
+Valid Values:
+Importance:
+high
+ssl.keystore.location
+The location of the key store file. This is optional for client and can be used for two-way authentication for client.
+Type:
+string
+Default:
+null
+Valid Values:
+Importance:
+high
+ssl.keystore.password
+The store password for the key store file. This is optional for client and only needed if 'ssl.keystore.location' is configured. Key store password is not supported for PEM format.
+Type:
+password
+Default:
+null
+Valid Values:
+Importance:
+high
+ssl.truststore.certificates
+Trusted certificates in the format specified by 'ssl.truststore.type'. Default SSL engine factory supports only PEM format with X.509 certificates.
+Type:
+password
+Default:
+null
+Valid Values:
+Importance:
+high
+<a id=consumerconfigs_ssl.truststore.location href=#consumerconfigs_ssl.truststore.locat

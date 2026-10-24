@@ -1,0 +1,28 @@
+++ echo '## re-test :(glob) variants directly (no pipeline trickery)'
+## re-test :(glob) variants directly (no pipeline trickery)
+++ echo -n 'plain            [0-6]/* : '
+plain            [0-6]/* : +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- '.ufo/waves/round-5[0-6]/*'
++++ wc -l
+100
+++ echo -n ':(glob)          [0-6]/* : '
+:(glob)          [0-6]/* : +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]/*'
++++ wc -l
+0
+++ echo exit=0
+exit=0
+++ echo -n ':(glob)          [0-6]/** : '
+:(glob)          [0-6]/** : +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]/**'
++++ wc -l
+100
+++ echo -n ':(glob)          round-56 : '
+:(glob)          round-56 : +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-56'
++++ wc -l
+4
+++ echo
+
+++ echo '## glob magic note: with :(glob), * does NOT cross / (WM_PATHNAME) — test'
+## glob magic note: with :(glob), * does NOT cross / (WM_PATHNAME) — test
+++ echo -n ':(glob).ufo/waves/round-5*   : '
+:(glob).ufo/waves/round-5*   : +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5*'
++++ wc -l
+0

@@ -1,0 +1,30 @@
+$ git -C lane rev-parse HEAD
+8c6f5b017d149b18134917378cdbed3b492d8e89
+
+$ git -C lane ls-tree -r --name-only HEAD -- scripts/readme-map.mjs corpus/README.md .ufo/pins/readme-map.json
+.ufo/pins/readme-map.json
+corpus/README.md
+scripts/readme-map.mjs
+
+$ git -C lane show HEAD:<path> | sha256sum    (committed bytes = scratch bytes)
+scripts/readme-map.mjs  058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+corpus/README.md  7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d
+.ufo/pins/readme-map.json  9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+
+$ sha256sum scratch*/corpus/README.md
+3957f57db3137beb97a463f899c74a1770191d860d59af90046f3194f732e861  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch/corpus/README.md
+7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-clean/corpus/README.md
+f4dbc991ad1d767e1a2dd2674b189accbd73f92f024619cf2d03a1bffd5f87e7  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-format/corpus/README.md
+9b86263d187d40a0ea3b71591878422144df4632678a6d11a61458bac36596b9  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-k/corpus/README.md
+5f935ccaa1ee6d0c88880d96b75beef4057b861feba9a5bdd3647968eedf952b  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-last/corpus/README.md
+49b5815581e47571e691537f92daf126b5fdbde574e8b85b41c81e4a047938b5  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-reorder/corpus/README.md
+5f935ccaa1ee6d0c88880d96b75beef4057b861feba9a5bdd3647968eedf952b  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-stale/corpus/README.md
+
+$ sha256sum scratch*/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-clean/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-format/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-k/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-last/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-reorder/scripts/readme-map.mjs
+058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapUncovered/scratch-stale/scripts/readme-map.mjs

@@ -1,0 +1,19 @@
+## bracket matrix on non-hidden dir
+corpus/README.md         -> 1
+corpus/README.m[d]       -> 0
+corpus/READM[E].md       -> 0
+corpus/README*           -> 0
+corpus/READM?.md         -> 0
+
+## commit times vs receipt window
+f0dc6d1160e66af65355bd353665adac22bbf4a9 2026-10-24T09:45:41-03:00 2026-10-24T09:07:08-03:00
+b3bd0633aec43ad2559f980b400e4d7077e10af3 2026-10-24T09:47:46-03:00 2026-10-24T09:47:46-03:00
+8c6f5b017d149b18134917378cdbed3b492d8e89 2026-10-24T09:50:23-03:00 2026-10-24T09:50:23-03:00
+
+## all round-57 commits with times
+8c6f5b0 2026-10-24T09:50:23-03:00 round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5
+1238575 2026-10-24T09:50:17-03:00 round-57: idempotence at bookkeeping tip — A57 10/10, D57 5/5 at 798d4d2
+c42afe1 2026-10-24T09:50:14-03:00 round-57: SCORECARD measured-commit slots filled (R1 f0dc6d11; A57 10/10, D57 5/5 also re-verified at 798d4d23)
+798d4d2 2026-10-24T09:48:21-03:00 round-57: close receipts — A57 10/10 + D57 5/5 at measured rev, after-census exit 0, prior-counter obsolescence transcript
+b3bd063 2026-10-24T09:47:46-03:00 round-57: readme-map capability gate + worker-heartbeat-liveness frontier entry (S117-S120)
+f0dc6d1 2026-10-24T09:45:41-03:00 round-57: freeze + integrate — readme-map gate (corpus file<->README-row bimap, R56-V3), worker-heartbeat/liveness frontier entry (S117-S120), plan+counters A57/D57, base receipts, scratch-HELD witness, time-spaced receipts + doctored control, 64-seat v2 wave spec (prepared), routed-defect answers R56-V1/V2/V3

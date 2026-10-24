@@ -1,0 +1,51 @@
+113:const MAX_PAUSED_RESUME_ATTEMPTS = 8;
+117:const MAX_LAUNCH_MISSES = 8;
+123:const LAUNCHING_GRACE_MS = 120_000;
+263:// tip — same rependable predicate queueSummary uses.
+277:  "launch_not_registered", "launch_registration_exhausted", "registered_mission_missing", "resume_identity_missing",
+278:  "repend_requested",
+3570:      // Same rependable predicate as queueSummary: only a
+3571:      // registered_mission_missing block with a nonzero launcher exit can be
+3573:      const rependable = task.blocker?.code === "registered_mission_missing"
+3576:      if (rependable) record.live += 1;
+3589://   (3) failed / non-rependable-blocked members → dead;
+6291:  if (misses > MAX_LAUNCH_MISSES) {
+6311:// launch it. Refuses (repended:false report) when the task is terminal or a
+6316:function rependTask(runId) {
+6321:    // the watchdog reads repended:false + reason and stops retrying, while a
+6323:    if (!task) return { ok: true, repended: false, reason: "no_task", runId };
+6325:      return { ok: true, repended: false, reason: `task_${task.state}`, taskKey: task.key, runId };
+6328:    // case (no missions exist — repend is free); a present-but-unreadable one
+6329:    // may hide a live mission, so repending blind could double-launch. The
+6344:          repended: false,
+6354:        return { ok: true, repended: false, reason: "manifest_unreadable", taskKey: task.key, runId };
+6362:      return { ok: true, repended: false, reason: "mission_live", missionId: live.id, taskKey: task.key, runId };
+6366:    // conflicts), so repending here can never relaunch — it re-blocks on the
+6367:    // next cycle with no diagnostic (observed: 5 repends of 3 runIds in 2 min
+6369:    // stale row first instead of retrying a doomed repend.
+6374:        repended: false,
+6384:    task.blocker = { code: "repend_requested", retryable: true };
+6387:    // A repend is a fresh dispatch path: the paused-resume budget belongs to
+6389:    // near the cap would strand the repended task on resume_budget_exhausted
+6394:    log("queue_repend", { taskKey: task.key, runId: task.runId, priorMissionId });
+6395:    return { ok: true, repended: true, taskKey: task.key, runId: task.runId, queue: queueSummary(queue) };
+6774:        if (Number.isFinite(claimedAt) && Math.abs(Date.now() - claimedAt) < LAUNCHING_GRACE_MS) {
+6791:          task.blocker = { code: "registered_mission_missing", retryable: false };
+6832:        && task.blocker?.code === "registered_mission_missing"
+7069:        // registered_mission_missing with a nonzero launcher exit; every
+7071:        const rependable = dependency.blocker?.code === "registered_mission_missing"
+7074:        return !rependable;
+7084:      // afterChains starvation (M16): a dead chain (failed/non-rependable tip
+7186:// performed by other processes (rependTask via the CLI verb, the l0-monitor
+7551:            // registered_mission_missing and overwrites the precise identity
+7634:          if (nextAttempts > MAX_PAUSED_RESUME_ATTEMPTS) {
+7744:    // A failed (or non-rependable blocked) dependency can never satisfy —
+7747:    // SAME rependable predicate as reconcileQueue/queueSummary
+7750:    // registered_mission_missing block with a nonzero launcher exit — a
+7751:    // retryable:true non-rependable dep reported deps_pending here and
+7756:            && !(dependency.blocker?.code === "registered_mission_missing"
+8832:  // not, `enqueue --spec --dry-run` / `repend --run --bogus` must fail
+8987:  if (command === "repend") {
+8990:    if (!runId) throw usageError("repend requires --run");
+8992:      throw usageError("repend --run expects a gq<16-hex> run id");
+8994:    output(rependTask(runId));

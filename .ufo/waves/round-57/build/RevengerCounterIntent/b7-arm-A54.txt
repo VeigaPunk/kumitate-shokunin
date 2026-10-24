@@ -1,0 +1,18 @@
+  // B7 — gate-registry row + exactly 24 checklist items, item 24 naming the gate.
+  let b7ok = false; let b7d = '';
+  {
+    const skill = join(T, 'SKILL.md');
+    if (existsSync(skill)) {
+      const text = readFileSync(skill, 'utf8');
+      const rowOk = /\|\s*counter-pins\s*\|/.test(text) && text.includes('kumitate-counter-pins-v1');
+      const items = text.split('\n').filter((l) => /^\s*- \[[ x~]\]/.test(l));
+      const item24 = items.length >= 24 && /node scripts\/counter-pins\.mjs/.test(items[23] || '');
+      b7ok = rowOk && items.length === 24 && item24;
+      b7d = b7ok ? 'registry row + 24 items, item 24 = counter-pins'
+        : `row=${rowOk} items=${items.length} item24=${item24}`;
+    } else {
+      b7d = 'SKILL.md absent';
+    }
+  }
+  hold('B7', b7ok, b7d);
+

@@ -1,0 +1,311 @@
+sandbox clone of lane at 8c6f5b017d149b18134917378cdbed3b492d8e89
+MUTANT M1-drop-clauses: DOCTRINE57: DOCTRINE57_UNMET held=4/5 checks=5 rev=b91589eb148b38ff21f3aa185e6de9121710254a rule=D57 | E1 PASS | E2 MISS clauses=11 bound=11 distinct=11 hash-miss=0 | E3 PASS | E4 PASS | E5 PASS exit=1
+MUTANT M2-corrupt-hash: DOCTRINE57: DOCTRINE57_UNMET held=4/5 checks=5 rev=31651e7c88a68add7e8d01eeee4cf3bab97f70b1 rule=D57 | E1 PASS | E2 MISS clauses=11 bound=11 distinct=11 hash-miss=1 | E3 PASS | E4 PASS | E5 PASS exit=1
+MUTANT M3-status-queued: DOCTRINE57: DOCTRINE57_UNMET held=3/5 checks=5 rev=e4e93a01b3db3c226092d66194ee43d8dceb47f9 rule=D57 | E1 PASS | E2 MISS clauses=11 bound=11 distinct=11 hash-miss=1 | E3 MISS S118:queued | E4 PASS | E5 PASS exit=1
+MUTANT M4-drop-verified-at: DOCTRINE57: DOCTRINE57_UNMET held=1/5 checks=5 rev=54b49153166eca8ec85386620e10cdeee3293f2c rule=D57 | E1 MISS head="source: S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures; S118 https://kafka.apache.org/43/configuration/consumer-configs; S119 https://ku" | E2 MISS clauses=11 bound=11 distinct=11 hash-miss=1 | E3 MISS S118:queued | E4 MISS exit=1 last="SOURCES_CHECK: DRIFT (HEADER_INCOMPLETE)" | E5 PASS exit=1
+MUTANT M5-restored: DOCTRINE57: DOCTRINE57_UNMET held=1/5 checks=5 rev=72f25cd47e296a575592978c2edfc5b181954d6e rule=D57 | E1 MISS head="source: S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures; S118 https://kafka.apache.org/43/configuration/consumer-configs; S119 https://ku" | E2 MISS clauses=11 bound=11 distinct=11 hash-miss=1 | E3 MISS S118:queued | E4 MISS exit=1 last="SOURCES_CHECK: DRIFT (HEADER_INCOMPLETE)" | E5 PASS exit=1
+=== sandbox log ===
+72f25cd M5 restore conformant tree
+54b4915 M4 drop verified-at
+e4e93a0 M3 S118 status queued
+31651e7 M2 corrupt receipt hash
+b91589e M1 drop two clause lines
+8c6f5b0 round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5
+1238575 round-57: idempotence at bookkeeping tip — A57 10/10, D57 5/5 at 798d4d2
+c42afe1 round-57: SCORECARD measured-commit slots filled (R1 f0dc6d11; A57 10/10, D57 5/5 also re-verified at 798d4d23)
+798d4d2 round-57: close receipts — A57 10/10 + D57 5/5 at measured rev, after-census exit 0, prior-counter obsolescence transcript
+b3bd063 round-57: readme-map capability gate + worker-heartbeat-liveness frontier entry (S117-S120)
+f0dc6d1 round-57: freeze + integrate — readme-map gate (corpus file<->README-row bimap, R56-V3), worker-heartbeat/liveness frontier entry (S117-S120), plan+counters A57/D57, base receipts, scratch-HELD witness, time-spaced receipts + doctored control, 64-seat v2 wave spec (prepared), routed-defect answers R56-V1/V2/V3
+7178bfd round-56 verifier spot-check (integrator, hyaku): non-author admit/reject
+e709130 round-56: idempotence at bookkeeping tip — A56 10/10, D56 5/5
+0fb5c61 round-56: record R2 claim receipts — ATTEST56_HELD 10/10, DOCTRINE56_HELD 5/5 at e74ea6b8; interim d7da54ab receipts kept; SCORECARD measured slots filled
+e74ea6b round-56: re-mint receipt run-3 — time-spaced span >=300s for B8
+d7da54a round-56: claim receipts — time-spaced receipt-attest runs + doctored replay control, close batteries (selftests, harm part1, prior probes at R1)
+e4a4943 round-56: freeze + integrate — source-dupes gate (dup-URL ratchet), visibility-lease/ack-deadline frontier entry (S113-S116), plan+counters A56/D56, base receipts, witness, wave spec, routed-defect corrections R55-V1/V2
+453f6e9 considerthese: 2026-10-24 daily reflection
+3eae059 round-55 verifier spot-check (integrator, hyaku): non-author admit/reject
+26c886d round-55: fill remaining measured R1b slots in move log
+e7a0711 round-55: LOG entry + SCORECARD measured-commit slots (R1b 465a96f5)
+2750454 round-55: close batteries — idempotence at R3, harm battery, selftests, witness, counter-obsolescence note (A54 frozen 24-item checklist literal)
+3b3e1e9 round-55: record R2 claim receipts — ATTEST55_HELD 10/10, DOCTRINE55_HELD 5/5
+465a96f round-55: freeze-repair A55 v1 arm fixes (undo-restore, expectation strings, B1 whole-output scan, B5 optional counter-pins, B9 instrumentation, vacuous guard) + re-pin
+68940c6 round-55: freeze + integrate — source-capture gate (R54-C1), bounded-redelivery-budgets entry (S109-S111), plan+counters A55/D55, base receipts, receipts, wave spec
+c562d28 round-54 verifier spot-check (integrator, hyaku): non-author admit/reject
+4942741 round-54: close batteries and scorecard record
+670af7c round-54: record R2 idempotence receipts
+0f52b49 round-54: record R1 claim receipts and move log
+8eb113f round-54: freeze counter-pins and frontier entry
+383ad78 round-53 verifier spot-check (integrator, hyaku): non-author admit/reject
+5a7ea56 round-53: close — idempotence receipts + harm census H1-H6 green at tip (census exit 0, r52-set 8/8 8/8 5/5 5/5, pins match)
+3bf1fb4 round-53: re-bind the r52 entry's invocation-attestation citation to the re-anchored bytes (D52 E2 hash-miss repair)
+64b013a round-53: close receipts at R1 — ATTEST53_HELD 17/17, DOCTRINE53_HELD 5/5 (R52-11/Q44 discipline)
+728799f round-53: receipt-attest v3 whole-dir ledger + sourced entry receipt-identity-canonicalization (S104/S105) + D51 re-anchor + r52-spotcheck README drift repair + SCORECARD/LOG
+68dbfb3 round-53: freeze — plan (2 claims, v2 wave of 64 prepared), counters A53/D53 v1, executed base receipts, scratch-HELD witness (Q43/M5), receipts, wave spec
+d124a77 round-52 verifier spot-check (integrator, hyaku): non-author admit/reject
+17dd42e round-52: late SonicWave report revision (report-only; moves no counter term)
+2023b5b round-52 close R3: idempotence + final harm census (H1 23/23, H3 MATCH, H5 G50 8/8 R50v2 8/8, D51 4/5 named) + SCORECARD round-52 section + late wave report + registry
+0423721 round-52 close R2: FINAL receipts at the measured close rev R1=ab5dde40 (A52 13/13, D52 5/5)
+ab5dde4 round-52 close C1: receipt-attest v2 (3d10d554, 46 cases) + receipts + entry S102/S103 + Q44 + lesson + stanza A=76 C2=120/120 + R50v2 + wave evidence
+8fbf0fc round-52: freeze-repair addendum (14 named seat-found repairs; counters re-executed at base, receipts refreshed) + B5c evidence
+ac56743 round-52: wave validation + taskCall evidence (policy v2, 64 seats, one call)
+66766f7 round-52: v2 wave spec — 64 seats (19 exec/13 rev/7 scout/8 scribe/6 crit/5 mut/2 sent/2 simpl/1 conn/1 revg), 37.5% attack
+f539a71 round-52: freeze — plan (2 claims, v2 wave of 64), counters A52/D52 v1, executed base receipts (Q43)
+02c0125 round-51 verifier spot-check (integrator, hyaku): non-author admit/reject
+23471fb round-51: MutSkillItem report (last seat; item-23 falsifiability verified)
+42ecc3c round-51: ScribeEntry review nits — v3r5/v3 genealogy wording, run-3 binding, A2 prelude-derived note
+e530266 round-51: MutReceiptBytes post-close findings routed R52-7..R52-10 (A2 span-arm counterexample, prelude TZ parsing)
+633ab47 round-51: MutStanza final battery report (11/11 killed, MATCH earned)
+458f6dd round-51: A-term composition corrected per RevStanza (16 shipped + 55 .ufo artifacts; nested-repo files named)
+32624d9 round-51: post-close MutShipped evidence + R52-6 route (selftest coverage, shipped bytes correct)
+3aaa25a round-51: late wave-2 reports (MutCounters drop-one battery 14/14 UNMET)
+3f6c030 round-51: MutCounter late report + vacuous-HELD edge (R52-5) in limits
+9d11f4e round-51: entry span figure corrected to 773.5s (RevD51Rerun nit)
+cb6c472 round-51: final harm+census receipts
+fef6707 round-51: stanza A re-derived to 71 (committed-tree walk; transient seat scratch had inflated the live reading)
+57333ea round-51: close record — SCORECARD round-51 section + capability row, LOG, late seat evidence (ExecForgerControl zero-spawn demo), R52 routes, stanza A=81, dead-seat/H5 corrections
+efdd742 round-51: wave-2 seat reports and close measurement receipts
+2d7ecba round-51: final entry bindings (13/13) + addendum item 10 (inline-edit exception, header drift)
+9a345d5 round-51: wave-2 finding fixes — entry same-line bindings + measured window bound, plan pointer+item 9, SKILL numeral
+cd7f69d round-51: receipt 3 + stale-sidecar doctored control (M2 shape) + entry trio-first/D2 bindings + S101 teaches fix + Q43 limit + plan D1 wording, per wave-2 findings
+3304a56 round-51: w2 dispatch evidence (spec, dispatch, taskCall, registry with agentIds)
+51f2ecf round-51: w2 spec + validated dispatch payload (32 attack seats)
+7d88faa round-51: A2 receipts 1-2 + A3 doctored control (receipt 3 scheduled pre-close for the >=300s span)
+a476977 round-51: C1/C2 integration — receipt-attest instrument, GATE_PINS+pin family, stanza re-derivation (A=67 C=23 C2=117/117), S100/S101 rows, invocation-attestation entry, round-51 lesson+Q43, w1 evidence
+8f3c692 round-51: plan text repairs — C1 body ledger wording aligned to addendum item 4 and digest canonicalization clarified (MutInstrument F-1, RevInstrumentContract F3)
+cbca45c round-51: freeze repair 6 — A3d digest-binding challenge (DistWave1 item 1); check set now 9, base 0/9
+779b16e round-51: plan text repairs — before-line arithmetic 0/8 and superseded do-nothing-control claim, per RevPlan residue
+4b8da21 round-51: freeze repair 5 — A4c REPLAY challenge arm + plan body arithmetic (8 checks) + header exit-2 claim fix, per RevPlan
+8fd3cde round-51: freeze repair 4 — A3c copies the genuine sidecar to the tampered target so the arm tests prelude-rewrite+untouched-sidecar (CritC1)
+8c07e88 round-51: freeze repair 3 — A51 v3 challenge arms (A2c/A3c) per CritC1 kill-rule falsification; ledger same-digest exemption per RevInstrumentContract F1; probe-side absolute binary paths
+3ed875d round-51: freeze repair 2 — D51 SOURCES-row column indexes (status c[8], used-by c[11]) per two independent seat findings; no other semantics changed
+1fd8ace round-51: freeze repair — comment-only fix for A51 block-comment termination (no check semantics changed); counter executed for the first time
+9d08e6b round-51: w1 dispatch evidence (spec v2, dispatch, taskCall, registry with agentIds)
+06ecbf4 round-51: freeze plan, counters A51/D51, w1 spec
+d788f74 round-50 verifier spot-check (integrator, hyaku): non-author admit/reject
+c90b9de round-50: close B-records (sweep: L1 left untracked; attribution defect)
+329fcb8 round-50: close records — lesson corrections (M4 attribution, M5 pin provenance, M6 causality, S095 locator + SOURCES deltas), SCORECARD measured revisions + attribution limit + attack-mix correction, LOG round-50 entry, close receipts (G50/R50/5 residual seats/census)
+ab3c64e round-50: close — re-pin cap-run after the mount-root guard, C2 stanza 114/114 + lesson row, Q39 prelude-replay limit, round-50 lesson (M1-M6), SCORECARD round-50 section and move-log row
+227b9e6 round-50: cap-run mount-root guard (explicit bind + implicit cwd), re-pin cap-run, r49 Gate ledger, wave artifacts, QUALITY Q40/Q41, SOURCES used-by
+6927903 round-50: record wave seat assignments
+378b6e7 round-50: freeze guard and closure corrections
+5b0de26 round-50: freeze guard and closure audit
+ff40d7d round-49 verifier spot-check (integrator, hyaku): non-author admit/reject
+c432cc9 round-49: wave evidence — ConnSiblingOverlap seat report (sibling citation decisions, mount-binds name collision, r42 origin binding)
+923a172 round-49: record addendum — C2 re-scored 16/16 at 01b70bb0, LOG line for prior-art citations and the mount-binds disambiguation
+01b70bb round-49: C2 addendum — clause C16 binds the lane's r42 counter-amendment origin (corpus/lessons/round-42.md, in-repo receipt) + prior-art citations (mado r20/r25-26, kake r40/41, mori r23, tameshi r18/r34, Q36/Q37) + registry row disambiguates mount binds
+64b9286 round-49: record — C1 bind-oracle ORACLE_HELD 0/6->6/6 (0526f898, 3 time-spaced runs, selftest 7/7); C2 doctrine entry HELD 15/15 at 589d25e4 (doctored control UNMET); SCORECARD round-49 section + capability row + move log; LOG round-49 incl. R49-3/4/5 corrections; lesson round-49 (M1 fixed-allowlist drift receipt, M2 unpinned instrument); QUALITY Q38; registry rows (counter-rerun probe, cap-spawn helper, bind-oracle gate); README 110 rows; wave spec/taskcall/receipts; r48 late leftovers
+589d25e round-49: C2 knowledge entry counter-amendment-discipline (15 clauses, each hash-bound to a committed receipt) + SOURCES S099 (proc_pid_mountinfo(5), tier A, mined)
+0526f89 round-49: C1 capability bind-oracle — scripts/bind-oracle.mjs (kumitate-bind-oracle-v1): child-side /proc/self/mountinfo mount-set comparison vs requested binds, parent-set EXTRA rule, 7-arm selftest
+8237be8 round-49: freeze — plan (C1 bind-oracle ORACLE_HELD 0/6->6/6, C2 doctrine clause-receipt counter) + frozen counters bindoracle49-probe.mjs/doctrine49-probe.mjs + pre-data controls (nothing 0/6, forged-static 3/6 UNMET, C2 entry-absent)
+b7b040b round-48 verifier spot-check (integrator, hyaku): non-author admit/reject
+4e4f471 round-48: record — C1 verified (L1 4/4 + two committed re-runs 4/4 at ce9aee5d, rule F48+A48), C2 counter-rerun verified (selftest PASS + AGREE runs=2); SCORECARD round-48 section + r47 correction + stanza/gate-pins re-pins; LOG entry; lesson round-48 (mistakes 1-4, S098 mined); SOURCES S098; README rows (108/108); QUALITY Q36/Q37; proxy-check GATE_PINS + own re-pin; wave r48 + residual close receipts and manifests; attempt-1 build/ inheritance committed
+ce9aee5 round-48: C1+C2 candidate — four route sites (RG742 SP491 SP519 SP1592) through cap-run via cap-spawn; cap-spawn verdict-dir leak fix (delta=0); counter-rerun.mjs (C2); A48 pre-data counter amendment (summary corroboration, forced by MutSummaryForge M2) + plan addendum
+fe3d45b round-48: freeze — counter caproute48-probe.mjs (rule F48; R47-5 root causes: padded return column and padded PID prefix after PID wrap), plan § C1 (four sites RG742 SP491 SP519 SP1592), stability receipts (r47 set 5/5 x3, r48 set 0/4 x3 at f00cf278), open census
+bfc30d5 considerthese: 2026-10-23 daily reflection
+f00cf27 round-47 verifier spot-check (integrator, hyaku): non-author admit/reject
+e42eba6 round-47: late wave-1 report ReviewCounter (freeze-counter review; D1-D3 basis of A1/A2)
+67ebb32 round-47: record — C1 not verified (L1 5/5, wave-2 re-runs 3/5 3/5 4/5), S096/S097 supersedes rows after re-open defects, SCORECARD move-log row, round-46 correction and round-47 section, LOG entry, lesson verdict and mistake 3, wave-2 reports, close receipts
+f399fc6 round-47: C1 measured — CAPROUTE_PROBE held=5/5 rule=A2 at 269dadb6 (first counter score of the candidate); wave-2 spec and dispatch
+47e386f round-47: A2 re-score before data — base, freeze, calibration (K488 only 1/5), CtlEnvCaps and all twelve wave-1 controls 0/5 under A2; Q35 close receipt
+8de35e7 round-47: freeze A2 before data — return value read from the record's end, no-execve and invalid-base runs are exit 2 (ReviewCounter D3-D5); after control CtlRetParse met A1 5/5; receipts
+269dadb round-47: C1 commit — five child sites (kimi-census runGate, sources-check runTool and parity, claims-check runClaims, anchor-truth selftest tool) routed through cap-run via cap-spawn; runner bind/verdict-file hardening (ReviewCapRunV2 F1/L1/L2, SentinelCapSpawn 1-2); checklist receipts keep wall/load/output (R46-3); R46-1 rows restored plus supersedes rows S080-S092; S093-S095; QUALITY Q35 and checker; R46-4 patch series; README rows; lesson; proxy stanza (A=25 C2=106, re-pins, pin.cap-spawn)
+68aa433 round-47: A1 control re-score before data — all twelve wave-1 control patches 0/5 under A1 (a1-controls.txt); wave-1 control reports and patches, spec, dispatch, registry
+796b49b round-47: freeze A1 before data — counter reads systemd-run's own -p limits, ordered runner→scope→bwrap chain at exec time, executable identity, owning-suite summary and verdict, direct-child allowlist, execveat; after control CtlEnvCaps met the freeze counter 5/5 (CritC1Shape); A1 receipts
+cac4300 round-47: freeze — plan (C1 ROUTED_HELD, five sites), frozen counter caproute-probe.mjs, base and calibration receipts; prerequisite runner contract kumitate-cap-run-v2 (--bind, --verdict-file, sync verdict write, budget rule; R46-5) and helper scripts/cap-spawn.mjs (before any data seat)
+0bd8be6 round-46 verifier spot-check (integrator, hyaku): non-author admit/reject
+9b33e03 round-46: final receipts — O1 3/3 and O2 6/6 at record commit adedf671 (capability row present), close census exit 0, late residual files
+adedf67 round-46: record — capability row cap-run, move-log row, SCORECARD/LOG/lesson verdict (harm check 697 open), S047/S055 narrowed, plan erratum, residual and close receipts
+980a16a round-46: C1 commit — selftest Git-variable scrub (cite-check, proxy-check, round-gate; S065/S078), runner scripts/cap-run.mjs (S069/S072/S077/S079) with gate pin, SKILL registry row and checklist item, proxy stanza (A=21 C=22 C2=104, re-pins); repairs D1-D4, S073/S076 and 11 more rows from the all-row re-open, S078/S079, QUALITY Q33-Q34, README rows, lesson
+e0c1878 round-46: control re-score under A2/A3 and freeze A4 before data (O1 hostile fault run after CtlC1Replay-with-launches met A2); wave-1 build receipts, spec and dispatch
+cacfab3 round-46: freeze A3 before data — O2 probe observes the live child from outside the runner (after CtlC2LabelKeyed met A1); calibration receipts
+3b184d3 round-46: freeze A2 before data — one operability claim with obligations O1 (canary, two hostile runs, strict env, fault run) and O2 (probe with cgroup and pid-ns identity); after CtlC1PathKeyed/CtlC1Replay met the A1 counter and CritClaimShape objections
+516977a round-46: freeze A1 — randomized C2 probe (before any seat), re-scored do-nothing and calibration receipts
+7cd1fa3 round-46: freeze — plan (C1 CANARY_HELD, C2 CAP_HELD), frozen counters, do-nothing and calibration receipts, open receipts (before any data seat)
+2b2bf7b round-45 verifier spot-check (integrator, hyaku): non-author admit/reject
+330ebfe round-45: close receipts (proxy --strict MATCH, census exit 0, sources-check CLEAN, Q32 empty) at 9e3e3ed9
+9e3e3ed round-45: corrections after a3-residual review — entry errata X1' and X13-X20 (appended), lesson C1-at-close corrections, bounded Q30 reading and Q31 gloss fix, SCORECARD and LOG corrections
+92889d2 round-45: a3-residual review receipts (7 of 7 seats) and call payload, before corrections
+d5f67ee round-45: integrate a3-falsify — entry errata X1-X12 (appended), S077 and row fixes S013/S072/S073, QUALITY Q30-Q32 replay notes, lesson attempt-3 gate/mistake/C1 at close, SCORECARD row 45 and round-46 plan, LOG
+3837d31 round-45: a3-falsify wave receipts (33 of 33 seats, settled 07:14Z) before integration
+9c4785e round-45: attempt-3 plan erratum E10, a2-falsify dead-wave record, a3-falsify spec and dispatch (before seats run)
+6b2a451 round-45: C1 entry commit — corpus/knowledge/agent-isolation-substrates.md (judged object), SOURCES S013/S027 flips and S062-S076, README rows, PROVINCE frontier line, lesson
+1a8312e round-45: routed repairs R44-1/2/3/5/6 (QUALITY Q29 note fix, Q30, Q31, Q32; round-44 errata; SCORECARD R44-5 note, move-log order, C2 line, proxy stanza 102) and Q30 command bytes
+31656bd round-45: attempt-2 control-wave receipts (49 of 50 seats) and plan erratum E9 (checklist amended before the entry)
+d9ad287 round-45: attempt-2 plan erratum E8, start census, control-wave spec and dispatch
+a2e5b54 round-45: F1 quote-control receipt and E7 frozen C1 review checklist (before entry)
+ca5b0aa round-45: plan errata E1-E6 after wave-1 critique (before entry)
+cfa9930 round-45: plan (repair-first, one exploratory frontier claim) and round-open receipts
+3632602 round-44 verifier spot-check (integrator, hyaku): non-author admit/reject
+37e8f66 round-44: close — falsify wave evidence, C1 does not verify (post-data catalog controls MET), lesson, LOG, SCORECARD, Q29, source fixes
+8e82251 round-44: knowledge entry omp-agent-root (S053-S061), README map row, proxy stanza C2 98
+bde1086 round-44: C1 counted run receipt (P44 MET 207/207 at d81978cd)
+d81978c round-44: omp-census gate (C1 measured commit), sources S053-S061, gate pin, checklist 20-21, R43 repairs
+32b7fd5 round-44: third pre-data redesign (p44d counter); 44 controls UNMET; wave-1 and residual reports so far
+28e29bb round-44: second pre-data redesign (p44c counter) after control wave; controls re-scored UNMET
+292d926 round-44: pre-data redesign of the P44 case set (p44b counter), before any seat or census
+361d449 round-44: plan, frozen P44 counter and shape, do-nothing before receipt
+6cda8c3 round-43 verifier spot-check (integrator, hyaku): non-author admit/reject
+b01ded3 round-43: falsify wave evidence (35 dispatched, 33 returned, 2 cancelled at the operator deadline: MutCiteWitness, SentinelReaper); lesson late findings, K43 (a) wording, reject precision; trial receipt disclosed
+7f899ea round-43: close - lesson measurement and falsify dispositions, S047 erratum, Gate URLs and word counts; cite-check primary-only switch guarded to selftest depth (CritPrimaryOnlySwitch) and re-pin; QUALITY Q25-Q28 in-force note; LOG round 43; SCORECARD Move log row, capability re-evidence, round-43 section and correction quote fix
+003dd28 round-43: C1 after receipt at measured 84cb1d5d (frozen counter CLEAN mutants=43 killed=43 frozen=41/41 exit 0; first run at that commit), A1 discriminators PASS, checklist 19/19 at 84cb1d5d; falsify wave spec and dispatch
+84cb1d5 round-43: measured commit - C1 independent verdict witnesses in cite-check (primary-only self-observation child) and wave-census (primary lines, WC29 load-robust timeouts, D8 WC32 red-before); gate-mutants lane copy isolation and counter-suite cases (D4); kimi-census secret-dir mode/owner (D7); S046-S052; QUALITY Q25-Q28; round-42 appended corrections (D2, S045 Q8); SKILL K43 rows; lesson; re-pins, stanza A=11 C2=96
+fb3eab4 round-43: wave-1 build evidence - 34 seat reports (34 spawned, 34 returned, 0 dead), spec, dispatch and registry
+df1ceaf round-43: addendum A1 before any measured run - C1 discriminators D-static and D-null (add failure conditions only) after wave-1 junk J4 and a self-digest tripwire read the frozen counter CLEAN; probe and control receipts (e5ffcbe7 PASS, both junk FAIL); counter limits named
+e5ffcbe round-43: C1 do-nothing control receipt - frozen K43 counter (plan 0f4108bf) on round-open bytes reads SURVIVED frozen=34/41 exit 1 (seven named survivors)
+0f4108b round-43: plan with frozen K43 kill predicate and counter (gate-mutants v2, temp parent fix D4), open receipts and pre-commit dry run; base repair (README row for round-42 closure, stanza C2=95, gate-mutants re-pin); D1 three late round-42 falsify reports committed as late evidence
+2a7f37d round-42 verifier spot-check (integrator, hyaku): non-author admit/reject
+43f54c1 round-42: misrooted ScoutMisroot report moved in from the fleet root (cmp equal); Mistakes row
+4e1f3a7 round-42: close - falsify wave (35 dispatched, 23 returned, 12 cancelled) evidence; wave-census canonical-path refusal (SentinelCensusTip B1), re-pin; lesson, SOURCES (S042 used-by), knowledge, QUALITY, SKILL and SCORECARD corrections from falsify seats; R41-2 pending operator ruling; amendment-after-data mistake recorded; C1/C2 receipts and close receipt
+c9a084b round-42: measured commit - C1 capability gate-mutants (operability 8 to 9: A 10, C 19; battery CLEAN frozen 41/41), C2 ~/.kimi-code/locks declared in K3 (census strays 1 to 0, K 53/53); R41-2 gate-pins block, R41-3 guard depth stop, R40-4 anchor-truth caps, wave-census sentinel fixes; S039-S045; QUALITY Q21-Q24; lesson, LOG, SCORECARD; wave-1 build evidence (37 seats)
+a0a07ba round-42: plan amendments A1-A4 before any counted run; base repair (README row for the round-41 closure lesson, stanza C2=C2_total=93)
+b237e3f round-42: plan with frozen counters (C1 operability gate-mutants, C2 coverage:kimi-layer locks) and open receipts
+dfabe92 round-41 verifier spot-check (integrator, hyaku): non-author admit/reject
+fb7046c round-41: attempt 2 close - all 38 verify reports; WC22 widened (name half), receipts regenerated at the final source (repair 3/3, survivor 10/10, findings 10/10, exits 2/2); lesson round shape (72 spawned, verify 38/38, deviation named), guard recursion and counter kill-rule limits, sentinel and ledger open limits; LOG attempt-2 bullet; cite-check back to 545; seat-gate release
+57269a5 round-41: attempt 2 verify wave (38 seats) evidence so far; wave-census WC24 self-observation, WC25 --expect edges, WC26 finding edges (26/26; 23 named survivors killed); C1 and C2 tip receipts at fae386aa; lesson, SKILL, SCORECARD and LOG corrections from verify seats (14 of 16 split, MAST Appendix J locator, R40-2 not re-measured, cite-check errors back to 545, Mistakes rows, open limits); misroot sweep receipt
+fae386a round-41: attempt 2 - inherited attempt-1 leftovers committed (wave-census .. path, string agent and read-error repairs; S018 re-open; SKILL, README and lesson wording; 8 falsify reports) plus WC21-WC23 pinning them (23/23, 3/3 revert mutants killed); misrooted ReviewCensusCode.md moved in; Mistakes rows
+5320e0d round-41: cite-check self-observation guard (no recursion on a changed literal), re-pin; claim-sizing wording fixes; falsify reports so far
+02fef27 round-41: falsify repairs (wave-census resume lanes, regular-file reports, --expect unknown role/attack/round scope, selftest 20/20; C1 wording qualified), lesson, LOG, SCORECARD round-41 section and corrections, wave evidence
+4e58bb0 round-41: C2 wave-census capability (gate, registry row, checklist 16-17, capability row, S038); R40-1 R40-3 R40-5 R40-6; lesson draft; stanza A=9 C=17 C2=92
+2759297 round-41: C2 counter (jq recount, capability rows, R40-6 expect pair), committed before the instrument
+68db341 round-41: C1 cite-check pins its 16 verdict, render and exit conditions (11 new hermetic cases, 75/75); stanza re-pin; seat-gate record
+cb2d8d0 round-41: C1 counter (cite-check verdict-condition mutant probe), committed before its first run
+34fccc1 round-41: plan, frozen counters, open receipts, R40-7 README row
+a58b7f7 round-40 verifier spot-check (integrator, hyaku): non-author admit/reject
+69ceb52 round-40: lesson fixes from the falsify review, seat-probe defect receipt, seat-gate record for wave 2 and the wrap-up
+8d6a942 round-40: checklist truth item back to its round-open form (honest re-cites stay CLEAN), SKILL pattern corrections, kimi note fixes from falsify seats, falsify reports, in-lane checklist receipt
+e26937e round-40: lesson follow-up and wave-2 findings, calibration corrections, Q20 falsify correction, receipts for the follow-up commit (probe, mutants, borrow replays, proxy at open and at 5ae8ac9c)
+5ae8ac9 round-40: falsify follow-up - a review record binds a nested re-citation only when its own anchor is gone, once (AT46, red-before 41/42); checklist truth item carries --open; kimi section fixes and sibling citations; S012 cited by its used-by entry
+0004ae3 round-40: lesson, SCORECARD rows and pre-registration, SKILL error pattern, README row, LOG entry, measured probe and mutant receipts, wave-2 spec and dispatch
+1530a75 round-40: measured candidate - anchor-truth --open floor (REVIEW_UNBOUND, DEBT_NEW, open-revision BASE_TRUE_LOST), survivor fixtures AT43-AT45, cite-check zero-resolved and clean-PASS fixtures, kimi census skills 6->7 with the kimi-webbridge K2 section and S035, README row, Q20, S012 recheck, S036-S037, wave-1 reports and probe
+8eea560 round-40: move origin pin clone to /fast/scratch/hyaku/kumitate-pin/src (R39-8), round-open receipts, wave-1 spec and dispatch
+f69817e round-39 verifier spot-check (integrator, hyaku): non-author admit/reject
+7745826 round-39: residual 8-seat check integrated (reports under falsify/), open limits L1-L3 corrected from non-author findings, seat-gate record
+d8bb37d round-39: lesson cites evidence by full lane path (cite-check resolves them)
+654d1b2 round-39: lesson, Q19, S034, SKILL error pattern, README rows, SCORECARD rows and limits, LOG entry, final receipts and specs
+3908f32 round-39: measured production — AT28-AT30 kill the two surviving mutants and pin the path in identity; probes kept as .txt so round evidence does not count toward proxy term A
+3a81b7c considerthese: 2026-10-22 daily reflection
+dfa159d round-39: candidate 3 — probe A6 hand-writes a consistent pin so it measures the direct entry
+4bbd51c round-39: candidate 2 — raw@path group check against masked falsification (AT27), probe attack A6
+4e34c35 round-39: candidate — identity floor and pair-token check in anchor-truth (R38-1), repair S8#475 (last r37-regressed debt), probes and open measurements
+fac3917 considerthese: 2026-10-21 daily reflection
+2fa28e5 round-38 verifier spot-check (integrator, hyaku): non-author admit/reject
+89ff4a7 round-38: final-revision receipts, zero-regression witnesses, digest-checked frozen replay and settled seat accounting
+01aab4b round-38: integrate twelve semantic/range falsifiers, preserve frozen oracle and explicit residual debt; settle both waves
+c938c06 round-38: integrate per-anchor repairs without true-anchor regression; replace checklist ratchet with frozen truth floor
+e18ff1a round-38: freeze independent per-anchor oracle and round-open truth baseline (811 anchors)
+753446a round-37 verifier spot-check (integrator, hyaku): non-author admit/reject
+198091c round-37: final wave-evidence set (11 late audit/truth reports)
+ea63c4e round-37: final evidence tail
+b90dcf0 round-37: re-pin claims-check after harness env scrub; commit remaining falsify evidence
+1f72f3d round-37: remaining falsify/audit reports (evidence)
+28164ee round-37: D1 record corrected with measured counts (Verify1)
+6f88d12 round-37: scrub GIT_* in the selftest harness (Sec3 L1/L2)
+eb4c106 round-37: lesson D5/D2 correct — falsify findings were integrated (Verify5)
+08ee2cf round-37: record slot grant/dispatch and un-run release (Rep1 P14)
+c589b38 round-37: correct restoration-notice audit attributions per note (AuditNativeTrial2)
+9ae8468 round-37: final falsify/audit evidence (incl. Sec4)
+9021825 round-37: mine the git-blind misroot sweep (Sec4)
+8c41439 round-37: refresh final gate captures; record policy path+digest and plan validation (Wave4)
+c7648c7 round-37: D6 evidence corrected — rej hash + timed misroot sweep (Verify6)
+469500f round-37: late audit/falsify reports (evidence)
+5bc40d0 round-37: reset four notes to 0614092 bytes (scope-accurate notice); ratchet 200; SCORECARD row 37
+fb5b90e round-37: correct anchor-truth claims (Verify4) — gate is not truth, re-measurement owed
+1c281bb round-37: falsify-wave reports (late evidence)
+fdac52c round-37: sighting-wall notice amended to PARTIAL (AuditSighting4)
+5031720 round-37: D8 record correction — C2 83->84 evidence named (Verify8)
+a5d627b round-37: D3 corrections verified — named SCORECARD/lesson correction, live runtime evidence 92/92
+86c0676 round-37: lesson map row + C2 84 (repair close)
+5ceb8cd round-37: repair-first — restore 123 shifted anchors + mark notes; canonical left-first pairing with shift selftest; measured fidelity ratchet; D3-D8; falsify wave 68 dispatched
+5833351 round-36 verifier spot-check (integrator, hyaku): non-author admit/reject
+91da27c round-36: late wave evidence (unapplied ExecFidSmall patch + reviews)
+cb80bc1 round-36: correction — committed pairing is right-first; C1 fidelity verdict not admitted, remaining-scripts-census repair harmed
+0b5dcfb round-36: late build-wave reports (evidence)
+3d5760a round-36: pinned gate verdicts (PIN v1 + scrubbed git env) + FIDELITY v1 anchor gate with clause-guarded pairing; declared-order digest; read-only dispatcher state; R5/R7 sectionization (coverage:runtime-layer 10); S029-S032; lesson
+0614092 round-35 verifier spot-check (integrator, hyaku): non-author admit/reject
+4c9e407 round-35: distinct S/R derivation; S8 re-census at pinned 31c465f1; K1 mcp.json shape-only member; sources S021-S028; lesson + falsify-wave corrections
+a1258f9 considerthese: 2026-10-20 daily reflection
+1770305 Integrate remote documentation; preserve local round log
+a5683a9 round-34 verifier spot-check (integrator, kaika): non-author admit/reject sample + adjudication
+d933e15 integrator: record verified source-gate direct-file boundary
+0acb775 round-34: fix SOURCES Markdown row parsing
+6336d71 round-34: correct saturation pointers
+06757b0 round-34: post-review fixes
+1a8eed5 round-34: sources-registry gate + SOURCES/QUALITY (operability f_O 17/20->20/23), kimi skills tripwire 5->6 + cursor-lane section (coverage:kimi-layer live 9->10), round-34 lessons, omp-task-contract + kimi-mcp-plane entries
+72d9ccd considerthese: 2026-10-19 daily reflection
+a1a4a38 Merge pull request #2 from VeigaPunk/devin/wiki-link
+a506dd2 kumitate: README header Devin wiki link + LOG entry
+16a5441 kumitate: runtime-support, cost-and-profile, distill-and-l3 knowledge + round-18 lessons + LOG/SCORECARD
+17a8069 protocol conformance: adopt SCORECARD.md contract fields (2026-10-16 operator amendment rollout) — additive scaffolds only, no axis claims
+f61cfc2 round-33: publish blocked report and fresh-session handoff
+23504d1 round-33: correct saved wave to the single runtime axis
+e6cdc8f round-33: preserve candidate and record blocked alias contract
+6b982ab round-32: record the R11 directory-glob leak and why the historical prose occurrences stay
+a484d4c round-32: strip the backticked native-wildcard from the R1 cell; record the runtime section-omission gap
+8baa62c round-32: correct the S4 declared count (5, the shim is not a member) and name R1s members instead of a native*.rs glob
+1ed7f10 round-32: complete the R11 note-honesty leg — phantom sections removed, anchors re-pointed; CLAIMS: MATCH
+f6d6272 round-32: record the independent S8 verification and its two anchor nits
+85b2b70 round-32: refresh the Axes derivation prose to the measured terms (the integers were already correct)
+cdeaa0a round-32: correct S4 cell line counts and record the shim pattern gap
+ccd82e4 round-32: record the independent K-block scope check
+4151491 round-32: integrate S8 note re-census; re-bind stanza to the settled measurement
+c64b380 round-32: LOG entry
+5d250b4 round-32: bind the stanza and Axes to the measured layer re-census; correct registry cells to live membership
+edfb9c5 round-32: land the wave's member-section work (S1,S2,S3,S4,S5,S6 + R1..R11 note sections and phantom removals)
+0ecba26 round-32: fix a self-inflicted registry-parse defect (my own summary table matched the S|R row regex)
+1a162a4 round-32: land the measured layer re-census (stanza + Axes); name the section-coverage gap; add the K-block boundary clause
+175de6b round-31 (final): multi-line-backtick class resolved doc-side — 5 named citations restored (+5 notes, zero vanished, quoted bytes byte-identical); prose-token census hole named; ~7 residue sites named; kumitate 10/10 strict
+1205c66 round-30: doc-repair trio (F1 prose-preserving re-anchor; F4 24 refs re-owned; F3 superseded-revision historical treatment) + F3 check re-token — --integrations 9/9 first full green since the restructure; verify-lane clean; pin re-pinned
+b423918 round-29 (uncounted repair): the lesson file itself — the README row dangled over a file never written (proxy's C2_TOTAL_DRIFT caught it); the fourth occurrence of the write-then-verify discipline failing, now with the file landed and counts reconciled 72/72
+9c9cd1b round-29: off-by-one root-caused (span.start for all span tokens) and fixed via view-offset mapping (4128/4128 slice-exact); integrations refreshed 4/9→6/9 with doc-repair residuals named; error set byte-identical; 62/62 selftest; pin re-pinned
+ef17a11 round-28: «» verbatim-quote grammar (58/58 mutation-controlled, zero vanished findings) — verify-lane DEFECT corrects the r26 record: aggregator-audit loss is multi-line backtick spans (named, queued), binary-secrets loss was emphasis noise correctly removed; pin re-pinned
+97e1e93 round-27: FP classification pass — exact-shape exemptions with conservation proof (558→543, zero real citations vanished); binary-internal window→marker repair saga recorded; 50/50 selftest; pin re-pinned
+eefa412 round-26: line-local span pairing removes the parity class (41/41 mutation-controlled; 36 citations restored) — honest surfacing shows the carried OMP debt at full size (420→554, TP-dominant, FPs + multi-span coverage loss named and queued); verified no-permissive; pin re-pinned
+8dcfca9 round-25: alias-poisoning fix (citation-shape expansion, 34/34 mutation-controlled) — ~230 refs rebound to correct owners, accepted +2 true-positive surfacing; verified by independent verify lane; pin re-pinned
+364f1d5 round-24: triage — 105/106 surfaced citation errors repaired (modes-machinery holds a documented verbatim-quote floor); alias poisoning + directory-context cascade exposed and queued; --src derivation completes in cite-check (29/29) + round-gate (60/60); repo errors 519→414; 2 pins re-pinned
+e404431 round-23: cite-check fence masking (26/26 selftest, 123 hidden errors surfaced as named triage queue) + --src derivation in proxy/claims/surface-probe (102/102, 39/39, 42/42) — honest gate costs one named checklist regression; 4 pins re-pinned
+1955f74 round-22: distinct-member K_sections tightening (pre-registered r21) — 49/49 members named, anticipated drop refuted by measurement, duplicate-one/drop-one hole closed (98/98 selftest), score holds at 10 now saturated; stanza+pins re-pinned
+160d032 round-21 (uncounted repair): C2 re-pinned 63→64 — the round-20 rule ('count rows with the gate, not from memory') was stated in the lesson and missed at the stanza edit in the same round; the gate's own C2_DRIFT caught it pre-push. Third occurrence of this defect class: the rule now needs a checklist-shaped enforcement, recorded in the round-21 lesson
+dac6599 round-21: sectionization wave (6 lanes, hyper/zai buckets; opencode-go 400 recorded) + 14-lane verification — coverage:kimi-layer 4→10, 49/49 members verified, errata landed, stanza re-pinned
+f86b8ed round-20: K5 residue family + first coverage:kimi-layer measurement (4) — census 49 members with always-on root enumeration, proxy K-derivation (92/92), stanza+axes+pins travel together; stale-C2 defect self-caught via the gate's own C2_DRIFT; third and final round of the goal
+4fc889c round-19 (uncounted repair, tail): final erratum token qualified; the self-sweep lesson recorded in lessons/round-19.md Gate section — integrators sweep their own errata
+f1b341f round-19 (uncounted repair): 3 citation-form errors in the round-19 errata blocks themselves — bare config.toml / sec-fast-hyper-ds-flash.md tokens, the exact defect class the notes were audited for; full-path qualified, claims untouched; the round-19 lesson's Gate section now carries the matching lesson: integrators sweep their own errata too
+154fc45 round-19: audits + K-census gate — 4 audit lanes re-verify round-18 notes (errata, mid-round substrate mutation recorded); kimi-census.mjs lands (A 5→6, C 10→11, f_O 0.85, integer 8); K-block terms frozen; K5 + coverage:kimi-layer measurement pre-registered
+682c453 round-18: Kimi-CLI province expansion — 6-lane secondary-model wave lands six kimi-* surface notes; admission rejected then repaired (80 citation-form errors → 0); C2 53/53→60/60, stanza re-pinned; carried OMP-origin debt recorded
+2b72aed scorecard: Kimi-CLI province expansion pre-registration (operator directive 2026-10-13) — candidate surfaces, K-family membership K1-K4, mechanism frozen; S2 move parked; origin-tree relocation + upstream restructure recorded as OMP-side carried debt
+871c8e6 Revert "HOURS.md: craft-hours ledger opened (§Craft-hours canon)"
+977f27e HOURS.md: craft-hours ledger opened (§Craft-hours canon)
+c860887 round-17
+f9f8e4d round-16 fixups 2: wave-2 reviewer results recorded (six-term re-derivation agreement; term-vs-integer granularity; round-14 replay finds a hidden 1 where the retired aggregate read 9; the cite-check fence defect reproduced twice, severity medium)
+d64b511 round-16 fixups: wave-2 arm boundaries recorded (colon key = STANZA_MALFORMED; existing-but-empty --src degrades to DRIFT, not fail-closed) and the tracked-report recovery noted
+2f114f0 round-16: coverage successors 6 and 6 — the pre-registered terms become machine-derived (proxy carries the layer split + V)
+db61be0 round-15: coverage 9 -> 10 — R11 census (47/47) + retirement at saturation (notes)
+637d181 round-14 close evidence: --close CLEAN (round=14 checks=13 errors=0); third-party README row restores C2 48/48
+93b0567 corpus: round-9 aggregator corpus-verdict lesson (rule-10 re-emitted at dffbf0e, canonical-form + rule-8 literal findings, routed rows)
+dffbf0e round-14: operability — the registry 'yes' claim becomes a gate (claims-check.mjs, kumitate-claims-v1)
+7a099b2 round-13 close evidence: --close CLEAN (round=13 checks=13 errors=0)
+ed991d0 round-13: coverage 8 -> 9 — S7 partitioned (9-member probe cluster) + S8 census (60 of 60 named); cite-check prototype-token crash repaired
+e0e5de1 round-12 close evidence: --close CLEAN (round=12 checks=13 errors=0)
+64a27e7 round-12: coverage 7 -> 8 — S6 ops watchers (5/5) + R10 gate (2/2) named end-to-end; family standard stated; S7 cluster note stays C2-only
+942afe4 corpus: round-8 aggregator box-3 operative verdict — provisional marker lifted at 59e6c0c (lane landed proxy-check.mjs + SKILL rows + SCORECARD stanza together; PROXY: MATCH exit 0 re-executed by the integrator at the cutoff)
+59e6c0c round-11 close evidence: LOG carries the --close verdict
+71b5e57 round-11 close evidence: --close CLEAN (round=11 checks=13)
+23452e7 round-11: proxy-check (kumitate-proxy-v1) — the lane's own axes re-derived; round-gate --tracked
+0f24ca7 corpus: round-8 aggregator box-3 amendment (critic-absorbed)
+e79fefa corpus: round-8 aggregator box-3 non-author cold run
+c91fe96 round-10
+d65aa24 round-9
+31f09cd corpus: round-6 aggregator audit — post-audit re-measurement (lane landings + rule-9 adjudication)
+0ac2272 corpus: round-6 aggregator audit lesson (non-author re-verification)
+a6f9456 round-8 fixups: measured gap counts, contract anchor, CLI exit-map range
+2075363 round-8
+7a4c9a0 round-7 corpus entries (uncommitted on fleet pause)
+eca3d14 round-6
+294cbf1 corpus: round-5 aggregator audit lesson (independent re-verification, L1-adjudicated)
+e748e44 round-5
+6a4a9f0 corpus: round-4 aggregator audit lesson (independent re-verification)
+e0f5ca7 round-4
+33632b8 corpus: round-1 aggregator audit lesson (independent re-verification)
+efe19da round-3
+0ac95e1 round-2
+45b4ed3 round-1
+cb1f12e seed: kumitate shonen

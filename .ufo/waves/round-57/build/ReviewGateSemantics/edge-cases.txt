@@ -1,0 +1,46 @@
+== E1 covered entry duplicated (untested path, expect FAIL-CLOSED 2) ==
+README_MAP: FAIL-CLOSED reason=covered entry duplicated: "lessons/c.md"
+  exit=2
+== E2 empty corpus dirs (untested path, expect FAIL-CLOSED 2) ==
+README_MAP: FAIL-CLOSED reason=no *.md under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ReviewGateSemantics/scratch/e/knowledge + /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ReviewGateSemantics/scratch/e/lessons (empty corpus)
+  exit=2
+== E3 registry missing file (expect FAIL-CLOSED 2) ==
+README_MAP: FAIL-CLOSED reason=registry unreadable: ENOENT
+  exit=2
+== E4 registry is a directory (expect FAIL-CLOSED 2) ==
+README_MAP: FAIL-CLOSED reason=registry not a regular file
+  exit=2
+== E5 covered entry knowledge/..md passes COVERED_RE then stale-covered? ==
+README_MAP: note uncovered:lessons/c.md
+README_MAP: note stale-covered:knowledge/..md
+README_MAP: DRIFT files=3 rows=1 covered=4 bad=3 first=uncovered:lessons/b.md
+  exit=1
+== E6 tab-indented row (expect row ignored -> uncovered DRIFT 1) ==
+README_MAP: DRIFT files=3 rows=2 covered=3 bad=1 first=uncovered:lessons/c.md
+  exit=1
+== E7 fenced block row masks missing real row? (contract question) ==
+README_MAP: CLEAN files=3 rows=3 covered=3
+  exit=0
+== E8 fenced block row naming nonexistent file -> orphan? ==
+README_MAP: DRIFT files=3 rows=4 covered=3 bad=1 first=orphan-row:lessons/ghost.md
+  exit=1
+== E9 duplicate --corpus dir: files double-counted ==
+README_MAP: CLEAN files=5 rows=3 covered=3
+  exit=0
+== E10 multi-finding DRIFT note lines + first= ==
+README_MAP: note orphan-row:lessons/ghost.md
+README_MAP: note uncovered:lessons/b.md
+README_MAP: note uncovered:lessons/c.md
+README_MAP: DRIFT files=3 rows=3 covered=3 bad=4 first=duplicate-row:knowledge/a.md
+  exit=1
+== E11 directory named *.md counts as file ==
+README_MAP: CLEAN files=4 rows=4 covered=4
+  exit=0
+== E12 4-space indented row (markdown code block) ignored ==
+README_MAP: DRIFT files=3 rows=2 covered=3 bad=1 first=uncovered:lessons/c.md
+  exit=1
+== E13 usage exit 64 ==
+README_MAP: USAGE node scripts/readme-map.mjs [--registry <path>] [--readme <path>] [--corpus <dir>]... | --selftest
+  exit=64
+README_MAP: USAGE node scripts/readme-map.mjs [--registry <path>] [--readme <path>] [--corpus <dir>]... | --selftest
+  exit=64

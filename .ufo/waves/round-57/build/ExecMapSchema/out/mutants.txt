@@ -1,0 +1,25 @@
+### m1-namespace-regex-weakened — COVERED_RE loses its filename/extension part: any path under knowledge|lessons is accepted
+gate_sha256 before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 after=e887aee436a13bb17c3a401cbcb3f6986f8a6d020b13e293a51d8a0827c90c90
+  c4-covered-outside-namespace: baseline_exit=2 mutant_exit=2 UNCHANGED :: README_MAP: FAIL-CLOSED reason=covered entry malformed: "scripts/readme-map.md"
+  c9-covered-subdirectory: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/sub/a.md
+  c11-covered-root-file: baseline_exit=2 mutant_exit=2 UNCHANGED :: README_MAP: FAIL-CLOSED reason=covered entry malformed: "README.md"
+  c13-namespace-case: baseline_exit=2 mutant_exit=2 UNCHANGED :: README_MAP: FAIL-CLOSED reason=covered entry malformed: "Knowledge/agent-isolation-substrates.md"
+  c14-wrong-extension: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:lessons/x.markdown
+  c15-trailing-slash: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:lessons/x.md/
+
+### m2-version-guard-inverted — the version guard accepts 2 instead of 1
+gate_sha256 before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 after=37d777444e28ccd2ff48a095b939e690aa6bb36f2fe4a4ea591bb9762b0010bc
+  c2-version-2: baseline_exit=2 mutant_exit=0 FLIPPED :: README_MAP: CLEAN files=135 rows=135 covered=135
+
+### m3-covered-array-guard-deleted — the `covered` array guard (and its reason string) is deleted; iteration proceeds on whatever shape
+gate_sha256 before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 after=f0e9eeef63bbcee97e96da47100ca87d03caa18f47e7832ea6bf17cb5c9068eb
+  c3-covered-not-array: baseline_exit=2 mutant_exit=2 UNCHANGED :: README_MAP: FAIL-CLOSED reason=covered entry malformed: "k"
+  c3b-covered-string-x: baseline_exit=2 mutant_exit=2 UNCHANGED :: README_MAP: FAIL-CLOSED reason=covered entry malformed: "x"
+  c12-covered-object: baseline_exit=2 mutant_exit=1 FLIPPED :: file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/mut-m3-covered-array-guard-deleted/scripts/readme-map.mjs:103
+
+### m4-per-entry-scope-guard-deleted — the per-entry namespace/type guard is deleted; only the duplicate check remains
+gate_sha256 before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 after=ae8a3f4cb05beb82e88e2f6d4fbc14fe927c53ded5b446c3fd96eeaba626365e
+  c4-covered-outside-namespace: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:scripts/readme-map.md
+  c9-covered-subdirectory: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/sub/a.md
+  c11-covered-root-file: baseline_exit=2 mutant_exit=1 FLIPPED :: README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:README.md
+

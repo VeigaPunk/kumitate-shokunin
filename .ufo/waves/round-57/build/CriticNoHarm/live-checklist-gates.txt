@@ -1,0 +1,29 @@
+== node scripts/round-gate.mjs
+ROUND_GATE  error  COMMIT_CITED_UNRESOLVED  cited=14 unresolved=1 [1cd6d667e20075fd2e77e6e655bc755f95e3d940]
+ROUND_GATE  warning  SCORECARD_PLAN_MISSING  ## Planned names no round later than 57
+ROUND_GATE: DRIFT (round=57 lane=kumitate checks=10 errors=1 warnings=1)
+exit=0
+== node scripts/claims-check.mjs
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/distill_tests.rs is outside R9's declared members
+SUMMARY: errors=0 warnings=4
+CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+exit=0
+== node scripts/cite-check.mjs
+  indexFiles=1145 selfIndexFiles=5391 fleetIndexFiles=379564
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=139 tokens=11052 errors=1012 warnings=664)
+exit=0
+== node scripts/kimi-census.mjs
+INFO  ROOT_ENUM  -  root children=35 declared=27 chain=8 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=53 checked=53 errors=0 info=4 chain=8
+KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)
+exit=0
+== node scripts/sources-check.mjs
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=120 tiers=A:99,B:13,C:8 status=queued:12,mined:88,rejected:20 entries_with_source=14 legacy=38)
+exit=0
+== node scripts/surface-probe.mjs --checklists
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 25/27 pass
+VERDICT: FAIL
+exit=0

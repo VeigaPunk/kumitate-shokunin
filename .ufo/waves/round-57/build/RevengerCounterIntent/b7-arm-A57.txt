@@ -1,0 +1,15 @@
+  // B7 — SKILL registry row + checklist items 24..27 bound (R56-V2 amendment)
+  {
+    const sk = readT('SKILL.md');
+    if (!sk) { hold('B7', false, 'SKILL.md absent'); }
+    else {
+      const txt = sk.toString('utf8');
+      const rowOk = /\|\s*readme-map\s*\|\s*gate\s*\|/.test(txt) && txt.includes('kumitate-readme-map-v1');
+      const itemLines = txt.split('\n').filter((l) => /^\s*- \[/.test(l));
+      const items = itemLines.length;
+      const i24 = itemLines[23] || '', i25 = itemLines[24] || '', i26 = itemLines[25] || '', i27 = itemLines[26] || '';
+      const bind = i24.includes('counter-pins.mjs') && i25.includes('source-capture.mjs')
+        && i26.includes('source-dupes.mjs') && i27.includes('readme-map.mjs');
+      hold('B7', rowOk && items === 27 && bind,
+        `row=${rowOk} items=${items} i24..27=${bind}`);
+    }

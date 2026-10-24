@@ -1,0 +1,91 @@
+# MutA57DropCheck run log — 2026-10-24T12:55:06Z
+
+lane=8c6f5b017d149b18134917378cdbed3b492d8e89
+measured_rev=f0dc6d1160e66af65355bd353665adac22bbf4a9
+tip_rev=8c6f5b017d149b18134917378cdbed3b492d8e89
+
+## allhold-void.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-allhold-void.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9
+
+## dropone-mutant-tip.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-dropone-mutant.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 8c6f5b017d149b18134917378cdbed3b492d8e89
+
+## dropone-mutant.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-dropone-mutant.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9
+
+## dropone.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-dropone.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9
+
+## pristine-prerev.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-pristine.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9
+
+## restored.cmd
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/MutA57DropCheck
+cmd=node attest57-dropone.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9
+
+## allhold-void.exit
+1
+
+## dropone-mutant-tip.exit
+0
+
+## dropone-mutant.exit
+0
+
+## dropone.exit
+0
+
+## pristine-prerev.exit
+0
+
+## restored.exit
+0
+
+## allhold-void.stdout
+ATTEST57: ATTEST57_UNMET held=0/0 checks=0 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | hold-call-deleted
+
+## dropone-mutant-tip.stdout
+ATTEST57: ATTEST57_HELD held=9/9 checks=9 rev=8c6f5b017d149b18134917378cdbed3b492d8e89 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS
+
+## dropone-mutant.stdout
+ATTEST57: ATTEST57_HELD held=9/9 checks=9 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS
+
+## dropone.stdout
+ATTEST57: ATTEST57_HELD held=9/9 checks=9 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS
+
+## pristine-prerev.stdout
+ATTEST57: ATTEST57_HELD held=10/10 checks=10 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS | B10 PASS
+
+## restored.stdout
+ATTEST57: ATTEST57_HELD held=10/10 checks=10 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 PASS | B8 PASS | B9 PASS | B10 PASS
+
+## allhold-void.stderr
+
+## dropone-mutant-tip.stderr
+
+## dropone-mutant.stderr
+
+## dropone.stderr
+
+## pristine-prerev.stderr
+
+## restored.stderr
+
+## hashes-before.txt
+d177f6d5a7335b5e36d7d950b7cde8af4f99b979ce5d0321ab50100939045815  attest57-pristine.mjs
+37095ebe434dd6d42deeb000f0695b563a9c68de912c5373c47a97e8e0093823  attest57-dropone.mjs
+
+## hashes-after-restore.txt
+d177f6d5a7335b5e36d7d950b7cde8af4f99b979ce5d0321ab50100939045815  attest57-dropone.mjs
+
+## sha256
+d177f6d5a7335b5e36d7d950b7cde8af4f99b979ce5d0321ab50100939045815  attest57-pristine.mjs
+d177f6d5a7335b5e36d7d950b7cde8af4f99b979ce5d0321ab50100939045815  attest57-dropone.mjs
+37095ebe434dd6d42deeb000f0695b563a9c68de912c5373c47a97e8e0093823  attest57-dropone-mutant.mjs
+c4dea716716ddb32573dd2d25549c79437bd59e8dcde15dbc37ec31555574ce1  attest57-allhold-void.mjs
+28bd03ae26cff4e626f2e8122040e5309ad1d32a49b807abeb056401e090cc00  ../../build/MutCounter57/counter-mutant.txt

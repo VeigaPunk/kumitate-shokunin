@@ -1,0 +1,15 @@
+usage: node scripts/sources-check.mjs [options]
+       node scripts/sources-check.mjs --selftest
+       node scripts/sources-check.mjs -h|--help
+contract id: kumitate-sources-v1
+
+options
+  --self DIR      lane root (default: this script's parent directory)
+  --today DATE    ISO YYYY-MM-DD used for opened/recheck validation (default: UTC today)
+  --json          print one machine-readable JSON object
+  --strict        promote warning findings to errors
+  --selftest      run hermetic fixtures under the OS temporary directory
+  -h, --help      print this help
+
+findings: ROW_MALFORMED ID_FORM ID_DUPLICATE ROW_OUTSIDE_REGISTRY ROW_FIELD_EMPTY KIND_ENUM TIER_ENUM STATUS_ENUM TIER_INFLATION OPENED_INVALID RECHECK_INVALID USED_BY_MISSING MINED_UNUSED REJECTED_NO_REASON REJECTED_NO_FLIP SECTION_MISSING ENTRY_SOURCE_UNKNOWN ENTRY_HEADER_REQUIRED HEADER_INCOMPLETE USED_BY_ASYMMETRY RECHECK_OVERDUE
+exit map: 0 clean · 1 drift (warnings too under --strict) · 2 fail-closed · 64 usage

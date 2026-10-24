@@ -1,0 +1,25 @@
+----- E7b: --corpus outside lane (basename lessons), real lane lessons/b.md NOT supplied -----
+README_MAP: CLEAN files=2 rows=2 covered=2
+exit=0
+----- E9: strace of the gate over traversal rows (cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx2/E9/corpus) -----
+README_MAP: note orphan-row:knowledge/../../../../../../etc/passwd
+README_MAP: DRIFT files=2 rows=4 covered=2 bad=2 first=orphan-row:knowledge/../../../../canary/secret.md
+exit=1
+--- strace lines mentioning canary: ---
+0
+(none)
+--- strace lines mentioning /etc/passwd: ---
+0
+(none)
+--- any open/stat of corpus *.md content (a.md/b.md): ---
+(none)
+--- line count: ---
+51
+``knowledge/gone.md``            README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+```knowledge/gone.md```          README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+*`knowledge/gone.md`*            README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+**`knowledge/gone.md`**          README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+_`knowledge/gone.md`_            README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+[`knowledge/gone.md`](x)         README_MAP: CLEAN files=2 rows=2 covered=2 exit=0
+`knowledge/gone.md`              README_MAP: DRIFT files=2 rows=3 covered=2 bad=1 first=orphan-row:knowledge/gone.md exit=1
+knowledge/gone.md                README_MAP: DRIFT files=2 rows=2 covered=2 bad=1 first=format-unmapped:knowledge/gone.md exit=1

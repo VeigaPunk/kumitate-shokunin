@@ -1,0 +1,47 @@
+# ReviewRoundReport — receipt content spot-checks (pointers resolve AND support the quotes)
+
+## close/FINAL-attest57-R1.txt
+ATTEST57: ATTEST57_HELD held=10/10 checks=10 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1..B10 PASS
+=> matches report quote (held=10/10 checks=10, exit 0).
+
+## base/attest57-base.txt
+ATTEST57: ATTEST57_UNMET held=0/10 checks=10 rev=7178bfd3… | B1 MISS gate absent | … | B6 proxyExit=1 PROXY: DRIFT C2_TOTAL_DRIFT declared=132 computed=133 | …
+=> matches report quote; also corroborates the R56-V3 base-drift quote.
+
+## Independent base re-run (read-only, no mutation)
+node .ufo/waves/round-57/probe/attest57-probe.mjs <lane> 7178bfd3643c0fac74c8eb637cd6e985faadd0cf
+=> exit=1  (ATTEST57_UNMET reproduced at the base rev)
+
+## close/FINAL-doctrine57-R1.txt
+DOCTRINE57: DOCTRINE57_HELD held=5/5 checks=5 rev=f0dc6d11… rule=D57 | E1..E5 PASS
+
+## base/doctrine57-base.txt
+DOCTRINE57: DOCTRINE57_UNMET held=2/5 checks=5 rev=7178bfd3… | E1 MISS entry-absent | E2 MISS entry-absent | E3 MISS S117..S120 missing/pin-miss | E4 PASS | E5 PASS
+
+## close/selftests.txt — multiple VERDICT: PASS lines present (gate selftest receipts exist)
+
+## close/harm-battery.txt — census lines
+4:  kumitate W04 S095 duplicate url …
+6:  census_exit=0
+9:  "== sources census (re-run standalone; the census_exit above is tail's exit, superseded here)"
+10-13: four pinned W04 rows S034, S068, S084, S095
+=> supports the report's before→after census claim (exit 0, same four warnings;
+   the 'census_exit is tail's exit' caveat in the report matches the file).
+
+## witness/
+scratch-held-attest.txt:1    ATTEST57_HELD held=10/10 checks=10 rev=1cd6d667e20075fd2e77e6e655bc755f95e3d940 rule=A57 version=v1 | B1..B10 PASS
+scratch-held-doctrine.txt:1  DOCTRINE57_HELD held=5/5 checks=5 rev=1cd6d667… | E1..E5 PASS
+
+## SHONEN pointer targets
+SKILL.md:587  '## Gate registry'  ; SKILL.md:676 '## Verifiable checklist'
+SKILL.md:624  readme-map gate row (contract kumitate-readme-map-v1, 14-case selftest)
+SKILL.md:720  checklist item: 'Corpus coverage-map bimap gate (round 57 …)' => 27-item checklist claim consistent
+SCORECARD.md:1774 `readme-map` capability row ; SCORECARD.md:449 round-57 stanza row
+LOG.md:2175   '2026-10-24 — round 57 (hyaku run 5; attempt 2 lands it …)' entry present
+PROVINCE.md:22 durable-execution frontier line names 'advanced round 57 by corpus/knowledge/worker-heartbeat-liveness.md (S117/S118/S119)'
+
+## SHONEN section content (reviewed bytes)
+4 lines, all '- [~]' with pointers; SHONEN.md carries exactly 4 boxes => one line per box.
+Line 3 pointer tail "the saved plan/counter contract" names no path; the same
+line carries a resolvable command pointer (node scripts/readme-map.mjs …) + the
+14-case selftest, and the plan is committed at .ufo/waves/round-57/plan.md.

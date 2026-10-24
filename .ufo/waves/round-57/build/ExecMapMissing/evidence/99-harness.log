@@ -1,0 +1,19 @@
+11 baseline pristine: PASS exit 0 (README_MAP: CLEAN files=135 rows=135 covered=135)
+12 selftest: README_MAP_SELFTEST: PASS (14/14); VERDICT: PASS; readme-absent: case readme-absent: PASS; corpus-dir-missing: case corpus-dir-missing: PASS; --- exit: 0
+20 arm README removed: PASS "README_MAP: FAIL-CLOSED reason=README unreadable: ENOENT" --- exit: 2
+21 same tree, README restored: PASS "README_MAP: CLEAN files=135 rows=135 covered=135" --- exit: 0
+30 arm corpus/lessons removed: PASS "README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapMissing/scratch/arm-dir-lessons-removed/corpus/lessons (ENOENT)" --- exit: 2
+31 same tree, corpus/lessons restored: PASS "README_MAP: CLEAN files=135 rows=135 covered=135" --- exit: 0
+40 arm corpus/knowledge removed: PASS "README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapMissing/scratch/arm-dir-knowledge-removed/corpus/knowledge (ENOENT)" --- exit: 2
+41 same tree, corpus/knowledge restored: PASS "README_MAP: CLEAN files=135 rows=135 covered=135" --- exit: 0
+50 arm both corpus dirs removed: PASS "README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapMissing/scratch/arm-both-dirs-removed/corpus/knowledge (ENOENT)" --- exit: 2
+55 adjacency empty corpus dirs: PASS "README_MAP: FAIL-CLOSED reason=no *.md under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapMissing/scratch/arm-empty-corpus/corpus/knowledge + /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapMissing/scratch/arm-empty-corpus/corpus/lessons (empty corpus)" --- exit: 2
+56 same tree, corpus restored: PASS "README_MAP: CLEAN files=135 rows=135 covered=135" --- exit: 0
+60 pristine isolation: PASS (pristine manifest unchanged before/after all arms)
+unexpected_arms=0
+overall: PASS
+
+real	0m1.197s
+user	0m3.227s
+sys	0m1.114s
+harness_exit=0

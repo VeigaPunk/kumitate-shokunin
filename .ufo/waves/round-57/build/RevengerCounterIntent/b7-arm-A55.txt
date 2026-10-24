@@ -1,0 +1,11 @@
+  // B7 — SKILL registry row + checklist item 25
+  {
+    const sk = readT('SKILL.md');
+    if (!sk) { hold('B7', false, 'SKILL.md absent'); }
+    else {
+      const txt = sk.toString('utf8');
+      const rowOk = /\|\s*source-capture\s*\|\s*gate\s*\|/.test(txt) && txt.includes('kumitate-source-capture-v1');
+      const items = (txt.match(/^\s*- \[/gm) || []).length;
+      const itemOk = /- \[ \][^\n]*source-capture\.mjs/.test(txt);
+      hold('B7', rowOk && items === 25 && itemOk, `row=${rowOk} items=${items} item25=${itemOk}`);
+    }

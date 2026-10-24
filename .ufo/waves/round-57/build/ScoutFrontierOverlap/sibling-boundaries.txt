@@ -1,0 +1,65 @@
+Sibling boundary quotes — ScoutFrontierOverlap, kumitate round 57 w1
+All lines verbatim from the named files (working tree, 2026-10-24). Read-only.
+
+=== kumitate-shokunin/PROVINCE.md ===
+L3:  **Domain:** orchestration & tooling — scopes OMP task/hub, ufo-fsd scripts & runtime
+L5:  **Owns:** the domain knowledge, playbooks, error patterns, and checklists above.
+L6:  **Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+L12: - Origin script layer `/home/vgpnk/Projects/ufo-fsd-alpha/scripts/` — registry rows S1–S8 (`SCORECARD.md` §In-scope surface registry), gated by `scripts/claims-check.mjs` + `scripts/proxy-check.mjs` (`coverage_script`).
+L17: ### Frontier — named ground, entered by sourced entries, not yet gated
+L22: - Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107) … advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; other broker/workflow failure families remain queued.
+L24: ### Adjacent — reported, never absorbed
+L26: - MCP/OAuth security practice (token passthrough, confused deputy) → kasegi / kagi.
+L27: - Local model serving and endpoints → kama. Prompt and skill craft → kotoba. Research method → chousa.
+L28: - Upstream defects in `/home/vgpnk/Projects/ufo-fsd-alpha` → filed in lane reports for the operator; never patched from here.
+
+git diff e4a4943..f0dc6d1 -- PROVINCE.md: exactly one hunk (@@ -19,7 +19,7 @@),
+the durable-execution frontier bullet extended in place with the r57 clause.
+Adjacent section bytes unchanged. See province-r57-diff.txt.
+
+=== kama-shokunin/PROVINCE.md ===
+L3-4:  **Domain:** local model serving & endpoint health — local LLM endpoints, baseURL drift, served-model reconciliation, probe conventions.
+L13:   | liveness/readiness probe conventions | `/health`, `/props`, `/slots` |
+L22:   this lane reports pin correctness and serving liveness separately and never asserts [MODEL_OK]
+L40-43: **Refuses:** model quality/eval (kengaku), credential material & auth flows (kagi), dispatch/route mechanism (kumitate), remote web surfaces (kake). Boundary rule: kama answers *"is the thing at this baseURL the model this config believes it is, right now"* — never *"is the model good"* or *"is the request safe"*.
+L51-53: **Out of province → report, never absorb.**
+
+=== kama-shokunin/corpus/knowledge/cross-lane-scope.md ===
+L28: | A selected route's destination versus the route-selection mechanism. | **Kumitate** owns how a dispatch/alias resolves; **kama** owns what the resolved local baseURL serves. …
+L32: **Falsifiable arbitration rule:** … if changing only route mapping changes the resolved URL, kumitate; if changing only agent/instruction wording changes it, kotoba …
+L40: **kumitate:** Kama reports: … if dispatch later resolves to a local URL, kumitate owns resolution and kama owns verification of the resolved service/model.
+L43: **kasegi:** Kama reports: no bounty/security target participates in these host consumer pins; kama retains endpoint identity and kasegi retains bounty/target-scope research.
+
+=== kotoba-shokunin/PROVINCE.md ===
+L3-4:  **Domain:** prompt & skill craft — scopes SKILL.md/AGENTS.md quality, trigger fidelity
+L59 (Adjacent table, kumitate row): | kumitate | adjacent | fac39171… | orchestration and dispatch runtime and swarm lifecycle; kumitate routes "Prompt and skill craft → kotoba" (kumitate `PROVINCE.md:27`); kotoba owns the prompt wording, not the runtime (kotoba base `PROVINCE.md` § Adjacent) |
+
+=== kasegi-shokunin/PROVINCE.md ===
+L3:   **Domain:** bounty & security research — scopes ~/Projects/bounties, program rules, claim packages
+L40-48: ## Adjacent — Sibling lanes are reported, not absorbed: chousa, kagi, kake, kengaku (kumitate not listed)
+L49:  Live-target testing is refused; this corpus is documentation only.
+
+=== mori-shokunin/PROVINCE.md (closest live "liveness" homonym) ===
+L3-4:  **Domain:** fleet & host observability (森) — whether the fleet, its waves and its host are alive and progressing.
+L6-11: **Owns (read-only probes):** shokunin watchdog liveness (pid, start time, log freshness, lane counters); `.ufo/waves/*` settlement state … kill/OOM … resource runway … lane silence grading
+L12-16: **Refuses:** dispatch and orchestration mechanism (→ kumitate); OS package, systemd unit, driver/firmware and boot state (→ tsukuroi) … endpoint and model-serving health (→ kama); credential material (→ kagi). **Detection and report only — never remediation.**
+L65 (adjacent table, kumitate row): | kumitate | Owns OMP task/hub orchestration and wave plan/run/record/collect semantics; mori passively grades `.ufo/waves/*` filesystem settlement state. No conflicting settlement contract was found. |
+
+=== souji-shokunin/PROVINCE.md ===
+L50-52: - mori-shokunin observes fleet and host health (liveness, kill/OOM, …) … routes liveness or resource findings to mori. Complementary.
+
+=== tsukuroi-shokunin/PROVINCE.md ===
+L50 (ADJ-05): | Task/hub dispatch, routing or orchestration semantics are wrong, rather than merely a failed host unit | systemd and resource evidence; unit liveness cannot prove dispatch correctness | kumitate | … |
+
+=== kaidoku-shokunin/PROVINCE.md ===
+L42: "| Surface | Ports / paths / config keys | Liveness / readiness probe | Verified evidence |" — column header in a REA-MCP surface table; "probe" = the command verifying each reverse-engineering surface, not worker liveness.
+
+=== audio-shokunin/PROVINCE.md ===
+L21: "…its leaf workers write only assigned audio-scoped reports/scratch…" — seat-write wording, not a liveness/orchestration claim.
+
+=== D57 judged object ===
+kumitate-shokunin/corpus/knowledge/worker-heartbeat-liveness.md
+L1:   source: S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures; S118 https://kafka.apache.org/43/configuration/consumer-configs; S119 https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+L7-14: Seventh entry of the durable-execution line: "the liveness signal — how the coordinator learns the consumer died rather than merely not acking"; S120 RabbitMQ rejected (transport keepalive, not worker liveness).
+L28-31 (Lane mapping): maps to `fleet-dispatcher.mjs` reconcile — pull-based liveness via `registered_mission_missing` + nonzero launcher exit, `MAX_LAUNCH_MISSES` (origin tree, pin 31c465f1); one clause marked [INFERENCE] (push-vs-pull axis).
+Origin check: /home/vgpnk/Projects/ufo-fsd-alpha/scripts/fleet-dispatcher.mjs exists (427,801 bytes); lines 117 `const MAX_LAUNCH_MISSES = 8;`, 123 `const LAUNCHING_GRACE_MS = 120_000;`, 3573 `rependable = task.blocker?.code === "registered_mission_missing"`. That file is the lane's own core surface (PROVINCE.md L12, origin script layer).

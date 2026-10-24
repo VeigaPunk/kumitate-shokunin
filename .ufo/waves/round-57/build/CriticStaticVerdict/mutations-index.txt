@@ -1,0 +1,27 @@
+# CriticStaticVerdict — scratch-mutation log (all on scratch clone, lane untouched)
+# Base for every mutation: R1 = f0dc6d1160e66af65355bd353665adac22bbf4a9
+# Probe invoked: node .ufo/waves/round-57/probe/attest57-probe.mjs <scratch> <rev>
+# Exit code is the probe's own process exit (0=HELD, 1=UNMET).
+
+baseline  rev=f0dc6d11...  ATTEST57_HELD held=10/10 exit=0   file=baseline-r1.txt
+
+mutA   47f74099  source-capture.mjs regressed + registry re-pinned, SCORECARD pin stale
+                 UNMET 9/10 — B5 PASS (pin regressed undetected), B6 MISS via proxy GATE_PIN_DRIFT
+mutA2  e2aacd3c  same + SCORECARD pin.source-capture updated
+                 HELD 10/10 — consistent regression invisible to every arm
+mutA3  d47367a4  attest56-probe.mjs replaced by forged stub printing
+                 'ATTEST56_HELD held=10/10' + registry re-pinned
+                 HELD 10/10 — forged counter passes B5; stub output verified
+mutB   fd4b38eb  '## Mistakes' heading renamed in corpus/lessons/round-57.md,
+                 R56-V1/V2/V3 strings retained in the same section body
+                 HELD 10/10 — B9 docblock 'in its ## Mistakes section' unenforced
+mutC2  ebaa1e1e  doctored control attest-run-2-replayed.txt replaced by a freshly
+                 minted VALID receipt (verify --ledger → RECEIPT: VALID exit 0)
+                 HELD 10/10 — probe never invokes the control; plan claim
+                 'must read REPLAY/never VALID' is unverified
+mutD   66d45d63  scripts/readme-map.mjs deleted, all prose (SKILL row, checklist
+                 item 27, pin names) intact
+                 UNMET 3/10 — B7 PASS + B8 PASS + B9 PASS only; six computed arms MISS
+mutE   499a5194  '## Verifiable checklist' heading renamed in SKILL.md, 27 items
+                 and item-name bindings untouched
+                 HELD 10/10 — B7 counts whole-file '- [' lines, not the section

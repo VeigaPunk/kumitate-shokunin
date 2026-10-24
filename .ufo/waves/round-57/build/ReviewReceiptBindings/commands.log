@@ -1,0 +1,10 @@
+commands (cwd=lane, GIT_OPTIONAL_LOCKS=0):
+  git rev-parse HEAD -> 8c6f5b017d149b18134917378cdbed3b492d8e89
+  git log -8 --format='%H %s'  (R1=f0dc6d11, freeze base=7178bfd)
+  git ls-files .ufo/waves/round-57/build/ -> all 15 receipt paths (+ scout .html + MutCounter57/counter-mutant.txt) tracked at HEAD
+  git check-ignore -v .ufo/waves/round-57/build/ScoutTemporalHb -> exit 1 (not ignored)
+  git status --porcelain -- <md> + 5 Scout build dirs -> empty (clean)
+  grep -oE 'receipt:[^`[:space:]]+@sha256:[0-9a-f]{64}' <md> -> 15 tokens (none malformed)
+  git cat-file blob <rev>:<path> hashed with hashlib.sha256, per token, rev in {R1, HEAD}
+  probe E2 semantics reimplemented per .ufo/waves/round-57/probe/doctrine57-probe.mjs lines 98-115
+exit codes: all git commands 0; check-ignore 1 (expected = not ignored)

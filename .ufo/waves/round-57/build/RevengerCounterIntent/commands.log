@@ -1,0 +1,11 @@
+# 2026-10-24 RevengerCounterIntent — commands run (cwd = lane root, read-only + own build dir)
+# 1. probes re-run at the r57 close rev named by SCORECARD/FINAL receipts (no HEAD move):
+for r in 54 55 56 57; do node .ufo/waves/round-$r/probe/attest$r-probe.mjs \
+  /home/vgpnk/Projects/shokunin/kumitate-shokunin f0dc6d1160e66af65355bd353665adac22bbf4a9; echo "exit=$?"; done
+#    -> probes-rerun-f0dc6d11.txt (all four executed; results inline below)
+# 2. sha256 of the four frozen counters -> probe-sha256.txt
+# 3. committed receipts read (not re-run): round-56 close/prior-probes.txt (@e4a49432),
+#    round-56 close/INTERIM-attest56-d7da54ab.txt, round-57 close/{prior-probes,prior-counters-at-close,
+#    FINAL-attest57-R1,harm-battery}.txt, round-57 base/attest57-base.txt
+# 4. SKILL.md checklist census: grep -n '^\s*- \[' SKILL.md | nl -ba  (27 items; items 24..27 = lines 717..720)
+# Exit codes: attest54=1 attest55=1 attest56=1 attest57=0 (see probes-rerun-f0dc6d11.txt)

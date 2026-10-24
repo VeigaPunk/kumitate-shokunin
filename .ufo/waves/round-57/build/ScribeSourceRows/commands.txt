@@ -1,0 +1,22 @@
+# ScribeSourceRows — command log (all commands run from lane root
+# /home/vgpnk/Projects/shokunin/kumitate-shokunin unless a path is absolute;
+# no command wrote Git/jj state; no pacman/install performed this round)
+
+$ mkdir -p .ufo/waves/round-57/build/ScribeSourceRows
+→ exit 0 (supervised pid 1238009)
+
+$ git rev-parse HEAD
+→ 8c6f5b017d149b18134917378cdbed3b492d8e89 (exit 0; run inside audit script)
+
+$ git log -1 --format=%ci %s
+→ 2026-10-24 09:50:23 -0300 round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5 (exit 0)
+
+$ git status --porcelain -- corpus/SOURCES.md .ufo/pins/source-captures.json corpus/knowledge/worker-heartbeat-liveness.md
+→ (empty) — audited paths identical to HEAD bytes (exit 0)
+
+$ node .ufo/waves/round-57/build/ScribeSourceRows/audit-s117-s120.mjs
+→ exit 0 (supervised pid 1286506); full stdout: audit-s117-s120.out.txt; machine view: audit-s117-s120.json
+
+  (inside the audit script, read-only corroboration:)
+$ node scripts/sources-check.mjs --json
+→ exit 0; stdout: {"schema":"kumitate-sources-v1","verdict":"CLEAN","exitCode":0,"findings":[],"totals":{"errors":0,"warnings":0},"counts":{"rows":120,"tiers":{"A":99,"B":13,"C":8},"status":{"queued":12,"mined":88,"rejected":20},"entriesWithSource":14,"legacy":38},"info":{"legacyEntriesWithoutHeader":38}}

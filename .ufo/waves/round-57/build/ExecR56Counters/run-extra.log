@@ -1,0 +1,43 @@
+# ExecR56Counters extra arms — 2026-10-24T12:53:04Z
+# HEAD=8c6f5b017d149b18134917378cdbed3b492d8e89
+# revs:
+b3bd063 b3bd0633aec43ad2559f980b400e4d7077e10af3
+3eae059e 3eae059e929e4da317c45eba18b4099b90f7541b
+
+=== attest56 label=b3bd063 rev=b3bd0633aec43ad2559f980b400e4d7077e10af3 start=2026-10-24T12:53:04Z end=2026-10-24T12:53:04Z exit=1
+--- cmd: node .ufo/waves/round-56/probe/attest56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin b3bd0633aec43ad2559f980b400e4d7077e10af3
+--- stdout:
+ATTEST56: ATTEST56_UNMET held=9/10 checks=10 rev=b3bd0633aec43ad2559f980b400e4d7077e10af3 rule=A56 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS | B6 PASS | B7 MISS row=true items=27 item26=true | B8 PASS | B9 PASS | B10 PASS
+--- stderr:
+
+=== doctrine56 label=b3bd063 rev=b3bd0633aec43ad2559f980b400e4d7077e10af3 start=2026-10-24T12:53:04Z end=2026-10-24T12:53:05Z exit=0
+--- cmd: node .ufo/waves/round-56/probe/doctrine56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin b3bd0633aec43ad2559f980b400e4d7077e10af3
+--- stdout:
+DOCTRINE56: DOCTRINE56_HELD held=5/5 checks=5 rev=b3bd0633aec43ad2559f980b400e4d7077e10af3 rule=D56 | E1 PASS | E2 PASS | E3 PASS | E4 PASS | E5 PASS
+--- stderr:
+
+=== attest56 label=base56 rev=3eae059e929e4da317c45eba18b4099b90f7541b start=2026-10-24T12:53:05Z end=2026-10-24T12:53:05Z exit=1
+--- cmd: node .ufo/waves/round-56/probe/attest56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 3eae059e929e4da317c45eba18b4099b90f7541b
+--- stdout:
+ATTEST56: ATTEST56_UNMET held=0/10 checks=10 rev=3eae059e929e4da317c45eba18b4099b90f7541b rule=A56 version=v1 | B1 MISS gate absent | B2 MISS registry absent or malformed | B3 MISS registry absent or no known entries | B4 MISS registry absent or no known entries | B5 MISS pins=8 misses=["attest56-probe-pin","doctrine56-probe-pin","source-dupes-pin"] vacuous:transcript=false guard=false | B6 MISS pinOk=false proxyExit=1 last="PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=129 computed=130 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)" | B7 MISS row=false items=25 item26=false | B8 MISS receipt files missing | B9 MISS lesson=null log=false captures=false | B10 MISS src=true reg=false
+--- stderr:
+
+=== doctrine56 label=base56 rev=3eae059e929e4da317c45eba18b4099b90f7541b start=2026-10-24T12:53:05Z end=2026-10-24T12:53:05Z exit=1
+--- cmd: node .ufo/waves/round-56/probe/doctrine56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 3eae059e929e4da317c45eba18b4099b90f7541b
+--- stdout:
+DOCTRINE56: DOCTRINE56_UNMET held=2/5 checks=5 rev=3eae059e929e4da317c45eba18b4099b90f7541b rule=D56 | E1 MISS entry-absent | E2 MISS entry-absent | E3 MISS S113:missing,S114:missing,S115:missing,S113:pin-miss,S114:pin-miss,S115:pin-miss,S116:pin-miss | E4 PASS | E5 PASS
+--- stderr:
+
+=== attest56 label=norev rev=0000000000000000000000000000000000000000 start=2026-10-24T12:53:05Z end=2026-10-24T12:53:05Z exit=2
+--- cmd: node .ufo/waves/round-56/probe/attest56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 0000000000000000000000000000000000000000
+--- stdout:
+--- stderr:
+ATTEST56: FAIL-CLOSED rev unreadable (2)
+
+=== doctrine56 label=norev rev=0000000000000000000000000000000000000000 start=2026-10-24T12:53:05Z end=2026-10-24T12:53:05Z exit=2
+--- cmd: node .ufo/waves/round-56/probe/doctrine56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 0000000000000000000000000000000000000000
+--- stdout:
+--- stderr:
+DOCTRINE56: FAIL-CLOSED rev unreadable (2)
+
+# done 2026-10-24T12:53:05Z

@@ -1,0 +1,67 @@
+# ExecReceiptSet — round-57 receipt-set verification summary
+# date 2026-10-24; cwd for primary commands: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+# lane rev @ = 2909579f06af (parent 8c6f5b01); receipt-bearing chain: b3bd0633 / 798d4d23 / c42afe1c / 1238575b / 8c6f5b01; base 7178bfd3643c has NO .ufo/waves/round-57/receipts entries
+# attest script sha256 = ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31 ; node v24.21.0
+
+PRIMARY COMMAND FORM (item):
+  node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs \
+    verify --ledger .ufo/waves/round-57/receipts .ufo/waves/round-57/receipts/<f>
+
+attest-run-1.txt  exit=0  RECEIPT: VALID          (verify-run-1.out/.err)
+attest-run-2.txt  exit=0  RECEIPT: VALID          (verify-run-2.out/.err)
+attest-run-3.txt  exit=0  RECEIPT: VALID          (verify-run-3.out/.err)
+attest-run-2-replayed.txt  exit=1  RECEIPT: TAMPERED
+  receipt-attest: sidecar mismatch: sidecar 5bcb7aba0a3ee5708a092fa61d74b85f9b57dd5e191165445455f441e3268988, actual 0354f3e6550d08f812025fdf8da91a928fe855692c2d115b8edcdf1e5bbe3f8a
+
+LEDGER SKIP NOTES (identical in all three VALID runs; stderr empty):
+  skipped attest-run-1.txt.sha256: sidecar absent (ENOENT)
+  skipped attest-run-2-replayed.txt: sidecar hash mismatch
+  skipped attest-run-2-replayed.txt.sha256: sidecar absent (ENOENT)
+  skipped attest-run-2.txt.sha256: sidecar absent (ENOENT)
+  skipped attest-run-3.txt.sha256: sidecar absent (ENOENT)
+  -> the doctored control is excluded from ledger evidence by attestation state (not by filename),
+     and no nonce-reuse alarm fires between the three attested receipts.
+
+BODY INVARIANTS (body-fields.txt):
+  run-1 argv="node scripts/readme-map.mjs --selftest"   nonce 89182e38... (32 hex) exit 0
+  run-2 argv="node scripts/bind-oracle.mjs --selftest"   nonce e9f14ab4... (32 hex) exit 0
+  run-3 argv="node scripts/round-gate.mjs --selftest"    nonce 9a065643... (32 hex) exit 0
+  distinct nonces 3/3, distinct digests 3/3
+  wall_start span = 326.213 s >= 300 s (12:41:22.462 -> 12:46:48.675); first-start->last-end = 334.306 s
+  argv set matches the frozen receipt plan exactly (B8 evidence set).
+
+COMMITTED-REVISION CORROBORATION (rev-r1/, r1-vs-wc.txt, r1-verify.txt):
+  receipts extracted with `jj file show -r f0dc6d1160e6` into rev-r1/ then verified there:
+    R1-run-1 exit=0 VALID ; R1-run-2 exit=0 VALID ; R1-run-3 exit=0 VALID ; R1-replayed exit=1 TAMPERED
+  working-copy vs f0dc6d: run-1 same, run-2 same, replayed same, run-3 DIFFERS
+    (f0dc6d run-3: wall 12:26:15.254-12:26:23.075Z, nonce 3fcdb7ca..., sha 70701e58...;
+     b3bd0633 re-minted run-3: wall 12:46:48.675-12:46:56.768Z, nonce 9a065643..., sha d3dfc3d3...)
+    both pairs internally consistent; @ tip and working copy agree on d3dfc3d3 (tip-state.txt). No cross-commit pair mixing observed.
+
+NO-LEDGER ARMS (noledger-*.out): run-1/2/3 exit=0 VALID; replayed exit=1 TAMPERED -> single-file binding holds without the ledger.
+
+NEGATIVE CONTROLS on scratch copies (scratch/{A,B,C,D}):
+  A append byte, stale sidecar       -> exit=2 UNREADABLE (missing trailing newline)
+  B one hex char flipped in sidecar  -> exit=1 TAMPERED (sidecar mismatch f041c4c6... vs 8041c4c6...)
+  C body field exit 0->1, digest stale -> exit=1 REPLAY (inner digest mismatch)
+  D replayed copy with sidecar re-minted to doctored bytes -> exit=1 TAMPERED
+      prelude 2026-10-24T13:45:00.000Z is outside the recorded wall window [12:43:19.632Z, 12:43:19.945Z]
+  -> the doctored control cannot be laundered by merely re-hashing its sidecar.
+
+BOUNDARY OBSERVATIONS (not defects against this item; scratch only):
+  E1 fresh mint in scratch (`run --out scratch/E1/forged -- node -e ...`) then verify -> exit=0 VALID
+       => VALID attests internal byte-consistency with a co-located sidecar, not provenance/authority;
+          there is no secret or signature in contract kumitate-receipt-attest-v3.
+  E2 run-2 copy with prelude shifted +30 s (12:43:49.632Z) and sidecar re-minted -> exit=0 VALID
+       => prelude is outside the semantic digest; the 60 s PRELUDE_SLACK_MS window and the
+          byte-identical/same-digest ledger exemption leave a replay with a nearby prelude undetected.
+          The committed control rewrites the prelude 62 min out, so it is caught; a +30 s variant is not.
+
+PATH RESOLUTION (cwd-relative.out): running the same command from another cwd with the relative
+  --ledger fails closed: exit=2 "UNREADABLE ledger directory .ufo/waves/round-57/receipts does not exist".
+
+MANIFEST (receipts-manifest.sha256):
+  8041c4c6... attest-run-1.txt         c95308cc... attest-run-1.txt.sha256
+  5bcb7aba... attest-run-2.txt         9ac6da44... attest-run-2.txt.sha256
+  d3dfc3d3... attest-run-3.txt         99d2d242... attest-run-3.txt.sha256
+  0354f3e6... attest-run-2-replayed.txt 2e2a0995... attest-run-2-replayed.txt.sha256

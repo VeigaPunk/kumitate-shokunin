@@ -1,0 +1,52 @@
+### L) independent C arithmetic at close rev (SKILL.md checklist lines, no gate code)
+SKILL.md lines matching ^\s*- \[ :
+27
+declared stanza at close rev:
+288:A=90
+289:C=27
+290:C1=19
+291:C1_total=19
+292:C2=135
+293:C2_total=135
+2441:C=23, C2=120, C2_total=120; computed agrees (`PROXY: MATCH … pins=6 match
+2522:C2_total=123; computed agrees (`PROXY: MATCH … pins=6 match src-rev=31c465f15669`). A
+2591:C2_total=124: the committed R53 verifier spot-check existed without a README map row, so
+2649:C2=129, C2_total=130: the committed R55 verifier spotcheck existed without a
+2703:C2=135, C2_total=135, `PROXY: MATCH`. Sources rows 116→120: A 96→99, B 12→13, C 8
+
+### M) proxy-check --json at close rev (terms capture)
+exit=0
+stderr:
+node:internal/modules/cjs/loader:1568
+  throw err;
+  ^
+
+Error: Cannot find module '.ufo/waves/round-57/build/ExecProxyCounts/proxy-close-f0dc6d1.json'
+Require stack:
+- /home/vgpnk/Projects/shokunin/kumitate-shokunin/[eval]
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.require (node:internal/modules/cjs/loader:1674:12)
+    at require (node:internal/modules/helpers:157:16)
+    at [eval]:1:9
+    at runScriptInThisContext (node:internal/vm:219:10) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '/home/vgpnk/Projects/shokunin/kumitate-shokunin/[eval]' ]
+}
+
+Node.js v24.21.0
+
+### N) revision + content receipts
+f0dc6d1 = f0dc6d1160e66af65355bd353665adac22bbf4a9 (commit)
+8c6f5b0 = 8c6f5b017d149b18134917378cdbed3b492d8e89 (commit)
+7178bfd = 7178bfd3643c0fac74c8eb637cd6e985faadd0cf (commit)
+base corpus/README.md  sha256=87eff612b6f5486fde067844455ca62a8e0efaa6fe6abe5ceeab01a0d0812d25 bytes=64630
+close corpus/README.md sha256=7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d bytes=66495
+close scripts/readme-map.mjs sha256=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+close scripts/proxy-check.mjs sha256=816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200
+base scripts/proxy-check.mjs  sha256=b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589
+lane scripts/readme-map.mjs == close? IDENTICAL

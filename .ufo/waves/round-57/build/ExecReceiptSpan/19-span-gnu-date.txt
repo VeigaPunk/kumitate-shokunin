@@ -1,0 +1,42 @@
++++ date -u -d 2026-10-24T12:41:22.462Z +%s%N
+++ a=1792845682462000000
++++ date -u -d 2026-10-24T12:46:48.675Z +%s%N
+++ b=1792846008675000000
+++++ date --version
+++++ head -1
+++ echo 'coreutils date: date 0.8.0'
+coreutils date: date 0.8.0
+++ echo min_start_ns=1792845682462000000
+min_start_ns=1792845682462000000
+++ echo max_start_ns=1792846008675000000
+max_start_ns=1792846008675000000
+++ echo span_ms=326213
+span_ms=326213
++++ awk -v n=326213000000 'BEGIN{printf "%.3f", n/1e9}'
+++ echo span_s=326.213
+span_s=326.213
++++ '[' 326213 -ge 300000 ']'
++++ echo PASS
+++ echo 'gate 300000ms -> PASS'
+gate 300000ms -> PASS
+++ echo margin_ms=26213
+margin_ms=26213
+++ echo
+
++++ date -u -d 2026-10-24T12:41:22.685Z +%s%N
+++ c=1792845682685000000
++++ date -u -d 2026-10-24T12:46:56.768Z +%s%N
+++ d=1792846016768000000
+++ echo 'wall_end span_ms=334083'
+wall_end span_ms=334083
+++ echo
+
+++ echo '## strict ordering'
+## strict ordering
++++ '[' 1792845682462 -lt 1792845799632 ']'
++++ echo yes
++++ '[' 1792845799632 -lt 1792846008675 ']'
++++ echo yes
+++ printf 'run1 < run2: %s\nrun2 < run3: %s\n' yes yes
+run1 < run2: yes
+run2 < run3: yes

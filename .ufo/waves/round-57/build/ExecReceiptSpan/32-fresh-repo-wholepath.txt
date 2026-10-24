@@ -1,0 +1,7 @@
+## fresh repo: which forms match whole paths?
+round-5[0-6]           -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-5[0-6]' 
+round-5[0-6]/*         -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-5[0-6]/*' "nonce":"nround-50" "nonce":"nround-56" 
+round-5?               -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-5?' 
+round-5?/*             -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-5?/*' "nonce":"nround-50" "nonce":"nround-56" "nonce":"nround-57" 
+round-5*               -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-5*' "nonce":"nround-50" "nonce":"nround-56" "nonce":"nround-57" 
+round-4[89]/**         -> +++ git grep -ohE '"nonce":"[^"]+"' HEAD -- 'round-4[89]/**' "nonce":"nround-48" 

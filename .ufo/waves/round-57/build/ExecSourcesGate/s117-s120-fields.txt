@@ -1,0 +1,49 @@
+header line 12 COLS: id ~ source ~ kind ~ tier ~ scope ~ anchor ~ teaches ~ status ~ opened ~ recheck ~ used-by
+### S117  (line 130)
+  id = S117
+  source = Detecting Activity Failures — Temporal documentation — https://docs.temporal.io/encyclopedia/detecting-activity-failures
+  kind = docs
+  tier = A
+  scope = Temporal worker-liveness contract: Activity Heartbeats are pings from the executing Worker to the Temporal Service; a missed Heartbeat Timeout marks the Activity failed and frees its slot; the four timeout slots bound each leg
+  anchor = §Activity Heartbeats, saved HTML; fetched 2026-10-24, HTTP 200, 80,679 bytes, body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50
+  teaches = An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service.
+  status = mined
+  opened = 2026-10-24
+  recheck = on-release
+  used-by = corpus/knowledge/worker-heartbeat-liveness.md
+### S118  (line 131)
+  id = S118
+  source = Consumer configs — Apache Kafka 4.3 documentation — https://kafka.apache.org/43/configuration/consumer-configs
+  kind = docs
+  tier = A
+  scope = Kafka group-liveness knobs: `session.timeout.ms` is the broker's client-failure detection timeout fed by periodic heartbeats; `heartbeat.interval.ms` bounds their cadence (default 3 s, typically ≤ 1/3 of session timeout); a silent member is expelled and its pa
+  anchor = §session.timeout.ms + §heartbeat.interval.ms, saved HTML; fetched 2026-10-24, HTTP 200, 145,719 bytes, body sha256 abf4310fd8bec0df3f1ddcae3a115faa509d98c5d5d8266e721db2965189cb17
+  teaches = The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker.
+  status = mined
+  opened = 2026-10-24
+  recheck = on-release
+  used-by = corpus/knowledge/worker-heartbeat-liveness.md
+### S119  (line 132)
+  id = S119
+  source = Configure Liveness, Readiness and Startup Probes — Kubernetes documentation — https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+  kind = docs
+  tier = A
+  scope = Kubernetes container liveness: the kubelet probes a container (exec/HTTP/TCP/gRPC) on `periodSeconds`; a failed liveness probe restarts the container — the platform's remedy for workers stuck in unrecoverable states
+  anchor = §Define a liveness command, saved HTML; fetched 2026-10-24, HTTP 200, 554,624 bytes, body sha256 2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e
+  teaches = Kubernetes provides liveness probes to detect and remedy such situations.
+  status = mined
+  opened = 2026-10-24
+  recheck = on-release
+  used-by = corpus/knowledge/worker-heartbeat-liveness.md
+### S120  (line 133)
+  id = S120
+  source = Detecting Dead TCP Connections with Heartbeats and TCP Keepalives — RabbitMQ documentation — https://www.rabbitmq.com/docs/heartbeats
+  kind = docs
+  tier = B
+  scope = RabbitMQ heartbeats: periodic AMQP heartbeat frames detect dead TCP connections between client and broker at connection scope — transport liveness, not worker/task liveness
+  anchor = §Overview, saved HTML; fetched 2026-10-24, HTTP 200, 51,578 bytes, body sha256 8370687da1c8b67387951eaeab2c7658e0abc1564e40607cb190bfdca7228779
+  teaches = REJECTED: AMQP heartbeats answer "is this TCP peer alive" at connection scope — the worker's connection lives or dies as one unit, not its outstanding units of work; the name collides with this entry's worker-liveness scope but the mechanism is transport keepa
+  status = rejected
+  opened = 2026-10-24
+  recheck = 180d
+  used-by = —

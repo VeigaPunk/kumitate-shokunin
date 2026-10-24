@@ -1,0 +1,24 @@
+lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+HEAD=8c6f5b017d149b18134917378cdbed3b492d8e89
+plan_base=7178bfd3643c0fac74c8eb637cd6e985faadd0cf R1_measured=f0dc6d11
+gate@7178bfd3643c0fac74c8eb637cd6e985faadd0cf sha256=ABSENT (git show exit=128)
+gate@f0dc6d11 sha256=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 (git show exit=0)
+gate@8c6f5b0 sha256=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 (git show exit=0)
+counter-pins round57 readme-map sha256=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727 path=scripts/readme-map.mjs
+worktree gate sha256=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+worktree registry sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+worktree README sha256=7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d
+registry version=1 covered=135 sorted_unique=true
+corpus knowledge *.md=52 lessons *.md=83
+extracted .ufo/pins/readme-map.json unchanged_by_runs=true sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+extracted corpus/README.md unchanged_by_runs=true sha256=7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d
+lane git status (scripts, .ufo/pins, corpus): CLEAN (no entries)
+tree rev-f0dc6d1@f0dc6d11 ls_tree_entries=140 matched=138 pruned=2 mismatched=0 pruned_sample=corpus/QUALITY.md,corpus/SOURCES.md
+tree rev-8c6f5b0@8c6f5b0 ls_tree_entries=140 matched=138 pruned=2 mismatched=0 pruned_sample=corpus/QUALITY.md,corpus/SOURCES.md
+fixture c1-malformed-json sha256=3bc4fa19cb09b748579d0831dfd37c04d55b2c8c24452971f2a78da17d1cfc98 unparseable by design (raw bytes): "{ \"version\": 1, \"covered\": [ \"knowledge/a.md\",\n"
+fixture c2-version-2 sha256=bcc91fa18f15099b52e77f2feedb4af8f587bda419e2ee7ebe865c1c8b685806 version=2 covered_type=array covered_len=135 added_vs_committed=[] removed_from_committed=0
+fixture c3-covered-not-array sha256=97ae7ec50d2ba89e8b376cb0d8a049aa189b8e4bc386d254ace5d0e872ae262f version=1 covered_type="string" covered_len="knowledge/agent-isolation-substrates.md" added_vs_committed=[] removed_from_committed=135
+fixture c3b-covered-string-x sha256=2b2bd196b0d91d1f6a49e5329c619f3d9350f02b5eb4d863812c2d6315a2acd1 version=1 covered_type="string" covered_len="x" added_vs_committed=[] removed_from_committed=135
+fixture c12-covered-object sha256=3f4714304a965725c9a8fb4bc33c52e758d91f63f4880bbaf259ad1d2241256e version=1 covered_type="object" covered_len={} added_vs_committed=[] removed_from_committed=135
+fixture c4-covered-outside-namespace sha256=8a3cf5f8b3b5d0927e0625d973bd8adff0a70d63c8cea39cd8d1f7b9c18d8362 version=1 covered_type=array covered_len=136 added_vs_committed=["scripts/readme-map.md"] removed_from_committed=0
+m3 c12-covered-object stderr_first_line="file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/mut-m3-covered-array-guard-deleted/scripts/readme-map.mjs:103" exit=1

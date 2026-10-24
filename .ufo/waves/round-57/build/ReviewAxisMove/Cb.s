@@ -1,0 +1,26 @@
+- [ ] Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap) — `node scripts/cap-run.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Citation gate verdict — `node scripts/cite-check.mjs` → exit 0|1 + `CITE_CHECK:`
+- [ ] Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`) — `node scripts/counter-pins.mjs` → exit 0 + `COUNTER_PINS: CLEAN`
+- [ ] Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`) — `node scripts/gate-mutants.mjs` → exit 0 + `frozen=41/41`
+- [ ] Gate-mutants hermetic suite — `node scripts/gate-mutants.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`
+- [ ] Live sighting-surface conformance — `node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json` → exit 0 + `SURFACE_PROBE: CLEAN`
+- [ ] Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`
+- [ ] OMP agent-root census — `node scripts/omp-census.mjs` → exit 0 + `OMP_CENSUS: CLEAN`
+- [ ] OMP-census hermetic suite — `node scripts/omp-census.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`) — `node scripts/source-capture.mjs` → exit 0 + `SOURCE_CAPTURE: CLEAN`
+- [ ] Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` → exit 0 + `TRUTH: CLEAN`
+- [ ] Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails) — `node scripts/proxy-check.mjs --strict` → exit 0 + `PROXY: MATCH`
+- [ ] Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`) — `node scripts/receipt-attest.mjs --selftest` → exit 0 + `ATTEST_SELFTEST: PASS`
+- [ ] Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`
+- [ ] Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`) — `node scripts/source-dupes.mjs` → exit 0 + `SOURCE_DUPES: CLEAN`
+- [ ] Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
+- [ ] Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`
+- [ ] Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch) — `node scripts/wave-census.mjs --round 40` → exit 0 + `WAVE_CENSUS: CLEAN`
+- [ ] Wave-census hermetic suite — `node scripts/wave-census.mjs --selftest` → exit 0 + `VERDICT: PASS`

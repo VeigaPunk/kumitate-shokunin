@@ -1,0 +1,10 @@
+# the `covered` array guard (and its reason string) is deleted; iteration proceeds on whatever shape
+# find:
+  if (!Array.isArray(doc.covered)) {
+    return { ok: false, reason: 'registry covered not an array' };
+  }
+
+# replace:
+
+# gate_sha256_before=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
+# gate_sha256_after=f0e9eeef63bbcee97e96da47100ca87d03caa18f47e7832ea6bf17cb5c9068eb

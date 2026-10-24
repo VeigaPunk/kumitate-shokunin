@@ -592,10 +592,10 @@ gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-ce
 (ScoutRegistryClassification, `r49/ScoutRegistryClassification.md`) — and `cap-spawn` is a **helper** with no process exit map. None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
 origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
-`--checklists` mode runs the commands listed below. Verdict map for all sixteen: `0` → clean,
+`--checklists` mode runs the commands listed below. Verdict map for all seventeen: `0` → clean,
 `1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
 this lane (kumitate L1). Round 46 adds one **runner**, `cap-run`, which is not a gate: it exits with its child's
-code (its own exit map is in its row), so "all sixteen" above still counts the gates only.
+code (its own exit map is in its row), so "all seventeen" above still counts the gates only.
 
 | name | kind | entry command | self-test | pinned values live in |
 |---|---|---|---|---|

@@ -1,0 +1,73 @@
+# Clause-by-clause source-fidelity audit
+# Entry: corpus/knowledge/worker-heartbeat-liveness.md @ R1 f0dc6d1160e66af65355bd353665adac22bbf4a9
+# (entry blob sha256 ca31a65d… == working tree; 13 clause lines, 15 bound receipts, all distinct paths, all sha256-verified)
+
+L18  heartbeat-def      MATCH      Both quoted sentences verbatim in receipt and in captured S117 HTML.
+                                 Flag (low): headline "…not a lease" — receipt/upstream say "ping"/"progress and
+                                 not crashed"; the lease contrast is entry framing, not sourced text. Intro
+                                 (L7-14) supplies the contrast context; no factual overreach.
+
+L19  heartbeat-timeout  MATCH w/ flag (low): entry names slot 4 "Heartbeat Timeout"; receipt + upstream
+                                 failure-detection family literally list "Activity Heartbeats" as the fourth
+                                 member. Entry's name is the more precise upstream term (SOURCES.md S117 row
+                                 also says "the four timeout slots bound each leg") — wording drift from the
+                                 bound receipt's literal list, substance preserved.
+
+L20  short-timeout      MATCH      Quote verbatim (receipt lowercases "we"; entry capitalizes inside quote —
+                                 trivial). "(progress detail)" gloss matches receipt gloss "progress detail
+                                 rides the liveness ping". "liveness latency is priced directly" is entry
+                                 synthesis of "handled in a timely manner" — acceptable paraphrase.
+
+L21  session-timeout    MATCH      Verbatim receipt; verbatim upstream S118.
+
+L22  heartbeat-interval MATCH      Entry's quoted fragment "typically should be set no higher than 1/3" is
+                                 verbatim UPSTREAM (Kafka page); receipt had paraphrased to "typically no
+                                 higher than 1/3 of that value". Defaults 3000 ms / 45000 ms match receipt +
+                                 upstream. "the same short-timeout/frequent-ping trade as Temporal" is
+                                 cross-source synthesis — accurate.
+
+L23  rebalance-reclaim  MATCH      Verbatim receipt gloss. "On session expiry" framing comes from the
+                                 session-timeout receipt (its own header says "continuation") — bound to a
+                                 companion receipt, fine. "distinct from the visibility-lease redelivery
+                                 path" is cross-entry contrast, accurate.
+
+L24  liveness-remedy    MATCH w/ flag (low): entry re-anchors the quote's subject — upstream/receipt say
+                                 "applications … cannot recover except by being restarted"; entry says
+                                 "workers that 'cannot recover except by being restarted'" — the quoted
+                                 fragment itself is verbatim, but the framing substitutes the subject.
+                                 "the kubelet probes" and "container restart" remedy are bound to the
+                                 companion probe-timing receipt (cross-receipt context, header of this
+                                 receipt does not name kubelet). "different actor than broker reclaim" is
+                                 accurate contrast.
+
+L25  probe-timing       MATCH w/ flag (low): "initialDelaySeconds for startup grace … a startup slot for
+                                 slow initializers" — receipt/upstream state only a 5 s first-probe delay;
+                                 the startup-probe rationale is the entry's gloss (upstream documents
+                                 startup probes elsewhere on the page, not in the bound quote).
+
+L26  source-metadata×3  MATCH      80,679 / 145,719 / 554,624 bytes and fetched-dates verbatim across all
+                                 three receipts and SOURCES.md rows.
+
+L30  repend-signals     MATCH      Lane claims verbatim to receipt; corroborated in origin
+                                 scripts/fleet-dispatcher.mjs (rependable = blocker.code
+                                 "registered_mission_missing" && launcherExit safe-int ≠ 0;
+                                 MAX_LAUNCH_MISSES = 8 bounds misses).
+
+L31  grace-window       MATCH      (explicit [INFERENCE]) LAUNCHING_GRACE_MS 120 s verbatim to receipt and
+                                 code (120_000). Flag (low): "a hung worker that still answers a TCP/exec
+                                 probe survives its lease forever" — hyperbole inside the marked inference;
+                                 lease expiry and probe liveness are separate mechanisms. Kafka-expiry
+                                 analogy is grounded.
+
+L35  tcp-liveness       MATCH      Quotes verbatim to receipt+upstream modulo elisions: "(and peers)" trims
+                                 "(and also completely unresponsive peers)"; "the client … needs to
+                                 re-connect" splices with ellipsis. Meaning preserved.
+                                 "r55/r56 transport layer" is cross-entry lineage, accurate.
+
+L36  source-metadata    MATCH      51,578 bytes, 2026-10-24 verbatim.
+
+Header (L1-3): provenance trio within first 5 lines; S117 temporal URL, S118 kafka URL, S119 k8s URL —
+all correct (rejected S120 correctly absent from `source:` row).
+Intro (L7-14): "seventh entry" lineage — at-least-once-dedupe.md, bounded-redelivery-budgets.md,
+visibility-lease-ack-deadlines.md all exist in corpus/knowledge/ (verified by listing);
+"Every clause is bound to committed bytes (E2, rule D57)" — all 15 bindings sha256-verified at R1.

@@ -1,0 +1,91 @@
+ScribeSeatAccounting — kumitate round 57 w1 seat accounting
+Date: 2026-10-24
+Subject: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/w1-spec.json
+Spec sha256: cf37d7eb8356e4545104574ad448b5a0ce7765f9b9d3c24e054f69d401529063
+All commands run read-only with cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin. No git/jj mutation. jq only; no installs.
+
+--- COMMAND 1 ---
+S=.ufo/waves/round-57/w1-spec.json; echo '== items =='; jq '.items|length' $S; echo '== roles =='; jq -r '.items[].role' $S | sort | uniq -c | sort -rn; echo '== attack (reviewer+critic+mutation-tester) =='; jq '[.items[]|select(.role=="reviewer" or .role=="critic" or .role=="mutation-tester")]|length' $S; echo '== duplicate names (empty=none) =='; jq -r '.items[].name' $S | sort | uniq -d; echo '== item key sets =='; jq -c '[.items[]|keys]|add|unique' $S; echo '== items mentioning resume (count) =='; jq '[.items[]|tojson|test("resume";"i")]|map(select(.))|length' $S; echo '== top-level keys =='; jq -c 'keys' $S; echo '== spec sha256 =='; sha256sum $S
+
+stdout:
+== items ==
+64
+== roles ==
+     19 executor
+     13 reviewer
+      8 scribe
+      7 scout
+      6 critic
+      5 mutation-tester
+      2 simplifier
+      2 sentinel
+      1 revenger
+      1 connector
+== attack (reviewer+critic+mutation-tester) ==
+24
+== duplicate names (empty=none) ==
+== item key sets ==
+["item","name","role"]
+== items mentioning resume (count) ==
+2
+== top-level keys ==
+["axes","context","items","milestone","reportDir","wave"]
+== spec sha256 ==
+cf37d7eb8356e4545104574ad448b5a0ce7765f9b9d3c24e054f69d401529063  .ufo/waves/round-57/w1-spec.json
+stderr: (none)
+exit: 0
+
+--- COMMAND 2 (attempted, failed filter) ---
+jq -c '{total:(.items|length), namesDistinct:..., ..., resumes:([.items[]|select(has("resume") or (.role|asciiname|test("resume";"i")) ...'
+stderr: Error: undefined filter (asciiname)
+exit: 3
+Replaced by COMMAND 3 (asciiname removed).
+
+--- COMMAND 3 ---
+jq -c '{total:(.items|length), namesDistinct:(((.items|map(.name))|length)==((.items|map(.name)|unique)|length)), nameCount:((.items|map(.name)|unique)|length), roles:(.items|group_by(.role)|map({(.[0].role):length})|add), attack:([.items[]|select(.role=="reviewer" or .role=="critic" or .role=="mutation-tester")]|length), attackSharePct:(([.items[]|select(.role=="reviewer" or .role=="critic" or .role=="mutation-tester")]|length)/(.items|length)*100)}' .ufo/waves/round-57/w1-spec.json
+
+stdout:
+{"total":64,"namesDistinct":true,"nameCount":64,"roles":{"connector":1,"critic":6,"executor":19,"mutation-tester":5,"revenger":1,"reviewer":13,"scout":7,"scribe":8,"sentinel":2,"simplifier":2},"attack":24,"attackSharePct":37.5}
+stderr: (none)
+exit: 0
+
+--- COMMAND 4 ---
+jq -r '.items[]|select(tojson|test("resume";"i"))|.name' .ufo/waves/round-57/w1-spec.json; echo '---context---'; jq -r '.items[]|select(tojson|test("resume";"i"))|.item' .ufo/waves/round-57/w1-spec.json | grep -io '.\{60\}resume.\{60\}'; echo "exit=$?"
+
+stdout:
+ScribeSeatAccounting
+ScoutDispatcherLiveness
+---context---
+surfaces: LAUNCHING_GRACE_MS, MAX_LAUNCH_MISSES, MAX_PAUSED_RESUME_ATTEMPTS, repend, registered_mission_missing; verify the en
+exit=0
+
+Explanation of the two "resume" string hits:
+- ScribeSeatAccounting: this item's own text contains the phrase "0 resumes" (the assertion under test).
+- ScoutDispatcherLiveness: cites the origin-tree constant MAX_PAUSED_RESUME_ATTEMPTS.
+Neither is a resumed-seat marker. No seat carries a "resume" field; item schema is exactly {item, name, role}.
+
+--- COMMAND 5 ---
+S=.ufo/waves/round-57/w1-spec.json; echo '== names with retry-ish patterns (empty=none) =='; jq -r '.items[].name' $S | grep -iE 'retry|attempt|resume|redo|rerun|-v[0-9]|_[0-9]$' || echo 'NONE'; echo '== role count sum =='; jq '[.items|group_by(.role)[]|length]|add' $S; echo '== report paths not matching w1/<name>.md (empty=none) =='; jq -r '.items[]|select(.item|test("Report: \\.ufo/waves/round-57/w1/"+.name+"\\.md")|not)|.name' $S; echo "exit=$?"
+
+stdout:
+== names with retry-ish patterns (empty=none) ==
+NONE
+== role count sum ==
+64
+== report paths not matching w1/<name>.md (empty=none) ==
+stderr: Error: cannot index "Item ExecMapClean. ..." with "name"  (jq scoping bug in the last check; .name inside test() referred to the piped string)
+exit: 5
+Fixed in COMMAND 6.
+
+--- COMMAND 6 ---
+jq -r '.items[] | .name as $n | select(.item | test("Report: \\.ufo/waves/round-57/w1/" + $n + "\\.md") | not) | $n' .ufo/waves/round-57/w1-spec.json; echo "exit=$?"
+
+stdout:
+(no output — zero items deviate from the Report: .ufo/waves/round-57/w1/<name>.md convention)
+exit=0
+
+--- COMMAND 7 ---
+mkdir -p .ufo/waves/round-57/build/ScribeSeatAccounting && jq -r '.items[]|[.role,.name]|@tsv' .ufo/waves/round-57/w1-spec.json | sort
+
+stdout: full 64-row roster — see roster.tsv in this directory.
+exit: 0

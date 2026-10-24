@@ -1,0 +1,4 @@
+quote (S120, rabbitmq.com/docs/heartbeats §Overview):
+"AMQP 0-9-1 offers a heartbeat feature to ensure that the application layer promptly finds out about disrupted connections (and peers)..."
+"When a client detects that RabbitMQ node is unreachable due to a heartbeat, it needs to re-connect."
+scope: CONNECTION liveness — one connection ↔ one verdict; nothing about outstanding deliveries' worker state.

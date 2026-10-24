@@ -1,0 +1,76 @@
+++ echo '## git grep glob matrix (ambient)'
+## git grep glob matrix (ambient)
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5?' '.ufo/waves/round-5[0-6]' 'corpus/*' 'corpus/README*'
+++ printf '%-28s files=' '.ufo/waves/round-5*'
+.ufo/waves/round-5*          files=++++ wc -l
+++ c=382
+++ echo 382
+382
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5?' '.ufo/waves/round-5[0-6]' 'corpus/*' 'corpus/README*'
+++ printf '%-28s files=' '.ufo/waves/round-5?'
+.ufo/waves/round-5?          files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5?' '.ufo/waves/round-5[0-6]' 'corpus/*' 'corpus/README*'
+++ printf '%-28s files=' '.ufo/waves/round-5[0-6]'
+.ufo/waves/round-5[0-6]      files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5?' '.ufo/waves/round-5[0-6]' 'corpus/*' 'corpus/README*'
+++ printf '%-28s files=' 'corpus/*'
+corpus/*                     files=++++ wc -l
+++ c=19
+++ echo 19
+19
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5?' '.ufo/waves/round-5[0-6]' 'corpus/*' 'corpus/README*'
+++ printf '%-28s files=' 'corpus/README*'
+corpus/README*               files=++++ wc -l
+++ c=1
+++ echo 1
+1
+++ echo
+
+++ echo '## same with GIT_GLOB_PATHSPECS=1'
+## same with GIT_GLOB_PATHSPECS=1
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5[0-6]' 'corpus/README*'
+++ printf '%-28s files=' '.ufo/waves/round-5*'
+.ufo/waves/round-5*          files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5[0-6]' 'corpus/README*'
+++ printf '%-28s files=' '.ufo/waves/round-5[0-6]'
+.ufo/waves/round-5[0-6]      files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in '.ufo/waves/round-5*' '.ufo/waves/round-5[0-6]' 'corpus/README*'
+++ printf '%-28s files=' 'corpus/README*'
+corpus/README*               files=++++ wc -l
+++ c=1
+++ echo 1
+1
+++ echo
+
+++ echo '## ls-tree equivalent'
+## ls-tree equivalent
+++ for p in 'corpus/*' 'corpus/README*' 'corpus'
+++ printf '%-20s files=' 'corpus/*'
+corpus/*             files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in 'corpus/*' 'corpus/README*' 'corpus'
+++ printf '%-20s files=' 'corpus/README*'
+corpus/README*       files=++++ wc -l
+++ c=0
+++ echo 0
+0
+++ for p in 'corpus/*' 'corpus/README*' 'corpus'
+++ printf '%-20s files=' corpus
+corpus               files=++++ wc -l
+++ c=138
+++ echo 138
+138

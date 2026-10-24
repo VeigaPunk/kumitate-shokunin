@@ -1,0 +1,22 @@
+# provenance
+sources.md sha256=b58498dd1e2983480dc50c48c6226776048f123df00294e56d96f03461b25e79 bytes=93491
+head=8c6f5b017d149b18134917378cdbed3b492d8e89 git-exit=0
+head-commit=2026-10-24 09:50:23 -0300 round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5
+dirty(audited paths)=none
+today=2026-10-24
+registry S-rows=120 duplicate-ids=none
+source-captures.json version=1 captures=13
+knowledge-entry-cites S117=yes
+knowledge-entry-cites S118=yes
+knowledge-entry-cites S119=yes
+knowledge-entry-trio source=true verified-at=true recheck=true
+# corroborating-run node scripts/sources-check.mjs --json (live lane, read-only)
+sources-check exit=0
+sources-check stdout={"schema":"kumitate-sources-v1","verdict":"CLEAN","exitCode":0,"findings":[],"totals":{"errors":0,"warnings":0},"counts":{"rows":120,"tiers":{"A":99,"B":13,"C":8},"status":{"queued":12,"mined":88,"rejected":20},"entriesWithSource":14,"legacy":38},"info":{"legacyEntriesWithoutHeader":38}}
+# summary
+failures=0
+S117: pass=29/29
+S118: pass=29/29
+S119: pass=29/29
+S120: pass=29/29
+# wrapper: node .ufo/waves/round-57/build/ScribeSourceRows/audit-s117-s120.mjs -> exit 0 (supervised pid 1286506, observed by harness)

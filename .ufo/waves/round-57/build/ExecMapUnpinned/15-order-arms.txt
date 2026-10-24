@@ -1,0 +1,13 @@
+$ order-independence arms (gate --corpus swapped; covered shuffled)
+--- A: baseline, corpus dirs swapped (lessons first)
+README_MAP: CLEAN files=135 rows=135 covered=135
+exit=0
+--- B: covered array reversed (complete set, unsorted) -> expect CLEAN
+README_MAP: CLEAN files=135 rows=135 covered=135
+exit=0
+--- C: reversed + one entry removed -> expect DRIFT unpinned exit 1
+README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:knowledge/gate-verdict.md
+exit=1
+--- D: restore pristine
+README_MAP: CLEAN files=135 rows=135 covered=135
+exit=0

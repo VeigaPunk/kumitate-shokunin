@@ -1,0 +1,44 @@
+# ReviewRoundReport — report drift: committed blob vs live working copy
+# The review target is a moving file; two byte-states were observed during this audit.
+
+## State A — committed/landed (fleet repo)
+ blob b1b6e989 at fleet commit 7c3d1203cfe8efa166836452deeb1f964204bf29
+   author 09:22:57 -0300 ; committer 09:51:10 -0300 (12:51:10Z); 13,143 B
+ content: wave = "Prepared-but-undispatched: no seats spawned, returned or
+   killed"; registry rewrite of 2026-10-24 12:50:32Z described as by "a
+   non-lane writer (presumably orchestrator wave tooling)", rewritten registry
+   claimed "(64 members, agentId: null)"; Landed changes lists FIVE commits,
+   "(Complete r57 lane-commit list. All five …"; concurrent writer described
+   only as "most likely a second live session … omp process … since 02:11";
+   witness paragraph lists 2 lane-artifact defects (entry line-wrap, shared
+   receipt path) + mutant-transcript replacement.
+
+## State B — working copy (reviewed bytes)
+ sha256 e1f2696eec94a02a5bcece5535b3f5f39260fe657a598494fe9e66c0cdc091b2
+   13,601 B ; mtime 2026-10-24 09:56:34 -0300
+ content changes (git diff, 53 insertions / 38 deletions):
+ - wave = "Dispatched during the round … the wave ran"; R56-V1 answer
+   upgraded to "answered in the strongest available form".
+ - registry rewrite: "64 members" (agentId:null claim dropped — correct:
+   current registry carries real agentIds, count verified = 64).
+ - Landed changes lists SIX commits (adds 1238575b); "(Complete r57
+   lane-commit list at report write — a wave-evidence commit lands after
+   this list and is named under Seat accounting. All six …"
+ - names the second session: L1-kumitate-r57-attempt2; attempt 1 presumed
+   dead on PROVIDER_ERROR but alive.
+ - witness paragraph expanded to disclose: inherited UNMET witness (1/10,1/5),
+   B3-arm(d) ReferenceError in frozen A57 counter + probe re-pin, receipt
+   span 189 s < 300 s re-mint to 326,213 ms (verified), E2 token folding
+   (0/13 bound), shared receipt path -> grace-window.txt (file exists under
+   build/ScoutQueue/), ScratchWitness clone doubling proxy term A (180 vs
+   90), mutant transcript against pre-state replaced by all-hold-deleted
+   (held=0/0 exit 1).
+ - kotodama IRC lines updated (attempt-2 answered with decline-to-act).
+ - new forward references: "Seat accounting" (:66, :127) — no such section.
+
+## Race observation
+Fleet report commit 7c3d1203 committer timestamp 12:51:10Z; the registry
+rewrite the committed text itself cites is 12:50:32Z — the "prepared-but-
+undispatched / no seats spawned" claim was committed ~38 s AFTER the signal
+it denies. Lane commit 1238575b (09:50:17 -0300) likewise predates the fleet
+commit yet is absent from the landed "complete" five-commit list.

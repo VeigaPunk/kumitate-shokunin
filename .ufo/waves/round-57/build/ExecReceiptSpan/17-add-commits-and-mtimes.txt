@@ -1,0 +1,91 @@
+++ echo '## which commit added each receipt + its committer time'
+## which commit added each receipt + its committer time
++++ git log --diff-filter=A '--format=COMMIT %h %cI' --name-only -- .ufo/waves/round-57/receipts/
++++ grep -v '^$'
+COMMIT f0dc6d1 2026-10-24T09:45:41-03:00
+.ufo/waves/round-57/receipts/attest-run-1.txt
+.ufo/waves/round-57/receipts/attest-run-1.txt.sha256
+.ufo/waves/round-57/receipts/attest-run-2-replayed.txt
+.ufo/waves/round-57/receipts/attest-run-2-replayed.txt.sha256
+.ufo/waves/round-57/receipts/attest-run-2.txt
+.ufo/waves/round-57/receipts/attest-run-2.txt.sha256
+.ufo/waves/round-57/receipts/attest-run-3.txt
+.ufo/waves/round-57/receipts/attest-run-3.txt.sha256
+++ echo
+
+++ echo '## introducer committer time vs receipt wall_end (UTC)'
+## introducer committer time vs receipt wall_end (UTC)
+++ for f in attest-run-1.txt attest-run-2.txt attest-run-3.txt attest-run-2-replayed.txt
+++++ git log --diff-filter=A --format=%h -- .ufo/waves/round-57/receipts/attest-run-1.txt
+++++ tail -1
+++ c=f0dc6d1
++++ git show -s --format=%cI f0dc6d1
+++ ct=2026-10-24T09:45:41-03:00
+++++ grep -oE '"wall_end":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-1.txt
+++++ cut '-d"' -f4
+++ we=2026-10-24T12:41:22.685Z
+++++ grep -oE '"wall_start":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-1.txt
+++++ cut '-d"' -f4
+++ ws=2026-10-24T12:41:22.462Z
+++ echo 'attest-run-1.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:41:22.462Z wall_end=2026-10-24T12:41:22.685Z'
+attest-run-1.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:41:22.462Z wall_end=2026-10-24T12:41:22.685Z
+++ for f in attest-run-1.txt attest-run-2.txt attest-run-3.txt attest-run-2-replayed.txt
+++++ git log --diff-filter=A --format=%h -- .ufo/waves/round-57/receipts/attest-run-2.txt
+++++ tail -1
+++ c=f0dc6d1
++++ git show -s --format=%cI f0dc6d1
+++ ct=2026-10-24T09:45:41-03:00
+++++ grep -oE '"wall_end":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-2.txt
+++++ cut '-d"' -f4
+++ we=2026-10-24T12:43:19.945Z
+++++ grep -oE '"wall_start":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-2.txt
+++++ cut '-d"' -f4
+++ ws=2026-10-24T12:43:19.632Z
+++ echo 'attest-run-2.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:43:19.632Z wall_end=2026-10-24T12:43:19.945Z'
+attest-run-2.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:43:19.632Z wall_end=2026-10-24T12:43:19.945Z
+++ for f in attest-run-1.txt attest-run-2.txt attest-run-3.txt attest-run-2-replayed.txt
+++++ git log --diff-filter=A --format=%h -- .ufo/waves/round-57/receipts/attest-run-3.txt
+++++ tail -1
+++ c=f0dc6d1
++++ git show -s --format=%cI f0dc6d1
+++ ct=2026-10-24T09:45:41-03:00
+++++ grep -oE '"wall_end":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-3.txt
+++++ cut '-d"' -f4
+++ we=2026-10-24T12:46:56.768Z
+++++ grep -oE '"wall_start":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-3.txt
+++++ cut '-d"' -f4
+++ ws=2026-10-24T12:46:48.675Z
+++ echo 'attest-run-3.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:46:48.675Z wall_end=2026-10-24T12:46:56.768Z'
+attest-run-3.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:46:48.675Z wall_end=2026-10-24T12:46:56.768Z
+++ for f in attest-run-1.txt attest-run-2.txt attest-run-3.txt attest-run-2-replayed.txt
+++++ git log --diff-filter=A --format=%h -- .ufo/waves/round-57/receipts/attest-run-2-replayed.txt
+++++ tail -1
+++ c=f0dc6d1
++++ git show -s --format=%cI f0dc6d1
+++ ct=2026-10-24T09:45:41-03:00
+++++ grep -oE '"wall_end":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-2-replayed.txt
+++++ cut '-d"' -f4
+++ we=2026-10-24T12:43:19.945Z
+++++ grep -oE '"wall_start":"[^"]+"' .ufo/waves/round-57/receipts/attest-run-2-replayed.txt
+++++ cut '-d"' -f4
+++ ws=2026-10-24T12:43:19.632Z
+++ echo 'attest-run-2-replayed.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:43:19.632Z wall_end=2026-10-24T12:43:19.945Z'
+attest-run-2-replayed.txt add=f0dc6d1 committer=2026-10-24T09:45:41-03:00 wall_start=2026-10-24T12:43:19.632Z wall_end=2026-10-24T12:43:19.945Z
+++ echo
+
+++ echo '## mtimes (local TZ) vs wall_start'
+## mtimes (local TZ) vs wall_start
+++ stat -c '%n mtime=%y' .ufo/waves/round-57/receipts/attest-run-1.txt .ufo/waves/round-57/receipts/attest-run-1.txt.sha256 .ufo/waves/round-57/receipts/attest-run-2-replayed.txt .ufo/waves/round-57/receipts/attest-run-2-replayed.txt.sha256 .ufo/waves/round-57/receipts/attest-run-2.txt .ufo/waves/round-57/receipts/attest-run-2.txt.sha256 .ufo/waves/round-57/receipts/attest-run-3.txt .ufo/waves/round-57/receipts/attest-run-3.txt.sha256
+.ufo/waves/round-57/receipts/attest-run-1.txt mtime=2026-10-24 09:41:22.684590569 -0300
+.ufo/waves/round-57/receipts/attest-run-1.txt.sha256 mtime=2026-10-24 09:41:22.685590570 -0300
+.ufo/waves/round-57/receipts/attest-run-2-replayed.txt mtime=2026-10-24 09:43:39.234713015 -0300
+.ufo/waves/round-57/receipts/attest-run-2-replayed.txt.sha256 mtime=2026-10-24 09:43:45.456973538 -0300
+.ufo/waves/round-57/receipts/attest-run-2.txt mtime=2026-10-24 09:43:19.944691824 -0300
+.ufo/waves/round-57/receipts/attest-run-2.txt.sha256 mtime=2026-10-24 09:43:19.944691824 -0300
+.ufo/waves/round-57/receipts/attest-run-3.txt mtime=2026-10-24 09:46:56.767989471 -0300
+.ufo/waves/round-57/receipts/attest-run-3.txt.sha256 mtime=2026-10-24 09:46:56.768989473 -0300
+++ echo
+
++++ date +%Z%z
+++ echo TZ=-03-0300
+TZ=-03-0300

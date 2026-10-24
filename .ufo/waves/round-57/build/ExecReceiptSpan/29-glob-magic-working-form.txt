@@ -1,0 +1,44 @@
+++ echo '## L1'\''s claimed working spelling'
+## L1's claimed working spelling
+++ printf ':(glob)round-5[0-6]/**  -> '
+:(glob)round-5[0-6]/**  -> +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]/**'
++++ wc -l
+100
+++ printf ':(glob)round-4[89]/**  -> '
+:(glob)round-4[89]/**  -> +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-4[89]/**'
++++ wc -l
+0
+++ echo
+
+++ echo '## why: prefix before the bracket'
+## why: prefix before the bracket
+++ printf ':(glob)round-5[0-6]     -> '
+:(glob)round-5[0-6]     -> +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]'
++++ wc -l
+0
+++ printf ':(glob)round-5[0-6]/    -> '
+:(glob)round-5[0-6]/    -> +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]/'
++++ wc -l
+0
+++ printf ':(glob)round-5[0-6]/*   -> '
+:(glob)round-5[0-6]/*   -> +++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-5[0-6]/*'
++++ wc -l
+0
+++ echo
+
+++ echo '## both bracket forms together, glob magic, trailing /**'
+## both bracket forms together, glob magic, trailing /**
++++ git grep -ohE '"nonce":\s*"[0-9a-f]+"' HEAD -- ':(glob).ufo/waves/round-4[89]/**' ':(glob).ufo/waves/round-5[0-6]/**'
++++ wc -l
+100
+++ echo
+
+++ echo '## exit-code semantics for a real no-match vs an error'
+## exit-code semantics for a real no-match vs an error
+++ git grep -qE zzz-no-such-token HEAD -- .ufo/waves/round-56
+++ echo 'no-match exit=1'
+no-match exit=1
+++ git grep -qE nonce 0000000000000000000000000000000000000000 -- .ufo/waves/round-56
+fatal: unable to parse object: 0000000000000000000000000000000000000000
+++ echo 'bad-rev exit=128'
+bad-rev exit=128

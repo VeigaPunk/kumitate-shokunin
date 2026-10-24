@@ -1,0 +1,63 @@
+SimplifyEntryProse — evidence log (all commands observed 2026-10-24, lane kumitate-shokunin)
+
+1. Revision identification
+$ git log --format='%H %s' -3 -- corpus/knowledge/worker-heartbeat-liveness.md
+f0dc6d1160e66af65355bd353665adac22bbf4a9 round-57: freeze + integrate — readme-map gate …
+$ git rev-parse HEAD
+8c6f5b017d149b18134917378cdbed3b492d8e89
+Entry added at f0dc6d1 (round-57 R1 close), untouched since; audited at rev f0dc6d1, not HEAD.
+audit.mjs check "entry working-tree == rev bytes": true.
+
+2. Mechanical binding audit (audit.mjs in this dir; full JSON in audit.json)
+$ node audit.mjs   → exit 0
+clause 1 (line 18) receipts=1            [no sha/quote/token miss]
+clause 2 (line 19) receipts=1
+clause 3 (line 20) receipts=1 QUOTE-MISS: "We recommend using a relatively short…"
+clause 4 (line 21) receipts=1 QUOTE-MISS: artifact (backticks inside quote; receipt verbatim otherwise)
+clause 5 (line 22) receipts=1 QUOTE-MISS: "`heartbeat.interval.ms` …" (artifact) + "typically should be set no higher than 1/3" (REAL: not in receipt bytes)
+clause 6 (line 23) receipts=1
+clause 7 (line 24) receipts=1
+clause 8 (line 25) receipts=1 QUOTE-MISS: artifact (backtick around periodSeconds; sentence fragment found)
+clause 9 (line 26) receipts=3 TOKEN-MISS: audit-strip artifact (3 backticked receipts)
+clause 10 (line 30) receipts=1 QUOTE-MISS "is the worker still there?" ; TOKEN-MISS "fleet-dispatcher.mjs"
+clause 11 (line 31) receipts=1
+clause 12 (line 35) receipts=1 QUOTE-MISS: "the client" fragment (REAL)
+clause 13 (line 36) receipts=1
+clauses: 13  distinct paths: 15   — NO SHA-BAD lines: all 15 blobs exist at f0dc6d1 with matching sha256.
+
+3. Receipt blob contents read at rev (paths lane-relative, all sha-verified above)
+- ScoutTemporalHb/heartbeat-def.txt: "An Activity Heartbeat is a ping from the Worker…" / "[it] informs the Temporal Service…has not crashed." fetched 2026-10-24 HTTP 200, 80679 bytes.
+- ScoutTemporalHb/heartbeat-timeout.txt: "Activity Heartbeats work in conjunction with a Heartbeat Timeout…"; "failure detection family: Schedule-To-Start, Start-To-Close, Schedule-To-Close, Activity Heartbeats — four timeout slots bound each leg."
+- ScoutTemporalHb/short-timeout.txt: "we recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat. That way if a Worker fails it can be handled in a timely manner." + "A Heartbeat can include an application layer payload".
+- ScoutKafka/session-timeout.txt: "session.timeout.ms — The timeout used to detect client failures…indicate its liveness to the broker." + removal/rebalance sentence.
+- ScoutKafka/heartbeat-interval.txt: "heartbeat.interval.ms — The expected time between heartbeats to the consumer coordinator when using…" + "Default: 3000 (3 seconds); must be set lower than session.timeout.ms, typically no higher than 1/3 of that value." + "group.consumer.session.timeout.ms default: 45000 (45 seconds)."
+- ScoutKafka/rebalance-reclaim.txt: removal/rebalance quote + note "a dead consumer's partitions re-assign to survivors".
+- ScoutK8s/liveness-remedy.txt: "Many applications…cannot recover except by being restarted. Kubernetes provides liveness probes to detect and remedy such situations." + "probe kinds: command (exec), HTTP request, TCP socket, gRPC."
+- ScoutK8s/probe-timing.txt: "The periodSeconds field specifies that the kubelet should perform a liveness probe every 5 seconds. The initialDelaySeconds field tells the kubelet that it should wait 5 seconds before performing the first probe." + "failure → container restart (pod-level reclaim), not job reclaim."
+- Scout{TemporalHb,Kafka,K8s}/source-metadata.txt: fetched 2026-10-24 HTTP 200; 80679 / 145719 / 554624 bytes + body sha256s.
+- ScoutQueue/repend-signals.txt: "repend fires only on `registered_mission_missing` with a nonzero launcher exit — a pull-based "is the worker still there" signal rather than a worker-pushed heartbeat; MAX_LAUNCH_MISSES bounds false positives." (no "?" in receipt)
+- ScoutQueue/grace-window.txt: "fleet-dispatcher.mjs LAUNCHING_GRACE_MS = 120000 (120 s)…repend's MAX_LAUNCH_MISSES bound; the dispatcher inspects, the worker never pings."
+- ScoutRabbitmqHb/tcp-liveness.txt: "AMQP 0-9-1 offers a heartbeat feature to ensure that the application layer promptly finds out about disrupted connections (and peers)..." + "When a client detects that RabbitMQ node is unreachable due to a heartbeat, it needs to re-connect." + scope note.
+- ScoutRabbitmqHb/source-metadata.txt: fetched 2026-10-24 HTTP 200; 51578 bytes + body sha256.
+
+4. Origin-tree pin check (read-only)
+$ git -C /home/vgpnk/Projects/ufo-fsd-alpha rev-parse --verify 31c465f1^{commit}
+31c465f15669f744848bd9f5d56191c5085670f7  (commit dated 2026-10-20, "routing: grammar admits org-prefixed model ids…")
+$ git show 31c465f1:scripts/fleet-dispatcher.mjs | grep -nE 'registered_mission_missing|MAX_LAUNCH_MISSES|LAUNCHING_GRACE_MS'
+117: const MAX_LAUNCH_MISSES = 8;
+123: const LAUNCHING_GRACE_MS = 120_000;
+3571/3573, 7069/7071, 7750: rependability gated on registered_mission_missing + nonzero launcher exit; 6291 misses > MAX_LAUNCH_MISSES; 6774 grace-window compare; 6791/6832 blocker code.
+
+5. Corpus cross-checks
+- corpus/SOURCES.md rows *130 S117 (A, mined capture cell), *131 S118 (A), *132 S119 (A), *133 S120 (B, REJECTED: AMQP heartbeats…).
+- .ufo/pins/source-captures.json contains keys S117, S118, S119, S120 (node check: all "pinned").
+- PROVINCE.md:22 — durable-execution line: first entry at-least-once-dedupe (r54, S106/S107), advanced r55 bounded-redelivery-budgets (S109/S110/S111), advanced r56 visibility-lease-ack-deadlines (S113/S114/S115), advanced r57 worker-heartbeat-liveness (S117/S118/S119).
+- Ordinal chain in entry intros: at-least-once-dedupe "fourth entry in the durable-execution research frontier"; bounded-redelivery-budgets "the fifth entry of the durable-execution front…"; visibility-lease-ack-deadlines "sixth entry of the durable-execution frontier"; worker-heartbeat-liveness "Seventh entry of the durable-execution and multi-agent failure research line". Chain self-consistent.
+
+6. Source re-opens (2026-10-24, curl -sL, exact URLs)
+- S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures → 80679 bytes (matches pinned). Located: "we recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat" (lowercase "we"); "informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed"; "Heartbeat Timeout" ×27, all four timeout-slot names present. Tier A stands.
+- S118 https://kafka.apache.org/43/configuration/consumer-configs → 145719 bytes (matches). Located: "typically should be set no higher than 1/3 of that value. It can be adjusted even lower…"; "The expected time between heartbeats to the consumer coordinator when using Kafka's group manage…"; 45000 present. Tier A stands.
+- S119 https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ → 554624 bytes (matches). Located: "The <code>periodSeconds</code> field specifies that the kubelet should perform a liveness probe every 5 seconds."; "The <code>initialDelaySeconds</code> field tells the kubelet that it should wait 5 seconds before performing the first probe."; "Kubernetes provides liveness probes to detect and remedy such situations."; startup-probe section present. Tier A stands.
+- S120 https://www.rabbitmq.com/docs/heartbeats → plain curl: 5427 bytes Cloudflare "Just a moment…" challenge page; with browser UA (-A 'Mozilla/5.0…Firefox/128.0'): 51578 bytes (matches pinned). Located: "AMQP 0-9-1 offers a <i>heartbeat</i> feature to ensure that the application layer promptly finds out about disrupted connections (and also completely unresponsive peers)."; "When a client detects that RabbitMQ node is unreachable due to a heartbeat, it needs to re-connect." Tier B / rejection stands (connection↔peer scope, no worker/task liveness).
+
+7. Tooling: no installs this round (none needed; node + git + curl sufficed).

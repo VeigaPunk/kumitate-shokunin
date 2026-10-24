@@ -1,0 +1,73 @@
+ConnectorSiblingOverlap — observed commands (read-only). Lane production not modified.
+Access date for reopened URLs: 2026-10-24.
+
+# git rev-parse HEAD + subject (exit 0 each)
+kumitate HEAD=8c6f5b017d149b18134917378cdbed3b492d8e89
+  subject=round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5
+kama     HEAD=7c35289da5f4b94e062cd900eb086919e5094003
+  subject=round-33 verifier spot-check (integrator, hyaku): non-author admit/reject
+kotoba   HEAD=2a8eba56b3f9321b70c569fa2816d42237ca49a2
+  subject=round-66 verifier spot-check (integrator, hyaku): non-author admit/reject
+kasegi   HEAD=1fafde8f11454f3b0b98ab7f2b2e640aaf7f399a
+  subject=considerthese: 2026-10-21 daily reflection
+mado     HEAD=91862344b9fddbb5b4c3a9977acc776632993799
+  subject=round-31 verifier spot-check (integrator, hyaku): non-author admit/reject
+mori     HEAD=d72ac167535229d737b9fa844513431d9a12f5ea
+  subject=round-41: freeze C1-C3 contracts and controls
+aggregator-shokunin directory: ABSENT
+  (ls /home/vgpnk/Projects/shokunin/aggregator-shokunin → No such file or directory)
+
+# git status --porcelain on cited files: empty, exit 0
+# kama PROVINCE.md, runtime-health-surface-matrix.md, llamacpp-loading-lifecycle.md, SOURCES.md, cross-lane-scope.md
+# kotoba PROVINCE.md
+# kasegi PROVINCE.md, mission-ledger.md, SKILL.md
+# mado PROVINCE.md
+# mori PROVINCE.md
+# kumitate PROVINCE.md, worker-heartbeat-liveness.md, readme-map.mjs, SOURCES.md
+
+# entry at plan base vs HEAD
+git -C kumitate-shokunin cat-file -e 7178bfd3643c0fac74c8eb637cd6e985faadd0cf:corpus/knowledge/worker-heartbeat-liveness.md
+  fatal: path exists on disk, but not in that rev
+  BASE_LACKS_ENTRY
+git -C kumitate-shokunin rev-parse HEAD:corpus/knowledge/worker-heartbeat-liveness.md
+  afed676b678fafa1328c28ec8ebc20d66ef5ee6c
+git -C kumitate-shokunin hash-object corpus/knowledge/worker-heartbeat-liveness.md
+  afed676b678fafa1328c28ec8ebc20d66ef5ee6c
+  (working tree matches HEAD blob after the scratch append was written only under this build dir)
+
+# entry shape (python over the committed file, before any proposal)
+lines=36 dash_clauses=13 dash_lines=[18, 19, 20, 21, 22, 23, 24, 25, 26, 30, 31, 35, 36]
+token counts in the entry: kama=0 kotoba=0 kasegi=0 mado=0 aggregator=0 S017=0 sibling=0
+
+# scratch append shape check (build dir only; lane blob unchanged)
+BEFORE lines=36 dash=13 head_unchanged=True dash_set_unchanged=True
+AFTER  lines=40 dash=13 head_unchanged=True dash_set_unchanged=True
+dash lines stayed [18, 19, 20, 21, 22, 23, 24, 25, 26, 30, 31, 35, 36]
+proposal file: proposed-paragraph.md
+scratch copy:  entry-with-paragraph.scratch.md
+
+# kama SOURCES at 7c35289 (git grep exit 0)
+L29  S017 Kubernetes Liveness, Readiness, and Startup Probes — https://kubernetes.io/docs/concepts/workloads/pods/probes/
+L129 S117 llama.cpp server-context.cpp @ 704366d L5453
+L130 S118 llama.cpp server-context.cpp @ 704366d L6132
+L131 S119 llama.cpp server-context.cpp @ 704366d L6137
+L132 S120 llama.cpp server-context.cpp @ 704366d L6151
+
+# kumitate SOURCES at 8c6f5b01 (git grep exit 0)
+L130 S117 https://docs.temporal.io/encyclopedia/detecting-activity-failures
+L131 S118 https://kafka.apache.org/43/configuration/consumer-configs
+L132 S119 https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+L133 S120 https://www.rabbitmq.com/docs/heartbeats  (rejected)
+
+# whole-tree searches (tool grep, not shell rg)
+mado-shokunin heartbeat|worker liveness|session.timeout|liveness probe|readme-map|durable.execution|Activity Heartbeat
+  → No matches found
+kotoba-shokunin same pattern
+  → CensusKumitate.md describes kumitate's frontier line; sibling-description-rewrites cites kasegi telemetry as "dispatcher heartbeat"
+kasegi-shokunin same pattern
+  → SKILL.md and mission-ledger.md / mission-control.md: telemetry.jsonl and <program>.status.json, not worker/task liveness
+kama-shokunin same pattern
+  → S017 concepts page + runtime-health-surface-matrix.md + round-16 scout notes; no worker-heartbeat-liveness claim
+
+# not run
+ATTEST57 / DOCTRINE57 probes were not re-executed. No production edit. No commit.

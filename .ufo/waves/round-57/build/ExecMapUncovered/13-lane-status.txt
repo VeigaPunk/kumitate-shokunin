@@ -1,0 +1,67 @@
+$ git -C lane status --porcelain | grep -v "build/ExecMapUncovered"
+ M .ufo/waves/round-57/w1/swarm-registry.json
+?? .ufo/waves/round-57/build/02-gate-drift.txt
+?? .ufo/waves/round-57/build/ConnectorSiblingOverlap/
+?? .ufo/waves/round-57/build/CriticC1Scope/
+?? .ufo/waves/round-57/build/CriticC2Overfit/
+?? .ufo/waves/round-57/build/CriticCounterNoop/
+?? .ufo/waves/round-57/build/CriticStaticVerdict/
+?? .ufo/waves/round-57/build/ExecA57Close/
+?? .ufo/waves/round-57/build/ExecChecklistBattery/
+?? .ufo/waves/round-57/build/ExecD57Close/
+?? .ufo/waves/round-57/build/ExecMapClean/
+?? .ufo/waves/round-57/build/ExecMapDupRow/
+?? .ufo/waves/round-57/build/ExecMapEmptyCovered/
+?? .ufo/waves/round-57/build/ExecMapFormat/
+?? .ufo/waves/round-57/build/ExecMapMissing/
+?? .ufo/waves/round-57/build/ExecMapOrphan/
+?? .ufo/waves/round-57/build/ExecMapSchema/
+?? .ufo/waves/round-57/build/ExecMapSelftest/
+?? .ufo/waves/round-57/build/ExecMapUnpinned/
+?? .ufo/waves/round-57/build/ExecProxyCounts/
+?? .ufo/waves/round-57/build/ExecR56Counters/
+?? .ufo/waves/round-57/build/ExecR56V3Repair/
+?? .ufo/waves/round-57/build/ExecReceiptSet/
+?? .ufo/waves/round-57/build/ExecReceiptSpan/
+?? .ufo/waves/round-57/build/ExecSourcesGate/
+?? .ufo/waves/round-57/build/MutA57DropCheck/
+?? .ufo/waves/round-57/build/MutD57SourceRow/
+?? .ufo/waves/round-57/build/MutMapOrphan/
+?? .ufo/waves/round-57/build/MutMapPinDrop/
+?? .ufo/waves/round-57/build/MutMapUncovered/
+?? .ufo/waves/round-57/build/ReviewD57Predicate/
+?? .ufo/waves/round-57/build/ReviewGateSemantics/
+?? .ufo/waves/round-57/build/ReviewMistakeR56V2/
+?? .ufo/waves/round-57/build/ReviewProxyPin/
+?? .ufo/waves/round-57/build/ReviewS117Admission/
+?? .ufo/waves/round-57/build/ReviewS118Admission/
+?? .ufo/waves/round-57/build/ReviewS119Admission/
+?? .ufo/waves/round-57/build/ScoutDispatcherLiveness/
+?? .ufo/waves/round-57/build/ScoutFrontierOverlap/
+?? .ufo/waves/round-57/build/ScoutK8sDeep/
+?? .ufo/waves/round-57/build/ScoutKafkaDeep/
+?? .ufo/waves/round-57/build/ScoutTemporalDeep/
+?? .ufo/waves/round-57/build/ScoutWavePolicy/
+?? .ufo/waves/round-57/build/ScribeMistakes/
+?? .ufo/waves/round-57/build/ScribeTrendEvidence/
+?? .ufo/waves/round-57/build/SentinelArtifacts/
+?? .ufo/waves/round-57/build/SentinelRegistryPaths/
+?? .ufo/waves/round-57/w1/ExecA57Close.md
+?? .ufo/waves/round-57/w1/ExecMapClean.md
+?? .ufo/waves/round-57/w1/ExecMapEmptyCovered.md
+?? .ufo/waves/round-57/w1/ExecMapFormat.md
+?? .ufo/waves/round-57/w1/ExecReceiptSet.md
+?? .ufo/waves/round-57/w1/MutD57SourceRow.md
+?? .ufo/waves/round-57/w1/MutMapOrphan.md
+?? .ufo/waves/round-57/w1/MutMapPinDrop.md
+?? .ufo/waves/round-57/w1/MutMapUncovered.md
+?? .ufo/waves/round-57/w1/ReviewS119Admission.md
+?? .ufo/waves/round-57/w1/ScoutKafkaDeep.md
+?? .ufo/waves/round-57/w1/ScoutTemporalDeep.md
+?? .ufo/waves/round-57/w1/ScoutWavePolicy.md
+?? .ufo/waves/round-57/w1/ScribeMistakes.md
+?? .ufo/waves/round-57/w1/swarm-registry.legacy-wave-v1.json
+exit=0
+
+$ git -C lane diff --stat -- corpus/README.md scripts/readme-map.mjs .ufo/pins/readme-map.json
+diff_empty=0

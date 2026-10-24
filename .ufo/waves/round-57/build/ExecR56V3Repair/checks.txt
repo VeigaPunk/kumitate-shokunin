@@ -1,0 +1,9 @@
+--- nested-dir check (find vs non-recursive readdir agreement) ---
+base subdirs=0 tip subdirs=0
+base md deeper-than-1=0 tip md deeper-than-1=0
+--- base gate presence ---
+fatal: path 'scripts/readme-map.mjs' exists on disk, but not in '7178bfd3'
+cat-file-exit=128
+--- frozen base receipt C2 drift (proxy-check declared vs computed) ---
+C2_TOTAL_DRIFT term=C2_total declared=132 computed=133 delta=+1
+--- tip proxy-check strict (read-only, observed mid-flight) ---

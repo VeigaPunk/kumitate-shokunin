@@ -1,0 +1,14 @@
+### M2) read of captured JSON at close rev
+verdict=MATCH exitCode=0 ok=true strict=true errors=0 warnings=0
+A=90 C=27 operability=9 C1=19/19 C2=135/135 coverage=10
+S=88/88 R=92/92 K=53/53
+pinsMatched=6 pinsTotal=6 srcRev=31c465f15669f744848bd9f5d56191c5085670f7 findings=[]
+
+### O) single-variable cause probe: clean tip tree + ONE scratch .mjs under a build/ dir
+$ node <clean-tip>/scripts/proxy-check.mjs --self <clean-tip+1 scratch .mjs> --strict
+PROXY  error  A_DRIFT  A: declared=90 computed=91 delta=+1
+PROXY: DRIFT (A_DRIFT term=A declared=90 computed=91 delta=+1; src-rev=31c465f15669)
+exit=1
+--- same tree after removing the scratch file (control) ---
+PROXY: MATCH (A=90 C=27 operability=9; C1=19/19 C2=135/135 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0

@@ -1,0 +1,16 @@
+## attempt-1's corrected cause: measure whole-path wildcard semantics
+.ufo/waves/round-5[0-6]                        lines=0
+.ufo/waves/round-5[0-6]/*                      lines=100
+.ufo/waves/round-5[0-6]/**                     lines=100
+.ufo/waves/round-5?                            lines=0
+.ufo/waves/round-5?/*                          lines=104
+.ufo/waves/round-5*                            lines=104
+.ufo/waves/round-5[0-6]/receipts/*.txt         lines=24
+
+## what round-5?/* adds: is it round-57?
+HEAD:.ufo/waves/round-57/probe/attest57-probe.mjs
+HEAD:.ufo/waves/round-57/receipts/attest-run-1.txt
+HEAD:.ufo/waves/round-57/receipts/attest-run-2-replayed.txt
+HEAD:.ufo/waves/round-57/receipts/attest-run-2.txt
+HEAD:.ufo/waves/round-57/receipts/attest-run-3.txt
+round-57 nonce lines in that set: 4

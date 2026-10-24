@@ -1,0 +1,11 @@
+## fresh repo pathspec forms (git 2.56.0)
+round-5?                 -> 
+round-5[06]              -> 
+round-5[0-6]             -> 
+:(glob)round-5[0-6]      -> 
+round-5*                 -> HEAD:round-50/a.txt:1 HEAD:round-56/a.txt:1 
+
+## ls-files
+round-5?         -> 
+round-5[06]      -> 
+round-5*         -> round-50/a.txt round-56/a.txt 

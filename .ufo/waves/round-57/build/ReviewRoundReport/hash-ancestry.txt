@@ -1,0 +1,55 @@
+# ReviewRoundReport — cited-hash ancestry evidence
+# Lane repo: /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated)
+# Command: git -C <lane> merge-base --is-ancestor <h> master  (exit 0 => ANCESTOR)
+
+## Refs
+8c6f5b017d149b18134917378cdbed3b492d8e89 refs/heads/master
+8c6f5b017d149b18134917378cdbed3b492d8e89 refs/remotes/origin/master
+HEAD == master == origin/master == 8c6f5b017d149b18134917378cdbed3b492d8e89  (tip pushed)
+
+## Types — all six cited lane hashes resolve to commits
+7178bfd3643c0fac74c8eb637cd6e985faadd0cf commit   (base)
+f0dc6d1160e66af65355bd353665adac22bbf4a9 commit   (R1)
+b3bd0633aec43ad2559f980b400e4d7077e10af3 commit
+798d4d23743487d0c642239ca54deba421021af3 commit
+c42afe1c189f2a1ecbe175f6e4ea4f9065c138d7 commit
+1238575b6522d839699df443ed40b29c49d2b5a7 commit
+8c6f5b017d149b18134917378cdbed3b492d8e89 commit  (tip)
+
+## Ancestry vs master — every cited lane hash is an ancestor
+ANCESTOR 7178bfd3643c0fac74c8eb637cd6e985faadd0cf
+ANCESTOR f0dc6d1160e66af65355bd353665adac22bbf4a9
+ANCESTOR b3bd0633aec43ad2559f980b400e4d7077e10af3
+ANCESTOR 798d4d23743487d0c642239ca54deba421021af3
+ANCESTOR c42afe1c189f2a1ecbe175f6e4ea4f9065c138d7
+ANCESTOR 1238575b6522d839699df443ed40b29c49d2b5a7
+ANCESTOR 8c6f5b017d149b18134917378cdbed3b492d8e89
+
+## Completeness of the Landed-changes list
+git rev-list --count 7178bfd3..master => 6
+git rev-list (newest first):
+ 8c6f5b01 round-57: idempotence at bookkeeping tip c42afe1c — A57 10/10, D57 5/5
+ 1238575b round-57: idempotence at bookkeeping tip — A57 10/10, D57 5/5 at 798d4d2  (2026-10-24 09:50:17 -0300; changes: close/IDEMPOTENCE-798d4d2.txt, +2 lines)
+ c42afe1c round-57: SCORECARD measured-commit slots filled
+ 798d4d23 round-57: close receipts
+ b3bd0633 round-57: readme-map capability gate + worker-heartbeat-liveness frontier entry (S117-S120)
+ f0dc6d11 round-57: freeze + integrate — R1
+=> Current bytes list all six. Committed blob (b1b6e989) listed only five and
+   declared "(Complete r57 lane-commit list. All five …" — 1238575b (committed
+   09:50:17 -0300) predates the fleet report commit (09:51:10 -0300) yet was
+   omitted from the landed list.
+
+## Non-repo citation
+1cd6d667e20075fd2e77e6e655bc755f95e3d940 — `git cat-file -t` => "could not get object info".
+Report discloses it as a /tmp scratch-clone rev; committed witness files carry it:
+ witness/scratch-held-attest.txt:1   ATTEST57_HELD held=10/10 … rev=1cd6d667…
+ witness/scratch-held-doctrine.txt:1 DOCTRINE57_HELD held=5/5 … rev=1cd6d667…
+=> unresolvable in-repo by design; corroborated by committed receipts.
+
+## Short-prefix citations
+f0dc6d1, b3bd063, 798d4d2, 8c6f5b0 — unique prefixes of the verified ancestors above.
+
+## Fleet report commit
+7c3d1203cfe8efa166836452deeb1f964204bf29  "round-57: kumitate report (lane tip 8c6f5b01…)"
+ author 2026-10-24 09:22:57 -0300 ; committer 2026-10-24 09:51:10 -0300
+ git status --porcelain =>  M .ufo/reports/round-57/kumitate.md   (working copy modified, uncommitted)

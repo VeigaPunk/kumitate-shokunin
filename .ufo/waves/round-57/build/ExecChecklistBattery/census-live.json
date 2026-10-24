@@ -1,0 +1,315 @@
+{
+  "label": "live",
+  "skillPath": "SKILL.md",
+  "section": {
+    "headingLine": 676,
+    "endLine": 790
+  },
+  "items": [
+    {
+      "n": 1,
+      "line": 694,
+      "checked": false,
+      "cmd": "node scripts/cite-check.mjs",
+      "all": [
+        "node scripts/cite-check.mjs"
+      ],
+      "body": "Citation gate verdict — `node scripts/cite-check.mjs` → exit 0|1 + `CITE_CHECK:`"
+    },
+    {
+      "n": 2,
+      "line": 695,
+      "checked": false,
+      "cmd": "node scripts/cite-check.mjs --selftest",
+      "all": [
+        "node scripts/cite-check.mjs --selftest"
+      ],
+      "body": "Citation gate hermetic suite — `node scripts/cite-check.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 3,
+      "line": 696,
+      "checked": false,
+      "cmd": "node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json",
+      "all": [
+        "node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json"
+      ],
+      "body": "Live sighting-surface conformance — `node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json` → exit 0 + `SURFACE_PROBE: CLEAN`"
+    },
+    {
+      "n": 4,
+      "line": 697,
+      "checked": false,
+      "cmd": "node scripts/surface-probe.mjs --selftest",
+      "all": [
+        "node scripts/surface-probe.mjs --selftest"
+      ],
+      "body": "Surface-probe hermetic suite — `node scripts/surface-probe.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 5,
+      "line": 698,
+      "checked": false,
+      "cmd": "node scripts/round-gate.mjs --selftest",
+      "all": [
+        "node scripts/round-gate.mjs --selftest"
+      ],
+      "body": "Round-gate hermetic suite — `node scripts/round-gate.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 6,
+      "line": 699,
+      "checked": false,
+      "cmd": "node scripts/round-gate.mjs",
+      "all": [
+        "node scripts/round-gate.mjs"
+      ],
+      "body": "Round-close artifact audit — `node scripts/round-gate.mjs` → exit 0 + `ROUND_GATE: CLEAN`"
+    },
+    {
+      "n": 7,
+      "line": 700,
+      "checked": false,
+      "cmd": "node scripts/round-gate.mjs --tracked",
+      "all": [
+        "node scripts/round-gate.mjs --tracked"
+      ],
+      "body": "Filed-report tracking — `node scripts/round-gate.mjs --tracked` → exit 0 + `ROUND_GATE: CLEAN`"
+    },
+    {
+      "n": 8,
+      "line": 701,
+      "checked": false,
+      "cmd": "node scripts/proxy-check.mjs --strict",
+      "all": [
+        "node scripts/proxy-check.mjs --strict"
+      ],
+      "body": "Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails) — `node scripts/proxy-check.mjs --strict` → exit 0 + `PROXY: MATCH`"
+    },
+    {
+      "n": 9,
+      "line": 702,
+      "checked": false,
+      "cmd": "node scripts/proxy-check.mjs --selftest",
+      "all": [
+        "node scripts/proxy-check.mjs --selftest"
+      ],
+      "body": "Proxy-check hermetic suite — `node scripts/proxy-check.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 10,
+      "line": 703,
+      "checked": false,
+      "cmd": "node scripts/claims-check.mjs",
+      "all": [
+        "node scripts/claims-check.mjs"
+      ],
+      "body": "Member-claims gate — `node scripts/claims-check.mjs` → exit 0 + `CLAIMS: MATCH`"
+    },
+    {
+      "n": 11,
+      "line": 704,
+      "checked": false,
+      "cmd": "node scripts/kimi-census.mjs",
+      "all": [
+        "node scripts/kimi-census.mjs"
+      ],
+      "body": "Kimi-substrate census — `node scripts/kimi-census.mjs` → exit 0 + `KIMI_CENSUS: CLEAN`"
+    },
+    {
+      "n": 12,
+      "line": 705,
+      "checked": false,
+      "cmd": "node scripts/sources-check.mjs",
+      "all": [
+        "node scripts/sources-check.mjs"
+      ],
+      "body": "Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`"
+    },
+    {
+      "n": 13,
+      "line": 706,
+      "checked": false,
+      "cmd": "node scripts/sources-check.mjs --selftest",
+      "all": [
+        "node scripts/sources-check.mjs --selftest"
+      ],
+      "body": "Sources-check hermetic suite — `node scripts/sources-check.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 14,
+      "line": 707,
+      "checked": false,
+      "cmd": "node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9",
+      "all": [
+        "node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9"
+      ],
+      "body": "Per-anchor truth burn-down — `node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9` → exit 0 + `TRUTH: CLEAN`"
+    },
+    {
+      "n": 15,
+      "line": 708,
+      "checked": false,
+      "cmd": "node scripts/anchor-truth.mjs --selftest",
+      "all": [
+        "node scripts/anchor-truth.mjs --selftest"
+      ],
+      "body": "Anchor-truth hermetic suite — `node scripts/anchor-truth.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 16,
+      "line": 709,
+      "checked": false,
+      "cmd": "node scripts/wave-census.mjs --round 40",
+      "all": [
+        "node scripts/wave-census.mjs --round 40"
+      ],
+      "body": "Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch) — `node scripts/wave-census.mjs --round 40` → exit 0 + `WAVE_CENSUS: CLEAN`"
+    },
+    {
+      "n": 17,
+      "line": 710,
+      "checked": false,
+      "cmd": "node scripts/wave-census.mjs --selftest",
+      "all": [
+        "node scripts/wave-census.mjs --selftest"
+      ],
+      "body": "Wave-census hermetic suite — `node scripts/wave-census.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 18,
+      "line": 711,
+      "checked": false,
+      "cmd": "node scripts/gate-mutants.mjs",
+      "all": [
+        "node scripts/gate-mutants.mjs"
+      ],
+      "body": "Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`) — `node scripts/gate-mutants.mjs` → exit 0 + `frozen=41/41`"
+    },
+    {
+      "n": 19,
+      "line": 712,
+      "checked": false,
+      "cmd": "node scripts/gate-mutants.mjs --selftest",
+      "all": [
+        "node scripts/gate-mutants.mjs --selftest"
+      ],
+      "body": "Gate-mutants hermetic suite — `node scripts/gate-mutants.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 20,
+      "line": 713,
+      "checked": false,
+      "cmd": "node scripts/omp-census.mjs",
+      "all": [
+        "node scripts/omp-census.mjs"
+      ],
+      "body": "OMP agent-root census — `node scripts/omp-census.mjs` → exit 0 + `OMP_CENSUS: CLEAN`"
+    },
+    {
+      "n": 21,
+      "line": 714,
+      "checked": false,
+      "cmd": "node scripts/omp-census.mjs --selftest",
+      "all": [
+        "node scripts/omp-census.mjs --selftest"
+      ],
+      "body": "OMP-census hermetic suite — `node scripts/omp-census.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 22,
+      "line": 715,
+      "checked": false,
+      "cmd": "node scripts/cap-run.mjs --selftest",
+      "all": [
+        "node scripts/cap-run.mjs --selftest"
+      ],
+      "body": "Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap) — `node scripts/cap-run.mjs --selftest` → exit 0 + `VERDICT: PASS`"
+    },
+    {
+      "n": 23,
+      "line": 716,
+      "checked": false,
+      "cmd": "node scripts/receipt-attest.mjs --selftest",
+      "all": [
+        "node scripts/receipt-attest.mjs --selftest"
+      ],
+      "body": "Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`) — `node scripts/receipt-attest.mjs --selftest` → exit 0 + `ATTEST_SELFTEST: PASS`"
+    },
+    {
+      "n": 24,
+      "line": 717,
+      "checked": false,
+      "cmd": "node scripts/counter-pins.mjs",
+      "all": [
+        "node scripts/counter-pins.mjs"
+      ],
+      "body": "Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`) — `node scripts/counter-pins.mjs` → exit 0 + `COUNTER_PINS: CLEAN`"
+    },
+    {
+      "n": 25,
+      "line": 718,
+      "checked": false,
+      "cmd": "node scripts/source-capture.mjs",
+      "all": [
+        "node scripts/source-capture.mjs"
+      ],
+      "body": "Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`) — `node scripts/source-capture.mjs` → exit 0 + `SOURCE_CAPTURE: CLEAN`"
+    },
+    {
+      "n": 26,
+      "line": 719,
+      "checked": false,
+      "cmd": "node scripts/source-dupes.mjs",
+      "all": [
+        "node scripts/source-dupes.mjs"
+      ],
+      "body": "SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`) — `node scripts/source-dupes.mjs` → exit 0 + `SOURCE_DUPES: CLEAN`"
+    },
+    {
+      "n": 27,
+      "line": 720,
+      "checked": false,
+      "cmd": "node scripts/readme-map.mjs",
+      "all": [
+        "node scripts/readme-map.mjs"
+      ],
+      "body": "Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v1`) — `node scripts/readme-map.mjs` → exit 0 + `README_MAP: CLEAN`"
+    }
+  ],
+  "count": 27,
+  "checked": 0,
+  "proseFirstLine": "Twenty-six items (round 56; item 26 is the SOURCES duplicate-URL ratchet; item 25 is the opened-source byte-persistence gate; item 24 is the frozen-counter registry gate; item 23 remains the receipt-attest hermetic suite",
+  "proseMentionsRound57": false,
+  "bindings": [
+    {
+      "n": 24,
+      "line": 717,
+      "names": "node scripts/counter-pins.mjs",
+      "expect": "counter-pins.mjs",
+      "ok": true
+    },
+    {
+      "n": 25,
+      "line": 718,
+      "names": "node scripts/source-capture.mjs",
+      "expect": "source-capture.mjs",
+      "ok": true
+    },
+    {
+      "n": 26,
+      "line": 719,
+      "names": "node scripts/source-dupes.mjs",
+      "expect": "source-dupes.mjs",
+      "ok": true
+    },
+    {
+      "n": 27,
+      "line": 720,
+      "names": "node scripts/readme-map.mjs",
+      "expect": "readme-map.mjs",
+      "ok": true
+    }
+  ],
+  "allBindingsOk": true
+}

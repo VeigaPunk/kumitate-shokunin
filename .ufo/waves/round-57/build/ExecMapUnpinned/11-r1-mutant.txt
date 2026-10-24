@@ -1,0 +1,12 @@
+rev=f0dc6d1160e66af65355bd353665adac22bbf4a9
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=135 rows=135 covered=135
+exit=0
+removed=lessons/round-56-verifier-spotcheck.md covered=134
+$ ls corpus/lessons/round-56-verifier-spotcheck.md
+corpus/lessons/round-56-verifier-spotcheck.md
+$ grep -c row in README
+1
+$ node scripts/readme-map.mjs  (one covered entry removed)
+README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:lessons/round-56-verifier-spotcheck.md
+exit=1

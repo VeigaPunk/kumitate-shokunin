@@ -1,0 +1,36 @@
+# Quote verification — receipt text vs captured upstream HTML
+# Method: normalized each captured HTML (tags stripped, entities unescaped,
+# whitespace collapsed) with python3 re/html; substring find for each
+# receipt-quoted string. Raw grep -c -F also run pre-normalization
+# (3 phrases were tag-split; all 3 HIT after normalization).
+# Capture files are committed scout artifacts; body sha256 for each page is
+# recorded in the seat's source-metadata.txt and matches corpus/SOURCES.md
+# rows S117–S120.
+
+== S117 ScoutTemporalHb/temporal-activity-failures.html (80,679 B, sha256 c7f7c401…)
+HIT  "An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service."
+HIT  "[it] informs the Temporal Service that the Activity Execution is making progress and the Worker has not crashed."
+HIT  "Activity Heartbeats work in conjunction with a Heartbeat Timeout."
+HIT  "Activity Heartbeats are implemented within the Activity Definition."
+HIT  "The Temporal Server doesn't detect failures when a Worker loses communication with the Server or crashes."
+HIT  failure-detection family literal: "Schedule-To-Start Timeout / Start-To-Close Timeout / Schedule-To-Close Timeout / Activity Heartbeats"  ← source names slot 4 "Activity Heartbeats", NOT "Heartbeat Timeout"
+HIT  "we recommend using a relatively short Heartbeat Timeout and a frequent Heartbeat. That way if a Worker fails it can be handled in a timely manner."
+HIT  "A Heartbeat can include an application layer payload that can be used to save Activity Execution progress."
+
+== S118 ScoutKafka/kafka-consumer-configs.html (145,719 B, sha256 abf4310f…)
+HIT  "session.timeout.ms — The timeout used to detect client failures when using Kafka's group management facility. The client sends periodic heartbeats to indicate its liveness to the broker."
+HIT  "if no heartbeats are received by the broker before the expiration of this session timeout, then the broker will remove this client from the group and initiate a rebalance."
+HIT  "heartbeat.interval.ms — The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities. Heartbeats are used to ensure that the consumer's session stays active…"
+HIT  upstream literal: "must be set lower than session.timeout.ms, but typically should be set no higher than 1/3 of that value"  ← entry's quoted fragment "typically should be set no higher than 1/3" is verbatim upstream; receipt paraphrased
+HIT  "group.consumer.session.timeout.ms" Default: 45000 (45 seconds); heartbeat.interval.ms Default: 3000
+
+== S119 ScoutK8s/k8s-liveness-probes.html (554,624 B, sha256 2a69b9a5…)
+HIT  "Many applications running for long periods of time eventually transition to broken states, and cannot recover except by being restarted. Kubernetes provides liveness probes to detect and remedy such situations."  ← source subject is "applications", entry re-anchors it to "workers"
+HIT  probe kinds present: exec command / HTTP request / TCP socket / gRPC (page section list)
+HIT  "The periodSeconds field specifies that the kubelet should perform a liveness probe every 5 seconds. The initialDelaySeconds field tells the kubelet that it should wait 5 seconds before performing the first probe."
+NOTE: upstream documents initialDelaySeconds as a generic first-probe delay; "startup slot for slow initializers" is the entry's interpretation (upstream discusses startup probes elsewhere on the page, but the bound receipt does not quote that text).
+
+== S120 ScoutRabbitmqHb/rabbitmq-heartbeats.html (51,578 B, sha256 8370687d…)
+HIT  "AMQP 0-9-1 offers a heartbeat feature to ensure that the application layer promptly finds out about disrupted connections (and also completely unresponsive peers)."
+HIT  "When a client detects that RabbitMQ node is unreachable due to a heartbeat, it needs to re-connect."
+NOTE: entry elides "(and also completely unresponsive peers)" to "(and peers)" inside the quote and splices "the client … needs to re-connect" with an ellipsis — both flagged as quote-trimming, meaning preserved.

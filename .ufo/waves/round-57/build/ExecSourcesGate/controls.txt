@@ -1,0 +1,53 @@
+# Non-vacuity controls — exact commands and observed output
+# All runs from lane root /home/vgpnk/Projects/shokunin/kumitate-shokunin.
+# Trap: explicit --registry resolves capture/pin paths against the REGISTRY FILE'S DIRECTORY,
+# so a scratch registry must sit at the scratch root with files at repo-relative paths.
+
+## C0 (layout trap, neg/replica): registry at <D>/.ufo/pins/counter-pins.json
+$ node scripts/counter-pins.mjs --registry $D/.ufo/pins/counter-pins.json
+COUNTER_PINS: note attest53-probe:absent            (x14)
+COUNTER_PINS: DRIFT pins=14 bad=14 first=attest53-probe:absent
+EXIT=1
+=> the gate reports every unresolvable binding; it never passes silently.
+
+## C1 baseline (neg/replica2: registry at scratch root, all 14 pinned files copied)
+$ node scripts/counter-pins.mjs --registry $D/counter-pins.json
+COUNTER_PINS: CLEAN pins=14
+EXIT=0
+$ node scripts/source-capture.mjs --registry $D/source-captures.json --sources $D/SOURCES.md
+SOURCE_CAPTURE: CLEAN captures=13 exemptions=107
+EXIT=0
+
+## C2 one byte flipped at offset 200 of the attest57-probe copy
+$ printf 'X' | dd of=$D/.ufo/waves/round-57/probe/attest57-probe.mjs bs=1 seek=200 conv=notrunc
+$ node scripts/counter-pins.mjs --registry $D/counter-pins.json
+COUNTER_PINS: DRIFT pins=14 bad=1 first=attest57-probe:hash-mismatch
+EXIT=1
+=> per-pin granularity: exactly the mutated pin fails, the other 13 stay clean.
+
+## C3 one byte flipped at offset 1000 of the S119 capture copy
+$ printf 'Z' | dd of=$D/.ufo/waves/round-57/build/ScoutK8s/k8s-liveness-probes.html bs=1 seek=1000 conv=notrunc
+$ node scripts/source-capture.mjs --registry $D/source-captures.json --sources $D/SOURCES.md
+SOURCE_CAPTURE: DRIFT captures=13 exemptions=107 bad=1 first=S119:hash-mismatch
+EXIT=1
+
+## C4 doc-side: S117 row deleted, REAL registry (neg/cap)
+$ node scripts/source-capture.mjs --sources $D/cap/SOURCES.md
+SOURCE_CAPTURE: DRIFT captures=13 exemptions=107 bad=1 first=S117:orphan-capture
+EXIT=1
+
+## C5 doc-side: S120 source URL repointed onto S117's URL (neg/dupes)
+$ node scripts/source-dupes.mjs --sources $D/dupes/SOURCES.md
+SOURCE_DUPES: DRIFT groups=5 known=4 bad=1 first=new-duplicate:docs.temporal.io/encyclopedia/detecting-activity-failures ids=S117,S120
+EXIT=1
+
+## C6 sources-check, scratch lane root with corpus/knowledge + corpus/lessons + SOURCES.md
+baseline (unmutated): DRIFT exit=1, 16 findings, all kind=USED_BY_MISSING — six
+used-by targets (corpus/QUALITY.md, SKILL.md, scripts/wave-census.mjs, ...) are not
+present under the scratch root. Live tree: 0 findings.
+mutant A: S119 row id -> S117  => + ID_DUPLICATE id=S117, + ENTRY_SOURCE_UNKNOWN ... S119
+mutant B: S117 tier -> Z       => + TIER_ENUM id=S117 tier=Z
+```
+
+# Scratch trees were deleted after capture (they contributed *.mjs copies to the lane's
+# proxy A-count). Outputs above are the retained evidence.

@@ -1,0 +1,18 @@
+# attest57-probe.mjs B4 arm slice (lines 247-267), grep n
+247:  // B4 — FAIL-CLOSED arms
+249:    const runArm = (mutate) => {
+257:    if (!regOk) { hold('B4', false, 'registry absent or no covered entries'); } else {
+260:    res.push(runArm(() => { writeFileSync(join(T, REG), '{ not json'); return () => writeFileSync(join(T, REG), before); }));
+261:    res.push(runArm(() => { const d = JSON.parse(readT(REG).toString('utf8')); d.version = 2; writeFileSync(join(T, REG), JSON.stringify(d)); return () => writeFileSync(join(T, REG), before); }));
+262:    res.push(runArm(() => { const d = JSON.parse(readT(REG).toString('utf8')); d.covered = 'x'; writeFileSync(join(T, REG), JSON.stringify(d)); return () => writeFileSync(join(T, REG), before); }));
+263:    res.push(runArm(() => { const d = JSON.parse(readT(REG).toString('utf8')); d.covered.push('scripts/escape.md'); writeFileSync(join(T, REG), JSON.stringify(d)); return () => writeFileSync(join(T, REG), before); }));
+264:    res.push(runArm(() => { const sp = join(T, README); const b = readFileSync(sp); rmSync(sp); return () => writeFileSync(sp, b); }));
+265:    hold('B4', res.every(Boolean), `arms=${res.map((x, i) => `${'abcde'[i]}=${x ? 'ok' : 'MISS'}`).join(',')}`);
+
+# readme-map.mjs selftest case 12/13 slice (grep n)
+48: *     duplicated or outside `knowledge|lessons/`; README unreadable; a corpus
+127:    return { ok: false, reason: `README unreadable: ${e.code || 'EIO'}` };
+158:      return { ok: false, reason: `corpus dir unreadable: ${d} (${e.code || 'EIO'})` };
+163:    return { ok: false, reason: `no *.md under ${dirs.join(' + ')} (empty corpus)` };
+319:      pass('readme-absent', r.status === 2, `exit=${r.status}`);
+326:      pass('corpus-dir-missing', r.status === 2, `exit=${r.status}`);

@@ -1,0 +1,60 @@
+# MutMapUncovered — exact commands, observed exits (round 57, kumitate)
+# cwd notation: LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+#                B=LANE/.ufo/waves/round-57/build/MutMapUncovered
+
+1) cd LANE && git rev-parse HEAD
+   -> 8c6f5b017d149b18134917378cdbed3b492d8e89   exit 0
+   (HEAD not moved at any point; no git/jj mutating command run)
+
+2) mkdir -p $B/scratch && git archive 8c6f5b017d149b18134917378cdbed3b492d8e89 | tar -x -C $B/scratch
+   -> exit 0
+
+3) sha256sum $B/scratch/corpus/README.md $B/scratch/scripts/readme-map.mjs \
+             $B/scratch/.ufo/pins/readme-map.json $B/scratch/corpus/lessons/round-57.md
+   7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d  corpus/README.md
+   058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  scripts/readme-map.mjs
+   9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c  .ufo/pins/readme-map.json
+   b3cbf9741d21421e74d321afba9749cd34e917c6909dba37da6eabe4ae6f5566  corpus/lessons/round-57.md
+   -> exit 0
+
+4) BASELINE — cd $B/scratch && node scripts/readme-map.mjs
+   stdout: README_MAP: CLEAN files=135 rows=135 covered=135
+   exit 0            (captured $B/baseline.out, $B/baseline.err)
+
+5) MUTATION — delete exactly the `lessons/round-57.md` README table row (1 line, 481 bytes)
+   grep -c '^| `lessons/round-57.md` |' $B/scratch/corpus/README.md
+   -> 1              exit 0
+   cp $B/scratch/corpus/README.md $B/original-README.md
+   node -e '<filter line whose prefix is "| `lessons/round-57.md` |", assert exactly 1 hit, rewrite joined>'
+   -> removed_bytes=481 removed_chars=481   exit 0   (captured $B/mutate.log)
+   diff -u $B/original-README.md $B/scratch/corpus/README.md > $B/mutant.diff
+   -> diff exit 1; 1 removed line, 0 added lines
+   sha256sum $B/scratch/corpus/README.md -> 5f935ccaa1ee6d0c88880d96b75beef4057b861feba9a5bdd3647968eedf952b
+
+6) MUTANT RUN — cd $B/scratch && node scripts/readme-map.mjs
+   stdout: README_MAP: DRIFT files=135 rows=134 covered=135 bad=1 first=uncovered:lessons/round-57.md
+   stderr: (empty)
+   exit 1            (captured $B/mutant.out, $B/mutant.err)
+
+7) RESTORE — cp $B/original-README.md $B/scratch/corpus/README.md
+   sha256sum -> 7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d
+   (byte-identical to the pre-mutation extraction)
+
+8) RESTORED RUN — cd $B/scratch && node scripts/readme-map.mjs
+   stdout: README_MAP: CLEAN files=135 rows=135 covered=135
+   exit 0            (captured $B/restored.out, $B/restored.err)
+
+9) DETECTOR SELFTEST — cd $B/scratch && node scripts/readme-map.mjs --selftest
+   tail: README_MAP_SELFTEST: PASS (14/14)
+   14 `case ` lines, 0 FAIL lines
+   exit 0            (captured $B/selftest.out, $B/selftest.err)
+
+10) LANE UNTOUCHED — cd LANE && sha256sum corpus/README.md scripts/readme-map.mjs \
+        corpus/lessons/round-57.md .ufo/pins/readme-map.json
+    7575614804acc82f309d2a763af2b7572a2f81ee98520f3b0517ee187d97205d  corpus/README.md
+    058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  scripts/readme-map.mjs
+    b3cbf9741d21421e74d321afba9749cd34e917c6909dba37da6eabe4ae6f5566  corpus/lessons/round-57.md
+    9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c  .ufo/pins/readme-map.json
+    -> exit 0   (identical to step 3; lane production bytes unchanged)
+
+Tool installs this seat: none.

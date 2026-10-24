@@ -1,0 +1,47 @@
+r>
+Default:
+52428800 (50 mebibytes)
+Valid Values:
+[0,...]
+Importance:
+medium
+group.instance.id
+A unique identifier of the consumer instance provided by the end user. Only non-empty strings are permitted. If set, the consumer is treated as a static member, which means that only one instance with this ID is allowed in the consumer group at any time. This can be used in combination with a larger session timeout to avoid group rebalances caused by transient unavailability (e.g. process restarts). If not set, the consumer will join the group as a dynamic member, which is the traditional behavior.
+Type:
+string
+Default:
+null
+Valid Values:
+non-empty string
+Importance:
+medium
+group.remote.assignor
+The name of the server-side assignor to use. If not specified, the group coordinator will pick the first assignor defined in the broker config group.consumer.assignors.This configuration is applied only if 
+group.protocol
+ is set to "consumer".
+Type:
+string
+Default:
+null
+Valid Values:
+Importance:
+medium
+isolation.level
+Controls how to read messages written transactionally. If set to 
+read_committed
+, consumer.poll() will only return transactional messages which have been committed. If set to 
+read_uncommitted
+ (the default), consumer.poll() will return all messages, even transactional messages which have been aborted. Non-transactional messages will be returned unconditionally in either mode.
+Messages will always be returned in offset order. Hence, in 
+read_committed
+ mode, consumer.poll() will only return messages up to the last stable offset (LSO), which is the one less than the offset of the first open transaction. In particular any messages appearing after messages belonging to ongoing transactions will be withheld until the relevant transaction has been completed. As a result, 
+read_committed
+ consumers will not be able to read up to the high watermark when there are in flight transactions.
+Further, when in 
+read_committed
+ the seekToEnd method will return the LSO
+Type:
+string
+Default:
+read_uncommitted
+Valid Values:</

@@ -1,0 +1,9 @@
+$ cat .ufo/waves/round-57/build/02-gate-drift.txt   # stray write outside my seat dir (a misdirected redirect during setup)
+$ cd scratch && node scripts/readme-map.mjs
+README_MAP: DRIFT files=135 rows=134 covered=135 bad=1 first=uncovered:lessons/round-56-verifier-spotcheck.md
+EXIT=1
+
+$ rm -f .ufo/waves/round-57/build/02-gate-drift.txt
+rm_exit=0
+$ test -e .ufo/waves/round-57/build/02-gate-drift.txt
+ABSENT

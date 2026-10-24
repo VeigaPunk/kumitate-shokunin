@@ -1,0 +1,34 @@
+=== Mistakes table (lines 27-33) ===
+## Mistakes
+
+| class | evidence | captured-by | fix |
+|---|---|---|---|
+| coverage-map drift | R56-V3 (`corpus/lessons/round-56-verifier-spotcheck.md` §6): `corpus/lessons/round-56-verifier-spotcheck.md` landed post-close without a `corpus/README.md` map row — third recurrence of the class (r52, r55 spotchecks; proxy read `C2_TOTAL_DRIFT declared=132 computed=133` at base) | `none` until this round — the count-only C2 term could not name WHICH file lacked a row | R57-1: the `readme-map` gate (`scripts/readme-map.mjs`, contract `kumitate-readme-map-v1`) makes the bimap mechanical — every file must have exactly one row, every row a live file, every file pinned in `.ufo/pins/readme-map.json`; the missing row is added in this commit. Shown able to fail: selftest cases `uncovered`/`orphan-row`/`stale-covered`/`unpinned` each exit 1 for the named reason |
+| stale frozen literal | R56-V2 (same artifact §1): frozen A54 `exactly 24` and A55 `exactly 25` checklist literals read `UNMET 9/10` at the r56 close rev because item 26 exists — capability moves retreading named obsolescence every round | `none` — no convention bound which supersession shape a frozen count literal may take | R57-2: the A57 B7 arm freezes the amended convention — `items === 27` AND the full item-id→gate binding (24→counter-pins, 25→source-capture, 26→source-dupes, 27→readme-map); future capability moves must re-express every item binding, never only the newest; recorded in LOG.md and the plan §Routed-defect answers |
+| process carry | R56-V1 (same artifact §1): the round-56 wave was prepared-but-undispatched; the L2 floor note records the orchestrator dispatches waves between rounds | n/a — orchestrator ruling/process convention, not a lane defect the lane can fix inside the repo | R57-3: this round prepares and validates the 64-seat v2 wave (`w1-spec.json`, `w1-validate.json`, `w1-taskcall.json`, `w1/swarm-registry.json`) and reports it prepared; dispatch is the orchestrator's |
+
+=== Section headers of spotcheck artifact ===
+11:## 1. Conformance (step 1)
+38:## 2. Claims re-check (re-measured over committed bytes)
+64:## 3. Frontier re-measurement
+77:## 4. Discernment spot-check (non-author)
+89:## 5. Trend verdicts
+101:## 6. Routed items for the lane (next round)
+
+=== R56-V1/V2 in spotcheck §1 (Defects block, lines 22-32) ===
+Defects (status-neutral; routed to kumitate next round):
+- **R56-V1 (routed):** the §3 L2 floor is unmet — the report states the single
+  64-seat v2 wave is *prepared-but-undispatched* ("no seats spawned, returned
+  or killed"), so 0 L2 subagents ran this round (floor: ≥8 in one batched
+  call; the round's own sizing rule expects a 64–128 v2 wave dispatched).
+  Honest report of a miss; the spec/taskCall/registry are committed under
+  `.ufo/waves/round-56/w1*` as prepared evidence.
+- **R56-V2 (informational):** counter-obsolescence carry — frozen A54
+  (exactly-24 items) and A55 (exactly-25) read `UNMET 9/10` at the close
+  revision (`close/prior-probes.txt`, B7 `items=26`). Named cost of the
+  capability move; an append-only counter-amendment convention exists (r53).
+
+=== R56-V3 in spotcheck §6 (Routed items, lines 108-110) ===
+3. R56-V3 — this artifact lands without a `corpus/README.md` map row
+   (closure scope allows only this path; the same C2_total drift class the
+   round repaired for the r55 file). Add the row next round.

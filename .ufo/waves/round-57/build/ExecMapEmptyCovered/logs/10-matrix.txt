@@ -1,0 +1,19 @@
+# matrix — rev f0dc6d1160e66af65355bd353665adac22bbf4a9 (round-57 R1)
+# gate sha256 058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727  (== SCORECARD pin.readme-map)
+# registry sha256 9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c (live == extraction)
+# columns: log exit verdict/error
+01-baseline.out      baseline_exit=0  README_MAP: CLEAN files=135 rows=135 covered=135
+arm1.txt             # exit=1         README_MAP: DRIFT files=135 rows=135 covered=0 bad=135 first=unpinned:knowledge/agent-isolation-substrates.md
+arm2.txt             # exit=1         README_MAP: DRIFT files=135 rows=0 covered=0 bad=270 first=uncovered:knowledge/agent-isolation-substrates.md
+arm3.txt             # exit=2         README_MAP: FAIL-CLOSED reason=no *.md under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapEmptyCovered/arms/arm3/c
+arm3b.txt            # exit=2         README_MAP: FAIL-CLOSED reason=no *.md under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapEmptyCovered/arms/arm3b/
+arm4.txt             # exit=2         README_MAP: FAIL-CLOSED reason=registry covered not an array
+arm5.txt             # exit=1         README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:knowledge/at-least-once-dedupe.md
+arm6.txt             # exit=2         README_MAP: FAIL-CLOSED reason=README unreadable: ENOENT
+arm7.txt             # exit=2         README_MAP: FAIL-CLOSED reason=corpus dir unreadable: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapEmptyCovered/ar
+arm8.txt             # exit=2         README_MAP: FAIL-CLOSED reason=registry version 2 !== 1
+arm9.txt             # exit=0         README_MAP: CLEAN files=135 rows=135 covered=135
+arm10.txt            # exit=2         README_MAP: FAIL-CLOSED reason=no *.md under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapEmptyCovered/arms/arm10/
+arm11.txt            # exit=2         README_MAP: FAIL-CLOSED reason=covered entry duplicated: "knowledge/agent-isolation-substrates.md"
+02-selftest.txt      selftest_exit=0  README_MAP_SELFTEST: PASS (14/14)
+03-attest57-r1.txt   exit=0           ATTEST57: ATTEST57_HELD held=10/10 checks=10 rev=f0dc6d1160e66af65355bd353665adac22bbf4a9 rule=A57 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS 

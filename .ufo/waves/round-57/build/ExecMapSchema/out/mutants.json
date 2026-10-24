@@ -1,0 +1,121 @@
+[
+  {
+    "id": "m1-namespace-regex-weakened",
+    "note": "COVERED_RE loses its filename/extension part: any path under knowledge|lessons is accepted",
+    "gate_sha256": "e887aee436a13bb17c3a401cbcb3f6986f8a6d020b13e293a51d8a0827c90c90",
+    "arms": [
+      {
+        "arm": "c4-covered-outside-namespace",
+        "baseline": 2,
+        "mutant": 2,
+        "stdout": "README_MAP: FAIL-CLOSED reason=covered entry malformed: \"scripts/readme-map.md\"",
+        "stderr": ""
+      },
+      {
+        "arm": "c9-covered-subdirectory",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/sub/a.md",
+        "stderr": ""
+      },
+      {
+        "arm": "c11-covered-root-file",
+        "baseline": 2,
+        "mutant": 2,
+        "stdout": "README_MAP: FAIL-CLOSED reason=covered entry malformed: \"README.md\"",
+        "stderr": ""
+      },
+      {
+        "arm": "c13-namespace-case",
+        "baseline": 2,
+        "mutant": 2,
+        "stdout": "README_MAP: FAIL-CLOSED reason=covered entry malformed: \"Knowledge/agent-isolation-substrates.md\"",
+        "stderr": ""
+      },
+      {
+        "arm": "c14-wrong-extension",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:lessons/x.markdown",
+        "stderr": ""
+      },
+      {
+        "arm": "c15-trailing-slash",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:lessons/x.md/",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "id": "m2-version-guard-inverted",
+    "note": "the version guard accepts 2 instead of 1",
+    "gate_sha256": "37d777444e28ccd2ff48a095b939e690aa6bb36f2fe4a4ea591bb9762b0010bc",
+    "arms": [
+      {
+        "arm": "c2-version-2",
+        "baseline": 2,
+        "mutant": 0,
+        "stdout": "README_MAP: CLEAN files=135 rows=135 covered=135",
+        "stderr": ""
+      }
+    ]
+  },
+  {
+    "id": "m3-covered-array-guard-deleted",
+    "note": "the `covered` array guard (and its reason string) is deleted; iteration proceeds on whatever shape",
+    "gate_sha256": "f0e9eeef63bbcee97e96da47100ca87d03caa18f47e7832ea6bf17cb5c9068eb",
+    "arms": [
+      {
+        "arm": "c3-covered-not-array",
+        "baseline": 2,
+        "mutant": 2,
+        "stdout": "README_MAP: FAIL-CLOSED reason=covered entry malformed: \"k\"",
+        "stderr": ""
+      },
+      {
+        "arm": "c3b-covered-string-x",
+        "baseline": 2,
+        "mutant": 2,
+        "stdout": "README_MAP: FAIL-CLOSED reason=covered entry malformed: \"x\"",
+        "stderr": ""
+      },
+      {
+        "arm": "c12-covered-object",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "",
+        "stderr": "file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/ExecMapSchema/mut-m3-covered-array-guard-deleted/scripts/readme-map.mjs:103"
+      }
+    ]
+  },
+  {
+    "id": "m4-per-entry-scope-guard-deleted",
+    "note": "the per-entry namespace/type guard is deleted; only the duplicate check remains",
+    "gate_sha256": "ae8a3f4cb05beb82e88e2f6d4fbc14fe927c53ded5b446c3fd96eeaba626365e",
+    "arms": [
+      {
+        "arm": "c4-covered-outside-namespace",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:scripts/readme-map.md",
+        "stderr": ""
+      },
+      {
+        "arm": "c9-covered-subdirectory",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/sub/a.md",
+        "stderr": ""
+      },
+      {
+        "arm": "c11-covered-root-file",
+        "baseline": 2,
+        "mutant": 1,
+        "stdout": "README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:README.md",
+        "stderr": ""
+      }
+    ]
+  }
+]

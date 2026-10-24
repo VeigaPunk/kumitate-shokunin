@@ -1,0 +1,57 @@
+id                      class          exp     status verdict     last
+base                    baseline       CLEAN   0      CLEAN       README_MAP: CLEAN files=135 rows=135 covered=135
+trav-1                  traversal      FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/../scripts/x.md"
+trav-2                  traversal      FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/../../../../etc/passwd.md"
+trav-3                  traversal      FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "lessons/../../corpus/knowledge/a.md"
+abs-1                   absolute       FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "/etc/passwd.md"
+abs-2                   absolute       FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/agent-isolation-substrates.md"
+sub-1                   subdir         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "lessons/sub/x.md"
+sub-2                   subdir         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/sub/agent-isolation-substrates.md"
+dup-1                   duplicate      FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry duplicated: "knowledge/agent-isolation-substrates.md"
+dup-2                   duplicate      FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry duplicated: "knowledge/dispatch-shapes.md"
+type-num                non-string     FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: 42
+type-null               non-string     FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: null
+type-bool               non-string     FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: true
+type-obj                non-string     FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: {"path":"knowledge/x.md"}
+type-arr                non-string     FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: ["knowledge/x.md"]
+fmt-empty               format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: ""
+fmt-dironly             format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/"
+fmt-dslash              format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge//agent-isolation-substrates.md"
+fmt-dotseg              format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/./agent-isolation-substrates.md"
+fmt-trail               format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/agent-isolation-substrates.md/"
+fmt-nul                 format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/agent-isolation-substrates.md\u0000"
+fmt-nl                  format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/agent-isolation-substrates.md\n"
+fmt-space               format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: " knowledge/agent-isolation-substrates.md"
+fmt-case                format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "Knowledge/agent-isolation-substrates.md"
+fmt-backslash           format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge\\..\\x.md"
+fmt-urlenc              format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledge/%2e%2e/x.md"
+fmt-prefix              format         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=covered entry malformed: "knowledgex/a.md"
+stale-shape             semantic       DRIFT   1      DRIFT       README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/definitely-not-here.md
+dot-dot-md              semantic       DRIFT   1      DRIFT       README_MAP: DRIFT files=135 rows=135 covered=136 bad=1 first=stale-covered:knowledge/..md
+covered-string          schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry covered not an array
+covered-obj             schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry covered not an array
+version-absent          schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry version undefined !== 1
+version-2               schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry version 2 !== 1
+version-str             schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry version "1" !== 1
+version-float           schema         CLEAN   0      CLEAN       README_MAP: CLEAN files=135 rows=135 covered=135
+version-null            schema         FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry version null !== 1
+covered-empty           schema         DRIFT   1      DRIFT       README_MAP: DRIFT files=135 rows=135 covered=0 bad=135 first=unpinned:knowledge/agent-isolation-substrates.md
+extra-key               schema         CLEAN   0      CLEAN       README_MAP: CLEAN files=135 rows=135 covered=135
+proto-key               schema         CLEAN   0      CLEAN       README_MAP: CLEAN files=135 rows=135 covered=135
+path-dir                registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not a regular file
+path-symlink-good       registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not a regular file
+path-symlink-dangling   registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not a regular file
+path-devnull            registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not a regular file
+json-malformed          registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not valid JSON
+json-empty              registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not valid JSON
+json-truncated          registry-type  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=registry not valid JSON
+mem-symlink-out         corpus-member  CLEAN   0      CLEAN       README_MAP: CLEAN files=136 rows=136 covered=136
+mem-symlink-dangling    corpus-member  CLEAN   0      CLEAN       README_MAP: CLEAN files=136 rows=136 covered=136
+mem-symlink-sibling     corpus-member  CLEAN   0      CLEAN       README_MAP: CLEAN files=136 rows=136 covered=136
+mem-dir-md              corpus-member  CLEAN   0      CLEAN       README_MAP: CLEAN files=136 rows=136 covered=136
+mem-symlink-unpoliced   corpus-member  DRIFT   1      DRIFT       README_MAP: DRIFT files=136 rows=135 covered=135 bad=2 first=uncovered:knowledge/zlinkdang.md
+mem-replace-with-dir    corpus-member  CLEAN   0      CLEAN       README_MAP: CLEAN files=135 rows=135 covered=135
+mem-remove-file         corpus-member  DRIFT   1      DRIFT       README_MAP: DRIFT files=134 rows=135 covered=135 bad=2 first=orphan-row:knowledge/agent-isolation-substrates.md
+mem-corpusdir-symlink   corpus-member  FC      2      FAIL-CLOSED README_MAP: FAIL-CLOSED reason=corpus dir not a directory: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelRegistryPaths/sandbox/corpus/knowledge
+
+CASES total=54 pass=54 mismatch=0 silent_accept=0

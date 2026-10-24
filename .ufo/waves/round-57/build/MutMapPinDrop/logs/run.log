@@ -1,0 +1,31 @@
+# MutMapPinDrop probe 2026-10-24T12:53:05Z rev=8c6f5b017d149b18134917378cdbed3b492d8e89
+archive_exit=0 scratch_files=3626
+pristine_sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+pristine_copy_sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+lane_registry_sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+target=lessons/round-23.md file_present=yes readme_rows=1
+--- 1 pristine
+=== 1-pristine exit=0
+    README_MAP: CLEAN files=135 rows=135 covered=135
+    exit=0
+mutate_exit=0
+mutant_sha256=b26683ee318d7c1b0e7b1385718910074333b4be9fe1a5c647bf775f0bace6f2
+mutant_covered_len=134
+--- 2 mutant
+=== 2-mutant exit=1
+    README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:lessons/round-23.md
+    exit=1
+restored_sha256=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c
+restore_cmp=identical
+--- 3 restored
+=== 3-restored exit=0
+    README_MAP: CLEAN files=135 rows=135 covered=135
+    exit=0
+--- 4 verdict
+1-pristine exit=0 last=README_MAP: CLEAN files=135 rows=135 covered=135
+2-mutant exit=1 last=README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:lessons/round-23.md
+3-restored exit=0 last=README_MAP: CLEAN files=135 rows=135 covered=135
+mutant_bad_count=1
+mutant_notes=0
+mutant_unpinned_paths=unpinned:lessons/round-23.md 
+lane_registry_sha256_after=9ef0cf6ec794bc11d139382e703794b218ec4a38070a831f22fdce40585c729c

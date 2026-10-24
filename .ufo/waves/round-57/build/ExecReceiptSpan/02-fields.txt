@@ -1,0 +1,22 @@
+## field extraction (grep -oE, raw bytes)
+attest-run-1.txt	"wall_start":"2026-10-24T12:41:22.462Z"
+	"nonce":"89182e386fd9d9a57b2a894a2a86387d"
+attest-run-2.txt	"wall_start":"2026-10-24T12:43:19.632Z"
+	"nonce":"e9f14ab41bb2b52adb4a1cd5a4cd8bb8"
+attest-run-3.txt	"wall_start":"2026-10-24T12:46:48.675Z"
+	"nonce":"9a065643099d3095b3db2bbbc0cb1287"
+attest-run-2-replayed.txt	"wall_start":"2026-10-24T12:43:19.632Z"
+	"nonce":"e9f14ab41bb2b52adb4a1cd5a4cd8bb8"
+
+## prelude run-at lines
+attest-run-1.txt:run-at: 2026-10-24T12:41:22.462Z
+attest-run-2.txt:run-at: 2026-10-24T12:43:19.632Z
+attest-run-3.txt:run-at: 2026-10-24T12:46:48.675Z
+attest-run-2-replayed.txt:run-at: 2026-10-24T13:45:00.000Z
+
+## line/byte counts
+   2  480 attest-run-1.txt
+   2  481 attest-run-2.txt
+   2  481 attest-run-3.txt
+   2  481 attest-run-2-replayed.txt
+   8 1923 total

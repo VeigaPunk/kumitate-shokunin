@@ -1,0 +1,14 @@
+--- attest57-pristine.mjs	2026-10-24 09:41:26.873593298 -0300
++++ attest57-dropone-mutant.mjs	2026-10-24 09:54:22.264878818 -0300
+@@ -405,8 +405,8 @@
+       const agree = uncovered.length === 0 && orphans.length === 0 && dupes.length === 0
+         && stale.length === 0 && uncoveredCovered.length === 0 && unpinned.length === 0
+         && r.status === 0 && /README_MAP: CLEAN/.test(last(r));
+-      hold('B10', agree,
+-        `uncovered=${uncovered.length} orphans=${orphans.length} dupes=${dupes.length} stale=${stale.length} uncoveredCovered=${uncoveredCovered.length} unpinned=${unpinned.length} gateExit=${r.status}`);
++      // hold('B10', agree,
++      //   `uncovered=${uncovered.length} orphans=${orphans.length} dupes=${dupes.length} stale=${stale.length} uncoveredCovered=${uncoveredCovered.length} unpinned=${unpinned.length} gateExit=${r.status}`);
+     }
+   }
+ } catch (e) {
+diff_exit=1

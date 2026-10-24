@@ -1,0 +1,18 @@
+[replica close] items=27 A54old=False A55old=False A57new=True newestOnly28=False
+== M1: only-newest shape (24-26 unbound, 27 bound readme-map) rev=0bc18ac ==
+[M1] ATTEST57: ATTEST57_UNMET held=9/10 checks=10 exit=1
+[M1] B7 MISS row=true items=27 i24..27=false
+[replica M1] items=27 A54old=False A55old=False A57new=False newestOnly28=False
+== M2: drop one old binding (26 unbound) rev=3b4e47e ==
+[M2] ATTEST57: ATTEST57_UNMET held=9/10 checks=10 exit=1
+[M2] B7 MISS row=true items=27 i24..27=false
+[replica M2] items=27 A54old=False A55old=False A57new=False newestOnly28=False
+== M3: growth to 28 without re-expression rev=bf510b5 ==
+[M3] ATTEST57: ATTEST57_UNMET held=8/10 checks=10 exit=1
+[M3] B7 MISS row=true items=28 i24..27=true
+[replica M3] items=28 A54old=False A55old=False A57new=False newestOnly28=True
+== M4: reorder items 24/25 rev=8f4a4a8 ==
+[M4] ATTEST57: ATTEST57_UNMET held=9/10 checks=10 exit=1
+[M4] B7 MISS row=true items=27 i24..27=false
+[replica M4] items=27 A54old=False A55old=False A57new=False newestOnly28=False
+sandbox restored dirty=1

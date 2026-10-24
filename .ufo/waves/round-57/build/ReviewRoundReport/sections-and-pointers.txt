@@ -1,0 +1,73 @@
+# ReviewRoundReport — sections & pointers evidence
+# Target: /home/vgpnk/Projects/shokunin/.ufo/reports/round-57/kumitate.md
+# Reviewed bytes: sha256 e1f2696eec94a02a5bcece5535b3f5f39260fe657a598494fe9e66c0cdc091b2, 13,601 B, mtime 2026-10-24 09:56:34 -0300
+# (Earlier state also observed: committed blob b1b6e989 at fleet commit 7c3d1203, 13,143 B — see report-drift.txt)
+
+## Headings (grep -n '^## ' $R) — required order per .ufo/prompts/kumitate-round-57.md §4
+3:## Work performed
+97:## Landed changes
+135:## Before → after measurements
+158:## Sources & frontier
+197:## Trend verdicts
+214:## SHONEN
+=> all six required sections, contract order. No "Seat accounting" heading anywhere.
+
+## 'Seat accounting' mentions (grep -n 'Seat accounting' $R)
+66:  `w1/`; per-seat outcomes are listed under Seat accounting below.
+127:lands after this list and is named under Seat accounting. All six carry the
+=> forward reference to a section absent at reviewed bytes.
+
+## Pointer existence sweep (test -e per path; lane-relative unless absolute)
+OK  scripts/readme-map.mjs
+OK  .ufo/pins/readme-map.json
+OK  corpus/knowledge/worker-heartbeat-liveness.md
+OK  .ufo/waves/round-57/close/selftests.txt
+OK  scripts/proxy-check.mjs
+OK  .ufo/waves/round-57/build/ScoutTemporalHb   (dir)
+OK  .ufo/waves/round-57/build/ScoutKafka        (dir)
+OK  .ufo/waves/round-57/build/ScoutK8s          (dir)
+OK  .ufo/waves/round-57/build/ScoutQueue        (dir)
+OK  .ufo/waves/round-57/build/ScoutRabbitmqHb   (dir)
+OK  .ufo/waves/round-57/close/prior-probes.txt
+OK  .ufo/waves/round-57/w1-spec.json
+OK  .ufo/waves/round-57/w1-validate.json
+OK  .ufo/waves/round-57/w1-taskcall.json
+OK  .ufo/waves/round-57/w1/swarm-registry.json
+OK  .ufo/waves/round-57/w1/swarm-registry.legacy-wave-v1.json
+OK  .ufo/waves/round-57/witness                 (dir: scratch-held-attest.txt, scratch-held-doctrine.txt)
+OK  .ufo/waves/round-57/probe/attest57-probe.mjs
+OK  .ufo/waves/round-57/probe/doctrine57-probe.mjs
+OK  .ufo/waves/round-57/base/attest57-base.txt
+OK  .ufo/waves/round-57/base/doctrine57-base.txt
+OK  .ufo/waves/round-57/base/sources-census-before.txt
+OK  .ufo/waves/round-57/close/FINAL-attest57-R1.txt
+OK  .ufo/waves/round-57/close/FINAL-doctrine57-R1.txt
+OK  .ufo/waves/round-57/close/IDEMPOTENCE-c42afe1c189f2a1ecbe175f6e4ea4f9065c138d7.txt  (report writes 'IDEMPOTENCE-c42afe1c….txt' — resolvable)
+OK  .ufo/waves/round-57/close/IDEMPOTENCE-798d4d2.txt
+OK  .ufo/waves/round-57/close/attest57-final.txt  doctrine57-final.txt  prior-counters-at-close.txt  sources-census-after.txt  harm-battery.txt
+OK  .ufo/waves/round-57/close/selftests.txt
+OK  .ufo/pins/source-captures.json
+OK  corpus/SOURCES.md  corpus/lessons/round-57.md  corpus/lessons/round-56-verifier-spotcheck.md  corpus/README.md
+OK  SCORECARD.md  LOG.md  SKILL.md  PROVINCE.md  .ufo/waves/round-57/plan.md  .ufo/waves/round-57/receipts/
+OK  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+OK  .ufo/waves/round-57/build/ScoutQueue/grace-window.txt   (the 'grace-window.txt' receipt the witness paragraph names)
+
+## 'committed under w1/' — FALSE at review time
+git -C lane ls-files -- '.ufo/waves/round-57/w1/':
+  .ufo/waves/round-57/w1/swarm-registry.json        (ONLY tracked file, from f0dc6d11)
+git status --porcelain | grep 'round-57/w1/':
+   M .ufo/waves/round-57/w1/swarm-registry.json
+  ?? .ufo/waves/round-57/w1/swarm-registry.legacy-wave-v1.json
+  ?? 55 seat report .md files (ConnectorSiblingOverlap.md … SimplifyMapGate.md; mtimes 09:52–09:58 -0300)
+=> "seat reports and the settled registry are committed under w1/" contradicted at reviewed bytes.
+
+## Registry shape claims
+grep -c '"agentId"' w1/swarm-registry.json => 64 (real ids, e.g. "ConnectorSiblingOverlap-2")
+grep -m1 -o 'ufo-swarm-registry-v1' => ufo-swarm-registry-v1
+git show f0dc6d11:.ufo/waves/round-57/w1/swarm-registry.json | cmp - w1/swarm-registry.legacy-wave-v1.json => IDENTICAL
+=> legacy-preservation and 64-member claims verified.
+
+## Receipt span claim (326,213 ms)
+attest-run-1 wall_start 2026-10-24T12:41:22.462Z
+attest-run-3 wall_start 2026-10-24T12:46:48.675Z   => 326,213 ms exactly.
+receipts/: attest-run-{1,2,3}.txt + .sha256 sidecars + attest-run-2-replayed.txt + .sha256.

@@ -41,3 +41,59 @@ runs at closure (per Q45 this line is closed next round by an append-only correc
 - R56-V3 repaired above (R57-1): the row exists AND the class is gated.
 - Carried, not this round's: R41-2 gate-pins ruling, R43-1/R43-5, A3e
   captured-invocation, R53-2 seat-accounting convention.
+
+## Round-58 routed defects (from the dispatched w1 attack seats)
+
+- **R57-V1 — A57 B8's cross-round nonce arm is dead, and its argv arm is
+  absent** (found by seat ExecReceiptSpan; `.ufo/waves/round-57/w1/ExecReceiptSpan.md`).
+  `attest57-probe.mjs` B8 scans older corpora with `git grep … --
+  '.ufo/waves/round-4[89]' '.ufo/waves/round-5[0-6]'`. A pathspec must cover
+  the whole path: a bare directory-name wildcard does not descend, so the
+  grep matches nothing and exits 1; the arm only compares when
+  `older.status === 0`, so a failed scan silently counts as fresh.
+  Demonstrated by a scratch clone carrying a round-56 file that reuses
+  round-57 `attest-run-1`'s nonce: A57 still prints `held=10/10 … B8 PASS`.
+  The frozen plan also states B8 "asserts exactly these" planned argv; B8
+  reads no `argv`. Fix for round 58 (frozen counters are not edited after
+  scoring): (a) spell the scan `:(glob).ufo/waves/round-4[89]/**` +
+  `:(glob).ufo/waves/round-5[0-6]/**` — measured same 100 nonce lines as the
+  explicit-dir list; never `?` or `round-5*`, both swallow round-57 itself;
+  (b) fail on grep exit ≥ 2 AND prove coverage (pathspec resolves to ≥1
+  file; a known-present sentinel token found) — exit 1 is a legitimate
+  no-match, 128 an unparseable rev; (c) assert each receipt's body `argv`
+  against the plan's frozen list; (d) prefer the body `wall_start` over the
+  prelude `run-at` when measuring the span.
+- **R57-V2 — A57's in-band verdict accepts a drop-one mutant** (found by
+  seat MutA57DropCheck; `.ufo/waves/round-57/w1/MutA57DropCheck.md`).
+  K3's predicted `held=9/10` shape is wrong: a dropped check yields
+  `held=9/9` → `ATTEST57_HELD`, exit 0. The vacuous-HELD guard covers only
+  `checks.length === 0`; no arm enforces the frozen count of ten checks, so
+  any consumer trusting the verdict token or exit code accepts the
+  mutant — the kill holds only through the external frozen-predicate
+  literal `held=10/10 checks=10`. Fix for round 58: the counter asserts
+  `checks.length === <frozen>` as a fail-closed arm, not only `=== 0`.
+- **R57-V3 — `readme-map` covered entries are name-only** (found by seat
+  SentinelRegistryPaths; `.ufo/waves/round-57/w1/SentinelRegistryPaths.md`;
+  two LOW findings). A `covered` entry or README row naming a directory or
+  symlink is still scored CLEAN — corpus members compare by name, not by
+  lstat'd regular-file. Captured-by: none (gate limitation). Fix for round
+  58 or a `kumitate-readme-map-v2`: lstat each `covered` member and require
+  `S_ISREG`; a non-file member is DRIFT (`covered-not-file`), a dangling
+  symlink DRIFT (`stale-covered`).
+- **R57-V4 — A57 B8's doctored-replay arm is defeated by forged receipts**
+  (found by seat CriticReceiptForgery;
+  `.ufo/waves/round-57/w1/CriticReceiptForgery.md`). Receipts fabricated at
+  commit time without `receipt-attest run` pass `verify --ledger` AND score
+  `B8 PASS`, including a set replaying a nonce committed in round 52 —
+  inside the directories the sweep intends to cover; the sweep reads zero
+  bytes at the judged rev (R57-V1's dead-grep cause). Reproduced end-to-end
+  on sandbox commits. Fix: folded into R57-V1's remediation — B8 must fail
+  closed on grep exit ≥ 2, prove coverage (sentinel token found), assert
+  the frozen argv, and the sweep's pathspec must descend
+  (`:(glob)…/round-5[0-6]/**`).
+- **In-round repair, not routed — SKILL.md "all sixteen" prose literal**
+  (found by seat CriticNoHarm, F1; the R56-V2 stale-literal class in doc
+  prose one section above the guarded checklist). Re-expressed to "all
+  seventeen" (`SKILL.md` verdict-map paragraph) in the wave-evidence
+  commit — the B7 arm guards checklist items only; the registry-table
+  count stays a named-unbounded literal by convention.

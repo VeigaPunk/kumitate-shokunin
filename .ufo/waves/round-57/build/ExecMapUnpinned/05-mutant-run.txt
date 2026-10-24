@@ -1,0 +1,7 @@
+$ ls -l corpus/lessons/round-56-verifier-spotcheck.md
+-rw-r--r-- 1 vgpnk vgpnk 8329 Oct 24 09:50 corpus/lessons/round-56-verifier-spotcheck.md
+$ grep -n "round-56-verifier-spotcheck" corpus/README.md
+168:| `lessons/round-56-verifier-spotcheck.md` | Round-56 non-author closure (hyaku closure, non-author integrator): C1 `source-dupes` re-measured 0/10 → 10/10 (A56), C2 `visibility-lease-ack-deadlines`/D56 re-measured 2/5 → 5/5; S113/S114 admits + S116 reject AGREE 3/3 on committed captures; routed defects R56-V1 (prepared-but-undispatched wave — the orchestrator dispatches), R56-V2 (frozen A54/A55 exactly-N literals stale), R56-V3 (this file landed without this README row — repaired in round 57 by the `readme-map` gate) | `.ufo/reports/round-56/kumitate.md`; `corpus/lessons/round-56.md`; `corpus/lessons/round-57.md` |
+$ node scripts/readme-map.mjs
+README_MAP: DRIFT files=135 rows=135 covered=134 bad=1 first=unpinned:lessons/round-56-verifier-spotcheck.md
+exit=1

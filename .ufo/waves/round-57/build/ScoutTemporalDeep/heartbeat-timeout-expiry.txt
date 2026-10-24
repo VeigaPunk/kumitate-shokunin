@@ -1,0 +1,7 @@
+quote (S117, §Heartbeat Timeout, docs.temporal.io/encyclopedia/detecting-activity-failures, fetched 2026-10-24):
+"A Heartbeat Timeout is the maximum time between Activity Heartbeats."
+"If this timeout is reached, the Activity Task fails and a retry occurs if a Retry Policy dictates it."
+"If an Activity Task Execution times out due to a missed Heartbeat, the next Activity Task can access and continue with that payload."
+"0s means the Heartbeat Timeout is disabled. No Heartbeat timer is started, so the Activity never fails for missing a Heartbeat."
+"The Heartbeat Timeout is also capped at the Start-To-Close Timeout."
+semantics: expiry fails the Activity TASK (one attempt); retry is conditional on Retry Policy — not automatic retry, not whole-execution failure.

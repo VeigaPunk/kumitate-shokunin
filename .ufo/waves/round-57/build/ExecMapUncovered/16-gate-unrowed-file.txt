@@ -1,0 +1,10 @@
+$ printf "# landing note\n" > scratch-untracked/corpus/lessons/round-58.md   # a file with no row, not in git
+$ cd scratch-untracked && node scripts/readme-map.mjs
+README_MAP: note unpinned:lessons/round-58.md
+README_MAP: DRIFT files=136 rows=135 covered=135 bad=2 first=uncovered:lessons/round-58.md
+EXIT=1
+$ node scripts/proxy-check.mjs --strict
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=135 computed=136 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=135 computed=136 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+EXIT=1
