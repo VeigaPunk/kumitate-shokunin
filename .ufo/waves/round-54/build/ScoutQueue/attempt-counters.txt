@@ -1,0 +1,6 @@
+Lane capture: `corpus/knowledge/queue-and-claim.md:90-99` (read 2026-10-24)
+
+`attempts`: claim-scoped dispatch tries, monotone across repends.
+`resumeAttempts`: paused-resume budget; repend resets it to zero.
+`launchMisses`: launch-registration failures; repend resets it alongside `missionId`.
+The watchdog's `attempt N/3` is a separate per-row lifetime repend budget and is never written to the queue row.

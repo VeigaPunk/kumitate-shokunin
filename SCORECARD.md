@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=78
-C=23
+A=81
+C=24
 C1=19
 C1_total=19
-C2=123
-C2_total=123
+C2=126
+C2_total=126
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9
+pin.proxy-check=91af76cdd864a9926a4d99929681b90bebade2f8266185ebb50663f8533a4747
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -320,6 +320,7 @@ pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
+pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 -->
 
 
@@ -1742,6 +1743,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger** (v3, round 53): it scans the whole ledger directory and flags a nonce only when another attested receipt — under ANY filename — binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
 
 | `bind-oracle` | Prove from inside a `cap-run` child that requested host directories are mounted: read the child's own `/proc/self/mountinfo` (S099: a process's mount namespace; field 5 = mount point), compare the observed mount-point set with the requested binds and with the parent process's mount set, and report `HELD` / `MISSING missing=<n>` (a dropped request bind) / `EXTRA extra=<n>` (an unrequested bind) / `CONTROL_VISIBLE` (the sandbox failed to mask an unbound control dir) / `NO_CHILD` (fail-closed, 2); `--selftest` builds three runner mutants from `cap-run.mjs` source and scores 7 arms. It answers the r48 §Limits (a) surgical-bind-drop class with a mechanism probe; it proves the mechanism, not a site's own call. Exit 0/1/2/64 | `.ufo/waves/round-49/r49/L1-score-0526f898.txt` + `ReRunCounter49-{2,3}.txt` (`ORACLE_HELD held=6/6` at `0526f898`, three time-spaced runs), `scripts/bind-oracle.mjs` | 49 |
+| `counter-pins` | Reverify a versioned registry of frozen counter paths and sha256 values; default repo-relative paths must be regular files beneath the lane root, malformed registries fail closed, and an empty set is DRIFT | `node scripts/counter-pins.mjs` → `COUNTER_PINS: CLEAN pins=5`; `--selftest` → `COUNTER_PINS_SELFTEST: PASS (11/11)`; `pin.counter-pins` is hash-checked by `proxy-check --strict` | 54 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds

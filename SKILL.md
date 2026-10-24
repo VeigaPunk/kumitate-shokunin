@@ -586,16 +586,16 @@ Citations are to the notes — the notes carry the live anchors.
 
 ## Gate registry
 
-Registry home per the fleet protocol's §Gate standard (round 34). Thirteen are
-gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49);
+Registry home per the fleet protocol's §Gate standard (round 34). Fourteen are
+gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54);
 `counter-rerun` (round 49 row) is a **probe** — its exit 1 is `DISAGREE`, two runs of one counter disagreeing, not a surface defect
 (ScoutRegistryClassification, `r49/ScoutRegistryClassification.md`) — and `cap-spawn` is a **helper** with no process exit map. None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
 origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
-`--checklists` mode runs the commands listed below. Verdict map for all thirteen: `0` → clean,
+`--checklists` mode runs the commands listed below. Verdict map for all fourteen: `0` → clean,
 `1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
 this lane (kumitate L1). Round 46 adds one **runner**, `cap-run`, which is not a gate: it exits with its child's
-code (its own exit map is in its row), so "all thirteen" above still counts the gates only.
+code (its own exit map is in its row), so "all fourteen" above still counts the gates only.
 
 | name | kind | entry command | self-test | pinned values live in |
 |---|---|---|---|---|
@@ -616,6 +616,7 @@ code (its own exit map is in its row), so "all thirteen" above still counts the 
 | bind-oracle | gate | `node scripts/bind-oracle.mjs (requested **mount** binds — not the Hyprland `mado-binds.py` keybind file) [--cap-run <path>] [--binds <n>]` → `BIND_ORACLE: HELD\|MISSING\|CONTROL_VISIBLE\|EXTRA\|NO_CHILD` (0 held · 1 a real defect · 2 fail-closed · 64 usage) | `--selftest` (`BIND_ORACLE_SELFTEST: n/7 pass`; arms A3–A5 build runner mutants from `cap-run.mjs` source — drop the request binds, add `--bind /etc /etc`, remove `--tmpfs /tmp`) | the requested bind count and the parent-mount EXTRA rule inside the script; S099 (mountinfo); `pin.bind-oracle` in `kumitate-gate-pins-v1` |
 | cap-spawn | helper | imported (`capSpawnSync`), not a CLI — it builds a `cap-run.mjs` argv and spawns it | exercised by every routed site's `--selftest` | `pin.cap-spawn` in the `kumitate-gate-pins-v1` block |
 | receipt-attest | gate | `node scripts/receipt-attest.mjs run --out <base> [--stdin] -- <cmd...>` → `RECEIPT: WROTE <base>.txt`; `node scripts/receipt-attest.mjs verify [--ledger <dir>] <file>` → `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid · 1 replayed or tampered · 2 unreadable · 64 usage), contract `kumitate-receipt-attest-v3` (round 53; rounds 51/52 semantics preserved: receipt form, digest, sidecar, verdicts, exit map; additions: field whitelist with unknown fields unreadable; exactly two lines + trailing newline; prelude value must match the Z-only millisecond profile; sidecar recorded name must equal the receipt basename; half-pair removal on sidecar write failure; wall clocks must parse finite AND round-trip byte-exact; `--stdin` delivers the nonce on the child's stdin and records stdin_sha256; ledger skip of unattested priors stated in the contract): a receipt is a `run-at:` display prelude plus one canonical-JSON line whose `digest` field is the sha256 of that line's canonical JSON with the `digest` field removed (sorted keys, recursive, one line), and whose sidecar `<base>.txt.sha256` is the GNU `sha256sum` text-mode digest of the exact receipt bytes — the prelude included; the inner digest binds every semantic field (argv, exit, mono span, nonce, stdout/stderr sha256, wall instants), the prelude is bound by the sidecar only, and `--ledger` rejects a nonce bound to a **different** record digest (a byte-identical duplicate is exempt; v3: the evidence set is the WHOLE ledger directory — attested receipts count under any filename, non-receipt entries skip with a note) | `--selftest` (`ATTEST_SELFTEST: PASS`; 51 hermetic cases, one per contract clause — among them the flake-injection arm that must read `RECEIPT: REPLAY`, the sidecar-mismatch arm that must read `RECEIPT: TAMPERED` and the v3 arms that hide a nonce-reusing twin under a non-`.txt` name) | the receipt bytes' inner digest, the sidecar digest and the clock ordering inside the script; `pin.receipt-attest` in the `kumitate-gate-pins-v1` block |
+| counter-pins | gate | `node scripts/counter-pins.mjs [--registry <path>]` → `COUNTER_PINS: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-counter-pins-v1`; default `.ufo/pins/counter-pins.json` checks repo-relative paths, byte sha256, regular-file targets, and a nonempty pin set | `--selftest` (11 hermetic cases; `COUNTER_PINS_SELFTEST: PASS (11/11)` + `VERDICT: PASS`) | `.ufo/pins/counter-pins.json`; `pin.counter-pins` in `kumitate-gate-pins-v1` |
 
 Named legacy gaps (not claimed): the original seven gates do not ship the
 §Gate standard digest-checked frozen-snapshot replayer. Round 38 supplies that
@@ -668,7 +669,7 @@ new one as a further anchor; no token-kept arm (`corpus/lessons/round-40.md`).
 
 ## Verifiable checklist
 
-Twenty-three items (round 51; item 23 = the receipt-attest hermetic suite). Item 14 replaces the round-36/37 adjacency-fidelity
+Twenty-four items (round 54; item 24 is the frozen-counter registry gate; item 23 remains the receipt-attest hermetic suite). Item 14 replaces the round-36/37 adjacency-fidelity
 ratchet with the per-anchor truth gate on four registered notes (811 anchors);
 item 15 is its hermetic suite; items 16–17 (round 41) are the wave-census of round 40's
 committed swarm evidence (a fixed, landed round) and its hermetic suite; items 18–19 (round 42)
@@ -707,6 +708,7 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] OMP-census hermetic suite — `node scripts/omp-census.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap) — `node scripts/cap-run.mjs --selftest` → exit 0 + `VERDICT: PASS`
 - [ ] Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`) — `node scripts/receipt-attest.mjs --selftest` → exit 0 + `ATTEST_SELFTEST: PASS`
+- [ ] Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`) — `node scripts/counter-pins.mjs` → exit 0 + `COUNTER_PINS: CLEAN`
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,
 empty scan set, unparsable surface JSON, a pin that no longer resolves to its

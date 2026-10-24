@@ -1,0 +1,5 @@
+Lane capture: `corpus/knowledge/queue-and-claim.md:52-56,90-99` (read 2026-10-24)
+
+Pinned grammar: `key=task_[a-f0-9]{24}` content-derived (`task_${sha256(immutable).slice(0,24)}`); `runId=gq[a-f0-9]{16}`; `sessionId` is `omp-${runId}`.
+
+`attempts` are claim-scoped dispatch tries, monotone across repends. `resumeAttempts` and `launchMisses` are retry budgets with separate semantics; neither is the stable task key.

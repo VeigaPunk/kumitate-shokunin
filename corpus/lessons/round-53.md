@@ -75,3 +75,7 @@ without a w1/ report is counted "returned-without-report" by name in the report 
 round-52 ScribeReadme case sets the convention. Carried open: A3e captured-invocation
 question, the ±60 s prelude tolerance (Q39 ceiling), the tree-author forgery boundary,
 R43-1/R43-5, R41-2 L0 pending.
+
+## Gate correction (round 54; R54-1)
+
+- **Spot-check closure — AGREE:** the non-author round-53 verifier spot-check re-opened S104 and S105 and agreed with both admissions; the separate artifact also confirms there were no rejected rows in round 53. Pointer: `corpus/lessons/round-53-verifier-spotcheck.md` §3. This append-only correction closes the prior `<pending>` pointer without rewriting the original Gate line.

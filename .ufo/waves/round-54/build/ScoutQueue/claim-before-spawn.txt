@@ -1,0 +1,5 @@
+Lane capture: `corpus/knowledge/queue-and-claim.md:119-131` (read 2026-10-24)
+
+`claimNextTask` scans `queue.tasks` in insertion order. Claim flips `pending|paused→launching`, increments attempts, clears the blocker, and `writeQueue` commits BEFORE spawn. A mid-dispatch crash may therefore leave a `launching` row for reconciliation.
+
+The queue's immutable task key survives the claim/dispatch lifecycle; attempt counters describe tries, not operation identity.

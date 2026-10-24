@@ -856,3 +856,11 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
     IDEMPOTENCE, and the non-author closure compares cited rev to receipt rev and the
     receipt commit to the transcript; no lane gate mechanically rejects a close commit
     whose FINAL receipt cites another revision (seat ScribeQuality, round 52).
+
+- **Q45 — a pending non-author spot-check pointer is closed by an append-only named correction when its separate artifact lands.** Grounding: `corpus/lessons/round-53.md`'s `## Gate` still said `<pending>` after the non-author re-open had landed separately in `corpus/lessons/round-53-verifier-spotcheck.md` §3 (R53-1 in this round's `corpus/lessons/round-54.md`).
+  - **Who checks.** In the next lane round, the author appends a correction naming the committed spot-check artifact and its verdict; the non-author confirms that both the pointer and the verdict resolve. The original pending line stays unchanged.
+  - **Field.** One appended `## Gate correction (round N)` section names the artifact, section, sampled admits/rejects and `AGREE`/`DISAGREE` with reason; it never rewrites the old `## Gate` text.
+  - **Command.** `grep -nE 'round-53-verifier-spotcheck\.md.*AGREE|AGREE.*round-53-verifier-spotcheck\.md' corpus/lessons/round-53.md` → the appended correction line.
+  - **Fails when.** At the round-53 base `383ad787`, `grep -n '<pending' corpus/lessons/round-53.md` finds the open marker while `grep -n 'round-53-verifier-spotcheck.md' corpus/lessons/round-53.md` finds nothing, despite the separate check artifact; the correction is still required even when the reviewer artifact already exists.
+  - **Shown able to fail.** Base `383ad787`: the Gate line is `<pending>` and the pointer sweep is empty; this round appends the round-54 Gate correction pointing at the non-author §3 source re-open, without changing the old line.
+  - **Limit.** The command checks the durable pointer and verdict text, not whether the named reviewer actually re-opened the evidence; the non-author re-reads the cited artifact.

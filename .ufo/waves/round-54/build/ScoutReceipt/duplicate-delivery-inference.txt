@@ -1,0 +1,5 @@
+Round-54 inference receipt (author synthesis; not a source quotation)
+
+Inputs: S106 §Abstract states MQTT at-least-once delivery can duplicate; S107 §Negative Acknowledgement and Requeuing of Deliveries says RabbitMQ requeues a delivery when `requeue=true`.
+
+Inference: where repeating an operation's effect is unsafe, dedupe needs a stable application/task operation identity at the effect boundary. A transport delivery tag, retry-attempt counter, receipt nonce, or wall-clock timestamp is a different identity. This does not claim exactly-once delivery or exactly-once effects.

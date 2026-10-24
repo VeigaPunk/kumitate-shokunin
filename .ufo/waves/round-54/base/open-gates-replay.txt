@@ -1,0 +1,20 @@
+$ node scripts/proxy-check.mjs --strict [base=383ad787ac3a9301b25422e50ebfef256d534924]
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=123 computed=124 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=123 computed=124 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+EXIT=1
+
+$ node scripts/kimi-census.mjs [base=383ad787ac3a9301b25422e50ebfef256d534924]
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=27  checked=27  frozen=27
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=8 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=35 declared=27 chain=8 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=53 checked=53 errors=0 info=4 chain=8
+KIMI_CENSUS: CLEAN (members=53 checked=53 chain=8 info=4)
+EXIT=0

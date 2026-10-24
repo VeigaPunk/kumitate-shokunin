@@ -469,6 +469,7 @@ const GATE_PINS = {
   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
   'pin.counter-rerun': 'scripts/counter-rerun.mjs', // round 48: repeat-run receipt instrument (C2)
   'pin.receipt-attest': 'scripts/receipt-attest.mjs', // round 51: invocation receipt attestation instrument (C1)
+  'pin.counter-pins': 'scripts/counter-pins.mjs', // round 54: frozen-counter registry gate
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
@@ -2438,8 +2439,8 @@ function selfTest() {
       };
     });
     const gatePinsFixture = fxBase('gate-pins-clean', {
-      gatePins: ['anchor-truth', 'sources-check', 'wave-census', 'gate-mutants'],
-      expect: { ...F1.expect, A: 10, operability: 8 },
+      gatePins: ['anchor-truth', 'sources-check', 'wave-census', 'gate-mutants', 'counter-pins'],
+      expect: { ...F1.expect, A: 11, operability: 8 },
     });
     const gatePinsRun = runProxy(args(gatePinsFixture, ['--strict', '--json']));
     check('separate gate-pin block verifies named gates, suppresses warnings, and keeps v1 pins unchanged', () => {
