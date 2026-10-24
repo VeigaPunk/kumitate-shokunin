@@ -816,3 +816,43 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
     unforgeable (see round-51 report, forgery boundary). Enforcement is MANUAL — the L1
     commits the before-receipt at freeze and the non-author closure verifies it; no lane
     gate mechanically rejects a freeze commit that lacks one (seat CritQ43, round 51).
+- **Q44 — a round's FINAL claim receipt must be executed against the measured close
+  revision it cites, and the receipt commit must carry an idempotence re-run.**
+  Classes caught: receipt-rev ≠ cited-rev (R52-11: round-51's FINAL receipt cites
+  `57333ead`, was committed at `cb6c472` — one commit after the measured close rev
+  `fef67079` and two after the rev it cites — and no A51/D51 receipt exists at
+  `fef67079`, so the 9/9 filed there was compositional); compositional citation
+  masquerading as measured (the same 655-byte FINAL file joins a rev-bound `held=8/9`
+  line whose A5 records `PROXY: DRIFT … declared=81 computed=71` with an un-rev-bound
+  `PROXY: MATCH (A=81 …)` line — at the rev it names `SCORECARD.md` declares A=81
+  against a computed 71, and at `fef67079` it declares A=71, so no committed tree
+  yields that MATCH [INFERENCE: the transient seat scratch named by commit `fef6707`]).
+  Fix: the R52-11 close sequence (round-52 plan `## Close sequence`). R1 is the
+  integration tip; A52 and D52 run against R1 and both receipts are committed as
+  `close/FINAL-<R1>.txt`. R2 is that receipt commit; both counters re-run against R2
+  and the transcript is committed as `close/IDEMPOTENCE-<R2>.txt` (R3). The report and
+  SCORECARD cite measured close revision R1, name R2/R3 as the receipt/idempotence
+  commits, and quote the committed FINAL verdict line verbatim — the cited rev and the
+  receipt rev are the same tree by construction, and the tip carries a re-run against
+  its own bytes.
+  - **Fails when.** The FINAL verdict's `rev=` is not the cited close revision; no
+    receipt file exists at the cited rev; one transcript mixes lines from different
+    tree states (an un-rev-bound line, or a line contradicting the stanza declared at
+    the rev it names); the receipt commit carries no idempotence transcript; a FINAL
+    line is re-wrapped or truncated mid-token.
+  - **Shown able to fail.** Round-51's own FINAL receipt:
+    `.ufo/waves/round-51/close/FINAL-57333ead13b1b39419bdb1cf6502fad0aa8523ff.txt`
+    (`sha256 0c1f9b22…`, 6 lines / 655 bytes) reads
+    `ATTEST51: ATTEST_UNMET held=8/9 … rev=57333ead…` and was added by `cb6c472`.
+    `grep -rn 'rev=fef67079' .ufo/waves/round-51` prints nothing and
+    `find .ufo/waves/round-51 -iname '*idempot*'` prints nothing; its line 1 is 280
+    bytes and ends mid-word at `delt`. The spotcheck files the route itself
+    (`corpus/lessons/round-51-verifier-spotcheck.md:71`).
+  - **Limit.** `rev=` is a self-declared field: this binds rev identity, file presence
+    and transcript consistency, not byte provenance, and a forger who writes a
+    receipt-shaped file naming the right rev still passes (the r49 forgery boundary);
+    only a probe-emitted digest-bound receipt (A52's B2 arm class) narrows that.
+    Enforcement is MANUAL — the L1 runs both counters at R1, commits FINAL and
+    IDEMPOTENCE, and the non-author closure compares cited rev to receipt rev and the
+    receipt commit to the transcript; no lane gate mechanically rejects a close commit
+    whose FINAL receipt cites another revision (seat ScribeQuality, round 52).

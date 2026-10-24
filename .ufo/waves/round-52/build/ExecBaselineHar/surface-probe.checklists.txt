@@ -1,0 +1,50 @@
+CHECKLIST  PASS SKILL.md:687 exit=1 expected=0|1 substring=hit wall=2.746 load1=28.06 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:688 exit=0 expected=0 substring=hit wall=1.613 load1=28.06 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:689 exit=0 expected=0 substring=hit wall=0.301 load1=28.14 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:690 exit=0 expected=0 substring=hit wall=2.368 load1=28.14 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:691 exit=0 expected=0 substring=hit wall=15.664 load1=28.14 — Round-gate hermetic suite
+CHECKLIST  FAIL SKILL.md:692 exit=2 expected=0 substring=miss wall=0.045 load1=29.03 — Round-close artifact audit
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBaselineHar/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBaselineHar/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:693 exit=2 expected=0 substring=miss wall=0.031 load1=29.03 — Filed-report tracking
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBaselineHar/.ufo/reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBaselineHar/.ufo/reports is absent
+CHECKLIST  FAIL SKILL.md:694 exit=1 expected=0 substring=miss wall=0.160 load1=29.03 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  A_DRIFT  A: declared=71 computed=73 delta=+2
+  | PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=117 computed=118 delta=+1
+  | PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  | PROXY: DRIFT (A_DRIFT term=A declared=71 computed=73 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=117 computed=118 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:695 exit=0 expected=0 substring=hit wall=11.899 load1=29.03 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:696 exit=0 expected=0 substring=hit wall=0.119 load1=30.71 — Member-claims gate
+CHECKLIST  PASS SKILL.md:697 exit=0 expected=0 substring=hit wall=0.037 load1=30.71 — Kimi-substrate census
+CHECKLIST  PASS SKILL.md:698 exit=0 expected=0 substring=hit wall=0.051 load1=30.71 — Sources-registry gate
+CHECKLIST  PASS SKILL.md:699 exit=0 expected=0 substring=hit wall=5.070 load1=30.71 — Sources-check hermetic suite
+CHECKLIST  FAIL SKILL.md:700 exit=1 expected=0 substring=miss wall=1.278 load1=32.02 — Per-anchor truth burn-down
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/route-probe-cluster.md#157  :44 source=review:Prose12 token=MAX_BUFFER no committed review record binds this anchor
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/route-probe-cluster.md#158  scripts/probe-token-plan-shared.mjs:22 source=review:Prose13 token=45_000 no committed review record binds this anchor
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/route-probe-cluster.md#159  scripts/probe-token-plan-shared.mjs:23 source=review:Prose13 token=250_000 no committed review record binds this anchor
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/route-probe-cluster.md#163  scripts/probe-token-plan-models.mjs:35 source=review:FixS759 token=probe-token-plan-models.verdict.json no committed review record binds this anchor
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/sighting-wall.md#18  scripts/ufo-sighting.mjs:4730 source=review:Prose14 token=surface no committed review record binds this anchor
+  | TRUTH  REVIEW_UNBOUND  corpus/knowledge/native-trial-launch.md#0  config/ufo.json:69 source=review:FixNTL01 token=autoRegisterInvokedNativeTrial no committed review record binds this anchor
+  | TRUTH_TOTAL anchors=811 true=778 debt=20 unchecked=13
+  | TRUTH: DRIFT (138 findings: REVIEW_UNBOUND base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:701 exit=0 expected=0 substring=hit wall=17.460 load1=32.02 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:702 exit=0 expected=0 substring=hit wall=0.065 load1=36.38 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:703 exit=0 expected=0 substring=hit wall=4.481 load1=36.38 — Wave-census hermetic suite
+CHECKLIST  FAIL SKILL.md:704 exit=2 expected=0 substring=miss wall=118.747 load1=36.38 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+  | MUTANT wave-census:findings/F-M21 killed cases=30/32 control=32 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+  | MUTANT wave-census:findings/F-M22 killed cases=30/32 control=32 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+  | MUTANT wave-census:findings/F-M23 killed cases=30/32 control=32 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+  | MUTANT wave-census:exits/M22-name-half-dropped killed cases=30/32 control=32 fail_lines=2 exit=1 verdict=FAIL group_clean=true fail_lines=2 overflow=false confirm=same
+  | MUTANT wave-census:exits/M19-selftest-exit-const killed cases=31/32 control=32 fail_lines=1 exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+  | CONTROL_AFTER cite-check PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=76/76 floor=75
+  | CONTROL_AFTER wave-census PASS exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=32/32 floor=31
+  | GATE_MUTANTS: ERROR (mutants=43 killed=40 frozen=38/41 drift=0 targets=2 rev=working-copy manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f leftovers=0) drift=0 nomatch=0 crash=0 unstable=3 timeout=0 overflow=0 control-fail=0
+CHECKLIST  PASS SKILL.md:705 exit=0 expected=0 substring=hit wall=1.196 load1=41.44 — Gate-mutants hermetic suite
+CHECKLIST  PASS SKILL.md:706 exit=0 expected=0 substring=hit wall=0.029 load1=41.44 — OMP agent-root census
+CHECKLIST  PASS SKILL.md:707 exit=0 expected=0 substring=hit wall=0.048 load1=41.44 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:708 exit=0 expected=0 substring=hit wall=8.728 load1=41.44 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST  PASS SKILL.md:709 exit=0 expected=0 substring=hit wall=2.706 load1=39.68 — Receipt-attest hermetic suite (round 51; contract `kumitate-receipt-attest-v1`; hermetic; the final line is `ATTEST_SELFTEST: PASS`)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 18/23 pass
+VERDICT: FAIL

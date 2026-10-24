@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    // noEmitOnError and the shared compiler baseline live in tsconfig.base.json
+    // (see its $comment: gates import dist/, so a failed build must not leave
+    // importable output for the next run to pass against). Only the portable
+    // build's own deltas are set here.
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*.ts"]
+}

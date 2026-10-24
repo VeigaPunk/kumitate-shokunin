@@ -1,0 +1,55 @@
+MutStanza — SCORECARD-only mutant probe on the round-52 freeze tree
+====================================================================
+Freeze tree: lane git rev 02c01258464cac3804faf177d0cfbf113cd59706, exported via
+`git clone --shared` into build/MutStanza/repo (detached), each variant committed there.
+Only SCORECARD.md bytes differ per variant (diff -rq: "Files .../SCORECARD.md ... differ",
+nothing else). Corpus census in every variant: 118 *.md files (unchanged).
+
+Hashes (sha256 of SCORECARD.md body):
+  pristine            e16f1e44c97070806c120db7a28fd7d70a281ad0620e976f54fd58b1b09a924e
+  variant A           fd1b7c62995a83d48fb9d05a09825002f959e70576ef887203e698da04d4c86e
+  variant B1         2c86f2ad3ae486326028f9b10d6b02fc2404763a447ce5c4f9083ca61c8cbe18
+  variant B2          b9716df759a3da164dca7e10f4a35a656d6886cf8eb41f87173fc3a74a4a8ebe
+  restored            e16f1e44c97070806c120db7a28fd7d70a281ad0620e976f54fd58b1b09a924e  (= pristine)
+
+Scratch commits (build/MutStanza/repo):
+  base        02c01258464cac3804faf177d0cfbf113cd59706
+  variant A   c5486c5431c68926ff79a48dcb02c51c6011a56d
+  variant B1  e3d00760cbbeba0bc2898a1c86aaf353c4c9e01d
+  variant B2  77cb454f1a0738eb65bd340e5dab2eaf436f627c
+  restored    323bca2b5044df7ded4849daf332d651b9f2bbbe   (git diff base..restored: empty)
+
+Variant A — SCORECARD only: C2_total=117 -> 118; ## Axes `coverage` 10 -> 9.
+  $ (cd varA) UFO_SRC=/home/vgpnk/Projects/ufo-fsd-alpha node scripts/proxy-check.mjs --strict
+  exit 0
+  PROXY: MATCH (A=71 C=23 operability=9; C1=19/19 C2=117/118 coverage=9; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+  Frozen A52 probe at c5486c5:
+  ATTEST52: ATTEST52_UNMET held=6/13 checks=13 rev=c5486c5431c68926ff79a48dcb02c51c6011a56d rule=A52 version=v1 | ... B5 PASS ...
+
+Variant B1 — SCORECARD only: C2_total=117 -> 118, axes untouched.
+  exit 1
+  PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+  Frozen A52 probe at e3d0076: ATTEST52_UNMET held=5/13; B5 MISS (proxy exit=1 PROXY: DRIFT (AXES_DRIFT ...)).
+  NOTE: C2_TOTAL_DRIFT is GONE. The freeze tree census is 118 *.md files, so declaring 118 is
+  truthful; the item's "rows stay 117" premise does not hold for C2_total (117 is the README
+  map-row count C2 = 117, the unrowed note is corpus/lessons/round-51-verifier-spotcheck.md).
+
+Variant B2 — measurable analogue of the item's intent (overstate by one): C2_total=118 -> 119,
+## Axes coverage 10 -> 9.
+  exit 1
+  PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=119 computed=118 delta=-1
+  PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=119 computed=118 delta=-1; src-rev=31c465f15669)
+  Frozen A52 probe at 77cb454: ATTEST52_UNMET held=5/13; B5 MISS (proxy exit=1 C2_TOTAL_DRIFT declared=119).
+
+Restore — pristine SCORECARD bytes committed as 323bca2; tree byte-identical to base
+(`git diff --name-only 02c01258 HEAD` empty, worktree clean).
+  Frozen A52 probe at 323bca2:
+  ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=323bca2b5044df7ded4849daf332d651b9f2bbbe rule=A52 version=v1 | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c
+
+D52 sanity (SCORECARD edits must not move it):
+  pristine: DOCTRINE52_UNMET held=0/5 ... E1 MISS entry-absent, exit 1
+  variant A: DOCTRINE52_UNMET held=0/5 ... E1 MISS entry-absent, exit 1
+
+Raw logs: log-pristine-{live,frozen}.txt, log-varA.txt, log-varB1.txt, log-varB2.txt,
+log-probe-{pristine,varA,varB1,varB2,restored}.txt, log-doctrine-*.txt, probe-exits.txt, revs.txt.

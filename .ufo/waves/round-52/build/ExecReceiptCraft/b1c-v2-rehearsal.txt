@@ -1,0 +1,20 @@
+B1C generator=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/MutSelftest/v2/receipt-attest.mjs
+run> receipt-attest: wrote /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecReceiptCraft/b1c-yOu0Ct/genuine.txt
+run> receipt-attest: sidecar /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecReceiptCraft/b1c-yOu0Ct/genuine.txt.sha256
+run> receipt-attest: receipt-sha256 19f1aedce10e118e48932c6e983e45534d479eda1124e0d8e4d9fe3f82a95120
+run> receipt-attest: command-exit 0
+fixture.receipt=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecReceiptCraft/b1c-yOu0Ct/genuine.txt
+fixture.wall_start=2026-13-01T00:00:00.000Z
+fixture.wall_end=2026-13-01T00:00:00.000Z
+fixture.inner_digest_recomputed=9b762593e5f5c637d77cc01a45211cabc3bfdf40a634934f100402fb39d795e5
+fixture.sidecar_recomputed=983abbad1f2c81aec8b448752b730e65fa1a7497ba97d3563fe746a49e108527  genuine.txt
+v1> RECEIPT: VALID
+v1.verdict=RECEIPT: VALID exit=0
+v1.expected_VALID=PASS
+v2> receipt-attest: wall_start 2026-13-01T00:00:00.000Z does not round-trip through toISOString
+v2> RECEIPT: TAMPERED
+v2.verdict=RECEIPT: TAMPERED exit=1
+v2.expected_TAMPERED=PASS
+B1C_RESULT=PASS
+
+PROCESS_EXIT=0

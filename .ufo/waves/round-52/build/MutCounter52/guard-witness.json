@@ -1,0 +1,34 @@
+{
+  "frozen_tail_lines": [
+    "const held = checks.filter((c) => c.ok).length;",
+    "const label = held === checks.length && checks.length > 0 ? 'ATTEST52_HELD' : 'ATTEST52_UNMET';",
+    "process.stdout.write(`ATTEST52: ${label} held=${held}/${checks.length} checks=${checks.length} rev=${rev} rule=${RULE} version=${VERSION} | ${checks.map((c) => `${c.id} ${c.ok ? 'PASS' : `MISS ${c.detail.slice(0, 80)}`}`).join(' | ')}\\n`);",
+    "process.exit(held === checks.length && checks.length > 0 ? 0 : 1);"
+  ],
+  "runs": {
+    "n=13,allok=True": {
+      "exit": 0,
+      "label": "ATTEST52_HELD",
+      "held": "13/13",
+      "checks": "13"
+    },
+    "n=12,allok=True": {
+      "exit": 0,
+      "label": "ATTEST52_HELD",
+      "held": "12/12",
+      "checks": "12"
+    },
+    "n=13,allok=False": {
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "0/13",
+      "checks": "13"
+    },
+    "n=0,allok=True": {
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "0/0",
+      "checks": "0"
+    }
+  }
+}

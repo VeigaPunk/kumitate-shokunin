@@ -1,0 +1,13 @@
+V1_SEMANTIC_FIELDS ["argv","exit","mono_span_ms","nonce","stderr_sha256","stdout_sha256","wall_end","wall_start"]
+V1_RECORD_FIELDS   ["argv","digest","exit","mono_span_ms","nonce","stderr_sha256","stdout_sha256","wall_end","wall_start"]
+V2_WHITELIST       ["argv","digest","exit","mono_span_ms","nonce","stderr_sha256","stdin_sha256","stdout_sha256","wall_end","wall_start"]
+CONTAINMENT v1<=v2 PROVED
+V2_ONLY_FIELDS     ["stdin_sha256"] (optional-only)
+ROW {"name":"attest-run-1.txt","layout":"2+\n","prelude":"2026-10-24T02:35:11.057Z","preludeOk":true,"unknown":[],"digestOk":true,"sideName":"attest-run-1.txt","sideNameOk":true,"sideHashOk":true,"clockOk":true,"orderOk":true,"preludeInWindow":true,"verdict":"VALID"}
+ROW {"name":"attest-run-2-replayed.txt","layout":"2+\n","prelude":"2026-10-23T20:43:09.000Z","preludeOk":true,"unknown":[],"digestOk":true,"sideName":"attest-run-2.txt","sideNameOk":false,"sideHashOk":false,"clockOk":true,"orderOk":true,"preludeInWindow":false,"verdict":"TAMPERED(sidecar-name)"}
+ROW {"name":"attest-run-2.txt","layout":"2+\n","prelude":"2026-10-24T02:39:06.793Z","preludeOk":true,"unknown":[],"digestOk":true,"sideName":"attest-run-2.txt","sideNameOk":true,"sideHashOk":true,"clockOk":true,"orderOk":true,"preludeInWindow":true,"verdict":"VALID"}
+ROW {"name":"attest-run-3.txt","layout":"2+\n","prelude":"2026-10-24T02:48:04.542Z","preludeOk":true,"unknown":[],"digestOk":true,"sideName":"attest-run-3.txt","sideNameOk":true,"sideHashOk":true,"clockOk":true,"orderOk":true,"preludeInWindow":true,"verdict":"VALID"}
+B4C_RENAME recordedName=attest-run-1.txt basenameAfterRename=orig.txt nameEqual=false
+B4C_RENAME hashStillCovers=true
+B4C_REQUIRED_VERDICT REPLAY (probe b4cok requires /RECEIPT: REPLAY/ on orig.txt)
+B4C_V2_PREDICTED TAMPERED(sidecar-name) — probe expectation UNREACHABLE

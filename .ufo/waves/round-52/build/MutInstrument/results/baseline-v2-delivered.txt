@@ -1,0 +1,23 @@
+DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44
+DETECTOR D10: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D11: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D12: PASS exit=0 final="RECEIPT: VALID"
+DETECTOR D13: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D14: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D15: PASS recorded-exit=127 verify="RECEIPT: VALID"
+DETECTOR D16: PASS exit=0 final="RECEIPT: VALID" skip-note=true
+DETECTOR D17: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D18: PASS exit=2 final="receipt-attest: UNREADABLE malformed receipt /tmp/mutdet-D18-0fKrKt/noncewidth.txt: nonce is not 32 lowercase hex characters"
+DETECTOR D19: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D2: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D20: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D21: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D22: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D2b: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D3: PASS exit=2 final="receipt-attest: UNREADABLE malformed receipt /tmp/mutdet-D3-NZGzcf/unknown.txt: record contains a field outside the v2 whitelist"
+DETECTOR D4: PASS exit=2 final="receipt-attest: UNREADABLE malformed receipt /tmp/mutdet-D4-ZHJs7y/blank.txt: expected exactly 2 lines plus trailing newline, got 3 lines"
+DETECTOR D5: PASS exit=2 final="receipt-attest: UNREADABLE malformed receipt /tmp/mutdet-D5-7DPlDf/zoneless.txt: prelude is not a UTC ISO instant with milliseconds"
+DETECTOR D6: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D7: PASS exit=2 receipt-left=false final="receipt-attest: UNREADABLE cannot write receipt pair (EISDIR)"
+DETECTOR D8: PASS verify="RECEIPT: VALID" stdin_sha256=71e22880 stdout_sha256=71e22880 want=71e22880
+DETECTOR D9: PASS exit=1 final="RECEIPT: TAMPERED"

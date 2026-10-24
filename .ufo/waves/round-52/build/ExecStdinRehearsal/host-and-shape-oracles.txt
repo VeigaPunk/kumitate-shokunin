@@ -1,0 +1,22 @@
+ExecStdinRehearsal — independent host evidence (2026-10-24)
+
+A. /bin/cat byte echo
+Fixed payload (UTF-8): 00112233445566778899aabbccddeeff
+Input bytes: 32
+Captured /bin/cat stdout bytes: 32
+Input SHA-256: 5947d7c33d783f94b3b4c1a96ebc8991ed28f1b069b71e03376cba8caa98a720
+Captured stdout SHA-256: 5947d7c33d783f94b3b4c1a96ebc8991ed28f1b069b71e03376cba8caa98a720
+Exact byte equality: true; exit=0; stderr empty. Thus /bin/cat adds no newline for this 32-byte payload.
+
+Independent child-output oracles using the same fixed payload (NOT receipt-attest runs):
+1. /usr/bin/sha256sum -- -
+   stdin bytes=32; stdin SHA-256=5947d7c33d783f94b3b4c1a96ebc8991ed28f1b069b71e03376cba8caa98a720
+   exit=0; stdout bytes=68; stdout=`5947d7c33d783f94b3b4c1a96ebc8991ed28f1b069b71e03376cba8caa98a720  -\n`
+   stdout SHA-256=8653bd5b772c036639742dff34a7f1b7d078d90a1e40f731b667f5a92ccca8ac; stderr empty.
+2. /usr/bin/true
+   stdin bytes=32; stdin SHA-256=5947d7c33d783f94b3b4c1a96ebc8991ed28f1b069b71e03376cba8caa98a720
+   exit=0; stdout bytes=0; stdout SHA-256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; stderr empty.
+
+V2 artifact: `.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs` appeared after the initial absence noted above. Five v2 `/bin/cat` receipts and the two odd-shape receipt runs, independent captures, hashes and `verify` outputs are retained in `v2-receipt-rehearsal.json`; all requested checks passed. See `.ufo/waves/round-52/w1/ExecStdinRehearsal.md`.
+
+Tools installed/updated: none.

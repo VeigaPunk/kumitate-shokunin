@@ -1,0 +1,109 @@
+== Engine facts (node v24.21.0) ==
+Date.parse(2026-13-05T00:00:00.000Z) = NaN (NaN: never parsed) ; round-trips: false
+Date.parse(2026-02-30T00:00:00.000Z) = 1772409600000 -> 2026-03-02T00:00:00.000Z ; round-trips: false
+Date.parse(2026-02-30T00:05:00.000Z) = 1772409900000 -> 2026-03-02T00:05:00.000Z ; round-trips: false
+Date.parse(2026-13-01T00:00:00.000Z) = NaN (NaN: never parsed) ; round-trips: false
+
+== Genuine run (v1) ==
+exit=0 out=receipt-attest: command-exit 0
+genuine record: nonce=9c207215e55f32e0c78e5ebdee77f54b wall=[2026-10-24T04:07:03.619Z .. 2026-10-24T04:07:03.622Z]
+
+== Control: genuine receipt under v1 verify ==
+
+[control] genuine
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/genuine.txt
+  sha256(bytes)= 1b32a7eda0ad0c936e08e96485012e541067ae318c790fe111e102645a5ccd30
+  sidecar: 1b32a7eda0ad0c936e08e96485012e541067ae318c790fe111e102645a5ccd30  genuine.txt
+  exit=0 stdout:
+  | RECEIPT: VALID
+
+== F1 reproduction against v1 (CURRENT lane bytes) ==
+
+[f1a-nan-inverted]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1a-nan-inverted.txt
+  sha256(bytes)= 2d9d29678a6eeed0d282ecabd4fa2b0594a3156d9d132909c2168b0953dc446a
+  sidecar: 2d9d29678a6eeed0d282ecabd4fa2b0594a3156d9d132909c2168b0953dc446a  f1a-nan-inverted.txt
+  exit=0 stdout:
+  | RECEIPT: VALID
+
+[f1b-rollover-feb30]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1b-rollover-feb30.txt
+  sha256(bytes)= eb27c8bf45b29e22026c408f60431086a14317c0e3372cd0510d28b8b867a1ea
+  sidecar: eb27c8bf45b29e22026c408f60431086a14317c0e3372cd0510d28b8b867a1ea  f1b-rollover-feb30.txt
+  exit=1 stdout:
+  | receipt-attest: prelude 2026-10-24T04:07:03.619Z is outside the recorded wall window [2026-02-30T00:00:00.000Z, 2026-02-30T00:05:00.000Z]
+  | RECEIPT: TAMPERED
+
+[f1c-nan-prelude-2020]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1c-nan-prelude-2020.txt
+  sha256(bytes)= f75bd8e2cfbd41c911be474621a7dbc0d3da5b1cb2de3ee82dacc33d187fe391
+  sidecar: f75bd8e2cfbd41c911be474621a7dbc0d3da5b1cb2de3ee82dacc33d187fe391  f1c-nan-prelude-2020.txt
+  exit=0 stdout:
+  | RECEIPT: VALID
+
+[f1b2-rollover-prelude-repaired]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1b2-rollover-prelude-repaired.txt
+  sha256(bytes)= 83b03e0c73ac0a592c61a60121d93b5a6a13b92acd0c6712c20d92d3749329c7
+  sidecar: 83b03e0c73ac0a592c61a60121d93b5a6a13b92acd0c6712c20d92d3749329c7  f1b2-rollover-prelude-repaired.txt
+  exit=0 stdout:
+  | RECEIPT: VALID
+
+== Same crafted bytes against delivered v2 (build/ExecInstrumentV2/receipt-attest.mjs) ==
+v2 FOUND: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  sha256(v2 bytes)= aed7191c29edea3fb317ce9aaf1bd9fe6ec7b954c4421788057730e82cf20b29
+
+[v2 f1a-nan-inverted]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1a-nan-inverted--x2.txt
+  sha256(bytes)= 2d9d29678a6eeed0d282ecabd4fa2b0594a3156d9d132909c2168b0953dc446a
+  sidecar: 2d9d29678a6eeed0d282ecabd4fa2b0594a3156d9d132909c2168b0953dc446a  f1a-nan-inverted--x2.txt
+  exit=1 stdout:
+  | receipt-attest: wall clock is not a finite round-tripping ISO instant: start 2026-13-05T00:00:00.000Z, end 2026-13-01T00:00:00.000Z
+  | RECEIPT: TAMPERED
+
+[v2 f1b-rollover-feb30]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1b-rollover-feb30--x2.txt
+  sha256(bytes)= eb27c8bf45b29e22026c408f60431086a14317c0e3372cd0510d28b8b867a1ea
+  sidecar: eb27c8bf45b29e22026c408f60431086a14317c0e3372cd0510d28b8b867a1ea  f1b-rollover-feb30--x2.txt
+  exit=1 stdout:
+  | receipt-attest: wall clock is not a finite round-tripping ISO instant: start 2026-02-30T00:00:00.000Z, end 2026-02-30T00:05:00.000Z
+  | RECEIPT: TAMPERED
+
+[v2 f1c-nan-prelude-2020]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1c-nan-prelude-2020--x2.txt
+  sha256(bytes)= f75bd8e2cfbd41c911be474621a7dbc0d3da5b1cb2de3ee82dacc33d187fe391
+  sidecar: f75bd8e2cfbd41c911be474621a7dbc0d3da5b1cb2de3ee82dacc33d187fe391  f1c-nan-prelude-2020--x2.txt
+  exit=1 stdout:
+  | receipt-attest: wall clock is not a finite round-tripping ISO instant: start 2026-13-05T00:00:00.000Z, end 2026-13-01T00:00:00.000Z
+  | RECEIPT: TAMPERED
+
+[v2 f1b2-rollover-prelude-repaired]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/f1b2-rollover-prelude-repaired--x2.txt
+  sha256(bytes)= 83b03e0c73ac0a592c61a60121d93b5a6a13b92acd0c6712c20d92d3749329c7
+  sidecar: 83b03e0c73ac0a592c61a60121d93b5a6a13b92acd0c6712c20d92d3749329c7  f1b2-rollover-prelude-repaired--x2.txt
+  exit=1 stdout:
+  | receipt-attest: wall clock is not a finite round-tripping ISO instant: start 2026-02-30T00:00:00.000Z, end 2026-02-30T00:05:00.000Z
+  | RECEIPT: TAMPERED
+
+[v2 control genuine]
+  tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+  bytes: /tmp/r52revenger-f1/genuine.txt
+  sha256(bytes)= 1b32a7eda0ad0c936e08e96485012e541067ae318c790fe111e102645a5ccd30
+  sidecar: 1b32a7eda0ad0c936e08e96485012e541067ae318c790fe111e102645a5ccd30  genuine.txt
+  exit=0 stdout:
+  | RECEIPT: VALID
+
+== Reference implementation of the v2 CLOCK rule (finite && new Date(ms).toISOString() === field) on the same bytes ==
+genuine: clockOk=true
+f1a-nan-inverted: clockOk=false (v2 contract: non-conforming -> RECEIPT: TAMPERED exit 1)
+f1b-rollover-feb30: clockOk=false (v2 contract: non-conforming -> RECEIPT: TAMPERED exit 1)
+f1c-nan-prelude-2020: clockOk=false (v2 contract: non-conforming -> RECEIPT: TAMPERED exit 1)
+f1b2-rollover-prelude-repaired: clockOk=false (v2 contract: non-conforming -> RECEIPT: TAMPERED exit 1)

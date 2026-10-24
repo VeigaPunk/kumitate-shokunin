@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=71
+A=76
 C=23
 C1=19
 C1_total=19
-C2=117
-C2_total=117
+C2=120
+C2_total=120
 S_members=88
 S_sections=88
 R_members=92
@@ -319,7 +319,7 @@ pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
-pin.receipt-attest=44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9
+pin.receipt-attest=3d10d554e70a9d5dcb510287d3d030e04abe873f2573b922b961e9071ab7f01a
 -->
 
 
@@ -433,6 +433,8 @@ the frozen definitions name.
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
 | 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at `ab3c64e9aaaff80faf3a2c93743287e44def4084` → `BINDGUARD50: GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`); the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; the explicit `/tmp` refusal pre-landed at `378b6e7` and G50 already read 8/8 at `6927903` (attribution limit, `close/CritCloseClaims.md` §2); auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
+| 51 | operability (capability acquisition: receipt-attest; C2 frontier entry invocation-attestation sourced on S100/S101) | A51 at base c90b9de9 → ATTEST_UNMET held=0/9; D51 → DOCTRINE_UNMET held=0/5 | A51 held=9/9 at the measured close rev fef67079 (compositional — committed FINAL reads 8/9 at 57333ead; R52-11 mined into Q44); D51 held=5/5 | .ufo/waves/round-51/{base,close,probe}; corpus/knowledge/invocation-attestation.md; report .ufo/reports/round-51/kumitate.md |
+| 52 | operability (capability deepening: receipt-attest v2, contract kumitate-receipt-attest-v2; C2 frontier entry fail-closed-clock-validation sourced on S102/S103) | A52 at base 02c01258 → ATTEST52_UNMET held=5/13 (B1 B1c B2 B2e B3 B4 B5 B5c MISS; B2c B3c B4c B4d B6 pass under v1); D52 → DOCTRINE52_UNMET (E1 entry-absent, checks=1) | ATTEST52_HELD held=13/13 at the measured close rev R1 (close/FINAL-<R1>.txt; idempotence at R2); DOCTRINE52_HELD held=5/5 at R1 | .ufo/waves/round-52/{plan.md,probe/,base/,receipts/,build/,w1/}; corpus/knowledge/fail-closed-clock-validation.md; rows S102/S103; report .ufo/reports/round-52/kumitate.md |
 | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
 | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |

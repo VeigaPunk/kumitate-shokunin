@@ -1,0 +1,1 @@
+| `lessons/round-51-verifier-spotcheck.md` | Round-51 non-author closure: C1 and C2 evidence-verified; A-term re-counted; R52-11 measured-close receipt gap routed | `.ufo/reports/round-51/kumitate.md`; `.ufo/waves/round-51/close/`; `.ufo/waves/round-51/` |

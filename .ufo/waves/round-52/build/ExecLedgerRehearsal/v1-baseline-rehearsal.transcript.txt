@@ -1,0 +1,141 @@
+Ledger rehearsal: v1-baseline-rehearsal
+Instrument: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs
+Evidence root: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal
+
+## (a) Three genuine receipts pairwise verify VALID under one ledger
+### mint-one
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs run --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/one -- /usr/bin/printf %s ledger-one
+Exit: 0
+Output:
+```
+receipt-attest: wrote /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/one.txt
+receipt-attest: sidecar /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/one.txt.sha256
+receipt-attest: receipt-sha256 d0472190b27fb141e3e10c02e8a66fcac5f94a81768ca0bb286c4b83027ef3ce
+receipt-attest: command-exit 0
+```
+Result: PASS
+
+### mint-two
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs run --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/two -- /usr/bin/printf %s ledger-two
+Exit: 0
+Output:
+```
+receipt-attest: wrote /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/two.txt
+receipt-attest: sidecar /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/two.txt.sha256
+receipt-attest: receipt-sha256 5b76376a46794eb87c8a85d2815d531bbc5d3fced4247cd8b3494e98a6ec7257
+receipt-attest: command-exit 0
+```
+Result: PASS
+
+### mint-three
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs run --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/three -- /usr/bin/printf %s ledger-three
+Exit: 0
+Output:
+```
+receipt-attest: wrote /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/three.txt
+receipt-attest: sidecar /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/three.txt.sha256
+receipt-attest: receipt-sha256 f503357623e4d5dfd1ea5577dbc99c89dede44f8495592008e8ff11fb3bb3733
+receipt-attest: command-exit 0
+```
+Result: PASS
+
+### three-way-ledger-one.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/one.txt
+Exit: 0
+Output:
+```
+RECEIPT: VALID
+```
+Result: PASS
+
+### three-way-ledger-two.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/two.txt
+Exit: 0
+Output:
+```
+RECEIPT: VALID
+```
+Result: PASS
+
+### three-way-ledger-three.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/three.txt
+Exit: 0
+Output:
+```
+RECEIPT: VALID
+```
+Result: PASS
+
+## (b) Corrupt prior sidecar is skipped; all three genuine receipts remain VALID
+### corrupt-prior-one.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/one.txt
+Exit: 0
+Output:
+```
+receipt-attest: ledger skipped damaged.txt: not an attested receipt (sidecar hash mismatch)
+RECEIPT: VALID
+```
+Result: PASS
+
+### corrupt-prior-two.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/two.txt
+Exit: 0
+Output:
+```
+receipt-attest: ledger skipped damaged.txt: not an attested receipt (sidecar hash mismatch)
+RECEIPT: VALID
+```
+Result: PASS
+
+### corrupt-prior-three.txt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/three/three.txt
+Exit: 0
+Output:
+```
+receipt-attest: ledger skipped damaged.txt: not an attested receipt (sidecar hash mismatch)
+RECEIPT: VALID
+```
+Result: PASS
+
+## (c) Same-nonce/different-body twin replays in both directions in a two-file ledger
+### twin-valid-without-ledger
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/twins/twin.txt
+Exit: 0
+Output:
+```
+RECEIPT: VALID
+```
+Result: PASS
+
+### ledger-original-sees-twin
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/twins /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/twins/original.txt
+Exit: 1
+Output:
+```
+receipt-attest: nonce d3150ee406bb5857bc3fe2114686461e already bound to a different record in twin.txt
+RECEIPT: REPLAY
+```
+Result: PASS
+
+### ledger-twin-sees-original
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/twins /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/twins/twin.txt
+Exit: 1
+Output:
+```
+receipt-attest: nonce d3150ee406bb5857bc3fe2114686461e already bound to a different record in original.txt
+RECEIPT: REPLAY
+```
+Result: PASS
+
+## (d) Byte-identical duplicate of attested receipt is exempt
+Receipt bytes identical: true
+### ledger-identical-duplicate-exempt
+Command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/duplicates /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecLedgerRehearsal/v1-baseline-rehearsal/duplicates/duplicate.txt
+Exit: 0
+Output:
+```
+RECEIPT: VALID
+```
+Result: PASS
+
+Final: PASS

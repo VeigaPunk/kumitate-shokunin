@@ -1,0 +1,26 @@
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify .ufo/waves/round-51/receipts/attest-run-1.txt && printf 'exit=0\n'
+RECEIPT: VALID
+exit=0
+
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify .ufo/waves/round-51/receipts/attest-run-2.txt && printf 'exit=0\n'
+RECEIPT: VALID
+exit=0
+
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify .ufo/waves/round-51/receipts/attest-run-3.txt && printf 'exit=0\n'
+RECEIPT: VALID
+exit=0
+
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify --ledger .ufo/waves/round-51/receipts .ufo/waves/round-51/receipts/attest-run-1.txt && printf 'exit=0\n'
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar name does not match receipt basename)
+RECEIPT: VALID
+exit=0
+
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify --ledger .ufo/waves/round-51/receipts .ufo/waves/round-51/receipts/attest-run-2.txt && printf 'exit=0\n'
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar name does not match receipt basename)
+RECEIPT: VALID
+exit=0
+
+$ node .ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs verify --ledger .ufo/waves/round-51/receipts .ufo/waves/round-51/receipts/attest-run-3.txt && printf 'exit=0\n'
+receipt-attest: ledger skipped attest-run-2-replayed.txt: not an attested receipt (sidecar name does not match receipt basename)
+RECEIPT: VALID
+exit=0

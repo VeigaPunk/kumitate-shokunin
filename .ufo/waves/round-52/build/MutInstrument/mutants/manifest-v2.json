@@ -1,0 +1,220 @@
+[
+ {
+  "id": "V01",
+  "category": "clock",
+  "label": "drop the CLOCK round-trip check",
+  "target_detectors": [
+   "D2",
+   "D2b"
+  ],
+  "file": "mutants/V01.mjs",
+  "sha256": "5ab3c5bb8cb65e0907e5da5854403ff3320308874b2eedcb3bdf95d3b99679f2",
+  "changed_lines": 3,
+  "diff": "--- v2-delivered.mjs\n+++ V01.mjs\n@@ -297,4 +297,3 @@\n   const endMs = Date.parse(record.wall_end);\n-  if (!Number.isFinite(startMs) || new Date(startMs).toISOString() !== record.wall_start\n-      || !Number.isFinite(endMs) || new Date(endMs).toISOString() !== record.wall_end) {\n+  if (false) {\n     out(`receipt-attest: wall clock is not a finite round-tripping ISO instant: start ${record.wall_start}, end ${record.wall_end}\\n`);\n"
+ },
+ {
+  "id": "V02",
+  "category": "clock",
+  "label": "widen the ordering tolerance by one day",
+  "target_detectors": [
+   "D14"
+  ],
+  "file": "mutants/V02.mjs",
+  "sha256": "a95d3fcf66f54582c933a5f334b28ff6e5eab5619cf996aae10d72b4768843bf",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V02.mjs\n@@ -303,3 +303,3 @@\n   }\n-  if (endMs < startMs) {\n+  if (endMs < startMs - 86_400_000) {\n     out(`receipt-attest: wall clock order violated: start ${record.wall_start}, end ${record.wall_end}\\n`);\n"
+ },
+ {
+  "id": "V03",
+  "category": "clock",
+  "label": "drop the finite guard, keep only round-trip",
+  "target_detectors": [
+   "D2b",
+   "D2"
+  ],
+  "file": "mutants/V03.mjs",
+  "sha256": "6b5b906b44ec7b82f441ca1f59584f9414f1fc93de408a9ab8705403ade7b338",
+  "changed_lines": 4,
+  "diff": "--- v2-delivered.mjs\n+++ V03.mjs\n@@ -297,4 +297,4 @@\n   const endMs = Date.parse(record.wall_end);\n-  if (!Number.isFinite(startMs) || new Date(startMs).toISOString() !== record.wall_start\n-      || !Number.isFinite(endMs) || new Date(endMs).toISOString() !== record.wall_end) {\n+  if (new Date(startMs).toISOString() !== record.wall_start\n+      || new Date(endMs).toISOString() !== record.wall_end) {\n     out(`receipt-attest: wall clock is not a finite round-tripping ISO instant: start ${record.wall_start}, end ${record.wall_end}\\n`);\n"
+ },
+ {
+  "id": "V04",
+  "category": "shape",
+  "label": "drop the field whitelist",
+  "target_detectors": [
+   "D3"
+  ],
+  "file": "mutants/V04.mjs",
+  "sha256": "7b0b121f096000919a7b0f78ca1ee1e6b757c05b8795fb6b3a7e5c7c0dc3cc12",
+  "changed_lines": 1,
+  "diff": "--- v2-delivered.mjs\n+++ V04.mjs\n@@ -92,3 +92,2 @@\n   const keys = Object.keys(record);\n-  if (keys.some((k) => !ALLOWED_FIELDS.has(k))) return 'record contains a field outside the v2 whitelist';\n   if (!Array.isArray(record.argv) || record.argv.some((a) => typeof a !== 'string')) return 'argv is not a string array';\n"
+ },
+ {
+  "id": "V05",
+  "category": "shape",
+  "label": "tolerate blank lines (v1 filter)",
+  "target_detectors": [
+   "D4"
+  ],
+  "file": "mutants/V05.mjs",
+  "sha256": "d6b4621881b8f9f27183b65a639a59c608d93d4394b8c753b25d49d9e81f481e",
+  "changed_lines": 5,
+  "diff": "--- v2-delivered.mjs\n+++ V05.mjs\n@@ -71,5 +71,4 @@\n function splitReceipt(text) {\n-  if (!text.endsWith('\\n')) return { error: 'receipt is missing its trailing newline' };\n-  const lines = text.split('\\n');\n-  if (lines.length !== 3 || lines[2] !== '') return { error: `expected exactly 2 lines plus trailing newline, got ${lines.length - 1} lines` };\n+  const lines = text.split('\\n').filter((l) => l.length > 0);\n+  if (lines.length !== 2) return { error: `expected 2 non-empty lines, got ${lines.length}` };\n   if (!lines[0].startsWith('run-at: ')) return { error: 'first line is not a `run-at: ` prelude' };\n"
+ },
+ {
+  "id": "V06",
+  "category": "shape",
+  "label": "drop the prelude ISO grammar check",
+  "target_detectors": [
+   "D5"
+  ],
+  "file": "mutants/V06.mjs",
+  "sha256": "05b32feba929e0ce3212186afcf258be5389c34dab8b0fef8b8a9e35deaea8e4",
+  "changed_lines": 1,
+  "diff": "--- v2-delivered.mjs\n+++ V06.mjs\n@@ -76,3 +76,2 @@\n   const runAt = lines[0].slice('run-at: '.length);\n-  if (!ISO_RE.test(runAt)) return { error: 'prelude is not a UTC ISO instant with milliseconds' };\n   if (!lines[1].startsWith('{')) return { error: 'second line is not a JSON object' };\n"
+ },
+ {
+  "id": "V07",
+  "category": "shape",
+  "label": "drop the sidecar-name check",
+  "target_detectors": [
+   "D6"
+  ],
+  "file": "mutants/V07.mjs",
+  "sha256": "8dcf0f4969ac02952a1cd87f76fa290959c963c632c8dd44b965e4b15616231b",
+  "changed_lines": 5,
+  "diff": "--- v2-delivered.mjs\n+++ V07.mjs\n@@ -283,7 +283,2 @@\n   }\n-  if (parsed.name !== basename(file)) {\n-    out(`receipt-attest: sidecar name ${JSON.stringify(parsed.name)} does not match receipt basename ${JSON.stringify(basename(file))}\\n`);\n-    out('RECEIPT: TAMPERED\\n');\n-    process.exit(1);\n-  }\n   const actual = sha256(bytes);\n"
+ },
+ {
+  "id": "V08",
+  "category": "shape",
+  "label": "skip half-pair removal",
+  "target_detectors": [
+   "D7"
+  ],
+  "file": "mutants/V08.mjs",
+  "sha256": "e989c73260d1bb626ee6b9ec750f286d87aa312db75c48ada6afd909cdb2ce7e",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V08.mjs\n@@ -208,4 +208,2 @@\n   } catch (e) {\n-    try { rmSync(file, { force: true }); } catch { /* best-effort half-pair cleanup */ }\n-    try { rmSync(side, { force: true }); } catch { /* best-effort half-pair cleanup */ }\n     unreadable(`cannot write receipt pair (${e.code ?? e.message})`);\n"
+ },
+ {
+  "id": "V09",
+  "category": "stdin",
+  "label": "do not wire the nonce into the child's stdin",
+  "target_detectors": [
+   "D8"
+  ],
+  "file": "mutants/V09.mjs",
+  "sha256": "b926b2b8cd89dcad44c6ab755439b8f46521c26e80536a99038c7223cd0030e8",
+  "changed_lines": 1,
+  "diff": "--- v2-delivered.mjs\n+++ V09.mjs\n@@ -165,3 +165,2 @@\n   const spawnOptions = { encoding: 'buffer', maxBuffer: 64 << 20 };\n-  if (useStdin) spawnOptions.input = stdinBytes;\n   const r = spawnSync(cmd[0], cmd.slice(1), spawnOptions);\n"
+ },
+ {
+  "id": "V10",
+  "category": "stdin",
+  "label": "record the hash of empty stdin",
+  "target_detectors": [
+   "D8"
+  ],
+  "file": "mutants/V10.mjs",
+  "sha256": "3f519dc89bc4dd618e198361abe09a79739139e3f7b466265ed4c41e30ae1426",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V10.mjs\n@@ -196,3 +196,3 @@\n   };\n-  if (useStdin) record.stdin_sha256 = sha256(stdinBytes);\n+  if (useStdin) record.stdin_sha256 = sha256(Buffer.alloc(0));\n   record.digest = digestOf(record);\n"
+ },
+ {
+  "id": "V11",
+  "category": "stdin",
+  "label": "exclude stdin_sha256 from the inner digest",
+  "target_detectors": [
+   "D19"
+  ],
+  "file": "mutants/V11.mjs",
+  "sha256": "476e39e748e4da2bff1544a9d6eb3d7d5d19c1520ac670899debfb8de1bf6ae6",
+  "changed_lines": 1,
+  "diff": "--- v2-delivered.mjs\n+++ V11.mjs\n@@ -63,2 +63,3 @@\n   delete copy.digest;\n+  delete copy.stdin_sha256;\n   return sha256(canonical(copy));\n"
+ },
+ {
+  "id": "V12",
+  "category": "truncation",
+  "label": "sidecar compare truncated to a 16-bit prefix",
+  "target_detectors": [
+   "D9"
+  ],
+  "file": "mutants/V12.mjs",
+  "sha256": "4330e9b6498c46510e7e4e01f01df2e95215b50348d2b097679fb72d02c95069",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V12.mjs\n@@ -289,3 +289,3 @@\n   const actual = sha256(bytes);\n-  if (parsed.hash !== actual) {\n+  if (parsed.hash.slice(0, 4) !== actual.slice(0, 4)) {\n     out(`receipt-attest: sidecar mismatch: sidecar ${parsed.hash}, actual ${actual}\\n`);\n"
+ },
+ {
+  "id": "V13",
+  "category": "truncation",
+  "label": "inner-digest compare truncated to a 16-bit prefix",
+  "target_detectors": [
+   "D10"
+  ],
+  "file": "mutants/V13.mjs",
+  "sha256": "8281f6cc25f63a7c3d092e377e679fa6fe18dfa997f50aeda79336e8038d7e4f",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V13.mjs\n@@ -263,3 +263,3 @@\n   const digest = digestOf(record);\n-  if (digest !== record.digest) {\n+  if (digest.slice(0, 4) !== record.digest.slice(0, 4)) {\n     out(`receipt-attest: inner digest mismatch: recomputed ${digest}, recorded ${record.digest}\\n`);\n"
+ },
+ {
+  "id": "V14",
+  "category": "truncation",
+  "label": "ledger digest compare truncated to a 16-bit prefix",
+  "target_detectors": [
+   "D11"
+  ],
+  "file": "mutants/V14.mjs",
+  "sha256": "4b9aa784df476326abb87d111f88ff518f30745ff353e56c08b6ac1e94a584c8",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V14.mjs\n@@ -328,3 +328,3 @@\n       }\n-      if (state.nonce === record.nonce && state.digest !== record.digest) {\n+      if (state.nonce === record.nonce && state.digest.slice(0, 4) !== record.digest.slice(0, 4)) {\n         out(`receipt-attest: nonce ${record.nonce} already bound to a different record in ${name}\\n`);\n"
+ },
+ {
+  "id": "V15",
+  "category": "verdict",
+  "label": "final VALID emission swapped to TAMPERED",
+  "target_detectors": [
+   "D12"
+  ],
+  "file": "mutants/V15.mjs",
+  "sha256": "b7259cd3489116dffaecca53333addebfd333ec6810cc9b956b6f761410d609c",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V15.mjs\n@@ -344,3 +344,3 @@\n   }\n-  out('RECEIPT: VALID\\n');\n+  out('RECEIPT: TAMPERED\\n');\n   process.exit(0);\n"
+ },
+ {
+  "id": "V16",
+  "category": "verdict",
+  "label": "sidecar-mismatch TAMPERED emission swapped to VALID",
+  "target_detectors": [
+   "D9"
+  ],
+  "file": "mutants/V16.mjs",
+  "sha256": "75ff3e58a5c3da0d41312422a0a78fdfdc329b2142f56fc7021ea0bfd508d9ec",
+  "changed_lines": 4,
+  "diff": "--- v2-delivered.mjs\n+++ V16.mjs\n@@ -291,4 +291,4 @@\n     out(`receipt-attest: sidecar mismatch: sidecar ${parsed.hash}, actual ${actual}\\n`);\n-    out('RECEIPT: TAMPERED\\n');\n-    process.exit(1);\n+    out('RECEIPT: VALID\\n');\n+    process.exit(0);\n   }\n"
+ },
+ {
+  "id": "V17",
+  "category": "ledger",
+  "label": "treat a damaged-sidecar prior as attested",
+  "target_detectors": [
+   "D16"
+  ],
+  "file": "mutants/V17.mjs",
+  "sha256": "fdae36ba4f3caf52ccb2a6100d133252cdbf1b4f8f1c3b6b07a59756f154dbd4",
+  "changed_lines": 1,
+  "diff": "--- v2-delivered.mjs\n+++ V17.mjs\n@@ -230,3 +230,2 @@\n   if (side.name !== basename(file)) return { attested: false, why: 'sidecar name does not match receipt basename' };\n-  if (side.hash !== sha256(bytes)) return { attested: false, why: 'sidecar hash mismatch' };\n   const parts = splitReceipt(bytes.toString('utf8'));\n"
+ },
+ {
+  "id": "V18",
+  "category": "shape",
+  "label": "relax the nonce width to 8+ hex",
+  "target_detectors": [
+   "D18"
+  ],
+  "file": "mutants/V18.mjs",
+  "sha256": "21812e363c052e30118741fc3be61058a470a203977a9fa6bb36f8376b43f4c2",
+  "changed_lines": 2,
+  "diff": "--- v2-delivered.mjs\n+++ V18.mjs\n@@ -97,3 +97,3 @@\n   if (typeof record.mono_span_ms !== 'number' || !Number.isInteger(record.mono_span_ms)) return 'mono_span_ms is not an integer';\n-  if (typeof record.nonce !== 'string' || !NONCE_RE.test(record.nonce)) return 'nonce is not 32 lowercase hex characters';\n+  if (typeof record.nonce !== 'string' || !/^[0-9a-f]{8,}$/.test(record.nonce)) return 'nonce is not 32 lowercase hex characters';\n   if (typeof record.stdout_sha256 !== 'string' || !HASH_RE.test(record.stdout_sha256)) return 'stdout_sha256 is not a sha256 hex';\n"
+ }
+]

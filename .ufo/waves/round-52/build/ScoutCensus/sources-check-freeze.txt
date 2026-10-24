@@ -1,0 +1,23 @@
+# started_utc=2026-10-24T04:04:02.983305+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ git rev-parse --verify 'f539a71e^{commit}'
+f539a71e236a4d66810851c1f2fb6e1abe61ec19
+exit=0
+
+# started_utc=2026-10-24T04:04:02.984687+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ mktemp -d /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ScoutCensus/freeze-f539a71e.XXXXXX
+/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ScoutCensus/freeze-f539a71e.IceAt6
+exit=0
+
+# started_utc=2026-10-24T04:04:02.986584+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ bash -o pipefail -c 'git archive f539a71e | tar -x -C "$1"' bash /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ScoutCensus/freeze-f539a71e.IceAt6
+exit=0
+
+# started_utc=2026-10-24T04:04:03.102528+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ScoutCensus/freeze-f539a71e.IceAt6
+$ node scripts/sources-check.mjs
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=101 tiers=A:87,B:6,C:8 status=queued:12,mined:73,rejected:16 entries_with_source=8 legacy=38)
+exit=0

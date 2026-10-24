@@ -1,0 +1,23 @@
+TARGET /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecInstrumentV2/receipt-attest.mjs
+MODE CLI-only; instrument imported: no
+PASS v1-valid-run-pair exit=0 receipt=true sidecar=true
+PASS v1-VALID exit-map exit=0 expected=0 match=/RECEIPT: VALID/ output="RECEIPT: VALID"
+PASS v1-REPLAY exit-map exit=1 expected=1 match=/RECEIPT: REPLAY/ output="RECEIPT: REPLAY"
+PASS v1-TAMPERED exit-map exit=1 expected=1 match=/RECEIPT: TAMPERED/ output="RECEIPT: TAMPERED"
+PASS v1-UNREADABLE exit-map exit=2 expected=2 match=/receipt-attest: UNREADABLE/ output="receipt-attest: UNREADABLE malformed receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBlackBox/fixtures-oDpOMG/unreadable.txt: expected exactly"
+PASS v2-whitelist-unknown-field exit=2 expected=2 match=/receipt-attest: UNREADABLE/ output="receipt-attest: UNREADABLE malformed receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBlackBox/fixtures-oDpOMG/unknown-field.txt: record contai"
+PASS v2-strict-two-lines exit=2 expected=2 match=/receipt-attest: UNREADABLE/ output="receipt-attest: UNREADABLE malformed receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBlackBox/fixtures-oDpOMG/blank-line.txt: expected exactly"
+PASS v2-prelude-shape-zone-required exit=2 expected=2 match=/receipt-attest: UNREADABLE/ output="receipt-attest: UNREADABLE malformed receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/ExecBlackBox/fixtures-oDpOMG/bad-prelude.txt: prelude is not "
+PASS v2-sidecar-name-equality exit=1 expected=1 match=/RECEIPT: TAMPERED/ output="RECEIPT: TAMPERED"
+PASS v2-half-pair-removed-on-sidecar-failure exit=2 receipt-absent=true
+PASS v2-half-pair-cleanup half-written receipt absent
+PASS v2-spawn-failure-recorded-127 run-exit=0 receipt-exit=127
+PASS v2-exit-127-receipt-verifies exit=0 expected=0 match=/RECEIPT: VALID/ output="RECEIPT: VALID"
+PASS v2-CLOCK-roundtrip-month-13 exit=1 expected=1 match=/RECEIPT: TAMPERED/ output="RECEIPT: TAMPERED"
+PASS v2-CLOCK-roundtrip-day-32 exit=1 expected=1 match=/RECEIPT: TAMPERED/ output="RECEIPT: TAMPERED"
+PASS v2-stdin-nonce-and-stdout-hashes run-exit=0 stdin_sha256=26a13e65ad51f872b42eea4892dc1d93016c3295688fb7690f87e60309830e68 stdout_sha256=26a13e65ad51f872b42eea4892dc1d93016c3295688fb7690f87e60309830e68
+PASS v2-stdin-receipt-verifies exit=0 expected=0 match=/RECEIPT: VALID/ output="RECEIPT: VALID"
+PASS v2-ledger-skips-unattested-priors-with-note exit=0 expected=0 match=/RECEIPT: VALID/ output="RECEIPT: VALID"
+PASS v2-ledger-skip-note-present output="receipt-attest: ledger skipped damaged-digest.txt: not an attested receipt (inner digest mismatch) receipt-attest: ledger skipped damaged-sidecar.txt: not an attested receipt (side"
+PASS v1-USAGE exit-map exit=64 expected=64 match=/receipt-attest: USAGE/ output="receipt-attest: USAGE verify mode needs exactly one <file> (contract kumitate-receipt-attest-v2: run --out <base> [--stdin] -- <cmd...> | verify [--ledger <dir>] <file> | --selftes"
+BLACKBOX PASS 20/20

@@ -2043,3 +2043,23 @@ round-gate 61/61; PROXY MATCH pins=6; census exit 0; G50 8/8; R50 8/8). Lesson
 (13 bound clauses); rows S100/S101 (mined, tier A, re-open AGREE by non-author wave-2 scouts).
 Round-50 closure routed defects R51-1..R51-4 honored (close-hygiene sweep; declared-vs-computed terms;
 L0 citation style; live-census limit). Open L0: the R41-2 gate-pins authority question stays pending.
+- 2026-10-24 — round 51 (hyaku run 5; attempt 1). C1 operability capability
+receipt-attest (A51 v3r6, 9/9 at the measured close rev fef67079, compositional — the
+committed FINAL receipt reads 8/9 at 57333ead; R52-11 routed and mined) and C2 frontier
+entry invocation-attestation (D51 5/5, S100/S101). Base c90b9de9, close 23471fb5. LOG line
+filed in round 52 as an inherited-state repair (the round-close checklist item audits the
+previous round; seat ExecChecklistAudit, round 52).
+- 2026-10-24 — round 52 (hyaku run 5; attempt 1). Claims: C1 operability —
+receipt-attest v2 (contract kumitate-receipt-attest-v2: SHAPE/CLOCK/STDIN/LEDGER/
+SELFTEST; R52-1/2/3/5/6/7/8 + A2e package), predicate ATTEST52_HELD (rule A52, 13 checks,
+counter freeze-repaired in-wave by named addendum); C2 frontier coverage —
+fail-closed-clock-validation (S102 RFC 3339 + S103 MDN Date.parse), predicate
+DOCTRINE52_HELD (rule D52, 5 checks). Base 02c01258, freeze f539a71e, repair addendum
+8fbf0fc8. ONE v2 wave of exactly 64 seats (operator steer 2026-10-24; policy v2; 24
+attack-role by reviewer+critic+mutation-tester, 25 counting the revenger), one task call;
+planner seat held by the L1. Receipts attest52-run-{1,2,3} wrap bind-oracle selftest,
+sources-check, round-gate selftest (span >=300 s, digest-bound wall_start). Close per the
+R52-11 discipline: measured close rev R1, FINAL receipts at R1, idempotence re-run at R2.
+R52-4 landed (repairs50-probe-v2, count-derived R5 arm). R52-9/10 deferred to round 53.
+Quality Q44 added (close-receipt citation discipline). Lane tip, report and close
+revisions: see .ufo/reports/round-52/kumitate.md.

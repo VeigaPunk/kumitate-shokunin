@@ -1,0 +1,27 @@
+ARTIFACT HASHES
+  r51-s02-forger.txt sha256=b22f8245d2088c7a28e6c91c15163e6ed6dcb71e4dfee4b779a1bb6858f05300 sidecar=b22f75298324bc4190543774d75485995c105c1833152dfbe4f69e1786dc00dc full-match=false
+  digest-prefix-forger.txt sha256=e198bcbd166c84f9a578fd4f1bc0905e4e7379264137b38154acb5fc2ff1d0a3 sidecar=e198bcbd166c84f9a578fd4f1bc0905e4e7379264137b38154acb5fc2ff1d0a3 full-match=true
+  a.txt sha256=f3b9b5fe659db9f472f17a491851e5828f989031c602a3a5a66dedd538647dae sidecar=f3b9b5fe659db9f472f17a491851e5828f989031c602a3a5a66dedd538647dae full-match=true
+  b.txt sha256=bd0d20a390d86f662eb62cd76a9272fe5cf43b4292f1b78613ebb48a9a674e6d sidecar=bd0d20a390d86f662eb62cd76a9272fe5cf43b4292f1b78613ebb48a9a674e6d full-match=true
+
+MATRIX (<build> <artifact> exit verdict arc)
+v2-pristine          r51-s02-forger         exit=1 verdict="RECEIPT: TAMPERED" arc=non-VALID
+v2-pristine          digest-prefix-forger   exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+v2-pristine          n02/a                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-pristine          n02/b                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-nonce      r51-s02-forger         exit=1 verdict="RECEIPT: TAMPERED" arc=non-VALID
+v2-mutant-nonce      digest-prefix-forger   exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+v2-mutant-nonce      n02/a                  exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+v2-mutant-nonce      n02/b                  exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+v2-mutant-sidecar    r51-s02-forger         exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-sidecar    digest-prefix-forger   exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+v2-mutant-sidecar    n02/a                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-sidecar    n02/b                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-digest     r51-s02-forger         exit=1 verdict="RECEIPT: TAMPERED" arc=non-VALID
+v2-mutant-digest     digest-prefix-forger   exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-digest     n02/a                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+v2-mutant-digest     n02/b                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+shipped-v1           r51-s02-forger         exit=1 verdict="RECEIPT: TAMPERED" arc=non-VALID
+shipped-v1           digest-prefix-forger   exit=1 verdict="RECEIPT: REPLAY" arc=non-VALID
+shipped-v1           n02/a                  exit=0 verdict="RECEIPT: VALID" arc=VALID
+shipped-v1           n02/b                  exit=0 verdict="RECEIPT: VALID" arc=VALID

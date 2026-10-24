@@ -1,0 +1,44 @@
+/target/
+# Run state is ephemeral at ANY depth: the root-anchored `/.ufo/` alone let a
+# nested clone's `ufo-fsd-alpha/.ufo/` and `.ufo/wt-*/.ufo/` scopes be committed.
+**/.ufo/
+/node_modules/
+**/node_modules/
+**/dist/
+/uploads/
+/.lkg/
+/vendor/ufo-fsd-alpha/
+/sp-*/
+
+*.log
+*.tmp
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
+*.tsbuildinfo
+*.py[cod]
+*.egg-info/
+*.rs.bk
+.env
+.env.*
+coverage/
+build/
+__pycache__/
+.pytest_cache/
+.venv/
+.devin/
+
+# .godspeed run logs are ephemeral; reviewed findings live with their report
+# (reports/deep-review/findings.jsonl), not in a second tracked log tree.
+.godspeed/logs/
+
+# Machine-local LSP config (points into gitignored .ufo/ tree)
+.omp/lsp.json
+# npm pack artifacts
+*.tgz
+# Root-level probe scratch tree
+/scratch/

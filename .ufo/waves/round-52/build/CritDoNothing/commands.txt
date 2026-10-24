@@ -1,0 +1,38 @@
+$ git "init" "--initial-branch=control"
+[cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only]
+Initialized empty Git repository in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only/.git/
+
+exit 0
+
+$ git "add" "-f" "."
+[cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only]
+
+exit 0
+
+$ git "-c" "commit.gpgSign=false" "commit" "--no-verify" "-m" "output-only"
+[cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only]
+[control (root-commit) 8792cc9] output-only
+ 9 files changed, 14 insertions(+)
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-1.txt
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-1.txt.sha256
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-2-replayed.txt
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-2-replayed.txt.sha256
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-2.txt
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-2.txt.sha256
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-3.txt
+ create mode 100644 .ufo/waves/round-52/receipts/attest52-run-3.txt.sha256
+ create mode 100644 scripts/receipt-attest.mjs
+
+exit 0
+
+$ git "rev-parse" "HEAD"
+[cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only]
+8792cc9da0d0d9dfbbf5f5b08be689ab60efa02d
+
+exit 0
+
+$ node "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/probe/attest52-probe.mjs" "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only" "8792cc9da0d0d9dfbbf5f5b08be689ab60efa02d"
+[cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-52/build/CritDoNothing/output-only]
+ATTEST52: ATTEST52_UNMET held=2/13 checks=13 rev=8792cc9da0d0d9dfbbf5f5b08be689ab60efa02d rule=A52 version=v1 | B1 MISS exit=0 cases=0 last="ATTEST_SELFTEST: PASS" | B1c MISS run exit=0 | B2 PASS | B2c MISS run exit=0 last="RECEIPT: VALID" | B2e MISS run exit=0 last="RECEIPT: VALID" | B3 MISS exit=0 last="RECEIPT: VALID" | B3c MISS run exit=0 | B4 PASS | B4c MISS run exit=0 | B4d MISS run exit=0 | B5 MISS tool or SCORECARD absent | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 MISS tool or r51 receipts absent
+
+exit 1

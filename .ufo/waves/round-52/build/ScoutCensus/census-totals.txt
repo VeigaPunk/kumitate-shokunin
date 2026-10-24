@@ -1,0 +1,35 @@
+# started_utc=2026-10-24T04:04:02.983001+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	rows	101
+kumitate	tier.A	87
+kumitate	tier.B	6
+kumitate	tier.C	8
+kumitate	status.mined	73
+kumitate	status.queued	12
+kumitate	status.rejected	16
+FLEET	rows	101
+FLEET	tier.A	87
+FLEET	tier.B	6
+FLEET	tier.C	8
+FLEET	tier.invalid	0
+FLEET	status.queued	12
+FLEET	status.mined	73
+FLEET	status.rejected	16
+FLEET	status.invalid	0
+FLEET	missing	0
+census-exit=0
+
+# Anchored row query via grep device (equivalent to grep -c '^| S' corpus/SOURCES.md):
+row-pattern=^\| S
+row-count=101
+first-id=S001
+last-id=S101
+S102-present=false
+S103-present=false
+
+# started_utc=2026-10-24T04:04:22.946960+00:00
+# cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ sha256sum corpus/SOURCES.md
+1f12e2d1b563455d3bf8dcf52320fc20788bb03791ba343502f067fe25e6c03e  corpus/SOURCES.md
+exit=0

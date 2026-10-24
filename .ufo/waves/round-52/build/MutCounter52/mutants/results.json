@@ -1,0 +1,658 @@
+{
+  "rev": "02c01258464cac3804faf177d0cfbf113cd59706",
+  "pristine_sha256": "f6146a2cfd3fba984848c5b91c1d2570108dc751d5edca5939d6f4aee5171428",
+  "elapsed_s": 76.7,
+  "results": [
+    {
+      "mutant": "pristine",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/13",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-0/+0",
+      "removed": [],
+      "added": []
+    },
+    {
+      "mutant": "a-drop-B1",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B1', b1ok, b1d);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B1c",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B1c', b1cok, b1cd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B2",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B2', b2ok, b2ok ? `3 receipts VALID body-wall_start span=${Math.round(span)}s nonces=distinct sha=distinct` : b2miss.join(';'));"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B2c",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "4/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=4/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B2c', b2cok, b2cd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B2e",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B2e', b2eok, b2ed);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B3",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B3', b3ok, b3d);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B3c",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "4/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=4/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B3c', b3cok, b3cd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B4",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B4', b4ok, b4d.join(';'));"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B4c",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "4/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=4/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B4c', b4cok, b4cd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B4d",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "4/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=4/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B4d', b4dok, b4dd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B5",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B5', b5ok, b5d.join(';'));"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B5c",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B5c', b5cok, b5cd);"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "a-drop-B6",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "4/12",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=4/12 checks=12 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present",
+      "stderr": "",
+      "diff": "-1/+0",
+      "removed": [
+        "hold('B6', b6ok, b6d.join(';'));"
+      ],
+      "added": [],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "b-hold-deleted",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "0/0",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [],
+      "misses": [],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=0/0 checks=0 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 |",
+      "stderr": "",
+      "diff": "-1/+1",
+      "removed": [
+        "const hold = (id, ok, detail) => { if (typeof id === 'string') checks.push({ id, ok, detail }); };"
+      ],
+      "added": [
+        "const hold = (id, ok, detail) => { /* hold-call DELETED: no check is ever recorded */ };"
+      ],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "c-span-300-to-0",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/13",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-2/+2",
+      "removed": [
+        "if (b2ok && (!distinctN || !distinctS || span < 300)) {",
+        "if (span < 300) b2miss.push(`span=${Math.round(span)}s<300(body wall_start)`);"
+      ],
+      "added": [
+        "if (b2ok && (!distinctN || !distinctS || span < 0)) {",
+        "if (span < 0) b2miss.push(`span=${Math.round(span)}s<300(body wall_start)`);"
+      ],
+      "stdout_identical_to_pristine": true
+    },
+    {
+      "mutant": "c-cases-30-to-1",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/13",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+1",
+      "removed": [
+        "b1ok = r.status === 0 && /ATTEST_SELFTEST: PASS/.test(last) && cases >= 30;"
+      ],
+      "added": [
+        "b1ok = r.status === 0 && /ATTEST_SELFTEST: PASS/.test(last) && cases >= 1;"
+      ],
+      "stdout_identical_to_pristine": true
+    },
+    {
+      "mutant": "c-prior-files-ignored",
+      "exit": 1,
+      "label": "ATTEST52_UNMET",
+      "held": "5/13",
+      "k4_printed_HELD": false,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-1/+1",
+      "removed": [
+        "if (hits > 0) { b4ok = false; b4d.push(`nonce-reuse-in-prior hits=${hits}`); }"
+      ],
+      "added": [
+        "if (false) { b4ok = false; b4d.push(`nonce-reuse-in-prior hits=${hits}`); }"
+      ],
+      "stdout_identical_to_pristine": true
+    },
+    {
+      "mutant": "d-verdict-swap",
+      "exit": 0,
+      "label": "ATTEST52_HELD",
+      "held": "5/13",
+      "k4_printed_HELD": true,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_HELD held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=present | B6 PASS",
+      "stderr": "",
+      "diff": "-3/+3",
+      "removed": [
+        "const label = held === checks.length && checks.length > 0 ? 'ATTEST52_HELD' : 'ATTEST52_UNMET';",
+        "process.exit(held === checks.length && checks.length > 0 ? 0 : 1);",
+        ""
+      ],
+      "added": [
+        "const label = held === checks.length && checks.length > 0 ? 'ATTEST52_UNMET' : 'ATTEST52_HELD';",
+        "process.exit(held === checks.length && checks.length > 0 ? 1 : 0);",
+        ""
+      ],
+      "stdout_identical_to_pristine": false
+    },
+    {
+      "mutant": "d2-always-held",
+      "exit": 0,
+      "label": "ATTEST52_HELD",
+      "held": "5/13",
+      "k4_printed_HELD": true,
+      "predicate_sentence_held": false,
+      "passes": [
+        "B2c",
+        "B3c",
+        "B4c",
+        "B4d",
+        "B6"
+      ],
+      "misses": [
+        "B1",
+        "B1c",
+        "B2",
+        "B2e",
+        "B3",
+        "B4",
+        "B5",
+        "B5c"
+      ],
+      "stdout": "ATTEST52: ATTEST52_HELD held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | B1 MISS exit=0 cases=0 last=\"ATTEST_SELFTEST: PASS\" | B1c MISS exit=0 last=\"RECEIPT: VALID\" | B2 MISS attest52-run-1.txt:absent;attest52-run-2.txt:absent;attest52-run-3.txt:absent | B2c PASS | B2e MISS run exit=64 last=\"receipt-attest: USAGE unexpected argument \\\"--stdin\\\" in run m | B3 MISS attest52-run-2-replayed.txt absent | B3c PASS | B4 MISS tool or receipts dir absent | B4c PASS | B4d PASS | B5 MISS pin match;proxy exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=117 c | B5c MISS mutantReceipt=absent-or-malformed selfGuard=absent | B6 PASS",
+      "stderr": "",
+      "diff": "-3/+3",
+      "removed": [
+        "const label = held === checks.length && checks.length > 0 ? 'ATTEST52_HELD' : 'ATTEST52_UNMET';",
+        "process.exit(held === checks.length && checks.length > 0 ? 0 : 1);",
+        ""
+      ],
+      "added": [
+        "const label = 'ATTEST52_HELD';",
+        "process.exit(0);",
+        ""
+      ],
+      "stdout_identical_to_pristine": false
+    }
+  ]
+}

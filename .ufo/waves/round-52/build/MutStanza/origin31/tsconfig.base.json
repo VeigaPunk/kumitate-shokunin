@@ -1,0 +1,26 @@
+{
+  "$comment": [
+    "noEmitOnError is load-bearing, not tidiness. tsc emits by default even when",
+    "type checking fails, and several gates import package dist/ output. A failed",
+    "build therefore used to leave importable JavaScript behind, so the next gate",
+    "run read artifacts from a build that did not succeed and reported PASS. That",
+    "is the paper's fabricated-evidence failure in the Node half of the repo: a",
+    "claim resting on evidence the run never produced. With this set a failed",
+    "build leaves nothing to import and the gate fails loudly instead."
+  ],
+  "compilerOptions": {
+    "noEmitOnError": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "src"
+  }
+}

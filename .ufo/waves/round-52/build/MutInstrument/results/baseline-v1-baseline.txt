@@ -1,0 +1,23 @@
+DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS" pass-cases=27
+DETECTOR D10: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D11: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D12: PASS exit=0 final="RECEIPT: VALID"
+DETECTOR D13: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D14: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D15: PASS recorded-exit=127 verify="RECEIPT: VALID"
+DETECTOR D16: PASS exit=0 final="RECEIPT: VALID" skip-note=true
+DETECTOR D17: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D18: PASS exit=2 final="receipt-attest: UNREADABLE malformed receipt /tmp/mutdet-D18-x0TAQo/noncewidth.txt: nonce is not 32 lowercase hex characters"
+DETECTOR D19: FAIL no receipt; run exit=64
+DETECTOR D2: FAIL exit=0 final="RECEIPT: VALID"
+DETECTOR D20: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D21: PASS exit=1 final="RECEIPT: REPLAY"
+DETECTOR D22: PASS exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D2b: FAIL exit=0 final="RECEIPT: VALID"
+DETECTOR D3: FAIL exit=0 final="RECEIPT: VALID"
+DETECTOR D4: FAIL exit=0 final="RECEIPT: VALID"
+DETECTOR D5: FAIL exit=1 final="RECEIPT: TAMPERED"
+DETECTOR D6: FAIL exit=0 final="RECEIPT: VALID"
+DETECTOR D7: FAIL exit=2 receipt-left=true final="receipt-attest: UNREADABLE cannot write receipt pair (EISDIR)"
+DETECTOR D8: FAIL no receipt; run exit=64 "receipt-attest: USAGE unexpected argument \"--stdin\" in run mode (contract kumitate-receipt-attest-v1: run --out <base> -- <cmd...> | verify [--ledger <dir>] <file> | --selftest)"
+DETECTOR D9: PASS exit=1 final="RECEIPT: TAMPERED"

@@ -1,0 +1,38 @@
+V01 DETECTOR D2: FAIL exit=0 final="RECEIPT: VALID"
+V01 DETECTOR D2b: FAIL exit=0 final="RECEIPT: VALID"
+V01 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-nonfinite-clock-is-tampered: exit 0 (want 1):" pass-cases=42
+V02 DETECTOR D14: FAIL exit=0 final="RECEIPT: VALID"
+V02 DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44
+V03 DETECTOR D2b: FAIL exit=1 final="Node.js v24.21.0"
+V03 DETECTOR D2: PASS exit=1 final="RECEIPT: TAMPERED"
+V03 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-nonfinite-clock-is-tampered: verdict line is \"Node.js v24.21.0\" (want RECEIPT: TAMPERED)" pass-cases=42
+V04 DETECTOR D3: FAIL exit=0 final="RECEIPT: VALID"
+V04 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-unknown-field-is-unreadable: exit 0 (want 2):" pass-cases=43
+V05 DETECTOR D4: FAIL exit=0 final="RECEIPT: VALID"
+V05 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-missing-trailing-newline-is-unreadable: exit 0 (want 2):" pass-cases=42
+V06 DETECTOR D5: FAIL exit=1 final="RECEIPT: TAMPERED"
+V06 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-zone-less-prelude-is-unreadable: exit 1 (want 2):" pass-cases=43
+V07 DETECTOR D6: FAIL exit=0 final="RECEIPT: VALID"
+V07 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-sidecar-recorded-name-must-match-basename: exit 0 (want 1):" pass-cases=43
+V08 DETECTOR D7: FAIL exit=2 receipt-left=true final="receipt-attest: UNREADABLE cannot write receipt pair (EISDIR)"
+V08 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-sidecar-write-failure-removes-half-receipt: half-written receipt remains after sidecar failure" pass-cases=43
+V09 DETECTOR D8: FAIL verify="RECEIPT: VALID" stdin_sha256=1ee5dbe4 stdout_sha256=e3b0c442 want=1ee5dbe4
+V09 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-stdin-binds-32-nonce-bytes-and-child-output: /bin/cat stdout hash does not bind its real stdin output" pass-cases=43
+V10 DETECTOR D8: FAIL verify="RECEIPT: VALID" stdin_sha256=e3b0c442 stdout_sha256=84577049 want=84577049
+V10 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL v2-stdin-binds-32-nonce-bytes-and-child-output: stdin_sha256 does not bind the nonce bytes" pass-cases=43
+V11 DETECTOR D19: FAIL exit=0 final="RECEIPT: VALID"
+V11 DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44
+V12 DETECTOR D9: FAIL exit=0 final="RECEIPT: VALID"
+V12 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL r52-6-sidecar-difference-after-16-bit-prefix-is-not-valid: exit 0 (want 1):" pass-cases=43
+V13 DETECTOR D10: FAIL exit=0 final="RECEIPT: VALID"
+V13 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL r52-6-inner-digest-16bit-prefix-collision-reads-replay: exit 0 (want 1):" pass-cases=43
+V14 DETECTOR D11: FAIL exit=0 final="RECEIPT: VALID"
+V14 DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44
+V15 DETECTOR D12: FAIL exit=0 final="RECEIPT: TAMPERED"
+V15 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL r52-6-ledger-nonce-16bit-prefix-not-reuse: n02-a.txt: exit 0 \"RECEIPT: TAMPERED\"; n02-b.txt: exit 0 \"RECEIPT: TAMPERED\"" pass-cases=35
+V16 DETECTOR D9: FAIL exit=0 final="RECEIPT: VALID"
+V16 DETECTOR D1: FAIL exit=1 final="receipt-attest: SELFTEST FAIL r52-6-sidecar-difference-after-16-bit-prefix-is-not-valid: exit 0 (want 1):" pass-cases=41
+V17 DETECTOR D16: FAIL exit=1 final="RECEIPT: REPLAY" skip-note=false
+V17 DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44
+V18 DETECTOR D18: FAIL exit=0 final="RECEIPT: VALID"
+V18 DETECTOR D1: PASS exit=0 final="ATTEST_SELFTEST: PASS (44/44)" pass-cases=44

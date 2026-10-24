@@ -1,0 +1,51 @@
+# RevStanza matrix — 2026-10-24T04:10:37Z node v24.21.0
+# scratch: /tmp/r52-revstanza.VY3NRQ = git archive f539a71e
+
+## A_row_only
+PROXY: MATCH (A=73 C=23 operability=9; C1=19/19 C2=118/118 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+## D_plan_literal
+PROXY  error  A_DRIFT  A: declared=71 computed=73 delta=+2
+PROXY: DRIFT (A_DRIFT term=A declared=71 computed=73 delta=+2; src-rev=31c465f15669)
+exit=1
+
+## G_v2_match
+PROXY: MATCH (A=73 C=23 operability=9; C1=19/19 C2=118/118 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+## H_v2_stale_pin
+PROXY  error  GATE_PIN_DRIFT  pin.receipt-attest: declared=44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9 computed=9531e89827fdfb0a345b0ce613318163d5ae7a42d6d176426ce2cbdaa36ba74e
+PROXY: DRIFT (GATE_PIN_DRIFT term=pin.receipt-attest declared=44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9 computed=9531e89827fdfb0a345b0ce613318163d5ae7a42d6d176426ce2cbdaa36ba74e; src-rev=31c465f15669)
+exit=1
+
+## I_close_shape
+PROXY: MATCH (A=73 C=23 operability=9; C1=19/19 C2=120/120 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+## J_v2_build_copy
+PROXY  error  A_DRIFT  A: declared=73 computed=74 delta=+1
+PROXY: DRIFT (A_DRIFT term=A declared=73 computed=74 delta=+1; src-rev=31c465f15669)
+exit=1
+
+## K_no_lesson_row
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+## L_no_drift_row
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+## C_close_rows_missing
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+## freeze f539a71e declared-vs-computed (baseline)
+PROXY  error  A_DRIFT  A: declared=71 computed=73 delta=+2
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=117 computed=118 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=71 computed=73 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=117 computed=118 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1

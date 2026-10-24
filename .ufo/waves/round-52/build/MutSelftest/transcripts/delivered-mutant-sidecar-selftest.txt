@@ -1,0 +1,43 @@
+case run-writes-receipt-and-sidecar: PASS
+case receipt-shape-is-prelude-plus-json-line: PASS
+case sidecar-is-gnu-text-mode-basename: PASS
+case sidecar-hash-is-computed-with-node-crypto: PASS
+case nonce-is-128-bit-hex-and-unique-per-run: PASS
+case verify-genuine-receipt-reads-valid: PASS
+case flake-injection-doctored-body-reads-replay: PASS
+case digest-field-corrupted-with-recomputed-sidecar-reads-replay: PASS
+case sidecar-mismatch-reads-tampered: PASS
+case missing-sidecar-reads-tampered: PASS
+case prelude-only-rewrite-reads-tampered: PASS
+case prelude-rewrite-with-forged-sidecar-reads-replay: PASS
+case ledger-detects-a-nonce-reused-by-a-different-record: PASS
+case ledger-exempt-a-byte-identical-duplicate: PASS
+case ledger-ignores-an-unattested-copy: PASS
+case usage-errors-exit-64: PASS
+case missing-receipt-reads-unreadable-exit-2: PASS
+case malformed-receipt-reads-unreadable-exit-2: PASS
+case clock-order-violation-reads-tampered: PASS
+case negative-monotonic-span-reads-tampered: PASS
+case prelude-outside-the-wall-window-reads-tampered: PASS
+case inner-digest-covers-every-semantic-field: PASS
+case canonical-json-is-sorted-and-stable: PASS
+case receipt-records-no-environment: PASS
+case run-records-the-command-exit-code: PASS
+case run-records-output-hashes-not-output: PASS
+case verify-resolves-the-sidecar-next-to-the-receipt: PASS
+case v2-unknown-field-is-unreadable: PASS
+case v2-blank-line-is-unreadable: PASS
+case v2-missing-trailing-newline-is-unreadable: PASS
+case v2-zone-less-prelude-is-unreadable: PASS
+case v2-sidecar-recorded-name-must-match-basename: PASS
+case v2-clock-month-rollover-is-tampered: PASS
+case v2-clock-day-rollover-is-tampered: PASS
+case v2-nonfinite-clock-is-tampered: PASS
+case v2-sidecar-write-failure-removes-half-receipt: PASS
+case v2-spawn-failure-is-recorded-as-127: PASS
+case v2-stdin-binds-32-nonce-bytes-and-child-output: PASS
+case v2-ledger-prints-damaged-prior-skip-note: PASS
+case r52-6-nonce-difference-after-16-bit-prefix-is-not-valid: PASS
+case r52-6-sidecar-difference-after-16-bit-prefix-is-not-valid: FAIL (exit 0 (want 1): )
+receipt-attest: SELFTEST FAIL r52-6-sidecar-difference-after-16-bit-prefix-is-not-valid: exit 0 (want 1): 
+ATTEST_SELFTEST: FAIL

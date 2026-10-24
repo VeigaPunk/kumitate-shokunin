@@ -1,0 +1,96 @@
+{
+  "pristine": {
+    "path": "probe/pristine.mjs",
+    "sha256": "e1aa408337e6546e82610d3781cafd40a4f166f39526059747e8fa3b92537169"
+  },
+  "mutants": [
+    {
+      "id": "D1-drop-E1",
+      "axis": "drop-one-check",
+      "description": "drop the E1 provenance-trio hold() call",
+      "path": "mutants/D1-drop-E1.mjs",
+      "sha256": "31ca3ed48c927f091991821e18c725e84a4d6de66e9edeb038409aa16fbd3da5",
+      "bytes_delta": -46
+    },
+    {
+      "id": "D2-drop-E2",
+      "axis": "drop-one-check",
+      "description": "drop the E2 clause-binding hold() call",
+      "path": "mutants/D2-drop-E2.mjs",
+      "sha256": "5e459aa2c933ce80502b9b939cc7818278b56de424fb09510f33d87801f298fc",
+      "bytes_delta": -59
+    },
+    {
+      "id": "D3-drop-E3",
+      "axis": "drop-one-check",
+      "description": "drop the E3 SOURCES-row hold() call",
+      "path": "mutants/D3-drop-E3.mjs",
+      "sha256": "7e6610193ebca7f98cd3c294393733c774b3a67dcfbe85062e33ac5aac5bac6b",
+      "bytes_delta": 7
+    },
+    {
+      "id": "D4-drop-E4",
+      "axis": "drop-one-check",
+      "description": "drop the E4 sources-check hold() call",
+      "path": "mutants/D4-drop-E4.mjs",
+      "sha256": "247732d883d4147bd27bd5189665668a68b7b80431793bbbe723ed8aa2325752",
+      "bytes_delta": -85
+    },
+    {
+      "id": "D5-drop-E5",
+      "axis": "drop-one-check",
+      "description": "drop the E5 live-census hold() call",
+      "path": "mutants/D5-drop-E5.mjs",
+      "sha256": "8309a9bc344d651ba15c9fb09d45bb531291f349ac526d93cc4a0260f03ffc46",
+      "bytes_delta": -100
+    },
+    {
+      "id": "R1-relax-clauses",
+      "axis": "relax-threshold",
+      "description": "E2 clause-count threshold >=12 -> >=1",
+      "path": "mutants/R1-relax-clauses.mjs",
+      "sha256": "b46287512fec5b6f768d901c4845a3767941e09d118be4451a75416ef1fd1dd5",
+      "bytes_delta": -1
+    },
+    {
+      "id": "R2-relax-bound",
+      "axis": "relax-threshold",
+      "description": "E2 bound-count threshold >=12 -> >=1",
+      "path": "mutants/R2-relax-bound.mjs",
+      "sha256": "ce5e4bbcc526b56d0bcca44e1a1040eb50184b39cd2ffa644be71c7469da0bc6",
+      "bytes_delta": -1
+    },
+    {
+      "id": "R3-trio-S101",
+      "axis": "trio-regex-swap",
+      "description": "E1 trio row id S102 -> S101",
+      "path": "mutants/R3-trio-S101.mjs",
+      "sha256": "88e5cfde996c64db8e3b733370fce9a3db7e4a1d0e7b1bb49d9b03333fc8502a",
+      "bytes_delta": 0
+    },
+    {
+      "id": "R4-trio-example",
+      "axis": "trio-regex-swap",
+      "description": "E1 trio source host rfc-editor.org -> example.com",
+      "path": "mutants/R4-trio-example.mjs",
+      "sha256": "90a2b8eadca1a188bfeafdf948f309820d5bac4c83c6db77dc60f510e8d07297",
+      "bytes_delta": -3
+    },
+    {
+      "id": "R5-census-always",
+      "axis": "census-always-pass",
+      "description": "E5 live census verdict forced to true",
+      "path": "mutants/R5-census-always.mjs",
+      "sha256": "d616c845f139b6debd85a1470fa55dbe0e6d91c12ccc2d52cdbc79b5b930e85e",
+      "bytes_delta": -12
+    },
+    {
+      "id": "R6-relax-both",
+      "axis": "relax-threshold",
+      "description": "E2 both thresholds >=12 -> >=1 (conjunctive defense probe)",
+      "path": "mutants/R6-relax-both.mjs",
+      "sha256": "d0bbff7e5df049774761d41d7916b26ad8474cdf32017c59e0935f02fd2cba09",
+      "bytes_delta": -2
+    }
+  ]
+}

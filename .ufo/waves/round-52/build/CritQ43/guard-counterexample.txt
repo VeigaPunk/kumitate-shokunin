@@ -1,0 +1,6 @@
+Scope: isolated reproduction of frozen A52 lines 470-474, NOT a full A52 run or a forged 13/13 receipt.
+Checks: original IDs B1,B1c,B2,B2c,B2e,B3,B3c,B4,B4c,B4d,B5,B5c,B6; delete B1; remaining 12 checks have ok=true.
+Frozen expressions: label = held === checks.length && checks.length > 0 ? 'ATTEST52_HELD' : 'ATTEST52_UNMET'; exit = held === checks.length && checks.length > 0 ? 0 : 1.
+Observed Node output:
+TAIL-LOGIC-ONLY: ATTEST52_HELD held=12/12 checks=12; exit=0
+Implication: the nonempty guard kills the 0/0 class but does not enforce the frozen 13-check identity set. An all-green post-state plus a dropped hold() may print HELD12/12. This is not the frozen 13/13 predicate, but it contradicts K4's stronger 'must never print HELD' rule.

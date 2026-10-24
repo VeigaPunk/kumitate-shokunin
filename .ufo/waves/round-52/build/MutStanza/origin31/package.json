@@ -1,0 +1,39 @@
+{
+  "name": "ufo-fsd",
+  "private": true,
+  "version": "0.1.0",
+  "description": "UFO-FSD runtime with seven native local substrate surfaces; this checkout is the source of truth",
+  "type": "module",
+  "workspaces": [
+    "packages/ufo-core",
+    "packages/contract-support",
+    "packages/substrate-lib",
+    "packages/substrate-runtime"
+  ],
+  "scripts": {
+    "build": "npm run build -w @ufo/core --if-present && npm run build -w @ufo/contract-support --if-present && npm run build:portable",
+    "prebuild:portable": "npm run build -w @ufo/core --if-present",
+    "build:portable": "rm -rf dist && tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build:portable && npm run test -w @ufo/core && npm run test -w @ufo/contract-support && npm run test -w @ufo/substrate-runtime && node --test tests/*.test.js scripts/*.test.mjs",
+    "run:portable": "npm run build:portable && node dist/cli.js",
+    "gates": "bash scripts/gates.sh",
+    "smoke": "bash scripts/smoke.sh",
+    "doctor": "npm run contracts:check && cargo check -p ufo-core-runtime -p ufo-cli",
+    "self-iter": "bash scripts/self-iter.sh",
+    "ufo": "cargo run -p ufo-cli --",
+    "loop": "cargo run -p ufo-cli -- self-iter",
+    "contracts:check": "node scripts/sync-ufo-contracts.mjs --check && node scripts/project-devin-subagents.mjs --check && node scripts/check-routing-free-config.mjs && node scripts/render-seat-tables.mjs --check && node scripts/check-hand-authored-sets.mjs",
+    "contracts:sync": "node scripts/sync-ufo-contracts.mjs && node scripts/project-devin-subagents.mjs && node scripts/render-seat-tables.mjs",
+    "the-tick:handler": "node scripts/ufo-ground-handler.mjs",
+    "the-tick:ping": "node scripts/the-tick-ping.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
