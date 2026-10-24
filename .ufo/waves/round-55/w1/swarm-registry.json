@@ -1,0 +1,713 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "kumitate-r55-w1",
+  "createdAt": "2026-10-24T11:27:57.016Z",
+  "updatedAt": "2026-10-24T11:27:57.016Z",
+  "reportDir": ".ufo/waves/round-55/w1",
+  "members": {
+    "ExecCapClean": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapClean. Run the new gate on the committed revision: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs must read SOURCE_CAPTURE: CLEAN captures=5 exemptions=107. Capture exact output and exit.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapClean/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapClean.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapSelftest": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapSelftest. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs --selftest; count `case <name>: PASS` lines, verify 13/13 and final `VERDICT: PASS`.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapSelftest/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapSelftest.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapHashTamper": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapHashTamper. In a scratch copy of the lane (or `--registry`/`--sources` fixture), flip one capture sha256; run the gate and capture DRIFT `<id>:hash-mismatch` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapHashTamper/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapHashTamper.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapAbsent": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapAbsent. In a scratch copy, delete one captured file; run the gate; capture DRIFT `<id>:capture-absent` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapAbsent/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapAbsent.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapSymlink": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapSymlink. In a scratch copy, replace one captured file with a symlink to a sibling capture; verify lstat semantics produce DRIFT `not-a-regular-file` without touching the lane.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapSymlink/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapSymlink.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapBytes": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapBytes. In a scratch copy, set one capture `bytes` wrong; verify DRIFT `bytes-mismatch` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapBytes/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapBytes.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapUncaptured": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapUncaptured. In a scratch copy, append an `| S999 |` row to SOURCES.md without a registry binding; verify DRIFT `S999:uncaptured` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapUncaptured/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapUncaptured.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapOrphan": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapOrphan. In a scratch copy, add a capture for S998 (no such SOURCES row); verify DRIFT `S998:orphan-capture` exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapOrphan/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapOrphan.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapSchema": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapSchema. Run scratch controls for malformed JSON, version 2, duplicate sourceIds, capture+exempt conflict, and missing sources doc; capture each FAIL-CLOSED exit 2.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapSchema/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapSchema.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapEmpty": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapEmpty. In a scratch copy, set captures=[] and exempt all rows; verify the gate returns DRIFT `captures-empty`, not a vacuous CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapEmpty/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapEmpty.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecCapEscape": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecCapEscape. In a scratch copy, point one capture path at `../outside.txt`; verify DRIFT `path-escape` and that the gate never reads outside its base.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecCapEscape/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecCapEscape.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecA55Close": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecA55Close. Run frozen A55 against the round-55 R1 revision and capture the literal `ATTEST55: ATTEST55_HELD held=10/10 checks=10` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecA55Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecA55Close.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecD55Close": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecD55Close. Run frozen D55 against the round-55 R1 revision and capture the literal `DOCTRINE55: DOCTRINE55_HELD held=5/5 checks=5` line plus exit code.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/doctrine55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecD55Close/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecD55Close.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecReceiptSet": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecReceiptSet. Verify the three round-55 receipts `.ufo/waves/round-55/receipts/attest-run-{1,2,3}.txt` and the doctored replay control `attest-run-2-replayed.txt`: `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs verify --ledger <dir> <file>` must read `RECEIPT: VALID` for each planned argv and `RECEIPT: TAMPERED` exit 1 for the control.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-attest.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecReceiptSet/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecReceiptSet.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecReceiptSpan": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecReceiptSpan. Parse the three receipt bodies; verify exact planned argv (bind-oracle --selftest, source-capture --selftest, round-gate --selftest), pairwise-distinct nonces/digests, >=300s wall_start span, and no nonce in the round-48..54 corpora.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md §Receipt plan\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecReceiptSpan/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecReceiptSpan.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecSourcesGate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecSourcesGate. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs at the final tree; capture `SOURCES_CHECK: CLEAN` exit 0, and run the fleet census `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` exit 0.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/sources-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecSourcesGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecSourcesGate.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecChecklistBattery": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecChecklistBattery. Run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs --checklists at final tree; compare its `CHECKLIST: n/m` against the freeze baseline `.ufo/waves/round-55/base/checklists-freeze.txt` (25 items now).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecChecklistBattery/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecChecklistBattery.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecR54Counters": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecR54Counters. Re-run the round-54 frozen counters A54 and D54 at the round-55 close revision; report whether both remain HELD (the registry must carry the r54 pins without regression).\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-54/probe/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/counter-pins.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecR54Counters/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecR54Counters.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ExecProxyCounts": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "executor",
+      "item": "Item ExecProxyCounts. Re-derive A/C/C2 and axis terms at R3 with node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --strict; capture `PROXY: MATCH` and the full stanza line.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ExecProxyCounts/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ExecProxyCounts.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewA55Predicate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewA55Predicate. Attack A55 as a predicate: verify its 10 checks, the base receipt, the drop-one literal, the vacuous-HELD guard, and the R1 result; identify any do-nothing or scorecard-only change that could reach ATTEST55_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/base/attest55-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewA55Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewA55Predicate.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewD55Predicate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewD55Predicate. Attack D55: inspect E1-E5 — entry existence + provenance trio, >=12 distinct receipt bindings hashed at rev, SOURCES rows mined+used-by + capture pins, sources-check CLEAN, live census; plus the base receipt.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/doctrine55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/base/doctrine55-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewD55Predicate/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewD55Predicate.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewGateSemantics": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewGateSemantics. Review source-capture schema, exit map, path base (lane-root default vs registry-local explicit), symlink/parent traversal, empty captures and failure classes; do not alter production files.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewGateSemantics/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewGateSemantics.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewS109Admission": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewS109Admission. Independently reopen S109 (https://kafka.apache.org/43/design/design/); confirm the admitted claim/tier/quote/anchor are limited to Kafka 4.3 delivery semantics, idempotent producer and consumer offset ordering. URL, access date, <=25-word quote, tier judgment.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutKafka/kafka-43-design.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewS109Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewS109Admission.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewS110Admission": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewS110Admission. Independently reopen S110 (https://www.rabbitmq.com/docs/dlx); confirm the quote and tier apply only to RabbitMQ dead-letter/delivery-limit behavior.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutRabbitmqDlx/rabbitmq-dlx.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewS110Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewS110Admission.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewS111Admission": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewS111Admission. Independently reopen S111 (AWS Builders Library timeouts/retries/backoff-with-jitter); confirm the quote and tier-B scope is client-side retry policy, not broker delivery.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutAwsBuilders/aws-timeouts.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewS111Admission/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewS111Admission.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewS112Rejection": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewS112Rejection. Challenge S112 rejection (Temporal workflow-execution): is Event-History/Replay genuinely out of scope for a delivery-guarantee + broker-budget entry, or is the reject too narrow? Confirm or refute against the opened page.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutTemporal/temporal-workflow-execution.html\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewS112Rejection/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewS112Rejection.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewMistakeR55One": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewMistakeR55One. Verify mistake R55-1 honestly recorded: S108 bytes absent at base (class landing/verifiability), captured-by = r54 verifier spotcheck §5 item 1, fix = capture rule + Q46 + gate; confirm the red-before and fixed readings.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-55.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewMistakeR55One/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewMistakeR55One.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewReceiptBindings": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewReceiptBindings. Recompute each doctrine55 receipt sha256 and verify >=12 distinct binding paths under round-55; challenge any clause whose binding file does not carry the asserted content.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/bounded-redelivery-budgets.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewReceiptBindings/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewReceiptBindings.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewProxyPin": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewProxyPin. Check GATE_PINS now includes pin.source-capture, the v1 pin set stayed six, pin.proxy-check matches the edited script bytes, and strict proxy reads MATCH at R3.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewProxyPin/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewProxyPin.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewAxisMove": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewAxisMove. Check the lowest-axis obligation: operability stays scored via a new capability (source-capture gate + registry), coverage moves on a frontier entry, claims are causally separable, no retired axis worked.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewAxisMove/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewAxisMove.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewFrontierMap": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewFrontierMap. Compare README Frontier entries and map rows with PROVINCE.md; verify the new knowledge row and lesson row map exactly once and the S112 reject row is retained.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewFrontierMap/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewFrontierMap.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ReviewRoundReport": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "reviewer",
+      "item": "Item ReviewRoundReport. Check the final report: section order, commits, per-claim measurements with verbatim FINAL lines, sources census, trend verdicts, SHONEN lines and the wave-prepared status.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ReviewRoundReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ReviewRoundReport.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeSourceRows": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeSourceRows. Draft a concise source-row and quote audit for S109-S112; do not edit SOURCES.md; flag any scope/tier/anchor correction.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/Scout*/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeSourceRows/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeSourceRows.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeEntryReview": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeEntryReview. Draft a clause-by-clause summary of the bounded-redelivery-budgets entry, marking sourced facts vs [INFERENCE] and any unsupported sentence.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/bounded-redelivery-budgets.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeEntryReview/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeEntryReview.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeMistakes": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeMistakes. Draft a compact audit of R55-1 with class, evidence, captured-by and fix fields; do not edit the lesson.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-55.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeMistakes/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeMistakes.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeFrontierReport": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeFrontierReport. Draft the Sources & frontier report subsection with before/after row/tier counts (108 -> 112, tier A 91->93, B 9->10), touched rows, frontier advance and exact commands.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeFrontierReport/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeFrontierReport.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeScorecardAudit": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeScorecardAudit. Draft a claim-to-scorecard crosswalk for the capability row, A/C/C2 terms, axis scores and measured revisions; flag missing fields.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeScorecardAudit/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeScorecardAudit.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeTrendEvidence": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeTrendEvidence. Draft evidence options for expansion, quality and discernment trends, respecting that this seat cannot provide the non-author spot-check.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-55.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeTrendEvidence/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeTrendEvidence.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeSeatAccounting": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeSeatAccounting. Draft the 64-seat role-mix and prepared-but-undispatched accounting, including dead=0 and returned-without-report=0 unless a seat actually returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/w1-validate.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeSeatAccounting/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeSeatAccounting.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScribeLimitations": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scribe",
+      "item": "Item ScribeLimitations. Draft a precise limits paragraph separating broker delivery-limit semantics, consumer commit ordering, client-side retry budgets, task identity, and withheld exactly-once/replay claims.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/bounded-redelivery-budgets.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScribeLimitations/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScribeLimitations.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutKafkaReopen": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutKafkaReopen. Freshly reopen https://kafka.apache.org/43/design/design/; confirm §Message delivery semantics location, the at-least-once quote, the idempotent-producer paragraph (since 0.11.0.0) and the consumer position/rewind passage; record the saved-body hash bcca1c2a….\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutKafka/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutKafkaReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutKafkaReopen.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutRabbitDlxReopen": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutRabbitDlxReopen. Freshly reopen https://www.rabbitmq.com/docs/dlx; confirm the four dead-lettering trigger events and the delivery-limit quote; record the saved-body hash c69bab87….\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutRabbitmqDlx/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutRabbitDlxReopen/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutRabbitDlxReopen.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutLocalPriorArt": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutLocalPriorArt. Search the committed corpus for redelivery-budget, dead-letter, retry-budget, and queue task-identity overlap; report exact search commands and hits; verify no existing entry already covers the new clauses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutLocalPriorArt/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutLocalPriorArt.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutFrontierOverlap": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutFrontierOverlap. Read other lane province boundaries for durable-execution ownership; report contested scope only, never absorb another domain.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutFrontierOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutFrontierOverlap.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutCounterInventory": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutCounterInventory. Recompute script count A, checklist count C and note count C2 from committed R1 bytes; identify any unlisted/runnable file or unmapped corpus note.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutCounterInventory/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutCounterInventory.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutWavePolicy": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutWavePolicy. Read policy v2 (/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json) and the committed spec/taskCall; verify band 64-128, attack ratio >=25%, role mix and task uniqueness.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/w1-taskcall.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutWavePolicy/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutWavePolicy.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ScoutR54SeatConvention": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "scout",
+      "item": "Item ScoutR54SeatConvention. Re-read the R53-2 routed convention and report the exact accounting for the prepared R55 wave; no seat is counted returned-without-report unless it returned a payload.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/w1-spec.json\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-55.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ScoutR54SeatConvention/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ScoutR54SeatConvention.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticCounterNoop": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticCounterNoop. Build the cheapest no-op control that leaves source-capture absent or scorecard-only; run A55 at base and show why it cannot reach HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/base/attest55-base.txt\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticCounterNoop/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticCounterNoop.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticStaticVerdict": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticStaticVerdict. Try a verdict-printing stub or hand-written CLEAN output against A55 B3/B4; show whether the frozen counter can be fooled by a gate that only prints CLEAN.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticStaticVerdict/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticStaticVerdict.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticReceiptForgery": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticReceiptForgery. Attack the R55 receipt plan with a rewritten prelude, copied sidecar, nonce replay, or same-record duplicate; report which B8 arms fire.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/receipts/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticReceiptForgery/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticReceiptForgery.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticC2Overfit": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticC2Overfit. Try a sourceless/empty fixture or unrelated README row to satisfy D55; identify which E1-E5 clauses fail and why.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/doctrine55-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticC2Overfit/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticC2Overfit.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticC1Scope": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticC1Scope. Challenge whether every A55 check is reachable and whether any scorecard-only or do-nothing change can meet ATTEST55_HELD.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticC1Scope/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticC1Scope.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "CriticNoHarm": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "critic",
+      "item": "Item CriticNoHarm. Review all touched lane files for an axis harm, unscoped content, source-tier inflation, or score-proxy regression; do not grade on a model seat basis.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/CriticNoHarm/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/CriticNoHarm.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "MutCapDigest": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Item MutCapDigest. Mutate a listed capture digest and verify source-capture kills it with DRIFT hash-mismatch, exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/MutCapDigest/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/MutCapDigest.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "MutCapTraversal": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Item MutCapTraversal. Mutate a capture path to escape through .. or a symlinked parent; verify a bounded refusal, never an outside read.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/MutCapTraversal/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/MutCapTraversal.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "MutCapVacuity": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Item MutCapVacuity. Mutate captures to an empty array and a duplicate sourceId; verify empty is DRIFT and duplicate is FAIL-CLOSED.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/MutCapVacuity/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/MutCapVacuity.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "MutA55DropCheck": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Item MutA55DropCheck. Drop one hold check in a sandbox copy of the frozen A55 probe; require ATTEST55_UNMET 9/10, exit 1.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/attest55-probe.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/MutA55DropCheck/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/MutA55DropCheck.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "MutD55SourceRow": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "mutation-tester",
+      "item": "Item MutD55SourceRow. Remove S109 or its used-by cell in a sandbox tree; require D55 E3/E4 to miss at the same revision.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/probe/doctrine55-probe.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/MutD55SourceRow/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/MutD55SourceRow.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "SimplifyCapGate": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "simplifier",
+      "item": "Item SimplifyCapGate. Find code or schema branches in source-capture that are unnecessary for the frozen contract; propose only deletions preserving every selftest case.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/SimplifyCapGate/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/SimplifyCapGate.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "SimplifyEntryProse": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "simplifier",
+      "item": "Item SimplifyEntryProse. Identify duplicate or non-actionable prose in the entry; propose a shorter version without changing its sourced claims or scope.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/bounded-redelivery-budgets.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/SimplifyEntryProse/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/SimplifyEntryProse.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "SentinelRegistryPaths": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "Item SentinelRegistryPaths. Threat-model untrusted registry paths, symlink parents, hash substitution and malformed JSON; verify the gate never reads outside its base and fail-closed arms cannot degrade to DRIFT.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/source-captures.json\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/SentinelRegistryPaths/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/SentinelRegistryPaths.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "SentinelArtifacts": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "sentinel",
+      "item": "Item SentinelArtifacts. Scan new source captures, receipts and lesson for credentials, private URLs or leaked environment values; report patterns only.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/receipts/\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/SentinelArtifacts/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/SentinelArtifacts.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "RevengerCounterIntent": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "revenger",
+      "item": "Item RevengerCounterIntent. Reverse-engineer the R54-C1/capture lineage from the round-54 verifier spotcheck and prior scorecards; look for undocumented registry invariants or intent the contract misses.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-54-verifier-spotcheck.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/plan.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/RevengerCounterIntent/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/RevengerCounterIntent.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    },
+    "ConnectorSiblingOverlap": {
+      "kind": "spawn",
+      "agentId": null,
+      "role": "connector",
+      "item": "Item ConnectorSiblingOverlap. Scan sibling PROVINCE frontiers for overlap with bounded-redelivery/dead-letter/delivery-limit work; report contested ownership with pointers, never absorb.\n\nRelevant absolute lane paths:\n  /home/vgpnk/Projects/shokunin/*/PROVINCE.md\n  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/bounded-redelivery-budgets.md\n\nWrite full evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-55/build/ConnectorSiblingOverlap/. Do not change production or commit anything.\nReport: .ufo/waves/round-55/w1/ConnectorSiblingOverlap.md",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "kumitate round 55 (hyaku run 5)"
+    }
+  }
+}

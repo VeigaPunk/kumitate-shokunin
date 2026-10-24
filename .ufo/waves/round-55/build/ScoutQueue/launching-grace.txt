@@ -1,0 +1,1 @@
+fleet-dispatcher.mjs:123 `const LAUNCHING_GRACE_MS = 120_000;` — a row committed `launching` before spawn is a claim lock; 120 s is the only crash-recovery boundary after which reconcile may reclaim the row (origin tree, read-only)
