@@ -2333,7 +2333,11 @@ Wall-window tolerance is exactly −60,000/+60,073 ms (`w2/CritA2Span.md`); insi
 re-dated copy verifies — the Q39 ceiling. (e) D5 is live-only; D4 trusts the rev's own
 checker (R51-4 class). (f) Probe runs inherit the host environment (interpreter-tampering
 class). (g) The three-receipt span is author-scheduled (honestly labelled, R50-4 class).
-(h) Q43's enforcement is manual (named in its Limit). (h2) Probe-integrity edge (seat
+(h) Q43's enforcement is manual (named in its Limit). (h3) R52-6 (routed, seat MutShipped, delivered post-close): the instrument's selftest
+cannot distinguish a truncated sidecar/nonce comparison from a full one (16-bit-prefix
+forger measured VALID in 313 ms against a mutated build; the SHIPPED bytes are correct —
+full compares — but the suite under-covers; wave-1 battery anchoring defects named in
+`w2/MutShipped.md`). (h2) Probe-integrity edge (seat
 MutCounter, wave 1, delivered late): a mutant that deletes every `hold()` call reads
 `held=0/0 exit 0` — a vacuous HELD label; no frozen arm guards the checks-array
 non-emptiness (routed R52-5 with the counter-mutant table). (i) R52-1 (routed, HIGH): the

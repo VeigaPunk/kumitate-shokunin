@@ -200,7 +200,7 @@ invites a default-mode invocation, which is exactly the mode that reads
 
 ---
 
-## 4. Finding (LIVE, H3 currently RED) — 14 untracked runnable files break the `A` term
+## 4. Finding (LIVE — found, reported, and acted on) — 14 untracked runnable files broke the `A` term
 
 This is the most consequential finding of the seat, and it is **not** a mutant:
 it was observed in the **live lane** while this seat was measuring.
@@ -331,8 +331,9 @@ records the coupling explicitly). No edit was made by this seat.
 
 **Dependency note (recorded, not blocking)**: this seat's own measurements were
 taken against a `git archive` extraction of `HEAD` precisely because the live
-tree is being written concurrently. Every mutant result in §2 and §2b was
-reproduced 3× on the clean tree and is byte-stable.
+tree is being written concurrently. The first battery's results were reproduced
+3× on the clean tree and are byte-stable; the final battery was rebuilt against
+the shipping stanza and re-run in full (§2).
 
 ---
 
@@ -345,13 +346,17 @@ the row's integer untouched) is **not** caught:
 |---|---|---|
 | 13 | `## Axes` operability cell: `**A=10**` → `**A=99**` | **exit 0 — `PROXY: MATCH`** |
 | 14 | `## Axes` operability cell: `and **C=19**` → `and **C=99**` | **exit 0 — `PROXY: MATCH`** |
-| 15 | prose in the round-41 correction note: `live terms are A=9, C=17` → `A=999` | **exit 0 — `PROXY: MATCH`** |
+| 15 | prose in the round-41 correction note: `live terms are A=9, C=17` → `A=999` | **exit 0 — `PROXY: MATCH`** (first battery only) |
 
 The proxy checks the `## Axes` row's **integer** (mutant 09 → `AXES_DRIFT`
 killed) but not the **evidence cell's quoted term values** in that same row.
 The lane's `## Axes` operability row currently quotes **A=10, C=19** while the
-live stanza declares **A=67, C=23** — the row's evidence is already stale
-relative to its own stanza, and nothing in the toolchain notices.
+live stanza declares **A=71, C=23** — the row's evidence is already stale
+relative to its own stanza, and nothing in the toolchain notices. (The
+integrator's own round-51 close section records the honest decomposition —
+"computed A=67 = 44 shipped/instrument files + 23 round-51 probe files" — and
+the `## Axes` row was not updated to match; the row still quotes the round-42
+reading. That is the same gap, already visible in the lane's own prose.)
 
 **Severity: low — a coverage finding.** The proxy's contract is explicit that
 it compares *derived integers* against the `## Axes` rows; the prose in an

@@ -10,9 +10,10 @@ Tooling note: no `lsp` device is mounted in this runtime (`read xd://lsp` →
 file-count walk over a git tree, not call/definition structure, so the fallback is direct
 execution of the frozen derivation + `git ls-tree`; no semantic-server claim is made.
 
-The lane moved continuously during this review: `7d88faa` → `3304a56:efdd742` →
-`57333ea` → `fef6707`. Every reading below names its rev. The claim as assigned was
-**A=67** (committed at `a476977`…`efdd742`); the final state at `fef6707` is **A=71**.
+The lane moved continuously during this review: `7d88faa` → `3304a56`/`efdd742` →
+`57333ea` → `fef6707` → `9d11f4e`. Every reading below names its rev. The claim as
+assigned was **A=67** (committed at `a476977`…`efdd742`); the final state at `9d11f4e` is
+**A=71**.
 
 ## Verdict
 
@@ -87,6 +88,7 @@ Term ledger per commit (`git ls-tree -r --name-only <rev> | grep -cE '\.(mjs|js|
 | `7d88faa`…`efdd742` | receipts, w2 evidence, w2 reports | 67 |
 | `57333ea` | close record, stanza `A=81` | **71** (+4 `build/ExecForgerControl/*.mjs`) |
 | `fef6707` | stanza corrected to `A=71` (SCORECARD only) | 71 |
+| `9d11f4e` | entry span nit + committed FINAL receipts | 71 |
 
 Plan §"Terms expected to move" declared **A 43 → 44**. The frozen walk reaches 71:
 **+28 over base**, of which 1 is the shipped instrument, 2 are the frozen probes, and 25
@@ -251,10 +253,12 @@ transcript behind it; the one committed rerun reads 22/23 FAIL.
   `.git`, while `git status -uall` collapses each nested repo. Deleting the 4 top-level
   builders is not enough. Measure H3 on an exported commit tree, or remove the directory —
   and never let a `PROXY: MATCH` line from the dirty tree stand as close evidence.
-- **HIGH (convergent, not mine alone) — H1's `23/23` has no supporting transcript.** The
-  committed rerun reads 22/23 FAIL; my two runs read 22/23 FAIL. Gate-mutants alone reads
-  CLEAN 41/41, so this is load sensitivity, but the declared close value is unproven and
-  contradicted by the only committed evidence (also RevHarm.md:30, RevChecklist23.md:86).
+- **HIGH (convergent, not mine alone) — H1's `23/23` is contradicted by the round's own
+  close receipt.** `close/FINAL-harm-census.txt` reads `CHECKLIST: 22/23 pass`,
+  `VERDICT: FAIL`, while SCORECARD claims 23/23 exit 0 "at the close commit on the idle
+  host (`close/`)". My two runs read 22/23 FAIL; gate-mutants alone reads CLEAN 41/41, so
+  the item is load sensitivity, but the declared value is not the committed measurement
+  (also RevHarm.md:30, RevChecklist23.md:86).
 - **MED — A double-counts one implementation.** `build/ExecInstrument/receipt-attest.mjs`
   is byte-identical to `scripts/receipt-attest.mjs` (sha256 `4491976…`), with four more
   copies/variants (`ExecSelftestArms/scratch`, `ExecSelftestExec`,
@@ -276,9 +280,9 @@ transcript behind it; the one committed rerun reads 22/23 FAIL.
 
 ## Residual risk and gaps
 
-- The lane tip moved through six revs during this review; the live-tree readings (A=81,
+- The lane tip moved through seven revs during this review; the live-tree readings (A=81,
   H3 DRIFT, checklist 22/23) are snapshots and can change if the scratch owner deletes its
-  files. Committed readings are pinned to `fef6707`.
+  files. Committed readings are pinned to `9d11f4e` (A=71, archive MATCH, both probes HELD).
 - I verified `pin.receipt-attest` by sha equality and the probes' A5 PASS; I did not
   re-derive the other nine gate pins. H2/H4/H5 were outside this assignment.
 - `DOCTRINE_HELD 5/5` at HEAD was measured through the frozen probe (`git archive` of the
