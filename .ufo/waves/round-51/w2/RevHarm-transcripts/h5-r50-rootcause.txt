@@ -1,0 +1,16 @@
+# R5 rule source (round-50 probe, lines 90-97)
+  const distinct = new Set(recs.map((r) => r.sha)).size;
+  const span = (Math.max(...recs.map((r) => r.at)) - Math.min(...recs.map((r) => r.at))) / 1000;
+  g4ok = recs.every((r) => r.held && !Number.isNaN(r.at)) && distinct === recs.length && span >= 300;
+  g4say = `files=${recs.length} distinct=${distinct} held=${recs.filter((r) => r.held).length} span_s=${Math.round(span)}`;
+}
+
+// R5 — the 'all eleven' sweep.
+const skill = blob('SKILL.md');
+const g5ok = !!(skill && !skill.includes('all eleven') && /Twelve/.test(skill));
+
+
+# SKILL.md word at 8f3c692 (pre-integration)
+589:Registry home per the fleet protocol's §Gate standard (round 34). Twelve are
+# SKILL.md word at a476977 (integration)
+589:Registry home per the fleet protocol's §Gate standard (round 34). Thirteen are
