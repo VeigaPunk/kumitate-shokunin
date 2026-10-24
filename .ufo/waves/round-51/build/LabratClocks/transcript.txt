@@ -1,0 +1,49 @@
+# LabratClocks — transcript (kumitate round 51, seat LabratClocks, wave 1)
+# host: Linux 7.2.11-arch1-1 x86_64 | node v24.21.0 | sha256sum 0.8.0
+# scripts run from scratch copies under /tmp (mktemp -d); artifacts copied to build/LabratClocks/
+# NOTE: scripts/receipt-attest.mjs did not exist at probe time; this probe validates the HOST
+#       ASSUMPTIONS its clock / nonce / sidecar fields rely on (plan.md C1).
+# script line count: 39 total, 35 code
+
+$ node labrat-clocks.mjs
+A trials=20 mono_span_all_gt0=true wall_span_all_ge_50ms=true wall_regress=false gap(wall-mono)=[0.000,0.688]ms
+B draws=1000 distinct=1000 collisions=0
+C sidecar="8bd13e8a67409074bb166a2385ebb64a84d1175f426f32b344bccbc3bf3b5c3f  receipt.txt\n" identical_to_gnu=true sha256sum_-c_exit=0 out="receipt.txt: OK"
+C2 prelude-only-rewrite sha256sum_-c_exit=1 out="receipt.txt: FAILED"
+RESULT PASS A=true B=true C=true C2=true
+EXIT=0
+
+$ node labrat-clocks-addendum-2.mjs
+D gnu_bytes="a78cf7d2c9c3cc0663f415743e14261d4b20139e21d5e798a38862de23b0e5e9  receipt.txt\n" our_bytes="a78cf7d2c9c3cc0663f415743e14261d4b20139e21d5e798a38862de23b0e5e9  receipt.txt\n" identical=true
+D2 sha256sum -c on our sidecar exit=0 out="receipt.txt: OK"
+E trials=60 mono_lt_wall=55 mono_eq_wall=0 mono_gt_wall=5 wall_lt_50ms=0 mono_nonpos=0 wall_regress=0 max(wall-mono)gap=0.707ms
+F draws=10000 distinct=10000 collisions=0 hex128_shape_ok=true
+RESULT D=true D2=true E=true F=true
+EXIT=0
+
+$ node labrat-clocks-addendum-3.mjs
+G [bare-sidecar, cwd=receipts-dir] exit=0 out="attest-run-1.txt: OK" err=""
+G [bare-sidecar, cwd=parent] exit=1 out="attest-run-1.txt: FAILED open or read" err="sha256sum: attest-run-1.txt: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read"
+G [pathform-sidecar, cwd=parent] exit=0 out="receipts/attest-run-1.txt: OK" err=""
+G [pathform-sidecar, cwd=receipts-dir] exit=1 out="receipts/attest-run-1.txt: FAILED open or read" err="sha256sum: receipts/attest-run-1.txt: No such file or directory\nsha256sum: WARNING: 1 listed file could not be read"
+H trials=200 wall_lt_50ms=0 mono_nonpos=0 gap_range=[-0.163,0.379]ms gap_eq_0=0
+H2 implication: wall_span >= 50ms holds in 200/200; wall_span can EXCEED mono_span by up to 0.379ms (Date.now() ms-quantisation)
+RESULT G_bare_from_receiptsdir=true G_pathform_from_parent=true H=true
+EXIT=0
+
+$ node labrat-clocks-addendum-4.mjs
+I samples=10000 iso_roundtrip_lossless=10000 lossy=0
+J samples=5000 lexicographic_eq_chronological=true iso_sample=2026-10-24T02:05:11.459Z
+K samples=300 wall_and_mono_ordering_agree=true wall_regressions=0
+L draws=1000 observed_collisions=0 distinct=1000 birthday_p≈1.468e-33 space=2^128
+RESULT I=true J=true K=true L=true
+EXIT=0
+
+$ node labrat-clocks-addendum-5.mjs
+M /proc/uptime=3083.48s hrtime=3083.483s hrtime_minus_uptime=0.003s
+M2 anchors: hrtime tracks CLOCK_MONOTONIC (boot-anchored, NTP/step immune); Date.now() tracks CLOCK_REALTIME
+N over_spin: wall_ms=300 mono_ms=300.028 ratio=0.999905 abs_diff_ms=-0.028
+N2 rate_ratio within [0.999,1.001]: true
+O iso=2026-10-24T02:05:11.790Z Date_parse_eq_epoch=true
+RESULT M=true N=true O=true
+EXIT=0

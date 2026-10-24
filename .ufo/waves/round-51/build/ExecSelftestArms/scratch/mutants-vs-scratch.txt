@@ -1,0 +1,18 @@
+M01 KILLED: inner-digest check disabled (accept any digest) [killed by C05,C16,C20]
+M02 KILLED: sidecar comparison disabled (accept any sidecar) [killed by C06,C07,C20]
+M03 KILLED: missing sidecar accepted as VALID [killed by C17]
+M04 KILLED: ledger nonce check disabled [killed by C08,C08b,C20,C27]
+M05 KILLED: verdict literal swapped: TAMPERED -> REPLAY [killed by C17]
+M06 KILLED: clock-order check disabled [killed by C22]
+M07 KILLED: digest computed over the body WITH the digest field (self-referential) [killed by C01,C06,C07,C09,C10,C17,C18,C20,C23]
+M08 KILLED: canonical JSON no longer key-sorted [killed by C05,C15,C16,C20,C21]
+M09 KILLED: nonce drawn from a constant (not random) [killed by C03,C09,C20]
+M10 KILLED: nonce truncated to 8 hex chars (32 bits) [killed by C04]
+M11 KILLED: exit code not recorded (always 0) [killed by C18]
+M12 KILLED: stdout/stderr hashes replaced by a constant [killed by C19]
+M13 KILLED: usage error exits 0 instead of 64 [killed by C11,C20]
+M14 KILLED: unreadable receipt exits 1 instead of 2 [killed by C12,C20]
+M15 KILLED: environment leaked into the receipt body [killed by C14,C20,C24]
+M16 KILLED: ledger skips the subject file by CONTENT (ignores other files with same nonce) [killed by C08,C08b,C09,C20,C27]
+MUTANTS: 16/16 killed; survivors=none
+STATIC_FORGER: REJECTED (27 cases fail: C01,C02,C03,C04,C05,C06,C07,C08,C08b,C25,C09,C10,C11,C12,C13,C14,C15,C16,C17,C18,C19,C21,C22,C23,C24,C26,C27)

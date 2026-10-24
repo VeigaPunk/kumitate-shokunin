@@ -1,0 +1,29 @@
+================================================================
+FORGER LADDER — tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/build/LabratM2Replay/scratch-receipt-attest.mjs
+sha256: 89952c55cd29199f5a037b7054efaee88baa948651cc46f543753658c68a20a3
+================================================================
+
+--- RUNG 0 — genuine receipt (baseline: must be VALID)
+    attest-run-1.txt                                           -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r0/attest-run-1.txt nonce=67475b31b33944a474377deb3c31d6f7 run-at=2026-10-24T02:31:34.173Z (exit=0)
+
+--- RUNG 1 — exact lesson-M2 move: rewrite ONLY the prelude, KEEP the old sidecar
+    attest-run-2-replayed.txt                                  -> RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/ladder-scratch/r1/attest-run-2-replayed.txt (exit=1)
+
+--- RUNG 2 — the forger REFRESHES the sidecar over the re-dated bytes (no secret needed)
+    attest-run-2-replayed.txt                                  -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r2/attest-run-2-replayed.txt nonce=cdefbe5da96066d82e7329d752ce92a2 run-at=2030-01-01T00:00:00.000Z (exit=0)
+    with --ledger over the dir holding the original:
+    attest-run-2-replayed.txt                                  -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r2/attest-run-2-replayed.txt nonce=cdefbe5da96066d82e7329d752ce92a2 run-at=2030-01-01T00:00:00.000Z (exit=0)
+
+--- RUNG 3 — the M2 PRESENTATION: ONE genuine invocation shown as THREE time-spaced runs
+    attest-run-1.txt                                           -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r3/attest-run-1.txt nonce=57c4579a9ae994a5adf17b1693e4635b run-at=2026-10-24T02:31:34.329Z (exit=0)
+    attest-run-2.txt                                           -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r3/attest-run-2.txt nonce=57c4579a9ae994a5adf17b1693e4635b run-at=2026-10-24T02:41:34.000Z (exit=0)
+    attest-run-3.txt                                           -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r3/attest-run-3.txt nonce=57c4579a9ae994a5adf17b1693e4635b run-at=2026-10-24T02:51:34.000Z (exit=0)
+
+--- RUNG 4 — re-dated AND re-bodied (semantic clocks rewritten), OLD nonce, digest+sidecar recomputed
+    attest-run-2.txt                                           -> RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/ladder-scratch/r4/attest-run-2.txt other=attest-run-1.txt (exit=1)
+
+--- RUNG 5 — full forge: FRESH nonce + re-dated + recomputed digest + recomputed sidecar
+    attest-run-2.txt                                           -> RECEIPT: VALID file=/tmp/lm2-opjoxh/ladder-scratch/r5/attest-run-2.txt nonce=8bf37cd72fc08db672679e3383911a9c run-at=2030-01-01T00:00:00.000Z (exit=0)
+    (RUNG 5 is the kept Q39 ceiling: an unkeyed digest cannot detect a wholly
+     invented record. The plan keeps this ceiling verbatim.)
+### DONE

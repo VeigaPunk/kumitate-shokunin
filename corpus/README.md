@@ -147,6 +147,9 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-48-verifier-spotcheck.md` | Round-48 non-author closure: per-claim re-score, source/gate reopens, and routed R47 defects | `.ufo/reports/round-48/kumitate.md`; `.ufo/waves/round-48/` |
 | `lessons/round-49-verifier-spotcheck.md` | Round-49 non-author closure: C1/C2 re-check, gate-ledger disagreement, and routed R50-1..R50-6 | `.ufo/reports/round-49/kumitate.md`; `.ufo/waves/round-49/` |
 | `lessons/round-50.md` | Round-50: the `cap-run` mount-root guard (explicit `/tmp` triple, `/run` etc. and the implicit cwd bind) judged G50 `5/8 → 8/8`, gate-pin family re-pin (incl. `pin.bind-oracle`); r49 closure repairs R50-1..R50-10 judged R50 `1/8 → 8/8`; QUALITY Q39–Q41; S095/S098 re-open HOLD; mistakes M1–M6 | `.ufo/waves/round-50/close/`, `.ufo/waves/round-50/controls/`, `.ufo/waves/round-50/r50/` |
+| `lessons/round-50-verifier-spotcheck.md` | Round-50 non-author closure spot-check: C1 re-measured verified (attribution limit agreed), R50 repairs spot-verified R50-1..R50-8, S095/S098 re-opens AGREE, routed defects R51-1..R51-4 for this round | `.ufo/reports/round-50/kumitate.md`; fleet `b2758e94` |
+| `knowledge/invocation-attestation.md` | Invocation-receipt attestation design: the M2 prelude-replay class, sidecar-over-whole-file + inner-digest two-layer binding, CLOCK_MONOTONIC spans (S100), getrandom nonces + ledger freshness (S101), the kept Q39 ceiling; clauses bound by sha256, verified by `probe/doctrine51-probe.mjs` (rule D51) | S100, S101; `.ufo/waves/round-51/receipts/`; `.ufo/waves/round-51/base/` |
+| `lessons/round-51.md` | Round-51: the `receipt-attest` instrument judged A51 `0/9 -> 9/9`; six named freeze repairs (unrun-counter defect class); sourced entry S100/S101; mistakes mined | `.ufo/waves/round-51/base/`, `.ufo/waves/round-51/receipts/`, `.ufo/waves/round-51/w1/` |
 
 ## Known gaps
 

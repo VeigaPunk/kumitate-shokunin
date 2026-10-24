@@ -798,3 +798,19 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Shown able to fail.** At r49 open, the registry said Twelve while `SKILL.md:595` and `:598` each said
     “all eleven”; the exact conflicting lines are in the verifier-spotcheck artifact above.
   - **Limit.** The text sweep is scoped to `SKILL.md`; it does not discover count claims in other documents.
+- **Q43 — a frozen counter is not frozen until it has been executed, and its declared
+  controls must be executed against it.**
+  Classes caught: unrun-check (A51 v1 could not parse; D51 v1 unsatisfiable — both found
+  by seats within minutes of wave 1), vacuous kill rule (the plan's "a stub cannot clear
+  A1/A3" fell to a print-stub; the full-tree forger scored held=5/5).
+  Fix: at freeze time the L1 runs the counter at base and commits the receipt
+  (`base/attest-base-v3r6.txt`, `held=0/9`); every freeze repair re-runs it; every declared
+  do-nothing control is executed by a seat before data, not asserted. From round 51 on, a
+  counter whose before-state receipt is absent from the freeze commit is a conformance
+  defect, not a predicate.
+  - **Fails when.** A freeze commit lacks the executed before-receipt, or a declared
+    control was never run.
+  - **Shown able to fail.** The round-51 wave-1 seats: two independent findings for D51's
+    index bug; CritC1's stub reading; RevCounterA's held=5/5 forger.
+  - **Limit.** The rule binds the L1's freeze discipline; it does not make static arms
+    unforgeable (see round-51 report, forgery boundary).

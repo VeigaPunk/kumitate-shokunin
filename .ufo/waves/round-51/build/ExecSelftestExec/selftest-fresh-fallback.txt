@@ -1,0 +1,27 @@
+=== FRESH-MKTEMP RUN — subject: build/ExecSelftestExec/receipt-attest.mjs (THIS SEAT'S FALLBACK implementation, used because build/ExecInstrument/ was absent until 23:27)
+=== subject sha256: cdde1e8aaa731b381bda16627114755b0823918409f747ec16a70c7102c5ed04
+=== directory: /tmp/execselftestexec-fb.YTf5cG  (only the script copied; no corpus, no sidecars)
+=== $ node receipt-attest.mjs --selftest
+CASE 01 run-roundtrip-valid PASS observed=RECEIPT: VALID exit=0 hand-built fixture verifies
+CASE 02 flake-injection-replay PASS observed=RECEIPT: REPLAY reason=inner-digest-mismatch exit=1 doctored bound field, re-signed sidecar
+CASE 03 sidecar-mismatch-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 doctored bytes, stale sidecar
+CASE 04 prelude-rewrite-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 lesson-M2 move: prelude only
+CASE 05 clock-disorder-replay PASS observed=RECEIPT: REPLAY reason=clock-disorder exit=1 wall_end < wall_start
+CASE 06 ledger-nonce-reuse-replay PASS observed=RECEIPT: REPLAY reason=nonce-reuse:b.txt exit=1 same nonce, different body
+CASE 07 ledger-benign-copy-valid PASS observed=RECEIPT: VALID exit=0 byte-identical copy is not reuse
+CASE 08 ledger-self-exclusion-valid PASS observed=RECEIPT: VALID exit=0 target excluded from its own ledger
+CASE 09 usage-no-args PASS observed=RECEIPT: USAGE reason=expected-run|verify|--selftest exit=64 
+CASE 10 usage-verify-two-paths PASS observed=RECEIPT: USAGE reason=expected-one-receipt-path exit=64 
+CASE 11 unreadable-receipt PASS observed=RECEIPT: UNREADABLE reason=receipt-unreadable:ENOENT exit=2 
+CASE 12 run-writes-receipt-and-sidecar PASS observed=RECEIPT: RECORDED /tmp/attest-selftest.LXE3zj/run.txt exit=0 files=true
+CASE 13 run-receipt-verifies-valid PASS observed=RECEIPT: VALID exit=0 
+CASE 14 run-records-argv PASS observed=argv:ok exit=0 ["/bin/sh","-c","printf kumitate"]
+CASE 15 run-records-nonce-128bit-hex PASS observed=nonce:ok exit=0 cf5e3a1915267bdad0c233942223994c
+CASE 16 sidecar-is-gnu-sha256sum-format PASS observed=sidecar:ok exit=0 "13de54a1e3637ff6f691402a20c668e32404c3f71e5fc2c17718e0ae12ba10f7  run.txt\n"
+CASE 17 no-environment-recorded PASS observed=env:ok exit=0 argv,digest,exit,mono_ns,nonce,stderr_sha256,stdout_sha256,wall_end,wall_end_ms,wall_start,wall_start_ms
+CASE 18 run-nonces-are-distinct PASS observed=nonce:distinct exit=0 
+CASE 19 canonical-json-sorted-keys PASS observed=canon:ok exit=0 
+CASE 20 inner-digest-binds-semantic-fields PASS observed=digest:ok exit=0 
+SELFTEST CASES: 20 FAILED: 0
+ATTEST_SELFTEST: PASS
+exit=0

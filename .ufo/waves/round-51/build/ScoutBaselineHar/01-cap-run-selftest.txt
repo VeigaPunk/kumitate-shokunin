@@ -1,0 +1,27 @@
+# 01-cap-run-selftest
+started: 2026-10-24T02:01:08.888Z
+cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin
+command: node scripts/cap-run.mjs --selftest
+jj_@ pinned: 1e6bd7c0382c73dddf9e5d6fa99c8a71c03580ce
+git_HEAD: 1fd8acebbd9a9d75896456e1985e752358ec4798
+wall_s: 7.678
+exit: 0
+signal: 
+
+----- stdout -----
+PASS  usage arms exit 64 with CAP_RUN: USAGE
+PASS  exit code and stdout pass through (EXIT code=7)
+PASS  runner cwd is writable to the child
+PASS  --verdict-file: child stderr byte-exact, verdict line in the file (EXIT code=3, decimal budget)
+PASS  --bind: a host directory outside the cwd is read-write only when bound
+PASS  explicit env: --env pair arrives, GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE and marker dropped
+PASS  own PID namespace: /proc/1/environ readable, planted marker and GIT_DIR absent
+PASS  512 MiB Buffer child under --mem 256 dies non-zero with OOM (allocs=15, exit=137)
+PASS  32 MiB Buffer child under --mem 256 finishes (liveness)
+PASS  budget 2 s on a 300 s child: BUDGET, exit 124, no leftover (wall=2.029s)
+PASS  SIGTERM 1.5 s into a 300 s child: SIGNAL, exit 143, no leftover (0.012s)
+PASS  detached new-session grandchild is gone after the runner returns
+CAP_RUN_SELFTEST: 12/12 pass
+VERDICT: PASS
+----- stderr -----
+

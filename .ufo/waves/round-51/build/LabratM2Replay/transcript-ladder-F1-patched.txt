@@ -1,0 +1,29 @@
+================================================================
+FORGER LADDER — tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/build/LabratM2Replay/patched-F1-prelude-coherence.mjs
+sha256: bbd118ebb62ac683ef5f8d55cf0a78695f0fc06dc6190d5d75ba5e86758f0391
+================================================================
+
+--- RUNG 0 — genuine receipt (baseline: must be VALID)
+    attest-run-1.txt                                           -> RECEIPT: VALID (exit=0)
+
+--- RUNG 1 — exact lesson-M2 move: rewrite ONLY the prelude, KEEP the old sidecar
+    attest-run-2-replayed.txt                                  -> RECEIPT: TAMPERED reason=sidecar-hash-mismatch (exit=1)
+
+--- RUNG 2 — the forger REFRESHES the sidecar over the re-dated bytes (no secret needed)
+    attest-run-2-replayed.txt                                  -> RECEIPT: TAMPERED reason=prelude-disagrees-with-wall-start (exit=1)
+    with --ledger over the dir holding the original:
+    attest-run-2-replayed.txt                                  -> RECEIPT: TAMPERED reason=prelude-disagrees-with-wall-start (exit=1)
+
+--- RUNG 3 — the M2 PRESENTATION: ONE genuine invocation shown as THREE time-spaced runs
+    attest-run-1.txt                                           -> RECEIPT: VALID (exit=0)
+    attest-run-2.txt                                           -> RECEIPT: TAMPERED reason=prelude-disagrees-with-wall-start (exit=1)
+    attest-run-3.txt                                           -> RECEIPT: TAMPERED reason=prelude-disagrees-with-wall-start (exit=1)
+
+--- RUNG 4 — re-dated AND re-bodied (semantic clocks rewritten), OLD nonce, digest+sidecar recomputed
+    attest-run-2.txt                                           -> RECEIPT: REPLAY reason=nonce-reuse:attest-run-1.txt (exit=1)
+
+--- RUNG 5 — full forge: FRESH nonce + re-dated + recomputed digest + recomputed sidecar
+    attest-run-2.txt                                           -> RECEIPT: VALID (exit=0)
+    (RUNG 5 is the kept Q39 ceiling: an unkeyed digest cannot detect a wholly
+     invented record. The plan keeps this ceiling verbatim.)
+### DONE

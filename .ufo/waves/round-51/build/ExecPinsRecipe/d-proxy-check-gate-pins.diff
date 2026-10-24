@@ -1,0 +1,125 @@
+# (d) `scripts/proxy-check.mjs` — the `GATE_PINS` map addition
+
+**Target file:** `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs`
+**Target location:** the `GATE_PINS` constant (`scripts/proxy-check.mjs:461-471`),
+immediately after the `pin.counter-rerun` entry.
+
+## Unified-diff-style snippet
+
+```diff
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -467,5 +467,6 @@ const GATE_PINS = {
+   'pin.cap-run': 'scripts/cap-run.mjs',
+   'pin.bind-oracle': 'scripts/bind-oracle.mjs', // round 50: child-side mount oracle for bind visibility
+   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
+   'pin.counter-rerun': 'scripts/counter-rerun.mjs', // round 48: repeat-run receipt instrument (C2)
++  'pin.receipt-attest': 'scripts/receipt-attest.mjs', // round 51: invocation receipt attestation instrument (C1)
+ };
+```
+
+The diff is one added line. `GATE_PINS` is declared at `scripts/proxy-check.mjs:461`
+with the comment `/** Separate lane-owned gate pins; never widen the parent-frozen v1 key set. */`
+on the line above — the added entry sits **inside that block**, so the v1 stanza's 23-key
+set and its six-pin count are untouched. `STANZA_KEYS` (`:459`) is built from
+`TERM_KEYS` + `Object.keys(PINS)` only — `GATE_PINS` is deliberately not part of it, so
+this addition cannot widen the frozen v1 contract.
+
+## What the addition does, in the tool's own terms
+
+`GATE_PINS` is used in three places, and the new entry reaches all three:
+
+1. **`parseGatePins` (`:1054`)** — the gate-pin block's whitelist. A `pin.*` line in the
+   SCORECARD's `kumitate-gate-pins-v1` block whose key is not in `GATE_PINS` is
+   **fail-closed** (`GATE_PIN_KEY_UNKNOWN`, exit 2). Without this entry, delta (a)'s
+   `pin.receipt-attest=…` line would abort the whole check. Measured:
+
+   ```
+   proxy-check: fail-closed — GATE_PIN_KEY_UNKNOWN: line 322: pin.receipt-attest is not a kumitate-gate-pins-v1 key
+   PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 322: pin.receipt-attest is not a kumitate-gate-pins-v1 key
+   exit=2
+   ```
+
+2. **`compareGatePins` (`:1114-1119`)** — the new key is verified against the actual
+   file's sha256, and a mismatch is a `GATE_PIN_DRIFT` error. This is what makes
+   `pin.receipt-attest` a real pin rather than a declaration.
+
+3. **`comparePinCoverage` (`:1132-1148`)** — the advisory `PIN_UNPINNED` sweep over
+   `scripts/*.mjs`. Without this entry, `scripts/receipt-attest.mjs` would be reported as
+   unpinned, and `--strict` **promotes that warning to a gate failure** (`:1196`:
+   `const drift = errors > 0 || (Boolean(strict) && warnings > 0)`). Measured with the
+   script present but the map entry absent:
+
+   ```
+   PROXY  warn  PIN_UNPINNED  scripts/receipt-attest.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+   PROXY: DRIFT (... PIN_UNPINNED term=scripts/receipt-attest.mjs; ...)
+   exit=1
+   ```
+
+   With the entry present, that warning is gone.
+
+## The re-pin this addition forces (the part that is easy to miss)
+
+Editing `scripts/proxy-check.mjs` changes its bytes, so the parent-frozen v1 pin
+`pin.proxy-check` in the SCORECARD's `kumitate-proxy-v1` stanza (`SCORECARD.md:308`)
+becomes stale. Measured with the addition applied and nothing else changed:
+
+```
+PROXY  error  PIN_DRIFT  pin.proxy-check: declared=0d5c00c26950788f3ef20fc86fac6c78523438a8d75637021fe89ea4a506f929 computed=495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9
+```
+
+`PIN_DRIFT` is an **error** (not a warning) at `comparePins` (`:1103-1110`), so it
+fails the run under both default and `--strict` modes — it would break harm rule H3 and
+probe arm A5.
+
+**Therefore the integrator must also update `SCORECARD.md:308` to:**
+
+```
+pin.proxy-check=495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9
+```
+
+That digest is the sha256 of `scripts/proxy-check.mjs` **after exactly this one-line
+addition** (measured). It changes if the file is edited by even one more byte — for
+example if the integrator also adds a comment or reformats. Re-derive it:
+
+```sh
+sha256sum scripts/proxy-check.mjs | cut -d' ' -f1
+```
+
+**Order of operations:** (1) apply this diff; (2) `sha256sum scripts/proxy-check.mjs` →
+write `pin.proxy-check=` into the v1 stanza; (3) `sha256sum scripts/receipt-attest.mjs` →
+write `pin.receipt-attest=` into the gate-pins block (delta (a)); (4) re-derive the
+stanza terms `A`/`C`/`C2`/`C2_total`; (5) run `node scripts/proxy-check.mjs --strict`
+and confirm `PROXY: MATCH` exit 0.
+
+## The tool's own hermetic suite still passes with the new key
+
+`proxy-check.mjs --selftest` is a checklist item of this lane (item 9) and must stay
+green. Its fixture builder (`fxBase`, `:1595-1601`) synthesises gate-pin fixtures from
+a `gatePins` knob, so the new key is exercised by the same machinery as the existing
+nine. Measured on the scratch clone with the addition applied:
+
+```
+$ node scripts/proxy-check.mjs --selftest | tail -3
+PASS  [121/122]  every declared finding kind fires in at least one fixture — 22 kinds observed
+PASS  [122/122]  every declared fail-closed arm fires in at least one fixture — 17 arms observed
+PROXY_SELFTEST: 122/122 pass
+VERDICT: PASS
+exit=0
+```
+
+122/122 pass, exit 0 — unchanged from the pre-change count, so the addition introduces
+no new finding kind and removes no arm.
+
+## What the addition must NOT do
+
+- **Do not add the key to `PINS`** (`:455-459`). `PINS` is the v1 stanza's six pins;
+  `STANZA_KEYS` (`:459`) is `TERM_KEYS` + `Object.keys(PINS)`, so a `PINS` entry would
+  widen the parent-frozen v1 key set from 23 to 24 and break `STANZA_MALFORMED`
+  validation of the v1 stanza. `GATE_PINS` is the correct home — it is the lane-owned
+  block the round-41-2 design created for exactly this purpose.
+- **Do not change `GATE_PIN_HEAD` / `GATE_PIN_CONTRACT`** (`:304-305`). The block head
+  is matched by prefix (`startsWith`), so the contract id must stay
+  `kumitate-gate-pins-v1`.
+- **Do not add a `pin.receipt-attest` line to the v1 `kumitate-proxy-v1` stanza.** It
+  would read `STANZA_KEY_UNKNOWN` and fail closed (`parseStanza`, `:994`).

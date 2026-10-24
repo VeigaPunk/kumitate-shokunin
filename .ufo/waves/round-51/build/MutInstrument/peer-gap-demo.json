@@ -1,0 +1,102 @@
+[
+  {
+    "id": "D02",
+    "kind": "integrity-hole",
+    "why": "the exit code of the recorded command is unbound by the inner digest",
+    "desc": "the inner digest stops binding the exit code",
+    "artifact": "exit rewritten to 42, digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "D03",
+    "kind": "integrity-hole",
+    "why": "stdout_sha256 is unbound by the inner digest",
+    "desc": "the inner digest stops binding stdout_sha256",
+    "artifact": "stdout_sha256 rewritten to \"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\", digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "D04",
+    "kind": "integrity-hole",
+    "why": "stderr_sha256 is unbound by the inner digest",
+    "desc": "the inner digest stops binding stderr_sha256",
+    "artifact": "stderr_sha256 rewritten to \"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd\", digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "D05",
+    "kind": "integrity-hole",
+    "why": "the wall clocks are unbound by the inner digest — a receipt can be RE-DATED (the lesson-M2 forgery moved inside the JSON body)",
+    "desc": "the inner digest stops binding the wall clocks",
+    "artifact": "wall_start rewritten to \"2020-01-01T00:00:00.000Z\", digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "D06",
+    "kind": "integrity-hole",
+    "why": "argv is unbound by the inner digest",
+    "desc": "the inner digest stops binding argv",
+    "artifact": "argv rewritten to [\"/bin/false\"], digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "D07",
+    "kind": "integrity-hole",
+    "why": "the monotonic span is unbound by the inner digest",
+    "desc": "the inner digest stops binding the monotonic span",
+    "artifact": "mono_ns rewritten to 999, digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  },
+  {
+    "id": "S03",
+    "kind": "integrity-hole",
+    "why": "a missing sidecar is accepted — the sidecar is the only layer covering the run-at prelude",
+    "desc": "a missing sidecar is treated as VALID",
+    "artifact": "the sidecar file deleted",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: TAMPERED exit 1"
+  },
+  {
+    "id": "N06",
+    "kind": "entropy-weakness",
+    "why": "the nonce is 64 bits, not the contracted 128",
+    "desc": "the nonce is truncated to 64 bits",
+    "artifact": "the nonce field width",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "nonce field is 16 hex chars; the contract requires 32 (128 bits)"
+  },
+  {
+    "id": "V03",
+    "kind": "benign-or-cosmetic",
+    "why": "the VALID verdict literal carries a trailing space",
+    "desc": "the VALID verdict literal carries a trailing space",
+    "artifact": "the VALID verdict literal",
+    "verdict": "\"RECEIPT: VALID\"",
+    "exit": 0,
+    "note": "the frozen counter greps /RECEIPT: VALID/ (a regex), so a trailing space is invisible to it"
+  },
+  {
+    "id": "C02",
+    "kind": "integrity-hole",
+    "why": "the negative-monotonic check is the only guard against a time-reversed span once the digest is recomputed",
+    "desc": "the negative monotonic span is accepted",
+    "artifact": "mono_ns rewritten to -5, digest re-derived under the mutant's own rule, sidecar regenerated",
+    "verdict": "RECEIPT: VALID",
+    "exit": 0,
+    "note": "the contract requires RECEIPT: REPLAY exit 1 (the inner digest must bind this field)"
+  }
+]

@@ -1,0 +1,84 @@
+================================================================
+ISOLATED ledger-rule matrix — each case in its own directory
+tool: /tmp/lm2-opjoxh/receipt-attest.mjs   sha256: 89952c55cd29199f5a037b7054efaee88baa948651cc46f543753658c68a20a3
+================================================================
+
+### CASE 1 — genuine run-1 + a prelude-rewritten copy whose sidecar was RECOMPUTED
+###          (the forger defeats the sidecar arm; same JSON body => same inner digest)
+  digest run-1   : 6e9fc053eef86545b07c7c2ed04259a69ba00aba40f31f4c1712d66bd28d503e
+  digest forged  : 6e9fc053eef86545b07c7c2ed04259a69ba00aba40f31f4c1712d66bd28d503e
+  -- rule=l1frozen, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case1 /tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt nonce=b36d229e1c2868aaf5e34fe45db4cd56 run-at=2030-01-01T00:00:00.000Z
+EXIT=0
+
+  -- rule=intact, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case1 /tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt other=attest-run-1.txt
+EXIT=1
+
+  -- rule=literal, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case1 /tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case1/attest-run-2-forged.txt other=attest-run-1.txt
+EXIT=1
+
+
+### CASE 2 — genuine run-1 + a prelude-rewritten copy whose sidecar was NOT recomputed
+###          (the exact lesson-M2 move; the A3 committed control's shape)
+  -- no ledger (the A3 arm's exact call) --
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+EXIT=1
+
+  -- rule=l1frozen, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case2 /tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+EXIT=1
+
+  -- rule=intact, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case2 /tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt other=attest-run-1.txt
+EXIT=1
+
+  -- rule=literal, verify --ledger over the dir --
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case2 /tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case2/attest-run-2-replayed.txt other=attest-run-1.txt
+EXIT=1
+
+
+### CASE 3 — the counter's A4 arm: genuine run-2 + its stale-sidecar twin in one dir
+###          (A4 requires attest-run-2.txt to verify VALID under --ledger)
+  -- rule=l1frozen, verify --ledger attest-run-2.txt --
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case3 /tmp/lm2-opjoxh/iso/case3/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/iso/case3/attest-run-2.txt nonce=c2bf332d09770d2e92691370bcddeb25 run-at=2026-10-24T02:22:49.589Z
+EXIT=0
+
+  -- rule=intact, verify --ledger attest-run-2.txt --
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case3 /tmp/lm2-opjoxh/iso/case3/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/iso/case3/attest-run-2.txt nonce=c2bf332d09770d2e92691370bcddeb25 run-at=2026-10-24T02:22:49.589Z
+EXIT=0
+
+  -- rule=literal, verify --ledger attest-run-2.txt --
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case3 /tmp/lm2-opjoxh/iso/case3/attest-run-2.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case3/attest-run-2.txt other=attest-run-2-replayed.txt
+EXIT=1
+
+
+### CASE 4 — the item's requested variant: NEW body (recomputed inner digest), OLD nonce
+###          + recomputed sidecar; verified with --ledger over a 3-receipt dir
+  -- rule=l1frozen, verify --ledger attest-run-4-oldnonce.txt --
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case4 /tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt other=attest-run-1.txt
+EXIT=1
+
+  -- rule=intact, verify --ledger attest-run-4-oldnonce.txt --
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case4 /tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt other=attest-run-1.txt
+EXIT=1
+
+  -- rule=literal, verify --ledger attest-run-4-oldnonce.txt --
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/iso/case4 /tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/iso/case4/attest-run-4-oldnonce.txt other=attest-run-1.txt
+EXIT=1
+
+### DONE

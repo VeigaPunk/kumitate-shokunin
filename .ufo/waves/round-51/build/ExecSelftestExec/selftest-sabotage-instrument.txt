@@ -1,0 +1,36 @@
+=== SABOTAGE RUN — subject: a scratch copy of build/ExecInstrument/receipt-attest.mjs
+=== sabotage: one case expectation swapped VALID -> REPLAY in the fixture
+===   case 'verify-genuine-receipt-reads-valid':  lastLine(r) !== 'RECEIPT: VALID'  ->  'RECEIPT: REPLAY'
+=== sabotage-copy sha256: 732c2665c592d172dc5bbf1a322364209b283a5bdb8e36f5483e15e514072011
+=== $ node receipt-attest.mjs --selftest
+ATTEST_CASE 01 run-writes-receipt-and-sidecar: PASS
+ATTEST_CASE 02 receipt-shape-is-prelude-plus-json-line: PASS
+ATTEST_CASE 03 sidecar-is-gnu-text-mode-basename: PASS
+ATTEST_CASE 04 sidecar-hash-is-computed-with-node-crypto: PASS
+ATTEST_CASE 05 nonce-is-128-bit-hex-and-unique-per-run: PASS
+ATTEST_CASE 06 verify-genuine-receipt-reads-valid: FAIL (verdict line is "RECEIPT: VALID")
+ATTEST_CASE 07 flake-injection-doctored-body-reads-replay: PASS
+ATTEST_CASE 08 digest-field-corrupted-with-recomputed-sidecar-reads-replay: PASS
+ATTEST_CASE 09 sidecar-mismatch-reads-tampered: PASS
+ATTEST_CASE 10 missing-sidecar-reads-tampered: PASS
+ATTEST_CASE 11 prelude-only-rewrite-reads-tampered: PASS
+ATTEST_CASE 12 prelude-rewrite-with-forged-sidecar-reads-replay: PASS
+ATTEST_CASE 13 ledger-detects-a-nonce-reused-by-a-different-record: PASS
+ATTEST_CASE 14 ledger-exempt-a-byte-identical-duplicate: PASS
+ATTEST_CASE 15 ledger-ignores-an-unattested-copy: PASS
+ATTEST_CASE 16 usage-errors-exit-64: PASS
+ATTEST_CASE 17 missing-receipt-reads-unreadable-exit-2: PASS
+ATTEST_CASE 18 malformed-receipt-reads-unreadable-exit-2: PASS
+ATTEST_CASE 19 clock-order-violation-reads-tampered: PASS
+ATTEST_CASE 20 negative-monotonic-span-reads-tampered: PASS
+ATTEST_CASE 21 prelude-outside-the-wall-window-reads-tampered: PASS
+ATTEST_CASE 22 inner-digest-covers-every-semantic-field: PASS
+ATTEST_CASE 23 canonical-json-is-sorted-and-stable: PASS
+ATTEST_CASE 24 receipt-records-no-environment: PASS
+ATTEST_CASE 25 run-records-the-command-exit-code: PASS
+ATTEST_CASE 26 run-records-output-hashes-not-output: PASS
+ATTEST_CASE 27 verify-resolves-the-sidecar-next-to-the-receipt: PASS
+ATTEST_CASES: 26 passed, 1 failed
+receipt-attest: SELFTEST FAIL verify-genuine-receipt-reads-valid: verdict line is "RECEIPT: VALID"
+ATTEST_SELFTEST: FAIL
+exit=1

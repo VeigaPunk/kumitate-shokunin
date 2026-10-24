@@ -1,0 +1,188 @@
+{
+  "head": "3ed875d34914560d3e30ee3e80bec7fa9b9e8666",
+  "base": "c90b9de94009b938fa19a089bfaa97df20b54f86",
+  "probeSha": "422e67b02d844fd1c3fe2d20c9211261460c452381a111b68b0d6bc22af53cd1",
+  "exactFind": 102,
+  "correctedFind": 106,
+  "exactGrep": 1,
+  "correctedGrep": 4,
+  "a4": 162,
+  "nonceAll": 7,
+  "nonceAllI": 7,
+  "caseOnly": [],
+  "outsideWaves": [
+    ".ufo/rounds/round-33/receipt-prerequisites.json",
+    "scripts/counter-rerun.mjs"
+  ],
+  "rows": 168,
+  "parseable": 0,
+  "notAtBase": [],
+  "dirty": [],
+  "prose": [
+    {
+      "rel": ".ufo/waves/round-36/build/ScoutR7Members.md",
+      "mentions": [
+        {
+          "line": 46,
+          "text": "- `create_0600_tmp` names `<prefix>-<pid>-<nanos:x>` (nonce only, no uuid), `create_new` 0600; `hard_link_tmp` maps AlreadyExists to Ok(false) (lost race), every other error propagates."
+        },
+        {
+          "line": 48,
+          "text": "- Test pins: `tmp_guard_cleans_on_drop_but_not_after_disarm` (171) proves both drop arms; `hard_link_tmp_is_create_new_semantics` (155); `create_0600_tmp_creates_private_new_file_with_nonce_name` (131)."
+        },
+        {
+          "line": 57,
+          "text": "`create_0600_tmp_creates_private_new_file_with_nonce_name` (`fs_durability.rs:131`)"
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-45/a2-control/ReopenS027.md",
+      "mentions": [
+        {
+          "line": 38,
+          "text": "- Blob-page receipts are non-regenerable (per-request nonce); only raw-URL hashes are."
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-45/build/CtlQuoteFabricated.md",
+      "mentions": [
+        {
+          "line": 293,
+          "text": "page carries a per-request nonce. The quote re-opened FOUND in all three,"
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-48/r48/SentinelReceipt.md",
+      "mentions": [
+        {
+          "line": 3,
+          "text": "**Severity: High (round-verdict integrity).** This is a straightforward false-evidence path, not a code-execution issue: receipts are plain, seat-authored text, while C1/C2 scores affect whether operability is accepted. "
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-50/plan.md",
+      "mentions": [
+        {
+          "line": 60,
+          "text": "writing /tmp/<nonce> through `--bind /tmp` leaves a host file — the bug in one file)."
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-50/r50/CritPlan.md",
+      "mentions": [
+        {
+          "line": 80,
+          "text": "The mount-table correction has its own boundary: G50:96 tests existence of a tmpfs row, not which stacked mount supplies effective `/tmp`. The nonce write additionally checks absence at one host path, not the provenance "
+        },
+        {
+          "line": 94,
+          "text": "| C1 plan:50, child `/tmp` “is still tmpfs” | One `.some(...)` mount-table test plus one nonce write (G50:94–101) | **One mechanism/observation.** Does not enumerate effective stacked-mount origins; see chronology sectio"
+        },
+        {
+          "line": 95,
+          "text": "| C1 plan:51–54, both suites PASS, five named pins, strict proxy MATCH, no-bind write leaves no host file | G4/G5 check two executions; G6 loops five keys; G7 one proxy execution; G8 one nonce write | **Finite observatio"
+        }
+      ]
+    },
+    {
+      "rel": ".ufo/waves/round-50/r50/SimplifierGuard.md",
+      "mentions": [
+        {
+          "line": 47,
+          "text": "| 3 | `--tmpfs /tmp` then `--bind /tmp /tmp`, child `touch /tmp/<nonce>` | **HOST FILE APPEARED** (leak), child rc=0 |"
+        },
+        {
+          "line": 48,
+          "text": "| 4 | `--tmpfs /tmp`, no bind, child `touch /tmp/<nonce>` | no host file — tmpfs isolation intact |"
+        }
+      ]
+    }
+  ],
+  "missedByBrace": [
+    ".ufo/waves/round-50/ReRunB49-1.txt",
+    ".ufo/waves/round-50/ReRunB49-2.txt",
+    ".ufo/waves/round-50/ReRunB49-3.txt",
+    ".ufo/waves/round-50/r50/MutReceiptSyntax.md"
+  ],
+  "roundDirs": [
+    {
+      "dir": "round-35",
+      "a4": 7
+    },
+    {
+      "dir": "round-36",
+      "a4": 0
+    },
+    {
+      "dir": "round-37",
+      "a4": 0
+    },
+    {
+      "dir": "round-38",
+      "a4": 0
+    },
+    {
+      "dir": "round-39",
+      "a4": 0
+    },
+    {
+      "dir": "round-40",
+      "a4": 6
+    },
+    {
+      "dir": "round-41",
+      "a4": 3
+    },
+    {
+      "dir": "round-42",
+      "a4": 5
+    },
+    {
+      "dir": "round-43",
+      "a4": 7
+    },
+    {
+      "dir": "round-44",
+      "a4": 12
+    },
+    {
+      "dir": "round-45",
+      "a4": 1
+    },
+    {
+      "dir": "round-46",
+      "a4": 1
+    },
+    {
+      "dir": "round-47",
+      "a4": 0
+    },
+    {
+      "dir": "round-48",
+      "a4": 113
+    },
+    {
+      "dir": "round-49",
+      "a4": 3
+    },
+    {
+      "dir": "round-50",
+      "a4": 4
+    },
+    {
+      "dir": "round-51",
+      "a4": 0
+    }
+  ],
+  "shaCrosscheck": {
+    "rel": ".ufo/waves/round-35/falsify/RerunChecklists.md",
+    "sha": "35c51c5af157f9f626392a690214d8a9735792123e342506188974983797d8e7",
+    "cli": "35c51c5af157f9f626392a690214d8a9735792123e342506188974983797d8e7"
+  },
+  "parseableDetail": []
+}

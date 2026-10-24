@@ -1,0 +1,35 @@
+================================================================
+FORGER LADDER — tool: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/build/ExecInstrument/receipt-attest.mjs
+sha256: 44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9
+================================================================
+
+--- RUNG 0 — genuine receipt (baseline: must be VALID)
+    attest-run-1.txt                                           -> RECEIPT: VALID (exit=0)
+
+--- RUNG 1 — exact lesson-M2 move: rewrite ONLY the prelude, KEEP the old sidecar
+    attest-run-2-replayed.txt                                  -> receipt-attest: sidecar mismatch: sidecar b48c32b4d68218abec5f7cf21d94f9e28db991c46212de2ccf7c239ec36ff7e6, actual 35310844e8488b6ffc3e0f7fbd58ead43fde5fda2880868740fd464891aafda6
+RECEIPT: TAMPERED (exit=1)
+
+--- RUNG 2 — the forger REFRESHES the sidecar over the re-dated bytes (no secret needed)
+    attest-run-2-replayed.txt                                  -> receipt-attest: prelude 2030-01-01T00:00:00.000Z is outside the recorded wall window [2026-10-24T02:35:04.388Z, 2026-10-24T02:35:04.391Z]
+RECEIPT: TAMPERED (exit=1)
+    with --ledger over the dir holding the original:
+    attest-run-2-replayed.txt                                  -> receipt-attest: prelude 2030-01-01T00:00:00.000Z is outside the recorded wall window [2026-10-24T02:35:04.388Z, 2026-10-24T02:35:04.391Z]
+RECEIPT: TAMPERED (exit=1)
+
+--- RUNG 3 — the M2 PRESENTATION: ONE genuine invocation shown as THREE time-spaced runs
+    attest-run-1.txt                                           -> RECEIPT: VALID (exit=0)
+    attest-run-2.txt                                           -> receipt-attest: prelude 2026-10-24T02:45:04.000Z is outside the recorded wall window [2026-10-24T02:35:04.461Z, 2026-10-24T02:35:04.463Z]
+RECEIPT: TAMPERED (exit=1)
+    attest-run-3.txt                                           -> receipt-attest: prelude 2026-10-24T02:55:04.000Z is outside the recorded wall window [2026-10-24T02:35:04.461Z, 2026-10-24T02:35:04.463Z]
+RECEIPT: TAMPERED (exit=1)
+
+--- RUNG 4 — re-dated AND re-bodied (semantic clocks rewritten), OLD nonce, digest+sidecar recomputed
+    attest-run-2.txt                                           -> receipt-attest: nonce 328e2ba383225d396428a84e000b71b3 already bound to a different record in attest-run-1.txt
+RECEIPT: REPLAY (exit=1)
+
+--- RUNG 5 — full forge: FRESH nonce + re-dated + recomputed digest + recomputed sidecar
+    attest-run-2.txt                                           -> RECEIPT: VALID (exit=0)
+    (RUNG 5 is the kept Q39 ceiling: an unkeyed digest cannot detect a wholly
+     invented record. The plan keeps this ceiling verbatim.)
+### DONE

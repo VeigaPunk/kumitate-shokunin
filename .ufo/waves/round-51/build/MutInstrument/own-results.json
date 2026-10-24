@@ -1,0 +1,338 @@
+{
+  "candidate": "/tmp/mut-instr/pristine/receipt-attest.mjs",
+  "pristineSha": "d3936c9537b1573bbfaa132f55b1f498a68999e3737ceb83cd22b0192a9507e6",
+  "baseline": {
+    "arm1": {
+      "status": 0,
+      "last": "ATTEST_SELFTEST: PASS",
+      "ok": true
+    },
+    "arm2": {
+      "ok": true,
+      "problems": [],
+      "detail": "VALID/TAMPERED/REPLAY/LEDGER/A4c semantics hold"
+    }
+  },
+  "rows": [
+    {
+      "id": "D01",
+      "site": "digest",
+      "desc": "the inner digest stops binding the nonce",
+      "demo": "nonce rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-nonce, no-env-in-receipt | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "52cfb4e38eb4ea5a102525560ae707ca978445486b0796f917a4874d1a78fce5"
+    },
+    {
+      "id": "D02",
+      "site": "digest",
+      "desc": "the inner digest stops binding the exit code",
+      "demo": "exit rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-exit, ledger-nonce-reuse-replay, no-env-in-receipt, cli-verify-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "e39639011e46ee9848caa214c734b51091039608fad6d2ce4913fd1c309e22b7"
+    },
+    {
+      "id": "D03",
+      "site": "digest",
+      "desc": "the inner digest stops binding stdout_sha256",
+      "demo": "stdout_sha256 rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-stdout, no-env-in-receipt | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "25d96e3e2bb9208d1637c8781650525282306325d6f4405a9fa87a2957384c6a"
+    },
+    {
+      "id": "D04",
+      "site": "digest",
+      "desc": "the inner digest stops binding stderr_sha256",
+      "demo": "stderr_sha256 rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-stderr, no-env-in-receipt | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "040872de0ca44bf308547792e18de43e29743fdb6d52bda0afdd05bb08e3d13e"
+    },
+    {
+      "id": "D05",
+      "site": "digest",
+      "desc": "the inner digest stops binding the wall clocks",
+      "demo": "receipt re-dated, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-wall-start, flake-injection-replay, no-env-in-receipt | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "e1448d82fa463db8f2ecc17a05ffd33422691cb6789acaadf58df95760030139"
+    },
+    {
+      "id": "D06",
+      "site": "digest",
+      "desc": "the inner digest stops binding argv",
+      "demo": "argv rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-argv, no-env-in-receipt, twin-ledger-replay-both | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "b9f947fb95225d780c16f4e37333d58e9843f17a030c5b218b0f5698d73c9d67"
+    },
+    {
+      "id": "D07",
+      "site": "digest",
+      "desc": "the inner digest stops binding the monotonic span",
+      "demo": "mono_ns rewritten, digest re-derived",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-mono, no-env-in-receipt | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "8094ac58858c018250829bbb0f56bf78c19fab822593fbd2ea0fb89f23713f7e"
+    },
+    {
+      "id": "D08",
+      "site": "digest",
+      "desc": "the digest is computed over the object INCLUDING its own digest field",
+      "demo": "the digest is self-referential",
+      "verdict": "KILLED",
+      "detail": "arm1: exit=1 | arm2: no receipt produced",
+      "restoredOk": true,
+      "mutatedSha": "d5146900c10755c169a83f4b4c430bf8facb37d79f4f3207f9b3e82ff45e30ad"
+    },
+    {
+      "id": "D09",
+      "site": "digest",
+      "desc": "canonical JSON stops sorting keys",
+      "demo": "the body line is no longer canonical",
+      "verdict": "KILLED",
+      "detail": "arm1: no-env-in-receipt | arm2: green",
+      "restoredOk": true,
+      "mutatedSha": "73ffaab9331b19a0451a8544ee8dd407ae67470e27871e181b7a371884209bda"
+    },
+    {
+      "id": "D10",
+      "site": "digest",
+      "desc": "the inner digest uses sha1 instead of sha256",
+      "demo": "digest field is 40 hex chars, not 64",
+      "verdict": "KILLED",
+      "detail": "arm1: sidecar-gnu-format, digest-is-sha256-width | arm2: A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "ee207ed121c81f233db695e30c57a15267e74e0d73e070c5a239c847dad74e80"
+    },
+    {
+      "id": "D11",
+      "site": "digest",
+      "desc": "the digest comparison is inverted (mismatch never detected)",
+      "demo": "any doctored body verifies",
+      "verdict": "KILLED",
+      "detail": "arm1: roundtrip-valid, digest-binds-argv, digest-binds-exit, digest-binds-nonce, digest-binds-stdout, digest-binds-stderr, digest-binds-wall-start, digest-binds-wall-end, digest-binds-mono, flake-injection-replay, sidecar-mismatch-tampered, sidecar-missing-tampered, prelude-only-forgery-tampered, ledger-distinct-valid, ledger-same-digest-exempt, cli-verify-valid, cli-verify-replay, cli-verify-tampered, sidecar-prefix-collision-tampered, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last=\"RECEIPT: REPLAY\"; TAMPERED exit=1 last=\"RECEIPT: REPLAY\"; REPLAY exit=0 last=\"RECEIPT: VALID\"; LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"; A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "20efdfd66f6d8dbb7148b30adf289f5cab8b42a268bd585b17cfeb186df71976"
+    },
+    {
+      "id": "S01",
+      "site": "sidecar",
+      "desc": "the sidecar hash comparison is removed",
+      "demo": "any sidecar content passes",
+      "verdict": "KILLED",
+      "detail": "arm1: sidecar-mismatch-tampered, prelude-only-forgery-tampered, cli-verify-tampered, sidecar-prefix-collision-tampered | arm2: TAMPERED exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "b63a15167f88ee8467f98bce6313990e75cf1382c71a3e15cc528df7e14b4471"
+    },
+    {
+      "id": "S02",
+      "site": "sidecar",
+      "desc": "the sidecar hash is compared on a truncated prefix",
+      "demo": "a sidecar sharing only the prefix passes",
+      "verdict": "KILLED",
+      "detail": "arm1: roundtrip-valid, ledger-nonce-reuse-replay, ledger-distinct-valid, ledger-same-digest-exempt, clock-order-violation-replay, mono-negative-replay, cli-verify-valid, cli-ledger-replay, nonce-prefix-not-reuse, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both, nonce-suffix-not-reuse | arm2: VALID exit=1 last=\"RECEIPT: TAMPERED\"; LEDGER attest-run-1 exit=1 last=\"RECEIPT: TAMPERED\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: TAMPERED\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: TAMPERED\"; A4c twin-alone exit=1 last=\"RECEIPT: TAMPERED\"; A4c ledger(orig) exit=1 last=\"RECEIPT: TAMPERED\"; A4c ledger(twin) exit=1 last=\"RECEIPT: TAMPERED\"",
+      "restoredOk": true,
+      "mutatedSha": "f24005233b6159684fb061309cd7a928cb55aa8d19020bb98f8c173d400b2a4d"
+    },
+    {
+      "id": "S03",
+      "site": "sidecar",
+      "desc": "a missing sidecar is treated as VALID",
+      "demo": "sidecar deleted -> VALID",
+      "verdict": "KILLED",
+      "detail": "arm1: sidecar-missing-tampered | arm2: green",
+      "restoredOk": true,
+      "mutatedSha": "538832af80a23f252cbd35d733c48a3055d853317bdef02f6724e5412dcd593b"
+    },
+    {
+      "id": "S04",
+      "site": "sidecar",
+      "desc": "the sidecar covers the body line only, so the prelude is uncovered",
+      "demo": "prelude rewritten + sidecar regenerated -> VALID",
+      "verdict": "KILLED",
+      "detail": "arm1: sidecar-gnu-format, prelude-only-forgery-tampered | arm2: no receipt produced",
+      "restoredOk": true,
+      "mutatedSha": "b45b303fcffdd725d4d18a8129b569eeff393bac69c78a50985fc4e9620c59ba"
+    },
+    {
+      "id": "N01",
+      "site": "nonce",
+      "desc": "the ledger nonce comparison is inverted",
+      "demo": "every distinct nonce reads as reuse",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-distinct-valid, ledger-same-digest-exempt, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"; A4c ledger(orig) exit=0 last=\"RECEIPT: VALID\"; A4c ledger(twin) exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "c78c2d3184f56d0ee00048c070f1ca9737e79cbda4eb8e6e6806428a08d8ff2b"
+    },
+    {
+      "id": "N02",
+      "site": "nonce",
+      "desc": "the ledger nonce comparison is truncated to a prefix",
+      "demo": "distinct nonces sharing the prefix are falsely REPLAY",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last=\"RECEIPT: VALID\"; A4c ledger(twin) exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "c5af4b831ca894ea29f54f708092e978bfe92e83f3d9c175c4f49d27e4566e8a"
+    },
+    {
+      "id": "N03",
+      "site": "nonce",
+      "desc": "the ledger compares the digest instead of the nonce",
+      "demo": "a nonce-reuse forgery is ACCEPTED",
+      "verdict": "KILLED",
+      "detail": "arm1: exit=1 | arm2: no receipt produced",
+      "restoredOk": true,
+      "mutatedSha": "c46d6ef8130ec44fe1ce2c474192a38bd7811fc23653610e627bad028231a557"
+    },
+    {
+      "id": "N04",
+      "site": "nonce",
+      "desc": "the ledger walk is skipped entirely",
+      "demo": "nonce reuse is never detected",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last=\"RECEIPT: VALID\"; A4c ledger(twin) exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "7034fa5237885dc1b402fc451603022f7325c5d77c7f5949e4032558fea5f792"
+    },
+    {
+      "id": "N05",
+      "site": "nonce",
+      "desc": "the nonce is a fixed constant",
+      "demo": "every receipt carries the same nonce",
+      "verdict": "KILLED",
+      "detail": "arm1: runs-mint-distinct-128-bit-nonces | arm2: LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "ecca656b40f17d535fe56eaf257a70d455c150c086717de813a883ec615a85ff"
+    },
+    {
+      "id": "N06",
+      "site": "nonce",
+      "desc": "the nonce is truncated to 64 bits",
+      "demo": "nonce field is 16 hex chars, not 32",
+      "verdict": "KILLED",
+      "detail": "arm1: runs-mint-distinct-128-bit-nonces | arm2: green",
+      "restoredOk": true,
+      "mutatedSha": "467a57f4a7b8b57f363f2c59a0459b2789bf3c2ac58051f7b021a28aa3f03f7b"
+    },
+    {
+      "id": "N07",
+      "site": "nonce",
+      "desc": "the ledger compares only the last 8 hex chars of the nonce",
+      "demo": "distinct nonces sharing the suffix are falsely REPLAY",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last=\"RECEIPT: VALID\"; A4c ledger(twin) exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "d54a9276658e05afa59f834c2d4292db6973361c92408d1228009c66f72be4e3"
+    },
+    {
+      "id": "N08",
+      "site": "nonce",
+      "desc": "the ledger loses the same-digest exemption (the literal \"reject a nonce already present\" reading)",
+      "demo": "a byte-identical duplicate (the A3 doctored control) trips the ledger on every genuine receipt",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-same-digest-exempt | arm2: LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "7a28097d08d72e0ba16381343b126f98fa51014d68fb4f8019d766889a5ad69f"
+    },
+    {
+      "id": "N09",
+      "site": "nonce",
+      "desc": "the ledger exempts every nonce match (the digest distinction is dropped from the other side)",
+      "demo": "a same-nonce / different-digest twin is ACCEPTED (the A4c forgery)",
+      "verdict": "KILLED",
+      "detail": "arm1: ledger-nonce-reuse-replay, ledger-same-digest-exempt, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"; A4c ledger(orig) exit=0 last=\"RECEIPT: VALID\"; A4c ledger(twin) exit=0 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "da636975263254f134edf051aa98710e9e1cdd1f55c111f834fbedc8b6405e46"
+    },
+    {
+      "id": "V01",
+      "site": "verdict",
+      "desc": "the TAMPERED verdict literal is misspelled",
+      "demo": "the contract grep cannot match the TAMPERED verdict",
+      "verdict": "KILLED",
+      "detail": "arm1: green | arm2: TAMPERED exit=1 last=\"RECEIPT: TAMPER\"",
+      "restoredOk": true,
+      "mutatedSha": "d76de282d80f9ea912a47197ec42ab0cdf8cd7610a2b1eb7ee14ecab7b6d58c8"
+    },
+    {
+      "id": "V02",
+      "site": "verdict",
+      "desc": "the REPLAY verdict literal is misspelled",
+      "demo": "the contract grep cannot match the REPLAY verdict",
+      "verdict": "KILLED",
+      "detail": "arm1: green | arm2: REPLAY exit=1 last=\"RECEIPT: REPL\"; A4c ledger(orig) exit=1 last=\"RECEIPT: REPL\"; A4c ledger(twin) exit=1 last=\"RECEIPT: REPL\"",
+      "restoredOk": true,
+      "mutatedSha": "7fc615c537e57e7776f246f2ec8fef9d757f98b8d32bc4d02fdd7f6d54d1a6d7"
+    },
+    {
+      "id": "V03",
+      "site": "verdict",
+      "desc": "the VALID verdict literal carries a trailing space",
+      "demo": "the contract grep cannot match the VALID verdict",
+      "verdict": "KILLED",
+      "detail": "arm1: cli-verify-valid | arm2: green",
+      "restoredOk": true,
+      "mutatedSha": "55035024ff511b769df06ff98e8fcdb2b4e7910d4659489f8c9eb04e8e5d78c0"
+    },
+    {
+      "id": "V04",
+      "site": "verdict",
+      "desc": "a sidecar mismatch is reported as REPLAY instead of TAMPERED",
+      "demo": "the TAMPERED verdict is unreachable on the sidecar path",
+      "verdict": "KILLED",
+      "detail": "arm1: sidecar-mismatch-tampered, prelude-only-forgery-tampered, cli-verify-tampered, sidecar-prefix-collision-tampered | arm2: TAMPERED exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "36ffd1da57eb0cf799351fa729ab5c11ecba5ccded948477e16349dfd77b7a9f"
+    },
+    {
+      "id": "V05",
+      "site": "verdict",
+      "desc": "a finding verdict exits 0 instead of 1",
+      "demo": "a forgery is reported as success",
+      "verdict": "KILLED",
+      "detail": "arm1: digest-binds-argv, digest-binds-exit, digest-binds-nonce, digest-binds-stdout, digest-binds-stderr, digest-binds-wall-start, digest-binds-wall-end, digest-binds-mono, flake-injection-replay, sidecar-mismatch-tampered, sidecar-missing-tampered, prelude-only-forgery-tampered, ledger-nonce-reuse-replay, clock-order-violation-replay, mono-negative-replay, cli-verify-replay, cli-verify-tampered, cli-ledger-replay, sidecar-prefix-collision-tampered, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: TAMPERED exit=0 last=\"RECEIPT: TAMPERED\"; REPLAY exit=0 last=\"RECEIPT: REPLAY\"; A4c ledger(orig) exit=0 last=\"RECEIPT: REPLAY\"; A4c ledger(twin) exit=0 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "676d9d2b670c055192016fb77b0483c0afac4feb518019b0f39cd147bd780da5"
+    },
+    {
+      "id": "V06",
+      "site": "verdict",
+      "desc": "a VALID receipt exits 1 instead of 0",
+      "demo": "a genuine receipt is reported as a failure",
+      "verdict": "KILLED",
+      "detail": "arm1: roundtrip-valid, ledger-distinct-valid, ledger-same-digest-exempt, cli-verify-valid, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last=\"RECEIPT: VALID\"; LEDGER attest-run-1 exit=1 last=\"RECEIPT: VALID\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: VALID\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: VALID\"; A4c twin-alone exit=1 last=\"RECEIPT: VALID\"",
+      "restoredOk": true,
+      "mutatedSha": "7754a78b1bbf22013290e9b2797e30858606e081c270dddaf3faec5ce5e23346"
+    },
+    {
+      "id": "C01",
+      "site": "clock",
+      "desc": "the wall clock ordering test is inverted",
+      "demo": "a backwards clock verifies",
+      "verdict": "KILLED",
+      "detail": "arm1: roundtrip-valid, ledger-distinct-valid, ledger-same-digest-exempt, clock-order-violation-replay, cli-verify-valid, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-1 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-2 exit=1 last=\"RECEIPT: REPLAY\"; LEDGER attest-run-3 exit=1 last=\"RECEIPT: REPLAY\"; A4c twin-alone exit=1 last=\"RECEIPT: REPLAY\"",
+      "restoredOk": true,
+      "mutatedSha": "938a9fcc3020aef7f39df8ca462132f2dc72c1cb7c4ce87c3786ecffc78b25b5"
+    },
+    {
+      "id": "C02",
+      "site": "clock",
+      "desc": "the negative monotonic span is accepted",
+      "demo": "mono_ns = -5 verifies",
+      "verdict": "KILLED",
+      "detail": "arm1: exit=1 | arm2: no receipt produced",
+      "restoredOk": true,
+      "mutatedSha": "efc55d78ac2b1fd30cc8d542c3eb4b66f3cb717fa19d99e46c9f3d0a957eb75c"
+    }
+  ]
+}

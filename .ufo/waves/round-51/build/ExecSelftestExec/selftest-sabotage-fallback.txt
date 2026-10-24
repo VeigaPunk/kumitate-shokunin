@@ -1,0 +1,24 @@
+CASE 01 run-roundtrip-valid FAIL observed=RECEIPT: VALID exit=0 hand-built fixture verifies
+CASE 02 flake-injection-replay PASS observed=RECEIPT: REPLAY reason=inner-digest-mismatch exit=1 doctored bound field, re-signed sidecar
+CASE 03 sidecar-mismatch-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 doctored bytes, stale sidecar
+CASE 04 prelude-rewrite-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 lesson-M2 move: prelude only
+CASE 05 clock-disorder-replay PASS observed=RECEIPT: REPLAY reason=clock-disorder exit=1 wall_end < wall_start
+CASE 06 ledger-nonce-reuse-replay PASS observed=RECEIPT: REPLAY reason=nonce-reuse:b.txt exit=1 same nonce, different body
+CASE 07 ledger-benign-copy-valid PASS observed=RECEIPT: VALID exit=0 byte-identical copy is not reuse
+CASE 08 ledger-self-exclusion-valid PASS observed=RECEIPT: VALID exit=0 target excluded from its own ledger
+CASE 09 usage-no-args PASS observed=RECEIPT: USAGE reason=expected-run|verify|--selftest exit=64 
+CASE 10 usage-verify-two-paths PASS observed=RECEIPT: USAGE reason=expected-one-receipt-path exit=64 
+CASE 11 unreadable-receipt PASS observed=RECEIPT: UNREADABLE reason=receipt-unreadable:ENOENT exit=2 
+CASE 12 run-writes-receipt-and-sidecar PASS observed=RECEIPT: RECORDED /tmp/attest-selftest.0EBRc8/run.txt exit=0 files=true
+CASE 13 run-receipt-verifies-valid PASS observed=RECEIPT: VALID exit=0 
+CASE 14 run-records-argv PASS observed=argv:ok exit=0 ["/bin/sh","-c","printf kumitate"]
+CASE 15 run-records-nonce-128bit-hex PASS observed=nonce:ok exit=0 174dae515bfb497ad876166c92d03b43
+CASE 16 sidecar-is-gnu-sha256sum-format PASS observed=sidecar:ok exit=0 "21af278aed8d936ee83bebb1d26da8f7da4bd9344842dfd99254ec2edd24b5c0  run.txt\n"
+CASE 17 no-environment-recorded PASS observed=env:ok exit=0 argv,digest,exit,mono_ns,nonce,stderr_sha256,stdout_sha256,wall_end,wall_end_ms,wall_start,wall_start_ms
+CASE 18 run-nonces-are-distinct PASS observed=nonce:distinct exit=0 
+CASE 19 canonical-json-sorted-keys PASS observed=canon:ok exit=0 
+CASE 20 inner-digest-binds-semantic-fields PASS observed=digest:ok exit=0 
+SELFTEST CASES: 20 FAILED: 1
+FAILED run-roundtrip-valid
+ATTEST_SELFTEST: FAIL
+exit=1

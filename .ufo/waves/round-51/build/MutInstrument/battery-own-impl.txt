@@ -1,0 +1,43 @@
+CANDIDATE /tmp/mut-instr/pristine/receipt-attest.mjs
+sha256 d3936c9537b1573bbfaa132f55b1f498a68999e3737ceb83cd22b0192a9507e6
+BASELINE arm1(selftest) exit=0 last="ATTEST_SELFTEST: PASS"
+BASELINE arm2(contract) ok=true VALID/TAMPERED/REPLAY/LEDGER/A4c semantics hold
+
+=== PORTABLE MUTANT TABLE ===
+id	site	verdict	detail
+D01	digest	KILLED	arm1: digest-binds-nonce, no-env-in-receipt | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D02	digest	KILLED	arm1: digest-binds-exit, ledger-nonce-reuse-replay, no-env-in-receipt, cli-verify-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D03	digest	KILLED	arm1: digest-binds-stdout, no-env-in-receipt | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D04	digest	KILLED	arm1: digest-binds-stderr, no-env-in-receipt | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D05	digest	KILLED	arm1: digest-binds-wall-start, flake-injection-replay, no-env-in-receipt | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D06	digest	KILLED	arm1: digest-binds-argv, no-env-in-receipt, twin-ledger-replay-both | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D07	digest	KILLED	arm1: digest-binds-mono, no-env-in-receipt | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D08	digest	KILLED	arm1: exit=1 | arm2: no receipt produced
+D09	digest	KILLED	arm1: no-env-in-receipt | arm2: green
+D10	digest	KILLED	arm1: sidecar-gnu-format, digest-is-sha256-width | arm2: A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+D11	digest	KILLED	arm1: roundtrip-valid, digest-binds-argv, digest-binds-exit, digest-binds-nonce, digest-binds-stdout, digest-binds-stderr, digest-binds-wall-start, digest-binds-wall-end, digest-binds-mono, flake-injection-replay, sidecar-mismatch-tampered, sidecar-missing-tampered, prelude-only-forgery-tampered, ledger-distinct-valid, ledger-same-digest-exempt, cli-verify-valid, cli-verify-replay, cli-verify-tampered, sidecar-prefix-collision-tampered, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last="RECEIPT: REPLAY"; TAMPERED exit=1 last="RECEIPT: REPLAY"; REPLAY exit=0 last="RECEIPT: VALID"; LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"; A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+S01	sidecar	KILLED	arm1: sidecar-mismatch-tampered, prelude-only-forgery-tampered, cli-verify-tampered, sidecar-prefix-collision-tampered | arm2: TAMPERED exit=0 last="RECEIPT: VALID"
+S02	sidecar	KILLED	arm1: roundtrip-valid, ledger-nonce-reuse-replay, ledger-distinct-valid, ledger-same-digest-exempt, clock-order-violation-replay, mono-negative-replay, cli-verify-valid, cli-ledger-replay, nonce-prefix-not-reuse, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both, nonce-suffix-not-reuse | arm2: VALID exit=1 last="RECEIPT: TAMPERED"; LEDGER attest-run-1 exit=1 last="RECEIPT: TAMPERED"; LEDGER attest-run-2 exit=1 last="RECEIPT: TAMPERED"; LEDGER attest-run-3 exit=1 last="RECEIPT: TAMPERED"; A4c twin-alone exit=1 last="RECEIPT: TAMPERED"; A4c ledger(orig) exit=1 last="RECEIPT: TAMPERED"; A4c ledger(twin) exit=1 last="RECEIPT: TAMPERED"
+S03	sidecar	KILLED	arm1: sidecar-missing-tampered | arm2: green
+S04	sidecar	KILLED	arm1: sidecar-gnu-format, prelude-only-forgery-tampered | arm2: no receipt produced
+N01	nonce	KILLED	arm1: ledger-distinct-valid, ledger-same-digest-exempt, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"; A4c ledger(orig) exit=0 last="RECEIPT: VALID"; A4c ledger(twin) exit=0 last="RECEIPT: VALID"
+N02	nonce	KILLED	arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last="RECEIPT: VALID"; A4c ledger(twin) exit=0 last="RECEIPT: VALID"
+N03	nonce	KILLED	arm1: exit=1 | arm2: no receipt produced
+N04	nonce	KILLED	arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last="RECEIPT: VALID"; A4c ledger(twin) exit=0 last="RECEIPT: VALID"
+N05	nonce	KILLED	arm1: runs-mint-distinct-128-bit-nonces | arm2: LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"
+N06	nonce	KILLED	arm1: runs-mint-distinct-128-bit-nonces | arm2: green
+N07	nonce	KILLED	arm1: ledger-nonce-reuse-replay, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: A4c ledger(orig) exit=0 last="RECEIPT: VALID"; A4c ledger(twin) exit=0 last="RECEIPT: VALID"
+N08	nonce	KILLED	arm1: ledger-same-digest-exempt | arm2: LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"
+N09	nonce	KILLED	arm1: ledger-nonce-reuse-replay, ledger-same-digest-exempt, cli-ledger-replay, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"; A4c ledger(orig) exit=0 last="RECEIPT: VALID"; A4c ledger(twin) exit=0 last="RECEIPT: VALID"
+V01	verdict	KILLED	arm1: green | arm2: TAMPERED exit=1 last="RECEIPT: TAMPER"
+V02	verdict	KILLED	arm1: green | arm2: REPLAY exit=1 last="RECEIPT: REPL"; A4c ledger(orig) exit=1 last="RECEIPT: REPL"; A4c ledger(twin) exit=1 last="RECEIPT: REPL"
+V03	verdict	KILLED	arm1: cli-verify-valid | arm2: green
+V04	verdict	KILLED	arm1: sidecar-mismatch-tampered, prelude-only-forgery-tampered, cli-verify-tampered, sidecar-prefix-collision-tampered | arm2: TAMPERED exit=1 last="RECEIPT: REPLAY"
+V05	verdict	KILLED	arm1: digest-binds-argv, digest-binds-exit, digest-binds-nonce, digest-binds-stdout, digest-binds-stderr, digest-binds-wall-start, digest-binds-wall-end, digest-binds-mono, flake-injection-replay, sidecar-mismatch-tampered, sidecar-missing-tampered, prelude-only-forgery-tampered, ledger-nonce-reuse-replay, clock-order-violation-replay, mono-negative-replay, cli-verify-replay, cli-verify-tampered, cli-ledger-replay, sidecar-prefix-collision-tampered, ledger-nonce-reuse-forgery-replay, twin-ledger-replay-both | arm2: TAMPERED exit=0 last="RECEIPT: TAMPERED"; REPLAY exit=0 last="RECEIPT: REPLAY"; A4c ledger(orig) exit=0 last="RECEIPT: REPLAY"; A4c ledger(twin) exit=0 last="RECEIPT: REPLAY"
+V06	verdict	KILLED	arm1: roundtrip-valid, ledger-distinct-valid, ledger-same-digest-exempt, cli-verify-valid, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last="RECEIPT: VALID"; LEDGER attest-run-1 exit=1 last="RECEIPT: VALID"; LEDGER attest-run-2 exit=1 last="RECEIPT: VALID"; LEDGER attest-run-3 exit=1 last="RECEIPT: VALID"; A4c twin-alone exit=1 last="RECEIPT: VALID"
+C01	clock	KILLED	arm1: roundtrip-valid, ledger-distinct-valid, ledger-same-digest-exempt, clock-order-violation-replay, cli-verify-valid, nonce-prefix-not-reuse, nonce-suffix-not-reuse | arm2: VALID exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-1 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-2 exit=1 last="RECEIPT: REPLAY"; LEDGER attest-run-3 exit=1 last="RECEIPT: REPLAY"; A4c twin-alone exit=1 last="RECEIPT: REPLAY"
+C02	clock	KILLED	arm1: exit=1 | arm2: no receipt produced
+
+total=32 killed=32 survived=0 drift=0 not-applicable=0
+restore_check: 32/32 mutants restored to the pristine sha256
+results written to /tmp/mut-instr/FINAL-OWN/portable-results.json

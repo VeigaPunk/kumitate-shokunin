@@ -1,0 +1,215 @@
+================================================================
+LabratM2Replay — probe of the lesson-M2 forgery
+tool        : /tmp/lm2-opjoxh/receipt-attest.mjs
+tool sha256 : 89952c55cd29199f5a037b7054efaee88baa948651cc46f543753658c68a20a3
+date        : 2026-10-23T23:21:39-03:00
+node        : v24.21.0
+workdir     : /tmp/lm2-opjoxh/work
+================================================================
+
+############ SECTION 1 — genuine receipt ############
+### 1.1 run
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs run --out /tmp/lm2-opjoxh/work/r/attest-run-1 -- /bin/sh -c printf "hello-stdout"; printf "hello-stderr" 1>&2; exit 0
+RECEIPT: WRITTEN /tmp/lm2-opjoxh/work/r/attest-run-1.txt
+EXIT=0
+
+### 1.2 receipt bytes
+run-at: 2026-10-24T02:21:39.969Z
+{"argv":["/bin/sh","-c","printf \"hello-stdout\"; printf \"hello-stderr\" 1>&2; exit 0"],"digest":"ad942815bf5626edadcb34ee89e025a56151f5080b3edc12f40e7efbcb9ad1c4","exit":0,"mono_ns":"3135674","nonce":"237e44584c5da2a912b015cd232b17db","stderr_sha256":"841094d53de5e9938ce26a7abcaa1ce168458dfbe84b366267da48a33749f143","stdout_sha256":"f47c9c441737fbdf6cb1d84c465c4045e3122c5f586840db30e52fee42609bdd","wall_end":"2026-10-24T02:21:39.973Z","wall_start":"2026-10-24T02:21:39.969Z"}
+### 1.3 sidecar (GNU sha256sum format)
+3f8ede6b959c44fa3f27849102c190e2600fce74a69c8f6f7660e8b0ce1f3a08  attest-run-1.txt
+### 1.4 sha256sum -c accepts the sidecar
+attest-run-1.txt: OK
+EXIT=0
+
+### 1.5 verify the genuine receipt
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-1.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/r/attest-run-1.txt nonce=237e44584c5da2a912b015cd232b17db run-at=2026-10-24T02:21:39.969Z
+EXIT=0
+
+
+############ SECTION 2 — the exact M2 forgery: rewrite ONLY the run-at prelude, keep the OLD sidecar ############
+### 2.1 diff genuine vs forged (only the prelude line may differ)
+1c1
+< run-at: 2026-10-24T02:21:39.969Z
+---
+> run-at: 2026-10-24T04:21:39.000Z
+DIFF_EXIT=1
+### 2.2 the kept (stale) sidecar — note it names attest-run-1.txt
+3f8ede6b959c44fa3f27849102c190e2600fce74a69c8f6f7660e8b0ce1f3a08  attest-run-1.txt
+### 2.3 VERDICT: verify the forged receipt  [expect RECEIPT: TAMPERED, exit 1]
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-2-replayed.txt
+RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/work/r/attest-run-2-replayed.txt
+EXIT=1
+
+### 2.4 the same forgery with NO sidecar file of its own (plan's 'sidecar untouched', reading #2)
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-2b-nosidecar.txt
+RECEIPT: TAMPERED reason=sidecar-missing file=/tmp/lm2-opjoxh/work/r/attest-run-2b-nosidecar.txt
+EXIT=1
+
+### 2.5 the same forgery, sidecar kept, verified WITH --ledger over the dir holding the original
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/r /tmp/lm2-opjoxh/work/r/attest-run-2-replayed.txt
+RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/work/r/attest-run-2-replayed.txt
+EXIT=1
+
+
+############ SECTION 3 — variant: the forger RECOMPUTES the sidecar over the tampered bytes ############
+### 3.1 the new sidecar matches the doctored bytes
+63826dadb84d3a8ec709993a2fcce1d15e08837d0249754b7a19c2536f529394  attest-run-3-residecar.txt
+### 3.2 digests: the forged body is byte-identical to the original body
+  attest-run-1.txt           digest=ad942815bf5626edadcb34ee89e025a56151f5080b3edc12f40e7efbcb9ad1c4
+  attest-run-3-residecar.txt digest=ad942815bf5626edadcb34ee89e025a56151f5080b3edc12f40e7efbcb9ad1c4
+### 3.3 verify WITHOUT a ledger
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt nonce=237e44584c5da2a912b015cd232b17db run-at=2026-10-24T04:21:39.000Z
+EXIT=0
+
+### 3.4 verify WITH --ledger over the dir holding the original run-1
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/r /tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt nonce=237e44584c5da2a912b015cd232b17db run-at=2026-10-24T04:21:39.000Z
+EXIT=0
+
+
+############ SECTION 4 — the 3-receipt ledger dir (the item's ledger probe) ############
+run1 EXIT=0
+run2 EXIT=0
+### 4.1 forged third receipt: body copied from run-1, prelude re-dated, sidecar RECOMPUTED
+  total 24
+  -rw-r--r-- 1 vgpnk vgpnk 464 Oct 23 23:21 attest-run-1.txt
+  -rw-r--r-- 1 vgpnk vgpnk  83 Oct 23 23:21 attest-run-1.txt.sha256
+  -rw-r--r-- 1 vgpnk vgpnk 464 Oct 23 23:21 attest-run-2.txt
+  -rw-r--r-- 1 vgpnk vgpnk  83 Oct 23 23:21 attest-run-2.txt.sha256
+  -rw-r--r-- 1 vgpnk vgpnk 464 Oct 23 23:21 attest-run-3-forged.txt
+  -rw-r--r-- 1 vgpnk vgpnk  90 Oct 23 23:21 attest-run-3-forged.txt.sha256
+  attest-run-1.txt               nonce=e347adfcacc29b4568207e8b1b8da5c8
+  attest-run-2.txt               nonce=8fff63ffb60c3ffbdd5d78e8921fe7ee
+  attest-run-3-forged.txt        nonce=e347adfcacc29b4568207e8b1b8da5c8
+### 4.2 VERDICT: verify --ledger attest-run-3-forged.txt  [expect REPLAY: nonce reuse]
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt nonce=e347adfcacc29b4568207e8b1b8da5c8 run-at=2030-01-01T00:00:00.000Z
+EXIT=0
+
+### 4.3 verify --ledger attest-run-1.txt (the GENUINE receipt; its forged twin shares its nonce)
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-1.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/ledger3/attest-run-1.txt nonce=e347adfcacc29b4568207e8b1b8da5c8 run-at=2026-10-24T02:21:40.162Z
+EXIT=0
+
+### 4.4 verify --ledger attest-run-2.txt (unrelated nonce)
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/ledger3/attest-run-2.txt nonce=8fff63ffb60c3ffbdd5d78e8921fe7ee run-at=2026-10-24T02:21:40.182Z
+EXIT=0
+
+
+############ SECTION 5 — counter layout: run-2 and its stale-sidecar twin in ONE dir ############
+(mirrors the frozen A3/A4 arms: attest-run-{1,2,3}.txt + attest-run-2-replayed.txt share a dir)
+  attest-run-1.txt               nonce=9476b64e2ba4dc3f4b7378c386e91317
+  attest-run-2-replayed.txt      nonce=eae6222eba376ee9be9a5f24e242b947
+  attest-run-2.txt               nonce=eae6222eba376ee9be9a5f24e242b947
+  attest-run-3.txt               nonce=9cfe055dd0ba1e290f115533a1c99202
+### 5.1 A3 arm: verify the doctored control (stale sidecar) -> must be TAMPERED exit 1
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/counter/attest-run-2-replayed.txt
+RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/lm2-opjoxh/work/counter/attest-run-2-replayed.txt
+EXIT=1
+
+### 5.2 A4 arm: verify --ledger each of the three genuine receipts -> must be VALID exit 0
+-- attest-run-1.txt --
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-1.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/counter/attest-run-1.txt nonce=9476b64e2ba4dc3f4b7378c386e91317 run-at=2026-10-24T02:21:40.000Z
+EXIT=0
+
+-- attest-run-2.txt --
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/counter/attest-run-2.txt nonce=eae6222eba376ee9be9a5f24e242b947 run-at=2026-10-24T02:28:20.000Z
+EXIT=0
+
+-- attest-run-3.txt --
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-3.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/counter/attest-run-3.txt nonce=9cfe055dd0ba1e290f115533a1c99202 run-at=2026-10-24T02:35:00.000Z
+EXIT=0
+
+
+############ SECTION 6 — the three forger sub-variants, isolated ############
+### 6.1 (b) genuinely NEW body, OLD nonce, recomputed inner digest + recomputed sidecar
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-5-oldnonce-newbody.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/work/ledger3/attest-run-5-oldnonce-newbody.txt other=attest-run-1.txt
+EXIT=1
+
+### 6.2 (c) fully forged: FRESH nonce + recomputed inner digest + recomputed sidecar
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-6-fullforge.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/ledger3/attest-run-6-fullforge.txt nonce=58ab2c9c3ae09627a9280dcde1e28d75 run-at=2030-01-01T00:00:00.000Z
+EXIT=0
+
+(6.2 is the kept Q39 ceiling: the digest is an unkeyed sha256, so a wholly invented
+ receipt is indistinguishable from a genuine one. Not a defect; the ceiling.)
+
+############ SECTION 7 — ledger-rule matrix (the three readings of the --ledger arm) ############
+--- rule=l1frozen : forged twin with RECOMPUTED sidecar, --ledger over the 3-dir ---
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt other=attest-run-5-oldnonce-newbody.txt
+EXIT=1
+
+--- rule=l1frozen : genuine run-2 in the counter dir (its stale-sidecar twin is present) ---
+$ (env RECEIPT_ATTEST_LEDGER=l1frozen) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/counter/attest-run-2.txt nonce=eae6222eba376ee9be9a5f24e242b947 run-at=2026-10-24T02:28:20.000Z
+EXIT=0
+
+--- rule=intact : forged twin with RECOMPUTED sidecar, --ledger over the 3-dir ---
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt other=attest-run-1.txt
+EXIT=1
+
+--- rule=intact : genuine run-2 in the counter dir (its stale-sidecar twin is present) ---
+$ (env RECEIPT_ATTEST_LEDGER=intact) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-2.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/counter/attest-run-2.txt nonce=eae6222eba376ee9be9a5f24e242b947 run-at=2026-10-24T02:28:20.000Z
+EXIT=0
+
+--- rule=literal : forged twin with RECOMPUTED sidecar, --ledger over the 3-dir ---
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/ledger3 /tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/work/ledger3/attest-run-3-forged.txt other=attest-run-1.txt
+EXIT=1
+
+--- rule=literal : genuine run-2 in the counter dir (its stale-sidecar twin is present) ---
+$ (env RECEIPT_ATTEST_LEDGER=literal) node /tmp/lm2-opjoxh/receipt-attest.mjs verify --ledger /tmp/lm2-opjoxh/work/counter /tmp/lm2-opjoxh/work/counter/attest-run-2.txt
+RECEIPT: REPLAY reason=nonce-reuse file=/tmp/lm2-opjoxh/work/counter/attest-run-2.txt other=attest-run-2-replayed.txt
+EXIT=1
+
+
+############ SECTION 8 — prelude-binding knob (does the re-dated prelude survive a recomputed sidecar?) ############
+--- 8.1 RECEIPT_ATTEST_PRELUDE_BIND=0 (contract default: prelude is display-only) ---
+$ (env RECEIPT_ATTEST_PRELUDE_BIND=0) node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt nonce=237e44584c5da2a912b015cd232b17db run-at=2026-10-24T04:21:39.000Z
+EXIT=0
+
+--- 8.2 RECEIPT_ATTEST_PRELUDE_BIND=1 (prelude must equal the digest-bound wall_start) ---
+$ (env RECEIPT_ATTEST_PRELUDE_BIND=1) node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt
+RECEIPT: TAMPERED reason=prelude-disagrees-with-wall_start file=/tmp/lm2-opjoxh/work/r/attest-run-3-residecar.txt
+EXIT=1
+
+--- 8.3 PRELUDE_BIND=1 on a genuine receipt (must stay VALID) ---
+$ (env RECEIPT_ATTEST_PRELUDE_BIND=1) node /tmp/lm2-opjoxh/receipt-attest.mjs verify /tmp/lm2-opjoxh/work/r/attest-run-1.txt
+RECEIPT: VALID file=/tmp/lm2-opjoxh/work/r/attest-run-1.txt nonce=237e44584c5da2a912b015cd232b17db run-at=2026-10-24T02:21:39.969Z
+EXIT=0
+
+
+############ SECTION 9 — selftest of the probed implementation ############
+$ node /tmp/lm2-opjoxh/receipt-attest.mjs --selftest
+SELFTEST PASS run exits 0 (status=0)
+SELFTEST PASS receipt written
+SELFTEST PASS sidecar written
+SELFTEST PASS prelude present (run-at: 2026-10-24T02:21:40.833Z)
+SELFTEST PASS json present
+SELFTEST PASS digest binds fields
+SELFTEST PASS nonce is 128-bit hex
+SELFTEST PASS sidecar matches bytes
+SELFTEST PASS canonical json sorted
+SELFTEST PASS verify VALID (status=0 RECEIPT: VALID file=/tmp/attest-selftest-801594/r1.txt nonce=0c26000df7094bef23215dc9a97eca6b run-at=2026-10-24T02:21:40.833Z)
+SELFTEST PASS flake injection reads REPLAY (status=1 RECEIPT: REPLAY reason=inner-digest-mismatch file=/tmp/attest-selftest-801594/flake.txt)
+SELFTEST PASS sidecar mismatch reads TAMPERED (status=1 RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/attest-selftest-801594/tam.txt)
+SELFTEST PASS prelude replay reads TAMPERED (status=1 RECEIPT: TAMPERED reason=sidecar-mismatch file=/tmp/attest-selftest-801594/forged.txt)
+SELFTEST PASS ledger nonce reuse reads REPLAY (status=1 RECEIPT: REPLAY reason=nonce-reuse file=/tmp/attest-selftest-801594/ledger/a.txt other=b.txt)
+SELFTEST PASS usage exit 64 (status=64)
+SELFTEST PASS unreadable exit 2 (status=2)
+ATTEST_SELFTEST: PASS 16/16 contract=kumitate-receipt-attest-v1
+EXIT=0
+
+### DONE

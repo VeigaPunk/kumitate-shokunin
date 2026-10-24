@@ -1,0 +1,31 @@
+# Supplementary red-reading evidence: semantic mutants of the implementation (not expectation swaps).
+# Each mutant disables one verifier check; --selftest must read FAIL.
+
+== mutant M1: inner-digest comparison removed ==
+CASE 01 run-roundtrip-valid PASS observed=RECEIPT: VALID exit=0 hand-built fixture verifies
+CASE 02 flake-injection-replay FAIL observed=RECEIPT: VALID exit=0 doctored bound field, re-signed sidecar
+CASE 03 sidecar-mismatch-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 doctored bytes, stale sidecar
+CASE 04 prelude-rewrite-tampered PASS observed=RECEIPT: TAMPERED reason=sidecar-hash-mismatch exit=1 lesson-M2 move: prelude only
+CASE 05 clock-disorder-replay PASS observed=RECEIPT: REPLAY reason=clock-disorder exit=1 wall_end < wall_start
+CASE 06 ledger-nonce-reuse-replay PASS observed=RECEIPT: REPLAY reason=nonce-reuse:b.txt exit=1 same nonce, different body
+CASE 07 ledger-benign-copy-valid PASS observed=RECEIPT: VALID exit=0 byte-identical copy is not reuse
+CASE 08 ledger-self-exclusion-valid PASS observed=RECEIPT: VALID exit=0 target excluded from its own ledger
+CASE 09 usage-no-args PASS observed=RECEIPT: USAGE reason=expected-run|verify|--selftest exit=64 
+SELFTEST CASES: 20 FAILED: 1
+FAILED flake-injection-replay
+ATTEST_SELFTEST: FAIL
+
+== mutant M2: sidecar-hash comparison removed ==
+CASE 01 run-roundtrip-valid PASS observed=RECEIPT: VALID exit=0 hand-built fixture verifies
+CASE 02 flake-injection-replay PASS observed=RECEIPT: REPLAY reason=inner-digest-mismatch exit=1 doctored bound field, re-signed sidecar
+CASE 03 sidecar-mismatch-tampered FAIL observed=RECEIPT: REPLAY reason=inner-digest-mismatch exit=1 doctored bytes, stale sidecar
+CASE 04 prelude-rewrite-tampered FAIL observed=RECEIPT: VALID exit=0 lesson-M2 move: prelude only
+CASE 05 clock-disorder-replay PASS observed=RECEIPT: REPLAY reason=clock-disorder exit=1 wall_end < wall_start
+CASE 06 ledger-nonce-reuse-replay PASS observed=RECEIPT: REPLAY reason=nonce-reuse:b.txt exit=1 same nonce, different body
+CASE 07 ledger-benign-copy-valid PASS observed=RECEIPT: VALID exit=0 byte-identical copy is not reuse
+CASE 08 ledger-self-exclusion-valid PASS observed=RECEIPT: VALID exit=0 target excluded from its own ledger
+CASE 09 usage-no-args PASS observed=RECEIPT: USAGE reason=expected-run|verify|--selftest exit=64 
+SELFTEST CASES: 20 FAILED: 2
+FAILED sidecar-mismatch-tampered
+FAILED prelude-rewrite-tampered
+ATTEST_SELFTEST: FAIL
