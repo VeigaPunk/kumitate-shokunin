@@ -140,15 +140,20 @@ the stanza that actually ships.)*
 
 Mutating the **stanza** only proves the detector compares stanza↔tree. To prove
 the terms are *derived from the tree* (and not merely echoed), this seat
-mutated the **tree** in scratch copies instead — the declared stanza untouched:
+mutated the **tree** in scratch copies instead — the declared stanza untouched.
+Re-run against the **shipping tree** (`fef6707`, `A=71`):
 
-| Tree mutation (pristine stanza) | Exit | Findings | Term moved |
+| Tree mutation (pristine shipping stanza) | Exit | Findings | Term moved |
 |---|---|---|---|
-| add `.ufo/waves/round-51/probe/zz-mutstanza-probe.mjs` | 1 | `A_DRIFT` | A 67 → 68 |
-| add `scripts/zz-mutstanza.mjs` | 1 | `A_DRIFT` **+** `PIN_UNPINNED` | A 67 → 68 |
-| append `- [ ] …` to `SKILL.md` | 1 | `C_DRIFT` | C 23 → 24 |
+| add `.ufo/waves/round-51/probe/zz-mutstanza-probe.mjs` | 1 | `A_DRIFT` (declared=71 computed=72) | A 71 → 72 |
+| add `scripts/zz-mutstanza.mjs` | 1 | `A_DRIFT` **+** `PIN_UNPINNED` | A 71 → 72 |
+| append `- [ ] …` to `SKILL.md` | 1 | `C_DRIFT` (declared=23 computed=24) | C 23 → 24 |
 | add `corpus/knowledge/zz-mutstanza.md` (no README row) | 1 | `C2_TOTAL_DRIFT` **+** `AXES_DRIFT` (coverage 10→9) | C2_total 117 → 118 |
-| add a `corpus/README.md` row (no note file) | 1 | `C2_DRIFT` | C2 117 → 118 |
+| add a `corpus/README.md` row (no note file) | 1 | `C2_DRIFT` (declared=117 computed=118) | C2 117 → 118 |
+
+*(The same five mutations against the first battery's tree `3304a56`, stanza
+`A=67`, gave the identical kinds and deltas — `A_DRIFT` 67→68, `C_DRIFT`
+23→24, `C2_TOTAL_DRIFT` 117→118, `C2_DRIFT` 117→118.)*
 
 This is the decisive non-vacuity evidence: **the same declared stanza that
 yields `PROXY: MATCH` on the pristine tree yields `PROXY: DRIFT` when any of
@@ -158,7 +163,7 @@ are independent (a note without a README row moves `C2_total` only; a README
 row without a note moves `C2` only) — the numerator and denominator are
 separately grounded in different files.
 
-Corpus integrity at HEAD (no orphan rows, no unlisted notes, no duplicate
+Corpus integrity at `fef6707` (no orphan rows, no unlisted notes, no duplicate
 paths): 117 README rows / 117 distinct paths / 117 `corpus/**/*.md` files, with
 an empty set in each of {rows without a file, files without a row, duplicate
 paths}.
@@ -423,11 +428,17 @@ stable.
   battery, against `3304a56`), copied to the lane at
   `.ufo/waves/round-51/w2/MutStanza-transcripts/` (`.txt`, never a runnable
   extension) — full stdout of the detector for every mutant, each preceded by
-  the mutant's sha256 and followed by its exit code. **These lane copies add 0
-  to the `A` term** (`.txt`/`.json` are not matched by `RE_RUNNABLE`).
-* **Clean tree**: `/tmp/mutstanza-r51/tree-head` (`git archive HEAD`), and
-  `/tmp/mutstanza-r51/tree-base` (`git archive c90b9de9`) for the base
-  decomposition.
+  the mutant's sha256 and followed by its exit code. The **tree-side**
+  (non-vacuity) mutations have their own transcript,
+  `MutStanza-transcripts/mutstanza-tree-mutations.txt` (§2b). **These lane
+  copies add 0 to the `A` term** (`.txt`/`.json` are not matched by
+  `RE_RUNNABLE`).
+* **Clean trees**: `/tmp/mutstanza-r51/tree-head2` (`git archive fef6707` — the
+  shipping tree), `/tmp/mutstanza-r51/tree-head` (`git archive 3304a56` — the
+  first battery's tree), `/tmp/mutstanza-r51/tree-base`
+  (`git archive c90b9de9` — the round-open base, for the `A` decomposition),
+  and `/tmp/mutstanza-r51/final-tree-t{1..5}` (the five tree-side mutants of
+  §2b).
 * **Restoration**: the lane was **never** written to by this seat. At the close of
   this seat's measurements — `SCORECARD.md` =
   `4b98541fcdbcd3e5d278d311fd6159f01a2b842078fbc60381b0fed6b3d87138` (pristine),
