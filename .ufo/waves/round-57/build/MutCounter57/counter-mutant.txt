@@ -1,15 +1,12 @@
-MutCounter57 — hold-call-deleted A57 mutant transcript (K4 / B5c witness).
-Mutation: `.ufo/waves/round-57/probe/attest57-probe.mjs` copied to a scratch path;
-`const hold = (id, ok, detail) => checks.push({ id, ok, detail });` replaced with
-`const hold = (id, ok, detail) => {};` — the checks array is never populated, so a
-counter that prints HELD from an empty check set would prove nothing.
+MUTANT: hold-call-deleted — every `hold(` call in attest57-probe.mjs replaced by
+`void(` (18 sites), run against the scratch conformant post-state rev
+1cd6d667e20075fd2e77e6e655bc755f95e3d940 (same rev as witness/scratch-held-*.txt).
+Expectation: no check is ever recorded; the counter's own vacuous-HELD guard
+(`checks.length === 0` early exit) fires `held=0/0` exit 1 — a drop-one/crashless
+mutant can never print the frozen predicate literal `ATTEST57_HELD held=10/10
+checks=10`.
 
-Run (scratch copy, never committed):
-  node $TMP/mut.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf
-
-Observed output:
-  ATTEST57: ATTEST57_UNMET held=0/0 checks=0 rev=7178bfd3643c0fac74c8eb637cd6e985faadd0cf rule=A57 version=v1 | hold-call-deleted
-  process exit=1
-
-The frozen probe's own `checks.length === 0` guard converts the empty check set to
-`ATTEST57_UNMET held=0/0` exit 1 — a vacuous HELD cannot be printed.
+$ sed 's/\bhold(/void(/g' attest57-probe.mjs > a57-mutant.mjs
+$ node a57-mutant.mjs /tmp/r57-witness/lane 1cd6d667e20075fd2e77e6e655bc755f95e3d940
+ATTEST57: ATTEST57_UNMET held=0/0 checks=0 rev=1cd6d667e20075fd2e77e6e655bc755f95e3d940 rule=A57 version=v1 | hold-call-deleted
+exit=1
