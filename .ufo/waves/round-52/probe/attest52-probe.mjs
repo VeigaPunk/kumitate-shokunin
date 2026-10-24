@@ -18,11 +18,14 @@
  *       matching `^case <name>: PASS` (v2 SELFTEST contract; v1 shipped 27 cases and no
  *       --stdin, so at base this reads MISS).
  *   B1c CLOCK challenge (R52-1): the probe crafts a receipt from a live run whose
- *       wall_start/wall_end are rewritten to the rolled instant 2026-13-01T00:00:00.000Z
- *       (V8 Date.parse rolls month 13 into January 2027), recomputing BOTH the inner
- *       digest and the sidecar — the strongest forgery. `verify` must NOT print
- *       `RECEIPT: VALID` and must exit non-zero (v2 CLOCK contract: finite parse AND
- *       exact toISOString round-trip; v1 reads VALID here).
+ *       wall_start/wall_end are rewritten to the impossible instant 2026-13-01T00:00:00.000Z,
+ *       recomputing BOTH the inner digest and the sidecar — the strongest forgery. On the
+ *       measured runtime (node v24.21.0/V8, seat ExecClockSweep) month 13 is Date.parse-NaN,
+ *       not a rollover: the NaN disables v1's ordering and prelude-window checks (every NaN
+ *       comparison is false) — exactly the R52-1 defect RevengerV1V2 reproduced as
+ *       `RECEIPT: VALID` against the shipped v1. v2's CLOCK contract (finite parse AND exact
+ *       toISOString round-trip) rejects it; FREEZE REPAIR 7 requires the CLOCK verdict
+ *       `RECEIPT: TAMPERED` exit 1 — a crash is not a verdict.
  *   B2  the three committed receipts .ufo/waves/round-52/receipts/attest52-run-{1,2,3}.txt
  *       (+ sidecars) each verify `RECEIPT: VALID` exit 0; embedded nonces pairwise
  *       distinct; file sha256 pairwise distinct; span = max(wall_start) - min(wall_start)
@@ -79,6 +82,10 @@
  * pattern (a MISS, not a crash). Frozen at `.ufo/waves/round-52/plan.md` before any data
  * seat ran; freeze repairs, if any, are named in that plan's addendum with re-run base
  * receipts.
+ *
+ * FREEZE REPAIR 12 (addendum item 12, seats CritFreeze + RevPlan + SonicFreeze): the frozen
+ * predicate sentence, byte-identical with plan.md §Claims and the round report —
+ * ATTEST52_HELD — node .ufo/waves/round-52/probe/attest52-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "ATTEST52: ATTEST52_HELD held=13/13 checks=13 rev=<rev> rule=A52 version=v1" and exits 0.
  */
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -103,6 +110,13 @@ if (!existsSync(join(lane, '.git'))) {
   process.stderr.write(`ATTEST52: USAGE ${JSON.stringify(lane)} is not a git repo\n`);
   process.exit(64);
 }
+// FREEZE REPAIR 6 (addendum item 6, seat RevCounterA HIGH): <rev> is interpolated into a shell
+// pipeline and `git archive` accepts any revision expression — a hostile rev string executes.
+// Only full hex object names are accepted, and the extraction must not contain symlinks.
+if (!/^[0-9a-f]{40,64}$/.test(rev)) {
+  process.stderr.write('ATTEST52: USAGE <rev> must be a full lowercase hex object name\n');
+  process.exit(64);
+}
 
 const sha = (b) => createHash('sha256').update(b).digest('hex');
 const sh = (cmd, args, opts = {}) =>
@@ -123,6 +137,13 @@ try {
     process.stderr.write(`ATTEST52: FAIL-CLOSED git archive ${rev} exit=${tar.status}\n`);
     process.exit(2);
   }
+  // FREEZE REPAIR 6 (cont.): committed symlinks would be recreated and read through — the
+  // judged bytes must be plain files.
+  const sym = spawnSync('bash', ['-lc', `find ${JSON.stringify(T)} -type l -print -quit`], { encoding: 'utf8', timeout: 60_000 });
+  if (sym.status !== 0 || (sym.stdout || '').trim() !== '') {
+    process.stderr.write('ATTEST52: FAIL-CLOSED extraction contains a symlink\n');
+    process.exit(2);
+  }
   const S = join(T, 'scripts');
   const tool = join(S, 'receipt-attest.mjs');
   const runTool = (args, opts = {}) => sh('node', [tool, ...args], { cwd: T, ...opts });
@@ -133,7 +154,9 @@ try {
     const r = runTool(['--selftest']);
     const last = lastLine(r);
     const cases = `${r.stdout || ''}`.split('\n').filter((l) => /^case\s+\S+:\s+PASS\s*$/.test(l)).length;
-    b1ok = r.status === 0 && /ATTEST_SELFTEST: PASS/.test(last) && cases >= 30;
+    // FREEZE REPAIR 5 (addendum item 5, seat RevReceipts F6): the final line must carry the
+    // (n/n) tally — a bare `ATTEST_SELFTEST: PASS` line does not satisfy the SELFTEST contract.
+    b1ok = r.status === 0 && /ATTEST_SELFTEST: PASS \(/.test(last) && cases >= 30;
     b1d = b1ok ? `selftest PASS cases=${cases}` : `exit=${r.status} cases=${cases} last=${JSON.stringify(last.slice(0, 120))}`;
   } else {
     b1d = 'scripts/receipt-attest.mjs absent';
@@ -169,8 +192,8 @@ try {
         writeFileSync(`${bad}.sha256`, `${sha(readFileSync(bad))}  ${bad.split('/').pop()}\n`);
         const v = runTool(['verify', bad]);
         const last = lastLine(v);
-        b1cok = v.status !== 0 && !/RECEIPT: VALID/.test(last);
-        b1cd = b1cok ? `rolled clocks rejected (${v.status}:${last.slice(0, 40)})` : `exit=${v.status} last=${JSON.stringify(last.slice(0, 100))}`;
+        b1cok = v.status === 1 && /RECEIPT: TAMPERED/.test(last);
+        b1cd = b1cok ? `impossible clocks rejected as TAMPERED` : `exit=${v.status} last=${JSON.stringify(last.slice(0, 100))}`;
       } catch (e) {
         b1cd = `craft failed: ${e.message}`;
       }
@@ -178,9 +201,21 @@ try {
   } else b1cd = 'tool absent';
   hold('B1c', b1cok, b1cd);
 
-  // B2 (+distinctness/span from the digest-bound wall_start BODY field — R52-7)
+  // B2 (+distinctness/span from the digest-bound wall_start BODY field — R52-7).
+  // FREEZE REPAIR 3 (addendum item 3, seats RevReceipts F1 + RevCounterA): each receipt must
+  // record EXACTLY the planned wrapped gate command — argv is part of the claim (the receipts
+  // attest live lane-gate invocations), and wall_start must be CLOCK-shaped before the span is
+  // scored. FREEZE REPAIR 10 (addendum item 10, seat RevHistory F4, routed R52-10): record
+  // digests — not file bytes — must be pairwise distinct (trailing-newline byte differences
+  // alone must not satisfy distinctness).
   const rd = join(T, RDIR);
-  const nonces = []; const wallStarts = []; const fshas = [];
+  const PLANNED_ARGV = {
+    'attest52-run-1.txt': ['node', 'scripts/bind-oracle.mjs', '--selftest'],
+    'attest52-run-2.txt': ['node', 'scripts/sources-check.mjs'],
+    'attest52-run-3.txt': ['node', 'scripts/round-gate.mjs', '--selftest'],
+  };
+  const WALL_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  const nonces = []; const wallStarts = []; const digests = [];
   let b2ok = true; const b2miss = [];
   for (const f of RECEIPTS) {
     const p = join(rd, f);
@@ -189,25 +224,31 @@ try {
     const v = runTool(['verify', p]);
     const last = lastLine(v);
     if (!(v.status === 0 && /RECEIPT: VALID/.test(last))) { b2ok = false; b2miss.push(`${f}:exit=${v.status} ${last.slice(0, 80)}`); continue; }
-    let nonce = null; let ws = null;
+    let nonce = null; let ws = null; let dg = null; let argv = null; let wsb = null;
     try {
       const j = JSON.parse(jsonLineOf(p));
-      nonce = j.nonce; ws = Date.parse(j.wall_start);
+      nonce = j.nonce; dg = j.digest; argv = j.argv; wsb = j.wall_start;
+      ws = Date.parse(wsb);
     } catch (e) { b2ok = false; b2miss.push(`${f}:unparseable(${e.message})`); }
+    const want = PLANNED_ARGV[f];
+    if (!argv || JSON.stringify(argv) !== JSON.stringify(want)) {
+      b2ok = false; b2miss.push(`${f}:argv!=planned(${JSON.stringify(argv).slice(0, 60)})`); continue;
+    }
+    if (!WALL_RE.test(wsb || '')) { b2ok = false; b2miss.push(`${f}:wall_start not CLOCK-shaped`); continue; }
     if (!nonce || !Number.isFinite(ws)) { b2ok = false; b2miss.push(`${f}:nonce/wall_start missing`); continue; }
-    nonces.push(nonce); wallStarts.push(ws); fshas.push(sha(readFileSync(p)));
+    nonces.push(nonce); wallStarts.push(ws); digests.push(dg);
   }
   let span = 0;
   if (wallStarts.length === 3) span = (Math.max(...wallStarts) - Math.min(...wallStarts)) / 1000;
   const distinctN = new Set(nonces).size === nonces.length && nonces.length === 3;
-  const distinctS = new Set(fshas).size === fshas.length && fshas.length === 3;
-  if (b2ok && (!distinctN || !distinctS || span < 300)) {
+  const distinctD = new Set(digests).size === digests.length && digests.length === 3;
+  if (b2ok && (!distinctN || !distinctD || span < 300)) {
     b2ok = false;
     if (!distinctN) b2miss.push('nonce-not-distinct');
-    if (!distinctS) b2miss.push('sha-not-distinct');
+    if (!distinctD) b2miss.push('digest-not-distinct');
     if (span < 300) b2miss.push(`span=${Math.round(span)}s<300(body wall_start)`);
   }
-  hold('B2', b2ok, b2ok ? `3 receipts VALID body-wall_start span=${Math.round(span)}s nonces=distinct sha=distinct` : b2miss.join(';'));
+  hold('B2', b2ok, b2ok ? `3 receipts VALID planned-argv body-wall_start span=${Math.round(span)}s nonces=distinct digests=distinct` : b2miss.join(';'));
 
   // B2c — printf challenge (retained from A51 A2c)
   let b2cok = false; let b2cd = '';
@@ -272,7 +313,14 @@ try {
   } else b3d = 'attest52-run-2-replayed.txt absent';
   hold('B3', b3ok, b3d);
 
-  // B3c — live prelude-tamper challenge
+  // B3c — live prelude-tamper challenge. FREEZE REPAIR 1 (addendum item 1, seats
+  // CritC1 + RevCounterA + RevCompat + ExecInstrumentV2): the v1 craft renamed the receipt
+  // (`.tampered`) while copying the sidecar verbatim, so v2 SHAPE rejects on the NAME rule
+  // before the sidecar-hash arm is ever reached, and the far-past prelude was rejected by the
+  // window check regardless of the sidecar. The repaired craft copies the fresh receipt to an
+  // isolated directory under its ORIGINAL basename (sidecar copied verbatim — name matches by
+  // construction) and rewrites ONLY the prelude to a value INSIDE the wall window (wall_start
+  // + 30 s), so the sidecar hash mismatch is the only possible reject — the M2 class proper.
   let b3cok = false; let b3cd = '';
   if (existsSync(tool)) {
     const base = join(T, `challenge-tamper-${randomBytes(6).toString('hex')}`);
@@ -281,19 +329,29 @@ try {
     if (r.status !== 0 || !existsSync(rcpt)) {
       b3cd = `run exit=${r.status}`;
     } else {
-      const tampered = `${rcpt}.tampered`;
-      const lines = readFileSync(rcpt, 'utf8').split('\n');
-      const idx = lines.findIndex((l) => l.startsWith('run-at:'));
-      if (idx === -1) {
-        b3cd = 'no run-at prelude in generated receipt';
+      const iso = (ms) => new Date(ms).toISOString();
+      let wallStartMs = 0;
+      try { wallStartMs = Date.parse(JSON.parse(jsonLineOf(rcpt)).wall_start); } catch { wallStartMs = 0; }
+      if (!Number.isFinite(wallStartMs) || wallStartMs <= 0) {
+        b3cd = 'fresh receipt wall_start unparseable';
       } else {
-        lines[idx] = 'run-at: 2020-01-01T00:00:00.000Z (rewritten by probe B3c)';
-        writeFileSync(tampered, lines.join('\n'));
-        if (existsSync(`${rcpt}.sha256`)) copyFileSync(`${rcpt}.sha256`, `${tampered}.sha256`);
-        const v = runTool(['verify', tampered]);
-        const last = lastLine(v);
-        b3cok = v.status === 1 && /RECEIPT: TAMPERED/.test(last);
-        b3cd = b3cok ? 'live prelude-tamper rejected' : `exit=${v.status} last=${JSON.stringify(last.slice(0, 120))}`;
+        const dir2 = mkdtempSync(join(tmpdir(), 'a52-b3c.'));
+        const moved = join(dir2, rcpt.split('/').pop());
+        copyFileSync(rcpt, moved);
+        copyFileSync(`${rcpt}.sha256`, `${moved}.sha256`);
+        const lines = readFileSync(moved, 'utf8').split('\n');
+        const idx = lines.findIndex((l) => l.startsWith('run-at:'));
+        if (idx === -1) {
+          b3cd = 'no run-at prelude in generated receipt';
+        } else {
+          lines[idx] = `run-at: ${iso(wallStartMs + 30_000)}`;
+          writeFileSync(moved, lines.join('\n'));
+          const v = runTool(['verify', moved]);
+          const last = lastLine(v);
+          b3cok = v.status === 1 && /RECEIPT: TAMPERED/.test(last);
+          b3cd = b3cok ? 'in-window prelude-tamper rejected by the sidecar arm' : `exit=${v.status} last=${JSON.stringify(last.slice(0, 120))}`;
+        }
+        rmSync(dir2, { recursive: true, force: true });
       }
     }
   } else b3cd = 'tool absent';
@@ -318,7 +376,11 @@ try {
           let st;
           try { st = statSync(p); } catch { continue; }
           if (st.isDirectory()) { if (!/round-52$/.test(n)) walk(p); continue; }
-          if (/receipt|ReRun|L1-score/i.test(n)) prior.push(p);
+          // FREEZE REPAIR 4 (addendum item 4, seats RevReceipts F2 + RevHistory F1): the v1
+          // filter (/receipt|ReRun|L1-score/i) never matched the actual receipt corpora
+          // (attest-run-*.txt under round-51/receipts/ et al.) — a reused nonce from a prior
+          // corpus was invisible. The repaired filter includes the attest-run naming family.
+          if (/receipt|ReRun|L1-score|attest-run|attest\d+-run|stab-r/i.test(n)) prior.push(p);
         }
       };
       walk(waves);
@@ -366,10 +428,21 @@ try {
         const vTwin = runTool(['verify', twinPath]);
         const twinValid = vTwin.status === 0 && /RECEIPT: VALID/.test(lastLine(vTwin));
         const ledgerDir = mkdtempSync(join(tmpdir(), 'a52-b4c.'));
+        // FREEZE REPAIR 2 (addendum item 2, seats CritC1 + RevCounterA + RevCompat +
+        // ExecInstrumentV2 + RevInstrumentV1): v2 SHAPE requires the sidecar's recorded name
+        // to equal the receipt's basename. The v1 craft copied the pair under new names with
+        // the OLD recorded names, so a conformant v2 rejected on the name rule before the
+        // ledger arm ran (ceiling 11/13). The repaired craft re-points each copied sidecar's
+        // recorded NAME FIELD to the copied basename (hash fields unchanged), so the ledger
+        // nonce-reuse arm is what answers.
+        const sidecarFor = (srcSide, dstName) => {
+          const parsed = /^([0-9a-f]{64})[ \t]+[*]?(\S+)$/.exec(readFileSync(srcSide, 'utf8').trim());
+          writeFileSync(`${join(ledgerDir, dstName)}.sha256`, `${parsed[1]}  ${dstName}\n`);
+        };
         copyFileSync(rcpt, join(ledgerDir, 'orig.txt'));
-        copyFileSync(`${rcpt}.sha256`, join(ledgerDir, 'orig.txt.sha256'));
+        sidecarFor(`${rcpt}.sha256`, 'orig.txt');
         copyFileSync(twinPath, join(ledgerDir, twinName));
-        copyFileSync(`${twinPath}.sha256`, join(ledgerDir, `${twinName}.sha256`));
+        sidecarFor(`${twinPath}.sha256`, twinName);
         const vL1 = runTool(['verify', '--ledger', ledgerDir, join(ledgerDir, 'orig.txt')]);
         const vL2 = runTool(['verify', '--ledger', ledgerDir, join(ledgerDir, twinName)]);
         const replay1 = vL1.status === 1 && /RECEIPT: REPLAY/.test(lastLine(vL1));
@@ -429,24 +502,32 @@ try {
   } else b5d.push('tool or SCORECARD absent');
   hold('B5', b5ok, b5d.join(';'));
 
-  // B5c — vacuous-HELD guard: committed counter-mutant transcript + own-source guard.
+  // B5c — vacuous-HELD guard: committed counter-mutant transcript + guard in the JUDGED bytes.
+  // FREEZE REPAIR 8 (addendum item 8, seat RevCounterANew HIGH): the v1 arm read the RUNNING
+  // probe's source (import.meta.url), which a one-token hold() mutant still satisfies; the
+  // repaired arm reads the probe source from the EXTRACTED tree (the judged bytes) and the
+  // transcript regex accepts both `exit 1` spellings.
   let b5cok = false; let b5cd = '';
   const mutantFile = join(T, '.ufo', 'waves', 'round-52', 'build', 'MutCounter52', 'counter-mutant.txt');
   let mutantOk = false;
   if (existsSync(mutantFile)) {
     const t = readFileSync(mutantFile, 'utf8');
-    mutantOk = /ATTEST52_UNMET/.test(t) && /held=0\/0/.test(t) && /exit 1/.test(t);
+    mutantOk = /ATTEST52_UNMET/.test(t) && /held=0\/0/.test(t) && /exit ?1/.test(t);
   }
   let selfGuardOk = false;
   try {
-    const selfSrc = readFileSync(fileURLToPath(import.meta.url), 'utf8');
-    selfGuardOk = /checks\.length\s*>\s*0/.test(selfSrc) && /held\s*===\s*checks\.length/.test(selfSrc);
+    const judgedSrc = readFileSync(join(T, '.ufo', 'waves', 'round-52', 'probe', 'attest52-probe.mjs'), 'utf8');
+    selfGuardOk = /checks\.length\s*>\s*0/.test(judgedSrc) && /held\s*===\s*checks\.length/.test(judgedSrc);
   } catch { selfGuardOk = false; }
   b5cok = mutantOk && selfGuardOk;
-  b5cd = `mutantReceipt=${mutantOk ? 'present' : 'absent-or-malformed'} selfGuard=${selfGuardOk ? 'present' : 'absent'}`;
+  b5cd = `mutantReceipt=${mutantOk ? 'present' : 'absent-or-malformed'} judgedSelfGuard=${selfGuardOk ? 'present' : 'absent'}`;
   hold('B5c', b5cok, b5cd);
 
-  // B6 — round-51 v1 receipts still VALID under v2
+  // B6 — round-51 v1 receipts still VALID under v2 (+ a synthesized fourth v1-format receipt).
+  // FREEZE REPAIR 11 (addendum item 11, seat RevCounterANew MEDIUM): a v2 that special-cases
+  // the three known r51 receipts by hash would pass the v1 arm; the synthesized fourth receipt
+  // (fresh nonce, v1 field set, recomputed digest+sidecar) must ALSO read VALID — compat is a
+  // property of the format, not of three known files.
   let b6ok = true; const b6d = [];
   const r51 = join(T, '.ufo', 'waves', 'round-51', 'receipts');
   if (existsSync(tool) && existsSync(r51)) {
@@ -457,7 +538,33 @@ try {
       const last = lastLine(v);
       if (!(v.status === 0 && /RECEIPT: VALID/.test(last))) { b6ok = false; b6d.push(`${f}:exit=${v.status} ${last.slice(0, 80)}`); }
     }
-    if (b6d.length === 0) b6d.push('3 v1 receipts VALID under v2');
+    try {
+      const synth = join(T, `b6-synth-${randomBytes(6).toString('hex')}`);
+      const rs = runTool(['run', '--out', synth, '--', '/usr/bin/printf', '%s', 'b6-synth-v1compat']);
+      const sp = `${synth}.txt`;
+      if (rs.status !== 0 || !existsSync(sp)) { b6ok = false; b6d.push('synth:run-failed'); }
+      else {
+        const lines = readFileSync(sp, 'utf8').split('\n');
+        const ji = lines.findIndex((l) => l.trimStart().startsWith('{'));
+        const body = JSON.parse(lines[ji]);
+        delete body.stdin_sha256;
+        const sortKeys = (v) => {
+          if (Array.isArray(v)) return v.map(sortKeys);
+          if (v && typeof v === 'object') {
+            return Object.fromEntries(Object.keys(v).sort().map((k) => [k, sortKeys(v[k])]));
+          }
+          return v;
+        };
+        const { digest, ...restS } = body;
+        const canon = JSON.stringify(sortKeys(restS));
+        lines[ji] = canon.slice(0, -1) + `,"digest":"${sha(Buffer.from(canon, 'utf8'))}"}`;
+        writeFileSync(sp, lines.join('\n'));
+        writeFileSync(`${sp}.sha256`, `${sha(readFileSync(sp))}  ${sp.split('/').pop()}\n`);
+        const v = runTool(['verify', sp]);
+        if (!(v.status === 0 && /RECEIPT: VALID/.test(lastLine(v)))) { b6ok = false; b6d.push(`synth:exit=${v.status} ${lastLine(v).slice(0, 60)}`); }
+      }
+    } catch (e) { b6ok = false; b6d.push(`synth:${e.message}`); }
+    if (b6d.length === 0) b6d.push('3 r51 receipts + synthesized v1 receipt VALID under v2');
   } else { b6ok = false; b6d.push('tool or r51 receipts absent'); }
   hold('B6', b6ok, b6d.join(';'));
 } catch (e) {

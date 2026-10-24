@@ -217,3 +217,68 @@ carries: tooling authorization (read ~/.omp/agent/RULES.md first; official chann
 record installs), pacman guard (PAUSED host-wide — uv/npx/binary only, or L0), lane
 read-only except the seat's own build/ and w1/ paths, no fleet/sibling writes, no
 MANIFEST, no ask tool, the two verbatim wave rules (time-box + independent leaf).
+
+## Freeze repair addendum (2026-10-24, post-wave, per the plan's repair procedure)
+
+Every repair is seat-found, named, and minimal; the claim predicates, the frozen predicate
+sentences, the counting commands and the check sets are UNCHANGED (repairs fix fixtures and
+hardening; they do not move the goalposts). Both counters were re-run at base after the
+repairs and fresh receipts committed over base/ (A52 pattern unchanged at held=5/13;
+D52's entry-absent label is now derived: held=0/1 checks=1, repair 14's whole point).
+
+1. **B3c craft** (seats CritC1, RevCounterA, RevCompat, ExecInstrumentV2, RevInstrumentV1):
+   the v1 craft renamed the receipt while copying the sidecar verbatim, so v2 SHAPE rejected
+   on the name rule and the far-past prelude was rejected by the window check regardless of
+   the sidecar — the M2 class went unexercised. Repaired: same-basename copy in an isolated
+   dir + prelude moved INSIDE the wall window; the sidecar-hash arm is now the only
+   possible reject.
+2. **B4c craft** (same seats + RevInstrumentV1's ceiling proof ≤11/13): copied sidecars
+   re-point their recorded NAME FIELD to the copied basename (hash fields unchanged), so
+   the ledger arm is what answers REPLAY.
+3. **B2 planned-argv binding** (seats RevReceipts F1, RevCounterA): each receipt must record
+   EXACTLY the planned wrapped gate — run-1 `node scripts/bind-oracle.mjs --selftest`,
+   run-2 `node scripts/sources-check.mjs`, run-3 `node scripts/round-gate.mjs --selftest`;
+   wall_start must be CLOCK-shaped before the span is scored.
+4. **B4 sweep filter** (seats RevReceipts F2, RevHistory F1): extended to the attest-run
+   naming family — the v1 filter never scanned the actual round-51 receipt corpus
+   (176 files swept, 0 from any receipts/ dir).
+5. **B1 final-line regex** (seat RevReceipts F6): requires the `(n/n)` tally.
+6. **rev hardening** (seat RevCounterA HIGH): full-hex object names only (exit 64), symlink
+   rejection in the extraction (exit 2). Applied to BOTH counters.
+7. **B1c wording + verdict** (seats ExecClockSweep, RevCounterANew, ScribeEntry,
+   RevengerV1V2): month-13 is the NaN class on the measured runtime (not a rollover — the
+   plan prose was wrong); the arm now requires the CLOCK verdict `RECEIPT: TAMPERED` exit 1
+   (a crash is not a verdict). The NaN fixture is the R52-1 defect as reproduced against
+   shipped v1; the finite-roller class with a co-moved prelude is the Q39 ceiling class,
+   named as a limit (not a counter gap).
+8. **B5c judged-bytes guard** (seat RevCounterANew HIGH): the self-guard regex now reads the
+   probe source from the EXTRACTED tree (the judged bytes), not the running file; the
+   transcript regex accepts both `exit 1` spellings.
+9. **B6 synthesized fourth receipt** (seat RevCounterANew): a fresh v1-format receipt must
+   also read VALID — compat is a format property, not three known files.
+10. **B2 digest distinctness** (seat RevHistory F4, routed R52-10 re-opened probe-side):
+    record digests — not file bytes — must be pairwise distinct.
+11. **Probe-header predicate sentences** (seats CritFreeze, RevPlan, SonicFreeze): both
+    headers now carry the frozen predicate sentences byte-identical with plan §Claims.
+12. **D52 E2** (seats RevCounterD H1, RevEntry): bound paths must be DISTINCT and each must
+    verify as a blob (`git cat-file -t`).
+13. **D52 E3** (seat RevCounterD): row match accepts the contract's 0-3 leading spaces.
+14. **D52 entry-absent label** (seats MutProbeD F2, RevPlan): derived through the common
+    tail (no fabricated `held=0/5`).
+
+Text corrections (no check semantics): plan attack-count reads 24 attack-role seats by
+reviewer+critic+mutation-tester (37.5%), 25 counting the revenger (39.1%) — both clear the
+policy floor; the round-open baseline carries A_DRIFT (A declared=71 computed=73 after the
+two frozen probes) alongside the inherited C2_TOTAL_DRIFT; close step 1's inventory gains
+`build/MutCounter52/counter-mutant.txt` (B5c reads it from `git archive` bytes — RevPlan
+HIGH-6) and the receipts + doctored control (RevIntegration HIGH-1).
+
+Named limits carried to the report (not repairs): B2e binds data, not execution — the
+zero-spawn TREE-AUTHOR boundary stays declared (K3 scoped precisely; the stub class is
+closed); B5's proxy conjunct runs the scored rev's own proxy-check (self-referential pin,
+r51 class); drop-one counter mutants print HELD k/k at a green state and are killed by the
+frozen predicate string's literal `held=13/13 checks=13` (r53 may add a source-pin arm);
+D52 E5 is live-only (R51-4 class); H1's round-close audit item audits the previous round —
+the missing round-51 table row + LOG line land as an inherited-state repair in the
+integration commits; A counts committed runnable files only — seat scratch `.mjs` under
+build/ is NOT committed (RevStanza S4; evidence commits as `.txt`/`.md` transcripts).

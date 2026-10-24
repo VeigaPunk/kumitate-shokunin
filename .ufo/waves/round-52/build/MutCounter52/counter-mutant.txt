@@ -1,0 +1,36 @@
+# round-52 A52 counter-mutant transcript — seat MutCounter52 (R52-5 vacuous-HELD class)
+#
+# Mutant class : (b) hold-call DELETED — the hold() function body is emptied, so no check is
+#                ever recorded and the checks array stays empty (vacuous HELD if unguarded).
+# Transformation: one line, in a COPY of the frozen probe (the frozen file is never touched).
+#   - const hold = (id, ok, detail) => { if (typeof id === 'string') checks.push({ id, ok, detail }); };
+#   + const hold = (id, ok, detail) => { /* hold-call DELETED: no check is ever recorded */ };
+# Pristine bytes : sha256 f6146a2cfd3fba984848c5b91c1d2570108dc751d5edca5939d6f4aee5171428  (.ufo/waves/round-52/probe/attest52-probe.mjs)
+# Mutant bytes   : sha256 ea2d71912e439029...  build/MutCounter52/mutants/b-hold-deleted.mjs
+# Target         : lane /home/vgpnk/Projects/shokunin/kumitate-shokunin at base rev
+#                  02c01258464cac3804faf177d0cfbf113cd59706 (freeze base, plan.md)
+# Command        : node .ufo/waves/round-52/build/MutCounter52/mutants/b-hold-deleted.mjs \
+#                    /home/vgpnk/Projects/shokunin/kumitate-shokunin 02c01258464cac3804faf177d0cfbf113cd59706
+
+[stdout]
+ATTEST52: ATTEST52_UNMET held=0/0 checks=0 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | 
+
+[stderr]
+(empty)
+
+[exit]
+exit 1
+
+# Expected under the frozen final guard (probe lines 470/472/474):
+#   held = 0, checks.length = 0  ->  `checks.length > 0` is false  ->  label ATTEST52_UNMET,
+#   process.exit(1).  The guard's only job is this case: an empty check set can never be HELD.
+#
+# Control, same rev, pristine probe bytes (frozen at plan.md):
+#   ATTEST52: ATTEST52_UNMET held=5/13 checks=13 rev=02c01258464cac3804faf177d0cfbf113cd59706 rule=A52 version=v1 | ...
+#   exit 1   (matches the committed freeze receipt base/attest52-base.txt)
+#
+# Restoration: the frozen probe under .ufo/waves/round-52/probe/ was never written to; sha256
+# before and after this seat is f6146a2cfd3fba984848c5b91c1d2570108dc751d5edca5939d6f4aee5171428.
+#
+# Seats reading this file: B5c requires /ATTEST52_UNMET/, /held=0\/0/, /exit 1/ in the
+# transcript committed at .ufo/waves/round-52/build/MutCounter52/counter-mutant.txt.

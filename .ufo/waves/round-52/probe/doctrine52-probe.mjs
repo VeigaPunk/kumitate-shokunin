@@ -30,6 +30,10 @@
  * Predicate DOCTRINE52_HELD = held=5/5, exit 0. Any other reading is
  * `DOCTRINE52_UNMET held=<k>/5` exit 1. A crash or an unreadable extraction is exit 2
  * (never a score). Frozen at `.ufo/waves/round-52/plan.md` § C2 before any data seat ran.
+ *
+ * FREEZE REPAIR 12 (addendum item 12, seats CritFreeze + RevPlan + SonicFreeze): the frozen
+ * predicate sentence, byte-identical with plan.md §Claims and the round report —
+ * DOCTRINE52_HELD — node .ufo/waves/round-52/probe/doctrine52-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "DOCTRINE52: DOCTRINE52_HELD held=5/5 checks=5 rev=<rev> rule=D52" and exits 0.
  */
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -49,7 +53,14 @@ if (!existsSync(join(lane, '.git'))) {
   process.stderr.write(`DOCTRINE52: USAGE ${JSON.stringify(lane)} is not a git repo\n`);
   process.exit(64);
 }
+// FREEZE REPAIR 6 (addendum item 6, seat RevCounterA HIGH): <rev> is interpolated into a
+// shell pipeline; only full hex object names are accepted.
+if (!/^[0-9a-f]{40,64}$/.test(rev)) {
+  process.stderr.write('DOCTRINE52: USAGE <rev> must be a full lowercase hex object name\n');
+  process.exit(64);
+}
 const sha = (b) => createHash('sha256').update(b).digest('hex');
+class EarlyExit extends Error {}
 const checks = [];
 const hold = (id, ok, detail) => checks.push({ id, ok, detail });
 
@@ -64,9 +75,11 @@ try {
   }
   const ep = join(T, ENTRY);
   if (!existsSync(ep)) {
-    process.stdout.write(`DOCTRINE52: DOCTRINE52_UNMET held=0/5 checks=5 rev=${rev} rule=${RULE} | E1 MISS entry-absent\n`);
-    rmSync(T, { recursive: true, force: true });
-    process.exit(1);
+    // FREEZE REPAIR 15 (addendum item 15, seats MutProbeD F2 + RevPlan MEDIUM): the v1
+    // short-circuit printed a hardcoded held=0/5 label without running E2-E5; the repaired
+    // path records the miss through the common tail so the label is always derived.
+    hold('E1', false, 'entry-absent');
+    throw new EarlyExit();
   }
   const text = readFileSync(ep, 'utf8');
   const head = text.split('\n').slice(0, 5).join('\n');
@@ -77,7 +90,10 @@ try {
     && /verified-at\s*:/i.test(head) && /recheck\s*:/i.test(head);
   hold('E1', e1, e1 ? 'trio present' : 'trio incomplete in first 5 lines');
 
-  // E2
+  // E2. FREEZE REPAIR 13 (addendum item 13, seats RevCounterD H1 + RevEntry): bound paths
+  // must be DISTINCT (twelve copies of one binding are hollow) and each must be a blob
+  // (`git show` on a directory prints a listing whose hash can match nothing — but only
+  // cat-file proves the object is a blob).
   const clauses = text.split('\n').filter((l) => l.startsWith('- '));
   const bound = [];
   let e2miss = 0;
@@ -86,19 +102,23 @@ try {
     if (!m) continue;
     bound.push(m);
   }
+  const distinctPaths = new Set(bound.map(([, p]) => p)).size;
   for (const [, p, h] of bound) {
+    const t = spawnSync('git', ['-C', lane, 'cat-file', '-t', `${rev}:${p}`], { encoding: 'utf8', timeout: 120_000 });
+    if (t.status !== 0 || t.stdout.trim() !== 'blob') { e2miss += 1; continue; }
     const r = spawnSync('git', ['-C', lane, 'show', `${rev}:${p}`], { encoding: 'utf8', timeout: 120_000, maxBuffer: 64 << 20 });
     if (r.status !== 0) { e2miss += 1; continue; }
     if (sha(Buffer.from(r.stdout)) !== h) e2miss += 1;
   }
-  const e2 = clauses.length >= 12 && bound.length >= 12 && e2miss === 0;
-  hold('E2', e2, `clauses=${clauses.length} bound=${bound.length} hash-miss=${e2miss}`);
+  const e2 = clauses.length >= 12 && bound.length >= 12 && distinctPaths >= 12 && e2miss === 0;
+  hold('E2', e2, `clauses=${clauses.length} bound=${bound.length} distinct=${distinctPaths} hash-miss=${e2miss}`);
 
-  // E3
+  // E3. FREEZE REPAIR 14 (addendum item 14, seat RevCounterD MEDIUM): the contract accepts
+  // 0-3 leading spaces per row; the row match must too.
   const sp = join(T, 'corpus', 'SOURCES.md');
   let e3 = false; let e3d = 'SOURCES.md absent';
   if (existsSync(sp)) {
-    const rows = readFileSync(sp, 'utf8').split('\n').filter((l) => /^\|\s*S10[23]\s*\|/.test(l));
+    const rows = readFileSync(sp, 'utf8').split('\n').filter((l) => /^\s{0,3}\|\s*S10[23]\s*\|/.test(l));
     const okRow = (id) => rows.some((l) => {
       const c = l.split('|').map((x) => x.trim());
       return c[1] === id && c[8] === 'mined' && c[11].includes(ENTRY);
@@ -121,8 +141,10 @@ try {
   const e5 = cen.status === 0;
   hold('E5', e5, e5 ? 'census exit 0' : `exit=${cen.status} ${(`${cen.stderr || ''}${cen.stdout || ''}`).trim().slice(0, 120)}`);
 } catch (e) {
-  process.stderr.write(`DOCTRINE52: FAIL-CLOSED ${e.stack || e}\n`);
-  process.exit(2);
+  if (!(e instanceof EarlyExit)) {
+    process.stderr.write(`DOCTRINE52: FAIL-CLOSED ${e.stack || e}\n`);
+    process.exit(2);
+  }
 } finally {
   try { rmSync(T, { recursive: true, force: true }); } catch {}
 }
