@@ -2106,3 +2106,33 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   and `H2-*`, `H3-*`, `H4-*`, `H5-*`, `H6-*`. Non-author source spot-check
   awaited from the independent closure reviewer; discernment is not self-claimed.
   Tool installs/updates: none.
+
+- 2026-10-24 — round 55 (hyaku run 5; attempt 1). Claims: C1 operability,
+  capability acquisition `source-capture` (`kumitate-source-capture-v1`), frozen
+  A55 v1; C2 coverage frontier, sourced entry `bounded-redelivery-budgets.md`
+  (S109/S110/S111), frozen D55 v1. Base
+  `c562d28557067bf35d78171c5737feee3c8679fd`; integration R1
+  `68940c66f7482c4bb3bbb4f3a6ffea5aee53c1bc`; freeze-repair R1b
+  `465a96f5caad46a7fe9fd5cfe43f6e7f4672c678`; measured tip R1b (claim receipts);
+  R2 `3b3e1e965cc100b102f1222ff71d0538d367ed87`; R3
+  `2750454b9dcd3de7ae3ed14b004d2122bab4c756`.
+  A55: base `ATTEST55_UNMET held=0/10` → tip `ATTEST55_HELD held=10/10`;
+  D55: base `DOCTRINE55_UNMET held=2/5` → tip `DOCTRINE55_HELD held=5/5`.
+  Commands and FINAL/idempotence receipts are in `.ufo/waves/round-55/close/`.
+  `source-capture` at tip reads `CLEAN captures=5 exemptions=107`; `--selftest`
+  is 13/13. Proxy terms A=84, C=25, C2=129/129; operability score remains 9,
+  and the retired coverage aggregate remains 10 after the inherited
+  `round-54-verifier-spotcheck` README row repair. R55-1 repairs routed defect
+  R54-C1 (uncommitted S108 source bytes; QUALITY Q46 + the gate); S108
+  re-adjudicated on committed bytes, stands rejected. Rows S109/S110/S111
+  admitted, S112 rejected; no other source row changed. Source census
+  108→112 rows, A=91→93/B=9→10/C=8, maintained census exit 0.
+  One v2 wave validated/prepared: 64 seats, 24 attack roles (reviewer 13,
+  critic 6, mutation-tester 5), 0 resumes; planner held by L1. It remains
+  prepared-but-undispatched for the orchestrator; no seats returned, no dead
+  seats, and no returned-without-report seats. Named counter-obsolescence:
+  frozen A54 asserts exactly-24 checklist items; the r55 capability move makes
+  it 25, so A54 reads 9/10 at R3 (B7) while A53/D53/D54 remain HELD — the
+  named cost of adding the item, recorded in the report. Non-author source
+  spot-check awaited from the independent closure reviewer; discernment is
+  not self-claimed. Tool installs/updates: none.
