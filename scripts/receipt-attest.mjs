@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /**
- * receipt-attest.mjs — capability `receipt-attest` (contract `kumitate-receipt-attest-v2`).
+ * receipt-attest.mjs — capability `receipt-attest` (contract `kumitate-receipt-attest-v3`).
  *
  * Records an invocation (argv, exit code, stdout/stderr hashes, a 128-bit nonce, UTC wall
  * clocks and a monotonic span) in a canonical JSON body. Its inner digest binds every body
  * field; a GNU sha256sum text-mode sidecar binds the complete receipt including its prelude.
+ * v3 is the round-53 ledger-evidence extension (routed defects R52-9 + R52-10): the nonce
+ * ledger scans the WHOLE ledger directory — every entry is examined, whatever its filename
+ * extension — so a nonce-colliding forgery can no longer hide by being stored under a
+ * non-`.txt` name. v1/v2 receipt formats and verdicts are unchanged.
  *
  *   node scripts/receipt-attest.mjs run --out <base> [--stdin] -- <cmd...>
  *   node scripts/receipt-attest.mjs verify [--ledger <dir>] <file>
@@ -16,11 +20,16 @@
  * The prelude is sidecar-bound; semantic fields are digest-bound. Verdicts and the v1 exit
  * map are unchanged: VALID 0; REPLAY/TAMPERED 1; UNREADABLE 2; USAGE 64.
  *
- * With `verify --ledger`, a prior receipt counts only when it is attested by its sidecar and
- * inner digest. A prior receipt with a damaged/absent sidecar or invalid digest is skipped,
- * with a printed `receipt-attest: ledger skipped ... not an attested receipt` note; it is not
- * treated as evidence of nonce reuse. The subject and byte-identical duplicates are exempt.
- * A nonce reused by a different attested record reads REPLAY.
+ * With `verify --ledger`, every entry of the ledger directory is examined — the evidence
+ * set is the whole directory, NOT a `*.txt` subset (R52-9: a nonce-colliding forgery stored
+ * under any other extension is evidence and is caught). A prior entry counts only when it
+ * is an attested receipt: sidecar present, GNU text-mode, name-matching, hash-covering,
+ * shape-valid, inner digest valid, clocks finite round-trippers. Entries that are not
+ * attested receipts — sidecars, foreign files, directories, anything else — are skipped,
+ * each with a printed `receipt-attest: ledger skipped ... not an attested receipt` note;
+ * they are never treated as evidence of nonce reuse. The subject and byte-identical
+ * duplicates (the same record digest under any name) are exempt. A nonce reused by a
+ * different attested record — whatever filename that record wears — reads REPLAY.
  *
  * `run --stdin` creates the nonce before spawning, writes its 32 UTF-8 hex bytes to child
  * stdin, closes stdin, and records stdin_sha256. Without --stdin, the v1 run behavior is
@@ -29,12 +38,12 @@
  */
 import { spawnSync } from 'node:child_process';
 import { createHash, randomBytes } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { constants as osConstants, tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-receipt-attest-v2';
+const CONTRACT = 'kumitate-receipt-attest-v3';
 const SELF = fileURLToPath(import.meta.url);
 const NONCE_BYTES = 16;
 const PRELUDE_SLACK_MS = 60_000;
@@ -318,9 +327,17 @@ function doVerify(args) {
     catch (e) { unreadable(`cannot list ledger directory ${ledgerDir} (${e.code ?? e.message})`); }
     const selfPath = resolve(file);
     for (const name of names.sort()) {
-      if (!name.endsWith('.txt')) continue;
       const other = join(ledgerDir, name);
       if (resolve(other) === selfPath) continue;
+      // v3 (R52-9): the evidence set is the whole directory, not a `*.txt` subset. Only
+      // regular files are read; directories, FIFOs, sockets and devices are skipped with
+      // the same printed note (fail closed on exotic kinds, never block on a FIFO read).
+      let st = null;
+      try { st = statSync(other); } catch { st = null; }
+      if (!st || !st.isFile()) {
+        out(`receipt-attest: ledger skipped ${name}: not an attested receipt (not a regular file)\n`);
+        continue;
+      }
       const state = attestationState(other);
       if (!state.attested) {
         out(`receipt-attest: ledger skipped ${name}: not an attested receipt (${state.why})\n`);
@@ -789,6 +806,71 @@ case_('ledger-prior-recorded-digest-16bit-collision-is-skipped-not-reuse', (d) =
   if (!/ledger skipped prior\.txt: not an attested receipt \(inner digest mismatch\)/.test(`${r.stdout || ''}`)) return 'no skip note for the unattested prior';
   if (lastLine(r) !== 'RECEIPT: VALID') return `verdict line is ${JSON.stringify(lastLine(r))}`;
   return null;
+});
+
+// v3 LEDGER arms (round 53, routed defects R52-9 + R52-10): the evidence set is the whole
+// ledger directory — attested receipts count whatever their filename extension, and the
+// same-digest exemption is extension-independent.
+case_('v3-ledger-catches-nonce-reuse-hidden-under-a-non-txt-name', (d) => {
+  const orig = makeReceipt(d, 'r52-9-orig', NODE_ECHO('r52-9'));
+  const body = JSON.parse(readFileSync(orig.file, 'utf8').split('\n')[1]);
+  const forged = { ...body, argv: [...body.argv, 'r52-9-evil'] };
+  forged.digest = digestOf(forged);
+  const bytes = Buffer.from(`run-at: ${body.wall_start}\n${canonical(forged)}\n`, 'utf8');
+  // The R52-9 evasion name: NOT a .txt file. Under v2 the ledger never opened it.
+  const hidden = join(d, 'attest-run-1-forged.receipt');
+  writeFileSync(hidden, bytes);
+  writeFileSync(`${hidden}.sha256`, sidecarLine(sha256(bytes), basename(hidden)));
+  const r = tool(['verify', '--ledger', d, orig.file]);
+  if (r.status !== 1 || lastLine(r) !== 'RECEIPT: REPLAY') return `exit ${r.status} ${JSON.stringify(lastLine(r))}`;
+  if (!/already bound to a different record in .*attest-run-1-forged\.receipt/.test(`${r.stdout || ''}`)) return 'REPLAY does not name the hidden file';
+  return null;
+});
+case_('v3-ledger-counts-an-attested-receipt-under-any-extension', (d) => {
+  const scratch = mkdtempSync(join(tmpdir(), 'receipt-attest-v3anyext.'));
+  try {
+    const prior = makeReceipt(scratch, 'prior', NODE_ECHO('prior'));
+    const body = JSON.parse(readFileSync(prior.file, 'utf8').split('\n')[1]);
+    const ledger = join(d, 'ledger-anyext');
+    mkdirSync(ledger);
+    // Re-key the attested prior under an extension-free name; the sidecar name follows.
+    const anyName = join(ledger, 'witness.log');
+    writeFileSync(anyName, readFileSync(prior.file));
+    writeFileSync(`${anyName}.sha256`, sidecarLine(sha256(readFileSync(anyName)), basename(anyName)));
+    const subject = makeReceipt(d, 'subject-anyext', NODE_ECHO('subject'));
+    rewriteConsistently(subject, (b) => { b.nonce = body.nonce; });
+    const r = tool(['verify', '--ledger', ledger, subject.file]);
+    if (r.status !== 1 || lastLine(r) !== 'RECEIPT: REPLAY') return `exit ${r.status} ${JSON.stringify(lastLine(r))}`;
+    if (!/already bound to a different record in witness\.log/.test(`${r.stdout || ''}`)) return 'REPLAY does not name witness.log';
+    return null;
+  } finally { try { rmSync(scratch, { recursive: true, force: true }); } catch { /* tmpfs reaps */ } }
+});
+case_('v3-ledger-exempts-a-byte-identical-duplicate-under-a-different-name', (d) => {
+  const orig = makeReceipt(d, 'same-name-a', NODE_ECHO('same-bytes'));
+  const copy = join(d, 'same-bytes.receipt');
+  writeFileSync(copy, readFileSync(orig.file));
+  writeFileSync(`${copy}.sha256`, sidecarLine(sha256(readFileSync(copy)), basename(copy)));
+  return verdict(tool(['verify', '--ledger', d, copy]), 0, 'RECEIPT: VALID');
+});
+case_('v3-ledger-skips-directories-and-foreign-files', (d) => {
+  const rec = makeReceipt(d, 'amid-junk', NODE_ECHO('j'));
+  const sub = join(d, 'nested-dir');
+  mkdirSync(sub);
+  writeFileSync(join(d, 'notes.json'), '{"not":"a receipt"}\n');
+  writeFileSync(join(d, 'stray.sha256'), `${'0'.repeat(64)}  stray\n`);
+  const r = tool(['verify', '--ledger', d, rec.file]);
+  if (r.status !== 0 || lastLine(r) !== 'RECEIPT: VALID') return `exit ${r.status} ${JSON.stringify(lastLine(r))}`;
+  const text = `${r.stdout || ''}`;
+  if (!/ledger skipped nested-dir: not an attested receipt \(not a regular file\)/.test(text)) return 'directory skip note absent';
+  if (!/ledger skipped notes\.json: not an attested receipt/.test(text)) return 'foreign-file skip note absent';
+  if (!/ledger skipped stray\.sha256: not an attested receipt/.test(text)) return 'sidecar skip note absent';
+  return null;
+});
+case_('v3-ledger-scan-finds-no-evidence-in-an-empty-directory', (d) => {
+  const rec = makeReceipt(d, 'solo', NODE_ECHO('solo'));
+  const empty = join(d, 'empty-ledger');
+  mkdirSync(empty);
+  return verdict(tool(['verify', '--ledger', empty, rec.file]), 0, 'RECEIPT: VALID');
 });
 
 function selftest() {

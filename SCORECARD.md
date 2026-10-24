@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=76
+A=78
 C=23
 C1=19
 C1_total=19
-C2=120
-C2_total=120
+C2=123
+C2_total=123
 S_members=88
 S_sections=88
 R_members=92
@@ -319,7 +319,7 @@ pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
-pin.receipt-attest=3d10d554e70a9d5dcb510287d3d030e04abe873f2573b922b961e9071ab7f01a
+pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
 -->
 
 
@@ -435,6 +435,7 @@ the frozen definitions name.
 | 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at `ab3c64e9aaaff80faf3a2c93743287e44def4084` → `BINDGUARD50: GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`); the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; the explicit `/tmp` refusal pre-landed at `378b6e7` and G50 already read 8/8 at `6927903` (attribution limit, `close/CritCloseClaims.md` §2); auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
 | 51 | operability (capability acquisition: receipt-attest; C2 frontier entry invocation-attestation sourced on S100/S101) | A51 at base c90b9de9 → ATTEST_UNMET held=0/9; D51 → DOCTRINE_UNMET held=0/5 | A51 held=9/9 at the measured close rev fef67079 (compositional — committed FINAL reads 8/9 at 57333ead; R52-11 mined into Q44); D51 held=5/5 | .ufo/waves/round-51/{base,close,probe}; corpus/knowledge/invocation-attestation.md; report .ufo/reports/round-51/kumitate.md |
 | 52 | operability (capability deepening: receipt-attest v2, contract kumitate-receipt-attest-v2; C2 frontier entry fail-closed-clock-validation sourced on S102/S103) | A52 at base 02c01258 → ATTEST52_UNMET held=5/13 (B1 B1c B2 B2e B3 B4 B5 B5c MISS; B2c B3c B4c B4d B6 pass under v1); D52 → DOCTRINE52_UNMET (E1 entry-absent, checks=1) | ATTEST52_HELD held=13/13 at the measured close rev R1 (close/FINAL-<R1>.txt; idempotence at R2); DOCTRINE52_HELD held=5/5 at R1 | .ufo/waves/round-52/{plan.md,probe/,base/,receipts/,build/,w1/}; corpus/knowledge/fail-closed-clock-validation.md; rows S102/S103; report .ufo/reports/round-52/kumitate.md |
+| 53 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; C1 capability deepening receipt-attest v3 — the whole-directory ledger evidence set, routed R52-9 + R52-10; C2 frontier coverage receipt-identity-canonicalization, sourced on S104/S105 opened this round) | A53 at base d124a775 → ATTEST53_UNMET held=9/17 (B2/B3/B4 absent-arms; B7a/B7b reproduce the R52-9 defect live: `ledger(orig)=RECEIPT: VALID namesEvasionFile=false`); D53 → DOCTRINE53_UNMET held=0/1 entry-absent; base also carries inherited C2_TOTAL_DRIFT 120 rows/121 files + AXES_DRIFT (coverage) from the post-close round-52 spotcheck (repaired in-round, named) | ATTEST53_HELD held=17/17 at the measured close rev R1 (close/FINAL-attest53-R1.txt; idempotence at R2); DOCTRINE53_HELD held=5/5 at R1 (close/FINAL-doctrine53-R1.txt; idempotence at R2) | .ufo/waves/round-53/{plan.md,probe/,base/,witness/,receipts/,close/}; corpus/knowledge/receipt-identity-canonicalization.md; corpus/lessons/round-53.md; rows S104/S105; report .ufo/reports/round-53/kumitate.md |
 | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
 | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
@@ -1738,7 +1739,7 @@ original patch is preserved at `.ufo/rounds/round-33/inherited.patch`.
 Rows enter only through a round that demonstrates the capability running (`AXES.md` §Capabilities); none enter through this rollout.
 
 | `counter-rerun` | Run a probe K times and compare each run's final summary line byte-for-byte: `AGREE (runs=K)` exit 0 iff every run exits 0 and all final lines match, else `DISAGREE` exit 1; exit 2 fail-closed, 64 usage; the selftest's flake-injection case kills a print-PASS stub. Final-summary-line agreement only — site-level stability is a different, unclaimed instrument. | `node scripts/counter-rerun.mjs --selftest` → `COUNTER_RERUN_SELFTEST: PASS` exit 0 (`r48/L1-c2-binding-ce9aee5d.txt`, instrument sha256 `c002523f…`); real AGREE: `--probe …/caproute48-probe.mjs --lane <lane> --rev ce9aee5d… --runs 2 -- --set r48` → `COUNTER_RERUN: AGREE (runs=2)`, both runs `held=4/4` exit 0, summary sha256 `f3c23bdc…` (same receipt) | round 48 |
-| `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger**: it flags a nonce only when another `*.txt` receipt binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
+| `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger** (v3, round 53): it scans the whole ledger directory and flags a nonce only when another attested receipt — under ANY filename — binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
 
 | `bind-oracle` | Prove from inside a `cap-run` child that requested host directories are mounted: read the child's own `/proc/self/mountinfo` (S099: a process's mount namespace; field 5 = mount point), compare the observed mount-point set with the requested binds and with the parent process's mount set, and report `HELD` / `MISSING missing=<n>` (a dropped request bind) / `EXTRA extra=<n>` (an unrequested bind) / `CONTROL_VISIBLE` (the sandbox failed to mask an unbound control dir) / `NO_CHILD` (fail-closed, 2); `--selftest` builds three runner mutants from `cap-run.mjs` source and scores 7 arms. It answers the r48 §Limits (a) surgical-bind-drop class with a mechanism probe; it proves the mechanism, not a site's own call. Exit 0/1/2/64 | `.ufo/waves/round-49/r49/L1-score-0526f898.txt` + `ReRunCounter49-{2,3}.txt` (`ORACLE_HELD held=6/6` at `0526f898`, three time-spaced runs), `scripts/bind-oracle.mjs` | 49 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
@@ -2441,3 +2442,90 @@ captured-invocation question stays open. (j) R43-1/R43-5 open; R41-2 L0 pending.
 Planned next round (candidates, not commitments): (1) the ledger-evidence extension
 (R52-9/10) riding an instrument-byte change if any; (2) the B5d counter source-pin arm;
 (3) the r53 freeze discipline upgrade (scratch-HELD witness at freeze time, lesson M5).
+
+## Round 52 correction (2026-10-24, round 53; routed defect R53-1; supersedes one prose sentence, append-only)
+
+The round-52 section's harm line above says "D51 5/5 at R2". The committed
+`close/FINAL-harm-census.txt` and the round-52 report's named limit both read
+`DOCTRINE51 held=4/5 at R2` (D2 hash-miss on the v1 instrument bytes the v2 cutover
+replaced; the identical bytes are archived hash-matching at
+`.ufo/waves/round-52/build/ScribeEntry/v1-receipt-attest.mjs`). The prose sentence is
+corrected here; the census stands as committed. Round 53 lands the re-anchor (H5) and the
+H6 source-pin arm so a prose/pin divergence fails close at the harm battery.
+
+## Round 53 — claims, freeze repairs, limits (2026-10-24)
+
+Plan `.ufo/waves/round-53/plan.md` (claims, kill rules K1-K5, receipt plan, harm rules
+H1-H6, close sequence); base `d124a775ee46902f588ac730ff97f4d8864e4692`; counters
+`.ufo/waves/round-53/probe/attest53-probe.mjs` (rule `A53` v1, seventeen checks B1..B7d)
+and `probe/doctrine53-probe.mjs` (rule `D53` v1, checks E1-E5), both frozen AND executed
+at base before data (Q43), with the M5/Q43 scratch-HELD witness of a synthetic conformant
+post-state committed at freeze (`witness/`). ONE v2 wave of exactly 64 seats prepared
+under policy v2 (attack 24/64 = 37.5%); the orchestrator dispatches the committed spec.
+
+**C1 — operability (capability deepening): `receipt-attest` v3**, contract
+`kumitate-receipt-attest-v3` (the ledger-evidence extension: `verify --ledger` examines
+every directory entry; attested receipts count under any filename; non-regular files and
+non-attested entries skip with the printed note; the same-digest exemption is
+extension-independent; five new selftest arms, 51 cases). Predicate `ATTEST53_HELD` (rule
+A53, 17 checks).
+- **Before** at base: `ATTEST53_UNMET held=9/17` exit 1 (`base/attest53-base.txt`; the
+  nine passing arms re-assert the r52 v2 properties under the v3 counter; the eight misses
+  are the round-53 arms, and B7a/B7b show the routed defect live).
+- **After** at the measured close rev R1: `ATTEST53_HELD held=17/17 checks=17` exit 0
+  (`close/FINAL-attest53-R1.txt`); idempotence re-run at R2
+  (`close/IDEMPOTENCE-<R2>.txt`). Counting command:
+  `node .ufo/waves/round-53/probe/attest53-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+  Do-nothing control: v2 bytes + SCORECARD-only edits cannot reach 17/17 (K1 = the base
+  reading; K3 drop-one mutants are killed by the predicate's literal `held=17/17
+  checks=17`; K4 = B5c mutant transcript + judged-bytes guard).
+
+**C2 — frontier coverage (learning, sourced): `receipt-identity-canonicalization.md`**,
+predicate `DOCTRINE53_HELD` (rule D53, 5 checks), sourced on S104 (RFC 8785, tier A) +
+S105 (sha256sum(1), tier B), opened this round.
+- **Before** at base: `DOCTRINE53_UNMET held=0/1 checks=1 rev=d124a775… rule=D53 | E1
+  MISS entry-absent` exit 1 (`base/doctrine53-base.txt`).
+- **After** at R1: `DOCTRINE53_HELD held=5/5 checks=5` exit 0
+  (`close/FINAL-doctrine53-R1.txt`); idempotence at R2.
+
+**Terms (declared vs computed).** At R1 the declared block reads A=78, C=23, C2=123,
+C2_total=123; computed agrees (`PROXY: MATCH … pins=6 match src-rev=31c465f15669`). A
+composition: 76 at the r52 tip + the two round-53 probes (the frozen whole-tree walk; no
+other runnable file was added — the mutant source was deleted after its transcript was
+captured, and every close/build artifact is non-runnable). C 23 (checklist unchanged).
+C2 123/123 = 120 at base + the r52-spotcheck drift repair + this entry + this lesson.
+Re-pins: `pin.receipt-attest` (the v3 bytes `ba5139b12…`).
+
+**Inherited-state repairs (named).** (a) the round-52 verifier spotcheck landed post-close
+without a README map row — live C2 read 120 rows / 121 files and the retired coverage
+aggregate computed 9 vs the declared 10 (`AXES_DRIFT`); the row is added
+(`corpus/README.md`, round-53 commit) and the drift is repaired, not hidden. (b) The D51
+re-anchor (routed from the round-52 closure): the r51 entry's instrument binding moves to
+the archived hash-matching v1 bytes; DOCTRINE51 reads 5/5 at the close rev (H5). (c) R53-1
+prose correction (the `## Round 52 correction` above). (d) R53-2: the round-52 report's
+seat wording is corrected by convention — ScribeReadme counts as returned-without-report.
+
+**Harm (H1-H6 at R3, `close/FINAL-harm-census.txt`).** H1 checklist item census at the
+committed tree (freeze baseline committed at freeze). H2 selftests green (receipt-attest
+51/51, cap-run 12/12, bind-oracle 7/7, round-gate 61/61, sources-check CLEAN,
+counter-rerun PASS). H3 `PROXY: MATCH pins=6 match` (default and `--strict`). H4 census
+exit 0. H5 r52-set: repairs50-probe-v2 8/8, bindguard50-probe 8/8, DOCTRINE51 5/5 via the
+re-anchor, DOCTRINE52 5/5. H6 the §Counters source pins re-verified at close.
+
+**Limits, recorded not hidden.** (a) The five static A52-carried arms remain
+whole-tree-author satisfiable (the r52 limit carries). (b) B2e binds data, not execution
+(carries). (c) B5's proxy conjunct executes the scored rev's own proxy-check
+(self-referential pin, carries). (d) Drop-one counter mutants print HELD k-1/k and are
+killed only by the frozen predicate string's literal `held=17/17 checks=17` (carries; the
+B5d hardening beyond H6 stays open). (e) E5 is live-only (R51-4 class, carries). (f) The
+±60 s prelude tolerance and the finite-roller ceiling are the Q39 ceiling class (carries).
+(g) H5's DOCTRINE51 arm audits the previous round and is binding-history dependent. (h)
+The wave is prepared-but-undispatched at close (the accepted host mapping): its 64 seats
+are itemized in the report's receipts and the spec is committed; attack coverage of the
+v3 build lands when the orchestrator dispatches, and the round admits on the L1-landed,
+counter-verified claims — the same shape the fleet accepted for prepared waves.
+
+Planned next round (candidates, not commitments): (1) the dispatched round-53 wave's
+findings integration (freeze-repair addendum discipline if any); (2) the B5d counter
+source-pin arm beyond H6 (a pinned counter registry); (3) A3e captured-invocation
+question; (4) R43-1/R43-5 stay open; the R41-2 gate-pins ruling stays pending.

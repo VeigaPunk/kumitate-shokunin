@@ -2063,3 +2063,21 @@ R52-11 discipline: measured close rev R1, FINAL receipts at R1, idempotence re-r
 R52-4 landed (repairs50-probe-v2, count-derived R5 arm). R52-9/10 deferred to round 53.
 Quality Q44 added (close-receipt citation discipline). Lane tip, report and close
 revisions: see .ufo/reports/round-52/kumitate.md.
+- 2026-10-24 — round 53 (hyaku run 5; attempt 1). Claims: C1 operability —
+receipt-attest v3 (contract kumitate-receipt-attest-v3: the whole-directory
+ledger evidence set, routed R52-9 + R52-10; five new selftest arms, 51 cases),
+predicate ATTEST53_HELD (rule A53 v1, 17 checks); C2 frontier coverage —
+receipt-identity-canonicalization (S104 RFC 8785 + S105 sha256sum(1), opened
+this round), predicate DOCTRINE53_HELD (rule D53 v1, 5 checks). Base d124a775.
+Freeze per M5/Q43: counters + base receipts (9/17, 0/1) + scratch-HELD witness
+committed at freeze; source pins in plan §Counters (the B5d/H6 arm). ONE v2 wave
+of exactly 64 seats prepared under policy v2 (24 attack-role = 37.5%), committed
+as w1-spec.json for orchestrator dispatch. Receipts attest53-run-{1,2,3} wrap
+bind-oracle --selftest, sources-check, round-gate --selftest (span >=300 s,
+body wall_start); doctored control attest53-run-2-replayed reads TAMPERED.
+Inherited-state repairs: the round-52 spotcheck README row (C2_TOTAL_DRIFT +
+AXES_DRIFT repair), the D51 re-anchor (archived v1 bytes, hash-matching), the
+R53-1 prose correction. Close per the R52-11/Q44 discipline: measured close rev
+R1, FINAL receipts at R1, idempotence at R2, harm battery + census at R3.
+Quality: lesson round-53 (M1 mined); rows S104/S105. Lane tip, report and close
+revisions: see .ufo/reports/round-53/kumitate.md.
