@@ -525,6 +525,12 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
   F‑4), a survivor is a statement about the *suite's discriminating power*, not a licence to
   change the contract. The shipped bytes were verified correct on every site this battery
   attacks.
+* The **self-audit (§7) proves each mutant changes observable behaviour; it does not prove
+  each mutant is the *minimal* weakening for its site.** A mutant that both truncates a
+  comparison and disables the ledger would still pass the fingerprint test while testing two
+  things at once. The per-mutant *diffs* in `/tmp/mutshipped/w2run/*/mutant.mjs` are the
+  ground truth for "one site, one change" and were inspected individually; the fingerprint is
+  a *no-op* test, not a minimality test.
 * No tool installs or upgrades were made during this seat's run.
 
 ---
