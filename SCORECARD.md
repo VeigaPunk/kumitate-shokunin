@@ -285,7 +285,7 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=81
+A=71
 C=23
 C1=19
 C1_total=19
