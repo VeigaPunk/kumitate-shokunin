@@ -62,15 +62,15 @@ directory reports no nonce reuse against any prior committed receipt corpus list
 probe (r49/r50 receipt files); A5 `pin.receipt-attest` in the SCORECARD
 `kumitate-gate-pins-v1` block equals the sha256 of the extracted script and
 `node scripts/proxy-check.mjs --strict` (UFO_SRC = live origin checkout) prints
-`PROXY: MATCH` exit 0. `ATTEST_HELD` = held=8/8 exit 0 (checks A1, A2, A2c, A3, A3c, A4,
-A4c, A5 — the challenge arms A2c/A3c/A4c per the `## Freeze repair addendum`; the body's
-original "five checks / held=5/5" wording is superseded by addendum items 3 and 7); any
-other reading is `ATTEST_UNMET held=<k>/8` exit 1; crash/unreadable extraction = exit 2
-(never a score).
+`PROXY: MATCH` exit 0. `ATTEST_HELD` = held=9/9 exit 0 (checks A1, A2, A2c, A3, A3c, A3d,
+A4, A4c, A5 — the challenge arms A2c/A3c/A3d/A4c per the `## Freeze repair addendum`; the
+body's original "five checks / held=5/5" wording is superseded by addendum items 3, 7 and
+8); any other reading is `ATTEST_UNMET held=<k>/9` exit 1; crash/unreadable extraction =
+exit 2 (never a score).
 
 - Counting command: `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`
-- Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/8` (A1 absent;
-  measured `base/attest-base-v3r5.txt`).
+- Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/9` (A1 absent;
+  measured `base/attest-base-v3r6.txt`).
   Do-nothing control (SUPERSEDED by addendum item 3 — the original claim "a stub cannot
   clear A1/A3" was falsified by seats CritC1 and RevengerGap; v3's challenge arms A2c/A3c
   now defeat the print-stub class, and RevCounterA re-verified: forger rev 9cb611b7 reads
@@ -209,3 +209,9 @@ repaired arms. Base before-state re-measured with the repaired counters at base
    VALID; `--ledger` over {original, twin} must read `RECEIPT: REPLAY` exit 1 for both),
    rewrites the body arithmetic to eight checks, and fixes the header claim. Check set:
    A1, A2, A2c, A3, A3c, A4, A4c, A5.
+8. **A3d digest-binding challenge (v3r6, per seat DistWave1 item 1)** — DistWave1 showed a
+   tool whose `verify` checks only sidecars would pass every frozen arm (nothing asserted
+   the stored inner digest). A3d corrupts only the digest field of a live-generated receipt
+   (sidecar recomputed) and requires `RECEIPT: REPLAY` exit 1. Check set becomes A1, A2,
+   A2c, A3, A3c, A3d, A4, A4c, A5 — `ATTEST_HELD` = held=9/9. Base re-measured with each
+   repair (`base/attest-base-v3r6.txt`: `ATTEST_UNMET held=0/9` exit 1).

@@ -46,16 +46,20 @@
  *       sidecar; the twin alone must verify VALID, and `verify --ledger` over a directory
  *       containing both the original and the twin must answer `RECEIPT: REPLAY` exit 1 —
  *       the declared nonce-reuse class must be asserted, not just implied.
+ *   A3d DIGEST-BINDING CHALLENGE (v3r6, seat DistWave1 item 1) — a receipt whose inner
+ *       digest field is corrupted (constant hex, semantic body untouched) but whose sidecar
+ *       is recomputed must NOT read VALID: `verify` must answer `RECEIPT: REPLAY` exit 1 —
+ *       otherwise a tool that checks only sidecars passes every arm.
  *   A5  pin.receipt-attest in the SCORECARD.md `kumitate-gate-pins-v1` block equals the
  *       sha256 of the extracted scripts/receipt-attest.mjs, and
  *       `node scripts/proxy-check.mjs --strict` (UFO_SRC = live origin checkout) exits 0
  *       with `PROXY: MATCH`.
  *
- * Predicate ATTEST_HELD = held=8/8, exit 0. Any other reading is `ATTEST_UNMET held=<k>/8`
+ * Predicate ATTEST_HELD = held=9/9, exit 0. Any other reading is `ATTEST_UNMET held=<k>/9`
  * exit 1. A crash or an unreadable extraction is exit 2 (never a score); a malformed verdict
  * line from the tool simply fails its check's pattern (a MISS, not a crash). Frozen at
  * `.ufo/waves/round-51/plan.md` § C1 + `## Freeze repair addendum` before any data seat ran
- * against the v3r5 arms.
+ * against the v3r6 arms.
  */
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
@@ -299,6 +303,36 @@ try {
     }
   } else a4cd = 'tool absent';
   hold('A4c', a4cok, a4cd);
+
+  // A3d — DIGEST-BINDING challenge: corrupt only the inner digest field (constant hex),
+  // recompute the sidecar; verify must NOT read VALID (expect RECEIPT: REPLAY exit 1).
+  let a3dok = false; let a3dd = '';
+  if (existsSync(tool)) {
+    const base = join(T, `a3d-${randomBytes(6).toString('hex')}`);
+    const r = runTool(['run', '--out', base, '--', '/usr/bin/printf', '%s', 'a3d-digest']);
+    const rcpt = `${base}.txt`;
+    if (r.status !== 0 || !existsSync(rcpt)) {
+      a3dd = `run exit=${r.status}`;
+    } else {
+      try {
+        const lines = readFileSync(rcpt, 'utf8').split('\n');
+        const ji = lines.findIndex((l) => l.trimStart().startsWith('{'));
+        const body = JSON.parse(lines[ji]);
+        body.digest = 'f'.repeat(64);
+        lines[ji] = JSON.stringify(body);
+        const bad = `${rcpt}.baddigest`;
+        writeFileSync(bad, lines.join('\n'));
+        writeFileSync(`${bad}.sha256`, `${sha(readFileSync(bad))}  ${bad.split('/').pop()}\n`);
+        const v = runTool(['verify', bad]);
+        const last = lastLine(v);
+        a3dok = v.status === 1 && /RECEIPT: REPLAY/.test(last);
+        a3dd = a3dok ? 'corrupt-digest rejected as REPLAY' : `exit=${v.status} last=${JSON.stringify(last.slice(0, 100))}`;
+      } catch (e) {
+        a3dd = `craft failed: ${e.message}`;
+      }
+    }
+  } else a3dd = 'tool absent';
+  hold('A3d', a3dok, a3dd);
 
   // A5
   let a5ok = false; const a5d = [];
