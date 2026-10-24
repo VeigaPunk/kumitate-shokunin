@@ -2246,3 +2246,13 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   flip conditions are recorded in the lesson `## Gate` and the report.
   Non-author source spot-check awaited from the independent closure
   reviewer; discernment is not self-claimed. Tool installs/updates: none.
+- 2026-10-24 — round 59 (Kimi fresh L1): C1 operability capability
+  `cite-sources` (contract `kumitate-cite-sources-v1`; routed R58-V3, and the
+  same counter binds R58-V1/V4/V5/V6/V7/V8 as lane-byte facts). C2 coverage
+  frontier item 2, one theme: `mcp-orchestration-contract.md` on S125/S127/S136,
+  re-opened 2026-10-24; the two durable-execution package entries rejected
+  with flips. Base counters at `0f66ecd4` read REPAIR59 0/8 and DOCTRINE59 0/5.
+  Scratch census of the normalized append exited 0 before the registry append.
+  Collision guard: reg 123, staged 147, collisions 0; indented fixture caught
+  S125. Quarantine slice 9 rows re-checked, none adopted. considerthese item 1
+  grounded as QUALITY Q50; the file was not edited. Tool installs/updates: none.

@@ -892,3 +892,10 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Fails when.** The URL no longer resolves; the fresh bytes' sha diverges from the pinned capture without the divergence being recorded; the located quote is absent from the fresh bytes' normalized text. A paywalled or vanished page fails the re-fetch arm honestly — the capture pin stands as the historical record and the drift is named.
   - **Shown able to fail.** The round-58 demonstration could have failed on all three arms (fetch, sha, quote); its passing output is recorded in `corpus/lessons/round-58.md` §considerthese. A synthetic divergence case is trivially constructible (flip one byte of the capture) and is the spot-check's cheapest re-derivation.
   - **Limit.** One source per round, sampled — this is a discernment tripwire, not a census; it binds nothing mechanically and does not replace `source-capture` (which binds committed bytes, not live truth).
+
+- **Q50 — a tier or row count quoted in a lesson is the histogram re-derived from `corpus/SOURCES.md`, not a figure copied from a report.** Grounding: `considerthese/2026-10-24.md` item 1 (recount every number quoted), taken this round; the defect it would have caught is R58-V4 (the round-58 report said tier counts 96→99 A; the census histogram at that tip was A=102 B=13 C=8).
+  - **Who checks.** The frozen counter `repair59-probe.mjs` arm B7: the lesson line `TIER59: A=<n> B=<n> C=<n> rows=<n>` must equal the probe's own count of registry rows at the measured rev.
+  - **Command.** The probe, or the same split: a `| S### |` row's fourth cell is the tier. Round-59 after-state is `TIER59: A=104 B=14 C=8 rows=126`.
+  - **Fails when.** The lesson line is absent, or any of the four integers disagrees with the registry at that rev. A hand-copied "96→99" fails.
+  - **Shown able to fail.** At base `0f66ecd4` the lesson is absent, so B7 misses (`want TIER59: A=102 B=13 C=8 rows=123`). A one-integer lie in the line misses the same way.
+  - **Limit.** It binds the one TIER59 line, not every number in the report. The report still has to quote the command.

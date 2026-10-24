@@ -474,6 +474,7 @@ const GATE_PINS = {
   'pin.source-dupes': 'scripts/source-dupes.mjs', // round 56: SOURCES duplicate-URL ratchet
   'pin.readme-map': 'scripts/readme-map.mjs', // round 57: corpus coverage-map bimap gate
   'pin.receipt-evidence': 'scripts/receipt-evidence.mjs', // round 58: receipt reproduction + descending nonce-sweep gate (R57-V1/V2/V4)
+  'pin.cite-sources': 'scripts/cite-sources.mjs', // round 59: README map rows must not cite an absent S### (R58-V3)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

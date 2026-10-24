@@ -586,16 +586,16 @@ Citations are to the notes — the notes carry the live anchors.
 
 ## Gate registry
 
-Registry home per the fleet protocol's §Gate standard (round 34). Seventeen are
-gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54, `source-capture` round 55, `source-dupes` round 56);
+Registry home per the fleet protocol's §Gate standard (round 34). Nineteen are
+gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54, `source-capture` round 55, `source-dupes` round 56, `receipt-evidence` round 58, `cite-sources` round 59);
 `counter-rerun` (round 49 row) is a **probe** — its exit 1 is `DISAGREE`, two runs of one counter disagreeing, not a surface defect
 (ScoutRegistryClassification, `r49/ScoutRegistryClassification.md`) — and `cap-spawn` is a **helper** with no process exit map. None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute
 origin read verbs (`ufo-sighting surface --json`, dispatcher `status`), and its
-`--checklists` mode runs the commands listed below. Verdict map for all eighteen: `0` → clean,
+`--checklists` mode runs the commands listed below. Verdict map for all nineteen: `0` → clean,
 `1` → failed, `2` (fail-closed) and `64` (usage) → could-not-evaluate. Owner:
 this lane (kumitate L1). Round 46 adds one **runner**, `cap-run`, which is not a gate: it exits with its child's
-code (its own exit map is in its row), so "all eighteen" above still counts the gates only.
+code (its own exit map is in its row), so "all nineteen" above still counts the gates only.
 
 | name | kind | entry command | self-test | pinned values live in |
 |---|---|---|---|---|
@@ -623,6 +623,7 @@ code (its own exit map is in its row), so "all eighteen" above still counts the 
 | source-dupes | gate | `node scripts/source-dupes.mjs [--registry <path>] [--sources <path>]` → `SOURCE_DUPES: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-source-dupes-v1`; default `.ufo/pins/source-dupes.json` pins the set of live duplicate-URL groups (same normalized URL under differing scopes — the census W04 class); a NEW duplicate group is DRIFT `new-duplicate`, a pinned group that no longer duplicates is DRIFT `stale-known`, and a pin whose member/url shape mismatches the live group is DRIFT `known-mismatch`; malformed registry, a row id covered by two pins, or an unreadable sources doc is FAIL-CLOSED | `--selftest` (12 hermetic cases; `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`) | `.ufo/pins/source-dupes.json`; `corpus/SOURCES.md`; `pin.source-dupes` in `kumitate-gate-pins-v1` |
 
 | readme-map | gate | `node scripts/readme-map.mjs [--registry <path>] [--readme <path>] [--corpus <dir>]...` → `README_MAP: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-readme-map-v2` (round 58: every `covered` member must lstat as a regular file — a directory member is DRIFT `covered-not-file`, a dangling symlink DRIFT `stale-covered`; registry version 2); default `.ufo/pins/readme-map.json` pins the `covered` set — every `*.md` under `corpus/knowledge` + `corpus/lessons` must carry exactly one README map row `| `path` |`, every such row must name a live file, and every live file must be pinned; findings `uncovered`, `orphan-row`, `duplicate-row`, `format-unmapped`, `stale-covered`, `unpinned` are DRIFT; malformed registry/README/corpus-dir is FAIL-CLOSED | `--selftest` (16 hermetic cases; `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`) | `.ufo/pins/readme-map.json`; `corpus/README.md`; `pin.readme-map` in `kumitate-gate-pins-v1` |
+| cite-sources | gate | `node scripts/cite-sources.mjs [--readme PATH] [--sources PATH]` → `CITE_SOURCES: CLEAN\|DRIFT\|FAIL-CLOSED` (0 clean · 1 a README map row cites an `S` + 3-or-more-digit id that is not a SOURCES row · 2 unreadable input · 64 usage), contract `kumitate-cite-sources-v1`; one- and two-digit family ids are ignored | `--selftest` (8 hermetic cases; `CITE_SOURCES_SELFTEST: PASS (8/8)` + `VERDICT: PASS`) | `pin.cite-sources` in `kumitate-gate-pins-v1` |
 
 
 Named legacy gaps (not claimed): the original seven gates do not ship the
@@ -720,6 +721,7 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`) — `node scripts/source-dupes.mjs` → exit 0 + `SOURCE_DUPES: CLEAN`
 - [ ] Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`) — `node scripts/readme-map.mjs` → exit 0 + `README_MAP: CLEAN`
 - [ ] Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`) — `node scripts/receipt-evidence.mjs --selftest` → exit 0 + `RECEIPT_EVIDENCE_SELFTEST: PASS`
+- [ ] README source-id citation gate (round 59; contract `kumitate-cite-sources-v1`) — `node scripts/cite-sources.mjs --selftest` → exit 0 + `CITE_SOURCES_SELFTEST: PASS`
 
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,

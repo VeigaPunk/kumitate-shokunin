@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=93
-C=28
+A=96
+C=29
 C1=19
 C1_total=19
-C2=138
-C2_total=138
+C2=141
+C2_total=141
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=bb9223bda189daa6cf8f1a82891adaa70e050ae31e766d48844574db6dc54022
+pin.proxy-check=01bd849a865eb0e310c014eaf9b8d3801530f71c0248a1b518db67f4e6d715ca
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -325,6 +325,7 @@ pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d2
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
 pin.readme-map=b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e
 pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
+pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
 -->
 
 
@@ -1786,7 +1787,9 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `counter-pins` | Reverify a versioned registry of frozen counter paths and sha256 values; default repo-relative paths must be regular files beneath the lane root, malformed registries fail closed, and an empty set is DRIFT | `node scripts/counter-pins.mjs` → `COUNTER_PINS: CLEAN pins=5`; `--selftest` → `COUNTER_PINS_SELFTEST: PASS (11/11)`; `pin.counter-pins` is hash-checked by `proxy-check --strict` | 54 |
 | `source-capture` | Bind every opened `corpus/SOURCES.md` `S###` row to committed capture bytes — sha256 + byte size + capture date in `.ufo/pins/source-captures.json` — or an explicit exemption; capture path-escape, symlink, absent, hash-/bytes-mismatch, uncaptured rows, orphan bindings and empty capture sets are `SOURCE_CAPTURE: DRIFT` exit 1; malformed registry or unreadable sources doc is FAIL-CLOSED exit 2; the gate mechanically enforces the round-55 capture-commit rule (routed defect R54-C1: a SOURCES row is a claim; a URL alone is not a resolvable location at closure) | `node scripts/source-capture.mjs` → `SOURCE_CAPTURE: CLEAN captures=5 exemptions=107`; `--selftest` → `SOURCE_CAPTURE_SELFTEST: PASS (13/13)` + `VERDICT: PASS`; `pin.source-capture` is hash-checked by `proxy-check --strict` | 55 |
 | `source-dupes` | Hold the SOURCES duplicate-URL warning class to a pinned set: the registry `.ufo/pins/source-dupes.json` (version 1) enumerates every live duplicate group — rows sharing one normalized URL under differing scopes (the census W04 class) — and `node scripts/source-dupes.mjs` exits 0 only when live groups equal the pinned set exactly; a new duplicate is DRIFT `new-duplicate`, a resolved duplicate is DRIFT `stale-known` until its pin is removed, and a malformed pin set is FAIL-CLOSED exit 2; the warning the census never gates on becomes a scored contract | `node scripts/source-dupes.mjs` → `SOURCE_DUPES: CLEAN groups=4 known=4`; `--selftest` → `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`; `pin.source-dupes` in `kumitate-gate-pins-v1` | 56 |
-| `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (version 1); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=135 rows=135 covered=135`; `--selftest` → `README_MAP_SELFTEST: PASS (14/14)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
+| `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (v2; registry version 2); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=141 rows=141 covered=141`; `--selftest` → `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
+| `receipt-evidence` | A receipt set is evidence only if every receipt verifies under the extraction's own receipt-attest, reproduces its recorded argv in the git archive of the judged rev, carries a nonce absent from the descending round-48..57 sweep, and spans the body-clock minimum (contract `kumitate-receipt-evidence-v1`; routed R57-V1/V2/V4). Row added in round 59: the round-58 acquisition landed the gate and the pin, and the capabilities table did not gain the row (R58-V6) | `node scripts/receipt-evidence.mjs --selftest` → `RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `pin.receipt-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 28 | 58 |
+| `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
@@ -2764,7 +2767,7 @@ rejected → mined, logged old→new in the lesson), S122 (Kafka committed-offse
 cursor), S123 (LangGraph checkpoints; same URL as queued S028, duplicate group
 pinned); S124 (Flink checkpointing) opened, kept queued. Frozen predicate
 `DOCTRINE58_HELD` (D58 v1, five checks E1–E5). Before: `DOCTRINE58_UNMET
-held=0/5` entry-absent at base; after `close/FINAL-doctrine58-R1.txt`.
+held=2/5` (E4 and E5 already passed at base; the prose that said held=0/5 was wrong). R58-V1 measured base held=2/5. After `close/FINAL-doctrine58-R1.txt`.
 PROVINCE.md stays frontier, not core.
 
 **Terms and inherited repair.** At base the r57 closure integrator's
