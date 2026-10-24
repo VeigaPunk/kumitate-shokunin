@@ -1,0 +1,361 @@
+{
+  "schema": "ufo-swarm-registry-v1",
+  "wave": "kumitate-r51-w2",
+  "createdAt": "2026-10-24T02:44:06.110Z",
+  "updatedAt": "2026-10-24T02:44:06.110Z",
+  "reportDir": ".ufo/waves/round-51/w2",
+  "members": {
+    "RevA51Rerun": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.AccusedPony",
+      "role": "reviewer",
+      "item": "ATTACK the A51 counting command. Run: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7d88faa733c5621da1cac174515e4a7d7d8896ea — report the exact held line and each check's PASS/MISS. Expected: everything PASS except A2 (receipt 3 absent — pre-scheduled, not a finding). Independently re-run twice and confirm byte-identical output. Then attack: can any MISS be made a PASS without editing the tree? (no — name why per check). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevD51Rerun": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.WearyDove",
+      "role": "reviewer",
+      "item": "ATTACK the D51 counting command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/doctrine51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7d88faa733c5621da1cac174515e4a7d7d8896ea — report the exact held line. If HELD 5/5, attack D2's hollow-clause class on the REAL entry: read corpus/knowledge/invocation-attestation.md and judge whether each bound clause is substantive (topicality review — the counter binds hashes, you judge content); list any vacuous clause with its line. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevA5Pin": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.RunningTyrannosaurus",
+      "role": "reviewer",
+      "item": "ATTACK A5. At rev 7d88faa: extract via git archive to /tmp, verify pin.receipt-attest equals sha256(scripts/receipt-attest.mjs) by hand; run the extracted proxy-check --strict with UFO_SRC=/home/vgpnk/Projects/ufo-fsd-alpha and confirm PROXY: MATCH exit 0. Then the stale-pin control: flip ONE hex digit of pin.receipt-attest in a scratch copy of SCORECARD.md and confirm proxy-check reads GATE_PIN_DRIFT/PIN_DRIFT exit non-zero (A5 is not vacuous). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevInstrument": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.LikeTick",
+      "role": "reviewer",
+      "item": "ATTACK scripts/receipt-attest.mjs (shipped bytes at 7d88faa) line by line against the contract in plan.md §C1 + addendum items 3-5: run mode argv/exit/stdout capture; canonical digest (parse-drop-sort-stringify sha256); GNU sidecar; verify check ORDER (inner digest -> REPLAY, sidecar -> TAMPERED, clocks -> TAMPERED, ledger exemption, prelude/wall window); ledger same-digest exemption; sidecar resolved next to receipt; no env recorded; verdict last line; exits 0/1/1/64/2. Report every deviation with line numbers. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevFreezeGenealogy": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.OutsideChameleon",
+      "role": "reviewer",
+      "item": "ATTACK the freeze genealogy. git show each repair commit (1fd8aceb, 3ed875d3, 8c07e880, 8fd3cde1, 4b8da2166f62d7bda814132a669ad873a05833d3, cbca45cc107a9b67d51e7375ea07003350d61648, 779b16e570de4bf7a19135b78f8eb96101a948f9, 8f3c692bb112f918bdbf8e6df4f5796614d1e103) and verify each diff matches its addendum item's description and changed ONLY what the item names (no silent semantic drift, no predicate-label change). Report per commit: files touched, semantic vs comment-only, addendum fidelity. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevEntryClauses": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.TameSawfish",
+      "role": "reviewer",
+      "item": "ATTACK corpus/knowledge/invocation-attestation.md clause-by-clause: for EVERY receipt:<path>@sha256:<hex> binding, recompute the sha256 and read enough of the target bytes to confirm the clause's claim about them is true (not just hash-equal). Flag any clause whose prose overclaims its binding (e.g. the RevengerGap precision notes: 'verbatim duplication detected by A2' holds only within the named receipt set — check the entry phrases it precisely). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevStanza": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.ImpressedHorse",
+      "role": "reviewer",
+      "item": "ATTACK the stanza re-derivation claim A=67. Reproduce the frozen walk (proxy-check.mjs RE_RUNNABLE over walkFiles(self)) and produce the exact breakdown: enumerate the 44 shipped/instrument files (git ls-files scripts | grep runnable + the two round-51 probes' status) vs the 23 probe files under .ufo/waves/round-51 that inflate the term. Verify C=23 (grep -c '^\\s*- \\[ \\]' SKILL.md) and C2=117/117 (README rows vs find corpus counts). Report the enumeration as the R51-2 terms-line evidence. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevChecklist23": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.TastelessWasp",
+      "role": "reviewer",
+      "item": "ATTACK checklist item 23: run node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/surface-probe.mjs --checklists and confirm 23/23 with item 23 genuinely executed (not counted-but-skipped): mutate the item line in a SCRATCH SKILL.md (change the expected substring to a wrong literal) and confirm the probe fails that item — proving the probe executes it. Report both transcripts. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevHarm": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.SexualFrog",
+      "role": "reviewer",
+      "item": "ATTACK the harm battery at 7d88faa: H1 surface-probe --checklists (expect 23/23); H2 cap-run --selftest (12/12), bind-oracle --selftest (7/7), counter-rerun --selftest, round-gate --selftest (61/61); H3 proxy --strict MATCH; H4 sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate exit 0; H5 both round-50 counters at 7d88faa (GUARD_HELD 8/8, LEDGER_HELD 8/8). Save transcripts (.txt) next to your report; any red arm is a HIGH finding. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritClaims": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.PlasticGoat",
+      "role": "critic",
+      "item": "FALSIFY the claim pair end-to-end. (a) Attribution for C1: which A51 arms genuinely discriminate 'instrument exists and closes the M2 class' from 'instrument absent' (the before state)? Name them. (b) Is ATTEST_HELD=9/9 at the close commit reachable by any do-nothing control (justify with the v2 forger history and the v3r6 challenge arms)? (c) For C2: is the entry new ground vs a re-expression of QUALITY Q39/counter-amendment-discipline (quote both and judge)? Verdict per claim with required-changes if any. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritA2Span": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.LowOtter",
+      "role": "critic",
+      "item": "ATTACK A2's span semantics. The frozen check reads the run-at prelude lines (max-min >= 300s) while the instrument separately binds the prelude to the body's wall window. Construct the strongest replay you can in /tmp: take attest-run-2.txt, try to re-date it by <=60s inside the wall window WITH a recomputed sidecar — does verify read VALID (Q39 ceiling, honest) or TAMPERED? Then prove the M2-class forgery (>=300s re-date) still fails. Report the exact boundary you measured. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritLedger": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.DoubtfulTermite",
+      "role": "critic",
+      "item": "ATTACK the ledger exemption boundary in /tmp: (a) same nonce + different digest -> REPLAY (must); (b) same nonce + same digest duplicate -> VALID (must); (c) unattested .txt in the ledger dir -> ignored (must); (d) boundary: a receipt whose digest field is VALID but whose file differs only in the prelude AND sidecar recomputed, inside the wall window — what does the ledger arm answer, and is that the declared semantics? Report each with transcripts. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritReceiptsHand": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.MixedMoose",
+      "role": "critic",
+      "item": "ATTACK the committed receipts by hand: for attest-run-{1,2}.txt and attest-run-2-replayed.txt INDEPENDENTLY recompute (with sha256sum + your own canonical-JSON digest in /tmp, not by calling the instrument): sidecar hash, inner digest, nonce distinctness, span. Confirm your independent verdicts match the instrument's (VALID/VALID/TAMPERED). Any mismatch is CRITICAL. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritSourcesRows": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.SoundMink",
+      "role": "critic",
+      "item": "ATTACK the S100/S101 rows in corpus/SOURCES.md: check every cell against the saved bytes at build/ScoutClockSource/clock-gettime.html and build/ScoutRandomSource/getrandom.html (sha256, line ranges, quotes as verbatim substrings, tier-A defensibility for the named scopes, mined status, used-by). Flag tier inflation or quote drift. Also verify rows sit inside ## Registry and sources-check --strict is CLEAN. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritReportContract": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.PermanentDragon",
+      "role": "critic",
+      "item": "ATTACK the round report before it is written: from plan.md §4 list every required section and the concrete evidence pointer that will fill it (wave shape/seat counts/dead seats, per-claim before->after with counting commands + measured commits, sources before->after with census outputs, trend verdicts, SHONEN 4 boxes, stale-lane line, tool installs, L0 questions). Flag any section you predict will be thin or missing; that is the report's risk list. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritQ43": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.AttractiveCrab",
+      "role": "critic",
+      "item": "ATTACK Q43's fix claim: read corpus/QUALITY.md Q43 and judge whether its 'Fails when/Shown able to fail' arms are themselves executed evidence or assertion; is the 'freeze commit lacks the before-receipt = conformance defect' rule mechanically enforced anywhere (name the mechanism or record its absence as the limit Q43's own Limit section must carry)? Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "MutShipped": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.ActiveSnail",
+      "role": "mutation-tester",
+      "item": "ATTACK the shipped instrument with the wave-1 battery: replay build/MutInstrument/'s mutant table (32 single-site mutants: digest 11, sidecar 4, nonce 9, verdict 6, clock 2) against scripts/receipt-attest.mjs in /tmp scratch copies; run each mutant's --selftest; classify killed/survived with the exact killing case. Any survivor is a finding with severity. All scratch under /tmp; transcripts .txt in your report dir. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "MutCounters": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.PrivateSnipe",
+      "role": "mutation-tester",
+      "item": "ATTACK both frozen counters with drop-one-check mutants in /tmp (never edit the lane): for EACH of A51's 9 checks and D51's 5 checks, force that check to always-PASS (invert its boolean) and run against 7d88faa — every mutant must still read UNMET (the missing arms fire) or, for checks whose objects are absent at 7d88faa (A2 receipt 3), report the expected reading and why. Any mutant reading HELD is CRITICAL. Table + transcripts. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "MutStanza": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.ResonantOpossum",
+      "role": "mutation-tester",
+      "item": "ATTACK the stanza terms: in /tmp scratch copies of SCORECARD.md, set A=66, A=68, C=22, C2=116/117, 117/118 and confirm proxy-check reports the exact DRIFT kind (A_DRIFT, C_DRIFT, C2_DRIFT/C2_TOTAL_DRIFT) each time and never MATCHes — the MATCH at 7d88faa is not vacuous. Also flip one hex of pin.bind-oracle and confirm GATE_PIN_DRIFT. Transcripts .txt. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "MutReceiptBytes": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.GrotesquePiranha",
+      "role": "mutation-tester",
+      "item": "ATTACK the committed receipts byte-level: copy attest-run-2.txt to /tmp and produce 8 mutants (flip one hex char in: nonce, argv, digest, wall_end; truncate the JSON line; swap in run-1's sidecar; delete the sidecar; rewrite only the run-at prelude). Run the shipped verify on each: report the exact verdict class + exit for each. Any mutant reading VALID (except a same-digest verbatim copy) is CRITICAL. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "MutSkillItem": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.PetiteCentipede",
+      "role": "mutation-tester",
+      "item": "ATTACK checklist item 23's executability: in a /tmp copy of SKILL.md, mutate the item line three ways (wrong exit set; wrong expected substring; command pointing at a nonexistent script) and run surface-probe --checklists against the copy (read scripts/surface-probe.mjs for how to point it at a tree, or overlay-copy the whole lane to /tmp) — each mutation must fail the item. Report transcripts. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ScoutCensus2": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.FreshEarthworm",
+      "role": "scout",
+      "item": "MEASURE the sources before->after for the report: run scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate (exit code + output), the frozen manual row count grep -cE '^\\|[[:space:]]*S[0-9]{3,}[[:space:]]*\\|' corpus/SOURCES.md, the tier histogram awk and status histogram awk from /home/vgpnk/Projects/shokunin/CORPUS.md, and node scripts/sources-check.mjs. Report every output verbatim (before-close state; the close re-runs it). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ScoutReopenS100": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.InterestingAmphibian",
+      "role": "scout",
+      "item": "RE-OPEN S100 (non-author verification): fresh curl https://man7.org/linux/man-pages/man2/clock_gettime.2.html to /tmp; sha256 it and compare to the row's body sha256 (7d7948bcf8400a786c2795b24e8da979d6e01610f7b8ea6bf1ab97f06205fb69) and to build/ScoutClockSource/clock-gettime.html; verify the 22-word quote is a verbatim substring with the claimed location. Report AGREE/DISAGREE with evidence. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ScoutReopenS101": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.RawAnglerfish",
+      "role": "scout",
+      "item": "RE-OPEN S101: fresh curl https://man7.org/linux/man-pages/man2/getrandom.2.html to /tmp; sha256 vs the row (366f0e7e27c7bd5e361e782bb12ce23215dabcd20ddc505eb91451cda49f7b3d) and vs build/ScoutRandomSource/getrandom.html; verify the 17-word quote verbatim + location. Report AGREE/DISAGREE with evidence. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ScoutPriorSweep2": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.MatureDinosaur",
+      "role": "scout",
+      "item": "RE-RUN the A4 prior-corpus sweep against the CURRENT tree: the three round-51 receipts now contain real nonces — run the probe's sweep logic (walk .ufo/waves except round-51, basename /receipt|ReRun|L1-score/i, substring-compare each round-51 nonce) and confirm zero hits; ALSO check the reverse: the round-51 receipts' nonces against each other (must be 3 distinct). Paste the sweep commands + outputs (a negative claim carries its sweep). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ScoutDeadSeats": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.ElderlyLimpet",
+      "role": "scout",
+      "item": "CENSUS the wave-1 dead seats for the report: registry .ufo/waves/round-51/w1/swarm-registry.json vs reports present — ExecForgerControl (OppositeBuzzard), MutCounter (VariableGamefowl), ScribeEntry (ProfoundBoar) filed nothing; read proc:// for their last status if visible to you (else record 'no terminal status text available'); check whether each wrote ANY file under build/ (ls each build/<seat>/ dir). Produce the exact dead-seat paragraph evidence for the report. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "ConnOverlap2": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.NorthernCephalopod",
+      "role": "connector",
+      "item": "RE-SCAN sibling lanes (read-only, late-breaking): any lane landed or claiming receipt-attestation, invocation receipts/ledgers, clock_gettime/getrandom sourcing, or attestation entries since the wave-1 scan? Check .ufo/reports/round-51/ and */*-shokunin/.ufo/waves/round-51*/ and round-52 starts. Report deltas vs ConnSiblingOverlap.md or 'no change'. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "SentSecrets2": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.UncomfortableMammal",
+      "role": "sentinel",
+      "item": "RUN the receipts secret sweep: the three committed receipts + doctored control must carry no env, tokens, or secret material (they record argv only). Propose and run the concrete sweep (grep -iE 'token|secret|passwd|apikey|authorization|cookie|ssh|private' over the receipts + jq-style field listing of each JSON line's keys); verify argv contents are lane-public commands. Report findings + the sweep command for the close. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevengerClose": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.EnchantingOrangutan",
+      "role": "revenger",
+      "item": "REVERSE-ENGINEER the round's true delta for the report's Work-performed opener: one sentence — what precise capability did the lane lack at base and hold at the close tip, and which committed artifact is the evidence? Then audit the close tip 7d88faa for over-claim risks: list every file/commit that a non-author verifier will re-derive and could disagree with (stanza A=67 breakdown, Q43, lesson M-rows, addendum items) — the disagree-list for the report. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "SimplDedup": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.ViolentParrot",
+      "role": "simplifier",
+      "item": "DEDUPE build/DistWave1/wave2-items.md (96 items) against the 31 dispatched wave-2 seats: list the items NOT covered by any seat's attack (name the gap) and any seat whose item duplicates another. The uncovered list becomes residual-call candidates — report it numbered with the one-line method each would need. Do not start the residual work yourself. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "RevW2Scope": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.HilariousMongoose",
+      "role": "reviewer",
+      "item": "SCOPE-AUDIT wave 2 at run time: list every file under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/ when you run; confirm every wave-2 write is w2/<Seat>.md only (plus /tmp scratch); flag any seat writing .mjs/.sh/.py under the lane (A-term contamination) or anywhere outside its report. Also re-sha256 plan.md + both counters and compare against SonicAudit's freeze-hash record (report any drift). Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    },
+    "CritA3eGap": {
+      "kind": "spawn",
+      "agentId": "kumitate-r51.OfficialWeasel",
+      "role": "critic",
+      "item": "ATTACK the gap seat LabratM2Replay named as F-3: no frozen arm covers 'prelude edited AND sidecar refreshed'. In /tmp: re-date a genuine receipt by >=300s with a recomputed sidecar against the SHIPPED verify — the wall-window check must answer TAMPERED (the instrument closes the class behaviorally); then judge: should the frozen counter gain an A3e arm, or is the instrument's behavioral check plus the judged-bytes boundary (r49 precedent) an honest limit? Give the verdict with reasons; recommend the exact limit sentence for the report if limit. Time-box: return within 15 minutes with your best findings+evidence; partial results are acceptable. You are an independent leaf: never block on or wait for another seat; if a needed artifact is absent, record the dependency as a finding and return.",
+      "axes": [
+        "operability",
+        "coverage"
+      ],
+      "milestone": "r51 v1 falsify wave: attack the integrated C1 instrument + C2 entry + freeze repairs + receipts; re-run both frozen counting commands; re-open S100/S101; mutation-test shipped bytes; harm battery"
+    }
+  }
+}
