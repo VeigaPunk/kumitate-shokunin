@@ -22,74 +22,16 @@ detection gap and the ceiling that stays open.
 
 ## Design
 
-- A receipt is a display `run-at:` prelude plus ONE canonical-JSON line; a GNU `sha256sum`
-  text-mode sidecar covers the whole file, prelude included
-  (`receipt:.ufo/waves/round-51/receipts/attest-run-1.txt@sha256:7b87133ae29dbc9245c71689d05428886bea934cd487ceaa0954a8ede3b2fafd`
-  is the first instrument-produced receipt; the receipt-definition clause cites the class
-  members, not the round-50 guard counter output).
-- Rewriting only the prelude while the sidecar stays stale fails verification
-  (`RECEIPT: TAMPERED` via sidecar mismatch) — measured rung 1 by
-  `receipt:.ufo/waves/round-51/w1/LabratM2Replay.md@sha256:ad45ebe7d1eb973c2a2e9b041f962632dc31d26edee4fc5f66d0c910692c7dbe`,
-  and pinned as selftest case 11 in
-  `receipt:.ufo/waves/round-51/build/ExecInstrument/selftest.txt@sha256:ae530b7d7c61b01b1c4b0ebdcba8db1bf9f5d2ce2bcc85551f79a7343c36556d`.
-- The inner `digest` field binds every semantic field (argv, exit, stdout/stderr sha256,
-  wall ISO start/end, monotonic span, nonce) as sha256 over the canonical JSON with the
-  `digest` field removed (parse, drop, sort keys recursively, one line — semantic
-  re-canonicalization, not textual excision). Corrupting any field, or the digest itself,
-  reads `RECEIPT: REPLAY`.
-- CLOCK_MONOTONIC "is not affected by discontinuous jumps in the system time (e.g., if
-  the system administrator manually changes the clock)" (S100, 22 words). The monotonic
-  span (`mono_span_ms` from `process.hrtime.bigint()`) stays ordered when an operator
-  steps the wall clock; the prelude is separately checked against the body's own wall
-  window, and measured re-dates of −300/+300/+600 s with recomputed sidecars all fail
-  (`receipt:.ufo/waves/round-51/w2/CritA3eGap.md@sha256:bd38328ae74a7039bb7fde647327241db6706cb306000f568efef513f5ec8576`);
-  the accepted tolerance around the body window is exactly −60,000 through +60,073 ms
-  (`receipt:.ufo/waves/round-51/w2/CritA2Span.md@sha256:93dfe9b6ae5e96f8e2654da07296baa78cd2738a1b8a69584774818d030a55cf`).
-  A drift inside that window is indistinguishable from clock jitter — that boundary is the
-  Q39 ceiling, not a defect. Frequency adjustments still apply to CLOCK_MONOTONIC,
-  which is why the span is an ordering witness, never a temporal proof.
-- The nonce is 128 bits from `crypto.randomBytes(16)`. S101 grounds the OS interface a
-  process draws such bytes from on Linux: "By default, getrandom() draws entropy from the
-  urandom source (i.e., the same source as the /dev/urandom device)." (S101, 17 words) —
-  the page says nothing about Node specifically, and this entry does not claim it does
-  (`receipt:.ufo/waves/round-51/w1/ScoutRandomSource.md@sha256:6f63673bb7cf55d738416b4b2bb8bb5a58236b21c6d2744d8aa1d69840123b63`).
-- Ledger freshness: `--ledger` flags a nonce only when another receipt binds the SAME
-  nonce to a DIFFERENT record digest; byte-identical duplicates are exempt (addendum
-  item 4 — the literal "rejects a nonce already present" reading made frozen A4
-  unpassable, found by
-  `receipt:.ufo/waves/round-51/w1/RevInstrumentContract.md@sha256:d146f3327577a61d843222f4384966bf5322a674044b9d9afac5d6b418bd0265`
-  F1). Reuse across distinct records answers `RECEIPT: REPLAY` in both directions
-  (`receipt:.ufo/waves/round-51/w2/CritLedger.md@sha256:cbe8e730d2698eb3e15d3b03e476a6133a1ab2ce1f0a0c6386776ec138e266aa`).
-- The frozen predicate asserts the forgery classes behaviorally: rule A51 v3r6 (nine
-  checks) includes probe-issued challenge arms — A2c binds a fresh receipt to a
-  probe-issued command's argv and output hash; A3c rewrites a live receipt's prelude; A4c
-  reuses a nonce across different bodies; A3d corrupts the stored digest
-  (`receipt:.ufo/waves/round-51/probe/attest51-probe.mjs@sha256:73ee53ec994c5abaf23a5d95022a395be89e87675df07cea58efd3cf1cf0ff2c`).
-  Measured history: a verdict-printing stub cleared the v2 counter's static arms at
-  held=5/5 (`receipt:.ufo/waves/round-51/w1/CritC1.md@sha256:ba815f68433f2c2f25953f8760b3f8cb48c05383cb20c02e96d6cca93a773ea9`);
-  against v3r6 the same forger reads held=5/8 and the zero-child counterfeit stays a
-  declared forgery-boundary limit (`receipt:.ufo/waves/round-51/w1/RevCounterA.md@sha256:7510dbd61584a54ae57c7bea5086e7a38d620c69c38c293242cf4398512ce3fa`).
-- The instrument is the judged object: `receipt:scripts/receipt-attest.mjs@sha256:44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9`
-  ships a 27-case selftest, independently re-run in a fresh directory with a sabotage
-  control that reads red
-  (`receipt:.ufo/waves/round-51/w1/ExecSelftestExec.md@sha256:de83be90f9d7b381d89166eb31ba2555de13b7291666e8e31e735783d72dbd90`).
-- Before-state, measured: `receipt:.ufo/waves/round-51/base/attest-base-v3r6.txt@sha256:b0fb355869d27549fa1e4601d3ef7dfff638878f380639c9732d38decb162adf`
-  records `ATTEST_UNMET held=0/9` at base `c90b9de9` exit 1. This entry is scored by
-  `receipt:.ufo/waves/round-51/probe/doctrine51-probe.mjs@sha256:f2d27071241489122a683269938a19bc17607be967880ece0aaf9e651983e8a0`
-  (rule D51).
-- Receipt count, distinctness and span are measured, not asserted: three receipts,
-  distinct nonces, pairwise-distinct sha256, span 772.9 s between earliest and latest
-  `run-at` (frozen arm A2) — the same author-scheduled invocation-independence class the
-  lane has used since R50-4, honestly labelled; run 2 wraps a live `proxy-check --strict`
-  (`receipt:.ufo/waves/round-51/receipts/attest-run-2.txt@sha256:7d0f3e075b8bb9c87d67318ca3f96e17b81a1b4a8a4478ea492d50cd59a9cc85`).
-- Freeze integrity is itself a recorded lesson: the round's first counters were frozen
-  unrun (one unparseable, one unsatisfiable) and its declared kill rule fell to a stub;
-  every repair is named in the plan's addendum with re-measured base receipts
-  (`receipt:.ufo/waves/round-51/w1/RevPlan.md@sha256:449eaa758a21687a8a9afccea3bf16b37e45db8183173e73d74b3d0e262966b8`).
-- Secret hygiene: receipts record argv verbatim and never the environment; wrap only lane
-  gates whose argv is public — a receipt must be publishable by construction (the wave-2
-  sentinel sweep over the committed receipts found no secret-pattern matches).
-- Zero-run minting stays possible by any author of the tree (RevengerGap F3): attestation
-  proves record integrity and ledger nonce freshness, NOT temporal truth. Q39's ceiling
-  stands verbatim: receipts are author-attested invocation records, not cryptographic
-  temporal proof.
+- A receipt is a display `run-at:` prelude plus ONE canonical-JSON line; a GNU `sha256sum` text-mode sidecar covers the whole file, prelude included (`receipt:.ufo/waves/round-51/receipts/attest-run-1.txt@sha256:7b87133ae29dbc9245c71689d05428886bea934cd487ceaa0954a8ede3b2fafd` is the first instrument-produced receipt; the receipt-definition clause cites the class members, not the round-50 guard counter output).
+- Rewriting only the prelude while the sidecar stays stale fails verification (`RECEIPT: TAMPERED` via sidecar mismatch) — measured rung 1 by `receipt:.ufo/waves/round-51/w1/LabratM2Replay.md@sha256:ad45ebe7d1eb973c2a2e9b041f962632dc31d26edee4fc5f66d0c910692c7dbe`, and pinned as selftest case 11 in `receipt:.ufo/waves/round-51/build/ExecInstrument/selftest.txt@sha256:ae530b7d7c61b01b1c4b0ebdcba8db1bf9f5d2ce2bcc85551f79a7343c36556d`.
+- The inner `digest` field binds every semantic field (argv, exit, stdout/stderr sha256, wall ISO start/end, monotonic span, nonce) as sha256 over the canonical JSON with the `digest` field removed (parse, drop, sort keys recursively, one line — semantic re-canonicalization, not textual excision); corrupting any field, or the digest itself, reads `RECEIPT: REPLAY` (selftest case 08: `receipt:.ufo/waves/round-51/build/ExecInstrument/selftest.txt@sha256:ae530b7d7c61b01b1c4b0ebdcba8db1bf9f5d2ce2bcc85551f79a7343c36556d`).
+- CLOCK_MONOTONIC "is not affected by discontinuous jumps in the system time (e.g., if the system administrator manually changes the clock)" (S100, 22 words). The monotonic span (`mono_span_ms` from `process.hrtime.bigint()`) stays ordered when an operator steps the wall clock; the prelude is separately checked against the body's own wall window, and measured re-dates of −300/+300/+600 s with recomputed sidecars all fail (`receipt:.ufo/waves/round-51/w2/CritA3eGap.md@sha256:bd38328ae74a7039bb7fde647327241db6706cb306000f568efef513f5ec8576`); the accepted tolerance around the body window is exactly −60,000 through +60,073 ms (`receipt:.ufo/waves/round-51/w2/CritA2Span.md@sha256:93dfe9b6ae5e96f8e2654da07296baa78cd2738a1b8a69584774818d030a55cf`). A drift inside that window is indistinguishable from clock jitter — that boundary is the Q39 ceiling, not a defect. Frequency adjustments still apply to CLOCK_MONOTONIC, which is why the span is an ordering witness, never a temporal proof.
+- The nonce is 128 bits from `crypto.randomBytes(16)`. S101 grounds the OS interface a process draws such bytes from on Linux: "By default, getrandom() draws entropy from the urandom source (i.e., the same source as the /dev/urandom device)." (S101, 17 words) — the page says nothing about Node specifically, and this entry does not claim it does (`receipt:.ufo/waves/round-51/w1/ScoutRandomSource.md@sha256:6f63673bb7cf55d738416b4b2bb8bb5a58236b21c6d2744d8aa1d69840123b63`).
+- Ledger freshness: `--ledger` flags a nonce only when another receipt binds the SAME nonce to a DIFFERENT record digest; byte-identical duplicates are exempt (addendum item 4 — the literal "rejects a nonce already present" reading made frozen A4 unpassable, found by `receipt:.ufo/waves/round-51/w1/RevInstrumentContract.md@sha256:d146f3327577a61d843222f4384966bf5322a674044b9d9afac5d6b418bd0265` F1). Reuse across distinct records answers `RECEIPT: REPLAY` in both directions (`receipt:.ufo/waves/round-51/w2/CritLedger.md@sha256:cbe8e730d2698eb3e15d3b03e476a6133a1ab2ce1f0a0c6386776ec138e266aa`).
+- The frozen predicate asserts the forgery classes behaviorally: rule A51 v3r6 (nine checks) includes probe-issued challenge arms — A2c binds a fresh receipt to a probe-issued command's argv and output hash; A3c rewrites a live receipt's prelude; A4c reuses a nonce across different bodies; A3d corrupts the stored digest (`receipt:.ufo/waves/round-51/probe/attest51-probe.mjs@sha256:73ee53ec994c5abaf23a5d95022a395be89e87675df07cea58efd3cf1cf0ff2c`). Measured history: a verdict-printing stub cleared the v2 counter's static arms at held=5/5 (`receipt:.ufo/waves/round-51/w1/CritC1.md@sha256:ba815f68433f2c2f25953f8760b3f8cb48c05383cb20c02e96d6cca93a773ea9`); against v3r6 the same forger reads held=5/8 and the zero-child counterfeit stays a declared forgery-boundary limit (`receipt:.ufo/waves/round-51/w1/RevCounterA.md@sha256:7510dbd61584a54ae57c7bea5086e7a38d620c69c38c293242cf4398512ce3fa`).
+- The instrument is the judged object: `receipt:scripts/receipt-attest.mjs@sha256:44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9` ships a 27-case selftest, independently re-run in a fresh directory with a sabotage control that reads red (`receipt:.ufo/waves/round-51/w1/ExecSelftestExec.md@sha256:de83be90f9d7b381d89166eb31ba2555de13b7291666e8e31e735783d72dbd90`).
+- Before-state, measured: `receipt:.ufo/waves/round-51/base/attest-base-v3r6.txt@sha256:b0fb355869d27549fa1e4601d3ef7dfff638878f380639c9732d38decb162adf` records `ATTEST_UNMET held=0/9` at base `c90b9de9` exit 1. This entry is scored by `receipt:.ufo/waves/round-51/probe/doctrine51-probe.mjs@sha256:f2d27071241489122a683269938a19bc17607be967880ece0aaf9e651983e8a0` (rule D51).
+- Receipt count, distinctness and span are measured, not asserted: three receipts, distinct nonces, pairwise-distinct sha256, span 772.9 s between earliest and latest `run-at` (frozen arm A2) — the same author-scheduled invocation-independence class the lane has used since R50-4, honestly labelled; run 2 wraps a live `proxy-check --strict` (`receipt:.ufo/waves/round-51/receipts/attest-run-2.txt@sha256:7d0f3e075b8bb9c87d67318ca3f96e17b81a1b4a8a4478ea492d50cd59a9cc85`).
+- Freeze integrity is itself a recorded lesson: the round's first counters were frozen unrun (one unparseable, one unsatisfiable) and its declared kill rule fell to a stub; every repair is named in the plan's addendum with re-measured base receipts (`receipt:.ufo/waves/round-51/w1/RevPlan.md@sha256:449eaa758a21687a8a9afccea3bf16b37e45db8183173e73d74b3d0e262966b8`).
+- Secret hygiene: receipts record argv verbatim and never the environment; wrap only lane gates whose argv is public — a receipt must be publishable by construction (the wave-2 sentinel sweep found no secret-pattern matches: `receipt:.ufo/waves/round-51/w2/SentSecrets2.md@sha256:f31bcf51f15ab97851c93e3e27cf0c1154f9a0b60a71db7754d8b0a188076123`).
+- Zero-run minting stays possible by any author of the tree (`receipt:.ufo/waves/round-51/w1/RevengerGap.md@sha256:ae70ce3f35e8c471719556974badfb63f1c00abc0938566aeea9e363901e5ab7` F3): attestation proves record integrity and ledger nonce freshness, NOT temporal truth. Q39's ceiling stands verbatim: receipts are author-attested invocation records, not cryptographic temporal proof.

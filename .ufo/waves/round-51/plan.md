@@ -239,3 +239,11 @@ repaired arms. Base before-state re-measured with the repaired counters at base
    is the strictest reading and stands. (e) The emitted check order differs from the
    header's listed order (set-equal, nine); cosmetic. (f) The pre-close tip reads 7/9
    (A2 **and** A4 are receipt-3-coupled), not 8/9.
+10. **Integration exceptions and header drift (wave-2 seat RevW2Scope).** (a) The inline
+    §C2 D1-window edit inside commit `cd7f69d3` (plan body "first three lines" → "within
+    its first five lines") bypassed this addendum; it is recorded here as the round's one
+    explicit append-only exception, and the post-addendum plan hash is pinned in
+    `w2/RevW2Scope.md`. (b) The A51 header comment still says "Scores seven checks" and
+    carries `VERSION = 'v3'`, predating the v3r5/v3r6 additions (nine checks; the emitted
+    verdict field reads `version=v3`); this addendum is the authoritative count and the
+    counter bytes stay frozen to keep the pinned hash (`73ee53ec…`) stable.
