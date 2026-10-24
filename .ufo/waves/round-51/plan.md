@@ -1,0 +1,155 @@
+# kumitate round 51 — frozen plan
+
+Lane `kumitate-shokunin` (master, jj-colocated). Base and round-open tip
+`c90b9de94009b938fa19a089bfaa97df20b54f86` (local == remote, ahead=0). Frozen before any
+data seat runs, same commit as both counters. Axes owned: operability + coverage
+(orchestration & tooling). This round declares **two claims**, one per distinct axis.
+
+## Context — why these claims
+
+Every live axis sits at its terminal value (operability 9 under the saturating `f_O`;
+coverage successors 10/10/10) and the round-50 close recorded the next candidates:
+(1) the anti-replay question for R4-class receipts — a separately frozen
+captured-invocation instrument or an explicit attestation field (QUALITY Q39's honest
+ceiling); (2) the bind guard's site-level arm (not taken this round). The round-49/50
+lesson M2 class — receipts presented as time-spaced runs that were byte-identical — was
+repaired by re-issue (R50-4) but the *detection* gap remains: nothing in the lane can
+machine-distinguish a genuine invocation record from a prelude-only replay. Round 51
+lands the instrument that closes that gap (C1) and records the design as sourced
+frontier knowledge (C2).
+
+## C1 — operability (capability acquisition): `receipt-attest`
+
+New shipped instrument `scripts/receipt-attest.mjs` (contract `kumitate-receipt-attest-v1`):
+turn an invocation record into a machine-checked object.
+
+- `run --out <base> -- <cmd...>` executes `<cmd...>`, captures argv, exit code, stdout and
+  stderr sha256, a 128-bit random nonce (`crypto.randomBytes`), wall clocks
+  (`Date.now`, ISO start/end) and a monotonic span (`process.hrtime.bigint`), then writes
+  `<base>.txt` and `<base>.txt.sha256` (GNU `sha256sum` format over the exact receipt
+  bytes). Receipt bytes = a display `run-at:` prelude line plus one canonical-JSON line
+  (sorted keys) whose `digest` field binds every semantic field (nonce, argv, exit,
+  output hashes, clocks) — sha256 over the JSON line with the `digest` field removed.
+- `verify [--ledger <dir>] <file>` recomputes the inner digest, the sidecar hash and the
+  clock ordering (wall_end ≥ wall_start, mono ≥ 0); with `--ledger`, walks every other
+  `*.txt` receipt in `<dir>` and rejects a nonce already present. Verdict lines:
+  `RECEIPT: VALID` exit 0; `RECEIPT: REPLAY` exit 1 for both an inner-digest mismatch and
+  a nonce-reuse; `RECEIPT: TAMPERED` exit 1 for a sidecar mismatch; usage 64; unreadable 2.
+  No env is recorded; receipts carry no secret material (QUALITY Q42 class).
+- `--selftest` hermetic suite ≥10 cases including a flake-injection case whose doctored
+  receipt must read `REPLAY` and a sidecar-mismatch case that must read `TAMPERED`.
+
+What it closes (r50 limit (c) / lesson M2): a receipt re-dated by rewriting only its
+`run-at:` prelude now fails verification (`TAMPERED` — the sidecar covers the whole file,
+prelude included), and a new receipt forged from an old body's nonce fails the ledger
+(`REPLAY`). What it does not claim (Q39 ceiling kept verbatim): receipts remain
+author-attested invocation records, not cryptographic temporal proof — the instrument
+proves integrity of the record and freshness of nonces across a ledger, not the wall-clock
+truth of when the bytes were made.
+
+**Predicate, label `ATTEST_HELD`** — frozen counter
+`.ufo/waves/round-51/probe/attest51-probe.mjs` (this directory), five checks over the
+committed bytes of `<rev>` (`git archive`, never the working tree):
+A1 `scripts/receipt-attest.mjs` exists at rev and `--selftest` prints
+`ATTEST_SELFTEST: PASS` exit 0; A2 the three committed receipts
+`.ufo/waves/round-51/receipts/attest-run-{1,2,3}.txt` (+ sidecars) each verify
+`RECEIPT: VALID`, their embedded nonces are pairwise distinct, their file sha256 are
+pairwise distinct, and max(run-at) − min(run-at) ≥ 300 s; A3 the committed doctored
+control `.ufo/waves/round-51/receipts/attest-run-2-replayed.txt` (run-2's receipt with
+only the `run-at:` prelude rewritten, sidecar untouched — the exact lesson-M2 forgery)
+verifies `RECEIPT: TAMPERED` exit 1; A4 `verify --ledger` over the round-51 receipts
+directory reports no nonce reuse against any prior committed receipt corpus listed in the
+probe (r49/r50 receipt files); A5 `pin.receipt-attest` in the SCORECARD
+`kumitate-gate-pins-v1` block equals the sha256 of the extracted script and
+`node scripts/proxy-check.mjs --strict` (UFO_SRC = live origin checkout) prints
+`PROXY: MATCH` exit 0. `ATTEST_HELD` = held=5/5 exit 0; any other reading is
+`ATTEST_UNMET held=<k>/5` exit 1; crash/unreadable extraction = exit 2 (never a score).
+
+- Counting command: `node .ufo/waves/round-51/probe/attest51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`
+- Before (control): at base `c90b9de9` → expected `ATTEST_UNMET held=0/5` (A1 absent).
+  Do-nothing control: a stub script printing verdict strings cannot clear A1 (the probe
+  runs the selftest and requires its exact final line from real execution) nor A3 (the
+  doctored control must be rejected by genuine digest binding, not string matching) — the
+  control is executed by a wave-1 seat against a scratch stub and its reading committed.
+
+## C2 — frontier coverage (learning, sourced): `invocation-attestation`
+
+New knowledge entry `corpus/knowledge/invocation-attestation.md` recording the design and
+its grounding: why wall clocks alone invite the M2 forgery; CLOCK_MONOTONIC semantics for
+the span field (S100); nonce generation via the kernel CSPRNG interface node uses (S101);
+the two-layer binding (sidecar over whole file, inner digest over semantic fields); the
+nonce ledger; and the kept Q39 ceiling. New SOURCES rows S100 (man7.org
+`clock_gettime(2)`) and S101 (man7.org `getrandom(2)`) are opened this round by scout
+seats (fetch bytes, hash, ≤25-word located quote each, recorded in the lesson `## Gate`),
+written by the scribe, status `mined`, `used-by` the entry. C2 rests on these rows:
+the entry's provenance trio cites S100/S101 — this is the round's sourced claim.
+
+**Predicate, label `DOCTRINE_HELD`** — frozen counter
+`.ufo/waves/round-51/probe/doctrine51-probe.mjs` (rule `D51`):
+D1 the entry exists at rev with the provenance trio (`source:` citing S100 and S101 with
+URLs, `verified-at:`, `recheck:`) in its first three lines; D2 ≥12 clause lines, each
+carrying a `receipt:<repo-path>@sha256:<64hex>` binding whose path exists at rev with a
+matching blob sha256; D3 `corpus/SOURCES.md` at rev carries rows S100 and S101 with
+status `mined` and `used-by` naming the entry; D4 `node scripts/sources-check.mjs` against
+the extracted tree prints `SOURCES_CHECK: CLEAN` exit 0; D5 the live census
+`/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate`
+exits 0. `DOCTRINE_HELD` = held=5/5 exit 0; else `DOCTRINE_UNMET held=<k>/5` exit 1;
+crash/unreadable = exit 2.
+
+- Counting command: `node .ufo/waves/round-51/probe/doctrine51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`
+- Before (control): at base `c90b9de9` → expected `DOCTRINE_UNMET held=0/5` (entry absent).
+
+## Terms expected to move
+
+A 43 → **44** (the new shipped instrument; round-51 probe counters live under
+`.ufo/waves/round-51/probe/` and add to the frozen A count only by the frozen
+`RE_RUNNABLE` walk — recorded, not claimed); C 22 → **23** (checklist item 23 =
+receipt-attest hermetic suite; item text integrated with SKILL.md's gate registry row for
+`receipt-attest`). Operability integer holds **9** (terminal under `f_O`); coverage
+successors unchanged (frontier band entry — no registry family moves). New capability row
+`receipt-attest` enters the SCORECARD capabilities table (demonstrated running this
+round). Stanza re-derivation (A/C/C2 terms + `pin.receipt-attest`) rides the close commit,
+with `proxy-check --strict` MATCH as the harm gate H3.
+
+## Harm rules (declared before data; freeze baseline = round-open measurements)
+
+- H1 `node scripts/surface-probe.mjs --checklists` item-level ≥ the round-open baseline
+  **22/22**, exit 0 (`base/baseline-gates.txt`).
+- H2 `cap-run` 12/12, `bind-oracle` 7/7, `counter-rerun --selftest` PASS,
+  `round-gate --selftest` 61/61 — all at the close commit.
+- H3 `node scripts/proxy-check.mjs --strict` → `PROXY: MATCH` exit 0 at the close commit.
+- H4 sources census exit 0 at round end.
+- H5 round-50 frozen counters do not regress at the close commit: G50 `held=8/8`,
+  R50 `held=8/8`.
+
+## Waves
+
+**Round shape: two v1 waves, 32 + 32 = 64 seats (≤128).** Wave 1 `kumitate-r51-w1`
+(build, 32 seats, band 32–64 under `scripts/hyaku/ufo-wave-policy.json`): recon, source
+opening, instrument build in scratch, entry drafting, and the first falsifiers of both
+frozen predicates; the §3 L2 floor (1 connector, 3 executors, 1 scribe, 1 scout, 1
+reviewer, 1 critic; the planner seat is the L1's, per the orchestrator ruling — a bounded
+planning walk rides scout/reviewer items). Wave 2 `kumitate-r51-w2` (falsify, 32 seats)
+dispatched only if wave 1 yields ≥32 distinct attack items; every item names what it
+attacks. Residuals, if any, go to one ordinary task call ≤8 seats, counted in the round
+total. Seats never edit the lane checkout outside their own report/aux paths; code and
+prose are delivered as artifacts the L1 integrates (single integration owner).
+
+## Controls to run before data
+
+1. Both counters at base `c90b9de9` → `ATTEST_UNMET`, `DOCTRINE_UNMET` (before receipts).
+2. Static-forger control: a scratch stub `receipt-attest.mjs` printing the verdict
+   strings, scored by the frozen A1/A3 arms → must remain UNMET.
+3. Baseline battery: proxy `--strict` MATCH, checklists 22/22 — done at round open
+   (`base/baseline-gates.txt`, 2026-10-23).
+
+## Limits declared up front
+
+(a) Receipts prove record integrity and ledger nonce freshness, not temporal truth — the
+Q39 ceiling sentence is carried into the entry and the lesson. (b) A2's ≥300 s span is
+author-scheduled (three runs by the L1 across the round), the same invocation-independence
+class the lane has used since R50-4; it is honestly labelled. (c) A4's prior-corpus list
+is finite (the probe names it); a negative-claim sweep command is included in the probe
+output. (d) The instrument pins a SKILL gate-registry row and a checklist item; the
+`kumitate-gate-pins-v1` block addition rides the pending R41-2 operator ruling (stays
+pending; recorded, does not block).
