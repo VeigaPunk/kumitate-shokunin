@@ -2374,3 +2374,70 @@ package (fail-closed finite clocks, ledger wording alignment, F4–F8 lows) with
 pin re-derivation; (2) routing the lane's three-receipt
 pattern through receipt-attest itself as its first internal consumer; (3) R43-1/R43-5 stay
 open; the R41-2 gate-pins ruling stays pending (`.ufo/l0-questions.md`, kumitate round 42).
+
+## Round 52 — claims, freeze repairs, limits (2026-10-24)
+
+**C1 — operability (capability deepening): `receipt-attest` v2**, contract
+`kumitate-receipt-attest-v2` (SHAPE / CLOCK / STDIN / LEDGER / SELFTEST additions; v1
+semantics preserved), shipped bytes sha256
+`3d10d554e70a9d5dcb510287d3d030e04abe873f2573b922b961e9071ab7f01a` (46-case selftest).
+Predicate sentence (frozen, byte-identical in plan/probe header/report):
+`ATTEST52_HELD — node .ufo/waves/round-52/probe/attest52-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "ATTEST52: ATTEST52_HELD held=13/13 checks=13 rev=<rev> rule=A52 version=v1" and exits 0.`
+Counting command per the sentence.
+- **Before** at `02c01258464cac3804faf177d0cfbf113cd59706`:
+  `ATTEST52: ATTEST52_UNMET held=5/13 checks=13` exit 1 (`base/attest52-base.txt`,
+  addendum-re-run; the five passing arms B2c/B3c/B4c/B4d/B6 re-assert r51 properties under
+  v1; the eight misses are the v2 arms).
+- **After** at the measured close revision **R1 `ab5dde401b7c798a5cbbd1cb9198756c7b913290`**:
+  `ATTEST52: ATTEST52_HELD held=13/13 checks=13 rev=ab5dde401b7c798a5cbbd1cb9198756c7b913290 rule=A52 version=v1` exit 0
+  (`close/FINAL-attest52-R1.txt`); idempotence re-run at R2 `042372174ac3940658e13733038638bd754469ea`
+  reads `held=13/13` exit 0 (`close/IDEMPOTENCE-04237217.txt`). Do-nothing control: v1
+  bytes + SCORECARD-only edits cannot reach 13/13 (K1 = the base reading; K2/K3 seat-run,
+  `w1/ExecForgerV2.md`; K4 `w1/MutCounter52.md`).
+
+**C2 — frontier coverage (learning, sourced): `fail-closed-clock-validation`**, predicate
+(frozen, byte-identical): `DOCTRINE52_HELD — node .ufo/waves/round-52/probe/doctrine52-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints "DOCTRINE52: DOCTRINE52_HELD held=5/5 checks=5 rev=<rev> rule=D52" and exits 0.`
+- **Before** at base: `DOCTRINE52: DOCTRINE52_UNMET held=0/1 checks=1 rev=02c01258… rule=D52 | E1 MISS entry-absent` exit 1 (`base/doctrine52-base.txt`).
+- **After** at R1: `DOCTRINE52: DOCTRINE52_HELD held=5/5 checks=5 rev=ab5dde40… rule=D52` exit 0 (`close/FINAL-doctrine52-R1.txt`); idempotence at R2 5/5. Sourced: S102 (RFC 3339, tier A) + S103 (MDN Date.parse(), tier B), opened this round, `mined`, used-by the entry; prior art kake S032 named in the entry.
+
+**Freeze repairs (addendum, 14 items, every one seat-found and named** in
+`.ufo/waves/round-52/plan.md` `## Freeze repair addendum`; counters re-executed at base,
+receipts refreshed; the counter was also shown ABLE to pass before data by seat
+ExecProbeA52's scratch-tree witness (`w1/ExecProbeA52.md`, 13/13 + 5/5 against a synthetic
+conformant post-state) — Q43 whole).
+
+**Terms (declared vs computed, R51-2 phrasing).** At R1 the declared block reads A=76,
+C=23, C2=120, C2_total=120; computed agrees (`PROXY: MATCH … pins=6 match
+src-rev=31c465f15669`, `close/FINAL-harm-census.txt`). A composition: 16 shipped scripts +
+60 .ufo artifacts (runnable probes/evidence; seat scratch `.mjs` deliberately NOT committed,
+RevStanza S4). C 23 (checklist unchanged; item 23 re-labelled v2). C2 120/120 = 117 rows +
+the round-51-spotcheck drift repair + this entry + this lesson.
+
+**Harm (H1–H5 at R2/R3, `close/FINAL-harm-census.txt`).** H1 checklist 23/23 at the
+committed tree (the round-51 table row + LOG line landed as an inherited-state repair;
+item audits the previous round). H2 selftests green (receipt-attest 46/46, cap-run 12/12,
+bind-oracle 7/7, round-gate 61/61, sources-check CLEAN). H3 `PROXY: MATCH pins=6 match`.
+H4 census exit 0. H5 G50 8/8 (returns to green with the drift repair — the 7/8 arm was the
+C2 drift); R50 8/8 under the named count-derived v2 repair probe; R50-original reads 7/8
+retained as history; A51 superseded by A52 (its 8/9-at-tip reading was the same drift);
+D51 5/5 at R2.
+
+**Limits, recorded not hidden.** (a) Forgery boundary: the five static arms remain
+whole-tree-author satisfiable (r49 precedent; witnessed end-to-end again by
+ExecForgerV2's no-child-execution forger reading held=7/13). (b) B2e binds data, not
+execution: the nonce is instrument-generated and the probe re-derives cat's output, so a
+tree author implementing the contract passes B2e without ever spawning a child — the arm
+closes the STUB class, not the tree-author class (RevPlan H-3, RevCounterANew, precise
+scope). (c) B5's proxy conjunct executes the scored rev's own proxy-check (self-referential
+pin, r51 class). (d) Drop-one counter mutants print HELD k/k at a green state and are killed
+only by the frozen predicate string's literal `held=13/13 checks=13` (r53 may add a
+source-pin arm; MutCounter52's table). (e) D52 E5 is live-only (R51-4 class). (f) The
+finite-roller clock class with a co-moved prelude is the Q39 ceiling class, not a counter
+gap (RevengerV1V2 f1b2). (g) H1 audits the previous round and is fleet-state dependent
+(quote taken pre-filing). (h) R52-9 (ledger `*.txt` scope) and R52-10 (distinct-sha)
+deferred to round 53 — R52-10's probe-side half landed (B2 digest distinctness). (i) A3e
+captured-invocation question stays open. (j) R43-1/R43-5 open; R41-2 L0 pending.
+
+Planned next round (candidates, not commitments): (1) the ledger-evidence extension
+(R52-9/10) riding an instrument-byte change if any; (2) the B5d counter source-pin arm;
+(3) the r53 freeze discipline upgrade (scratch-HELD witness at freeze time, lesson M5).

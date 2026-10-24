@@ -1,0 +1,34 @@
+# round-52 harm battery — final readings
+# R1 (measured close rev) = ab5dde401b7c798a5cbbd1cb9198756c7b913290
+# R2 (FINAL receipt commit) = 042372174ac3940658e13733038638bd754469ea
+# date: 2026-10-24T04:4xZ (see commit timestamps)
+
+H1  node scripts/surface-probe.mjs --checklists  (LIVE tree, post scratch-clean)
+    CHECKLIST: 23/23 pass  VERDICT: PASS exit 0
+    (the round-51 table row + LOG line landed as an inherited-state repair; item audits
+    the previous round; quoted pre-filing per RevIntegration MEDIUM)
+H2  selftests: receipt-attest ATTEST_SELFTEST: PASS (46/46); cap-run 12/12; bind-oracle 7/7;
+    round-gate 61/61; sources-check SOURCES_CHECK: CLEAN (rows=103 tiers=A:88,B:7,C:8)
+H3  node scripts/proxy-check.mjs --strict  (LIVE tree after scratch-clean)
+    PROXY: MATCH (A=76 C=23 operability=9; C1=19/19 C2=120/120 coverage=10; S=88/88
+    coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53
+    coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) exit 0
+    (B5's proxy conjunct also runs INSIDE the extracted rev — see close/IDEMPOTENCE-04237217.txt)
+H4  sources-census validate --root /home/vgpnk/Projects/shokunin kumitate -> exit 0
+    (103 rows; the four pre-existing W04s S034/S068/S084/S095)
+H5  BINDGUARD50 at R2: GUARD_HELD held=8/8 checks=8 rule=G50 (returns to green with the
+    drift repair — the 7/8 arm at round open was the inherited C2_TOTAL_DRIFT);
+    REPAIRS50 v2 (named R52-4 count-derived repair): LEDGER_HELD held=8/8 checks=8 rule=R50;
+    REPAIRS50 original retained as history (reads 7/8 — the stale Twelve literal arm);
+    ATTEST51 superseded by A52 (its 8/9-at-tip reading was the same drift);
+    DOCTRINE51 at R2: DOCTRINE_UNMET held=4/5 — D2 hash-miss=1 NAMED, not prettified:
+    the r51 entry binds scripts/receipt-attest.mjs@sha256:44919763… (the v1 bytes) and the
+    v2 cutover replaced the bytes at that path; the identical v1 bytes are archived at
+    .ufo/waves/round-52/build/ScribeEntry/v1-receipt-attest.mjs with the matching hash
+    (bound in the r52 entry); re-anchoring the r51 binding is routed to round 53.
+COUNTS at R1/R2 (frozen): ATTEST52_HELD held=13/13 at R1 (close/FINAL-attest52-R1.txt) and
+at R2 (close/IDEMPOTENCE-04237217.txt); DOCTRINE52_HELD held=5/5 at R1 and R2 (same files).
+
+Misroot sweep: git -C /home/vgpnk/Projects/shokunin status --porcelain — no kumitate seat
+file landed at the fleet root (state/*.report-baseline modifications are driver-owned;
+root-level untracked files predate this round per mtimes). No copy/delete needed.
