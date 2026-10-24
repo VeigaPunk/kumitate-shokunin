@@ -1,0 +1,325 @@
+{
+ "context": "# Goal\nkumitate round 53 ONLY \u2014 ONE v2 wave of exactly 64 seats (the round-52 orchestrator/operator steer 2026-10-24 carries), validated under /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json (band 64-128, >=25% attack roles). Lane repo: /home/vgpnk/Projects/shokunin/kumitate-shokunin (jj-colocated; the lane is READ-ONLY for you except your own aux dir /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/build/<YourSeatName>/ and your report /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/w1/<YourSeatName>.md).\n\nREAD FIRST (all absolute): the frozen plan /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/plan.md \u2014 it freezes the two claims, the C1 v3 contract (whole-directory ledger evidence set), the kill rules K1-K5 and the close sequence. Frozen counters: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/probe/attest53-probe.mjs (rule A53 v1, 17 checks B1..B7d) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/probe/doctrine53-probe.mjs (rule D53 v1, checks E1-E5). Freeze receipts: base/attest53-base.txt (ATTEST53_UNMET held=9/17 at base d124a775) and base/doctrine53-base.txt (DOCTRINE53_UNMET held=0/1) \u2014 Q43: the counters are frozen AND executed; witness/ carries the scratch-HELD witness (lesson M5).\n\nClaims: C1 operability \u2014 receipt-attest v3 (contract kumitate-receipt-attest-v3), predicate sentence: ATTEST53_HELD \u2014 node .ufo/waves/round-53/probe/attest53-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints \"ATTEST53: ATTEST53_HELD held=17/17 checks=17 rev=<rev> rule=A53 version=v1\" and exits 0. C2 frontier coverage \u2014 corpus/knowledge/receipt-identity-canonicalization.md sourced by S104 (RFC 8785) + S105, predicate sentence: DOCTRINE53_HELD \u2014 node .ufo/waves/round-53/probe/doctrine53-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev> prints \"DOCTRINE53: DOCTRINE53_HELD held=5/5 checks=5 rev=<rev> rule=D53\" and exits 0.\n\nTooling authorization (operator, 2026-10-19): you may install or upgrade tools that help the task \u2014 read /home/vgpnk/.omp/agent/RULES.md first (official channels only; record tool/version/channel/reason in your report). PACMAN GUARD (orchestrator ruling 2026-10-20): all pacman transactions are PAUSED host-wide \u2014 install via uv tool/npx/an official binary in ~/.local/bin, or record an L0 need; never pacman -S/-Sy/-Syu/-U/-R, never restart a host service.\n\nBounds: NEVER write outside your own build/<SeatName>/ and w1/<SeatName>.md in the lane; never touch the fleet repo, sibling lanes, lane jj state or git index, MANIFEST.json, ~/.omp config, or .ufo/state|watchdog.log. Read-only git (log/show/diff/status) is fine; no mutating git or jj commands. You are a LEAF: no subagents, no background jobs that outlive you, no swarm. The validator renders each seat a relative `Report: .ufo/waves/round-53/w1/<SeatName>.md` trailer \u2014 that path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin: write your report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-53/w1/<SeatName>.md (absolute). Partial results within the time-box beat waiting for a sibling artifact; if a needed peer file is missing, name the missing dependency in your report and score what you can. Evidence rule: a claim without a resolvable pointer (path, command + actual output, hash) is not evidence \u2014 re-run commands at write time.",
+ "tasks": [
+  {
+   "name": "ExecInstrumentV3",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecInstrumentV3. Review the v3 ledger diff of scripts/receipt-attest.mjs against the routed defect wording (R52-9: MutReceiptBytes F4 \u2014 the *.txt filter at the old doVerify; R52-10 remainder) and the frozen plan contract; re-run `node scripts/receipt-attest.mjs --selftest` from a clean copy of the lane; save the full transcript under build/ExecInstrumentV3/. Report: .ufo/waves/round-53/w1/ExecInstrumentV3.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecInstrumentV3.md"
+  },
+  {
+   "name": "ExecSelftestV3",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecSelftestV3. Independently re-run the 51-case selftest (`node scripts/receipt-attest.mjs --selftest`) capturing the verbatim transcript; verify: exit 0, 51 `case <name>: PASS` lines, final line `ATTEST_SELFTEST: PASS (51/51)`; list the five v3 case names and what each binds. Report: .ufo/waves/round-53/w1/ExecSelftestV3.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecSelftestV3.md"
+  },
+  {
+   "name": "ExecReceiptPlan",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecReceiptPlan. Re-verify the committed receipt set .ufo/waves/round-53/receipts/: each of attest53-run-{1,2,3}.txt verifies VALID (exit 0) with its sidecar; argv equals the plan's PLANNED_ARGV entry; body wall_start values are CLOCK-shaped; span = max-min body wall_start >= 300 s; nonces and record digests pairwise distinct; `sha256sum -c` passes on each sidecar. Save transcripts under build/ExecReceiptPlan/. Report: .ufo/waves/round-53/w1/ExecReceiptPlan.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecReceiptPlan.md"
+  },
+  {
+   "name": "ExecReceiptCraft",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecReceiptCraft. Live-replay the four B7 crafts against the shipped v3 from a scratch dir (build/ExecReceiptCraft/): B7a evasion under a non-.txt name answers REPLAY naming the evasion file; B7b names witness.log; B7c byte-identical dup under .receipt is VALID; B7d junk dir (subdirectory + notes.json + stray.sha256) skips with notes and stays VALID. Transcript each run. Report: .ufo/waves/round-53/w1/ExecReceiptCraft.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecReceiptCraft.md"
+  },
+  {
+   "name": "ExecCompat",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecCompat. Verify the format-compat corpus under v3: the three round-51 receipts (.ufo/waves/round-51/receipts/attest-run-*.txt) and the three round-52 receipts (.ufo/waves/round-52/receipts/attest52-run-*.txt) each verify VALID; mint a fresh synthesized v1-format receipt (no stdin_sha256, recomputed digest+sidecar) and verify it VALID. Transcripts under build/ExecCompat/. Report: .ufo/waves/round-53/w1/ExecCompat.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecCompat.md"
+  },
+  {
+   "name": "ExecProbeA53",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecProbeA53. Independently reproduce the M5 scratch-HELD witness: build your own synthetic conformant post-state (a scratch git repo containing the built tree), run BOTH counters against it, and show ATTEST53_HELD 17/17 + DOCTRINE53_HELD 5/5. Save the scratch recipe + transcripts under build/ExecProbeA53/. Report: .ufo/waves/round-53/w1/ExecProbeA53.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecProbeA53.md"
+  },
+  {
+   "name": "ExecHarmBattery",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecHarmBattery. Run the plan's H1-H6 harm battery at the LANE TIP (post-close rev): H1 surface-probe --checklists, H2 the six selftest gates, H3 proxy-check --strict, H4 the sources census, H5 the r52-set (repairs50-probe-v2, bindguard50-probe, DOCTRINE51 via the re-anchor, DOCTRINE52), H6 the sha256 source pins vs plan \u00a7Counters. Transcripts under build/ExecHarmBattery/. Report: .ufo/waves/round-53/w1/ExecHarmBattery.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecHarmBattery.md"
+  },
+  {
+   "name": "ExecLedgerSweep",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecLedgerSweep. Sweep the whole-dir ledger behavior beyond the selftest: a damaged-prior receipt (R52-2) is skipped with the note; a FIFO in the ledger dir is skipped without blocking (mkfifo, 5 s timeout guard); a 1 MiB foreign file is skipped; the subject itself is never its own evidence; 200-file ledger completes. Transcripts under build/ExecLedgerSweep/. Report: .ufo/waves/round-53/w1/ExecLedgerSweep.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecLedgerSweep.md"
+  },
+  {
+   "name": "ExecDoNothing",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecDoNothing. Do-nothing control (K1): prove the v2 instrument bytes + SCORECARD-only edits cannot reach 17/17 \u2014 take the base tree, change ONLY the pin/stanza prose, run A53, and show the reading stays UNMET with the miss list. Transcript under build/ExecDoNothing/. Report: .ufo/waves/round-53/w1/ExecDoNothing.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecDoNothing.md"
+  },
+  {
+   "name": "ExecClockSweep",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecClockSweep. Re-run the CLOCK class against v3: month-13, day-30-Feb, second-99 wall fields, each with recomputed digest AND sidecar, each must answer RECEIPT: TAMPERED exit 1 (a crash is not a verdict). Also the zone-less prelude class (UNREADABLE 2). Transcripts under build/ExecClockSweep/. Report: .ufo/waves/round-53/w1/ExecClockSweep.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecClockSweep.md"
+  },
+  {
+   "name": "ExecProxyPin",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecProxyPin. Re-derive every proxy stanza term from the tree (the whole-tree runnable walk for A=78, `grep -c '^\\s*- \\[' SKILL.md` for C, the README-map rows for C2=122/122) and the six v1 pins + the ten gate pins against actual file bytes. Report any mismatch as a defect. Transcripts under build/ExecProxyPin/. Report: .ufo/waves/round-53/w1/ExecProxyPin.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecProxyPin.md"
+  },
+  {
+   "name": "ExecWaveSpec",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecWaveSpec. Validate .ufo/waves/round-53/w1-spec.json under policy v2 (run the validator yourself with UFO_CONFIG_PATH=/home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy-v2.json): band 64-128, attack >=25%, one task call; audit that every item names what it attacks/delivers (no padding). Transcript under build/ExecWaveSpec/. Report: .ufo/waves/round-53/w1/ExecWaveSpec.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecWaveSpec.md"
+  },
+  {
+   "name": "ExecR51Reanchor",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecR51Reanchor. Execute and transcript the D51 re-anchor check: `node .ufo/waves/round-51/probe/doctrine51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <tip>` reads DOCTRINE51_HELD 5/5; sha256 of .ufo/waves/round-52/build/ScribeEntry/v1-receipt-attest.mjs equals 44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9; the r51 entry line 32 binds the archived path. Under build/ExecR51Reanchor/. Report: .ufo/waves/round-53/w1/ExecR51Reanchor.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecR51Reanchor.md"
+  },
+  {
+   "name": "ExecB6Corpus",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecB6Corpus. Build the B6 receipt corpus table: for each of the six prior receipts (r51 x3, r52 x3): file sha256, record digest, nonce, verify verdict under v3, stdin_sha256 presence. Confirm pairwise distinct nonces across the corpus. Save under build/ExecB6Corpus/. Report: .ufo/waves/round-53/w1/ExecB6Corpus.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecB6Corpus.md"
+  },
+  {
+   "name": "ExecChecklist",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecChecklist. Run `node scripts/surface-probe.mjs --checklists` at the tip; itemize all 23 items with per-item PASS/FAIL; confirm item 23 (receipt-attest hermetic suite) passes and names contract v3; compare the pass count against the freeze baseline recorded in the round-53 close. Transcript under build/ExecChecklist/. Report: .ufo/waves/round-53/w1/ExecChecklist.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecChecklist.md"
+  },
+  {
+   "name": "ExecMutantReplay",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecMutantReplay. Replay the B5c mutant: recreate the hold-call-deleted A53 probe in your build dir, run it, and confirm it prints ATTEST53_UNMET held=0/0 with exit 1 \u2014 matching the committed build/MutCounter53/counter-mutant.txt. Transcript under build/ExecMutantReplay/. Report: .ufo/waves/round-53/w1/ExecMutantReplay.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecMutantReplay.md"
+  },
+  {
+   "name": "ExecReceiptIndex",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecReceiptIndex. Index every receipt and receipt-shaped file under .ufo/waves/round-53/ with sha256, producer (instrument or hand), and verifier verdict; flag any receipt that fails verification. Save the index under build/ExecReceiptIndex/. Report: .ufo/waves/round-53/w1/ExecReceiptIndex.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecReceiptIndex.md"
+  },
+  {
+   "name": "ExecBaseReplay",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecBaseReplay. Replay both counters at the committed base d124a775ee46902f588ac730ff97f4d8864e4692 and confirm the readings match base/attest53-base.txt (9/17) and base/doctrine53-base.txt (0/1) except the rev field. Transcripts under build/ExecBaseReplay/. Report: .ufo/waves/round-53/w1/ExecBaseReplay.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecBaseReplay.md"
+  },
+  {
+   "name": "ExecCensusAfter",
+   "agent": "executor",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ExecCensusAfter. Run the sources census at your execution time (`/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate`); record rows/tiers/warnings; compare against the round-start 103 rows (A:88/B:7/C:8). Transcript under build/ExecCensusAfter/. Report: .ufo/waves/round-53/w1/ExecCensusAfter.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ExecCensusAfter.md"
+  },
+  {
+   "name": "RevPlan",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevPlan. Plan fidelity: the two predicate sentences are byte-identical across plan.md \u00a7Claims, both probe headers and the wave context; the frozen pins in plan \u00a7Counters match the committed probe/instrument bytes; the receipt plan argv matches what the receipts record. Report any drift as a HIGH defect. Report: .ufo/waves/round-53/w1/RevPlan.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevPlan.md"
+  },
+  {
+   "name": "RevCounterA",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevCounterA. Counter soundness, A53 arm by arm (all 17): what each arm binds, its forgeability class (whole-tree-author satisfiable / data-bound / live-only), and any arm a conformant v3 could fail. Grade each HIGH/MEDIUM/LOW with reasons. Report: .ufo/waves/round-53/w1/RevCounterA.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevCounterA.md"
+  },
+  {
+   "name": "RevCounterD",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevCounterD. Counter soundness for D53 (E1-E5): the E2 distinct-paths and blob checks, the E3 cell indices, the E5 liveness limit (R51-4 class \u2014 name it), and whether a hollow entry (12 copies of one binding) can pass. Report: .ufo/waves/round-53/w1/RevCounterD.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevCounterD.md"
+  },
+  {
+   "name": "RevReceipts",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevReceipts. Receipt-set soundness: recompute the span from the committed bodies, check the argv plan byte-for-byte, confirm the doctored control's sidecar is run-2's untouched sidecar, and trace each receipt's wrapped command to a real gate. Report: .ufo/waves/round-53/w1/RevReceipts.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevReceipts.md"
+  },
+  {
+   "name": "RevScope",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevScope. Write-scope audit: `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain` + the round-53 commit diff \u2014 every changed path inside the lane and in-scope per the brief; no fleet/sibling/~/.omp edits; receipts contain no environment or plaintext output. Report: .ufo/waves/round-53/w1/RevScope.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevScope.md"
+  },
+  {
+   "name": "RevEntry",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevEntry. Adjudicate corpus/knowledge/receipt-identity-canonicalization.md: every load-bearing claim cites S104/S105 within their declared scopes; withheld claims named; tier honesty (S105 is tier B \u2014 check nothing leans on it as normative); clause bindings resolve at the tip. Report: .ufo/waves/round-53/w1/RevEntry.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevEntry.md"
+  },
+  {
+   "name": "RevHistory",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevHistory. Lineage audit: the v1->v2->v3 instrument diff semantics \u2014 list every behavioral delta and show v1/v2 receipts are unaffected (B6 evidence); the round-52 receipts were minted under v2 \u2014 confirm nothing about v3 invalidates their r52 bindings. Report: .ufo/waves/round-53/w1/RevHistory.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevHistory.md"
+  },
+  {
+   "name": "RevCompat",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevCompat. Compat attack: craft receipts that exercise the boundary between formats \u2014 a v2 record with stdin_sha256 absent but --stdin claimed in argv; unknown fields; extra blank lines \u2014 each must fail with the typed verdict/exit, never VALID. Report: .ufo/waves/round-53/w1/RevCompat.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevCompat.md"
+  },
+  {
+   "name": "RevCloseA53",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevCloseA53. Independent close: run A53 at the lane tip yourself, twice, time-spaced; both runs must read ATTEST53_HELD held=17/17 exit 0 with byte-identical summary lines; report any arm-level flake. Report: .ufo/waves/round-53/w1/RevCloseA53.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevCloseA53.md"
+  },
+  {
+   "name": "RevCloseD53",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevCloseD53. Independent close: run D53 at the lane tip yourself, twice, time-spaced; both must read DOCTRINE53_HELD held=5/5 exit 0; re-verify two entry clause bindings by hand. Report: .ufo/waves/round-53/w1/RevCloseD53.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevCloseD53.md"
+  },
+  {
+   "name": "RevFreeze",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevFreeze. Freeze completeness (Q43+M5): counters frozen before data (base receipts committed), scratch-HELD witness present and genuine (recipe reproducible), source pins recorded, and the do-nothing control class covered. Report any freeze defect as HIGH. Report: .ufo/waves/round-53/w1/RevFreeze.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevFreeze.md"
+  },
+  {
+   "name": "RevStanza",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevStanza. Stanza soundness: prove A=78 by listing the 78 runnable files (76 at the r52 tip + the two round-53 probes, nothing else); confirm C=23 unchanged and C2=122/122 rows match the corpus files; a do-nothing SCORECARD edit must not reach PROXY: MATCH. Report: .ufo/waves/round-53/w1/RevStanza.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevStanza.md"
+  },
+  {
+   "name": "RevPins",
+   "agent": "reviewer",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevPins. Pin audit: the ten kumitate-gate-pins-v1 pins and the six v1 pins against actual file bytes at the tip; `node scripts/proxy-check.mjs --strict` output; any PIN drift is a HIGH defect. Report: .ufo/waves/round-53/w1/RevPins.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevPins.md"
+  },
+  {
+   "name": "ScribeEntry",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeEntry. Read the entry end-to-end as a skeptical non-author: quote any sentence that overclaims S104 (JCS scope) or S105 (a man page); verify the two withheld-claim sentences exist and are honest; check every `receipt:` binding resolves to a real file whose sha256 matches. Report findings \u2014 do not edit the entry. Report: .ufo/waves/round-53/w1/ScribeEntry.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeEntry.md"
+  },
+  {
+   "name": "ScribeSources",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeSources. Row-shape audit of S104/S105 against SOURCES-CONTRACT-v1 (all 12 cells, enum values, tier justification, the anchor's located quote <=25 words, status/used-by honesty); report any contract breach. Report: .ufo/waves/round-53/w1/ScribeSources.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeSources.md"
+  },
+  {
+   "name": "ScribeLesson",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeLesson. Read corpus/lessons/round-53.md: M-class entries carry class/evidence/captured-by/fix; the Gate section records URL+access date+quote for both new rows; report any gap \u2014 do not edit. Report: .ufo/waves/round-53/w1/ScribeLesson.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeLesson.md"
+  },
+  {
+   "name": "ScribeReadme",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeReadme. README map audit: rows for knowledge/receipt-identity-canonicalization.md and lessons/round-53.md exist, are well-formed, and the map/corpus counts agree (122 = 122). Report the exact grep and find outputs. Report: .ufo/waves/round-53/w1/ScribeReadme.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeReadme.md"
+  },
+  {
+   "name": "ScribeQuality",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeQuality. QUALITY.md audit: confirm Q43 (freeze) and Q44 (close receipts) cover this round's actual freeze/close sequence; if a gap shows (e.g. the B5d source-pin arm is not yet a criterion), draft the exact Q45 wording as a proposal in your report \u2014 do not edit QUALITY.md. Report: .ufo/waves/round-53/w1/ScribeQuality.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeQuality.md"
+  },
+  {
+   "name": "ScribeScorecard",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeScorecard. SCORECARD audit: the round-53 section's declared terms (A=78, C=23, C2=122/122) re-derive from the tree; the move-log rows and the R53-1 correction are append-only and name what they supersede; report mismatches. Report: .ufo/waves/round-53/w1/ScribeScorecard.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeScorecard.md"
+  },
+  {
+   "name": "ScribeShonen",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeShonen. SHONEN audit: all four boxes' evidence pointers resolve at the tip; the receipt-attest-related rows in the capabilities table match the v3 contract wording; report drift. Report: .ufo/waves/round-53/w1/ScribeShonen.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeShonen.md"
+  },
+  {
+   "name": "ScribeFrontier",
+   "agent": "scribe",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScribeFrontier. Frontier-step audit: census before/after outputs recorded in the report with exit codes; the mistake is mined with a real evidence pointer; C2 is the sourced claim and names S104/S105; report any conformance gap. Report: .ufo/waves/round-53/w1/ScribeFrontier.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScribeFrontier.md"
+  },
+  {
+   "name": "ScoutRfc8785",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutRfc8785. Re-open S104 from a fresh fetch (`curl --location --fail --max-time 120 https://www.rfc-editor.org/rfc/rfc8785.txt`); compare bytes against the saved .ufo/waves/round-53/build/ScoutRfc8785/rfc8785.txt (sha256 63d52294...); verify the quoted line numbers; verdict HOLDS/DRIFT + transcript under build/ScoutRfc8785Reopen/. Report: .ufo/waves/round-53/w1/ScoutRfc8785.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutRfc8785.md"
+  },
+  {
+   "name": "ScoutCoreutils",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutCoreutils. Re-open S105 from a fresh fetch of the manpages.debian.org URL; compare body sha256 against 9ed3269c...; verify the 13-word quote is a verbatim located substring; note the gnu.org manual node reachability; verdict + transcript under build/ScoutCoreutilsReopen/. Report: .ufo/waves/round-53/w1/ScoutCoreutils.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutCoreutils.md"
+  },
+  {
+   "name": "ScoutCensus",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutCensus. Run the live census and the frozen `node scripts/sources-check.mjs` against the extracted-tip tree; record rows/tiers/status counts; confirm S104/S105 rows are well-formed under the contract validator. Transcript under build/ScoutCensus/. Report: .ufo/waves/round-53/w1/ScoutCensus.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutCensus.md"
+  },
+  {
+   "name": "ScoutPriorArt",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutPriorArt. Sibling scan: which fleet lanes already hold canonicalization/JCS or sha256sum-related SOURCES rows or knowledge entries (read sibling corpora read-only); name what the entry must cite as prior art; confirm no source-id collision with kumitate S001-S103. Report: .ufo/waves/round-53/w1/ScoutPriorArt.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutPriorArt.md"
+  },
+  {
+   "name": "ScoutSibling",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutSibling. Overlap scan: kake S032 (RFC 3339) precedent for cross-lane prior-art naming; check kagi/kasegi/kotoba for receipt/ledger/canonicalization topics that border this entry; report contested scope per the adjacency membrane (report, never absorb). Report: .ufo/waves/round-53/w1/ScoutSibling.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutSibling.md"
+  },
+  {
+   "name": "ScoutLedgerPerf",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutLedgerPerf. Measure the whole-dir ledger scan on adversarial dirs: 500-file dir, one 5 MiB foreign file, one FIFO (with timeout guard), one unreadable-permission file; record timings and verdicts; confirm no path blocks or crashes. Transcripts under build/ScoutLedgerPerf/. Report: .ufo/waves/round-53/w1/ScoutLedgerPerf.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutLedgerPerf.md"
+  },
+  {
+   "name": "ScoutFreeze",
+   "agent": "scout",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ScoutFreeze. Replay both counters at the freeze commit named in LOG.md and compare against the committed base/ and witness/ receipts byte-for-byte except the rev field; report any freeze-receipt divergence. Report: .ufo/waves/round-53/w1/ScoutFreeze.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ScoutFreeze.md"
+  },
+  {
+   "name": "CritC1",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritC1. Falsify C1: find a state that satisfies the contract but fails A53, or a defective v3 that passes 17/17. Attack the B7 arms hardest \u2014 the whole-dir scan's skip logic, the self-skip, the same-digest exemption under renamed copies, ordering. Report constructions with transcripts. Report: .ufo/waves/round-53/w1/CritC1.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritC1.md"
+  },
+  {
+   "name": "CritC2",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritC2. Falsify C2: entry hollow-clause class (12 bindings, one fact), quote located-ness, tier inflation (S105 used as normative), scope overreach (S104 cited for behaviors it does not specify). Report each finding with severity. Report: .ufo/waves/round-53/w1/CritC2.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritC2.md"
+  },
+  {
+   "name": "CritDoNothing",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritDoNothing. Second do-nothing control: a tree with v2 bytes + the r53 receipts + all doc edits but the v2 instrument \u2014 run A53 and enumerate what passes/fails; confirm the reading is UNMET and name the discriminating arms. Report: .ufo/waves/round-53/w1/CritDoNothing.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritDoNothing.md"
+  },
+  {
+   "name": "CritLedger",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritLedger. Attack the whole-dir scan: symlinked entries in the ledger dir (extraction guard covers the tree, but a runtime dir may hold one), the subject-already-in-dir case, sidecar-only dirs, a receipt whose sidecar names another file; each must end in a typed verdict, never a crash or a silent VALID. Report: .ufo/waves/round-53/w1/CritLedger.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritLedger.md"
+  },
+  {
+   "name": "CritFreeze",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritFreeze. Freeze defects (M2/M5 classes): is any frozen craft unexecuted against the contract it scores? Is the predicate sentence byte-identical everywhere it must be? Replay the base receipts at base and confirm the miss patterns match the plan's claims. Report: .ufo/waves/round-53/w1/CritFreeze.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritFreeze.md"
+  },
+  {
+   "name": "CritStanza",
+   "agent": "critic",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem CritStanza. Attack the A=78 composition: hunt for any runnable file under .ufo/waves/round-53/ beyond the two probes (a stray .mjs in build/, receipts dirs) that would make computed A disagree with the declared 78; confirm the mutant/transcript files are non-runnable. Report: .ufo/waves/round-53/w1/CritStanza.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/CritStanza.md"
+  },
+  {
+   "name": "MutInstrument",
+   "agent": "mutation-tester",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem MutInstrument. Byte-mutants of scripts/receipt-attest.mjs confined to the v3 ledger arm (the endsWith filter restored; the statSync guard removed; the same-digest exemption flipped; the skip note silenced): each mutant must be killed by a named selftest case \u2014 run the 51-case suite against each and table the results under build/MutInstrument/. Report: .ufo/waves/round-53/w1/MutInstrument.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/MutInstrument.md"
+  },
+  {
+   "name": "MutCounterA",
+   "agent": "mutation-tester",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem MutCounterA. Drop-one and verdict-swap mutants of attest53-probe.mjs (one hold() removed per mutant; the label flipped): each must read ATTEST53_UNMET or fail the frozen predicate's literal `held=17/17 checks=17`; table under build/MutCounterA/. Report: .ufo/waves/round-53/w1/MutCounterA.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/MutCounterA.md"
+  },
+  {
+   "name": "MutCounterD",
+   "agent": "mutation-tester",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem MutCounterD. Drop-one mutants of doctrine53-probe.mjs: each must read DOCTRINE53_UNMET; the E5-live arm's liveness limit must be named in your table. Under build/MutCounterD/. Report: .ufo/waves/round-53/w1/MutCounterD.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/MutCounterD.md"
+  },
+  {
+   "name": "MutEntry",
+   "agent": "mutation-tester",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem MutEntry. Entry mutations: one clause binding doctored by a single hex digit; one binding duplicated twelve times; one path pointed at a directory: D53 must read UNMET in each case, with the failing check named. Under build/MutEntry/. Report: .ufo/waves/round-53/w1/MutEntry.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/MutEntry.md"
+  },
+  {
+   "name": "MutLedger",
+   "agent": "mutation-tester",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem MutLedger. Semantic mutants of the v3 ledger behavior implemented as scratch scripts (keep-*.txt-filter; silent directory skip; name-based instead of digest-based exemption): show each is detected by a named selftest case or probe arm, with transcripts under build/MutLedger/. Report: .ufo/waves/round-53/w1/MutLedger.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/MutLedger.md"
+  },
+  {
+   "name": "SimplifyLedger",
+   "agent": "simplifier",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem SimplifyLedger. Read the v3 ledger arm: is every branch load-bearing (stat guard, self-skip, attestation check, nonce/digest compare)? Propose deletions only if a selftest case or probe arm dies with it \u2014 report, never edit. Report: .ufo/waves/round-53/w1/SimplifyLedger.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/SimplifyLedger.md"
+  },
+  {
+   "name": "SimplifyProbe",
+   "agent": "simplifier",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem SimplifyProbe. Read attest53-probe.mjs against attest52-probe.mjs: is any A52-carried arm dead weight in the round-53 context? Report a per-arm keep/drop table with reasons \u2014 never edit. Report: .ufo/waves/round-53/w1/SimplifyProbe.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/SimplifyProbe.md"
+  },
+  {
+   "name": "SentScope",
+   "agent": "sentinel",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem SentScope. Security pass: receipts contain no environment values and no plaintext child output; no secret material anywhere under .ufo/waves/round-53/; the lane jj/git state untouched by round work; report any leak as CRITICAL. Report: .ufo/waves/round-53/w1/SentScope.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/SentScope.md"
+  },
+  {
+   "name": "SentReceipt",
+   "agent": "sentinel",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem SentReceipt. Receipt boundary pass: every receipt's argv stays inside the lane; no receipt wraps a network or mutating command; the doctored control is the only forged file and it fails closed; report violations. Report: .ufo/waves/round-53/w1/SentReceipt.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/SentReceipt.md"
+  },
+  {
+   "name": "RevengerV2V3",
+   "agent": "revenger",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem RevengerV2V3. Reverse-engineer the v2->v3 delta line by line from git history and the bytes: prove no v2 behavior changed outside the ledger arm (quote the diff), and that the r52 receipts' validity under v3 (B6) is a consequence, not an accident of special-casing. Report: .ufo/waves/round-53/w1/RevengerV2V3.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/RevengerV2V3.md"
+  },
+  {
+   "name": "ConnOverlap",
+   "agent": "connector",
+   "task": "/skill:godspeed\nYou are Godspeed-enabled.\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim \u2014 let the frontier walk itself.**\n\nItem ConnOverlap. Cross-axis overlap: scan sibling lanes' round-53-adjacent work for collisions with this round's claims (kake receipts, kagi vault receipts, any lane touching sha256sum/canonicalization); name contested scope; verify the entry's prior-art sentence is accurate. Report: .ufo/waves/round-53/w1/ConnOverlap.md\n\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 53 (hyaku run 5)\n\nReport: write your scoped findings to .ufo/waves/round-53/w1/ConnOverlap.md"
+  }
+ ]
+}
