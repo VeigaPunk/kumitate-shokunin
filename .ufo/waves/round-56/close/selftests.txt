@@ -1,0 +1,28 @@
+=== H2 selftests ===
+--- receipt-attest
+case v3-ledger-scan-finds-no-evidence-in-an-empty-directory: PASS
+ATTEST_SELFTEST: PASS (51/51)
+--- counter-pins
+COUNTER_PINS_SELFTEST: PASS (11/11)
+VERDICT: PASS
+--- source-capture
+SOURCE_CAPTURE_SELFTEST: PASS (13/13)
+VERDICT: PASS
+--- source-dupes
+SOURCE_DUPES_SELFTEST: PASS (12/12)
+VERDICT: PASS
+--- cap-run
+CAP_RUN_SELFTEST: 12/12 pass
+VERDICT: PASS
+--- bind-oracle
+BIND_ORACLE_SELFTEST: 7/7 pass
+VERDICT: PASS
+--- round-gate
+ROUND_GATE_SELFTEST: 61/61 pass
+VERDICT: PASS
+--- sources-check
+SOURCES_SELFTEST: 46/46 pass
+VERDICT: PASS
+--- counter-rerun
+PASS  mutation control: a stub that always prints PASS fails its own selftest (the flake case kills the verdict stub, the execution check kills the path stub)
+COUNTER_RERUN_SELFTEST: PASS
