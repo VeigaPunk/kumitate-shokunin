@@ -153,3 +153,41 @@ is finite (the probe names it); a negative-claim sweep command is included in th
 output. (d) The instrument pins a SKILL gate-registry row and a checklist item; the
 `kumitate-gate-pins-v1` block addition rides the pending R41-2 operator ruling (stays
 pending; recorded, does not block).
+
+## Freeze repair addendum (2026-10-24, append-only; supersedes the freeze bytes it names)
+
+All repairs are named, minimal, and re-based before any data seat scored against the
+repaired arms. Base before-state re-measured with the repaired counters at base
+`c90b9de9` (both UNMET) and committed under `base/`.
+
+1. **A51 v1 → v2 (`1fd8aceb`)** — comment-only fix: the v1 JSDoc contained the glob
+   `round-4*/**`, whose `*/` terminated the block comment; the probe could not execute
+   (SyntaxError) and a crash reads exit 1, indistinguishable from a legitimate UNMET.
+   Found by seat CritC1 before any data ran against it.
+2. **D51 v1 → v2 (`3ed875d3`)** — one-line column-index fix in the D3 SOURCES-row check:
+   status is split-field 8 and used-by field 11 (`sources-check.mjs` schema), not 9/12.
+   Found independently by two seats (ScoutRandomSource, ScoutClockSource); D3 and D4 were
+   mutually exclusive in v1, so `DOCTRINE_HELD` was unpassable as frozen.
+3. **A51 v2 → v3 (this addendum's commit)** — seat CritC1 demonstrated a
+   verdict-printing stub clears v2's A1..A4, falsifying the plan's declared do-nothing
+   kill rule. v3 adds two behavioural challenge arms: **A2c** runs the instrument in
+   `run` mode against a probe-issued command (`/usr/bin/printf %s <probe-nonce>`) and
+   requires the fresh receipt to bind that argv and the sha256 of the command's real
+   output, plus a `sha256sum -c`-clean sidecar (absolute `/usr/bin/sha256sum`); **A3c**
+   generates a fresh receipt, rewrites only its `run-at:` prelude and requires
+   `RECEIPT: TAMPERED` exit 1. Check set becomes A1, A2, A2c, A3, A3c, A4, A5 (7);
+   predicate label and kind unchanged: `ATTEST_HELD` = every check holds. No seat scored
+   against v3's arms before this freeze.
+4. **Ledger semantics (seat RevInstrumentContract finding F1, confirmed live)** — the A3
+   doctored control lives in the same receipts directory as run-2 and carries run-2's
+   exact nonce; the literal reading ("reject a nonce already present") makes A4
+   unpassable. Clarified contract: the `--ledger` arm flags a nonce only when another
+   receipt file binds the SAME nonce to a DIFFERENT record digest; the target file itself
+   and byte-identical duplicates (same digest) are exempt. Reuse across distinct records
+   is what the ledger detects; verbatim duplication is detected by A2's
+   distinct-sha/distinct-nonce arms instead.
+5. **Probe-side binaries** — the probe (not the shipped instrument) may spawn host
+   binaries; it uses absolute paths (`/usr/bin/printf`, `/usr/bin/sha256sum`) per the
+   connector's chousa-r37 PATH-injection note. The shipped instrument itself must compute
+   all digests with `node:crypto` and emit the GNU text-mode sidecar without spawning
+   `sha256sum`.
