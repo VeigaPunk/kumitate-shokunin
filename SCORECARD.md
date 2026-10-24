@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=87
-C=26
+A=90
+C=27
 C1=19
 C1_total=19
-C2=132
-C2_total=132
+C2=135
+C2_total=135
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=b9e877143abe6f3241374c3582f6295641ccc4d74b64838f3d9b641b2dccc589
+pin.proxy-check=816a8650ba6a53c2abf20446021c3c19563747c0b8ac659d1c0695c3d84b2200
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -323,6 +323,7 @@ pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2c
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
+pin.readme-map=058e503363363ca3d9dbfd7a82602bd1b7287dfc9936af25796834b8812c7727
 -->
 
 
@@ -445,6 +446,8 @@ the frozen definitions name.
 | 55 | coverage frontier — durable-execution bounded-redelivery budgets (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-55/probe/doctrine55-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin c562d28557067bf35d78171c5737feee3c8679fd` → `DOCTRINE55_UNMET held=2/5`, exit 1; source entry absent | same command at R1b `465a96f5caad46a7fe9fd5cfe43f6e7f4672c678` → `DOCTRINE55_HELD held=5/5`, exit 0; `bounded-redelivery-budgets.md` cites S109/S110/S111; frontier band advanced; C2=129/129 after inherited README repair | `.ufo/waves/round-55/plan.md`; `.ufo/waves/round-55/base/doctrine55-base.txt`; `.ufo/waves/round-55/close/FINAL-doctrine55-R1.txt`; command above; measured commit `465a96f5caad46a7fe9fd5cfe43f6e7f4672c678` |
 | 56 | operability (lowest non-retired axis; score 9 held at terminal; capability acquisition `source-dupes`) | `node .ufo/waves/round-56/probe/attest56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 3eae059e929e4da317c45eba18b4099b90f7541b` → `ATTEST56_UNMET held=0/10`, exit 1; base terms A=84, C=25 | same command at `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` → `ATTEST56_HELD held=10/10`, exit 0; `source-dupes` CLEAN groups=4 known=4, selftest 12/12; A=87, C=26, operability remains 9 | `.ufo/waves/round-56/plan.md`; `.ufo/waves/round-56/base/attest56-base.txt`; `.ufo/waves/round-56/close/FINAL-attest56-R2.txt`; command above; measured commit `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` |
 | 56 | coverage frontier — durable-execution visibility lease / ack deadlines (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-56/probe/doctrine56-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 3eae059e929e4da317c45eba18b4099b90f7541b` → `DOCTRINE56_UNMET held=2/5`, exit 1; source entry absent | same command at `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` → `DOCTRINE56_HELD held=5/5`, exit 0; `visibility-lease-ack-deadlines.md` cites S113/S114/S115; frontier band advanced; C2=132/132 after inherited README repair | `.ufo/waves/round-56/plan.md`; `.ufo/waves/round-56/base/doctrine56-base.txt`; `.ufo/waves/round-56/close/FINAL-doctrine56-R2.txt`; command above; measured commit `e74ea6b8634a1f3c421f3e8f0ed2fd07cfe03843` |
+| 57 | operability (lowest non-retired axis; score 9 held at terminal; capability acquisition `readme-map`, routed defect R56-V3) | `node .ufo/waves/round-57/probe/attest57-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf` → `ATTEST57_UNMET held=0/10`, exit 1; base terms A=87, C=26 (proxy `C2_TOTAL_DRIFT declared=132 computed=133`) | same command at R1 `R1PENDING` → `ATTEST57_HELD held=10/10`, exit 0; `readme-map` CLEAN files=135 rows=135 covered=135, selftest 14/14; A=90, C=27, operability remains 9 | `.ufo/waves/round-57/plan.md`; `.ufo/waves/round-57/base/attest57-base.txt`; `.ufo/waves/round-57/close/FINAL-attest57-R1.txt`; command above; measured commit `R1PENDING` |
+| 57 | coverage frontier — durable-execution worker heartbeat / liveness (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-57/probe/doctrine57-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf` → `DOCTRINE57_UNMET held=2/5`, exit 1; source entry absent | same command at R1 `R1PENDING` → `DOCTRINE57_HELD held=5/5`, exit 0; `worker-heartbeat-liveness.md` cites S117/S118/S119; frontier band advanced; C2=135/135 after the inherited R56-V3 README repair | `.ufo/waves/round-57/plan.md`; `.ufo/waves/round-57/base/doctrine57-base.txt`; `.ufo/waves/round-57/close/FINAL-doctrine57-R1.txt`; command above; measured commit `R1PENDING` |
 | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
 | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
@@ -1768,6 +1771,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `counter-pins` | Reverify a versioned registry of frozen counter paths and sha256 values; default repo-relative paths must be regular files beneath the lane root, malformed registries fail closed, and an empty set is DRIFT | `node scripts/counter-pins.mjs` → `COUNTER_PINS: CLEAN pins=5`; `--selftest` → `COUNTER_PINS_SELFTEST: PASS (11/11)`; `pin.counter-pins` is hash-checked by `proxy-check --strict` | 54 |
 | `source-capture` | Bind every opened `corpus/SOURCES.md` `S###` row to committed capture bytes — sha256 + byte size + capture date in `.ufo/pins/source-captures.json` — or an explicit exemption; capture path-escape, symlink, absent, hash-/bytes-mismatch, uncaptured rows, orphan bindings and empty capture sets are `SOURCE_CAPTURE: DRIFT` exit 1; malformed registry or unreadable sources doc is FAIL-CLOSED exit 2; the gate mechanically enforces the round-55 capture-commit rule (routed defect R54-C1: a SOURCES row is a claim; a URL alone is not a resolvable location at closure) | `node scripts/source-capture.mjs` → `SOURCE_CAPTURE: CLEAN captures=5 exemptions=107`; `--selftest` → `SOURCE_CAPTURE_SELFTEST: PASS (13/13)` + `VERDICT: PASS`; `pin.source-capture` is hash-checked by `proxy-check --strict` | 55 |
 | `source-dupes` | Hold the SOURCES duplicate-URL warning class to a pinned set: the registry `.ufo/pins/source-dupes.json` (version 1) enumerates every live duplicate group — rows sharing one normalized URL under differing scopes (the census W04 class) — and `node scripts/source-dupes.mjs` exits 0 only when live groups equal the pinned set exactly; a new duplicate is DRIFT `new-duplicate`, a resolved duplicate is DRIFT `stale-known` until its pin is removed, and a malformed pin set is FAIL-CLOSED exit 2; the warning the census never gates on becomes a scored contract | `node scripts/source-dupes.mjs` → `SOURCE_DUPES: CLEAN groups=4 known=4`; `--selftest` → `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`; `pin.source-dupes` in `kumitate-gate-pins-v1` | 56 |
+| `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (version 1); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=135 rows=135 covered=135`; `--selftest` → `README_MAP_SELFTEST: PASS (14/14)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
@@ -2668,3 +2672,46 @@ D56 E5 is the live sources census, not an R1 snapshot. The source admissions
 and rejection await the independent non-author spot-check; no discernment
 improvement is claimed until that review lands. The v2 wave is
 prepared-but-undispatched, as detailed in the round report.
+
+## Round 57 — claims, routed-defect answers, limits (2026-10-24)
+
+Plan `.ufo/waves/round-57/plan.md`; base `7178bfd3643c0fac74c8eb637cd6e985faadd0cf`;
+measured integration revision R1 `R1PENDING`; the receipt/idempotence revisions are
+recorded in the round-57 LOG entry and the fleet report (every lane commit named).
+
+**C1 — operability (lowest non-retired axis; capability acquisition): `readme-map`.**
+Contract `kumitate-readme-map-v1`: the corpus file↔README-row bimap, pinned and scored.
+Frozen predicate `ATTEST57_HELD` (A57 v1, 10 checks). Before: at base the counting
+command `node .ufo/waves/round-57/probe/attest57-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf`
+reads `ATTEST57_UNMET held=0/10`, exit 1 (`base/attest57-base.txt`). Pre-score witness:
+the same counter against a scratch post-state commit reads `held=10/10`
+(`witness/scratch-held-attest.txt`). After: `close/FINAL-attest57-R1.txt`. The gate reads
+`README_MAP: CLEAN files=135 rows=135 covered=135`; `--selftest` 14/14. Operability
+remains 9: A=87→90, C=26→27, `floor(10×(A+C)/(A+C+3))` 9→9 (terminal integer).
+
+**C2 — coverage frontier (durable execution; retired aggregate remains 10):**
+`corpus/knowledge/worker-heartbeat-liveness.md`, sourced on S117/S118/S119 opened this
+round; S120 opened and rejected (TCP connection keepalive ≠ worker liveness). Frozen
+predicate `DOCTRINE57_HELD` (D57 v1, five checks). Before: `DOCTRINE57_UNMET held=2/5`
+(`base/doctrine57-base.txt`); witness `held=5/5` (`witness/scratch-held-doctrine.txt`);
+after: `close/FINAL-doctrine57-R1.txt`. Seventh durable-execution frontier entry;
+`PROVINCE.md` stays frontier, not core.
+
+**Terms and inherited repair.** At base `proxy-check --strict` read `C2_TOTAL_DRIFT
+declared=132 computed=133`: the R56 verifier spotcheck had landed without a README map
+row (R56-V3). The row is restored and the class is gated; the R1 stanza is A=90, C=27,
+C2=135, C2_total=135, `PROXY: MATCH`. Sources rows 116→120: A 96→99, B 12→13, C 8
+unchanged; S117–S119 mined, S120 rejected; no prior-row cell changed.
+
+**Routed-defect answers.** R56-V1: the 64-seat v2 wave is prepared and validated
+(`w1-spec.json`, `w1-validate.json`, `w1-taskcall.json`, `w1/swarm-registry.json`) and
+reported prepared; the orchestrator dispatches waves between rounds. R56-V2: the A57 B7
+arm binds `items === 27` AND every item id→gate (24 counter-pins, 25 source-capture,
+26 source-dupes, 27 readme-map) — the frozen A54/A55/A56 exactly-N literals stay as
+written and read MISS at items=27 as named counter-obsolescence; the binding shape is
+the convention future capability moves re-express. R56-V3: repaired and gated (Q48).
+
+**Limits.** B5c remains transcript+source-binding, not execution-proof (R52-5 lineage).
+D57 E5 is the live sources census, not an R1 snapshot. The gate binds the mapping, not
+row-description truth. Source admissions/rejection await the non-author spot-check; no
+discernment improvement is claimed. The wave is prepared-but-undispatched.

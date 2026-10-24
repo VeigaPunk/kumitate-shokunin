@@ -621,6 +621,8 @@ code (its own exit map is in its row), so "all sixteen" above still counts the g
 
 | source-dupes | gate | `node scripts/source-dupes.mjs [--registry <path>] [--sources <path>]` → `SOURCE_DUPES: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-source-dupes-v1`; default `.ufo/pins/source-dupes.json` pins the set of live duplicate-URL groups (same normalized URL under differing scopes — the census W04 class); a NEW duplicate group is DRIFT `new-duplicate`, a pinned group that no longer duplicates is DRIFT `stale-known`, and a pin whose member/url shape mismatches the live group is DRIFT `known-mismatch`; malformed registry, a row id covered by two pins, or an unreadable sources doc is FAIL-CLOSED | `--selftest` (12 hermetic cases; `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`) | `.ufo/pins/source-dupes.json`; `corpus/SOURCES.md`; `pin.source-dupes` in `kumitate-gate-pins-v1` |
 
+| readme-map | gate | `node scripts/readme-map.mjs [--registry <path>] [--readme <path>] [--corpus <dir>]...` → `README_MAP: CLEAN` exit 0 / `DRIFT` exit 1 / `FAIL-CLOSED` exit 2 / usage 64, contract `kumitate-readme-map-v1`; default `.ufo/pins/readme-map.json` pins the `covered` set — every `*.md` under `corpus/knowledge` + `corpus/lessons` must carry exactly one README map row `| `path` |`, every such row must name a live file, and every live file must be pinned; findings `uncovered`, `orphan-row`, `duplicate-row`, `format-unmapped`, `stale-covered`, `unpinned` are DRIFT; malformed registry/README/corpus-dir is FAIL-CLOSED | `--selftest` (14 hermetic cases; `README_MAP_SELFTEST: PASS (14/14)` + `VERDICT: PASS`) | `.ufo/pins/readme-map.json`; `corpus/README.md`; `pin.readme-map` in `kumitate-gate-pins-v1` |
+
 
 Named legacy gaps (not claimed): the original seven gates do not ship the
 §Gate standard digest-checked frozen-snapshot replayer. Round 38 supplies that
@@ -715,6 +717,7 @@ Unlike the legacy gates, item 14 fails closed without its origin pin.
 - [ ] Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`) — `node scripts/counter-pins.mjs` → exit 0 + `COUNTER_PINS: CLEAN`
 - [ ] Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`) — `node scripts/source-capture.mjs` → exit 0 + `SOURCE_CAPTURE: CLEAN`
 - [ ] SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`) — `node scripts/source-dupes.mjs` → exit 0 + `SOURCE_DUPES: CLEAN`
+- [ ] Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v1`) — `node scripts/readme-map.mjs` → exit 0 + `README_MAP: CLEAN`
 
 
 Exit 2, or no verdict line at all, is a tool/environment fault (`--src` missing,

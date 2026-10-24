@@ -1,0 +1,15 @@
+MutCounter57 — hold-call-deleted A57 mutant transcript (K4 / B5c witness).
+Mutation: `.ufo/waves/round-57/probe/attest57-probe.mjs` copied to a scratch path;
+`const hold = (id, ok, detail) => checks.push({ id, ok, detail });` replaced with
+`const hold = (id, ok, detail) => {};` — the checks array is never populated, so a
+counter that prints HELD from an empty check set would prove nothing.
+
+Run (scratch copy, never committed):
+  node $TMP/mut.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 7178bfd3643c0fac74c8eb637cd6e985faadd0cf
+
+Observed output:
+  ATTEST57: ATTEST57_UNMET held=0/0 checks=0 rev=7178bfd3643c0fac74c8eb637cd6e985faadd0cf rule=A57 version=v1 | hold-call-deleted
+  process exit=1
+
+The frozen probe's own `checks.length === 0` guard converts the empty check set to
+`ATTEST57_UNMET held=0/0` exit 1 — a vacuous HELD cannot be printed.

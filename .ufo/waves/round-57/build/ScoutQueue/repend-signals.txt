@@ -1,0 +1,4 @@
+lane mapping (origin tree read-only, pin 31c465f1):
+fleet-dispatcher reconcile treats a `launching` claim older than LAUNCHING_GRACE_MS as reclaimable — the lease side.
+Worker liveness analog: repend fires only on `registered_mission_missing` with a nonzero launcher exit — a pull-based
+"is the worker still there" signal rather than a worker-pushed heartbeat; MAX_LAUNCH_MISSES bounds false positives.

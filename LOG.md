@@ -2171,3 +2171,47 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   and A55 9/10 (B7) at close — the named cost of adding the item.
   Non-author source spot-check awaited from the independent closure reviewer;
   discernment is not self-claimed. Tool installs/updates: none.
+
+- 2026-10-24 — round 57 (hyaku run 5; attempt 2 lands it — attempt 1 died on
+  a PROVIDER_ERROR ~28 min in with no lane commit and no fleet report,
+  leaving `.ufo/waves/round-57/` prepared; attempt 2 re-verified and reused
+  the frozen plan/counters/base receipts/validated wave spec, re-did the
+  three receipts (span was <300 s), the scratch-HELD witness (was UNMET
+  1/10 and 1/5) and the mutant transcript (was pre-state), fixed a B3-arm(d)
+  ReferenceError in the frozen counter pre-commit (probe re-pinned), and
+  removed a lane-internal scratch clone that doubled proxy term A). Claims:
+  C1 operability,
+  capability acquisition `readme-map` (`kumitate-readme-map-v1`), frozen
+  A57 v1; C2 coverage frontier, sourced entry `worker-heartbeat-liveness.md`
+  (S117/S118/S119), frozen D57 v1. Base
+  `7178bfd3643c0fac74c8eb637cd6e985faadd0cf`. Plan
+  `.ufo/waves/round-57/plan.md`; counters `.ufo/waves/round-57/probe/`; receipts
+  in `.ufo/waves/round-57/{base,close,receipts,witness,build}/`.
+  A57: base `ATTEST57_UNMET held=0/10` → measured-tip result committed under
+  `close/` (the integration revision carries the gate, registries, SKILL rows,
+  capability row, entry, sources rows, captures, lesson, README, PROVINCE,
+  QUALITY Q48, wave spec and mutant transcript). D57: base
+  `DOCTRINE57_UNMET held=2/5` → measured-tip result under `close/`.
+  `readme-map` at tip reads `CLEAN files=135 rows=135 covered=135`;
+  `--selftest` is 14/14.
+  Proxy terms A=90, C=27, C2=135/135; operability score remains 9 (terminal
+  integer), and the retired coverage aggregate remains 10 after the inherited
+  `round-56-verifier-spotcheck` README map row is restored (the R56-V3 routed
+  defect — third recurrence of the class, now gated by `readme-map`).
+  Corrections and conventions for routed defects (append-only): **R56-V1** —
+  the r56 wave was prepared-but-undispatched; the orchestrator dispatches
+  waves between rounds, so this round prepares, validates and reports its
+  64-seat wave the same way (spec committed, seats unspawned by the lane).
+  **R56-V2** — the frozen A54 exactly-24 and A55 exactly-25 checklist
+  literals read 9/10 at the r56 close; the A57 B7 arm freezes the amended
+  supersession convention: a capability move growing the checklist must bind
+  EVERY item id→gate mapping (24→counter-pins, 25→source-capture,
+  26→source-dupes, 27→readme-map), never only the newest. **R56-V3** — the
+  r56 verifier spotcheck file landed without a README row; the row is added
+  and the recurrence class is now gated (QUALITY Q48).
+  One v2 wave validated/prepared: 64 seats, attack roles per the spec, 0
+  resumes; planner held by L1; prepared-but-undispatched for the
+  orchestrator. Named counter-obsolescence carry: frozen A54/A55/A56
+  item-count literals supersede at items=27 — recorded, not hidden.
+  Non-author source spot-check awaited from the independent closure reviewer;
+  discernment is not self-claimed. Tool installs/updates: none.
