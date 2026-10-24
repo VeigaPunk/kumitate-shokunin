@@ -2215,3 +2215,34 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   item-count literals supersede at items=27 — recorded, not hidden.
   Non-author source spot-check awaited from the independent closure reviewer;
   discernment is not self-claimed. Tool installs/updates: none.
+- 2026-10-24 — round 58 (attempt 1 resumed by a fresh Kimi L1 after the
+  operator stopped the original attempt mid-round): C1 operability capability
+  `receipt-evidence` + `readme-map` v2 (routed defects R57-V1/V2/V3/V4), C2
+  coverage frontier entry `failure-recovery-replay.md` on S112/S122/S123
+  (S124 queued). Frozen plan `.ufo/waves/round-58/plan.md`; counters
+  `.ufo/waves/round-58/probe/`; receipts in
+  `.ufo/waves/round-58/{base,close,receipts,witness,build,controls}/`.
+  Freeze commit `50548ae5` landed the counters, base receipts, scratch-HELD
+  witness, tool, v2 gate, registries and pins; the stopped attempt left
+  SKILL rows, the lesson and the S123 capture body uncommitted — all three
+  re-verified against the frozen plan this attempt and landed in R1 (named in
+  the report's inherited-state section; nothing was discarded).
+  A58: base `ATTEST58_UNMET held=0/10` → freeze tip `held=7/10` (B8/B9/B10
+  awaiting the R1 files) → measured R1 `close/FINAL-attest58-R1.txt`
+  (hash recorded here and in the report). D58: base entry-absent → freeze
+  tip `held=3/5` (E2 clause-binding repair, E3 capture commit) → measured
+  R1 `close/FINAL-doctrine58-R1.txt`. Proxy terms at R1: A=93, C=28,
+  C2=138/138, `PROXY: MATCH`; `K_members`/`K_sections` 53→52 — the kimi
+  host root lost `search-index/` between closes, re-declared at its measured
+  value and named in the report (checklist item 705 stays red).
+  Corrections and conventions (append-only): the stopped attempt's lesson
+  recorded the 2026-10-24 wrap-up steer ("wave prepared-but-undispatched");
+  the operator's resumption directive supersedes it — the r58 wave is
+  dispatched in-round (one batched swarm call after validator approval) and
+  the lane continues one-round-at-a-time training toward the campaign
+  target. Lane-addendum item 10 (assimilation, 2026-10-24) binds this
+  resumed round: shokuknow/considerthese material served the frozen claims
+  only as ordinary §2b curation; the admit/reject decisions with reasons and
+  flip conditions are recorded in the lesson `## Gate` and the report.
+  Non-author source spot-check awaited from the independent closure
+  reviewer; discernment is not self-claimed. Tool installs/updates: none.
