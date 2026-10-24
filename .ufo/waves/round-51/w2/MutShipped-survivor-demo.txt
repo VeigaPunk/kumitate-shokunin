@@ -1,0 +1,19 @@
+########## S02 ##########
+S02 ARTIFACT sidecar = 1338b41832d4d11c000000000000000000000000000000000000000000000000  prefix-collision.txt
+S02 real receipt hash = 1338b41832d4d11c1dff7814545cc70e7da061190a72f256ab18a025ba9ad2f2
+S02 MUTANT  exit=0 verdict="RECEIPT: VALID"
+S02 PRISTINE exit=1 verdict="RECEIPT: TAMPERED"
+S02 INJECTED-CASE selftest exit=1 failed=[sidecar-prefix-collision-reads-tampered] last=ATTEST_SELFTEST: FAIL
+S02 INJECTED-CASE@PRISTINE selftest exit=0 failed=[] last=ATTEST_SELFTEST: PASS
+########## N02 ##########
+N02 a.nonce=bd20e1351f8a88e0304b30293545166a b.nonce=bd20e135f1ec5795c667df715494c13f distinct=true shared8=bd20e135
+N02 MUTANT   exit=1 verdict="RECEIPT: REPLAY"
+N02 PRISTINE exit=0 verdict="RECEIPT: VALID"
+N02 INJECTED-CASE selftest exit=1 failed=[ledger-nonce-prefix-not-reuse] last=ATTEST_SELFTEST: FAIL
+N02 INJECTED-CASE@PRISTINE selftest exit=0 failed=[] last=ATTEST_SELFTEST: PASS
+########## N07 ##########
+N07 a.nonce=9ad94da37b4ceb7f1f3dd6efbf3bf93b b.nonce=3690157da026b69e19b7844fbf3bf93b distinct=true shared8=bf3bf93b
+N07 MUTANT   exit=1 verdict="RECEIPT: REPLAY"
+N07 PRISTINE exit=0 verdict="RECEIPT: VALID"
+N07 INJECTED-CASE selftest exit=0 failed=[] last=ATTEST_SELFTEST: PASS
+N07 INJECTED-CASE@PRISTINE selftest exit=0 failed=[] last=ATTEST_SELFTEST: PASS

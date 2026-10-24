@@ -32,17 +32,21 @@ node scripts/proxy-check.mjs --self <tree> --scorecard <mutant>/SCORECARD.md --s
 ```
 
 * **Tree**: a pristine `git archive HEAD` extraction at
-  `/tmp/mutstanza-r51/tree-head` (committed bytes, never the working tree — the
-  working tree is being written to concurrently by sibling seats; see §4).
-* **Mutants**: byte-exact copies of the committed `SCORECARD.md`
-  (`sha256 4b98541fcdbcd3e5d278d311fd6159f01a2b842078fbc60381b0fed6b3d87138`,
-  237 204 B) with **one** stanza token changed each. Every mutant is the same
-  length as the pristine file (237 204 B) — a single in-place token edit, no
-  reformatting.
-* **Scope discipline**: nothing under the lane tree was created or modified. All
-  mutation material lives under `/tmp/mutstanza-r51/`. The lane's
-  `SCORECARD.md` still hashes to the pristine value and `scripts/proxy-check.mjs`
-  still hashes to `495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9`
+  `/tmp/mutstanza-r51/tree-head2` (committed bytes, never the working tree —
+  the working tree is being written to concurrently by sibling seats; see §4).
+  An earlier extraction `/tmp/mutstanza-r51/tree-head` (at `3304a56`) is the
+  tree the first battery ran against.
+* **Mutants**: byte-exact copies of the committed `SCORECARD.md` with **one**
+  stanza token changed each. Every mutant is the same length as the pristine
+  file — a single in-place token edit, no reformatting. Two corpora:
+  `/tmp/mutstanza-r51/{00..15}-*/` (built against the `A=67` stanza, sha256
+  `4b98541f…7138`, 237 204 B) and `/tmp/mutstanza-r51/final/*/` (rebuilt against
+  the shipping `A=71` stanza, sha256 `fd11706a…c6cf7`, 246 224 B) — the
+  **final corpus is authoritative** (§2).
+* **Scope discipline**: nothing under the lane tree was created or modified by
+  this seat. All mutation material lives under `/tmp/mutstanza-r51/`. The
+  lane's `scripts/proxy-check.mjs` still hashes to
+  `495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9`
   (= the stanza's own `pin.proxy-check`), and `scripts/receipt-attest.mjs` to
   `44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9`
   (= `pin.receipt-attest`) — **restoration verified byte-for-byte**.
@@ -54,17 +58,19 @@ node scripts/proxy-check.mjs --self <tree> --scorecard <mutant>/SCORECARD.md --s
 ### Baseline (pristine control, same detector)
 
 ```
-$ node scripts/proxy-check.mjs --self /tmp/mutstanza-r51/tree-head \
-      --scorecard /tmp/mutstanza-r51/tree-head/SCORECARD.md --strict
-PROXY: MATCH (A=67 C=23 operability=9; C1=19/19 C2=117/117 coverage=10;
+$ node scripts/proxy-check.mjs --self /tmp/mutstanza-r51/tree-head2 \
+      --scorecard /tmp/mutstanza-r51/tree-head2/SCORECARD.md --strict
+PROXY: MATCH (A=71 C=23 operability=9; C1=19/19 C2=117/117 coverage=10;
   S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10;
   K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
 exit=0
 ```
 
-`SCORECARD.md` is **byte-identical** at `7d88faa` and at `HEAD` (`3304a56`):
-both hash to `4b98541f…7138` and the stanza block diffs empty. So the MATCH
-quoted at `7d88faa` is the same object this seat attacked.
+`SCORECARD.md` was **byte-identical** at `7d88faa` and at `3304a56` (both
+hash to `4b98541f…7138`, stanza block diffs empty), so the MATCH quoted at
+`7d88faa` is the same object this seat attacked; the lane's later commits only
+re-pinned `A` (§4) — **no other stanza key changed**, so every finding below
+applies verbatim to the `7d88faa` stanza.
 
 ---
 
@@ -73,37 +79,49 @@ quoted at `7d88faa` is the same object this seat attacked.
 Every mutant: **exit 1**, verdict `PROXY: DRIFT (…)`, **never** `PROXY: MATCH`,
 and the finding kind is **exactly** the one the term's name implies.
 
+> **Final battery (authoritative)**: run against the **final committed tree**
+> `fef6707` (`git archive HEAD` → `/tmp/mutstanza-r51/tree-head2`, committed
+> `SCORECARD.md` sha256 `fd11706a7d71c3f6ad6a38f7414bbe55d2b2b3db8a3a5421ff0b41b89f2c6cf7`,
+> live terms `A=71 C=23 C2=117 C2_total=117`). The mutant corpus was **rebuilt
+> against this stanza** so the control is a true control (the earlier corpus
+> was built against the pre-re-pin `A=67` stanza and is retained as
+> `/tmp/mutstanza-r51/{00..15}-*/`). Full transcript:
+> `/tmp/mutstanza-r51/transcripts/mutstanza-battery-final.txt`, copied to the
+> lane at `.ufo/waves/round-51/w2/MutStanza-transcripts/`.
+
 | # | Mutant (one-token edit) | Exit | Verdict / finding kind | Declared → computed |
 |---|---|---|---|---|
-| 01 | `A=67` → **`A=66`** | 1 | `A_DRIFT` | declared=66 computed=67 delta=**+1** |
-| 02 | `A=67` → **`A=68`** | 1 | `A_DRIFT` | declared=68 computed=67 delta=**−1** |
+| 00 | **control** (byte-identical) | **0** | **`PROXY: MATCH`** | — |
+| 01 | `A=71` → **`A=70`** | 1 | `A_DRIFT` | declared=70 computed=71 delta=**+1** |
+| 02 | `A=71` → **`A=72`** | 1 | `A_DRIFT` | declared=72 computed=71 delta=**−1** |
 | 03 | `C=23` → **`C=22`** | 1 | `C_DRIFT` | declared=22 computed=23 delta=**+1** |
 | 04 | `C2=117` → **`C2=116`** | 1 | `C2_DRIFT` | declared=116 computed=117 delta=**+1** |
 | 05 | `C2_total=117` → **`C2_total=118`** | 1 | `C2_TOTAL_DRIFT` | declared=118 computed=117 delta=**−1** |
 | 06 | both of 04+05 together | 1 | `C2_DRIFT` **and** `C2_TOTAL_DRIFT` (two findings, one verdict line, joined `; `) | — |
-| 07 | `pin.bind-oracle` → first hex `c…`→**`d…`** | 1 | **`GATE_PIN_DRIFT`** | declared=`d3929a97…` computed=`c3929a97…` |
-| 08 | `pin.cite-check` → first hex `7…`→**`8…`** (v1 pin, control) | 1 | `PIN_DRIFT` | declared=`8484274f…` computed=`7484274f…` |
+| 07 | `pin.bind-oracle` value hex `c…`→**`0…`** | 1 | **`GATE_PIN_DRIFT`** | declared=`03929a97…` computed=`c3929a97…` |
+| 08 | `pin.cite-check` value hex `7…`→**`0…`** (v1 pin, control) | 1 | `PIN_DRIFT` | declared=`0484274f…` computed=`7484274f…` |
 | 09 | `\| operability \| 9 \|` → **`\| operability \| 8 \|`** | 1 | `AXES_DRIFT` | `## Axes` row=8 derived=9 |
-| 12 | 01 + 09 together | 1 | `A_DRIFT` **and** `AXES_DRIFT` | — |
+| 10 | delete the whole `kumitate-gate-pins-v1` block | 1 | 10 × `PIN_UNPINNED` | §3 |
+| 11 | delete only the `pin.bind-oracle=` line | 1 | 1 × `PIN_UNPINNED` | §3 |
 
 Verbatim verdict lines (from
-`/tmp/mutstanza-r51/transcripts/mutstanza-battery.txt`):
+`.ufo/waves/round-51/w2/MutStanza-transcripts/mutstanza-battery-final.txt`):
 
 ```
-01-A-66              exit=1  PROXY: DRIFT (A_DRIFT term=A declared=66 computed=67 delta=+1; src-rev=31c465f15669)
-02-A-68              exit=1  PROXY: DRIFT (A_DRIFT term=A declared=68 computed=67 delta=-1; src-rev=31c465f15669)
-03-C-22              exit=1  PROXY: DRIFT (C_DRIFT term=C declared=22 computed=23 delta=+1; src-rev=31c465f15669)
-04-C2-116-of-117     exit=1  PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; src-rev=31c465f15669)
-05-C2-total-118      exit=1  PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
-06-C2-both           exit=1  PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
-07-gatepin-hex       exit=1  PROXY: DRIFT (GATE_PIN_DRIFT term=pin.bind-oracle declared=d3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5 computed=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5; src-rev=31c465f15669)
-08-v1pin-hex         exit=1  PROXY: DRIFT (PIN_DRIFT term=pin.cite-check declared=8484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2 computed=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2; src-rev=31c465f15669)
-09-axes-operability  exit=1  PROXY: DRIFT (AXES_DRIFT term=operability declared=8 computed=9; src-rev=31c465f15669)
-12-A-66-plus-axes-8  exit=1  PROXY: DRIFT (A_DRIFT term=A declared=66 computed=67 delta=+1; AXES_DRIFT term=operability declared=8 computed=9; src-rev=31c465f15669)
+00-control            exit=0  PROXY: MATCH (A=71 C=23 operability=9; C1=19/19 C2=117/117 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+01-A-minus1           exit=1  PROXY: DRIFT (A_DRIFT term=A declared=70 computed=71 delta=+1; src-rev=31c465f15669)
+02-A-plus1            exit=1  PROXY: DRIFT (A_DRIFT term=A declared=72 computed=71 delta=-1; src-rev=31c465f15669)
+03-C-minus1           exit=1  PROXY: DRIFT (C_DRIFT term=C declared=22 computed=23 delta=+1; src-rev=31c465f15669)
+04-C2-minus1          exit=1  PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; src-rev=31c465f15669)
+05-C2total-plus1      exit=1  PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
+06-C2-both            exit=1  PROXY: DRIFT (C2_DRIFT term=C2 declared=116 computed=117 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=118 computed=117 delta=-1; src-rev=31c465f15669)
+07-gatepin-hex        exit=1  PROXY: DRIFT (GATE_PIN_DRIFT term=pin.bind-oracle declared=03929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5 computed=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5; src-rev=31c465f15669)
+08-v1pin-hex          exit=1  PROXY: DRIFT (PIN_DRIFT term=pin.cite-check declared=0484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2 computed=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2; src-rev=31c465f15669)
+09-axes-operability   exit=1  PROXY: DRIFT (AXES_DRIFT term=operability declared=8 computed=9; src-rev=31c465f15669)
 ```
 
 **All four assigned terms are killed with the exact kind, in both directions:**
-`A_DRIFT` fires for `A=66` **and** `A=68` (delta sign is correct in both
+`A_DRIFT` fires for `A=70` **and** `A=72` (delta sign is correct in both
 directions — `+1` when the declared value is *below* the computed one, `−1` when
 above, so the delta is not a hard-coded magnitude); `C_DRIFT` fires for `C=22`;
 `C2_DRIFT` and `C2_TOTAL_DRIFT` fire **distinguishably** — mutating the
@@ -112,6 +130,11 @@ are not collapsed into one. Mutant 07 confirms `pin.bind-oracle` (a
 `kumitate-gate-pins-v1` key) reports **`GATE_PIN_DRIFT`**, while mutant 08
 confirms the v1 `pin.*` keys report the distinct **`PIN_DRIFT`** — the two pin
 families are not conflated.
+
+*(The `A=66` / `A=68` mutants of the first battery, against the pre-re-pin
+`A=67` stanza, were also killed with `A_DRIFT` at delta `+1` / `−1` — see
+`mutstanza-battery.txt`. The final battery restates the same result against
+the stanza that actually ships.)*
 
 ### 2b. Non-vacuity: the terms are *live-derived*, not self-consistent
 
@@ -210,6 +233,50 @@ PROXY: DRIFT (A_DRIFT term=A declared=67 computed=81 delta=+14; src-rev=31c465f1
 exit=1
 ```
 
+**This was reported to the integrator and the finding was acted on — and the
+churn itself is the sharpest evidence for the finding.** The sequence observed
+live in this lane, minute by minute:
+
+| Time | Live `A` computed | Stanza `A` declared | Live `proxy-check --strict` |
+|---|---|---|---|
+| 23:41 | 67 | 67 | `PROXY: MATCH` exit 0 |
+| 23:50 | **81** (+14 sibling scratch) | 67 | `PROXY: DRIFT (A_DRIFT declared=67 computed=81 delta=+14)` exit **1** |
+| 23:53 | 81 | **81** (integrator re-pin) | `PROXY: MATCH (A=81 …)` exit 0 |
+| 23:55 | 81 | **71** (integrator re-pin, committed-tree walk) | `PROXY: DRIFT (A_DRIFT declared=71 computed=81 delta=+10)` exit **1** |
+
+The integrator's second re-pin landed on **`A=71`**, and the commit message
+states the reasoning directly: *"round-51: stanza A re-derived to 71
+(committed-tree walk; transient seat scratch had inflated the live reading)"*.
+**That is exactly this seat's finding, independently reproduced by the
+integrator**: the working-tree reading is inflated by transient sibling-seat
+scratch, and the correct measurement surface is the committed tree.
+
+Verified against committed bytes, the re-pin is correct and H3 is **green**:
+
+```
+$ node scripts/proxy-check.mjs --self <git archive HEAD> \
+      --scorecard <same tree>/SCORECARD.md --strict
+PROXY: MATCH (A=71 C=23 operability=9; C1=19/19 C2=117/117 coverage=10;
+  S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10;
+  K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+```
+
+The committed tree's `A=71` decomposes as **16 under `scripts/` + 55 under
+`.ufo/waves/`** — i.e. **78 % of the `A` term is wave scratch**, and only
+`scripts/receipt-attest.mjs` is round 51's actual capability addition.
+
+**Residual risk at close.** The stanza is now pinned to the committed-tree
+count, which is the right choice — but `A` remains coupled to the *committed*
+scratch inventory, so any seat that **commits** a further `.mjs` under
+`.ufo/` moves `A` again and re-breaks H3 with the same `A_DRIFT` signature.
+This is the frozen definition behaving as designed (the plan discloses the
+coupling), so it is recorded as a **live robustness finding for the close**,
+not a request to change `RE_RUNNABLE`. **Practical guidance: the close-time
+H3 measurement must be taken against committed bytes** (`git archive HEAD`),
+never the working tree — the working tree reading is only valid when the
+scratch inventory is stable, which during a 32-seat wave it is not.
+
 The 14 newly-counted files are **untracked** artifacts of a sibling wave-1
 seat, `.ufo/waves/round-51/build/ExecForgerControl/`:
 
@@ -247,14 +314,20 @@ tree (as this seat did: `git archive HEAD | tar -x` into `/tmp`), or the
 *"A 43 → 44 (the new shipped instrument; round-51 probe counters live under
 `.ufo/waves/round-51/probe/` and add to the frozen A count only by the frozen
 `RE_RUNNABLE` walk — recorded, not claimed)"* — so the plan **does** disclose
-this coupling, and the stanza's `A=67` is the honest current value. The
-finding is that the **coupling is stronger than one round's counters**: it is
-the entire accumulated `.ufo/` history, and any sibling seat's build scratch
-moves `A` live.
+this coupling, and the stanza's `A=67` was the honest current value at the
+time. The finding is that the **coupling is stronger than one round's
+counters**: it is the entire accumulated `.ufo/` history, and any sibling
+seat's build scratch moves `A` live.
+
+*(Update, 2026-10-23 23:55: the integrator re-pinned `A` twice — first to 81
+(the live reading), then to **71** (the committed-tree walk) in commit
+`fef6707`, whose message states the same diagnosis this seat reported:
+"transient seat scratch had inflated the live reading". H3 is green against
+committed bytes. See the "acted on" note above.)*
 
 This is a **coverage/robustness finding for the integrator**, not a request to
 change the frozen definition (the `RE_RUNNABLE` walk is frozen and the plan
-records the coupling explicitly). No edit was made.
+records the coupling explicitly). No edit was made by this seat.
 
 **Dependency note (recorded, not blocking)**: this seat's own measurements were
 taken against a `git archive` extraction of `HEAD` precisely because the live
@@ -300,52 +373,87 @@ a coverage finding, not a licence to change the frozen contract.**
 | The gate-pin block is verified | **HELD** | `GATE_PIN_DRIFT` on a one-hex flip (07); `PIN_DRIFT` distinct for v1 pins (08) |
 | The `## Axes` integers are checked | **HELD** | `AXES_DRIFT` (09, 12) |
 | The terms are **live-derived**, not self-consistent | **HELD** | 5/5 tree-side mutations drift (T1–T5, §2b) |
-| The MATCH at `7d88faa` is non-vacuous | **HELD** | pristine `SCORECARD.md` byte-identical at `7d88faa` and `HEAD`; control MATCH, 12 mutants DRIFT |
+| The MATCH at `7d88faa` is non-vacuous | **HELD** | pristine `SCORECARD.md` byte-identical at `7d88faa` and `3304a56`; only `A` changed since (`67`→`71`); control MATCH, 11/11 mutants DRIFT |
 | Gate-pin **integrity** (block present / line present) | **HELD under `--strict`; NOT HELD in default mode** | §3 — mutants 10/11 |
-| `## Axes` evidence-cell **prose** | **NOT CHECKED** (out of contract scope) | §5 — mutants 13/14/15 |
-| H3 (`proxy-check --strict` → MATCH) at the live lane | **RED right now** | §4 — `A_DRIFT declared=67 computed=81` from 14 untracked sibling scratch files |
+| `## Axes` evidence-cell **prose** | **NOT CHECKED** (out of contract scope) | §5 — mutants 13/14 |
+| H3 (`proxy-check --strict` → MATCH) at the live lane | **was RED** (`A_DRIFT declared=67 computed=81`, §4) — **recovered**: the integrator re-pinned `A` to 81, then to **71** (the committed-tree walk, commit `fef6707`); H3 is green against committed bytes. The coupling that broke it remains | §4 |
 
 **Bottom line.** The round-51 stanza re-derivation is **machine-checked, not
-asserted**: the `PROXY: MATCH` at `7d88faa` is earned — every one of the four
+asserted**: the `PROXY: MATCH` at `7d88faa` is **earned**. Every one of the four
 assigned terms, in both directions, plus both pin families, produces the exact
-DRIFT kind and no MATCH. Two coverage limits are recorded (§3 default-mode
-`PIN_UNPINNED`, §5 unchecked `## Axes` prose) — neither changes a score and
-neither is a licence to alter the frozen contract. One **live** item needs the
-integrator's attention before the close commit: the `A` term is 51/67 wave
-scratch under `.ufo/`, and 14 untracked sibling-seat `.mjs` files currently
-hold the live lane's H3 gate at `A_DRIFT declared=67 computed=81` (§4).
+DRIFT kind and no MATCH — 11/11 mutants killed against the shipping stanza,
+re-verified after the integrator's re-pin, and 5/5 tree-side mutations confirm
+the terms are live-derived rather than self-consistent. Two coverage limits are
+recorded (§3 default-mode `PIN_UNPINNED`, §5 unchecked `## Axes` prose) —
+neither changes a score and neither is a licence to alter the frozen contract.
+One **live** item was found and **acted on**: the `A` term counts the whole
+lane including `.ufo/` wave scratch (**55 of 71** at `fef6707`, i.e. 78 %), and
+14 untracked sibling-seat `.mjs` files held the live lane's H3 gate at
+`A_DRIFT declared=67 computed=81` (§4). The integrator's commit `fef6707`
+re-pinned `A` to the committed-tree walk (71) with the message *"transient seat
+scratch had inflated the live reading"* — the same diagnosis this seat
+reported. The residual risk is structural: `A` is pinned to the **committed**
+scratch inventory, so any seat that commits a further `.mjs` under `.ufo/`
+moves `A` again and re-breaks H3 identically. **Practical guidance: take the
+close-time H3 measurement against committed bytes (`git archive HEAD`), never
+the working tree** — during a 32-seat wave the working-tree reading is not
+stable.
 
 ---
 
 ## 7. Artifacts and restoration evidence
 
-* **Mutant corpus**: `/tmp/mutstanza-r51/{00..15}-*/SCORECARD.md` — 16
-  single-token copies of the committed file (each 237 204 B, one of which is the
-  byte-identical control), with a machine-readable manifest at
-  `/tmp/mutstanza-r51/manifest.json` and `/tmp/mutstanza-r51/manifest2.json`
-  (each mutant's sha256, byte length, and the exact edit applied).
-* **Transcripts**: `/tmp/mutstanza-r51/transcripts/mutstanza-battery.txt`, copied
-  to the lane at `.ufo/waves/round-51/w2/MutStanza-transcripts/mutstanza-battery.txt`
-  (`.txt`, never a runnable extension) — full stdout of the detector for all 16
-  mutants, each preceded by the mutant's sha256 and followed by its exit code.
-  The two mutant manifests are copied alongside it as
-  `MutStanza-transcripts/manifest.json` and `manifest2.json` (each mutant's
-  sha256, byte length, and the exact edit applied). **These lane copies add 0
+* **Mutant corpus**: two corpora, each single-token copies of the committed
+  `SCORECARD.md` (one of which is the byte-identical control), with
+  machine-readable manifests recording each mutant's sha256, byte length, and
+  the exact edit applied —
+  * `/tmp/mutstanza-r51/final/*/` (**authoritative**, against the shipping
+    `A=71` stanza, sha256 `fd11706a…c6cf7`, 246 224 B),
+    manifest `MutStanza-transcripts/manifest-final.json`;
+  * `/tmp/mutstanza-r51/{00..15}-*/` (against the pre-re-pin `A=67` stanza,
+    sha256 `4b98541f…7138`, 237 204 B), manifests
+    `MutStanza-transcripts/manifest.json` and `manifest2.json`.
+* **Transcripts**: `/tmp/mutstanza-r51/transcripts/mutstanza-battery-final.txt`
+  (authoritative, against `fef6707`) and `mutstanza-battery.txt` (first
+  battery, against `3304a56`), copied to the lane at
+  `.ufo/waves/round-51/w2/MutStanza-transcripts/` (`.txt`, never a runnable
+  extension) — full stdout of the detector for every mutant, each preceded by
+  the mutant's sha256 and followed by its exit code. **These lane copies add 0
   to the `A` term** (`.txt`/`.json` are not matched by `RE_RUNNABLE`).
 * **Clean tree**: `/tmp/mutstanza-r51/tree-head` (`git archive HEAD`), and
   `/tmp/mutstanza-r51/tree-base` (`git archive c90b9de9`) for the base
   decomposition.
-* **Restoration**: the lane was **never** written to by this seat. Post-run
-  verification — `SCORECARD.md` = `4b98541fcdbcd3e5d278d311fd6159f01a2b842078fbc60381b0fed6b3d87138`
-  (pristine), `scripts/proxy-check.mjs` = `495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9`
+* **Restoration**: the lane was **never** written to by this seat. At the close of
+  this seat's measurements — `SCORECARD.md` =
+  `4b98541fcdbcd3e5d278d311fd6159f01a2b842078fbc60381b0fed6b3d87138` (pristine),
+  `scripts/proxy-check.mjs` =
+  `495e5164ffe4b3500f128f256699b6f82e0d1e54b5618fafbe81b2b857af63e9`
   (= stanza `pin.proxy-check`), `scripts/receipt-attest.mjs` =
   `44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9`
-  (= stanza `pin.receipt-attest`). `git status --porcelain` shows **no
-  modification** to any tracked file; the only untracked paths are sibling
+  (= stanza `pin.receipt-attest`). `git status --porcelain` showed **no
+  modification** to any tracked file; the only untracked paths were sibling
   seats' own report/build artifacts (`.ufo/waves/round-51/w2/*.md`,
   `.ufo/waves/round-51/build/ExecForgerControl/`, `.ufo/waves/round-51/close/`).
   No `.mjs`/`.js`/`.sh`/`.py` file was created by this seat anywhere under the
   lane tree.
+* **Post-seat concurrent edits (not this seat's)**: at 23:53 the **integrator**
+  modified `SCORECARD.md` (adding the `receipt-attest` capability row and the
+  `## Round 51 — claims, freeze repairs, limits` section) and re-pinned the
+  stanza's `A` from `67` to `81` — the exact live correction this seat
+  reported in §4; at 23:55 commit `fef6707` re-pinned `A` again to **71**, the
+  committed-tree walk. `git status --porcelain --untracked-files=no` lists
+  `SCORECARD.md`, `LOG.md`, `corpus/lessons/round-51.md` and
+  `.ufo/waves/round-51/w2/RevD51Rerun.md` as modified; **none of these is this
+  seat's edit** (this seat wrote only
+  `.ufo/waves/round-51/w2/MutStanza.md` and the five `.txt`/`.json` files under
+  `.ufo/waves/round-51/w2/MutStanza-transcripts/`).
+  **Verified**: between `7d88faa` and `fef6707` the **only** stanza key that
+  changed is `A` (`67` → `71`); the `kumitate-gate-pins-v1` block is
+  **byte-identical** at both revisions (sha256
+  `1d55ac550ac7c6753ceafefdd5aa774d17c29add9e0788eb0e97e0755641ba3d`), and the
+  whole battery was **rebuilt and re-run** against the shipping `A=71` stanza
+  with identical verdicts (§2). Every finding in this report therefore applies
+  verbatim to both the `7d88faa` and the `fef6707` stanza.
 * **Tools installed**: none. No package manager transaction was performed
   (PACMAN GUARD observed — no `pacman` invocation of any kind).
 

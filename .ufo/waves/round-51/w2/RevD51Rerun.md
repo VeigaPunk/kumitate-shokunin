@@ -1,181 +1,130 @@
 # RevD51Rerun — attack on the D51 counting command (round 51, wave 2)
 
 Seat: `kumitate-r51.WearyDove` (reviewer). Lane: `/home/vgpnk/Projects/shokunin/kumitate-shokunin`.
-Review clock: 2026-10-24T02:44Z–02:52Z. Lane was READ-ONLY for this seat; every mutation ran in
-`mktemp -d` under `/tmp`; no tool was installed or updated. No edits to `plan.md`, `scripts/`,
-`corpus/`, counters, `SCORECARD.md`, `SKILL.md`, or `.ufo/state`.
+Review clock: 2026-10-24T02:44Z–03:00Z. Lane READ-ONLY for this seat: every mutation ran in
+`mktemp -d` under `/tmp` (all removed); no tool installed or updated; no edit to `plan.md`,
+`scripts/`, `corpus/`, either counter, `SCORECARD.md`, `SKILL.md`, or `.ufo/state`.
 
 Axes named before acting:
-1. **Predicate truth** — does the frozen counter's own line read `DOCTRINE_HELD held=5/5` at the
-   measured rev?
+1. **Predicate truth** — what does the frozen counter's own line read, and at which rev?
 2. **Predicate discrimination** — can non-compliant or content-free bytes read HELD, and can
    compliant bytes read UNMET?
-3. **Harm containment** — does the integrated entry move any H1..H5 baseline gate.
+3. **Harm containment** — does the integrated entry move an H1..H5 baseline gate?
+
+The lane moved twice during review. Every verdict below is pinned to a rev or to a file digest;
+the timeline is part of the finding.
 
 ---
 
-## 1. The assigned command and its exact held line
+## 1. The assigned command at the assigned rev — `DOCTRINE_UNMET held=2/5`
 
-Command (exact, run twice, identical output both times):
+Command (run twice, byte-identical output):
 
 ```
 node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-51/probe/doctrine51-probe.mjs \
   /home/vgpnk/Projects/shokunin/kumitate-shokunin 7d88faa733c5621da1cac174515e4a7d7d8896ea
 ```
 
-Line (verbatim):
+Exact held line:
 
 ```
 DOCTRINE51: DOCTRINE_UNMET held=2/5 checks=5 rev=7d88faa733c5621da1cac174515e4a7d7d8896ea rule=D51 | D1 MISS trio incomplete in first 5 lines | D2 MISS clauses=12 bound=5 hash-miss=0 | D3 PASS | D4 MISS exit=1 SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED) | D5 PASS
 ```
 
-`EXIT=1`. Same reading at the integration commit `a476977`, at the w2-spec commit `51f2ecf`, and
-at `HEAD=3304a56b`:
+`EXIT=1`. The same reading at the integration commit `a476977`, at `51f2ecf`, and at the then-HEAD
+`3304a56b`; base control `c90b9de9` reads `DOCTRINE_UNMET held=0/5 … D1 MISS entry-absent`, exit 1.
 
-```
-DOCTRINE51: DOCTRINE_UNMET held=2/5 checks=5 rev=3304a56... rule=D51 | D1 MISS ... | D2 MISS clauses=12 bound=5 hash-miss=0 | D3 PASS | D4 MISS exit=1 ... | D5 PASS
-```
-
-Base control `c90b9de9` reads `DOCTRINE_UNMET held=0/5 ... D1 MISS entry-absent`, exit 1 — the
-predicate is executable and moves 0→2, but not to 5.
-
-**The condition in the assignment ("If HELD 5/5, attack D2's hollow-clause class") did not
-trigger on the real bytes: the predicate is false.** I ran the hollow-clause attack anyway as a
-synthetic falsification (§4) and the content review of the real entry (§5), because the counter's
-discrimination is the actual risk.
-
-### Why receipt 3 cannot repair this
-
-Receipt 3 (scheduled pre-close) feeds A51-A2 only. D51's misses are receipt-3-independent:
-D1 and D2 are properties of the entry bytes, D4 is the repo sources gate. Unless
-`corpus/knowledge/invocation-attestation.md` is edited, `DOCTRINE_HELD` stays false at the close
-commit.
-
-### Miss-by-miss evidence at `7d88faa`
-
-| Check | Probe verdict | Cause, cited |
+| Check | At `7d88faa` | Cause |
 |---|---|---|
-| D1 | MISS | Entry line 1 is an H1 title; `source:` is line 3, `verified-at:` line 9, `recheck:` line 10. Probe head window is `text.split('\n').slice(0, 5)` (`doctrine51-probe.mjs:64`). |
-| D2 | MISS (`clauses=12 bound=5`) | Only lines 40, 42, 45, 50, 52 (all `- ` lines) carry `receipt:<path>@sha256:<64hex>`. Lines 20, 24, 29, 35, 54, 57, 60 do not. The 5 bound hashes all verify (`hash-miss=0`), so no forged binding. |
-| D3 | PASS | `corpus/SOURCES.md:113-114` rows S100/S101, tier A, `mined`, used-by `corpus/knowledge/invocation-attestation.md`. |
-| D4 | MISS | `sources-check.mjs:359` requires `lines[0].startsWith('source:')`. Live and extracted-tree runs print: `SOURCES  error  ENTRY_HEADER_REQUIRED  corpus/knowledge/invocation-attestation.md:1  non-legacy knowledge file lacks source: header` then `SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED)`, exit 1. |
-| D5 | PASS | Live census exits 0. |
+| D1 | MISS | Line 1 is an H1 title; `source:` is line 3, `verified-at:` line 9, `recheck:` line 10. Probe window is `text.split('\n').slice(0, 5)` (`doctrine51-probe.mjs:64`). |
+| D2 | MISS `clauses=12 bound=5` | Only lines 40, 42, 45, 50, 52 (all `- ` lines) carry a `receipt:…@sha256:<64hex>`. Lines 20, 24, 29, 35, 54, 57, 60 do not. All 5 bound hashes verify (`hash-miss=0`). |
+| D3 | PASS | `corpus/SOURCES.md:113-114` rows S100/S101, tier A, `mined`, used-by the entry. |
+| D4 | MISS | `sources-check.mjs:359` requires `lines[0].startsWith('source:')`. Output: `SOURCES  error  ENTRY_HEADER_REQUIRED  corpus/knowledge/invocation-attestation.md:1 …` → `SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED)`, exit 1; JSON totals `rows=101 entriesWithSource=7 legacy=38` (the new entry is not counted as having a source header). |
+| D5 | PASS | Live census exit 0. |
 
-The three failures are one root cause plus one content gap: the scribe's own wave-1 lesson proved
-`DOCTRINE_HELD held=5/5` reachable only with a house-shaped header (`source:` line 1,
-`verified-at:` line 2, `recheck:` line 3) and recorded that a title-first entry fails D4
-(`w1/ScribeLesson.md:97-100`, "Constraint A (fails first, then fixed)"). The integrated bytes
-are title-first and carry 5/12 bindings, i.e. the L1 integrated a shape the scribe had already
-measured as failing.
+This was not a timing artifact: receipt 3 feeds A51-A2 only, and D1/D2/D4 are properties of the
+entry bytes. The scribe's own wave-1 lesson had already proved `DOCTRINE_HELD held=5/5` reachable
+with a house-shaped header and recorded that a title-first entry fails D4
+(`w1/ScribeLesson.md:97-100`); the integrated bytes were title-first. Confirmatory of
+`w2/ScoutCensus2.md:117-143` and `w2/CritSourcesRows.md:33-35`, reproduced independently here.
 
----
-
-## 2. The live tree moved during review — and the repair still cannot reach HELD
-
-At 02:49Z the working-tree entry diverged from `7d88faa` (uncommitted; L1 mid-integration).
-Pinned live bytes: sha256 `4851b4c25970ee4b955d303f9cb866bb661e54cca9062db6f1cde0ce07db64bd`,
-mtime `2026-10-23 23:47:12 -0300`.
-
-Live effects, measured with the frozen counter's own expressions (not the counter, because the
-edit is uncommitted) plus the live gates:
-
-- **D1 → PASS.** Lines 1–3 are `source:` (both URLs on line 1), `verified-at:`, `recheck:`.
-- **D4 → PASS.** `node scripts/sources-check.mjs` prints
-  `SOURCES_CHECK: CLEAN (rows=101 tiers=A:87,B:6,C:8 status=queued:12,mined:73,rejected:16 entries_with_source=8 legacy=38)`, exit 0
-  (was `entries_with_source=7` + DRIFT at the pinned rev).
-- **D2 → still MISS, and worse: `clauses=12 bound=2`.** Only the `- ` lines at 62 and 66 carry
-  inline bindings (`scripts/receipt-attest.mjs`, `base/attest-base-v3r6.txt`).
-
-The rewrite has **17 `receipt:` references, of which 14 hash-match their files, 3 are
-`sha256:pending-close` placeholders**, and **15 of 17 sit on indented continuation lines**, which
-the frozen D2 never inspects:
-
-```
- 15 continuation MATCH         .ufo/waves/round-50/ReRunB49-1.txt
- 16 continuation MATCH         .ufo/waves/round-50/ReRunB49-2.txt
- 22 continuation MATCH         .ufo/waves/round-51/receipts/attest-run-1.txt
- 25 continuation MATCH         .ufo/waves/round-51/w1/LabratM2Replay.md
- 32 continuation MATCH         .ufo/waves/round-51/build/ExecInstrument/selftest.txt
- 38 continuation PLACEHOLDER   .ufo/waves/round-51/w2/CritA3eGap.md
- 45 continuation PLACEHOLDER   .ufo/waves/round-51/w2/ScoutReopenS101.md
- 51 continuation MATCH         .ufo/waves/round-51/w1/RevInstrumentContract.md
- 58 continuation MATCH         .ufo/waves/round-51/probe/attest51-probe.mjs
- 61 continuation MATCH         .ufo/waves/round-51/w1/RevCounterA.md
- 62 inline       MATCH         scripts/receipt-attest.mjs
- 65 continuation PLACEHOLDER   .ufo/waves/round-51/w1/ExecSelftestExec.md
- 66 inline       MATCH         .ufo/waves/round-51/base/attest-base-v3r6.txt
- 69 continuation MATCH         .ufo/waves/round-51/probe/doctrine51-probe.mjs
- 75 continuation MATCH         .ufo/waves/round-51/receipts/attest-run-2.txt
- 79 continuation MATCH         .ufo/waves/round-51/w1/CritC1.md
- 80 continuation MATCH         .ufo/waves/round-51/w1/RevPlan.md
- total refs=17
-```
-
-(`ReRunB49-1.txt` hash independently re-derived: `aa293cc4951a02b19aba7bbc3a8fc5dd19918aff4766e850f696421cb2dd06f6`
-— matches.)
-
-Consequence: **if the live rewrite is committed as-is, D51 reads `held=4/5` (D1/D3/D4/D5 pass,
-D2 bound=2).** The entry is now substantively well-bound — 14 valid bindings — but the frozen
-counter cannot see 12 of them. The mechanical repair that satisfies the frozen bytes is to place
-one binding on each of 12 `- ` lines (wrapping prose after the binding is fine) and to resolve the
-three `pending-close` placeholders before close; those are decision inputs for the L1, not edits
-by this seat.
+**Harm at this rev:** `SKILL.md:698` (`Sources-registry gate → exit 0 + SOURCES_CHECK: CLEAN`)
+exits 1; the frozen baseline recorded that item PASS at then-line 697 and ends
+`CHECKLIST: 22/22 pass`. So at `7d88faa`/`3304a56` the checklist is 21/22 on baseline items — H1
+fails. `git diff --stat c90b9de9..HEAD -- scripts/sources-check.mjs SKILL.md` shows only `SKILL.md`
+changed this round, so the regression came from the new entry, not from a gate change.
 
 ---
 
-## 3. H1 blast radius at the pinned rev
+## 2. Resolution mid-review — the close candidate reads `DOCTRINE_HELD held=5/5`
 
-`SKILL.md:698` (pre-existing baseline item, current numbering) is:
+Between 02:49Z and 02:52Z the L1 rewrote the entry (first as an uncommitted file, sha256
+`4851b4c2…`, which measured `clauses=12 bound=2` because 12 of 17 bindings sat on continuation
+lines), then committed it. HEAD advanced once more during review (`fef6707`); the entry bytes are
+identical at both revs (sha256 `826320a3cc771aeff6a2e8b8423e521d29a33d423829f9ff357e930428352f41`),
+and D51 reads `held=5/5` at `fef6707` as well. State pinned here:
 
 ```
-- [ ] Sources-registry gate — `node scripts/sources-check.mjs` → exit 0 + `SOURCES_CHECK: CLEAN`
+HEAD = efdd742
+node …/doctrine51-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin efdd742
+DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=efdd742 rule=D51 | D1 PASS | D2 PASS | D3 PASS | D4 PASS | D5 PASS
+EXIT=0
 ```
 
-At the pinned rev its command exits 1 with DRIFT (§1). The frozen baseline recorded it PASS at
-the then-line 697, and `base/baseline-gates.txt` ends `CHECKLIST: 22/22 pass` / `VERDICT: PASS`.
-So at `7d88faa`/`3304a56` the checklist is **21/22 on baseline items**, which falsifies H1's
-`22/22` floor. Only the uncommitted working tree (D4 fixed) restores it; the close commit must
-carry the entry repair or H1 fails. `git diff --stat c90b9de9..HEAD -- scripts/sources-check.mjs SKILL.md`
-shows only `SKILL.md` changed this round — the regression is caused by the new entry, not by a
-gate change.
+Cross-checks at the same rev:
 
-H2/H3/H5 are unaffected by construction: `round-gate.mjs` names no sources gate, `proxy-check.mjs`
-pins the script digest (`pin.sources-check=5402b210…`) rather than running it, and the round-50
-counters read their own receipts. H4's live census exits 0 (D5), so H4 holds at the pinned rev.
+```
+node …/attest51-probe.mjs … efdd742
+ATTEST51: ATTEST_HELD held=9/9 checks=9 rev=efdd742 rule=A51 version=v3 | A1 PASS | A2 PASS | A2c PASS | A3 PASS | A3c PASS | A4 PASS | A4c PASS | A3d PASS | A5 PASS   (exit 0)
+
+node scripts/sources-check.mjs
+SOURCES_CHECK: CLEAN (rows=101 tiers=A:87,B:6,C:8 status=queued:12,mined:73,rejected:16 entries_with_source=8 legacy=38)   (exit 0)
+
+node scripts/receipt-attest.mjs --selftest
+ATTEST_CASES: 27 passed, 0 failed / ATTEST_SELFTEST: PASS   (exit 0, temp dirs only)
+```
+
+Receipt 3 now exists (`attest-run-3.txt`, run-at `2026-10-24T02:48:04.542Z`, nonce `176f623b…`,
+argv = the D51 probe at base `c90b9de9`), so A51-A2's declared pre-close miss is closed. **At the
+close candidate the predicate holds, and the H1 sources item is green.** The assignment's
+"if HELD 5/5" branch therefore applies to this rev, and §3–§4 are the attack on what that HELD
+does and does not certify.
 
 ---
 
-## 4. Counter discrimination — synthetic falsification (scratch clone under `/tmp`)
+## 3. Counter discrimination — synthetic falsification (scratch clone under `/tmp`)
 
-`git clone --no-hardlinks` of the lane into `/tmp/d51synth.*/repo`; the frozen counter run against
-that clone at each synthetic rev. The clone and its three commits were removed after the runs;
-reproduction is: header-first entry (`source:` line 1 with both URLs, `verified-at:` line 2,
-`recheck:` line 3) + N `- ` clause lines.
+`git clone --no-hardlinks` of the lane into `/tmp/d51synth.*/repo`, frozen counter run against the
+clone at each synthetic rev; clone and commits removed afterwards. Reproduction: header-first
+entry (`source:` line 1 with both URLs, `verified-at:` line 2, `recheck:` line 3) plus N `- `
+clause lines.
 
-**4a. Content-free entry reads HELD 5/5** (12 `- hollow clause NN — receipt:scripts/receipt-attest.mjs@sha256:4491…` lines, one
-identical blob bound 12×, no prose of substance), rev `82c8055e`:
+**3a. Content-free entry reads HELD 5/5.** 12 lines of the form
+`- hollow clause NN — receipt:scripts/receipt-attest.mjs@sha256:4491…`, one blob bound 12×, no
+prose of substance, rev `82c8055e`:
 
 ```
 DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=82c8055e8bdd2dd338920b7d2b103296a5001cbd rule=D51 | D1 PASS | D2 PASS | D3 PASS | D4 PASS | D5 PASS
 EXIT=0
 ```
 
-This makes D51's saturation claim uninformative about content: it is the wave-2 item-22/item-23
-class ("hollow clauses pass", "one blob bound 12× counts 12"), now **observed**, not inferred.
+This is the wave-2 item-22/item-23 class ("hollow clauses pass", "one blob bound 12× counts 12")
+**observed**, not inferred. `DOCTRINE_HELD` is a shape predicate.
 
-**4b. A compliant clause scores MISS when its binding wraps.** Same entry, clause 12's binding
-moved to the next (indented) line — every clause is content-bound, rev `51db0f37`:
+**3b. A fully bound clause reads MISS when its binding wraps.** Same entry, clause 12's binding
+moved to its indented continuation line, rev `51db0f37`:
 
 ```
-DOCTRINE51: DOCTRINE_UNMET held=4/5 checks=5 rev=51db0f37... rule=D51 | D1 PASS | D2 MISS clauses=12 bound=11 hash-miss=0 | D3 PASS | D4 PASS | D5 PASS
+DOCTRINE51: DOCTRINE_UNMET held=4/5 checks=5 rev=51db0f37… rule=D51 | D1 PASS | D2 MISS clauses=12 bound=11 hash-miss=0 | D3 PASS | D4 PASS | D5 PASS
 EXIT=1
 ```
 
-This is exactly the real entry's bullet at `7d88faa:20`, whose two bindings sit at line 23. D2's
-line-start heuristic (`clauses = lines.filter(l => l.startsWith('- '))`, then regex on that same
-string) is line-granular, so a substantively-bound clause can read unbound.
+The real pinned entry's bullet at `7d88faa:20` had exactly this shape (bindings at line 23), and
+the interim rewrite at `4851b4c2…` was scored `bound=2` while carrying 14 valid bindings. D2 is
+line-granular: `clauses = lines.filter(l => l.startsWith('- '))` then a regex on that same string
+(`doctrine51-probe.mjs:74`, `:87`).
 
-**4c. "Each carrying a binding" is not enforced.** 13 clause lines with only 12 bound, rev
+**3c. "Each carrying a binding" is not enforced.** 13 clause lines with only 12 bound, rev
 `bd40949c`:
 
 ```
@@ -183,113 +132,105 @@ DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=bd40949cd6171841daca8099b77419fe
 EXIT=0
 ```
 
-`plan.md` §C2 still says "≥12 clause lines, **each** carrying a `receipt:…` binding"; the
-implementation is `clauses.length >= 12 && bound.length >= 12 && d2miss === 0`
-(`doctrine51-probe.mjs:74`, `:87`). The plan text was amended mid-review only for D1 (now "within its
-first five lines", `plan.md:101-103`), so this counter/plan mismatch stands. It was pre-registered
-by `w1/CritFreeze.md:72-79`, `w1/RevCounterD.md:75-78`, `w1/ScribeLesson.md` F-1/F-2; my runs
-confirm it live.
+`plan.md` §C2 says "≥12 clause lines, **each** carrying a `receipt:…` binding"; the code requires
+`clauses.length >= 12 && bound.length >= 12 && d2miss === 0` (`:87`). Pre-registered by
+`w1/CritFreeze.md:72-79`, `w1/RevCounterD.md:75-78`, `w1/ScribeLesson.md` F-1/F-2; now executed.
+The plan's D1 sentence was amended mid-review to the counter's five-line window
+(`plan.md:101-103`); the D2 sentence was not reconciled.
 
 ---
 
-## 5. Topicality review of the real entry (D2's hollow-clause class)
+## 4. Topicality review of the committed entry at `efdd742` (13 clauses, 13 bindings)
 
-Judged the committed bytes at `7d88faa` (12 `- ` clauses, 63 lines), bindings as of §1.
+All 13 clause lines carry an inline 64-hex binding; the 13 bound targets are distinct and every
+hash matches (`D2 PASS`, `hash-miss=0`, independently re-verified against the working tree).
+Substance judgment per clause (the counter binds hashes; it does not judge content):
 
-| Line | Clause | Inline binding | Substance |
+| Line | Clause | Bound target(s) | Verdict |
 |---|---|---|---|
-| 20 | receipt = prelude + one canonical-JSON line + whole-file sidecar | no (bindings at line 23, continuation) | substantive, verifiable |
-| 24 | inner `digest` over semantic fields, parse-drop-sort re-canonicalization | no | substantive; cites arm A3d + selftest case 08, no receipt |
-| 29 | CLOCK_MONOTONIC semantics, frequency-adjustment caveat, ordering-not-proof bound | no | substantive, S100-grounded |
-| 35 | 128-bit nonce; "Node's bytes come from … getrandom()" | no | partly unsupported (see L-2 below) |
-| 40 | worked M2 forgery, run-1 | yes | substantive |
-| 42 | instrument metrics (27 cases, 15/15 mutants killed) | yes | substantive |
-| 45 | frozen predicate A51 v3r6, nine checks | yes | substantive |
-| 50 | frontier companion "binds this entry's clauses to committed bytes" | yes | borderline vacuous — describes the counter, not the domain |
-| 52 | before-state `ATTEST_UNMET held=0/9` | yes | substantive |
-| 54 | "3 round-51 receipts, distinct nonces, … span ≥ 300 s" | no | **false at the rev** (see L-1) |
-| 57 | secret hygiene (argv yes, environment no) | no | substantive normative claim |
-| 60 | zero-run minting ceiling; integrity ≠ temporal truth | no | substantive limit, honestly stated |
+| 25 | receipt = prelude + one canonical-JSON line + whole-file sidecar | `receipts/attest-run-1.txt` | substantive, verifiable |
+| 26 | prelude-only rewrite fails with stale sidecar (`TAMPERED`) | `w1/LabratM2Replay.md`, `build/ExecInstrument/selftest.txt` | substantive |
+| 27 | inner `digest` = canonical JSON minus digest; corruption → `REPLAY` | `build/ExecInstrument/selftest.txt` | substantive |
+| 28 | CLOCK_MONOTONIC ordering witness; full 22-word S100 quote; measured −300/+300/+600 s failures; tolerance −60,000…+60,073 ms | `w2/CritA3eGap.md`, `w2/CritA2Span.md` | substantive; tolerance arithmetic checks out against `PRELUDE_SLACK_MS=60_000` plus the 73 ms body window (`receipt-attest.mjs:75,383-390`; `CritA2Span.md:5,71-72`) |
+| 29 | 128-bit nonce; full 17-word S101 quote; **explicitly withdraws the Node-specific bridge** | `w1/ScoutRandomSource.md` | substantive; fixes the earlier over-attribution |
+| 30 | ledger flags same nonce → different digest only; byte-identical duplicates exempt | `w1/RevInstrumentContract.md`, `w2/CritLedger.md` | substantive |
+| 31 | A51 v3r6 nine checks + challenge arms; forger history "against v3r6 … held=5/8" | `probe/attest51-probe.mjs`, `w1/CritC1.md`, `w1/RevCounterA.md` | **non-veridical** — see M-1 |
+| 32 | instrument is the judged object; 27-case selftest; fresh-dir sabotage control reads red | `scripts/receipt-attest.mjs`, `w1/ExecSelftestExec.md` | substantive; 27/27 independently reproduced |
+| 33 | before-state `ATTEST_UNMET held=0/9` at base; D51 scores this entry | `base/attest-base-v3r6.txt`, `probe/doctrine51-probe.mjs` | substantive |
+| 34 | three receipts, distinct nonces, pairwise-distinct sha256, span **772.9 s**, run-2 wraps `proxy-check --strict` | `receipts/attest-run-2.txt` | **partly non-veridical** — see L-1/L-2 |
+| 35 | freeze integrity as a lesson; each repair named/re-measured | `w1/RevPlan.md` | substantive (process lesson) |
+| 36 | secret hygiene; sentinel sweep found no secret patterns | `w2/SentSecrets2.md` | substantive |
+| 37 | zero-run minting possible; integrity ≠ temporal truth; Q39 ceiling | `w1/RevengerGap.md` | substantive limit, honestly stated |
 
-**No fully vacuous clause found.** The D2-class risk is not tautology here; it is (i) 7/12 clauses
-carry no binding, (ii) all 5 bindings are self-referential (the round's own receipt, instrument,
-probes, base record) — none binds an external source, so even a repaired 12/12 would be
-satisfiable by decorating clauses with unrelated self-receipts, which wave-2 item 25 already
-names ("the binding target is unconstrained"), and (iii) unbound clauses carry unguarded claims,
-one of which is false (§L-1).
+**No fully vacuous clause.** The earlier hollow-clause concern (a clause carrying an unrelated
+receipt) is not realized here: every binding is topical to its clause except line 34's receipt,
+which binds run-2 while the clause also counts run-3. The residual risk is the counter's inability
+to tell "bound and true" from "bound and false" — realized in the two clauses below.
 
 ---
 
-## 6. Findings by severity
+## 5. Findings by severity
 
-**HIGH-1 — `DOCTRINE_HELD` is false at the measured rev and at every commit since integration.**
-`held=2/5` at `a476977`, `51f2ecf`, `7d88faa`, `3304a56`; D1, D2, D4 miss. Receipt 3 cannot change
-any of the three. Confirmatory of `w2/ScoutCensus2.md:117-143` and `w2/CritSourcesRows.md:33-35`;
-independently reproduced here twice.
+**M-1 (MEDIUM) — entry line 31 states a v3r6 forger reading that does not exist, and contradicts
+itself in the same sentence.** The clause says "rule A51 v3r6 (nine checks) … against v3r6 the
+same forger reads held=5/8". Nine checks cannot produce a `/8` reading. The only `held=5/8`
+reading in the lane is v3r5 with `checks=8` (`w1/RevPlan.md:318`, `:327` shows v3 `held=5/7`, v3r5
+`held=5/8`); `w2/RevFreezeGenealogy.md:256` states "No 9-arm (`v3r6`) reading of forger rev
+`9cb611b7` exists in the lane; the `5/8` figure is from v3r5." The bound receipt
+`w1/CritC1.md` (hash verifies) explicitly says no full held reading is claimed. Nothing in D51
+inspects this sentence; the hash binds a report that does not support the claim.
 
-**HIGH-2 — the live (uncommitted) repair fixes D1/D4 but leaves D2 at `bound=2`, so the close
-commit as it stands still reads `held=4/5`.** 14 valid bindings exist; 12 are invisible because
-they sit on continuation lines; 3 references are `sha256:pending-close` placeholders
-(lines 38, 45, 65). Action for the L1: put one binding on each of 12 `- ` lines and resolve the
-placeholders before the close commit.
+**M-2 (MEDIUM) — `DOCTRINE_HELD` cannot certify the entry's content.** §3a: a content-free entry
+reads `held=5/5`; §3b: a fully bound clause reads MISS when its binding wraps; §3c: an unbound
+13th clause passes. Since the round's C2 claim rests on `DOCTRINE_HELD`, the 5/5 at `efdd742` is
+evidence of entry *shape* (header, 12+ bound lines, rows, gates), not of the entry's accuracy —
+and M-1/L-1 are live examples inside a 5/5 entry.
 
-**MEDIUM-1 — H1 regression at the pinned rev.** `SKILL.md:698` sources gate exits 1
-(DRIFT); baseline was `22/22 pass` with that item PASS at then-line 697. 22/22 → 21/22 at
-`7d88faa`/`3304a56`; restored only in the working tree.
+**L-1 (LOW) — entry line 34's span figure is stale by 0.585 s.** "span 772.9 s between earliest
+and latest `run-at`" vs the committed receipts: `02:35:11.057Z` → `02:48:04.542Z` = **773.485 s**
+(the A51-A2 arm computes 773 s). 772.9 s corresponds to a latest timestamp of `02:47:59.957Z`,
+i.e., an earlier run-3 that was re-issued; the prose was not re-derived. `wall_start` equals
+`run-at` in all three receipts, so no field pairing yields 772.9.
 
-**MEDIUM-2 — D51 discriminates in neither direction.** Content-free bytes read `HELD 5/5`
-(§4a); 13 clauses/12 bound read `HELD 5/5` (§4c); a fully bound clause reads `MISS` when its
-binding wraps (§4b). Therefore `DOCTRINE_HELD` is not evidence that the entry is substantive, and
-it can punish compliant content.
+**L-2 (LOW) — the third receipt is counted but not bound.** Line 34 asserts "three receipts …
+pairwise-distinct sha256" but binds only `attest-run-2.txt`. `attest-run-3.txt`
+(`c6eac06d911ee1082fb8f9b03eaa19041afa621f2b8e71a8c8bf615ba2715836`) has no binding, so the count
+and distinctness of the third receipt are prose-only. (The underlying facts are true: three
+receipts exist, nonces `3fd22d21…`, `f95078d0…`, `176f623b…`, hashes pairwise distinct.)
 
-**LOW-1 — entry line 54 asserts a completed state that is false in the committed bytes.**
-At `7d88faa` the receipts directory holds exactly two genuine receipts
-(`attest-run-1.txt` nonce `3fd22d21…`, span 313 ms; `attest-run-2.txt` nonce `f95078d0…`, span
-73 ms) plus the doctored twin `attest-run-2-replayed.txt`; `run-at` gap is 235.7 s
-(02:35:11.057Z → 02:39:06.793Z); no `attest-run-3*` exists anywhere under `.ufo`. "3 receipts …
-span ≥ 300 s" is a forecast written as fact, in a clause no counter checks.
+**INFO-1 — timeline risk for the close record.** The assignment's "measured lane tip" `7d88faa`
+reads `held=2/5` and has H1 red; `efdd742` reads `held=5/5` and H1 green. Any close document that
+quotes `7d88faa` as the measured state, or `efdd742` without the rev, misstates one of the two.
+The predicate became true only because the entry was rewritten after the measured rev.
 
-**LOW-2 — S101 does not support the Node bridge.** `getrandom(2)` says `getrandom()` draws from
-urandom; it says nothing about Node. Entry line 35 turns that into "Node's bytes come from the
-kernel random interface `getrandom()`". Corroborates `w2/ScoutReopenS101.md:70` (same finding,
-recorded there as a residual).
-
-**LOW-3 — quote labels do not match the displayed quotes.** Entry line 29 displays a 9-word
-fragment but labels it "(S100, 22-word quote)"; line 35 displays 4 words labeled "(S101, 17-word
-quote)". The 22/17 counts are correct for the scouts' longer located quotes
-(`w1/ScoutClockSource.md:28-32`, `w1/ScoutRandomSource.md:23-30`), not for the fragments — the
-entry should either quote the full located sentence or drop the count.
-
-**INFO-1 —** `plan.md` D1 sentence was amended during review from "first three lines" to "within
-its first five lines" (`plan.md:101-103`), matching the probe; the D2 "each carrying" sentence
-remains unimplemented.
-
-**INFO-2 —** Assignment path `build/DistWave1/wave2-items.md` resolves to
+**INFO-2 —** assignment path `build/DistWave1/wave2-items.md` resolves to
 `.ufo/waves/round-51/build/DistWave1/wave2-items.md` (used; items 22-27 are the D51 arms). No
-artifact was missing.
+artifact was missing. Novelty: §1 is confirmatory of ScoutCensus2/CritSourcesRows; §3a-3c are new
+executions of the distilled items; M-1 corroborates RevFreezeGenealogy's provenance finding and
+shows the mislabel is now *inside the doctrine entry*; L-1/L-2 are new.
 
 ---
 
-## 7. Residual risk and verification gaps
+## 6. Residual risk and verification gaps
 
-- **I did not run `node scripts/surface-probe.mjs --checklists`.** It executes 23 gate commands;
-  the lane is read-only for this seat, and a harness run is not needed to establish that one
-  item's command exits 1. H1's "21/22" is therefore a derivation from
-  `base/baseline-gates.txt` (22 PASS lines, sources item PASS at then-line 697) plus the direct
-  exit-1 run — not a harness reading. H2/H3/H5 were not run (out of assignment).
-- **Live tree moved during review.** All pinned verdicts name a rev; the live repair is cited by
-  file sha256 `4851b4c2…` and timestamp, not by commit. If the L1 commits a different byte set,
-  D2's `bound` count must be re-measured.
-- **The synthetic revs are `/tmp`-local** and were deleted; the entry text of each variant is the
-  one-block-per-run form quoted above, reproducible in a scratch clone.
-- **D5 is a live, unpinned fleet executable** (CritFreeze F1's class); it returned 0 here but its
-  bytes are not bound by the counter.
-- **Fetched HTML body hashes were not re-derived by me**; the ScoutReopen seats' AGREE verdicts
-  (S100, S101) are cited as their measurements, not mine.
-- **Citation gate sanity-check (not scored as harm):** live `node scripts/cite-check.mjs` prints
-  `VERDICT: FAIL` / `CITE_CHECK: DRIFT (files=121 tokens=10625 errors=916 warnings=654)` exit 1,
-  but `base/baseline-gates.txt` records that item as PASS with `exit=1 expected=0|1`, so this is
-  the tolerated baseline state; `grep invocation-attestation` over its output returns 0 lines, so
-  the new entry and its three `pending-close` tokens are invisible to cite-check. A cross-tree
-  comparison against the extracted rev is confounded (no `.git`, no fleet index).
-- No verdict here is an admission, and nothing was edited, judged, integrated, or shipped.
+- **I did not run `node scripts/surface-probe.mjs --checklists`.** It executes 23 gate commands and
+  the lane is read-only for this seat. H1's status at `efdd742` is therefore established only for
+  the item that had failed (sources gate: exit 0 + CLEAN, directly run); the other 21 baseline
+  items are cited from `base/baseline-gates.txt`, not re-run. H2/H3/H5 were not run (out of
+  assignment).
+- **The lane moved mid-review.** Verdicts are pinned to `7d88faa` (2/5), `a476977`, `51f2ecf`,
+  `3304a56` (2/5), interim working-tree sha `4851b4c2…` (D1/D4 pass, D2 bound=2), `efdd742`
+  (5/5, A51 9/9, sources CLEAN, selftest 27/27), and `fef6707` (5/5; entry bytes identical to
+  `efdd742`, sha `826320a3…`). If HEAD advances again the D51 line must be re-read.
+- **Synthetic revs `82c8055e`, `51db0f37`, `bd40949c` were `/tmp`-local** and deleted; their entry
+  text is reproducible from §3's description.
+- **D5 remains a live, unpinned fleet executable** (CritFreeze F1's class); it returned 0 here.
+- **Fetched HTML body hashes were not re-derived by me**; ScoutReopen S100/S101 AGREE verdicts are
+  cited as their measurements. The docs quotes in the entry now match those located quotes
+  verbatim (22 and 17 words).
+- **Live citation gate sanity check (not scored):** `node scripts/cite-check.mjs` prints
+  `VERDICT: FAIL` (`errors=916 warnings=654`, exit 1), which `base/baseline-gates.txt` records as
+  the tolerated baseline state (`exit=1 expected=0|1`); `grep invocation-attestation` over its
+  output returns 0 lines, so the entry and its binding tokens are invisible to that gate.
+- No verdict here is an admission; nothing was edited, judged, integrated, shipped, or invoked as
+  a runtime.

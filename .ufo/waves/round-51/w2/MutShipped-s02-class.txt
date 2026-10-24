@@ -1,0 +1,11 @@
+prefix=16	selftest=PASS (blind)	A3-pristine=RECEIPT: REPLAY	A3-mutant=RECEIPT: REPLAY
+prefix=8	selftest=PASS (blind)	A3-pristine=RECEIPT: REPLAY	A3-mutant=RECEIPT: REPLAY
+prefix=4	selftest=PASS (blind)	A3-pristine=RECEIPT: REPLAY	A3-mutant=RECEIPT: REPLAY
+prefix=2	selftest=PASS (blind)	A3-pristine=RECEIPT: REPLAY	A3-mutant=RECEIPT: REPLAY
+prefix=1	selftest=PASS (blind)	A3-pristine=RECEIPT: REPLAY	A3-mutant=RECEIPT: REPLAY
+
+== PRACTICAL FORGERY against the prefix-4 mutant ==
+target prefix=d7f6 sidecar kept = d7f6638b106f0fa2bcf70a2f3367bbe921b20c1a541a8cd2061e47200c6d249d  forge.txt
+forged body = {"argv":["/bin/sh","-c","printf secret","grind-9394"],"digest":"cddfabc74a51cfbb9322491df7c32466c3246d83d19df8e2bfea93fdd3b1a0a8","exit":0,"mono_span_...
+PRISTINE exit=1 verdict="RECEIPT: TAMPERED"
+MUTANT   exit=0 verdict="RECEIPT: VALID"

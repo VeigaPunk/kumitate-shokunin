@@ -1,0 +1,13 @@
+== PROOF A: wave-1 D07 is a NO-OP (the shipped record has no mono_ns field) ==
+pristine projection digest : 86342e14fb53c009648c67d0ef0f7cd5d6ecc725363f888e83c8f241d748790d
+wave-1 D07 projection digest: 86342e14fb53c009648c67d0ef0f7cd5d6ecc725363f888e83c8f241d748790d
+IDENTICAL (delete of a NON-EXISTENT field): true
+shipped record fields: argv,exit,mono_span_ms,nonce,stderr_sha256,stdout_sha256,wall_end,wall_start
+
+== PROOF B: the LEDGER only scans names ending .txt ==
+twin named twin.txt      -> exit=1 "RECEIPT: REPLAY"   (contract: REPLAY exit 1)
+twin named twin.receipt  -> exit=1 "RECEIPT: REPLAY"   (contract: REPLAY exit 1)
+
+== PROOF C: the same twin, EXTENSION-CHANGED, inside the SAME ledger dir ==
+forged twin named twin.receipt, same nonce, different digest -> exit=1 "RECEIPT: REPLAY"
+contract requires: RECEIPT: REPLAY exit 1 (nonce reused by a DIFFERENT record)
