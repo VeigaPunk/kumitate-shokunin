@@ -813,4 +813,6 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Shown able to fail.** The round-51 wave-1 seats: two independent findings for D51's
     index bug; CritC1's stub reading; RevCounterA's held=5/5 forger.
   - **Limit.** The rule binds the L1's freeze discipline; it does not make static arms
-    unforgeable (see round-51 report, forgery boundary).
+    unforgeable (see round-51 report, forgery boundary). Enforcement is MANUAL — the L1
+    commits the before-receipt at freeze and the non-author closure verifies it; no lane
+    gate mechanically rejects a freeze commit that lacks one (seat CritQ43, round 51).

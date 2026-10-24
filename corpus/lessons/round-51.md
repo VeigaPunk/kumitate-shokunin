@@ -75,3 +75,9 @@ scout seats this round.
   `crypto.randomBytes` calls `getrandom()` — the entry phrases both bounds exactly.
 - Rejected: none this round.
 - Spot-check: wave-2 seats re-open both rows (fresh fetch, byte-hash compare).
+- **S101 `teaches` cell correction (wave-2 seat CritSourcesRows):** old → new:
+  `getrandom() draws entropy from the urandom source, the same source as /dev/urandom, and
+  its bytes are usable for cryptographic purposes.` → `By default, getrandom() draws
+  entropy from the urandom source (the same source as /dev/urandom); its bytes are usable
+  for cryptographic purposes.` — restores the omitted "By default," so the teaches cell
+  matches the verbatim quote. Row identity, tier, status unchanged.

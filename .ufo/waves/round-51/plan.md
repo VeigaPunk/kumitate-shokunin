@@ -97,7 +97,9 @@ the entry's provenance trio cites S100/S101 — this is the round's sourced clai
 **Predicate, label `DOCTRINE_HELD`** — frozen counter
 `.ufo/waves/round-51/probe/doctrine51-probe.mjs` (rule `D51`):
 D1 the entry exists at rev with the provenance trio (`source:` citing S100 and S101 with
-URLs, `verified-at:`, `recheck:`) in its first three lines; D2 ≥12 clause lines, each
+URLs, `verified-at:`, `recheck:`) within its first five lines (the frozen counter's window;
+the body's original "first three lines" wording is superseded — item 7-class text repair
+per seat ScribeLesson F-1); D2 ≥12 clause lines, each
 carrying a `receipt:<repo-path>@sha256:<64hex>` binding whose path exists at rev with a
 matching blob sha256; D3 `corpus/SOURCES.md` at rev carries rows S100 and S101 with
 status `mined` and `used-by` naming the entry; D4 `node scripts/sources-check.mjs` against
