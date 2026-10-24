@@ -17,7 +17,8 @@
  *       verifies `RECEIPT: TAMPERED` exit 1.
  *   A4  no nonce reuse: the ledger arm — every pair of the three round-51 receipts passes
  *       `verify --ledger <receipts-dir>`, and each embedded nonce appears in NO prior
- *       receipt corpus file under .ufo/waves/round-4*/** at rev (the sweep prints what it
+ *       receipt corpus file under .ufo/waves/ (round-48/49/50 receipt corpora) at rev (the
+ *       sweep prints what it
  *       scanned; zero hits required).
  *   A5  pin.receipt-attest in the SCORECARD.md `kumitate-gate-pins-v1` block equals the
  *       sha256 of the extracted scripts/receipt-attest.mjs, and
