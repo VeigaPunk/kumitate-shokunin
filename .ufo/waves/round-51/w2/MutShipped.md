@@ -435,6 +435,7 @@ shipped bytes — the shipped instrument does compare in full.
 | **F‑4** | **MEDIUM** (against the frozen counter) | The counter's A-arms are **blind to all three survivors** — `ATTEST_HELD = 9/9` is satisfiable by a prefix-truncating instrument. The counter's `lastLine` **trims** (`attest51-probe.mjs:93`) and its greps are substring regexes, so V03 (trailing-space verdict) is also unpinned. | §5, `MutShipped-counter-sim.txt` |
 | **F‑5** | **LOW** | The **sidecar's `name` field is parsed but never checked** against the receipt's basename (`parseSidecar` returns `name`; `doVerify` ignores it). Not exploitable as shipped (the hash covers the bytes) — a second unpinned field in the same layer. | `scripts/receipt-attest.mjs:158-161`, `doVerify` |
 | **F‑6** | **INFO** (positive) | The shipped suite's digest-binding coverage is **complete** over all eight semantic fields: correctly anchored, D01–D07 are all killed by `inner-digest-covers-every-semantic-field`. The shipped implementation is **not** defective on any site this battery attacks. | §2, `MutShipped-killing-cases.txt` |
+| **F‑7** | **INFO** | The wave-1 battery classifies a **behaviourally empty** mutation as `SURVIVED` (D07's `delete copy.mono_ns;` — a field the shipped record does not have). A no-op is a battery defect, not a suite survivor. Any future battery should assert the mutant changes the instrument's *observable behaviour* before classifying it. | §4, `MutShipped-proofs.txt` |
 
 ### What would close F‑1 and F‑2 (proposals; this seat edits nothing)
 

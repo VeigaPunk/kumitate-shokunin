@@ -233,14 +233,14 @@ transcript behind it; the one committed rerun reads 22/23 FAIL.
 
 ## Findings by severity
 
-- **HIGH — no committed receipt binds both predicates at the close rev.** The only
-  committed close receipts are `cd7f69d`'s: A51 9/9 **and D51 UNMET 4/5 exit 1**. The
-  final receipt (`FINAL-57333ea`, untracked) is **ATTEST_UNMET 8/9** with A5 MISS because
-  the stanza then declared 81 while the commit computed 71 — and its `PROXY: MATCH (A=81)`
-  line is the dirty tree. After `fef6707` both probes read HELD (9/9, 5/5), but nothing
-  committed records that. Fix: commit `FINAL` receipts for A51 and D51 at the actual close
-  rev (`fef6707` or later) and delete/supersede the stale `cd7f69d` pair if they remain as
-  evidence.
+- **HIGH — the committed close evidence does not bind either predicate at the close rev.**
+  `A51-cd7f69d3.txt` is 9/9 at `cd7f69d` (where `D51-cd7f69d3.txt` is UNMET 4/5);
+  `FINAL-57333ea…txt` is **ATTEST_UNMET 8/9** (A5 MISS because the stanza then declared 81
+  while the commit computed 71) with D51 5/5, and its `PROXY: MATCH (A=81)` line is the
+  dirty tree — a claim arm passing on untracked scratch. At HEAD `9d11f4e` both probes read
+  HELD (9/9, 5/5) but no receipt names that rev. Fix: commit A51 and D51 receipts at the
+  final close rev, and retire the stale `cd7f69d` pair so a reader cannot take it as the
+  close reading.
 - **HIGH — the SCORECARD terms sentence misstates the composition and cites this report.**
   "A=67 = 44 shipped/instrument files + 23 round-51 probe files" is wrong on both terms:
   67 = 16 shipped + 28 legacy wave artifacts + 23 round-51 (2 probes, 21 build), and A is
