@@ -2338,7 +2338,15 @@ Wall-window tolerance is exactly −60,000/+60,073 ms (`w2/CritA2Span.md`); insi
 re-dated copy verifies — the Q39 ceiling. (e) D5 is live-only; D4 trusts the rev's own
 checker (R51-4 class). (f) Probe runs inherit the host environment (interpreter-tampering
 class). (g) The three-receipt span is author-scheduled (honestly labelled, R50-4 class).
-(h) Q43's enforcement is manual (named in its Limit). (h3) R52-6 (routed, seat MutShipped, delivered post-close): the instrument's selftest
+(h) Q43's enforcement is manual (named in its Limit). (h4) R52-7 (routed, HIGH, seat MutReceiptBytes, post-close): A2's span arm trusts the
+display `run-at:` prelude even though the receipt body binds the true wall window — two
+genuine receipts each drifted 60 s outward with recomputed sidecars display a 350.042 s
+span over a true 230.042 s digest-bound span (one-line fix named: score the span from the
+digest-bound wall_start the probe already reads). (h5) R52-8: the prelude is never
+shape-checked, so a zone-less prelude's verdict flips with the verifier's TZ — verify is
+not a pure function of receipt bytes. (h6) R52-9/10: the ledger's evidence set is
+`*.txt`-scoped, and A2's distinct-sha arm is satisfiable by trailing-newline bytes alone
+(only the nonce arm ties distinctness to distinct invocations). (h3) R52-6 (routed, seat MutShipped, delivered post-close): the instrument's selftest
 cannot distinguish a truncated sidecar/nonce comparison from a full one (16-bit-prefix
 forger measured VALID in 313 ms against a mutated build; the SHIPPED bytes are correct —
 full compares — but the suite under-covers; wave-1 battery anchoring defects named in

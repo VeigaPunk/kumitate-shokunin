@@ -216,6 +216,41 @@ a rev-independent arm inside a rev-scoped counter. Measured live census on the l
 
 ---
 
+## 5b. Control: the drop-one mutant is only informative against a FAILING baseline
+
+Re-running all 20 mutants against the **satisfied** baseline `fef6707` (where the pristine counters
+read HELD) shows every mutant reading HELD:
+
+```
+attest51-probe-drop-A1        ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A2        ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A2c       ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A3        ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A3c       ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A3d       ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A4        ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A4c       ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A5        ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A2+A4     ATTEST51: ATTEST_HELD held=9/9 exit=0
+attest51-probe-drop-A2+A4+A1  ATTEST51: ATTEST_HELD held=9/9 exit=0
+doctrine51-probe-drop-D1      DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D2      DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D3      DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D4      DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D5      DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D1+D2   DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D1+D4   DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D2+D4   DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+doctrine51-probe-drop-D1+D2+D4 DOCTRINE51: DOCTRINE_HELD held=5/5 exit=0
+```
+
+This is the **negative control** for the whole method, and it is why the assigned rev `7d88faa` was
+the right target: a drop-one mutant is only a *discriminator* when the pristine baseline is failing.
+At a satisfied baseline every mutant is vacuously HELD (nothing to discriminate), so a mutant sweep
+run only against `fef6707` would have "passed" while proving nothing. At `7d88faa` the baseline
+reads UNMET and the mutants are informative. It also confirms the HELD readings in §2 are produced
+by the *mutation*, not by the rev.
+
 ## 6. Secondary coverage findings
 
 1. **D2 measures formatting, not provenance coverage.** `D2` counts a clause as bound only when the
@@ -267,10 +302,12 @@ transcripts for the teeth tests are quoted inline in §3–§4. Generation scrip
 
 ## 9. What this seat does and does not claim
 
-- **Claimed (measured):** all 14 drop-one mutants read UNMET at `7d88faa`; the counter's effective
-  root-cause depth is 1 (A51) and 2 (D51); A2, A3d and D2 are each the sole detector of their
-  defect class; D51 standalone does not detect a neutered `sources-check.mjs`; D5 and A5's proxy
-  arm are rev-independent; D2 counts only inline bindings (6/842 corpus-wide).
+- **Claimed (measured):** all 14 drop-one mutants read UNMET at `7d88faa`; the same 20 mutants
+  read HELD at the satisfied rev `fef6707` (negative control, §5b) — so the UNMET readings are
+  produced by the mutation, not by the rev; the counter's effective root-cause depth is 1 (A51) and
+  2 (D51); A2, A3d and D2 are each the sole detector of their defect class; D51 standalone does not
+  detect a neutered `sources-check.mjs`; D5 and A5's proxy arm are rev-independent; D2 counts only
+  inline bindings (6/842 corpus-wide).
 - **Not claimed:** no contract change is proposed, no counter was edited, and no claim is made about
   the truth of any receipt or entry — this seat tested *counter coverage*, not artifact truth.
 - **Open for the L1 (informational, not a request):** the round's stated reading at the assigned rev

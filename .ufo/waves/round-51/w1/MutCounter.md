@@ -1,7 +1,7 @@
 # MutCounter — mutation probe of the two frozen round-51 counters (seat `kumitate-r51.VariableGamefowl`)
 
 RESULT MutCounter verdict=survivors killed=8/19 base-detector survivors=11/19
-lanes-at-risk A51 held=9/9 at cd7f69d (PASS) · D51 held=4/5 at cd7f69d (D2 MISS — live finding, see F1)
+lanes-at-risk A51 held=9/9 at cd7f69d (PASS) · D51 held=4/5 at cd7f69d (D2 MISS — live finding F1, since remediated: D51 held=5/5 at 633ab47)
 
 ## Scope and method
 
@@ -90,8 +90,9 @@ arms they touch are not pinned by any committed artifact.
 
 ## Live findings (not mutation artifacts)
 
-**F1 — D51 reads `held=4/5` (D2 MISS) at the round-51 integration tip; C2's predicate cannot hold
-as shipped.** Pristine at `cd7f69d`:
+**F1 — D51 read `held=4/5` (D2 MISS) at the round-51 integration tip `cd7f69d`; C2's predicate could
+not hold as shipped. REMEDIATED in the lane after my measurement — the entry now carries 13 inline
+bindings and D51 reads 5/5 (see "F1 remediation" below).** Pristine at `cd7f69d`:
 ```
 DOCTRINE51: DOCTRINE_UNMET held=4/5 checks=5 rev=cd7f69d31b0df6882e1472614476a7cee6baa25a rule=D51 | D1 PASS | D2 MISS clauses=12 bound=2 hash-miss=0 | D3 PASS | D4 PASS | D5 PASS
 ```
@@ -109,10 +110,29 @@ and the two that do match hash-verify correctly (`scripts/receipt-attest.mjs`,
 placement**, not on any hash. Severity: **high for C2** — `DOCTRINE_HELD` is unreachable at the tip
 as committed. Minimal fix (L1/scribe seat, entry only — not the counter): move each binding onto the
 same physical line as its `- ` clause prefix, so ≥12 clause lines each carry an inline
-`receipt:<path>@sha256:<64hex>` with a path that exists at rev. Note the working tree already
-diverges from `cd7f69d` for this file (`git diff cd7f69d -- corpus/knowledge/invocation-attestation.md`
-= 22 insertions / 72 deletions), so the entry is being rewritten as I write this — the fix may be
-in flight. Re-run the D51 counter at the tip after the entry lands.
+`receipt:<path>@sha256:<64hex>` with a path that exists at rev.
+
+**F1 remediation — confirmed in the lane after my measurement.** At lane HEAD
+`633ab47175e414a4c0780328d86090db79b309db` the committed entry carries every binding inline and D51
+reads HELD:
+```
+$ git show HEAD:corpus/knowledge/invocation-attestation.md | python3 -c "...count inline bindings..."
+clauses: 13 inline-bound: 13
+$ node .ufo/waves/round-51/probe/doctrine51-probe.mjs <lane> 633ab47
+DOCTRINE51: DOCTRINE_HELD held=5/5 checks=5 rev=633ab47175e414a4c0780328d86090db79b309db rule=D51 | D1 PASS | D2 PASS | D3 PASS | D4 PASS | D5 PASS
+```
+The A51/D51 counter bytes did **not** move for that fix (`73ee53ec…` / `f2d27071…`, re-verified), so
+the fix was entry-side exactly as recommended — the counter was not touched. F1 is closed for C2 at
+the current tip; the mutation table above is unchanged because it was measured against the frozen
+`cd7f69d` bytes and the counter semantics did not change.
+
+**Mutant executability check (cross-check against a sibling lane's finding).** A sibling seat
+(`kotodama-r64.RevVerifyO2`) found a mutant in another lane that was syntactically invalid, so the
+mutant could never pass as landed. I verified the equivalent property for my own set: all 19
+mutants are parse-valid and executable — `node --check mut/<id>/probe.mjs` passes for **19/19**, and
+every mutant produced a real reading line (never a crash, never an empty stdout) in both the base and
+live cycles. A mutant that crashes or emits nothing is INVALID, not a kill; none of mine did.
+Mutation inventory with before/after hashes: `/tmp/mutcnt/manifest.json`.
 
 **F2 — the A4 ledger arm is unpassable with the shipped instrument + committed receipts.** At the
 live tip A4 PASSES, but the same fixture pairing breaks it: the plan (addendum item 4) requires the

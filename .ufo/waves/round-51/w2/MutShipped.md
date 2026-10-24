@@ -436,6 +436,7 @@ shipped bytes — the shipped instrument does compare in full.
 | **F‑5** | **LOW** | The **sidecar's `name` field is parsed but never checked** against the receipt's basename (`parseSidecar` returns `name`; `doVerify` ignores it). Not exploitable as shipped (the hash covers the bytes) — a second unpinned field in the same layer. | `scripts/receipt-attest.mjs:158-161`, `doVerify` |
 | **F‑6** | **INFO** (positive) | The shipped suite's digest-binding coverage is **complete** over all eight semantic fields: correctly anchored, D01–D07 are all killed by `inner-digest-covers-every-semantic-field`. The shipped implementation is **not** defective on any site this battery attacks. | §2, `MutShipped-killing-cases.txt` |
 | **F‑7** | **INFO** | The wave-1 battery classifies a **behaviourally empty** mutation as `SURVIVED` (D07's `delete copy.mono_ns;` — a field the shipped record does not have). A no-op is a battery defect, not a suite survivor. Any future battery should assert the mutant changes the instrument's *observable behaviour* before classifying it. | §4, `MutShipped-proofs.txt` |
+| **F‑8** | **INFO** (self-audit, positive) | This seat's own battery was put through the **same** no-op test it charges wave-1's with: all **34/34** mutants change observable behaviour, **0 no-ops, 0 syntax crashes**. The test's first run flagged V03 and N07 as no-ops — both were **harness** blind spots (a trimming last-line reader; a fingerprint battery that only built same-nonce twins), i.e. the same two blind spots the audit exists to catch. Both corrections were to the harness, not to the mutants; neither mutant was reclassified. | §7, `MutShipped-self-audit.txt` |
 
 ### What would close F‑1 and F‑2 (proposals; this seat edits nothing)
 
@@ -461,8 +462,41 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
   `sha256sum scripts/receipt-attest.mjs` → `44919763ee523f334adaa4242d370435180d07aa0cdd4b85b0a7be870f48e8d9` — **unchanged**.
 * All scratch (mutant sources, harnesses, forged artefacts, receipts) lives under
   `/tmp/mutshipped/`. **No runnable file (`.mjs`/`.js`/`.sh`/`.py`) was created anywhere under
-  the lane tree**; the only lane-tree writes by this seat are this report and the ten `.txt`
+  the lane tree**; the only lane-tree writes by this seat are this report and the eleven `.txt`
   transcripts beside it.
+* **Self-audit (this seat's own battery held to the standard I charged wave-1's with).**
+  §4/F‑7 charges a battery with scoring a behaviourally-empty mutant as a real result. The
+  same test was applied to **this seat's own** 34 mutants: each was run through a fixed
+  scenario battery (run · verify-genuine · sidecar-flip · sidecar-absent · prelude-forgery ·
+  digest-broken · ledger-twin · ledger shared-prefix-and-suffix nonce pair · selftest verdict)
+  and the normalised observable behaviour (exit codes + **raw, untrimmed** verdict lines +
+  receipt shape, with nonces/instants/hashes masked) was hashed into a fingerprint and
+  compared against the pristine fingerprint.
+
+  ```
+  pristine fingerprint 71d37780aabf105c01f1aaf5d08be45454d9d85f775da0fd909454beb33a7241
+  ...
+  no-op mutants: NONE
+  syntax-crash mutants: NONE
+  mutants scored: 34
+  ```
+
+  Transcript: `MutShipped-self-audit.txt`. **All 34 mutants change observable behaviour; none
+  is a no-op; none crashes.** The harness needed two corrections to reach that result, both
+  of them the *same* blind spots the audit exists to catch, and both recorded here rather
+  than quietly fixed:
+
+  * the first version used a **trimming** last-line reader, which made **V03** (trailing-space
+    `RECEIPT: VALID `) look like a no-op — the identical trimming blindness that makes the
+    frozen counter miss V03 (F‑4). The reader is now raw/untrimmed.
+  * the first version's fingerprint battery created only a twin with the **same full nonce**,
+    which a truncated nonce comparison cannot distinguish; **N07** therefore looked like a
+    no-op. A scenario with two **distinct** nonces sharing an 8-hex prefix *and* an 8-hex
+    suffix was added.
+
+  Both corrections changed the harness, not the mutants. The two mutants concerned (V03,
+  N07) are **not** reclassified: V03 remains killed-by-arm-2-only and N07 remains a survivor
+  with a demonstrated adversarial artefact (§3).
 * Lane `git status` after the run shows no modification to `scripts/`:
   ```
    M .ufo/waves/round-51/w2/MutStanza.md          <- a sibling seat's file, not mine
@@ -509,6 +543,7 @@ For F‑4 the cheapest counter-side fix is to compare the verdict **exactly** (s
 | S02 truncation-class sweep + forgery | `MutShipped-s02-class.txt`, `MutShipped-forgery-cost.txt` |
 | attacker-controlled S02 forgery | `MutShipped-s02-attacker-forgery.txt` |
 | wave-1 battery audit | `MutShipped-wave1-battery-audit.txt` |
+| self-audit (no-op / crash test of this seat's own 34 mutants) | `MutShipped-self-audit.txt` |
 | no-op / ledger proofs | `MutShipped-proofs.txt` |
 | pristine baseline selftest (27/27) | `MutShipped-baseline-selftest.txt` |
 
