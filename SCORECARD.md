@@ -2299,8 +2299,13 @@ MATCH`, `base/baseline-gates.txt`). The wave-1 probes landed two runnable probe 
 (computed A 43→45, measured by ScoutBaselineHar before any claim data) and the integrator's
 close commit added `scripts/receipt-attest.mjs` plus 22 more wave probe `.mjs` files under
 `.ufo/waves/round-51/build/` (the frozen `RE_RUNNABLE` walk counts the whole tree — the
-round-45 note recorded this and Q26 rules A out as claim evidence): computed A=67 = 44
-shipped/instrument files + 23 round-51 probe files, enumerated in `w2/RevStanza.md`. C 22→
+round-45 note recorded this and Q26 rules A out as claim evidence): computed A moved 43 -> 45 -> 67 -> 81 -> 71 across the round, twice pinned to
+transient working-tree values before the committed-tree reading stabilized; the correct
+composition (seat RevStanza, `w2/RevStanza.md`): 71 = 16 shipped scripts + 55 .ufo
+artifacts (28 legacy rounds 43-50 + 27 round-51: 2 frozen probes + 25 wave build files,
+10 of them inside nested git repos under `build/ExecForgerControl/lanes/`, invisible to
+plain `git status`). Q26 rules the term out as claim evidence; the enumeration is the
+R51-2 record. C 22→
 **23** (checklist item 23, genuinely executed — `w2/RevChecklist23.md` mutation controls).
 C2 114/114 → **117/117** (README rows + notes for `lessons/round-50-verifier-spotcheck.md`
 (the integrator's round-50 close file, unrowed at `d788f74`), `knowledge/invocation-attestation.md`
