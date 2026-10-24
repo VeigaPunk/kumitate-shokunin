@@ -94,7 +94,7 @@ try {
     const rows = readFileSync(sp, 'utf8').split('\n').filter((l) => /^\|\s*S10[01]\s*\|/.test(l));
     const okRow = (id) => rows.some((l) => {
       const c = l.split('|').map((x) => x.trim());
-      return c[1] === id && c[9] === 'mined' && c[12].includes(ENTRY);
+      return c[1] === id && c[8] === 'mined' && c[11].includes(ENTRY);
     });
     d3 = okRow('S100') && okRow('S101');
     d3d = `rows=${rows.length} S100=${okRow('S100')} S101=${okRow('S101')}`;
