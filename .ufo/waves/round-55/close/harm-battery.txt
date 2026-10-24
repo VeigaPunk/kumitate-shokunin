@@ -1,0 +1,22 @@
+== proxy strict
+PROXY: MATCH (A=84 C=25 operability=9; C1=19/19 C2=129/129 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+== census
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+census_exit=0
+== counter-pins gate
+COUNTER_PINS: CLEAN pins=8
+== source-capture gate
+SOURCE_CAPTURE: CLEAN captures=5 exemptions=107
+== counter pins file hashes
+cfb6c8f36066165d60653da03b2353517888e6aa1c156f028a6ffdcec11f2ea2  .ufo/waves/round-55/probe/attest55-probe.mjs
+636fd23be3a4abf6aa5a3a8790c6d242a05801b253d34e2d414e6213060c98bc  .ufo/waves/round-55/probe/doctrine55-probe.mjs
+39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5  scripts/source-capture.mjs
+ATTEST54: ATTEST54_UNMET held=9/10 checks=10 rev=3b3e1e965cc100b102f1222ff71d0538d367ed87 rule=A54 version=v1 | B1 PASS | B2 PASS | B3 PASS | B4 PASS | B5 PASS 
+exit=1
+DOCTRINE54: DOCTRINE54_HELD held=5/5 checks=5 rev=3b3e1e965cc100b102f1222ff71d0538d367ed87 rule=D54 | E1 PASS | E2 PASS | E3 PASS | E4 PASS | E5 PASS
+ATTEST53: ATTEST53_HELD held=17/17 checks=17 rev=3b3e1e965cc100b102f1222ff71d0538d367ed87 rule=A53 version=v1 | B1 PASS | B1c PASS | B2 PASS | B2c PASS | B2e PA
+DOCTRINE53: DOCTRINE53_HELD held=5/5 checks=5 rev=3b3e1e965cc100b102f1222ff71d0538d367ed87 rule=D53 | E1 PASS | E2 PASS | E3 PASS | E4 PASS | E5 PASS
