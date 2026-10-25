@@ -122,8 +122,11 @@ Item 1 was taken in round 59 and item 4 in round 58; items 2, 3 and 6 are not ta
 
 ## Census before → after
 
-Before (round open, exit 0): five W04 warnings, 126 rows, A=102 B=14 C=8 (the tier histogram
+Before (round open, exit 0): five W04 warnings, 126 rows, A=104 B=14 C=8 (the tier histogram
 the lane re-derives itself, not the report's figure). After: the same five W04 warnings plus
-one more — the S117/S126 duplicate-URL group — and seven new mined rows; the TIER60 line in the
-round report is the re-derived histogram. The round-end `sources-census.sh validate --root`
-transcript is committed under `.ufo/waves/round-60/close/`.
+one more — the S117/S126 duplicate-URL group — and seven new mined rows.
+
+`TIER60: A=110 B=15 C=8 rows=133` — re-derived from the committed registry with
+`awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; …}' corpus/SOURCES.md`
+(base `ffbfe3cc`: A=104 B=14 C=8 rows=126; six new A rows and one new B row). The round-end
+`sources-census.sh validate --root` transcript is committed under `.ufo/waves/round-60/close/`.

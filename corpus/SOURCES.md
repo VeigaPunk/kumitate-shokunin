@@ -149,6 +149,13 @@ Rules: a row is a claim written only after opening the source; append-only excep
 
 ## Paths
 
+- **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194:** delivery
+  identity first, then the liveness signal that pronounces a worker dead, then the
+  retry-forcing timeout that the same Temporal page carries under a second scope
+  (S126, the group pinned with S117), then the measured break across six
+  frameworks (S133), then the two primitives the band was missing: tail tolerance
+  (S190) and compensating action (S194). Read the failure *signal* before the
+  *repair*, because a repair without a signal is a policy, not a mechanism.
 - **Kimi MCP plane — S005 → S006 → S007 → S008:** read the client surface
   (mcp.json levels and trust gating) before the config knobs that resolve models
   and timeouts; then the contrasting Codex dialect, because the host's inert

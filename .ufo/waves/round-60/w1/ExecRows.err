@@ -1,0 +1,105 @@
+commit
+commit
+a745a3b round-60: dispatch-evidence gate, band-4 durable-execution entries, S117/S126 group pinned
+58b658d round-60: freeze — plan and frozen counters A60/D60 with base receipts
+ffbfe3c round-59 verifier spot-check (integrator, hyaku): non-author admit/reject
+103831 /tmp/kumitate-r60/ExecRows/SOURCES-at-work.md
+ corpus/SOURCES.md | 7 +++++++
+ 1 file changed, 7 insertions(+)
+# SOURCES — where kumitate learns
+
+The lane's curated reading list: what each place teaches, how far to trust it for
+which scope, and when to look again. `corpus/knowledge/` holds admitted facts;
+this file holds where they come from. Tier semantics are the frozen fleet contract's
+(SOURCES-CONTRACT-v1.md), scoped per row; `corpus/QUALITY.md` points here for them.
+Rules: a row is a claim written only after opening the source; append-only except
+`status`, `recheck`, `used-by`; a rejection is kept as evidence of taste.
+
+## Registry
+
+| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+|---|---|---|---|---|---|---|---|---|---|---|
+| S001 | oh-my-pi docs/tools/task.md — https://github.com/can1357/oh-my-pi/blob/main/docs/tools/task.md | docs | A | OMP task tool contract on main: batch shape, caps, isolation | docs/tools/task.md § Limits & Caps; can1357/oh-my-pi main 81fa40e (2026-10-19) | OMP task contract: batch shape, solutionSpace, speculative launch, semaphore 32, idle TTL 420000 ms, depth 2, isolation PAL | mined | 2026-10-19 | on-release | corpus/knowledge/omp-task-contract.md |
+| S002 | oh-my-pi docs/agent-hub.md — https://github.com
+=== APPENDED LINES ===
++++ b/corpus/SOURCES.md$
++| S126 | Detecting Activity failures M-bM-^@M-^T Temporal documentation M-bM-^@M-^T https://docs.temporal.io/encyclopedia/detecting-activity-failures | docs | A | the failure-detection and timeout contract a durable-execution orchestrator must implement; the same page the lane already holds as S117 under the worker-liveness scope (duplicate group pinned in `.ufo/pins/source-dupes.json`, byte-iden
++| S131 | M-iM-^XM-?M-iM-^GM-^LM-dM-:M-^QM-gM-^YM->M-gM-^BM-< Managed Agents M-fM-&M-^BM-hM-?M-0 M-bM-^@M-^T M-iM-^XM-?M-iM-^GM-^LM-dM-:M-^QM-gM-^YM->M-gM-^BM-<M-fM-^VM-^GM-fM-!M-# M-bM-^@M-^T https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-introduction | docs | A | a Chinese cloud vendor's managed-agent runtime contract used as a durable-execution substrate; the registry he
++| S133 | Stop Means Stop: Measuring and Repairing the Enforcement Gap in Agent-Framework Control Primitives M-bM-^@M-^T arXiv 2607.14166 (Sajjad Khan) | paper | A | whether agent frameworks enforce their own stop, idempotency and cancellation control primitives M-bM-^@M-^T the open question under the lane's durable-execution frontier | M-BM-' Abstract; arXiv abs page read 2026-10-24, HTTP 200, 44
++| S134 | Where Does Exactly-Once Live? Model, Harness, and Tool-Contract Effects on Duplicate Side Effects in LLM Agents M-bM-^@M-^T arXiv 2609.29095 (Jiapeng Li, Microsoft) | paper | A | where exactly-once must live when an LLM agent's tool call can be duplicated; the registry held no row on duplicate side effects before this one | M-BM-' Title page; arXiv abs page read 2026-10-24, HTTP 200, 448
++| S135 | CyberAgent Developers Blog M-bM-^@M-^T AIM-cM-^BM-(M-cM-^CM-<M-cM-^BM-8M-cM-^BM-'M-cM-^CM-3M-cM-^CM-^HM-cM-^AM-.M-iM-^UM-7M-fM-^YM-^BM-iM-^VM-^SM-eM-.M-^_M-hM-!M-^LM-cM-^AM-'M-iM-^GM-^MM-hM-&M-^AM-cM-^AM-*Durable ExecutionM-cM-^AM-.M-dM-;M-^UM-gM-5M-^DM-cM-^AM-?M-cM-^AM-(AWS LambdaM-cM-^AM-'M-cM-^AM-.Go SDKM-eM-.M-^_M-hM-#M-^E M-bM-^@M-^T https://developers.cyberagent.co.jp/blog/archives
++| S190 | The Tail at Scale M-bM-^@M-^T Dean and Barroso, CACM 56 (2013) 74-80 M-bM-^@M-^T https://research.google/pubs/the-tail-at-scale/ | paper | A | the fan-out tail primitive behind a multi-seat wave's slowest seat, read for the framing the authors themselves publish | M-BM-' Abstract; landing page read 2026-10-24, HTTP 200, 143176 bytes, sha256 399be231120943041eef0f7909a42cffae339f67b8c3aa8
++| S194 | Sagas M-bM-^@M-^T Garcia-Molina and Salem, ACM SIGMOD Record 16(3) 1987 M-bM-^@M-^T https://dl.acm.org/doi/10.1145/38714.38742 | paper | A | the compensating-action primitive behind durable execution, read for the paper's own definition of a saga | M-BM-' Abstract, the definition sentence; full text retrieved 2026-10-24 through `aaron papers fetch` of DOI 10.1145/38714.38742, 47194 bytes
+   257 /tmp/kumitate-r60/ExecRows/SOURCES-at-base.md
+   264 /tmp/kumitate-r60/ExecRows/SOURCES-at-work.md
+   521 total
+ M corpus/SOURCES.md
+worktree-clean-check-done
+== structural ==
+registry-header-occurrences: work=1 anomalies=[]
+header-cells: ['id', 'source', 'kind', 'tier', 'scope', 'anchor', 'teaches', 'status', 'opened', 'recheck', 'used-by']
+separator-is-dashes: True
+== counts ==
+base-data-rows: 126
+work-data-rows: 133
+distinct-ids: 133 duplicate-ids: none
+== histograms (work commit) ==
+tier: A=110 B=15 C=8
+status: mined=101 queued=13 rejected=19
+kind: code=14 community=12 docs=78 own-work=9 paper=8 spec=9 tool=3
+== attack: rows that do not parse as 11 clean cells ==
+ATTACK RESULT: no defect — all rows parse as eleven cells, no pipe
+== the seven frozen rows ==
+S126: cells=11 status='mined' opened='2026-10-24' recheck='90d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-failure-detection.md' defects=none
+S131: cells=11 status='mined' opened='2026-10-24' recheck='90d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-failure-detection.md' defects=none
+S133: cells=11 status='mined' opened='2026-10-24' recheck='180d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-failure-detection.md' defects=none
+S134: cells=11 status='mined' opened='2026-10-24' recheck='180d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-failure-detection.md' defects=none
+S135: cells=11 status='mined' opened='2026-10-24' recheck='180d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-failure-detection.md' defects=none
+S190: cells=11 status='mined' opened='2026-10-24' recheck='180d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md' defects=none
+S194: cells=11 status='mined' opened='2026-10-24' recheck='180d' recheck-iso=False recheck-symbolic=True opened-iso=True used-by='corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md' defects=none
+== base regression for the seven ==
+EXIT=0
+script-exit=0
+== independent awk cross-check (fields==13 means 11 cells) ==
+total=133 nf13=133 bad=0
+== grep row count ==
+133
+== blob identity ==
+762b977d950ef4e7a0e798e83bf68643a323ca3b
+a4a6848d3f6ceb2ed7f14e1a27d746d5f76dedca1815e52529c754ff25cac89b  SOURCES-at-work.md
+== used-by paths exist at rev ==
+EXISTS corpus/knowledge/durable-execution-failure-detection.md
+EXISTS corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md
+== id citations inside each entry at rev ==
+      2 S117
+      3 S126
+      2 S131
+      3 S133
+      3 S134
+      2 S135
+      1 S141
+---
+      2 S190
+      2 S194
+== head drift note ==
+a745a3b round-60: dispatch-evidence gate, band-4 durable-execution entries, S117/S126 group pinned
+ corpus/SOURCES.md | 7 +++++++
+ 1 file changed, 7 insertions(+)
+--- c/corpus/SOURCES.md
++++ w/corpus/SOURCES.md
++- **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194:** delivery
++  identity first, then the liveness signal that pronounces a worker dead, then the
++  retry-forcing timeout that the same Temporal page carries under a second scope
++  (S126, the group pinned with S117), then the measured break across six
++  frameworks (S133), then the two primitives the band was missing: tail tolerance
++  (S190) and compensating action (S194). Read the failure *signal* before the
++  *repair*, because a repair without a signal is a policy, not a mechanism.
+== worktree row count ==
+133
+[unexpected] RuntimeError: workspace wd_shokunin_8c4a99c6228c is not materialized
+    at RuntimeResolver.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:180263:36)
+    at AgentRuntimeService.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:131899:25)
+    at AgentFileHistoryService.readCurrent (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177438:31)
+    at AgentFileHistoryService.endCheckpoint (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177351:32) {
+  code: 'runtime.not_found'
+}

@@ -2256,3 +2256,27 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   Collision guard: reg 123, staged 147, collisions 0; indented fixture caught
   S125. Quarantine slice 9 rows re-checked, none adopted. considerthese item 1
   grounded as QUALITY Q50; the file was not edited. Tool installs/updates: none.
+- 2026-10-24 — round 60 (Kimi fresh L1): C1 operability capability
+  `dispatch-evidence` (contract `kumitate-dispatch-evidence-v1`; routed R58-V2
+  turned from prose into a gate — the round's *actual* launcher record is
+  read, so a prepared spec is not a dispatch and a dead seat is never
+  credited). C2 coverage frontier band 4, one theme: two durable-execution
+  entries adopted — `durable-execution-and-fanout-primitives-2026-10-24.md`
+  (S190/S194) and `durable-execution-failure-detection.md`
+  (S126/S131/S133/S134/S135) — every source re-opened by this lane on
+  2026-10-24 with a located ≤25-word quote; the r59 flips satisfied (S190 and
+  S194 re-opened; the S117/S126 duplicate-URL group pinned in the same change
+  that appends S126); `exactly-once-attribution.md` and
+  `multi-agent-coordinator-topologies.md` rejected with reason and flip.
+  Base counters at `ffbfe3cc` read DISPATCH60 0/10 and DOCTRINE60 0/6.
+  Scratch validate-before-append exited 0 on the base registry plus the seven
+  transformed rows; the campaign's byte-exact rows in the same slot fail with
+  E01 fields=12 (transformation is load-bearing). Collision guard: reg 126,
+  staged 147, collisions 3 (S125/S127/S136 — round 59's own ids,
+  document-identical); the seven adopted ids are disjoint, so no citation is
+  re-pointed. Quarantine slice re-derived: 9 rows, none adopted.
+  considerthese item 5 grounded as QUALITY Q51; the file was not edited.
+  Inherited repair: the round-59 verifier spot-check had landed without its
+  README row and covered pin (readme-map DRIFT, proxy A_DRIFT/AXES_DRIFT at
+  round open) — repaired in the same change as the new entries.
+  Tool installs/updates: none.

@@ -1,0 +1,33 @@
+a745a3b0e02253e722834ef95042d97ed92e5e53
+commit
+not-ancestor-of-base(expected)
+PASS clean — DISPATCH_EVIDENCE: CLEAN (seats=3 sessions=3 exit0=3 reports=3 dead=0)
+PASS template-registry — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)
+PASS dead-seat-credited — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=1 exit0=1 reports=2 dead=1)
+PASS progress-absent — DISPATCH_EVIDENCE: FAIL-CLOSED progress-absent path=/tmp/dispatch-evidence-selftest.bm2aMg/absent/.ufo/waves/round-1/w1/launcher-progress.tsv
+PASS plan-mismatch — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)
+PASS report-absent — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=1 dead=0)
+PASS expect-mismatch — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)
+PASS dead-mismatch — DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=1 exit0=1 reports=1 dead=1)
+FINDING NOT_A_DISPATCH
+FINDING DEAD_SEAT_UNCREDITED
+FINDING PROGRESS_ABSENT
+FINDING PLAN_MISMATCH
+FINDING REPORT_ABSENT
+FINDING EXPECT_MISMATCH
+DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)
+VERDICT: PASS
+SELFTEST_EXIT=0
+DISPATCH_EVIDENCE: FAIL-CLOSED registry-unreadable path=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-60/w1/dispatch-actual.json
+FINDING REGISTRY_UNREADABLE
+DISPATCH_EVIDENCE: FAIL-CLOSED contract=kumitate-dispatch-evidence-v1
+GATE_EXIT=2
+3 launcher-progress.tsv
+ExecRows	pid=54178	session=session_9b3e6593-23c2-4015-8f93-bbe4ecca6efa	exit=0	start=1792894711	end=1792894939	err=commit | commit | a745a3b round-60: dispatch-evidence gate, band-4 durable-execution entries, S117/S126 group pinned | 58b658d round-60: freeze — plan and frozen counters A60/D60 with base receipts | ffbfe3c round-59 verifier spot-check (integrator, hyaku): non-author admit/reject | 103831 /tmp/kumitate-r60/ExecRows/SOURCES-at-work.md |  corpus/SOURCES.md | 7 +++++++ |  1 file changed, 7 insertions(+) | # SOURCES
+ExecGates	pid=54173	session=session_3954136f-c596-42bb-96e2-452eca6a312f	exit=0	start=1792894711	end=1792894949	err=EXIT:0 | README_MAP: CLEAN files=145 rows=145 covered=145 | EXIT:0 | SOURCE_DUPES: CLEAN groups=6 known=6 | EXIT:0 | SOURCE_CAPTURE: CLEAN captures=26 exemptions=107 | EXIT:0 | CITE_SOURCES: CLEAN cited=176 | EXIT:0 | SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md | SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failu
+ExecCensus	pid=54175	session=session_985f1d42-bc52-4443-b1e2-0eb0ef8f9c9e	exit=0	start=1792894711	end=1792895003	err=EXIT=1 | /bin/bash: line 1: /tmp/kumitate-r60/ExecCensus/census-stdout.txt: No such file or directory | EXIT=0 | --- STDOUT --- | kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes | kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes | kumitate	W04	S084 duplicate url infe
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+    r=json.load(open('dispatch-actual.json'))
+                ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'dispatch-actual.json'

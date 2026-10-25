@@ -1,0 +1,139 @@
+EXIT=1
+/bin/bash: line 1: /tmp/kumitate-r60/ExecCensus/census-stdout.txt: No such file or directory
+EXIT=0
+--- STDOUT ---
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+--- STDERR ---
+0
+6
+EXIT2=0
+DETERMINISTIC
+6a1dd8ce1a3165a25f9f2b774b21449e0d125c94 ops: vendor canonical e737d2e; activate child-only curation and verified retry lifecycle
+3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+      1 ok
+      6 W04
+W04=6
+E=0
+otherW=0
+ccf2d262941300ebc35ba3a1cd85e5598dc6854aa62d4b065a1cc02469f34757  census-stdout.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  census-stderr.txt
+708 census-stdout.txt
+  0 census-stderr.txt
+708 total
+a745a3b0e02253e722834ef95042d97ed92e5e53
+ M corpus/SOURCES.md
+TREE_CLEAN_FOR_SOURCES
+ corpus/SOURCES.md | 7 +++++++
+ 1 file changed, 7 insertions(+)
+18 live-diff-head.txt
+=== S126 in work commit a745a3b ===
+130:| S117 | Detecting Activity Failures — Temporal documentation — https://docs.temporal.io/encyclopedia/detecting-activity-failures | docs | A | Temporal worker-liveness contract: Activity Heartbeats are pings from the executing Worker to the Temporal Service; a missed Heartbeat Timeout marks the Activity failed and frees its slot; the four timeout slots bound each leg | §Activity Heartbeats, saved HTML; fetched 2026-10-24, HTTP 200, 80,679 bytes, body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50 | An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service. | mined | 2026-10-24 | on-release | corpus/knowledge/worker-heartbeat-liveness.md |
+140:| S126 | Detecting Activity failures — Temporal documentation — https://docs.temporal.io/encyclopedia/detecting-activity-failures | docs | A | the failure-detection and timeout contract a durable-execution orchestrator must implement; the same page the lane already holds as S117 under the worker-liveness scope (duplicate group pinned in `.ufo/pins/source-dupes.json`, byte-identical capture) | § Start-To-Close Timeout, § Activity Heartbeat, § Heartbeat Timeout; docs revision read 2026-10-24, HTTP 200, 80679 bytes, body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50 | the server cannot detect a crashed worker, so the Start-To-Close Timeout is what forces a retry; an unset Heartbeat Timeout and an explicit 0s are indistinguishable once the Activity is scheduled; the heartbeat throttle interval is min(heartbeatTimeout times 0.8, maxHeartbeatThrottleInterval), default 30s, max 60s | mined | 2026-10-24 | 90d | corpus/knowledge/durable-execution-failure-detection.md |
+252:- **Temporal detecting-activity-failures and workflow-versioning pages.** Only the
+=== S126 in base ffbfe3cc ===
+2
+=== live vs a745a3b S117/S126 lines diff ===
+3a4,5
+> 152:- **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194:** delivery
+> 155:  (S126, the group pinned with S117), then the measured break across six
+21-#   census:   rows | tier.A|tier.B|tier.C|tier.invalid
+22-#             | status.queued|status.mined|status.rejected|status.invalid
+23-#             | missing | FLEET.rows | FLEET.tier.X | FLEET.status.X | FLEET.missing
+24-#   validate: E01 malformed row (NF!=13)         E02 id not S[0-9]{3,}
+25:#             E03 duplicate id                   E04 duplicate URL+scope (no supersedes)
+26-#             E05 kind enum violation            E06 tier enum violation
+27-#             E07 status enum violation          E08 opened not a past/present ISO date
+28-#             E09 invalid recheck (ISO date, NNd, or symbolic cadence)
+29-#             E10 community at tier A            E11 used-by path missing on disk
+30-#             E12 row-shaped source outside the ## Registry section
+31-#             W01 tier-C mined with non-— used-by   W02 rejected row, thin teaches
+32-#             W03 mined row with used-by = — (warnings do not affect clean lanes)
+33:#             W04 same URL across scopes (warnings do not affect clean lanes)
+34-#   overdue:  overdue<SPC>id<SPC><days>d<SPC>recheck=<x><SPC>opened=<x> — ISO recheck
+35-#             dates or NNd cadence (due = opened + N days); report on/after due date.
+36-#             cadence<SPC>id<SPC>recheck=<x> — symbolic cadences (e.g. on-release)
+37-#             are reported, never judged overdue.
+38-#   shared:   url<TAB>shared<TAB>lane,lane,… — normalized URL present in >=2 lanes.
+39-
+40-# Maintained parser accepts 0–3 leading ASCII spaces before Markdown rows/headings;
+41-# 4 or more spaces are indented code and ignored. Frozen manual examples assume
+--
+125-  }
+126-  check "E01-malformed-row"    "E01" "$0" validate --today 2026-10-19 --root "$froot" a
+127-  check "E02-malformed-id"     "E02" "$0" validate --today 2026-10-19 --root "$froot" a
+128-  check "E03-duplicate-id"     "E03" "$0" validate --today 2026-10-19 --root "$froot" a
+129:  check "E04-duplicate-url"    "E04" "$0" validate --today 2026-10-19 --root "$froot" a
+130-  check "E05-bad-kind"         "E05" "$0" validate --today 2026-10-19 --root "$froot" a
+131-  check "E06-bad-tier"         "E06" "$0" validate --today 2026-10-19 --root "$froot" a
+132-  check "E07-bad-status"       "E07" "$0" validate --today 2026-10-19 --root "$froot" a
+133-  check "E08-future-opened"    "E08" "$0" validate --today 2026-10-19 --root "$froot" a
+134-  check "E09-bad-recheck"      "E09" "$0" validate --today 2026-10-19 --root "$froot" a
+135-  check "E10-community-at-A"   "E10" "$0" validate --today 2026-10-19 --root "$froot" a
+136-  check "E11-dangling-usedby"  "E11" "$0" validate --today 2026-10-19 --root "$froot" a
+137-  check "W01-tierC-mined"      "W01" "$0" validate --today 2026-10-19 --root "$froot" a
+--
+357-|---|---|---|---|---|---|---|---|---|---|---|
+358-| S901 | Scope one — https://DUP.example/source | docs | B | taxonomy | §1 | taxonomy evidence | queued | 2026-10-01 | 90d | — |
+359-| S902 | Scope two — https://dup.example/source/ | docs | B | checker | §2 | checker evidence | queued | 2026-10-01 | 90d | — |
+360-EOF
+361:  checkline "W04-scope-sensitive-mutant" \
+362:    $'scope-shokunin\tW04\tS902 duplicate url dup.example/source across scopes' \
+363-    "$0" validate --today 2026-10-19 "$scope_dir"
+364:  checkx "W04-does-not-fail-validation" 0 \
+365-    "$0" validate --today 2026-10-19 "$scope_dir"
+366-  rejected_dir="$test_root/rejected-duplicate-shokunin"
+367-  mkdir -p "$rejected_dir/corpus" || exit 3
+368-  cat > "$rejected_dir/corpus/SOURCES.md" <<'EOF'
+369-# Rejected duplicate fixture
+370-
+371-## Registry
+372-| id | source | kind | tier | scope | anchor | teaches | status | opened | recheck | used-by |
+--
+375-| S030 | Rejected duplicate — https://keep.example/evidence/ | docs | B | shared scope | §2 | retained rejection reason | rejected | 2026-10-01 | 90d | — |
+376-| S031 | Rejected first — https://prior.example/evidence | docs | B | shared scope | §3 | retained prior rejection | rejected | 2026-10-01 | 90d | — |
+377-| S032 | Later finding — https://prior.example/evidence/ | docs | B | shared 
+scope | §4 | later evidence | queued | 2026-10-01 | 90d | — |
+378-EOF
+379:  check "E04-rejected-pair-exemption-mutant" "ok" \
+380-    "$0" validate --today 2026-10-19 "$rejected_dir"
+381:  checkx "E04-rejected-pair-exemption-exit-0" 0 \
+382-    "$0" validate --today 2026-10-19 "$rejected_dir"
+383-  printf 'preserve\n' > "$test_root/out-guard"
+384-  if "$0" validate --root "$froot" --out "$test_root/out-guard" missing-lane > /dev/null 2>&1; then
+385-    out_guard_rc=0
+386-  else
+387-    out_guard_rc=$?
+388-  fi
+389-  if [ "$out_guard_rc" = 2 ] && grep -Fqx "preserve" "$test_root/out-guard"; then
+--
+641-        else if (id in seen) printf "%s\tE03\t%s duplicate id\n",lane,id
+642-        seen[id]=1
+643-        scope_key=u SUBSEP scope
+644-        if (u!="" && (u in url_seen) && !(scope_key in url_scopes))
+645:          printf "%s\tW04\t%s duplicate url %s across scopes\n",lane,id,u
+646-        if (u!="" && (scope_key in url_scopes) && status!="rejected" &&
+647-            url_scope_nonrejected[scope_key] &&
+648-            teaches !~ /supersedes S[0-9]{3}/)
+649:          printf "%s\tE04\t%s duplicate url %s within scope %s\n",lane,id,u,scope
+650-        if (u!="") {
+651-          url_seen[u]=1
+EXIT3=0
+SAME_AS_RUN1
+2026-10-25T02:21:35Z
+2026-10-25T02:21:35Z
+ M LOG.md
+ M PROVINCE.md
+ M corpus/QUALITY.md
+ M corpus/SOURCES.md
+?? .ufo/waves/round-60/launcher.py.txt
+?? .ufo/waves/round-60/w1-launcher.log
+?? .ufo/waves/round-60/w1-plan.json
+?? .ufo/waves/round-60/w1-spec.json
+?? .ufo/waves/round-60/w1-taskcall.json
+?? .ufo/waves/round-60/w1/

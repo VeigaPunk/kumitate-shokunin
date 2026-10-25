@@ -1,0 +1,105 @@
+#!/usr/bin/env python3
+"""One batched kimi -p launch of the validated round-60 taskCall.
+Records session ids, exits, and dead seats. Does not replace a dead seat.
+"""
+import json, os, subprocess, time
+from pathlib import Path
+
+LANE = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin")
+WAVE = LANE / ".ufo/waves/round-60"
+TASKCALL = json.loads((WAVE / "w1-taskcall.json").read_text())
+DIRECTIVE = Path("/home/vgpnk/.agents/skills/godspeed/directive.md").read_text()
+OUT = WAVE / "w1"
+OUT.mkdir(parents=True, exist_ok=True)
+PROGRESS = OUT / "launcher-progress.tsv"
+CONCURRENCY = 10
+SEAT_TIMEOUT = 420
+tc = TASKCALL["taskCall"]
+context = tc["context"]
+tasks = tc["tasks"]
+assert len(tasks) == 32, len(tasks)
+
+def compose(task_text: str) -> str:
+    lines = task_text.split("\n")
+    if lines and lines[0].strip() == "/skill:godspeed":
+        lines.insert(1, DIRECTIVE.rstrip("\n"))
+        task_text = "\n".join(lines)
+    return context + "\n\n" + task_text
+
+def session_id(blob: str) -> str:
+    key = '"session_id":"'
+    i = blob.find(key)
+    if i < 0:
+        return ""
+    j = blob.find('"', i + len(key))
+    return blob[i + len(key):j]
+
+rows = []
+running = []
+queue = list(tasks)
+started = {}
+
+def launch(task):
+    name = task["name"]
+    prompt = compose(task["task"])
+    log = OUT / f"{name}.stream.jsonl"
+    err = OUT / f"{name}.err"
+    proc = subprocess.Popen(
+        ["kimi", "--output-format", "stream-json", "-p", prompt],
+        cwd="/home/vgpnk/Projects/shokunin",
+        stdout=open(log, "w"),
+        stderr=open(err, "w"),
+    )
+    started[name] = time.time()
+    running.append((name, proc, log, err))
+    print(f"spawn {name} pid={proc.pid}", flush=True)
+
+while queue or running:
+    while queue and len(running) < CONCURRENCY:
+        launch(queue.pop(0))
+    time.sleep(2)
+    still = []
+    for name, proc, log, err in running:
+        code = proc.poll()
+        elapsed = time.time() - started[name]
+        if code is None and elapsed > SEAT_TIMEOUT:
+            proc.kill()
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+            code = proc.poll()
+            if code is None:
+                code = 124
+        if code is None:
+            still.append((name, proc, log, err))
+            continue
+        blob = log.read_text(errors="replace") if log.exists() else ""
+        sid = session_id(blob)
+        err_txt = err.read_text(errors="replace")[:400].replace("\n", " | ") if err.exists() else ""
+        end = time.time()
+        row = f"{name}\tpid={proc.pid}\tsession={sid or 'null'}\texit={code}\tstart={int(started[name])}\tend={int(end)}\terr={err_txt}\n"
+        rows.append(row)
+        with PROGRESS.open("a") as fh:
+            fh.write(row)
+        print(f"settled {name} exit={code} session={sid or 'null'}", flush=True)
+    running = still
+
+registry = {
+    "wave": "kumitate-r60-w1",
+    "concurrency": CONCURRENCY,
+    "seatTimeoutSec": SEAT_TIMEOUT,
+    "members": [],
+}
+for line in PROGRESS.read_text().splitlines():
+    parts = dict(p.split("=", 1) for p in line.split("\t")[1:])
+    name = line.split("\t", 1)[0]
+    registry["members"].append({
+        "name": name,
+        "agentId": None if parts.get("session") in ("", "null") else parts.get("session"),
+        "exit": int(parts.get("exit", "-1")),
+        "pid": parts.get("pid"),
+    })
+(OUT / "swarm-registry.json").write_text(json.dumps(registry, indent=1) + "\n")
+spawned = sum(1 for m in registry["members"] if m["agentId"])
+print(f"DONE members={len(registry['members'])} session_ids={spawned}", flush=True)

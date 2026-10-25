@@ -1791,7 +1791,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (v2; registry version 2); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=141 rows=141 covered=141`; `--selftest` → `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
 | `receipt-evidence` | A receipt set is evidence only if every receipt verifies under the extraction's own receipt-attest, reproduces its recorded argv in the git archive of the judged rev, carries a nonce absent from the descending round-48..57 sweep, and spans the body-clock minimum (contract `kumitate-receipt-evidence-v1`; routed R57-V1/V2/V4). Row added in round 59: the round-58 acquisition landed the gate and the pin, and the capabilities table did not gain the row (R58-V6) | `node scripts/receipt-evidence.mjs --selftest` → `RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `pin.receipt-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 28 | 58 |
 | `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
-| `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30 | 60 |
+| `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30; first working round 60 | 60 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
@@ -2811,4 +2811,61 @@ proxy arm reads the live kimi root (K=52/52 at the measured value). The
 B5c-lineage limit stands (transcript+source-binding, not execution-proof) for
 the committed control transcripts; the probe's own B4/B5 arms execute their
 controls hermetically. Source admissions/rejections await the non-author
+spot-check; discernment is not self-claimed.
+
+## Round 60 — claims, assimilation, limits (2026-10-24)
+
+Plan `.ufo/waves/round-60/plan.md` (frozen at the round-60 freeze commit
+`58b658dedc298611e4b95a9735dc101e13f9391b`); base `ffbfe3cc38ff8eaa6375550b16472c90a006a179`
+(the round-59 verifier-spot-check tip). Runtime identity: `Kimi fresh L1`.
+
+**C1 — operability (lowest non-retired axis; capability acquisition `dispatch-evidence`,
+contract `kumitate-dispatch-evidence-v1`).** The lane's own round-dispatch evidence: the
+launcher progress file and the summary a report quotes, plus the seat report files. A
+prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited
+(`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`). Frozen predicate `DISPATCH60_HELD` (A60 v1, ten
+checks A1..A10). Counting command:
+`node .ufo/waves/round-60/probe/dispatch60-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before: at base `ffbfe3cc` → `DISPATCH60_UNMET held=0/10` exit 1
+(`base/dispatch60-base.txt`); at the work commit `a745a3b0` → `held=8/10` — A7 (the
+capabilities row did not yet name the round) and A10 (the dispatch record, not committed
+until the wave settles) missed; the capabilities row was corrected to name round 60 in the
+next commit. After: at the measured revision `__MEASURED__` → `DISPATCH60_HELD held=10/10
+checks=10` exit 0 (`close/dispatch60-tip.txt`). Terms: A 102 → 105, C 29 → 30, the gate
+registry 19 → 20, the checklist 29 → 30; the operability **integer stays 9** — the frozen
+`f_O` proxy's terminal value, disclosed rather than hidden. The moved surface is the
+repertoire (a runnable artifact that fails on a real defect), not the integer.
+
+**C2 — coverage frontier band 4 (durable-execution and multi-agent failure research); the
+retired coverage aggregate stays 10.** Two entries adopted, seven rows mined, every source
+re-opened by the lane on 2026-10-24: `durable-execution-and-fanout-primitives-2026-10-24.md`
+(S190, S194) and `durable-execution-failure-detection.md` (S126, S131, S133, S134, S135).
+Frozen predicate `DOCTRINE60_HELD` (D60 v1, six checks F1..F6). Counting command:
+`node .ufo/waves/round-60/probe/doctrine60-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before: at base `ffbfe3cc` → `DOCTRINE60_UNMET held=0/6` exit 1
+(`base/doctrine60-base.txt`). After: `DOCTRINE60_HELD held=6/6 checks=6` exit 0 at the
+measured revision `__MEASURED__` (`close/doctrine60-tip.txt`); the same 6/6 already holds at
+the work commit `a745a3b0`. Registry: 126 → 133 rows, `TIER60: A=110 B=15 C=8 rows=133`
+(base A=104 B=14 C=8 rows=126). `PROVINCE.md` band 4 now names both entries.
+
+**r59 flips satisfied by evidence.** The fanout entry's flip (re-open S190 and S194 in a
+band-4 round) and the detection entry's flip (pin the S117/S126 group before adopting the
+non-overlapping remainder) are both met in this round: the two sources were re-opened here
+and the duplicate-URL group is pinned in `.ufo/pins/source-dupes.json` in the same change
+that appends S126 (`source-dupes` reads `CLEAN groups=6 known=6`).
+
+**Inherited repair.** The round-59 verifier spot-check landed in the lane corpus without its
+README map row or its `readme-map` pin, so the round opened with `readme-map` DRIFT
+(files=142 rows=141 covered=141) and the proxy at `A_DRIFT` (+8) and `AXES_DRIFT`
+(coverage derived 9 vs declared 10). Repaired in the same change as the new lesson and the
+two new entries; the proxy stanza now reads A=105, C=30, C2=145, C2_total=145 and
+`proxy-check --strict` prints MATCH.
+
+**Limits.** A10 depends on the wave's own committed dispatch record, so the work commit
+reads 8/10 by construction (A7 and A10). The live sources census is not a D60 check — it
+already exits 0 at the base. D60 F5 runs the lane's own `source-dupes` gate over the
+extracted tree, not the live fleet. S194's full text is OCR-degraded (`1s` for `is`,
+`compensatmg` for `compensating`); the quote used is a contiguous substring of the captured
+bytes and the degradation is recorded in the lesson. The two remaining round-58 L0 questions
+are open and were not duplicated. Source admissions and rejections await the non-author
 spot-check; discernment is not self-claimed.

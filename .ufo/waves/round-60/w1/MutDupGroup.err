@@ -1,0 +1,38 @@
+ARCHIVE_OK
+AGENTS.md
+considerthese
+corpus
+LOG.md
+PROVINCE.md
+README.md
+SCORECARD.md
+scripts
+SHONEN.md
+SKILL.md
+total 580
+drwxr-xr-x  6 vgpnk vgpnk   4096 Oct 24 23:32 .
+drwxr-xr-x 18 vgpnk vgpnk   4096 Oct 24 23:32 ..
+-rw-r--r--  1 vgpnk vgpnk    248 Oct 24 23:17 AGENTS.md
+drwxr-xr-x  2 vgpnk vgpnk    132 Oct 24 23:17 considerthese
+drwxr-xr-x  4 vgpnk vgpnk     91 Oct 24 23:17 corpus
+-rw-r--r--  1 vgpnk vgpnk     27 Oct 24 23:17 .gitignore
+-rw-r--r--  1 vgpnk vgpnk 177667 Oct 24 23:17 LOG.md
+-rw-r--r--  1 vgpnk vgpnk   3257 Oct 24 23:17 PROVINCE.md
+-rw-r--r--  1 vgpnk vgpnk    608 Oct 24 23:17 README.md
+-rw-r--r--  1 vgpnk vgpnk 292727 Oct 24 23:17 SCORECARD.md
+drwxr-xr-x  2 vgpnk vgpnk   4096 Oct 24 23:17 scripts
+-rw-r--r--  1 vgpnk vgpnk    365 Oct 24 23:17 SHONEN.md
+-rw-r--r--  1 vgpnk vgpnk  82100 Oct 24 23:17 SKILL.md
+drwxr-xr-x  6 vgpnk vgpnk     60 Oct 24 23:17 .ufo
+anchor-truth.json
+counter-pins.json
+fidelity-ratchet.json
+origin.json
+readme-map.json
+source-captures.json
+source-dupes.json
+surface-known.json
+SOURCE_DUPES: CLEAN groups=6 known=6
+EXIT=0
+130:| S117 | Detecting Activity Failures — Temporal documentation — https://docs.temporal.io/encyclopedia/detecting-activity-failures | docs | A | Temporal worker-liveness contract: Activity Heartbeats are pings from the executing Worker to the Temporal Service; a missed Heartbeat Timeout marks the Activity failed and frees its slot; the four timeout slots bound each leg | §Activity Heartbeats, saved HTML; fetched 2026-10-24, HTTP 200, 80,679 bytes, body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50 | An Activity Heartbeat is a ping from the Worker that is executing the Activity to the Temporal Service. | mined | 2026-10-24 | on-release | corpus/knowledge/worker-heartbeat-liveness.md |
+140:| S126 | Detecting Activity failures — Temporal documentation — https://docs.temporal.io/encyclopedia/detecting-activity-failures | docs | A | the failure-detection and timeout contract a durable-execution orchestrator must implement; the same page the lane already holds as S117 under the worker-liveness scope (duplicate group pinned in `.ufo/pins/source-dupes.json`, byte-identical capture) | § Start-To-Close Timeout, § Activity Heartbeat, § Heartbeat Timeout; docs revision read 2026-10-24, HTTP 200, 80679 bytes, body sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50 | the server cannot detect a crashed worker, so the Start-To-Close Timeout is what forces a retry; an unset Heartbeat Timeout and an explicit 0s are indistinguishable once the Activity is scheduled; the heartbeat throttle interval is min(heartbeatTimeout times 0.8, maxHeartbeatThrottleInterval), default 30s, max 60s | mined | 2026-10-24 | 90d | corpus/knowledge/durable-execution-failure-detection.md |
