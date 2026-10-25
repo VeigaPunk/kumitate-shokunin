@@ -1,0 +1,19 @@
+# Proxy/stanza/pin byte audit — round 62
+
+Scope: independently checked the routed proxy/stanza/pin conditions using the lane worktree and round-62 w1 evidence. Findings only; no verdict. No tools installed.
+
+## Findings
+
+1. **Frozen plan not available at the cited lane path.** `.ufo/waves/round-62/plan.md` is absent; `.ufo/waves/round-62/plan/` is an empty directory. Round-62 files are untracked worktree artifacts, and no committed round-62 plan exists in lane history. The fleet prompt `.ufo/prompts/kumitate-round-62.md` supplies the general round contract, not the frozen claim/predicate text. The w1 reports likewise say the claim sentences are frozen only in a parent plan, which was not located/readable in the assigned lane. Therefore I cannot independently verify any expected value stated only in that plan.
+
+2. **Live stanza is stale; computed terms differ from the Round-61 routed values.** Lane `SCORECARD.md:287–311` still declares `A=105`, `C2=145`, `C2_total=145`. Round-61 correction at `SCORECARD.md:2888–2896` records measured values `A=115, C=30, C2=148, C2_total=148` at `019a844c` and explicitly defers in-place stanza refresh and the dispatch-tool pin to the next round. Running `node scripts/proxy-check.mjs --strict` in the lane returned exit 1, `src-rev=31c465f15669`, with `A_DRIFT declared=105 computed=117`, `C2_DRIFT declared=145 computed=148`, `C2_TOTAL_DRIFT declared=145 computed=149`, `AXES_DRIFT coverage declared=10 computed=9`, and `PIN_UNPINNED scripts/make-dispatch-actual.mjs`.
+
+   `proxy-check.mjs:942–946` derives A from all runnable extensions under the lane and C2 from README rows; C2_total is the number of corpus notes. Thus A=117 includes the two round-62 `.mjs` probes (their bytes are identical to the round-61 probes), while C2_total=149 reflects the current files and is not 148. The exact lane counts independently observed: `corpus/knowledge` 57 markdown files + `corpus/lessons` 92 = 149; README map rows 148; `readme-map.json` covered entries 148. `node scripts/readme-map.mjs` returned exit 1: `DRIFT files=149 rows=148 covered=148 bad=2`, with `lessons/round-61-verifier-spotcheck.md` both uncovered and unpinned. That file has no README row and is absent from `covered` (confirmed by `ReadmeGate.md:19–32, 119–128`). README+covered therefore do not form a complete bimap; no round-62 lesson is present yet.
+
+3. **`make-dispatch-actual.mjs` bytes match the routed hash, but the gate pin is absent.** Actual SHA-256 is `f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9`, matching the value specified by `ReadmeGate.md:100–103,120–128`. The live `kumitate-gate-pins-v1` block in `SCORECARD.md:312–330` contains 17 `pin.<name>=<64-lowercase-hex>` entries, including `pin.dispatch-evidence`, but no `pin.make-dispatch-actual`. `proxy-check --strict` independently reports it `PIN_UNPINNED`. The unchanged `kumitate-proxy-v1` block is the six-key v1 pin set, as its nearby SCORECARD text (`:268–275`) requires; do not add this new gate pin to that v1 block. The missing pin is an unsatisfied byte-level condition, not a hash mismatch.
+
+4. **Round-62 copies of both v1 probes are byte-identical to round 61.** SHA-256s match across rounds: `dispatch61-probe.mjs` = `02028d11b9b05d952df421b030be919e2af1bf77101d302c06a8b0a718c9a89f`; `doctrine61-probe.mjs` = `e638e2b932f9d1552484c428131f73ad7efef663b273bad72e1581a30efa1965`. This establishes unchanged v1 bytes, not that their known revision-byte/parser defects are repaired.
+
+## Verification gap
+
+The exact frozen round-62 plan and its expected A/C2/C2_total targets were not present in the assigned lane checkout, so no claim is made about the plan's precise target wording. All live values above are worktree observations; the proxy output itself identifies the origin `src-rev` used for layer terms.

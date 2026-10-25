@@ -1,0 +1,16 @@
+# R16-R60InPlace — R60 correction append-only check
+
+**Finding:** The r62 append-only correction for the in-place edits made by `165b830` remains absent in the inspected lane state. The already-appended round-61 SCORECARD correction does not satisfy the required per-artifact correction: it explicitly says the capability row stays history-only/not admitted, but the capability row itself still has no appended correction stating that disposition. The r62 LessonGate §2 independently records this as unaddressed; its claim matches the inspected files.
+
+**Evidence:**
+
+- `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 165b83044d33cbd52fc2209aefe57edfd7e6590a:corpus/lessons/round-60.md` contains the altered R60 Before statement, “at work commit `a745a3b0` → `held=8/10`” and “the capabilities row was corrected to name round 60 in the next commit.” Its census paragraph says “Before … A=104”, while r62 LessonGate §2 lines 45–48 identifies this as the rewrite from the prior `A=102` and notes that no named old→new correction accompanies it.
+- `git -C ... show --stat 165b830…` reports `corpus/lessons/round-60.md | 11 +`; this commit changes that filed lesson and `SCORECARD.md` together.
+- `git -C ... show 165b830…:SCORECARD.md` has the capability table row for `dispatch-evidence` at line 1794. At current `HEAD`, `git -C ... grep -n ... HEAD -- SCORECARD.md` still shows the row at line 1794, ending with `| 60 |`; there is no appended row-level correction. The later round-61 correction is appended at line 2882 and says the capability is “not admitted” and the row “stays as history only”; it does not amend the row's own appendix/history.
+- The r62 worktree status showed `.ufo/waves/round-62/` untracked; inspected r62 `w2/LessonGate.md` §2 (lines 43–52) says no appendix/correction row was appended to the capability row and marks R61-V3 unaddressed. No r62 correction to either cited artifact was observed.
+
+**Why this reaches the target:** The issue is not whether a later note discloses that the R60 capability was not admitted; that disclosure exists in the appended round-61 section. The claim target is append-only provenance for the prior in-place edits: the edited R60 lesson needs an explicit named old→new correction, and the modified SCORECARD capability row needs its own appended correction stating it is history only/not admitted. Current evidence shows neither correction in the respective artifact's appended record. Thus the later note is not a repair of the original filed bytes under the stated correction protocol.
+
+**Impacted axes:** append-only correction/provenance integrity; capability admission/history accuracy. No claim about r62 plan or verdict.
+
+**Smallest safe correction:** Append (do not rewrite existing prose) a dated named old→new correction to `corpus/lessons/round-60.md` that records the original `A=102` wording and the `165b830` replacement `A=104` wording with revision identity. Append a dated row-specific correction under SCORECARD capabilities recording that `dispatch-evidence`'s round-60 admission is not verified/admitted and remains history only, retaining the existing row text as historical evidence. Record both correction paths in the r62 lesson/round record; do not erase the filed history.

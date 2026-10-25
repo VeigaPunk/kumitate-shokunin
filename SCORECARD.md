@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=105
+A=117
 C=30
 C1=19
 C1_total=19
-C2=145
-C2_total=145
+C2=150
+C2_total=150
 S_members=88
 S_sections=88
 R_members=92
@@ -308,6 +308,26 @@ pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
 pin.proxy-check=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
+-->
+<!-- kumitate-gate-pins-v1
+pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23d
+pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
+pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
+pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
+pin.omp-census=fd4d1c4e5fe385e4459c003a417c7076576598fef1e27469a7823ad0e072bba7
+pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
+pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
+pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
+pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
+pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
+pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
+pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
+pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
+pin.readme-map=b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e
+pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
+pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
+pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
 -->
 <!-- kumitate-gate-pins-v1
 pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23d
@@ -2895,6 +2915,14 @@ Appended correction; the round-60 lines above and the filed round-60 report are 
   stanza's in-place refresh and the `make-dispatch-actual` pin belong to the next round's frozen plan; until then
   `proxy-check` reads DRIFT and that is the honest state.
 
+
+## Round 62 correction — append-only R61-V3 (2026-10-25)
+
+This correction supplements the round-60 artifacts as filed; it does not rewrite them.
+
+- **Round-60 lesson `corpus/lessons/round-60.md` line 125.** The filed text says `A=102` for the round-open baseline; this is superseded by the lane's 2026-10-24 measurement `A=104`, re-derived in `corpus/lessons/round-60.md` lines 125–131 and supported by the committed base `ffbfe3cc`. The lane's prior in-place update in commit `165b83044d33cbd52fc2209aefe57edfd7e6590a` did not append a correction; this paragraph is the named correction. The old filed bytes remain unchanged.
+- **Capabilities row `dispatch-evidence` (line 1794).** Its historical `first working round 60` cell was written in `165b83044d33cbd52fc2209aefe57edfd7e6590a` after round-60 C1 was ruled unprovable. The row is history only, not an admitted capability; do not interpret its presence as a passing first-working round. It has no admitted replacement in this round.
+- **Current round status.** No round-62 claim sentence was present in the dispatched prompt or a frozen lane plan before data work. Round-62 inherited probes remain unmodified copies of the failed round-61 probes; this correction does not claim their targets verified.
 ## Round 61 — claims, verdicts, limits (2026-10-25)
 
 Plan `.ufo/waves/round-61/plan.md` (frozen at `48877b4`, base `c2721f812cebd97ab67a1dd8cd8492a193f82d42`).
@@ -2931,3 +2959,13 @@ A=110→111 B=15 C=8); the claim does not verify. Score delta: none; coverage st
 by honest work → QUALITY Q57; quarantine id-vs-document drift → Q56). **Waves:** w1 32 seats all exit 0; w2 40
 seats, 39 exit 0, `Audit19` dead (`provider rejected task prompt as invalid_prompt`); Audit22 misroot recovered
 (`close/misroot-Audit22.txt`). Admission: neither claim admits; no axis is claimed improved.
+
+## Round 62 — honest stop, inherited counter falsification (2026-10-25)
+
+No claim sentences or counter predicates were present in the dispatched round-62 prompt / frozen lane plan before falsification work began. Do not count any round-62 axis move as declared or admitted. The round-62 copies of `dispatch61-probe.mjs` and `doctrine61-probe.mjs` are byte-identical to the failed round-61 counters; the forged C2 fixture still reads `DOCTRINE61_HELD 6/6`, and the honest C2 registry row cannot satisfy the frozen v1 parser. Findings: `.ufo/waves/round-62/w1/AttackC1C2.md`, `w1/ReviewClaims.md`, and the falsification reports under `.ufo/waves/round-62/w2/`.
+
+R61-V1: the C2 forged commit is now archived in `.ufo/waves/round-61/controls/r61-c2-full-forgery.bundle` (fixture revision `4247d2da937842bd6846874d548b7125b356e14c`; sha256 `c5c0154010d5becc752179bee2cbf81c8fb5dc8a8bd7ed8debb2a20ec9f0526b`; 16,488,385 bytes; `git bundle verify` succeeded). The C1 fabrication repository was absent under `/tmp/kumitate-r61/CritControlC1` and was not synthesized.
+
+R61-V3: append-only corrections now name the in-place round-60 lesson A-count change and the unadmitted `dispatch-evidence` capability row; see the preceding correction and `corpus/lessons/round-60.md` §Round-62 correction. R61-V4: the filed fleet report's six placeholders are mapped, one occurrence each, in `w2/R60Erratum.md`; the filed report itself is not writable from this lane. R61-V5: the single proxy block is refreshed to the measured working tree terms (A=117, C2=150, C2_total=150) and the separate gate-pin block now pins `make-dispatch-actual.mjs` sha256 `f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9`; the missing round-61 verifier spot-check and round-62 lesson now have README rows and covered ids. R61-V6: Audit19 was re-queued under a fresh identity; `.ufo/waves/round-62/w1/Audit19.md` re-derives the headline counts and records exhaustive checks still not executed; the w2 audit further confirms the 64-file and per-row scan. It also identifies a dead-seat `.md` artifact for RevS126Quote.
+
+No axis score changed. Operability and coverage remain unchanged; inherited C1/C2 predicates remain falsified, not verified by these repairs. Tool installs/updates: none.

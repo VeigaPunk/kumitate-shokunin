@@ -130,3 +130,12 @@ one more — the S117/S126 duplicate-URL group — and seven new mined rows.
 `awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; …}' corpus/SOURCES.md`
 (base `ffbfe3cc`: A=104 B=14 C=8 rows=126; six new A rows and one new B row). The round-end
 `sources-census.sh validate --root` transcript is committed under `.ufo/waves/round-60/close/`.
+
+## Round-62 correction — prior in-place count change
+
+The line above is the filed round-60 lesson byte sequence as corrected in-place by
+`165b83044d33cbd52fc2209aefe57edfd7e6590a`. The round-61 non-author spot-check
+identified that edit as non-append-only: the original Before value was `A=102`;
+the corrected value is `A=104`, re-derived from base `ffbfe3cc38ff8eaa6375550b16472c90a006a179`
+and retained at the round-60 measured tree. This paragraph records the correction
+without rewriting the existing lesson again.

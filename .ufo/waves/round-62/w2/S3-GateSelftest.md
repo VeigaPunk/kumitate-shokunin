@@ -1,0 +1,7 @@
+# P1 dispatch-evidence selftest scope
+
+**Finding:** P1's selftest validates only generated fixture behavior; it does not validate the measured revision or wave.
+
+Evidence: `scripts/dispatch-evidence.mjs` selftest at lines 192–268 constructs `T` with `mkdtempSync`, then `writeFixture` populates synthetic `round-1/w1` progress, registry, and reports (lines 161–189). Its helper calls `inspect(dir, 1, 'w1', expectSpec)` (line 195), and every one of the seven cases uses those temp fixture directories (lines 198–254). No argument supplies the claimed revision or measured wave. Exact frozen selftest output, per its output loop (lines 260–267), consists of seven `PASS <case> — <line>` records (`clean`, `template-registry`, `dead-seat-credited`, `progress-absent`, `plan-mismatch`, `report-absent`, `expect-mismatch`, `dead-mismatch`—eight cases), six `FINDING` id records, then `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` and `VERDICT: PASS`.
+
+This fails to establish P1's target (a claim about the measured rev/wave): its success demonstrates the implementation's behavior on synthetic input only. Independent corroboration in committed `corpus/lessons/round-61-verifier-spotcheck.md` §2 states P1 is selftest 8/8, records it as evidence-verified, and its C1 falsifier section explicitly notes the selftest never reads the wave (lines 73, 83). Source pointer: `scripts/dispatch-evidence.mjs:161-268`; committed corroboration: `corpus/lessons/round-61-verifier-spotcheck.md:73-88`.
