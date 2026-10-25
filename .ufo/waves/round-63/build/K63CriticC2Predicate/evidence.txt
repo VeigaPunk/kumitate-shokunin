@@ -1,0 +1,94 @@
+## frozen probe (sha256) and fixture base
+122fcf041a39fa42396f7e989110fb3ca5e00161b3a34436964425e68414f53b  topology63-probe.mjs (frozen, unmodified)
+b38a2065ab8ac5b198f6569b9013d04411c3d40d
+
+## base receipt (committed)
+TOPOLOGY63_UNMET held=1/7 checks=7 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=T63 | T1 MISS entry-absent | T2 MISS no-entry | T3 MISS no-rows | T4 MISS bullets=0 | T5 MISS no-bullets | T7 MISS province-names-entry=false readme-map-clean=false
+exit=1
+
+## verdicts: honest fixture + six forgeries, frozen counter, HEAD of each fixture commit
+HELD  c-honest-c2 exit=0 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 rule=T63
+HELD  a-invented-claims exit=0 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff :: TOPOLOGY63_HELD held=7/7 checks=7 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff rule=T63
+HELD  b-attacker-hosted-copy exit=0 rev=861bd251555344664fd982f5fe9ffe6c47d5397b :: TOPOLOGY63_HELD held=7/7 checks=7 rev=861bd251555344664fd982f5fe9ffe6c47d5397b rule=T63
+HELD  c-normaliser-only-quote exit=0 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c :: TOPOLOGY63_HELD held=7/7 checks=7 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c rule=T63
+HELD  d-duplicate-document exit=0 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 rule=T63
+HELD  e-wrong-version exit=0 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 rule=T63
+HELD  f-phantom-row exit=0 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 rule=T63
+honest=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+fixture-base=b38a2065ab8ac5b198f6569b9013d04411c3d40d
+
+## cheapness: diffstat vs the honest fixture
+-- a-invented-claims
+ 1 file changed, 4 insertions(+)
+-- b-attacker-hosted-copy
+ 4 files changed, 26 insertions(+), 8 deletions(-)
+-- c-normaliser-only-quote
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+-- d-duplicate-document
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+-- e-wrong-version
+ 3 files changed, 8 insertions(+), 8 deletions(-)
+-- f-phantom-row
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+## (a) no arm reads the entry body: only the first 14 lines and the Located-quotes section
+22: * T4 the entry's `## Located quotes` section holds >= 6 bullets `- S### — "<quote>"`, each <= 25
+76:  const head = text.split('\n').slice(0, 14).join('\n');
+140:  const at = text.search(/^##\s+Located quotes\s*$/m);
+146:      if (m) bullets.push({ id: m[1], q: m[2] });
+-- fabricated figures absent from both cited captures (fixed-string grep -cF)
+token='nine subagents' arXiv-v3=0 anthropic=0
+token='99.99' arXiv-v3=0 anthropic=0
+token='12,400' arXiv-v3=0 anthropic=0
+token='1.02x' arXiv-v3=0 anthropic=0
+token='64 agents' arXiv-v3=0 anthropic=0
+token='kappa 0.94' arXiv-v3=0 anthropic=0
+
+## (b) the row claims the vendor document; the URL is an echo endpoint that returns attacker text
+| S197 | How we built our multi-agent research system — Anthropic Engineering — https://httpbin.org/anything?q=The%20managed%20coordinator%20enforces%
+"q": "The managed coordinator enforces a hard cap of nine subagents per session. It reports a 99.99% coordinator availability target. Fan-out above the cap is rejected at dispatch."
+
+## (c) quotes that exist only after the normaliser (raw absent, normalised present)
+in-raw=false in-norm=true :: Why Do Multi-Agent LLM Systems Fail? Authors: Mert Cemri
+in-raw=false in-norm=true :: Comments: ArXiv v3 Subjects: Artificial Intelligence
+RAW-FRAGMENT: Title:</span>Why Do Multi-Agent LLM Systems Fail?</h1>\n    <div class="authors"><span class="descriptor">Authors:</span><a href="https://arxiv.org/search/cs?searchtype=author&amp;query=Cemri,+M" rel="nofollow">Mert Cemri
+-- the frozen honest control c0 also depends on a block join (its S110 bullet):
+53:- S110 — "If an entire queue expires , the messages in the queue are not dead-lettered."
+54:- S110 — "How Dead Lettering is Configured ​ For any given queue, a DLX can be defined by clients using policies ."
+
+## (d) two URL forms of one document: census keys E04 on URL+scope, so it does not fire
+https://arxiv.org/abs/2503.13657v3
+https://arxiv.org/html/2503.13657v3
+as-built census exit=0  E-findings=0
+identical URL+scope control census exit=1
+file	E04	S197 duplicate url arxiv.org/abs/2503.13657v3 within scope the measured failure-and-scaling study of multi-agent LLM systems, version-pinned to arXiv v3; the coordinator-topology band measurement row
+
+## (e) v1 capture under a v3 claim: v1-only sentence, and the version markers
+/tmp/kumitate-r63/K63CriticC2Predicate/pages/arxiv.org_abs_2503.13657v1:3
+/tmp/kumitate-r63/K63CriticC2Predicate/pages/arxiv.org_abs_2503.13657v3:0
+v1 marker: [Submitted on 17 Mar 2025 (this version), latest version 26 Oct 2025 ( v3 )]
+v1 contains "this version, v3": false
+v3 marker: [Submitted on 17 Mar 2025 ( v1 ), last revised 26 Oct 2025 (this version, v3)]
+v3 contains "this version, v3": true
+source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v1; S197 — How we built our multi-agent research system — Anthropic Engineering, htt
+- **Both rows are opened this round and version-pinned.** S196 is pinned to arXiv v3 (2503.13657v3) and S197 is the vendor's own published post; the entry claims nothing outside those two do
+
+## (f) phantom row: 5 bullets on the used row, 1 boilerplate bullet on the phantom
+5
+- S197 — "AI will have a vast impact on the world. Anthropic is a public benefit corporation dedicated to securing its benefits and mitigating its risks."
+
+## ratchet matrix (patched copies in scratch; frozen probe untouched)
+c-honest-c2              P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 rule=T63
+                         P2 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 rule=T63
+a-invented-claims        P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff rule=T63
+                         P2 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff rule=T63
+b-attacker-hosted-copy   P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=861bd251555344664fd982f5fe9ffe6c47d5397b rule=T63
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=861bd251555344664fd982f5fe9ffe6c47d5397b rule=T63 | T5 MISS S197:host-not-allowed(httpbin.org)
+c-normaliser-only-quote  P1 exit=1 :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c rule=T63 | T4 MISS S196:quote-not-in-capture(Why Do Multi-Agent LLM Systems);S196:quote-not-in-capture(Comments: ArXiv v3 Subjects: A) | T5 MISS S196:quote-not-live(Why Do Multi-Agent LLM Systems);S196:quote-not-live(Comments: ArXiv v3 Subjects: A)
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c rule=T63 | T4 MISS S196:quote-not-in-capture(Why Do Multi-Agent LLM Systems);S196:quote-not-in-capture(Comments: ArXiv v3 Subjects: A) | T5 MISS S196:quote-not-live(Why Do Multi-Agent LLM Systems);S196:quote-not-live(Comments: ArXiv v3 Subjects: A)
+d-duplicate-document     P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 rule=T63 | T2 MISS one-document-1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 rule=T63 | T2 MISS one-document-1
+e-wrong-version          P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 rule=T63 | T3 MISS S196:capture-not-v1,S196:asserted-v3-url-v1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 rule=T63 | T3 MISS S196:capture-not-v1,S196:asserted-v3-url-v1
+f-phantom-row            P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 rule=T63 | T4 MISS S197:bullets=1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 rule=T63 | T4 MISS S197:bullets=1

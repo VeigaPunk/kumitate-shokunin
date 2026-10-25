@@ -1,0 +1,143 @@
+# K63ExecWaveCensus receipts — wave-census operability on run-7 inline waves, 2026-10-25T21:03:24Z
+# lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin  script sha256=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
+# git HEAD=b38a2065ab8ac5b198f6569b9013d04411c3d40d
+
+### LIVE lane round 61
+WAVE round=61 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=32 attack=10 reports=32/32 roles: executor=9 scout=8 reviewer=5 critic=4 scribe=3 connector=1 mutation-tester=1 sentinel=1
+WAVE round=61 wave=w2 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=40 reports=39/40 roles: reviewer=21 critic=19
+ROUND round=61 waves=2 seats=72 attack=50 reports=71/72
+WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+EXIT=0
+
+### LIVE lane round 63
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=5/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=5/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### expect holds
+WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+EXIT=0
+
+### expect fails
+FINDING EXPECT_MISMATCH round=61 wave=w1 61/w1:reviewer=6 payload=5
+WAVE_CENSUS: DRIFT (rounds=1 waves=2 findings=1)
+EXIT=1
+
+### selftest
+PASS  WC24 self-observation: a child selftest with one injected failure prints it, counts it, ends VERDICT: FAIL, exits 1 — exit=1 WAVE_CENSUS_SELFTEST: 31/32 pass
+WAVE_CENSUS_SELFTEST: 32/32 pass
+WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: 0
+WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: PASS
+VERDICT: PASS
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/A --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/B --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/C --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=1/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=1/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/D --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=1/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=1/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/E --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+FINDING STRAY_REPORT round=63 wave=w1 .ufo/waves/round-63/w1/GhostSeat.md
+WAVE_CENSUS: DRIFT (rounds=1 waves=1 findings=1)
+EXIT=1
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/I --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=2/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=2/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z1 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=0 attack=0 reports=0/0 roles: 
+ROUND round=63 waves=1 seats=0 attack=0 reports=0/0
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z2 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z3 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z4 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+FINDING REGISTRY_MISMATCH round=63 wave=w1 not-in-registry=[] not-in-tasks=[K63ScoutArxivOpen]
+WAVE_CENSUS: DRIFT (rounds=1 waves=1 findings=1)
+EXIT=1
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z5 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z6 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=0/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=0/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### wave-census --root /tmp/kumitate-r63/K63ExecWaveCensus/fix/Z7 --round 63 
+WAVE round=63 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=40 attack=10 reports=1/40 roles: executor=13 scribe=6 scout=5 reviewer=4 connector=3 critic=3 mutation-tester=3 revenger=1 sentinel=1 simplifier=1
+ROUND round=63 waves=1 seats=40 attack=10 reports=1/40
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### --rev unsupported
+wave-census: unknown argument: --rev
+usage: node scripts/wave-census.mjs --round N [--round M ...] [--root DIR] [--expect <wave>:<role>=<n> ...] [--json] | --selftest
+EXIT=64
+
+### refused role distiller accepted as known
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### refused role planner accepted as known
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### refused role labrat accepted as known
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+EXIT=0
+
+### inline gate live (worktree)
+INLINE_DISPATCH: FAIL-CLOSED results-unreadable path=.ufo/waves/round-63/w1-results.json
+FINDING RESULTS_UNREADABLE
+INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+EXIT=2
+
+### inline gate --rev base
+INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-63/w1
+FINDING WAVE_ABSENT
+INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+EXIT=2
+

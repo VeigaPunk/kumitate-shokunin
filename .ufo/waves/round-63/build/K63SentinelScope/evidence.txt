@@ -1,0 +1,91 @@
+K63SentinelScope — verbatim evidence (commands run 2026-10-25, this host, cwd /home/vgpnk/Projects/shokunin)
+
+## E0 — gate prints no transcript content (canary)
+$ python3 <inject CANARY-SECRET-9f3a1c-DO-NOT-LEAK into honest/sessions/orch/K63AlphaOne.jsonl + a foreign K63Phantom.jsonl>
+$ node scripts/inline-dispatch-evidence.mjs --root honest/lane --round 7 --wave w1 --sessions-root honest/sessions --dispatcher-log honest/dispatcher.log
+EXIT=0
+INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+--- stderr ---
+--- canary occurrences in gate output: out.txt:0,err.txt:0
+$ <replace K63BetaTwo's user text with the canary>; same command
+EXIT=1
+INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=3 dead=0)
+FINDING SESSION_FOREIGN:K63BetaTwo
+canary-in-output=0
+Gate write sites: only scripts/inline-dispatch-evidence.mjs:280-344 (fixture()/selftest(), all under mkdtemp); inspect() writes nothing.
+
+## E1 — freeze commit b38a2065ab8ac5b198f6569b9013d04411c3d40d scope and size
+$ git show --name-only --format= b38a206 | awk -F/ '{print $1"/"$2}' | sort | uniq -c | sort -rn
+    196 .ufo/waves
+      1 scripts/inline-dispatch-evidence.mjs
+      1 .ufo/pins
+$ <non-round63/scripts paths>  ->  .ufo/pins/counter-pins.json     (L1-owned; within L1 integration scope)
+$ git ls-tree -rl b38a206 -- .ufo/waves/round-63 | awk '$4>1048576' | wc -l
+0
+largest: 663997 .ufo/waves/round-63/build/K63Capture/arxiv-2512.08296v3.html
+$ git grep -nE '/home/vgpnk|\.omp/agent/sessions|/fast/scratch|sk-[A-Za-z0-9]{16,}|Bearer |api[_-]?key|password' b38a206 -- .ufo/waves/round-63 scripts/inline-dispatch-evidence.mjs
+plan.md:25,26,47,90,146 (own paths), probe/inline63-probe.mjs:14 (~/.omp/agent/sessions — directory name),
+probe/topology63-probe.mjs:36 (fleet census path), scripts/inline-dispatch-evidence.mjs:42 (DEFAULT_LOG),
+base/census-before.txt:7 (lane path), build/K63Capture/bailian-managed-agents-multiagent.md:43
+    -H "Authorization: Bearer $DASHSCOPE_API_KEY"      <- vendor placeholder, no secret value
+=> no transcript excerpt, no credential, no host-session file path in the committed round-63 tree.
+
+## E2 — S-1 make-inline-controls.mjs deletes a caller-named tree
+$ mkdir -p rmtest/precious/nested; echo IMPORTANT > rmtest/precious/nested/keepme.txt; echo sibling > rmtest/precious/sibling.txt
+$ node .ufo/waves/round-63/probe/make-inline-controls.mjs /tmp/kumitate-r63/K63SentinelScope/rmtest/precious
+EXIT=0
+precious/keepme.txt exists? NO
+precious/sibling.txt exists? NO
+ls rmtest/precious -> done-line-absent duplicate-spawn forged-no-sessions honest   (the fixture replaced the tree)
+
+## E3 — S-2 command injection (make-topology-controls.mjs:43, same pattern topology63-probe.mjs:53, inline63-probe.mjs:29)
+$ L='/tmp/kumitate-r63/K63SentinelScope/x";touch /tmp/kumitate-r63/K63SentinelScope/PWNED;"'
+$ node .ufo/waves/round-63/probe/make-topology-controls.mjs "$L" b38a2065ab8ac5b198f6569b9013d04411c3d40d "$S/topo-out"
+EXIT=1
+PWNED created? YES
+
+## E4 — S-3 T5 live-fetch arm
+$ curl -fsSL --max-time 90 --retry 2 -A 'Mozilla/5.0 (kumitate-topology63)' http://127.0.0.1:18763/big.bin -o got.bin
+EXIT=0 bytes=8388608                       (loopback fetched; no --max-filesize)
+$ curl -fsSL --max-time 90 --retry 2 -A '…' http://127.0.0.1:18763/redir     (302 -> file:///etc/hostname)
+curl: (1) Protocol "file" is disabled (in redirect)   EXIT=1     (curl 8.23.0 default closes that path)
+end-to-end: fixture repo $S/ssrf2 with two rows pointing at http://127.0.0.1:18765/secret.html
+$ node .ufo/waves/round-63/probe/topology63-probe.mjs $S/ssrf2 46f2950a4a8f53f50f08461df1c9a425f2491c23 --entry corpus/knowledge/e.md
+TOPOLOGY63_UNMET held=5/7 checks=7 rev=46f2950a4a8f53f50f08461df1c9a425f2491c23 rule=T63 | T6 MISS census-exit=1 | T7 MISS province-names-entry=false readme-map-clean=false
+=> T5 PASSED on loopback URLs: the live arm accepts lane-written internal endpoints.
+
+$ norm() on "<script"*n  (no closing tag): bytes=140000 norm_ms=1032.8 | bytes=280000 norm_ms=4110.6 | bytes=560000 norm_ms=16312.4
+   (4x per doubling; the arm has no overall timeout, only --max-time 90 per attempt x --retry 2)
+
+## E5 — S-4 output line injection via a lane-written seat name
+$ node scripts/inline-dispatch-evidence.mjs --root inject/lane --round 7 --wave w1 --sessions-root inject/sessions --dispatcher-log inject/dispatcher.log
+EXIT=1
+INLINE_DISPATCH: DRIFT (seats=4 sessions=2 done=2 reports=3 dead=0)
+FINDING SESSION_FOREIGN:K63BetaTwo
+FINDING SESSION_ABSENT:K63Evil
+INLINE_DISPATCH: CLEAN (seats=40 sessions=40 done=40 reports=40 dead=0)
+=== grep CLEAN lines: 1        (grep 'INLINE_DISPATCH: CLEAN' matches a forged line)
+
+## E6 — S-5 build/ is 160 MB / 12,547 untracked files mid-wave, not ignored
+$ du -sb .ufo/waves/round-63/build -> 160329220
+$ git status --porcelain --untracked-files=all .ufo/waves/round-63/build | wc -l -> 12547
+$ git check-ignore -v .ufo/waves/round-63/build/K63ExecProxyStanza/mirror/LOG.md -> (no match, exit 1)
+$ du -sh .ufo/waves/round-63/build/K63ExecProxyStanza/mirror -> 158M ; largest member 16488385 …/round-61/controls/r61-c2-full-forgery.bundle
+$ git ls-files --error-unmatch .ufo/waves/round-61/controls/r61-c2-full-forgery.bundle -> bundle tracked at HEAD
+$ grep -rl '/home/vgpnk/.omp' build --include='*.jsonl' | wc -l -> 19  (all inside the 158M mirror: round-59 *.stream.jsonl)
+
+## E7 — S-6 host metadata extracted into an uncommitted artifact
+$ du -sh build/K63ExecTranscriptStats -> 1.4M ; stats.tsv 1,251,011 bytes, 4,528 data rows
+$ head -1 stats.summary.txt
+TRANSCRIPT_STATS root=/home/vgpnk/.omp/agent/sessions files=4527 scanned=4527 skipped=0 bytes=3083636269
+columns: name lane session bytes rows user assistant toolResult custom toolCalls toolCallsByName hasYield exitKind modelUsage firstTs lastTs … (counts/ids only, no message text)
+
+## E8 — S-7 trust-boundary permissions
+$ stat -c '%U %G %a %n' /fast/scratch/hyaku-run7/dispatcher.log -> vgpnk vgpnk 644 /fast/scratch/hyaku-run7/dispatcher.log
+$ stat -c '%U %G %a %n' /home/vgpnk/.omp/agent/sessions -> vgpnk vgpnk 755 …
+$ id -un -> vgpnk ; test -w /fast/scratch/hyaku-run7/dispatcher.log -> WRITABLE by vgpnk
+
+## E9 — real-wave gate cost (read-only, other lane)
+$ time node scripts/inline-dispatch-evidence.mjs --root …/kengaku-shokunin --round 35 --wave build
+INLINE_DISPATCH: CLEAN (seats=32 sessions=32 done=32 reports=32 dead=0)
+real 0m0.085s   (sessions store: 1618 *.jsonl at depth<=3, 3.4G; indexSessions walks names only)

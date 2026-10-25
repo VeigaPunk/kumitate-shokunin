@@ -1,0 +1,63 @@
+# K63ExecProxyStanza — verbatim receipts (2026-10-25)
+
+## 1. base reproduction (mirror of b38a206, unmodified)
+$ node scripts/proxy-check.mjs   # in mirror/ before any edit
+proxy-check: fail-closed — GATE_PIN_KEY_UNKNOWN: line 330: pin.make-dispatch-actual is not a kumitate-gate-pins-v1 key
+PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 330: pin.make-dispatch-actual is not a kumitate-gate-pins-v1 key
+EXIT=2
+
+## 2. after the two GATE_PINS keys, BEFORE the stanza was recomputed (the masked drifts)
+verdict DRIFT errors 6 warnings 1
+error A_DRIFT | A: declared=117 computed=122 delta=+5
+error C2_TOTAL_DRIFT | C2_total: declared=150 computed=151 delta=+1
+error K_MEMBERS_DRIFT | K_members: declared=52 computed=49 delta=-3
+error K_SECTIONS_DRIFT | K_sections: declared=52 computed=49 delta=-3
+error PIN_DRIFT | pin.proxy-check: declared=7f73f8e7... computed=cac52a0b...
+error AXES_DRIFT | coverage: ## Axes row=10 derived=9
+warn PIN_UNPINNED | scripts/inline-dispatch-evidence.mjs has no pin.<name> key
+
+## 3. final mirror state (b38a206 archive + patch + stanza + README row)
+$ node scripts/proxy-check.mjs
+PROXY: MATCH (A=122 C=30 operability=9; C1=19/19 C2=151/151 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+EXIT=0
+$ node scripts/proxy-check.mjs --strict
+PROXY: MATCH (A=122 C=30 operability=9; C1=19/19 C2=151/151 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+STRICT_EXIT=0
+
+## 4. selftest (final lines)
+PASS  [122/122]  every declared fail-closed arm fires in at least one fixture — 17 arms observed
+PROXY_SELFTEST: 122/122 pass
+VERDICT: PASS
+SELFTEST_EXIT=0
+
+## 5. end-to-end replay from the pristine frozen archive (/tmp/.../replay)
+$ git archive b38a206 | tar -x -C replay && git apply proxy-check.mjs.patch
+PATCH_APPLIED
+cac52a0b3c690fb925925fa9da87d3e68a355109caecb1877d33df9e48fcdc67  scripts/proxy-check.mjs
+STANZA_AND_ROW_APPLIED
+PROXY: MATCH (A=122 C=30 operability=9; C1=19/19 C2=151/151 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+REPLAY_STRICT_EXIT=0
+
+## 6. falsifiers on scratch copies of the fixed mirror
+f1 (unknown gate key added to the block): plain_exit=2 strict_exit=2   # GATE_PIN_KEY_UNKNOWN
+f2 (pin.make-dispatch-actual zeroed):    plain_exit=1 strict_exit=1   # GATE_PIN_DRIFT, names declared+computed
+f3 (registered key, declaration dropped): plain_exit=0 strict_exit=1  # PIN_UNPINNED warn; MATCH without --strict
+
+## 7. the stanza is an ARCHIVE count, measured on the round-62 tip
+$ recompute.sh /tmp/.../a2281a3   (git archive a2281a39)
+A=117
+C=30
+C1=19
+C1_total=19
+C2=150
+C2_total=150
+PREFLIGHT FAIL: pin.make-dispatch-actual is declared in SCORECARD.md but not in GATE_PINS (proxy-check would FAIL-CLOSED GATE_PIN_KEY_UNKNOWN)
+
+## 8. the same script on the LIVE lane working tree (mid-wave; A grows as seats write runnables)
+# A counts 373 of 29282 regular files   [measured 18:0x; a later breakdown of the same tree read 401 total runnables:
+#   118 rest-of-tree, 155 .ufo/waves/round-63/build (other seats), 122 this seat's mirror, 6 round-63 probe/controls]
+A=373
+C2=150
+C2_total=151
+# runnables not in git ls-files (counted by A here, absent from git archive): 251
+# tool verdict: FAIL-CLOSED errors=1 warnings=0

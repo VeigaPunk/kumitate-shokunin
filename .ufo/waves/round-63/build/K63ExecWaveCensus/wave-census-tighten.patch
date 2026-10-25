@@ -1,0 +1,34 @@
+NOT APPLIED — L1 decision. Draft against scripts/wave-census.mjs at b38a2065ab8ac5b198f6569b9013d04411c3d40d.
+Two contract-level holes found by seat K63ExecWaveCensus (findings -1 and -4). Both are fail-open /
+unchecked-field defects inside the tool's own stated contract, not scope questions.
+
+--- a/scripts/wave-census.mjs
++++ b/scripts/wave-census.mjs
+@@ -175,6 +175,8 @@
+     const seatCount = tc.tasks.length + resumeCount;
++    // A wave that dispatches no seat is not evidence. Before this line an envelope with
++    // `taskCall: null` and an empty `resumeSends` printed `seats=0 … WAVE_CENSUS: CLEAN` exit 0.
++    if (seatCount === 0) throw new FailClosed(`${path} dispatches no seat (tasks=0 resumeSends=0)`);
+     if (seatCount > MAX_SEATS_PER_WAVE) throw new FailClosed(`${path} exceeds seat limit ${MAX_SEATS_PER_WAVE}`);
+     seatsInRound += seatCount;
+@@ -198,7 +200,10 @@
+-      if (d.counts && (d.counts.spawn !== tasks.length || (d.counts.resume ?? 0) !== resumes.length)) {
++      // `counts.total` was named in the header and never read; total = spawn + resume holds in
++      // all 334 committed v1 dispatches in the fleet (measured 2026-10-25).
++      const totalLie = d.counts && typeof d.counts.total === 'number' && d.counts.total !== tasks.length + resumes.length;
++      if (d.counts && (d.counts.spawn !== tasks.length || (d.counts.resume ?? 0) !== resumes.length || totalLie)) {
+         if (findings.length >= MAX_FINDINGS_PER_ROUND) throw new FailClosed(`round ${n} exceeds finding limit ${MAX_FINDINGS_PER_ROUND}`);
+-        findings.push({ kind: 'COUNT_MISMATCH', round: n, wave, detail: `counts.spawn=${d.counts.spawn} tasks=${tasks.length} counts.resume=${d.counts.resume} resumeSends=${resumes.length}` });
++        findings.push({ kind: 'COUNT_MISMATCH', round: n, wave, detail: `counts.spawn=${d.counts.spawn} tasks=${tasks.length} counts.resume=${d.counts.resume} resumeSends=${resumes.length}${totalLie ? ` counts.total=${d.counts.total}` : ''}` });
+       }
+
+Notes for the integrator:
+- Hunk 1 changes an exit code (0 -> 2) for a shape no committed wave uses today: measured over every
+  `.ufo/waves/round-*/*-dispatch.json` in the fleet, 334 v1 envelopes, none with zero seats. It does not
+  touch the selftest corpus, but `WAVE_CENSUS_SELFTEST` should be re-run (32/32 at b38a206) and one case
+  added (`WC33` empty envelope -> exit 2).
+- Hunk 2 keeps exit 1 and the existing COUNT_MISMATCH id; the detail string only grows when total lies,
+  so WC05/WC26 regexes (`counts\.spawn=… tasks=… counts\.resume=… resumeSends=…$`-anchored) still match
+  for the non-lying case.
+- Deliberately NOT proposed: results/ready/log/transcript reading. That is `inline-dispatch-evidence.mjs`'s
+  contract (I63) and adding it to `kumitate-wave-census-v1` would duplicate the gate, not repair a bug.

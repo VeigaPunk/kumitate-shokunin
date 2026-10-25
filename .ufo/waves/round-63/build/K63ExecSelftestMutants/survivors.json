@@ -1,0 +1,218 @@
+[
+  {
+    "id": "M02",
+    "axis": "report-floor",
+    "line": 43,
+    "old": "const MIN_REPORT_BYTES = 64;",
+    "neu": "const MIN_REPORT_BYTES = 63;",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M03",
+    "axis": "report-floor",
+    "line": 244,
+    "old": "if (b.length < MIN_REPORT_BYTES)",
+    "neu": "if (b.length <= MIN_REPORT_BYTES)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M05",
+    "axis": "tail-120",
+    "line": 216,
+    "old": "tail(String(t.task), 120)",
+    "neu": "tail(String(t.task), 1)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M06",
+    "axis": "tail-120",
+    "line": 216,
+    "old": "tail(String(t.task), 120)",
+    "neu": "tail(String(t.task), 0)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M07",
+    "axis": "tail-120",
+    "line": 216,
+    "old": "tail(String(t.task), 120)",
+    "neu": "tail(String(t.task), 100000)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M08",
+    "axis": "tail-120",
+    "line": 216,
+    "old": "&& tr.user.includes(tail(String(t.task), 120))",
+    "neu": "&& true",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M09",
+    "axis": "ctx-head-200",
+    "line": 204,
+    "old": "tc.context.trim().slice(0, 200)",
+    "neu": "tc.context.trim().slice(0, 0)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M10",
+    "axis": "ctx-head-200",
+    "line": 204,
+    "old": ".slice(0, 200)",
+    "neu": ".slice(0, 5)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M11",
+    "axis": "ctx-head-200",
+    "line": 216,
+    "old": "&& tr.user.includes(ctxHead) && ",
+    "neu": "&& true && ",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M12",
+    "axis": "ctx-head-200",
+    "line": 204,
+    "old": "tc.context.trim().slice(0, 200)",
+    "neu": "tc.context.slice(0, 200)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M16",
+    "axis": "exit-kind",
+    "line": 231,
+    "old": "const clean = tr.yielded && tr.exitKind === 'normal';",
+    "neu": "const clean = tr.yielded || tr.exitKind === 'normal';",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M18",
+    "axis": "exit-kind",
+    "line": 144,
+    "old": "(row.data && row.data.kind) || 'unknown'",
+    "neu": "(row.data && row.data.kind) || 'normal'",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M25",
+    "axis": "spawn-log",
+    "line": 193,
+    "old": "(\\\\d+)$",
+    "neu": "(\\\\d+)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M26",
+    "axis": "spawn-log",
+    "line": 195,
+    "old": "else if (spawned.length > 1)",
+    "neu": "else if (spawned.length > 2)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M32",
+    "axis": "ready",
+    "line": 175,
+    "old": "|| !ready.l1 ||",
+    "neu": "|| false ||",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M33",
+    "axis": "ready",
+    "line": 175,
+    "old": "ready.wave !== wave ||",
+    "neu": "false ||",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M43",
+    "axis": "session-match",
+    "line": 224,
+    "old": "if (matched.length > 1) findings.push(",
+    "neu": "if (matched.length > 2) findings.push(",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M46",
+    "axis": "session-match",
+    "line": 216,
+    "old": "tr.user.includes(`# Seat ${t.name}\\n`)",
+    "neu": "tr.user.includes(`# Seat ${t.name}`)",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M50",
+    "axis": "transcript",
+    "line": 117,
+    "old": "/^\\d+$/.test(stem.slice(name.length + 1))",
+    "neu": "/^.*$/.test(stem.slice(name.length + 1))",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M51",
+    "axis": "transcript",
+    "line": 137,
+    "old": "row.type === 'session' && !t.sessionId",
+    "neu": "row.type === 'session'",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M52",
+    "axis": "transcript",
+    "line": 140,
+    "old": "row.message.role === 'user' && !t.user",
+    "neu": "row.message.role === 'user'",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M57",
+    "axis": "reports",
+    "line": 252,
+    "old": "const done = seatInfo.filter((s) => s.session && !s.dead).length;",
+    "neu": "const done = seatInfo.filter((s) => !s.dead).length;",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M58",
+    "axis": "verdict",
+    "line": 260,
+    "old": "unique.length ? 'DRIFT' : 'CLEAN'",
+    "neu": "unique.length ? 'CLEAN' : 'DRIFT'",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M63",
+    "axis": "dispatch-shape",
+    "line": 170,
+    "old": "tasks.length === 0 ||",
+    "neu": "tasks.length === -1 ||",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M64",
+    "axis": "dispatch-shape",
+    "line": 170,
+    "old": "typeof tc.context !== 'string'",
+    "neu": "false",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M66",
+    "axis": "selftest-harness",
+    "line": 311,
+    "old": "finding === null ? r.unique.length === 0 : ",
+    "neu": "finding === null ? true : ",
+    "outcome": "SURVIVED"
+  },
+  {
+    "id": "M67",
+    "axis": "selftest-harness",
+    "line": 359,
+    "old": "process.exit(passed === cases.length ? 0 : 1);",
+    "neu": "process.exit(passed === cases.length ? 0 : 0);",
+    "outcome": "SURVIVED"
+  }
+]

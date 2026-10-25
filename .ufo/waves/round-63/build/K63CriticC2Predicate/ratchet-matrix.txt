@@ -1,0 +1,14 @@
+c-honest-c2              P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 rule=T63
+                         P2 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9 rule=T63
+a-invented-claims        P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff rule=T63
+                         P2 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=e122b2fb86a2fd756b4bead93a8ac9e98610e6ff rule=T63
+b-attacker-hosted-copy   P1 exit=0 :: TOPOLOGY63_HELD held=7/7 checks=7 rev=861bd251555344664fd982f5fe9ffe6c47d5397b rule=T63
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=861bd251555344664fd982f5fe9ffe6c47d5397b rule=T63 | T5 MISS S197:host-not-allowed(httpbin.org)
+c-normaliser-only-quote  P1 exit=1 :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c rule=T63 | T4 MISS S196:quote-not-in-capture(Why Do Multi-Agent LLM Systems);S196:quote-not-in-capture(Comments: ArXiv v3 Subjects: A) | T5 MISS S196:quote-not-live(Why Do Multi-Agent LLM Systems);S196:quote-not-live(Comments: ArXiv v3 Subjects: A)
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=5adf0af50149ac3205f78d4de1c21aee5dd5ce8c rule=T63 | T4 MISS S196:quote-not-in-capture(Why Do Multi-Agent LLM Systems);S196:quote-not-in-capture(Comments: ArXiv v3 Subjects: A) | T5 MISS S196:quote-not-live(Why Do Multi-Agent LLM Systems);S196:quote-not-live(Comments: ArXiv v3 Subjects: A)
+d-duplicate-document     P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 rule=T63 | T2 MISS one-document-1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=8798ddf4a7cd153e86b36269a567bda08f0a0292 rule=T63 | T2 MISS one-document-1
+e-wrong-version          P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 rule=T63 | T3 MISS S196:capture-not-v1,S196:asserted-v3-url-v1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47 rule=T63 | T3 MISS S196:capture-not-v1,S196:asserted-v3-url-v1
+f-phantom-row            P1 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 rule=T63 | T4 MISS S197:bullets=1
+                         P2 exit=1 :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=a1bb220d6733879c2a8199ca5990967b92bfe293 rule=T63 | T4 MISS S197:bullets=1

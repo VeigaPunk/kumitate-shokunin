@@ -1,0 +1,14 @@
+AS-EXPECTED c0-honest exit=0 expect=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=a773b125155b48426c69444e10954691580f8395 rule=T63
+AS-EXPECTED f1-forged-capture exit=1 expect=T5 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=81a707c2e9068737f4637d6b820735fbf21caf1a rule=T63 | T5 MISS S110:quote-not-live(The broker redelivers a reject);S110:quote-not-live(A delivery limit of seventeen )
+AS-EXPECTED f2-phantom-row exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=4/7 checks=7 rev=a132f261dbff751098c2d931924ecc1088f6365f rule=T63 | T2 MISS S110:not-in-registry | T5 MISS S110:no-url | T6 MISS census-exit=1
+AS-EXPECTED f3-wrong-quote exit=1 expect=T4 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=30cc6b5d76bef2c24406e73073625c3c168873f0 rule=T63 | T4 MISS S109:quote-not-in-capture(A sentence that appears in no ) | T5 MISS S109:quote-not-live(A sentence that appears in no )
+AS-EXPECTED f4-stale-opened exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=d9696175b57958be7aa108779a5399159aa6cab3 rule=T63 | T2 MISS S111:opened=2026-10-23
+AS-EXPECTED f5-no-recheck exit=1 expect=T1 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=fd0633098eec5e55465340c4dd6fd2575a10d2a0 rule=T63 | T1 MISS trio source=true verified-at=true recheck=false
+AS-EXPECTED f6-capture-edited exit=1 expect=T3 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=b4efdfc18a862d79f3c7cb2ac7ff10d428ecbb18 rule=T63 | T3 MISS S109:hash-or-size | T4 MISS S109:quote-not-in-capture(It also meant the system would);S109:quote-not-in-capture(The consu
+AS-EXPECTED f7-duplicate-id exit=1 expect=T6 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=0bc7739efb313ab554c9f89b5f3ee64823617ecc rule=T63 | T6 MISS census-exit=1
+AS-EXPECTED f8-used-by-lacks-entry exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=6ef0fbaddce0318d3144247ce1a47cce5f370326 rule=T63 | T2 MISS S109:used-by-lacks-entry
+AS-EXPECTED f9-province-unnamed exit=1 expect=T7 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=a3a13ad3fba89267b5e74a213ebeb249274ecd2d rule=T63 | T7 MISS province-names-entry=false readme-map-clean=true
+UNEXPECTED  f10-readme-row-removed exit=0 expect=T7 MISS :: TOPOLOGY63_HELD held=7/7 checks=7 rev=214d16aa95bba4470294b7e002399d360d8e9adf rule=T63
+AS-EXPECTED f11-five-bullets exit=1 expect=T4 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=9564ecbfe39338a9ce42c8827b8713a9313362ae rule=T63 | T4 MISS bullets=5
+honest-bullets=6
+fixture-base=dfa6fca8f362e9c962f5b940025a2619380b759b

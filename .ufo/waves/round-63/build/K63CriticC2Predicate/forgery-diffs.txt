@@ -1,0 +1,215 @@
+########## a-invented-claims (e122b2fb86a2fd756b4bead93a8ac9e98610e6ff) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..dbb77b8 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -10,6 +10,10 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ 
+ ## What the sources ground
+ 
++- **The vendor caps coordinator fan-out at nine subagents.** The vendor contract states a hard cap of nine subagents per session and a 99.99% coordinator availability SLA (S197).
++- **Cost is flat in agent count.** A 2026 measurement across 64 agents reports 1.02x per-agent cost, so coordinator fan-out is effectively free beyond 8 agents (S196).
++- **The taxonomy was validated on 12,400 traces.** MAST was validated on 12,400 traces with kappa 0.94 (S196).
++
+ - **The measured row is a failure taxonomy, not a scaling win.** The v3 abstract reports MAST-Data (1600+ annotated traces, 7 frameworks) and MAST (14 failure modes, 3 categories), and states that gains on popular benchmarks are often minimal (S196).
+ - **The vendor's row is the coordinator contract in practice.** A lead agent decomposes the query, spawns subagents for independent directions, and waits for each set synchronously before proceeding — the synchronous-fan-out shape, stated as a current limitation (S197).
+ - **Both rows are opened this round and version-pinned.** S196 is pinned to arXiv v3 (2503.13657v3) and S197 is the vendor's own published post; the entry claims nothing outside those two documents.
+########## b-attacker-hosted-copy (861bd251555344664fd982f5fe9ffe6c47d5397b) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index b671e4f..18d329c 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -199,9 +199,9 @@
+   },
+   {
+    "sourceId": "S197",
+-   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/anthropic-research-system.html",
+-   "sha256": "712aa2052d1a208346d081597f77e8669771bb47d39c8e4ec85bd3268a5d7af2",
+-   "bytes": 243322,
++   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/attacker-echo.json",
++   "sha256": "ef0c21330641d3af6e3ad6dec8819d9c6ea022bedf074b227347e7e671b6e0de",
++   "bytes": 734,
+    "captured": "2026-10-25"
+   }
+  ],
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6303727..2d818cc 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -146,7 +146,7 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S194 | Sagas — Garcia-Molina and Salem, ACM SIGMOD Record 16(3) 1987 — https://dl.acm.org/doi/10.1145/38714.38742 | paper | A | the compensating-action primitive behind durable execution, read for the paper's own definition of a saga | § Abstract, the definition sentence; full text retrieved 2026-10-24 through `aaron papers fetch` of DOI 10.1145/38714.38742, 47194 bytes, sha256 d57846cc153e9e22c89c8af8f0c617b791d8a8afefbdeba715a375a7d0e76942 — OCR-degraded in places | a long-lived transaction becomes a saga when it can be written as a sequence of transactions that can be interleaved with other transactions, and the system's guarantee is that either the whole sequence completes or compensating transactions amend the partial execution — a semantic undo the application supplies, not a database rollback | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
+ | S195 | Worker Versioning — Temporal documentation — https://docs.temporal.io/worker-versioning.md | docs | A | the version-pinning contract for durable Workflow execution; the registry has not held this concepts page before | § Versioning behaviors → § Pinned Workflows, guarantee sentence; raw markdown opened 2026-10-25, HTTP 200, sha256 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc | A **Pinned** Workflow is guaranteed to complete on a single Worker Deployment Version. | mined | 2026-10-25 | 90d | corpus/knowledge/temporal-worker-versioning-pinning.md, corpus/lessons/round-61.md, corpus/lessons/round-61-verifier-spotcheck.md, corpus/lessons/round-62.md |
+ | S196 | Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3) — https://arxiv.org/abs/2503.13657v3 | paper | A | the measured failure-and-scaling study of multi-agent LLM systems, version-pinned to arXiv v3; the coordinator-topology band measurement row | § Abstract, v3 page; fetched 2026-10-25, HTTP 200, 44775 bytes, sha256 76fa4a674d603c41b9fc743e17f996be1a5245148fee775b2c64f069eedbc0e1 | MAST-Data holds 1600+ annotated traces across 7 frameworks and MAST clusters 14 failure modes into 3 categories | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+-| S197 | How we built our multi-agent research system — Anthropic Engineering — https://www.anthropic.com/engineering/multi-agent-research-system | docs | A | the vendor's own account of a lead-agent/subagent coordinator: spawn, synchronous fan-out, token economics | § Benefits of a multi-agent system + § Production reliability; fetched 2026-10-25, HTTP 200, 243322 bytes, sha256 712aa2052d1a208346d081597f77e8669771bb47d39c8e4ec85bd3268a5d7af2 | a lead agent decomposes a query and spawns subagents in parallel; the vendor reports about 15x the token use of chat | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
++| S197 | How we built our multi-agent research system — Anthropic Engineering — https://httpbin.org/anything?q=The%20managed%20coordinator%20enforces%20a%20hard%20cap%20of%20nine%20subagents%20per%20session.%20It%20reports%20a%2099.99%25%20coordinator%20availability%20target.%20Fan-out%20above%20the%20cap%20is%20rejected%20at%20dispatch. | docs | A | the vendor's own account of the lead-agent/subagent coordinator: the fan-out cap and availability target | fetched 2026-10-25, HTTP 200, 734 bytes, sha256 ef0c21330641d3af6e3ad6dec8819d9c6ea022bedf074b227347e7e671b6e0de | the coordinator enforces a hard cap of nine subagents per session and reports a 99.99% availability target | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+ 
+ 
+ 
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..b98c897 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -1,4 +1,4 @@
+-source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v3; S197 — How we built our multi-agent research system — Anthropic Engineering, https://www.anthropic.com/engineering/multi-agent-research-system
++source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v3; S197 — How we built our multi-agent research system — Anthropic Engineering, https://httpbin.org/anything?q=The%20managed%20coordinator%20enforces%20a%20hard%20cap%20of%20nine%20subagents%20per%20session.%20It%20reports%20a%2099.99%25%20coordinator%20availability%20target.%20Fan-out%20above%20the%20cap%20is%20rejected%20at%20dispatch.
+ verified-at: 2026-10-25 (arXiv page served 2026-10-25; vendor post served 2026-10-25)
+ recheck: node .ufo/waves/round-63/probe/topology63-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>
+ 
+@@ -19,6 +19,6 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ - S196 — "We introduce MAST-Data, a comprehensive dataset of 1600+ annotated traces collected across 7 popular MAS frameworks."
+ - S196 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
+ - S196 — "This process identifies 14 unique modes, clustered into 3 categories: (i) system design issues, (ii) inter-agent misalignment, and (iii) task verification."
+-- S197 — "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together."
+-- S197 — "In our data, agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats."
+-- S197 — "Currently, our lead agents execute subagents synchronously, waiting for each set of subagents to complete before proceeding."
++- S197 — "The managed coordinator enforces a hard cap of nine subagents per session."
++- S197 — "It reports a 99.99% coordinator availability target."
++- S197 — "Fan-out above the cap is rejected at dispatch."
+########## c-normaliser-only-quote (5adf0af50149ac3205f78d4de1c21aee5dd5ce8c) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..5e4474e 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -16,8 +16,8 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ 
+ ## Located quotes
+ 
+-- S196 — "We introduce MAST-Data, a comprehensive dataset of 1600+ annotated traces collected across 7 popular MAS frameworks."
+-- S196 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
++- S196 — "Why Do Multi-Agent LLM Systems Fail? Authors: Mert Cemri"
++- S196 — "Comments: ArXiv v3 Subjects: Artificial Intelligence"
+ - S196 — "This process identifies 14 unique modes, clustered into 3 categories: (i) system design issues, (ii) inter-agent misalignment, and (iii) task verification."
+ - S197 — "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together."
+ - S197 — "In our data, agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats."
+########## d-duplicate-document (8798ddf4a7cd153e86b36269a567bda08f0a0292) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index b671e4f..f837022 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -199,9 +199,9 @@
+   },
+   {
+    "sourceId": "S197",
+-   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/anthropic-research-system.html",
+-   "sha256": "712aa2052d1a208346d081597f77e8669771bb47d39c8e4ec85bd3268a5d7af2",
+-   "bytes": 243322,
++   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/arxiv-html-v3.html",
++   "sha256": "e54dc4caed74ca80fb6a9a165fac6ae037e438e22878399830f40c0c38cfbb7d",
++   "bytes": 1780259,
+    "captured": "2026-10-25"
+   }
+  ],
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6303727..43e50a5 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -146,7 +146,7 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S194 | Sagas — Garcia-Molina and Salem, ACM SIGMOD Record 16(3) 1987 — https://dl.acm.org/doi/10.1145/38714.38742 | paper | A | the compensating-action primitive behind durable execution, read for the paper's own definition of a saga | § Abstract, the definition sentence; full text retrieved 2026-10-24 through `aaron papers fetch` of DOI 10.1145/38714.38742, 47194 bytes, sha256 d57846cc153e9e22c89c8af8f0c617b791d8a8afefbdeba715a375a7d0e76942 — OCR-degraded in places | a long-lived transaction becomes a saga when it can be written as a sequence of transactions that can be interleaved with other transactions, and the system's guarantee is that either the whole sequence completes or compensating transactions amend the partial execution — a semantic undo the application supplies, not a database rollback | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
+ | S195 | Worker Versioning — Temporal documentation — https://docs.temporal.io/worker-versioning.md | docs | A | the version-pinning contract for durable Workflow execution; the registry has not held this concepts page before | § Versioning behaviors → § Pinned Workflows, guarantee sentence; raw markdown opened 2026-10-25, HTTP 200, sha256 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc | A **Pinned** Workflow is guaranteed to complete on a single Worker Deployment Version. | mined | 2026-10-25 | 90d | corpus/knowledge/temporal-worker-versioning-pinning.md, corpus/lessons/round-61.md, corpus/lessons/round-61-verifier-spotcheck.md, corpus/lessons/round-62.md |
+ | S196 | Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3) — https://arxiv.org/abs/2503.13657v3 | paper | A | the measured failure-and-scaling study of multi-agent LLM systems, version-pinned to arXiv v3; the coordinator-topology band measurement row | § Abstract, v3 page; fetched 2026-10-25, HTTP 200, 44775 bytes, sha256 76fa4a674d603c41b9fc743e17f996be1a5245148fee775b2c64f069eedbc0e1 | MAST-Data holds 1600+ annotated traces across 7 frameworks and MAST clusters 14 failure modes into 3 categories | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+-| S197 | How we built our multi-agent research system — Anthropic Engineering — https://www.anthropic.com/engineering/multi-agent-research-system | docs | A | the vendor's own account of a lead-agent/subagent coordinator: spawn, synchronous fan-out, token economics | § Benefits of a multi-agent system + § Production reliability; fetched 2026-10-25, HTTP 200, 243322 bytes, sha256 712aa2052d1a208346d081597f77e8669771bb47d39c8e4ec85bd3268a5d7af2 | a lead agent decomposes a query and spawns subagents in parallel; the vendor reports about 15x the token use of chat | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
++| S197 | MAST-Data trace appendix and taxonomy tables — https://arxiv.org/html/2503.13657v3 | paper | A | the trace appendix and taxonomy tables of the failure study, opened as its own document | § Abstract in the HTML rendering; fetched 2026-10-25, HTTP 200, 1780259 bytes, sha256 e54dc4caed74ca80fb6a9a165fac6ae037e438e22878399830f40c0c38cfbb7d | the appendix tables list the failure modes and their trace counts | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+ 
+ 
+ 
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..568ea64 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -1,4 +1,4 @@
+-source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v3; S197 — How we built our multi-agent research system — Anthropic Engineering, https://www.anthropic.com/engineering/multi-agent-research-system
++source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v3; S197 — MAST-Data trace appendix and taxonomy tables, https://arxiv.org/html/2503.13657v3
+ verified-at: 2026-10-25 (arXiv page served 2026-10-25; vendor post served 2026-10-25)
+ recheck: node .ufo/waves/round-63/probe/topology63-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>
+ 
+@@ -19,6 +19,6 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ - S196 — "We introduce MAST-Data, a comprehensive dataset of 1600+ annotated traces collected across 7 popular MAS frameworks."
+ - S196 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
+ - S196 — "This process identifies 14 unique modes, clustered into 3 categories: (i) system design issues, (ii) inter-agent misalignment, and (iii) task verification."
+-- S197 — "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together."
+-- S197 — "In our data, agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats."
+-- S197 — "Currently, our lead agents execute subagents synchronously, waiting for each set of subagents to complete before proceeding."
++- S197 — "This gap highlights a critical need for a principled understanding of why MAS fail."
++- S197 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
++- S197 — "To enable scalable annotation, we develop an LLM-as-a-Judge pipeline with high agreement with human annotations."
+########## e-wrong-version (54d91d9eedcf562fde0db49cdbb0ff6ca96cdd47) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index b671e4f..90b0322 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -192,9 +192,9 @@
+   },
+   {
+    "sourceId": "S196",
+-   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/arxiv-v3.html",
+-   "sha256": "76fa4a674d603c41b9fc743e17f996be1a5245148fee775b2c64f069eedbc0e1",
+-   "bytes": 44775,
++   "path": ".ufo/waves/round-63/build/K63CriticC2Predicate/captures/arxiv-v1.html",
++   "sha256": "ac38a94aebf47e4651bbd377a31e49565718f99baceb28a3082354953ec50fcd",
++   "bytes": 43591,
+    "captured": "2026-10-25"
+   },
+   {
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6303727..a94a418 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -145,7 +145,7 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S190 | The Tail at Scale — Dean and Barroso, CACM 56 (2013) 74-80 — https://research.google/pubs/the-tail-at-scale/ | paper | A | the fan-out tail primitive behind a multi-seat wave's slowest seat, read for the framing the authors themselves publish | § Abstract; landing page read 2026-10-24, HTTP 200, 143176 bytes, sha256 399be231120943041eef0f7909a42cffae339f67b8c3aa85d8e0a05b4c8ee63e | the authors frame tail tolerance as the same move as fault tolerance: large online services must create a predictably responsive whole out of less predictable parts, because temporary high-latency episodes that are unimportant at moderate size dominate performance at large scale | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
+ | S194 | Sagas — Garcia-Molina and Salem, ACM SIGMOD Record 16(3) 1987 — https://dl.acm.org/doi/10.1145/38714.38742 | paper | A | the compensating-action primitive behind durable execution, read for the paper's own definition of a saga | § Abstract, the definition sentence; full text retrieved 2026-10-24 through `aaron papers fetch` of DOI 10.1145/38714.38742, 47194 bytes, sha256 d57846cc153e9e22c89c8af8f0c617b791d8a8afefbdeba715a375a7d0e76942 — OCR-degraded in places | a long-lived transaction becomes a saga when it can be written as a sequence of transactions that can be interleaved with other transactions, and the system's guarantee is that either the whole sequence completes or compensating transactions amend the partial execution — a semantic undo the application supplies, not a database rollback | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
+ | S195 | Worker Versioning — Temporal documentation — https://docs.temporal.io/worker-versioning.md | docs | A | the version-pinning contract for durable Workflow execution; the registry has not held this concepts page before | § Versioning behaviors → § Pinned Workflows, guarantee sentence; raw markdown opened 2026-10-25, HTTP 200, sha256 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc | A **Pinned** Workflow is guaranteed to complete on a single Worker Deployment Version. | mined | 2026-10-25 | 90d | corpus/knowledge/temporal-worker-versioning-pinning.md, corpus/lessons/round-61.md, corpus/lessons/round-61-verifier-spotcheck.md, corpus/lessons/round-62.md |
+-| S196 | Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3) — https://arxiv.org/abs/2503.13657v3 | paper | A | the measured failure-and-scaling study of multi-agent LLM systems, version-pinned to arXiv v3; the coordinator-topology band measurement row | § Abstract, v3 page; fetched 2026-10-25, HTTP 200, 44775 bytes, sha256 76fa4a674d603c41b9fc743e17f996be1a5245148fee775b2c64f069eedbc0e1 | MAST-Data holds 1600+ annotated traces across 7 frameworks and MAST clusters 14 failure modes into 3 categories | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
++| S196 | Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3) — https://arxiv.org/abs/2503.13657v1 | paper | A | the measured failure-and-scaling study of multi-agent LLM systems, version-pinned to arXiv v3; the coordinator-topology band measurement row | § Abstract, v1 page; fetched 2026-10-25, HTTP 200, 43591 bytes, sha256 ac38a94aebf47e4651bbd377a31e49565718f99baceb28a3082354953ec50fcd | MAST-Data holds 1600+ annotated traces across 7 frameworks and MAST clusters 14 failure modes into 3 categories | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+ | S197 | How we built our multi-agent research system — Anthropic Engineering — https://www.anthropic.com/engineering/multi-agent-research-system | docs | A | the vendor's own account of a lead-agent/subagent coordinator: spawn, synchronous fan-out, token economics | § Benefits of a multi-agent system + § Production reliability; fetched 2026-10-25, HTTP 200, 243322 bytes, sha256 712aa2052d1a208346d081597f77e8669771bb47d39c8e4ec85bd3268a5d7af2 | a lead agent decomposes a query and spawns subagents in parallel; the vendor reports about 15x the token use of chat | mined | 2026-10-25 | 180d | corpus/knowledge/multi-agent-coordinator-topologies.md |
+ 
+ 
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..31d6de5 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -1,4 +1,4 @@
+-source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v3; S197 — How we built our multi-agent research system — Anthropic Engineering, https://www.anthropic.com/engineering/multi-agent-research-system
++source: S196 — Why Do Multi-Agent LLM Systems Fail? (arXiv 2503.13657v3), https://arxiv.org/abs/2503.13657v1; S197 — How we built our multi-agent research system — Anthropic Engineering, https://www.anthropic.com/engineering/multi-agent-research-system
+ verified-at: 2026-10-25 (arXiv page served 2026-10-25; vendor post served 2026-10-25)
+ recheck: node .ufo/waves/round-63/probe/topology63-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>
+ 
+@@ -16,9 +16,9 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ 
+ ## Located quotes
+ 
+-- S196 — "We introduce MAST-Data, a comprehensive dataset of 1600+ annotated traces collected across 7 popular MAS frameworks."
+-- S196 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
+-- S196 — "This process identifies 14 unique modes, clustered into 3 categories: (i) system design issues, (ii) inter-agent misalignment, and (iii) task verification."
++- S196 — "In this paper, we present the first comprehensive study of MAS challenges."
++- S196 — "We analyze five popular MAS frameworks across over 150 tasks, involving six expert human annotators."
++- S196 — "We identify 14 unique failure modes and propose a comprehensive taxonomy applicable to various MAS frameworks."
+ - S197 — "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together."
+ - S197 — "In our data, agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats."
+ - S197 — "Currently, our lead agents execute subagents synchronously, waiting for each set of subagents to complete before proceeding."
+########## f-phantom-row (a1bb220d6733879c2a8199ca5990967b92bfe293) vs honest 8d9a0b367713dc054d2f500e1ba8e3cc7a406ba9
+diff --git a/corpus/knowledge/multi-agent-coordinator-topologies.md b/corpus/knowledge/multi-agent-coordinator-topologies.md
+index 6fefb43..f4a59be 100644
+--- a/corpus/knowledge/multi-agent-coordinator-topologies.md
++++ b/corpus/knowledge/multi-agent-coordinator-topologies.md
+@@ -10,15 +10,15 @@ first entry of the frontier band *multi-agent coordinator topology*.
+ 
+ ## What the sources ground
+ 
+-- **The measured row is a failure taxonomy, not a scaling win.** The v3 abstract reports MAST-Data (1600+ annotated traces, 7 frameworks) and MAST (14 failure modes, 3 categories), and states that gains on popular benchmarks are often minimal (S196).
+-- **The vendor's row is the coordinator contract in practice.** A lead agent decomposes the query, spawns subagents for independent directions, and waits for each set synchronously before proceeding — the synchronous-fan-out shape, stated as a current limitation (S197).
+-- **Both rows are opened this round and version-pinned.** S196 is pinned to arXiv v3 (2503.13657v3) and S197 is the vendor's own published post; the entry claims nothing outside those two documents.
++- **The measured row carries the whole entry.** The v3 abstract reports MAST-Data (1600+ annotated traces, 7 frameworks) and MAST (14 failure modes, 3 categories) (S196).
++- **The taxonomy is the band's measurement.** Failure modes cluster into system design, inter-agent misalignment, and task verification (S196).
++- **The band is framed as a public-benefit obligation.** The vendor closes its account on mission framing rather than on a performance number (S197).
+ 
+ ## Located quotes
+ 
+ - S196 — "We introduce MAST-Data, a comprehensive dataset of 1600+ annotated traces collected across 7 popular MAS frameworks."
+ - S196 — "MAST-Data is the first multi-agent system dataset to outline the failure dynamics in MAS for guiding the development of better future systems."
+ - S196 — "This process identifies 14 unique modes, clustered into 3 categories: (i) system design issues, (ii) inter-agent misalignment, and (iii) task verification."
+-- S197 — "A multi-agent system consists of multiple agents (LLMs autonomously using tools in a loop) working together."
+-- S197 — "In our data, agents typically use about 4× more tokens than chat interactions, and multi-agent systems use about 15× more tokens than chats."
+-- S197 — "Currently, our lead agents execute subagents synchronously, waiting for each set of subagents to complete before proceeding."
++- S196 — "This gap highlights a critical need for a principled understanding of why MAS fail."
++- S196 — "Addressing this question requires systematic identification and analysis of failure patterns."
++- S197 — "AI will have a vast impact on the world. Anthropic is a public benefit corporation dedicated to securing its benefits and mitigating its risks."

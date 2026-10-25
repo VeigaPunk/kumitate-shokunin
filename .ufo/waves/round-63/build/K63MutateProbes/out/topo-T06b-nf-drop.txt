@@ -1,0 +1,14 @@
+generator-exit=0
+case0: AS-EXPECTED c0-honest exit=0 expect=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=X rule=T63 ==> (empty)
+case1: AS-EXPECTED f1-forged-capture exit=1 expect=T5 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T5 MISS S110:quote-not-live(The broker redelivers a reject);S110:quote-not-live(A delivery limit of seventeen ) ==> (empty)
+case2: AS-EXPECTED f2-phantom-row exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=4/7 checks=7 rev=X rule=T63 | T2 MISS S110:not-in-registry | T5 MISS S110:no-url | T6 MISS census-exit=1 ==> (empty)
+case3: AS-EXPECTED f3-wrong-quote exit=1 expect=T4 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=X rule=T63 | T4 MISS S109:quote-not-in-capture(A sentence that appears in no ) | T5 MISS S109:quote-not-live(A sentence that appears in no ) ==> (empty)
+case4: AS-EXPECTED f4-stale-opened exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T2 MISS S111:opened=2026-10-23 ==> (empty)
+case5: AS-EXPECTED f5-no-recheck exit=1 expect=T1 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T1 MISS trio source=true verified-at=true recheck=false ==> (empty)
+case6: AS-EXPECTED f6-capture-edited exit=1 expect=T3 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=X rule=T63 | T3 MISS S109:hash-or-size | T4 MISS S109:quote-not-in-capture(It also meant the system would);S109:quote-not-in-capture(The consu ==> (empty)
+case7: AS-EXPECTED f7-duplicate-id exit=1 expect=T6 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T6 MISS census-exit=1 ==> (empty)
+case8: AS-EXPECTED f8-used-by-lacks-entry exit=1 expect=T2 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T2 MISS S109:used-by-lacks-entry ==> (empty)
+case9: AS-EXPECTED f9-province-unnamed exit=1 expect=T7 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T7 MISS province-names-entry=false readme-map-clean=true ==> (empty)
+case10: AS-EXPECTED f10-readme-row-removed exit=1 expect=T7 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T7 MISS province-names-entry=true readme-map-clean=false ==> (empty)
+case11: AS-EXPECTED f11-five-bullets exit=1 expect=T4 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=X rule=T63 | T4 MISS bullets=5 ==> (empty)
+receipt exit=1 TOPOLOGY63_UNMET held=1/7 checks=7 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=T63 | T1 MISS entry-absent | T2 MISS no-entry | T3 MISS no-rows | T4 MISS bullets=0 | T5 MISS no-bullets | T7 MISS province-names-entry=false readme-map-clean=false

@@ -1,0 +1,5 @@
+$ git log --diff-filter=A --format="%H %ct" -- .ufo/waves/round-63/*.ready   # unmagicked
+b38a2065ab8ac5b198f6569b9013d04411c3d40d 1792961253
+$ git log --diff-filter=A --format="%H %ct" -- ":(glob).ufo/waves/round-63/*.ready"
+$ git ls-tree -r --name-only b38a2065 -- .ufo/waves/round-63 | grep -c "\.ready$"
+14

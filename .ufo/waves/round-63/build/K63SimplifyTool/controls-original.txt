@@ -1,0 +1,52 @@
+== done-line-absent exit=1 want=1 DONE_LOG_ABSENT OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING DONE_LOG_ABSENT
+== duplicate-spawn exit=1 want=1 SESSION_AMBIGUOUS OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING SESSION_AMBIGUOUS:K63AlphaOne
+== forged-no-sessions exit=1 want=1 NOT_A_DISPATCH OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0)
+  FINDING SESSION_ABSENT:K63AlphaOne
+  FINDING SESSION_ABSENT:K63BetaTwo
+  FINDING SESSION_ABSENT:K63GammaThree
+  FINDING NOT_A_DISPATCH
+== honest exit=0 want=0 CLEAN OK
+  INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+== one-session-missing exit=1 want=1 SESSION_ABSENT OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=3 dead=0)
+  FINDING SESSION_ABSENT:K63BetaTwo
+== parent-mismatch exit=1 want=1 PARENT_MISMATCH OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING PARENT_MISMATCH:2-parents
+== report-absent exit=1 want=1 REPORT_ABSENT OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=2 dead=0)
+  FINDING REPORT_ABSENT:K63GammaThree
+== reports-28-bytes exit=1 want=1 REPORT_TINY OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=0 dead=0)
+  FINDING REPORT_TINY:K63AlphaOne
+  FINDING REPORT_TINY:K63BetaTwo
+  FINDING REPORT_TINY:K63GammaThree
+== reports-identical exit=1 want=1 REPORT_DUP OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING REPORT_DUP:K63BetaTwo=K63AlphaOne
+  FINDING REPORT_DUP:K63GammaThree=K63AlphaOne
+== results-name-swap exit=1 want=1 RESULTS_MISMATCH OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING RESULTS_MISMATCH:K63GammaThree
+  FINDING RESULTS_MISMATCH:extra-K63Phantom
+== session-id-dup exit=1 want=1 SESSION_ID_DUP OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING SESSION_ID_DUP:K63BetaTwo=K63AlphaOne
+== spawn-count-lie exit=1 want=1 SPAWN_LOG_MISMATCH OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING SPAWN_LOG_MISMATCH:logged=9 dispatched=3
+== spawn-line-absent exit=1 want=1 SPAWN_LOG_ABSENT OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+  FINDING SPAWN_LOG_ABSENT
+== template-transcripts exit=1 want=1 SESSION_FOREIGN OK
+  INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0)
+  FINDING SESSION_FOREIGN:K63AlphaOne
+  FINDING SESSION_FOREIGN:K63BetaTwo
+  FINDING SESSION_FOREIGN:K63GammaThree
+  FINDING NOT_A_DISPATCH
+CONTROLS: 14/14 as expected

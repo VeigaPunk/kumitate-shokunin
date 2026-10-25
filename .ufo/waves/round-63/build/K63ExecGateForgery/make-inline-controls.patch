@@ -1,0 +1,56 @@
+--- a/.ufo/waves/round-63/probe/make-inline-controls.mjs
++++ b/.ufo/waves/round-63/probe/make-inline-controls.mjs
+@@ -11,6 +11,7 @@
+  * `honest` is a complete record; every other case alters exactly one thing a do-nothing or
+  * forging lane could alter. Nothing here touches git.
+  */
++import { createHash } from 'node:crypto';
+ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+ import { join, resolve } from 'node:path';
+ 
+@@ -22,13 +23,38 @@
+ const task = (n) => `/skill:godspeed\n\nControl task for ${n}; write your report.\nReport: .ufo/waves/round-7/w1/${n}.md`;
+ 
+ function transcript(n, o = {}) {
+-  const rows = [
+-    { type: 'session', version: 3, id: o.id || `session-${n}`, parentSession: o.parent || '/host/orchestrator.jsonl' },
+-    { type: 'model_change', role: `subagent:${n}`, model: 'fixture/model' },
+-    { type: 'message', message: { role: 'user', content: [{ type: 'text', text: o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${CTX}\n\n# Seat ${n}\n${task(n)}` }] } },
+-    { type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', name: 'yield', arguments: {} }] } },
+-    { type: 'custom', customType: 'session_exit', data: { kind: 'normal' } },
+-  ];
++  // Harness-shaped rows: id/parentId graph, header records, joined tool calls, spread timestamps.
++  // The five-row stub this replaced was itself the cheapest forgery (see
++  // .ufo/waves/round-63/build/K63ExecGateForgery/); a lane can hand-write those five rows.
++  const t0 = Date.parse('2026-10-25T00:00:00.000Z');
++  const digest = createHash('sha256').update(n).digest('hex').slice(0, 8);
++  const rows = [];
++  let step = 0;
++  let prev = null;
++  const push = (row, opts = {}) => {
++    const r = { ...row };
++    if (typeof r.id !== 'string') r.id = `row-${n}-${rows.length}`;
++    r.parentId = opts.root ? null : prev;
++    r.runtime = { version: 'fixture/1.0' };
++    if (!opts.noTs) r.timestamp = new Date(t0 + (step += 20) * 1000).toISOString();
++    prev = r.id;
++    rows.push(r);
++  };
++  const user = o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${CTX}\n\n# Seat ${n}\n${task(n)}`;
++  push({ type: 'title', v: 1, title: '', updatedAt: new Date(t0).toISOString(), pad: ' ' }, { noTs: true, root: true });
++  push({ type: 'session', version: 3, id: o.id || `session-${n}`, cwd: '/fixture/lane', parentSession: o.parent || '/host/orchestrator.jsonl' }, { root: true });
++  push({ type: 'model_change', model: 'fixture/model' }, { root: true });
++  push({ type: 'model_change', role: `subagent:${n}`, model: 'fixture/model' });
++  push({ type: 'session_init', systemPrompt: ['control fixture prompt'], tools: ['read', 'bash', 'yield'] });
++  push({ type: 'custom', customType: 'system-prompt-digest', data: { sha256: digest } });
++  push({ type: 'message', message: { role: 'user', content: [{ type: 'text', text: user }] } });
++  for (const tool of ['read', 'bash', 'write']) {
++    const id = `call-${n}-${tool}`;
++    push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', id, name: tool, arguments: { path: `/fixture/${digest}` } }] } });
++    push({ type: 'message', message: { role: 'toolResult', toolCallId: id, toolName: tool, content: [{ type: 'text', text: `ok ${digest}` }] } });
++  }
++  push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', id: `call-${n}-yield`, name: 'yield', arguments: {} }] } });
++  push({ type: 'custom', customType: 'session_exit', data: { kind: 'normal' } });
+   return `${rows.map((r) => JSON.stringify(r)).join('\n')}\n`;
+ }
+ const body = (n) => `# ${n}\n\nControl seat report: findings, evidence pointers and commands run. ${'detail '.repeat(12)}\n`;

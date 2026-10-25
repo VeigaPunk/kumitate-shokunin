@@ -1,0 +1,104 @@
+--- work/inline-dispatch-evidence.mjs	2026-10-25 17:58:03.624063006 -0300
++++ proposed/inline-dispatch-evidence.proposed.mjs	2026-10-25 18:06:38.868726340 -0300
+@@ -268,8 +268,9 @@
+     { type: 'model_change', role: `subagent:${name}`, model: 'fixture/model' },
+     { type: 'message', message: { role: 'user', content: [{ type: 'text', text: o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${ctx}\n\n# Seat ${name}\n${task}` }] } },
+   ];
++  for (const extra of o.extraRows || []) rows.push(extra);
+   if (!o.noYield) rows.push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', name: 'yield', arguments: {} }] } });
+-  if (o.exit !== false) rows.push({ type: 'custom', customType: 'session_exit', data: { kind: o.exit || 'normal' } });
++  if (o.exit !== false) rows.push(o.exitRow || { type: 'custom', customType: 'session_exit', data: { kind: o.exit || 'normal' } });
+   return `${rows.map((r) => JSON.stringify(r)).join('\n')}\n`;
+ }
+ 
+@@ -279,26 +280,28 @@
+   const base = join(lane, '.ufo', 'waves', 'round-7');
+   mkdirSync(join(base, 'w1'), { recursive: true });
+   mkdirSync(sess, { recursive: true });
+-  const ctx = 'ROUND CONTEXT (lane demo round 7, wave w1)\nLane repo: /x';
+-  const tasks = names.map((n) => ({ name: n, agent: 'executor', task: `/skill:godspeed\n\ndo the work for ${n}.\nReport: .ufo/waves/round-7/w1/${n}.md` }));
+-  writeFileSync(join(base, 'w1-dispatch.json'), JSON.stringify({ taskCall: { context: ctx, tasks } }));
++  const ctx = o.ctx === undefined ? 'ROUND CONTEXT (lane demo round 7, wave w1)\nLane repo: /x' : o.ctx;
++  const tasks = names.map((n) => ({ name: n, agent: 'executor', task: (o.tasks && o.tasks[n]) || `/skill:godspeed\n\ndo the work for ${n}.\nReport: .ufo/waves/round-7/w1/${n}.md` }));
++  writeFileSync(join(base, 'w1-dispatch.json'), JSON.stringify({ taskCall: { context: o.dispatchCtx === undefined ? ctx : o.dispatchCtx, tasks: o.emptyTasks ? [] : tasks } }));
+   writeFileSync(join(base, 'w1.ready'), JSON.stringify(o.ready || { lane: 'demo', round: 7, wave: 'w1', dispatch: '/abs/lane/.ufo/waves/round-7/w1-dispatch.json', l1: 'DemoR7' }));
+   writeFileSync(join(base, 'w1.ready.dispatched'), '2026-10-25T00:00:00\n');
+   const rs = (o.resultNames || names).map((n) => ({ name: n, agent: 'executor', output: null }));
+   writeFileSync(join(base, 'w1-results.json'), JSON.stringify({ lane: 'demo', round: 7, wave: 'w1', seats: o.seatsLie === undefined ? rs.length : o.seatsLie, results: rs }));
+-  const lines = [`2026-10-25T00:00:00 spawned demo 7 w1 ${o.spawnN === undefined ? names.length : o.spawnN}`];
++  const lines = [`2026-10-25T00:00:00 spawned demo 7 w1 ${o.spawnN === undefined ? names.length : o.spawnN}${o.spawnTail || ''}`];
++  if (o.extraSpawn) lines.push(`2026-10-25T00:00:30 spawned demo 7 w1 ${names.length}`);
+   if (!o.noDone) lines.push('2026-10-25T00:01:00 done demo w1 /abs/lane/.ufo/waves/round-7/w1-results.json');
+   if (o.noSpawn) lines.shift();
+   const logPath = join(dir, 'dispatcher.log');
+   writeFileSync(logPath, `${lines.join('\n')}\n`);
+   for (const t of tasks) {
+     const od = (o.tr && o.tr[t.name]) || {};
+-    if (o.noSession && o.noSession.includes(t.name)) continue;
+-    writeFileSync(join(sess, `${t.name}.jsonl`), transcript(t.name, ctx, t.task, od));
++    if (o.noSessionAll || (o.noSession && o.noSession.includes(t.name))) continue;
++    writeFileSync(join(sess, `${od.file || t.name}.jsonl`), transcript(od.seatName || t.name, ctx, t.task, od));
+     if (!(o.noReport && o.noReport.includes(t.name))) {
+       writeFileSync(join(base, 'w1', `${t.name}.md`), (o.reportBody && o.reportBody[t.name]) || `# ${t.name}\n\nfixture seat report with enough bytes to pass the size floor.\n${'x'.repeat(40)} ${t.name}\n`);
+     }
+   }
++  for (const [f, body] of Object.entries(o.rawFiles || {})) writeFileSync(join(sess, f), body);
+   return { lane, sessions: join(dir, 'sessions'), log: logPath, base };
+ }
+ 
+@@ -347,6 +350,55 @@
+         expect('rev-unreadable-fail-closed', run(f, { rev: '0'.repeat(40) }), 2, 'REV_UNREADABLE');
+       } else cases.push(['rev-mode-fixture-toplevel', false, `toplevel=${top} expected=${G}`]);
+     }
++    // ---- round-63 mutation battery (seat K63ExecSelftestMutants): one case per surviving mutant
++    // Every case below is a fixture the frozen 25-case suite could not express; each one makes
++    // one surviving single-literal mutant FAIL. Case names carry the mutant id in a comment.
++    const FIXCTX = 'ROUND CONTEXT (lane demo round 7, wave w1)\nLane repo: /x';
++    const LONG_TASK = `/skill:godspeed\n\n${'z'.repeat(400)}\n\nReport: .ufo/waves/round-7/w1/A1.md`;
++    const TASK_A1 = `/skill:godspeed\n\ndo the work for A1.\nReport: .ufo/waves/round-7/w1/A1.md`;
++    // M02: a 63-byte report is below the 64-byte floor.
++    expect('report-floor-63-bytes', run(mk(['A1'], { reportBody: { A1: 'y'.repeat(63) } }).f), 1, 'REPORT_TINY');
++    // M03: a 64-byte report is exactly at the floor, not below it.
++    expect('report-floor-64-bytes', run(mk(['A1'], { reportBody: { A1: 'y'.repeat(64) } }).f), 0, null);
++    // M05 + M08: right marker and context, wrong task text (and no char the task ends with).
++    expect('transcript-wrong-task-text', run(mk(['A1'], { tr: { A1: { user: `Complete assignment thoroughly:\n\n${FIXCTX}\n\n# Seat A1\nwrong work only; see the other note` } } }).f), 1, 'SESSION_FOREIGN');
++    // M06 + M07: the transcript carries only the last 150 chars of a >500-char task: the 120-char
++    // tail is present, the whole task is not. The 120 window must stay a window.
++    expect('transcript-truncated-task-tail', run(mk(['A1'], { tasks: { A1: LONG_TASK }, tr: { A1: { user: `Complete assignment thoroughly:\n\n${FIXCTX}\n\n# Seat A1\n${LONG_TASK.slice(-150)}` } } }).f), 0, null);
++    // M09 + M11: right marker and task, a different round's context.
++    expect('transcript-wrong-context', run(mk(['A1'], { tr: { A1: { user: `Complete assignment thoroughly:\n\nSOME OTHER ROUND CONTEXT\n\n# Seat A1\n${TASK_A1}` } } }).f), 1, 'SESSION_FOREIGN');
++    // M10: a context that agrees for five characters and diverges after.
++    expect('transcript-five-char-context', run(mk(['A1'], { tr: { A1: { user: `Complete assignment thoroughly:\n\nROUND context truncated after five chars\n\n# Seat A1\n${TASK_A1}` } } }).f), 1, 'SESSION_FOREIGN');
++    // M16: yielded, but exited aborted — a dead seat, not a done seat.
++    { const { f, d } = mk(['A1', 'B2'], { tr: { B2: { exit: 'aborted' } } }); const rep = join(d, 'rep-m16.md'); writeFileSync(rep, 'only A1 is discussed here'); expect('yielded-but-aborted-is-dead', run(f, { reportFile: rep }), 1, 'DEAD_UNNAMED'); }
++    // M18: a session_exit row with no kind is 'unknown', never 'normal'.
++    { const { f, d } = mk(['A1', 'B2'], { tr: { B2: { exitRow: { type: 'custom', customType: 'session_exit' } } } }); const rep = join(d, 'rep-m18.md'); writeFileSync(rep, 'only A1 is discussed here'); expect('exit-row-without-kind-is-dead', run(f, { reportFile: rep }), 1, 'DEAD_UNNAMED'); }
++    // M25: a spawn line with a trailing token is not a spawn line (the count is the last field).
++    expect('spawn-line-trailing-token', run(mk(['A1', 'B2'], { spawnTail: ' trailing-token' }).f), 1, 'SPAWN_LOG_ABSENT');
++    // M26: the same wave spawned twice is a mismatch, not a second chance.
++    expect('spawn-line-twice', run(mk(['A1', 'B2'], { extraSpawn: true }).f), 1, 'SPAWN_LOG_MISMATCH');
++    // M32: a ready marker with no l1 names no dispatcher.
++    expect('ready-without-l1', run(mk(['A1'], { ready: { lane: 'demo', round: 7, wave: 'w1', dispatch: '/abs/lane/.ufo/waves/round-7/w1-dispatch.json' } }).f), 1, 'READY_MISMATCH');
++    // M33: the marker names another wave even though its dispatch path is this wave's.
++    expect('ready-wrong-wave-name', run(mk(['A1'], { ready: { lane: 'demo', round: 7, wave: 'w9', dispatch: '/abs/lane/.ufo/waves/round-7/w1-dispatch.json', l1: 'DemoR7' } }).f), 1, 'READY_MISMATCH');
++    // M43: two transcripts that both carry this seat's marker/context/task tail.
++    expect('two-transcripts-one-seat', run(mk(['A1'], { rawFiles: { 'A1-2.jsonl': transcript('A1', FIXCTX, '/skill:godspeed\n\ndo the work for A1.\nReport: .ufo/waves/round-7/w1/A1.md') } }).f), 1, 'SESSION_AMBIGUOUS');
++    // M46: '# Seat A10' is not '# Seat A1'.
++    expect('seat-marker-prefix-collision', run(mk(['A1'], { tr: { A1: { seatName: 'A10' } } }).f), 1, 'SESSION_FOREIGN');
++    // M50: a transcript stem that is not the seat name (A1-notes) is not this seat's session.
++    expect('transcript-stem-not-seat', run(mk(['A1'], { tr: { A1: { file: 'A1-notes' } } }).f), 1, 'SESSION_ABSENT');
++    // M51: a second session row in the same transcript cannot launder a duplicated session id.
++    expect('second-session-row-hides-dup', run(mk(['A1', 'B2'], { tr: { B2: { id: 'sid-A1', extraRows: [{ type: 'session', version: 3, id: 'sid-B2-uniq', parentSession: '/p/orch.jsonl' }] } } }).f), 1, 'SESSION_ID_DUP');
++    // M52: a second user message cannot repair a foreign transcript (the dispatched prompt is first).
++    expect('second-user-message-cannot-repair', run(mk(['A1'], { tr: { A1: { user: 'Complete assignment thoroughly: other lane work', extraRows: [{ type: 'message', message: { role: 'user', content: [{ type: 'text', text: `Complete assignment thoroughly:\n\n${FIXCTX}\n\n# Seat A1\n/skill:godspeed\n\ndo the work for A1.\nReport: .ufo/waves/round-7/w1/A1.md` }] } }] } } }).f), 1, 'SESSION_FOREIGN');
++    // M57: no transcripts at all — done must be 0, not 'every seat that is not marked dead'.
++    { const r = run(mk(['A1', 'B2'], { noSessionAll: true }).f); expect('no-sessions-not-a-dispatch', r, 1, 'NOT_A_DISPATCH'); cases.push(['no-sessions-done-is-zero', r.done === 0, `done=${r.done}`]); }
++    // M58: the verdict word is part of the contract (probe I2 greps for 'INLINE_DISPATCH: CLEAN').
++    { const r = run(mk(['A1']).f); cases.push(['verdict-word-clean', r.code === 0 && r.line.startsWith('INLINE_DISPATCH: CLEAN '), r.line]); }
++    // M63: an empty task list is fail-closed, not a wave with zero seats.
++    expect('empty-task-list-fail-closed', run(mk(['A1'], { emptyTasks: true }).f), 2, 'DISPATCH_UNREADABLE');
++    // M64: a non-string context is fail-closed, not a TypeError. (Placed last: the mutant crashes.)
++    expect('context-not-a-string-fail-closed', run(mk(['A1'], { dispatchCtx: 123 }).f), 2, 'DISPATCH_UNREADABLE');
+   } finally {
+     rmSync(T, { recursive: true, force: true });
+   }

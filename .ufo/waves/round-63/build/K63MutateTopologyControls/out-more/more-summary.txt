@@ -1,0 +1,11 @@
+AS-EXPECTED n1-dup-source-id exit=0 want=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=4a65851418836400522635f5a5f1fbf11ef43c64 rule=T63 :: counter-HELD-correct
+AS-EXPECTED n1b-dup-only-one-row exit=1 want=UNMET with T2+T4 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=4e4a24d5580696d0d1963cddd879c96c73c61276 rule=T63 | T2 MISS cites-1-rows | T4 MISS S110:not-a-source;S110:not-a-source;S111:not-a-source;S111:not-a-source :: caught
+AS-EXPECTED n2-short-quote exit=0 want=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=ecbb3c1bd869491b968a43cf5d37822775407087 rule=T63 :: HOLE: no minimum quote length: T4 only enforces <=25 words; a 2-word quote satisfies Located quotes
+AS-EXPECTED n3-url-host-swap exit=1 want=UNMET with T5 MISS :: TOPOLOGY63_UNMET held=6/7 checks=7 rev=78d8d60387266f31a7e365b45b89b81f75e5bdb6 rule=T63 | T5 MISS S110:live-unreachable :: caught
+AS-EXPECTED n4-capture-path-escape exit=1 want=UNMET with T3+T4 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=c79f837573232c1433c1fcebb554e7f12641eb03 rule=T63 | T3 MISS S111:capture-absent | T4 MISS S111:quote-not-in-capture(To build resilient systems, we);S111:quote-not-in-capture(Timeout :: caught
+AS-EXPECTED n5-pin-entry-missing exit=1 want=UNMET with T3+T4 MISS :: TOPOLOGY63_UNMET held=5/7 checks=7 rev=4c083ee9e220251807f1511ea344eaa1c388c8df rule=T63 | T3 MISS S110:unbound | T4 MISS S110:quote-not-in-capture(If an entire queue expires , t);S110:quote-not-in-capture(How Dead Lette :: caught
+AS-EXPECTED n6-province-prefix-path exit=0 want=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=0108355e924f88c10019641b0512b06cc8fe7b6c rule=T63 :: HOLE: T7 named check is String.includes: a suffixed path still contains the entry path
+AS-EXPECTED n7-usedby-prefix-path-existing exit=0 want=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=bbd3c477e414ef43d66f08cb83a893f8d13a4b31 rule=T63 :: HOLE: T2 usedBy.includes(ENTRY) + census E11 satisfied because the suffixed file exists
+honest-bullets=6
+fixture-base=b38a2065ab8ac5b198f6569b9013d04411c3d40d
+HELD-despite-fault=n2-short-quote,n6-province-prefix-path,n7-usedby-prefix-path-existing

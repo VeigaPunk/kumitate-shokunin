@@ -1,0 +1,150 @@
+== 1. round 63 w1 now (wave in flight: results.json not yet written)
+### gate r63 w1
+    INLINE_DISPATCH: FAIL-CLOSED results-unreadable path=.ufo/waves/round-63/w1-results.json
+    FINDING RESULTS_UNREADABLE
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+== 2. historical rounds as committed (no ready marker / no results.json)
+### gate r59 w1
+    INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-59/w1
+    FINDING WAVE_ABSENT
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+### gate r60 w1
+    INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-60/w1
+    FINDING WAVE_ABSENT
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+### gate r61 w2
+    INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-61/w2
+    FINDING WAVE_ABSENT
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+### gate r62 w2
+    INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-62/w2
+    FINDING WAVE_ABSENT
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+== 3. committed honest control reads CLEAN
+### honest control
+    INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+    EXIT=0
+
+== 4. DEAD_UNNAMED fires when a transcript exists without a yield and the report is silent
+### yield stripped, silent report
+    INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=2 reports=3 dead=1)
+    FINDING DEAD_UNNAMED:K63BetaTwo
+    DEAD K63BetaTwo
+    EXIT=1
+
+== 5. the same dead seat passes when the report merely lists its name (no error text)
+### roster-only report
+    INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=2 reports=3 dead=1)
+    DEAD K63BetaTwo
+    EXIT=0
+
+== 6. a seat with NO transcript at all is SESSION_ABSENT, not dead, and is never required to be named
+### one-session-missing + silent report
+    INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=3 dead=0)
+    FINDING SESSION_ABSENT:K63BetaTwo
+    EXIT=1
+
+== 7. round 60 reconstructed: 27 dead in the lane record, dead=0 at the gate, no DEAD_UNNAMED
+### r60 synthesized record + real sessions root
+    INLINE_DISPATCH: DRIFT (seats=32 sessions=0 done=0 reports=0 dead=0)
+    FINDING SESSION_ABSENT:ExecRows
+    FINDING SESSION_ABSENT:ExecGates
+    FINDING SESSION_FOREIGN:ExecCensus
+    FINDING SESSION_ABSENT:RevS190Quote
+    FINDING SESSION_ABSENT:ExecDispatch60
+    FINDING SESSION_ABSENT:ExecDoctrine60
+    FINDING SESSION_ABSENT:ExecDispatchGate
+    FINDING SESSION_ABSENT:ExecProxy
+    FINDING SESSION_ABSENT:ExecCapture
+    FINDING SESSION_ABSENT:RevS194Quote
+    FINDING SESSION_ABSENT:RevS133Quote
+    FINDING SESSION_ABSENT:RevS126Quote
+    FINDING SESSION_ABSENT:RevS131Quote
+    FINDING SESSION_ABSENT:RevS134Quote
+    FINDING SESSION_ABSENT:RevS135Quote
+    FINDING SESSION_ABSENT:RevUsedBy
+    FINDING SESSION_ABSENT:CritBaseNotZero
+    FINDING SESSION_ABSENT:CritDropOne
+    FINDING SESSION_ABSENT:CritQuarantine
+    FINDING SESSION_FOREIGN:CritTheme
+    FINDING SESSION_ABSENT:MutTemplate
+    FINDING SESSION_ABSENT:MutDeadSeat
+    FINDING SESSION_ABSENT:MutPipeRow
+    FINDING SESSION_ABSENT:MutDupGroup
+    FINDING SESSION_ABSENT:ScoutCollision
+    FINDING SESSION_ABSENT:ScoutFrontier
+    FINDING SESSION_ABSENT:ScoutCost
+    FINDING SESSION_ABSENT:ScoutLaneState
+    FINDING SESSION_ABSENT:ScribeGateRow
+    FINDING SESSION_FOREIGN:ConnectorSiblings
+    FINDING SESSION_ABSENT:RevengerFlip
+    FINDING SESSION_ABSENT:SentinelBounds
+    FINDING NOT_A_DISPATCH
+    EXIT=1
+
+== 8. round 62: committed w2-dispatch.json has no taskCall wrapper
+### r62 committed dispatch shape
+    INLINE_DISPATCH: FAIL-CLOSED dispatch-taskcall-absent
+    FINDING DISPATCH_UNREADABLE
+    INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+    EXIT=2
+
+== 9. round 62 with a synthesized taskCall wrapper and the real transcripts: identity does not bind
+### r62 wrapped + real transcripts
+    INLINE_DISPATCH: DRIFT (seats=40 sessions=0 done=0 reports=0 dead=0)
+    FINDING SESSION_FOREIGN:CritControlC1Nonempty
+    FINDING SESSION_FOREIGN:CritControlC1ZeroSeats
+    FINDING SESSION_FOREIGN:CritControlC1NullMix
+    FINDING SESSION_FOREIGN:CritControlC1P3Only
+    FINDING SESSION_FOREIGN:CritControlC1EmptyCommitted
+    FINDING SESSION_FOREIGN:CritControlC1IdSwap
+    FINDING SESSION_FOREIGN:CritControlC1StatusSynthesis
+    FINDING SESSION_FOREIGN:CritControlC1SessionIdentity
+    FINDING SESSION_FOREIGN:CritC2Regex
+    FINDING SESSION_FOREIGN:CritC2Columns
+    FINDING SESSION_FOREIGN:CritC2CaptureForge
+    FINDING SESSION_FOREIGN:CritC2CensusRoot
+    FINDING SESSION_FOREIGN:CritC2LiveCensus
+    FINDING SESSION_FOREIGN:CritC2WorkingMap
+    FINDING SESSION_FOREIGN:CritC2UnrelatedRow
+    FINDING SESSION_FOREIGN:CritC2HashPin
+    FINDING SESSION_FOREIGN:Audit01
+    FINDING SESSION_FOREIGN:Audit02
+    FINDING SESSION_FOREIGN:Audit03
+    FINDING SESSION_FOREIGN:Audit04
+    FINDING SESSION_FOREIGN:Audit05
+    FINDING SESSION_FOREIGN:Audit06
+    FINDING SESSION_FOREIGN:Audit07
+    FINDING SESSION_FOREIGN:Audit08
+    FINDING SESSION_FOREIGN:Audit09
+    FINDING SESSION_FOREIGN:Audit10
+    FINDING SESSION_FOREIGN:Audit11
+    FINDING SESSION_FOREIGN:Audit12
+    FINDING SESSION_FOREIGN:Audit13
+    FINDING SESSION_FOREIGN:Audit14
+    FINDING SESSION_FOREIGN:Audit15
+    FINDING SESSION_FOREIGN:Audit16
+    FINDING SESSION_FOREIGN:Audit17
+    FINDING SESSION_FOREIGN:Audit18
+    FINDING SESSION_FOREIGN:Audit19
+    FINDING SESSION_FOREIGN:Audit20
+    FINDING SESSION_FOREIGN:Audit21
+    FINDING SESSION_FOREIGN:Audit22
+    FINDING SESSION_FOREIGN:Audit23
+    FINDING SESSION_FOREIGN:Audit24
+    FINDING NOT_A_DISPATCH
+    EXIT=1
+
+== 10. what the real round-62 seat prompt actually carried (no seat marker, no committed context)
+    user-head: "Complete assignment thoroughly:\n\n/skill:godspeed\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let"
+    has-seat-marker: false

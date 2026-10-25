@@ -11,6 +11,7 @@
  * `honest` is a complete record; every other case alters exactly one thing a do-nothing or
  * forging lane could alter. Nothing here touches git.
  */
+import { createHash } from 'node:crypto';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -19,36 +20,65 @@ if (!process.argv[2]) { process.stderr.write('usage: make-inline-controls.mjs <o
 rmSync(out, { recursive: true, force: true });
 const NAMES = ['K63AlphaOne', 'K63BetaTwo', 'K63GammaThree'];
 const CTX = 'ROUND CONTEXT (kumitate round 7, wave w1 — control fixture)\nLane repo: /fixture/lane';
+let CTXV = CTX; // the context the current case dispatches and its transcripts carry
 const task = (n) => `/skill:godspeed\n\nControl task for ${n}; write your report.\nReport: .ufo/waves/round-7/w1/${n}.md`;
 
 function transcript(n, o = {}) {
-  const rows = [
-    { type: 'session', version: 3, id: o.id || `session-${n}`, parentSession: o.parent || '/host/orchestrator.jsonl' },
-    { type: 'model_change', role: `subagent:${n}`, model: 'fixture/model' },
-    { type: 'message', message: { role: 'user', content: [{ type: 'text', text: o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${CTX}\n\n# Seat ${n}\n${task(n)}` }] } },
-    { type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', name: 'yield', arguments: {} }] } },
-    { type: 'custom', customType: 'session_exit', data: { kind: 'normal' } },
-  ];
+  // Harness-shaped rows: id/parentId graph, header records, joined tool calls, spread timestamps.
+  // The five-row stub this replaced was itself the cheapest forgery (see
+  // .ufo/waves/round-63/build/K63ExecGateForgery/); a lane can hand-write those five rows.
+  const t0 = Date.parse('2026-10-25T00:00:00.000Z');
+  const digest = createHash('sha256').update(n).digest('hex').slice(0, 8);
+  const rows = [];
+  let step = 0;
+  let prev = null;
+  const push = (row, opts = {}) => {
+    const r = { ...row };
+    if (typeof r.id !== 'string') r.id = `row-${n}-${rows.length}`;
+    r.parentId = opts.root ? null : prev;
+    r.runtime = { version: 'fixture/1.0' };
+    if (!opts.noTs) r.timestamp = new Date(t0 + (step += 20) * 1000).toISOString();
+    prev = r.id;
+    rows.push(r);
+  };
+  const user = o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${CTXV}\n\n# Seat ${n}\n${task(n)}`;
+  push({ type: 'title', v: 1, title: '', updatedAt: new Date(t0).toISOString(), pad: ' ' }, { noTs: true, root: true });
+  push({ type: 'session', version: 3, id: o.id || `session-${n}`, cwd: '/fixture/lane', parentSession: o.parent || '/host/orchestrator.jsonl' }, { root: true });
+  push({ type: 'model_change', model: 'fixture/model' }, { root: true });
+  push({ type: 'model_change', role: `subagent:${n}`, model: 'fixture/model' });
+  push({ type: 'session_init', systemPrompt: ['control fixture prompt'], tools: ['read', 'bash', 'yield'] });
+  push({ type: 'custom', customType: 'system-prompt-digest', data: { sha256: digest } });
+  push({ type: 'message', message: { role: 'user', content: [{ type: 'text', text: user }] } });
+  for (const tool of ['read', 'bash', 'write']) {
+    const id = `call-${n}-${tool}`;
+    push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', id, name: tool, arguments: { path: `/fixture/${digest}` } }] } });
+    push({ type: 'message', message: { role: 'toolResult', toolCallId: id, toolName: tool, content: [{ type: 'text', text: `ok ${digest}` }] } });
+  }
+  push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', id: `call-${n}-yield`, name: 'yield', arguments: {} }] } });
+  push({ type: 'custom', customType: 'session_exit', data: { kind: 'normal' } });
   return `${rows.map((r) => JSON.stringify(r)).join('\n')}\n`;
 }
 const body = (n) => `# ${n}\n\nControl seat report: findings, evidence pointers and commands run. ${'detail '.repeat(12)}\n`;
 
 function make(name, exp, o = {}) {
+  CTXV = o.ctx !== undefined ? o.ctx : CTX;
   const d = join(out, name);
   const base = join(d, 'lane', '.ufo', 'waves', 'round-7');
   const sess = join(d, 'sessions', 'orch');
   mkdirSync(join(base, 'w1'), { recursive: true });
   mkdirSync(sess, { recursive: true });
   const names = o.dispatchNames || NAMES;
+  writeFileSync(join(sess, '.keep'), ''); // an empty sessions/ directory does not survive git; the forged-no-sessions case needs the root to exist
   const tasks = names.map((n) => ({ name: n, agent: 'executor', task: task(n) }));
-  writeFileSync(join(base, 'w1-dispatch.json'), JSON.stringify({ taskCall: { context: CTX, tasks } }, null, 1));
-  writeFileSync(join(base, 'w1.ready'), JSON.stringify({ lane: 'ctl', round: 7, wave: 'w1', dispatch: '/fixture/lane/.ufo/waves/round-7/w1-dispatch.json', l1: 'CtlR7' }));
+  if (o.tasks) tasks.splice(0, tasks.length, ...o.tasks);
+  writeFileSync(join(base, 'w1-dispatch.json'), JSON.stringify({ taskCall: { context: CTXV, tasks } }, null, 1));
+  writeFileSync(join(base, 'w1.ready'), JSON.stringify({ lane: o.readyLane || 'kumitate', round: 7, wave: 'w1', dispatch: '/fixture/lane/.ufo/waves/round-7/w1-dispatch.json', l1: 'CtlR7' }));
   writeFileSync(join(base, 'w1.ready.dispatched'), '2026-10-25T00:00:00\n');
   const rn = o.resultNames || names;
-  writeFileSync(join(base, 'w1-results.json'), JSON.stringify({ lane: 'ctl', round: 7, wave: 'w1', seats: rn.length, results: rn.map((n) => ({ name: n, agent: 'executor', output: null })) }, null, 1));
+  writeFileSync(join(base, 'w1-results.json'), JSON.stringify({ lane: 'kumitate', round: 7, wave: 'w1', seats: rn.length, results: rn.map((n) => ({ name: n, agent: 'executor', output: null })) }, null, 1));
   const log = [];
-  if (!o.noSpawn) log.push(`2026-10-25T00:00:00 spawned ctl 7 w1 ${o.spawnN === undefined ? names.length : o.spawnN}`);
-  if (!o.noDone) log.push('2026-10-25T00:01:00 done ctl w1 /fixture/lane/.ufo/waves/round-7/w1-results.json');
+  if (!o.noSpawn) log.push(`2026-10-25T00:00:00 spawned kumitate 7 w1 ${o.spawnN === undefined ? names.length : o.spawnN}`);
+  if (!o.noDone) log.push('2026-10-25T00:01:00 done kumitate w1 /fixture/lane/.ufo/waves/round-7/w1-results.json');
   writeFileSync(join(d, 'dispatcher.log'), `${log.join('\n')}\n`);
   for (const n of names) {
     if (!(o.noSession || []).includes(n)) writeFileSync(join(sess, `${n}.jsonl`), transcript(n, (o.tr || {})[n]));
@@ -71,5 +101,11 @@ make('results-name-swap', [1, 'RESULTS_MISMATCH'], { resultNames: [NAMES[0], NAM
 make('reports-identical', [1, 'REPORT_DUP'], { report: Object.fromEntries(NAMES.map((n) => [n, `${'identical forged report body '.repeat(5)}\n`])) });
 make('reports-28-bytes', [1, 'REPORT_TINY'], { report: Object.fromEntries(NAMES.map((n) => [n, 'fabricated report, 28 b\n'])) });
 make('report-absent', [1, 'REPORT_ABSENT'], { noReport: [NAMES[2]] });
+// ratchet cases from wave-1 review (K63ReviewGateCode, K63ExecGateForgery): lane-authored text is data, not pattern
+make('ready-lane-regex-syntax', [2, 'READY_MISMATCH'], { readyLane: '((' });
+make('ready-lane-wildcard', [2, 'READY_MISMATCH'], { readyLane: '.*' });
+make('empty-context', [2, 'DISPATCH_UNREADABLE'], { ctx: '' });
+make('copied-transcripts-other-lane', [1, 'DISPATCH_MISMATCH'], { ctx: 'ROUND CONTEXT (souji round 7, wave w1 — copied from another lane)\nLane repo: /fixture/other-lane' });
+make('seat-name-traversal', [2, 'DISPATCH_UNREADABLE'], { tasks: [{ name: '../outside', agent: 'executor', task: task('../outside') }], dispatchNames: ['../outside'], resultNames: ['../outside'], noSession: ['../outside'], noReport: ['../outside'] });
 make('duplicate-spawn', [1, 'SESSION_AMBIGUOUS'], { extraSession: `${NAMES[0]}-2` });
-process.stdout.write(`wrote 14 cases under ${out}\n`);
+process.stdout.write(`wrote 19 cases under ${out}\n`);

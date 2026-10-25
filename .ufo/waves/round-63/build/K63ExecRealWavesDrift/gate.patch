@@ -1,0 +1,113 @@
+--- scripts/inline-dispatch-evidence.mjs	2026-10-25 17:38:41.557972954 -0300
++++ .ufo/waves/round-63/build/K63ExecRealWavesDrift/inline-dispatch-evidence.patched.mjs	2026-10-25 18:16:15.333420160 -0300
+@@ -83,12 +83,26 @@
+         const r = spawnSync('git', ['-C', abs, 'show', `${rev}:${rel}`], { maxBuffer: 256 * 1024 * 1024 });
+         return r.status === 0 ? r.stdout : null;
+       },
++      list(rel) {
++        const r = spawnSync('git', ['-C', abs, 'ls-tree', '-r', '--name-only', `${rev}:${rel}`], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
++        return r.status === 0 ? r.stdout.split('\n').filter(Boolean).map((p) => `${rel}/${p}`) : [];
++      },
+     };
+   }
+   return {
+     read(rel) {
+       try { return readFileSync(join(abs, rel)); } catch { return null; }
+     },
++    list(rel) {
++      const out = [];
++      const walk = (r) => {
++        let ents = [];
++        try { ents = readdirSync(join(abs, r), { withFileTypes: true }); } catch { return; }
++        for (const e of ents) { const p = `${r}/${e.name}`; if (e.isDirectory()) walk(p); else out.push(p); }
++      };
++      walk(rel);
++      return out;
++    },
+   };
+ }
+ 
+@@ -190,12 +204,29 @@
+     let logRaw = null;
+     try { logRaw = readFileSync(log, 'utf8'); } catch { return { code: 2, findings: ['LOG_UNREADABLE'], unique: ['LOG_UNREADABLE'], line: `INLINE_DISPATCH: FAIL-CLOSED log-unreadable path=${log}` }; }
+     const lines = logRaw.split('\n');
+-    const spawned = lines.filter((l) => new RegExp(`\\bspawned ${lane} ${round} ${wave} (\\d+)$`).test(l));
+-    if (spawned.length === 0) findings.push('SPAWN_LOG_ABSENT');
++    const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
++    const L = esc(lane); const R = esc(round);
++    // The dispatcher logs the wave name it read from the ready marker (`meta.wave`). When a lane
++    // declares a different name than the marker's file stem (READY_MISMATCH, still reported), the
++    // log lines carry the declared name; read both so a real record is not called absent.
++    const W = [wave, ready.wave].filter((x, i, a) => x && a.indexOf(x) === i).map(esc);
++    const anyW = (l, re) => W.some((w) => re(w).test(l));
++    // A spawn record is any of the four shapes the dispatcher has written on this host:
++    //   spawned <lane> <round> <wave> <n>            (dispatcher.py and its predecessor)
++    //   adopted  <abs>/round-N/<wave>.ready          (dispatcher.py, wave already running)
++    //   registered <abs>/round-N/<wave>.ready        (pre-kernel-loss dispatcher cell)
++    //   drive … '<lane>/<wave>: spawned <n>/<total>' (pre-kernel-loss aggregate status line)
++    const spawned = lines.filter((l) => anyW(l, (w) => new RegExp(`\\bspawned ${L} ${R} ${w} (\\d+)$`)));
++    const adopted = lines.filter((l) => anyW(l, (w) => new RegExp(`\\badopted \\S*/round-${R}/${w}\\.ready$`)));
++    const registered = lines.filter((l) => anyW(l, (w) => new RegExp(`\\bregistered \\S*/round-${R}/${w}\\.ready$`)));
++    const aggregated = lines.map((l) => W.map((w) => l.match(new RegExp(`'${L}/${w}: spawned (\\d+)/(\\d+)`))).find(Boolean))
++      .filter((m) => m && Number(m[1]) === tasks.length && Number(m[2]) === tasks.length);
++    if (spawned.length === 0 && adopted.length === 0 && registered.length === 0 && aggregated.length === 0) findings.push('SPAWN_LOG_ABSENT');
+     else if (spawned.length > 1) findings.push(`SPAWN_LOG_MISMATCH:spawned-${spawned.length}-times`);
+-    else if (Number(spawned[0].split(' ').pop()) !== tasks.length) findings.push(`SPAWN_LOG_MISMATCH:logged=${spawned[0].split(' ').pop()} dispatched=${tasks.length}`);
+-    const doneRe = new RegExp(`\\bdone ${lane} ${wave} \\S*/round-${round}/${wave}-results\\.json$`);
+-    if (!lines.some((l) => doneRe.test(l))) findings.push('DONE_LOG_ABSENT');
++    else if (spawned.length === 1 && Number(spawned[0].split(' ').pop()) !== tasks.length) findings.push(`SPAWN_LOG_MISMATCH:logged=${spawned[0].split(' ').pop()} dispatched=${tasks.length}`);
++    // Older dispatchers wrote `done <lane> <wave>` with no results path; the file itself is read above.
++    if (!lines.some((l) => anyW(l, (w) => new RegExp(`\\bdone ${L} ${w} \\S*/round-${R}/${w}-results\\.json$`))
++      || anyW(l, (w) => new RegExp(`\\bdone ${L} ${w}$`)))) findings.push('DONE_LOG_ABSENT');
+   }
+ 
+   // 4. host transcripts
+@@ -210,14 +241,26 @@
+     const cands = candidates(index, t.name);
+     const matched = [];
+     let foreign = 0;
++    let sameWave = 0;
+     for (const p of cands) {
+       const tr = parseTranscript(p);
+       if (!tr) continue;
+-      const ok = tr.user.includes(`# Seat ${t.name}\n`) && tr.user.includes(ctxHead) && tr.user.includes(tail(String(t.task), 120));
++      // Identity = the wave-unique context head + the seat-unique task tail. The `# Seat <name>`
++      // marker is written only by the run-7 inline dispatcher (dispatcher.py); the dispatcher
++      // generations before it compose `<ctx> + <task>` with no marker line, and those transcripts
++      // are equally this seat's. Cross-wave/cross-lane namesakes fail both tests.
++      // When a marker IS present it stays authoritative: a transcript that names another seat is
++      // never credited here (it is a namesake or a re-labelled copy), marker or no marker.
++      const other = /(?:^|\n)# Seat ([^\n]+)\n/.exec(tr.user);
++      if (other && other[1] !== t.name) { foreign += 1; continue; }
++      if (tr.user.includes(ctxHead)) sameWave += 1;
++      const ok = tr.user.includes(ctxHead) && tr.user.includes(tail(String(t.task), 120));
+       if (ok) matched.push({ p, tr }); else foreign += 1;
+     }
+     if (matched.length === 0) {
+-      findings.push(foreign ? `SESSION_FOREIGN:${t.name}` : `SESSION_ABSENT:${t.name}`);
++      // `:namesake-only` = every candidate is a same-named seat of another wave/lane, so this
++      // wave's transcript is absent rather than foreign.
++      findings.push(foreign ? `SESSION_FOREIGN:${t.name}${sameWave ? '' : ':namesake-only'}` : `SESSION_ABSENT:${t.name}`);
+       seatInfo.push({ name: t.name, session: null });
+       continue;
+     }
+@@ -234,11 +277,17 @@
+   if (parents.size > 1) findings.push(`PARENT_MISMATCH:${parents.size}-parents`);
+   if (sessions === 0) findings.push('NOT_A_DISPATCH');
+ 
+-  // 5. committed seat reports
++  // 5. committed seat reports: `<wave>/<Seat>.md`, or the per-seat subdirectory layout
++  // (`<wave>/<Seat>/**/*.md`) that several waves' dispatched contexts instruct
++  // ("Write only unique `.ufo/waves/round-N/<wave>/<seat>/` report").
+   const seen = new Map();
+   let reports = 0;
+   for (const s of seatInfo) {
+-    const b = src.read(`${base}/${wave}/${s.name}.md`);
++    let b = src.read(`${base}/${wave}/${s.name}.md`);
++    if (!b) {
++      const nested = src.list(`${base}/${wave}/${s.name}`).filter((p) => p.endsWith('.md')).sort();
++      if (nested.length) b = Buffer.concat(nested.map((p) => src.read(p) || Buffer.alloc(0)));
++    }
+     s.report = !!b;
+     if (!b) { if (!s.dead && s.session) findings.push(`REPORT_ABSENT:${s.name}`); continue; }
+     if (b.length < MIN_REPORT_BYTES) { findings.push(`REPORT_TINY:${s.name}`); continue; }

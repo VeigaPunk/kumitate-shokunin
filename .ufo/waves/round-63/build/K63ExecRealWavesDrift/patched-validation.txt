@@ -1,0 +1,18 @@
+# patched gate: selftest
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+exit=0
+# patched gate: frozen controls
+done-line-absent       want=1 got=1 id=DONE_LOG_ABSENT    yes
+duplicate-spawn        want=1 got=1 id=SESSION_AMBIGUOUS  yes
+forged-no-sessions     want=1 got=1 id=NOT_A_DISPATCH     yes
+honest                 want=0 got=0 id=CLEAN              yes
+one-session-missing    want=1 got=1 id=SESSION_ABSENT     yes
+parent-mismatch        want=1 got=1 id=PARENT_MISMATCH    yes
+report-absent          want=1 got=1 id=REPORT_ABSENT      yes
+reports-28-bytes       want=1 got=1 id=REPORT_TINY        yes
+reports-identical      want=1 got=1 id=REPORT_DUP         yes
+results-name-swap      want=1 got=1 id=RESULTS_MISMATCH   yes
+session-id-dup         want=1 got=1 id=SESSION_ID_DUP     yes
+spawn-count-lie        want=1 got=1 id=SPAWN_LOG_MISMATCH yes
+spawn-line-absent      want=1 got=1 id=SPAWN_LOG_ABSENT   yes
+template-transcripts   want=1 got=1 id=SESSION_FOREIGN    yes

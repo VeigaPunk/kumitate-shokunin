@@ -1,0 +1,116 @@
+# K63CriticFreezeIntegrity — reproduction log (verbatim outputs, 2026-10-25)
+# scratch: /tmp/kumitate-r63/K63CriticFreezeIntegrity
+# sandbox clone: /tmp/kumitate-r63/K63CriticFreezeIntegrity/base-clone (clone of the lane, HEAD b38a206)
+
+## 1. base receipts reproduce exactly (inline)
+$ node inline63-probe.mjs base-clone dfa6fca8f362e9c962f5b940025a2619380b759b ; echo exit=$?
+INLINE63_UNMET held=0/6 checks=6 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=I63 | I1 MISS tool-absent | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I3 MISS tool-absent;cases=0<10;no-honest-case | I5 MISS row-absent | I6 MISS tip-receipt-absent
+exit=1
+# == base/inline63-base.txt byte-for-byte
+
+## 2. base receipts reproduce exactly (topology)
+$ node topology63-probe.mjs base-clone dfa6fca8f362e9c962f5b940025a2619380b759b ; echo exit=$?
+TOPOLOGY63_UNMET held=1/7 checks=7 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=T63 | T1 MISS entry-absent | T2 MISS no-entry | T3 MISS no-rows | T4 MISS bullets=0 | T5 MISS no-bullets | T7 MISS province-names-entry=false readme-map-clean=false
+exit=1
+# == base/topology63-base.txt byte-for-byte
+
+## 3. the freeze itself: C1 I3 already MISSES from committed bytes
+$ node inline63-probe.mjs base-clone b38a2065ab8ac5b198f6569b9013d04411c3d40d ; echo exit=$?
+INLINE63_UNMET held=1/6 checks=6 rev=b38a2065ab8ac5b198f6569b9013d04411c3d40d rule=I63 | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I3 MISS forged-no-sessions:exit=2 want=1 NOT_A_DISPATCH | I5 MISS row-absent | I6 MISS tip-receipt-absent
+exit=1
+
+## 4. why: the control's sessions/ dir is empty and git cannot store it
+$ git -C kumitate-shokunin ls-tree -r b38a2065ab8ac5b198f6569b9013d04411c3d40d -- .ufo/waves/round-63/controls/inline/forged-no-sessions
+100644 blob 58ccc7ae5df8671ce3a14d4f315c9441f3b885ba	.ufo/waves/round-63/controls/inline/forged-no-sessions/dispatcher.log
+100644 blob 61e82a01c21f82411f825732c5a0fbde64c42871	.ufo/waves/round-63/controls/inline/forged-no-sessions/expect
+100644 blob 7a84dd6bb4f2f3c4623df3a6972eb751489753b4	.../lane/.ufo/waves/round-7/w1-dispatch.json
+100644 blob 218c0528f92362da965eed29b6bd9feed8c380f0	.../lane/.ufo/waves/round-7/w1-results.json
+100644 blob d87cbb2edb1df66baf3a8cd4fbdc966c4eed6ce2	.../lane/.ufo/waves/round-7/w1.ready
+100644 blob c2fe5f2953c7243ea786f7a99b5cba7833c73570	.../lane/.ufo/waves/round-7/w1.ready.dispatched
+100644 blob 38c405611c1c90032790ff2d11f894b286abbb94	.../lane/.ufo/waves/round-7/w1/K63AlphaOne.md
+100644 blob f944d641e4f9fa3f5fc99ac9da8b6e0951478af4	.../lane/.ufo/waves/round-7/w1/K63BetaTwo.md
+100644 blob d12e355d09108cc8e2480aaedd167b63502b32f4	.../lane/.ufo/waves/round-7/w1/K63GammaThree.md
+# no sessions/ member (git has no empty dirs); worktree: drwxr-xr-x sessions/ (untracked, empty)
+$ cat expect
+1
+NOT_A_DISPATCH
+
+## 5. the gate on that case, run from the freeze archive
+$ node scripts/inline-dispatch-evidence.mjs --root .../forged-no-sessions/lane --round 7 --wave w1 \
+    --sessions-root .../forged-no-sessions/sessions --dispatcher-log .../forged-no-sessions/dispatcher.log ; echo exit=$?
+INLINE_DISPATCH: FAIL-CLOSED sessions-root-absent path=.../forged-no-sessions/sessions
+FINDING SESSIONS_ROOT_ABSENT
+INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1
+exit=2
+
+## 6. all 14 cases from the archive, exit vs expect
+done-line-absent rc=1 want=1 id=DONE_LOG_ABSENT exit-ok
+duplicate-spawn rc=1 want=1 id=SESSION_AMBIGUOUS exit-ok
+forged-no-sessions rc=2 want=1 id=NOT_A_DISPATCH MISMATCH
+honest rc=0 want=0 id=CLEAN exit-ok
+one-session-missing rc=1 want=1 id=SESSION_ABSENT exit-ok
+parent-mismatch rc=1 want=1 id=PARENT_MISMATCH exit-ok
+report-absent rc=1 want=1 id=REPORT_ABSENT exit-ok
+reports-28-bytes rc=1 want=1 id=REPORT_TINY exit-ok
+reports-identical rc=1 want=1 id=REPORT_DUP exit-ok
+results-name-swap rc=1 want=1 id=RESULTS_MISMATCH exit-ok
+session-id-dup rc=1 want=1 id=SESSION_ID_DUP exit-ok
+spawn-count-lie rc=1 want=1 id=SPAWN_LOG_MISMATCH exit-ok
+spawn-line-absent rc=1 want=1 id=SPAWN_LOG_ABSENT exit-ok
+template-transcripts rc=1 want=1 id=SESSION_FOREIGN exit-ok
+
+## 7. minimal correction, verified in a fixture clone (never in the lane)
+$ git clone --no-hardlinks base-clone fixfix && git -C fixfix checkout -q b38a206...
+$ mkdir -p .ufo/waves/round-63/controls/inline/forged-no-sessions/sessions
+$ touch .ufo/waves/round-63/controls/inline/forged-no-sessions/sessions/.keep
+$ git -C fixfix add ... && git -C fixfix -c user.name=critic -c user.email=critic@invalid commit -m ...
+$ node inline63-probe.mjs fixfix e75a85869d40101b0b81dfc3abfac798154109cb ; echo exit=$?
+INLINE63_UNMET held=2/6 checks=6 rev=e75a85869d40101b0b81dfc3abfac798154109cb rule=I63 | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I5 MISS row-absent | I6 MISS tip-receipt-absent
+exit=1
+# I3 now passes; the remaining misses are the round's real work.
+
+## 8. selftest / fixture count / pins / real hosts
+$ node scripts/inline-dispatch-evidence.mjs --selftest | tail -1
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+$ git ls-tree -r --name-only b38a206... -- .ufo/waves/round-63/controls/inline | grep -c '/expect$'
+14
+# (git ls-tree -d on the controls/inline path prints only the tree itself, not its children — use the expect files)
+$ node scripts/counter-pins.mjs ; echo exit=$?
+COUNTER_PINS: CLEAN pins=21
+exit=0
+$ node scripts/inline-dispatch-evidence.mjs --root ~/Projects/shokunin/kengaku-shokunin --round 35 --wave build ; echo exit=$?
+INLINE_DISPATCH: CLEAN (seats=32 sessions=32 done=32 reports=32 dead=0)
+exit=0
+$ node scripts/inline-dispatch-evidence.mjs --root ~/Projects/shokunin/mori-shokunin --round 47 --wave w2 ; echo exit=$?
+INLINE_DISPATCH: CLEAN (seats=37 sessions=37 done=37 reports=37 dead=0)
+exit=0
+$ node scripts/inline-dispatch-evidence.mjs --root ~/Projects/shokunin/mori-shokunin --round 47 --wave w1 ; echo exit=$?
+INLINE_DISPATCH: DRIFT (seats=42 sessions=42 done=42 reports=41 dead=0)
+FINDING REPORT_ABSENT:MutPinSemanticCell
+exit=1
+# all three lines == controls/inline-real-hosts.txt verbatim
+
+## 9. freeze diff: nothing else moved
+$ git diff --name-status dfa6fca8 b38a206 | awk '{print $1}' | sort | uniq -c
+    197 A
+      1 M
+$ git diff --name-status dfa6fca8 b38a206 | grep -v '\.ufo/waves/round-63/'
+M	.ufo/pins/counter-pins.json
+A	scripts/inline-dispatch-evidence.mjs
+# counter-pins: 17 -> 21 pins, 4 added, 0 removed, 0 changed, 0 duplicate keys
+
+## 10. C2 T4/T5 accept degenerate quotes (patched generator, honest fixture only)
+$ node gen-degenerate.mjs base-clone dfa6fca8... /tmp/.../ctl-degenerate | head -1
+AS-EXPECTED c0-honest exit=0 expect=HELD :: TOPOLOGY63_HELD held=7/7 checks=7 rev=f8bc5c01d270e3bd500d131849e2e6c7358b1e55 rule=T63
+# bullets were  - S109 — "the"  and  - S109 — "and"  (one word each); 12/12 cases still AS-EXPECTED
+
+## 11. round shape vs I2
+$ node -e '...w1-dispatch.json...' -> counts: {"spawn":40,"resume":0,"total":40}
+# I2 requires the waves' seats to sum into [64,100]; w1 alone = 40.
+
+## 12. base receipts for maintenance (reproduced)
+$ node scripts/readme-map.mjs            -> README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 ... exit=1   (== base/readme-map-before.txt)
+$ node scripts/proxy-check.mjs           -> PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 330: pin.make-dispatch-actual ... exit=2 (== base/proxy-before.txt)
+$ sources-census.sh validate --file <base>/corpus/SOURCES.md -> 6x W04 + "file ok <path>" exit=0
+# note: label column is "file" here, "kumitate-shokunin" for the dir form; the receipt's "kumitate" matches neither.
+$ sources-census.sh census --file .../corpus/SOURCES.md -> file rows 134

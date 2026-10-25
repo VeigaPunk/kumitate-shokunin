@@ -476,6 +476,9 @@ const GATE_PINS = {
   'pin.receipt-evidence': 'scripts/receipt-evidence.mjs', // round 58: receipt reproduction + descending nonce-sweep gate (R57-V1/V2/V4)
   'pin.cite-sources': 'scripts/cite-sources.mjs', // round 59: README map rows must not cite an absent S### (R58-V3)
   'pin.dispatch-evidence': 'scripts/dispatch-evidence.mjs', // round 60: the round's actual dispatch record, not a prepared spec (R58-V2)
+  'pin.make-dispatch-actual': 'scripts/make-dispatch-actual.mjs', // round 62: the round-62 dispatcher invocation writer (pinned in SCORECARD, registered here in round 63 — the R62 fail-closed)
+  'pin.inline-dispatch-evidence': 'scripts/inline-dispatch-evidence.mjs', // round 63: inline wave dispatch evidence gate (C1)
+  'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

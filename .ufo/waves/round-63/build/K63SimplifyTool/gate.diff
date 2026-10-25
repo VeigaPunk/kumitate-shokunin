@@ -1,0 +1,113 @@
+--- a/scripts/inline-dispatch-evidence.mjs
++++ b/scripts/inline-dispatch-evidence.mjs
+@@ -34,7 +34,7 @@
+  */
+ import { spawnSync } from 'node:child_process';
+ import { createHash } from 'node:crypto';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
++import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+ import { homedir, tmpdir } from 'node:os';
+ import { join, resolve } from 'node:path';
+ 
+@@ -129,13 +129,12 @@
+ function parseTranscript(path) {
+   let raw = '';
+   try { raw = readFileSync(path, 'utf8'); } catch { return null; }
+-  const t = { sessionId: null, parent: null, user: '', yielded: false, exitKind: null, model: null };
++  const t = { sessionId: null, parent: null, user: '', yielded: false, exitKind: null };
+   for (const line of raw.split('\n')) {
+     if (!line) continue;
+     let row;
+     try { row = JSON.parse(line); } catch { continue; }
+     if (row.type === 'session' && !t.sessionId) { t.sessionId = row.id || null; t.parent = row.parentSession || null; }
+-    else if (row.type === 'model_change' && row.role && String(row.role).startsWith('subagent:') && !t.model) t.model = row.model || null;
+     else if (row.type === 'message' && row.message) {
+       if (row.message.role === 'user' && !t.user) t.user = userText(row);
+       else if (row.message.role === 'assistant' && Array.isArray(row.message.content)) {
+@@ -148,26 +147,27 @@
+ 
+ const tail = (s, n) => s.trim().slice(-n);
+ const sha = (b) => createHash('sha256').update(b).digest('hex');
++const failClosed = (id, why) => ({ code: 2, findings: [id], unique: [id], line: `INLINE_DISPATCH: FAIL-CLOSED ${why}` });
+ 
+ function inspect(opts) {
+   const { root, round, wave, rev, sessionsRoot, log, reportFile } = opts;
+   const findings = [];
+   const src = makeSource(root, rev);
+-  if (src.error) return { code: 2, findings: ['REV_UNREADABLE'], unique: ['REV_UNREADABLE'], line: `INLINE_DISPATCH: FAIL-CLOSED ${src.error.toLowerCase().replace('_unreadable', '-unreadable')}` };
++  if (src.error) return failClosed('REV_UNREADABLE', `rev-unreadable rev=${rev}`);
+   const base = `.ufo/waves/round-${round}`;
+   const readyRaw = src.read(`${base}/${wave}.ready`);
+   const markRaw = src.read(`${base}/${wave}.ready.dispatched`);
+-  if (!readyRaw || !markRaw) return { code: 2, findings: ['WAVE_ABSENT'], unique: ['WAVE_ABSENT'], line: `INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=${!!readyRaw} dispatched=${!!markRaw} wave=${base}/${wave}` };
++  if (!readyRaw || !markRaw) return failClosed('WAVE_ABSENT', `wave-absent ready=${!!readyRaw} dispatched=${!!markRaw} wave=${base}/${wave}`);
+   let ready; let dispatch; let results;
+-  try { ready = JSON.parse(readyRaw.toString('utf8')); } catch { return { code: 2, findings: ['DISPATCH_UNREADABLE'], unique: ['DISPATCH_UNREADABLE'], line: 'INLINE_DISPATCH: FAIL-CLOSED ready-unreadable' }; }
++  try { ready = JSON.parse(readyRaw.toString('utf8')); } catch { return failClosed('DISPATCH_UNREADABLE', 'ready-unreadable'); }
+   const dispatchRaw = src.read(`${base}/${wave}-dispatch.json`);
+-  try { dispatch = JSON.parse(dispatchRaw.toString('utf8')); } catch { return { code: 2, findings: ['DISPATCH_UNREADABLE'], unique: ['DISPATCH_UNREADABLE'], line: `INLINE_DISPATCH: FAIL-CLOSED dispatch-unreadable path=${base}/${wave}-dispatch.json` }; }
++  try { dispatch = JSON.parse(dispatchRaw.toString('utf8')); } catch { return failClosed('DISPATCH_UNREADABLE', `dispatch-unreadable path=${base}/${wave}-dispatch.json`); }
+   const resultsRaw = src.read(`${base}/${wave}-results.json`);
+-  try { results = JSON.parse(resultsRaw.toString('utf8')); } catch { return { code: 2, findings: ['RESULTS_UNREADABLE'], unique: ['RESULTS_UNREADABLE'], line: `INLINE_DISPATCH: FAIL-CLOSED results-unreadable path=${base}/${wave}-results.json` }; }
++  try { results = JSON.parse(resultsRaw.toString('utf8')); } catch { return failClosed('RESULTS_UNREADABLE', `results-unreadable path=${base}/${wave}-results.json`); }
+ 
+   const tc = dispatch && dispatch.taskCall;
+   const tasks = tc && Array.isArray(tc.tasks) ? tc.tasks : null;
+-  if (!tasks || tasks.length === 0 || typeof tc.context !== 'string') return { code: 2, findings: ['DISPATCH_UNREADABLE'], unique: ['DISPATCH_UNREADABLE'], line: 'INLINE_DISPATCH: FAIL-CLOSED dispatch-taskcall-absent' };
++  if (!tasks || tasks.length === 0 || typeof tc.context !== 'string') return failClosed('DISPATCH_UNREADABLE', 'dispatch-taskcall-absent');
+   const names = tasks.map((t) => t.name);
+   if (new Set(names).size !== names.length) findings.push('DISPATCH_MISMATCH:duplicate-seat-names');
+ 
+@@ -188,7 +188,7 @@
+   const lane = String(ready.lane || '');
+   if (log !== 'none') {
+     let logRaw = null;
+-    try { logRaw = readFileSync(log, 'utf8'); } catch { return { code: 2, findings: ['LOG_UNREADABLE'], unique: ['LOG_UNREADABLE'], line: `INLINE_DISPATCH: FAIL-CLOSED log-unreadable path=${log}` }; }
++    try { logRaw = readFileSync(log, 'utf8'); } catch { return failClosed('LOG_UNREADABLE', `log-unreadable path=${log}`); }
+     const lines = logRaw.split('\n');
+     const spawned = lines.filter((l) => new RegExp(`\\bspawned ${lane} ${round} ${wave} (\\d+)$`).test(l));
+     if (spawned.length === 0) findings.push('SPAWN_LOG_ABSENT');
+@@ -199,7 +199,7 @@
+   }
+ 
+   // 4. host transcripts
+-  if (!existsSync(sessionsRoot)) return { code: 2, findings: ['SESSIONS_ROOT_ABSENT'], unique: ['SESSIONS_ROOT_ABSENT'], line: `INLINE_DISPATCH: FAIL-CLOSED sessions-root-absent path=${sessionsRoot}` };
++  if (!existsSync(sessionsRoot)) return failClosed('SESSIONS_ROOT_ABSENT', `sessions-root-absent path=${sessionsRoot}`);
+   const index = indexSessions(sessionsRoot);
+   const ctxHead = tc.context.trim().slice(0, 200);
+   const seatInfo = [];
+@@ -229,7 +229,7 @@
+     else idSeen.set(tr.sessionId, t.name);
+     if (tr.parent) parents.add(tr.parent);
+     const clean = tr.yielded && tr.exitKind === 'normal';
+-    seatInfo.push({ name: t.name, session: tr.sessionId, dead: !clean, model: tr.model });
++    seatInfo.push({ name: t.name, session: tr.sessionId, dead: !clean });
+   }
+   if (parents.size > 1) findings.push(`PARENT_MISMATCH:${parents.size}-parents`);
+   if (sessions === 0) findings.push('NOT_A_DISPATCH');
+@@ -239,7 +239,6 @@
+   let reports = 0;
+   for (const s of seatInfo) {
+     const b = src.read(`${base}/${wave}/${s.name}.md`);
+-    s.report = !!b;
+     if (!b) { if (!s.dead && s.session) findings.push(`REPORT_ABSENT:${s.name}`); continue; }
+     if (b.length < MIN_REPORT_BYTES) { findings.push(`REPORT_TINY:${s.name}`); continue; }
+     reports += 1;
+@@ -258,7 +257,7 @@
+ 
+   const unique = [...new Set(findings.map((f) => f.split(':')[0]))];
+   const line = `INLINE_DISPATCH: ${unique.length ? 'DRIFT' : 'CLEAN'} (seats=${tasks.length} sessions=${sessions} done=${done} reports=${reports} dead=${dead.length})`;
+-  return { code: unique.length ? 1 : 0, findings, unique, line, dead, seatInfo, seats: tasks.length, sessions, done, reports };
++  return { code: unique.length ? 1 : 0, findings, unique, line, dead, done };
+ }
+ 
+ // ---------------------------------------------------------------- selftest
+@@ -269,7 +268,7 @@
+     { type: 'message', message: { role: 'user', content: [{ type: 'text', text: o.user !== undefined ? o.user : `Complete assignment thoroughly:\n\n${ctx}\n\n# Seat ${name}\n${task}` }] } },
+   ];
+   if (!o.noYield) rows.push({ type: 'message', message: { role: 'assistant', content: [{ type: 'toolCall', name: 'yield', arguments: {} }] } });
+-  if (o.exit !== false) rows.push({ type: 'custom', customType: 'session_exit', data: { kind: o.exit || 'normal' } });
++  rows.push({ type: 'custom', customType: 'session_exit', data: { kind: o.exit || 'normal' } });
+   return `${rows.map((r) => JSON.stringify(r)).join('\n')}\n`;
+ }
+ 

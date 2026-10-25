@@ -1,0 +1,603 @@
+## M01 [report-floor] line 43 exit=1 signal=-
+old: "const MIN_REPORT_BYTES = 64;"
+new: "const MIN_REPORT_BYTES = 0;"
+detail: FAIL report-tiny — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+--- last 3 output lines:
+FAIL worktree-mode-sees-edit — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (23/25)
+
+## M02 [report-floor] line 43 exit=0 signal=-
+old: "const MIN_REPORT_BYTES = 64;"
+new: "const MIN_REPORT_BYTES = 63;"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M03 [report-floor] line 244 exit=0 signal=-
+old: "if (b.length < MIN_REPORT_BYTES)"
+new: "if (b.length <= MIN_REPORT_BYTES)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M04 [report-floor] line 244 exit=1 signal=-
+old: "if (b.length < MIN_REPORT_BYTES)"
+new: "if (b.length > MIN_REPORT_BYTES)"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=0 dead=0) [REPORT_TINY]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M05 [tail-120] line 216 exit=0 signal=-
+old: "tail(String(t.task), 120)"
+new: "tail(String(t.task), 1)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M06 [tail-120] line 216 exit=0 signal=-
+old: "tail(String(t.task), 120)"
+new: "tail(String(t.task), 0)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M07 [tail-120] line 216 exit=0 signal=-
+old: "tail(String(t.task), 120)"
+new: "tail(String(t.task), 100000)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M08 [tail-120] line 216 exit=0 signal=-
+old: "&& tr.user.includes(tail(String(t.task), 120))"
+new: "&& true"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M09 [ctx-head-200] line 204 exit=0 signal=-
+old: "tc.context.trim().slice(0, 200)"
+new: "tc.context.trim().slice(0, 0)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M10 [ctx-head-200] line 204 exit=0 signal=-
+old: ".slice(0, 200)"
+new: ".slice(0, 5)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M11 [ctx-head-200] line 216 exit=0 signal=-
+old: "&& tr.user.includes(ctxHead) && "
+new: "&& true && "
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M12 [ctx-head-200] line 204 exit=0 signal=-
+old: "tc.context.trim().slice(0, 200)"
+new: "tc.context.slice(0, 200)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M13 [exit-kind] line 231 exit=1 signal=-
+old: "tr.exitKind === 'normal'"
+new: "tr.exitKind !== 'normal'"
+detail: FAIL dead-count — dead=A1,B2 done=0
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=0 reports=1 dead=2) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (22/25)
+
+## M14 [exit-kind] line 231 exit=1 signal=-
+old: "tr.exitKind === 'normal'"
+new: "tr.exitKind === 'aborted'"
+detail: FAIL dead-count — dead=A1,B2 done=0
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=0 reports=1 dead=2) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (22/25)
+
+## M15 [exit-kind] line 142 exit=1 signal=-
+old: "part.name === 'yield'"
+new: "part.name === 'yieldx'"
+detail: FAIL dead-count — dead=A1,B2 done=0
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=0 reports=1 dead=2) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (22/25)
+
+## M16 [exit-kind] line 231 exit=0 signal=-
+old: "const clean = tr.yielded && tr.exitKind === 'normal';"
+new: "const clean = tr.yielded || tr.exitKind === 'normal';"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M17 [exit-kind] line 144 exit=1 signal=-
+old: "row.customType === 'session_exit'"
+new: "row.customType === 'session-exit'"
+detail: FAIL dead-count — dead=A1,B2 done=0
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=0 reports=1 dead=2) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (22/25)
+
+## M18 [exit-kind] line 144 exit=0 signal=-
+old: "(row.data && row.data.kind) || 'unknown'"
+new: "(row.data && row.data.kind) || 'normal'"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M19 [parents] line 234 exit=1 signal=-
+old: "if (parents.size > 1)"
+new: "if (parents.size > 2)"
+detail: FAIL parent-mismatch — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M20 [parents] line 234 exit=1 signal=-
+old: "if (parents.size > 1)"
+new: "if (parents.size > 0)"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [PARENT_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [PARENT_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M21 [sessions-zero] line 235 exit=1 signal=-
+old: "if (sessions === 0) findings.push('NOT_A_DISPATCH');"
+new: "if (sessions === -1) findings.push('NOT_A_DISPATCH');"
+detail: FAIL forged-no-sessions — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=0 dead=0) [SESSION_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M22 [sessions-zero] line 235 exit=1 signal=-
+old: "if (sessions === 0)"
+new: "if (sessions === 1)"
+detail: FAIL forged-no-sessions — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=0 dead=0) [SESSION_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M23 [sessions-zero] line 226 exit=1 signal=-
+old: "sessions += 1;"
+new: "sessions += 0;"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=3 reports=3 dead=0) [NOT_A_DISPATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=2 reports=1 dead=0) [NOT_A_DISPATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M24 [spawn-log] line 193 exit=1 signal=-
+old: "spawned ${lane} ${round} ${wave} ("
+new: "spawnX ${lane} ${round} ${wave} ("
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [SPAWN_LOG_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [SPAWN_LOG_ABSENT,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M25 [spawn-log] line 193 exit=0 signal=-
+old: "(\\\\d+)$"
+new: "(\\\\d+)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M26 [spawn-log] line 195 exit=0 signal=-
+old: "else if (spawned.length > 1)"
+new: "else if (spawned.length > 2)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M27 [spawn-log] line 196 exit=1 signal=-
+old: "Number(spawned[0].split(' ').pop()) !== tasks.length"
+new: "Number(spawned[0].split(' ').pop()) === tasks.length"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [SPAWN_LOG_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [SPAWN_LOG_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M28 [done-log] line 197 exit=1 signal=-
+old: "*/round-${round}/${wave}-results"
+new: "*/round-9/${wave}-results"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [DONE_LOG_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [DONE_LOG_ABSENT,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M29 [done-log] line 198 exit=1 signal=-
+old: "if (!lines.some((l) => doneRe.test(l))) findings.push('DONE_LOG_ABSENT');"
+new: "if (lines.some((l) => doneRe.test(l))) findings.push('DONE_LOG_ABSENT');"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [DONE_LOG_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [DONE_LOG_ABSENT,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M30 [done-log] line 197 exit=1 signal=-
+old: "done ${lane} ${wave} "
+new: "done ${lane} ${wave}X "
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [DONE_LOG_ABSENT]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [DONE_LOG_ABSENT,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M31 [ready] line 175 exit=1 signal=-
+old: "if (String(ready.round) !== String(round) || ready.wave !== wave"
+new: "if (String(ready.round) === String(round) || ready.wave !== wave"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [READY_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [READY_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M32 [ready] line 175 exit=0 signal=-
+old: "|| !ready.l1 ||"
+new: "|| false ||"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M33 [ready] line 175 exit=0 signal=-
+old: "ready.wave !== wave ||"
+new: "false ||"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M34 [ready] line 176 exit=1 signal=-
+old: "|| !String(ready.dispatch).endsWith("
+new: "|| String(ready.dispatch).endsWith("
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [READY_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [READY_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M35 [ready] line 160 exit=1 signal=-
+old: "if (!readyRaw || !markRaw)"
+new: "if (!readyRaw && !markRaw)"
+detail: FAIL marker-absent-fail-closed — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M36 [results] line 182 exit=1 signal=-
+old: "if (results.seats !== rs.length || rs.length !== tasks.length"
+new: "if (results.seats === rs.length || rs.length !== tasks.length"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [RESULTS_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [RESULTS_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M37 [results] line 182 exit=1 signal=-
+old: "rs.length !== tasks.length ||"
+new: "rs.length === tasks.length ||"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [RESULTS_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [RESULTS_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M38 [results] line 184 exit=1 signal=-
+old: "if (rn.get(t.name) !== t.agent)"
+new: "if (rn.get(t.name) === t.agent)"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [RESULTS_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [RESULTS_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M39 [results] line 185 exit=1 signal=-
+old: "if (!names.includes(r.name))"
+new: "if (names.includes(r.name))"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [RESULTS_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [RESULTS_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M40 [results] line 172 exit=1 signal=-
+old: "if (new Set(names).size !== names.length)"
+new: "if (new Set(names).size === names.length)"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [DISPATCH_MISMATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [DISPATCH_MISMATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M41 [session-match] line 217 exit=1 signal=-
+old: "if (ok) matched.push({ p, tr }); else foreign += 1;"
+new: "if (!ok) matched.push({ p, tr }); else foreign += 1;"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (16/25)
+
+## M42 [session-match] line 220 exit=1 signal=-
+old: "findings.push(foreign ? `SESSION_FOREIGN:${t.name}` : `SESSION_ABSENT:${t.name}`);"
+new: "findings.push(foreign ? `SESSION_ABSENT:${t.name}` : `SESSION_FOREIGN:${t.name}`);"
+detail: FAIL one-session-missing — INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=2 dead=0) [SESSION_FOREIGN]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (23/25)
+
+## M43 [session-match] line 224 exit=0 signal=-
+old: "if (matched.length > 1) findings.push("
+new: "if (matched.length > 2) findings.push("
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M44 [session-match] line 227 exit=1 signal=-
+old: "if (!tr.sessionId) findings.push("
+new: "if (tr.sessionId) findings.push("
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [SESSION_FOREIGN]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [SESSION_FOREIGN,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (20/25)
+
+## M45 [session-match] line 228 exit=1 signal=-
+old: "else if (idSeen.has(tr.sessionId))"
+new: "else if (false)"
+detail: FAIL session-id-dup — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M46 [session-match] line 216 exit=0 signal=-
+old: "tr.user.includes(`# Seat ${t.name}\\n`)"
+new: "tr.user.includes(`# Seat ${t.name}`)"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M47 [transcript] line 103 exit=1 signal=-
+old: "if (depth < 3) walk(p, depth + 1);"
+new: "if (depth < 0) walk(p, depth + 1);"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=0 reports=1 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (15/25)
+
+## M48 [transcript] line 103 exit=1 signal=-
+old: "e.name.endsWith('.jsonl')"
+new: "e.name.endsWith('.json')"
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=0 reports=1 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (15/25)
+
+## M49 [transcript] line 117 exit=1 signal=-
+old: "if (stem === name || (stem.startsWith("
+new: "if ((stem.startsWith("
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=0 reports=1 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (15/25)
+
+## M50 [transcript] line 117 exit=0 signal=-
+old: "/^\\d+$/.test(stem.slice(name.length + 1))"
+new: "/^.*$/.test(stem.slice(name.length + 1))"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M51 [transcript] line 137 exit=0 signal=-
+old: "row.type === 'session' && !t.sessionId"
+new: "row.type === 'session'"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M52 [transcript] line 140 exit=0 signal=-
+old: "row.message.role === 'user' && !t.user"
+new: "row.message.role === 'user'"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M53 [reports] line 243 exit=1 signal=-
+old: "if (!s.dead && s.session)"
+new: "if (s.dead && s.session)"
+detail: FAIL report-absent — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=1 dead=0)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M54 [reports] line 247 exit=1 signal=-
+old: "if (seen.has(h)) findings.push("
+new: "if (!seen.has(h)) findings.push("
+detail: FAIL honest — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [REPORT_DUP]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_DUP,REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M55 [reports] line 256 exit=1 signal=-
+old: "for (const n of dead) if (!rep.includes(n))"
+new: "for (const n of dead) if (rep.includes(n))"
+detail: FAIL dead-unnamed-in-report — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=1 reports=2 dead=1)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (23/25)
+
+## M56 [reports] line 253 exit=1 signal=-
+old: "if (reportFile) {"
+new: "if (true) {"
+detail: FAIL dead-seat-counted-not-credited — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=2 dead=1) [DEAD_UNNAMED]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (24/25)
+
+## M57 [reports] line 252 exit=0 signal=-
+old: "const done = seatInfo.filter((s) => s.session && !s.dead).length;"
+new: "const done = seatInfo.filter((s) => !s.dead).length;"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M58 [verdict] line 260 exit=0 signal=-
+old: "unique.length ? 'DRIFT' : 'CLEAN'"
+new: "unique.length ? 'CLEAN' : 'DRIFT'"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M59 [verdict] line 261 exit=1 signal=-
+old: "code: unique.length ? 1 : 0"
+new: "code: unique.length ? 1 : 1"
+detail: FAIL honest — INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (21/25)
+
+## M60 [verdict] line 259 exit=1 signal=-
+old: "f.split(':')[0]"
+new: "f.split(':')[1]"
+detail: FAIL dead-unnamed-in-report — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=2 dead=1) [B2]
+--- last 3 output lines:
+FAIL worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [B2]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (9/25)
+
+## M61 [rev-mode] line 78 exit=1 signal=-
+old: "if (rev) {"
+new: "if (!rev) {"
+detail: TypeError: Cannot read properties of undefined (reading 'length')
+--- last 3 output lines:
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.21.0
+
+## M62 [rev-mode] line 80 exit=1 signal=-
+old: "if (probe.status !== 0) return"
+new: "if (probe.status === 0) return"
+detail: FAIL rev-mode-ignores-worktree-edit — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=9e3f03abb82bd7e6b2daca9ffa256526ebf52ab2 [REV_UNREADABLE]
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+FAIL rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=false dispatched=false wave=.ufo/waves/round-7/w1 [WAVE_ABSENT]
+INLINE_DISPATCH_SELFTEST: FAIL (23/25)
+
+## M63 [dispatch-shape] line 170 exit=0 signal=-
+old: "tasks.length === 0 ||"
+new: "tasks.length === -1 ||"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M64 [dispatch-shape] line 170 exit=0 signal=-
+old: "typeof tc.context !== 'string'"
+new: "false"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M65 [selftest-harness] line 311 exit=1 signal=-
+old: "r.unique.includes(finding)"
+new: "!r.unique.includes(finding)"
+detail: FAIL dead-unnamed-in-report — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=2 dead=1) [DEAD_UNNAMED]
+--- last 3 output lines:
+FAIL worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+FAIL rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: FAIL (5/25)
+
+## M66 [selftest-harness] line 311 exit=0 signal=-
+old: "finding === null ? r.unique.length === 0 : "
+new: "finding === null ? true : "
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+
+## M67 [selftest-harness] line 359 exit=0 signal=-
+old: "process.exit(passed === cases.length ? 0 : 1);"
+new: "process.exit(passed === cases.length ? 0 : 0);"
+detail: exit=0 selftest PASS with mutant applied
+--- last 3 output lines:
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+INLINE_DISPATCH_SELFTEST: PASS (25/25)
+

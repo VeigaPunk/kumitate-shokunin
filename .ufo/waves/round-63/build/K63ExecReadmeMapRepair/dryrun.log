@@ -1,0 +1,29 @@
+== step 0: mirror of the frozen base (b38a2065, no repair) ========
+README_MAP: note unpinned:lessons/round-62-verifier-spotcheck.md
+README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 first=uncovered:lessons/round-62-verifier-spotcheck.md
+EXIT=1
+== step 1: repair applied (row + covered pin for round-62 spotcheck) ==
+README_MAP: CLEAN files=151 rows=151 covered=151
+EXIT=0
+== step 2: round-63 landing dry-run on a copy of the repaired mirror ==
+-- 2a: entry lands, no row, no pin --
+README_MAP: note unpinned:knowledge/multi-agent-coordinator-topologies.md
+README_MAP: DRIFT files=152 rows=151 covered=151 bad=2 first=uncovered:knowledge/multi-agent-coordinator-topologies.md
+EXIT=1
+-- 2b: entry row + pin added --
+README_MAP: CLEAN files=152 rows=152 covered=152
+EXIT=0
+-- 2c: lessons/round-63.md lands, no row, no pin (between the two landings) --
+README_MAP: note unpinned:lessons/round-63.md
+README_MAP: DRIFT files=153 rows=152 covered=152 bad=2 first=uncovered:lessons/round-63.md
+EXIT=1
+-- 2d: round-63.md row + pin added --
+README_MAP: CLEAN files=153 rows=153 covered=153
+EXIT=0
+-- 2e: round-63-verifier-spotcheck.md lands with its own writer, no row, no pin --
+README_MAP: note unpinned:lessons/round-63-verifier-spotcheck.md
+README_MAP: DRIFT files=154 rows=153 covered=153 bad=2 first=uncovered:lessons/round-63-verifier-spotcheck.md
+EXIT=1
+-- 2f: spotcheck row + pin added (closure-complete state) --
+README_MAP: CLEAN files=154 rows=154 covered=154
+EXIT=0

@@ -1,0 +1,85 @@
+{
+ "selftest": {
+  "code": 0,
+  "out": "PASS honest — INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)\nPASS dead-count — dead=B2 done=1\nPASS dead-seat-counted-not-credited — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=1 reports=2 dead=1)\nPASS dead-unnamed-in-report — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=2 dead=1) [DEAD_UNNAMED]\nPASS dead-named-in-report — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=1 reports=2 dead=1)\nPASS forged-no-sessions — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=0 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]\nPASS one-session-missing — INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=2 dead=0) [SESSION_ABSENT]\nPASS foreign-transcript — INLINE_DISPATCH: DRIFT (seats=2 sessions=1 done=1 reports=2 dead=0) [SESSION_FOREIGN]\nPASS session-id-dup — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_ID_DUP]\nPASS parent-mismatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [PARENT_MISMATCH]\nPASS spawn-count-lie — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_MISMATCH]\nPASS spawn-line-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_ABSENT]\nPASS done-line-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [DONE_LOG_ABSENT]\nPASS results-name-mismatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [RESULTS_MISMATCH]\nPASS results-seats-lie — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [RESULTS_MISMATCH]\nPASS report-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_ABSENT]\nPASS report-tiny — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]\nPASS report-duplicate-bytes — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [REPORT_DUP]\nPASS ready-wrong-round — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [READY_MISMATCH]\nPASS marker-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=true dispatched=false wave=.ufo/waves/round-7/w1 [WAVE_ABSENT]\nPASS sessions-root-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED sessions-root-absent path=<SELFTEST_TMP>/nope [SESSIONS_ROOT_ABSENT]\nPASS log-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED log-unreadable path=<SELFTEST_TMP>/nolog [LOG_UNREADABLE]\nPASS rev-mode-ignores-worktree-edit — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)\nPASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]\nPASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]\nINLINE_DISPATCH_SELFTEST: PASS (25/25)\n",
+  "pass": true,
+  "n": "25/25"
+ },
+ "controls": [
+  {
+   "case": "done-line-absent",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING DONE_LOG_ABSENT\n"
+  },
+  {
+   "case": "duplicate-spawn",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING SESSION_AMBIGUOUS:K63AlphaOne\n"
+  },
+  {
+   "case": "forged-no-sessions",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0)\nFINDING SESSION_ABSENT:K63AlphaOne\nFINDING SESSION_ABSENT:K63BetaTwo\nFINDING SESSION_ABSENT:K63GammaThree\nFINDING NOT_A_DISPATCH\n"
+  },
+  {
+   "case": "honest",
+   "code": 0,
+   "out": "INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)\n"
+  },
+  {
+   "case": "one-session-missing",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=3 dead=0)\nFINDING SESSION_ABSENT:K63BetaTwo\n"
+  },
+  {
+   "case": "parent-mismatch",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING PARENT_MISMATCH:2-parents\n"
+  },
+  {
+   "case": "report-absent",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=2 dead=0)\nFINDING REPORT_ABSENT:K63GammaThree\n"
+  },
+  {
+   "case": "reports-28-bytes",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=0 dead=0)\nFINDING REPORT_TINY:K63AlphaOne\nFINDING REPORT_TINY:K63BetaTwo\nFINDING REPORT_TINY:K63GammaThree\n"
+  },
+  {
+   "case": "reports-identical",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING REPORT_DUP:K63BetaTwo=K63AlphaOne\nFINDING REPORT_DUP:K63GammaThree=K63AlphaOne\n"
+  },
+  {
+   "case": "results-name-swap",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING RESULTS_MISMATCH:K63GammaThree\nFINDING RESULTS_MISMATCH:extra-K63Phantom\n"
+  },
+  {
+   "case": "session-id-dup",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING SESSION_ID_DUP:K63BetaTwo=K63AlphaOne\n"
+  },
+  {
+   "case": "spawn-count-lie",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING SPAWN_LOG_MISMATCH:logged=9 dispatched=3\n"
+  },
+  {
+   "case": "spawn-line-absent",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)\nFINDING SPAWN_LOG_ABSENT\n"
+  },
+  {
+   "case": "template-transcripts",
+   "code": 1,
+   "out": "INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=3 dead=0)\nFINDING SESSION_FOREIGN:K63AlphaOne\nFINDING SESSION_FOREIGN:K63BetaTwo\nFINDING SESSION_FOREIGN:K63GammaThree\nFINDING NOT_A_DISPATCH\n"
+  }
+ ],
+ "real": {
+  "code": 0,
+  "out": "INLINE_DISPATCH: CLEAN (seats=32 sessions=32 done=32 reports=32 dead=0)\n",
+  "err": ""
+ }
+}

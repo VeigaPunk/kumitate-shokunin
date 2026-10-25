@@ -1,0 +1,14 @@
+done-line-absent exit=1 want=1 gotid=DONE_LOG_ABSENT wantid=DONE_LOG_ABSENT :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING DONE_LOG_ABSENT 
+duplicate-spawn exit=1 want=1 gotid=SESSION_AMBIGUOUS wantid=SESSION_AMBIGUOUS :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING SESSION_AMBIGUOUS:K63AlphaOne 
+forged-no-sessions exit=2 want=1 gotid=SESSIONS_ROOT_ABSENT wantid=NOT_A_DISPATCH :: FINDING SESSIONS_ROOT_ABSENT INLINE_DISPATCH: FAIL-CLOSED contract=kumitate-inline-dispatch-evidence-v1 
+honest exit=0 want=0 gotid=CLEAN wantid=CLEAN :: INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0) 
+one-session-missing exit=1 want=1 gotid=SESSION_ABSENT wantid=SESSION_ABSENT :: INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=3 dead=0) FINDING SESSION_ABSENT:K63BetaTwo 
+parent-mismatch exit=1 want=1 gotid=PARENT_MISMATCH wantid=PARENT_MISMATCH :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING PARENT_MISMATCH:2-parents 
+report-absent exit=1 want=1 gotid=REPORT_ABSENT wantid=REPORT_ABSENT :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=2 dead=0) FINDING REPORT_ABSENT:K63GammaThree 
+reports-28-bytes exit=1 want=1 gotid=REPORT_TINY wantid=REPORT_TINY :: FINDING REPORT_TINY:K63BetaTwo FINDING REPORT_TINY:K63GammaThree 
+reports-identical exit=1 want=1 gotid=REPORT_DUP wantid=REPORT_DUP :: FINDING REPORT_DUP:K63BetaTwo=K63AlphaOne FINDING REPORT_DUP:K63GammaThree=K63AlphaOne 
+results-name-swap exit=1 want=1 gotid=RESULTS_MISMATCH wantid=RESULTS_MISMATCH :: FINDING RESULTS_MISMATCH:K63GammaThree FINDING RESULTS_MISMATCH:extra-K63Phantom 
+session-id-dup exit=1 want=1 gotid=SESSION_ID_DUP wantid=SESSION_ID_DUP :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING SESSION_ID_DUP:K63BetaTwo=K63AlphaOne 
+spawn-count-lie exit=1 want=1 gotid=SPAWN_LOG_MISMATCH wantid=SPAWN_LOG_MISMATCH :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING SPAWN_LOG_MISMATCH:logged=9 dispatched=3 
+spawn-line-absent exit=1 want=1 gotid=SPAWN_LOG_ABSENT wantid=SPAWN_LOG_ABSENT :: INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) FINDING SPAWN_LOG_ABSENT 
+template-transcripts exit=1 want=1 gotid=SESSION_FOREIGN wantid=SESSION_FOREIGN :: FINDING SESSION_FOREIGN:K63GammaThree FINDING NOT_A_DISPATCH 

@@ -1,0 +1,31 @@
+## probe on the real lane, base dfa6fca8 (reproduces base/inline63-base.txt)
+INLINE63_UNMET held=0/6 checks=6 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=I63 | I1 MISS tool-absent | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I3 MISS tool-absent;cases=0<10;no-honest-case | I5 MISS row-absent | I6 MISS tip-receipt-absent
+exit=1
+
+## probe on a CLEAN FIXTURE of this lane at b38a206 (archive -> git init -> commit, unmodified)
+INLINE63_UNMET held=1/6 checks=6 rev=8bce529d9687bb4841024d685272f30ef4249192 rule=I63 | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I3 MISS forged-no-sessions:exit=2 want=1 NOT_A_DISPATCH | I5 MISS row-absent | I6 MISS tip-receipt-absent
+exit=1
+
+## (a) no tool at all + fabricated wave/SCORECARD row/receipt
+INLINE63_UNMET held=1/6 checks=6 rev=2a8f46df1c667cef0d24f42faf082b00e141ea26 rule=I63 | I1 MISS tool-absent | I2 MISS tool-absent | I4 MISS no-committed-wave-results | I3 MISS tool-absent;cases=0<10;no-honest-case | I6 MISS missing-lines=0
+exit=1
+
+## (b) copies the real tool, fabricated wave with invented seat names
+INLINE63_UNMET held=3/6 checks=6 rev=438bb1a3cba982513f53e2ec16b6add0ecb13ce0 rule=I63 | I2 MISS w1:INLINE_DISPATCH: DRIFT (seats=40 sessions=0 done=0 reports=40 dead=0);total-seats=0 | I3 MISS forged-no-sessions:exit=2 want=1 NOT_A_DISPATCH | I6 MISS missing-lines=0
+exit=1
+
+## (b2) same tool, seats = 40 REAL w1 transcripts, harvested read-only (no host writes)
+INLINE63_UNMET held=4/6 checks=6 rev=208f13e2421bc7103bf23c618950bdb689f1f5ac rule=I63 | I2 MISS w1:INLINE_DISPATCH: DRIFT (seats=40 sessions=40 done=3 reports=40 dead=37);total-seats=0 | I6 MISS missing-lines=0
+exit=1
+
+## (c) hand-written transcripts in a SCRATCH sessions root (real HOME)
+INLINE63_UNMET held=4/6 checks=6 rev=7432ceb98d70a818679f85c8f6b56289915163ac rule=I63 | I2 MISS w1:INLINE_DISPATCH: DRIFT (seats=40 sessions=0 done=0 reports=40 dead=0);total-seats=0 | I6 MISS first-line=rev=307143f1740704562d629c31a9f3db1a95279c85
+exit=1
+
+## (c2) same, HOME=fakehome so the scratch root IS the default root
+INLINE63_UNMET held=4/6 checks=6 rev=7432ceb98d70a818679f85c8f6b56289915163ac rule=I63 | I2 MISS w1:INLINE_DISPATCH: DRIFT (seats=40 sessions=40 done=40 reports=40 dead=0);total-seats=0 | I6 MISS first-line=rev=307143f1740704562d629c31a9f3db1a95279c85
+exit=1
+
+## (d) 21-line stub tool printing the expected lines
+INLINE63_HELD held=6/6 checks=6 rev=1ef349f4a663b958930fc69efe5c8bc8bf185fa4 rule=I63
+exit=0

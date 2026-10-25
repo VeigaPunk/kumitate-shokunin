@@ -1,0 +1,241 @@
+TRANSCRIPT_STATS root=/home/vgpnk/.omp/agent/sessions files=4596 scanned=4596 skipped=0 bytes=3123640274
+
+## classification (mutually exclusive)
+files total = 4596; with "# Seat <name>" user marker = 639; without = 3957
+finished (yield + exit normal) = 1447   [seat-marked 538]
+dead: no yield tool call          = 3096   [seat-marked 48]
+dead: yield but exit != normal    = 0   [seat-marked 0]
+dead: yield but no session_exit   = 53   [seat-marked 53]
+check: 1447+3096+0+53 = 4596 of 4596
+exitKind census (all files): normal=4483 NO_RECORD=111 signal=2
+exitKind census (seat-marked): normal=538 NO_RECORD=101
+
+## distribution among FINISHED seats
+all finished (n=1447)
+  bytes        n=1447 min=46421 p5=198781 median=448274 p95=1327153 max=3885219
+  toolResult   n=1447 min=1 p5=12 median=33 p95=109 max=303
+  spanS        n=1447 min=425 p5=480 median=645 p95=1564 max=8437
+  toolCalls    n=1447 min=1 p5=12 median=33 p95=109 max=303
+  rows         n=1447 min=15 p5=47 median=97 p95=317 max=874
+  modelUsage   n=1447 min=0 p5=0 median=1 p95=2 max=4
+  assistant    n=1447 min=2 p5=8 median=18 p95=79 max=243
+  user         n=1447 min=1 p5=1 median=1 p95=1 max=4
+  sessionInits n=1447 min=1 p5=1 median=2 p95=3 max=6
+  distinctTools n=1447 min=1 p5=4 median=5 p95=7 max=9
+
+finished + seat-marked (the population the gate credits) (n=538)
+  bytes        n=538 min=132136 p5=210157 median=380102 p95=984222 max=2474924
+  toolResult   n=538 min=9 p5=13 median=31 p95=88 max=199
+  spanS        n=538 min=453 p5=485 median=640 p95=1411 max=2925
+  toolCalls    n=538 min=9 p5=13 median=31 p95=88 max=199
+  rows         n=538 min=40 p5=51 median=92 p95=254 max=537
+  modelUsage   n=538 min=0 p5=0 median=1 p95=2 max=3
+  assistant    n=538 min=6 p5=9 median=17 p95=57 max=151
+  user         n=538 min=1 p5=1 median=1 p95=1 max=2
+  sessionInits n=538 min=1 p5=1 median=2 p95=3 max=4
+  distinctTools n=538 min=3 p5=4 median=5 p95=7 max=8
+
+## "-<N>" suffixed files (suffix is ambiguous: respawn OR a seat name that ends in -N)
+suffixed files = 524 (finished 187, dead 337)
+suffixed seat-marked = 98 (finished 96, dead 2)
+suffixed markerKind census: none=426 base=98 (own = the prompt names the -N stem itself; base = prompt names the stem without the suffix, i.e. a real respawn)
+true respawns (prompt names the base seat) = 98: ConnCrossClaim-2(finished) ConnCrossClaim-3(finished) ConnEvidenceResolve-2(finished) ConnPackageCross-2(finished) ConnRunState-2(finished) ConnSiblingFreshness-2(finished) ConnSiblingOverlap-2(finished) ConnSiblings-3(finished) ConnSiblings-4(finished) CritC1Control-2(finished) CritC1Control-3(finished) CritC1Predicate-3(finished) CritC2Admission-2(finished) CritC2Control-2(finished) CritC2Control-3(finished) ExecAssimIdGuard-2(finished) ExecC2Controls-2(finished) ExecGtestMirror-2(finished) ExecGtestMirror-3(finished) ExecLiveDriftR43-2(finished) ExecQuarantineSlice-2(finished) ExecRegressionSweep-2(finished) ExecRows01-2(finished) ExecRows01-3(finished) ExecRows02-2(finished) ExecRows02-3(finished) ExecRows03-2(finished) ExecRows03-3(finished) ExecRows04-2(finished) ExecRows04-3(finished) ExecRows05-2(finished) ExecRows05-3(finished) ExecRows06-2(finished) ExecRows06-3(finished) ExecRows07-2(finished) ExecRows07-3(finished) ExecRows08-2(finished) ExecRows08-3(finished) ExecRows09-2(finished) ExecRows09-3(finished) ExecRows10-2(finished) ExecRows10-3(finished) ExecRows11-2(finished) ExecRows11-3(finished) ExecRows12-2(finished) ExecRows12-3(finished) ExecRows13-2(finished) ExecRows13-3(finished) ExecRows14-2(finished) ExecRows14-3(finished) ExecRows15-2(finished) ExecRows15-3(finished) ExecRows16-2(finished) ExecRows16-3(finished) ExecRows17-2(finished) ExecRows17-3(finished) ExecRows18-2(finished) ExecRows18-3(finished) ExecRows19-2(finished) ExecRows19-3(finished) ExecRows20-2(finished) ExecRows20-3(finished) ExecRows21-2(finished) ExecRows21-3(finished) ExecRows22-2(finished) ExecRows22-3(finished) ExecRows23-2(finished) ExecRows23-3(finished) ExecRows24-2(finished) ExecRows24-3(finished) ExecScratchMirror-4(finished) MutC1Counter-2(finished) MutC1Counter-3(finished) MutC1Counter-4(finished) MutC2Counter-2(finished) MutC2Counter-3(dead) MutGuardIndent-2(finished) RevC1Counter-3(finished) RevC2Counter-2(finished) RevC2Entries-2(finished) RevReadme-2(finished) RevToolSafety-2(finished) ScoutQuarantine-2(finished) ScrScorecard-2(finished) ScribeFrontier-2(finished) ScribeGtestOrder-2(finished) ScribeGtestOrder-3(finished) ScribeGtestPrimer-2(finished) ScribeGtestPrimer-3(finished) ScribeGtestRows-2(finished) ScribeGtestRows-3(finished) ScribeLesson-4(finished) ScribeLog-4(finished) ScribeMistakes-2(finished) ScribeQuality-2(finished) ScribeQuality-3(finished) ScribeScorecard-5(finished) SentinelHygiene-2(dead)
+respawn vs base: base-absent=2 base-finished=96 base-dead=0 identical-first-user-message=63 different=33
+identical-prompt respawns (a dispatch matching one matches both -> gate SESSION_AMBIGUOUS): ConnPackageCross-2 ConnSiblingFreshness-2 ExecGtestMirror-2 ExecGtestMirror-3 ExecLiveDriftR43-2 ExecRegressionSweep-2 ExecRows01-2 ExecRows01-3 ExecRows02-2 ExecRows02-3 ExecRows03-2 ExecRows03-3 ExecRows04-2 ExecRows04-3 ExecRows05-2 ExecRows05-3 ExecRows06-2 ExecRows06-3 ExecRows07-2 ExecRows07-3 ExecRows08-2 ExecRows08-3 ExecRows09-2 ExecRows09-3 ExecRows10-2 ExecRows10-3 ExecRows11-2 ExecRows11-3 ExecRows12-2 ExecRows12-3 ExecRows13-2 ExecRows13-3 ExecRows14-2 ExecRows14-3 ExecRows15-2 ExecRows15-3 ExecRows16-2 ExecRows16-3 ExecRows17-2 ExecRows17-3 ExecRows18-2 ExecRows18-3 ExecRows19-2 ExecRows19-3 ExecRows20-2 ExecRows20-3 ExecRows21-2 ExecRows21-3 ExecRows22-2 ExecRows22-3 ExecRows23-2 ExecRows23-3 ExecRows24-2 ExecRows24-3 MutC2Counter-2 MutGuardIndent-2 ScoutQuarantine-2 ScribeGtestOrder-2 ScribeGtestOrder-3 ScribeGtestPrimer-2 ScribeGtestPrimer-3 ScribeGtestRows-2 ScribeGtestRows-3
+suffix census: -2=392 -3=121 -4=10 -5=1
+suffixed names: ClosureKasegi24-3 ClosureKotodama69-2 ClosureTabi23-2 L1Chousa46.CritC3Inference-2 L1Kaidoku34-2 L1Kake51.ConnectorSiblingOverlap-2 L1Kake51.CriticAbsence-2 L1Kake51.CriticCapability-2 L1Kake51.CriticGateCriterion-2 L1Kake51.CriticHarm-2 L1Kake51.CriticIds-2 L1Kake51.CriticQuarantine-2 L1Kake51.CriticShape-2 L1Kake51.CriticStaleRows-2 L1Kake51.CriticTautology-2 L1Kake51.CriticZeroControl-2 L1Kake51.ExecAccountingPrototype-2 L1Kake51.ExecCensusMirrorValidate-2 L1Kake51.ExecLedgerMutants-2 L1Kake51.ExecQuoteCounterMutants-2 L1Kake51.ExecQuoteRawScan-2 L1Kake51.ExecRegistryDiff-2 L1Kake51.ExecRowShape-2 L1Kake51.ExecSourceDigest-2 L1Kake51.ExecSpecLint-2 L1Kake51.MutationDropReport-2 L1Kake51.MutationRoute-2 L1Kake51.MutationSourceSha-2 L1Kake51.MutationSwapIds-2 L1Kake51.MutationWallClock-2 L1Kake51.RevengerR50-2 L1Kake51.ReviewAppendOnly-2 L1Kake51.ReviewC1Predicate-2 L1Kake51.ReviewC2Conditions-2 L1Kake51.ReviewEntryScope-2 L1Kake51.ReviewL1Accounting-2 L1Kake51.ReviewL2Routes-2 L1Kake51.ReviewL3Time-2 L1Kake51.ReviewQualityBar-2 L1Kake51.ReviewReportContract-2 L1Kake51.ReviewShonen-2 L1Kake51.ScoutCensusBefore-2 L1Kake51.ScoutCounterC1Base-2 L1Kake51.ScoutCounterC2Base-2 L1Kake51.ScoutCounterC2Tip-2 L1Kake51.ScoutMisroot-2 L1Kake51.ScoutQuarantineSlice-2 L1Kake51.ScribeEntryAudit-2 L1Kake51.ScribeLessonShape-2 L1Kake51.ScribeReportSources-2 L1Kake51.ScribeSourcesCells-2 L1Kake51.SentinelWriteScope-2 L1Kake51.SimplifierCounters-2 L1Kama38-2 L1Kama38-2.ConnSibling-2 L1Kama38-2.CriticC1Overcredit-2 L1Kama38-2.CriticClaimSize-2 L1Kama38-2.CriticRejectSet-2 L1Kama38-2.CriticTheme-2 L1Kama38-2.ExecCollisionGuard-2 L1Kama38-2.ExecFreshClone-2 L1Kama38-2.ExecHelp-2 L1Kama38-2.ExecTagInventory-2 L1Kama38-2.ExecValidateMirror-2 L1Kama38-2.FetchLiveRadix-2 L1Kama38-2.FetchLiveSession-2 L1Kama38-2.FetchS352-2 L1Kama38-2.FetchS353-2 L1Kama38-2.MutC1WrongId-2 L1Kama38-2.MutC3Instrument-2 L1Kama38-2.MutStagedLines-2 L1Kama38-2.RevengerIntent-2 L1Kama38-2.ReviewC1Predicate-2 L1Kama38-2.ReviewC1Sound-2 L1Kama38-2.ReviewC3Predicate-2 L1Kama38-2.ReviewFreeze-2 L1Kama38-2.ReviewKQ46Behavior-2 L1Kama38-2.ReviewQuorum-2 L1Kama38-2.ReviewSchema-2 L1Kama38-2.ReviewSeatReceipt-2 L1Kama38-2.ScoutConsiderthese-2 L1Kama38-2.ScoutLearned-2 L1Kama38-2.ScoutMisroot-2 L1Kama38-2.ScoutQuarantine-2 L1Kama38-2.ScoutStagedRows-2 L1Kama38-2.ScribeAppendBlock-2 L1Kama38-2.ScribeEntryAmendment-2 L1Kama38-2.ScribeEntryPin-2 L1Kama38-2.ScribeLesson-2 L1Kama38-2.ScribeScorecardLog-2 L1Kama39.R39Attack01-2 L1Kama39.R39Attack02-2 L1Kama39.R39Attack03-2 L1Kama39.R39Attack04-2 L1Kama39.R39Attack05-2 L1Kama39.R39Attack06-2 L1Kama39.R39Attack07-2 L1Kama39.R39Attack08-2 L1Kama39.R39Attack09-2 L1Kama39.R39Attack10-2 L1Kama39.R39Attack11-2 L1Kama39.R39Attack12-2 L1Kama39.R39Attack13-2 L1Kama39.R39Attack14-2 L1Kama39.R39Attack15-2 L1Kama39.R39Attack16-2 L1Kama39.R39Attack17-2 L1Kama39.R39Attack18-2 L1Kama39.R39Attack19-2 L1Kama39.R39Attack20-2 L1Kama39.R39Attack21-2 L1Kama39.R39Attack22-2 L1Kama39.R39Attack23-2 L1Kama39.R39Attack24-2 L1Kama39.R39Attack25-2 L1Kama39.R39Attack26-2 L1Kama39.R39Attack27-2 L1Kama39.R39Attack28-2 L1Kama39.R39Attack29-2 L1Kama39.R39Attack30-2 L1Kama39.R39Attack31-2 L1Kama39.R39Attack32-2 L1Kama39.R39Attack33-2 L1Kasegi23.AbsFormProbe-2 L1Kasegi23.AddHocAbsForm-2 L1Kasegi23.AnchorDebt-2 L1Kasegi23.BaselineFalsify-2 L1Kasegi23.BraceGlobProbe-2 L1Kasegi23.ClaimsIntegrity-2 L1Kasegi23.CnaVersionDate-2 L1Kasegi23.ControlsRerun-2 L1Kasegi23.DenomCount-2 L1Kasegi23.DocstringTruth-2 L1Kasegi23.EmptySuffixProbe-2 L1Kasegi23.EntryQuoteBinding-2 L1Kasegi23.FrontierAdmitForm-2 L1Kasegi23.FrontierSources-2 L1Kasegi23.HashCheck-2 L1Kasegi23.InheritedReuse-2 L1Kasegi23.LessonGateRows-2 L1Kasegi23.LiteralCarveout-2 L1Kasegi23.MatrixFreezeOrder-2 L1Kasegi23.MutateBoundary-2 L1Kasegi23.MutateBountyConfine-2 L1Kasegi23.MutateRelConfine-2 L1Kasegi23.NoHarmDiff-2 L1Kasegi23.Q2TierSupport-2 L1Kasegi23.Q7ControlsClaim-2 L1Kasegi23.RecheckAsWritten-2 L1Kasegi23.RegistryR8-2 L1Kasegi23.RerunMatrix-2 L1Kasegi23.S018Quotes-2 L1Kasegi23.S029Quotes-2 L1Kasegi23.S030Quotes-2 L1Kasegi23.SentinelChecker-2 L1Kasegi23.SentinelQ6-2 L1Kasegi23.SiblingOverlap-2 L1Kasegi23.SnapGapDisclosure-2 L1Kasegi23.VacuityDisclosure-2 L1Kasegi26.ConnOverlap-2 L1Kasegi26.ConnOwnership-2 L1Kasegi26.ConnR25Continuity-2 L1Kasegi26.ConnUsedbyMap-2 L1Kasegi26.CritNoHarm-2 L1Kasegi26.CritVacuityC1-2 L1Kasegi26.CritVacuityC2-2 L1Kasegi26.ExecAuditFix-2 L1Kasegi26.ExecCaptureS041-2 L1Kasegi26.ExecExpectedList-2 L1Kasegi26.ExecFrontierSim-2 L1Kasegi26.ExecManifestRecheck-2 L1Kasegi26.ExecMirrorCensus-2 L1Kasegi26.ExecReceiptIndex-2 L1Kasegi26.ExecSkillRegistry-2 L1Kasegi26.MutDeletionControls-2 L1Kasegi26.MutGameability-2 L1Kasegi26.MutRegistryRow-2 L1Kasegi26.RevDigestLineage-2 L1Kasegi26.RevS040Fingerprint-2 L1Kasegi26.ScoutDatawalk-2 L1Kasegi26.ScoutPackageInventory-2 L1Kasegi26.ScoutQuarantine-2 L1Kasegi26.ScoutQuoteRelocation-2 L1Kasegi26.ScoutS040Probe-2 L1Kasegi26.ScribeEntryCrosswalk-2 L1Kasegi26.ScribeEntryDivision-2 L1Kasegi26.ScribeLesson-2 L1Kasegi26.ScribeLogProvince-2 L1Kasegi26.ScribeReadme-2 L1Kasegi26.ScribeScorecard-2 L1Kasegi26.ScribeSourcesAppend-2 L1Kasegi26.SentContract-2 L1Kasegi26.SentScopeSweep-2 L1Kasegi26.SimplYagni-2 L1Kengaku30.R30FxC1ControlJunk-3 L1Kengaku30.R30FxC1Counter-3 L1Kengaku30.R30FxC1Predicate-3 L1Kengaku30.R30FxC2Counter-3 L1Kengaku30.R30FxC2Recheck-3 L1Kengaku30.R30FxC3CLI-3 L1Kengaku30.R30FxC3Gate-3 L1Kengaku30.R30FxConsiderthese-3 L1Kengaku30.R30FxCounterSelfGuard-3 L1Kengaku30.R30FxCoverageAxis-3 L1Kengaku30.R30FxDeadSeats-3 L1Kengaku30.R30FxEntryCompleteSet-3 L1Kengaku30.R30FxEntryQ1Q3-3 L1Kengaku30.R30FxEntryQ4Q6-3 L1Kengaku30.R30FxEntryQ7Q9-3 L1Kengaku30.R30FxEvidence-3 L1Kengaku30.R30FxFlipRev-3 L1Kengaku30.R30FxGateRegression-3 L1Kengaku30.R30FxNoHarm-3 L1Kengaku30.R30FxPriorArt-3 L1Kengaku30.R30FxQ13Fixture-3 L1Kengaku30.R30FxQuarantine-3 L1Kengaku30.R30FxQuotes-3 L1Kengaku30.R30FxR13Revert-3 L1Kengaku30.R30FxRowsCensus-3 L1Kengaku30.R30FxSibling-3 L1Kengaku30.R30FxSrcS081-3 L1Kengaku30.R30FxSrcS082-3 L1Kengaku30.R30FxSrcS083-3 L1Kengaku30.R30FxSrcS084-3 L1Kengaku30.R30FxSrcS085-3 L1Kengaku30.R30FxSrcS086-3 L1Kengaku30.R30FxStagedContrast-3 L1Kengaku32.R32CatProbe-2 L1Kengaku32.R32CatProbe-3 L1Kengaku32.R32CollisionGuard-2 L1Kengaku32.R32CollisionGuard-3 L1Kengaku32.R32ConnSibling-2 L1Kengaku32.R32ConnSibling-3 L1Kengaku32.R32Considerthese-2 L1Kengaku32.R32Considerthese-3 L1Kengaku32.R32CountersPreflight-2 L1Kengaku32.R32CountersPreflight-3 L1Kengaku32.R32CritC1-2 L1Kengaku32.R32CritC1-3 L1Kengaku32.R32CritC2-2 L1Kengaku32.R32CritC2-3 L1Kengaku32.R32CritC3-2 L1Kengaku32.R32CritC3-3 L1Kengaku32.R32DraftEntry-2 L1Kengaku32.R32DraftEntry-3 L1Kengaku32.R32DraftErrata-2 L1Kengaku32.R32DraftErrata-3 L1Kengaku32.R32DraftLesson-2 L1Kengaku32.R32DraftLesson-3 L1Kengaku32.R32DraftMistakes-2 L1Kengaku32.R32DraftMistakes-3 L1Kengaku32.R32DraftReport-2 L1Kengaku32.R32DraftReport-3 L1Kengaku32.R32DraftRows-2 L1Kengaku32.R32DraftRows-3 L1Kengaku32.R32DraftScorecard-2 L1Kengaku32.R32DraftScorecard-3 L1Kengaku32.R32Frontier-2 L1Kengaku32.R32Frontier-3 L1Kengaku32.R32GateBlock-2 L1Kengaku32.R32GateBlock-3 L1Kengaku32.R32LearnC1-2 L1Kengaku32.R32LearnC1-3 L1Kengaku32.R32MirrorCensus-2 L1Kengaku32.R32MirrorCensus-3 L1Kengaku32.R32MutCounters-2 L1Kengaku32.R32MutCounters-3 L1Kengaku32.R32MutRows-2 L1Kengaku32.R32MutRows-3 L1Kengaku32.R32PlanWalk-2 L1Kengaku32.R32PlanWalk-3 L1Kengaku32.R32Quarantine-2 L1Kengaku32.R32Quarantine-3 L1Kengaku32.R32QuoteMode-2 L1Kengaku32.R32QuoteMode-3 L1Kengaku32.R32ReconPackage-2 L1Kengaku32.R32ReconPackage-3 L1Kengaku32.R32RevClaims-2 L1Kengaku32.R32RevClaims-3 L1Kengaku32.R32RevEntry-2 L1Kengaku32.R32RevEntry-3 L1Kengaku32.R32RevFixes-2 L1Kengaku32.R32RevFixes-3 L1Kengaku32.R32RevGate-2 L1Kengaku32.R32RevGate-3 L1Kengaku32.R32Sentinel-2 L1Kengaku32.R32Sentinel-3 L1Kengaku32.R32SentinelScope-2 L1Kengaku32.R32SentinelScope-3 L1Kengaku32.R32SrcS094a-2 L1Kengaku32.R32SrcS094a-3 L1Kengaku32.R32SrcS094b-2 L1Kengaku32.R32SrcS094b-3 L1Kengaku32.R32SrcS097-2 L1Kengaku32.R32SrcS097-3 L1Kotoba69-2 L1Kumitate62.Audit19-2 L1Kumitate62.Audit19-3 L1Mado37-2 L1Mori44-4 L1Souji25.ConnSiblings-2 L1Souji25.CritFrontier-2 L1Souji25.CritRound-2 L1Souji25.ExecC1-2 L1Souji25.ExecC2-2 L1Souji25.ExecC3-2 L1Souji25.ExecR17-2 L1Souji25.MutCoverageAgreement-2 L1Souji25.MutSizeCensus-2 L1Souji25.RevC1-2 L1Souji25.RevC2-2 L1Souji25.RevC3-2 L1Souji25.RevR17-2 L1Souji25.ScoutC1KillRule-2 L1Souji25.ScoutC2Probe-2 L1Souji25.ScoutC3Structure-2 L1Souji25.ScoutD6Slice-2 L1Souji25.ScoutGateCensus-2 L1Souji25.ScoutPreregAudit-2 L1Souji25.ScoutR17RecordAgreement-2 L1Souji25.ScoutScorecardLines-2 L1Souji25.ScoutSourcedClaimCheck-2 L1Souji25.ScoutSourcesOpen-2 L1Souji25.ScoutToolSHA256Counter-2 L1Souji25.ScribeD5D6-2 L1Souji25.ScribeLesson-2 L1Souji25.ScribeQualityQ57-2 L1Souji25.ScribeReadme-2 L1Souji25.ScribeScorecard-2 L1Souji25.ScribeSources-2 L1Souji25.SentScope-2 L1Souji25.SentSecurity-2 C27N15-2 ConnClaims-2 ConnClaims-3 ConnClaims-4 ConnCrossClaim-2 ConnCrossClaim-3 ConnCrossSource-2 ConnEvidenceResolve-2 ConnPackageCross-2 ConnRedirectSurface-2 ConnRunState-2 ConnSiblingFreshness-2 ConnSiblingOverlap-2 ConnSiblings-2 ConnSiblings-3 ConnSiblings-4 ConnStagedCensus-2 ConnStagedCensus-3 CritC1Control-2 CritC1Control-3 CritC1Kill-2 CritC1Kill-4 CritC1Predicate-3 CritC2Admission-2 CritC2Control-2 CritC2Control-3 CritC2Kill-2 CritC2Kill-3 CritGlobal-2 CritGlobal-3 CritMeta-2 ExecAssimIdGuard-2 ExecAxisFixture-3 ExecAxisSelftest-2 ExecC1Surgery-2 ExecC1Verify-2 ExecC2Controls-2 ExecCensusAfter-2 ExecCensusAfter-3 ExecCensusDry-2 ExecControlC1-2 ExecDensityNoHarm-2 ExecExpectedList-2 ExecGtestMirror-2 ExecGtestMirror-3 ExecHarnessC2-2 ExecImplC1-2 ExecLiveDriftR43-2 ExecPostCommitRecheck-2 ExecQuarantineSlice-2 ExecRegressionSweep-2 ExecRenumberMap-2 ExecRows01-2 ExecRows01-3 ExecRows02-2 ExecRows02-3 ExecRows03-2 ExecRows03-3 ExecRows04-2 ExecRows04-3 ExecRows05-2 ExecRows05-3 ExecRows06-2 ExecRows06-3 ExecRows07-2 ExecRows07-3 ExecRows08-2 ExecRows08-3 ExecRows09-2 ExecRows09-3 ExecRows10-2 ExecRows10-3 ExecRows11-2 ExecRows11-3 ExecRows12-2 ExecRows12-3 ExecRows13-2 ExecRows13-3 ExecRows14-2 ExecRows14-3 ExecRows15-2 ExecRows15-3 ExecRows16-2 ExecRows16-3 ExecRows17-2 ExecRows17-3 ExecRows18-2 ExecRows18-3 ExecRows19-2 ExecRows19-3 ExecRows20-2 ExecRows20-3 ExecRows21-2 ExecRows21-3 ExecRows22-2 ExecRows22-3 ExecRows23-2 ExecRows23-3 ExecRows24-2 ExecRows24-3 ExecScopeSweep-2 ExecScopeSweep-3 ExecScratchMirror-3 ExecScratchMirror-4 ExecSelftestProbe-2 ExecVerifyLoop-2 LabAxisRun-2 MutC1Counter-2 MutC1Counter-3 MutC1Counter-4 MutC2Counter-2 MutC2Counter-3 MutC2Rows-2 MutGuardIndent-2 R33ExecVerifySelf-2 R33GateMutants-2 R33IndexTruth-2 R33L0Packet-2 R33SentinelScope-2 R33WaveBook-2 R35Audit46-2 R35Audit47-2 R40F03-2 R40S11-2 RevC1Controls-2 RevC1Counter-2 RevC1Counter-3 RevC1Instrument-2 RevC2Counter-2 RevC2Entries-2 RevC2Entry-2 RevC2Manifest-2 RevC2Registry-2 RevEntryC3-2 RevNoHarm-2 RevNoHarmC1-2 RevReadme-2 RevReceiptsCanon-2 RevToolSafety-2 Review1Causal153-2 ScoutAssimilation-2 ScoutDatawalk-2 ScoutDatawalk-3 ScoutQuarantine-2 ScrKnowledgeEntry-2 ScrLesson-2 ScrReportMain-2 ScrScorecard-2 Scribe3347-2 Scribe8852-2 ScribeEntryA-2 ScribeFrontier-2 ScribeFrontierNote-2 ScribeFrontierNotes-2 ScribeGtestOrder-2 ScribeGtestOrder-3 ScribeGtestPrimer-2 ScribeGtestPrimer-3 ScribeGtestRows-2 ScribeGtestRows-3 ScribeLOG27-2 ScribeLesson-2 ScribeLesson-3 ScribeLesson-4 ScribeLessonGate-2 ScribeLessonGate-3 ScribeLessonGate-4 ScribeLog-2 ScribeLog-3 ScribeLog-4 ScribeMistakes-2 ScribeQuality-2 ScribeQuality-3 ScribeQuarantine-2 ScribeReadmeC2-2 ScribeReport-2 ScribeReportDigest-2 ScribeScorecard-2 ScribeScorecard-3 ScribeScorecard-4 ScribeScorecard-5 ScribeSkillGate-2 ScribeSkillGate-3 ScribeSourceRows-2 ScribeSourcesGate-2 SctHeldEntries-2 SentScope-2 SentScope-3 SentinelHygiene-2 SimplSeqTrim-2 SonicReadmeMap-2 TabiR27.MutC2Gate-2
+
+## structural invariants over FINISHED seats (all) (n=1447)
+HOLDS  toolResult >= 1: violations=0
+HOLDS  toolCalls >= 1: violations=0
+BROKEN toolResult == toolCalls: violations=3 [RevC1ExemptionSemantics RevSeatEvidence ScoutPlanned]
+BROKEN toolExecStarts == toolCalls: violations=3 [RevC1ExemptionSemantics RevSeatEvidence ScoutPlanned]
+HOLDS  rows >= 4: violations=0
+HOLDS  sessionInits >= 1: violations=0
+HOLDS  session row with an id: violations=0
+HOLDS  user >= 1: violations=0
+HOLDS  assistant >= 2: violations=0
+BROKEN modelUsage >= 1: violations=558 [Audit1Protocol157 Build2S334 Build3S435 Build5C237 C11S101 C12S302 C13S403 C16S306 C211509 C24ActionOverride12 C26F14 CloseKasegiR28 …+546]
+HOLDS  dupIds == 0: violations=0
+HOLDS  danglingParents == 0: violations=0
+HOLDS  parseFail == 0: violations=0
+BROKEN orphanResults == 0: violations=1 [ScoutPlanned]
+HOLDS  yield answered by a toolResult: violations=0
+HOLDS  spanS >= 1: violations=0
+BROKEN distinctTools >= 3: violations=4 [ProbeFlashChain R34ReviewReadmePatch Run7DispatcherProbe SwarmScribe28]
+
+## structural invariants over FINISHED seat-marked (n=538)
+HOLDS  toolResult >= 1: violations=0
+HOLDS  toolCalls >= 1: violations=0
+BROKEN toolResult == toolCalls: violations=1 [ScoutPlanned]
+BROKEN toolExecStarts == toolCalls: violations=1 [ScoutPlanned]
+HOLDS  rows >= 4: violations=0
+HOLDS  sessionInits >= 1: violations=0
+HOLDS  session row with an id: violations=0
+HOLDS  user >= 1: violations=0
+HOLDS  assistant >= 2: violations=0
+BROKEN modelUsage >= 1: violations=239 [ConnEvidenceResolve-2 ConnNextRound ConnRoundPattern ConnRunState-2 ConnSeparability ConnSiblingAdoption ConnSiblingOverlap-2 ConnSiblings-4 ConnSourcePatterns ConnectorCrossClaim ConnectorSiblings CritAxisNaming …+227]
+HOLDS  dupIds == 0: violations=0
+HOLDS  danglingParents == 0: violations=0
+HOLDS  parseFail == 0: violations=0
+BROKEN orphanResults == 0: violations=1 [ScoutPlanned]
+HOLDS  yield answered by a toolResult: violations=0
+HOLDS  spanS >= 1: violations=0
+HOLDS  distinctTools >= 3: violations=0
+
+## threshold sweep (violations among finished seat-marked)
+toolResult  violations >=2:0 >=3:0 >=4:0 >=5:0 >=8:0 >=10:3 >=12:11 >=20:80 (n=538, min=9)
+toolCalls   violations >=2:0 >=3:0 >=4:0 >=5:0 >=8:0 >=10:3 >=12:11 >=20:80 (n=538, min=9)
+rows        violations >=10:0 >=15:0 >=20:0 >=30:0 >=40:0 >=46:14 (n=538, min=40)
+bytes       violations >=10000:0 >=20000:0 >=40000:0 >=46000:0 >=100000:0 >=190000:12 (n=538, min=132136)
+spanS       violations >=30:0 >=60:0 >=120:0 >=300:0 >=420:0 >=470:5 (n=538, min=453)
+distinctTools violations >=2:0 >=3:0 >=4:4 >=5:116 (n=538, min=3)
+modelUsage  violations >=1:239 (n=538, min=0)
+zero-violation floors among finished seat-marked: toolResult>=9 toolCalls>=9 rows>=40 bytes>=132136 spanS>=453 distinctTools>=3
+
+## finished seats a cheap forgery could imitate (bottom-5% band, seat-marked)
+bottom-5%-band finished seat-marked = 58 of 538
+  ConnRunState-2 bytes=257355 rows=69 toolResult=23 toolCalls=23 execStarts=23 spanS=453 distinctTools=5 dupIds=0 orphan=0
+  ConnSeparability bytes=376217 rows=91 toolResult=33 toolCalls=33 execStarts=33 spanS=483 distinctTools=5 dupIds=0 orphan=0
+  CritC2Depth bytes=246309 rows=59 toolResult=18 toolCalls=18 execStarts=18 spanS=483 distinctTools=6 dupIds=0 orphan=0
+  CritJudge03 bytes=308478 rows=114 toolResult=39 toolCalls=39 execStarts=39 spanS=662 distinctTools=3 dupIds=0 orphan=0
+  CritJudge04 bytes=347420 rows=97 toolResult=34 toolCalls=34 execStarts=34 spanS=640 distinctTools=3 dupIds=0 orphan=0
+  CritJudge06 bytes=305368 rows=118 toolResult=40 toolCalls=40 execStarts=40 spanS=648 distinctTools=3 dupIds=0 orphan=0
+  ExecAppendOnly bytes=195453 rows=46 toolResult=13 toolCalls=13 execStarts=13 spanS=470 distinctTools=4 dupIds=0 orphan=0
+  ExecC2Controls-2 bytes=235539 rows=89 toolResult=33 toolCalls=33 execStarts=33 spanS=477 distinctTools=5 dupIds=0 orphan=0
+  ExecDiffScope bytes=166060 rows=40 toolResult=10 toolCalls=10 execStarts=10 spanS=471 distinctTools=4 dupIds=0 orphan=0
+  ExecHostTracefs2 bytes=215862 rows=56 toolResult=17 toolCalls=17 execStarts=17 spanS=476 distinctTools=6 dupIds=0 orphan=0
+  ExecJudge12 bytes=247393 rows=90 toolResult=29 toolCalls=29 execStarts=29 spanS=605 distinctTools=3 dupIds=0 orphan=0
+  ExecLiveDriftR43-2 bytes=226099 rows=64 toolResult=20 toolCalls=20 execStarts=20 spanS=480 distinctTools=4 dupIds=0 orphan=0
+  ExecLiveDriftR43 bytes=162694 rows=44 toolResult=13 toolCalls=13 execStarts=13 spanS=456 distinctTools=5 dupIds=0 orphan=0
+  ExecLiveRefetch bytes=192655 rows=45 toolResult=9 toolCalls=9 execStarts=9 spanS=515 distinctTools=5 dupIds=0 orphan=0
+  ExecMisrootBaseline bytes=181769 rows=43 toolResult=12 toolCalls=12 execStarts=12 spanS=462 distinctTools=6 dupIds=0 orphan=0
+  ExecOffHostReplay bytes=183688 rows=60 toolResult=18 toolCalls=18 execStarts=18 spanS=485 distinctTools=5 dupIds=0 orphan=0
+  ExecOffHostV2 bytes=169627 rows=54 toolResult=17 toolCalls=17 execStarts=17 spanS=491 distinctTools=5 dupIds=0 orphan=0
+  ExecROMAReopen bytes=214782 rows=42 toolResult=9 toolCalls=9 execStarts=9 spanS=504 distinctTools=6 dupIds=0 orphan=0
+  ExecRerunC1v1 bytes=202980 rows=64 toolResult=19 toolCalls=19 execStarts=19 spanS=551 distinctTools=5 dupIds=0 orphan=0
+  ExecRerunC2 bytes=195567 rows=53 toolResult=16 toolCalls=16 execStarts=16 spanS=480 distinctTools=4 dupIds=0 orphan=0
+  ExecRows03 bytes=255001 rows=78 toolResult=27 toolCalls=27 execStarts=27 spanS=471 distinctTools=4 dupIds=0 orphan=0
+  ExecRows07-2 bytes=222655 rows=61 toolResult=20 toolCalls=20 execStarts=20 spanS=480 distinctTools=4 dupIds=0 orphan=0
+  ExecRows09-2 bytes=240596 rows=84 toolResult=29 toolCalls=29 execStarts=29 spanS=483 distinctTools=5 dupIds=0 orphan=0
+  ExecRows10-2 bytes=324527 rows=79 toolResult=27 toolCalls=27 execStarts=27 spanS=481 distinctTools=7 dupIds=0 orphan=0
+  ExecRows10 bytes=306684 rows=69 toolResult=24 toolCalls=24 execStarts=24 spanS=476 distinctTools=4 dupIds=0 orphan=0
+  ExecRows12 bytes=213385 rows=64 toolResult=20 toolCalls=20 execStarts=20 spanS=471 distinctTools=5 dupIds=0 orphan=0
+  ExecRows14 bytes=234389 rows=65 toolResult=22 toolCalls=22 execStarts=22 spanS=468 distinctTools=5 dupIds=0 orphan=0
+  ExecRows15-2 bytes=231561 rows=56 toolResult=16 toolCalls=16 execStarts=16 spanS=477 distinctTools=5 dupIds=0 orphan=0
+  ExecRows18-2 bytes=234689 rows=52 toolResult=12 toolCalls=12 execStarts=12 spanS=521 distinctTools=5 dupIds=0 orphan=0
+  ExecRows19 bytes=222182 rows=76 toolResult=26 toolCalls=26 execStarts=26 spanS=475 distinctTools=5 dupIds=0 orphan=0
+  ExecRows23-2 bytes=220610 rows=81 toolResult=28 toolCalls=28 execStarts=28 spanS=480 distinctTools=4 dupIds=0 orphan=0
+  ExecRows23-3 bytes=210157 rows=62 toolResult=19 toolCalls=19 execStarts=19 spanS=476 distinctTools=5 dupIds=0 orphan=0
+  ExecStagedTable bytes=216482 rows=43 toolResult=12 toolCalls=12 execStarts=12 spanS=469 distinctTools=5 dupIds=0 orphan=0
+  F35MutLedgerD1 bytes=207531 rows=58 toolResult=17 toolCalls=17 execStarts=17 spanS=629 distinctTools=5 dupIds=0 orphan=0
+  F35RunC2 bytes=167712 rows=43 toolResult=11 toolCalls=11 execStarts=11 spanS=632 distinctTools=4 dupIds=0 orphan=0
+  GroundS101 bytes=222086 rows=48 toolResult=13 toolCalls=13 execStarts=13 spanS=510 distinctTools=7 dupIds=0 orphan=0
+  GroundS104 bytes=228039 rows=47 toolResult=14 toolCalls=14 execStarts=14 spanS=504 distinctTools=6 dupIds=0 orphan=0
+  LabC2Parser bytes=203140 rows=58 toolResult=18 toolCalls=18 execStarts=18 spanS=484 distinctTools=6 dupIds=0 orphan=0
+  MutC1Counter-4 bytes=235529 rows=42 toolResult=11 toolCalls=11 execStarts=11 spanS=998 distinctTools=5 dupIds=0 orphan=0
+  MutC2Fields bytes=198781 rows=45 toolResult=10 toolCalls=10 execStarts=10 spanS=518 distinctTools=5 dupIds=0 orphan=0
+  MutC2Source bytes=234458 rows=50 toolResult=12 toolCalls=12 execStarts=12 spanS=529 distinctTools=5 dupIds=0 orphan=0
+  R35ProbeRerun bytes=200009 rows=51 toolResult=15 toolCalls=15 execStarts=15 spanS=495 distinctTools=4 dupIds=0 orphan=0
+  R35ReopenPins bytes=196137 rows=41 toolResult=11 toolCalls=11 execStarts=11 spanS=494 distinctTools=6 dupIds=0 orphan=0
+  R41A17 bytes=359524 rows=48 toolResult=13 toolCalls=13 execStarts=13 spanS=784 distinctTools=6 dupIds=0 orphan=0
+  R41F05 bytes=132136 rows=45 toolResult=11 toolCalls=11 execStarts=11 spanS=742 distinctTools=5 dupIds=0 orphan=0
+  R41F08 bytes=193371 rows=54 toolResult=13 toolCalls=13 execStarts=13 spanS=735 distinctTools=5 dupIds=0 orphan=0
+  RevC2Counter-2 bytes=240068 rows=47 toolResult=14 toolCalls=14 execStarts=14 spanS=846 distinctTools=4 dupIds=0 orphan=0
+  RevCountC2Code bytes=178234 rows=45 toolResult=10 toolCalls=10 execStarts=10 spanS=501 distinctTools=4 dupIds=0 orphan=0
+  RevJudge04 bytes=159541 rows=57 toolResult=18 toolCalls=18 execStarts=18 spanS=670 distinctTools=4 dupIds=0 orphan=0
+  RevPinHistory bytes=208034 rows=52 toolResult=16 toolCalls=16 execStarts=16 spanS=867 distinctTools=4 dupIds=0 orphan=0
+  RowAccessPacket bytes=190751 rows=42 toolResult=10 toolCalls=10 execStarts=10 spanS=515 distinctTools=6 dupIds=0 orphan=0
+  RowCrawlErrors bytes=173618 rows=54 toolResult=15 toolCalls=15 execStarts=15 spanS=540 distinctTools=4 dupIds=0 orphan=0
+  RowCrawlerIdent bytes=185302 rows=46 toolResult=12 toolCalls=12 execStarts=12 spanS=540 distinctTools=5 dupIds=0 orphan=0
+  RowDynamicRender bytes=188498 rows=48 toolResult=12 toolCalls=12 execStarts=12 spanS=553 distinctTools=6 dupIds=0 orphan=0
+  RowSecurityTxt bytes=266344 rows=46 toolResult=12 toolCalls=12 execStarts=12 spanS=547 distinctTools=5 dupIds=0 orphan=0
+  ScoutPlanned bytes=1764546 rows=491 toolResult=162 toolCalls=161 execStarts=162 spanS=2496 distinctTools=6 dupIds=0 orphan=1
+  ScribeLifecycle bytes=228149 rows=44 toolResult=9 toolCalls=9 execStarts=9 spanS=512 distinctTools=4 dupIds=0 orphan=0
+  SentPinExec bytes=292620 rows=46 toolResult=13 toolCalls=13 execStarts=13 spanS=486 distinctTools=6 dupIds=0 orphan=0
+finished seat-marked failing the zero-violation floor = 1 [ScoutPlanned]
+floor witnesses (weakest real finished seat per axis): toolResult=9@ExecLiveRefetch rows=40@ExecDiffScope bytes=132136@R41F05 spanS=453@ConnRunState-2
+seats at the distinctTools floor (3): CritJudge03 CritJudge04 CritJudge06 ExecJudge12
+seats without model_usage rows: 239 of 538 (a model_usage requirement would reject them)
+
+## tool name census (seat-marked finished)
+bash=10543 read=5433 write=1307 grep=882 edit=738 yield=562 eval=434 glob=432 wait=33 web_search=25
+seat-marked finished with <12 answered calls: ExecDiffScope(10) ExecLiveRefetch(9) ExecROMAReopen(9) F35RunC2(11) MutC1Counter-4(11) MutC2Fields(10) R35ReopenPins(11) R41F05(11) RevCountC2Code(10) RowAccessPacket(10) ScribeLifecycle(9)
+
+## current orchestrator session (largest session dir) — the in-flight round
+session -Projects-shokunin/2026-10-25T16-43-09-760Z_01a173f1-d040-72cd-9542-6011673d5d9b files=1572 finished=1447 seat-marked-finished=538
+  seat-marked-finished floors: toolResult>=9 rows>=40 bytes>=132136 spanS>=453 distinctTools>=3
+  seat-marked-finished violations of the floor: 1
+  seat-marked-finished without model_usage: 239 of 538
+  seat-marked dead so far: 101 (no-yield 48, no-exit-record 53)
+  distinct parentSession among seat-marked files: 1
+  seat-marked "-<N>" files in this session: 98 (markerKind base=98, own=0, none=0)
+
+## lane census (from first user message)
+unknown=1312 souji-shokunin=426 tameshi-shokunin=342 kengaku-shokunin=321 kasegi-shokunin=290 mado-shokunin=285 tabi-shokunin=283 chousa-shokunin=264 revenger-shokunin=160 kama-shokunin=150 mori-shokunin=148 kake-shokunin=135 kaidoku-shokunin=131 kumitate-shokunin=118 tsukuroi-shokunin=67 kotoba-shokunin=60 scripts=45 kotodama-shokunin=36 kagi-shokunin=8 AXES=4 CORPUS=4 MISSION=2 LEARNING=2 templates=1 lore-shokunin=1 shokunin=1
+finished seat-marked by lane: tameshi-shokunin=146 mori-shokunin=79 chousa-shokunin=71 kengaku-shokunin=64 kama-shokunin=64 mado-shokunin=57 kake-shokunin=38 kumitate-shokunin=16 revenger-shokunin=3
+
+## sessions (directory) census
+  -Projects-shokunin/2026-10-25T16-43-09-760Z_01a173f1-d040-72cd-9542-6011673d5d9b files=1572 finished=1447
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kengaku32 files=136 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a files=116 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kasegi26 files=106 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Souji25 files=103 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kumitate62 files=96 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tabi23 files=88 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tameshi42 files=85 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Chousa45 files=84 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kotodama71 files=77 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Souji23 files=74 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Souji24 files=73 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kama38-2 files=72 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kengaku31 files=72 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kumitate61 files=72 finished=0
+  -Projects-shokunin/2026-10-25T16-43-09-760Z_01a173f1-d040-72cd-9542-6011673d5d9b/TabiR27 files=72 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Chousa47 files=71 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kasegi25 files=70 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mado36 files=70 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kengaku30 files=69 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tameshi43 files=68 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kama39 files=67 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kaidoku34-2 files=66 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tabi24 files=65 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Chousa46 files=64 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Chousa48 files=64 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Revenger68 files=64 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Revenger69 files=64 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Souji22 files=59 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kake51 files=54 finished=0
+  -Projects-shokunin/2026-10-25T16-43-09-760Z_01a173f1-d040-72cd-9542-6011673d5d9b/KengakuR33 files=54 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tameshi41 files=48 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mado37-2 files=46 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kasegi24 files=43 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kake53 files=40 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kengaku29 files=40 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mado35 files=40 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mori45 files=39 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kama37 files=37 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kasegi23 files=36 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kotoba70 files=36 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mado38 files=35 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kotoba69-2 files=34 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tabi25 files=34 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kake54 files=33 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kotodama72 files=32 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mori44-4 files=32 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mori46 files=32 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Tameshi44 files=32 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureKake51 files=8 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kagi28 files=8 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureKake52 files=7 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureKotodama69-2 files=7 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Kotodama69 files=7 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/L1Mado37 files=5 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureTameshi41 files=4 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureMado36 files=3 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureMado38 files=3 finished=0
+  -Projects-shokunin files=2 finished=0
+  -Projects-shokunin/2026-10-25T06-15-52-413Z_01a171b3-835d-7667-b875-b75970c45a2a/ClosureKake54 files=2 finished=0
+  -Projects-shokunin/2026-10-25T16-43-09-760Z_01a173f1-d040-72cd-9542-6011673d5d9b/SoujiR27a2 files=2 finished=0
+  -Projects-shokunin-kotodama-shokunin files=1 finished=0
+  -tmp files=1 finished=0

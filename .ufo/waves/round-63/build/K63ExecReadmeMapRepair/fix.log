@@ -1,0 +1,42 @@
+== F1: the writer keeps the gate able to fail ====================
+-- F1a: a real lesson loses its row and pin (hand-mutation) --
+README_MAP: note unpinned:lessons/round-61-verifier-spotcheck.md
+README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 first=uncovered:lessons/round-61-verifier-spotcheck.md
+EXIT=1
+-- F1b: the writer lands row + pin from the file itself --
+README_MAP_APPEND: OK lessons/round-61-verifier-spotcheck.md row=inserted pin=inserted
+EXIT=0
+README_MAP: CLEAN files=151 rows=151 covered=151
+EXIT=0
+-- F1c: idempotent second run --
+README_MAP_APPEND: OK lessons/round-61-verifier-spotcheck.md row=present pin=present
+EXIT=0
+README_MAP: CLEAN files=151 rows=151 covered=151
+EXIT=0
+-- F1d: the writer refuses a corpus path with no file (cannot paper over a typo) --
+README_MAP_APPEND: FAIL-CLOSED reason=no such corpus file: corpus/lessons/round-99-verifier-spotcheck.md
+EXIT=2
+-- F1e: byte check — only the two intended lines differ from the repaired mirror --
+146d145
+<     "lessons/round-61-verifier-spotcheck.md",
+154c153,154
+<     "lessons/round-62-verifier-spotcheck.md"
+---
+>     "lessons/round-62-verifier-spotcheck.md",
+>     "lessons/round-61-verifier-spotcheck.md"
+184d183
+< | `lessons/round-61-verifier-spotcheck.md` | Round-61 non-author verification: C1/C2 fail as declared; routes R61-V1..
+186a186
+> | `lessons/round-61-verifier-spotcheck.md` | Round-61 non-author verification: C1/C2 fail as declared; routes R61-V1..
+
+== F3 (REJECTED): one wildcard row covers every *-verifier-spotcheck.md =
+-- F3a: honest gate on the wildcard row + no per-file row for the round-62 spotcheck --
+README_MAP: note uncovered:lessons/round-62-verifier-spotcheck.md
+README_MAP: DRIFT files=151 rows=151 covered=151 bad=2 first=orphan-row:lessons/round-*-verifier-spotcheck.md
+EXIT=1
+-- F3b: mutant gate implementing the wildcard rule --
+README_MAP: CLEAN files=151 rows=151 covered=151
+EXIT=0
+-- F3c: the wildcard rule on a REAL unmapped lesson of another class (round-62.md row removed) --
+README_MAP: DRIFT files=151 rows=150 covered=151 bad=1 first=uncovered:lessons/round-62.md
+EXIT=1

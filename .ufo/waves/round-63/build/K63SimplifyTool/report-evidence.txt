@@ -1,0 +1,15 @@
+# K63SimplifyTool — predicate replay of the two loose/typed frozen predicates (read-only)
+# date: 2026-10-25T18:08:23-03:00  rev: b38a2065ab8ac5b198f6569b9013d04411c3d40d
+
+## inline63-probe.mjs:118  I5  (regex /^\|\s*`inline-dispatch-evidence`\s*\|/ then cells[cells.length-2] === '63')
+ACCEPTS cells=6  | `inline-dispatch-evidence` | binds a wave to host records | `node scripts/inline-dispatch-evidence.mjs` | 63 |
+rejects cells=6  | `inline-dispatch-evidence` | binds a wave to host records | `node scripts/inline-dispatch-evidence.mjs` | round 63 |
+rejects cells=5  | `inline-dispatch-evidence` | binds a wave to host records | 63 |
+rejects cells=7  | `inline-dispatch-evidence` | binds a wave to host records | `node x` | 63 | note |
+rejects cells=6  | inline-dispatch-evidence | binds a wave to host records | `node x` | 63 |
+
+## topology63-probe.mjs:186  T7  named = line.includes(ENTRY) && /frontier|band|ground|first entry/i
+ACCEPTS "| frontier | coordinator topology | corpus/knowledge/multi-agent-coordinator-topologies.md |"
+ACCEPTS "- not grounded: corpus/knowledge/multi-agent-coordinator-topologies.md (staged only)"
+ACCEPTS "background: see corpus/knowledge/multi-agent-coordinator-topologies.md"
+ACCEPTS "- corpus/knowledge/multi-agent-coordinator-topologies.md — still staged, band not yet admitted"

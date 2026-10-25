@@ -1,0 +1,25 @@
+== E1: mint an honest receipt at the repaired tip (b9e31a876ee77cd9cdbdd15e98565857b500dba3) ===========
+receipt-attest: wrote .ufo/waves/round-63/close/readme-map.txt
+receipt-attest: sidecar .ufo/waves/round-63/close/readme-map.txt.sha256
+receipt-attest: receipt-sha256 d8a52ca8968069afd8d091a5d93ec15845f8326a19c4117e49fa08c5e0d09d44
+receipt-attest: command-exit 0
+EXIT=0
+"exit":0
+recorded-exit-above
+== E2: receipt-evidence at the repaired tip (the rule passes) =====
+RECEIPT_EVIDENCE: HELD receipts=1 reproduced=1 sweep_files=1 sweep_nonces=1 span_ms=0
+EXIT=0
+== E3: the same tree drifts (row + pin removed), tip 2d5acf7d70a281c0f0a44491db9dc099ce62834e unchanged receipt ==
+README_MAP: note unpinned:lessons/round-62-verifier-spotcheck.md
+README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 first=uncovered:lessons/round-62-verifier-spotcheck.md
+EXIT=1
+RECEIPT_EVIDENCE: UNMET reason=REPRODUCE detail=readme-map.txt
+EXIT=1
+== E4: can an honest CLEAN receipt exist at the FROZEN base (unrepaired)? ==
+receipt-attest: wrote /tmp/tmp.oNno1NwbAb/base-receipt.txt
+receipt-attest: sidecar /tmp/tmp.oNno1NwbAb/base-receipt.txt.sha256
+receipt-attest: receipt-sha256 9da0151c2183580dfbf1efa7cb3c4e54d4fa3957d34578ba794b63493332779b
+receipt-attest: command-exit 1
+EXIT=0
+"exit":1
+recorded-exit-above
