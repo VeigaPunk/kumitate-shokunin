@@ -1,0 +1,31 @@
+--- scripts/report-receipt-diff.mjs.orig
++++ scripts/report-receipt-diff.mjs
+@@ -38,9 +38,10 @@
+-const PLACEHOLDER = /__[A-Z][A-Z0-9_]{2,}__|\bLANE_HASH\b|\bTBD\b/g;
++const PLACEHOLDER = /__[A-Z][A-Z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\bTODO\b|\bFIXME\b|\bXXX\b/g;
+ const TALLY = /\b([A-Z][A-Z0-9]*_(?:HELD|UNMET))\s+held=(\d+)\/(\d+)/g;
++const UNLABELLED_TALLY = /(?:^|\s)(?:(?:[A-Z0-9_]+[:=]\s*)|\b)held=(\d+)\/(\d+)\b/g;
+ const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._-]+`, 'g');
+ const HASH40 = /\b[0-9a-f]{40}\b/g;
++const HASH_SHORT = /\b[0-9a-f]{7,39}\b/g;
+ 
+ function git(dir, args) { return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }); }
+ 
+@@ -82,9 +83,18 @@
+   const allLines = [...receiptNames.values()].flatMap((t) => t.split('\n'));
+   for (const m of text.matchAll(TALLY)) {
+     const [, label, x, y] = m;
+     const key = `${label} held=${x}/${y}`;
+-    const line = (l) => l.includes(`${label} held=${x}/${y}`) || (l.includes(label) && new RegExp(`held=${x}/${y}\\b`).test(l));
++    // Strict check: must match start of line or canonical prefix, not arbitrary error text
++    const line = (l) => new RegExp(`^${label}\\s+held=${x}/${y}\\b`).test(l.trim());
+     if (!allLines.some(line)) add('TALLY_UNRECEIPTED', key);
+   }
++  // Detect unlabelled or punctuation-separated tallies
++  for (const m of text.matchAll(UNLABELLED_TALLY)) {
++    const matchStr = m[0].trim();
++    if (!text.matchAll(TALLY).some(t => t[0].includes(matchStr))) {
++      add('TALLY_UNLABELLED', matchStr);
++    }
++  }
+   // hashes

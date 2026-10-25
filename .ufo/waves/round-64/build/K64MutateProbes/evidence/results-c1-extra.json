@@ -1,0 +1,42 @@
+{
+ "which": "c1",
+ "pristineShaBefore": "34b3b308fab63355ed6f11ba25fc1a96a9616bd9d5412734fc54c866ad2d2be6",
+ "pristineShaAfter": "34b3b308fab63355ed6f11ba25fc1a96a9616bd9d5412734fc54c866ad2d2be6",
+ "baseline": {
+  "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+  "exit": 1,
+  "stderr": ""
+ },
+ "mutants": [
+  {
+   "id": "ids-floor-6-kill",
+   "mutation": "seen.size < 8 -> seen.size < 6",
+   "changed": true,
+   "exit": 1,
+   "held": "4/5",
+   "line": "RECEIPT64_UNMET held=4/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "clean-prefix-p2only",
+   "mutation": "const got = r.stdout.startsWith('REPORT_RECEIPT: CLEAN') -> const got = r.stdout.startsWith('REPORT_RECEIPT: KLEAN')",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS c0-honest:got=0/;c14-honest-templates:got=0/;c15-honest-two-receipts:got=0/;ids=6;clean=0 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "stub-clean-text2",
+   "mutation": "REPORT_RECEIPT: CLEAN (stub) -> REPORT_RECEIPT: PAS (stub)",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  }
+ ]
+}

@@ -1,0 +1,73 @@
+K64ReviewProbeC1 — verbatim probe runs (all against the frozen counter, unedited)
+
+=== 0. Probe at the frozen commit, lane = real lane ===
+$ node .ufo/waves/round-64/probe/receipt64-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef --report /tmp/kumitate-r64/K64ReviewProbeC1/dummy-report.md
+RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS exit=1 REPORT_RECEIPT: DRIFT SECTION_MISSING (round=64 rev=dd1a3e6... bytes=191)
+PROBE_EXIT=1
+
+=== 1. Corpus id census (committed expect files, line 2 of each) ===
+$ cat */expect | awk 'NR%3==2' | tr ',' '\n' | grep -v '^CLEAN$' | sort -u
+HASH_DEAD
+PLACEHOLDER
+SECTION_MISSING
+SHONEN_COUNT
+TALLY_UNRECEIPTED
+RECEIPT_MISSING
+6
+
+=== 2. Fixture A: cheat-tool.mjs (echoes expect files; no diffing) + verbatim corpus ===
+$ node probe.mjs /tmp/.../fixtureA 5e03e4fb09242db7aac2b367acc272a6bf03cc53 --report dummy-report.md
+RECEIPT64_UNMET held=4/5 checks=5 rev=5e03e4fb09242db7aac2b367acc272a6bf03cc53 rule=R64 | P2 MISS ids=6
+EXIT=1
+(P1 selftest PASS, all 16 cases echoed correctly -> only the corpus floor fails.)
+
+=== 3. Fixture B: same cheat tool, corpus + 2 added cases (HASH_ORPHAN, FENCE_UNCLOSED) -> 8 ids ===
+$ node probe.mjs /tmp/.../fixtureB fb7ad3ececa92b1f7dbef61d254ff9cc0e975d6b --report dummy-report.md
+RECEIPT64_HELD held=5/5 checks=5 rev=fb7ad3ececa92b1f7dbef61d254ff9cc0e975d6b rule=R64
+EXIT_B=0
+
+=== 4. Fixture C: lane arg = /tmp/.../$(touch /tmp/.../PWNED) containing a valid repo ===
+$ node probe.mjs '/tmp/kumitate-r64/K64ReviewProbeC1/$(touch /tmp/kumitate-r64/K64ReviewProbeC1/PWNED)' HEAD
+RECEIPT64_UNMET held=0/5 ... rev=944920ea... | P1 MISS tool-absent ...
+EXIT_C=1
+PWNED FILE CREATED — injection confirmed  (line 43 bash -c: "$(lane)" still expands $(...))
+
+=== 5. Fixture D: committed scripts/report-receipt-diff.mjs is a SYMLINK to /tmp/.../host-tool.mjs ===
+(host-tool.mjs was edited AFTER the commit; it appends to HOST_EXEC — mutable non-committed code)
+$ node probe.mjs /tmp/.../fixtureD e6ce6d7b8d0b5a4dbc7c0ec5da7cdb024b0e715a --report dummy-report.md
+RECEIPT64_UNMET held=2/5 ... | P5 MISS exit=0 REPORT_RECEIPT_SELFTEST: PASS (20/20) executed-from-outside-commit
+HOST FILE WAS EXECUTED (HOST_EXEC contains "ran")
+
+=== 6. GIT_DIR steers 'git -C' ===
+$ GIT_DIR=/tmp/.../fixtureA/.git node probe.mjs /home/vgpnk/.../kumitate-shokunin 5e03e4fb... --report dummy-report.md
+RECEIPT64_UNMET held=3/5 checks=5 rev=5e03e4fb09242db7aac2b367acc272a6bf03cc53 rule=R64 | P2 MISS ids=6 | P3 MISS fleet-blob-unreadable
+(rev 5e03e4fb exists ONLY in fixtureA; the lane arg never reached git. Archive likewise read fixtureA.)
+
+=== 7. make-receipt-controls.mjs rmSync ===
+$ mkdir victim && echo precious-data > victim/keep-me.txt
+$ node make-receipt-controls.mjs /tmp/.../victim
+controls written: 16 cases under /tmp/.../victim
+keep-me.txt DELETED by rmSync(out)
+
+=== 8. Swallowed archive failure ===
+$ rm <fixtureE>/.git/objects/33/c05db3...   (delete the tool's blob)
+$ git -C fixtureE rev-parse --verify 'HEAD^{commit}'   -> 5e03e4fb... (still OK)
+$ git -C fixtureE archive HEAD | tar -t                -> 'error: invalid object ... for scripts/report-receipt-diff.mjs'; ARCHIVE_STATUS=141
+$ node probe.mjs fixtureE HEAD --report dummy-report.md
+RECEIPT64_UNMET held=0/5 ... | P1 MISS tool-absent | P2 MISS tool-absent | P3 MISS tool-absent | P4 MISS tool-absent | P5 MISS tool-absent
+(tool IS committed; misdiagnosed as absent because spawnSync status is never checked.)
+
+=== 9. Crash ambiguity: a case dir whose expect/ is a DIRECTORY ===
+$ node probe.mjs /tmp/.../fixtureF HEAD --report dummy-report.md > out 2> err ; NODE_EXIT=1 ; wc -c out -> 0
+err tail: EISDIR, syscall 'read' — unhandled exception, NO verdict line, exit 1 (same as UNMET).
+
+=== 10. ids() regex ===
+input lines: 'X9_LABEL forged' / 'ROUND64_X forged' / 'PLAIN_ID forged'
+ids() => "PLAIN_ID"   (X9_LABEL contains a digit -> dropped; ROUND64_X contains a digit -> dropped)
+
+=== 11. Fleet blob pins (as of review) ===
+git -C /home/vgpnk/Projects/shokunin rev-parse 7b0581ed 8fd46e61
+7b0581ed63a46ac1961b1ecf98ec0caf561ccd9b
+8fd46e614d6db3ca251b9ce75cdc7b94ecb574ad
+both blobs .ufo/reports/round-{60,63}/kumitate.md exist; round-60 has 6 placeholder tokens,
+1 line 'DISPATCH60_HELD held=10/10'. Abbreviated shas resolve today; reachability after gc not guaranteed.

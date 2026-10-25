@@ -1,0 +1,11 @@
+--- a/scripts/kimi-census.mjs
++++ b/scripts/kimi-census.mjs
+@@ -454,7 +454,7 @@
+     }
+     for (const i of v.infos) lines.push(`INFO  ${i.kind}  ${i.id}  ${i.detail}`);
+     for (const f of v.findings) lines.push(`CENSUS  ${f.severity}  ${f.kind}  ${f.id}  ${f.detail}`);
+-    lines.push(`TOTALS: members=${v.totals.members} checked=${v.totals.checked} errors=${v.totals.errors} info=${v.totals.info} chain=${v.totals.chain}`);
++    lines.push(`TOTALS: members=${v.totals.members} checked=${v.totals.checked} errors=${v.totals.errors} info=${v.totals.info} chain=${v.totals.chain} frozen=${FAMILIES.reduce((n, f) => n + FROZEN[f], 0)}`);
+     lines.push(renderVerdict(verdict, v.findings, v.totals));
+     process.stdout.write(`${lines.join('\n')}\n`);
+   }

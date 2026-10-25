@@ -1,0 +1,46 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/probe/jj64-probe.mjs	2026-10-25 19:33:58.365049734 -0300
++++ proposed-jj64-probe.mjs	2026-10-25 19:58:38.649580437 -0300
+@@ -34,6 +34,11 @@
+ const CENSUS = process.env.SOURCES_CENSUS || '/home/vgpnk/Projects/shokunin/scripts/sources-census.sh';
+ const RULE = 'J64';
+ const BASE = '6825a51425e91908f019ed65aa2f4209acbd7087'; // round-64 base: lane tip when the round started
++// PROPOSED RATCHET (seat K64ExecJjHonestFixture, round 64): J6 ran the measured revision's own scripts/jj-seat-demo.sh,
++// so a stub that prints the entry's stated outcomes read HELD 8/8 (variant demo-script-stubbed). Pin the claim's demo
++// script bytes at the freeze (dd1a3e6) and MISS on any other script; re-freezing the pin is a disclosed ratchet step.
++const DEMO = 'scripts/jj-seat-demo.sh';
++const DEMO_SHA = process.env.JJ64_DEMO_SHA || 'e8b4b01f2234b4a296747b01335f71b9140608e7f381c2125378399d4a40fd69';
+ const argv = process.argv.slice(2);
+ const pos = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--entry', '--opened'].includes(argv[i - 1])));
+ const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
+@@ -194,6 +199,12 @@
+     }
+   }
+   if (stated.size < 12) bad.push(`stated-keys=${stated.size}`);
++  const demoBytes = rd(DEMO);
++  if (!demoBytes) bad.push('demo-script-absent');
++  else {
++    const sha = createHash('sha256').update(demoBytes).digest('hex');
++    if (sha !== DEMO_SHA) bad.push(`demo-script-not-pinned:${sha.slice(0, 12)}`);
++  }
+   const r = spawnSync('bash', [join(T, 'scripts', 'jj-seat-demo.sh')], { encoding: 'utf8', timeout: 120000 });
+   if (r.status !== 0) bad.push(`demo-exit=${r.status}`);
+   const live = new Map();
+@@ -207,7 +218,17 @@
+ {
+   const r = spawnSync('bash', [CENSUS, 'validate', '--file', join(T, 'corpus', 'SOURCES.md')], { encoding: 'utf8' });
+   const prov = rd('PROVINCE.md');
+-  const named = prov ? prov.toString('utf8').split('\n').some((l) => l.includes(ENTRY) && /frontier|band|ground|first entry/i.test(l)) : false;
++  // PROPOSED RATCHET (seat K64ExecJjHonestFixture, round 64): the line had only to contain the entry path and one of
++  // /frontier|band|ground|first entry/i anywhere in the file, so the same line moved into § Adjacent read HELD
++  // (variant province-line-misplaced). Require it inside a heading whose text names the frontier.
++  const named = prov ? (() => {
++    let inFrontier = false;
++    for (const l of prov.toString('utf8').split('\n')) {
++      if (/^#{1,6}\s/.test(l)) { inFrontier = /frontier/i.test(l); continue; }
++      if (inFrontier && l.includes(ENTRY)) return true;
++    }
++    return false;
++  })() : false;
+   let clean = false;
+   if (existsSync(join(T, 'scripts', 'readme-map.mjs'))) {
+     const m = spawnSync('node', ['scripts/readme-map.mjs'], { cwd: T, encoding: 'utf8' });

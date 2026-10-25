@@ -1,0 +1,99 @@
++ bash /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecReadmeGuard/receipts/run.sh
+
+=== 01 base 6825a51425e91908f019ed65aa2f4209acbd7087: node scripts/readme-map.mjs in a git archive ===
+README_MAP: note unpinned:lessons/round-63-verifier-spotcheck.md
+README_MAP: DRIFT files=154 rows=153 covered=153 bad=2 first=uncovered:lessons/round-63-verifier-spotcheck.md
+exit=1
+
+=== repaired scratch tree: node scripts/readme-map.mjs ===
+README_MAP: CLEAN files=154 rows=154 covered=154
+exit=0
+
+=== A base+plan, map red: patched gate then the unpatched lane gate ===
+fixture=/tmp/k64-readmemap-receipts.ONEYC4/fix-red.X1CUPl
+0836454 round-64 plan (no marker yet)
+00cac17 base 6825a51425e91908f019ed65aa2f4209acbd7087 tree
+--- patched gate: bash plan-before-ready.sh --repo <A> --round 64
+PLAN_BEFORE_READY: FAIL rev=0836454530fb33e591354d4438e7e9e89f82b6c1 round=64 dir=.ufo/waves/round-64 reason=MAP_DRIFT plan=0836454530fb33e591354d4438e7e9e89f82b6c1 plan_ct=1792967900 marker=- marker_kind=- marker_ct=- marker_path=- map=DRIFT map_exit=1 map_first=uncovered:lessons/round-63-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=64-64 rev=0836454530fb33e591354d4438e7e9e89f82b6c1 exit=1 failed=64 na_rounds= map_red=64
+exit=1
+--- unpatched lane gate, same fixture
+PLAN_BEFORE_READY: NA rev=0836454530fb33e591354d4438e7e9e89f82b6c1 round=64 dir=.ufo/waves/round-64 reason=NO_MARKER plan=0836454530fb33e591354d4438e7e9e89f82b6c1 plan_ct=1792967900 marker=-
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=64-64 rev=0836454530fb33e591354d4438e7e9e89f82b6c1 exit=2 failed= na_rounds=64
+exit=2
+
+=== B plan committed over the red map, repair AFTER the plan ===
+fixture=/tmp/k64-readmemap-receipts.ONEYC4/fix-late-repair.6hWfGI
+4d16e57 round-64 w1.ready
+a48a5ea late repair: row + pin (after the plan)
+5c63dbb round-64 plan (frozen over the red map)
+a23d710 base tree (map red)
+--- patched gate --round 64 (map at the PLAN commit is red; the tip is clean)
+PLAN_BEFORE_READY: FAIL rev=4d16e574d5e5eba62d0d7562dc1519fc7403ba42 round=64 dir=.ufo/waves/round-64 reason=MAP_DRIFT plan=5c63dbb779d114115dffc8d3d37bf30bc07ff0eb plan_ct=1792967900 marker=4d16e574d5e5eba62d0d7562dc1519fc7403ba42 marker_kind=ready marker_ct=1792968000 marker_path=.ufo/waves/round-64/w1.ready map=DRIFT map_exit=1 map_first=uncovered:lessons/round-63-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=64-64 rev=4d16e574d5e5eba62d0d7562dc1519fc7403ba42 exit=1 failed=64 na_rounds= map_red=64
+exit=1
+--- the same fixture's tip map
+README_MAP: CLEAN files=154 rows=154 covered=154
+exit=0
+
+=== C repair before the plan: patched gate passes ===
+fixture=/tmp/k64-readmemap-receipts.ONEYC4/fix-green.0LI6oJ
+e2e69c6 round-64 w1.ready
+3191232 round-64 plan
+e7d003c repair: row + pin
+--- patched gate --round 64
+PLAN_BEFORE_READY: PASS rev=e2e69c6201a96406038651aedae1e508ca882aba round=64 dir=.ufo/waves/round-64 plan=3191232585a77b6984c0254a25870d287a7c4b64 plan_ct=1792967888 marker=e2e69c6201a96406038651aedae1e508ca882aba marker_kind=ready marker_ct=1792968000 marker_path=.ufo/waves/round-64/w1.ready map=CLEAN files=154 rows=154 covered=154
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=64-64 rev=e2e69c6201a96406038651aedae1e508ca882aba exit=0 failed= na_rounds= map_red=
+exit=0
+
+=== D repaired tree, plan only (in flight): arm green, verdict NA ===
+fixture=/tmp/k64-readmemap-receipts.ONEYC4/fix-green-planonly.j7FzXg
+PLAN_BEFORE_READY: NA rev=b6ab4c438e6ec5d4e47de635d49da1df579db9d3 round=64 dir=.ufo/waves/round-64 reason=NO_MARKER plan=b6ab4c438e6ec5d4e47de635d49da1df579db9d3 plan_ct=1792967888 marker=- map=CLEAN files=154 rows=154 covered=154
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=64-64 rev=b6ab4c438e6ec5d4e47de635d49da1df579db9d3 exit=2 failed= na_rounds=64 map_red=
+exit=2
+
+=== C's committed tree repaired, the WORKING TREE row deleted: the arm must still pass ===
+fixture=/tmp/k64-readmemap-receipts.ONEYC4/fix-green.0LI6oJ (committed tree repaired; the working-tree row is deleted, uncommitted)
+$ git -C <C> status --porcelain
+ M corpus/README.md
+$ node scripts/readme-map.mjs   # dirty worktree
+README_MAP: DRIFT files=154 rows=153 covered=154 bad=1 first=uncovered:lessons/round-63-verifier-spotcheck.md
+exit=1
+$ bash <draft> --repo <C> --round 64   # reads git archive PLAN, not the worktree
+PLAN_BEFORE_READY: PASS rev=e2e69c6201a96406038651aedae1e508ca882aba round=64 dir=.ufo/waves/round-64 plan=3191232585a77b6984c0254a25870d287a7c4b64 plan_ct=1792967888 marker=e2e69c6201a96406038651aedae1e508ca882aba marker_kind=ready marker_ct=1792968000 marker_path=.ufo/waves/round-64/w1.ready map=CLEAN files=154 rows=154 covered=154
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=64-64 rev=e2e69c6201a96406038651aedae1e508ca882aba exit=0 failed= na_rounds= map_red=
+exit=0
+
+=== lane: --round 64 and --round 63 at dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef, patched vs unpatched ===
+--- gate=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecReadmeGuard/plan-before-ready.sh
+$ --round 64 --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+PLAN_BEFORE_READY: FAIL rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef round=64 dir=.ufo/waves/round-64 reason=MAP_DRIFT plan=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef plan_ct=1792967888 marker=- marker_kind=- marker_ct=- marker_path=- map=DRIFT map_exit=1 map_first=uncovered:lessons/round-63-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=64-64 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=1 failed=64 na_rounds= map_red=64
+exit=1
+$ --round 63 --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+PLAN_BEFORE_READY: FAIL rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef round=63 dir=.ufo/waves/round-63 reason=MAP_DRIFT plan=b38a2065ab8ac5b198f6569b9013d04411c3d40d plan_ct=1792961253 marker=05b3176915de4175bb211b4b1422d8e56cf16888 marker_kind=ready marker_ct=1792964033 marker_path=.ufo/waves/round-63/w1.ready map=DRIFT map_exit=1 map_first=uncovered:lessons/round-62-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=63-63 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=1 failed=63 na_rounds= map_red=63
+exit=1
+--- gate=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/plan-before-ready.sh
+$ --round 64 --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+PLAN_BEFORE_READY: NA rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef round=64 dir=.ufo/waves/round-64 reason=NO_MARKER plan=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef plan_ct=1792967888 marker=-
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=64-64 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=2 failed= na_rounds=64
+exit=2
+$ --round 63 --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+PLAN_BEFORE_READY: PASS rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef round=63 dir=.ufo/waves/round-63 plan=b38a2065ab8ac5b198f6569b9013d04411c3d40d plan_ct=1792961253 marker=05b3176915de4175bb211b4b1422d8e56cf16888 marker_kind=ready marker_ct=1792964033 marker_path=.ufo/waves/round-63/w1.ready
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=63-63 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=0 failed= na_rounds=
+exit=0
+
+=== lane: --all at dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef, patched vs unpatched ===
+patched exit=1
+unpatched exit=1
+PLAN_BEFORE_READY_SUMMARY: pass=10 fail=12 na=8 rounds=all(30) rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=1 failed=35,36,37,38,39,40,58,60,61,62,63,64 na_rounds=49,52,53,54,55,56,57,59 map_red=58,60,61,63,64
+PLAN_BEFORE_READY_SUMMARY: pass=12 fail=7 na=11 rounds=all(30) rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=1 failed=35,36,37,38,39,40,62 na_rounds=49,52,53,54,55,56,57,58,59,60,64
+
+=== selftest: bash plan-before-ready.sh --selftest ===
+exit=0
+PLAN_BEFORE_READY_SELFTEST: PASS (18/18) fixtures=/tmp/pbr-selftest.2DvLhN
+
+=== result ===
+receipts=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecReadmeGuard/receipts root=/tmp/k64-readmemap-receipts.ONEYC4
+assertions_failed=0

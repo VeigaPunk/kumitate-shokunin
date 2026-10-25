@@ -1,0 +1,12 @@
+# proposed ratchet control (NOT committed; controls/ is frozen). Case dir: build/K64SimplifyTool/control-c16-tally-prefix
+# replay with the probe's p2 command shape: --lane <case>/lane --round 9 --report <case>/report.md
+
+$ node <before> ... c16-tally-prefix   # the tool at dd1a3e6 accepts this lie -> control FAILS on before
+DIFF c16-tally-prefix exit=0 got=CLEAN want=TALLY_UNRECEIPTED wantexit=1
+CASES=1 DISTINCT_IDS=0 CLEAN=0 DIFF=1 IDS=
+exit=1
+
+$ node <after>  ... c16-tally-prefix   # the simplified tool -> control PASSES
+OK   c16-tally-prefix exit=1 got=TALLY_UNRECEIPTED want=TALLY_UNRECEIPTED wantexit=1
+CASES=1 DISTINCT_IDS=1 CLEAN=0 DIFF=0 IDS=TALLY_UNRECEIPTED
+exit=0

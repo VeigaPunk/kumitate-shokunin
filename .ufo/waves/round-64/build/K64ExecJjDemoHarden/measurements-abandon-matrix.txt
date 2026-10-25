@@ -1,0 +1,45 @@
+### 2x2: who abandons the seat head x seat has content ###
+abandon-by=default content=yes -> seat=stale file=present
+    Error: The working copy is stale (not updated since operation 496e21dd4815).
+    Hint: Run `jj workspace update-stale` to update it.
+abandon-by=default content=no -> seat=fresh file=absent
+    The working copy has no changes.
+    Working copy  (@) : ksuymvuk 9de6e6af (empty) (no description set)
+abandon-by=otherseat content=yes -> seat=stale file=present
+    Error: The working copy is stale (not updated since operation 9bf50d78ebb0).
+    Hint: Run `jj workspace update-stale` to update it.
+abandon-by=otherseat content=no -> seat=fresh file=absent
+    The working copy has no changes.
+    Working copy  (@) : tnuwslru dd8984a7 (empty) (no description set)
+
+### mutual abandon with content on both seats, then ONE status each ###
+A abandons B head: B=stale file_b=present
+B abandons A head: A=fresh file_a=present
+--- one jj status each:
+A=fresh B=stale
+files after: a=present b=present
+--- one update-stale each:
+    Attempted recovery, but the working copy is not stale.
+uA=0
+    Working copy  (@) now at: roornsku d048d6e7 (empty) (no description set)
+    Parent commit (@-)      : ukzuuvow 33f9134d base
+    Added 0 files, modified 0 files, removed 1 files
+    Updated working copy to fresh commit d048d6e70953
+uB=0
+A=fresh B=fresh files: a=present b=absent
+A desc=[] B desc=[]
+
+### restore of an abandoned head content with a root: fileset ###
+after update-stale file=absent
+    Working copy  (@) now at: qtwlptvr 398ffdf4 (no description set)
+    Parent commit (@-)      : ukzuuvow 33f9134d base
+    Added 1 files, modified 0 files, removed 0 files
+restore exit=0
+after restore file=present content=[restorework]
+
+### does update-stale create a RECOVERY commit naming the old one? op log check ###
+op log top 3:
+    abandon commit 4d9522d54cd99d56f55f677398aeeaeee73cca9c
+    snapshot working copy
+    create initial working-copy commit in workspace op
+abandoned commit 4d9522d54cd9 still readable: 4d9522d54cd9

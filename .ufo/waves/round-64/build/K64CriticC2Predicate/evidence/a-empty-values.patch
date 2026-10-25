@@ -1,0 +1,71 @@
+commit 81cb6397e88e92f097604798f677e8e9bf9db4a4
+Author: fixture <fixture@example.invalid>
+Date:   Sun Oct 25 19:51:47 2026 -0300
+
+    A: twelve empty values
+
+diff --git a/corpus/knowledge/jj-workspace-seat-containment.md b/corpus/knowledge/jj-workspace-seat-containment.md
+index 3a3d0fb..090b62d 100644
+--- a/corpus/knowledge/jj-workspace-seat-containment.md
++++ b/corpus/knowledge/jj-workspace-seat-containment.md
+@@ -49,15 +49,15 @@ measured behaviour, so the policy decision has a fact in front of it.
+ 
+ ## Demo outcomes
+ 
+-- workspace_list=seat, main
+-- seat_file_visible=true
+-- seat_git_dir=.git
+-- shared_oplog=true
+-- ignore_working_copy=accepted
+-- rewrite_seat_commit=rebased
+-- seat_working_copy_after_rewrite=clean
+-- abandon_seat_commit=stale
+-- stale_recovery=refused
+-- absolute_path_write=accepted
+-- forget_workspace=gone
+-- seats_after_forget=1
++- workspace_list=
++- seat_file_visible=
++- seat_git_dir=
++- shared_oplog=
++- ignore_working_copy=
++- rewrite_seat_commit=
++- seat_working_copy_after_rewrite=
++- abandon_seat_commit=
++- stale_recovery=
++- absolute_path_write=
++- forget_workspace=
++- seats_after_forget=
+diff --git a/scripts/jj-seat-demo.sh b/scripts/jj-seat-demo.sh
+index 82479f0..647b46c 100755
+--- a/scripts/jj-seat-demo.sh
++++ b/scripts/jj-seat-demo.sh
+@@ -2,16 +2,16 @@
+ # forged demo: no jj invocation, no workspace, just the entry's own numbers
+ set -eu
+ cat <<'OUT'
+-JJ_SEAT: workspace_list=seat, main
+-JJ_SEAT: seat_file_visible=true
+-JJ_SEAT: seat_git_dir=.git
+-JJ_SEAT: shared_oplog=true
+-JJ_SEAT: ignore_working_copy=accepted
+-JJ_SEAT: rewrite_seat_commit=rebased
+-JJ_SEAT: seat_working_copy_after_rewrite=clean
+-JJ_SEAT: abandon_seat_commit=stale
+-JJ_SEAT: stale_recovery=refused
+-JJ_SEAT: absolute_path_write=accepted
+-JJ_SEAT: forget_workspace=gone
+-JJ_SEAT: seats_after_forget=1
++JJ_SEAT: workspace_list=
++JJ_SEAT: seat_file_visible=
++JJ_SEAT: seat_git_dir=
++JJ_SEAT: shared_oplog=
++JJ_SEAT: ignore_working_copy=
++JJ_SEAT: rewrite_seat_commit=
++JJ_SEAT: seat_working_copy_after_rewrite=
++JJ_SEAT: abandon_seat_commit=
++JJ_SEAT: stale_recovery=
++JJ_SEAT: absolute_path_write=
++JJ_SEAT: forget_workspace=
++JJ_SEAT: seats_after_forget=
+ OUT

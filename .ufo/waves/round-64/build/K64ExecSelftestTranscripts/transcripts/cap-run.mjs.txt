@@ -1,0 +1,14 @@
+PASS  usage arms exit 64 with CAP_RUN: USAGE
+PASS  exit code and stdout pass through (EXIT code=7)
+PASS  runner cwd is writable to the child
+PASS  --verdict-file: child stderr byte-exact, verdict line in the file (EXIT code=3, decimal budget)
+PASS  --bind: a host directory outside the cwd is read-write only when bound
+PASS  explicit env: --env pair arrives, GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE and marker dropped
+PASS  own PID namespace: /proc/1/environ readable, planted marker and GIT_DIR absent
+PASS  512 MiB Buffer child under --mem 256 dies non-zero with OOM (allocs=15, exit=143)
+PASS  32 MiB Buffer child under --mem 256 finishes (liveness)
+PASS  budget 2 s on a 300 s child: BUDGET, exit 124, no leftover (wall=2.043s)
+PASS  SIGTERM 1.5 s into a 300 s child: SIGNAL, exit 143, no leftover (0.02s)
+PASS  detached new-session grandchild is gone after the runner returns
+CAP_RUN_SELFTEST: 12/12 pass
+VERDICT: PASS

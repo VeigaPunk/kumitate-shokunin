@@ -1,0 +1,402 @@
+{
+ "which": "c2",
+ "pristineShaBefore": "157be0acaa799bb6acb92c76aa989a49f33c68ca3fd74d594e9e98b6b290daf1",
+ "pristineShaAfter": "157be0acaa799bb6acb92c76aa989a49f33c68ca3fd74d594e9e98b6b290daf1",
+ "baseline": {
+  "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+  "exit": 0,
+  "stderr": ""
+ },
+ "mutants": [
+  {
+   "id": "base-lastchar",
+   "mutation": "'6825a51425e91908f019ed65aa2f4209acbd7087' -> '6825a51425e91908f019ed65aa2f4209acbd7088'",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J8 MISS file-unreadable",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "base-shortprefix",
+   "mutation": "'6825a51425e91908f019ed65aa2f4209acbd7087' -> '6825a514'",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "opened-26",
+   "mutation": "'2026-10-25' -> '2026-10-26'",
+   "changed": true,
+   "exit": 1,
+   "held": "6/8",
+   "line": "JJ64_UNMET held=6/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS trio source=true verified-at=false recheck=true | J2 MISS S198:opened=2026-10-25,S199:opened=2026-10-25,S200:opened=2026-10-25",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j1-src-4digits",
+   "mutation": "/^source:\\s*S\\d{3,}/m -> /^source:\\s*S\\d{4,}/m",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS trio source=false verified-at=true recheck=true",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j1-recheck-empty",
+   "mutation": "/^recheck:\\s*\\S+/m -> /^recheck:\\s*$/m",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS trio source=true verified-at=true recheck=false",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "head-slice-0",
+   "mutation": ".slice(0, 14) -> .slice(0, 0)",
+   "changed": true,
+   "exit": 1,
+   "held": "4/8",
+   "line": "JJ64_UNMET held=4/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS trio source=false verified-at=false recheck=false | J2 MISS cites-0-rows | J3 MISS no-rows | J4 MISS S198:not-a-source;S198:not-a-source;S198:not-a-source;S198:not-a-source;S199:not-a-source;S199:not-a-source",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "head-slice-4",
+   "mutation": ".slice(0, 14) -> .slice(0, 4)",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS trio source=true verified-at=true recheck=false",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j2-ids-1",
+   "mutation": "if (ids.length < 2) -> if (ids.length < 1)",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j2-cells-11",
+   "mutation": "if (c.length !== 13) -> if (c.length !== 11)",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J2 MISS S198:NF=13,S199:NF=13,S200:NF=13",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j2-status-mined",
+   "mutation": "if (status !== 'mined') -> if (status !== 'MINED')",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J2 MISS S198:status=mined,S199:status=mined,S200:status=mined",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j2-opened-fixed",
+   "mutation": "if (opened !== OPENED) -> if (opened !== '2000-01-01')",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J2 MISS S198:opened=2026-10-25,S199:opened=2026-10-25,S200:opened=2026-10-25",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j2-usedby-x",
+   "mutation": "if (!usedBy.includes(ENTRY)) -> if (!usedBy.includes('placeholder-x'))",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J2 MISS S198:used-by-lacks-entry,S199:used-by-lacks-entry,S200:used-by-lacks-entry",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j2-url-scheme",
+   "mutation": "/https?:\\/\\//.test(source) -> /httpz?:\\/\\//.test(source)",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j3-sha512",
+   "mutation": "createHash('sha256') -> createHash('sha512')",
+   "changed": true,
+   "exit": 1,
+   "held": "6/8",
+   "line": "JJ64_UNMET held=6/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J3 MISS S198:hash-or-size,S199:hash-or-size,S200:hash-or-size | J4 MISS S198:quote-not-in-capture(You can have multiple working );S198:quote-not-in-capture(Each workspace can have a diff);S198:quote-not-in-capture(When you modify workspace A's );S198:quote-not-in-capture(The workspace directory and fi);S199:quote-",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j3-bytes-plus1",
+   "mutation": "b.length !== c.bytes -> b.length + 1 !== c.bytes",
+   "changed": true,
+   "exit": 1,
+   "held": "6/8",
+   "line": "JJ64_UNMET held=6/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J3 MISS S198:hash-or-size,S199:hash-or-size,S200:hash-or-size | J4 MISS S198:quote-not-in-capture(You can have multiple working );S198:quote-not-in-capture(Each workspace can have a diff);S198:quote-not-in-capture(When you modify workspace A's );S198:quote-not-in-capture(The workspace directory and fi);S199:quote-",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j3-ids-99",
+   "mutation": "ids.length > 0 && bad.length === 0 -> ids.length > 99 && bad.length === 0",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J3 MISS ",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j4-bullets-5",
+   "mutation": "if (bullets.length < 4) -> if (bullets.length < 5)",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j4-words-24",
+   "mutation": ".length > 25 -> .length > 24",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j4-dash-ascii",
+   "mutation": "[—-] -> [—]",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j6-stated-13",
+   "mutation": "if (stated.size < 12) -> if (stated.size < 13)",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j6-stated-1",
+   "mutation": "if (stated.size < 12) -> if (stated.size < 1)",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j6-demo-exit-1",
+   "mutation": "if (r.status !== 0) bad.push(`demo-exit=${r.status}`) -> if (r.status !== 1) bad.push(`demo-exit=${r.status}`)",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J6 MISS demo-exit=0",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j6-live-regex-x",
+   "mutation": "/^JJ_SEAT: ([a-z0-9_]+)=(.*)$/ -> /^JJ_SEATX: ([a-z0-9_]+)=(.*)$/",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J6 MISS workspaces_after_add:stated-not-live;seat_gets_base_file:stated-not-live;seat_has_git_dir:stated-not-live;seat_file_in_default_tree:stated-not-live;default_status_clean_after_seat_write:stated-not-live;seat_snapshot_in_shared_op_log:stated-not-live",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j6-timeout-1ms",
+   "mutation": "timeout: 120000 -> timeout: 1",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J6 MISS demo-exit=null;workspaces_after_add:stated-not-live;seat_gets_base_file:stated-not-live;seat_has_git_dir:stated-not-live;seat_file_in_default_tree:stated-not-live;default_status_clean_after_seat_write:stated-not-live",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j7-census-exit-1",
+   "mutation": "check('J7', r.status === 0 && named && clean -> check('J7', r.status === 1 && named && clean",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J7 MISS census-exit=0 province-names-entry=true readme-map-clean=true",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j7-frontier-typo",
+   "mutation": "/frontier|band|ground|first entry/i -> /fronier|band|ground|first entry/i",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "j7-readmemap-cleak",
+   "mutation": "/README_MAP: CLEAN/ -> /README_MAP: CLEAK/",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J7 MISS census-exit=0 province-names-entry=true readme-map-clean=false",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j8-prefix-10",
+   "mutation": "now.subarray(0, baseBytes.stdout.length) -> now.subarray(0, 10)",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J8 MISS base-bytes-not-a-prefix",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j8-amend-24",
+   "mutation": "Amendment 2026-10-25/m -> Amendment 2026-10-24/m",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J8 MISS no-amendment-heading",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j8-tail-entry-x",
+   "mutation": "tail.includes(ENTRY) -> tail.includes(ENTRY + 'x')",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J8 MISS amendment-lacks-entry-or-M7",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j8-m8",
+   "mutation": "/\\bM7\\b/ -> /\\bM8\\b/",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J8 MISS amendment-lacks-entry-or-M7",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "entry-path-x",
+   "mutation": "'corpus/knowledge/jj-workspace-seat-containment.md' -> 'corpus/knowledge/jj-workspace-seat-containmentx.md'",
+   "changed": true,
+   "exit": 1,
+   "held": "0/8",
+   "line": "JJ64_UNMET held=0/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J1 MISS entry-absent | J2 MISS no-entry | J3 MISS no-rows | J4 MISS bullets=0 | J5 MISS no-bullets | J6 MISS stated-keys=0;workspaces_after_add:stated=undefined:live=2;seat_gets_base_file:stated=undefined:live=yes;seat_has_git_dir:stated=undefined:live=no;seat_file_in_default_tree:stated=undefined:live=no;default_",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "live-inverted",
+   "mutation": "!argv.includes('--no-live') -> argv.includes('--no-live')",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J5 MISS live-fetch-skipped",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "j5-bullets-99",
+   "mutation": "bullets.length > 0 && bad.length === 0 -> bullets.length > 99 && bad.length === 0",
+   "changed": true,
+   "exit": 1,
+   "held": "7/8",
+   "line": "JJ64_UNMET held=7/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J5 MISS ",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "held-7",
+   "mutation": "const ok = held === 8; -> const ok = held === 7;",
+   "changed": true,
+   "exit": 1,
+   "held": "8/8",
+   "line": "JJ64_UNMET held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "final-exit-2",
+   "mutation": "process.exit(ok ? 0 : 1); -> process.exit(ok ? 0 : 2);",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "rule-j63",
+   "mutation": "const RULE = 'J64'; -> const RULE = 'J63';",
+   "changed": true,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J63",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "norm-squeeze",
+   "mutation": ".replace(/\\s+/g, ' ') -> .replace(/\\s+/g, '')",
+   "changed": false,
+   "exit": 0,
+   "held": "8/8",
+   "line": "JJ64_HELD held=8/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "rows-regex-4digits",
+   "mutation": "\\|\\s*(S\\d{3,})\\s*\\| -> \\|\\s*(S\\d{4,})\\s*\\|",
+   "changed": true,
+   "exit": 1,
+   "held": "6/8",
+   "line": "JJ64_UNMET held=6/8 checks=8 rev=f1ef90fcba0de3c759e6571cb6fd29f0286b2f59 rule=J64 | J2 MISS S198:not-in-registry,S199:not-in-registry,S200:not-in-registry | J5 MISS S198:no-url;S199:no-url;S200:no-url",
+   "heldChanged": true,
+   "stderr": ""
+  }
+ ]
+}

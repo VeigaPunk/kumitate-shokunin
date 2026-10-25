@@ -1,0 +1,12 @@
+# lie the BEFORE tool accepts: report claims X9_HELD held=3/3; the committed receipt says held=3/30
+# fixture: /tmp/kumitate-r64/K64SimplifyTool/lie/lane/.ufo/waves/round-9/close/p-tip.txt = 'X9_HELD held=3/30 checks=30 rev=abc rule=X9'
+#          /tmp/kumitate-r64/K64SimplifyTool/lie/report-lie.md = six headings, 4 SHONEN boxes, one tally line 'X9_HELD held=3/3 checks=3 ...'
+
+$ node <before> --lane lie/lane --round 9 --report lie/report-lie.md
+REPORT_RECEIPT: CLEAN (round=9 rev=worktree bytes=210)
+exit=0
+
+$ node <after>  --lane lie/lane --round 9 --report lie/report-lie.md
+REPORT_RECEIPT: DRIFT TALLY_UNRECEIPTED (round=9 rev=worktree bytes=210)
+TALLY_UNRECEIPTED X9_HELD held=3/3
+exit=1

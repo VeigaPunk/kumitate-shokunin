@@ -1,0 +1,30 @@
+PASS copied-siblings-and-allowlisted-env exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=1/1 floor=0
+PASS killed-requires-failing-case killed exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+PASS k43-exit-zero-with-verdict-fail-is-survived survived exit=0 verdict=FAIL group_clean=true fail_lines=1 overflow=false
+PASS k43-kill-confirmed-by-second-run exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+PASS survived survived exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS pass-with-fewer-cases-is-drift-not-kill drift exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS higher-case-count-mismatch-is-not-survived drift exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS nomatch nomatch occurrences=0
+PASS crash-without-summary crash exit=23 verdict=none group_clean=true fail_lines=0 overflow=false
+PASS timeout-and-process-group-cleanup timeout timeout=100ms group_clean=true
+PASS failing-control-exit-class-is-2 FAIL
+PASS k43-nonzero-with-verdict-fail-is-killed killed
+PASS k43-nonzero-with-verdict-pass-is-survived survived
+PASS k43-confirmation-same-names-agrees same names, details differ
+PASS k43-confirmation-other-names-or-pass-disagrees other names / pass on rerun
+PASS k43-unstable-exit-class-is-2 unstable
+PASS nomatch-exit-class-is-2 2
+PASS unevaluable-outcome-precedes-survivor 2
+PASS evaluated-drift-uses-survivor-exit-class 1
+PASS option-like-revision-rejected refused before Git
+PASS symlink-target-refused refused before read/write
+PASS fifo-target-refused mkfifo=0 refused=true
+PASS polluted-git-env-does-not-write-sentinel control=PASS head_unchanged=true 
+PASS missing-frozen-manifest-exits-2 cite-check:warn-total
+PASS manifest-has-41-frozen-and-two-extras rows=43 extras=2 missing=0 duplicates=0 invalid=0
+PASS all-manifest-literals-apply-once unapplicable=none
+PASS mutated-byte-header-digest GATE_MUTANTS_HEADER rev=selftest fixture=2d56cf285e2a83c8b220c6ac52055489b788ecf767c56ae124e31fbe7affa4c9 manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f
+PASS selftest-leftovers leftovers=0
+GATE_MUTANTS_SELFTEST: 28/28 pass leftovers=0
+VERDICT: PASS

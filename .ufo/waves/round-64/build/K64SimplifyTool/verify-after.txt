@@ -1,0 +1,51 @@
+# AFTER: simplify.diff applied to a scratch copy (byte-identical to /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64SimplifyTool/tool-after.mjs and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64SimplifyTool/demo-after.sh): tool 175 lines, demo 66 lines
+
+## (a) P1 selftest
+$ node <after>/report-receipt-diff.mjs --selftest
+REPORT_RECEIPT_SELFTEST: PASS (20/20)
+exit=0
+
+## (b) P2 replay: probe p2's exact command over the 16 committed controls
+OK   c0-honest exit=0 got=CLEAN want=CLEAN wantexit=0
+OK   c1-placeholder-measured exit=1 got=PLACEHOLDER want=PLACEHOLDER wantexit=1
+OK   c10-shonen-twice exit=1 got=SHONEN_COUNT want=SHONEN_COUNT wantexit=1
+OK   c11-hash-dead exit=1 got=HASH_DEAD want=HASH_DEAD wantexit=1
+OK   c12-r60-shape exit=1 got=PLACEHOLDER,TALLY_UNRECEIPTED want=PLACEHOLDER,TALLY_UNRECEIPTED wantexit=1
+OK   c13-placeholder-in-fence exit=1 got=PLACEHOLDER want=PLACEHOLDER wantexit=1
+OK   c14-honest-templates exit=0 got=CLEAN want=CLEAN wantexit=0
+OK   c15-honest-two-receipts exit=0 got=CLEAN want=CLEAN wantexit=0
+OK   c2-placeholder-lanehash exit=1 got=PLACEHOLDER want=PLACEHOLDER wantexit=1
+OK   c3-placeholder-tbd exit=1 got=PLACEHOLDER want=PLACEHOLDER wantexit=1
+OK   c4-tally-overstated exit=1 got=TALLY_UNRECEIPTED want=TALLY_UNRECEIPTED wantexit=1
+OK   c5-tally-verdict-flip exit=1 got=TALLY_UNRECEIPTED want=TALLY_UNRECEIPTED wantexit=1
+OK   c6-tally-label-swapped exit=1 got=TALLY_UNRECEIPTED want=TALLY_UNRECEIPTED wantexit=1
+OK   c7-receipt-path-missing exit=1 got=RECEIPT_MISSING want=RECEIPT_MISSING wantexit=1
+OK   c8-section-missing exit=1 got=SECTION_MISSING want=SECTION_MISSING wantexit=1
+OK   c9-shonen-absent exit=1 got=SECTION_MISSING,SHONEN_COUNT want=SECTION_MISSING,SHONEN_COUNT wantexit=1
+CASES=16 DISTINCT_IDS=6 CLEAN=3 DIFF=0 IDS=HASH_DEAD,PLACEHOLDER,RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED
+exit=0
+
+## (c) P3 replay: probe p3's exact commands (r60=fleet 7b0581ed, r63=fleet 8fd46e61), rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+P3-R60 exit=1 placeholders=6 indep=6 tally-line=true first="REPORT_RECEIPT: DRIFT PLACEHOLDER,TALLY_UNRECEIPTED (round=60 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef bytes=13611)"
+P3-R63 exit=0 first="REPORT_RECEIPT: CLEAN (round=63 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef bytes=17479)"
+P3=PASS
+exit=0
+
+## (d) demo: bash <after>/jj-seat-demo.sh
+JJ_SEAT: workspaces_after_add=2
+JJ_SEAT: seat_gets_base_file=yes
+JJ_SEAT: seat_has_git_dir=no
+JJ_SEAT: seat_file_in_default_tree=no
+JJ_SEAT: default_status_clean_after_seat_write=1
+JJ_SEAT: seat_snapshot_in_shared_op_log=2
+JJ_SEAT: ignore_working_copy_adds_op=no
+JJ_SEAT: rewrite_seat_head_seat_state=fresh
+JJ_SEAT: rewrite_seat_head_description_seen=rewritten
+JJ_SEAT: abandon_seat_head_seat_state=stale
+JJ_SEAT: abandon_seat_head_files_on_disk=kept
+JJ_SEAT: update_stale_recovers=yes
+JJ_SEAT: absolute_path_write_seen_in_default=1
+JJ_SEAT: workspaces_after_forget=1
+JJ_SEAT: seat_dir_after_forget=present
+JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5
+exit=0

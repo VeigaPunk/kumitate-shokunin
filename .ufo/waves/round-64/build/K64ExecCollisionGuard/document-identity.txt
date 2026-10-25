@@ -1,0 +1,17 @@
+$ curl -sS https://docs.jj-vcs.dev/latest/working-copy/ > wc-latest.html; curl -sS https://raw.githubusercontent.com/jj-vcs/jj/v0.45.1/docs/working-copy.md > wc-0451.md
+$ grep -o "docs/working-copy.md" wc-latest.html | head -1
+docs/working-copy.md
+$ sha256sum wc-latest.html wc-0451.md
+947d0c56c02f9c10b4c14e8aaa8cc3f435f7650536ab9386ef6a52f1d64ff3c7  /tmp/kumitate-r64/K64ExecCollisionGuard/wc-latest.html
+20578df094781b9a3a24a33be318ee2810b6686e3886ea13f997c5a20275e4ea  /tmp/kumitate-r64/K64ExecCollisionGuard/wc-0451.md
+$ python3 verbatim-sentence overlap
+v0.45.1 raw sentences found verbatim in live latest page: 20/57
+$ git -C /home/vgpnk/Projects/shokuknow log -1 --format="%H"
+8b94c5c12c0521e4cd9ed8e5b6939afd8518c715
+$ grep -nE "^\| S067 " corpus/SOURCES.md | cut -c1-300
+80:| S067 | Jujutsu v0.45.1 docs/working-copy.md — https://raw.githubusercontent.com/jj-vcs/jj/v0.45.1/docs/working-copy.md | docs | A | jj working-copy snapshots, automatic tracking, ignores and workspaces (host jj 0.45.1) | § Introduction :9-22, § Ignored files :63-71, § Workspaces :74-118 (i
+NOTE: the re-fetched raw v0.45.1 file hashes to 20578df094781b9a3a24a33be318ee2810b6686e3886ea13f997c5a20275e4ea,
+which is exactly the `body sha256` recorded in lane row S067 (corpus/SOURCES.md:80). The live
+docs.jj-vcs.dev/latest/working-copy/ page names docs/working-copy.md as its own source (Edit this
+page link) and shares 20/57 verbatim sentences with that file -> S200's document IS S067's document,
+at a newer revision and an unpinned `latest` tag.

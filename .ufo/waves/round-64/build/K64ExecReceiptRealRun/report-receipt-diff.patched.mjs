@@ -1,0 +1,268 @@
+#!/usr/bin/env node
+/**
+ * report-receipt-diff.mjs — diff a round report against the committed receipts it cites.
+ * Contract: kumitate-report-receipt-diff-v1 (round 64, capability report-receipt-diff;
+ * considerthese/2026-10-25.md idea 2: "diff reports against receipts").
+ *
+ *   node scripts/report-receipt-diff.mjs --lane <lane-dir> --round N --report <file> [--rev <lane-rev>] [--fleet <fleet-dir>]
+ *   node scripts/report-receipt-diff.mjs --selftest
+ *
+ * Reads the report bytes and the lane's committed receipts (`git show <rev>:.ufo/waves/round-N/{base,close}/*`;
+ * the worktree only when --rev is absent). Findings, one line each:
+ *   PLACEHOLDER        a template token left in the report (__NAME__, LANE_HASH, TBD; an angle-bracket `<tip>` is a legitimate command template and is not flagged)
+ *   TALLY_UNRECEIPTED  a labelled verdict `<LABEL>_HELD|UNMET held=x/y` that no receipt line carries with the same label
+ *                      and the same x/y (a result quoted in the report that no committed receipt says)
+ *   RECEIPT_MISSING    a `.ufo/waves/round-N/(base|close)/<file>` path the report names that does not exist at the rev
+ *   HASH_DEAD          a 40-hex hash that resolves in neither the lane repo nor the fleet repo
+ *   HASH_ORPHAN        a 40-hex hash in the lane repo that is not an ancestor of the lane rev
+ *   SECTION_MISSING    one of the six required report headings is absent
+ *   SHONEN_COUNT       the `SHONEN` heading does not occur exactly once, or fewer than 4 box lines follow it
+ * Output: `REPORT_RECEIPT: CLEAN (...)` exit 0 | `REPORT_RECEIPT: DRIFT <ids>` + one line per finding, exit 1 |
+ * exit 2 fail-closed (unreadable report or rev) | exit 64 usage.
+ * Declared limit: only labelled tallies are checked; a bare `held=9/10` is not (a plan's target and a result are
+ * indistinguishable without a label), and a receipt written by the lane itself is trusted as written.
+ */
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
+
+const REQUIRED = [
+  ['Work performed', /^#{1,6}\s*\**\s*Work performed/im],
+  ['Landed changes', /^#{1,6}\s*\**\s*Landed changes/im],
+  ['Before → after measurements', /^#{1,6}\s*\**\s*Before\s*(?:→|->)\s*after measurements/im],
+  ['Sources & frontier', /^#{1,6}\s*\**\s*Sources\s*&\s*frontier/im],
+  ['Trend verdicts', /^#{1,6}\s*\**\s*Trend verdicts/im],
+  ['SHONEN', /^#{1,6}\s*\**\s*SHONEN/im],
+];
+const PLACEHOLDER = /__[A-Z][A-Z0-9_]{2,}__|\bLANE_HASH\b|\bTBD\b/g;
+const TALLY = /\b([A-Z][A-Z0-9]*_(?:HELD|UNMET))\s+held=(\d+)\/(\d+)/g;
+const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*-]+`, 'g');
+const HASH40 = /\b[0-9a-f]{40}\b/g;
+
+function git(dir, args) { return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }); }
+
+function walkFiles(root, rel = '', out = []) {
+  let entries;
+  try { entries = readdirSync(join(root, rel), { withFileTypes: true }); } catch { return out; }
+  for (const e of entries) {
+    if (e.name === '.git') continue;
+    const r = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) walkFiles(root, r, out); else out.push(r);
+  }
+  return out;
+}
+
+export function diffReport({ lane, round, reportText, rev, fleet }) {
+  const findings = [];
+  const add = (id, detail) => findings.push({ id, detail });
+  const text = reportText;
+  // PLACEHOLDER
+  for (const m of text.matchAll(PLACEHOLDER)) add('PLACEHOLDER', m[0]);
+  // sections
+  for (const [name, re] of REQUIRED) if (!re.test(text)) add('SECTION_MISSING', name);
+  const sh = [...text.matchAll(/^#{1,6}\s*\**\s*SHONEN/gim)];
+  if (sh.length !== 1) add('SHONEN_COUNT', `headings=${sh.length}`);
+  else {
+    const rest = text.slice(sh[0].index).split('\n').slice(1);
+    // count boxes, not lines (a report may put two boxes on one line) and accept a box inside a code span (`[~]`)
+    const boxes = rest.filter((l) => /^\s*[-*]\s/.test(l))
+      .reduce((n, l) => n + (l.match(/`?\[[xX~ ]\]`?/g) || []).length, 0);
+    if (boxes < 4) add('SHONEN_COUNT', `boxes=${boxes}`);
+  }
+  // receipts at rev: base/ and close/ verbatim, plus every *.txt of the round (a round's own receipt dirs —
+  // `r<N>/`, `controls/` — hold receipts too); never plan.md, probe/, build/ or the committed control fixtures.
+  const files = rev
+    ? (git(lane, ['ls-tree', '-r', '--name-only', rev]).stdout || '').split('\n').filter(Boolean)
+    : walkFiles(lane, '.ufo/waves');
+  const content = new Map();
+  const read = (p) => {
+    if (content.has(p)) return content.get(p);
+    let t = null;
+    if (rev) {
+      const b = spawnSync('git', ['-C', lane, 'show', `${rev}:${p}`], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+      if (b.status === 0) t = b.stdout;
+    } else {
+      try { t = readFileSync(join(lane, p), 'utf8'); } catch { /* absent or directory */ }
+    }
+    content.set(p, t);
+    return t;
+  };
+  const roundDir = `.ufo/waves/round-${round}/`;
+  const isReceipt = (f) => f.startsWith(`${roundDir}base/`) || f.startsWith(`${roundDir}close/`)
+    || (f.startsWith(roundDir) && f.endsWith('.txt')
+      && !/^\.ufo\/waves\/round-\d+\/(?:build|probe)\//.test(f) && !/\/controls\//.test(f));
+  const receiptNames = new Map();
+  for (const f of files) if (isReceipt(f)) { const t = read(f); if (t !== null) receiptNames.set(f, t); }
+  const globToRe = (g) => new RegExp(`^${g.split('*').map((s) => s.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('.*')}$`);
+  const expand = (p) => (p.includes('*') ? files.filter((f) => globToRe(p).test(f)) : [p]);
+  // RECEIPT_MISSING (a glob is satisfied by any matching committed file)
+  for (const m of new Set([...text.matchAll(RECEIPT_PATH(round))].map((x) => x[0]))) {
+    if (!expand(m).some((f) => receiptNames.has(f) || read(f) !== null)) add('RECEIPT_MISSING', m);
+  }
+  // TALLY_UNRECEIPTED: a labelled verdict no receipt carries. A tally is accepted when the round's receipts carry
+  // it, or when the report names the receipt that carries it on the same line (± one wrapped line); the citation may
+  // point at another round's receipts or at a committed seat-dir transcript (r62 cites round-61; r53 cites build/).
+  const allLines = [...receiptNames.values()].flatMap((t) => t.split('\n'));
+  const CITE_ROUND = /(?:\.ufo\/waves\/)?round-(\d+)\/((?:base|close|controls|r\d+|build)\/[A-Za-z0-9._*/-]+)/g;
+  const CITE_REL = /(?<![\w/.-])((?:base|close|controls|r\d+|build)\/[A-Za-z0-9._*/-]+)/g;
+  const reportLines = text.split('\n');
+  // An UNMET reading is what mutants and controls produce, so a cited committed file may carry it; a HELD verdict is
+  // the claim's own positive result and must come from the round's receipts (see the filter below).
+  const starts = [];
+  for (let i = 0, pos = 0; i < reportLines.length; i += 1) { starts.push(pos); pos += reportLines[i].length + 1; }
+  const lineIdx = (idx) => { let i = 0; while (i + 1 < starts.length && starts[i + 1] <= idx) i += 1; return i; };
+  const cited = (i) => {
+    const win = reportLines.slice(Math.max(0, i - 1), i + 2).join('\n');
+    const paths = [];
+    for (const m of win.matchAll(CITE_ROUND)) paths.push(`.ufo/waves/round-${m[1]}/${m[2].replace(/\.+$/, '')}`);
+    for (const m of win.matchAll(CITE_REL)) paths.push(`${roundDir}${m[1].replace(/\.+$/, '')}`);
+    return paths;
+  };
+  for (const m of text.matchAll(TALLY)) {
+    const [, label, x, y] = m;
+    const key = `${label} held=${x}/${y}`;
+    const line = (l) => l.includes(`${label} held=${x}/${y}`) || (l.includes(label) && new RegExp(`held=${x}/${y}\\b`).test(l));
+    if (allLines.some(line)) continue;
+    // A HELD verdict is only ever accepted from the round's own receipts (fail-closed): a citation cannot carry it,
+    // because a committed forgery/control transcript (r61 close/a2-repro-c1-fabrication.txt reads HELD 4/4) would.
+    const hit = /_HELD$/.test(label) ? false
+      : cited(lineIdx(m.index)).flatMap(expand)
+        .some((p) => { const t = read(p); return t !== null && t.split('\n').some(line); });
+    if (!hit) add('TALLY_UNRECEIPTED', key);
+  }
+  // hashes: a 40-hex token inside a URL is a URL component, not a commit claim; a hash the report itself declares
+  // non-local (source pin of a read-only clone, scratch/fixture/bundle/witness rev) cannot be resolved here and is
+  // reported as HASH_EXTERNAL, which is printed but never turns the verdict.
+  const tip = rev || git(lane, ['rev-parse', 'HEAD']).stdout.trim();
+  const EXTERNAL = /(?:https?:\/\/|\/tree\/|\/commit\/|\/blob\/|read-only clone|source pin|scratch (?:repo|clone|rev|witness)|fixture|bundle|witness)/i;
+  const hashIdx = new Map();
+  for (let i = 0; i < reportLines.length; i += 1) for (const h of reportLines[i].match(HASH40) || []) {
+    if (!hashIdx.has(h)) hashIdx.set(h, []);
+    hashIdx.get(h).push(i);
+  }
+  const near = (h, i) => {
+    const parts = [reportLines[i]];
+    for (const j of [i - 1, i + 1]) if (j >= 0 && j < reportLines.length && !reportLines[j].includes(h)) parts.push(reportLines[j]);
+    return parts.join('\n');
+  };
+  for (const [h, idxs] of hashIdx) {
+    if (idxs.some((i) => /(?:https?:\/\/|(?:^|[\s(`])(?:github|gitlab)\.com\/)/.test(reportLines[i]) && reportLines[i].includes(`/${h}`))) continue;
+    const inLane = git(lane, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+    const inFleet = fleet && git(fleet, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+    if (!inLane && !inFleet) { add(idxs.every((i) => EXTERNAL.test(near(h, i))) ? 'HASH_EXTERNAL' : 'HASH_DEAD', h); continue; }
+    if (inLane && git(lane, ['merge-base', '--is-ancestor', h, tip]).status !== 0) add('HASH_ORPHAN', h);
+  }
+  return findings;
+}
+
+function render(findings, meta) {
+  const lines = findings.map((f) => `${f.id} ${f.detail}`).join('\n');
+  const fatal = findings.filter((f) => f.id !== 'HASH_EXTERNAL');
+  if (!fatal.length) return { code: 0, out: `REPORT_RECEIPT: CLEAN (${meta})${lines ? `\n${lines}` : ''}\n` };
+  const ids = [...new Set(fatal.map((f) => f.id))].join(',');
+  return { code: 1, out: `REPORT_RECEIPT: DRIFT ${ids} (${meta})\n${lines}\n` };
+}
+
+function selftest() {
+  const results = [];
+  const t = (name, ok) => results.push([name, ok]);
+  const T = mkdtempSync(join(tmpdir(), 'rrd-self.'));
+  const D = realpathSync(T);
+  const g = (...a) => spawnSync('git', ['-C', D, '-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', ...a], { encoding: 'utf8' });
+  g('init', '-q');
+  if (git(D, ['rev-parse', '--show-toplevel']).stdout.trim() !== D) { process.stdout.write('REPORT_RECEIPT_SELFTEST: FAIL (fixture root)\n'); process.exit(1); }
+  mkdirSync(join(D, '.ufo/waves/round-9/close'), { recursive: true });
+  mkdirSync(join(D, '.ufo/waves/round-9/base'), { recursive: true });
+  writeFileSync(join(D, '.ufo/waves/round-9/close/p-tip.txt'), 'X9_HELD held=3/3 checks=3 rev=abc rule=X9\n');
+  writeFileSync(join(D, '.ufo/waves/round-9/base/p-base.txt'), 'X9_UNMET held=0/3 checks=3 rev=abc rule=X9\n');
+  mkdirSync(join(D, '.ufo/waves/round-9/r9'), { recursive: true });
+  mkdirSync(join(D, '.ufo/waves/round-9/build/Mut'), { recursive: true });
+  mkdirSync(join(D, '.ufo/waves/round-9/controls'), { recursive: true });
+  mkdirSync(join(D, '.ufo/waves/round-8/close'), { recursive: true });
+  writeFileSync(join(D, '.ufo/waves/round-9/r9/s-tip.txt'), 'R9_HELD held=4/4 checks=4 rev=abc rule=R9\n');
+  writeFileSync(join(D, '.ufo/waves/round-9/build/Mut/q.txt'), 'M9_UNMET held=0/0 checks=0 rev=abc rule=M9\n');
+  writeFileSync(join(D, '.ufo/waves/round-9/build/Mut/h.txt'), 'F9_HELD held=1/1 checks=1 rev=abc rule=F9\n');
+  writeFileSync(join(D, '.ufo/waves/round-9/controls/c-ctl.txt'), 'C9_UNMET held=1/4 checks=4 rev=abc rule=C9\n');
+  writeFileSync(join(D, '.ufo/waves/round-8/close/y-tip.txt'), 'Y8_HELD held=2/2 checks=2 rev=abc rule=Y8\n');
+  writeFileSync(join(D, '.ufo/waves/round-8/close/y-base.txt'), 'Y8_UNMET held=0/2 checks=2 rev=abc rule=Y8\n');
+  writeFileSync(join(D, 'f.txt'), 'a');
+  g('add', '-A'); g('commit', '-q', '-m', 'one');
+  const c1 = g('rev-parse', 'HEAD').stdout.trim();
+  g('checkout', '-q', '-b', 'side'); writeFileSync(join(D, 'g.txt'), 'b'); g('add', '-A'); g('commit', '-q', '-m', 'side');
+  const orphan = g('rev-parse', 'HEAD').stdout.trim();
+  g('checkout', '-q', '-'); g('checkout', '-q', '-B', 'main2', c1);
+  const body = (extra = '', skip = '') => [
+    '# report', skip === 'wp' ? '' : '## Work performed', 'x', '## Landed changes', 'x', '## Before → after measurements',
+    'X9_UNMET held=0/3 base; X9_HELD held=3/3 tip (`.ufo/waves/round-9/close/p-tip.txt`)', '## Sources & frontier', 'x', '## Trend verdicts', 'x',
+    skip === 'sh' ? '' : '## SHONEN', '- [~] a', '- [~] b', '- [ ] c', '- [~] d', extra,
+  ].join('\n');
+  const run = (text) => diffReport({ lane: D, round: 9, reportText: text, rev: c1, fleet: null });
+  const ids = (text) => [...new Set(run(text).map((f) => f.id))].join(',');
+  t('honest-clean', run(body()).length === 0);
+  t('placeholder-measured', ids(body('rev __MEASURED__')) === 'PLACEHOLDER');
+  t('placeholder-lane-hash', ids(body('LANE_HASH')) === 'PLACEHOLDER');
+  t('placeholder-tbd', ids(body('tip TBD')) === 'PLACEHOLDER');
+  t('placeholder-count', run(body('__A_B__ and __C_D__')).filter((f) => f.id === 'PLACEHOLDER').length === 2);
+  t('tally-wrong-xy', ids(body('X9_HELD held=10/10')) === 'TALLY_UNRECEIPTED');
+  t('tally-wrong-label', ids(body('Y9_HELD held=3/3')) === 'TALLY_UNRECEIPTED');
+  t('tally-verdict-flip', ids(body('X9_UNMET held=3/3')) === 'TALLY_UNRECEIPTED');
+  t('tally-bare-not-checked', run(body('held=10/10')).length === 0);
+  t('receipt-missing', ids(body('see `.ufo/waves/round-9/close/none.txt`')) === 'RECEIPT_MISSING');
+  t('receipt-present', run(body('see `.ufo/waves/round-9/base/p-base.txt`')).length === 0);
+  t('hash-dead', ids(body('0123456789abcdef0123456789abcdef01234567')) === 'HASH_DEAD');
+  t('hash-orphan', ids(body(orphan)) === 'HASH_ORPHAN');
+  t('hash-live', run(body(c1)).length === 0);
+  t('section-missing', ids(body('', 'wp')) === 'SECTION_MISSING');
+  t('shonen-absent', /SHONEN_COUNT/.test(ids(body('', 'sh'))) && /SECTION_MISSING/.test(ids(body('', 'sh'))));
+  t('shonen-twice', ids(body('## SHONEN\n- [~] a')) === 'SHONEN_COUNT');
+  t('shonen-short', /SHONEN_COUNT/.test(ids(body().replace('- [~] d', ''))));
+  t('round-scoped', diffReport({ lane: D, round: 8, reportText: body(), rev: c1, fleet: null }).some((f) => f.id === 'TALLY_UNRECEIPTED'));
+  t('render-clean-exit', render([], 'm').code === 0 && render([{ id: 'PLACEHOLDER', detail: 'x' }], 'm').code === 1);
+  // round-64 ratchet additions: boxes counted not lines, backticked boxes, URL components, declared-external hashes,
+  // glob receipts, ambient round-dir receipts, and a tally accepted only when the receipt it cites carries it.
+  t('shonen-backticked', run(body().replace(/- \[/g, '- `[').replace(/\] /g, ']` ')).length === 0);
+  t('shonen-two-per-line', run(body().replace('- [~] b\n- [ ] c\n- [~] d', '- [~] b\n- [ ] c — [~] d')).length === 0);
+  t('hash-in-url', run(body('https://github.com/x/y/tree/0123456789abcdef0123456789abcdef01234567')).length === 0);
+  t('hash-external-declared', ids(body('source pin 0123456789abcdef0123456789abcdef01234567 of a read-only clone')) === 'HASH_EXTERNAL'
+    && render(run(body('source pin 0123456789abcdef0123456789abcdef01234567 of a read-only clone')), 'm').code === 0);
+  t('hash-external-mixed', ids(body('source pin 0123456789abcdef0123456789abcdef01234567\ncommit 0123456789abcdef0123456789abcdef01234567')) === 'HASH_DEAD');
+  t('receipt-glob', run(body('see `.ufo/waves/round-9/close/p-*.txt`')).length === 0);
+  t('receipt-glob-unmatched', ids(body('see `.ufo/waves/round-9/close/zz-*.txt`')) === 'RECEIPT_MISSING');
+  t('tally-ambient-round-dir', run(body('R9_HELD held=4/4')).length === 0);
+  t('tally-control-not-ambient', ids(body('C9_UNMET held=1/4')) === 'TALLY_UNRECEIPTED');
+  t('tally-cited-control', run(body('the control `controls/c-ctl.txt` reads `C9_UNMET held=1/4`')).length === 0);
+  t('tally-cited-build', run(body('the mutant `build/Mut/q.txt` reads `M9_UNMET held=0/0`')).length === 0);
+  t('tally-held-not-from-transcript', ids(body('the forgery `build/Mut/h.txt` reads `F9_HELD held=1/1`')) === 'TALLY_UNRECEIPTED');
+  t('tally-build-uncited', ids(body('the mutant reads `M9_UNMET held=0/0`')) === 'TALLY_UNRECEIPTED');
+  t('tally-held-not-cited', ids(body('round-8 receipt `round-8/close/y-tip.txt` reads Y8_HELD held=2/2')) === 'TALLY_UNRECEIPTED');
+  t('tally-unmet-cited-other-round', run(body('round-8 receipt `round-8/close/y-base.txt` reads Y8_UNMET held=0/2')).length === 0);
+  t('tally-citation-must-carry', ids(body('round-8 receipt `round-8/close/y-base.txt` reads Y8_UNMET held=9/9')) === 'TALLY_UNRECEIPTED');
+  rmSync(T, { recursive: true, force: true });
+  const pass = results.filter(([, ok]) => ok).length;
+  for (const [n, ok] of results) if (!ok) process.stdout.write(`FAIL ${n}\n`);
+  process.stdout.write(`REPORT_RECEIPT_SELFTEST: ${pass === results.length ? 'PASS' : 'FAIL'} (${pass}/${results.length})\n`);
+  process.exit(pass === results.length ? 0 : 1);
+}
+
+const argv = process.argv.slice(2);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  if (argv.includes('--selftest')) selftest();
+  const opt = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : undefined; };
+  const lane = opt('--lane'); const round = opt('--round'); const report = opt('--report');
+  if (!lane || !round || !report || !/^\d+$/.test(round)) { process.stderr.write('usage: report-receipt-diff.mjs --lane DIR --round N --report FILE [--rev REV] [--fleet DIR] | --selftest\n'); process.exit(64); }
+  const laneAbs = resolve(lane);
+  let revFull = opt('--rev');
+  if (revFull) {
+    const rv = git(laneAbs, ['rev-parse', '--verify', `${revFull}^{commit}`]);
+    if (rv.status !== 0) { process.stdout.write(`REPORT_RECEIPT: FAIL-CLOSED rev-unreadable ${revFull}\n`); process.exit(2); }
+    revFull = rv.stdout.trim();
+  }
+  let reportText;
+  try { reportText = readFileSync(resolve(report), 'utf8'); } catch { process.stdout.write(`REPORT_RECEIPT: FAIL-CLOSED report-unreadable ${report}\n`); process.exit(2); }
+  const fleet = opt('--fleet') ? resolve(opt('--fleet')) : (existsSync(join(dirname(laneAbs), '.git')) ? dirname(laneAbs) : null);
+  const findings = diffReport({ lane: laneAbs, round, reportText, rev: revFull, fleet });
+  const r = render(findings, `round=${round} rev=${revFull || 'worktree'} bytes=${Buffer.byteLength(reportText)}`);
+  process.stdout.write(r.out);
+  process.exit(r.code);
+}

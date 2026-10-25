@@ -1,0 +1,39 @@
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -299,8 +299,8 @@
+ coverage_runtime=10
+ C1k=5
+ C1k_total=5
+-K_members=49
+-K_sections=49
++K_members=53
++K_sections=53
+ coverage_kimi=10
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+@@ -343,6 +343,25 @@
+ | coverage:runtime-layer | 10 | `floor(10 × 11/11 × 92/92)` = **10** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
+ | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 53/53)` = **10** — round 42: the root child `locks/` (created by Kimi Code 2.3.0, S041) is declared in K3 in both member lists (`scripts/kimi-census.mjs` and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by ``## `~/.kimi-code/locks/` …`` in `knowledge/kimi-session-state.md`: `K_members`/`K_sections` 52 → 53, census `DRIFT (UNLISTED locks)` exit 1 → `CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, root enumeration `declared=26 strays=1` → `declared=27 strays=0`; integer held (the ratio cannot show this move, the root enumeration does). Round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 (integer); round 42 (terms) |
+ 
++### K layer — DEGRADED (2026-10-25; routed defect D4 names the rounds-58/63 refits)
++
++The `coverage:kimi-layer` integer is 10 and the layer is **DEGRADED**: four governed K members are
++absent from `~/.kimi-code` while both member lists still declare them — K3 `logs/kimi-code.log`,
++`cache/`, `search-index/` and K4 `updates/`. The census names them (`MEMBER_MISSING ×4`,
++`TOTALS: members=49 checked=49 errors=4`, exit 1). The stanza's K terms are the governed universe
++(**53** = the census `FROZEN` total 4/27/10/9/3), never a live count, so the proxy reports the same
++shortfall: `K_MEMBERS_DRIFT declared=53 computed=49 delta=-4` and `K_SECTIONS_DRIFT … delta=-4`.
++Round 58 fitted 53 → 52 (`search-index/`) and round 63 fitted 52 → 49 (the other three), each time
++declaring the census's live `members=` value as if it were the universe — a MATCH that hid the loss.
++`coverage_kimi` stays 10 because it is the live ratio 49/49, so that integer is not evidence of
++health here; the two K deltas are. The layer reads DEGRADED until each member returns (the installed
++binary still carries `search-index`, `query-store`, `kimi-code.log` and `updates/latest.json`, so this
++is removed runtime state, not a layout change) or a sourced retirement lands in **both** member lists
++with the census `FROZEN` totals moved in the same commit. Bound: `search-index/` was live at the
++round-57 close and gone by round-58 w1 (2026-10-24); the other three were live in the round-61 w1
++census (2026-10-25T08:29-0300) and gone by the round-63 measurement; the host root's last child-set
++change is 2026-10-25T13:16:18-0300, and the host keeps no per-member time for an absent path.
++
+ Why not 10 on either axis: operability now has five runnable artifacts and ten
+ executed checklist items, but still no CI/schedule leg, and the probes cover
+ citations, two live surfaces, the round record, this lane's own scorecard and the

@@ -1,0 +1,62 @@
+### v1: baseline (default TMPDIR) ###
+exit=0 stderr=[]
+### jj absent: PATH=/usr/bin:<stub without jj> ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED jj-absent]
+### git absent: PATH=<stub with jj+coreutils, no git> ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED git-absent]
+### PATH empty ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED jj-absent]
+### jj+git present but coreutils absent ###
+exit=2 out=[/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/jj-seat-demo.sh: line 13: mktemp: command not found
+JJ_SEAT_DEMO: FAIL-CLOSED mktemp]
+### HOME=<empty dir>, JJ_CONFIG unset ###
+exit=0
+HOME residue: []
+### TMPDIR with a space ###
+exit=0 residue=[]
+### caller cwd = / ###
+exit=0
+### caller cwd = lane root (a jj repo) ###
+exit=0
+### inherited GIT_DIR ###
+exit=2 stderr=[fatal: this operation must be run in a work tree] residue=[/tmp/bogus-gitdir]
+### inherited GIT_WORK_TREE ###
+exit=2 stderr=[fatal: GIT_WORK_TREE (or --work-tree=<directory>) not allowed without specifying GIT_DIR (or --git-dir=<directory>)]
+### inherited GIT_DIR + GIT_WORK_TREE ###
+exit=2
+### TMPDIR inside a git worktree ###
+exit=0
+### output equality ###
+base == home
+base != tmpspace
+3c3
+< JJ_SEAT: seat_has_git_dir=no
+---
+> JJ_SEAT: seat_has_git_dir=yes
+base == cwd-root
+base == cwd-lane
+base != gitdir
+1,16c1
+< JJ_SEAT: workspaces_after_add=2
+< JJ_SEAT: seat_gets_base_file=yes
+< JJ_SEAT: seat_has_git_dir=no
+< JJ_SEAT: seat_file_in_default_tree=no
+base != gitwt
+1,16c1
+< JJ_SEAT: workspaces_after_add=2
+< JJ_SEAT: seat_gets_base_file=yes
+< JJ_SEAT: seat_has_git_dir=no
+< JJ_SEAT: seat_file_in_default_tree=no
+base != gitboth
+1,16c1
+< JJ_SEAT: workspaces_after_add=2
+< JJ_SEAT: seat_gets_base_file=yes
+< JJ_SEAT: seat_has_git_dir=no
+< JJ_SEAT: seat_file_in_default_tree=no
+base != tmpgit
+3c3
+< JJ_SEAT: seat_has_git_dir=no
+---
+> JJ_SEAT: seat_has_git_dir=yes
+### key count / last line ###
+keys=15 last=[JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5]

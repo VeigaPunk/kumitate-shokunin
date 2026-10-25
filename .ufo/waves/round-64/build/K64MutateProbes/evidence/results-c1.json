@@ -1,0 +1,402 @@
+{
+ "which": "c1",
+ "pristineShaBefore": "34b3b308fab63355ed6f11ba25fc1a96a9616bd9d5412734fc54c866ad2d2be6",
+ "pristineShaAfter": "34b3b308fab63355ed6f11ba25fc1a96a9616bd9d5412734fc54c866ad2d2be6",
+ "baseline": {
+  "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+  "exit": 1,
+  "stderr": ""
+ },
+ "mutants": [
+  {
+   "id": "p1floor-up",
+   "mutation": "Number(m[1]) >= 20 -> Number(m[1]) >= 21",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P1 MISS selftest=20/20 exit=0 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p1floor-down",
+   "mutation": "Number(m[1]) >= 20 -> Number(m[1]) >= 19",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "cases-floor-down",
+   "mutation": "cases.length < 14 -> cases.length < 13",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "cases-floor-up",
+   "mutation": "cases.length < 14 -> cases.length < 17",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS cases=16;ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "ids-floor-down",
+   "mutation": "seen.size < 8 -> seen.size < 7",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "ids-floor-up",
+   "mutation": "seen.size < 8 -> seen.size < 9",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "clean-floor-up-invis",
+   "mutation": "clean < 2 -> clean < 3",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "clean-floor-up-kill",
+   "mutation": "clean < 2 -> clean < 4",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6;clean=3 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "honest-name",
+   "mutation": "c === 'c0-honest' -> c === 'c0-honesz'",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6;honest-absent-or-wrong | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "clean-prefix",
+   "mutation": "r.stdout.startsWith('REPORT_RECEIPT: CLEAN') -> r.stdout.startsWith('REPORT_RECEIPT: KLEAN')",
+   "error": "occurrences=2, skipped"
+  },
+  {
+   "id": "ids-regex-2plus",
+   "mutation": "/^[A-Z_]+ / -> /^[A-Z_][A-Z_]+ /",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "p3r60-exit",
+   "mutation": "if (a.status !== 1) -> if (a.status !== 2)",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS r60-exit=1 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p3r63-exit",
+   "mutation": "if (b.status !== 0 -> if (b.status !== 1",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS r63-exit=0 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p1-selftest-exit",
+   "mutation": "check('P1', s.status === 0 -> check('P1', s.status === 1",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P1 MISS selftest=20/20 exit=0 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p1-eq-invert",
+   "mutation": "m[1] === m[2] -> m[1] !== m[2]",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P1 MISS selftest=20/20 exit=0 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p1-eq-tautology",
+   "mutation": "m[1] === m[2] -> m[2] === m[2]",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "p4-every-to-some",
+   "mutation": "fails.every(Boolean) -> fails.some(Boolean)",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "p4-every-invert",
+   "mutation": "fails.every(Boolean) -> fails.every((x) => !x)",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P4 MISS stub-clean-fails=true stub-drift-fails=true | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "stub-clean-text",
+   "mutation": "'REPORT_RECEIPT: CLEAN (stub)' -> 'REPORT_RECEIPT: PASS (stub)'",
+   "error": "occurrences=0, skipped"
+  },
+  {
+   "id": "stub-drift-exit0",
+   "mutation": "process.exit(1); -> process.exit(0);",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "held-boundary-4",
+   "mutation": "held === 5 ? 'HELD' : 'UNMET' -> held === 4 ? 'HELD' : 'UNMET'",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "final-exit-2",
+   "mutation": "process.exit(held === 5 ? 0 : 1) -> process.exit(held === 5 ? 0 : 2)",
+   "changed": true,
+   "exit": 2,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "r60-const",
+   "mutation": "const R60 = '7b0581ed' -> const R60 = '7b0581ee'",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS fleet-blob-unreadable | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "r63-const",
+   "mutation": "const R63 = '8fd46e61' -> const R63 = '8fd46e60'",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS fleet-blob-unreadable | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "tally-regex-9",
+   "mutation": "held=10\\/10 -> held=9\\/10",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS r60-tally-line-absent | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "placeholder-prefix",
+   "mutation": "l.startsWith('PLACEHOLDER ') -> l.startsWith('PLACEHOLDXR ')",
+   "changed": true,
+   "exit": 1,
+   "held": "2/5",
+   "line": "RECEIPT64_UNMET held=2/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P3 MISS r60-placeholders=0/indep=6 | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "indep-or-to-and",
+   "mutation": "if (indep < 1 || ph !== indep) -> if (indep < 1 && ph !== indep)",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "usage-exit-65",
+   "mutation": "process.exit(64) -> process.exit(65)",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "poslen-3",
+   "mutation": "if (pos.length < 2) -> if (pos.length < 3)",
+   "changed": true,
+   "exit": 64,
+   "held": "none(base 3/5)",
+   "line": "",
+   "heldChanged": false,
+   "stderr": "usage: receipt64-probe.mjs <lane-dir> <measured-rev> [--report file] [--fleet dir]"
+  },
+  {
+   "id": "tool-path",
+   "mutation": "'report-receipt-diff.mjs' -> 'report-receipt-dif.mjs'",
+   "changed": true,
+   "exit": 1,
+   "held": "0/5",
+   "line": "RECEIPT64_UNMET held=0/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P1 MISS tool-absent | P2 MISS tool-absent | P3 MISS tool-absent | P4 MISS tool-absent | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "case-report-path",
+   "mutation": "join(dir, c, 'report.md') -> join(dir, c, 'report.mdX')",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS c0-honest:got=2/;c1-placeholder-measured:got=2/;c10-shonen-twice:got=2/;c11-hash-dead:got=2/;c12-r60-shape:got=2/ | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "case-lane-path",
+   "mutation": "join(dir, c, 'lane') -> join(dir, c, 'laneX')",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS c0-honest:got=1/RECEIPT_MISSING,TALLY_UNRECEIPTED;c1-placeholder-measured:got=1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED;c10-shonen-twice:got=1/RECEIPT_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED;c11-hash-dead:got=1/HASH_DEAD,RECEIPT_MISSING,TALLY_UNRECEIPTED;c12-r60-shape:got=1/PLACEHOLDER,RECEIPT_MI",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "rev-verify-invert",
+   "mutation": "rv.status !== 0 -> rv.status === 0",
+   "changed": true,
+   "exit": 2,
+   "held": "0/5",
+   "line": "RECEIPT64_UNMET held=0/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | rev-unreadable",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "p2-round-90",
+   "mutation": "--round', '9' -> --round', '90'",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS c0-honest:got=1/TALLY_UNRECEIPTED;c1-placeholder-measured:got=1/PLACEHOLDER,TALLY_UNRECEIPTED;c10-shonen-twice:got=1/SHONEN_COUNT,TALLY_UNRECEIPTED;c11-hash-dead:got=1/HASH_DEAD,TALLY_UNRECEIPTED;c13-placeholder-in-fence:got=1/PLACEHOLDER,TALLY_UNRECEIPTED | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "archive-parent",
+   "mutation": "archive \"${rev}\" -> archive \"${rev}~1\"",
+   "changed": true,
+   "exit": 1,
+   "held": "0/5",
+   "line": "RECEIPT64_UNMET held=0/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P1 MISS tool-absent | P2 MISS tool-absent | P3 MISS tool-absent | P4 MISS tool-absent | P5 MISS report-not-given",
+   "heldChanged": true,
+   "stderr": ""
+  },
+  {
+   "id": "expect-filter",
+   "mutation": "existsSync(join(dir, n, 'expect')) -> existsSync(join(dir, n, 'expecz'))",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS cases=0;ids=0;clean=0;honest-absent-or-wrong | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "p5-exit-1",
+   "mutation": "check('P5', r.status === 0 -> check('P5', r.status === 1",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "opt-report-typo",
+   "mutation": "opt('--report') -> opt('--repork')",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "miss-join-sep",
+   "mutation": "miss.join(' | ') -> miss.join(' , ')",
+   "changed": true,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 , P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  },
+  {
+   "id": "blob-or-to-and",
+   "mutation": "if (b60.status !== 0 || b63.status !== 0) -> if (b60.status !== 0 && b63.status !== 0)",
+   "changed": false,
+   "exit": 1,
+   "held": "3/5",
+   "line": "RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given",
+   "heldChanged": false,
+   "stderr": ""
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+# Round-64 K64ExecRowsDraft registry validation transcript (final mirror: narrow symlinks, no loop)
+# mirror root: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecRowsDraft/validate
+# own bytes in the mirror: corpus/SOURCES.md (block appended) + corpus/knowledge/jj-workspace-seat-containment.md (placeholder)
+# symlinks only so base rows' used-by paths resolve: scripts -> lane/scripts, SKILL.md -> lane/SKILL.md,
+#   .ufo/pins, .ufo/waves/{round-35,round-42,round-47,round-48} -> lane counterparts
+
+== 0. base lane control (read-only, unmodified lane) ==
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=136 tiers=A:113,B:15,C:8 status=queued:13,mined:104,rejected:19 entries_with_source=20 legacy=38)
+exit=0
+
+== 1. fleet census validate --file mirror/corpus/SOURCES.md ==
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecRowsDraft/validate/corpus/SOURCES.md
+exit=0
+
+== 2. lane sources-check.mjs --self mirror ==
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)
+exit=0
+
+== 3. quote check (frozen probe normaliser; capture + live fetch) ==
+S198 capture=concurrency-latest.html sha256=5e2f757641748faf15df032f51e14435ddd579b13c30ab54fea0d40ce2e00bf6 bytes=48988 live-curl-exit=0
+  PASS words=23 capture=true live=true "The most important piece in the lock-free design is the "operation log". That is what allows us to detect and merge divergent operations."
+  PASS words=19 capture=true live=true "The view object contains the set of visible head commits, bookmarks, tags, and the working-copy commit in each workspace."
+  PASS words=12 capture=true live=true "When a command starts, it loads the repo at the latest operation."
+S199 capture=firefox-jujutsu.html sha256=abbe47cfa45e809694b224d0db0ea7d6b00e9846b94086d077aea0604db7b3d2 bytes=53233 live-curl-exit=0
+  PASS words=22 capture=true live=true "A workspace becomes stale when a commit it depends on is rewritten from another workspace, for example by rebasing, editing, or squashing."
+  PASS words=21 capture=true live=true "We recommend this default because some mach commands invoke jj and can fail, sometimes silently, if the working copy is stale."
+S200 capture=working-copy-latest.html sha256=947d0c56c02f9c10b4c14e8aaa8cc3f435f7650536ab9386ef6a52f1d64ff3c7 bytes=47694 live-curl-exit=0
+  PASS words=14 capture=true live=true "Use jj workspace remove to forget a workspace and remove its directory from disk."
+  PASS words=17 capture=true live=true "Tracked changes are snapshotted before the directory is removed, but ignored files in that directory are deleted."
+  PASS words=6 capture=true live=true "The main workspace cannot be removed."
+QUOTE_CHECK: PASS quotes=8 failing=0
+exit=0
+
+== 4. J64 J1-J5 simulation on the mirror with a draft entry header ==
+J1 PASS
+J2 PASS
+J3 PASS
+J4 PASS
+J5 PASS
+DRAFT_J1_J5: PASS checks=5 ids=S198,S199,S200 bullets=8
+exit=0

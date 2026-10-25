@@ -1,0 +1,63 @@
+--- a/scripts/report-receipt-diff.mjs
++++ b/scripts/report-receipt-diff.mjs
+@@ -45,22 +45,20 @@
+ export function diffReport({ lane, round, reportText, rev, fleet }) {
+   const findings = [];
+   const add = (id, detail) => findings.push({ id, detail });
+-  const text = reportText;
+   // PLACEHOLDER
+-  for (const m of text.matchAll(PLACEHOLDER)) add('PLACEHOLDER', m[0]);
++  for (const m of reportText.matchAll(PLACEHOLDER)) add('PLACEHOLDER', m[0]);
+   // sections
+-  for (const [name, re] of REQUIRED) if (!re.test(text)) add('SECTION_MISSING', name);
+-  const sh = [...text.matchAll(/^#{1,6}\s*\**\s*SHONEN/gim)];
++  for (const [name, re] of REQUIRED) if (!re.test(reportText)) add('SECTION_MISSING', name);
++  const sh = [...reportText.matchAll(/^#{1,6}\s*\**\s*SHONEN/gim)];
+   if (sh.length !== 1) add('SHONEN_COUNT', `headings=${sh.length}`);
+   else {
+-    const rest = text.slice(sh[0].index).split('\n').slice(1);
++    const rest = reportText.slice(sh[0].index).split('\n').slice(1);
+     const boxes = rest.filter((l) => /^\s*[-*]\s*\[[x~ ]\]/.test(l)).length;
+     if (boxes < 4) add('SHONEN_COUNT', `boxes=${boxes}`);
+   }
+   // receipts at rev
+   const receiptNames = new Map();
+-  const dirs = ['base', 'close'];
+-  for (const d of dirs) {
++  for (const d of ['base', 'close']) {
+     const rel = `.ufo/waves/round-${round}/${d}`;
+     if (rev) {
+       const ls = git(lane, ['ls-tree', '-r', '--name-only', rev, '--', rel]);
+@@ -76,18 +74,18 @@
+     }
+   }
+   // RECEIPT_MISSING
+-  for (const m of new Set([...text.matchAll(RECEIPT_PATH(round))].map((x) => x[0]))) if (!receiptNames.has(m)) add('RECEIPT_MISSING', m);
++  for (const m of new Set([...reportText.matchAll(RECEIPT_PATH(round))].map((x) => x[0]))) if (!receiptNames.has(m)) add('RECEIPT_MISSING', m);
+   // TALLY_UNRECEIPTED
+   const allLines = [...receiptNames.values()].flatMap((t) => t.split('\n'));
+-  for (const m of text.matchAll(TALLY)) {
++  for (const m of reportText.matchAll(TALLY)) {
+     const [, label, x, y] = m;
+     const key = `${label} held=${x}/${y}`;
+-    const line = (l) => l.includes(`${label} held=${x}/${y}`) || (l.includes(label) && new RegExp(`held=${x}/${y}\\b`).test(l));
++    const line = (l) => l.includes(label) && new RegExp(`held=${x}/${y}\\b`).test(l);
+     if (!allLines.some(line)) add('TALLY_UNRECEIPTED', key);
+   }
+   // hashes
+   const tip = rev || git(lane, ['rev-parse', 'HEAD']).stdout.trim();
+-  for (const h of new Set(text.match(HASH40) || [])) {
++  for (const h of new Set(reportText.match(HASH40) || [])) {
+     const inLane = git(lane, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+     const inFleet = fleet && git(fleet, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+     if (!inLane && !inFleet) { add('HASH_DEAD', h); continue; }
+--- a/scripts/jj-seat-demo.sh
++++ b/scripts/jj-seat-demo.sh
+@@ -17,7 +17,6 @@
+ [ "$(git -C "$D" rev-parse --show-toplevel)" = "$D" ] || { echo 'JJ_SEAT_DEMO: FAIL-CLOSED fixture-root'; exit 2; }
+ (cd "$D" && J git init >/dev/null 2>&1) || { echo 'JJ_SEAT_DEMO: FAIL-CLOSED jj-git-init'; exit 2; }
+ echo base > "$D/base.txt"
+-J -R "$D" describe -m base >/dev/null 2>&1
+ J -R "$D" new -m trunk >/dev/null 2>&1
+ SEAT="$S/seat1"
+ J -R "$D" workspace add "$SEAT" >/dev/null 2>&1 || { echo 'JJ_SEAT_DEMO: FAIL-CLOSED workspace-add'; exit 2; }

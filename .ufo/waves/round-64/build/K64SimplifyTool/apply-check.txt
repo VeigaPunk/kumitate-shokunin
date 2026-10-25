@@ -1,0 +1,9 @@
+# git apply --check/-p1 of simplify.diff on a scratch copy of the two subjects
+$ cp scripts/{report-receipt-diff.mjs,jj-seat-demo.sh} /tmp/kumitate-r64/K64SimplifyTool/applytest/scripts/ && cd /tmp/kumitate-r64/K64SimplifyTool/applytest
+$ git apply --check -p1 <simplify.diff>   -> exit=0
+$ git apply -p1 <simplify.diff>           -> exit=0
+$ diff -q applytest/scripts/report-receipt-diff.mjs build/K64SimplifyTool/tool-after.mjs -> identical (exit=0)
+$ diff -q applytest/scripts/jj-seat-demo.sh        build/K64SimplifyTool/demo-after.sh  -> identical (exit=0)
+$ wc -l applytest/scripts/* -> 175 + 66
+$ bash applytest/scripts/jj-seat-demo.sh | md5sum -> 4a470fdd2b6fb51bee501c6fec67c8b6 (== baseline run)
+$ node applytest/scripts/report-receipt-diff.mjs --selftest -> REPORT_RECEIPT_SELFTEST: PASS (20/20), exit=0

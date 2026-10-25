@@ -1,0 +1,705 @@
+{
+  "cases": 16,
+  "results": [
+    {
+      "id": "M01",
+      "target": "REQUIRED Work performed",
+      "note": "heading literal misspelled",
+      "find": "\\s*Work performed/im",
+      "replace": "\\s*Work performd/im",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SECTION_MISSING c1-placeholder-measured:1/PLACEHOLDER,SECTION_MISSING c10-shonen-twice:1/SECTION_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SECTION_MISSING c12-r60-shape:1/PLACEHOLDER,SECTION_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SECTION_MISSING c14-honest-templates:1/SECTION_MISSING c15-honest-two-receipts:1/SECTION_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,SECTION_MISSING c3-placeholder-tbd:1/PLACEHOLDER,SECTION_MISSING c4-tally-overstated:1/SECTION_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SECTION_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SECTION_MISSING,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SECTION_MISSING"
+    },
+    {
+      "id": "M02",
+      "target": "REQUIRED Landed changes",
+      "note": "heading literal truncated",
+      "find": "\\s*Landed changes/im",
+      "replace": "\\s*Landed change/im",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M03",
+      "target": "REQUIRED Before->after arrow alt",
+      "note": "drops the ASCII -> alternative",
+      "find": "Before\\s*(?:→|->)\\s*after",
+      "replace": "Before\\s*(?:→)\\s*after",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M04",
+      "target": "REQUIRED Before->after whitespace",
+      "note": "requires exactly one space after the label",
+      "find": "Before\\s*(?:→|->)",
+      "replace": "Before (?:→|->)",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M05",
+      "target": "REQUIRED Sources & frontier amp",
+      "note": "drops the ampersand requirement",
+      "find": "Sources\\s*&\\s*frontier",
+      "replace": "Sources\\s*frontier",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SECTION_MISSING c1-placeholder-measured:1/PLACEHOLDER,SECTION_MISSING c10-shonen-twice:1/SECTION_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SECTION_MISSING c12-r60-shape:1/PLACEHOLDER,SECTION_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SECTION_MISSING c14-honest-templates:1/SECTION_MISSING c15-honest-two-receipts:1/SECTION_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,SECTION_MISSING c3-placeholder-tbd:1/PLACEHOLDER,SECTION_MISSING c4-tally-overstated:1/SECTION_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SECTION_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SECTION_MISSING,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SECTION_MISSING"
+    },
+    {
+      "id": "M06",
+      "target": "REQUIRED Trend verdicts",
+      "note": "heading literal truncated",
+      "find": "\\s*Trend verdicts/im",
+      "replace": "\\s*Trend verdict/im",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M07",
+      "target": "REQUIRED SHONEN heading",
+      "note": "REQUIRED entry renamed (SHONEN detect arm untouched)",
+      "find": "\\s*SHONEN/im],",
+      "replace": "\\s*SHONENN/im],",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SECTION_MISSING c1-placeholder-measured:1/PLACEHOLDER,SECTION_MISSING c10-shonen-twice:1/SECTION_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SECTION_MISSING c12-r60-shape:1/PLACEHOLDER,SECTION_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SECTION_MISSING c14-honest-templates:1/SECTION_MISSING c15-honest-two-receipts:1/SECTION_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,SECTION_MISSING c3-placeholder-tbd:1/PLACEHOLDER,SECTION_MISSING c4-tally-overstated:1/SECTION_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SECTION_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SECTION_MISSING,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SECTION_MISSING"
+    },
+    {
+      "id": "M08",
+      "target": "REQUIRED heading anchor",
+      "note": "drops the ^ anchor",
+      "find": "'Work performed', /^#{1,6}",
+      "replace": "'Work performed', /#{1,6}",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M09",
+      "target": "REQUIRED heading quantifier",
+      "note": "narrows #{1,6} to #{1,3}",
+      "find": "'Landed changes', /^#{1,6}",
+      "replace": "'Landed changes', /^#{1,3}",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M10",
+      "target": "REQUIRED bold-marker arm",
+      "note": "drops the optional ** bold marker",
+      "find": "\\s*\\**\\s*Sources",
+      "replace": "\\s*Sources",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M11",
+      "target": "PLACEHOLDER quantifier",
+      "note": "two-char token no longer flagged",
+      "find": "[A-Z0-9_]{2,}__",
+      "replace": "[A-Z0-9_]{3,}__",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c12-r60-shape:1/TALLY_UNRECEIPTED"
+    },
+    {
+      "id": "M12",
+      "target": "PLACEHOLDER LANE_HASH boundary",
+      "note": "trailing \\b dropped (LANE_HASHX matches)",
+      "find": "\\bLANE_HASH\\b",
+      "replace": "\\bLANE_HASH",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M13",
+      "target": "PLACEHOLDER TBD boundary",
+      "note": "trailing \\b dropped (TBDs matches)",
+      "find": "\\bTBD\\b",
+      "replace": "\\bTBD",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M14",
+      "target": "PLACEHOLDER char class",
+      "note": "underscore removed from the class",
+      "find": "[A-Z0-9_]{2,}",
+      "replace": "[A-Z0-9]{2,}",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M15",
+      "target": "TALLY leading boundary",
+      "note": "leading \\b dropped",
+      "find": "const TALLY = /\\b(",
+      "replace": "const TALLY = /(",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M16",
+      "target": "TALLY separator",
+      "note": "requires exactly one space",
+      "find": ")\\s+held=",
+      "replace": ") held=",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M17",
+      "target": "TALLY y quantifier",
+      "note": "single-digit y only",
+      "find": "held=(\\d+)\\/(\\d+)/g",
+      "replace": "held=(\\d+)\\/(\\d)/g",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M18",
+      "target": "TALLY verdict alternation",
+      "note": "UNMET no longer tallied",
+      "find": "(?:HELD|UNMET))",
+      "replace": "(?:HELD))",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c5-tally-verdict-flip:0/CLEAN"
+    },
+    {
+      "id": "M19",
+      "target": "TALLY label class",
+      "note": "digits removed from the label class",
+      "find": "([A-Z][A-Z0-9]*_",
+      "replace": "([A-Z]+_",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (16/20)",
+      "controls": "c12-r60-shape:1/PLACEHOLDER c4-tally-overstated:0/CLEAN c5-tally-verdict-flip:0/CLEAN c6-tally-label-swapped:0/CLEAN"
+    },
+    {
+      "id": "M20",
+      "target": "RECEIPT_PATH dir alternation",
+      "note": "close/ receipts unreachable",
+      "find": "(?:base|close)",
+      "replace": "(?:base)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c7-receipt-path-missing:0/CLEAN"
+    },
+    {
+      "id": "M21",
+      "target": "RECEIPT_PATH name class",
+      "note": "dash removed from the name class",
+      "find": "[A-Za-z0-9._-]+",
+      "replace": "[A-Za-z0-9._]+",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/RECEIPT_MISSING c1-placeholder-measured:1/PLACEHOLDER,RECEIPT_MISSING c10-shonen-twice:1/RECEIPT_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,RECEIPT_MISSING c12-r60-shape:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,RECEIPT_MISSING c14-honest-templates:1/RECEIPT_MISSING c15-honest-two-receipts:1/RECEIPT_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,RECEIPT_MISSING c3-placeholder-tbd:1/PLACEHOLDER,RECEIPT_MISSING c4-tally-overstated:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/RECEIPT_MISSING,SECTION_MISSING c9-shonen-absent:1/RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M22",
+      "target": "RECEIPT_PATH name quantifier",
+      "note": "names longer than 8 chars unreachable",
+      "find": "[A-Za-z0-9._-]+",
+      "replace": "[A-Za-z0-9._-]{1,8}",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/RECEIPT_MISSING c1-placeholder-measured:1/PLACEHOLDER,RECEIPT_MISSING c10-shonen-twice:1/RECEIPT_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,RECEIPT_MISSING c12-r60-shape:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,RECEIPT_MISSING c14-honest-templates:1/RECEIPT_MISSING c15-honest-two-receipts:1/RECEIPT_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,RECEIPT_MISSING c3-placeholder-tbd:1/PLACEHOLDER,RECEIPT_MISSING c4-tally-overstated:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/RECEIPT_MISSING,SECTION_MISSING c9-shonen-absent:1/RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M23",
+      "target": "RECEIPT_PATH anchor",
+      "note": "leading dot anchor dropped",
+      "find": "`\\\\.ufo/waves/round-",
+      "replace": "`ufo/waves/round-",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/RECEIPT_MISSING c1-placeholder-measured:1/PLACEHOLDER,RECEIPT_MISSING c10-shonen-twice:1/RECEIPT_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,RECEIPT_MISSING c12-r60-shape:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,RECEIPT_MISSING c14-honest-templates:1/RECEIPT_MISSING c15-honest-two-receipts:1/RECEIPT_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,RECEIPT_MISSING c3-placeholder-tbd:1/PLACEHOLDER,RECEIPT_MISSING c4-tally-overstated:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/RECEIPT_MISSING,SECTION_MISSING c9-shonen-absent:1/RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M24",
+      "target": "HASH40 quantifier",
+      "note": "39 hex digits",
+      "find": "[0-9a-f]{40}",
+      "replace": "[0-9a-f]{39}",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (18/20)",
+      "controls": "c11-hash-dead:0/CLEAN"
+    },
+    {
+      "id": "M25",
+      "target": "HASH40 trailing boundary",
+      "note": "trailing \\b dropped",
+      "find": "[0-9a-f]{40}\\b",
+      "replace": "[0-9a-f]{40}",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M26",
+      "target": "SHONEN box threshold",
+      "note": "threshold 4 -> 3",
+      "find": "if (boxes < 4)",
+      "replace": "if (boxes < 3)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M27",
+      "target": "SHONEN box threshold",
+      "note": "threshold 4 -> 5",
+      "find": "if (boxes < 4)",
+      "replace": "if (boxes < 5)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SHONEN_COUNT c1-placeholder-measured:1/PLACEHOLDER,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SHONEN_COUNT c12-r60-shape:1/PLACEHOLDER,SHONEN_COUNT,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SHONEN_COUNT c14-honest-templates:1/SHONEN_COUNT c15-honest-two-receipts:1/SHONEN_COUNT c2-placeholder-lanehash:1/PLACEHOLDER,SHONEN_COUNT c3-placeholder-tbd:1/PLACEHOLDER,SHONEN_COUNT c4-tally-overstated:1/SHONEN_COUNT,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SHONEN_COUNT,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SHONEN_COUNT,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SHONEN_COUNT c8-section-missing:1/SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M28",
+      "target": "SHONEN box regex space alt",
+      "note": "unchecked box [ ] not counted",
+      "find": "/^\\s*[-*]\\s*\\[[x~ ]\\]/",
+      "replace": "/^\\s*[-*]\\s*\\[[x~]\\]/",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SHONEN_COUNT c1-placeholder-measured:1/PLACEHOLDER,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SHONEN_COUNT c12-r60-shape:1/PLACEHOLDER,SHONEN_COUNT,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SHONEN_COUNT c14-honest-templates:1/SHONEN_COUNT c15-honest-two-receipts:1/SHONEN_COUNT c2-placeholder-lanehash:1/PLACEHOLDER,SHONEN_COUNT c3-placeholder-tbd:1/PLACEHOLDER,SHONEN_COUNT c4-tally-overstated:1/SHONEN_COUNT,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SHONEN_COUNT,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SHONEN_COUNT,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SHONEN_COUNT c8-section-missing:1/SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M29",
+      "target": "SHONEN box regex bullet alt",
+      "note": "star bullet dropped",
+      "find": "[-*]\\s*\\[[x~ ]\\]",
+      "replace": "-\\s*\\[[x~ ]\\]",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M30",
+      "target": "SHONEN uniqueness test",
+      "note": "multiple headings tolerated",
+      "find": "if (sh.length !== 1)",
+      "replace": "if (sh.length < 1)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c10-shonen-twice:0/CLEAN"
+    },
+    {
+      "id": "M31",
+      "target": "SHONEN box scan start",
+      "note": "heading line kept in the scan",
+      "find": ".split('\\n').slice(1)",
+      "replace": ".split('\\n')",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M32",
+      "target": "line() label arm",
+      "note": "label match dropped from the second arm",
+      "find": "(l.includes(label) && new RegExp(",
+      "replace": "(true && new RegExp(",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (18/20)",
+      "controls": "c5-tally-verdict-flip:0/CLEAN c6-tally-label-swapped:0/CLEAN"
+    },
+    {
+      "id": "M33",
+      "target": "line() exact arm",
+      "note": "first arm weakened to label-only",
+      "find": "l.includes(`${label} held=${x}/${y}`) ||",
+      "replace": "l.includes(label) ||",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (18/20)",
+      "controls": "c12-r60-shape:1/PLACEHOLDER c4-tally-overstated:0/CLEAN c5-tally-verdict-flip:0/CLEAN"
+    },
+    {
+      "id": "M34",
+      "target": "line() x/y boundary",
+      "note": "trailing \\b dropped",
+      "find": "new RegExp(`held=${x}/${y}\\\\b`)",
+      "replace": "new RegExp(`held=${x}/${y}`)",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M35",
+      "target": "TALLY any-line test",
+      "note": "some -> every",
+      "find": "if (!allLines.some(line))",
+      "replace": "if (!allLines.every(line))",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (7/20)",
+      "controls": "c0-honest:1/TALLY_UNRECEIPTED c1-placeholder-measured:1/PLACEHOLDER,TALLY_UNRECEIPTED c10-shonen-twice:1/SHONEN_COUNT,TALLY_UNRECEIPTED c11-hash-dead:1/HASH_DEAD,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,TALLY_UNRECEIPTED c14-honest-templates:1/TALLY_UNRECEIPTED c15-honest-two-receipts:1/TALLY_UNRECEIPTED c2-placeholder-lanehash:1/PLACEHOLDER,TALLY_UNRECEIPTED c3-placeholder-tbd:1/PLACEHOLDER,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/SECTION_MISSING,TALLY_UNRECEIPTED c9-shonen-absent:1/SECTION_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED"
+    },
+    {
+      "id": "M36",
+      "target": "RECEIPT_MISSING test",
+      "note": "inverted",
+      "find": "if (!receiptNames.has(m))",
+      "replace": "if (receiptNames.has(m))",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/RECEIPT_MISSING c1-placeholder-measured:1/PLACEHOLDER,RECEIPT_MISSING c10-shonen-twice:1/RECEIPT_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,RECEIPT_MISSING c12-r60-shape:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,RECEIPT_MISSING c14-honest-templates:1/RECEIPT_MISSING c15-honest-two-receipts:1/RECEIPT_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,RECEIPT_MISSING c3-placeholder-tbd:1/PLACEHOLDER,RECEIPT_MISSING c4-tally-overstated:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/RECEIPT_MISSING,SECTION_MISSING c9-shonen-absent:1/RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M37",
+      "target": "receipt dirs",
+      "note": "close/ receipts never read",
+      "find": "const dirs = ['base', 'close'];",
+      "replace": "const dirs = ['base'];",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (5/20)",
+      "controls": "c0-honest:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c1-placeholder-measured:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c10-shonen-twice:1/RECEIPT_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED c11-hash-dead:1/HASH_DEAD,RECEIPT_MISSING,TALLY_UNRECEIPTED c12-r60-shape:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c14-honest-templates:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c15-honest-two-receipts:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c2-placeholder-lanehash:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c3-placeholder-tbd:1/PLACEHOLDER,RECEIPT_MISSING,TALLY_UNRECEIPTED c4-tally-overstated:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,TALLY_UNRECEIPTED c8-section-missing:1/RECEIPT_MISSING,SECTION_MISSING,TALLY_UNRECEIPTED c9-shonen-absent:1/RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED"
+    },
+    {
+      "id": "M38",
+      "target": "round-scoped rel dir",
+      "note": "round hardcoded to 9",
+      "find": "`.ufo/waves/round-${round}/${d}`",
+      "replace": "`.ufo/waves/round-9/${d}`",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M39",
+      "target": "round-scoped RECEIPT_PATH",
+      "note": "RECEIPT_PATH accepts any round",
+      "find": "`\\\\.ufo/waves/round-${round}/",
+      "replace": "`\\\\.ufo/waves/round-\\\\d+/",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M40",
+      "target": "ancestor direction",
+      "note": "arguments swapped",
+      "find": "['merge-base', '--is-ancestor', h, tip]",
+      "replace": "['merge-base', '--is-ancestor', tip, h]",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M41",
+      "target": "ancestor exit test",
+      "note": "inverted",
+      "find": "'--is-ancestor', h, tip]).status !== 0",
+      "replace": "'--is-ancestor', h, tip]).status === 0",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (18/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M42",
+      "target": "ancestor repo gate",
+      "note": "gated on fleet resolution",
+      "find": "if (inLane && git(lane,",
+      "replace": "if (inFleet && git(lane,",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M43",
+      "target": "tip fallback",
+      "note": "no HEAD fallback",
+      "find": "const tip = rev || git(lane, ['rev-parse', 'HEAD']).stdout.trim();",
+      "replace": "const tip = rev;",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M44",
+      "target": "tip honours rev",
+      "note": "rev ignored",
+      "find": "const tip = rev || git(lane, ['rev-parse', 'HEAD']).stdout.trim();",
+      "replace": "const tip = git(lane, ['rev-parse', 'HEAD']).stdout.trim();",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M45",
+      "target": "HASH commit peel",
+      "note": "any object, not a commit",
+      "find": "const inLane = git(lane, ['cat-file', '-e', `${h}^{commit}`])",
+      "replace": "const inLane = git(lane, ['cat-file', '-e', `${h}`])",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M46",
+      "target": "exit code usage",
+      "note": "usage exit 64 -> 1",
+      "find": "process.exit(64);",
+      "replace": "process.exit(1);",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M47",
+      "target": "exit code rev fail-closed",
+      "note": "rev-unreadable exit 2 -> 1",
+      "find": "rev-unreadable ${revFull}\\n`); process.exit(2);",
+      "replace": "rev-unreadable ${revFull}\\n`); process.exit(1);",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M48",
+      "target": "exit code report fail-closed",
+      "note": "report-unreadable exit 2 -> 1",
+      "find": "report-unreadable ${report}\\n`); process.exit(2);",
+      "replace": "report-unreadable ${report}\\n`); process.exit(1);",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M49",
+      "target": "exit code DRIFT",
+      "note": "DRIFT exit 1 -> 2",
+      "find": "return { code: 1, out:",
+      "replace": "return { code: 2, out:",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c1-placeholder-measured:2/PLACEHOLDER c10-shonen-twice:2/SHONEN_COUNT c11-hash-dead:2/HASH_DEAD c12-r60-shape:2/PLACEHOLDER,TALLY_UNRECEIPTED c13-placeholder-in-fence:2/PLACEHOLDER c2-placeholder-lanehash:2/PLACEHOLDER c3-placeholder-tbd:2/PLACEHOLDER c4-tally-overstated:2/TALLY_UNRECEIPTED c5-tally-verdict-flip:2/TALLY_UNRECEIPTED c6-tally-label-swapped:2/TALLY_UNRECEIPTED c7-receipt-path-missing:2/RECEIPT_MISSING c8-section-missing:2/SECTION_MISSING c9-shonen-absent:2/SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M50",
+      "target": "exit code CLEAN",
+      "note": "CLEAN exit 0 -> 3",
+      "find": "return { code: 0, out:",
+      "replace": "return { code: 3, out:",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c0-honest:3/CLEAN c14-honest-templates:3/CLEAN c15-honest-two-receipts:3/CLEAN"
+    },
+    {
+      "id": "M51",
+      "target": "main exit propagation",
+      "note": "main always exits 0",
+      "find": "process.exit(r.code);",
+      "replace": "process.exit(0);",
+      "verdict": "KILLED-CONTROLS",
+      "selftest": "20/20",
+      "controls": "c1-placeholder-measured:0/PLACEHOLDER c10-shonen-twice:0/SHONEN_COUNT c11-hash-dead:0/HASH_DEAD c12-r60-shape:0/PLACEHOLDER,TALLY_UNRECEIPTED c13-placeholder-in-fence:0/PLACEHOLDER c2-placeholder-lanehash:0/PLACEHOLDER c3-placeholder-tbd:0/PLACEHOLDER c4-tally-overstated:0/TALLY_UNRECEIPTED c5-tally-verdict-flip:0/TALLY_UNRECEIPTED c6-tally-label-swapped:0/TALLY_UNRECEIPTED c7-receipt-path-missing:0/RECEIPT_MISSING c8-section-missing:0/SECTION_MISSING c9-shonen-absent:0/SECTION_MISSING,SHONEN_COUNT"
+    },
+    {
+      "id": "M52",
+      "target": "selftest exit propagation",
+      "note": "selftest always exits 0",
+      "find": "process.exit(pass === results.length ? 0 : 1);",
+      "replace": "process.exit(0);",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M53",
+      "target": "finding id PLACEHOLDER",
+      "note": "id renamed",
+      "find": "add('PLACEHOLDER', m[0])",
+      "replace": "add('PLACEHOLDERS', m[0])",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (16/20)",
+      "controls": "c1-placeholder-measured:1/PLACEHOLDERS c12-r60-shape:1/PLACEHOLDERS,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDERS c2-placeholder-lanehash:1/PLACEHOLDERS c3-placeholder-tbd:1/PLACEHOLDERS"
+    },
+    {
+      "id": "M54",
+      "target": "finding id SECTION_MISSING",
+      "note": "id renamed",
+      "find": "add('SECTION_MISSING', name)",
+      "replace": "add('SECTION_MISSIN', name)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (18/20)",
+      "controls": "c8-section-missing:1/SECTION_MISSIN c9-shonen-absent:1/SECTION_MISSIN,SHONEN_COUNT"
+    },
+    {
+      "id": "M55",
+      "target": "finding id SHONEN_COUNT (headings)",
+      "note": "id renamed on the headings arm",
+      "find": "add('SHONEN_COUNT', `headings=",
+      "replace": "add('SHONEN_COUNTS', `headings=",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c10-shonen-twice:1/SHONEN_COUNTS c9-shonen-absent:1/SECTION_MISSING,SHONEN_COUNTS"
+    },
+    {
+      "id": "M56",
+      "target": "finding id RECEIPT_MISSING",
+      "note": "id renamed",
+      "find": "add('RECEIPT_MISSING', m)",
+      "replace": "add('RECEIPT_MISSIN', m)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c7-receipt-path-missing:1/RECEIPT_MISSIN"
+    },
+    {
+      "id": "M57",
+      "target": "finding id TALLY_UNRECEIPTED",
+      "note": "id renamed",
+      "find": "add('TALLY_UNRECEIPTED', key)",
+      "replace": "add('TALLY_UNRECEIPT', key)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (16/20)",
+      "controls": "c12-r60-shape:1/PLACEHOLDER,TALLY_UNRECEIPT c4-tally-overstated:1/TALLY_UNRECEIPT c5-tally-verdict-flip:1/TALLY_UNRECEIPT c6-tally-label-swapped:1/TALLY_UNRECEIPT"
+    },
+    {
+      "id": "M58",
+      "target": "finding id HASH_DEAD",
+      "note": "id renamed",
+      "find": "add('HASH_DEAD', h)",
+      "replace": "add('HASH_DEADS', h)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c11-hash-dead:1/HASH_DEADS"
+    },
+    {
+      "id": "M59",
+      "target": "finding id HASH_ORPHAN",
+      "note": "id renamed",
+      "find": "add('HASH_ORPHAN', h)",
+      "replace": "add('HASH_ORPHANS', h)",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M60",
+      "target": "fleet autodetect",
+      "note": "probes lane/.git instead of parent",
+      "find": "existsSync(join(dirname(laneAbs), '.git'))",
+      "replace": "existsSync(join(laneAbs, '.git'))",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M61",
+      "target": "rev ls-tree guard",
+      "note": "unreadable rev no longer skipped",
+      "find": "if (ls.status !== 0) continue;",
+      "replace": "if (false) continue;",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M62",
+      "target": "rev show guard",
+      "note": "failed show still registered",
+      "find": "if (b.status === 0) receiptNames.set(f, b.stdout);",
+      "replace": "if (true) receiptNames.set(f, b.stdout);",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M63",
+      "target": "hash dedupe",
+      "note": "per-occurrence hashes",
+      "find": "for (const h of new Set(text.match(HASH40) || []))",
+      "replace": "for (const h of (text.match(HASH40) || []))",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M64",
+      "target": "render id dedupe",
+      "note": "duplicate ids in the DRIFT header",
+      "find": "const ids = [...new Set(findings.map((f) => f.id))].join(',');",
+      "replace": "const ids = findings.map((f) => f.id).join(',');",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M65",
+      "target": "clean/drift switch",
+      "note": "inverted",
+      "find": "if (!findings.length) return { code: 0",
+      "replace": "if (findings.length) return { code: 0",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (19/20)",
+      "controls": "c0-honest:1/- c1-placeholder-measured:0/CLEAN c10-shonen-twice:0/CLEAN c11-hash-dead:0/CLEAN c12-r60-shape:0/CLEAN c13-placeholder-in-fence:0/CLEAN c14-honest-templates:1/- c15-honest-two-receipts:1/- c2-placeholder-lanehash:0/CLEAN c3-placeholder-tbd:0/CLEAN c4-tally-overstated:0/CLEAN c5-tally-verdict-flip:0/CLEAN c6-tally-label-swapped:0/CLEAN c7-receipt-path-missing:0/CLEAN c8-section-missing:0/CLEAN c9-shonen-absent:0/CLEAN"
+    },
+    {
+      "id": "M66",
+      "target": "section test inversion",
+      "note": "inverted",
+      "find": "if (!re.test(text)) add('SECTION_MISSING'",
+      "replace": "if (re.test(text)) add('SECTION_MISSING'",
+      "verdict": "KILLED-SELFTEST",
+      "selftest": "exit=1 line=REPORT_RECEIPT_SELFTEST: FAIL (6/20)",
+      "controls": "c0-honest:1/SECTION_MISSING c1-placeholder-measured:1/PLACEHOLDER,SECTION_MISSING c10-shonen-twice:1/SECTION_MISSING,SHONEN_COUNT c11-hash-dead:1/HASH_DEAD,SECTION_MISSING c12-r60-shape:1/PLACEHOLDER,SECTION_MISSING,TALLY_UNRECEIPTED c13-placeholder-in-fence:1/PLACEHOLDER,SECTION_MISSING c14-honest-templates:1/SECTION_MISSING c15-honest-two-receipts:1/SECTION_MISSING c2-placeholder-lanehash:1/PLACEHOLDER,SECTION_MISSING c3-placeholder-tbd:1/PLACEHOLDER,SECTION_MISSING c4-tally-overstated:1/SECTION_MISSING,TALLY_UNRECEIPTED c5-tally-verdict-flip:1/SECTION_MISSING,TALLY_UNRECEIPTED c6-tally-label-swapped:1/SECTION_MISSING,TALLY_UNRECEIPTED c7-receipt-path-missing:1/RECEIPT_MISSING,SECTION_MISSING"
+    },
+    {
+      "id": "M67",
+      "target": "rev-verify guard",
+      "note": "unreadable rev accepted",
+      "find": "if (rv.status !== 0) {",
+      "replace": "if (false) {",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M68",
+      "target": "SHONEN heading anchor",
+      "note": "^ dropped from the SHONEN scan",
+      "find": "matchAll(/^#{1,6}\\s*\\**\\s*SHONEN/gim)",
+      "replace": "matchAll(/#{1,6}\\s*\\**\\s*SHONEN/gim)",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M69",
+      "target": "SHONEN box anchor",
+      "note": "^ dropped from the box regex",
+      "find": "rest.filter((l) => /^\\s*[-*]",
+      "replace": "rest.filter((l) => /\\s*[-*]",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    },
+    {
+      "id": "M70",
+      "target": "HASH40 leading boundary",
+      "note": "leading \\b dropped",
+      "find": "const HASH40 = /\\b",
+      "replace": "const HASH40 = /",
+      "verdict": "SURVIVOR",
+      "selftest": "20/20",
+      "controls": "all-16-match"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+### v2: baseline (default TMPDIR) ###
+exit=0 stderr=[]
+### jj absent: PATH=/usr/bin:<stub without jj> ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED jj-absent]
+### git absent: PATH=<stub with jj+coreutils, no git> ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED git-absent]
+### PATH empty ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED jj-absent]
+### jj+git present but coreutils absent ###
+exit=2 out=[JJ_SEAT_DEMO: FAIL-CLOSED util-absent]
+### HOME=<empty dir>, JJ_CONFIG unset ###
+exit=0
+HOME residue: []
+### TMPDIR with a space ###
+exit=0 residue=[]
+### caller cwd = / ###
+exit=0
+### caller cwd = lane root (a jj repo) ###
+exit=0
+### inherited GIT_DIR ###
+exit=0 stderr=[] residue=[ls: cannot access '/tmp/bogus-gitdir': No such file or directory]
+### inherited GIT_WORK_TREE ###
+exit=0 stderr=[]
+### inherited GIT_DIR + GIT_WORK_TREE ###
+exit=0
+### TMPDIR inside a git worktree ###
+exit=0
+### output equality ###
+base == home
+base == tmpspace
+base == cwd-root
+base == cwd-lane
+base == gitdir
+base == gitwt
+base == gitboth
+base == tmpgit
+### key count / last line ###
+keys=18 last=[JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5]

@@ -1,0 +1,10 @@
+FIXTURE          GUARD                        CENSUS                             VALIDATE
+base             GUARD rows=136 staged=155 collisions=3 ids=S195 S196 S197 exit=0 rows=136 exit=0                    exit=0 E(n=0)=[]
+fixture-0sp      GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=137 exit=0                    exit=0 E(n=0)=[]
+fixture-2sp      GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=137 exit=0                    exit=0 E(n=0)=[]
+fixture-4sp      GUARD rows=136 staged=155 collisions=3 ids=S195 S196 S197 exit=0 rows=136 exit=0                    exit=0 E(n=0)=[]
+fixture-tab      GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=137 exit=0                    exit=0 E(n=0)=[]
+fixture-e12      GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=136 exit=0                    exit=1 E(n=1)=[E12:S259 row outside Registry section]
+fixture-badid    GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=137 exit=0                    exit=1 E(n=1)=[E02:S259x]
+fixture-4digit   GUARD rows=137 staged=155 collisions=3 ids=S195 S196 S197 exit=0 rows=137 exit=0                    exit=0 E(n=0)=[]
+fixture-crlf     GUARD rows=137 staged=155 collisions=4 ids=S195 S196 S197 S259 exit=0 rows=0 exit=0                      exit=1 E(n=137)=[E12:S001 row outside Registry section E12:S002 row outside Registry section E12:S003 row outside Registry section]

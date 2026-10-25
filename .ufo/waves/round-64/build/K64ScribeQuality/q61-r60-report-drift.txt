@@ -1,0 +1,19 @@
+# Q61 receipt A — round-60 report as filed (fleet 7b0581ed) diffed at lane rev dd1a3e6f
+# command: git -C /home/vgpnk/Projects/shokunin show 7b0581ed:.ufo/reports/round-60/kumitate.md > /tmp/kumitate-r64/K64ScribeQuality/r60-report.md
+# command: node scripts/report-receipt-diff.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --round 60 --report /tmp/kumitate-r64/K64ScribeQuality/r60-report.md --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef --fleet /home/vgpnk/Projects/shokunin; echo exit=$?
+--- independent token count (grep -o '__[A-Z][A-Z0-9_]*__' | wc -l):
+6
+--- output:
+REPORT_RECEIPT: DRIFT PLACEHOLDER,TALLY_UNRECEIPTED (round=60 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef bytes=13611)
+PLACEHOLDER __TIP__
+PLACEHOLDER __MEASURED__
+PLACEHOLDER __COMMITS__
+PLACEHOLDER __MEASURED__
+PLACEHOLDER __MEASURED__
+PLACEHOLDER __MEASURED__
+TALLY_UNRECEIPTED DISPATCH60_HELD held=10/10
+exit=1
+--- the receipt the report contradicts (git show HEAD:.ufo/waves/round-60/close/dispatch60-tip.txt):
+DISPATCH60: DISPATCH60_UNMET held=8/10 checks=10 rev=a745a3b0e02253e722834ef95042d97ed92e5e53 rule=A60
+ | A1 PASS bytes=12389 | A2 PASS exit=0 verdict=true | A3 PASS findings=6 | A4 PASS row-present | A5 PASS checklist-item | A6 PASS pin-match | A7 MISS row-absent | A8 PASS gate=true mistakes=true name=true | A9 PASS rows=20 prose=20 | A10 MISS exit=2 DISPATCH_EVIDENCE: FAIL-CLOSED wave-dir-absent dir=/tmp/a60-probe.L6n7ih/.ufo/waves/round-60/w1
+exit=1

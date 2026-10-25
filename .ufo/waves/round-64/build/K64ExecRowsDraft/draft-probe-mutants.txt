@@ -1,0 +1,35 @@
+== M1: entry cites S067 on its source: line (the reuse route) ==
+J1 PASS
+J2 MISS S067:opened=2026-10-23,S067:used-by-lacks-entry
+J3 MISS S067:unbound
+J4 MISS S067:no-bullet
+J5 PASS
+DRAFT_J1_J5: MISS checks=5 ids=S198,S199,S200,S067 bullets=6
+== M2: one quote padded past 25 words ==
+J1 PASS
+J2 PASS
+J3 PASS
+J4 MISS S198:over-25-words;S198:quote-not-in-capture(The most important piece in th)
+J5 MISS S198:quote-not-live(The most important piece in th)
+DRAFT_J1_J5: MISS checks=5 ids=S198,S199,S200 bullets=6
+
+== M3: S198 used-by names a different entry (J2 predicate, checked directly) ==
+NF = 13
+mutated used-by cell = 
+used-by-lacks-entry = True
+
+== M4: control — the delivered draft entry header ==
+J1 PASS
+J2 PASS
+J3 PASS
+J4 PASS
+J5 PASS
+DRAFT_J1_J5: PASS checks=5 ids=S198,S199,S200 bullets=8
+
+== M3b: S198 used-by names a different (existing) entry ==
+rewritten used-by cell: 
+file	ok	/tmp/kumitate-r64/K64ExecRowsDraft/m3b/corpus/SOURCES.md
+census-exit=0
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/jj-workspace-seat-containment.md:1  S198 used-by omits corpus/knowledge/jj-workspace-seat-containment.md
+SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)
+NF=13 usedBy="corpus/knowledge/agent-isolation-substrates.md" used-by-lacks-entry=true

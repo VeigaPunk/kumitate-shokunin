@@ -1,0 +1,25 @@
+# Patch draft for .ufo/waves/round-64/probe/make-receipt-controls.mjs (frozen — integrate as review)
+
+--- a/.ufo/waves/round-64/probe/make-receipt-controls.mjs
++++ b/.ufo/waves/round-64/probe/make-receipt-controls.mjs
+@@ const out = resolve(process.argv[2] || default);
+-rmSync(out, { recursive: true, force: true });
++# rmSync unconditionally deletes ANY directory passed as argv[2] (repro: a victim dir with keep-me.txt
++# was wiped and replaced by 16 cases). Refuse to delete a directory that is not one this script wrote:
++const MARK = '.receipt-controls-v1';
++if (existsSync(out) && !existsSync(join(out, MARK))) {
++  process.stderr.write(`refusing to rm ${out}: no ${MARK} marker (pass a dedicated dir or delete it yourself)\n`);
++  process.exit(64);
++}
++rmSync(out, { recursive: true, force: true });
+@@ last: process.stdout.write(...)
++W(join(out, MARK), 'receipt controls v1\n');
++# corpus shortfall (probe P2 'ids=6' at dd1a3e6): the 16 cases exercise only 6 distinct ids
++# (PLACEHOLDER, TALLY_UNRECEIPTED, RECEIPT_MISSING, SECTION_MISSING, SHONEN_COUNT, HASH_DEAD) but the
++# frozen floor is >= 8 and contract v1 defines only 7 finding ids (adds HASH_ORPHAN). Ratchet-compliant fix:
++# (a) add a HASH_ORPHAN case: report cites a 40-hex lane commit not in --rev's ancestry
++#     (works only in --rev mode; in worktree/controls mode the tool may treat it as HASH_DEAD — verify
++#      which finding it emits before fixing the expect line);
++# (b) add ONE new finding class to the tool (contract -> v2) plus its case, e.g. FENCE_UNCLOSED
++#     (odd number of ``` fence lines in the report). Strengthens the check; never lowers the floor.
++# Do NOT invent synthetic expect ids — a corpus case must be one a correct tool produces.

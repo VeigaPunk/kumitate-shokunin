@@ -1,0 +1,44 @@
+PROBE HARDENING — RECOMMENDED, NOT APPLIED (round 64, seat K64SentinelDemoHost)
+=================================================================================
+The two counters below are FROZEN at dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef. This file is patch TEXT for a
+future round; nothing here is applied and no frozen byte was touched. Severity order matches the seat report.
+
+Both files, line `const ar = spawnSync('bash', ['-c', `git -C "${lane}" archive "${full}" | tar -x -C "${T}"`])`
+(jj64-probe.mjs:52, receipt64-probe.mjs:43): the lane path is interpolated into a shell command.
+  - F1. Replace the shell entirely (removes the injection and the BASH_ENV/TAR_OPTIONS channel):
+        const tgz = join(T, '.archive.tar');
+        const fd = openSync(tgz, 'w');
+        const ar = spawnSync('git', ['-C', lane, 'archive', full], { stdio: ['ignore', fd, 'inherit'] });
+        closeSync(fd);
+        if (ar.status !== 0) { /* archive-failed, as today */ }
+        if (statSync(tgz).size > 512 * 1024 * 1024) { /* FAIL-CLOSED archive-too-large (F11) */ }
+        const tx = spawnSync('tar', ['-x', '--no-same-owner', '--no-overwrite-dir', '-f', tgz, '-C', T],
+                             { env: { PATH: process.env.PATH } });
+        if (tx.status !== 0) { /* archive-failed */ }
+  - F4a. Refuse symlink entries before extracting (a measured revision can commit one):
+        const ls = spawnSync('git', ['-C', lane, 'ls-tree', '-r', full], { encoding: 'utf8' });
+        if (ls.stdout.split('\n').some((l) => l.startsWith('120000'))) { /* FAIL-CLOSED symlink-in-archive */ }
+  - F4b. Contain every read: jj64-probe.mjs:54
+        const rd = (rel) => {
+          const p = join(T, rel);
+          if (p !== T && !p.startsWith(T + sep)) return null;   // no '..'
+          try { if (lstatSync(p).isSymbolicLink()) return null; return readFileSync(p); } catch { return null; }
+        };
+        and the same guard for --entry (J1) and for the pin `path` values read in J3.
+  - F3. Give each child a scrubbed env rather than the counter's own: { env: { PATH: process.env.PATH } } on every
+        spawnSync (node children included), so BASH_ENV / TAR_OPTIONS / NODE_OPTIONS / GIT_DIR cannot ride along.
+  - F9. jj64-probe.mjs:34 — `process.env.SOURCES_CENSUS` picks the census binary: drop the override, or require the
+        resolved path to live under the fleet repo.
+  - F5. jj64-probe.mjs:171 — add `-q` as the FIRST argument (ignore ~/.curlrc and CURL_HOME), `--proto '=http,https'`
+        (kills file:// and every other scheme), `--max-redirs 5`, and a byte cap (`--max-filesize`); keep the UA.
+  - F11. Every spawnSync gets a `timeout:` (jj64-probe.mjs:197 has 120000; the git/tar/census/readme-map calls have none).
+
+Bound at the call site instead, without touching the frozen bytes (verified in this seat's build dir):
+  bash .ufo/waves/round-64/build/K64SentinelDemoHost/run-frozen-counter.sh <lane> <rev> <receipt64|jj64> [args] [--sandbox]
+  - scrubs the environment (env -i, throwaway HOME/TMPDIR, GIT_CONFIG_GLOBAL=/dev/null, JJ_CONFIG=/dev/null);
+  - --sandbox adds bwrap: host read-only, only the run root writable, net unshared unless the counter may go live.
+  Verified identical verdicts: RECEIPT64_UNMET held=3/5 … P2 MISS ids=6 and JJ64_UNMET held=0/8 at dd1a3e6f, with and
+  without --sandbox; a write outside the run root inside the sandbox fails with "Read-only file system".
+  This bounds F2 (archive bytes exec) but NOT F1 (the injection happens before the scrub? no — the scrub is the outer
+  `env -i node`, and the injection is inside node, so --sandbox/F3 call-site scrub does not remove F1; F1 needs the
+  patch). State that plainly: F1 is only closed by the code change.

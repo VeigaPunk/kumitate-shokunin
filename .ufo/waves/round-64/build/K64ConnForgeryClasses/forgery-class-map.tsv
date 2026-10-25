@@ -1,0 +1,16 @@
+class	r64_status	r64_evidence	j64_status	j64_evidence	tool_status	tool_evidence
+worktree_read	Guarded	receipt64-probe.mjs:43 (git archive)	Guarded	jj64-probe.mjs:52 (git archive)	Partial	report-receipt-diff.mjs:171 (reads live --report file)
+substring_match	Partial	receipt64-probe.mjs:104 (startsWith CLEAN)	Accepted	jj64-probe.mjs:157,178,210,230 (includes)	Accepted	report-receipt-diff.mjs:85 (receipt l.includes)
+file_count	Guarded	receipt64-probe.mjs:60 (cases>=14)	Partial	jj64-probe.mjs:102,151,196 (length/size checks)	Accepted	report-receipt-diff.mjs:58 (boxes<4 count only)
+fixture_url	N/A	R64 does not fetch URLs	Accepted	jj64-probe.mjs:112,171 (curl arbitrary URL)	N/A	Tool does not fetch URLs
+stub_tool	Partial	receipt64-probe.mjs:93-97 (tests 2 static stubs; arg-specializer passes)	Accepted	jj64-probe.mjs:197 (demo can echo stated outcomes)	N/A	Tool subject
+handwritten_wave	Accepted	receipt64-probe.mjs trusts tool diff against receipts	N/A	J64 does not verify waves	Accepted	report-receipt-diff.mjs:60-77 (trusts any close/* receipt)
+recomputed_pin	N/A	R64 does not check source pins	Accepted	jj64-probe.mjs:127-130 (matches committed pin)	N/A	Tool does not check pins
+vacuous_regex	Guarded	receipt64-probe.mjs uses standard JS regexes	Guarded	jj64-probe.mjs uses \s and cells()	Accepted	report-receipt-diff.mjs:38-41 (skips TODO, short hash, bare tally)
+misindexed_cells	N/A	R64 does not parse markdown tables	Guarded	jj64-probe.mjs:106-108 (c.length===13, contract indices)	N/A	Tool does not parse tables
+unlabelled_tally	Accepted	R64 accepts tool verdict	N/A	J64 does not verify tallies	Accepted	report-receipt-diff.mjs:39 (requires LABEL_HELD|UNMET)
+tautological_demo	N/A	R64 does not run demos	Accepted	jj64-probe.mjs:197-203 (stated==live check)	N/A	Tool does not run demos
+quote_truncation	N/A	R64 does not check quotes	Accepted	jj64-probe.mjs:154 (<=25 words, no min length)	N/A	Tool does not check quotes
+amendment_prefix	N/A	R64 does not check substrates	Accepted	jj64-probe.mjs:227-231 (only needs 3-line tail)	N/A	Tool does not check substrates
+short_hash	Accepted	R64 accepts tool verdict	N/A	J64 does not verify commit hashes	Accepted	report-receipt-diff.mjs:41 (HASH40 ignores <40 hex)
+cross_round_receipt	Accepted	R64 accepts tool verdict	N/A	J64 does not verify cross-round refs	Accepted	report-receipt-diff.mjs:40 (RECEIPT_PATH only checks round-N)

@@ -1,0 +1,70 @@
+PASS honest — INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+PASS dead-count — dead=B2 done=1
+PASS dead-seat-counted-not-credited — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=1 reports=2 dead=1)
+PASS dead-unnamed-in-report — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=2 dead=1) [DEAD_UNNAMED]
+PASS dead-named-in-report — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=1 reports=2 dead=1)
+PASS forged-no-sessions — INLINE_DISPATCH: DRIFT (seats=3 sessions=0 done=0 reports=0 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+PASS one-session-missing — INLINE_DISPATCH: DRIFT (seats=3 sessions=2 done=2 reports=2 dead=0) [SESSION_ABSENT]
+PASS foreign-transcript — INLINE_DISPATCH: DRIFT (seats=2 sessions=1 done=1 reports=2 dead=0) [SESSION_FOREIGN]
+PASS session-id-dup — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_ID_DUP]
+PASS parent-mismatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [PARENT_MISMATCH]
+PASS spawn-count-lie — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_MISMATCH]
+PASS spawn-line-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_ABSENT]
+PASS done-line-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [DONE_LOG_ABSENT]
+PASS results-name-mismatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [RESULTS_MISMATCH]
+PASS results-seats-lie — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [RESULTS_MISMATCH]
+PASS report-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_ABSENT]
+PASS report-tiny — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS report-duplicate-bytes — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [REPORT_DUP]
+PASS ready-wrong-round — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [READY_MISMATCH]
+PASS marker-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED wave-absent ready=true dispatched=false wave=.ufo/waves/round-7/w1 [WAVE_ABSENT]
+PASS sessions-root-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED sessions-root-absent path=/tmp/inline-dispatch-selftest.1TyQ7v/nope [SESSIONS_ROOT_ABSENT]
+PASS log-absent-fail-closed — INLINE_DISPATCH: FAIL-CLOSED log-unreadable path=/tmp/inline-dispatch-selftest.1TyQ7v/nolog [LOG_UNREADABLE]
+PASS ready-lane-regex-syntax-fail-closed — INLINE_DISPATCH: FAIL-CLOSED ready-lane-invalid [READY_MISMATCH]
+PASS ready-lane-wildcard-fail-closed — INLINE_DISPATCH: FAIL-CLOSED ready-lane-invalid [READY_MISMATCH]
+PASS empty-context-fail-closed — INLINE_DISPATCH: FAIL-CLOSED dispatch-context-too-short [DISPATCH_UNREADABLE]
+PASS seat-name-traversal-fail-closed — INLINE_DISPATCH: FAIL-CLOSED dispatch-seat-name-invalid seat="../x" [DISPATCH_UNREADABLE]
+PASS context-names-another-round — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [DISPATCH_MISMATCH,SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS crlf-log-reads-clean — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+PASS done-twice — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [DONE_LOG_MISMATCH]
+PASS corrupt-transcript — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_CORRUPT,NOT_A_DISPATCH]
+PASS two-finished-writers — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [SESSION_AMBIGUOUS]
+PASS dead-earlier-try-is-not-ambiguity — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+PASS marker-only-transcript-is-foreign — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS forged-cheap-transcripts — INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0) [SESSION_HEADER,SESSION_TOOL_JOIN,SESSION_ROWGRAPH,SESSION_TIMELINE,SESSION_TEMPLATE]
+PASS forged-cheap-one-seat — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_HEADER,SESSION_TOOL_JOIN,SESSION_ROWGRAPH,SESSION_TIMELINE]
+PASS shape-header-records-absent — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_HEADER]
+PASS shape-toolcall-without-result — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_TOOL_JOIN]
+PASS shape-orphan-toolresult — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_TOOL_JOIN]
+PASS shape-toolresult-name-mismatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_TOOL_JOIN]
+PASS shape-dangling-parentid — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_ROWGRAPH]
+PASS shape-no-row-ids — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_ROWGRAPH,SESSION_TIMELINE]
+PASS shape-thin-transcript — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_TOOL_JOIN,SESSION_ROWGRAPH]
+PASS shape-instant-timeline — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SESSION_TIMELINE]
+PASS shape-template-transcripts — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [SESSION_TEMPLATE,REPORT_ABSENT]
+PASS shape-honest-transcript-passes — INLINE_DISPATCH: CLEAN (seats=3 sessions=3 done=3 reports=3 dead=0)
+PASS rev-mode-ignores-worktree-edit — INLINE_DISPATCH: CLEAN (seats=2 sessions=2 done=2 reports=2 dead=0)
+PASS worktree-mode-sees-edit — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=1 dead=0) [REPORT_TINY]
+PASS rev-unreadable-fail-closed — INLINE_DISPATCH: FAIL-CLOSED rev-unreadable rev=0000000000000000000000000000000000000000 [REV_UNREADABLE]
+PASS report-floor-63-bytes — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=0 dead=0) [REPORT_TINY]
+PASS report-floor-64-bytes — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+PASS transcript-wrong-task-text — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS transcript-final-character-only-is-foreign — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS transcript-truncated-task-tail — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+PASS transcript-wrong-context — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS transcript-five-char-context — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS aborted-session-exit-not-finished — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=1 dead=1) [DEAD_UNNAMED]
+PASS exit-row-without-kind-is-dead — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=1 reports=1 dead=1) [DEAD_UNNAMED]
+PASS spawn-line-trailing-token — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_ABSENT]
+PASS spawn-line-twice — INLINE_DISPATCH: DRIFT (seats=2 sessions=2 done=2 reports=2 dead=0) [SPAWN_LOG_MISMATCH]
+PASS ready-without-l1 — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [READY_MISMATCH]
+PASS ready-wrong-wave-name — INLINE_DISPATCH: DRIFT (seats=1 sessions=1 done=1 reports=1 dead=0) [READY_MISMATCH]
+PASS seat-marker-prefix-collision — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS transcript-stem-not-seat — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+PASS second-user-message-cannot-repair — INLINE_DISPATCH: DRIFT (seats=1 sessions=0 done=0 reports=1 dead=0) [SESSION_FOREIGN,NOT_A_DISPATCH]
+PASS no-sessions-not-a-dispatch — INLINE_DISPATCH: DRIFT (seats=2 sessions=0 done=0 reports=0 dead=0) [SESSION_ABSENT,NOT_A_DISPATCH]
+PASS verdict-word-clean — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+PASS empty-task-list-fail-closed — INLINE_DISPATCH: FAIL-CLOSED dispatch-taskcall-absent [DISPATCH_UNREADABLE]
+PASS context-not-a-string-fail-closed — INLINE_DISPATCH: FAIL-CLOSED dispatch-taskcall-absent [DISPATCH_UNREADABLE]
+PASS yielded-without-exit-row-is-finished — INLINE_DISPATCH: CLEAN (seats=1 sessions=1 done=1 reports=1 dead=0)
+INLINE_DISPATCH_SELFTEST: PASS (69/69)

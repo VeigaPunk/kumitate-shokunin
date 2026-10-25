@@ -1,0 +1,33 @@
+== F1: the four staged rows appended verbatim to the base registry (no drafted block) ==
+inserted ids: | S259 | S270 | S290 | S291 
+escaped pipes per staged row: S259\|x1 S270\|x1 S290\|x1 S291\|x1 
+--- staged rows as-is
+file	E01	S259 fields=12
+file	E01	S270 fields=12
+file	E01	S290 fields=12
+file	E01	S291 fields=12
+file	E11	S259 missing used-by grep -c -F 'You can have multiple working copies backed by a single repo.'` -> 1 (ran 2026-10-24)
+file	E11	S270 missing used-by grep -c -F 'The workspace directory and files are left on disk.'` -> 1 (ran 2026-10-24)
+file	E11	S290 missing used-by grep -c -F 'operation log'` -> 1 (ran 2026-10-24)
+file	E11	S291 missing used-by grep -c -F 'A workspace becomes stale when a commit it depends on is rewritten from another workspace'` -> 1 (ran 2026-10-24)
+exit=1
+
+== F2: mutation — S198 recheck cell carries prose instead of NNd ==
+--- S198 recheck prose
+file	E09	S198 recheck=180d - `curl` -> 1 (ran 2026-10-25)
+exit=1
+
+== F3: mutation — S199 used-by points at a non-existent entry ==
+--- S199 dangling used-by
+file	E11	S199 missing used-by corpus/knowledge/jj-seat-workspace-containment-2026-10-24.md
+exit=1
+
+== F4: mutation — S200 loses its teaches cell (NF drops by 2) ==
+--- S200 malformed
+file	E01	S200 fields=10
+exit=1
+
+== F5: control — the drafted mirror as delivered ==
+--- drafted mirror
+file	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64ExecRowsDraft/validate/corpus/SOURCES.md
+exit=0

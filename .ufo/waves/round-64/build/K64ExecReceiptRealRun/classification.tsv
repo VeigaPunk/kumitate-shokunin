@@ -1,0 +1,33 @@
+# round	tool_verdict	finding_id	detail	occurrences	verdict	class	hand-check evidence (path:line or command output)
+40	DRIFT	HASH_DEAD	31c465f15669f744848bd9f5d56191c5085670f7	1	FALSE	external-source-pin	`r40.md:7` "Source pin `31c465f1…`, read-only clone /fast/scratch/hyaku/kumitate-pin/src"; `git cat-file -e 31c465f1^{commit}` = lane no, fleet no, /home/vgpnk/Projects/shokuknow no, any-object fleet no
+41	DRIFT	HASH_DEAD	31c465f15669f744848bd9f5d56191c5085670f7	1	FALSE	external-source-pin	`r41.md:6` same source pin sentence
+42	DRIFT	HASH_DEAD	31c465f15669f744848bd9f5d56191c5085670f7	1	FALSE	external-source-pin	`r42.md:7` same source pin sentence
+43	DRIFT	HASH_DEAD	31c465f15669f744848bd9f5d56191c5085670f7	1	FALSE	external-source-pin	`r43.md:8` same source pin sentence
+44	CLEAN	-	-	0	CLEAN	no-receipts-at-all	round 44 has no `.ufo/waves/round-44/{base,close}` at all (`git ls-tree` empty) and the report uses no labelled tally and cites no receipt path
+45	CLEAN	-	-	0	CLEAN	-	no finding
+46	CLEAN	-	-	0	CLEAN	-	no finding
+47	CLEAN	-	-	0	CLEAN	-	no finding
+48	DRIFT	SHONEN_COUNT	boxes=3	1	FALSE	shonen-box-per-line	`r48.md:37-39`: three list lines carry FOUR boxes; line 39 is "- [ ] Instructions executable … — [ ] No cross-domain bleed"
+49	DRIFT	TALLY_UNRECEIPTED	ORACLE_HELD held=6/6	2	FALSE	receipt-dir-variance	`r49.md:39,74`; committed `.ufo/waves/round-49/r49/L1-score-0526f898.txt:7` reads `BINDORACLE49: ORACLE_HELD held=6/6 checks=6` (also `r49/ReRunCounter49-2.txt:7`, `-3.txt:7`) — round 49 filed receipts under `r49/`, not `close/`
+49	DRIFT	TALLY_UNRECEIPTED	ORACLE_UNMET held=0/6	1	FALSE	receipt-dir-variance	`r49.md:74` names `controls/CtlNothing-base-b7b040b5.txt`, which at `:7` reads `BINDORACLE49: ORACLE_UNMET held=0/6`
+50	DRIFT	SHONEN_COUNT	boxes=0	1	FALSE	shonen-backticked-box	`r50.md:203-215`: four boxes written `- \`[~]\` **…**` (box inside a code span)
+51	DRIFT	SHONEN_COUNT	boxes=0	1	FALSE	shonen-backticked-box	`r51.md:157-169`: four `- \`[~]\` **…**` boxes
+52	DRIFT	SHONEN_COUNT	boxes=0	1	FALSE	shonen-backticked-box	`r52.md:150-162`: four `- \`[~]\` **…**` boxes
+53	DRIFT	TALLY_UNRECEIPTED	ATTEST53_UNMET held=0/0	1	FALSE	receipt-in-build-cited	`r53.md:102-103` cites "committed `build/MutCounter53/counter-mutant.txt`"; that file at `:4` reads `ATTEST53: ATTEST53_UNMET held=0/0 checks=0`
+53	DRIFT	HASH_DEAD	b717dc035bf687a3039123f4c70527bd3774f510	1	FALSE	external-scratch-rev	`r53.md:35` "scratch repo rev `b717dc03…`"; unresolvable in lane, fleet, shokuknow
+54	DRIFT	HASH_DEAD	45c35e40c46166dc726ccc52f5d27f40f2449f99	1	FALSE	url-component	`r54.md:48` token sits inside `github.com/can1357/oh-my-pi/tree/45c35e40…` (census W04 line) — a URL path segment, not a commit claim
+55	DRIFT	HASH_DEAD	45c35e40c46166dc726ccc52f5d27f40f2449f99	1	FALSE	url-component	`r55.md:121` same census URL
+56	DRIFT	HASH_DEAD	45c35e40c46166dc726ccc52f5d27f40f2449f99	1	FALSE	url-component	`r56.md:127` same census URL
+57	DRIFT	HASH_DEAD	1cd6d667e20075fd2e77e6e655bc755f95e3d940	1	FALSE	external-scratch-rev	`r57.md:84-85` "in a `/tmp` clone … scratch rev `1cd6d667…`" (marker on the wrapped preceding line)
+58	DRIFT	TALLY_UNRECEIPTED	ATTEST58_UNMET held=9/9	1	FALSE	control-receipt	`r58.md:30-31` cites `controls/MutCounter58.txt`, which at `:1` reads `ATTEST58_UNMET held=9/9 checks=9 … checks-mismatch want=10`
+59	CLEAN	-	-	0	CLEAN	-	no finding
+60	DRIFT	PLACEHOLDER	__TIP__ __MEASURED__ __COMMITS__ (6 lines)	6	TRUE	placeholder	`r60.md:4,5,73,88,96,190`; independent `grep -o '__[A-Z][A-Z0-9_]*__' r60.md | wc -l` = 6 (matches the 6 PLACEHOLDER lines)
+60	DRIFT	TALLY_UNRECEIPTED	DISPATCH60_HELD held=10/10	1	TRUE	tally-unreceipted	`r60.md:88` claims `DISPATCH60_HELD held=10/10`; the committed receipt `.ufo/waves/round-60/close/dispatch60-tip.txt:1` reads `DISPATCH60: DISPATCH60_UNMET held=8/10 checks=10`. No round-60 `.txt` outside `plan.md`/`probe/`/`w1/*.jsonl` carries `DISPATCH60_HELD held=10/10`
+61	DRIFT	RECEIPT_MISSING	.ufo/waves/round-61/close/a2-	1	FALSE	glob-path	`r61.md:112` writes `.ufo/waves/round-61/close/a2-*.txt`; 6 committed files match (`a2-repro-c1-fabrication.txt`, `a2-repro-c2-forgery.txt`, `a2-repro-c2-forgery-dirty-worktree.txt`, `a2-tip-dispatch61.txt`, `a2-tip-doctrine61.txt`, `a2-tip-proxy.txt`)
+61	DRIFT	HASH_DEAD	ab902da2fa30d051455a5f3563627e2c23c3a74d	1	FALSE	external-fixture-rev	`r61.md:65` "the fabrication fixture at rev `ab902da2…`" — a `/tmp` fixture repo (see `round-61/close/a2-repro-c1-fabrication.txt:1` command line `/tmp/kumitate-r61/CritControlC1/a4-full-fabrication`)
+62	DRIFT	TALLY_UNRECEIPTED	DISPATCH61_UNMET held=2/4	1	FALSE	cross-round-citation	`r62.md:29` cites `round-61/close/a2-tip-*`; `.ufo/waves/round-61/close/a2-tip-dispatch61.txt:2` reads `DISPATCH61: DISPATCH61_UNMET held=2/4 checks=4 rev=019a844c…`
+62	DRIFT	TALLY_UNRECEIPTED	DOCTRINE61_UNMET held=3/6	1	FALSE	cross-round-citation	`.ufo/waves/round-61/close/a2-tip-doctrine61.txt:2` reads `DOCTRINE61: DOCTRINE61_UNMET held=3/6 checks=6 rev=019a844c…`
+62	DRIFT	HASH_DEAD	4247d2da937842bd6846874d548b7125b356e14c	1	FALSE	external-bundle-rev	`r62.md:9` "`.ufo/waves/round-61/controls/r61-c2-full-forgery.bundle`, revision `4247d2da…`" — a git bundle's revision, not a repo commit
+62	DRIFT	HASH_DEAD	45c35e40c46166dc726ccc52f5d27f40f2449f99	2	FALSE	url-component	`r62.md:38,49` census URL
+63	CLEAN	-	-	0	CLEAN	-	no finding
+# TOTALS: 24 reports, 6 CLEAN / 18 DRIFT; 31 finding lines (HASH_DEAD 12, TALLY_UNRECEIPTED 8, PLACEHOLDER 6, SHONEN_COUNT 4, RECEIPT_MISSING 1) in 31 distinct (round,id,detail) rows; TRUE 2 rows = 7 lines (round 60 only: 6 PLACEHOLDER + 1 TALLY_UNRECEIPTED); FALSE 29 rows = 24 lines in 12 classes, consolidated into 4 patches (A SHONEN box counting; B hash provenance/URL; C glob receipt paths; D receipt pool + citation).

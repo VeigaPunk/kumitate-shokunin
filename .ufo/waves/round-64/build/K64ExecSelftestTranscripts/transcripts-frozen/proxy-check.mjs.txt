@@ -1,0 +1,125 @@
+kumitate proxy-check --selftest (hermetic, node v24.21.0)
+PASS  [  1/122]  MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [  2/122]  MATCH: text mode prints the verdict line and nothing else — lines=1
+PASS  [  3/122]  MATCH: A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict) — exit=0 PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [  4/122]  MATCH: A=11 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5 — exit=0 PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [  5/122]  A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt) — fixture has 6 scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=11
+PASS  [  6/122]  determinism: the same fixture yields byte-identical stdout on a re-run — len=170
+PASS  [  7/122]  --strict on a MATCH tree stays exit 0 (no warnings to promote) — exit=0
+PASS  [  8/122]  -h → exit 0, USAGE on stdout naming the contract and the modes — exit=0 stderr=""
+PASS  [  9/122]  --help → exit 0, same USAGE text as -h — exit=0
+PASS  [ 10/122]  --json MATCH: contract/mode/ok/terms/findings + computed terms — exit=0 terms={"A":6,"C":3,"op":7,"cov":5,"S":"0/3","R":"0/2","K":"0/30"}
+PASS  [ 11/122]  layer terms: S=2/3 R=1/2 from the claims gate walk; coverage_script=6 coverage_runtime=5 — exit=0 S=2/3 script=6 R=1/2 runtime=5
+PASS  [ 12/122]  layer terms are declared integers in the stanza (all seventeen TERM_KEYS compared) — TERM_KEYS=A C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections coverage_kimi
+PASS  [ 13/122]  parent-frozen v1 parser accepts its unchanged 23-key base stanza — keys=23 baseKeysMatch=true accepted=true
+PASS  [ 14/122]  layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [ 15/122]  distinct S sections: duplicate one member + drop another keeps 2 occurrences; declaring 2 fires S_SECTIONS_DRIFT — exit=1 occurrences=2 distinct=1 kinds=[S_SECTIONS_DRIFT] PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=2 computed=1 delta=-1)
+PASS  [ 16/122]  distinct R sections: duplicate one member + drop another keeps 2 occurrences; declaring 2 fires R_SECTIONS_DRIFT — exit=1 occurrences=2 distinct=1 kinds=[R_SECTIONS_DRIFT] PROXY: DRIFT (R_SECTIONS_DRIFT term=R_sections declared=2 computed=1 delta=-1)
+PASS  [ 17/122]  distinct control: 3 section occurrences naming 2 files match the declared distinct count with no layer drift — exit=0 S occurrences=3 distinct=2 R=2 findings=0
+PASS  [ 18/122]  distinct across rows: one S member sectioned under two rows whose families both admit it counts once — exit=1 S distinct=1 (rows S1+S2 both name scripts/a.mjs) R=2
+PASS  [ 19/122]  distinct across heading spellings: `a.mjs` and `scripts/a.mjs` headings resolving to one file count once — exit=0 S distinct=2 (alias heading + x.mjs) findings=0
+PASS  [ 20/122]  layer drift: s-members → [S_MEMBERS_DRIFT] — exit=1 kinds=[S_MEMBERS_DRIFT] PROXY: DRIFT (S_MEMBERS_DRIFT term=S_members declared=4 computed=3 delta=-1)
+PASS  [ 21/122]  layer drift: s-sections → [S_SECTIONS_DRIFT] — exit=1 kinds=[S_SECTIONS_DRIFT] PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=2 computed=1 delta=-1)
+PASS  [ 22/122]  layer drift: r-members → [R_MEMBERS_DRIFT] — exit=1 kinds=[R_MEMBERS_DRIFT] PROXY: DRIFT (R_MEMBERS_DRIFT term=R_members declared=3 computed=2 delta=-1)
+PASS  [ 23/122]  layer drift: r-sections → [R_SECTIONS_DRIFT] — exit=1 kinds=[R_SECTIONS_DRIFT] PROXY: DRIFT (R_SECTIONS_DRIFT term=R_sections declared=2 computed=1 delta=-1)
+PASS  [ 24/122]  layer drift: coverage-script → [COVERAGE_SCRIPT_DRIFT] — exit=1 kinds=[COVERAGE_SCRIPT_DRIFT] PROXY: DRIFT (COVERAGE_SCRIPT_DRIFT term=coverage_script declared=3 computed=1 delta=-2)
+PASS  [ 25/122]  layer drift: coverage-runtime → [COVERAGE_RUNTIME_DRIFT] — exit=1 kinds=[COVERAGE_RUNTIME_DRIFT] PROXY: DRIFT (COVERAGE_RUNTIME_DRIFT term=coverage_runtime declared=5 computed=2 delta=-3)
+PASS  [ 26/122]  a layer row going `no` moves its own score (S2 off ⇒ script 3→1, runtime stays 5) — verdict=MATCH script=1 runtime=5 C1=3
+PASS  [ 27/122]  an R row going `no` drops only the runtime score (R2 off ⇒ runtime 5→2, script stays 3) — verdict=MATCH script=3 runtime=2
+PASS  [ 28/122]  out-of-family section is NOT counted: `scripts/lib/x.mjs` under S1 (`a.mjs`) ⇒ S_sections 0 — exit=1 kinds=[S_SECTIONS_DRIFT] PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=1 computed=0 delta=-1)
+PASS  [ 29/122]  AXES_DRIFT covers the two successor rows (term=axis name, key=term key) — exit=1 findings=["AXES_DRIFT:coverage:runtime-layer"]
+PASS  [ 30/122]  K member list includes locks/ as one K3 directory — members=31 locks=true rule={"id":"locks/","family":"K3","path":"locks","kind":"dir"}
+PASS  [ 31/122]  K terms MATCH: `C1k=5/5 K=4/30 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict) — exit=0 kinds=[] PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/30 coverage:kimi-layer=1; pins=6 match)
+PASS  [ 32/122]  --json parity: the five K terms compute AND carry their declared strings — terms={"C1k":"5/5","K":"4/30","cov":1}
+PASS  [ 33/122]  the drift chain is ONE member whatever the generation count (+2 generations ⇒ MATCH) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/30 coverage:kimi-la
+PASS  [ 34/122]  K_members reads live: a removed K5 file is K_MEMBERS_DRIFT (never a fitted count) — exit=1 kinds=[K_MEMBERS_DRIFT] K_members: declared=30 computed=29 delta=-1
+PASS  [ 35/122]  K_members reads live: a new counted-dir child moves the total (30 → 31) — added=PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage= stale=PROXY: DRIFT (K_MEMBERS_DRIFT term=K_members declared=30 com
+PASS  [ 36/122]  kind matters: a declared dir member replaced by a file drops the count (K_MEMBERS_DRIFT) — exit=1 kinds=[K_MEMBERS_DRIFT] K_members: declared=30 computed=29 delta=-1
+PASS  [ 37/122]  K_sections drift: one member section renamed to topic form is K_SECTIONS_DRIFT alone — exit=1 kinds=[K_SECTIONS_DRIFT] K_sections: declared=4 computed=3 delta=-1
+PASS  [ 38/122]  coverage_kimi recompute: two sections lost ⇒ 1→0, terms AND the ## Axes row drift — exit=1 kinds=[K_SECTIONS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT] K_sections: declared=4 computed=2 delta=-2 | coverage_kimi: declared=1 computed=0 delta=-1 | coverage:kimi-layer: ## Axes row=1 derived=0
+PASS  [ 39/122]  a K row going `no` moves C1k (5/5→4/5); coverage_kimi floors to the same 1 — flipped=0 PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4 stale=[C1K_DRIFT]
+PASS  [ 40/122]  C1k_total drift: the K-row denominator is its own count, not C1_total's — exit=1 kinds=[C1K_TOTAL_DRIFT] PROXY: DRIFT (C1K_TOTAL_DRIFT term=C1k_total declared=6 computed=5 delta=-1)
+PASS  [ 41/122]  AXES_DRIFT covers `| coverage:kimi-layer | N |` — exit=1 findings=["AXES_DRIFT:coverage:kimi-layer"]
+PASS  [ 42/122]  zero denominators score 0: no K rows at all ⇒ C1k_total=0, coverage_kimi=0, never NaN — exit=0 C1k=0/0 cov=0
+PASS  [ 43/122]  distinct ≠ occurrence: a duplicated member section + a dropped one lowers the numerator (4→3, never 4) — exit=1 K_sections=3 (occurrence would be 4) findings=["K_SECTIONS_DRIFT"]
+PASS  [ 44/122]  basename ambiguity: a basename owned by two members binds to none and warns; a full path still binds — exit=0 K_sections=1 (occurrence would be 2) warnings=1 strict=1 kimi-alpha.md: heading names `skill-a`, a basename shared by agents/secondary/skill-a, skills/skill-a — binds to none
+PASS  [ 45/122]  chain-as-one: two `.bak` generation headings name the CHAIN member once — exit=0 K=1/30 (occurrence would be 2)
+PASS  [ 46/122]  counted-children: a lane-file heading names that lane; a repeat adds no second member — exit=0 K=2/30 (occurrence would be 3)
+PASS  [ 47/122]  zero denominator safety: an empty kimi root ⇒ K_members=0, K_sections=0, coverage_kimi=0 (integer, never NaN) — exit=0 K=0/0 cov=0
+PASS  [ 48/122]  stanza drift arm: declaring the OCCURRENCE count (2) where distinct is 1 is K_SECTIONS_DRIFT alone — exit=1 kinds=[K_SECTIONS_DRIFT] PROXY: DRIFT (K_SECTIONS_DRIFT term=K_sections declared=2 computed=1 delta=-1)
+PASS  [ 49/122]  fail-closed KIMI_ROOT_NOT_A_DIR --json carries the token and no terms — exit=2 verdict=FAIL-CLOSED terms={}
+PASS  [ 50/122]  A_DRIFT: declared=4 computed=6 delta=+2, exit 1, exactly [A_DRIFT] — exit=1 PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2)
+PASS  [ 51/122]  a term drift does not disturb the ## Axes rows (derived score unchanged) — stdout="PROXY  error  A_DRIFT  A: declared=4 computed=6 delta=+2"
+PASS  [ 52/122]  --scorecard FILE: the claim is read from FILE, the tree from --self — exit=1 PROXY: DRIFT (A_DRIFT term=A declared=8 computed=6 delta=-2)
+PASS  [ 53/122]  C_DRIFT: declared=4 computed=3 delta=-1 — exit=1 PROXY: DRIFT (C_DRIFT term=C declared=4 computed=3 delta=-1)
+PASS  [ 54/122]  C1_DRIFT: declared=2 computed=1 (registry 4th-cell `yes` test) — exit=1 PROXY: DRIFT (C1_DRIFT term=C1 declared=2 computed=1 delta=-1)
+PASS  [ 55/122]  registry: `\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [ 56/122]  registry: a `no` row with an escaped pipe is not counted as covered (C1=0/2) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=0/2 C2=2/2 coverage=0; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [ 57/122]  C1_TOTAL_DRIFT: declared=3 computed=2 — exit=1 PROXY: DRIFT (C1_TOTAL_DRIFT term=C1_total declared=3 computed=2 delta=-1)
+PASS  [ 58/122]  C2_DRIFT: declared=3 computed=2 — exit=1 PROXY: DRIFT (C2_DRIFT term=C2 declared=3 computed=2 delta=-1)
+PASS  [ 59/122]  C2_TOTAL_DRIFT: declared=3 computed=2 (corpus *.md census) — exit=1 PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=3 computed=2 delta=-1)
+PASS  [ 60/122]  two drifts → both findings, in term order, joined in one verdict line — exit=1 PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2; C_DRIFT term=C declared=4 computed=3 delta=-1)
+PASS  [ 61/122]  PIN_DRIFT: a tampered pin is a finding naming the key, declared and computed — exit=1 kinds=[PIN_DRIFT] shaped=true pin.round-gate: declared=0000000000000000000000000000000000000000000000000000000000000000 
+PASS  [ 62/122]  STANZA_KEY_UNKNOWN: parent-frozen v1 rejects pin.sources-check — exit=2 token=STANZA_KEY_UNKNOWN PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 44: pin.sources-check is not a kumitate-proxy-v1 key
+PASS  [ 63/122]  separate gate-pin block verifies named gates, suppresses warnings, and keeps v1 pins unchanged — exit=0 warnings=0 v1Pins=6/6 futureKey=true
+PASS  [ 64/122]  GATE_PIN_DRIFT: a changed gate hash is an error with the declared and computed digests — exit=1 kinds=[GATE_PIN_DRIFT] pin.anchor-truth: declared=0000000000000000000000000000000000000000000000000000000000000000 computed
+PASS  [ 65/122]  GATE_PIN_KEY_UNKNOWN: an undeclared gate key fails closed — exit=2 token=GATE_PIN_KEY_UNKNOWN PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 47: pin.future-unknown is not a kumitate-gate-pins-v1 key
+PASS  [ 66/122]  GATE_PIN_MALFORMED: an invalid gate digest fails closed — exit=2 token=GATE_PIN_MALFORMED PROXY: FAIL-CLOSED (GATE_PIN_MALFORMED) line 47: pin.anchor-truth is not a 64-hex sha256
+PASS  [ 67/122]  PIN_DRIFT (absent) + A_DRIFT: a removed pinned script is never skipped — exit=1 kinds=[A_DRIFT,PIN_DRIFT] pin.proxy-check: declared=bd9a1bd0065611d331d3d5fdded79c38064f70b14ff9bcacb17105
+PASS  [ 68/122]  AXES_DRIFT: derived 7 vs ## Axes row 6 → exit 1 — exit=1 operability: ## Axes row=6 derived=7
+PASS  [ 69/122]  AXES_DRIFT (absent row): a missing `| coverage |` row is drift, not silence — exit=1 coverage: ## Axes row=absent derived=5
+PASS  [ 70/122]  a stale `| operability | 6 |` row before `## Axes` cannot shadow the axis row → MATCH — exit=0 kinds=[] PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [ 71/122]  no `## Axes` heading → all five axes AXES_DRIFT with `no ## Axes section` — exit=1 kinds=[AXES_DRIFT,AXES_DRIFT,AXES_DRIFT,AXES_DRIFT,AXES_DRIFT] operability: ## Axes row=no ## Axes section derived=7
+PASS  [ 72/122]  --json drift: ok=false, verdict DRIFT, findings carry kind/term/declared/computed — exit=1 findings=["AXES_DRIFT"]
+PASS  [ 73/122]  PIN_UNPINNED: an unpinned scripts/*.mjs warns, exit 0, verdict still MATCH — exit=0 PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [ 74/122]  --strict promotes PIN_UNPINNED → exit 1, DRIFT, errors=0 warnings=1 — exit=1 PROXY: DRIFT (PIN_UNPINNED term=scripts/extra.mjs)
+PASS  [ 75/122]  fail-closed: SELF_NOT_A_DIR (self absent) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-yUZq49/nope-nope i
+PASS  [ 76/122]  fail-closed: SELF_NOT_A_DIR (self is a file) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-yUZq49/01-match-ba
+PASS  [ 77/122]  fail-closed: SRC_NOT_A_DIR (--src absent) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-yUZq49/nope-src-dir 
+PASS  [ 78/122]  fail-closed: SRC_NOT_A_DIR (--src is a file) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-yUZq49/02-match-basi
+PASS  [ 79/122]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root absent) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-yUZq49/n
+PASS  [ 80/122]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root is a file) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-yUZq49/0
+PASS  [ 81/122]  fail-closed: STANZA_MALFORMED (K count value is not an integer) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) K_members="five" is not a non-negative integer
+PASS  [ 82/122]  fail-closed: STANZA_MALFORMED (coverage_kimi value is not an integer) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) coverage_kimi="1.5" is not a non-negative integer
+PASS  [ 83/122]  fail-closed: STANZA_KEY_UNKNOWN (unknown K-ish key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 39: K_blocks is not a kumitate-proxy-v1 key
+PASS  [ 84/122]  fail-closed: STANZA_MALFORMED (required K key absent) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) missing key(s): K_sections
+PASS  [ 85/122]  fail-closed: SCORECARD_MISSING (SCORECARD.md absent) — exit=2 PROXY: FAIL-CLOSED (SCORECARD_MISSING) --scorecard /tmp/kumitate-proxy-selftest-yUZq49/192
+PASS  [ 86/122]  fail-closed: STANZA_MISSING (no claim block) — exit=2 PROXY: FAIL-CLOSED (STANZA_MISSING) no "<!-- kumitate-proxy-v1" block in the scorecard
+PASS  [ 87/122]  fail-closed: STANZA_MALFORMED (two claim blocks) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) 2 "<!-- kumitate-proxy-v1" blocks (exactly 1 require
+PASS  [ 88/122]  fail-closed: STANZA_MALFORMED (block without `-->`) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) line 45 is not key=value: "<!-- kumitate-gate-pins-v
+PASS  [ 89/122]  fail-closed: STANZA_MALFORMED (body line not key=value) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) line 24 is not key=value: "C1 total=2"
+PASS  [ 90/122]  fail-closed: STANZA_MALFORMED (required key absent) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) missing key(s): C2_total
+PASS  [ 91/122]  fail-closed: STANZA_MALFORMED (count value not an integer) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) A="four" is not a non-negative integer
+PASS  [ 92/122]  fail-closed: STANZA_MALFORMED (pin value not a 64-hex sha256) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) pin.proxy-check="zz" is not a 64-hex sha256
+PASS  [ 93/122]  fail-closed: STANZA_KEY_UNKNOWN (unknown key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 22: Z is not a kumitate-proxy-v1 key
+PASS  [ 94/122]  fail-closed: STANZA_KEY_DUPLICATE (duplicate key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_DUPLICATE) line 23: C is declared twice
+PASS  [ 95/122]  fail-closed: REGISTRY_MISSING (no registry rows) — exit=2 PROXY: FAIL-CLOSED (REGISTRY_MISSING) no "| S<n> |" or "| R<n> |" registry row in /tmp/kum
+PASS  [ 96/122]  fail-closed: SKILL_MISSING (SKILL.md absent) — exit=2 PROXY: FAIL-CLOSED (SKILL_MISSING) /tmp/kumitate-proxy-selftest-yUZq49/225-no-skill/SKILL.
+PASS  [ 97/122]  fail-closed: README_MISSING (corpus/README.md absent) — exit=2 PROXY: FAIL-CLOSED (README_MISSING) /tmp/kumitate-proxy-selftest-yUZq49/228-no-readme/corp
+PASS  [ 98/122]  fail-closed: CORPUS_DIRS_MISSING (corpus/lessons absent) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) /tmp/kumitate-proxy-selftest-yUZq49/231-no-lesson
+PASS  [ 99/122]  fail-closed: CORPUS_DIRS_MISSING (corpus census empty (no *.md in either dir)) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) no *.md under /tmp/kumitate-proxy-selftest-yUZq49
+PASS  [100/122]  fail-closed --json: one schema object, ok=false, token as the finding kind — exit=2 verdict=FAIL-CLOSED kind=SELF_NOT_A_DIR
+PASS  [101/122]  bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
+PASS  [102/122]  bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
+PASS  [103/122]  bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
+PASS  [104/122]  bare run (no --src): both candidates absent keeps SRC_NOT_A_DIR (exit 2, never a scored zero) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-yUZq49/home-none/Projects/ufo-fsd-alpha 
+PASS  [105/122]  PIN v1: default pin file resolves src from the pin clone, asserts HEAD, prints src-rev= — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match; src-rev=b80574109c32)
+PASS  [106/122]  PIN v1: pin revision != HEAD under an explicit --src → SRC_REV_MISMATCH (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_MISMATCH) /tmp/kumitate-proxy-selftest-yUZq49/241-pin-mismatch-src HEAD b80574109c32 != pin 0000000000
+PASS  [107/122]  PIN v1: a pin clone that is not a git repository → SRC_REV_UNVERIFIABLE (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_UNVERIFIABLE) git rev-parse HEAD in /tmp/kumitate-proxy-selftest-yUZq49/244-pin-nonrepo-src 
+PASS  [108/122]  PIN v1: a pin whose clone is absent → SRC_NOT_A_DIR naming the resolved path (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-yUZq49/nope-pin-clone is absent
+PASS  [109/122]  PIN v1: no pin file → the legacy verdict is unchanged (no src-rev=, pin/srcRev null) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/30 coverage:kimi-layer=0; pins=6 match)
+PASS  [110/122]  PIN v1: an explicit --pin that does not exist → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-yUZq49/pin-files/absent.json is absent
+PASS  [111/122]  PIN v1: a pin naming another contract → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-yUZq49/pin-files/wrong-contract.json contract "kum
+PASS  [112/122]  usage: unknown flag → exit 64, usage on stderr — exit=64 proxy-check: unknown argument: --bogus
+PASS  [113/122]  usage: --self without a value → exit 64 — exit=64
+PASS  [114/122]  usage: a value that is a flag is refused (--self --json) → exit 64 — exit=64
+PASS  [115/122]  usage: empty --scorecard value → exit 64 — exit=64
+PASS  [116/122]  usage: --src without a value → exit 64 — exit=64
+PASS  [117/122]  usage: --kimi-root without a value → exit 64 — exit=64
+PASS  [118/122]  usage: a value that is a flag is refused (--kimi-root --json) → exit 64 — exit=64
+PASS  [119/122]  hermeticity: `--selftest` ignores bogus --self/--scorecard and every env var — exit=0 tail=PROXY_SELFTEST: 122/122 pass | VERDICT: PASS
+PASS  [120/122]  hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [121/122]  every declared finding kind fires in at least one fixture — 22 kinds observed
+PASS  [122/122]  every declared fail-closed arm fires in at least one fixture — 17 arms observed
+PROXY_SELFTEST: 122/122 pass
+VERDICT: PASS

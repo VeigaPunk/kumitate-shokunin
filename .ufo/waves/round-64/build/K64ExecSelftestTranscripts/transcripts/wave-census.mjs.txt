@@ -1,0 +1,36 @@
+PASS  WC01 clean round: counts, roles, attack seats, reports present/absent — exit=0 WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+PASS  WC02 --expect holds → exit 0; --expect wrong count → EXPECT_MISMATCH exit 1 — holds=0 wrong=1
+PASS  WC03 --expect of an absent role reads payload=0 — zero=0 one=1
+PASS  WC04 --expect of an unknown wave → EXPECT_UNKNOWN exit 1 — exit=1
+PASS  WC05 counts.spawn differs from tasks → COUNT_MISMATCH — exit=1
+PASS  WC06 registry members differ from tasks → REGISTRY_MISMATCH — exit=1
+PASS  WC07 report file naming no task → STRAY_REPORT — exit=1
+PASS  WC08 bare {context,tasks} residual payload is read — exit=0
+PASS  WC09 missing round dir → fail-closed exit 2 — exit=2
+PASS  WC10 unparsable dispatch → fail-closed exit 2 — exit=2
+PASS  WC11 usage errors → exit 64 (no --round; bad --expect) — none=64 badExpect=64
+PASS  WC12 --json carries verdict, waves and findings — exit=1 verdict=DRIFT
+PASS  WC13 resume-only wave (taskCall null) is read: seats=0 resumed=1, report present — exit=0
+PASS  WC14 mixed spawn+resume wave: no REGISTRY_MISMATCH; a directory named S.md is not a report — exit=0
+PASS  WC15 --expect under-declared count → EXPECT_MISMATCH — exit=1
+PASS  WC16 --expect unknown role → EXPECT_UNKNOWN; `attack` is the attack total — typo=1 attack3=0 attack4=1
+PASS  WC17 round-scoped --expect: <round>/<wave> checks one round only — scoped=0 unscoped=1
+PASS  WC18 attack counts seats, roles count repeats, an empty report file is absent, totals stay per round — exit=0
+PASS  WC19 a task with no Report: trailer is absent; a stray-only round exits 1 — exit=1
+PASS  WC20 usage: --round abc and an unknown argument exit 64 — abc=64 bogus=64
+PASS  WC21 a Report: path with a `..` segment is absent, never resolved outside the round — exit=0
+PASS  WC22 a task without a string agent, or with a non-string name, fails closed (exit 2), never counted — noAgent=2 numericName=2
+PASS  WC23 a read error outside FailClosed (report dir is a regular file) exits 2, not 1 — exit=2
+PASS  WC25 --expect edges: unknown wave with count 0, hyphenated wave, empty count or round, known roles absent from every wave — unknown0=1 hyphen=1 noCount=64 noRound=64 planner0=0 labrat0=0
+PASS  WC26 finding edges: under-declared spawn and resume, short registry, resumed report dir scanned, missing counts/registry/report dir, counts without resume, non-.md file — spawnLow=1 resumeLow=1 bareV1=0 noResumeKey=0 shortReg=1 nonMd=0
+PASS  WC27 a report path through a symlinked directory outside --root fails closed — exit=2 wave-census: fail-closed — /tmp/kumitate-wave-census-xkeDGk/r30/.ufo/waves/round-30/build resolves outside --root
+PASS  WC28 symlinked dispatch and round paths outside --root fail closed — dispatch=2 round=2
+PASS  WC29 FIFO and non-regular dispatch entries fail closed without blocking — mkfifo=0 fifo=2 error=- directory=2
+PASS  WC30 dispatch bytes, seats, and report-directory entries are capped — bytes=2 tasks=2 reports=2
+PASS  WC31 only a line-anchored final Report trailer names the report — exit=0 WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+PASS  WC32 an in-root symlinked report directory fails closed — exit=2 wave-census: fail-closed — /tmp/kumitate-wave-census-xkeDGk/r39/.ufo/waves/round-39/build is not the canonical path (symbolic link)
+PASS  WC24 self-observation: a child selftest with one injected failure prints it, counts it, ends VERDICT: FAIL, exits 1 — exit=1 WAVE_CENSUS_SELFTEST: 31/32 pass
+WAVE_CENSUS_SELFTEST: 32/32 pass
+WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: 0
+WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: PASS
+VERDICT: PASS

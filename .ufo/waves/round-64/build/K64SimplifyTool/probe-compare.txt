@@ -1,0 +1,15 @@
+# frozen-probe verdict with the tool path swapped (scratch copy of receipt64-probe.mjs, one line changed:
+#   const tool = process.env.TOOL || join(T,'scripts','report-receipt-diff.mjs');
+# every other byte identical to .ufo/waves/round-64/probe/receipt64-probe.mjs; P5 not scored (no round-64 report yet)
+
+$ TOOL=<before> node probe-toolpath.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin HEAD
+RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given
+exit=1
+
+$ TOOL=<after>  node probe-toolpath.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin HEAD
+RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given
+exit=1
+
+$ node .ufo/waves/round-64/probe/receipt64-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin HEAD   # unmodified frozen counter, tool from git archive
+RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given
+exit=1

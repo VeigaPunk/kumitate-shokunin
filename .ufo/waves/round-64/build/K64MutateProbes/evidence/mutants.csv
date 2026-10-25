@@ -1,0 +1,83 @@
+id,counter,mutation,killed-at-C1-baseline,killed-at-C2-donothing,killed-at-C2-honest,held(observed),classification
+p1floor-up,C1,Number(m[1]) >= 20 -> Number(m[1]) >= 21,KILLED,,,2/5,
+p1floor-down,C1,Number(m[1]) >= 20 -> Number(m[1]) >= 19,SURVIVOR,,,3/5,survivor: see report findings
+cases-floor-down,C1,cases.length < 14 -> cases.length < 13,SURVIVOR,,,3/5,survivor: see report findings
+cases-floor-up,C1,cases.length < 14 -> cases.length < 17,KILLED,,,3/5,
+ids-floor-down,C1,seen.size < 8 -> seen.size < 7,SURVIVOR,,,3/5,survivor: see report findings
+ids-floor-up,C1,seen.size < 8 -> seen.size < 9,SURVIVOR,,,3/5,survivor: see report findings
+clean-floor-up-invis,C1,clean < 2 -> clean < 3,SURVIVOR,,,3/5,survivor: see report findings
+clean-floor-up-kill,C1,clean < 2 -> clean < 4,KILLED,,,3/5,
+honest-name,C1,c === 'c0-honest' -> c === 'c0-honesz',KILLED,,,3/5,
+clean-prefix,C1,r.stdout.startsWith('REPORT_RECEIPT: CLEAN') -> r.stdout.startsWith('REPORT_RECEIPT: KLEAN'),SPEC-SKIPPED,,,,occurrences=2, skipped
+ids-regex-2plus,C1,/^[A-Z_]+ / -> /^[A-Z_][A-Z_]+ /,SURVIVOR,,,3/5,survivor: see report findings
+p3r60-exit,C1,if (a.status !== 1) -> if (a.status !== 2),KILLED,,,2/5,
+p3r63-exit,C1,if (b.status !== 0 -> if (b.status !== 1,KILLED,,,2/5,
+p1-selftest-exit,C1,check('P1', s.status === 0 -> check('P1', s.status === 1,KILLED,,,2/5,
+p1-eq-invert,C1,m[1] === m[2] -> m[1] !== m[2],KILLED,,,2/5,
+p1-eq-tautology,C1,m[1] === m[2] -> m[2] === m[2],SURVIVOR,,,3/5,survivor: see report findings
+p4-every-to-some,C1,fails.every(Boolean) -> fails.some(Boolean),SURVIVOR,,,3/5,survivor: see report findings
+p4-every-invert,C1,fails.every(Boolean) -> fails.every((x) => !x),KILLED,,,2/5,
+stub-clean-text,C1,'REPORT_RECEIPT: CLEAN (stub)' -> 'REPORT_RECEIPT: PASS (stub)',SPEC-SKIPPED,,,,occurrences=0, skipped
+stub-drift-exit0,C1,process.exit(1); -> process.exit(0);,SURVIVOR,,,3/5,survivor: see report findings
+held-boundary-4,C1,held === 5 ? 'HELD' : 'UNMET' -> held === 4 ? 'HELD' : 'UNMET',SURVIVOR,,,3/5,survivor: see report findings
+final-exit-2,C1,process.exit(held === 5 ? 0 : 1) -> process.exit(held === 5 ? 0 : 2),KILLED,,,3/5,
+r60-const,C1,const R60 = '7b0581ed' -> const R60 = '7b0581ee',KILLED,,,2/5,
+r63-const,C1,const R63 = '8fd46e61' -> const R63 = '8fd46e60',KILLED,,,2/5,
+tally-regex-9,C1,held=10\/10 -> held=9\/10,KILLED,,,2/5,
+placeholder-prefix,C1,l.startsWith('PLACEHOLDER ') -> l.startsWith('PLACEHOLDXR '),KILLED,,,2/5,
+indep-or-to-and,C1,if (indep < 1 || ph !== indep) -> if (indep < 1 && ph !== indep),SURVIVOR,,,3/5,survivor: see report findings
+usage-exit-65,C1,process.exit(64) -> process.exit(65),SURVIVOR,,,3/5,survivor: see report findings
+poslen-3,C1,if (pos.length < 2) -> if (pos.length < 3),KILLED,,,none(base 3/5),
+tool-path,C1,'report-receipt-diff.mjs' -> 'report-receipt-dif.mjs',KILLED,,,0/5,
+case-report-path,C1,join(dir, c, 'report.md') -> join(dir, c, 'report.mdX'),KILLED,,,3/5,
+case-lane-path,C1,join(dir, c, 'lane') -> join(dir, c, 'laneX'),KILLED,,,3/5,
+rev-verify-invert,C1,rv.status !== 0 -> rv.status === 0,KILLED,,,0/5,
+p2-round-90,C1,--round', '9' -> --round', '90',KILLED,,,3/5,
+archive-parent,C1,archive '${rev}' -> archive '${rev}~1',KILLED,,,0/5,
+expect-filter,C1,existsSync(join(dir, n, 'expect')) -> existsSync(join(dir, n, 'expecz')),KILLED,,,3/5,
+p5-exit-1,C1,check('P5', r.status === 0 -> check('P5', r.status === 1,SURVIVOR,,,3/5,survivor: see report findings
+opt-report-typo,C1,opt('--report') -> opt('--repork'),SURVIVOR,,,3/5,survivor: see report findings
+miss-join-sep,C1,miss.join(' | ') -> miss.join(' , '),KILLED,,,3/5,
+blob-or-to-and,C1,if (b60.status !== 0 || b63.status !== 0) -> if (b60.status !== 0 && b63.status !== 0),SURVIVOR,,,3/5,survivor: see report findings
+ids-floor-6-kill,C1,seen.size < 8 -> seen.size < 6,KILLED,,,4/5,
+clean-prefix-p2only,C1,const got = r.stdout.startsWith('REPORT_RECEIPT: CLEAN') -> const got = r.stdout.startsWith('REPORT_RECEIPT: KLEAN'),KILLED,,,3/5,
+stub-clean-text2,C1,REPORT_RECEIPT: CLEAN (stub) -> REPORT_RECEIPT: PAS (stub),SURVIVOR,,,3/5,survivor: see report findings
+base-lastchar,C2,'6825a51425e91908f019ed65aa2f4209acbd7087' -> '6825a51425e91908f019ed65aa2f4209acbd7088',,KILLED,KILLED,donothing=0/8/honest=7/8,killed-both
+base-shortprefix,C2,'6825a51425e91908f019ed65aa2f4209acbd7087' -> '6825a514',,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+opened-26,C2,'2026-10-25' -> '2026-10-26',,SURVIVOR,KILLED,donothing=1/8/honest=6/8,killed-honest-only
+j1-src-4digits,C2,/^source:\s*S\d{3,}/m -> /^source:\s*S\d{4,}/m,,KILLED,KILLED,donothing=1/8/honest=7/8,killed-both
+j1-recheck-empty,C2,/^recheck:\s*\S+/m -> /^recheck:\s*$/m,,KILLED,KILLED,donothing=1/8/honest=7/8,killed-both
+head-slice-0,C2,.slice(0, 14) -> .slice(0, 0),,KILLED,KILLED,donothing=1/8/honest=4/8,killed-both
+head-slice-4,C2,.slice(0, 14) -> .slice(0, 4),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j2-ids-1,C2,if (ids.length < 2) -> if (ids.length < 1),,KILLED,SURVIVOR,donothing=1/8/honest=8/8,killed-donothing-only
+j2-cells-11,C2,if (c.length !== 13) -> if (c.length !== 11),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j2-status-mined,C2,if (status !== 'mined') -> if (status !== 'MINED'),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j2-opened-fixed,C2,if (opened !== OPENED) -> if (opened !== '2000-01-01'),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j2-usedby-x,C2,if (!usedBy.includes(ENTRY)) -> if (!usedBy.includes('placeholder-x')),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j2-url-scheme,C2,/https?:\/\//.test(source) -> /httpz?:\/\//.test(source),,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j3-sha512,C2,createHash('sha256') -> createHash('sha512'),,SURVIVOR,KILLED,donothing=1/8/honest=6/8,killed-honest-only
+j3-bytes-plus1,C2,b.length !== c.bytes -> b.length + 1 !== c.bytes,,SURVIVOR,KILLED,donothing=1/8/honest=6/8,killed-honest-only
+j3-ids-99,C2,ids.length > 0 && bad.length === 0 -> ids.length > 99 && bad.length === 0,,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j4-bullets-5,C2,if (bullets.length < 4) -> if (bullets.length < 5),,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j4-words-24,C2,.length > 25 -> .length > 24,,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j4-dash-ascii,C2,[—-] -> [—],,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j6-stated-13,C2,if (stated.size < 12) -> if (stated.size < 13),,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j6-stated-1,C2,if (stated.size < 12) -> if (stated.size < 1),,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+j6-demo-exit-1,C2,if (r.status !== 0) bad.push(`demo-exit=${r.status}`) -> if (r.status !== 1) bad.push(`demo-exit=${r.status}`),,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j6-live-regex-x,C2,/^JJ_SEAT: ([a-z0-9_]+)=(.*)$/ -> /^JJ_SEATX: ([a-z0-9_]+)=(.*)$/,,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j6-timeout-1ms,C2,timeout: 120000 -> timeout: 1,,KILLED,KILLED,donothing=1/8/honest=7/8,killed-both
+j7-census-exit-1,C2,check('J7', r.status === 0 && named && clean -> check('J7', r.status === 1 && named && clean,,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j7-frontier-typo,C2,/frontier|band|ground|first entry/i -> /fronier|band|ground|first entry/i,,KILLED,SURVIVOR,donothing=1/8/honest=8/8,killed-donothing-only
+j7-readmemap-cleak,C2,/README_MAP: CLEAN/ -> /README_MAP: CLEAK/,,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+j8-prefix-10,C2,now.subarray(0, baseBytes.stdout.length) -> now.subarray(0, 10),,KILLED,KILLED,donothing=0/8/honest=7/8,killed-both
+j8-amend-24,C2,Amendment 2026-10-25/m -> Amendment 2026-10-24/m,,KILLED,KILLED,donothing=0/8/honest=7/8,killed-both
+j8-tail-entry-x,C2,tail.includes(ENTRY) -> tail.includes(ENTRY + 'x'),,KILLED,KILLED,donothing=0/8/honest=7/8,killed-both
+j8-m8,C2,/\bM7\b/ -> /\bM8\b/,,KILLED,KILLED,donothing=0/8/honest=7/8,killed-both
+entry-path-x,C2,'corpus/knowledge/jj-workspace-seat-containment.md' -> 'corpus/knowledge/jj-workspace-seat-containmentx.md',,KILLED,KILLED,donothing=0/8/honest=0/8,killed-both
+live-inverted,C2,!argv.includes('--no-live') -> argv.includes('--no-live'),,KILLED,KILLED,donothing=1/8/honest=7/8,killed-both
+j5-bullets-99,C2,bullets.length > 0 && bad.length === 0 -> bullets.length > 99 && bad.length === 0,,SURVIVOR,KILLED,donothing=1/8/honest=7/8,killed-honest-only
+held-7,C2,const ok = held === 8; -> const ok = held === 7;,,SURVIVOR,KILLED,donothing=1/8/honest=8/8,killed-honest-only
+final-exit-2,C2,process.exit(ok ? 0 : 1); -> process.exit(ok ? 0 : 2);,,KILLED,SURVIVOR,donothing=1/8/honest=8/8,killed-donothing-only
+rule-j63,C2,const RULE = 'J64'; -> const RULE = 'J63';,,KILLED,KILLED,donothing=1/8/honest=8/8,killed-both
+norm-squeeze,C2,.replace(/\s+/g, ' ') -> .replace(/\s+/g, ''),,SURVIVOR,SURVIVOR,donothing=1/8/honest=8/8,full-survivor
+rows-regex-4digits,C2,\|\s*(S\d{3,})\s*\| -> \|\s*(S\d{4,})\s*\|,,SURVIVOR,KILLED,donothing=1/8/honest=6/8,killed-honest-only

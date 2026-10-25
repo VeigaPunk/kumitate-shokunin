@@ -1,0 +1,8 @@
+# instrumented arm check: tool-adprobe.mjs = the dd1a3e6 tool with the auto-detect arm writing AUTODETECT-FIRED to stderr
+$ node tool-adprobe.mjs --selftest 2>&1 | grep -c AUTODETECT            -> 0
+$ node cases.mjs tool-adprobe.mjs controls/receipt 2>&1 | grep -c AUTODETECT -> 0
+$ node p3.mjs tool-adprobe.mjs <lane> <rev> r60 r63 2>&1 | grep -c AUTODETECT -> 0
+$ node tool-adprobe.mjs --lane <lane> --round 63 --report r63.md --rev HEAD 2>&1 | grep -E 'AUTODETECT|REPORT_RECEIPT'
+AUTODETECT-FIRED
+REPORT_RECEIPT: CLEAN (round=63 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef bytes=17479)
+# i.e. the arm fires only for a real-lane run that omits --fleet (P3 always passes --fleet; the 16 controls' lane/ has no sibling .git)

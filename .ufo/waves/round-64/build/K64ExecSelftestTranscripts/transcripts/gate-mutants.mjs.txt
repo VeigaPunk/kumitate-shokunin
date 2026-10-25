@@ -1,0 +1,45 @@
+PASS copied-siblings-and-allowlisted-env exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false cases=1/1 floor=0
+PASS killed-requires-failing-case killed exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+PASS k43-exit-zero-with-verdict-fail-is-survived survived exit=0 verdict=FAIL group_clean=true fail_lines=1 overflow=false
+PASS k43-kill-confirmed-by-second-run exit=1 verdict=FAIL group_clean=true fail_lines=1 overflow=false confirm=same
+PASS survived survived exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS pass-with-fewer-cases-is-drift-not-kill drift exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS higher-case-count-mismatch-is-not-survived drift exit=0 verdict=PASS group_clean=true fail_lines=0 overflow=false
+PASS nomatch nomatch occurrences=0
+PASS crash-without-summary crash exit=23 verdict=none group_clean=true fail_lines=0 overflow=false
+PASS timeout-and-process-group-cleanup timeout timeout=100ms group_clean=true
+PASS process-cap-kills-overfull-group status=null signal=SIGKILL timeout=false overflow=true group_clean=true stderr= stdout=1/1 cases passed (fixture)
+VERDICT: PASS
+
+PASS rss-cap-kills-overfull-group timeout=false overflow=true group_clean=true
+PASS dead-parent-kills-process-group timeout=false signal=SIGKILL group_clean=true
+PASS failing-control-exit-class-is-2 FAIL
+PASS k43-nonzero-with-verdict-fail-is-killed killed
+PASS k43-nonzero-with-verdict-pass-is-survived survived
+PASS k43-evaluable-rejects-timeout timedOut=true
+PASS k43-evaluable-rejects-overflow overflow=true
+PASS k43-evaluable-rejects-live-group groupClean=false
+PASS k43-evaluable-requires-control-total cases.total=2 controlTotal=1
+PASS k43-confirmation-same-names-agrees same names, details differ
+PASS k43-confirmation-other-names-or-pass-disagrees other names / pass on rerun
+PASS k43-fail-names-ignore-output-order FAIL A, FAIL B / FAIL A, FAIL B
+PASS k43-unstable-exit-class-is-2 unstable
+PASS failed-control-after-adds-integrity-error control-after:fixture
+PASS k43-unstable-is-invalid-before-survivor exit=2 state_reads=1
+PASS nomatch-exit-class-is-2 2
+PASS unevaluable-outcome-precedes-survivor 2
+PASS evaluated-drift-uses-survivor-exit-class 1
+PASS option-like-revision-rejected refused before Git
+PASS single-dash-revision-rejected refused before Git
+PASS git-revision-end-of-options rev-parse delimiter present
+PASS dead-owner-temp-dir-reaped reaped 
+PASS symlink-target-refused refused before read/write
+PASS fifo-target-refused mkfifo=0 refused=true
+PASS polluted-git-env-does-not-write-sentinel control=PASS head_unchanged=true 
+PASS missing-frozen-manifest-exits-2 cite-check:warn-total
+PASS manifest-has-41-frozen-and-two-extras rows=43 extras=2 missing=0 duplicates=0 invalid=0
+PASS all-manifest-literals-apply-once unapplicable=none
+PASS mutated-byte-header-digest GATE_MUTANTS_HEADER rev=selftest fixture=2474883e05994c6ebb298be93e912abe7289b8ffcf9db9f9aeb4b811e0d931a3 manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f
+PASS selftest-leftovers leftovers=0
+GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0
+VERDICT: PASS

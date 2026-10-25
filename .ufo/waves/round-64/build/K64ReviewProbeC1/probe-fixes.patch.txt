@@ -1,0 +1,56 @@
+# Patch draft for .ufo/waves/round-64/probe/receipt64-probe.mjs (frozen — integrate as R64 v2 review, not by seat)
+# Addresses: shell injection (lane path), swallowed archive status, symlink escape, env steering, no timeouts,
+# answer-key leak into tool CWD-neighbourhood, scratch files written inside measured tree, crash exit ambiguity.
+
+--- a/.ufo/waves/round-64/probe/receipt64-probe.mjs
++++ b/.ufo/waves/round-64/probe/receipt64-probe.mjs
+@@ const git = (d, ...a) => spawnSync('git', ['-C', d, ...a], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
++# minimal env: strip GIT_DIR/GIT_WORK_TREE/GIT_OBJECT_DIRECTORY/GIT_CONFIG_* and NODE_OPTIONS so the
++# caller cannot steer repo resolution or inject code into the tool's node process.
++const GITENV = { PATH: process.env.PATH, HOME: process.env.HOME, TMPDIR: process.env.TMPDIR, LANG: 'C.UTF-8' };
++const git = (d, ...a) => spawnSync('git', ['-C', d, ...a], { encoding: 'utf8', env: GITENV, timeout: 120000, maxBuffer: 256 * 1024 * 1024 });
+@@ const rv = git(lane, 'rev-parse', '--verify', `${pos[1]}^{commit}`);
+ if (rv.status !== 0) { ...exit(2)... }
+ const rev = rv.stdout.trim();
+-const T = mkdtempSync(join(tmpdir(), 'receipt64.'));
+-spawnSync('bash', ['-c', `git -C "${lane}" archive "${rev}" | tar -x -C "${T}"`]);
+-const tool = join(T, 'scripts', 'report-receipt-diff.mjs');
++# never interpolate paths into a shell: $(...) and `...` expand inside double quotes (injection).
++const T  = mkdtempSync(join(tmpdir(), 'receipt64-scratch.'));   // probe scratch (r60.md, stubs)
++const TR = mkdtempSync(join(tmpdir(), 'receipt64-tree.'));      // measured tree only
++const arc = spawnSync('git', ['-C', lane, 'archive', rev], { env: GITENV, timeout: 120000, maxBuffer: 512 * 1024 * 1024 });
++if (arc.status !== 0 || !arc.stdout?.length) { process.stdout.write(`RECEIPT64_UNMET held=0/5 checks=5 rev=${rev} rule=R64 | archive-failed\n`); process.exit(2); }
++const unt = spawnSync('tar', ['-x', '-C', TR], { input: arc.stdout, timeout: 120000 });
++if (unt.status !== 0) { process.stdout.write(`... | untar-failed\n`); process.exit(2); }
++# refuse symlinked tool (committed symlink -> host file escapes "committed bytes" and reads the mutable worktree)
++import { lstatSync, statSync } from 'node:fs';
++const tool = join(TR, 'scripts', 'report-receipt-diff.mjs');
++const toolReal = existsSync(tool) && lstatSync(tool).isFile() && !lstatSync(tool).isSymbolicLink() && statSync(tool).isFile();
+@@ const run = (toolPath, args) => spawnSync('node', [toolPath, ...args], { ... });
++# run the SAME interpreter as the probe, with timeouts and a clean env (no NODE_OPTIONS).
++const run = (toolPath, args) => spawnSync(process.execPath, [toolPath, ...args], { encoding: 'utf8', env: GITENV, timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
+@@ function p2(toolPath) {
+-  const dir = join(T, '.ufo/waves/round-64/controls/receipt');
++  const dir = join(TR, '.ufo/waves/round-64/controls/receipt');
+   if (!existsSync(dir)) return { ok: false, why: 'controls-absent' };
+   const cases = readdirSync(dir).filter((n) => existsSync(join(dir, n, 'expect')));
++  # hide the answer key: read expect files first, then delete them from the extracted tree so a
++  # case dir the tool can see (via dirname(--report)/expect) no longer carries the expected output.
++  const expects = {};
++  for (const c of cases) { expects[c] = readFileSync(join(dir, c, 'expect'), 'utf8'); rmSync(join(dir, c, 'expect')); }
+   ...
+-    const [code, want] = readFileSync(join(dir, c, 'expect'), 'utf8').split('\n');
++    const [code, want] = expects[c].split('\n');
++# distinct-id floor: corpus must supply >= 8 ids. With contract v1's 7 finding ids the floor is unreachable —
++# either the contract gains a new finding (strengthening) or each P2 run synthesizes a nonce case whose id the
++# tool cannot know (e.g. expect NONCE_<random> — true anti-echo); do NOT lower the floor (forbidden by ratchet).
+@@ if (!existsSync(tool))
++if (!toolReal)
+@@ const r = run(tool, ['--selftest']); ... guard every readFileSync/readdirSync with try/catch; on exception
++# print RECEIPT64_ERROR rev=<rev> rule=R64 | probe-crashed:<name> and exit(3) so a crash is never confused
++# with a check MISS (exit 1).
+@@ p3: const blob = (c, r) => git(FLEET, 'show', `${c}:...`)
++# pin full 40-hex ids (7b0581ed63a46ac1961b1ecf98ec0caf561ccd9b, 8fd46e614d6db3ca251b9ce75cdc7b94ecb574ad)
++# so ambiguity is impossible; keep 'fleet-blob-unreadable' as a distinct MISS reason.
+@@ rmSync(T ...) -> rmSync(T) and rmSync(TR); wrap in try/finally so exceptions still clean up and the
++# verdict line is always printed.

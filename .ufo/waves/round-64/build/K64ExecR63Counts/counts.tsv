@@ -1,0 +1,62 @@
+statement	claimed	derived (command)	verdict
+round total seats	79 (band 64-100)	40+39 from w1-dispatch.json counts.spawn=40 + w2-dispatch.json counts.spawn=39	MATCH
+wave-1 seats	40	node -e registry.members.length on w1-dispatch.json -> 40; ls w1/*.md -> 40; w1-results.json seats=40, results.length=40	MATCH
+wave-2 seats	39	node -e registry.members.length on w2-dispatch.json -> 39; ls w2/*.md -> 39; w2-results.json seats=39, results.length=39	MATCH
+wave-1 role vector	executor 13, scribe 6, scout 5, reviewer 4, connector 3, critic 3, mutation-tester 3, sentinel 1, revenger 1, simplifier 1	node -e role tally over w1-dispatch.json registry.members -> exactly those 10 cells	MATCH
+wave-2 role vector	reviewer 12, executor 11, critic 5, mutation-tester 3, scribe 3, connector 2, scout 2, simplifier 1	node -e role tally over w2-dispatch.json registry.members -> exactly those 8 cells	MATCH
+attack share w1	10/40 = 25.0%	(4 reviewer+3 critic+3 mutation-tester)/40 = 10/40 = 25.0%	MATCH
+attack share w2	20/39 = 51.3%	(12+5+3)/39 = 20/39 = 51.28%	MATCH
+attack share round	30/79 = 38%	(10+20)/79 = 37.97%	MATCH
+m_flash share loose	45/79 = 57%	executor+scribe+simplifier+critic+revenger+sentinel = (13+6+1+3+1+1)+(11+3+1+5)=45; 45/79=56.96%	MATCH
+m_flash share strict	35/79 = 44.3%	executor+scribe+simplifier = (13+6+1)+(11+3+1)=35; 35/79=44.30%	MATCH
+w1 answering models (spawn model_change)	deepseek-v4.1-flash 25, glm-5.3-flash 7, MiniMax-M3.1-Flash 5, gemini-3.8-flash 3	node models.mjs over 40 w1 seat transcripts, model_change role=subagent:<seat> -> 25/7/5/3, sum 40	MATCH
+w2 answering models (spawn model_change)	deepseek 20, glm-5.3-flash 15, antigravity 2, minimax 2	node models2.mjs with exact-stem-else-<stem>-2 resolution over 39 seats -> 20/15/2/2, sum 39	MATCH
+w1 provider errors 402	"402 Insufficient account funds" x25	node errors2.mjs message.errorStatus==402 -> 25 rows on 25 seats	MATCH
+w1 provider errors 429	429 x9	same script errorStatus==429 -> 9 rows on 9 seats	MATCH
+w1 seats hit by provider errors	34 of 40	seats with any errorStatus row -> 34/40	MATCH
+w2 provider errors	402 x20, 429 x24	errorStatus 402 -> 20 rows, 429 -> 24 rows (23 seats); 35/39 seats hit	MATCH
+lane commits 9	9 commits dfa6fca8..bb184a90	git log --oneline dfa6fca8..bb184a90 | wc -l -> 9; all nine hashes byte-equal to the report list	MATCH
+selftest cases before	25	node <b38a2065 gate> --selftest -> INLINE_DISPATCH_SELFTEST: PASS (25/25)	MATCH
+selftest cases after	69	node scripts/inline-dispatch-evidence.mjs --selftest -> PASS (69/69) exit 0	MATCH
+controls before	14	git ls-tree -r -d b38a2065 .ufo/waves/round-63/controls/inline | awk -F/ NF==6 | wc -l -> 14	MATCH
+controls after	75	find .ufo/waves/round-63/controls/inline -mindepth 1 -maxdepth 1 -type d | wc -l -> 75	MATCH
+controls at the wave-1 commit	44 controls (bullet attributed to 05b31769)	git ls-tree -r -d 05b31769 .../controls/inline | wc -l -> 45 (44 only at a9531c8e, the next commit)	MISMATCH
+topology controls at freeze	12	git show b38a2065:controls/topology/summary.txt | grep -c ^AS-EXPECTED -> 12	MATCH
+wave-2 controls adopted	31	75 - 44 = 31 (44 = inline controls at a9531c8e)	MATCH
+selftest cases adopted in wave 2	21	69 - 48 = 21 (48 at 05b31769/a9531c8e)	MATCH
+registry rows before -> after	134 -> 136	git show dfa6fca8:corpus/SOURCES.md / bb184a90 grep -cE "^\| S[0-9]{3} \|" -> 134 / 136	MATCH
+tier histogram before -> after	A 111/B 15/C 8 -> A 113/B 15/C 8	awk -F"|" field 5 tally over both revisions -> A111 B15 C8 / A113 B15 C8; sources-check.mjs -> tiers=A:113,B:15,C:8	MATCH
+SOURCES_CHECK verdict	SOURCES_CHECK: CLEAN rows=136	node scripts/sources-check.mjs -> SOURCES_CHECK: CLEAN (rows=136 tiers=A:113,B:15,C:8 ...) exit 0	MATCH
+rows added by tier	+2, both tier A	diff of the two histograms: docs 79->80, paper 8->9 = 2 new A rows (S196, S197)	MATCH
+rows touched old->new	none (two insertions)	git diff --stat dfa6fca8..bb184a90 -- corpus/SOURCES.md -> 2 insertions(+), 0 deletions	MATCH
+w2 "-2" name collisions	one (K63R2ConnRoutedDefects-2)	ls ~/.omp/agent/sessions/-Projects-shokunin/2026-10-25T16-43-09-*/K63*-[0-9]*.jsonl -> 3: ConnRoutedDefects-2, ScoutHostRecords-2, ScoutLeftovers-2	MISMATCH
+proxy stanza A	257	git archive bb184a90 -> node scripts/proxy-check.mjs -> PROXY: MATCH (A=257 ...) exit 0	MATCH
+proxy stanza C2/C2_total	153	C2=153/153 in the same verdict line	MATCH
+proxy stanza K	49	K=49/49 in the same verdict line	MATCH
+proxy A at c8cb1bb	258	git show c8cb1bb:SCORECARD.md | grep ^A= -> A=258	MATCH
+proxy --strict at the tip	MATCH	node scripts/proxy-check.mjs --strict on the bb184a90 archive -> PROXY: MATCH exit 0	MATCH
+C1 base receipt	INLINE63_UNMET held=0/6 exit 1	cat .ufo/waves/round-63/base/inline63-base.txt -> that line + exit=1	MATCH
+C2 base receipt	TOPOLOGY63_UNMET held=1/7 exit 1	cat base/topology63-base.txt -> that line + exit=1	MATCH
+C1 measured verdict	INLINE63_HELD held=6/6 checks=6 rev=d37e7d0a rule=I63	cat close/inline63-probe-at-T.txt -> identical line	MATCH
+C2 measured verdict	TOPOLOGY63_HELD held=7/7 checks=7 rule=T63	cat close/topology63-measured.txt -> identical line (twice), exit=0	MATCH
+wave gate verdicts	CLEAN seats=40 ... dead=0 / seats=39 ... dead=0	node scripts/inline-dispatch-evidence.mjs --root <bb184a90 archive> --round 63 --wave w1|w2 -> both CLEAN, exit 0	MATCH
+census before/after	six W04 warnings, exit 0 both	cat base/census-before.txt close/census-after.txt -> same six W04 (S034 S068 S084 S095 S123 S126) + ok, EXIT=0	MATCH
+readme-map at tip	CLEAN files=153 rows=153 covered=153	node scripts/readme-map.mjs in the bb184a90 archive -> identical line, exit 0	MATCH
+proxy at base	FAIL-CLOSED GATE_PIN_KEY_UNKNOWN pin.make-dispatch-actual	cat base/proxy-before.txt -> PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 330, EXIT=2	MATCH
+plan-before-ready r63/r62	PASS / FAIL reason=NO_PLAN	cat close/plan-before-ready-r63.txt -> PASS; bash scripts/plan-before-ready.sh --round 62 -> FAIL reason=NO_PLAN exit 1	MATCH
+plan round-total band vs actual	plan 80-100, ran 79 (report admits)	git show b38a2065:.ufo/waves/round-63/plan.md:139 "Round total 80-100"; 79 seats -> missed by one, disclosed	MATCH
+plan wave-2 floor vs actual	not disclosed (plan says >= 40 seats)	plan.md:137 "Wave 2 (>= 40 seats ...)"; dispatched 39; report discloses only the round-total miss	MISMATCH
+PROVINCE coordinator hits	0 at base	grep -c coordinator on dfa6fca8:PROVINCE.md -> 0 (tip: 1)	MATCH
+quarantine slice	9 ids, 9/9 PRESENT, 0 ABSENT, 0 UNVERIFIABLE	wc -l assimilation/quarantine-slice -> 9; w1/K63ScoutQuarantine.md:1 -> "9/9 PRESENT, 0 ABSENT ..., 0 UNVERIFIABLE"	MATCH
+collision guard	registry 134, staged 155, collisions S195 only	wc -l assimilation/reg-ids -> 134; staged-ids -> 155; cat collisions -> S195	MATCH
+counter pins	4	.ufo/pins/counter-pins.json pins with round===63 -> 4 (inline63-probe, topology63-probe, make-inline-controls, make-topology-controls)	MATCH
+clean-room crosscheck	40 dispatched, 40 transcripts, 40 finished, 0 ambiguous	close/supplementary.txt SUMMARY dispatched=40 transcript_found=40 finished=40 missing=0 ambiguous=0; crosscheck.tsv 40 seat rows + SUMMARY (wave 1 only)	MATCH
+committed round-63 tree size	~12 MB	git ls-tree -r -l bb184a90 .ufo/waves/round-63 -> 11,307,180 B = 10.8 MiB / 11.3 MB, 2895 files	MATCH (approximate)
+shape arms measured on real seats	1466 real finished seats, 0 violations	no committed receipt; the 1466 exists only in a code comment (scripts/inline-dispatch-evidence.mjs:43,53), which also states 415 marker-scoped and K63ExecGateForgery.md:1 states 458/458; today the store holds 5145 finished transcripts	UNDERIVABLE
+six w1 seats yield-without-session_exit	6	time-indexed: today 0 w1 transcripts have a yield and no session_exit row (rows landed later); SCORECARD:2972 corroborates the late rows	UNDERIVABLE
+readme-map-close mechanism unlanded	not landed	test -e scripts/readme-map-close.mjs -> ABSENT	MATCH
+Q51 grounding hash 9237a72	resolves nowhere	git cat-file -e 9237a72 -> does not resolve in the lane	MATCH
+wave-1 forged-no-sessions control loses its empty sessions/ root	empty dir lost by git	git ls-tree -r b38a2065 .../controls/inline/forged-no-sessions -> dispatcher.log, expect, lane/... ; no sessions/ entry	MATCH
+wave-2 lesson defects	7 stale/false statements	w2/K63R2ReviewLesson.md:1 -> "carries 7 defects"	MATCH
+wave-2 entry-table correction	three decision-table rows contradicted	w2/K63R2ReviewEntryTable.md:1 -> "three rows prefer a topology the paper ... contradicts"	MATCH
+pushed tip at filing	bb184a90 is the pushed master	git ls-remote origin refs/heads/master -> dd1a3e6f (round-64 base, two commits on); git merge-base --is-ancestor bb184a90 dd1a3e6f -> exit 0, so bb184a90 was the remote tip and is an ancestor of it	MATCH (time-indexed)

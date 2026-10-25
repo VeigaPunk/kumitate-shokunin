@@ -1,0 +1,40 @@
+Verdict lines observed by seat K64CriticC2Predicate against the frozen counter
+.ufo/waves/round-64/probe/jj64-probe.mjs (sha256 157be0acaa799bb6acb92c76aa989a49f33c68ca3fd74d594e9e98b6b290daf1,
+== .ufo/pins/counter-pins.json pin `jj64-probe` round 64). Each line is copied verbatim from the run.
+
+F1  cheapest forged path (staged text + reused rows + boilerplate quotes + echo demo + heading-only amendment)
+    JJ64_HELD held=8/8 checks=8 rev=0c698f484e6824b439e4f44fcaadcc47a7370d0b rule=J64
+    exit=0
+
+A   12 stated keys with EMPTY values, demo echoing empty values (same clone, child of F1)
+    JJ64_HELD held=8/8 checks=8 rev=81cb6397e88e92f097604798f677e8e9bf9db4a4 rule=J64
+    exit=0
+
+B   one stated value contradicts the demo (calibration: J6 bites)
+    JJ64_UNMET held=7/8 checks=8 rev=2c753ba5f2676d1ecca441abfda7bfb9132a49cb rule=J64 | J6 MISS workspace_list:stated=WRONG:live=
+    exit=1
+
+C   S195's pin re-pointed at a different document's capture, quote unique to that document (calibration: J4+J5 bite)
+    JJ64_UNMET held=6/8 checks=8 rev=5dffdb1a0c7ab1db476598399ae4e9c6f6a01238 rule=J64 | J4 MISS S195:quote-not-in-capture(For the complete documentation) | J5 MISS S195:quote-not-live(Use this file to discover all )
+    exit=1
+
+F3  attacker-hosted row URLs (loopback http://127.0.0.1:8741/x.html), attacker-authored capture and pins
+    JJ64_HELD held=8/8 checks=8 rev=ec462374cace019afa36f93131b27644ca94fd85 rule=J64
+    exit=0
+
+F4/F5  self-referential demo (greps the entry from the archive, no jj) + cwd write
+    JJ64_HELD held=8/8 checks=8 rev=2ad1bcb155e0fa9b24ca4f33faa5d54f055c14d1 rule=J64
+    exit=0
+    demo-cwd.txt (written by the demo) = /tmp/kumitate-r64/K64CriticC2Predicate/cwdtest
+    -> the demo ran in the caller's cwd, not in the archive T
+
+D   S195's cited URL swapped to https://docs.temporal.io/visibility.md (a DIFFERENT page), anchor cell invented,
+    capture + pin untouched, quotes are the docs-index header note
+    JJ64_HELD held=8/8 checks=8 rev=930c0fceb71b0eb57743fc9a2a0974e8aad2daa0 rule=J64
+    exit=0
+
+Cross-page boilerplate check with the counter's own `norm()` (copied verbatim):
+    quote "Any documentation page is available as raw Markdown by appending .md to its URL."
+    /tmp/kumitate-r64/K64CriticC2Predicate/15898f5b.md contains-quote: true   (docs.temporal.io/visibility.md)
+    /tmp/kumitate-r64/K64CriticC2Predicate/754335e2.md contains-quote: true   (docs.temporal.io/workflow-execution.md)
+    S195 capture contains-quote: true                                        (docs.temporal.io/worker-versioning.md)
