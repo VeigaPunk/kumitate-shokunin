@@ -20,13 +20,13 @@ plan: `.ufo/waves/round-63/plan.md` (frozen before any wave result)
 | `omp-advisor-and-mcp-transports.md` (staged S209/S210) | REJECT | citation integrity: its headline citation `S104` names RFC 8785 (JSON Canonicalization Scheme) in the lane registry (`corpus/SOURCES.md:117`), a different document, and its protocol-version claim is superseded by later package rounds (K63ScoutStagedScope Finding 4); all 67 staged files also begin with a blank line and read `ENTRY_HEADER_REQUIRED` under `sources-check.mjs` (Finding 1) | `/home/vgpnk/Projects/shokuknow/merge/kumitate/knowledge/corpus/knowledge/omp-advisor-and-mcp-transports.md:80`; `.ufo/waves/round-63/w1/K63ScoutStagedScope.md` rows 143, findings 1 and 4; flip: re-point the citation to the lane row that holds the MCP architecture document (S125) or a new row opened in-round, re-scope the entry to the advisor half, strip the leading blank line |
 | `exactly-once-attribution.md` (package document arXiv 2609.29095) | REJECT (carried from rounds 60 and 61; no new decision this round) | duplicate-document scope: lane `S134` already holds arXiv 2609.29095, and the package stages that same document twice more (S204 structure, S211 abstract); no measured reopen under the lane's id | `corpus/lessons/round-60.md:32`; `corpus/lessons/round-61.md:13`; `corpus/lessons/round-62.md:12`; lane row `corpus/SOURCES.md:143`. Flip unchanged: a later one-theme round re-opens the paper under the lane's existing document id and adopts only under it |
 
-**Claim verdicts.** C1 `INLINE63_HELD` and C2 `TOPOLOGY63_HELD`: {{CLAIMS}}. Neither frozen predicate may be altered after a seat scored.
+**Claim verdicts.** C1 `INLINE63_HELD` and C2 `TOPOLOGY63_HELD`: C1 `INLINE63_HELD held=6/6` and C2 `TOPOLOGY63_HELD held=7/7`, both read at `d37e7d0aa2cf824c80a7e499cc3ae320ca4621ca` (receipts `.ufo/waves/round-63/close/`); the counters' own holes and the post-freeze control changes are listed in `SCORECARD.md` §Round 63 and `controls/CHANGES-AFTER-FREEZE.md`. No frozen predicate was edited after a seat scored. Neither frozen predicate may be altered after a seat scored.
 
 Stripped-prose record (not in any row cell): the staged `recheck:` cell carries a pipe-bearing command (`curl … | grep -c 'coordinator' -> 11`); pasted verbatim it splits the eleven-cell row, so the adopted cell is reduced to the cadence (`90d`) and the full prose stays here. The staged entry's two `source:` lines name package ids (`S200`, `S202`) that do not exist in this lane's registry; the adopted entry's lines must carry `S196`/`S197`.
 
 ## Assimilation
 
-One theme from `merge/kumitate/` — coordinator topology — adopting one entry, `multi-agent-coordinator-topologies.md` (staged rows S200/S202). Access date 2026-10-25; plan pointer `.ufo/waves/round-63/plan.md` § Frontier step and assimilation.
+One theme from `/home/vgpnk/Projects/shokuknow/merge/kumitate/` — coordinator topology — adopting one entry, `multi-agent-coordinator-topologies.md` (staged rows S200/S202). Access date 2026-10-25; plan pointer `.ufo/waves/round-63/plan.md` § Frontier step and assimilation.
 
 Collision guard (committed before data, `.ufo/waves/round-63/assimilation/`): `reg-ids` 134 lines (max id `S195`, gaps at `S121`, `S128`–`S130`, `S132`, `S137`–`S189`), `staged-ids` 155 lines (`S195`–`S349`), `collisions` = `S195` only — `comm -12 <(sort reg-ids) <(sort staged-ids)` prints `S195`. Package `S195` is the MCP Architecture overview row (`/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md:7`) whose document the lane already holds as `S125` (`corpus/SOURCES.md:137`); not appended.
 
@@ -44,7 +44,7 @@ Verdicts: K63ScoutQuarantine (`.ufo/waves/round-63/w1/K63ScoutQuarantine.md`): 9
 
 Before (committed receipt `.ufo/waves/round-63/base/census-before.txt`; `EXIT=0`): six W04 duplicate-URL warnings (`S034`, `S068`, `S084`, `S095`, `S123`, `S126`) then `ok` on `corpus/SOURCES.md`; 134 rows re-derived at `b38a2065` with `grep -cE '^\| S[0-9]{3} \|' corpus/SOURCES.md` → `134`, equal to `wc -l` of `assimilation/reg-ids`.
 
-After: {{CENSUS}} — paste the round-end `sources-census.sh validate --root … kumitate` transcript with its exit code, and re-derive the tier histogram instead of copying a report figure.
+After: `sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate` → six W04 warnings then `ok`, `EXIT=0` (`.ufo/waves/round-63/close/census-after.txt`); 136 rows, tier A 113 / B 15 / C 8 re-derived with the registry-only awk, rows added S196 and S197, none touched — paste the round-end `sources-census.sh validate --root … kumitate` transcript with its exit code, and re-derive the tier histogram instead of copying a report figure.
 
 ## Mistakes
 
