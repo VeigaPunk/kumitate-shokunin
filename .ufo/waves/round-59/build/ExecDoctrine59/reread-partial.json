@@ -1,0 +1,238 @@
+{
+  "E1": {
+    "ok": true,
+    "detail": "trio",
+    "facts": {
+      "present": true,
+      "line0": "source: S125 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture ; S127 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md ; S136 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026",
+      "head5": [
+        "source: S125 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture ; S127 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md ; S136 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026",
+        "verified-at: 2026-10-24",
+        "recheck: 90d",
+        "coverage-map: frontier item 2 \u2014 MCP protocol revisions as they bear on orchestration (PROVINCE.md)",
+        "ground: the lane held the 2026-07-28 revision only as queued changelog and README rows; this entry is the first sourced contract an orchestrator has to implement"
+      ],
+      "S125": true,
+      "S127": true,
+      "S136": true,
+      "mcp_host": true,
+      "verified_at": true,
+      "recheck": true,
+      "head_hits": [
+        "verified-at: 2026-10-24",
+        "recheck: 90d"
+      ]
+    }
+  },
+  "E2_partial": {
+    "clauses": 8,
+    "distinct": 8,
+    "paths": [
+      ".ufo/waves/round-59/build/ScoutMcpArch/body.html",
+      ".ufo/waves/round-59/receipts/quote-s125.txt",
+      ".ufo/waves/round-59/build/ScoutMcpTasks/body.md",
+      ".ufo/waves/round-59/receipts/quote-s127.txt",
+      ".ufo/waves/round-59/build/ScoutZenn/body.html",
+      ".ufo/waves/round-59/receipts/quote-s136.txt",
+      ".ufo/waves/round-59/assimilation/reg-ids",
+      ".ufo/waves/round-59/assimilation/staged-ids"
+    ],
+    "hash_miss_so_far_unextracted": 0,
+    "receipts": [
+      {
+        "line_no": 17,
+        "line": "- A 2026-07-28 client request carries protocol version and client capabilities in `_meta`, so the server identifies the caller from the request rather than from who connected. receipt:.ufo/waves/round-59/build/ScoutMcpArch/body.html@sha256:3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca",
+        "matched": true,
+        "path": ".ufo/waves/round-59/build/ScoutMcpArch/body.html",
+        "claimed": "3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 18,
+        "line": "- The located quote is \"Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta\" (11 words, offset of the tag-stripped page). receipt:.ufo/waves/round-59/receipts/quote-s125.txt@sha256:7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573",
+        "matched": true,
+        "path": ".ufo/waves/round-59/receipts/quote-s125.txt",
+        "claimed": "7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 20,
+        "line": "- A server that has negotiated the Tasks extension must not return `CreateTaskResult` until the task is durably created \u2014 a later `tasks/get` for that id would resolve. receipt:.ufo/waves/round-59/build/ScoutMcpTasks/body.md@sha256:5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5",
+        "matched": true,
+        "path": ".ufo/waves/round-59/build/ScoutMcpTasks/body.md",
+        "claimed": "5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 21,
+        "line": "- The located quote is \"A server MUST NOT return CreateTaskResult until the task is durably created\" (12 words). receipt:.ufo/waves/round-59/receipts/quote-s127.txt@sha256:979e492a081e2f25086086ebf3162ecbcdd57d7ab2acd604ce078401811e6dde",
+        "matched": true,
+        "path": ".ufo/waves/round-59/receipts/quote-s127.txt",
+        "claimed": "979e492a081e2f25086086ebf3162ecbcdd57d7ab2acd604ce078401811e6dde",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 23,
+        "line": "- A Japanese practitioner account of the same revision says the initialize handshake and `Mcp-Session-Id` were removed from the specification, and that work needing state carries a server-issued handle instead. receipt:.ufo/waves/round-59/build/ScoutZenn/body.html@sha256:64fd5551c7357e2ca4d65deac37dfa8b60050cc1fcfb16df83929501d97395b5",
+        "matched": true,
+        "path": ".ufo/waves/round-59/build/ScoutZenn/body.html",
+        "claimed": "64fd5551c7357e2ca4d65deac37dfa8b60050cc1fcfb16df83929501d97395b5",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 24,
+        "line": "- The located quote is \"initialize \u30cf\u30f3\u30c9\u30b7\u30a7\u30a4\u30af\u3068 Mcp-Session-Id \u304c\u4ed5\u69d8\u304b\u3089\u524a\u9664\u3055\u308c\u305f\" (4 words). S136 is tier B and secondary to S125 and S127. receipt:.ufo/waves/round-59/receipts/quote-s136.txt@sha256:2edb8ce1a4ffad88ce8fb1fb72635e5ce04251cb1aa5fe8a476800f188291ff9",
+        "matched": true,
+        "path": ".ufo/waves/round-59/receipts/quote-s136.txt",
+        "claimed": "2edb8ce1a4ffad88ce8fb1fb72635e5ce04251cb1aa5fe8a476800f188291ff9",
+        "in_limited_extract": false
+      },
+      {
+        "line_no": 28,
+        "line": "- The id-collision guard against the lane registry (123 ids, S001\u2013S124 minus S121) and the staged package (147 ids) produced an empty collision file. Adopted ids are S125, S127 and S136, the three this entry cites, not the package. receipt:.ufo/waves/round-59/assimilation/reg-ids@sha256:227bc4663eaadaa83b71d587c19fc40d9200608d100c5e3e719ef776e64b968c",
+        "matched": true,
+        "path": ".ufo/waves/round-59/assimilation/reg-ids",
+        "claimed": "227bc4663eaadaa83b71d587c19fc40d9200608d100c5e3e719ef776e64b968c",
+        "in_limited_extract": true
+      },
+      {
+        "line_no": 29,
+        "line": "- The staged id list is the evidence that the package was larger than the admit. Bulk append is refused. receipt:.ufo/waves/round-59/assimilation/staged-ids@sha256:53d344e19fcd816bbcf945eb533a7142820caa5cf945eebde01a98eed2ad3e5f",
+        "matched": true,
+        "path": ".ufo/waves/round-59/assimilation/staged-ids",
+        "claimed": "53d344e19fcd816bbcf945eb533a7142820caa5cf945eebde01a98eed2ad3e5f",
+        "in_limited_extract": true
+      }
+    ]
+  },
+  "E3_rows": {
+    "row_ok": true,
+    "why": [],
+    "rows": [
+      {
+        "id": "S125",
+        "row": "| S125 | MCP Architecture overview \u2014 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture | docs | A | MCP 2026-07-28 stateless request model as an orchestration contract; the registry held the changelog (S010) but not this architecture page | \u00a7 Real-time Updates; spec revision 2026-07-28; fetched 2026-10-24, 688587 bytes, sha256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca | every client request carries protocolVersion and clientCapabilities in _meta, so identity does not live in the connection | mined | 2026-10-24 | 90d | corpus/knowledge/mcp-orchestration-contract.md |",
+        "ncols": 11,
+        "status": "mined",
+        "used_by": "corpus/knowledge/mcp-orchestration-contract.md",
+        "escaped_pipe": false,
+        "cells": [
+          "S125",
+          "MCP Architecture overview \u2014 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture",
+          "docs",
+          "A",
+          "MCP 2026-07-28 stateless request model as an orchestration contract; the registry held the changelog (S010) but not this architecture page",
+          "\u00a7 Real-time Updates; spec revision 2026-07-28; fetched 2026-10-24, 688587 bytes, sha256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca",
+          "every client request carries protocolVersion and clientCapabilities in _meta, so identity does not live in the connection",
+          "mined",
+          "2026-10-24",
+          "90d",
+          "corpus/knowledge/mcp-orchestration-contract.md"
+        ]
+      },
+      {
+        "id": "S127",
+        "row": "| S127 | MCP Tasks extension specification 2026-07-28 \u2014 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md | spec | A | the durable-task state machine an MCP orchestrator polls; S026 read the README, not this spec text | \u00a7 Task Creation; ext-tasks b3d28ace; fetched 2026-10-24, 34156 bytes, sha256 5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5 | the server must not return CreateTaskResult until the task is durably created | mined | 2026-10-24 | 90d | corpus/knowledge/mcp-orchestration-contract.md |",
+        "ncols": 11,
+        "status": "mined",
+        "used_by": "corpus/knowledge/mcp-orchestration-contract.md",
+        "escaped_pipe": false,
+        "cells": [
+          "S127",
+          "MCP Tasks extension specification 2026-07-28 \u2014 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md",
+          "spec",
+          "A",
+          "the durable-task state machine an MCP orchestrator polls; S026 read the README, not this spec text",
+          "\u00a7 Task Creation; ext-tasks b3d28ace; fetched 2026-10-24, 34156 bytes, sha256 5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5",
+          "the server must not return CreateTaskResult until the task is durably created",
+          "mined",
+          "2026-10-24",
+          "90d",
+          "corpus/knowledge/mcp-orchestration-contract.md"
+        ]
+      },
+      {
+        "id": "S136",
+        "row": "| S136 | Zenn MCP 2026-07-28 TypeScript SDK v2 account \u2014 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026 | community | B | Japanese practitioner account of the stateless delta; secondary to S125 and S127 | the stateless-delta paragraph; published 2026-07-29; fetched 2026-10-24, 194763 bytes, sha256 64fd5551c7357e2ca4d65deac37dfa8b60050cc1fcfb16df83929501d97395b5 | initialize handshake and Mcp-Session-Id were removed from the specification | mined | 2026-10-24 | 180d | corpus/knowledge/mcp-orchestration-contract.md |",
+        "ncols": 11,
+        "status": "mined",
+        "used_by": "corpus/knowledge/mcp-orchestration-contract.md",
+        "escaped_pipe": false,
+        "cells": [
+          "S136",
+          "Zenn MCP 2026-07-28 TypeScript SDK v2 account \u2014 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026",
+          "community",
+          "B",
+          "Japanese practitioner account of the stateless delta; secondary to S125 and S127",
+          "the stateless-delta paragraph; published 2026-07-29; fetched 2026-10-24, 194763 bytes, sha256 64fd5551c7357e2ca4d65deac37dfa8b60050cc1fcfb16df83929501d97395b5",
+          "initialize handshake and Mcp-Session-Id were removed from the specification",
+          "mined",
+          "2026-10-24",
+          "180d",
+          "corpus/knowledge/mcp-orchestration-contract.md"
+        ]
+      }
+    ],
+    "pin_err": null,
+    "pins": [
+      {
+        "sourceId": "S125",
+        "path": ".ufo/waves/round-59/build/ScoutMcpArch/body.html",
+        "sha256": "3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca",
+        "bytes": 688587,
+        "captured": "2026-10-24"
+      },
+      {
+        "sourceId": "S127",
+        "path": ".ufo/waves/round-59/build/ScoutMcpTasks/body.md",
+        "sha256": "5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5",
+        "bytes": 34156,
+        "captured": "2026-10-24"
+      },
+      {
+        "sourceId": "S136",
+        "path": ".ufo/waves/round-59/build/ScoutZenn/body.html",
+        "sha256": "64fd5551c7357e2ca4d65deac37dfa8b60050cc1fcfb16df83929501d97395b5",
+        "bytes": 194763,
+        "captured": "2026-10-24"
+      }
+    ]
+  },
+  "E4": {
+    "ok": true,
+    "detail": "admit=true fanout=true detect=true flips=2",
+    "admit_lines": [
+      "| S125 | ADMIT mcp-orchestration-contract.md | Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta | (new row) queued-in-package \u2192 mined; opened 2026-10-23 campaign date replaced by 2026-10-24; recheck prose stripped to `90d` |",
+      "| S127 | ADMIT mcp-orchestration-contract.md | A server MUST NOT return CreateTaskResult until the task is durably created | (new row) same normalization; status mined; used-by this entry only |",
+      "| S136 | ADMIT mcp-orchestration-contract.md | initialize \u30cf\u30f3\u30c9\u30b7\u30a7\u30a4\u30af\u3068 Mcp-Session-Id \u304c\u4ed5\u69d8\u304b\u3089\u524a\u9664\u3055\u308c\u305f | (new row) tier B kept (community); recheck `180d` |",
+      "ADMIT mcp-orchestration-contract.md \u2014 frontier item 2, the uncovered MCP orchestration contract. Three rows, no others."
+    ],
+    "reject_lines": [
+      "REJECT durable-execution-and-fanout-primitives-2026-10-24.md \u2014 right province band, wrong theme. This round's one theme is frontier item 2. The entry's ground (saga compensating action, Tail at Scale) is not item 2. flip: a later round whose one theme is band-4 primitives re-opens S190 and S194 and adopts it through the item-10 pipeline.",
+      "REJECT durable-execution-failure-detection.md \u2014 overlaps held surfaces, and its S126 URL is the same page as held S117. a shared page is not automatically a duplicate; the operational conclusion is to pin the duplicate group before adoption. This round does not adopt it and does not pin a group it did not open. flip: pin the S117/S126 group, then a later band-4 round may adopt the non-overlapping remainder."
+    ],
+    "flip_lines": [
+      "REJECT durable-execution-and-fanout-primitives-2026-10-24.md \u2014 right province band, wrong theme. This round's one theme is frontier item 2. The entry's ground (saga compensating action, Tail at Scale) is not item 2. flip: a later round whose one theme is band-4 primitives re-opens S190 and S194 and adopts it through the item-10 pipeline.",
+      "REJECT durable-execution-failure-detection.md \u2014 overlaps held surfaces, and its S126 URL is the same page as held S117. a shared page is not automatically a duplicate; the operational conclusion is to pin the duplicate group before adoption. This round does not adopt it and does not pin a group it did not open. flip: pin the S117/S126 group, then a later band-4 round may adopt the non-overlapping remainder."
+    ],
+    "flip_count": 2
+  },
+  "E5": {
+    "ok": true,
+    "detail": "collisions=present empty=true regS124=true stagedS125=true",
+    "collisions_bytes": "",
+    "collisions_repr": "''",
+    "reg_line_count": 124,
+    "reg_nonempty": 123,
+    "s124_lines": [
+      "S124"
+    ],
+    "s125_reg_hits": [],
+    "staged_line_count": 148,
+    "staged_nonempty": 147,
+    "s125_staged_hits": [
+      "S125"
+    ],
+    "reg_s124_is_whole_line": true
+  }
+}

@@ -1,0 +1,212 @@
+   941 688587 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html
+     1    136 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt
+   942 688723 total
+/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html: HTML document, Unicode text, UTF-8 text, with very long lines (27106)
+total 676
+drwxr-xr-x 1 vgpnk vgpnk     18 Oct 24 21:20 .
+drwxr-xr-x 1 vgpnk vgpnk    242 Oct 24 21:30 ..
+-rw-r--r-- 1 vgpnk vgpnk 688587 Oct 24 21:17 body.html
+=== /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-spec.json
+dict ['wave', 'milestone', 'axes', 'reportDir', 'context', 'items']
+=== /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-plan.json
+dict ['schema', 'wave', 'context', 'policy', 'counts', 'compaction', 'dispatch', 'registry', 'priorRegistries', 'tasks']
+=== /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-taskcall.json
+dict ['schema', 'wave', 'policy', 'counts', 'registry', 'compaction', 'taskCall', 'resumeSends', 'note']
+=== /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/swarm-registry.json
+dict ['schema', 'wave', 'createdAt', 'updatedAt', 'reportDir', 'members']
+wave kumitate-r59-w1
+milestone kumitate round 59 falsify
+axes ['operability', 'coverage']
+reportDir .ufo/waves/round-59/w1
+context keys <class 'str'>
+n items 32
+--- item 5 keys ['name', 'role', 'item']
+{
+  "name": "ExecCapture",
+  "role": "executor",
+  "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs`. Then sha256sum the three round-59 captures ScoutMcpArch/body.html, ScoutMcpTasks/body.md, ScoutZenn/body.html and compare to .ufo/pins/source-captures.json for S125, S127, S136.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCapture.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCapture/."
+}
+--- item 8 keys ['name', 'role', 'item']
+{
+  "name": "RevS125Quote",
+  "role": "reviewer",
+  "item": "Open /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt. Confirm the quote file's sentence occurs in the tag-stripped HTML and is at most 25 words. Quote the sentence and the word count.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS125Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/."
+}
+--- item 14 keys ['name', 'role', 'item']
+{
+  "name": "RevUsedBy",
+  "role": "reviewer",
+  "item": "In /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md, rows S125, S127 and S136 must be status mined, 11 cells, and used-by exactly corpus/knowledge/mcp-orchestration-contract.md. Quote each used-by cell. Attack: a pipe inside a cell.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevUsedBy.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevUsedBy/."
+}
+--- item 19 keys ['name', 'role', 'item']
+{
+  "name": "CritQuarantine",
+  "role": "critic",
+  "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/assimilation/quarantine-slice. Confirm 9 lines, that none is S125, S127 or S136, and that the lesson says adoption of those nine is closed. Quote the nine ids.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritQuarantine.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritQuarantine/."
+}
+--- item 22 keys ['name', 'role', 'item']
+{
+  "name": "MutPipeRow",
+  "role": "mutation-tester",
+  "item": "Count pipe-separated cells on the S125, S127 and S136 rows in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md. Each must be 11 cells (split length 13 including the empty ends). Quote the three lengths. A length other than 11 is a census-breaking row.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutPipeRow.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/."
+}
+--- item 24 keys ['name', 'role', 'item']
+{
+  "name": "ScoutS125Live",
+  "role": "scout",
+  "item": "curl -fsSL https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture to a temp file, sha256 it, and compare to pin S125 sha256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca. Quote both hashes and whether they match. Record the access date.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS125Live.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live/."
+}
+--- item 27 keys ['name', 'role', 'item']
+{
+  "name": "ScoutFrontier",
+  "role": "scout",
+  "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md frontier item 2 and confirm it names corpus/knowledge/mcp-orchestration-contract.md. Confirm that file's first line cites S125, S127, S136 and modelcontextprotocol.io. Quote the province bullet and the source line.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutFrontier.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/."
+}
+ls: cannot access '/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote': No such file or directory
+2026-10-25T00:33:26Z
+2026-10-24T21:33:26-0300
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+Python 3.14.8
+--- identity ---
+date_utc=2026-10-25T00:34:07Z
+date_local=2026-10-24T21:34:07-0300
+python=Python 3.14.8
+head=5469c0a58d7986ff8a5f203938ae1c8785a92213
+--- wc ---
+11 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt
+wc_exit=0
+--- sha256 ---
+7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt
+3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html
+sha_exit=0
+--- strip ---
+QUOTE_REPR 'Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta'
+QUOTE_BYTES 136
+QUOTE_SHA256 7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573
+QUOTE_WORDS 11
+QUOTE_WORDS_LE_25 True
+BODY_BYTES 688587
+BODY_SHA256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca
+RAW_HTML_COUNT 0
+PRIMARY_CHARS 455294
+VISIBLE_CHARS 27767
+BOUNDARY_CHARS 455858
+PRIMARY_COUNT 1
+PRIMARY_OFFSETS 44455
+PRIMARY_HIT1_NEXT ','
+PRIMARY_HIT1_WINDOW ntInfo": { "name": "example-client", "version": "1.0.0" }, "io.modelcontextprotocol/clientCapabilities": { "elicitation": {} } }, "notifications": { "toolsListChanged": true } } } Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta, and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.The server acknowledges the subscription with n
+VISIBLE_COUNT 1
+VISIBLE_OFFSETS 23354
+VISIBLE_HIT1_NEXT ','
+VISIBLE_HIT1_WINDOW ntInfo": { "name": "example-client", "version": "1.0.0" }, "io.modelcontextprotocol/clientCapabilities": { "elicitation": {} } }, "notifications": { "toolsListChanged": true } } } Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta, and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.The server acknowledges the subscription with n
+BOUNDARY_COUNT 1
+BOUNDARY_OFFSETS 44856
+BOUNDARY_HIT1_NEXT ' '
+BOUNDARY_HIT1_WINDOW : { "name" : "example-client" , "version" : "1.0.0" }, "io.modelcontextprotocol/clientCapabilities" : { "elicitation" : {} } }, "notifications" : { "toolsListChanged" : true } } } Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta , and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state. The server acknowledges the subscription with
+PRIMARY_MAP_COVERED 455294 of 455294 joined_len=461330
+PRIMARY_HIT1_NODES
+  kind=visible path=div/div/div/div/div/div/div/span text='Every client request carries the '
+  kind=visible path=div/div/div/div/div/div/span/code text='io.modelcontextprotocol/protocolVersion'
+  kind=visible path=div/div/div/div/div/div/div/span text=' and '
+  kind=visible path=div/div/div/div/div/div/span/code text='io.modelcontextprotocol/clientCapabilities'
+  kind=visible path=div/div/div/div/div/div/div/span text=' fields in '
+  kind=visible path=div/div/div/div/div/div/span/code text='_meta'
+OCCURS_IN_PRIMARY True
+AT_MOST_25 True
+ITEM HOLD
+strip_exit=0
+strip_stderr_bytes=0
+===== 04-refind =====
+sentence=Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta
+words=11
+le25=True
+stripped-primary.txt count=1 offset=44455 chars=455294
+stripped-primary.txt next12=', and normal'
+stripped-visible.txt count=1 offset=23354 chars=27767
+stripped-visible.txt next12=', and normal'
+stripped-boundary-spaced.txt count=1 offset=44856 chars=455858
+stripped-boundary-spaced.txt next12=' , and norma'
+refind_exit=0 stderr_bytes=0
+===== 05-raw-window =====
+RAW_NEEDLE_COUNT 3
+RAW_NEEDLE_OFFSETS 229868 555836 666378
+RAW_SENTENCE_COUNT 0
+RAW_WINDOW_BEGIN
+Every client request carries the <code>io.modelcontextprotocol/protocolVersion</code> and <code>io.modelcontextprotocol/clientCapabilities</code> fields in <code>_meta</code>, and normally <code>io.modelcontextprotocol/clientInfo</code> as well, so the server can identify the client without relying on connection state.</span><span data-as="p">The server acknowledges the subscription with <code>notifications/subscript
+RAW_WINDOW_END
+RAW_WINDOW_HAS_CODE_TAG True
+REGEX_EMPTY_TAG_COUNT 1 offset=41724 chars=451782
+REGEX_EMPTY_TAG_NEXT ','
+REGEX_SPACE_TAG_COUNT 1 offset=42125 chars=452347
+PUNCT_SPLIT_WORDS 15
+PUNCT_SPLIT_LE_25 True
+PUNCT_SPLIT_TOKENS Every client request carries the io modelcontextprotocol protocolVersion and io modelcontextprotocol clientCapabilities fields in meta
+REGEX_SHA 5707c4b0c21ce22202abc88bffe227b0fa8ed91e0ed3c67bdef5d8e58e549523
+raw_exit=0 stderr_bytes=0
+===== 06-git =====
+head=5469c0a58d7986ff8a5f203938ae1c8785a92213
+body_at_head=present
+quote_at_head=present
+git_exit=0
+===== 07-sha =====
+501646e2530a7ebbdeffdbb0040c3e07c53d36038a2b7432ebba8a1a48b24f00  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/stripped-primary.txt
+8e6e37fbdabd71e5012c2d62c22e200e42de34adbfaa3263686e94e56591f3ce  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/stripped-visible.txt
+64fb2fb387c10789c08222d72bcd79c1fc7cb82fe28a6e56067032db56c61791  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/stripped-boundary-spaced.txt
+sha_exit=0
+exit=0 stderr=0
+HIT 1 offset=229868 local_has_sentence=True
+Every client request carries the <code>io.modelcontextprotocol/protocolVersion</code> and <code>io.modelcontextprotocol/clientCapabilities</code> fields in <code>_meta</code>, and normally <code>io.modelcontextprotocol/clientInfo</code> as well, so the server can identify the cli
+---
+HIT 2 offset=555836 local_has_sentence=False
+Every client request carries the `,_jsx(_components.code,{children:`io.modelcontextprotocol/protocolVersion`}),` and `,_jsx(_components.code,{children:`io.modelcontextprotocol/clientCapabilities`}),` fields in `,_jsx(_components.code,{children:`_meta`}),`, and normally `,_jsx(_co
+---
+HIT 3 offset=666378 local_has_sentence=False
+Every client request carries the `,_jsx(_components.code,{children:`io.modelcontextprotocol/protocolVersion`}),` and `,_jsx(_components.code,{children:`io.modelcontextprotocol/clientCapabilities`}),` fields in `,_jsx(_components.code,{children:`_meta`}),`, and normally `,_jsx(_co
+---
+HITS 3
+exit=0 stderr_bytes=0
+rev=5469c0a58d7986ff8a5f203938ae1c8785a92213
+quote_blob_sha256=7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573
+body_blob_sha256=3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca
+7a248183c670eadcd765225727d606a009313b53303868f9ce19ad9e2218a573  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt
+3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html
+--- stderr ---
+exit=0 stderr=0
+page_sentence=Every client request carries the io.
+page_sentence_words=6
+page_sentence_gt_25=False
+quote_is_prefix=False
+chars_between_quote_and_period=-100
+exit=0 stderr=0
+boundary_rule=period_then_space_or_end
+page_sentence=Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta, and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.The server acknowledges the subscription with notifications/subscriptions/acknowledged, which is the first message carrying that subscription’s ID in _meta (the server sends no other notification for that subscription before it).
+page_sentence_words=56
+page_sentence_gt_25=True
+quote_is_prefix=True
+quote_words=11
+suffix_after_quote=', and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.The server acknowledges the subscription with notifications/subscriptions/acknowledged, which is the first message carrying that subscription’s ID in _meta (the server sends no other notification for that subscription before it).'
+suffix_words=46
+exit=0 stderr=0
+stripped-visible.txt offset=23354 page_words=28 quote_prefix=True glue_after='The server a'
+VISIBLE_PAGE Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta, and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.
+stripped-primary.txt offset=44455 page_words=28 quote_prefix=True glue_after='The server a'
+stripped-boundary-spaced.txt offset=44856 page_words=29 quote_prefix=True glue_after=' The server '
+exit=0
+stripped-visible.txt 28
+Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta, and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.
+---
+stripped-boundary-spaced.txt 29
+Every client request carries the io.modelcontextprotocol/protocolVersion and io.modelcontextprotocol/clientCapabilities fields in _meta , and normally io.modelcontextprotocol/clientInfo as well, so the server can identify the client without relying on connection state.
+---
+ONLY_BOUNDARY
+'_meta'
+','
+ONLY_VISIBLE
+'_meta,'
+[unexpected] RuntimeError: workspace wd_shokunin_8c4a99c6228c is not materialized
+    at RuntimeResolver.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:180263:36)
+    at AgentRuntimeService.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:131899:25)
+    at AgentFileHistoryService.readCurrent (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177438:31)
+    at AgentFileHistoryService.endCheckpoint (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177351:32) {
+  code: 'runtime.not_found'
+}

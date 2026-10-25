@@ -1,0 +1,555 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "kumitate-r59-w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 256,
+    "minLanes": 16,
+    "waveMinLanes": 32,
+    "waveMaxLanes": 64,
+    "declaredMaxLanes": null,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 32,
+    "resume": 0,
+    "total": 32
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-59/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-59/w1",
+    "members": {
+      "ExecRepair59": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 5469c0a58d7986ff8a5f203938ae1c8785a92213`. Quote the full REPAIR59 line and exit code. Attack: a held=8/8 that is not what the command printed.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecRepair59.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecDoctrine59": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/doctrine59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 5469c0a58d7986ff8a5f203938ae1c8785a92213`. Quote the full DOCTRINE59 line and exit code. Attack: any E-arm PASS whose detail you cannot re-read from the extraction.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecDoctrine59.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecDoctrine59/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecCiteLive": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs`. Expect `CITE_SOURCES: CLEAN`. Then `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin grep -n S121 -- corpus/README.md` and quote the result (expect no match).\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCiteLive.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCiteLive/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecMap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/readme-map.mjs`. Quote the README_MAP line. Expect CLEAN files=141 rows=141 covered=141. Name the first finding if it drifts.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecMap.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecMap/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecCensus": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate`. Quote exit code and every warning. Expect exit 0 and the five existing W04 lines, no E03/E04.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCensus.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCensus/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecCapture": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs`. Then sha256sum the three round-59 captures ScoutMcpArch/body.html, ScoutMcpTasks/body.md, ScoutZenn/body.html and compare to .ufo/pins/source-captures.json for S125, S127, S136.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCapture.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCapture/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecProxy": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --strict`. Quote the PROXY line. Expect MATCH with A=96 C=29 C2=141/141. Name any mismatch.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecProxy.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecProxy/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ExecSelftest": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs --selftest`. Quote the CITE_SOURCES_SELFTEST line and VERDICT. Expect PASS (8/8).\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecSelftest.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevS125Quote": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Open /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt. Confirm the quote file's sentence occurs in the tag-stripped HTML and is at most 25 words. Quote the sentence and the word count.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS125Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevS127Quote": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Open ScoutMcpTasks/body.md and receipts/quote-s127.txt under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Confirm the quote occurs in the markdown and is at most 25 words. Quote it.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS127Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS127Quote/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevS136Quote": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Open ScoutZenn/body.html and receipts/quote-s136.txt under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Confirm the quote occurs in the page text and is at most 25 words. Quote it.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS136Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS136Quote/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevS121Gone": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "In /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md, the failure-recovery-replay row and the round-58 lesson row must cite S112 and must not cite S121. Quote both rows' source-id cells. Attack: any remaining S121 in a map row.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS121Gone.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS121Gone/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevGateCount": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Count `| gate |` rows in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md and read the line containing `are gates`. The prose integer and the row count must both be 19, and one row must be cite-sources. Quote both numbers.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevGateCount.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevGateCount/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevCapabilityRows": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "In /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md capabilities table, confirm rows whose first cell is `receipt-evidence` and `cite-sources`, and that the `readme-map` row contains v2 and 16/16 and does not contain files=135. Quote the three first cells.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevCapabilityRows.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevCapabilityRows/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevUsedBy": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "In /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md, rows S125, S127 and S136 must be status mined, 11 cells, and used-by exactly corpus/knowledge/mcp-orchestration-contract.md. Quote each used-by cell. Attack: a pipe inside a cell.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevUsedBy.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevUsedBy/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevPins": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": "Confirm /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/readme-map.json covered contains lessons/round-58-verifier-spotcheck.md, lessons/round-59.md, and knowledge/mcp-orchestration-contract.md, and that those three files exist. Quote the three pin lines.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevPins.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevPins/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "CritBaseNotZero": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Run both round-59 probes against base 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f. Quote both UNMET lines. Attack: if either is already HELD, the do-nothing control failed and the claim is void. Also confirm doctrine58 base receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/base/doctrine58-base.txt says held=2/5, not 0/5.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritBaseNotZero.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritBaseNotZero/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "CritDropOne": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs and confirm EXPECTED_CHECKS is 8. In a temp copy only, delete the B8 hold() call, run that copy against 5469c0a58d7986ff8a5f203938ae1c8785a92213, and quote the checks-mismatch line. Do not write the mutant into the lane.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritDropOne.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "CritTheme": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-59.md. Confirm exactly one admit theme (mcp-orchestration-contract) and the two REJECT lines for the durable-execution files, each with a flip. Quote the admit line and both flip sentences. Attack: a second theme admitted.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritTheme.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritTheme/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "CritQuarantine": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/assimilation/quarantine-slice. Confirm 9 lines, that none is S125, S127 or S136, and that the lesson says adoption of those nine is closed. Quote the nine ids.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritQuarantine.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritQuarantine/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "MutGhost": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "In /tmp only, write a README map row citing S121 and a SOURCES file that has S112 but not S121. Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs --readme <tmp> --sources <tmp>`. Expect DRIFT first=S121 exit 1. Quote the line. Do not edit the lane.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutGhost.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutGhost/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "MutFamily": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "In /tmp only, a README row citing S6 and S7 and a SOURCES file with no S6 row. Run cite-sources against those files. Expect CLEAN, because family ids are not source ids. Quote the line.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutFamily.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutFamily/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "MutPipeRow": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Count pipe-separated cells on the S125, S127 and S136 rows in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md. Each must be 11 cells (split length 13 including the empty ends). Quote the three lengths. A length other than 11 is a census-breaking row.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutPipeRow.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "MutChecksPin": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": "Show that the committed probe at 5469c0a58d7986ff8a5f203938ae1c8785a92213 prints checks=8 on a HELD line. Run the probe. Then confirm a one-check deletion cannot print HELD: quote the CritDropOne method is available, and quote the EXPECTED_CHECKS constant from the committed file.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutChecksPin.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutChecksPin/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ScoutS125Live": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "curl -fsSL https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture to a temp file, sha256 it, and compare to pin S125 sha256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca. Quote both hashes and whether they match. Record the access date.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS125Live.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ScoutS127Live": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "curl -fsSL the raw GitHub URL for ext-tasks b3d28ace tasks.md to a temp file, sha256 it, compare to pin S127 5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5. Quote both hashes.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS127Live.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS127Live/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ScoutCollision": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Re-run the 0-3 space id extract on /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md and on /home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md (read-only). comm -12 the id lists. Quote reg count, staged count, and collision count. Expect collisions empty. Do not write shokuknow.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutCollision.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ScoutFrontier": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md frontier item 2 and confirm it names corpus/knowledge/mcp-orchestration-contract.md. Confirm that file's first line cites S125, S127, S136 and modelcontextprotocol.io. Quote the province bullet and the source line.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutFrontier.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ScribeGateTable": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": "From /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-59.md Gate table, copy the three located quotes and count words in each. Each must be ≤25. Quote the three counts. Do not edit the lesson.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScribeGateTable.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScribeGateTable/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "ConnectorSiblings": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": "Read PROVINCE.md in kasegi-shokunin, kagi-shokunin, and kotoba-shokunin under /home/vgpnk/Projects/shokunin. Report whether any sibling claims MCP protocol revisions as an orchestration contract. Quote the rejecting or overlapping sentence, or say none found. Read-only.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ConnectorSiblings/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "SentinelBounds": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": "Run `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain` and `git -C /home/vgpnk/Projects/shokunin status --porcelain`. List any path a seat (not the L1) appears to have written outside /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Do not delete or revert anything.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/SentinelBounds.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      },
+      "RevengerV1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "revenger",
+        "item": "Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/base/doctrine58-base.txt and the SCORECARD sentence containing `R58-V1 measured base held=2/5`. Quote both. Attack: if the SCORECARD still states the D58 base as held=0/5 with no correction, the V1 repair missed.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevengerV1.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevengerV1/.",
+        "axes": [
+          "operability",
+          "coverage"
+        ],
+        "milestone": "kumitate round 59 falsify"
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\nkumitate round 59 ONLY. One v1 wave of 32 seats. Claims already frozen and measured at 5469c0a58d7986ff8a5f203938ae1c8785a92213: C1 operability cite-sources (REPAIR59, rule A59, target held=8/8); C2 coverage frontier item 2 mcp-orchestration-contract (DOCTRINE59, rule D59, target held=5/5). Axes: operability + coverage. The L1 holds the planner seat. Do not dispatch, resume, or replace any seat. You are a leaf.\n\n# Lane and write boundary\nLane: /home/vgpnk/Projects/shokunin/kumitate-shokunin. Fleet root: /home/vgpnk/Projects/shokunin. Seats never mutate the fleet repo, sibling lanes, lane jj state, or the lane Git index. Do not commit, push, or run mutating git or jj. Read-only git show/log/grep is fine. Never edit /home/vgpnk/Projects/shokuknow. Your only write is your report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/<SeatName>.md and, if you need scratch, /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/../build/<SeatName>/ which you may create. No seat writes another seat's files.\nEvery Report: trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.\n\n# Read first\nFrozen plan /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/plan.md. Counters: repair59-probe.mjs and doctrine59-probe.mjs under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/. Score revision 5469c0a58d7986ff8a5f203938ae1c8785a92213 unless the item names the base 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f. A report is not a verdict. Falsify or corroborate the named item and quote the command output.\n\n# Tooling\nRead /home/vgpnk/.omp/agent/RULES.md before any install. Official channels only. All pacman transactions are PAUSED: do not run pacman. No install is needed. Never set a model or provider.\n\n# Godspeed\nName the axes. Iterate cheap. Keep moves that improve any axis and harm none. Do not ask clarifying questions. Execute the item and write the report.\n",
+    "tasks": [
+      {
+        "name": "ExecRepair59",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 5469c0a58d7986ff8a5f203938ae1c8785a92213`. Quote the full REPAIR59 line and exit code. Attack: a held=8/8 that is not what the command printed.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecRepair59.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecRepair59.md"
+      },
+      {
+        "name": "ExecDoctrine59",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/doctrine59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 5469c0a58d7986ff8a5f203938ae1c8785a92213`. Quote the full DOCTRINE59 line and exit code. Attack: any E-arm PASS whose detail you cannot re-read from the extraction.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecDoctrine59.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecDoctrine59/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecDoctrine59.md"
+      },
+      {
+        "name": "ExecCiteLive",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs`. Expect `CITE_SOURCES: CLEAN`. Then `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin grep -n S121 -- corpus/README.md` and quote the result (expect no match).\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCiteLive.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCiteLive/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecCiteLive.md"
+      },
+      {
+        "name": "ExecMap",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/readme-map.mjs`. Quote the README_MAP line. Expect CLEAN files=141 rows=141 covered=141. Name the first finding if it drifts.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecMap.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecMap/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecMap.md"
+      },
+      {
+        "name": "ExecCensus",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `/home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate`. Quote exit code and every warning. Expect exit 0 and the five existing W04 lines, no E03/E04.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCensus.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCensus/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecCensus.md"
+      },
+      {
+        "name": "ExecCapture",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/source-capture.mjs`. Then sha256sum the three round-59 captures ScoutMcpArch/body.html, ScoutMcpTasks/body.md, ScoutZenn/body.html and compare to .ufo/pins/source-captures.json for S125, S127, S136.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCapture.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCapture/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecCapture.md"
+      },
+      {
+        "name": "ExecProxy",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --strict`. Quote the PROXY line. Expect MATCH with A=96 C=29 C2=141/141. Name any mismatch.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecProxy.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecProxy/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecProxy.md"
+      },
+      {
+        "name": "ExecSelftest",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\nRun `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs --selftest`. Quote the CITE_SOURCES_SELFTEST line and VERDICT. Expect PASS (8/8).\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecSelftest.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ExecSelftest.md"
+      },
+      {
+        "name": "RevS125Quote",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nOpen /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt. Confirm the quote file's sentence occurs in the tag-stripped HTML and is at most 25 words. Quote the sentence and the word count.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS125Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevS125Quote.md"
+      },
+      {
+        "name": "RevS127Quote",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nOpen ScoutMcpTasks/body.md and receipts/quote-s127.txt under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Confirm the quote occurs in the markdown and is at most 25 words. Quote it.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS127Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS127Quote/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevS127Quote.md"
+      },
+      {
+        "name": "RevS136Quote",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nOpen ScoutZenn/body.html and receipts/quote-s136.txt under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Confirm the quote occurs in the page text and is at most 25 words. Quote it.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS136Quote.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS136Quote/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevS136Quote.md"
+      },
+      {
+        "name": "RevS121Gone",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nIn /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/README.md, the failure-recovery-replay row and the round-58 lesson row must cite S112 and must not cite S121. Quote both rows' source-id cells. Attack: any remaining S121 in a map row.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS121Gone.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS121Gone/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevS121Gone.md"
+      },
+      {
+        "name": "RevGateCount",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nCount `| gate |` rows in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md and read the line containing `are gates`. The prose integer and the row count must both be 19, and one row must be cite-sources. Quote both numbers.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevGateCount.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevGateCount/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevGateCount.md"
+      },
+      {
+        "name": "RevCapabilityRows",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nIn /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md capabilities table, confirm rows whose first cell is `receipt-evidence` and `cite-sources`, and that the `readme-map` row contains v2 and 16/16 and does not contain files=135. Quote the three first cells.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevCapabilityRows.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevCapabilityRows/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevCapabilityRows.md"
+      },
+      {
+        "name": "RevUsedBy",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nIn /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md, rows S125, S127 and S136 must be status mined, 11 cells, and used-by exactly corpus/knowledge/mcp-orchestration-contract.md. Quote each used-by cell. Attack: a pipe inside a cell.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevUsedBy.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevUsedBy/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevUsedBy.md"
+      },
+      {
+        "name": "RevPins",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\nConfirm /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/readme-map.json covered contains lessons/round-58-verifier-spotcheck.md, lessons/round-59.md, and knowledge/mcp-orchestration-contract.md, and that those three files exist. Quote the three pin lines.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevPins.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevPins/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevPins.md"
+      },
+      {
+        "name": "CritBaseNotZero",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\nRun both round-59 probes against base 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f. Quote both UNMET lines. Attack: if either is already HELD, the do-nothing control failed and the claim is void. Also confirm doctrine58 base receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/base/doctrine58-base.txt says held=2/5, not 0/5.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritBaseNotZero.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritBaseNotZero/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/CritBaseNotZero.md"
+      },
+      {
+        "name": "CritDropOne",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs and confirm EXPECTED_CHECKS is 8. In a temp copy only, delete the B8 hold() call, run that copy against 5469c0a58d7986ff8a5f203938ae1c8785a92213, and quote the checks-mismatch line. Do not write the mutant into the lane.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritDropOne.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/CritDropOne.md"
+      },
+      {
+        "name": "CritTheme",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-59.md. Confirm exactly one admit theme (mcp-orchestration-contract) and the two REJECT lines for the durable-execution files, each with a flip. Quote the admit line and both flip sentences. Attack: a second theme admitted.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritTheme.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritTheme/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/CritTheme.md"
+      },
+      {
+        "name": "CritQuarantine",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/assimilation/quarantine-slice. Confirm 9 lines, that none is S125, S127 or S136, and that the lesson says adoption of those nine is closed. Quote the nine ids.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritQuarantine.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritQuarantine/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/CritQuarantine.md"
+      },
+      {
+        "name": "MutGhost",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\nIn /tmp only, write a README map row citing S121 and a SOURCES file that has S112 but not S121. Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs --readme <tmp> --sources <tmp>`. Expect DRIFT first=S121 exit 1. Quote the line. Do not edit the lane.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutGhost.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutGhost/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/MutGhost.md"
+      },
+      {
+        "name": "MutFamily",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\nIn /tmp only, a README row citing S6 and S7 and a SOURCES file with no S6 row. Run cite-sources against those files. Expect CLEAN, because family ids are not source ids. Quote the line.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutFamily.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutFamily/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/MutFamily.md"
+      },
+      {
+        "name": "MutPipeRow",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\nCount pipe-separated cells on the S125, S127 and S136 rows in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md. Each must be 11 cells (split length 13 including the empty ends). Quote the three lengths. A length other than 11 is a census-breaking row.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutPipeRow.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/MutPipeRow.md"
+      },
+      {
+        "name": "MutChecksPin",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\nShow that the committed probe at 5469c0a58d7986ff8a5f203938ae1c8785a92213 prints checks=8 on a HELD line. Run the probe. Then confirm a one-check deletion cannot print HELD: quote the CritDropOne method is available, and quote the EXPECTED_CHECKS constant from the committed file.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutChecksPin.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutChecksPin/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/MutChecksPin.md"
+      },
+      {
+        "name": "ScoutS125Live",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\ncurl -fsSL https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture to a temp file, sha256 it, and compare to pin S125 sha256 3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca. Quote both hashes and whether they match. Record the access date.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS125Live.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ScoutS125Live.md"
+      },
+      {
+        "name": "ScoutS127Live",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\ncurl -fsSL the raw GitHub URL for ext-tasks b3d28ace tasks.md to a temp file, sha256 it, compare to pin S127 5fc22b9b5ff248703927c69855f751a061c2d6170f4dc3923204452f859f91a5. Quote both hashes.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS127Live.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS127Live/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ScoutS127Live.md"
+      },
+      {
+        "name": "ScoutCollision",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\nRe-run the 0-3 space id extract on /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md and on /home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md (read-only). comm -12 the id lists. Quote reg count, staged count, and collision count. Expect collisions empty. Do not write shokuknow.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutCollision.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ScoutCollision.md"
+      },
+      {
+        "name": "ScoutFrontier",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md frontier item 2 and confirm it names corpus/knowledge/mcp-orchestration-contract.md. Confirm that file's first line cites S125, S127, S136 and modelcontextprotocol.io. Quote the province bullet and the source line.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutFrontier.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ScoutFrontier.md"
+      },
+      {
+        "name": "ScribeGateTable",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\nFrom /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-59.md Gate table, copy the three located quotes and count words in each. Each must be ≤25. Quote the three counts. Do not edit the lesson.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScribeGateTable.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScribeGateTable/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ScribeGateTable.md"
+      },
+      {
+        "name": "ConnectorSiblings",
+        "agent": "connector",
+        "task": "/skill:godspeed\n\nRead PROVINCE.md in kasegi-shokunin, kagi-shokunin, and kotoba-shokunin under /home/vgpnk/Projects/shokunin. Report whether any sibling claims MCP protocol revisions as an orchestration contract. Quote the rejecting or overlapping sentence, or say none found. Read-only.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ConnectorSiblings/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/ConnectorSiblings.md"
+      },
+      {
+        "name": "SentinelBounds",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\n\nRun `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain` and `git -C /home/vgpnk/Projects/shokunin status --porcelain`. List any path a seat (not the L1) appears to have written outside /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Do not delete or revert anything.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/SentinelBounds.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/SentinelBounds.md"
+      },
+      {
+        "name": "RevengerV1",
+        "agent": "revenger",
+        "task": "/skill:godspeed\n\nRead /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/base/doctrine58-base.txt and the SCORECARD sentence containing `R58-V1 measured base held=2/5`. Quote both. Attack: if the SCORECARD still states the D58 base as held=0/5 with no correction, the V1 repair missed.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevengerV1.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevengerV1/.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/RevengerV1.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}

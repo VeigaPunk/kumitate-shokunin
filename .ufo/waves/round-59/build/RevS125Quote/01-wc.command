@@ -1,0 +1,1 @@
+wc -w /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt

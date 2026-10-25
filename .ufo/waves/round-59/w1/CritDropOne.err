@@ -1,0 +1,127 @@
+clock=2026-10-24T21:36:48-03:00
+node=/home/vgpnk/.local/share/mise/installs/node/latest/bin/node
+node_version=v26.12.0
+tmp=/tmp/crit-drop-one.xl6gw2
+probe=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs
+rev=5469c0a58d7986ff8a5f203938ae1c8785a92213
+d3fa48ed30b516659e29f484a8305733da9bfec5339ece171e3a790b9586cf37  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs
+commit
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+command=git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/waves/round-59/probe/repair59-probe.mjs
+401db5623589424a06bb2e19c4ecef8d6f5f28ee
+401db5623589424a06bb2e19c4ecef8d6f5f28ee
+exit=0
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+42:const EXPECTED_CHECKS = 8;
+157:const mismatch = checks.length !== EXPECTED_CHECKS;
+159:const head = `REPAIR59: ${mismatch ? 'REPAIR59_UNMET' : (held === EXPECTED_CHECKS ? 'REPAIR59_HELD' : 'REPAIR59_UNMET')} held=${held}/${checks.length} checks=${EXPECTED_CHECKS} rev=${full} rule=${RULE} version=v1${mismatch ? ' checks-mismatch' : ''}`;
+160:finish(held === EXPECTED_CHECKS && !mismatch ? 0 : 1, head);
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+87:    hold('B1', ok, ok ? 'selftest-8/8' : `status=${self.status} ${(self.stdout || self.stderr || '').slice(0, 120)}`);
+93:    hold('B2', ok, ok ? 'clean' : `status=${run.status} ${(run.stdout || '').slice(0, 120)}`);
+104:    hold('B3', ok, `prose=${named} rows=${rows.length} cite-sources=${has}`);
+113:    hold('B4', ok, `cite=${cite} receipt=${receipt} mapv2=${map.includes('v2')} 16/16=${map.includes('16/16')} stale135=${map.includes('files=135')}`);
+121:    hold('B5', pinned && clean, `pinned=${pinned} status=${map.status} ${(map.stdout || '').split('\n').pop()}`);
+126:    hold('B6', ok, ok ? 'literal' : 'absent');
+142:    hold('B7', ok, ok ? want : `want ${want}`);
+148:    hold('B8', a && b, `nuance=${a} pin-first=${b}`);
+hold_before=8
+hold_after=7
+deleted=1
+expected_checks_still_8=1
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+42:const EXPECTED_CHECKS = 8;
+156:const mismatch = checks.length !== EXPECTED_CHECKS;
+158:const head = `REPAIR59: ${mismatch ? 'REPAIR59_UNMET' : (held === EXPECTED_CHECKS ? 'REPAIR59_HELD' : 'REPAIR59_UNMET')} held=${held}/${checks.length} checks=${EXPECTED_CHECKS} rev=${full} rule=${RULE} version=v1${mismatch ? ' checks-mismatch' : ''}`;
+159:finish(held === EXPECTED_CHECKS && !mismatch ? 0 : 1, head);
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+87:    hold('B1', ok, ok ? 'selftest-8/8' : `status=${self.status} ${(self.stdout || self.stderr || '').slice(0, 120)}`);
+93:    hold('B2', ok, ok ? 'clean' : `status=${run.status} ${(run.stdout || '').slice(0, 120)}`);
+104:    hold('B3', ok, `prose=${named} rows=${rows.length} cite-sources=${has}`);
+113:    hold('B4', ok, `cite=${cite} receipt=${receipt} mapv2=${map.includes('v2')} 16/16=${map.includes('16/16')} stale135=${map.includes('files=135')}`);
+121:    hold('B5', pinned && clean, `pinned=${pinned} status=${map.status} ${(map.stdout || '').split('\n').pop()}`);
+126:    hold('B6', ok, ok ? 'literal' : 'absent');
+142:    hold('B7', ok, ok ? want : `want ${want}`);
+lane_probe_unchanged_vs_copy=differs
+mutant_path=/tmp/crit-drop-one.xl6gw2/repair59-probe.mjs
+d3fa48ed30b516659e29f484a8305733da9bfec5339ece171e3a790b9586cf37  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs
+4e06db2f1aaba9d63882504c8c9dfb15feddfc709623f393ab86c92e61a25e67  /tmp/crit-drop-one.xl6gw2/repair59-probe.mjs
+diff_exit_recorded_separately
+1
+d3fa48ed30b516659e29f484a8305733da9bfec5339ece171e3a790b9586cf37  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs
+lane_probe_sha256_unchanged=1
+probe_diff_exit=0
+removed=/tmp/crit-drop-one.xl6gw2
+DONE exit=1
+---- stdout ----
+REPAIR59: REPAIR59_UNMET held=7/7 checks=8 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=A59 version=v1 checks-mismatch
+ | B1 PASS selftest-8/8 | B2 PASS clean | B3 PASS prose=19 rows=19 cite-sources=true | B4 PASS cite=true receipt=true mapv2=true 16/16=true stale135=false | B5 PASS pinned=true status=0  | B6 PASS literal | B7 PASS TIER59: A=104 B=14 C=8 rows=126
+---- stderr ----
+---- diff ----
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs	2026-10-24 21:19:45.547904682 -0300
++++ /tmp/crit-drop-one.xl6gw2/repair59-probe.mjs	2026-10-24 21:36:48.089953335 -0300
+@@ -145,7 +145,6 @@
+     const lesson = readT('corpus/lessons/round-59.md') || '';
+     const a = lesson.includes('a shared page is not automatically a duplicate');
+     const b = lesson.includes('pin the duplicate group before adoption');
+-    hold('B8', a && b, `nuance=${a} pin-first=${b}`);
+   }
+ } catch (err) {
+   process.stderr.write(`REPAIR59: FAIL-CLOSED ${err && err.message}\n`);
+371 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/stdout.txt
+  0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/stderr.txt
+  0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/probe.status.txt
+  0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/probe.diff.txt
+  0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/probe-at-rev.stderr
+371 total
+987c487a07bd5f1c77c700f5b5cce8e63ef8fd79b33eb78c31fd090b5ba422cf  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/stdout.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne/stderr.txt
+---- HELD count ----
+0
+---- checks-mismatch count ----
+1
+---- B8 in stdout ----
+0
+---- lane probe still has B8 hold and EXPECTED_CHECKS 8 ----
+148:    hold('B8', a && b, `nuance=${a} pin-first=${b}`);
+42:const EXPECTED_CHECKS = 8;
+---- tmp gone ----
+ABSENT
+---- evidence names ----
+00-identity.txt
+command.txt
+deleted-line.txt
+exit-code.txt
+expected-checks.mutant.txt
+expected-checks.source.txt
+head.txt
+hold-calls.mutant.txt
+hold-calls.source.txt
+mutant.diff
+mutant-not-lane.txt
+mutant.removed.txt
+probe-at-rev.blob
+probe-at-rev.stderr
+probe-at-rev.txt
+probe.diff.exit.txt
+probe.diff.txt
+probe.sha256.after
+probe.sha256.before
+probe.status.txt
+probe.unchanged.txt
+probe.worktree.blob
+rev.txt
+rev.type
+stderr.txt
+stdout.txt
+tmp.path
+---- no mutant mjs under evidence ----
+WROTE
+stdout_lines_missing_from_report=0
+trailer True
+has_checks_mismatch True
+claims_verdict_held False
+401db5623589424a06bb2e19c4ecef8d6f5f28ee
+401db5623589424a06bb2e19c4ecef8d6f5f28ee
+OK

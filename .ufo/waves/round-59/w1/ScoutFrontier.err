@@ -1,0 +1,103 @@
+--- 00-rev.txt ---
+date=2026-10-24T21:41:11-03:00
+pwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+rev=5469c0a58d7986ff8a5f203938ae1c8785a92213
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+ancestor_exit=0
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+commit
+--- stderr bytes ---
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/00-rev.stderr
+===== 05-identity =====
+=== cmp province worktree vs score blob ===
+province_cmp_exit=0
+=== cmp entry worktree vs score blob ===
+entry_cmp_exit=0
+=== sha256 ===
+92102aa91d10cc02f63cd82cd70b294a1a8edea66f7116bed9efb3532764e308  PROVINCE.md
+92102aa91d10cc02f63cd82cd70b294a1a8edea66f7116bed9efb3532764e308  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/01-province-at-rev.md
+a9c11099d665df26ccb223acd74170c54f3cf91363b3e400d95f5c51c26f3797  corpus/knowledge/mcp-orchestration-contract.md
+a9c11099d665df26ccb223acd74170c54f3cf91363b3e400d95f5c51c26f3797  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/02-entry-at-rev.md
+=== git hash-object vs rev blob ===
+province_worktree_blob=a07a3d903c176d754c7855b8c17d28e919ef7c53
+province_rev_blob=a07a3d903c176d754c7855b8c17d28e919ef7c53
+entry_worktree_blob=f84a4b5d6dc0f8d07f08ce20ef776a8bdbb52a6b
+entry_rev_blob=f84a4b5d6dc0f8d07f08ce20ef776a8bdbb52a6b
+===== 06-frontier =====
+frontier_heading_line=17
+next_heading_line=24
+heading='### Frontier — named ground, entered by sourced entries, not yet gated'
+ITEM 1 line=19
+- OMP harness contract (task batch, agent hub, agent discovery) — first entry `corpus/knowledge/omp-task-contract.md` (round 34); the docs track upstream `main` while the host runs the installed `omp` binary (skew named in the entry).
+ITEM 2 line=20
+- MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
+ITEM 3 line=21
+- Isolation substrates for parallel agents (git worktrees, harness isolation backends) — first entry `corpus/knowledge/agent-isolation-substrates.md` (round 45, exploratory): seat-containment rules derived from their mechanisms with demos; harness isolation is off on this host, jj workspaces are not demonstrated.
+ITEM 4 line=22
+- Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107): delivery identity and claim/repend; advanced round 55 by `corpus/knowledge/bounded-redelivery-budgets.md` (S109/S110/S111): the bound side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets; advanced round 56 by `corpus/knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115): the lease slot — visibility timeout / ack deadline; advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; other broker/workflow failure families remain queued.
+frontier_bullet_count=4
+===== 07-source =====
+byte_len=4452
+line_count=33
+first_line_chars=285
+FIRST_LINE:
+source: S125 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture ; S127 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md ; S136 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026
+cites_S125=yes
+cites_S127=yes
+cites_S136=yes
+cites_modelcontextprotocol.io=yes
+first_line_is_line_1=yes
+header_line_4=coverage-map: frontier item 2 — MCP protocol revisions as they bear on orchestration (PROVINCE.md)
+===== 08-quoted =====
+=== nl -ba province frontier window (score blob) ===
+    17	### Frontier — named ground, entered by sourced entries, not yet gated
+    18	
+    19	- OMP harness contract (task batch, agent hub, agent discovery) — first entry `corpus/knowledge/omp-task-contract.md` (round 34); the docs track upstream `main` while the host runs the installed `omp` binary (skew named in the entry).
+    20	- MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
+    21	- Isolation substrates for parallel agents (git worktrees, harness isolation backends) — first entry `corpus/knowledge/agent-isolation-substrates.md` (round 45, exploratory): seat-containment rules derived from their mechanisms with demos; harness isolation is off on this host, jj workspaces are not demonstrated.
+    22	- Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107): delivery identity and claim/repend; advanced round 55 by `corpus/knowledge/bounded-redelivery-budgets.md` (S109/S110/S111): the bound side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets; advanced round 56 by `corpus/knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115): the lease slot — visibility timeout / ack deadline; advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; other broker/workflow failure families remain queued.
+    23	
+=== sed -n 1p entry (score blob) ===
+source: S125 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture ; S127 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md ; S136 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026
+=== sed -n 1,5p entry (score blob) ===
+source: S125 https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture ; S127 https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md ; S136 https://zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026
+verified-at: 2026-10-24
+recheck: 90d
+coverage-map: frontier item 2 — MCP protocol revisions as they bear on orchestration (PROVINCE.md)
+ground: the lane held the 2026-07-28 revision only as queued changelog and README rows; this entry is the first sourced contract an orchestrator has to implement
+===== 09-grep =====
+=== province path hits ===
+20:- MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
+=== entry token hits on line 1 ===
+      1 modelcontextprotocol.io
+      1 S125
+      1 S127
+      1 S136
+===== stderr sizes =====
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/00-rev.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/05-identity.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/06-frontier-bullets.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutFrontier/07-source-line.stderr
+0 total
+bullet_in_report=True
+source_in_report=True
+report_bytes=3750
+00-rev.stderr
+00-rev.txt
+01-province-at-rev.exit
+01-province-at-rev.md
+02-entry-at-rev.exit
+02-entry-at-rev.md
+03-province-worktree.md
+04-entry-worktree.md
+05-identity.stderr
+05-identity.txt
+06-frontier-bullets.stderr
+06-frontier-bullets.txt
+07-source-line.stderr
+07-source-line.txt
+08-quoted-lines.txt
+09-token-grep.txt
+commands.md
+--- report path ---
+-rw-r--r-- 1 vgpnk vgpnk 3750 Oct 24 21:42 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutFrontier.md

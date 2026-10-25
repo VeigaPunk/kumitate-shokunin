@@ -1,0 +1,1 @@
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && TMPDIR=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritBaseNotZero/tmp-doctrine-r2 node .ufo/waves/round-59/probe/doctrine59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f

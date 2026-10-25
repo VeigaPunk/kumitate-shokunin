@@ -1,0 +1,23 @@
+$ wc -l 05-reg-ids.unique 05-staged-ids.unique 07-collisions.txt
+ 126 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/05-reg-ids.unique
+ 147 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/05-staged-ids.unique
+   3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/07-collisions.txt
+ 276 total
+$ LC_ALL=C comm -12 05-reg-ids.unique 05-staged-ids.unique
+S125
+S127
+S136
+comm_exit=0
+$ wc -l 09-collisions-base-vs-staged.txt 09-collisions-score-vs-staged.txt 10-assim-collisions.copy
+ 0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/09-collisions-base-vs-staged.txt
+ 3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/09-collisions-score-vs-staged.txt
+ 3 total
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision/10-assim-collisions.copy
+$ awk gap check staged unique
+last 271 n checked via END
+$ awk gap check reg vs expected missing
+done
+$ grep -c each collision id in both unique lists
+S125 reg=1 staged=1
+S127 reg=1 staged=1
+S136 reg=1 staged=1

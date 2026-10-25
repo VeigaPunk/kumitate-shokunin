@@ -1,0 +1,8 @@
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+87:    hold('B1', ok, ok ? 'selftest-8/8' : `status=${self.status} ${(self.stdout || self.stderr || '').slice(0, 120)}`);
+93:    hold('B2', ok, ok ? 'clean' : `status=${run.status} ${(run.stdout || '').slice(0, 120)}`);
+104:    hold('B3', ok, `prose=${named} rows=${rows.length} cite-sources=${has}`);
+113:    hold('B4', ok, `cite=${cite} receipt=${receipt} mapv2=${map.includes('v2')} 16/16=${map.includes('16/16')} stale135=${map.includes('files=135')}`);
+121:    hold('B5', pinned && clean, `pinned=${pinned} status=${map.status} ${(map.stdout || '').split('\n').pop()}`);
+126:    hold('B6', ok, ok ? 'literal' : 'absent');
+142:    hold('B7', ok, ok ? want : `want ${want}`);

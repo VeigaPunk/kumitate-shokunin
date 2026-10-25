@@ -1,0 +1,2892 @@
+===== ConnectorSiblings line 34 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ConnectorSiblings"
+mkdir -p "$EVID"
+cd "$EVID"
+
+date -u +%Y-%m-%dT%H:%M:%SZ > date-utc.txt
+date +%Y-%m-%dT%H:%M:%S%z > date-local.txt
+
+{
+  echo "pwd=$(pwd)"
+  echo "evid=$EVID"
+} > cwd.txt
+
+for lane in kasegi kagi kotoba kumitate; do
+  root="/home/vgpnk/Projects/shokunin/${lane}-shokunin"
+  {
+    echo "lane=$lane"
+    echo "root=$root"
+    echo -n "head="
+    git -C "$root" rev-parse HEAD
+    echo "rev-parse.exit=$?"
+    echo -n "province.head-blob="
+    git -C "$root" rev-parse "HEAD:PROVINCE.md"
+    echo "rev-parse-blob.exit=$?"
+    echo -n "province.worktree-blob="
+    git -C "$root" hash-object -- "$root/PROVINCE.md"
+    echo "hash-object.exit=$?"
+  } > "${lane}.identity.txt"
+  git -C "$root" status --porcelain -- PROVINCE.md > "${lane}.province.status.txt"
+  echo "status.exit=$?" >> "${lane}.identity.txt"
+  wc -l "$root/PROVINCE.md" > "${lane}.province.wc.txt"
+  sha256sum "$root/PROVINCE.md" > "${lane}.province.sha256.txt"
+  git -C "$root" rev-parse HEAD > "${lane}.head.txt"
+  git -C "$root" rev-parse "HEAD:PROVINCE.md" > "${lane}.province.head-blob.txt"
+  git -C "$root" hash-object -- "$root/PROVINCE.md" > "${lane}.province.worktree-blob.txt"
+done
+
+# claim-string and token greps, PROVINCE.md only
+for lane in kasegi kagi kotoba; do
+  root="/home/vgpnk/Projects/shokunin/${lane}-shokunin"
+  f="$root/PROVINCE.md"
+  for name in claim-phrase mcp-token orchestration-token protocol-token contract-token refuses-token; do
+    :
+  done
+  set +e
+  grep -n -E 'MCP protocol revisions|orchestration contract|mcp-orchestration-contract' "$f" > "${lane}.grep.claim-phrase.txt"
+  echo $? > "${lane}.grep.claim-phrase.exit"
+  grep -n -E -i 'MCP|Model Context Protocol' "$f" > "${lane}.grep.mcp.txt"
+  echo $? > "${lane}.grep.mcp.exit"
+  grep -n -E 'orchestration' "$f" > "${lane}.grep.orchestration.txt"
+  echo $? > "${lane}.grep.orchestration.exit"
+  grep -n -E 'protocol revision' "$f" > "${lane}.grep.protocol-revision.txt"
+  echo $? > "${lane}.grep.protocol-revision.exit"
+  grep -n -E 'Refuses:' "$f" > "${lane}.grep.refuses.txt"
+  echo $? > "${lane}.grep.refuses.exit"
+  grep -n -E 'not the runtime|report, don'"'"'t absorb|anything outside this domain' "$f" > "${lane}.grep.reject-route.txt"
+  echo $? > "${lane}.grep.reject-route.exit"
+  set -e
+done
+
+# kumitate claim-under-test lines (read-only context, not a sibling)
+set +e
+grep -n -E 'MCP protocol revisions|MCP/OAuth' "/home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md" > kumitate.grep.claim-under-test.txt
+echo $? > kumitate.grep.claim-under-test.exit
+set -e
+
+# exact line extracts
+sed -n '3p;24,26p' /home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md > kasegi.lines.txt
+sed -n '3p;5,6p;67p' /home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md > kagi.lines.txt
+sed -n '3p;5,6p;19p;32p;59p' /home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md > kotoba.lines.txt
+sed -n '20p;26p' /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md > kumitate.lines.txt
+
+# numbered extracts so the report can cite file:line from the same bytes
+nl -ba -nln -w1 /home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md | sed -n '3p;24,26p' > kasegi.lines.nl.txt
+nl -ba -nln -w1 /home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md | sed -n '3p;5,6p;67p' > kagi.lines.nl.txt
+nl -ba -nln -w1 /home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md | sed -n '3p;6p;19p;32p;59p' > kotoba.lines.nl.txt
+nl -ba -nln -w1 /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md | sed -n '20p;26p' > kumitate.lines.nl.txt
+
+# blob equality
+for lane in kasegi kagi kotoba kumitate; do
+  if cmp -s "${lane}.province.head-blob.txt" "${lane}.province.worktree-blob.txt"; then
+    echo "equal" > "${lane}.province.blob-cmp.txt"
+    echo 0 > "${lane}.province.blob-cmp.exit"
+  else
+    echo "differ" > "${lane}.province.blob-cmp.txt"
+    echo 1 > "${lane}.province.blob-cmp.exit"
+  fi
+done
+
+{
+  echo "# ConnectorSiblings evidence index"
+  echo
+  echo "Clock UTC: $(cat date-utc.txt)"
+  echo "Clock local: $(cat date-local.txt)"
+  echo
+  echo "## Identity"
+  for lane in kasegi kagi kotoba kumitate; do
+    echo "### $lane"
+    echo '```'
+    cat "${lane}.identity.txt"
+    echo "status.porcelain:"
+    if [ -s "${lane}.province.status.txt" ]; then
+      cat "${lane}.province.status.txt"
+    else
+      echo "(empty)"
+    fi
+    echo -n "blob-cmp="
+    cat "${lane}.province.blob-cmp.txt"
+    echo -n "wc="
+    cat "${lane}.province.wc.txt"
+    echo -n "sha256="
+    cat "${lane}.province.sha256.txt"
+    echo '```'
+    echo
+  done
+  echo "## Grep exits (0 = match, 1 = none)"
+  for lane in kasegi kagi kotoba; do
+    echo "### $lane"
+    for kind in claim-phrase mcp orchestration protocol-revision refuses reject-route; do
+      printf '%s %s exit=%s\n' "$lane" "$kind" "$(cat "${lane}.grep.${kind}.exit")"
+      echo "--- ${lane}.grep.${kind}.txt ---"
+      if [ -s "${lane}.grep.${kind}.txt" ]; then
+        cat "${lane}.grep.${kind}.txt"
+      else
+        echo "(empty)"
+      fi
+    done
+    echo
+  done
+  echo "### kumitate claim-under-test"
+  echo "exit=$(cat kumitate.grep.claim-under-test.exit)"
+  cat kumitate.grep.claim-under-test.txt
+} > commands.md
+
+echo "WROTE $EVID"
+ls -1 "$EVID" | wc -l
+echo "--- identity ---"
+cat kasegi.identity.txt kagi.identity.txt kotoba.identity.txt
+echo "--- blob cmp ---"
+for lane in kasegi kagi kotoba; do echo -n "$lane "; cat "${lane}.province.blob-cmp.txt"; done
+echo "--- grep exits ---"
+for lane in kasegi kagi kotoba; do
+  for kind in claim-phrase mcp orchestration protocol-revision refuses reject-route; do
+    printf '%s %s %s\n' "$lane" "$kind" "$(cat "${lane}.grep.${kind}.exit")"
+  done
+done
+echo "--- kotoba mcp grep ---"
+cat kotoba.grep.mcp.txt
+echo "--- kotoba orchestration grep ---"
+cat kotoba.grep.orchestration.txt
+echo "--- kotoba reject ---"
+cat kotoba.grep.reject-route.txt
+echo "--- kasegi refuses ---"
+cat kasegi.grep.refuses.txt
+echo "--- kagi refuses ---"
+cat kagi.grep.refuses.txt
+
+
+===== ConnectorSiblings line 51 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ConnectorSiblings"
+REPORT="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.md"
+# confirm quoted rejecting/overlapping lines are byte-substrings of the pinned files
+python3 - <<'PY'
+from pathlib import Path
+pairs = [
+    ("kasegi refuse", Path("/home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md"),
+     "**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it."),
+    ("kagi refuse", Path("/home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md"),
+     "**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it."),
+    ("kotoba line59", Path("/home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md"),
+     'kotoba owns the prompt wording, not the runtime'),
+    ("kotoba line19", Path("/home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md"),
+     "what the MCP specification and six clients"),
+    ("kumitate item2", Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md"),
+     "MCP protocol revisions as they bear on orchestration"),
+]
+report = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.md").read_text()
+for name, path, needle in pairs:
+    body = path.read_text()
+    print(f"{name} in-source={needle in body} in-report={needle in report}")
+print("report-bytes", len(report.encode()))
+print("trailer", report.strip().splitlines()[-1])
+PY
+# sibling provinces still clean
+for lane in kasegi kagi kotoba; do
+  git -C "/home/vgpnk/Projects/shokunin/${lane}-shokunin" status --porcelain -- PROVINCE.md
+  echo "status-exit=$?"
+done
+# report path is the only new w1 file we own; do not list other seats' files as ours
+test -f "$REPORT" && echo REPORT_OK
+test -d "$EVID" && echo EVID_OK
+# confirm we did not write ConnectorSiblings.md outside the assigned path
+find /home/vgpnk/Projects/shokunin/kumitate-shokunin -name 'ConnectorSiblings.md' -print
+
+
+===== CritBaseNotZero line 37 cwd=- =====
+EV="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritBaseNotZero"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+SCORE="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+RECEIPT="$LANE/.ufo/waves/round-58/base/doctrine58-base.txt"
+mkdir -p "$EV"
+{
+  printf 'ran_at=%s\n' "$(date -Iseconds)"
+  printf 'node=%s\n' "$(command -v node)"
+  printf 'node_version=%s\n' "$(node --version)"
+  printf 'lane=%s\n' "$LANE"
+  printf 'base=%s\n' "$BASE"
+  printf 'score=%s\n' "$SCORE"
+} > "$EV/00-clock.txt"
+git -C "$LANE" rev-parse --verify "${BASE}^{commit}" > "$EV/01-rev-parse.stdout" 2> "$EV/01-rev-parse.stderr"
+printf '%s\n' "$?" > "$EV/01-rev-parse.exit"
+git -C "$LANE" cat-file -t "$BASE" > "$EV/02-cat-file.stdout" 2> "$EV/02-cat-file.stderr"
+printf '%s\n' "$?" > "$EV/02-cat-file.exit"
+git -C "$LANE" log -1 --format='%H%n%P%n%s%n%ci' "$BASE" > "$EV/03-log.stdout" 2> "$EV/03-log.stderr"
+printf '%s\n' "$?" > "$EV/03-log.exit"
+git -C "$LANE" merge-base --is-ancestor "$BASE" "$SCORE" > "$EV/04-ancestor.stdout" 2> "$EV/04-ancestor.stderr"
+printf '%s\n' "$?" > "$EV/04-ancestor.exit"
+sha256sum \
+  "$LANE/.ufo/waves/round-59/probe/repair59-probe.mjs" \
+  "$LANE/.ufo/waves/round-59/probe/doctrine59-probe.mjs" \
+  > "$EV/05-probe-sha256.stdout" 2> "$EV/05-probe-sha256.stderr"
+printf '%s\n' "$?" > "$EV/05-probe-sha256.exit"
+wc -c "$LANE/.ufo/waves/round-59/probe/repair59-probe.mjs" "$LANE/.ufo/waves/round-59/probe/doctrine59-probe.mjs" \
+  > "$EV/06-probe-wc.stdout" 2> "$EV/06-probe-wc.stderr"
+printf '%s\n' "$?" > "$EV/06-probe-wc.exit"
+if [ -e "$LANE/.git" ]; then printf 'git_path_exists=yes\n'; else printf 'git_path_exists=no\n'; fi > "$EV/07-git-path.txt"
+if [ -L "$LANE/.git" ]; then printf 'git_path_symlink=yes\n' >> "$EV/07-git-path.txt"; else printf 'git_path_symlink=no\n' >> "$EV/07-git-path.txt"; fi
+stat -c 'receipt_type=%F receipt_bytes=%s receipt_mtime=%y' "$RECEIPT" > "$EV/08-receipt-stat.stdout" 2> "$EV/08-receipt-stat.stderr"
+printf '%s\n' "$?" > "$EV/08-receipt-stat.exit"
+cp -a "$RECEIPT" "$EV/doctrine58-base.txt"
+sha256sum "$RECEIPT" > "$EV/09-receipt-sha256.stdout" 2> "$EV/09-receipt-sha256.stderr"
+printf '%s\n' "$?" > "$EV/09-receipt-sha256.exit"
+wc -c "$RECEIPT" > "$EV/10-receipt-wc.stdout" 2> "$EV/10-receipt-wc.stderr"
+printf '%s\n' "$?" > "$EV/10-receipt-wc.exit"
+grep -n -o -E 'held=[0-9]+/[0-9]+' "$RECEIPT" > "$EV/11-receipt-held.stdout" 2> "$EV/11-receipt-held.stderr" || true
+printf '%s\n' "$?" > "$EV/11-receipt-held.exit"
+grep -F -n 'held=2/5' "$RECEIPT" > "$EV/12-receipt-held-2of5.stdout" 2> "$EV/12-receipt-held-2of5.stderr" || true
+printf '%s\n' "$?" > "$EV/12-receipt-held-2of5.exit"
+grep -F -n 'held=0/5' "$RECEIPT" > "$EV/13-receipt-held-0of5.stdout" 2> "$EV/13-receipt-held-0of5.stderr" || true
+printf '%s\n' "$?" > "$EV/13-receipt-held-0of5.exit"
+git -C "$LANE" check-ignore -v -- "$RECEIPT" > "$EV/14-receipt-ignore.stdout" 2> "$EV/14-receipt-ignore.stderr" || true
+printf '%s\n' "$?" > "$EV/14-receipt-ignore.exit"
+git -C "$LANE" ls-files -- "$RECEIPT" > "$EV/15-receipt-lsfiles.stdout" 2> "$EV/15-receipt-lsfiles.stderr"
+printf '%s\n' "$?" > "$EV/15-receipt-lsfiles.exit"
+printf '%s\n' "identity_done"
+
+===== CritBaseNotZero line 106 cwd=- =====
+EV="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritBaseNotZero"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+mkdir -p "$EV/tmp-repair-r2" "$EV/tmp-doctrine-r2"
+printf '%s\n' "cd $LANE && TMPDIR=$EV/tmp-repair-r2 node .ufo/waves/round-59/probe/repair59-probe.mjs $LANE $BASE" > "$EV/repair59-base-r2.command"
+printf '%s\n' "cd $LANE && TMPDIR=$EV/tmp-doctrine-r2 node .ufo/waves/round-59/probe/doctrine59-probe.mjs $LANE $BASE" > "$EV/doctrine59-base-r2.command"
+(
+  cd "$LANE" && TMPDIR="$EV/tmp-repair-r2" node .ufo/waves/round-59/probe/repair59-probe.mjs "$LANE" "$BASE" > "$EV/repair59-base-r2.stdout" 2> "$EV/repair59-base-r2.stderr"
+  printf '%s\n' "$?" > "$EV/repair59-base-r2.exit"
+) &
+rp=$!
+(
+  cd "$LANE" && TMPDIR="$EV/tmp-doctrine-r2" node .ufo/waves/round-59/probe/doctrine59-probe.mjs "$LANE" "$BASE" > "$EV/doctrine59-base.stdout.r2hold" 2> "$EV/doctrine59-base-r2.stderr"
+  # keep the canonical r2 name; the hold path above is a mistake if I also want doctrine59-base-r2.stdout
+  printf '%s\n' "$?" > "$EV/doctrine59-base-r2.exit"
+) &
+dp=$!
+wait "$rp"
+wait "$dp"
+# The doctrine r2 was written to a hold name by mistake. Move it if the canonical name is absent.
+if [ -f "$EV/doctrine59-base.stdout.r2hold" ] && [ ! -f "$EV/doctrine59-base-r2.stdout" ]; then
+  mv "$EV/doctrine59-base.stdout.r2hold" "$EV/doctrine59-base-r2.stdout"
+fi
+date -Iseconds > "$EV/37-rerun-clock.txt"
+cmp -s "$EV/repair59-base.stdout" "$EV/repair59-base-r2.stdout"
+printf '%s\n' "$?" > "$EV/38-repair-rerun-cmp.exit"
+cmp -s "$EV/doctrine59-base.stdout" "$EV/doctrine59-base-r2.stdout"
+printf '%s\n' "$?" > "$EV/39-doctrine-rerun-cmp.exit"
+head -n 1 "$EV/repair59-base-r2.stdout" > "$EV/40-repair-r2-headline.txt"
+head -n 1 "$EV/doctrine59-base-r2.stdout" > "$EV/41-doctrine-r2-headline.txt"
+wc -c "$EV/repair59-base.stderr" "$EV/doctrine59-base.stderr" "$EV/repair59-base-r2.stderr" "$EV/doctrine59-base-r2.stderr" > "$EV/42-stderr-wc.stdout"
+# token counts on first capture
+grep -F -c ' PASS ' "$EV/repair59-base.stdout" > "$EV/43-repair-pass-count.stdout" 2> "$EV/43-repair-pass-count.stderr"
+printf '%s\n' "$?" > "$EV/43-repair-pass-count.exit"
+grep -F -c ' MISS ' "$EV/repair59-base.stdout" > "$EV/44-repair-miss-count.stdout" 2> "$EV/44-repair-miss-count.stderr"
+printf '%s\n' "$?" > "$EV/44-repair-miss-count.exit"
+grep -F -c ' PASS ' "$EV/doctrine59-base.stdout" > "$EV/45-doctrine-pass-count.stdout" 2> "$EV/45-doctrine-pass-count.stderr"
+printf '%s\n' "$?" > "$EV/45-doctrine-pass-count.exit"
+grep -F -c ' MISS ' "$EV/doctrine59-base.stdout" > "$EV/46-doctrine-miss-count.stdout" 2> "$EV/46-doctrine-miss-count.stderr"
+printf '%s\n' "$?" > "$EV/46-doctrine-miss-count.exit"
+# base commit blob of the receipt, grep held tokens
+git -C "$LANE" cat-file -p be3c58c9d7a3bac2177bdd4ed1cee6174868df68 > "$EV/47-receipt-blob.txt"
+grep -F -c 'held=2/5' "$EV/47-receipt-blob.txt" > "$EV/48-blob-held-2of5.stdout" 2> "$EV/48-blob-held-2of5.stderr"
+printf '%s\n' "$?" > "$EV/48-blob-held-2of5.exit"
+grep -F -c 'held=0/5' "$EV/47-receipt-blob.txt" > "$EV/49-blob-held-0of5.stdout" 2> "$EV/49-blob-held-0of5.stderr"
+printf '%s\n' "$?" > "$EV/49-blob-held-0of5.exit"
+cmp -s "$EV/47-receipt-blob.txt" "$LANE/.ufo/waves/round-58/base/doctrine58-base.txt"
+printf '%s\n' "$?" > "$EV/50-blob-vs-path-cmp.exit"
+printf 'rerun_done repair_r2_exit=%s doctrine_r2_exit=%s\n' "$(cat "$EV/repair59-base-r2.exit")" "$(cat "$EV/doctrine59-base-r2.exit")"
+
+===== CritDropOne line 26 cwd=- =====
+set -euo pipefail
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+PROBE="$LANE/.ufo/waves/round-59/probe/repair59-probe.mjs"
+EVID="$LANE/.ufo/waves/round-59/build/CritDropOne"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+mkdir -p "$EVID"
+# refuse to place the mutant under the lane
+case "$EVID" in
+  "$LANE"/*) ;;
+  *) echo "evidence path escaped lane" >&2; exit 2 ;;
+esac
+TMP="$(mktemp -d /tmp/crit-drop-one.XXXXXX)"
+case "$TMP" in
+  /tmp/crit-drop-one.*) ;;
+  *) echo "temp path not under /tmp" >&2; exit 2 ;;
+esac
+cp -- "$PROBE" "$TMP/repair59-probe.mjs"
+{
+  echo "clock=$(date -Iseconds)"
+  echo "node=$(command -v node)"
+  echo "node_version=$(node --version)"
+  echo "tmp=$TMP"
+  echo "probe=$PROBE"
+  echo "rev=$REV"
+} | tee "$EVID/00-identity.txt"
+sha256sum -- "$PROBE" | tee "$EVID/probe.sha256.before"
+git -C "$LANE" cat-file -t "$REV" | tee "$EVID/rev.type"
+git -C "$LANE" rev-parse --verify "${REV}^{commit}" | tee "$EVID/rev.txt"
+git -C "$LANE" rev-parse HEAD | tee "$EVID/head.txt"
+# frozen-counter identity: worktree probe vs blob at the score rev, if present
+{
+  echo "command=git -C $LANE rev-parse ${REV}:.ufo/waves/round-59/probe/repair59-probe.mjs"
+  if git -C "$LANE" cat-file -e "${REV}:.ufo/waves/round-59/probe/repair59-probe.mjs" 2>"$EVID/probe-at-rev.stderr"; then
+    git -C "$LANE" rev-parse "${REV}:.ufo/waves/round-59/probe/repair59-probe.mjs" | tee "$EVID/probe-at-rev.blob"
+    git -C "$LANE" hash-object -- "$PROBE" | tee "$EVID/probe.worktree.blob"
+    echo "exit=0"
+  else
+    echo "ABSENT"
+    echo "exit=$?"
+  fi
+} | tee "$EVID/probe-at-rev.txt"
+grep -n 'EXPECTED_CHECKS' -- "$PROBE" | tee "$EVID/expected-checks.source.txt"
+grep -n "hold(" -- "$PROBE" | tee "$EVID/hold-calls.source.txt"
+python3 - "$TMP/repair59-probe.mjs" "$EVID/deleted-line.txt" <<'PY'
+import sys
+from pathlib import Path
+src = Path(sys.argv[1])
+deleted_out = Path(sys.argv[2])
+text = src.read_text()
+needle = "    hold('B8', a && b, `nuance=${a} pin-first=${b}`);\n"
+if text.count("const EXPECTED_CHECKS = 8;") != 1:
+    raise SystemExit(f"EXPECTED_CHECKS literal count={text.count('const EXPECTED_CHECKS = 8;')}")
+n = text.count(needle)
+if n != 1:
+    raise SystemExit(f"B8 hold() line count={n}")
+before = text.count("hold('")
+text2 = text.replace(needle, "", 1)
+after = text2.count("hold('")
+if before - after != 1:
+    raise SystemExit(f"hold(' delta={before - after}")
+if "hold('B8'" in text2:
+    raise SystemExit("B8 hold still present")
+if "const EXPECTED_CHECKS = 8;" not in text2:
+    raise SystemExit("EXPECTED_CHECKS lost")
+if text2.count("const EXPECTED_CHECKS = 8;") != 1:
+    raise SystemExit("EXPECTED_CHECKS literal changed")
+src.write_text(text2)
+deleted_out.write_text(needle)
+print(f"hold_before={before}")
+print(f"hold_after={after}")
+print("deleted=1")
+print("expected_checks_still_8=1")
+PY
+grep -n 'EXPECTED_CHECKS' -- "$TMP/repair59-probe.mjs" | tee "$EVID/expected-checks.mutant.txt"
+grep -n "hold(" -- "$TMP/repair59-probe.mjs" | tee "$EVID/hold-calls.mutant.txt"
+# prove the lane probe was not the file we edited
+if cmp -s -- "$PROBE" "$TMP/repair59-probe.mjs"; then
+  echo "FAIL mutant identical to lane probe" | tee "$EVID/mutant-not-lane.txt"
+  exit 1
+fi
+{
+  echo "lane_probe_unchanged_vs_copy=differs"
+  echo "mutant_path=$TMP/repair59-probe.mjs"
+  sha256sum -- "$PROBE" "$TMP/repair59-probe.mjs"
+} | tee "$EVID/mutant-not-lane.txt"
+# diff is evidence of the deletion; the runnable mutant stays in /tmp only
+diff -u -- "$PROBE" "$TMP/repair59-probe.mjs" > "$EVID/mutant.diff" || true
+echo "diff_exit_recorded_separately" 
+# run the temp copy only
+CMD=(node "$TMP/repair59-probe.mjs" "$LANE" "$REV")
+printf '%q ' "${CMD[@]}" > "$EVID/command.txt"
+echo >> "$EVID/command.txt"
+set +e
+"${CMD[@]}" > "$EVID/stdout.txt" 2> "$EVID/stderr.txt"
+ec=$?
+set -e
+echo "$ec" | tee "$EVID/exit-code.txt"
+# lane probe must be byte-identical to the pre-run hash
+sha256sum -- "$PROBE" | tee "$EVID/probe.sha256.after"
+if ! cmp -s "$EVID/probe.sha256.before" "$EVID/probe.sha256.after"; then
+  # sha256sum lines include the path, which is identical; cmp of the files is the real check
+  :
+fi
+cmp -s -- <(cut -d' ' -f1 "$EVID/probe.sha256.before") <(cut -d' ' -f1 "$EVID/probe.sha256.after")
+echo "lane_probe_sha256_unchanged=1" | tee "$EVID/probe.unchanged.txt"
+# scoped read-only status; do not add or commit
+git -C "$LANE" status --porcelain -- .ufo/waves/round-59/probe/repair59-probe.mjs | tee "$EVID/probe.status.txt" || true
+git -C "$LANE" diff --exit-code -- .ufo/waves/round-59/probe/repair59-probe.mjs > "$EVID/probe.diff.txt"
+echo "probe_diff_exit=$?" | tee "$EVID/probe.diff.exit.txt"
+# keep the temp path recorded, then remove the mutant so it is not left as a lane artifact
+echo "$TMP" > "$EVID/tmp.path"
+rm -rf -- "$TMP"
+if [[ -e "$TMP/repair59-probe.mjs" ]]; then
+  echo "mutant still present" | tee "$EVID/mutant.removed.txt"
+  exit 1
+fi
+echo "removed=$TMP" | tee "$EVID/mutant.removed.txt"
+echo "DONE exit=$ec"
+echo "---- stdout ----"
+cat "$EVID/stdout.txt"
+echo "---- stderr ----"
+cat "$EVID/stderr.txt"
+echo "---- diff ----"
+cat "$EVID/mutant.diff"
+
+
+===== CritDropOne line 46 cwd=- =====
+set -euo pipefail
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne"
+PROBE="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs"
+wc -c "$EVID/stdout.txt" "$EVID/stderr.txt" "$EVID/probe.status.txt" "$EVID/probe.diff.txt" "$EVID/probe-at-rev.stderr"
+sha256sum "$EVID/stdout.txt" "$EVID/stderr.txt"
+echo "---- HELD count ----"
+grep -c 'REPAIR59_HELD' "$EVID/stdout.txt" || true
+echo "---- checks-mismatch count ----"
+grep -c 'checks-mismatch' "$EVID/stdout.txt" || true
+echo "---- B8 in stdout ----"
+grep -c 'B8' "$EVID/stdout.txt" || true
+echo "---- lane probe still has B8 hold and EXPECTED_CHECKS 8 ----"
+grep -n "hold('B8'" "$PROBE"
+grep -n 'const EXPECTED_CHECKS = 8;' "$PROBE"
+echo "---- tmp gone ----"
+if [[ -e /tmp/crit-drop-one.xl6gw2 ]]; then echo PRESENT; else echo ABSENT; fi
+echo "---- evidence names ----"
+ls -1 "$EVID"
+echo "---- no mutant mjs under evidence ----"
+find "$EVID" -name '*.mjs' -print
+
+
+===== CritDropOne line 52 cwd=- =====
+set -euo pipefail
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritDropOne"
+PROBE="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs"
+{
+  echo "command=sha256sum stdout.txt stderr.txt"
+  sha256sum "$EVID/stdout.txt" "$EVID/stderr.txt"
+  echo "command=wc -c stdout.txt stderr.txt"
+  wc -c "$EVID/stdout.txt" "$EVID/stderr.txt"
+} > "$EVID/stdout.meta.txt"
+{
+  echo "command=grep -c REPAIR59_HELD stdout.txt"
+  grep -c 'REPAIR59_HELD' "$EVID/stdout.txt" || true
+  echo "command=grep -c checks-mismatch stdout.txt"
+  grep -c 'checks-mismatch' "$EVID/stdout.txt" || true
+  echo "command=grep -c B8 stdout.txt"
+  grep -c 'B8' "$EVID/stdout.txt" || true
+} > "$EVID/stdout.tokens.txt"
+{
+  echo "command=grep -n hold('B8' and const EXPECTED_CHECKS = 8 on lane probe after the run"
+  grep -n "hold('B8'" "$PROBE"
+  grep -n 'const EXPECTED_CHECKS = 8;' "$PROBE"
+  echo "tmp=/tmp/crit-drop-one.xl6gw2"
+  if [[ -e /tmp/crit-drop-one.xl6gw2 ]]; then echo "tmp_state=PRESENT"; else echo "tmp_state=ABSENT"; fi
+  echo "mutant_mjs_under_evidence=$(find "$EVID" -name '*.mjs' | wc -l)"
+} > "$EVID/post-run-lane-probe.txt"
+python3 - "$EVID/stdout.txt" > "$EVID/stdout.repr.txt" <<'PY'
+import sys
+from pathlib import Path
+text = Path(sys.argv[1]).read_text()
+lines = text.splitlines()
+print(f"line_count={len(lines)}")
+print(f"endswith_newline={text.endswith(chr(10))}")
+for i, line in enumerate(lines, 1):
+    print(f"L{i}={line!r}")
+PY
+echo WROTE
+
+
+===== CritQuarantine line 42 cwd=- =====
+set -u
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+EV="$LANE/.ufo/waves/round-59/build/CritQuarantine"
+SLICE="$LANE/.ufo/waves/round-59/assimilation/quarantine-slice"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+mkdir -p "$EV"
+cd "$LANE"
+
+{
+  echo "clock=$(date -Iseconds)"
+  echo "pwd=$(pwd)"
+  echo "rev=$REV"
+  echo "base=$BASE"
+} > "$EV/00-clock.txt"
+
+{
+  echo "=== rev-parse HEAD ==="
+  git rev-parse HEAD
+  echo "exit=$?"
+  echo "=== cat-file -t score ==="
+  git cat-file -t "$REV"
+  echo "exit=$?"
+  echo "=== rev-parse score ==="
+  git rev-parse "$REV^{commit}"
+  echo "exit=$?"
+  echo "=== ancestor base of HEAD ==="
+  if git merge-base --is-ancestor "$BASE" HEAD; then echo ancestor_exit=0; else echo ancestor_exit=$?; fi
+  echo "=== ancestor score of HEAD ==="
+  if git merge-base --is-ancestor "$REV" HEAD; then echo score_ancestor_exit=0; else echo score_ancestor_exit=$?; fi
+  echo "=== status lesson ==="
+  git status --porcelain --untracked-files=all -- corpus/lessons/round-59.md
+  echo "status_exit=$?"
+  echo "=== diff stat lesson vs score ==="
+  git diff --stat "$REV" -- corpus/lessons/round-59.md
+  echo "diff_exit=$?"
+  echo "=== hash-object worktree lesson ==="
+  git hash-object corpus/lessons/round-59.md
+  echo "=== rev-parse score lesson blob ==="
+  git rev-parse "$REV:corpus/lessons/round-59.md"
+  echo "=== log -1 score ==="
+  git log -1 --format='%H%n%s%n%ci' "$REV"
+} > "$EV/01-identity.txt" 2>&1
+
+echo "identity written"
+wc -l "$EV/01-identity.txt"
+
+===== CritQuarantine line 67 cwd=- =====
+set -u
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+EV="$LANE/.ufo/waves/round-59/build/CritQuarantine"
+SLICE="$LANE/.ufo/waves/round-59/assimilation/quarantine-slice"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+PATH_IN_REPO=".ufo/waves/round-59/assimilation/quarantine-slice"
+cd "$LANE"
+{
+  echo "=== rev-parse blob ==="
+  git rev-parse "$REV:$PATH_IN_REPO"
+  echo "rev_parse_exit=$?"
+  echo "=== hash-object worktree ==="
+  git hash-object "$SLICE"
+  echo "=== diff stat vs score ==="
+  git diff --stat "$REV" -- "$PATH_IN_REPO"
+  echo "diff_exit=$?"
+  echo "=== status porcelain slice ==="
+  git status --porcelain --untracked-files=all -- "$PATH_IN_REPO"
+  echo "status_exit=$?"
+  echo "=== git grep exact phrase at score ==="
+  set +e
+  git grep -n -F "adoption of those nine is closed" "$REV" --
+  echo "grep_exact_exit=$?"
+  git grep -n -F "adoption closed" "$REV" -- "corpus/lessons"
+  echo "grep_closed_exit=$?"
+  set -e
+  echo "=== cmp worktree vs git show ==="
+  git show "$REV:$PATH_IN_REPO" > "$EV/14-slice-at-rev.bin"
+  cmp -s "$SLICE" "$EV/14-slice-at-rev.bin"
+  echo "cmp_exit=$?"
+  echo "=== sha256 both ==="
+  sha256sum "$SLICE" "$EV/14-slice-at-rev.bin"
+  echo "=== wc git show ==="
+  wc -l -c "$EV/14-slice-at-rev.bin"
+} > "$EV/14-blob-bind.txt" 2>&1
+echo DONE
+# first whitespace field vs S-digit token
+python3 - << 'PY'
+import pathlib
+p = pathlib.Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/assimilation/quarantine-slice")
+ev = pathlib.Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/CritQuarantine/15-id-tokens.txt")
+lines = p.read_text(encoding="utf-8").splitlines()
+out = []
+for i, line in enumerate(lines, 1):
+    field = line.strip().split()[0]
+    import re
+    m = re.match(r"(S\d+)", field)
+    out.append(f"{i}\tfield={field!r}\tdigits={m.group(1) if m else None}\tfield_equals_digits={field==(m.group(1) if m else None)}")
+ev.write_text("\n".join(out)+"\n", encoding="utf-8")
+print("\n".join(out))
+PY
+
+===== CritTheme line 43 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+EV="$LANE/.ufo/waves/round-59/build/CritTheme"
+mkdir -p "$EV"
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+BASE=0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f
+{
+  echo "date=$(date --iso-8601=seconds)"
+  echo "pwd=$(pwd)"
+  git -C "$LANE" rev-parse HEAD
+  git -C "$LANE" cat-file -t "$REV"
+  git -C "$LANE" merge-base --is-ancestor "$BASE" "$REV"; echo "base_ancestor_exit=$?"
+  git -C "$LANE" merge-base --is-ancestor "$REV" HEAD; echo "rev_ancestor_of_head_exit=$?"
+  git -C "$LANE" rev-parse "$REV:corpus/lessons/round-59.md"
+  git -C "$LANE" hash-object "$LANE/corpus/lessons/round-59.md"
+  git -C "$LANE" status --porcelain --untracked-files=all -- corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md corpus/SOURCES.md corpus/README.md PROVINCE.md
+} > "$EV/00-identity.txt" 2> "$EV/00-identity.stderr"
+echo identity_exit:$?
+wc -l "$EV/00-identity.txt"
+
+===== CritTheme line 50 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+EV="$LANE/.ufo/waves/round-59/build/CritTheme"
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+BASE=0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f
+
+git -C "$LANE" diff --name-status "$BASE" "$REV" -- corpus/knowledge corpus/lessons corpus/README.md corpus/SOURCES.md PROVINCE.md LOG.md SCORECARD.md > "$EV/04-name-status.txt"
+echo "name_status_exit=$?" >> "$EV/04-name-status.txt"
+
+# new knowledge files only
+git -C "$LANE" diff --name-status --diff-filter=A "$BASE" "$REV" -- corpus/knowledge > "$EV/05-knowledge-added.txt"
+echo "added_exit=$?" >> "$EV/05-knowledge-added.txt"
+
+# SOURCES id set delta
+git -C "$LANE" show "$BASE:corpus/SOURCES.md" | grep -oE '^\| S[0-9]+' | tr -d '|' | tr -d ' ' | sort > "$EV/06-sources-ids-base.txt"
+git -C "$LANE" show "$REV:corpus/SOURCES.md" | grep -oE '^\| S[0-9]+' | tr -d '|' | tr -d ' ' | sort > "$EV/06-sources-ids-rev.txt"
+{
+  echo "base_rows=$(wc -l < "$EV/06-sources-ids-base.txt")"
+  echo "rev_rows=$(wc -l < "$EV/06-sources-ids-rev.txt")"
+  echo "=== added ids ==="
+  comm -13 "$EV/06-sources-ids-base.txt" "$EV/06-sources-ids-rev.txt"
+  echo "=== removed ids ==="
+  comm -23 "$EV/06-sources-ids-base.txt" "$EV/06-sources-ids-rev.txt"
+} > "$EV/06-sources-id-delta.txt"
+
+# rejected-theme ids in SOURCES at rev
+{
+  echo "=== rows for rejected-theme ids ==="
+  git -C "$LANE" show "$REV:corpus/SOURCES.md" | grep -nE '^\| S(126|131|133|134|135|190|194) ' || echo '(none of S126 S131 S133 S134 S135 S190 S194)'
+  echo "=== used-by cells naming something other than mcp-orchestration among added? printed below after python ==="
+} > "$EV/07-rejected-ids.txt"
+
+echo delta_done
+
+===== CritTheme line 59 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+EV="$LANE/.ufo/waves/round-59/build/CritTheme"
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+BASE=0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f
+
+git -C "$LANE" diff -U3 "$BASE" "$REV" -- PROVINCE.md > "$EV/08-province.diff"
+echo "province_diff_exit=$?" >> "$EV/08-province.diff"
+
+# README rows added or mentioning the two themes
+git -C "$LANE" diff -U2 "$BASE" "$REV" -- corpus/README.md > "$EV/09-readme.diff"
+echo "readme_diff_exit=$?" >> "$EV/09-readme.diff"
+
+# marker search at the score rev, corpus only
+{
+  echo "=== saga / Tail at Scale / S190 / S194 / rejected filenames in corpus at rev ==="
+  git -C "$LANE" grep -n -e 'saga' -e 'Tail at Scale' -e 'Tail-at-Scale' -e 'S190' -e 'S194' -e 'durable-execution-and-fanout' -e 'durable-execution-failure-detection' -e 'compensating action' "$REV" -- corpus || echo '(no corpus match)'
+  echo "=== same markers in the admitted entry only ==="
+  git -C "$LANE" grep -n -e 'saga' -e 'Tail at Scale' -e 'S190' -e 'S194' -e 'S126' -e 'failure-detection' -e 'fanout' "$REV" -- corpus/knowledge/mcp-orchestration-contract.md || echo '(entry has none of those markers)'
+  echo "=== S126 S190 S194 anywhere at rev outside round-58 history ==="
+  git -C "$LANE" grep -l -e 'S190' -e 'S194' "$REV" -- corpus .ufo/pins PROVINCE.md || echo '(no S190/S194 in corpus pins province)'
+} > "$EV/10-marker-grep.txt" 2> "$EV/10-marker-grep.stderr"
+
+# staged package vs adopted
+{
+  echo "=== staged-ids membership ==="
+  for id in S125 S126 S127 S131 S133 S134 S135 S136 S190 S194; do
+    if grep -qx "$id" "$LANE/.ufo/waves/round-59/assimilation/staged-ids"; then
+      echo "staged $id yes"
+    else
+      echo "staged $id no"
+    fi
+  done
+  echo "=== reg-ids membership ==="
+  for id in S125 S126 S127 S136 S190 S194; do
+    if grep -qx "$id" "$LANE/.ufo/waves/round-59/assimilation/reg-ids"; then
+      echo "reg $id yes"
+    else
+      echo "reg $id no"
+    fi
+  done
+  echo "staged_count=$(grep -c . "$LANE/.ufo/waves/round-59/assimilation/staged-ids" || true)"
+  echo "reg_count=$(grep -c . "$LANE/.ufo/waves/round-59/assimilation/reg-ids" || true)"
+} > "$EV/11-staged-vs-adopted.txt"
+
+# exact quote extraction
+python3 - <<'PY' > "$EV/12-quotes.txt"
+from pathlib import Path
+p = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-59.md")
+lines = p.read_text().splitlines()
+# 1-based
+for n in (11, 12, 13, 15, 17, 19):
+    print(f"L{n}|{lines[n-1]}")
+print("---flip-sentences---")
+for n in (17, 19):
+    line = lines[n-1]
+    idx = line.index("flip:")
+    print(f"L{n} flip-sentence|{line[idx+5:].strip()}")
+print("---admit-line---")
+print(lines[14])
+PY
+
+echo quotes_done
+wc -l "$EV/08-province.diff" "$EV/09-readme.diff" "$EV/10-marker-grep.txt" "$EV/11-staged-vs-adopted.txt" "$EV/12-quotes.txt"
+
+===== CritTheme line 67 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+EV="$LANE/.ufo/waves/round-59/build/CritTheme"
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+BASE=0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f
+
+{
+  echo "=== LOG/SCORECARD markers at rev ==="
+  git -C "$LANE" grep -n -e 'ADMIT ' -e 'durable-execution-and-fanout' -e 'durable-execution-failure-detection' -e 'mcp-orchestration-contract' "$REV" -- LOG.md SCORECARD.md || echo '(no match)'
+  echo "=== knowledge file count base vs rev ==="
+  echo -n "base "; git -C "$LANE" ls-tree -r --name-only "$BASE" -- corpus/knowledge | wc -l
+  echo -n "rev "; git -C "$LANE" ls-tree -r --name-only "$REV" -- corpus/knowledge | wc -l
+  echo "=== rejected filenames as tree paths ==="
+  git -C "$LANE" ls-tree -r --name-only "$REV" | grep -F -e 'durable-execution-and-fanout-primitives-2026-10-24.md' -e 'durable-execution-failure-detection.md' || echo '(absent from rev tree)'
+  echo "=== theme word in round-59 lesson ==="
+  git -C "$LANE" grep -n -e 'theme' "$REV" -- corpus/lessons/round-59.md
+  echo "=== used-by of added rows ==="
+  git -C "$LANE" show "$REV:corpus/SOURCES.md" | grep -E '^\| S(125|127|136) \|'
+  echo "=== S117 still present, S126 absent ==="
+  git -C "$LANE" show "$REV:corpus/SOURCES.md" | grep -E '^\| S117 \|' | cut -c1-180
+  git -C "$LANE" show "$REV:corpus/SOURCES.md" | grep -cE '^\| S126 \|' || true
+} > "$EV/13-ledger-and-counts.txt" 2> "$EV/13-ledger-and-counts.stderr"
+
+# package files not copied into assimilation
+{
+  echo "=== assimilation dir names ==="
+  ls -1 "$LANE/.ufo/waves/round-59/assimilation"
+  echo "=== filename hits under wave dir ==="
+  find "$LANE/.ufo/waves/round-59" -name '*durable-execution*' -o -name '*fanout-primitives*' -o -name '*failure-detection.md' | grep -v '/build/' || echo '(no rejected filename under round-59 wave)'
+} > "$EV/14-package-absent.txt" 2> "$EV/14-package-absent.stderr"
+
+# entry first lines and durable-task clause vs rejected grounds
+git -C "$LANE" show "$REV:corpus/knowledge/mcp-orchestration-contract.md" | nl -ba > "$EV/15-entry-nl.txt"
+
+echo extra_done
+wc -l "$EV/13-ledger-and-counts.txt" "$EV/14-package-absent.txt"
+
+===== ExecCapture line 38 cwd=- =====
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && E=.ufo/waves/round-59/build/ExecCapture && REV=5469c0a58d7986ff8a5f203938ae1c8785a92213 && {
+  printf '%s\n' "cwd: /home/vgpnk/Projects/shokunin/kumitate-shokunin" "command: git rev-parse HEAD && git rev-parse --verify ${REV}^{commit} && git merge-base --is-ancestor ${REV} HEAD; echo ancestor_exit=\$?" > "$E/04-rev.command.txt"
+  {
+    echo "HEAD=$(git rev-parse HEAD)"
+    echo "REV_TYPE=$(git cat-file -t "$REV" 2>&1 || true)"
+    git rev-parse --verify "${REV}^{commit}"
+    if git merge-base --is-ancestor "$REV" HEAD; then echo "ancestor_of_HEAD=yes"; else echo "ancestor_of_HEAD=no exit=$?"; fi
+    echo "--- ls-tree captures ---"
+    git ls-tree "$REV" -- .ufo/waves/round-59/build/ScoutMcpArch/body.html .ufo/waves/round-59/build/ScoutMcpTasks/body.md .ufo/waves/round-59/build/ScoutZenn/body.html .ufo/pins/source-captures.json
+    echo "--- status porcelain (read-only) ---"
+    git status --porcelain -- .ufo/pins/source-captures.json .ufo/waves/round-59/build/ScoutMcpArch/body.html .ufo/waves/round-59/build/ScoutMcpTasks/body.md .ufo/waves/round-59/build/ScoutZenn/body.html scripts/source-capture.mjs
+  } > "$E/04-rev.stdout.txt" 2> "$E/04-rev.stderr.txt"
+  printf '%s\n' "$?" > "$E/04-rev.exit.txt"
+  echo '=== rev ==='
+  cat "$E/04-rev.stdout.txt"
+  echo '=== rev stderr ==='
+  cat "$E/04-rev.stderr.txt"
+}
+
+===== ExecCensus line 31 cwd=- =====
+date -u +%Y-%m-%dT%H:%M:%SZ; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain -- corpus/SOURCES.md; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin log -1 --format='%H %ci %s' -- corpus/SOURCES.md; test -x /home/vgpnk/Projects/shokunin/scripts/sources-census.sh && echo executable || echo not-executable
+
+===== ExecCensus line 38 cwd=- =====
+EV=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCensus
+cd "$EV" || exit 2
+{
+  echo '=== wc ==='
+  wc -l -c stdout.txt stderr.txt exit-code.txt
+  echo '=== codes ==='
+  awk -F '\t' '{print $2}' stdout.txt | sort | uniq -c
+  echo '=== W04 count ==='
+  awk -F '\t' '$2 == "W04" {n++} END {print n+0}' stdout.txt
+  echo '=== E03 count ==='
+  awk -F '\t' '$2 == "E03" {n++} END {print n+0}' stdout.txt
+  echo '=== E04 count ==='
+  awk -F '\t' '$2 == "E04" {n++} END {print n+0}' stdout.txt
+  echo '=== any E ==='
+  awk -F '\t' '$2 ~ /^E/ {n++} END {print n+0}' stdout.txt
+  echo '=== any W not W04 ==='
+  awk -F '\t' '$2 ~ /^W/ && $2 != "W04" {n++} END {print n+0}' stdout.txt
+  echo '=== sha256 ==='
+  sha256sum stdout.txt stderr.txt exit-code.txt command.txt
+  echo '=== diff vs close/census-after.txt ==='
+  diff -u /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/close/census-after.txt stdout.txt; echo "diff_exit=$?"
+  echo '=== diff vs r58 stdout ==='
+  if [ -f /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/ExecCensus/stdout.txt ]; then
+    diff -u /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-58/build/ExecCensus/stdout.txt stdout.txt; echo "r58_diff_exit=$?"
+  else
+    echo 'r58 stdout absent'
+  fi
+  echo '=== HEAD / porcelain SOURCES ==='
+  git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD
+  git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain -- corpus/SOURCES.md
+  echo 'porcelain_done'
+} > counts.txt
+cat counts.txt
+
+===== ExecCiteLive line 24 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecCiteLive"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+SCORE="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+mkdir -p "$EVID"
+date -Iseconds > "$EVID/date.stdout"
+printf '%s\n' "$SCORE" > "$EVID/score-rev.txt"
+
+git -C "$LANE" rev-parse HEAD > "$EVID/head.stdout" 2> "$EVID/head.stderr"
+printf '%s\n' "$?" > "$EVID/head.exit"
+
+git -C "$LANE" rev-parse --verify "${SCORE}^{commit}" > "$EVID/score-rev.stdout" 2> "$EVID/score-rev.stderr"
+printf '%s\n' "$?" > "$EVID/score-rev.exit"
+
+git -C "$LANE" merge-base --is-ancestor "$SCORE" HEAD > "$EVID/score-ancestor.stdout" 2> "$EVID/score-ancestor.stderr"
+printf '%s\n' "$?" > "$EVID/score-ancestor.exit"
+
+node "$LANE/scripts/cite-sources.mjs" > "$EVID/cite-sources.stdout" 2> "$EVID/cite-sources.stderr"
+printf '%s\n' "$?" > "$EVID/cite-sources.exit"
+
+git -C "$LANE" grep -n S121 -- corpus/README.md > "$EVID/grep-s121.stdout" 2> "$EVID/grep-s121.stderr"
+printf '%s\n' "$?" > "$EVID/grep-s121.exit"
+
+# read-only binding: do the gate inputs match the score rev?
+git -C "$LANE" diff --exit-code "$SCORE" -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/diff-score-gate-inputs.stdout" 2> "$EVID/diff-score-gate-inputs.stderr"
+printf '%s\n' "$?" > "$EVID/diff-score-gate-inputs.exit"
+
+git -C "$LANE" status --porcelain --untracked-files=all -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/status-gate-inputs.stdout" 2> "$EVID/status-gate-inputs.stderr"
+printf '%s\n' "$?" > "$EVID/status-gate-inputs.exit"
+
+{
+  printf 'cite-sources.exit=%s\n' "$(cat "$EVID/cite-sources.exit")"
+  printf 'cite-sources.stdout:\n'
+  cat "$EVID/cite-sources.stdout"
+  printf 'cite-sources.stderr:\n'
+  cat "$EVID/cite-sources.stderr"
+  printf 'grep-s121.exit=%s\n' "$(cat "$EVID/grep-s121.exit")"
+  printf 'grep-s121.stdout:\n'
+  cat "$EVID/grep-s121.stdout"
+  printf 'grep-s121.stderr:\n'
+  cat "$EVID/grep-s121.stderr"
+  printf 'head:\n'
+  cat "$EVID/head.stdout"
+  printf 'score-ancestor.exit=%s\n' "$(cat "$EVID/score-ancestor.exit")"
+  printf 'diff-score-gate-inputs.exit=%s\n' "$(cat "$EVID/diff-score-gate-inputs.exit")"
+  printf 'status-gate-inputs:\n'
+  cat "$EVID/status-gate-inputs.stdout"
+}
+
+===== ExecDoctrine59 line 19 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+EV="$LANE/.ufo/waves/round-59/build/ExecDoctrine59"
+mkdir -p "$EV"
+{
+  echo "=== rev-parse ==="
+  git -C "$LANE" rev-parse "${REV}^{commit}"
+  echo "=== cat-file -t ==="
+  git -C "$LANE" cat-file -t "$REV"
+  echo "=== log -1 ==="
+  git -C "$LANE" log -1 --format='hash=%H%nparents=%P%nsubject=%s%ndate=%cI' "$REV"
+  echo "=== HEAD ==="
+  git -C "$LANE" rev-parse HEAD
+  echo "=== ancestor-of-HEAD ==="
+  if git -C "$LANE" merge-base --is-ancestor "$REV" HEAD; then echo yes; else echo no; fi
+  echo "=== named paths in tree ==="
+  for p in \
+    corpus/knowledge/mcp-orchestration-contract.md \
+    corpus/SOURCES.md \
+    corpus/lessons/round-59.md \
+    .ufo/pins/source-captures.json \
+    .ufo/waves/round-59/assimilation/collisions \
+    .ufo/waves/round-59/assimilation/reg-ids \
+    .ufo/waves/round-59/assimilation/staged-ids \
+    .gitattributes
+  do
+    if git -C "$LANE" cat-file -e "${REV}:${p}" 2>/dev/null; then
+      printf 'present %s\n' "$p"
+    else
+      printf 'absent %s\n' "$p"
+    fi
+  done
+  echo "=== export-ignore / export-subst ==="
+  git -C "$LANE" show "${REV}:.gitattributes" 2>/dev/null | grep -E 'export-ignore|export-subst' || echo '(none or no .gitattributes)'
+} > "$EV/rev-identity.txt"
+cat "$EV/rev-identity.txt"
+
+===== ExecDoctrine59 line 22 cwd=- =====
+set -euo pipefail
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+EV="$LANE/.ufo/waves/round-59/build/ExecDoctrine59"
+EXT="$EV/extract"
+rm -rf "$EXT"
+mkdir -p "$EXT"
+# Same extraction the probe uses: git archive of the rev, never the worktree.
+# Path-limited so the evidence tree stays the files the arms read.
+git -C "$LANE" archive "$REV" \
+  corpus/knowledge/mcp-orchestration-contract.md \
+  corpus/SOURCES.md \
+  corpus/lessons/round-59.md \
+  .ufo/pins/source-captures.json \
+  .ufo/waves/round-59/assimilation/collisions \
+  .ufo/waves/round-59/assimilation/reg-ids \
+  .ufo/waves/round-59/assimilation/staged-ids \
+  | tar -x -C "$EXT"
+# Record archive member list and sizes.
+{
+  echo "extractor=git archive $REV | tar -x"
+  echo "extract_root=$EXT"
+  find "$EXT" -type f -printf '%s %p\n' | sort
+} > "$EV/extract-manifest.txt"
+python3 - << 'PY'
+import hashlib, json, re, sys
+from pathlib import Path
+
+lane = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin")
+ev = lane / ".ufo/waves/round-59/build/ExecDoctrine59"
+ext = ev / "extract"
+ENTRY = "corpus/knowledge/mcp-orchestration-contract.md"
+out = []
+
+def sha256(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+def read(rel: str):
+    p = ext / rel
+    if not p.is_file():
+        return None
+    return p.read_bytes()
+
+def text(rel: str):
+    b = read(rel)
+    return None if b is None else b.decode("utf-8")
+
+# --- E1 ---
+entry_b = read(ENTRY)
+entry = entry_b.decode("utf-8") if entry_b is not None else None
+e1 = {"present": entry is not None}
+if entry is None:
+    e1["detail"] = "entry-absent"
+    e1["ok"] = False
+else:
+    lines = entry.split("\n")
+    head = "\n".join(lines[:5])
+    e1["line0"] = lines[0] if lines else ""
+    e1["head5"] = lines[:5]
+    e1["S125"] = bool(re.search(r"S125", lines[0] if lines else ""))
+    e1["S127"] = bool(re.search(r"S127", lines[0] if lines else ""))
+    e1["S136"] = bool(re.search(r"S136", lines[0] if lines else ""))
+    e1["mcp_host"] = bool(re.search(r"modelcontextprotocol\.io", lines[0] if lines else ""))
+    e1["verified_at"] = bool(re.search(r"verified-at:\s*2026-10-24", head))
+    e1["recheck"] = bool(re.search(r"recheck:", head))
+    e1["ok"] = all([e1["S125"], e1["S127"], e1["S136"], e1["mcp_host"], e1["verified_at"], e1["recheck"]])
+    e1["detail"] = "trio" if e1["ok"] else "header-miss"
+    # quote the verified-at / recheck lines from the first five
+    e1["head_hits"] = [ln for ln in lines[:5] if re.search(r"verified-at:|recheck:", ln)]
+
+# --- E2 ---
+clauses = []
+if entry:
+    for i, ln in enumerate(entry.split("\n"), 1):
+        if ln.startswith("- ") and re.search(r"receipt:.+@sha256:[0-9a-f]{64}", ln):
+            clauses.append((i, ln))
+paths = []
+hash_miss = 0
+receipts = []
+for i, ln in clauses:
+    m = re.search(r"receipt:([^@\s]+)@sha256:([0-9a-f]{64})", ln)
+    rec = {"line_no": i, "line": ln, "matched": bool(m)}
+    if not m:
+        hash_miss += 1
+        receipts.append(rec)
+        continue
+    path, digest = m.group(1), m.group(2)
+    paths.append(path)
+    blob = read(path)
+    # receipt blobs are not in the path-limited extract yet
+    rec.update({"path": path, "claimed": digest, "in_limited_extract": blob is not None})
+    receipts.append(rec)
+e2_partial = {
+    "clauses": len(clauses),
+    "distinct": len(set(paths)),
+    "paths": paths,
+    "hash_miss_so_far_unextracted": hash_miss,
+    "receipts": receipts,
+}
+
+# --- E3 rows (pins hashed after blob extract) ---
+sources = text("corpus/SOURCES.md") or ""
+pins_raw = text(".ufo/pins/source-captures.json")
+try:
+    pin_doc = json.loads(pins_raw) if pins_raw else None
+    pin_err = None
+except json.JSONDecodeError as exc:
+    pin_doc = None
+    pin_err = str(exc)
+want = ["S125", "S127", "S136"]
+rows = []
+why = []
+row_ok = True
+for sid in want:
+    row = next((l for l in sources.split("\n") if re.search(rf"^ {{0,3}}\|\s*{sid}\s*\|", l)), None)
+    item = {"id": sid, "row": row}
+    if row is None:
+        row_ok = False
+        why.append(f"{sid}:missing")
+        rows.append(item)
+        continue
+    cells = [c.strip() for c in row.split("|")[1:-1]]
+    item["ncols"] = len(cells)
+    item["status"] = cells[7] if len(cells) > 7 else None
+    item["used_by"] = cells[10] if len(cells) > 10 else None
+    item["escaped_pipe"] = "\\|" in row
+    item["cells"] = cells
+    if len(cells) != 11:
+        row_ok = False
+        why.append(f"{sid}:cols={len(cells)}")
+    if item["status"] != "mined":
+        row_ok = False
+        why.append(f"{sid}:status")
+    if ENTRY not in str(item["used_by"] or ""):
+        row_ok = False
+        why.append(f"{sid}:used-by")
+    if item["escaped_pipe"]:
+        row_ok = False
+        why.append(f"{sid}:escaped-pipe")
+    rows.append(item)
+
+captures = pin_doc.get("captures") if isinstance(pin_doc, dict) and isinstance(pin_doc.get("captures"), list) else []
+pins = []
+for sid in want:
+    pin = next((c for c in captures if isinstance(c, dict) and c.get("sourceId") == sid), None)
+    pins.append(pin)
+
+# --- E4 ---
+lesson = text("corpus/lessons/round-59.md") or ""
+admit_s = "ADMIT mcp-orchestration-contract.md"
+r1_s = "REJECT durable-execution-and-fanout-primitives-2026-10-24.md"
+r2_s = "REJECT durable-execution-failure-detection.md"
+admit = admit_s in lesson
+r1 = r1_s in lesson
+r2 = r2_s in lesson
+flips = len(re.findall(r"flip:", lesson))
+flip_lines = [ln for ln in lesson.split("\n") if "flip:" in ln]
+admit_lines = [ln for ln in lesson.split("\n") if "ADMIT " in ln or ln.startswith("ADMIT")]
+reject_lines = [ln for ln in lesson.split("\n") if "REJECT " in ln]
+e4_ok = admit and r1 and r2 and flips >= 2
+e4_detail = f"admit={str(admit).lower()} fanout={str(r1).lower()} detect={str(r2).lower()} flips={flips}"
+
+# --- E5 ---
+col_b = read(".ufo/waves/round-59/assimilation/collisions")
+reg = text(".ufo/waves/round-59/assimilation/reg-ids") or ""
+staged = text(".ufo/waves/round-59/assimilation/staged-ids") or ""
+empty = col_b is not None and all(l.strip() == "" for l in col_b.decode("utf-8").split("\n"))
+reg_lines = reg.split("\n")
+staged_lines = staged.split("\n")
+reg_has_s124_substr = "S124" in reg
+reg_has_s125_line = "S125" in reg_lines
+staged_has_s125_line = "S125" in staged_lines
+# probe: reg.includes('S124') && !reg.split('\n').includes('S125') && staged.split('\n').includes('S125')
+e5_ok = empty and reg_has_s124_substr and (not reg_has_s125_line) and staged_has_s125_line
+e5_detail = (
+    f"collisions={'absent' if col_b is None else 'present'} empty={str(empty).lower()} "
+    f"regS124={str(reg_has_s124_substr).lower()} stagedS125={str(staged_has_s125_line).lower()}"
+)
+# extra facts the detail string does not show, still from the extraction
+s124_lines = [ln for ln in reg_lines if "S124" in ln]
+s125_reg_hits = [ln for ln in reg_lines if "S125" in ln]
+s125_staged_hits = [ln for ln in staged_lines if ln.strip() == "S125" or "S125" in ln]
+
+report = {
+    "E1": {"ok": e1.get("ok"), "detail": e1.get("detail"), "facts": {k: e1[k] for k in e1 if k not in ("ok", "detail")}},
+    "E2_partial": e2_partial,
+    "E3_rows": {"row_ok": row_ok, "why": why, "rows": rows, "pin_err": pin_err, "pins": pins},
+    "E4": {
+        "ok": e4_ok,
+        "detail": e4_detail,
+        "admit_lines": admit_lines,
+        "reject_lines": reject_lines,
+        "flip_lines": flip_lines,
+        "flip_count": flips,
+    },
+    "E5": {
+        "ok": e5_ok,
+        "detail": e5_detail,
+        "collisions_bytes": None if col_b is None else col_b.decode("utf-8"),
+        "collisions_repr": None if col_b is None else repr(col_b.decode("utf-8")),
+        "reg_line_count": len(reg_lines),
+        "reg_nonempty": sum(1 for ln in reg_lines if ln.strip()),
+        "s124_lines": s124_lines,
+        "s125_reg_hits": s125_reg_hits,
+        "staged_line_count": len(staged_lines),
+        "staged_nonempty": sum(1 for ln in staged_lines if ln.strip()),
+        "s125_staged_hits": s125_staged_hits,
+        "reg_s124_is_whole_line": "S124" in reg_lines,
+    },
+}
+(ev / "reread-partial.json").write_text(json.dumps(report, indent=2) + "\n")
+# also write receipt path list for the next extract
+(ev / "receipt-paths.txt").write_text("\n".join(paths) + ("\n" if paths else ""))
+print(f"E1 detail={e1.get('detail')} ok={e1.get('ok')}")
+print(f"E2 clauses={len(clauses)} paths={len(paths)}")
+print("PATHS")
+for p in paths:
+    print(p)
+print(f"E4 detail={e4_detail} ok={e4_ok}")
+print(f"E5 detail={e5_detail} ok={e5_ok}")
+print(f"E3 row_ok={row_ok} why={why}")
+for pin in pins:
+    if pin:
+        print(f"PIN {pin.get('sourceId')} path={pin.get('path')} sha={pin.get('sha256')}")
+    else:
+        print("PIN missing")
+PY
+echo "=== manifest ==="
+cat "$EV/extract-manifest.txt"
+
+===== ExecMap line 30 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecMap"
+mkdir -p "$EVID"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+{
+  echo "date=$(date -Is)"
+  echo "cwd=$LANE"
+  command -v node
+  node --version
+} > "$EVID/env.txt"
+git -C "$LANE" rev-parse HEAD > "$EVID/head.txt"
+git -C "$LANE" rev-parse "$REV" > "$EVID/score-rev.txt"
+git -C "$LANE" merge-base --is-ancestor "$REV" HEAD
+echo "ancestor_exit=$?" > "$EVID/score-rev-ancestor.exit"
+# read-only status of gate inputs
+git -C "$LANE" status --porcelain --untracked-files=all -- \
+  scripts/readme-map.mjs \
+  .ufo/pins/readme-map.json \
+  corpus/README.md \
+  corpus/knowledge \
+  corpus/lessons \
+  > "$EVID/gate-inputs.status" 
+echo "status_exit=$?" > "$EVID/gate-inputs.status.exit"
+# diff those paths against the score revision (read-only)
+git -C "$LANE" diff --stat "$REV" -- \
+  scripts/readme-map.mjs \
+  .ufo/pins/readme-map.json \
+  corpus/README.md \
+  corpus/knowledge \
+  corpus/lessons \
+  > "$EVID/gate-inputs.diffstat"
+echo "diffstat_exit=$?" >> "$EVID/gate-inputs.diffstat.exit"
+printf '%s\n' "node $LANE/scripts/readme-map.mjs" > "$EVID/readme-map.command"
+set +e
+node "$LANE/scripts/readme-map.mjs" > "$EVID/readme-map.stdout" 2> "$EVID/readme-map.stderr"
+ec=$?
+set -e
+printf '%s\n' "$ec" > "$EVID/readme-map.exit"
+echo "EXIT=$ec"
+echo "STDOUT:"
+cat "$EVID/readme-map.stdout"
+echo "STDERR:"
+cat "$EVID/readme-map.stderr"
+echo "HEAD=$(cat "$EVID/head.txt")"
+echo "SCORE=$(cat "$EVID/score-rev.txt")"
+echo "STATUS:"
+cat "$EVID/gate-inputs.status"
+echo "DIFFSTAT:"
+cat "$EVID/gate-inputs.diffstat"
+wc -c "$EVID/readme-map.stdout" "$EVID/readme-map.stderr"
+
+
+===== ExecMap line 32 cwd=- =====
+set -u
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+EVID="$LANE/.ufo/waves/round-59/build/ExecMap"
+python3 - <<'PY'
+from pathlib import Path
+p=Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecMap")
+for name in ["env.txt","head.txt","score-rev.txt","score-rev-ancestor.exit","gate-inputs.status","gate-inputs.status.exit","gate-inputs.diffstat","gate-inputs.diffstat.exit","readme-map.command","readme-map.stdout","readme-map.stderr","readme-map.exit"]:
+    f=p/name
+    data=f.read_bytes()
+    print(f"===== {name} bytes={len(data)} =====")
+    print(data.decode())
+PY
+stat -c '%y %n' "$LANE/.git/index" "$LANE/.jj" 2>/dev/null || true
+ls -ld "$LANE/.git" "$LANE/.jj" 2>/dev/null || true
+# read-only: did the index content differ from HEAD tree? --no-optional-locks avoids writing
+git -C "$LANE" --no-optional-locks diff --cached --stat --exit-code
+echo "cached_diff_exit=$?"
+git -C "$LANE" --no-optional-locks diff --stat --exit-code -- scripts/readme-map.mjs .ufo/pins/readme-map.json corpus/README.md corpus/knowledge corpus/lessons
+echo "wt_diff_exit=$?"
+
+
+===== ExecProxy line 29 cwd=- =====
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+echo "HEAD=$(git -C "$LANE" rev-parse HEAD)"
+echo "HEAD_SUBJECT=$(git -C "$LANE" log -1 --format='%s')"
+echo "REV_EXISTS=$(git -C "$LANE" cat-file -t "$REV" 2>/dev/null || echo missing)"
+echo "BASE_EXISTS=$(git -C "$LANE" cat-file -t "$BASE" 2>/dev/null || echo missing)"
+if git -C "$LANE" merge-base --is-ancestor "$REV" HEAD; then echo "REV_ANCESTOR_OF_HEAD=yes"; else echo "REV_ANCESTOR_OF_HEAD=no"; fi
+echo "HEAD_EQ_REV=$([[ "$(git -C "$LANE" rev-parse HEAD)" == "$REV" ]] && echo yes || echo no)"
+echo "--- status porcelain ---"
+git -C "$LANE" status --porcelain=v1 --untracked-files=normal | head -n 80
+echo "--- status count ---"
+git -C "$LANE" status --porcelain=v1 --untracked-files=normal | wc -l
+
+===== ExecRepair59 line 50 cwd=- =====
+d=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59
+node -v > "$d/node.version"
+command -v node > "$d/node.path"
+date -Iseconds > "$d/clock.txt"
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse --verify 5469c0a58d7986ff8a5f203938ae1c8785a92213^{commit} > "$d/rev.txt"
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin cat-file -t 5469c0a58d7986ff8a5f203938ae1c8785a92213 > "$d/rev.type"
+echo "---node---"; cat "$d/node.version"; echo "---path---"; cat "$d/node.path"; echo "---clock---"; cat "$d/clock.txt"; echo "---rev---"; cat "$d/rev.txt"; echo "---type---"; cat "$d/rev.type"
+
+===== ExecSelftest line 27 cwd=- =====
+mkdir -p /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest && set +e; node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs --selftest > /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stdout 2> /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stderr; ec=$?; printf '%s\n' "$ec" > /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.exit; echo "EXIT=$ec"; echo '--- stdout ---'; cat /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stdout; echo '--- stderr ---'; cat /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stderr; echo '--- identity ---'; date -u +%Y-%m-%dT%H:%M:%SZ; node --version; sha256sum /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain -- scripts/cite-sources.mjs; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff --exit-code -- scripts/cite-sources.mjs 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- scripts/cite-sources.mjs >/dev/null; echo "diff-vs-score-rev-exit=$?"
+
+===== ExecSelftest line 31 cwd=- =====
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 5469c0a58d7986ff8a5f203938ae1c8785a92213:scripts/cite-sources.mjs | sha256sum | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/blob.sha256; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor_exit=$?"; git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain -- scripts/cite-sources.mjs | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/status.porcelain; wc -c /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stdout /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.stderr /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/selftest.exit; printf 'node %s\n' "$(node --version)" | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/node.version; date -u +%Y-%m-%dT%H:%M:%SZ | tee /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecSelftest/ran-at.txt
+
+===== MutChecksPin line 47 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+PROBE_REL=.ufo/waves/round-59/probe/repair59-probe.mjs
+EVID="$LANE/.ufo/waves/round-59/build/MutChecksPin"
+mkdir -p "$EVID"
+date -Iseconds | tee "$EVID/clock.txt"
+{
+  printf 'command: git -C %s rev-parse HEAD\n' "$LANE"
+  git -C "$LANE" rev-parse HEAD
+  printf 'exit:%s\n' "$?"
+} > "$EVID/head.txt" 2>"$EVID/head.err"
+{
+  printf 'command: git -C %s cat-file -t %s\n' "$LANE" "$REV"
+  git -C "$LANE" cat-file -t "$REV"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/rev.type.txt" 2>"$EVID/rev.type.err"
+{
+  printf 'command: git -C %s rev-parse %s^{commit}\n' "$LANE" "$REV"
+  git -C "$LANE" rev-parse "${REV}^{commit}"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/rev.txt" 2>"$EVID/rev.err"
+{
+  printf 'command: git -C %s rev-parse %s:%s\n' "$LANE" "$REV" "$PROBE_REL"
+  git -C "$LANE" rev-parse "${REV}:${PROBE_REL}"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/probe.blob.rev.txt" 2>"$EVID/probe.blob.rev.err"
+{
+  printf 'command: git -C %s hash-object %s\n' "$LANE" "$PROBE_REL"
+  git -C "$LANE" hash-object "$PROBE_REL"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/probe.hash-object.txt" 2>"$EVID/probe.hash-object.err"
+{
+  printf 'command: git -C %s cat-file -p %s:%s\n' "$LANE" "$REV" "$PROBE_REL"
+  git -C "$LANE" cat-file -p "${REV}:${PROBE_REL}" > "$EVID/probe.at-rev.mjs"
+  printf 'exit:%s\n' "$?"
+  wc -c "$EVID/probe.at-rev.mjs"
+} > "$EVID/probe.at-rev.meta.txt" 2>"$EVID/probe.at-rev.meta.err"
+cmp -s "$EVID/probe.at-rev.mjs" "$LANE/$PROBE_REL"
+printf 'cmp_worktree_vs_committed_exit:%s\n' "$?" | tee "$EVID/probe.cmp.txt"
+sha256sum "$EVID/probe.at-rev.mjs" "$LANE/$PROBE_REL" > "$EVID/probe.sha256.txt"
+{
+  printf 'command: grep -n EXPECTED_CHECKS committed blob\n'
+  grep -n 'EXPECTED_CHECKS' "$EVID/probe.at-rev.mjs"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/expected-checks.committed.txt" 2>"$EVID/expected-checks.committed.err"
+{
+  printf 'command: grep -n REPAIR59_HELD committed blob\n'
+  grep -n 'REPAIR59_HELD' "$EVID/probe.at-rev.mjs"
+  printf 'exit:%s\n' "$?"
+} > "$EVID/held-sites.committed.txt" 2>"$EVID/held-sites.committed.err"
+command -v node
+node --version
+printf 'node_path:%s\n' "$(command -v node)" > "$EVID/node.path"
+node --version > "$EVID/node.version"
+printf 'identity_done\n'
+
+===== MutFamily line 39 cwd=/tmp =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+EVID="$LANE/.ufo/waves/round-59/build/MutFamily"
+SCRIPT="$LANE/scripts/cite-sources.mjs"
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+mkdir -p "$EVID"
+{
+  date -u +%Y-%m-%dT%H:%M:%SZ
+  date +%Y-%m-%dT%H:%M:%S%z
+  node -v
+  command -v node
+  git -C "$LANE" rev-parse HEAD
+  git -C "$LANE" rev-parse --verify "${REV}^{commit}"
+  git -C "$LANE" log -1 --format='%H%n%s' "$REV"
+  git -C "$LANE" merge-base --is-ancestor "$REV" HEAD
+  echo "ancestor_exit=$?"
+  git -C "$LANE" status --porcelain -- scripts/cite-sources.mjs
+  echo "status_exit=$?"
+  git -C "$LANE" diff --exit-code "$REV" -- scripts/cite-sources.mjs
+  echo "diff_exit=$?"
+  git -C "$LANE" hash-object scripts/cite-sources.mjs
+  git -C "$LANE" rev-parse "${REV}:scripts/cite-sources.mjs"
+} > "$EVID/00-identity.txt" 2> "$EVID/00-identity.stderr"
+sha256sum "$SCRIPT" > "$EVID/wt.sha256"
+git -C "$LANE" show "${REV}:scripts/cite-sources.mjs" | sha256sum > "$EVID/blob.sha256"
+git -C "$LANE" show "${REV}:scripts/cite-sources.mjs" | awk 'NR>=1 && NR<=20 || NR==26 || NR>=42 && NR<=50 { printf "%d\t%s\n", NR, $0 }' > "$EVID/rule-excerpt.txt"
+node -v > "$EVID/node.version"
+TMP=$(mktemp -d /tmp/mutfamily.XXXXXXXX)
+case "$TMP" in
+  /tmp/*) ;;
+  *) echo "refusing non-/tmp fixture dir: $TMP" >&2; exit 2 ;;
+esac
+printf '%s\n' "$TMP" > "$EVID/tmp.path"
+printf '%s\n' '| `knowledge/ops-watchers.md` | family S6 and S7 |' > "$TMP/README.md"
+printf '%s\n' '| id | source |' '|---|---|' '| S112 | example |' '| S122 | example |' > "$TMP/SOURCES.md"
+cp -a "$TMP/README.md" "$EVID/readme.fixture"
+cp -a "$TMP/SOURCES.md" "$EVID/sources.fixture"
+sha256sum "$TMP/README.md" "$TMP/SOURCES.md" > "$EVID/fixture.sha256"
+cat -A "$TMP/README.md" > "$EVID/readme.cat-A"
+cat -A "$TMP/SOURCES.md" > "$EVID/sources.cat-A"
+grep -n -o -E 'S[0-9]+' "$TMP/README.md" > "$EVID/readme-tokens.stdout"
+printf '%s\n' "$?" > "$EVID/readme-tokens.exit"
+grep -n -F 'S6' "$TMP/SOURCES.md" > "$EVID/sources-s6.stdout"
+printf '%s\n' "$?" > "$EVID/sources-s6.exit"
+grep -n -F 'S7' "$TMP/SOURCES.md" > "$EVID/sources-s7.stdout"
+printf '%s\n' "$?" > "$EVID/sources-s7.exit"
+{
+  printf '%s\n' "cwd=/tmp"
+  printf '%s\n' "node $SCRIPT --readme $TMP/README.md --sources $TMP/SOURCES.md"
+} > "$EVID/command.txt"
+node "$SCRIPT" --readme "$TMP/README.md" --sources "$TMP/SOURCES.md" > "$EVID/cite.stdout" 2> "$EVID/cite.stderr"
+printf '%s\n' "$?" > "$EVID/cite.exit"
+pwd > "$EVID/cite.pwd"
+printf '%s\n' '| `knowledge/ops-watchers.md` | family S6 and S7 and ghost S121 |' > "$TMP/README-ghost.md"
+cp -a "$TMP/README-ghost.md" "$EVID/control-ghost.readme"
+{
+  printf '%s\n' "node $SCRIPT --readme $TMP/README-ghost.md --sources $TMP/SOURCES.md"
+} > "$EVID/control-ghost.command.txt"
+node "$SCRIPT" --readme "$TMP/README-ghost.md" --sources "$TMP/SOURCES.md" > "$EVID/control-ghost.stdout" 2> "$EVID/control-ghost.stderr"
+printf '%s\n' "$?" > "$EVID/control-ghost.exit"
+printf '%s\n' '| `knowledge/ops-watchers.md` | family S11 |' > "$TMP/README-s11.md"
+printf '%s\n' '| id | source |' '|---|---|' '| S112 | example |' > "$TMP/SOURCES-s11.md"
+cp -a "$TMP/README-s11.md" "$EVID/control-s11.readme"
+cp -a "$TMP/SOURCES-s11.md" "$EVID/control-s11.sources"
+grep -n -F 'S11' "$TMP/SOURCES-s11.md" > "$EVID/control-s11.sources-grep.stdout"
+printf '%s\n' "$?" > "$EVID/control-s11.sources-grep.exit"
+{
+  printf '%s\n' "node $SCRIPT --readme $TMP/README-s11.md --sources $TMP/SOURCES-s11.md"
+} > "$EVID/control-s11.command.txt"
+node "$SCRIPT" --readme "$TMP/README-s11.md" --sources "$TMP/SOURCES-s11.md" > "$EVID/control-s11.stdout" 2> "$EVID/control-s11.stderr"
+printf '%s\n' "$?" > "$EVID/control-s11.exit"
+# prove the executed script path is the lane file, not a /tmp copy
+sha256sum "$SCRIPT" > "$EVID/executed.sha256"
+# lane corpus was not the input
+printf '%s\n' "readme=$TMP/README.md" "sources=$TMP/SOURCES.md" > "$EVID/argv-paths.txt"
+# show fixture dirs are outside the lane
+realpath "$TMP/README.md" "$TMP/SOURCES.md" > "$EVID/fixture.realpath"
+wc -c "$EVID/cite.stdout" "$EVID/cite.stderr" "$EVID/control-ghost.stdout" "$EVID/control-ghost.stderr" "$EVID/control-s11.stdout" "$EVID/control-s11.stderr" > "$EVID/output.wc"
+printf '%s\n' "--- identity ---"
+cat "$EVID/00-identity.txt"
+printf '%s\n' "--- identity.stderr ---"
+cat "$EVID/00-identity.stderr"
+printf '%s\n' "--- hashes ---"
+cat "$EVID/wt.sha256" "$EVID/blob.sha256" "$EVID/executed.sha256"
+printf '%s\n' "--- primary ---"
+printf 'exit=%s\n' "$(cat "$EVID/cite.exit")"
+printf 'stdout:'; cat "$EVID/cite.stdout"
+printf 'stderr-bytes=%s\n' "$(wc -c < "$EVID/cite.stderr")"
+printf '%s\n' "--- sources S6 grep exit ---"
+cat "$EVID/sources-s6.exit"
+printf '%s\n' "--- tokens ---"
+cat "$EVID/readme-tokens.stdout"
+printf '%s\n' "--- ghost control ---"
+printf 'exit=%s\n' "$(cat "$EVID/control-ghost.exit")"
+cat "$EVID/control-ghost.stdout"
+printf '%s\n' "--- s11 control ---"
+printf 'exit=%s\n' "$(cat "$EVID/control-s11.exit")"
+cat "$EVID/control-s11.stdout"
+printf '%s\n' "--- tmp ---"
+cat "$EVID/tmp.path"
+
+
+===== MutGhost line 22 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+git rev-parse HEAD && git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213 && git merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor_exit=$?" && git hash-object scripts/cite-sources.mjs && git rev-parse '5469c0a58d7986ff8a5f203938ae1c8785a92213:scripts/cite-sources.mjs' && sha256sum scripts/cite-sources.mjs && git show '5469c0a58d7986ff8a5f203938ae1c8785a92213:scripts/cite-sources.mjs' | sha256sum && git status --porcelain -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md; echo "status_exit=$?" && git diff --exit-code 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md; echo "diff_exit=$?" && node --version && date -u +%Y-%m-%dT%H:%M:%SZ
+
+===== MutGhost line 26 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutGhost"
+TMP="/tmp/kumitate-r59-MutGhost"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+SCRIPT="$LANE/scripts/cite-sources.mjs"
+mkdir -p "$EVID"
+date -u +%Y-%m-%dT%H:%M:%SZ > "$EVID/00-clock.txt"
+git -C "$LANE" rev-parse HEAD > "$EVID/01-rev-parse.stdout" 2> "$EVID/01-rev-parse.stderr"
+echo $? > "$EVID/01-rev-parse.exit"
+git -C "$LANE" merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD > "$EVID/02-ancestor.stdout" 2> "$EVID/02-ancestor.stderr"
+echo $? > "$EVID/02-ancestor.exit"
+git -C "$LANE" hash-object scripts/cite-sources.mjs > "$EVID/03-hash-object.stdout" 2> "$EVID/03-hash-object.stderr"
+echo $? > "$EVID/03-hash-object.exit"
+git -C "$LANE" rev-parse '5469c0a58d7986ff8a5f203938ae1c8785a92213:scripts/cite-sources.mjs' > "$EVID/04-blob.stdout" 2> "$EVID/04-blob.stderr"
+echo $? > "$EVID/04-blob.exit"
+sha256sum "$SCRIPT" > "$EVID/05-wt.sha256"
+git -C "$LANE" show '5469c0a58d7986ff8a5f203938ae1c8785a92213:scripts/cite-sources.mjs' | sha256sum > "$EVID/06-blob.sha256"
+git -C "$LANE" status --porcelain -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/07-status-before.stdout" 2> "$EVID/07-status-before.stderr"
+echo $? > "$EVID/07-status-before.exit"
+git -C "$LANE" diff --exit-code 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/08-diff.stdout" 2> "$EVID/08-diff.stderr"
+echo $? > "$EVID/08-diff.exit"
+node --version > "$EVID/09-node.version" 2> "$EVID/09-node.stderr"
+cp -a "$TMP/README.md" "$EVID/readme.fixture.md"
+cp -a "$TMP/SOURCES.md" "$EVID/sources.fixture.md"
+sha256sum "$TMP/README.md" "$TMP/SOURCES.md" > "$EVID/10-fixture.sha256"
+# fixture shape, recorded before the gate
+grep -n 'S121' "$TMP/README.md" > "$EVID/11-readme-s121.stdout" 2> "$EVID/11-readme-s121.stderr" || true
+echo $? > "$EVID/11-readme-s121.exit"
+grep -n 'S112' "$TMP/SOURCES.md" > "$EVID/12-sources-s112.stdout" 2> "$EVID/12-sources-s112.stderr" || true
+echo $? > "$EVID/12-sources-s112.exit"
+grep -n 'S121' "$TMP/SOURCES.md" > "$EVID/13-sources-s121.stdout" 2> "$EVID/13-sources-s121.stderr" || true
+echo $? > "$EVID/13-sources-s121.exit"
+# assigned command, cwd not the lane
+CMD=(node "$SCRIPT" --readme "$TMP/README.md" --sources "$TMP/SOURCES.md")
+printf '%q ' "${CMD[@]}" > "$EVID/cite-sources.command"
+printf '\n' >> "$EVID/cite-sources.command"
+printf '%s\n' "$TMP" > "$EVID/cite-sources.pwd"
+set +e
+( cd /tmp && "${CMD[@]}" > "$EVID/cite-sources.stdout" 2> "$EVID/cite-sources.stderr" )
+echo $? > "$EVID/cite-sources.exit"
+set -e
+wc -c "$EVID/cite-sources.stdout" "$EVID/cite-sources.stderr" > "$EVID/cite-sources.wc"
+# control: same SOURCES, map row cites S112 only. Not the assigned command.
+printf '%s\n' '| `knowledge/a.md` | cites S112 |' > "$TMP/README-s112-only.md"
+cp -a "$TMP/README-s112-only.md" "$EVID/readme-s112-only.fixture.md"
+CTRL=(node "$SCRIPT" --readme "$TMP/README-s112-only.md" --sources "$TMP/SOURCES.md")
+printf '%q ' "${CTRL[@]}" > "$EVID/control-clean.command"
+printf '\n' >> "$EVID/control-clean.command"
+set +e
+( cd /tmp && "${CTRL[@]}" > "$EVID/control-clean.stdout" 2> "$EVID/control-clean.stderr" )
+echo $? > "$EVID/control-clean.exit"
+set -e
+# post: lane inputs unchanged
+git -C "$LANE" status --porcelain -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/14-status-after.stdout" 2> "$EVID/14-status-after.stderr"
+echo $? > "$EVID/14-status-after.exit"
+git -C "$LANE" diff --exit-code 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- scripts/cite-sources.mjs corpus/README.md corpus/SOURCES.md > "$EVID/15-diff-after.stdout" 2> "$EVID/15-diff-after.stderr"
+echo $? > "$EVID/15-diff-after.exit"
+echo '--- assigned ---'
+echo -n 'exit='; cat "$EVID/cite-sources.exit"
+echo -n 'stdout='; cat "$EVID/cite-sources.stdout"
+echo -n 'stderr_bytes='; wc -c < "$EVID/cite-sources.stderr"
+echo '--- control ---'
+echo -n 'exit='; cat "$EVID/control-clean.exit"
+echo -n 'stdout='; cat "$EVID/control-clean.stdout"
+echo '--- fixtures ---'
+echo -n 'readme_s121_grep_exit='; cat "$EVID/11-readme-s121.exit"
+echo -n 'sources_s121_grep_exit='; cat "$EVID/13-sources-s121.exit"
+echo -n 'sources_s112='; cat "$EVID/12-sources-s112.stdout"
+echo -n 'readme='; cat "$EVID/readme.fixture.md"
+echo -n 'sources='; cat "$EVID/sources.fixture.md"
+
+
+===== MutGhost line 56 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutGhost"
+TMP="/tmp/kumitate-r59-MutGhost"
+SCRIPT="/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/cite-sources.mjs"
+# authoritative recount: no || true
+set +e
+grep -n 'S121' "$TMP/SOURCES.md" > "$EVID/16-sources-s121.stdout" 2> "$EVID/16-sources-s121.stderr"
+printf '%s\n' "$?" > "$EVID/16-sources-s121.exit"
+grep -n 'S112' "$TMP/SOURCES.md" > "$EVID/17-sources-s112.stdout" 2> "$EVID/17-sources-s112.stderr"
+printf '%s\n' "$?" > "$EVID/17-sources-s112.exit"
+grep -n 'S121' "$TMP/README.md" > "$EVID/18-readme-s121.stdout" 2> "$EVID/18-readme-s121.stderr"
+printf '%s\n' "$?" > "$EVID/18-readme-s121.exit"
+# second assigned run; cwd recorded inside the same subshell
+(
+  cd /tmp
+  pwd > "$EVID/20-assigned.pwd"
+  node "$SCRIPT" --readme "$TMP/README.md" --sources "$TMP/SOURCES.md" > "$EVID/20-assigned.stdout" 2> "$EVID/20-assigned.stderr"
+  printf '%s\n' "$?" > "$EVID/20-assigned.exit"
+)
+printf '%s\n' "node $SCRIPT --readme $TMP/README.md --sources $TMP/SOURCES.md" > "$EVID/20-assigned.command"
+wc -c "$EVID/20-assigned.stdout" "$EVID/20-assigned.stderr" > "$EVID/20-assigned.wc"
+echo '--- recount ---'
+echo -n 'sources_s121_exit='; cat "$EVID/16-sources-s121.exit"
+echo -n 'sources_s121_stdout_bytes='; wc -c < "$EVID/16-sources-s121.stdout"
+echo -n 'sources_s112_exit='; cat "$EVID/17-sources-s112.exit"
+echo -n 'sources_s112_line='; cat "$EVID/17-sources-s112.stdout"
+echo -n 'readme_s121_exit='; cat "$EVID/18-readme-s121.exit"
+echo -n 'readme_s121_line='; cat "$EVID/18-readme-s121.stdout"
+echo '--- rerun ---'
+echo -n 'pwd='; cat "$EVID/20-assigned.pwd"
+echo -n 'exit='; cat "$EVID/20-assigned.exit"
+echo -n 'stdout='; cat "$EVID/20-assigned.stdout"
+echo -n 'stderr_bytes='; wc -c < "$EVID/20-assigned.stderr"
+cmp -s "$EVID/cite-sources.stdout" "$EVID/20-assigned.stdout"; echo "stdout_cmp_exit=$?"
+
+
+===== MutPipeRow line 30 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+date -Iseconds; git rev-parse HEAD; git cat-file -t 5469c0a58d7986ff8a5f203938ae1c8785a92213; git merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor_exit=$?"; git status --porcelain -- corpus/SOURCES.md; git diff --exit-code 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- corpus/SOURCES.md; echo "diff_exit=$?"
+
+===== MutPipeRow line 45 cwd=- =====
+set -u
+EV="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+CENSUS="/home/vgpnk/Projects/shokunin/scripts/sources-census.sh"
+cd "$LANE"
+
+{
+  echo "date=$(date -Iseconds)"
+  echo -n "HEAD="; git rev-parse HEAD
+  echo -n "rev_type="; git cat-file -t "$REV"
+  git merge-base --is-ancestor "$REV" HEAD
+  echo "ancestor_exit=$?"
+  echo -n "porcelain="; git status --porcelain -- corpus/SOURCES.md | wc -c
+  git status --porcelain -- corpus/SOURCES.md
+  git diff --exit-code "$REV" -- corpus/SOURCES.md
+  echo "diff_exit=$?"
+  echo -n "blob="; git rev-parse "$REV:corpus/SOURCES.md"
+  echo "--- sha256 worktree ---"
+  sha256sum corpus/SOURCES.md
+  echo "--- sha256 git-show ---"
+  git show "$REV:corpus/SOURCES.md" | sha256sum
+  echo "--- versions ---"
+  python3 --version
+  awk --version | head -1
+  gawk --version | head -1
+  command -v awk
+  command -v gawk
+} > "$EV/00-identity.txt" 2> "$EV/00-identity.stderr"
+echo "identity_exit=$?"
+
+git show "$REV:corpus/SOURCES.md" > "$EV/sources.at-rev.md"
+echo "show_exit=$?"
+
+python3 "$EV/count.py" "$EV/sources.at-rev.md" > "$EV/01-count.stdout" 2> "$EV/01-count.stderr"
+echo "count_exit=$?" | tee "$EV/01-count.exit"
+
+python3 "$EV/count.py" "$LANE/corpus/SOURCES.md" > "$EV/01b-count-worktree.stdout" 2> "$EV/01b-count-worktree.stderr"
+echo "worktree_count_exit=$?" | tee "$EV/01b-count-worktree.exit"
+
+gawk -F'|' '
+  $0 ~ /^ {0,3}\|[[:space:]]*S(125|127|136)[[:space:]]*\|/ {
+    raw_nf = NF
+    line = $0
+    sub(/^ {0,3}/, "", line)
+    $0 = line
+    id = $2
+    gsub(/^[ \t]+|[ \t]+$/, "", id)
+    printf "id=%s NR=%d raw_NF=%d census_NF=%d fields=%d split_len=%d cells=%d\n", id, NR, raw_nf, NF, NF-2, NF, NF-2
+  }
+' "$EV/sources.at-rev.md" > "$EV/02-gawk.stdout" 2> "$EV/02-gawk.stderr"
+echo "gawk_exit=$?" | tee "$EV/02-gawk.exit"
+
+# contract one-liner, scoped to the three ids, then whole-file malformed count
+awk -F'|' '/^\|[[:space:]]*S(125|127|136)[[:space:]]*\|/ { id=$2; gsub(/[[:space:]]/,"",id); printf "id=%s NF=%d fields=%d malformed=%d\n", id, NF, NF-2, (NF!=13) }' "$EV/sources.at-rev.md" > "$EV/03-contract-awk.stdout" 2> "$EV/03-contract-awk.stderr"
+echo "contract_awk_exit=$?" | tee "$EV/03-contract-awk.exit"
+awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++; printf "malformed id=%s NF=%d fields=%d\n", $2, NF, NF-2} END{print "malformed_rows=" n+0}' "$EV/sources.at-rev.md" > "$EV/03b-contract-malformed.stdout" 2> "$EV/03b-contract-malformed.stderr"
+echo "malformed_exit=$?" | tee "$EV/03b-contract-malformed.exit"
+
+# bash IFS drops a trailing empty field; record it so it is not quoted as the census length
+python3 - <<'PY' > "$EV/04-bash-ifs.stdout" 2> "$EV/04-bash-ifs.stderr"
+import subprocess, pathlib
+text = pathlib.Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/sources.at-rev.md").read_text()
+rows = []
+for line in text.splitlines():
+    if line.startswith("| S125 |") or line.startswith("| S127 |") or line.startswith("| S136 |"):
+        rows.append(line)
+script = r'''
+set -u
+while IFS= read -r line; do
+  id=$(printf "%s" "$line" | awk -F"|" "{print \$2}" | tr -d " ")
+  IFS="|" read -r -a cells <<< "$line"
+  printf "id=%s bash_IFS_len=%s\n" "$id" "${#cells[@]}"
+done
+'''
+proc = subprocess.run(["bash", "-c", script], input="\n".join(rows)+"\n", text=True, capture_output=True)
+print(proc.stdout, end="")
+print(proc.stderr, end="", file=__import__("sys").stderr)
+raise SystemExit(proc.returncode)
+PY
+echo "bash_ifs_exit=$?" | tee "$EV/04-bash-ifs.exit"
+
+bash "$CENSUS" validate --file "$LANE/corpus/SOURCES.md" > "$EV/05-census-live.stdout" 2> "$EV/05-census-live.stderr"
+echo "census_live_exit=$?" | tee "$EV/05-census-live.exit"
+awk -F'\t' '$2=="E01" && ($3 ~ /S125/ || $3 ~ /S127/ || $3 ~ /S136/)' "$EV/05-census-live.stdout" > "$EV/05-census-live-e01-trio.stdout"
+echo "trio_e01_lines=$(wc -l < "$EV/05-census-live-e01-trio.stdout")"
+awk -F'\t' '$2=="E01"' "$EV/05-census-live.stdout" > "$EV/05-census-live-e01-all.stdout"
+echo "all_e01_lines=$(wc -l < "$EV/05-census-live-e01-all.stdout")"
+
+python3 "$EV/mutate.py" "$EV/sources.at-rev.md" "$EV" > "$EV/06-mutate.stdout" 2> "$EV/06-mutate.stderr"
+echo "mutate_exit=$?" | tee "$EV/06-mutate.exit"
+
+for name in sources.mut-s125-extra-cell sources.mut-s127-drop-pipe sources.mut-s136-interior-pipe; do
+  python3 "$EV/count.py" "$EV/${name}.md" > "$EV/07-${name}.count.stdout" 2> "$EV/07-${name}.count.stderr"
+  echo "count_exit=$?" > "$EV/07-${name}.count.exit"
+  awk -F'|' '/^\|[[:space:]]*S(125|127|136)[[:space:]]*\|/ { id=$2; gsub(/[[:space:]]/,"",id); printf "id=%s NF=%d fields=%d malformed=%d\n", id, NF, NF-2, (NF!=13) }' "$EV/${name}.md" > "$EV/07-${name}.awk.stdout" 2> "$EV/07-${name}.awk.stderr"
+  echo "awk_exit=$?" > "$EV/07-${name}.awk.exit"
+  bash "$CENSUS" validate --file "$EV/${name}.md" > "$EV/07-${name}.census.stdout" 2> "$EV/07-${name}.census.stderr"
+  echo "census_exit=$?" > "$EV/07-${name}.census.exit"
+  awk -F'\t' '$2=="E01" && ($3 ~ /S125/ || $3 ~ /S127/ || $3 ~ /S136/)' "$EV/07-${name}.census.stdout" > "$EV/07-${name}.census-e01-trio.stdout"
+done
+
+echo DONE
+
+
+===== RevCapabilityRows line 12 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+git rev-parse HEAD && git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213 && git status --porcelain --untracked-files=all -- SCORECARD.md && git diff --stat 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- SCORECARD.md && git log -1 --format='%H %s' -- SCORECARD.md
+
+===== RevCapabilityRows line 23 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+date -Iseconds > .ufo/waves/round-59/build/RevCapabilityRows/date.txt && git rev-parse HEAD > .ufo/waves/round-59/build/RevCapabilityRows/head.txt && git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213 > .ufo/waves/round-59/build/RevCapabilityRows/score-rev.txt && git status --porcelain --untracked-files=all -- SCORECARD.md > .ufo/waves/round-59/build/RevCapabilityRows/scorecard.status && git diff --stat 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- SCORECARD.md > .ufo/waves/round-59/build/RevCapabilityRows/scorecard.diffstat && node .ufo/waves/round-59/build/RevCapabilityRows/extract.mjs > .ufo/waves/round-59/build/RevCapabilityRows/extract.stdout 2> .ufo/waves/round-59/build/RevCapabilityRows/extract.stderr; echo $? > .ufo/waves/round-59/build/RevCapabilityRows/extract.exit; sha256sum .ufo/waves/round-59/build/RevCapabilityRows/extract.stdout > .ufo/waves/round-59/build/RevCapabilityRows/extract.stdout.sha256; wc -c .ufo/waves/round-59/build/RevCapabilityRows/extract.stdout .ufo/waves/round-59/build/RevCapabilityRows/extract.stderr .ufo/waves/round-59/build/RevCapabilityRows/scorecard.status .ufo/waves/round-59/build/RevCapabilityRows/scorecard.diffstat
+
+===== RevCapabilityRows line 32 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+node -v && git archive 5469c0a58d7986ff8a5f203938ae1c8785a92213 SCORECARD.md | tar -xO SCORECARD.md | sha256sum && git diff --cached --stat && git status --porcelain --untracked-files=no
+
+===== RevPins line 35 cwd=- =====
+mkdir -p /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevPins && date -Iseconds && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse --verify '5469c0a58d7986ff8a5f203938ae1c8785a92213^{commit}' && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor_exit=$?" && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin cat-file -t '5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/pins/readme-map.json' && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse '5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/pins/readme-map.json' && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain --untracked-files=all -- .ufo/pins/readme-map.json corpus/lessons/round-58-verifier-spotcheck.md corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md; echo "status_exit=$?" && git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff --stat 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- .ufo/pins/readme-map.json corpus/lessons/round-58-verifier-spotcheck.md corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md; echo "diff_exit=$?"
+
+===== RevPins line 38 cwd=- =====
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+OUT="$LANE/.ufo/waves/round-59/build/RevPins"
+cd "$LANE"
+
+{
+  echo "ran_at=$(date -Iseconds)"
+  echo "head=$(git rev-parse HEAD)"
+  echo "score=$(git rev-parse --verify "${REV}^{commit}")"
+  git merge-base --is-ancestor "$REV" HEAD
+  echo "ancestor_exit=$?"
+  echo "pin_type=$(git cat-file -t "${REV}:.ufo/pins/readme-map.json")"
+  echo "pin_blob=$(git rev-parse "${REV}:.ufo/pins/readme-map.json")"
+  echo "worktree_hash=$(git hash-object .ufo/pins/readme-map.json)"
+} > "$OUT/00-identity.txt"
+
+git status --porcelain --untracked-files=all -- .ufo/pins/readme-map.json corpus/lessons/round-58-verifier-spotcheck.md corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md > "$OUT/01-status.txt"
+echo "status_exit=$?" >> "$OUT/01-status.txt"
+git diff --stat "$REV" -- .ufo/pins/readme-map.json corpus/lessons/round-58-verifier-spotcheck.md corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md > "$OUT/02-diffstat.txt"
+echo "diff_exit=$?" >> "$OUT/02-diffstat.txt"
+
+git cat-file -p "${REV}:.ufo/pins/readme-map.json" > "$OUT/03-pin-at-rev.json"
+python3 - << 'PY' > "$OUT/04-membership.txt"
+import json, pathlib
+p = pathlib.Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevPins/03-pin-at-rev.json")
+raw = p.read_bytes()
+text = raw.decode("utf-8")
+doc = json.loads(text)
+want = [
+    "lessons/round-58-verifier-spotcheck.md",
+    "lessons/round-59.md",
+    "knowledge/mcp-orchestration-contract.md",
+]
+print(f"version={doc.get('version')!r}")
+print(f"covered_type={type(doc.get('covered')).__name__}")
+covered = doc["covered"]
+print(f"covered_len={len(covered)}")
+print(f"unique={len(set(covered))}")
+print(f"dups={sorted([x for x in set(covered) if covered.count(x) != 1])}")
+lines = text.splitlines()
+for w in want:
+    exact = covered.count(w)
+    substr = [x for x in covered if w in x and x != w]
+    prefix = [x for x in covered if x.endswith(w) and x != w]
+    raw_hits = []
+    for i, line in enumerate(lines, 1):
+        if w in line:
+            raw_hits.append((i, line))
+    print(f"--- {w}")
+    print(f"exact_members={exact}")
+    print(f"substring_other={substr}")
+    print(f"endswith_other={prefix}")
+    print(f"raw_hit_count={len(raw_hits)}")
+    for i, line in raw_hits:
+        print(f"LINE {i}:{line}")
+# near misses
+near = [x for x in covered if "round-58" in x or "round-59" in x or "mcp-orchestration" in x or "verifier-spotcheck" in x]
+print("--- near")
+for x in near:
+    print(x)
+PY
+
+python3 - << 'PY' > "$OUT/05-files.txt"
+import os, hashlib, subprocess
+LANE = "/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REV = "5469c0a58d7986ff8a5f203938ae1c8785a92213"
+rels = [
+    "corpus/lessons/round-58-verifier-spotcheck.md",
+    "corpus/lessons/round-59.md",
+    "corpus/knowledge/mcp-orchestration-contract.md",
+]
+# also attack wrong prefixes
+alts = [
+    "lessons/round-58-verifier-spotcheck.md",
+    "lessons/round-59.md",
+    "knowledge/mcp-orchestration-contract.md",
+    "corpus/knowledge/lessons/round-59.md",
+]
+for rel in rels + alts:
+    wt = os.path.join(LANE, rel)
+    exists = os.path.lexists(wt)
+    is_link = os.path.islink(wt) if exists else False
+    is_file = os.path.isfile(wt) if exists else False
+    size = os.path.getsize(wt) if exists and not is_link else None
+    if exists and is_file and not is_link:
+        h = hashlib.sha256(open(wt, "rb").read()).hexdigest()
+    else:
+        h = None
+    r = subprocess.run(["git", "-C", LANE, "cat-file", "-t", f"{REV}:{rel}"], capture_output=True, text=True)
+    blob = subprocess.run(["git", "-C", LANE, "rev-parse", f"{REV}:{rel}"], capture_output=True, text=True)
+    print(f"path={rel}")
+    print(f"  lexists={exists} islink={is_link} isfile={is_file} size={size} sha256={h}")
+    print(f"  git_type_exit={r.returncode} git_type={r.stdout.strip()!r} git_err={r.stderr.strip()!r}")
+    print(f"  git_blob={blob.stdout.strip()!r} blob_exit={blob.returncode}")
+PY
+
+# raw pin lines via nl, exact three
+git cat-file -p "${REV}:.ufo/pins/readme-map.json" | nl -ba | awk 'index($0, "lessons/round-58-verifier-spotcheck.md") || index($0, "lessons/round-59.md") || index($0, "knowledge/mcp-orchestration-contract.md")' > "$OUT/06-pin-lines-nl.txt"
+
+# file mode at rev
+{
+  for p in corpus/lessons/round-58-verifier-spotcheck.md corpus/lessons/round-59.md corpus/knowledge/mcp-orchestration-contract.md; do
+    echo "== $p"
+    git ls-tree "$REV" -- "$p"
+    git cat-file -t "${REV}:$p"
+    git rev-parse "${REV}:$p"
+    stat -c 'mode=%f type=%F size=%s links=%h' "$p"
+    sha256sum "$p"
+  done
+} > "$OUT/07-file-identity.txt"
+
+# covered index positions
+python3 - << 'PY' > "$OUT/08-indexes.txt"
+import json
+doc = json.load(open("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevPins/03-pin-at-rev.json"))
+want = [
+    "lessons/round-58-verifier-spotcheck.md",
+    "lessons/round-59.md",
+    "knowledge/mcp-orchestration-contract.md",
+]
+for w in want:
+    idxs = [i for i, x in enumerate(doc["covered"]) if x == w]
+    print(f"{w} indexes={idxs} count={len(idxs)}")
+print(f"covered_len={len(doc['covered'])}")
+print(f"version={doc['version']}")
+print(f"keys={sorted(doc.keys())}")
+PY
+
+wc -l "$OUT/03-pin-at-rev.json" "$OUT/06-pin-lines-nl.txt"
+echo DONE
+
+
+===== RevS121Gone line 41 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+date -Is && git rev-parse HEAD && git rev-parse --verify 5469c0a58d7986ff8a5f203938ae1c8785a92213 && git merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor-exit:$?" && git status --porcelain --untracked-files=all -- corpus/README.md && echo "status-exit:$?" && git diff --stat 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- corpus/README.md && echo "diffstat-exit:$?" && git rev-parse 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f
+
+===== RevS121Gone line 44 cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin =====
+mkdir -p .ufo/waves/round-59/build/RevS121Gone && python3 - << 'PY'
+import hashlib, re, subprocess
+from pathlib import Path
+
+lane = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin")
+out = lane / ".ufo/waves/round-59/build/RevS121Gone"
+rev = "5469c0a58d7986ff8a5f203938ae1c8785a92213"
+base = "0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+ID_RE = re.compile(r"\bS[0-9]{3,}\b")
+ROW_RE = re.compile(r"^\s*\| ")
+
+def blob(rev):
+    r = subprocess.run(
+        ["git", "-C", str(lane), "show", f"{rev}:corpus/README.md"],
+        check=True, capture_output=True,
+    )
+    return r.stdout
+
+def cells(line):
+    # markdown row: leading |, trailing |, split on unescaped |
+    body = line.rstrip("\n")
+    if body.endswith("|"):
+        body = body[:-1]
+    if body.startswith("|"):
+        body = body[1:]
+    return [c.strip() for c in body.split("|")]
+
+score = blob(rev)
+base_b = blob(base)
+(out / "score-readme.sha256").write_text(hashlib.sha256(score).hexdigest() + "\n")
+(out / "score-readme.bytes").write_text(str(len(score)) + "\n")
+
+lines = score.decode("utf-8").splitlines()
+base_lines = base_b.decode("utf-8").splitlines()
+
+def find_rows(ls, needle):
+    hits = []
+    for i, line in enumerate(ls, 1):
+        if needle in line and ROW_RE.match(line):
+            hits.append((i, line))
+    return hits
+
+targets = {
+    "failure-recovery-replay": "`knowledge/failure-recovery-replay.md`",
+    "round-58-lesson": "`lessons/round-58.md`",
+}
+
+report = []
+for name, needle in targets.items():
+    hits = [(i, line) for i, line in enumerate(lines, 1) if line.startswith("| ") and needle in line.split("|")[1]]
+    report.append(f"## {name} exact-entry-cell hits={len(hits)}")
+    for i, line in hits:
+        c = cells(line)
+        ids = ID_RE.findall(line)
+        src = c[2] if len(c) > 2 else "<missing>"
+        report.append(f"line={i}")
+        report.append(f"ncols={len(c)}")
+        report.append(f"entry={c[0] if c else ''}")
+        report.append(f"row-ids={','.join(ids) if ids else '(none)'}")
+        report.append(f"row-has-S112={'S112' in ids}")
+        report.append(f"row-has-S121={'S121' in ids}")
+        report.append("SOURCE-ID-CELL-BEGIN")
+        report.append(src)
+        report.append("SOURCE-ID-CELL-END")
+        report.append(f"source-id-cell-ids={','.join(ID_RE.findall(src)) or '(none)'}")
+        report.append(f"source-id-cell-sha256={hashlib.sha256(src.encode()).hexdigest()}")
+        (out / f"{name}.line").write_text(line + "\n")
+        (out / f"{name}.source-id-cell.txt").write_text(src + "\n")
+    report.append("")
+
+# map-row attack: gate definition is a line whose first non-space chars are "| "
+map_rows = [(i, line) for i, line in enumerate(lines, 1) if ROW_RE.match(line)]
+s121_rows = []
+s121_sub_rows = []
+for i, line in map_rows:
+    ids = ID_RE.findall(line)
+    if "S121" in ids:
+        s121_rows.append((i, ids, line))
+    if "S121" in line or "s121" in line.lower():
+        s121_sub_rows.append((i, line))
+
+# coverage-map section only
+start = next(i for i, l in enumerate(lines) if l.strip() == "## Coverage map")
+end = next((i for i, l in enumerate(lines) if i > start and l.startswith("## ")), len(lines))
+section = [(i + 1, lines[i]) for i in range(start, end) if ROW_RE.match(lines[i])]
+section_s121 = [(i, line) for i, line in section if "S121" in ID_RE.findall(line)]
+
+# whole-file byte scan
+raw_hits = []
+text = score.decode("utf-8")
+for m in re.finditer(r"S121", text):
+    raw_hits.append(m.start())
+ci_hits = [m.start() for m in re.finditer(r"s121", text, re.I)]
+
+attack = []
+attack.append(f"map-rows={len(map_rows)}")
+attack.append(f"coverage-map-pipe-lines={len(section)} section-lines={start+1}-{end}")
+attack.append(f"map-rows-with-word-S121={len(s121_rows)}")
+attack.append(f"map-rows-with-substring-S121-ci={len(s121_sub_rows)}")
+attack.append(f"coverage-section-word-S121={len(section_s121)}")
+attack.append(f"file-byte-S121={len(raw_hits)} offsets={raw_hits}")
+attack.append(f"file-ci-s121={len(ci_hits)}")
+attack.append("ATTACK-ROWS-BEGIN")
+if not s121_rows and not s121_sub_rows:
+    attack.append("(none)")
+else:
+    for i, ids, line in s121_rows:
+        attack.append(f"WORD line={i} ids={ids}")
+    for i, line in s121_sub_rows:
+        attack.append(f"SUB line={i} {line}")
+attack.append("ATTACK-ROWS-END")
+
+# base contrast for the same two entry cells
+attack.append("")
+attack.append("## base contrast (not the scored surface)")
+for name, needle in targets.items():
+    hits = [(i, line) for i, line in enumerate(base_lines, 1) if line.startswith("| ") and needle in line.split("|")[1]]
+    attack.append(f"{name} base-hits={len(hits)}")
+    for i, line in hits:
+        ids = ID_RE.findall(line)
+        src = cells(line)[2]
+        attack.append(f"base-line={i} row-ids={','.join(ids)} source-cell-ids={','.join(ID_RE.findall(src)) or '(none)'}")
+        (out / f"{name}.base-line").write_text(line + "\n")
+
+(out / "extract.txt").write_text("\n".join(report) + "\n")
+(out / "attack.txt").write_text("\n".join(attack) + "\n")
+print("\n".join(report))
+print("---")
+print("\n".join(attack))
+PY
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin hash-object corpus/README.md
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213:corpus/README.md
+printf '%s\n' 'git grep -n -E S121 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- corpus/README.md' > .ufo/waves/round-59/build/RevS121Gone/score-grep.command.txt
+git grep -n -E 'S121' 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- corpus/README.md > .ufo/waves/round-59/build/RevS121Gone/score-grep.stdout.txt
+echo "score-grep-exit:$?" | tee .ufo/waves/round-59/build/RevS121Gone/score-grep.exit.txt
+printf '%s\n' 'git grep -n -E S121 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f -- corpus/README.md' > .ufo/waves/round-59/build/RevS121Gone/base-grep.command.txt
+git grep -n -E 'S121' 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f -- corpus/README.md > .ufo/waves/round-59/build/RevS121Gone/base-grep.stdout.txt
+echo "base-grep-exit:$?" | tee .ufo/waves/round-59/build/RevS121Gone/base-grep.exit.txt
+date -Is > .ufo/waves/round-59/build/RevS121Gone/clock.txt
+git rev-parse HEAD > .ufo/waves/round-59/build/RevS121Gone/head.txt
+git status --porcelain --untracked-files=all -- corpus/README.md > .ufo/waves/round-59/build/RevS121Gone/readme.status.txt
+echo "status-exit:$?" >> .ufo/waves/round-59/build/RevS121Gone/readme.status.txt
+git diff --stat 5469c0a58d7986ff8a5f203938ae1c8785a92213 -- corpus/README.md > .ufo/waves/round-59/build/RevS121Gone/readme.diffstat.txt
+echo "diffstat-exit:$?" >> .ufo/waves/round-59/build/RevS121Gone/readme.diffstat.txt
+
+
+===== RevS125Quote line 66 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote"
+QUOTE="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt"
+BODY="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+
+echo "python3 independent find on stripped texts" > "$EVID/04-refind.command"
+python3 - << 'PY' > "$EVID/04-refind.stdout" 2> "$EVID/04-refind.stderr"
+from pathlib import Path
+evid = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevS125Quote")
+quote = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt")
+sentence = quote.read_text(encoding="utf-8").rstrip("\n")
+print(f"sentence={sentence}")
+print(f"words={len(sentence.split())}")
+print(f"le25={len(sentence.split()) <= 25}")
+for name in ("stripped-primary.txt", "stripped-visible.txt", "stripped-boundary-spaced.txt"):
+    text = (evid / name).read_text(encoding="utf-8")
+    if text.endswith("\n"):
+        text = text[:-1]
+    off = text.find(sentence)
+    print(f"{name} count={text.count(sentence)} offset={off} chars={len(text)}")
+    if off >= 0:
+        nxt = text[off + len(sentence): off + len(sentence) + 12]
+        print(f"{name} next12={nxt!r}")
+PY
+echo $? > "$EVID/04-refind.exit"
+
+echo "python3 raw window and regex cross-check" > "$EVID/05-raw-window.command"
+python3 - << 'PY' > "$EVID/05-raw-window.stdout" 2> "$EVID/05-raw-window.stderr"
+import hashlib
+import re
+from html import unescape
+from pathlib import Path
+
+quote = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/receipts/quote-s125.txt")
+body_path = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutMcpArch/body.html")
+sentence = quote.read_text(encoding="utf-8").rstrip("\n")
+body = body_path.read_text(encoding="utf-8")
+needle = "Every client request carries the"
+idxs = []
+start = 0
+while True:
+    i = body.find(needle, start)
+    if i < 0:
+        break
+    idxs.append(i)
+    start = i + 1
+print(f"RAW_NEEDLE_COUNT {len(idxs)}")
+print(f"RAW_NEEDLE_OFFSETS {' '.join(str(i) for i in idxs)}")
+print(f"RAW_SENTENCE_COUNT {body.count(sentence)}")
+if idxs:
+    i = idxs[0]
+    frag = body[i:i+420]
+    print("RAW_WINDOW_BEGIN")
+    print(frag)
+    print("RAW_WINDOW_END")
+    print(f"RAW_WINDOW_HAS_CODE_TAG {'<code' in frag}")
+
+# Regex tag-strip: drop comments, replace tags with empty, unescape, collapse whitespace.
+no_comments = re.sub(r"<!--.*?-->", "", body, flags=re.S)
+no_tags = re.sub(r"<[^>]*>", "", no_comments)
+plain = re.sub(r"\s+", " ", unescape(no_tags)).strip()
+off = plain.find(sentence)
+print(f"REGEX_EMPTY_TAG_COUNT {plain.count(sentence)} offset={off} chars={len(plain)}")
+if off >= 0:
+    print(f"REGEX_EMPTY_TAG_NEXT {plain[off+len(sentence):off+len(sentence)+1]!r}")
+
+spaced = re.sub(r"<[^>]*>", " ", no_comments)
+spaced = re.sub(r"\s+", " ", unescape(spaced)).strip()
+off2 = spaced.find(sentence)
+print(f"REGEX_SPACE_TAG_COUNT {spaced.count(sentence)} offset={off2} chars={len(spaced)}")
+
+punct = re.findall(r"[A-Za-z0-9]+", sentence)
+print(f"PUNCT_SPLIT_WORDS {len(punct)}")
+print(f"PUNCT_SPLIT_LE_25 {len(punct) <= 25}")
+print(f"PUNCT_SPLIT_TOKENS {' '.join(punct)}")
+print(f"REGEX_SHA {hashlib.sha256(plain.encode()).hexdigest()}")
+PY
+echo $? > "$EVID/05-raw-window.exit"
+
+echo "git cat-file -e capture and quote (read-only)" > "$EVID/06-git-blob.command"
+{
+  echo "head=$(git -C "$LANE" rev-parse HEAD)"
+  if git -C "$LANE" cat-file -e "HEAD:.ufo/waves/round-59/build/ScoutMcpArch/body.html" 2>/tmp/revs125-git-body.err; then
+    echo "body_at_head=present"
+  else
+    echo "body_at_head=absent"
+    echo "body_cat_file_stderr=$(tr '\n' ' ' < /tmp/revs125-git-body.err)"
+  fi
+  if git -C "$LANE" cat-file -e "HEAD:.ufo/waves/round-59/receipts/quote-s125.txt" 2>/tmp/revs125-git-quote.err; then
+    echo "quote_at_head=present"
+  else
+    echo "quote_at_head=absent"
+    echo "quote_cat_file_stderr=$(tr '\n' ' ' < /tmp/revs125-git-quote.err)"
+  fi
+} > "$EVID/06-git-blob.stdout" 2> "$EVID/06-git-blob.stderr"
+echo $? > "$EVID/06-git-blob.exit"
+rm -f /tmp/revs125-git-body.err /tmp/revs125-git-quote.err
+
+echo "sha256sum stripped texts" > "$EVID/07-stripped-sha.command"
+sha256sum "$EVID/stripped-primary.txt" "$EVID/stripped-visible.txt" "$EVID/stripped-boundary-spaced.txt" > "$EVID/07-stripped-sha.stdout" 2> "$EVID/07-stripped-sha.stderr"
+echo $? > "$EVID/07-stripped-sha.exit"
+
+echo "===== 04-refind ====="
+cat "$EVID/04-refind.stdout"
+echo "refind_exit=$(cat "$EVID/04-refind.exit") stderr_bytes=$(wc -c < "$EVID/04-refind.stderr")"
+echo "===== 05-raw-window ====="
+cat "$EVID/05-raw-window.stdout"
+echo "raw_exit=$(cat "$EVID/05-raw-window.exit") stderr_bytes=$(wc -c < "$EVID/05-raw-window.stderr")"
+echo "===== 06-git ====="
+cat "$EVID/06-git-blob.stdout"
+echo "git_exit=$(cat "$EVID/06-git-blob.exit")"
+echo "===== 07-sha ====="
+cat "$EVID/07-stripped-sha.stdout"
+echo "sha_exit=$(cat "$EVID/07-stripped-sha.exit")"
+
+
+===== RevUsedBy line 30 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/RevUsedBy"
+mkdir -p "$EVID"
+cd /home/vgpnk/Projects/shokunin/kumitate-shokunin
+REV=5469c0a58d7986ff8a5f203938ae1c8785a92213
+{
+  echo "=== date ==="
+  date -u +%Y-%m-%dT%H:%M:%SZ
+  echo "=== rev-parse HEAD ==="
+  git rev-parse HEAD
+  echo "=== cat-file -t score rev ==="
+  git cat-file -t "$REV"
+  echo "=== merge-base --is-ancestor score HEAD ==="
+  git merge-base --is-ancestor "$REV" HEAD; echo "ancestor_exit=$?"
+  echo "=== status porcelain SOURCES.md ==="
+  git status --porcelain -- corpus/SOURCES.md
+  echo "=== diff score vs worktree SOURCES.md exit ==="
+  git diff --exit-code "$REV" -- corpus/SOURCES.md >/dev/null
+  echo "diff_exit=$?"
+} > "$EVID/00-identity.txt" 2> "$EVID/00-identity.err"
+echo "identity_exit=$?"
+wc -c "$EVID/00-identity.txt" "$EVID/00-identity.err"
+
+===== RevengerV1 line 42 cwd=- =====
+set -u
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+EVID="$LANE/.ufo/waves/round-59/build/RevengerV1"
+mkdir -p "$EVID"
+cd "$LANE"
+
+SCORE="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+RECEIPT=".ufo/waves/round-58/base/doctrine58-base.txt"
+
+date -Iseconds > "$EVID/00-date.stdout"
+printf '%s\n' "git rev-parse HEAD" > "$EVID/01-head.command"
+git rev-parse HEAD > "$EVID/01-head.stdout" 2> "$EVID/01-head.stderr"
+printf '%s\n' "$?" > "$EVID/01-head.exit"
+
+printf '%s\n' "git rev-parse --verify ${SCORE}^{commit}" > "$EVID/02-score-rev.command"
+git rev-parse --verify "${SCORE}^{commit}" > "$EVID/02-score-rev.stdout" 2> "$EVID/02-score-rev.stderr"
+printf '%s\n' "$?" > "$EVID/02-score-rev.exit"
+
+printf '%s\n' "git cat-file -t ${SCORE}" > "$EVID/02b-score-type.command"
+git cat-file -t "$SCORE" > "$EVID/02b-score-type.stdout" 2> "$EVID/02b-score-type.stderr"
+printf '%s\n' "$?" > "$EVID/02b-score-type.exit"
+
+printf '%s\n' "git log -1 --format=%H%n%P%n%s%n%ci ${SCORE}" > "$EVID/02c-score-log.command"
+git log -1 --format='%H%n%P%n%s%n%ci' "$SCORE" > "$EVID/02c-score-log.stdout" 2> "$EVID/02c-score-log.stderr"
+printf '%s\n' "$?" > "$EVID/02c-score-log.exit"
+
+printf '%s\n' "git rev-parse --verify ${BASE}^{commit}" > "$EVID/03-base-rev.command"
+git rev-parse --verify "${BASE}^{commit}" > "$EVID/03-base-rev.stdout" 2> "$EVID/03-base-rev.stderr"
+printf '%s\n' "$?" > "$EVID/03-base-rev.exit"
+
+printf '%s\n' "git merge-base --is-ancestor ${BASE} ${SCORE}" > "$EVID/04-base-ancestor.command"
+git merge-base --is-ancestor "$BASE" "$SCORE" > "$EVID/04-base-ancestor.stdout" 2> "$EVID/04-base-ancestor.stderr"
+printf '%s\n' "$?" > "$EVID/04-base-ancestor.exit"
+
+printf '%s\n' "git merge-base --is-ancestor ${SCORE} HEAD" > "$EVID/05-score-ancestor-head.command"
+git merge-base --is-ancestor "$SCORE" HEAD > "$EVID/05-score-ancestor-head.stdout" 2> "$EVID/05-score-ancestor-head.stderr"
+printf '%s\n' "$?" > "$EVID/05-score-ancestor-head.exit"
+
+printf '%s\n' "git status --porcelain -- SCORECARD.md ${RECEIPT}" > "$EVID/06-status.command"
+git status --porcelain -- SCORECARD.md "$RECEIPT" > "$EVID/06-status.stdout" 2> "$EVID/06-status.stderr"
+printf '%s\n' "$?" > "$EVID/06-status.exit"
+
+printf '%s\n' "git diff --stat ${SCORE} -- SCORECARD.md ${RECEIPT}" > "$EVID/07-diff-stat.command"
+git diff --stat "$SCORE" -- SCORECARD.md "$RECEIPT" > "$EVID/07-diff-stat.stdout" 2> "$EVID/07-diff-stat.stderr"
+printf '%s\n' "$?" > "$EVID/07-diff-stat.exit"
+
+{
+  printf 'worktree SCORECARD.md '
+  git hash-object SCORECARD.md
+  printf 'score:SCORECARD.md '
+  git rev-parse "${SCORE}:SCORECARD.md"
+  printf 'base:SCORECARD.md '
+  git rev-parse "${BASE}:SCORECARD.md"
+  printf 'HEAD:SCORECARD.md '
+  git rev-parse "HEAD:SCORECARD.md"
+} > "$EVID/08-scorecard-blobs.stdout" 2> "$EVID/08-scorecard-blobs.stderr"
+printf '%s\n' "$?" > "$EVID/08-scorecard-blobs.exit"
+
+{
+  printf 'worktree receipt '
+  git hash-object "$RECEIPT"
+  printf 'score:receipt '
+  git rev-parse "${SCORE}:${RECEIPT}"
+  printf 'base:receipt '
+  git rev-parse "${BASE}:${RECEIPT}"
+  printf 'HEAD:receipt '
+  git rev-parse "HEAD:${RECEIPT}"
+} > "$EVID/09-receipt-blobs.stdout" 2> "$EVID/09-receipt-blobs.stderr"
+printf '%s\n' "$?" > "$EVID/09-receipt-blobs.exit"
+
+git cat-file -p "${SCORE}:${RECEIPT}" > "$EVID/doctrine58-base.at-score.txt"
+cp -a "$RECEIPT" "$EVID/doctrine58-base.worktree.txt"
+cmp -s "$EVID/doctrine58-base.at-score.txt" "$EVID/doctrine58-base.worktree.txt"
+printf '%s\n' "$?" > "$EVID/10-receipt-cmp.exit"
+sha256sum "$EVID/doctrine58-base.at-score.txt" "$EVID/doctrine58-base.worktree.txt" "$RECEIPT" > "$EVID/11-receipt-sha256.stdout"
+wc -c "$EVID/doctrine58-base.at-score.txt" > "$EVID/12-receipt-wc.stdout"
+
+printf '%s\n' "git grep -n -F 'R58-V1 measured base held=2/5' ${SCORE} -- SCORECARD.md" > "$EVID/13-grep-literal-score.command"
+git grep -n -F 'R58-V1 measured base held=2/5' "$SCORE" -- SCORECARD.md > "$EVID/13-grep-literal-score.stdout" 2> "$EVID/13-grep-literal-score.stderr"
+printf '%s\n' "$?" > "$EVID/13-grep-literal-score.exit"
+
+printf '%s\n' "git grep -c -F 'R58-V1 measured base held=2/5' ${SCORE} -- SCORECARD.md" > "$EVID/14-grep-literal-count.command"
+git grep -c -F 'R58-V1 measured base held=2/5' "$SCORE" -- SCORECARD.md > "$EVID/14-grep-literal-count.stdout" 2> "$EVID/14-grep-literal-count.stderr"
+printf '%s\n' "$?" > "$EVID/14-grep-literal-count.exit"
+
+printf '%s\n' "git grep -n -F 'held=0/5' ${SCORE} -- SCORECARD.md" > "$EVID/15-grep-held0-score.command"
+git grep -n -F 'held=0/5' "$SCORE" -- SCORECARD.md > "$EVID/15-grep-held0-score.stdout" 2> "$EVID/15-grep-held0-score.stderr"
+printf '%s\n' "$?" > "$EVID/15-grep-held0-score.exit"
+
+printf '%s\n' "git grep -n -F 'held=0/5' ${BASE} -- SCORECARD.md" > "$EVID/16-grep-held0-base.command"
+git grep -n -F 'held=0/5' "$BASE" -- SCORECARD.md > "$EVID/16-grep-held0-base.stdout" 2> "$EVID/16-grep-held0-base.stderr"
+printf '%s\n' "$?" > "$EVID/16-grep-held0-base.exit"
+
+printf '%s\n' "git grep -n -F 'R58-V1 measured base held=2/5' ${BASE} -- SCORECARD.md" > "$EVID/17-grep-literal-base.command"
+git grep -n -F 'R58-V1 measured base held=2/5' "$BASE" -- SCORECARD.md > "$EVID/17-grep-literal-base.stdout" 2> "$EVID/17-grep-literal-base.stderr"
+printf '%s\n' "$?" > "$EVID/17-grep-literal-base.exit"
+
+printf '%s\n' "git grep -n -F 'DOCTRINE58' ${SCORE} -- SCORECARD.md" > "$EVID/18-grep-d58-score.command"
+git grep -n -F 'DOCTRINE58' "$SCORE" -- SCORECARD.md > "$EVID/18-grep-d58-score.stdout" 2> "$EVID/18-grep-d58-score.stderr"
+printf '%s\n' "$?" > "$EVID/18-grep-d58-score.exit"
+
+printf '%s\n' "git grep -n -F 'DOCTRINE58' ${BASE} -- SCORECARD.md" > "$EVID/19-grep-d58-base.command"
+git grep -n -F 'DOCTRINE58' "$BASE" -- SCORECARD.md > "$EVID/19-grep-d58-base.stdout" 2> "$EVID/19-grep-d58-base.stderr"
+printf '%s\n' "$?" > "$EVID/19-grep-d58-base.exit"
+
+printf '%s\n' "git log -S 'R58-V1 measured base held=2/5' --format=%H%x09%ci%x09%s -- SCORECARD.md" > "$EVID/20-log-S.command"
+git log -S 'R58-V1 measured base held=2/5' --format='%H%x09%ci%x09%s' -- SCORECARD.md > "$EVID/20-log-S.stdout" 2> "$EVID/20-log-S.stderr"
+printf '%s\n' "$?" > "$EVID/20-log-S.exit"
+
+echo DONE
+
+
+===== ScoutCollision line 117 cwd=- =====
+set -u
+EV="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision"
+mkdir -p "$EV"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REG="$LANE/corpus/SOURCES.md"
+STAGED="/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md"
+SCORE="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+BASE="0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f"
+{
+  echo "clock=$(date -Is)"
+  echo "utc=$(date -u -Is)"
+  echo "lane=$LANE"
+  echo "reg=$REG"
+  echo "staged=$STAGED"
+} > "$EV/00-clock.txt"
+
+# prove the staged path is not written: capture identity before any read that could be confused with a write
+stat -c 'mtime=%y size=%s inode=%i sha_pending' "$STAGED" > "$EV/01-staged-stat-before.txt"
+sha256sum "$STAGED" "$REG" > "$EV/01-input-sha256.txt"
+wc -l -c "$STAGED" "$REG" > "$EV/01-input-wc.txt"
+
+{
+  echo "HEAD=$(git -C "$LANE" rev-parse HEAD)"
+  echo "HEAD_type=$(git -C "$LANE" cat-file -t HEAD)"
+  echo "score_type=$(git -C "$LANE" cat-file -t "$SCORE")"
+  echo "base_type=$(git -C "$LANE" cat-file -t "$BASE")"
+  echo "score_ancestor_of_HEAD_exit=$(git -C "$LANE" merge-base --is-ancestor "$SCORE" HEAD; echo $?)"
+  echo "base_ancestor_of_HEAD_exit=$(git -C "$LANE" merge-base --is-ancestor "$BASE" HEAD; echo $?)"
+  echo "--- status porcelain corpus/SOURCES.md ---"
+  git -C "$LANE" status --porcelain -- corpus/SOURCES.md
+  echo "--- diff --stat HEAD vs worktree corpus/SOURCES.md ---"
+  git -C "$LANE" diff --stat -- corpus/SOURCES.md
+  echo "--- diff --stat score vs worktree corpus/SOURCES.md ---"
+  git -C "$LANE" diff --stat "$SCORE" -- corpus/SOURCES.md
+} > "$EV/02-identity.txt" 2> "$EV/02-identity.stderr"
+echo "identity_exit=$?" >> "$EV/02-identity.txt"
+
+# census-identical 0-3 space id extract.
+# sources-census.sh:40 and :615: 0-3 leading ASCII spaces, then '|'.
+# id = trimmed second '|'-field. Keep ^S[0-9]{3,}$.
+# Header 'id' and separator '---' fail that pattern and drop.
+# NF=13 is not required: the lesson fixture '  | S125 |' must extract.
+# Registry-section gate is a labeled control, not the named extract:
+# SOURCES.append.md has no '## Registry' heading.
+extract_ungated() {
+  gawk '
+    function trim(s) { gsub(/^[ \t]+|[ \t]+$/, "", s); return s }
+    {
+      line = $0
+      if (line !~ /^ {0,3}\|/) next
+      spaces = 0
+      while (spaces < length(line) && substr(line, spaces + 1, 1) == " ") spaces++
+      sub(/^ {0,3}/, "", line)
+      n = split(line, a, "|")
+      id = trim(a[2])
+      if (id ~ /^S[0-9]{3,}$/) printf "%s\tspaces=%d\tnf=%d\n", id, spaces, n
+    }
+  ' "$1"
+}
+
+extract_registry() {
+  gawk '
+    function trim(s) { gsub(/^[ \t]+|[ \t]+$/, "", s); return s }
+    {
+      line = $0
+      if (line ~ /^ {0,3}##[ \t]/) {
+        sub(/^ {0,3}/, "", line)
+        in_registry = (trim(substr(line, 3)) == "Registry")
+        next
+      }
+      if (line ~ /^ {0,3}#[ \t]/) { in_registry = 0; next }
+      if (line !~ /^ {0,3}\|/) next
+      if (!in_registry) next
+      sub(/^ {0,3}/, "", line)
+      n = split(line, a, "|")
+      id = trim(a[2])
+      if (id ~ /^S[0-9]{3,}$/) print id
+    }
+  ' "$1"
+}
+
+# leading-space class counts, including rows the 0-3 rule ignores (4+ spaces)
+gawk '
+  {
+    if ($0 ~ /^ *\|/) {
+      spaces = 0
+      while (spaces < length($0) && substr($0, spaces + 1, 1) == " ") spaces++
+      bucket = (spaces <= 3 ? spaces : "4plus")
+      c[bucket]++
+    }
+  }
+  END {
+    for (k in c) printf "leading_%s=%d\n", k, c[k]
+  }
+' "$REG" | LC_ALL=C sort > "$EV/03-reg-leading-classes.txt"
+
+gawk '
+  {
+    if ($0 ~ /^ *\|/) {
+      spaces = 0
+      while (spaces < length($0) && substr($0, spaces + 1, 1) == " ") spaces++
+      bucket = (spaces <= 3 ? spaces : "4plus")
+      c[bucket]++
+    }
+  }
+  END {
+    for (k in c) printf "leading_%s=%d\n", k, c[k]
+  }
+' "$STAGED" | LC_ALL=C sort > "$EV/03-staged-leading-classes.txt"
+
+extract_ungated "$REG" > "$EV/04-reg-extract.tsv"
+extract_ungated "$STAGED" > "$EV/04-staged-extract.tsv"
+
+cut -f1 "$EV/04-reg-extract.tsv" > "$EV/05-reg-ids.raw"
+cut -f1 "$EV/04-staged-extract.tsv" > "$EV/05-staged-ids.raw"
+
+LC_ALL=C sort "$EV/05-reg-ids.raw" > "$EV/05-reg-ids.sorted"
+LC_ALL=C sort "$EV/05-staged-ids.raw" > "$EV/05-staged-ids.sorted"
+LC_ALL=C sort -u "$EV/05-reg-ids.raw" > "$EV/05-reg-ids.unique"
+LC_ALL=C sort -u "$EV/05-staged-ids.raw" > "$EV/05-staged-ids.unique"
+
+# duplicates inside each list
+LC_ALL=C uniq -d "$EV/05-reg-ids.sorted" > "$EV/06-reg-dups.txt"
+LC_ALL=C uniq -d "$EV/05-staged-ids.sorted" > "$EV/06-staged-dups.txt"
+
+# named operation: comm -12 the unique id lists (set intersection)
+LC_ALL=C comm -12 "$EV/05-reg-ids.unique" "$EV/05-staged-ids.unique" > "$EV/07-collisions.txt"
+echo "comm12_exit=$?" > "$EV/07-comm.exit"
+
+# Registry-gated control on the same bytes
+extract_registry "$REG" | LC_ALL=C sort -u > "$EV/08-reg-registry-scoped.unique"
+extract_registry "$STAGED" | LC_ALL=C sort -u > "$EV/08-staged-registry-scoped.unique"
+LC_ALL=C comm -12 "$EV/08-reg-registry-scoped.unique" "$EV/08-staged-registry-scoped.unique" > "$EV/08-collisions-registry-scoped.txt"
+
+# score-rev and base blobs, same ungated extract (read-only git show)
+git -C "$LANE" show "${SCORE}:corpus/SOURCES.md" > "$EV/09-sources-at-score.md"
+git -C "$LANE" show "${BASE}:corpus/SOURCES.md" > "$EV/09-sources-at-base.md"
+extract_ungated "$EV/09-sources-at-score.md" | cut -f1 | LC_ALL=C sort -u > "$EV/09-reg-ids-at-score.unique"
+extract_ungated "$EV/09-sources-at-base.md" | cut -f1 | LC_ALL=C sort -u > "$EV/09-reg-ids-at-base.unique"
+LC_ALL=C comm -12 "$EV/09-reg-ids-at-score.unique" "$EV/05-staged-ids.unique" > "$EV/09-collisions-score-vs-staged.txt"
+LC_ALL=C comm -12 "$EV/09-reg-ids-at-base.unique" "$EV/05-staged-ids.unique" > "$EV/09-collisions-base-vs-staged.txt"
+cmp -s "$REG" "$EV/09-sources-at-score.md"; echo "live_eq_score_exit=$?" > "$EV/09-live-vs-score.cmp"
+cmp -s "$EV/05-reg-ids.unique" "$EV/09-reg-ids-at-score.unique"; echo "live_ids_eq_score_ids_exit=$?" >> "$EV/09-live-vs-score.cmp"
+
+# committed assimilation receipt, read-only compare
+ASSIM="$LANE/.ufo/waves/round-59/assimilation"
+LC_ALL=C sort -u "$ASSIM/reg-ids" > "$EV/10-assim-reg.unique"
+LC_ALL=C sort -u "$ASSIM/staged-ids" > "$EV/10-assim-staged.unique"
+cp -a "$ASSIM/collisions" "$EV/10-assim-collisions.copy"
+cmp -s "$EV/05-reg-ids.unique" "$EV/10-assim-reg.unique"; echo "live_reg_eq_assim_reg_exit=$?" > "$EV/10-assim.cmp"
+cmp -s "$EV/05-staged-ids.unique" "$EV/10-assim-staged.unique"; echo "live_staged_eq_assim_staged_exit=$?" >> "$EV/10-assim.cmp"
+LC_ALL=C comm -23 "$EV/05-reg-ids.unique" "$EV/10-assim-reg.unique" > "$EV/10-reg-only-live.txt"
+LC_ALL=C comm -13 "$EV/05-reg-ids.unique" "$EV/10-assim-reg.unique" > "$EV/10-reg-only-assim.txt"
+LC_ALL=C comm -23 "$EV/05-staged-ids.unique" "$EV/10-assim-staged.unique" > "$EV/10-staged-only-live.txt"
+LC_ALL=C comm -13 "$EV/05-staged-ids.unique" "$EV/10-assim-staged.unique" > "$EV/10-staged-only-assim.txt"
+
+# method pin: indented fixture the lesson names, plus the 4-space ignore case
+printf '  | S125 |\n' > "$EV/11-fixture-2space.txt"
+printf '   | S126 |\n' > "$EV/11-fixture-3space.txt"
+printf '| S127 |\n' > "$EV/11-fixture-0space.txt"
+printf '    | S999 |\n' > "$EV/11-fixture-4space.txt"
+extract_ungated "$EV/11-fixture-2space.txt" > "$EV/11-fixture-2space.out"
+extract_ungated "$EV/11-fixture-3space.txt" > "$EV/11-fixture-3space.out"
+extract_ungated "$EV/11-fixture-0space.txt" > "$EV/11-fixture-0space.out"
+extract_ungated "$EV/11-fixture-4space.txt" > "$EV/11-fixture-4space.out"
+
+# heading presence
+gawk 'BEGIN{r=0;s=0} /^ {0,3}##[ \t]/ { if ($0 ~ /Registry/) r++ } END { print "registry_headings=" r }' "$REG" > "$EV/12-headings.txt"
+gawk 'BEGIN{r=0} /^ {0,3}##[ \t]/ { if ($0 ~ /Registry/) r++ } END { print "registry_headings=" r }' "$STAGED" >> "$EV/12-headings.txt"
+grep -n -E '^#{1,3} ' "$STAGED" > "$EV/12-staged-headings.txt" || true
+grep -c -E '^## Registry$' "$STAGED" > "$EV/12-staged-registry-heading.count" || true
+
+# counts
+{
+  echo "reg_raw=$(wc -l < "$EV/05-reg-ids.raw")"
+  echo "reg_unique=$(wc -l < "$EV/05-reg-ids.unique")"
+  echo "reg_dups=$(wc -l < "$EV/06-reg-dups.txt")"
+  echo "staged_raw=$(wc -l < "$EV/05-staged-ids.raw")"
+  echo "staged_unique=$(wc -l < "$EV/05-staged-ids.unique")"
+  echo "staged_dups=$(wc -l < "$EV/06-staged-dups.txt")"
+  echo "collision_count=$(wc -l < "$EV/07-collisions.txt")"
+  echo "reg_registry_scoped=$(wc -l < "$EV/08-reg-registry-scoped.unique")"
+  echo "staged_registry_scoped=$(wc -l < "$EV/08-staged-registry-scoped.unique")"
+  echo "collision_registry_scoped=$(wc -l < "$EV/08-collisions-registry-scoped.txt")"
+  echo "reg_at_score=$(wc -l < "$EV/09-reg-ids-at-score.unique")"
+  echo "reg_at_base=$(wc -l < "$EV/09-reg-ids-at-base.unique")"
+  echo "collision_score=$(wc -l < "$EV/09-collisions-score-vs-staged.txt")"
+  echo "collision_base=$(wc -l < "$EV/09-collisions-base-vs-staged.txt")"
+  echo "assim_reg=$(wc -l < "$EV/10-assim-reg.unique")"
+  echo "assim_staged=$(wc -l < "$EV/10-assim-staged.unique")"
+  echo "assim_collisions_bytes=$(wc -c < "$EV/10-assim-collisions.copy")"
+  echo "reg_only_live=$(wc -l < "$EV/10-reg-only-live.txt")"
+  echo "staged_only_live=$(wc -l < "$EV/10-staged-only-live.txt")"
+  echo "staged_only_assim=$(wc -l < "$EV/10-staged-only-assim.txt")"
+} > "$EV/13-counts.txt"
+
+# first/last ids
+{
+  echo "reg_first=$(head -n 1 "$EV/05-reg-ids.unique")"
+  echo "reg_last=$(tail -n 1 "$EV/05-reg-ids.unique")"
+  echo "staged_first=$(head -n 1 "$EV/05-staged-ids.unique")"
+  echo "staged_last=$(tail -n 1 "$EV/05-staged-ids.unique")"
+} > "$EV/14-ends.txt"
+
+# staged file mtime after (must match before)
+stat -c 'mtime=%y size=%s inode=%i' "$STAGED" > "$EV/15-staged-stat-after.txt"
+sha256sum "$STAGED" > "$EV/15-staged-sha-after.txt"
+cmp -s "$EV/01-staged-stat-before.txt" "$EV/15-staged-stat-after.txt" || true
+# the before file has an extra token; compare the stat fields directly
+diff -u "$EV/01-input-sha256.txt" <(sha256sum "$STAGED" "$REG") > "$EV/15-sha-unchanged.diff" || true
+
+echo DONE
+
+
+===== ScoutCollision line 158 cwd=- =====
+set -u
+EV="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutCollision"
+REG="/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md"
+STAGED="/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md"
+sha256sum "$EV/extract.awk" > "$EV/17-extract-awk.sha256"
+gawk -f "$EV/extract.awk" "$REG" > "$EV/17-reg-rerun.tsv"
+gawk -f "$EV/extract.awk" "$STAGED" > "$EV/17-staged-rerun.tsv"
+cmp -s "$EV/04-reg-extract.tsv" "$EV/17-reg-rerun.tsv"; echo "reg_rerun_cmp_exit=$?"
+cmp -s "$EV/04-staged-extract.tsv" "$EV/17-staged-rerun.tsv"; echo "staged_rerun_cmp_exit=$?"
+# shokuknow still untouched
+stat -c 'mtime=%y size=%s inode=%i' "$STAGED"
+sha256sum "$STAGED"
+
+
+===== ScoutS125Live line 28 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live"
+mkdir -p "$EVID"
+date --iso-8601=seconds > "$EVID/access-date.before.txt"
+date -u --iso-8601=seconds > "$EVID/access-date.utc.before.txt"
+TMP="$(mktemp -d /tmp/scouts125live.XXXXXX)"
+printf '%s\n' "$TMP" > "$EVID/tmp.path"
+URL="https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture"
+printf '%s\n' "curl -fsSL $URL" > "$EVID/command.txt"
+set +e
+curl -fsSL "$URL" > "$TMP/architecture" 2> "$EVID/curl.stderr"
+ec=$?
+set -e
+printf '%s\n' "$ec" > "$EVID/curl.exit"
+date --iso-8601=seconds > "$EVID/access-date.after.txt"
+date -u --iso-8601=seconds > "$EVID/access-date.utc.after.txt"
+if [[ -f "$TMP/architecture" ]]; then
+  cp -a "$TMP/architecture" "$EVID/live.body"
+  sha256sum "$TMP/architecture" > "$EVID/live.sha256.txt"
+  sha256sum "$EVID/live.body" > "$EVID/live-copy.sha256.txt"
+  wc -c "$TMP/architecture" > "$EVID/live.bytes.txt"
+  file -b "$TMP/architecture" > "$EVID/live.file.txt" || true
+fi
+printf 'curl_exit=%s\n' "$ec"
+if [[ -f "$EVID/live.sha256.txt" ]]; then
+  cat "$EVID/live.sha256.txt"
+  cat "$EVID/live.bytes.txt"
+fi
+echo "--- stderr ---"
+cat "$EVID/curl.stderr"
+echo "--- dates ---"
+cat "$EVID/access-date.before.txt"
+cat "$EVID/access-date.after.txt"
+
+
+===== ScoutS125Live line 32 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+REV="5469c0a58d7986ff8a5f203938ae1c8785a92213"
+PIN="3f5cdc194aab7f1e15ecc255030fa42522e24341beaf7328ce71161cfa2963ca"
+TMP="$(cat "$EVID/tmp.path")"
+STORED="$LANE/.ufo/waves/round-59/build/ScoutMcpArch/body.html"
+
+# independent re-hash of the temp file and the evidence copy
+sha256sum "$TMP/architecture" > "$EVID/02-rehash-tmp.stdout" 2> "$EVID/02-rehash-tmp.stderr"
+printf '%s\n' "$?" > "$EVID/02-rehash-tmp.exit"
+sha256sum "$EVID/live.body" > "$EVID/03-rehash-evidence.stdout" 2> "$EVID/03-rehash-evidence.stderr"
+printf '%s\n' "$?" > "$EVID/03-rehash-evidence.exit"
+
+# explicit compare against the named pin string
+{
+  echo "named_pin=$PIN"
+  live="$(sha256sum "$EVID/live.body" | awk '{print $1}')"
+  echo "live=$live"
+  if [[ "$live" == "$PIN" ]]; then
+    echo "MATCH yes"
+  else
+    echo "MATCH no"
+  fi
+} > "$EVID/04-compare.stdout" 2> "$EVID/04-compare.stderr"
+printf '%s\n' "0" > "$EVID/04-compare.exit"
+
+# byte compare live vs stored capture and vs temp
+cmp -s "$EVID/live.body" "$STORED"
+printf '%s\n' "$?" > "$EVID/05-cmp-stored.exit"
+cmp -s "$EVID/live.body" "$TMP/architecture"
+printf '%s\n' "$?" > "$EVID/05-cmp-tmp.exit"
+{
+  echo "cmp_live_vs_stored_exit=$(cat "$EVID/05-cmp-stored.exit")"
+  echo "cmp_live_vs_tmp_exit=$(cat "$EVID/05-cmp-tmp.exit")"
+  echo "note=cmp exit 0 means byte-identical"
+} > "$EVID/05-cmp.stdout"
+
+# committed blob at the pin path
+git -C "$LANE" show "$REV:.ufo/waves/round-59/build/ScoutMcpArch/body.html" > "$EVID/committed.body" 2> "$EVID/06-git-show-body.stderr"
+printf '%s\n' "$?" > "$EVID/06-git-show-body.exit"
+sha256sum "$EVID/committed.body" > "$EVID/06-committed.sha256.txt"
+wc -c "$EVID/committed.body" > "$EVID/06-committed.bytes.txt"
+cmp -s "$EVID/live.body" "$EVID/committed.body"
+printf '%s\n' "$?" > "$EVID/06-cmp-committed.exit"
+
+# identity snippet from the live body only
+python3 - << 'PY' > "$EVID/07-identity.stdout" 2> "$EVID/07-identity.stderr"
+from pathlib import Path
+p = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS125Live/live.body")
+b = p.read_bytes()
+text = b.decode("utf-8", errors="replace")
+import re
+title = re.search(r"<title[^>]*>(.*?)</title>", text, re.I|re.S)
+canon = re.search(r'rel="canonical" href="([^"]+)"', text)
+og = re.search(r'property="og:url" content="([^"]+)"', text)
+print(f"bytes={len(b)}")
+print(f"nul={'yes' if b.find(b'\\x00')>=0 else 'no'}")
+print("title=" + (re.sub(r"\\s+", " ", title.group(1)).strip() if title else "ABSENT"))
+print("canonical=" + (canon.group(1) if canon else "ABSENT"))
+print("og_url=" + (og.group(1) if og else "ABSENT"))
+print("has_architecture=" + str("learn/architecture" in text))
+print("has_protocolVersion=" + str("protocolVersion" in text))
+PY
+printf '%s\n' "$?" > "$EVID/07-identity.exit"
+
+echo "==== compare ===="
+cat "$EVID/04-compare.stdout"
+echo "==== cmp ===="
+cat "$EVID/05-cmp.stdout"
+echo "==== committed ===="
+cat "$EVID/06-committed.sha256.txt"
+cat "$EVID/06-committed.bytes.txt"
+echo "cmp_committed_exit=$(cat "$EVID/06-cmp-committed.exit") git_show_exit=$(cat "$EVID/06-git-show-body.exit")"
+echo "==== identity ===="
+cat "$EVID/07-identity.stdout"
+echo "==== rehash ===="
+cat "$EVID/02-rehash-tmp.stdout"
+cat "$EVID/03-rehash-evidence.stdout"
+
+
+===== ScoutS127Live line 42 cwd=- =====
+set -u
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+cd "$LANE"
+git rev-parse HEAD
+git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213
+git merge-base --is-ancestor 5469c0a58d7986ff8a5f203938ae1c8785a92213 HEAD; echo "ancestor_exit=$?"
+git status --porcelain -- .ufo/pins/source-captures.json .ufo/waves/round-59/build/ScoutMcpTasks/body.md corpus/SOURCES.md
+echo "--- pin object at rev ---"
+git show 5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/pins/source-captures.json | python3 -c '
+import json,sys
+d=json.load(sys.stdin)
+rows=[c for c in d["captures"] if c.get("sourceId")=="S127"]
+print("count", len(rows))
+for c in rows:
+    print(json.dumps(c, sort_keys=True))
+'
+echo "--- sources row at rev ---"
+git show 5469c0a58d7986ff8a5f203938ae1c8785a92213:corpus/SOURCES.md | awk -F"|" '$2 ~ /^ S127 / {print}'
+echo "--- local capture hash ---"
+sha256sum .ufo/waves/round-59/build/ScoutMcpTasks/body.md
+wc -c .ufo/waves/round-59/build/ScoutMcpTasks/body.md
+git hash-object .ufo/waves/round-59/build/ScoutMcpTasks/body.md
+git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/waves/round-59/build/ScoutMcpTasks/body.md
+
+
+===== ScoutS127Live line 49 cwd=- =====
+set -u
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ScoutS127Live"
+LANE="/home/vgpnk/Projects/shokunin/kumitate-shokunin"
+cd "$LANE"
+{
+  echo "=== git rev-parse HEAD ==="
+  git rev-parse HEAD
+  echo "=== git rev-parse score ==="
+  git rev-parse 5469c0a58d7986ff8a5f203938ae1c8785a92213
+  echo "=== porcelain ==="
+  git status --porcelain -- .ufo/pins/source-captures.json .ufo/waves/round-59/build/ScoutMcpTasks/body.md corpus/SOURCES.md
+  echo "porcelain_exit=$?"
+  echo "=== hash-object vs rev-parse ==="
+  git hash-object .ufo/waves/round-59/build/ScoutMcpTasks/body.md
+  git rev-parse "5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/waves/round-59/build/ScoutMcpTasks/body.md"
+  echo "=== pin row ==="
+  git show 5469c0a58d7986ff8a5f203938ae1c8785a92213:.ufo/pins/source-captures.json | python3 -c 'import json,sys; d=json.load(sys.stdin); rows=[c for c in d["captures"] if c.get("sourceId")=="S127"]; print(len(rows));
+import pprint; pprint.pp(rows[0])'
+  echo "=== sources row ==="
+  git show 5469c0a58d7986ff8a5f203938ae1c8785a92213:corpus/SOURCES.md | awk -F"|" '$2 ~ /^ S127 / {print}'
+} > "$EVID/git-identity.txt"
+echo "=== date headers ==="
+grep -i -E '^(HTTP/|date:|content-type:|content-length:|location:|etag:)' "$EVID/raw-short.headers" "$EVID/raw-full.headers" "$EVID/github-raw.headers" > "$EVID/header-dates.txt"
+wc -l "$EVID/git-identity.txt" "$EVID/header-dates.txt"
+# confirm evidence dir contains only this seat
+find "$EVID" -maxdepth 1 -type f -printf '%f\n' | sort
+
+
+===== SentinelBounds line 2 cwd=- =====
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain && echo "---FLEET---" && git -C /home/vgpnk/Projects/shokunin status --porcelain
+
+===== SentinelBounds line 30 cwd=- =====
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds"
+mkdir -p "$EVID"
+{
+  echo "date=$(date -Is)"
+  echo "utc=$(date -u -Is)"
+  echo "epoch=$(date +%s)"
+  echo "pwd=$(pwd)"
+  echo "user=$(id -un)"
+  echo "hostname=$(hostname)"
+} > "$EVID/00-identity.txt"
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain > "$EVID/01-lane-porcelain.txt"
+echo "lane_porcelain_exit=$?" > "$EVID/01-lane-porcelain.exit"
+git -C /home/vgpnk/Projects/shokunin status --porcelain > "$EVID/02-fleet-porcelain.txt"
+echo "fleet_porcelain_exit=$?" > "$EVID/02-fleet-porcelain.exit"
+wc -l "$EVID/01-lane-porcelain.txt" "$EVID/02-fleet-porcelain.txt"
+echo "--- lane porcelain ---"
+cat "$EVID/01-lane-porcelain.txt"
+echo "--- fleet porcelain ---"
+cat "$EVID/02-fleet-porcelain.txt"
+
+===== SentinelBounds line 35 cwd=- =====
+EVID="/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds"
+# supplementary sizes and abort note; no git status (index refresh risk)
+{
+  echo "=== w1 file sizes ==="
+  find /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1 -maxdepth 1 -type f -printf '%s\t%p\n' | sort -n
+  echo "=== w1-abort sizes ==="
+  find /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort -maxdepth 1 -type f -printf '%s\t%p\n' | sort -n
+  echo "=== lane git index ==="
+  stat -c 'index mtime=%y epoch=%Y size=%s' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/index
+  echo "=== fleet git index ==="
+  stat -c 'index mtime=%y epoch=%Y size=%s' /home/vgpnk/Projects/shokunin/.git/index
+} > "$EVID/03-sizes-index.txt"
+wc -c /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/*.stream.jsonl /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/*.stream.jsonl 2>/dev/null | sort -n | tail -40
+echo "==== abort NOTE ===="
+head -c 2000 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/NOTE.txt
+echo
+echo "==== jj dir ===="
+ls -ld /home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git 2>&1 | head
+
+===== SentinelBounds line 54 cwd=- =====
+python3 << 'PY'
+import json, os, re, time
+from pathlib import Path
+
+EVID = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds")
+EVID.mkdir(parents=True, exist_ok=True)
+LANE = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin")
+FLEET = Path("/home/vgpnk/Projects/shokunin")
+BOUND = (LANE / ".ufo/waves/round-59").resolve()
+WAVE_START = 1792888155  # earliest relaunch start in launcher-progress
+SEATS = {
+    "ExecRepair59","ExecDoctrine59","ExecCiteLive","ExecMap","ExecCensus","ExecCapture",
+    "ExecProxy","ExecSelftest","RevS125Quote","RevS127Quote","RevS136Quote","RevS121Gone",
+    "RevGateCount","RevCapabilityRows","RevUsedBy","RevPins","CritBaseNotZero","CritDropOne",
+    "CritTheme","CritQuarantine","MutGhost","MutFamily","MutPipeRow","MutChecksPin",
+    "ScoutS125Live","ScoutS127Live","ScoutCollision","ScoutFrontier","ScribeGateTable",
+    "ConnectorSiblings","SentinelBounds","RevengerV1",
+}
+
+def inside(p: str) -> bool:
+    try:
+        rp = Path(p).resolve()
+    except Exception:
+        return False
+    try:
+        rp.relative_to(BOUND)
+        return True
+    except ValueError:
+        return False
+
+# --- extract write-like paths from streams and err/md ---
+path_re = re.compile(r"/home/vgpnk/[^\s\"'\\<>|;&]+|/tmp/[A-Za-z0-9._/-]+|/fast/scratch/[^\s\"'\\]+|/dev/shm/[^\s\"'\\]+|/home/vgpnk/Projects/shokuknow[^\s\"'\\]*")
+write_tools = {"Write", "Edit"}
+# bash write indicators
+write_cmd_re = re.compile(
+    r"(?:^|[;&|`(]|&&|\|\|)\s*(?:mkdir|mktemp|touch|cp|mv|rm|tee|install|ln|truncate|dd|git\s+add|git\s+commit|git\s+checkout|git\s+reset|git\s+clean|jj\b|python3?\s+-c|node\s+-e)",
+    re.I,
+)
+redir_re = re.compile(r"(?:>>?|\d>>?)\s*([^\s;&|]+)")
+
+records = []
+streams = list((LANE/".ufo/waves/round-59/w1").glob("*.stream.jsonl"))
+streams += list((LANE/".ufo/waves/round-59/w1-abort").glob("*.stream.jsonl"))
+
+def add(seat, kind, path, detail):
+    path = path.rstrip(").,;:`")
+    if path.endswith("\\"):
+        path = path[:-1]
+    records.append((seat, kind, path, inside(path), detail[:240]))
+
+for sp in streams:
+    seat = sp.name.split(".stream")[0]
+    if seat not in SEATS and not sp.parent.name == "w1-abort":
+        continue
+    seat_label = seat if sp.parent.name == "w1" else f"abort:{seat}"
+    with sp.open() as f:
+        for i, line in enumerate(f, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except Exception:
+                continue
+            # assistant tool calls
+            for tc in obj.get("tool_calls") or []:
+                fn = (tc.get("function") or {})
+                name = fn.get("name") or ""
+                args_raw = fn.get("arguments") or ""
+                try:
+                    args = json.loads(args_raw) if isinstance(args_raw, str) else args_raw
+                except Exception:
+                    args = {"_raw": args_raw}
+                if name in write_tools:
+                    p = args.get("path") or ""
+                    if p:
+                        add(seat_label, f"tool:{name}", p, f"line {i}")
+                elif name == "Bash":
+                    cmd = args.get("command") or ""
+                    if not isinstance(cmd, str):
+                        continue
+                    # redirections
+                    for m in redir_re.finditer(cmd):
+                        target = m.group(1).strip("'\"")
+                        if target.startswith("/"):
+                            add(seat_label, "bash-redir", target, cmd[:180].replace("\n"," "))
+                    # absolute paths in commands that look like writes
+                    if any(tok in cmd for tok in (" >", ">>", "mkdir", "mktemp", "tee ", "cp ", "mv ", "install ", "touch ", "truncate ", "git add", "git commit", "jj ")):
+                        for m in path_re.finditer(cmd):
+                            add(seat_label, "bash-path-in-writeish", m.group(0), cmd[:180].replace("\n"," "))
+
+# also scan err/md/build command files for /tmp and write commands, but mark as cited not necessarily tool-confirmed
+cited = []
+cite_re = re.compile(r"/tmp/[A-Za-z0-9._/-]+")
+for folder, tag in ((LANE/".ufo/waves/round-59/w1", "w1"), (LANE/".ufo/waves/round-59/w1-abort", "abort"), (LANE/".ufo/waves/round-59/build", "build")):
+    if not folder.exists():
+        continue
+    for p in folder.rglob("*"):
+        if not p.is_file():
+            continue
+        if p.stat().st_size > 2_000_000:
+            continue
+        if p.suffix not in {".md", ".err", ".txt", ".tsv"} and p.name not in {"command.txt", "commands.md"}:
+            continue
+        # skip our own evidence to avoid self-echo, except we still want other seats
+        if "SentinelBounds" in str(p) and tag == "build":
+            continue
+        try:
+            text = p.read_text(errors="replace")
+        except Exception:
+            continue
+        for m in cite_re.finditer(text):
+            cited.append((tag, str(p.relative_to(LANE)), m.group(0)))
+
+# dedupe records
+seen = set()
+uniq = []
+for r in records:
+    key = (r[0], r[1], r[2])
+    if key in seen:
+        continue
+    seen.add(key)
+    uniq.append(r)
+
+out = EVID / "10-tool-write-paths.txt"
+with out.open("w") as f:
+    f.write(f"stream_files={len(streams)} raw_records={len(records)} uniq={len(uniq)}\n")
+    outside = [r for r in uniq if not r[3]]
+    inside_n = len(uniq) - len(outside)
+    f.write(f"inside_bound={inside_n} outside_bound={len(outside)}\n")
+    f.write("--- OUTSIDE ---\n")
+    for seat, kind, path, ins, detail in outside:
+        exists = Path(path).exists()
+        f.write(f"{seat}\t{kind}\texists={exists}\t{path}\t{detail}\n")
+    f.write("--- INSIDE sample count only ---\n")
+    f.write(f"inside_unique={inside_n}\n")
+
+cite_out = EVID / "11-tmp-citations.txt"
+with cite_out.open("w") as f:
+    seen = set()
+    for tag, src, path in cited:
+        key = (src, path)
+        if key in seen:
+            continue
+        seen.add(key)
+        f.write(f"{tag}\t{src}\t{path}\texists={Path(path).exists()}\n")
+    f.write(f"uniq_citations={len(seen)}\n")
+
+print(f"wrote {out} outside={sum(1 for r in uniq if not r[3])} inside={sum(1 for r in uniq if r[3])}")
+print(f"tmp citations {len(set((a,b) for a,b,_ in [(x[1], x[2]) for x in cited]))}")
+PY
+
+===== SentinelBounds line 59 cwd=- =====
+python3 << 'PY'
+import os, time
+from pathlib import Path
+EVID = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds")
+LANE = Path("/home/vgpnk/Projects/shokunin/kumitate-shokunin")
+FLEET = Path("/home/vgpnk/Projects/shokunin")
+BOUND = (LANE / ".ufo/waves/round-59").resolve()
+WAVE_START = 1792888155
+
+def fmt(st):
+    return f"mtime={time.strftime('%Y-%m-%dT%H:%M:%S%z', time.localtime(st.st_mtime))} epoch={int(st.st_mtime)} size={st.st_size} mode={oct(st.st_mode)}"
+
+lines = []
+def add(label, p):
+    p = Path(p)
+    if not p.exists():
+        lines.append(f"ABSENT\t{label}\t{p}")
+        return
+    st = p.stat()
+    during = "DURING" if st.st_mtime >= WAVE_START else "BEFORE"
+    lines.append(f"{during}\t{label}\t{p}\t{fmt(st)}")
+
+# fleet porcelain paths
+porc = (EVID/"02-fleet-porcelain.txt").read_text().splitlines()
+for row in porc:
+    path = row[3:] if row.startswith("?? ") or row.startswith(" M ") or row[0] in " MADRCU?!" else row.split(maxsplit=1)[-1]
+    # porcelain is 'XY path' with XY two chars
+    rel = row[3:]
+    add("fleet-porcelain", FLEET/rel)
+
+# known outside candidates
+cands = [
+    "/tmp/kumitate-r59-MutGhost",
+    "/tmp/kumitate-r59-MutGhost/README.md",
+    "/tmp/kumitate-r59-MutGhost/SOURCES.md",
+    "/tmp/kumitate-r59-MutGhost/README-s112-only.md",
+    "/tmp/mutfamily.rcZHD8Bx",
+    "/tmp/mutfamily.rcZHD8Bx/README.md",
+    "/tmp/mutfamily.rcZHD8Bx/SOURCES.md",
+    "/tmp/mutfamily.rcZHD8Bx/README-ghost.md",
+    "/tmp/mutfamily.rcZHD8Bx/README-s11.md",
+    "/tmp/mutfamily.rcZHD8Bx/SOURCES-s11.md",
+    "/tmp/scouts125live.WMuhPk",
+    "/tmp/scouts125live.WMuhPk/architecture",
+    "/tmp/crit-drop-one.xl6gw2",
+    "/tmp/revs125-git-body.err",
+    "/tmp/revs125-git-quote.err",
+    "/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md",
+    "/home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md",
+    "/home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md",
+    "/home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md",
+    "/home/vgpnk/Projects/shokunin/.ufo/reports/round-58/kumitate.md",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/index",
+    "/home/vgpnk/Projects/shokunin/.git/index",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.git",
+]
+for c in cands:
+    add("candidate", c)
+
+# list /tmp seat-like dirs
+lines.append("--- /tmp name scan ---")
+tmp = Path("/tmp")
+for p in tmp.iterdir():
+    name = p.name.lower()
+    if any(s in name for s in ("kumitate", "mutfamily", "mutghost", "scout", "crit-drop", "revs125", "sentinel", "shokunin", "doctrine", "repair59")):
+        add("tmp-match", p)
+
+# lane files outside bound with mtime >= wave start, prune .git/objects and build evidence we just wrote
+lines.append("--- lane mtime during wave outside bound ---")
+skip_parts = {".git", ".jj"}
+n = 0
+for root, dirs, files in os.walk(LANE):
+    rp = Path(root)
+    # prune
+    if rp == LANE / ".git":
+        # keep top-level .git files, don't descend into objects/refs logs deeply? descend but skip objects
+        dirs[:] = [d for d in dirs if d not in ("objects", "worktrees", "lfs")]
+    if ".jj" in rp.parts and rp != LANE / ".jj":
+        dirs[:] = []
+        continue
+    try:
+        rp.resolve().relative_to(BOUND)
+        dirs[:] = []
+        continue
+    except ValueError:
+        pass
+    # don't descend into round-59
+    if BOUND in rp.parents or rp == BOUND:
+        dirs[:] = []
+        continue
+    for fn in files:
+        fp = rp / fn
+        try:
+            st = fp.stat()
+        except OSError:
+            continue
+        if st.st_mtime >= WAVE_START:
+            n += 1
+            if n <= 200:
+                lines.append(f"DURING\tlane-outside\t{fp}\t{fmt(st)}")
+lines.append(f"lane_outside_during_count={n}")
+
+# jj files
+lines.append("--- jj stat ---")
+jj = LANE / ".jj"
+if jj.exists():
+    for root, dirs, files in os.walk(jj):
+        for fn in files:
+            fp = Path(root)/fn
+            try:
+                st = fp.stat()
+            except OSError:
+                continue
+            flag = "DURING" if st.st_mtime >= WAVE_START else "BEFORE"
+            lines.append(f"{flag}\tjj\t{fp}\t{fmt(st)}")
+
+text = "\n".join(lines) + "\n"
+(EVID/"12-mtime-survey.txt").write_text(text)
+print(f"lines={len(lines)} lane_outside_hits={n}")
+print("\n".join(lines[:80]))
+PY

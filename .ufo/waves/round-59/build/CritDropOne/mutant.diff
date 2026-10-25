@@ -1,0 +1,10 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs	2026-10-24 21:19:45.547904682 -0300
++++ /tmp/crit-drop-one.xl6gw2/repair59-probe.mjs	2026-10-24 21:36:48.089953335 -0300
+@@ -145,7 +145,6 @@
+     const lesson = readT('corpus/lessons/round-59.md') || '';
+     const a = lesson.includes('a shared page is not automatically a duplicate');
+     const b = lesson.includes('pin the duplicate group before adoption');
+-    hold('B8', a && b, `nuance=${a} pin-first=${b}`);
+   }
+ } catch (err) {
+   process.stderr.write(`REPAIR59: FAIL-CLOSED ${err && err.message}\n`);

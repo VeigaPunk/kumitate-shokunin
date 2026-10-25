@@ -1,0 +1,461 @@
+?? .ufo/waves/round-59/build/CritBaseNotZero/
+?? .ufo/waves/round-59/build/CritDropOne/
+?? .ufo/waves/round-59/build/CritQuarantine/
+?? .ufo/waves/round-59/build/CritTheme/
+?? .ufo/waves/round-59/build/ExecCapture/
+?? .ufo/waves/round-59/build/ExecCensus/
+?? .ufo/waves/round-59/build/ExecCiteLive/
+?? .ufo/waves/round-59/build/ExecDoctrine59/
+?? .ufo/waves/round-59/build/ExecMap/
+?? .ufo/waves/round-59/build/ExecProxy/
+?? .ufo/waves/round-59/build/ExecRepair59/
+?? .ufo/waves/round-59/build/ExecSelftest/
+?? .ufo/waves/round-59/build/MutChecksPin/
+?? .ufo/waves/round-59/build/MutFamily/
+?? .ufo/waves/round-59/build/MutGhost/
+?? .ufo/waves/round-59/build/MutPipeRow/
+?? .ufo/waves/round-59/build/RevCapabilityRows/
+?? .ufo/waves/round-59/build/RevGateCount/
+?? .ufo/waves/round-59/build/RevPins/
+?? .ufo/waves/round-59/build/RevS121Gone/
+?? .ufo/waves/round-59/build/RevS125Quote/
+?? .ufo/waves/round-59/build/RevS127Quote/
+?? .ufo/waves/round-59/build/RevS136Quote/
+?? .ufo/waves/round-59/build/RevUsedBy/
+?? .ufo/waves/round-59/build/ScoutFrontier/
+?? .ufo/waves/round-59/build/ScoutS125Live/
+?? .ufo/waves/round-59/build/ScoutS127Live/
+?? .ufo/waves/round-59/close/
+?? .ufo/waves/round-59/controls/
+?? .ufo/waves/round-59/launcher.py.txt
+?? .ufo/waves/round-59/w1-abort/
+?? .ufo/waves/round-59/w1-plan.json
+?? .ufo/waves/round-59/w1-spec.json
+?? .ufo/waves/round-59/w1-taskcall.json
+?? .ufo/waves/round-59/w1/
+---FLEET---
+ M .ufo/state/chousa.report-baseline
+ M .ufo/state/kagi.report-baseline
+ M .ufo/state/kaidoku.report-baseline
+ M .ufo/state/kake.report-baseline
+ M .ufo/state/kama.report-baseline
+ M .ufo/state/kengaku.report-baseline
+ M .ufo/state/kumitate.report-baseline
+ M .ufo/state/mado.report-baseline
+ M .ufo/state/mori.report-baseline
+ M .ufo/state/souji.report-baseline
+ M .ufo/state/tameshi.report-baseline
+ M .ufo/state/tsukuroi.report-baseline
+ M .ufo/watchdog.log
+?? .omp/mcp.json
+?? .ufo/state/kotoba.report-baseline
+?? .ufo/state/kotodama.report-baseline
+?? .ufo/state/revenger.report-baseline
+?? bm.json
+?? live.html
+?? live_s228.html
+?? nama.html
+?? s395.txt
+?? scripts/hyaku/append-closure.py.bak-20261023T040735Z
+?? scripts/hyaku/fleet-commit.sh.bak-20261023T040735Z
+?? tf_bavelas.html
+?? unblob.log
+?? wb2.html
+?? write
+?? xc.xml
+=== w1-spec.json size=19810 ===
+type dict
+keys ['wave', 'milestone', 'axes', 'reportDir', 'context', 'items']
+=== w1-plan.json size=51879 ===
+type dict
+keys ['schema', 'wave', 'context', 'policy', 'counts', 'compaction', 'dispatch', 'registry', 'priorRegistries', 'tasks']
+=== w1-taskcall.json size=52286 ===
+type dict
+keys ['schema', 'wave', 'policy', 'counts', 'registry', 'compaction', 'taskCall', 'resumeSends', 'note']
+=== SPEC CONTEXT ===
+# Goal
+kumitate round 59 ONLY. One v1 wave of 32 seats. Claims already frozen and measured at 5469c0a58d7986ff8a5f203938ae1c8785a92213: C1 operability cite-sources (REPAIR59, rule A59, target held=8/8); C2 coverage frontier item 2 mcp-orchestration-contract (DOCTRINE59, rule D59, target held=5/5). Axes: operability + coverage. The L1 holds the planner seat. Do not dispatch, resume, or replace any seat. You are a leaf.
+
+# Lane and write boundary
+Lane: /home/vgpnk/Projects/shokunin/kumitate-shokunin. Fleet root: /home/vgpnk/Projects/shokunin. Seats never mutate the fleet repo, sibling lanes, lane jj state, or the lane Git index. Do not commit, push, or run mutating git or jj. Read-only git show/log/grep is fine. Never edit /home/vgpnk/Projects/shokuknow. Your only write is your report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/<SeatName>.md and, if you need scratch, /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/../build/<SeatName>/ which you may create. No seat writes another seat's files.
+Every Report: trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.
+
+# Read first
+Frozen plan /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/plan.md. Counters: repair59-probe.mjs and doctrine59-probe.mjs under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/. Score revision 5469c0a58d7986ff8a5f203938ae1c8785a92213 unless the item names the base 0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f. A report is not a verdict. Falsify or corroborate the named item and quote the command output.
+
+# Tooling
+Read /home/vgpnk/.omp/agent/RULES.md before any install. Official channels only. All pacman transactions are PAUSED: do not run pacman. No install is needed. Never set a model or provider.
+
+# Godspeed
+Name the axes. Iterate cheap. Keep moves that improve any axis and harm none. Do not ask clarifying questions. Execute the item and write the report.
+
+=== SPEC AXES === ['operability', 'coverage']
+=== SPEC MILESTONE === kumitate round 59 falsify
+=== ITEMS ===
+--- ExecRepair59 ['name', 'role', 'item']
+--- ExecDoctrine59 ['name', 'role', 'item']
+--- ExecCiteLive ['name', 'role', 'item']
+--- ExecMap ['name', 'role', 'item']
+--- ExecCensus ['name', 'role', 'item']
+--- ExecCapture ['name', 'role', 'item']
+--- ExecProxy ['name', 'role', 'item']
+--- ExecSelftest ['name', 'role', 'item']
+--- RevS125Quote ['name', 'role', 'item']
+--- RevS127Quote ['name', 'role', 'item']
+--- RevS136Quote ['name', 'role', 'item']
+--- RevS121Gone ['name', 'role', 'item']
+--- RevGateCount ['name', 'role', 'item']
+--- RevCapabilityRows ['name', 'role', 'item']
+--- RevUsedBy ['name', 'role', 'item']
+--- RevPins ['name', 'role', 'item']
+--- CritBaseNotZero ['name', 'role', 'item']
+--- CritDropOne ['name', 'role', 'item']
+--- CritTheme ['name', 'role', 'item']
+--- CritQuarantine ['name', 'role', 'item']
+--- MutGhost ['name', 'role', 'item']
+--- MutFamily ['name', 'role', 'item']
+--- MutPipeRow ['name', 'role', 'item']
+--- MutChecksPin ['name', 'role', 'item']
+--- ScoutS125Live ['name', 'role', 'item']
+--- ScoutS127Live ['name', 'role', 'item']
+--- ScoutCollision ['name', 'role', 'item']
+--- ScoutFrontier ['name', 'role', 'item']
+--- ScribeGateTable ['name', 'role', 'item']
+--- ConnectorSiblings ['name', 'role', 'item']
+--- SentinelBounds ['name', 'role', 'item']
+--- RevengerV1 ['name', 'role', 'item']
+
+===== MATCHED ITEM =====
+{
+  "name": "SentinelBounds",
+  "role": "sentinel",
+  "item": "Run `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain` and `git -C /home/vgpnk/Projects/shokunin status --porcelain`. List any path a seat (not the L1) appears to have written outside /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Do not delete or revert anything.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/SentinelBounds.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/."
+}
+POLICY:
+{
+  "source": "config",
+  "maxLanes": 256,
+  "minLanes": 16,
+  "waveMinLanes": 32,
+  "waveMaxLanes": 64,
+  "declaredMaxLanes": null,
+  "hardCeiling": 256,
+  "rampBatchSize": 5,
+  "rampIntervalMs": 700,
+  "globalRunnerCeiling": 1056
+}
+
+COUNTS: {
+  "spawn": 32,
+  "resume": 0,
+  "total": 32
+}
+
+TASKS type list
+{
+  "name": "SentinelBounds",
+  "agent": "sentinel",
+  "task": "/skill:godspeed\n\nRun `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin status --porcelain` and `git -C /home/vgpnk/Projects/shokunin status --porcelain`. List any path a seat (not the L1) appears to have written outside /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/. Do not delete or revert anything.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/SentinelBounds.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/.\n\nLane bounds: leaf member \u2014 no subagent dispatch.\nJudged on: operability, coverage\nMilestone: kumitate round 59 falsify\n\nReport: write your scoped findings to .ufo/waves/round-59/w1/SentinelBounds.md"
+}
+  38 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/01-lane-porcelain.txt
+  29 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/02-fleet-porcelain.txt
+  67 total
+--- lane porcelain ---
+?? .ufo/waves/round-59/build/ConnectorSiblings/
+?? .ufo/waves/round-59/build/CritBaseNotZero/
+?? .ufo/waves/round-59/build/CritDropOne/
+?? .ufo/waves/round-59/build/CritQuarantine/
+?? .ufo/waves/round-59/build/CritTheme/
+?? .ufo/waves/round-59/build/ExecCapture/
+?? .ufo/waves/round-59/build/ExecCensus/
+?? .ufo/waves/round-59/build/ExecCiteLive/
+?? .ufo/waves/round-59/build/ExecDoctrine59/
+?? .ufo/waves/round-59/build/ExecMap/
+?? .ufo/waves/round-59/build/ExecProxy/
+?? .ufo/waves/round-59/build/ExecRepair59/
+?? .ufo/waves/round-59/build/ExecSelftest/
+?? .ufo/waves/round-59/build/MutChecksPin/
+?? .ufo/waves/round-59/build/MutFamily/
+?? .ufo/waves/round-59/build/MutGhost/
+?? .ufo/waves/round-59/build/MutPipeRow/
+?? .ufo/waves/round-59/build/RevCapabilityRows/
+?? .ufo/waves/round-59/build/RevGateCount/
+?? .ufo/waves/round-59/build/RevPins/
+?? .ufo/waves/round-59/build/RevS121Gone/
+?? .ufo/waves/round-59/build/RevS125Quote/
+?? .ufo/waves/round-59/build/RevS127Quote/
+?? .ufo/waves/round-59/build/RevS136Quote/
+?? .ufo/waves/round-59/build/RevUsedBy/
+?? .ufo/waves/round-59/build/ScoutFrontier/
+?? .ufo/waves/round-59/build/ScoutS125Live/
+?? .ufo/waves/round-59/build/ScoutS127Live/
+?? .ufo/waves/round-59/build/ScribeGateTable/
+?? .ufo/waves/round-59/build/SentinelBounds/
+?? .ufo/waves/round-59/close/
+?? .ufo/waves/round-59/controls/
+?? .ufo/waves/round-59/launcher.py.txt
+?? .ufo/waves/round-59/w1-abort/
+?? .ufo/waves/round-59/w1-plan.json
+?? .ufo/waves/round-59/w1-spec.json
+?? .ufo/waves/round-59/w1-taskcall.json
+?? .ufo/waves/round-59/w1/
+--- fleet porcelain ---
+ M .ufo/state/chousa.report-baseline
+ M .ufo/state/kagi.report-baseline
+ M .ufo/state/kaidoku.report-baseline
+ M .ufo/state/kake.report-baseline
+ M .ufo/state/kama.report-baseline
+ M .ufo/state/kengaku.report-baseline
+ M .ufo/state/kumitate.report-baseline
+ M .ufo/state/mado.report-baseline
+ M .ufo/state/mori.report-baseline
+ M .ufo/state/souji.report-baseline
+ M .ufo/state/tameshi.report-baseline
+ M .ufo/state/tsukuroi.report-baseline
+ M .ufo/watchdog.log
+?? .omp/mcp.json
+?? .ufo/state/kotoba.report-baseline
+?? .ufo/state/kotodama.report-baseline
+?? .ufo/state/revenger.report-baseline
+?? bm.json
+?? live.html
+?? live_s228.html
+?? nama.html
+?? s395.txt
+?? scripts/hyaku/append-closure.py.bak-20261023T040735Z
+?? scripts/hyaku/fleet-commit.sh.bak-20261023T040735Z
+?? tf_bavelas.html
+?? unblob.log
+?? wb2.html
+?? write
+?? xc.xml
+  26603 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecRepair59.stream.jsonl
+  28321 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecCiteLive.stream.jsonl
+  28600 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecMap.stream.jsonl
+  31412 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecDoctrine59.stream.jsonl
+  33493 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecCensus.stream.jsonl
+  59226 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/SentinelBounds.stream.jsonl
+  62780 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecMap.stream.jsonl
+  63996 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecCapture.stream.jsonl
+  68080 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecRepair59.stream.jsonl
+  72362 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutGhost.stream.jsonl
+  76660 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS125Live.stream.jsonl
+  78395 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCiteLive.stream.jsonl
+  84220 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCensus.stream.jsonl
+  85811 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevCapabilityRows.stream.jsonl
+  87110 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutFamily.stream.jsonl
+  89639 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritDropOne.stream.jsonl
+  94350 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevengerV1.stream.jsonl
+  94383 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecSelftest.stream.jsonl
+ 103012 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutFrontier.stream.jsonl
+ 103280 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecCapture.stream.jsonl
+ 103330 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutS127Live.stream.jsonl
+ 103670 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevPins.stream.jsonl
+ 110295 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecDoctrine59.stream.jsonl
+ 110613 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevUsedBy.stream.jsonl
+ 111054 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritQuarantine.stream.jsonl
+ 118115 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutChecksPin.stream.jsonl
+ 120649 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.stream.jsonl
+ 122457 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScribeGateTable.stream.jsonl
+ 125434 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS121Gone.stream.jsonl
+ 134209 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritBaseNotZero.stream.jsonl
+ 139295 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS127Quote.stream.jsonl
+ 141484 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevGateCount.stream.jsonl
+ 152991 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS125Quote.stream.jsonl
+ 157472 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/MutPipeRow.stream.jsonl
+ 171469 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/RevS136Quote.stream.jsonl
+ 177893 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/CritTheme.stream.jsonl
+ 223747 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecProxy.stream.jsonl
+ 240813 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1-abort/ExecProxy.stream.jsonl
+ 291720 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ScoutCollision.stream.jsonl
+4246161 total
+==== abort NOTE ====
+launcher-abort: parent tool timeout 40s killed the dispatcher before any session_id. 8 processes started, 0 session ids, 24 never started. Recorded as a launcher defect, not dead seats. Same validated taskCall relaunched with a parent that stays until settlement.
+
+==== jj dir ====
+drwxr-xr-x 1 vgpnk vgpnk 204 Oct 24 21:43 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git
+drwxr-xr-x 1 vgpnk vgpnk  52 Oct 20 21:05 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj
+wrote /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/SentinelBounds/10-tool-write-paths.txt outside=79 inside=141
+Traceback (most recent call last):
+  File "<stdin>", line 149, in <module>
+  File "<stdin>", line 149, in <genexpr>
+ValueError: not enough values to unpack (expected 3, got 2)
+lines=5579 lane_outside_hits=0
+DURING	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/chousa.report-baseline	mtime=2026-10-24T21:36:35-0300 epoch=1792888595 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kagi.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kaidoku.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kake.report-baseline	mtime=2026-10-24T21:22:14-0300 epoch=1792887734 size=68 mode=0o100644
+DURING	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kama.report-baseline	mtime=2026-10-24T21:43:15-0300 epoch=1792888995 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kengaku.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kumitate.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+DURING	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/mado.report-baseline	mtime=2026-10-24T21:40:54-0300 epoch=1792888854 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/mori.report-baseline	mtime=2026-10-24T21:21:32-0300 epoch=1792887692 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/souji.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+DURING	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/tameshi.report-baseline	mtime=2026-10-24T21:34:37-0300 epoch=1792888477 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/tsukuroi.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+DURING	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/watchdog.log	mtime=2026-10-24T21:43:16-0300 epoch=1792888996 size=114756 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.omp/mcp.json	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=285 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kotoba.report-baseline	mtime=2026-10-24T19:58:12-0300 epoch=1792882692 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/kotodama.report-baseline	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/.ufo/state/revenger.report-baseline	mtime=2026-10-24T20:34:33-0300 epoch=1792884873 size=68 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/bm.json	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=5563 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/live.html	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=57113 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/live_s228.html	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=5196 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/nama.html	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=68855 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/s395.txt	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=0 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/scripts/hyaku/append-closure.py.bak-20261023T040735Z	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=5757 mode=0o100755
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/scripts/hyaku/fleet-commit.sh.bak-20261023T040735Z	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=2857 mode=0o100755
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/tf_bavelas.html	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=5583 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/unblob.log	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=1510 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/wb2.html	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=620 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/write	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=25 mode=0o100644
+BEFORE	fleet-porcelain	/home/vgpnk/Projects/shokunin/xc.xml	mtime=2026-10-24T18:07:20-0300 epoch=1792876040 size=237 mode=0o100644
+DURING	candidate	/tmp/kumitate-r59-MutGhost	mtime=2026-10-24T21:38:18-0300 epoch=1792888698 size=68 mode=0o40755
+DURING	candidate	/tmp/kumitate-r59-MutGhost/README.md	mtime=2026-10-24T21:37:49-0300 epoch=1792888669 size=68 mode=0o100644
+DURING	candidate	/tmp/kumitate-r59-MutGhost/SOURCES.md	mtime=2026-10-24T21:37:49-0300 epoch=1792888669 size=45 mode=0o100644
+DURING	candidate	/tmp/kumitate-r59-MutGhost/README-s112-only.md	mtime=2026-10-24T21:38:18-0300 epoch=1792888698 size=34 mode=0o100644
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=107 mode=0o40700
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx/README.md	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=51 mode=0o100644
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx/SOURCES.md	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=64 mode=0o100644
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx/README-ghost.md	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=66 mode=0o100644
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx/README-s11.md	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=45 mode=0o100644
+DURING	candidate	/tmp/mutfamily.rcZHD8Bx/SOURCES-s11.md	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=45 mode=0o100644
+DURING	candidate	/tmp/scouts125live.WMuhPk	mtime=2026-10-24T21:40:17-0300 epoch=1792888817 size=26 mode=0o40700
+DURING	candidate	/tmp/scouts125live.WMuhPk/architecture	mtime=2026-10-24T21:40:17-0300 epoch=1792888817 size=688587 mode=0o100644
+ABSENT	candidate	/tmp/crit-drop-one.xl6gw2
+ABSENT	candidate	/tmp/revs125-git-body.err
+ABSENT	candidate	/tmp/revs125-git-quote.err
+BEFORE	candidate	/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md	mtime=2026-10-24T21:17:10-0300 epoch=1792887430 size=190317 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md	mtime=2026-10-19T19:39:23-0300 epoch=1792449563 size=2313 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md	mtime=2026-10-21T14:57:49-0300 epoch=1792605469 size=14234 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md	mtime=2026-10-24T00:01:03-0300 epoch=1792810863 size=19749 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/.ufo/reports/round-58/kumitate.md	mtime=2026-10-24T19:55:17-0300 epoch=1792882517 size=18157 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/index	mtime=2026-10-24T21:25:16-0300 epoch=1792887916 size=1198600 mode=0o100644
+DURING	candidate	/home/vgpnk/Projects/shokunin/.git/index	mtime=2026-10-24T21:43:16-0300 epoch=1792888996 size=542736 mode=0o100644
+BEFORE	candidate	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=52 mode=0o40755
+DURING	candidate	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.git	mtime=2026-10-24T21:44:24-0300 epoch=1792889064 size=204 mode=0o40755
+--- /tmp name scan ---
+BEFORE	tmp-match	/tmp/kumitate-r58-closure.json	mtime=2026-10-24T20:17:17-0300 epoch=1792883837 size=5409 mode=0o100644
+BEFORE	tmp-match	/tmp/tameshi-r39-ScoutS107Quote	mtime=2026-10-24T21:14:51-0300 epoch=1792887291 size=34 mode=0o40755
+BEFORE	tmp-match	/tmp/kumitate-r59-src	mtime=2026-10-24T21:17:05-0300 epoch=1792887425 size=55 mode=0o40755
+BEFORE	tmp-match	/tmp/kumitate-r59-launch.py	mtime=2026-10-24T21:27:46-0300 epoch=1792888066 size=3654 mode=0o100644
+BEFORE	tmp-match	/tmp/kumitate-r59-guard	mtime=2026-10-24T21:20:26-0300 epoch=1792887626 size=53 mode=0o40755
+BEFORE	tmp-match	/tmp/repair59-dropb8.mjs	mtime=2026-10-24T21:28:07-0300 epoch=1792888087 size=7740 mode=0o100644
+DURING	tmp-match	/tmp/kumitate-r59-report-draft.md	mtime=2026-10-24T21:31:45-0300 epoch=1792888305 size=6483 mode=0o100644
+DURING	tmp-match	/tmp/kake-r49-scout-s273	mtime=2026-10-24T21:36:47-0300 epoch=1792888607 size=29 mode=0o40755
+DURING	tmp-match	/tmp/kake-r49-scout-s274	mtime=2026-10-24T21:37:17-0300 epoch=1792888637 size=42 mode=0o40755
+DURING	tmp-match	/tmp/kumitate-r59-MutGhost	mtime=2026-10-24T21:38:18-0300 epoch=1792888698 size=68 mode=0o40755
+DURING	tmp-match	/tmp/kake-r49-s259-scout	mtime=2026-10-24T21:38:27-0300 epoch=1792888707 size=179 mode=0o40755
+DURING	tmp-match	/tmp/mutfamily.rcZHD8Bx	mtime=2026-10-24T21:39:22-0300 epoch=1792888762 size=107 mode=0o40700
+DURING	tmp-match	/tmp/kake-r49-s259-scout2	mtime=2026-10-24T21:39:27-0300 epoch=1792888767 size=108 mode=0o40755
+DURING	tmp-match	/tmp/scouts125live.WMuhPk	mtime=2026-10-24T21:40:17-0300 epoch=1792888817 size=26 mode=0o40700
+--- lane mtime during wave outside bound ---
+lane_outside_during_count=0
+--- jj stat ---
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/.gitignore	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=3 mode=0o100644
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/config-id	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=20 mode=0o100600
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/git_target	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=13 mode=0o100644
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/type	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=3 mode=0o100644
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/extra/482ae5a29fbe856c7272f2071b8b0f0359ee2d89ff392b8a900643fbd0836eccd067b8bf41909e206c90d45d6e7d8b6686b93ecaee5fe1a9060d87b672101310	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=8 mode=0o100600
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/extra/504afaef1204e426d3350cd1dfc3d9292eaefd3b3aa2d6fd6da7d8dda865ade75a50f07b13c051fa4e750a0abcb71d5d149ea4be292355eaa9098b01c633bc68	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=52 mode=0o100600
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/extra/be2d2ef82f0ec7c1c4454bfe482e8ef59e4f73fd90ee39e3b4d0f7368ffd4ba27cfab14549baac7270bf13bcb45d1c73421dedc8711633cd1f041503c13b7782	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=3792 mode=0o100600
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/extra/232af67645749beab4f09ba1bebf8478e7e0ac4e7f023d2f5308d35e3d0fe6795a8f33379a777181dba1796d6c21a65f2c30a3791b7fe955444d3fdc3daea903	mtime=2026-10-20T21:05:24-0300 epoch=1792541124 size=180 mode=0o100600
+BEFORE	jj	/home/vgpnk/Projects/shokunin/kumitate-shokunin/.jj/repo/store/extra/209901a57be99d7a1152a750e7212a20b8653b58429b201507e098e54102c137347a77a2574c1bfb54b7f913c416c3396638a78094ad6fa1d5d3ab3627df8c31	mtime=2026-10-20T23:35:04-0300 epoch=1792550104 size=246 mode=0o100600
+blocks=53 bytes=137014
+=== lane cached ===
+exit:0
+=== fleet cached ===
+exit:0
+=== lane .git top ===
+BEFORE 1791921063 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/description
+BEFORE 1791921063 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/hooks
+BEFORE 1791921064 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/logs
+BEFORE 1792207697 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/COMMIT_EDITMSG
+BEFORE 1792458303 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/rr-cache
+BEFORE 1792458508 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/ORIG_HEAD
+BEFORE 1792541124 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/refs
+BEFORE 1792843038 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/info
+BEFORE 1792846276 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/packed-refs
+BEFORE 1792846743 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/FETCH_HEAD
+BEFORE 1792882694 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/config
+BEFORE 1792887901 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/HEAD
+BEFORE 1792887901 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/objects
+BEFORE 1792887916 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/index
+BEFORE 1792887916 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.git/index
+=== fleet .git top during ===
+DURING 1792888995 /home/vgpnk/Projects/shokunin/.git/HEAD
+DURING 1792888996 /home/vgpnk/Projects/shokunin/.git/index
+DURING 1792888995 /home/vgpnk/Projects/shokunin/.git/objects
+DURING 1792888996 /home/vgpnk/Projects/shokunin/.git/index
+=== shokuknow during ===
+1792888885.9995017920 /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/__pycache__
+1792888258.4583353990 /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/__pycache__/quote-lint.cpython-314.pyc
+1792888373.9826816300 /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/__pycache__/build-wave3.cpython-314.pyc
+1792888436.9752687790 /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/__pycache__/audit-wave.cpython-314.pyc
+1792888885.9995017920 /home/vgpnk/Projects/shokuknow/.ufo/waves/corpus-expansion-1/__pycache__/renumber-staged.cpython-314.pyc
+1792889265.3144539130 /home/vgpnk/Projects/shokuknow/lanes/tabi/round8/.work/ratelimit-series.tsv
+1792888539.8989705380 /home/vgpnk/Projects/shokuknow/.git
+shokuknow_find_exit:0
+=== /fast/scratch and /dev/shm name hits ===
+drwxrwxrwt 2 root  root   80 Oct 24 21:48 /dev/shm
+drwxr-xr-x 7 vgpnk vgpnk 102 Oct 24 21:13 /fast/scratch
+/fast/scratch/hyaku/kumitate-pin
+/fast/scratch/hyaku/kumitate-r58-close
+/fast/scratch/hyaku/kumitate-r58-wave
+=== fleet HEAD ===
+4428a2b25435c064c45861d596057f6fa57db231
+hash=4428a2b25435c064c45861d596057f6fa57db231
+subject=round-36: kama dispatch evidence (hyaku inline attempt 1)
+author=kama-shokunin <kama@shokunin.local>
+committer=kama-shokunin <kama@shokunin.local>
+commit_date=2026-10-24 21:43:15 -0300
+author_date=2026-10-24 21:42:55 -0300
+=== fleet reflog -8 ===
+4428a2b2 HEAD@{2026-10-24 21:43:15 -0300}: export from jj
+9820b722 HEAD@{2026-10-24 21:42:55 -0300}: export from jj
+127a2669 HEAD@{2026-10-24 21:41:30 -0300}: export from jj
+5cff012c HEAD@{2026-10-24 21:41:16 -0300}: export from jj
+0d848b2a HEAD@{2026-10-24 21:40:54 -0300}: export from jj
+79965815 HEAD@{2026-10-24 21:40:25 -0300}: export from jj
+8dd0ad8a HEAD@{2026-10-24 21:36:35 -0300}: export from jj
+d4fb5cbc HEAD@{2026-10-24 21:36:14 -0300}: export from jj
+=== watchdog tail ===
+2026-10-24T19:58:07-03:00 launch kama round=34 pgid=1645288 driver=hyaku-inline attempt=1
+2026-10-24T19:58:09-03:00 launch tameshi round=38 pgid=1645856 driver=hyaku-inline attempt=1
+2026-10-24T19:58:10-03:00 launch chousa round=42 pgid=1646428 driver=hyaku-inline attempt=1
+2026-10-24T19:58:12-03:00 launch kake round=48 pgid=1647007 driver=hyaku-inline attempt=1
+2026-10-24T19:58:14-03:00 launch kotoba round=67 pgid=1647559 driver=hyaku-inline attempt=1
+2026-10-24T19:58:14-03:00 complete kumitate round=58; hyaku-inline attempt=1
+2026-10-24T20:33:30-03:00 complete mado round=32; hyaku-inline attempt=1
+2026-10-24T20:34:31-03:00 complete kotodama round=68; hyaku-inline attempt=1
+2026-10-24T20:34:34-03:00 launch revenger round=67 pgid=1935276 driver=hyaku-inline attempt=1
+2026-10-24T20:41:17-03:00 complete tameshi round=38; hyaku-inline attempt=1
+2026-10-24T20:45:11-03:00 complete chousa round=42; hyaku-inline attempt=1
+2026-10-24T20:57:46-03:00 complete kama round=34; hyaku-inline attempt=1
+2026-10-24T20:58:07-03:00 complete mori round=42; hyaku-inline attempt=1
+2026-10-24T20:58:11-03:00 launch mado round=33 pgid=2254139 driver=hyaku-inline attempt=1
+2026-10-24T20:58:13-03:00 launch tameshi round=39 pgid=2253415 driver=hyaku-inline attempt=1
+2026-10-24T20:59:39-03:00 launch chousa round=43 pgid=2257195 driver=hyaku-inline attempt=1
+2026-10-24T21:11:49-03:00 complete kotoba round=67; hyaku-inline attempt=1
+2026-10-24T21:13:06-03:00 complete kake round=48; hyaku-inline attempt=1
+2026-10-24T21:13:57-03:00 launch kama round=35 pgid=2559625 driver=hyaku-inline attempt=1
+2026-10-24T21:21:34-03:00 launch mori round=43 pgid=2878367 driver=hyaku-inline attempt=1
+2026-10-24T21:22:16-03:00 launch kake round=49 pgid=2899645 driver=hyaku-inline attempt=1
+2026-10-24T21:27:17-03:00 complete tameshi round=39; hyaku-inline attempt=1
+2026-10-24T21:28:08-03:00 complete chousa round=43; hyaku-inline attempt=1
+2026-10-24T21:30:29-03:00 complete mado round=33; hyaku-inline attempt=1
+2026-10-24T21:33:35-03:00 complete kama round=35; hyaku-inline attempt=1
+2026-10-24T21:34:39-03:00 launch tameshi round=40 pgid=3086320 driver=hyaku-inline attempt=1
+2026-10-24T21:36:37-03:00 launch chousa round=44 pgid=3105723 driver=hyaku-inline attempt=1
+2026-10-24T21:40:56-03:00 launch mado round=34 pgid=3166550 driver=hyaku-inline attempt=1
+2026-10-24T21:41:30-03:00 complete kake round=49; hyaku-inline attempt=1
+2026-10-24T21:43:16-03:00 launch kama round=36 pgid=3178699 driver=hyaku-inline attempt=1
+=== report baselines during ===
+-- chousa --
+44 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+-- kama --
+36 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+-- mado --
+34 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+-- tameshi --
+40 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855

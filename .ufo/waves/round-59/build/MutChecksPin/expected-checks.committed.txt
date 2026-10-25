@@ -1,0 +1,7 @@
+command: grep -n EXPECTED_CHECKS committed blob
+33: * A drop-one mutant (EXPECTED_CHECKS still 8, one hold() removed) prints
+42:const EXPECTED_CHECKS = 8;
+157:const mismatch = checks.length !== EXPECTED_CHECKS;
+159:const head = `REPAIR59: ${mismatch ? 'REPAIR59_UNMET' : (held === EXPECTED_CHECKS ? 'REPAIR59_HELD' : 'REPAIR59_UNMET')} held=${held}/${checks.length} checks=${EXPECTED_CHECKS} rev=${full} rule=${RULE} version=v1${mismatch ? ' checks-mismatch' : ''}`;
+160:finish(held === EXPECTED_CHECKS && !mismatch ? 0 : 1, head);
+exit:0

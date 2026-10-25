@@ -1,0 +1,70 @@
+2026-10-24T21:38:17-03:00
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+commit
+ancestor_exit=0
+diff_exit=0
+identity_exit=0
+show_exit=0
+count_exit=0
+worktree_count_exit=0
+gawk_exit=0
+contract_awk_exit=0
+malformed_exit=0
+bash_ifs_exit=0
+census_live_exit=0
+trio_e01_lines=0
+all_e01_lines=0
+mutate_exit=0
+DONE
+wrote sources.mut-s125-insert-pipe.md pipes=13
+line=138 split_len=12 cells=10 pipe_count=11
+cell0=' S127  MCP Tasks extension specification 2026-07-28 — https://github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md '
+CENSUS_BREAKING=true
+line=139 split_len=13 cells=11 pipe_count=12
+cell0=' S136 '
+CENSUS_BREAKING=false
+S125 line=137 kind=row
+S125 line=139 kind=other
+S127 line=138 kind=row
+S127 line=139 kind=other
+S136 line=139 kind=row
+--- stderr sizes ---
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/01-count.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/02-gawk.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/03-contract-awk.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/03b-contract-malformed.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/04-bash-ifs.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/05-census-live.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/08-insert-pipe.count.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/08-insert-pipe.awk.stderr
+0 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/MutPipeRow/08-insert-pipe.census.stderr
+0 total
+--- lane sha unchanged ---
+dae027546be53767aba9265cf19ac8c9ee0ec3455b767e6b27f643cfd2bd37af  /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+--- insert e01 ---
+file	E01	S125 fields=12
+--- insert awk ---
+id=S125 NF=14 fields=12 malformed=1
+id=S127 NF=13 fields=11 malformed=0
+id=S136 NF=13 fields=11 malformed=0
+--- insert count head ---
+id=S125 row_matches=1 lines=[137] substring_lines=2
+id=S125 line=137
+id=S125 split_len=14 cells=12 pipe_count=13
+id=S125 raw_split_len=14 leading_spaces=0
+id=S125 endswith_pipe=True startswith_pipe=True
+id=S125 escaped_pipe=False backslash=0
+id=S125 cr=False
+id=S125 CENSUS_BREAKING=true length=12
+--- census exits ---
+census_exit=1
+count_exit=0
+awk_exit=0
+2026-10-24T21:41:40-03:00
+[unexpected] RuntimeError: workspace wd_shokunin_8c4a99c6228c is not materialized
+    at RuntimeResolver.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:180263:36)
+    at AgentRuntimeService.acquire (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:131899:25)
+    at AgentFileHistoryService.readCurrent (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177438:31)
+    at AgentFileHistoryService.endCheckpoint (/home/runner/work/kimi-code/kimi-code/apps/kimi-code/dist-native/intermediates/main.cjs:177351:32) {
+  code: 'runtime.not_found'
+}

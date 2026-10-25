@@ -1,0 +1,13 @@
+probe_stdout_line1=DOCTRINE59: DOCTRINE59_HELD held=5/5 checks=5 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=D59
+probe_exit=0
+E1 probe=PASS trio reread=trio match=yes
+E1 facts=line1 has S125 S127 S136 modelcontextprotocol.io; head has verified-at: 2026-10-24 and recheck:
+E2 probe=PASS clauses=8 distinct=8 hash-miss=0 reread=clauses=8 distinct=8 hash-miss=0 match=yes
+E3 probe=PASS rows+pins reread=rows+pins match=yes
+E3 facts=S125 S127 S136 each cells=11 status=mined used-by exact entry no escaped pipe; pin sha256 equals archive sha256
+E4 probe=PASS admit=true fanout=true detect=true flips=2 reread=admit=true fanout=true detect=true flips=2 match=yes
+E5 probe=PASS collisions=present empty=true regS124=true stagedS125=true reread=same match=yes
+E5 facts=collisions 0 bytes; reg-ids line 123 is S124; reg-ids has no S125 line; staged-ids line 1 is S125
+archive_vs_catfile=EQUAL for every arm path
+probe_bytes=EQUAL worktree hash-object bc2993bea72a69068861b22012e60022e1f9ecd8 rev blob same
+attack_unreadable_pass=none

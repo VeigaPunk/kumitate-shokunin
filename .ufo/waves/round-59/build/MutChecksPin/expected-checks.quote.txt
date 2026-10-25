@@ -1,0 +1,6 @@
+const EXPECTED_CHECKS = 8;
+const held = checks.filter((c) => c.ok).length;
+const mismatch = checks.length !== EXPECTED_CHECKS;
+const full = rev.length >= 40 ? rev : rev;
+const head = `REPAIR59: ${mismatch ? 'REPAIR59_UNMET' : (held === EXPECTED_CHECKS ? 'REPAIR59_HELD' : 'REPAIR59_UNMET')} held=${held}/${checks.length} checks=${EXPECTED_CHECKS} rev=${full} rule=${RULE} version=v1${mismatch ? ' checks-mismatch' : ''}`;
+finish(held === EXPECTED_CHECKS && !mismatch ? 0 : 1, head);

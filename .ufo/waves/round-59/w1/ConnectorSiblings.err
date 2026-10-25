@@ -1,0 +1,128 @@
+WROTE /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ConnectorSiblings
+86
+--- identity ---
+lane=kasegi
+root=/home/vgpnk/Projects/shokunin/kasegi-shokunin
+head=1fafde8f11454f3b0b98ab7f2b2e640aaf7f399a
+rev-parse.exit=0
+province.head-blob=3f3d8aad3b179f8f13fe6311dfb135f507e79fcd
+rev-parse-blob.exit=0
+province.worktree-blob=3f3d8aad3b179f8f13fe6311dfb135f507e79fcd
+hash-object.exit=0
+status.exit=0
+lane=kagi
+root=/home/vgpnk/Projects/shokunin/kagi-shokunin
+head=899c50b42634a3a4ad0b28ab7509786315e2fc2b
+rev-parse.exit=0
+province.head-blob=2bbd4daae8a117bc62a0761e828f5004c6617a5a
+rev-parse-blob.exit=0
+province.worktree-blob=2bbd4daae8a117bc62a0761e828f5004c6617a5a
+hash-object.exit=0
+status.exit=0
+lane=kotoba
+root=/home/vgpnk/Projects/shokunin/kotoba-shokunin
+head=e94ae32a5cd8dc3ee8e2d247816784bec2750cc0
+rev-parse.exit=0
+province.head-blob=eac94699bbe1407da57089a077707471757ec9e0
+rev-parse-blob.exit=0
+province.worktree-blob=eac94699bbe1407da57089a077707471757ec9e0
+hash-object.exit=0
+status.exit=0
+--- blob cmp ---
+kasegi 
+equal
+kagi 
+equal
+kotoba 
+equal
+--- grep exits ---
+kasegi claim-phrase 1
+kasegi mcp 1
+kasegi orchestration 1
+kasegi protocol-revision 1
+kasegi refuses 0
+kasegi reject-route 0
+kagi claim-phrase 1
+kagi mcp 1
+kagi orchestration 1
+kagi protocol-revision 1
+kagi refuses 0
+kagi reject-route 0
+kotoba claim-phrase 1
+kotoba mcp 0
+kotoba orchestration 0
+kotoba protocol-revision 1
+kotoba refuses 0
+kotoba reject-route 0
+--- kotoba mcp grep ---
+19:- MCP server `instructions` (round 52, moved from Frontier "MCP/plugin instruction surfaces", in part): what the MCP specification and six clients (Claude Code, VS Code, Codex, Gemini CLI, opencode, Copilot CLI) document about the server-wide `instructions` text, with the authoring rule in `SKILL.md` § Instruction surfaces — `corpus/knowledge/mcp-server-instructions-round52.md` (S032–S037, S040–S042; opencode and Copilot CLI first recorded silent, corrected in attempt 2 by S041 and S042, lesson M38), checked by `verifiers/check_mcp_instructions.py`. Plugin surfaces and measured client behaviour stay Frontier.
+32:- Executed checklist coverage (33 of 41 boxes still lane-attested prose at round 46; 31 at round 49), command extraction outside the declared vocabulary, implicit-intent trigger fidelity, MCP/plugin instruction surfaces (round 52: MCP server `instructions` per client moved to Core; plugin surfaces and measured client behaviour stay here), sibling arbitration clauses (round 49: the census moved to Core; round 50: kotoba's own description names the 9 `adjacent` lanes; round 51: the per-client overlap levers moved to Core — 7 of 7 clients document a non-wording removal lever on the widened counter, 4 of 7 on the counter frozen at the round-51 plan, which is the declared and unverified result (round-52 correction, M36), and none of them is a tie-break; open: whether naming a lane, or removing one of an overlapping pair, improves routing is unmeasured on any harness), per-render skill consumption.
+--- kotoba orchestration grep ---
+59:| kumitate | adjacent | fac39171ac28c606e90da75fc2ba2ed3df52f4ea | orchestration and dispatch runtime and swarm lifecycle; kumitate routes "Prompt and skill craft → kotoba" (kumitate `PROVINCE.md:27`); kotoba owns the prompt wording, not the runtime (kotoba base `PROVINCE.md` § Adjacent) |
+--- kotoba reject ---
+6:**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+37:Sibling-owned ground (report, don't absorb). Rewritten round 49 from the fleet census
+59:| kumitate | adjacent | fac39171ac28c606e90da75fc2ba2ed3df52f4ea | orchestration and dispatch runtime and swarm lifecycle; kumitate routes "Prompt and skill craft → kotoba" (kumitate `PROVINCE.md:27`); kotoba owns the prompt wording, not the runtime (kotoba base `PROVINCE.md` § Adjacent) |
+--- kasegi refuses ---
+25:**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+--- kagi refuses ---
+6:**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+=== kasegi objects exit=1 ===
+(empty)
+=== kagi objects exit=0 ===
+49:- `corpus/op-ref-probe.sh` — the `op.env` contract gate: `refs` (`cmd_refs` awk) vs `op run --env-file` (what `cmd_run` execs) over generated plain-value fixtures, plus the dotenv edge classes, precedence, six error signatures (four `op`-side, two wrapper-side; four until the v2 probe) and the masking scope. `--selftest` proves 36 cases (comparator, POLICY-before-exec for a ref token / symlink / FIFO / premise break, SETUP, the hard-failure class, and the seven byte-comparator cases; 29 before the `--dotenv-bytes` arm); `--dotenv-bytes` is the op-only byte contract under `env -i` with scratch HOME/XDG (ledger `R21-01`, `knowledge/op-ref-consumption.md` §11); POLICY refuses any op-side fixture carrying a ref token, so the gate never resolves a reference. Exit 0/1/2. Data: the contract arrays in the script (there is no TSV — the fixtures are generated from the contract).
+52:- `corpus/claim-ledger.sh` — calibration gate: `verify` (91 revision stamps + 65 claim rows; since round 24 host/substrate rows are HOST-SKIPped by default and run only with `--allow-host-rows`), `citations` (durable evidence; `.ufo/` resolves lane-first; since round 25 a lone clone prints `FLEET-ABSENT` and ends `INCOMPLETE` exit 3, and `verify` reports `LAYOUT-INCOMPLETE`), `cells` (policy/host classification before recursion skips), `docs` and reviewed `stamp`. Exit 0/1/2 (3 = citations incomplete in a lone layout); `--selftest` declares 170 cases (121 at round 23; 151 at round 24; fourteen round-25 layout cases and one network-mode refusal). Only executed output verifies the count. Script expansion, attached external pattern-file operands and symlinked script ancestors are refused; the host-free fixture invocation is a closed vector, not a prefix.
+55:- `corpus/sources-census.sh` — source-registry gate (round 21): the SOURCES-CONTRACT-v1 census over `corpus/SOURCES.md` plus the citation handshake with `corpus/knowledge/` entries that carry `source:`. Read-only, no network; exit 0/1/2; `--selftest` proves 70 cases (40 at first landing; seven fail-open cases added after the round-21 post-landing review; twelve SC_FETCH cases added in round 23; eleven SC_INROW cases in round 24). Checks the citation chain and declared capture/classification records, never page content; entries without a column-1 `source:` line are outside every check.
+80:Local typed-review and revision-accounting fixtures do not absorb research
+84:revision pins check bytes, not currentness of historical host facts.
+=== kotoba objects exit=1 ===
+(empty)
+=== sha256 ===
+bfea62f21a4a54118fb82c1c3a0801b87d0ece37f6332f57ec3e803b581226e8  /home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md
+5edd4f1b134d1cf3b4434239478e168bcc535e02fcfa31bc354dabec4650bb02  /home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md
+77941512a16284292e0f1ac998aa2ca6f62401af2a9e22cb998bdcc3848d550b  /home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md
+92102aa91d10cc02f63cd82cd70b294a1a8edea66f7116bed9efb3532764e308  /home/vgpnk/Projects/shokunin/kumitate-shokunin/PROVINCE.md
+=== wc ===
+49 /home/vgpnk/Projects/shokunin/kasegi-shokunin/PROVINCE.md
+83 /home/vgpnk/Projects/shokunin/kagi-shokunin/PROVINCE.md
+67 /home/vgpnk/Projects/shokunin/kotoba-shokunin/PROVINCE.md
+=== status bytes ===
+0 kasegi.province.status.txt
+0 kagi.province.status.txt
+0 kotoba.province.status.txt
+0 total
+=== kumitate claim grep ===
+20:- MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
+26:- MCP/OAuth security practice (token passthrough, confused deputy) → kasegi / kagi.
+exit=0
+=== nl extracts ===
+-- kasegi --
+3	**Domain:** bounty & security research — scopes ~/Projects/bounties, program rules, claim packages
+24	**Owns:** the domain knowledge, playbooks, error patterns, and checklists above.
+25	**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+26	
+-- kagi domain/refuse --
+3	**Domain:** secrets & vault ops — the-janitor flows, credential hygiene evidence
+5	**Owns:** the domain knowledge, playbooks, error patterns, and checklists above.
+6	**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+-- kotoba 19/32/59 --
+3	**Domain:** prompt & skill craft — scopes SKILL.md/AGENTS.md quality, trigger fidelity
+6	**Refuses:** anything outside this domain; report cross-domain evidence back to the orchestrator rather than absorbing it.
+19	- MCP server `instructions` (round 52, moved from Frontier "MCP/plugin instruction surfaces", in part): what the MCP specification and six clients (Claude Code, VS Code, Codex, Gemini CLI, opencode, Copilot CLI) document about the server-wide `instructions` text, with the authoring rule in `SKILL.md` § Instruction surfaces — `corpus/knowledge/mcp-server-instructions-round52.md` (S032–S037, S040–S042; opencode and Copilot CLI first recorded silent, corrected in attempt 2 by S041 and S042, lesson M38), checked by `verifiers/check_mcp_instructions.py`. Plugin surfaces and measured client behaviour stay Frontier.
+32	- Executed checklist coverage (33 of 41 boxes still lane-attested prose at round 46; 31 at round 49), command extraction outside the declared vocabulary, implicit-intent trigger fidelity, MCP/plugin instruction surfaces (round 52: MCP server `instructions` per client moved to Core; plugin surfaces and measured client behaviour stay here), sibling arbitration clauses (round 49: the census moved to Core; round 50: kotoba's own description names the 9 `adjacent` lanes; round 51: the per-client overlap levers moved to Core — 7 of 7 clients document a non-wording removal lever on the widened counter, 4 of 7 on the counter frozen at the round-51 plan, which is the declared and unverified result (round-52 correction, M36), and none of them is a tie-break; open: whether naming a lane, or removing one of an overlapping pair, improves routing is unmeasured on any harness), per-render skill consumption.
+59	| kumitate | adjacent | fac39171ac28c606e90da75fc2ba2ed3df52f4ea | orchestration and dispatch runtime and swarm lifecycle; kumitate routes "Prompt and skill craft → kotoba" (kumitate `PROVINCE.md:27`); kotoba owns the prompt wording, not the runtime (kotoba base `PROVINCE.md` § Adjacent) |
+APPENDED
+163 commands.md
+kasegi refuse in-source=True in-report=True
+kagi refuse in-source=True in-report=True
+kotoba line59 in-source=True in-report=True
+kotoba line19 in-source=True in-report=True
+kumitate item2 in-source=True in-report=True
+report-bytes 6496
+trailer Report: .ufo/waves/round-59/w1/ConnectorSiblings.md
+status-exit=0
+status-exit=0
+status-exit=0
+REPORT_OK
+EVID_OK
+/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ConnectorSiblings.md

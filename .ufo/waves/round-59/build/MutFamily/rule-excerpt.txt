@@ -1,0 +1,30 @@
+1	#!/usr/bin/env node
+2	/**
+3	 * cite-sources.mjs — gate `cite-sources` (contract `kumitate-cite-sources-v1`).
+4	 *
+5	 *   node scripts/cite-sources.mjs [--readme PATH] [--sources PATH]
+6	 *   node scripts/cite-sources.mjs --selftest
+7	 *
+8	 * A README map row (a line whose first non-space characters are `| `) may cite
+9	 * a source id `S` + 3 or more digits. Each such id must be a row id in
+10	 * corpus/SOURCES.md. One- and two-digit tokens (registry family ids S1–S11)
+11	 * are not source ids and are ignored. This is the class routed as R58-V3:
+12	 * corpus/README.md cited S121, which is not a row.
+13	 *
+14	 *   CITE_SOURCES: CLEAN cited=<n>                         exit 0
+15	 *   CITE_SOURCES: DRIFT ghosts=<k> first=<id>             exit 1
+16	 *   CITE_SOURCES: FAIL-CLOSED reason=<why>                exit 2
+17	 *   CITE_SOURCES: USAGE ...                               exit 64
+18	 *
+19	 * The gate reads the two files and writes nothing.
+20	 */
+26	const ID_RE = /\bS[0-9]{3,}\b/g;
+42	function citedIds(readme) {
+43	  const cited = [];
+44	  for (const line of readme.split('\n')) {
+45	    if (!/^\s*\| /.test(line)) continue;
+46	    const found = line.match(ID_RE);
+47	    if (found) cited.push(...found);
+48	  }
+49	  return cited;
+50	}

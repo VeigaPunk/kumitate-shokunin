@@ -1,0 +1,58 @@
+REPAIR59: REPAIR59_HELD held=8/8 checks=8 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=A59 version=v1
+ | B1 PASS selftest-8/8 | B2 PASS clean | B3 PASS prose=19 rows=19 cite-sources=true | B4 PASS cite=true receipt=true mapv2=true 16/16=true stale135=false | B5 PASS pinned=true status=0  | B6 PASS literal | B7 PASS TIER59: A=104 B=14 C=8 rows=126 | B8 PASS nuance=true pin-first=true
+EXIT:0
+EXIT:0
+---STDOUT---
+REPAIR59: REPAIR59_HELD held=8/8 checks=8 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=A59 version=v1
+ | B1 PASS selftest-8/8 | B2 PASS clean | B3 PASS prose=19 rows=19 cite-sources=true | B4 PASS cite=true receipt=true mapv2=true 16/16=true stale135=false | B5 PASS pinned=true status=0  | B6 PASS literal | B7 PASS TIER59: A=104 B=14 C=8 rows=126 | B8 PASS nuance=true pin-first=true
+---STDERR---
+---BYTES---
+391 stdout.txt
+  0 stderr.txt
+  2 exit-code.txt
+393 total
+dict ['wave', 'milestone', 'axes', 'reportDir', 'context', 'items']
+.reportDir: .ufo/waves/round-59/w1
+context keys <class 'str'>
+items type <class 'list'> len 32
+{
+  "name": "ExecRepair59",
+  "role": "executor",
+  "item": "Run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/probe/repair59-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 5469c0a58d7986ff8a5f203938ae1c8785a92213`. Quote the full REPAIR59 line and exit code. Attack: a held=8/8 that is not what the command printed.\n\nWrite the report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/w1/ExecRepair59.md. Evidence only under /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/."
+}
+nlines 2
+repr0 'REPAIR59: REPAIR59_HELD held=8/8 checks=8 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=A59 version=v1'
+repr1 ' | B1 PASS selftest-8/8 | B2 PASS clean | B3 PASS prose=19 rows=19 cite-sources=true | B4 PASS cite=true receipt=true mapv2=true 16/16=true stale135=false | B5 PASS pinned=true status=0  | B6 PASS literal | B7 PASS TIER59: A=104 B=14 C=8 rows=126 | B8 PASS nuance=true pin-first=true'
+arm_count 8
+ARM B1 PASS selftest-8/8
+ARM B2 PASS clean
+ARM B3 PASS prose=19 rows=19 cite-sources=true
+ARM B4 PASS cite=true receipt=true mapv2=true 16/16=true stale135=false
+ARM B5 PASS pinned=true status=0
+ARM B6 PASS literal
+ARM B7 PASS TIER59: A=104 B=14 C=8 rows=126
+ARM B8 PASS nuance=true pin-first=true
+passes 8 misses 0
+held_field ('8', '8')
+headline_is_held_8_8 True
+status REPAIR59_HELD
+byte_match_predicate True
+70c0e2c97342628163edccd51096c7009884da18a3b1d7b0aa2fc46905cece33  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/stdout.txt
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/stderr.txt
+9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-59/build/ExecRepair59/exit-code.txt
+---ATTACK---
+attack: held=8/8 is present in stdout line 1; arm PASS count follows
+headline=REPAIR59: REPAIR59_HELD held=8/8 checks=8 rev=5469c0a58d7986ff8a5f203938ae1c8785a92213 rule=A59 version=v1
+held_token_in_headline=True
+arm_count=8 pass=8 miss=0
+attack_lands=False
+---node---
+v26.12.0
+---path---
+/home/vgpnk/.local/share/mise/installs/node/latest/bin/node
+---clock---
+2026-10-24T21:32:02-03:00
+---rev---
+5469c0a58d7986ff8a5f203938ae1c8785a92213
+---type---
+commit
