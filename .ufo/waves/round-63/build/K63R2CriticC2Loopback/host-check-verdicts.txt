@@ -1,0 +1,9 @@
+=== F1 loopback (expect FAIL) ===
+HOST_CHECK: FAIL S196:host-not-in-registry(127.0.0.1);S196:private-resolves(127.0.0.1);S197:host-not-in-registry(127.0.0.1);S197:private-resolves(127.0.0.1) rev=8576bf992194da7e41fc944d98d8529c969d0fa0 ids=S196,S197 tierA-hosts=36
+exit=1
+=== F2 httpbin (expect FAIL) ===
+HOST_CHECK: FAIL S196:host-not-in-registry(httpbin.org);S197:host-not-in-registry(httpbin.org) rev=0816d72a0d7fab770b6d1d16a0cb806fd0d63e5c ids=S196,S197 tierA-hosts=36
+exit=1
+=== integrated a9531c8 (expect PASS) ===
+HOST_CHECK: PASS rev=a9531c8e617338fd16cb69c61344ef8f17711117 ids=S196,S197 tierA-hosts=36
+exit=0

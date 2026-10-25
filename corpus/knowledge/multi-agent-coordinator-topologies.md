@@ -1,7 +1,7 @@
-source: S196 — Alibaba Cloud Bailian Model Studio, 多智能体协作 (managed agents `multiagent` roster) — https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-multiagent.md — § 多智能体协作, § 编队配置, § agents 条目字段 (the `.md` rendering; the bare page is the HTML build)
+source: S196 — Alibaba Cloud Bailian Model Studio, 多智能体协作 (managed agents `multiagent` roster) — https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-multiagent.md — § 多智能体协作, § 编队配置 (its `agents` per-entry field table, "`agents` 中每个条目的字段：") (the `.md` rendering; the bare page is the HTML build)
 source: S197 — Kim et al., Towards a Science of Scaling Agent Systems — https://arxiv.org/html/2512.08296v3 — § 3.2 Agentic Tasks and Benchmarks, § 4.1 Setup, § 4.2 Main Results, § 4.3 Scaling principles, § 5 Limitations, App. C.3 Critical Threshold (arXiv:2512.08296v3, 08 Apr 2026)
-verified-at: 2026-10-25
-recheck: 90d — `curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' https://arxiv.org/html/2512.08296v3 -o live.html && grep -c '260 experiments' live.html` -> 2; `curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' 'https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-multiagent.md' -o live.md && grep -c coordinator live.md` -> 11 (both run 2026-10-25; 663997 and 3388 bytes, byte-identical to this round's captures)
+verified-at: 2026-10-25 (arXiv:2512.08296v3, 08 Apr 2026; Bailian `.md` rendering as served 2026-10-25)
+recheck: 90d — `curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' https://arxiv.org/html/2512.08296v3 -o live.html && grep -c '260 experiments' live.html` -> 2; `curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' 'https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-multiagent.md' -o bailian-live.txt && grep -c coordinator bailian-live.txt` -> 11 (both run 2026-10-25; 663997 and 3388 bytes, byte-identical to this round's captures)
 coverage-map: frontier band "multi-agent coordinator topology" (PROVINCE.md §Frontier)
 
 # Multi-agent coordinator topologies: pick the topology from the task, not the agent count
@@ -12,20 +12,30 @@ multi-agent variants the mean effect is −0.3% (95% CI −58.7% to +77.2%, σ =
 
 ## If the task looks like X, prefer topology Y
 
+> Studied scale: every MAS configuration runs 3 agents (3 sub-agents + 1 orchestrator; 3 debate agents);
+> agent scaling is explored only "up to nine"; turns grow superlinearly (≈69 turns at n=6, ≈157 at n=10 vs
+> SAS 7.2) and "beyond 3–4 agents, per-agent reasoning quality degrades sharply under fixed budgets" (§4.3).
+> The vendor contract (S196) caps a roster at 20 entries including the coordinator. Do not apply the rows
+> below to teams larger than that. All percentages are fixed-budget (matched ~4,800 reasoning tokens),
+> SAS-referenced. The benchmark-shape mappings are this entry's wording [INFERENCE]; the study measured six
+> benchmarks only.
+
 | If the task looks like | prefer | because (S197 section) |
 | --- | --- | --- |
-| Decomposes into independent parallel information streams, single-agent baseline under ~45% (multi-source research, multi-step quantitative reasoning) | **Centralized** — one orchestrator plus n members | Finance Agent is the strongest MAS result: Centralized +80.8% (0.631 vs SAS 0.349), and the caption range over all variants is +57% to +80.8% (§4.2) |
-| Same decomposable shape, but you refuse a single orchestrator bottleneck and can pay peer chatter | **Decentralized** — peer-to-peer fusion, consensus | Named winner on BrowseComp-Plus (+9.2% vs Centralized +0.2%); best named result on Workbench (+5.6%, Centralized and Hybrid −1.2%, caption range −11% to +6%); second on Finance (+74.5% vs Centralized +80.8%) (§4.2) |
-| Tight sequential constraint satisfaction, short execution pipelines (planning, crafting) | **Single agent (SAS)** | Every MAS variant loses on PlanCraft: Independent −70.0%, Centralized −50.3%, Decentralized −41.5%, Hybrid −39.1%; critical domain complexity D ≈ 0.40 (App. C.3) |
-| The single-agent baseline already sits above ~45% accuracy | **Single agent (SAS)** | Capability-saturation ceiling (β = −0.236, p = 0.004): "tasks where single-agent performance already exceeds 45% accuracy experience negative returns from additional agents"; SWE-bench Verified degrades for every variant, −2.1% to −14.9% (§4.2, §4.3) |
-| Few tools per agent (2), orchestration-heavy team | **Independent**, or plain SAS — avoid Centralized | Terminal-Bench: Independent +1.7% (0.350), Centralized −19.2% (0.278); the low tool count limits the benefit of orchestration-heavy architectures (§4.2) |
-| Tool-heavy workflows — the paper's negligible-efficiency band ends at T ≤ 4 tools | **the simplest topology you can run** | Tool-coordination trade-off (β = −0.096, p = 0.002): "tool-heavy workflows suffer from coordination tax", and tool-rich environments amplify it (§4.3; reading the T > 4 side as penalised is the contrapositive of the stated T ≤ 4 band [INFERENCE]) |
-| Long traces where one bad step must not reach the output | **Centralized** — lowest amplification of any MAS | Trace-level error amplification: SAS 1.0, Centralized 4.4, Hybrid 5.1, Decentralized 7.8, Independent 17.2 (§4.3) |
-| You want an ensemble of independent attempts with no cross-validation | **Independent** — synthesis-only aggregator | "Independent isolates the effect of parallelism (ensemble) without communication"; it also carries the largest named loss on BrowseComp-Plus (−35%) (§3.2, §4.2) |
+| Structured low-entropy decomposition — factors analyzable independently (Finance-like earnings/market/risk analysis), SAS under ~45% | **Centralized or Decentralized** — all MAS beat SAS | Finance: every MAS variant +57% to +80.8% (Centralized +80.8% 0.631 vs SAS 0.349, Decentralized +74.5%, Hybrid +73.1%); the MAS-vs-MAS spread is a point estimate the study does not significance-separate; the paper's own worked rule: "Analysis tasks (T=5, P_SA=0.35) favor centralized multi-agent" (§4.3) |
+| High-entropy parallel search or tool-heavy business workflows (BrowseComp-Plus-like multi-source web research; Workbench-like T=16 function-calling) | **Decentralized** | Named winner on both benchmarks of that shape: BrowseComp-Plus +9.2% (Centralized flat +0.2%, Independent −35%), Workbench +5.6% (Centralized/Hybrid −1.2%); §1: "decentralized coordination benefits tasks requiring parallel exploration of high-entropy search spaces"; the BrowseComp-Plus ordering is model-family-dependent (Table 9) and Workbench's margin sits inside the caption's −11% to +6% spread |
+| Sequential constraint satisfaction — ordered steps where decomposition is artificial (PlanCraft-like planning/crafting) | **Single agent (SAS)** | Every MAS variant loses on PlanCraft: Independent −70.0%, Centralized −50.3%, Decentralized −41.5%, Hybrid −39.1% (vs SAS 0.568); "sequential interdependence, rather than complexity alone, determines coordination viability"; D ≈ 0.40 (App. C.3) is PlanCraft-correlated but non-discriminative — Finance (D=0.407) won +80.8% and SWE-bench (D=0.255) lost with every MAS, and the paper itself says "Domain complexity alone does not fully predict MAS effectiveness" |
+| The single-agent baseline already sits above ~45% accuracy | **Single agent (SAS)** | Capability-saturation ceiling (β = −0.236, p = 0.004; survives cluster-robust SEs and Holm correction, pHolm = 0.018): "tasks where single-agent performance already exceeds 45% accuracy experience negative returns from additional agents"; SWE-bench Verified degrades for every variant, −2.1% to −14.9%; validates across all held-out models (Table 9) |
+| Few tools per agent (≈2) | **SAS**, or Independent if marginal gains suffice | Terminal-Bench (2 tools): Independent +1.7% (0.350) vs SAS 0.344, Centralized −19.2% (0.278); "the low tool count (2 tools) limits the benefit of orchestration-heavy architectures" (§4.2); Independent's +1.7% is caption-"marginal" and its relative results failed held-out-model validation on Gemini (Table 9) |
+| Tool-heavy workflows (T > 4) | **the lowest-overhead topology that still decomposes the task — not automatically SAS** | Ec×T interaction (β = −0.096, p = 0.002 naive) penalises low-efficiency architectures as T grows ("tool-rich environments amplify the coordination tax"); on the study's own T=16 benchmark the winner was Decentralized (0.664 vs SAS 0.629) while Hybrid collapsed (O% = 515), and the paper's worked rule reads "Tool-heavy tasks (T=16, P_SA=0.63) favor decentralized multi-agent despite high overhead (263%)"; directional only — dataset-level predictor, not significant under cluster-robust SEs; the tool main effect is positive (log(1+T) +0.166, p < 0.001) |
+| Long traces where one bad step must not reach the output | **Centralized** (if a MAS at all) — verification bottleneck | Factual error absorption: Centralized/Hybrid −22.7% average (95% CI [20.1%, 25.3%]), peak −31.4% on Finance; context omission −66.8% under Centralized; Independent has no error correction (+4.6%) — "errors made by individual agents propagate directly to the aggregated output"; note A_e^trace (SAS 1.0, Centralized 4.4, Hybrid 5.1, Decentralized 7.8, Independent 17.2) measures wasted coordination compute, not output contamination, and has no significant performance effect (p = 0.658); SAS (1.0) remains the zero-propagation option |
+| You want to measure ensemble value in isolation | **Independent** — as an ablation, not a default | "Independent isolates the effect of parallelism (ensemble) without communication"; it is the study's worst architecture by mean success (0.370 vs SAS 0.466), carries the largest named loss (BrowseComp-Plus −35%) and no error correction (+4.6%) — adopt it only to run that measurement |
 
-A row restates a measured per-benchmark winner; transferring it to a *new* task is the study's predictor (87%
-correct architecture selection on held-out configurations, versus 20% random and 54% capability-only, §4.3), not a
-per-row guarantee — that transfer is this entry's construction, not a sentence the paper writes [INFERENCE].
+> A row restates a measured per-benchmark winner. Transferring a row to a new task is this entry's
+> construction [INFERENCE]: the study's 87% correct-architecture-selection figure is within-domain
+> (held-out configurations of the same six benchmarks), and the paper itself reports that cross-domain
+> prediction of absolute success remains limited (leave-one-dataset-out cross-validation; Table 9 validates
+> only 11/15 finding-model pairs, with the BrowseComp-Plus ordering varying by model family).
 
 ## The roster ceiling a coordinator must live under (S196)
 
@@ -45,15 +55,19 @@ per-row guarantee — that transfer is this entry's construction, not a sentence
   scale and role prompts; prompts were not tuned per model family (§5). Communication overhead grows superlinearly
   with agent count, so nothing here extends to large collectives.
 - **Fixed-budget deltas.** MAS and SAS were matched for total reasoning-token budget (mean 4,800 tokens per trial)
-  and tool-call access. The percentages are fixed-budget percentages; the study reports no cost, latency or
-  wall-clock comparison (§4.1).
+  and tool-call access. The percentages are fixed-budget percentages; the study reports no latency or
+  wall-clock comparison, and its cost evidence (Figure 3: normalized USD cost per experiment against
+  performance, 180 configurations with full cost tracking) is not budget-matched to the headline
+  percentages (§4.1).
 - **S196 is a contract, not a measurement.** It gives field shape and the one supported topology; it states no
   fan-out performance, no cost, no failure behaviour, and no opinion on when a roster is worth having. Every
   "prefer" above comes from S197 alone.
 - **Unspecified by both.** Whether a member agent may itself be a coordinator (recursion) and how nested rosters
-  count against the 1–20 bound: neither source says [INFERENCE: unspecified].
-- **Version scope.** arXiv 2512.08296v3 (08 Apr 2026) and the vendor page as served 2026-10-25; earlier paper
-  versions and later vendor changes are out of scope. Benchmarks are named per S197 Table 1; the mapping of those
+  count against the 1–20 bound: neither source says — UNKNOWN.
+- **Version scope.** arXiv 2512.08296v3 (08 Apr 2026) and the vendor page as served 2026-10-25. v1/v2 (Dec 2025)
+  read 180 experiments across four benchmarks — every headline number here is v3-only — and v3 itself still
+  carries one stale "180 configurations" in its Figure 3 caption; do not cite it as the setup figure. Later
+  paper versions and vendor changes are out of scope. Benchmarks are named per S197 Table 1; the mapping of those
   benchmark shapes onto "if the task looks like" is this entry's wording [INFERENCE].
 
 ## Located quotes

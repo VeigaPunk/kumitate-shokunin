@@ -1,0 +1,16 @@
+# adversarial fixtures (D=/tmp/tmp.S7lFksbD5u)
+
+## (a) nested marker BEFORE plan -> expect NA/2
+PLAN_BEFORE_READY: NA rev=34b659627c33bb091cbb34bde2d0961bf63e3df8 round=9 dir=.ufo/waves/round-9 reason=NO_MARKER plan=34b659627c33bb091cbb34bde2d0961bf63e3df8 plan_ct=1000000100 marker=-
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=9-9 rev=34b659627c33bb091cbb34bde2d0961bf63e3df8 exit=2 failed= na_rounds=9
+rc=2
+
+## (b) plan+marker same commit -> expect PASS/0
+PLAN_BEFORE_READY: PASS rev=74ce0a2db7f722ad2f61ba43ad27c4500743d81a round=9 dir=.ufo/waves/round-9 plan=74ce0a2db7f722ad2f61ba43ad27c4500743d81a plan_ct=1000000000 marker=74ce0a2db7f722ad2f61ba43ad27c4500743d81a marker_kind=ready marker_ct=1000000000 marker_path=.ufo/waves/round-9/w1.ready
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=9-9 rev=74ce0a2db7f722ad2f61ba43ad27c4500743d81a exit=0 failed= na_rounds=
+rc=0
+
+## (c) plan add/del/readd after marker -> expect PASS/0 (oldest add)
+PLAN_BEFORE_READY: PASS rev=4f9a6e748eb0c27f8dd6bd0a3ebb2664a57f60a0 round=9 dir=.ufo/waves/round-9 plan=b3d14dc6368b09b0fc7451b3efde51e2d840dfc7 plan_ct=1000000000 marker=eb8c9bee6a1101ae68fddff60fa9bda35714aa46 marker_kind=ready marker_ct=1000000100 marker_path=.ufo/waves/round-9/w1.ready
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=9-9 rev=4f9a6e748eb0c27f8dd6bd0a3ebb2664a57f60a0 exit=0 failed= na_rounds=
+rc=0

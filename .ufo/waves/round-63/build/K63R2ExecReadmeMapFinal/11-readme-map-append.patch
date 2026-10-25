@@ -1,0 +1,78 @@
+diff --git 1/readme-map-append.mjs 2/readme-map-append.mjs
+new file mode 100755
+index 0000000..3bd1d90
+--- /dev/null
++++ 2/readme-map-append.mjs
+@@ -0,0 +1,72 @@
++#!/usr/bin/env node
++/**
++ * readme-map-append.mjs — coverage-map writer (proposal, K63R2ExecReadmeMapFinal).
++ * The honest repair path for the R56-V3 class: one command adds the README row
++ * and the covered pin for a corpus note that landed unmapped. It derives nothing;
++ * it only lands the row + pin for a REAL, existing file, so it cannot paper over
++ * a typo (FAIL-CLOSED). It is idempotent and appends (the pins file is
++ * append-ordered, never rewritten/sorted — see wave-1 finding K63ExecReadmeMapRepair-5).
++ *
++ * Contract (proposal): kumitate-readme-map-append-v1
++ *   node scripts/readme-map-append.mjs <corpus-relative-path> [--readme PATH] [--pins PATH]
++ * Exit map: 0 OK (row=inserted|present pin=inserted|present) · 2 FAIL-CLOSED · 64 usage.
++ */
++import { readFileSync, writeFileSync, statSync } from 'node:fs';
++import { basename, dirname, join, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++const SELF = dirname(fileURLToPath(import.meta.url));
++const usage = (why) => {
++  process.stderr.write(`README_MAP_APPEND: USAGE ${why} (kumitate-readme-map-append-v1: <corpus-relative-path> [--readme PATH] [--pins PATH])\n`);
++  process.exit(64);
++};
++
++const argv = process.argv.slice(2);
++let path = null;
++let readme = join(SELF, '..', 'corpus', 'README.md');
++let pins = join(SELF, '..', '.ufo', 'pins', 'readme-map.json');
++for (let i = 0; i < argv.length; i++) {
++  if (argv[i] === '--readme' && i + 1 < argv.length) readme = resolve(argv[++i]);
++  else if (argv[i] === '--pins' && i + 1 < argv.length) pins = resolve(argv[++i]);
++  else if (argv[i].startsWith('--')) usage(`unknown arg ${argv[i]}`);
++  else path = argv[i];
++}
++if (path === null) usage('missing corpus path');
++
++// The corpus file must exist and be a knowledge/lessons note.
++if (!(path.startsWith('knowledge/') || path.startsWith('lessons/'))) {
++  process.stderr.write(`README_MAP_APPEND: FAIL-CLOSED reason=not a knowledge/lessons note: ${path}\n`);
++  process.exit(2);
++}
++const corpusRoot = resolve(join(SELF, '..', 'corpus'));
++const file = resolve(join(corpusRoot, path));
++if (!file.startsWith(corpusRoot + '/') || !statSync(file, { throwIfNoEntry: false })?.isFile()) {
++  process.stderr.write(`README_MAP_APPEND: FAIL-CLOSED reason=no such corpus file: corpus/${path}\n`);
++  process.exit(2);
++}
++
++// Row: append before `## Known gaps` (the coverage-map section opener that follows the table).
++const readmeText = readFileSync(readme, 'utf8');
++const row = `| \`${path}\` | ${basename(path).replace(/\.md$/, '')} — row landed by readme-map-append (round-close writer) | |\n`;
++const anchor = '\n## Known gaps';
++if (readmeText.includes(`| \`${path}\` |`)) {
++  process.stdout.write(`README_MAP_APPEND: OK ${path} row=present\n`);
++} else if (readmeText.includes(anchor)) {
++  writeFileSync(readme, readmeText.replace(anchor, `\n${row}${anchor}`));
++  process.stdout.write(`README_MAP_APPEND: OK ${path} row=inserted\n`);
++} else {
++  process.stderr.write(`README_MAP_APPEND: FAIL-CLOSED reason=no '## Known gaps' anchor in ${readme}\n`);
++  process.exit(2);
++}
++
++// Pin: append to covered (JSON is append-ordered; preserve the file's byte tail style).
++const pinsText = readFileSync(pins, 'utf8');
++const j = JSON.parse(pinsText);
++const had = j.covered.includes(path);
++if (!had) {
++  j.covered.push(path);
++  const trailing = pinsText.endsWith('\n') ? '\n' : '';
++  writeFileSync(pins, JSON.stringify(j, null, 2) + trailing);
++}
++process.stdout.write(`README_MAP_APPEND: OK ${path} pin=${had ? 'present' : 'inserted'}\n`);
++process.exit(0);

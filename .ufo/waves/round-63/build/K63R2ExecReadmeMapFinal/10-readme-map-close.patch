@@ -1,0 +1,86 @@
+diff --git 1/readme-map-close.mjs 2/readme-map-close.mjs
+new file mode 100755
+index 0000000..3e5d8c7
+--- /dev/null
++++ 2/readme-map-close.mjs
+@@ -0,0 +1,80 @@
++#!/usr/bin/env node
++/**
++ * readme-map-close.mjs — round-close map gate (proposal, K63R2ExecReadmeMapFinal).
++ * Runs the frozen `readme-map` gate at the round tip, attests the run as a close
++ * receipt (receipt-attest), and REQUIRES the receipt to record exit 0 (CLEAN).
++ * A closure file that lands unmapped (the R56-V3 class) makes the run exit 1,
++ * the receipt record exit 1, and this gate fail — so the lane cannot close with
++ * a silently drifted map.
++ *
++ * Contract (proposal): kumitate-readme-map-close-v1
++ *   node scripts/readme-map-close.mjs [--round N] [--out BASE]
++ * Defaults: --round 63; --out .ufo/waves/round-<N>/close/readme-map
++ * Exit map: 0 CLEAN (receipt recorded exit 0) · 1 DRIFT (map or receipt exit
++ * non-zero) · 2 fail-closed (attest unavailable) · 64 usage.
++ */
++import { spawnSync } from 'node:child_process';
++import { existsSync, readFileSync } from 'node:fs';
++import { dirname, join, resolve } from 'node:path';
++import { fileURLToPath } from 'node:url';
++
++const SELF = dirname(fileURLToPath(import.meta.url));
++const usage = (why) => {
++  process.stderr.write(`README_MAP_CLOSE: USAGE ${why} (contract kumitate-readme-map-close-v1: [--round N] [--out BASE])\n`);
++  process.exit(64);
++};
++
++const argv = process.argv.slice(2);
++let round = 63;
++let outBase = null;
++for (let i = 0; i < argv.length; i++) {
++  if (argv[i] === '--round' && i + 1 < argv.length) round = Number(argv[++i]);
++  else if (argv[i] === '--out' && i + 1 < argv.length) outBase = argv[++i];
++  else if (argv[i] === '--selftest' || argv[i] === '-h' || argv[i] === '--help') usage('see header');
++  else usage(`unknown arg ${argv[i]}`);
++}
++if (!Number.isInteger(round) || round < 1) usage(`bad --round ${round}`);
++if (outBase === null) outBase = join('.ufo', 'waves', `round-${round}`, 'close', 'readme-map');
++
++const run = (cmd, args, cwd) => {
++  const r = spawnSync(cmd, args, { cwd, encoding: 'utf8' });
++  return { status: r.status, stdout: r.stdout, stderr: r.stderr };
++};
++
++// 1. run the frozen map gate
++const map = run(process.execPath, [join(SELF, 'readme-map.mjs')], process.cwd());
++process.stdout.write(map.stdout);
++if (map.stderr) process.stderr.write(map.stderr);
++
++// 2. attest it as a close receipt
++const attest = run(
++  process.execPath,
++  [join(SELF, 'receipt-attest.mjs'), 'run', '--out', outBase, '--', process.execPath, join(SELF, 'readme-map.mjs')],
++  process.cwd(),
++);
++process.stdout.write(attest.stdout);
++if (attest.stderr) process.stderr.write(attest.stderr);
++if (attest.status !== 0) {
++  process.stderr.write(`README_MAP_CLOSE: FAIL-CLOSED receipt-attest exit=${attest.status}\n`);
++  process.exit(2);
++}
++
++// 3. require the receipt to record exit 0
++const receiptPath = `${outBase}.txt`;
++if (!existsSync(receiptPath)) {
++  process.stderr.write(`README_MAP_CLOSE: FAIL-CLOSED no receipt at ${receiptPath}\n`);
++  process.exit(2);
++}
++const receipt = readFileSync(receiptPath, 'utf8');
++const m = /"exit":(-?\d+)/.exec(receipt);
++const recorded = m ? Number(m[1]) : null;
++if (recorded === null) {
++  process.stderr.write(`README_MAP_CLOSE: FAIL-CLOSED unreadable receipt ${receiptPath}\n`);
++  process.exit(2);
++}
++if (recorded !== 0 || map.status !== 0) {
++  process.stdout.write(`README_MAP_CLOSE: DRIFT recorded-exit=${recorded} map-exit=${map.status}\n`);
++  process.exit(1);
++}
++process.stdout.write(`README_MAP_CLOSE: CLEAN recorded-exit=0 rev=${run('git', ['rev-parse', 'HEAD'], process.cwd()).stdout.trim()}\n`);
++process.exit(0);

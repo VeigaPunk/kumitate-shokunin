@@ -951,8 +951,8 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
 
 - **Q58 — a round's `plan.md` is committed before that round's first wave marker, and the command that
   says so exits 0 for a closed round.** Grounding: `corpus/lessons/round-62-verifier-spotcheck.md`
-  §Verdict (routed defect 1) — round 62 read "the dispatched prompt contains no claim sentences" as "no
-  claims declared" and filed a zero-claim round; it committed no `.ufo/waves/round-62/plan.md` at all,
+  §Verdict (routed defect 1) — round 62 read "no 1–3 frozen claim sentences or counting predicates" in its prompt as "no
+  claims declared" (`round-62-verifier-spotcheck.md:15`; routed defect 1 at `:57`) and filed a zero-claim round; it committed no `.ufo/waves/round-62/plan.md` at all,
   while `.ufo/waves/round-62/w2-dispatch.json` is committed at
   `6d8faede281e509a2201de504ffcb0f7781256fe`. Nothing in the lane could fail on that until this command
   existed. Measured at lane tip `b38a2065ab8ac5b198f6569b9013d04411c3d40d` (2026-10-25):
@@ -964,7 +964,7 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
     (fallback, only when no `.ready` was ever added: a top-level `*-dispatch.json`), and its committer
     time is `<=` that marker's. Pathspecs are glob-restricted (`:(glob)`) so a nested fixture marker
     under `controls/` can never stand in for the round's marker.
-  - **Command.** `bash scripts/plan-before-ready.sh --round <N> --rev <tip>` → one line
+  - **Command.** `bash scripts/plan-before-ready.sh --round <N> --rev <tip> --earliest-marker` (the strictest reading: the earlier of the first `.ready` and the first `*-dispatch.json`; without the flag a `*-dispatch.json` committed before the plan passes whenever a later `.ready` exists) → one line
     `PLAN_BEFORE_READY: PASS rev=<tip> round=<N> ... plan=<sha> marker=<sha>` and exit 0. Self-test of the
     command itself: `bash scripts/plan-before-ready.sh --selftest` →
     `PLAN_BEFORE_READY_SELFTEST: PASS (10/10)` exit 0. Standing sweep: `bash scripts/plan-before-ready.sh --all`.
@@ -974,12 +974,13 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
     committed no wave marker at all, so the ordering was never demonstrated (round 63 at `b38a206`
     reads `NA reason=NO_MARKER` until wave 1's `.ready` is committed).
   - **Shown able to fail.** `--round 62 --rev dfa6fca8` → exit 1, `reason=NO_PLAN`, marker
-    `6d8faede281e509a2201de504ffcb0f7781256fe`; wrong-order fixture (`.ready` commit `59a40c84` then
-    plan commit `34a9aee0`) → exit 1 `reason=PLAN_NOT_ANCESTOR`; `--all` at `b38a206` → exit 1 with
+    `6d8faede281e509a2201de504ffcb0f7781256fe`; the selftest case `wrong-order-ready-first` (a fixture repo the script builds itself; its commits are throwaway and not citable) → exit 1 `reason=PLAN_NOT_ANCESTOR`; `--all` at `b38a206` → exit 1 with
     `failed=35,36,37,38,39,40,62`.
   - **Epoch.** The first round with a committed `plan.md` is round 41 (`34fccc170c73264faf5c27aaf7650d3419765ae0`);
     rounds 35-40 predate the convention and `--all` reports them `NO_PLAN` by design. The criterion
-    applies from round 41 onward; a pre-41 round is not re-judged.
+    applies from round 41 onward; a pre-41 round is not re-judged. The same `--all` run reads `NA` for rounds
+    49 and 52-60 (`NO_MARKER`: their waves ran but committed no top-level marker) — their ordering is never judged;
+    there is no check that turns "closed round with reports and no marker" into FAIL.
   - **Limit.** A plan and a marker committed together (round 50: `5b0de268e5a6bdd744fe47c6ee2ee58404693ac3`
     adds both `plan.md` and `r50-dispatch.json`) reads PASS, which cannot distinguish a pre-dispatch
     freeze from a same-commit write after dispatch; pair it with the round's `base/` freeze receipt and
@@ -991,6 +992,6 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
 - **Q59 — a dispatch claim is backed by host records the lane does not author (per-seat session transcripts, the orchestrator dispatcher log, committed bytes only), and the dead-seat set read from the transcripts is named in the report.** Grounding: `corpus/lessons/round-60-verifier-spotcheck.md` R60-V5/V6 (`:181-191`) — round 60's registry read `NOT_A_DISPATCH`, 27/32 seats settled `exit=-9 session=null`, and the report named no dead seat — with `considerthese/2026-10-25.md` idea 3 (audit seat deaths).
   - **Who checks.** The lane at round close, after committing the wave's `<wave>.ready`, `<wave>.ready.dispatched`, `<wave>-dispatch.json`, `<wave>-results.json` and seat reports; the non-author spot-check re-runs the same gate against the same host records and re-derives the dead set from the transcripts, never from `results.json`.
   - **Command.** `node scripts/inline-dispatch-evidence.mjs --root <lane> --rev <tip> --round <N> --wave <w> --report /home/vgpnk/Projects/shokunin/.ufo/reports/round-<N>/kumitate.md` → exit 0 `INLINE_DISPATCH: CLEAN (seats=… sessions=… done=… reports=… dead=…)`; when it also prints `DEAD <names>`, every name appears in the report beside its last error text.
-  - **Fails when.** A seat's transcript is absent, foreign, ambiguous or shares a session id with another seat; a `spawned` or `done` log line is missing or its count disagrees; a seat report is absent, under 64 bytes or byte-identical to another's; a dead seat is unnamed under `--report`; the wave reads `NOT_A_DISPATCH` or fail-closed `WAVE_ABSENT`/`REV_UNREADABLE`.
-  - **Shown able to fail.** The 44 committed controls (`controls/inline/`, 14 at the freeze plus the wave-1 ratchet cases; see `.ufo/waves/round-63/controls/CHANGES-AFTER-FREEZE.md`) each exit as their `expect` names — `honest` → `CLEAN` exit 0, `forged-no-sessions` → `NOT_A_DISPATCH`, `cheap-40-seats` (a 40-seat forgery of five hand-written rows per seat) → `SESSION_TOOL_JOIN`, `session-id-dup` → `SESSION_ID_DUP`, `reports-28-bytes` → `REPORT_TINY`, `results-name-swap` → `RESULTS_MISMATCH`; the real-host sweep `controls/inline-real-hosts.txt` reads `CLEAN` on kengaku r35 build/falsify and mori r47 w2, `DRIFT` on older dispatcher generations.
-  - **Limit.** The limit `plan.md` states: a lane that also writes faithful transcripts into the host session store and lines into the orchestrator's log defeats the gate; those two records live outside the repository and the non-author closure re-derives them. The committed controls do not exercise the `DEAD_UNNAMED` arm (they run without `--report`); that arm is shown only by the gate's `--selftest` (`dead-unnamed-in-report` → `DRIFT [DEAD_UNNAMED]`, `dead-named-in-report` → `CLEAN dead=1`).
+  - **Fails when.** A seat's transcript is absent, foreign, ambiguous or shares a session id with another seat; a `spawned` or `done` log line is missing or its count disagrees; a seat report is absent, under 64 bytes or byte-identical to another's; a dead seat's name is absent from the `--report` file; the dispatch/ready/results/context disagree (`READY_MISMATCH`, `DISPATCH_MISMATCH`, `RESULTS_MISMATCH`, `PARENT_MISMATCH`, a `done` line twice); a transcript is corrupt (`SESSION_CORRUPT`) or fails a shape arm (`SESSION_HEADER`, `SESSION_TOOL_JOIN`, `SESSION_ROWGRAPH`, `SESSION_TIMELINE`, `SESSION_TEMPLATE`); the wave reads `NOT_A_DISPATCH` or fail-closed (`WAVE_ABSENT`, `REV_UNREADABLE`, `DISPATCH_UNREADABLE`, `RESULTS_UNREADABLE`, `SESSIONS_ROOT_ABSENT`, `LOG_UNREADABLE`). A dead seat's own missing report is not a finding (it is named, not credited). Relation to Q54: Q54 binds the launcher-era record; Q59 binds the inline-era host records and carries the dead-seat clause forward.
+  - **Shown able to fail.** The 75 committed controls (`controls/inline/`, 14 at the freeze plus the wave-1 and wave-2 ratchet cases; see `.ufo/waves/round-63/controls/CHANGES-AFTER-FREEZE.md`) each exit as their `expect` names — `honest` → `CLEAN` exit 0, `forged-no-sessions` → `NOT_A_DISPATCH`, `cheap-40-seats` (a 40-seat forgery of five hand-written rows per seat) → `SESSION_TOOL_JOIN`, `session-id-dup` → `SESSION_ID_DUP`, `reports-28-bytes` → `REPORT_TINY`, `results-name-swap` → `RESULTS_MISMATCH`; the real-host sweep `controls/inline-real-hosts.txt` reads `CLEAN` on kengaku r35 build/falsify and mori r47 w2, `DRIFT` on older dispatcher generations.
+  - **Limit.** The limit `plan.md` states: a lane that also writes faithful transcripts into the host session store and lines into the orchestrator's log defeats the gate; those two records live outside the repository and the non-author closure re-derives them. The `--report` arm is a substring test on a file read live from disk (not `git show REV:`), so a report that names a dead seat anywhere, even in a success roster, satisfies it; `finished()` counts a seat that yielded and has no `session_exit` row as finished (wave 1: 6 of 40 seats were still idle when the dispatcher settled the wave) and no committed control locks that choice. The committed controls do not exercise the `DEAD_UNNAMED` arm (they run without `--report`); that arm is shown only by the gate's `--selftest` (`dead-unnamed-in-report` → `DRIFT [DEAD_UNNAMED]`, `dead-named-in-report` → `CLEAN dead=1`).

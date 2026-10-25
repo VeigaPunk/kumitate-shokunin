@@ -1,0 +1,31 @@
+== merged experiment: honest lane+sessions + mut-done-line-suffix dispatcher.log ==
+$ node arch/scripts/inline-dispatch-evidence.mjs --root merged/lane --round 7 --wave w1 --sessions-root merged/sessions --dispatcher-log merged/dispatcher.log
+INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+FINDING SPAWN_LOG_ABSENT
+FINDING DONE_LOG_ABSENT
+merged-exit=1
+merged dispatcher.log:
+2026-10-25T00:00:00 spawned ctl 7 w1 3
+2026-10-25T00:01:00 done ctl w1 /fixture/lane/.ufo/waves/round-7/w1-results.json.bak
+
+== untaken mut-family cases on the ratcheted gate (expect vs actual) ==
+--- dead-seat-no-report expect: 0/CLEAN
+INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=2 reports=2 dead=1)
+FINDING DISPATCH_MISMATCH:context-names-another-lane-or-round
+FINDING SESSION_HEADER:K63AlphaOne
+exit=1
+--- report-64-bytes expect: 0/CLEAN
+INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+FINDING DISPATCH_MISMATCH:context-names-another-lane-or-round
+FINDING SESSION_HEADER:K63AlphaOne
+exit=1
+--- sessions-deep expect: 0/CLEAN
+INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=3 dead=0)
+FINDING DISPATCH_MISMATCH:context-names-another-lane-or-round
+FINDING SESSION_HEADER:K63AlphaOne
+exit=1
+--- rev-report-absent expect: 1/REPORT_ABSENT
+INLINE_DISPATCH: DRIFT (seats=3 sessions=3 done=3 reports=2 dead=0)
+FINDING DISPATCH_MISMATCH:context-names-another-lane-or-round
+FINDING SESSION_HEADER:K63AlphaOne
+exit=1

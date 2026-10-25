@@ -1,0 +1,44 @@
+# K63R2ReviewQuoteArxivA — decisive outputs (2026-10-25)
+
+## Recheck (entry line 4, S197 arm, run verbatim)
+$ curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' https://arxiv.org/html/2512.08296v3 -o live.html && grep -c '260 experiments' live.html
+2        (curl exit=0, grep exit=0)
+$ wc -c live.html -> 663997
+$ sha256sum live.html <capture> -> df31beb3a2ae0f9ad2084750b34a05849b2ab418cb8121666ffb8a8a15517223  (both)
+$ cmp live.html <capture> -> IDENTICAL
+
+## norm() provenance
+Extracted verbatim from frozen probe by regex+eval: /const norm = \(s\) =>[\s\S]*?\.trim\(\);/ on
+.ufo/waves/round-63/probe/topology63-probe.mjs -> 468 chars (check2.mjs NORM-EXTRACT: ok).
+A hand-typed copy diverged on &/"/' entity decoding (my transcription artifact, discarded);
+all verdicts below use the probe-extracted norm.
+
+## Per-bullet (normed hay of live == capture, normed chars=153895)
+Q1 entry:66  words=13 normHits=1 normAt=43449 rawByte=185162..185265 selfCheck=true
+   section: "4.1 Setup" body heading (raw 184853) -> paragraph heading "Benchmarks." sectionId=S4.SS1.SSS0.Px1
+Q2 entry:67  words=18 normHits=1 normAt=42762 rawByte=183470..183613 selfCheck=true
+   section: Figure 2 caption (figure id S4.F2, label "Figure 2: Comparative performance..." @normed 42091),
+            item (b); sits in the S4 preamble BEFORE the 4.1 body heading (183470 < 184853)
+Q3 entry:68  words=12 normHits=1 normAt=42911 rawByte=183677..183762 selfCheck=true   (same caption, item (c))
+Q4 entry:69  words=13 normHits=1 normAt=43227 rawByte=184486..184597 selfCheck=true   (same caption, item (f))
+
+## Support numbers (true body slices from LAST heading occurrences)
+4.2 body (normed 51220..62237): +80.8, 0.631, 0.349, +9.2, +0.2, +5.6, -1.2, -70.0, -50.3, -41.5, -39.1,
+   +1.7, 0.350, -19.2, 0.278, -2.1, -14.9, -0.3, -58.7, +77.2, 37.5 all present;
+   ABSENT from 4.2 body: +57, -11, exceeds 45%, coordination tax, 4,800, up to nine, 87%, 54%, 20%
+4.3 body (62237..98865): 87%, 54%, 20%, coordination tax, tool-rich, 1.0/4.4/5.1/7.8/17.2 present;
+   ABSENT: up to nine, -0.236 (those live elsewhere; not this seat's bullets)
+C.3 body: "critical complexity threshold at D ≈ 0.40" present; 'critical domain' ABSENT whole-doc
+Whole doc: "these four MAS configurations" present; 'four multi-agent' ABSENT (entry paraphrase)
+'260 experiments' normed occurrences=2 (@43462 §4.1 body; @82230 §4.1/4.2 budget paragraph)
+
+## Header facts (live)
+TITLE: Towards a Science of Scaling Agent Systems
+DATELINE-HIT @38516: arXiv:2512.08296v3 [cs.AI] 08 Apr 2026
+AUTHORS-BLOCK: "Yubin Kim Affiliation: Google Research Affiliation: Massachusetts Institute of Technology Ken Gu ..."
+Body headings present with exact names: 3.2 Agentic Tasks and Benchmarks / 4.1 Setup / 4.2 Main Results /
+4.3 Scaling principles / 5 Limitations / C.3 Critical Threshold (each normed occurrences=2: TOC + body)
+
+## Pin cross-check (.ufo/pins/source-captures.json, S197)
+path=.ufo/waves/round-63/build/K63Capture/arxiv-2512.08296v3.html pinSha=df31beb3... pinBytes=663997
+actualSha=df31beb3a2ae0f9ad2084750b34a05849b2ab418cb8121666ffb8a8a15517223 actualBytes=663997 match=true

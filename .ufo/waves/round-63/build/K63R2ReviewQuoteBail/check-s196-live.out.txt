@@ -1,0 +1,17 @@
+# S196 bullets found in entry: 5
+VERIFIED bullet :: "多智能体协作让一个 coordinator（协调者） 智能体编排一组成员智能体。" (words=3)
+VERIFIED bullet :: "协作拓扑类型，当前仅支持 coordinator。" (words=2)
+VERIFIED bullet :: "编队条目列表，1-20 个。传空数组表示清空编队。" (words=2)
+VERIFIED bullet :: "条目类型：agent（引用另一个 Agent）或 self（coordinator 自身，编队中最多一个）。" (words=4)
+VERIFIED bullet :: "被引用的智能体版本号，type=agent 时可选（>=1，不传取最新）" (words=2)
+VERIFIED claim:type-coordinator-only :: 协作拓扑类型，当前仅支持 coordinator。
+VERIFIED claim:roster-1-20-empty-clears :: 编队条目列表，1-20 个。传空数组表示清空编队。
+VERIFIED claim:self-at-most-one :: 条目类型：agent（引用另一个 Agent）或 self（coordinator 自身，编队中最多一个）。
+VERIFIED claim:id-required-max-64 :: 被引用的智能体 ID，type=agent 时必填（最长 64 字符）；type=self 时不可传。
+VERIFIED claim:version-ge1-default-latest :: 被引用的智能体版本号，type=agent 时可选（>=1，不传取最新）；type=self 时不可传。
+VERIFIED claim:absent-or-empty-single-agent :: 不配置 multiagent 或编队为空时，智能体按单智能体运行。
+VERIFIED claim:note-empty-array-reverts :: 传空数组 "agents": [] 表示清空编队，智能体回退为单智能体运行。
+VERIFIED claim:roster-attached-to-agent :: 在创建或更新 Agent 时通过 multiagent 字段配置编队。
+VERIFIED anchor:subtitle-blockquote :: 通过 coordinator 编队，让一个协调者智能体编排多个成员智能体协同完成任务。
+VERIFIED limits:no-performance-cost-failure :: none of 性能,成本,费用,价格,失败,重试,超时,并发,吞吐,延迟 occurs in live bytes
+# page example id present: yes (agent_researcher)

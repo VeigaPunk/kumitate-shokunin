@@ -1,0 +1,31 @@
+VERDICT: Drafted the LOG.md entry and SCORECARD.md round-63 section from committed bytes at the measured integration revision `a9531c8e` (base `dfa6fca8`, freeze `b38a2065`, wave-1 landing `05b3176`) with the C1/C2 verdicts left as `{{L1:…}}` tokens, and recorded the three wave-1 counter holes (C1 stub tool, C2 attacker-hosted URL, I3 empty-dir control loss) and the post-freeze ratchet (44 controls, `.keep` repair, honest case reshaped, five shape arms; probes unpatched).
+
+## Evidence
+
+- Commits between base and measured rev: `git log --oneline dfa6fca8..a9531c8e` →
+  `a9531c8 round-63: drop rev-mode-only control, control counts`; `05b3176 round-63: wave 1 landed — gate ratchet (shape arms, regex/name/context guards), 45 controls, S196/S197 + coordinator-topology entry, proxy-check pin keys, plan-before-ready, Q58/Q59, lesson`; `b38a206 round-63: freeze — …`.
+- Base receipts (verbatim): `base/inline63-base.txt` → `INLINE63_UNMET held=0/6 checks=6 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=I63 | I1 MISS tool-absent | I2 MISS no-committed-wave-results | I4 MISS no-committed-wave-results | I3 MISS tool-absent;cases=0<10;no-honest-case | I5 MISS row-absent | I6 MISS tip-receipt-absent` / `exit=1`; `base/topology63-base.txt` → `TOPOLOGY63_UNMET held=1/7 checks=7 rev=dfa6fca8f362e9c962f5b940025a2619380b759b rule=T63 | T1 MISS entry-absent | T2 MISS no-entry | T3 MISS no-rows | T4 MISS bullets=0 | T5 MISS no-bullets | T7 MISS province-names-entry=false readme-map-clean=false` / `exit=1`.
+- Measured rev facts (`git show a9531c8e:…`): `corpus/SOURCES.md` rows S196/S197 present, `grep -c '^| S'` → `136` (base `134`); entry `corpus/knowledge/multi-agent-coordinator-topologies.md` opens `source: S196 …` / `source: S197 …` / `verified-at: 2026-10-25` / `recheck:`; `PROVINCE.md` carries the coordinator frontier bullet; `scripts/plan-before-ready.sh` exists; `corpus/QUALITY.md` holds Q58 (line 952) and Q59 (line 991); `scripts/proxy-check.mjs:479` now lists `'pin.make-dispatch-actual': 'scripts/make-dispatch-actual.mjs'`; `scripts/inline-dispatch-evidence.mjs` blob changed `a05eb756…` (freeze) → `8e60cd6c…` (tip); inline controls: 44 case dirs each with an `expect` (`git ls-tree -r … | grep -cE '/expect$'` → `44`), `forged-no-sessions` now has committed `sessions/orch/.keep` and `expect` still `1 NOT_A_DISPATCH`; `w1-results.json` committed with `"seats": 40`; no `.ufo/waves/round-63/close/` files at the rev.
+- Counter holes (from wave-1 reports, quoted summaries): K63CriticC1Predicate-1 (critical) — probe runs the measured revision's own tool and believes its stdout; a 21-line stub prints the expected lines and reads `INLINE63_HELD held=6/6` exit 0. K63ReviewProbeC2-1 (critical) / K63CriticC2Predicate-2 (high) — T5 fetches the lane-authored URL, so a loopback-hosted row reads `TOPOLOGY63_HELD held=7/7` exit 0. K63CriticFreezeIntegrity-1 / K63ExecCounterReplay-1 / K63ScribeScorecard-1 — `forged-no-sessions` lost its empty `sessions/` tree to `git archive`, I3 `exit=2 want=1 NOT_A_DISPATCH`.
+- Ratchet (`controls/CHANGES-AFTER-FREEZE.md` at `a9531c8e`, committed): `.keep` in every case; honest case reshaped to harness-shaped transcript; gate gained five shape arms; cases 14 → 44 (5 K63ReviewGateCode + 13 K63ExecGateForgery + 12 K63MutateInlineGate; `mut-rev-report-absent` dropped at tip); probes and C2 controls unchanged; "Known counter holes found by wave 1 are reported, not patched".
+- No tool installs/updates (none needed); no subagents, no background jobs; no frozen files read/written except read-only; nothing outside my build/report paths and `/tmp/kumitate-r63/K63R2ScribeLogScorecard/`.
+
+## Findings
+
+1. **K63R2ScribeLogScorecard-1 — LOW (draft hygiene) — the capability row's I5 cell must be the bare round number.** The frozen probe requires `cells[cells.length-2] === '63'`, but house-style rows end `| round 34 |`. The draft row therefore ends `| 63 |` (cells=4, verified). If the L1 prefers `round 63` prose, I5 will MISS; keep the bare `63` cell (or amend the probe, which is frozen and must not be edited by a seat).
+2. **K63R2ScribeLogScorecard-2 — LOW — the `SESSION_…` placeholder was fixed to concrete finding ids** in the capability row (`SESSION_FOREIGN`, `SESSION_ABSENT`, `SESSION_ID_DUP` etc.), so no unverifiable identifier remains in either draft.
+3. **K63R2ScribeLogScorecard-3 — LOW — `controls/inline-receipts.txt` (worktree-mode) predates the `.keep` repair; the draft does not cite it as a committed-bytes reading.** I3's after-value is token `{{L1:after:every case exits as its expect names (controls/inline-receipts.txt, n/44)}}`; the integrator must regenerate the receipt from committed bytes before filling it (mirrors K63ScribeScorecard-2).
+4. **K63R2ScribeLogScorecard-4 — LOW — the gate changed between freeze and tip** (`a05eb756…` → `8e60cd6c…`), so the capability-row text describes tip bytes; the frozen probe's I1 selftest arm (25/25) was measured at freeze bytes by wave-1 seats, and the row's claim is written against the committed tip.
+
+## Artifacts
+
+- `/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-63/build/K63R2ScribeLogScorecard/log-entry.md` — LOG.md draft (append after line 2302).
+- `/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-63/build/K63R2ScribeLogScorecard/scorecard-section.md` — SCORECARD.md draft: Part A capability row (gated on C1 HELD), Part B round-63 section, Part C R61-V2 retirement correction, and the full token list (17 distinct `{{L1:…}}` placeholders).
+- Scratch: `/tmp/kumitate-r63/K63R2ScribeLogScorecard/` (empty scratch dir; no intermediates needed).
+
+## Limits
+
+- Did not run the frozen probes at `a9531c8e` (or any later rev): the C1/C2 verdicts are post-wave-2 measurements and are left as `{{L1:…}}` tokens; an unrun check is not passed.
+- Did not verify the live-fetch arm (T5), the real host transcripts/dispatcher log for round-63's own waves, or the census-after (post-append) — all tokens.
+- Did not check `SKILL.md`, `corpus/QUALITY.md` Q58/Q59 texts beyond presence and ids, `corpus/lessons/round-63.md`, or the readme-map/proxy gate verdicts at the tip (commit-byte existence verified for the proxy pin key; verdicts are tokens).
+- No tool installed or upgraded; no frozen file edited; no integration edits; no `git` index/state mutation.

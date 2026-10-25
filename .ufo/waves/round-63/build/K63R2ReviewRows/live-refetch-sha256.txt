@@ -1,0 +1,19 @@
+# K63R2ReviewRows — live re-fetch evidence, 2026-10-25
+
+UA: Mozilla/5.0 (kumitate-r63) — same as the entry's recheck command.
+
+```
+$ curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' 'https://docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-multiagent.md' -o live-bailian.md
+$ curl -fsSL -A 'Mozilla/5.0 (kumitate-r63)' 'https://arxiv.org/html/2512.08296v3' -o live-arxiv.html
+$ sha256sum live-bailian.md live-arxiv.html; wc -c live-bailian.md live-arxiv.html
+7ea4396645e3b1c89a3fd984ea095dabd75c2e23e8f376ec2211c1b855ec37e6  live-bailian.md
+df31beb3a2ae0f9ad2084750b34a05849b2ab418cb8121666ffb8a8a15517223  live-arxiv.html
+     3388 live-bailian.md
+   663997 live-arxiv.html
+$ grep -c '260 experiments' live-arxiv.html
+2
+$ grep -c coordinator live-bailian.md
+11
+```
+
+Both hashes equal the pins in `.ufo/pins/source-captures.json:193-205` and the committed capture bytes at `a9531c8e617338fd16cb69c61344ef8f17711117` — byte-identical re-fetch, same day.

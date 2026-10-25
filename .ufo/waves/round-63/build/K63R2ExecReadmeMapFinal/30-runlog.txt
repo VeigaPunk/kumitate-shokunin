@@ -1,0 +1,41 @@
+# runlog — K63R2ExecReadmeMapFinal (fixture at a9531c8e, git-only)
+
+## A) LEGIT tip (R1, 153/153) — close gate
+README_MAP: CLEAN files=153 rows=153 covered=153
+receipt-attest: wrote .ufo/waves/round-63/close/readme-map.txt
+receipt-attest: sidecar .ufo/waves/round-63/close/readme-map.txt.sha256
+receipt-attest: receipt-sha256 9c4fdbb9f69fe6113079acb1e282335dafae5018244e21f749831617186da8a0
+receipt-attest: command-exit 0
+README_MAP_CLOSE: CLEAN recorded-exit=0 rev=841e1b6f22d43f0f016e62fe80ec79657fd44c8f
+A_EXIT=0
+
+## B) closure lands round-63-verifier-spotcheck.md unmapped (R3) — close gate
+README_MAP: note unpinned:lessons/round-63-verifier-spotcheck.md
+README_MAP: DRIFT files=154 rows=153 covered=153 bad=2 first=uncovered:lessons/round-63-verifier-spotcheck.md
+receipt-attest: wrote .ufo/waves/round-63/close/readme-map.txt
+receipt-attest: sidecar .ufo/waves/round-63/close/readme-map.txt.sha256
+receipt-attest: receipt-sha256 8050f86db95aa71b2fae591e34178bb14facf965c80279d17c5dff6f5c02f35e
+receipt-attest: command-exit 1
+README_MAP_CLOSE: DRIFT recorded-exit=1 map-exit=1
+B_EXIT=1
+
+## C) writer repairs (row+pin), then close gate
+README_MAP_APPEND: OK lessons/round-63-verifier-spotcheck.md row=inserted
+README_MAP_APPEND: OK lessons/round-63-verifier-spotcheck.md pin=inserted
+C_WRITER_EXIT=0
+README_MAP: CLEAN files=154 rows=154 covered=154
+C_MAP_EXIT=0
+README_MAP: CLEAN files=154 rows=154 covered=154
+receipt-attest: wrote .ufo/waves/round-63/close/readme-map.txt
+receipt-attest: sidecar .ufo/waves/round-63/close/readme-map.txt.sha256
+receipt-attest: receipt-sha256 8e54f91e1c9aab1bfc2d2d558c6fbda1ceed5da6633717d2af589cdd9d5bde11
+receipt-attest: command-exit 0
+README_MAP_CLOSE: CLEAN recorded-exit=0 rev=6fd50638652882a92a9ca81c0be74f78c4a75b73
+C_CLOSE_EXIT=0
+
+## D) idempotence + fail-closed
+README_MAP_APPEND: OK lessons/round-63-verifier-spotcheck.md row=present
+README_MAP_APPEND: OK lessons/round-63-verifier-spotcheck.md pin=present
+D_IDEMPOTENT_EXIT=0
+README_MAP_APPEND: FAIL-CLOSED reason=no such corpus file: corpus/lessons/round-99-verifier-spotcheck.md
+D_PHANTOM_EXIT=2

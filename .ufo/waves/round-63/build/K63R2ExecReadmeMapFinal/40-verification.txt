@@ -1,0 +1,27 @@
+# verification evidence — K63R2ExecReadmeMapFinal (all runs quoted verbatim)
+
+## 1. lane worktree at measured rev a9531c8e: readme-map
+README_MAP: CLEAN files=153 rows=153 covered=153
+EXIT=0
+
+## 2. readme-map selftest (archive)
+case symlink-stale-covered: PASS
+README_MAP_SELFTEST: PASS (16/16)
+VERDICT: PASS
+
+## 3. probe-sources (lane)
+CITE_SOURCES: CLEAN cited=190
+EXIT=0
+
+## 4. cite-sources selftest
+PASS usage-64
+CITE_SOURCES_SELFTEST: PASS (8/8)
+VERDICT: PASS
+
+## 5. proxy-check on CLEAN archive of a9531c8e
+PROXY  error  PIN_DRIFT  pin.proxy-check: declared=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976 computed=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861
+PROXY  warn  PIN_UNPINNED  scripts/inline-dispatch-evidence.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=117 computed=201 delta=+84; C2_DRIFT term=C2 declared=150 computed=153 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=150 computed=153 delta=+3; K_MEMBERS_DRIFT term=K_members declared=52 computed=49 delta=-3; K_SECTIONS_DRIFT term=K_sections declared=52 computed=49 delta=-3; PIN_DRIFT term=pin.proxy-check declared=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976 computed=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861; PIN_UNPINNED term=scripts/inline-dispatch-evidence.mjs; src-rev=31c465f15669)
+
+## 6. pins vs files (clean archive)
+pins 153 unique 153 files 153 unmapped [] phantom []
