@@ -2869,3 +2869,65 @@ extracted tree, not the live fleet. S194's full text is OCR-degraded (`1s` for `
 bytes and the degradation is recorded in the lesson. The two remaining round-58 L0 questions
 are open and were not duplicated. Source admissions and rejections await the non-author
 spot-check; discernment is not self-claimed.
+
+## Round 61 correction — supersedes round-60 placeholders, the R60 C1 overclaim and the stale proxy stanza (2026-10-25)
+
+Appended correction; the round-60 lines above and the filed round-60 report are not rewritten.
+
+- **Line 2833 (R60 C1 after-revision `__MEASURED__`) and the R60 C1 overclaim.** The only committed
+  after-receipt is `.ufo/waves/round-60/close/dispatch60-tip.txt` (landed in `be4a820c344d4eb2f94b999c3b5d649e76ab70f1`):
+  `DISPATCH60: DISPATCH60_UNMET held=8/10 checks=10 rev=a745a3b0e02253e722834ef95042d97ed92e5e53 rule=A60`,
+  exit 1, with `A7 MISS row-absent` and `A10 MISS exit=2`. The round-60 sentence "`DISPATCH60_HELD held=10/10
+  checks=10` exit 0" is withdrawn: no committed receipt carries it. R60 C1 (`dispatch-evidence` capability
+  acquisition) reads **unprovable / not admitted**; the capabilities row at line 1794 stays as history only.
+  The round-60 non-author closure agrees (`corpus/lessons/round-60-verifier-spotcheck.md`, C1 `unprovable`).
+- **Line 2847 (R60 C2 after-revision `__MEASURED__`).** The measured revision is
+  `a745a3b0e02253e722834ef95042d97ed92e5e53`; receipt `.ufo/waves/round-60/close/doctrine60-tip.txt`:
+  `DOCTRINE60: DOCTRINE60_HELD held=6/6 checks=6 rev=a745a3b0e02253e722834ef95042d97ed92e5e53 rule=D60`, exit 0.
+  R60 C2 stands as recorded.
+- **Stale proxy stanza (the `kumitate-proxy-v1` block near line 287).** `proxy-check` requires exactly one
+  stanza (a second block reads `STANZA_MALFORMED`), so it is superseded here in prose, not by a second block.
+  Measured at lane tip `019a844c9db6d63206f3a39949bf790b05747a40` (`node scripts/proxy-check.mjs`, exit 1,
+  receipt `.ufo/waves/round-61/close/a2-tip-proxy.txt`): `A_DRIFT declared=105 computed=115`,
+  `C2_DRIFT declared=145 computed=148`, `C2_TOTAL_DRIFT declared=145 computed=148`,
+  `PIN_UNPINNED scripts/make-dispatch-actual.mjs`; C=30, operability=9, coverage=10 unchanged. The authoritative
+  declared values from this round are therefore A=115, C=30, C2=148, C2_total=148; the integers do not move. The
+  stanza's in-place refresh and the `make-dispatch-actual` pin belong to the next round's frozen plan; until then
+  `proxy-check` reads DRIFT and that is the honest state.
+
+## Round 61 — claims, verdicts, limits (2026-10-25)
+
+Plan `.ufo/waves/round-61/plan.md` (frozen at `48877b4`, base `c2721f812cebd97ab67a1dd8cd8492a193f82d42`).
+Runtime: attempt 1 ran the waves and stopped honestly before landing; attempt 2 landed its work and
+re-ran the falsifiers. Measured revision: lane tip `019a844c9db6d63206f3a39949bf790b05747a40`.
+
+**C1 — operability, capability acquisition `dispatch-evidence` (frozen `DISPATCH61_HELD`, P61 v1, P1..P4) —
+failed as declared.** Counting command:
+`node .ufo/waves/round-61/probe/dispatch61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before at base `c2721f81`: gate `FAIL-CLOSED wave-dir-absent` (`base/dispatch61-base.txt`). After at
+`019a844c`: `DISPATCH61_UNMET held=2/4` exit 1 (P3 row does not name round 61, P4 tip receipt absent;
+`close/a2-tip-dispatch61.txt`). Falsifier reproduced in attempt 2: the critic's zero-seat fabrication
+(fixture `/tmp/kumitate-r61/CritControlC1/a4-full-fabrication`, rev `ab902da2fa30d051455a5f3563627e2c23c3a74d`:
+hand-written progress file, dispatch record, 32 one-line reports, no seat ever ran) reads
+`DISPATCH61_HELD held=4/4 checks=4` exit 0 (`close/a2-repro-c1-fabrication.txt`; attempt-1 receipt
+`controls/ctl-c1-critic-a4-full-fabrication.txt`). A predicate a do-nothing control satisfies cannot
+evidence dispatch. Score delta: none; operability stays 9.
+
+**C2 — coverage frontier band 4, sourced on S195 (frozen `DOCTRINE61_HELD`, D61 v1, E1..E6) — failed as
+declared.** Counting command:
+`node .ufo/waves/round-61/probe/doctrine61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
+Before at base: entry absent, registry 133 rows (`base/census-before.txt`). After at `019a844c`:
+`DOCTRINE61_UNMET held=3/6` exit 1 (E3 `row-absent`, E4 `pin=`, E5 `exit=2`; `close/a2-tip-doctrine61.txt`) on
+the honest committed row. Root cause (`controls/ctl-c2-critic-a0-honest-row-vacuity.txt`): the probe's row regex
+uses POSIX `[[:space:]]` in JavaScript and reads cells c[9]/c[10]/c[12] of an 11-cell contract row, so E3 and
+the census's NF=13 rule are jointly unsatisfiable for any honest row. Falsifier reproduced in attempt 2: the
+critic's forged commit (phantom S195 line outside `## Registry`, fabricated capture, no fetch) on a clean checkout
+reads `DOCTRINE61_HELD held=6/6 checks=6` exit 0 (`close/a2-repro-c2-forgery.txt`); on the critic's reset
+worktree the same rev reads 4/6 (`close/a2-repro-c2-forgery-dirty-worktree.txt`) because E4/E5 read the
+worktree, not the revision. The entry, row S195 and capture landed (census exit 0, 133 → 134 rows,
+A=110→111 B=15 C=8); the claim does not verify. Score delta: none; coverage stays 10.
+
+**Mistake mined:** `corpus/lessons/round-61.md` §Mistakes (frozen counters reachable by fabrication / unreachable
+by honest work → QUALITY Q57; quarantine id-vs-document drift → Q56). **Waves:** w1 32 seats all exit 0; w2 40
+seats, 39 exit 0, `Audit19` dead (`provider rejected task prompt as invalid_prompt`); Audit22 misroot recovered
+(`close/misroot-Audit22.txt`). Admission: neither claim admits; no axis is claimed improved.

@@ -2280,3 +2280,20 @@ revisions: see .ufo/reports/round-53/kumitate.md.
   README row and covered pin (readme-map DRIFT, proxy A_DRIFT/AXES_DRIFT at
   round open) — repaired in the same change as the new entries.
   Tool installs/updates: none.
+- 2026-10-25 — round 61 (attempt 1 waves, attempt 2 landing): C1 operability
+  capability `dispatch-evidence` (frozen DISPATCH61_HELD P61) and C2 coverage
+  band-4 entry `temporal-worker-versioning-pinning.md` on S195 (frozen
+  DOCTRINE61_HELD D61) — BOTH failed as declared. At lane tip `019a844c` the
+  honest record reads DISPATCH61 2/4 and DOCTRINE61 3/6; the critic's zero-seat
+  fabrication reads DISPATCH61_HELD 4/4 and the critic's forged S195 commit reads
+  DOCTRINE61_HELD 6/6 (both re-run in attempt 2, receipts
+  `.ufo/waves/round-61/close/a2-repro-*.txt`). Landed anyway as honest work:
+  S195 row (census exit 0, 133→134), the entry, capture pin, README rows, QUALITY
+  Q52–Q57, lesson, R60-V6 dead-seat table, `scripts/make-dispatch-actual.mjs`,
+  and wave evidence (w1 32/32 exit 0; w2 39/40, Audit19 dead invalid_prompt;
+  Audit22 misroot recovered). SCORECARD correction supersedes the R60
+  `__MEASURED__` placeholders at lines 2833/2847, withdraws the R60 C1 10/10
+  overclaim (receipt 8/10), and supersedes the stale proxy stanza in prose
+  (measured A=115 C2=148; proxy DRIFT until the next round re-pins). Attempt-1
+  SCORECARD append (duplicated heading) discarded and replaced. Tool
+  installs/updates: none.
