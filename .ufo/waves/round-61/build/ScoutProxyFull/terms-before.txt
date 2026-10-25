@@ -1,0 +1,182 @@
+# terms-before — kumitate-shokunin round 61 w1 (ScoutProxyFull)
+# captured: 2026-10-25T09:41:02Z
+# git HEAD: be4a820c344d4eb2f94b999c3b5d649e76ab70f1
+# node: v24.21.0
+
+===== node scripts/proxy-check.mjs =====
+PROXY  error  A_DRIFT  A: declared=105 computed=108 delta=+3
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=145 computed=146 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=105 computed=108 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=145 computed=146 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+===== exit code (proxy-check): 1 =====
+
+===== node scripts/readme-map.mjs =====
+README_MAP: note unpinned:lessons/round-60-verifier-spotcheck.md
+README_MAP: DRIFT files=146 rows=145 covered=145 bad=2 first=uncovered:lessons/round-60-verifier-spotcheck.md
+===== exit code (readme-map): 1 =====
+
+===== node scripts/kimi-census.mjs =====
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=27  checked=27  frozen=27
+FAMILY K3  members=9  checked=9  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=10 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=36 declared=27 chain=10 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+CENSUS  error  MEMBER_MISSING  search-index/  search-index is absent under /home/vgpnk/.kimi-code
+TOTALS: members=52 checked=52 errors=1 info=4 chain=10
+KIMI_CENSUS: DRIFT (MEMBER_MISSING search-index/)
+===== exit code (kimi-census): 1 =====
+
+===== node scripts/sources-check.mjs =====
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=133 tiers=A:110,B:15,C:8 status=queued:13,mined:101,rejected:19 entries_with_source=18 legacy=38)
+===== exit code (sources-check): 0 =====
+
+===== APPENDIX: node scripts/proxy-check.mjs --json (full term values) =====
+{
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "scorecard": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src",
+  "pin": {
+    "file": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/origin.json",
+    "contract": "kumitate-origin-pin-v1",
+    "repo": "ufo-fsd-alpha",
+    "revision": "31c465f15669f744848bd9f5d56191c5085670f7",
+    "clone": "/fast/scratch/hyaku/kumitate-pin/src",
+    "srcRev": "31c465f15669f744848bd9f5d56191c5085670f7"
+  },
+  "srcRev": "31c465f15669f744848bd9f5d56191c5085670f7",
+  "kimiRoot": "/home/vgpnk/.kimi-code",
+  "strict": false,
+  "terms": {
+    "A": 108,
+    "C": 30,
+    "C1": 19,
+    "C1_total": 19,
+    "C2": 145,
+    "C2_total": 146,
+    "operability": 9,
+    "coverage": 9,
+    "S_members": 88,
+    "S_sections": 88,
+    "R_members": 92,
+    "R_sections": 92,
+    "coverage_script": 10,
+    "coverage_runtime": 10,
+    "C1k": 5,
+    "C1k_total": 5,
+    "K_members": 52,
+    "K_sections": 52,
+    "coverage_kimi": 10,
+    "pins": {
+      "pin.cite-check": {
+        "file": "scripts/cite-check.mjs",
+        "declared": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+        "computed": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+        "match": true
+      },
+      "pin.surface-probe": {
+        "file": "scripts/surface-probe.mjs",
+        "declared": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+        "computed": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+        "match": true
+      },
+      "pin.round-gate": {
+        "file": "scripts/round-gate.mjs",
+        "declared": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+        "computed": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+        "match": true
+      },
+      "pin.proxy-check": {
+        "file": "scripts/proxy-check.mjs",
+        "declared": "7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976",
+        "computed": "7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976",
+        "match": true
+      },
+      "pin.claims-check": {
+        "file": "scripts/claims-check.mjs",
+        "declared": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+        "computed": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+        "match": true
+      },
+      "pin.kimi-census": {
+        "file": "scripts/kimi-census.mjs",
+        "declared": "9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50",
+        "computed": "9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50",
+        "match": true
+      }
+    },
+    "pinsMatched": 6,
+    "pinsTotal": 6,
+    "declared": {
+      "A": "105",
+      "C": "30",
+      "C1": "19",
+      "C1_total": "19",
+      "C2": "145",
+      "C2_total": "145",
+      "S_members": "88",
+      "S_sections": "88",
+      "R_members": "92",
+      "R_sections": "92",
+      "coverage_script": "10",
+      "coverage_runtime": "10",
+      "C1k": "5",
+      "C1k_total": "5",
+      "K_members": "52",
+      "K_sections": "52",
+      "coverage_kimi": "10",
+      "pin.cite-check": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+      "pin.surface-probe": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+      "pin.round-gate": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+      "pin.proxy-check": "7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976",
+      "pin.claims-check": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+      "pin.kimi-census": "9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50"
+    },
+    "stanzaLine": 287
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "A_DRIFT",
+      "term": "A",
+      "declared": 105,
+      "computed": 108,
+      "delta": "+3",
+      "detail": "A: declared=105 computed=108 delta=+3"
+    },
+    {
+      "severity": "error",
+      "kind": "C2_TOTAL_DRIFT",
+      "term": "C2_total",
+      "declared": 145,
+      "computed": 146,
+      "delta": "+1",
+      "detail": "C2_total: declared=145 computed=146 delta=+1"
+    },
+    {
+      "severity": "error",
+      "kind": "AXES_DRIFT",
+      "term": "coverage",
+      "key": "coverage",
+      "declared": 10,
+      "computed": 9,
+      "detail": "coverage: ## Axes row=10 derived=9"
+    }
+  ],
+  "errors": 3,
+  "warnings": 0,
+  "durationMs": 53
+}
+===== exit code (proxy-check --json): 1 =====

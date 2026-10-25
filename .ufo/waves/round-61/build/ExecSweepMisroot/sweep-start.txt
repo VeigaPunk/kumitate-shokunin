@@ -1,0 +1,30 @@
+ExecSweepMisroot — fleet-root misroot sweep at wave start (kumitate round-61, wave w1)
+Swept: 2026-10-25 ~06:40 -0300 (09:40 UTC). Read-only; nothing moved, edited, or deleted.
+
+Command: git -C /home/vgpnk/Projects/shokunin status --porcelain   (exit 0)
+Untracked expanded with --untracked-files=all -> 6 files.
+Marker regex (case-insensitive): kumitate|round-61|round 61|\bw1\b|wave w1
+
+match_count  mtime(-0300)          path
+0            2026-10-24 18:07:20   .omp/mcp.json                     (credential-bearing config: counted only, content not printed)
+1            2026-10-25 06:19:57   .scratch/goal-20261025-hyaku-12h.md
+0            2026-10-24 22:45:19   .ufo/state/kotoba.report-baseline
+0            2026-10-25 03:23:34   .ufo/state/kotodama.report-baseline
+0            2026-10-25 03:23:38   .ufo/state/revenger.report-baseline
+2            2026-10-25 05:55:04   .ufo/waves/round-24/w2/RevUnlandedResolution.md
+
+RECORDED (names this lane):
+- .scratch/goal-20261025-hyaku-12h.md
+  first line: <!-- ORCHESTRATOR-OWNED run state (hyaku run 6). Not a misroot: lanes and seats never move, copy-then-delete, or edit this file. -->
+  hit L63: "... Next block: chousa (0 this run), kumitate, kotoba, revenger, kotodama,"
+  class: pre-existing operator/orchestrator file; it only lists kumitate in a schedule. Not a round-61 artifact. NOT a misroot.
+
+NEAR-MISS (regex hit, does not name this lane/round):
+- .ufo/waves/round-24/w2/RevUnlandedResolution.md
+  first line: # RevUnlandedResolution — routed defect 2 (89 unlanded paths): closure composition
+  hits L80/L234 refer to round-23 wave-1 files (w1-dispatch.err, gen-w1.mjs). Fleet round-24 artifact, last modified before this wave. Ignored.
+
+Tracked-modified entries (M) at the fleet root: .ufo/state/*.report-baseline x14, .ufo/watchdog.log,
+scripts/hyaku/hyaku.env, scripts/hyaku/lane-addendum.md. These are out of scope (tracked, not untracked) and none sit in this lane's paths.
+
+VERDICT: CLEAN — 0 round-61/kumitate misroots at the fleet root. Only a pre-existing orchestrator file mentions the lane name. Nothing deleted.

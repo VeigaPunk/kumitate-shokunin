@@ -144,18 +144,23 @@ Rules: a row is a claim written only after opening the source; append-only excep
 | S135 | CyberAgent Developers Blog — AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装 — https://developers.cyberagent.co.jp/blog/archives/63635/ | community | B | the Japanese-language engineering framing of durable execution for long-running agents; secondary to S126, S133 and S134 for the mechanism itself | § Go SDK を実装してみる; published 2026-04-26; fetched 2026-10-24, HTTP 200, 93798 bytes, sha256 6f18124ee4a897656f9067f4dd7251392d505898ccca08c9278617099a0bd65c | side-effecting and non-deterministic work must be confined inside a durable operation so that replay cannot corrupt it; replay must traverse the same operation sequence and a mismatch is treated as non-deterministic execution and errors out | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-failure-detection.md |
 | S190 | The Tail at Scale — Dean and Barroso, CACM 56 (2013) 74-80 — https://research.google/pubs/the-tail-at-scale/ | paper | A | the fan-out tail primitive behind a multi-seat wave's slowest seat, read for the framing the authors themselves publish | § Abstract; landing page read 2026-10-24, HTTP 200, 143176 bytes, sha256 399be231120943041eef0f7909a42cffae339f67b8c3aa85d8e0a05b4c8ee63e | the authors frame tail tolerance as the same move as fault tolerance: large online services must create a predictably responsive whole out of less predictable parts, because temporary high-latency episodes that are unimportant at moderate size dominate performance at large scale | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
 | S194 | Sagas — Garcia-Molina and Salem, ACM SIGMOD Record 16(3) 1987 — https://dl.acm.org/doi/10.1145/38714.38742 | paper | A | the compensating-action primitive behind durable execution, read for the paper's own definition of a saga | § Abstract, the definition sentence; full text retrieved 2026-10-24 through `aaron papers fetch` of DOI 10.1145/38714.38742, 47194 bytes, sha256 d57846cc153e9e22c89c8af8f0c617b791d8a8afefbdeba715a375a7d0e76942 — OCR-degraded in places | a long-lived transaction becomes a saga when it can be written as a sequence of transactions that can be interleaved with other transactions, and the system's guarantee is that either the whole sequence completes or compensating transactions amend the partial execution — a semantic undo the application supplies, not a database rollback | mined | 2026-10-24 | 180d | corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md |
+| S195 | Worker Versioning — Temporal documentation — https://docs.temporal.io/worker-versioning.md | docs | A | the version-pinning contract for durable Workflow execution; the registry has not held this concepts page before | § Versioning behaviors → § Pinned Workflows, guarantee sentence; raw markdown opened 2026-10-25, HTTP 200, sha256 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc | A **Pinned** Workflow is guaranteed to complete on a single Worker Deployment Version. | mined | 2026-10-25 | 90d | corpus/knowledge/temporal-worker-versioning-pinning.md |
+
+
 
 
 
 ## Paths
 
-- **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194:** delivery
+- **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194 → S195:** delivery
   identity first, then the liveness signal that pronounces a worker dead, then the
   retry-forcing timeout that the same Temporal page carries under a second scope
   (S126, the group pinned with S117), then the measured break across six
-  frameworks (S133), then the two primitives the band was missing: tail tolerance
-  (S190) and compensating action (S194). Read the failure *signal* before the
-  *repair*, because a repair without a signal is a policy, not a mechanism.
+  frameworks (S133), then tail tolerance and compensating action (S190/S194),
+  and finally the Worker Versioning pinning contract (S195). Read the failure
+  *signal* before the *repair*, then separate the code-version boundary from
+  the delivery/replay claim it supports; none of these sources alone proves
+  end-to-end exactly-once execution.
 - **Kimi MCP plane — S005 → S006 → S007 → S008:** read the client surface
   (mcp.json levels and trust gating) before the config knobs that resolve models
   and timeouts; then the contrasting Codex dialect, because the host's inert

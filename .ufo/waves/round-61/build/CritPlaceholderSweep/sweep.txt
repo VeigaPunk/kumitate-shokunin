@@ -1,0 +1,56 @@
+# CritPlaceholderSweep — placeholder sweep, kumitate-shokunin
+# HEAD: be4a820c344d4eb2f94b999c3b5d649e76ab70f1 (round-61: record real round-60 tip receipts)
+# Pattern: __TIP__|__MEASURED__|__COMMITS__|PLACEHOLDER|TODO: implement|FIXME ; globs *.md *.mjs *.json *.tsv ; .git and node_modules excluded
+# Committed tree: git grep HEAD. Working tree: grep -r. Both return the same 20 hits (untracked: only .ufo/waves/round-61/build/ and w1/, which had no hits at sweep time).
+# Other file types (git grep HEAD, globs inverted): 0 hits. .ufo/waves/round-60/close/ (any type): 0 hits.
+# Lines are cut at 220 chars.
+
+## LIVE (unfilled placeholder in a committed claim) — 2
+SCORECARD.md:2833: next commit. After: at the measured revision `__MEASURED__` → `DISPATCH60_HELD held=10/10   [introduced 165b830]
+SCORECARD.md:2847: measured revision `__MEASURED__` (`close/doctrine60-tip.txt`); the same 6/6 already holds at   [introduced 165b830]
+
+## META (quotes, specs or checks that name the token; not unfilled) — 18
+.ufo/waves/round-36/build/SimplSurface.md:24:  | grep -E '/fast/scratch|/tmp/|\.ufo/waves|588|577|TODO|FIXME|console\.debug'
+.ufo/waves/round-36/build/SimplSurface.md:82:(`588`/`577` absent), no `TODO`/`FIXME`/`console.debug`, no new file under `scripts/`.
+.ufo/waves/round-38/build/Prose04.md:2:VERDICT remaining-scripts-census#311 TOKEN wiredCount | cited 1705-1710 is the full-run breach check: 1704 `if (only === null) {`, 1705 `if (suite.counts.pending > wiredCount) {`, 1
+.ufo/waves/round-38/evidence/review-decisions.json:992:   "why": "cited 1705-1710 is the full-run breach check: 1704 `if (only === null) {`, 1705 `if (suite.counts.pending > wiredCount) {`, 1708 `if (suite.counts.referen
+.ufo/waves/round-61/build-spec.mjs:34:4. Verify the files contain no placeholder tokens (\`__TIP__\`, \`__MEASURED__\`, \`__COMMITS__\`).
+.ufo/waves/round-61/build-spec.mjs:57:- Q52 — every citation in a committed report/scorecard/lesson names a real object (commit hash, line, file); \`__TIP__\`/\`__MEASURED__\`/\`__COMMITS__\` are rejected. Grounding: R
+.ufo/waves/round-61/build-spec.mjs:144:- \`${LANE}/.ufo/waves/round-60/close/dispatch60-tip.txt\` and \`doctrine60-tip.txt\` exist, contain real observed lines (no \`__TIP__\`/\`__MEASURED__\`), and match a fresh run of 
+.ufo/waves/round-61/w1-dispatch.json:366:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fron
+.ufo/waves/round-61/w1-dispatch.json:386:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fron
+.ufo/waves/round-61/w1-dispatch.json:461:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fron
+.ufo/waves/round-61/w1-plan.json:371:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier w
+.ufo/waves/round-61/w1-plan.json:391:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier w
+.ufo/waves/round-61/w1-plan.json:466:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier w
+.ufo/waves/round-61/w1-spec.json:10:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarif
+.ufo/waves/round-61/w1-spec.json:46:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarif
+.ufo/waves/round-61/w1-spec.json:184:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clari
+corpus/lessons/round-60-verifier-spotcheck.md:26:| every cited lane commit exists and is an ancestor of the branch | `git log --format='%H %an %s' ffbfe3cc..a745a3b0`; `git merge-base --is-ancestor <h> master` | `58b658d
+corpus/lessons/round-60-verifier-spotcheck.md:43:exists (`__MEASURED__`), and at the only committed work revision the lane's own
+corpus/lessons/round-60-verifier-spotcheck.md:171:- **R60-V2 — placeholders filed in the fleet report.** `__TIP__`, `__MEASURED__`,
+corpus/lessons/round-60-verifier-spotcheck.md:172:  `__COMMITS__` are unfilled: the third landed change, the lane tip and both
+
+## Raw working-tree command output (as assigned)
+./corpus/lessons/round-60-verifier-spotcheck.md:26:| every cited lane commit exists and is an ancestor of the branch | `git log --format='%H %an %s' ffbfe3cc..a745a3b0`; `git merge-base --is-ancestor <h> master` | `58b65
+./corpus/lessons/round-60-verifier-spotcheck.md:43:exists (`__MEASURED__`), and at the only committed work revision the lane's own
+./corpus/lessons/round-60-verifier-spotcheck.md:171:- **R60-V2 — placeholders filed in the fleet report.** `__TIP__`, `__MEASURED__`,
+./corpus/lessons/round-60-verifier-spotcheck.md:172:  `__COMMITS__` are unfilled: the third landed change, the lane tip and both
+./.ufo/waves/round-36/build/SimplSurface.md:24:  | grep -E '/fast/scratch|/tmp/|\.ufo/waves|588|577|TODO|FIXME|console\.debug'
+./.ufo/waves/round-36/build/SimplSurface.md:82:(`588`/`577` absent), no `TODO`/`FIXME`/`console.debug`, no new file under `scripts/`.
+./.ufo/waves/round-38/evidence/review-decisions.json:992:   "why": "cited 1705-1710 is the full-run breach check: 1704 `if (only === null) {`, 1705 `if (suite.counts.pending > wiredCount) {`, 1708 `if (suite.counts.refer
+./.ufo/waves/round-38/build/Prose04.md:2:VERDICT remaining-scripts-census#311 TOKEN wiredCount | cited 1705-1710 is the full-run breach check: 1704 `if (only === null) {`, 1705 `if (suite.counts.pending > wiredCount) {`,
+./.ufo/waves/round-61/build-spec.mjs:34:4. Verify the files contain no placeholder tokens (\`__TIP__\`, \`__MEASURED__\`, \`__COMMITS__\`).
+./.ufo/waves/round-61/build-spec.mjs:57:- Q52 — every citation in a committed report/scorecard/lesson names a real object (commit hash, line, file); \`__TIP__\`/\`__MEASURED__\`/\`__COMMITS__\` are rejected. Grounding:
+./.ufo/waves/round-61/build-spec.mjs:144:- \`${LANE}/.ufo/waves/round-60/close/dispatch60-tip.txt\` and \`doctrine60-tip.txt\` exist, contain real observed lines (no \`__TIP__\`/\`__MEASURED__\`), and match a fresh run o
+./.ufo/waves/round-61/w1-spec.json:10:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clar
+./.ufo/waves/round-61/w1-spec.json:46:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clar
+./.ufo/waves/round-61/w1-spec.json:184:   "prompt": "### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No cla
+./.ufo/waves/round-61/w1-dispatch.json:366:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fr
+./.ufo/waves/round-61/w1-dispatch.json:386:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fr
+./.ufo/waves/round-61/w1-dispatch.json:461:        "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the fr
+./.ufo/waves/round-61/w1-plan.json:371:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier
+./.ufo/waves/round-61/w1-plan.json:391:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier
+./.ufo/waves/round-61/w1-plan.json:466:      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier
+./SCORECARD.md:2833:next commit. After: at the measured revision `__MEASURED__` → `DISPATCH60_HELD held=10/10
+./SCORECARD.md:2847:measured revision `__MEASURED__` (`close/doctrine60-tip.txt`); the same 6/6 already holds at

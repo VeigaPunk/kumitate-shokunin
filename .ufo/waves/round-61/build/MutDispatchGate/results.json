@@ -1,0 +1,290 @@
+{
+  "baseline": {
+    "rc": 0,
+    "sha": "765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc",
+    "cases": {
+      "clean": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: CLEAN (seats=3 sessions=3 exit0=3 reports=3 dead=0)"
+      },
+      "template-registry": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)"
+      },
+      "dead-seat-credited": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=1 exit0=1 reports=2 dead=1)"
+      },
+      "progress-absent": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: FAIL-CLOSED progress-absent path=/tmp/dispatch-evidence-selftest.YJ38nk/absent/.ufo/waves/round-1/w1/launcher-progress.tsv"
+      },
+      "plan-mismatch": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)"
+      },
+      "report-absent": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=1 dead=0)"
+      },
+      "expect-mismatch": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)"
+      },
+      "dead-mismatch": {
+        "status": "PASS",
+        "verdict": "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=1 exit0=1 reports=1 dead=1)"
+      }
+    },
+    "summary": [
+      "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+      "VERDICT: PASS"
+    ],
+    "stderr": ""
+  },
+  "mutants": [
+    {
+      "id": "M1a-exit0-deleted",
+      "condition": "exit0 counting: `if (row.exit === 0) exit0 += 1;`",
+      "mutation": "DELETE the guarded increment (exit0 never counted)",
+      "expected": "clean",
+      "sha": "b430d71f0475dbd9e3f322946f8f6676a28701f60efff42d2ca3c7ec42b420a0",
+      "rc": 1,
+      "flipped": [
+        "clean"
+      ],
+      "new_cases": [],
+      "verdict": "KILLED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: FAIL (7/8)",
+        "VERDICT: FAIL"
+      ],
+      "fail_lines": [
+        "clean: DISPATCH_EVIDENCE: DRIFT (seats=3 sessions=3 exit0=0 reports=3 dead=0)"
+      ],
+      "stderr": "",
+      "case_status": {
+        "clean": "FAIL",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M1b-exit0-guard-relaxed",
+      "condition": "exit0 counting: `if (row.exit === 0)`",
+      "mutation": "ADJUST guard to unconditional `exit0 += 1;` (dead seats counted as exit0)",
+      "expected": "dead-seat-credited | dead-mismatch (registry cross-check)",
+      "sha": "0173e31bb119a56c1552e9c76abd79467606a31a7910b2003f65ad55099355fc",
+      "rc": 0,
+      "flipped": [],
+      "new_cases": [],
+      "verdict": "SURVIVED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+        "VERDICT: PASS"
+      ],
+      "fail_lines": [],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M2a-report-check-deleted",
+      "condition": "report existence: `hasReport = statSync(reportPath).size > 0`",
+      "mutation": "REPLACE the stat probe with unconditional `hasReport = true;`",
+      "expected": "report-absent",
+      "sha": "0c96ac0bba778677bd1d6ca30210effbca969d95ca6b0b34fc4d076bfc20d760",
+      "rc": 1,
+      "flipped": [
+        "report-absent"
+      ],
+      "new_cases": [],
+      "verdict": "KILLED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: FAIL (7/8)",
+        "VERDICT: FAIL"
+      ],
+      "fail_lines": [
+        "report-absent: DISPATCH_EVIDENCE: CLEAN (seats=2 sessions=2 exit0=2 reports=2 dead=0)"
+      ],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "FAIL",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M2b-report-size-boundary",
+      "condition": "report existence: `.size > 0` (non-empty)",
+      "mutation": "ADJUST boundary to `.size >= 0` (empty file counts as a report)",
+      "expected": "report-absent (only if an empty-report fixture exists)",
+      "sha": "35c8e740a432025956dd3d1f87028499af204d963a3229783c100004a481afe6",
+      "rc": 0,
+      "flipped": [],
+      "new_cases": [],
+      "verdict": "SURVIVED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+        "VERDICT: PASS"
+      ],
+      "fail_lines": [],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M3a-notadispatch-guard-dropped",
+      "condition": "NOT_A_DISPATCH when sessions=0: `withSession === 0 && rows.length > 0`",
+      "mutation": "ADJUST guard to `rows.length > 0` (any progress file is NOT_A_DISPATCH)",
+      "expected": "clean",
+      "sha": "69c897142603c75f187bae220a7220ec40e46270b852ad5a6580d6cecd216d92",
+      "rc": 1,
+      "flipped": [
+        "clean"
+      ],
+      "new_cases": [],
+      "verdict": "KILLED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: FAIL (7/8)",
+        "VERDICT: FAIL"
+      ],
+      "fail_lines": [
+        "clean: DISPATCH_EVIDENCE: DRIFT (seats=3 sessions=3 exit0=3 reports=3 dead=0)"
+      ],
+      "stderr": "",
+      "case_status": {
+        "clean": "FAIL",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M3b-notadispatch-clause-deleted",
+      "condition": "NOT_A_DISPATCH when sessions=0 (progress-side clause)",
+      "mutation": "DELETE the progress-side `withSession === 0` finding entirely",
+      "expected": "template-registry (only if that case drives sessions=0 through progress)",
+      "sha": "c2d1f7aebbb79253f9b70f78b3a3dbf3871eec53791e0d1ac36b890ecd7c0039",
+      "rc": 0,
+      "flipped": [],
+      "new_cases": [],
+      "verdict": "SURVIVED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+        "VERDICT: PASS"
+      ],
+      "fail_lines": [],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    },
+    {
+      "id": "M4a-dead-mismatch-deleted",
+      "condition": "dead-mismatch join: `declaredDead.join(\",\") !== dead.slice().sort().join(\",\")`",
+      "mutation": "DELETE the DEAD_MISMATCH comparison block",
+      "expected": "dead-mismatch",
+      "sha": "aa3d68ff4df87d324e220b5d83c8062cb0a767e8572d7e5aacb2438336df9bcc",
+      "rc": 1,
+      "flipped": [
+        "dead-mismatch"
+      ],
+      "new_cases": [],
+      "verdict": "KILLED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: FAIL (7/8)",
+        "VERDICT: FAIL"
+      ],
+      "fail_lines": [
+        "dead-mismatch: DISPATCH_EVIDENCE: CLEAN (seats=2 sessions=1 exit0=1 reports=1 dead=1)"
+      ],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "FAIL"
+      }
+    },
+    {
+      "id": "M4b-dead-mismatch-sort-dropped",
+      "condition": "dead-mismatch join: sort of observed dead set",
+      "mutation": "ADJUST `dead.slice().sort()` -> `dead.slice()` (order-sensitive compare)",
+      "expected": "dead-mismatch (only if a multi-dead fixture exists)",
+      "sha": "4433b66c681ee81718e75575b2fe962ead520a24c870c334ed8d2dd7306a2e59",
+      "rc": 0,
+      "flipped": [],
+      "new_cases": [],
+      "verdict": "SURVIVED",
+      "summary": [
+        "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+        "VERDICT: PASS"
+      ],
+      "fail_lines": [],
+      "stderr": "",
+      "case_status": {
+        "clean": "PASS",
+        "template-registry": "PASS",
+        "dead-seat-credited": "PASS",
+        "progress-absent": "PASS",
+        "plan-mismatch": "PASS",
+        "report-absent": "PASS",
+        "expect-mismatch": "PASS",
+        "dead-mismatch": "PASS"
+      }
+    }
+  ],
+  "restored": {
+    "sha": "765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc",
+    "matches_pristine": true,
+    "rc": 0,
+    "all_pass": true,
+    "cases": 8,
+    "summary": [
+      "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+      "VERDICT: PASS"
+    ]
+  }
+}

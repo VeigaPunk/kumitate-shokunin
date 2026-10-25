@@ -1,0 +1,82 @@
+CritProxyAttack — kumitate round 61, w1 — proxy falsify (axis: operability)
+Target: scripts/proxy-check.mjs sha256 7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976 (selftest: PROXY_SELFTEST: 122/122 pass / VERDICT: PASS)
+Sandbox: /tmp/kumitate-r61/CritProxyAttack/tree (tar copy of the lane minus .git, taken 2026-10-25 ~09:41Z)
+Battery: /tmp/kumitate-r61/CritProxyAttack/battery.sh  -> full output /tmp/kumitate-r61/CritProxyAttack/battery.out
+Lane state: not mutated (all forging done in the sandbox or via --scorecard copies in /tmp; sandbox restored, cmp-identical to lane for proxy-check.mjs + dispatch-evidence.mjs)
+
+VERDICT
+  Step 1 (stanza-only gaming)        HOLDS  — 11/11 forged stanzas DRIFT (exit 1) or FAIL-CLOSED (exit 2) whenever the tree disagrees.
+  Step 2 (--strict pin coverage)     PARTIAL — fires on any new top-level scripts/*.mjs (incl. dotfile and the live new
+                                              scripts/make-dispatch-actual.mjs), but 6 executable-script shapes escape it.
+  Overall: FIXABLE DEFECT in pin coverage (lane-owned code); one documented tradeoff (self-pin) for the judge.
+
+BASELINE (live lane and sandbox, identical at copy time)
+  PROXY: DRIFT (A_DRIFT term=A declared=105 computed=108 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=145 computed=146 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)  exit=1
+Honest re-declaration (stanza A=108 C2_total=146 + ## Axes coverage=9 — i.e. what the tree computes), card cards/honest.md:
+  PROXY: MATCH (A=108 C=30 operability=9; C1=19/19 C2=145/146 coverage=9; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=52/52 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)  exit=0 (also --strict exit=0)
+All attacks below start from that honest MATCH so each forged edit is isolated.
+
+STEP 1 — stanza-only edits claiming MATCH values
+  In-place (sandbox SCORECARD.md edited, default --scorecard): stanza A=105->108, C2_total=145->146 only
+    PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)  exit=1 (default and --strict)
+    -> the stanza cannot launder the ## Axes row: coverage 10 is not reachable by stanza edits alone.
+  S1 untouched stanza (round-60 MATCH values)          DRIFT exit=1  A_DRIFT +3, C2_TOTAL_DRIFT +1, AXES_DRIFT
+  S3 C2_total=145 (value that keeps coverage=10)       DRIFT exit=1  C2_TOTAL_DRIFT declared=145 computed=146
+  S4 A=500 C=500                                       DRIFT exit=1  A_DRIFT -392, C_DRIFT -470
+  S5 S_sections=87 K_members=53                        DRIFT exit=1  S_SECTIONS_DRIFT, K_MEMBERS_DRIFT
+  S6 pin.proxy-check=000…0                             DRIFT exit=1  PIN_DRIFT
+  S8 key case a=108                                    FAIL-CLOSED exit=2 (STANZA_KEY_UNKNOWN)
+  S9 decoy second stanza                               FAIL-CLOSED exit=2 (STANZA_MALFORMED, 2 blocks)
+  S10 delete key C2                                    FAIL-CLOSED exit=2 (STANZA_MALFORMED missing C2)
+  S11 early "-->" on the C line                        FAIL-CLOSED exit=2 (STANZA_MALFORMED, 22 keys missing)
+  S7 A=0108 (leading zero, same integer)               MATCH exit=0 — benign: value equals the tree.
+  No stanza-only edit produced MATCH against a disagreeing tree.
+
+STEP 2 — --strict on new unpinned scripts (stanza A adjusted so A_DRIFT does not mask the result)
+  P1 scripts/evil.mjs            default MATCH+warn  | --strict DRIFT exit=1 (PIN_UNPINNED)   CAUGHT
+  P2 scripts/.hidden.mjs         default MATCH+warn  | --strict DRIFT exit=1 (PIN_UNPINNED)   CAUGHT
+  LIVE scripts/make-dispatch-actual.mjs (untracked, mtime 06:43:37 -0300, real round-61 file):
+       PROXY: DRIFT (A_DRIFT … delta=+8; C2_DRIFT …; C2_TOTAL_DRIFT …; PIN_UNPINNED term=scripts/make-dispatch-actual.mjs; src-rev=31c465f15669)  CAUGHT
+  P3 scripts/evil.js             --strict MATCH exit=0   ESCAPES (counted in A, never pin-checked)
+  P5 scripts/evil.sh             --strict MATCH exit=0   ESCAPES (counted in A, never pin-checked)
+  P6 scripts/lib/evil.mjs        --strict MATCH exit=0   ESCAPES (non-recursive readdir)
+  P7 scripts/evil.mjs -> symlink --strict MATCH exit=0   ESCAPES (Dirent.isFile() false; walkFiles also skips it, so A unchanged)
+  P4 scripts/evil.cjs            --strict MATCH exit=0   ESCAPES (invisible to A AND pin coverage)
+  P8 scripts/evil.ts             --strict MATCH exit=0   ESCAPES (invisible to A AND pin coverage)
+  P9 scripts/evil.mts            --strict MATCH exit=0   ESCAPES (invisible to A AND pin coverage)
+  Executability on this host (node v24.21.0): `node x.cjs` -> ran-cjs; `node x.ts` -> ran-ts; `node x.mts` -> ran-mts;
+  the symlinked target printed "PROXY: MATCH" — i.e. an unpinned, forgeable "proxy" sat at scripts/evil.mjs under a strict MATCH.
+  Cause: comparePinCoverage (scripts/proxy-check.mjs:1140-1157) = top-level readdir, `e.isFile() && e.name.endsWith('.mjs')`.
+
+OUT-OF-STANZA COUNTEREXAMPLES
+  G0 tamper scripts/dispatch-evidence.mjs, gate pin intact     DRIFT exit=1 (GATE_PIN_DRIFT)          CAUGHT
+  G1 same tamper + delete its pin line from kumitate-gate-pins-v1
+       default:  PROXY: MATCH (… pins=6 match; src-rev=31c465f15669) exit=0  + warn PIN_UNPINNED   DOWNGRADE error->warn
+       --strict: PROXY: DRIFT (PIN_UNPINNED term=scripts/dispatch-evidence.mjs; …) exit=1          CAUGHT
+  G2 delete the whole kumitate-gate-pins-v1 block: default MATCH exit=0 (17 warns); --strict DRIFT exit=1
+     Mitigation in place: SKILL.md:703 checklist runs `--strict`. Residual: any bare-mode consumer (incl. this
+     assignment's step-1 command) accepts a tampered gate whose pin line was removed.
+  G3 patch proxy-check.mjs (drop compareTerms call) + re-pin pin.proxy-check to the patched bytes + stanza A=999
+       PROXY: MATCH (A=108 … pins=6 match; src-rev=31c465f15669) exit=0                          SELF-VOUCH
+     No authority outside the lane holds the proxy-check hash (grep of the fleet tree for 7f73f8e7085377ac found
+     no copy outside kumitate-shokunin; .ufo/pins/* do not pin it). Documented at proxy-check.mjs:191
+     ("pin.proxy-check hashes this file for a reader, not for this run") — TRADEOFF, not an in-lane fix.
+  A-term identity: of the 113 files A counts live, 89 are under .ufo/ (wave scratch: probe.py, harness.py,
+     build-spec.mjs …) and 24 under scripts/. Any seat writing a scratch script moves A (live delta +8 this
+     round). Frozen derivation (proxy-check.mjs:94-95) and operability is terminal at 9, so no integer moves —
+     TRADEOFF for the canonical judge; A_DRIFT is now mostly scratch noise, not artifact provenance.
+
+IMPACTED AXES
+  operability — the pin-coverage gate the strict proxy relies on certifies MATCH while executable, unpinned
+  scripts sit under scripts/ (P3-P9); A-term is scratch-dominated.
+
+SMALLEST SAFE CORRECTION (lane-owned code; v1 frozen keys untouched)
+  1. comparePinCoverage: walk scripts/ recursively; flag any entry that is a file OR a symlink whose name matches
+     /\.(?:m?js|cjs|ts|mts|cts|sh|py)$/ and is not a pinned path (symlink -> always a finding). Keep severity warn
+     so --strict stays the gate. Add hermetic cases for .js, .cjs, .ts, subdir, symlink.
+  2. A GATE_PINS key the tool itself enumerates, whose file exists, but which is absent from the block should be
+     an error (e.g. GATE_PIN_MISSING), not PIN_UNPINNED warn — closes G1/G2 in bare mode. Lane-owned block, so
+     this does not widen the parent-frozen 23-key contract.
+  3. (Judge, not lane) anchor pin.proxy-check outside the lane if self-vouching is to be closed.
+
+Tools installed/updated: none.

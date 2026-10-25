@@ -1,0 +1,57 @@
+COUNTERS61 pack rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 sha=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin node=v24.21.0
+## tool sha256
+3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30  /home/vgpnk/Projects/shokunin/scripts/sources-census.sh
+7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs
+02028d11b9b05d952df421b030be919e2af1bf77101d302c06a8b0a718c9a89f  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/probe/dispatch61-probe.mjs
+e638e2b932f9d1552484c428131f73ad7efef663b273bad72e1581a30efa1965  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/probe/doctrine61-probe.mjs
+765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc  /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+
+## [1/5] $ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate 
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+-- exit=0
+
+## [2/5] $ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs 
+PROXY  error  A_DRIFT  A: declared=105 computed=112 delta=+7
+PROXY  error  C2_DRIFT  C2: declared=145 computed=146 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=145 computed=146 delta=+1
+PROXY  warn  PIN_UNPINNED  scripts/make-dispatch-actual.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=105 computed=112 delta=+7; C2_DRIFT term=C2 declared=145 computed=146 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=145 computed=146 delta=+1; PIN_UNPINNED term=scripts/make-dispatch-actual.mjs; src-rev=31c465f15669)
+-- exit=1
+
+## [3/5] $ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/probe/dispatch61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin be4a820c344d4eb2f94b999c3b5d649e76ab70f1 
+DISPATCH61: DISPATCH61_UNMET held=1/4 checks=4 rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 rule=P61
+ | P1 PASS DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)
+ | P2 MISS gate=2 clean=false reports=0
+ | P3 MISS | `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (
+ | P4 MISS absent
+-- exit=1
+
+## [4/5] $ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/probe/doctrine61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin be4a820c344d4eb2f94b999c3b5d649e76ab70f1 --census-root /home/vgpnk/Projects/shokunin 
+DOCTRINE61: DOCTRINE61_UNMET held=1/6 checks=6 rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 rule=D61
+ | E1 MISS absent
+ | E2 MISS src=false verified=false recheck=false
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=8ef2ee5f5e196d9d
+ | E5 PASS exit=0
+ | E6 MISS mapped=false readme-map=0 README_MAP: CLEAN files=146 rows=146 covered=146
+-- exit=1
+
+## [5/5] $ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs --root /home/vgpnk/Projects/shokunin/kumitate-shokunin --round 61 --wave w1 
+DISPATCH_EVIDENCE: FAIL-CLOSED progress-absent path=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/launcher-progress.tsv
+FINDING PROGRESS_ABSENT
+DISPATCH_EVIDENCE: FAIL-CLOSED contract=kumitate-dispatch-evidence-v1
+-- exit=2
+
+## summary rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 sha=be4a820c344d4eb2f94b999c3b5d649e76ab70f1
+[1] exit=0 kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+[2] exit=1 PROXY: DRIFT (A_DRIFT term=A declared=105 computed=112 delta=+7; C2_DRIFT term=C2 declared=145 computed=146 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=145 computed=146 delta=+1; PIN_UNPINNED term=scripts/make-dispatch-actual.mjs; src-rev=31c465f15669)
+[3] exit=1 DISPATCH61: DISPATCH61_UNMET held=1/4 checks=4 rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 rule=P61
+[4] exit=1 DOCTRINE61: DOCTRINE61_UNMET held=1/6 checks=6 rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1 rule=D61
+[5] exit=2 DISPATCH_EVIDENCE: FAIL-CLOSED progress-absent path=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/launcher-progress.tsv
+COUNTERS61: NONZERO nonzero=4/5 rev=be4a820c344d4eb2f94b999c3b5d649e76ab70f1

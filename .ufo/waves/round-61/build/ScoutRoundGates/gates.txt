@@ -1,0 +1,30 @@
+# Lane gate selftest fleet — kumitate round 61, w1 (ScoutRoundGates)
+# Revision: git be4a820 (jj @- xnpoxkmn be4a820c344d, master, "round-61: record real round-60 tip receipts")
+# Working copy @ wpmzqrut 547e4f1f empty; scripts/ clean vs HEAD (git status/diff empty) before and after the runs.
+# Runtime: node v24.21.0. Each run: `node scripts/<gate>.mjs --selftest` from the lane root, sequential.
+# Raw stdout/stderr: /tmp/kumitate-r61/ScoutRoundGates/<gate>.{out,err} (all .err empty).
+#
+# gate               | summary line                                    | verdict line   | exit
+cite-check           | 76/76 cases passed (hermetic)                   | VERDICT: PASS  | 0
+surface-probe        | 46/46 cases passed                              | VERDICT: PASS  | 0
+round-gate           | ROUND_GATE_SELFTEST: 61/61 pass                 | VERDICT: PASS  | 0
+claims-check         | CLAIMS_SELFTEST: 47/47 pass                     | VERDICT: PASS  | 0
+kimi-census          | KIMI_CENSUS_SELFTEST: 54/54 pass                | VERDICT: PASS  | 0
+sources-check        | SOURCES_SELFTEST: 46/46 pass                    | VERDICT: PASS  | 0
+anchor-truth         | ANCHOR_TRUTH_SELFTEST: 44/44 pass               | VERDICT: PASS  | 0
+wave-census          | WAVE_CENSUS_SELFTEST: 32/32 pass                | VERDICT: PASS  | 0
+gate-mutants         | GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0   | VERDICT: PASS  | 0   (58 s wall)
+receipt-evidence     | RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)         | VERDICT: PASS  | 0
+cite-sources         | CITE_SOURCES_SELFTEST: PASS (8/8)               | VERDICT: PASS  | 0
+source-dupes         | SOURCE_DUPES_SELFTEST: PASS (12/12)             | VERDICT: PASS  | 0
+source-capture       | SOURCE_CAPTURE_SELFTEST: PASS (13/13)           | VERDICT: PASS  | 0
+readme-map           | README_MAP_SELFTEST: PASS (16/16)               | VERDICT: PASS  | 0
+dispatch-evidence    | DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)          | VERDICT: PASS  | 0
+#
+# Totals: 15/15 gates PASS, exit 0; 514/514 selftest cases pass.
+# Failures: none. Round-61 attribution: n/a (no failing gate).
+# Note: grep for FAIL in the outputs hits only PASS lines that deliberately exercise
+# failure paths (FAIL-CLOSED fixtures, injected-failure self-observation), e.g.
+# round-gate.out:33-38,56,58; cite-check.out:76; wave-census.out:32; sources-check.out:36;
+# dispatch-evidence.out:4.
+# wave-census also prints WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: 0 / WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: PASS.

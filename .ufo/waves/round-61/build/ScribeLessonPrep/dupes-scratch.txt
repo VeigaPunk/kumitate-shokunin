@@ -1,0 +1,48 @@
+== source-dupes / sources-census on scratch copies of HEAD corpus/SOURCES.md (be4a820), staged rows inserted after the S194 row (line 146)
+== staged rows: merge/kumitate/SOURCES.append.md lines 16 (S204), 23 (S211), 29 (S217); 'n' = escaped pipe replaced by U+00A6 so the row has 11 cells
+== E11 lines are scratch noise (no corpus/knowledge beside the copy) and appear at base too
+
+### s211
+$ node scripts/source-dupes.mjs --sources <scratch>/s211.md
+SOURCE_DUPES: CLEAN groups=6 known=6
+$ sources-census.sh validate --file <scratch>/s211.md   (diff vs base copy)
+6a7
+> file	E01	S211 fields=12
+170a172,173
+> file	E11	S211 missing used-by grep -c '25
+> file	E11	S211 missing used-by 930 episodes'` -> 3 (ran 2026-10-23)
+
+### s211n
+$ node scripts/source-dupes.mjs --sources <scratch>/s211n.md
+SOURCE_DUPES: CLEAN groups=6 known=6
+$ sources-census.sh validate --file <scratch>/s211n.md   (diff vs base copy)
+6a7
+> file	E09	S211 recheck=180d — `curl -fsSL 'https://arxiv.org/abs/2609.29095' ¦ grep -c '25,930 episodes'` -> 3 (ran 2026-10-23)
+170a172
+> file	E11	S211 missing used-by corpus/knowledge/exactly-once-attribution.md
+
+### s211n+s204n
+$ node scripts/source-dupes.mjs --sources <scratch>/s211n+s204n.md
+SOURCE_DUPES: DRIFT groups=7 known=6 bad=1 first=new-duplicate:arxiv.org/abs/2609.29095 ids=S204,S211
+$ sources-census.sh validate --file <scratch>/s211n+s204n.md   (diff vs base copy)
+6a7,9
+> file	E09	S211 recheck=180d — `curl -fsSL 'https://arxiv.org/abs/2609.29095' ¦ grep -c '25,930 episodes'` -> 3 (ran 2026-10-23)
+> file	W04	S204 duplicate url arxiv.org/abs/2609.29095 across scopes
+> file	E09	S204 recheck=180d — `aaron papers fetch 10.48550/arXiv.2609.29095 -m arxiv ¦ grep -c 'Where Does Exactly-Once Live'` -> 1 (ran 2026-10-23)
+170a174,175
+> file	E11	S211 missing used-by corpus/knowledge/exactly-once-attribution.md
+> file	E11	S204 missing used-by corpus/knowledge/durable-execution-failure-detection.md
+
+### s217
+$ node scripts/source-dupes.mjs --sources <scratch>/s217.md
+SOURCE_DUPES: CLEAN groups=6 known=6
+$ sources-census.sh validate --file <scratch>/s217.md   (diff vs base copy)
+6a7
+> file	E01	S217 fields=12
+170a172
+> file	E11	S217 missing used-by grep -c 'Pinned'` -> 14 (ran 2026-10-23)
+
+### s134url — scratch copy with S134's source cell given '— https://arxiv.org/abs/2609.29095' (append-only cell: scratch only, NOT a proposed edit)
+SOURCE_DUPES: CLEAN groups=6 known=6
+### s134url+s211n — same, plus pipe-normalized staged S211 inserted after S194
+SOURCE_DUPES: DRIFT groups=7 known=6 bad=1 first=new-duplicate:arxiv.org/abs/2609.29095 ids=S134,S211

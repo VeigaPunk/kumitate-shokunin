@@ -1,0 +1,83 @@
+{
+  "M1b": {
+    "claim": "clean/fixture says exit0=1",
+    "pristine": {
+      "rc": 0,
+      "out": [
+        "DISPATCH_EVIDENCE: CLEAN (seats=2 sessions=1 exit0=1 reports=1 dead=1)"
+      ],
+      "err": ""
+    },
+    "mutant": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=1 exit0=2 reports=1 dead=1)",
+        "FINDING REGISTRY_MISMATCH:exit0=1observed=2"
+      ],
+      "err": ""
+    },
+    "differs": true
+  },
+  "M2b": {
+    "claim": "empty report must be REPORT_ABSENT",
+    "pristine": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=1 dead=0)",
+        "FINDING REPORT_ABSENT:B"
+      ],
+      "err": ""
+    },
+    "mutant": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=2 exit0=2 reports=2 dead=0)",
+        "FINDING REGISTRY_MISMATCH:reports=1observed=2"
+      ],
+      "err": ""
+    },
+    "differs": true
+  },
+  "M3b": {
+    "claim": "sessionless progress must be NOT_A_DISPATCH",
+    "pristine": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=0 exit0=2 reports=2 dead=2)",
+        "FINDING SESSION_MISMATCH:A",
+        "FINDING SESSION_MISMATCH:B",
+        "FINDING NOT_A_DISPATCH"
+      ],
+      "err": ""
+    },
+    "mutant": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=2 sessions=0 exit0=2 reports=2 dead=2)",
+        "FINDING SESSION_MISMATCH:A",
+        "FINDING SESSION_MISMATCH:B"
+      ],
+      "err": ""
+    },
+    "differs": true
+  },
+  "M4b": {
+    "claim": "dead set compare must be order-insensitive",
+    "pristine": {
+      "rc": 0,
+      "out": [
+        "DISPATCH_EVIDENCE: CLEAN (seats=3 sessions=1 exit0=1 reports=1 dead=2)"
+      ],
+      "err": ""
+    },
+    "mutant": {
+      "rc": 1,
+      "out": [
+        "DISPATCH_EVIDENCE: DRIFT (seats=3 sessions=1 exit0=1 reports=1 dead=2)",
+        "FINDING DEAD_MISMATCH:declared=B+Cobserved=B+C"
+      ],
+      "err": ""
+    },
+    "differs": true
+  }
+}
