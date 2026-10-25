@@ -1,0 +1,33 @@
+== C2 critic control: a1-no-capture ==
+attempt: S195 row with opened=2026-10-25 and a sha256 pin, but no build/ScoutSourceWorkerVersioning/body.md
+expected: E4 MISS
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+-- variant 1: contract-shaped row, body.md absent --
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin d9f83d5 --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=4/6 checks=6 rev=d9f83d5 rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=1
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+
+-- variant 2: probe-shaped row (so E3/E4 can see it), body.md absent: isolates the capture leg --
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin ae9100e --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=5/6 checks=6 rev=ae9100e rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 PASS status=mined opened=2026-10-25 used-by=corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E4 MISS pin=sha256 8ef2ee5f5e196d9d1 sha=
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=1
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0

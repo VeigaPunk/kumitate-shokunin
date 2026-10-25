@@ -1,0 +1,21 @@
+== C2 critic control: a5-full-forgery-held ==
+attempt: compose: header-only rewrite of package entry (no fetch/quote) + fabricated body.md + probe-shaped phantom S195 line outside ## Registry + README row
+expected: DOCTRINE61_UNMET
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+S195 lines at rev (none inside ## Registry):
+|:S195:| Worker Versioning — https://docs.temporal.io/worker-versioning.md | docs | A | scope | § Pinned Workflows sha256 15841c50876fe839f1a3bc8d31a77a9c3ccbb1f60f9a67a0f2c6e1fe0249f75d | phantom | shim | mined | 2026-10-25 | 90d | corpus/knowledge/temporal-worker-versioning-pinning.md |
+
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin 4247d2d --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_HELD held=6/6 checks=6 rev=4247d2d rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 PASS status=mined opened=2026-10-25 used-by=corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E4 PASS pin=sha256 15841c50876fe839f sha=15841c50876fe839
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=0
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0

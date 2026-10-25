@@ -1,0 +1,26 @@
+== C2 critic control: a6-default-census-root ==
+attempt: run the probe exactly as plan.md counting command (no --census-root) against the real lane HEAD
+expected: E5 measured at fleet root per plan.md E5
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+$ node doctrine61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin be4a820
+DOCTRINE61: DOCTRINE61_UNMET held=0/6 checks=6 rev=be4a820 rule=D61
+ | E1 MISS absent
+ | E2 MISS src=false verified=false recheck=false
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=8ef2ee5f5e196d9d
+ | E5 MISS exit=2
+ | E6 MISS mapped=false readme-map=0 README_MAP: CLEAN files=146 rows=146 covered=146
+exit=1
+
+-- the census call E5 makes when --census-root is omitted --
+$ sources-census.sh validate --root /home/vgpnk/Projects/shokunin/kumitate-shokunin kumitate   (W04 warnings elided)
+ERROR: config not found: /home/vgpnk/Projects/shokunin/kumitate-shokunin/shokunin.conf
+ERROR: unknown lane (not a dir, not in conf or root): kumitate
+exit=2
+
+-- plan.md E5 command (fleet root) --
+$ sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate   (W04 warnings elided)
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0

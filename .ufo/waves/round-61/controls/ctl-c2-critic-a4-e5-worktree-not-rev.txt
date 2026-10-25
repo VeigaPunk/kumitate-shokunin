@@ -1,0 +1,28 @@
+== C2 critic control: a4-e5-worktree-not-rev ==
+attempt: E5 is claimed "at the measured revision"; commit a malformed registry and leave the worktree clean
+expected: E5 MISS at the malformed rev
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+rev ad78e87 commits a malformed (escaped-pipe) row; working tree SOURCES.md restored to base.
+
+-- census of the committed rev tree (git archive ad78e87) --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/revfleet kumitate   (W04 warnings elided)
+kumitate	E01	S195 fields=12
+exit=1
+
+-- census of the working tree the probe actually reads --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+
+-- probe at that rev --
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin ad78e87 --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=1/6 checks=6 rev=ad78e87 rule=D61
+ | E1 MISS absent
+ | E2 MISS src=false verified=false recheck=false
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=
+ | E5 PASS exit=0
+ | E6 MISS mapped=false readme-map=1 README_MAP: note unpinned:lessons/round-60-verifier-spotcheck.md
+exit=1

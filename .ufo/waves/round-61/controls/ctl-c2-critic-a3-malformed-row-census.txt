@@ -1,0 +1,36 @@
+== C2 critic control: a3-malformed-row-census ==
+attempt: make E5 (census exit 0) coexist with a malformed S195 row
+expected: census E01/E02/E03/E04 for every malformed shape
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+-- variant 1: escaped pipe `\|` inside the teaches cell of a registry row --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	E01	S195 fields=12
+exit=1
+
+-- variant 2: S195 row twice in Registry --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	E03	S195 duplicate id
+kumitate	E04	S195 duplicate url docs.temporal.io/worker-versioning.md within scope which code version a durable retry may run, read for the Pinned/Auto-Upgrade definitions
+kumitate	E11	S195 missing used-by corpus/knowledge/temporal-worker-versioning-pinning.md
+kumitate	E11	S195 missing used-by corpus/knowledge/temporal-worker-versioning-pinning.md
+exit=1
+
+-- variant 3: S195 + S196 same URL, same scope, no supersedes --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	E04	S196 duplicate url docs.temporal.io/worker-versioning.md within scope x
+kumitate	E11	S195 missing used-by corpus/knowledge/temporal-worker-versioning-pinning.md
+kumitate	E11	S196 missing used-by corpus/knowledge/temporal-worker-versioning-pinning.md
+exit=1
+
+-- variant 4: probe-shaped `|:S195:|` row (12 cells) inside Registry --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	E01	:S195: fields=12
+kumitate	E02	:S195:
+exit=1
+
+-- variant 5: same malformed row (extra cell + escaped pipe) placed OUTSIDE `## Registry` (after ## Leads) --
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0

@@ -1,0 +1,629 @@
+{
+  "schema": "ufo-swarm-wave-v1",
+  "wave": "kumitate-r61-w2",
+  "context": "ROUND 61 WAVE 2 — falsify wave-1 outputs, every task item attacks one named artifact/claim.\nLane write scope: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w2/ seat reports only. Inputs are lane repo and committed round-61 wave-1 evidence; use absolute paths. Your tools start at fleet root. \nWrite report at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w2/<SeatName>.md (Report trailer path resolves against /home/vgpnk/Projects/shokunin/kumitate-shokunin). Scratch only under /tmp/kumitate-r61/<SeatName>/. Do not edit lane production files, gate scripts, SOURCES, lesson, or scorecard; report findings only. Never write fleet repo, sibling repos, .ufo/state/, .scratch/, campaign root, or lane jj/git index. No background jobs or subagent spawns. Pacman transactions are PAUSED; no pacman installs. REA MCP unavailable; use CLI only if relevant. Report evidence pointers, commands, exact verdicts and exits.",
+  "policy": {
+    "source": "config",
+    "maxLanes": 40,
+    "minLanes": 16,
+    "waveMinLanes": 32,
+    "waveMaxLanes": 64,
+    "declaredMaxLanes": 40,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 40,
+    "resume": 0,
+    "total": 40
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "dispatch": {
+    "calls": 1,
+    "kind": "task",
+    "note": "Issue exactly one batched task call carrying every spawn lane, plus one hub send per resume lane. Never split a wave into multiple task calls (one-swarm-per-wave)."
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-61/w2/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-61/w2",
+    "members": {
+      "CritControlC1Nonempty": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1ZeroSeats": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1NullMix": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1P3Only": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1EmptyCommitted": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1IdSwap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1StatusSynthesis": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritControlC1SessionIdentity": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability"
+        ]
+      },
+      "CritC2Regex": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2Columns": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2CaptureForge": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2CensusRoot": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2LiveCensus": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2WorkingMap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2UnrelatedRow": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "CritC2HashPin": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "coverage"
+        ]
+      },
+      "Audit01": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit02": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit03": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit04": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit05": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit06": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit07": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit08": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit09": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit10": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit11": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit12": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit13": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit14": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit15": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit16": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit17": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit18": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit19": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit20": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit21": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit22": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit23": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      },
+      "Audit24": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null,
+        "axes": [
+          "operability",
+          "coverage"
+        ]
+      }
+    }
+  },
+  "priorRegistries": [],
+  "tasks": [
+    {
+      "name": "CritControlC1Nonempty",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 1 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1Nonempty.md"
+    },
+    {
+      "name": "CritControlC1ZeroSeats",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 2 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1ZeroSeats.md"
+    },
+    {
+      "name": "CritControlC1NullMix",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 3 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1NullMix.md"
+    },
+    {
+      "name": "CritControlC1P3Only",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 4 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1P3Only.md"
+    },
+    {
+      "name": "CritControlC1EmptyCommitted",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 5 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1EmptyCommitted.md"
+    },
+    {
+      "name": "CritControlC1IdSwap",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 6 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1IdSwap.md"
+    },
+    {
+      "name": "CritControlC1StatusSynthesis",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 7 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1StatusSynthesis.md"
+    },
+    {
+      "name": "CritControlC1SessionIdentity",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C1 subcase 8 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC1.md: use the already committed control receipts and reproduce only that named case in scratch. For nonempty fake reports, zero-seat registry, mixed/null IDs, P3-only, committed zero-byte files, swapped identities, settled-status→exit mapping, or actual-session identity (respectively), record exact command/output/exit. Does this case independently falsify P61? Do not touch lane files except your report.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritControlC1SessionIdentity.md"
+    },
+    {
+      "name": "CritC2Regex",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 1 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2Regex.md"
+    },
+    {
+      "name": "CritC2Columns",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 2 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2Columns.md"
+    },
+    {
+      "name": "CritC2CaptureForge",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 3 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2CaptureForge.md"
+    },
+    {
+      "name": "CritC2CensusRoot",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 4 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2CensusRoot.md"
+    },
+    {
+      "name": "CritC2LiveCensus",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 5 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2LiveCensus.md"
+    },
+    {
+      "name": "CritC2WorkingMap",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 6 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2WorkingMap.md"
+    },
+    {
+      "name": "CritC2UnrelatedRow",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 7 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2UnrelatedRow.md"
+    },
+    {
+      "name": "CritC2HashPin",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nAttack C2 subcase 8 in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/CritControlC2.md: reproduce the named frozen-probe behavior in scratch only: JS POSIX-class row regex, shifted SOURCES cell indices, arbitrary bytes with a matching invented digest, lane-root census exit, mutable live census vs measured rev, README working-tree map, fake non-Registry row, or partial-hash acceptance (respectively). Quote exact line/output/exit. State if the case independently prevents D61 from verifying.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/CritC2HashPin.md"
+    },
+    {
+      "name": "Audit01",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-CompletedNoExit — Verify the validator results envelope has status=completed but no numeric exit; run make-dispatch-actual against a fixture with only status completed. Compare the result to the actual OMP result semantics and cite the exact mapper code.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit01.md"
+    },
+    {
+      "name": "Audit02",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-ContradictoryStatus — Attack make-dispatch-actual with status=failed + exit=0 and status=completed + exit=-9; determine whether contradictions are rejected and whether any accepted record lies about settlement.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit02.md"
+    },
+    {
+      "name": "Audit03",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-NullIdentity — Attack the dispatch record with session IDs absent/null while exit=0; run dispatch-evidence and document whether the gate still credits the seat.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit03.md"
+    },
+    {
+      "name": "Audit04",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-ArrayObject — Verify members-as-object is rejected by dispatch-evidence and the converter preserves the rejection.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit04.md"
+    },
+    {
+      "name": "Audit05",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-UnplannedSeat — Verify a settled result name absent from the validated registry fails closed and no record is written.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit05.md"
+    },
+    {
+      "name": "Audit06",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-EmptyReport — Verify a zero-byte seat report is not credited; compare report-size semantics with the builder and P61 counter.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit06.md"
+    },
+    {
+      "name": "Audit07",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-ReportPath — Attack the reports path and report-name mapping: absent, wrong-dir, path traversal or mismatched stem; state whether any malformed report can be credited.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit07.md"
+    },
+    {
+      "name": "Audit08",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSchema-TaskVsSession — Trace the OMP task id versus transcript session id for a completed wave-1 seat; use actual files if available. Does the current dispatch record label the identifier honestly?\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit08.md"
+    },
+    {
+      "name": "Audit09",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSource-Quote — Reopen the committed Temporal capture and verify the quote in SOURCES row S195 and the knowledge entry byte-for-byte; report exact line/hash.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit09.md"
+    },
+    {
+      "name": "Audit10",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSource-Hash — Independently hash `.ufo/waves/round-61/build/ScoutSourceWorkerVersioning/body.md` and compare with SOURCES row and source-captures pin; do not trust scribe output.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit10.md"
+    },
+    {
+      "name": "Audit11",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSource-Provenance — Check the new knowledge entry opens with source/verified-at/recheck, cites only the correct lane id S195, and does not retain staged S217 citations or unsupported retry claims.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit11.md"
+    },
+    {
+      "name": "Audit12",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSource-RowSchema — Check S195 is an 11-cell row, is mined/opened 2026-10-25, used-by exact, with no escaped/literal pipe; run sources census on an extraction if possible.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit12.md"
+    },
+    {
+      "name": "Audit13",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nSource-UsedBy — Check S195 used-by resolves to exactly the new entry and that the entry is present in README+readme-map pin. Report specific counts.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit13.md"
+    },
+    {
+      "name": "Audit14",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuarantine-S116 — Independently inspect arXiv 2512.08296 and verify the S116 register quote splice (abstract 260/six vs §4.1 180/four); cite source and the correct sentence.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit14.md"
+    },
+    {
+      "name": "Audit15",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuarantine-S109 — Reopen the register S109 cited source and compare by document identity to lane S125; is the register ABSENT verdict false? Cite paths.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit15.md"
+    },
+    {
+      "name": "Audit16",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuarantine-S118 — Reopen the register S118 cited source and compare by DOI/document to lane S134; does the quote occur in the e-print capture despite absence on abstract?\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit16.md"
+    },
+    {
+      "name": "Audit17",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuarantine-S142 — Check S142 locator claim against pinned source repository source at the named commit; determine whether source file defines or imports MCP_PROTOCOL_VERSION.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit17.md"
+    },
+    {
+      "name": "Audit18",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuarantine-Count — Re-derive the lane slice count from absent-defect-register using shape-matching (not fixed columns), verify 9 rows, and diff per-row verdicts against committed verdicts.md.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit18.md"
+    },
+    {
+      "name": "Audit19",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nRound60-DeadTable — Audit `.ufo/waves/round-60/close/dead-seats-r60.md` against committed progress, stream files and launcher log: count 32/5/27, full errors no truncation, traceback exact.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit19.md"
+    },
+    {
+      "name": "Audit20",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nRound60-Receipt — Re-run round-60 probes in a sandbox at a745a3b0; compare to close tip receipts and scorecard/report claims. List every contradiction.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit20.md"
+    },
+    {
+      "name": "Audit21",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nRound60-Readme — Verify round-60 verifier spotcheck README row and covered pin; run readme-map and cite-source gates. Name any remaining drift.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit21.md"
+    },
+    {
+      "name": "Audit22",
+      "agent": "critic",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nQuality-Q52-Q57 — Review QUALITY Q52-Q57 against the R60/R61 evidence pointers and named failure demonstrations; identify any criterion that cannot fail or cites missing lines.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit22.md"
+    },
+    {
+      "name": "Audit23",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nTrend-Expansion — Verify the new Temporal entry is sourced to opened mined S195 and genuinely adds band-4 knowledge; distinguish this trend from the failed frozen C2 counter.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit23.md"
+    },
+    {
+      "name": "Audit24",
+      "agent": "reviewer",
+      "task": "/skill:godspeed\n\n### Godspeed posture\nName the axes; iterate cheap and in parallel; keep moves that improve any axis and harm none; do not aim — let the frontier walk itself. No clarifying-question loops: act via tool calls.\n\nScope-Overlap — Recheck sibling overlap scan at build/ConnectorSiblings/scan.md; report any missed same-surface lane/quality entry.\n\nLane bounds: leaf member — no subagent dispatch.\nJudged on: operability, coverage\n\nReport: write your scoped findings to .ufo/waves/round-61/w2/Audit24.md"
+    }
+  ]
+}

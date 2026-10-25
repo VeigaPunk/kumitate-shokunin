@@ -1,0 +1,19 @@
+== CritControlC1 — A3 P3 satisfied alone (SCORECARD row names round 61), no wave record ==
+gate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+sha256(gate)=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+host: 2026-10-25T06:43:03-03:00
+
+fixture: /tmp/kumitate-r61/CritControlC1/a3-p3-only (scratch git repo, no .ufo/waves/round-61/w1)
+rev: 6bc66470a7cd9b8336603e48b19fd9b1455fa664
+
+$ node .ufo/waves/round-61/probe/dispatch61-probe.mjs /tmp/kumitate-r61/CritControlC1/a3-p3-only 6bc66470a7cd9b8336603e48b19fd9b1455fa664
+exit=1
+--- stdout ---
+DISPATCH61: DISPATCH61_UNMET held=2/4 checks=4 rev=6bc66470a7cd9b8336603e48b19fd9b1455fa664 rule=P61
+ | P1 PASS DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)
+ | P2 MISS gate=2 clean=false reports=0
+ | P3 PASS | `dispatch-evidence` | read a round's dispatch record | `node scripts/dispatch-evidence.mjs --selftest` -> PASS (8/8) | round 61 |
+ | P4 MISS absent
+--- stderr ---
+
+VERDICT: P2 still MISS — P3 alone cannot satisfy the predicate

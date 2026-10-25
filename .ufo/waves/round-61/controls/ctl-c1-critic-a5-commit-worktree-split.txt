@@ -1,0 +1,26 @@
+== CritControlC1 — A5 commit/working-tree split ==
+gate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+sha256(gate)=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+fixture: /tmp/kumitate-r61/CritControlC1/a5-commit-worktree-split
+rev: ced3ece36d6798e441a2456d18ce2b4da13483c3
+
+committed at rev: 32 .md files, 32 of them zero-byte; tip receipt committed=False
+working tree after commit: 32 one-line reports (uncommitted), untracked close/dispatch61-tip.txt
+
+$ node .ufo/waves/round-61/probe/dispatch61-probe.mjs /tmp/kumitate-r61/CritControlC1/a5-commit-worktree-split ced3ece36d6798e441a2456d18ce2b4da13483c3
+exit=0
+--- stdout ---
+DISPATCH61: DISPATCH61_HELD held=4/4 checks=4 rev=ced3ece36d6798e441a2456d18ce2b4da13483c3 rule=P61
+ | P1 PASS DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)
+ | P2 PASS gate=0 clean=true reports=32
+ | P3 PASS | `dispatch-evidence` | read a round's dispatch record | `node scripts/dispatch-evidence.mjs --selftest` -> PASS (8/8) | round 61 |
+ | P4 PASS exists
+--- stderr ---
+
+$ node scripts/dispatch-evidence.mjs --root /tmp/kumitate-r61/CritControlC1/a5-commit-worktree-split --round 61 --wave w1
+exit=0
+--- stdout ---
+DISPATCH_EVIDENCE: CLEAN (seats=32 sessions=32 exit0=32 reports=32 dead=0)
+--- stderr ---
+
+VERDICT: P2/P4 read the working tree: the predicate reads HELD while the committed revision holds zero-byte reports and no tip receipt

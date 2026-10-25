@@ -1,0 +1,23 @@
+== C2 critic control: a0-honest-row-vacuity ==
+attempt: fully honest build: contract-shaped 11-column S195 row (mined, opened 2026-10-25, used-by entry, real capture sha pinned), re-grounded entry, real capture present, README row + pin
+expected: DOCTRINE61_HELD if the probe measures what plan.md says
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin 661c4e2 --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=4/6 checks=6 rev=661c4e2 rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=8ef2ee5f5e196d9d
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=1
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+
+why (probe source line 17/21 replayed on the committed row):
+  probe row regex /^\|[[:space:]]*S195[[:space:]]*\|/ on "| S195 | ..." -> false (JS has no POSIX [[:space:]]; class is {[,:,s,p,a,c,e} then literal "]*")
+  even if found, probe reads c[9]/c[10]/c[12]; on the 11-column contract row those are opened="2026-10-25" recheck="90d" trailing=""; status/opened/used-by live at c[8]/c[9]/c[11]="mined"/"2026-10-25"/"corpus/knowledge/temporal-worker-version"
+  census requires NF=13 (11 cells) in ## Registry, probe E3 requires a 12th cell -> E3 and E5 are jointly unsatisfiable for any Registry row.

@@ -149,3 +149,11 @@ standing rejects stay refused unless their flip condition is met.
 
 One v1 wave of 32, build + falsifiers, dispatched from the validator's taskCall.
 Wave 2 only on ≥32 distinct attack items; residual review ≤8 seats. No spawns.
+
+### Shape addendum (post-wave-1, 2026-10-25)
+
+Wave 1 returned 32 seat reports and at least 40 distinct falsification tasks: eight C1 control
+cases, eight C2 control cases, and 24 named schema/source/quarantine/entry/gate attacks. The
+validated wave-2 spec at `.ufo/waves/round-61/w2-spec.json` carries those 40 separate prompts.
+Wave 2 is one v1 wave of 40 reviewer/critic seats; it attacks each named item from wave 1.
+Round planned total is 72/128; no residual call is planned.

@@ -1,0 +1,11 @@
+# Wave-2 misroot repair — Audit22
+
+The Audit22 subagent wrote its report outside the lane at `/home/vgpnk/Projects/shokunin/kumitate-shokukin/.ufo/waves/round-61/w2/Audit22.md` (misspelled lane directory). This was a lane/round report, not operator state.
+
+Repair performed:
+
+1. `cp <fleet-root>/kumitate-shokukin/.ufo/waves/round-61/w2/Audit22.md <lane>/.ufo/waves/round-61/w2/Audit22.md`
+2. `cmp` on the two paths exited 0 (byte-identical).
+3. Deleted the fleet-root copy and removed its now-empty misspelled directories.
+
+The original path was later confirmed by `glob`; the recovered lane report is included in the wave-2 reports. Fleet-root misroot sweep at final report time is in the round report.

@@ -1,0 +1,15 @@
+== CritControlC1 — A2c NOT_A_DISPATCH bypass — one non-null agentId defeats the template check ==
+gate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+sha256(gate)=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+host: 2026-10-25T06:43:03-03:00
+
+fixture: /tmp/kumitate-r61/CritControlC1/a2c-one-id-selfcount
+members: 32, agentId null on 31, one non-null; sessionIds declared 32
+
+$ node scripts/dispatch-evidence.mjs --root /tmp/kumitate-r61/CritControlC1/a2c-one-id-selfcount --round 61 --wave w1
+exit=0
+--- stdout ---
+DISPATCH_EVIDENCE: CLEAN (seats=32 sessions=32 exit0=32 reports=32 dead=0)
+--- stderr ---
+
+VERDICT: CLEAN — the all-null test is a token-membership check, not provenance

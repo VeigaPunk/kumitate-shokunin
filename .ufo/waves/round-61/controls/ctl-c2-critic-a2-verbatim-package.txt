@@ -1,0 +1,35 @@
+== C2 critic control: a2-verbatim-package ==
+attempt: adopt merge/kumitate/knowledge entry without re-grounding (no fresh access date, no located quote)
+expected: E2 MISS
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+-- variant 1: package entry copied byte-for-byte (cites S217, verified-at 2026-10-23) --
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin 60ed01c --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=3/6 checks=6 rev=60ed01c rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 MISS src=false verified=false recheck=true
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=8ef2ee5f5e196d9d
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=1
+
+-- variant 2: same copy with only `S217`->`S195` and `2026-10-23`->`2026-10-25` rewritten in the header; no fetch, no located quote, body still cites S217 --
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin aae3b02 --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_UNMET held=4/6 checks=6 rev=aae3b02 rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 MISS row-absent
+ | E4 MISS pin= sha=8ef2ee5f5e196d9d
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=1
+
+header of variant-2 entry:
+
+source: S195 — https://docs.temporal.io/worker-versioning.md — § Versioning behaviors → § Pinned Workflows / § Auto-Upgrade Workflows, § Versioning statuses, § Continue-as-new, Child Workflow, and Retry Semantics — raw markdown rendering, docs revision current at 2026-10-23
+verified-at: 2026-10-25
+recheck: 90d — `curl -fsSL 'https://docs.temporal.io/worker-versioning.md' | grep -c 'Pinned'` -> 14 (ran 2026-10-23)
+coverage-map: frontier band "Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies)" (PROVINCE.md §Frontier)
+body S217 citations remaining: 1

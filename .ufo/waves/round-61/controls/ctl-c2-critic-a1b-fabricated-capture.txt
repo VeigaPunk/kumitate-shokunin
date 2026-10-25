@@ -1,0 +1,18 @@
+== C2 critic control: a1b-fabricated-capture ==
+attempt: body.md filled with invented bytes (no fetch), its own sha pinned in the row
+expected: E4 should MISS (capture is not a source opening)
+scratch: /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin (clone of lane @ be4a820); fleet root /tmp/kumitate-r61/CritControlC2/fleet
+real capture sha256: 8ef2ee5f5e196d9d14fc8c85449442764e812f3e4f0f6e2bb1bdc12895f0f8fc
+
+$ node doctrine61-probe.mjs /tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin d79fc61 --census-root /tmp/kumitate-r61/CritControlC2/fleet
+DOCTRINE61: DOCTRINE61_HELD held=6/6 checks=6 rev=d79fc61 rule=D61
+ | E1 PASS corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E2 PASS src=true verified=true recheck=true
+ | E3 PASS status=mined opened=2026-10-25 used-by=corpus/knowledge/temporal-worker-versioning-pinning.md
+ | E4 PASS pin=sha256 15841c50876fe839f sha=15841c50876fe839
+ | E5 PASS exit=0
+ | E6 PASS mapped=true readme-map=0 README_MAP: CLEAN files=147 rows=147 covered=147
+exit=0
+$ sources-census.sh validate --root /tmp/kumitate-r61/CritControlC2/fleet kumitate   (W04 warnings elided)
+kumitate	ok	/tmp/kumitate-r61/CritControlC2/fleet/kumitate-shokunin/corpus/SOURCES.md
+exit=0

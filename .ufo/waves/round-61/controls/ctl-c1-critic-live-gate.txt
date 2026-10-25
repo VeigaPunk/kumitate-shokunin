@@ -1,0 +1,16 @@
+== CritControlC1 — live lane w1 read (no progress file yet) ==
+gate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+sha256(gate)=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+host: 2026-10-25T06:43:03-03:00
+
+$ node scripts/dispatch-evidence.mjs --root /home/vgpnk/Projects/shokunin/kumitate-shokunin --round 61 --wave w1
+exit=2
+--- stdout ---
+DISPATCH_EVIDENCE: FAIL-CLOSED progress-absent path=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-61/w1/launcher-progress.tsv
+FINDING PROGRESS_ABSENT
+--- stderr ---
+DISPATCH_EVIDENCE: FAIL-CLOSED contract=kumitate-dispatch-evidence-v1
+
+note: the harness dispatch record is .ufo/waves/round-61/w1/swarm-registry.json
+(ufo-swarm-registry-v1, 32 spawn members, 32 non-null agentIds); neither
+launcher-progress.tsv nor dispatch-actual.json is emitted by the harness.

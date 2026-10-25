@@ -1,0 +1,24 @@
+== CritControlC1 — A4 full fabrication — DISPATCH61_HELD from a do-nothing control ==
+gate: /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/dispatch-evidence.mjs
+sha256(gate)=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+host: 2026-10-25T06:43:03-03:00
+
+fixture: /tmp/kumitate-r61/CritControlC1/a4-full-fabrication (scratch git repo)
+content: scripts/dispatch-evidence.mjs (copy), SCORECARD.md with a
+  `dispatch-evidence` row naming round 61, 32 one-line fabricated seat reports,
+  hand-written launcher-progress.tsv with fabricated session ids, hand-written
+  dispatch-actual.json, close/dispatch61-tip.txt holding the CLEAN line.
+  NO seat ever ran; NO real dispatch record exists.
+rev: ab902da2fa30d051455a5f3563627e2c23c3a74d
+
+$ node .ufo/waves/round-61/probe/dispatch61-probe.mjs /tmp/kumitate-r61/CritControlC1/a4-full-fabrication ab902da2fa30d051455a5f3563627e2c23c3a74d
+exit=0
+--- stdout ---
+DISPATCH61: DISPATCH61_HELD held=4/4 checks=4 rev=ab902da2fa30d051455a5f3563627e2c23c3a74d rule=P61
+ | P1 PASS DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)
+ | P2 PASS gate=0 clean=true reports=32
+ | P3 PASS | `dispatch-evidence` | read a round's dispatch record | `node scripts/dispatch-evidence.mjs --selftest` -> PASS (8/8) | round 61 |
+ | P4 PASS exists
+--- stderr ---
+
+VERDICT: DISPATCH61_HELD 4/4 exit 0 — the C1 target is reachable by fabrication
