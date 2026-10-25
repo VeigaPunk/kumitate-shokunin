@@ -586,8 +586,7 @@ Citations are to the notes — the notes carry the live anchors.
 
 ## Gate registry
 
-Registry home per the fleet protocol's §Gate standard (round 34). Nineteen are
-gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54, `source-capture` round 55, `source-dupes` round 56, `receipt-evidence` round 58, `cite-sources` round 59);
+Registry home per the fleet protocol's §Gate standard (round 34). Nineteen are gates (each can exit 1 on a real defect; `anchor-truth` added round 38, `wave-census` round 41, `gate-mutants` round 42, `omp-census` round 44, `bind-oracle` round 49, `counter-pins` round 54, `source-capture` round 55, `source-dupes` round 56, `receipt-evidence` round 58, `cite-sources` round 59);
 `counter-rerun` (round 49 row) is a **probe** — its exit 1 is `DISAGREE`, two runs of one counter disagreeing, not a surface defect
 (ScoutRegistryClassification, `r49/ScoutRegistryClassification.md`) — and `cap-spawn` is a **helper** with no process exit map. None writes to a surface it does not
 own; self-tests write only `mkdtemp` fixtures. `surface-probe` does execute

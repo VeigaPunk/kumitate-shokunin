@@ -16,7 +16,7 @@ ADMIT mcp-orchestration-contract.md — frontier item 2, the uncovered MCP orche
 
 REJECT durable-execution-and-fanout-primitives-2026-10-24.md — right province band, wrong theme. This round's one theme is frontier item 2. The entry's ground (saga compensating action, Tail at Scale) is not item 2. flip: a later round whose one theme is band-4 primitives re-opens S190 and S194 and adopts it through the item-10 pipeline.
 
-REJECT durable-execution-failure-detection.md — overlaps held surfaces, and its S126 URL is the same page as held S117. A shared page is not automatically a duplicate; the operational conclusion is to pin the duplicate group before adoption. This round does not adopt it and does not pin a group it did not open. flip: pin the S117/S126 group, then a later band-4 round may adopt the non-overlapping remainder.
+REJECT durable-execution-failure-detection.md — overlaps held surfaces, and its S126 URL is the same page as held S117. a shared page is not automatically a duplicate; the operational conclusion is to pin the duplicate group before adoption. This round does not adopt it and does not pin a group it did not open. flip: pin the S117/S126 group, then a later band-4 round may adopt the non-overlapping remainder.
 
 Stripped recheck prose (not in the row cells): S125 campaign cell was `90d — curl … grep -c clientCapabilities`; S127 was `on-release — curl … grep -c until the task is durably created` split across a literal pipe; S136 was `180d — curl … grep -c Mcp-Session-Id`. Those pipes are why a byte-exact append fails the census. Recorded here, not in the row.
 
