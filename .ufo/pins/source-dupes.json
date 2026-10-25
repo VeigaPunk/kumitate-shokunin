@@ -40,6 +40,14 @@
       ],
       "url": "docs.langchain.com/oss/python/langgraph/checkpointers",
       "why": "round-58 duplicate (queued S028 durability-modes scope vs S123 checkpoint-snapshots scope, opened this round under the recovery entry). Retained as a pin; resolution = supersede one row into the other, then remove this pin."
+    },
+    {
+      "ids": [
+        "S117",
+        "S126"
+      ],
+      "url": "docs.temporal.io/encyclopedia/detecting-activity-failures",
+      "why": "round-60 duplicate (S117 worker-liveness scope, held since round 57, vs S126 failure-detection and timeout contract, opened this round under the durable-execution detection entry). The two captures are byte-identical (sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50). This is the group the round-59 flip required to be pinned before the detection entry could be adopted; it is pinned in the same change that appends S126. Retained as a pin; resolution = supersede one row into the other, then remove this pin."
     }
   ]
 }

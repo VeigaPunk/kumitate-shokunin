@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=96
-C=29
+A=105
+C=30
 C1=19
 C1_total=19
-C2=141
-C2_total=141
+C2=145
+C2_total=145
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=01bd849a865eb0e310c014eaf9b8d3801530f71c0248a1b518db67f4e6d715ca
+pin.proxy-check=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -326,6 +326,7 @@ pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7
 pin.readme-map=b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e
 pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
 pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
+pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
 -->
 
 
@@ -1790,6 +1791,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (v2; registry version 2); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=141 rows=141 covered=141`; `--selftest` → `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
 | `receipt-evidence` | A receipt set is evidence only if every receipt verifies under the extraction's own receipt-attest, reproduces its recorded argv in the git archive of the judged rev, carries a nonce absent from the descending round-48..57 sweep, and spans the body-clock minimum (contract `kumitate-receipt-evidence-v1`; routed R57-V1/V2/V4). Row added in round 59: the round-58 acquisition landed the gate and the pin, and the capabilities table did not gain the row (R58-V6) | `node scripts/receipt-evidence.mjs --selftest` → `RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `pin.receipt-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 28 | 58 |
 | `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
+| `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30 | 60 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="egCW2ZAp9Vx7eY-mSv3uC1LmtrM7ASkOZHABQCe-ps8" />
+<title>AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装 | CyberAgent Developers Blog</title>
+
+		<!-- All in One SEO 5.0.4 - aioseo.com -->
+	<meta name="description" content="AI エージェントの長時間実行と相性のよい Durable Execution の考え方を整理し、AWS Lambda Durable Execution の checkpoint / replay の仕組みと Go SDK 実装例を紹介します。" />
+	<meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+	<meta name="author" content="黒崎 優太"/>
+	<meta name="google-site-verification" content="egCW2ZAp9Vx7eY-mSv3uC1LmtrM7ASkOZHABQCe-ps8" />
+	<link rel="canonical" href="https://developers.cyberagent.co.jp/blog/archives/63635/" />
+		<meta name="generator" content="All in One SEO (AIOSEO) 5.0.4" />
+		<meta property="og:locale" content="ja_JP" />
+		<meta property="og:site_name" content="CyberAgent Developers Blog" />
+		<meta property="og:type" content="article" />
+		<meta property="og:title" content="AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装 | CyberAgent Developers Blog" />
+		<meta property="og:description" content="AI エージェントの長時間実行と相性のよい Durable Execution の考え方を整理し、AWS Lambda Durable Execution の checkpoint / replay の仕組みと Go SDK 実装例を紹介します。" />
+		<meta property="og:url" content="https://developers.cyberagent.co.jp/blog/archives/63635/" />
+		<meta property="og:image" content="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0549f7761edbae170169eb2d981d088191bbc8c94e9ae55145.jpg" />
+		<meta property="og:image:secure_url" content="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0549f7761edbae170169eb2d981d088191bbc8c94e9ae55145.jpg" />
+		<meta property="og:image:width" content="1672" />
+		<meta property="og:image:height" content="941" />
+		<meta property="article:published_time" content="2026-04-26T23:32:06+00:00" />
+		<meta property="article:modified_time" content="2026-04-26T23:32:06+00:00" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装 | CyberAgent Developers Blog" />
+		<meta name="twitter:description" content="AI エージェントの長時間実行と相性のよい Durable Execution の考え方を整理し、AWS Lambda Durable Execution の checkpoint / replay の仕組みと Go SDK 実装例を紹介します。" />
+		<meta name="twitter:image" content="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0549f7761edbae170169eb2d981d088191bbc8c94e9ae55145.jpg" />
+		<!-- All in One SEO -->
+
+<link rel="alternate" type="application/rss+xml" title="CyberAgent Developers Blog | サイバーエージェント デベロッパーズブログ &raquo; フィード" href="https://developers.cyberagent.co.jp/blog/feed/" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<style id="wp-emoji-styles-inline-css">
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+/*# sourceURL=wp-emoji-styles-inline-css */
+</style>
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='sab-plugin-css' href='https://developers.cyberagent.co.jp/blog/wp-content/plugins/simple-author-box/css/simple-author-box.min.css?ver=v1.5' media='all' />
+<link rel='stylesheet' id='onepress-fonts-css' href='https://fonts.googleapis.com/css?family=Raleway%3A400%2C500%2C600%2C700%2C300%2C100%2C800%2C900%7COpen+Sans%3A400%2C300%2C300italic%2C400italic%2C600%2C600italic%2C700%2C700italic&#038;subset=latin%2Clatin-ext' media='all' />
+<link rel='stylesheet' id='onepress-animate-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/assets/css/animate.min.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='onepress-fa-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/assets/css/font-awesome.min.css?ver=4.4.0' media='all' />
+<link rel='stylesheet' id='onepress-bootstrap-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/css/bootstrap.min.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='onepress-style-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/style.css?ver=7.1.3' media='all' />
+<style id="onepress-style-inline-css">
+#main .video-section section.hero-slideshow-wrapper{background:transparent}.hero-slideshow-wrapper:after{position:absolute;top:0px;left:0px;width:100%;height:100%;background-color:rgba(0,0,0,0.3);display:block;content:""}.body-desktop .parallax-hero .hero-slideshow-wrapper:after{display:none!important}#parallax-hero>.parallax-bg::before{background-color:rgba(0,0,0,0.3);opacity:1}.body-desktop .parallax-hero .hero-slideshow-wrapper:after{display:none!important}#footer-widgets{}.gallery-carousel .g-item{padding:0px 10px}.gallery-carousel{margin-left:-10px;margin-right:-10px}.gallery-grid .g-item,.gallery-masonry .g-item .inner{padding:10px}.gallery-grid,.gallery-masonry{margin:-10px}
+/*# sourceURL=onepress-style-inline-css */
+</style>
+<link rel='stylesheet' id='highlight-style-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/css/tomorrow-night-bright.min.css?ver=11.6.0' media='all' />
+<link rel='stylesheet' id='onepress-gallery-lightgallery-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/assets/css/lightgallery.css?ver=7.1.3' media='all' />
+<link rel='stylesheet' id='child-style-css' href='https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/child.css?ver=1635136766' media='all' />
+<script id="empty-js-extra">
+var onepress_js_settings = {"onepress_disable_animation":"","onepress_disable_sticky_header":"","onepress_vertical_align_menu":"","hero_animation":"flipInX","hero_speed":"5000"};
+//# sourceURL=empty-js-extra
+</script>
+<script id="empty-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/empty.js?ver=7.1.3"></script>
+<script id="jquery-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/jquery-3.4.1.min.js?ver=7.1.3"></script>
+<script id="jquery-migrate-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/jquery-migrate-3.1.0.min.js?ver=7.1.3"></script>
+<script id="onepress-js-popper-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/popper.min.js?ver=7.1.3"></script>
+<script id="onepress-js-header-nav-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/header-nav.js?ver=7.1.3"></script>
+<script id="highlight-script-js" src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/highlight-11.6.0.min.js?ver=7.1.3"></script>
+<script id="highlight-script-js-after">
+hljs.highlightAll();
+//# sourceURL=highlight-script-js-after
+</script>
+<style type="text/css">.saboxplugin-wrap {margin-top:0px;}.saboxplugin-wrap {margin-bottom:0px;}.saboxplugin-wrap .saboxplugin-authorname {font-size:18px; line-height:25px;}.saboxplugin-wrap .saboxplugin-desc {font-size:14px; line-height:21px;}.saboxplugin-wrap .saboxplugin-web {font-size:14px;}.saboxplugin-wrap .saboxplugin-socials .saboxplugin-icon-color {font-size:21px;}.saboxplugin-wrap .saboxplugin-socials .saboxplugin-icon-color:before {width:36px; height:36px; line-height:37px; }.saboxplugin-wrap .saboxplugin-socials .saboxplugin-icon-grey {font-size:18px;}</style><link rel="icon" href="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/09/cropped-ca-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/09/cropped-ca-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/09/cropped-ca-180x180.png" />
+<meta name="msapplication-TileImage" content="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/09/cropped-ca-270x270.png" />
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-63635 single-format-standard wp-theme-onepress wp-child-theme-onepress-child-20220324 group-blog">
+
+<div id="page" class="hfeed site">
+             <header id="masthead" class="site-header" role="banner">
+             <div class="container site-header-container">
+                <div class="site-branding">
+                  <div class="site-brand-inner has-logo-img"><div class="site-logo-div"><a class="site-image-logo" href="https://developers.cyberagent.co.jp/blog/" rel="home"><img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/nav.png" alt="CyberAgent Developers Blog | サイバーエージェント デベロッパーズブログ"></a></div></div>                </div>
+                <!-- .site-branding -->
+
+                <div class="header-right-wrapper">
+
+                  <a href="#0" id="nav-toggle">メニュー<span></span></a>
+  
+
+                  <nav id="site-navigation" class="main-navigation" role="navigation">
+                    <ul class="onepress-menu">
+                      <li class="menu-item menu-item-type-pc">
+                        <div class="dropdown">
+                          <button class="header_nav_dropdownButton" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            タグ
+                          </button>
+                          <div class="dropdown-menu header_nav_dropdownMenu header_nav_dropdown_tag" aria-labelledby="dropdownMenuButton">
+                            <ul>
+                              <li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a8%e3%83%b3%e3%82%b8%e3%83%8b%e3%82%a2/'>エンジニア / 141件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/abema/'>ABEMA / 128件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%87%e3%82%b6%e3%82%a4%e3%83%8a%e3%83%bc/'>デザイナー / 115件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%af%e3%83%aa%e3%82%a8%e3%82%a4%e3%82%bf%e3%83%bc/'>クリエイター / 115件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a4%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%b3%e3%82%b7%e3%83%83%e3%83%97/'>インターンシップ / 113件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e5%8b%89%e5%bc%b7%e4%bc%9a/'>勉強会 / 111件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ai%e4%ba%8b%e6%a5%ad%e6%9c%ac%e9%83%a8/'>AI事業本部 / 103件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ai/'>AI / 87件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/aws/'>AWS / 70件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ios/'>iOS / 64件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e7%94%9f%e6%88%90ai/'>生成AI / 63件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ameba/'>Ameba / 60件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89/'>バックエンド / 58件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/uiux/'>UI/UX / 57件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/android/'>Android / 56件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/unity/'>Unity / 53件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%ac%e3%83%9d%e3%83%bc%e3%83%88/'>レポート / 52件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/kubernetes/'>kubernetes / 51件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a4%e3%83%b3%e3%83%95%e3%83%a9/'>インフラ / 48件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e5%85%b1%e8%91%97/'>共著 / 46件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%95%e3%83%ad%e3%83%b3%e3%83%88%e3%82%a8%e3%83%b3%e3%83%89/'>フロントエンド / 45件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/golang/'>Golang / 38件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%b3%e3%82%a8%e3%83%ad%e3%82%b0/'>コエログ / 37件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/winticket/'>WINTICKET / 36件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%8d%e3%82%a4%e3%83%86%e3%82%a3%e3%83%96/'>ネイティブ / 36件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/dynalyst/'>Dynalyst / 35件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/mdts/'>MDTS / 33件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/mdh/'>MDH / 29件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/flutter/'>Flutter / 29件</a></li><li><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%bf%e3%83%83%e3%83%97%e3%83%ab/'>タップル / 29件</a></li>                            </ul>
+                          </div>
+                        </div>
+                      </li>
+                      <li class="menu-item menu-item-type-pc">
+                        <div class="dropdown">
+                          <button class="header_nav_dropdownButton" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            月別
+                          </button>
+                          <div class="dropdown-menu header_nav_dropdownMenu" aria-labelledby="dropdownMenuButton">
+                            <ul>
+                              	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/10/'>2026年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/09/'>2026年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/08/'>2026年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/07/'>2026年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/06/'>2026年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/05/'>2026年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/04/'>2026年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/03/'>2026年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/02/'>2026年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2026/01/'>2026年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/12/'>2025年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/11/'>2025年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/10/'>2025年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/09/'>2025年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/08/'>2025年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/07/'>2025年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/06/'>2025年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/05/'>2025年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/04/'>2025年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/03/'>2025年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/02/'>2025年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2025/01/'>2025年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/12/'>2024年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/11/'>2024年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/10/'>2024年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/09/'>2024年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/08/'>2024年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/07/'>2024年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/06/'>2024年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/05/'>2024年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/04/'>2024年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/03/'>2024年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/02/'>2024年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2024/01/'>2024年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/12/'>2023年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/11/'>2023年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/10/'>2023年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/09/'>2023年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/08/'>2023年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/07/'>2023年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/06/'>2023年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/05/'>2023年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/04/'>2023年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/03/'>2023年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/02/'>2023年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2023/01/'>2023年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/12/'>2022年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/11/'>2022年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/10/'>2022年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/09/'>2022年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/08/'>2022年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/07/'>2022年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/06/'>2022年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/05/'>2022年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/04/'>2022年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/03/'>2022年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/02/'>2022年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2022/01/'>2022年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/12/'>2021年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/11/'>2021年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/10/'>2021年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/09/'>2021年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/08/'>2021年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/07/'>2021年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/06/'>2021年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/05/'>2021年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/04/'>2021年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/03/'>2021年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/02/'>2021年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2021/01/'>2021年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/12/'>2020年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/11/'>2020年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/10/'>2020年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/09/'>2020年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/08/'>2020年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/07/'>2020年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/06/'>2020年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/05/'>2020年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/04/'>2020年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/03/'>2020年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/02/'>2020年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2020/01/'>2020年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/12/'>2019年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/11/'>2019年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/10/'>2019年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/09/'>2019年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/08/'>2019年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/07/'>2019年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/06/'>2019年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/05/'>2019年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/04/'>2019年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/03/'>2019年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/02/'>2019年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2019/01/'>2019年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/12/'>2018年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/11/'>2018年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/10/'>2018年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/09/'>2018年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/08/'>2018年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/07/'>2018年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/06/'>2018年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/05/'>2018年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/04/'>2018年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/03/'>2018年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/02/'>2018年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2018/01/'>2018年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/12/'>2017年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/11/'>2017年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/10/'>2017年10月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/09/'>2017年9月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/08/'>2017年8月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/07/'>2017年7月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/06/'>2017年6月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/05/'>2017年5月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/04/'>2017年4月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/03/'>2017年3月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/02/'>2017年2月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2017/01/'>2017年1月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2016/12/'>2016年12月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2016/11/'>2016年11月</a></li>
+	<li><a href='https://developers.cyberagent.co.jp/blog/archives/date/2016/10/'>2016年10月</a></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </li>
+                    <li class="menu-item menu-item-type-pc">
+                      <div class="dropdown">
+                        <button class="header_nav_dropdownButton" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          カテゴリ
+                        </button>
+                        <div class="dropdown-menu header_nav_dropdownMenu" aria-labelledby="dropdownMenuButton">
+                          <ul>
+                            	<li class="cat-item cat-item-2"><a href="https://developers.cyberagent.co.jp/blog/archives/category/engineer/">エンジニア</a>
+</li>
+	<li class="cat-item cat-item-3"><a href="https://developers.cyberagent.co.jp/blog/archives/category/creator/">クリエイター</a>
+</li>
+	<li class="cat-item cat-item-660"><a href="https://developers.cyberagent.co.jp/blog/archives/category/pm/">PM</a>
+</li>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="menu-item">
+                      <form method="get" class="searchForm" action="https://developers.cyberagent.co.jp/blog/">
+  <input type="text" placeholder="キーワード検索" name="s" class="searchField" value="" />
+  <input type="submit" value="" alt="検索" title="検索" class="searchSubmit">
+</form>                    </li>
+                    <li class="menu-item menu-item-type-mobile">
+                        <dl class="menu-item-type-mobile-container">
+                          <dt class="menu-item-type-mobile-title">
+                            カテゴリ
+                          </dt>
+                          <dd class="menu-item-category-list">
+                            <a href="https://developers.cyberagent.co.jp/blog/archives/category/engineer">エンジニア</a><a href="https://developers.cyberagent.co.jp/blog/archives/category/creator">クリエイター</a><a href="https://developers.cyberagent.co.jp/blog/archives/category/pm">PM</a>                          </dd>
+                        </dl>
+                      </li>
+                      <li class="menu-item menu-item-type-mobile">
+                        <dl class="menu-item-type-mobile-container">
+                          <dt class="menu-item-type-mobile-title">
+                            タグ
+                          </dt>
+                          <dd class="menu-item-tag-list">
+                            <span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a8%e3%83%b3%e3%82%b8%e3%83%8b%e3%82%a2/'>エンジニア (141)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/abema/'>ABEMA (128)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%87%e3%82%b6%e3%82%a4%e3%83%8a%e3%83%bc/'>デザイナー (115)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%af%e3%83%aa%e3%82%a8%e3%82%a4%e3%82%bf%e3%83%bc/'>クリエイター (115)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a4%e3%83%b3%e3%82%bf%e3%83%bc%e3%83%b3%e3%82%b7%e3%83%83%e3%83%97/'>インターンシップ (113)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e5%8b%89%e5%bc%b7%e4%bc%9a/'>勉強会 (111)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ai%e4%ba%8b%e6%a5%ad%e6%9c%ac%e9%83%a8/'>AI事業本部 (103)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ai/'>AI (87)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/aws/'>AWS (70)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ios/'>iOS (64)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e7%94%9f%e6%88%90ai/'>生成AI (63)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/ameba/'>Ameba (60)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89/'>バックエンド (58)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/uiux/'>UI/UX (57)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/android/'>Android (56)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/unity/'>Unity (53)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%ac%e3%83%9d%e3%83%bc%e3%83%88/'>レポート (52)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/kubernetes/'>kubernetes (51)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%a4%e3%83%b3%e3%83%95%e3%83%a9/'>インフラ (48)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e5%85%b1%e8%91%97/'>共著 (46)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%95%e3%83%ad%e3%83%b3%e3%83%88%e3%82%a8%e3%83%b3%e3%83%89/'>フロントエンド (45)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/golang/'>Golang (38)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%b3%e3%82%a8%e3%83%ad%e3%82%b0/'>コエログ (37)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/winticket/'>WINTICKET (36)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%83%8d%e3%82%a4%e3%83%86%e3%82%a3%e3%83%96/'>ネイティブ (36)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/dynalyst/'>Dynalyst (35)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/mdts/'>MDTS (33)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/mdh/'>MDH (29)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/flutter/'>Flutter (29)</a></span><span><a href='https://developers.cyberagent.co.jp/blog/archives/tag/%e3%82%bf%e3%83%83%e3%83%97%e3%83%ab/'>タップル (29)</a></span>                          </dd>
+                        </dl>
+                      </li>
+                    </ul>
+                  </nav>
+
+                </div>
+             </div>
+            </div>
+         </header><!-- #masthead -->
+         
+	<div id="content" class="site-content site-content-single">
+
+		
+		
+		<div class="singleContent__topBackground" style="background-image: url(https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/pc/header/bg_header.png)"></div>
+
+		<div id="content-inside" class="container">
+			<div id="primary" class="singleContent">
+				<main id="main" class="site-main" role="main">
+
+				
+					
+<article id="post-63635" class="cadev-entry post-63635 post type-post status-publish format-standard has-post-thumbnail hentry category-engineer tag-ai-agent tag-aws tag-aws-lambda tag-go">
+  <header class="entry-header">
+    <!-- 日付用カラム -->
+
+    <!-- タイトル,メタ用カラム -->
+    <div class="entry-meta">
+      <h1 class="entry-title">AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装</h1>      <div class="entry_date_writer">
+        <a href="https://developers.cyberagent.co.jp/blog/archives/63635/" rel="bookmark"><time class="entry-date published" datetime="2026-04-27T08:32:06+09:00"><span class="entry-date__month">Apr</span><span class="entry-date__date">27</span><span class="entry-date__year">2026</span></time></a>        <span class="byline"> WRITER: <span class="author vcard"><a class="url fn n" href="https://developers.cyberagent.co.jp/blog/archives/author/kurochan/">黒崎 優太</a></span></span>        <div class="entry-cats"><ul><li class="entry-cats__item"><a href="https://developers.cyberagent.co.jp/blog/archives/category/engineer/" rel="category tag">エンジニア</a></li></ul></div>     </div><!-- /.entry-date-container -->
+      <section class="sns">
+  <div class="sns-area">
+    <div class="sns-share">
+      <a href="http://b.hatena.ne.jp/entry/https://developers.cyberagent.co.jp/blog/archives/63635/" class="hatena-bookmark-button" data-hatena-bookmark-title="AIエージェントの長時間実行で重要なDurable Executionの仕組みとAWS LambdaでのGo SDK実装" data-hatena-bookmark-layout="standard-balloon" data-hatena-bookmark-lang="ja" title="このエントリーをはてなブックマークに追加"><img src="https://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="https://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+
+    <div class="sns-share">
+      <a href="https://twitter.com/share" class="twitter-share-button"></a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+   
+    <div class="sns-share">
+      <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.8";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+      <div class="fb-like" data-href="https://developers.cyberagent.co.jp/blog/archives/63635/" data-layout="button_count" data-action="like" data-size="small" data-show-faces="false" data-share="true"></div>
+    </div>
+
+  </div><!-- .sns-area -->
+</section>
+    </div><!-- .entry-meta -->
+  </header><!-- .entry-header -->
+
+  <div class="entry-content">
+    <p>ABEMAの広告配信システムのバックエンド開発を担当している黒崎 ( <a href="https://x.com/kuro_m88">@kuro_m88</a> )です。</p>
+<p>AI エージェントはモデルやハーネスの進化とともに、人間の介入なしに複雑なタスクをこなせるようになってきました。<br />
+AI エージェントは、1 回推論して終わるのではなく、推論とツール実行、外部 API 呼び出し、結果の確認を何度も繰り返しながらタスクを進めていきます。<br />
+実際のタスク実行では、外部 API 待ちや人間の確認待ちのような待機が入りやすく、途中で失敗した場合には手前からの再開も必要になります。</p>
+<p>本記事では、こうしたワークロードを入口に Durable Execution が何を解決する概念なのかを紹介し、具体例として AWS Lambda の Durable Execution のモデルをベースに説明します。<br />
+さらに <a title="aws-durable-execution-sdk-js" href="https://github.com/aws/aws-durable-execution-sdk-js"><code>aws-durable-execution-sdk-js</code></a> の実装を読み解き、それを <a title="https://github.com/kurochan/aws-durable-execution-go/" href="https://github.com/kurochan/aws-durable-execution-go/">Go SDK として再実装してみました</a>。</p>
+<p><img fetchpriority="high" decoding="async" class="aligncenter size-large wp-image-63652" src="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7-1024x576.jpg" alt="Durable Executionのイメージ" width="800" height="450" srcset="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7-1024x576.jpg 1024w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7-300x169.jpg 300w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7-768x432.jpg 768w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7-1536x864.jpg 1536w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/ig_0873908978d30df50169eb329086088191a9bb4c56276506b7.jpg 1672w" sizes="(max-width: 800px) 100vw, 800px" /></p>
+<p>Durable Execution という言葉自体は複数のプロダクトや文脈で使われていますが、標準化された定義は見つけられなかったため、長時間実行・待機・失敗からの再開を扱うための実行モデルを指す言葉として捉えています。</p>
+<h2>AI エージェントのワークロードと Durable Execution の相性</h2>
+<p>AI エージェントの実行時間は、モデル推論もそうですが、それ以外の要因によって長くなりがちです。<br />
+たとえば次のような処理は、どれも AI エージェントでは自然に出てきます。</p>
+<ul>
+<li>LLM の推論 API の応答待ち</li>
+<li>MCP サーバーを含むツール呼び出しやデータ取得待ち</li>
+<li>人間の承認や確認待ち</li>
+<li>失敗時の再試行による待ち</li>
+<li>途中結果を保持したままの再開</li>
+<li>サブエージェントによる処理の分岐</li>
+</ul>
+<p>これらの間、実行環境を占有し続けると、待機中にも CPU やメモリを消費し続けることになります。<br />
+特にこうしたタスクを大量に並列実行することを考えると、待機の間実行環境を確保し続ける構成は無駄が多く、スケールさせづらくなります。さらに、途中失敗のたびに最初からやり直すしかない構成だと、実行が長時間になるほどコストだけでなく期待される時間内にタスクを完遂できない確率も上がります。<br />
+個人の業務環境規模ではそこまで大きな問題にならないかもしれませんが、プラットフォームとして大規模に AI エージェントを運用する場合、これらは無視できない課題になります。</p>
+<p>Durable Execution は、処理の途中状態を保持しながら、中断と再開を前提に実行を進めていくための概念です。そのため、「途中で止まり、あとで再開し、失敗しても必要なところからやり直したい」ワークロードと相性がよいです。<br />
+Durable Execution は AI の技術そのものではありませんが、長時間動作しながら待機や再開を扱う AI エージェントを支える実行基盤を考えるうえで重要な概念です。</p>
+<h2>Durable Execution は何を解決するのか</h2>
+<p>Durable Execution は、長い処理を単にそのまま動かし続ける仕組みではありません。<br />
+本質は、途中状態を記録しながら安全に再開できるようにすることです。<br />
+「外部応答を待つ」「一定時間スリープする」「途中の結果を保持したまま別の処理へ進む」といった場面で、実行をいったん区切りつつ、一連の処理としては継続している状態を表現できます。</p>
+<p>Go の goroutine で非同期 I/O を扱うときの感覚に少し近いかもしれません。Go ではコード上は外部の API 呼び出し等を待つように書けますが、待機中に OS スレッドを占有し続けるわけではなく、Go ランタイムがその goroutine を一時停止して実行対象から外し、I/O の完了をきっかけに再び実行可能な状態へ戻します。</p>
+<p>Durable Execution も、プログラマには逐次的な処理として見せながら、長い待機中に実行環境を占有し続けないという点では似ています。</p>
+<p>ただし、任意のタイミングで実行途中の呼び出し状態やローカル変数、つまり継続やコールスタックに相当するものを丸ごと保存し、あとからそのまま再開するのは簡単ではありません。言語ランタイムや実行環境への依存も強くなり、多言語の SDK として一般化するのも難しくなります。<br />
+そのため、実用上は処理を再開可能な単位に分解し、処理単位ごとの入力、結果、状態遷移を記録するモデルとして実装されることが多くなります。<br />
+再開時には、確定済みの単位は保存済みの結果を使い、未完了のところから続きの処理へ進みます。</p>
+<p>概念的には、次のように永続化可能な状態が積み上がっていくイメージです。</p>
+<pre><code class="hljs json">{
+  "state": [
+    {
+      "operation": "fetch-user",
+      "status": "started",
+      "input": { "id": "u-1" }
+    },
+    {
+      "operation": "fetch-user",
+      "status": "completed",
+      "result": { "id": "u-1", "name": "Alice" }
+    },
+    {
+      "operation": "wait-for-approval",
+      "status": "waiting",
+      "resumeAfter": "external-callback"
+    }
+  ]
+}
+</code></pre>
+<p>利用者として実装する上でも、「何が保存されて、何が保存されないのか」は把握しておく必要があります。</p>
+<p>保存されるもの:</p>
+<ul>
+<li>operation の ID、Type、SubType、Status</li>
+<li>operation 結果の payload</li>
+<li>wait、retry、callback に必要な制御情報</li>
+<li>error object</li>
+</ul>
+<p>自動では保存されないもの:</p>
+<ul>
+<li>言語ランタイム上のコールスタック</li>
+<li>クロージャに閉じたローカル変数のその時点の値</li>
+<li>durable operation 外で進んでいた副作用の途中経過</li>
+</ul>
+<p>つまり Durable Execution は「普通の関数を途中からそのまま再開する」仕組みではなく、「checkpoint 可能な処理単位の列に分解した一連の処理を再生可能にする」仕組みだと捉えると理解しやすくなります。</p>
+<h2>AWS Lambda の Durable Execution はどう動くのか</h2>
+<p>AWS Lambda の Durable Execution では、1 回の実行（invocation）が実行全体を完結させるのではなく、execution state と checkpoint を介して次の invocation へ処理を受け渡していきます。<br />
+そのため、関数の返り値も単なる成功・失敗だけではなく、<code>SUCCEEDED</code>、<code>FAILED</code>、<code>PENDING</code> のように「この invocation が全体の中でどういう状態にあるか」を表すものになります。</p>
+<p>AWS Lambda Durable Execution では、この checkpoint 可能な処理単位が durable operation として表現されます。<br />
+AWS の API 定義では、<a title="CheckpointDurableExecution" href="https://docs.aws.amazon.com/lambda/latest/api/API_CheckpointDurableExecution.html" target="_blank" rel="noopener"><code>CheckpointDurableExecution</code></a> が <code>CheckpointToken</code> と <code>Updates</code> を受け取り、<a title="GetDurableExecutionState" href="https://docs.aws.amazon.com/lambda/latest/api/API_GetDurableExecutionState.html" target="_blank" rel="noopener"><code>GetDurableExecutionState</code></a> が replay に必要な <code>Operations</code> を返します。</p>
+<p><a title="https://docs.aws.amazon.com/lambda/latest/api/API_CheckpointDurableExecution.html" href="https://docs.aws.amazon.com/lambda/latest/api/API_CheckpointDurableExecution.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/lambda/latest/api/API_CheckpointDurableExecution.html</a><br />
+<a title="https://docs.aws.amazon.com/lambda/latest/api/API_GetDurableExecutionState.html" href="https://docs.aws.amazon.com/lambda/latest/api/API_GetDurableExecutionState.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/lambda/latest/api/API_GetDurableExecutionState.html</a></p>
+<p>再開時には、Lambda runtime から現在の durable execution を表す ARN、checkpoint token、初期の execution state が渡されます。<br />
+SDK は言語に関係なく、この情報をもとに execution context を初期化し、必要に応じて <code>GetDurableExecutionState</code> で replay 用の operation 履歴を取得します。<br />
+JSON として見ると、入力はおおむね次のような形になります。</p>
+<pre><code class="hljs json">{
+  "DurableExecutionArn": "arn:test:execution:manual",
+  "CheckpointToken": "manual-token-1",
+  "InitialExecutionState": {
+    "Operations": [
+      {
+        "Id": "execution-root",
+        "Type": "EXECUTION",
+        "Status": "STARTED",
+        "ExecutionDetails": {
+          "InputPayload": "{\"name\":\"alice\"}"
+        }
+      }
+    ]
+  }
+}
+</code></pre>
+<p>SDK は取得した operation 履歴を見ながら、いまが通常実行なのか replay なのかを判断します。<br />
+もし未完了の wait や callback があれば、その invocation は <code>PENDING</code> で終わり、後続の再開 invocation に処理が引き継がれます。<br />
+逆に処理全体が完了したときだけ <code>SUCCEEDED</code> が返り、エラーで継続不能なときは <code>FAILED</code> になります。</p>
+<p>責務をざっくり分けると次のようになります。</p>
+<ul>
+<li>Lambda runtime: durable execution の生成、再開、state API と checkpoint API の提供</li>
+<li>SDK: durable API の提供、checkpoint 作成、replay 整合性の維持</li>
+<li>アプリコード: operation 境界の設計、冪等性、決定性の担保</li>
+</ul>
+<p>Durable Execution は Lambda の新しい実行モデルではありますが、実際に replay で破綻しないように operation を並べ、checkpoint を正しく作る責務は SDK とアプリ側に残っています。<br />
+外部 API 呼び出しや DB 書き込みのような副作用は、durable operation の境界内に置いたうえで、一意な識別用のキーなどを使って冪等にしておくのが基本です。</p>
+<h2>Lambda Durable Execution での実装方法</h2>
+<p>ここまで checkpoint や replay の話をしてきたので、複雑な仕組みに見えたかもしれません。<br />
+ただ、実際に利用する側のコードは SDK によってかなり隠蔽されており、見た目としては通常の非同期処理に近い形で書けます。</p>
+<p>AWS が提供している JavaScript/TypeScript SDK では、Lambda handler を <code>withDurableExecution</code> で包み、handler の中で <code>context.step()</code> や <code>context.wait()</code> のような durable operation を呼び出します。<br />
+公式ドキュメントでも、SDK は checkpoint 管理と replay coordination を隠蔽し、逐次的なコードとして書けるようにするものとして説明されています（<a title="Durable execution SDK" href="https://docs.aws.amazon.com/lambda/latest/dg/durable-execution-sdk.html" target="_blank" rel="noopener">Durable execution SDK</a>）。</p>
+<p>たとえば、ユーザー情報を取得し、少し待ってから次の処理へ進むだけなら、コードの見た目はかなり普通の非同期処理に近くなります。</p>
+<pre><code class="hljs typescript">export const handler = withDurableExecution(
+  async (event: Event, context: DurableContext) =&gt; {
+    const user = await context.step("fetch-user", async () =&gt; {
+      const res = await fetch(`https://example.com/users/${event.userId}`);
+      return await res.json();
+    });
+
+    await context.wait({ seconds: 30 });
+
+    const result = await context.step("build-result", async () =&gt; {
+      return {
+        user,
+        processedAt: new Date().toISOString(),
+      };
+    });
+
+    return result;
+  },
+);
+</code></pre>
+<p>このコードだけ見ると、<code>fetch-user</code>、30 秒の wait、<code>build-result</code> を順番に実行しているだけに見えます。<br />
+しかし SDK の内部では、<code>step</code> の結果や <code>wait</code> の開始状態が checkpoint され、待機が必要な場合は invocation を <code>PENDING</code> で終了します。<br />
+再開時には handler が最初から replay されますが、完了済みの <code>step</code> は関数本体を再実行せず、checkpoint 済みの結果を返します。</p>
+<p>ここで重要なのは、外部 API 呼び出しや現在時刻の取得のように結果が毎回変わりうる処理を <code>step</code> の中に閉じ込めている点です。<br />
+副作用を持つ処理や非決定的な処理は、replay で再実行されても結果が壊れないように、durable operation の境界内に置き、必要に応じて冪等性キー（idempotency key）などで冪等にしておく必要があります。</p>
+<p>このように、アプリケーションコードの見た目は普通の async/await に近い一方で、実際には <code>withDurableExecution</code> と <code>DurableContext</code> が Lambda invocation、checkpoint、replay の境界を管理しています。</p>
+<h2>Go SDK を実装してみる</h2>
+<p>私は最近は Go を書くことが多いので、Go SDK が欲しかったのですが、2026年4月時点では公式 SDK は JavaScript/TypeScript、Python、Java の3 言語のみで、Go SDK は提供されていませんでした。<br />
+いずれ Go も公式にサポートされるのではないかと期待していますが、前述の調査から Lambda Durable Execution の仕組みはプログラミング言語に依存しないものであるとわかっていたので、JavaScript SDK を参考に Go SDK を実装してみました。<br />
+まず JavaScript SDK でのインターフェースと内部での概念を読み解くところから始めました。といっても、重要と思われる概念と知りたいポイントだけをピックアップして、残りの調査は Codex に任せたので、かなり効率的に全体像を掴めました。</p>
+<p>実装に関しては、JavaScript SDK の調査結果をもとに Codex (GPT-5.5) も活用しながら進めました。<br />
+生成された実装はほぼそのまま採用できるレベルでしたが、公式 SDK の挙動と照らし合わせながらレビューすると、replay や checkpoint の整合性に関わる部分ではいくつか修正が必要でした。</p>
+<p>実装した SDK は GitHub で公開しています。<br />
+<a title="https://github.com/kurochan/aws-durable-execution-go/" href="https://github.com/kurochan/aws-durable-execution-go" target="_blank" rel="noopener">https://github.com/kurochan/aws-durable-execution-go/</a></p>
+<p>JavaScript SDK の調査、Go SDK の実装を通して得られた知見や視点は以下のようなものがありました。</p>
+<h3>replay で同じ operation 列をたどるための設計</h3>
+<p>replay では、以前の invocation で完了済みの operation を再実行するのではなく、checkpoint 済みの結果を読み直して先に進みます。<br />
+そのため Durable Execution の実装では、replay 時に初回実行と同じ operation 列を同じ順序でたどれるのが重要になります。</p>
+<p>Go 版では JavaScript SDK と同様に、<code>Step</code> などを実行するたびに <code>type</code>、<code>name</code>、<code>subtype</code> が既存 checkpoint と一致するかを検証しています。<br />
+一致しないまま replay を続けると、どの checkpoint をどの処理の結果として扱うべきかが不定になるため、安全のために non-deterministic execution としてエラーにしています。</p>
+<h3>step ID と child context で分岐を表現する</h3>
+<p>直列の <code>Step</code> だけであれば、状態遷移はまだ単純です。<br />
+難しくなるのは <code>RunInChildContext</code>、<code>Map</code>、<code>Parallel</code> のように分岐を扱い始めたときです。</p>
+<p>JavaScript SDK を読むと、step ID は階層を持った ID として採番され、backend 送信時にはハッシュ化されます。<br />
+Go 版でもこの考え方に合わせて、内部では親子関係を持った step ID を扱い、checkpoint の送受信ではハッシュ化した ID をキーにしています。<br />
+この分離をしておかないと、ancestor 判定や child context の cleanup が曖昧になります。</p>
+<p><code>RunInChildContext</code> は、単なる便利 API ではなく、独立した replay 単位を作るための仕組みとして重要です。<br />
+<code>Map</code> や <code>Parallel</code> も最終的には child context を使って分岐を表現しており、各分岐がそれぞれの順序で replay できるように設計されています。<br />
+実装上は <a title="DurableContext" href="https://github.com/kurochan/aws-durable-execution-go/blob/main/durable/durable_context.go" target="_blank" rel="noopener"><code>DurableContext</code></a> の <code>RunInChildContext</code> と、<a title="concurrent.go" href="https://github.com/kurochan/aws-durable-execution-go/blob/main/durable/concurrent.go" target="_blank" rel="noopener"><code>concurrent.go</code></a> の <code>Map</code> / <code>Parallel</code> が対応する箇所です。</p>
+<h2>AWS Lambda で動かす</h2>
+<p>リポジトリには、Go SDK を使った Lambda サンプルを <a title="examples/lambda-sample" href="https://github.com/kurochan/aws-durable-execution-go/tree/main/examples/lambda-sample" target="_blank" rel="noopener">https://github.com/kurochan/aws-durable-execution-go/tree/main/examples/lambda-sample</a> として置いています。</p>
+<p>こちらを実際にデプロイして動かしてみると、以下の画像のような実行履歴になりました。</p>
+<figure id="attachment_63646" aria-describedby="caption-attachment-63646" style="width: 800px" class="wp-caption aligncenter"><img decoding="async" class="size-large wp-image-63646" src="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-1024x571.jpg" alt="Durable Executionの結果" width="800" height="446" srcset="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-1024x571.jpg 1024w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-300x167.jpg 300w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-768x429.jpg 768w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-1536x857.jpg 1536w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-operation-2048x1143.jpg 2048w" sizes="(max-width: 800px) 100vw, 800px" /><figcaption id="caption-attachment-63646" class="wp-caption-text">Durable Executionの結果</figcaption></figure>
+<p>通常の Lambda Function の実行と違い、durable operationごとに分割して実行されているのがわかります。</p>
+<figure id="attachment_63648" aria-describedby="caption-attachment-63648" style="width: 800px" class="wp-caption aligncenter"><img decoding="async" class="size-large wp-image-63648" src="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-1024x570.jpg" alt="Durable Operationの履歴" width="800" height="445" srcset="https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-1024x570.jpg 1024w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-300x167.jpg 300w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-768x428.jpg 768w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-1536x855.jpg 1536w, https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/durable-history-2048x1140.jpg 2048w" sizes="(max-width: 800px) 100vw, 800px" /><figcaption id="caption-attachment-63648" class="wp-caption-text">Durable Operationの履歴</figcaption></figure>
+<p>各 operation が保存した state もみられます。<br />
+コードと実行結果を眺めることで、より理解を深められると思います。</p>
+<h2>おわりに</h2>
+<p>この記事では、AI エージェントのワークロードと Durable Execution の相性を入口に、AWS Lambda の Durable Execution がどういうモデルで動いているのか、そしてそれを Go SDK として表現するとどうなるのかを紹介しました。</p>
+<p>今までは REST API のようにステートレスなアプリケーションの実装をする機会が多かったですが、今後は AI エージェントのようなワークロードの開発の機会も増えていきそうなので、この機会に触れてみることができてよかったです。</p>
+<p>他にも AWS Lambda Durable Execution は最大1年間実行を継続可能な特徴もあったりするので、 今までは Step Functions で実装していたものの、ワークフローが複雑になりすぎてしまったものの置き換えなど、期待できるユースケースが色々ありそうですね！</p>
+    
+    <footer class="entry-footer">
+      <ul class="tags"><li class="tag-item"><a href="https://developers.cyberagent.co.jp/blog/archives/tag/ai-agent/" rel="tag">AI Agent</a></li><li class="tag-item"><a href="https://developers.cyberagent.co.jp/blog/archives/tag/aws/" rel="tag">AWS</a></li><li class="tag-item"><a href="https://developers.cyberagent.co.jp/blog/archives/tag/aws-lambda/" rel="tag">AWS Lambda</a></li><li class="tag-item"><a href="https://developers.cyberagent.co.jp/blog/archives/tag/go/" rel="tag">Go</a></li></ul><div class="saboxplugin-wrap"><div class="saboxplugin-gravatar"><img alt='アバター画像' src='https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/10/kurochan_avatar_1476932005-96x96.jpg' srcset='https://developers.cyberagent.co.jp/blog/wp-content/uploads/2016/10/kurochan_avatar_1476932005-192x192.jpg 2x' class='avatar avatar-96 photo' height='96' width='96' loading='lazy' decoding='async'/></div><div class="saboxplugin-authorname"><a href="https://developers.cyberagent.co.jp/blog/archives/author/kurochan/">黒崎 優太</a></div><div class="saboxplugin-desc"><div class="vcard author"><span class="fn">2015年新卒入社 ABEMA / サイバーエージェントCTO統括室所属。バックエンドの実装やインフラ、セキュリティを担当。趣味で中古サーバやネットワーク機器を買ってデータセンタに設置して運用しています。</span></div></div><div class="saboxplugin-web sab-web-position"><a href="https://kurochan-note.hatenablog.jp/" target="_blank" >https://kurochan-note.hatenablog.jp/</a></div><div class="clearfix"></div><div class="saboxplugin-socials "><a target="_self" href="https://github.com/kurochan"><span class="saboxplugin-icon-grey saboxplugin-icon-github"></span></a><a target="_self" href="https://twitter.com/kuro_m88"><span class="saboxplugin-icon-grey saboxplugin-icon-twitter"></span></a></div></div>    </footer><!-- .entry-footer -->
+
+  <div class="entryNav">
+
+    <div class="entryNav__box"><a class="entryNav_link entryNav_previous" style="background-image:url(https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/17db55667deaaf8db8a6f6cac09f8a72-2-1024x538.png)" href="https://developers.cyberagent.co.jp/blog/archives/63596/"><div class="entryNav_link_bg"></div><div class="entryNav_link_text">Liquid Glass 対応 — タップルでの意思決定と実装</div><div class="entryNav_link_subText">次の記事</div></a></div><div class="entryNav__box"><a class="entryNav_link entryNav_next" style="background-image:url(https://developers.cyberagent.co.jp/blog/wp-content/uploads/2026/04/3c5a01d930654daa475ebd0b5ca2e5c9-1024x536.jpg)" href="https://developers.cyberagent.co.jp/blog/archives/63600/"><div class="entryNav_link_bg"></div><div class="entryNav_link_text">1ヶ月間で「わける」技術を学んだ話</div><div class="entryNav_link_subText">前の記事</div></a></div>
+  </div>
+
+  </div><!-- .entry-content -->
+</article><!-- #post-## -->
+
+					
+				
+				</main><!-- #main -->
+
+        
+			</div><!-- #primary -->
+
+		</div><!--#content-inside -->
+	</div><!-- #content -->
+
+    <footer id="colophon" class="cadevFooter" role="contentinfo">
+        <a class="cadevFooter__topButton" href="#page" title="ページトップへ戻る">TOP</a>
+        <div class="cadevFooter__links">
+            <dl class="cadevFooter__links_blogs">
+                <dt>
+                    <span class="cadevFooter__links_title">
+                        Blogs
+                    </span>
+                    <a class="cadevFooter__links_titleToggle" data-toggle="collapse" href="#collapseBlogs" role="button" aria-expanded="false" aria-controls="collapseBlogs">
+                        Blogs
+                    </a>
+                </dt>
+                <dd class="collapse" id="collapseBlogs">
+                    <ul>
+                        <li>
+                            <a href="https://cyberagent.ai/" target="_blank" rel="noopener noreferrer">
+                                AI tech studio
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.ai-shift.co.jp/techblog" target="_blank" rel="noopener noreferrer">
+                                AI SHIFT
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://cam-inc.co.jp/p/techblog" target="_blank" rel="noopener noreferrer">
+                                CAM
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://creator.game.cyberagent.co.jp/" target="_blank" rel="noopener noreferrer">
+                                CyberAgent Game & Entertainment
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://media.colorfulpalette.co.jp/m/m753f507dae79" target="_blank" rel="noopener noreferrer">
+                                Colorful Palette
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://tech.sumzap.co.jp/" target="_blank" rel="noopener noreferrer">
+                                サムザップ
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://blog.applibot.co.jp/" target="_blank" rel="noopener noreferrer">
+                                アプリボット
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://technote.qualiarts.jp/" target="_blank" rel="noopener noreferrer">
+                                QualiArts
+                            </a>
+                        </li>
+                        <li>
+			    <a href="https://blog.sge-coretech.com/" target="_blank" rel="noopener noreferrer">
+                                SGEコア技術本部(コアテク)
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <span class="cadevFooter__links_title">
+                        News
+                    </span>
+                    <a class="cadevFooter__links_titleToggle" data-toggle="collapse" href="#collapseNews" role="button" aria-expanded="false" aria-controls="collapseNews">
+                        News
+                    </a>
+                </dt>
+                <dd class="collapse" id="collapseNews">
+                    <ul>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/way/" target="_blank" rel="noopener noreferrer">
+                            CyberAgent Way
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/techinfo/" target="_blank" rel="noopener noreferrer">
+                            技術・クリエイティブニュース
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://capture.cyberagent.co.jp/" target="_blank" rel="noopener noreferrer">
+                            CApture
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <span class="cadevFooter__links_title">
+                        Careers
+                    </span>
+                    <a class="cadevFooter__links_titleToggle" data-toggle="collapse" href="#collapseCareers" role="button" aria-expanded="false" aria-controls="collapseCareers">
+                        Careers
+                    </a>
+                </dt>
+                <dd class="collapse" id="collapseCareers">
+                    <ul>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/careers/students/biz/" target="_blank" rel="noopener noreferrer">
+                                新卒採用ビジネスコース
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/careers/students/tech/" target="_blank" rel="noopener noreferrer">
+                                新卒採用エンジニアコース
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/careers/students/designer/" target="_blank" rel="noopener noreferrer">
+                                新卒採用クリエイターコース
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/careers/professional/" target="_blank" rel="noopener noreferrer">
+                                キャリア採用
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <span class="cadevFooter__links_title">
+                        Resources
+                    </span>
+                    <a class="cadevFooter__links_titleToggle" data-toggle="collapse" href="#collapseResources" role="button" aria-expanded="false" aria-controls="collapseResources">
+                        Resources
+                    </a>
+                </dt>
+                <dd class="collapse" id="collapseResources">
+                    <ul>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/akihabaralabo/paper/" target="_blank" rel="noopener noreferrer">
+                                Media Data Tech Studio技術報告書
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cyberagent.co.jp/techinfo/info/detail/id=26111" target="_blank" rel="noopener noreferrer">
+                                AI/ Data Technology Map 
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    <span class="cadevFooter__links_title">
+                       Events
+                    </span>
+                    <a class="cadevFooter__links_titleToggle" data-toggle="collapse" href="#collapseEvent" role="button" aria-expanded="false" aria-controls="collapseEvent">
+                        Events
+                    </a>
+                </dt>
+                <dd class="collapse" id="collapseEvent">
+                    <ul>
+                        <li>
+                            <a href="https://cyberagent.events/" target="_blank" rel="noopener noreferrer">
+                                CA Tech Events
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://cyberagent.connpass.com/" target="_blank" rel="noopener noreferrer">
+                                Connpass -Cyberagent
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+        <div class="cadevFooter__bottoms" >
+            <a href="https://www.cyberagent.co.jp/" target="_blank" rel="noopener">
+                <img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/logo_cyberagent.svg" width="173" height="32" alt="CyberAgent" />
+            </a>
+            <ul class="cadevFooter__sns_list">
+                <li class="cadevFooter__sns_item">
+                    <a href="https://twitter.com/ca_developers" target="_blank" rel="noopener">
+                        <img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/icon_twitter.svg" width="24" height="19.5" alt="twitter" />
+                    </a>
+                </li>
+                <li class="cadevFooter__sns_item">
+                    <a href="https://www.facebook.com/CyberAgent.Inc/" target="_blank" rel="noopener">
+                        <img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/icon_facebook.svg" width="24" height="24" alt="facebook" />
+                    </a>
+                </li>
+                <li class="cadevFooter__sns_item">
+                    <a href="https://www.youtube.com/channel/UCYvmsuoQ32tVY6MpOYhr5jA" target="_blank" rel="noopener">
+                        <img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/icon_youtube.svg" width="24" height="16.6" alt="youtube" />
+                    </a>
+                </li>
+                <li class="cadevFooter__sns_item">
+                    <a href="https://developers.cyberagent.co.jp/blog/feed/" target="_blank" rel="noopener">
+                        <img src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/images/icon_rss.svg" width="23" height="23" alt="rss" />
+                    </a>
+                </li>
+                <li class="cadevFooter__textLink">
+                    <a href="/blog/term/">
+                        ご利用にあたって
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </footer><!-- #colophon -->
+</div><!-- #page -->
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/blog/*"},{"not":{"href_matches":["/blog/wp-*.php","/blog/wp-admin/*","/blog/wp-content/uploads/*","/blog/wp-content/*","/blog/wp-content/plugins/*","/blog/wp-content/themes/onepress-child-20220324/*","/blog/wp-content/themes/onepress/*","/blog/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<script src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/assets/js/plugins.js?ver=1.0.0" defer></script>
+<script src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress-child-20220324/assets/js/bootstrap.min.js?ver=7.1.3" defer></script>
+<script id="onepress-theme-js-extra">
+var onepress_js_settings = {"onepress_disable_animation":"","onepress_disable_sticky_header":"","onepress_vertical_align_menu":"","hero_animation":"flipInX","hero_speed":"5000","hero_fade":"750","hero_duration":"5000","hero_disable_preload":"","is_home":"","gallery_enable":"1","is_rtl":""};
+//# sourceURL=onepress-theme-js-extra
+</script>
+<script src="https://developers.cyberagent.co.jp/blog/wp-content/themes/onepress/assets/js/theme.js?ver=20120206" defer></script>
+<script id="mathjax-js" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=default&#038;ver=1.3.12"></script>
+<script id="wp-emoji-settings" type="application/json">
+{"baseUrl":"https://s.w.org/images/core/emoji/17.0.2/72x72/","ext":".png","svgUrl":"https://s.w.org/images/core/emoji/17.0.2/svg/","svgExt":".svg","source":{"concatemoji":"https://developers.cyberagent.co.jp/blog/wp-includes/js/wp-emoji-release.min.js?ver=7.1.3"}}
+</script>
+<script type="module">
+/*! This file is auto-generated */
+var e="script#wp-emoji-settings",t=document.querySelector(e);if(!(t instanceof HTMLScriptElement))throw new Error("Element missing: "+e);const r=JSON.parse(t.text),s=(window._wpemojiSettings=r,"wpEmojiSettingsSupports"),o=["flag","emoji"];function i(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(s,JSON.stringify(t))}catch(e){}}function c(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0);const r=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data);return t.every((e,t)=>e===r[t])}function p(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var n=e.getImageData(16,16,1,1);for(let e=0;e<n.data.length;e++)if(0!==n.data[e])return!1;return!0}function u(e,t,n,r){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!r(e,"\ud83e\u1fac8")}return!1}function f(e,t,n,r){let a;const s=(a="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):document.createElement("canvas")).getContext("2d",{willReadFrequently:!0}),o=(s.textBaseline="top",s.font="600 32px Arial",{});return e.forEach(e=>{o[e]=t(s,e,n,r)}),o}function a(e){var t=document.createElement("script");t.src=e,t.defer=!0,document.head.appendChild(t)}r.supports={everything:!0,everythingExceptFlag:!0},new Promise(t=>{let n=function(){try{var e=JSON.parse(sessionStorage.getItem(s));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(o),u.toString(),c.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"});const a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=e=>{i(n=e.data),a.terminate(),t(n)})}catch(e){}i(n=f(o,u,c,p))}t(n)}).then(e=>{for(const n in e)r.supports[n]=e[n],r.supports.everything=r.supports.everything&&r.supports[n],"flag"!==n&&(r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&r.supports[n]);var t;r.supports.everythingExceptFlag=r.supports.everythingExceptFlag&&!r.supports.flag,r.supports.everything||((t=r.source||{}).concatemoji?a(t.concatemoji):t.wpemoji&&t.twemoji&&(a(t.twemoji),a(t.wpemoji)))});
+//# sourceURL=https://developers.cyberagent.co.jp/blog/wp-includes/js/wp-emoji-loader.min.js
+</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XN628HSWK5"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XN628HSWK5');
+  gtag('config', 'UA-84802124-1')
+</script>
+
+</body>
+</html>
+
+<!-- Dynamic page generated in 0.517 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2026-10-25 11:10:27 -->
+
+<!-- super cache -->
