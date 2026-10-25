@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=117
+A=258
 C=30
 C1=19
 C1_total=19
-C2=150
-C2_total=150
+C2=153
+C2_total=153
 S_members=88
 S_sections=88
 R_members=92
@@ -299,13 +299,13 @@ coverage_script=10
 coverage_runtime=10
 C1k=5
 C1k_total=5
-K_members=52
-K_sections=52
+K_members=49
+K_sections=49
 coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976
+pin.proxy-check=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -328,6 +328,8 @@ pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e00
 pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
 pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
 pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
+pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721e29ef9ce1e741
+pin.plan-before-ready=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9
 -->
 
 
@@ -1793,6 +1795,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `receipt-evidence` | A receipt set is evidence only if every receipt verifies under the extraction's own receipt-attest, reproduces its recorded argv in the git archive of the judged rev, carries a nonce absent from the descending round-48..57 sweep, and spans the body-clock minimum (contract `kumitate-receipt-evidence-v1`; routed R57-V1/V2/V4). Row added in round 59: the round-58 acquisition landed the gate and the pin, and the capabilities table did not gain the row (R58-V6) | `node scripts/receipt-evidence.mjs --selftest` → `RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `pin.receipt-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 28 | 58 |
 | `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
 | `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30; first working round 60 | 60 |
+| `inline-dispatch-evidence` | Judge a run-7 inline wave from records the lane does not author: per-seat host session transcripts (seat marker, context head, task tail, five shape arms, yield, exit), the orchestrator dispatcher log (`spawned`/`done` lines, counts) and committed bytes only under `--rev`; dead seats are counted from transcripts and must be named by `--report`; lane-authored text (lane, seat names, context) is validated as data, never as pattern. A hand-written wave reads `NOT_A_DISPATCH`; a five-row-per-seat forgery reads `SESSION_TOOL_JOIN`. Stated limits: a lane that writes faithful transcripts into the host store and lines into the orchestrator log defeats it; the frozen C1 counter runs the committed tool, so a stub tool reads HELD (wave-2 K63R2CriticC1Stub) | `node scripts/inline-dispatch-evidence.mjs --selftest` → `INLINE_DISPATCH_SELFTEST: PASS (69/69)`; `node scripts/inline-dispatch-evidence.mjs --root . --rev <rev> --round 63 --wave w1` → `INLINE_DISPATCH: CLEAN (seats=40 sessions=40 done=40 reports=40 dead=0)`; 75 committed controls in `.ufo/waves/round-63/controls/inline/`; counting command `node .ufo/waves/round-63/probe/inline63-probe.mjs <lane> <rev> [<tip>]`; `pin.inline-dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL gate-registry row; QUALITY Q59 | 63 |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
