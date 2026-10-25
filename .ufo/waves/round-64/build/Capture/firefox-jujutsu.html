@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction to Jujutsu &mdash; Firefox Source Docs  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx_js.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css" href="../_static/pygments_dark.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom_theme.css?v=624589a5" />
+      <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+      <link rel="stylesheet" type="text/css" href="../_static/dark_mode.css" />
+
+  
+    <link rel="shortcut icon" href="../_static/firefox.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=30646c52"></script>
+      <script src="../_static/scrollable_regions.js?v=017340cf"></script>
+      <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Git Tricks" href="git-tricks.html" />
+    <link rel="prev" title="Firefox AI Coding Policy" href="ai-coding.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Firefox Source Docs
+              <img src="../_static/firefox-wordmark.svg" class="logo" alt="Logo"/>
+          </a><! -- This code is governed by the BSD license -->
+
+<div>
+  <h3>Quick search</h3>
+  <script>
+    (function () {
+      var cx = "dd12886298f75dbef";
+      var gcse = document.createElement("script");
+      gcse.async = true;
+      gcse.src = "https://cse.google.com/cse.js?cx=" + cx;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(gcse, s);
+    })();
+  </script>
+  <gcse:search></gcse:search>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../glossary/index.html">A Glossary of Common Terms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/index.html">A Quick Guide to Mozilla Applications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../setup/index.html">Getting Set Up To Work On The Firefox Codebase</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Working On Firefox</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Working on Firefox</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="contribution_quickref.html">Firefox Contributors’ Quick Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stack_quickref.html">Working with stack of patches Quick Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reviewable-patch-series.html">Making a patch series reviewable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phabricator_vs_github.html">Phabricator vs GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pocket-guide-shipping-firefox.html">Pocket Guide: Shipping Firefox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editor.html">Editor / IDE integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reviews.html">Getting reviews</a></li>
+<li class="toctree-l2"><a class="reference internal" href="levelling-up.html">Levelling up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="how_to_submit_a_patch.html">How to submit a patch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-collection.html">Data Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data-review.html">Data Review</a></li>
+<li class="toctree-l2"><a class="reference internal" href="searchfox.html">Searchfox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai-coding.html">Firefox AI Coding Policy</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Introduction to Jujutsu</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#links-and-resources">Links and Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#quick-start">Quick Start</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#general-tips">General Tips</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#changes-and-commits">Changes and Commits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#co-located-jujutsu-and-git">Co-located Jujutsu and Git</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#firefox-main-tips">Firefox Main Tips</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#other-useful-revset-aliases-place-in-jj-repo-config-toml">Other Useful revset aliases (place in <code class="docutils literal notranslate"><span class="pre">.jj/repo/config.toml</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#moz-phab"><code class="docutils literal notranslate"><span class="pre">moz-phab</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mach-lint"><code class="docutils literal notranslate"><span class="pre">mach</span> <span class="pre">lint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rebasing-work-in-progress-and-automatically-drop-changes-that-have-landed">Rebasing work in progress (and automatically drop changes that have landed)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dropping-pruning-removing-obsolete-commits">Dropping/pruning/removing obsolete commits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#watchman-integration">Watchman integration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#working-with-multiple-workspaces">Working with multiple workspaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="git-tricks.html">Git Tricks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code_Review_FAQ.html">Code Review FAQ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reviewer_checklist.html">Reviewer Checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debugging/index.html">Debugging Firefox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="signing/configure_development_certificate.html">Configure Development Certificate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="signing/signing_macos_build.html">Signing Local macOS Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="directory_structure.html">Firefox Source Code Directory Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build/artifact_builds.html">Understanding Artifact Builds</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build/building_mobile_firefox.html">Firefox for Mobile Devices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build/working_with_esr_115.html">Working with ESR115</a></li>
+<li class="toctree-l2"><a class="reference internal" href="engineering_show_and_tell.html">Engineering Show and Tell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filing-good-bugs.html">Filing good bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="helpful-error-messages.html">Helpful error messages for web developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bug-mgmt/index.html">Bug Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../crash-reporting/index.html">Firefox Crash Reporting</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Firefox User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/3d_view/index.html">3D view</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/about_colon_debugging/index.html">about:debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/accessibility_inspector/index.html">Accessibility Inspector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/application/index.html">Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/browser_console/index.html">Browser Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/browser_toolbox/index.html">Browser Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/custom_formatters/index.html">Custom Formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/debugger/index.html">The Firefox JavaScript Debugger</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/debugger-api/index.html">Debugger-API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/deprecated_tools/index.html">Deprecated tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/devtoolsapi/index.html">DevTools API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/devtoolscolors/index.html">DevToolsColors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/dom_property_viewer/index.html">DOM Property Viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/eyedropper/index.html">Eyedropper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/index/index.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/javascript_tracer/index.html">JavaScript Tracer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/json_viewer/index.html">JSON viewer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/keyboard_shortcuts/index.html">All keyboard shortcuts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/local_mode/index.html">Local Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/measure_a_portion_of_the_page/index.html">Measure a portion of the page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/memory/index.html">Memory</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/migrating_from_firebug/index.html">Migrating from Firebug</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/network_monitor/index.html">Network Monitor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/page_inspector/index.html">Page Inspector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/performance/index.html">Performance Tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/responsive_design_mode/index.html">Responsive Design Mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/rulers/index.html">Rulers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/settings/index.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/shader_editor/index.html">Shader Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/storage_inspector/index.html">Storage Inspector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/style_editor/index.html">Style Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/taking_screenshots/index.html">Taking screenshots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/tips/index.html">Tips</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/tools_toolbox/index.html">Toolbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/validators/index.html">Validators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/view_source/index.html">View Source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/web_audio_editor/index.html">Web Audio Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/web_console/index.html">Web Console</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/working_with_iframes/index.html">Working with iframes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools-user/index.html">Firefox DevTools User Docs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Source Code Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mots/index.html">Governance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../browser/index.html">Firefox Front-end</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dom/index.html">DOM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../editor/index.html">Editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../layout/index.html">Style system (CSS) &amp; Layout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gfx/index.html">Graphics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ipc/index.html">Processes, Threads and IPC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools/README.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools/architecture-overview.html">Architecture overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools/bugs-issues.html">Bugs and issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devtools/index.html">Firefox DevTools Contributor Docs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toolkit/index.html">Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../js/index.html">SpiderMonkey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../jsloader/index.html">JS Loader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mobile/android/geckoview/index.html">GeckoView</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mobile/android/fenix/index.html">Fenix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mobile/android/focus-android/index.html">Focus for Android</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dom/bindings/webidl/index.html">WebIDL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/libpref/index.html">libpref</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../networking/index.html">Networking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../remote/index.html">Remote Protocols</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../services/index.html">Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../permissions/index.html">Permissions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uriloader/index.html">File Handling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../widget/cocoa/index.html">Firefox on macOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../widget/windows/index.html">Firefox on Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toolkit/components/ml/index.html">Firefox AI Runtime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../toolkit/components/pageextractor/index.html">Page Extractor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accessible/index.html">Accessibility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../media/index.html">Media Playback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code-quality/index.html">Code quality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../writing-rust-code/index.html">Writing Rust Code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rust-components/index.html">Rust Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/profiler/index.html">Gecko Profiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance/index.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../storage/index.html">Database bindings (SQLite, KV, …)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../xpcom/index.html">XPCOM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nspr/index.html">NSPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security/nss/index.html">Network Security Services (NSS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content-security/index.html">Web Security Checks in Gecko</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rlbox/index.html">RLBox sandboxing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The Firefox Build System</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mach/index.html">Mach</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/try/index.html">Pushing to Try</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build/buildsystem/index.html">Build System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../taskcluster/index.html">Firefox CI and Taskgraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/moztreedocs/index.html">Managing Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mozbuild/vendor/index.html">Vendoring Third Party Components</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Testing &amp; Test Infrastructure</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../testing/automated-testing/index.html">Automated Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/treeherder-try/index.html">Understanding Treeherder Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/sheriffed-intermittents/index.html">Sheriffed intermittent failures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/tests-for-new-config/index.html">Turning on Firefox tests for a new configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/intermittent/index.html">Avoiding intermittent tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/debugging-intermittents/index.html">Debugging Intermittent Test Failures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/testing-policy/index.html">Testing Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/ci-configs/index.html">Configuration Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/browser-chrome/index.html">Browser chrome mochitests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/chrome-tests/index.html">Chrome Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/geckodriver/index.html">geckodriver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/test-verification/index.html">Test Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/webrender/index.html">WebRender Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/mochitest-plain/index.html">Mochitest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/xpcshell/index.html">XPCShell tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/tps/index.html">TPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../web-platform/index.html">web-platform-tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gtest/index.html">GTest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/fuzzing/index.html">Fuzzing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/sanitizer/index.html">Sanitizer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/perfdocs/index.html">Performance Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/code-coverage/index.html">Code coverage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing-rust-code/index.html">Testing &amp; Debugging Rust Code</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">AI Agent Tools</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../ai-agent-tools/index.html">AI Agent Tools for Firefox Development</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases &amp; Updates</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../update-infrastructure/index.html">Mozilla Update Infrastructure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../update-infrastructure/index.html#watershed-updates">Watershed Updates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../update-infrastructure/index.html#desupport-updates">Desupport Updates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tools/update-verify/index.html">Update Verify</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Localization &amp; Internationalization</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intl/index.html">Internationalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../l10n/index.html">Localization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Firefox and Python</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mozbase/index.html">mozbase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Using third-party Python packages</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Metrics Collected in Firefox</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../metrics/index.html">Firefox metrics</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Firefox Source Docs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this file,
+   - You can obtain one at http://mozilla.org/MPL/2.0/.  --><div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Working on Firefox</a></li>
+      <li class="breadcrumb-item active">Introduction to Jujutsu</li>
+<li class="wy-breadcrumbs-aside">
+  <a
+    href="https://bugzilla.mozilla.org/enter_bug.cgi?product=Developer+Infrastructure&component=Firefox+Source+Docs%3A+Content&short_desc=Documentation+issue+on+contributing/jujutsu&comment=URL+=+https://firefox-source-docs.mozilla.org/contributing/jujutsu.html&bug_file_loc=https://firefox-source-docs.mozilla.org/contributing/jujutsu.html"
+    rel="nofollow"
+    >Report an issue</a
+  >
+  /
+  <a
+    href="https://github.com/mozilla-firefox/firefox/blob/main/docs/contributing/jujutsu.md"
+    rel="nofollow"
+    >View page source</a
+  >
+</li>
+
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction-to-jujutsu">
+<h1><a class="toc-backref" href="#id1" role="doc-backlink">Introduction to Jujutsu</a><a class="headerlink" href="#introduction-to-jujutsu" title="Link to this heading"></a></h1>
+<p>Jujutsu (<code class="docutils literal notranslate"><span class="pre">jj</span></code> on the command-line) is a modern DVCS, that uses <code class="docutils literal notranslate"><span class="pre">git</span></code>
+repository as its storage backend. It borrows extensively from Mercurial,
+but has many more features.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Jujutsu is an optional alternative to plain Git for managing your
+patch stack. If you prefer Git, see <a class="reference internal" href="stack_quickref.html"><span class="std std-doc">Working with stack of
+patches Quick Reference</span></a>.</p>
+</div>
+<nav class="contents" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction-to-jujutsu" id="id1">Introduction to Jujutsu</a></p>
+<ul>
+<li><p><a class="reference internal" href="#links-and-resources" id="id2">Links and Resources</a></p></li>
+<li><p><a class="reference internal" href="#quick-start" id="id3">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#general-tips" id="id4">General Tips</a></p>
+<ul>
+<li><p><a class="reference internal" href="#changes-and-commits" id="id5">Changes and Commits</a></p></li>
+<li><p><a class="reference internal" href="#co-located-jujutsu-and-git" id="id6">Co-located Jujutsu and Git</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#firefox-main-tips" id="id7">Firefox Main Tips</a></p>
+<ul>
+<li><p><a class="reference internal" href="#other-useful-revset-aliases-place-in-jj-repo-config-toml" id="id8">Other Useful revset aliases (place in <code class="docutils literal notranslate"><span class="pre">.jj/repo/config.toml</span></code>)</a></p></li>
+<li><p><a class="reference internal" href="#moz-phab" id="id9"><code class="docutils literal notranslate"><span class="pre">moz-phab</span></code></a></p></li>
+<li><p><a class="reference internal" href="#mach-lint" id="id10"><code class="docutils literal notranslate"><span class="pre">mach</span> <span class="pre">lint</span></code></a></p></li>
+<li><p><a class="reference internal" href="#rebasing-work-in-progress-and-automatically-drop-changes-that-have-landed" id="id11">Rebasing work in progress (and automatically drop changes that have landed)</a></p></li>
+<li><p><a class="reference internal" href="#dropping-pruning-removing-obsolete-commits" id="id12">Dropping/pruning/removing obsolete commits</a></p></li>
+<li><p><a class="reference internal" href="#watchman-integration" id="id13">Watchman integration</a></p></li>
+<li><p><a class="reference internal" href="#working-with-multiple-workspaces" id="id14">Working with multiple workspaces</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="links-and-resources">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Links and Resources</a><a class="headerlink" href="#links-and-resources" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Hope page <a class="reference external" href="https://jj-vcs.github.io/jj/latest/">https://jj-vcs.github.io/jj/latest/</a></p></li>
+<li><p>In-progress tutorial: <a class="reference external" href="https://steveklabnik.github.io/jujutsu-tutorial/">https://steveklabnik.github.io/jujutsu-tutorial/</a></p></li>
+<li><p>Good introduction and context: <a class="reference external" href="https://v5.chriskrycho.com/essays/jj-init/">https://v5.chriskrycho.com/essays/jj-init/</a></p></li>
+<li><p>Short introduction:
+<a class="reference external" href="https://neugierig.org/software/blog/2024/12/jujutsu.html">https://neugierig.org/software/blog/2024/12/jujutsu.html</a></p></li>
+<li><p>Introduction for Mercurial users:
+<a class="reference external" href="https://ahal.ca/blog/2024/jujutsu-mercurial-haven/">https://ahal.ca/blog/2024/jujutsu-mercurial-haven/</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">:ahal</span></code>’s configuration: <a class="reference external" href="https://github.com/ahal/dot-files/blob/main/dot-files/jj-config.toml">https://github.com/ahal/dot-files/blob/main/dot-files/jj-config.toml</a></p></li>
+</ul>
+</section>
+<section id="quick-start">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>To get up and running with a fresh checkout, run the following commands
+(line-separated) after installing <code class="docutils literal notranslate"><span class="pre">git</span></code> and <code class="docutils literal notranslate"><span class="pre">jj</span></code> (jujutsu):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a clone and enter the directory. Use one of the following</span>
+
+<span class="c1"># (1) Fresh clone:</span>
+<span class="n">jj</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">mozilla</span><span class="o">-</span><span class="n">firefox</span><span class="o">/</span><span class="n">firefox</span>
+<span class="n">cd</span> <span class="n">firefox</span>
+<span class="o">./</span><span class="n">mach</span> <span class="n">vcs</span><span class="o">-</span><span class="n">setup</span>
+
+<span class="c1"># (2) Or if you have a Git clone already:</span>
+<span class="o">./</span><span class="n">mach</span> <span class="n">vcs</span><span class="o">-</span><span class="n">setup</span> <span class="o">--</span><span class="n">vcs</span><span class="o">=</span><span class="n">jj</span>
+
+<span class="c1"># Set up jujutsu default configuration (which will affect e.g. the default `jj log` output)</span>
+<span class="o">./</span><span class="n">mach</span> <span class="n">vcs</span><span class="o">-</span><span class="n">setup</span>
+
+<span class="c1"># Track remote bookmarks (you can do this for the other bookmarks, too)</span>
+<span class="n">jj</span> <span class="n">bookmark</span> <span class="n">track</span> <span class="n">main</span><span class="nd">@origin</span> <span class="n">autoland</span><span class="nd">@origin</span> <span class="n">beta</span><span class="nd">@origin</span> <span class="n">release</span><span class="nd">@origin</span>
+
+<span class="c1"># To see the other untracked bookmarks on that remote:</span>
+<span class="n">jj</span> <span class="n">bookmark</span> <span class="nb">list</span> <span class="o">--</span><span class="n">remote</span> <span class="n">origin</span> <span class="o">-</span><span class="n">T</span> <span class="s1">&#39;if(!tracked &amp;&amp; remote, name ++ &quot;@&quot; ++ remote ++ &quot;</span><span class="se">\n</span><span class="s1">&quot;)&#39;</span>
+
+<span class="c1"># Move the working copy commit to bookmarks/central</span>
+<span class="n">jj</span> <span class="n">new</span> <span class="n">main</span>
+</pre></div>
+</div>
+</section>
+<section id="general-tips">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">General Tips</a><a class="headerlink" href="#general-tips" title="Link to this heading"></a></h2>
+<section id="changes-and-commits">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Changes and Commits</a><a class="headerlink" href="#changes-and-commits" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">changes</span></code> and <code class="docutils literal notranslate"><span class="pre">commits</span></code> are distinct concepts. While in git there’s
+a one-to-one record of <code class="docutils literal notranslate"><span class="pre">changes</span></code> <em>as</em> <code class="docutils literal notranslate"><span class="pre">commits</span></code> (plus, perhaps,
+staging), in jujutsu <code class="docutils literal notranslate"><span class="pre">commits</span></code> occur fairly frequently (basically any
+time there’s a change and you run <code class="docutils literal notranslate"><span class="pre">jj</span></code>, which results in a snapshot).
+In this sense, <code class="docutils literal notranslate"><span class="pre">commits</span></code> can be considered literal snapshot/state
+commits, whereas <code class="docutils literal notranslate"><span class="pre">changes</span></code> are the user-friendly unit-of-work that
+developers are doing. <code class="docutils literal notranslate"><span class="pre">changes</span></code> have hashes that are alphabetic using the letters k..z,
+whereas <code class="docutils literal notranslate"><span class="pre">commits</span></code> have hashes which are the same as their git
+counterparts (sha1, represented as hex characters).</p>
+<p>Thus, a particular <code class="docutils literal notranslate"><span class="pre">change</span></code> points to one <code class="docutils literal notranslate"><span class="pre">commit</span></code> at a time,
+however there is a history of <code class="docutils literal notranslate"><span class="pre">commits</span></code> recorded for each <code class="docutils literal notranslate"><span class="pre">change</span></code>
+(see <code class="docutils literal notranslate"><span class="pre">jj</span> <span class="pre">evolog</span></code>, for example). You can specify either <code class="docutils literal notranslate"><span class="pre">change</span></code>
+hashes <em>or</em> <code class="docutils literal notranslate"><span class="pre">commit</span></code> hashes in revsets.</p>
+</section>
+<section id="co-located-jujutsu-and-git">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Co-located Jujutsu and Git</a><a class="headerlink" href="#co-located-jujutsu-and-git" title="Link to this heading"></a></h3>
+<p>A <a class="reference external" href="https://jj-vcs.github.io/jj/latest/git-compatibility/#co-located-jujutsugit-repos">co-located repository</a>
+allows running <code class="docutils literal notranslate"><span class="pre">jj</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span></code> commands in the same repository rather than
+syncing changes between <code class="docutils literal notranslate"><span class="pre">jj</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span></code> repositories to switch between the
+different tools. Recent versions of <code class="docutils literal notranslate"><span class="pre">jj</span></code> default to being co-located.</p>
+<p>Git commands can be useful because some features are not yet implemented in
+Jujutsu, such as <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">log</span></code> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">rebase</span></code> for <a class="reference external" href="https://github.com/jj-vcs/jj/issues/6940">interactions with file
+renames</a> and <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">am</span></code> for
+<a class="reference external" href="https://github.com/jj-vcs/jj/issues/2702">importing patches</a>. See also
+<a class="reference internal" href="git-tricks.html#git-mercurial-transplant"><span class="std std-ref">Transplanting Patches To and From Mercurial Repositories</span></a>.</p>
+</section>
+</section>
+<section id="firefox-main-tips">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Firefox Main Tips</a><a class="headerlink" href="#firefox-main-tips" title="Link to this heading"></a></h2>
+<section id="other-useful-revset-aliases-place-in-jj-repo-config-toml">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Other Useful revset aliases (place in <code class="docutils literal notranslate"><span class="pre">.jj/repo/config.toml</span></code>)</a><a class="headerlink" href="#other-useful-revset-aliases-place-in-jj-repo-config-toml" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">revset</span><span class="o">-</span><span class="n">aliases</span><span class="p">]</span>
+<span class="c1"># Get all changes with &quot;Bug 12345&quot; in the subject (can be improved with https://github.com/jj-vcs/jj/issues/5895)</span>
+<span class="s1">&#39;bug_all(x)&#39;</span> <span class="o">=</span> <span class="s1">&#39;mutable() &amp; subject(glob:&quot;Bug *&quot;) &amp; subject(x)&#39;</span>
+<span class="c1"># Get head change(s) with &quot;Bug 12345&quot; in the subject</span>
+<span class="s1">&#39;bug(x)&#39;</span> <span class="o">=</span> <span class="s1">&#39;heads(bug_all(x))&#39;</span>
+<span class="c1"># Get root change(s) with &quot;Bug 12345&quot; in the subject</span>
+<span class="s1">&#39;bug_root(x)&#39;</span> <span class="o">=</span> <span class="s1">&#39;roots(bug_all(x))&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="moz-phab">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink"><code class="docutils literal notranslate"><span class="pre">moz-phab</span></code></a><a class="headerlink" href="#moz-phab" title="Link to this heading"></a></h3>
+<p>As of <code class="docutils literal notranslate"><span class="pre">moz-phab</span></code> 2.0.0, Jujutsu is officially supported! This applies to both
+colocated Git/Jujutsu repositories, as well as standalone Jujutsu repositories
+and workspaces.</p>
+<p>If you are using a colocated repository, you can make <code class="docutils literal notranslate"><span class="pre">moz-phab</span></code> use Git
+instead of Jujutsu by calling it with <code class="docutils literal notranslate"><span class="pre">--avoid-jj-vcs</span></code>. Note that if you are
+using <code class="docutils literal notranslate"><span class="pre">moz-phab</span></code> with Git like that, most operations require your repo to not
+be in a detached <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> state, which Jujutsu frequently leaves it in. One
+simple solution is to wrap the <code class="docutils literal notranslate"><span class="pre">moz-phab</span></code> command with a script like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">B</span> <span class="n">moz</span><span class="o">-</span><span class="n">phab</span> <span class="o">&amp;&amp;</span> <span class="n">moz</span><span class="o">-</span><span class="n">phab</span> <span class="o">--</span><span class="n">avoid</span><span class="o">-</span><span class="n">jj</span><span class="o">-</span><span class="n">vcs</span> <span class="s2">&quot;$@&quot;</span>
+</pre></div>
+</div>
+<p>You could instead make this a shell alias/function, if preferred.</p>
+</section>
+<section id="mach-lint">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink"><code class="docutils literal notranslate"><span class="pre">mach</span> <span class="pre">lint</span></code></a><a class="headerlink" href="#mach-lint" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">./mach</span> <span class="pre">lint</span></code></p>
+<p>can be integrated with</p>
+<p><code class="docutils literal notranslate"><span class="pre">jj</span> <span class="pre">fix</span></code></p>
+<p>. Follow the
+instructions here:</p>
+<p><a class="reference internal" href="../code-quality/lint/usage.html#jujutsu-integration"><span class="std std-ref">Jujutsu integration</span></a></p>
+<p>(adding the config to <code class="docutils literal notranslate"><span class="pre">jj</span> <span class="pre">config</span> <span class="pre">edit</span> <span class="pre">--repo</span></code>)</p>
+<p>The benefit of running <code class="docutils literal notranslate"><span class="pre">jj</span> <span class="pre">fix</span></code> over <code class="docutils literal notranslate"><span class="pre">./mach</span> <span class="pre">lint</span> <span class="pre">--fix</span></code> directly,
+is that it will step through all your mutable commits and checkout each
+file at that revision before running the fixers on it. So you’re
+guaranteed to get the fix directly in the commit that introduced the
+issue.</p>
+</section>
+<section id="rebasing-work-in-progress-and-automatically-drop-changes-that-have-landed">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Rebasing work in progress (and automatically drop changes that have landed)</a><a class="headerlink" href="#rebasing-work-in-progress-and-automatically-drop-changes-that-have-landed" title="Link to this heading"></a></h3>
+<p>You want something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jj</span> <span class="n">git</span> <span class="n">fetch</span> <span class="o">&amp;&amp;</span> <span class="n">jj</span> <span class="n">rebase</span> <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">emptied</span> <span class="o">-</span><span class="n">r</span> <span class="s1">&#39;mutable() &amp; mine()&#39;</span> <span class="o">--</span><span class="n">onto</span> <span class="n">main</span>
+</pre></div>
+</div>
+<p>This will:</p>
+<ol class="arabic simple">
+<li><p>Pull from the main repo</p></li>
+<li><p>Rebase any mutable changesets you’ve made onto the (updated, tracked
+bookmark) <code class="docutils literal notranslate"><span class="pre">main</span></code> changeset, and drop any that become empty (because
+they have landed)</p></li>
+</ol>
+<p>Of course you could narrow the scope of what you want to rebase by
+altering the <code class="docutils literal notranslate"><span class="pre">-r</span></code> argument and providing specific revisions, or rebase
+onto autoland or beta or other bookmarks if you want.</p>
+</section>
+<section id="dropping-pruning-removing-obsolete-commits">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Dropping/pruning/removing obsolete commits</a><a class="headerlink" href="#dropping-pruning-removing-obsolete-commits" title="Link to this heading"></a></h3>
+<p>(Note: you may want to look at the <a class="reference internal" href="#rebasing-work-in-progress-and-automatically-drop-changes-that-have-landed">previous
+tip</a>!)</p>
+<p>You can use any of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jj</span> <span class="n">abandon</span> <span class="n">x</span>     <span class="c1"># just revision ``x``</span>
+<span class="n">jj</span> <span class="n">abandon</span> <span class="n">x</span> <span class="n">y</span>   <span class="c1"># revisions ``x`` and ``y``</span>
+<span class="n">jj</span> <span class="n">abandon</span> <span class="n">x</span><span class="o">..</span><span class="n">z</span>  <span class="c1"># revisions leading to z that have not been merged into x</span>
+<span class="n">jj</span> <span class="n">abandon</span> <span class="n">x</span><span class="p">::</span><span class="n">y</span>  <span class="c1"># revisions in the commit graph between x and y</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">x::y</span></code> is similar to <code class="docutils literal notranslate"><span class="pre">x..y</span></code>. The main difference is that the former includes
+<code class="docutils literal notranslate"><span class="pre">x</span></code> and the latter does not, but they are for different purposes. <code class="docutils literal notranslate"><span class="pre">x..y</span></code> has
+the same meaning as in git, where <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are used to denote entire
+branches of work ending in <code class="docutils literal notranslate"><span class="pre">x</span></code>/<code class="docutils literal notranslate"><span class="pre">y</span></code>. So <code class="docutils literal notranslate"><span class="pre">main..y</span></code> for example includes
+everything past the branch point from the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch up to <code class="docutils literal notranslate"><span class="pre">y</span></code>. The exact
+definition is “all ancestors of (aka all commits leading up to) <code class="docutils literal notranslate"><span class="pre">y</span></code>) that are
+not also ancestors of <code class="docutils literal notranslate"><span class="pre">main</span></code>”, or in brief: <code class="docutils literal notranslate"><span class="pre">::y</span> <span class="pre">~</span> <span class="pre">::x</span></code>. This is especially
+useful when <code class="docutils literal notranslate"><span class="pre">main</span></code> has advanced past the common ancestor with <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+<p>When you’re dealing with temporary changes that you have not committed
+(“working directory changes”) this is also an easy way to revert those
+(a la <code class="docutils literal notranslate"><span class="pre">hg</span> <span class="pre">revert</span> <span class="pre">--no-backup</span> <span class="pre">–all</span></code>).</p>
+</section>
+<section id="watchman-integration">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Watchman integration</a><a class="headerlink" href="#watchman-integration" title="Link to this heading"></a></h3>
+<p>Tired of the frequent Snapshotting… message? Edit your global <code class="docutils literal notranslate"><span class="pre">jj</span></code>
+configuration by doing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jj</span> <span class="n">config</span> <span class="n">edit</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+<p>and add the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">fsmonitor</span><span class="p">]</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="s2">&quot;watchman&quot;</span>
+</pre></div>
+</div>
+<p>Instead of scanning the file system, <code class="docutils literal notranslate"><span class="pre">jj</span></code> will (much like <code class="docutils literal notranslate"><span class="pre">hg</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">fsmonitor</span></code> extension) use file system events to be notified about
+file changes, resulting in much shorter operation time, without having
+to disable the snapshotting mechanism.</p>
+</section>
+<section id="working-with-multiple-workspaces">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Working with multiple workspaces</a><a class="headerlink" href="#working-with-multiple-workspaces" title="Link to this heading"></a></h3>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">./mach</span> <span class="pre">vcs-setup</span></code> configures <code class="docutils literal notranslate"><span class="pre">snapshot.auto-update-stale</span> <span class="pre">=</span> <span class="pre">true</span></code>, which
+causes <code class="docutils literal notranslate"><span class="pre">jj</span></code> to automatically update a workspace’s working copy when it becomes
+stale. A workspace becomes stale when a commit it depends on is rewritten from
+another workspace, for example by rebasing, editing, or squashing. We recommend this
+default because some <code class="docutils literal notranslate"><span class="pre">mach</span></code> commands invoke <code class="docutils literal notranslate"><span class="pre">jj</span></code> and can fail, sometimes
+silently, if the working copy is stale.</p>
+<p>If you use multiple workspaces and want to control when each workspace picks up
+changes, for example to avoid triggering a slow rebuild after rebasing patches
+in bulk from another workspace, you can disable this per-workspace:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">jj</span> <span class="n">config</span> <span class="nb">set</span> <span class="o">--</span><span class="n">workspace</span> <span class="n">snapshot</span><span class="o">.</span><span class="n">auto</span><span class="o">-</span><span class="n">update</span><span class="o">-</span><span class="n">stale</span> <span class="n">false</span>
+</pre></div>
+</div>
+<p>With auto-update disabled, most <code class="docutils literal notranslate"><span class="pre">jj</span></code> commands will refuse to run on a stale
+workspace until you manually update with <code class="docutils literal notranslate"><span class="pre">jj</span> <span class="pre">workspace</span> <span class="pre">update-stale</span></code>. (Note
+that this is only relevant when you modify one workspace’s ancestor from another
+workspace, which is what causes the former workspace to become stale. If you
+choose to be selecting with your rebases, edits, and squashes, such that you
+only touch the current workspace’s ancestors, then you won’t encounter stale
+workspaces very often.)</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ai-coding.html" class="btn btn-neutral float-left" title="Firefox AI Coding Policy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="git-tricks.html" class="btn btn-neutral float-right" title="Git Tricks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

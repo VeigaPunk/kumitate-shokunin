@@ -23,13 +23,37 @@
 # Batch mode (--rounds A-B) aggregates: 1 if any round FAILs; else 2 if any round is NA;
 # else 0. A single round's verdict is always on its own PLAN_BEFORE_READY line.
 #
+# readme-map arm (round 64; the R56-V3 recurrence's structural fix — a corpus file landed
+# without its README row for the tenth time, and `readme-map` only ever detected it AFTER the
+# fact). Every round that has a committed PLAN is additionally judged at PLAN, i.e. at the
+# commit that carries the plan, by running `node scripts/readme-map.mjs` INSIDE
+# `git archive PLAN` (the counter derives its lane from its own path, so the archived copy
+# reads the archived corpus/README.md, .ufo/pins/readme-map.json and corpus/{knowledge,lessons}):
+#   GREEN  = the archived counter exits 0 and prints `README_MAP: CLEAN`.
+#   RED    = anything else: DRIFT (exit 1), FAIL-CLOSED (exit 2), exit 0 without a CLEAN
+#            verdict (a counter that prints nothing cannot pass), node/archive/mktemp failure
+#            or a 300 s timeout. RED makes the round FAIL with reason=MAP_DRIFT /
+#            MAP_NO_VERDICT / MAP_UNRUNNABLE and exit 1 — before the marker/ordering arms, so a
+#            round still in flight (plan committed, no wave marker yet: the freeze moment)
+#            cannot read NA over a red map.
+#   SKIP   = the arm does not apply: the readme-map gate did not exist when the plan was frozen
+#            (the commit that first adds scripts/readme-map.mjs is not an ancestor-or-equal of
+#            PLAN — rounds 41-56). `map=SKIP reason=MAP_PRE_EPOCH` is printed and the exit code
+#            is unchanged, so historical verdicts keep their meaning.
+#   MAP_ABSENT (FAIL, fail closed) = the gate existed before PLAN (its first-add commit is an
+#            ancestor of PLAN) yet `scripts/readme-map.mjs` is missing at PLAN — a gate removed
+#            at the freeze is never a pass.
+# The arm never relaxes an existing verdict: it can only turn a would-be PASS/NA into FAIL.
+#
 # Pathspec hazard this script deliberately closes: git pathspec `*` matches `/`, so the
 # unmagicked pathspec `.ufo/waves/round-63/*.ready` also matches NESTED fixture markers such as
 # .ufo/waves/round-63/controls/inline/honest/lane/.ufo/waves/round-7/w1.ready. Every pathspec
 # below carries the `:(glob)` magic so `*` stops at the directory separator. Selftest case 8
 # locks that in.
 #
-# Read-only: uses only `git log` / `git show` / `git merge-base`. Never writes to the repo.
+# Read-only: uses only `git log` / `git show` / `git merge-base` / `git cat-file` /
+# `git archive`, plus node. The map arm extracts `git archive PLAN` into a fresh mktemp dir and
+# removes it again; nothing is ever written to the judged repository.
 set -uo pipefail
 
 REPO_DEFAULT=/home/vgpnk/Projects/shokunin/kumitate-shokunin
@@ -56,6 +80,13 @@ usage: plan-before-ready.sh [--repo DIR] [--rev REV] (--round N | --rounds A-B) 
                     (strictest reading) instead of .ready-else-dispatch
   --quiet           per-round lines only, no summary
   --selftest        build fixture repos in a temp dir and assert every exit code; no repo needed
+
+Every round with a committed plan is also judged by the readme-map arm: `node
+scripts/readme-map.mjs` is run inside `git archive PLAN` (the plan's own commit) and a red map
+there makes the round FAIL (reason=MAP_DRIFT|MAP_NO_VERDICT|MAP_UNRUNNABLE|MAP_ABSENT) with exit
+1, before any marker/ordering arm. Rounds whose plan predates the gate read `map=SKIP
+reason=MAP_PRE_EPOCH` and are judged exactly as before. Every verdict line ends with its map
+field; the summary adds `map_red=<rounds>`.
 
 exit: 0 PASS, 1 FAIL, 2 NA (no plan/wave data). Batch: 1 if any FAIL, else 2 if any NA, else 0.
 EOF
@@ -102,6 +133,78 @@ first_added_path() {
   git -C "$1" show --diff-filter=A --name-only --format= "$2" -- "$3" 2>/dev/null | head -n 1
 }
 
+# ---------------------------------------------------------------------------
+# readme-map arm (round 64). Semantics: judge `node scripts/readme-map.mjs` inside a
+# `git archive` of the PLAN commit — not of REV, not of the tip, not of the working tree — so a
+# late repair cannot launder a freeze made over a red map, and a working-tree edit cannot pass a
+# red plan commit. Sets MAP_FIELD (the trailing verdict fragment) and MAP_FAIL_REASON (empty when
+# the arm is green or does not apply). Never relaxes a verdict; only turns PASS/NA into FAIL.
+# ---------------------------------------------------------------------------
+MAP_GATE=scripts/readme-map.mjs
+# Epoch: the arm is enforced from this round on (set PBR_MAP_FROM to move it; the selftest sets 0). Rounds 58, 60, 61, 63 and 64
+# froze over a red map before the arm existed: they read `map=SKIP reason=MAP_PRE_EPOCH_ROUND` by default, and FAIL under
+# `PBR_MAP_FROM=0` (the red-before receipts, `.ufo/waves/round-64/build/K64ExecReadmeGuard/receipts/`).
+MAP_FROM="${PBR_MAP_FROM:-65}"
+
+map_first_add() {  # $1=repo -> oldest commit (any revision) that ADDS the readme-map gate
+  git -C "$1" log --full-history --diff-filter=A --format='%H' -- "$MAP_GATE" 2>/dev/null | tail -n 1
+}
+
+map_at_plan() {  # $1=repo $2=plan_sha
+  local repo="$1" plan="$2" t out rc line first fc gate_sha
+  MAP_FIELD="map=SKIP reason=MAP_PRE_EPOCH"; MAP_FAIL_REASON=""
+
+  if ! git -C "$repo" cat-file -e "$plan:$MAP_GATE" 2>/dev/null; then
+    # The gate is absent at the plan commit. It applies only if the gate already existed when
+    # this plan was frozen (its first-add commit is an ancestor-or-equal of PLAN); otherwise the
+    # plan predates the gate and the arm does not apply (rounds 41-56 read exactly as before).
+    gate_sha="$(map_first_add "$repo")"
+    if [ -n "$gate_sha" ] \
+       && git -C "$repo" merge-base --is-ancestor "$gate_sha" "$plan" 2>/dev/null; then
+      MAP_FIELD="map=ABSENT"; MAP_FAIL_REASON=MAP_ABSENT
+    fi
+    return 0
+  fi
+
+  t="$(mktemp -d "${TMPDIR:-/tmp}/pbr-map.XXXXXX" 2>/dev/null)" || {
+    MAP_FIELD="map=UNRUNNABLE reason=MKTEMP"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
+  if ! git -C "$repo" archive --format=tar "$plan" 2>/dev/null | tar -x -C "$t" --no-same-owner 2>/dev/null; then
+    rm -rf "$t"; MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+  fi
+  if command -v timeout >/dev/null 2>&1; then
+    out="$(cd "$t" && timeout 300 node "$MAP_GATE" 2>&1)"; rc=$?
+  else
+    out="$(cd "$t" && node "$MAP_GATE" 2>&1)"; rc=$?
+  fi
+  rm -rf "$t"
+
+  if [ "$rc" = 0 ] && printf '%s\n' "$out" | grep -q '^README_MAP: CLEAN '; then
+    line="$(printf '%s\n' "$out" \
+      | sed -n 's/^README_MAP: CLEAN \(files=[0-9]* rows=[0-9]* covered=[0-9]*\).*/\1/p' | head -n 1)"
+    MAP_FIELD="map=CLEAN ${line:-files=? rows=? covered=?}"
+    return 0
+  fi
+  if [ "$rc" = 0 ]; then
+    MAP_FIELD="map=NO_VERDICT map_exit=0"; MAP_FAIL_REASON=MAP_NO_VERDICT; return 0
+  fi
+  if [ "$rc" = 127 ]; then
+    MAP_FIELD="map=UNRUNNABLE reason=NODE_ABSENT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+  fi
+  if [ "$rc" = 124 ]; then
+    MAP_FIELD="map=UNRUNNABLE reason=TIMEOUT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+  fi
+  first="$(printf '%s\n' "$out" | sed -n 's/^README_MAP: DRIFT .*first=//p' | head -n 1)"
+  fc="$(printf '%s\n' "$out" | sed -n 's/^README_MAP: FAIL-CLOSED reason=//p' | head -n 1)"
+  if [ -n "$first" ]; then
+    MAP_FIELD="map=DRIFT map_exit=$rc map_first=$first"; MAP_FAIL_REASON=MAP_DRIFT
+  elif [ -n "$fc" ]; then
+    MAP_FIELD="map=FAIL-CLOSED map_exit=$rc map_reason=$fc"; MAP_FAIL_REASON=MAP_FAIL_CLOSED
+  else
+    MAP_FIELD="map=UNRUNNABLE map_exit=$rc"; MAP_FAIL_REASON=MAP_UNRUNNABLE
+  fi
+  return 0
+}
+
 # judge one round in repo $1 at revision $2; prints one verdict line; echoes exit code on stdout? no:
 # sets globals VERDICT_LINE and returns the exit code (0/1/2)
 judge_round() {
@@ -143,33 +246,48 @@ judge_round() {
   fi
 
   local base="rev=$REV_RESOLVED round=$round dir=$dir"
+
+  # readme-map arm: a plan frozen over a red map is a FAIL, and it fires BEFORE the marker arms,
+  # so a round still in flight (plan committed, no wave marker yet — the freeze moment) cannot
+  # read NA over a red map.
+  MAP_FIELD="map=SKIP reason=NO_PLAN"; MAP_FAIL_REASON=""
+  if [ -n "$plan_sha" ] && [ "$round" -lt "$MAP_FROM" ] 2>/dev/null; then
+    MAP_FIELD="map=SKIP reason=MAP_PRE_EPOCH_ROUND"
+  elif [ -n "$plan_sha" ]; then
+    map_at_plan "$repo" "$plan_sha"
+    if [ -n "$MAP_FAIL_REASON" ]; then
+      VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=$MAP_FAIL_REASON plan=$plan_sha plan_ct=$plan_ct marker=${marker_sha:--} marker_kind=${marker_kind:--} marker_ct=${marker_ct:--} marker_path=${marker_path:--} $MAP_FIELD"
+      return 1
+    fi
+  fi
+
   if [ -z "$marker_sha" ]; then
     if [ -z "$plan_sha" ]; then
-      VERDICT_LINE="PLAN_BEFORE_READY: NA $base reason=NO_PLAN_NO_MARKER plan=- marker=-"
+      VERDICT_LINE="PLAN_BEFORE_READY: NA $base reason=NO_PLAN_NO_MARKER plan=- marker=- $MAP_FIELD"
     else
-      VERDICT_LINE="PLAN_BEFORE_READY: NA $base reason=NO_MARKER plan=$plan_sha plan_ct=$plan_ct marker=-"
+      VERDICT_LINE="PLAN_BEFORE_READY: NA $base reason=NO_MARKER plan=$plan_sha plan_ct=$plan_ct marker=- $MAP_FIELD"
     fi
     return 2
   fi
 
   if [ -z "$plan_sha" ]; then
-    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=NO_PLAN plan=- marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path"
+    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=NO_PLAN plan=- marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path $MAP_FIELD"
     return 1
   fi
 
   local ancestor_rc=0
   git -C "$repo" merge-base --is-ancestor "$plan_sha" "$marker_sha" 2>/dev/null || ancestor_rc=$?
   if [ "$ancestor_rc" -ne 0 ]; then
-    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=PLAN_NOT_ANCESTOR plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path"
+    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=PLAN_NOT_ANCESTOR plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path $MAP_FIELD"
     return 1
   fi
 
   if [ "$plan_ct" -gt "$marker_ct" ]; then
-    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=PLAN_CT_AFTER_MARKER plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path"
+    VERDICT_LINE="PLAN_BEFORE_READY: FAIL $base reason=PLAN_CT_AFTER_MARKER plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path $MAP_FIELD"
     return 1
   fi
 
-  VERDICT_LINE="PLAN_BEFORE_READY: PASS $base plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path"
+  VERDICT_LINE="PLAN_BEFORE_READY: PASS $base plan=$plan_sha plan_ct=$plan_ct marker=$marker_sha marker_kind=$marker_kind marker_ct=$marker_ct marker_path=$marker_path $MAP_FIELD"
   return 0
 }
 
@@ -177,6 +295,7 @@ judge_round() {
 # selftest: fixture repos under a fresh mktemp dir; every exit code asserted
 # ---------------------------------------------------------------------------
 run_selftest() {
+  MAP_FROM=0   # the selftest judges fixture rounds with small numbers: enforce the map arm on all of them
   local pass=0 fail=0
   local root; root="$(mktemp -d "${TMPDIR:-/tmp}/pbr-selftest.XXXXXX")" || {
     echo "PLAN_BEFORE_READY_SELFTEST: ERROR (mktemp failed)" >&2; return 2; }
@@ -191,17 +310,52 @@ run_selftest() {
   fcommit() {  # $1=dir $2=date-epoch $3=msg $4...=paths (relative)
     local d="$1" ts="$2" msg="$3"; shift 3
     local p
-    for p in "$@"; do mkdir -p "$d/$(dirname "$p")"; printf 'x\n' > "$d/$p"; done
+    for p in "$@"; do
+      mkdir -p "$d/$(dirname "$p")"
+      if [ "$p" = "scripts/readme-map.mjs" ]; then map_stub > "$d/$p"
+      else printf 'x\n' > "$d/$p"; fi
+    done
     git -C "$d" add -A -- "$@" >/dev/null 2>&1
     GIT_AUTHOR_DATE="@$ts +0000" GIT_COMMITTER_DATE="@$ts +0000" \
       git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
       commit -q -m "$msg" -- "$@" >/dev/null 2>&1
+  }
+  fcommit_all() {  # $1=dir $2=date-epoch $3=msg -> stages EVERYTHING (incl. deletions) and commits
+    local d="$1" ts="$2" msg="$3"
+    git -C "$d" add -A >/dev/null 2>&1
+    GIT_AUTHOR_DATE="@$ts +0000" GIT_COMMITTER_DATE="@$ts +0000" \
+      git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
+      commit -q -m "$msg" >/dev/null 2>&1
+  }
+  map_stub() {  # contract-shaped stand-in for scripts/readme-map.mjs; MAP_STUB=green|red|silent|failclosed
+    case "${MAP_STUB:-green}" in
+      red)    printf '%s\n%s\n' \
+                "process.stdout.write('README_MAP: DRIFT files=2 rows=1 covered=1 bad=1 first=uncovered:lessons/b.md\\n');" \
+                'process.exit(1);' ;;
+      failclosed) printf '%s\n%s\n' \
+                "process.stdout.write('README_MAP: FAIL-CLOSED reason=registry unreadable: ENOENT\\n');" \
+                'process.exit(2);' ;;
+      silent) printf '%s\n' 'process.exit(0);' ;;
+      *)      printf '%s\n%s\n' \
+                "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
+                'process.exit(0);' ;;
+    esac
   }
   check() {  # $1=label $2=want_rc $3=dir $4=round ; uses judge_round
     local label="$1" want="$2" d="$3" round="$4" got
     REV_RESOLVED="$(git -C "$d" rev-parse HEAD)"
     judge_round "$d" "$round"; got=$?
     if [ "$got" = "$want" ]; then
+      pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=%s got=%s  %s\n' "$label" "$want" "$got" "$VERDICT_LINE"
+    else
+      fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=%s got=%s  %s\n' "$label" "$want" "$got" "$VERDICT_LINE"
+    fi
+  }
+  check_has() {  # $1=label $2=want_rc $3=dir $4=round $5=substring that must appear in the line
+    local label="$1" want="$2" d="$3" round="$4" sub="$5" got
+    REV_RESOLVED="$(git -C "$d" rev-parse HEAD)"
+    judge_round "$d" "$round"; got=$?
+    if [ "$got" = "$want" ] && printf '%s' "$VERDICT_LINE" | grep -qF -- "$sub"; then
       pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=%s got=%s  %s\n' "$label" "$want" "$got" "$VERDICT_LINE"
     else
       fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=%s got=%s  %s\n' "$label" "$want" "$got" "$VERDICT_LINE"
@@ -273,6 +427,53 @@ run_selftest() {
     fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=1 got=%s  %s\n' all-rounds-enumeration "$rc2" "$(printf '%s' "$out" | tail -1)"
   fi
 
+  # --- readme-map arm (round 64). Each case pins the reason and the map field, not only the code.
+  # 11 a plan frozen over a RED map fails closed: this is the R56-V3 structural fix. Without the
+  #    arm the identical history reads PASS 0 (plan before .ready, both committed in order).
+  d="$(fixture map-red-at-plan)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-red-at-plan 1 "$d" 9 'reason=MAP_DRIFT'
+  check_has map-red-names-file 1 "$d" 9 'map_first=uncovered:lessons/b.md'
+
+  # 12 the same history with a GREEN map passes, and the line carries the counter's counts
+  d="$(fixture map-green-at-plan)" || return 2
+  MAP_STUB=green fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-green-at-plan 0 "$d" 9 'map=CLEAN files=2 rows=2 covered=2'
+
+  # 13 the freeze moment: plan committed, no wave marker yet, map red -> FAIL, never NA
+  d="$(fixture map-red-no-marker)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-red-no-marker 1 "$d" 9 'reason=MAP_DRIFT'
+
+  # 14 the gate existed before the plan and the plan commit itself drops it: fail closed, never skip
+  d="$(fixture map-absent-at-plan)" || return 2
+  MAP_STUB=green fcommit "$d" 1000000000 "gate" scripts/readme-map.mjs
+  git -C "$d" rm -q -- scripts/readme-map.mjs
+  mkdir -p "$d/.ufo/waves/round-9"; printf 'x\n' > "$d/.ufo/waves/round-9/plan.md"
+  fcommit_all "$d" 1000000100 "plan, gate dropped"
+  fcommit "$d" 1000000300 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-absent-at-plan 1 "$d" 9 'reason=MAP_ABSENT'
+
+  # 15 a plan that predates the gate is judged exactly as before: arm skipped, verdict unchanged
+  d="$(fixture map-pre-epoch)" || return 2
+  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-pre-epoch-skip 0 "$d" 9 'map=SKIP reason=MAP_PRE_EPOCH'
+
+  # 16 exit 0 without a CLEAN verdict is not a pass (a counter that prints nothing proves nothing)
+  d="$(fixture map-silent-zero)" || return 2
+  MAP_STUB=silent fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-silent-zero 1 "$d" 9 'reason=MAP_NO_VERDICT'
+
+  # 17 a FAIL-CLOSED counter (exit 2) fails the round with its own reason, not as a bare drift
+  d="$(fixture map-fail-closed)" || return 2
+  MAP_STUB=failclosed fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
+
   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
   [ "$fail" -eq 0 ] && return 0 || return 1
 }
@@ -326,10 +527,11 @@ else
   RANGE_LABEL="$lo-$hi"
 fi
 
-npass=0; nfail=0; nna=0; anyfail=0; anyna=0; FAILED=(); NA_ROUNDS=()
+npass=0; nfail=0; nna=0; anyfail=0; anyna=0; FAILED=(); NA_ROUNDS=(); MAP_FAILED=()
 for r in "${ROUND_LIST[@]}"; do
   judge_round "$REPO" "$r"; rc=$?
   echo "$VERDICT_LINE"
+  [ -n "$MAP_FAIL_REASON" ] && MAP_FAILED+=("$r")
   case "$rc" in
     0) npass=$((npass+1)) ;;
     1) nfail=$((nfail+1)); anyfail=1; FAILED+=("$r") ;;
@@ -339,5 +541,5 @@ done
 
 if [ "$anyfail" = 1 ]; then rc=1; elif [ "$anyna" = 1 ]; then rc=2; else rc=0; fi
 joined() { local IFS=,; printf '%s' "$*"; }
-[ "$QUIET" = 1 ] || echo "PLAN_BEFORE_READY_SUMMARY: pass=$npass fail=$nfail na=$nna rounds=$RANGE_LABEL rev=$REV_RESOLVED exit=$rc failed=$(joined "${FAILED[@]:-}") na_rounds=$(joined "${NA_ROUNDS[@]:-}")"
+[ "$QUIET" = 1 ] || echo "PLAN_BEFORE_READY_SUMMARY: pass=$npass fail=$nfail na=$nna rounds=$RANGE_LABEL rev=$REV_RESOLVED exit=$rc failed=$(joined "${FAILED[@]:-}") na_rounds=$(joined "${NA_ROUNDS[@]:-}") map_red=$(joined "${MAP_FAILED[@]:-}")"
 exit "$rc"

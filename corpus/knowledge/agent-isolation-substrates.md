@@ -297,3 +297,37 @@ narrowed reading is the operative one from round 46.
   so the row's "Git 2.56.0" rests on that identity, not on the page's own marker (XChanS063, KSheetFull).
 - **X20 — M5 table absolute counts.** The 263/264 name counts are launcher-specific (265/265 in AblBwrapRow); only the
   contrasts between modes carry over, as the § Mechanisms preface says of every demo count.
+
+## Amendment 2026-10-25 — M7 (jj workspaces share one repository) is demonstrated
+
+Everything above this heading is the round-45 judged object and is not reworded; this section is appended after its last
+byte. Exactly two of its sentences are superseded, for M7 only:
+
+- § Mechanisms, M7: «Not demonstrated this round; no table row relies on it.» — demonstrated now, in the entry named below.
+- § What this entry does not establish, last bullet: «jj workspaces in colocated repos (M7) are not demonstrated here.» —
+  no longer true; the demonstration is filed in a separate entry so this entry's table and prose stay as they are.
+
+The mechanism sentence stands as filed (S067 § Workspaces: «You can have multiple working copies backed by a single repo.»).
+What round 64 adds is the measurement: a seat given its own jj workspace shares one repository, one operation log and one
+commit graph with the default workspace, while its working tree is separate.
+
+**Where it is demonstrated:** `corpus/knowledge/jj-workspace-seat-containment.md` (round 64, frontier ground), grounded on
+rows S198–S200 opened 2026-10-25 and on the re-runnable hermetic demo `bash scripts/jj-seat-demo.sh` (contract
+`kumitate-jj-seat-demo-v2`; every repository is a fresh `mktemp` fixture, every git/jj call names it). The demo exits 0
+and prints 21 keys; the ones this amendment rests on: `seat_file_in_default_tree=no` (separate trees),
+`seat_snapshot_in_shared_op_log=1` (the seat's snapshot is an operation in the shared log),
+`rewrite_seat_head_seat_state=fresh` against `abandon_seat_head_seat_state=stale` and
+`rewrite_treechange_seat_state=stale` (staleness follows the tree of the seat's commit, not the operation kind),
+`update_stale_abandoned_seat_file=deleted-no-recovery-commit` (recovery deletes the abandoned commit's files from the seat),
+`absolute_path_write_seen_in_default=1` (a workspace is containment of a working copy, not of a writer),
+`seat_dir_after_forget=present` and `forget_seat_commit_in_all=yes`.
+
+**What follows for seats:** a jj workspace bounds a seat's *tree* surface (its writes stay out of the default tree) but not
+its *filesystem* surface (a path reaches the default workspace), not its *history* surface (one operation log) and not its
+*staleness* surface (another workspace can stale the seat by changing or abandoning its head). The guards: one workspace per
+seat, `--ignore-working-copy` on reads (M1), `jj workspace update-stale` only after the seat's files are committed or
+copied out, absolute paths in every seat write, and the M3/M4 rules above.
+
+**Limits of this amendment.** jj 0.45.1 only; counts are fixture-dependent as § Mechanisms says of every demo count; no
+concurrency was exercised; nothing here is a security boundary. Recheck: on a jj release, re-run `bash scripts/jj-seat-demo.sh`
+and compare the keys against the entry.
