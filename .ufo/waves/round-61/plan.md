@@ -1,8 +1,9 @@
 # Round 61 — plan (frozen before any data seat scored)
 
-Round: kumitate 61 (attempt 1). Base: `165b83044d33cbd52fc2209aefe57edfd7e6590a`
-(the round-61 commit landing the inherited round-60 close work; round-60 tip
-`a745a3b0`). Working dir: `/home/vgpnk/Projects/shokunin/kumitate-shokunin`.
+Round: kumitate 61, attempt 1. Base revision \`c2721f812cebd97ab67a1dd8cd8492a193f82d42\`.
+Frozen 2026-10-25 before wave data. The lane's axes are operability and coverage;
+the stagnation nudge waives lowest-axis obligation because all owned axes are at
+or above saturation. Claims are distinct axes, each with its own counter.
 
 Frozen 2026-10-25 before any wave seat scored. These sentences are the claims;
 the same words appear in the counters' code and in the receipts' labels.
@@ -40,7 +41,7 @@ therefore a capability acquisition or a frontier move, disclosed as such.
 **Kill rule:** any check MISS → the claim fails as declared. A rule changed
 after any seat scored is not this claim's rule.
 
-**Before (measured at base `165b8304`):** the round-60 equivalent read
+**Before (measured at base `c2721f81`):** the round-60 equivalent read
 `DISPATCH60_HELD` **unmet** — `held=8/10` at `a745a3b0` (A7 row-absent, A10
 wave-dir-absent), and the gate itself reads `FAIL-CLOSED wave-dir-absent` for
 `round-61/w1` (no wave dir at base). Receipts: `base/dispatch61-base.txt`.
@@ -77,7 +78,7 @@ their terminal integers). **Type:** frontier ground into core.
 **Counting command:** `node .ufo/waves/round-61/probe/doctrine61-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`.
 **Kill rule:** any check MISS → fails as declared.
 
-**Before (base `165b8304`):** registry 133 rows (A=110 B=15 C=8), no entry, no
+**Before (base `c2721f81`):** registry 133 rows (A=110 B=15 C=8), no entry, no
 S195, README map missing the round-60 spot-check row (`PROXY` already reads
 `C2_TOTAL_DRIFT declared=145 computed=146`). Receipts: `base/census-before.txt`,
 `base/proxy-before.txt`.
@@ -89,26 +90,62 @@ capture) must fail E3/E4 — receipt `controls/ctl-c2-unopened-row.txt`.
 
 ## Assimilation
 
-First adoption round under item 10 (round 60 hand-checked the quarantine slice
-and adopted nothing). This round adopts exactly one entry from the package
-(`merge/kumitate/knowledge/corpus/knowledge/temporal-worker-versioning-pinning.md`),
-re-grounded in-round: the only cited source (Temporal Worker Versioning docs,
-`docs.temporal.io/worker-versioning.md`) is re-opened by this lane with a fresh
-access date and ≤25-word located quote. Quarantine slice re-derived from the
-absent-defect register; all slice rows stay quarantined unless hand-checked.
+This round opens one Temporal Worker Versioning source, adopts one entry on
+durable-execution band-4 ground, and re-grounded evidence appears as S195. The
+two round-60 standing rejects remain refused: exactly-once attribution has a
+same-document collision (S134/S211); coordinator topology remains a separate
+theme, to be re-opened only in a topology round. Quarantine slice is re-derived
+from the absent-defect register; each row's verdict appears in the lesson.
 
 ## Round shape
 
-Default two-v1-wave shape, adjusted to evidence: **one v1 wave (32 seats)** —
-build + first falsifiers. Wave 2 is dispatched only if wave 1 yields ≥32 distinct
-attack items; expected residual: one ordinary `task` call of ≤8 reviewer/critic
-seats. Round total ≤128. All seats leaf-only; no seat spawns. The dispatch
-record for C1 is this wave's own record, produced through the validator's
-`taskCall` (never a custom launcher).
+One v1 wave, 32 seats, build + falsifiers; dispatched by the validated taskCall.
+Wave 2 only if wave 1 yields at least 32 distinct attack items; any residual
+review ≤8 seats in a normal task call. Round total ≤128. No seat spawns.
 
 ## Write scope
 
-Lane repo only: `/home/vgpnk/Projects/shokunin/kumitate-shokunin`. Seats never
-touch the fleet repo, sibling lanes, lane jj state or lane git index, `.ufo/state/`,
-`.scratch/`, templates/ or scripts/ in the fleet root. Reports at
-`.ufo/waves/round-61/w1/<SeatName>.md` (absolute path given in each item).
+Lane repo only: `/home/vgpnk/Projects/shokunin/kumitate-shokunin`. No seat
+touches the fleet repo, sibling lanes, lane jj state/git index, `.ufo/state/`,
+`.scratch/`, fleet templates/scripts, or campaign tree.
+## Work Plan (frozen before data)
+
+Base revision: \`c2721f812cebd97ab67a1dd8cd8492a193f82d42\`.
+
+### C1 — operability, capability acquisition \`dispatch-evidence\`
+
+Frozen predicate \`DISPATCH61_HELD\` (P61 v1): P1, \`dispatch-evidence --selftest\`
+prints \`DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)\`, exit 0; P2 the real round-61
+wave gate prints \`CLEAN (seats=32 sessions=32 exit0=32 reports=32 dead=0)\`, exit 0,
+and the measured revision contains a progress file, dispatch-actual.json, and 32
+seat reports; P3 SCORECARD capabilities row names round 61; P4 committed tip
+receipt contains that same CLEAN line. Count command:
+\`node .ufo/waves/round-61/probe/dispatch61-probe.mjs <lane> <rev>\`.
+Any MISS fails as declared; no edits after seats score. Base: gate fails closed
+at round-61/w1; the round-60 equivalent reads 8/10 at a745a3b0 (A7 and A10
+missed). Control: fabricated registry without progress fails closed; 32 null
+session records read NOT_A_DISPATCH. Receipts under base/ and controls/.
+
+### C2 — coverage, frontier move: one sourced band-4 entry
+
+Frozen predicate \`DOCTRINE61_HELD\` (D61 v1): E1 entry exists; E2 source,
+verified-at and recheck header trio; E3 S195 is mined/opened 2026-10-25/used-by
+exactly the entry; E4 in-round source capture hash matches the S195 row; E5
+sources-census validates; E6 README-map row and readme-map CLEAN. Count command:
+\`node .ufo/waves/round-61/probe/doctrine61-probe.mjs <lane> <rev>\`; any MISS
+fails as declared. Base: 133 rows, A=110 B=15 C=8; no S195 or entry; readme-map
+missing R60 verifier row. Control: no captured bytes means E4 MISS. Receipt
+under base/ and controls/.
+
+### Frontier and assimilation
+
+One source: Temporal Worker Versioning docs. One entry adopted from
+\`merge/kumitate/knowledge/corpus/knowledge/temporal-worker-versioning-pinning.md\`,
+re-grounded with this round's access date and located quote. S195 is the sourced
+claim. Re-derive the quarantine slice; record a verdict for each row. Round-60
+standing rejects stay refused unless their flip condition is met.
+
+### Shape
+
+One v1 wave of 32, build + falsifiers, dispatched from the validator's taskCall.
+Wave 2 only on ≥32 distinct attack items; residual review ≤8 seats. No spawns.
