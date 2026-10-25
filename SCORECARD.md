@@ -285,7 +285,7 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=258
+A=257
 C=30
 C1=19
 C1_total=19
@@ -2966,6 +2966,6 @@ Plan `.ufo/waves/round-63/plan.md` frozen at `b38a2065ab8ac5b198f6569b9013d04411
 
 **C2 — coverage, frontier ground: coordinator topology (sourced on S196/S197).** Counting command: `node .ufo/waves/round-63/probe/topology63-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin d37e7d0aa2cf824c80a7e499cc3ae320ca4621ca`. Before at `dfa6fca8f362e9c962f5b940025a2619380b759b`: `TOPOLOGY63_UNMET held=1/7` (`base/topology63-base.txt`). After: `TOPOLOGY63_HELD held=7/7 checks=7 rule=T63` exit 0 (`close/topology63-measured.txt`). Verdict by the frozen counter: **verifies**. Limits: the counter's own honest control scores 7/7 on an unrelated entry, so it measures the evidence chain, not new coverage (K63R2CriticEntryScope: this reads as quality work on the lane's frontier, with the surface moved being one PROVINCE band and one admitted entry); an attacker-hosted row URL passes T5 (K63R2CriticC2Loopback; supplementary `host-check.mjs` PASS at `d37e7d0aa2cf824c80a7e499cc3ae320ca4621ca`); prose numbers and version labels are not read by T63 (K63R2MutateEntry: 11/28 mutants survive; supplementary `numbers-check.py` PASS, 124 prose numbers). The entry was corrected after wave 2 (decision-table rows, limits, version skew). Score delta: none; coverage aggregate stays 10 (retired).
 
-**Maintenance (not claims):** `proxy-check` FAIL-CLOSED at base (`pin.make-dispatch-actual` unregistered) repaired — the stanza now reads `PROXY: MATCH` (A=258 C=30 C2=153 K=49; K reflects four host Kimi-root members gone, `kimi-census` still reads MEMBER_MISSING x4 — a host-state defect carried, not repaired); `readme-map` DRIFT at base repaired and CLEAN at 153/153/153. Gate pins added: `pin.inline-dispatch-evidence`, `pin.plan-before-ready`.
+**Maintenance (not claims):** `proxy-check` FAIL-CLOSED at base (`pin.make-dispatch-actual` unregistered) repaired — the stanza now reads `PROXY: MATCH` (A=257 C=30 C2=153 K=49; K reflects four host Kimi-root members gone, `kimi-census` still reads MEMBER_MISSING x4 — a host-state defect carried, not repaired); `readme-map` DRIFT at base repaired and CLEAN at 153/153/153. Gate pins added: `pin.inline-dispatch-evidence`, `pin.plan-before-ready`.
 
 **Waves:** w1 40 seats (all finished; six session_exit rows landed after the wave settled), w2 39 seats (all finished), 79 total; role mix and model answers in the report. No axis score changed; no axis harmed (`close/` gate table in the report).
