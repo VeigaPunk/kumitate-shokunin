@@ -1,46 +1,108 @@
-# Audit19 r62 missing-dimensions review
+# Audit19 — Round60-DeadTable re-queue audit (round-62 w2, findings only)
 
-Read-only review of the r61 Audit19 handoff against the r62 dispatch and the r62 `w1/Audit19.md`. No files edited except this report; no commits, tests, installs, fixtures, or prior identity recontact.
+Seat: `L1Kumitate62.Audit19-2` (re-queued Audit19, R61-V6 routed item). Read-only refutation wave;
+no edits besides this report, no commits, no tools installed (install record: none).
 
-## Scope and identity
+## 1. Scope and inputs
 
-Former item: r61 `w2-spec.json` `Audit19` entry (lines 298–304), explicitly re-queued in the r62 dispatch. The old identity `L1Kumitate61.Audit19` is not revived or contacted. The r62 report actually present is `.ufo/waves/round-62/w1/Audit19.md`; the r62 w2 dispatch carries a separately assigned Audit19 item, but `.ufo/waves/round-62/w2/Audit19.md` is absent. I compare the former prompt's dimensions with the actual w1 report and identify its incomplete checks; I do not claim the round's plan or verdict (dispatch context says the claim plan is not frozen).
+Target: `.ufo/waves/round-60/close/dead-seats-r60.md` (R60-V6 repair), derived from committed
+blobs at `HEAD=be4a820c344d4eb2f94b999c3b5d649e76ab70f1`. All inputs re-read from committed blobs
+via `git show <rev>:<path>`; worktree hashes verified identical at current `HEAD=0cbe0d75`:
 
-## Original test dimensions vs r62 report
+| Input | Blob |
+|---|---|
+| `w1/launcher-progress.tsv` | `df92492b4a48dfeb39f9e5a3729a2e08ac1b3d66` |
+| `w1-launcher.log` | `d014d43024ed437d8f7b6741712f41647b1a9be2` |
+| `launcher.py.txt` | `24fea66d3d2dba097c62abc3f49f83b9087660ee` |
+| `close/dead-seats-r60.md` | `34d3213cac185bb3840f9044dcc6801f346dfbb6` |
+| `w1/swarm-registry.json` | `68a2c21094b4e111b528cc34907d91bdabb4dd16` |
+| 32× `w1/<Seat>.err` + 32× `w1/<Seat>.stream.jsonl` | (64 files, extracted and scanned whole) |
 
-Former prompt: “Audit `.ufo/waves/round-60/close/dead-seats-r60.md` against committed progress, stream files and launcher log: count 32/5/27, full errors no truncation, traceback exact.” The detailed r61 follow-up enumerates four required checks (r61 w1 `Audit19.md:58–61`):
+`git status --porcelain -- .ufo/waves/round-60` is empty; r60 worktree is clean.
 
-| Dimension | r62 w1 report | Assessment |
-|---|---|---|
-| Independently re-derive counts from committed progress and launcher line counts | Reports counts but does not show an independently reproducible command/output; this review independently ran the committed-byte count below | Partial, not a demonstrated self-check in the report |
-| Full no-truncation scan of all 64 `.err` and `.stream.jsonl` files, including all tails/events | Report only states 32 `.err` files and gives two examples; does not inspect/cite the complete 64-file set | **Missing** |
-| Byte-exact traceback comparison and end-of-log/no-DONE | Quotes lines 65–68 and says end/no DONE; no byte-comparison command/output | **Missing exact byte comparison**; end/no-DONE assertion is present but not independently substantiated there |
-| Cross-check each of 32 rows' pid/exit/session against matching spawn/settled records | Reports aggregate session/exit correlation, not the 32 row-by-row pid/exit/session joins | **Missing** |
+## 2. Count checks (32/5/27) — all re-derived, match
 
-Additional inherited claims that also need full evidence to close the actual dead-seat table: one `session.resume_hint` per live seat and none per dead seat; all 589 retries/events and their `max_attempts`, delay range, and HTTP 429/provider error; all 27 timeout durations and their relation to 420-second `SEAT_TIMEOUT`; the claimed window bounds; complete table/error-tail agreement and launcher-registry crash explanation. The r62 report gives aggregate summaries, examples, or assertions, but not exhaustive per-seat/per-file evidence for these dimensions. Its own §4 correctly marks four tests unexecuted; it must not describe the original audit as complete.
+- Progress TSV: 32 rows, unique seat names. Exit distribution: `exit=0` = 5, `exit=-9` = 27,
+  no other exit codes.
+- Launcher log: 32 `spawn` lines, 32 `settled` lines; exit/session per settled line matches the
+  progress row for the same seat (diff of sorted pairs: zero rows differing).
+- `pid` cross-check: spawn-line pid == progress-row pid for all 32 seats (join mismatch count 0).
+- Sessions: exactly 5 non-null sessions; the same 5 seats are the only streams containing
+  `session.resume_hint` (exactly one hint each: ExecRows, ExecGates, ExecCensus, RevS190Quote,
+  RevS133Quote). All 27 dead seats: `session=null`, no hint, no `session_id` anywhere in stream.
+- Window: first start = 1792894711, last end = 1792896200 (matches).
+- Dead-seat durations: all 27 run 420–421 s (`end-start`), consistent with `SEAT_TIMEOUT=420`
+  (launcher.py.txt lines 16, 65–66) — killed by launcher, not self-crash.
+- Retries: 589 `turn.step.retrying` records total across the 32 streams; every record is
+  `APIProviderRateLimitError` HTTP 429, every record `max_attempts=20`; `delay_ms` min 500.35,
+  max 39852.93 (0.5–39.9 s). Matches table.
 
-## Independent committed-byte checks
+## 3. Full errors / tails — byte-for-byte, match
 
-Commands used explicit repository and revision:
+- Table "last non-empty line of `.err`" (`stream tail` = last `turn.step.retrying` record, `last
+  event` = final stream record) compared for all 27 dead seats against raw file bytes: every tail
+  is the verbatim final non-empty line; `retries` counts equal per-seat grep counts; `.err` byte
+  sizes equal the table's `.err bytes` column (e.g. ExecDispatch60 104360, ExecProxy 294225, RevS194Quote
+  49882, RevS126Quote 7579, SentinelBounds 25317, MutDupGroup 2812). No content cutting found.
 
-```sh
-D=/home/vgpnk/Projects/shokunin/kumitate-shokunin
-R=be4a820c344d4eb2f94b999c3b5d649e76ab70f1
-git -C "$D" show "$R:.ufo/waves/round-60/w1/launcher-progress.tsv" | awk -F '\t' 'NF { n++; if ($4 ~ /exit=0/) z++; else if ($4 ~ /exit=-9/) m++; else other++ } END {print "rows=" n, "exit0=" z, "exit-9=" m, "other=" other+0}'
-git -C "$D" show "$R:.ufo/waves/round-60/w1-launcher.log" | awk '/spawn/ {s++} /settled/ {t++} /DONE/ {d++} END {print "spawn="s, "settled="t, "DONE="d+0}'
-```
+## 4. Traceback — exact, match
 
-Observed: `rows=32 exit0=5 exit-9=27 other=0`; `spawn=32 settled=32 DONE=0`. The final committed log lines are exactly:
+`w1-launcher.log` lines 65–68 verbatim: `Traceback` → `ValueError: dictionary update sequence
+element #6 has length 1; 2 is required`; log ends there with no `DONE members=` line. Cause
+re-derived: progress row 3 (ExecCensus) field `#6` = `W04` (no `=`), row 26 (ScoutFrontier)
+`#6` = `corpus/REA`; `swarm-registry.json` at the rev is the `ufo-swarm-registry-v1` shape
+(createdAt 2026-10-25T02:18:21.213Z, members dict), not the launcher's
+`{wave, concurrency, seatTimeoutSec, members}` output — launcher died before its own registry
+write. Matches.
 
-```text
-65:Traceback (most recent call last):
-66:  File "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-60/launcher.py.txt", line 95, in <module>
-67:    parts = dict(p.split("=", 1) for p in line.split("\t")[1:])
-68:ValueError: dictionary update sequence element #6 has length 1; 2 is required
-```
+## 5. Discrepancies found
 
-Important provenance limitation: the cited r61/r62 Audit19 text says its target table is present at `be4a820c`, but `git -C "$D" show "$R:.ufo/waves/round-60/close/dead-seats-r60.md"` fails: “path … exists on disk, but not in …”. Thus the evidence supports independent recomputation of the raw counts/log state, not a revision-pinned comparison against the alleged table at that revision. The same pinned revision's w1 tree has 72 paths (including the 32 error and 32 stream files), but this audit did not read/check every such file; no full no-truncation claim is made.
+1. **Table self-violation: unescaped pipes in two `.err` tail cells.** The table section declares
+   "`|` inside the text is escaped, not cut." Two rows violate it: `RevS134Quote` and
+   `MutDupGroup` embed raw `|` characters in the `.err tail` field (the `\|`-escaped convention is
+   used elsewhere, e.g. the `S134`/`S126` row content). Parsing those rows as a delimited table
+   splits each into 20 columns instead of the 7 defined by the header — e.g.
+   `MutDupGroup` tail contains `| S126 | Detecting Activity failures — Temporal documentation — ...`
+   verbatim with unescaped pipes. The textual content itself is still complete and untruncated;
+   the table's declarable structure is broken for those two rows only.
+2. **A dead seat produced a full report: `w1/RevS126Quote.md` (6826 B, complete) exists for seat
+   `RevS126Quote` (exit -9, `session=null`).** The table's input set claims "32 + 32 files, one
+   pair per seat" (err/stream only) so it does not assert report absence; the escape-62 w1 attack
+   follow-up explicitly accounts for this file as a dead-seat report (`RevS126Quote.md`). Note for
+   the audit: the 32/5/27 dead-seat semantics concern exit codes/sessions, not report artifacts —
+   one dead seat did write its report before the 420 s kill.
+3. **Round-62 re-queue payload omits the report path and lane-bounds lines that the round-61
+   dispatch carried.** Round-61 `w2-dispatch.json` for Audit19 appended: `Lane bounds: leaf
+   member — no subagent dispatch.`, `Judged on: operability, coverage`, and
+   `Report: write your scoped findings to .ufo/waves/round-61/w2/Audit19.md`. The round-62
+   `w2-dispatch.json` task 34 (`Audit19`, role reviewer) contains only the godspeed header +
+   task text — no `Report:` instruction, no report path. The seat's runner message and the
+   assignment fix the path at `.ufo/waves/round-62/w2/Audit19.md`; the dispatch payload itself is
+   ambiguous about where the report must land.
+4. **No provider-prompt re-validation is evidenced; the re-queued payload is byte-near-identical
+   to the one rejected as `invalid_prompt`.** The round-61 seat failed at dispatch (`close/w2-results.json`:
+   status failed, exit 1, error `provider rejected task prompt as invalid_prompt`). The round-62 task
+   payload reproduces the same prompt text (identical `Round60-DeadTable — Audit ...` wording; the
+   `/skill:godspeed\n\n###` → `/skill:godspeed\n###` newline difference is the only delta). The
+   frozen plan calls for the re-queued prompt to be provider-validated before dispatch; no w2
+   launch/validation record exists yet (round-62 `close/` empty; no w2 launch-progress/log), so
+   this requirement is not evidenced as met.
 
-## Finding
+## 6. Result-path inspection
 
-The r62 w1 Audit19 report is useful corroboration and explicitly preserves four incomplete checks, but it does not satisfy the former prompt's full audit dimensions. The main concrete gaps are exhaustive scanning of all 64 files, byte-level traceback verification, and per-row pid/exit/session reconciliation; additionally the alleged comparison target table is absent from the claimed committed revision. These are missing tests/evidence, not a verdict on r62 claims. Evidence pointers: `.ufo/waves/round-61/w2-spec.json:298-304`; `.ufo/waves/round-62/w1/Audit19.md:40-68`; committed evidence at `be4a820c344d4eb2f94b999c3b5d649e76ab70f1` paths above; r62 dispatch `.ufo/waves/round-62/w2-dispatch.json`.
+Round-62 paths inspected: `plan/` is empty and `.ufo/waves/round-62/plan.md` does not exist
+(not in git tree either); `close/`, `baseline/`, `bundlescratch/` empty; `w1/` holds the eight
+routed-item reports (incl. `Audit19.md` plan/evidence note); `w2/` holds `CounterReplay.md`,
+`CriticC1.md`, `ControlMutation.md`, `LessonGate.md`, `ProxyAudit.md`, `R60Erratum.md`; no
+`w2/Audit19.md` existed before this report. The whole `.ufo/waves/round-62/` tree is untracked at
+`HEAD=0cbe0d75` (as is `round-61/controls/r61-c2-full-forgery.bundle`). No w2 dispatch progress,
+launcher log, or results JSON exists yet for the re-queued seat.
+
+## 7. Summary
+
+The dead-seat table's substantive claims (counts 32/5/27, session pairing, pid/exit parity,
+window, timeout-kill mechanic, 429/retry model, traceback exactness, full untruncated tails)
+all re-derive cleanly from the committed blobs. The discrepancies are structural/process ones:
+two rows break the table's own pipe-escaping convention; one dead seat's `.md` report exists;
+and the round-62 re-queue payload is not yet evidenced as provider-validated and lacks the report
+path/lane-bounds fields the round-61 dispatch carried.
