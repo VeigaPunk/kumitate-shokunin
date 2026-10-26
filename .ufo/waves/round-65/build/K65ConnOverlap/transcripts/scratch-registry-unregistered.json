@@ -1,0 +1,11 @@
+{
+  "contract": "kumitate-harm-matrix-v1",
+  "note": "scratch: the 5 SKILL.md checklist commands the v1 harm registry does NOT run",
+  "gates": [
+    { "id": "round-gate", "argv": ["node", "scripts/round-gate.mjs"], "verdict": "^ROUND_GATE: (\\w+)", "clean": ["CLEAN"], "timeout": 120 },
+    { "id": "round-gate-tracked", "argv": ["node", "scripts/round-gate.mjs", "--tracked"], "verdict": "^ROUND_GATE: (\\w+)", "clean": ["CLEAN"], "timeout": 120 },
+    { "id": "anchor-truth-selftest", "argv": ["node", "scripts/anchor-truth.mjs", "--selftest"], "verdict": "^VERDICT: (\\w+)", "clean": ["PASS"], "timeout": 120 },
+    { "id": "cite-check-bare", "argv": ["node", "scripts/cite-check.mjs"], "verdict": "^CITE_CHECK: (\\w+)", "clean": ["CLEAN"], "timeout": 120 },
+    { "id": "gate-mutants", "argv": ["node", "scripts/gate-mutants.mjs"], "verdict": "^GATE_MUTANTS: (\\w+)", "clean": ["CLEAN"], "timeout": 180 }
+  ]
+}
