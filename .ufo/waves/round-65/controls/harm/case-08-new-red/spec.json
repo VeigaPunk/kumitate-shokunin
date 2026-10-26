@@ -1,0 +1,43 @@
+{
+ "id": "new-red",
+ "gates": [
+  {
+   "id": "g1",
+   "argv": [
+    "bash",
+    "scripts/g1.sh"
+   ],
+   "verdict": "^G1: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 5
+  },
+  {
+   "id": "g2",
+   "argv": [
+    "bash",
+    "scripts/g2.sh"
+   ],
+   "verdict": "^G2: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 5
+  }
+ ],
+ "base": {
+  "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+ },
+ "tip": {
+  "scripts/g2.sh": "echo 'G2: DRIFT'; exit 1\n"
+ },
+ "expect": {
+  "exit": 1,
+  "rows": [
+   "g1 HELD",
+   "g2 NEW_RED"
+  ],
+  "summary": "new_red=1"
+ }
+}

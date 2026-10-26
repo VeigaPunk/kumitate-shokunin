@@ -1,0 +1,29 @@
+{
+ "id": "carried-moved-line",
+ "gates": [
+  {
+   "id": "g1",
+   "argv": [
+    "bash",
+    "scripts/g1.sh"
+   ],
+   "verdict": "^G1: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 5
+  }
+ ],
+ "base": {
+  "scripts/g1.sh": "echo 'G1: DRIFT a=1'; exit 1\n"
+ },
+ "tip": {
+  "scripts/g1.sh": "echo 'G1: DRIFT a=5'; exit 1\n"
+ },
+ "expect": {
+  "exit": 0,
+  "rows": [
+   "g1 CARRIED_MOVED"
+  ]
+ }
+}

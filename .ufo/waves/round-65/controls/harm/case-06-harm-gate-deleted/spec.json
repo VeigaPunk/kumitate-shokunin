@@ -1,0 +1,31 @@
+{
+ "id": "harm-gate-deleted",
+ "gates": [
+  {
+   "id": "g1",
+   "argv": [
+    "bash",
+    "scripts/g1.sh"
+   ],
+   "verdict": "^G1: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 5
+  }
+ ],
+ "base": {
+  "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+ },
+ "tip": {},
+ "tip_delete": [
+  "scripts/g1.sh"
+ ],
+ "expect": {
+  "exit": 1,
+  "rows": [
+   "g1 HARM_ABSENT"
+  ],
+  "summary": "harm_absent=1"
+ }
+}

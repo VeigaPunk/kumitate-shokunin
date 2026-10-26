@@ -1,0 +1,29 @@
+{
+ "id": "repaired-from-timeout",
+ "gates": [
+  {
+   "id": "g1",
+   "argv": [
+    "bash",
+    "scripts/g1.sh"
+   ],
+   "verdict": "^G1: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 2
+  }
+ ],
+ "base": {
+  "scripts/g1.sh": "sleep 30; echo 'G1: CLEAN'\n"
+ },
+ "tip": {
+  "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+ },
+ "expect": {
+  "exit": 0,
+  "rows": [
+   "g1 REPAIRED"
+  ]
+ }
+}
