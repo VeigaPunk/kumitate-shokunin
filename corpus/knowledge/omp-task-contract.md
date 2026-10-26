@@ -212,3 +212,26 @@ S004 — `omp --version` on this host; stdout `omp/18.12.3`, observed 2026-10-19
 - S002 — OMP Agent Hub docs: https://github.com/can1357/oh-my-pi/blob/main/docs/agent-hub.md; anchors `#roster-and-inspector`, `#read-and-steer-a-subagent`, `#related-surfaces`, `#persisted-agents-and-advisors`. Latest commit touching this path is recorded in the path query result. Path result object ID: ae29413e870eb186a342b1f9a16e41b65c9d3ed6, 2026-10-19T12:20:43Z.
 - S003 — OMP task agent discovery docs: https://github.com/can1357/oh-my-pi/blob/main/docs/task-agent-discovery.md; anchors `#role-backed-custom-agents`, `#discovery-inputs-and-precedence`, `#merge-and-collision-rules`, `#agent-lookup-and-selection`. Latest commit touching this path is recorded in the path query result. Path result object ID: 2b4e9121fecf0c7ab6daba7cc18cb01325578fe3, 2026-10-14T16:40:06Z.
 - S004 — `omp --version` on this host; stdout `omp/18.12.3`, observed 2026-10-19.
+
+## Amendment 2026-10-25 — the installed release is measured for the MCP constant; the task/hub semantics stay unmeasured
+
+Everything above this heading is the round-34 judged object and is not reworded; this section is appended after its last byte.
+Of the three sentences of § Version skew, one is now answered, one is not, and one is dated:
+
+- «`[INFERENCE]` Version skew is possible; a version-to-commit mapping is UNKNOWN.» — **answered for the installed release.**
+  `omp/18.12.6` is tag `v18.12.6`, commit `45c35e40c46166dc726ccc52f5d27f40f2449f99` (`.ufo/waves/round-65/base/omp-release-tag.txt`,
+  `git ls-remote` at round 65), and the MCP rows round 65 opened are fetched at that tag, not at `main`.
+- «its implementation was not inspected, so no claim is made that every current `main` default or lifecycle behavior matches that
+  binary» — **still true for this entry's subject.** No task-batch shape, recursion depth, idle TTL, isolation backend, merge mode,
+  discovery-precedence or Hub-lifecycle rule above is re-measured against the binary. A byte sweep is not an implementation
+  inspection, and the docs-versus-binary question for task/hub semantics is NOT answered here.
+- «the installed host reports `omp/18.12.3` (S004)» — a dated observation that still stands for 2026-10-19; the host now reports
+  `18.12.6` (`OMP_BIN: real_version=18.12.6`, round 65).
+
+What round 65 adds is narrow and measured: `corpus/knowledge/omp-installed-release-mcp-runtime.md` grounds the MCP half of the
+installed release on rows opened at its tag (S201–S206) and re-measures this host with `scripts/omp-binary-probe.sh` — a read-only
+probe whose only executed program is `<real> --version`. The measured facts are the release version, the wrapper (a script that
+restarts `omp.real` on exit codes 132–139 up to 5 times) and the literals the release bytes carry: `2025-11-25` twice, `2026-07-28`
+zero times, `MCP_PROTOCOL_VERSION` / `MCP-Protocol-Version` / `DeferredMCPTool` three times each. The MCP protocol constant, the
+wrapper and the release version are the whole of what this amendment resolves; the skew named in § Version skew remains open for
+everything the entry above records about task batches, defaults and lifecycle.
