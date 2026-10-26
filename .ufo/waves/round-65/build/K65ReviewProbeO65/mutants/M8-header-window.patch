@@ -1,0 +1,27 @@
+From 311f7e49c413a84f47af7c7c44bacbdbfef28eac Mon Sep 17 00:00:00 2001
+From: fixture <fixture@example.invalid>
+Date: Sun, 25 Oct 2026 22:32:46 -0300
+Subject: [PATCH] M8: four source lines push recheck: to line 6 (O1 window 14,
+ gate window 5)
+
+---
+ corpus/knowledge/omp-installed-release-mcp-runtime.md | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+index 5367edb..33e4e0d 100644
+--- a/corpus/knowledge/omp-installed-release-mcp-runtime.md
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -1,5 +1,7 @@
+-source: S201 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/types.ts` (the MCP revision constant and its doc comment) — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts — `MCP_PROTOCOL_VERSION` at :181 under the doc comment :170-180 ; source: S202 — oh-my-pi v18.12.6, `docs/mcp-runtime-lifecycle.md` (handshake, startup gate, replay rule) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/docs/mcp-runtime-lifecycle.md — § Lifecycle at a glance (:97-107), § Fast startup gate + deferred fallback (:109-124)
+-source: S203 — oh-my-pi commit 10bce690, the decision that set the revision — https://github.com/can1357/oh-my-pi/commit/10bce6900b5bdcf7479ed718f52902feeab9ed00.patch — the commit body and the client.ts hunk ; source: S204 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/client.ts` (what the release's client sends in `initialize` and echoes afterwards) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts — `initializeConnection` (:91-125), the echo (:117-123)
++source: S201 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/types.ts` (the MCP revision constant and its doc comment) — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts — `MCP_PROTOCOL_VERSION` at :181 under the doc comment :170-180
++source: S202 — oh-my-pi v18.12.6, `docs/mcp-runtime-lifecycle.md` (handshake, startup gate, replay rule) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/docs/mcp-runtime-lifecycle.md — § Lifecycle at a glance (:97-107), § Fast startup gate + deferred fallback (:109-124)
++source: S203 — oh-my-pi commit 10bce690, the decision that set the revision — https://github.com/can1357/oh-my-pi/commit/10bce6900b5bdcf7479ed718f52902feeab9ed00.patch — the commit body and the client.ts hunk
++source: S204 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/client.ts` (what the release's client sends in `initialize` and echoes afterwards) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts — `initializeConnection` (:91-125), the echo (:117-123)
+ verified-at: 2026-10-25 (host `OMP_NO_RESTART=1 ~/.local/bin/omp.real --version` → `omp/18.12.6`; `bash scripts/omp-binary-probe.sh` printed 15 `OMP_BIN:` keys, exit 0)
+ recheck: 90d — re-run `bash scripts/omp-binary-probe.sh` and compare its 15 `OMP_BIN:` keys with § Host measurements
+ ground: PROVINCE.md §Frontier — the first entry that measures the **installed** release at the MCP layer
+-- 
+2.56.0
+

@@ -1,0 +1,76 @@
+diff --git a/SCORECARD.md b/SCORECARD.md
+index 31f3528..c1e4d66 100644
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -285,12 +285,12 @@ boundary:
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=351
++A=357
+ C=33
+ C1=19
+ C1_total=19
+-C2=156
+-C2_total=156
++C2=158
++C2_total=158
+ S_members=88
+ S_sections=88
+ R_members=92
+@@ -305,7 +305,7 @@ coverage_kimi=10
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+ pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+-pin.proxy-check=d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f
++pin.proxy-check=9ffefe0f0edf9cd7091224d349b76361205f454d43d086f81fc7ad208e59eddd
+ pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
+ pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
+ -->
+@@ -332,6 +332,7 @@ pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721
+ pin.plan-before-ready=0c7da32a217da1634e9a5ea7e0f8acfe0c4e077e5d64e53c07c0fa6fe292e77e
+ pin.jj-seat-demo=80d174dba368e71296da65f59d93e60fb5e37673f429e3d832be02681c5b480a
+ pin.report-receipt-diff=23efb0908b9ebe51f158f590c6512be59aa183e5e25f268b5e0340f78f2f8927
++pin.harm-matrix=6bde065f8b80a53c864be10fa6a5c30cbaeeafc29847d6a8b397144bf7ce7560
+ -->
+ 
+ 
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index bae8aa4..85bdb39 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -152,9 +152,9 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S200 | Jujutsu (jj) documentation — Working copy — https://docs.jj-vcs.dev/v0.46.0/working-copy/ | docs | A | the jj workspace lifecycle as documented at v0.46.0: several working copies backed by one repo, the stale-working-copy trigger and remedy, and `forget` versus `remove` (the latter is v0.46.0-only; the `forget` sentence is also worded differently from v0.45.1); the lane's S067 holds the v0.45.1 source of the same page, this row is the newer rendering | § Workspaces (first paragraph and the forget and remove paragraphs) and § Stale working copy; docs v0.46.0, cited by its immutable `v0.46.0` path (the `latest` alias served the same bytes on 2026-10-25); the host's jj 0.45.1 lists no remove subcommand (jj workspace --help, 2026-10-25) | releasing a seat has two operations in v0.46.0: jj workspace forget makes the repo forget the workspace and leaves its directory and files on disk, while jj workspace remove forgets it and deletes the directory, snapshotting tracked changes first but deleting ignored files; the main workspace cannot be removed and removing the current workspace needs jj -R from another directory on Windows; on this host (0.45.1) only forget exists, so a seat pool cannot rely on remove; a workspace's working copy goes stale when its working-copy commit is modified from another workspace, and `jj workspace update-stale` updates its files | mined | 2026-10-25 | 180d | corpus/knowledge/jj-workspace-seat-containment.md, corpus/knowledge/agent-isolation-substrates.md, corpus/lessons/round-64.md |
+ 
+ 
+-| S201 | oh-my-pi v18.12.6 packages/coding-agent/src/mcp/types.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts | code | A | the MCP protocol version constant and its rationale comment at the installed release commit | § MCP_PROTOCOL_VERSION; commit 45c35e40c46166dc726ccc52f5d27f40f2449f99 (tag v18.12.6), opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the release pins its MCP protocol constant and states why the floor sits where it does | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
+-| S202 | oh-my-pi v18.12.6 docs/mcp-config.md — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/docs/mcp-config.md | docs | A | the MCP configuration surface documented at the installed release commit | § Preferred config locations; commit 45c35e40c46166dc726ccc52f5d27f40f2449f99, opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the release's own MCP config documentation, read at the tag rather than at main | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
+-| S203 | oh-my-pi release v18.12.6 — https://github.com/can1357/oh-my-pi/releases/tag/v18.12.6 | docs | A | the installed release identity: tag, commit and publication date | § Assets and commit line; tag v18.12.6 = 45c35e40c46166dc726ccc52f5d27f40f2449f99, opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the tag resolves to the commit the other rows are read at | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S201 | oh-my-pi v18.12.6 packages/coding-agent/src/mcp/types.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts | code | A | the MCP protocol version constant and its rationale comment at the installed release commit | § MCP_PROTOCOL_VERSION; tag v18.12.6, opened 2026-10-25 (the row URL carries the release hash) | PLACEHOLDER ROW (round-65 C2 dry-run): the release pins its MCP protocol constant and states why the floor sits where it does | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S202 | oh-my-pi v18.12.6 docs/mcp-config.md — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/docs/mcp-config.md | docs | A | the MCP configuration surface documented at the installed release commit | § Preferred config locations; tag v18.12.6, opened 2026-10-25 (the row URL carries the release hash) | PLACEHOLDER ROW (round-65 C2 dry-run): the release's own MCP config documentation, read at the tag rather than at main | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S203 | oh-my-pi release v18.12.6 — https://github.com/can1357/oh-my-pi/releases/tag/v18.12.6 | docs | A | the installed release identity: tag, commit and publication date | § Assets and tag line; tag v18.12.6, opened 2026-10-25 (the tag page pins the release) | PLACEHOLDER ROW (round-65 C2 dry-run): the tag resolves to the commit the other rows are read at | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+index 9a00b0e..8d97e36 100644
+--- a/corpus/knowledge/omp-installed-release-mcp-runtime.md
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -1,4 +1,4 @@
+-source: S201, S202, S203 — the installed release's MCP protocol constant at commit 45c35e40c46166dc726ccc52f5d27f40f2449f99 (tag v18.12.6), its MCP documentation at the same commit, and the release page — rows opened in round 65 at the installed release tag
++source: S201, S202, S203 — the installed release's MCP protocol constant at tag v18.12.6 (the row URL carries the release hash), its MCP documentation at the same commit, and the release page — rows opened in round 65 at the installed release tag
+ verified-at: 2026-10-25
+ recheck: 30d
+ coverage-map: frontier band "OMP harness contract (task batch, agent hub, agent discovery)" (PROVINCE.md §Frontier)
+diff --git a/scripts/proxy-check.mjs b/scripts/proxy-check.mjs
+index 00ed300..da9777f 100755
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -481,6 +481,7 @@ const GATE_PINS = {
+   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
+   'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
+   'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
++  'pin.harm-matrix': 'scripts/harm-matrix.mjs', // round 65 C1: harm-matrix tool (PIN_UNPINNED at freeze)
+ };
+ /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+ const AXIS_ROWS = [

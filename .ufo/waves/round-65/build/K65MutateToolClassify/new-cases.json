@@ -1,0 +1,383 @@
+{
+ "contract": "kumitate-harm-matrix-v1",
+ "note": "K65MutateToolClassify wave w1: 12 killing cases for harm-matrix v1 (committed 2ca91a0) selftest survivors. Each proven: mutant FAIL (exit 1, HARM_MATRIX_SELFTEST: FAIL (0/1)) vs pristine PASS (1/1). Run: node scripts/harm-matrix.mjs --selftest --cases <this file>. 7 further v1 survivors (20-clone-drop-nocheckout, 22-tmpdir-prefix, 23-etimedout-flip, 24-signal-ternary-swap, 32-mcls-notclean, 33-mcls-timeout, 34-mcls-failclosed) are equivalent-in-contract: cls values and cosmetic strings are never read by transition() and are unpinned by the selftest rows/exit/summary contract. v2 re-validation (uncommitted lane v2, 2026-10-25 23:0x): 10/12 cases PASS on v2; needs-inference-py-absent and default-timeout-60-not-90 are v1-specific (v2 rejects argv[0]!=node/bash with GATES_INVALID and changed the timeout-default surface).",
+ "cases": [
+  {
+   "id": "hyphen-gate-id",
+   "gates": [
+    {
+     "id": "g-1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g-1 HELD"
+    ],
+    "summary": "HARM_MATRIX: CLEAN gates=1 held=1"
+   },
+   "kills": "02-id-hyphen (ID_RE drops [^-])"
+  },
+  {
+   "id": "missing-gate-id",
+   "gates": [
+    {
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [],
+    "summary": "reason=GATES_INVALID"
+   },
+   "kills": "03-id-default (String(g.id || '') -> 'g')"
+  },
+  {
+   "id": "duplicate-gate-id-detail",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    },
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [],
+    "summary": "GATES_INVALID detail=\"duplicate id g1\""
+   },
+   "kills": "06-dup-err-str (GATES_INVALID -> GATES_INVALIDX)"
+  },
+  {
+   "id": "needs-inference-py-absent",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "python3",
+      "scripts/g1.py"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "README.txt": "x\n"
+   },
+   "tip": {
+    "README.txt": "y\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [
+     "g1 ABSENT_BOTH"
+    ],
+    "summary": "reason=NO_GATES"
+   },
+   "kills": "13-needs-regex-drop-py"
+  },
+  {
+   "id": "default-timeout-applied",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ]
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "sleep 20; echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "sleep 20; echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 HELD"
+    ]
+   },
+   "kills": "14-timeout-default-zero (60 -> 0)"
+  },
+  {
+   "id": "default-timeout-60-not-90",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ]
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "sleep 65; echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "sleep 65; echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 CARRIED"
+    ]
+   },
+   "kills": "15-timeout-default-90 (60 -> 90)"
+  },
+  {
+   "id": "gates-unreadable-detail",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "gates_raw": "{not json",
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [],
+    "summary": "detail=\"Expected"
+   },
+   "kills": "19-unreadable-slice (slice(0,160) -> slice(0,1))"
+  },
+  {
+   "id": "empty-gates-array-detail",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "gates_raw": "{\"gates\":[]}",
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [],
+    "summary": "detail=\"no gates array\""
+   },
+   "kills": "17-no-gates-array-detail (+X)"
+  },
+  {
+   "id": "gates-unreadable-str-detail",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "gates_raw": "{not json",
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 2,
+    "rows": [],
+    "summary": "GATES_UNREADABLE d"
+   },
+   "kills": "18-gates-unreadable-str (+X)"
+  },
+  {
+   "id": "indented-verdict-not-matched",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo '  G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 1,
+    "rows": [
+     "g1 HARM"
+    ]
+   },
+   "kills": "35-trimend-to-trim"
+  },
+  {
+   "id": "stdout-before-stderr-verdicts",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: DRIFT' >&2; echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 1,
+    "rows": [
+     "g1 HARM"
+    ]
+   },
+   "kills": "36-stream-swap"
+  },
+  {
+   "id": "timeout-zero-arg-rejected",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 5
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "args": [
+    "--base",
+    "{BASE}",
+    "--tip",
+    "{TIP}",
+    "--gates",
+    "{DIR}/gates.json",
+    "--timeout",
+    "0"
+   ],
+   "expect": {
+    "exit": 64,
+    "rows": []
+   },
+   "kills": "70-timeout-arg-regex (allows 0)"
+  }
+ ]
+}

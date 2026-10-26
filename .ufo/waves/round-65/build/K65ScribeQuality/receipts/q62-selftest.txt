@@ -1,0 +1,12 @@
+CASE ok emit-counts (alpha 3 beta 1 gamma 1 )
+CASE ok honest CLASS_RECUR: CLEAN classes=2 at3=alpha file=/tmp/tmp.8pxTnjLvBh/t-honest.md
+CASE ok count-mismatch CLASS_RECUR: FAIL reason=COUNT_MISMATCH class=alpha table=2 recount=3
+CASE ok routed CLASS_RECUR: FAIL reason=CLASS_ROUTED class=alpha count=3 fix="routed to round 66"
+CASE ok fix-absent CLASS_RECUR: FAIL reason=FIX_ABSENT class=alpha fix=scripts/nope.mjs
+CASE ok class-missing CLASS_RECUR: FAIL reason=CLASS_MISSING class=alpha count=3
+CASE ok gate-unknown CLASS_RECUR: FAIL reason=GATE_UNKNOWN class=alpha gate=no-such-gate
+CASE ok table-absent alpha
+CLASS_RECUR: FAIL reason=TABLE_ABSENT file=/tmp/tmp.8pxTnjLvBh/t-none.md
+CASE ok lessons-absent CLASS_RECUR: FAIL_CLOSED reason=LESSONS_ABSENT dir=/tmp/tmp.8pxTnjLvBh/empty-x
+CLASS_RECUR_SELFTEST: PASS (9/9)
+EXIT=0

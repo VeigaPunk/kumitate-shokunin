@@ -39,9 +39,76 @@ SKILL.md rows with no registry row (15): cite-check.mjs · round-gate.mjs · rou
   cap-run.mjs --selftest · receipt-attest.mjs --selftest · receipt-evidence.mjs --selftest ·
   dispatch-evidence.mjs --selftest · jj-seat-demo.sh
 ```
-The registry's own `note` admits this is deliberate ("Heavy or interactive gates (cite-check, gate-mutants, cap-run, surface-probe --checklists) are out of the registry") — but the note names 4 gates and the gap is 15, and 6 of the 15 are *selftests* (cheap, hermetic, no systemd) that the note does not cover. The freeze's own sibling seat already widened the registry to 36 rows (`.ufo/waves/round-65/build/K65ExecHarmRegistry/registry-v2.json`), which closes 10 of the 15.
+The registry's own `note` admits this is deliberate ("Heavy or interactive gates (cite-check, gate-mutants, cap-run, surface-probe --checklists) are out of the registry") — but the note names **4** gates and the gap is **15** rows, of which **13 are `--selftest` rows** (cheap, hermetic, no systemd) that the note does not cover. The freeze's own sibling seat already widened the registry to 36 rows (`.ufo/waves/round-65/build/K65ExecHarmRegistry/registry-v2.json`), which closes **10 of the 15**, leaving 5 (`cite-check.mjs`, `round-gate.mjs`, `round-gate.mjs --tracked`, `gate-mutants.mjs`, `anchor-truth.mjs --selftest`).
 
-### 3. The drift is measurable, and the "unregistered" gates carry real verdicts
+**Measured with the draft checker** (`registry-coverage.mjs`, §Artifacts) against the **committed v1** registry:
+```
+FINDING GATE_UNREGISTERED node scripts/cite-check.mjs SKILL.md:707 (expect CITE_CHECK:)
+FINDING GATE_UNREGISTERED node scripts/round-gate.mjs SKILL.md:712 (expect ROUND_GATE: CLEAN)
+FINDING GATE_UNREGISTERED node scripts/round-gate.mjs --tracked SKILL.md:713 (expect ROUND_GATE: CLEAN)
+… (13 further selftest rows) …
+FINDING GATE_UNLISTED node scripts/counter-pins.mjs --selftest registry id=counter-pins-selftest
+FINDING GATE_UNLISTED node scripts/harm-matrix.mjs --selftest registry id=harm-matrix-selftest
+REGISTRY_COVERAGE: FINDINGS checklist=33 registry=20 findings=17 unregistered=15 unlisted=2 exit_diverges=0
+```
+exit 1. Against the working-copy registry (36 rows): `registry=36 findings=13 unregistered=5 unlisted=8 exit_diverges=0`, exit 1.
+
+### 3. What the unregistered gates actually read — the gap is not hypothetical
+
+The five SKILL.md gates the v1 registry does not run, measured **in the matrix's own sandbox** at PAIR_A (`a004902d → 47fe2383`), with the committed v1 tool and a scratch registry holding just those five:
+
+```
+HARM_ROW gate=round-gate base=NOT_CLEAN tip=NOT_CLEAN id=CARRIED base_text="ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/.ufo/reports is absent [exit=2]" tip_text="ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/.ufo/reports is absent [exit=2]"
+HARM_ROW gate=round-gate-tracked base=NOT_CLEAN tip=NOT_CLEAN id=CARRIED base_text="ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/.ufo/reports is absent [exit=2]" tip_text="ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir /tmp/.ufo/reports is absent [exit=2]"
+HARM_ROW gate=anchor-truth-selftest base=CLEAN tip=CLEAN id=HELD base_text="VERDICT: PASS" tip_text="VERDICT: PASS"
+HARM_ROW gate=cite-check-bare base=NOT_CLEAN tip=NOT_CLEAN id=CARRIED_MOVED base_text="CITE_CHECK: DRIFT (files=160 tokens=11980 errors=1476 warnings=764) [exit=1]" tip_text="CITE_CHECK: DRIFT (files=161 tokens=12033 errors=1506 warnings=768) [exit=1]"
+HARM_ROW gate=gate-mutants base=CLEAN tip=CLEAN id=HELD base_text="GATE_MUTANTS: CLEAN (mutants=43 killed=43 frozen=41/41 drift=0 targets=2 rev=working-copy manifest=8486506f…)" tip_text="GATE_MUTANTS: CLEAN (…same…)"
+HARM_MATRIX: CLEAN gates=5 held=2 repaired=0 carried=2 moved=1 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=a004902d77d1 tip=47fe238319
+```
+exit 0, 390.69 s. Two of the five read **not-clean for a reason that has nothing to do with the lane**: `round-gate` resolves `DEFAULT_MAIN_REPO = resolve(HERE, '..', '..')` (`scripts/round-gate.mjs:154`), so inside the matrix's sandbox (`/tmp/harm-matrix.XXXX`) it looks for `/tmp/.ufo/reports` — the **sandbox's parent**, not the lane — and fails closed; `cite-check` resolves `opts.fleet = dirname(opts.self)` (`scripts/cite-check.mjs:272`), so it reads `/tmp` as the fleet root. The sibling seat K65ExecHarmRegistry already measured the same escape and proposed `--fleet .` for cite-check; `round-gate` has no such pin. So the registry gap is **partly justified** (these gates are not sandbox-pure) and **partly a hole** (the 13 selftests are hermetic and cost 1.6–7 s each). The registry `note` does not say which is which.
+
+### 4. The lane already has THREE revision-materialization mechanisms; harm-matrix adds a fourth, and the cheapest one is not the one it picked
+
+| mechanism | where | cost measured at `47fe2383` |
+|---|---|---|
+| `git archive \| tar -x` | `scripts/plan-before-ready.sh:178`, `scripts/receipt-evidence.mjs:100-103` | **194 MiB**, no `.git` |
+| `git ls-tree` + `git show` per blob | `scripts/gate-mutants.mjs:739-770 loadRevisionScripts` | scripts/ only, no checkout |
+| `git clone --shared --no-checkout` + `checkout` | (kotoba's `check_gate_finding_delta.py` style) | **196 MiB**, `.git` = 2.2 MiB (alternates) |
+| `git clone --no-hardlinks --no-checkout` + `checkout` | `scripts/harm-matrix.mjs:74-81 sandbox()` | **276 MiB**, `.git` = 83 MiB |
+
+harm-matrix holds **two** of the last one at once (base + tip), i.e. ~552 MiB per invocation, and the lane tree is 908 MiB at HEAD (601 MiB of it `.ufo/waves/round-65`). This is a live constraint on this host, not a theory: while my four matrix runs were in flight `/tmp` hit **100 % (345 MiB free)** and a plain `git clone` of the lane failed with `fatal: failed to copy file … No space left on device`; removing my own 275 MiB scratch clone freed 4.0 GiB. The tool cleans up in a `finally` (`scripts/harm-matrix.mjs:135-136 rmSync`), so the leak is not the tool's — but the *peak* is.
+
+**Does the cheap mechanism work?** Measured, each registry gate run inside a `git archive` tree (no `.git`):
+```
+README_MAP: DRIFT files=157 rows=156 covered=156 bad=2 first=uncovered:lessons/round-64-verifier-spotcheck.md
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+SUMMARY: errors=0 warnings=4          (claims-check)
+COUNTER_PINS: CLEAN pins=25
+SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 …)
+SOURCE_CAPTURE: CLEAN captures=32 exemptions=107
+SOURCE_DUPES: CLEAN groups=6 known=6
+WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+CITE_SOURCES_SELFTEST / COUNTER_PINS_SELFTEST / SOURCES_CHECK_SELFTEST / WAVE_CENSUS_SELFTEST: PASS
+```
+**16 of the 20 registry gates read identically in the archive.** Two do not:
+- `round-gate` → `round-gate: fail-closed — NOT_A_GIT_WORK_TREE: --repo /tmp/tmp.VSrACX91ba is not a git work tree` (exit 2)
+- `anchor-truth --base e18ff1af…` → `TRUTH: FAIL-CLOSED (BASE_UNREADABLE e18ff1af…:.ufo/pins/anchor-truth.json)` (exit 2) — it needs `git show REV:path` (`scripts/anchor-truth.mjs:245,745`)
+
+**The lane's third mechanism closes both.** Using kotoba's pattern (`git archive` + `git read-tree` + `GIT_DIR`/`GIT_WORK_TREE`/`GIT_INDEX_FILE`, `kotoba-shokunin/verifiers/check_gate_finding_delta.py:59-88`) inside the archive tree at `47fe2383`:
+```
+read-tree ok
+round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/.ufo/reports is absent   ← git-ness restored (NOT_A_GIT_WORK_TREE gone)
+TRUTH: FAIL-CLOSED (BASE_UNREADABLE e18ff1af…:.ufo/pins/anchor-truth.json)                  ← still fails: needs the base REV's blob
+```
+and with a **`git clone --shared --no-checkout`** checkout at `a004902d` (196 MiB, `.git` 2.2 MiB):
+```
+TRUTH_WARN review sources are bound against the lane's current HEAD (a004902d77d1) … 
+TRUTH note=corpus/knowledge/remaining-scripts-census.md anchors=521 true=508 debt=4 unchecked=9
+round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir /tmp/tmp.lYHzpPrH4m/.ufo/reports is absent
+```
+⇒ `--shared` restores git-ness at **196 MiB instead of 276 MiB** (a 29 % cut, and it drops the 83 MiB private `.git`), and the clone's `.git` is 2.2 MiB of alternates pointing at the lane. The `round-gate` reports-dir escape is *independent* of the sandbox mechanism (it is `HERE/../..` = the sandbox's parent in any layout) and needs its own pin — that is a `round-gate.mjs` repair (`:154`), not a matrix repair, and it belongs to whoever owns that gate.
+
+### 5. The drift is measurable, and the "unregistered" gates carry real verdicts
 
 `scripts/harm-matrix.mjs` at the **freeze commit** (`git show HEAD:scripts/harm-matrix.mjs`) run over the frozen pair `a004902d → 47fe2383`, with the v1 registry, reproduces the frozen H3 clause exactly:
 
@@ -54,7 +121,7 @@ HARM_MATRIX: HARM gates=19 held=15 repaired=0 carried=2 moved=0 new=0 gone=0 har
 
 With the sibling seat's proposed **registry-v2** (36 rows) the same tool on PAIR_A reads `HARM_MATRIX: HARM gates=35 held=30 … harm=2 harm_absent=0 new_red=0` — the two HARM rows are still exactly `readme-map` and `proxy-check` (exit 1, 145.08 s) — and on PAIR_B `HARM_MATRIX: CLEAN gates=35 … harm=0` with `readme-map`/`proxy-check` REPAIRED plus `report-receipt-diff-selftest` and `jj-seat-demo` NEW_OK and `cap-run-selftest` REPAIRED (exit 0, 307.96 s). **The widened registry does not break the frozen H3 predicate**; it adds coverage and one extra transition class the plan's H3 sentence does not forbid (H3 constrains HARM/HARM_ABSENT/NEW_RED only).
 
-### 4. The reuse option, with the parser's file:line
+### 6. The reuse option, with the parser's file:line
 
 `scripts/surface-probe.mjs` already owns the lane's **frozen checklist grammar**: `CHECKLIST_RE` at `scripts/surface-probe.mjs:278` and `parseChecklist(text)` at `scripts/surface-probe.mjs:979-1003` (label / command / exits / expect, with `- [x]` → checked and an unparsable `- [ ]` → malformed). `scripts/surface-probe.mjs` **exports nothing** and self-executes at `:1903` (`process.exitCode = main();`), so `parseChecklist` cannot be imported — `import('…/surface-probe.mjs')` runs the whole live conformance probe (measured: the import printed a `SURFACE_PROBE: DRIFT (surfaces=2 checks=12 errors=1 warnings=1 src-rev=31c465f15669)` report before resolving). **Concrete reuse options, in order of cost:**
 1. **Copy the two blocks** into the new gate (what the draft below does) and add a source-line comment naming the upstream lines. Zero changes to `surface-probe.mjs`; the risk is a second copy that drifts.
@@ -85,7 +152,11 @@ Reproduce: `node /tmp/kumitate-r65/K65ConnOverlap/tool/harm-matrix.mjs --lane <l
 Attacks: the reuse option. `--checklists` runs one tree only (`--self DIR`, no `--rev`), and its verdict is a substring test that reads `CITE_CHECK: DRIFT` as PASS (measured above). What it *does* own is the frozen grammar for "which commands are lane gates" (`scripts/surface-probe.mjs:278`, `:979`), and that is the reuse. `scripts/surface-probe.mjs` exports nothing and self-executes at `:1903`, so the grammar must be **copied** (option 1) or **lifted into a shared module** (option 2) — importing it does not work.
 Reproduce: `node scripts/surface-probe.mjs --help` (no `--rev`); `node -e "import('…/surface-probe.mjs')"` (prints a full `SURFACE_PROBE:` report before resolving).
 
-**K65ConnOverlap-5 — info — a fleet-root instrument is a neutered fork of souji's two-revision comparator (adjacency watch, outside this lane's write scope).**
+**K65ConnOverlap-5 — medium — the matrix's sandbox mechanism is a FOURTH revision-materialization mechanism in the lane, and the most expensive one; the lane already has three, one of which restores git-ness at 29 % less disk.**
+Attacks: the tool's operational cost and the reuse axis. The lane already materializes a revision three ways: `git archive | tar -x` (`scripts/plan-before-ready.sh:178`, `scripts/receipt-evidence.mjs:100-103`, measured **194 MiB**, no `.git`), `git ls-tree` + `git show` per blob (`scripts/gate-mutants.mjs:739-770`, no checkout at all), and `git clone --shared --no-checkout` + `checkout` (kotoba's pattern, `kotoba-shokunin/verifiers/check_gate_finding_delta.py:59-88`, measured **196 MiB**, `.git` 2.2 MiB of alternates). `scripts/harm-matrix.mjs:74-81 sandbox()` uses `git clone --no-hardlinks --no-checkout` + `checkout` = **276 MiB** with an **83 MiB private `.git`**, and it holds **two** of them at once (base + tip) ⇒ ~552 MiB per invocation. This is not theoretical on this host: with four matrix runs in flight `/tmp` reached **100 % (345 MiB free)** and a plain `git clone` of the lane died with `fatal: failed to copy file … No space left on device`; removing my own 275 MiB scratch clone recovered 4.0 GiB. The tool cleans up correctly (`scripts/harm-matrix.mjs:135-136 rmSync` in a `finally`), so the *leak* is not the tool's — the *peak* is. Measured coverage: **16 of the 20 registry gates read identically in a bare `git archive` tree**; the two that do not are `round-gate` (`NOT_A_GIT_WORK_TREE`) and `anchor-truth --base` (`BASE_UNREADABLE`, it needs `git show REV:path`, `scripts/anchor-truth.mjs:245,745`), and **both are restored by the `--shared` clone** (measured: `TRUTH note=corpus/knowledge/remaining-scripts-census.md anchors=521 true=508 debt=4 unchecked=9`, no BASE_UNREADABLE). Concrete strengthening (never a relaxation): switch `sandbox()` to `git clone -q --shared --no-checkout` + `checkout` (or `git archive` + `git read-tree` + `GIT_DIR`/`GIT_WORK_TREE`, the kotoba pattern, measured to restore git-ness: `NOT_A_GIT_WORK_TREE` → `REPORTS_DIR_MISSING`). Note the `round-gate` reports-dir escape (`scripts/round-gate.mjs:154` `DEFAULT_MAIN_REPO = resolve(HERE, '..', '..')` ⇒ the sandbox's **parent**) is independent of the sandbox mechanism and needs its own pin in `round-gate.mjs`, not in the matrix.
+Reproduce: `D=$(mktemp -d); git clone -q --no-hardlinks --no-checkout <lane> "$D/c"; git -C "$D/c" checkout -q 47fe2383…; du -sh "$D/c" "$D/c/.git"` → 276 MiB / 83 MiB; then `git clone -q --shared --no-checkout <lane> "$D/s"; du -sh "$D/s" "$D/s/.git"` → 196 MiB / 2.2 MiB.
+
+**K65ConnOverlap-6 — info — a fleet-root instrument is a neutered fork of souji's two-revision comparator (adjacency watch, outside this lane's write scope).**
 Attacks: precedent hygiene, not C1. `/home/vgpnk/Projects/shokunin/m-rev-vs-rev.py` is tracked in the fleet repo (`git ls-files -s m-rev-vs-rev.py` → `4b4d076f…`) and is byte-identical to `souji-shokunin/tools/souji-coverage-agreement.py` except **one** line: `base = grounds` (`m-rev-vs-rev.py:118`) where souji has `base = entry_grounds(root, base_rev, knowledge_tree(root, base_rev))` (`souji-coverage-agreement.py:118`). The neutered line makes the `--base-rev` kill rule vacuous. Measured on a purpose-built fixture (a `ground: F1` entry that loses its ground between two commits): souji's tool prints `MISMATCH KILL-RULE corpus/knowledge/x.md base_grounds=F1 lost=F1 rev_grounds=none` … `kill_violations=1`, **exit 1**; the fleet-root copy prints `grounded=0 mapped=0 dangling=0 mismatches=0 kill_tested=0 kill_violations=0`, **exit 0** — the base-rev arm reads *nothing tested*. It is not kumitate's file and kumitate must not patch it; it is exactly the "masked verdict" shape C1's ratchet targets, and it is the reason a new two-revision comparator must be pinned to the revision it names. (kengaku r32 already filed it as a misroot candidate: `kengaku-shokunin/.ufo/waves/round-32/build/R32DraftMistakes.md:35`.)
 Reproduce: `D=$(mktemp -d); git -C "$D" init -q; …` (fixture recipe in the transcript below) then run both tools with `--rev <tip> --base-rev <base>`.
 

@@ -1,0 +1,19 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65MutateToolRender/work/harm-matrix.mjs	2026-10-25 22:34:34.223509715 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65MutateToolRender/work/harm-matrix-p1.mjs	2026-10-25 22:40:49.536621609 -0300
+@@ -178,14 +178,14 @@
+     let fx;
+     try {
+       fx = buildFixture(c);
+-      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D);
++      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D).replaceAll('{BASE12}', fx.baseRev.slice(0, 12)).replaceAll('{TIP12}', fx.tipRev.slice(0, 12));
+       const args = (c.args || ['--base', '{BASE}', '--tip', '{TIP}', '--gates', '{DIR}/gates.json']).map(rep);
+       const r = spawnSync('node', [SELF, '--lane', fx.D, ...args], { encoding: 'utf8', timeout: 180000 });
+       const lines = r.stdout.split('\n');
+       const got = lines.filter((l) => l.startsWith('HARM_ROW ')).map((l) => { const m = /gate=(\S+) .* id=(\S+) base_text/.exec(l); return m ? `${m[1]} ${m[2]}` : l; }).sort();
+       const want = [...(c.expect.rows || [])].sort();
+       const sumLine = lines.find((l) => l.startsWith('HARM_MATRIX: '));
+-      const okSummary = !c.expect.summary || (sumLine && sumLine.includes(c.expect.summary));
++      const okSummary = !c.expect.summary || (sumLine && sumLine.includes(rep(c.expect.summary)));
+       const ok = r.status === c.expect.exit && JSON.stringify(got) === JSON.stringify(want) && okSummary;
+       if (ok) { pass++; out(`CASE ok ${c.id}`); } else out(`CASE FAIL ${c.id} exit=${r.status} want=${c.expect.exit} rows=${JSON.stringify(got)} wantrows=${JSON.stringify(want)} summary=${JSON.stringify(sumLine || null)}`);
+     } catch (e) { out(`CASE FAIL ${c.id} threw ${String(e.message).slice(0, 120)}`); } finally { if (fx) rmSync(fx.D, { recursive: true, force: true }); }

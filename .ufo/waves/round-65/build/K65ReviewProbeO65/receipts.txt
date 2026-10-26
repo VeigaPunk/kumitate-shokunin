@@ -1,0 +1,76 @@
+# K65ReviewProbeO65 — C2 counter receipts (round 65, w1)
+
+Fixture: `git clone --no-hardlinks <lane> /tmp/kumitate-r65/K65ReviewProbeO65/fx.i2Scq3/c` at lane HEAD
+2ca91a0c81542cad5f731049aa55dd2f99ade98d. Every git write named `-C <clone>`, identity passed as
+`-c user.name=fixture -c user.email=fixture@example.invalid`. The lane was never written.
+
+## 1. Host probe determinism (3 runs, lane copy, unmodified)
+
+    $ for i in 1 2 3; do bash scripts/omp-binary-probe.sh; done
+    OMP_BIN: wrapper_is_script=1
+    OMP_BIN: wrapper_names_real=omp.real
+    OMP_BIN: wrapper_restart_codes=132-139
+    OMP_BIN: wrapper_max_restarts=5
+    OMP_BIN: real_is_elf=1
+    OMP_BIN: real_bytes=256702432
+    OMP_BIN: real_version=18.12.6
+    OMP_BIN: lit_2025_11_25=2
+    OMP_BIN: lit_2026_07_28=0
+    OMP_BIN: lit_2025_03_26=2
+    OMP_BIN: sym_MCP_PROTOCOL_VERSION=3
+    OMP_BIN: header_MCP-Protocol-Version=3
+    OMP_BIN: sym_DeferredMCPTool=3
+    OMP_BIN: collab_hosts_literal=2
+    OMP_BIN: docs_phrase_never_replayed=0
+    OMP_BIN_PROBE: DONE omp=18.12.6
+    EXIT=0        (all three runs byte-identical; 0.51-0.55 s each)
+
+## 2. Frozen receipts reproduced
+
+    $ node .ufo/waves/round-65/probe/omp65-probe.mjs <lane> 47fe2383151909d31557ada118ad84f90404dc6c --no-live
+    OMP65_UNMET held=0/8 checks=8 rev=47fe2383151909d31557ada118ad84f90404dc6c rule=O65 | O1 MISS entry-absent | O2 MISS no-entry | O3 MISS no-rows | O4 MISS bullets=0;no-2025-11-25-quote | O5 MISS live-fetch-skipped | O6 MISS stated-keys=0;probe-absent;body-lacks-lit_2026_07_28-or-real_version | O7 MISS census-exit=0 province-names-entry=false readme-map-clean=false sources-check-clean=true | O8 MISS no-amendment-heading,amendment-lacks-entry-or-Version-skew
+    EXIT=1        (identical to base/omp65-base.txt)
+
+    $ bash .ufo/waves/round-65/probe/omp-donothing-control.sh <lane> 47fe2383151909d31557ada118ad84f90404dc6c <probe>
+    OMP65_UNMET held=1/8 checks=8 rev=fd16e02cf4014666e01b61b08821626942a9b24d rule=O65 | O1 MISS trio source=true verified-at=false recheck=true ids=1 | O2 MISS cites-1-rows,S250:not-in-registry | O3 MISS S250:unbound | O4 MISS bullets=0;S250:no-bullet;no-2025-11-25-quote | O5 MISS live-fetch-skipped | O6 MISS stated-keys=0;probe-absent;body-lacks-lit_2026_07_28-or-real_version | O7 MISS census-exit=0 province-names-entry=true readme-map-clean=false sources-check-clean=false
+    EXIT=0        (matches base/omp65-donothing.txt: only O8 passes)
+
+## 3. Hand-made honest entry and mutants (live O5; every run `node <probe> <clone> <rev>`)
+
+    HONEST                   976982ef6a80bdc62dcc7dbe11b8736cc823a638  OMP65_HELD held=8/8 checks=8 rev=976982ef6a80bdc62dcc7dbe11b8736cc823a638 rule=O65            EXIT=0
+    M0-edge-punctuation      c7a76f7b7788ec3daa702633a976519b592b3259  OMP65_HELD held=8/8  (em dash inside a quote, backticks, hyphen, inner double quotes)          EXIT=0
+    M1-doctored-probe        be3729ce5925a6fb1205640248fc42b5bed3ef7d  OMP65_HELD held=8/8  (probe prints constants; body claims 18.12.3 / lit_2026_07_28=4)        EXIT=0
+    M2-swapped-capture       a36d62e6bb432204b21e305ea9b238b3d135b3f7  OMP65_HELD held=8/8  (S204 URL client.ts; pin points at the S203 patch capture)                EXIT=0
+    M3-cross-capture-quote   952c7f738b8ad0c80a15d29eef177edfdb5e8294  OMP65_UNMET held=6/8 | O4 MISS S204:quote-not-in-capture(fix(mcp): send MCP-Protocol-Ve) | O5 MISS S204:quote-not-live(fix(mcp): send MCP-Protocol-Ve)  EXIT=1
+    M4-province-off-section  1af44b49808ac8602b39bda80c6fbd50c35b902a  OMP65_HELD held=8/8  (entry named only under ### Adjacent, "background only")                  EXIT=0
+    M5-equals-value          6c74d0626d2b2500237c63427e23eea3f7545fa4  OMP65_UNMET held=7/8 | O6 MISS real_version:stated=18.12.6=x:live=18.12.6                EXIT=1
+    M6-pin-by-mention        238255777a1ec6d03927e4d2f21025a2b561d5d3  OMP65_HELD held=8/8  (all row URLs are main; /v18.12.6/ only as anchor text)                 EXIT=0
+    M7-twelve-keys           49eb86fe2e6198497fbfb416e38f45567f36f93d  OMP65_UNMET held=7/8 | O6 MISS lit_2025_03_26:stated=undefined:live=2;collab_hosts_literal:stated=undefined:live=2;docs_phrase_never_replayed:stated=undefined:live=0  EXIT=1
+    M8-header-window         311f7e49c413a84f47af7c7c44bacbdbfef28eac  OMP65_UNMET held=7/8 | O7 MISS census-exit=0 province-names-entry=true readme-map-clean=true sources-check-clean=false  EXIT=1
+    M9-false-amendment       2e8fa783ba7dad18aa4aa8340b69a8bedb353d97  OMP65_HELD held=8/8  (amendment names the entry + Version skew and retracts it)               EXIT=0
+    M10-heading-spoof        4c8262f804919200a607a36bcaa3b74254218215  OMP65_UNMET held=7/8 | O8 MISS no-amendment-heading                                      EXIT=1
+    M11-extra-key            311cba80069672515f8e0d35644f6f7bf7ab0289  OMP65_UNMET held=7/8 | O6 MISS real_sha256:stated-not-live                               EXIT=1
+    M12-pin-escapes-archive  30bcca9a07d5ec3d08598fe4c828fd0f933066a0  OMP65_HELD held=8/8  (S204 capture pinned at ../kumitate-r65/... outside the archive)        EXIT=0
+
+## 4. What the honest fixture contains (the 8/8 path)
+
+- Entry `.ufo/waves/round-65/build/K65ReviewProbeO65/honest-entry.md`: two `source:` lines carrying S201-S204
+  (the header triple inside lines 1-4, required by `scripts/sources-check.mjs:369`), `verified-at:`, `recheck:`,
+  7 bullets (one quote carries an em dash, one backticks, one inner double quotes), all 15 `OMP_BIN:` keys verbatim.
+- 4 rows in `corpus/SOURCES.md` (13 split fields, mined, opened 2026-10-25, tier A, used-by = the entry path),
+  captures copied from the scouts' fetches (live fetch of all four URLs is byte-identical: sha256
+  362acea5…f83d, caa3eade…e0d, eedfbbc4…c9b, 479aef6d…fe9), pins, PROVINCE frontier line, README row,
+  `.ufo/pins/readme-map.json` covered entry, appended amendment from K65ScribeEntryA.
+- `sources-census.sh validate` exit 0, `SOURCES_CHECK: CLEAN`, `README_MAP: CLEAN` in the same revision.
+
+## 5. Reproducing (the /tmp clone was deleted; 478 MB of scratch reclaimed)
+
+    D=$(mktemp -d); git clone -q --no-hardlinks <lane> "$D/c"
+    [ "$(git -C "$D/c" rev-parse --show-toplevel)" = "$D/c" ]
+    R=$(bash .ufo/waves/round-65/build/K65ReviewProbeO65/build-fixture.sh "$D/c" HONEST)
+    node .ufo/waves/round-65/probe/omp65-probe.mjs "$D/c" "$R"          # expect HELD 8/8
+    R=$(bash .ufo/waves/round-65/build/K65ReviewProbeO65/build-fixture.sh "$D/c" M6-pin-by-mention)
+    node .ufo/waves/round-65/probe/omp65-probe.mjs "$D/c" "$R"          # expect HELD 8/8 (finding -3)
+
+The SHAs in §3 are fixture-local (commit timestamps differ on re-creation); the verdict lines are the receipt.
+The four live fetches of the row URLs were byte-identical to the scouts' captures (sha256 in §4) and are not kept.

@@ -35,5 +35,11 @@ add('gate-pipe-held-by-background-child', 'K65ExecHarmNormalize-2: a background 
 add('exit-124-by-gate-convention-is-not-a-timeout', 'K65ReviewToolClassify-9: exit 124 chosen by the gate is a normal not-clean exit', { gates: [G('g1')], base: clean('g1'), tip: S('g1', "echo 'G1: DRIFT'; exit 124"), expect: { exit: 1, rows: ['g1 HARM'], text: { g1: 'exit=124' } } });
 add('cross-talk-reset-between-gates', 'K65ExecHarmCases-3: a gate that rewrites another gate cannot change that gate reading', { gates: [G('g1'), G('g2')], base: { ...clean('g1'), ...clean('g2') }, tip: { ...S('g1', "printf \"echo 'G2: CLEAN'\\n\" > scripts/g2.sh; echo 'G1: CLEAN'"), ...drift('g2') }, expect: { exit: 1, rows: ['g1 HELD', 'g2 HARM'] } });
 
+add('default-timeout-60-not-90', 'override of K65MutateToolClassify: both sides TIMEOUT is blind at every gate, so v2 fails closed (ALL_UNMEASURED, exit 2) instead of exit 0', { gates: [G('g1', { timeout: undefined })], base: S('g1', "sleep 65; echo 'G1: CLEAN'"), tip: S('g1', "sleep 65; echo 'G1: CLEAN'"), expect: { exit: 2, rows: ['g1 CARRIED'], summary: 'reason=ALL_UNMEASURED' } });
+
+add('low-disk-fails-closed', 'host incident 2026-10-25 (/tmp 100% full): a full TMPDIR makes gates fail with ENOSPC and read as a false HARM, so the run fails closed first (HARM_MATRIX_MIN_FREE_BYTES)', { gates: [G('g1')], base: clean('g1'), tip: clean('g1'), env: { HARM_MATRIX_MIN_FREE_BYTES: '999999999999999' }, expect: { exit: 2, rows: [], summary: 'reason=LOW_DISK' } });
+
+add('needs-inference-py-absent', 'override of K65MutateToolClassify: argv[0] python3 is outside the {node,bash} allowlist (K65SentinelHarmExec-9), so the registry is invalid before any needs inference', { gates: [{ id: 'g1', argv: ['python3', 'scripts/g1.py'], verdict: '^G1: (\\w+)', clean: ['CLEAN'], timeout: 5 }], base: { 'README.txt': 'x\n' }, tip: { 'README.txt': 'y\n' }, expect: { exit: 2, rows: [], summary: 'reason=GATES_INVALID' } });
+
 writeFileSync(process.argv[2], `${JSON.stringify({ contract: 'kumitate-harm-matrix-v2', cases }, null, 1)}\n`);
 console.log(`generated ${cases.length} cases`);

@@ -1,0 +1,225 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -16,6 +16,12 @@
+  *   ABSENT_BOTH (gate present at neither revision; not counted).
+  * A gate is CLEAN only when its exit code is in `ok_exit` AND the LAST line matching `verdict` carries a first capture in
+  * `clean`. A missing verdict line is FAIL_CLOSED, never clean; a gate that outlives `timeout` is TIMEOUT, never clean.
++ * The capture must end at a word boundary (`CLEAN-STALE` is not `CLEAN`), the verdict must be written to one merged
++ * stream (a stderr diagnostic cannot override a later stdout line), and `needs` must be a regular file inside the
++ * sandbox (a symlink out of it measures host bytes and fails closed). `timeout` on PATH is a hard dependency
++ * (HARM_MATRIX: FAIL_CLOSED reason=TOOL_MISSING). The summary carries `absent_both=` and `unmeasured=`; a registry
++ * that lives in the repo is unioned with the base revision's so a dropped row is still scored (`registry=union added=n`);
++ * `--strict-gone` additionally counts GONE as harm and fails closed when nothing was measurable.
+  *
+  * Registry: scripts/harm-matrix-gates.json next to this file (override with --gates). Each gate:
+  *   { id, argv[], needs (a path that must exist at the revision, default = first *.mjs|js|sh|py argv), ok_exit[] (default [0]),
+@@ -29,9 +35,9 @@
+  * host at both revisions, so a host change between the two runs is not told apart from a revision change.
+  */
+ import { spawnSync } from 'node:child_process';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
++import { lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+-import { dirname, join, resolve } from 'node:path';
++import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+@@ -39,11 +45,13 @@
+ const argv = process.argv.slice(2);
+ const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : d; };
+ const ID_RE = /^[a-z0-9][a-z0-9-]*$/;
++// interpreter flags whose VALUE is not the gate (a value that looks like a script used to become `needs`)
++const NEEDS_FLAG_VALUES = new Set(['--import', '--require', '-r', '--loader', '--experimental-loader', '--eval', '-e', '--print', '-p', '--test-reporter', '--conditions', '-C', '--inspect-port', '--env-file']);
+ const CLEAN_ENV = () => ({ PATH: process.env.PATH || '/usr/bin:/bin', HOME: process.env.HOME || '/tmp', LANG: 'C', LC_ALL: 'C', NO_COLOR: '1' });
+ const GIT_ID = ['-c', 'user.name=harm-matrix', '-c', 'user.email=harm-matrix@invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null'];
+ 
+ const out = (s) => process.stdout.write(`${s}\n`);
+-const usage = () => { process.stderr.write('usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] | --selftest [--cases FILE]\n'); process.exit(64); };
++const usage = () => { process.stderr.write('usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] [--strict-gone] | --selftest [--cases FILE]\n'); process.exit(64); };
+ const failClosed = (reason, detail = '') => { out(`HARM_MATRIX: FAIL_CLOSED reason=${reason}${detail ? ` detail=${JSON.stringify(detail)}` : ''}`); process.exit(2); };
+ const git = (dir, args, extra = {}) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 64 << 20, ...extra });
+ 
+@@ -62,9 +70,24 @@
+     if (typeof g.verdict !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: verdict` };
+     let re;
+     try { re = new RegExp(g.verdict); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: verdict regex` }; }
++    // capture 1 is the verdict word; a pattern without one fell back to m[0], which can equal a clean word
++    // embedded in any sentence (`CLEAN` inside "expected CLEAN, got DRIFT"). Anchoring is required so a
++    // diagnostic line quoting the verdict cannot be read as the verdict.
++    if (!re.source.startsWith('^') || !/\((?!\?)/.test(re.source)) return { error: 'GATES_INVALID', detail: `${g.id}: verdict needs ^anchor and a capturing group 1` };
+     if (!Array.isArray(g.clean) || g.clean.length === 0) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
+     const okExit = Array.isArray(g.ok_exit) && g.ok_exit.length ? g.ok_exit : [0];
+-    const needs = g.needs || g.argv.find((a) => /\.(mjs|js|sh|py)$/.test(a)) || null;
++    // `argv.find(\.mjs|js|sh|py)` took the first script-looking token, including the VALUE of an interpreter
++    // flag: for `node --import x.mjs scripts/y.mjs` needs became x.mjs, so a gate carrying a loader read
++    // ABSENT_BOTH and disappeared from the matrix. Skip flags and their values, then take the first positional.
++    const deriveNeeds = (a) => {
++      for (let i = 1; i < a.length; i++) {
++        if (NEEDS_FLAG_VALUES.has(a[i])) { i++; continue; }
++        if (/^-/.test(a[i])) continue;
++        if (/\.(mjs|cjs|js|sh|py)$/.test(a[i])) return a[i];
++      }
++      return null;
++    };
++    const needs = g.needs || deriveNeeds(g.argv) || null;
+     const timeout = Number.isInteger(g.timeout) && g.timeout > 0 ? g.timeout : 60;
+     gates.push({ id: g.id, argv: g.argv, needs, okExit, re, clean: g.clean, timeout });
+   }
+@@ -80,20 +103,61 @@
+   return { dir };
+ }
+ 
++// A gate is present only when the revision carries a regular file at `needs`. existsSync followed a symlink
++// out of the sandbox (measuring host bytes, not the revision's) and accepted a directory; a needs that is
++// present but not a regular file is a registry defect, so it fails closed instead of reading ABSENT.
++const presence = (dir, rel) => {
++  if (typeof rel !== 'string' || rel === '') return 'invalid';
++  if (isAbsolute(rel)) return 'absolute';
++  if (rel.split('/').includes('..')) return 'escape';
++  let st;
++  try { st = lstatSync(join(dir, rel)); } catch { return 'absent'; }
++  if (st.isSymbolicLink()) {
++    let real;
++    try { real = realpathSync(join(dir, rel)); } catch { return 'dangling-link'; }
++    if (!real.startsWith(realpathSync(dir) + '/')) return 'escape-link';
++    try { st = lstatSync(real); } catch { return 'dangling-link'; }
++  }
++  return st.isFile() ? 'file' : 'not-a-file';
++};
++
+ function measure(g, dir) {
+-  if (g.needs && !existsSync(join(dir, g.needs))) return { cls: 'ABSENT', text: `absent:${g.needs}` };
+-  const r = spawnSync('timeout', ['-k', '2', String(g.timeout), ...g.argv], {
++  if (g.needs) {
++    const p = presence(dir, g.needs);
++    if (p !== 'file') return p === 'absent'
++      ? { cls: 'ABSENT', text: `absent:${g.needs}`, key: `absent:${g.needs}` }
++      : { cls: 'FAIL_CLOSED', text: `needs-${p}:${g.needs}`, key: `needs-${p}:${g.needs}` };
++  }
++  const t0 = Date.now();
++  // `sh -c 'exec "$@" 2>&1'` gives ONE ordered stream: concatenating stdout then stderr puts every stderr
++  // line last, so a stderr diagnostic overrode the true last line whichever was written later.
++  const r = spawnSync('timeout', ['-k', '2', String(g.timeout), 'sh', '-c', 'exec "$@" 2>&1', 'sh', ...g.argv], {
+     cwd: dir, encoding: 'utf8', env: CLEAN_ENV(), maxBuffer: 64 << 20, timeout: (g.timeout + 8) * 1000, killSignal: 'SIGKILL',
+   });
+-  if (r.error && r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+-  const rc = r.status === null ? (r.signal ? 128 : -1) : r.status;
+-  if (rc === 124 || rc === 137) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+-  const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
++  const elapsed = Date.now() - t0;
++  if (r.error) {
++    if (r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s`, key: `timeout>${g.timeout}s` };
++    return { cls: 'FAIL_CLOSED', text: `spawn-error ${r.error.code}`, key: `spawn-error ${r.error.code}` };
++  }
++  const lines = `${r.stdout || ''}`.split('\n').map((l) => l.trimEnd());
+   let hit = null;
+-  for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+-  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
++  for (const l of lines) {
++    const m = g.re.exec(l);
++    if (!m || m[1] === undefined) continue;
++    // the capture must end at a word boundary: `\w+` stops at `-`, so `CLEAN-STALE` captured `CLEAN`
++    if (/[-A-Za-z0-9_]/.test(l.charAt(m.index + m[0].length))) continue;
++    hit = { line: l.trim(), word: m[1] };
++  }
++  if (r.status === null) return { cls: 'FAIL_CLOSED', text: `signal=${r.signal || 'unknown'}${hit ? ` verdict=${JSON.stringify(hit.line.slice(0, 120))}` : ''}`, key: `signal=${r.signal || 'unknown'}` };
++  const rc = r.status;
++  // 124/137 are the wrapper's. A gate that exits 124 on its own did not time out; only a run that used up
++  // its budget is TIMEOUT (137 is also the kernel's OOM kill, which TIMEout hid).
++  if ((rc === 124 || rc === 137) && elapsed >= (g.timeout - 1) * 1000) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s`, key: `timeout>${g.timeout}s` };
++  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}`, key: `no-verdict exit=${rc}` };
+   const clean = g.okExit.includes(rc) && g.clean.includes(hit.word);
+-  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`) };
++  // `key` keeps the full line: `text` is cut at 200 chars for display, and two different lines sharing a
++  // 200-char prefix used to read CARRIED (same line) instead of CARRIED_MOVED.
++  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`), key: hit.line + (clean ? '' : ` [exit=${rc}]`) };
+ }
+ 
+ function transition(b, t) {
+@@ -102,22 +166,46 @@
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+-  return b.text === t.text ? 'CARRIED' : 'CARRIED_MOVED';
++  return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+-function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride }) {
++function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride, strictGone }) {
++  // the wrapper is a hard dependency: without it every gate reads FAIL_CLOSED at both revisions, which the
++  // summary counted as CARRIED and reported as CLEAN exit 0 (a vacuous admission).
++  if (spawnSync('timeout', ['--version'], { encoding: 'utf8' }).error) return { fail: 'TOOL_MISSING', detail: 'timeout (coreutils) is not on PATH: no gate can be spawned' };
+   const lg = loadGates(gatesFile);
+   if (lg.error) return { fail: lg.error, detail: lg.detail };
+   let gates = lg.gates;
+-  if (only) gates = gates.filter((g) => only.includes(g.id));
+-  if (timeoutOverride) gates = gates.map((g) => ({ ...g, timeout: timeoutOverride }));
+-  if (gates.length === 0) return { fail: 'NO_GATES', detail: 'registry empty after --only' };
+   const revs = {};
+   for (const [k, v] of [['base', base], ['tip', tip]]) {
+     const r = git(lane, ['rev-parse', '--verify', `${v}^{commit}`]);
+     if (r.status !== 0) return { fail: 'REV_UNREADABLE', detail: `${k}=${v}` };
+     revs[k] = r.stdout.trim();
+   }
++  // The registry is read once, from the working tree, so a tip that drops a row dropped the gate from BOTH
++  // measurements and it simply stopped being scored. When the registry lives in the repo, union the ids the
++  // base revision carries: a dropped row is still measured, and counted in `absent_both=` if it also lost
++  // its file.
++  let registry = 'registry=tip';
++  const rel = relative(resolve(lane), gatesFile);
++  if (!rel.startsWith('..') && !isAbsolute(rel)) {
++    const r = git(lane, ['show', `${revs.base}:${rel}`]);
++    if (r.status === 0) {
++      const tmp = join(mkdtempSync(join(tmpdir(), 'harm-reg.')), 'gates.json');
++      writeFileSync(tmp, r.stdout);
++      const bl = loadGates(tmp);
++      rmSync(dirname(tmp), { recursive: true, force: true });
++      if (!bl.error) {
++        const seen = new Set(gates.map((g) => g.id));
++        let added = 0;
++        for (const g of bl.gates) if (!seen.has(g.id)) { gates.push(g); seen.add(g.id); added++; }
++        registry = `registry=union added=${added}`;
++      }
++    }
++  }
++  if (only) gates = gates.filter((g) => only.includes(g.id));
++  if (timeoutOverride) gates = gates.map((g) => ({ ...g, timeout: timeoutOverride }));
++  if (gates.length === 0) return { fail: 'NO_GATES', detail: 'registry empty after --only' };
+   const sb = {};
+   try {
+     for (const k of ['base', 'tip']) {
+@@ -131,7 +219,7 @@
+       const t = measure(g, sb.tip);
+       rows.push({ gate: g.id, b, t, id: transition(b, t) });
+     }
+-    return { rows, revs };
++    return { rows, revs, strictGone, registry };
+   } finally {
+     for (const d of Object.values(sb)) rmSync(d, { recursive: true, force: true });
+   }
+@@ -142,9 +230,14 @@
+   for (const r of res.rows) out(`HARM_ROW gate=${r.gate} base=${r.b.cls} tip=${r.t.cls} id=${r.id} base_text=${JSON.stringify(r.b.text)} tip_text=${JSON.stringify(r.t.text)}`);
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH').length;
+   if (counted === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
++  // a row that produced no reading at either revision is not evidence; the default exit mapping is kept
++  // (the frozen H5 reads it) and `unmeasured=`/`--strict-gone` are the reporting side of it.
++  const unmeasured = res.rows.filter((r) => r.id !== 'ABSENT_BOTH' && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
++  if (unmeasured === counted && res.strictGone) failClosed('NO_MEASURABLE_GATE', `${counted} gate(s) unmeasured at both revisions`);
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+-  const bad = harm + harmAbsent + newRed;
+-  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
++  const bad = harm + harmAbsent + newRed + (res.strictGone ? n('GONE') : 0);
++  out(`${res.registry || 'registry=tip'}`);
++  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} absent_both=${n('ABSENT_BOTH')} unmeasured=${unmeasured} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+   return bad === 0 ? 0 : 1;
+ }
+ 
+@@ -203,6 +296,6 @@
+ const only = opt('--only') ? opt('--only').split(',').filter(Boolean) : null;
+ const tmo = opt('--timeout');
+ if (tmo !== undefined && !/^[1-9][0-9]*$/.test(tmo)) usage();
+-const res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0 });
++const res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0, strictGone: argv.includes('--strict-gone') });
+ if (res.fail) failClosed(res.fail, res.detail);
+ process.exit(render(res));

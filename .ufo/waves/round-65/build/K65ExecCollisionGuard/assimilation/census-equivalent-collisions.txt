@@ -1,0 +1,41 @@
+census-equivalent staged<->lane document pairs: 11
+S195 scope='MCP 2026-07-28 stateless request model and notification transport as an orchestration contract; the registry holds the changelog (S010) but never this architecture contract' == lane S125 scope='MCP 2026-07-28 stateless request model as an orchestration contract; the registry held the changelog (S010) but not this architecture page' W04-warn :: modelcontextprotocol.io/docs/2026-07-28/learn/architecture
+S196 scope='the failure-detection and timeout contract a durable-execution orchestrator must implement; S017 holds only the activity-definition idempotency page' == lane S117 scope='Temporal worker-liveness contract: Activity Heartbeats are pings from the executing Worker to the Temporal Service; a missed Heartbeat Timeout marks the Activity failed and frees its slot; the four timeout slots bound each leg' W04-warn :: docs.temporal.io/encyclopedia/detecting-activity-failures
+S196 scope='the failure-detection and timeout contract a durable-execution orchestrator must implement; S017 holds only the activity-definition idempotency page' == lane S126 scope='the failure-detection and timeout contract a durable-execution orchestrator must implement; the same page the lane already holds as S117 under the worker-liveness scope (duplicate group pinned in `.ufo/pins/source-dupes.json`, byte-identical capture)' W04-warn :: docs.temporal.io/encyclopedia/detecting-activity-failures
+S197 scope="the durable-task state machine an MCP orchestrator polls; the lane's own lead (`corpus/SOURCES.md:216-218`) records that S026 read only the README and SEP-2663, not this spec text" == lane S127 scope='the durable-task state machine an MCP orchestrator polls; S026 read the README, not this spec text' W04-warn :: github.com/modelcontextprotocol/ext-tasks/blob/b3d28aceaa6d49f5f92258e3d06b61ad6f111e84/specification/2026-07-28/tasks.md
+S201 scope="a Chinese cloud vendor's managed-agent runtime contract used as a durable-execution substrate; the registry holds no Chinese-language source row at all" == lane S131 scope="a Chinese cloud vendor's managed-agent runtime contract used as a durable-execution substrate; the registry held no Chinese-language source row before this one" W04-warn :: docs.bailian.console.aliyun.com/zh/model-studio/managed-agents-introduction
+S205 scope='the Japanese-language engineering framing of durable execution for long-running agents, from a Japanese corporate engineering blog — the registry holds no Japanese-language source row; secondary to S196, S203 and S204 for the mechanism itself' == lane S135 scope='the Japanese-language engineering framing of durable execution for long-running agents; secondary to S126, S133 and S134 for the mechanism itself' W04-warn :: developers.cyberagent.co.jp/blog/archives/63635
+S206 scope='the Japanese-language practitioner account of the 2026-07-28 stateless delta with a reproduced cross-process experiment; secondary to S195 and S197 for the protocol itself' == lane S136 scope='Japanese practitioner account of the stateless delta; secondary to S125 and S127' W04-warn :: zenn.dev/komlock_lab/articles/mcp-stateless-spec-2026
+S217 scope="the code-pinning contract a durable-execution orchestrator needs so that a replay cannot pick up changed behaviour — the page the lane's own lead named as 'workflow-versioning', which does not exist: Temporal's page is Worker Versioning, found via the site's llms.txt" == lane S195 scope='the version-pinning contract for durable Workflow execution; the registry has not held this concepts page before' W04-warn :: docs.temporal.io/worker-versioning.md
+S260 scope="the fan-out tail primitive behind a multi-seat wave's slowest seat, read for the framing the authors themselves publish; tier=A for the authors' own publication page, canonical DOI 10.1145/2408776.2408794" == lane S190 scope="the fan-out tail primitive behind a multi-seat wave's slowest seat, read for the framing the authors themselves publish" W04-warn :: research.google/pubs/the-tail-at-scale
+S264 scope="the compensating-action primitive behind durable execution, read for the paper's own definition of a saga; tier=A for the canonical paper record (DOI 10.1145/38714.38742), quoted from the full text retrieved this round" == lane S194 scope="the compensating-action primitive behind durable execution, read for the paper's own definition of a saga" W04-warn :: dl.acm.org/doi/10.1145/38714.38742
+S291 scope="a large multi-workspace deployment's own account of jj's stale-workspace behaviour, read because the frontier's question is what a seat pool should run and a policy needs the knob, not the mechanism; tier=A for the project's own contributor documentation" == lane S199 scope="Firefox's own multi-workspace stale-workspace setup: the trigger it names, the knob its `./mach vcs-setup` sets and the per-workspace remedy (tier A is for that deployment's own policy, not for jj's staleness rule); the lane holds no row on this page" W04-warn :: firefox-source-docs.mozilla.org/contributing/jujutsu.html
+
+census-equivalent within-staged duplicate pairs:
+S204+S211 W04-warn :: arxiv.org/abs/2609.29095
+S212+S218 W04-warn :: techblog.spiderplus.co.jp/entry/2026/06/26/120000
+S215+S258 W04-warn :: blog.modelcontextprotocol.io/posts/2026-07-28
+S220+S345 W04-warn :: book.st-hakky.com/column/mcp-stateless-spec-2026-07-28
+S230+S231 W04-warn :: github.com/VeigaPunk/ufo-fsd-alpha
+S233+S319 W04-warn :: modelcontextprotocol.io/specification/2026-07-28/deprecated.md
+S234+S242 W04-warn :: modelcontextprotocol.io/community/feature-lifecycle.md
+S234+S314 W04-warn :: modelcontextprotocol.io/community/feature-lifecycle.md
+S242+S314 W04-warn :: modelcontextprotocol.io/community/feature-lifecycle.md
+S238+S245 W04-warn :: api.github.com/repos/can1357/oh-my-pi/issues/8167
+S239+S240 W04-warn :: modelcontextprotocol.io/specification/draft/deprecated.md
+S239+S331 W04-warn :: modelcontextprotocol.io/specification/draft/deprecated.md
+S240+S331 W04-warn :: modelcontextprotocol.io/specification/draft/deprecated.md
+S241+S334 W04-warn :: api.github.com/repos/modelcontextprotocol/modelcontextprotocol/pulls/2596
+S243+S317 W04-warn :: modelcontextprotocol.io/seps/2596-spec-feature-lifecycle-and-deprecation.md
+S244+S318 W04-warn :: modelcontextprotocol.io/docs/learn/versioning.md
+S256+S257 W04-warn :: raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/2026-07-28/seps/2575-stateless-mcp.md
+S259+S270 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S259+S271 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S259+S280 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S270+S271 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S270+S280 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S271+S280 W04-warn :: docs.jj-vcs.dev/latest/working-copy
+S277+S279 W04-warn :: raw.githubusercontent.com/VeigaPunk/kumitate-shokunin/c562d28557067bf35d78171c5737feee3c8679fd/corpus/README.md
+S290+S295 W04-warn :: docs.jj-vcs.dev/latest/technical/concurrency
+S307+S328 W04-warn :: raw.githubusercontent.com/VeigaPunk/kumitate-shokunin/50548ae5b4a47bb8d8cdc62212ec0648aa3776ee/corpus/README.md
+total within-staged pairs: 26

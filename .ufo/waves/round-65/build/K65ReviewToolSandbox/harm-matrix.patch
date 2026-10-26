@@ -1,0 +1,125 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -31,13 +31,21 @@
+ import { spawnSync } from 'node:child_process';
+ import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+-import { dirname, join, resolve } from 'node:path';
++import { dirname, join, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+ const HERE = dirname(fileURLToPath(import.meta.url));
+ const SELF = fileURLToPath(import.meta.url);
+ const argv = process.argv.slice(2);
+-const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : d; };
++const FLAGS = new Set(['--base', '--tip', '--lane', '--gates', '--only', '--timeout', '--cases', '--selftest']);
++const opt = (k, d) => {
++  const hits = argv.reduce((acc, a, i) => (a === k ? acc.concat(i) : acc), []);
++  if (hits.length > 1) usage();
++  if (hits.length === 0) return d;
++  const v = argv[hits[0] + 1];
++  if (v === undefined || FLAGS.has(v)) usage();
++  return v;
++};
+ const ID_RE = /^[a-z0-9][a-z0-9-]*$/;
+ const CLEAN_ENV = () => ({ PATH: process.env.PATH || '/usr/bin:/bin', HOME: process.env.HOME || '/tmp', LANG: 'C', LC_ALL: 'C', NO_COLOR: '1' });
+ const GIT_ID = ['-c', 'user.name=harm-matrix', '-c', 'user.email=harm-matrix@invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null'];
+@@ -62,9 +70,13 @@
+     if (typeof g.verdict !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: verdict` };
+     let re;
+     try { re = new RegExp(g.verdict); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: verdict regex` }; }
+-    if (!Array.isArray(g.clean) || g.clean.length === 0) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
++    if (!/\((?!\?)/.test(g.verdict)) return { error: 'GATES_INVALID', detail: `${g.id}: verdict has no capture group` };
++    if (!Array.isArray(g.clean) || g.clean.length === 0 || g.clean.some((w) => typeof w !== 'string')) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
+     const okExit = Array.isArray(g.ok_exit) && g.ok_exit.length ? g.ok_exit : [0];
++    if (okExit.some((n) => !Number.isInteger(n))) return { error: 'GATES_INVALID', detail: `${g.id}: ok_exit` };
+     const needs = g.needs || g.argv.find((a) => /\.(mjs|js|sh|py)$/.test(a)) || null;
++    if (needs !== null && typeof needs !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: needs` };
++    if (g.timeout !== undefined && !(Number.isInteger(g.timeout) && g.timeout > 0)) return { error: 'GATES_INVALID', detail: `${g.id}: timeout` };
+     const timeout = Number.isInteger(g.timeout) && g.timeout > 0 ? g.timeout : 60;
+     gates.push({ id: g.id, argv: g.argv, needs, okExit, re, clean: g.clean, timeout });
+   }
+@@ -72,7 +84,8 @@
+ }
+ 
+ function sandbox(lane, rev) {
+-  const dir = mkdtempSync(join(tmpdir(), 'harm-matrix.'));
++  let dir;
++  try { dir = mkdtempSync(join(tmpdir(), 'harm-matrix.')); } catch (e) { return { error: `mkdtemp: ${String((e && e.code) || (e && e.message) || e)}` }; }
+   let r = git(lane, ['clone', '-q', '--no-hardlinks', '--no-checkout', lane, dir]);
+   if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `clone: ${String(r.stderr).slice(0, 160)}` }; }
+   r = git(dir, ['-c', 'advice.detachedHead=false', 'checkout', '-q', rev]);
+@@ -151,19 +164,28 @@
+ // ---------------------------------------------------------------------------------------------------- selftest
+ function buildFixture(c) {
+   const D = realpathSync(mkdtempSync(join(tmpdir(), 'harm-fixture.')));
++  try { return buildFixtureIn(D, c); } catch (e) { rmSync(D, { recursive: true, force: true }); throw e; }
++}
++
++function buildFixtureIn(D, c) {
+   const g = (a) => git(D, [...GIT_ID, ...a]);
+   if (git(D, ['init', '-q']).status !== 0) throw new Error('fixture init');
+   const top = git(D, ['rev-parse', '--show-toplevel']).stdout.trim();
+   if (realpathSync(top) !== D) throw new Error(`fixture toplevel ${top} != ${D}`);
+-  const put = (files) => { for (const [p, body] of Object.entries(files || {})) { mkdirSync(dirname(join(D, p)), { recursive: true }); writeFileSync(join(D, p), body); } };
++  const inside = (p) => {
++    const t = resolve(D, p);
++    if (t !== D && !t.startsWith(D + sep)) throw new Error(`case path escapes the fixture: ${p}`);
++    return t;
++  };
++  const put = (files) => { for (const [p, body] of Object.entries(files || {})) { const t = inside(p); mkdirSync(dirname(t), { recursive: true }); writeFileSync(t, body); } };
+   put(c.base);
+   if (c.gates_raw !== undefined) writeFileSync(join(D, 'gates.json'), c.gates_raw);
+   else writeFileSync(join(D, 'gates.json'), JSON.stringify({ gates: c.gates }));
+   if (g(['add', '-A']).status !== 0 || g(['commit', '-q', '-m', 'base']).status !== 0) throw new Error('fixture base commit');
+   const baseRev = git(D, ['rev-parse', 'HEAD']).stdout.trim();
+   put(c.tip);
+-  for (const p of c.tip_delete || []) rmSync(join(D, p), { force: true });
+-  g(['add', '-A']);
++  for (const p of c.tip_delete || []) rmSync(inside(p), { force: true });
++  if (g(['add', '-A']).status !== 0) throw new Error('fixture tip add');
+   if (c.same_rev) return { D, baseRev, tipRev: baseRev };
+   if (g(['commit', '-q', '--allow-empty', '-m', 'tip']).status !== 0) throw new Error('fixture tip commit');
+   return { D, baseRev, tipRev: git(D, ['rev-parse', 'HEAD']).stdout.trim() };
+@@ -178,15 +200,21 @@
+     let fx;
+     try {
+       fx = buildFixture(c);
+-      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D);
++      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D)
++        .replaceAll('{B12}', fx.baseRev.slice(0, 12)).replaceAll('{T12}', fx.tipRev.slice(0, 12));
+       const args = (c.args || ['--base', '{BASE}', '--tip', '{TIP}', '--gates', '{DIR}/gates.json']).map(rep);
+       const r = spawnSync('node', [SELF, '--lane', fx.D, ...args], { encoding: 'utf8', timeout: 180000 });
+       const lines = r.stdout.split('\n');
+       const got = lines.filter((l) => l.startsWith('HARM_ROW ')).map((l) => { const m = /gate=(\S+) .* id=(\S+) base_text/.exec(l); return m ? `${m[1]} ${m[2]}` : l; }).sort();
+       const want = [...(c.expect.rows || [])].sort();
+-      const sumLine = lines.find((l) => l.startsWith('HARM_MATRIX: '));
+-      const okSummary = !c.expect.summary || (sumLine && sumLine.includes(c.expect.summary));
+-      const ok = r.status === c.expect.exit && JSON.stringify(got) === JSON.stringify(want) && okSummary;
++      const sumLines = lines.filter((l) => l.startsWith('HARM_MATRIX: '));
++      const sumLine = sumLines[0] || null;
++      const okSummary = c.expect.summary === null
++        ? sumLines.length === 0
++        : typeof c.expect.summary === 'string' && sumLines.length === 1 && rep(c.expect.summary) === sumLine;
++      const okStdout = !c.expect.stdout_empty || r.stdout === '';
++      const okStderr = !c.expect.stderr_re || new RegExp(c.expect.stderr_re).test(r.stderr);
++      const ok = r.status === c.expect.exit && JSON.stringify(got) === JSON.stringify(want) && okSummary && okStdout && okStderr;
+       if (ok) { pass++; out(`CASE ok ${c.id}`); } else out(`CASE FAIL ${c.id} exit=${r.status} want=${c.expect.exit} rows=${JSON.stringify(got)} wantrows=${JSON.stringify(want)} summary=${JSON.stringify(sumLine || null)}`);
+     } catch (e) { out(`CASE FAIL ${c.id} threw ${String(e.message).slice(0, 120)}`); } finally { if (fx) rmSync(fx.D, { recursive: true, force: true }); }
+   }
+@@ -200,9 +228,13 @@
+ if (!base || !tip) usage();
+ const lane = resolve(opt('--lane', process.cwd()));
+ const gatesFile = resolve(opt('--gates', join(HERE, 'harm-matrix-gates.json')));
+-const only = opt('--only') ? opt('--only').split(',').filter(Boolean) : null;
++const onlyRaw = opt('--only');
++const only = onlyRaw === undefined ? null : onlyRaw.split(',').map((s) => s.trim()).filter(Boolean);
++if (only !== null && only.length === 0) usage();
+ const tmo = opt('--timeout');
+ if (tmo !== undefined && !/^[1-9][0-9]*$/.test(tmo)) usage();
+-const res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0 });
++let res;
++try { res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0 }); }
++catch (e) { failClosed('INTERNAL', String((e && e.message) || e).slice(0, 160)); }
+ if (res.fail) failClosed(res.fail, res.detail);
+ process.exit(render(res));

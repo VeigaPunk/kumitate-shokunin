@@ -1,0 +1,20 @@
+readme-map	exit=1	1s	README_MAP: DRIFT files=157 rows=156 covered=156 bad=2 first=uncovered:lessons/round-64-verifier-spotcheck.md
+proxy-check	exit=1	1s	PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+claims-check	exit=0	0s	CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+counter-pins	exit=0	0s	COUNTER_PINS: CLEAN pins=25
+sources-check	exit=0	0s	SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)
+source-capture	exit=0	1s	SOURCE_CAPTURE: CLEAN captures=32 exemptions=107
+source-dupes	exit=0	0s	SOURCE_DUPES: CLEAN groups=6 known=6
+kimi-census	exit=1	0s	KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)
+omp-census	exit=1	0s	OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)
+anchor-truth	exit=0	7s	TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+surface-known	exit=0	0s	SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)
+wave-census-r40	exit=0	0s	WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+cite-sources-selftest	exit=0	0s	VERDICT: PASS
+round-gate-selftest	exit=0	26s	VERDICT: PASS
+sources-check-selftest	exit=0	5s	VERDICT: PASS
+counter-pins-selftest	exit=0	0s	VERDICT: PASS
+report-receipt-diff-selftest	exit=0	5s	REPORT_RECEIPT_SELFTEST: PASS (125/125)
+plan-before-ready-selftest	exit=0	11s	PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.hJt0lK
+wave-census-selftest	exit=0	5s	VERDICT: PASS
+harm-matrix-selftest	exit=1	0s	Node.js v24.21.0

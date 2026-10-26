@@ -1,0 +1,40 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/harm-matrix.mjs	2026-10-25 21:51:04.661360829 -0300
++++ ./patched-harm-matrix.mjs	2026-10-25 22:37:57.151859102 -0300
+@@ -66,7 +66,13 @@
+     const okExit = Array.isArray(g.ok_exit) && g.ok_exit.length ? g.ok_exit : [0];
+     const needs = g.needs || g.argv.find((a) => /\.(mjs|js|sh|py)$/.test(a)) || null;
+     const timeout = Number.isInteger(g.timeout) && g.timeout > 0 ? g.timeout : 60;
+-    gates.push({ id: g.id, argv: g.argv, needs, okExit, re, clean: g.clean, timeout });
++    let itemsRe = [];
++    if (g.items !== undefined) {
++      const specs = Array.isArray(g.items) ? g.items : [g.items];
++      if (specs.some((x) => typeof x !== 'string')) return { error: 'GATES_INVALID', detail: `${g.id}: items` };
++      try { itemsRe = specs.map((x) => new RegExp(x)); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: items regex` }; }
++    }
++    gates.push({ id: g.id, argv: g.argv, needs, okExit, re, clean: g.clean, timeout, itemsRe });
+   }
+   return { gates };
+ }
+@@ -91,9 +97,11 @@
+   const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
+   let hit = null;
+   for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+-  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
++  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}`, items: [] };
++  const items = [];
++  for (const re of g.itemsRe || []) for (const l of lines) { const m = re.exec(l.trim()); if (m) items.push(m[1] !== undefined ? m[1] : m[0]); }
+   const clean = g.okExit.includes(rc) && g.clean.includes(hit.word);
+-  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`) };
++  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`), items };
+ }
+ 
+ function transition(b, t) {
+@@ -102,6 +110,8 @@
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
++  const before = new Set(b.items || []);
++  if ((t.items || []).some((x) => !before.has(x))) return 'HARM';
+   return b.text === t.text ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 

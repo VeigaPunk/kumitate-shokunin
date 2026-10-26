@@ -1,0 +1,28 @@
+A00	no overrides: the installed host	0|OMP_BIN_PROBE: DONE omp=18.12.6	0|OMP_BIN_PROBE: DONE omp=18.12.6	PASS	
+A01	wrapper absent (OMP_BIN_WRAPPER=/nonexistent)	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	PASS	
+A02	wrapper present without BIN=, real overridden	0|OMP_BIN_PROBE: DONE omp=1.2.3	0|OMP_BIN_PROBE: DONE omp=1.2.3	PASS	
+A02b	wrapper without BIN=, no real override	0|OMP_BIN_PROBE: DONE omp=18.12.6	2|OMP_BIN_PROBE: FAIL-CLOSED real-unidentified	PASS	
+A03	real absent (OMP_BIN_REAL=/nonexistent)	2|OMP_BIN_PROBE: FAIL-CLOSED real-absent	2|OMP_BIN_PROBE: FAIL-CLOSED real-absent	PASS	
+A04	real present but not executable (0644)	2|OMP_BIN_PROBE: FAIL-CLOSED real-absent	2|OMP_BIN_PROBE: FAIL-CLOSED real-not-executable	PASS	
+A05	real is a text script that prints omp/9.9.9	0|OMP_BIN_PROBE: DONE omp=9.9.9	2|OMP_BIN_PROBE: FAIL-CLOSED real-not-elf	PASS	
+A06	real (ELF) prints an empty --version	2|OMP_BIN_PROBE: FAIL-CLOSED version-unreadable	2|OMP_BIN_PROBE: FAIL-CLOSED version-unreadable	PASS	
+A07	real prints omp/9.9.9 and exits 1	0|OMP_BIN_PROBE: DONE omp=9.9.9	2|OMP_BIN_PROBE: FAIL-CLOSED version-exit-1	PASS	
+A08	real hangs on --version (probe timeout 2s)	124|HANG(harness-timeout) OMP_BIN: real_bytes=15968	2|OMP_BIN_PROBE: FAIL-CLOSED version-timeout	PASS	
+A09	HOME unset with explicit wrapper+real	0|OMP_BIN_PROBE: DONE omp=1.2.3	0|OMP_BIN_PROBE: DONE omp=1.2.3	PASS	
+A10	HOME unset, no overrides (set -u arm)	1|OMP_BIN: wrapper_names_real=omp.real	2|OMP_BIN_PROBE: FAIL-CLOSED real-unidentified	PASS	
+A11	grep missing from PATH	2|OMP_BIN_PROBE: FAIL-CLOSED util-absent	2|OMP_BIN_PROBE: FAIL-CLOSED util-absent-grep	PASS	
+A12	wrapper is a symlink loop	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-symlink-loop	PASS	
+A13	paths containing spaces	0|OMP_BIN_PROBE: DONE omp=1.2.3	0|OMP_BIN_PROBE: DONE omp=1.2.3	PASS	
+A14	real is a directory	2|OMP_BIN_PROBE: FAIL-CLOSED real-absent	2|OMP_BIN_PROBE: FAIL-CLOSED real-is-dir	PASS	
+A15	real executable but unreadable (0111)	0|OMP_BIN_PROBE: DONE omp=1.2.3	2|OMP_BIN_PROBE: FAIL-CLOSED real-unreadable	PASS	
+A16	env -i (no PATH, no HOME)	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	PASS	
+A17	real prints a non-version line, exit 0	0|OMP_BIN_PROBE: DONE omp=not-a-version	2|OMP_BIN_PROBE: FAIL-CLOSED version-shape	PASS	
+A18	wrapper is a directory	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-is-dir	PASS	
+A19	real prints version on stderr only	2|OMP_BIN_PROBE: FAIL-CLOSED version-unreadable	2|OMP_BIN_PROBE: FAIL-CLOSED version-unreadable	PASS	
+A20	timeout missing from PATH	0|OMP_BIN_PROBE: DONE omp=1.2.3	2|OMP_BIN_PROBE: FAIL-CLOSED util-absent-timeout	PASS	
+A21	OMP_BIN_TIMEOUT invalid	0|OMP_BIN_PROBE: DONE omp=1.2.3	2|OMP_BIN_PROBE: FAIL-CLOSED timeout-invalid	PASS	
+A22	wrapper unreadable (0000)	0|OMP_BIN_PROBE: DONE omp=1.2.3	2|OMP_BIN_PROBE: FAIL-CLOSED wrapper-unreadable	PASS	
+A23	real is a symlink loop	2|OMP_BIN_PROBE: FAIL-CLOSED real-absent	2|OMP_BIN_PROBE: FAIL-CLOSED real-symlink-loop	PASS	
+A24	OMP_BIN_TIMEOUT above the counter spawn limit	0|OMP_BIN_PROBE: DONE omp=1.2.3	2|OMP_BIN_PROBE: FAIL-CLOSED timeout-too-large	PASS	
+A25	PATH lacking sed (v1 sed dependency removed)	0|OMP_BIN_PROBE: DONE omp=1.2.3	0|OMP_BIN_PROBE: DONE omp=1.2.3	PASS	
+A00f	freeze-compat (A00 keys=values vs base/omp-binary-probe-freeze.txt)	-	-	PASS	

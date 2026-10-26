@@ -1,0 +1,77 @@
+K65ExecHistoryC — direct gate runs and exit-code edges (round 65 w1)
+All commands run once; lane = /home/vgpnk/Projects/shokunin/kumitate-shokunin.
+Archives: git -C <lane> archive <rev> | tar -x -C /tmp/kumitate-r65/K65ExecHistoryC/arch/<rev>
+Gate env (same as the tool's CLEAN_ENV): env -i PATH HOME LANG=C LC_ALL=C NO_COLOR=1
+
+[1] host paths the archived gates resolve to
+    MISSING /fast/scratch/kumitate-r36/src
+    MISSING /home/vgpnk/Projects/origin-work/ufo-fsd-alpha
+    EXISTS  /home/vgpnk/Projects/ufo-fsd-alpha
+    .ufo/pins/origin.json @89ff4a74:  {"revision":"31c465f15669...","clone":"/fast/scratch/kumitate-r36/src",...}
+    scripts/proxy-check.mjs @f86b8ed0:245  const DEFAULT_SRC = process.env.UFO_SRC || '/home/vgpnk/Projects/origin-work/ufo-fsd-alpha';
+    scripts/claims-check.mjs @f86b8ed0:71  (same literal)
+
+[2] archive 89ff4a74 (pair B tip), gate run as the tool ran it
+    $ node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9
+    TRUTH: FAIL-CLOSED (SRC_MISSING /fast/scratch/kumitate-r36/src)
+    EXIT=2
+    $ node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json
+    surface-probe: fail-closed — --src /fast/scratch/kumitate-r36/src is missing
+    SURFACE_PROBE: FAIL-CLOSED (--src /fast/scratch/kumitate-r36/src is missing)
+    EXIT=2
+
+[3] archive 364f1d59 (pair A tip), gate run as the tool ran it
+    $ node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json
+    surface-probe: unknown argument: --known
+    usage: node scripts/surface-probe.mjs [options]
+    ...
+      --src DIR       origin tree to probe (default: $UFO_SRC, else the first
+                      existing of ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha)
+    PIPE_EXIT=64
+    $ node scripts/proxy-check.mjs --strict
+    PROXY: DRIFT (S_MEMBERS_DRIFT term=S_members declared=114 computed=104 delta=-10; ... ; AXES…
+    PIPE_EXIT=1
+    $ node scripts/claims-check.mjs
+    CLAIMS: DRIFT (SECTION_FILE_UNRESOLVED row=S7 scripts/probe-ufo-route-health.test.mjs does not resolve under --src; ... +28 more)
+    PIPE_EXIT=1
+
+[4] 89ff4a74 replay with its own pin satisfied (who is right)
+    $ git clone -q --no-hardlinks --no-checkout . /tmp/.../clone89
+    $ git -C clone89 checkout -q 89ff4a74
+    # edit clone89/.ufo/pins/origin.json clone=/tmp/kumitate-r65/K65ExecHistoryC/src38
+    # src38 = git clone --no-hardlinks file:///home/vgpnk/Projects/ufo-fsd-alpha, HEAD 31c465f15669f744848bd9f5d56191c5085670f7
+    $ node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9
+    TRUTH_TOTAL anchors=811 true=777 debt=21 unchecked=13
+    TRUTH: CLEAN (notes=4 anchors=811 true=777 debt=21 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+    EXIT=0
+    (archive-only replay, no .git, instead reads: TRUTH: FAIL-CLOSED (BASE_UNREADABLE e18ff1af…:.ufo/pins/anchor-truth.json) EXIT=2 — the gate needs the repo, so the clone is the correct harness)
+    $ node scripts/surface-probe.mjs --known .ufo/pins/surface-known.json
+    SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)   EXIT=0
+    $ node scripts/claims-check.mjs
+    CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)   EXIT=0
+    same tree, committed receipt .ufo/waves/round-38/candidate-c938/truth.txt:
+    TRUTH: CLEAN (notes=4 anchors=811 true=777 debt=21 unchecked=13 base=e18ff1af… src-rev=31c465f15669) / EXIT=0
+
+[5] fixture: gate with no verdict at either revision (mktemp repo, base+tip commits)
+    HARM_ROW gate=honest base=CLEAN tip=CLEAN id=HELD base_text="G1: OK" tip_text="G1: OK"
+    HARM_ROW gate=inapplicable base=FAIL_CLOSED tip=FAIL_CLOSED id=CARRIED base_text="no-verdict exit=64" tip_text="no-verdict exit=64"
+    HARM_MATRIX: CLEAN gates=2 held=1 ... carried=1 ... exit 0
+
+[6] fixture: red gate deleted at tip
+    HARM_ROW gate=redgate base=NOT_CLEAN tip=ABSENT id=GONE base_text="G1: RED [exit=1]" tip_text="absent:g1.mjs"
+    HARM_MATRIX: CLEAN gates=1 ... gone=1 ... exit 0
+
+[7] exit-code edges (live tool, lane revisions)
+    --base 0123456789abcdef0123456789abcdef01234567 --tip 364f1d59
+      HARM_MATRIX: FAIL_CLOSED reason=REV_UNREADABLE detail="base=0123..."        EXIT=2
+    --lane /tmp/kumitate-r65/K65ExecHistoryC/no-such-lane --base f86b8ed0 --tip 364f1d59 --only round-gate-selftest
+      HARM_MATRIX: FAIL_CLOSED reason=REV_UNREADABLE detail="base=f86b8ed0"        EXIT=2   (lane, not rev, is wrong)
+    --base 364f1d59 --tip f86b8ed0 --only surface-known,round-gate-selftest        (reversed pair)
+      HARM_MATRIX: CLEAN gates=2 held=1 carried=1 ...                              EXIT=0
+    --only no-such-gate
+      HARM_MATRIX: FAIL_CLOSED reason=NO_GATES detail="registry empty after --only" EXIT=2
+    all-absent pair 45b4ed3f -> e0f5ca78 (r1 -> r4): 20 ABSENT_BOTH rows, no summary line
+      HARM_MATRIX: FAIL_CLOSED reason=NO_GATES detail="every gate absent at both revisions" EXIT=2
+
+[8] no TIMEOUT row in any of the five pair runs (grep -c TIMEOUT runs/*.txt = 0 each);
+    --timeout 120 was in force for every gate, largest pair wall 44.0 s.

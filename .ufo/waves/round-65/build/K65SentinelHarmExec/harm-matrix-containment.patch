@@ -1,0 +1,175 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -2,9 +2,18 @@
+ /**
+  * harm-matrix.mjs — kumitate lane gate, contract kumitate-harm-matrix-v1 (round 65).
+  *
+- *   node scripts/harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only id,id] [--timeout SECONDS]
++ *   node scripts/harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only id,id] [--timeout SECONDS] [--sandbox CAP_RUN]
+  *   node scripts/harm-matrix.mjs --selftest [--cases FILE]
+  *
++ * Containment (round 65 host-safety review). Every gate runs the tip's code with the lane user's privileges, so the
++ * tool treats that code as hostile: children get a disposable HOME (never the caller's), a PATH of this interpreter
++ * plus the system bins (no shim in ~/.local/bin), no inherited GIT_* / global git config, and a sandbox git checkout
++ * with hooks off. `--sandbox <scripts/cap-run.mjs>` goes further and runs each gate inside cap-run's bwrap sandbox
++ * (read-only /, fresh /tmp and /run, PID namespace, cgroup memory and budget, no network), passing `--no-net` so a
++ * gate cannot fetch or exfiltrate; six registry gates were measured clean under it at this revision (round 65,
++ * K65SentinelHarmExec). Limits of the non-isolated mode (stated): the caller's PATH is still a writable directory on
++ * this host (fnm shims, ~/.local/bin), /tmp is shared, and a gate can still write the lane worktree and refs.
++ *
+  * Why it exists. The admission rule is "every claim verifies and no axis is harmed" (AXES.md). Until round 65 the harm
+  * check was a seat's hand-run list of gates at two revisions (round 64: K64R2ExecHarmBattery). This tool runs a
+  * registry of the lane's gates at BASE and at TIP, each inside its own sandbox clone checked out at that revision (the
+@@ -39,11 +48,19 @@
+ const argv = process.argv.slice(2);
+ const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : d; };
+ const ID_RE = /^[a-z0-9][a-z0-9-]*$/;
+-const CLEAN_ENV = () => ({ PATH: process.env.PATH || '/usr/bin:/bin', HOME: process.env.HOME || '/tmp', LANG: 'C', LC_ALL: 'C', NO_COLOR: '1' });
++// K65SentinelHarmExec 1: a gate must not inherit the host's HOME or the caller's PATH. HOME is a disposable
++// directory (measure()'s caller makes one per revision, removed with the sandbox), so a gate can neither read nor
++// poison ~/.omp, ~/.gitconfig, ~/.local/bin or ~/.config; PATH is this interpreter's directory plus the system bins,
++// so a gate cannot plant a `node`/`bash`/`timeout` shim that later gates, later revisions or later runs would run.
++const CLEAN_ENV = (home) => ({ PATH: `${dirname(process.execPath)}:/usr/bin:/bin`, HOME: home, LANG: 'C', LC_ALL: 'C', NO_COLOR: '1' });
+ const GIT_ID = ['-c', 'user.name=harm-matrix', '-c', 'user.email=harm-matrix@invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null'];
++// K65SentinelHarmExec 2: the sandbox git calls read the caller's global/system config, so a `core.hooksPath` in
++// ~/.gitconfig turned `checkout` into an execution of the hook (measured: HOOK_RAN=2). Hooks are disabled on every
++// sandbox git invocation (not only on fixture commits, where GIT_ID already did it) and global/system config is off.
++const GIT_HARD = (home) => ({ ...process.env, HOME: home, GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_SYSTEM: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', GIT_TERMINAL_PROMPT: '0' });
+ 
+ const out = (s) => process.stdout.write(`${s}\n`);
+-const usage = () => { process.stderr.write('usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] | --selftest [--cases FILE]\n'); process.exit(64); };
++const usage = () => { process.stderr.write('usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] [--sandbox CAP_RUN] | --selftest [--cases FILE]\n'); process.exit(64); };
+ const failClosed = (reason, detail = '') => { out(`HARM_MATRIX: FAIL_CLOSED reason=${reason}${detail ? ` detail=${JSON.stringify(detail)}` : ''}`); process.exit(2); };
+ const git = (dir, args, extra = {}) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 64 << 20, ...extra });
+ 
+@@ -59,6 +76,10 @@
+     if (seen.has(g.id)) return { error: 'GATES_INVALID', detail: `duplicate id ${g.id}` };
+     seen.add(g.id);
+     if (!Array.isArray(g.argv) || g.argv.length === 0 || g.argv.some((a) => typeof a !== 'string')) return { error: 'GATES_INVALID', detail: `${g.id}: argv` };
++    // K65SentinelHarmExec 6: the registry is trusted input (it is committed next to this file), and --gates lets a
++    // caller run any argv with the lane user's privileges. Keep a registry row from smuggling an arbitrary binary
++    // in, so the worst a bad row can do is run a script through an interpreter this tool already trusts.
++    if (g.argv[0] !== 'node' && g.argv[0] !== 'bash') return { error: 'GATES_INVALID', detail: `${g.id}: interpreter ${JSON.stringify(g.argv[0])}` };
+     if (typeof g.verdict !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: verdict` };
+     let re;
+     try { re = new RegExp(g.verdict); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: verdict regex` }; }
+@@ -71,24 +92,43 @@
+   return { gates };
+ }
+ 
+-function sandbox(lane, rev) {
++function sandbox(lane, rev, home) {
+   const dir = mkdtempSync(join(tmpdir(), 'harm-matrix.'));
+-  let r = git(lane, ['clone', '-q', '--no-hardlinks', '--no-checkout', lane, dir]);
++  const env = GIT_HARD(home);
++  let r = git(lane, ['-c', 'core.hooksPath=/dev/null', 'clone', '-q', '--no-hardlinks', '--no-checkout', lane, dir], { env });
+   if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `clone: ${String(r.stderr).slice(0, 160)}` }; }
+-  r = git(dir, ['-c', 'advice.detachedHead=false', 'checkout', '-q', rev]);
++  r = git(dir, ['-c', 'core.hooksPath=/dev/null', '-c', 'advice.detachedHead=false', 'checkout', '-q', rev], { env });
+   if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `checkout: ${String(r.stderr).slice(0, 160)}` }; }
+   return { dir };
+ }
+ 
+-function measure(g, dir) {
+-  if (g.needs && !existsSync(join(dir, g.needs))) return { cls: 'ABSENT', text: `absent:${g.needs}` };
+-  const r = spawnSync('timeout', ['-k', '2', String(g.timeout), ...g.argv], {
+-    cwd: dir, encoding: 'utf8', env: CLEAN_ENV(), maxBuffer: 64 << 20, timeout: (g.timeout + 8) * 1000, killSignal: 'SIGKILL',
++function measure(g, dir, home, isolate) {
++  if (g.needs) {
++    // K65SentinelHarmExec 3: a symlink is stored as mode 120000 and checkout materialises it, so `existsSync`
++    // alone let a vanished gate read bytes from outside the revision (`HELD` for a tree with no gate at all).
++    // Any `needs` that resolves outside the sandbox is treated like a missing gate.
++    let inside = false;
++    try { const rp = realpathSync(join(dir, g.needs)); const rd = realpathSync(dir); inside = rp === rd || rp.startsWith(rd + '/'); } catch { inside = false; }
++    if (!inside) return { cls: 'ABSENT', text: `absent:${g.needs}` };
++  }
++  // K65SentinelHarmExec 4: `--sandbox <cap-run.mjs>` runs each gate inside cap-run's bwrap sandbox (read-only /,
++  // fresh /tmp and /run, PID namespace, cgroup memory/budget, no network with cap-run --no-net). `node` is
++  // mapped to this interpreter so the gate reads the same runtime the tool runs under (cap-run's PATH would
++  // otherwise pick /usr/bin/node).
++  const [cmd, args] = isolate
++    ? [process.execPath, [isolate, '--mem', '1024', '--tasks', '64', '--budget', String(g.timeout), '--no-net', '--', ...g.argv.map((a) => (a === 'node' ? process.execPath : a))]]
++    : ['timeout', ['-k', '2', String(g.timeout), ...g.argv]];
++  const r = spawnSync(cmd, args, {
++    cwd: dir, encoding: 'utf8', env: CLEAN_ENV(home), maxBuffer: 64 << 20, timeout: (g.timeout + 15) * 1000, killSignal: 'SIGKILL',
+   });
+   if (r.error && r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+   const rc = r.status === null ? (r.signal ? 128 : -1) : r.status;
+   if (rc === 124 || rc === 137) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+-  const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
++  const joined = `${r.stdout || ''}\n${r.stderr || ''}`;
++  // cap-run's own verdict is not a gate reading: OOM, budget and signal mean the gate never produced a verdict.
++  const sandboxed = /CAP_RUN: (OOM|BUDGET|SIGNAL)/.exec(joined);
++  if (sandboxed) return { cls: 'FAIL_CLOSED', text: `sandbox-${sandboxed[1]} exit=${rc}` };
++  const lines = joined.split('\n').map((l) => l.trimEnd());
+   let hit = null;
+   for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+   if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
+@@ -105,7 +145,7 @@
+   return b.text === t.text ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+-function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride }) {
++function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride, isolate }) {
+   const lg = loadGates(gatesFile);
+   if (lg.error) return { fail: lg.error, detail: lg.detail };
+   let gates = lg.gates;
+@@ -119,22 +159,42 @@
+     revs[k] = r.stdout.trim();
+   }
+   const sb = {};
++  const homes = {};
++  const disposable = [];
++  let cleanupError = null;
++  let result;
+   try {
+     for (const k of ['base', 'tip']) {
+-      const s = sandbox(lane, revs[k]);
++      homes[k] = mkdtempSync(join(tmpdir(), 'harm-home.'));
++      disposable.push(homes[k]);
++      const s = sandbox(lane, revs[k], homes[k]);
+       if (s.error) return { fail: 'SANDBOX_FAILED', detail: `${k}: ${s.error}` };
+       sb[k] = s.dir;
+     }
+     const rows = [];
+     for (const g of gates) {
+-      const b = measure(g, sb.base);
+-      const t = measure(g, sb.tip);
++      const b = measure(g, sb.base, homes.base, isolate);
++      const t = measure(g, sb.tip, homes.tip, isolate);
+       rows.push({ gate: g.id, b, t, id: transition(b, t) });
+     }
+-    return { rows, revs };
++    result = { rows, revs };
+   } finally {
+-    for (const d of Object.values(sb)) rmSync(d, { recursive: true, force: true });
++    // K65SentinelHarmExec 5: an uncaught rmSync threw out of this `finally`, so a gate that chmod'ed its own
++    // sandbox turned the run into exit 1 (a HARM reading) and left the hostile tree in /tmp. Cleanup failure is a
++    // containment failure: FAIL_CLOSED (exit 2), never a verdict.
++    for (const d of [...Object.values(sb), ...disposable]) {
++      let ok = false;
++      for (let attempt = 0; attempt < 2 && !ok; attempt++) {
++        try { rmSync(d, { recursive: true, force: true, maxRetries: 3 }); ok = true; } catch (e) {
++          // A gate can chmod its own sandbox to 000; one best-effort chmod pass lets the retry succeed.
++          if (attempt === 0) spawnSync('chmod', ['-R', 'u+rwX', d]);
++          else cleanupError = cleanupError || `${d}: ${e.code || e.message}`;
++        }
++      }
++    }
+   }
++  if (cleanupError) return { fail: 'CLEANUP', detail: cleanupError };
++  return result;
+ }
+ 
+ function render(res) {
+@@ -203,6 +263,9 @@
+ const only = opt('--only') ? opt('--only').split(',').filter(Boolean) : null;
+ const tmo = opt('--timeout');
+ if (tmo !== undefined && !/^[1-9][0-9]*$/.test(tmo)) usage();
+-const res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0 });
++const sbOpt = opt('--sandbox');
++const isolate = sbOpt ? resolve(sbOpt) : '';
++if (isolate && !existsSync(isolate)) failClosed('SANDBOX_UNREADABLE', isolate);
++const res = runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride: tmo ? Number(tmo) : 0, isolate });
+ if (res.fail) failClosed(res.fail, res.detail);
+ process.exit(render(res));

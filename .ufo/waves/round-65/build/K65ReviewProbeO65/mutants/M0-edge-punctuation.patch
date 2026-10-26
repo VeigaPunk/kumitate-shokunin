@@ -1,0 +1,26 @@
+From c7a76f7b7788ec3daa702633a976519b592b3259 Mon Sep 17 00:00:00 2001
+From: fixture <fixture@example.invalid>
+Date: Sun, 25 Oct 2026 22:31:05 -0300
+Subject: [PATCH] M0: honest entry with em dash inside a quote, backticks, and
+ a hyphen
+
+---
+ corpus/knowledge/omp-installed-release-mcp-runtime.md | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+index 5367edb..f808245 100644
+--- a/corpus/knowledge/omp-installed-release-mcp-runtime.md
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -19,6 +19,8 @@ tag — a 250 ms startup gate and a no-replay rule (S202) — and no byte sweep
+ - S201 — "Latest MCP protocol revision this client negotiates."
+ - S202 — "performs MCP `initialize` using protocol version `2025-11-25` and advertises the `roots` capability"
+ - S202 — "Connection loss after a request may have reached the server is non-retryable and is never replayed automatically"
++- S202 — "a slow server no longer blocks startup — issue #2100"
++- S202 — "Reconnect retries with backoff (`500`, `1000`, `2000`, `4000` ms)"
+ - S203 — "The Streamable HTTP transport never emitted the MCP-Protocol-Version header and the client pinned the stale 2025-03-26 revision."
+ - S203 — "echo the negotiated version in the MCP-Protocol-Version header at the transport's single #fetch choke point"
+ - S204 — "Streamable HTTP spec requires the MCP-Protocol-Version header after"
+-- 
+2.56.0
+

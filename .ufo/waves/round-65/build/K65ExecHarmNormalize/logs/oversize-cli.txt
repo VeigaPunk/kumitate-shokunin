@@ -1,0 +1,9 @@
+fixture=/tmp/kumitate-r65/K65ExecHarmNormalize/fx2 rev=3cf74e2c6da03e10aa5c0e1263c2347bd69e3ea6 gate: ok_exit=[0,128], script: echo 'G1: CLEAN'; head -c 70000000 /dev/zero | tr '\0' x
+--- unfixed
+HARM_ROW gate=g1 base=CLEAN tip=CLEAN id=HELD base_text="G1: CLEAN" tip_text="G1: CLEAN"
+HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=3cf74e2c6da0 tip=3cf74e2c6da0
+exit=0
+--- patched
+HARM_ROW gate=g1 base=FAIL_CLOSED tip=FAIL_CLOSED id=CARRIED base_text="output>67108864B" tip_text="output>67108864B"
+HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=3cf74e2c6da0 tip=3cf74e2c6da0
+exit=0

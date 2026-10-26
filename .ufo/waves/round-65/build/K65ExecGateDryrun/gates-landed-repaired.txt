@@ -1,0 +1,20 @@
+readme-map	exit=0	1s	README_MAP: CLEAN files=158 rows=158 covered=158
+proxy-check	exit=0	0s	PROXY: MATCH (A=357 C=33 operability=9; C1=19/19 C2=158/158 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+claims-check	exit=0	0s	CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+counter-pins	exit=0	0s	COUNTER_PINS: CLEAN pins=30
+sources-check	exit=0	0s	SOURCES_CHECK: CLEAN (rows=142 tiers=A:119,B:15,C:8 status=queued:13,mined:110,rejected:19 entries_with_source=22 legacy=38)
+source-capture	exit=0	0s	SOURCE_CAPTURE: CLEAN captures=35 exemptions=107
+source-dupes	exit=0	0s	SOURCE_DUPES: CLEAN groups=6 known=6
+kimi-census	exit=1	0s	KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)
+omp-census	exit=1	0s	OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)
+anchor-truth	exit=0	2s	TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)
+surface-known	exit=0	0s	SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)
+wave-census-r40	exit=0	0s	WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+cite-sources-selftest	exit=0	0s	VERDICT: PASS
+round-gate-selftest	exit=0	18s	VERDICT: PASS
+sources-check-selftest	exit=0	5s	VERDICT: PASS
+counter-pins-selftest	exit=0	1s	VERDICT: PASS
+report-receipt-diff-selftest	exit=0	4s	REPORT_RECEIPT_SELFTEST: PASS (125/125)
+plan-before-ready-selftest	exit=0	4s	PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.PlZW6G
+wave-census-selftest	exit=0	4s	VERDICT: PASS
+harm-matrix-selftest	exit=0	8s	HARM_MATRIX_SELFTEST: PASS (26/26)

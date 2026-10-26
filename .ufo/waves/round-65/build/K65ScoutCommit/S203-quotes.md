@@ -1,0 +1,5 @@
+- S203 — "fix(mcp): send MCP-Protocol-Version header and negotiate 2025-11-25"
+- S203 — "The Streamable HTTP transport never emitted the MCP-Protocol-Version header and the client pinned the stale 2025-03-26 revision."
+- S203 — "Spec-current servers (e.g. AWS Bedrock AgentCore Gateway with an outbound per-user OAuth target) discard the negotiated version"
+- S203 — "echo the negotiated version in the MCP-Protocol-Version header at the transport's single #fetch choke point"
+- S203 — "Fixes #8264"

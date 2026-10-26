@@ -1,0 +1,122 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs	2026-10-25 21:57:04.977861673 -0300
++++ ratchet-probe.mjs	2026-10-25 22:37:19.518305334 -0300
+@@ -27,6 +27,7 @@
+  */
+ import { spawnSync } from 'node:child_process';
+ import { createHash } from 'node:crypto';
++import { writeFileSync as wfs, chmodSync } from 'node:fs';
+ import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { join, resolve } from 'node:path';
+@@ -44,6 +45,7 @@
+ const ENTRY = opt('--entry', 'corpus/knowledge/omp-installed-release-mcp-runtime.md');
+ const OPENED = opt('--opened', '2026-10-25');
+ const LIVE = !argv.includes('--no-live');
++const FREEZE = process.env.OMP65_FREEZE || '2ca91a0c81542cad5f731049aa55dd2f99ade98d'; // freeze commit: instrumentation is read from here, never from M
+ 
+ const rv = spawnSync('git', ['-C', lane, 'rev-parse', '--verify', `${rev}^{commit}`], { encoding: 'utf8' });
+ if (rv.status !== 0) { process.stdout.write(`OMP65_UNMET held=0/8 checks=8 rev=${rev} rule=${RULE} | rev-unreadable\n`); process.exit(2); }
+@@ -53,6 +55,10 @@
+ const ar = spawnSync('bash', ['-c', `git -C "${lane}" archive "${full}" | tar -x -C "${T}"`], { encoding: 'utf8' });
+ if (ar.status !== 0) { process.stdout.write(`OMP65_UNMET held=0/8 checks=8 rev=${full} rule=${RULE} | archive-failed\n`); rmSync(T, { recursive: true, force: true }); process.exit(2); }
+ const rd = (rel) => { try { return readFileSync(join(T, rel)); } catch { return null; } };
++const cells0 = (line) => line.replace(/^ {0,3}/, '').split('|').map((c) => c.trim());
++const urlOf = (line) => { const m = line && /(https?:\/\/[^\s|)]+)/.exec(cells0(line)[2] || ''); return m ? m[1] : null; };
++const hostOf = (u) => { try { return new URL(u).host; } catch { return null; } };
++const gitFile = (p) => { const g = spawnSync('git', ['-C', lane, 'show', `${FREEZE}:${p}`], { maxBuffer: 64 * 1024 * 1024 }); return g.status === 0 ? g.stdout : null; };
+ 
+ const norm = (s) => s.toString('utf8')
+   .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+@@ -95,6 +101,7 @@
+ const rows = rowsOf(rd('corpus/SOURCES.md'));
+ const baseSrc = spawnSync('git', ['-C', lane, 'show', `${BASE}:corpus/SOURCES.md`], { encoding: 'buffer', maxBuffer: 64 * 1024 * 1024 });
+ const baseRows = rowsOf(baseSrc.status === 0 ? baseSrc.stdout : null);
++const ALLOWED_HOSTS = new Set([...baseRows.values()].map((l) => hostOf(urlOf(l))).filter(Boolean));
+ const cells = (line) => line.replace(/^ {0,3}/, '').split('|').map((c) => c.trim());
+ if (!entryRaw) check('O2', false, 'no-entry');
+ else {
+@@ -128,6 +135,8 @@
+     const b = rd(c.path);
+     if (!b) { bad.push(`${id}:capture-absent`); continue; }
+     if (createHash('sha256').update(b).digest('hex') !== c.sha256 || b.length !== c.bytes) bad.push(`${id}:hash-or-size`);
++    if (c.url !== urlOf(rows.get(id))) bad.push(`${id}:capture-url-mismatch`);
++    if (Number(c.status) !== 200) bad.push(`${id}:capture-status=${c.status}`);
+     else capText.set(id, norm(b));
+   }
+   check('O3', ids.length > 0 && bad.length === 0, ids.length ? bad.join(',') : 'no-rows');
+@@ -155,7 +164,9 @@
+     if (b.q.trim().split(/\s+/).length > 25) bad.push(`${b.id}:over-25-words`);
+     if (!ids.includes(b.id)) { bad.push(`${b.id}:not-a-source`); continue; }
+     const t = capText.get(b.id);
+-    if (!t || !t.includes(norm(b.q))) bad.push(`${b.id}:quote-not-in-capture(${b.q.slice(0, 30)})`);
++    const qn = norm(b.q);
++    if (qn.length < 8 || !/[A-Za-z0-9]/.test(qn)) bad.push(`${b.id}:quote-empty-or-short`);
++    else if (!t || !t.includes(qn)) bad.push(`${b.id}:quote-not-in-capture(${b.q.slice(0, 30)})`);
+   }
+   check('O4', bad.length === 0, bad.slice(0, 6).join(';'));
+ }
+@@ -171,6 +182,10 @@
+     if (!url) { bad.push(`${id}:no-url`); continue; }
+     const r = spawnSync('curl', ['-fsSL', '--max-time', '90', '--retry', '2', '-A', 'Mozilla/5.0 (kumitate-omp65)', url[1]], { maxBuffer: 128 * 1024 * 1024 });
+     if (r.status !== 0) { bad.push(`${id}:live-unreachable`); continue; }
++    const cap = caps.get(id);
++    if (!cap || createHash('sha256').update(r.stdout).digest('hex') !== cap.sha256) bad.push(`${id}:live-body-differs-from-capture`);
++    const host = hostOf(url[1]);
++    if (!host || !ALLOWED_HOSTS.has(host)) bad.push(`${id}:url-host-not-in-registry(${host})`);
+     live.set(id, norm(r.stdout));
+   }
+   for (const b of bullets) {
+@@ -198,7 +213,11 @@
+   const probe = join(T, 'scripts', 'omp-binary-probe.sh');
+   if (!existsSync(probe)) bad.push('probe-absent');
+   else {
+-    const r = spawnSync('bash', [probe], { encoding: 'utf8', timeout: 180000 });
++    const frozen = gitFile('scripts/omp-binary-probe.sh');
++    const runnable = join(T, '.omp65-frozen-probe.sh');
++    if (!frozen) bad.push('frozen-probe-unreadable');
++    else { wfs(runnable, frozen); chmodSync(runnable, 0o755); }
++    const r = frozen ? spawnSync('bash', [runnable], { encoding: 'utf8', timeout: 180000 }) : { status: 1, stdout: '' };
+     if (r.status !== 0) bad.push(`probe-exit=${r.status}`);
+     const live = new Map();
+     for (const l of (r.stdout || '').split('\n')) { const m = /^OMP_BIN: ([A-Za-z0-9_-]+)=(.*)$/.exec(l); if (m) live.set(m[1], m[2]); }
+@@ -207,7 +226,7 @@
+     const real = live.get('real_version');
+     if (!real) bad.push('no-real-version');
+     else {
+-      const pinned = ids.filter((id) => { const u = rows.get(id) || ''; return u.includes(`/v${real}/`) || u.includes(`/${RELEASE_COMMIT}/`); });
++      const pinned = ids.filter((id) => { const u = urlOf(rows.get(id)) || ''; return u.includes(`/v${real}/`) || u.includes(`/${RELEASE_COMMIT}/`); });
+       if (pinned.length < 2) bad.push(`rows-pinned-to-installed-version=${pinned.length}<2`);
+     }
+   }
+@@ -219,14 +238,28 @@
+ {
+   const r = spawnSync('bash', [CENSUS, 'validate', '--file', join(T, 'corpus', 'SOURCES.md')], { encoding: 'utf8' });
+   const prov = rd('PROVINCE.md');
+-  const named = prov ? prov.toString('utf8').split('\n').some((l) => l.includes(ENTRY) && /frontier|band|ground|first entry|advanced/i.test(l)) : false;
++  let named = false;
++  if (prov) {
++    const pt = prov.toString('utf8');
++    const at = pt.search(/^#{2,3}\s+Frontier\b.*$/m);
++    if (at >= 0) {
++      const rest = pt.slice(at);
++      const end = rest.slice(1).search(/^#{1,3}\s/m);
++      const sec = end < 0 ? rest : rest.slice(0, end + 1);
++      named = sec.split('\n').some((l) => l.includes(ENTRY));
++    }
++  }
+   let clean = false; let sclean = false;
+   if (existsSync(join(T, 'scripts', 'readme-map.mjs'))) {
+-    const m = spawnSync('node', ['scripts/readme-map.mjs'], { cwd: T, encoding: 'utf8' });
++    const ob = gitFile('scripts/readme-map.mjs');
++    if (ob) wfs(join(T, '.oracle-readme-map.mjs'), ob);
++    const m = ob ? spawnSync('node', ['.oracle-readme-map.mjs'], { cwd: T, encoding: 'utf8' }) : { status: 1, stdout: '' };
+     clean = m.status === 0 && /README_MAP: CLEAN/.test(m.stdout);
+   }
+   if (existsSync(join(T, 'scripts', 'sources-check.mjs'))) {
+-    const m = spawnSync('node', ['scripts/sources-check.mjs'], { cwd: T, encoding: 'utf8' });
++    const ob = gitFile('scripts/sources-check.mjs');
++    if (ob) wfs(join(T, '.oracle-sources-check.mjs'), ob);
++    const m = ob ? spawnSync('node', ['.oracle-sources-check.mjs'], { cwd: T, encoding: 'utf8' }) : { status: 1, stdout: '' };
+     sclean = m.status === 0 && /SOURCES_CHECK: CLEAN/.test(m.stdout);
+   }
+   check('O7', r.status === 0 && named && clean && sclean, `census-exit=${r.status} province-names-entry=${named} readme-map-clean=${clean} sources-check-clean=${sclean}`);

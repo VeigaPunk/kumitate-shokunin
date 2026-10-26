@@ -1,0 +1,8 @@
+- S202 — "performs MCP initialize using protocol version 2025-11-25 and advertises the roots capability"
+- S202 — "OMP_MCP_STARTUP_TIMEOUT_MS env override, else mcp.startupTimeoutMs, else 250 ms; 0 waits until initial loads settle"
+- S202 — "use cached tool definitions if available (MCPToolCache.get) to create DeferredMCPTools"
+- S202 — "the background continuation registers their tools via #onToolsChanged once connect/list finishes"
+- S202 — "Connection loss after a request may have reached the server is non-retryable and is never replayed automatically"
+- S202 — "Refused connections are retried."
+- S202 — "Reconnect retries with backoff (500, 1000, 2000, 4000 ms)"
+- S202 — "stale tools remain while reconnecting and future calls may retry once or fail with MCP errors"

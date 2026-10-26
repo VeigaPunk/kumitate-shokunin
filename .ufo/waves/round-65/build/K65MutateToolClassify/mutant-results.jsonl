@@ -1,0 +1,70 @@
+{"name":"01-id-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held (exit 2 vs 0)"}
+{"name":"02-id-hyphen","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:hyphen-gate-id"}
+{"name":"03-id-default","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:missing-gate-id"}
+{"name":"04-listlen-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"05-dup-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"06-dup-err-str","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:duplicate-gate-id-detail"}
+{"name":"07-argvlen-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"08-argvstr-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"09-verdicttype-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"10-cleanlen-flip","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"11-okexit-default-empty","verdict":"KILLED","pass":"9/26","killer":"honest-held"}
+{"name":"12-okexit-default-one","verdict":"KILLED","pass":"9/26","killer":"honest-held"}
+{"name":"13-needs-regex-drop-py","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:needs-inference-py-absent (v1; superseded on v2)"}
+{"name":"14-timeout-default-zero","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:default-timeout-applied"}
+{"name":"15-timeout-default-90","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:default-timeout-60-not-90 (v1; v2 exit 2)"}
+{"name":"16-gates-key","verdict":"KILLED","pass":"3/26","killer":"honest-held"}
+{"name":"17-no-gates-array-detail","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:empty-gates-array-detail"}
+{"name":"18-gates-unreadable-str","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:gates-unreadable-str-detail"}
+{"name":"19-unreadable-slice","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:gates-unreadable-detail"}
+{"name":"20-clone-drop-nocheckout","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (clone+checkout -q rev identical)"}
+{"name":"21-checkout-flag","verdict":"KILLED","pass":"4/26","killer":"honest-held (SANDBOX_FAILED)"}
+{"name":"22-tmpdir-prefix","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (cosmetic)"}
+{"name":"23-etimedout-flip","verdict":"SURVIVED_EQUIVALENT_UNREACHABLE","pass":"26/26","killer":"none (probe: spawnSync returned ms=4003 signal=SIGKILL error=undefined)"}
+{"name":"24-signal-ternary-swap","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (uniform no-verdict text template)"}
+{"name":"25-rc124-flip","verdict":"KILLED","pass":"7/26","killer":"honest-held (all-TIMEOUT)"}
+{"name":"26-rc137-flip","verdict":"KILLED","pass":"7/26","killer":"honest-held (all-TIMEOUT)"}
+{"name":"27-capture-swap","verdict":"KILLED","pass":"8/26","killer":"honest-held (word 'G1: CLEAN' not in clean)"}
+{"name":"28-and-to-or","verdict":"KILLED","pass":"23/26","killer":"harm-exit-code-with-clean-line"}
+{"name":"29-clean-membership-neg","verdict":"KILLED","pass":"8/26","killer":"honest-held"}
+{"name":"30-okexit-membership-neg","verdict":"KILLED","pass":"8/26","killer":"honest-held"}
+{"name":"31-mcls-clean","verdict":"KILLED","pass":"8/26","killer":"honest-held (CARRIED != HELD)"}
+{"name":"32-mcls-notclean","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (cls never read by transition(); unpinned by harness)"}
+{"name":"33-mcls-timeout","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (cls unpinned)"}
+{"name":"34-mcls-failclosed","verdict":"SURVIVED_EQUIVALENT","pass":"26/26","killer":"none (cls unpinned)"}
+{"name":"35-trimend-to-trim","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:indented-verdict-not-matched"}
+{"name":"36-stream-swap","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:stdout-before-stderr-verdicts (v2 interleaves streams; fixed there)"}
+{"name":"37-split-nl","verdict":"KILLED","pass":"24/26","killer":"last-verdict-wins"}
+{"name":"38-regexp-global","verdict":"KILLED","pass":"25/26","killer":"last-verdict-wins"}
+{"name":"39-absboth-str","verdict":"KILLED","pass":"24/26","killer":"absent-both-skipped"}
+{"name":"40-newok-str","verdict":"KILLED","pass":"25/26","killer":"new-ok"}
+{"name":"41-newred-str","verdict":"KILLED","pass":"25/26","killer":"new-red"}
+{"name":"42-harmabsent-str","verdict":"KILLED","pass":"25/26","killer":"harm-gate-deleted"}
+{"name":"43-gone-str","verdict":"KILLED","pass":"25/26","killer":"gone-red-gate"}
+{"name":"44-held-str","verdict":"KILLED","pass":"17/26","killer":"honest-held"}
+{"name":"45-harm-str","verdict":"KILLED","pass":"19/26","killer":"harm-verdict"}
+{"name":"46-repaired-str","verdict":"KILLED","pass":"23/26","killer":"repaired"}
+{"name":"47-carried-str","verdict":"KILLED","pass":"25/26","killer":"carried-same-line"}
+{"name":"48-moved-str","verdict":"KILLED","pass":"25/26","killer":"carried-moved-line"}
+{"name":"49-absflip-base","verdict":"KILLED","pass":"22/26","killer":"absent-both-skipped"}
+{"name":"50-absflip-tip","verdict":"KILLED","pass":"22/26","killer":"absent-both-skipped"}
+{"name":"51-new-abs-flip","verdict":"KILLED","pass":"5/26","killer":"absent-both-skipped"}
+{"name":"52-gone-abs-flip","verdict":"KILLED","pass":"5/26","killer":"harm-gate-deleted"}
+{"name":"53-new-ok-flip","verdict":"KILLED","pass":"24/26","killer":"new-ok"}
+{"name":"54-harmabsent-flip","verdict":"KILLED","pass":"24/26","killer":"harm-gate-deleted"}
+{"name":"55-held-flip-base","verdict":"KILLED","pass":"7/26","killer":"honest-held"}
+{"name":"56-held-flip-tip","verdict":"KILLED","pass":"11/26","killer":"honest-held"}
+{"name":"57-repaired-flip","verdict":"KILLED","pass":"21/26","killer":"repaired"}
+{"name":"58-carried-eq-flip","verdict":"KILLED","pass":"24/26","killer":"carried-same-line"}
+{"name":"59-base-tip-swap","verdict":"KILLED","pass":"13/26","killer":"repaired"}
+{"name":"60-treeish","verdict":"KILLED","pass":"4/26","killer":"honest-held (SANDBOX_FAILED; git checkout <tree> fatal rc 128)"}
+{"name":"61-opt-guard","verdict":"KILLED","pass":"4/26","killer":"honest-held (lane default cwd non-git -> REV_UNREADABLE)"}
+{"name":"62-usage-exit","verdict":"KILLED","pass":"25/26","killer":"usage-missing-base"}
+{"name":"63-failclosed-exit","verdict":"KILLED","pass":"22/26","killer":"rev-unreadable"}
+{"name":"64-failclosed-text","verdict":"KILLED","pass":"25/26","killer":"rev-unreadable"}
+{"name":"65-summary-clean","verdict":"KILLED","pass":"25/26","killer":"honest-held"}
+{"name":"66-summary-harm","verdict":"KILLED","pass":"25/26","killer":"harm-verdict"}
+{"name":"67-row-tag","verdict":"KILLED","pass":"4/26","killer":"honest-held"}
+{"name":"68-selftest-flag","verdict":"KILLED","pass":"no-output","killer":"all cases (usage exit 64)"}
+{"name":"69-cases-default","verdict":"KILLED","pass":"cases-unreadable","killer":"all cases (exit 1)"}
+{"name":"70-timeout-arg-regex","verdict":"SURVIVED->KILLED_BY_NC","pass":"26/26","killer":"new-cases.json:timeout-zero-arg-rejected (v2 has v2-cli-timeout-zero-usage)"}

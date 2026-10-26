@@ -40,7 +40,8 @@
  * that differ are CARRIED_MOVED and are not ranked; host-state gates read the same host at both revisions.
  */
 import { spawnSync } from 'node:child_process';
-import { chmodSync, closeSync, existsSync, lstatSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { chmodSync, closeSync, existsSync, lstatSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, realpathSync, rmSync, statSync, statfsSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -292,6 +293,13 @@ function runMatrix(o) {
     gates = gates.filter((g) => want.includes(g.id));
   }
   if (o['--timeout'] !== undefined) gates = gates.map((g) => ({ ...g, timeout: Number(o['--timeout']) }));
+  // two sandbox clones of this lane are ~0.2-0.5 GB each and gates write scratch: on a full TMPDIR gates fail with
+  // ENOSPC and read as FAIL_CLOSED, i.e. a false HARM (observed 2026-10-25, host /tmp at 100%). Fail closed first.
+  try {
+    const sf = statfsSync(tmpdir());
+    const minFree = Number(process.env.HARM_MATRIX_MIN_FREE_BYTES || 1.5 * 1024 ** 3);
+    if (sf.bavail * sf.bsize < minFree) return { fail: 'LOW_DISK', detail: `${tmpdir()} has ${Math.floor((sf.bavail * sf.bsize) / 1048576)} MiB free, needs ${Math.floor(minFree / 1048576)} MiB` };
+  } catch { /* statfs unavailable: the mkdtemp below still fails closed */ }
   let scratch;
   try { scratch = mkdtempSync(join(tmpdir(), 'harm-matrix.')); } catch (e) { return { fail: 'SANDBOX_FAILED', detail: `mkdtemp: ${e.code || e.message}` }; }
   TMP_ROOTS = [...new Set([tmpdir(), '/tmp', '/var/tmp', '/dev/shm', scratch])];
@@ -309,7 +317,8 @@ function runMatrix(o) {
       rows.push({ gate: g.id, b, t, id: transition(b, t) });
     }
     const anc = revs.base === revs.tip ? 'same' : (git(lane, ['merge-base', '--is-ancestor', revs.base, revs.tip]).status === 0 ? 'yes' : 'no');
-    return { rows, revs, added, anc };
+    const registry = createHash('sha256').update(readFileSync(gatesFile)).digest('hex').slice(0, 12);
+    return { rows, revs, added, anc, registry };
   } finally {
     if (!reap(scratch)) process.stderr.write(`HARM_MATRIX_CLEANUP: leaked=${scratch}\n`);
   }
@@ -324,7 +333,7 @@ function render(res, o) {
   if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
   const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
-  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
   return bad === 0 ? 0 : 1;
 }
 
@@ -372,9 +381,9 @@ function selftest(o) {
     try {
       fx = buildFixture(c, parent);
       const b12 = fx.baseRev.slice(0, 12), t12 = fx.tipRev.slice(0, 12);
-      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D).replaceAll('{B12}', b12).replaceAll('{T12}', t12);
+      const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D).replaceAll('{B12}', b12).replaceAll('{T12}', t12).replaceAll('{BASE12}', b12).replaceAll('{TIP12}', t12);
       const args = (c.args || ['--base', '{BASE}', '--tip', '{TIP}', '--gates', '{DIR}/gates.json']).map(rep);
-      const env = { ...process.env, TMPDIR: tmpd };
+      const env = { ...process.env, TMPDIR: tmpd, HARM_MATRIX_MIN_FREE_BYTES: '1', ...(c.env || {}) };
       if (c.tmpdir_is_file) { writeFileSync(join(parent, 'tmpfile'), 'x'); env.TMPDIR = join(parent, 'tmpfile'); }
       if (c.restrict_path) {
         const bin = join(parent, 'bin'); mkdirSync(bin);

@@ -1,0 +1,18 @@
+== frozen pair A (base a004902d -> tip 47fe2383), .ufo/waves/round-65/base/harm-pairA-freeze.txt (tail) ==
+HARM_ROW gate=harm-matrix-selftest base=ABSENT tip=ABSENT id=ABSENT_BOTH base_text="absent:scripts/harm-matrix.mjs" tip_text="absent:scripts/harm-matrix.mjs"
+HARM_MATRIX: HARM gates=19 held=15 repaired=0 carried=2 moved=0 new=0 gone=0 harm=2 harm_absent=0 new_red=0 base=a004902d77d1 tip=47fe23831519
+EXIT=1
+== frozen pair B (base 6825a514 -> tip a004902d) ==
+HARM_MATRIX: CLEAN gates=19 held=14 repaired=2 carried=2 moved=0 new=1 gone=0 harm=0 harm_absent=0 new_red=0 base=6825a51425e9 tip=a004902d77d1
+EXIT=0
+== frozen selftest ==
+HARM_MATRIX_SELFTEST: PASS (26/26)
+EXIT=0
+== controls 03/04/14 expect ==
+case-03-harm-verdict: {"exit":1,"rows":["g1 HARM"],"summary":"HARM_MATRIX: HARM gates=1"}
+case-04-harm-exit-code-with-clean-line: {"exit":1,"rows":["g1 HARM"]}
+case-14-last-verdict-wins: {"exit":1,"rows":["g1 HARM"]}
+== quoting arm: HARM_MATRIX: lines in the round-64 report ==
+0
+grep_exit=1
+== round-65 close dir ==

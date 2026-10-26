@@ -1,0 +1,71 @@
+{
+  "_comment": "Proposed ADDITIONS to scripts/harm-matrix-gates.json (round 65 wave-1, seat K65ExecHistoryA). Each row was run directly in git-archive extractions of six boundary revisions (453f6e97, 7178bfd3, c49f2a8d, 0f66ecd4, ffbfe3cc, 33043377) and is cheap (<=6 s) and environment-independent (no network, no systemd, no privileges): see build/K65ExecHistoryA/runs/nonregistry-selftests.txt and runs/selftest-verdict-lines.txt. Adding rows only widens coverage; existing rows are untouched.",
+  "gates": [
+    {
+      "id": "dispatch-evidence-selftest",
+      "argv": [
+        "node",
+        "scripts/dispatch-evidence.mjs",
+        "--selftest"
+      ],
+      "verdict": "^(?:DISPATCH_EVIDENCE_SELFTEST|VERDICT): (\\w+)",
+      "clean": [
+        "PASS"
+      ],
+      "timeout": 120
+    },
+    {
+      "id": "receipt-evidence-selftest",
+      "argv": [
+        "node",
+        "scripts/receipt-evidence.mjs",
+        "--selftest"
+      ],
+      "verdict": "^(?:RECEIPT_EVIDENCE_SELFTEST|VERDICT): (\\w+)",
+      "clean": [
+        "PASS"
+      ],
+      "timeout": 180
+    },
+    {
+      "id": "receipt-attest-selftest",
+      "argv": [
+        "node",
+        "scripts/receipt-attest.mjs",
+        "--selftest"
+      ],
+      "verdict": "^ATTEST_SELFTEST: (\\w+)",
+      "clean": [
+        "PASS"
+      ],
+      "timeout": 180
+    },
+    {
+      "id": "counter-rerun-selftest",
+      "argv": [
+        "node",
+        "scripts/counter-rerun.mjs",
+        "--selftest"
+      ],
+      "verdict": "^COUNTER_RERUN_SELFTEST: (\\w+)",
+      "clean": [
+        "PASS"
+      ],
+      "timeout": 180
+    },
+    {
+      "id": "bind-oracle-selftest",
+      "argv": [
+        "node",
+        "scripts/bind-oracle.mjs",
+        "--selftest"
+      ],
+      "verdict": "^VERDICT: (\\w+)",
+      "clean": [
+        "PASS"
+      ],
+      "timeout": 180
+    }
+  ],
+  "_caveat": "receipt-evidence-selftest prints VERDICT: PASS as its last line at 0f66ecd4/ffbfe3cc/33043377 and RECEIPT_EVIDENCE_SELFTEST: PASS is documented at 2ca91a0c; the two-branch verdict regex keeps both shapes readable. dispatch-evidence-selftest's last line at 33043377 is 'VERDICT: PASS' although the script also documents DISPATCH_EVIDENCE_SELFTEST (line 266); check the final line at the tip before pinning the regex."
+}

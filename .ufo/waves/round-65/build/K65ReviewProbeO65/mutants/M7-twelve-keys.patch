@@ -1,0 +1,29 @@
+From 49eb86fe2e6198497fbfb416e38f45567f36f93d Mon Sep 17 00:00:00 2001
+From: fixture <fixture@example.invalid>
+Date: Sun, 25 Oct 2026 22:32:37 -0300
+Subject: [PATCH] M7: only 12 of the probe keys stated (the plan says >= 12)
+
+---
+ corpus/knowledge/omp-installed-release-mcp-runtime.md | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+index 5367edb..eae7011 100644
+--- a/corpus/knowledge/omp-installed-release-mcp-runtime.md
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -34,12 +34,9 @@ tag — a 250 ms startup gate and a no-replay rule (S202) — and no byte sweep
+ - real_version=18.12.6
+ - lit_2025_11_25=2
+ - lit_2026_07_28=0
+-- lit_2025_03_26=2
+ - sym_MCP_PROTOCOL_VERSION=3
+ - header_MCP-Protocol-Version=3
+ - sym_DeferredMCPTool=3
+-- collab_hosts_literal=2
+-- docs_phrase_never_replayed=0
+ 
+ These are the 15 `OMP_BIN:` keys `bash scripts/omp-binary-probe.sh` prints on this host on 2026-10-25, read from the
+ release bytes only; the probe executes nothing but `<binary> --version`.
+-- 
+2.56.0
+

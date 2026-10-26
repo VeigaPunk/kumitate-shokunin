@@ -1,0 +1,71 @@
+## FINAL dry-run 2 at freeze 2ca91a0c81542cad5f731049aa55dd2f99ade98d + fixture wave markers, FTIP=443cf496ddfada7396bef277ec5c69a727882982
+## script sha256=c0668cdab952de93b1c9f76ad001691b82da545262cd9531b4741b99b4d52c1a  date=2026-10-25T22:34:24-03:00
+## REPORT=/tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/fixture-report.md (synthetic; exercises only the report-receipt-diff step and the inline-dispatch --report binding)
+STEP census-validate exit=0
+    | kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+    | kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+STEP readme-map exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | README_MAP: CLEAN files=157 rows=157 covered=157
+STEP proxy-check-strict exit=1
+    (receipt /tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/out/proxy-check-strict.txt)
+    | PROXY  warn  PIN_UNPINNED  scripts/harm-matrix.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+    | PROXY: DRIFT (A_DRIFT term=A declared=351 computed=357 delta=+6; C2_DRIFT term=C2 declared=156 computed=157 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; PIN_UNPINNED term=scripts/harm-matrix.mjs; src-rev=31c465
+STEP counter-pins exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | COUNTER_PINS: CLEAN pins=30
+STEP claims-check exit=0
+    | SUMMARY: errors=0 warnings=4
+    | CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+STEP sources-check exit=0
+    | SOURCES  info  LEGACY_NO_HEADER  count=38
+    | SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)
+STEP source-capture exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | SOURCE_CAPTURE: CLEAN captures=32 exemptions=107
+STEP source-dupes exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | SOURCE_DUPES: CLEAN groups=6 known=6
+STEP cite-sources-selftest exit=0
+    | CITE_SOURCES_SELFTEST: PASS (8/8)
+    | VERDICT: PASS
+STEP harm65-probe exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | HARM65_HELD held=5/5 checks=5 rev=443cf496ddfada7396bef277ec5c69a727882982 rule=H65
+STEP omp65-probe exit=1
+    (receipt /tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/out/omp65-probe.txt)
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | OMP65_UNMET held=0/8 checks=8 rev=443cf496ddfada7396bef277ec5c69a727882982 rule=O65 | O1 MISS entry-absent | O2 MISS no-entry | O3 MISS no-rows | O4 MISS bullets=0;no-2025-11-25-quote | O5 MISS no-bullets | O6 MISS stated-keys=0;wrapper_is_
+STEP harm-matrix exit=0
+    | HARM_ROW gate=harm-matrix-selftest base=ABSENT tip=CLEAN id=NEW_OK base_text="absent:scripts/harm-matrix.mjs" tip_text="HARM_MATRIX_SELFTEST: PASS (26/26)"
+    | HARM_MATRIX: CLEAN gates=20 held=15 repaired=1 carried=2 moved=1 new=1 gone=0 harm=0 harm_absent=0 new_red=0 base=47fe23831519 tip=443cf496ddfa
+STEP report-receipt-diff exit=0
+    | ## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+    | REPORT_RECEIPT: CLEAN (round=65 rev=443cf496ddfada7396bef277ec5c69a727882982 bytes=250 report_sha256=204cb63c5c50)
+STEP plan-before-ready exit=0
+    | PLAN_BEFORE_READY: PASS rev=443cf496ddfada7396bef277ec5c69a727882982 round=65 dir=.ufo/waves/round-65 plan=2ca91a0c81542cad5f731049aa55dd2f99ade98d plan_ct=1792976976 marker=443cf496ddfada7396bef277ec5c69a727882982 marker_kind=ready marker_
+    | PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=65-65 rev=443cf496ddfada7396bef277ec5c69a727882982 exit=0 failed= na_rounds= map_red=
+STEP inline-dispatch-w1 exit=1
+    (receipt /tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/out/inline-dispatch-w1.txt)
+    | FINDING DEAD_UNNAMED:K65MutateToolRender
+    | DEAD K65ExecHarmNormalize,K65ExecHarmRegistry,K65ExecHistoryA,K65ExecHistoryB,K65ExecCloseScript,K65ConnOverlap,K65ConnOmpSources,K65ReviewProbeO65,K65CriticC1Predicate,K65CriticC1Pairs,K65CriticC2Predicate,K65MutateToolClassify,K65MutateTo
+
+== close battery: lane=/tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/lane base=47fe23831519 tip=443cf496ddfa out=/tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/out
+STEP                       EXIT
+census-validate            0
+readme-map                 0
+proxy-check-strict         1
+counter-pins               0
+claims-check               0
+sources-check              0
+source-capture             0
+source-dupes               0
+cite-sources-selftest      0
+harm65-probe               0
+omp65-probe                1
+harm-matrix                0
+report-receipt-diff        0
+plan-before-ready          0
+inline-dispatch-w1         1
+BATTERY: steps=15 failed=3 out=/tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/out
+BATTERY_EXIT=1

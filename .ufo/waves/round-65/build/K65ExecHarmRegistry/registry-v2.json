@@ -1,0 +1,1460 @@
+{
+ "contract": "kumitate-harm-matrix-v1",
+ "note": "Proposed registry v2 (round 65, seat K65ExecHarmRegistry). Measured 2026-10-25 on the lane host (32 cores, load average 124.8 at start) in fresh sandbox clones: every gate run twice at base 47fe2383151909d31557ada118ad84f90404dc6c and once at tip 2ca91a0c81542cad5f731049aa55dd2f99ade98d, clean env (PATH/HOME/LANG=C/LC_ALL=C/NO_COLOR=1) and `timeout -k 2` exactly as scripts/harm-matrix.mjs runs them. timeout = ceil(5 x slowest of the three runs, to 10 s), clamped to [45,120]. Excluded with evidence: `wave-census` bare (exit 64 usage, 0 verdict lines). readme-map verdict tightened: the v1 regex also matched `README_MAP: note ...` lines (2 matches at base) and only the emission order made last-match correct.",
+ "measured_at": "2026-10-25",
+ "base_rev": "47fe2383151909d31557ada118ad84f90404dc6c",
+ "tip_rev": "2ca91a0c81542cad5f731049aa55dd2f99ade98d",
+ "host": {
+  "loadavg_at_start": "124.83 129.54 108.99",
+  "cores": 32
+ },
+ "totals": {
+  "gates": 36,
+  "one_pass_ms": 139291,
+  "both_revisions_ms": 278582,
+  "slowest_gate": "round-gate-selftest"
+ },
+ "gates": [
+  {
+   "id": "readme-map",
+   "argv": [
+    "node",
+    "scripts/readme-map.mjs"
+   ],
+   "verdict": "^README_MAP: (CLEAN|DRIFT|FAIL-CLOSED)\\b",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     42,
+     37
+    ],
+    "head_ms": 49,
+    "max_ms": 49,
+    "base": {
+     "exit": 1,
+     "matches_as_declared": 2,
+     "matches_proposed": 1,
+     "line": "README_MAP: DRIFT files=157 rows=156 covered=156 bad=2 first=uncovered:lessons/round-64-verifier-spotcheck.md",
+     "line_as_declared": "README_MAP: DRIFT files=157 rows=156 covered=156 bad=2 first=uncovered:lessons/round-64-verifier-spotcheck.md"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "README_MAP: CLEAN files=157 rows=157 covered=157",
+     "line_as_declared": "README_MAP: CLEAN files=157 rows=157 covered=157"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "proxy-check",
+   "argv": [
+    "node",
+    "scripts/proxy-check.mjs",
+    "--strict"
+   ],
+   "verdict": "^PROXY: (\\w+)",
+   "clean": [
+    "MATCH"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     166,
+     460
+    ],
+    "head_ms": 301,
+    "max_ms": 460,
+    "base": {
+     "exit": 1,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)",
+     "line_as_declared": "PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)"
+    },
+    "head": {
+     "exit": 1,
+     "matches_proposed": 1,
+     "line": "PROXY: DRIFT (A_DRIFT term=A declared=351 computed=357 delta=+6; C2_DRIFT term=C2 declared=156 computed=157 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; PIN_UNPINNED term=scripts/harm-matrix.mjs; src-rev=31c465f15669)",
+     "line_as_declared": "PROXY: DRIFT (A_DRIFT term=A declared=351 computed=357 delta=+6; C2_DRIFT term=C2 declared=156 computed=157 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; PIN_UNPINNED term=scripts/harm-matrix.mjs; src-rev=31c465f15669)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "claims-check",
+   "argv": [
+    "node",
+    "scripts/claims-check.mjs"
+   ],
+   "verdict": "^CLAIMS: (\\w+)",
+   "clean": [
+    "MATCH"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     293,
+     138
+    ],
+    "head_ms": 406,
+    "max_ms": 406,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)",
+     "line_as_declared": "CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)",
+     "line_as_declared": "CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "counter-pins",
+   "argv": [
+    "node",
+    "scripts/counter-pins.mjs"
+   ],
+   "verdict": "^COUNTER_PINS: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     131,
+     43
+    ],
+    "head_ms": 376,
+    "max_ms": 376,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "COUNTER_PINS: CLEAN pins=25",
+     "line_as_declared": "COUNTER_PINS: CLEAN pins=25"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "COUNTER_PINS: CLEAN pins=30",
+     "line_as_declared": "COUNTER_PINS: CLEAN pins=30"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "sources-check",
+   "argv": [
+    "node",
+    "scripts/sources-check.mjs"
+   ],
+   "verdict": "^SOURCES_CHECK: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     148,
+     63
+    ],
+    "head_ms": 415,
+    "max_ms": 415,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)",
+     "line_as_declared": "SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)",
+     "line_as_declared": "SOURCES_CHECK: CLEAN (rows=139 tiers=A:116,B:15,C:8 status=queued:13,mined:107,rejected:19 entries_with_source=21 legacy=38)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "source-capture",
+   "argv": [
+    "node",
+    "scripts/source-capture.mjs"
+   ],
+   "verdict": "^SOURCE_CAPTURE: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     311,
+     188
+    ],
+    "head_ms": 81,
+    "max_ms": 311,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SOURCE_CAPTURE: CLEAN captures=32 exemptions=107",
+     "line_as_declared": "SOURCE_CAPTURE: CLEAN captures=32 exemptions=107"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SOURCE_CAPTURE: CLEAN captures=32 exemptions=107",
+     "line_as_declared": "SOURCE_CAPTURE: CLEAN captures=32 exemptions=107"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "source-dupes",
+   "argv": [
+    "node",
+    "scripts/source-dupes.mjs"
+   ],
+   "verdict": "^SOURCE_DUPES: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     66,
+     43
+    ],
+    "head_ms": 107,
+    "max_ms": 107,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SOURCE_DUPES: CLEAN groups=6 known=6",
+     "line_as_declared": "SOURCE_DUPES: CLEAN groups=6 known=6"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SOURCE_DUPES: CLEAN groups=6 known=6",
+     "line_as_declared": "SOURCE_DUPES: CLEAN groups=6 known=6"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "kimi-census",
+   "argv": [
+    "node",
+    "scripts/kimi-census.mjs"
+   ],
+   "verdict": "^KIMI_CENSUS: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     43,
+     56
+    ],
+    "head_ms": 31,
+    "max_ms": 56,
+    "base": {
+     "exit": 1,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)",
+     "line_as_declared": "KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)"
+    },
+    "head": {
+     "exit": 1,
+     "matches_proposed": 1,
+     "line": "KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)",
+     "line_as_declared": "KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": [
+     "/home/vgpnkx5",
+     ".kimi-codex5"
+    ]
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "omp-census",
+   "argv": [
+    "node",
+    "scripts/omp-census.mjs"
+   ],
+   "verdict": "^OMP_CENSUS: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     33,
+     40
+    ],
+    "head_ms": 72,
+    "max_ms": 72,
+    "base": {
+     "exit": 1,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)",
+     "line_as_declared": "OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)"
+    },
+    "head": {
+     "exit": 1,
+     "matches_proposed": 1,
+     "line": "OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)",
+     "line_as_declared": "OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": [
+     "/home/vgpnkx1",
+     "/.omp/x1"
+    ]
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "anchor-truth",
+   "argv": [
+    "node",
+    "scripts/anchor-truth.mjs",
+    "--base",
+    "e18ff1af3392e3823227644c977c237737fe65c9"
+   ],
+   "verdict": "^TRUTH: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     1698,
+     1150
+    ],
+    "head_ms": 4340,
+    "max_ms": 4340,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)",
+     "line_as_declared": "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)",
+     "line_as_declared": "TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "surface-known",
+   "argv": [
+    "node",
+    "scripts/surface-probe.mjs",
+    "--known",
+    ".ufo/pins/surface-known.json"
+   ],
+   "verdict": "^SURFACE_PROBE: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     340,
+     371
+    ],
+    "head_ms": 419,
+    "max_ms": 419,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)",
+     "line_as_declared": "SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)",
+     "line_as_declared": "SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": [
+     "/fast/scratchx1"
+    ]
+   },
+   "scope": "host-state"
+  },
+  {
+   "id": "wave-census-r40",
+   "argv": [
+    "node",
+    "scripts/wave-census.mjs",
+    "--round",
+    "40"
+   ],
+   "verdict": "^WAVE_CENSUS: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     57,
+     75
+    ],
+    "head_ms": 48,
+    "max_ms": 75,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)",
+     "line_as_declared": "WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)",
+     "line_as_declared": "WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "cite-sources-selftest",
+   "argv": [
+    "node",
+    "scripts/cite-sources.mjs",
+    "--selftest"
+   ],
+   "verdict": "^CITE_SOURCES_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     85,
+     71
+    ],
+    "head_ms": 123,
+    "max_ms": 123,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "CITE_SOURCES_SELFTEST: PASS (8/8)",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "CITE_SOURCES_SELFTEST: PASS (8/8)",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "round-gate-selftest",
+   "argv": [
+    "node",
+    "scripts/round-gate.mjs",
+    "--selftest"
+   ],
+   "verdict": "^ROUND_GATE_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 120,
+   "measured": {
+    "base_ms": [
+     21699,
+     20822
+    ],
+    "head_ms": 27814,
+    "max_ms": 27814,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "ROUND_GATE_SELFTEST: 61/61 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "ROUND_GATE_SELFTEST: 61/61 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "sources-check-selftest",
+   "argv": [
+    "node",
+    "scripts/sources-check.mjs",
+    "--selftest"
+   ],
+   "verdict": "^SOURCES_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     6132,
+     4820
+    ],
+    "head_ms": 5959,
+    "max_ms": 6132,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SOURCES_SELFTEST: 46/46 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SOURCES_SELFTEST: 46/46 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "counter-pins-selftest",
+   "argv": [
+    "node",
+    "scripts/counter-pins.mjs",
+    "--selftest"
+   ],
+   "verdict": "^COUNTER_PINS_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     613,
+     450
+    ],
+    "head_ms": 384,
+    "max_ms": 613,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "COUNTER_PINS_SELFTEST: PASS (11/11)",
+     "line_as_declared": "COUNTER_PINS_SELFTEST: PASS (11/11)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "COUNTER_PINS_SELFTEST: PASS (11/11)",
+     "line_as_declared": "COUNTER_PINS_SELFTEST: PASS (11/11)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "report-receipt-diff-selftest",
+   "argv": [
+    "node",
+    "scripts/report-receipt-diff.mjs",
+    "--selftest"
+   ],
+   "verdict": "^REPORT_RECEIPT_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     2990,
+     3297
+    ],
+    "head_ms": 2587,
+    "max_ms": 3297,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "REPORT_RECEIPT_SELFTEST: PASS (125/125)",
+     "line_as_declared": "REPORT_RECEIPT_SELFTEST: PASS (125/125)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "REPORT_RECEIPT_SELFTEST: PASS (125/125)",
+     "line_as_declared": "REPORT_RECEIPT_SELFTEST: PASS (125/125)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "plan-before-ready-selftest",
+   "argv": [
+    "bash",
+    "scripts/plan-before-ready.sh",
+    "--selftest"
+   ],
+   "verdict": "^PLAN_BEFORE_READY_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     3434,
+     3931
+    ],
+    "head_ms": 3765,
+    "max_ms": 3931,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.7JSnpS",
+     "line_as_declared": "PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.7JSnpS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.7lkY0e",
+     "line_as_declared": "PLAN_BEFORE_READY_SELFTEST: PASS (38/38) fixtures=/tmp/pbr-selftest.7lkY0e"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": false,
+    "deterministic_note": "verdict line carries a random mktemp path (fixtures=/tmp/...); the clean/not-clean class is stable but two identical FAILs never compare equal -> patch proposed-fixes.md §2",
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure (latent lane-absolute default: scripts/plan-before-ready.sh:59 REPO_DEFAULT=/home/vgpnk/Projects/shokunin/kumitate-shokunin, unused under --selftest)"
+  },
+  {
+   "id": "wave-census-selftest",
+   "argv": [
+    "node",
+    "scripts/wave-census.mjs",
+    "--selftest"
+   ],
+   "verdict": "^WAVE_CENSUS_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     5464,
+     4152
+    ],
+    "head_ms": 4000,
+    "max_ms": 5464,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "WAVE_CENSUS_SELFTEST: 32/32 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "WAVE_CENSUS_SELFTEST: 32/32 pass",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "harm-matrix-selftest",
+   "argv": [
+    "node",
+    "scripts/harm-matrix.mjs",
+    "--selftest"
+   ],
+   "verdict": "^HARM_MATRIX_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     null,
+     null
+    ],
+    "head_ms": 7192,
+    "max_ms": 7192,
+    "base": {
+     "absent": "scripts/harm-matrix.mjs"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "HARM_MATRIX_SELFTEST: PASS (26/26)",
+     "line_as_declared": "HARM_MATRIX_SELFTEST: PASS (26/26)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "cite-check-fleet-dot",
+   "argv": [
+    "node",
+    "scripts/cite-check.mjs",
+    "--fleet",
+    "."
+   ],
+   "verdict": "^CITE_CHECK: (\\w+)",
+   "clean": [
+    "CLEAN"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     2458,
+     3670
+    ],
+    "head_ms": 3761,
+    "max_ms": 3761,
+    "base": {
+     "exit": 1,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "CITE_CHECK: DRIFT (files=161 tokens=12033 errors=1545 warnings=766)",
+     "line_as_declared": "CITE_CHECK: DRIFT (files=161 tokens=12033 errors=1545 warnings=766)"
+    },
+    "head": {
+     "exit": 1,
+     "matches_proposed": 1,
+     "line": "CITE_CHECK: DRIFT (files=161 tokens=12035 errors=1545 warnings=766)",
+     "line_as_declared": "CITE_CHECK: DRIFT (files=161 tokens=12035 errors=1545 warnings=766)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": [
+     "/home/vgpnkx1",
+     "/.omp/x2"
+    ]
+   },
+   "scope": "sandbox-pure (--fleet . pins the fleet parent inside the sandbox; the bare form reads dirname --self, i.e. /tmp, and its verdict changed with that directory: errors=1545 warnings=771 vs errors=1506 warnings=768)"
+  },
+  {
+   "id": "cite-check-selftest",
+   "argv": [
+    "node",
+    "scripts/cite-check.mjs",
+    "--selftest"
+   ],
+   "verdict": "^VERDICT: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     1595,
+     1937
+    ],
+    "head_ms": 2072,
+    "max_ms": 2072,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "gate-mutants-selftest",
+   "argv": [
+    "node",
+    "scripts/gate-mutants.mjs",
+    "--selftest"
+   ],
+   "verdict": "^GATE_MUTANTS_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     2105,
+     2272
+    ],
+    "head_ms": 2518,
+    "max_ms": 2518,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0",
+     "line_as_declared": "GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0",
+     "line_as_declared": "GATE_MUTANTS_SELFTEST: 41/41 pass leftovers=0"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "cap-run-selftest",
+   "argv": [
+    "node",
+    "scripts/cap-run.mjs",
+    "--selftest"
+   ],
+   "verdict": "^CAP_RUN_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 50,
+   "measured": {
+    "base_ms": [
+     9584,
+     9895
+    ],
+    "head_ms": 9146,
+    "max_ms": 9895,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "CAP_RUN_SELFTEST: 12/12 pass",
+     "line_as_declared": "CAP_RUN_SELFTEST: 12/12 pass"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "CAP_RUN_SELFTEST: 12/12 pass",
+     "line_as_declared": "CAP_RUN_SELFTEST: 12/12 pass"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "receipt-attest-selftest",
+   "argv": [
+    "node",
+    "scripts/receipt-attest.mjs",
+    "--selftest"
+   ],
+   "verdict": "^ATTEST_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     5979,
+     6365
+    ],
+    "head_ms": 5953,
+    "max_ms": 6365,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "ATTEST_SELFTEST: PASS (51/51)",
+     "line_as_declared": "ATTEST_SELFTEST: PASS (51/51)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "ATTEST_SELFTEST: PASS (51/51)",
+     "line_as_declared": "ATTEST_SELFTEST: PASS (51/51)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "receipt-evidence-selftest",
+   "argv": [
+    "node",
+    "scripts/receipt-evidence.mjs",
+    "--selftest"
+   ],
+   "verdict": "^RECEIPT_EVIDENCE_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     4162,
+     5050
+    ],
+    "head_ms": 4672,
+    "max_ms": 5050,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)",
+     "line_as_declared": "RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)",
+     "line_as_declared": "RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "dispatch-evidence-selftest",
+   "argv": [
+    "node",
+    "scripts/dispatch-evidence.mjs",
+    "--selftest"
+   ],
+   "verdict": "^DISPATCH_EVIDENCE_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     43,
+     95
+    ],
+    "head_ms": 42,
+    "max_ms": 95,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+     "line_as_declared": "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)",
+     "line_as_declared": "DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "inline-dispatch-evidence-selftest",
+   "argv": [
+    "node",
+    "scripts/inline-dispatch-evidence.mjs",
+    "--selftest"
+   ],
+   "verdict": "^INLINE_DISPATCH_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     213,
+     599
+    ],
+    "head_ms": 532,
+    "max_ms": 599,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "INLINE_DISPATCH_SELFTEST: PASS (69/69)",
+     "line_as_declared": "INLINE_DISPATCH_SELFTEST: PASS (69/69)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "INLINE_DISPATCH_SELFTEST: PASS (69/69)",
+     "line_as_declared": "INLINE_DISPATCH_SELFTEST: PASS (69/69)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "claims-check-selftest",
+   "argv": [
+    "node",
+    "scripts/claims-check.mjs",
+    "--selftest"
+   ],
+   "verdict": "^CLAIMS_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     5355,
+     5455
+    ],
+    "head_ms": 5756,
+    "max_ms": 5756,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "CLAIMS_SELFTEST: 47/47 pass",
+     "line_as_declared": "CLAIMS_SELFTEST: 47/47 pass"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "CLAIMS_SELFTEST: 47/47 pass",
+     "line_as_declared": "CLAIMS_SELFTEST: 47/47 pass"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "proxy-check-selftest",
+   "argv": [
+    "node",
+    "scripts/proxy-check.mjs",
+    "--selftest"
+   ],
+   "verdict": "^PROXY_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 100,
+   "measured": {
+    "base_ms": [
+     11696,
+     13056
+    ],
+    "head_ms": 18795,
+    "max_ms": 18795,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "PROXY_SELFTEST: 122/122 pass",
+     "line_as_declared": "PROXY_SELFTEST: 122/122 pass"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "PROXY_SELFTEST: 122/122 pass",
+     "line_as_declared": "PROXY_SELFTEST: 122/122 pass"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "kimi-census-selftest",
+   "argv": [
+    "node",
+    "scripts/kimi-census.mjs",
+    "--selftest"
+   ],
+   "verdict": "^KIMI_CENSUS_SELFTEST: \\d+/\\d+ (\\w+)",
+   "clean": [
+    "pass"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     6062,
+     6019
+    ],
+    "head_ms": 6060,
+    "max_ms": 6062,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "KIMI_CENSUS_SELFTEST: 54/54 pass",
+     "line_as_declared": "KIMI_CENSUS_SELFTEST: 54/54 pass"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "KIMI_CENSUS_SELFTEST: 54/54 pass",
+     "line_as_declared": "KIMI_CENSUS_SELFTEST: 54/54 pass"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "omp-census-selftest",
+   "argv": [
+    "node",
+    "scripts/omp-census.mjs",
+    "--selftest"
+   ],
+   "verdict": "^VERDICT: (PASS|FAIL) \\(\\d+ cases\\)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     62,
+     62
+    ],
+    "head_ms": 194,
+    "max_ms": 194,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS (29 cases)",
+     "line_as_declared": "VERDICT: PASS (29 cases)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS (29 cases)",
+     "line_as_declared": "VERDICT: PASS (29 cases)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "bind-oracle",
+   "argv": [
+    "node",
+    "scripts/bind-oracle.mjs"
+   ],
+   "verdict": "^BIND_ORACLE: (\\w+)",
+   "clean": [
+    "HELD"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     127,
+     131
+    ],
+    "head_ms": 149,
+    "max_ms": 149,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "BIND_ORACLE: HELD binds=3 observed=3 absent=1",
+     "line_as_declared": "BIND_ORACLE: HELD binds=3 observed=3 absent=1"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "BIND_ORACLE: HELD binds=3 observed=3 absent=1",
+     "line_as_declared": "BIND_ORACLE: HELD binds=3 observed=3 absent=1"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure (bwrap child; no host path in argv)"
+  },
+  {
+   "id": "source-capture-selftest",
+   "argv": [
+    "node",
+    "scripts/source-capture.mjs",
+    "--selftest"
+   ],
+   "verdict": "^SOURCE_CAPTURE_SELFTEST: (\\w+)",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     492,
+     511
+    ],
+    "head_ms": 554,
+    "max_ms": 554,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "SOURCE_CAPTURE_SELFTEST: PASS (13/13)",
+     "line_as_declared": "SOURCE_CAPTURE_SELFTEST: PASS (13/13)"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "SOURCE_CAPTURE_SELFTEST: PASS (13/13)",
+     "line_as_declared": "SOURCE_CAPTURE_SELFTEST: PASS (13/13)"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  },
+  {
+   "id": "jj-seat-demo",
+   "argv": [
+    "bash",
+    "scripts/jj-seat-demo.sh"
+   ],
+   "verdict": "^JJ_SEAT_DEMO: (\\w+)",
+   "clean": [
+    "DONE"
+   ],
+   "timeout": 60,
+   "measured": {
+    "base_ms": [
+     11861,
+     7042
+    ],
+    "head_ms": 9857,
+    "max_ms": 11861,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+     "line_as_declared": "JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5",
+     "line_as_declared": "JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure (HOME/XDG fixture-local; jj from PATH)"
+  },
+  {
+   "id": "surface-probe-selftest",
+   "argv": [
+    "node",
+    "scripts/surface-probe.mjs",
+    "--selftest"
+   ],
+   "verdict": "^VERDICT: (PASS|FAIL)\\b",
+   "clean": [
+    "PASS"
+   ],
+   "timeout": 45,
+   "measured": {
+    "base_ms": [
+     2985,
+     3020
+    ],
+    "head_ms": 3913,
+    "max_ms": 3913,
+    "base": {
+     "exit": 0,
+     "matches_as_declared": 1,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "head": {
+     "exit": 0,
+     "matches_proposed": 1,
+     "line": "VERDICT: PASS",
+     "line_as_declared": "VERDICT: PASS"
+    },
+    "deterministic_class_2runs": true,
+    "deterministic_2runs": true,
+    "deterministic_note": null,
+    "wrote_into_sandbox": [],
+    "external_paths_in_output": []
+   },
+   "scope": "sandbox-pure"
+  }
+ ]
+}

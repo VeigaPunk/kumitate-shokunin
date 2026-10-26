@@ -1,0 +1,78 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -29,7 +29,7 @@
+  * host at both revisions, so a host change between the two runs is not told apart from a revision change.
+  */
+ import { spawnSync } from 'node:child_process';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
++import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+@@ -47,6 +47,30 @@
+ const failClosed = (reason, detail = '') => { out(`HARM_MATRIX: FAIL_CLOSED reason=${reason}${detail ? ` detail=${JSON.stringify(detail)}` : ''}`); process.exit(2); };
+ const git = (dir, args, extra = {}) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 64 << 20, ...extra });
+ 
++// A gate can leave an unreadable tree in its sandbox (a locked cache directory is enough).
++// rmSync({ force: true }) still throws EACCES on a 0o500 directory, and the throw escaped the
++// finally block: no verdict was rendered and BOTH sandboxes stayed in /tmp (100-220 MB each on
++// this lane). Relax the modes, reap, and never let cleanup decide the exit.
++function reap(dir, stage) {
++  const relax = (p) => {
++    let st;
++    try { st = lstatSync(p); } catch { return; }
++    if (!st.isDirectory()) return;
++    try { chmodSync(p, 0o700); } catch { /* best effort */ }
++    let names = [];
++    try { names = readdirSync(p); } catch { return; }
++    for (const n of names) relax(join(p, n));
++  };
++  try {
++    relax(dir);
++    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 50 });
++    return true;
++  } catch (e) {
++    process.stderr.write(`HARM_MATRIX_SANDBOX_LEAK dir=${dir} stage=${stage} reason=${String(e.code || e.message).slice(0, 80)}\n`);
++    return false;
++  }
++}
++
+ function loadGates(file) {
+   let raw;
+   try { raw = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { return { error: 'GATES_UNREADABLE', detail: String(e.message).slice(0, 160) }; }
+@@ -74,9 +98,9 @@
+ function sandbox(lane, rev) {
+   const dir = mkdtempSync(join(tmpdir(), 'harm-matrix.'));
+   let r = git(lane, ['clone', '-q', '--no-hardlinks', '--no-checkout', lane, dir]);
+-  if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `clone: ${String(r.stderr).slice(0, 160)}` }; }
++  if (r.status !== 0) { reap(dir, 'clone'); return { error: `clone: ${String(r.stderr).slice(0, 160)}` }; }
+   r = git(dir, ['-c', 'advice.detachedHead=false', 'checkout', '-q', rev]);
+-  if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `checkout: ${String(r.stderr).slice(0, 160)}` }; }
++  if (r.status !== 0) { reap(dir, 'checkout'); return { error: `checkout: ${String(r.stderr).slice(0, 160)}` }; }
+   return { dir };
+ }
+ 
+@@ -91,7 +115,13 @@
+   const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
+   let hit = null;
+   for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+-  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
++  if (!hit) {
++    // A no-verdict row used to record only exit=N: when the gate crashed (round 65: round-gate-selftest
++    // flaked to exit 1 once in six matrix runs, 3/3 direct runs PASS) the matrix could not say why, and
++    // the row still counts as harm. Keep the last non-empty output line, bounded.
++    const tailLine = lines.map((l) => l.trim()).filter(Boolean).at(-1) || '';
++    return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine.slice(0, 160))}` : ''}` };
++  }
+   const clean = g.okExit.includes(rc) && g.clean.includes(hit.word);
+   return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`) };
+ }
+@@ -133,7 +163,7 @@
+     }
+     return { rows, revs };
+   } finally {
+-    for (const d of Object.values(sb)) rmSync(d, { recursive: true, force: true });
++    for (const [k, d] of Object.entries(sb)) reap(d, `sandbox-${k}`);
+   }
+ }
+ 

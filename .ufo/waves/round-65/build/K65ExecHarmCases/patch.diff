@@ -1,0 +1,133 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -29,7 +29,7 @@
+  * host at both revisions, so a host change between the two runs is not told apart from a revision change.
+  */
+ import { spawnSync } from 'node:child_process';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
++import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+@@ -47,6 +47,13 @@
+ const failClosed = (reason, detail = '') => { out(`HARM_MATRIX: FAIL_CLOSED reason=${reason}${detail ? ` detail=${JSON.stringify(detail)}` : ''}`); process.exit(2); };
+ const git = (dir, args, extra = {}) => spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 64 << 20, ...extra });
+ 
++// a verdict word must be extracted from the line: capture 1, else the first named group.
++// a regex with no group at all makes every reading NOT_CLEAN, so a real HARM reads CARRIED_MOVED.
++function verdictWord(re) {
++  const src = re.source.replace(/\\./g, '');
++  return /\((?!\?)/.test(src) || /\(\?<[A-Za-z_][A-Za-z0-9_]*>/.test(src);
++}
++
+ function loadGates(file) {
+   let raw;
+   try { raw = JSON.parse(readFileSync(file, 'utf8')); } catch (e) { return { error: 'GATES_UNREADABLE', detail: String(e.message).slice(0, 160) }; }
+@@ -62,7 +69,11 @@
+     if (typeof g.verdict !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: verdict` };
+     let re;
+     try { re = new RegExp(g.verdict); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: verdict regex` }; }
+-    if (!Array.isArray(g.clean) || g.clean.length === 0) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
++    if (!verdictWord(re)) return { error: 'GATES_INVALID', detail: `${g.id}: verdict has no capture group` };
++    if (!Array.isArray(g.clean) || g.clean.length === 0 || g.clean.some((w) => typeof w !== 'string' || w === '')) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
++    if (g.ok_exit !== undefined && (!Array.isArray(g.ok_exit) || g.ok_exit.length === 0 || g.ok_exit.some((c) => !Number.isInteger(c)))) return { error: 'GATES_INVALID', detail: `${g.id}: ok_exit` };
++    if (g.timeout !== undefined && !(Number.isInteger(g.timeout) && g.timeout > 0)) return { error: 'GATES_INVALID', detail: `${g.id}: timeout` };
++    if (g.needs !== undefined && (typeof g.needs !== 'string' || g.needs === '' || g.needs.startsWith('/') || g.needs.split(/[\\/]/).includes('..'))) return { error: 'GATES_INVALID', detail: `${g.id}: needs` };
+     const okExit = Array.isArray(g.ok_exit) && g.ok_exit.length ? g.ok_exit : [0];
+     const needs = g.needs || g.argv.find((a) => /\.(mjs|js|sh|py)$/.test(a)) || null;
+     const timeout = Number.isInteger(g.timeout) && g.timeout > 0 ? g.timeout : 60;
+@@ -81,19 +92,40 @@
+ }
+ 
+ function measure(g, dir) {
+-  if (g.needs && !existsSync(join(dir, g.needs))) return { cls: 'ABSENT', text: `absent:${g.needs}` };
++  if (g.needs) {
++    let st = null;
++    try { st = statSync(join(dir, g.needs)); } catch { st = null; }
++    if (!st || !st.isFile()) return { cls: 'ABSENT', text: `absent:${g.needs}`, full: `absent:${g.needs}` };
++  }
+   const r = spawnSync('timeout', ['-k', '2', String(g.timeout), ...g.argv], {
+     cwd: dir, encoding: 'utf8', env: CLEAN_ENV(), maxBuffer: 64 << 20, timeout: (g.timeout + 8) * 1000, killSignal: 'SIGKILL',
+   });
+-  if (r.error && r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
++  if (r.error && r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s`, full: `timeout>${g.timeout}s` };
+   const rc = r.status === null ? (r.signal ? 128 : -1) : r.status;
+-  if (rc === 124 || rc === 137) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+-  const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
+-  let hit = null;
+-  for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+-  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
+-  const clean = g.okExit.includes(rc) && g.clean.includes(hit.word);
+-  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`) };
++  if (rc === 124 || rc === 137) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s`, full: `timeout>${g.timeout}s` };
++  // per stream: the last matching line; the word is capture 1, else the first named group, else null.
++  const lastHit = (stream) => {
++    let hit = null;
++    for (const raw of String(stream || '').split('\n')) {
++      const l = raw.trimEnd();
++      const m = g.re.exec(l);
++      if (!m) continue;
++      const word = m[1] !== undefined ? m[1] : (m.groups ? Object.values(m.groups).find((v) => v !== undefined) : undefined);
++      hit = { line: l.trim(), word };
++    }
++    return hit;
++  };
++  const ho = lastHit(r.stdout); const he = lastHit(r.stderr);
++  if (!ho && !he) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}`, full: `no-verdict exit=${rc}` };
++  // streams that disagree are not a reading: a gate that says DRIFT and CLEAN at once is not clean.
++  if (ho && he && ho.line !== he.line) {
++    const full = `streams-disagree stdout=${JSON.stringify(ho.line.slice(0, 120))} stderr=${JSON.stringify(he.line.slice(0, 120))} [exit=${rc}]`;
++    return { cls: 'NOT_CLEAN', text: full.slice(0, 200), full };
++  }
++  const hit = he || ho;
++  const clean = g.okExit.includes(rc) && hit.word !== undefined && g.clean.includes(hit.word);
++  const full = hit.line + (clean ? '' : ` [exit=${rc}]`);
++  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: full.slice(0, 200), full };
+ }
+ 
+ function transition(b, t) {
+@@ -102,14 +134,19 @@
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+-  return b.text === t.text ? 'CARRIED' : 'CARRIED_MOVED';
++  return b.full === t.full ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+ function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride }) {
+   const lg = loadGates(gatesFile);
+   if (lg.error) return { fail: lg.error, detail: lg.detail };
+   let gates = lg.gates;
+-  if (only) gates = gates.filter((g) => only.includes(g.id));
++  if (only) {
++    const known = new Set(gates.map((g) => g.id));
++    const unknown = only.filter((id) => !known.has(id));
++    if (unknown.length) return { fail: 'ONLY_UNKNOWN', detail: unknown.join(',') };
++    gates = gates.filter((g) => only.includes(g.id));
++  }
+   if (timeoutOverride) gates = gates.map((g) => ({ ...g, timeout: timeoutOverride }));
+   if (gates.length === 0) return { fail: 'NO_GATES', detail: 'registry empty after --only' };
+   const revs = {};
+@@ -126,7 +163,11 @@
+       sb[k] = s.dir;
+     }
+     const rows = [];
++    // each gate starts from the revision's own bytes: a gate that rewrites its sandbox must not
++    // change what the next gate is measured against (round 65, K65ExecHarmCases).
++    const scrub = (dir, rev) => { git(dir, [...GIT_ID, 'reset', '-q', '--hard', rev]); git(dir, ['clean', '-qfdx']); };
+     for (const g of gates) {
++      scrub(sb.base, revs.base); scrub(sb.tip, revs.tip);
+       const b = measure(g, sb.base);
+       const t = measure(g, sb.tip);
+       rows.push({ gate: g.id, b, t, id: transition(b, t) });
+@@ -143,8 +184,9 @@
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH').length;
+   if (counted === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
++  const unmeasured = res.rows.filter((r) => r.b.cls === 'FAIL_CLOSED' || r.t.cls === 'FAIL_CLOSED').length;
+   const bad = harm + harmAbsent + newRed;
+-  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
++  out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)} unmeasured=${unmeasured}`);
+   return bad === 0 ? 0 : 1;
+ }
+ 

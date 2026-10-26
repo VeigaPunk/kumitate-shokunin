@@ -1,0 +1,45 @@
+--- a/scripts/cap-run.mjs
++++ b/scripts/cap-run.mjs
+@@ -8,7 +8,7 @@
+  * own PID namespace, and prints exactly one verdict line.
+  *
+  * CLI:
+- *   node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]...
++ *   node scripts/cap-run.mjs --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]... [--no-net]...
+  *     [--verdict-file <path>] -- <cmd> [args...]
+  *   node scripts/cap-run.mjs --selftest
+  * The child's stdin, stdout and stderr are the runner's; the runner's working directory is
+@@ -107,7 +107,7 @@
+ };
+ 
+ const usage = (why) => {
+-  writeSync(2, `CAP_RUN: USAGE ${why} (contract ${CONTRACT}: --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]... [--verdict-file <path>] -- <cmd> [args...] | --selftest)\n`);
++  writeSync(2, `CAP_RUN: USAGE ${why} (contract ${CONTRACT}: --mem <MiB> --tasks <n> --budget <s> [--env K=V]... [--bind <dir>]... [--no-net] [--verdict-file <path>] -- <cmd> [args...] | --selftest)\n`);
+   process.exit(64);
+ };
+ const isSandboxManagedMount = (p) => p === '/' || p === '/tmp' || /^\/(?:proc|sys|dev|run)(?:\/|$)/.test(p);
+@@ -117,7 +117,14 @@
+   let i = 0;
+   for (; i < argv.length && argv[i] !== '--'; i++) {
+     const k = argv[i];
+-    if (!['--mem', '--tasks', '--budget', '--env', '--bind', '--verdict-file'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
++    if (!['--mem', '--tasks', '--budget', '--env', '--bind', '--verdict-file', '--no-net'].includes(k)) usage(`unknown argument ${JSON.stringify(k)}`);
++    if (k === '--no-net') {
++      // K65SentinelHarmExec: additive, off by default. A gate registry that runs a tip's code does not need a
++      // network; bwrap --unshare-net answers ENETUNREACH to a TCP child (measured, round 65).
++      if (o.noNet) usage('--no-net given twice');
++      o.noNet = true;
++      continue;
++    }
+     if (i + 1 >= argv.length) usage(`${k} needs a value`);
+     const v = argv[++i];
+     if (k === '--env') {
+@@ -192,7 +199,7 @@
+     '-p', `MemoryMax=${o.mem}M`, '-p', 'MemorySwapMax=0', '-p', `TasksMax=${o.tasks}`, '--',
+     'env', '-i', 'PATH=/usr/bin', 'bwrap', '--ro-bind', '/', '/', '--dev', '/dev', '--proc', '/proc',
+     '--tmpfs', '/tmp', '--tmpfs', '/run', '--bind', cwd, cwd, ...o.bind.flatMap(([src, dst]) => ['--bind', src, dst]), '--chdir', cwd,
+-    '--unshare-pid', '--die-with-parent', '--new-session', ...setenv,
++    '--unshare-pid', ...(o.noNet ? ['--unshare-net'] : []), '--die-with-parent', '--new-session', ...setenv,
+     '--argv0', o.cmd[0], real, ...o.cmd.slice(1)];
+ 
+   const killScope = () => {

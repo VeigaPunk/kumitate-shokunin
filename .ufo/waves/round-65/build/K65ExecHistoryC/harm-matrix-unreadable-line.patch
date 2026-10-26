@@ -1,0 +1,52 @@
+harm-matrix.mjs — additive visibility patch (proposed by K65ExecHistoryC, round 65 w1)
+
+WHY (evidence in .ufo/waves/round-65/w1/K65ExecHistoryC.md findings -1 and -2, and
+build/K65ExecHistoryC/direct-runs.txt):
+
+  * A gate that emits no verdict line at EITHER revision becomes a CARRIED row, is
+    counted in `gates=`, and is invisible in the summary. The matrix then prints
+    `HARM_MATRIX: CLEAN` and exits 0 while one of the "measured" gates produced nothing.
+    Real revisions: node scripts/harm-matrix.mjs --lane . \
+      --base f86b8ed0 --tip 364f1d59 --only surface-known --timeout 120
+      -> HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 ... exit 0
+         (the single row is base=FAIL_CLOSED tip=FAIL_CLOSED "no-verdict exit=64")
+    Full pair A (f86b8ed0 -> 364f1d59) reads `CLEAN gates=5` with 1 of the 5 blind.
+  * Pair B (0ecba269 -> 89ff4a74) exits 1 on NEW_RED minted from a tip that did not
+    run (`TRUTH: FAIL-CLOSED (SRC_MISSING ...)` exit 2), i.e. from an unreadable gate.
+
+WHAT IT CHANGES: one new output line. No class change, no exit-code change, no
+relaxation. `HARM_MATRIX_UNREADABLE:` does not share the `HARM_MATRIX: ` prefix, so the
+frozen harness (rows from `HARM_ROW `, summary from `HARM_MATRIX: `) is unaffected.
+The line is printed after the rows and before the summary.
+
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -142,6 +142,8 @@
+   for (const r of res.rows) out(`HARM_ROW gate=${r.gate} base=${r.b.cls} tip=${r.t.cls} id=${r.id} base_text=${JSON.stringify(r.b.text)} tip_text=${JSON.stringify(r.t.text)}`);
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH').length;
+   if (counted === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
++  const unreadable = res.rows.filter((r) => r.id !== 'ABSENT_BOTH' && [r.b.cls, r.t.cls].some((c) => c === 'FAIL_CLOSED' || c === 'TIMEOUT'));
++  if (unreadable.length) out(`HARM_MATRIX_UNREADABLE: count=${unreadable.length} gates=${unreadable.map((r) => `${r.gate}:${r.b.cls}/${r.t.cls}`).join(',')}`);
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+   const bad = harm + harmAbsent + newRed;
+   out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+
+APPLIED AND EXERCISED in a scratch copy (/tmp/kumitate-r65/K65ExecHistoryC/hm, deleted):
+  patch -p1 -> "Hunk #1 succeeded at 142 with fuzz 2."  (the hand-written hunk above is
+  the same bytes; regenerate with diff -u if your patch(1) is strict)
+  node --check -> SYNTAX_OK
+  pair A full:  HARM_MATRIX_UNREADABLE: count=1 gates=surface-known:FAIL_CLOSED/FAIL_CLOSED
+                HARM_MATRIX: CLEAN gates=5 held=1 repaired=0 carried=2 moved=2 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=f86b8ed0e03d tip=364f1d595415   EXIT=0
+  pair A --only surface-known:
+                HARM_MATRIX_UNREADABLE: count=1 gates=surface-known:FAIL_CLOSED/FAIL_CLOSED
+                HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=f86b8ed0e03d tip=364f1d595415   EXIT=0
+  pair C full (d81978cd -> 329fcb80), patched: no HARM_MATRIX_UNREADABLE line, and
+                HARM_MATRIX: CLEAN gates=11 held=8 repaired=0 carried=3 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=d81978cdfefd tip=329fcb8018d2   EXIT=0
+  Expected, not exercised after the patch: pair B full prints
+    HARM_MATRIX_UNREADABLE: count=2 gates=surface-known:FAIL_CLOSED/NOT_CLEAN,anchor-truth:ABSENT/NOT_CLEAN
+    (harm-matrix HARM gates=8 ... new_red=1, exit 1 unchanged); the NO_GATES pair prints no line.
+
+DELIBERATELY NOT PROPOSED IN THIS WAVE (each would move exit semantics while the counter
+is frozen): failClosed('NO_VERDICTS', ...) when unreadable === counted; and a distinct
+transition for "gate self-reported a FAIL_CLOSED verdict word" so NEW_RED stops mixing
+"newly red" with "newly unreadable". Either needs the frozen probe re-read first.

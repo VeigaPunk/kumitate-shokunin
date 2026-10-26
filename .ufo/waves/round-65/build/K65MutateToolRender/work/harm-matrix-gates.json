@@ -1,0 +1,26 @@
+{
+  "contract": "kumitate-harm-matrix-v1",
+  "note": "Registry of lane gates run by scripts/harm-matrix.mjs at a base and a tip revision. verdict is a regex over output lines (the last match wins); capture 1 is the verdict word; a gate is CLEAN only when its exit is in ok_exit and the word is in clean. Heavy or interactive gates (cite-check, gate-mutants, cap-run, surface-probe --checklists) are out of the registry: they run longer than a close step allows or need systemd, and are listed under limits in the round report.",
+  "gates": [
+    { "id": "readme-map", "argv": ["node", "scripts/readme-map.mjs"], "verdict": "^README_MAP: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "proxy-check", "argv": ["node", "scripts/proxy-check.mjs", "--strict"], "verdict": "^PROXY: (\\w+)", "clean": ["MATCH"], "timeout": 60 },
+    { "id": "claims-check", "argv": ["node", "scripts/claims-check.mjs"], "verdict": "^CLAIMS: (\\w+)", "clean": ["MATCH"], "timeout": 60 },
+    { "id": "counter-pins", "argv": ["node", "scripts/counter-pins.mjs"], "verdict": "^COUNTER_PINS: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "sources-check", "argv": ["node", "scripts/sources-check.mjs"], "verdict": "^SOURCES_CHECK: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "source-capture", "argv": ["node", "scripts/source-capture.mjs"], "verdict": "^SOURCE_CAPTURE: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "source-dupes", "argv": ["node", "scripts/source-dupes.mjs"], "verdict": "^SOURCE_DUPES: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "kimi-census", "argv": ["node", "scripts/kimi-census.mjs"], "verdict": "^KIMI_CENSUS: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "omp-census", "argv": ["node", "scripts/omp-census.mjs"], "verdict": "^OMP_CENSUS: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "anchor-truth", "argv": ["node", "scripts/anchor-truth.mjs", "--base", "e18ff1af3392e3823227644c977c237737fe65c9"], "verdict": "^TRUTH: (\\w+)", "clean": ["CLEAN"], "timeout": 120 },
+    { "id": "surface-known", "argv": ["node", "scripts/surface-probe.mjs", "--known", ".ufo/pins/surface-known.json"], "verdict": "^SURFACE_PROBE: (\\w+)", "clean": ["CLEAN"], "timeout": 120 },
+    { "id": "wave-census-r40", "argv": ["node", "scripts/wave-census.mjs", "--round", "40"], "verdict": "^WAVE_CENSUS: (\\w+)", "clean": ["CLEAN"], "timeout": 60 },
+    { "id": "cite-sources-selftest", "argv": ["node", "scripts/cite-sources.mjs", "--selftest"], "verdict": "^VERDICT: (\\w+)", "clean": ["PASS"], "timeout": 60 },
+    { "id": "round-gate-selftest", "argv": ["node", "scripts/round-gate.mjs", "--selftest"], "verdict": "^VERDICT: (\\w+)", "clean": ["PASS"], "timeout": 180 },
+    { "id": "sources-check-selftest", "argv": ["node", "scripts/sources-check.mjs", "--selftest"], "verdict": "^VERDICT: (\\w+)", "clean": ["PASS"], "timeout": 120 },
+    { "id": "counter-pins-selftest", "argv": ["node", "scripts/counter-pins.mjs", "--selftest"], "verdict": "^COUNTER_PINS_SELFTEST: (\\w+)", "clean": ["PASS"], "timeout": 60 },
+    { "id": "report-receipt-diff-selftest", "argv": ["node", "scripts/report-receipt-diff.mjs", "--selftest"], "verdict": "^REPORT_RECEIPT_SELFTEST: (\\w+)", "clean": ["PASS"], "timeout": 180 },
+    { "id": "plan-before-ready-selftest", "argv": ["bash", "scripts/plan-before-ready.sh", "--selftest"], "verdict": "^PLAN_BEFORE_READY_SELFTEST: (\\w+)", "clean": ["PASS"], "timeout": 180 },
+    { "id": "wave-census-selftest", "argv": ["node", "scripts/wave-census.mjs", "--selftest"], "verdict": "^VERDICT: (\\w+)", "clean": ["PASS"], "timeout": 120 },
+    { "id": "harm-matrix-selftest", "argv": ["node", "scripts/harm-matrix.mjs", "--selftest"], "verdict": "^HARM_MATRIX_SELFTEST: (\\w+)", "clean": ["PASS"], "timeout": 300 }
+  ]
+}

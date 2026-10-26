@@ -1,0 +1,207 @@
+--- a/scripts/harm-matrix.mjs
++++ b/scripts/harm-matrix.mjs
+@@ -17,6 +17,23 @@
+  * A gate is CLEAN only when its exit code is in `ok_exit` AND the LAST line matching `verdict` carries a first capture in
+  * `clean`. A missing verdict line is FAIL_CLOSED, never clean; a gate that outlives `timeout` is TIMEOUT, never clean.
+  *
++ * Text rules (round 65 hardening; each is a strengthening, none relaxes a clean reading):
++ *   R1 temp-suffix normalisation — CARRIED vs CARRIED_MOVED compares the verdict line after every path of the form
++ *      <tmp-root>/<stem>.<6+ alnum> has its random suffix replaced by `<tmp>` (tmp roots: os.tmpdir(), /tmp, /var/tmp,
++ *      /dev/shm). The raw line is still printed; a row whose compared text was normalised ends with ` normalized=1`.
++ *      Without R1 a verdict carrying a per-run temp path (`... fixtures=/tmp/x.AbCdEf`) reads CARRIED_MOVED on every run.
++ *   R2 no output pipes — gate stdout and stderr are redirected to files in a scratch dir, not to pipes, so a background
++ *      grandchild that inherits the stream cannot keep the matrix waiting: spawnSync returns when the direct child exits.
++ *      The `timeout -k 2 T` wrapper still bounds the direct child; the parent adds a T+8s SIGKILL backstop.
++ *   R3 output cap — combined output above 64 MiB (67108864 bytes) is FAIL_CLOSED `output>...`, never read into the tool
++ *      and never CLEAN: a gate whose output we cannot hold is a gate whose last verdict line we cannot prove.
++ *   R4 encoding — a line that is not valid UTF-8 may not carry a trusted verdict: if it matches `verdict` the gate is
++ *      FAIL_CLOSED `verdict-not-utf8`; invalid bytes on lines that do not match are ignored.
++ *   R5 verdict flags — `verdict` is a bare pattern string with NO flags; the registry cannot express `g`/`y` (RegExp is
++ *      built without flags, so `lastIndex` state cannot leak between the base and the tip run). A JS-literal value
++ *      (`/re/g`) is an operator error and is rejected at load as FAIL_CLOSED GATES_INVALID `verdict-literal`; inline
++ *      `(?g)` is rejected by the RegExp constructor.
++ *
+  * Registry: scripts/harm-matrix-gates.json next to this file (override with --gates). Each gate:
+  *   { id, argv[], needs (a path that must exist at the revision, default = first *.mjs|js|sh|py argv), ok_exit[] (default [0]),
+  *     verdict (regex; capture 1 is the verdict word), clean[] (verdict words that are clean), timeout (seconds, default 60) }.
+@@ -29,7 +46,7 @@
+  * host at both revisions, so a host change between the two runs is not told apart from a revision change.
+  */
+ import { spawnSync } from 'node:child_process';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
++import { closeSync, existsSync, mkdirSync, mkdtempSync, openSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+ import { dirname, join, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+@@ -41,6 +58,19 @@
+ const ID_RE = /^[a-z0-9][a-z0-9-]*$/;
+ const CLEAN_ENV = () => ({ PATH: process.env.PATH || '/usr/bin:/bin', HOME: process.env.HOME || '/tmp', LANG: 'C', LC_ALL: 'C', NO_COLOR: '1' });
+ const GIT_ID = ['-c', 'user.name=harm-matrix', '-c', 'user.email=harm-matrix@invalid', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null'];
++const MAX_OUT = 64 << 20;
++const EMPTY = Buffer.alloc(0);
++
++// R1 — a temp path's random suffix is not part of a gate's verdict. `mkdtemp` and friends mint <stem>.<6+ alnum> under a temp
++// root; two not-clean lines that differ only there are the same reading. The stem and everything else stay compared.
++const TMP_ROOTS = [...new Set([tmpdir(), '/tmp', '/var/tmp', '/dev/shm'].map((p) => String(p).replace(/\/+$/, '')).filter(Boolean))];
++const TMP_SUFFIX = new RegExp(`((?:${TMP_ROOTS.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})/[A-Za-z][A-Za-z0-9._-]*\\.)[A-Za-z0-9]{6,}(?![A-Za-z0-9])`, 'g');
++const normText = (s) => String(s).replace(TMP_SUFFIX, '$1<tmp>');
++
++// R4 — a line is decoded strictly; an undecodable line is still shown (U+FFFD) but can never carry a clean verdict.
++const STRICT_UTF8 = new TextDecoder('utf-8', { fatal: true });
++const LOOSE_UTF8 = new TextDecoder('utf-8');
++const decodeLine = (bytes) => { try { return { text: STRICT_UTF8.decode(bytes), bad: false }; } catch { return { text: LOOSE_UTF8.decode(bytes), bad: true }; } };
+ 
+ const out = (s) => process.stdout.write(`${s}\n`);
+ const usage = () => { process.stderr.write('usage: harm-matrix.mjs --base REV --tip REV [--lane DIR] [--gates FILE] [--only a,b] [--timeout S] | --selftest [--cases FILE]\n'); process.exit(64); };
+@@ -60,6 +90,9 @@
+     seen.add(g.id);
+     if (!Array.isArray(g.argv) || g.argv.length === 0 || g.argv.some((a) => typeof a !== 'string')) return { error: 'GATES_INVALID', detail: `${g.id}: argv` };
+     if (typeof g.verdict !== 'string') return { error: 'GATES_INVALID', detail: `${g.id}: verdict` };
++    // R5: the registry holds a bare pattern. A JS-literal value (`/re/g`, `/re/`) is an operator error that would otherwise
++    // match nothing (the slashes and flags would be read as literal pattern text) and be reported as a silent no-verdict.
++    if (/^\/[\s\S]*\/[a-z]*$/.test(g.verdict)) return { error: 'GATES_INVALID', detail: `${g.id}: verdict-literal (flags are not accepted; write a bare pattern)` };
+     let re;
+     try { re = new RegExp(g.verdict); } catch { return { error: 'GATES_INVALID', detail: `${g.id}: verdict regex` }; }
+     if (!Array.isArray(g.clean) || g.clean.length === 0) return { error: 'GATES_INVALID', detail: `${g.id}: clean` };
+@@ -77,23 +110,58 @@
+   if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `clone: ${String(r.stderr).slice(0, 160)}` }; }
+   r = git(dir, ['-c', 'advice.detachedHead=false', 'checkout', '-q', rev]);
+   if (r.status !== 0) { rmSync(dir, { recursive: true, force: true }); return { error: `checkout: ${String(r.stderr).slice(0, 160)}` }; }
++  // A sandbox that does not actually hold the requested revision must not be read: an absent `needs` path would be reported as
++  // ABSENT/GONE (a gate change) when the truth is a stale or partial checkout.
++  r = git(dir, ['rev-parse', 'HEAD']);
++  if (r.status !== 0 || r.stdout.trim() !== rev) { rmSync(dir, { recursive: true, force: true }); return { error: `stale-checkout: HEAD=${String(r.stdout || '').trim().slice(0, 40)} want=${rev.slice(0, 40)}` }; }
+   return { dir };
+ }
+ 
+-function measure(g, dir) {
+-  if (g.needs && !existsSync(join(dir, g.needs))) return { cls: 'ABSENT', text: `absent:${g.needs}` };
+-  const r = spawnSync('timeout', ['-k', '2', String(g.timeout), ...g.argv], {
+-    cwd: dir, encoding: 'utf8', env: CLEAN_ENV(), maxBuffer: 64 << 20, timeout: (g.timeout + 8) * 1000, killSignal: 'SIGKILL',
+-  });
+-  if (r.error && r.error.code === 'ETIMEDOUT') return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
++function readCapture(file) {
++  let size = 0;
++  try { size = statSync(file).size; } catch { size = 0; }
++  if (size > MAX_OUT) { rmSync(file, { force: true }); return { over: size }; }
++  try { return { buf: readFileSync(file) }; } catch { return { buf: EMPTY }; } finally { rmSync(file, { force: true }); }
++}
++
++function measure(g, dir, tag, scratch) {
++  if (g.needs && !existsSync(join(dir, g.needs))) { const t = `absent:${g.needs}`; return { cls: 'ABSENT', text: t, cmp: t }; }
++  const oPath = join(scratch, `${tag}.out`);
++  const ePath = join(scratch, `${tag}.err`);
++  const oFd = openSync(oPath, 'w');
++  const eFd = openSync(ePath, 'w');
++  let r;
++  try {
++    r = spawnSync('timeout', ['-k', '2', String(g.timeout), ...g.argv], {
++      cwd: dir, stdio: ['ignore', oFd, eFd], env: CLEAN_ENV(), timeout: (g.timeout + 8) * 1000, killSignal: 'SIGKILL',
++    });
++  } finally { closeSync(oFd); closeSync(eFd); }
++  const o = readCapture(oPath);
++  const e = readCapture(ePath);
++  const over = Math.max(o.over || 0, e.over || 0);
++  if (over || (o.buf?.length ?? 0) + (e.buf?.length ?? 0) > MAX_OUT) {
++    const t = `output>${MAX_OUT}B`;
++    return { cls: 'FAIL_CLOSED', text: t, cmp: t };
++  }
++  if (r.error && r.error.code === 'ETIMEDOUT') { const t = `timeout>${g.timeout}s`; return { cls: 'TIMEOUT', text: t, cmp: t }; }
+   const rc = r.status === null ? (r.signal ? 128 : -1) : r.status;
+-  if (rc === 124 || rc === 137) return { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+-  const lines = `${r.stdout || ''}\n${r.stderr || ''}`.split('\n').map((l) => l.trimEnd());
++  if (rc === 124 || rc === 137) { const t = `timeout>${g.timeout}s`; return { cls: 'TIMEOUT', text: t, cmp: t }; }
++  const blob = Buffer.concat([o.buf ?? EMPTY, Buffer.from('\n'), e.buf ?? EMPTY]);
+   let hit = null;
+-  for (const l of lines) { const m = g.re.exec(l); if (m) hit = { line: l.trim(), word: m[1] !== undefined ? m[1] : m[0] }; }
+-  if (!hit) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}` };
++  let start = 0;
++  for (let i = 0; i <= blob.length; i++) {
++    if (i !== blob.length && blob[i] !== 0x0A) continue;
++    const d = decodeLine(blob.subarray(start, i));
++    start = i + 1;
++    const line = d.text.trimEnd();
++    const m = g.re.exec(line);
++    if (m) hit = { line, word: m[1] !== undefined ? m[1] : m[0], bad: d.bad };
++  }
++  if (!hit) { const t = `no-verdict exit=${rc}`; return { cls: 'FAIL_CLOSED', text: t, cmp: t }; }
++  if (hit.bad) { const t = `verdict-not-utf8 exit=${rc}`; return { cls: 'FAIL_CLOSED', text: t, cmp: t }; }
+   const clean = g.okExit.includes(rc) && g.clean.includes(hit.word);
+-  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text: hit.line.slice(0, 200) + (clean ? '' : ` [exit=${rc}]`) };
++  const text = (hit.line.trim().slice(0, 200) + (clean ? '' : ` [exit=${rc}]`));
++  return { cls: clean ? 'CLEAN' : 'NOT_CLEAN', text, cmp: normText(text) };
+ }
+ 
+ function transition(b, t) {
+@@ -102,7 +170,7 @@
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+-  return b.text === t.text ? 'CARRIED' : 'CARRIED_MOVED';
++  return b.cmp === t.cmp ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+ function runMatrix({ lane, base, tip, gatesFile, only, timeoutOverride }) {
+@@ -119,6 +187,7 @@
+     revs[k] = r.stdout.trim();
+   }
+   const sb = {};
++  const scratch = mkdtempSync(join(tmpdir(), 'harm-cap.'));
+   try {
+     for (const k of ['base', 'tip']) {
+       const s = sandbox(lane, revs[k]);
+@@ -127,19 +196,23 @@
+     }
+     const rows = [];
+     for (const g of gates) {
+-      const b = measure(g, sb.base);
+-      const t = measure(g, sb.tip);
++      const b = measure(g, sb.base, `base-${g.id}`, scratch);
++      const t = measure(g, sb.tip, `tip-${g.id}`, scratch);
+       rows.push({ gate: g.id, b, t, id: transition(b, t) });
+     }
+     return { rows, revs };
+   } finally {
+     for (const d of Object.values(sb)) rmSync(d, { recursive: true, force: true });
++    rmSync(scratch, { recursive: true, force: true });
+   }
+ }
+ 
+ function render(res) {
+   const n = (id) => res.rows.filter((r) => r.id === id).length;
+-  for (const r of res.rows) out(`HARM_ROW gate=${r.gate} base=${r.b.cls} tip=${r.t.cls} id=${r.id} base_text=${JSON.stringify(r.b.text)} tip_text=${JSON.stringify(r.t.text)}`);
++  for (const r of res.rows) {
++    const norm = r.b.text !== r.b.cmp || r.t.text !== r.t.cmp ? ' normalized=1' : '';
++    out(`HARM_ROW gate=${r.gate} base=${r.b.cls} tip=${r.t.cls} id=${r.id} base_text=${JSON.stringify(r.b.text)} tip_text=${JSON.stringify(r.t.text)}${norm}`);
++  }
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH').length;
+   if (counted === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+@@ -180,14 +253,24 @@
+       fx = buildFixture(c);
+       const rep = (s) => String(s).replaceAll('{BASE}', fx.baseRev).replaceAll('{TIP}', fx.tipRev).replaceAll('{DIR}', fx.D);
+       const args = (c.args || ['--base', '{BASE}', '--tip', '{TIP}', '--gates', '{DIR}/gates.json']).map(rep);
++      const started = Date.now();
+       const r = spawnSync('node', [SELF, '--lane', fx.D, ...args], { encoding: 'utf8', timeout: 180000 });
++      const elapsed = Date.now() - started;
+       const lines = r.stdout.split('\n');
+-      const got = lines.filter((l) => l.startsWith('HARM_ROW ')).map((l) => { const m = /gate=(\S+) .* id=(\S+) base_text/.exec(l); return m ? `${m[1]} ${m[2]}` : l; }).sort();
++      const textOf = {};
++      const got = lines.filter((l) => l.startsWith('HARM_ROW ')).map((l) => {
++        const m = /gate=(\S+) .* id=(\S+) base_text=("(?:[^"\\]|\\.)*") tip_text=("(?:[^"\\]|\\.)*")/.exec(l);
++        if (!m) return l;
++        textOf[m[1]] = `${JSON.parse(m[3])}\n${JSON.parse(m[4])}`;
++        return `${m[1]} ${m[2]}`;
++      }).sort();
+       const want = [...(c.expect.rows || [])].sort();
+       const sumLine = lines.find((l) => l.startsWith('HARM_MATRIX: '));
+       const okSummary = !c.expect.summary || (sumLine && sumLine.includes(c.expect.summary));
+-      const ok = r.status === c.expect.exit && JSON.stringify(got) === JSON.stringify(want) && okSummary;
+-      if (ok) { pass++; out(`CASE ok ${c.id}`); } else out(`CASE FAIL ${c.id} exit=${r.status} want=${c.expect.exit} rows=${JSON.stringify(got)} wantrows=${JSON.stringify(want)} summary=${JSON.stringify(sumLine || null)}`);
++      const okText = !c.expect.text || Object.entries(c.expect.text).every(([gate, needle]) => String(textOf[gate] || '').includes(needle));
++      const okTime = !c.expect.max_ms || elapsed <= c.expect.max_ms;
++      const ok = r.status === c.expect.exit && JSON.stringify(got) === JSON.stringify(want) && okSummary && okText && okTime;
++      if (ok) { pass++; out(`CASE ok ${c.id}`); } else out(`CASE FAIL ${c.id} exit=${r.status} want=${c.expect.exit} rows=${JSON.stringify(got)} wantrows=${JSON.stringify(want)} summary=${JSON.stringify(sumLine || null)} ms=${elapsed}${c.expect.max_ms ? ` max=${c.expect.max_ms}` : ''}${okText ? '' : ` text=${JSON.stringify(textOf)}`}`);
+     } catch (e) { out(`CASE FAIL ${c.id} threw ${String(e.message).slice(0, 120)}`); } finally { if (fx) rmSync(fx.D, { recursive: true, force: true }); }
+   }
+   out(`HARM_MATRIX_SELFTEST: ${pass === cases.length ? 'PASS' : 'FAIL'} (${pass}/${cases.length})`);

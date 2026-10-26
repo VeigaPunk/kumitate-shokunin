@@ -1,0 +1,82 @@
+C2 forgery receipts — K65CriticC2Predicate, round 65 wave 1
+All runs: frozen counter .ufo/waves/round-65/probe/omp65-probe.mjs, lane path = scratch clone, rev = clone HEAD.
+Each forgery commit exists only inside a /tmp clone; no frozen file was edited.
+
+=== 1. naive forge: real tag URLs + captures of unrelated committed files, off-line (cloneA) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneA a4f836b8b64f16de09facff229db288837714afb --no-live
+OMP65_UNMET held=7/8 checks=8 rev=a4f836b8b64f16de09facff229db288837714afb rule=O65 | O5 MISS live-fetch-skipped
+EXIT=1
+
+=== 2. same revision, live (what O5 adds: 5 of 6 lifted quotes are caught) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneA a4f836b8b64f16de09facff229db288837714afb
+OMP65_UNMET held=7/8 checks=8 rev=a4f836b8b64f16de09facff229db288837714afb rule=O65 | O5 MISS S201:quote-not-live(bytes. # Output: OMP_BIN: = li);S202:quote-not-live(by +1 to +22. LOG.md pointers );S202:quote-not-live(vs distinct); LOG.md:1297 (CLA);S203:quote-not-live(wrapper_restart_codes=132-139 );S203:quote-not-live(OMP_BIN: sym_MCP_PROTOCOL_VERS)
+EXIT=1
+(the surviving bullet is the token 2025-11-25, which the cited page does contain)
+
+=== 3. 8/8: quotes reduced to tokens that are on the page AND in an unrelated capture (cloneB) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneB 367058425fec0e5575db21f91dd0b94800944d6e
+OMP65_HELD held=8/8 checks=8 rev=367058425fec0e5575db21f91dd0b94800944d6e rule=O65
+EXIT=0
+captures pinned: .ufo/waves/round-65/base/omp-binary-probe-freeze.txt, corpus/lessons/round-34.md, corpus/SOURCES.md
+quotes: "MCP-Protocol-Version" "OMP" "mcp.json" "config" "2025-11-25" "MCP"
+
+=== 4. 8/8 with markup-only quotes (cloneE) — norm("<p>") === "" matches every capture and every page ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneE d396720b746101d4942a26af54ebbf928da01fdf
+OMP65_HELD held=8/8 checks=8 rev=d396720b746101d4942a26af54ebbf928da01fdf rule=O65
+EXIT=0
+committed ## Located quotes:
+- S201 — "<p>"
+- S201 — "<div>"
+- S202 — "<b>"
+- S202 — "<span>"
+- S203 — "<em>"
+- S203 — "2025-11-25"
+
+=== 5. 8/8 with reflecting URLs and no row URL at the release (cloneD) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneD e72edf95ee0043ca001678790cee9a856bfd6a89
+OMP65_HELD held=8/8 checks=8 rev=e72edf95ee0043ca001678790cee9a856bfd6a89 rule=O65
+EXIT=0
+row URL cells: https://httpbin.org/anything/OMP/MCP-Protocol-Version ; https://httpbin.org/anything/mcp.json/config ; https://httpbin.org/anything/MCP/2025-11-25
+O6's version pin is satisfied by the string "/v18.12.6/" in the anchor cell of two rows, not by any URL.
+
+=== 6. 8/8 with a doctored probe script: O6 measures the archive's own code (cloneC) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneC e73e6f8cd7b2c4930af484cb9af647b6c528b0ea
+OMP65_HELD held=8/8 checks=8 rev=e73e6f8cd7b2c4930af484cb9af647b6c528b0ea rule=O65
+EXIT=0
+entry states: real_bytes=1 · lit_2026_07_28=999 · wrapper_max_restarts=99
+real host:     real_bytes=256702432 · lit_2026_07_28=0 · wrapper_max_restarts=5  (base/omp-binary-probe-freeze.txt)
+scripts/omp-binary-probe.sh at that rev is 15 echo lines, exit 0.
+
+=== 7. 8/8 after a real README_MAP DRIFT is masked by replacing the O7 oracle (cloneD) ===
+$ (cd cloneD && node scripts/readme-map.mjs)
+README_MAP: note unpinned:knowledge/omp-installed-release-mcp-runtime.md
+README_MAP: DRIFT files=158 rows=157 covered=157 bad=2 first=uncovered:knowledge/omp-installed-release-mcp-runtime.md
+EXIT=1
+$ printf "console.log('README_MAP: CLEAN files=157 rows=157 covered=157'); process.exit(0);\n" > cloneD/scripts/readme-map.mjs
+$ printf "console.log('SOURCES_CHECK: CLEAN'); process.exit(0);\n" > cloneD/scripts/sources-check.mjs
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneD 35c65121e2eb0c2003e2ac81b34cf2aa1206b8fb
+OMP65_HELD held=8/8 checks=8 rev=35c65121e2eb0c2003e2ac81b34cf2aa1206b8fb rule=O65
+EXIT=0
+(readme-map.mjs is already pinned in .ufo/pins/counter-pins.json round 58; the counter does not check that pin)
+
+=== 8. 8/8 with a PROVINCE line that says it is not a frontier line (cloneD) ===
+PROVINCE.md line: - ground: `corpus/knowledge/omp-installed-release-mcp-runtime.md` (not a frontier advance; a ground note)
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/cloneD 7c76b9bb10d8d22f99a20a48d710aabbd0d40d4c
+OMP65_HELD held=8/8 checks=8 rev=7c76b9bb10d8d22f99a20a48d710aabbd0d40d4c rule=O65
+EXIT=0
+
+=== 9. base revision still 0/8 (the counter is not vacuous) ===
+$ node .ufo/waves/round-65/probe/omp65-probe.mjs /tmp/kumitate-r65/K65CriticC2Predicate/clone 47fe2383151909d31557ada118ad84f90404dc6c --no-live
+OMP65_UNMET held=0/8 checks=8 rev=47fe2383151909d31557ada118ad84f90404dc6c rule=O65 | O1 MISS entry-absent | O2 MISS no-entry | O3 MISS no-rows | O4 MISS bullets=0;no-2025-11-25-quote | O5 MISS live-fetch-skipped | O6 MISS stated-keys=0;probe-absent;body-lacks-lit_2026_07_28-or-real_version | O7 MISS census-exit=0 province-names-entry=false readme-map-clean=false sources-check-clean=true | O8 MISS no-amendment-heading,amendment-lacks-entry-or-Version-skew
+EXIT=1
+
+=== 10. size of the cheapest 8/8 forgery (cloneE, vacuous quotes) ===
+$ git -C cloneE diff --stat 2ca91a0c81542cad5f731049aa55dd2f99ade98d HEAD
+ .ufo/pins/readme-map.json                          |  3 +-
+ .ufo/pins/source-captures.json                     | 21 ++++++++++
+ PROVINCE.md                                        |  1 +
+ corpus/README.md                                   |  1 +
+ corpus/SOURCES.md                                  |  3 ++
+ .../knowledge/omp-installed-release-mcp-runtime.md | 48 ++++++++++++++++++++++
+ corpus/knowledge/omp-task-contract.md              |  4 ++
+ 7 files changed, 80 insertions(+), 1 deletion(-)

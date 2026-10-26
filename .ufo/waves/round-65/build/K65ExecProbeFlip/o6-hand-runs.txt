@@ -1,0 +1,29 @@
+### A: entry states TRUE host values, probe reads installed host (expected: O6 ok, no reasons)
+COUNTER /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs sha256=688f5684c85e9e3b0075f1075f0b09736dc362286788c94bdc0057b3a1c967af slice_lines=34
+ENTRY /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65ExecProbeFlip/entry-host-true.md stated_lit_2025_11_25=2 stated_lit_2026_07_28=0
+O6 ok=true reasons=(none)
+exit=0
+
+### B: entry states FLIPPED values, probe reads installed host
+COUNTER /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs sha256=688f5684c85e9e3b0075f1075f0b09736dc362286788c94bdc0057b3a1c967af slice_lines=34
+ENTRY /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65ExecProbeFlip/entry-host-flipped.md stated_lit_2025_11_25=0 stated_lit_2026_07_28=2
+O6 ok=false reasons=O6 MISS lit_2025_11_25:stated=0:live=2;lit_2026_07_28:stated=2:live=0
+exit=1
+
+### C: entry states TRUE values, probe reads a date-flipped host (OMP_BIN_REAL=flip copy)
+COUNTER /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs sha256=688f5684c85e9e3b0075f1075f0b09736dc362286788c94bdc0057b3a1c967af slice_lines=34
+ENTRY /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65ExecProbeFlip/entry-host-true.md stated_lit_2025_11_25=2 stated_lit_2026_07_28=0
+O6 ok=false reasons=O6 MISS lit_2025_11_25:stated=2:live=0;lit_2026_07_28:stated=0:live=2
+exit=1
+
+### D: entry states TRUE values, probe reads a padded host (OMP_BIN_REAL=+4096 NUL copy)
+COUNTER /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs sha256=688f5684c85e9e3b0075f1075f0b09736dc362286788c94bdc0057b3a1c967af slice_lines=34
+ENTRY /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65ExecProbeFlip/entry-host-true.md stated_lit_2025_11_25=2 stated_lit_2026_07_28=0
+O6 ok=false reasons=O6 MISS real_bytes:stated=256702432:live=256706528
+exit=1
+
+### E: entry states TRUE values, probe reads the byte-identical third copy (OMP_BIN_REAL=orig copy)
+COUNTER /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/probe/omp65-probe.mjs sha256=688f5684c85e9e3b0075f1075f0b09736dc362286788c94bdc0057b3a1c967af slice_lines=34
+ENTRY /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-65/build/K65ExecProbeFlip/entry-host-true.md stated_lit_2025_11_25=2 stated_lit_2026_07_28=0
+O6 ok=true reasons=(none)
+exit=0

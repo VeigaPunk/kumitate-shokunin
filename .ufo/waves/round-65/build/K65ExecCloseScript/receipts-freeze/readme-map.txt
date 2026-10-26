@@ -1,0 +1,5 @@
+## STEP readme-map
+## cwd=/tmp/kumitate-r65/K65ExecCloseScript/freeze.tpoz/lane
+## /run/user/1000/fnm_multishells/13812_1792946939276/bin/node scripts/readme-map.mjs
+## base=47fe2383151909d31557ada118ad84f90404dc6c tip=443cf496ddfada7396bef277ec5c69a727882982
+README_MAP: CLEAN files=157 rows=157 covered=157

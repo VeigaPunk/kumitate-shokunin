@@ -1,0 +1,137 @@
+diff --git a/.ufo/pins/readme-map.json b/.ufo/pins/readme-map.json
+index a8dd295..74fd7ff 100644
+--- a/.ufo/pins/readme-map.json
++++ b/.ufo/pins/readme-map.json
+@@ -37,6 +37,7 @@
+   "knowledge/native-transcript-ledger-seats.md",
+   "knowledge/native-trial-launch.md",
+   "knowledge/omp-agent-root.md",
++  "knowledge/omp-installed-release-mcp-runtime.md",
+   "knowledge/omp-task-contract.md",
+   "knowledge/ops-watchers.md",
+   "knowledge/pinned-evidence.md",
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index 589ede6..c89a40f 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -224,6 +224,27 @@
+    "sha256": "947d0c56c02f9c10b4c14e8aaa8cc3f435f7650536ab9386ef6a52f1d64ff3c7",
+    "bytes": 47694,
+    "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S201",
++   "path": ".ufo/waves/round-65/build/K65ExecGateDryrun/captures/S201-types.ts",
++   "sha256": "fa41f733ac0fa994ca9346a464d3f662f4955197606e7b3cce4c3f3c476a6508",
++   "bytes": 156,
++   "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S202",
++   "path": ".ufo/waves/round-65/build/K65ExecGateDryrun/captures/S202-mcp-config.md",
++   "sha256": "a114866b8e0e6a9c7af715f3a40b082897665f2782fbacb55c26302d60ff4fa7",
++   "bytes": 66,
++   "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S203",
++   "path": ".ufo/waves/round-65/build/K65ExecGateDryrun/captures/S203-release.html",
++   "sha256": "998de64e4c82b5d02121c3189a9d80fb3a853e4dd676274a2f4df7b9cf5319c9",
++   "bytes": 60,
++   "captured": "2026-10-25"
+   }
+  ],
+  "exemptions": [
+diff --git a/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S201-types.ts b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S201-types.ts
+new file mode 100644
+index 0000000..8add136
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S201-types.ts
+@@ -0,0 +1 @@
++PLACEHOLDER capture S201 — oh-my-pi v18.12.6 packages/coding-agent/src/mcp/types.ts (round-65 C2 landing dry-run; real landing commits the fetched bytes)
+diff --git a/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S202-mcp-config.md b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S202-mcp-config.md
+new file mode 100644
+index 0000000..d0fdb96
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S202-mcp-config.md
+@@ -0,0 +1 @@
++PLACEHOLDER capture S202 — oh-my-pi v18.12.6 docs/mcp-config.md
+diff --git a/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S203-release.html b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S203-release.html
+new file mode 100644
+index 0000000..1f60b9d
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ExecGateDryrun/captures/S203-release.html
+@@ -0,0 +1 @@
++PLACEHOLDER capture S203 — oh-my-pi releases/tag/v18.12.6
+diff --git a/PROVINCE.md b/PROVINCE.md
+index 6a94f01..73c122e 100644
+--- a/PROVINCE.md
++++ b/PROVINCE.md
+@@ -17,6 +17,7 @@
+ ### Frontier — named ground, entered by sourced entries, not yet gated
+ 
+ - OMP harness contract (task batch, agent hub, agent discovery) — first entry `corpus/knowledge/omp-task-contract.md` (round 34); the docs track upstream `main` while the host runs the installed `omp` binary (skew named in the entry).
++- The installed OMP release, measured — frontier entry `corpus/knowledge/omp-installed-release-mcp-runtime.md` (round 65, S201/S202/S203): the release tag v18.12.6's MCP protocol constant, read at the tag rather than at upstream `main`, beside a read-only host probe of the installed binary.
+ - MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
+ - Isolation substrates for parallel agents (git worktrees, harness isolation backends, jj workspaces) — first entry `corpus/knowledge/agent-isolation-substrates.md` (round 45, exploratory): seat-containment rules derived from their mechanisms with demos; harness isolation is off on this host; jj workspaces advanced in round 64 by `corpus/knowledge/jj-workspace-seat-containment.md` — the first demonstrated jj-workspace seat-containment ground (mechanism M7 measured by `scripts/jj-seat-demo.sh`: one shared operation log, staleness that follows the seat's tree, `update-stale` recovery that deletes the abandoned files, no filesystem boundary), appended to the round-45 entry as `Amendment 2026-10-25`.
+ - Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107): delivery identity and claim/repend; advanced round 55 by `corpus/knowledge/bounded-redelivery-budgets.md` (S109/S110/S111): the bound side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets; advanced round 56 by `corpus/knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115): the lease slot — visibility timeout / ack deadline; advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; advanced round 60 by `corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md` (S190/S194): the two primitives the band was missing — compensating action as a saga, tail tolerance as the slowest seat's cost — and by `corpus/knowledge/durable-execution-failure-detection.md` (S126/S131/S133/S134/S135): the three shapes of "durable" and where the guarantee breaks; advanced round 61 by `corpus/knowledge/temporal-worker-versioning-pinning.md` (S195): the version boundary for Pinned Workflows and the narrower Auto-Upgrade/retry-inheritance contract; other broker/workflow failure families remain queued.
+diff --git a/corpus/README.md b/corpus/README.md
+index 29eee0a..0a1f793 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -190,6 +190,7 @@ fixture suite, `--strict` to fail on warnings.
+ | `lessons/round-63-verifier-spotcheck.md` | Round-63 non-author verification (hyaku closure, non-author integrator): C1 `inline-dispatch-evidence` verified (frozen `INLINE63_HELD held=6/6`, independently recounted 40 + 39 = 79 seats, 0 dead) and C2 `multi-agent-coordinator-topologies`/D63 verified (`TOPOLOGY63_HELD held=7/7`, registry 134 → 136); conformance defects (three `-2` stems, 79 seats against the 80–100 plan band, m_flash 44.3%); routed defects D1–D6 for round 64; row added in round 64 so the file does not open the next round in DRIFT | `.ufo/reports/round-63/kumitate.md`; lane tip `bb184a901d88193cf582de03c57e39945df65f15` at the spot-check |
+ | `lessons/round-64.md` | Round-64: `report-receipt-diff` capability acquisition (contract `kumitate-report-receipt-diff-v2` — a report diffed against the committed receipts it cites, judged by frozen R64 P1–P5) and the jj-workspace seat-containment frontier entry (mechanism M7 demonstrated by `scripts/jj-seat-demo.sh`, judged by frozen J64 J1–J8); `readme-map` and `proxy-check` base DRIFT repaired as maintenance; `considerthese/2026-10-25.md` idea 2 taken as C1, idea 1 applied to the new tool and both counters by the forge seats | `.ufo/waves/round-64/plan.md`; `.ufo/waves/round-64/base/`; `.ufo/waves/round-64/probe/` |
+ | `lessons/round-64-verifier-spotcheck.md` | Round-64 non-author verification (hyaku closure, non-author integrator): C1 `report-receipt-diff` (`RECEIPT64_HELD held=5/5`) and C2 jj-workspace seat containment (`JJ64_HELD held=8/8`, registry 136 → 139) re-measured plainly, demo re-run live and byte-identical; admits 3 and rejects 2 staged entries re-opened; routed defects D1–D5 for round 65; row added in round 65 (D2) so the file does not open the round in DRIFT | `.ufo/reports/round-64/kumitate.md`; lane tip `a004902d77d17741b807069fa2bd9ce2e310e424` at the spot-check |
++| `knowledge/omp-installed-release-mcp-runtime.md` | The installed OMP release measured (round-65 C2 frontier entry): its MCP protocol constant read at tag v18.12.6 rather than at upstream `main`, beside the read-only host probe `scripts/omp-binary-probe.sh` (wrapper, release version and size, protocol literals and symbols the release bytes carry) | S201, S202, S203 (rows opened 2026-10-25 in `corpus/SOURCES.md`) |
+ 
+ 
+ ## Known gaps
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6c6691f..bae8aa4 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -152,6 +152,9 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S200 | Jujutsu (jj) documentation — Working copy — https://docs.jj-vcs.dev/v0.46.0/working-copy/ | docs | A | the jj workspace lifecycle as documented at v0.46.0: several working copies backed by one repo, the stale-working-copy trigger and remedy, and `forget` versus `remove` (the latter is v0.46.0-only; the `forget` sentence is also worded differently from v0.45.1); the lane's S067 holds the v0.45.1 source of the same page, this row is the newer rendering | § Workspaces (first paragraph and the forget and remove paragraphs) and § Stale working copy; docs v0.46.0, cited by its immutable `v0.46.0` path (the `latest` alias served the same bytes on 2026-10-25); the host's jj 0.45.1 lists no remove subcommand (jj workspace --help, 2026-10-25) | releasing a seat has two operations in v0.46.0: jj workspace forget makes the repo forget the workspace and leaves its directory and files on disk, while jj workspace remove forgets it and deletes the directory, snapshotting tracked changes first but deleting ignored files; the main workspace cannot be removed and removing the current workspace needs jj -R from another directory on Windows; on this host (0.45.1) only forget exists, so a seat pool cannot rely on remove; a workspace's working copy goes stale when its working-copy commit is modified from another workspace, and `jj workspace update-stale` updates its files | mined | 2026-10-25 | 180d | corpus/knowledge/jj-workspace-seat-containment.md, corpus/knowledge/agent-isolation-substrates.md, corpus/lessons/round-64.md |
+ 
+ 
++| S201 | oh-my-pi v18.12.6 packages/coding-agent/src/mcp/types.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts | code | A | the MCP protocol version constant and its rationale comment at the installed release commit | § MCP_PROTOCOL_VERSION; commit 45c35e40c46166dc726ccc52f5d27f40f2449f99 (tag v18.12.6), opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the release pins its MCP protocol constant and states why the floor sits where it does | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S202 | oh-my-pi v18.12.6 docs/mcp-config.md — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/docs/mcp-config.md | docs | A | the MCP configuration surface documented at the installed release commit | § Preferred config locations; commit 45c35e40c46166dc726ccc52f5d27f40f2449f99, opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the release's own MCP config documentation, read at the tag rather than at main | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S203 | oh-my-pi release v18.12.6 — https://github.com/can1357/oh-my-pi/releases/tag/v18.12.6 | docs | A | the installed release identity: tag, commit and publication date | § Assets and commit line; tag v18.12.6 = 45c35e40c46166dc726ccc52f5d27f40f2449f99, opened 2026-10-25 | PLACEHOLDER ROW (round-65 C2 dry-run): the tag resolves to the commit the other rows are read at | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
+ 
+ ## Paths
+ 
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+new file mode 100644
+index 0000000..9a00b0e
+--- /dev/null
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -0,0 +1,28 @@
++source: S201, S202, S203 — the installed release's MCP protocol constant at commit 45c35e40c46166dc726ccc52f5d27f40f2449f99 (tag v18.12.6), its MCP documentation at the same commit, and the release page — rows opened in round 65 at the installed release tag
++verified-at: 2026-10-25
++recheck: 30d
++coverage-map: frontier band "OMP harness contract (task batch, agent hub, agent discovery)" (PROVINCE.md §Frontier)
++ground: frontier item **1** — "the docs track upstream `main` while the host runs the installed `omp` binary (skew named in the entry)"
++
++# The installed OMP release, measured, is the same 2025-era revision as upstream
++
++PLACEHOLDER ENTRY — round-65 C2 landing dry-run. Body text is the staged
++`merge/kumitate/` skew entry, re-pointed at rows S201-S203; the real entry
++replaces this section with quotes from the captures and the host-measurement
++bullets from `scripts/omp-binary-probe.sh`.
++
++## The pair
++
++| side | what it says | measurement |
++| --- | --- | --- |
++| upstream `main` | `MCP_PROTOCOL_VERSION = "2025-11-25"` | row S201 at the release commit (upstream `main` was the same commit) |
++| the installed binary | the same protocol literals | the byte sweep of the release binary (S203 and the probe below) |
++
++Both sides are on the same revision. The installed release is not behind
++upstream; the protocol revision it implements is the one the specification
++has since replaced.
++
++## What this entry does not claim
++
++It does not claim the installed release is broken, and it does not claim the
++upstream constant is wrong. It records the pair as measured.

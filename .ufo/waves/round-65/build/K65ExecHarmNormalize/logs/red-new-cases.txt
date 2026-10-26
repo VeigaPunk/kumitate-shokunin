@@ -1,0 +1,11 @@
+CASE FAIL normalise-temp-path-fixed exit=0 want=0 rows=["g1 CARRIED_MOVED"] wantrows=["g1 CARRIED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=0 moved=1 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=50f18a62b3df tip=42cbb705bafb"
+CASE FAIL normalise-temp-path-per-run exit=0 want=0 rows=["g1 CARRIED_MOVED"] wantrows=["g1 CARRIED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=0 moved=1 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=fbb001155eeb tip=49490726b3e6"
+CASE FAIL bg-grandchild-pipe-release exit=0 want=0 rows=["g1 CARRIED"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=b85cc3d23889 tip=8e6d186b3d60"
+CASE ok oversize-output-early-verdict
+CASE ok oversize-output-late-verdict
+CASE FAIL oversize-truncation-not-clean exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 CARRIED"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=5b40505efeb6 tip=4ef9bb60201c"
+CASE FAIL non-utf8-verdict-line exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 REPAIRED"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=c987961c115a tip=91ce76ae4abc"
+CASE ok non-utf8-noise-ignored
+CASE FAIL verdict-literal-flags-rejected exit=0 want=2 rows=["g1 CARRIED"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 base=33a417ea9fa8 tip=22b019009490"
+CASE ok verdict-inline-flags-rejected
+HARM_MATRIX_SELFTEST: FAIL (4/10)

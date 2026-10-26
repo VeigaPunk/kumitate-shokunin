@@ -1,0 +1,1818 @@
+From 976982ef6a80bdc62dcc7dbe11b8736cc823a638 Mon Sep 17 00:00:00 2001
+From: fixture <fixture@example.invalid>
+Date: Sun, 25 Oct 2026 22:30:26 -0300
+Subject: [PATCH] honest fixture: entry + 4 rows + captures + pins + province +
+ readme + amendment
+
+---
+ .ufo/pins/readme-map.json                     |  31 +-
+ .ufo/pins/source-captures.json                |  28 +
+ .../build/K65ReviewProbeO65/capture/S201.ts   | 524 +++++++++++++++++
+ .../build/K65ReviewProbeO65/capture/S202.md   | 265 +++++++++
+ .../K65ReviewProbeO65/capture/S203.patch      | 228 ++++++++
+ .../build/K65ReviewProbeO65/capture/S204.ts   | 527 ++++++++++++++++++
+ PROVINCE.md                                   |   1 +
+ corpus/README.md                              |   1 +
+ corpus/SOURCES.md                             |   4 +
+ .../omp-installed-release-mcp-runtime.md      |  49 ++
+ corpus/knowledge/omp-task-contract.md         |  10 +
+ 11 files changed, 1653 insertions(+), 15 deletions(-)
+ create mode 100644 .ufo/waves/round-65/build/K65ReviewProbeO65/capture/S201.ts
+ create mode 100644 .ufo/waves/round-65/build/K65ReviewProbeO65/capture/S202.md
+ create mode 100644 .ufo/waves/round-65/build/K65ReviewProbeO65/capture/S203.patch
+ create mode 100644 .ufo/waves/round-65/build/K65ReviewProbeO65/capture/S204.ts
+ create mode 100644 corpus/knowledge/omp-installed-release-mcp-runtime.md
+
+diff --git a/.ufo/pins/readme-map.json b/.ufo/pins/readme-map.json
+index a8dd295..317f58a 100644
+--- a/.ufo/pins/readme-map.json
++++ b/.ufo/pins/readme-map.json
+@@ -17,6 +17,7 @@
+   "knowledge/failure-telemetry.md",
+   "knowledge/gate-verdict.md",
+   "knowledge/invocation-attestation.md",
++  "knowledge/jj-workspace-seat-containment.md",
+   "knowledge/kimi-binary-secrets.md",
+   "knowledge/kimi-config-plane.md",
+   "knowledge/kimi-lane-definitions.md",
+@@ -32,11 +33,13 @@
+   "knowledge/mcp-orchestration-contract.md",
+   "knowledge/member-claims-gate.md",
+   "knowledge/mount-order-and-bind-scope.md",
++  "knowledge/multi-agent-coordinator-topologies.md",
+   "knowledge/native-admission-detail.md",
+   "knowledge/native-judge-pipeline.md",
+   "knowledge/native-transcript-ledger-seats.md",
+   "knowledge/native-trial-launch.md",
+   "knowledge/omp-agent-root.md",
++  "knowledge/omp-installed-release-mcp-runtime.md",
+   "knowledge/omp-task-contract.md",
+   "knowledge/ops-watchers.md",
+   "knowledge/pinned-evidence.md",
+@@ -53,8 +56,8 @@
+   "knowledge/sighting-wall.md",
+   "knowledge/singleton-and-queue-ownership.md",
+   "knowledge/successor-chain.md",
+-  "knowledge/temporal-worker-versioning-pinning.md",
+   "knowledge/swarm-wave-lifecycle.md",
++  "knowledge/temporal-worker-versioning-pinning.md",
+   "knowledge/test-inventories.md",
+   "knowledge/visibility-lease-ack-deadlines.md",
+   "knowledge/worker-heartbeat-liveness.md",
+@@ -138,25 +141,23 @@
+   "lessons/round-57.md",
+   "lessons/round-58-verifier-spotcheck.md",
+   "lessons/round-58.md",
+-  "lessons/round-59.md",
+   "lessons/round-59-verifier-spotcheck.md",
+-  "lessons/round-60-verifier-spotcheck.md",
+-  "lessons/round-60.md",
+-  "lessons/round-61.md",
+-  "lessons/round-61-verifier-spotcheck.md",
+-  "lessons/round-62.md",
++  "lessons/round-59.md",
+   "lessons/round-6-aggregator-audit.md",
+   "lessons/round-6.md",
++  "lessons/round-60-verifier-spotcheck.md",
++  "lessons/round-60.md",
++  "lessons/round-61-verifier-spotcheck.md",
++  "lessons/round-61.md",
++  "lessons/round-62-verifier-spotcheck.md",
++  "lessons/round-62.md",
++  "lessons/round-63-verifier-spotcheck.md",
++  "lessons/round-63.md",
++  "lessons/round-64-verifier-spotcheck.md",
++  "lessons/round-64.md",
+   "lessons/round-7.md",
+   "lessons/round-8-aggregator-box3-coldrun.md",
+   "lessons/round-9-aggregator-corpus-verdict.md",
+-  "lessons/round-9.md",
+-  "lessons/round-62-verifier-spotcheck.md",
+-  "knowledge/multi-agent-coordinator-topologies.md",
+-  "lessons/round-63.md",
+-  "knowledge/jj-workspace-seat-containment.md",
+-  "lessons/round-63-verifier-spotcheck.md",
+-  "lessons/round-64.md",
+-  "lessons/round-64-verifier-spotcheck.md"
++  "lessons/round-9.md"
+  ]
+ }
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index 589ede6..c052a83 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -224,6 +224,34 @@
+    "sha256": "947d0c56c02f9c10b4c14e8aaa8cc3f435f7650536ab9386ef6a52f1d64ff3c7",
+    "bytes": 47694,
+    "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S201",
++   "path": ".ufo/waves/round-65/build/K65ReviewProbeO65/capture/S201.ts",
++   "sha256": "caa3eadeb21bc36d8c6a4bf65fd362b1b27d4c189ca40684b1e11075c48bfe0d",
++   "bytes": 16167,
++   "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S202",
++   "path": ".ufo/waves/round-65/build/K65ReviewProbeO65/capture/S202.md",
++   "sha256": "362acea5d3d0eca06d54aa9a80febab5a43634007ab40a435dbb0c75079cf83d",
++   "bytes": 22741,
++   "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S203",
++   "path": ".ufo/waves/round-65/build/K65ReviewProbeO65/capture/S203.patch",
++   "sha256": "eedfbbc405d55fdb205b74a76a67f06a0a78fa9b383a06a491107a034e172c9b",
++   "bytes": 9953,
++   "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S204",
++   "path": ".ufo/waves/round-65/build/K65ReviewProbeO65/capture/S204.ts",
++   "sha256": "479aef6ddda012f8402bc2480637a8c71ada8597d9705a56080dd3ed7c7d3fe9",
++   "bytes": 14975,
++   "captured": "2026-10-25"
+   }
+  ],
+  "exemptions": [
+diff --git a/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S201.ts b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S201.ts
+new file mode 100644
+index 0000000..1c03ae0
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S201.ts
+@@ -0,0 +1,524 @@
++import type {
++	MCPContent,
++	MCPImageContent,
++	MCPProgress,
++	MCPResourceContent,
++	MCPTextContent,
++} from "@oh-my-pi/pi-tui/tools/mcp";
++/**
++ * MCP (Model Context Protocol) type definitions.
++ *
++ * Based on MCP specification 2025-11-25:
++ * https://modelcontextprotocol.io/specification/2025-11-25/
++ */
++
++// =============================================================================
++// JSON-RPC 2.0 Types
++// =============================================================================
++
++import type { SourceMeta } from "../capability/types";
++
++export interface JsonRpcRequest {
++	jsonrpc: "2.0";
++	id: string | number;
++	method: string;
++	params?: Record<string, unknown>;
++}
++
++export interface JsonRpcNotification {
++	jsonrpc: "2.0";
++	method: string;
++	params?: Record<string, unknown>;
++}
++
++export interface JsonRpcResponse {
++	jsonrpc: "2.0";
++	id: string | number;
++	result?: unknown;
++	error?: JsonRpcError;
++}
++
++export interface JsonRpcError {
++	code: number;
++	message: string;
++	data?: unknown;
++}
++
++export type JsonRpcMessage = JsonRpcRequest | JsonRpcNotification | JsonRpcResponse;
++
++// =============================================================================
++// MCP Server Configuration (.mcp.json format)
++// =============================================================================
++
++/** Authentication configuration for MCP servers */
++export interface MCPAuthConfig {
++	/** Authentication type */
++	type: "oauth" | "apikey";
++	/** Credential ID for OAuth (references agent.db) */
++	credentialId?: string;
++	/** Token endpoint URL — persisted for proactive token refresh */
++	tokenUrl?: string;
++	/** Client ID — persisted for token refresh */
++	clientId?: string;
++	/** Client secret — persisted for token refresh */
++	clientSecret?: string;
++	/** MCP resource URI — persisted for OAuth resource indicators during refresh */
++	resource?: string;
++}
++
++/** Encoding used for outgoing JSON-RPC request ids. */
++export type MCPRequestIdFormat = "string" | "number";
++
++/** Base server config with shared options */
++interface MCPServerConfigBase {
++	/** Whether this server is enabled (default: true) */
++	enabled?: boolean;
++	/** MCP request timeout in milliseconds (default: 30000, 0 to disable) */
++	timeout?: number;
++	/**
++	 * Encoding for outgoing JSON-RPC request ids (default: `"number"`).
++	 *
++	 * Set `"string"` for servers that need collision-resistant snowflake string
++	 * ids instead of per-transport integers. See `RequestIdAllocator` in
++	 * `./request-id`.
++	 *
++	 * OMP-specific, so only the OMP-owned discovery providers parse it (native,
++	 * standalone `mcp.json`, OMP plugins). Providers that translate another
++	 * tool's config do not, since the key is not part of those formats.
++	 */
++	requestIdFormat?: MCPRequestIdFormat;
++	/**
++	 * Include server-provided instructions in the system prompt (default: true).
++	 * OMP-specific: only native config, standalone `mcp.json`, and OMP plugins
++	 * parse this option; providers for other tools' formats ignore it.
++	 */
++	instructions?: boolean;
++	/** Authentication configuration (optional) */
++	auth?: MCPAuthConfig;
++	/** OAuth configuration for servers requiring explicit client credentials */
++	oauth?: {
++		clientId?: string;
++		clientSecret?: string;
++		scope?: string;
++		redirectUri?: string;
++		callbackPort?: number;
++		callbackPath?: string;
++		/** `prompt` param for the authorization request (default "consent"; "" to omit) */
++		prompt?: string;
++	};
++}
++
++/** Stdio server configuration */
++export interface MCPStdioServerConfig extends MCPServerConfigBase {
++	type?: "stdio"; // Default if not specified
++	command: string;
++	args?: string[];
++	env?: Record<string, string>;
++	/**
++	 * `literal`: env values are opaque plugin package data (Agent Plugins
++	 * §§4.1/9.2) — no env-name lookup, no `!command` execution, no dropping of
++	 * empty values. The provider already applied the only permitted expansion
++	 * (`${PLUGIN_ROOT}`/`${PLUGIN_DATA}`).
++	 */
++	envPolicy?: "literal";
++	/** Env keys whose values are final package data; auth resolution keeps them verbatim. */
++	envLiteralKeys?: string[];
++	cwd?: string;
++}
++
++/** HTTP server configuration (Streamable HTTP transport) */
++export interface MCPHttpServerConfig extends MCPServerConfigBase {
++	type: "http";
++	url: string;
++	headers?: Record<string, string>;
++	/**
++	 * `origin-locked`: configured headers are literal package data pinned to the
++	 * configured URL's origin (Agent Plugins §7.2.1) — never expanded, never
++	 * forwarded cross-origin, and client-generated headers win case-insensitively.
++	 */
++	headerPolicy?: "origin-locked";
++}
++
++/** SSE server configuration (deprecated, use HTTP) */
++export interface MCPSseServerConfig extends MCPServerConfigBase {
++	type: "sse";
++	url: string;
++	headers?: Record<string, string>;
++	/** See {@link MCPHttpServerConfig.headerPolicy}. */
++	headerPolicy?: "origin-locked";
++}
++
++export type MCPServerConfig = MCPStdioServerConfig | MCPHttpServerConfig | MCPSseServerConfig;
++
++export const MCP_CONFIG_SCHEMA_URL =
++	"https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/config/mcp-schema.json";
++
++/** Root mcp.json/.mcp.json file structure */
++export interface MCPConfigFile {
++	$schema?: string;
++	mcpServers?: Record<string, MCPServerConfig>;
++	/** Names to hide regardless of any source `enabled` flag. Highest precedence. */
++	disabledServers?: string[];
++	/** Names to force-enable when a non-writable source reports `enabled: false`. */
++	enabledServers?: string[];
++}
++
++// =============================================================================
++// MCP Protocol Types
++// =============================================================================
++
++/**
++ * Latest MCP protocol revision this client negotiates.
++ *
++ * Sent as `protocolVersion` in the `initialize` request and, for Streamable
++ * HTTP, echoed back to the server in the `MCP-Protocol-Version` header on every
++ * subsequent request (per the MCP HTTP transport spec). Must track the current
++ * stable revision: AWS Bedrock AgentCore Gateway refuses tool calls on an
++ * outbound per-user OAuth (`AUTHORIZATION_CODE`) target below `2025-11-25`, and
++ * it checks the version *before* consulting its token vault, so an older client
++ * is refused even for a caller whose consent is already stored.
++ */
++export const MCP_PROTOCOL_VERSION = "2025-11-25";
++
++/** Optionally-sized icon for MCP UI metadata (implementation, tools, resources). */
++export interface MCPIcon {
++	src: string;
++	mimeType?: string;
++	sizes?: string[];
++	theme?: "light" | "dark";
++}
++
++/** MCP implementation info (`InitializeRequest.params.clientInfo` / `InitializeResult.serverInfo`). */
++export interface MCPImplementation {
++	name: string;
++	title?: string;
++	version: string;
++	description?: string;
++	websiteUrl?: string;
++	icons?: MCPIcon[];
++}
++
++/** MCP client capabilities */
++export interface MCPClientCapabilities {
++	roots?: { listChanged?: boolean };
++	sampling?: Record<string, never>;
++	experimental?: Record<string, unknown>;
++}
++
++/** MCP server capabilities */
++export interface MCPServerCapabilities {
++	tools?: { listChanged?: boolean };
++	resources?: { subscribe?: boolean; listChanged?: boolean };
++	prompts?: { listChanged?: boolean };
++	logging?: Record<string, never>;
++	experimental?: Record<string, unknown>;
++}
++
++/** Initialize request params */
++export interface MCPInitializeParams {
++	protocolVersion: string;
++	capabilities: MCPClientCapabilities;
++	clientInfo: MCPImplementation;
++}
++
++/** Initialize response result */
++export interface MCPInitializeResult {
++	protocolVersion: string;
++	capabilities: MCPServerCapabilities;
++	serverInfo: MCPImplementation;
++	instructions?: string;
++}
++
++/** Tool annotations from the 2025-11-25 tools spec. */
++export interface MCPToolAnnotations {
++	title?: string;
++	readOnlyHint?: boolean;
++	destructiveHint?: boolean;
++	idempotentHint?: boolean;
++	openWorldHint?: boolean;
++}
++
++/** Execution metadata from the 2025-11-25 tools spec. */
++export interface MCPToolExecution {
++	taskSupport?: "forbidden" | "optional" | "required";
++}
++
++/** MCP tool definition */
++export interface MCPToolDefinition {
++	name: string;
++	title?: string;
++	description?: string;
++	icons?: MCPIcon[];
++	inputSchema: {
++		type: "object";
++		properties?: Record<string, unknown>;
++		required?: string[];
++		[key: string]: unknown;
++	};
++	outputSchema?: Record<string, unknown>;
++	execution?: MCPToolExecution;
++	annotations?: MCPToolAnnotations;
++	_meta?: Record<string, unknown>;
++}
++
++/** tools/list response */
++export interface MCPToolsListResult {
++	tools: MCPToolDefinition[];
++	nextCursor?: string;
++}
++
++/** tools/call params */
++export interface MCPToolCallParams {
++	name: string;
++	arguments?: Record<string, unknown>;
++}
++
++/** Structured authentication challenge returned in a tool result. */
++export interface MCPAuthChallenge {
++	/** Values from `_meta["mcp/www_authenticate"]`. */
++	readonly wwwAuthenticate: readonly string[];
++}
++
++/** tools/call response */
++export interface MCPToolCallResult {
++	content: MCPContent[];
++	isError?: boolean;
++	/**
++	 * Machine-readable payload channel (MCP spec 2025-06-18, Tools → Structured
++	 * Content). Servers may return their data here while keeping `content`
++	 * minimal; the bridge surfaces it so it reaches the model.
++	 */
++	structuredContent?: Record<string, unknown>;
++	_meta?: Record<string, unknown>;
++}
++
++// =============================================================================
++// Transport Types
++// =============================================================================
++
++export interface MCPRequestOptions {
++	/** Abort signal (e.g. Escape-to-interrupt) */
++	signal?: AbortSignal;
++	/**
++	 * Adds `_meta.progressToken` to the request and receives only this request's
++	 * `notifications/progress` while pending. Progress never extends its deadline.
++	 */
++	onProgress?: (progress: MCPProgress) => void;
++}
++
++/** Transport interface - abstracts stdio/http */
++export interface MCPTransport {
++	/** Send a request and wait for response */
++	request<T = unknown>(method: string, params?: Record<string, unknown>, options?: MCPRequestOptions): Promise<T>;
++
++	/** Send a notification (no response expected) */
++	notify(method: string, params?: Record<string, unknown>): Promise<void>;
++
++	/** Close the transport */
++	close(): Promise<void>;
++
++	/**
++	 * Record the protocol version negotiated in the `initialize` response.
++	 * Streamable HTTP transports echo it in the `MCP-Protocol-Version` header on
++	 * every subsequent request; transports that need no per-request version
++	 * (stdio) omit this.
++	 */
++	setProtocolVersion?(version: string): void;
++
++	/** Whether the transport is connected */
++	readonly connected: boolean;
++
++	/** Event handlers */
++	onClose?: () => void;
++	onError?: (error: Error) => void;
++	onNotification?: (method: string, params: unknown) => void;
++	/** Handler for server-to-client requests (e.g. roots/list). Returns result or throws a JsonRpcError. */
++	onRequest?: (method: string, params: unknown) => Promise<unknown>;
++}
++
++/** Transport factory function */
++export type TransportFactory = (config: MCPServerConfig) => Promise<MCPTransport>;
++
++// =============================================================================
++// MCP Client Types
++// =============================================================================
++
++/** Connected MCP server state */
++export interface MCPServerConnection {
++	/** Server name from config */
++	name: string;
++	/** Original config */
++	config: MCPServerConfig;
++	/** Transport instance */
++	transport: MCPTransport;
++	/** Server info from initialize */
++	serverInfo: MCPImplementation;
++	/** Server capabilities */
++	capabilities: MCPServerCapabilities;
++	/** Cached tools (populated on demand) */
++	tools?: MCPToolDefinition[];
++	/** Source metadata (for display) */
++	_source?: SourceMeta;
++	/** Cached resources (populated on demand) */
++	resources?: MCPResource[];
++	/** Cached resource templates (populated on demand) */
++	resourceTemplates?: MCPResourceTemplate[];
++	/** Server instructions from initialize */
++	instructions?: string;
++	/** Cached prompts (populated on demand) */
++	prompts?: MCPPrompt[];
++}
++
++/** MCP tool with server context */
++export interface MCPToolWithServer {
++	server: MCPServerConnection;
++	tool: MCPToolDefinition;
++}
++
++// =============================================================================
++// MCP Resource Types
++// =============================================================================
++
++/** Annotations for resources, templates, and content blocks */
++export interface MCPAnnotations {
++	audience?: ("user" | "assistant")[];
++	priority?: number;
++	lastModified?: string;
++}
++
++/** A concrete resource exposed by an MCP server */
++export interface MCPResource {
++	uri: string;
++	name: string;
++	title?: string;
++	description?: string;
++	mimeType?: string;
++	size?: number;
++	annotations?: MCPAnnotations;
++}
++
++/** A parameterized resource template (RFC 6570 URI template) */
++export interface MCPResourceTemplate {
++	uriTemplate: string;
++	name: string;
++	title?: string;
++	description?: string;
++	mimeType?: string;
++	annotations?: MCPAnnotations;
++}
++
++/** Result of resources/list */
++export interface MCPResourcesListResult {
++	resources: MCPResource[];
++	nextCursor?: string;
++}
++
++/** Result of resources/templates/list */
++export interface MCPResourceTemplatesListResult {
++	resourceTemplates: MCPResourceTemplate[];
++	nextCursor?: string;
++}
++
++/** A single content item from resources/read */
++export interface MCPResourceContentItem {
++	uri: string;
++	mimeType?: string;
++	text?: string;
++	blob?: string;
++}
++
++/** Result of resources/read */
++export interface MCPResourceReadResult {
++	contents: MCPResourceContentItem[];
++}
++
++/** Params for resources/read */
++export interface MCPResourceReadParams {
++	uri: string;
++}
++
++/** Params for resources/subscribe and resources/unsubscribe */
++export interface MCPResourceSubscribeParams {
++	uri: string;
++}
++
++// =============================================================================
++// MCP Prompt Types
++// =============================================================================
++
++/** An argument definition for an MCP prompt */
++export interface MCPPromptArgument {
++	name: string;
++	description?: string;
++	required?: boolean;
++}
++
++/** A prompt definition exposed by an MCP server */
++export interface MCPPrompt {
++	name: string;
++	title?: string;
++	description?: string;
++	arguments?: MCPPromptArgument[];
++}
++
++/** Result of prompts/list */
++export interface MCPPromptsListResult {
++	prompts: MCPPrompt[];
++	nextCursor?: string;
++}
++
++/** Audio content in prompt messages */
++export interface MCPAudioContent {
++	type: "audio";
++	data: string;
++	mimeType: string;
++}
++
++/** Content type union for prompt messages */
++export type MCPPromptContent = MCPTextContent | MCPImageContent | MCPAudioContent | MCPResourceContent;
++
++/** A single message in a prompt result */
++export interface MCPPromptMessage {
++	role: "user" | "assistant";
++	content: MCPPromptContent | MCPPromptContent[];
++}
++
++/** Params for prompts/get */
++export interface MCPGetPromptParams {
++	name: string;
++	arguments?: Record<string, string>;
++}
++
++/** Result of prompts/get */
++export interface MCPGetPromptResult {
++	description?: string;
++	messages: MCPPromptMessage[];
++}
++
++// =============================================================================
++// MCP Notification Method Names
++// =============================================================================
++
++/** MCP server notification method names */
++export const MCPNotificationMethods = {
++	PROGRESS: "notifications/progress",
++	TOOLS_LIST_CHANGED: "notifications/tools/list_changed",
++	RESOURCES_LIST_CHANGED: "notifications/resources/list_changed",
++	RESOURCES_UPDATED: "notifications/resources/updated",
++	PROMPTS_LIST_CHANGED: "notifications/prompts/list_changed",
++} as const;
++
++/** Extract a JsonRpcError from a thrown value. Preserves `.code` and `.message` from Error instances or plain objects. */
++export function toJsonRpcError(error: unknown): JsonRpcError {
++	if (error instanceof Error) {
++		const code = "code" in error && typeof error.code === "number" ? error.code : -32603;
++		return { code, message: error.message };
++	}
++	if (typeof error === "object" && error !== null) {
++		const obj = error as Record<string, unknown>;
++		if (typeof obj.code === "number" && typeof obj.message === "string") {
++			return { code: obj.code, message: obj.message };
++		}
++	}
++	return { code: -32603, message: "Internal error" };
++}
+diff --git a/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S202.md b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S202.md
+new file mode 100644
+index 0000000..5d38131
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S202.md
+@@ -0,0 +1,265 @@
++# MCP runtime lifecycle
++
++This document describes how MCP servers are discovered, connected, exposed as tools, refreshed, and torn down in the coding-agent runtime.
++
++## Lifecycle at a glance
++
++1. **SDK startup** kicks off MCP discovery (unless MCP is disabled or tool names are restricted): headless/SDK sessions await `discoverAndLoadMCPTools()`; interactive sessions (`hasUI: true`) create the manager up front and defer `discoverAndConnect()` until the session is live.
++2. **Discovery** (`loadAllMCPConfigs`) resolves MCP server configs from capability sources, filters disabled/project/Exa entries and browser MCP servers when the built-in browser prelude is callable, and preserves source metadata.
++3. **Manager connect phase** (`MCPManager.connectServers`) starts per-server connect + `tools/list` in parallel.
++4. **Fast startup gate** waits up to 250ms, then may return:
++   - fully loaded `MCPTool`s,
++   - failures per server,
++   - or cached `DeferredMCPTool`s for still-pending servers.
++5. **SDK wiring** merges MCP tools into runtime tool registry for the session.
++6. **Post-connect enrichment** best-effort loads resources, resource templates, prompts, and optional resource subscriptions.
++7. **Live session** receives late tool changes through the manager callback; `/mcp reload` does `disconnectAll` + rediscovery + `session.refreshMCPTools`, while transport close and `/mcp reconnect` use the per-server reconnect path.
++8. **Teardown** happens on explicit manager disconnects and automatically when an owning `AgentSession` is disposed; borrowed parent managers are not disconnected by subagents.
++
++## Discovery and load phase
++
++### Entry path from SDK
++
++`createAgentSession()` in `src/sdk.ts` performs MCP startup when `enableMCP` is true (default) and tool names are not restricted. A supplied `mcpManager` is reused without discovery. Otherwise there are two paths:
++
++- **Headless/SDK** (no UI, no provided manager): awaits `discoverAndLoadMCPTools(cwd, { ... })` and merges the returned tools into the startup `customTools` set. Print mode alone then waits for configured servers' tool handshakes or failures before its first prompt (bounded by `OMP_MCP_TIMEOUT_MS`, default 30 seconds), refreshes the session's tool registry, and warns per unavailable server; `OMP_MCP_REQUIRE_READY=1` instead exits 1 without sending the prompt. `OMP_MCP_TIMEOUT_MS=0` disables this barrier deadline and may wait indefinitely.
++- **Interactive/TUI** (`hasUI: true`, no provided manager): constructs `MCPManager` immediately (with cache + auth storage), defers `discoverAndConnect()` to a background task started after the session exists, then binds tools via `session.refreshMCPTools(...)` (disposing the manager if the session was torn down mid-connect).
++  The first turn of such a session (interactive or `--mode rpc-ui`) waits up to 1.5 s for this MCP startup, so its system prompt includes servers connected by then; slower servers register later and change the next turn's prompt.
++
++Both paths:
++
++- pass `authStorage`, cache storage, `mcp.startupTimeoutMs`, and `mcp.enableProjectConfig`; browser-MCP filtering requires `browser.enabled`, registered and active Eval, and an unrestricted session,
++- always set `filterExa: true`,
++- log per-server load/connect errors,
++- store the manager in `toolSession.mcpManager` and the session result.
++
++If `enableMCP` is false or the session restricts tool names, MCP discovery and manager inheritance are skipped entirely. ACP sessions disable on-disk discovery because their MCP definitions come from the ACP client.
++
++### Config discovery and filtering
++
++`loadAllMCPConfigs()` (`src/mcp/config.ts`) loads canonical MCP server items through capability discovery, then converts to legacy `MCPServerConfig`.
++
++Filtering behavior:
++
++- `enableProjectConfig: false` removes project-level entries (`_source.level === "project"`).
++- `enabled: false` entries are suppressed unless the active-profile user `enabledServers` allowlist names them; the user `disabledServers` denylist always suppresses a same-named entry.
++- Exa servers are filtered out by default and API keys are extracted for native Exa tool integration, unless the config explicitly requests Exa tools the native integration does not provide (`web_fetch_exa`, `web_search_advanced_exa`); browser automation MCP servers are filtered when `filterBrowser` is true.
++
++Result includes both `configs` and `sources` (metadata used later for provider labeling).
++
++### Discovery-level failure behavior
++
++`discoverAndLoadMCPTools()` distinguishes two failure classes:
++
++- **Discovery hard failure** (exception from `manager.discoverAndConnect`, typically from config discovery): returns an empty tool set and one synthetic error `{ path: ".mcp.json", error }`.
++- **Per-server runtime/connect failure**: manager returns partial success with `errors` map; other servers continue.
++
++So startup does not fail the whole agent session when individual MCP servers fail.
++
++## Manager state model
++
++`MCPManager` tracks runtime lifecycle with separate registries:
++
++- `#connections: Map<string, MCPServerConnection>` — fully connected servers.
++- `#pendingConnections: Map<string, Promise<MCPServerConnection>>` — handshake in progress.
++- `#pendingToolLoads: Map<string, Promise<{ connection, serverTools }>>` — initialized connections whose `tools/list` is still in flight.
++- `#tools: CustomTool[]` — current MCP tool view exposed to callers, kept in stable name order.
++- `#sources: Map<string, SourceMeta>` — provider/source metadata even before connect completes.
++- `#pendingReconnections: Map<string, Promise<MCPServerConnection | null>>` — reconnects in progress after a dropped transport or explicit reconnect.
++- `#startupUpdates`, `#startupServers`, and `#startupFailures` — track tool registration/callback completion for startup readiness barriers.
++- `#lostRemoteServers` — scheduled recovery state for previously connected HTTP/SSE servers that remain unavailable.
++- `#serverConfigs: Map<string, MCPServerConfig>` — original unresolved configs preserved so reconnect can re-resolve credentials without leaking resolved tokens.
++- `#reconnectHistory: Map<string, number[]>` plus `#epoch` — per-server crash-window accounting and invalidation of reconnect attempts that outlive a global disconnect.
++- listener/callback state, including a bounded pending-notification FIFO and tracked resource subscriptions/refreshes.
++
++`getConnectionStatus(name)` derives status from these maps:
++
++- `connected` if in `#connections`,
++- `connecting` if pending connect, pending tool load, or pending reconnect,
++- `disconnected` otherwise.
++
++## Connection establishment and startup timing
++
++### Per-server connect pipeline
++
++For each discovered server in `connectServers()`:
++
++1. store/update source metadata,
++2. skip if already connected/pending/reconnecting,
++3. validate transport fields (`validateServerConfig`),
++4. save the unresolved config for possible reconnect,
++5. resolve managed OAuth credentials and env/header shell substitutions (`#resolveAuthConfig`),
++6. call `connectToServer(name, resolvedConfig)` with manager notification/request handlers,
++7. wire HTTP OAuth refresh and transport `onClose` reconnect handling,
++8. call `listTools(connection)`,
++9. cache tool definitions (`MCPToolCache.set`) best-effort,
++10. best-effort load resources, resource templates, prompts, and subscriptions after tools load.
++
++`connectToServer()` behavior (`src/mcp/client.ts`):
++
++- creates stdio or HTTP/SSE transport,
++- performs MCP `initialize` using protocol version `2025-11-25` and advertises the `roots` capability,
++- answers server-to-client `ping` and `roots/list` requests; unsupported request methods return JSON-RPC `-32601`,
++- sends `notifications/initialized` before any further session traffic,
++- for Streamable HTTP, starts the background SSE listener only after `notifications/initialized`,
++- uses timeout precedence `OMP_MCP_TIMEOUT_MS`, then `config.timeout`, then 30s; `0` disables the client-side timeout,
++- records the server's negotiated protocol revision; Streamable HTTP carries it on subsequent requests in `MCP-Protocol-Version`,
++- closes transport on init failure.
++
++### Fast startup gate + deferred fallback
++
++`connectServers()` waits on a race between:
++
++- all connect/tool-load tasks settled, and
++- `resolveMCPStartupTimeoutMs`: `OMP_MCP_STARTUP_TIMEOUT_MS` env override, else `mcp.startupTimeoutMs`, else 250 ms; `0` waits until initial loads settle.
++
++After the startup window:
++
++- fulfilled tasks become live `MCPTool`s,
++- rejected tasks produce per-server errors,
++- still-pending tasks:
++  - use cached tool definitions if available (`MCPToolCache.get`) to create `DeferredMCPTool`s,
++  - otherwise contribute no tools at startup; they stay in flight, and the background continuation registers their tools via `#onToolsChanged` once connect/list finishes (a slow server no longer blocks startup — issue #2100).
++
++This is a hybrid startup model: fast return with deferred handles when cache is available, late background registration when it is not.
++
++### Background completion behavior
++
++Each pending `toolsPromise` also has a background continuation that eventually:
++
++- replaces that server's tool slice in manager state and restores stable name ordering,
++- invokes `#onToolsChanged` so a live session can rebind the late tools,
++- writes cache,
++- logs late failures only after startup (`allowBackgroundLogging`).
++
++## Tool exposure and live-session availability
++
++### Startup registration
++
++`discoverAndLoadMCPTools()` converts manager tools into `LoadedCustomTool[]` and decorates paths (`mcp:<server> via <providerName>` when known).
++
++`createAgentSession()` then pushes these tools into `customTools`, which are wrapped and added to the runtime tool registry with names like `mcp__<server>_<tool>`.
++
++Server and tool name components are lowercased and sanitized to letters, digits, and underscores; repeated/edge underscores are collapsed/trimmed, and a redundant server prefix on the tool is stripped. Names longer than 64 characters are capped with a deterministic hash suffix. If two distinct origins mint the same runtime name, OMP logs the collision and keeps a deterministic winner based on the original server/tool identity, so reconnect ordering cannot change ownership.
++
++Connected manager tools become enabled immediately. Presentation is reconciled with the session's current tool policy: tools may be mounted under `xd://` rather than exposed as top-level function definitions. Registry identity and original server/tool ownership remain intact regardless of presentation.
++
++### Tool calls
++
++- `MCPTool` calls tools through an already connected `MCPServerConnection`.
++- `DeferredMCPTool` waits for `waitForConnection(server)` before calling; this allows cached tools to exist before connection is ready.
++- Both attempt a reconnect + single retry for retriable connection failures before dispatch, such as `Transport not connected`.
++- Connection loss after a request may have reached the server is non-retryable and is never replayed automatically: stdio has written its frame to stdin, or an HTTP or legacy SSE connection was reset or closed after it was established (with or without a response). The operation may already have run; check its effect before retrying. Refused connections are retried.
++- A structured tool-result auth challenge can trigger the configured auth handler, reconnect, and one retry. Interactive mode wires this to the `/mcp` OAuth controller; without a handler the challenge remains an MCP error.
++
++Both preserve MCP content and metadata; `structuredContent` is retained in `details.structuredContent` and rendered as text when not already duplicated in a text block. Server `isError` results propagate the error flag. Remaining exceptions become an `MCP failure` diagnostic with server/tool, transport, stage, failure class, retryability, message, optional code/trace/data, and next-step guidance; abort remains abort. Structured transport errors drive retry classification.
++
++## Refresh/reload paths (startup vs live reload)
++
++### Initial startup path
++
++- one-time discovery/load in `sdk.ts`,
++- tools are registered in initial session tool registry.
++
++### Interactive reload and live-change paths
++
++`/mcp reload` (`src/modes/controllers/mcp-command-controller.ts`) does:
++
++1. `mcpManager.disconnectAll()`,
++2. clears stale MCP prompt commands,
++3. calls `mcpManager.discoverAndConnect()` with the same project/Exa/browser filters as startup,
++4. calls `session.refreshMCPTools(mcpManager.getTools())`.
++
++`session.refreshMCPTools()` delegates to `src/session/session-tools.ts`, which serializes registry mutations, reconciles manager and extension-owned MCP tools, re-wraps the latest tools, and reapplies availability/presentation without restarting. Connected manager tools become enabled; extension-owned MCP tools preserve their previous selection. A failed refresh restores the previous MCP registry. The owning SDK session also installs `setOnToolsChanged`, so late initial connections, server `tools/list_changed` notifications, reconnects, and disconnects can trigger the same rebinding. Explicit `/mcp reconnect <name>` performs one final refresh after the manager reconnect completes.
++
++### Live settings reconciliation
++
++The owning SDK session listens for `mcp.enableProjectConfig` changes: it disconnects affected project entries, restores user definitions they shadowed, or loads newly allowed project entries without `/mcp reload`. Browser-MCP reconciliation is serialized and follows whether the built-in browser prelude is actually callable. Borrowed managers keep the parent's single-slot tools/prompts/resources callbacks; each session still installs its own notification listener.
++
++## Server-initiated notifications
++
++MCP servers may push JSON-RPC notification frames at any point after `initialize` completes. The transport surfaces them via `onNotification`; the manager fans them out in two paths:
++
++1. **Internal refresh** for known methods:
++   - `notifications/tools/list_changed` → `refreshServerTools`
++   - `notifications/resources/list_changed` → `refreshServerResources`
++   - `notifications/resources/updated` → `#onResourcesChanged` (only for currently subscribed URIs)
++   - `notifications/prompts/list_changed` → `refreshServerPrompts`
++2. **Listener fanout**: every notification (known and server-custom) is delivered after any internal refresh. `MCPManager.addNotificationListener(listener)` returns an unsubscribe function; multiple listeners have independent error isolation.
++
++If no listener is attached, the manager buffers up to 100 frames, dropping the oldest on overflow, then drains the FIFO into the first listener that attaches. `sdk.ts` registers a per-session listener that bridges to the extension runner's `mcp_notification` event with `{ server, method, params }`; the extension runner has its own bounded startup buffer. The listener and debounce timers are released through session postmortem cleanup.
++
++## Health, reconnect, and partial failure behavior
++
++Current runtime behavior is connection-event driven:
++
++- **No autonomous polling health monitor** in manager/client.
++- **Automatic reconnect is wired to `transport.onClose`** for managed connections.
++- Reconnect retries with backoff (`500`, `1000`, `2000`, `4000` ms), reloads tools, and notifies consumers on success. A crash-storm circuit breaker suspends automatic reconnects for a server after more than 5 reconnect attempts within 30s; manual `/mcp reconnect` resets that history.
++- If a previously connected HTTP/SSE server remains unavailable after the retry ladder, quiet scheduled probes continue after 15s, doubling up to 5 minutes until recovery, explicit disconnect, or reconfiguration. Scheduled probes make one full connection attempt and concurrent reconnect callers share it. Stdio and remote servers that never connected stop at the ladder.
++- Initial connection timeouts trigger a reconnect attempt; print-mode readiness includes these attempts.
++- Tool calls that see retriable connection errors also attempt one reconnect + retry; calls already dispatched under the boundaries above are not replayed after connection loss.
++- Reconnect is also explicit via `/mcp reconnect <name>` or broader `/mcp reload`.
++
++Operationally:
++
++- one server failing does not remove tools from healthy servers,
++- connect/list failures are isolated per server,
++- stale tools may remain visible while reconnect is attempted; calls report MCP errors if recovery fails,
++- tool cache, resource/prompt loading, subscriptions, and background updates are best-effort (warnings/errors logged, no hard stop).
++
++## Teardown semantics
++
++### Server-level teardown
++
++`disconnectServer(name)`:
++
++- removes pending connect/tool-load/reconnect and startup-readiness entries, source metadata, saved config, reconnect history, scheduled remote recovery, and resource refresh/subscription state,
++- detaches `onClose` so explicit close does not trigger reconnect,
++- closes the transport if connected,
++- removes tools by their exact `mcpServerName` owner (not by a sanitized name prefix) and notifies tool consumers,
++- notifies prompt consumers when stale prompt commands need removal.
++
++### Global teardown and ownership
++
++`disconnectAll()`:
++
++- increments a lifecycle epoch so initial connections or reconnects that finish later cannot resurrect old connections, and cancels scheduled remote recovery,
++- detaches `onClose` for all active transports, then closes them with `Promise.allSettled`,
++- clears pending maps, sources, saved configs, connections, subscriptions, resource refreshes, reconnect history, and manager tools.
++
++Top-level sessions own managers they create. `AgentSession.dispose()` disconnects that owned manager with a 3-second cleanup timeout and logs cleanup failure; a subagent/session given `options.mcpManager` borrows the parent manager and does not disconnect it. `/mcp reload` deliberately reuses the manager object after `disconnectAll`, so installed callbacks/listeners remain available for the next discovery cycle.
++
++## Failure modes and guarantees
++
++| Scenario                                             | Behavior                                                                                                                  | Hard fail vs best-effort       |
++| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
++| Discovery throws (capability/config load path)       | Loader returns empty tools + synthetic `.mcp.json` error                                                                  | Best-effort session startup    |
++| Invalid server config                                | Server skipped with validation error entry                                                                                | Best-effort per server         |
++| Connect timeout/init failure                         | Server error recorded; others continue                                                                                    | Best-effort per server         |
++| `tools/list` still pending at startup with cache hit | Deferred tools returned immediately                                                                                       | Best-effort fast startup       |
++| `tools/list` still pending at startup without cache  | No tools at startup; background continuation registers them via `#onToolsChanged` when ready                              | Best-effort late registration  |
++| Late background tool-load failure                    | Logged after startup gate                                                                                                 | Best-effort logging            |
++| Runtime dropped transport                            | Manager attempts reconnect; stale tools remain while reconnecting and future calls may retry once or fail with MCP errors | Best-effort automatic recovery |
++| Previously connected remote server still unavailable after retry ladder | Quiet single-attempt probes continue from 15s up to 5-minute intervals until recovery/disconnect/reconfiguration | Best-effort background recovery |
++| More than 5 reconnect invocations within 30s         | Circuit breaker closes/removes the stale connection but leaves tools registered; manual reconnect resets the history      | Automatic reconnect suspended  |
++| Owning session disposal                              | Owned manager disconnect is awaited for up to 3s; failure is logged                                                       | Bounded best-effort cleanup    |
++
++## Public API surface
++
++`src/mcp/index.ts` re-exports client operations, config loader/writer APIs, loader and manager APIs, OAuth discovery, tool bridges/cache, HTTP and stdio transports, protocol types, plus the lightweight HTTP helpers `callMCP`, `readMcpJsonRpcResponse`, and `redactUrlForLog`. `src/sdk.ts` exposes `discoverMCPServers()` as a convenience wrapper over `discoverAndLoadMCPTools`; it returns `{ manager, tools, errors, connectedServers, exaApiKeys }`.
++
++## Implementation files
++
++- [`src/mcp/loader.ts`](../packages/coding-agent/src/mcp/loader.ts) — loader facade, discovery error normalization, `LoadedCustomTool` conversion.
++- [`src/mcp/manager.ts`](../packages/coding-agent/src/mcp/manager.ts) — lifecycle state registries, parallel connect/list flow, refresh/disconnect.
++- [`src/mcp/client.ts`](../packages/coding-agent/src/mcp/client.ts) — transport setup, initialize handshake, list/call/disconnect.
++- [`src/mcp/index.ts`](../packages/coding-agent/src/mcp/index.ts) — MCP module API exports.
++- [`src/sdk.ts`](../packages/coding-agent/src/sdk.ts) — startup wiring into session/tool registry.
++- [`src/mcp/config.ts`](../packages/coding-agent/src/mcp/config.ts) — config discovery/filtering/validation used by manager.
++- [`src/mcp/tool-bridge.ts`](../packages/coding-agent/src/mcp/tool-bridge.ts) — `MCPTool` and `DeferredMCPTool` runtime behavior.
++- [`src/session/agent-session.ts`](../packages/coding-agent/src/session/agent-session.ts) — session ownership/disposal and tool-refresh facade.
++- [`src/session/session-tools.ts`](../packages/coding-agent/src/session/session-tools.ts) — serialized MCP registry rebinding and tool presentation.
++- [`src/mcp/errors.ts`](../packages/coding-agent/src/mcp/errors.ts) — structured transport failures and tool diagnostics.
++- [`src/modes/controllers/mcp-command-controller.ts`](../packages/coding-agent/src/modes/controllers/mcp-command-controller.ts) — interactive reload/reconnect flows.
++- [`src/task/executor.ts`](../packages/coding-agent/src/task/executor.ts) — subagent MCP proxying via parent manager connections.
+diff --git a/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S203.patch b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S203.patch
+new file mode 100644
+index 0000000..c9c5f89
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S203.patch
+@@ -0,0 +1,228 @@
++From 10bce6900b5bdcf7479ed718f52902feeab9ed00 Mon Sep 17 00:00:00 2001
++From: roboomp <omp@can.ac>
++Date: Tue, 11 Aug 2026 17:56:14 +0000
++Subject: [PATCH] fix(mcp): send MCP-Protocol-Version header and negotiate
++ 2025-11-25
++
++The Streamable HTTP transport never emitted the MCP-Protocol-Version header and the client pinned the stale 2025-03-26 revision. Spec-current servers (e.g. AWS Bedrock AgentCore Gateway with an outbound per-user OAuth target) discard the negotiated version and deny every tools/call with a generic internal error.
++
++Bump the negotiated version to the current stable 2025-11-25 (MCP_PROTOCOL_VERSION) and echo the negotiated version in the MCP-Protocol-Version header at the transport's single #fetch choke point, so it rides GET/POST/DELETE requests uniformly.
++
++Fixes #8264
++---
++ packages/coding-agent/CHANGELOG.md            |  4 +++
++ packages/coding-agent/src/mcp/client.ts       | 10 ++++--
++ .../coding-agent/src/mcp/transports/http.ts   | 32 ++++++++++++++---
++ packages/coding-agent/src/mcp/types.ts        | 21 ++++++++++++
++ .../test/mcp-http-transport.test.ts           | 34 +++++++++++++++++++
++ 5 files changed, 94 insertions(+), 7 deletions(-)
++
++diff --git a/packages/coding-agent/CHANGELOG.md b/packages/coding-agent/CHANGELOG.md
++index a53f31baf9e9..ae9bc9dc0c86 100644
++--- a/packages/coding-agent/CHANGELOG.md
+++++ b/packages/coding-agent/CHANGELOG.md
++@@ -2,6 +2,10 @@
++ 
++ ## [Unreleased]
++ 
+++### Fixed
+++
+++- Fixed the MCP Streamable HTTP transport never sending the `MCP-Protocol-Version` header and negotiating the stale `2025-03-26` revision, which made spec-current servers (e.g. AWS Bedrock AgentCore Gateway with an outbound per-user OAuth target) reject every `tools/call` with a generic internal error. The client now negotiates `2025-11-25` and echoes the negotiated version in the `MCP-Protocol-Version` header on every request ([#8264](https://github.com/can1357/oh-my-pi/issues/8264)).
+++
++ ## [17.2.13] - 2026-08-11
++ 
++ ### Added
++diff --git a/packages/coding-agent/src/mcp/client.ts b/packages/coding-agent/src/mcp/client.ts
++index eea0688a2a2c..8fac5b8c5077 100644
++--- a/packages/coding-agent/src/mcp/client.ts
+++++ b/packages/coding-agent/src/mcp/client.ts
++@@ -38,8 +38,7 @@ import type {
++ 	MCPTransport,
++ } from "./types";
++ 
++-/** MCP protocol version we support */
++-const PROTOCOL_VERSION = "2025-03-26";
+++import { MCP_PROTOCOL_VERSION } from "./types";
++ 
++ /** Client info sent during initialization */
++ const CLIENT_INFO = {
++@@ -98,7 +97,7 @@ async function initializeConnection(
++ 	},
++ ): Promise<MCPInitializeResult> {
++ 	const params: MCPInitializeParams = {
++-		protocolVersion: PROTOCOL_VERSION,
+++		protocolVersion: MCP_PROTOCOL_VERSION,
++ 		capabilities: {
++ 			roots: { listChanged: false },
++ 		},
++@@ -115,6 +114,11 @@ async function initializeConnection(
++ 		throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
++ 	}
++ 
+++	// Echo the negotiated protocol version on every subsequent request. The MCP
+++	// Streamable HTTP spec requires the MCP-Protocol-Version header after
+++	// initialize; transports that don't need it ignore this.
+++	transport.setProtocolVersion?.(result.protocolVersion);
+++
++ 	// Hook point: the transport now has the session ID from the initialize response.
++ 	// For HTTP, this is the moment to open the SSE stream so server-to-client requests
++ 	// triggered by notifications/initialized (e.g. roots/list) can be delivered.
++diff --git a/packages/coding-agent/src/mcp/transports/http.ts b/packages/coding-agent/src/mcp/transports/http.ts
++index 28c2cb872398..37bb4a6af62e 100644
++--- a/packages/coding-agent/src/mcp/transports/http.ts
+++++ b/packages/coding-agent/src/mcp/transports/http.ts
++@@ -2,7 +2,8 @@
++  * MCP HTTP transport (Streamable HTTP).
++  *
++  * Implements JSON-RPC 2.0 over HTTP POST with optional SSE streaming.
++- * Based on MCP spec 2025-03-26.
+++ * The negotiated protocol revision is carried in the `MCP-Protocol-Version`
+++ * header on every request (see `MCP_PROTOCOL_VERSION`).
++  */
++ import * as AIError from "@oh-my-pi/pi-ai/error";
++ import { logger, readSseJson } from "@oh-my-pi/pi-utils";
++@@ -16,7 +17,7 @@ import type {
++ 	MCPSseServerConfig,
++ 	MCPTransport,
++ } from "../../mcp/types";
++-import { toJsonRpcError } from "../../mcp/types";
+++import { MCP_PROTOCOL_VERSION, toJsonRpcError } from "../../mcp/types";
++ import { RequestIdAllocator } from "../request-id";
++ import { createMCPTimeout, getNeverAbortSignal, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "../timeout";
++ import { type MCPFetchInit, mcpFetch } from "./header-policy";
++@@ -45,6 +46,12 @@ export class HttpTransport implements MCPTransport {
++ 	#sessionId: string | null = null;
++ 	#sseConnection: AbortController | null = null;
++ 	readonly #requestIds = new RequestIdAllocator();
+++	/**
+++	 * Protocol version echoed in the `MCP-Protocol-Version` header on every
+++	 * request. Starts at the version this client requests and is replaced with
+++	 * the value the server negotiates via {@link setProtocolVersion}.
+++	 */
+++	#protocolVersion = MCP_PROTOCOL_VERSION;
++ 
++ 	onClose?: () => void;
++ 	onError?: (error: Error) => void;
++@@ -55,16 +62,33 @@ export class HttpTransport implements MCPTransport {
++ 
++ 	constructor(private config: MCPHttpServerConfig | MCPSseServerConfig) {}
++ 
++-	/** Fetch the configured endpoint with header precedence and origin policy. */
+++	/**
+++	 * Fetch the configured endpoint with header precedence and origin policy.
+++	 *
+++	 * Every request carries `MCP-Protocol-Version`. The MCP Streamable HTTP spec
+++	 * requires it on all requests after `initialize`; sending it on `initialize`
+++	 * too is harmless and keeps this a single choke point. It is placed under
+++	 * `generated` so the merge policy lets a caller-supplied header win only when
+++	 * one isn't generated here, and so an explicitly generated value (none today)
+++	 * would take precedence.
+++	 */
++ 	#fetch(init: MCPFetchInit, generated: Record<string, string>): Promise<Response> {
++ 		return mcpFetch(
++ 			this.config.url,
++ 			init,
++-			{ generated, configured: this.config.headers },
+++			{
+++				generated: { "MCP-Protocol-Version": this.#protocolVersion, ...generated },
+++				configured: this.config.headers,
+++			},
++ 			this.config.headerPolicy === "origin-locked",
++ 		);
++ 	}
++ 
+++	/** Record the protocol version negotiated during `initialize`. */
+++	setProtocolVersion(version: string): void {
+++		this.#protocolVersion = version;
+++	}
+++
++ 	get connected(): boolean {
++ 		return this.#connected;
++ 	}
++diff --git a/packages/coding-agent/src/mcp/types.ts b/packages/coding-agent/src/mcp/types.ts
++index 47fda8ad2212..70271acd1610 100644
++--- a/packages/coding-agent/src/mcp/types.ts
+++++ b/packages/coding-agent/src/mcp/types.ts
++@@ -151,6 +151,19 @@ export interface MCPConfigFile {
++ // MCP Protocol Types
++ // =============================================================================
++ 
+++/**
+++ * Latest MCP protocol revision this client negotiates.
+++ *
+++ * Sent as `protocolVersion` in the `initialize` request and, for Streamable
+++ * HTTP, echoed back to the server in the `MCP-Protocol-Version` header on every
+++ * subsequent request (per the MCP HTTP transport spec). Must track the current
+++ * stable revision: AWS Bedrock AgentCore Gateway refuses tool calls on an
+++ * outbound per-user OAuth (`AUTHORIZATION_CODE`) target below `2025-11-25`, and
+++ * it checks the version *before* consulting its token vault, so an older client
+++ * is refused even for a caller whose consent is already stored.
+++ */
+++export const MCP_PROTOCOL_VERSION = "2025-11-25";
+++
++ /** MCP implementation info */
++ export interface MCPImplementation {
++ 	name: string;
++@@ -269,6 +282,14 @@ export interface MCPTransport {
++ 	/** Close the transport */
++ 	close(): Promise<void>;
++ 
+++	/**
+++	 * Record the protocol version negotiated in the `initialize` response.
+++	 * Streamable HTTP transports echo it in the `MCP-Protocol-Version` header on
+++	 * every subsequent request; transports that need no per-request version
+++	 * (stdio) omit this.
+++	 */
+++	setProtocolVersion?(version: string): void;
+++
++ 	/** Whether the transport is connected */
++ 	readonly connected: boolean;
++ 
++diff --git a/packages/coding-agent/test/mcp-http-transport.test.ts b/packages/coding-agent/test/mcp-http-transport.test.ts
++index 432ff50bb697..5e22bd745013 100644
++--- a/packages/coding-agent/test/mcp-http-transport.test.ts
+++++ b/packages/coding-agent/test/mcp-http-transport.test.ts
++@@ -1,5 +1,6 @@
++ import { afterEach, describe, expect, it } from "bun:test";
++ import { HttpTransport } from "@oh-my-pi/pi-coding-agent/mcp/transports/http";
+++import { MCP_PROTOCOL_VERSION } from "@oh-my-pi/pi-coding-agent/mcp/types";
++ 
++ const encoder = new TextEncoder();
++ const REQUEST_TIMEOUT_MS = 50;
++@@ -101,3 +102,36 @@ describe("MCP Streamable HTTP transport timeouts", () => {
++ 		});
++ 	});
++ });
+++
+++describe("MCP Streamable HTTP protocol version header", () => {
+++	it("sends MCP-Protocol-Version on requests, defaulting to the client's revision", async () => {
+++		const seen: { version: string | null } = { version: null };
+++		server = Bun.serve({
+++			port: 0,
+++			fetch(req) {
+++				seen.version = req.headers.get("MCP-Protocol-Version");
+++				return Response.json({ jsonrpc: "2.0", id: 1, result: {} });
+++			},
+++		});
+++		const transport = await connectedTransport();
+++
+++		await withPendingGuard(transport.request("tools/list"), "request");
+++		expect(seen.version).toBe(MCP_PROTOCOL_VERSION);
+++	});
+++
+++	it("echoes the negotiated version on requests after setProtocolVersion", async () => {
+++		const seen: { version: string | null } = { version: null };
+++		server = Bun.serve({
+++			port: 0,
+++			fetch(req) {
+++				seen.version = req.headers.get("MCP-Protocol-Version");
+++				return Response.json({ jsonrpc: "2.0", id: 1, result: {} });
+++			},
+++		});
+++		const transport = await connectedTransport();
+++		transport.setProtocolVersion("2025-06-18");
+++
+++		await withPendingGuard(transport.request("tools/list"), "request");
+++		expect(seen.version).toBe("2025-06-18");
+++	});
+++});
+diff --git a/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S204.ts b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S204.ts
+new file mode 100644
+index 0000000..a9e68a0
+--- /dev/null
++++ b/.ufo/waves/round-65/build/K65ReviewProbeO65/capture/S204.ts
+@@ -0,0 +1,527 @@
++/**
++ * MCP Client.
++ *
++ * Handles connection initialization, tool listing, and tool calling.
++ */
++import * as path from "node:path";
++import * as url from "node:url";
++import { getProjectDir, logger, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
++import { describeMCPTimeout, isMCPTimeoutEnabled, resolveMCPTimeoutMs } from "./timeout";
++import { createHttpTransport } from "./transports/http";
++import { LegacySseConnectionTimeoutError, createSseTransport } from "./transports/sse";
++import { createStdioTransport } from "./transports/stdio";
++import type {
++	MCPGetPromptParams,
++	MCPGetPromptResult,
++	MCPHttpServerConfig,
++	MCPInitializeParams,
++	MCPInitializeResult,
++	MCPPrompt,
++	MCPPromptsListResult,
++	MCPRequestOptions,
++	MCPResource,
++	MCPResourceReadParams,
++	MCPResourceReadResult,
++	MCPResourceSubscribeParams,
++	MCPResourcesListResult,
++	MCPResourceTemplate,
++	MCPResourceTemplatesListResult,
++	MCPServerCapabilities,
++	MCPServerConfig,
++	MCPServerConnection,
++	MCPSseServerConfig,
++	MCPStdioServerConfig,
++	MCPToolCallParams,
++	MCPToolCallResult,
++	MCPToolDefinition,
++	MCPToolsListResult,
++	MCPTransport,
++} from "./types";
++
++import { MCP_PROTOCOL_VERSION } from "./types";
++
++/** Client info sent during initialization */
++const CLIENT_INFO = {
++	name: "omp-coding-agent",
++	version: "1.0.0",
++};
++
++/**
++ * Default handler for standard MCP server-to-client requests.
++ * Handles `ping` and `roots/list`; rejects unknown methods with -32601.
++ * Reads getProjectDir() at call time so the root stays stable even if
++ * the process cwd changes during tool execution.
++ */
++async function defaultRequestHandler(method: string, _params: unknown): Promise<unknown> {
++	switch (method) {
++		case "ping":
++			return {};
++		case "roots/list": {
++			const cwd = getProjectDir();
++			return {
++				roots: [{ uri: url.pathToFileURL(cwd).href, name: path.basename(cwd) }],
++			};
++		}
++		default:
++			throw Object.assign(new Error(`Unsupported server request: ${method}`), { code: -32601 });
++	}
++}
++
++/**
++ * Create a transport for the given server config.
++ */
++async function createTransport(config: MCPServerConfig, signal?: AbortSignal): Promise<MCPTransport> {
++	const serverType = config.type ?? "stdio";
++
++	switch (serverType) {
++		case "stdio":
++			return createStdioTransport(config as MCPStdioServerConfig);
++		case "http":
++			return createHttpTransport(config as MCPHttpServerConfig);
++		case "sse":
++			return createSseTransport(config as MCPSseServerConfig, signal);
++		default:
++			throw new Error(`Unknown server type: ${serverType}`);
++	}
++}
++
++/**
++ * Initialize connection with MCP server.
++ */
++async function initializeConnection(
++	transport: MCPTransport,
++	options?: {
++		signal?: AbortSignal;
++		/** Called after notifications/initialized succeeds. */
++		onInitialized?: () => void | Promise<void>;
++	},
++): Promise<MCPInitializeResult> {
++	const params: MCPInitializeParams = {
++		protocolVersion: MCP_PROTOCOL_VERSION,
++		capabilities: {
++			roots: { listChanged: false },
++		},
++		clientInfo: CLIENT_INFO,
++	};
++
++	const result = await transport.request<MCPInitializeResult>(
++		"initialize",
++		params as unknown as Record<string, unknown>,
++		{ signal: options?.signal },
++	);
++
++	if (options?.signal?.aborted) {
++		throw options.signal.reason instanceof Error ? options.signal.reason : new Error("Aborted");
++	}
++
++	// Echo the negotiated protocol version on every subsequent request. The MCP
++	// Streamable HTTP spec requires the MCP-Protocol-Version header after
++	// initialize; transports that don't need it ignore this.
++	transport.setProtocolVersion?.(result.protocolVersion);
++
++	// Send initialized before opening the optional GET SSE stream. Servers may
++	// reject or terminate sessions that receive session traffic before this
++	// notification; POST response streams already carry messages during setup.
++	await transport.notify("notifications/initialized");
++
++	await options?.onInitialized?.();
++
++	return result;
++}
++
++/** Identifies an MCP server whose initial handshake exceeded its configured timeout. */
++export class MCPConnectionTimeoutError extends Error {
++	readonly serverName: string;
++	readonly timeoutMs: number;
++
++	constructor(serverName: string, timeoutMs: number) {
++		super(`Connection to MCP server "${serverName}" timed out after ${describeMCPTimeout(timeoutMs)}`);
++		this.name = "MCPConnectionTimeoutError";
++		this.serverName = serverName;
++		this.timeoutMs = timeoutMs;
++	}
++}
++
++/**
++ * Connect to an MCP server.
++ * Has a 30 second timeout by default to prevent blocking startup.
++ * Set OMP_MCP_TIMEOUT_MS=0 to disable MCP client-side timeouts.
++ */
++export async function connectToServer(
++	name: string,
++	config: MCPServerConfig,
++	options?: {
++		signal?: AbortSignal;
++		onNotification?: (method: string, params: unknown) => void;
++		onRequest?: (method: string, params: unknown) => Promise<unknown>;
++	},
++): Promise<MCPServerConnection> {
++	// `withTimeout` rejects a pre-aborted signal without observing `connect()`; never start one.
++	options?.signal?.throwIfAborted();
++	const timeoutMs = resolveMCPTimeoutMs(config.timeout);
++	const timeoutError = new MCPConnectionTimeoutError(name, timeoutMs);
++	let transport: MCPTransport | undefined;
++
++	const connect = async (): Promise<MCPServerConnection> => {
++		transport = await createTransport(config, options?.signal);
++		if (options?.onNotification) {
++			transport.onNotification = options.onNotification;
++		}
++
++		// Always handle standard MCP server-to-client requests (ping, roots/list).
++		// The initialize request declares roots capability, so we must respond to
++		// roots/list — even for short-lived test connections.
++		transport.onRequest = options?.onRequest ?? defaultRequestHandler;
++
++		try {
++			const initResult = await initializeConnection(transport, {
++				signal: options?.signal,
++				async onInitialized() {
++					// Open the optional GET SSE stream only after the initialized
++					// notification makes the session ready for further traffic.
++					if ("startSSEListener" in transport! && typeof transport!.startSSEListener === "function") {
++						await (transport as { startSSEListener(): Promise<void> }).startSSEListener();
++					}
++				},
++			});
++
++			return {
++				name,
++				config,
++				transport,
++				serverInfo: initResult.serverInfo,
++				capabilities: initResult.capabilities,
++				instructions: initResult.instructions,
++			};
++		} catch (error) {
++			await transport.close();
++			throw error;
++		}
++	};
++
++	try {
++		// Race the whole handshake against the signal: the steps after `initialize` (the
++		// initialized notification, the SSE listener) do not observe it themselves.
++		if (!isMCPTimeoutEnabled(timeoutMs)) {
++			return await untilAborted(options?.signal, connect());
++		}
++		return await withTimeout(connect(), timeoutMs, timeoutError, options?.signal);
++	} catch (error) {
++		// If the timeout or the signal won while connect() was still pending,
++		// the transport may be alive with an open SSE listener. Close it.
++		if (transport) {
++			void transport.close().catch(() => {});
++		}
++		throw error instanceof LegacySseConnectionTimeoutError ? timeoutError : error;
++	}
++}
++
++/**
++ * List tools from a connected server.
++ */
++export async function listTools(
++	connection: MCPServerConnection,
++	options?: { signal?: AbortSignal },
++): Promise<MCPToolDefinition[]> {
++	// Check if server supports tools
++	if (!connection.capabilities.tools) {
++		return [];
++	}
++
++	// Return cached tools if available
++	if (connection.tools) {
++		return connection.tools;
++	}
++
++	const allTools: MCPToolDefinition[] = [];
++	let cursor: string | undefined;
++
++	do {
++		const params: Record<string, unknown> = {};
++		if (cursor) {
++			params.cursor = cursor;
++		}
++
++		const result = await connection.transport.request<MCPToolsListResult>("tools/list", params, options);
++		allTools.push(...result.tools);
++		cursor = result.nextCursor;
++	} while (cursor);
++
++	// Cache tools
++	connection.tools = allTools;
++
++	return allTools;
++}
++
++/**
++ * Call a tool on a connected server.
++ */
++export async function callTool(
++	connection: MCPServerConnection,
++	toolName: string,
++	args: Record<string, unknown> = {},
++	options?: MCPRequestOptions,
++): Promise<MCPToolCallResult> {
++	const params: MCPToolCallParams = {
++		name: toolName,
++		arguments: args,
++	};
++
++	return connection.transport.request<MCPToolCallResult>(
++		"tools/call",
++		params as unknown as Record<string, unknown>,
++		options,
++	);
++}
++
++/**
++ * Disconnect from a server.
++ */
++export async function disconnectServer(connection: MCPServerConnection): Promise<void> {
++	await connection.transport.close();
++}
++
++/**
++ * Check if a server supports tools.
++ */
++export function serverSupportsTools(capabilities: MCPServerCapabilities): boolean {
++	return capabilities.tools !== undefined;
++}
++
++/**
++ * List resources from a connected server.
++ */
++export async function listResources(
++	connection: MCPServerConnection,
++	options?: { signal?: AbortSignal },
++): Promise<MCPResource[]> {
++	if (!connection.capabilities.resources) {
++		return [];
++	}
++
++	if (connection.resources) {
++		return connection.resources;
++	}
++
++	const allResources: MCPResource[] = [];
++	let cursor: string | undefined;
++
++	do {
++		const params: Record<string, unknown> = {};
++		if (cursor) {
++			params.cursor = cursor;
++		}
++
++		const result = await connection.transport.request<MCPResourcesListResult>("resources/list", params, options);
++		allResources.push(...result.resources);
++		cursor = result.nextCursor;
++	} while (cursor);
++
++	connection.resources = allResources;
++	return allResources;
++}
++
++/** True when an error is a JSON-RPC "method not found" (-32601) response. */
++function isMethodNotFoundError(error: unknown): boolean {
++	const message = error instanceof Error ? error.message : String(error);
++	return message.includes("-32601") || /method not found/i.test(message);
++}
++
++/**
++ * List resource templates from a connected server.
++ *
++ * A server MAY advertise the `resources` capability without implementing the
++ * optional `resources/templates/list` method (it is optional in the MCP spec).
++ * Such servers reject the request with JSON-RPC -32601 ("Method not found").
++ * Treat that as "no templates" and return `[]` rather than throwing — otherwise
++ * a caller that loads resources and templates together (see `MCPManager`'s
++ * `Promise.all([listResources, listResourceTemplates])`) would discard the
++ * server's concrete resources too. Any other error still propagates.
++ */
++export async function listResourceTemplates(
++	connection: MCPServerConnection,
++	options?: { signal?: AbortSignal },
++): Promise<MCPResourceTemplate[]> {
++	if (!connection.capabilities.resources) {
++		return [];
++	}
++
++	if (connection.resourceTemplates) {
++		return connection.resourceTemplates;
++	}
++
++	const allTemplates: MCPResourceTemplate[] = [];
++	let cursor: string | undefined;
++
++	try {
++		do {
++			const params: Record<string, unknown> = {};
++			if (cursor) {
++				params.cursor = cursor;
++			}
++
++			const result = await connection.transport.request<MCPResourceTemplatesListResult>(
++				"resources/templates/list",
++				params,
++				options,
++			);
++			allTemplates.push(...result.resourceTemplates);
++			cursor = result.nextCursor;
++		} while (cursor);
++	} catch (error) {
++		// A server that doesn't implement the optional templates method answers
++		// -32601; cache an empty list so we neither retry nor let the failure
++		// bubble up and discard the server's concrete resources.
++		if (isMethodNotFoundError(error)) {
++			connection.resourceTemplates = [];
++			return [];
++		}
++		throw error;
++	}
++
++	connection.resourceTemplates = allTemplates;
++	return allTemplates;
++}
++
++/**
++ * Read a resource from a connected server.
++ */
++export async function readResource(
++	connection: MCPServerConnection,
++	uri: string,
++	options?: MCPRequestOptions,
++): Promise<MCPResourceReadResult> {
++	const params: MCPResourceReadParams = { uri };
++	return connection.transport.request<MCPResourceReadResult>(
++		"resources/read",
++		params as unknown as Record<string, unknown>,
++		options,
++	);
++}
++
++/**
++ * Subscribe to resource update notifications.
++ */
++export async function subscribeToResources(
++	connection: MCPServerConnection,
++	uris: string[],
++	options?: MCPRequestOptions,
++): Promise<void> {
++	if (uris.length === 0 || !connection.capabilities.resources?.subscribe) return;
++	const results = await Promise.allSettled(
++		uris.map(uri => {
++			const params: MCPResourceSubscribeParams = { uri };
++			return connection.transport.request(
++				"resources/subscribe",
++				params as unknown as Record<string, unknown>,
++				options,
++			);
++		}),
++	);
++	for (const result of results) {
++		if (result.status === "rejected") {
++			logger.warn("Failed to subscribe to MCP resource", { error: result.reason });
++		}
++	}
++}
++
++/**
++ * Unsubscribe from resource update notifications.
++ */
++export async function unsubscribeFromResources(
++	connection: MCPServerConnection,
++	uris: string[],
++	options?: MCPRequestOptions,
++): Promise<void> {
++	if (uris.length === 0 || !connection.capabilities.resources?.subscribe) return;
++	const results = await Promise.allSettled(
++		uris.map(uri => {
++			const params: MCPResourceSubscribeParams = { uri };
++			return connection.transport.request(
++				"resources/unsubscribe",
++				params as unknown as Record<string, unknown>,
++				options,
++			);
++		}),
++	);
++	for (const result of results) {
++		if (result.status === "rejected") {
++			logger.warn("Failed to unsubscribe from MCP resource", { error: result.reason });
++		}
++	}
++}
++
++/**
++ * Check if a server supports resource subscriptions.
++ */
++export function serverSupportsResourceSubscriptions(capabilities: MCPServerCapabilities): boolean {
++	return capabilities.resources?.subscribe === true;
++}
++
++/**
++ * Check if a server supports resources.
++ */
++export function serverSupportsResources(capabilities: MCPServerCapabilities): boolean {
++	return capabilities.resources !== undefined;
++}
++
++/**
++ * List prompts from a connected server.
++ */
++export async function listPrompts(
++	connection: MCPServerConnection,
++	options?: { signal?: AbortSignal },
++): Promise<MCPPrompt[]> {
++	if (!connection.capabilities.prompts) {
++		return [];
++	}
++
++	if (connection.prompts) {
++		return connection.prompts;
++	}
++
++	const allPrompts: MCPPrompt[] = [];
++	let cursor: string | undefined;
++
++	do {
++		const params: Record<string, unknown> = {};
++		if (cursor) {
++			params.cursor = cursor;
++		}
++
++		const result = await connection.transport.request<MCPPromptsListResult>("prompts/list", params, options);
++		allPrompts.push(...result.prompts);
++		cursor = result.nextCursor;
++	} while (cursor);
++
++	connection.prompts = allPrompts;
++	return allPrompts;
++}
++
++/**
++ * Get a specific prompt from a connected server.
++ */
++export async function getPrompt(
++	connection: MCPServerConnection,
++	name: string,
++	args?: Record<string, string>,
++	options?: MCPRequestOptions,
++): Promise<MCPGetPromptResult> {
++	const params: MCPGetPromptParams = { name };
++	if (args && Object.keys(args).length > 0) {
++		params.arguments = args;
++	}
++
++	return connection.transport.request<MCPGetPromptResult>(
++		"prompts/get",
++		params as unknown as Record<string, unknown>,
++		options,
++	);
++}
++
++/**
++ * Check if a server supports prompts.
++ */
++export function serverSupportsPrompts(capabilities: MCPServerCapabilities): boolean {
++	return capabilities.prompts !== undefined;
++}
+diff --git a/PROVINCE.md b/PROVINCE.md
+index 6a94f01..6f42e0e 100644
+--- a/PROVINCE.md
++++ b/PROVINCE.md
+@@ -22,6 +22,7 @@
+ - Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107): delivery identity and claim/repend; advanced round 55 by `corpus/knowledge/bounded-redelivery-budgets.md` (S109/S110/S111): the bound side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets; advanced round 56 by `corpus/knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115): the lease slot — visibility timeout / ack deadline; advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; advanced round 60 by `corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md` (S190/S194): the two primitives the band was missing — compensating action as a saga, tail tolerance as the slowest seat's cost — and by `corpus/knowledge/durable-execution-failure-detection.md` (S126/S131/S133/S134/S135): the three shapes of "durable" and where the guarantee breaks; advanced round 61 by `corpus/knowledge/temporal-worker-versioning-pinning.md` (S195): the version boundary for Pinned Workflows and the narrower Auto-Upgrade/retry-inheritance contract; other broker/workflow failure families remain queued.
+ - Multi-agent coordinator topology — orchestration topology **decisions** (how a wave's seats are arranged: which topology, what a coordinator may delegate, what the arrangement costs), not agent evaluation — first entry `corpus/knowledge/multi-agent-coordinator-topologies.md` (round 63, S196/S197): a vendor's managed-agent coordinator contract beside the measured scaling study of agent-system topologies, version-pinned to arXiv 2512.08296 v3; adjacent, not absorbed: kengaku evaluates agents, this lane arranges the seats around that judgment; recursion, nested rosters and cost per topology stay unspecified by both sources.
+ 
++- OMP harness contract (MCP runtime) — frontier entry `corpus/knowledge/omp-installed-release-mcp-runtime.md` (round 65): the installed release measured at its own tag.
+ ### Adjacent — reported, never absorbed
+ 
+ - MCP/OAuth security practice (token passthrough, confused deputy) → kasegi / kagi.
+diff --git a/corpus/README.md b/corpus/README.md
+index 29eee0a..f363b9c 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -288,3 +288,4 @@ All entries are falsifiable and cite file+symbol. Opinions marked as such.
+ - **Isolation substrates for parallel agents:** first entry `knowledge/agent-isolation-substrates.md`; seat-containment mechanisms are mapped, harness isolation is not demonstrated on this host, and jj workspaces advanced in round 64 by `knowledge/jj-workspace-seat-containment.md` — mechanism M7 demonstrated by a 21-key hermetic demo (`scripts/jj-seat-demo.sh`), with the round-45 entry carrying it as `Amendment 2026-10-25`.
+ - **Durable-execution and multi-agent failure research:** advanced by `knowledge/at-least-once-dedupe.md` (S106/S107), `knowledge/bounded-redelivery-budgets.md` (S109/S110/S111) and `knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115), linking protocol/broker redelivery semantics, the *bound* side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets — and the *lease* slot — visibility timeout / ack deadline — to the lane's content-derived task key and claim/repend lifecycle; workflow-engine replay (S112, rejected), operator-search Visibility (S116, rejected) and other broker families remain unexplored.
+ - **Multi-agent coordinator topology (how a wave's seats are arranged):** first entry `knowledge/multi-agent-coordinator-topologies.md` (S196/S197); the coordinator contract and the measured scaling study are mapped to seat arrangement, with kengaku's agent evaluation as the adjacent, not absorbed, half; nested rosters and per-topology cost stay open.
++| `knowledge/omp-installed-release-mcp-runtime.md` | fixture row: the installed OMP release at the MCP layer, 18.12.6, read at its tag and measured on the host | S201–S204 |
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 6c6691f..bec8e0d 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -150,6 +150,10 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ | S198 | Jujutsu (jj) documentation — Concurrency — https://docs.jj-vcs.dev/v0.46.0/technical/concurrency/ | docs | A | what a shared jj repository actually shares between workspaces: the operation log and the per-workspace working-copy commit, named as the mechanism rather than described as a symptom; the lane holds the colocated-git page (S066) and the working-copy page (S067) but no row on this page | § Operation log, its first three paragraphs; docs v0.46.0 (the `latest` alias, now cited by its immutable `v0.46.0` path in https://docs.jj-vcs.dev/versions.json, read 2026-10-25), whose HTML is byte-identical to the v0.45.1 and `latest` renderings (48988 bytes, sha256 5e2f7576…00bf6; 8602 characters under the frozen counter's norm(), measured 2026-10-25); host jj 0.45.1 | the operation log is the most important piece in the lock-free design and is what lets divergent operations be detected and merged; the view object holds the visible head commits, bookmarks, tags and the working-copy commit of each workspace, so a seat's commit is visible from every workspace [INFERENCE: the page names no seats, it names the view of every workspace]; a command loads the repo at the latest operation, never sees later changes from other processes, and its own operation cannot fail to commit except for disk failures and such | mined | 2026-10-25 | 180d | corpus/knowledge/jj-workspace-seat-containment.md, corpus/knowledge/agent-isolation-substrates.md, corpus/lessons/round-64.md |
+ | S199 | Firefox Source Docs — Introduction to Jujutsu — https://firefox-source-docs.mozilla.org/contributing/jujutsu.html | docs | A | Firefox's own multi-workspace stale-workspace setup: the trigger it names, the knob its `./mach vcs-setup` sets and the per-workspace remedy (tier A is for that deployment's own policy, not for jj's staleness rule); the lane holds no row on this page | § Working with multiple workspaces (an `<h3>` followed only by the page footer; the 'Git Tricks' link there is a separate page, not a heading); fetched 2026-10-25, body sha256 abbe47cfa45e809694b224d0db0ea7d6b00e9846b94086d077aea0604db7b3d2, 53233 bytes | a workspace becomes stale when a commit it depends on is rewritten from another workspace, by rebasing, editing or squashing; Firefox's mach vcs-setup sets snapshot.auto-update-stale=true because some mach commands can fail silently on a stale working copy; disabling it per workspace makes most jj commands refuse to run until jj workspace update-stale runs, [INFERENCE: the knob chooses between auto-update and refusal on a stale workspace; it does not decide whether a workspace goes stale, which the lane's demo ties to the working-copy tree] | mined | 2026-10-25 | 180d | corpus/knowledge/jj-workspace-seat-containment.md, corpus/lessons/round-64.md |
+ | S200 | Jujutsu (jj) documentation — Working copy — https://docs.jj-vcs.dev/v0.46.0/working-copy/ | docs | A | the jj workspace lifecycle as documented at v0.46.0: several working copies backed by one repo, the stale-working-copy trigger and remedy, and `forget` versus `remove` (the latter is v0.46.0-only; the `forget` sentence is also worded differently from v0.45.1); the lane's S067 holds the v0.45.1 source of the same page, this row is the newer rendering | § Workspaces (first paragraph and the forget and remove paragraphs) and § Stale working copy; docs v0.46.0, cited by its immutable `v0.46.0` path (the `latest` alias served the same bytes on 2026-10-25); the host's jj 0.45.1 lists no remove subcommand (jj workspace --help, 2026-10-25) | releasing a seat has two operations in v0.46.0: jj workspace forget makes the repo forget the workspace and leaves its directory and files on disk, while jj workspace remove forgets it and deletes the directory, snapshotting tracked changes first but deleting ignored files; the main workspace cannot be removed and removing the current workspace needs jj -R from another directory on Windows; on this host (0.45.1) only forget exists, so a seat pool cannot rely on remove; a workspace's working copy goes stale when its working-copy commit is modified from another workspace, and `jj workspace update-stale` updates its files | mined | 2026-10-25 | 180d | corpus/knowledge/jj-workspace-seat-containment.md, corpus/knowledge/agent-isolation-substrates.md, corpus/lessons/round-64.md |
++| S201 | oh-my-pi v18.12.6, packages/coding-agent/src/mcp/types.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts | code | A | which MCP protocol revision OMP v18.12.6 negotiates: the constant OMP sends as protocolVersion in `initialize`, the HTTP header that echoes it, and the reason the source gives for tracking the newest revision | packages/coding-agent/src/mcp/types.ts:181 + tag v18.12.6 = 45c35e40c46166dc726ccc52f5d27f40f2449f99 | `export const MCP_PROTOCOL_VERSION = "2025-11-25";` (:181) under the doc comment :170-180 "Latest MCP protocol revision this client negotiates." — sent as protocolVersion in `initialize` and echoed in the MCP-Protocol-Version header on every later Streamable HTTP request (:173-175, :321-325); the comment names AWS Bedrock AgentCore Gateway as the reason for tracking the current revision (:176-179); the file holds no list of other supported revisions (the only other revision literal is 2025-06-18 at :287, a structured-content comment); file 16167 bytes, sha256 caa3eadeb21bc36d8c6a4bf65fd362b1b27d4c189ca40684b1e11075c48bfe0d, raw fetch at tag and at commit byte-identical (cmp), HTTP 200, 2026-10-25 | mined | 2026-10-25 | 180d | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S202 | OMP (oh-my-pi) documentation — MCP runtime lifecycle — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/docs/mcp-runtime-lifecycle.md | docs | A | what the OMP MCP runtime does at startup and on connection loss at the installed release v18.12.6 (tag commit 45c35e40c46166dc726ccc52f5d27f40f2449f99): the protocol version the client sends at initialize, the 250 ms fast startup gate with its overrides, cached DeferredMCPTools versus late registration, the reconnect ladder and circuit breaker, and the rule that a request that may have reached the server is never replayed automatically; the vendor's own statement of its runtime, so tier A for that scope (it is documentation, not a measurement of the binary) | § Lifecycle at a glance, § Connection establishment and startup timing (connectToServer list), § Fast startup gate + deferred fallback, § Tool calls, § Health, reconnect, and partial failure behavior, § Failure modes and guarantees; docs at tag v18.12.6, raw bytes fetched 2026-10-25 HTTP 200, 22741 bytes, sha256 362acea5d3d0eca06d54aa9a80febab5a43634007ab40a435dbb0c75079cf83d; the same bytes at main 0b5c27ab24719c86a5986b95ee55f4e75bc1aaa0 and at the commit-pinned raw path; the host's `omp.real --version` printed omp/18.12.6 | the client sends protocol version 2025-11-25 at initialize (the doc never mentions 2026-07-28); the startup gate waits 250 ms (env OMP_MCP_STARTUP_TIMEOUT_MS, else mcp.startupTimeoutMs, 0 waits for all) and still-pending servers yield cached DeferredMCPTools or register late through #onToolsChanged; reconnect backs off 500, 1000, 2000, 4000 ms with a breaker after more than 5 attempts in 30 s; retriable failures before dispatch get one reconnect and one retry, but connection loss after a request may have reached the server is never replayed automatically (stdio frame written, or HTTP/SSE reset or closed after established) and refused connections are retried | mined | 2026-10-25 | 180d | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S203 | oh-my-pi commit 10bce690 — fix(mcp): send MCP-Protocol-Version header and negotiate 2025-11-25 — https://github.com/can1357/oh-my-pi/commit/10bce6900b5bdcf7479ed718f52902feeab9ed00.patch | code | A | the commit that set OMP's MCP protocol revision, at the release the lane now measures: the revision it replaced (2025-03-26, called stale), the interoperability failure that forced the bump (a spec-current server denying every tools/call with a generic internal error), the target it chose (2025-11-25) and the transport choke point where the negotiated revision is echoed; closes issue #8264 | the commit body plus the packages/coding-agent/CHANGELOG.md hunk of the patch; commit 10bce6900b5bdcf7479ed718f52902feeab9ed00, dated 2026-08-11T17:56:14Z, ancestor of tag v18.12.6 (compare API behind_by 0, read 2026-10-25) | commit subject fix(mcp): send MCP-Protocol-Version header and negotiate 2025-11-25; body states the client pinned the stale 2025-03-26 revision and that the fix bumps to the current stable 2025-11-25 and echoes it at the transport's single #fetch point so it rides GET, POST and DELETE; patch touches 5 files in packages/coding-agent/ and carries Fixes #8264 | mined | 2026-10-25 | 180d | corpus/knowledge/omp-installed-release-mcp-runtime.md |
++| S204 | oh-my-pi v18.12.6, packages/coding-agent/src/mcp/client.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts | code | A | what the installed release's MCP client does across the handshake at v18.12.6: initializeConnection sends protocolVersion MCP_PROTOCOL_VERSION, requests initialize, then records the server's negotiated revision onto the transport before sending notifications/initialized; the comment above the echo states why (the Streamable HTTP spec requires the MCP-Protocol-Version header after initialize) | packages/coding-agent/src/mcp/client.ts:91-125 (initializeConnection), echo at :117-123, params at :96-104; tag v18.12.6 = 45c35e40c46166dc726ccc52f5d27f40f2449f99, bytes sha256 479aef6d…3fe9 (14975 bytes) | at v18.12.6 initializeConnection sets protocolVersion: MCP_PROTOCOL_VERSION (:100) in the initialize request (:107), checks the abort signal, calls transport.setProtocolVersion?.(result.protocolVersion) (:120) and only then notifies notifications/initialized (:125), with onInitialized awaited after that; the echo is optional on the transport interface, so a transport that does not need the header ignores it | mined | 2026-10-25 | on-release | corpus/knowledge/omp-installed-release-mcp-runtime.md |
+ 
+ 
+ 
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+new file mode 100644
+index 0000000..5367edb
+--- /dev/null
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -0,0 +1,49 @@
++source: S201 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/types.ts` (the MCP revision constant and its doc comment) — https://raw.githubusercontent.com/can1357/oh-my-pi/45c35e40c46166dc726ccc52f5d27f40f2449f99/packages/coding-agent/src/mcp/types.ts — `MCP_PROTOCOL_VERSION` at :181 under the doc comment :170-180 ; source: S202 — oh-my-pi v18.12.6, `docs/mcp-runtime-lifecycle.md` (handshake, startup gate, replay rule) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/docs/mcp-runtime-lifecycle.md — § Lifecycle at a glance (:97-107), § Fast startup gate + deferred fallback (:109-124)
++source: S203 — oh-my-pi commit 10bce690, the decision that set the revision — https://github.com/can1357/oh-my-pi/commit/10bce6900b5bdcf7479ed718f52902feeab9ed00.patch — the commit body and the client.ts hunk ; source: S204 — oh-my-pi v18.12.6, `packages/coding-agent/src/mcp/client.ts` (what the release's client sends in `initialize` and echoes afterwards) — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts — `initializeConnection` (:91-125), the echo (:117-123)
++verified-at: 2026-10-25 (host `OMP_NO_RESTART=1 ~/.local/bin/omp.real --version` → `omp/18.12.6`; `bash scripts/omp-binary-probe.sh` printed 15 `OMP_BIN:` keys, exit 0)
++recheck: 90d — re-run `bash scripts/omp-binary-probe.sh` and compare its 15 `OMP_BIN:` keys with § Host measurements
++ground: PROVINCE.md §Frontier — the first entry that measures the **installed** release at the MCP layer
++
++# The installed OMP release at the MCP layer: 18.12.6
++
++The installed release is `omp/18.12.6`. Its MCP revision is the constant `"2025-11-25"` (S201:181, sent at S204:100),
++the client adopts whatever revision the server answers with (S204:120), and the release bytes carry `2025-11-25` twice,
++the header name three times, `2025-03-26` twice and `2026-07-28` not at all (`lit_2026_07_28=0`; the key
++`real_version` above reads `18.12.6`). The revision was chosen, not inherited: a commit bumped the client off the stale
++`2025-03-26` and says why (S203). What the release does with a slow or a lost server is a documentation fact at the same
++tag — a 250 ms startup gate and a no-replay rule (S202) — and no byte sweep can confirm either.
++
++## Located quotes
++
++- S201 — "export const MCP_PROTOCOL_VERSION = "2025-11-25";"
++- S201 — "Latest MCP protocol revision this client negotiates."
++- S202 — "performs MCP `initialize` using protocol version `2025-11-25` and advertises the `roots` capability"
++- S202 — "Connection loss after a request may have reached the server is non-retryable and is never replayed automatically"
++- S203 — "The Streamable HTTP transport never emitted the MCP-Protocol-Version header and the client pinned the stale 2025-03-26 revision."
++- S203 — "echo the negotiated version in the MCP-Protocol-Version header at the transport's single #fetch choke point"
++- S204 — "Streamable HTTP spec requires the MCP-Protocol-Version header after"
++
++## Host measurements
++
++- wrapper_is_script=1
++- wrapper_names_real=omp.real
++- wrapper_restart_codes=132-139
++- wrapper_max_restarts=5
++- real_is_elf=1
++- real_bytes=256702432
++- real_version=18.12.6
++- lit_2025_11_25=2
++- lit_2026_07_28=0
++- lit_2025_03_26=2
++- sym_MCP_PROTOCOL_VERSION=3
++- header_MCP-Protocol-Version=3
++- sym_DeferredMCPTool=3
++- collab_hosts_literal=2
++- docs_phrase_never_replayed=0
++
++These are the 15 `OMP_BIN:` keys `bash scripts/omp-binary-probe.sh` prints on this host on 2026-10-25, read from the
++release bytes only; the probe executes nothing but `<binary> --version`.
++
++## Limits
++
++Byte counts prove presence, not use; no MCP session was started; the 18.12.3 → 18.12.6 delta is not measured.
+diff --git a/corpus/knowledge/omp-task-contract.md b/corpus/knowledge/omp-task-contract.md
+index 9ad41ea..ddba682 100644
+--- a/corpus/knowledge/omp-task-contract.md
++++ b/corpus/knowledge/omp-task-contract.md
+@@ -212,3 +212,13 @@ S004 — `omp --version` on this host; stdout `omp/18.12.3`, observed 2026-10-19
+ - S002 — OMP Agent Hub docs: https://github.com/can1357/oh-my-pi/blob/main/docs/agent-hub.md; anchors `#roster-and-inspector`, `#read-and-steer-a-subagent`, `#related-surfaces`, `#persisted-agents-and-advisors`. Latest commit touching this path is recorded in the path query result. Path result object ID: ae29413e870eb186a342b1f9a16e41b65c9d3ed6, 2026-10-19T12:20:43Z.
+ - S003 — OMP task agent discovery docs: https://github.com/can1357/oh-my-pi/blob/main/docs/task-agent-discovery.md; anchors `#role-backed-custom-agents`, `#discovery-inputs-and-precedence`, `#merge-and-collision-rules`, `#agent-lookup-and-selection`. Latest commit touching this path is recorded in the path query result. Path result object ID: 2b4e9121fecf0c7ab6daba7cc18cb01325578fe3, 2026-10-14T16:40:06Z.
+ - S004 — `omp --version` on this host; stdout `omp/18.12.3`, observed 2026-10-19.
++
++## Amendment 2026-10-25 — Version skew
++
++`corpus/knowledge/omp-installed-release-mcp-runtime.md` measures the installed release at the MCP layer, which § Version
++skew above records as not inspected ("the binary's version was observed, but its implementation was not inspected").
++Re-read on 2026-10-25: the host runs `omp/18.12.6` (this entry's S004 observed `omp/18.12.3` on 2026-10-19), reached
++through a crash-restart wrapper; at tag `v18.12.6` the MCP revision is `2025-11-25` — the same constant `main` carries —
++the client echoes the server's negotiated revision back onto the transport, and the release bytes carry no `2026-07-28`.
++The documentation facts this entry states for the task contract remain upstream-`main` facts. The skew sentence above is
++resolved for the MCP revision only; a tag-to-commit mapping for `omp/18.12.3` stays UNKNOWN.
+-- 
+2.56.0
+

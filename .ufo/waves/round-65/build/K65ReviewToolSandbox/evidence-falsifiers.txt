@@ -1,0 +1,47 @@
+=== A. committed tool vs tightened cases (only the new falsifiers should fail)
+rc=1 fails=29
+CASE FAIL honest-held exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=
+CASE FAIL repaired exit=0 want=0 rows=["g1 REPAIRED"] wantrows=["g1 REPAIRED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=1 carried=0 moved=0
+CASE FAIL harm-verdict exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carried=0 moved=0 new=
+CASE FAIL harm-exit-code-with-clean-line exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carr
+CASE FAIL harm-no-verdict-line exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carried=0 move
+CASE FAIL harm-gate-deleted exit=1 want=1 rows=["g1 HARM_ABSENT"] wantrows=["g1 HARM_ABSENT"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 car
+CASE FAIL new-ok exit=0 want=0 rows=["g1 HELD","g2 NEW_OK"] wantrows=["g1 HELD","g2 NEW_OK"] summary="HARM_MATRIX: CLEAN gates=2 held=1 repaired=0 car
+CASE FAIL new-red exit=1 want=1 rows=["g1 HELD","g2 NEW_RED"] wantrows=["g1 HELD","g2 NEW_RED"] summary="HARM_MATRIX: HARM gates=2 held=1 repaired=0 c
+CASE FAIL carried-same-line exit=0 want=0 rows=["g1 CARRIED"] wantrows=["g1 CARRIED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 
+CASE FAIL carried-moved-line exit=0 want=0 rows=["g1 CARRIED_MOVED"] wantrows=["g1 CARRIED_MOVED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired
+CASE FAIL harm-timeout exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carried=0 moved=0 new=
+CASE FAIL repaired-from-timeout exit=0 want=0 rows=["g1 REPAIRED"] wantrows=["g1 REPAIRED"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=1 carr
+CASE FAIL stderr-verdict-held exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 move
+CASE FAIL last-verdict-wins exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carried=0 moved=0
+CASE FAIL absent-both-skipped exit=0 want=0 rows=["g1 ABSENT_BOTH","g2 HELD"] wantrows=["g1 ABSENT_BOTH","g2 HELD"] summary="HARM_MATRIX: CLEAN gates=
+CASE FAIL same-rev-held exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 ne
+CASE FAIL gone-red-gate exit=0 want=0 rows=["g1 GONE"] wantrows=["g1 GONE"] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=0 moved=0 ne
+CASE FAIL mixed-three exit=1 want=1 rows=["g1 HELD","g2 HARM","g3 REPAIRED"] wantrows=["g1 HELD","g2 HARM","g3 REPAIRED"] summary="HARM_MATRIX: HARM g
+CASE FAIL only-filter exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=
+CASE FAIL ok-exit-list-honored exit=0 want=0 rows=["g1 HELD"] wantrows=["g1 HELD"] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 mov
+CASE FAIL clean-word-not-in-list exit=1 want=1 rows=["g1 HARM"] wantrows=["g1 HARM"] summary="HARM_MATRIX: HARM gates=1 held=0 repaired=0 carried=0 mo
+CASE FAIL only-empty-string exit=0 want=64 rows=["g1 HELD"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 
+CASE FAIL only-empty-list exit=2 want=64 rows=[] wantrows=[] summary="HARM_MATRIX: FAIL_CLOSED reason=NO_GATES detail=\"registry empty after --only\""
+CASE FAIL duplicated-base-flag exit=0 want=64 rows=["g1 HELD"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new
+CASE FAIL base-eats-flag exit=2 want=64 rows=[] wantrows=[] summary="HARM_MATRIX: FAIL_CLOSED reason=REV_UNREADABLE detail=\"base=--tip\""
+CASE FAIL gates-needs-nonstring exit=1 want=2 rows=[] wantrows=[] summary=null
+CASE FAIL gates-ok-exit-strings exit=0 want=2 rows=["g1 CARRIED"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 
+CASE FAIL gates-verdict-no-capture exit=0 want=2 rows=["g1 CARRIED"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved
+CASE FAIL gates-timeout-string exit=0 want=2 rows=["g1 HELD"] wantrows=[] summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=
+=== B. hardened tool vs tightened cases
+rc=0 tail=HARM_MATRIX_SELFTEST: PASS (34/34)
+=== C. N1: counters inflated/aliased (carried+100, moved<-CARRIED+9, gone+7, new+5)
+rc=1 tail=HARM_MATRIX_SELFTEST: FAIL (13/34) fails=21
+=== D. N2: base/tip dropped from the summary
+rc=1 tail=HARM_MATRIX_SELFTEST: FAIL (13/34) fails=21
+=== E. N3: a second contradictory summary line is appended
+rc=1 tail=HARM_MATRIX_SELFTEST: FAIL (13/34) fails=21
+=== F. N4: usage written to stdout
+rc=1 tail=HARM_MATRIX_SELFTEST: FAIL (30/34) fails=4
+=== G. hardened tool: leak on throw and traversal are gone
+no-git rc=1 out=CASE FAIL honest-held threw fixture init|CASE FAIL repaired threw fixture init|CASE FAIL harm-verdict threw fixture init|CASE FAIL harm-exit-code-with-clean-line threw fixture init|CASE FAIL harm-no-verdict-line threw fixture init|CASE FAIL harm-gate-deleted threw fixture init|CASE FAIL new-ok threw
+orphan fixtures=0
+traversal rc=1 out=CASE FAIL trav threw case path escapes the fixture: ../../sentinel2/target.txt|HARM_MATRIX_SELFTEST: FAIL (0/1)| sentinel2=present
+=== H. hardened tool: sandbox creation failure is exit 2, not 1
+rc=2 out=HARM_MATRIX: FAIL_CLOSED reason=SANDBOX_FAILED detail="base: mkdtemp: ENOTDIR"|

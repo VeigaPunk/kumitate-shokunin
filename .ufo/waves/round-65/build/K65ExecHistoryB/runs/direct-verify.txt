@@ -1,0 +1,41 @@
+# direct gate re-runs in git-archive extractions of both revisions (no harm-matrix.mjs); tool CLEAN_ENV replicated
+# host Linux 7.2.11-arch1-1 load 31.98 36.09 56.08
+GATE_DIRECT rev=be4a820c344d gate=readme-map exit=1 verdict=README_MAP: DRIFT files=146 rows=145 covered=145 bad=2 first=uncovered:lessons/round-60-verifier-spotcheck.md
+GATE_DIRECT rev=15084153a022 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=148 rows=148 covered=148
+GATE_DIRECT rev=f351c520bfc4 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=148 rows=148 covered=148
+GATE_DIRECT rev=0cbe0d75e5a0 gate=readme-map exit=1 verdict=README_MAP: DRIFT files=149 rows=148 covered=148 bad=2 first=uncovered:lessons/round-61-verifier-spotcheck.md
+GATE_DIRECT rev=6d8faede281e gate=readme-map exit=0 verdict=README_MAP: CLEAN files=150 rows=150 covered=150
+GATE_DIRECT rev=a2281a397796 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=150 rows=150 covered=150
+GATE_DIRECT rev=dfa6fca8f362 gate=readme-map exit=1 verdict=README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 first=uncovered:lessons/round-62-verifier-spotcheck.md
+GATE_DIRECT rev=b38a2065ab8a gate=readme-map exit=1 verdict=README_MAP: DRIFT files=151 rows=150 covered=150 bad=2 first=uncovered:lessons/round-62-verifier-spotcheck.md
+GATE_DIRECT rev=05b3176915de gate=readme-map exit=0 verdict=README_MAP: CLEAN files=153 rows=153 covered=153
+GATE_DIRECT rev=144f11f5bbeb gate=proxy-check exit=1 verdict=PROXY: DRIFT (A_DRIFT term=A declared=117 computed=258 delta=+141; C2_DRIFT term=C2 declared=150 computed=153 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=150 computed=153 delta=+3; K_MEMBERS_DRIFT term=K_members declared=52 computed=49 delta=-3; K_SECTIONS_DRIFT term=K_sections declared=52 computed=49 delta=-3; PIN_DRIFT term=pin.proxy-check declared=7f73f8e7085377ac6ae543059bddbd5b2bf5693790a5cbb4648eb61c5b446976 computed=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861; PIN_UNPINNED term=scripts/inline-dispatch-evidence.mjs; src-rev=31c465f15669)
+GATE_DIRECT rev=c8cb1bbecc51 gate=proxy-check exit=0 verdict=PROXY: MATCH (A=258 C=30 operability=9; C1=19/19 C2=153/153 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+GATE_DIRECT rev=011a4e76affb gate=proxy-check exit=1 verdict=PROXY: DRIFT (A_DRIFT term=A declared=258 computed=257 delta=-1; src-rev=31c465f15669)
+GATE_DIRECT rev=fcb35e011fe6 gate=proxy-check exit=1 verdict=PROXY: DRIFT (A_DRIFT term=A declared=258 computed=257 delta=-1; src-rev=31c465f15669)
+GATE_DIRECT rev=bb184a901d88 gate=proxy-check exit=0 verdict=PROXY: MATCH (A=257 C=30 operability=9; C1=19/19 C2=153/153 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+GATE_DIRECT rev=bb184a901d88 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=153 rows=153 covered=153
+GATE_DIRECT rev=6825a51425e9 gate=readme-map exit=1 verdict=README_MAP: DRIFT files=154 rows=153 covered=153 bad=2 first=uncovered:lessons/round-63-verifier-spotcheck.md
+GATE_DIRECT rev=6825a51425e9 gate=proxy-check exit=1 verdict=PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=153 computed=154 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+GATE_DIRECT rev=d92cf1fff302 gate=readme-map exit=1 verdict=README_MAP: DRIFT files=154 rows=153 covered=153 bad=2 first=uncovered:lessons/round-63-verifier-spotcheck.md
+GATE_DIRECT rev=2ed8a5f8b133 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=156 rows=156 covered=156
+GATE_DIRECT rev=f874353902d0 gate=proxy-check exit=1 verdict=PROXY: DRIFT (A_DRIFT term=A declared=257 computed=351 delta=+94; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=0c7da32a217da1634e9a5ea7e0f8acfe0c4e077e5d64e53c07c0fa6fe292e77e; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+GATE_DIRECT rev=fd437f87b0c6 gate=proxy-check exit=0 verdict=PROXY: MATCH (A=351 C=33 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+GATE_DIRECT rev=a004902d77d1 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=156 rows=156 covered=156
+GATE_DIRECT rev=a004902d77d1 gate=proxy-check exit=0 verdict=PROXY: MATCH (A=351 C=33 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+GATE_DIRECT rev=47fe23831519 gate=readme-map exit=1 verdict=README_MAP: DRIFT files=157 rows=156 covered=156 bad=2 first=uncovered:lessons/round-64-verifier-spotcheck.md
+GATE_DIRECT rev=47fe23831519 gate=proxy-check exit=1 verdict=PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+GATE_DIRECT rev=2ca91a0c8154 gate=readme-map exit=0 verdict=README_MAP: CLEAN files=157 rows=157 covered=157
+GATE_DIRECT rev=2ca91a0c8154 gate=proxy-check exit=1 verdict=PROXY: DRIFT (A_DRIFT term=A declared=351 computed=357 delta=+6; C2_DRIFT term=C2 declared=156 computed=157 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=156 computed=157 delta=+1; PIN_UNPINNED term=scripts/harm-matrix.mjs; src-rev=31c465f15669)
+GATE_DIRECT rev=165b83044d33 gate=claims-check exit=0 verdict=CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+GATE_DIRECT rev=165b83044d33 gate=counter-pins exit=0 verdict=COUNTER_PINS: CLEAN pins=17
+GATE_DIRECT rev=165b83044d33 gate=sources-check exit=0 verdict=SOURCES_CHECK: CLEAN (rows=133 tiers=A:110,B:15,C:8 status=queued:13,mined:101,rejected:19 entries_with_source=18 legacy=38)
+GATE_DIRECT rev=165b83044d33 gate=source-capture exit=0 verdict=SOURCE_CAPTURE: CLEAN captures=26 exemptions=107
+GATE_DIRECT rev=165b83044d33 gate=source-dupes exit=0 verdict=SOURCE_DUPES: CLEAN groups=6 known=6
+GATE_DIRECT rev=165b83044d33 gate=surface-known exit=0 verdict=SURFACE_PROBE: CLEAN (surfaces=2 checks=12 errors=0 warnings=1 known=1 src-rev=31c465f15669)
+GATE_DIRECT rev=165b83044d33 gate=wave-census-r40 exit=0 verdict=WAVE_CENSUS: CLEAN (rounds=1 waves=2 findings=0)
+GATE_DIRECT rev=165b83044d33 gate=kimi-census exit=1 verdict=KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)
+GATE_DIRECT rev=2ca91a0c8154 gate=kimi-census exit=1 verdict=KIMI_CENSUS: DRIFT (MEMBER_MISSING logs/kimi-code.log; MEMBER_MISSING cache/; MEMBER_MISSING search-index/; MEMBER_MISSING updates/)
+GATE_DIRECT rev=165b83044d33 gate=omp-census exit=1 verdict=OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)
+GATE_DIRECT rev=2ca91a0c8154 gate=omp-census exit=1 verdict=OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=42 findings=10)
+GATE_DIRECT rev=165b8304(clone) gate=anchor-truth exit=0 verdict=TRUTH: CLEAN (notes=4 anchors=811 true=778 debt=20 unchecked=13 base=e18ff1af3392e3823227644c977c237737fe65c9 src-rev=31c465f15669)

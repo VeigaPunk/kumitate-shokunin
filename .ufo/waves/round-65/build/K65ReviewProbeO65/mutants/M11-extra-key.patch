@@ -1,0 +1,24 @@
+From 311cba80069672515f8e0d35644f6f7bf7ab0289 Mon Sep 17 00:00:00 2001
+From: fixture <fixture@example.invalid>
+Date: Sun, 25 Oct 2026 22:35:58 -0300
+Subject: [PATCH] M11: one measurement key the probe does not print
+
+---
+ corpus/knowledge/omp-installed-release-mcp-runtime.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/corpus/knowledge/omp-installed-release-mcp-runtime.md b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+index 5367edb..704ff91 100644
+--- a/corpus/knowledge/omp-installed-release-mcp-runtime.md
++++ b/corpus/knowledge/omp-installed-release-mcp-runtime.md
+@@ -40,6 +40,7 @@ tag — a 250 ms startup gate and a no-replay rule (S202) — and no byte sweep
+ - sym_DeferredMCPTool=3
+ - collab_hosts_literal=2
+ - docs_phrase_never_replayed=0
++- real_sha256=deadbeef
+ 
+ These are the 15 `OMP_BIN:` keys `bash scripts/omp-binary-probe.sh` prints on this host on 2026-10-25, read from the
+ release bytes only; the probe executes nothing but `<binary> --version`.
+-- 
+2.56.0
+

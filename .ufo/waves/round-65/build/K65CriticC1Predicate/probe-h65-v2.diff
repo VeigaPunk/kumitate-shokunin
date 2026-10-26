@@ -1,0 +1,86 @@
+--- /tmp/kumitate-r65/K65CriticC1Predicate/v2-keep.txt	2026-10-25 22:36:33.555006107 -0300
++++ /tmp/kumitate-r65/K65CriticC1Predicate/v2.mjs	2026-10-25 22:37:21.943321153 -0300
+@@ -103,6 +103,33 @@
+   }
+   if (ids.size < 8) why.push(`ids=${ids.size}<8`);
+   if (zero < 2) why.push(`exit0-cases=${zero}<2`);
++  // held-out cases generated in memory: no on-disk answer key, random ids and verdict words
++  const pick = (a) => a[Math.floor(Math.random() * a.length)];
++  const word = () => pick(['ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'GOLF', 'HOTEL', 'INDIA', 'JULIET']) + Math.floor(Math.random() * 1000);
++  const nid = () => `g${Math.floor(Math.random() * 1679616).toString(36)}`;
++  const one = (id, w) => ({ id, argv: ['bash', `s/${id}.sh`], verdict: `^${id.toUpperCase()}: (\\w+)`, clean: [w], timeout: 5 });
++  const shape = () => {
++    const id = nid(); const w = word(); const bad = `BAD${id}`; const up = id.toUpperCase();
++    const cleanS = `echo '${up}: ${w}'\n`;
++    const badS = `echo '${up}: ${bad}'; exit 1\n`;
++    const k = Math.floor(Math.random() * 6);
++    if (k === 0) return { gates: [one(id, w)], base: { [`s/${id}.sh`]: cleanS }, tip: { [`s/${id}.sh`]: cleanS }, expect: { exit: 0, rows: [`${id} HELD`] } };
++    if (k === 1) return { gates: [one(id, w)], base: { [`s/${id}.sh`]: cleanS }, tip: { [`s/${id}.sh`]: badS }, expect: { exit: 1, rows: [`${id} HARM`] } };
++    if (k === 2) return { gates: [one(id, w)], base: { [`s/${id}.sh`]: badS }, tip: { [`s/${id}.sh`]: cleanS }, expect: { exit: 0, rows: [`${id} REPAIRED`] } };
++    if (k === 3) return { gates: [one(id, w)], base: {}, tip: { [`s/${id}.sh`]: cleanS }, expect: { exit: 0, rows: [`${id} NEW_OK`] } };
++    if (k === 4) { const id2 = nid(); const w2 = word(); return { gates: [one(id, w), one(id2, w2)], base: { [`s/${id2}.sh`]: `echo '${id2.toUpperCase()}: ${w2}'\n` }, tip: {}, expect: { exit: 0, rows: [`${id} ABSENT_BOTH`, `${id2} HELD`] } }; }
++    return { gates: [one(id, w)], base: { [`s/${id}.sh`]: badS }, tip: { [`s/${id}.sh`]: `echo '${up}: ${bad}x'; exit 1\n` }, expect: { exit: 0, rows: [`${id} CARRIED_MOVED`] } };
++  };
++  let heldOut = 0;
++  for (let i = 0; i < 8; i++) {
++    const sp = shape();
++    let got;
++    try { got = runCase(toolCmd, sp); } catch { why.push(`heldout-${i}:threw`); continue; }
++    const want = [...sp.expect.rows].sort();
++    if (got.exit === sp.expect.exit && JSON.stringify(got.rows) === JSON.stringify(want)) heldOut++;
++    else why.push(`heldout-${i}:got exit=${got.exit} rows=${JSON.stringify(got.rows)} want=${JSON.stringify(want)}`);
++  }
++  if (heldOut !== 8) why.push(`heldout=${heldOut}/8`);
+   return why;
+ }
+ 
+@@ -112,7 +139,11 @@
+ else {
+   const r = spawnSync('node', [TOOL[1], '--selftest'], { cwd: A, encoding: 'utf8', timeout: 600000 });
+   const m = /HARM_MATRIX_SELFTEST: PASS \((\d+)\/(\d+)\)/.exec(r.stdout || '');
+-  check('H1', r.status === 0 && !!m && m[1] === m[2] && Number(m[2]) >= 20, `selftest exit=${r.status} line=${m ? m[0] : 'none'}`);
++  let caseIds = null;
++  try { caseIds = JSON.parse(readFileSync(join(A, 'scripts/harm-cases.json'), 'utf8')).cases.map((c) => c.id); } catch { caseIds = null; }
++  const okLines = (r.stdout || '').split('\n').filter((l) => /^CASE ok \S+/.test(l)).map((l) => l.slice(8).trim());
++  const crossCheck = caseIds !== null && !!m && Number(m[2]) === caseIds.length && caseIds.every((id) => okLines.includes(id));
++  check('H1', r.status === 0 && !!m && m[1] === m[2] && Number(m[2]) >= 20 && crossCheck, `selftest exit=${r.status} line=${m ? m[0] : 'none'} cases=${caseIds ? caseIds.length : 'none'} ok-lines=${okLines.length}`);
+ }
+ 
+ // ---- direct runs for H3 (independent of the tool)
+@@ -145,6 +176,19 @@
+   const badB = rowsB.filter(([, id]) => ['HARM', 'HARM_ABSENT', 'NEW_RED'].includes(id));
+   const repB = rowsB.filter(([, id]) => id === 'REPAIRED').map(([g]) => g);
+   if (rb.status !== 0 || badB.length || !(repB.includes('readme-map') && repB.includes('proxy-check'))) why.push(`B exit=${rb.status} bad=${badB.length} repaired=${JSON.stringify(repB)}`);
++  // a third pair chosen by measuring readme-map directly over recent history (defeats pair-table dispatch)
++  const revs = git(lane, ['rev-list', '--max-count=10', '--all']).stdout.split('\n').filter(Boolean);
++  const seen = [];
++  for (const rev of revs) { const T = archive(rev); if (!T) continue; seen.push([rev, spawnSync('node', ['scripts/readme-map.mjs'], { cwd: T, encoding: 'utf8', timeout: 120000 }).status]); }
++  let pair = null;
++  for (const [r1, c1] of seen) for (const [r2, c2] of seen) if (r1 !== r2 && (c1 === 0) !== (c2 === 0) && !pair) pair = [r1, r2, c1, c2];
++  if (!pair) why.push('randPair:none-found');
++  else {
++    const rr = spawnSync(toolCmd[0], [...toolCmd.slice(1), '--lane', lane, '--base', pair[0], '--tip', pair[1], '--only', 'readme-map', '--timeout', '120'], { encoding: 'utf8', timeout: 900000, maxBuffer: 64 << 20 });
++    const row = rowsOf(rr.stdout || '').find(([g]) => g === 'readme-map');
++    const wantId = pair[3] === 0 ? 'REPAIRED' : 'HARM';
++    if (!row || row[1] !== wantId) why.push(`randPair ${pair[0].slice(0, 8)}->${pair[1].slice(0, 8)} readme-map=${row ? row[1] : 'none'} want=${wantId}`);
++  }
+   return why;
+ }
+ const matrixRun = (toolCmd, base, tip) => spawnSync(toolCmd[0], [...toolCmd.slice(1), '--lane', lane, '--base', base, '--tip', tip, '--timeout', '120'], { encoding: 'utf8', timeout: 900000, maxBuffer: 64 << 20 });
+@@ -180,7 +224,15 @@
+   const r = matrixRun(TOOL, ROUND_BASE, full);
+   const m = /^HARM_MATRIX: (CLEAN|HARM) gates=(\d+) .* harm=(\d+) harm_absent=(\d+) new_red=(\d+)/m.exec(r.stdout || '');
+   const bad = m ? Number(m[3]) + Number(m[4]) + Number(m[5]) : -1;
+-  check('H5', !!m && Number(m[2]) >= 14 && r.status === (bad === 0 ? 0 : 1), `summary=${m ? m[0].slice(0, 120) : 'none'} exit=${r.status}`);
++  const rows = rowsOf(r.stdout || '');
++  const printed = rows.map(([g]) => g);
++  const byId = (id) => rows.filter(([, i]) => i === id).length;
++  let reg = null;
++  try { reg = JSON.parse(readFileSync(join(A, 'scripts/harm-matrix-gates.json'), 'utf8')).gates.map((g) => g.id); } catch { reg = null; }
++  const selfConsistent = !!m && reg !== null && reg.every((g) => printed.includes(g)) && printed.length === reg.length
++    && Number(m[2]) === rows.filter(([, i]) => i !== 'ABSENT_BOTH').length
++    && Number(m[3]) === byId('HARM') && Number(m[4]) === byId('HARM_ABSENT') && Number(m[5]) === byId('NEW_RED');
++  check('H5', !!m && Number(m[2]) >= 14 && r.status === (bad === 0 ? 0 : 1) && selfConsistent, `summary=${m ? m[0].slice(0, 120) : 'none'} exit=${r.status} rows=${rows.length} registry=${reg ? reg.length : 'none'} self=${selfConsistent}`);
+ }
+ 
+ const held = Object.values(results).filter(Boolean).length;

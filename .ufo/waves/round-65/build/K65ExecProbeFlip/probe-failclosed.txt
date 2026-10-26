@@ -1,0 +1,43 @@
+### H: real binary absent -> fail-closed
+OMP_BIN: wrapper_is_script=1
+OMP_BIN: wrapper_names_real=omp.real
+OMP_BIN_PROBE: FAIL-CLOSED real-absent
+exit=2
+
+### I: wrapper absent -> fail-closed
+OMP_BIN_PROBE: FAIL-CLOSED wrapper-absent
+exit=2
+
+### J: zero-byte file at real path -> fail-closed (version unreadable)
+OMP_BIN: wrapper_is_script=1
+OMP_BIN: wrapper_names_real=omp.real
+OMP_BIN_PROBE: FAIL-CLOSED real-absent
+exit=2
+
+### K: 30-byte shell stub printing omp/18.12.6 at real path (documented fallback shape, bytes NOT measured)
+OMP_BIN: wrapper_is_script=1
+OMP_BIN: wrapper_names_real=omp.real
+OMP_BIN: wrapper_restart_codes=132-139
+OMP_BIN: wrapper_max_restarts=5
+OMP_BIN: real_is_elf=0
+OMP_BIN: real_bytes=58
+OMP_BIN: real_version=18.12.6
+OMP_BIN: lit_2025_11_25=0
+OMP_BIN: lit_2026_07_28=0
+OMP_BIN: lit_2025_03_26=0
+OMP_BIN: sym_MCP_PROTOCOL_VERSION=0
+OMP_BIN: header_MCP-Protocol-Version=0
+OMP_BIN: sym_DeferredMCPTool=0
+OMP_BIN: collab_hosts_literal=0
+OMP_BIN: docs_phrase_never_replayed=0
+OMP_BIN_PROBE: DONE omp=18.12.6
+exit=0
+### L: zero-byte EXECUTABLE file at real path -> fail-closed (version unreadable)
+OMP_BIN: wrapper_is_script=1
+OMP_BIN: wrapper_names_real=omp.real
+OMP_BIN: wrapper_restart_codes=132-139
+OMP_BIN: wrapper_max_restarts=5
+OMP_BIN: real_is_elf=0
+OMP_BIN: real_bytes=0
+OMP_BIN_PROBE: FAIL-CLOSED version-unreadable
+exit=2
