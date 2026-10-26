@@ -1,0 +1,55 @@
+### tree=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### cmd=node scripts/surface-probe.mjs --selftest
+### cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### started=2026-10-25T23:43:21Z
+kumitate surface-probe --selftest (hermetic)
+PASS  clean fixture → CLEAN, zero findings, exit 0 — verdict=CLEAN exit=0 checks=12 codes=[PIN_MATCH,STATUS_SHAPE_DERIVED]
+PASS  missing shim → SURFACE_UNREACHABLE, fail-closed exit 2 — exit=2 failClosed=sighting surface unreachable (sighting shim is missing: scripts/ufo-sighting)
+PASS  non-JSON manifest → MANIFEST_UNPARSED, fail-closed exit 2 — exit=2 failClosed=sighting manifest unparsable
+PASS  foreign manifest kind → MANIFEST_KIND, fail-closed exit 2 — exit=2 codes=[MANIFEST_KIND,STATUS_SHAPE_DERIVED]
+PASS  digestInputs listing an absent file → DIGEST_INPUT_MISSING + DIGEST_SET_INCOMPLETE — exit=1 codes=[DIGEST_INPUT_MISSING,DIGEST_SET_INCOMPLETE,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  listed per-file sha256 != disk → DIGEST_MISMATCH — codes=[DIGEST_MISMATCH,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  digestInputs omitting a lib module → DIGEST_SET_INCOMPLETE (and no SCRIPT_DIGEST_MISMATCH) — codes=[DIGEST_SET_INCOMPLETE,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  digestInputs order permuted (declared-order digest) → DIGEST_ORDER note, no error — exit=0 codes=[DIGEST_ORDER,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  declared order permuted but scriptDigest over sorted bytes → SCRIPT_DIGEST_MISMATCH — exit=1 codes=[DIGEST_ORDER,PIN_DRIFT,SCRIPT_DIGEST_MISMATCH,STATUS_SHAPE_DERIVED]
+PASS  scriptDigest != concatenated bytes → SCRIPT_DIGEST_MISMATCH — codes=[PIN_DRIFT,SCRIPT_DIGEST_MISMATCH,STATUS_SHAPE_DERIVED]
+PASS  pin set to scriptDigest (the digest trap) → PIN_DRIFT warn, exit 0 — never CLEAN-by-accident — verdict=CLEAN exit=0 codes=[PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  --strict does NOT gate PIN_DRIFT (non-gating origin-owned warn, exit 0) — verdict=CLEAN exit=0 nonGating=1 gating=0
+PASS  absent config pin → PIN_MISSING warn — codes=[PIN_MISSING,STATUS_SHAPE_DERIVED]
+PASS  dispatch arm without a declaration → VERB_UNDECLARED — codes=[PIN_MATCH,STATUS_SHAPE_DERIVED,VERB_UNDECLARED]
+PASS  declared verb with no dispatch arm → VERB_UNDISPATCHED — codes=[PIN_DRIFT,STATUS_SHAPE_DERIVED,VERB_UNDISPATCHED]
+PASS  trigger-alias (resolves) + __idle internal arm are never verb findings — codes=[PIN_MATCH,STATUS_SHAPE_DERIVED]
+PASS  fail("X") present but undeclared → ERROR_CODE_UNDECLARED — codes=[ERROR_CODE_UNDECLARED,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  declared code with no fail("X") site → ERROR_CODE_PHANTOM — codes=[ERROR_CODE_PHANTOM,PIN_DRIFT,STATUS_SHAPE_DERIVED]
+PASS  literal `code:` value outside manifest.errors → ERROR_CODE_OFF_MANIFEST warn, non-gating — exit=0 strict=0 message=assigned to a code: field as a literal but absent from manifest.errors (which is derived from fail("X") only): scripts/ufo-sighting.mjs:14:FIXTURE_LITERAL
+PASS  status queue retyped → STATUS_SHAPE error, exit 1 — codes=[PIN_MATCH,STATUS_SHAPE,STATUS_SHAPE_DERIVED]
+PASS  status missing a top-level key → STATUS_SHAPE — codes=[PIN_MATCH,STATUS_SHAPE,STATUS_SHAPE_DERIVED]
+PASS  status carrying an undeclared top-level key → STATUS_KEY_EXTRA warn, exit 0 (strict → 1) — exit=0 strict=1 codes=[PIN_MATCH,STATUS_KEY_EXTRA,STATUS_SHAPE_DERIVED]
+PASS  status queue.schema retyped → STATUS_SHAPE on STATUS_QUEUE_SCHEMA — codes=[PIN_MATCH,STATUS_SHAPE,STATUS_SHAPE_DERIVED]
+PASS  dispatcher absent → SURFACE_UNREACHABLE(dispatcher), exit 1 (sighting checks ran) — exit=1 codes=[PIN_MATCH,SURFACE_UNREACHABLE]
+PASS  non-JSON status → STATUS_SHAPE — codes=[PIN_MATCH,STATUS_SHAPE]
+PASS  status contract derived from the dispatcher source (QUEUE_SCHEMA + projection keys), not the frozen list — statusShape=true derived=true
+PASS  source-derived contract still catches drift (missing + extra key) — codes=[PIN_MATCH,STATUS_KEYS_DERIVED,STATUS_KEY_EXTRA,STATUS_SHAPE]
+PASS  dispatcher status carries a throwaway UFO_STATE_DIR (cleanup + scored tree untouched) — ok=true argv=["status"] project=/tmp/kumitate-surface-probe-QsxdpJ/state-redirect mkdtemp=true pending=true untouched=true cleaned=true
+PASS  sighting surface carries a throwaway NODE_COMPILE_CACHE (cleanup + scored tree untouched) — ok=true mkdtemp=true untouched=true cleaned=true
+PASS  unknown flag → exit 64 (usage) — exit=64
+PASS  --src /nonexistent → exit 2 fail-closed — exit=2
+PASS  --help → exit 0 with usage on stdout — exit=0
+PASS  bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha — exit=2 src=/tmp/kumitate-surface-probe-QsxdpJ/home-new/Projects/ufo-fsd-alpha
+PASS  bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent — exit=2 src=/tmp/kumitate-surface-probe-QsxdpJ/home-legacy/Projects/origin-work/ufo-fsd-alpha
+PASS  bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec) — exit=2 src=/tmp/kumitate-surface-probe-QsxdpJ/home-both/Projects/ufo-fsd-alpha
+PASS  bare run (no --src): both candidates absent keeps the --src fail-closed arm (exit 2) — exit=2 SURFACE_PROBE: FAIL-CLOSED (--src /tmp/kumitate-surface-probe-QsxdpJ/home-none/Projects/ufo-fsd-alph
+PASS  checklists: 2 valid items pass → `CHECKLIST: 2/2 pass`, `VERDICT: PASS`, exit 0 — exit=0 tail=CHECKLIST: 2/2 pass | VERDICT: PASS
+PASS  checklists: exit-set miss and substring miss both fail → `CHECKLIST: 0/2 pass`, exit 1 — exit=1
+PASS  checklists: every ran line carries `wall=`/`load1=`, a FAIL line appends the last 8 output lines (`  | `, ≤2000 bytes) — R46-3 — exit=1 ran=3 receipted=3 tail=8:L5..L12 huge=5/2000B
+PASS  checklists: --checklists items are SKIP(self), - [x] lines SKIP(checked) → 1/1 pass, exit 0 — exit=0 tail=CHECKLIST: 1/1 pass
+PASS  checklists: unparsable task line → CHECKLIST_GRAMMAR error, `CHECKLIST: 0/1 pass`, exit 1 — exit=1 line=CHECKLIST  ERROR  SKILL.md:3 grammar (- [ ] broken item without the frozen shape)
+PASS  checklists: zero items → `CHECKLIST: 0/0 pass`, `VERDICT: PASS`, exit 0 — exit=0
+PASS  checklists: missing SKILL.md → fail-closed `CHECKLIST: FAIL-CLOSED`, exit 2 — exit=2
+PASS  checklists: --self is a file → fail-closed exit 2 — exit=2
+PASS  hermeticity: --selftest passes with a bogus --src (never reads the live tree) — exit=0 tail=46/46 cases passed
+PASS  every declared finding code fires in at least one fixture — 21 codes observed
+46/46 cases passed
+VERDICT: PASS
+### exit=0
+### ended=2026-10-25T23:43:22Z

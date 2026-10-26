@@ -1,0 +1,37 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P3-clean-grep
+@@ -336,6 +336,11 @@
+                 "process.stdout.write('README_MAP: FAIL-CLOSED reason=registry unreadable: ENOENT\\n');" \
+                 'process.exit(2);' ;;
+       silent) printf '%s\n' 'process.exit(0);' ;;
++      nocounts)  printf '%s\n' "process.stdout.write('README_MAP: CLEAN\\n'); process.exit(0);" ;;
++      midline)   printf '%s\n' "process.stdout.write('noise README_MAP: CLEAN files=2 rows=2 covered=2\\n'); process.exit(0);" ;;
++      cleanfail) printf '%s\n%s\n' \
++                "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
++                'process.exit(1);' ;;
+       *)      printf '%s\n%s\n' \
+                 "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
+                 'process.exit(0);' ;;
+@@ -473,6 +478,22 @@
+   MAP_STUB=failclosed fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
++
++
++  # 27 a bare CLEAN verdict without counts is NO_VERDICT, not CLEAN
++  d="$(fixture map-clean-no-counts)" || return 2
++  MAP_STUB=nocounts fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  check_has map-clean-no-counts 1 "$d" 9 'reason=MAP_NO_VERDICT'
++
++  # 28 CLEAN only counts at line start: a mid-line CLEAN proves nothing
++  d="$(fixture map-clean-midline)" || return 2
++  MAP_STUB=midline fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  check_has map-clean-midline 1 "$d" 9 'reason=MAP_NO_VERDICT'
++
++  # 29 a CLEAN verdict at exit 1 is not CLEAN: verdict and status must agree
++  d="$(fixture map-clean-exit-1)" || return 2
++  MAP_STUB=cleanfail fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  check_has map-clean-exit-1 1 "$d" 9 'map=UNRUNNABLE map_exit=1'
+ 
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1

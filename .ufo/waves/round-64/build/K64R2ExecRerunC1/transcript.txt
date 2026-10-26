@@ -1,0 +1,71 @@
+K64R2ExecRerunC1 — C1 counter re-run transcript (verbatim stdout, 2026-10-25)
+
+# Host: node v24.21.0, load1 4.30-5.68 during the runs, lane HEAD = 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8
+# git rev-parse master -> 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8
+
+## A. Five runs at the integrated revision, no --report
+RUN=1 load1=4.42 wall_ms=2999 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given
+RUN=2 load1=4.47 wall_ms=3157 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given
+RUN=3 load1=4.47 wall_ms=2887 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given
+RUN=4 load1=4.59 wall_ms=2739 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given
+RUN=5 load1=4.59 wall_ms=2802 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given
+
+## B. P5 arm, --report report-draft.md (six headings, four SHONEN boxes, no placeholders)
+RUN=P5 load1=4.46 wall_ms=2756 exit=0
+RECEIPT64_HELD held=5/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64
+
+## C. Other revisions
+REV=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef wall_ms=1479 exit=1
+RECEIPT64_UNMET held=3/5 checks=5 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef rule=R64 | P2 MISS ids=6 | P5 MISS report-not-given
+REV=d92cf1fff3026087a0e21a3183b97de169c6f22c wall_ms=2997 exit=1
+RECEIPT64_UNMET held=4/5 checks=5 rev=d92cf1fff3026087a0e21a3183b97de169c6f22c rule=R64 | P5 MISS report-not-given
+REV=6825a51425e91908f019ed65aa2f4209acbd7087 wall_ms=580 exit=1
+RECEIPT64_UNMET held=0/5 checks=5 rev=6825a51425e91908f019ed65aa2f4209acbd7087 rule=R64 | P1 MISS tool-absent | P2 MISS tool-absent | P3 MISS tool-absent | P4 MISS tool-absent | P5 MISS report-not-given
+
+## D. Independent P2 census over each archive (tool run per control case)
+dd1a3e6f: selftest REPORT_RECEIPT_SELFTEST: PASS (20/20); cases=16 clean=3 ids=HASH_DEAD,PLACEHOLDER,RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT,TALLY_UNRECEIPTED (6)
+d92cf1ff: selftest REPORT_RECEIPT_SELFTEST: PASS (52/52); cases=37 clean=3 ids=HASH_DEAD,PLACEHOLDER,RECEIPT_EMPTY,RECEIPT_MISSING,SECTION_MISSING,SHONEN_COUNT,TALLY_CHECKS_MISMATCH,TALLY_UNRECEIPTED (8)
+2ed8a5f8: selftest REPORT_RECEIPT_SELFTEST: PASS (52/52); cases=37 clean=3 ids= same 8
+CLEAN cases: c0-honest, c14-honest-templates, c15-honest-two-receipts
+k16/k20 removed from the 2ed8a5f8 control set: cases=35 ids=6 (P2 floor 8 unmet)
+
+## E. counter-rerun.mjs (contract kumitate-counter-rerun-v1)
+--runs 5 -- --report report-draft.md:
+COUNTER_RERUN_RUN run=1 exit=0 wall_ms=2752.41 load1=4.30 stdout_bytes=87 stderr_bytes=0 summary_sha256=f8d47bed31ece5d08c4753285ad6e2090c3f47fb4a14b8dfa899eae28711a878 summary="RECEIPT64_HELD held=5/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64"
+... runs 2-5 identical summary_sha256=f8d47bed... (wall_ms 2666.29 / 2734.72 / 2760.76 / 2691.68)
+COUNTER_RERUN: AGREE (runs=5)                     exit 0
+--runs 5 -- (no report):
+five records exit=1 summary_sha256=ba60b8dd941710f66760b44ad20163798ecc8ada7e044df8a923ee2f67c56a9b summary="RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P5 MISS report-not-given"
+COUNTER_RERUN_REASON: run 1..5 exited 1
+COUNTER_RERUN: DISAGREE                           exit 1
+node scripts/counter-rerun.mjs --selftest -> COUNTER_RERUN_SELFTEST: PASS  exit 0
+
+## F. Pins and host dependencies
+node scripts/counter-pins.mjs -> COUNTER_PINS: CLEAN pins=25   exit 0
+env -i PATH=/usr/bin:/bin <probe ... --report draft> -> RECEIPT64_HELD held=5/5 exit 0   (no HOME needed)
+TMPDIR=/tmp/kumitate-r64/K64R2ExecRerunC1/tmp <same> -> RECEIPT64_HELD held=5/5 exit 0
+unshare -n <same> -> unshare: unshare failed: Operation not permitted (could not prove no-network by namespace)
+grep -nE "http|fetch|net\.|dns|https" probe/receipt64-probe.mjs -> none
+--fleet /tmp/.../nope -> RECEIPT64_UNMET held=3/5 | P3 MISS fleet-blob-unreadable | P5 MISS report-not-given exit 1
+fleet commits present: 7b0581ed-present, 8fd46e61-present
+
+## G. Report/tally tension (the P5 finding)
+node scripts/report-receipt-diff.mjs --lane . --round 64 --report report-draft.md --rev 2ed8a5f8... --fleet /home/vgpnk/Projects/shokunin
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=1848)     exit 0
+same command over report-tip-tally.md (identical text except it quotes the tip verdict line verbatim):
+REPORT_RECEIPT: DRIFT TALLY_UNRECEIPTED (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=1874)
+TALLY_UNRECEIPTED RECEIPT64_UNMET held=4/5                                                      exit 1
+ls .ufo/waves/round-64/close/ -> empty (git tracks no receipt for round 64)
+
+## H. Remedy proof in a throwaway fixture (mktemp -d, git init -q, committed only inside it)
+with .ufo/waves/round-64/close/receipt64-tip.txt present:
+REPORT_RECEIPT: CLEAN (round=64 rev=2683f796352809db9014637f9282aaf980851606 bytes=345)        exit 0
+after deleting that receipt (new commit):
+REPORT_RECEIPT: DRIFT RECEIPT_MISSING,TALLY_UNRECEIPTED (...)
+RECEIPT_MISSING .ufo/waves/round-64/close/receipt64-tip.txt
+TALLY_UNRECEIPTED RECEIPT64_UNMET held=4/5                                                      exit 1

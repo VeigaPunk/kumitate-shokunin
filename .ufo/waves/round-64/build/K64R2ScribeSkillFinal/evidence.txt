@@ -1,0 +1,53 @@
+# K64R2ScribeSkillFinal — measured lines (host: node v24.21.0, jj 0.45.1-7c41cdeb, git 2.56.0)
+
+## base archive (git archive 2ed8a5f8, unpatched SKILL.md)
+task-lines=30 malformed=1 (SKILL.md:727)
+PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=S2  scripts/ufo-mission-result.mjs is outside S2's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/loop_driver_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/local_ship_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/distill_tests.rs is outside R9's declared members
+CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+CITE_CHECK: DRIFT (files=160 tokens=11883 errors=1409 warnings=645)
+
+## patched archive (skill.patch applied)
+task-lines=33 malformed=0
+PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C_DRIFT term=C declared=30 computed=33 delta=+3; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=S2  scripts/ufo-mission-result.mjs is outside S2's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/loop_driver_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/local_ship_tests.rs is outside R9's declared members
+CLAIMS  warn  SECTION_FILE_NOT_MEMBER  row=R9  crates/ufo-core-runtime/src/distill_tests.rs is outside R9's declared members
+CLAIMS: MATCH (rows=19 yes=19 notes=27 sections=184 adv=4 src-rev=31c465f15669)
+CITE_CHECK: DRIFT (files=160 tokens=11899 errors=1409 warnings=645)
+
+## patched archive + scorecard-stanza.patch
+PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+-- strict:
+PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+
+## gate evidence at 2ed8a5f8 (lane worktree)
+PROXY: DRIFT (A_DRIFT term=A declared=257 computed=1294 delta=+1037; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669)
+
+## item runs (patched archive)
+REPORT_RECEIPT_SELFTEST: PASS (52/52)
+JJ_SEAT_DEMO: DONE jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5
+PLAN_BEFORE_READY_SELFTEST: PASS (18/18) fixtures=/tmp/pbr-selftest.QaqMXQ
+
+## surface-probe fixtures
+CHECKLIST  PASS SKILL.md:903 exit=0 expected=0 substring=hit wall=0.983 load1=30.56 — Report-vs-receipt diff suite (ro
+CHECKLIST  PASS SKILL.md:904 exit=0 expected=0 substring=hit wall=1.861 load1=30.03 — jj seat-containment demo re-run 
+CHECKLIST  PASS SKILL.md:905 exit=0 expected=0 substring=hit wall=0.707 load1=30.03 — Plan-before-ready map-arm suite 
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 3/3 pass
+VERDICT: PASS
+CHECKLIST  PASS SKILL.md:903 exit=0 expected=0 substring=hit wall=0.032 load1=32.70 — Round dispatch-evidence gate (ro
+CHECKLIST  PASS SKILL.md:904 exit=0 expected=0 substring=hit wall=1.046 load1=32.70 — Report-vs-receipt diff suite (ro
+CHECKLIST  PASS SKILL.md:905 exit=0 expected=0 substring=hit wall=1.059 load1=32.70 — jj seat-containment demo re-run 
+CHECKLIST  PASS SKILL.md:906 exit=0 expected=0 substring=hit wall=0.605 load1=32.70 — Plan-before-ready map-arm suite 
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 4/4 pass
+VERDICT: PASS
+CHECKLIST  ERROR  SKILL.md:894 grammar (- [ ] Round dispatch-evidence gate (round 60; contract `kumitate-dispatch-eviden
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 0/1 pass
+VERDICT: FAIL

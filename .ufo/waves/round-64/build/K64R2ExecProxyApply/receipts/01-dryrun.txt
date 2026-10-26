@@ -1,0 +1,55 @@
+CLOSE_PROXY: dry-run lane=/tmp/kumitate-r64/K64R2ExecProxyApply/tip refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+BEFORE  PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669) (exit 1)
+
+--- pins (2 to add) ---
+PIN  + pin.jj-seat-demo=scripts/jj-seat-demo.sh  // round 64 C2: jj seat containment demo (J6 re-runs it)
+PIN  + pin.report-receipt-diff=scripts/report-receipt-diff.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -479,6 +479,8 @@
+   'pin.make-dispatch-actual': 'scripts/make-dispatch-actual.mjs', // round 62: the round-62 dispatcher invocation writer (pinned in SCORECARD, registered here in round 63 — the R62 fail-closed)
+   'pin.inline-dispatch-evidence': 'scripts/inline-dispatch-evidence.mjs', // round 63: inline wave dispatch evidence gate (C1)
+   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
++  'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
++  'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
+ };
+ /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+ const AXIS_ROWS = [
+PINS: none written
+
+--- stanza diff (737 bytes) ---
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -285,12 +285,12 @@
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=257
++A=514
+ C=30
+ C1=19
+ C1_total=19
+-C2=153
+-C2_total=153
++C2=156
++C2_total=156
+ S_members=88
+ S_sections=88
+ R_members=92
+@@ -329,7 +329,7 @@
+ pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+ pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
+ pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721e29ef9ce1e741
+-pin.plan-before-ready=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9
++pin.plan-before-ready=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0
+ -->
+ 
+ 
+REFRESH  BLOCK  PIN_UNPINNED  scripts/report-receipt-diff.mjs has no pin key — add `'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs',` to GATE_PINS in scripts/proxy-check.mjs (strengthens --strict), then re-run this tool so the key is pinned in the kumitate-gate-pins-v1 block
+REFRESH  BLOCK  CANDIDATE_STRICT_DRIFT  candidate matches plain but reads PROXY: DRIFT (PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669) under --strict
+STANZA: NOT written (the refresher reports a blocker: fix the tree, never the number)
+
+AFTER  PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669) (exit 1)
+AFTER  PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669) (exit 1)
+
+CLOSE_PROXY: DRIFT (plain=1 strict=1 blockers=2)

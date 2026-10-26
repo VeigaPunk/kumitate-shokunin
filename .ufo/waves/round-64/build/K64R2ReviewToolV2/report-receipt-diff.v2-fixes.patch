@@ -1,0 +1,365 @@
+--- a/scripts/report-receipt-diff.mjs
++++ b/scripts/report-receipt-diff.mjs
+@@ -6,172 +6,192 @@
+  *
+  *   node scripts/report-receipt-diff.mjs --lane <lane-dir> --round N --report <file> [--rev <lane-rev>] [--fleet <fleet-dir>]
+  *   node scripts/report-receipt-diff.mjs --selftest
+- *
+- * Reads the report bytes and the lane's committed receipts (`git show <rev>:.ufo/waves/round-N/{base,close}/*`;
+- * the worktree only when --rev is absent; a symlinked receipt is not a receipt). Findings, one line each:
+- *   PLACEHOLDER        a template token left in the report (__name__, {{NAME}}, XXXX, "to be filled", <measured>,
+- *                      LANE_HASH, TBD; the command-template arguments `<tip>`/`<lane>`/`<rev>` are not flagged)
+- *   TALLY_UNRECEIPTED  a labelled verdict `<LABEL>_HELD|UNMET held=x/y` (case- and spacing-insensitive, table cells
+- *                      included) that no receipt carries as the same (label, x, y) pair; when the claim's own line
+- *                      cites receipts, only those receipts may carry it (a superseded or uncited receipt does not)
+- *   TALLY_CHECKS_MISMATCH  a claim that states `checks=k` for a pair the receipt carries with another k
+- *   RECEIPT_MISSING    a `.ufo/waves/round-N/(base|close)/<file>` path the report names that does not exist at the
+- *                      rev, or that escapes the round tree with `..`, is a directory, or is a symlink
+- *   RECEIPT_EMPTY      a cited receipt that exists but carries no bytes
+- *   HASH_DEAD          a 39- or 40-hex hash (either case) that resolves in neither the lane repo nor the fleet repo
+- *   HASH_ORPHAN        a 40-hex hash in the lane repo that is not an ancestor of the lane rev
+- *   SECTION_MISSING    one of the six required report headings is absent from the prose (a heading inside a fenced
+- *                      block is a quotation, not a section)
+- *   SHONEN_COUNT       the `SHONEN` heading does not occur exactly once in the prose, or fewer than 4 box lines
+- *                      follow it inside its own section
+- * Output: `REPORT_RECEIPT: CLEAN (...)` exit 0 | `REPORT_RECEIPT: DRIFT <ids>` + one line per finding, exit 1 |
+- * exit 2 fail-closed (unreadable report or rev) | exit 64 usage.
+- * Declared limit: only labelled tallies are checked; a bare `held=9/10` is not (a plan's target and a result are
+- * indistinguishable without a label), and a receipt written by the lane itself is trusted as written.
+  */
+-import { spawnSync } from 'node:child_process';
+-import { existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+-import { tmpdir } from 'node:os';
+-import { dirname, join, resolve } from 'node:path';
++import { spawnSync } from "node:child_process";
++import { existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { dirname, join, resolve } from "node:path";
++import { pathToFileURL } from "node:url";
+ 
+ const REQUIRED = [
+-  ['Work performed', /^#{1,6}\s*\**\s*Work performed/im],
+-  ['Landed changes', /^#{1,6}\s*\**\s*Landed changes/im],
+-  ['Before → after measurements', /^#{1,6}\s*\**\s*Before\s*(?:→|->)\s*after measurements/im],
+-  ['Sources & frontier', /^#{1,6}\s*\**\s*Sources\s*&\s*frontier/im],
+-  ['Trend verdicts', /^#{1,6}\s*\**\s*Trend verdicts/im],
+-  ['SHONEN', /^#{1,6}\s*\**\s*SHONEN/im],
++  ["Work performed", /^ {0,3}#{1,6}[ \t]+\**[ \t]*Work performed/im],
++  ["Landed changes", /^ {0,3}#{1,6}[ \t]+\**[ \t]*Landed changes/im],
++  ["Before → after measurements", /^ {0,3}#{1,6}[ \t]+\**[ \t]*Before[ \t]*(?:→|->)[ \t]*after measurements/im],
++  ["Sources & frontier", /^ {0,3}#{1,6}[ \t]+\**[ \t]*Sources[ \t]*&[ \t]*frontier/im],
++  ["Trend verdicts", /^ {0,3}#{1,6}[ \t]+\**[ \t]*Trend verdicts/im],
++  ["SHONEN", /^ {0,3}#{1,6}[ \t]+\**[ \t]*SHONEN/im],
+ ];
+-const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\{\{[A-Za-z][A-Za-z0-9_]*\}\}|\bX{4,}\b|\bto be filled\b|<(?:measured|measured_rev|tip_hash|rev_hash|placeholder|tbd|todo)>/gi;
+-const TALLY = /\b([a-z][a-z0-9]*_(?:held|unmet))\s+held=(\d+)\/(\d+)/gi;
+-const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'g');
+-const HASH = /\b[0-9a-fA-F]{39,40}\b/g;
+-// Scan copy: invisible characters, table pipes and spaced operators are normalised away, so a claim cannot be
+-// hidden from the tally parser by formatting alone (controls k1 spaced `held = 3 / 3`, k3 table cell, k4 U+200B).
++const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\{\{[A-Za-z][A-Za-z0-9_]*\}\}|\bX{4,}\b|\bto\s+be\s+filled\b|<(?:measured|measured_rev|tip_hash|rev_hash|placeholder|tbd|todo)>/gi;
++const TALLY = /(?:^|(?<![A-Za-z0-9]))([A-Za-z][A-Za-z0-9_]*_(?:HELD|UNMET))\s+held=(\d+)\/(\d+)(?![0-9/])/g;
++const TALLY_LOWER = /(?:^|(?<![A-Za-z0-9_]))([a-z][a-z0-9]*\d[a-z0-9_]*_(?:held|unmet))\s+held=(\d+)\/(\d+)(?![0-9/])/gi;
++const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, "g");
++const REL_RECEIPT = /(?<![\w./-])(?:base|close)\/[A-Za-z0-9._*/-]+/g;
++const HASH = /\b[0-9a-fA-F]{39,40}\b(?![\u2026])/g;
++// Scan copy: invisible chars, inline markdown/table formatting, and spaced held=/checks= operators normalised
++// without corrupting path slashes or prose outside tallies.
+ const scan = (s) => s
+-  .replace(/[\u200B-\u200F\u2060\uFEFF]/g, '')
+-  .replace(/\|/g, ' ')
+-  .replace(/[ \t]*=[ \t]*/g, '=')
+-  .replace(/[ \t]*\/[ \t]*/g, '/');
+-// Prose copy: fenced blocks blanked, so a heading quoted as an example is not a section (controls k12/k13).
++  .replace(/[\u00AD\u034F\u200B-\u200F\u2060-\u2064\uFEFF]/g, "")
++  .replace(/\u00A0/g, " ")
++  .replace(/\|/g, " ")
++  .replace(/([A-Za-z0-9_])[\`*:]+(\s+held\b)/gi, "$1$2")
++  .replace(/[\`*]+(held\s*=\s*\d+\s*\/\s*\d+)[\`*]+/gi, "$1")
++  .replace(/\b(held|checks)[ \t]*=[ \t]*/gi, "$1=")
++  .replace(/(held=\d+)[ \t]*\/[ \t]*(\d+)/gi, "$1/$2");
++// Prose copy: CommonMark fenced blocks blanked (fence char & length matched; inline triple-backtick code spans ignored).
+ const unfence = (text) => {
+-  let fenced = false;
+-  return text.split('\n').map((l) => {
+-    if (/^\s*(?:```|~~~)/.test(l)) { fenced = !fenced; return ''; }
+-    return fenced ? '' : l;
+-  }).join('\n');
++  let openCh = ""; let openLen = 0;
++  return text.split("\n").map((l) => {
++    if (!openLen) {
++      const m = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(l);
++      if (m && !(m[1][0] === "`" && m[2].includes("`"))) { openCh = m[1][0]; openLen = m[1].length; return ""; }
++      return l;
++    }
++    const c = /^ {0,3}(`{3,}|~{3,})[ \t]*$/.exec(l);
++    if (c && c[1][0] === openCh && c[1].length >= openLen) { openCh = ""; openLen = 0; }
++    return "";
++  }).join("\n");
+ };
+ const tallyKey = (label, x, y) => `${label.toUpperCase()} held=${x}/${y}`;
+ 
+-function git(dir, args) { return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }); }
++function git(dir, args) { return spawnSync("git", ["-C", dir, ...args], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 }); }
+ 
++function walkWorktree(baseDir, relPrefix, outMap) {
++  const full = join(baseDir, relPrefix);
++  if (!existsSync(full)) return;
++  for (const n of readdirSync(full)) {
++    const p = join(full, n);
++    const rel = `${relPrefix}/${n}`;
++    try {
++      const st = lstatSync(p);
++      if (st.isSymbolicLink()) continue;
++      if (st.isDirectory()) walkWorktree(baseDir, rel, outMap);
++      else if (st.isFile()) outMap.set(rel, readFileSync(p, "utf8").replace(/\r\n?/g, "\n"));
++    } catch { /* unreadable */ }
++  }
++}
++
+ export function diffReport({ lane, round, reportText, rev, fleet }) {
+   const findings = [];
+   const add = (id, detail) => findings.push({ id, detail });
+-  const text = reportText;
++  const text = reportText.replace(/\r\n?/g, "\n");
+   const prose = unfence(text);
+-  // PLACEHOLDER (fence-agnostic on purpose: a token inside an example block is still an unfilled token)
+-  for (const m of text.matchAll(PLACEHOLDER)) add('PLACEHOLDER', m[0]);
+-  // sections (prose only)
+-  for (const [name, re] of REQUIRED) if (!re.test(prose)) add('SECTION_MISSING', name);
+-  const sh = [...prose.matchAll(/^#{1,6}\s*\**\s*SHONEN/gim)];
+-  if (sh.length !== 1) add('SHONEN_COUNT', `headings=${sh.length}`);
++  for (const m of text.matchAll(PLACEHOLDER)) add("PLACEHOLDER", m[0]);
++  for (const [name, re] of REQUIRED) if (!re.test(prose)) add("SECTION_MISSING", name);
++  const sh = [...prose.matchAll(/^ {0,3}#{1,6}[ \t]+\**[ \t]*SHONEN/gim)];
++  if (sh.length !== 1) add("SHONEN_COUNT", `headings=${sh.length}`);
+   else {
+-    const level = sh[0][0].match(/^#+/)[0].length;
+-    let boxes = 0;
+-    for (const l of prose.slice(sh[0].index).split('\n').slice(1)) {
+-      const h = /^(#{1,6})\s/.exec(l);
++    const level = sh[0][0].match(/^#+/)[0].trim().length;
++    let boxes = 0; let bulletLines = 0;
++    for (const l of prose.slice(sh[0].index).split("\n").slice(1)) {
++      const h = /^ {0,3}(#{1,6})(?:[ \t]|\*)\s*\S/.exec(l);
+       if (h && h[1].length <= level) break;
+-      if (/^\s*[-*]\s/.test(l)) boxes += (l.match(/`?\[[xX~ ]\]`?/g) || []).length;
++      if (/^\s*[-*]\s/.test(l)) {
++        const b = (l.match(/`?\[[xX~ ]\]`?/g) || []).length;
++        if (b > 0) { bulletLines += 1; boxes += Math.min(b, 2); }
++      }
+     }
+-    if (boxes < 4) add('SHONEN_COUNT', `boxes=${boxes}`);
++    if (boxes < 4 || bulletLines < 2) add("SHONEN_COUNT", `boxes=${boxes}`);
+   }
+-  // receipts at rev
+   const receiptNames = new Map();
+-  const dirs = ['base', 'close'];
+-  for (const d of dirs) {
++  for (const d of ["base", "close"]) {
+     const rel = `.ufo/waves/round-${round}/${d}`;
+     if (rev) {
+-      const ls = git(lane, ['ls-tree', '-r', '-z', rev, '--', rel]);
++      const ls = git(lane, ["ls-tree", "-r", "-z", rev, "--", rel]);
+       if (ls.status !== 0) continue;
+-      for (const row of ls.stdout.split('\0').filter(Boolean)) {
++      for (const row of ls.stdout.split("\0").filter(Boolean)) {
+         const m = /^(\d{6}) \w+ [0-9a-f]+\t(.+)$/.exec(row);
+-        if (!m || m[1] === '120000') continue; // a symlinked receipt is not a receipt of this round
+-        const b = spawnSync('git', ['-C', lane, 'show', `${rev}:${m[2]}`], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+-        if (b.status === 0) receiptNames.set(m[2], b.stdout);
+-      }
+-    } else if (existsSync(join(lane, rel))) {
+-      for (const n of readdirSync(join(lane, rel))) {
+-        const p = join(lane, rel, n);
+-        try {
+-          if (!lstatSync(p).isFile()) continue; // symlink or directory: not a receipt
+-          receiptNames.set(`${rel}/${n}`, readFileSync(p, 'utf8'));
+-        } catch { /* unreadable */ }
++        if (!m || m[1] === "120000") continue;
++        const b = spawnSync("git", ["-C", lane, "show", `${rev}:${m[2]}`], { encoding: "utf8", maxBuffer: 256 * 1024 * 1024 });
++        if (b.status === 0) receiptNames.set(m[2], b.stdout.replace(/\r\n?/g, "\n"));
+       }
++    } else {
++      walkWorktree(lane, rel, receiptNames);
+     }
+   }
+-  // cited receipt paths, normalised: trailing punctuation dropped; `..` segments and bare directories are not receipts
+-  const cited = (s) => [...new Set([...s.matchAll(RECEIPT_PATH(round))].map((x) => x[0].replace(/[.,;:]+$/, '')))];
+-  const globRe = (g) => new RegExp(`^${g.split('*').map((x) => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]*')}$`);
+-  const isPath = (p) => Boolean(p) && !p.split('/').includes('..');
+-  // RECEIPT_MISSING / RECEIPT_EMPTY
++  const stripPunct = (raw) => raw.replace(/(?:\.{3,}|[,;:]+|(?<!\.)\.(?!\.))+$/, "");
++  const cited = (s) => [...new Set([...[...s.matchAll(RECEIPT_PATH(round))].map((x) => stripPunct(x[0])), ...[...s.matchAll(REL_RECEIPT)].map((x) => stripPunct(`.ufo/waves/round-${round}/${x[0]}`))])];
++  const globRe = (g) => new RegExp(`^${g.split("**/").map((seg) => seg.split("**").map((part) => part.split("*").map((x) => x.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join("[^/]*")).join(".*")).join("(?:.+/)?")}$`);
++  const isPath = (p) => Boolean(p) && !p.split("/").some((seg) => seg === ".." || seg === ".");
++  const matchSpec = (sp, file) => (sp.endsWith("/") ? file.startsWith(sp) : sp.includes("*") ? globRe(sp).test(file) : sp === file);
+   for (const p of cited(text)) {
+-    if (!isPath(p)) { add('RECEIPT_MISSING', `${p} (escape-or-dir)`); continue; }
+-    if (p.endsWith('/')) { // a directory citation is satisfied by any committed receipt under it
+-      if (![...receiptNames.keys()].some((f) => f.startsWith(p))) add('RECEIPT_MISSING', `${p} (no receipt under it)`);
++    if (!isPath(p)) { add("RECEIPT_MISSING", `${p} (escape-or-dir)`); continue; }
++    if (p.endsWith("/")) {
++      const under = [...receiptNames.keys()].filter((f) => f.startsWith(p));
++      if (!under.length) add("RECEIPT_MISSING", `${p} (no receipt under it)`);
++      else if (!under.some((f) => receiptNames.get(f).trim())) add("RECEIPT_EMPTY", p);
+       continue;
+     }
+-    if (p.includes('*')) { // a glob is satisfied by any committed receipt it matches
+-      if (![...receiptNames.keys()].some((f) => globRe(p).test(f))) add('RECEIPT_MISSING', p);
++    if (p.includes("*")) {
++      const matched = [...receiptNames.keys()].filter((f) => globRe(p).test(f));
++      if (!matched.length) add("RECEIPT_MISSING", p);
++      else if (!matched.some((f) => receiptNames.get(f).trim())) add("RECEIPT_EMPTY", p);
+       continue;
+     }
+-    if (!receiptNames.has(p)) add('RECEIPT_MISSING', p);
+-    else if (!receiptNames.get(p).trim()) add('RECEIPT_EMPTY', p);
++    if (!receiptNames.has(p)) add("RECEIPT_MISSING", p);
++    else if (!receiptNames.get(p).trim()) add("RECEIPT_EMPTY", p);
+   }
+-  // TALLY_UNRECEIPTED — exact (label, x, y) pairs parsed out of the receipts, never a substring of a line; when the
+-  // claim's own line cites receipts, only those may carry it (an uncited or superseded receipt does not).
+-  // TALLY_CHECKS_MISMATCH — a claim that states `checks=k` where the receipt carrying the same pair states another k.
++  const extractTallies = (line) => {
++    const out = []; const seen = new Set();
++    for (const re of [TALLY, TALLY_LOWER]) {
++      for (const m of line.matchAll(re)) {
++        if (seen.has(m.index)) continue;
++        seen.add(m.index);
++        out.push(m);
++      }
++    }
++    return out.sort((a, b) => a.index - b.index);
++  };
+   const index = new Map();
+   for (const [file, body] of receiptNames) {
+-    for (const line of scan(body).split('\n')) {
+-      for (const m of line.matchAll(TALLY)) {
++    for (const line of scan(body).split("\n")) {
++      for (const m of extractTallies(line)) {
+         const key = tallyKey(m[1], m[2], m[3]);
+-        const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
++        const c = /^[^\n;]*?\bchecks=(\d+)/i.exec(line.slice(m.index + m[0].length));
+         if (!index.has(key)) index.set(key, []);
+         index.get(key).push({ file, checks: c ? c[1] : null });
+       }
+     }
+   }
+-  for (const line of scan(text).split('\n')) {
+-    const scope = cited(line).filter(isPath);
+-    for (const m of line.matchAll(TALLY)) {
+-      const key = tallyKey(m[1], m[2], m[3]);
+-      const hits = (index.get(key) || []).filter((h) => !scope.length || scope.some((sp) => (sp.includes('*') ? globRe(sp).test(h.file) : sp === h.file)));
+-      if (!hits.length) { add('TALLY_UNRECEIPTED', key); continue; }
+-      const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
+-      if (c && !hits.some((h) => h.checks === null || h.checks === c[1])) add('TALLY_CHECKS_MISMATCH', `${key} checks=${c[1]}`);
++  const joinedText = text.replace(/([A-Za-z0-9_]+_(?:HELD|UNMET))[ \t]*\n[ \t]*(held\b)/gi, "$1 $2");
++  const rawLines = joinedText.split("\n");
++  for (let i = 0; i < rawLines.length; i += 1) {
++    const rawLine = rawLines[i];
++    let lineCitations = cited(rawLine);
++    if (!lineCitations.length && i + 1 < rawLines.length && !/^ {0,3}#/.test(rawLines[i + 1]) && cited(rawLines[i + 1]).length > 0 && !extractTallies(scan(rawLines[i + 1])).length) {
++      lineCitations = cited(rawLines[i + 1]);
++    }
++    const clauses = rawLine.split(";");
++    const multiClauseScoped = clauses.length > 1 && clauses.some((cl) => cited(cl).length > 0);
++    for (const rawClause of (multiClauseScoped ? clauses : [rawLine])) {
++      const clauseCitations = multiClauseScoped ? cited(rawClause) : lineCitations;
++      const scannedClause = scan(rawClause);
++      for (const m of extractTallies(scannedClause)) {
++        const key = tallyKey(m[1], m[2], m[3]);
++        if (clauseCitations.some((sp) => !isPath(sp))) { add("TALLY_UNRECEIPTED", key); continue; }
++        const hits = (index.get(key) || []).filter((h) => !clauseCitations.length || clauseCitations.some((sp) => matchSpec(sp, h.file)));
++        if (!hits.length) { add("TALLY_UNRECEIPTED", key); continue; }
++        const c = /^[^\n;]*?\bchecks=(\d+)/i.exec(scannedClause.slice(m.index + m[0].length));
++        if (c && !hits.some((h) => h.checks !== null && h.checks === c[1])) add("TALLY_CHECKS_MISMATCH", `${key} checks=${c[1]}`);
++      }
+     }
+   }
+-  // hashes
+-  const headRes = rev ? null : git(lane, ['rev-parse', '--verify', 'HEAD^{commit}']);
++  const headRes = rev ? null : git(lane, ["rev-parse", "--verify", "HEAD^{commit}"]);
+   const tip = rev || (headRes.status === 0 ? headRes.stdout.trim() : null);
+-  const textLines = text.split('\n');
+-  const inUrl = (raw) => textLines.some((l) => l.includes(raw) && new RegExp(`(?:https?://|(?:github|gitlab)\\.com/)[^\\s)\\]>\`]*${raw}`, 'i').test(l));
+-  for (const raw of new Set(text.match(HASH) || [])) {
+-    if (inUrl(raw)) continue; // a hash that is a path component of a URL is the URL's, not a commit claim
++  const urlStripped = text.replace(/(?:https?:\/\/|\b(?:github|gitlab)\.com\/)[^\s)\]>`]+/gi, "");
++  for (const raw of new Set(urlStripped.match(HASH) || [])) {
+     const h = raw.toLowerCase();
+-    const inLane = git(lane, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+-    const inFleet = fleet && git(fleet, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+-    if (!inLane && !inFleet) { add('HASH_DEAD', raw.length === 40 ? raw : `${raw} (len=${raw.length})`); continue; }
+-    if (inLane && tip && git(lane, ['merge-base', '--is-ancestor', h, tip]).status !== 0) add('HASH_ORPHAN', h);
++    const inLane = git(lane, ["cat-file", "-e", `${h}^{commit}`]).status === 0;
++    const inFleet = fleet && git(fleet, ["cat-file", "-e", `${h}^{commit}`]).status === 0;
++    if (!inLane && !inFleet) { add("HASH_DEAD", raw.length === 40 ? raw : `${raw} (len=${raw.length})`); continue; }
++    if (inLane && tip && git(lane, ["merge-base", "--is-ancestor", h, tip]).status !== 0) add("HASH_ORPHAN", h);
+   }
+   return findings;
+ }
+ 
+ function render(findings, meta) {
+   if (!findings.length) return { code: 0, out: `REPORT_RECEIPT: CLEAN (${meta})\n` };
+-  const ids = [...new Set(findings.map((f) => f.id))].join(',');
+-  return { code: 1, out: `REPORT_RECEIPT: DRIFT ${ids} (${meta})\n${findings.map((f) => `${f.id} ${f.detail}`).join('\n')}\n` };
++  const ids = [...new Set(findings.map((f) => f.id))].join(",");
++  return { code: 1, out: `REPORT_RECEIPT: DRIFT ${ids} (${meta})\n${findings.map((f) => `${f.id} ${f.detail}`).join("\n")}\n` };
+ }
+ 
+ function selftest() {
+@@ -275,24 +295,41 @@
+   process.exit(pass === results.length ? 0 : 1);
+ }
+ 
+-const argv = process.argv.slice(2).flatMap((a) => (/^--[a-z]+=/.test(a) ? [a.slice(0, a.indexOf('=')), a.slice(a.indexOf('=') + 1)] : [a]));
+-if (import.meta.url === `file://${process.argv[1]}`) {
+-  if (argv.includes('--selftest')) selftest();
+-  const opt = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : undefined; };
+-  const lane = opt('--lane'); const round = opt('--round'); const report = opt('--report');
+-  if (!lane || !round || !report || !/^\d+$/.test(round)) { process.stderr.write('usage: report-receipt-diff.mjs --lane DIR --round N --report FILE [--rev REV] [--fleet DIR] | --selftest\n'); process.exit(64); }
++
++const rawArgv = process.argv.slice(2);
++const isMain = (() => {
++  if (!process.argv[1]) return false;
++  try { return import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href || import.meta.url === pathToFileURL(resolve(process.argv[1])).href; }
++  catch { return import.meta.url === pathToFileURL(resolve(process.argv[1])).href; }
++})();
++if (isMain) {
++  if (rawArgv.length === 1 && rawArgv[0] === "--selftest") selftest();
++  const opts = new Map();
++  for (let i = 0; i < rawArgv.length; i += 1) {
++    const a = rawArgv[i];
++    if (a === "--selftest") { process.stderr.write("usage: report-receipt-diff.mjs --lane DIR --round N --report FILE [--rev REV] [--fleet DIR] | --selftest\n"); process.exit(64); }
++    const eq = /^(--[a-z][a-z0-9-]*)=(.*)$/s.exec(a);
++    if (eq) { opts.set(eq[1], eq[2]); continue; }
++    if (a.startsWith("--")) {
++      if (i + 1 >= rawArgv.length || rawArgv[i + 1].startsWith("--")) { opts.set(a, ""); }
++      else { opts.set(a, rawArgv[i + 1]); i += 1; }
++    }
++  }
++  const lane = opts.get("--lane"); const round = opts.get("--round"); const report = opts.get("--report");
++  if (!lane || !round || !report || !/^\d+$/.test(round)) { process.stderr.write("usage: report-receipt-diff.mjs --lane DIR --round N --report FILE [--rev REV] [--fleet DIR] | --selftest\n"); process.exit(64); }
+   const laneAbs = resolve(lane);
+-  let revFull = opt('--rev');
+-  if (revFull) {
+-    const rv = git(laneAbs, ['rev-parse', '--verify', `${revFull}^{commit}`]);
++  let revFull = opts.get("--rev");
++  if (opts.has("--rev")) {
++    if (!revFull) { process.stdout.write("REPORT_RECEIPT: FAIL-CLOSED rev-unreadable (empty)\n"); process.exit(2); }
++    const rv = git(laneAbs, ["rev-parse", "--verify", `${revFull}^{commit}`]);
+     if (rv.status !== 0) { process.stdout.write(`REPORT_RECEIPT: FAIL-CLOSED rev-unreadable ${revFull}\n`); process.exit(2); }
+     revFull = rv.stdout.trim();
+   }
+   let reportText;
+-  try { reportText = readFileSync(resolve(report), 'utf8'); } catch { process.stdout.write(`REPORT_RECEIPT: FAIL-CLOSED report-unreadable ${report}\n`); process.exit(2); }
+-  const fleet = opt('--fleet') ? resolve(opt('--fleet')) : (existsSync(join(dirname(laneAbs), '.git')) ? dirname(laneAbs) : null);
++  try { reportText = readFileSync(resolve(report), "utf8"); } catch { process.stdout.write(`REPORT_RECEIPT: FAIL-CLOSED report-unreadable ${report}\n`); process.exit(2); }
++  const fleet = opts.has("--fleet") ? (opts.get("--fleet") ? resolve(opts.get("--fleet")) : null) : (existsSync(join(dirname(laneAbs), ".git")) ? dirname(laneAbs) : null);
+   const findings = diffReport({ lane: laneAbs, round, reportText, rev: revFull, fleet });
+-  const r = render(findings, `round=${round} rev=${revFull || 'worktree'} bytes=${Buffer.byteLength(reportText)}`);
++  const r = render(findings, `round=${round} rev=${revFull || "worktree"} bytes=${Buffer.byteLength(reportText)}`);
+   process.stdout.write(r.out);
+   process.exit(r.code);
+ }

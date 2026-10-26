@@ -1,0 +1,53 @@
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/arm-pin refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+BEFORE  PROXY: DRIFT (A_DRIFT term=A declared=814 computed=815 delta=+1; src-rev=31c465f15669) (exit 1)
+
+--- pins (1 to add) ---
+PIN  + pin.zz-demo=scripts/zz-demo.sh  // named by --pin
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -481,6 +481,7 @@
+   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
+   'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
+   'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
++  'pin.zz-demo': 'scripts/zz-demo.sh', // named by --pin
+ };
+ /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+ const AXIS_ROWS = [
+PINS: wrote 1 key(s) into scripts/proxy-check.mjs
+
+--- stanza diff (1137 bytes) ---
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -285,7 +285,7 @@
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=814
++A=815
+ C=31
+ C1=19
+ C1_total=19
+@@ -305,7 +305,7 @@
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+ pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+-pin.proxy-check=d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f
++pin.proxy-check=dc1c9b1eb5baf9a645e55b53853b5328c0cc3fcf5aa81e5b53a0a62d95eab689
+ pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
+ pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
+ -->
+@@ -332,6 +332,7 @@
+ pin.plan-before-ready=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0
+ pin.jj-seat-demo=2d2edd43559c52912e674d89cf5d05c3988cbd1618bb98b82561691ca53182c3
+ pin.report-receipt-diff=faca709960bd9c132c78abf6e0f075944d3a7d35a29104cb7203802c3ca58e83
++pin.zz-demo=fb99eae951f1adc14d1a4a9a186c21930db2786b3208c94c7d9af382bd1048e5
+ -->
+ 
+ 
+STANZA: wrote SCORECARD.md from the measured candidate
+IDEMPOTENT: diff_bytes=0 blockers=0 ok=true
+
+AFTER  PROXY: MATCH (A=815 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (exit 0)
+AFTER  PROXY: MATCH (A=815 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (exit 0)
+
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=1 pins_written=1 stanza_written=yes idempotent=true)

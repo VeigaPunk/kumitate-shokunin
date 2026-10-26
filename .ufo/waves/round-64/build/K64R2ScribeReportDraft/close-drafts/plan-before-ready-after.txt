@@ -1,0 +1,8 @@
+$ bash scripts/plan-before-ready.sh --round 64
+PLAN_BEFORE_READY: PASS rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 round=64 dir=.ufo/waves/round-64 plan=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef plan_ct=1792967888 marker=d92cf1fff3026087a0e21a3183b97de169c6f22c marker_kind=ready marker_ct=1792970647 marker_path=.ufo/waves/round-64/w1.ready map=SKIP reason=MAP_PRE_EPOCH_ROUND
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=64-64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 exit=0 failed= na_rounds= map_red=
+exit=0
+$ PBR_MAP_FROM=64 bash scripts/plan-before-ready.sh --round 64 --rev dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef
+PLAN_BEFORE_READY: FAIL rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef round=64 dir=.ufo/waves/round-64 reason=MAP_DRIFT plan=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef plan_ct=1792967888 marker=- marker_kind=- marker_ct=- marker_path=- map=DRIFT map_exit=1 map_first=uncovered:lessons/round-63-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=64-64 rev=dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef exit=1 failed=64 na_rounds= map_red=64
+exit=1

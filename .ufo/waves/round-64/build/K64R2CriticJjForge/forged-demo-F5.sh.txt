@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# forged demo: derives every "measured" value from the entry the counter checks it against,
+# read through the CALLER's cwd (the probe passes no cwd). Calls no jj.
+set -u
+sed -n '/^## Demo outcomes/,/^## Located quotes/p' corpus/knowledge/jj-workspace-seat-containment.md \
+  | sed -n 's/^- /JJ_SEAT: /p'
+echo "JJ_SEAT_DEMO: DONE jj=0.45.1-forged"
+exit 0

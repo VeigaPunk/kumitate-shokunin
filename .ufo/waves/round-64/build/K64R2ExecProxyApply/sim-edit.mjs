@@ -1,0 +1,16 @@
+import { readFileSync, writeFileSync } from "node:fs";
+const sc = readFileSync("SCORECARD.md", "utf8").split("\n");
+const capIdx = sc.findIndex((l) => l.startsWith("| `inline-dispatch-evidence` |"));
+if (capIdx < 0) throw new Error("no capabilities anchor");
+sc.splice(capIdx + 1, 0, "| `report-receipt-diff` | Diff a round report against the receipts it cites (contract `kumitate-report-receipt-diff-v2`) | `node scripts/report-receipt-diff.mjs --selftest` -> `REPORT_RECEIPT_SELFTEST: PASS (52/52)`; `pin.report-receipt-diff` in `kumitate-gate-pins-v1` | 64 |");
+sc.push("", "## Round 64 - claims, verdicts, limits (2026-10-25)", "", "Simulated close section (proof fixture, not the round text).", "");
+writeFileSync("SCORECARD.md", sc.join("\n"));
+const sk = readFileSync("SKILL.md", "utf8").split("\n");
+const regIdx = sk.findIndex((l) => l.startsWith("| plan-before-ready | gate |"));
+if (regIdx < 0) throw new Error("no gate-registry anchor");
+sk.splice(regIdx + 1, 0, "| report-receipt-diff | gate | `node scripts/report-receipt-diff.mjs --round N --rev REV [--report FILE]` -> `REPORT_RECEIPT_DIFF:` | `--selftest` (52 cases) | `pin.report-receipt-diff` in `kumitate-gate-pins-v1` |");
+const clIdx = sk.map((l, i) => [l, i]).filter(([l]) => /^\s*- \[/.test(l)).pop()[1];
+sk.splice(clIdx + 1, 0, "- [ ] Report-vs-receipt diff gate (round 64; contract `kumitate-report-receipt-diff-v2`) - `node scripts/report-receipt-diff.mjs --selftest` -> exit 0 + `REPORT_RECEIPT_SELFTEST: PASS`");
+writeFileSync("SKILL.md", sk.join("\n"));
+writeFileSync("LOG.md", readFileSync("LOG.md", "utf8") + "\n- 2026-10-25 - round 64 (attempt 1): simulated close entry (proof fixture).\n");
+console.log("SIM_EDIT: ok");

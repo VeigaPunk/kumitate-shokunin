@@ -1,0 +1,11 @@
+--- a/scripts/plan-before-ready.sh
++++ b/scripts/plan-before-ready.sh
+@@ -56,7 +56,7 @@
+ # removes it again; nothing is ever written to the judged repository.
+ set -uo pipefail
+ 
+-REPO_DEFAULT=/home/vgpnk/Projects/shokunin/kumitate-shokunin
++REPO_DEFAULT="${PLAN_BEFORE_READY_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)}"
+ REPO="$REPO_DEFAULT"
+ REV="HEAD"
+ ROUNDS=""

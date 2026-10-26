@@ -1,0 +1,46 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P1-epoch-default
+@@ -474,6 +474,43 @@
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
+ 
++
++  # 18 round 0: MAP_FROM=0 must judge round 0 itself (a MAP_FROM>=1 override skips it)
++  d="$(fixture map-round-zero)" || return 2
++  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-0/plan.md
++  check_has map-round-zero 1 "$d" 0 'reason=MAP_DRIFT'
++
++  # 19 epoch boundary from above: with MAP_FROM=1 the arm must fire at round 1 (-lt, not -le)
++  d="$(fixture map-epoch-boundary)" || return 2
++  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-1/plan.md
++  fcommit "$d" 1000000100 "ready" .ufo/waves/round-1/w1.ready
++  MAP_FROM=1 check_has map-epoch-boundary 1 "$d" 1 'reason=MAP_DRIFT'
++  MAP_FROM=0
++
++  # 20 production default 65: round 64 is still pre-epoch (kills a lowered default)
++  d="$(fixture map-epoch-default-64)" || return 2
++  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-64/plan.md
++  fcommit "$d" 1000000100 "ready" .ufo/waves/round-64/w1.ready
++  defout="$(PBR_MAP_FROM= bash "${BASH_SOURCE[0]}" --repo "$d" --round 64 2>&1)"; defrc=$?
++  if [ "$defrc" = 0 ] && printf '%s' "$defout" | grep -q 'MAP_PRE_EPOCH_ROUND' \
++     && ! printf '%s' "$defout" | grep -Eq 'reason=MAP_PRE_EPOCH$'; then
++    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=0 got=%s  %s\n' map-epoch-default-64 "$defrc" "$(printf '%s' "$defout" | grep '^PLAN_BEFORE_READY' | head -n 1)"
++  else
++    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=0 got=%s  %s\n' map-epoch-default-64 "$defrc" "$(printf '%s' "$defout" | tail -n 1)"
++  fi
++
++  # 21 production default 65: round 65 is the first enforced round (kills a raised default)
++  d="$(fixture map-epoch-default-65)" || return 2
++  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-65/plan.md
++  fcommit "$d" 1000000100 "ready" .ufo/waves/round-65/w1.ready
++  defout="$(PBR_MAP_FROM= bash "${BASH_SOURCE[0]}" --repo "$d" --round 65 2>&1)"; defrc=$?
++  if [ "$defrc" = 0 ] && printf '%s' "$defout" | grep -Eq 'reason=MAP_PRE_EPOCH$' \
++     && ! printf '%s' "$defout" | grep -q 'MAP_PRE_EPOCH_ROUND'; then
++    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=0 got=%s  %s\n' map-epoch-default-65 "$defrc" "$(printf '%s' "$defout" | grep '^PLAN_BEFORE_READY' | head -n 1)"
++  else
++    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=0 got=%s  %s\n' map-epoch-default-65 "$defrc" "$(printf '%s' "$defout" | tail -n 1)"
++  fi
++
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1
+ }

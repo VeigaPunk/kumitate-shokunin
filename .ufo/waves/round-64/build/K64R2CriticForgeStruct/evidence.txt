@@ -1,0 +1,24 @@
+# evidence — K64R2CriticForgeStruct (round 64 wave 2)
+
+$ node scripts/report-receipt-diff.mjs --selftest
+REPORT_RECEIPT_SELFTEST: PASS (52/52)
+exit=0
+
+$ node scripts/report-receipt-diff.mjs --lane . --round 64 --rev 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/kumitate-r64/K64R2CriticForgeStruct/hollow.md
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=174)
+exit=0
+$ node scripts/report-receipt-diff.mjs --lane . --round 64 --rev 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/kumitate-r64/K64R2CriticForgeStruct/hollow2.md
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=198)
+exit=0
+$ node scripts/report-receipt-diff.mjs --lane . --round 64 --rev 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/kumitate-r64/K64R2CriticForgeStruct/order.md
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=451)
+exit=0
+$ node scripts/report-receipt-diff.mjs --lane . --round 64 --rev 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/kumitate-r64/K64R2CriticForgeStruct/prosebox.md
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=614)
+exit=0
+$ node scripts/report-receipt-diff.mjs --lane . --round 64 --rev 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/kumitate-r64/K64R2CriticForgeStruct/xnoverifier.md
+REPORT_RECEIPT: CLEAN (round=64 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 bytes=554)
+exit=0
+
+$ node .ufo/waves/round-64/probe/receipt64-probe.mjs <lane> 2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 --report /tmp/.../hollow.md
+RECEIPT64_UNMET held=4/5 checks=5 rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 rule=R64 | P3 MISS fleet-blob-unreadable

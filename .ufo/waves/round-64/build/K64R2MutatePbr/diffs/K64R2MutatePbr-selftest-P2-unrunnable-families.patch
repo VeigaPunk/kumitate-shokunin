@@ -1,0 +1,60 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P2-unrunnable-families
+@@ -336,6 +336,13 @@
+                 "process.stdout.write('README_MAP: FAIL-CLOSED reason=registry unreadable: ENOENT\\n');" \
+                 'process.exit(2);' ;;
+       silent) printf '%s\n' 'process.exit(0);' ;;
++      exit127) printf '%s\n' 'process.exit(127);' ;;
++      noise)   printf '%s\n' 'process.exit(1);' ;;
++      slowclean) printf '%s\n' \
++                'setTimeout(function () {' \
++                "  process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
++                '  process.exit(0);' \
++                '}, 2000);' ;;
+       *)      printf '%s\n%s\n' \
+                 "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
+                 'process.exit(0);' ;;
+@@ -473,6 +480,43 @@
+   MAP_STUB=failclosed fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
++
++
++  # 22 mktemp failure fails closed with its own reason
++  d="$(fixture map-mktemp-fails)" || return 2
++  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  TMPDIR=/nonexistent-pbr-mktemp check_has map-mktemp-fails 1 "$d" 9 'reason=MKTEMP'
++
++  # 23 an unextractable archive fails closed AND its scratch dir is removed
++  d="$(fixture map-archive-fails)" || return 2
++  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  mkdir -p "$d/fakebin"; printf '%s\n' '#!/bin/sh' 'exit 1' > "$d/fakebin/tar"; chmod +x "$d/fakebin/tar"
++  leak_before="$(find "${TMPDIR:-/tmp}" -maxdepth 1 -name 'pbr-map.*' 2>/dev/null | wc -l)"
++  PATH="$d/fakebin:$PATH" check_has map-archive-fails 1 "$d" 9 'reason=ARCHIVE'
++  leak_after="$(find "${TMPDIR:-/tmp}" -maxdepth 1 -name 'pbr-map.*' 2>/dev/null | wc -l)"
++  if [ "$leak_after" = "$leak_before" ]; then
++    pass=$((pass+1)); printf 'SELFTEST ok   %-24s %s\n' map-archive-no-leak 'no new pbr-map.* leftovers'
++  else
++    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s %s\n' map-archive-no-leak "pbr-map.* leftovers: $leak_before -> $leak_after"
++  fi
++
++  # 24 rc 127 from the counter fails closed as NODE_ABSENT
++  d="$(fixture map-node-127)" || return 2
++  MAP_STUB=exit127 fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  check_has map-node-127 1 "$d" 9 'reason=NODE_ABSENT'
++
++  # 25 exit 1 without a parseable verdict is MAP_UNRUNNABLE, never a pass
++  d="$(fixture map-noise-exit-1)" || return 2
++  MAP_STUB=noise fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  check_has map-noise-exit-1 1 "$d" 9 'map=UNRUNNABLE map_exit=1'
++
++  # 26 a counter hung past the timeout fails with reason=TIMEOUT (the 300 s bound is live)
++  d="$(fixture map-timeout-fires)" || return 2
++  MAP_STUB=slowclean fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  mkdir -p "$d/bin"
++  printf '%s\n' '#!/bin/sh' 'if [ "$1" = 300 ]; then shift; exec /usr/bin/timeout 1 "$@"; fi' 'exec /usr/bin/timeout "$@"' > "$d/bin/timeout"
++  chmod +x "$d/bin/timeout"
++  PATH="$d/bin:$PATH" check_has map-timeout-fires 1 "$d" 9 'reason=TIMEOUT'
+ 
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1

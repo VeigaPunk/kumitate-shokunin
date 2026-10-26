@@ -1,0 +1,19 @@
+### tree=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/int
+### cmd=node scripts/make-dispatch-actual.mjs --selftest
+### cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/int
+### started=2026-10-25T23:44:28Z
+PASS known-good-roundtrip — tool=0 array=true tsv=true DISPATCH_EVIDENCE: CLEAN (seats=3 sessions=3 exit0=3 reports=3 dead=0)
+PASS object-members-rejected — gate=1 DISPATCH_EVIDENCE: DRIFT (seats=3 sessions=3 exit0=3 reports=3 dead=0)
+PASS null-agentId-rejected — tool=1 gate=1 DISPATCH_EVIDENCE: DRIFT (seats=3 sessions=0 exit0=0 reports=0 dead=3)
+PASS dead-seat-named — tool=0 dead=true DISPATCH_EVIDENCE: CLEAN (seats=3 sessions=2 exit0=2 reports=2 dead=1)
+PASS contradictory-status-exit-rejected — tool=2 MAKE_DISPATCH_ACTUAL: FAIL-CLOSED reason=RESULT_STATUS_MISMATCH name=ExecAlpha status=failed exit=0
+PASS unplanned-seat-fail-closed — tool=2 MAKE_DISPATCH_ACTUAL: FAIL-CLOSED reason=UNPLANNED_SEAT name=ExecGhost detail=settled-but-not-in-registry
+PASS tsv-settle-roundtrip — tool=0 ids=true DISPATCH_EVIDENCE: CLEAN (seats=2 sessions=2 exit0=2 reports=2 dead=0)
+PASS invalid-result-fields-rejected — cases=2/2
+PASS tsv-status-exit-mismatch-rejected — tool=2 MAKE_DISPATCH_ACTUAL: FAIL-CLOSED reason=RESULT_STATUS_MISMATCH name=ExecAlpha status=failed exit=0
+PASS metadata-only-registry-fail-closed — tool=2 MAKE_DISPATCH_ACTUAL: FAIL-CLOSED reason=REGISTRY_UNREADABLE detail=members-absent
+PASS usage-64 — tool=64
+MAKE_DISPATCH_ACTUAL_SELFTEST: PASS (11/11)
+VERDICT: PASS
+### exit=0
+### ended=2026-10-25T23:44:29Z

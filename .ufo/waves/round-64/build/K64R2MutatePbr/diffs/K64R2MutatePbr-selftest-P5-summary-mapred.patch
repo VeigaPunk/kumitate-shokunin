@@ -1,0 +1,21 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P5-summary-mapred
+@@ -474,6 +474,18 @@
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
+ 
++
++  # 33 the summary carries map_red=<rounds> for map-failed rounds
++  d="$(fixture map-red-summary)" || return 2
++  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
++  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
++  sout="$(PBR_MAP_FROM=0 bash "${BASH_SOURCE[0]}" --repo "$d" --round 9 2>&1)"; src_rc=$?
++  if [ "$src_rc" = 1 ] && printf '%s' "$sout" | grep -q 'map_red=9'; then
++    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=1 got=%s  %s\n' map-red-summary-field "$src_rc" "$(printf '%s' "$sout" | tail -n 1)"
++  else
++    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=1 got=%s  %s\n' map-red-summary-field "$src_rc" "$(printf '%s' "$sout" | tail -n 1)"
++  fi
++
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1
+ }

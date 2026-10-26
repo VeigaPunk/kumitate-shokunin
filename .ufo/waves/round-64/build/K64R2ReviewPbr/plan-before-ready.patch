@@ -1,0 +1,98 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/plan-before-ready.sh	2026-10-25 20:27:43.836820770 -0300
++++ /tmp/kumitate-r64/K64R2ReviewPbr/plan-before-ready.sh	2026-10-25 20:46:09.901942922 -0300
+@@ -119,7 +119,7 @@
+   case "$r" in
+     ''|*[!0-9]*) die_usage "not a round number: $1" ;;
+   esac
+-  printf '%s' "$r"
++  printf '%s' "$((10#$r))"
+ }
+ 
+ # oldest commit that adds $2 (a pathspec) in repo $1; prints "<sha>\t<ct>" or nothing
+@@ -145,44 +145,54 @@
+ # froze over a red map before the arm existed: they read `map=SKIP reason=MAP_PRE_EPOCH_ROUND` by default, and FAIL under
+ # `PBR_MAP_FROM=0` (the red-before receipts, `.ufo/waves/round-64/build/K64ExecReadmeGuard/receipts/`).
+ MAP_FROM="${PBR_MAP_FROM:-65}"
++case "$MAP_FROM" in
++  ''|*[!0-9]*) die_usage "not a non-negative integer in PBR_MAP_FROM: $MAP_FROM" ;;
++esac
++MAP_FROM="$((10#$MAP_FROM))"
+ 
+-map_first_add() {  # $1=repo -> oldest commit (any revision) that ADDS the readme-map gate
+-  git -C "$1" log --full-history --diff-filter=A --format='%H' -- "$MAP_GATE" 2>/dev/null | tail -n 1
++map_first_add() {  # $1=repo $2=plan_sha -> commit in plan's ancestry that ADDS the readme-map gate
++  git -C "$1" log "$2" --full-history --diff-filter=A --format='%H' -n 1 -- "$MAP_GATE" 2>/dev/null
+ }
+ 
+ map_at_plan() {  # $1=repo $2=plan_sha
+-  local repo="$1" plan="$2" t out rc line first fc gate_sha
++  local repo="$1" plan="$2" t out rc line first fc gate_sha node_bin timeout_bin
+   MAP_FIELD="map=SKIP reason=MAP_PRE_EPOCH"; MAP_FAIL_REASON=""
+ 
+-  if ! git -C "$repo" cat-file -e "$plan:$MAP_GATE" 2>/dev/null; then
+-    # The gate is absent at the plan commit. It applies only if the gate already existed when
+-    # this plan was frozen (its first-add commit is an ancestor-or-equal of PLAN); otherwise the
+-    # plan predates the gate and the arm does not apply (rounds 41-56 read exactly as before).
+-    gate_sha="$(map_first_add "$repo")"
+-    if [ -n "$gate_sha" ] \
+-       && git -C "$repo" merge-base --is-ancestor "$gate_sha" "$plan" 2>/dev/null; then
++  if [ "$(git -C "$repo" cat-file -t "$plan:$MAP_GATE" 2>/dev/null)" != "blob" ] \
++     || git -C "$repo" ls-tree "$plan" -- "$MAP_GATE" 2>/dev/null | grep -q '^120000 '; then
++    # The gate is absent (or not a regular file) at the plan commit. It applies iff the gate was
++    # added in an ancestor-or-equal of PLAN; otherwise the plan predates the gate (rounds 41-56).
++    gate_sha="$(map_first_add "$repo" "$plan")"
++    if [ -n "$gate_sha" ]; then
+       MAP_FIELD="map=ABSENT"; MAP_FAIL_REASON=MAP_ABSENT
+     fi
+     return 0
+   fi
+ 
++  node_bin="$(command -v node 2>/dev/null)" || {
++    MAP_FIELD="map=UNRUNNABLE reason=NODE_ABSENT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
++  timeout_bin="$(command -v timeout 2>/dev/null || true)"
+   t="$(mktemp -d "${TMPDIR:-/tmp}/pbr-map.XXXXXX" 2>/dev/null)" || {
+     MAP_FIELD="map=UNRUNNABLE reason=MKTEMP"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
++  trap 'rm -rf "$t"' INT TERM HUP EXIT
+   if ! git -C "$repo" archive --format=tar "$plan" 2>/dev/null | tar -x -C "$t" --no-same-owner 2>/dev/null; then
+-    rm -rf "$t"; MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
++    rm -rf "$t"; trap - INT TERM HUP EXIT
++    MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+   fi
+-  if command -v timeout >/dev/null 2>&1; then
+-    out="$(cd "$t" && timeout 300 node "$MAP_GATE" 2>&1)"; rc=$?
++  if [ -n "$timeout_bin" ]; then
++    out="$(cd "$t" && "$timeout_bin" -k 5 300 "$node_bin" "$MAP_GATE" 2>&1)"; rc=$?
+   else
+-    out="$(cd "$t" && node "$MAP_GATE" 2>&1)"; rc=$?
++    out="$(cd "$t" && "$node_bin" "$MAP_GATE" 2>&1)"; rc=$?
+   fi
+-  rm -rf "$t"
++  rm -rf "$t"; trap - INT TERM HUP EXIT
+ 
+-  if [ "$rc" = 0 ] && printf '%s\n' "$out" | grep -q '^README_MAP: CLEAN '; then
++  if [ "$rc" = 0 ]; then
+     line="$(printf '%s\n' "$out" \
+-      | sed -n 's/^README_MAP: CLEAN \(files=[0-9]* rows=[0-9]* covered=[0-9]*\).*/\1/p' | head -n 1)"
+-    MAP_FIELD="map=CLEAN ${line:-files=? rows=? covered=?}"
+-    return 0
++      | sed -n 's/^README_MAP: CLEAN \(files=[0-9][0-9]* rows=[0-9][0-9]* covered=[0-9][0-9]*\)$/\1/p' | head -n 1)"
++    if [ -n "$line" ]; then
++      MAP_FIELD="map=CLEAN $line"
++      return 0
++    fi
+   fi
+   if [ "$rc" = 0 ]; then
+     MAP_FIELD="map=NO_VERDICT map_exit=0"; MAP_FAIL_REASON=MAP_NO_VERDICT; return 0
+@@ -474,7 +484,12 @@
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
+ 
++  # 18 MAP_FROM epoch skip: round < MAP_FROM reads map=SKIP reason=MAP_PRE_EPOCH_ROUND
++  MAP_FROM=65 check_has map-epoch-round-skip 0 "$d" 9 'map=SKIP reason=MAP_PRE_EPOCH_ROUND'
++  MAP_FROM=0
++
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
++  rm -rf "$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1
+ }
+ 

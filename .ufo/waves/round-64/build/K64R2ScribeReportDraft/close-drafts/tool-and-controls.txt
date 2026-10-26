@@ -1,0 +1,22 @@
+$ node scripts/report-receipt-diff.mjs --selftest
+REPORT_RECEIPT_SELFTEST: PASS (52/52)
+exit=0
+$ ls .ufo/waves/round-64/controls/receipt | wc -l
+37
+$ cat .ufo/waves/round-64/controls/receipt/*/expect | awk "NR>1{print \$1}" | grep -v ^CLEAN | sort -u
+0
+1
+HASH_DEAD
+PLACEHOLDER
+PLACEHOLDER,TALLY_UNRECEIPTED
+RECEIPT_EMPTY
+RECEIPT_MISSING
+RECEIPT_MISSING,TALLY_UNRECEIPTED
+SECTION_MISSING
+SECTION_MISSING,SHONEN_COUNT
+SHONEN_COUNT
+TALLY_CHECKS_MISMATCH
+TALLY_UNRECEIPTED
+$ node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=25
+exit=0

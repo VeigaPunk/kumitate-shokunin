@@ -1,0 +1,117 @@
+--- a/corpus/knowledge/jj-workspace-seat-containment.md
++++ b/corpus/knowledge/jj-workspace-seat-containment.md
+@@ -11,8 +11,8 @@
+ `corpus/knowledge/agent-isolation-substrates.md` states mechanism M7 in one sentence — workspaces share one repository, and
+ rewriting a commit another workspace has checked out makes that workspace stale — and says "Not demonstrated this round; no
+ table row relies on it." This entry is the demonstration. It adds what M7 lacked: a re-runnable hermetic demo that prints
+-21 outcome keys (`scripts/jj-seat-demo.sh`), the rule that decides whether a seat goes stale (the seat's on-disk tree
+-against the tree of its new commit — not the kind of operation), and the containment consequence that no jj feature
++27 outcome keys (`scripts/jj-seat-demo.sh`), the rule that decides whether a seat goes stale (the seat's last-snapshotted
++working-copy tree against the tree of its new commit in the operation view — not the live files on disk or the kind of operation), and the containment consequence that no jj feature
+ supplies: a workspace is a working-copy directory, not a sandbox. The staged shokuknow text (package entry `jj-seat-staleness-outcome`, not adopted) claimed "the seat
+ does not go stale"; that holds for one operation kind and is false for others, which is why the entry carries the demo and
+ not the staged sentence (`corpus/lessons/round-64.md` § Gate).
+@@ -25,14 +25,21 @@
+ (`abandon_seat_head_seat_state=stale`) while its files are still on disk
+ (`abandon_seat_head_files_on_disk=kept`), and it is stale after a rewrite that **changes the tree**
+ (`rewrite_treechange_seat_state=stale`: a `squash` moved a file into the seat's commit). An abandon of an
+-**empty** seat head leaves the seat fresh (`abandon_empty_seat_state=fresh`). The rule consistent with all four
+-outcomes: jj re-points a seat's working copy to the rewritten or replacement commit on its own when the files on disk
+-already equal that commit's tree, and marks the working copy stale when they differ [INFERENCE: the demo shows the four
+-outcomes; the rule is the reading that fits them, derived by K64ReviewDemo]. Recovery is `jj workspace update-stale`
+-(`update_stale_recovers=yes`) — and it **deletes** the abandoned commit's files from the seat
++**empty** seat head leaves the seat fresh (`abandon_empty_seat_state=fresh`), as does squashing a **non-empty** seat
++commit into its parent (`squash_seat_into_parent_seat_state=fresh`: the seat's commit is emptied into `@-` and replaced by a
++fresh empty child whose tree still equals the seat's prior snapshot). The rule consistent with all outcomes — and
++distinguished from "files on disk equal the new commit's tree" when the seat holds unsnapshotted edits: when a workspace's
++recorded checkout operation (`.jj/working_copy/checkout`) lags the repository's latest operation and the workspace's `@`
++commit id changed in the operation view, jj compares the workspace's **last-snapshotted working-copy tree** (`Current tree`
++in `.jj/working_copy/tree_state`) against the new working-copy commit's tree (`root_tree` in the operation view) BEFORE
++snapshotting the live filesystem; if those two recorded `MergedTreeId`s equal, jj fast-forwards the workspace's checkout
++operation on its own and then snapshots any pending on-disk edits (`pending_edit_on_tree_preserving_rewrite_seat_state=fresh`);
++if they differ, jj marks the working copy stale (`pending_delete_matching_abandoned_tree_seat_state=stale`, even when live
++disk files match the new commit's tree) [INFERENCE: fit to 20 fixture experiments on jj 0.45.1, K64R2ReviewEntryLimits].
++Recovery is `jj workspace update-stale` (`update_stale_recovers=yes`): on an **abandoned** head it **deletes** the abandoned commit's tracked files from the seat
+ (`update_stale_abandoned_seat_file=deleted-no-recovery-commit`): the seat's new commit is empty and no recovery commit is created; the
+ content survives only in the hidden abandoned commit, restorable by commit id (measured by hand,
+-`.ufo/waves/round-64/build/K64ExecJjDemoHarden/measurements-abandon-matrix.txt`; not a demo key).
++`.ufo/waves/round-64/build/K64ExecJjDemoHarden/measurements-abandon-matrix.txt`; on a tree-changing rewrite into the seat's commit, `update-stale` keeps the seat's file and merges the added file, `update_stale_treechange_seat_file=kept-and-merged`).
+ 
+ The working trees are separate and the log is shared. A file written in the seat is not in the default workspace's tree
+ (`seat_file_in_default_tree=no`, `default_status_clean_after_seat_write=1`), the seat's snapshot is an operation in the
+@@ -70,10 +77,10 @@
+ | --- | --- | --- |
+ | the seat edits files under its own workspace path | the edit stays out of the default tree (`seat_file_in_default_tree=no`), the default workspace reads clean (`default_status_clean_after_seat_write=1`), and the seat's next jj command adds a snapshot operation to the one shared log (`seat_snapshot_in_shared_op_log=1`) | the tree is isolated and the log is not: a seat's work is visible as an operation to every other workspace, so claim isolation comes from per-seat receipts, not from the workspace layout |
+ | the seat runs a read-only jj command | an unflagged command snapshots and adds an operation; `--ignore-working-copy` adds none and hides a pending file (`ignore_working_copy_adds_op=no`, `ignore_working_copy_hides_pending=yes`) | `--ignore-working-copy` on every read, as M1 of `agent-isolation-substrates.md` requires — the workspace boundary does not remove the snapshot hazard |
+-| another workspace describes the seat's checked-out commit | the seat stays fresh and reads the new description (`rewrite_seat_head_seat_state=fresh`) | a seat must re-read `@` rather than trust an identifier captured earlier in its run [INFERENCE: the demo prints the description, not the commit id] |
+-| another workspace changes the tree of the seat's commit, or abandons it while the seat carries content | the seat is stale (`rewrite_treechange_seat_state=stale`, `abandon_seat_head_seat_state=stale`), files kept until `update-stale` (`abandon_seat_head_files_on_disk=kept`); `update-stale` recovers the seat and deletes those files (`update_stale_abandoned_seat_file=deleted-no-recovery-commit`) | a supervisor never abandons or squashes into a live seat's `@`; a seat that finds itself stale commits or copies its files out before running `update-stale`, because recovery drops them from disk |
+-| another workspace abandons an empty seat head | the seat stays fresh (`abandon_empty_seat_state=fresh`) | none needed for an empty seat; do not rely on this for a seat that has written anything |
+-| two seats abandon each other's empty heads | both end fresh after one status each (`cross_abandon_both_fresh_after_status=yes`); with content on both sides the first abandoned seat is stale and cannot run the second abandon (hand-measured, `measurements-abandon-matrix.txt`) | a stale seat cannot act, so staleness limits the damage a seat can do to a peer, but only for seats that have content |
++| another workspace describes the seat's checked-out commit | the seat stays fresh, reads the new description, keeps its `change_id`, and gets a new `commit_id` (`rewrite_seat_head_seat_state=fresh`, `rewrite_preserves_change_id_changes_commit_id=yes`) | a seat must re-read `@`'s `commit_id` (or after abandon/squash-into-parent, its `change_id` too) rather than trust an identifier captured earlier in its run |
++| another workspace changes the tree of the seat's commit, or abandons it while the seat carries snapshotted content | the seat is stale (`rewrite_treechange_seat_state=stale`, `abandon_seat_head_seat_state=stale`), files kept until `update-stale` (`abandon_seat_head_files_on_disk=kept`); on an abandoned head `update-stale` deletes those tracked files (`update_stale_abandoned_seat_file=deleted-no-recovery-commit`), whereas on a squash-into rewrite it keeps the seat's file and adds the squashed file (`update_stale_treechange_seat_file=kept-and-merged`) | a supervisor never abandons or squashes into a live seat's `@`; a stale seat **cannot** run `jj commit` (refused with exit 1 because the working copy is stale) and must copy its files out on disk (or restore by old commit id) before running `update-stale` |
++| another workspace abandons an empty seat head, or squashes a seat's commit into its parent (`@-`) | the seat stays fresh with a newly minted empty commit and new `change_id` (`abandon_empty_seat_state=fresh`, `squash_seat_into_parent_seat_state=fresh`) | even on a non-empty seat, squashing into `@-` leaves the seat fresh while changing its `change_id`; re-read `@` before referencing the seat's change id |
++| two seats abandon each other's heads | with empty heads both end fresh after one status each (`cross_abandon_both_fresh_after_status=yes`); with content on both sides an unflagged command from the stale seat is refused, **but** `jj --ignore-working-copy abandon` from the stale seat still succeeds (`stale_seat_iwc_can_abandon_peer=yes`) | staleness stops only working-copy-touching commands; it does **not** stop a seat that passes `--ignore-working-copy` from mutating or abandoning a peer's commits |
+ | the seat writes into the default workspace by path | the write lands in the default tree and its status shows it (`absolute_path_write_seen_in_default=1`) | absolute paths in every seat write plus the L1 misroot sweep — a workspace is not a sandbox, as M3/M4 of `agent-isolation-substrates.md` establish for git |
+ | the seat is forgotten (`jj workspace forget`) | the registration goes (`workspaces_after_forget=1`), the directory stays (`seat_dir_after_forget=present`), the seat's commit stays visible (`forget_seat_commit_in_all=yes`) | cleanup is an explicit directory removal plus `jj abandon` of the seat's commits if they must leave history; forgetting is neither |
+ | a seat must not see another seat's claims | impossible inside one repository: one operation log, every workspace's operations in it (S198) | separate repositories (clones) per seat, not workspaces |
+@@ -90,7 +97,9 @@
+ - ignore_working_copy_hides_pending=yes
+ - rewrite_seat_head_seat_state=fresh
+ - rewrite_seat_head_description_seen=rewritten
++- rewrite_preserves_change_id_changes_commit_id=yes
+ - rewrite_treechange_seat_state=stale
++- update_stale_treechange_seat_file=kept-and-merged
+ - abandon_seat_head_seat_state=stale
+ - abandon_seat_head_files_on_disk=kept
+ - abandon_empty_seat_state=fresh
+@@ -101,6 +110,10 @@
+ - seat_dir_after_forget=present
+ - cross_abandon_both_fresh_after_status=yes
+ - forget_seat_commit_in_all=yes
++- pending_edit_on_tree_preserving_rewrite_seat_state=fresh
++- pending_delete_matching_abandoned_tree_seat_state=stale
++- squash_seat_into_parent_seat_state=fresh
++- stale_seat_iwc_can_abandon_peer=yes
+ 
+ ## Located quotes
+ 
+@@ -123,18 +136,28 @@
+ - **Not a security boundary.** The demo writes into the default workspace from a seat-positioned process; that is an honest-seat
+   accident model, not an escape analysis (kasegi and kagi ground).
+ - **One jj version, sequential drivers.** Measured on jj 0.45.1 only, with two or three workspaces driven one command at a
+-  time by one process: no two writers race, no operation-log merge conflict is produced, nothing measures parallel
+-  throughput or lock behaviour (S198 describes the merge; the demo never triggers it).
++  time by one process: no two OS processes race in parallel, and nothing measures parallel throughput or lock behaviour.
++  (Note: the demo itself leaves the op log linear because it snapshots before rewriting, but a sequential single-process driver
++  **does** trigger `reconcile divergent operations` whenever `update-stale` runs on a stale workspace that holds unsnapshotted
++  on-disk edits — `update-stale` snapshots at the workspace's old operation and reconciles with the rewrite, `K64R2ReviewEntryLimits` E8b-3.)
+ - **Fixture-dependent counts.** `seat_snapshot_in_shared_op_log` is an op-count delta in one fresh fixture; only the contrasts
+-  carry over. `ignore_working_copy_adds_op` and the stale/fresh keys print the wording of one jj version (`working copy is
+-  stale`); a different jj may read differently, not silently pass.
++  carry over. `default_status_clean_after_seat_write` (`The working copy has no changes`, whereas `ignore_working_copy_adds_op`
++  compares op-log line counts) and the stale/fresh keys grep the wording of one jj version (`working copy is stale`); a
++  different jj wording would make `stale_q` fall through its `|| echo fresh` branch and falsely report `fresh` on a stale
++  seat unless `stale_q` also checks `jj status`'s exit code.
+ - **The stale/fresh rule is a fit, not a documented rule.** S200's sentence says modifying a workspace's working-copy
+-  commit makes it stale; the demo's describe case contradicts the unqualified reading and the tree-identity reading fits all
+-  four outcomes. No document in S198–S200 states the tree-identity rule [INFERENCE].
+-- **The auto-update knob is observed, not exercised.** `snapshot.auto-update-stale = true` was not run; S199's default is
+-  Firefox's `./mach vcs-setup`, not jj's.
+-- **Not measured:** whether the seat's change id survives the rewrite (the demo prints the description only), what a seat sees
+-  when its workspace is forgotten while a command runs, `jj workspace remove` (absent on the host), and git-side effects in
+-  the colocated default workspace.
++  commit makes it stale; the recorded-snapshot-tree equality rule (`Current tree` in `.jj/working_copy/tree_state` against
++  `root_tree` of the new `@` commit in the operation view) fits all 20 fixture outcomes, whereas the literal "files on disk
++  equal the new commit's tree" wording is falsified when the seat holds unsnapshotted edits (E8a, E8b-1, E8b-2). No document
++  in S198–S200 states the tree-equality rule [INFERENCE].
++- **The auto-update knob in the default demo.** The default demo runs with `JJ_CONFIG=/dev/null` (`snapshot.auto-update-stale`
++  unset/false); S199's default is Firefox's `./mach vcs-setup`, not jj's. Exercised in `K64R2ReviewEntryLimits` E10d: with
++  `--config snapshot.auto-update-stale=true`, `jj -R <seat> status` after `abandon` exits 0 and silently deletes the seat's
++  tracked file without printing the stale error.
++- **Other surfaces.** `jj workspace remove` is absent on the host's jj 0.45.1 (`jj workspace --help`). What happens when a
++  workspace is forgotten *concurrently while* a long command is mid-flight is not measured; after `jj workspace forget`,
++  `jj -R <seat> status` exits 0 and prints `No working copy.` (E10d). In the colocated default workspace, a seat snapshot
++  stores its commit object in `.git/objects` (`git cat-file -t <seat_commit>` → `commit`) while leaving `git status --porcelain`
++  empty (E10d).
+ - **What the counter cannot tell.** The frozen counter J64 measures an evidence chain and a live demo re-run; it would score a
+   well-grounded wrong entry 8/8 (`.ufo/waves/round-64/plan.md`, stated limit; K64CriticC2Predicate reproduced four forgeries).

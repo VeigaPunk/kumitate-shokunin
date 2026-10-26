@@ -1,0 +1,68 @@
+--- a/scripts/jj-seat-demo.sh
++++ b/scripts/jj-seat-demo.sh
+@@ -84,14 +84,18 @@
+ rm "$SEAT/pend.txt"; J -R "$SEAT" status >/dev/null 2>&1 || fail seat-status-2
+ 
+ # rewrite the seat's checked-out commit from the default workspace.
+-# NOTE (measured 0.45.1): jj auto-repoints a stale wc when the op leaves its tree identical.
+-# describe is tree-preserving => 'fresh' below means "auto-recovered", not "never stale".
++# NOTE (measured 0.45.1): jj auto-repoints a seat's checkout operation iff the seat's
++# LAST-SNAPSHOTTED tree_id (.jj/working_copy/tree_state) equals the new working-copy commit's
++# tree_id in the operation view — NOT whether the live files on disk equal the new commit's tree.
+ SEAT_CHANGE=$(J -R "$SEAT" log -r @ --no-graph -T 'change_id.short()' 2>/dev/null) || fail seat-change
++SEAT_COMMIT_0=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'commit_id.short()' 2>/dev/null) || fail seat-commit-0
+ J -R "$D" describe -r "$SEAT_CHANGE" -m rewritten >/dev/null 2>&1 || fail describe-rewrite
+ out=$(J -R "$SEAT" status 2>&1)
+ kv rewrite_seat_head_seat_state "$(printf '%s' "$out" | grep -qi 'working copy is stale' && echo stale || echo fresh)"
+ kv rewrite_seat_head_description_seen "$(J -R "$SEAT" log -r @ --no-graph -T 'description.first_line()' 2>/dev/null)"
+-
++SEAT_CHANGE_1=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'change_id.short()' 2>/dev/null)
++SEAT_COMMIT_1=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'commit_id.short()' 2>/dev/null)
++kv rewrite_preserves_change_id_changes_commit_id "$([ "$SEAT_CHANGE" = "$SEAT_CHANGE_1" ] && [ "$SEAT_COMMIT_0" != "$SEAT_COMMIT_1" ] && echo yes || echo no)"
+ # control: a tree-CHANGING rewrite DOES stale the seat (squash moves a file into seat's @).
+ echo extra > "$D/extra.txt"; J -R "$D" status >/dev/null 2>&1 || fail d-status
+ J -R "$D" squash --from @ --into "$SEAT_CHANGE" >/dev/null 2>&1 || fail squash-into
+@@ -99,7 +103,7 @@
+ kv rewrite_treechange_seat_state "$(printf '%s' "$out" | grep -qi 'working copy is stale' && echo stale || echo fresh)"
+ J -R "$SEAT" workspace update-stale >/dev/null 2>&1 || fail update-stale-1
+ out=$(J -R "$SEAT" status 2>&1); printf '%s' "$out" | grep -qi 'working copy is stale' && fail still-stale-1
+-
++kv update_stale_treechange_seat_file "$([ -f "$SEAT/seat.txt" ] && [ -f "$SEAT/extra.txt" ] && echo kept-and-merged || echo lost)"
+ # abandon the seat's checked-out commit: mints a NEW wc change id (no successor) ->
+ # stale iff on-disk tree differs from the new (empty) wc commit.
+ J -R "$D" abandon "$SEAT_CHANGE" >/dev/null 2>&1 || fail abandon
+@@ -170,4 +174,34 @@
+ J -R "$D" workspace forget seatx4 >/dev/null 2>&1 || fail workspace-forget
+ kv forget_seat_commit_in_all "$([ "$(J -R "$D" --ignore-working-copy log -r 'all()' --no-graph -T 'change_id.short()++"\n"' 2>/dev/null | grep -c "^$CX4")" -ge 1 ] && echo yes || echo no)"
+ 
++# (d) falsifiers of "files on disk == new commit's tree" in favour of "recorded snapshot tree_id == new commit's tree_id":
++SEATX5="$S/seatx5"
++J -R "$D" workspace add "$SEATX5" >/dev/null 2>&1 || fail workspace-add-5
++echo snap1 > "$SEATX5/s5.txt" || fail write-s5
++J -R "$SEATX5" status >/dev/null 2>&1 || fail status-s5
++CX5=$(chg "$SEATX5")
++# unsnapshotted edit on disk makes live disk != commit tree, yet tree-preserving describe leaves seat fresh:
++echo unsnap_dirty > "$SEATX5/s5.txt" || fail dirty-s5
++J -R "$D" describe -r "$CX5" -m dirty-describe >/dev/null 2>&1 || fail describe-s5
++kv pending_edit_on_tree_preserving_rewrite_seat_state "$(stale_q "$SEATX5")"
++# unsnapshotted deletion makes live disk == base tree, yet abandoning seat commit leaves seat stale:
++rm "$SEATX5/s5.txt" || fail rm-s5
++J -R "$D" abandon "$CX5" >/dev/null 2>&1 || fail abandon-s5
++kv pending_delete_matching_abandoned_tree_seat_state "$(stale_q "$SEATX5")"
++
++# (e) squash FROM a non-empty seat commit into its parent (@-): seat commit is emptied/abandoned into parent,
++# minting a new change_id, yet the seat's tree (parent + empty child) equals its recorded snapshot tree -> fresh:
++SEATX6="$S/seatx6"
++J -R "$D" workspace add "$SEATX6" >/dev/null 2>&1 || fail workspace-add-6
++echo squashme > "$SEATX6/s6.txt" || fail write-s6
++J -R "$SEATX6" status >/dev/null 2>&1 || fail status-s6
++CX6=$(chg "$SEATX6")
++J -R "$D" squash -r "$CX6" -u >/dev/null 2>&1 || fail squash-s6-parent
++kv squash_seat_into_parent_seat_state "$(stale_q "$SEATX6")"
++
++# (f) a stale seat CAN still mutate/abandon a peer workspace's commit via --ignore-working-copy:
++CX6_NEW=$(chg "$SEATX6")
++J -R "$SEATX5" --ignore-working-copy abandon "$CX6_NEW" >/dev/null 2>&1 && iwc_ab=yes || iwc_ab=no
++kv stale_seat_iwc_can_abandon_peer "$iwc_ab"
++
+ echo "JJ_SEAT_DEMO: DONE jj=$(jj --version | awk '{print $2}')"

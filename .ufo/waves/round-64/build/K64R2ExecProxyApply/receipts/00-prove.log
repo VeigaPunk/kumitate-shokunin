@@ -1,0 +1,89 @@
+PROVE: rev=2ed8a5f8b133c65b3be59e3d10ff5bff50c4a2d8 lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin scratch=/tmp/kumitate-r64/K64R2ExecProxyApply
+== 01 dry-run on the frozen tip
+CLOSE_PROXY: dry-run lane=/tmp/kumitate-r64/K64R2ExecProxyApply/tip refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+BEFORE  PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PI
+PIN  + pin.jj-seat-demo=scripts/jj-seat-demo.sh  // round 64 C2: jj seat containment demo (J6 re-runs it)
+PIN  + pin.report-receipt-diff=scripts/report-receipt-diff.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+PINS: none written
+STANZA: NOT written (the refresher reports a blocker: fix the tree, never the number)
+CLOSE_PROXY: DRIFT (plain=1 strict=1 blockers=2)
+== 02 --write at the tip
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/tip refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PINS: wrote 2 key(s) into scripts/proxy-check.mjs
+STANZA: wrote SCORECARD.md from the measured candidate
+IDEMPOTENT: diff_bytes=0 blockers=0 ok=true
+AFTER  PROXY: MATCH (A=514 C=30 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (ex
+AFTER  PROXY: MATCH (A=514 C=30 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (ex
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=2 pins_written=2 stanza_written=yes idempotent=true)
+== 03 second --write (must write nothing)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/tip refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PINS: none written
+STANZA: already current
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=0 pins_written=0 stanza_written=no idempotent=n/a)
+== 04 proxy-check --selftest after the GATE_PINS edit
+04 exit=0
+PROXY_SELFTEST: 122/122 pass
+VERDICT: PASS
+== 05 close simulation (capabilities row, Round 64 section, SKILL row + checklist item, LOG entry, 300 stray .mjs)
+05 edit exit=0
+06 before exit=1
+PROXY: DRIFT (A_DRIFT term=A declared=514 computed=814 delta=+300; C_DRIFT term=C declared=30 computed=31 delta=+1; src-rev=31c465f15669)
+07 before strict exit=1
+PROXY: DRIFT (A_DRIFT term=A declared=514 computed=814 delta=+300; C_DRIFT term=C declared=30 computed=31 delta=+1; src-rev=31c465f15669)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/close-sim refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+STANZA: wrote SCORECARD.md from the measured candidate
+IDEMPOTENT: diff_bytes=0 blockers=0 ok=true
+AFTER  PROXY: MATCH (A=814 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (ex
+AFTER  PROXY: MATCH (A=814 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (ex
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=0 pins_written=0 stanza_written=yes idempotent=true)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/close-sim refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PINS: none written
+STANZA: already current
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=0 pins_written=0 stanza_written=no idempotent=n/a)
+== 10 arm A: three unpinned scripts/*.mjs
+10 exit=1
+PROXY: DRIFT (A_DRIFT term=A declared=814 computed=817 delta=+3; PIN_UNPINNED term=scripts/zz-alpha.mjs; PIN_UNPINNED term=scripts/zz-beta.mjs; PIN_UNPINNED term=scripts/zz-gamma.mjs; src-rev=31c465f15669)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/arm-scripts refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PIN  + pin.zz-alpha=scripts/zz-alpha.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+PIN  + pin.zz-beta=scripts/zz-beta.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+PIN  + pin.zz-gamma=scripts/zz-gamma.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+PINS: wrote 3 key(s) into scripts/proxy-check.mjs
+AFTER  PROXY: MATCH (A=817 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-r
+AFTER  PROXY: MATCH (A=817 C=31 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-r
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=3 pins_written=3 stanza_written=yes idempotent=true)
+== 12 arm B: new corpus note with no README row -> BLOCK, SCORECARD untouched
+12 exit=1
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/arm-map refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+REFRESH  BLOCK  MAP_INCOMPLETE  C2=156 README rows vs C2_total=157 corpus *.md — 1 note(s) carry no map row; proxy coverage derives 9 and the ## Axes row would have to be lowered to match (an axis har
+REFRESH  BLOCK  CANDIDATE_DRIFT  candidate still reads PROXY: DRIFT (AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+STANZA: NOT written (the refresher reports a blocker: fix the tree, never the number)
+CLOSE_PROXY: DRIFT (plain=1 strict=1 blockers=2)
+12 scorecard_unchanged=yes sha=3ff3a42a69ea8ad76c47ef74ffef5755b8d76ab6d0b7a54408a97be11a319e92
+== 13 arm C: gate block key not in GATE_PINS -> FAIL-CLOSED before any write
+13 exit=2
+CLOSE_PROXY: FAIL-CLOSED (PROXY_REFUSED) the tree's own stanza fails closed: PROXY: FAIL-CLOSED (GATE_PIN_KEY_UNKNOWN) line 335: pin.ghost is not a kumitate-gate-pins-v1 key
+== 14 arm D: dry-run leaves every byte identical
+16 tree_unchanged=yes
+CLOSE_PROXY: dry-run lane=/tmp/kumitate-r64/K64R2ExecProxyApply/close-sim refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=0 pins_written=0 stanza_written=no idempotent=n/a)
+== 17 usage and fail-closed arms
+17 exit=64
+CLOSE_PROXY: USAGE unknown argument "--bogus"
+18 exit=2
+CLOSE_PROXY: FAIL-CLOSED (LANE_NOT_A_LANE) /nonexistent/scripts/proxy-check.mjs is not a file
+19 exit=2
+CLOSE_PROXY: FAIL-CLOSED (REFRESHER_ABSENT) --refresh /nonexistent/x.mjs is not a readable file
+== 20 arm E: --pin a .sh gate (the frozen coverage rule never reaches .sh)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/arm-pin refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PIN  + pin.zz-demo=scripts/zz-demo.sh  // named by --pin
+PINS: wrote 1 key(s) into scripts/proxy-check.mjs
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=1 pins_written=1 stanza_written=yes idempotent=true)
+== 21 arm F: two files mapping to one pin key -> FAIL-CLOSED
+21 exit=2
+CLOSE_PROXY: FAIL-CLOSED (PIN_KEY_COLLISION) scripts/zz-twin.sh and scripts/zz-twin.mjs both map to pin.zz-twin — rename one or pin it under a distinct key by hand
+== 22 arm G: --no-subject-pins pins only what --strict demands (the .sh pin is a strengthening, not a MATCH requirement)
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/arm-nosubject refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+PIN  + pin.report-receipt-diff=scripts/report-receipt-diff.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+PINS: wrote 1 key(s) into scripts/proxy-check.mjs
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=1 pins_written=1 stanza_written=yes idempotent=true)
+PROVE: receipts under /tmp/kumitate-r64/K64R2ExecProxyApply/receipts

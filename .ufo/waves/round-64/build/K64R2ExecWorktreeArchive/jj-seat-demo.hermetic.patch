@@ -1,0 +1,20 @@
+--- a/scripts/jj-seat-demo.sh
++++ b/scripts/jj-seat-demo.sh
+@@ -40,7 +40,16 @@
+ # The seat fixture must not inherit a repository from the caller's TMPDIR (git walks up from the seat dir and would find
+ # a .git above the mktemp dir; measured: TMPDIR inside a git worktree flipped seat_has_git_dir to yes).
+ export GIT_CEILING_DIRECTORIES="${S%/*}"
+-J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --no-pager --color never "$@"; }
++# jj's own repo discovery is NOT bounded by GIT_CEILING_DIRECTORIES: with `-R <fixture>` and a cwd inside another
++# jj repo, 0.45.1 probes that repo's `.jj/repo/` with a temp file ("Failed to determine the secure config for a repo")
++# — a write into the caller's repo, and a hard FAIL-CLOSED when that repo is read-only (measured). Sit in $S instead:
++# every path in this script is absolute, so the cwd is free to be a non-repository directory.
++cd "$S" || fail chdir
++# The description editor is a jj config, not an env var: `squash` combines descriptions and opens $VISUAL/$EDITOR
++# (else nano) unless ui.editor is pinned. Ambient VISUAL/EDITOR therefore decided this script's exit code on this
++# host (VISUAL=true passed, unset or /bin/false FAIL-CLOSED at squash-into; measured). Pin it and clear the vars.
++unset EDITOR VISUAL
++J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --config 'ui.editor="true"' --no-pager --color never "$@"; }
+ # -----------------------------------------------------------------------------
+ 
+ git -C "$D" init -q || fail git-init

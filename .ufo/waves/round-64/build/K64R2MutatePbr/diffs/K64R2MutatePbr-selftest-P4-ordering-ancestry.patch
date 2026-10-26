@@ -1,0 +1,43 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P4-ordering-ancestry
+@@ -372,7 +372,7 @@
+   d="$(fixture wrong-order)" || return 2
+   fcommit "$d" 1000000000 "ready" .ufo/waves/round-9/w1.ready
+   fcommit "$d" 1000000100 "plan"  .ufo/waves/round-9/plan.md
+-  check wrong-order-ready-first 1 "$d" 9
++  check_has wrong-order-ready-first 1 "$d" 9 'reason=PLAN_NOT_ANCESTOR'
+ 
+   # 3 round 62's shape: marker, no plan at all
+   d="$(fixture no-plan)" || return 2
+@@ -473,6 +473,31 @@
+   MAP_STUB=failclosed fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
++
++
++  # 30 the committer date, not the author date, orders plan and marker
++  d="$(fixture ct-not-at)" || return 2
++  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-9/plan.md
++  mkdir -p "$d/.ufo/waves/round-9"; printf 'x\n' > "$d/.ufo/waves/round-9/w1.ready"
++  git -C "$d" add -A -- .ufo/waves/round-9/w1.ready >/dev/null 2>&1
++  GIT_AUTHOR_DATE="@999999000 +0000" GIT_COMMITTER_DATE="@1000000100 +0000" \
++    git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
++    commit -q -m "ready authored earlier" -- .ufo/waves/round-9/w1.ready >/dev/null 2>&1
++  check_has ct-not-at 0 "$d" 9 'marker_ct=1000000100'
++
++  # 31 --earliest-marker breaks a tie by taking the .ready (-le, not -lt)
++  d="$(fixture earliest-tie)" || return 2
++  fcommit "$d" 1000000000 "plan"     .ufo/waves/round-9/plan.md
++  fcommit "$d" 1000000100 "ready"    .ufo/waves/round-9/w1.ready
++  fcommit "$d" 1000000100 "dispatch" .ufo/waves/round-9/w2-dispatch.json
++  EARLIEST_MARKER=1 check_has earliest-tie 0 "$d" 9 'marker_kind=ready'
++  EARLIEST_MARKER=0
++
++  # 32 two markers added in one commit: the reported marker_path is the first
++  d="$(fixture two-readies-one-commit)" || return 2
++  fcommit "$d" 1000000000 "plan"     .ufo/waves/round-9/plan.md
++  fcommit "$d" 1000000100 "readies"  .ufo/waves/round-9/w1.ready .ufo/waves/round-9/w2.ready
++  check_has two-readies-one-commit 0 "$d" 9 'marker_path=.ufo/waves/round-9/w1.ready'
+ 
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1

@@ -1,0 +1,24 @@
+### tree=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### cmd=node scripts/readme-map.mjs --selftest
+### cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### started=2026-10-25T23:43:12Z
+case clean: PASS
+case uncovered: PASS
+case orphan-row: PASS
+case duplicate-row: PASS
+case format-unmapped: PASS
+case stale-covered: PASS
+case unpinned: PASS
+case empty-covered: PASS
+case malformed-registry: PASS
+case registry-version: PASS
+case covered-scope: PASS
+case readme-absent: PASS
+case corpus-dir-missing: PASS
+case non-corpus-rows: PASS
+case covered-not-file: PASS
+case symlink-stale-covered: PASS
+README_MAP_SELFTEST: PASS (16/16)
+VERDICT: PASS
+### exit=0
+### ended=2026-10-25T23:43:13Z

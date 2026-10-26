@@ -1,0 +1,190 @@
+--- a/scripts/report-receipt-diff.mjs	2026-10-25 20:49:57.611210539 -0300
++++ b/scripts/report-receipt-diff.mjs	2026-10-25 20:51:07.384522665 -0300
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env node
+ /**
+  * report-receipt-diff.mjs — diff a round report against the committed receipts it cites.
+- * Contract: kumitate-report-receipt-diff-v2 (round 64, capability report-receipt-diff;
++ * Contract: kumitate-report-receipt-diff-v3 (round 64, capability report-receipt-diff; v2 + the wave-2 ratchet)
+  * considerthese/2026-10-25.md idea 2: "diff reports against receipts").
+  *
+  *   node scripts/report-receipt-diff.mjs --lane <lane-dir> --round N --report <file> [--rev <lane-rev>] [--fleet <fleet-dir>]
+@@ -18,8 +18,11 @@
+  *   RECEIPT_MISSING    a `.ufo/waves/round-N/(base|close)/<file>` path the report names that does not exist at the
+  *                      rev, or that escapes the round tree with `..`, is a directory, or is a symlink
+  *   RECEIPT_EMPTY      a cited receipt that exists but carries no bytes
+- *   HASH_DEAD          a 39- or 40-hex hash (either case) that resolves in neither the lane repo nor the fleet repo
++ *   HASH_DEAD          a 39-, 40- or 41-hex hash (either case) that resolves in neither the lane repo nor the fleet repo
++ *                      (41 is one character too long for a commit id: a typo is not a commit)
+  *   HASH_ORPHAN        a 40-hex hash in the lane repo that is not an ancestor of the lane rev
++ *   HASH_FOREIGN       a hash that is a commit of another repository under the fleet root, cited as this lane's
++ *                      (a line naming `fleet` next to it is a fleet citation and is not flagged)
+  *   SECTION_MISSING    one of the six required report headings is absent from the prose (a heading inside a fenced
+  *                      block is a quotation, not a section)
+  *   SHONEN_COUNT       the `SHONEN` heading does not occur exactly once in the prose, or fewer than 4 box lines
+@@ -27,7 +30,11 @@
+  * Output: `REPORT_RECEIPT: CLEAN (...)` exit 0 | `REPORT_RECEIPT: DRIFT <ids>` + one line per finding, exit 1 |
+  * exit 2 fail-closed (unreadable report or rev) | exit 64 usage.
+  * Declared limit: only labelled tallies are checked; a bare `held=9/10` is not (a plan's target and a result are
+- * indistinguishable without a label), and a receipt written by the lane itself is trusted as written.
++ * indistinguishable without a label), and a receipt written by the lane itself is trusted as written — nothing in the
++ * tree binds a receipt to a counter run (the frozen fixtures carry `rev=aaa rule=X9`, so any syntactic binding is
++ * copyable at the same cost). Residuals: a label whose separator is not `_` (`X9-HELD`), a label spelled in a script
++ * outside the confusable table, a citation of another round's receipt that carries the pair, and a label split across
++ * two lines (only `held=`/`checks=` continuations are folded).
+  */
+ import { spawnSync } from 'node:child_process';
+ import { existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+@@ -42,26 +49,60 @@
+   ['Trend verdicts', /^#{1,6}\s*\**\s*Trend verdicts/im],
+   ['SHONEN', /^#{1,6}\s*\**\s*SHONEN/im],
+ ];
+-const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\{\{[A-Za-z][A-Za-z0-9_]*\}\}|\bX{4,}\b|\bto be filled\b|<(?:measured|measured_rev|tip_hash|rev_hash|placeholder|tbd|todo)>/gi;
+-const TALLY = /\b([a-z][a-z0-9]*_(?:held|unmet))\s+held=(\d+)\/(\d+)/gi;
+-const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'g');
+-const HASH = /\b[0-9a-fA-F]{39,40}\b/g;
++const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\bTODO\b|\bFIXME\b|\bREPLACE_?ME\b|\{\{[A-Za-z][A-Za-z0-9_]*\}\}|\bX{4,}\b|\bto be filled\b|<<[A-Za-z][A-Za-z0-9_]*>>|<(?:measured|measured_rev|tip_hash|rev_hash|placeholder|tbd|todo)>/gi;
++const TALLY = /\b([a-z0-9]+_(?:held|unmet))\s+held=(\d+)\/(\d+)/gi;
++const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'gi');
++const HASH = /\b[0-9a-fA-F]{39,41}\b/g;
++// Confusables (Cyrillic/Greek lookalikes of the Latin letters a verdict label is spelled with) and non-ASCII digit
++// blocks are folded to ASCII in the scan copy only: a claim cannot be hidden from the parser by spelling `HELD` in
++// another script or writing the numbers in another block (forgeries f2 confusable `Н`, f3 full-width, f4 Arabic-Indic).
++const CONFUSABLE = {
++  '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041A': 'K', '\u041C': 'M', '\u041D': 'H', '\u041E': 'O',
++  '\u0420': 'P', '\u0421': 'C', '\u0422': 'T', '\u0423': 'Y', '\u0425': 'X', '\u0406': 'I', '\u0408': 'J',
++  '\u0405': 'S', '\u0430': 'a', '\u0432': 'b', '\u0435': 'e', '\u043A': 'k', '\u043C': 'm', '\u043D': 'h',
++  '\u043E': 'o', '\u0440': 'p', '\u0441': 'c', '\u0442': 't', '\u0443': 'y', '\u0445': 'x', '\u0456': 'i',
++  '\u0458': 'j', '\u0455': 's', '\u0391': 'A', '\u0392': 'B', '\u0395': 'E', '\u0396': 'Z', '\u0397': 'H',
++  '\u0399': 'I', '\u039A': 'K', '\u039C': 'M', '\u039D': 'N', '\u039F': 'O', '\u03A1': 'P', '\u03A4': 'T',
++  '\u03A5': 'Y', '\u03A7': 'X', '\u03B1': 'a', '\u03B5': 'e', '\u03B9': 'i', '\u03BA': 'k', '\u03BD': 'v',
++  '\u03BF': 'o', '\u03C1': 'p', '\u03C4': 't', '\u03C5': 'u', '\u03C7': 'x', '\u03B6': 'z',
++};
++const DIGIT_BLOCK = [0x0660, 0x06F0, 0x0966, 0xFF10];
++const foldDigits = (s) => s.replace(/[\u0660-\u0669\u06F0-\u06F9\u0966-\u096F\uFF10-\uFF19]/g, (d) => {
++  const c = d.codePointAt(0);
++  return String(c - DIGIT_BLOCK.find((b) => c >= b && c < b + 10));
++});
+ // Scan copy: invisible characters, table pipes and spaced operators are normalised away, so a claim cannot be
+ // hidden from the tally parser by formatting alone (controls k1 spaced `held = 3 / 3`, k3 table cell, k4 U+200B).
+-const scan = (s) => s
+-  .replace(/[\u200B-\u200F\u2060\uFEFF]/g, '')
++const scan = (s) => foldDigits(s
++  .normalize('NFKC')
++  .replace(/[\u200B-\u200F\u00AD\u2060-\u2064\uFEFF]/g, '')
++  .replace(/[\u0391-\u03C9\u0400-\u045F]/g, (c) => CONFUSABLE[c] || c))
+   .replace(/\|/g, ' ')
+   .replace(/[ \t]*=[ \t]*/g, '=')
+   .replace(/[ \t]*\/[ \t]*/g, '/');
+-// Prose copy: fenced blocks blanked, so a heading quoted as an example is not a section (controls k12/k13).
++// A claim's pair or check count may sit on the line after its label (`X9_HELD` / `held=9/9` / `checks=9`, forgeries
++// f5 and f12): a continuation line that starts with either is folded into the claim line, keeping its citation scope.
++const claimLines = (s) => {
++  const out = [];
++  for (const l of s.split('\n')) {
++    if (out.length && /^\s*(?:held=\d+(?:\/\d+)?|checks=\d+)\b/.test(l)) out[out.length - 1] += ` ${l.trim()}`;
++    else out.push(l);
++  }
++  return out;
++};
++// Prose copy: fenced blocks and HTML comments blanked, so a heading quoted as an example or hidden in a comment is
++// not a section (controls k12/k13, forgery f6). Newlines are kept, so line structure survives.
+ const unfence = (text) => {
+   let fenced = false;
+-  return text.split('\n').map((l) => {
++  return text.replace(/<!--[\s\S]*?(?:-->|$)/g, (m) => m.replace(/[^\n]/g, '')).split('\n').map((l) => {
+     if (/^\s*(?:```|~~~)/.test(l)) { fenced = !fenced; return ''; }
+     return fenced ? '' : l;
+   }).join('\n');
+ };
+-const tallyKey = (label, x, y) => `${label.toUpperCase()} held=${x}/${y}`;
++// Leading zeros are the same number (`03/03` is `3/3`), so a pair is keyed numerically: an honest report is not
++// flagged (forgery f11) and a padded forgery is not excused.
++const num = (d) => String(Number(d));
++const tallyKey = (label, x, y) => `${label.toUpperCase()} held=${num(x)}/${num(y)}`;
+ 
+ function git(dir, args) { return spawnSync('git', ['-C', dir, ...args], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }); }
+ 
+@@ -133,37 +174,43 @@
+   // TALLY_CHECKS_MISMATCH — a claim that states `checks=k` where the receipt carrying the same pair states another k.
+   const index = new Map();
+   for (const [file, body] of receiptNames) {
+-    for (const line of scan(body).split('\n')) {
++    for (const line of claimLines(scan(body))) {
+       for (const m of line.matchAll(TALLY)) {
+         const key = tallyKey(m[1], m[2], m[3]);
+         const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
+         if (!index.has(key)) index.set(key, []);
+-        index.get(key).push({ file, checks: c ? c[1] : null });
++        index.get(key).push({ file, checks: c ? num(c[1]) : null });
+       }
+     }
+   }
+-  for (const line of scan(text).split('\n')) {
++  for (const line of claimLines(scan(text))) {
+     const scope = cited(line).filter(isPath);
+     for (const m of line.matchAll(TALLY)) {
+       const key = tallyKey(m[1], m[2], m[3]);
+       const hits = (index.get(key) || []).filter((h) => !scope.length || scope.some((sp) => (sp.includes('*') ? globRe(sp).test(h.file) : sp === h.file)));
+       if (!hits.length) { add('TALLY_UNRECEIPTED', key); continue; }
+       const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
+-      if (c && !hits.some((h) => h.checks === null || h.checks === c[1])) add('TALLY_CHECKS_MISMATCH', `${key} checks=${c[1]}`);
++      if (c && !hits.some((h) => h.checks === null || h.checks === num(c[1]))) add('TALLY_CHECKS_MISMATCH', `${key} checks=${c[1]}`);
+     }
+   }
+   // hashes
+   const headRes = rev ? null : git(lane, ['rev-parse', '--verify', 'HEAD^{commit}']);
+   const tip = rev || (headRes.status === 0 ? headRes.stdout.trim() : null);
+   const textLines = text.split('\n');
+-  const inUrl = (raw) => textLines.some((l) => l.includes(raw) && new RegExp(`(?:https?://|(?:github|gitlab)\\.com/)[^\\s)\\]>\`]*${raw}`, 'i').test(l));
++  // A hash is the URL's only when the URL is a git object URL (`…/commit|commits|tree|blob/<hash>`); a hash that merely
++  // ends a path of an unrelated URL is still a commit claim (forgery f9).
++  const inUrl = (raw) => textLines.some((l) => l.includes(raw) && new RegExp(`(?:https?://|(?:github|gitlab)\\.com/)[^\\s)\\]>\`]*/(?:commit|commits|tree|blob)/${raw}`, 'i').test(l));
++  // A line that names the fleet is a fleet citation: a hash of another repository is the fleet's, not this lane's
++  // landing (forgery f8); without that word it is a claim about this lane.
++  const fleetNamed = (raw) => textLines.some((l) => l.includes(raw) && /\bfleet\b/i.test(l));
+   for (const raw of new Set(text.match(HASH) || [])) {
+-    if (inUrl(raw)) continue; // a hash that is a path component of a URL is the URL's, not a commit claim
++    if (inUrl(raw)) continue;
+     const h = raw.toLowerCase();
+     const inLane = git(lane, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+     const inFleet = fleet && git(fleet, ['cat-file', '-e', `${h}^{commit}`]).status === 0;
+-    if (!inLane && !inFleet) { add('HASH_DEAD', raw.length === 40 ? raw : `${raw} (len=${raw.length})`); continue; }
+-    if (inLane && tip && git(lane, ['merge-base', '--is-ancestor', h, tip]).status !== 0) add('HASH_ORPHAN', h);
++    if (!inLane && inFleet) { if (!fleetNamed(raw)) add('HASH_FOREIGN', raw); continue; }
++    if (!inLane) { add('HASH_DEAD', raw.length === 40 ? raw : `${raw} (len=${raw.length})`); continue; }
++    if (tip && git(lane, ['merge-base', '--is-ancestor', h, tip]).status !== 0) add('HASH_ORPHAN', h);
+   }
+   return findings;
+ }
+@@ -262,6 +309,30 @@
+   t('receipt-dir-citation-ok', run(body('see `.ufo/waves/round-9/close/`')).length === 0);
+   t('receipt-dir-citation-empty', ids(body('see `.ufo/waves/round-9/base/nope/`')) === 'RECEIPT_MISSING');
+   t('hash-in-url-skipped', run(body('https://example.invalid/tree/0123456789abcdef0123456789abcdef01234567')).length === 0);
++  // wave-2 ratchet (round-64 forgeries f1..f11, build/K64R2CriticForgeV2/cases)
++  t('tally-digits-first-label', ids(body('64_HELD held=6/6')) === 'TALLY_UNRECEIPTED');
++  t('tally-confusable-held', ids(body('X9_\u041dELD held=6/6')) === 'TALLY_UNRECEIPTED');
++  t('tally-fullwidth-digits', ids(body('X9_HELD held=\uff16/\uff16')) === 'TALLY_UNRECEIPTED');
++  t('tally-arabic-indic-digits', ids(body('X9_HELD held=\u0666/\u0666')) === 'TALLY_UNRECEIPTED');
++  t('tally-line-split', ids(body('X9_HELD\nheld=6/6')) === 'TALLY_UNRECEIPTED');
++  t('tally-leading-zeros-honest', run(body('X9_UNMET held=00/03 (`.ufo/waves/round-9/base/p-base.txt`)')).length === 0);
++  t('placeholder-todo', ids(body('TODO: fill the revision')) === 'PLACEHOLDER');
++  t('placeholder-angle-upper', ids(body('the tip is <<TIP>>')) === 'PLACEHOLDER');
++  t('receipt-path-case-fold', ids(body('see `.ufo/waves/round-9/Close/p-tip.txt`')) === 'RECEIPT_MISSING');
++  t('hash-url-non-git-tail', ids(body('0123456789abcdef0123456789abcdef01234567 (https://example.invalid/docs/0123456789abcdef0123456789abcdef01234567)')) === 'HASH_DEAD');
++  t('sections-in-html-comment', ids(`# r\n<!--\n${body()}\n-->\nNothing to report.\n`) === 'SECTION_MISSING,SHONEN_COUNT');
++  // fleet-side fixture repo: a commit that exists only outside the lane (forgery f8)
++  const E = join(T, 'fleetrepo');
++  mkdirSync(E, { recursive: true });
++  const ge = (...a) => spawnSync('git', ['-C', E, '-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', ...a], { encoding: 'utf8' });
++  ge('init', '-q'); writeFileSync(join(E, 'f.txt'), 'f'); ge('add', '-A'); ge('commit', '-q', '-m', 'fleet');
++  const foreign = ge('rev-parse', 'HEAD').stdout.trim();
++  const runF = (text) => diffReport({ lane: D, round: 9, reportText: text, rev: c1, fleet: E });
++  const idsF = (text) => [...new Set(runF(text).map((f) => f.id))].join(',');
++  t('hash-foreign', idsF(body(foreign)) === 'HASH_FOREIGN');
++  t('hash-foreign-named-fleet', runF(body(`${foreign} fleet`)).length === 0);
++  t('tally-checks-line-split', ids(body('X9_HELD held=3/3\nchecks=9')) === 'TALLY_CHECKS_MISMATCH');
++  t('hash-41-malformed', ids(body('0123456789abcdef0123456789abcdef01234567f')) === 'HASH_DEAD');
+   const rf = join(T, 'r.md'); writeFileSync(rf, body());
+   const cli = (...a) => spawnSync(process.execPath, [process.argv[1], '--lane', D, '--round', '9', '--report', rf, ...a], { encoding: 'utf8' });
+   t('cli-rev-space-form-bad-rev', cli('--rev', 'deadbeef00').status === 2);

@@ -1,0 +1,29 @@
+--- scripts/plan-before-ready.sh (pristine selftest)
++++ scripts/plan-before-ready.sh + P6-oldest-add
+@@ -474,6 +474,26 @@
+   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
+ 
++
++  # 34 the gate re-added after the plan: the OLDEST add proves it predated the plan
++  d="$(fixture map-gate-readded)" || return 2
++  MAP_STUB=green fcommit "$d" 1000000000 "gate" scripts/readme-map.mjs
++  git -C "$d" rm -q -- scripts/readme-map.mjs
++  fcommit_all "$d" 1000000100 "gate dropped"
++  fcommit "$d" 1000000200 "plan"  .ufo/waves/round-9/plan.md
++  fcommit "$d" 1000000300 "ready" .ufo/waves/round-9/w1.ready
++  MAP_STUB=green fcommit "$d" 1000000400 "gate re-added" scripts/readme-map.mjs
++  check_has map-gate-readded 1 "$d" 9 'reason=MAP_ABSENT'
++
++  # 35 a plan added, dropped, re-added after the marker: the OLDEST add is the freeze
++  d="$(fixture plan-readded-after-marker)" || return 2
++  fcommit "$d" 1000000000 "plan" .ufo/waves/round-9/plan.md
++  git -C "$d" rm -q -- .ufo/waves/round-9/plan.md
++  fcommit_all "$d" 1000000100 "plan dropped"
++  fcommit "$d" 1000000200 "ready" .ufo/waves/round-9/w1.ready
++  fcommit "$d" 1000000300 "plan re-added" .ufo/waves/round-9/plan.md
++  check_has plan-readded-after-marker 0 "$d" 9 'plan_ct=1000000000'
++
+   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+   [ "$fail" -eq 0 ] && return 0 || return 1
+ }

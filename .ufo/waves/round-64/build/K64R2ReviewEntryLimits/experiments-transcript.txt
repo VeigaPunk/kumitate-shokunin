@@ -1,0 +1,28 @@
+HOST: jj=0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5 git=2.56.0
+================================================================================
+E1_rewrite_below_seat_at: recorded_trees_equal=no disk_equals_new_tree=no entry_predicts=stale corrected_predicts=stale measured=stale -> FIT_BOTH
+E2a_rebase_seat_same_tree_parent: cid_changed=yes recorded_trees_equal=yes disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=fresh measured=fresh -> FIT_BOTH (refines S199: rebase alone does not stale)
+E2b_rebase_seat_diff_tree_parent: recorded_trees_equal=no disk_equals_new_tree=no entry_predicts=stale corrected_predicts=stale measured=stale -> FIT_BOTH
+E3a_squash_from_seat_into_parent: chid_changed=yes recorded_trees_equal=yes disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=fresh measured=fresh -> FIT_TREE_RULE (breaks Decision Table row 5: non-empty seat commit emptied/abandoned into parent stays fresh with new change_id)
+E3b_squash_from_seat_into_sibling: recorded_trees_equal=no disk_equals_new_tree=no entry_predicts=stale corrected_predicts=stale measured=stale -> FIT_BOTH
+E4a_restore_noop_same_tree: recorded_trees_equal=yes disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=fresh measured=fresh -> FIT_BOTH
+E4b_restore_changes_in_seat: recorded_trees_equal=no disk_equals_new_tree=no entry_predicts=stale corrected_predicts=stale measured=stale seat_file_on_disk=kept -> FIT_BOTH
+E5a_edit_seat_commit_from_default: both_on_same_change=yes default_gets_seat_file=yes measured=fresh -> FIT_BOTH
+E5b_shared_commit_describe_by_default: recorded_trees_equal=yes disk_equals_new_tree=yes measured=fresh -> FIT_BOTH
+E5c_shared_commit_file_write_by_default: recorded_trees_equal=no disk_equals_new_tree=no measured=stale -> FIT_BOTH
+E6a_ignored_file_in_seat_on_abandon: recorded_trees_equal=yes raw_disk_has_ignored=yes measured=fresh ignored_kept=yes -> BREAKS_LITERAL_FILES_ON_DISK (ignored files are excluded from tree_state)
+E6b_ignored_vs_tracked_after_update_stale: tracked_seat_txt=deleted ignored_txt=kept
+E7a_rebase_seat_into_conflict: recorded_trees_equal=no disk_equals_new_tree=no measured=stale -> FIT_BOTH
+E7b_describe_conflicted_seat: conflict_markers_on_disk=1 recorded_merged_trees_equal=yes measured=fresh -> FIT_CORRECTED_RULE (MergedTreeId equality holds across conflicted trees)
+E8a_pending_edit_on_describe: rec_tree_matches_view_tree=yes disk_equals_new_tree=no entry_predicts=stale corrected_predicts=fresh measured=fresh pending_snapshotted_after_status=1 -> BREAKS_ENTRY_RULE
+E8b1_pending_delete_matches_abandon_tree: rec_tree_matches_view_tree=no disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=stale measured=stale -> BREAKS_ENTRY_RULE
+E8b2_pending_add_matches_squash_tree: rec_tree_matches_view_tree=no disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=stale measured=stale -> BREAKS_ENTRY_RULE
+E8b3_dirty_abandon_update_stale_divergent_op: reconcile_ops=1 concurrent_msg=1 old_change_in_all=1 dirty_file_on_disk=deleted
+E9a_abandon_nonempty_parent: recorded_trees_equal=no disk_equals_new_tree=no entry_predicts=stale corrected_predicts=stale measured=stale parent_file_on_disk=kept -> FIT_BOTH
+E9b_abandon_empty_parent: recorded_trees_equal=yes disk_equals_new_tree=yes entry_predicts=fresh corrected_predicts=fresh measured=fresh -> FIT_BOTH
+================================================================================
+=== E10: Decision Table & ## Limits Audit Probes ===
+E10a_id_survival: rewrite_preserves_change_id=yes rewrite_changes_commit_id=yes abandon_changes_change_id=yes
+E10b_stale_commit_and_treechange_file_fate: stale_jj_commit_exit=1 update_stale_treechange_seat_file=kept update_stale_treechange_extra_file=added
+E10c_stale_seat_iwc_abandon_peer: sb_state_before=stale stale_sb_iwc_abandon_exit=0 sa_state_after=stale
+E10d_limits_probes: default_git_porcelain_lines=0 seat_commit_in_default_git_odb=commit auto_update_stale_status_exit=0 auto_update_stale_abandoned_file=deleted forgotten_seat_status_output=[No working copy.]

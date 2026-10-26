@@ -1,0 +1,48 @@
+--- a/scripts/report-receipt-diff.mjs
++++ b/scripts/report-receipt-diff.mjs
+@@ -43,7 +43,7 @@
+   ['SHONEN', /^#{1,6}\s*\**\s*SHONEN/im],
+ ];
+ const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\{\{[A-Za-z][A-Za-z0-9_]*\}\}|\bX{4,}\b|\bto be filled\b|<(?:measured|measured_rev|tip_hash|rev_hash|placeholder|tbd|todo)>/gi;
+-const TALLY = /\b([a-z][a-z0-9]*_(?:held|unmet))\s+held=(\d+)\/(\d+)/gi;
++const TALLY = /\b([a-z][a-z0-9]*_(?:held|unmet))\s+(held=)?(\d+)\/(\d+)/gi;
+ const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'g');
+ const HASH = /\b[0-9a-fA-F]{39,40}\b/g;
+ // Scan copy: invisible characters, table pipes and spaced operators are normalised away, so a claim cannot be
+@@ -135,19 +135,24 @@
+   for (const [file, body] of receiptNames) {
+     for (const line of scan(body).split('\n')) {
+       for (const m of line.matchAll(TALLY)) {
+-        const key = tallyKey(m[1], m[2], m[3]);
++        if (!m[2]) continue; // only the `held=x/y` form indexes a pair (the bare form never satisfies a claim)
++        const key = tallyKey(m[1], m[3], m[4]);
+         const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
+         if (!index.has(key)) index.set(key, []);
+         index.get(key).push({ file, checks: c ? c[1] : null });
+       }
+     }
+   }
++  const baseSeen = new Set([...index.keys()].map((k) => k.split(' ')[0].replace(/_(?:HELD|UNMET)$/, '')));
+   for (const line of scan(text).split('\n')) {
+     const scope = cited(line).filter(isPath);
+     for (const m of line.matchAll(TALLY)) {
+-      const key = tallyKey(m[1], m[2], m[3]);
++      const key = tallyKey(m[1], m[3], m[4]);
+       const hits = (index.get(key) || []).filter((h) => !scope.length || scope.some((sp) => (sp.includes('*') ? globRe(sp).test(h.file) : sp === h.file)));
+-      if (!hits.length) { add('TALLY_UNRECEIPTED', key); continue; }
++      // A claim written without `held=` (`DISPATCH60_HELD 10/10`) is checked only when the round's own receipts carry
++      // that counter (either verdict): a foreign counter's reading quoted in prose (r62's `DISPATCH61_HELD 4/4`) is
++      // not this round's claim, and a counter name no receipt of this round mentions is not checked at all.
++      if (!hits.length) { if (m[2] || baseSeen.has(m[1].toUpperCase().replace(/_(?:HELD|UNMET)$/, ''))) add('TALLY_UNRECEIPTED', key); continue; }
+       const c = /^\s*checks=(\d+)/.exec(line.slice(m.index + m[0].length));
+       if (c && !hits.some((h) => h.checks === null || h.checks === c[1])) add('TALLY_CHECKS_MISMATCH', `${key} checks=${c[1]}`);
+     }
+@@ -236,6 +241,8 @@
+   t('tally-cited-mismatch', ids(body('X9_HELD held=9/9 (`.ufo/waves/round-9/close/p-tip.txt`)')) === 'TALLY_UNRECEIPTED');
+   t('tally-checks-mismatch', ids(body('X9_HELD held=3/3 checks=9')) === 'TALLY_CHECKS_MISMATCH');
+   t('tally-base-only', ids(body('W9_HELD held=4/4 (`.ufo/waves/round-9/close/p-tip.txt`)')) === 'TALLY_UNRECEIPTED');
++  t('tally-bare-form-overstated', ids(body('X9_HELD 6/6')) === 'TALLY_UNRECEIPTED');
++  t('tally-bare-form-foreign-label', run(body('Z9_HELD 6/6')).length === 0);
+   t('receipt-empty', ids(body('see `.ufo/waves/round-9/close/empty.txt`')) === 'RECEIPT_EMPTY');
+   t('receipt-symlink', ids(body('see `.ufo/waves/round-9/close/link.txt`')) === 'RECEIPT_MISSING');
+   t('receipt-escape', ids(body('see `.ufo/waves/round-9/close/p-tip.txt/../../../base/p-base.txt`')) === 'RECEIPT_MISSING');

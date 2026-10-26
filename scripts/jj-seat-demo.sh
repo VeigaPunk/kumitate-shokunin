@@ -8,6 +8,13 @@
 # cleared, HOME/XDG fixture-local, GIT_CEILING_DIRECTORIES stops the seat's git lookup at the temp root), every mutating step
 # fail-closed, honest derivations (seat-attributed op delta, a real --ignore-working-copy probe, the tree-identity rule for
 # stale vs auto-repoint), and measured keys on update-stale file fate, cross-abandon and forget reachability.
+# v3 DRAFT (round 64 w2, K64R2ExecJjOtherVersion — NOT integrated; the L1 owns scripts/): version-skew repair.
+#   1. jj 0.46.0 creates a Git worktree for `jj workspace add` when the current workspace is colocated and
+#      `git.colocate` is true (its default), which flips `seat_has_git_dir` no -> yes. The fixture now pins
+#      non-colocation with `--no-colocate` where the version supports it, so the 21 `JJ_SEAT:` keys stay
+#      version-stable (measured equal on 0.45.1 and 0.46.0; the J64 counter's J6 compares them to the entry).
+#   2. Version-dependent facts are printed as `JJ_SKEW: <key>=<value>` lines, which J6 does not read: the
+#      default-flags colocation result, and `jj workspace remove` (0.46.0+) against S200's snapshot sentence.
 set -u
 command -v jj >/dev/null 2>&1 || { echo 'JJ_SEAT_DEMO: FAIL-CLOSED jj-absent'; exit 2; }
 command -v git >/dev/null 2>&1 || { echo 'JJ_SEAT_DEMO: FAIL-CLOSED git-absent'; exit 2; }
@@ -40,7 +47,21 @@ unset JJ_USER JJ_EMAIL JJ_EDITOR JJ_SSH JJ_FIX JJ_RUST_LOG JJ_OP_LOG_TEMPLATE JJ
 # The seat fixture must not inherit a repository from the caller's TMPDIR (git walks up from the seat dir and would find
 # a .git above the mktemp dir; measured: TMPDIR inside a git worktree flipped seat_has_git_dir to yes).
 export GIT_CEILING_DIRECTORIES="${S%/*}"
-J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --no-pager --color never "$@"; }
+# jj's own repo discovery is NOT bounded by GIT_CEILING_DIRECTORIES: with `-R <fixture>` and a cwd inside another
+# jj repo, 0.45.1 probes that repo's `.jj/repo/` with a temp file ("Failed to determine the secure config for a repo")
+# — a write into the caller's repo, and a hard FAIL-CLOSED when that repo is read-only (measured). Sit in $S instead:
+# every path in this script is absolute, so the cwd is free to be a non-repository directory.
+cd "$S" || fail chdir
+# The description editor is a jj config, not an env var: `squash` combines descriptions and opens $VISUAL/$EDITOR
+# (else nano) unless ui.editor is pinned. Ambient VISUAL/EDITOR therefore decided this script's exit code on this
+# host (VISUAL=true passed, unset or /bin/false FAIL-CLOSED at squash-into; measured). Pin it and clear the vars.
+unset EDITOR VISUAL
+J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --config 'ui.editor="true"' --no-pager --color never "$@"; }
+# Version skew: pin non-colocation where the flag exists (0.46.0+), so the outcome keys do not depend on
+# `git.colocate` (true by default from 0.46.0: `jj workspace add` then creates a Git worktree for the seat).
+WSADD=()
+if jj workspace add --help 2>/dev/null | grep -q -- '--no-colocate'; then WSADD=(--no-colocate); fi
+skew() { echo "JJ_SKEW: $1=$2"; }
 # -----------------------------------------------------------------------------
 
 git -C "$D" init -q || fail git-init
@@ -49,10 +70,12 @@ git -C "$D" init -q || fail git-init
 [ "$(cd "$D/.git" 2>/dev/null && pwd -P)" = "$(cd "$D" && pwd -P)/.git" ] || fail gitdir-outside
 (cd "$D" && J git init >/dev/null 2>&1) || fail jj-git-init
 echo base > "$D/base.txt"
+# v3: an ignore rule in the base tree, so a seat inherits it (the remove probe needs an ignored file).
+printf 'ign*\n' > "$D/.gitignore"
 J -R "$D" describe -m base >/dev/null 2>&1 || fail describe-base
 J -R "$D" new -m trunk >/dev/null 2>&1 || fail new-trunk
 SEAT="$S/seat1"
-J -R "$D" workspace add "$SEAT" >/dev/null 2>&1 || fail workspace-add
+J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$SEAT" >/dev/null 2>&1 || fail workspace-add
 kv() { echo "JJ_SEAT: $1=$2"; }
 stale_q() { J -R "$1" status 2>&1 | grep -qi 'working copy is stale' && echo stale || echo fresh; }
 chg() { J -R "$1" log -r @ --no-graph -T 'change_id.short()' 2>/dev/null; }
@@ -84,14 +107,18 @@ kv ignore_working_copy_hides_pending "$([ "$(J -R "$SEAT" --ignore-working-copy 
 rm "$SEAT/pend.txt"; J -R "$SEAT" status >/dev/null 2>&1 || fail seat-status-2
 
 # rewrite the seat's checked-out commit from the default workspace.
-# NOTE (measured 0.45.1): jj auto-repoints a stale wc when the op leaves its tree identical.
-# describe is tree-preserving => 'fresh' below means "auto-recovered", not "never stale".
+# NOTE (measured 0.45.1): jj auto-repoints a seat's checkout operation iff the seat's
+# LAST-SNAPSHOTTED tree_id (.jj/working_copy/tree_state) equals the new working-copy commit's
+# tree_id in the operation view — NOT whether the live files on disk equal the new commit's tree.
 SEAT_CHANGE=$(J -R "$SEAT" log -r @ --no-graph -T 'change_id.short()' 2>/dev/null) || fail seat-change
+SEAT_COMMIT_0=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'commit_id.short()' 2>/dev/null) || fail seat-commit-0
 J -R "$D" describe -r "$SEAT_CHANGE" -m rewritten >/dev/null 2>&1 || fail describe-rewrite
 out=$(J -R "$SEAT" status 2>&1)
 kv rewrite_seat_head_seat_state "$(printf '%s' "$out" | grep -qi 'working copy is stale' && echo stale || echo fresh)"
 kv rewrite_seat_head_description_seen "$(J -R "$SEAT" log -r @ --no-graph -T 'description.first_line()' 2>/dev/null)"
-
+SEAT_CHANGE_1=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'change_id.short()' 2>/dev/null)
+SEAT_COMMIT_1=$(J -R "$SEAT" --ignore-working-copy log -r @ --no-graph -T 'commit_id.short()' 2>/dev/null)
+kv rewrite_preserves_change_id_changes_commit_id "$([ "$SEAT_CHANGE" = "$SEAT_CHANGE_1" ] && [ "$SEAT_COMMIT_0" != "$SEAT_COMMIT_1" ] && echo yes || echo no)"
 # control: a tree-CHANGING rewrite DOES stale the seat (squash moves a file into seat's @).
 echo extra > "$D/extra.txt"; J -R "$D" status >/dev/null 2>&1 || fail d-status
 J -R "$D" squash --from @ --into "$SEAT_CHANGE" >/dev/null 2>&1 || fail squash-into
@@ -99,7 +126,7 @@ out=$(J -R "$SEAT" status 2>&1)
 kv rewrite_treechange_seat_state "$(printf '%s' "$out" | grep -qi 'working copy is stale' && echo stale || echo fresh)"
 J -R "$SEAT" workspace update-stale >/dev/null 2>&1 || fail update-stale-1
 out=$(J -R "$SEAT" status 2>&1); printf '%s' "$out" | grep -qi 'working copy is stale' && fail still-stale-1
-
+kv update_stale_treechange_seat_file "$([ -f "$SEAT/seat.txt" ] && [ -f "$SEAT/extra.txt" ] && echo kept-and-merged || echo lost)"
 # abandon the seat's checked-out commit: mints a NEW wc change id (no successor) ->
 # stale iff on-disk tree differs from the new (empty) wc commit.
 J -R "$D" abandon "$SEAT_CHANGE" >/dev/null 2>&1 || fail abandon
@@ -108,7 +135,7 @@ kv abandon_seat_head_seat_state "$(printf '%s' "$out" | grep -qi 'working copy i
 if [ -f "$SEAT/seat.txt" ]; then fd=kept; elif [ -e "$SEAT/seat.txt" ]; then fd=other; else fd=absent; fi
 kv abandon_seat_head_files_on_disk "$fd"
 # control: an empty seat head abandons to 'fresh' (identical trees auto-repoint).
-SEAT2="$S/seat2"; J -R "$D" workspace add "$SEAT2" >/dev/null 2>&1 || fail ws-add-2
+SEAT2="$S/seat2"; J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$SEAT2" >/dev/null 2>&1 || fail ws-add-2
 C2=$(J -R "$SEAT2" log -r @ --no-graph -T 'change_id.short()' 2>/dev/null)
 J -R "$D" abandon "$C2" >/dev/null 2>&1 || fail abandon-2
 out=$(J -R "$SEAT2" status 2>&1)
@@ -144,8 +171,8 @@ kv seat_dir_after_forget "$([ -d "$SEAT" ] && echo present || echo removed)"
 # a fresh empty commit (measured: a seat whose working copy carries changes goes stale instead).
 SEATX2="$S/seatx2"
 SEATX3="$S/seatx3"
-J -R "$D" workspace add "$SEATX2" >/dev/null 2>&1 || fail workspace-add-2
-J -R "$D" workspace add "$SEATX3" >/dev/null 2>&1 || fail workspace-add-3
+J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$SEATX2" >/dev/null 2>&1 || fail workspace-add-2
+J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$SEATX3" >/dev/null 2>&1 || fail workspace-add-3
 CX2=$(chg "$SEATX2"); CX3=$(chg "$SEATX3")
 [ -n "$CX2" ] && [ -n "$CX3" ] || fail seat-change-id
 J -R "$SEATX3" describe -r "$CX2" -m rewritten-by-seat3 >/dev/null 2>&1 || fail cross-rewrite
@@ -162,12 +189,91 @@ kv cross_abandon_both_fresh_after_status "$b"
 
 # (c) `jj workspace forget` of a seat whose head still carries a change: is that commit still in all()?
 SEATX4="$S/seatx4"
-J -R "$D" workspace add "$SEATX4" >/dev/null 2>&1 || fail workspace-add-4
+J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$SEATX4" >/dev/null 2>&1 || fail workspace-add-4
 echo forgetwork > "$SEATX4/seat4.txt" || fail fixture-write
 J -R "$SEATX4" status >/dev/null 2>&1 || fail jj-status
 CX4=$(chg "$SEATX4")
 [ -n "$CX4" ] || fail seat-change-id
 J -R "$D" workspace forget seatx4 >/dev/null 2>&1 || fail workspace-forget
 kv forget_seat_commit_in_all "$([ "$(J -R "$D" --ignore-working-copy log -r 'all()' --no-graph -T 'change_id.short()++"\n"' 2>/dev/null | grep -c "^$CX4")" -ge 1 ] && echo yes || echo no)"
+
+# (d) falsifiers of "files on disk == new commit's tree" in favour of "recorded snapshot tree_id == new commit's tree_id":
+SEATX5="$S/seatx5"
+J -R "$D" workspace add "$SEATX5" >/dev/null 2>&1 || fail workspace-add-5
+echo snap1 > "$SEATX5/s5.txt" || fail write-s5
+J -R "$SEATX5" status >/dev/null 2>&1 || fail status-s5
+CX5=$(chg "$SEATX5")
+# unsnapshotted edit on disk makes live disk != commit tree, yet tree-preserving describe leaves seat fresh:
+echo unsnap_dirty > "$SEATX5/s5.txt" || fail dirty-s5
+J -R "$D" describe -r "$CX5" -m dirty-describe >/dev/null 2>&1 || fail describe-s5
+kv pending_edit_on_tree_preserving_rewrite_seat_state "$(stale_q "$SEATX5")"
+# unsnapshotted deletion makes live disk == base tree, yet abandoning seat commit leaves seat stale:
+rm "$SEATX5/s5.txt" || fail rm-s5
+J -R "$D" abandon "$CX5" >/dev/null 2>&1 || fail abandon-s5
+kv pending_delete_matching_abandoned_tree_seat_state "$(stale_q "$SEATX5")"
+
+# (e) squash FROM a non-empty seat commit into its parent (@-): seat commit is emptied/abandoned into parent,
+# minting a new change_id, yet the seat's tree (parent + empty child) equals its recorded snapshot tree -> fresh:
+SEATX6="$S/seatx6"
+J -R "$D" workspace add "$SEATX6" >/dev/null 2>&1 || fail workspace-add-6
+echo squashme > "$SEATX6/s6.txt" || fail write-s6
+J -R "$SEATX6" status >/dev/null 2>&1 || fail status-s6
+CX6=$(chg "$SEATX6")
+J -R "$D" squash -r "$CX6" -u >/dev/null 2>&1 || fail squash-s6-parent
+kv squash_seat_into_parent_seat_state "$(stale_q "$SEATX6")"
+
+# (f) a stale seat CAN still mutate/abandon a peer workspace's commit via --ignore-working-copy:
+CX6_NEW=$(chg "$SEATX6")
+J -R "$SEATX5" --ignore-working-copy abandon "$CX6_NEW" >/dev/null 2>&1 && iwc_ab=yes || iwc_ab=no
+kv stale_seat_iwc_can_abandon_peer "$iwc_ab"
+# --- version-dependent measurements (`JJ_SKEW:` lines; J64's J6 reads only `JJ_SEAT:` keys) -----------
+skew jj_version "$(jj --version | awk '{print $2}')"
+if [ "${#WSADD[@]}" -gt 0 ]; then skew workspace_add_no_colocate_flag supported; else skew workspace_add_no_colocate_flag absent; fi
+# default flags (no pin): does this version colocate the seat into a Git worktree of the default repo?
+SEATD="$S/seatdefault"
+J -R "$D" workspace add "$SEATD" >/dev/null 2>&1 || fail workspace-add-default
+skew default_flags_seat_has_git_dir "$(git -C "$SEATD" rev-parse --git-dir >/dev/null 2>&1 && echo yes || echo no)"
+# shape only (no mktemp path in the value): is the seat's git dir inside the DEFAULT repo's .git?
+gd=$(git -C "$SEATD" rev-parse --git-dir 2>/dev/null || echo none)
+case "$gd" in
+  none) skew default_flags_seat_gitdir none ;;
+  "$D"/.git/*) skew default_flags_seat_gitdir default-repo-gitdir ;;
+  *) skew default_flags_seat_gitdir other ;;
+esac
+J -R "$D" workspace forget seatdefault >/dev/null 2>&1 || fail forget-default
+# `jj workspace remove` (0.46.0+) against S200: "Tracked changes are snapshotted before the directory is
+# removed, but ignored files in that directory are deleted." The change id is read with --ignore-working-copy
+# so the file stays UNSNAPSHOTTED until remove runs (the sharper form of the sentence).
+if jj workspace --help 2>/dev/null | grep -qE '^  remove'; then
+  skew workspace_remove_supported yes
+  RW="$S/seatremove"
+  J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$RW" >/dev/null 2>&1 || fail ws-add-remove
+  RC=$(J -R "$RW" --ignore-working-copy log -r @ --no-graph -T 'change_id.short()' 2>/dev/null)
+  [ -n "$RC" ] || fail seat-change-id
+  printf 'never snapshotted\n' > "$RW/late.txt" || fail fixture-write
+  printf 'ignored bytes\n' > "$RW/ign.tmp" || fail fixture-write
+  J -R "$D" workspace remove seatremove >/dev/null 2>&1 || fail ws-remove
+  skew workspace_remove_dir_after "$([ -d "$RW" ] && echo present || echo removed)"
+  skew workspace_remove_unsnapshotted_change_recovered "$([ "$(J -R "$D" --ignore-working-copy file show -r "$RC" 'root:late.txt' 2>/dev/null | grep -c 'never snapshotted')" -ge 1 ] && echo yes || echo no)"
+  skew workspace_remove_ignored_file_in_tree "$(J -R "$D" --ignore-working-copy file list -r "$RC" 2>/dev/null | grep -c 'ign.tmp')"
+  RS="$S/seatstale"
+  J -R "$D" workspace add ${WSADD[@]+"${WSADD[@]}"} "$RS" >/dev/null 2>&1 || fail ws-add-stale
+  printf 'stale seat\n' > "$RS/stale.txt" || fail fixture-write
+  J -R "$RS" status >/dev/null 2>&1 || fail jj-status
+  RSC=$(chg "$RS")
+  J -R "$D" abandon "$RSC" >/dev/null 2>&1 || fail abandon-stale
+  J -R "$D" workspace remove seatstale >/dev/null 2>&1; rc=$?
+  skew workspace_remove_stale_refused "$([ "$rc" -ne 0 ] && echo yes || echo no)"
+  J -R "$D" workspace forget seatstale >/dev/null 2>&1 || fail forget-stale
+  J -R "$D" workspace remove default >/dev/null 2>&1; rc=$?
+  skew workspace_remove_main_refused "$([ "$rc" -ne 0 ] && echo yes || echo no)"
+else
+  skew workspace_remove_supported no
+  skew workspace_remove_dir_after n/a
+  skew workspace_remove_unsnapshotted_change_recovered n/a
+  skew workspace_remove_ignored_file_in_tree n/a
+  skew workspace_remove_stale_refused n/a
+  skew workspace_remove_main_refused n/a
+fi
 
 echo "JJ_SEAT_DEMO: DONE jj=$(jj --version | awk '{print $2}')"

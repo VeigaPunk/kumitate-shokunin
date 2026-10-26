@@ -1,0 +1,65 @@
+CLOSE_PROXY: write lane=/tmp/kumitate-r64/K64R2ExecProxyApply/tip refresher=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecProxyApply/refresh-stanza.mjs
+BEFORE  PROXY: DRIFT (A_DRIFT term=A declared=257 computed=514 delta=+257; C2_DRIFT term=C2 declared=153 computed=156 delta=+3; C2_TOTAL_DRIFT term=C2_total declared=153 computed=156 delta=+3; GATE_PIN_DRIFT term=pin.plan-before-ready declared=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9 computed=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0; PIN_UNPINNED term=scripts/report-receipt-diff.mjs; src-rev=31c465f15669) (exit 1)
+
+--- pins (2 to add) ---
+PIN  + pin.jj-seat-demo=scripts/jj-seat-demo.sh  // round 64 C2: jj seat containment demo (J6 re-runs it)
+PIN  + pin.report-receipt-diff=scripts/report-receipt-diff.mjs  // proxy-check PIN_UNPINNED: no pin key covered this file
+--- a/scripts/proxy-check.mjs
++++ b/scripts/proxy-check.mjs
+@@ -479,6 +479,8 @@
+   'pin.make-dispatch-actual': 'scripts/make-dispatch-actual.mjs', // round 62: the round-62 dispatcher invocation writer (pinned in SCORECARD, registered here in round 63 — the R62 fail-closed)
+   'pin.inline-dispatch-evidence': 'scripts/inline-dispatch-evidence.mjs', // round 63: inline wave dispatch evidence gate (C1)
+   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
++  'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
++  'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
+ };
+ /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+ const AXIS_ROWS = [
+PINS: wrote 2 key(s) into scripts/proxy-check.mjs
+
+--- stanza diff (1510 bytes) ---
+--- a/SCORECARD.md
++++ b/SCORECARD.md
+@@ -285,12 +285,12 @@
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=257
++A=514
+ C=30
+ C1=19
+ C1_total=19
+-C2=153
+-C2_total=153
++C2=156
++C2_total=156
+ S_members=88
+ S_sections=88
+ R_members=92
+@@ -305,7 +305,7 @@
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+ pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+-pin.proxy-check=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861
++pin.proxy-check=d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f
+ pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
+ pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
+ -->
+@@ -329,7 +329,9 @@
+ pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
+ pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
+ pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721e29ef9ce1e741
+-pin.plan-before-ready=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9
++pin.plan-before-ready=ef726eaef83e7068c28ec3e5e0dfc7732337ee7f4c72eaa6db054d1ed40324a0
++pin.jj-seat-demo=2d2edd43559c52912e674d89cf5d05c3988cbd1618bb98b82561691ca53182c3
++pin.report-receipt-diff=faca709960bd9c132c78abf6e0f075944d3a7d35a29104cb7203802c3ca58e83
+ -->
+ 
+ 
+STANZA: wrote SCORECARD.md from the measured candidate
+IDEMPOTENT: diff_bytes=0 blockers=0 ok=true
+
+AFTER  PROXY: MATCH (A=514 C=30 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (exit 0)
+AFTER  PROXY: MATCH (A=514 C=30 operability=9; C1=19/19 C2=156/156 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=49/49 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669) (exit 0)
+
+CLOSE_PROXY: MATCH (plain=0 strict=0 pins_added=2 pins_written=2 stanza_written=yes idempotent=true)

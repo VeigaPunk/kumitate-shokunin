@@ -1,0 +1,18 @@
+--- a/scripts/report-receipt-diff.mjs
++++ b/scripts/report-receipt-diff.mjs
+@@ -177,7 +177,14 @@
+ function selftest() {
+   const results = [];
+   const t = (name, ok) => results.push([name, ok]);
+-  const T = mkdtempSync(join(tmpdir(), 'rrd-self.'));
++  // An unwritable TMPDIR (or no TMPDIR candidate) must read as a harness failure, not as a node stack trace:
++  // the contract's fail-closed exit is 2, and a stack trace on stdout/stderr is indistinguishable from a crash.
++  let T;
++  try { T = mkdtempSync(join(tmpdir(), 'rrd-self.')); }
++  catch (e) {
++    process.stdout.write(`REPORT_RECEIPT_SELFTEST: ERROR (mkdtemp failed in ${tmpdir()}: ${e.code || e.message})\n`);
++    process.exit(2);
++  }
+   const D = realpathSync(T);
+   const g = (...a) => spawnSync('git', ['-C', D, '-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid', ...a], { encoding: 'utf8' });
+   if (g('init', '-q').status !== 0) { rmSync(T, { recursive: true, force: true }); process.stdout.write('REPORT_RECEIPT_SELFTEST: FAIL (git unavailable)\n'); process.exit(1); }

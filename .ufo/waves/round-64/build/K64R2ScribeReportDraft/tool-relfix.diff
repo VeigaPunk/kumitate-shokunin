@@ -1,0 +1,20 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/report-receipt-diff.mjs	2026-10-25 20:23:41.111267461 -0300
++++ tool-relfix.mjs	2026-10-25 20:57:33.791969713 -0300
+@@ -46,6 +46,8 @@
+ const TALLY = /\b([a-z][a-z0-9]*_(?:held|unmet))\s+held=(\d+)\/(\d+)/gi;
+ const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'g');
+ const HASH = /\b[0-9a-fA-F]{39,40}\b/g;
++// RELFIX: a receipt cited relative to the round dir (`close/x.txt`) is bound like a full path.
++const REL_RECEIPT = /(?<![\w./-])(?:base|close)\/[A-Za-z0-9._*/-]+/g;
+ // Scan copy: invisible characters, table pipes and spaced operators are normalised away, so a claim cannot be
+ // hidden from the tally parser by formatting alone (controls k1 spaced `held = 3 / 3`, k3 table cell, k4 U+200B).
+ const scan = (s) => s
+@@ -111,7 +113,7 @@
+     }
+   }
+   // cited receipt paths, normalised: trailing punctuation dropped; `..` segments and bare directories are not receipts
+-  const cited = (s) => [...new Set([...s.matchAll(RECEIPT_PATH(round))].map((x) => x[0].replace(/[.,;:]+$/, '')))];
++  const cited = (s) => [...new Set([...[...s.matchAll(RECEIPT_PATH(round))].map((x) => x[0].replace(/[.,;:]+$/, '')), ...[...s.matchAll(REL_RECEIPT)].map((x) => `.ufo/waves/round-${round}/${x[0]}`.replace(/[.,;:]+$/, ''))])];
+   const globRe = (g) => new RegExp(`^${g.split('*').map((x) => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]*')}$`);
+   const isPath = (p) => Boolean(p) && !p.split('/').includes('..');
+   // RECEIPT_MISSING / RECEIPT_EMPTY

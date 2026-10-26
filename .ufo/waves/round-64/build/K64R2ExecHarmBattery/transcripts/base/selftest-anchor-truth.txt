@@ -1,0 +1,52 @@
+### tree=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### cmd=node scripts/anchor-truth.mjs --selftest
+### cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/base
+### started=2026-10-25T23:43:12Z
+PASS AT01 clean: a true anchor pins and reads CLEAN
+PASS AT02 positional run `a` / `b` (`:2`, `:3`) pairs left-first by position
+PASS AT03 next-symbol shift: anchor set change fails the check and the re-pin refuses (PIN_REGRESSION)
+PASS AT04 right-first discriminator: `BETA_MARK` (`:3`), `ALPHA_MARK` (`:3`) pins BETA as debt, ALPHA true
+PASS AT05 swapped run re-pin refuses (PIN_REGRESSION)
+PASS AT06 hand-edited pin token not on the line reads REGRESSED
+PASS AT07 debt flipped into the pin by hand reads DEBT_GREW against --base
+PASS AT08 a true expectation dropped to unchecked reads CHECKED_SHRANK against --base
+PASS AT09 review override absent from the sentence reads OVERRIDE_INVALID
+PASS AT10 review override present in the sentence and on the line pins true
+PASS AT11 fixed debt left in the pin reads DEBT_STALE
+PASS AT12 line beyond EOF and a `..` escape are dead debt, never read outside the clone
+PASS AT13 source clone at another revision fails closed (exit 2)
+PASS AT14 "At `path:N`, `sym`" with no earlier symbol pairs forward
+PASS AT15 bare `:N` resolves through the heading path; fenced code is ignored
+PASS AT16 clean pin re-checked against itself as --base stays CLEAN
+PASS AT18 one phrase cited at two sites pairs both anchors with that phrase, never a later symbol
+PASS AT19 forward fill never steals a symbol that owns the next citation
+PASS AT20 re-paired token cannot launder a true ordinal (PIN_REGRESSION by ordinal)
+PASS AT21 a dirty source worktree cannot change a verdict (committed blobs only)
+PASS AT22 a pin note key outside corpus/knowledge fails closed (exit 2)
+PASS AT23 a base-true anchor replaced by another true anchor reads BASE_TRUE_LOST against --base (round-38 closure R38-1)
+PASS AT24 a re-keyed base-true entry hand-set to unchecked, counts held by a forged token, reads BASE_TRUE_LOST and TOKEN_FORGED
+PASS AT25 an inserted earlier anchor shifts a base-true key index and ordinal yet stays CLEAN by identity
+PASS AT26 a pin entry source outside pair or review:<seat> fails closed (exit 2)
+PASS AT27 an earlier true copy of a base-true raw cannot mask the original turned unchecked (BASE_TRUE_LOST by raw@path group)
+PASS AT28 a debt entry hand-set to a null token and unchecked reads TOKEN_FORGED (debt hidden as unchecked)
+PASS AT29 identity carries the resolved path: one bare `:N` true under one heading cannot be swapped for another heading's
+PASS AT30 a review:<seat> entry with a null token fails closed as PIN_INVALID
+PASS AT31 a self-declared review source with no committed record reads REVIEW_UNBOUND (round-40 closure R39-1)
+PASS AT32 a committed review record binds its anchor; a record naming another seat does not
+PASS AT33 a review record binds one anchor: a review token that travels to another anchor is unbound
+PASS AT34 the write path refuses an unbound review source, and --open REV reads only the records committed at REV
+PASS AT43 a debt sibling at a base-true raw@path reads BASE_TRUE_LOST (the group counts every non-true anchor, not only unchecked ones)
+PASS AT44 a second unchecked anchor at a raw@path that held no true anchor at base stays CLEAN (the group check only guards base-true groups)
+PASS AT45 a hand-edited pin whose base-true key now holds a debt entry reads DEBT_GROW by key (the old key-match loop)
+PASS AT46 a record binds a nested re-citation only when its own anchor is gone: a second anchor cannot borrow it, an honest widening keeps it
+PASS AT47 more than 64 committed review registries fails closed under --open
+PASS AT48 an open pin over 4 MiB fails closed before git show
+PASS AT17 unknown flag is a usage refusal (exit 64)
+PASS AT39 a debt anchor swapped for another debt anchor at a fresh identity reads DEBT_NEW against --open (round-40 R39-3 one-for-one trade)
+PASS AT40 new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)
+PASS AT41 an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)
+PASS AT42 an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)
+ANCHOR_TRUTH_SELFTEST: 44/44 pass
+VERDICT: PASS
+### exit=0
+### ended=2026-10-25T23:43:20Z

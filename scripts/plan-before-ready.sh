@@ -119,7 +119,7 @@ norm_round() {  # 63 | round-63 | r63  ->  63
   case "$r" in
     ''|*[!0-9]*) die_usage "not a round number: $1" ;;
   esac
-  printf '%s' "$r"
+  printf '%s' "$((10#$r))"
 }
 
 # oldest commit that adds $2 (a pathspec) in repo $1; prints "<sha>\t<ct>" or nothing
@@ -145,44 +145,54 @@ MAP_GATE=scripts/readme-map.mjs
 # froze over a red map before the arm existed: they read `map=SKIP reason=MAP_PRE_EPOCH_ROUND` by default, and FAIL under
 # `PBR_MAP_FROM=0` (the red-before receipts, `.ufo/waves/round-64/build/K64ExecReadmeGuard/receipts/`).
 MAP_FROM="${PBR_MAP_FROM:-65}"
+case "$MAP_FROM" in
+  ''|*[!0-9]*) die_usage "not a non-negative integer in PBR_MAP_FROM: $MAP_FROM" ;;
+esac
+MAP_FROM="$((10#$MAP_FROM))"
 
-map_first_add() {  # $1=repo -> oldest commit (any revision) that ADDS the readme-map gate
-  git -C "$1" log --full-history --diff-filter=A --format='%H' -- "$MAP_GATE" 2>/dev/null | tail -n 1
+map_first_add() {  # $1=repo $2=plan_sha -> commit in plan's ancestry that ADDS the readme-map gate
+  git -C "$1" log "$2" --full-history --diff-filter=A --format='%H' -n 1 -- "$MAP_GATE" 2>/dev/null
 }
 
 map_at_plan() {  # $1=repo $2=plan_sha
-  local repo="$1" plan="$2" t out rc line first fc gate_sha
+  local repo="$1" plan="$2" t out rc line first fc gate_sha node_bin timeout_bin
   MAP_FIELD="map=SKIP reason=MAP_PRE_EPOCH"; MAP_FAIL_REASON=""
 
-  if ! git -C "$repo" cat-file -e "$plan:$MAP_GATE" 2>/dev/null; then
-    # The gate is absent at the plan commit. It applies only if the gate already existed when
-    # this plan was frozen (its first-add commit is an ancestor-or-equal of PLAN); otherwise the
-    # plan predates the gate and the arm does not apply (rounds 41-56 read exactly as before).
-    gate_sha="$(map_first_add "$repo")"
-    if [ -n "$gate_sha" ] \
-       && git -C "$repo" merge-base --is-ancestor "$gate_sha" "$plan" 2>/dev/null; then
+  if [ "$(git -C "$repo" cat-file -t "$plan:$MAP_GATE" 2>/dev/null)" != "blob" ] \
+     || git -C "$repo" ls-tree "$plan" -- "$MAP_GATE" 2>/dev/null | grep -q '^120000 '; then
+    # The gate is absent (or not a regular file) at the plan commit. It applies iff the gate was
+    # added in an ancestor-or-equal of PLAN; otherwise the plan predates the gate (rounds 41-56).
+    gate_sha="$(map_first_add "$repo" "$plan")"
+    if [ -n "$gate_sha" ]; then
       MAP_FIELD="map=ABSENT"; MAP_FAIL_REASON=MAP_ABSENT
     fi
     return 0
   fi
 
+  node_bin="$(command -v node 2>/dev/null)" || {
+    MAP_FIELD="map=UNRUNNABLE reason=NODE_ABSENT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
+  timeout_bin="$(command -v timeout 2>/dev/null || true)"
   t="$(mktemp -d "${TMPDIR:-/tmp}/pbr-map.XXXXXX" 2>/dev/null)" || {
     MAP_FIELD="map=UNRUNNABLE reason=MKTEMP"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
+  trap 'rm -rf "$t"' INT TERM HUP EXIT
   if ! git -C "$repo" archive --format=tar "$plan" 2>/dev/null | tar -x -C "$t" --no-same-owner 2>/dev/null; then
-    rm -rf "$t"; MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    rm -rf "$t"; trap - INT TERM HUP EXIT
+    MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
   fi
-  if command -v timeout >/dev/null 2>&1; then
-    out="$(cd "$t" && timeout 300 node "$MAP_GATE" 2>&1)"; rc=$?
+  if [ -n "$timeout_bin" ]; then
+    out="$(cd "$t" && "$timeout_bin" -k 5 300 "$node_bin" "$MAP_GATE" 2>&1)"; rc=$?
   else
-    out="$(cd "$t" && node "$MAP_GATE" 2>&1)"; rc=$?
+    out="$(cd "$t" && "$node_bin" "$MAP_GATE" 2>&1)"; rc=$?
   fi
-  rm -rf "$t"
+  rm -rf "$t"; trap - INT TERM HUP EXIT
 
-  if [ "$rc" = 0 ] && printf '%s\n' "$out" | grep -q '^README_MAP: CLEAN '; then
+  if [ "$rc" = 0 ]; then
     line="$(printf '%s\n' "$out" \
-      | sed -n 's/^README_MAP: CLEAN \(files=[0-9]* rows=[0-9]* covered=[0-9]*\).*/\1/p' | head -n 1)"
-    MAP_FIELD="map=CLEAN ${line:-files=? rows=? covered=?}"
-    return 0
+      | sed -n 's/^README_MAP: CLEAN \(files=[0-9][0-9]* rows=[0-9][0-9]* covered=[0-9][0-9]*\)$/\1/p' | head -n 1)"
+    if [ -n "$line" ]; then
+      MAP_FIELD="map=CLEAN $line"
+      return 0
+    fi
   fi
   if [ "$rc" = 0 ]; then
     MAP_FIELD="map=NO_VERDICT map_exit=0"; MAP_FAIL_REASON=MAP_NO_VERDICT; return 0
@@ -336,6 +346,18 @@ run_selftest() {
                 "process.stdout.write('README_MAP: FAIL-CLOSED reason=registry unreadable: ENOENT\\n');" \
                 'process.exit(2);' ;;
       silent) printf '%s\n' 'process.exit(0);' ;;
+      nocounts)  printf '%s\n' "process.stdout.write('README_MAP: CLEAN\\n'); process.exit(0);" ;;
+      midline)   printf '%s\n' "process.stdout.write('noise README_MAP: CLEAN files=2 rows=2 covered=2\\n'); process.exit(0);" ;;
+      cleanfail) printf '%s\n%s\n' \
+                "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
+                'process.exit(1);' ;;
+      exit127) printf '%s\n' 'process.exit(127);' ;;
+      noise)   printf '%s\n' 'process.exit(1);' ;;
+      slowclean) printf '%s\n' \
+                'setTimeout(function () {' \
+                "  process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
+                '  process.exit(0);' \
+                '}, 2000);' ;;
       *)      printf '%s\n%s\n' \
                 "process.stdout.write('README_MAP: CLEAN files=2 rows=2 covered=2\\n');" \
                 'process.exit(0);' ;;
@@ -372,7 +394,7 @@ run_selftest() {
   d="$(fixture wrong-order)" || return 2
   fcommit "$d" 1000000000 "ready" .ufo/waves/round-9/w1.ready
   fcommit "$d" 1000000100 "plan"  .ufo/waves/round-9/plan.md
-  check wrong-order-ready-first 1 "$d" 9
+  check_has wrong-order-ready-first 1 "$d" 9 'reason=PLAN_NOT_ANCESTOR'
 
   # 3 round 62's shape: marker, no plan at all
   d="$(fixture no-plan)" || return 2
@@ -474,7 +496,159 @@ run_selftest() {
   fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
   check_has map-fail-closed 1 "$d" 9 'reason=MAP_FAIL_CLOSED'
 
+
+  # 18 round 0: MAP_FROM=0 must judge round 0 itself (a MAP_FROM>=1 override skips it)
+  d="$(fixture map-round-zero)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-0/plan.md
+  check_has map-round-zero 1 "$d" 0 'reason=MAP_DRIFT'
+
+  # 19 epoch boundary from above: with MAP_FROM=1 the arm must fire at round 1 (-lt, not -le)
+  d="$(fixture map-epoch-boundary)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-1/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-1/w1.ready
+  MAP_FROM=1 check_has map-epoch-boundary 1 "$d" 1 'reason=MAP_DRIFT'
+  MAP_FROM=0
+
+  # 20 production default 65: round 64 is still pre-epoch (kills a lowered default)
+  d="$(fixture map-epoch-default-64)" || return 2
+  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-64/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-64/w1.ready
+  defout="$(PBR_MAP_FROM= bash "${BASH_SOURCE[0]}" --repo "$d" --round 64 2>&1)"; defrc=$?
+  if [ "$defrc" = 0 ] && printf '%s' "$defout" | grep -q 'MAP_PRE_EPOCH_ROUND' \
+     && ! printf '%s' "$defout" | grep -Eq 'reason=MAP_PRE_EPOCH$'; then
+    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=0 got=%s  %s\n' map-epoch-default-64 "$defrc" "$(printf '%s' "$defout" | grep '^PLAN_BEFORE_READY' | head -n 1)"
+  else
+    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=0 got=%s  %s\n' map-epoch-default-64 "$defrc" "$(printf '%s' "$defout" | tail -n 1)"
+  fi
+
+  # 21 production default 65: round 65 is the first enforced round (kills a raised default)
+  d="$(fixture map-epoch-default-65)" || return 2
+  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-65/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-65/w1.ready
+  defout="$(PBR_MAP_FROM= bash "${BASH_SOURCE[0]}" --repo "$d" --round 65 2>&1)"; defrc=$?
+  if [ "$defrc" = 0 ] && printf '%s' "$defout" | grep -Eq 'reason=MAP_PRE_EPOCH$' \
+     && ! printf '%s' "$defout" | grep -q 'MAP_PRE_EPOCH_ROUND'; then
+    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=0 got=%s  %s\n' map-epoch-default-65 "$defrc" "$(printf '%s' "$defout" | grep '^PLAN_BEFORE_READY' | head -n 1)"
+  else
+    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=0 got=%s  %s\n' map-epoch-default-65 "$defrc" "$(printf '%s' "$defout" | tail -n 1)"
+  fi
+
+
+  # 22 mktemp failure fails closed with its own reason
+  d="$(fixture map-mktemp-fails)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  TMPDIR=/nonexistent-pbr-mktemp check_has map-mktemp-fails 1 "$d" 9 'reason=MKTEMP'
+
+  # 23 an unextractable archive fails closed AND its scratch dir is removed
+  d="$(fixture map-archive-fails)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  mkdir -p "$d/fakebin"; printf '%s\n' '#!/bin/sh' 'exit 1' > "$d/fakebin/tar"; chmod +x "$d/fakebin/tar"
+  leak_before="$(find "${TMPDIR:-/tmp}" -maxdepth 1 -name 'pbr-map.*' 2>/dev/null | wc -l)"
+  PATH="$d/fakebin:$PATH" check_has map-archive-fails 1 "$d" 9 'reason=ARCHIVE'
+  leak_after="$(find "${TMPDIR:-/tmp}" -maxdepth 1 -name 'pbr-map.*' 2>/dev/null | wc -l)"
+  if [ "$leak_after" = "$leak_before" ]; then
+    pass=$((pass+1)); printf 'SELFTEST ok   %-24s %s\n' map-archive-no-leak 'no new pbr-map.* leftovers'
+  else
+    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s %s\n' map-archive-no-leak "pbr-map.* leftovers: $leak_before -> $leak_after"
+  fi
+
+  # 24 rc 127 from the counter fails closed as NODE_ABSENT
+  d="$(fixture map-node-127)" || return 2
+  MAP_STUB=exit127 fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-node-127 1 "$d" 9 'reason=NODE_ABSENT'
+
+  # 25 exit 1 without a parseable verdict is MAP_UNRUNNABLE, never a pass
+  d="$(fixture map-noise-exit-1)" || return 2
+  MAP_STUB=noise fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-noise-exit-1 1 "$d" 9 'map=UNRUNNABLE map_exit=1'
+
+  # 26 a counter hung past the timeout fails with reason=TIMEOUT (the 300 s bound is live)
+  d="$(fixture map-timeout-fires)" || return 2
+  MAP_STUB=slowclean fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  mkdir -p "$d/bin"
+  printf '%s\n' '#!/bin/sh' 'if [ "$1" = -k ] && [ "$3" = 300 ]; then shift 3; exec /usr/bin/timeout 1 "$@"; fi' 'exec /usr/bin/timeout "$@"' > "$d/bin/timeout"
+  chmod +x "$d/bin/timeout"
+  PATH="$d/bin:$PATH" check_has map-timeout-fires 1 "$d" 9 'reason=TIMEOUT'
+
+
+  # 27 a bare CLEAN verdict without counts is NO_VERDICT, not CLEAN
+  d="$(fixture map-clean-no-counts)" || return 2
+  MAP_STUB=nocounts fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-clean-no-counts 1 "$d" 9 'reason=MAP_NO_VERDICT'
+
+  # 28 CLEAN only counts at line start: a mid-line CLEAN proves nothing
+  d="$(fixture map-clean-midline)" || return 2
+  MAP_STUB=midline fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-clean-midline 1 "$d" 9 'reason=MAP_NO_VERDICT'
+
+  # 29 a CLEAN verdict at exit 1 is not CLEAN: verdict and status must agree
+  d="$(fixture map-clean-exit-1)" || return 2
+  MAP_STUB=cleanfail fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  check_has map-clean-exit-1 1 "$d" 9 'map=UNRUNNABLE map_exit=1'
+
+
+  # 30 the committer date, not the author date, orders plan and marker
+  d="$(fixture ct-not-at)" || return 2
+  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-9/plan.md
+  mkdir -p "$d/.ufo/waves/round-9"; printf 'x\n' > "$d/.ufo/waves/round-9/w1.ready"
+  git -C "$d" add -A -- .ufo/waves/round-9/w1.ready >/dev/null 2>&1
+  GIT_AUTHOR_DATE="@999999000 +0000" GIT_COMMITTER_DATE="@1000000100 +0000" \
+    git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
+    commit -q -m "ready authored earlier" -- .ufo/waves/round-9/w1.ready >/dev/null 2>&1
+  check_has ct-not-at 0 "$d" 9 'marker_ct=1000000100'
+
+  # 31 --earliest-marker breaks a tie by taking the .ready (-le, not -lt)
+  d="$(fixture earliest-tie)" || return 2
+  fcommit "$d" 1000000000 "plan"     .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready"    .ufo/waves/round-9/w1.ready
+  fcommit "$d" 1000000100 "dispatch" .ufo/waves/round-9/w2-dispatch.json
+  EARLIEST_MARKER=1 check_has earliest-tie 0 "$d" 9 'marker_kind=ready'
+  EARLIEST_MARKER=0
+
+  # 32 two markers added in one commit: the reported marker_path is the first
+  d="$(fixture two-readies-one-commit)" || return 2
+  fcommit "$d" 1000000000 "plan"     .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "readies"  .ufo/waves/round-9/w1.ready .ufo/waves/round-9/w2.ready
+  check_has two-readies-one-commit 0 "$d" 9 'marker_path=.ufo/waves/round-9/w1.ready'
+
+
+  # 33 the summary carries map_red=<rounds> for map-failed rounds
+  d="$(fixture map-red-summary)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  sout="$(PBR_MAP_FROM=0 bash "${BASH_SOURCE[0]}" --repo "$d" --round 9 2>&1)"; src_rc=$?
+  if [ "$src_rc" = 1 ] && printf '%s' "$sout" | grep -q 'map_red=9'; then
+    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=1 got=%s  %s\n' map-red-summary-field "$src_rc" "$(printf '%s' "$sout" | tail -n 1)"
+  else
+    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=1 got=%s  %s\n' map-red-summary-field "$src_rc" "$(printf '%s' "$sout" | tail -n 1)"
+  fi
+
+
+  # 34 the gate re-added after the plan: the OLDEST add proves it predated the plan
+  d="$(fixture map-gate-readded)" || return 2
+  MAP_STUB=green fcommit "$d" 1000000000 "gate" scripts/readme-map.mjs
+  git -C "$d" rm -q -- scripts/readme-map.mjs
+  fcommit_all "$d" 1000000100 "gate dropped"
+  fcommit "$d" 1000000200 "plan"  .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000300 "ready" .ufo/waves/round-9/w1.ready
+  MAP_STUB=green fcommit "$d" 1000000400 "gate re-added" scripts/readme-map.mjs
+  check_has map-gate-readded 1 "$d" 9 'reason=MAP_ABSENT'
+
+  # 35 a plan added, dropped, re-added after the marker: the OLDEST add is the freeze
+  d="$(fixture plan-readded-after-marker)" || return 2
+  fcommit "$d" 1000000000 "plan" .ufo/waves/round-9/plan.md
+  git -C "$d" rm -q -- .ufo/waves/round-9/plan.md
+  fcommit_all "$d" 1000000100 "plan dropped"
+  fcommit "$d" 1000000200 "ready" .ufo/waves/round-9/w1.ready
+  fcommit "$d" 1000000300 "plan re-added" .ufo/waves/round-9/plan.md
+  check_has plan-readded-after-marker 0 "$d" 9 'plan_ct=1000000000'
+
+  # 18 MAP_FROM epoch skip: round < MAP_FROM reads map=SKIP reason=MAP_PRE_EPOCH_ROUND
+  MAP_FROM=65 check_has map-epoch-round-skip 0 "$d" 9 'map=SKIP reason=MAP_PRE_EPOCH_ROUND'
+  MAP_FROM=0
+
   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
+  rm -rf "$root"
   [ "$fail" -eq 0 ] && return 0 || return 1
 }
 

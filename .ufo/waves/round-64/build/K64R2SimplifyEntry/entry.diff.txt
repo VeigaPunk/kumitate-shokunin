@@ -1,0 +1,120 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/jj-workspace-seat-containment.md	2026-10-25 20:26:26.775225958 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2SimplifyEntry/entry.simplified.md	2026-10-25 20:47:02.573548580 -0300
+@@ -1,8 +1,8 @@
+ source: S198 — Jujutsu documentation, Concurrency (operation log, divergent operations), v0.46.0 — https://docs.jj-vcs.dev/v0.46.0/technical/concurrency/ — § Operation log
+ source: S199 — Firefox Source Docs, Introduction to Jujutsu — https://firefox-source-docs.mozilla.org/contributing/jujutsu.html — § Working with multiple workspaces
+ source: S200 — Jujutsu documentation, Working copy, v0.46.0 — https://docs.jj-vcs.dev/v0.46.0/working-copy/ — § Workspaces, § Stale working copy
+-verified-at: 2026-10-25 (host jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5, git 2.56.0, node v24.21.0; the demo `bash scripts/jj-seat-demo.sh` ran in fresh mktemp fixtures; docs read at v0.46.0, one minor release above the host binary)
+-recheck: 180d — re-run `bash scripts/jj-seat-demo.sh` and `node .ufo/waves/round-64/probe/jj64-probe.mjs <lane> <rev>`; on a jj release, re-open S198-S200 at the new version (`curl -fsSL https://docs.jj-vcs.dev/latest/working-copy/ | grep -c -F 'jj workspace remove'` → 1 on 2026-10-25) and re-run the demo: a changed outcome key means a changed row
++verified-at: 2026-10-25 (host jj 0.45.1-7c41cdeb16b6b321c64e789a966b6adf723816a5, git 2.56.0, node v24.21.0; demo run in fresh mktemp fixtures)
++recheck: 180d — re-run `bash scripts/jj-seat-demo.sh` and `node .ufo/waves/round-64/probe/jj64-probe.mjs <lane> <rev>`; on a jj release, re-open S198-S200 at the new version (`curl -fsSL https://docs.jj-vcs.dev/latest/working-copy/ | grep -c -F 'jj workspace remove'` → 1): a changed outcome key means a changed row
+ coverage-map: isolation substrates for parallel agents (git worktrees, harness isolation backends) (PROVINCE.md §Frontier)
+ ground: PROVINCE.md §Frontier — isolation substrates for parallel agents — the first demonstrated jj-workspace ground for mechanism M7 of `corpus/knowledge/agent-isolation-substrates.md`
+ 
+@@ -10,53 +10,43 @@
+ 
+ `corpus/knowledge/agent-isolation-substrates.md` states mechanism M7 in one sentence — workspaces share one repository, and
+ rewriting a commit another workspace has checked out makes that workspace stale — and says "Not demonstrated this round; no
+-table row relies on it." This entry is the demonstration. It adds what M7 lacked: a re-runnable hermetic demo that prints
+-21 outcome keys (`scripts/jj-seat-demo.sh`), the rule that decides whether a seat goes stale (the seat's on-disk tree
+-against the tree of its new commit — not the kind of operation), and the containment consequence that no jj feature
+-supplies: a workspace is a working-copy directory, not a sandbox. The staged shokuknow text (package entry `jj-seat-staleness-outcome`, not adopted) claimed "the seat
+-does not go stale"; that holds for one operation kind and is false for others, which is why the entry carries the demo and
+-not the staged sentence (`corpus/lessons/round-64.md` § Gate).
++table row relies on it." This entry is the demonstration: a re-runnable hermetic demo that prints 21 outcome keys
++(`scripts/jj-seat-demo.sh`) and the containment consequence no jj feature supplies — a workspace is a working-copy
++directory, not a sandbox. The staged shokuknow text (package entry `jj-seat-staleness-outcome`, not adopted) claimed "the
++seat does not go stale"; that holds for one operation kind and is false for others, which is why the entry carries the demo
++and not the staged sentence (`corpus/lessons/round-64.md` § Gate).
+ 
+ ## What the demo measures
+ 
+ A seat in its own jj workspace is fresh after another workspace **describes** the commit the seat has checked out
+-(`rewrite_seat_head_seat_state=fresh`, `rewrite_seat_head_description_seen=rewritten`: the seat's next command reads the
+-new description). It is **stale** after another workspace **abandons** that commit
+-(`abandon_seat_head_seat_state=stale`) while its files are still on disk
+-(`abandon_seat_head_files_on_disk=kept`), and it is stale after a rewrite that **changes the tree**
+-(`rewrite_treechange_seat_state=stale`: a `squash` moved a file into the seat's commit). An abandon of an
+-**empty** seat head leaves the seat fresh (`abandon_empty_seat_state=fresh`). The rule consistent with all four
+-outcomes: jj re-points a seat's working copy to the rewritten or replacement commit on its own when the files on disk
+-already equal that commit's tree, and marks the working copy stale when they differ [INFERENCE: the demo shows the four
+-outcomes; the rule is the reading that fits them, derived by K64ReviewDemo]. Recovery is `jj workspace update-stale`
+-(`update_stale_recovers=yes`) — and it **deletes** the abandoned commit's files from the seat
+-(`update_stale_abandoned_seat_file=deleted-no-recovery-commit`): the seat's new commit is empty and no recovery commit is created; the
+-content survives only in the hidden abandoned commit, restorable by commit id (measured by hand,
+-`.ufo/waves/round-64/build/K64ExecJjDemoHarden/measurements-abandon-matrix.txt`; not a demo key).
++(`rewrite_seat_head_seat_state=fresh`, `rewrite_seat_head_description_seen=rewritten`: the seat's next command reads the new
++description). It is **stale** after another workspace **abandons** that commit (`abandon_seat_head_seat_state=stale`)
++while its files are still on disk (`abandon_seat_head_files_on_disk=kept`), and stale after a rewrite that **changes the
++tree** (`rewrite_treechange_seat_state=stale`: a `squash` moved a file into the seat's commit); an abandon of an **empty**
++seat head leaves it fresh (`abandon_empty_seat_state=fresh`). The rule consistent with all four outcomes: jj re-points a
++seat's working copy to the rewritten or replacement commit when the files on disk already equal that commit's tree, and
++marks it stale when they differ [INFERENCE: the demo shows the four outcomes; the rule is the reading that fits them,
++derived by K64ReviewDemo]. Recovery is `jj workspace update-stale` (`update_stale_recovers=yes`), and it **deletes** the
++abandoned commit's files from the seat (`update_stale_abandoned_seat_file=deleted-no-recovery-commit`): the seat's new
++commit is empty, no recovery commit is created, and the content survives only in the hidden abandoned commit, restorable by
++commit id (hand-measured, `.ufo/waves/round-64/build/K64ExecJjDemoHarden/measurements-abandon-matrix.txt`; not a demo key).
+ 
+-The working trees are separate and the log is shared. A file written in the seat is not in the default workspace's tree
+-(`seat_file_in_default_tree=no`, `default_status_clean_after_seat_write=1`), the seat's snapshot is an operation in the
+-repository's one operation log (`seat_snapshot_in_shared_op_log=1`: the op-count delta around one seat command),
+-and the seat directory has no git directory of its own (`seat_has_git_dir=no`, with the caller's TMPDIR ancestry ruled
+-out by `GIT_CEILING_DIRECTORIES`). A write by a process positioned in the seat reaches the default workspace and is
+-snapshotted there (`absolute_path_write_seen_in_default=1`): jj contains a working copy, never a writer.
+-Releasing a seat: `jj workspace forget` removes the registration and leaves the directory
+-(`workspaces_after_forget=1`, `seat_dir_after_forget=present`) and the seat's commit stays in `all()`
+-(`forget_seat_commit_in_all=yes`): forget does not drop a seat's work from the repository's history.
++The working trees are separate and the log is shared. The seat directory has no git directory of its own
++(`seat_has_git_dir=no`, the caller's TMPDIR ancestry ruled out by `GIT_CEILING_DIRECTORIES`). A write by a process
++positioned in the seat reaches the default workspace and is snapshotted there (`absolute_path_write_seen_in_default=1`):
++jj contains a working copy, never a writer.
+ 
+ ## Mechanism (S198, S200, S199)
+ 
+-One repository stands behind every workspace, so there is one **operation log**: the log is what allows jj to "detect
+-and merge divergent operations" (S198), every workspace's snapshots land in it, and each workspace has its own
+-working-copy commit recorded in the operation's view (S198 §Operation log). "You can have multiple working copies backed
+-by a single repo" and "Each workspace can have a different commit checked out" (S200). Staleness is the working copy
+-failing to catch up with an operation: "When you modify workspace A's working-copy commit from workspace B, workspace A's
+-working copy will become stale" (S200), the usual cause being a rewrite of a commit it depends on from another workspace
+-(S199). The demo's four stale/fresh outcomes refine that sentence: modifying the seat's commit does not by itself
+-stale the seat. With auto-update disabled, most jj commands refuse to run on a stale workspace until
++One repository stands behind every workspace, so there is one **operation log**: the log is what allows jj to "detect and
++merge divergent operations" (S198), every workspace's snapshots land in it, and each workspace has its own working-copy
++commit recorded in the operation's view (S198 §Operation log). Each workspace can have a different commit checked out
++(S200). Staleness is the working copy failing to catch up with an operation — S200's sentence that modifying workspace A's
++working-copy commit from workspace B stales A — the usual cause being a rewrite of a commit it depends on from another
++workspace (S199). With auto-update disabled, most jj commands refuse to run on a stale workspace until
+ `jj workspace update-stale` (S199); the demo runs with `JJ_CONFIG=/dev/null` and reads `stale`, so this fixture did not
+-auto-update. Firefox's own setup enables auto-update because "some mach commands invoke jj and can fail, sometimes
+-silently, if the working copy is stale" (S199) — a deployment knob, not jj's default.
++auto-update. Firefox's own setup enables auto-update because its mach commands can fail, sometimes silently, on a stale
++working copy (S199) — a deployment knob, not jj's default.
+ 
+ **Version skew.** The docs are v0.46.0 (S198, S200 cite the immutable `v0.46.0` path; the `latest` alias served the same
+ bytes on 2026-10-25); the host binary is jj 0.45.1. The concurrency page reads the same in both versions (S198's
+@@ -125,16 +115,15 @@
+ - **One jj version, sequential drivers.** Measured on jj 0.45.1 only, with two or three workspaces driven one command at a
+   time by one process: no two writers race, no operation-log merge conflict is produced, nothing measures parallel
+   throughput or lock behaviour (S198 describes the merge; the demo never triggers it).
+-- **Fixture-dependent counts.** `seat_snapshot_in_shared_op_log` is an op-count delta in one fresh fixture; only the contrasts
+-  carry over. `ignore_working_copy_adds_op` and the stale/fresh keys print the wording of one jj version (`working copy is
+-  stale`); a different jj may read differently, not silently pass.
+-- **The stale/fresh rule is a fit, not a documented rule.** S200's sentence says modifying a workspace's working-copy
+-  commit makes it stale; the demo's describe case contradicts the unqualified reading and the tree-identity reading fits all
+-  four outcomes. No document in S198–S200 states the tree-identity rule [INFERENCE].
++- **Fixture-dependent counts and wording.** `seat_snapshot_in_shared_op_log` is an op-count delta in one fresh fixture; only
++  the contrasts carry over. `ignore_working_copy_adds_op` and the stale/fresh keys print one jj version's wording (`working
++  copy is stale`); a different jj may read differently, not silently pass.
++- **The stale/fresh rule is a fit, not a documented rule.** No document in S198–S200 states the tree-identity rule; S200's
++  unqualified sentence is contradicted by the demo's describe case, and the tree-identity reading fits all four outcomes
++  [INFERENCE].
+ - **The auto-update knob is observed, not exercised.** `snapshot.auto-update-stale = true` was not run; S199's default is
+   Firefox's `./mach vcs-setup`, not jj's.
+-- **Not measured:** whether the seat's change id survives the rewrite (the demo prints the description only), what a seat sees
+-  when its workspace is forgotten while a command runs, `jj workspace remove` (absent on the host), and git-side effects in
+-  the colocated default workspace.
++- **Not measured:** whether the seat's change id survives a rewrite, what a seat sees when its workspace is forgotten while a
++  command runs, `jj workspace remove` (absent on the host), and git-side effects in the colocated default workspace.
+ - **What the counter cannot tell.** The frozen counter J64 measures an evidence chain and a live demo re-run; it would score a
+   well-grounded wrong entry 8/8 (`.ufo/waves/round-64/plan.md`, stated limit; K64CriticC2Predicate reproduced four forgeries).

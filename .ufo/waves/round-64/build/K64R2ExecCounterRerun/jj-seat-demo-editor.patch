@@ -1,0 +1,11 @@
+--- scripts/jj-seat-demo.sh	2026-10-25 20:22:53.465873631 -0300
++++ /tmp/kumitate-r64/K64R2ExecCounterRerun/fixlane.y0W69I/lane/scripts/jj-seat-demo.sh	2026-10-25 20:54:20.758221160 -0300
+@@ -40,7 +40,7 @@
+ # The seat fixture must not inherit a repository from the caller's TMPDIR (git walks up from the seat dir and would find
+ # a .git above the mktemp dir; measured: TMPDIR inside a git worktree flipped seat_has_git_dir to yes).
+ export GIT_CEILING_DIRECTORIES="${S%/*}"
+-J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --no-pager --color never "$@"; }
++J() { jj --config user.name=fixture --config user.email=fixture@example.invalid --config 'ui.editor=["true"]' --no-pager --color never "$@"; }
+ # -----------------------------------------------------------------------------
+ 
+ git -C "$D" init -q || fail git-init

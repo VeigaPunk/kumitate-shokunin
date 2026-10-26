@@ -1,0 +1,54 @@
+### tree=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/int
+### cmd=node scripts/sources-check.mjs --selftest
+### cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-64/build/K64R2ExecHarmBattery/int
+### started=2026-10-25T23:44:10Z
+PASS clean fixture returns CLEAN: exit=0 last=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:0,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS ROW_MALFORMED: fixture reports kind with expected exit: exit=1 kinds=[ROW_MALFORMED] last=SOURCES_CHECK: DRIFT (ROW_MALFORMED)
+PASS ID_FORM: fixture reports kind with expected exit: exit=1 kinds=[ID_FORM] last=SOURCES_CHECK: DRIFT (ID_FORM)
+PASS ID_DUPLICATE: fixture reports kind with expected exit: exit=1 kinds=[ID_DUPLICATE] last=SOURCES_CHECK: DRIFT (ID_DUPLICATE)
+PASS ROW_OUTSIDE_REGISTRY: fixture reports kind with expected exit: exit=1 kinds=[ROW_OUTSIDE_REGISTRY] last=SOURCES_CHECK: DRIFT (ROW_OUTSIDE_REGISTRY)
+PASS ROW_FIELD_EMPTY: fixture reports kind with expected exit: exit=1 kinds=[ROW_FIELD_EMPTY] last=SOURCES_CHECK: DRIFT (ROW_FIELD_EMPTY)
+PASS KIND_ENUM: fixture reports kind with expected exit: exit=1 kinds=[KIND_ENUM] last=SOURCES_CHECK: DRIFT (KIND_ENUM)
+PASS TIER_ENUM: fixture reports kind with expected exit: exit=1 kinds=[TIER_ENUM] last=SOURCES_CHECK: DRIFT (TIER_ENUM)
+PASS STATUS_ENUM: fixture reports kind with expected exit: exit=1 kinds=[STATUS_ENUM] last=SOURCES_CHECK: DRIFT (STATUS_ENUM)
+PASS TIER_INFLATION: fixture reports kind with expected exit: exit=1 kinds=[TIER_INFLATION] last=SOURCES_CHECK: DRIFT (TIER_INFLATION)
+PASS OPENED_INVALID: fixture reports kind with expected exit: exit=1 kinds=[OPENED_INVALID] last=SOURCES_CHECK: DRIFT (OPENED_INVALID)
+PASS RECHECK_INVALID: fixture reports kind with expected exit: exit=1 kinds=[RECHECK_INVALID] last=SOURCES_CHECK: DRIFT (RECHECK_INVALID)
+PASS USED_BY_MISSING: fixture reports kind with expected exit: exit=1 kinds=[USED_BY_MISSING] last=SOURCES_CHECK: DRIFT (USED_BY_MISSING)
+PASS MINED_UNUSED: fixture reports kind with expected exit: exit=1 kinds=[MINED_UNUSED] last=SOURCES_CHECK: DRIFT (MINED_UNUSED)
+PASS REJECTED_NO_REASON: fixture reports kind with expected exit: exit=1 kinds=[REJECTED_NO_REASON] last=SOURCES_CHECK: DRIFT (REJECTED_NO_REASON)
+PASS REJECTED_NO_FLIP: fixture reports kind with expected exit: exit=1 kinds=[REJECTED_NO_FLIP] last=SOURCES_CHECK: DRIFT (REJECTED_NO_FLIP)
+PASS SECTION_MISSING: fixture reports kind with expected exit: exit=1 kinds=[SECTION_MISSING] last=SOURCES_CHECK: DRIFT (SECTION_MISSING)
+PASS ENTRY_SOURCE_UNKNOWN: fixture reports kind with expected exit: exit=1 kinds=[ENTRY_SOURCE_UNKNOWN] last=SOURCES_CHECK: DRIFT (ENTRY_SOURCE_UNKNOWN)
+PASS HEADER_INCOMPLETE (missing recheck): fixture reports kind with expected exit: exit=1 kinds=[HEADER_INCOMPLETE] last=SOURCES_CHECK: DRIFT (HEADER_INCOMPLETE)
+PASS HEADER_INCOMPLETE (empty header trio): fixture reports kind with expected exit: exit=1 kinds=[HEADER_INCOMPLETE] last=SOURCES_CHECK: DRIFT (HEADER_INCOMPLETE)
+PASS ENTRY_HEADER_REQUIRED (new headerless file): fixture reports kind with expected exit: exit=1 kinds=[ENTRY_HEADER_REQUIRED] last=SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED)
+PASS ENTRY_HEADER_REQUIRED (source header removed from new entry): fixture reports kind with expected exit: exit=1 kinds=[ENTRY_HEADER_REQUIRED] last=SOURCES_CHECK: DRIFT (ENTRY_HEADER_REQUIRED)
+PASS USED_BY_ASYMMETRY: fixture reports kind with expected exit: exit=0 kinds=[USED_BY_ASYMMETRY] last=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:1,mined:0,rejected:0 entries_with_source=1 legacy=0)
+PASS RECHECK_OVERDUE: fixture reports kind with expected exit: exit=0 kinds=[RECHECK_OVERDUE] last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS 1-3-space Markdown headings and rows are normalized; a 4-space row stays code: exit=0 last=SOURCES_CHECK: CLEAN (rows=4 tiers=A:4,B:0,C:0 status=queued:3,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS 1-3-space indented invalid registry rows report their field and tier findings: exit=1 empty=3 tier=3 last=SOURCES_CHECK: DRIFT (ROW_FIELD_EMPTY,TIER_ENUM)
+PASS 1-3-space indented rows outside Registry are rejected: exit=1 outside=3 last=SOURCES_CHECK: DRIFT (ROW_OUTSIDE_REGISTRY)
+PASS reflip: does not satisfy the rejected-row flip: marker: exit=1 kinds=[REJECTED_NO_FLIP] last=SOURCES_CHECK: DRIFT (REJECTED_NO_FLIP)
+PASS opened + Nd overdue uses a strict before-today boundary: exit=0 kinds=[RECHECK_OVERDUE] last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS opened + Nd exactly due today is not overdue: exit=0 kinds=[] last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS frozen 16a5441 legacy identity set has 38 unique paths: base=38 unique=38
+PASS frozen base identity remains legacy and counted after append-only growth: exit=0 last=SOURCES_CHECK: CLEAN (rows=1 tiers=A:1,B:0,C:0 status=queued:1,mined:0,rejected:0 entries_with_source=0 legacy=1)
+PASS ROW_MALFORMED: an over-wide row (an extra cell, 14 split fields) is flagged: exit=1 kinds=[ROW_MALFORMED] last=SOURCES_CHECK: DRIFT (ROW_MALFORMED)
+PASS ISO recheck exactly today is not overdue: exit=0 kinds=[] last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS every declared finding kind fires in a fixture: unfired=[]
+PASS SELF_NOT_A_DIR: fail-closed exit 2: exit=2 last=SOURCES_CHECK: FAIL-CLOSED (SELF_NOT_A_DIR)
+PASS SOURCES_MISSING: fail-closed exit 2: exit=2 last=SOURCES_CHECK: FAIL-CLOSED (SOURCES_MISSING)
+PASS READ_FAILED: fail-closed exit 2: exit=2 last=SOURCES_CHECK: FAIL-CLOSED (READ_FAILED)
+PASS every fail-closed arm fires in a fixture: unfired=[]
+PASS --strict promotes warnings to drift: exit=1 kinds=[USED_BY_ASYMMETRY] last=SOURCES_CHECK: DRIFT (USED_BY_ASYMMETRY)
+PASS --json prints one parseable contract object: exit=0 verdict=CLEAN rows=1
+PASS S1000 is accepted and counted: exit=0 last=SOURCES_CHECK: CLEAN (rows=2 tiers=A:2,B:0,C:0 status=queued:1,mined:1,rejected:0 entries_with_source=1 legacy=0)
+PASS invalid/missing option value uses usage exit 64: exit=64
+PASS unknown option uses usage exit 64: exit=64
+PASS -h prints usage and exits 0: exit=0
+PASS frozen awk census parity: rows, malformed, duplicate ids: node=4/1/1 awk=4/1/1
+SOURCES_SELFTEST: 46/46 pass
+VERDICT: PASS
+### exit=0
+### ended=2026-10-25T23:44:14Z

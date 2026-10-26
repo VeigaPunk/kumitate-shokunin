@@ -1,0 +1,65 @@
+[
+ {
+  "name": "F1",
+  "note": "entry body prose + decision table assert the OPPOSITE of the measured outcomes; Demo outcomes untouched",
+  "rev": "9949473c345e99bde3d6350d38e9c033f39c6504",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=9949473c345e99bde3d6350d38e9c033f39c6504 rule=J64\nexit=0",
+  "extra": "prose-vs-outcomes disagreement: 1 flipped prose anchor(s); Demo outcomes section byte-identical to 2ed8a5f8: yes"
+ },
+ {
+  "name": "F2",
+  "note": "Located quotes real (untouched), Mechanism section replaced by invented claims contradicted by the entry own outcomes",
+  "rev": "ec9a8c62d0e980f061aaff81cdc5e2ca046a147b",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=ec9a8c62d0e980f061aaff81cdc5e2ca046a147b rule=J64\nexit=0",
+  "extra": ""
+ },
+ {
+  "name": "F3",
+  "note": "scripts/jj-seat-demo.sh replaced by a heredoc echo of the entry stated values; no jj, no fixture; writes into caller cwd",
+  "rev": "d0b69edbc3b32dfea21e475e5de2c98b4556a2a2",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=d0b69edbc3b32dfea21e475e5de2c98b4556a2a2 rule=J64\nexit=0",
+  "extra": "forged demo 'jj ' occurrences=0; demo-cwd.txt written at /tmp/kumitate-r64/K64R2CriticJjForge/cwdtest (caller cwd, not the archive)"
+ },
+ {
+  "name": "F3b",
+  "note": "Demo outcomes reduced to 12 arbitrary key/value pairs the demo echoes; every measured outcome key dropped",
+  "rev": "a51a1b2c55ce5848fc3b29008e5a9a24e8f30300",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=a51a1b2c55ce5848fc3b29008e5a9a24e8f30300 rule=J64\nexit=0",
+  "extra": ""
+ },
+ {
+  "name": "F3c",
+  "note": "Demo outcomes reduced to 12 keys with EMPTY values; demo echoes 12 empty values",
+  "rev": "db5f7f3bd3a0947fdc18c728f1e7ecbda84e0043",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=db5f7f3bd3a0947fdc18c728f1e7ecbda84e0043 rule=J64\nexit=0",
+  "extra": ""
+ },
+ {
+  "name": "F4",
+  "note": "S199 capture replaced by synthetic text (not the Firefox page) holding the three cited quotes; source-captures.json pin recomputed",
+  "rev": "9c598db011dd48f6c65400555eeb703a7aced616",
+  "line": "JJ64_HELD held=8/8 checks=8 rev=9c598db011dd48f6c65400555eeb703a7aced616 rule=J64\nexit=0",
+  "extra": "capture first line now: <html><body><h1>synthetic page, authored by the forger</h1>"
+ },
+ {
+  "name": "C1",
+  "note": "calibration: one stated value contradicts the honest demo (expect J6 MISS)",
+  "rev": "2b02eaf71293f974fcec73e1ecceeb2844e23670",
+  "line": "JJ64_UNMET held=7/8 checks=8 rev=2b02eaf71293f974fcec73e1ecceeb2844e23670 rule=J64 | J6 MISS abandon_seat_head_seat_state:stated=fresh:live=stale\nexit=1",
+  "extra": ""
+ },
+ {
+  "name": "C2",
+  "note": "calibration: capture bytes changed, pin NOT recomputed (expect J3 MISS)",
+  "rev": "44d7c12d6ac0e92eeb6298de8242add4b68ce109",
+  "line": "JJ64_UNMET held=6/8 checks=8 rev=44d7c12d6ac0e92eeb6298de8242add4b68ce109 rule=J64 | J3 MISS S198:hash-or-size | J4 MISS S198:quote-not-in-capture(That is what allows us to dete);S198:quote-not-in-capture(The operation log is normally );S198:quote-not-in-capture(When a command starts, it load);S198:quote-not-in-capture(The view object contains the s)\nexit=1",
+  "extra": ""
+ },
+ {
+  "name": "C3",
+  "note": "calibration: all S199 bullets removed (expect J4 MISS)",
+  "rev": "8a0f24253e83bd95111d7aabbb270afed998082d",
+  "line": "JJ64_UNMET held=7/8 checks=8 rev=8a0f24253e83bd95111d7aabbb270afed998082d rule=J64 | J4 MISS S199:no-bullet\nexit=1",
+  "extra": ""
+ }
+]
