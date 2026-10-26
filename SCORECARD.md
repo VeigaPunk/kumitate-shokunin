@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=257
-C=30
+A=351
+C=33
 C1=19
 C1_total=19
-C2=153
-C2_total=153
+C2=156
+C2_total=156
 S_members=88
 S_sections=88
 R_members=92
@@ -305,7 +305,7 @@ coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=cc4a2ea7a8a23998fca71551da86daef2590ae520a967dd41887db9f6588c861
+pin.proxy-check=d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
 -->
@@ -329,7 +329,9 @@ pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a
 pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
 pin.make-dispatch-actual=f0194314e98e87e86eb1329f36411e249911f9a0120aa4feb702562a54bf3dc9
 pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721e29ef9ce1e741
-pin.plan-before-ready=fdc10c4b91a3f59b1452ced06104c4fb03ad6130132cf83f3a8b32b8f3898fc9
+pin.plan-before-ready=0c7da32a217da1634e9a5ea7e0f8acfe0c4e077e5d64e53c07c0fa6fe292e77e
+pin.jj-seat-demo=80d174dba368e71296da65f59d93e60fb5e37673f429e3d832be02681c5b480a
+pin.report-receipt-diff=23efb0908b9ebe51f158f590c6512be59aa183e5e25f268b5e0340f78f2f8927
 -->
 
 
@@ -1796,6 +1798,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
 | `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30; first working round 60 | 60 |
 | `inline-dispatch-evidence` | Judge a run-7 inline wave from records the lane does not author: per-seat host session transcripts (seat marker, context head, task tail, five shape arms, yield, exit), the orchestrator dispatcher log (`spawned`/`done` lines, counts) and committed bytes only under `--rev`; dead seats are counted from transcripts and must be named by `--report`; lane-authored text (lane, seat names, context) is validated as data, never as pattern. A hand-written wave reads `NOT_A_DISPATCH`; a five-row-per-seat forgery reads `SESSION_TOOL_JOIN`. Stated limits: a lane that writes faithful transcripts into the host store and lines into the orchestrator log defeats it; the frozen C1 counter runs the committed tool, so a stub tool reads HELD (wave-2 K63R2CriticC1Stub) | `node scripts/inline-dispatch-evidence.mjs --selftest` → `INLINE_DISPATCH_SELFTEST: PASS (69/69)`; `node scripts/inline-dispatch-evidence.mjs --root . --rev <rev> --round 63 --wave w1` → `INLINE_DISPATCH: CLEAN (seats=40 sessions=40 done=40 reports=40 dead=0)`; 75 committed controls in `.ufo/waves/round-63/controls/inline/`; counting command `node .ufo/waves/round-63/probe/inline63-probe.mjs <lane> <rev> [<tip>]`; `pin.inline-dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL gate-registry row; QUALITY Q59 | 63 |
+| `report-receipt-diff` | Diff a round report against the committed receipts it cites (`git show <rev>:.ufo/waves/round-N/{base,close}/*`): 12 finding ids — template tokens, labelled `<LABEL>_HELD\|UNMET held=x/y` tallies no receipt carries (cited-receipt scoped, `checks=` compared), missing/empty/symlinked/escaping receipt paths, dead/orphan/foreign hashes, missing/empty/mis-ordered sections, SHONEN box count; exit 0 CLEAN, 1 DRIFT, 2 fail-closed, 64 usage; selftest 125 cases, 50 committed controls; limits: bare tallies unchecked, a hand-written receipt is trusted | `node scripts/report-receipt-diff.mjs --lane . --round N --report <file> --rev <tip>`; `node .ufo/waves/round-64/probe/receipt64-probe.mjs . <M> --report <report>` | 64 (verdict in `## Round 64` below) |
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
@@ -2969,3 +2972,18 @@ Plan `.ufo/waves/round-63/plan.md` frozen at `b38a2065ab8ac5b198f6569b9013d04411
 **Maintenance (not claims):** `proxy-check` FAIL-CLOSED at base (`pin.make-dispatch-actual` unregistered) repaired — the stanza now reads `PROXY: MATCH` (A=257 C=30 C2=153 K=49; K reflects four host Kimi-root members gone, `kimi-census` still reads MEMBER_MISSING x4 — a host-state defect carried, not repaired); `readme-map` DRIFT at base repaired and CLEAN at 153/153/153. Gate pins added: `pin.inline-dispatch-evidence`, `pin.plan-before-ready`.
 
 **Waves:** w1 40 seats (all finished; six session_exit rows landed after the wave settled), w2 39 seats (all finished), 79 total; role mix and model answers in the report. No axis score changed; no axis harmed (`close/` gate table in the report).
+
+
+## Round 64 — claims, verdicts, limits (2026-10-25)
+
+Plan `.ufo/waves/round-64/plan.md` frozen at `dd1a3e6f19dc82c54ef67864c9ba87e4eb7c24ef` (base `6825a51425e91908f019ed65aa2f4209acbd7087`), committed before the first `.ready` marker; counters pinned in `.ufo/pins/counter-pins.json` and byte-identical to the freeze. Measured revision M = `f874353902d05cee762da2e831f714b8d897604c` (wave-2 landing); close receipts `.ufo/waves/round-64/close/`. Post-freeze ratchet changes (controls 16 → 50, tool v1 → v3, demo v1 → v3) are disclosed in `.ufo/waves/round-64/controls/CHANGES-AFTER-FREEZE.md`; the freeze's own P2 floor (8 ids) was unreachable (6 ids exercised, 7 defined) and was met by the declared ratchet, not by lowering the floor.
+
+**C1 — operability, capability acquisition `report-receipt-diff`.** Counting command `node .ufo/waves/round-64/probe/receipt64-probe.mjs <lane> f874353902d05cee762da2e831f714b8d897604c --report <round-64 report>`. Before at base: `RECEIPT64_UNMET held=0/5` (`base/receipt64-base.txt`). At M without a report: `RECEIPT64_UNMET held=4/5 … | P5 MISS report-not-given` (`close/receipt64-measured-noreport.txt`); the P5 verdict with the filed report is in the round report and `close/receipt64-final.txt`. Do-nothing control: P4 (always-CLEAN and always-DRIFT stubs both fail the harness). Limits: bare tallies unchecked; a hand-written receipt that carries the false tally reads CLEAN (f14, inherent); P5 reads CLEAN on a hollow report except for the two structure arms the frozen honest control tolerates; ten of the 24 real reports of rounds 40–63 other than r60 read DRIFT on false-positive classes.
+
+**C2 — coverage frontier, jj workspaces as seat containment (sourced on S198, S199, S200).** Counting command `node .ufo/waves/round-64/probe/jj64-probe.mjs <lane> f874353902d05cee762da2e831f714b8d897604c`. Before at base `JJ64_UNMET held=0/8`; do-nothing control `held=1/8` (`base/jj64-donothing.txt`). After at M: `JJ64_HELD held=8/8 checks=8 … rule=J64` exit 0 (`close/jj64-measured.txt`). Limits: the counter measures an evidence chain and a live demo re-run and is forgeable (K64CriticC2Predicate, K64R2CriticJjForge; two entry mutants still read 8/8, K64R2MutateEntry); the entry's stale/fresh rule is an [INFERENCE] fit; measured on jj 0.45.1 and re-run on 0.46.0 (27 outcome keys identical, `JJ_SKEW` lines differ).
+
+**Maintenance (not claims).** `readme-map` DRIFT at base → `CLEAN files=156 rows=156 covered=156`; `proxy-check` DRIFT at base repaired by the close stanza refresh (see the report for the measured line). **Kimi layer: DEGRADED (routed defect D4).** Four governed K members (`logs/kimi-code.log`, `cache/`, `search-index/`, `updates/`) are absent from `~/.kimi-code`; `kimi-census` still reads MEMBER_MISSING ×4. The stanza's K terms (49) are the live count, not the governed universe (53): **K = 49/53, DEGRADED — never cite K=49 as clean.** No code changed (K64R2ExecKimiApply: restoring 53 makes proxy-check read DRIFT for as long as the members are missing).
+
+**Waves.** w1 41 seats, w2 39 seats, total 80, no residual call; `INLINE_DISPATCH: CLEAN (seats=41 … dead=0)` for w1; w2 reads `DRIFT` with `SESSION_AMBIGUOUS` for four scouts (`K64R2ScoutQuotesS198/S199/S200`, `K64R2ScoutRejects`: the host store holds a retry transcript `-2` beside the first one; all 39 seats finished and filed reports, dead=0; `close/inline64-tip.txt`). No axis score changed; no axis harmed on the gates run (`close/`, report).
+
+**Incident.** The fleet repository's `.git` was removed at about 21:02 during wave 2 by an action this lane did not identify; the orchestrator restored it. The demo's cwd and editor dependence found by K64R2ExecWorktreeArchive was fixed (the demo now `cd`s into its own scratch directory); the cause of the removal is not established.

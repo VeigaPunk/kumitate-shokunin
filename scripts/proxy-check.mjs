@@ -479,6 +479,8 @@ const GATE_PINS = {
   'pin.make-dispatch-actual': 'scripts/make-dispatch-actual.mjs', // round 62: the round-62 dispatcher invocation writer (pinned in SCORECARD, registered here in round 63 — the R62 fail-closed)
   'pin.inline-dispatch-evidence': 'scripts/inline-dispatch-evidence.mjs', // round 63: inline wave dispatch evidence gate (C1)
   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
+  'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
+  'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
