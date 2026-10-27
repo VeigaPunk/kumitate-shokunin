@@ -1,0 +1,28 @@
+### probe: frozen deprec66-probe.mjs on sandbox clone /fast/scratch/hyaku/kumitate-r66/K66ScribeRows/lane at e6f3d8a33e729e1169e0075fc7e6e671a735a6e1
+DEPREC66_HELD held=8/8 checks=8 rev=e6f3d8a33e729e1169e0075fc7e6e671a735a6e1 rule=M66
+probe-exit=0
+
+### census validate --file <clone>/corpus/SOURCES.md --today 2026-10-27
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r66/K66ScribeRows/lane/corpus/SOURCES.md
+census-exit=0
+
+### sources-check --self <clone> --today 2026-10-27
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=150 tiers=A:127,B:15,C:8 status=queued:13,mined:118,rejected:19 entries_with_source=23 legacy=38)
+sources-check-exit=0
+
+### source-capture (cwd=clone)
+SOURCE_CAPTURE: CLEAN captures=43 exemptions=107
+capture-exit=0
+
+### readme-map (cwd=clone)
+README_MAP: CLEAN files=161 rows=161 covered=161
+readme-exit=0

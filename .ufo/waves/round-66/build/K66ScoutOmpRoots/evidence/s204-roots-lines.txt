@@ -1,0 +1,26 @@
+# Verbatim roots lines — S204 = live v18.12.6 client.ts (byte-identical, sha256 479aef6d...)
+# Source: .ufo/waves/round-65/build/Capture/omp-v18.12.6-mcp-client.ts
+# Line numbers valid for both the pinned capture and the live tag fetch.
+
+ 11: import { LegacySseConnectionTimeoutError, createSseTransport } from "./transports/sse";
+ 51:  * Handles `ping` and `roots/list`; rejects unknown methods with -32601.
+ 59: 		case "roots/list": {
+ 60: 			const cwd = getProjectDir();
+ 61: 			return {
+ 62: 				roots: [{ uri: url.pathToFileURL(cwd).href, name: path.basename(cwd) }],
+ 63: 			};
+ 64: 		}
+ 81: 		case "sse":
+ 82: 			return createSseTransport(config as MCPSseServerConfig, signal);
+101: 		capabilities: {
+102: 			roots: { listChanged: false },
+103: 		},
+171: 		// Always handle standard MCP server-to-client requests (ping, roots/list).
+172: 		// The initialize request declares roots capability, so we must respond to
+173: 		// roots/list — even for short-lived test connections.
+
+# sse.ts at v18.12.6 (sha256 0b69229a...), legacy SSE transport:
+ 39: export class LegacySseConnectionTimeoutError extends Error {
+ 42: 		this.name = "LegacySseConnectionTimeoutError";
+ 47: export class LegacySseTransport implements MCPTransport {
+138: 				throw new LegacySseConnectionTimeoutError(timeout);

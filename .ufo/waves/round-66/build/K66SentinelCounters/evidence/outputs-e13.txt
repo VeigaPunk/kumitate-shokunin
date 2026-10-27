@@ -1,0 +1,12 @@
+capture path in the revision: ../../../../../../../../../../../../fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/outside/cap/capture.txt
+archive contains the capture? 1
+DEPREC66_UNMET held=4/8 checks=8 rev=703782d6da919e48faea56dd69f033e91c090d14 rule=M66 | M5 MISS live-fetch-skipped | M6 MISS no-cited-row-for-the-2026-07-28-deprecated-page;no-Registry-snapshot-secti
+on;capture-table-rows=0<5 | M7 MISS no-Bearing-section,no-cited-row-for-sse.ts-at-v18.12.6 | M8 MISS census-exit=0 sources-check=false source-capture=false readme-map=false province-names-entry=false
+M1 held? yes
+M2 held? yes
+M3 held? yes
+M4 held? yes
+
+-- same fixture, capture path now a FIFO with no writer:
+./e13.sh: line 54: 416258 Killed                     timeout -s KILL 6 env TMPDIR="$S/ev" node "$D66" "$F" HEAD --no-live > "$S/ev/fifo.out" 2>&1
+exit=137 (137 = still blocked in readFileSync when killed) output=[]

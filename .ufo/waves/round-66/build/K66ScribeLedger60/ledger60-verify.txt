@@ -1,0 +1,25 @@
+$ node scripts/routed-ledger.mjs --root $L --from 60 --to 60
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=9 rows=9 open=0 closed=9 wontfix=0
+exit=0
+$ node scripts/routed-ledger.mjs --root $L --from 60 --to 60 --classes
+CLASS citation-integrity rows=1 rounds=60
+CLASS dangling-pointer rows=2 rounds=60
+CLASS dispatch-accounting rows=1 rounds=60
+CLASS reference-drift rows=1 rounds=60
+CLASS report-fidelity rows=1 rounds=60
+CLASS tally-drift rows=1 rounds=60
+CLASS uncommitted-work rows=2 rounds=60
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=9 rows=9 open=0 closed=9 wontfix=0
+exit=0
+$ node scripts/routed-ledger.mjs --root $L --rev HEAD --from 60 --to 60
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=9 rows=9 open=0 closed=9 wontfix=0
+exit=0
+$ node scripts/routed-ledger.mjs --root $L --ledger corpus/mut-past-eof.md --from 60 --to 60   # mutant: R60-V3 answer line 99999
+FINDING ANSWER_DEAD R60-V3@line7:answer-line-99999-of-2998
+ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=9 rows=9 open=0 closed=9 wontfix=0 findings=1 first=ANSWER_DEAD:R60-V3@line7:answer-line-99999-of-2998
+exit=1
+$ node scripts/routed-ledger.mjs --root $L --ledger corpus/mut-decoy.md --from 60 --to 60   # mutant: decoy quote on R60-V6
+FINDING QUOTE_ABSENT R60-V6@line10:round-60-item-6
+FINDING UNLEDGERED round-60-item-6
+ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=9 rows=9 open=0 closed=9 wontfix=0 findings=2 first=QUOTE_ABSENT:R60-V6@line10:round-60-item-6
+exit=1

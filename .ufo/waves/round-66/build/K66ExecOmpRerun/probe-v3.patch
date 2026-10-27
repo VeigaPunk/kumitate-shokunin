@@ -1,0 +1,41 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-binary-probe.sh	2026-10-25 22:56:39.586526081 -0300
++++ /fast/scratch/hyaku/kumitate-r66/K66ExecOmpRerun/probe-v3-candidate.sh	2026-10-27 03:36:29.516377675 -0300
+@@ -46,12 +46,20 @@
+ esac
+ if [ "$DEF_named" = 1 ]; then kv wrapper_names_real=omp.real; else kv wrapper_names_real=none; fi
+ 
+-codes="$(grep -m1 -oE '132\|133\|134\|135\|136\|137\|138\|139' "$W" 2>/dev/null | tr -d '\n' | awk '{print ($0=="132|133|134|135|136|137|138|139") ? "132-139" : "other"}')"
+-[ "$?" -le 1 ] || fail wrapper-codes-unreadable
+-kv "wrapper_restart_codes=$codes"
+-maxr="$(grep -m1 -oE 'crashes[^0-9]*-gt [0-9]+' "$W" 2>/dev/null | grep -oE '[0-9]+$')"
+-[ "$?" -le 1 ] || fail wrapper-max-restarts-unreadable
+-kv "wrapper_max_restarts=$maxr"
++if [ "$(head -c 2 "$W" 2>/dev/null)" = '#!' ]; then
++  codes="$(grep -m1 -oE '132\|133\|134\|135\|136\|137\|138\|139' "$W" 2>/dev/null | tr -d '\n' | awk '{print ($0=="132|133|134|135|136|137|138|139") ? "132-139" : "other"}')"
++  [ "$?" -le 1 ] || fail wrapper-codes-unreadable
++  kv "wrapper_restart_codes=$codes"
++  maxr="$(grep -m1 -oE 'crashes[^0-9]*-gt [0-9]+' "$W" 2>/dev/null | grep -oE '[0-9]+$')"
++  [ "$?" -le 1 ] || fail wrapper-max-restarts-unreadable
++  kv "wrapper_max_restarts=$maxr"
++else
++  # No wrapper script: there is nothing to restart and no restart codes to read. Say so
++  # explicitly instead of printing an empty value (an empty key value reads like a measurement
++  # that failed).
++  kv "wrapper_restart_codes=none"
++  kv "wrapper_max_restarts=none"
++fi
+ 
+ # 3. The release binary: explicit override, else the default only when the wrapper itself names omp.real; otherwise
+ #    the measured file is not identified by anything on this host and the probe refuses to guess.
+@@ -59,6 +67,11 @@
+   R="$OMP_BIN_REAL"
+ elif [ "$DEF_named" = 1 ] && [ -n "${HOME:-}" ]; then
+   R="$HOME/.local/bin/omp.real"
++elif [ "$(head -c 4 "$W" 2>/dev/null | tr -d '\0')" = "$(printf '\177ELF')" ]; then
++  # Host layout v3 (2026-10-27): the release binary itself is on PATH; there is no wrapper
++  # script and no omp.real. The release is the PATH file; the wrapper keys above stay
++  # truthful (wrapper_is_script=0, wrapper_names_real=none, no restart codes, no restarts).
++  R="$W"
+ else
+   fail real-unidentified
+ fi

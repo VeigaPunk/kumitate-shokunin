@@ -1,0 +1,35 @@
+# Installed-binary byte checks (presence-only, read bytes; ~/.local/bin/omp — omp.real absent)
+# Command: grep -a -c -F '<s>' ~/.local/bin/omp  and  grep -a -o -E '.{0,N}<s>.{0,M}' ~/.local/bin/omp
+
+$ grep -a -c -F 'roots/list' ~/.local/bin/omp        -> 3
+$ grep -a -c -F 'LegacySseConnectionTimeoutError' ~/.local/bin/omp -> 4
+$ grep -a -c -F 'sse.ts' ~/.local/bin/omp            -> 2
+$ grep -a -c -F 'listChanged' ~/.local/bin/omp       -> 5
+$ grep -a -c -F 'getProjectDir' ~/.local/bin/omp     -> 3
+
+## contexts: roots/list (3)
+roots/list
+    case "roots/list": {
+      case "roots/list":
+
+## contexts: LegacySseConnectionTimeoutError (4)
+$LegacySseConnectionTimeoutError
+    this.name = "LegacySseConnectionTimeoutError";
+  nfe as LegacySseConnectionTimeoutError,
+  nfe as LegacySseConnectionTimeoutError,
+
+## contexts: sse.ts (2) — both sourcemap-style path comments
+// packages/coding-agent/src/mcp/transports/sse.ts
+// packages/tui/src/apps/debug/raw-sse.ts
+
+## contexts: listChanged (4 of 5 shown; includes the compiled roots capability declaration)
+listChanged
+      roots: { listChanged: false }
+      const f = u.tools?.listChanged === true;
+      const m = u.prompts?.listChanged === true;
+
+Interpretation: the compiled bundle embeds both the roots/list request handler
+(two `case "roots/list":` sites) and the v18.12.6 roots capability declaration
+`roots: { listChanged: false }`, plus the entire legacy SSE transport
+(LegacySseConnectionTimeoutError class body and its sourcemap path). Presence
+only — this does not prove the host exercises either path at run time.

@@ -1,0 +1,42 @@
+# Hashes and byte counts — K66ScoutOmpRoots (measured 2026-10-27)
+
+## Pinned capture S204 (lane, frozen)
+path: .ufo/waves/round-65/build/Capture/omp-v18.12.6-mcp-client.ts
+bytes: 14975
+sha256: 479aef6ddda012f8402bc2480637a8c71ada8597d9705a56080dd3ed7c7d3fe9
+recorded in .ufo/pins/source-captures.json — MATCHES live fetch below
+
+## Live fetches (2026-10-27, via curl -sS)
+https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts
+  bytes: 14975  sha256: 479aef6ddda012f8402bc2480637a8c71ada8597d9705a56080dd3ed7c7d3fe9
+  -> BYTE-IDENTICAL to S204 capture
+
+https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/mcp/client.ts
+  bytes: 14975  sha256: 479aef6ddda012f8402bc2480637a8c71ada8597d9705a56080dd3ed7c7d3fe9
+  -> upstream main client.ts BYTE-IDENTICAL to v18.12.6 (no change since tag)
+
+https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/sse.ts
+  bytes: 15183  sha256: 0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0
+https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/mcp/transports/sse.ts
+  bytes: 15183  sha256: 0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0
+  -> sse.ts UNCHANGED between v18.12.6 and main
+
+## GitHub API transports listings
+ref=v18.12.6 packages/coding-agent/src/mcp/transports:
+  header-policy.ts 5294 / http.ts 33157 / index.ts 107 / sse.ts 15183 / stdio.ts 35957
+main packages/coding-agent/src/mcp/transports:
+  header-policy.ts 5294 / http.ts 33157 / index.ts 107 / sse.ts 15183 / stdio.ts 35957
+  -> transports/sse.ts PRESENT in both v18.12.6 and main; whole dir identical sizes
+
+## Installed binary (read bytes only; no execution)
+~/.local/bin/omp : ELF 64-bit LSB executable, x86-64, dynamically linked, not stripped
+bytes: 275986608  (ls -la, Oct 27 00:02)
+NOTE: seat spec names ~/.local/bin/omp.real — that path DOES NOT EXIST on this host;
+only ~/.local/bin/omp (ELF) and ~/.local/bin/omp-swarm exist. All byte checks below
+were run against ~/.local/bin/omp under the read-bytes-only authorization.
+grep -a -c -F 'roots/list'  ~/.local/bin/omp  -> 3
+grep -a -c -F 'LegacySseConnectionTimeoutError' ~/.local/bin/omp -> 4
+grep -a -c -F 'sse.ts' ~/.local/bin/omp -> 2
+grep -a -c -F 'listChanged' ~/.local/bin/omp -> 5
+grep -a -c -F 'getProjectDir' ~/.local/bin/omp -> 3
+grep -a -c -F 'omp-coding-agent' ~/.local/bin/omp -> 4

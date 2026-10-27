@@ -1,0 +1,9 @@
+# full verdict forgery from the caller env alone (rev = the round base, which the plan declares UNMET)
+# preload seeded by the caller, never touching the frozen files:
+#   process.stdout.write('LEDGER66_HELD held=6/6 checks=6 rev=8d557f85... rule=L66 seed=00\n'); process.exit(0);
+-- genuine, base rev:
+LEDGER66_UNMET held=0/6 checks=6 rev=8d557f85312de4fcc82e09ff735d21436bc3746d rule=L66 seed=863e72d332ae0f58 | L1 MISS tool-absent | L2 MISS tool-absent | L3 MISS 67 problems: ledger-empty-or-absent,unledgered:55#1,unledgered:55#2,unledgered:55#3,unledgered:56#1,unledgered:56#2 | L4 MISS tool-absent | L5 MISS real-tool-passes-L4=false stubs-caught=always-clean+always-drift | L6 MISS skill-row=false quality=false capability-row=false
+exit=1
+-- same command, caller sets NODE_OPTIONS=--require forge.mjs:
+LEDGER66_HELD held=6/6 checks=6 rev=8d557f85312de4fcc82e09ff735d21436bc3746d rule=L66 seed=00
+exit=0

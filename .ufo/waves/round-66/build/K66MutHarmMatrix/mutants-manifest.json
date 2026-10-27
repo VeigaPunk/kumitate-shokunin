@@ -1,0 +1,212 @@
+[
+ {
+  "name": "T1-held-harm-swap",
+  "area": "transition",
+  "old": "if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';",
+  "new": "if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HARM' : 'HELD';",
+  "sha256": "ae96b827ae1f0727430c06244f4efdd60e6204091a074f5ffd31bd9c440cdd98"
+ },
+ {
+  "name": "T2-gone-harmabsent-swap",
+  "area": "transition",
+  "old": "if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';",
+  "new": "if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'GONE' : 'HARM_ABSENT';",
+  "sha256": "80c08d09a1e6e5ee08a5ea27d022529079fcb61f0441f164e2a704c4b2f1c20b"
+ },
+ {
+  "name": "T3-new-ok-dead",
+  "area": "transition",
+  "old": "if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';",
+  "new": "if (b.cls === 'ABSENT') return 'NEW_RED';",
+  "sha256": "1e1285c3d7fc3315b87a2489d94962fdbf9ff756611e18d3dd235bf4a3c2ece1"
+ },
+ {
+  "name": "T4-carried-swap",
+  "area": "transition",
+  "old": "return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';",
+  "new": "return b.key !== t.key ? 'CARRIED' : 'CARRIED_MOVED';",
+  "sha256": "372c9730c15a57407be76ad89d35427d5adcfd21173e77e5efcac6083ccf80c3"
+ },
+ {
+  "name": "T5-absentboth-dead",
+  "area": "transition",
+  "old": "if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';",
+  "new": "if (b.cls === 'ABSENT' && t.cls === 'ABSENTX') return 'ABSENT_BOTH';",
+  "sha256": "5ee73449a0a85dc99aebf3bb4bcc09cbe89fb1e6911cf3390e3d32b55bb0d774"
+ },
+ {
+  "name": "T6-repaired-to-gone",
+  "area": "transition",
+  "old": "if (t.cls === 'CLEAN') return 'REPAIRED';",
+  "new": "if (t.cls === 'CLEAN') return 'GONE';",
+  "sha256": "9f1b4bcedfffd61e4dfaadacd05d6265b52efa224b183be3abe5a76dbcac9c31"
+ },
+ {
+  "name": "T7-harm-to-moved",
+  "area": "transition",
+  "old": "? 'HELD' : 'HARM';",
+  "new": "? 'HELD' : 'CARRIED_MOVED';",
+  "sha256": "584c868baeda86cdedd5c6d4739877ad7922c5d6639a72756dd2beeed9c6801e"
+ },
+ {
+  "name": "T8-newok-fallthrough",
+  "area": "transition",
+  "old": "if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';",
+  "new": "if (b.cls === 'ABSENT' && t.cls !== 'CLEAN') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';",
+  "sha256": "43b14b9e508f56547e5d2879563f2e70567f3368774549555a174bdf3dc2ba33"
+ },
+ {
+  "name": "V1-first-hit",
+  "area": "verdict",
+  "old": "const last = hits.length ? hits[hits.length - 1] : null;",
+  "new": "const last = hits.length ? hits[0] : null;",
+  "sha256": "157642308132f8c0a126016393f301a5f7c2a43e485f8df7ee21efe3a78e1b18"
+ },
+ {
+  "name": "V2-no-hyphen-extend",
+  "area": "verdict",
+  "old": "while (end < loose.length && /[-A-Za-z0-9_]/.test(loose[end])) end += 1;",
+  "new": ";",
+  "sha256": "1477c095929636e470aeb7879e90e5b2dc9f451b0e5a6a47d3be9d8534b3ac09"
+ },
+ {
+  "name": "V3-earlier-bad-dead",
+  "area": "verdict",
+  "old": "const earlierBad = hits.slice(0, -1).find((h) => !g.clean.includes(h.word) && !g.ignore.includes(h.word));",
+  "new": "const earlierBad = undefined;",
+  "sha256": "492a8f5775cdd6a6cb941ba79820634ae7b9b50baecb18adc8093a7738b5dba7"
+ },
+ {
+  "name": "V4-utf8-check-dead",
+  "area": "verdict",
+  "old": "try { dec.decode(lineBuf); } catch { badLine = true; continue; }",
+  "new": ";",
+  "sha256": "fcc2be113386638791a4330977e23dca292923075ac4f035956b18caf9f19564"
+ },
+ {
+  "name": "V5-noverdict-notclean",
+  "area": "verdict",
+  "old": "if (!last) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine)}` : ''}` };",
+  "new": "if (!last) return { cls: 'NOT_CLEAN', text: 'no-verdict' };",
+  "sha256": "c7bd647fb822690a5c23bf1f98be8e52088bb952c9912b8e31923025ba204617"
+ },
+ {
+  "name": "V6-signal-ignored",
+  "area": "verdict",
+  "old": "if (signal) return { cls: 'FAIL_CLOSED', text: `signal=${signal}${last ? ` verdict=${JSON.stringify(last.line.slice(0, 120))}` : ''}` };",
+  "new": ";",
+  "sha256": "aaeb6a42f17980b875f80af5d9b7d4ed40fa7dbac3c93e70dc38c6c0297c8ff2"
+ },
+ {
+  "name": "V7-no-trailing-trim",
+  "area": "verdict",
+  "old": "const loose = lineBuf.toString('utf8').replace(/\\s+$/, '');",
+  "new": "const loose = lineBuf.toString('utf8');",
+  "sha256": "3524eecdc185aaebbf15b42f4f33b1f9eea1a4d969ae3eadbaaebd6a2d7d15a5"
+ },
+ {
+  "name": "V9-tail-clip-3",
+  "area": "verdict",
+  "old": "return t.length ? t[t.length - 1].slice(0, 120) : '';",
+  "new": "return t.length ? t[t.length - 1].slice(0, 3) : '';",
+  "sha256": "fe1c12f2d992b7ceeedbc35e9094ba25d62f05b88cbf058a30a29af26c0a426d"
+ },
+ {
+  "name": "S1-no-origin-removal",
+  "area": "sandbox",
+  "old": "git(dir, ['remote', 'remove', 'origin']);",
+  "new": ";",
+  "sha256": "eee8160cc51072ef9aa492ccbd68772c9f1218a9f9bdb03c0b402dfd57b648bb"
+ },
+ {
+  "name": "S2-clean-keeps-ignored",
+  "area": "sandbox",
+  "old": "['clean', '-qfdx']",
+  "new": "['clean', '-qfd']",
+  "sha256": "a5ea1dffb782de989196f310729ce6fa0bfe490660f7adc89aea0fe02af50c63"
+ },
+ {
+  "name": "S3-needs-escape-ok",
+  "area": "sandbox",
+  "old": "if (rp !== root && !rp.startsWith(root + sep)) return { state: 'defect', text: `needs-escape-link:${needs}` };",
+  "new": ";",
+  "sha256": "7d1ddcfad589949ede1356302399f6f701eb6cfa854189ef544fbe0b3f23649d"
+ },
+ {
+  "name": "S4-dir-needs-ok",
+  "area": "sandbox",
+  "old": "if (!statSync(rp).isFile()) return { state: 'defect', text: `needs-not-a-file:${needs}` };",
+  "new": ";",
+  "sha256": "0b7629c68868081a921e551655841a933a717d632722ba2641f9bbcc07ed0c1b"
+ },
+ {
+  "name": "S5-mkdtemp-outside-tmpdir",
+  "area": "sandbox",
+  "old": "try { scratch = mkdtempSync(join(tmpdir(), 'harm-matrix.')); }",
+  "new": "try { scratch = mkdtempSync(join('/tmp', 'harm-matrix.')); }",
+  "sha256": "90970bd71d4f51c8a0d1625ab34ffd5450cce7f917a8bd4b8fa2a4ce5fa0f0ac"
+ },
+ {
+  "name": "S6-stale-check-dead",
+  "area": "sandbox",
+  "old": "if (head !== rev) return { error: `stale-checkout: HEAD ${head} != ${rev}` };",
+  "new": ";",
+  "sha256": "4970bb3ce16ae08aaa13e2d960aa57397228ee3f3bbe1324b66e6ad578a66f23"
+ },
+ {
+  "name": "F1-loader-skip-dead",
+  "area": "sandbox",
+  "old": "if (LOADER_VALUE_FLAGS.has(a)) { i += 1; continue; }",
+  "new": ";",
+  "sha256": "69ef62bf5eeac2334d0703778e2c8e0c9e9e0e7a72e4424e183542f1d2b2d717"
+ },
+ {
+  "name": "E1-no-harmabsent",
+  "area": "exit",
+  "old": "const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);",
+  "new": "const bad = harm + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);",
+  "sha256": "a4d1ef7bb0ba45b27153851f988974090e0cbe45d87030f9bb6ae078e6c79d0e"
+ },
+ {
+  "name": "E2-always-exit0",
+  "area": "exit",
+  "old": "return bad === 0 ? 0 : 1;",
+  "new": "return 0;",
+  "sha256": "ed58b2b80e44ed2adf349da100de29fa1f5bb8d43efe3db84dd53bd315661140"
+ },
+ {
+  "name": "E3-allunmeasured-dead",
+  "area": "exit",
+  "old": "if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);",
+  "new": ";",
+  "sha256": "b3a02353a406ac248173b16cf7e35e25ff28582a4541cbe77e97bfa60ffd845a"
+ },
+ {
+  "name": "E4-nogates-dead",
+  "area": "exit",
+  "old": "if (counted.length === 0) failClosed('NO_GATES', 'every gate absent at both revisions');",
+  "new": ";",
+  "sha256": "2bbcbe7007ff174030aab469072396d1933ef559faf0a2b80378139c19b39186"
+ },
+ {
+  "name": "E5-strict-gone-dead",
+  "area": "exit",
+  "old": "(o['--strict-gone'] ? n('GONE') : 0)",
+  "new": "0",
+  "sha256": "36b018d2ac2b9f45a458edfcfb9cd8afa98ff59b34ee50f8211055cda8f319b6"
+ },
+ {
+  "name": "E6-timeout-read-as-error",
+  "area": "exit",
+  "old": "if (r.error && r.error.code === 'ETIMEDOUT') res = { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };",
+  "new": "if (r.error && r.error.code === 'ETIMEDOUT') res = { cls: 'FAIL_CLOSED', text: `timeout>${g.timeout}s` };",
+  "sha256": "7e2d2c5ed1e5e3a136547f617ea1a0bf360491d764b8f7261d8eeee3b868892a"
+ },
+ {
+  "name": "E9-text-clip-12",
+  "area": "exit",
+  "old": "res.text = res.text.slice(0, 200);",
+  "new": "res.text = res.text.slice(0, 12);",
+  "sha256": "62ac37bd83861183b9faf8d611796c5aacdff8353b9efe9a7cea25c324e528bf"
+ }
+]

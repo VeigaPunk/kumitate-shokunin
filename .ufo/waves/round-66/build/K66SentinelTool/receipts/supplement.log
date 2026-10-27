@@ -1,0 +1,23 @@
+== 50MB ledger read (no size cap)
+$ node tool.mjs --root fx --from 55 --to 55 --ledger ../big50.txt
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-has-no-Ledger-section:../big50.txt
+EXIT=2
+
+== unwritable TMPDIR: exit code and last stderr line
+EXIT=1
+node:fs:3134
+  return binding.mkdtemp(prefix, options.encoding);
+stdout-bytes=0
+
+== clean selftest (TMPDIR in scratch)
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+EXIT=0
+
+== git show REV:../x is refused by git itself
+/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/gx.gX1rIp
+EXIT=128
+fatal: '../outside-ledger.md' is outside repository at '/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/gx.gX1rIp'
+
+== 256MB git show maxBuffer path (code path only, 140: maxBuffer)
+140:      const r = spawnSync('git', ['-C', root, 'show', `${rev}:${p}`], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+144:      const r = spawnSync('git', ['-C', root, 'ls-tree', '--name-only', `${rev}:corpus/lessons`], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });

@@ -1,0 +1,39 @@
+$ node <lane>/scripts/surface-probe.mjs --checklists --self appv0   # appv0 = the patched SKILL.md + a stub scripts/routed-ledger.mjs printing the real selftest line
+CHECKLIST  FAIL SKILL.md:711 exit=1 expected=0|1 substring=miss wall=0.018 load1=8.83 — Citation gate verdict
+CHECKLIST  FAIL SKILL.md:712 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Citation gate hermetic suite
+CHECKLIST  FAIL SKILL.md:713 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Live sighting-surface conformance
+CHECKLIST  FAIL SKILL.md:714 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Surface-probe hermetic suite
+CHECKLIST  FAIL SKILL.md:715 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Round-gate hermetic suite
+CHECKLIST  FAIL SKILL.md:716 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Round-close artifact audit
+CHECKLIST  FAIL SKILL.md:717 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Filed-report tracking
+CHECKLIST  FAIL SKILL.md:718 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+CHECKLIST  FAIL SKILL.md:719 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Proxy-check hermetic suite
+CHECKLIST  FAIL SKILL.md:720 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Member-claims gate
+CHECKLIST  FAIL SKILL.md:721 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Kimi-substrate census
+CHECKLIST  FAIL SKILL.md:722 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Sources-registry gate
+CHECKLIST  FAIL SKILL.md:723 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Sources-check hermetic suite
+CHECKLIST  FAIL SKILL.md:724 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Per-anchor truth burn-down
+CHECKLIST  FAIL SKILL.md:725 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Anchor-truth hermetic suite
+CHECKLIST  FAIL SKILL.md:726 exit=1 expected=0 substring=miss wall=0.018 load1=8.83 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  FAIL SKILL.md:727 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Wave-census hermetic suite
+CHECKLIST  FAIL SKILL.md:728 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  FAIL SKILL.md:729 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Gate-mutants hermetic suite
+CHECKLIST  FAIL SKILL.md:730 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — OMP agent-root census
+CHECKLIST  FAIL SKILL.md:731 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — OMP-census hermetic suite
+CHECKLIST  FAIL SKILL.md:732 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST  FAIL SKILL.md:733 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`)
+CHECKLIST  FAIL SKILL.md:734 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`)
+CHECKLIST  FAIL SKILL.md:735 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`)
+CHECKLIST  FAIL SKILL.md:736 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`)
+CHECKLIST  FAIL SKILL.md:737 exit=1 expected=0 substring=miss wall=0.015 load1=8.83 — Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`)
+CHECKLIST  FAIL SKILL.md:738 exit=1 expected=0 substring=miss wall=0.017 load1=8.83 — Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`)
+CHECKLIST  FAIL SKILL.md:739 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — README source-id citation gate (round 59; contract `kumitate-cite-sources-v1`)
+CHECKLIST  FAIL SKILL.md:740 exit=1 expected=0 substring=miss wall=0.016 load1=8.83 — Round dispatch-evidence gate (round 60; contract `kumitate-dispatch-evidence-v1`; the real run over a round's committed launcher record is the registry row's command, --root <lane> --round <N> --wave <w>)
+CHECKLIST  FAIL SKILL.md:741 exit=1 expected=0 substring=miss wall=0.019 load1=8.83 — Report-vs-receipt diff suite (round 64; contract `kumitate-report-receipt-diff-v3`; twelve finding ids; the real diff before filing a round report is the registry row's command, --lane . --round N --rev <lane-tip> --report <round report>)
+CHECKLIST  FAIL SKILL.md:742 exit=127 expected=0 substring=miss wall=0.002 load1=8.83 — jj seat-containment demo re-run (round 64; contract `kumitate-jj-seat-demo-v2`; 27 keys; exits 0 done or 2 fail-closed and never 1, so it is a demo and not a gate; re-ground the entry on any jj version change)
+CHECKLIST  FAIL SKILL.md:743 exit=127 expected=0 substring=miss wall=0.002 load1=8.83 — Plan-before-ready map-arm suite (round 64; the readme-map arm judges readme-map inside git archive PLAN, epoch PBR_MAP_FROM default 65; the real run is the registry row's command, --round N --rev REV)
+CHECKLIST  PASS SKILL.md:746 exit=0 expected=0 substring=hit wall=0.016 load1=8.83 — Routed-defect ledger gate (round 66; contract `kumitate-routed-ledger-v1`; the real run over the lane's spot-checks and ledger is the registry row's command, `--rev <M> --from 55 --to 65 --classes`)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 1/34 pass
+VERDICT: FAIL
+exit=1

@@ -1,0 +1,11 @@
+# Draft: SKILL.md `## Verifiable checklist` item 34 for routed-ledger (round 66).
+# Insert as the LAST list item of the section, immediately after the plan-before-ready
+# map-arm item (SKILL.md:739 at the freeze revision 621212ba). One line, frozen v1 grammar:
+#   ^\s*- \[ \] <label> — `<command>` → exit <n>[|<m>…] + `<expected substring>$
+# Delimiter is " — `" (em dash, space, backtick); the command must be a single code span.
+# Verified executed by `node scripts/surface-probe.mjs --checklists` — see
+# checklists-with-draft-item.txt in this directory for the CHECKLIST PASS line.
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -739,0 +740 @@
++- [ ] Routed-ledger self-test suite (round 66; contract `kumitate-routed-ledger-v1`; 33 hermetic cases; the real run over the spot-check routed sections is the registry row's command, --rev M --from 55 --to 65 --classes) — `node scripts/routed-ledger.mjs --selftest` → exit 0 + `ROUTED_LEDGER_SELFTEST: PASS`

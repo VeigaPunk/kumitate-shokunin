@@ -1,0 +1,10 @@
+$ patch -p1 --dry-run -d appv2 < registry-home.patch   # appv2 = fresh copies of the three lane files
+checking file corpus/QUALITY.md
+checking file SKILL.md
+checking file SCORECARD.md
+dry_run_exit=0
+$ patch -p1 -d appv2 < registry-home.patch
+apply_exit=0
+dc2a50aebd266c13df7e69c5a6b02c9e  appv2/corpus/QUALITY.md
+2e457afd9be3fd6648a68a375010b441  appv2/SKILL.md
+327453ef5fecfd9829418f1dba22524e  appv2/SCORECARD.md

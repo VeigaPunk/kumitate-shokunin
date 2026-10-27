@@ -1,0 +1,83 @@
+### E1 os.tmpdir / TMPDIR honouring  (2026-10-27T03:40:26-03:00)
+TMPDIR unset -> /tmp
+TMPDIR set   -> /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev
+-- counter with TMPDIR at a missing dir:
+node:fs:3134
+  return binding.mkdtemp(prefix, options.encoding);
+                 ^
+
+Error: ENOENT: no such file or directory, mkdtemp '/fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/missing/ledger66.XXXXXX'
+    at mkdtempSync (node:fs:3134:18)
+    at file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-66/probe/ledger66-probe.mjs:48:11
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'mkdtemp',
+  path: '/fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/missing/ledger66.XXXXXX'
+}
+
+Node.js v24.21.0
+exit=1  (stdout empty above = no verdict line)
+node:fs:3134
+  return binding.mkdtemp(prefix, options.encoding);
+                 ^
+
+### E2 git archive export-subst rewrites file content (archive != tree)
+blob:    QUOTE = "$Format:%s$"
+archive: QUOTE = "FORGED-ANSWER-TEXT-NEVER-IN-A-BLOB"
+
+### E3 a committed symlink makes the counter execute a host file (L1 held)
+tree: 120000 scripts/routed-ledger.mjs 
+LEDGER66_UNMET held=1/6 checks=6 rev=43be1d76c37845c934e5c98f7561b6382065076f rule=L66 seed=f891ec168df80da8 | L2 MISS exit=1 verdict= own-items=0 own-spotchecks=0 | L3 MISS 4 problems: ledger-empty-o
+r-absent,round-65-items-absent,classes=0<5,no-class-spans-4-rounds | L4 MISS seed=f891ec168df80da8 14/14 mutants wrong: good:exit=1:;drop:exit=1:;quote-swap:exit=1:;quote-decoy:exit=1: | L5 MISS real-
+tool-passes-L4=false stubs-caught=always-clean+always-drift | L6 MISS skill-row=false quality=false capability-row=false
+L1 among misses? no -> L1 held (held=1/6); the tool it ran is the host symlink target
+
+### E4 lane path is interpolated into a bash -c string
+LEDGER66_UNMET held=0/6 checks=6 rev=3f28b6d4a53e49e6d8478bf9df3154308ea77387 rule=L66 | archive-failed
+injected file exists: YES
+
+### E5 NODE_OPTIONS in the caller env forges L1
+-- without: LEDGER66_UNMET held=0/6 checks=6 rev=c759ad2665db24190c9ac7c5d9f9e8b12368503b rule=L66 seed=65dd1c15c4edb1d0 | L1 MISS e
+   L1 among misses? L1 MISS
+-- with:    LEDGER66_UNMET held=1/6 checks=6 rev=c759ad2665db24190c9ac7c5d9f9e8b12368503b rule=L66 seed=41b3007943648f77 | L2 MISS e
+   L1 among misses? no -> L1 held (L1 was MISS without the preload)
+
+### E6 L2's verdict comes from the live worktree, not from M
+ledger committed at HEAD: 0  worktree: ?? corpus/routed-ledger.md
+LEDGER66_UNMET held=1/6 checks=6 rev=b08c1d487b733a0659a6e3300654b812b68763d1 rule=L66 seed=929d9bb5eb0c8feb | L1 MISS exit=1 line=none | L3 MISS 15 problems: ledger-empty-or-absent,unledgered:55#1,un
+ledgered:56#1,unledgered:57#1,unledgered:58#1,unledgered:59#1 | L4 MISS seed=929d9bb5eb0c8feb 14/14 mutants wrong: good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=11 findings=1 first=UNLEDGERED:x;drop:exi
+t=1:ROUTED_LEDGER: DRIFT spotchecks=11 findings=1 first=UNLEDGERED:x;quote-swap:exit=1:ROUTED_LEDGER: DRIFT spotchecks=11 findings=1 first=UNLEDGERED:x;quote-decoy:exit=1:ROUTED_LEDGER: DRIFT spotchec
+L2 among misses? no -> L2 held (held=1/6) on an untracked worktree ledger
+
+### E7 TAR_OPTIONS from the caller env silently mutates the extracted tree
+plain entries: 15 first=corpus/
+strip exit=0 -> lessons routed-ledger.mjs 
+
+### E8 SIGTERM to the counter: scratch leak + surviving child, no verdict
+before: /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/tt/ledger66.3Ztuuo
+child:  384978 node /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/tt/ledger66.3Ztuuo/archive/
+after:  /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/tt/ledger66.3Ztuuo
+child:  384978 node /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/tt/ledger66.3Ztuuo/archive/
+stdout: []
+
+### E9 M8 executes the revision's scripts with the caller's env and no sandbox
+DEPREC66_UNMET held=1/8 checks=8 rev=bb26a5e58277d937aa22b39f5e5f09f30bf27025 rule=M66 | M1 MISS entry-absent | M2 MISS 
+census: [census argv: validate --file /fast/scratch/hyaku/kumitate-r66/K66SentinelCounters/ev/deprec66.xFGcZo/corpus/SOURCES.md]
+escaped: [env:secret-token]
+
+### E10 M8 child has no timeout: counter hangs, then dies with no verdict
+./evidence.sh: line 113: 390013 Killed                     timeout -s KILL 5 env TMPDIR="$S/ev" node "$D66" "$F" HEAD > "$S/ev/hang.out" 2>&1
+exit=137 (137 = killed by timeout, verdict output: [])
+
+### E11 pins are present but nothing self-verifies
+ledger66-probe .ufo/waves/round-66/probe/ledger66-probe.mjs 453bd64cedce6bea3413de4e3ede8be8a620d3408f13f4f0c3982b3e8d231e64
+deprec66-probe .ufo/waves/round-66/probe/deprec66-probe.mjs 866bfb86b9530d6f86a05043d94c95b5edef1eb058df2d1169fe279ddd3774a6
+c1-controls66 .ufo/waves/round-66/probe/c1-controls.sh a78ea814683ea0baa15e906d231091ea0c98d256d65f1e4b08a7a0c19b1102e7
+c2-donothing66 .ufo/waves/round-66/probe/c2-donothing.sh a6b27ef7d3b36dc03d69c2e00fd753dfeaef95a0f4649bbc885765fe636f9efe
+actual ledger66 453bd64cedce6bea3413de4e3ede8be8a620d3408f13f4f0c3982b3e8d231e64
+actual deprec66 866bfb86b9530d6f86a05043d94c95b5edef1eb058df2d1169fe279ddd3774a6
+counter-pins references inside the counters: 0 0
+curl version: curl 8.23.0

@@ -1,0 +1,19 @@
+# receipt: routed-ledger v1 over rounds 55..56, seat rows only (scratch clone)
+# clone: 88041bc9f45b06560bbd807bd1ea7b44126aa49f  toplevel=/fast/scratch/hyaku/kumitate-r66/K66ScribeLedger5556/lane
+# tool sha256: f92a364d293a283804e7d693f04cddfd94040d7f29a6c5c428b900b0d6ff3bf5
+# input: build/K66ScribeLedger5556/ledger-input-scratch.md (7 rows)
+$ node scripts/routed-ledger.mjs --root <clone> --from 55 --to 56
+ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=2 closed=4 wontfix=1
+EXIT=0
+$ node scripts/routed-ledger.mjs --root <clone> --from 55 --to 56 --classes
+CLASS carried-l0 rows=2 rounds=55,56
+CLASS counter-obsolescence rows=1 rounds=56
+CLASS dispatch-evidence rows=1 rounds=56
+CLASS reference-drift rows=1 rounds=56
+CLASS tally-drift rows=2 rounds=55
+ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=2 closed=4 wontfix=1
+EXIT=0
+$ node scripts/routed-ledger.mjs --selftest
+CASE ok unreadable --rev → FAIL-CLOSED exit 2
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+EXIT=0

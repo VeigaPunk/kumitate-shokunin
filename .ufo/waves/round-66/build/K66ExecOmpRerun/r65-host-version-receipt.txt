@@ -1,0 +1,14 @@
+$ OMP_NO_RESTART=1 /home/vgpnk/.local/bin/omp.real --version
+error: command not found: /home/vgpnk/.local/bin/omp.real
+exit=127
+
+$ OMP_NO_RESTART=1 /home/vgpnk/.local/bin/omp --version
+omp/18.13.1
+exit=0
+
+$ ls -l /home/vgpnk/.local/bin/omp*
+-rwxr-xr-x 1 vgpnk vgpnk 275986608 Oct 27 00:02 /home/vgpnk/.local/bin/omp
+-rwxr-xr-x 1 vgpnk vgpnk     11185 Oct  6 16:28 /home/vgpnk/.local/bin/omp-swarm
+
+$ stat -c '%n %s %y' /home/vgpnk/.local/bin/omp
+/home/vgpnk/.local/bin/omp 275986608 2026-10-27 00:02:23.855671804 -0300

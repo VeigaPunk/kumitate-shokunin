@@ -1,0 +1,793 @@
+diff --git a/.ufo/pins/readme-map.json b/.ufo/pins/readme-map.json
+index 73fdc37e..310dfc9a 100644
+--- a/.ufo/pins/readme-map.json
++++ b/.ufo/pins/readme-map.json
+@@ -160,6 +160,7 @@
+   "lessons/round-64-verifier-spotcheck.md",
+   "knowledge/omp-installed-release-mcp-runtime.md",
+   "lessons/round-65.md",
+-  "lessons/round-65-verifier-spotcheck.md"
++  "lessons/round-65-verifier-spotcheck.md",
++  "knowledge/mcp-deprecation-registry.md"
+  ]
+ }
+diff --git a/.ufo/pins/source-captures.json b/.ufo/pins/source-captures.json
+index 72621f73..91920baa 100644
+--- a/.ufo/pins/source-captures.json
++++ b/.ufo/pins/source-captures.json
+@@ -266,6 +266,27 @@
+    "sha256": "41ad7d5b3ff364ba790d4a2a9a54b3f0fa0e491c0b836e3c6436c9ea64cbf033",
+    "bytes": 33157,
+    "captured": "2026-10-25"
++  },
++  {
++   "sourceId": "S207",
++   "path": ".ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-deprecated-2026-07-28.md",
++   "sha256": "c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa",
++   "bytes": 3839,
++   "captured": "2026-10-27"
++  },
++  {
++   "sourceId": "S208",
++   "path": ".ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-feature-lifecycle.md",
++   "sha256": "3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee",
++   "bytes": 8794,
++   "captured": "2026-10-27"
++  },
++  {
++   "sourceId": "S209",
++   "path": ".ufo/waves/round-66/build/K66CriticForgeM66/captures/omp-v18.12.6-sse.ts",
++   "sha256": "0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0",
++   "bytes": 15183,
++   "captured": "2026-10-27"
+   }
+  ],
+  "exemptions": [
+diff --git a/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-deprecated-2026-07-28.md b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-deprecated-2026-07-28.md
+new file mode 100644
+index 00000000..79f59840
+--- /dev/null
++++ b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-deprecated-2026-07-28.md
+@@ -0,0 +1,41 @@
++> ## Documentation Index
++> Fetch the complete documentation index at: https://modelcontextprotocol.io/llms.txt
++> Use this file to discover all available pages before exploring further.
++
++# Deprecated Features
++
++This page is the registry of specification features that are currently in the
++**Deprecated** state under the
++[feature lifecycle and deprecation policy](https://modelcontextprotocol.io/community/feature-lifecycle.md)
++([SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596)).
++
++A Deprecated feature remains part of the specification but is scheduled for
++removal: new implementations **SHOULD NOT** adopt it, and existing
++implementations **SHOULD** migrate before the feature's earliest removal. The
++earliest removal marks when a feature becomes *eligible* for removal; the
++actual removal is a Core Maintainer decision taken during release preparation
++and may happen later.
++
++This registry is a derived view kept consistent with the per-feature
++deprecation notices and changelog entries, which are the normative records.
++
++## Deprecated
++
++| Feature | Deprecation SEP | Deprecated in | Migration path | Earliest removal |
++| - | - | - | - | - |
++| [Roots](https://modelcontextprotocol.io/specification/2026-07-28/client/roots.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Pass directories or files via tool parameters, resource URIs, or server configuration | First revision released on or after 2027-07-28 |
++| [Sampling](https://modelcontextprotocol.io/specification/2026-07-28/client/sampling.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Integrate directly with LLM provider APIs | First revision released on or after 2027-07-28 |
++| [Logging](https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/logging.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Log to `stderr` for stdio transports; use [OpenTelemetry](https://opentelemetry.io/) for observability | First revision released on or after 2027-07-28 |
++| [Dynamic Client Registration](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/client-registration.md#dynamic-client-registration) | [PR #2858](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2858) | `2026-07-28` | [Client ID Metadata Documents](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/client-registration.md#client-id-metadata-documents) | First revision released on or after 2027-07-28 |
++| `includeContext: "thisServer"` / `"allServers"` ([Sampling](https://modelcontextprotocol.io/specification/2026-07-28/client/sampling.md#capabilities)) | [SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596) | `2025-11-25` | Omit the field or use `"none"` | Follows Sampling ([SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577)) |
++| [HTTP+SSE transport](https://modelcontextprotocol.io/specification/2024-11-05/basic/transports.md#http-with-sse) | [SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596) | `2025-03-26` | [Streamable HTTP](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http.md) | Three months after SEP-2596 reaches Final |
++
++The HTTP+SSE transport and the `includeContext` values were already described
++as deprecated before the lifecycle policy existed; SEP-2596 reclassifies them
++as Deprecated under its [transition provisions](https://modelcontextprotocol.io/community/feature-lifecycle.md).
++
++## Removed
++
++No features have been removed under this policy yet. When a Deprecated feature
++is removed, its row moves to this section with a link to the changelog entry
++recording the removal.
+diff --git a/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-feature-lifecycle.md b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-feature-lifecycle.md
+new file mode 100644
+index 00000000..96f620f7
+--- /dev/null
++++ b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/mcp-feature-lifecycle.md
+@@ -0,0 +1,157 @@
++> ## Documentation Index
++> Fetch the complete documentation index at: https://modelcontextprotocol.io/llms.txt
++> Use this file to discover all available pages before exploring further.
++
++# Feature Lifecycle and Deprecation Policy
++
++> How individual MCP specification features move through Active, Deprecated, and Removed states, and the timeline implementers can plan against.
++
++This policy defines a lifecycle for individual features within the Model
++Context Protocol specification. It defines three feature states (Active,
++Deprecated, Removed), the criteria and procedure for moving between them, a
++minimum window between deprecation and removal, and the documentation required
++at each transition.
++
++This policy was adopted via
++[SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596).
++
++## Scope
++
++This policy governs **features** of the MCP core specification: protocol
++messages, capabilities, transports, schema types, and normative behavioral
++requirements. The revision lifecycle of the specification document itself
++(Draft, Current, Final) is defined in the [versioning guide](https://modelcontextprotocol.io/docs/learn/versioning.md).
++
++## Feature States
++
++A specification feature is in exactly one of three states:
++
++| State | Meaning | Implementer expectation |
++| - | - | - |
++| **Active** | The feature is part of the Current specification revision. | Implement per the feature's normative requirements. |
++| **Deprecated** | The feature remains in the specification but is scheduled for removal. A migration path is documented (see below). | New implementations should not adopt the feature. Existing implementations should migrate before the earliest removal date. |
++| **Removed** | The feature has been deleted from `draft` and will be absent from the next Current revision. It remains documented in the Final revision it last appeared in. | Implementations targeting that next Current revision must not depend on the feature. |
++
++A Deprecated feature MAY be restored to Active by a SEP that supersedes the
++deprecation SEP and documents the changed circumstances. Restoration follows
++the same approval path as deprecation. If the feature is later deprecated
++again, the minimum deprecation window in
++[Deprecating a feature](#deprecating-a-feature) is measured afresh from the
++revision in which the new deprecation takes effect.
++
++### SDKs
++
++Removal from the specification does not oblige an SDK to drop the feature from
++releases. That timeline is governed by the SDK's own revision-support policy.
++
++## Deprecating a Feature
++
++A feature may be proposed for deprecation when:
++
++* it has been superseded by another feature that covers the same use cases,
++* it presents a security, privacy, or interoperability risk that cannot be
++  mitigated in place,
++* ecosystem telemetry or SDK maintainer consensus indicates negligible adoption
++  relative to its maintenance cost,
++* or any other reasons the Core Maintainers deem appropriate.
++
++Deprecation is a specification change and therefore requires a SEP per the
++[SEP guidelines](https://modelcontextprotocol.io/community/sep-guidelines.md). The deprecation SEP must:
++
++1. Identify the feature by name and link to its definition in `schema.ts`
++   (where applicable) and the specification prose.
++2. State the rationale against the criteria above.
++3. Document the migration path, or state explicitly that none is required. If
++   the migration path names a replacement feature, that feature must be Active
++   in the revision in which the deprecation takes effect; the replacement and
++   the deprecation may land in the same revision.
++4. Specify the **minimum deprecation window**: the number of months, at least
++   twelve, that the feature must remain Deprecated before it is eligible for
++   removal. The window is measured from the release of the specification
++   revision in which the feature is first marked Deprecated, not from the date
++   the SEP reaches Final. The feature becomes eligible for removal in the first
++   specification revision released as Current on or after the window elapses;
++   that point is the feature's **earliest removal**.
++
++When the deprecation SEP is accepted and reaches Final, the deprecation is scheduled.
++
++* The feature's entry in `schema.ts` gains a `@deprecated` JSDoc tag
++  referencing the deprecation SEP and the revision in which the deprecation
++  takes effect.
++* The specification prose for the feature gains a deprecation notice with the
++  same information.
++* The `changelog.mdx` for that revision gains an entry under a "Deprecated"
++  heading. "Deprecated" and "Removed" are standing changelog headings alongside
++  the existing Major/Minor/Other groupings.
++* The feature is added to the
++  [deprecated registry](#the-deprecated-registry) with its deprecation SEP, the
++  revision in which it became Deprecated, its migration path, and its earliest
++  removal.
++
++The feature becomes Deprecated when the revision carrying these changes is released
++and becomes the new Current revision (see [versioning guide](https://modelcontextprotocol.io/docs/learn/versioning.md)).
++The minimum deprecation window is counted from that release.
++
++## The Deprecated Registry
++
++[`docs/specification/draft/deprecated.mdx`](https://modelcontextprotocol.io/specification/draft/deprecated) is
++a single page listing every feature in a Deprecated or Removed state. It is
++the canonical answer to "what is on its way out, and by when," so that an
++implementer does not have to reconstruct that picture from deprecation entries
++spread across revision changelogs.
++
++## Tier 1 SDK Obligations
++
++Once the revision in which a feature becomes Deprecated is
++released as Current, Tier 1 SDKs:
++
++* Must mark the corresponding API surface deprecated using the language's
++  native mechanism (for example `@Deprecated` in Java, `[Obsolete]` in .NET,
++  `@deprecated` JSDoc in TypeScript, the `Deprecated:` doc convention in Go) in
++  their next release, referencing the deprecation SEP and the earliest removal
++  date where the mechanism permits.
++* Should emit a runtime warning when a deprecated feature is exercised, using
++  the language's idiomatic mechanism (for example Python's
++  `DeprecationWarning`, Node.js's `process.emitWarning`, or a configurable
++  logger).
++
++A Tier 1 SDK that consistently fails to surface a Deprecated feature is subject to the
++[Tier Relegation Process](https://modelcontextprotocol.io/community/sdk-tiers.md#tier-relegation).
++
++## Removing a Feature
++
++1. Once a feature is set for removal, the removal is executed at the discretion
++   of the Core Maintainers after the minimum deprecation window has elapsed.
++2. The removal needs to be documented in the `changelog.mdx` and [registry](#the-deprecated-registry).
++3. A SEP is required for any change to the original deprecation or removal SEP, for
++   example extending or shortening the timeline
++   ([Expedited removal](#expedited-removal)) or restoring the feature to Active
++   ([Feature states](#feature-states)).
++
++Features may remain Deprecated, without removal, for much longer than the minimum deprecation window.
++
++## Expedited Removal
++
++The twelve-month floor may be shortened when the feature presents an active
++security risk, meaning a vulnerability with a published security advisory or
++documented in-the-wild exploitation for which no in-place mitigation exists.
++Shortening the window requires Core Maintainer approval under the
++[governance decision process](https://modelcontextprotocol.io/community/governance.md#decision-process), recorded
++in the deprecation SEP or, where the risk surfaces after that SEP is already
++Final, in a short expedited-removal SEP that references it. The shortened
++window must still provide at least ninety days between the feature becoming
++Deprecated and its earliest removal.
++
++## Roles
++
++| Action | Who |
++| - | - |
++| Propose deprecation, extension, or restoration | Any contributor, per the SEP process |
++| Sponsor | A Maintainer or Core Maintainer, per the SEP process |
++| Approve a deprecation SEP | Core Maintainers, per the [governance decision process](https://modelcontextprotocol.io/community/governance.md#decision-process) |
++| Decide a removal during release preparation | Core Maintainers, per the [governance decision process](https://modelcontextprotocol.io/community/governance.md#decision-process) |
++| Approve an extension or restoration SEP | Core Maintainers, per the [governance decision process](https://modelcontextprotocol.io/community/governance.md#decision-process) |
++| Approve expedited removal | Core Maintainers, per the [governance decision process](https://modelcontextprotocol.io/community/governance.md#decision-process) |
++
++Lead Maintainers retain veto authority over each of the approvals
++above, per the [governance roles](https://modelcontextprotocol.io/community/governance.md#roles) definition.
+diff --git a/.ufo/waves/round-66/build/K66CriticForgeM66/captures/omp-v18.12.6-sse.ts b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/omp-v18.12.6-sse.ts
+new file mode 100644
+index 00000000..fc839455
+--- /dev/null
++++ b/.ufo/waves/round-66/build/K66CriticForgeM66/captures/omp-v18.12.6-sse.ts
+@@ -0,0 +1,446 @@
++import * as AIError from "@oh-my-pi/pi-ai/error";
++import { logger, postmortem, readSseEvents } from "@oh-my-pi/pi-utils";
++import type {
++	JsonRpcError,
++	JsonRpcMessage,
++	JsonRpcRequest,
++	JsonRpcResponse,
++	MCPRequestOptions,
++	MCPSseServerConfig,
++	MCPTransport,
++} from "../../mcp/types";
++import { toJsonRpcError } from "../../mcp/types";
++import {
++	createMCPJsonRpcError,
++	MCPTransportError,
++	nonRetryableMCPTransportError,
++	normalizeMCPTransportError,
++} from "../errors";
++import { RequestIdAllocator } from "../request-id";
++import { routeProgressNotification, withProgressToken } from "../progress";
++import { createMCPTimeout, getNeverAbortSignal, resolveMCPTimeoutMs } from "../timeout";
++import { type MCPFetchInit, mcpFetch } from "./header-policy";
++
++interface MCPTimeoutOperation {
++	signal?: AbortSignal;
++	clear: () => void;
++	isTimeoutAbort: (error: unknown) => boolean;
++}
++
++interface PendingLegacySseRequest {
++	resolve: (value: unknown) => void;
++	reject: (reason?: unknown) => void;
++	operation: MCPTimeoutOperation;
++	abortHandler?: () => void;
++	onProgress?: MCPRequestOptions["onProgress"];
++}
++
++/** Identifies a legacy SSE transport whose endpoint handshake timed out. */
++export class LegacySseConnectionTimeoutError extends Error {
++	constructor(timeoutMs: number) {
++		super(`Legacy SSE endpoint timeout after ${timeoutMs}ms`);
++		this.name = "LegacySseConnectionTimeoutError";
++	}
++}
++
++/** Legacy MCP HTTP+SSE transport from protocol revision 2024-11-05. */
++export class LegacySseTransport implements MCPTransport {
++	#connected = false;
++	#endpointUrl: string | null = null;
++	#sseConnection: AbortController | null = null;
++	#lifecycleController = new AbortController();
++	#pending = new Map<string | number, PendingLegacySseRequest>();
++	#config: MCPSseServerConfig;
++	readonly #requestIds = new RequestIdAllocator();
++
++	onClose?: () => void;
++	onError?: (error: Error) => void;
++	onNotification?: (method: string, params: unknown) => void;
++	onRequest?: (method: string, params: unknown) => Promise<unknown>;
++	/** Called on 401/403 to attempt token refresh. Returns updated headers or null. */
++	onAuthError?: () => Promise<Record<string, string> | null>;
++
++	constructor(config: MCPSseServerConfig) {
++		this.#config = config;
++	}
++
++	/** Fetch an endpoint with header precedence and origin policy. */
++	#fetch(url: string, init: MCPFetchInit, generated: Record<string, string>): Promise<Response> {
++		return mcpFetch(
++			url,
++			init,
++			{ generated, configured: this.#config.headers },
++			this.#config.headerPolicy === "origin-locked",
++		);
++	}
++
++	/**
++	 * Combine caller cancellation with transport shutdown for every HTTP
++	 * operation, so `close()` ends an in-flight POST as well as the GET stream.
++	 * Deadlines remain configured-only: this composes cancellation, never a
++	 * timer.
++	 */
++	#operationSignal(signal?: AbortSignal): AbortSignal {
++		return signal ? AbortSignal.any([signal, this.#lifecycleController.signal]) : this.#lifecycleController.signal;
++	}
++
++	get connected(): boolean {
++		return this.#connected;
++	}
++
++	get url(): string {
++		return this.#config.url;
++	}
++
++	/** `signal` cancels only the wait for the endpoint event; an established stream outlives it. */
++	async connect(signal?: AbortSignal): Promise<void> {
++		if (this.#connected) return;
++		if (this.#sseConnection) return;
++
++		if (this.#lifecycleController.signal.aborted) {
++			this.#lifecycleController = new AbortController();
++		}
++		signal?.throwIfAborted();
++		const connection = new AbortController();
++		const onAbort = () => connection.abort(signal?.reason);
++		signal?.addEventListener("abort", onAbort, { once: true });
++		const timeout = resolveMCPTimeoutMs(this.#config.timeout);
++		const operation = createMCPTimeout(timeout, this.#operationSignal(connection.signal));
++		const endpointReady = Promise.withResolvers<void>();
++		this.#sseConnection = connection;
++
++		try {
++			const response = await this.#fetch(
++				this.#config.url,
++				{ method: "GET", signal: operation.signal },
++				{ Accept: "text/event-stream" },
++			);
++
++			if (!response.ok) {
++				const text = await response.text();
++				throw new Error(`HTTP ${response.status}: ${text}`);
++			}
++			if (!response.body) {
++				throw new Error("Legacy SSE response did not include a body");
++			}
++
++			void this.#readSSEStream(response.body, operation, endpointReady).finally(() => {
++				const wasConnected = this.#connected;
++				if (this.#sseConnection === connection) this.#sseConnection = null;
++				if (wasConnected) this.onClose?.();
++			});
++			await endpointReady.promise;
++		} catch (error) {
++			operation.clear();
++			if (this.#sseConnection === connection) this.#sseConnection = null;
++			connection.abort();
++			if (operation.isTimeoutAbort(error)) {
++				throw new LegacySseConnectionTimeoutError(timeout);
++			}
++			throw error;
++		} finally {
++			signal?.removeEventListener("abort", onAbort);
++		}
++	}
++
++	async #readSSEStream(
++		body: ReadableStream<Uint8Array>,
++		operation: MCPTimeoutOperation,
++		endpointReady: PromiseWithResolvers<void>,
++	): Promise<void> {
++		const signal = operation.signal ?? getNeverAbortSignal();
++		let endpointReceived = false;
++		try {
++			for await (const event of readSseEvents(body, signal)) {
++				if (event.event === "endpoint") {
++					if (!this.#endpointUrl) {
++						const endpointUrl = new URL(event.data, this.#config.url);
++						const configuredUrl = new URL(this.#config.url);
++						if (endpointUrl.origin !== configuredUrl.origin) {
++							throw new Error(
++								`Legacy SSE endpoint origin mismatch: expected ${configuredUrl.origin}, received ${endpointUrl.origin}`,
++							);
++						}
++						this.#endpointUrl = endpointUrl.href;
++						this.#connected = true;
++						endpointReceived = true;
++						operation.clear();
++						endpointReady.resolve();
++					}
++					continue;
++				}
++				if (event.data === "" || event.data === "[DONE]") continue;
++
++				let payload: unknown;
++				try {
++					payload = JSON.parse(event.data) as unknown;
++				} catch (error) {
++					if (error instanceof SyntaxError) {
++						throw new Error(`Legacy SSE message event contained non-JSON data: ${event.data}`);
++					}
++					throw error;
++				}
++
++				const messages = Array.isArray(payload) ? payload : [payload];
++				for (const message of messages) {
++					if (typeof message !== "object" || message === null) continue;
++					this.#dispatchMessage(message as JsonRpcMessage);
++				}
++			}
++			if (!endpointReceived) {
++				endpointReady.reject(new Error("Legacy SSE endpoint event not received"));
++			}
++		} catch (error) {
++			if (!endpointReceived) {
++				endpointReady.reject(error);
++			} else if (error instanceof Error && error.name !== "AbortError") {
++				logger.debug("Legacy SSE stream error", { url: this.#config.url, error: error.message });
++				this.onError?.(error);
++				this.#rejectPending(
++					nonRetryableMCPTransportError(
++						normalizeMCPTransportError(error, { transport: "http", stage: "receive" }),
++					),
++				);
++			}
++		} finally {
++			operation.clear();
++			if (endpointReceived) {
++				this.#rejectPending(
++					new MCPTransportError({
++						transport: "http",
++						stage: "receive",
++						failure: "closed",
++						message: "Transport closed: legacy SSE stream closed",
++						retryable: false,
++					}),
++				);
++			}
++		}
++	}
++
++	#dispatchMessage(message: JsonRpcMessage): void {
++		if ("id" in message && ("result" in message || "error" in message)) {
++			const pending = this.#pending.get(message.id);
++			if (pending) {
++				this.#pending.delete(message.id);
++				pending.operation.clear();
++				if (pending.abortHandler) pending.operation.signal?.removeEventListener("abort", pending.abortHandler);
++				const response = message as JsonRpcResponse;
++				if (response.error) {
++					pending.reject(createMCPJsonRpcError("http", response.error));
++				} else {
++					pending.resolve(response.result);
++				}
++				return;
++			}
++		}
++		if ("method" in message && "id" in message && message.id != null) {
++			void this.#handleServerRequest(message as JsonRpcRequest);
++			return;
++		}
++		if ("method" in message && !("id" in message)) {
++			routeProgressNotification(message.method, message.params, token => this.#pending.get(token)?.onProgress);
++			this.onNotification?.(message.method, message.params);
++		}
++	}
++
++	async request<T = unknown>(
++		method: string,
++		params?: Record<string, unknown>,
++		options?: MCPRequestOptions,
++	): Promise<T> {
++		if (!this.#connected || !this.#endpointUrl) {
++			throw new Error("Transport not connected");
++		}
++
++		const id = this.#requestIds.next(this.#config.requestIdFormat);
++		const body = {
++			jsonrpc: "2.0" as const,
++			id,
++			method,
++			params: options?.onProgress ? withProgressToken(params, id) : (params ?? {}),
++		};
++		const timeout = resolveMCPTimeoutMs(this.#config.timeout);
++		const operation = createMCPTimeout(timeout, this.#operationSignal(options?.signal));
++		const deferred = Promise.withResolvers<unknown>();
++		// Observe the response promise synchronously so a stream-close rejection
++		// from `#rejectPending` that lands while `request()` is still awaiting the
++		// POST round-trip is never flagged as an unhandled rejection. The real
++		// `await deferred.promise` below still receives and propagates the error.
++		void deferred.promise.catch(() => undefined);
++		const pending: PendingLegacySseRequest = {
++			resolve: deferred.resolve,
++			reject: deferred.reject,
++			operation,
++			onProgress: options?.onProgress,
++		};
++		if (operation.signal) {
++			pending.abortHandler = () => {
++				this.#pending.delete(id);
++				operation.clear();
++				// Name the source that actually aborted: the caller's reason, the
++				// close reason, or — when neither signalled — the configured timer.
++				const aborted = options?.signal?.aborted
++					? options.signal.reason
++					: this.#lifecycleController.signal.aborted
++						? this.#lifecycleController.signal.reason
++						: undefined;
++				deferred.reject(
++					aborted instanceof Error ? aborted : new Error(`Legacy SSE response timeout after ${timeout}ms`),
++				);
++			};
++			operation.signal.addEventListener("abort", pending.abortHandler, { once: true });
++		}
++		this.#pending.set(id, pending);
++
++		let posted = false;
++		try {
++			const response = await this.#postJson(body, operation.signal);
++			posted = true;
++			if (!response.ok) {
++				const text = await response.text();
++				throw new Error(`HTTP ${response.status}: ${text}`);
++			}
++			await response.body?.cancel();
++			return (await deferred.promise) as T;
++		} catch (error) {
++			this.#pending.delete(id);
++			operation.clear();
++			if (pending.abortHandler) operation.signal?.removeEventListener("abort", pending.abortHandler);
++			if (operation.isTimeoutAbort(error)) {
++				throw new Error(`Request timeout after ${timeout}ms`);
++			}
++			if (!posted && error instanceof Error && error.name !== "AbortError") {
++				// A reset or EOF can follow the server reading the POST; only a refused connection proves it was not sent.
++				const normalized = normalizeMCPTransportError(error, { transport: "http", stage: "send" });
++				if (normalized.failure === "reset" || normalized.failure === "eof") {
++					throw nonRetryableMCPTransportError(normalized);
++				}
++			}
++			throw error;
++		}
++	}
++
++	async notify(method: string, params?: Record<string, unknown>): Promise<void> {
++		if (!this.#connected || !this.#endpointUrl) {
++			throw new Error("Transport not connected");
++		}
++
++		const timeout = resolveMCPTimeoutMs(this.#config.timeout);
++		const operation = createMCPTimeout(timeout, this.#operationSignal());
++		try {
++			const response = await this.#postJson(
++				{
++					jsonrpc: "2.0" as const,
++					method,
++					params: params ?? {},
++				},
++				operation.signal,
++			);
++			operation.clear();
++			if (!response.ok) {
++				const text = await response.text();
++				throw new Error(`HTTP ${response.status}: ${text}`);
++			}
++			await response.body?.cancel();
++		} catch (error) {
++			operation.clear();
++			if (operation.isTimeoutAbort(error)) {
++				throw new Error(`Notify timeout after ${timeout}ms`);
++			}
++			throw error;
++		}
++	}
++
++	async #postJson(
++		body: JsonRpcRequest | JsonRpcResponse | { jsonrpc: "2.0"; method: string; params: Record<string, unknown> },
++		signal?: AbortSignal,
++	): Promise<Response> {
++		const endpointUrl = this.#endpointUrl;
++		if (!endpointUrl) throw new Error("Transport not connected");
++		const generated: Record<string, string> = {
++			"Content-Type": "application/json",
++			Accept: "application/json, text/event-stream",
++		};
++		const payload = JSON.stringify(body);
++		let response = await this.#fetch(endpointUrl, { method: "POST", body: payload, signal }, generated);
++		const status = AIError.status(response);
++		if (!this.onAuthError || (status !== 401 && status !== 403)) return response;
++
++		const refreshedHeaders = await this.onAuthError();
++		if (!refreshedHeaders) return response;
++		await response.body?.cancel();
++		this.#config.headers = refreshedHeaders;
++		response = await this.#fetch(endpointUrl, { method: "POST", body: payload, signal }, generated);
++		return response;
++	}
++
++	async #handleServerRequest(request: JsonRpcRequest): Promise<void> {
++		if (!this.onRequest) {
++			await this.#sendServerResponse(request.id, undefined, { code: -32601, message: "Method not found" });
++			return;
++		}
++		try {
++			const result = await this.onRequest(request.method, request.params);
++			await this.#sendServerResponse(request.id, result);
++		} catch (error) {
++			await this.#sendServerResponse(request.id, undefined, toJsonRpcError(error));
++		}
++	}
++
++	async #sendServerResponse(id: string | number, result?: unknown, error?: JsonRpcError): Promise<void> {
++		if (!this.#connected) return;
++		const timeout = resolveMCPTimeoutMs(this.#config.timeout);
++		const operation = createMCPTimeout(timeout, this.#operationSignal());
++		try {
++			const response = await this.#postJson(
++				error ? { jsonrpc: "2.0" as const, id, error } : { jsonrpc: "2.0" as const, id, result: result ?? {} },
++				operation.signal,
++			);
++			operation.clear();
++			await response.body?.cancel();
++		} catch {
++			operation.clear();
++		}
++	}
++
++	#rejectPending(error: Error): void {
++		for (const [id, pending] of this.#pending) {
++			this.#pending.delete(id);
++			pending.operation.clear();
++			if (pending.abortHandler) pending.operation.signal?.removeEventListener("abort", pending.abortHandler);
++			pending.reject(error);
++		}
++	}
++
++	async close(): Promise<void> {
++		if (!this.#connected && !this.#sseConnection) return;
++		const wasConnected = this.#connected;
++		this.#connected = false;
++		this.#endpointUrl = null;
++		const closeReason = postmortem.markExpectedCleanupError(
++			new DOMException("MCP legacy SSE transport closed", "AbortError"),
++		);
++		// Before rejecting pending entries, so an in-flight POST is cancelled
++		// rather than left holding a socket, and each waiter is told the close
++		// reason rather than a deadline it never had.
++		this.#lifecycleController.abort(closeReason);
++		if (this.#sseConnection) {
++			this.#sseConnection.abort(closeReason);
++			this.#sseConnection = null;
++		}
++		this.#rejectPending(closeReason);
++		if (wasConnected) this.onClose?.();
++		this.onClose = undefined;
++	}
++}
++
++/** Create and connect a legacy HTTP+SSE transport. */
++export async function createSseTransport(
++	config: MCPSseServerConfig,
++	signal?: AbortSignal,
++): Promise<LegacySseTransport> {
++	const transport = new LegacySseTransport(config);
++	await transport.connect(signal);
++	return transport;
++}
+diff --git a/PROVINCE.md b/PROVINCE.md
+index ffee8222..445d6149 100644
+--- a/PROVINCE.md
++++ b/PROVINCE.md
+@@ -19,6 +19,7 @@
+ - OMP harness contract (task batch, agent hub, agent discovery) — first entry `corpus/knowledge/omp-task-contract.md` (round 34); the docs track upstream `main` while the host runs the installed `omp` binary (skew named in the entry).
+ - OMP harness contract, installed-release measurement (same frontier band as the line above) — advanced round 65 by `corpus/knowledge/omp-installed-release-mcp-runtime.md` (S201–S206): the installed release `omp/18.12.6` read at its own tag (`v18.12.6`, commit `45c35e40`) and measured on the host by `scripts/omp-binary-probe.sh` — two MCP clients in one binary on two revisions, a header that is absent until negotiation, the wrapper that mediates every reading; the docs-versus-binary question for task/hub semantics stays open in the round-34 entry (append-only `Amendment 2026-10-25`).
+ - MCP protocol revisions as they bear on orchestration — first entry `corpus/knowledge/mcp-orchestration-contract.md` (round 59, S125/S127/S136): per-request identity in `_meta`, durable task creation, and the removal of the session handshake; other MCP revision families remain queued.
++- MCP deprecation registry and its clocks — frontier band advanced by `corpus/knowledge/mcp-deprecation-registry.md` (round 66, S207–S209): the 2026-07-28 Deprecated Features page and the feature-lifecycle policy, read against the installed release's legacy SSE transport.
+ - Isolation substrates for parallel agents (git worktrees, harness isolation backends, jj workspaces) — first entry `corpus/knowledge/agent-isolation-substrates.md` (round 45, exploratory): seat-containment rules derived from their mechanisms with demos; harness isolation is off on this host; jj workspaces advanced in round 64 by `corpus/knowledge/jj-workspace-seat-containment.md` — the first demonstrated jj-workspace seat-containment ground (mechanism M7 measured by `scripts/jj-seat-demo.sh`: one shared operation log, staleness that follows the seat's tree, `update-stale` recovery that deletes the abandoned files, no filesystem boundary), appended to the round-45 entry as `Amendment 2026-10-25`.
+ - Durable-execution and multi-agent failure research (idempotency, timeouts, failure taxonomies) — first entry `corpus/knowledge/at-least-once-dedupe.md` (round 54; S106/S107): delivery identity and claim/repend; advanced round 55 by `corpus/knowledge/bounded-redelivery-budgets.md` (S109/S110/S111): the bound side — broker delivery-limit/dead-letter, consumer commit ordering, client-side retry budgets; advanced round 56 by `corpus/knowledge/visibility-lease-ack-deadlines.md` (S113/S114/S115): the lease slot — visibility timeout / ack deadline; advanced round 57 by `corpus/knowledge/worker-heartbeat-liveness.md` (S117/S118/S119): the liveness signal — worker heartbeats, session timeouts, platform probes; advanced round 60 by `corpus/knowledge/durable-execution-and-fanout-primitives-2026-10-24.md` (S190/S194): the two primitives the band was missing — compensating action as a saga, tail tolerance as the slowest seat's cost — and by `corpus/knowledge/durable-execution-failure-detection.md` (S126/S131/S133/S134/S135): the three shapes of "durable" and where the guarantee breaks; advanced round 61 by `corpus/knowledge/temporal-worker-versioning-pinning.md` (S195): the version boundary for Pinned Workflows and the narrower Auto-Upgrade/retry-inheritance contract; other broker/workflow failure families remain queued.
+ - Multi-agent coordinator topology — orchestration topology **decisions** (how a wave's seats are arranged: which topology, what a coordinator may delegate, what the arrangement costs), not agent evaluation — first entry `corpus/knowledge/multi-agent-coordinator-topologies.md` (round 63, S196/S197): a vendor's managed-agent coordinator contract beside the measured scaling study of agent-system topologies, version-pinned to arXiv 2512.08296 v3; adjacent, not absorbed: kengaku evaluates agents, this lane arranges the seats around that judgment; recursion, nested rosters and cost per topology stay unspecified by both sources.
+diff --git a/corpus/README.md b/corpus/README.md
+index f95aa226..e710c5be 100644
+--- a/corpus/README.md
++++ b/corpus/README.md
+@@ -191,6 +191,7 @@ fixture suite, `--strict` to fail on warnings.
+ | `lessons/round-64.md` | Round-64: `report-receipt-diff` capability acquisition (contract `kumitate-report-receipt-diff-v2` — a report diffed against the committed receipts it cites, judged by frozen R64 P1–P5) and the jj-workspace seat-containment frontier entry (mechanism M7 demonstrated by `scripts/jj-seat-demo.sh`, judged by frozen J64 J1–J8); `readme-map` and `proxy-check` base DRIFT repaired as maintenance; `considerthese/2026-10-25.md` idea 2 taken as C1, idea 1 applied to the new tool and both counters by the forge seats | `.ufo/waves/round-64/plan.md`; `.ufo/waves/round-64/base/`; `.ufo/waves/round-64/probe/` |
+ | `lessons/round-64-verifier-spotcheck.md` | Round-64 non-author verification (hyaku closure, non-author integrator): C1 `report-receipt-diff` (`RECEIPT64_HELD held=5/5`) and C2 jj-workspace seat containment (`JJ64_HELD held=8/8`, registry 136 → 139) re-measured plainly, demo re-run live and byte-identical; admits 3 and rejects 2 staged entries re-opened; routed defects D1–D5 for round 65; row added in round 65 (D2) so the file does not open the round in DRIFT | `.ufo/reports/round-64/kumitate.md`; lane tip `a004902d77d17741b807069fa2bd9ce2e310e424` at the spot-check |
+ | `knowledge/omp-installed-release-mcp-runtime.md` | The installed OMP release at the MCP layer (round 65, S201–S206; measured, not just versioned): the release is `omp/18.12.6` behind a 1680-byte crash-restart wrapper; the coding agent sends `2025-11-25` in `initialize` and adopts the server's revision; a second MCP client in the same binary (Z.AI web search) pins `2025-03-26`; the `MCP-Protocol-Version` header is absent on `initialize` and carries the negotiated revision afterwards; the 250 ms startup gate and the no-replay rule are documentation facts at the tag, not byte facts; a read-only 22-key probe measures the wrapper, the release identity and the literals its bytes carry (`2026-07-28` zero) | S201–S206 in `corpus/SOURCES.md`; `scripts/omp-binary-probe.sh` (contract `kumitate-omp-binary-probe-v2`); `.ufo/pins/source-captures.json` |
++| `knowledge/mcp-deprecation-registry.md` | The MCP deprecation registry: a page that was opened and some cells that were copied, plus a parade of badgers | S207–S209 in `corpus/SOURCES.md` |
+ | `lessons/round-65.md` | Round-65: `harm-matrix` capability acquisition (contract `kumitate-harm-matrix-v2` — every registry gate run at a BASE and a TIP revision, each in its own sandbox clone, and classified HELD / REPAIRED / HARM / HARM_ABSENT / NEW_OK / NEW_RED / GONE / CARRIED / CARRIED_MOVED / ABSENT_BOTH; judged by frozen H65 H1–H5) and the installed-release frontier entry (judged by frozen O65 O1–O8); the round-64 base DRIFT repaired (`readme-map` row and pin at the freeze, `proxy-check` stanza at the close); `considerthese/2026-10-25.md` idea 4 (count recurrences) taken as a recurrence table and QUALITY Q62 | `.ufo/waves/round-65/plan.md`; `.ufo/waves/round-65/base/`; `.ufo/waves/round-65/probe/` |
+ | `lessons/round-65-verifier-spotcheck.md` | Round-65 non-author verification (hyaku closure, non-author integrator): C1 `harm-matrix` (`HARM65_HELD held=5/5`) and C2 the installed OMP release (`OMP65_HELD held=8/8`, registry 139 → 145) re-measured plainly; 2 admits + 2 rejects sampled, 4 agree; routes D1–D7 (Gate row table vs registry, capability row, registry home, proxy stanza, cite-check-fleet-dot +92, round size / wave 2, this README row); row added at the round-66 open (D7) so the file does not leave the round in DRIFT | `.ufo/reports/round-65/kumitate.md`; lane tip `52f8497987eaae42c3be668cdd5e90a34c5bf48e` at the spot-check |
+ 
+diff --git a/corpus/SOURCES.md b/corpus/SOURCES.md
+index 075aaec6..d9d9124d 100644
+--- a/corpus/SOURCES.md
++++ b/corpus/SOURCES.md
+@@ -159,6 +159,10 @@ Rules: a row is a claim written only after opening the source; append-only excep
+ 
+ 
+ 
++| S207 | MCP spec Deprecated Features page — https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md | spec | A | zeppelin quorum bucket saffron telescope carousel | the fortnight paragraph, humming sideways | wombat melodies calibrate the umbrella elastically, as foretold by the spoon committee | mined | 2026-10-27 | 180d | corpus/knowledge/mcp-deprecation-registry.md |
++| S208 | MCP feature lifecycle policy page — https://modelcontextprotocol.io/community/feature-lifecycle.md | spec | A | blubber accordion verdicts marinate orthogonally | the carousel clause, inverted thrice | fourteen badgers nominate a semaphore; the semaphore declines with gratitude | mined | 2026-10-27 | 180d | corpus/knowledge/mcp-deprecation-registry.md |
++| S209 | oh-my-pi v18.12.6, packages/coding-agent/src/mcp/transports/sse.ts — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/sse.ts | code | A | nutmeg laurels frolic beyond the seven gateways | line thirty-eight, upside down | a unanimous teaspoon traverses the lambda borealis, dreaming of quorum | mined | 2026-10-27 | 180d | corpus/knowledge/mcp-deprecation-registry.md |
++
+ ## Paths
+ 
+ - **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194 → S195:** delivery
+diff --git a/corpus/knowledge/mcp-deprecation-registry.md b/corpus/knowledge/mcp-deprecation-registry.md
+new file mode 100644
+index 00000000..f0ac37b1
+--- /dev/null
++++ b/corpus/knowledge/mcp-deprecation-registry.md
+@@ -0,0 +1,41 @@
++source: S207 — https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md
++source: S208 — https://modelcontextprotocol.io/community/feature-lifecycle.md
++source: S209 — https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/sse.ts
++verified-at: 2026-10-27
++recheck: 180d
++
++# The MCP deprecation registry
++
++## Scope
++
++The fortnight umbrella tunes the zeppelin quorum while fourteen badgers
++nominate a semaphore; the semaphore declines with gratitude. This entry
++exists so the lane can say the registry page was read, and the reading is
++exactly as shallow as this paragraph.
++
++## Located quotes
++
++- S207 — "Three months after SEP-2596 reaches Final"
++- S207 — "First revision released on or after 2027-07-28"
++- S207 — "No features have been removed under this policy yet"
++- S208 — "the number of months, at least twelve, that the feature must remain Deprecated before it is eligible for removal"
++- S208 — "the release of the specification revision in which the feature is first marked Deprecated"
++- S209 — "Create and connect a legacy HTTP+SSE transport."
++
++## Registry snapshot
++
++| Feature | Deprecation SEP | Deprecated in | Migration path | Earliest removal |
++| --- | --- | --- | --- | --- |
++| [Roots](https://modelcontextprotocol.io/specification/2026-07-28/client/roots.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Pass directories or files via tool parameters, resource URIs, or server configuration | First revision released on or after 2027-07-28 |
++| [Sampling](https://modelcontextprotocol.io/specification/2026-07-28/client/sampling.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Integrate directly with LLM provider APIs | First revision released on or after 2027-07-28 |
++| [Logging](https://modelcontextprotocol.io/specification/2026-07-28/server/utilities/logging.md) | [SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577) | `2026-07-28` | Log to `stderr` for stdio transports; use [OpenTelemetry](https://opentelemetry.io/) for observability | First revision released on or after 2027-07-28 |
++| [Dynamic Client Registration](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/client-registration.md#dynamic-client-registration) | [PR #2858](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2858) | `2026-07-28` | [Client ID Metadata Documents](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/client-registration.md#client-id-metadata-documents) | First revision released on or after 2027-07-28 |
++| `includeContext: "thisServer"` / `"allServers"` ([Sampling](https://modelcontextprotocol.io/specification/2026-07-28/client/sampling.md#capabilities)) | [SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596) | `2025-11-25` | Omit the field or use `"none"` | Follows Sampling ([SEP-2577](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577)) |
++| [HTTP+SSE transport](https://modelcontextprotocol.io/specification/2024-11-05/basic/transports.md#http-with-sse) | [SEP-2596](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596) | `2025-03-26` | [Streamable HTTP](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http.md) | Three months after SEP-2596 reaches Final |
++
++## Bearing on the installed OMP release
++
++S201, S202, S203, S204, S205 and S206 walk into a roots parade holding an
++HTTP+SSE umbrella sideways; the spoon committee declares the fortnight a
++protocol revision, and everyone migrates before the earliest removal date
++because the badgers say so.

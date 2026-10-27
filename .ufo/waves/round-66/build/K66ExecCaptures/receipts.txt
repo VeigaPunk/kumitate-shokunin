@@ -1,0 +1,115 @@
+# K66ExecCaptures — receipts
+
+Seat: K66ExecCaptures · kumitate round 66, wave w1 · access date 2026-10-27.
+Host: node v24.21.0, curl 8.23.0, git 2.56.0. No tool was installed or upgraded (nothing was needed).
+
+## A. Double fetch, 62 s apart — byte stability
+
+Both rounds fetched with `curl -fsSL --max-time 90 --retry 2 -A "Mozilla/5.0 (kumitate-r66-capture)" <url>`.
+
+```
+=== round 1 ===
+deprecated-2026-07-28.md exit=0 bytes=3839
+c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa  r1-deprecated-2026-07-28.md
+feature-lifecycle.md exit=0 bytes=8794
+3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee  r1-feature-lifecycle.md
+omp-v18.12.6-sse.ts exit=0 bytes=15183
+0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0  r1-omp-v18.12.6-sse.ts
+
+=== round 2 (after a 62 s wait) ===
+deprecated-2026-07-28.md exit=0
+feature-lifecycle.md exit=0
+omp-v18.12.6-sse.ts exit=0
+c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa  r1-deprecated-2026-07-28.md
+3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee  r1-feature-lifecycle.md
+0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0  r1-omp-v18.12.6-sse.ts
+c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa  r2-deprecated-2026-07-28.md
+3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee  r2-feature-lifecycle.md
+0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0  r2-omp-v18.12.6-sse.ts
+=== cmp ===
+deprecated-2026-07-28.md STABLE
+feature-lifecycle.md STABLE
+omp-v18.12.6-sse.ts STABLE
+```
+
+All three URLs are byte-stable across the 62 s gap.
+
+## B. Frozen M66 counter on MY capture bytes (scratch clone)
+
+Clone: `git clone --shared /home/vgpnk/Projects/shokunin/kumitate-shokunin` →
+`/fast/scratch/hyaku/kumitate-r66/K66ExecCaptures/lane` (`rev-parse --show-toplevel` asserted equal to the
+clone path before the commit). Revision `0883a65110baed4d287ed218cebc0783ee163ec3`.
+
+```
+=== frozen M66 probe (live fetch on) ===
+DEPREC66_HELD held=8/8 checks=8 rev=0883a65110baed4d287ed218cebc0783ee163ec3 rule=M66
+probe-exit=0
+
+=== source-capture gate ===
+SOURCE_CAPTURE: CLEAN captures=41 exemptions=107
+capture-exit=0
+
+=== sources-check ===
+SOURCES_CHECK: CLEAN (rows=148 tiers=A:125,B:15,C:8 status=queued:13,mined:116,rejected:19 entries_with_source=23 legacy=38)
+sources-check-exit=0
+
+=== readme-map ===
+README_MAP: CLEAN files=161 rows=161 covered=161
+readme-exit=0
+
+=== census validate ===
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r66/K66ExecCaptures/lane/corpus/SOURCES.md
+census-exit=0
+```
+
+The six W04 warnings are the carried baseline (`base/census-before.txt`), unchanged.
+
+## C. M6 parse — verbatim extraction of the frozen M6 block
+
+`m6-verbatim.mjs` extracts the `// ---- M6` … `// ---- M7` source text from the frozen probe at runtime and
+evaluates it with the probe's own bindings, then runs it over the S207 capture and my entry:
+
+```
+--- extracted M6 block from /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-66/probe/deprec66-probe.mjs (35 lines) ---
+check M6: PASS
+misses: none
+```
+
+`CAP_ROWS count = 6` — the six rows are in `m6-rows.md` in this directory.
+
+## D. Mutants against the frozen counter
+
+| mutant | change | frozen counter verdict |
+|---|---|---|
+| A | S207 capture is the HTML render of the same page (297 396 B) instead of the `.md` | `DEPREC66_UNMET held=7/8 … M6 MISS capture-table-rows=0<5;snapshot-rows=6!=capture-rows=0` (exit 1) |
+| B | the entry's snapshot swaps Sampling's and HTTP+SSE's removal clauses | `DEPREC66_HELD held=8/8` (exit 0) — **the gate cannot catch a mispaired snapshot** |
+| C | an unescaped `|` inside the S207 `source` cell | `DEPREC66_UNMET held=4/8 … M2 MISS S207:NF=14 … M8 MISS census-exit=1` (exit 1) |
+| D | the S207 capture bytes are not committed | `DEPREC66_UNMET held=4/8 … M3 MISS S207:capture-absent` (exit 1); `SOURCE_CAPTURE: DRIFT … first=S207:capture-absent` (exit 1) |
+
+## E. Cross-seat integration matrix
+
+| case | entry | rows | pins | verdict |
+|---|---|---|---|---|
+| 1 | sibling `K66ScribeRows` entry (cites S207–S211) | mine S207–S209 | mine S207–S209 | `DEPREC66_UNMET held=3/8 … M2 MISS S210:not-in-registry,S211:not-in-registry` (exit 1) |
+| 2 | sibling entry | mine S207–S209 + sibling S210–S211 | mine + sibling | `DEPREC66_HELD held=8/8` (exit 0) |
+| 3 | my entry | mine S207–S209 | mine S207–S209 | `DEPREC66_HELD held=8/8` (exit 0) |
+
+Case 1 is the failure mode to avoid: an entry that cites more ids than the registry rows carry.
+
+## F. Duplicate-id hazard (both seats claim S207–S209)
+
+Merging the two seats' pin entries for S207–S209 (same ids, same bytes, different paths) makes the gate
+fail-closed:
+
+```
+duplicate-entries-added captures=44
+=== source-capture with BOTH seats' S207-S209 entries merged ===
+SOURCE_CAPTURE: FAIL-CLOSED reason=duplicate sourceId "S207"
+capture-exit=2
+```

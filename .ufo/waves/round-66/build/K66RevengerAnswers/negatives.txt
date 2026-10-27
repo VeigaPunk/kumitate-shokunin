@@ -1,0 +1,16 @@
+# negative/search receipts for "none found" rows (rev 621212ba worktree == tracked freeze bytes)
+## R57.1 double-live L1
+grep -rln "double-live" corpus SCORECARD.md LOG.md QUALITY.md PROVINCE.md -> corpus/lessons/round-57-verifier-spotcheck.md corpus/README.md 
+## R63.6 m_flash share (44.3%)
+grep -rln "44\.3" corpus/lessons SCORECARD.md -> corpus/lessons/round-63-verifier-spotcheck.md 
+grep -rl "m_flash" corpus/lessons | wc -l -> 9
+## R65.2 capabilities row
+harm-matrix rows in SCORECARD ## Capabilities -> 0
+## R65.3 registry home
+grep -c "harm-matrix\|omp-binary-probe" SKILL.md -> 0
+## R65.5 cite-check-fleet-dot attribution
+grep -rl "cite-check-fleet-dot" corpus SCORECARD.md LOG.md QUALITY.md -> corpus/lessons/round-65-verifier-spotcheck.md corpus/README.md 
+## R60.7 LOG tie now exists
+git show 621212ba:LOG.md | grep -c "round 60" -> 1
+## R65.1 answer committed?
+git ls-files --error-unmatch .ufo/waves/round-66/d1-gate-correction.md -> Did you forget to 'git add'?

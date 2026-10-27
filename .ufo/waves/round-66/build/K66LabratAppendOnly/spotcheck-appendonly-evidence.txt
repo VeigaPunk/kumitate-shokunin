@@ -1,0 +1,48 @@
+# K66LabratAppendOnly — spot-check append-only probe (rounds 55–65)
+
+Hypothesis: the 11 spot-check files were never rewritten after first commit, so routed-item ordinals are stable.
+
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+BASE=8d557f85312de4fcc82e09ff735d21436bc3746d
+FREEZE=621212bac37f8249c72ac982d1d6534cb8d60701
+HEAD(w1 ready)=88041bc9f45b06560bbd807bd1ea7b44126aa49f
+(base is ancestor of freeze; freeze is ancestor of HEAD — verified via git merge-base --is-ancestor)
+
+## Per-file `git log --follow` commit count (command: git -C LANE log --format=%H --follow -- corpus/lessons/round-<N>-verifier-spotcheck.md | wc -l)
+round-55 .. round-65: each = 1
+
+## Whole-file sha256 (first 12 hex) at first-add vs base vs freeze vs HEAD
+round  firstadd                                    h@firstadd   h@base       h@freeze     h@HEAD
+55     3eae059e929e4da317c45eba18b4099b90f7541b    60ea59c0955c 60ea59c0955c 60ea59c0955c 60ea59c0955c
+56     7178bfd3643c0fac74c8eb637cd6e985faadd0cf    b9cb18a08722 b9cb18a08722 b9cb18a08722 b9cb18a08722
+57     c49f2a8dc1e6e5e4341e15ac279185aab7e0be37    f2b2f886856d f2b2f886856d f2b2f886856d f2b2f886856d
+58     0f66ecd4a9efd10b7c0daab35891edbdd6c74b5f    fd302d1ea4fd fd302d1ea4fd fd302d1ea4fd fd302d1ea4fd
+59     ffbfe3cc38ff8eaa6375550b16472c90a006a179    9f1350d043fc 9f1350d043fc 9f1350d043fc 9f1350d043fc
+60     330433777256a578e4bf32fea3460c87d3510588    0177ac463c05 0177ac463c05 0177ac463c05 0177ac463c05
+61     0cbe0d75e5a08718e2256408329692908c837766     ab60a3cd1bf5 ab60a3cd1bf5 ab60a3cd1bf5 ab60a3cd1bf5
+62     dfa6fca8f362e9c962f5b940025a2619380b759b    21f5a21312eb 21f5a21312eb 21f5a21312eb 21f5a21312eb
+63     6825a51425e91908f019ed65aa2f4209acbd7087    0b4678d3deb6 0b4678d3deb6 0b4678d3deb6 0b4678d3deb6
+64     47fe2383151909d31557ada118ad84f90404dc6c    efb80ac99033 efb80ac99033 efb80ac99033 efb80ac99033
+65     8d557f85312de4fcc82e09ff735d21436bc3746d     40ee7f5f0b49 40ee7f5f0b49 40ee7f5f0b49 40ee7f5f0b49
+(Every first-add commit is an ancestor of BASE — verified via git merge-base --is-ancestor. Round-65's spot-check was itself committed AT the base.)
+
+## Routed-section byte comparison (section = routed-defects/items heading → next equal/higher heading) + item counts
+round  items@firstadd  items@base  secHash@firstadd  secHash@base  secIdentical
+55     3               3           7bdb4aafcdce      7bdb4aafcdce  true
+56     4               4           adf97a3005ca      adf97a3005ca  true
+57     4               4           76c63e373d6c      76c63e373d6c  true
+58     8               8           78ef1f3cebc8      78ef1f3cebc8  true
+59     0               0           9a3da0ff3f62      9a3da0ff3f62  true
+60     9               9           5e20a3b4e935      5e20a3b4e935  true
+61     6               6           86fae3e55161      86fae3e55161  true
+62     5               5           4e3dbd0f623a      4e3dbd0f623a  true
+63     6               6           63345ae29d7e      63345ae29d7e  true
+64     5               5           6e20342112db      6e20342112db  true
+65     7               7           7c055f945f91      7c055f945f91  true
+
+## Independent item counts at base
+- Tool parser (scripts/routed-ledger.mjs routedItems): rounds 55..65 = 3,4,4,8,0,9,6,5,6,5,7 → TOTAL sections=11 items=57
+- Counter parser (ledger66-probe.mjs items66, exact copy):  rounds 55..65 = 3,4,4,8,0,9,6,5,6,5,7 → TOTAL sections=11 items=57
+- Plan states "57 items in 11 sections at base" → MATCH.
+
+VERDICT: CONFIRMED

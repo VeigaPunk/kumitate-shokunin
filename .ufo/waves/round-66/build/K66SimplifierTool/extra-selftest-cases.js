@@ -1,0 +1,4 @@
+  add('bad id characters → ROW_MALFORMED', () => { setup([...goodRows, '| R7 X | 7 | 1 | "readme row" | wording | open | - |']); const r = run(); return (r.code === 1 && has(r, 'ROW_MALFORMED')) || verdict(r); });
+  add('non-numeric item ordinal → ROW_MALFORMED', () => { setup([...goodRows, '| R7-Z | 7 | x | "readme row" | wording | open | - |']); const r = run(); return (r.code === 1 && has(r, 'ROW_MALFORMED')) || verdict(r); });
+  add('bad class shape → ROW_MALFORMED', () => { setup([...goodRows, '| R7-C | 7 | 1 | "readme row" | Bad_Class | open | - |']); const r = run(); return (r.code === 1 && has(r, 'ROW_MALFORMED')) || verdict(r); });
+  add('answer quote over 25 words → ROW_MALFORMED', () => { setup([goodRows[0].replace('"the readme row and its pin landed"', `"${'w '.repeat(26).trim()}"`), ...goodRows.slice(1)]); const r = run(); return (r.code === 1 && has(r, 'ROW_MALFORMED')) || verdict(r); });

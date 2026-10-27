@@ -1,0 +1,108 @@
+tool sha256: f92a364d293a283804e7d693f04cddfd94040d7f29a6c5c428b900b0d6ff3bf5
+tool at freeze 621212ba: f92a364d293a283804e7d693f04cddfd94040d7f29a6c5c428b900b0d6ff3bf5
+node v24.21.0  git 2.56.0
+================ A. baseline + selftest + strace
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --to 55 --classes
+CLASS reference-drift rows=1 rounds=55
+CLASS tally-drift rows=1 rounds=55
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=2 rows=2 open=1 closed=1 wontfix=0
+EXIT=0
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+chdir targets during --selftest: 14
+chdir("/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tmp/routed-ledger-st.68PWtD/x") = 0
+absolute write-mode opens outside $S (expect only /dev/null):
+openat(AT_FDCWD, "/dev/null", O_RDWR) = 0
+openat(AT_FDCWD, "/dev/null", O_RDWR) = 3
+================ B. --rev argument injection (closed)
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --rev=--output=/x
+ROUTED_LEDGER: USAGE unknown argument --rev=--output=/x
+EXIT=64
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --rev --output=/x
+ROUTED_LEDGER: USAGE --rev needs a value
+EXIT=64
+rev=-q       ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-q
+rev=-1       ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-1
+rev=-n1      ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-n1
+rev=-h       ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-h
+rev=-v       ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-v
+rev=-b       ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-b
+rev=-        ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:-
+rev=--quiet  ROUTED_LEDGER: USAGE --rev needs a value
+================ C. answer paths: absolute / .. / symlink outside root
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fxC --from 55 --to 55
+FINDING ANSWER_DEAD R55-D1@line7:answer-path-not-allowed:/etc/passwd
+ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=2 rows=2 open=1 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:R55-D1@line7:answer-path-not-allowed:/etc/passwd
+EXIT=1
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fxL --from 55 --to 55
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=2 rows=2 open=1 closed=1 wontfix=0
+EXIT=0
+root=/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fxL  answer-target=/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/outside-answer.md
+================ D. ledger self-answer through an alias (guard is lexical)
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fxA --from 55 --to 55
+FINDING ANSWER_DEAD R55-D1@line7:answer-path-not-allowed:corpus/routed-ledger.md
+ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=2 rows=2 open=0 closed=2 wontfix=0 findings=1 first=ANSWER_DEAD:R55-D1@line7:answer-path-not-allowed:corpus/routed-ledger.md
+EXIT=1
+================ E. --ledger escaping the root
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --to 55 --ledger ../outside-ledger.md
+ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=2 rows=2 open=1 closed=1 wontfix=0
+EXIT=0
+ledger actually read: /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/outside-ledger.md
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --to 55 --ledger /etc/passwd
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:/etc/passwd
+EXIT=2
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --to 55 --ledger ../../../../../../../etc/passwd
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-has-no-Ledger-section:../../../../../../../etc/passwd
+EXIT=2
+================ F. GIT_DIR hijacks the selftest git fixture (repo mutation)
+before: 6c79d68c commits=358
+guard target (temp dir): /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/probe.IAjryW
+/fast/scratch/hyaku/kumitate-r66/K66SentinelTool/probe.IAjryW
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+after:  608a0c57 commits=359
+608a0c57 fixture
+6c79d68c round-66: capture opened sources and record r65 D1 correction evidence
+worktree entries now reported deleted: 119
+608a0c57 fixture
+ .gitignore                                         |     1 -
+ .ufo/pins/anchor-truth.json                        |  8947 ------
+ .ufo/pins/counter-pins.json                        |   209 -
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+GIT_INDEX_FILE wrote 550 bytes at /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/idx
+================ G. same env redirects --rev reads (--root ignored)
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/fx --from 55 --rev 88041bc9
+ROUTED_LEDGER: FAIL-CLOSED reason=rev-unreadable:88041bc9
+EXIT=2
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md
+
+$ node /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/tool.mjs --root /fast/scratch/hyaku/kumitate-r66/K66SentinelTool/lane3 --from 55 --rev 88041bc9
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md
+EXIT=2
+================ H. O(rows x k x n) in norm: 1MB item reused by 20 rows
+
+real	0m45.002s
+user	0m44.867s
+sys	0m0.017s
+EXIT(timeout)=124 means the gate did not finish in 45s
+single norm 1MB k=9000 ms=4983
+single norm 192KB k=1800 ms=108.2
+================ I. no size cap; unwritable TMPDIR
+
+real	0m0.039s
+user	0m0.010s
+sys	0m0.030s
+node:fs:3134
+  return binding.mkdtemp(prefix, options.encoding);
+                 ^
+
+EXIT=0
+================ done

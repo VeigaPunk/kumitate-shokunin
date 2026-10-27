@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>№05 MCP 2026-07-28 规范修订 · Haning</title>
+<!-- 深浅色在首屏之前定下来：记过的按记的，没记过的跟系统。
+     放在页尾脚本里会先画一屏浅色再翻成深色，选了深色的读者每页都闪一下。 -->
+<script>(function(){try{var t=localStorage.getItem('haning-theme');if(t==='dark'||(!t&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}catch(e){}})();</script>
+<meta name="description" content="协议级会话被移除、授权模型收紧、扩展机制正式化——以规范正文与 SEP 原文为基准，把 MCP 变更幅度最大的一次修订归纳为三个命题。">
+<!-- 字体自托管：按全站用到的 1707 个字符裁好，放在自己域名下。缘由见 _font-subset/README。
+     正文那一支每页必用，先 preload；其余字重不 preload，那会变成每页无条件多拖一兆。 -->
+<link rel="preload" href="/assets/fonts/notoserifsc-300.woff2?v=20260925" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:300;font-display:swap;src:url('/assets/fonts/notoserifsc-300.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:500;font-display:swap;src:url('/assets/fonts/notoserifsc-500.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:600;font-display:swap;src:url('/assets/fonts/notoserifsc-600.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:200;font-display:swap;src:url('/assets/fonts/spectral-200.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:300;font-display:swap;src:url('/assets/fonts/spectral-300.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Spectral';font-style:italic;font-weight:300;font-display:swap;src:url('/assets/fonts/spectral-300i.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Spectral';font-style:normal;font-weight:400;font-display:swap;src:url('/assets/fonts/spectral-400.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/assets/fonts/spacemono-400.woff2?v=20260925') format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url('/assets/fonts/spacemono-700.woff2?v=20260925') format('woff2')}
+/* supplement:start */
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:300;font-display:swap;src:url('/assets/fonts/supplement-300.woff2?v=20260925') format('woff2');unicode-range:U+519C,U+533B,U+53EC,U+5782,U+59D3,U+5A03,U+5E01,U+5E42,U+5E7B,U+5FE0,U+6316,U+6865,U+6868,U+68D2,U+6B4C,U+6BD2,U+6BEB,U+758F,U+7597,U+78C1,U+79CB,U+79D2,U+79DF,U+7A20,U+7BE1,U+7EAC,U+80DC,U+814A,U+8C46,U+8D27,U+8F74,U+900A,U+96A7,U+98DE}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:500;font-display:swap;src:url('/assets/fonts/supplement-500.woff2?v=20260925') format('woff2');unicode-range:U+519C,U+533B,U+53EC,U+5782,U+59D3,U+5A03,U+5E01,U+5E42,U+5E7B,U+5FE0,U+6316,U+6865,U+6868,U+68D2,U+6B4C,U+6BD2,U+6BEB,U+758F,U+7597,U+78C1,U+79CB,U+79D2,U+79DF,U+7A20,U+7BE1,U+7EAC,U+80DC,U+814A,U+8C46,U+8D27,U+8F74,U+900A,U+96A7,U+98DE}
+@font-face{font-family:'Noto Serif SC';font-style:normal;font-weight:600;font-display:swap;src:url('/assets/fonts/supplement-600.woff2?v=20260925') format('woff2');unicode-range:U+519C,U+533B,U+53EC,U+5782,U+59D3,U+5A03,U+5E01,U+5E42,U+5E7B,U+5FE0,U+6316,U+6865,U+6868,U+68D2,U+6B4C,U+6BD2,U+6BEB,U+758F,U+7597,U+78C1,U+79CB,U+79D2,U+79DF,U+7A20,U+7BE1,U+7EAC,U+80DC,U+814A,U+8C46,U+8D27,U+8F74,U+900A,U+96A7,U+98DE}
+/* supplement:end */</style>
+<!-- SEO:BLOCK -->
+<meta name="author" content="Haning">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://haning.me/notes/20260730-mcp-2026-07-28-revision.html">
+<link rel="alternate" type="application/rss+xml" title="Haning · Grey-Green Archive" href="https://haning.me/feed.xml">
+<link rel="alternate" hreflang="zh-Hans" href="https://haning.me/notes/20260730-mcp-2026-07-28-revision.html">
+<link rel="alternate" hreflang="en" href="https://haning.me/en/notes/20260730-mcp-2026-07-28-revision.html">
+<link rel="alternate" hreflang="fr" href="https://haning.me/fr/notes/20260730-mcp-2026-07-28-revision.html">
+<link rel="alternate" hreflang="x-default" href="https://haning.me/notes/20260730-mcp-2026-07-28-revision.html">
+<meta name="theme-color" content="#E7E6E1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1E19" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Haning · Grey-Green Archive">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:title" content="№05 MCP 2026-07-28 规范修订 · Haning">
+<meta property="og:description" content="MCP 自 2024 年开源以来变更幅度最大的一次修订，也是移交 Linux Foundation 中立治理后的首个大版本：协议级会话被移除、授权模型收紧、扩展机制正式化。以规范正文与 SEP 原文为基准，归纳为状态移置、基础设施化、核心收敛三个命题。">
+<meta property="og:url" content="https://haning.me/notes/20260730-mcp-2026-07-28-revision.html">
+<meta property="og:image" content="https://haning.me/assets/og/og-20260730-mcp-2026-07-28-revision.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Haning · Grey-Green Archive">
+<meta property="article:published_time" content="2026-07-30">
+<meta property="article:author" content="Haning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="№05 MCP 2026-07-28 规范修订 · Haning">
+<meta name="twitter:description" content="协议级会话被移除、授权模型收紧、扩展机制正式化——以规范正文与 SEP 原文为基准，把 MCP 变更幅度最大的一次修订归纳为三个命题。">
+<meta name="twitter:image" content="https://haning.me/assets/og/og-20260730-mcp-2026-07-28-revision.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","headline":"MCP 2026-07-28 规范修订：无状态化重构、授权收紧与扩展分层","alternativeHeadline":"The MCP 2026-07-28 Specification Revision","inLanguage":"zh-CN","datePublished":"2026-07-30","dateModified":"2026-07-30","author":{"@type":"Person","name":"Haning","url":"https://haning.me/about.html"},"image":"https://haning.me/assets/og/og-20260730-mcp-2026-07-28-revision.png","mainEntityOfPage":"https://haning.me/notes/20260730-mcp-2026-07-28-revision.html","publisher":{"@type":"Person","name":"Haning"}}
+</script>
+<!-- /SEO:BLOCK -->
+<link rel="stylesheet" href="/assets/style.css?v=20260925">
+</head>
+<body data-page="index">
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="/">Haning</a>
+    <div class="nav-links">
+      <a class="navlink" data-nav="index" href="/">INDEX</a>
+      <a class="navlink" data-nav="work" href="/work.html">WORK</a>
+      <a class="navlink" data-nav="ethos" href="/ethos.html">ETHOS</a>
+      <a class="navlink" data-nav="library" href="/library.html">LIBRARY</a>
+      <a class="navlink" data-nav="travel" href="/travel.html">TRAVEL</a>
+      <a class="navlink" data-nav="about" href="/about.html">INFO</a>
+      <span class="nav-tools">
+        <span class="langs"><a class="lang active" href="/notes/20260730-mcp-2026-07-28-revision.html">ZH</a><span class="lang-sep">/</span><a class="lang" href="/en/notes/20260730-mcp-2026-07-28-revision.html">EN</a><span class="lang-sep">/</span><a class="lang" href="/fr/notes/20260730-mcp-2026-07-28-revision.html">FR</a></span>
+        <button class="theme-btn" data-theme-toggle title="切换深浅色">◐</button>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<main class="narrow">
+  <div style="padding:44px 0 0">
+    <a class="mono" href="/" style="letter-spacing:.2em">← INDEX</a>
+  </div>
+
+  <header class="article-head">
+    <div class="mono-strong">№05 · ENGINEERING NOTES</div>
+    <h1>MCP 2026-07-28 规范修订：无状态化重构、授权收紧与扩展分层</h1>
+<div class="article-en">The MCP 2026-07-28 Specification Revision</div>
+    <div class="byline">
+      <span class="avatar">H</span>
+      <span class="name">Haning</span>
+      <span class="dot"></span>
+      <span class="meta">2026-07-30 · 阅读 34 MIN</span>
+    </div>
+  </header>
+
+  <article class="article-body">
+    <p class="article-dek" style="margin-top:36px">Model Context Protocol（MCP）于 2026 年 7 月 28 日正式发布的规范修订，是该协议自 2024 年 11 月由 Anthropic 开源以来变更幅度最大的一次，也是其 2025 年 12 月移交 Linux Foundation 旗下 Agentic AI Foundation（AAIF）中立治理后的首个大版本。本文以官方规范正文、变更日志与规范增强提案（SEP）原文为基准材料，对本轮修订做系统评述，归纳为三个命题：修订的实质是状态管理责任从协议层向实现层的移置（P1）；次要主线是使协议可被标准 HTTP 基础设施治理（P2）；扩展机制的正式化确立了「核心收敛、变化外置」的演进结构（P3）。在此基础上，本文梳理协议的发布主体、治理结构与 SDK 分级制度，评述特性弃用与新确立的生命周期政策，分析行业意义与生态影响，并面向产品与应用设计者给出设计指引。第十四章以笔者参与建设的中国财税知识库 MCP（公测中）为例，总结定稿前跟进未定稿协议的四条工程做法及其在发布日的检验结果。本文写作横跨候选发布与正式发布，截至 2026 年 7 月 29 日已完成五轮联机核验。</p>
+
+    <nav class="toc">
+      <span class="mono">CONTENTS / 目录</span>
+      <div class="toc-list">
+        <a href="#s1"><span class="n">01</span>引言：修订背景与本文范围</a>
+        <a href="#s2"><span class="n">02</span>发布主体与治理结构</a>
+        <a href="#s3"><span class="n">03</span>材料与核验方法</a>
+        <a href="#s4"><span class="n">04</span>核心修订：协议级会话的移除</a>
+        <a href="#s5"><span class="n">05</span>传输与可观测性</a>
+        <a href="#s6"><span class="n">06</span>工具契约：JSON Schema 2020-12</a>
+        <a href="#s7"><span class="n">07</span>授权模型的收紧</a>
+        <a href="#s8"><span class="n">08</span>扩展机制的正式化</a>
+        <a href="#s9"><span class="n">09</span>特性弃用与生命周期政策</a>
+        <a href="#s10"><span class="n">10</span>迁移影响分析</a>
+        <a href="#s11"><span class="n">11</span>边界澄清</a>
+        <a href="#s12"><span class="n">12</span>行业意义与生态影响</a>
+        <a href="#s13"><span class="n">13</span>面向产品与应用设计的指引</a>
+        <a href="#s14"><span class="n">14</span>案例经验：中国财税知识库 MCP</a>
+        <a href="#s15"><span class="n">15</span>结论</a>
+        <a href="#a1"><span class="n">··</span>附录一：迁移检查清单</a>
+        <a href="#a2"><span class="n">··</span>附录二：官方来源清单</a>
+        <a href="#a3"><span class="n">··</span>附录三：核心术语表</a>
+        <a href="#refs"><span class="n">··</span>参考来源</a>
+      </div>
+    </nav>
+
+    <h2 id="s1">一、引言：修订背景与本文范围</h2>
+    <p>MCP 的版本标识采用日期格式（<code>YYYY-MM-DD</code>），且仅在发生向后不兼容变更时启用新版本号；向后兼容的改动持续合入当前版本，版本号不动。在这一命名规则下，每个新版本号本身即是一次不兼容变更的声明。自 2024 年 11 月首发以来，协议经历了 2025-03-26、2025-06-18、2025-11-25 三个正式版本；官方对版本另有三态划分：Draft（进行中）、Current（现行）、Final（封版不改）。本文写作横跨发布日全天：日间两轮核验时，2026-07-28 版仍处于候选发布（Release Candidate, RC）状态；至 16:47 UTC，规范仓库发布页出现标记为稳定版（非预发布）的 <code>2026-07-28</code> 条目，正文声明「This marks the stable release of the 2026-07-28 revision」，由两位首席维护者之一签发，GPG 签名可验证。Final 至此正式发布，核验细节与当日文档站的同步滞后现象见 3.2 节。</p>
+    <p>本轮修订的规模在协议自身的发布史上没有先例。官方在 2026 年 5 月 21 日的 RC 公告中明确说明本版包含破坏性变更，并为此设置了十周的 SDK 验证窗口；Python、TypeScript、Go、C# 四个官方 SDK 的 beta 版本于 6 月 29 日全部就位。变更覆盖传输层生命周期、授权模型、工具契约、扩展机制与特性弃用政策，其中传输层的变化（移除协议级会话）直接改写了协议自 2024 年确立的基础假设。</p>
+    <p>围绕这次修订，可以预期会出现大量以「什么坏了、怎么迁移」为切口的快讯式解读。本文的目标不同：把散落在规范正文、变更日志与十余个 SEP 中的修订内容组织成一个可检验的整体图景，并回答一个快讯不处理的问题：这些变化是否共享同一个设计动机。</p>
+    <p>本文的贡献有六处：协议发布主体与治理结构的事实梳理（第二章）；以规范正文为基准、逐条标注材料层级的修订评述（第四至九章）；按实现者角色组织的迁移影响分析（第十章）；修订的行业意义与生态影响分析（第十二章）；面向产品与应用设计的指引（第十三章）；以及一份定稿前跟进未定稿协议的工程方法，以真实产品为案例（第十四章）。官方来源清单集中于附录二。第三章交代核验方法与材料层级，后文据此引用。</p>
+
+    <h2 id="s2">二、发布主体与治理结构</h2>
+
+    <h3>2.1 从单一厂商到中立基金会</h3>
+    <p>MCP 由 Anthropic 工程师 David Soria Parra 与 Justin Spahr-Summers 创建，2024 年 11 月 25 日以开放标准形式发布并开源（Anthropic, 2024）。此后协议完成了从厂商项目到中立标准的移交：2025 年 12 月 9 日，MCP 捐赠至 Agentic AI Foundation（AAIF），即 Linux Foundation 旗下新设的定向基金，该基金由 Anthropic、Block 与 OpenAI 共同发起，首批入驻项目为 MCP、goose 与 AGENTS.md（Linux Foundation, 2025）。法律实体层面，项目登记为「Model Context Protocol a Series of LF Projects, LLC」；规范与代码以 Apache 2.0 许可发布，文档（规范本身除外）以 CC BY 4.0 发布。</p>
+    <p>对本文主题的直接含义是：2026-07-28 修订是 MCP 进入中立治理之后的第一个大版本。一个包含破坏性变更的版本能够在竞争厂商共同参与的治理结构下获准发布，这一事实本身构成第十二章行业分析的起点。</p>
+
+    <h3>2.2 技术治理结构</h3>
+    <p>技术治理采用与 Python、PyTorch 同型的分层结构（治理章程见附录二）。最终决定权归属两位首席维护者（Lead Maintainer，项目沿用 BDFL 惯例）：David Soria Parra 与 Den Delimarsky，前者为协议共同创建者；另一位共同创建者 Justin Spahr-Summers 已转为荣休身份。其下为核心维护者（Core Maintainer）小组，截至核验时点共七人，负责规范与项目整体方向；再下为分管各 SDK、文档与工作组的维护者（Maintainer）。三层合称 Steering Group。</p>
+    <p>治理章程中有两条规定与协议的中立性直接相关：治理席位授予个人而非公司，章程明文规定不为任何公司保留席位；全部维护者（含核心与首席）与外部贡献者使用同一套拉取请求流程，不得直接修改仓库。规范变更的正式通道为规范增强提案（SEP），由核心维护者小组双周例会裁决；本文引用的各 SEP 编号均产生于该流程。本轮 RC 公告也由两位首席维护者署名，规范文本与治理签发在人事上连续。</p>
+
+    <h3>2.3 SDK 分级与一致性测试</h3>
+    <p>治理结构之外，项目另设一套面向实现侧的制度：SDK 分级（SDK Tiers）。本文各处出现的「第一梯队 SDK」即指该制度中的 Tier 1，其含义由官方分级页给出，非本文的修辞。</p>
+    <p>分级共三层：Tier 1 为完整支持，实现全部非实验性特性与可选能力；Tier 2 为积极维护、正在走向完整支持；Tier 3 为实验性、部分实现或专用 SDK。各层的量化义务如下表（择要）：</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>要求</th><th>Tier 1</th><th>Tier 2</th><th>Tier 3</th></tr>
+        <tr><td>一致性测试通过率</td><td>100%</td><td>80%</td><td>无下限</td></tr>
+        <tr><td>新协议特性支持</td><td>规范发布前</td><td>六个月内</td><td>无承诺</td></tr>
+        <tr><td>议题分诊</td><td>两个工作日内</td><td>一个月内</td><td>无要求</td></tr>
+        <tr><td>关键缺陷修复</td><td>七日内</td><td>两周内</td><td>无要求</td></tr>
+        <tr><td>稳定版</td><td>必须有</td><td>至少一个</td><td>不要求</td></tr>
+      </table>
+    </div>
+    <p>分级并非终身制。最新稳定版上的既有一致性测试若连续四周失败，SDK 自动降级：Tier 1 降 Tier 2 的触发条件是任一一致性测试失败，Tier 2 降 Tier 3 的条件是超过百分之二十的测试失败。</p>
+    <p>这套制度对理解本轮修订有两处直接作用。Python、TypeScript、Go、C# 四个官方 SDK 的 beta 版本在验证窗口内全部就位，与 Tier 1「新协议特性须在规范发布前支持」的时限要求一致；一致性测试同时充当准入门槛与降级触发器，本文第十二章讨论扩展碎片化风险时，它是协议方手中的对冲手段之一。需要区分的是，截至 2026 年 7 月 29 日，SDK 分级页给出了制度与门槛，但没有列出当前各 SDK 的正式分级名单；后文对具体 SDK 的状态判断因此以各仓库发布页为准。</p>
+
+    <h2 id="s3">三、材料与核验方法</h2>
+
+    <h3>3.1 材料分层</h3>
+    <p>本文使用的材料分四层，效力递减：</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>层级</th><th>材料</th><th>本文用法</th></tr>
+        <tr><td>一层</td><td>规范正文、机器可读 schema、SEP 原文</td><td>事实依据，可直接引述</td></tr>
+        <tr><td>二层</td><td>官方变更日志（changelog）</td><td>事实依据；与正文冲突时以正文为准</td></tr>
+        <tr><td>三层</td><td>官方博客公告</td><td>官方口径，用于动机与背景，标注为公告口径</td></tr>
+        <tr><td>四层</td><td>第三方媒体与厂商解读</td><td>不作为任何事实依据，仅用于观察传播语境</td></tr>
+      </table>
+    </div>
+    <p>区分二、三层有实际必要。核对中发现，博客公告的表述重点与规范正文存在不重合处：以授权部分为例，公告强调动态客户端注册流程中的应用类型声明，而正文的结构性变化是客户端注册机制的优先级重排（详见第七章）。此类差异不构成矛盾，但足以说明公告是导读性质的材料，规范正文才是约束实现的文本。后记：Final 变更日志证实应用类型声明的要求确属本轮内容（SEP-837，见 7.2 节），差异是重心之别而非真伪之别，这正是「分层」而非「对立」的含义。一层材料内部还需再作区分，这一点由官方文本自己提示。弃用登记表页面在开头自我声明：该页是一个派生视图，与各特性的弃用通知及变更日志条目保持一致，而后者才是规范性记录（normative records）。据此，本文引用登记表时用于呈现完整清单，涉及某一特性的具体规范义务时则回到该特性的正文条目。官方在自己的文档体系内区分派生视图与规范性记录，与本文的材料分层是同一种谨慎。</p>
+
+    <h3>3.2 核验方式与时点</h3>
+    <p>一手材料的核验共进行五轮，横跨 2026 年 7 月 28 日至 29 日；核验方式为直接访问官方规范站、官方博客、官方 GitHub 仓库发布页及官方包注册表，不经由转述来源。判断某一版本是否正式发布，以规范仓库带可验证签名的非预发布（non-prerelease）条目为硬信号，再用固定版本文档与版本策略页交叉核对。</p>
+    <p>这套判据在发布当日经受了一次真实考验。16:47 UTC 发布落地后数小时内，各处信号并不一致：发布页已出现稳定版条目，<code>/specification/latest</code> 已指向新版，新的版本协商章节也可以访问，而变更日志仍返回 404。滞后期间，规范源文件、schema 与 Final 变更日志均从签名 tag 直取并完成比对。到 7 月 29 日第五轮核验时，固定版本的 changelog、Deprecated 登记表、工具章节与 JSON Schema 章节均已上线；但版本策略页正文仍把 2025-11-25 写成 Current，尽管该页已经重定向到 2026-07-28 文档树，规范仓库也已将 2026-07-28 标记为 Latest。本文据此把签名稳定版条目与固定版本正文作为权威，版本策略页的 Current 文案视为仍在同步中的站点信息。</p>
+    <p>本文描述「新规范要求 X」时，均指 2026-07-28 固定版本正文的要求；SDK、扩展和一致性测试状态更新至 2026 年 7 月 29 日。</p>
+
+    <h2 id="s4">四、核心修订：协议级会话的移除</h2>
+
+    <h3>4.1 修订前的模型</h3>
+    <p>在 2025-11-25 及此前版本中，MCP 连接以一次 <code>initialize</code> / <code>initialized</code> 握手开始，双方在握手中交换能力声明；服务端签发 <code>Mcp-Session-Id</code> 头，此后的每个请求携带该标识。协议由此持有会话状态：服务端记忆协商结果，<code>tools/list</code> 等列表接口的返回可因会话而异。</p>
+    <p>这一模型与协议的初始场景（本地 stdio 传输、单进程单连接）相容，但在 HTTP 部署下产生了结构性成本：会话状态驻留于特定服务实例，水平扩展要求负载均衡将同一会话固定路由到同一实例（sticky session），或引入跨实例的共享状态存储。会话语义还使请求无法独立解释：中间层（网关、代理）不解析请求体便无法获知调用内容。</p>
+
+    <h3>4.2 修订后的模型</h3>
+    <p>2026-07-28 版移除了协议级会话与 <code>Mcp-Session-Id</code> 头（SEP-2567）；握手的废除、<code>server/discover</code> 与版本错误机制则由 SEP-2575 确立。正式版的版本协商章节开宗明义：「There is no negotiation handshake」。请求成为独立的自含单元：协议元数据（含能力声明）随每个请求的 <code>_meta</code> 字段携带，协议版本声明于其中的 <code>io.modelcontextprotocol/protocolVersion</code> 键（HTTP 上同值另置于 <code>MCP-Protocol-Version</code> 请求头）；服务端逐请求接受或拒绝，不支持所请求版本时必须（MUST）返回错误码为 <code>-32022</code> 的 <code>UnsupportedProtocolVersionError</code>，并在错误数据中列出自身支持的版本清单，客户端据此换版重试。一次性的握手式能力交换由新增的 <code>server/discover</code> 方法取代，其义务分配是不对称的：服务端必须实现，客户端可以调用但不被要求，客户端同样可以直接发起任意请求，失败时再处理版本错误。列表接口的返回不再随连接变化，且规范要求服务端应当（SHOULD）以确定性顺序返回工具列表，官方给出的理由是支持客户端缓存并提高语言模型的提示缓存（prompt cache）命中率。一个传输层协议为模型推理的缓存效率规定返回顺序，说明 MCP 的设计目标函数中显式包含「作为模型上下文供给方」的角色。</p>
+    <p>这一约束并非 MCP 独创。REST 架构风格的无状态约束早已确立了同型判断：每个请求须自含理解该请求所需的全部信息，不得依赖服务器存储的会话上下文（Fielding, 2000, §5.1.3），其代价与收益（以重复传输换取可见性、可靠性与可伸缩性）在 Web 架构二十余年的实践中已被充分检验。MCP 本轮修订可视为向这一成熟约束的回归。正式发布后的规范首页也以同样的语言概括自身基础协议：「无状态、自含的请求」与「逐请求能力协商」（Stateless, self-contained requests；Per-request capability negotiation），这两行自述与本文命题 P1 的表述互为印证。</p>
+
+    <h3>4.3 状态的去向</h3>
+    <p>移除协议级会话不等于取消状态。正式版对跨调用状态给出的处置是：由服务端签发显式句柄（handle），作为普通工具参数传递。需要多次调用共享上下文的场景（如「启动分析—查询进度」），服务端在首次调用返回标识符，后续调用以参数形式回传。该模式的成本端同样应当指出：状态管理由此部分转嫁给模型，句柄含义的理解与调用顺序的正确性成为模型推理负担的一部分；简单场景（如分页）代价可忽略，多步事务类场景则需评估模型能否稳定管理状态流转。</p>
+    <p>服务端主动发起的多轮交互（elicitation）原依赖服务器发送事件（SSE）长连接挂起等待，与无状态约束冲突，本轮以官方命名的多轮请求模式（Multi Round-Trip Requests, MRTR；SEP-2322）重设计。全部结果新增必填的 <code>resultType</code> 字段，取值 complete 或 input_required：需要补充输入时，服务端返回 <code>resultType</code> 为 input_required 的 <code>InputRequiredResult</code>，内含所需输入的 schema 与当前处理状态（state）；客户端获得用户输入后，以 <code>inputResponses</code> 连同原样回传的 state 重新提交原调用。因状态随请求携带，重提交可由任意服务实例处理；未携带 <code>resultType</code> 的旧式返回按 complete 处理，以兼容旧服务端。</p>
+    <p>综合上述三处（业务状态归于服务端句柄、能力状态随请求携带、交互状态由客户端回传），本文提出第一个命题：</p>
+    <div class="quote-block">
+      <div class="zh" style="font-size:17px;line-height:1.9"><strong>命题 P1（状态移置）</strong>：2026-07-28 修订的实质不是取消状态，而是状态管理责任从协议层向实现层的系统性移置——协议本身不再持有任何跨请求状态，状态的表示、传递与生命周期管理显式化为实现者的设计对象。</div>
+    </div>
+    <p>对这一移置的工程含义，笔者的判断是：短期增加实现负担，长期降低系统性风险。协议托管状态时，状态的失效时机与可见性对实现者不透明；显式化之后，状态成为可审查、可测试、可自主决定持久化策略的一等对象。该判断属于基于既有无状态架构经验的推断，本轮修订的实际效果需待社区实践检验。</p>
+
+    <h3>4.4 配套的删除项</h3>
+    <p>无状态化同时清理了一批依赖「连接持有状态」的机制（SEP-2575），共三组：</p>
+    <p><strong>一，订阅入口统一。</strong><code>subscriptions/listen</code> 取代 Streamable HTTP 的 GET 通道与 <code>resources/subscribe</code>、<code>resources/unsubscribe</code> 方法，服务端到客户端的通知自此走单一入口。</p>
+    <p><strong>二，三个操作移除。</strong><code>ping</code>、<code>logging/setLevel</code> 与 <code>notifications/roots/list_changed</code> 被直接删除，日志级别改由每请求 <code>_meta</code> 设置；以 <code>ping</code> 实现保活或健康检查的既有实现由此出现直接破坏点。</p>
+    <p><strong>三，流恢复移除。</strong>SSE 的 <code>Last-Event-ID</code> 头与事件 ID 一并删除，断流后不再续传，客户端重新发起请求即可：请求已经自含全部状态，续传失去了存在理由。</p>
+    <p>这组删除共享同一判断：凡为「连接是持久对象」这一假设服务的机制，在假设被拿掉之后均无保留必要。</p>
+
+    <h3>4.5 部署形态的变化</h3>
+    <p>对协议使用者，本节所述修订几乎不可感知；对实现者，其直接后果是部署形态的变化：MCP 服务端从有状态的长连接服务变为可置于标准轮询负载均衡之后的无状态 HTTP 服务，不再需要会话粘滞或共享状态存储，无服务器与边缘环境的部署由此可行（官方公告亦以此为主要收益之一）。受益最大的是将 MCP 纳入企业基础设施的部署方；受影响最大的是已将状态耦合于连接的既有实现，其迁移路径见第十章。</p>
+
+    <h2 id="s5">五、传输与可观测性：面向基础设施的修订组</h2>
+    <p>第二组修订单项幅度不大，但共享一个清晰的方向。</p>
+    <p><strong>一，标准请求头。</strong>SEP-2243 要求 Streamable HTTP 的 POST 请求必须携带 <code>Mcp-Method</code>（协议方法名）与 <code>Mcp-Name</code>（目标名称）两个标准头；正式版另将协议版本置于 <code>MCP-Protocol-Version</code> 头（与请求 <code>_meta</code> 中的版本声明同值，见 4.2 节）。三个头合起来，网关、代理等中间层不解析请求体即可完成按方法路由、按版本分流、限流与审计决策；同一提案还引入经工具参数传递自定义头的机制（<code>x-mcp-header</code>）。</p>
+    <p><strong>二，缓存元数据。</strong>可缓存结果强制携带 <code>ttlMs</code> 与 <code>cacheScope</code> 字段（SEP-2549），客户端首次获得协议级的缓存有效期依据。</p>
+    <p><strong>三，分布式追踪。</strong>SEP-414 在 <code>_meta</code> 中约定 OpenTelemetry 追踪上下文的标准键（<code>traceparent</code>、<code>tracestate</code>、<code>baggage</code>），与 W3C Trace Context 规范（W3C, 2020）对接，跨 SDK 的调用链追踪由此有统一载体。</p>
+    <p><strong>四，错误码规范化。</strong>部分既有实现以非标准错误码 <code>-32002</code> 表示资源不存在，本轮统一改用 JSON-RPC 2.0 标准错误码 <code>-32602</code>。依赖字面量 <code>-32002</code> 的客户端逻辑将静默失效，此为本轮修订中少数直接破坏既有代码的点之一。</p>
+    <p><strong>五，错误码空间划分。</strong>本轮确立分配政策：<code>-32000</code> 至 <code>-32019</code> 归实现自定义，<code>-32020</code> 至 <code>-32099</code> 为 MCP 保留段。4.2 节的 <code>-32022</code> 版本错误即落于保留段内，此后协议级错误与实现级错误在码段上可辨。</p>
+    <p>五项合观，本文提出第二个命题：</p>
+    <div class="quote-block">
+      <div class="zh" style="font-size:17px;line-height:1.9"><strong>命题 P2（基础设施化）</strong>：本轮修订的次要主线，是使 MCP 流量可被标准 HTTP 基础设施（负载均衡、网关、缓存、追踪系统）无侵入地治理。协议由「开发者可运行」向「组织可运维」演进。</div>
+    </div>
+
+    <h2 id="s6">六、工具契约：JSON Schema 2020-12 的完整支持</h2>
+    <p>工具的输入输出 schema 自本轮起（SEP-2106）放开至完整的 JSON Schema 2020-12 方言，包括组合关键字（<code>oneOf</code> / <code>anyOf</code> / <code>allOf</code>）、条件关键字（<code>if</code> / <code>then</code> / <code>else</code>）与引用（<code>$ref</code>）。</p>
+    <p>此项修订解决的是工具契约的表达力缺口。此前，参数间的互斥、依赖等约束无法在 schema 中表达，工具作者只能将规则写入自然语言描述，其执行依赖模型的理解与调用方的自觉；修订后，此类约束可由 schema 校验器强制执行。<code>$ref</code> 的支持同时降低了多工具服务端中重复类型定义的维护成本。正式版工具章节与基础协议的「JSON Schema Usage」小节现已上线，明确默认方言为 2020-12，并给出 <code>$ref</code> 解析和组合关键字资源限制。就工具契约的性质而言，这是从「面向模型的说明文本」向「面向机器的可校验合同」的移动。</p>
+
+    <h2 id="s7">七、授权模型的收紧</h2>
+    <p>授权是本轮修订中规范性语言（MUST/SHOULD）密度增加最显著的部分，官方公告称涉及六项 SEP。本章按机制而非提案编号组织，全部依据为正式版授权章节正文。</p>
+
+    <h3>7.1 授权服务器颁发者校验</h3>
+    <p>本轮修订（SEP-2468）将 RFC 9207（OAuth 2.0 授权服务器颁发者标识）纳入规范底座，其要求如下：客户端在发起授权跳转前，必须（MUST）记录所选授权服务器元数据中的 <code>issuer</code> 值，与 PKCE 校验码保存于同一请求记录；授权服务器应当（SHOULD）在授权响应（含错误响应）中附带 <code>iss</code> 参数，附带时必须在元数据中声明 <code>authorization_response_iss_parameter_supported</code> 为真；客户端在向任何令牌端点提交授权码之前，必须完成下表所示校验：</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>元数据声明支持 <code>iss</code></th><th>响应含 <code>iss</code></th><th>客户端动作</th></tr>
+        <tr><td>是</td><td>是</td><td>与记录值做简单字符串比较</td></tr>
+        <tr><td>是</td><td>否</td><td>拒绝响应</td></tr>
+        <tr><td>否或未声明</td><td>是</td><td>仍执行比较</td></tr>
+        <tr><td>否或未声明</td><td>否</td><td>放行</td></tr>
+      </table>
+    </div>
+    <p>两处细节具有工程意义。第一，比较必须为逐字符的简单比较（RFC 3986 §6.2.1），明确禁止任何 URL 归一化——大小写折叠、默认端口省略、尾部斜杠处理、百分号解码均不允许；实现者出于「健壮性」直觉引入的归一化在此构成规范违反。第二，校验同等适用于错误响应：<code>iss</code> 不匹配时，客户端不得处理或展示 <code>error</code>、<code>error_description</code>、<code>error_uri</code> 字段，因其可能来自攻击者构造。正文同时预告，未来版本拟将授权服务器附带 <code>iss</code> 的要求由 SHOULD 升为 MUST。</p>
+
+    <h3>7.2 客户端注册机制的优先级重排</h3>
+    <p>正式版对客户端注册的规定出现结构性变化：动态客户端注册（Dynamic Client Registration, DCR；RFC 7591）被标记为弃用，保留仅为兼容尚不支持新机制的授权服务器；上位机制为 OAuth 客户端标识元数据文档（Client ID Metadata Documents, CIMD）：客户端以自身控制的 HTTPS URL 作为 <code>client_id</code>，授权服务器识别 URL 形态后反向获取该地址的元数据文档以了解客户端。三种注册机制的优先顺序为：CIMD 优先，预注册次之，DCR 兜底。</p>
+    <p>CIMD 取消了注册接口与预先建档环节，客户端身份由其公开发布的文档自证。就信任模型而言，这是将客户端身份的锚点从「授权服务器的注册记录」转移到「客户端可验证控制的网络位置」。</p>
+    <p>DCR 的弃用有两处一手佐证：授权章节正文明写其「已弃用，保留以兼容不支持 CIMD 的授权服务器」；弃用登记表亦将其列为 Deprecated，弃用生效版本为 2026-07-28，迁移路径指向 CIMD，最早移除为 2027-07-28 当日或之后的首个版本。需要如实交代的是，登记表在「弃用 SEP」一栏填写的出处为 PR #2858，而该 PR 的标题与主旨是授权章节的文档拆分重组（2026 年 6 月 4 日合入）。弃用事实本身不因此存疑（正文与登记表已构成双重确认），但读者若循编号追溯原文，会看到一份以重组为主题的提案，此处先行说明。另一处经 Final 变更日志证实的相关要求：兼容期内仍使用 DCR 注册流程的，必须显式声明 <code>application_type</code>（SEP-837）。</p>
+
+    <h3>7.3 资源指示与权限语义</h3>
+    <p>RFC 8707 的 <code>resource</code> 参数由推荐转为硬性要求：授权请求与令牌请求均必须携带，取值为目标 MCP 服务端的规范化 URI（必须含 scheme、不得含 fragment），且无论授权服务器是否支持该参数，客户端均须发送。其目的为令牌与使用对象的受众绑定，被窃令牌无法用于其他资源服务器。</p>
+    <p>权限不足的响应语义被明确切分：无令牌或令牌无效返回 401；令牌有效但权限范围（scope）不足返回 403，携带 <code>error="insufficient_scope"</code> 及所需 scope。客户端的对应流程为步进授权（step-up authorization）：以既有 scope 与新挑战 scope 的并集重新授权。规范明确说明，scope 的累积计算是客户端责任，其设计目的是使服务端对客户端的 scope 集合保持无状态。此处与命题 P1 构成呼应：授权线上的状态责任移置方向与传输线一致。</p>
+    <p>刷新令牌方面：客户端应当在注册元数据中声明 <code>refresh_token</code> 授权类型，但不得（MUST NOT）假设授权服务器一定签发；MCP 服务端作为受保护资源，不应（SHOULD NOT）将 <code>offline_access</code> 列入其声明的 scope，理由是长期凭证的签发属授权服务器决策，非资源侧需求。凭证的存储侧也有了绑定要求：客户端凭证必须按签发它的授权服务器键控保存，不得跨服务器复用（SEP-2352），此为受众绑定思想在客户端侧的对应。</p>
+
+    <h2 id="s8">八、扩展机制的正式化</h2>
+
+    <h3>8.1 机制设计</h3>
+    <p>扩展（extensions）在本轮获得正式的协议地位。标识符采用「厂商前缀 / 扩展名」格式，官方扩展使用 <code>io.modelcontextprotocol</code> 前缀，第三方使用自有反向域名前缀。客户端与服务端在各自能力声明新增的 <code>extensions</code> 字段中声明支持项，每个扩展自定义其配置对象的 schema。机制设有两条约束：扩展一律默认关闭，须由开发者显式启用；当一方不支持某扩展时，支持方须退回核心协议行为，或在扩展为硬前提时明确拒绝请求。扩展独立于核心协议版本演进，其更新不需核心维护者审查。</p>
+    <p>治理流程（SEP-2133）设有一道值得注意的门槛：官方扩展的提案在进入评审前，必须已有至少一个官方 SDK 中的参考实现。以可运行实现为标准化前提，这一顺序设计对扩展质量构成实质约束。</p>
+
+    <h3>8.2 首批官方扩展</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>扩展</th><th>标识 / 仓库</th><th>功能</th></tr>
+        <tr><td>MCP Apps</td><td><code>ext-apps</code></td><td>工具返回交互式 HTML 界面，于宿主会话内沙箱 iframe 渲染</td></tr>
+        <tr><td>MCP Tasks</td><td><code>io.modelcontextprotocol/tasks</code></td><td>长任务异步化：任务句柄、轮询、中途输入、断线存续</td></tr>
+        <tr><td>OAuth Client Credentials</td><td><code>ext-auth</code></td><td>机器间场景的客户端凭证流</td></tr>
+        <tr><td>Enterprise-Managed Authorization</td><td><code>ext-auth</code></td><td>企业集中式授权管控</td></tr>
+      </table>
+    </div>
+    <p>MCP Apps 的机制可概括为四步：工具描述经 <code>_meta.ui.resourceUri</code> 引用一个 <code>ui://</code> 资源；宿主获取该 HTML 资源（外部来源由 <code>_meta.ui.csp</code> 控制）；宿主于沙箱 iframe 中渲染（附加权限经 <code>_meta.ui.permissions</code> 申请）；应用与宿主经 postMessage 传输一套 <code>ui/</code> 前缀的 JSON-RPC 方法族双向通信。沙箱隔离阻止应用访问父页面 DOM 与宿主存储，可调用的工具范围由宿主限制。官方支持矩阵截至 7 月 29 日已收录十一种客户端，包括 Claude、VS Code GitHub Copilot、Microsoft 365 Copilot、Goose、Postman、ChatGPT 与 Cursor；各客户端对 Apps 和授权扩展的支持程度仍应以该动态矩阵为准。</p>
+    <p>MCP Tasks 的沿革本身即为本轮设计取向的注脚：该功能原为核心协议中的实验性特性，本轮重构为扩展。其生命周期为五状态机（working、input_required、completed、failed、cancelled）；服务端对长任务返回含 <code>taskId</code> 的结果，客户端经 <code>tasks/get</code> 轮询，任务需人工输入时转入 input_required 状态。任务标识在连接中断后依然有效，故长任务不再依赖长连接——此处与第四章的无状态化同构。</p>
+
+    <h3>8.3 演进结构的含义</h3>
+    <div class="quote-block">
+      <div class="zh" style="font-size:17px;line-height:1.9"><strong>命题 P3（核心收敛、变化外置）</strong>：扩展机制的正式化改变了协议的演进结构——核心协议收敛于稳定的最小集合，有争议或未成熟的能力经扩展轨道孵化，其成本与风险由显式的协商机制、默认关闭原则与独立版本化承担。</div>
+    </div>
+    <p>该结构的代价是碎片化风险：扩展支持在客户端间不均匀分布。官方为此维护各客户端的扩展支持矩阵（见附录二），实现选型时应先行查证。</p>
+
+    <h2 id="s9">九、特性弃用与生命周期政策</h2>
+    <p>本轮在弃用一事上有两层变化：具体特性的弃用，以及管理弃用的政策本身。后者的意义大于前者，故先述前者的完整清单，再述政策。</p>
+
+    <h3>9.1 弃用清单</h3>
+    <p>本轮由 SEP-2577 新弃用三项核心特性：</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>特性</th><th>功能</th><th>官方弃用理由</th></tr>
+        <tr><td>Roots</td><td>客户端告知服务端应操作的目录范围</td><td>采用率低；语义含糊；工具参数、资源 URI、配置等替代方案重叠</td></tr>
+        <tr><td>Sampling</td><td>服务端反向请求客户端执行模型调用</td><td>实现复杂；自 2024 年 11 月可用以来客户端采用率持续偏低；直接集成模型 API 更为实际</td></tr>
+        <tr><td>Logging</td><td>服务端向客户端发送结构化日志</td><td>与 stderr、OpenTelemetry 职能重叠，价值不匹配实现成本</td></tr>
+      </table>
+    </div>
+    <p>但仅看这三项会误判实现者的实际工作量。官方弃用登记表列出的处于 Deprecated 状态的特性共六项，其中三项来自本轮之外——两项是此前的非正式弃用被新政策收编，一项来自授权章节的重组提案：</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>特性</th><th>弃用出处</th><th>弃用生效版本</th><th>迁移路径</th><th>最早移除</th></tr>
+        <tr><td>Roots</td><td>SEP-2577</td><td>2026-07-28</td><td>工具参数、资源 URI 或服务端配置</td><td>2027-07-28 当日或之后的首个版本</td></tr>
+        <tr><td>Sampling</td><td>SEP-2577</td><td>2026-07-28</td><td>直接集成模型提供方 API</td><td>同上</td></tr>
+        <tr><td>Logging</td><td>SEP-2577</td><td>2026-07-28</td><td>stdio 传输写 stderr；可观测性用 OpenTelemetry</td><td>同上</td></tr>
+        <tr><td>HTTP+SSE 传输</td><td>SEP-2596</td><td>2025-03-26</td><td>Streamable HTTP</td><td><strong>SEP-2596 定稿后三个月</strong></td></tr>
+        <tr><td><code>includeContext</code> 的 <code>thisServer</code> / <code>allServers</code> 取值</td><td>SEP-2596</td><td>2025-11-25</td><td>省略该字段或取 <code>none</code></td><td>跟随 Sampling</td></tr>
+        <tr><td>动态客户端注册（DCR）</td><td>PR #2858</td><td>2026-07-28</td><td>Client ID Metadata Documents（见 7.2 节）</td><td>2027-07-28 当日或之后的首个版本</td></tr>
+      </table>
+    </div>
+    <p>表中最需留意的是 HTTP+SSE 传输：它在 2025-03-26 版即已弃用，本轮由 SEP-2596 的过渡条款正式收编，其最早移除时点是全表最近的一个，且是唯一适用短于十二个月窗口的条目。仍在使用该传输的实现，其迁移紧迫性高于本轮新弃用的三项。</p>
+
+    <h3>9.2 生命周期政策</h3>
+    <p>政策由 SEP-2596（《Specification Feature Lifecycle and Deprecation Policy》，2026 年 6 月 3 日合入）确立，其内容比「至少保留十二个月」这一句话细致得多。</p>
+    <p>特性状态定义为三态：Active（属于当前版本）、Deprecated（仍在规范内但已排期移除，且有成文迁移路径）、Removed（已从草案删除，将不出现在下一当前版本，但仍记载于其最后出现的 Final 版本中）。Deprecated 并非单向：一份取代原弃用 SEP 并说明情势变化的新 SEP 可将特性恢复为 Active，若日后再次弃用，窗口重新计算。</p>
+    <p>弃用提案必须写明四项：按名指认特性并链接至 schema 定义与规范正文；依据成文标准说明理由（被覆盖同场景的新特性取代、存在无法就地缓解的安全隐私或互操作风险、生态遥测或 SDK 维护者共识显示采用率相对维护成本可忽略，或核心维护者认定的其他理由）；成文的迁移路径，若指名替代特性，该特性须在弃用生效的同一版本中已是 Active；以及最短弃用窗口，不得少于十二个月。窗口的计数起点值得单独指出：自特性首次被标记为 Deprecated 的规范版本发布之日起算，而非自 SEP 定稿之日起算。窗口届满后的首个当前版本中，该特性变为「可移除」，此即登记表中的「最早移除」。可移除不等于必然移除，实际移除由核心维护者在版本准备期裁量执行，特性可以长期停留在 Deprecated 状态。</p>
+    <p>加急移除的门槛比通常引述的「至少九十天」更严格。十二个月下限仅在特性存在活跃安全风险时方可缩短，而「活跃安全风险」被定义为：已发布安全公告或有据可查的在野利用，且无就地缓解措施。缩短须经核心维护者按治理决策流程批准并记录在案，且缩短后仍须保证至少九十天。</p>
+    <p>弃用生效时的动作亦成文：schema 条目添加引用弃用 SEP 与生效版本的 <code>@deprecated</code> 注解、规范正文添加弃用通知、该版本变更日志在「Deprecated」标题下添加条目（Deprecated 与 Removed 已成为与 Major、Minor 并列的常设标题）、特性进入登记表。这四步共同保证了一件事：实现者不必从散落于各版本变更日志的条目中重建「什么正在退场、何时退场」的图景，登记表是这一问题的单一答案页。</p>
+    <p>政策同时对 Tier 1 SDK 施加义务：版本发布为当前版本后，Tier 1 SDK 必须在下一个发行版中用语言原生机制标注对应 API 面（Java 的 <code>@Deprecated</code>、.NET 的 <code>[Obsolete]</code>、TypeScript 的 <code>@deprecated</code> JSDoc、Go 的 <code>Deprecated:</code> 约定），并在机制允许处引用弃用 SEP 与最早移除日；应当在弃用特性被调用时按语言惯例发出运行时警告。持续不履行者进入 2.3 节所述的降级流程。</p>
+
+    <h3>9.3 评价</h3>
+    <p>对具体的三项弃用，本文的评价是：协议在正式文本中承认三项特性的设计失败并给出有序退出通道，其对协议可信度的贡献不低于任何新增能力。</p>
+    <p>对政策本身，评价更强一些。SEP-2596 把弃用从「维护者的一次性决定」变成了有窗口、有留痕、有裁决主体、有单一查询入口、并向下游 SDK 传导义务的公开流程。对依赖被弃用特性的实现者，其价值不在宽限期的长度，而在宽限期的可预期性：既包括预期它可能被延长（可移除不等于移除），也包括预期它在何种严格条件下才可能被缩短。</p>
+    <h2 id="s10">十、迁移影响分析</h2>
+    <p>兼容性问题上，公告口径与正文条款的差异在本章最为具体，需先厘清。SDK beta 公告（2026-06-29）的表述是：「Nothing breaks today, and nothing breaks on July 28 either.」这一承诺成立，但有一个公告未展开的前提。正式版为此引入了一套官方术语：以每请求元数据工作的版本称 Modern（2026-07-28 及以后），以 <code>initialize</code> 握手建立会话的版本称 Legacy（2025-11-25 及以前），同时支持两者的实现称 Dual-era。正文给出的兼容性矩阵可归结为一句话：<strong>「不破坏任何一方」仅当服务端实现为 Dual-era 时成立。</strong></p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>客户端</th><th>服务端</th><th>结果</th></tr>
+        <tr><td>Modern</td><td>Modern</td><td>可用；版本不符以 <code>-32022</code> 错误换版重试</td></tr>
+        <tr><td>Modern</td><td>Legacy</td><td>失败</td></tr>
+        <tr><td>Dual-era</td><td>Modern</td><td>可用</td></tr>
+        <tr><td>Dual-era</td><td>Legacy</td><td>可用（回退 <code>initialize</code>，必要时再退至已弃用的 HTTP+SSE）</td></tr>
+        <tr><td>Legacy</td><td>Modern</td><td>失败（stdio 下 <code>initialize</code> 是未知方法且缺必需 <code>_meta</code>；HTTP 下缺必需头，被以 400 拒绝）</td></tr>
+        <tr><td>Legacy</td><td>Dual-era</td><td>可用</td></tr>
+        <tr><td>Legacy</td><td>Legacy</td><td>按旧版工作</td></tr>
+      </table>
+    </div>
+
+    <p>两个失败格中，Legacy 客户端对 Modern 服务端的失败尤其值得留意：旧客户端没有任何前向兼容机制，因此正文要求纯 Modern 服务端应当（SHOULD）在拒绝 <code>initialize</code> 的错误响应中列出自身支持的版本，那条错误信息可能是旧客户端用户唯一能看到的诊断。纪元的探测与缓存也有成文规则：stdio 以 <code>server/discover</code> 探测，HTTP 以首个 Modern 请求探测并检查 400 响应体是否含可识别的 Modern 错误；纪元判定是服务端属性而非单请求属性，客户端应当按进程或源缓存判定结果。</p>
+
+    <p>对部署决策的直接含义：面向存量客户端的服务端，迁移的现实路径是 Dual-era 而非直接切换为纯 Modern；纯 Modern 部署适合封闭环境或全新生态。迁移节奏仍由实现者自主决定。在此前提下，迁移的实质约束来自三处。</p>
+
+    <p><strong>一，SDK 大版本升级。</strong>四个官方 SDK 的升级幅度不均：Python 与 TypeScript 为重写级；TypeScript v2 将核心拆为 client、server、node、core 等包，正式版同时提供 ESM 与 CommonJS 构建；Go 保持模块路径；C# 的旧版 API 仍可沿 v1 线维护，但 v2 默认转向无状态 HTTP 与 discovery-first 协商。迁移测试仍应精确锁定版本。</p>
+
+    <p>截至 2026 年 7 月 29 日，各官方仓库已经给出与新规范对齐的稳定版：TypeScript 2.0.0、Python 2.0.0、Go 1.7.0、C# 2.0.0；Rust 的 <code>rmcp</code> 3.0.0 也已转为稳定版。TypeScript v1.x 至少六个月内继续接收缺陷与安全修复，Python v1.x 进入维护模式并继续接收关键与安全补丁。</p>
+
+    <p><strong>二，直接破坏点。</strong>会话依赖逻辑、<code>-32002</code> 错误码依赖、对 initialize 握手时序的假设、以 <code>ping</code> 实现的保活与健康检查、依赖 <code>Last-Event-ID</code> 的断流续传、<code>resources/subscribe</code> 系列方法，六者在新版协议语义下失效，须主动排查（后三者见 4.4 节）。</p>
+
+    <p><strong>三，弃用特性退出。</strong>Roots、Sampling、Logging 的既有使用在宽限期内不受影响，但新增使用应停止，存量使用应纳入一年期的退出规划。需要单独提出的是 HTTP+SSE 传输：其弃用早于本轮，最早移除时点也早于上述三项（见 9.1 节），仍在使用该传输的实现应将迁移至 Streamable HTTP 的优先级置于本轮其他迁移项之上。使用 <code>includeContext</code> 的 <code>thisServer</code> 或 <code>allServers</code> 取值的实现，应改为省略该字段或取 <code>none</code>。</p>
+
+    <p>逐项迁移检查清单按服务端、客户端两个角色整理于附录一。</p>
+
+    <h2 id="s11">十一、边界澄清：与本轮修订相邻但不属于它的工作</h2>
+    <p>规范发布的传播周期内，三类相邻工作易被误归入本轮修订，此处逐一澄清。</p>
+
+    <p>第一，Skills over MCP。该官方工作组确实存在：2026 年 2 月成立兴趣组，4 月 16 日升格为工作组，由 Anthropic 与 Nordstrom 的维护者共同牵头，参与方包括 Google、GitHub、AWS、Databricks、Bloomberg 等；正式发布后的规范首页也确实将其与 Tasks、MCP Apps 并列为值得关注的扩展方向。但两处事实同样清楚：首页链接指向的是工作组页面而非扩展文档，扩展总览页的官方扩展清单中并无 Skills；其产出方向 SEP-2640（Skills Extension）截至发稿仍处于评审中（In Review）状态，走扩展轨道、基于既有 Resources 原语构建。准确的表述是：Skills 是官方明示的扩展方向，但不属于 2026-07-28 版规范，也尚未成为官方扩展。</p>
+
+    <p>第二，Enterprise-Managed Authorization 为授权扩展（见第八章），非核心协议组成部分。</p>
+
+    <p>第三，插件式打包（技能、服务端、子代理与配置的单件分发）被 Skills 工作组章程明确列为范围外事项，归属尚未立项的打包议题。</p>
+
+    <h2 id="s12">十二、行业意义与生态影响</h2>
+    <p>本章从规范文本转向行业判断，依据是第二章的治理事实、公开的厂商采用记录与前文三个命题。</p>
+
+    <h3>12.1 中立化之后的第一次破坏性修订</h3>
+    <p>MCP 的行业地位在二十个月内经历三个节点：2024 年 11 月 Anthropic 开源发布；2025 年 3 月，OpenAI 公开支持 MCP，同年 4 月 Google 发布的 Agent Development Kit 已把 MCP 工具列入工具生态，微软也在其产品线中集成，相互竞争的头部厂商在模型工具接口层形成事实上的共同依赖；2025 年 12 月协议移交 AAIF。在此背景下评估本轮修订，其行业意义首先不在任何具体特性，而在事件本身：一个已被竞争厂商共同采用的协议，在中立治理结构下完成了一次破坏性修订。跨厂商标准的破坏性演进在协议史上通常以年计且伴随长期分裂，Python 2 到 3 的迁移是常被引用的先例；MCP 则以十周验证窗口和四个 SDK 同步发布来推进，正式版也在计划日的 16:47 UTC 落地。</p>
+
+    <p>发布日的官方口径首次提供了规模量化：官方发布公告称第一梯队 SDK 合计月下载量接近五亿次；Anthropic 同日的宿主侧公告称 SDK 月下载量已超四亿、年内增长四倍，其 Claude 目录收录服务器逾 950 个；AWS、Cloudflare、Google Cloud、微软等在发布当日公开确认支持，Anthropic 宣布支持将陆续上线其产品线。两处下载量口径不同，但都指向同一个结论：MCP 已形成相当规模的生态。</p>
+
+    <h3>12.2 企业采纳门槛的移动</h3>
+    <p>由命题 P2 可推出一个方向性判断：本轮修订把 MCP 从「开发者协议」推向「企业基础设施协议」。标准请求头、缓存元数据、追踪上下文与无状态部署使协议流量进入企业既有的网关、可观测性与容量管理体系；授权侧的受众绑定、颁发者校验与 403 语义使安全评审可以在 RFC 的语言体系内完成。若该判断成立，企业采纳的瓶颈将从协议能力本身移向组织自身的工具治理能力：哪些工具可以暴露、谁有权授权、如何审计调用。这一移动同时划出了中间层产品的空间，托管、路由、审计与授权代理由此第一次有了稳定的协议层立足点。企业向的外部解读提供了与此互补的两个观察角：有分析指出，组织此前为旧版 MCP 自建的补偿性设施（会话亲和层、自制鉴权与追踪）自本轮起有了「过期日期」；并认为把智能体身份锚定于标准 OAuth 而非厂商私有控制，是规范在企业智能体平台竞争中的一次立场选择（Trilogy AI, 2026-07-23）。此为第四层材料，本文引用为观点而非事实。</p>
+
+    <h3>12.3 竞争界面的移动</h3>
+    <p>由命题 P3 可推出第二个方向性判断：核心协议收敛后，「是否支持 MCP」将逐渐失去产品区分度，竞争界面移向扩展支持矩阵：宿主是否支持 Apps 的界面渲染、Tasks 的异步调度、企业授权扩展，以及仍在评审中的 Skills 扩展。官方维护的客户端支持矩阵由此从兼容性文档变为竞争格局的观察窗口。伴随的风险是碎片化，扩展支持的不均匀分布可能重演浏览器时代特性碎片化的旧况。协议方目前的对冲手段有四项：扩展默认关闭、要求优雅降级、公开客户端支持矩阵，以及 2.3 节所述的 SDK 分级与一致性测试制度。前三项作用于扩展层，第四项作用于核心层，即以 Tier 1 的百分之百一致性测试通过率与四周降级机制，保证核心协议在主流实现间不发生偏移。这一组合能否在扩展数量增长后继续奏效，须待观察。</p>
+
+    <h2 id="s13">十三、面向产品与应用设计的指引</h2>
+    <p>本章面向产品经理与 AI 应用设计者，每条采用「规范事实 → 设计含义」结构，规范事实均可回溯至前文章节。</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>#</th><th>规范事实（出处）</th><th>设计含义与建议</th></tr>
+        <tr><td>1</td><td>Tasks 扩展提供五状态生命周期，<code>input_required</code> 为协议级挂起点（8.2 节）</td><td>长操作可设计为「可离开、可返回」的任务流；人工确认环节应映射到 <code>input_required</code> 状态，而非以阻塞对话的方式实现</td></tr>
+        <tr><td>2</td><td>Apps 扩展支持会话内沙箱界面，协议要求优雅降级（8.1、8.2 节）</td><td>会话内的数据探索、表单与审批流成为标准能力；同一功能必须设计文本回退路径，覆盖不支持该扩展的宿主</td></tr>
+        <tr><td>3</td><td>步进授权与 403 <code>insufficient_scope</code> 语义（7.3 节）</td><td>授权交互可从「一次性大授权」改为「最小初始权限、按操作增量请求」；授权请求的时机与文案成为产品设计对象</td></tr>
+        <tr><td>4</td><td>CIMD 以公开元数据自证客户端身份（7.2 节）</td><td>第三方客户端接入不再依赖逐家注册，集成的运营成本下降；客户端的公开元数据文档本身成为对外资产</td></tr>
+        <tr><td>5</td><td>状态移置：跨调用上下文以显式句柄承载（P1，第四章）</td><td>用户可见的「会话连续性」不再由协议隐式提供；句柄的生命周期、命名与可分享性（深链、协作等场景）成为产品决策，句柄对模型推理负担的代价亦需权衡（4.3 节）</td></tr>
+        <tr><td>6</td><td>工具列表确定性排序与缓存元数据（第四、五章）</td><td>工具清单应作为稳定的 API 面管理：工具的增删与描述变更有真实的推理成本与缓存失效成本，宜纳入变更管理</td></tr>
+        <tr><td>7</td><td>工具 schema 支持完整 JSON Schema 2020-12（第六章）</td><td>参数约束从提示词文案迁入 schema；工具误调用率由此成为可度量、可工程化的质量指标</td></tr>
+        <tr><td>8</td><td>核心收敛、能力经扩展轨道孵化（P3，第八章）</td><td>能力路线图的观察对象从核心版本移向扩展轨道（如评审中的 Skills）；对未定稿扩展的投入应设置触发条件，方法见第十四章</td></tr>
+      </table>
+    </div>
+
+    <p>表中八条有一个共同点：本轮修订把若干原属工程内部的决定（状态的存续、权限的粒度、工具面的稳定性）推到了产品可见的层面。协议托管这些事项时，它们是技术副作用；显式化之后，它们成为需要产品立场的设计题。就此而言，命题 P1 所述的状态管理责任移置不止于工程，同样落在产品设计上。</p>
+
+    <h2 id="s14">十四、案例经验：中国财税知识库 MCP 的定稿前对齐</h2>
+    <p>笔者主导推进建设的「中国财税知识库 MCP」（chinataxmcp.caixiaoyun.com.cn，目前公测中）将经核验的中国财税政策库封装为 MCP 服务，供 AI 助手检索政策、定位条款和核验引用。这里聚焦它的协议路径：项目在 RC 锁定后、Final 发布前的窗口期内完成了对 2026-07-28 草案的架构对齐。跟进一个未定稿的协议存在双向风险：过早对齐，承担 RC 与 Final 之间正文变动的返工；不对齐，承担 Final 发布后的集中迁移成本。我们用四条做法管理这段窗口期，每条都在发布日前后得到了一轮检验。</p>
+
+    <p><strong>做法一，冻结与哈希核对。</strong>将官方仓库的机器可读 schema 冻结入项目仓库，记录 SHA-256 摘要与对应提交号，此后每次核验以重新计算摘要比对完成，把「上游是否变动」从主观印象转换为可判定命题。这条做法在 Final 发布当日兑现了价值：哈希比对精确定位出 RC 至 Final 的全部实质差异，变更日志仅有文档链接切换（不改协议语义），schema 唯一的语义变化是订阅相关类型的重命名与响应对象补充；该项目未启用订阅能力，判定为不适用。「Final 与 RC 实质一致」由此从期望变成经比对确认的事实。</p>
+
+    <p><strong>做法二，清单化对齐，不凭整体直觉。</strong>将变化点分解为逐项可勾选的清单逐项核对实现状态。Final 发布次日的复核清单显示各承重面对齐：生产源码锁定官方稳定 SDK 2.0.0（四包同号，lockfile 固定完整性摘要）；modern 路径按 2026-07-28 工作，无握手、逐请求版本元数据、<code>server/discover</code> 可发现全部工具；对未知版本返回带 <code>requested</code> 与 <code>supported</code> 数据的 <code>-32022</code>，并纳入生产回归。整体直觉式的「架构挺现代、应该没问题」在逐项清单面前的通过率，在笔者经验中显著低于其自信程度。</p>
+
+    <p><strong>做法三，分级冻结，挂触发条件而不挂日期。</strong>影响面大的改造显式挂接于触发条件（Final 发布、正式变更日志、一致性测试材料可用），条件满足前保持冻结。值得单独指出的是，一致性测试一项在 Final 发布后依然冻结：官方新一代 Conformance 套件截至核验仍为 alpha（0.2.0-alpha.10），稳定线停在面向旧版的 0.1.16。项目据此将公开表述限定为「与 2026-07-28 Final 对齐，并通过官方稳定 SDK 与项目协议回归」，不表述「通过官方一致性认证」。这里有一条可推广的判断：<strong>协议正式发布不等于生态组件全部稳定</strong>，对外表述必须逐项对应到证据。</p>
+
+    <p><strong>做法四，区分官方口径与官方正文。</strong>博客公告与规范正文的重心差异在第三章已有实例；该项目的对齐依据一律取正文与 SEP 原文，公告仅用于确定阅读入口与优先级。第十章的兼容性辨析（公告承诺以 Dual-era 为前提）是同一纪律的又一次应用。</p>
+
+    <p>部署选择上，该项目为第十章的矩阵分析提供了一个实例：同一个 Streamable HTTP 端点以官方 SDK 的 <code>legacy: "stateless"</code> 模式同时服务 Final 与 2025 时代客户端，实测覆盖 2025-11-25 与 2025-06-18 两个旧版的完整 initialize 旅程；协议升级不要求客户端同日升级，认证、套餐与数据权限在协议协商之外执行，兼容旧握手不降低权限边界。</p>
+
+    <p>最后报告一例核验失败，其教训价值不低于上述成功经验。写作本文期间，该项目的一个信息收集 Agent 曾报告「TypeScript SDK v2.0.0 稳定版已发布」，笔者向官方发布页复核，当时最新条目仍是 alpha，官方博客口径亦是 beta，该信息遂被降级为待核实项。稳定版 2.0.0 后来确实随 Final 发布，但结论应验不能追认时点错误：在证据尚不存在时写下的结论，即使事后成真，仍是核验纪律的失败。此例的一般化表述不变：二手信息，包括自有自动化系统生成的汇总，进入结论前必须回溯至一手来源。</p>
+
+    <h2 id="s15">十五、结论</h2>
+    <p>本文对 MCP 2026-07-28 修订的评述可压缩为三个命题。状态移置（P1）：协议不再持有跨请求状态，状态管理显式化为实现层的设计对象。基础设施化（P2）：协议流量成为标准 HTTP 基础设施可治理的对象。核心收敛、变化外置（P3）：扩展机制的正式化确立了核心最小化的演进结构。授权收紧与特性弃用分别从安全边界与功能边界两侧配合了这一收敛方向。</p>
+
+    <p>从协议史的视角看，本轮修订处理的问题有充分先例：无状态约束是 REST 确立的经典取舍，核心-扩展分层是成熟协议生态的常见演进形态，弃用政策是标准组织的例行工具。MCP 的特殊性在于时间密度——从首发到完成这轮基础假设的重写，间隔不足两年，且重写发生在协议移交中立基金会治理后的第一年。一个处于采用高峰期的协议选择在此时承担破坏性变更的成本，其隐含判断是：修正基础假设的窗口正在关闭，当前生态规模下的迁移成本尚可承受，此后只会更高。这一判断是否正确，是本轮修订留给未来十二个月的开放问题。</p>
+
+    <div class="dot-divider"><span class="rule"></span><span class="dot"></span><span class="rule"></span></div>
+
+    <h2 id="a1">附录一：迁移检查清单</h2>
+    <p><strong>服务端：</strong>① 排查会话依赖，跨调用状态改为服务端签发句柄、经工具参数传递；② <code>tools/list</code> 返回顺序确定化；③ 列表响应补充 <code>ttlMs</code> / <code>cacheScope</code>；④ 校验入站 <code>Mcp-Method</code> / <code>Mcp-Name</code> / <code>MCP-Protocol-Version</code> 头；⑤ 长任务由阻塞或 SSE 迁移至 Tasks 扩展；⑥ 错误码 <code>-32002</code> 改 <code>-32602</code>；⑦ 实现 <code>server/discover</code>（服务端义务），对不支持的版本返回 <code>-32022</code> 并附支持版本清单；⑧ 面向存量客户端的部署选择 Dual-era 形态，纯 Modern 部署须确认无 Legacy 客户端（第十章矩阵）；⑨ 订阅迁移：<code>resources/subscribe</code> / <code>unsubscribe</code> 与 HTTP GET 通道迁至 <code>subscriptions/listen</code>；⑩ 移除对 <code>ping</code> 的保活依赖与 <code>Last-Event-ID</code> 续传逻辑（4.4 节）。</p>
+
+    <p><strong>客户端与宿主：</strong>① 实现 <code>server/discover</code>，移除对 initialize 握手的假设；② 逐请求 <code>_meta</code> 携带能力声明；③ 实现 <code>InputRequiredResult</code> 重提交循环；④ 授权侧：记录 issuer、校验 <code>iss</code>、并集 scope、正确处理 403 insufficient_scope；⑤ 出站请求附带 <code>Mcp-Method</code> / <code>Mcp-Name</code>。</p>
+
+    <p><strong>共同事项：</strong>① SDK 升级至 v2 线，测试期精确锁定版本；② <strong>优先</strong>排查 HTTP+SSE 传输的存量使用并迁至 Streamable HTTP，其最早移除时点早于本轮新弃用项；③ 盘点 Roots / Sampling / Logging 使用量，纳入一年期退出规划；④ 将 <code>includeContext</code> 的 <code>thisServer</code> / <code>allServers</code> 取值改为省略或 <code>none</code>；⑤ 扩展选型前查证客户端支持矩阵；⑥ 以弃用登记表而非变更日志作为「什么正在退场」的查询入口。</p>
+
+    <h2 id="a2">附录二：官方来源清单</h2>
+    <p>判断某一版本是否正式发布，以规范仓库带签名的非预发布条目为硬信号，再用固定版本路径下的规范正文、变更日志与 schema 交叉核对。版本策略页仍是重要入口，但截至 2026 年 7 月 29 日，其正文中的 Current 标注仍停留在 2025-11-25，不能单独用于否定已经发布的 2026-07-28 版（见 3.2 节）。</p>
+
+    <h3>治理与组织</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>用途</th><th>地址</th></tr>
+        <tr><td>治理章程（发布主体、维护者结构、决策流程）</td><td><a href="https://modelcontextprotocol.io/community/governance" target="_blank" rel="noopener">modelcontextprotocol.io/community/governance</a></td></tr>
+        <tr><td>现任维护者与工作组名录</td><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/MAINTAINERS.md" target="_blank" rel="noopener">github.com/modelcontextprotocol/modelcontextprotocol/blob/main/MAINTAINERS.md</a></td></tr>
+        <tr><td>Agentic AI Foundation（AAIF）</td><td><a href="https://aaif.io" target="_blank" rel="noopener">aaif.io</a></td></tr>
+        <tr><td>Linux Foundation AAIF 成立公告（2025-12）</td><td><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation" target="_blank" rel="noopener">linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation</a></td></tr>
+        <tr><td>Anthropic 初始发布公告（2024-11-25）</td><td><a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">anthropic.com/news/model-context-protocol</a></td></tr>
+      </table>
+    </div>
+
+    <h3>规范本体</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>用途</th><th>地址</th></tr>
+        <tr><td>规范仓库</td><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol" target="_blank" rel="noopener">github.com/modelcontextprotocol/modelcontextprotocol</a></td></tr>
+        <tr><td>发布页（判断发布状态的唯一依据）</td><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/releases" target="_blank" rel="noopener">上述仓库 /releases</a></td></tr>
+        <tr><td>版本策略与现行版本</td><td><a href="https://modelcontextprotocol.io/specification/versioning" target="_blank" rel="noopener">modelcontextprotocol.io/specification/versioning</a>（截至 2026-07-29，正文 Current 标注仍滞后于仓库正式发布状态）</td></tr>
+        <tr><td>2026-07-28 规范入口</td><td><a href="https://modelcontextprotocol.io/specification/2026-07-28" target="_blank" rel="noopener">modelcontextprotocol.io/specification/2026-07-28</a>（发布当日经 /specification/latest 验证已上线）</td></tr>
+        <tr><td>变更日志</td><td><a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener">modelcontextprotocol.io/specification/2026-07-28/changelog</a>（现已上线）</td></tr>
+        <tr><td>与 2025-11-25 的完整差异</td><td><a href="https://github.com/modelcontextprotocol/specification/compare/2025-11-25...2026-07-28" target="_blank" rel="noopener">github.com/modelcontextprotocol/specification/compare/2025-11-25...2026-07-28</a></td></tr>
+        <tr><td>弃用特性登记表（「什么正在退场」的单一答案页）</td><td><a href="https://modelcontextprotocol.io/specification/2026-07-28/deprecated" target="_blank" rel="noopener">modelcontextprotocol.io/specification/2026-07-28/deprecated</a></td></tr>
+        <tr><td>工具契约与 JSON Schema 规则</td><td><a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools" target="_blank" rel="noopener">modelcontextprotocol.io/specification/2026-07-28/server/tools</a>；<a href="https://modelcontextprotocol.io/specification/2026-07-28/basic" target="_blank" rel="noopener">modelcontextprotocol.io/specification/2026-07-28/basic</a></td></tr>
+        <tr><td>特性生命周期与弃用政策</td><td><a href="https://modelcontextprotocol.io/community/feature-lifecycle" target="_blank" rel="noopener">modelcontextprotocol.io/community/feature-lifecycle</a></td></tr>
+        <tr><td>SDK 分级与一致性测试要求</td><td><a href="https://modelcontextprotocol.io/community/sdk-tiers" target="_blank" rel="noopener">modelcontextprotocol.io/community/sdk-tiers</a></td></tr>
+        <tr><td>机器可读文档索引</td><td><a href="https://modelcontextprotocol.io/llms.txt" target="_blank" rel="noopener">modelcontextprotocol.io/llms.txt</a></td></tr>
+      </table>
+    </div>
+
+    <p>机器可读 schema 位于规范仓库 <code>schema/</code> 目录，第十四章所述冻结核对以该文件为对象。</p>
+
+    <h3>官方博客</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>文章</th><th>日期</th></tr>
+        <tr><td>The 2026-07-28 MCP Specification Release Candidate</td><td>2026-05-21</td></tr>
+        <tr><td>Beta SDKs for the 2026-07-28 MCP Spec Release Candidate Are Here</td><td>2026-06-29</td></tr>
+        <tr><td>Enterprise-Managed Authorization: Zero-touch OAuth for MCP</td><td>2026-06-18</td></tr>
+        <tr><td>The 2026-07-28 Specification（Final 发布公告，两位首席维护者署名）</td><td>2026-07-28</td></tr>
+      </table>
+    </div>
+
+    <h3>官方 SDK</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>SDK</th><th>仓库（github.com/modelcontextprotocol/ 下）</th><th>备注</th></tr>
+        <tr><td>TypeScript</td><td><a href="https://github.com/modelcontextprotocol/typescript-sdk" target="_blank" rel="noopener">typescript-sdk</a></td><td>v2.0.0 已稳定发布；v2 拆分为多包，同时提供 ESM 与 CommonJS 构建</td></tr>
+        <tr><td>Python</td><td><a href="https://github.com/modelcontextprotocol/python-sdk" target="_blank" rel="noopener">python-sdk</a></td><td>v2.0.0 已稳定发布，为重写级升级</td></tr>
+        <tr><td>Go</td><td><a href="https://github.com/modelcontextprotocol/go-sdk" target="_blank" rel="noopener">go-sdk</a></td><td>v1.7.0 已稳定发布，模块路径不变</td></tr>
+        <tr><td>C#</td><td><a href="https://github.com/modelcontextprotocol/csharp-sdk" target="_blank" rel="noopener">csharp-sdk</a></td><td>v2.0.0 已稳定发布，v1 线继续维护旧版 API</td></tr>
+        <tr><td>Rust</td><td><a href="https://github.com/modelcontextprotocol/rust-sdk" target="_blank" rel="noopener">rust-sdk</a></td><td>rmcp-v3.0.0 已稳定发布并支持 2026-07-28</td></tr>
+      </table>
+    </div>
+
+    <h3>扩展</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>内容</th><th>地址</th></tr>
+        <tr><td>扩展总览</td><td><a href="https://modelcontextprotocol.io/extensions/overview" target="_blank" rel="noopener">modelcontextprotocol.io/extensions/overview</a></td></tr>
+        <tr><td>客户端支持矩阵</td><td><a href="https://modelcontextprotocol.io/extensions/client-matrix" target="_blank" rel="noopener">modelcontextprotocol.io/extensions/client-matrix</a></td></tr>
+        <tr><td>MCP Apps</td><td><a href="https://github.com/modelcontextprotocol/ext-apps" target="_blank" rel="noopener">github.com/modelcontextprotocol/ext-apps</a>；文档 <a href="https://apps.extensions.modelcontextprotocol.io" target="_blank" rel="noopener">apps.extensions.modelcontextprotocol.io</a></td></tr>
+        <tr><td>MCP Tasks</td><td><a href="https://modelcontextprotocol.io/extensions/tasks/overview" target="_blank" rel="noopener">modelcontextprotocol.io/extensions/tasks/overview</a></td></tr>
+        <tr><td>授权扩展</td><td><a href="https://github.com/modelcontextprotocol/ext-auth" target="_blank" rel="noopener">github.com/modelcontextprotocol/ext-auth</a></td></tr>
+      </table>
+    </div>
+
+    <h3>本文引用的 SEP</h3>
+    <p>PR 直链格式：<code>github.com/modelcontextprotocol/modelcontextprotocol/pull/编号</code>。</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>SEP</th><th>内容</th></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2567" target="_blank" rel="noopener">2567</a></td><td>移除协议级会话与 <code>Mcp-Session-Id</code></td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2575" target="_blank" rel="noopener">2575</a></td><td>无状态协议：握手废除、<code>server/discover</code>、<code>-32022</code>、订阅统一、操作移除、流恢复移除</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2322" target="_blank" rel="noopener">2322</a></td><td>多轮请求模式（MRTR）、<code>resultType</code> 必填</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2663" target="_blank" rel="noopener">2663</a></td><td>Tasks 扩展化</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2549" target="_blank" rel="noopener">2549</a></td><td>缓存元数据 <code>ttlMs</code> / <code>cacheScope</code></td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2468" target="_blank" rel="noopener">2468</a></td><td>授权服务器颁发者校验（<code>iss</code>）</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2106" target="_blank" rel="noopener">2106</a></td><td>工具 schema 放开至 JSON Schema 2020-12</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/837" target="_blank" rel="noopener">837</a></td><td>DCR 注册须声明 <code>application_type</code></td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2352" target="_blank" rel="noopener">2352</a></td><td>客户端凭证按 issuer 键控</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2243" target="_blank" rel="noopener">2243</a></td><td>标准请求头与自定义头机制</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/414" target="_blank" rel="noopener">414</a></td><td>追踪上下文在 <code>_meta</code> 的约定键</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2577" target="_blank" rel="noopener">2577</a></td><td>弃用 Roots / Sampling / Logging</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596" target="_blank" rel="noopener">2596</a></td><td>特性生命周期与弃用政策（2026-06-03 合入）</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2858" target="_blank" rel="noopener">PR #2858</a></td><td>授权章节重组；登记表以其为 DCR 弃用出处（2026-06-04 合入）</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2133" target="_blank" rel="noopener">2133</a></td><td>扩展机制</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/1850" target="_blank" rel="noopener">1850</a></td><td>SEP 流程迁移至基于 PR</td></tr>
+        <tr><td><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2640" target="_blank" rel="noopener">2640</a></td><td>Skills Extension（评审中，不属本轮修订）</td></tr>
+      </table>
+    </div>
+
+    <h2 id="a3">附录三：核心术语表</h2>
+    <div class="table-wrap">
+      <table>
+        <tr><th>术语</th><th>英文</th><th>定义</th><th>首次出现</th></tr>
+        <tr><td>候选发布</td><td>Release Candidate, RC</td><td>内容锁定、待验证窗口结束后转正的预发布版本</td><td>第一章</td></tr>
+        <tr><td>Agentic AI 基金会</td><td>Agentic AI Foundation, AAIF</td><td>Linux Foundation 旗下承载 MCP 的定向基金</td><td>第二章</td></tr>
+        <tr><td>规范增强提案</td><td>Specification Enhancement Proposals, SEP</td><td>规范变更的正式提案与裁决通道</td><td>第二章</td></tr>
+        <tr><td>无状态化</td><td>Statelessness</td><td>协议层不持有跨请求状态，每个请求自含解释所需信息</td><td>第四章</td></tr>
+        <tr><td>句柄</td><td>Handle</td><td>服务端签发、经工具参数传递的跨调用状态标识</td><td>第四章</td></tr>
+        <tr><td>能力发现</td><td><code>server/discover</code></td><td>取代握手式能力交换的按需查询方法</td><td>第四章</td></tr>
+        <tr><td>客户端标识元数据文档</td><td>Client ID Metadata Documents, CIMD</td><td>以客户端控制的 HTTPS URL 为 client_id 的注册机制</td><td>第七章</td></tr>
+        <tr><td>动态客户端注册</td><td>Dynamic Client Registration, DCR</td><td>RFC 7591 注册协议；本轮标记为弃用</td><td>第七章</td></tr>
+        <tr><td>步进授权</td><td>Step-up Authorization</td><td>权限不足时以 scope 并集重新授权的客户端流程</td><td>第七章</td></tr>
+        <tr><td>扩展标识符</td><td>Extension Identifier</td><td>「厂商前缀/扩展名」格式的扩展命名</td><td>第八章</td></tr>
+        <tr><td>弃用</td><td>Deprecated</td><td>保留于规范但计划移除的特性状态，附宽限期</td><td>第九章</td></tr>
+        <tr><td>特性生命周期政策</td><td>Feature Lifecycle Policy</td><td>SEP-2596 确立的 Active / Deprecated / Removed 三态与十二个月窗口</td><td>第九章</td></tr>
+        <tr><td>最早移除</td><td>Earliest Removal</td><td>弃用窗口届满后特性变为可移除的时点；可移除不等于必然移除</td><td>第九章</td></tr>
+        <tr><td>加急移除</td><td>Expedited Removal</td><td>仅在活跃安全风险下缩短窗口的例外，缩短后仍不少于九十天</td><td>第九章</td></tr>
+        <tr><td>SDK 分级</td><td>SDK Tiers</td><td>按特性完整度与维护承诺划分的三层制度，Tier 1 须一致性测试全通过</td><td>第二章</td></tr>
+        <tr><td>一致性测试</td><td>Conformance Tests</td><td>SDK 分级的量化标准，兼任准入门槛与降级触发器</td><td>第二章</td></tr>
+        <tr><td>冻结与哈希核对</td><td>Freeze-and-Hash</td><td>固化上游材料并以摘要比对判定变动的核验方法</td><td>第十四章</td></tr>
+        <tr><td>现代版</td><td>Modern</td><td>以每请求元数据传递版本、身份与能力的协议版本（2026-07-28 起）</td><td>第十章</td></tr>
+        <tr><td>传统版</td><td>Legacy</td><td>以 initialize 握手建立会话的协议版本（2025-11-25 及以前）</td><td>第十章</td></tr>
+        <tr><td>双纪元</td><td>Dual-era</td><td>同时支持现代版与传统版的实现；存量兼容的现实路径</td><td>第十章</td></tr>
+        <tr><td>版本不支持错误</td><td>UnsupportedProtocolVersionError</td><td>错误码 -32022，附服务端支持版本清单，驱动客户端换版重试</td><td>第四章</td></tr>
+        <tr><td>多轮请求模式</td><td>Multi Round-Trip Requests, MRTR</td><td>以必填 <code>resultType</code> 与状态回传实现的无连接多轮交互</td><td>第四章</td></tr>
+        <tr><td>统一订阅</td><td><code>subscriptions/listen</code></td><td>取代 HTTP GET 通道与 <code>resources/subscribe</code> 系列的单一通知入口</td><td>第四章</td></tr>
+      </table>
+    </div>
+
+    <h2 id="refs">参考来源</h2>
+
+    <p><strong>治理与组织</strong></p>
+    <ul>
+      <li><a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener">Anthropic, <em>Introducing the Model Context Protocol</em> (2024-11-25)</a></li>
+      <li><a href="https://blog.modelcontextprotocol.io/posts/2025-12-09-mcp-joins-agentic-ai-foundation/" target="_blank" rel="noopener">Model Context Protocol Blog, <em>MCP joins the Agentic AI Foundation</em> (2025-12-09)</a></li>
+      <li><a href="https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation" target="_blank" rel="noopener">Linux Foundation, <em>Formation of the Agentic AI Foundation (AAIF)</em> (2025-12)</a></li>
+      <li><a href="https://modelcontextprotocol.io/community/governance" target="_blank" rel="noopener">Model Context Protocol, <em>Governance and Stewardship</em></a></li>
+      <li><a href="https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/MAINTAINERS.md" target="_blank" rel="noopener">Model Context Protocol, <em>MAINTAINERS.md</em></a> — 现任维护者与工作组名录。</li>
+      <li><a href="https://openai.github.io/openai-agents-python/mcp/" target="_blank" rel="noopener">OpenAI, <em>Model Context Protocol — OpenAI Agents SDK</em></a> — 官方文档，MCP 支持的一手记载。</li>
+      <li><a href="https://developers.googleblog.com/agent-development-kit-easy-to-build-multi-agent-applications/" target="_blank" rel="noopener">Google Developers Blog, <em>Agent Development Kit: Making it easy to build multi-agent applications</em> (2025-04-09)</a> — 官方列出 MCP tools。</li>
+    </ul>
+
+    <p><strong>规范与标准文本</strong></p>
+    <ul>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28" target="_blank" rel="noopener">Model Context Protocol, <em>Specification 2026-07-28</em>（正式版）</a> — 本文引用的授权、生命周期各章节。</li>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning" target="_blank" rel="noopener">Model Context Protocol, <em>Versioning and Compatibility</em></a> — 2026-07-28 正文：版本协商、Modern/Legacy/Dual-era 与兼容性矩阵。</li>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/changelog" target="_blank" rel="noopener">Model Context Protocol, <em>Changelog: 2026-07-28</em></a></li>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/deprecated" target="_blank" rel="noopener">Model Context Protocol, <em>Deprecated Features Registry</em></a></li>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/server/tools" target="_blank" rel="noopener">Model Context Protocol, <em>Tools</em></a></li>
+      <li><a href="https://modelcontextprotocol.io/specification/2026-07-28/basic" target="_blank" rel="noopener">Model Context Protocol, <em>JSON Schema Usage</em></a></li>
+      <li><a href="https://modelcontextprotocol.io/community/feature-lifecycle" target="_blank" rel="noopener">Model Context Protocol, <em>Feature Lifecycle and Deprecation Policy</em>（SEP-2596）</a></li>
+      <li><a href="https://modelcontextprotocol.io/community/sdk-tiers" target="_blank" rel="noopener">Model Context Protocol, <em>SDK Tiers</em></a></li>
+      <li><a href="https://modelcontextprotocol.io/extensions/overview" target="_blank" rel="noopener">Model Context Protocol, <em>Extensions Overview / MCP Apps / MCP Tasks</em></a></li>
+      <li>IETF, <em>RFC 9207: OAuth 2.0 Authorization Server Issuer Identification</em> (2022)。</li>
+      <li>IETF, <em>RFC 8707: Resource Indicators for OAuth 2.0</em> (2020)。</li>
+      <li>IETF, <em>RFC 7591: OAuth 2.0 Dynamic Client Registration Protocol</em> (2015)。</li>
+      <li>IETF, <em>OAuth 2.1</em> (draft-ietf-oauth-v2-1)。</li>
+      <li><a href="https://json-schema.org/specification" target="_blank" rel="noopener">JSON Schema, <em>Draft 2020-12</em></a></li>
+      <li><a href="https://www.w3.org/TR/trace-context/" target="_blank" rel="noopener">W3C, <em>Trace Context</em> (Recommendation, 2020)</a></li>
+      <li>Fielding, R. T., <em>Architectural Styles and the Design of Network-based Software Architectures</em>, Doctoral dissertation, UC Irvine (2000) — REST 无状态约束（§5.1.3）。</li>
+    </ul>
+
+    <p><strong>官方公告与提案</strong></p>
+    <ul>
+      <li><a href="https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/" target="_blank" rel="noopener">Model Context Protocol Blog, <em>The 2026-07-28 MCP Specification Release Candidate</em> (2026-05-21)</a></li>
+      <li><a href="https://blog.modelcontextprotocol.io/posts/sdk-betas-2026-07-28/" target="_blank" rel="noopener">Model Context Protocol Blog, <em>Beta SDKs for the 2026-07-28 MCP Spec Release Candidate Are Here</em> (2026-06-29)</a></li>
+      <li><a href="https://blog.modelcontextprotocol.io/posts/2026-07-28/" target="_blank" rel="noopener">Model Context Protocol Blog, <em>The 2026-07-28 Specification</em>（Final 发布公告，2026-07-28）</a></li>
+      <li><a href="https://claude.com/blog/bringing-mcp-2026-07-28-to-claude" target="_blank" rel="noopener">Anthropic, <em>Bringing MCP 2026-07-28 to Claude</em> (2026-07-28)</a></li>
+      <li><a href="https://trilogyai.substack.com/p/mcp-grows-up-what-the-july-28-spec" target="_blank" rel="noopener">Trilogy AI, <em>MCP Grows Up: What the July 28 Spec Means for Every Enterprise Agent Deployment</em> (2026-07-23)</a> — 第四层材料，仅作显名观点引用。</li>
+      <li>SEP-2567、SEP-2243、SEP-414、SEP-2577、SEP-2133、SEP-1850、SEP-2640 — 见附录二 SEP 表。</li>
+      <li><a href="https://modelcontextprotocol.io/community/working-groups/skills-over-mcp" target="_blank" rel="noopener">Model Context Protocol, <em>Skills Over MCP Working Group Charter</em></a></li>
+      <li><a href="https://aaif.io/blog/mcp-2026-07-28-whats-changing-and-how-to-migrate" target="_blank" rel="noopener">Agentic AI Foundation, <em>MCP 2026-07-28: From Local Tool to Distributed Protocol</em> (2026-07-21)</a></li>
+    </ul>
+
+    <p>全部在线来源核验时点：2026 年 7 月 28 日至 29 日，共五轮；Final 发布于其间的 7 月 28 日 16:47 UTC。</p>
+
+    <h2>创作说明</h2>
+    <p>本文结合规范文本评述与工程经验分享。第四至十一章依据官方规范正文、变更日志、弃用登记表与 SEP 原文，材料分层与核验方法见第三章；一手材料经五轮联机核验，覆盖正式发布前后。固定版本路径下的规范、变更日志、工具页、JSON Schema 规则与弃用登记表均已上线；版本策略页的 Current 标注仍有同步延迟，已在正文如实记录。</p>
+
+    <div class="dot-divider"><span class="rule"></span><span class="dot"></span><span class="rule"></span></div>
+  </article>
+
+  <div style="text-align:center;padding:28px 0 0">
+    <a class="support-line" href="/feed.xml">用你自己的阅读器读下一篇 →</a><span class="support-sep">·</span><a class="support-line" href="/about.html#support">请我喝杯咖啡</a>
+  </div>
+
+  <div class="pager">
+    <a class="back" href="/notes/20260722-multi-agent-governance.html">← PREV №04 多 Agent 项目的工程治理</a>
+    <a class="next" href="/notes/20260807-ai-native-organization.html"><span class="label">NEXT №06</span><span class="t">如何打造 AI-Native 组织 →</span></a>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="brand-sm">Haning</span>
+    <span class="footer-links"><a href="/now.html">NOW</a><a href="/colophon.html">COLOPHON</a></span>
+    <span class="fine"><a href="/ethos.html" title="Quiet Archivism · 安静的档案主义">© <span data-year>2026</span> · GREY-GREEN ARCHIVE · EST. 2013</a></span>
+  </div>
+</footer>
+
+<script src="/assets/site.js?v=20260925"></script>
+</body>
+</html>

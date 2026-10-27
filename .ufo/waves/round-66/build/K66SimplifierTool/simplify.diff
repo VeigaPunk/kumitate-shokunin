@@ -1,0 +1,63 @@
+--- v1.mjs	2026-10-27 03:30:00.166251074 -0300
++++ v2.mjs	2026-10-27 03:32:58.045627515 -0300
+@@ -57,6 +57,7 @@
+ const FROM_DEFAULT = 55;
+ const SPOT_RE = /^corpus\/lessons\/round-(\d+)-verifier-spotcheck\.md$/;
+ const HEAD_RE = /\brouted\s+(defects?|items?)\b/i;
++const SEP_RE = /^\|[\s:|-]+\|\s*$/;
+ 
+ export const norm = (s) => String(s)
+   .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+@@ -83,23 +84,19 @@
+     const m = /^(#{1,6})\s/.exec(L[i]);
+     if (m && m[1].length <= level) { end = i; break; }
+   }
+-  const sep = (l) => /^\|[\s:|-]+\|\s*$/.test(l) && l.includes('-');
++  const sep = (l) => SEP_RE.test(l) && l.includes('-');
+   const starts = [];
+   for (let i = start + 1; i < end; i += 1) {
+     const l = L[i];
+-    if (/^(?:[-*+]|\d+[.)])\s+\S/.test(l)) starts.push({ i, kind: 'list' });
+-    else if (/^\|/.test(l) && !sep(l) && !(i + 1 < end && sep(L[i + 1]))) starts.push({ i, kind: 'table' });
++    if (/^(?:[-*+]|\d+[.)])\s+\S/.test(l)) starts.push(i);
++    else if (/^\|/.test(l) && !sep(l) && !(i + 1 < end && sep(L[i + 1]))) starts.push(i);
+   }
+-  const items = starts.map((s, k) => {
+-    if (s.kind === 'table') return L[s.i];
+-    const stop = k + 1 < starts.length ? starts[k + 1].i : end;
+-    const body = [L[s.i]];
+-    for (let j = s.i + 1; j < stop; j += 1) {
+-      // a column-0 non-blank line that is not a continuation ends the item (prose after a list)
+-      if (/^\S/.test(L[j]) && !/^\s/.test(L[j]) && L[j - 1].trim() === '') break;
+-      body.push(L[j]);
+-    }
+-    return body.join('\n');
++  const items = starts.map((at, k) => {
++    if (L[at].startsWith('|')) return L[at];
++    let stop = k + 1 < starts.length ? starts[k + 1] : end;
++    // a column-0 non-blank line that is not a continuation ends the item (prose after a list)
++    for (let j = at + 1; j < stop; j += 1) if (/^\S/.test(L[j]) && L[j - 1].trim() === '') { stop = j; break; }
++    return L.slice(at, stop).join('\n');
+   });
+   return { found: true, items };
+ }
+@@ -113,8 +110,7 @@
+   for (let i = at + 1; i < L.length; i += 1) {
+     const l = L[i];
+     if (/^##?\s/.test(l)) break;
+-    if (!/^\|/.test(l)) continue;
+-    if (/^\|[\s:|-]+\|\s*$/.test(l)) continue;
++    if (!/^\|/.test(l) || SEP_RE.test(l)) continue;
+     const cells = l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+     if (cells[0] === 'id') continue;
+     if (cells.length !== 7) { malformed.push(`line${i + 1}:cells=${cells.length}`); continue; }
+@@ -190,7 +186,8 @@
+     if (seen.has(row.id)) { F('ROW_DUPLICATE', where); bad = true; }
+     seen.add(row.id);
+     if (!/^\d+$/.test(row.round) || !/^\d+$/.test(row.item) || Number(row.item) < 1) { F('ROW_MALFORMED', `${where}:round-or-item`); bad = true; }
+-    if (!row.quote || words(row.quote) > 25) { F('ROW_MALFORMED', `${where}:quote-words=${words(row.quote)}`); bad = true; }
++    const qw = words(row.quote);
++    if (!row.quote || qw > 25) { F('ROW_MALFORMED', `${where}:quote-words=${qw}`); bad = true; }
+     if (!/^[a-z][a-z0-9-]*$/.test(row.cls)) { F('ROW_MALFORMED', `${where}:class`); bad = true; }
+     if (!['open', 'closed', 'wontfix'].includes(row.status)) { F('ROW_MALFORMED', `${where}:status=${row.status}`); bad = true; }
+     let ans = null;

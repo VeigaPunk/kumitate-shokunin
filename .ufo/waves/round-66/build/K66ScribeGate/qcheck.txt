@@ -1,0 +1,27 @@
+++ TMPDIR=/fast/scratch/hyaku/kumitate-r66/K66ScribeGate
+++ node qcheck.mjs
+IDS S207 S208 S209 S210 count=4 (M1 needs >=3, all opened 2026-10-27)
+BULLET S207 words=13 in-capture=true "A Deprecated feature remains part of the specification but i"
+BULLET S207 words=7 in-capture=true "First revision released on or after 2027-07-28"
+BULLET S207 words=6 in-capture=true "Three months after SEP-2596 reaches Final"
+BULLET S208 words=19 in-capture=true "The window is measured from the release of the specification"
+BULLET S208 words=19 in-capture=true "the number of months, at least twelve, that the feature must"
+BULLET S209 words=8 in-capture=true "Legacy MCP HTTP+SSE transport from protocol revision 2024-11"
+BULLET S209 words=7 in-capture=true "Create and connect a legacy HTTP+SSE transport"
+BULLET S210 words=21 in-capture=true "Each is therefore given a three-month grace period from the "
+BULLET S210 words=7 in-capture=true "Three months after this SEP is Final"
+M4-sim PASS bullets=9
+LIVE S207 http-ok bytes=3839
+LIVE S208 http-ok bytes=8794
+LIVE S209 http-ok bytes=15183
+LIVE S210 http-ok bytes=25830
+M5-sim PASS
+CAPROW Roots | dep-in=2026-07-28 | removal=First revision released on or after 2027-07-28
+CAPROW Sampling | dep-in=2026-07-28 | removal=First revision released on or after 2027-07-28
+CAPROW Logging | dep-in=2026-07-28 | removal=First revision released on or after 2027-07-28
+CAPROW Dynamic Client Registration | dep-in=2026-07-28 | removal=First revision released on or after 2027-07-28
+CAPROW includeContext: "thisServer" | dep-in=2025-11-25 | removal=Follows Sampling (SEP-2577)
+CAPROW HTTP+SSE transport | dep-in=2025-03-26 | removal=Three months after SEP-2596 reaches Final
+M6-sim PASS capRows=6 snapRows=6
+M7-sim PASS
+QCHECK PASS m4=true m5=true m6=true m7=true

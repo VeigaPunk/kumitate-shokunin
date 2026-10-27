@@ -1,0 +1,10 @@
+$ node scripts/routed-ledger.mjs --from 55 --to 65   # worktree
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md
+exit=2
+$ node scripts/routed-ledger.mjs --rev 621212bac37f8249c72ac982d1d6534cb8d60701 --from 55 --to 65 --classes
+ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md
+exit=2
+$ node scripts/routed-ledger.mjs --selftest
+CASE ok unreadable --rev → FAIL-CLOSED exit 2
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+exit=0

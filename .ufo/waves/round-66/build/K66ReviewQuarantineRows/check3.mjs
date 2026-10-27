@@ -1,0 +1,11 @@
+import fs from 'fs';
+const THEME_IDS = new Set(['S233','S234','S240','S241','S242','S243','S244','S273','S274','S303','S304','S305','S306','S314','S315','S316','S317','S318','S319','S320','S321','S334']);
+const rows = fs.readFileSync('/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md', 'utf8').split('\n').filter(l => { const m = l.match(/^ {0,3}\| (S[0-9]{3,})\b/); return m && THEME_IDS.has(m[1]); });
+const esc = rows.filter(l => l.includes('\\|')).map(l => l.match(/^ {0,3}\| (S[0-9]{3,})/)[1]);
+console.log('theme rows:', rows.length, '| with escaped \\| in any cell:', esc.length ? esc.join(' ') : 'none');
+const tr = '/home/vgpnk/Projects/shokuknow/lanes/kumitate/round13/sep-2596-timeline-probe-2026-10-24.txt';
+console.log('timeline transcript exists:', fs.existsSync(tr), '|', tr);
+const stagedAll = fs.readFileSync('/home/vgpnk/Projects/shokuknow/merge/kumitate/SOURCES.append.md', 'utf8').split('\n').filter(l => /^ {0,3}\| S[0-9]{3,}/.test(l));
+const lines = {};
+stagedAll.forEach((l, i) => { const m = l.match(/^ {0,3}\| (S[0-9]{3,})/); if (m && ['S204','S211','S202','S232'].includes(m[1])) lines[m[1]] = i + 1; });
+console.log('staged line numbers:', JSON.stringify(lines));

@@ -1,0 +1,49 @@
+# K66ScribeEntry — fixture receipts (all runs from /fast/scratch/hyaku/kumitate-r66/K66ScribeEntry)
+# Fixture: git clone --shared of the lane, checked out at the freeze 621212ba
+#   git -C lane rev-parse --short HEAD -> 621212ba
+# Integration applied in the clone, one commit:
+#   corpus/knowledge/mcp-deprecation-registry.md (this draft, unchanged)
+#   corpus/SOURCES.md + S207/S208/S209 after | S206 |
+#   .ufo/pins/source-captures.json + 3 captures under .ufo/waves/round-66/build/Capture66/
+#   corpus/README.md row + .ufo/pins/readme-map.json covered + PROVINCE.md frontier clause
+
+## 1. final draft scored at 6a1fbf73 (citation pass applied)
+$ TMPDIR=<scratch> node .ufo/waves/round-66/probe/deprec66-probe.mjs "$LANE" 6a1fbf73dbd5f33e212d2e8c1915b3cd9a867927
+DEPREC66_HELD held=8/8 checks=8 rev=6a1fbf73dbd5f33e212d2e8c1915b3cd9a867927 rule=M66
+exit=0
+
+## 2. first integration commit f7d8c60b (same draft before the citation pass)
+DEPREC66_HELD held=8/8 checks=8 rev=f7d8c60b968141f1f20bc46a92b924fe4a3ae8ba rule=M66
+exit=0
+
+## 3. M5 is the live check (same rev, --no-live)
+DEPREC66_UNMET held=7/8 checks=8 rev=f7d8c60b968141f1f20bc46a92b924fe4a3ae8ba rule=M66 | M5 MISS live-fetch-skipped
+exit=1
+
+## 4. gates at 6a1fbf73
+$ node scripts/sources-check.mjs   -> SOURCES_CHECK: CLEAN (rows=148 tiers=A:125,B:15,C:8 status=queued:13,mined:116,rejected:19 entries_with_source=23 legacy=38)  exit 0
+$ node scripts/source-capture.mjs  -> SOURCE_CAPTURE: CLEAN captures=41 exemptions=107  exit 0
+$ node scripts/readme-map.mjs      -> README_MAP: CLEAN files=161 rows=161 covered=161  exit 0
+$ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file <lane>/corpus/SOURCES.md
+  -> file ok <lane>/corpus/SOURCES.md  exit 0
+
+## 5. MUTANT A (K66ScribeEntry-1) — swap Roots' and HTTP+SSE's Earliest-removal cells, rev 53363c57
+DEPREC66_HELD held=8/8 checks=8 rev=53363c5733a7381e50372bfa244427b7ee4206e7 rule=M66
+exit=0            # the table now asserts a false removal clock for two features, and still scores 8/8
+
+## 6. MUTANT B (K66ScribeEntry-2) — one extra bullet whose quote spans a markdown link, rev dfc10536
+DEPREC66_UNMET held=6/8 checks=8 rev=dfc1053642fb53fc7598039a980e1a7c3e0955d7 rule=M66 |
+  M4 MISS S207:quote-not-in-capture(under its transition provision) | M5 MISS S207:quote-not-live(under its transition provision)
+exit=1
+
+## 7. K66ScribeEntry-3 demonstration — entry removed, rows/pins left in place (worktree, then restored)
+SOURCES  error  USED_BY_MISSING  corpus/SOURCES.md:159  id=S207 missing used-by corpus/knowledge/mcp-deprecation-registry.md
+SOURCES  error  USED_BY_MISSING  corpus/SOURCES.md:160  id=S208 missing used-by corpus/knowledge/mcp-deprecation-registry.md
+SOURCES  error  USED_BY_MISSING  corpus/SOURCES.md:161  id=S209 missing used-by corpus/knowledge/mcp-deprecation-registry.md
+SOURCES_CHECK: DRIFT (USED_BY_MISSING)
+README_MAP: note stale-covered:knowledge/mcp-deprecation-registry.md
+README_MAP: DRIFT files=160 rows=161 covered=161 bad=2 first=orphan-row:knowledge/mcp-deprecation-registry.md
+
+## fixture state at close
+git -C lane log --oneline -1 -> 6a1fbf73 fixture: citation precision
+clone and scratch dir deleted after this receipt was copied here.
