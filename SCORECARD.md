@@ -524,6 +524,8 @@ the frozen definitions name.
 
 ## Planned
 
+**Round 69 — candidates after round 68 (not frozen).** C1: versioned routed-ledger predicate that removes the L4 answer key and fixes the impossible A5 `good` fixture; add path-blinded, implementation-level falsification before any data seats score it. C2: versioned deprecation-entry predicate that counts valid Markdown table rows and requires independently authenticated capture origin (not only a self-asserted digest plus live URL re-fetch); M5 must also reject zero parseable quotes. Freeze new counters and controls before dispatch; do not change round-68 bytes.
+
 **Round 58 — pre-registration (2026-10-24, frozen at the round-58 freeze commit
 `50548ae5`).** The plan is frozen in `.ufo/waves/round-58/plan.md` with counters
 (A58 ten checks, D58 five checks), base receipts, kill rules K1–K6 and a
@@ -3005,3 +3007,19 @@ Plan `.ufo/waves/round-66/plan.md` frozen at `621212bac37f8249c72ac982d1d6534cb8
 **C2 — coverage frontier, MCP deprecation registry: not verified.** Counter `node .ufo/waves/round-66/probe/deprec66-probe.mjs <lane> <rev>`; base `DEPREC66_UNMET held=0/8`; at cutoff tip `6c79d68caf956e6c74a0c17c388662f4d1b7dec1`, `DEPREC66_UNMET held=0/8` because no entry/rows were integrated. Staged-entry do-nothing control is in `.ufo/waves/round-66/base/deprec66-donothing.txt`.
 
 **Limits.** These are cutoff readings, not final round measurements. Source row count remains 145; six W04 duplicate-URL warnings are carried. C1/C2 admission and all learning trend verdicts remain unresolved; report records the honest stop rather than an improvement.
+
+## Round 68 — claims, verdicts, limits (2026-10-27; both unmet)
+
+Frozen plan/counters commit 39f61816d4ee7a8d401df42c1818c91a9c537bce; measured integration revision 76bdda4bde02522829598c1c81f1836ffbea8d34 (.ufo/waves/round-68/close/). No axis integer changed: operability 9→9; coverage remains retired at 10.
+
+**C1 — operability, capability acquisition routed-ledger: UNMET, not admitted.** Command: node .ufo/waves/round-68/probe/ledger68-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 76bdda4bde02522829598c1c81f1836ffbea8d34 → LEDGER68_UNMET held=1/7, exit 1 (close/ledger68-final.txt). Base was also 1/7 (base/ledger68-base.txt); no v2 code, ledger, SKILL row or SCORECARD capability row was integrated. The wave's v2 draft has 56/56 selftests and 54/54 peer cases, but frozen L4's good/no-section A5 quote is impossible for a conforming implementation; separately, a critic's pathname-dispatch stub reached HELD 7/7. Preserve the freeze; versioned L69 ratchet only. No routed-ledger capability row is entered.
+
+**C2 — coverage frontier, MCP deprecation registry: UNMET, not admitted.** Command: node .ufo/waves/round-68/probe/deprec68-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 76bdda4bde02522829598c1c81f1836ffbea8d34 → DEPREC68_UNMET held=9/10 | M6 MISS rows=7!=6, exit 1 (close/deprec68-final.txt). Base 1/10; the source-grounded entry, seven rows/captures, pins, README map and PROVINCE sub-entry landed, but the proper Markdown delimiter row is counted as data. Do not omit the delimiter to fit the broken counter. A fabricated-capture attack passes offline M1–M4/M6–M10; live M5 rejects the sample, so M3/M4 prove integrity/self-consistency, not source provenance.
+
+**Controls and limits.** The three committed controls remain CONTROL-PASS: C1 donothing/autoledger each 2/7, C2 donothing 1/10; none reaches HELD. The standalone C2 seat fixture achieved 10/10 only after omitting the delimiter, so it is not the proper-table verdict. The plan's C1 item split is inaccurate: parser-derived total is 61 items / 12 sections = rounds 55–65: 57, round 66: 4 (D1–D3 plus an operator note). C1's after counter is at the integrated tip without its proposed tool/data; the wave reports and draft are evidence, not a landed capability. No axis score delta is claimed.
+
+**Wave.** One v2 wave, 66 settled seats; WAVE-DONE results contain 66 outputs and the wave dir contains 65 report files (K68ReviewC1Predicate output has no lane report file). Roles: 18 scout, 14 scribe, 9 executor, 9 reviewer, 6 critic, 4 mutation-tester, 3 connector, 1 sentinel, 1 revenger, 1 simplifier. Attack: 19/66 (28.8%); L1 held planner. Assimilation theme: MCP deprecation clocks; S207–S213 were opened and admitted to corpus memory, staged theme entry rejected as staged. Considerthese 2026-10-25 ideas 4/5 were already represented in the frozen claims; no additional proposal was added.
+
+**Sources.** Before 145 rows (round-66 committed tally); after 152 rows, +7 mined tier-A rows S207–S213, no existing row touched (SOURCES_CHECK: CLEAN rows=152 tiers=A:129,B:15,C:8 status=queued:13,mined:120,rejected:19). Census before and after: six carried W04 duplicate-URL warnings, exit 0; source-capture CLEAN captures=45 exemptions=107; readme-map CLEAN files=165 rows=165 covered=165. Assimilation: re-grounded MCP deprecation theme; staged entry rejected for Created-date clock / invalid recheck grounding.
+
+**Trend verdicts.** Expansion improved: new sourced entry and seven source rows, despite C2's unmet counter. Quality unchanged: source gates are clean but both frozen claim predicates fail; no capability is claimed. Discernment improved: review surfaced the impossible/forgeable C1 predicate, C2 delimiter defect, and unauthenticated capture-pin limit, recorded in corpus/lessons/round-68.md.
