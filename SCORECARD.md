@@ -3010,7 +3010,7 @@ Plan `.ufo/waves/round-66/plan.md` frozen at `621212bac37f8249c72ac982d1d6534cb8
 
 ## Round 68 — claims, verdicts, limits (2026-10-27; both unmet)
 
-Frozen plan/counters commit 39f61816d4ee7a8d401df42c1818c91a9c537bce; measured integration revision 76bdda4bde02522829598c1c81f1836ffbea8d34 (.ufo/waves/round-68/close/). No axis integer changed: operability 9→9; coverage remains retired at 10.
+Frozen plan/counters commit 39f61816d4ee7a8d401df42c1818c91a9c537bce; C2 data integration commit 76bdda4bde02522829598c1c81f1836ffbea8d34; measured close revision M 42b04dac0620b51a5ca4f09510e1b65cbd7e7fd1 (.ufo/waves/round-68/close/). No axis integer changed: operability 9→9; coverage remains retired at 10.
 
 **C1 — operability, capability acquisition routed-ledger: UNMET, not admitted.** Command: node .ufo/waves/round-68/probe/ledger68-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 76bdda4bde02522829598c1c81f1836ffbea8d34 → LEDGER68_UNMET held=1/7, exit 1 (close/ledger68-final.txt). Base was also 1/7 (base/ledger68-base.txt); no v2 code, ledger, SKILL row or SCORECARD capability row was integrated. The wave's v2 draft has 56/56 selftests and 54/54 peer cases, but frozen L4's good/no-section A5 quote is impossible for a conforming implementation; separately, a critic's pathname-dispatch stub reached HELD 7/7. Preserve the freeze; versioned L69 ratchet only. No routed-ledger capability row is entered.
 
