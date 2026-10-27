@@ -1,0 +1,5 @@
+Command: `TMPDIR=<fresh /fast/scratch/hyaku/kumitate-r66/L1/harness temp> node .ufo/waves/round-66/probe/ledger66-probe.mjs <shared scratch clone> 621212bac37f8249c72ac982d1d6534cb8d60701` (clone `git clone --shared`, root verified equal to clone path; temp clone removed on exit).
+Output:
+LEDGER66_UNMET held=3/6 checks=6 rev=621212bac37f8249c72ac982d1d6534cb8d60701 rule=L66 seed=4c7e1ea74d4302d4 | L2 MISS exit=2 verdict=ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md own-items=57 own-spotchecks=11 | L3 MISS 67 problems: ledger-empty-or-absent,unledgered:55#1,unledgered:55#2,unledgered:55#3,unledgered:56#1,unledgered:56#2 | L6 MISS skill-row=false quality=false capability-row=false
+EXIT=1
+Result: L1, L4 and L5 held; empty-ledger L2/L3 and absent registry-home L6 fail as expected. This was an L1 post-dispatch probe; seat scoring state was not observable here.
