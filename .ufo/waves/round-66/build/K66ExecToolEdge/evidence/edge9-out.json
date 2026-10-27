@@ -1,0 +1,57 @@
+[
+ {
+  "separator": "\"|---|---|\"",
+  "toolSep": true,
+  "counterSep": true,
+  "toolItems": 2,
+  "counterItems": 2,
+  "diverge": false
+ },
+ {
+  "separator": "\"|---|\"",
+  "toolSep": true,
+  "counterSep": true,
+  "toolItems": 2,
+  "counterItems": 2,
+  "diverge": false
+ },
+ {
+  "separator": "\"| --- | --- |\"",
+  "toolSep": true,
+  "counterSep": true,
+  "toolItems": 2,
+  "counterItems": 2,
+  "diverge": false
+ },
+ {
+  "separator": "\"| --- | ---\"",
+  "toolSep": false,
+  "counterSep": true,
+  "toolItems": 4,
+  "counterItems": 2,
+  "diverge": true
+ },
+ {
+  "separator": "\"|:---|---:|\"",
+  "toolSep": true,
+  "counterSep": true,
+  "toolItems": 2,
+  "counterItems": 2,
+  "diverge": false
+ },
+ {
+  "separator": "\"|--|--|--|\"",
+  "toolSep": true,
+  "counterSep": true,
+  "toolItems": 2,
+  "counterItems": 2,
+  "diverge": false
+ }
+]
+--- round-65 lines containing a pipe: 30 of 78
+| check | command | observed |
+|---|---|---|
+| report committed by the lane identity | `git log --format='%an %H' -- .ufo/reports/round-65/kumitate.md` | `kumitate-shokunin d85a301d29f7be73956a6bac74ca825d7d8e081e` (report, 23:42:44 -03:00) and `kumitate-shokunin e8d4a61dfed1cea7d47217e0e84d853d2a5e985d` (appended `## Erratum`, 23:57:36) — lane identity, erratum appended after the filed bytes |
+| `SHONEN` heading, one line per box | `grep -c '^## SHONEN' <report>`; `grep -cE '^\s*- \[[ x~]\]' SHONEN.md` | `1`; SHONEN.md has 4 boxes, the report has 4 `[~]` lines, each with a pointer |
+| cited lane commits exist and are ancestors of `master` | `git cat-file -t <h>`; `git merge-base --is-ancestor <h> master` for `47fe238`, `2ca91a0`, `2b1f416`, `62897df`, `090b4dd`, `52f8497` | all six `commit`, all `anc=0` (ancestor) |
+| report lands last | commit times: close receipts `62897df` 23:41:11 → report `d85a301` 23:42:44 | the report cites `62897df` and lands after it |

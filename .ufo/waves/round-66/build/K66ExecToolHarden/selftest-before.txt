@@ -1,0 +1,38 @@
+CASE ok clean ledger reads CLEAN exit 0
+CASE ok section items: nested bullet and prose are not items
+CASE ok section ends at same-level heading; sub-heading stays inside
+CASE ok bullets outside the routed section are not items
+CASE ok table header row is not an item
+CASE ok prose-only routed section: found, zero items
+CASE ok heading "ROUTED_HELD" is not a routed section
+CASE FAIL cross-round routed heading is skipped; the own-round section wins :: items=1
+CASE FAIL a prose routed item opened by an id arrow is an item :: items=0
+CASE ok prose without an id arrow is still not an item
+CASE ok dropped row → UNLEDGERED exit 1
+CASE ok quote not in its item → QUOTE_ABSENT
+CASE ok quote from a different item → QUOTE_ABSENT
+CASE ok item ordinal beyond section → ITEM_ABSENT
+CASE ok round outside range → ITEM_ABSENT
+CASE ok answer quote not at line → ANSWER_DEAD
+CASE ok answer line past EOF → ANSWER_DEAD
+CASE ok answer file absent → ANSWER_DEAD
+CASE ok answer pointing into the ledger itself → ANSWER_DEAD
+CASE ok answer pointing into a spot-check → ANSWER_DEAD
+CASE ok answer path escaping with .. → ANSWER_DEAD
+CASE ok closed row with "-" answer → ROW_MALFORMED
+CASE ok open row with an answer → ROW_MALFORMED
+CASE ok bad status → ROW_MALFORMED
+CASE ok quote over 25 words → ROW_MALFORMED
+CASE ok six-cell row → ROW_MALFORMED
+CASE ok duplicate id → ROW_DUPLICATE
+CASE ok two rows on one item (two classes) stay CLEAN
+CASE ok ledger absent → FAIL-CLOSED exit 2
+CASE ok ledger without ## Ledger → FAIL-CLOSED exit 2
+CASE ok no spot-check in range → FAIL-CLOSED exit 2
+CASE ok --to excludes later spot-checks
+CASE ok --classes prints CLASS lines; RECURRENT needs >= 4 rounds
+CASE ok RECURRENT fires at 4 distinct rounds
+CASE ok --rev reads committed bytes, not the worktree
+CASE ok unreadable --rev → FAIL-CLOSED exit 2
+ROUTED_LEDGER_SELFTEST: FAIL (34/36)
+exit_code=1 (node selftest exit 1: FAIL 34/36)

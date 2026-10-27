@@ -1,0 +1,170 @@
+[
+ {
+  "name": "E1 CRLF line endings (spot-check, ledger and answers all CRLF)",
+  "expect": "CLEAN exit 0, items=3, rows=3",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=0 items=0 rows=3 open=1 closed=1 wontfix=1 findings=3 first=ITEM_ABSENT:R7-D1@line7:round-7-item-1-of-0",
+  "findings": [
+   "FINDING ITEM_ABSENT R7-D1@line7:round-7-item-1-of-0",
+   "FINDING ITEM_ABSENT R7-D2@line8:round-7-item-2-of-0",
+   "FINDING ITEM_ABSENT R7-D3@line9:round-7-item-3-of-0"
+  ]
+ },
+ {
+  "name": "E2 tabs as indentation for nested bullets",
+  "expect": "CLEAN exit 0, items=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E3 fenced code block inside the routed section containing \"- \" lines",
+  "expect": "CLEAN exit 0, items=3 (NOT 5)",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=5 rows=3 open=1 closed=1 wontfix=1 findings=4 first=QUOTE_ABSENT:R7-D3@line9:round-7-item-3",
+  "findings": [
+   "FINDING QUOTE_ABSENT R7-D3@line9:round-7-item-3",
+   "FINDING UNLEDGERED round-7-item-3",
+   "FINDING UNLEDGERED round-7-item-4",
+   "FINDING UNLEDGERED round-7-item-5"
+  ]
+ },
+ {
+  "name": "E4a HTML comment holding a \"- \" line inside the routed section",
+  "expect": "CLEAN exit 0, items=3 (NOT 4)",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=4 rows=3 open=1 closed=1 wontfix=1 findings=3 first=QUOTE_ABSENT:R7-D3@line9:round-7-item-3",
+  "findings": [
+   "FINDING QUOTE_ABSENT R7-D3@line9:round-7-item-3",
+   "FINDING UNLEDGERED round-7-item-3",
+   "FINDING UNLEDGERED round-7-item-4"
+  ]
+ },
+ {
+  "name": "E4b HTML comment holding an earlier \"## Routed defects\" heading",
+  "expect": "items=3 bound to the live section; a retracted section must not be bound",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=1 rows=3 open=1 closed=1 wontfix=1 findings=4 first=QUOTE_ABSENT:R7-D1@line7:round-7-item-1",
+  "findings": [
+   "FINDING QUOTE_ABSENT R7-D1@line7:round-7-item-1",
+   "FINDING ITEM_ABSENT R7-D2@line8:round-7-item-2-of-1",
+   "FINDING ITEM_ABSENT R7-D3@line9:round-7-item-3-of-1",
+   "FINDING UNLEDGERED round-7-item-1"
+  ]
+ },
+ {
+  "name": "E5 ATX headings with trailing #s",
+  "expect": "CLEAN exit 0, items=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E6 setext heading (\"Routed defects\" over \"-----\")",
+  "expect": "routed section not found (items=0) — and then the ledger rows for round 7 must be ITEM_ABSENT, not silently OK",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=0 items=0 rows=3 open=1 closed=1 wontfix=1 findings=3 first=ITEM_ABSENT:R7-D1@line7:round-7-item-1-of-0",
+  "findings": [
+   "FINDING ITEM_ABSENT R7-D1@line7:round-7-item-1-of-0",
+   "FINDING ITEM_ABSENT R7-D2@line8:round-7-item-2-of-0",
+   "FINDING ITEM_ABSENT R7-D3@line9:round-7-item-3-of-0"
+  ]
+ },
+ {
+  "name": "E7 \"## Routed defects\" appears twice",
+  "expect": "items=1 (first heading wins) and the second block is NOT bound — but the tool must not silently drop it",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=1 rows=1 open=1 closed=0 wontfix=0",
+  "findings": []
+ },
+ {
+  "name": "E8 ledger table row with an escaped pipe (GFM \\|) inside a quote cell",
+  "expect": "row parses as 7 cells, quote located, CLEAN exit 0",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=3 rows=2 open=1 closed=0 wontfix=1 findings=2 first=ROW_MALFORMED:line7:cells=8",
+  "findings": [
+   "FINDING ROW_MALFORMED line7:cells=8",
+   "FINDING UNLEDGERED round-7-item-1"
+  ]
+ },
+ {
+  "name": "E9a ledger row with a trailing space after the last pipe",
+  "expect": "CLEAN exit 0, rows=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E9b ledger row with the trailing pipe missing",
+  "expect": "CLEAN exit 0, rows=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E9c ledger row with a trailing space inside the last cell",
+  "expect": "CLEAN exit 0, rows=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E10a ledger quote delimited by curly quotes (“ ”)",
+  "expect": "the quote is located in the item; CLEAN exit 0",
+  "code": 1,
+  "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1 findings=2 first=QUOTE_ABSENT:R7-D1@line7:round-7-item-1",
+  "findings": [
+   "FINDING QUOTE_ABSENT R7-D1@line7:round-7-item-1",
+   "FINDING UNLEDGERED round-7-item-1"
+  ]
+ },
+ {
+  "name": "E10b item text carries curly quotes, ledger quote is plain",
+  "expect": "CLEAN exit 0, items=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E10c item text carries a literal NBSP, ledger quote uses a plain space",
+  "expect": "CLEAN exit 0, items=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E10d ledger quote contains the HTML entity &nbsp; where the item has a real space",
+  "expect": "CLEAN exit 0, rows=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E11a answer path written with a \"./\" prefix",
+  "expect": "CLEAN exit 0, rows=3",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E11b answer path is a symlink that points at the ledger itself",
+  "expect": "ANSWER_DEAD (answer resolves into the ledger)",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E11c answer path is a symlink that points at a spot-check",
+  "expect": "ANSWER_DEAD (answer resolves into a spot-check)",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ },
+ {
+  "name": "E13 ledger file contains a second \"## Ledger\" section",
+  "expect": "either the duplicate section is reported, or its rows are merged — never silently dropped",
+  "code": 0,
+  "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1",
+  "findings": []
+ }
+]

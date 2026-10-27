@@ -1,0 +1,34 @@
+[
+ {
+  "name": "separator row \"|--|--|\" without a trailing pipe",
+  "tool_items": 2,
+  "tool_item_lines": [
+   "- **D1 — the readme row is missing.**",
+   "| D2 | the capability row is absent |"
+  ],
+  "note": "the tool counts the separator as an ITEM; the frozen counter isSep() does not"
+ },
+ {
+  "name": "same, with a trailing pipe",
+  "tool_items": 2,
+  "tool_item_lines": [
+   "- **D1 — the readme row is missing.**",
+   "| D2 | the capability row is absent |"
+  ]
+ },
+ {
+  "name": "--rev at a tree without the ledger",
+  "exit": 2,
+  "stdout": "ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md"
+ },
+ {
+  "name": "--rev at a TAG whose tree lacks the ledger",
+  "exit": 2,
+  "stdout": "ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md"
+ },
+ {
+  "name": "answer path is a symlink to the ledger itself (worktree mode)",
+  "exit": 0,
+  "stdout": "ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=1 rows=1 open=0 closed=1 wontfix=0"
+ }
+]

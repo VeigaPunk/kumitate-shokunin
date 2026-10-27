@@ -1,0 +1,76 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-66/build/K66ExecToolHarden/routed-ledger-v1-frozen.mjs	2026-10-27 04:34:41.026808462 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-66/build/K66ExecToolHarden/routed-ledger-v2-draft.mjs	2026-10-27 04:34:41.026494561 -0300
+@@ -57,6 +57,12 @@
+ const FROM_DEFAULT = 55;
+ const SPOT_RE = /^corpus\/lessons\/round-(\d+)-verifier-spotcheck\.md$/;
+ const HEAD_RE = /\brouted\s+(defects?|items?)\b/i;
++// A heading that opens with "Round <n>" names ANOTHER round's routed-defect list
++// (a cross-reference section), never this file's own routed section.
++const XROUND_RE = /^\s*Round[- ](\d+)\b/i;
++// A prose paragraph that opens with an item id and an arrow ("R38-1 → ...")
++// is a routed item written as prose rather than as a list bullet.
++const IDARROW_RE = /^[A-Za-z]{1,4}\d+-\d+\s*→/;
+ 
+ export const norm = (s) => String(s)
+   .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
+@@ -70,12 +76,17 @@
+ const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
+ 
+ /** Parse the routed section of a spot-check text → { found, items: [text…] }. */
+-export function routedItems(text) {
++export function routedItems(text, opts = {}) {
+   const L = String(text).split('\n');
++  const own = Number.isInteger(opts.round) ? opts.round : null;
+   let start = -1; let level = 0;
+   for (let i = 0; i < L.length; i += 1) {
+     const m = /^(#{1,6})\s+(.*)$/.exec(L[i]);
+-    if (m && HEAD_RE.test(m[2])) { start = i; level = m[1].length; break; }
++    if (!m || !HEAD_RE.test(m[2])) continue;
++    const x = XROUND_RE.exec(m[2]);
++    // skip a cross-reference heading that names a different round's routed defects
++    if (x && own !== null && Number(x[1]) !== own) continue;
++    start = i; level = m[1].length; break;
+   }
+   if (start < 0) return { found: false, items: [] };
+   let end = L.length;
+@@ -89,6 +100,7 @@
+     const l = L[i];
+     if (/^(?:[-*+]|\d+[.)])\s+\S/.test(l)) starts.push({ i, kind: 'list' });
+     else if (/^\|/.test(l) && !sep(l) && !(i + 1 < end && sep(L[i + 1]))) starts.push({ i, kind: 'table' });
++    else if (IDARROW_RE.test(l) && (i === start + 1 || L[i - 1].trim() === '')) starts.push({ i, kind: 'prose' });
+   }
+   const items = starts.map((s, k) => {
+     if (s.kind === 'table') return L[s.i];
+@@ -174,7 +186,7 @@
+ 
+   const sec = new Map(); let sections = 0; let items = 0;
+   for (const n of inRange) {
+-    const r = routedItems(R.read(spots.get(n)) ?? '');
++    const r = routedItems(R.read(spots.get(n)) ?? '', { round: n });
+     sec.set(n, r);
+     if (r.found) sections += 1;
+     items += r.items.length;
+@@ -295,6 +307,23 @@
+   add('table header row is not an item', () => !routedItems(S1).items.some((t) => /\| id \| what \|/.test(t)));
+   add('prose-only routed section: found, zero items', () => { const r = routedItems(S2); return r.found && r.items.length === 0; });
+   add('heading "ROUTED_HELD" is not a routed section', () => !routedItems('## C1 (ROUTED_HELD)\n- x\n').found);
++  add('cross-round routed heading is skipped; the own-round section wins', () => {
++    const t = ['# round-9 — spot-check', '', '## Round-8 routed defects D1', '', '| D | disposition |', '|---|---|', '| D1 | fixed |', '',
++      '## Routed defects (lane fixes next round)', '', '- **R1 — own item.** text', '- **R2 — own item two.** text'].join('\n');
++    const r = routedItems(t, { round: 9 });
++    return (r.items.length === 2 && r.items[0].includes('own item') && !r.items.some((x) => x.includes('fixed'))) || `items=${r.items.length}`;
++  });
++  add('a prose routed item opened by an id arrow is an item', () => {
++    const t = ['# round-9 — spot-check', '', '## Routed defects / operator handoff', '',
++      'R9-1 → kumitate next repair: close the missing-key floor gap.', 'Second wrapped line of the same prose item.',
++      '', 'R9-2 → kumitate/operator: keep the context violation disclosed.', ''].join('\n');
++    const r = routedItems(t, { round: 9 });
++    return (r.items.length === 2 && r.items[0].includes('Second wrapped line') && r.items[1].includes('context violation')) || `items=${r.items.length}`;
++  });
++  add('prose without an id arrow is still not an item', () => {
++    const t = ['# round-9 — spot-check', '', '## Routed defects', '', 'No new lane-owned defect is routed.', ''].join('\n');
++    return routedItems(t, { round: 9 }).items.length === 0;
++  });
+   add('dropped row → UNLEDGERED exit 1', () => { setup(goodRows.slice(1)); const r = run(); return (r.code === 1 && has(r, 'UNLEDGERED')) || verdict(r); });
+   add('quote not in its item → QUOTE_ABSENT', () => { setup([goodRows[0].replace('"the readme row is missing"', '"the readme row is present"'), ...goodRows.slice(1)]); const r = run(); return (r.code === 1 && has(r, 'QUOTE_ABSENT')) || verdict(r); });
+   add('quote from a different item → QUOTE_ABSENT', () => { setup([goodRows[0].replace('"the readme row is missing"', '"tier counts are wrong"'), ...goodRows.slice(1)]); const r = run(); return (r.code === 1 && has(r, 'QUOTE_ABSENT')) || verdict(r); });

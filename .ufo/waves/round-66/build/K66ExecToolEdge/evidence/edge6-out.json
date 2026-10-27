@@ -1,0 +1,72 @@
+[
+ {
+  "variant": "plain",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=e8a139705c215f9c1e8ec1ea65ef7f486bd0f60d rule=L66 seed=956b2ebb7c7fe96a",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0"
+ },
+ {
+  "variant": "no-trailing-pipe",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=b82194aae2dda236c395ec57f676a70ff549fcc5 rule=L66 seed=f79fb74809b77047 | L3 MISS 1 problems: R55-I1:open-with-answer",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0"
+ },
+ {
+  "variant": "escaped-pipe",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=ee202fd486025acdf58cdd055e9b857d5df9ebad rule=L66 seed=9323f4b72fa0f9e8 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=32 open=29 closed=3 wontfix=0 findings=2 first=ROW_MALFORMED:line7:cells=8 own-items=33 own-spotchecks=11 | L3 MISS 2 problems: malformed@7,unledgered:55#1",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line7:cells=8 || FINDING UNLEDGERED round-55-item-1 || ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=32 open=29 closed=3 wontfix=0 findings=2 first=ROW_MALFORMED:line7:cells=8"
+ },
+ {
+  "variant": "curly-quote",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=3715f343ebb0c696c259d622169a51845d8d6c12 rule=L66 seed=695c950a4ed03863 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0 findings=2 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1 own-items=33 own-spotchecks=11 | L3 MISS 2 problems: R55-I1:quote-not-in-item,unledgered:55#1",
+  "tool_exit": 1,
+  "tool": "FINDING QUOTE_ABSENT R55-I1@line7:round-55-item-1 || FINDING UNLEDGERED round-55-item-1 || ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0 findings=2 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1"
+ },
+ {
+  "variant": "trailing-space",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=c2e86910f36a51a17fd7fa0f9afe702073ccb19c rule=L66 seed=129924ef7ab9c232",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0"
+ },
+ {
+  "variant": "second-ledger",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=7ff3af9643a1a8669187491d0029692a3e2273dc rule=L66 seed=1ce836f248d6f980",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0"
+ },
+ {
+  "variant": "crlf-spotcheck",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=72e7e7110d7720fce5c2e3268efbc9089e03b5d0 rule=L66 seed=d3546a1e87b251e1 | L3 MISS 4 problems: ledger-empty-or-absent,round-65-items-absent,classes=0<5,no-class-spans-4-rounds",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=0 items=0 rows=0 open=0 closed=0 wontfix=0"
+ },
+ {
+  "variant": "fence-in-section",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=5464501f0d17d72e68dda3298e2a7d989c6d5dd0 rule=L66 seed=614c8afe97c0e93e",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=44 rows=44 open=40 closed=4 wontfix=0"
+ },
+ {
+  "variant": "comment-in-section",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=0e5b51b3a105087621ecea6c8c0bfd5c8ebcabe2 rule=L66 seed=06963a684ccbdeef",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=44 rows=44 open=40 closed=4 wontfix=0"
+ },
+ {
+  "variant": "thematic-break",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=bd751861d62eb575e87546a30f629766874b9927 rule=L66 seed=8adf91196ed4103f",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=44 rows=44 open=40 closed=4 wontfix=0"
+ }
+]

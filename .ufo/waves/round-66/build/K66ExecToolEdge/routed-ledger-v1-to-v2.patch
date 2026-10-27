@@ -1,0 +1,292 @@
+--- /fast/scratch/hyaku/kumitate-r66/K66ExecToolEdge/tool-v1.mjs	2026-10-27 04:15:27.635581430 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-66/build/K66ExecToolEdge/routed-ledger-v2.candidate.mjs	2026-10-27 04:20:50.232884874 -0300
+@@ -25,6 +25,23 @@
+  * text runs from its marker line to the line before the next item or the section end. Nested
+  * (indented) bullets belong to their parent item; prose paragraphs are not items.
+  *
++ * Reading rule (round 66, wave w1 hardening — every clause only ever makes the gate stricter):
++ *   - CRLF and lone-CR line endings are normalised to LF before parsing, so a CRLF spot-check
++ *     yields the same routed section, items and quotes as its LF twin (a CRLF file used to yield
++ *     NO routed section at all, so every routed item of that round escaped the gate silently);
++ *   - fenced code blocks (``` / ~~~) and HTML comments are not prose: their lines are never
++ *     headings and never items, and a heading inside them never opens or closes a routed section
++ *     (a fenced "## Routed defects" block used to steal the section and its "- " lines used to be
++ *     counted as routed items);
++ *   - a table delimiter row is a delimiter with or without its trailing pipe (`| --- | ---` is a
++ *     delimiter, not a data row);
++ *   - a ledger row must close with its trailing pipe (a row that does not is malformed, not a
++ *     silently mis-parsed row);
++ *   - an answer path is resolved before it is judged: a path that resolves (through a symlink) to
++ *     the ledger, to a spot-check, or outside the lane root is dead;
++ *   - a spot-check file with more than one routed heading is reported (SECTION_AMBIGUOUS) instead
++ *     of having the first one silently win.
++ *
+  * Ledger (`## Ledger` section, one GFM table, 7 cells):
+  *   | id | round | item | quote | class | status | answer |
+  *   id      [A-Za-z0-9][A-Za-z0-9.-]*, unique
+@@ -40,7 +57,7 @@
+  *   ROUTED_LEDGER: FAIL-CLOSED reason=<why>                                                   exit 2
+  *   ROUTED_LEDGER: USAGE <msg>                                                                exit 64
+  * Findings (one `FINDING <ID> <detail>` line each): ROW_MALFORMED, ROW_DUPLICATE, ITEM_ABSENT,
+- * QUOTE_ABSENT, ANSWER_DEAD, UNLEDGERED.
++ * QUOTE_ABSENT, ANSWER_DEAD, UNLEDGERED, SECTION_AMBIGUOUS.
+  * --classes adds `CLASS <c> rows=<n> rounds=<r,…>` lines and `RECURRENT <c> rounds=<k>` for every
+  * class seen in >= 4 distinct spot-check rounds (a class past three recurrences wants a structural fix).
+  *
+@@ -48,9 +65,9 @@
+  * Writes: nothing outside os.tmpdir() (selftest fixtures; honours TMPDIR; removed on exit).
+  */
+ import { spawnSync } from 'node:child_process';
+-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
++import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+-import { join, resolve, normalize, isAbsolute } from 'node:path';
++import { join, resolve, normalize, isAbsolute, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+ const LEDGER_DEFAULT = 'corpus/routed-ledger.md';
+@@ -69,44 +86,96 @@
+ 
+ const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
+ 
+-/** Parse the routed section of a spot-check text → { found, items: [text…] }. */
++/** Split a text into lines with CRLF / lone CR normalised to LF. */
++const lines = (text) => String(text).replace(/\r\n?/g, '\n').split('\n');
++
++/**
++ * Mark the lines that are code or comment, not prose.
++ * `mask[i]` is true when line i is inside a fenced code block or inside a multi-line HTML
++ * comment: such a line is never a heading and never an item. A single-line HTML comment is
++ * blanked in place instead, so a real item that merely carries a trailing comment survives.
++ */
++export function proseMask(text) {
++  const L = lines(text);
++  const mask = new Array(L.length).fill(false);
++  let fence = null; // { ch, n }
++  let inComment = false;
++  for (let i = 0; i < L.length; i += 1) {
++    const raw = L[i];
++    if (fence) {
++      mask[i] = true;
++      const close = /^\s*(`{3,}|~{3,})/.exec(raw);
++      if (close && close[1][0] === fence.ch && close[1].length >= fence.n) fence = null;
++      continue;
++    }
++    if (inComment) {
++      mask[i] = true;
++      if (raw.includes('-->')) inComment = false;
++      continue;
++    }
++    const open = /^\s*(`{3,}|~{3,})/.exec(raw);
++    if (open) { mask[i] = true; fence = { ch: open[1][0], n: open[1].length }; continue; }
++    const c0 = raw.indexOf('<!--');
++    if (c0 < 0) continue;
++    const c1 = raw.indexOf('-->', c0 + 4);
++    if (c1 < 0) { mask[i] = true; inComment = true; continue; }
++    L[i] = raw.slice(0, c0) + ' '.repeat(c1 + 3 - c0) + raw.slice(c1 + 3);
++  }
++  return { mask, view: L };
++}
++
++/** A table delimiter row: a column-0 `|` row of only pipes, dashes, colons and spaces that
++ *  carries at least one dash. The trailing pipe is optional (GFM allows `| --- | ---`). */
++const isSepRow = (l) => {
++  const t = String(l).trim();
++  return t.startsWith('|') && /-/.test(t) && /^[|\s:-]+$/.test(t);
++};
++
++/** Parse the routed section of a spot-check text → { found, items: [text…], headings }. */
+ export function routedItems(text) {
+-  const L = String(text).split('\n');
+-  let start = -1; let level = 0;
++  const { mask, view } = proseMask(text);
++  const L = view;
++  let start = -1; let level = 0; let headings = 0;
+   for (let i = 0; i < L.length; i += 1) {
++    if (mask[i]) continue;
+     const m = /^(#{1,6})\s+(.*)$/.exec(L[i]);
+-    if (m && HEAD_RE.test(m[2])) { start = i; level = m[1].length; break; }
++    if (m && HEAD_RE.test(m[2])) {
++      headings += 1;
++      if (start < 0) { start = i; level = m[1].length; }
++    }
+   }
+-  if (start < 0) return { found: false, items: [] };
++  if (start < 0) return { found: false, items: [], headings };
+   let end = L.length;
+   for (let i = start + 1; i < L.length; i += 1) {
++    if (mask[i]) continue;
+     const m = /^(#{1,6})\s/.exec(L[i]);
+     if (m && m[1].length <= level) { end = i; break; }
+   }
+-  const sep = (l) => /^\|[\s:|-]+\|\s*$/.test(l) && l.includes('-');
+   const starts = [];
+   for (let i = start + 1; i < end; i += 1) {
++    if (mask[i]) continue;
+     const l = L[i];
+     if (/^(?:[-*+]|\d+[.)])\s+\S/.test(l)) starts.push({ i, kind: 'list' });
+-    else if (/^\|/.test(l) && !sep(l) && !(i + 1 < end && sep(L[i + 1]))) starts.push({ i, kind: 'table' });
++    else if (/^\|/.test(l) && !isSepRow(l) && !(i + 1 < end && !mask[i + 1] && isSepRow(L[i + 1]))) starts.push({ i, kind: 'table' });
+   }
+   const items = starts.map((s, k) => {
+     if (s.kind === 'table') return L[s.i];
+     const stop = k + 1 < starts.length ? starts[k + 1].i : end;
+     const body = [L[s.i]];
+     for (let j = s.i + 1; j < stop; j += 1) {
++      if (mask[j]) continue;
+       // a column-0 non-blank line that is not a continuation ends the item (prose after a list)
+-      if (/^\S/.test(L[j]) && !/^\s/.test(L[j]) && L[j - 1].trim() === '') break;
++      if (/^\S/.test(L[j]) && L[j - 1].trim() === '') break;
+       body.push(L[j]);
+     }
+     return body.join('\n');
+   });
+-  return { found: true, items };
++  return { found: true, items, headings };
+ }
+ 
+ /** Parse the ledger text → { rows, malformed: [detail…] }. */
+ export function ledgerRows(text) {
+-  const L = String(text).split('\n');
++  const L = lines(text);
+   const at = L.findIndex((l) => /^##\s+Ledger\s*$/.test(l));
+   const rows = []; const malformed = [];
+   if (at < 0) return { rows, malformed, section: false };
+@@ -115,6 +184,7 @@
+     if (/^##?\s/.test(l)) break;
+     if (!/^\|/.test(l)) continue;
+     if (/^\|[\s:|-]+\|\s*$/.test(l)) continue;
++    if (!/\|\s*$/.test(l)) { malformed.push(`line${i + 1}:row-missing-trailing-pipe`); continue; }
+     const cells = l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+     if (cells[0] === 'id') continue;
+     if (cells.length !== 7) { malformed.push(`line${i + 1}:cells=${cells.length}`); continue; }
+@@ -177,12 +247,20 @@
+     const r = routedItems(R.read(spots.get(n)) ?? '');
+     sec.set(n, r);
+     if (r.found) sections += 1;
++    if (r.headings > 1) F('SECTION_AMBIGUOUS', `round-${n}:routed-headings=${r.headings}`);
+     items += r.items.length;
+   }
+   const seen = new Set(); const covered = new Set();
+   const counts = { open: 0, closed: 0, wontfix: 0 };
+   const spotPaths = new Set(spots.values());
+   const ledgerNorm = normalize(ledger);
++  // resolved identities of the forbidden answer locations (worktree mode; committed mode reads
++  // blob bytes, where a symlink is stored as its target path and can never carry the answer)
++  const realOf = (p) => { try { return realpathSync(isAbsolute(p) ? p : join(root, p)); } catch { return null; } };
++  const rootReal = (() => { try { return realpathSync(root); } catch { return null; } })();
++  const ledgerReal = rev ? null : realOf(ledger);
++  const spotReals = new Set();
++  if (!rev) for (const p of spotPaths) { const r = realOf(p); if (r) spotReals.add(r); }
+   for (const row of rows) {
+     const where = `${row.id}@line${row.line}`;
+     let bad = false;
+@@ -213,9 +291,18 @@
+     if (ans) {
+       const p = normalize(ans.path);
+       if (isAbsolute(ans.path) || p.startsWith('..') || p === ledgerNorm || spotPaths.has(p) || SPOT_RE.test(p)) { F('ANSWER_DEAD', `${where}:answer-path-not-allowed:${ans.path}`); continue; }
++      if (!rev) {
++        // a path that resolves elsewhere is not the lane file it claims to be
++        const real = realOf(ans.path);
++        if (real) {
++          if (rootReal && !(real === rootReal || real.startsWith(rootReal + sep))) { F('ANSWER_DEAD', `${where}:answer-path-resolves-outside-root:${ans.path}`); continue; }
++          if (ledgerReal && real === ledgerReal) { F('ANSWER_DEAD', `${where}:answer-path-resolves-to-the-ledger:${ans.path}`); continue; }
++          if (spotReals.has(real)) { F('ANSWER_DEAD', `${where}:answer-path-resolves-to-a-spotcheck:${ans.path}`); continue; }
++        }
++      }
+       const txt = R.read(p);
+       if (txt == null) { F('ANSWER_DEAD', `${where}:answer-file-absent:${p}`); continue; }
+-      const AL = txt.split('\n');
++      const AL = lines(txt);
+       if (ans.line < 1 || ans.line > AL.length) { F('ANSWER_DEAD', `${where}:answer-line-${ans.line}-of-${AL.length}`); continue; }
+       const win = norm(AL.slice(Math.max(0, ans.line - 3), Math.min(AL.length, ans.line + 2)).join(' '));
+       if (!win.includes(norm(ans.quote))) { F('ANSWER_DEAD', `${where}:answer-quote-not-at:${p}:${ans.line}`); continue; }
+@@ -293,7 +380,7 @@
+   add('section ends at same-level heading; sub-heading stays inside', () => routedItems(S1).items[3].includes('D4'));
+   add('bullets outside the routed section are not items', () => !routedItems(S1).items.some((t) => t.includes('not routed') || t.includes('not an item')));
+   add('table header row is not an item', () => !routedItems(S1).items.some((t) => /\| id \| what \|/.test(t)));
+-  add('prose-only routed section: found, zero items', () => { const r = routedItems(S2); return r.found && r.items.length === 0; });
++  add('prose-only routed section: found, zero items', () => { const r = routedItems(S2); return (r.found && r.items.length === 0) || r.items.length; });
+   add('heading "ROUTED_HELD" is not a routed section', () => !routedItems('## C1 (ROUTED_HELD)\n- x\n').found);
+   add('dropped row → UNLEDGERED exit 1', () => { setup(goodRows.slice(1)); const r = run(); return (r.code === 1 && has(r, 'UNLEDGERED')) || verdict(r); });
+   add('quote not in its item → QUOTE_ABSENT', () => { setup([goodRows[0].replace('"the readme row is missing"', '"the readme row is present"'), ...goodRows.slice(1)]); const r = run(); return (r.code === 1 && has(r, 'QUOTE_ABSENT')) || verdict(r); });
+@@ -343,6 +430,79 @@
+   });
+   add('unreadable --rev → FAIL-CLOSED exit 2', () => { setup(goodRows); const r = evaluate({ root: join(T, 'x'), from: 7, rev: 'deadbeef' }); return r.code === 2 || verdict(r); });
+ 
++  // ---- round 66, wave w1 (K66ExecToolEdge): edge-input hardening. Every case only tightens.
++  add('CRLF spot-check reads the same routed section and items as LF', () => {
++    setup(goodRows);
++    writeFileSync(join(T, 'x', 'corpus', 'lessons', 'round-7-verifier-spotcheck.md'), S1.replace(/\n/g, '\r\n'));
++    const r = run();
++    return (r.code === 0 && /CLEAN spotchecks=2 sections=2 items=4 rows=4/.test(verdict(r))) || verdict(r);
++  });
++  add('CRLF ledger and answer files read the same as LF', () => {
++    setup(goodRows);
++    writeFileSync(join(T, 'x', 'corpus', 'routed-ledger.md'), ledgerOf(goodRows).replace(/\n/g, '\r\n'));
++    writeFileSync(join(T, 'x', 'notes', 'answers.md'), ans.replace(/\n/g, '\r\n'));
++    const r = run();
++    return (r.code === 0 && /CLEAN .*items=4 rows=4/.test(verdict(r))) || verdict(r);
++  });
++  add('fenced code lines inside the routed section are not items', () => {
++    const s1 = S1.replace('| id | what |', ['```text', '- this is code, not an item', '```', '', '| id | what |'].join('\n'));
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 0 && /items=4 /.test(verdict(r))) || verdict(r);
++  });
++  add('a routed heading inside a fenced code block does not open the section', () => {
++    const s1 = ['# Round 7', '', '```md', '## Routed defects (example inside a fence)', '- example item inside a fence', '```', '', ...S1.split('\n')].join('\n');
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 0 && /items=4 /.test(verdict(r))) || verdict(r);
++  });
++  add('HTML comment lines inside the routed section are not items', () => {
++    const s1 = S1.replace('| id | what |', ['<!--', '- commented out, not an item', '-->', '', '| id | what |'].join('\n'));
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 0 && /items=4 /.test(verdict(r))) || verdict(r);
++  });
++  add('a routed heading inside an HTML comment does not open the section', () => {
++    const s1 = ['# Round 7', '', '<!--', '## Routed defects (retracted)', '', '- old item from a retracted section', '-->', '', ...S1.split('\n')].join('\n');
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 0 && /items=4 /.test(verdict(r))) || verdict(r);
++  });
++  add('a delimiter row without a trailing pipe is a delimiter, not an item', () => {
++    const s1 = S1.replace('|---|---|', '|---|---|');
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 0 && /items=4 /.test(verdict(r))) || verdict(r);
++  });
++  add('a ledger row without its trailing pipe is malformed, not mis-parsed', () => {
++    setup([goodRows[0].replace(/\|\s*$/, ''), ...goodRows.slice(1)]);
++    const r = run();
++    return (r.code === 1 && has(r, 'ROW_MALFORMED')) || verdict(r);
++  });
++  add('answer path that symlinks to the ledger → ANSWER_DEAD', () => {
++    setup(goodRows);
++    rmSync(join(T, 'x', 'notes', 'answers.md'));
++    symlinkSync('../corpus/routed-ledger.md', join(T, 'x', 'notes', 'answers.md'));
++    const rows = [goodRows[0].replace('`notes/answers.md:2`', '`notes/answers.md:7`').replace('"the readme row and its pin landed"', '"the readme row is missing"'), ...goodRows.slice(1)];
++    writeFileSync(join(T, 'x', 'corpus', 'routed-ledger.md'), ledgerOf(rows));
++    const r = run();
++    return (r.code === 1 && has(r, 'ANSWER_DEAD')) || verdict(r);
++  });
++  add('answer path that symlinks outside the lane root → ANSWER_DEAD', () => {
++    setup(goodRows);
++    writeFileSync(join(T, 'outside.md'), 'the readme row and its pin landed\n');
++    rmSync(join(T, 'x', 'notes', 'answers.md'));
++    symlinkSync('../../outside.md', join(T, 'x', 'notes', 'answers.md'));
++    const r = run();
++    return (r.code === 1 && has(r, 'ANSWER_DEAD')) || verdict(r);
++  });
++  add('two routed headings in one file → SECTION_AMBIGUOUS', () => {
++    const s1 = [...S1.split('\n'), '', '## Routed defects (second block)', '', '- second block item'].join('\n');
++    setup(goodRows, s1);
++    const r = run();
++    return (r.code === 1 && has(r, 'SECTION_AMBIGUOUS')) || verdict(r);
++  });
++
+   rmSync(T, { recursive: true, force: true });
+   const pass = cases.filter((c) => c.ok).length;
+   for (const c of cases) process.stdout.write(`CASE ${c.ok ? 'ok' : 'FAIL'} ${c.name}${c.ok ? '' : ` :: ${c.why}`}\n`);

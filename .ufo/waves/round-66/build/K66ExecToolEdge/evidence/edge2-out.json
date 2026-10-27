@@ -1,0 +1,77 @@
+[
+ {
+  "name": "P1 --rev r7tag",
+  "expect": "reads committed bytes: CLEAN exit 0, items=3, rows=3",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P1 --rev feature/ledger",
+  "expect": "reads committed bytes: CLEAN exit 0, items=3, rows=3",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P1 --rev HEAD~1",
+  "expect": "reads committed bytes: CLEAN exit 0, items=3, rows=3",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P1 --rev HEAD",
+  "expect": "reads committed bytes: CLEAN exit 0, items=3, rows=3",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P1 --rev HEAD^{commit}",
+  "expect": "reads committed bytes: CLEAN exit 0, items=3, rows=3",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P1b --rev HEAD~1 (ledger absent in that tree)",
+  "expect": "FAIL-CLOSED exit 2 reason=ledger-absent",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P2a CRLF everywhere",
+  "expect": "same content as LF: CLEAN exit 0 items=3 rows=3",
+  "observed": "exit=1 ROUTED_LEDGER: DRIFT spotchecks=1 sections=0 items=0 rows=3 open=1 closed=1 wontfix=1 findings=3 first=ITEM_ABSENT:R7-D1@line7:round-7-item-1-of-0"
+ },
+ {
+  "name": "P2b CRLF",
+  "expect": "CLEAN if the tool reads the section",
+  "observed": "exit=1 ROUTED_LEDGER: DRIFT spotchecks=1 sections=0 items=0 rows=3 open=1 closed=1 wontfix=1 findings=3 first=ITEM_ABSENT:R7-D1@line7:round-7-item-1-of-0"
+ },
+ {
+  "name": "P3 CRLF spot-check + empty ledger",
+  "expect": "the 3 routed items must be UNLEDGERED (exit 1); a CLEAN here means routed items escaped the gate silently",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=0 items=0 rows=0 open=0 closed=0 wontfix=0"
+ },
+ {
+  "name": "P4 real round-37 (first routed heading is \"Round-36 routed defects D1–D8\")",
+  "expect": "the bound section must be round-37's OWN \"## Routed defects (lane owes next round)\" block, not the cross-reference to round 36",
+  "observed": "exit=1 ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=27 rows=0 open=0 closed=0 wontfix=0 findings=27 first=UNLEDGERED:round-37-item-1"
+ },
+ {
+  "name": "P5 fenced code contains a routed heading + \"- \" item",
+  "expect": "the live section (items=1) must be bound; the fence must not create items or steal the heading",
+  "observed": "exit=1 ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=1 rows=3 open=1 closed=1 wontfix=1 findings=4 first=QUOTE_ABSENT:R7-D1@line7:round-7-item-1"
+ },
+ {
+  "name": "P6 answer path is a symlink to a file OUTSIDE the lane root",
+  "expect": "the answer must be a lane file; a symlink out of the tree must not be accepted as an answer location",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P7 item has straight quotes, ledger cell uses curly delimiters",
+  "expect": "the quote must be located in both directions",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ },
+ {
+  "name": "P8 answer quote contains a literal pipe",
+  "expect": "GFM: an unescaped pipe inside a cell is a cell separator, so this row is malformed — the tool must say so",
+  "observed": "exit=1 ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=3 rows=2 open=1 closed=0 wontfix=1 findings=2 first=ROW_MALFORMED:line7:cells=8"
+ },
+ {
+  "name": "P9 item text contains a pipe, ledger quote quotes across it",
+  "expect": "quote located",
+  "observed": "exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=3 rows=3 open=1 closed=1 wontfix=1"
+ }
+]

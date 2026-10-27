@@ -1,0 +1,302 @@
+--- E1-no-harmabsent
+@@ -332,7 +332,7 @@
+   const unmeasured = counted.filter((r) => ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
+   if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+-  const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
++  const bad = harm + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
+   out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+   return bad === 0 ? 0 : 1;
+ }
+--- E2-always-exit0
+@@ -334,7 +334,7 @@
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+   const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
+   out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+-  return bad === 0 ? 0 : 1;
++  return 0;
+ }
+ 
+ // ---------------------------------------------------------------------------------------------------- selftest
+--- E3-allunmeasured-dead
+@@ -330,7 +330,7 @@
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH');
+   if (counted.length === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
+   const unmeasured = counted.filter((r) => ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
+-  if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
++  ;
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+   const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
+   out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+--- E4-nogates-dead
+@@ -328,7 +328,7 @@
+   const n = (id) => res.rows.filter((r) => r.id === id).length;
+   for (const r of res.rows) out(`HARM_ROW gate=${r.gate} base=${r.b.cls} tip=${r.t.cls} id=${r.id} base_text=${JSON.stringify(r.b.text)} tip_text=${JSON.stringify(r.t.text)}`);
+   const counted = res.rows.filter((r) => r.id !== 'ABSENT_BOTH');
+-  if (counted.length === 0) failClosed('NO_GATES', 'every gate absent at both revisions');
++  ;
+   const unmeasured = counted.filter((r) => ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
+   if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+--- E5-strict-gone-dead
+@@ -332,7 +332,7 @@
+   const unmeasured = counted.filter((r) => ['FAIL_CLOSED', 'TIMEOUT'].includes(r.b.cls) && ['FAIL_CLOSED', 'TIMEOUT'].includes(r.t.cls)).length;
+   if (unmeasured === counted.length) failClosed('ALL_UNMEASURED', `${unmeasured} gate(s) produced no reading at either revision`);
+   const harm = n('HARM'), harmAbsent = n('HARM_ABSENT'), newRed = n('NEW_RED');
+-  const bad = harm + harmAbsent + newRed + (o['--strict-gone'] ? n('GONE') : 0) + (o['--strict-unmeasured'] ? unmeasured : 0);
++  const bad = harm + harmAbsent + newRed + 0 + (o['--strict-unmeasured'] ? unmeasured : 0);
+   out(`HARM_MATRIX: ${bad === 0 ? 'CLEAN' : 'HARM'} gates=${counted.length} held=${n('HELD')} repaired=${n('REPAIRED')} carried=${n('CARRIED')} moved=${n('CARRIED_MOVED')} new=${n('NEW_OK')} gone=${n('GONE')} harm=${harm} harm_absent=${harmAbsent} new_red=${newRed} unmeasured=${unmeasured} ancestor=${res.anc}${res.added ? ` registry_added=${res.added}` : ''} registry=${res.registry} base=${res.revs.base.slice(0, 12)} tip=${res.revs.tip.slice(0, 12)}`);
+   return bad === 0 ? 0 : 1;
+ }
+--- E6-timeout-read-as-error
+@@ -232,7 +232,7 @@
+   const elapsed = Date.now() - t0;
+   let res;
+   const rc = r.status;
+-  if (r.error && r.error.code === 'ETIMEDOUT') res = { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
++  if (r.error && r.error.code === 'ETIMEDOUT') res = { cls: 'FAIL_CLOSED', text: `timeout>${g.timeout}s` };
+   else if (r.error) res = { cls: 'FAIL_CLOSED', text: `spawn-error ${r.error.code || r.error.message}` };
+   else if ((rc === 124 || rc === 137) && elapsed >= (g.timeout - 1) * 1000) res = { cls: 'TIMEOUT', text: `timeout>${g.timeout}s` };
+   else if (statSync(outFile).size > MAX_OUT) res = { cls: 'FAIL_CLOSED', text: `output>${MAX_OUT}B` };
+--- E9-text-clip-12
+@@ -239,7 +239,7 @@
+   else res = readingOf(g, readFileSync(outFile), rc, rc === null ? r.signal || 'unknown' : null);
+   rmSync(outFile, { force: true });
+   res.key = normText(res.text);
+-  res.text = res.text.slice(0, 200);
++  res.text = res.text.slice(0, 12);
+   return res;
+ }
+ function transition(b, t) {
+--- F1-loader-skip-dead
+@@ -84,7 +84,7 @@
+ function deriveNeeds(argv) {
+   for (let i = 1; i < argv.length; i += 1) {
+     const a = argv[i];
+-    if (LOADER_VALUE_FLAGS.has(a)) { i += 1; continue; }
++    ;
+     if (a.startsWith('-')) continue;
+     return a;
+   }
+--- S1-no-origin-removal
+@@ -145,7 +145,7 @@
+   const dir = join(scratch, `sb-${tag}`);
+   let r = spawnSync('git', ['-c', 'core.hooksPath=/dev/null', 'clone', '-q', '--no-hardlinks', '--no-checkout', lane, dir], { encoding: 'utf8', env: GIT_ENV() });
+   if (r.status !== 0) return { error: `clone: ${String(r.stderr).trim().slice(0, 200)}` };
+-  git(dir, ['remote', 'remove', 'origin']);
++  ;
+   r = git(dir, ['checkout', '-q', '--detach', rev]);
+   if (r.status !== 0) return { error: `checkout: ${String(r.stderr).trim().slice(0, 200)}` };
+   const head = git(dir, ['rev-parse', 'HEAD']).stdout.trim();
+--- S2-clean-keeps-ignored
+@@ -154,8 +154,8 @@
+ }
+ function resetSandbox(sb) {
+   let r = git(sb.dir, ['reset', '-q', '--hard', sb.rev]);
+-  let c = r.status === 0 ? git(sb.dir, ['clean', '-qfdx']) : r;
+-  if (r.status !== 0 || c.status !== 0) { relax(sb.dir); r = git(sb.dir, ['reset', '-q', '--hard', sb.rev]); c = r.status === 0 ? git(sb.dir, ['clean', '-qfdx']) : r; }
++  let c = r.status === 0 ? git(sb.dir, ['clean', '-qfd']) : r;
++  if (r.status !== 0 || c.status !== 0) { relax(sb.dir); r = git(sb.dir, ['reset', '-q', '--hard', sb.rev]); c = r.status === 0 ? git(sb.dir, ['clean', '-qfd']) : r; }
+   return r.status === 0 && c.status === 0;
+ }
+ function presence(dir, needs) {
+--- S3-needs-escape-ok
+@@ -166,7 +166,7 @@
+   let rp;
+   try { rp = realpathSync(p); } catch { return { state: 'absent', text: `absent:${needs}` }; }
+   const root = realpathSync(dir);
+-  if (rp !== root && !rp.startsWith(root + sep)) return { state: 'defect', text: `needs-escape-link:${needs}` };
++  ;
+   if (!statSync(rp).isFile()) return { state: 'defect', text: `needs-not-a-file:${needs}` };
+   return { state: 'present' };
+ }
+--- S4-dir-needs-ok
+@@ -167,7 +167,7 @@
+   try { rp = realpathSync(p); } catch { return { state: 'absent', text: `absent:${needs}` }; }
+   const root = realpathSync(dir);
+   if (rp !== root && !rp.startsWith(root + sep)) return { state: 'defect', text: `needs-escape-link:${needs}` };
+-  if (!statSync(rp).isFile()) return { state: 'defect', text: `needs-not-a-file:${needs}` };
++  ;
+   return { state: 'present' };
+ }
+ 
+--- S5-mkdtemp-outside-tmpdir
+@@ -301,7 +301,7 @@
+     if (sf.bavail * sf.bsize < minFree) return { fail: 'LOW_DISK', detail: `${tmpdir()} has ${Math.floor((sf.bavail * sf.bsize) / 1048576)} MiB free, needs ${Math.floor(minFree / 1048576)} MiB` };
+   } catch { /* statfs unavailable: the mkdtemp below still fails closed */ }
+   let scratch;
+-  try { scratch = mkdtempSync(join(tmpdir(), 'harm-matrix.')); } catch (e) { return { fail: 'SANDBOX_FAILED', detail: `mkdtemp: ${e.code || e.message}` }; }
++  try { scratch = mkdtempSync(join('/tmp', 'harm-matrix.')); } catch (e) { return { fail: 'SANDBOX_FAILED', detail: `mkdtemp: ${e.code || e.message}` }; }
+   TMP_ROOTS = [...new Set([tmpdir(), '/tmp', '/var/tmp', '/dev/shm', scratch])];
+   try {
+     const sb = {};
+--- S6-stale-check-dead
+@@ -149,7 +149,7 @@
+   r = git(dir, ['checkout', '-q', '--detach', rev]);
+   if (r.status !== 0) return { error: `checkout: ${String(r.stderr).trim().slice(0, 200)}` };
+   const head = git(dir, ['rev-parse', 'HEAD']).stdout.trim();
+-  if (head !== rev) return { error: `stale-checkout: HEAD ${head} != ${rev}` };
++  ;
+   return { dir, rev };
+ }
+ function resetSandbox(sb) {
+--- T1-held-harm-swap
+@@ -246,7 +246,7 @@
+   if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
+   if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+-  if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
++  if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HARM' : 'HELD';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+   return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+--- T2-gone-harmabsent-swap
+@@ -245,7 +245,7 @@
+ function transition(b, t) {
+   if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
+   if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+-  if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
++  if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'GONE' : 'HARM_ABSENT';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+   return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
+--- T3-new-ok-dead
+@@ -244,7 +244,7 @@
+ }
+ function transition(b, t) {
+   if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
+-  if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
++  if (b.cls === 'ABSENT') return 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+--- T4-carried-swap
+@@ -248,7 +248,7 @@
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+-  return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
++  return b.key !== t.key ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+ function revParse(lane, rev) {
+--- T5-absentboth-dead
+@@ -243,7 +243,7 @@
+   return res;
+ }
+ function transition(b, t) {
+-  if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
++  if (b.cls === 'ABSENT' && t.cls === 'ABSENTX') return 'ABSENT_BOTH';
+   if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+--- T6-repaired-to-gone
+@@ -247,7 +247,7 @@
+   if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+-  if (t.cls === 'CLEAN') return 'REPAIRED';
++  if (t.cls === 'CLEAN') return 'GONE';
+   return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+ 
+--- T7-harm-to-moved
+@@ -246,7 +246,7 @@
+   if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
+   if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+-  if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
++  if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'CARRIED_MOVED';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+   return b.key === t.key ? 'CARRIED' : 'CARRIED_MOVED';
+ }
+--- T8-newok-fallthrough
+@@ -244,7 +244,7 @@
+ }
+ function transition(b, t) {
+   if (b.cls === 'ABSENT' && t.cls === 'ABSENT') return 'ABSENT_BOTH';
+-  if (b.cls === 'ABSENT') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
++  if (b.cls === 'ABSENT' && t.cls !== 'CLEAN') return t.cls === 'CLEAN' ? 'NEW_OK' : 'NEW_RED';
+   if (t.cls === 'ABSENT') return b.cls === 'CLEAN' ? 'HARM_ABSENT' : 'GONE';
+   if (b.cls === 'CLEAN') return t.cls === 'CLEAN' ? 'HELD' : 'HARM';
+   if (t.cls === 'CLEAN') return 'REPAIRED';
+--- V1-first-hit
+@@ -201,7 +201,7 @@
+     while (end < loose.length && /[-A-Za-z0-9_]/.test(loose[end])) end += 1;
+     hits.push({ line: loose.trim(), word: loose.slice(m.indices[1][0], end) });
+   }
+-  const last = hits.length ? hits[hits.length - 1] : null;
++  const last = hits.length ? hits[0] : null;
+   const tailLine = (() => { const t = buf.toString('utf8').split('\n').map((l) => l.trim()).filter(Boolean); return t.length ? t[t.length - 1].slice(0, 120) : ''; })();
+   if (signal) return { cls: 'FAIL_CLOSED', text: `signal=${signal}${last ? ` verdict=${JSON.stringify(last.line.slice(0, 120))}` : ''}` };
+   if (badLine) return { cls: 'FAIL_CLOSED', text: `verdict-not-utf8 exit=${rc}` };
+--- V2-no-hyphen-extend
+@@ -198,7 +198,7 @@
+     if (!m || !m.indices || !m.indices[1]) continue;
+     try { dec.decode(lineBuf); } catch { badLine = true; continue; }
+     let end = m.indices[1][1];
+-    while (end < loose.length && /[-A-Za-z0-9_]/.test(loose[end])) end += 1;
++    ;
+     hits.push({ line: loose.trim(), word: loose.slice(m.indices[1][0], end) });
+   }
+   const last = hits.length ? hits[hits.length - 1] : null;
+--- V3-earlier-bad-dead
+@@ -208,7 +208,7 @@
+   if (!last) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine)}` : ''}` };
+   // clean only when the exit is accepted, the LAST verdict word is clean and no EARLIER verdict line carried a non-clean
+   // word (a gate that said DRIFT and later CLEAN is not clean; `ignore_words` lists informational words such as `note`)
+-  const earlierBad = hits.slice(0, -1).find((h) => !g.clean.includes(h.word) && !g.ignore.includes(h.word));
++  const earlierBad = undefined;
+   const clean = g.okExit.includes(rc) && g.clean.includes(last.word) && !earlierBad;
+   if (clean) return { cls: 'CLEAN', text: last.line };
+   return { cls: 'NOT_CLEAN', text: `${earlierBad && g.clean.includes(last.word) ? earlierBad.line : last.line} [exit=${rc}${earlierBad && g.clean.includes(last.word) ? ' earlier-verdict-not-clean' : ''}]` };
+--- V4-utf8-check-dead
+@@ -196,7 +196,7 @@
+     const loose = lineBuf.toString('utf8').replace(/\s+$/, '');
+     const m = g.re.exec(loose);
+     if (!m || !m.indices || !m.indices[1]) continue;
+-    try { dec.decode(lineBuf); } catch { badLine = true; continue; }
++    ;
+     let end = m.indices[1][1];
+     while (end < loose.length && /[-A-Za-z0-9_]/.test(loose[end])) end += 1;
+     hits.push({ line: loose.trim(), word: loose.slice(m.indices[1][0], end) });
+--- V5-noverdict-notclean
+@@ -205,7 +205,7 @@
+   const tailLine = (() => { const t = buf.toString('utf8').split('\n').map((l) => l.trim()).filter(Boolean); return t.length ? t[t.length - 1].slice(0, 120) : ''; })();
+   if (signal) return { cls: 'FAIL_CLOSED', text: `signal=${signal}${last ? ` verdict=${JSON.stringify(last.line.slice(0, 120))}` : ''}` };
+   if (badLine) return { cls: 'FAIL_CLOSED', text: `verdict-not-utf8 exit=${rc}` };
+-  if (!last) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine)}` : ''}` };
++  if (!last) return { cls: 'NOT_CLEAN', text: 'no-verdict' };
+   // clean only when the exit is accepted, the LAST verdict word is clean and no EARLIER verdict line carried a non-clean
+   // word (a gate that said DRIFT and later CLEAN is not clean; `ignore_words` lists informational words such as `note`)
+   const earlierBad = hits.slice(0, -1).find((h) => !g.clean.includes(h.word) && !g.ignore.includes(h.word));
+--- V6-signal-ignored
+@@ -203,7 +203,7 @@
+   }
+   const last = hits.length ? hits[hits.length - 1] : null;
+   const tailLine = (() => { const t = buf.toString('utf8').split('\n').map((l) => l.trim()).filter(Boolean); return t.length ? t[t.length - 1].slice(0, 120) : ''; })();
+-  if (signal) return { cls: 'FAIL_CLOSED', text: `signal=${signal}${last ? ` verdict=${JSON.stringify(last.line.slice(0, 120))}` : ''}` };
++  ;
+   if (badLine) return { cls: 'FAIL_CLOSED', text: `verdict-not-utf8 exit=${rc}` };
+   if (!last) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine)}` : ''}` };
+   // clean only when the exit is accepted, the LAST verdict word is clean and no EARLIER verdict line carried a non-clean
+--- V7-no-trailing-trim
+@@ -193,7 +193,7 @@
+     const lineBuf = buf.subarray(off, nl);
+     off = nl + 1;
+     if (lineBuf.length === 0) continue;
+-    const loose = lineBuf.toString('utf8').replace(/\s+$/, '');
++    const loose = lineBuf.toString('utf8');
+     const m = g.re.exec(loose);
+     if (!m || !m.indices || !m.indices[1]) continue;
+     try { dec.decode(lineBuf); } catch { badLine = true; continue; }
+--- V9-tail-clip-3
+@@ -202,7 +202,7 @@
+     hits.push({ line: loose.trim(), word: loose.slice(m.indices[1][0], end) });
+   }
+   const last = hits.length ? hits[hits.length - 1] : null;
+-  const tailLine = (() => { const t = buf.toString('utf8').split('\n').map((l) => l.trim()).filter(Boolean); return t.length ? t[t.length - 1].slice(0, 120) : ''; })();
++  const tailLine = (() => { const t = buf.toString('utf8').split('\n').map((l) => l.trim()).filter(Boolean); return t.length ? t[t.length - 1].slice(0, 3) : ''; })();
+   if (signal) return { cls: 'FAIL_CLOSED', text: `signal=${signal}${last ? ` verdict=${JSON.stringify(last.line.slice(0, 120))}` : ''}` };
+   if (badLine) return { cls: 'FAIL_CLOSED', text: `verdict-not-utf8 exit=${rc}` };
+   if (!last) return { cls: 'FAIL_CLOSED', text: `no-verdict exit=${rc}${tailLine ? ` last=${JSON.stringify(tailLine)}` : ''}` };

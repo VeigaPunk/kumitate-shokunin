@@ -1,0 +1,79 @@
+[
+ {
+  "variant": "plain",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=8e44b076bb8b7c187745971dba512eb6a9e19f90 rule=L66 seed=106c3b41246c1414 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 23 problems: malformed@9,malformed@12,malformed@15,malformed@18,malformed@21,malformed@24",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ },
+ {
+  "variant": "no-trailing-pipe",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=7b0fb97a83d108fe26f6a4c8c353ee853a3b0f38 rule=L66 seed=f264b8a13ef5593a | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 24 problems: R55-I1:open-with-answer,malformed@9,malformed@12,malformed@15,malformed@18,malformed@21",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ },
+ {
+  "variant": "escaped-pipe",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=7d3cba715c0d1890f615af8d7e5306ceaabdef89 rule=L66 seed=efe74a7893af9ee2 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=21 open=19 closed=2 wontfix=0 findings=24 first=ROW_MALFORMED:line7:cells=8 own-items=33 own-spotchecks=11 | L3 MISS 25 problems: malformed@7,malformed@9,malformed@12,malformed@15,malformed@18,malformed@21",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line7:cells=8 || FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9"
+ },
+ {
+  "variant": "curly-quote",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=cd12891c3adba42e8edad6168410fec8dd3be94f rule=L66 seed=9df1279331821425 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=24 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 25 problems: R55-I1:quote-not-in-item,malformed@9,malformed@12,malformed@15,malformed@18,malformed@21",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ },
+ {
+  "variant": "trailing-space",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=b3cffc22b1e1c155eb4cd8110d1431ebac2400c9 rule=L66 seed=6fb52ae5eb843c25 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 23 problems: malformed@9,malformed@12,malformed@15,malformed@18,malformed@21,malformed@24",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ },
+ {
+  "variant": "second-ledger",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=458060c5462878a391c5e04a8c0ec6a0e7bf93c4 rule=L66 seed=847e2b8fc4ce3539 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 23 problems: malformed@9,malformed@12,malformed@15,malformed@18,malformed@21,malformed@24",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ },
+ {
+  "variant": "crlf-spotcheck",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=f76186f35187f58f921e4b671ea93f981cefacf0 rule=L66 seed=4e46c8529fc42362 | L3 MISS 4 problems: ledger-empty-or-absent,round-65-items-absent,classes=0<5,no-class-spans-4-rounds",
+  "tool_exit": 0,
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=0 items=0 rows=0 open=0 closed=0 wontfix=0"
+ },
+ {
+  "variant": "fence-in-section",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=1dc77348ad09102e6d4dc338b126ac3821a322cd rule=L66 seed=9df380acfac8e39f | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=44 rows=33 open=30 closed=3 wontfix=0 findings=22 first=ROW_MALFORMED:line10:cells=9 own-items=44 own-spotchecks=11 | L3 MISS 23 problems: malformed@10,malformed@14,malformed@18,malformed@22,malformed@26,malformed@30",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line10:cells=9 || FINDING ROW_MALFORMED line14:cells=9 || FINDING ROW_MALFORMED line18:cells=9"
+ },
+ {
+  "variant": "comment-in-section",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=c1b1e9a41bd37d5da2da67150345a136ed63187e rule=L66 seed=73196f19431e3f1c | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=44 rows=33 open=30 closed=3 wontfix=0 findings=22 first=ROW_MALFORMED:line10:cells=9 own-items=44 own-spotchecks=11 | L3 MISS 23 problems: malformed@10,malformed@14,malformed@18,malformed@22,malformed@26,malformed@30",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line10:cells=9 || FINDING ROW_MALFORMED line14:cells=9 || FINDING ROW_MALFORMED line18:cells=9"
+ },
+ {
+  "variant": "setext-appendix",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=63dccfe0757da418c6f1a18257e47a2a2feee51b rule=L66 seed=b47cdfda926d4544 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=44 rows=33 open=30 closed=3 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=44 own-spotchecks=11 | L3 MISS 23 problems: malformed@9,malformed@13,malformed@17,malformed@21,malformed@25,malformed@29",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line13:cells=9 || FINDING ROW_MALFORMED line17:cells=9"
+ },
+ {
+  "variant": "duplicate-routed-heading",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=bc4bf20b36cbba631943a63d9be85b9586b22e69 rule=L66 seed=8309127c069df58b | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=22 open=20 closed=2 wontfix=0 findings=22 first=ROW_MALFORMED:line9:cells=9 own-items=33 own-spotchecks=11 | L3 MISS 23 problems: malformed@9,malformed@12,malformed@15,malformed@18,malformed@21,malformed@24",
+  "tool_exit": 1,
+  "tool": "FINDING ROW_MALFORMED line9:cells=9 || FINDING ROW_MALFORMED line12:cells=9 || FINDING ROW_MALFORMED line15:cells=9"
+ }
+]

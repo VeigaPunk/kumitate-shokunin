@@ -20,6 +20,7 @@ const sha = (b) => createHash('sha256').update(b).digest('hex');
 const src = readFileSync(PROBE, 'utf8');
 const beforeHash = sha(src);
 mkdirSync(join(BUILD, 'mutants'), { recursive: true });
+for (const d of [S, join(S, 'tmp'), join(S, 'ctl')]) mkdirSync(d, { recursive: true });
 
 const M = [];
 const add = (id, cls, edits, expect, note) => M.push({ id, cls, edits, expect, note });
@@ -90,7 +91,7 @@ const probeLine = (out) => (out || '').split('\n').reverse().find((l) => l.start
 
 function spawnRetry(cmd, args, opts, tag) {
   let last = null;
-  for (let a = 1; a <= 4; a += 1) {
+  for (let a = 1; a <= 2; a += 1) {
     const r = spawnSync(cmd, args, opts);
     const gotLine = (r.stdout || '').split('\n').some((l) => l.startsWith('LEDGER66_'));
     if (r.status !== null || gotLine) return { r, attempts: a };
@@ -104,12 +105,12 @@ function fmtFail(r) {
   return `(no probe line; status=${r.r.status} sig=${r.r.signal} err=${String(r.r.error)} attempts=${r.attempts} stderr=${(r.r.stderr || '').slice(0, 160)})`;
 }
 function runProbe(probePath, rev) {
-  const { r, attempts } = spawnRetry('node', [probePath, LANE, rev], { encoding: 'utf8', timeout: 600, cwd: S, env: { ...process.env, TMPDIR: join(S, 'tmp') } });
+  const { r, attempts } = spawnRetry('node', [probePath, LANE, rev], { encoding: 'utf8', timeout: 600000, cwd: S, env: { ...process.env, TMPDIR: join(S, 'tmp') } });
   const line = probeLine(r.stdout);
   return { line: line === '(no probe line)' ? fmtFail({ r, attempts }) : line, status: r.status };
 }
 function runControl(probePath, variant) {
-  const { r, attempts } = spawnRetry('bash', [ctlMut, LANE, variant], { encoding: 'utf8', timeout: 900, cwd: S, env: { ...process.env, SCRATCH: join(S, 'ctl'), MUT_PROBE: probePath, TMPDIR: join(S, 'tmp') } });
+  const { r, attempts } = spawnRetry('bash', [ctlMut, LANE, variant], { encoding: 'utf8', timeout: 900000, cwd: S, env: { ...process.env, SCRATCH: join(S, 'ctl'), MUT_PROBE: probePath, TMPDIR: join(S, 'tmp') } });
   const line = probeLine(r.stdout);
   return { line: line === '(no probe line)' ? fmtFail({ r, attempts }) : line, status: r.status };
 }

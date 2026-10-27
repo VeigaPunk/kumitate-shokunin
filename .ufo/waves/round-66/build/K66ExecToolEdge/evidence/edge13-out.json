@@ -1,0 +1,64 @@
+[
+ {
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0",
+  "variant": "plain",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=245041eb60d240a644f3a761a97c402181124754 rule=L66 seed=790b8bd562b8ab44",
+  "tool_exit": 0
+ },
+ {
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=0 items=0 rows=0 open=0 closed=0 wontfix=0",
+  "variant": "crlf-spotcheck",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=1554b26f679cbf92ac08144147ee9d10e3aa2c59 rule=L66 seed=fd591aa2fe12375a | L3 MISS 4 problems: ledger-empty-or-absent,round-65-items-absent,classes=0<5,no-class-spans-4-rounds",
+  "tool_exit": 0
+ },
+ {
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=44 rows=44 open=40 closed=4 wontfix=0",
+  "variant": "fence-in-section",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=fdeccfacfdc126045e7c90aabfa370d5fe4028ad rule=L66 seed=86c9ff1b15aba206",
+  "tool_exit": 0
+ },
+ {
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=44 rows=44 open=40 closed=4 wontfix=0",
+  "variant": "comment-in-section",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=0a9401bd48feddb8927642cbacf8fc62119a8899 rule=L66 seed=a6f936dc91174727",
+  "tool_exit": 0
+ },
+ {
+  "tool": "ROUTED_LEDGER: CLEAN spotchecks=11 sections=11 items=33 rows=33 open=30 closed=3 wontfix=0",
+  "variant": "plain",
+  "counter_exit": 0,
+  "counter": "LEDGER66_HELD held=6/6 checks=6 rev=2bd0aab9f75df9ee9d11b1b783f6ec4c5b8c5696 rule=L66 seed=e9980cf6949e912b",
+  "tool_exit": 0
+ },
+ {
+  "tool": "ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=0 open=0 closed=0 wontfix=0 findings=33 first=UNLEDGERED:round-55-item-1",
+  "variant": "crlf-spotcheck",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=4/6 checks=6 rev=67f9088209741e1e86350146e3c539f7ba30e6ef rule=L66 seed=4d378722cc590a2e | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=0 open=0 closed=0 wontfix=0 findings=33 first=UNLEDGERED:round-55-item-1 own-items=0 own-spotchecks=11 | L3 MISS 4 problems: ledger-empty-or-absent,round-65-items-absent,classes=0<5,no-class-spans-4-rounds",
+  "tool_exit": 1
+ },
+ {
+  "tool": "ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=44 open=40 closed=4 wontfix=0 findings=77 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1",
+  "variant": "fence-in-section",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=81e47ba8c576c2441f06a4f899d975772b176ad7 rule=L66 seed=6e5214728243ad69 | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=44 open=40 closed=4 wontfix=0 findings=77 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1 own-items=44 own-spotchecks=11",
+  "tool_exit": 1
+ },
+ {
+  "tool": "ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=44 open=40 closed=4 wontfix=0 findings=77 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1",
+  "variant": "comment-in-section",
+  "counter_exit": 1,
+  "counter": "LEDGER66_UNMET held=5/6 checks=6 rev=1bdc1c3c3da10c167e42a706c857bad6dcded473 rule=L66 seed=9ce1250c395f68db | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=11 sections=11 items=33 rows=44 open=40 closed=4 wontfix=0 findings=77 first=QUOTE_ABSENT:R55-I1@line7:round-55-item-1 own-items=44 own-spotchecks=11",
+  "tool_exit": 1
+ },
+ {
+  "check": "v2 items <= counter items on every real round 34..65",
+  "violations": [],
+  "total_rounds": 32,
+  "changed": []
+ }
+]

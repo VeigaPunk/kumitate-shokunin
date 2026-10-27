@@ -1,0 +1,185 @@
+{
+ "cases": [
+  {
+   "id": "kc-origin-removed",
+   "note": "killing case: the sandbox clone must not carry the origin remote into gate runs (S1-no-origin-removal)",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "if git remote get-url origin >/dev/null 2>&1; then echo 'G1: LEAKED'; else echo 'G1: CLEAN'; fi\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "if git remote get-url origin >/dev/null 2>&1; then echo 'G1: LEAKED'; else echo 'G1: CLEAN'; fi\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 HELD"
+    ],
+    "summary": "held=1",
+    "text": {
+     "g1": "G1: CLEAN"
+    }
+   }
+  },
+  {
+   "id": "kc-clean-x-ignored-leftovers",
+   "note": "killing case: sandbox reset must remove ignored files between gate runs on the same revision clone (S2-clean-keeps-ignored)",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    },
+    {
+     "id": "g2",
+     "argv": [
+      "bash",
+      "scripts/g2.sh"
+     ],
+     "verdict": "^G2: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    }
+   ],
+   "base": {
+    ".gitignore": "ignored/\n",
+    "scripts/g1.sh": "echo 'G1: CLEAN'\nmkdir -p ignored\necho x > ignored/state\n",
+    "scripts/g2.sh": "if [ -e ignored/state ]; then echo 'G2: STALE'; else echo 'G2: CLEAN'; fi\n"
+   },
+   "tip": {
+    ".gitignore": "ignored/\n",
+    "scripts/g1.sh": "echo 'G1: CLEAN'\nmkdir -p ignored\necho x > ignored/state\n",
+    "scripts/g2.sh": "if [ -e ignored/state ]; then echo 'G2: STALE'; else echo 'G2: CLEAN'; fi\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 HELD",
+     "g2 HELD"
+    ],
+    "summary": "held=2"
+   }
+  },
+  {
+   "id": "kc-signal-fail-closed",
+   "note": "killing case: a gate that prints a verdict then dies by signal is FAIL_CLOSED (signal=SIGKILL), not a verdict reading (V6-signal-ignored)",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\nkill -9 $$\n"
+   },
+   "expect": {
+    "exit": 1,
+    "rows": [
+     "g1 HARM"
+    ],
+    "summary": "harm=1",
+    "text": {
+     "g1": "signal=SIGKILL"
+    }
+   }
+  },
+  {
+   "id": "kc-trailing-ws-trim",
+   "note": "killing case: trailing whitespace on the verdict line is trimmed before the anchored verdict regex matches (V7-no-trailing-trim)",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (CLEAN)$",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "printf 'G1: CLEAN   \\n'\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 HELD"
+    ],
+    "summary": "held=1"
+   }
+  },
+  {
+   "id": "kc-noverdict-tail-kept",
+   "note": "killing case: the no-verdict FAIL_CLOSED text keeps the gate's last output line (V9-tail-clip-3)",
+   "gates": [
+    {
+     "id": "g1",
+     "argv": [
+      "bash",
+      "scripts/g1.sh"
+     ],
+     "verdict": "^G1: (\\w+)",
+     "clean": [
+      "CLEAN"
+     ],
+     "timeout": 10
+    }
+   ],
+   "base": {
+    "scripts/g1.sh": "echo 'G9-long-tail-abcdef'\n"
+   },
+   "tip": {
+    "scripts/g1.sh": "echo 'G1: CLEAN'\n"
+   },
+   "expect": {
+    "exit": 0,
+    "rows": [
+     "g1 REPAIRED"
+    ],
+    "summary": "repaired=1",
+    "text": {
+     "g1": "last=\\\"G9-long-tail-abcdef\\\""
+    }
+   }
+  }
+ ]
+}

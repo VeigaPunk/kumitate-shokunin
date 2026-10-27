@@ -1,0 +1,40 @@
+== killed mutants: first CASE FAIL line each ==
+E2-always-exit0: CASE FAIL symlink-needs-escape exit=0 want=1
+E3-allunmeasured-dead: CASE FAIL oversize-output-late-verdict exit=0 want=2 | summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 unmeasured=1 ancest
+E1-no-harmabsent: CASE FAIL loader-argv-needs-derivation exit=0 want=1
+E5-strict-gone-dead: CASE FAIL strict-gone-opt-in exit=0 want=1 | summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=0 moved=0 new=0 gone=1 harm=0 harm_absent=0 new_red=0 unmeasured=0 ancestor=yes reg
+E4-nogates-dead: CASE FAIL all-absent-no-gates summary="HARM_MATRIX: FAIL_CLOSED reason=ALL_UNMEASURED detail=\"0 gate(s) produced no reading at either revision\"" want~"reason=NO_GATES"
+E9-text-clip-12: CASE FAIL oversize-output-late-verdict text(g1) lacks "output>67108864B"
+F1-loader-skip-dead: CASE FAIL loader-argv-needs-derivation rows=["g1 HARM"] want=["g1 HARM_ABSENT"]
+S4-dir-needs-ok: CASE FAIL v2-needs-directory-not-a-file exit=1 want=0 | rows=["g1 HARM","g2 HELD"] want=["g1 CARRIED","g2 HELD"] | summary="HARM_MATRIX: HARM gates=2 held=1 repaired=0 carried=0 moved=0 new=
+S3-needs-escape-ok: CASE FAIL symlink-needs-escape exit=0 want=1 | rows=["g1 HELD"] want=["g1 HARM"] | text(g1) lacks "needs-escape-link:scripts/g1.sh"
+T1-held-harm-swap: CASE FAIL v2-no-verdict-both-unmeasured exit=1 want=0 | rows=["g1 CARRIED","g2 HARM"] want=["g1 CARRIED","g2 HELD"]
+S5-mkdtemp-outside-tmpdir: CASE FAIL tmpdir-is-a-file-fails-closed exit=0 want=2 | rows=["g1 HELD"] want=[] | summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 gone=0 harm=0 harm_absent=0 n
+T3-new-ok-dead: CASE FAIL new-ok exit=1 want=0 | rows=["g1 HELD","g2 NEW_RED"] want=["g1 HELD","g2 NEW_OK"]
+T2-gone-harmabsent-swap: CASE FAIL loader-argv-needs-derivation exit=0 want=1 | rows=["g1 GONE"] want=["g1 HARM_ABSENT"]
+T4-carried-swap: CASE FAIL v2-no-verdict-both-unmeasured rows=["g1 CARRIED_MOVED","g2 HELD"] want=["g1 CARRIED","g2 HELD"]
+T7-harm-to-moved: CASE FAIL symlink-needs-escape exit=0 want=1 | rows=["g1 CARRIED_MOVED"] want=["g1 HARM"]
+T6-repaired-to-gone: CASE FAIL repaired rows=["g1 GONE"] want=["g1 REPAIRED"] | summary="HARM_MATRIX: CLEAN gates=1 held=0 repaired=0 carried=0 moved=0 new=0 gone=1 harm=0 harm_absent=0 new_red=0 unmeasured=0 an
+T5-absentboth-dead: CASE FAIL absent-both-skipped exit=1 want=0 | rows=["g1 NEW_RED","g2 HELD"] want=["g1 ABSENT_BOTH","g2 HELD"] | summary="HARM_MATRIX: HARM gates=2 held=1 repaired=0 carried=0 moved=0 new=0 g
+V1-first-hit: CASE FAIL earlier-drift-then-clean-not-clean text(g1) lacks "earlier-verdict-not-clean"
+V2-no-hyphen-extend: CASE FAIL hyphen-word-is-its-own-word exit=0 want=1 | rows=["g1 HELD"] want=["g1 HARM"]
+T8-newok-fallthrough: CASE FAIL new-ok rows=["g1 HELD","g2 REPAIRED"] want=["g1 HELD","g2 NEW_OK"]
+V3-earlier-bad-dead: CASE FAIL earlier-drift-then-clean-not-clean exit=0 want=1 | rows=["g1 HELD"] want=["g1 HARM"] | text(g1) lacks "earlier-verdict-not-clean"
+V4-utf8-check-dead: CASE FAIL non-utf8-verdict-line rows=["g1 HELD"] want=["g1 REPAIRED"] | summary="HARM_MATRIX: CLEAN gates=1 held=1 repaired=0 carried=0 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 un
+V5-noverdict-notclean: CASE FAIL v2-no-verdict-both-unmeasured summary="HARM_MATRIX: CLEAN gates=2 held=1 repaired=0 carried=1 moved=0 new=0 gone=0 harm=0 harm_absent=0 new_red=0 unmeasured=0 ancestor=yes registry
+
+== survivors: full-suite verdicts (before killing cases) ==
+E6-timeout-read-as-error: HARM_MATRIX_SELFTEST: PASS (114/114)
+S1-no-origin-removal: HARM_MATRIX_SELFTEST: PASS (114/114)
+S2-clean-keeps-ignored: HARM_MATRIX_SELFTEST: PASS (114/114)
+S6-stale-check-dead: HARM_MATRIX_SELFTEST: PASS (114/114)
+V6-signal-ignored: HARM_MATRIX_SELFTEST: PASS (114/114)
+V7-no-trailing-trim: HARM_MATRIX_SELFTEST: PASS (114/114)
+V9-tail-clip-3: HARM_MATRIX_SELFTEST: PASS (114/114)
+
+== killing-case runs (pristine vs mutant) ==
+S1-no-origin-removal: pristine=CASE ok kc-origin-removed mutant=CASE FAIL kc-origin-removed rows=["g1 CARRIED"] want=["g1 HE
+S2-clean-keeps-ignored: pristine=CASE ok kc-clean-x-ignored-leftovers mutant=CASE FAIL kc-clean-x-ignored-leftovers rows=["g1 HELD","g2 C
+V6-signal-ignored: pristine=CASE ok kc-signal-fail-closed mutant=CASE FAIL kc-signal-fail-closed text(g1) lacks "signal=SIGKI
+V7-no-trailing-trim: pristine=CASE ok kc-trailing-ws-trim mutant=CASE FAIL kc-trailing-ws-trim exit=1 want=0 | rows=["g1 HARM
+V9-tail-clip-3: pristine=CASE ok kc-noverdict-tail-kept mutant=CASE FAIL kc-noverdict-tail-kept text(g1) lacks "last=\\\"G9

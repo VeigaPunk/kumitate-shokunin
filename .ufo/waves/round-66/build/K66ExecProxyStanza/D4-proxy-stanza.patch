@@ -1,0 +1,73 @@
+diff --git i/SCORECARD.md w/SCORECARD.md
+index 2b3825de..4ba0dfb7 100644
+--- i/SCORECARD.md
++++ w/SCORECARD.md
+@@ -285,12 +285,12 @@ boundary:
+ `corpus/knowledge/executable-scorecard.md`.
+ 
+ <!-- kumitate-proxy-v1
+-A=351
++A=523
+ C=33
+ C1=19
+ C1_total=19
+-C2=156
+-C2_total=156
++C2=162
++C2_total=162
+ S_members=88
+ S_sections=88
+ R_members=92
+@@ -299,13 +299,13 @@ coverage_script=10
+ coverage_runtime=10
+ C1k=5
+ C1k_total=5
+-K_members=49
+-K_sections=49
++K_members=53
++K_sections=53
+ coverage_kimi=10
+ pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+ pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
+ pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
+-pin.proxy-check=d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f
++pin.proxy-check=5587610388457dd16e862932d93060e5bc99597f7bb9a230eba8d0d085df647d
+ pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
+ pin.kimi-census=9d27bc9c12546e07f8c54d36dcc73b50cfab56bf3198674febefd6c23ef84f50
+ -->
+@@ -332,6 +332,9 @@ pin.inline-dispatch-evidence=9f1978a93deb0001396008f48ceae2f154bf7bdc145fff36721
+ pin.plan-before-ready=0c7da32a217da1634e9a5ea7e0f8acfe0c4e077e5d64e53c07c0fa6fe292e77e
+ pin.jj-seat-demo=80d174dba368e71296da65f59d93e60fb5e37673f429e3d832be02681c5b480a
+ pin.report-receipt-diff=23efb0908b9ebe51f158f590c6512be59aa183e5e25f268b5e0340f78f2f8927
++pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
++pin.routed-ledger=f92a364d293a283804e7d693f04cddfd94040d7f29a6c5c428b900b0d6ff3bf5
++pin.omp-binary-probe=ce12d7489c73fe91a2b00fb3e91d3e4ea80b8a014d80c9b4266e12c82de8f7ff
+ -->
+ 
+ 
+diff --git i/corpus/README.md w/corpus/README.md
+index 95453d05..bc9dbd53 100644
+--- i/corpus/README.md
++++ w/corpus/README.md
+@@ -193,6 +193,7 @@ fixture suite, `--strict` to fail on warnings.
+ | `knowledge/omp-installed-release-mcp-runtime.md` | The installed OMP release at the MCP layer (round 65, S201–S206; measured, not just versioned): the release is `omp/18.12.6` behind a 1680-byte crash-restart wrapper; the coding agent sends `2025-11-25` in `initialize` and adopts the server's revision; a second MCP client in the same binary (Z.AI web search) pins `2025-03-26`; the `MCP-Protocol-Version` header is absent on `initialize` and carries the negotiated revision afterwards; the 250 ms startup gate and the no-replay rule are documentation facts at the tag, not byte facts; a read-only 22-key probe measures the wrapper, the release identity and the literals its bytes carry (`2026-07-28` zero) | S201–S206 in `corpus/SOURCES.md`; `scripts/omp-binary-probe.sh` (contract `kumitate-omp-binary-probe-v2`); `.ufo/pins/source-captures.json` |
+ | `lessons/round-65.md` | Round-65: `harm-matrix` capability acquisition (contract `kumitate-harm-matrix-v2` — every registry gate run at a BASE and a TIP revision, each in its own sandbox clone, and classified HELD / REPAIRED / HARM / HARM_ABSENT / NEW_OK / NEW_RED / GONE / CARRIED / CARRIED_MOVED / ABSENT_BOTH; judged by frozen H65 H1–H5) and the installed-release frontier entry (judged by frozen O65 O1–O8); the round-64 base DRIFT repaired (`readme-map` row and pin at the freeze, `proxy-check` stanza at the close); `considerthese/2026-10-25.md` idea 4 (count recurrences) taken as a recurrence table and QUALITY Q62 | `.ufo/waves/round-65/plan.md`; `.ufo/waves/round-65/base/`; `.ufo/waves/round-65/probe/` |
+ | `lessons/round-65-verifier-spotcheck.md` | Round-65 non-author verification (hyaku closure, non-author integrator): C1 `harm-matrix` (`HARM65_HELD held=5/5`) and C2 the installed OMP release (`OMP65_HELD held=8/8`, registry 139 → 145) re-measured plainly; 2 admits + 2 rejects sampled, 4 agree; routes D1–D7 (Gate row table vs registry, capability row, registry home, proxy stanza, cite-check-fleet-dot +92, round size / wave 2, this README row); row added at the round-66 open (D7) so the file does not leave the round in DRIFT | `.ufo/reports/round-65/kumitate.md`; lane tip `52f8497987eaae42c3be668cdd5e90a34c5bf48e` at the spot-check |
++| `lessons/round-66-verifier-spotcheck.md` | Round-66 non-author verification (hyaku closure, non-author integrator): C1 `routed-ledger` and C2 the MCP deprecation registry re-measured plainly; routed D4 answered (the proxy stanza refresh); row added at the round-66 close so the file does not leave the round in DRIFT | `.ufo/waves/round-66/w1/`; lane tip at the spot-check |
+ | `lessons/round-66.md` | Round-66 honest stop: `routed-ledger` and MCP deprecation-registry claims remain unmet at the report cutoff because the v2 wave was dispatched but no `WAVE-DONE` had been received; records the frozen counter readings, routed-item loss mistake, census, and incomplete assimilation status | `.ufo/waves/round-66/plan.md`; `.ufo/waves/round-66/base/`; `.ufo/waves/round-66/close/` |
+ 
+ 
+diff --git i/scripts/proxy-check.mjs w/scripts/proxy-check.mjs
+index 00ed3004..cd2e258a 100755
+--- i/scripts/proxy-check.mjs
++++ w/scripts/proxy-check.mjs
+@@ -481,6 +481,9 @@ const GATE_PINS = {
+   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
+   'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
+   'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
++  'pin.harm-matrix': 'scripts/harm-matrix.mjs', // round 66 D4: the harm-matrix gate had no pin key (PIN_UNPINNED)
++  'pin.routed-ledger': 'scripts/routed-ledger.mjs', // round 66 D4: the routed-ledger gate (C1 tool v1) had no pin key (PIN_UNPINNED)
++  'pin.omp-binary-probe': 'scripts/omp-binary-probe.sh', // round 66 D4: the installed-release probe (a .sh gate, pin key added)
+ };
+ /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
+ const AXIS_ROWS = [
