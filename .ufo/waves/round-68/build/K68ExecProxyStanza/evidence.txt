@@ -1,0 +1,77 @@
+# receipts — K68ExecProxyStanza (generated 2026-10-27T11:58:18-03:00)
+
+## 1. base state at freeze commit (lane worktree, tracked == HEAD)
+$ git -C lane rev-parse HEAD
+39f61816d4ee7a8d401df42c1818c91a9c537bce
+$ node scripts/proxy-check.mjs
+PROXY  error  A_DRIFT  A: declared=351 computed=556 delta=+205
+PROXY  error  C2_DRIFT  C2: declared=156 computed=163 delta=+7
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=156 computed=163 delta=+7
+PROXY  error  K_MEMBERS_DRIFT  K_members: declared=49 computed=53 delta=+4
+PROXY  error  K_SECTIONS_DRIFT  K_sections: declared=49 computed=53 delta=+4
+PROXY  warn  PIN_UNPINNED  scripts/harm-matrix.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/routed-ledger.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=351 computed=556 delta=+205; C2_DRIFT term=C2 declared=156 computed=163 delta=+7; C2_TOTAL_DRIFT term=C2_total declared=156 computed=163 delta=+7; K_MEMBERS_DRIFT term=K_members declared=49 computed=53 delta=+4; K_SECTIONS_DRIFT term=K_sections declared=49 computed=53 delta=+4; PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+exit=1
+
+## 2. tracked vs worktree runnable (A)
+$ git ls-tree -r --name-only HEAD | grep -cE '\.(mjs|js|sh|py)$'
+548
+$ find . -path ./.git -prune -o -type f \( -name "*.mjs" -o -name "*.js" -o -name "*.sh" -o -name "*.py" \) -print | wc -l   (at 2026-10-27, mid-wave)
+556
+$ comm -13 <tracked> <worktree>   (two samples, both mid-wave)
+t1 (11:52): tracked=548 worktree=555   -> 7 untracked, all under .ufo/waves/round-68/build/
+t2 (11:58): tracked=548 worktree=556   -> 8 untracked (the wave is still writing; the delta is live and monotone)
+untracked delta at t1: build/K68ExecCounterRehearsal/ctl/{c1-controls.sh,c2-donothing.sh},
+  build/K68ExecPins/{generate-pins.mjs,make-variants.mjs,validate-pins.sh},
+  build/K68ExecReadmeFix/apply.mjs, build/K68ScribeQuality/ledger67-probe-as-frozen.mjs
+
+## 3. C / C2 / C2_total counts
+$ grep -cE '^\s*- \[' SKILL.md
+33
+$ grep -cE '^\| `(knowledge|lessons)/' corpus/README.md
+163
+$ find corpus/knowledge corpus/lessons -maxdepth 1 -type f -name "*.md" | wc -l
+163
+$ git show d23892ad:corpus/README.md | grep -cE '^\| `(knowledge|lessons)/'
+161
+$ git show 39f61816 --stat -- corpus/README.md
+ corpus/README.md                                   |    2 +
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=163 rows=163 covered=163
+
+## 4. K terms (live)
+$ node scripts/kimi-census.mjs
+INFO  ROOT_ENUM  -  root children=37 declared=27 chain=10 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=53 checked=53 errors=0 info=4 chain=10
+KIMI_CENSUS: CLEAN (members=53 checked=53 chain=10 info=4)
+
+## 5. drafted stanza over git archive (fixture clone /fast/scratch/hyaku/kumitate-r68/K68ExecProxyStanza/lane, commit 760c7b8e…)
+$ node "$D/scripts/proxy-check.mjs" --self "$D" --strict
+PROXY: MATCH (A=548 C=34 operability=9; C1=19/19 C2=165/165 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+## 6. proxy-check selftest with the two GATE_PINS added
+$ node lane/scripts/proxy-check.mjs --selftest
+PASS  [122/122]  every declared fail-closed arm fires in at least one fixture — 17 arms observed
+PROXY_SELFTEST: 122/122 pass
+VERDICT: PASS
+
+## 7. control: same stanza terms, gate-pin block lines removed -> default vs strict
+$ node lane2/scripts/proxy-check.mjs --self lane2
+PROXY  warn  PIN_UNPINNED  scripts/routed-ledger.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: MATCH (A=548 C=34 operability=9; C1=19/19 C2=165/165 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=53/53 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+$ node lane2/scripts/proxy-check.mjs --self lane2; echo exit=$?
+PROXY: MATCH (A=548 C=34 operability=9; ... pins=6 match; src-rev=31c465f15669)
+exit=0
+$ node lane2/scripts/proxy-check.mjs --self lane2 --strict > out; echo exit=$?
+PROXY: DRIFT (PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+exit=1
+
+## 8. hashes
+$ sha256sum scripts/harm-matrix.mjs scripts/routed-ledger.mjs scripts/proxy-check.mjs (lane)
+ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38  scripts/harm-matrix.mjs
+f92a364d293a283804e7d693f04cddfd94040d7f29a6c5c428b900b0d6ff3bf5  scripts/routed-ledger.mjs
+d6f8dce9b4a36a958960f6361aca66aa6f09a15f0626beac579353f96b33371f  scripts/proxy-check.mjs
+$ sha256sum scripts/proxy-check.mjs (fixture, +2 GATE_PINS lines)
+121c02f3407391ab23adca05a73d42ccbead84ec152e9a96318ca3e9ef5079b6  /fast/scratch/hyaku/kumitate-r68/K68ExecProxyStanza/lane/scripts/proxy-check.mjs

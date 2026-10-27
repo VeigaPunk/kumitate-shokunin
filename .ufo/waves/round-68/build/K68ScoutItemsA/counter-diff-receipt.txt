@@ -1,0 +1,22 @@
+# counter-diff receipt — K68ScoutItemsA
+# command: DUMP_ITEMS=1 node counter-patched.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin d23892ad44b41e1af63b3edb949d265ca1dd812d
+# counter-patched.mjs = verbatim copy of frozen .ufo/waves/round-68/probe/ledger68-probe.mjs with a DUMP_ITEMS print inserted after the spot.set loop (no logic change)
+
+DUMP round=55 sections=1 items=3
+DUMP round=56 sections=1 items=4
+DUMP round=57 sections=1 items=4
+DUMP round=58 sections=1 items=8
+DUMP round=59 sections=1 items=0
+DUMP round=60 sections=1 items=9
+DUMP round=61 sections=1 items=6
+DUMP round=62 sections=1 items=5
+DUMP round=63 sections=1 items=6
+DUMP round=64 sections=1 items=5
+DUMP round=65 sections=1 items=7
+DUMP round=66 sections=1 items=4
+
+# text diff vs build/K68ScoutItemsA/round-<n>-items.json (verbatim items67 copy in items-extract.mjs):
+round 55: 3 items, text mismatches = 0
+round 56: 4 items, text mismatches = 0
+round 57: 4 items, text mismatches = 0
+round 58: 8 items, text mismatches = 0

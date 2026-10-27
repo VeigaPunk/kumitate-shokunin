@@ -1,0 +1,14 @@
+diff --git i/.ufo/waves/round-68/probe/deprec68-probe.mjs w/.ufo/waves/round-68/probe/deprec68-probe.mjs
+index 2b548c4f..bd21bb71 100755
+--- i/.ufo/waves/round-68/probe/deprec68-probe.mjs
++++ w/.ufo/waves/round-68/probe/deprec68-probe.mjs
+@@ -291,7 +291,8 @@ check('M5', m5Bad.length === 0, m5Bad.slice(0, 5).join(',') || 'ok');
+   };
+   const capRows = tableOf(captureOf.S207 || '');
+   const snapSec = entryText != null ? section(entryText, 'Registry snapshot') : null;
+-  const snapRows = snapSec ? snapSec.split('\n').filter((l) => l.startsWith('|') && !/^\|[\s:-]+\|$/.test(l.trim()) && !/^\|\s*Feature\s*\|/.test(l)).map((l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim())) : [];
++  const isSepRow = (c) => c.every((x) => /^[\s:-]+$/.test(x) || x === '') && c.some((x) => /-/.test(x));
++  const snapRows = snapSec ? snapSec.split('\n').filter((l) => l.startsWith('|') && !/^\|\s*Feature\s*\|/.test(l)).map((l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim())).filter((c) => !isSepRow(c)) : [];
+   if (!capRows) bad6.push('capture-table-absent');
+   else {
+     if (snapRows.length !== capRows.length) bad6.push(`rows=${snapRows.length}!=${capRows.length}`);

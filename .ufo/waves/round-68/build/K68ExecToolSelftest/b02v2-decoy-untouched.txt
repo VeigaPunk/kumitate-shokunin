@@ -1,0 +1,7 @@
+# B02 (v2 arm): the draft leaves the GIT_DIR-named foreign repo untouched
+$ node run-cases.mjs --tool build/K68ExecToolV2/routed-ledger.mjs --only B02 --keep
+CASE ok   B02 GIT_DIR exported: selftest still PASS with >=44 cases
+$ git -C <decoy> log --oneline
+4207244 decoy (clean)
+$ git -C <decoy> status --porcelain   # empty = untouched
+(end)

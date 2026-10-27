@@ -1,0 +1,21 @@
+### command: curl -sS -L -o /dev/null -w '%{http_code} %{size_download} %{url_effective}' <url>
+https://modelcontextprotocol.io/specification/2025-11-05/basic/transports	404 127278 https://modelcontextprotocol.io/specification/2025-11-05/basic/transports
+https://modelcontextprotocol.io/specification/2025-11-05/basic/transports.md	404 831 https://modelcontextprotocol.io/specification/2025-11-05/basic/transports.md
+https://modelcontextprotocol.io/specification/2025-11-25/basic/transports.md	200 16321 https://modelcontextprotocol.io/specification/2025-11-25/basic/transports.md
+
+### command: curl -sS -L https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2596 | grep -c '<needle>'  (three fetches, seconds apart)
+fetch1 bytes=502463 three-months-quote=0 grace-quote=0 sha=5aefbb52a8010f68
+fetch2 bytes=502463 three-months-quote=0 grace-quote=0 sha=f2fb553c2205f844
+fetch3 bytes=502463 three-months-quote=0 grace-quote=0 sha=b27ed12f72af33a5
+
+### command: hashes of the seven canonical captures
+c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa  deprecated-2026-07-28.md
+3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee  feature-lifecycle.md
+0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0  sse-v18.12.6.ts
+cc50162d2fa78a20783f5bc6d6e10569aac8d546005f188bfa2b23f7b86a9468  sep2596.md
+ae9bb7be00604a66a8f70f439ef028eced174bce4a5cb0f6fc11bbeaa625afcc  transports-2025-11-05.md
+0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0  sse-v18.13.1.ts
+088d1f8d614ed50c39f109745331738517f7aa80a119d9d061a62969a6b18ffc  pr2596-commits-api.json
+
+### command: cmp sse-v18.12.6.ts sse-v18.13.1.ts && echo identical
+identical

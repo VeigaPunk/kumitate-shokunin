@@ -1,0 +1,9 @@
+Candidate SOURCES.md `## Registry` row — prepared lane id S207 (ids are re-assigned by the L1 by
+document; key by URL). Schema: `| id | source | kind | tier | scope | anchor | teaches | status |
+opened | recheck | used-by |` (11 cells). Values required by the seat spec: kind `spec`, tier `A`,
+status `mined`, opened `2026-10-27`, used-by `corpus/knowledge/mcp-deprecation-registry.md`.
+Recheck `on-release` matches the lane's other modelcontextprotocol.io spec rows (S010, S011, S026).
+
+The row (append verbatim under `corpus/SOURCES.md` `## Registry`, key re-assignment by URL):
+
+| S207 | MCP specification Deprecated Features 2026-07-28 — https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md | spec | A | MCP Deprecated registry at revision 2026-07-28: the `## Deprecated` table (six data rows) and the derived-view note | `## Deprecated` table rows and the paragraph "This registry is a derived view…"; fetched 2026-10-27T14:54:18Z, HTTP 200, text/markdown, 3839 bytes; capture .ufo/waves/round-68/build/K68ScoutS207/captures/deprecated-2026-07-28.md (sha256 227bfbad12418d3575fe0a8449d29dc12f01e3848518a8c1d8943f86ba065d46) | Six Deprecated features at revision 2026-07-28: Roots, Sampling, Logging and Dynamic Client Registration deprecated in `2026-07-28` (earliest removal "First revision released on or after 2027-07-28"; Roots/Sampling/Logging under SEP-2577, DCR under PR #2858), `includeContext` thisServer/allServers deprecated in `2025-11-25` (SEP-2596, follows Sampling), HTTP+SSE transport deprecated in `2025-03-26` (SEP-2596; earliest removal "Three months after SEP-2596 reaches Final"); the registry is a derived view and the per-feature notices plus changelog entries are the normative records | mined | 2026-10-27 | on-release | corpus/knowledge/mcp-deprecation-registry.md |

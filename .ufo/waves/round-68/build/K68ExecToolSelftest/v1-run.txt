@@ -1,0 +1,74 @@
+CASE FAIL A01 L4 good: a correct ledger is CLEAN with fence-aware items=7
+     :: exit=1 want=0 | verdict=ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 closed=1 wontfix=0 findings=5 first=QUOTE_ABSENT:A4@line10:round-101-item-4
+CASE ok   A02 L4 drop: a dropped row is UNLEDGERED
+CASE ok   A03 L4 quote-swap: a quote from another item is QUOTE_ABSENT
+CASE ok   A04 L4 quote-decoy: a quote from outside the section is QUOTE_ABSENT
+CASE ok   A05 L4 answer-wrong: answer quote absent from the file
+CASE ok   A06 L4 answer-ledger: the ledger cannot answer itself
+CASE ok   A07 L4 answer-eof: answer line past EOF
+CASE ok   A08 L4 dup: duplicate row id
+CASE ok   A09 L4 ordinal: item ordinal beyond the section
+CASE ok   A10 L4 nested-as-item: a nested bullet is not an item
+CASE ok   A11 L4 prose-as-item: prose is not an item
+CASE ok   A12 L4 long-quote: 26-word quote is ROW_MALFORMED
+CASE FAIL A13 L4 one-word-quote: a 1-word quote is ROW_MALFORMED
+     :: exit=0 want=1 | no FINDING ROW_MALFORMED (got )
+CASE FAIL A14 L4 ambiguous-quote: a quote in two items is QUOTE_AMBIGUOUS
+     :: exit=0 want=1 | no FINDING QUOTE_AMBIGUOUS (got )
+CASE FAIL A15 L4 shifted-answer: answer quote one line off is ANSWER_DEAD
+     :: exit=0 want=1 | no FINDING ANSWER_DEAD (got )
+CASE FAIL A16 L4 fence-item: a row quoting a fenced line is QUOTE_ABSENT
+     :: detail=FINDING QUOTE_ABSENT A4@line10:round-101-item-4
+CASE FAIL A17 L4 second-section: the amended section counts, items=8
+     :: exit=0 want=1 | verdict=ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 | no FINDING UNLEDGERED (got )
+CASE FAIL A18 L4 contradictory: closed+wontfix on one item is ROW_CONTRADICTED
+     :: exit=0 want=1 | no FINDING ROW_CONTRADICTED (got )
+CASE FAIL A19 L4 no-section: round 102 has no routed section
+     :: exit=1 want=0 | verdict=ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=6 rows=5 open=4 closed=1 wontfix=0 findings=5 first=QUOTE_ABSENT:A4@line10:round-101-item-4
+CASE ok   A20 L4 ledger-absent: FAIL-CLOSED exit 2
+CASE FAIL B01 GIT_DIR exported must not redirect --rev
+     :: exit=0 want=1 | verdict=ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 | no FINDING UNLEDGERED (got )
+CASE FAIL B02 GIT_DIR exported: selftest still PASS with >=44 cases
+     :: selftest cases=33/33 want>=44
+CASE FAIL B03 an answer symlink leaving --root is ANSWER_DEAD
+     :: exit=0 want=1 | no FINDING ANSWER_DEAD (got )
+CASE FAIL B04 --ledger ../outside-ledger.md must FAIL-CLOSED
+     :: exit=0 want=2 | verdict=ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0
+CASE FAIL B05 a symlinked ledger must FAIL-CLOSED
+     :: exit=0 want=2 | verdict=ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0
+CASE FAIL B06 second routed section: items=8 worth of coverage enforced
+     :: exit=0 want=1 | verdict=ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 | no FINDING UNLEDGERED (got )
+CASE FAIL B07 a 1-word quote is ROW_MALFORMED
+     :: exit=0 want=1 | no FINDING ROW_MALFORMED (got )
+CASE FAIL B08 a non-unique quote is QUOTE_AMBIGUOUS
+     :: exit=0 want=1 | no FINDING QUOTE_AMBIGUOUS (got )
+CASE FAIL B09 the answer quote must sit on the named line
+     :: exit=0 want=1 | no FINDING ANSWER_DEAD (got )
+CASE FAIL B10 a fenced bullet does not shift item ordinals
+     :: exit=1 want=0 | verdict=ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 closed=1 wontfix=0 findings=5 first=QUOTE_ABSENT:A4@line10:round-101-item-4
+CASE ok   C01 unknown argument -> USAGE 64
+CASE ok   C02 --root without a value -> USAGE 64
+CASE ok   C03 unparseable --from -> USAGE 64
+CASE ok   C04 unparseable --to -> USAGE 64
+CASE ok   C05 absent --root -> FAIL-CLOSED 2
+CASE ok   C06 no spot-check in range -> FAIL-CLOSED 2
+CASE ok   D01 bad status -> ROW_MALFORMED
+CASE ok   D02 open row carrying an answer -> ROW_MALFORMED
+CASE ok   D03 closed row with a dash answer -> ROW_MALFORMED
+CASE ok   D04 six-cell row -> ROW_MALFORMED
+CASE ok   D05 duplicate id -> ROW_DUPLICATE
+CASE FAIL D06 id prefix R102- on a round-101 row -> ROW_MALFORMED id-round-mismatch
+     :: exit=0 want=1 | no FINDING ROW_MALFORMED (got )
+CASE ok   D07 26-word item quote -> ROW_MALFORMED quote-words=26
+CASE ok   D08 class token with capitals -> ROW_MALFORMED
+CASE ok   D09 26-word answer quote -> ROW_MALFORMED
+CASE ok   D10 non-numeric round cell -> ROW_MALFORMED
+CASE ok   D11 non-R-prefixed ids stay valid (the counter uses A1..A7)
+CASE ok   E01 --classes: one class spans both rounds
+CASE ok   E02 RECURRENT fires at 4 distinct rounds
+CASE ok   E03 three rounds stay below RECURRENT
+CASE ok   E04 --classes off: no CLASS/RECURRENT lines
+CASE ok   F01 round 59 prose section: found, zero items
+CASE ok   F02 round 66 real routed section: four column-0 bullets
+CASE ok   F03 round 55 real routed section: three items
+ROUTED_LEDGER_ACCEPTANCE: FAIL (35/54)

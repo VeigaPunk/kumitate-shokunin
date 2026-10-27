@@ -1,0 +1,19 @@
+# 20 frozen L4 mutants, seed k68yagni0000a1b2, harness = the frozen counter's own buildFixture/harness (text slice)
+# frozen generator (A5 splice): good + no-section unsatisfiable
+TOOL v1.mjs seed=k68yagni0000a1b2 mutants=20 fail=7 ::
+    good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo ; ordinal:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=7 clo ; one-word-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo ; ambiguous-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo ; shifted-answer:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo ; contradictory:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=6 clo ; no-section:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=6 rows=5 open=4 clo
+TOOL /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs seed=k68yagni0000a1b2 mutants=20 fail=2 ::
+    good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 clo ; no-section:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=5 rows=5 open=4 clo
+TOOL ref-v2.mjs seed=k68yagni0000a1b2 mutants=20 fail=2 ::
+    good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 clo ; no-section:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=5 rows=5 open=4 clo
+
+# P1-fixed generator (A5 contiguous)
+TOOL /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs seed=k68yagni0000a1b2 mutants=20 fail=0 :: ALL-20-MATCH
+TOOL v2-slim.mjs seed=k68yagni0000a1b2 mutants=20 fail=0 :: ALL-20-MATCH
+TOOL v2-mask.mjs seed=k68yagni0000a1b2 mutants=20 fail=0 :: ALL-20-MATCH
+TOOL ref-v2.mjs seed=k68yagni0000a1b2 mutants=20 fail=0 :: ALL-20-MATCH
+
+# three seeds, reference implementation
+TOOL ref-v2.mjs seed=k68yagni0000a1b2 mutants=20 fail=0 :: ALL-20-MATCH
+TOOL ref-v2.mjs seed=00112233aabbccdd mutants=20 fail=0 :: ALL-20-MATCH
+TOOL ref-v2.mjs seed=feedfacecafebeef mutants=20 fail=0 :: ALL-20-MATCH

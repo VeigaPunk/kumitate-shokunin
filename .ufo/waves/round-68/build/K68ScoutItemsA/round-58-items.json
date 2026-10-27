@@ -1,0 +1,34 @@
+[
+  {
+    "k": 1,
+    "text": "1. **R58-V1 — the C2 base counter is misreported as `held=0/5`.** The report's *Before → after*\n   section and `SCORECARD.md` §Round 58 both say `held=0/5`; the lane's own committed\n   `base/doctrine58-base.txt` and my re-run both read `held=2/5` (E4/E5 pass at base). The lane's\n   own `corpus/README.md:173` already says \"base 2/5\". Correct the SCORECARD prose and append the\n   correction to the next round's report (filed report bytes are not rewritten)."
+  },
+  {
+    "k": 2,
+    "text": "2. **R58-V2 — \"Seats spawned/dispatched: 64/64\" overstates the dispatch** (see §6: 35 reports,\n   29 never spawned). State the planned / ran / dead split with the registry and\n   `launcher-progress.tsv` as the counting commands."
+  },
+  {
+    "k": 3,
+    "text": "3. **R58-V3 — `corpus/README.md:172` cites `S121` for the new entry's Temporal source, and `S121`\n   is not a row in `corpus/SOURCES.md`** (it is the registry's only gap in `S001…S124`, and\n   `corpus/lessons/round-45.md:153` shows it is *another lane's* id). The entry's frontmatter, the\n   S112 row and the lesson all cite **S112**. Correct the README row, and check the row's other two\n   ids (S122/S123) while there. No registered gate covers this class — a candidate `cite-check` arm."
+  },
+  {
+    "k": 4,
+    "text": "4. **R58-V4 — the tier counts are wrong.** The report says \"Tier counts 96→99 A\"; the CORPUS census\n   tier histogram over the committed registry reads `A=102 B=13 C=8` at the tip and `A=99` at the\n   base (123 rows, 0 malformed) — i.e. 99→102, +3 for S122/S123/S124. Publish the counting command\n   with the numbers."
+  },
+  {
+    "k": 5,
+    "text": "5. **R58-V5 — `SKILL.md` says \"Seventeen are gates\" while its own registry table carries 18\n   `kind=gate` rows** (`receipt-attest` is missing from the prose enumeration); the adjacent \"Verdict\n   map for all eighteen\" line is correct. The report repeats \"17 gates / 18 verdict-mapped\"."
+  },
+  {
+    "k": 6,
+    "text": "6. **R58-V6 — the SCORECARD capabilities table gained no `receipt-evidence` row**, although the round\n   declares a capability acquisition (the lane's own precedent: `readme-map` entered the table in\n   round 57), and the existing `readme-map` row is stale (still version 1, `files=135`, selftest\n   14/14 — this round moved it to v2, files=138, 16/16). Add the capability row and refresh the\n   `readme-map` row next round."
+  },
+  {
+    "k": 7,
+    "text": "7. **R58-V7 — this non-author file lands without a README row or a `readme-map` pin.** The lane owns\n   both (Q48 pattern, and the same gap recurred four times); without them the next round opens with\n   `readme-map` DRIFT (files=139 / rows=138 / covered=138). Add the row and the pin together with\n   the new lesson row."
+  },
+  {
+    "k": 8,
+    "text": "8. **R58-V8 — wording:** the lesson's REJECT 3 reason calls S126 a \"same-page duplicate\"; the\n   campaign's own MERGE-REPORT says a shared page is \"not automatically a duplicate\". Keep the\n   operational conclusion (pin the group first), soften the wording.\n"
+  }
+]

@@ -1,0 +1,13 @@
+$ ls -la ~/.local/bin/omp*
+-rwxr-xr-x 1 vgpnk vgpnk 275986608 Oct 27 00:02 /home/vgpnk/.local/bin/omp
+-rwxr-xr-x 1 vgpnk vgpnk     11185 Oct  6 16:28 /home/vgpnk/.local/bin/omp-swarm
+$ file ~/.local/bin/omp
+/home/vgpnk/.local/bin/omp: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=588d7307f333293c728b74df19b7323c20736899, not stripped
+$ sha256sum ~/.local/bin/omp
+ee2961c7da02e514a2475ee958c2fd85dbabf4d0907949ba5022edb2951f84b5  /home/vgpnk/.local/bin/omp
+$ ls ~/.local/bin/omp.real
+ls: cannot access '/home/vgpnk/.local/bin/omp.real': No such file or directory
+$ omp --version
+omp/18.13.1
+$ grep -n wrapper PROVINCE.md
+20:- OMP harness contract, installed-release measurement (same frontier band as the line above) — advanced round 65 by `corpus/knowledge/omp-installed-release-mcp-runtime.md` (S201–S206): the installed release `omp/18.12.6` read at its own tag (`v18.12.6`, commit `45c35e40`) and measured on the host by `scripts/omp-binary-probe.sh` — two MCP clients in one binary on two revisions, a header that is absent until negotiation, the wrapper that mediates every reading; the docs-versus-binary question for task/hub semantics stays open in the round-34 entry (append-only `Amendment 2026-10-25`).

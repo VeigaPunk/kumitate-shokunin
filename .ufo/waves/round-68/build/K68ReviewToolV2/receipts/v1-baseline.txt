@@ -1,0 +1,41 @@
+# K68ReviewToolV2 receipts — v1 baseline (all runs 2026-10-27, TMPDIR=/fast/scratch/hyaku/kumitate-r68/K68ReviewToolV2)
+
+## v1 selftest
+$ env TMPDIR=<scratch> node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/routed-ledger.mjs --selftest
+…
+ROUTED_LEDGER_SELFTEST: PASS (33/33)
+exit=0
+
+## Frozen counter at base (v1 tool from the archive)
+$ env TMPDIR=<scratch> node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/probe/ledger68-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin d23892ad44b41e1af63b3edb949d265ca1dd812d --seed 68a1b2c3d4e5f607
+LEDGER68_UNMET held=1/7 checks=7 rev=d23892ad44b41e1af63b3edb949d265ca1dd812d rule=L68 seed=68a1b2c3d4e5f607 | L1 MISS exit=0 line=ROUTED_LEDGER_SELFTEST: PASS (33/33) | L2 MISS exit=2 verdict=ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md own-items=61 own-sections=12 own-spotchecks=12 | L3 MISS 68 problems: ledger-empty-or-absent,unledgered:55#1,unledgered:55#2,unledgered:55#3,unledgered:56#1,unledgered:56#2 | L4 MISS seed=68a1b2c3d4e5f607 7/20 mutants wrong: good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo;ordinal:exit=1:…;one-word-quote:exit=1:…;ambiguous-quote:exit=1:… | L5 MISS real-tool-passes-L4=false stubs-caught=always-clean+always-drift | L6 MISS skill-row=false quality=false capability-row=false
+exit=1
+(counter's own fence-aware count at base: own-items=61 own-sections=12 — matches plan's "61 items in 12 sections")
+
+## Verbatim replica of counter L4 fixture+harness (probe:284-365) vs v1 — full failure list
+FAILING 7/20:
+  FAIL good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo
+  FAIL ordinal:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=7 clo
+  FAIL one-word-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo
+  FAIL ambiguous-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo
+  FAIL shifted-answer:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo
+  FAIL contradictory:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=6 clo
+  FAIL no-section:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=1 items=6 rows=5 open=4 clo
+(passing 13 include accidental passes: every DRIFT line reads items=8 — the fence ghost bullet shifts
+all ordinals; e.g. second-section "passes" with UNLEDGERED raised for r101#6 instead of r102#3)
+
+## v1 six-hardenings battery (key verdicts; fixtures under scratch, deleted on exit)
+H1b --rev with GIT_DIR=<foreign repo>   : exit=0 ROUTED_LEDGER: CLEAN spotchecks=1 … (same command
+        without GIT_DIR: exit=2 FAIL-CLOSED reason=rev-unreadable:HEAD — the verdict flipped purely on
+        the inherited env var; all evidence bytes were read from the foreign repo)
+H1c --selftest with GIT_DIR poisoned    : exit=0 ROUTED_LEDGER_SELFTEST: PASS (33/33) (no refusal)
+H2a answer file symlinked out of tree   : exit=0 CLEAN (symlink followed)
+H2b --ledger ../outside-tree/…          : exit=0 CLEAN (ledger read outside --root)
+H3  second routed section               : exit=0 CLEAN sections=1 items=1 (silent loss)
+H4a mid-word substring quote            : exit=0 CLEAN ("…wrong tod" bound inside "wrong today")
+H4b two-word quote                      : exit=0 CLEAN (no 3-word minimum)
+H5  answer names :5, quote on line 3    : exit=0 CLEAN (±2-line window admits)
+H6  fenced pseudo-bullet                : exit=1 items=2 + FINDING UNLEDGERED round-55-item-2 (fence-blind)
+F1  one quote-swap defect               : findings=2 — QUOTE_ABSENT + UNLEDGERED for the same item
+F2  word-boundary-ambiguous quote       : exit=0 CLEAN (no QUOTE_AMBIGUOUS finding exists)
+F3  two non-open rows on one item       : exit=0 CLEAN (no ROW_CONTRADICTED finding exists)

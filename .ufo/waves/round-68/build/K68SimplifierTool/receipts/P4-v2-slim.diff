@@ -1,0 +1,35 @@
+--- v2draft.mjs	2026-10-27 12:06:48.932196955 -0300
++++ v2-slim.mjs	2026-10-27 12:06:48.939820071 -0300
+@@ -84,7 +84,7 @@
+   .replace(/\*\*|__|`/g, '')
+   .replace(/\s+/g, ' ').trim();
+ 
+-export const words = (s) => norm(s) === '' ? 0 : norm(s).split(' ').length;
++export const words = (s) => { const n = norm(s); return n === '' ? 0 : n.split(' ').length; };
+ 
+ /** Word-boundary containment: `quote` occurs in `text` bounded by non-alphanumerics (or the ends). */
+ export const wb = (quote, text) => {
+@@ -146,12 +146,6 @@
+   return { sections: heads.length, items };
+ }
+ 
+-/** v1 name, kept for callers: one file → { found, items }. `found` = at least one routed heading. */
+-export const routedItems = (text) => {
+-  const r = routedSections(text);
+-  return { found: r.sections > 0, sections: r.sections, items: r.items };
+-};
+-
+ /** Parse the ledger → { rows, malformed, section }. */
+ export function ledgerRows(text) {
+   const L = String(text).split('\n');
+@@ -249,9 +243,8 @@
+     REV = v.stdout.trim();
+   }
+ 
+-  // ledger: inside the root, a regular file, never through a symlink
++  // ledger: inside the root, a regular file, never through a symlink (contained() enforces the escape rule)
+   const ledgerRel = normalize(String(ledger));
+-  if (isAbsolute(ledgerRel) || ledgerRel === '..' || ledgerRel.startsWith(`..${sep}`)) return failClosed(out, `ledger-escape:${ledgerRel}`);
+   const lr = REV ? readRev(base, REV, ledgerRel) : readFileInside(base, ledgerRel);
+   if (lr.why) return failClosed(out, `ledger-${lr.why}:${ledgerRel}`);
+   const { rows, malformed, section } = ledgerRows(lr.text);

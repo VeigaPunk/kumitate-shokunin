@@ -1,0 +1,12 @@
+# symlink-to-existing-file on a covered member: documented covered-not-file, observed stale-covered
+$ ls -l fx1/corpus/lessons/link.md
+lrwxrwxrwx 1 vgpnk vgpnk 17 Oct 27 11:55 /fast/scratch/hyaku/kumitate-r68/K68ExecReadmeFix/fx1/corpus/lessons/link.md -> ../knowledge/a.md
+$ node scripts/readme-map.mjs --registry fx1/reg.json --readme fx1/corpus/README.md --corpus fx1/corpus/knowledge --corpus fx1/corpus/lessons
+README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=stale-covered:lessons/link.md
+EXIT=1
+
+# same fixture through a scratch copy whose symlink catch logs the exception
+$ node diag/readme-map-diag.mjs ... (same args)
+DIAG caught ReferenceError: full is not defined
+README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=stale-covered:lessons/link.md
+EXIT=1

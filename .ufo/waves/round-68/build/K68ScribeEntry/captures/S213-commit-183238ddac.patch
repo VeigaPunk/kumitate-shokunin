@@ -1,0 +1,510 @@
+From 183238ddacd0118a22399cd4743a5b5eaa43dbdd Mon Sep 17 00:00:00 2001
+From: Caitie McCaffrey <caitiem20@github.com>
+Date: Wed, 3 Jun 2026 13:45:19 -0700
+Subject: [PATCH] Mark SEPs as final
+
+---
+ docs/docs.json                                | 33 ++-----
+ docs/seps/2106-json-schema-2020-12.mdx        |  6 +-
+ docs/seps/2164-resource-not-found-error.mdx   |  6 +-
+ .../seps/2207-oidc-refresh-token-guidance.mdx |  6 +-
+ docs/seps/2322-MRTR.mdx                       |  6 +-
+ .../2468-recommend-issuer-claim-for-auth.mdx  |  6 +-
+ ...formance-tests-required-for-final-seps.mdx |  6 +-
+ docs/seps/2549-TTL-for-list-results.mdx       |  6 +-
+ docs/seps/2575-stateless-mcp.mdx              |  6 +-
+ ...spec-feature-lifecycle-and-deprecation.mdx |  6 +-
+ docs/seps/index.mdx                           | 91 +++++++++----------
+ seps/2106-json-schema-2020-12.md              |  2 +-
+ seps/2164-resource-not-found-error.md         |  2 +-
+ seps/2207-oidc-refresh-token-guidance.md      |  2 +-
+ seps/2322-MRTR.md                             |  2 +-
+ seps/2468-recommend-issuer-claim-for-auth.md  |  2 +-
+ ...nformance-tests-required-for-final-seps.md |  2 +-
+ seps/2549-TTL-for-list-results.md             |  2 +-
+ seps/2575-stateless-mcp.md                    |  2 +-
+ ...-spec-feature-lifecycle-and-deprecation.md |  2 +-
+ 20 files changed, 89 insertions(+), 107 deletions(-)
+
+diff --git a/docs/docs.json b/docs/docs.json
+index 5e716df16..ca2162fd2 100644
+--- a/docs/docs.json
++++ b/docs/docs.json
+@@ -424,39 +424,24 @@
+               "seps/1850-pr-based-sep-workflow",
+               "seps/1865-mcp-apps-interactive-user-interfaces-for-mcp",
+               "seps/2085-governance-succession-and-amendment",
++              "seps/2106-json-schema-2020-12",
+               "seps/2133-extensions",
+               "seps/2148-contributor-ladder",
+               "seps/2149-working-group-charter-template",
++              "seps/2164-resource-not-found-error",
++              "seps/2207-oidc-refresh-token-guidance",
+               "seps/2243-http-standardization",
+               "seps/2260-Require-Server-requests-to-be-associated-with-Client-requests",
++              "seps/2322-MRTR",
++              "seps/2468-recommend-issuer-claim-for-auth",
++              "seps/2484-conformance-tests-required-for-final-seps",
++              "seps/2549-TTL-for-list-results",
+               "seps/2567-sessionless-mcp",
++              "seps/2575-stateless-mcp",
+               "seps/2577-deprecate-roots-sampling-and-logging",
++              "seps/2596-spec-feature-lifecycle-and-deprecation",
+               "seps/2663-tasks-extension"
+             ]
+-          },
+-          {
+-            "group": "Accepted",
+-            "pages": [
+-              "seps/2207-oidc-refresh-token-guidance",
+-              "seps/2322-MRTR",
+-              "seps/2549-TTL-for-list-results",
+-              "seps/2575-stateless-mcp"
+-            ]
+-          },
+-          {
+-            "group": "In-Review",
+-            "pages": [
+-              "seps/2468-recommend-issuer-claim-for-auth"
+-            ]
+-          },
+-          {
+-            "group": "Draft",
+-            "pages": [
+-              "seps/2106-json-schema-2020-12",
+-              "seps/2164-resource-not-found-error",
+-              "seps/2484-conformance-tests-required-for-final-seps",
+-              "seps/2596-spec-feature-lifecycle-and-deprecation"
+-            ]
+           }
+         ]
+       },
+diff --git a/docs/seps/2106-json-schema-2020-12.mdx b/docs/seps/2106-json-schema-2020-12.mdx
+index e1760f7cd..b5feabc8f 100644
+--- a/docs/seps/2106-json-schema-2020-12.mdx
++++ b/docs/seps/2106-json-schema-2020-12.mdx
+@@ -5,8 +5,8 @@ description: "Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-1
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="gray" shape="pill">
+-    Draft
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-1
+ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+ | **SEP**       | 2106                                                                                                                                                                          |
+ | **Title**     | Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-12                                                                                                           |
+-| **Status**    | Draft                                                                                                                                                                         |
++| **Status**    | Final                                                                                                                                                                         |
+ | **Type**      | Standards Track                                                                                                                                                               |
+ | **Created**   | 2026-01-06                                                                                                                                                                    |
+ | **Author(s)** | John McBride ([@jpmcb](https://github.com/jpmcb)) — original proposal; Ola Hungerford ([@olaservo](https://github.com/olaservo)) — current shepherd, post-SEP-1850 conversion |
+diff --git a/docs/seps/2164-resource-not-found-error.mdx b/docs/seps/2164-resource-not-found-error.mdx
+index 910d4f659..20d89b168 100644
+--- a/docs/seps/2164-resource-not-found-error.mdx
++++ b/docs/seps/2164-resource-not-found-error.mdx
+@@ -5,8 +5,8 @@ description: "Standardize Resource Not Found Error Code"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="gray" shape="pill">
+-    Draft
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "Standardize Resource Not Found Error Code"
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2164                                                                            |
+ | **Title**     | Standardize Resource Not Found Error Code                                       |
+-| **Status**    | Draft                                                                           |
++| **Status**    | Final                                                                           |
+ | **Type**      | Standards Track                                                                 |
+ | **Created**   | 2026-01-28                                                                      |
+ | **Author(s)** | Peter Alexander ([@pja-ant](https://github.com/pja-ant))                        |
+diff --git a/docs/seps/2207-oidc-refresh-token-guidance.mdx b/docs/seps/2207-oidc-refresh-token-guidance.mdx
+index f1782f073..0657e1649 100644
+--- a/docs/seps/2207-oidc-refresh-token-guidance.mdx
++++ b/docs/seps/2207-oidc-refresh-token-guidance.mdx
+@@ -5,8 +5,8 @@ description: "OIDC-Flavored Refresh Token Guidance"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="blue" shape="pill">
+-    Accepted
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "OIDC-Flavored Refresh Token Guidance"
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2207                                                                            |
+ | **Title**     | OIDC-Flavored Refresh Token Guidance                                            |
+-| **Status**    | Accepted                                                                        |
++| **Status**    | Final                                                                           |
+ | **Type**      | Standards Track                                                                 |
+ | **Created**   | 2026-02-04                                                                      |
+ | **Author(s)** | Wils Dawson ([@wdawson](https://github.com/wdawson))                            |
+diff --git a/docs/seps/2322-MRTR.mdx b/docs/seps/2322-MRTR.mdx
+index 8e6cf624c..cc40a2a6b 100644
+--- a/docs/seps/2322-MRTR.mdx
++++ b/docs/seps/2322-MRTR.mdx
+@@ -5,8 +5,8 @@ description: "Multi Round-Trip Requests"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="blue" shape="pill">
+-    Accepted
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "Multi Round-Trip Requests"
+ | ------------- | ------------------------------------------------------------------------------------------------------------------------- |
+ | **SEP**       | 2322                                                                                                                      |
+ | **Title**     | Multi Round-Trip Requests                                                                                                 |
+-| **Status**    | Accepted                                                                                                                  |
++| **Status**    | Final                                                                                                                     |
+ | **Type**      | Standards Track                                                                                                           |
+ | **Created**   | 2026-02-03                                                                                                                |
+ | **Author(s)** | Mark D. Roth ([@markdroth](https://github.com/markdroth)), Caitie McCaffrey ([@CaitieM20](https://github.com/CaitieM20)), |
+diff --git a/docs/seps/2468-recommend-issuer-claim-for-auth.mdx b/docs/seps/2468-recommend-issuer-claim-for-auth.mdx
+index 2e342093a..20d18c7ee 100644
+--- a/docs/seps/2468-recommend-issuer-claim-for-auth.mdx
++++ b/docs/seps/2468-recommend-issuer-claim-for-auth.mdx
+@@ -5,8 +5,8 @@ description: "Recommend Issuer (iss) Parameter in MCP Auth Responses"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="yellow" shape="pill">
+-    In-Review
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "Recommend Issuer (iss) Parameter in MCP Auth Responses"
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2468                                                                            |
+ | **Title**     | Recommend Issuer (iss) Parameter in MCP Auth Responses                          |
+-| **Status**    | In-Review                                                                       |
++| **Status**    | Final                                                                           |
+ | **Type**      | Standards Track                                                                 |
+ | **Created**   | 2026-03-25                                                                      |
+ | **Author(s)** | Emily Lauber ([@EmLauber](https://github.com/EmLauber))                         |
+diff --git a/docs/seps/2484-conformance-tests-required-for-final-seps.mdx b/docs/seps/2484-conformance-tests-required-for-final-seps.mdx
+index bc959bdc0..01daea55c 100644
+--- a/docs/seps/2484-conformance-tests-required-for-final-seps.mdx
++++ b/docs/seps/2484-conformance-tests-required-for-final-seps.mdx
+@@ -5,8 +5,8 @@ description: "Require Conformance Tests for Standards Track SEPs to Reach Final
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="gray" shape="pill">
+-    Draft
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Process
+@@ -17,7 +17,7 @@ description: "Require Conformance Tests for Standards Track SEPs to Reach Final
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2484                                                                            |
+ | **Title**     | Require Conformance Tests for Standards Track SEPs to Reach Final Status        |
+-| **Status**    | Draft                                                                           |
++| **Status**    | Final                                                                           |
+ | **Type**      | Process                                                                         |
+ | **Created**   | 2026-03-27                                                                      |
+ | **Author(s)** | Paul Carleton ([@pcarleton](https://github.com/pcarleton))                      |
+diff --git a/docs/seps/2549-TTL-for-list-results.mdx b/docs/seps/2549-TTL-for-list-results.mdx
+index 7ca2cdc94..0ba162651 100644
+--- a/docs/seps/2549-TTL-for-list-results.mdx
++++ b/docs/seps/2549-TTL-for-list-results.mdx
+@@ -5,8 +5,8 @@ description: "TTL for List Results"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="blue" shape="pill">
+-    Accepted
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "TTL for List Results"
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2549                                                                            |
+ | **Title**     | TTL for List Results                                                            |
+-| **Status**    | Accepted                                                                        |
++| **Status**    | Final                                                                           |
+ | **Type**      | Standards Track                                                                 |
+ | **Created**   | 2026-04-09                                                                      |
+ | **Author(s)** | Caitie McCaffrey ([@CaitieM20](https://github.com/CaitieM20))                   |
+diff --git a/docs/seps/2575-stateless-mcp.mdx b/docs/seps/2575-stateless-mcp.mdx
+index 717ceebd0..b917d68f4 100644
+--- a/docs/seps/2575-stateless-mcp.mdx
++++ b/docs/seps/2575-stateless-mcp.mdx
+@@ -5,8 +5,8 @@ description: "Make MCP Stateless"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="blue" shape="pill">
+-    Accepted
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Standards Track
+@@ -17,7 +17,7 @@ description: "Make MCP Stateless"
+ | ------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+ | **SEP**       | 2575                                                                                                                            |
+ | **Title**     | Make MCP Stateless                                                                                                              |
+-| **Status**    | Accepted                                                                                                                        |
++| **Status**    | Final                                                                                                                           |
+ | **Type**      | Standards Track                                                                                                                 |
+ | **Created**   | 2025-06-18                                                                                                                      |
+ | **Author(s)** | Jonathan Hefner ([@jonathanhefner](https://github.com/jonathanhefner)), Mark Roth ([@markdroth](https://github.com/markdroth)), |
+diff --git a/docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx b/docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx
+index 4da405f10..8b9614c0f 100644
+--- a/docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx
++++ b/docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx
+@@ -5,8 +5,8 @@ description: "Specification Feature Lifecycle and Deprecation Policy"
+ ---
+ 
+ <div className="flex items-center gap-2 mb-4">
+-  <Badge color="gray" shape="pill">
+-    Draft
++  <Badge color="green" shape="pill">
++    Final
+   </Badge>
+   <Badge color="gray" shape="pill">
+     Process
+@@ -17,7 +17,7 @@ description: "Specification Feature Lifecycle and Deprecation Policy"
+ | ------------- | ------------------------------------------------------------------------------- |
+ | **SEP**       | 2596                                                                            |
+ | **Title**     | Specification Feature Lifecycle and Deprecation Policy                          |
+-| **Status**    | Draft                                                                           |
++| **Status**    | Final                                                                           |
+ | **Type**      | Process                                                                         |
+ | **Created**   | 2026-04-17                                                                      |
+ | **Author(s)** | Den Delimarsky ([@localden](https://github.com/localden))                       |
+diff --git a/docs/seps/index.mdx b/docs/seps/index.mdx
+index ff09a3642..658464479 100644
+--- a/docs/seps/index.mdx
++++ b/docs/seps/index.mdx
+@@ -12,56 +12,53 @@ Specification Enhancement Proposals (SEPs) are the primary mechanism for proposi
+ 
+ ## Summary
+ 
+-- **Final**: 32
+-- **Draft**: 4
+-- **Accepted**: 4
+-- **In-review**: 1
++- **Final**: 41
+ 
+ ## All SEPs
+ 
+-| SEP                                                                                  | Title                                                                         | Status                                               | Type             | Created    |
+-| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------------- | ---------------- | ---------- |
+-| [SEP-2663](/seps/2663-tasks-extension)                                               | Tasks Extension                                                               | <Badge color="green" shape="pill">Final</Badge>      | Extensions Track | 2026-04-27 |
+-| [SEP-2596](/seps/2596-spec-feature-lifecycle-and-deprecation)                        | Specification Feature Lifecycle and Deprecation Policy                        | <Badge color="gray" shape="pill">Draft</Badge>       | Process          | 2026-04-17 |
+-| [SEP-2577](/seps/2577-deprecate-roots-sampling-and-logging)                          | Deprecate Roots, Sampling, and Logging                                        | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2026-04-14 |
+-| [SEP-2575](/seps/2575-stateless-mcp)                                                 | Make MCP Stateless                                                            | <Badge color="blue" shape="pill">Accepted</Badge>    | Standards Track  | 2025-06-18 |
+-| [SEP-2567](/seps/2567-sessionless-mcp)                                               | Sessionless MCP via Explicit State Handles                                    | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2026-03-11 |
+-| [SEP-2549](/seps/2549-TTL-for-list-results)                                          | TTL for List Results                                                          | <Badge color="blue" shape="pill">Accepted</Badge>    | Standards Track  | 2026-04-09 |
+-| [SEP-2484](/seps/2484-conformance-tests-required-for-final-seps)                     | Require Conformance Tests for Standards Track SEPs to Reach Final Status      | <Badge color="gray" shape="pill">Draft</Badge>       | Process          | 2026-03-27 |
+-| [SEP-2468](/seps/2468-recommend-issuer-claim-for-auth)                               | Recommend Issuer (iss) Parameter in MCP Auth Responses                        | <Badge color="yellow" shape="pill">In-Review</Badge> | Standards Track  | 2026-03-25 |
+-| [SEP-2322](/seps/2322-MRTR)                                                          | Multi Round-Trip Requests                                                     | <Badge color="blue" shape="pill">Accepted</Badge>    | Standards Track  | 2026-02-03 |
+-| [SEP-2260](/seps/2260-Require-Server-requests-to-be-associated-with-Client-requests) | Require Server requests to be associated with a Client request.               | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2026-02-16 |
+-| [SEP-2243](/seps/2243-http-standardization)                                          | HTTP Header Standardization for Streamable HTTP Transport                     | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2026-02-04 |
+-| [SEP-2207](/seps/2207-oidc-refresh-token-guidance)                                   | OIDC-Flavored Refresh Token Guidance                                          | <Badge color="blue" shape="pill">Accepted</Badge>    | Standards Track  | 2026-02-04 |
+-| [SEP-2164](/seps/2164-resource-not-found-error)                                      | Standardize Resource Not Found Error Code                                     | <Badge color="gray" shape="pill">Draft</Badge>       | Standards Track  | 2026-01-28 |
+-| [SEP-2149](/seps/2149-working-group-charter-template)                                | MCP Group Governance and Charter Template                                     | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2025-01-15 |
+-| [SEP-2148](/seps/2148-contributor-ladder)                                            | MCP Contributor Ladder                                                        | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2026-01-15 |
+-| [SEP-2133](/seps/2133-extensions)                                                    | Extensions                                                                    | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-01-21 |
+-| [SEP-2106](/seps/2106-json-schema-2020-12)                                           | Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-12           | <Badge color="gray" shape="pill">Draft</Badge>       | Standards Track  | 2026-01-06 |
+-| [SEP-2085](/seps/2085-governance-succession-and-amendment)                           | Governance Succession and Amendment Procedures                                | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2025-12-05 |
+-| [SEP-1865](/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp)                  | MCP Apps - Interactive User Interfaces for MCP                                | <Badge color="green" shape="pill">Final</Badge>      | Extensions Track | 2025-11-21 |
+-| [SEP-1850](/seps/1850-pr-based-sep-workflow)                                         | PR-Based SEP Workflow                                                         | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2025-11-20 |
+-| [SEP-1730](/seps/1730-sdks-tiering-system)                                           | SDKs Tiering System                                                           | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-10-29 |
+-| [SEP-1699](/seps/1699-support-sse-polling-via-server-side-disconnect)                | Support SSE polling via server-side disconnect                                | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-10-22 |
+-| [SEP-1686](/seps/1686-tasks)                                                         | Tasks                                                                         | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-10-20 |
+-| [SEP-1613](/seps/1613-establish-json-schema-2020-12-as-default-dialect-f)            | Establish JSON Schema 2020-12 as Default Dialect for MCP                      | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-10-06 |
+-| [SEP-1577](/seps/1577--sampling-with-tools)                                          | Sampling With Tools                                                           | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-09-30 |
+-| [SEP-1330](/seps/1330-elicitation-enum-schema-improvements-and-standards)            | Elicitation Enum Schema Improvements and Standards Compliance                 | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-08-11 |
+-| [SEP-1319](/seps/1319-decouple-request-payload-from-rpc-methods-definiti)            | Decouple Request Payload from RPC Methods Definition                          | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-08-08 |
+-| [SEP-1303](/seps/1303-input-validation-errors-as-tool-execution-errors)              | Input Validation Errors as Tool Execution Errors                              | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-08-05 |
+-| [SEP-1302](/seps/1302-formalize-working-groups-and-interest-groups-in-mc)            | Formalize Working Groups and Interest Groups in MCP Governance                | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-08-05 |
+-| [SEP-1046](/seps/1046-support-oauth-client-credentials-flow-in-authoriza)            | Support OAuth client credentials flow in authorization                        | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-23 |
+-| [SEP-1036](/seps/1036-url-mode-elicitation-for-secure-out-of-band-intera)            | URL Mode Elicitation for secure out-of-band interactions                      | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-22 |
+-| [SEP-1034](/seps/1034--support-default-values-for-all-primitive-types-in)            | Support default values for all primitive types in elicitation schemas         | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-22 |
+-| [SEP-1024](/seps/1024-mcp-client-security-requirements-for-local-server-)            | MCP Client Security Requirements for Local Server Installation                | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-22 |
+-| [SEP-994](/seps/994-shared-communication-practicesguidelines)                        | Shared Communication Practices/Guidelines                                     | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2025-07-17 |
+-| [SEP-991](/seps/991-enable-url-based-client-registration-using-oauth-c)              | Enable URL-based Client Registration using OAuth Client ID Metadata Documents | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-07 |
+-| [SEP-990](/seps/990-enable-enterprise-idp-policy-controls-during-mcp-o)              | Enable enterprise IdP policy controls during MCP OAuth flows                  | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-06-04 |
+-| [SEP-986](/seps/986-specify-format-for-tool-names)                                   | Specify Format for Tool Names                                                 | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-16 |
+-| [SEP-985](/seps/985-align-oauth-20-protected-resource-metadata-with-rf)              | Align OAuth 2.0 Protected Resource Metadata with RFC 9728                     | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-16 |
+-| [SEP-973](/seps/973-expose-additional-metadata-for-implementations-res)              | Expose additional metadata for Implementations, Resources, Tools and Prompts  | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-07-15 |
+-| [SEP-932](/seps/932-model-context-protocol-governance)                               | Model Context Protocol Governance                                             | <Badge color="green" shape="pill">Final</Badge>      | Process          | 2025-07-08 |
+-| [SEP-414](/seps/414-request-meta)                                                    | Document OpenTelemetry Trace Context Propagation Conventions                  | <Badge color="green" shape="pill">Final</Badge>      | Standards Track  | 2025-04-25 |
++| SEP                                                                                  | Title                                                                         | Status                                          | Type             | Created    |
++| ------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------- | ---------------- | ---------- |
++| [SEP-2663](/seps/2663-tasks-extension)                                               | Tasks Extension                                                               | <Badge color="green" shape="pill">Final</Badge> | Extensions Track | 2026-04-27 |
++| [SEP-2596](/seps/2596-spec-feature-lifecycle-and-deprecation)                        | Specification Feature Lifecycle and Deprecation Policy                        | <Badge color="green" shape="pill">Final</Badge> | Process          | 2026-04-17 |
++| [SEP-2577](/seps/2577-deprecate-roots-sampling-and-logging)                          | Deprecate Roots, Sampling, and Logging                                        | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-04-14 |
++| [SEP-2575](/seps/2575-stateless-mcp)                                                 | Make MCP Stateless                                                            | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-06-18 |
++| [SEP-2567](/seps/2567-sessionless-mcp)                                               | Sessionless MCP via Explicit State Handles                                    | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-03-11 |
++| [SEP-2549](/seps/2549-TTL-for-list-results)                                          | TTL for List Results                                                          | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-04-09 |
++| [SEP-2484](/seps/2484-conformance-tests-required-for-final-seps)                     | Require Conformance Tests for Standards Track SEPs to Reach Final Status      | <Badge color="green" shape="pill">Final</Badge> | Process          | 2026-03-27 |
++| [SEP-2468](/seps/2468-recommend-issuer-claim-for-auth)                               | Recommend Issuer (iss) Parameter in MCP Auth Responses                        | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-03-25 |
++| [SEP-2322](/seps/2322-MRTR)                                                          | Multi Round-Trip Requests                                                     | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-02-03 |
++| [SEP-2260](/seps/2260-Require-Server-requests-to-be-associated-with-Client-requests) | Require Server requests to be associated with a Client request.               | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-02-16 |
++| [SEP-2243](/seps/2243-http-standardization)                                          | HTTP Header Standardization for Streamable HTTP Transport                     | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-02-04 |
++| [SEP-2207](/seps/2207-oidc-refresh-token-guidance)                                   | OIDC-Flavored Refresh Token Guidance                                          | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-02-04 |
++| [SEP-2164](/seps/2164-resource-not-found-error)                                      | Standardize Resource Not Found Error Code                                     | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-01-28 |
++| [SEP-2149](/seps/2149-working-group-charter-template)                                | MCP Group Governance and Charter Template                                     | <Badge color="green" shape="pill">Final</Badge> | Process          | 2025-01-15 |
++| [SEP-2148](/seps/2148-contributor-ladder)                                            | MCP Contributor Ladder                                                        | <Badge color="green" shape="pill">Final</Badge> | Process          | 2026-01-15 |
++| [SEP-2133](/seps/2133-extensions)                                                    | Extensions                                                                    | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-01-21 |
++| [SEP-2106](/seps/2106-json-schema-2020-12)                                           | Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-12           | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2026-01-06 |
++| [SEP-2085](/seps/2085-governance-succession-and-amendment)                           | Governance Succession and Amendment Procedures                                | <Badge color="green" shape="pill">Final</Badge> | Process          | 2025-12-05 |
++| [SEP-1865](/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp)                  | MCP Apps - Interactive User Interfaces for MCP                                | <Badge color="green" shape="pill">Final</Badge> | Extensions Track | 2025-11-21 |
++| [SEP-1850](/seps/1850-pr-based-sep-workflow)                                         | PR-Based SEP Workflow                                                         | <Badge color="green" shape="pill">Final</Badge> | Process          | 2025-11-20 |
++| [SEP-1730](/seps/1730-sdks-tiering-system)                                           | SDKs Tiering System                                                           | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-10-29 |
++| [SEP-1699](/seps/1699-support-sse-polling-via-server-side-disconnect)                | Support SSE polling via server-side disconnect                                | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-10-22 |
++| [SEP-1686](/seps/1686-tasks)                                                         | Tasks                                                                         | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-10-20 |
++| [SEP-1613](/seps/1613-establish-json-schema-2020-12-as-default-dialect-f)            | Establish JSON Schema 2020-12 as Default Dialect for MCP                      | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-10-06 |
++| [SEP-1577](/seps/1577--sampling-with-tools)                                          | Sampling With Tools                                                           | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-09-30 |
++| [SEP-1330](/seps/1330-elicitation-enum-schema-improvements-and-standards)            | Elicitation Enum Schema Improvements and Standards Compliance                 | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-08-11 |
++| [SEP-1319](/seps/1319-decouple-request-payload-from-rpc-methods-definiti)            | Decouple Request Payload from RPC Methods Definition                          | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-08-08 |
++| [SEP-1303](/seps/1303-input-validation-errors-as-tool-execution-errors)              | Input Validation Errors as Tool Execution Errors                              | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-08-05 |
++| [SEP-1302](/seps/1302-formalize-working-groups-and-interest-groups-in-mc)            | Formalize Working Groups and Interest Groups in MCP Governance                | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-08-05 |
++| [SEP-1046](/seps/1046-support-oauth-client-credentials-flow-in-authoriza)            | Support OAuth client credentials flow in authorization                        | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-23 |
++| [SEP-1036](/seps/1036-url-mode-elicitation-for-secure-out-of-band-intera)            | URL Mode Elicitation for secure out-of-band interactions                      | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-22 |
++| [SEP-1034](/seps/1034--support-default-values-for-all-primitive-types-in)            | Support default values for all primitive types in elicitation schemas         | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-22 |
++| [SEP-1024](/seps/1024-mcp-client-security-requirements-for-local-server-)            | MCP Client Security Requirements for Local Server Installation                | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-22 |
++| [SEP-994](/seps/994-shared-communication-practicesguidelines)                        | Shared Communication Practices/Guidelines                                     | <Badge color="green" shape="pill">Final</Badge> | Process          | 2025-07-17 |
++| [SEP-991](/seps/991-enable-url-based-client-registration-using-oauth-c)              | Enable URL-based Client Registration using OAuth Client ID Metadata Documents | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-07 |
++| [SEP-990](/seps/990-enable-enterprise-idp-policy-controls-during-mcp-o)              | Enable enterprise IdP policy controls during MCP OAuth flows                  | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-06-04 |
++| [SEP-986](/seps/986-specify-format-for-tool-names)                                   | Specify Format for Tool Names                                                 | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-16 |
++| [SEP-985](/seps/985-align-oauth-20-protected-resource-metadata-with-rf)              | Align OAuth 2.0 Protected Resource Metadata with RFC 9728                     | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-16 |
++| [SEP-973](/seps/973-expose-additional-metadata-for-implementations-res)              | Expose additional metadata for Implementations, Resources, Tools and Prompts  | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-07-15 |
++| [SEP-932](/seps/932-model-context-protocol-governance)                               | Model Context Protocol Governance                                             | <Badge color="green" shape="pill">Final</Badge> | Process          | 2025-07-08 |
++| [SEP-414](/seps/414-request-meta)                                                    | Document OpenTelemetry Trace Context Propagation Conventions                  | <Badge color="green" shape="pill">Final</Badge> | Standards Track  | 2025-04-25 |
+ 
+ ## SEP Status Definitions
+ 
+diff --git a/seps/2106-json-schema-2020-12.md b/seps/2106-json-schema-2020-12.md
+index ea8e341e1..4478bc0f2 100644
+--- a/seps/2106-json-schema-2020-12.md
++++ b/seps/2106-json-schema-2020-12.md
+@@ -1,6 +1,6 @@
+ # SEP-2106: Tools `inputSchema` & `outputSchema` Conform to JSON Schema 2020-12
+ 
+-- **Status**: Draft
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-01-06
+ - **Author(s)**: John McBride (@jpmcb) — original proposal; Ola Hungerford (@olaservo) — current shepherd, post-SEP-1850 conversion
+diff --git a/seps/2164-resource-not-found-error.md b/seps/2164-resource-not-found-error.md
+index d47b07799..4b3836d37 100644
+--- a/seps/2164-resource-not-found-error.md
++++ b/seps/2164-resource-not-found-error.md
+@@ -1,6 +1,6 @@
+ # SEP-2164: Standardize Resource Not Found Error Code
+ 
+-- **Status**: Draft
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-01-28
+ - **Author(s)**: Peter Alexander (@pja-ant)
+diff --git a/seps/2207-oidc-refresh-token-guidance.md b/seps/2207-oidc-refresh-token-guidance.md
+index 7b0947f51..02fdc9e63 100644
+--- a/seps/2207-oidc-refresh-token-guidance.md
++++ b/seps/2207-oidc-refresh-token-guidance.md
+@@ -1,6 +1,6 @@
+ # SEP-2207: OIDC-Flavored Refresh Token Guidance
+ 
+-- **Status**: Accepted
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-02-04
+ - **Author(s)**: Wils Dawson (@wdawson)
+diff --git a/seps/2322-MRTR.md b/seps/2322-MRTR.md
+index d05477608..fd66cb0ce 100644
+--- a/seps/2322-MRTR.md
++++ b/seps/2322-MRTR.md
+@@ -1,6 +1,6 @@
+ # SEP-2322: Multi Round-Trip Requests
+ 
+-- **Status**: Accepted
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-02-03
+ - **Author(s)**: Mark D. Roth (@markdroth), Caitie McCaffrey (@CaitieM20),
+diff --git a/seps/2468-recommend-issuer-claim-for-auth.md b/seps/2468-recommend-issuer-claim-for-auth.md
+index f33265fee..ac680ba61 100644
+--- a/seps/2468-recommend-issuer-claim-for-auth.md
++++ b/seps/2468-recommend-issuer-claim-for-auth.md
+@@ -1,6 +1,6 @@
+ # SEP-2468: Recommend Issuer (iss) Parameter in MCP Auth Responses
+ 
+-- **Status**: In-Review
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-03-25
+ - **Author(s)**: Emily Lauber (@EmLauber)
+diff --git a/seps/2484-conformance-tests-required-for-final-seps.md b/seps/2484-conformance-tests-required-for-final-seps.md
+index 66848aa17..a29de7aab 100644
+--- a/seps/2484-conformance-tests-required-for-final-seps.md
++++ b/seps/2484-conformance-tests-required-for-final-seps.md
+@@ -1,6 +1,6 @@
+ # SEP-2484: Require Conformance Tests for Standards Track SEPs to Reach Final Status
+ 
+-- **Status**: Draft
++- **Status**: Final
+ - **Type**: Process
+ - **Created**: 2026-03-27
+ - **Author(s)**: Paul Carleton (@pcarleton)
+diff --git a/seps/2549-TTL-for-list-results.md b/seps/2549-TTL-for-list-results.md
+index fd66c76d0..921e79e50 100644
+--- a/seps/2549-TTL-for-list-results.md
++++ b/seps/2549-TTL-for-list-results.md
+@@ -1,6 +1,6 @@
+ # SEP-2549: TTL for List Results
+ 
+-- **Status**: Accepted
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2026-04-09
+ - **Author(s)**: Caitie McCaffrey (@CaitieM20)
+diff --git a/seps/2575-stateless-mcp.md b/seps/2575-stateless-mcp.md
+index 6ea9ed8c5..4041aa3e2 100644
+--- a/seps/2575-stateless-mcp.md
++++ b/seps/2575-stateless-mcp.md
+@@ -1,6 +1,6 @@
+ # SEP-2575: Make MCP Stateless
+ 
+-- **Status**: Accepted
++- **Status**: Final
+ - **Type**: Standards Track
+ - **Created**: 2025-06-18
+ - **Author(s)**: Jonathan Hefner (@jonathanhefner), Mark Roth (@markdroth),
+diff --git a/seps/2596-spec-feature-lifecycle-and-deprecation.md b/seps/2596-spec-feature-lifecycle-and-deprecation.md
+index 3147594b0..9e8b4838d 100644
+--- a/seps/2596-spec-feature-lifecycle-and-deprecation.md
++++ b/seps/2596-spec-feature-lifecycle-and-deprecation.md
+@@ -1,6 +1,6 @@
+ # SEP-2596: Specification Feature Lifecycle and Deprecation Policy
+ 
+-- **Status**: Draft
++- **Status**: Final
+ - **Type**: Process
+ - **Created**: 2026-04-17
+ - **Author(s)**: Den Delimarsky (@localden)

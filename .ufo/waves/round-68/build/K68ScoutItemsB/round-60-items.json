@@ -1,0 +1,80 @@
+{
+  "round": 60,
+  "rev": "39f61816d4ee7a8d401df42c1818c91a9c537bce",
+  "spotcheck": "corpus/lessons/round-60-verifier-spotcheck.md",
+  "committed_equals_worktree": true,
+  "counter_items67": {
+    "section_count": 1,
+    "section_headings": [
+      {
+        "line": 163,
+        "text": "5. Routed defects the lane must fix next round"
+      }
+    ],
+    "item_count": 9,
+    "items": [
+      {
+        "k": 1,
+        "routedId": "R60-V1",
+        "words": 67,
+        "text": "- **R60-V1 — uncommitted round work (blocking for C1).** Six modified files and\n  seven untracked wave-evidence paths exist only in the working tree; under\n  landed-means-committed nothing there counts. Commit the close work (LOG.md\n  round-60 entry, PROVINCE band-4 line, SCORECARD round section + A7 fix,\n  QUALITY Q51, SOURCES Paths row, lesson, `close/`, `w1/`, launcher artifacts)\n  in one scoped `jj-lane.sh commit` and cite its landed hash in an erratum."
+      },
+      {
+        "k": 2,
+        "routedId": "R60-V2",
+        "words": 42,
+        "text": "- **R60-V2 — placeholders filed in the fleet report.** `__TIP__`, `__MEASURED__`,\n  `__COMMITS__` are unfilled: the third landed change, the lane tip and both\n  after-measurements cite no object. An erratum naming the real hashes is the\n  only repair (filed bytes are not rewritten)."
+      },
+      {
+        "k": 3,
+        "routedId": "R60-V3",
+        "words": 36,
+        "text": "- **R60-V3 — the report's 9/10 contradicts its own receipt.** `close/dispatch60-work.txt`\n  and the SCORECARD round-60 section read `8/10` with A7 and A10 missed; the\n  report says `9/10`, \"the only miss is A10\". Correct it in erratum."
+      },
+      {
+        "k": 4,
+        "routedId": "R60-V4",
+        "words": 31,
+        "text": "- **R60-V4 — nonexistent evidence files cited.** `.ufo/waves/round-60/close/dispatch60-tip.txt`\n  and `doctrine60-tip.txt` do not exist anywhere in the repo. Produce and commit\n  the tip receipts at the measured revision, or strike the citations."
+      },
+      {
+        "k": 5,
+        "routedId": "R60-V5",
+        "words": 57,
+        "text": "- **R60-V5 — the dispatch registry is not in the gate's schema.** Round 60 has no\n  `dispatch-actual.json`; the launcher wrote `w1/swarm-registry.json` with\n  `members` as an object and `agentId: null` for all 32 seats, which the new gate\n  reads as `REGISTRY_UNREADABLE` / `NOT_A_DISPATCH`. Emit the registry in the\n  schema the gate consumes before the next round's A-style check."
+      },
+      {
+        "k": 6,
+        "routedId": "R60-V6",
+        "words": 61,
+        "text": "- **R60-V6 — dead seats unreported.** 27/32 seats settled `exit=-9 session=null`,\n  only 5 settled `exit=0`, 6 seat report files exist, and `launcher.py.txt`\n  terminated with a `ValueError` traceback. The report names no dead seat and\n  claims the parent \"stayed alive until settlement\"; the report contract requires\n  every dead seat named with its last error text. Record them, and state the\n  launcher crash."
+      },
+      {
+        "k": 7,
+        "routedId": "R60-V7",
+        "words": 41,
+        "text": "- **R60-V7 — the LOG tie is unsupported at the tip.** `git show a745a3b0:LOG.md |\n  grep -ci 'round 60'` → 0. Both committed revisions are presented as \"tied to a\n  LOG.md entry\"; the entry exists only uncommitted. Land it with R60-V1."
+      },
+      {
+        "k": 8,
+        "routedId": "R60-V8",
+        "words": 55,
+        "text": "- **R60-V8 — corpus map drift, integrator-caused (sixth recurrence of the\n  R56-V3 / R58-V7 class).** This file adds\n  `corpus/lessons/round-60-verifier-spotcheck.md`; round 61 must add its\n  `corpus/README.md` row, its `covered` entry in `.ufo/pins/readme-map.json` and\n  the proxy stanza refresh in the same change, or `readme-map` opens in DRIFT\n  (that is exactly why round 60 opened with `files=142 rows=141`)."
+      },
+      {
+        "k": 9,
+        "routedId": "R60-V9",
+        "words": 37,
+        "text": "- **R60-V9 — reject reason cites the wrong snapshot id.** The exactly-once\n  rejection says `S141`; the package now assigns that document `S211`, which is\n  what the entry file's own `source:` line reads. Re-point or explain in erratum.\n"
+      }
+    ],
+    "section_text": [
+      "\n- **R60-V1 — uncommitted round work (blocking for C1).** Six modified files and\n  seven untracked wave-evidence paths exist only in the working tree; under\n  landed-means-committed nothing there counts. Commit the close work (LOG.md\n  round-60 entry, PROVINCE band-4 line, SCORECARD round section + A7 fix,\n  QUALITY Q51, SOURCES Paths row, lesson, `close/`, `w1/`, launcher artifacts)\n  in one scoped `jj-lane.sh commit` and cite its landed hash in an erratum.\n- **R60-V2 — placeholders filed in the fleet report.** `__TIP__`, `__MEASURED__`,\n  `__COMMITS__` are unfilled: the third landed change, the lane tip and both\n  after-measurements cite no object. An erratum naming the real hashes is the\n  only repair (filed bytes are not rewritten).\n- **R60-V3 — the report's 9/10 contradicts its own receipt.** `close/dispatch60-work.txt`\n  and the SCORECARD round-60 section read `8/10` with A7 and A10 missed; the\n  report says `9/10`, \"the only miss is A10\". Correct it in erratum.\n- **R60-V4 — nonexistent evidence files cited.** `.ufo/waves/round-60/close/dispatch60-tip.txt`\n  and `doctrine60-tip.txt` do not exist anywhere in the repo. Produce and commit\n  the tip receipts at the measured revision, or strike the citations.\n- **R60-V5 — the dispatch registry is not in the gate's schema.** Round 60 has no\n  `dispatch-actual.json`; the launcher wrote `w1/swarm-registry.json` with\n  `members` as an object and `agentId: null` for all 32 seats, which the new gate\n  reads as `REGISTRY_UNREADABLE` / `NOT_A_DISPATCH`. Emit the registry in the\n  schema the gate consumes before the next round's A-style check.\n- **R60-V6 — dead seats unreported.** 27/32 seats settled `exit=-9 session=null`,\n  only 5 settled `exit=0`, 6 seat report files exist, and `launcher.py.txt`\n  terminated with a `ValueError` traceback. The report names no dead seat and\n  claims the parent \"stayed alive until settlement\"; the report contract requires\n  every dead seat named with its last error text. Record them, and state the\n  launcher crash.\n- **R60-V7 — the LOG tie is unsupported at the tip.** `git show a745a3b0:LOG.md |\n  grep -ci 'round 60'` → 0. Both committed revisions are presented as \"tied to a\n  LOG.md entry\"; the entry exists only uncommitted. Land it with R60-V1.\n- **R60-V8 — corpus map drift, integrator-caused (sixth recurrence of the\n  R56-V3 / R58-V7 class).** This file adds\n  `corpus/lessons/round-60-verifier-spotcheck.md`; round 61 must add its\n  `corpus/README.md` row, its `covered` entry in `.ufo/pins/readme-map.json` and\n  the proxy stanza refresh in the same change, or `readme-map` opens in DRIFT\n  (that is exactly why round 60 opened with `files=142 rows=141`).\n- **R60-V9 — reject reason cites the wrong snapshot id.** The exactly-once\n  rejection says `S141`; the package now assigns that document `S211`, which is\n  what the entry file's own `source:` line reads. Re-point or explain in erratum.\n\nNote for the operator (promotion is operator-owned): SHONEN box 2 (end-to-end\ntask executed and logged) and box 4 (PROVINCE accuracy / no cross-domain bleed)\nlook checkable by a non-author *once* R60-V1 lands — box 2 against the LOG\nround-60 entry plus the committed wave record, box 4 against the PROVINCE band-4\nline and `w1/ConnectorSiblings.md`. They are not checkable now: both the LOG entry\nand every seat report are uncommitted.\n"
+    ]
+  },
+  "v1_routedItems": {
+    "found": true,
+    "item_count": 9
+  },
+  "parsers_agree": true
+}

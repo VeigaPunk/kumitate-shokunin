@@ -1,0 +1,186 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-67/probe/ledger67-probe.mjs	2026-10-27 04:21:53.413976570 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/probe/ledger68-probe.mjs	2026-10-27 11:41:15.462487151 -0300
+@@ -1,10 +1,10 @@
+ #!/usr/bin/env node
+ /**
+- * ledger67-probe.mjs — frozen counter for kumitate round 67 claim C1 (rule L67 v1).
++ * ledger68-probe.mjs — frozen counter for kumitate round 68 claim C1 (rule L68 v1).
+  *
+- *   node .ufo/waves/round-67/probe/ledger67-probe.mjs <lane-dir> <rev> [--tool <path-in-archive>] [--seed <hex>]
++ *   node .ufo/waves/round-68/probe/ledger68-probe.mjs <lane-dir> <rev> [--tool <path-in-archive>] [--seed <hex>]
+  *
+- * Predicate LEDGER67_HELD (checks L1..L7), measured over `git archive <rev>` (never the worktree):
++ * Predicate LEDGER68_HELD (checks L1..L7), measured over `git archive <rev>` (never the worktree):
+  *   L1 the archive's `scripts/routed-ledger.mjs --selftest` prints `ROUTED_LEDGER_SELFTEST: PASS (n/n)`, n >= 44, exit 0.
+  *   L2 the archive's tool run inside a second clean extraction of M (`--root <extraction> --from 55 --to 66 --classes`)
+  *     exits 0 with `ROUTED_LEDGER: CLEAN spotchecks=12`, `items=` equal to THIS counter's own fence-aware item count
+@@ -27,11 +27,11 @@
+  *     corpus/QUALITY.md names `routed-ledger`; SCORECARD.md `## Capabilities` holds a table row whose first cell
+  *     names `routed-ledger`.
+  *   L7 counter self-confinement, proven by fixtures at counting time: re-running this counter with
+- *     NODE_OPTIONS=--require <preload> set prints `LEDGER67_UNMET held=0/7 … | ENV_POISONED` and exits 2; a revision
++ *     NODE_OPTIONS=--require <preload> set prints `LEDGER68_UNMET held=0/7 … | ENV_POISONED` and exits 2; a revision
+  *     whose `scripts/routed-ledger.mjs` is a symlink fails L1 (never executes a host file); a revision containing any
+  *     symlink or non-regular file fails closed `EXTRACTION_UNSAFE` before any check; every child process runs under
+  *     an explicit environment allow-list (PATH, TMPDIR) with a timeout.
+- * Verdict: LEDGER67_HELD held=7/7 checks=7 rev=<full> rule=L67 (exit 0) | LEDGER67_UNMET held=k/7 … | MISS reasons (exit 1);
++ * Verdict: LEDGER68_HELD held=7/7 checks=7 rev=<full> rule=L68 (exit 0) | LEDGER68_UNMET held=k/7 … | MISS reasons (exit 1);
+  * exit 2 when the revision cannot be read or archived, or the environment/extraction is unsafe.
+  * Scratch: honours TMPDIR; everything is removed before exit.
+  */
+@@ -39,11 +39,11 @@
+ import { randomBytes, createHash } from 'node:crypto';
+ import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync, existsSync, lstatSync, readdirSync } from 'node:fs';
+ import { tmpdir } from 'node:os';
+-import { join, resolve, normalize, sep } from 'node:path';
++import { join, resolve, normalize, sep, relative } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+-const RULE = 'L67';
+-const BASE = 'f29eb6990653dba3e1c6296044fd7bfa2ac2b9ed';   // round-67 base: lane tip when the round started
++const RULE = 'L68';
++const BASE = 'd23892ad44b41e1af63b3edb949d265ca1dd812d';   // round-68 base: lane tip when the round started
+ const R66BASE = '8d557f85312de4fcc82e09ff735d21436bc3746d'; // round-66 base: L3's answered-this-round clause
+ const FROM = 55; const TO = 66; const N_CHECKS = 7;
+ const POISON = ['NODE_OPTIONS', 'LD_PRELOAD', 'GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_COMMON_DIR', 'TAR_OPTIONS'];
+@@ -52,7 +52,7 @@
+ // ---- confinement preamble: refuse a poisoned environment before anything runs
+ for (const k of POISON) {
+   if (process.env[k]) {
+-    process.stdout.write(`LEDGER67_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=unknown rule=${RULE} | ENV_POISONED:${k}\n`);
++    process.stdout.write(`LEDGER68_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=unknown rule=${RULE} | ENV_POISONED:${k}\n`);
+     process.exit(2);
+   }
+ }
+@@ -60,18 +60,18 @@
+ const argv = process.argv.slice(2);
+ const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
+ const pos = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--tool', '--seed'].includes(argv[i - 1])));
+-if (pos.length < 2) { process.stderr.write('usage: ledger67-probe.mjs <lane-dir> <rev> [--tool path] [--seed hex]\n'); process.exit(64); }
++if (pos.length < 2) { process.stderr.write('usage: ledger68-probe.mjs <lane-dir> <rev> [--tool path] [--seed hex]\n'); process.exit(64); }
+ const lane = resolve(pos[0]);
+ const rev = pos[1];
+ const TOOL_REL = opt('--tool', 'scripts/routed-ledger.mjs');
+ const SEED = opt('--seed', randomBytes(8).toString('hex'));
+ 
+ const CHILD_ENV = (T) => ({ PATH: process.env.PATH || '/usr/bin:/bin', TMPDIR: T, LANG: process.env.LANG || 'C' });
+-const T = mkdtempSync(join(tmpdir(), 'ledger67.'));
+-const A = join(T, 'archive'); mkdirSync(A);
++const T = mkdtempSync(join(tmpdir(), 'ledger68.'));
++const A = join(T, 'archive');
+ 
+ const rv = spawnSync('git', ['-C', lane, 'rev-parse', '--verify', `${rev}^{commit}`], { encoding: 'utf8', env: CHILD_ENV(T) });
+-if (rv.status !== 0) { process.stdout.write(`LEDGER67_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=${rev} rule=${RULE} | rev-unreadable\n`); rmSync(T, { recursive: true, force: true }); process.exit(2); }
++if (rv.status !== 0) { process.stdout.write(`LEDGER68_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=${rev} rule=${RULE} | rev-unreadable\n`); rmSync(T, { recursive: true, force: true }); process.exit(2); }
+ const full = rv.stdout.trim();
+ 
+ // ---- symlink-safe extraction; any symlink/special file in the revision fails closed
+@@ -82,19 +82,36 @@
+   const walk = (d) => {
+     for (const f of readdirSync(d, { withFileTypes: true })) {
+       const p = join(d, f.name);
+-      if (f.isSymbolicLink() || f.isSocket() || f.isFIFO() || f.isBlockDevice() || f.isCharacterDevice()) return p;
++      if (f.isSocket() || f.isFIFO() || f.isBlockDevice() || f.isCharacterDevice()) return p;
+       if (f.isDirectory()) { const r = walk(p); if (r) return r; }
+     }
+     return null;
+   };
+-  return walk(dst);
++  return walk(dst); // symlinks are tolerated in evidence trees but NEVER followed: every read/execute path is chain-checked
++
+ }
+ const bad = extract(A);
+ if (typeof bad === 'string') {
+-  process.stdout.write(`LEDGER67_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=${full} rule=${RULE} | ${bad === 'archive-failed' ? 'archive-failed' : 'EXTRACTION_UNSAFE'}\n`);
++  process.stdout.write(`LEDGER68_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=${full} rule=${RULE} | ${bad === 'archive-failed' ? 'archive-failed' : 'EXTRACTION_UNSAFE'}\n`);
+   rmSync(T, { recursive: true, force: true }); process.exit(2);
+ }
+-const rd = (rel) => { try { return readFileSync(join(A, rel), 'utf8'); } catch { return null; } };
++let UNSAFE = false;
++function chainSafe(p) {
++  const rel = relative(A, p); const parts = rel.split(sep);
++  let cur = A;
++  for (const part of parts) {
++    cur = join(cur, part);
++    let st;
++    try { st = lstatSync(cur); } catch { return true; } // a not-yet-existing component cannot be a symlink
++    if (st.isSymbolicLink()) return false;
++  }
++  return true;
++}
++const rd = (rel) => {
++  const p = join(A, rel);
++  if (!chainSafe(p)) { UNSAFE = true; return null; }
++  try { return readFileSync(p, 'utf8'); } catch { return null; }
++};
+ const atR66Base = (rel) => { const r = spawnSync('git', ['-C', lane, 'show', `${R66BASE}:${rel}`], { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024, env: CHILD_ENV(T) }); return r.status === 0 ? r.stdout : null; };
+ const TOOL = join(A, TOOL_REL);
+ 
+@@ -178,7 +195,7 @@
+ if (!existsSync(TOOL)) check('L1', false, 'tool-absent');
+ else {
+   const st = lstatSync(TOOL);
+-  if (!st.isFile()) check('L1', false, 'tool-not-regular');
++  if (!st.isFile() || !chainSafe(TOOL)) check('L1', false, 'tool-not-regular-or-symlinked');
+   else {
+     const r = spawnSync('node', [TOOL, '--selftest'], { encoding: 'utf8', timeout: 300000, env: CHILD_ENV(T) });
+     const m = /^ROUTED_LEDGER_SELFTEST: PASS \((\d+)\/(\d+)\)$/m.exec(r.stdout || '');
+@@ -201,7 +218,7 @@
+ const badB = extract(B);
+ const TOOL_B = join(B, TOOL_REL);
+ if (typeof badB === 'string') check('L2', false, `extraction2-${badB === 'archive-failed' ? 'failed' : 'unsafe'}`);
+-else if (!existsSync(TOOL_B)) check('L2', false, 'tool-absent');
++else if (!existsSync(TOOL_B) || !chainSafe(TOOL_B)) check('L2', false, 'tool-absent-or-symlinked');
+ else {
+   const r = spawnSync('node', [TOOL_B, '--root', B, '--from', String(FROM), '--to', String(TO)], { encoding: 'utf8', timeout: 300000, env: CHILD_ENV(T) });
+   const v = ((r.stdout || '').trim().split('\n').pop()) || '';
+@@ -256,6 +273,16 @@
+   check('L3', bad.length === 0, `${bad.length} problems: ${bad.slice(0, 6).join(',')}`);
+ }
+ 
++// ---- read-path confinement: a symlink at/above any static read path fails closed before scoring continues
++{
++  const staticPaths = ['corpus/routed-ledger.md', 'SKILL.md', 'corpus/QUALITY.md', 'SCORECARD.md']; // the tool itself is L1's job (a symlinked tool MISSes L1, never executes)
++  for (let n = FROM; n <= TO; n += 1) staticPaths.push(spotPath(n));
++  if (staticPaths.some((p) => { const ap = join(A, p); return existsSync(ap) && !chainSafe(ap); }) || UNSAFE) {
++    process.stdout.write(`LEDGER68_UNMET held=0/${N_CHECKS} checks=${N_CHECKS} rev=${full} rule=${RULE} | EXTRACTION_UNSAFE\n`);
++    rmSync(T, { recursive: true, force: true }); process.exit(2);
++  }
++}
++
+ // ---- L4 / L5 held-out fixtures
+ let seedCtr = 0;
+ const rnd = () => { seedCtr += 1; return createHash('sha256').update(`${SEED}:${seedCtr}`).digest('hex'); };
+@@ -352,7 +379,7 @@
+ }
+ let realL4 = false;
+ if (!existsSync(TOOL)) check('L4', false, 'tool-absent');
+-else if (!lstatSync(TOOL).isFile()) check('L4', false, 'tool-not-regular');
++else if (!lstatSync(TOOL).isFile() || !chainSafe(TOOL)) check('L4', false, 'tool-not-regular-or-symlinked');
+ else { const b = harness(TOOL); realL4 = b.length === 0; check('L4', realL4, `seed=${SEED} ${b.length}/${MUTANTS.length} mutants wrong: ${b.slice(0, 4).join(';')}`); }
+ {
+   const stubs = {
+@@ -416,12 +443,12 @@
+   }
+   // (c) a symlink anywhere in the revision fails closed EXTRACTION_UNSAFE
+   {
+-    const D = join(T, 'fx-symtree'); mkdirSync(join(D, 'notes'), { recursive: true });
+-    writeFileSync(join(D, 'notes', 'real.md'), 'real\n');
++    const D = join(T, 'fx-symtree'); mkdirSync(join(D, 'corpus'), { recursive: true });
++    writeFileSync(join(D, 'corpus', 'real.md'), 'real\n');
+     const g = (...a) => spawnSync('git', ['-C', D, ...a], { encoding: 'utf8', env: CHILD_ENV(T) });
+     g('init', '-q');
+-    const h = g('hash-object', '-w', join(D, 'notes', 'real.md')).stdout.trim();
+-    g('update-index', '--add', '--cacheinfo', `120000,${h},notes/alias.md`);
++    const h = g('hash-object', '-w', join(D, 'corpus', 'real.md')).stdout.trim();
++    g('update-index', '--add', '--cacheinfo', `120000,${h},corpus/lessons`);
+     g('-c', 'user.name=f', '-c', 'user.email=f@invalid', '-c', 'commit.gpgsign=false', 'commit', '-q', '--no-verify', '-m', 'symlink-tree');
+     const rev2 = g('rev-parse', 'HEAD').stdout.trim();
+     const r = spawnSync(process.execPath, [SELF, D, rev2], { encoding: 'utf8', timeout: 120000, env: CHILD_ENV(T) });
+@@ -435,5 +462,5 @@
+ rmSync(T, { recursive: true, force: true });
+ const held = Object.values(results).filter(Boolean).length;
+ const ok = held === N_CHECKS;
+-process.stdout.write(`LEDGER67_${ok ? 'HELD' : 'UNMET'} held=${held}/${N_CHECKS} checks=${N_CHECKS} rev=${full} rule=${RULE} seed=${SEED}${miss.length ? ` | ${miss.join(' | ')}` : ''}\n`);
++process.stdout.write(`LEDGER68_${ok ? 'HELD' : 'UNMET'} held=${held}/${N_CHECKS} checks=${N_CHECKS} rev=${full} rule=${RULE} seed=${SEED}${miss.length ? ` | ${miss.join(' | ')}` : ''}\n`);
+ process.exit(ok ? 0 : 1);

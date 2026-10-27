@@ -1,0 +1,14 @@
+$ node reanchor.mjs <lane> rows.md   # rows only
+REANCHOR: CLEAN problems=0
+EXIT=0
+$ node reanchor.mjs <lane> hdr.md   # header + separator rows present
+REANCHOR: CLEAN problems=0
+EXIT=0
+$ node reanchor.mjs <lane> badstatus.md
+BADSTATUS R61-V2 status=done
+REANCHOR: DRIFT problems=1
+EXIT=1
+$ node reanchor.mjs <lane> badformat.md
+BADFORMAT R61-V2
+REANCHOR: DRIFT problems=1
+EXIT=1

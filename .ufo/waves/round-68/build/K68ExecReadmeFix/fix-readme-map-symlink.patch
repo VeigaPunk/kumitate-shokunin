@@ -1,0 +1,33 @@
+--- a/scripts/readme-map.mjs
++++ b/scripts/readme-map.mjs
+@@ -221,15 +221,28 @@
+     }
+     if (lst.isSymbolicLink()) {
+       try {
+-        statSync(full);
++        // v2 (R57-V3): a symlink resolves or it does not — `full` was never
++        // defined here, so the ReferenceError fell into the catch below and a
++        // symlink to an *existing* file was reported `stale-covered` instead
++        // of the documented `covered-not-file` (K68ExecReadmeFix-2).
++        statSync(join(dirFor[ns], leaf));
+         bad.push(`covered-not-file:${c}`);
+       } catch {
+         bad.push(`stale-covered:${c}`);
+       }
+       continue;
+     }
+     if (!lst.isFile()) {
+       bad.push(`covered-not-file:${c}`);
+     }
+   }
++  // selftest case 17 (paired with case 16's dangling link):
++  //   { const f = fixture(join(root, 'd17'), {
++  //       files: ['knowledge/a.md', 'lessons/b.md'],
++  //       rows: '| `knowledge/a.md` | d | p |\n| `lessons/b.md` | d | p |\n| `lessons/live.md` | d | p |\n',
++  //       covered: ['knowledge/a.md', 'lessons/b.md', 'lessons/live.md'],
++  //     });
++  //     symlinkSync(join(f.dir, 'corpus/knowledge/a.md'), join(f.dir, 'corpus/lessons/live.md'));
++  //     const r = run(argsOf(f));
++  //     pass('symlink-not-file', r.status === 1 && `${r.stdout}`.includes('covered-not-file:lessons/live.md'),
++  //       `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`); }
++  // (fixture() must return `dir` for the symlink target; one-line change.)

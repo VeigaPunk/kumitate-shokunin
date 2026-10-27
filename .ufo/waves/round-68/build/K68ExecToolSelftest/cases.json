@@ -1,0 +1,3634 @@
+{
+  "suite": "kumitate routed-ledger v2 acceptance",
+  "contract": "kumitate-routed-ledger-v2",
+  "round": 68,
+  "seat": "K68ExecToolSelftest",
+  "tool_under_test": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs",
+  "tool_sha256": "9eebfefad18ef669bf468e4e9a932adfc339d845407f81dd62f593cdf8c8e29d",
+  "case_count": 54,
+  "groups": {
+    "A": "frozen L4 mutant parity (20)",
+    "B": "confirmed hardenings, red-before arms (10)",
+    "C": "usage arms (6)",
+    "D": "malformed rows (11)",
+    "E": "class recurrence (4)",
+    "F": "real-lane routed sections (3)"
+  },
+  "hardenings": [
+    "GIT_DIR-inherited selftest/repo escape",
+    "symlink/.. answer and ledger escapes",
+    "second routed section silently missed",
+    "one-word / ambiguous quote binding",
+    "+-2-line answer window",
+    "fence-blind item count"
+  ],
+  "cases": [
+    {
+      "id": "A01",
+      "group": "A",
+      "name": "L4 good: a correct ledger is CLEAN with fence-aware items=7",
+      "hardening": null,
+      "mutant": "good",
+      "rows_mutation": null,
+      "fixture": "good",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "69bac0e44e6b45ddfb968c75685ed7c017b92f7f2286b9f6456ff403ba5e6124",
+          "bytes": 593,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n```text\n- fence-bravo codeline here\n```\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0$"
+      },
+      "expectLines": null,
+      "note": "fenced shape: v1 counts the fenced bullet as round-101 item 4 -> items=8, UNLEDGERED round-101-item-4, exit 1."
+    },
+    {
+      "id": "A02",
+      "group": "A",
+      "name": "L4 drop: a dropped row is UNLEDGERED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "drop",
+      "fixture": "plain + rows drop",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "e6e55ce3182e8da1d48248e711aca437ba0a0cb0c957bae75a35662c1d25b343",
+          "bytes": 599,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-102-item-1$",
+        "verdict": "^ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=6 "
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A03",
+      "group": "A",
+      "name": "L4 quote-swap: a quote from another item is QUOTE_ABSENT",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "quote-swap",
+      "fixture": "plain + rows quote-swap",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "f343ef02376731fc4c4da6cc86a18f65f09f02aacb7e794146f589ffe86bc42e",
+          "bytes": 661,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_ABSENT",
+        "detail": "A2@line\\d+:round-101-item-2$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A04",
+      "group": "A",
+      "name": "L4 quote-decoy: a quote from outside the section is QUOTE_ABSENT",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "quote-decoy",
+      "fixture": "plain + rows quote-decoy",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "a26415074362550bb524684e516d946f2fd3703cb83eebd223899ac64ef5e6ea",
+          "bytes": 679,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"verdictbullet notrouted outside tokens\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_ABSENT",
+        "detail": "A4@line\\d+:round-101-item-4$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A05",
+      "group": "A",
+      "name": "L4 answer-wrong: answer quote absent from the file",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "answer-wrong",
+      "fixture": "plain + rows answer-wrong",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "ba0f6689171750343404396ebc0c2b45d4de060a2afc3e9f63a2d9625c40f27f",
+          "bytes": 667,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"zulu9 yankee9 xray9 whisky9\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "A1@line\\d+:answer-quote-not-at"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A06",
+      "group": "A",
+      "name": "L4 answer-ledger: the ledger cannot answer itself",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "answer-ledger",
+      "fixture": "plain + rows answer-ledger",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "bee0cfc32febcd9d1e73bc3120d1933a2c096be0a47ce7509f9ff7095f8b1f97",
+          "bytes": 678,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `corpus/routed-ledger.md:1` — \"ledger acceptance fixture\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "answer-path-not-allowed"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A07",
+      "group": "A",
+      "name": "L4 answer-eof: answer line past EOF",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "answer-eof",
+      "fixture": "plain + rows answer-eof",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "aa3b43336659120bbc4a5be826065c9e14f4d5b971f79c2def0bd2609b002a2a",
+          "bytes": 666,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:40` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "answer-line-40-of-\\d+$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A08",
+      "group": "A",
+      "name": "L4 dup: duplicate row id",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "dup",
+      "fixture": "plain + rows dup",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "2674797ab3f41e7497896511bee288b1327ff0b35b422dbaf4462c82e8c7ea9f",
+          "bytes": 734,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_DUPLICATE",
+        "detail": "A7@line\\d+$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A09",
+      "group": "A",
+      "name": "L4 ordinal: item ordinal beyond the section",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "ordinal",
+      "fixture": "plain + rows ordinal",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "620b314c45247a0fc76b077c41beb441c73135cdd6edf270a179816e19391692",
+          "bytes": 736,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A9 | 101 | 6 | \"prosepapa quebec romeo\" | section-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ITEM_ABSENT",
+        "detail": "round-101-item-6"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A10",
+      "group": "A",
+      "name": "L4 nested-as-item: a nested bullet is not an item",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "nested-as-item",
+      "fixture": "plain + rows nested-as-item",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "3b3796c784329b43087334c7b069c1dff9d301e79967036a975ef8293663891f",
+          "bytes": 744,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A10 | 101 | 2 | \"nestedgolf hotelindia juliett\" | section-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_ABSENT",
+        "detail": "A10@line\\d+:round-101-item-2"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A11",
+      "group": "A",
+      "name": "L4 prose-as-item: prose is not an item",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "prose-as-item",
+      "fixture": "plain + rows prose-as-item",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "36ceaf638bffdcc4894ba51fa17cd2a0a47ff44d3c564b6261cd6d69270aab5f",
+          "bytes": 737,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A11 | 101 | 2 | \"prosepapa quebec romeo\" | section-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_ABSENT",
+        "detail": "A11@line\\d+:round-101-item-2"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A12",
+      "group": "A",
+      "name": "L4 long-quote: 26-word quote is ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "long-quote",
+      "fixture": "plain + rows long-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "b416f606d2191e136bb562a691d725d71101cf010437d240640c0945a09d6f50",
+          "bytes": 764,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"lq1 lq2 lq3 lq4 lq5 lq6 lq7 lq8 lq9 lq10 lq11 lq12 lq13 lq14 lq15 lq16 lq17 lq18 lq19 lq20 lq21 lq22 lq23 lq24 lq25 lq26\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:quote-words=26"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "A13",
+      "group": "A",
+      "name": "L4 one-word-quote: a 1-word quote is ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "one-word-quote",
+      "fixture": "plain + rows one-word-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "47e9878d794816908c9a91b1118ad872da4d0ccbea319100918be187417af175",
+          "bytes": 650,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:quote-words=1"
+      },
+      "expectLines": null,
+      "note": "v1 has no minimum: it binds \"juliet\" and reads CLEAN exit 0."
+    },
+    {
+      "id": "A14",
+      "group": "A",
+      "name": "L4 ambiguous-quote: a quote in two items is QUOTE_AMBIGUOUS",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "ambiguous-quote",
+      "fixture": "plain + rows ambiguous-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "0d8594bd84cd40e78f74d4a48dea7e498d239bbd708a8d803a89bb172ff15c64",
+          "bytes": 668,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"dup-trio echo2 shared-token\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_AMBIGUOUS",
+        "detail": "A4@line\\d+"
+      },
+      "expectLines": null,
+      "note": "v1 binds the first occurrence and reads CLEAN exit 0."
+    },
+    {
+      "id": "A15",
+      "group": "A",
+      "name": "L4 shifted-answer: answer quote one line off is ANSWER_DEAD",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "shifted-answer",
+      "fixture": "plain + rows shifted-answer",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "d9edfece1852e85d3afd3a3533ae341f33f60ee0f604b43087e725c5206ecde5",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:4` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "answer-quote-not-at[^ ]*:notes/a.md:4$"
+      },
+      "expectLines": null,
+      "note": "v1 searches lines n-2..n+1, finds the quote on line 3 and reads CLEAN exit 0."
+    },
+    {
+      "id": "A16",
+      "group": "A",
+      "name": "L4 fence-item: a row quoting a fenced line is QUOTE_ABSENT",
+      "hardening": null,
+      "mutant": "fence-item",
+      "rows_mutation": null,
+      "fixture": "fence-item",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "69bac0e44e6b45ddfb968c75685ed7c017b92f7f2286b9f6456ff403ba5e6124",
+          "bytes": 593,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n```text\n- fence-bravo codeline here\n```\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "40b652f0e3ea6130c195fc6967fbd4f10d8a1f06a26993ca9ac9343ee22c4bb1",
+          "bytes": 740,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A12 | 101 | 4 | \"fence-bravo codeline here\" | section-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_ABSENT",
+        "detail": "A12@line\\d+:round-101-item-4$"
+      },
+      "expectLines": null,
+      "note": "v1 makes the fenced bullet item 4 and BINDS A12 (no finding for A12 at all)."
+    },
+    {
+      "id": "A17",
+      "group": "A",
+      "name": "L4 second-section: the amended section counts, items=8",
+      "hardening": null,
+      "mutant": "second-section",
+      "rows_mutation": null,
+      "fixture": "second-section",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "512f4f54765cf74c519199f011ee8cfa7a19ef24d07c83c6ddf703b078ef1ad6",
+          "bytes": 184,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## Routed items (amended)\n\n- **D3 — quebec3 romeo3 sierra3.**\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-102-item-3$",
+        "verdict": "^ROUTED_LEDGER: DRIFT spotchecks=2 sections=\\d+ items=8 "
+      },
+      "expectLines": null,
+      "note": "v1 stops at the first routed section: items=7, CLEAN exit 0."
+    },
+    {
+      "id": "A18",
+      "group": "A",
+      "name": "L4 contradictory: closed+wontfix on one item is ROW_CONTRADICTED",
+      "hardening": null,
+      "mutant": "contradictory",
+      "rows_mutation": null,
+      "fixture": "contradictory",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "ed3b55d131e1a2c5548e28f26f42bd7a0f5e843855423d38121111bf3fe172a3",
+          "bytes": 788,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A13 | 101 | 1 | \"charlie delta echo foxtrot\" | tally-drift | wontfix | `notes/a.md:2` — \"answerline bravo3 charlie3\" |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_CONTRADICTED",
+        "detail": "A13@line\\d+"
+      },
+      "expectLines": null,
+      "note": "v1 has no one-non-open-row-per-item rule and reads CLEAN exit 0."
+    },
+    {
+      "id": "A19",
+      "group": "A",
+      "name": "L4 no-section: round 102 has no routed section",
+      "hardening": null,
+      "mutant": "no-section",
+      "rows_mutation": null,
+      "fixture": "no-section",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "69bac0e44e6b45ddfb968c75685ed7c017b92f7f2286b9f6456ff403ba5e6124",
+          "bytes": 593,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n```text\n- fence-bravo codeline here\n```\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "0866e7886d73527fb774a5d7c0f1367d1b8693a4b7a2db7980e8c3312e689caf",
+          "bytes": 112,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Notes\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "f665bf541b75fdf6460e3e1601d6f0a9878d9eb2da9d1aaa9128b953b32145b9",
+          "bytes": 530,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=5 rows=5 open=4 closed=1 wontfix=0$"
+      },
+      "expectLines": null,
+      "note": "fenced shape: v1 still counts the fenced line -> items=6, DRIFT exit 1."
+    },
+    {
+      "id": "A20",
+      "group": "A",
+      "name": "L4 ledger-absent: FAIL-CLOSED exit 2",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "ledger-absent",
+      "fixture": "plain + rows ledger-absent",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 2,
+        "verdict": "^ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "B01",
+      "group": "B",
+      "name": "GIT_DIR exported must not redirect --rev",
+      "hardening": "GIT_DIR-inherited selftest/repo escape",
+      "mutant": "git-dir",
+      "rows_mutation": null,
+      "fixture": "git-dir",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md",
+        "fx/decoy (git repo, CLEAN HEAD)",
+        "fx/root (git repo, HEAD drift / worktree clean)"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --rev HEAD --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--rev",
+        "HEAD",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {
+        "GIT_DIR": "/fast/scratch/hyaku/kumitate-r68/K68ExecToolSelftest/suite-v2/fx/B01/decoy/.git"
+      },
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-102-item-1$",
+        "verdict": "^ROUTED_LEDGER: DRIFT "
+      },
+      "expectLines": null,
+      "note": "fixture HEAD drops row A6 (DRIFT); worktree ledger is CLEAN; GIT_DIR names a foreign repo whose HEAD is CLEAN. v1 reads the foreign repo -> CLEAN exit 0."
+    },
+    {
+      "id": "B02",
+      "group": "B",
+      "name": "GIT_DIR exported: selftest still PASS with >=44 cases",
+      "hardening": "GIT_DIR-inherited selftest/repo escape",
+      "mutant": "git-dir",
+      "rows_mutation": null,
+      "fixture": "git-dir",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md",
+        "fx/decoy (git repo, CLEAN HEAD)",
+        "fx/root (git repo, HEAD drift / worktree clean)"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --selftest",
+      "argv": [
+        "--selftest"
+      ],
+      "env": {
+        "GIT_DIR": "/fast/scratch/hyaku/kumitate-r68/K68ExecToolSelftest/suite-v2/fx/B02/decoy/.git"
+      },
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER_SELFTEST: PASS \\(\\d+/\\d+\\)$",
+        "selftestMin": 44
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "B03",
+      "group": "B",
+      "name": "an answer symlink leaving --root is ANSWER_DEAD",
+      "hardening": "symlink/.. answer and ledger escapes",
+      "mutant": "answer-symlink",
+      "rows_mutation": null,
+      "fixture": "answer-symlink",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/out.md",
+        "fx/outside/answer.md (outside --root, holds the quote)",
+        "root/notes/out.md -> ../../outside/answer.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        },
+        {
+          "path": "notes/out.md",
+          "symlink": "../../outside/answer.md"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "A1@line\\d+"
+      },
+      "expectLines": null,
+      "note": "notes/out.md -> ../../outside/answer.md; v1 follows it and reads CLEAN exit 0."
+    },
+    {
+      "id": "B04",
+      "group": "B",
+      "name": "--ledger ../outside-ledger.md must FAIL-CLOSED",
+      "hardening": "symlink/.. answer and ledger escapes",
+      "mutant": "ledger-dotdot",
+      "rows_mutation": null,
+      "fixture": "ledger-dotdot",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "notes/a.md",
+        "fx/outside-ledger.md (outside --root, valid CLEAN ledger)"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102 --ledger ../outside-ledger.md",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102",
+        "--ledger",
+        "../outside-ledger.md"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 2,
+        "verdict": "^ROUTED_LEDGER: FAIL-CLOSED reason=ledger-"
+      },
+      "expectLines": null,
+      "note": "v1 joins --ledger onto --root, reads outside the root and prints a CLEAN verdict, exit 0."
+    },
+    {
+      "id": "B05",
+      "group": "B",
+      "name": "a symlinked ledger must FAIL-CLOSED",
+      "hardening": "symlink/.. answer and ledger escapes",
+      "mutant": "ledger-symlink",
+      "rows_mutation": null,
+      "fixture": "ledger-symlink",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "notes/a.md",
+        "fx/outside-ledger.md (outside --root, valid CLEAN ledger)",
+        "root/corpus/routed-ledger.md -> ../outside-ledger.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 2,
+        "verdict": "^ROUTED_LEDGER: FAIL-CLOSED reason="
+      },
+      "expectLines": null,
+      "note": "corpus/routed-ledger.md -> ../../outside-ledger.md (valid CLEAN ledger); v1 follows it and reads CLEAN exit 0."
+    },
+    {
+      "id": "B06",
+      "group": "B",
+      "name": "second routed section: items=8 worth of coverage enforced",
+      "hardening": "second routed section silently missed",
+      "mutant": "second-section",
+      "rows_mutation": null,
+      "fixture": "second-section",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "512f4f54765cf74c519199f011ee8cfa7a19ef24d07c83c6ddf703b078ef1ad6",
+          "bytes": 184,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## Routed items (amended)\n\n- **D3 — quebec3 romeo3 sierra3.**\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-102-item-3$",
+        "verdict": "^ROUTED_LEDGER: DRIFT .* items=8 "
+      },
+      "expectLines": null,
+      "note": "hardening arm of A17: v1 items=7 CLEAN."
+    },
+    {
+      "id": "B07",
+      "group": "B",
+      "name": "a 1-word quote is ROW_MALFORMED",
+      "hardening": "one-word / ambiguous quote binding",
+      "mutant": "plain",
+      "rows_mutation": "one-word-quote",
+      "fixture": "plain + rows one-word-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "47e9878d794816908c9a91b1118ad872da4d0ccbea319100918be187417af175",
+          "bytes": 650,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "quote-words=1"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "B08",
+      "group": "B",
+      "name": "a non-unique quote is QUOTE_AMBIGUOUS",
+      "hardening": "one-word / ambiguous quote binding",
+      "mutant": "plain",
+      "rows_mutation": "ambiguous-quote",
+      "fixture": "plain + rows ambiguous-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "0d8594bd84cd40e78f74d4a48dea7e498d239bbd708a8d803a89bb172ff15c64",
+          "bytes": 668,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"dup-trio echo2 shared-token\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "QUOTE_AMBIGUOUS",
+        "detail": "A4@line\\d+"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "B09",
+      "group": "B",
+      "name": "the answer quote must sit on the named line",
+      "hardening": "+-2-line answer window",
+      "mutant": "plain",
+      "rows_mutation": "shifted-answer",
+      "fixture": "plain + rows shifted-answer",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "d9edfece1852e85d3afd3a3533ae341f33f60ee0f604b43087e725c5206ecde5",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:4` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ANSWER_DEAD",
+        "detail": "answer-quote-not-at[^ ]*:notes/a.md:4$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "B10",
+      "group": "B",
+      "name": "a fenced bullet does not shift item ordinals",
+      "hardening": "fence-blind item count",
+      "mutant": "fence-shift",
+      "rows_mutation": null,
+      "fixture": "fence-shift",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "69bac0e44e6b45ddfb968c75685ed7c017b92f7f2286b9f6456ff403ba5e6124",
+          "bytes": 593,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n```text\n- fence-bravo codeline here\n```\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0$"
+      },
+      "expectLines": null,
+      "note": "isolated arm: v2-correct ledger; v1 DRIFTs with UNLEDGERED round-101-item-4 (the fenced line it counted as an item)."
+    },
+    {
+      "id": "C01",
+      "group": "C",
+      "name": "unknown argument -> USAGE 64",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --bogus",
+      "argv": [
+        "--bogus"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 64,
+        "verdict": "^ROUTED_LEDGER: USAGE unknown argument --bogus$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "C02",
+      "group": "C",
+      "name": "--root without a value -> USAGE 64",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root",
+      "argv": [
+        "--root"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 64,
+        "verdict": "^ROUTED_LEDGER: USAGE --root needs a value$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "C03",
+      "group": "C",
+      "name": "unparseable --from -> USAGE 64",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from abc",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "abc"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 64,
+        "verdict": "^ROUTED_LEDGER: USAGE --from/--to must be integers$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "C04",
+      "group": "C",
+      "name": "unparseable --to -> USAGE 64",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --to 10x",
+      "argv": [
+        "--root",
+        "{root}",
+        "--to",
+        "10x"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 64,
+        "verdict": "^ROUTED_LEDGER: USAGE --from/--to must be integers$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "C05",
+      "group": "C",
+      "name": "absent --root -> FAIL-CLOSED 2",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {nonexistent-root}",
+      "argv": [
+        "--root",
+        "{nonexistent-root}"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 2,
+        "verdict": "^ROUTED_LEDGER: FAIL-CLOSED reason=root-absent($|:.+$)"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "C06",
+      "group": "C",
+      "name": "no spot-check in range -> FAIL-CLOSED 2",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 90 --to 95",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "90",
+        "--to",
+        "95"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 2,
+        "verdict": "^ROUTED_LEDGER: FAIL-CLOSED reason=no-spotchecks-in-range:90-95$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D01",
+      "group": "D",
+      "name": "bad status -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "bad-status",
+      "fixture": "plain + rows bad-status",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "a6f9813951aa4e369b621d39534662f6dbff66e0c994e836bdfe665a1ff72fb6",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | done | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:status=done"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D02",
+      "group": "D",
+      "name": "open row carrying an answer -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "open-answer",
+      "fixture": "plain + rows open-answer",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "834ec1e3ef010f140155458e3dad87780581a4c66dcaf495795bd8de12a98fec",
+          "bytes": 710,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:open-row-answer-not-dash"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D03",
+      "group": "D",
+      "name": "closed row with a dash answer -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "closed-dash",
+      "fixture": "plain + rows closed-dash",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "151362b05548d15892b5c97585e798dac86b56e2e2550f3157162e32effddcb5",
+          "bytes": 620,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | - |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A1@line\\d+:answer-format"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D04",
+      "group": "D",
+      "name": "six-cell row -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "six-cell",
+      "rows_mutation": null,
+      "fixture": "six-cell",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "5d77ed2d9f49c028a7bec743a754902e27570875cc60a0d92a3e6548b0cfe82c",
+          "bytes": 730,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A20 | 101 | 1 | \"bravo charlie delta\" | section-drift | open |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "line\\d+:cells=6"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D05",
+      "group": "D",
+      "name": "duplicate id -> ROW_DUPLICATE",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "dup",
+      "fixture": "plain + rows dup",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "2674797ab3f41e7497896511bee288b1327ff0b35b422dbaf4462c82e8c7ea9f",
+          "bytes": 734,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_DUPLICATE",
+        "detail": "A7@line\\d+"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D06",
+      "group": "D",
+      "name": "id prefix R102- on a round-101 row -> ROW_MALFORMED id-round-mismatch",
+      "hardening": null,
+      "mutant": "id-round-mismatch",
+      "rows_mutation": null,
+      "fixture": "id-round-mismatch",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "b0d1b7d7d3d9b2038620c32f255a25f4e6ff7c1f475bbaaeb89e600277507a2c",
+          "bytes": 745,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| R102-D1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "R102-D1@line\\d+:id-round-mismatch"
+      },
+      "expectLines": null,
+      "note": "v1 accepts the id, binds the quote to 101#1 and reads CLEAN exit 0."
+    },
+    {
+      "id": "D07",
+      "group": "D",
+      "name": "26-word item quote -> ROW_MALFORMED quote-words=26",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "long-quote",
+      "fixture": "plain + rows long-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "b416f606d2191e136bb562a691d725d71101cf010437d240640c0945a09d6f50",
+          "bytes": 764,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"lq1 lq2 lq3 lq4 lq5 lq6 lq7 lq8 lq9 lq10 lq11 lq12 lq13 lq14 lq15 lq16 lq17 lq18 lq19 lq20 lq21 lq22 lq23 lq24 lq25 lq26\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "quote-words=26"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D08",
+      "group": "D",
+      "name": "class token with capitals -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "bad-class",
+      "fixture": "plain + rows bad-class",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "2ed2119e61e48528ae79822b019db1fb4702e7eecc8762189c41b82400569749",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | Section-Drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:class$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D09",
+      "group": "D",
+      "name": "26-word answer quote -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "long-answer-quote",
+      "fixture": "plain + rows long-answer-quote",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "7af506c292bb156491b4b70ad7cf3783a0e5118a81342575246849199418a4bd",
+          "bytes": 760,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"aq1 aq2 aq3 aq4 aq5 aq6 aq7 aq8 aq9 aq10 aq11 aq12 aq13 aq14 aq15 aq16 aq17 aq18 aq19 aq20 aq21 aq22 aq23 aq24 aq25 aq26\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A1@line\\d+:answer-quote-words"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D10",
+      "group": "D",
+      "name": "non-numeric round cell -> ROW_MALFORMED",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": "round-text",
+      "fixture": "plain + rows round-text",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "9a45f4f01dd907c1b3ab0b3095a0c661172b8d08d9c6e4612e470473e35900e9",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | abc | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "ROW_MALFORMED",
+        "detail": "A2@line\\d+:round-or-item"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "D11",
+      "group": "D",
+      "name": "non-R-prefixed ids stay valid (the counter uses A1..A7)",
+      "hardening": null,
+      "mutant": "id-prefix-ok",
+      "rows_mutation": null,
+      "fixture": "id-prefix-ok",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "45183b4f6c4274f27b75293df7b78f87a4bf3e5b72344e60f26e9fe7f9d81dc7",
+          "bytes": 735,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n| A21 | 101 | 1 | \"delta echo foxtrot\" | reference-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0$"
+      },
+      "expectLines": null,
+      "note": "guards D06 against over-firing on ids that do not encode a round."
+    },
+    {
+      "id": "E01",
+      "group": "E",
+      "name": "--classes: one class spans both rounds",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102 --classes",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102",
+        "--classes"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN ",
+        "noLine": "RECURRENT "
+      },
+      "expectLines": [
+        "CLASS section-drift rows=5 rounds=101,102",
+        "CLASS reference-drift rows=1 rounds=101",
+        "CLASS tally-drift rows=1 rounds=102"
+      ],
+      "note": null
+    },
+    {
+      "id": "E02",
+      "group": "E",
+      "name": "RECURRENT fires at 4 distinct rounds",
+      "hardening": null,
+      "mutant": "recurrent4",
+      "rows_mutation": null,
+      "fixture": "recurrent4",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/lessons/round-201-verifier-spotcheck.md",
+        "corpus/lessons/round-202-verifier-spotcheck.md",
+        "corpus/lessons/round-203-verifier-spotcheck.md",
+        "corpus/lessons/round-204-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/lessons/round-201-verifier-spotcheck.md",
+          "sha256": "5264b3245025ea51289a3f965bc3c21338b793bf28549c84f66e3b15eff26fa7",
+          "bytes": 107,
+          "content": "# Round 201 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok201 alpha201 bravo201.**\n"
+        },
+        {
+          "path": "corpus/lessons/round-202-verifier-spotcheck.md",
+          "sha256": "5c64a3b3da833ed90d6787fd8de76608553b7fa1b14e3be9c5827eaeb678dc49",
+          "bytes": 107,
+          "content": "# Round 202 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok202 alpha202 bravo202.**\n"
+        },
+        {
+          "path": "corpus/lessons/round-203-verifier-spotcheck.md",
+          "sha256": "f45add3ddad947720dc1ce93fe0942110878e4b6c94a03dba644c1ac8a4063a6",
+          "bytes": 107,
+          "content": "# Round 203 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok203 alpha203 bravo203.**\n"
+        },
+        {
+          "path": "corpus/lessons/round-204-verifier-spotcheck.md",
+          "sha256": "f6831ab1ee3fa10e8b01a3e4d90257ae333e490750e25703173a06863f003612",
+          "bytes": 107,
+          "content": "# Round 204 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok204 alpha204 bravo204.**\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "309d51894c1ba08d4db5b498b2b94e3719cb97c7bc27ce6575684ee19f123c51",
+          "bytes": 448,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| R201-D1 | 201 | 1 | \"tok201 alpha201 bravo201\" | recurring-class | open | - |\n| R202-D1 | 202 | 1 | \"tok202 alpha202 bravo202\" | recurring-class | open | - |\n| R203-D1 | 203 | 1 | \"tok203 alpha203 bravo203\" | recurring-class | open | - |\n| R204-D1 | 204 | 1 | \"tok204 alpha204 bravo204\" | recurring-class | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 201 --to 204 --classes",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "201",
+        "--to",
+        "204",
+        "--classes"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=4 sections=4 items=4 rows=4 "
+      },
+      "expectLines": [
+        "RECURRENT recurring-class rounds=4"
+      ],
+      "note": null
+    },
+    {
+      "id": "E03",
+      "group": "E",
+      "name": "three rounds stay below RECURRENT",
+      "hardening": null,
+      "mutant": "recurrent3",
+      "rows_mutation": null,
+      "fixture": "recurrent3",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/lessons/round-201-verifier-spotcheck.md",
+        "corpus/lessons/round-202-verifier-spotcheck.md",
+        "corpus/lessons/round-203-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/lessons/round-201-verifier-spotcheck.md",
+          "sha256": "5264b3245025ea51289a3f965bc3c21338b793bf28549c84f66e3b15eff26fa7",
+          "bytes": 107,
+          "content": "# Round 201 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok201 alpha201 bravo201.**\n"
+        },
+        {
+          "path": "corpus/lessons/round-202-verifier-spotcheck.md",
+          "sha256": "5c64a3b3da833ed90d6787fd8de76608553b7fa1b14e3be9c5827eaeb678dc49",
+          "bytes": 107,
+          "content": "# Round 202 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok202 alpha202 bravo202.**\n"
+        },
+        {
+          "path": "corpus/lessons/round-203-verifier-spotcheck.md",
+          "sha256": "f45add3ddad947720dc1ce93fe0942110878e4b6c94a03dba644c1ac8a4063a6",
+          "bytes": 107,
+          "content": "# Round 203 — spot-check (acceptance fixture)\n\n## Routed defects\n\n- **D1 — tok203 alpha203 bravo203.**\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "ec8392d8e600ee64851357deea95e9752a5d902e6d3a3e6fd7599e64715c8df7",
+          "bytes": 368,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| R201-D1 | 201 | 1 | \"tok201 alpha201 bravo201\" | recurring-class | open | - |\n| R202-D1 | 202 | 1 | \"tok202 alpha202 bravo202\" | recurring-class | open | - |\n| R203-D1 | 203 | 1 | \"tok203 alpha203 bravo203\" | recurring-class | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 201 --to 203 --classes",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "201",
+        "--to",
+        "203",
+        "--classes"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=3 sections=3 items=3 rows=3 ",
+        "noLine": "RECURRENT "
+      },
+      "expectLines": [
+        "CLASS recurring-class rows=3 rounds=201,202,203"
+      ],
+      "note": null
+    },
+    {
+      "id": "E04",
+      "group": "E",
+      "name": "--classes off: no CLASS/RECURRENT lines",
+      "hardening": null,
+      "mutant": "plain",
+      "rows_mutation": null,
+      "fixture": "plain",
+      "layout": [
+        "corpus/lessons/round-101-verifier-spotcheck.md",
+        "corpus/lessons/round-102-verifier-spotcheck.md",
+        "corpus/routed-ledger.md",
+        "notes/a.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-101-verifier-spotcheck.md",
+          "sha256": "4e956791b5aaae71d2fa73a02a0b9e69884c55f828fd079b4e822a93f1085c06",
+          "bytes": 552,
+          "content": "# Round 101 — spot-check (acceptance fixture)\n\n## 1. Verdicts\n\n- verdictbullet notrouted outside tokens\n\n## 5. Routed defects for round 102\n\n- **D1 — alpha bravo charlie delta echo foxtrot.**\n  - nestedgolf hotelindia juliett\n1. **D2 — juliet kilo lima mike november oscar.**\n\nprosepapa quebec romeo sierra tango\n\n| id | what |\n|---|---|\n| D3 | whiskey xray yankee zulu alphaone |\n\n- **D4 — bravo2 charlie2 dup-trio echo2 shared-token.**\n- **D5 — foxtrot2 golf2 dup-trio echo2 shared-token.**\n\n## 6. Non-author statement\n\n- not-routed india2\n"
+        },
+        {
+          "path": "corpus/lessons/round-102-verifier-spotcheck.md",
+          "sha256": "1e841f4369581be1a94ebb934bf5757136aae7466fcbf7c6681a8eb3e204c288",
+          "bytes": 119,
+          "content": "# Round 102 — spot-check (acceptance fixture)\n\n## Routed items\n\n- kilo2 lima2 mike2\n- november2 oscar2 papa2\n\n## End\n"
+        },
+        {
+          "path": "notes/a.md",
+          "sha256": "a71aae483d60d0eeb04456f0daad3da83d1a1efdb3e3b8894b8a5543517b7a81",
+          "bytes": 199,
+          "content": "# answers (acceptance fixture)\nanswerline bravo3 charlie3 delta3 echo3 foxtrot3 golf3 hotel3 india3\nanswer alpha bravo charlie delta echo\nyankeeii zuluii alpha4 bravo4 charlie4 delta4 echo4 foxtrot4\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "8a28e2db28b82bfe43bfbfcbdd856a4bd92e7be9d824737dfa5d17f8fdb744ae",
+          "bytes": 665,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n| A1 | 101 | 1 | \"bravo charlie delta echo\" | reference-drift | closed | `notes/a.md:3` — \"alpha bravo charlie delta\" |\n| A2 | 101 | 2 | \"juliet kilo lima mike\" | section-drift | open | - |\n| A3 | 101 | 3 | \"xray yankee zulu\" | section-drift | open | - |\n| A4 | 101 | 4 | \"bravo2 charlie2 dup-trio\" | section-drift | open | - |\n| A5 | 101 | 5 | \"foxtrot2 golf2 dup-trio\" | section-drift | open | - |\n| A6 | 102 | 1 | \"kilo2 lima2 mike2\" | section-drift | open | - |\n| A7 | 102 | 2 | \"november2 oscar2 papa2\" | tally-drift | open | - |\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 101 --to 102",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "101",
+        "--to",
+        "102"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN ",
+        "noLine": "CLASS "
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "F01",
+      "group": "F",
+      "name": "round 59 prose section: found, zero items",
+      "hardening": null,
+      "mutant": "round59",
+      "rows_mutation": null,
+      "fixture": "round59",
+      "layout": [
+        "corpus/lessons/round-59-verifier-spotcheck.md",
+        "corpus/routed-ledger.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-59-verifier-spotcheck.md",
+          "sha256": "bfb0d2d0c179bfabd22fe0f394269f7427d98b33826bca5dc6c44ddd57e63f3e",
+          "bytes": 536,
+          "content": "# Round 59 — verifier spot-check (acceptance excerpt)\n\n## 8. Routed defects\n\n**No new lane-owned defect is routed.** R58-V1..V8 are repaired in lane bytes without rewriting the\nfiled r58 report, the r58 lesson, the r58 spot-check or the r58 probes, and each repair reproduces\nabove.\n\nNot lane-owned, status-neutral — orchestrator ordering defect: `inline.sh dispatch` was omitted\nbefore the L1 spawn for round 59, so `.ufo/watchdog.log` has no `launch kumitate round=59` line and\n`.ufo/prompts/kumitate-round-59.md` does not exist.\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "764578a646f4f83293e85b61487b87ffc7fa9a86393b986e704dbda7eb14f003",
+          "bytes": 128,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 59 --to 59",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "59",
+        "--to",
+        "59"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 0,
+        "verdict": "^ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=0 rows=0 open=0 closed=0 wontfix=0$"
+      },
+      "expectLines": null,
+      "note": null
+    },
+    {
+      "id": "F02",
+      "group": "F",
+      "name": "round 66 real routed section: four column-0 bullets",
+      "hardening": null,
+      "mutant": "round66",
+      "rows_mutation": null,
+      "fixture": "round66",
+      "layout": [
+        "corpus/lessons/round-66-verifier-spotcheck.md",
+        "corpus/routed-ledger.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-66-verifier-spotcheck.md",
+          "sha256": "02075debfce02cf21f8408fc7bef96fdc74824eb53783a314cf0d1cb2d2865d0",
+          "bytes": 1114,
+          "content": "# Round 66 — verifier spot-check (acceptance excerpt)\n\n## Routed defects for round 67\n\n- **D1 (routed, lane-owned): settle the wave leftovers.** At closure the working tree carried uncommitted round-66 seat output because orchestrator-dispatched seats of w1 were still live (no `WAVE-DONE`, no `w1-results.json`). Round 67 must wait for or reconcile the 66-seat wave final results and commit-or-revert every leftover under its own LOG entry.\n- **D2 (receipt precision):** the report Before-to-after cites `held=3/6` \"at cutoff tip `6c79d68`\" but the only committed receipt names `rev=621212bac` (freeze). Byte re-derivation at the closure tip confirms UNMET regardless, but receipts must name the revision they measured.\n- **D3 (frontier duty unmet):** no sourced claim and no SOURCES advance landed (self-declared conformance defect in the report). C2 rows/entry must land in a later round or be re-declared under a fresh freeze.\n- **Note for the operator (not a defect, promotion-owned):** all four SHONEN boxes remain lane-asserted `[~]`; non-author `[x]` verification stays operator-owned at promotion time.\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "764578a646f4f83293e85b61487b87ffc7fa9a86393b986e704dbda7eb14f003",
+          "bytes": 128,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 66 --to 66",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "66",
+        "--to",
+        "66"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-66-item-1$",
+        "verdict": "^ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=4 rows=0 "
+      },
+      "expectLines": null,
+      "note": "D1..D3 plus the operator Note bullet: an empty ledger must expose 4 unledgered items."
+    },
+    {
+      "id": "F03",
+      "group": "F",
+      "name": "round 55 real routed section: three items",
+      "hardening": null,
+      "mutant": "round55",
+      "rows_mutation": null,
+      "fixture": "round55",
+      "layout": [
+        "corpus/lessons/round-55-verifier-spotcheck.md",
+        "corpus/routed-ledger.md"
+      ],
+      "files": [
+        {
+          "path": "corpus/lessons/round-55-verifier-spotcheck.md",
+          "sha256": "2716ffc627a129e03c8aae7027d5c64e85e450ca134c305017511222d69d8bd6",
+          "bytes": 678,
+          "content": "# Round 55 — verifier spot-check (acceptance excerpt)\n\n## 5. Routed defects (lane must fix next round)\n\n- **R55-V1:** report `Landed changes` omitted the two trailing bookkeeping\n  commits (`e7a07111`, `26c886d7`). Correction: next round report/LOG may\n  note them; no file repair possible (append-only).\n- **R55-V2:** `B=9→10` in report + `corpus/lessons/round-55.md` + `LOG.md` is\n  wrong; measured `B=9→11`. Append-only correction entries owed in\n  `LOG.md` and `corpus/lessons/round-56.md` naming this line.\n- Carried (not this round): R41-2 gate-pins ruling, R43-1/R43-5, A3e\n  captured-invocation, R53-2 seat-accounting convention.\n\n## 6. Adjudication\n\nStatus `ok`.\n"
+        },
+        {
+          "path": "corpus/routed-ledger.md",
+          "sha256": "764578a646f4f83293e85b61487b87ffc7fa9a86393b986e704dbda7eb14f003",
+          "bytes": 128,
+          "content": "# ledger (acceptance fixture)\n\n## Ledger\n\n| id | round | item | quote | class | status | answer |\n|---|---|---|---|---|---|---|\n"
+        }
+      ],
+      "cmd": "node <tool> --root {root} --from 55 --to 55",
+      "argv": [
+        "--root",
+        "{root}",
+        "--from",
+        "55",
+        "--to",
+        "55"
+      ],
+      "env": {},
+      "expect": {
+        "exit": 1,
+        "finding": "UNLEDGERED",
+        "detail": "round-55-item-1$",
+        "verdict": "^ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=3 rows=0 "
+      },
+      "expectLines": null,
+      "note": null
+    }
+  ],
+  "results": {
+    "tool": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs",
+    "pass": 54,
+    "fail": 0,
+    "total": 54,
+    "verdict": "ROUTED_LEDGER_ACCEPTANCE: PASS (54/54)",
+    "cases": [
+      {
+        "id": "A01",
+        "name": "L4 good: a correct ledger is CLEAN with fence-aware items=7",
+        "group": "A",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "A02",
+        "name": "L4 drop: a dropped row is UNLEDGERED",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=6 open=5 closed=1 wontfix=0 findings=1 first=UNLEDGERED:round-102-item-1",
+        "problems": []
+      },
+      {
+        "id": "A03",
+        "name": "L4 quote-swap: a quote from another item is QUOTE_ABSENT",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=2 first=QUOTE_ABSENT:A2@line8:round-101-item-2",
+        "problems": []
+      },
+      {
+        "id": "A04",
+        "name": "L4 quote-decoy: a quote from outside the section is QUOTE_ABSENT",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=2 first=QUOTE_ABSENT:A4@line10:round-101-item-4",
+        "problems": []
+      },
+      {
+        "id": "A05",
+        "name": "L4 answer-wrong: answer quote absent from the file",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-quote-not-at-exact-line:notes/a.md:3",
+        "problems": []
+      },
+      {
+        "id": "A06",
+        "name": "L4 answer-ledger: the ledger cannot answer itself",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-path-not-allowed:corpus/routed-ledger.md",
+        "problems": []
+      },
+      {
+        "id": "A07",
+        "name": "L4 answer-eof: answer line past EOF",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-line-40-of-5",
+        "problems": []
+      },
+      {
+        "id": "A08",
+        "name": "L4 dup: duplicate row id",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=6 closed=1 wontfix=0 findings=1 first=ROW_DUPLICATE:A7@line14",
+        "problems": []
+      },
+      {
+        "id": "A09",
+        "name": "L4 ordinal: item ordinal beyond the section",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0 findings=1 first=ITEM_ABSENT:A9@line14:round-101-item-6-of-5",
+        "problems": []
+      },
+      {
+        "id": "A10",
+        "name": "L4 nested-as-item: a nested bullet is not an item",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0 findings=1 first=QUOTE_ABSENT:A10@line14:round-101-item-2",
+        "problems": []
+      },
+      {
+        "id": "A11",
+        "name": "L4 prose-as-item: prose is not an item",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0 findings=1 first=QUOTE_ABSENT:A11@line14:round-101-item-2",
+        "problems": []
+      },
+      {
+        "id": "A12",
+        "name": "L4 long-quote: 26-word quote is ROW_MALFORMED",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:quote-words=26",
+        "problems": []
+      },
+      {
+        "id": "A13",
+        "name": "L4 one-word-quote: a 1-word quote is ROW_MALFORMED",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:quote-words=1",
+        "problems": []
+      },
+      {
+        "id": "A14",
+        "name": "L4 ambiguous-quote: a quote in two items is QUOTE_AMBIGUOUS",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=2 first=QUOTE_AMBIGUOUS:A4@line10:round-101-item-4-hits=2",
+        "problems": []
+      },
+      {
+        "id": "A15",
+        "name": "L4 shifted-answer: answer quote one line off is ANSWER_DEAD",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-quote-not-at-exact-line:notes/a.md:4",
+        "problems": []
+      },
+      {
+        "id": "A16",
+        "name": "L4 fence-item: a row quoting a fenced line is QUOTE_ABSENT",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0 findings=1 first=QUOTE_ABSENT:A12@line14:round-101-item-4",
+        "problems": []
+      },
+      {
+        "id": "A17",
+        "name": "L4 second-section: the amended section counts, items=8",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=3 items=8 rows=7 open=6 closed=1 wontfix=0 findings=1 first=UNLEDGERED:round-102-item-3",
+        "problems": []
+      },
+      {
+        "id": "A18",
+        "name": "L4 contradictory: closed+wontfix on one item is ROW_CONTRADICTED",
+        "group": "A",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=6 closed=1 wontfix=1 findings=1 first=ROW_CONTRADICTED:A13@line14:second-non-open-on-round-101-item-1-after-A1",
+        "problems": []
+      },
+      {
+        "id": "A19",
+        "name": "L4 no-section: round 102 has no routed section",
+        "group": "A",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=1 items=5 rows=5 open=4 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "A20",
+        "name": "L4 ledger-absent: FAIL-CLOSED exit 2",
+        "group": "A",
+        "status": "PASS",
+        "exit": 2,
+        "verdict": "ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md",
+        "problems": []
+      },
+      {
+        "id": "B01",
+        "name": "GIT_DIR exported must not redirect --rev",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=6 open=5 closed=1 wontfix=0 findings=1 first=UNLEDGERED:round-102-item-1",
+        "problems": []
+      },
+      {
+        "id": "B02",
+        "name": "GIT_DIR exported: selftest still PASS with >=44 cases",
+        "group": "B",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER_SELFTEST: PASS (56/56)",
+        "problems": []
+      },
+      {
+        "id": "B03",
+        "name": "an answer symlink leaving --root is ANSWER_DEAD",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-symlink:notes/out.md",
+        "problems": []
+      },
+      {
+        "id": "B04",
+        "name": "--ledger ../outside-ledger.md must FAIL-CLOSED",
+        "group": "B",
+        "status": "PASS",
+        "exit": 2,
+        "verdict": "ROUTED_LEDGER: FAIL-CLOSED reason=ledger-escape:../outside-ledger.md",
+        "problems": []
+      },
+      {
+        "id": "B05",
+        "name": "a symlinked ledger must FAIL-CLOSED",
+        "group": "B",
+        "status": "PASS",
+        "exit": 2,
+        "verdict": "ROUTED_LEDGER: FAIL-CLOSED reason=ledger-symlink:corpus/routed-ledger.md",
+        "problems": []
+      },
+      {
+        "id": "B06",
+        "name": "second routed section: items=8 worth of coverage enforced",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=3 items=8 rows=7 open=6 closed=1 wontfix=0 findings=1 first=UNLEDGERED:round-102-item-3",
+        "problems": []
+      },
+      {
+        "id": "B07",
+        "name": "a 1-word quote is ROW_MALFORMED",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:quote-words=1",
+        "problems": []
+      },
+      {
+        "id": "B08",
+        "name": "a non-unique quote is QUOTE_AMBIGUOUS",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=2 first=QUOTE_AMBIGUOUS:A4@line10:round-101-item-4-hits=2",
+        "problems": []
+      },
+      {
+        "id": "B09",
+        "name": "the answer quote must sit on the named line",
+        "group": "B",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ANSWER_DEAD:A1@line7:answer-quote-not-at-exact-line:notes/a.md:4",
+        "problems": []
+      },
+      {
+        "id": "B10",
+        "name": "a fenced bullet does not shift item ordinals",
+        "group": "B",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "C01",
+        "name": "unknown argument -> USAGE 64",
+        "group": "C",
+        "status": "PASS",
+        "exit": 64,
+        "verdict": "ROUTED_LEDGER: USAGE unknown argument --bogus",
+        "problems": []
+      },
+      {
+        "id": "C02",
+        "name": "--root without a value -> USAGE 64",
+        "group": "C",
+        "status": "PASS",
+        "exit": 64,
+        "verdict": "ROUTED_LEDGER: USAGE --root needs a value",
+        "problems": []
+      },
+      {
+        "id": "C03",
+        "name": "unparseable --from -> USAGE 64",
+        "group": "C",
+        "status": "PASS",
+        "exit": 64,
+        "verdict": "ROUTED_LEDGER: USAGE --from/--to must be integers",
+        "problems": []
+      },
+      {
+        "id": "C04",
+        "name": "unparseable --to -> USAGE 64",
+        "group": "C",
+        "status": "PASS",
+        "exit": 64,
+        "verdict": "ROUTED_LEDGER: USAGE --from/--to must be integers",
+        "problems": []
+      },
+      {
+        "id": "C05",
+        "name": "absent --root -> FAIL-CLOSED 2",
+        "group": "C",
+        "status": "PASS",
+        "exit": 2,
+        "verdict": "ROUTED_LEDGER: FAIL-CLOSED reason=root-absent",
+        "problems": []
+      },
+      {
+        "id": "C06",
+        "name": "no spot-check in range -> FAIL-CLOSED 2",
+        "group": "C",
+        "status": "PASS",
+        "exit": 2,
+        "verdict": "ROUTED_LEDGER: FAIL-CLOSED reason=no-spotchecks-in-range:90-95",
+        "problems": []
+      },
+      {
+        "id": "D01",
+        "name": "bad status -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:status=done",
+        "problems": []
+      },
+      {
+        "id": "D02",
+        "name": "open row carrying an answer -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:open-row-answer-not-dash",
+        "problems": []
+      },
+      {
+        "id": "D03",
+        "name": "closed row with a dash answer -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=0 wontfix=0 findings=2 first=ROW_MALFORMED:A1@line7:answer-format",
+        "problems": []
+      },
+      {
+        "id": "D04",
+        "name": "six-cell row -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=1 first=ROW_MALFORMED:line14:cells=6",
+        "problems": []
+      },
+      {
+        "id": "D05",
+        "name": "duplicate id -> ROW_DUPLICATE",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=6 closed=1 wontfix=0 findings=1 first=ROW_DUPLICATE:A7@line14",
+        "problems": []
+      },
+      {
+        "id": "D06",
+        "name": "id prefix R102- on a round-101 row -> ROW_MALFORMED id-round-mismatch",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=8 open=6 closed=1 wontfix=0 findings=1 first=ROW_MALFORMED:R102-D1@line14:id-round-mismatch",
+        "problems": []
+      },
+      {
+        "id": "D07",
+        "name": "26-word item quote -> ROW_MALFORMED quote-words=26",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:quote-words=26",
+        "problems": []
+      },
+      {
+        "id": "D08",
+        "name": "class token with capitals -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:class",
+        "problems": []
+      },
+      {
+        "id": "D09",
+        "name": "26-word answer quote -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=0 wontfix=0 findings=2 first=ROW_MALFORMED:A1@line7:answer-quote-words",
+        "problems": []
+      },
+      {
+        "id": "D10",
+        "name": "non-numeric round cell -> ROW_MALFORMED",
+        "group": "D",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=5 closed=1 wontfix=0 findings=2 first=ROW_MALFORMED:A2@line8:round-or-item",
+        "problems": []
+      },
+      {
+        "id": "D11",
+        "name": "non-R-prefixed ids stay valid (the counter uses A1..A7)",
+        "group": "D",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=8 open=7 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "E01",
+        "name": "--classes: one class spans both rounds",
+        "group": "E",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "E02",
+        "name": "RECURRENT fires at 4 distinct rounds",
+        "group": "E",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=4 sections=4 items=4 rows=4 open=4 closed=0 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "E03",
+        "name": "three rounds stay below RECURRENT",
+        "group": "E",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=3 sections=3 items=3 rows=3 open=3 closed=0 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "E04",
+        "name": "--classes off: no CLASS/RECURRENT lines",
+        "group": "E",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "F01",
+        "name": "round 59 prose section: found, zero items",
+        "group": "F",
+        "status": "PASS",
+        "exit": 0,
+        "verdict": "ROUTED_LEDGER: CLEAN spotchecks=1 sections=1 items=0 rows=0 open=0 closed=0 wontfix=0",
+        "problems": []
+      },
+      {
+        "id": "F02",
+        "name": "round 66 real routed section: four column-0 bullets",
+        "group": "F",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=4 rows=0 open=0 closed=0 wontfix=0 findings=4 first=UNLEDGERED:round-66-item-1",
+        "problems": []
+      },
+      {
+        "id": "F03",
+        "name": "round 55 real routed section: three items",
+        "group": "F",
+        "status": "PASS",
+        "exit": 1,
+        "verdict": "ROUTED_LEDGER: DRIFT spotchecks=1 sections=1 items=3 rows=0 open=0 closed=0 wontfix=0 findings=3 first=UNLEDGERED:round-55-item-1",
+        "problems": []
+      }
+    ]
+  }
+}

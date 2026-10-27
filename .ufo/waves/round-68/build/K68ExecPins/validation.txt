@@ -1,0 +1,101 @@
+== A. generator over the frozen extraction ==
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecPins/generate-pins.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root /fast/scratch/hyaku/kumitate-r68/K68ExecPins/base-registry.json /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecPins
+PINS_FRAGMENT: ready additions=5 merged_pins=39 freeze=39f61816d4ee7a8d401df42c1818c91a9c537bce
+exit=0
+
+== B. proposed registry vs the frozen registry (only additions at the end) ==
+$ diff /dev/fd/63 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecPins/counter-pins.json.proposed
+206a207,236
+>   },
+>   {
+>    "round": 68,
+>    "name": "ledger68-probe",
+>    "path": ".ufo/waves/round-68/probe/ledger68-probe.mjs",
+>    "sha256": "981f2daeb3c392b971ec5541f01fb3157cd78f176b905fa445b2b3431c4843e2"
+>   },
+>   {
+>    "round": 68,
+>    "name": "deprec68-probe",
+>    "path": ".ufo/waves/round-68/probe/deprec68-probe.mjs",
+>    "sha256": "f0a3142e82ba1791270217f60d9cbc9658df34e9169b4575d77bc776063a8f17"
+>   },
+>   {
+>    "round": 68,
+>    "name": "c1-controls68",
+>    "path": ".ufo/waves/round-68/probe/c1-controls.sh",
+>    "sha256": "6648cc31fe5e3f7bbf4295a105a91748ca30d072a3d850fb00595d708aca154d"
+>   },
+>   {
+>    "round": 68,
+>    "name": "c2-donothing68",
+>    "path": ".ufo/waves/round-68/probe/c2-donothing.sh",
+>    "sha256": "c71c625a580c1e7bddbf09b8d64e0c1c684a457e0144f32a42d83f988b48294f"
+>   },
+>   {
+>    "round": 68,
+>    "name": "plan68",
+>    "path": ".ufo/waves/round-68/plan.md",
+>    "sha256": "476f2cb7c43f8167df569e90adc01204fdfed840aa668ea1d1b5fca7ddefb7a1"
+exit=1
+
+== C. proposed registry, paths resolved against the frozen extraction ==
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/counter-pins.json
+COUNTER_PINS: CLEAN pins=39
+exit=0
+
+== D. failure classes over mutants ==
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecPins/make-variants.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ExecPins/counter-pins.json.proposed /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root /fast/scratch/hyaku/kumitate-r68/K68ExecPins/mut
+VARIANTS: wrote 6 mutants under /fast/scratch/hyaku/kumitate-r68/K68ExecPins/mut
+exit=0
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/mut-t1-hash-tamper.json
+COUNTER_PINS: DRIFT pins=39 bad=1 first=ledger68-probe:hash-mismatch
+exit=1
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/mut-t2-absent.json
+COUNTER_PINS: DRIFT pins=39 bad=1 first=deprec68-probe:absent
+exit=1
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/mut-t3-path-escape.json
+COUNTER_PINS: DRIFT pins=39 bad=1 first=c1-controls68:path-escape
+exit=1
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/mut-t4-duplicate-name.json
+COUNTER_PINS: FAIL-CLOSED reason=duplicate pin name "ledger68-probe"
+exit=2
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/root/mut-t5-subject-placeholder.json
+COUNTER_PINS: FAIL-CLOSED reason=a pin entry lacks valid round/name/path/sha256(64hex)
+exit=2
+
+== E. a subject pin binds bytes: v1 digest, then a one-byte v2 edit ==
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/mut/subject-base/registry.json
+COUNTER_PINS: CLEAN pins=1
+exit=0
+
+-- after appending 12 bytes to the subject script --
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --registry /fast/scratch/hyaku/kumitate-r68/K68ExecPins/mut/subject-base/registry.json
+COUNTER_PINS: DRIFT pins=1 bad=1 first=routed-ledger68:hash-mismatch
+exit=1
+
+== F. the lane's live registry today ==
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=34
+exit=0
+
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs --selftest
+case clean-pass: PASS
+case hash-tamper-drift: PASS
+case missing-file-drift: PASS
+case malformed-fail-closed: PASS
+case wrong-version-fail-closed: PASS
+case duplicate-names-fail-closed: PASS
+case symlink-drift: PASS
+case empty-pins-drift: PASS
+case extra-fields-ignored: PASS
+case registry-dir-fail-closed: PASS
+case path-escape-drift: PASS
+COUNTER_PINS_SELFTEST: PASS (11/11)
+VERDICT: PASS
+exit=0
+

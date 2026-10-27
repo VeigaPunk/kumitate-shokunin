@@ -1,0 +1,13 @@
+"corpus/captures/s207.md"      -> allowed:/fast/scratch/hyaku/kumitate-r68/K68SentinelScope/archive/corpus/captures/s207.md
+"../etc/passwd"                -> path-escape
+".ufo/../../../etc/passwd"     -> path-escape
+"/etc/passwd"                  -> path-escape
+""                             -> path-outside
+"."                            -> path-outside
+"a/../.."                      -> path-escape
+".//../../x"                   -> path-escape
+"corpus/../x"                  -> allowed:/fast/scratch/hyaku/kumitate-r68/K68SentinelScope/archive/x
+"..foo/x.md"                   -> path-escape
+"C:\\tmp\\x"                   -> allowed:/fast/scratch/hyaku/kumitate-r68/K68SentinelScope/archive/C:\tmp\x
+".ufo/pins/source-captures.json" -> allowed:/fast/scratch/hyaku/kumitate-r68/K68SentinelScope/archive/.ufo/pins/source-captures.json
+"sub/.."                       -> path-outside

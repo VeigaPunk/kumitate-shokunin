@@ -1,0 +1,37 @@
+ok   S207 present words= 7 "First revision released on or after 2027-07-28"  <- K68ScoutS207/quotes.txt Q1 (M4 needs a 2027-07-28 quote)
+ok   S207 present words= 6 "Three months after SEP-2596 reaches Final"  <- K68ScoutS207/quotes.txt Q2 (M4 needs a Three-months quote)
+ok   S207 present words=21 "This registry is a derived view kept consistent with the per-feature deprecation notice  <- K68ScoutS207/quotes.txt Q3
+ok   S207 present words=17 "The HTTP+SSE transport and the `includeContext` values were already described as deprec  <- K68ScoutS207/quotes.txt Q4
+ok   S207 present words= 9 "No features have been removed under this policy yet."  <- K68ScoutS207/quotes.txt Q5
+ok   S207 present words= 6 "new implementations **SHOULD NOT** adopt it"  <- K68ScoutS207/quotes.txt Q6
+ok   S208 present words= 9 "The minimum deprecation window is counted from that release."  <- K68ScribeRows/rows.md S208 anchor (line 93)
+ok   S208 present words=19 "the number of months, at least twelve, that the feature must remain Deprecated before i  <- K68ScribeRows/rows.md S208 anchor (lines 68-70)
+ok   S208 present words= 8 "not from the date the SEP reaches Final"  <- K68ScribeRows/rows.md S208 anchor (lines 71-73)
+ok   S208 absent  words= 3 "Three months after"  <- S208 seat brief demanded this quote of THIS page — it is not there
+ok   S209 present words= 6 "export class LegacySseConnectionTimeoutError extends Error {"  <- K68ScoutS209/quotes.txt 1
+ok   S209 present words= 6 "Legacy SSE endpoint timeout after ${timeoutMs}ms"  <- K68ScoutS209/quotes.txt 2
+ok   S209 present words= 8 "Legacy MCP HTTP+SSE transport from protocol revision 2024-11-05."  <- K68ScoutS209/quotes.txt 3
+ok   S209 present words= 6 "export class LegacySseTransport implements MCPTransport {"  <- K68ScoutS209/quotes.txt 4
+ok   S209 present words= 5 "async connect(signal?: AbortSignal): Promise<void> {"  <- K68ScoutS209/quotes.txt 5
+ok   S209 present words= 4 "async close(): Promise<void> {"  <- K68ScoutS209/quotes.txt 6
+ok   S212 present words= 6 "export class LegacySseTransport implements MCPTransport {"  <- same class at the installed-release tag
+ok   S212 present words= 8 "Legacy MCP HTTP+SSE transport from protocol revision 2024-11-05."  <- same doc comment at the installed-release tag
+ok   S210 present words= 7 "Three months after this SEP is Final"  <- sep2596.md:257 (grace table cell)
+ok   S210 present words=16 "three-month grace period from the date this SEP reaches Final before it is eligible for  <- sep2596.md:249-250 (grace clause)
+ok   S210 present words=12 "Both features were publicly deprecated well over twelve months before this SEP"  <- sep2596.md:247-248 (rationale for the grace)
+ok   S210 present words= 3 "Status | Final"  <- sep2596.md:25 (status table)
+ok   S210 absent  words= 1 "2026-06-03"  <- the Final DATE is not on the SEP page — it is only in S213
+ok   S211 present words=10 "Clients and servers can maintain backwards compatibility with the deprecated"  <- transports:281 (prose before the inline link)
+ok   S211 present words=12 "the old HTTP+SSE transport, and should use that transport for all subsequent"  <- transports:305 (plain prose naming HTTP+SSE)
+ok   S211 absent  words= 5 "This replaces the [HTTP+SSE transport]"  <- blockquote + inline link breaks the counter matcher (norm keeps > and link syntax)
+ok   S211 absent  words= 1 "2025-11-05"  <- content is the 2025-11-25 revision; the 2025-11-05 path 404s
+ok   S213 present words= 7 "SEP-2596: condense Removing a feature per review"  <- PR #2596 commit 027f22cbc946 (2026-05-18)
+ok   S213 present words= 1 "2026-05-18T17:31:18Z"  <- PR head commit de05e1ef (last of 18)
+ok   S213 absent  words= 4 "Mark SEPs as final"  <- the Final flip is NOT in the PR commit list
+ok   S213 absent  words= 1 "2026-06-03"  <- the Final date is NOT in the PR commit list
+ok   S213b present words= 4 "Mark SEPs as final"  <- commits-API record of 183238ddac (extra capture)
+ok   S213b present words= 1 "2026-06-03T20:45:19Z"  <- commit committer/author date (extra capture)
+ok   S213b present words= 1 "docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx"  <- files[9] of the flip commit (extra capture)
+ok   S210x present words= 1 "2026-05-18T18:09:21Z"  <- PR #2596 merged_at (extra capture; the page HTML is not byte-stable)
+
+VERIFY_QUOTES: PASS cases=35 failed=0

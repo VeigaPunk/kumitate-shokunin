@@ -1,0 +1,32 @@
+# Freeze-commit readings (git archive 39f61816d4ee7a8d401df42c1818c91a9c537bce -> /fast/scratch/hyaku/kumitate-r68/K68ExecGates/head)
+# date 2026-10-27T12:06:06-03:00
+### sources-check
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/head && node scripts/sources-check.mjs)
+EXIT: 0
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=145 tiers=A:122,B:15,C:8 status=queued:13,mined:113,rejected:19 entries_with_source=22 legacy=38)
+
+### source-capture
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/head && node scripts/source-capture.mjs)
+EXIT: 0
+SOURCE_CAPTURE: CLEAN captures=38 exemptions=107
+
+### readme-map
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/head && node scripts/readme-map.mjs)
+EXIT: 0
+README_MAP: CLEAN files=163 rows=163 covered=163
+
+### proxy-check
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/head && node scripts/proxy-check.mjs)
+EXIT: 1
+PROXY  error  A_DRIFT  A: declared=351 computed=548 delta=+197
+PROXY  error  C2_DRIFT  C2: declared=156 computed=163 delta=+7
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=156 computed=163 delta=+7
+PROXY  error  K_MEMBERS_DRIFT  K_members: declared=49 computed=53 delta=+4
+PROXY  error  K_SECTIONS_DRIFT  K_sections: declared=49 computed=53 delta=+4
+PROXY  warn  PIN_UNPINNED  scripts/harm-matrix.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/routed-ledger.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=351 computed=548 delta=+197; C2_DRIFT term=C2 declared=156 computed=163 delta=+7; C2_TOTAL_DRIFT term=C2_total declared=156 computed=163 delta=+7; K_MEMBERS_DRIFT term=K_members declared=49 computed=53 delta=+4; K_SECTIONS_DRIFT term=K_sections declared=49 computed=53 delta=+4; PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+

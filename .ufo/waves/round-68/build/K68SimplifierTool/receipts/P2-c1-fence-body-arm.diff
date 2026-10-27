@@ -1,0 +1,10 @@
+--- p-c1-orig.mjs	2026-10-27 12:08:19.573258234 -0300
++++ c1-noarm.mjs	2026-10-27 12:04:41.810317107 -0300
+@@ -165,7 +165,6 @@
+       let body = l;
+       for (let j = i + 1; j < sec.length; j += 1) {
+         const n = sec[j];
+-        if (n.fence && !/^ {0,3}(```|~~~)/.test(n.l)) { body += `\n${n.l}`; continue; }
+         if (/^([-*+]|[0-9]+[.)])\s+\S/.test(n.l) || (n.l.startsWith('|') && !isSep(n.l))) break;
+         if (/^\S/.test(n.l) && sec[j - 1].l.trim() === '') break;
+         body += `\n${n.l}`;

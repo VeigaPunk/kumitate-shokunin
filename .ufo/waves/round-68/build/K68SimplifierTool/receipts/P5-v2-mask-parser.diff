@@ -1,0 +1,79 @@
+--- v2draft.mjs	2026-10-27 12:06:48.932196955 -0300
++++ v2-mask.mjs	2026-10-27 12:07:18.478230757 -0300
+@@ -103,45 +103,47 @@
+  */
+ export function routedSections(text) {
+   const lines = String(text).split('\n');
++  // one fence mask for the whole file: `del` = delimiter lines, `inside` = fenced content
++  const del = new Array(lines.length).fill(false);
++  const inside = new Array(lines.length).fill(false);
++  let open = false;
++  for (let i = 0; i < lines.length; i += 1) {
++    if (FENCE_RE.test(lines[i])) { del[i] = true; open = !open; continue; }
++    inside[i] = open;
++  }
+   const heads = [];
+-  let fence = false;
+   for (let i = 0; i < lines.length; i += 1) {
+-    if (FENCE_RE.test(lines[i])) { fence = !fence; continue; }
+-    if (fence) continue;
++    if (del[i] || inside[i]) continue;
+     const m = HEADING_RE.exec(lines[i]);
+     if (m && HEAD_RE.test(m[2])) heads.push({ i, lvl: m[1].length });
+   }
+   const isSep = (l) => l.startsWith('|') && /-/.test(l) && /^[|\s:-]+$/.test(l.trim());
+   const items = [];
+   heads.forEach((h, idx) => {
+-    const hardEnd = idx + 1 < heads.length ? heads[idx + 1].i : lines.length;
+-    const sec = [];
+-    let f = false;
+-    for (let j = h.i + 1; j < hardEnd; j += 1) {
+-      if (!f) {
+-        const m = /^(#{1,6})\s+/.exec(lines[j]);
+-        if (m && m[1].length <= h.lvl) break;
+-      }
+-      if (FENCE_RE.test(lines[j])) { f = !f; sec.push({ l: lines[j], fence: true }); continue; }
+-      sec.push({ l: lines[j], fence: f });
++    // body ends at the next routed heading, or at the next same-or-shallower heading outside a fence
++    let end = idx + 1 < heads.length ? heads[idx + 1].i : lines.length;
++    for (let j = h.i + 1; j < end; j += 1) {
++      if (del[j] || inside[j]) continue;
++      const m = /^(#{1,6})\s+/.exec(lines[j]);
++      if (m && m[1].length <= h.lvl) { end = j; break; }
++    }
++    const starts = [];
++    for (let i = h.i + 1; i < end; i += 1) {
++      if (del[i] || inside[i]) continue;
++      if (lines[i].startsWith('|') && !isSep(lines[i]) && !(i + 1 < end && isSep(lines[i + 1]))) starts.push({ i, kind: 'table' });
++      else if (LIST_RE.test(lines[i])) starts.push({ i, kind: 'list' });
+     }
+-    for (let i = 0; i < sec.length; i += 1) {
+-      const l = sec[i].l;
+-      if (sec[i].fence) continue;
+-      const row = l.startsWith('|') && !isSep(l) && !(i + 1 < sec.length && isSep(sec[i + 1].l));
+-      if (row) { items.push(l); continue; }
+-      if (!LIST_RE.test(l)) continue;
+-      let body = l;
+-      for (let j = i + 1; j < sec.length; j += 1) {
+-        const n = sec[j];
+-        if (n.fence && !FENCE_RE.test(n.l)) { body += `\n${n.l}`; continue; }
+-        if (LIST_RE.test(n.l) || (n.l.startsWith('|') && !isSep(n.l))) break;
+-        // a column-0 non-blank line after a blank line is prose, not item text
+-        if (/^\S/.test(n.l) && sec[j - 1].l.trim() === '') break;
+-        body += `\n${n.l}`;
++    starts.forEach((st, k) => {
++      if (st.kind === 'table') { items.push(lines[st.i]); return; }
++      const stop = k + 1 < starts.length ? starts[k + 1].i : end;
++      const body = [lines[st.i]];
++      for (let j = st.i + 1; j < stop; j += 1) {
++        if (inside[j] || del[j]) { body.push(lines[j]); continue; }   // fenced content (and the delimiters) belongs to its item's text
++        if (/^\S/.test(lines[j]) && lines[j - 1].trim() === '') break;
++        body.push(lines[j]);
+       }
+-      items.push(body);
+-    }
++      items.push(body.join('\n'));
++    });
+   });
+   return { sections: heads.length, items };
+ }

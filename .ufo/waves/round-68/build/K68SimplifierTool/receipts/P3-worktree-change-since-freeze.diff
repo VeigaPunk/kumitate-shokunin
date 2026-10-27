@@ -1,0 +1,12 @@
+--- p-c2-orig.mjs	2026-10-27 12:08:19.573580274 -0300
++++ c2-now.mjs	2026-10-27 12:11:48.037705266 -0300
+@@ -291,7 +291,8 @@
+   };
+   const capRows = tableOf(captureOf.S207 || '');
+   const snapSec = entryText != null ? section(entryText, 'Registry snapshot') : null;
+-  const snapRows = snapSec ? snapSec.split('\n').filter((l) => l.startsWith('|') && !/^\|[\s:-]+\|$/.test(l.trim()) && !/^\|\s*Feature\s*\|/.test(l)).map((l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim())) : [];
++  const isSepRow = (c) => c.every((x) => /^[\s:-]+$/.test(x) || x === '') && c.some((x) => /-/.test(x));
++  const snapRows = snapSec ? snapSec.split('\n').filter((l) => l.startsWith('|') && !/^\|\s*Feature\s*\|/.test(l)).map((l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim())).filter((c) => !isSepRow(c)) : [];
+   if (!capRows) bad6.push('capture-table-absent');
+   else {
+     if (snapRows.length !== capRows.length) bad6.push(`rows=${snapRows.length}!=${capRows.length}`);

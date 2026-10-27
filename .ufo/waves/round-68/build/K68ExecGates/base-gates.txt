@@ -1,0 +1,89 @@
+# Base-gate run — kumitate round 68, seat K68ExecGates
+# Base worktree: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin archive d23892ad44b41e1af63b3edb949d265ca1dd812d | tar -x -C /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base
+# Lane HEAD at run time: 39f61816d4ee7a8d401df42c1818c91a9c537bce
+# Date: 2026-10-27T11:57:58-03:00
+
+### G1 sources-census validate (prescribed form; --root form reads the LIVE lane)
+CMD: (cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate)
+EXIT: 0
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+
+### G1b sources-census validate on the base extraction (revision-bound)
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base --file /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base/corpus/SOURCES.md)
+EXIT: 0
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r68/K68ExecGates/base/corpus/SOURCES.md
+
+### G2 sources-check
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/sources-check.mjs)
+EXIT: 0
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=145 tiers=A:122,B:15,C:8 status=queued:13,mined:113,rejected:19 entries_with_source=22 legacy=38)
+
+### G3 source-capture
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/source-capture.mjs)
+EXIT: 0
+SOURCE_CAPTURE: CLEAN captures=38 exemptions=107
+
+### G4 readme-map
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/readme-map.mjs)
+EXIT: 1
+README_MAP: note uncovered:lessons/round-67-verifier-spotcheck.md
+README_MAP: note unpinned:lessons/round-66-verifier-spotcheck.md
+README_MAP: note unpinned:lessons/round-67-verifier-spotcheck.md
+README_MAP: DRIFT files=163 rows=161 covered=161 bad=4 first=uncovered:lessons/round-66-verifier-spotcheck.md
+
+### G5 proxy-check
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/proxy-check.mjs)
+EXIT: 1
+PROXY  error  A_DRIFT  A: declared=351 computed=543 delta=+192
+PROXY  error  C2_DRIFT  C2: declared=156 computed=161 delta=+5
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=156 computed=163 delta=+7
+PROXY  error  K_MEMBERS_DRIFT  K_members: declared=49 computed=53 delta=+4
+PROXY  error  K_SECTIONS_DRIFT  K_sections: declared=49 computed=53 delta=+4
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY  warn  PIN_UNPINNED  scripts/harm-matrix.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY  warn  PIN_UNPINNED  scripts/routed-ledger.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=351 computed=543 delta=+192; C2_DRIFT term=C2 declared=156 computed=161 delta=+5; C2_TOTAL_DRIFT term=C2_total declared=156 computed=163 delta=+7; K_MEMBERS_DRIFT term=K_members declared=49 computed=53 delta=+4; K_SECTIONS_DRIFT term=K_sections declared=49 computed=53 delta=+4; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+
+### G6 kimi-census
+CMD: (cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/kimi-census.mjs)
+EXIT: 0
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=27  checked=27  frozen=27
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=10 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=37 declared=27 chain=10 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=53 checked=53 errors=0 info=4 chain=10
+KIMI_CENSUS: CLEAN (members=53 checked=53 chain=10 info=4)
+
+### G7 plan-before-ready --round 68 (lane HEAD 39f61816)
+CMD: (cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && bash scripts/plan-before-ready.sh --round 68)
+EXIT: 0
+PLAN_BEFORE_READY: PASS rev=39f61816d4ee7a8d401df42c1818c91a9c537bce round=68 dir=.ufo/waves/round-68 plan=39f61816d4ee7a8d401df42c1818c91a9c537bce plan_ct=1793112782 marker=39f61816d4ee7a8d401df42c1818c91a9c537bce marker_kind=dispatch marker_ct=1793112782 marker_path=.ufo/waves/round-68/w1-dispatch.json map=CLEAN files=163 rows=163 covered=163
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=68-68 rev=39f61816d4ee7a8d401df42c1818c91a9c537bce exit=0 failed= na_rounds= map_red=
+
+### G7b plan-before-ready --round 68 --rev <base d23892ad>
+CMD: (cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && bash scripts/plan-before-ready.sh --round 68 --rev d23892ad44b41e1af63b3edb949d265ca1dd812d)
+EXIT: 2
+PLAN_BEFORE_READY: NA rev=d23892ad44b41e1af63b3edb949d265ca1dd812d round=68 dir=.ufo/waves/round-68 reason=NO_PLAN_NO_MARKER plan=- marker=- map=SKIP reason=NO_PLAN
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=68-68 rev=d23892ad44b41e1af63b3edb949d265ca1dd812d exit=2 failed= na_rounds=68 map_red=
+

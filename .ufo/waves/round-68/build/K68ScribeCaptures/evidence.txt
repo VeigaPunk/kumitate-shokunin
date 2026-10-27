@@ -1,0 +1,82 @@
+Captures seat K68ScribeCaptures — verbatim command outputs (2026-10-27)
+All runs: scratch clone /fast/scratch/hyaku/kumitate-r68/K68ScribeCaptures/lane
+(clone --shared of the lane; fixture commit fc63bd8d; lane itself untouched).
+
+1. Live re-fetch of every row URL (curl -fsSL, sha256sum)
+https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md               3839 c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa
+https://modelcontextprotocol.io/community/feature-lifecycle.md                       8794 3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee
+https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/sse.ts 15183 0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0
+https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/183238ddacd0118a22399cd4743a5b5eaa43dbdd/seps/2596-spec-feature-lifecycle-and-deprecation.md 26389 6608969be1213cafd12edc27269519be54b3fadb0443ff0f1b5fc76f75752de4
+https://modelcontextprotocol.io/specification/2025-11-25/basic/transports.md         16321 ae9bb7be00604a66a8f70f439ef028eced174bce4a5cb0f6fc11bbeaa625afcc
+https://raw.githubusercontent.com/can1357/oh-my-pi/v18.13.1/packages/coding-agent/src/mcp/transports/sse.ts 15183 0b69229a69b01a372117d3d86833ec40e8f5118efe1049fdc4993ae1c677fbb0
+https://github.com/modelcontextprotocol/modelcontextprotocol/commit/183238ddacd0118a22399cd4743a5b5eaa43dbdd.patch 43988 ff518cf333b141ab8de8d23baddeecf698e6b6f7a6143d8d0fc8a2aa2a6fa919 (HTTP 200)
+
+2. The docs-page render of SEP-2596 is a different artifact (do not pin against the raw row URL)
+https://modelcontextprotocol.io/seps/2596-spec-feature-lifecycle-and-deprecation.md   25830 cc50162d2fa78a20783f5bc6d6e10569aac8d546005f188bfa2b23f7b86a9468
+cmp with the 26389 raw-at-commit file: differ (title/status block, no raw header lines)
+
+3. The 404 body that sat in the shared captures dir (reproduced; HTTP 404, 831 bytes)
+https://modelcontextprotocol.io/specification/2025-11-05/basic/transports.md -> HTTP=404 bytes=831 sha=68b6ff608bc24769f9cf2c472e35635eb89e147419eb2973bd905b36c1c3a3ca
+body begins: "# Page Not Found"
+
+4. Lane state before integration (unchanged by this seat)
+$ node scripts/source-capture.mjs
+SOURCE_CAPTURE: CLEAN captures=38 exemptions=107   exit 0
+$ ls corpus/knowledge/mcp-deprecation-registry.md -> absent; SOURCES rows S207..S213: 0
+
+5. Fixture integration (7 rows inside ## Registry, entry draft, 7 captures, 7 pins from gen-pins.mjs)
+$ node scripts/source-capture.mjs
+SOURCE_CAPTURE: CLEAN captures=45 exemptions=107   exit 0
+$ node scripts/sources-check.mjs | tail -1
+SOURCES_CHECK: CLEAN (rows=152 tiers=A:129,B:15,C:8 status=queued:13,mined:120,rejected:19 entries_with_source=23 legacy=38)
+$ node gen-pins.mjs .ufo/waves/round-68/build/captures --check
+PINS_OK 7/7 bytes match registry   exit 0
+
+6. Same state, measured on the archive (M = fc63bd8de899ac431e98ff28178d809ee098eb0f)
+$ git archive M | tar -x -C $A; (cd $A && node scripts/source-capture.mjs)
+SOURCE_CAPTURE: CLEAN captures=45 exemptions=107   exit 0
+( cd $A && node scripts/sources-check.mjs | tail -1 )  -> SOURCES_CHECK: CLEAN (rows=152 ...)
+
+7. Frozen counter against the fixture, live arm on
+$ node .ufo/waves/round-68/probe/deprec68-probe.mjs <clone> fc63bd8de899ac431e98ff28178d809ee098eb0f
+DEPREC68_UNMET held=9/10 checks=10 rev=fc63bd8de899ac431e98ff28178d809ee098eb0f rule=M68 | M9 MISS readme-map-exit=1,province-entry-not-named
+exit 1   (M3, M4, M5 live, M6, M7, M8 PASS; M9 is the L1's readme-map row + PROVINCE line)
+$ ... --no-live -> held=8/10 ... | M5 MISS no-live | M9 MISS readme-map-exit=1,province-entry-not-named
+
+8. Attack A — S211 pinned to the HTTP 404 body (bytes/hash honest)
+$ node scripts/source-capture.mjs
+SOURCE_CAPTURE: CLEAN captures=45 exemptions=107   exit 0
+$ node .../deprec68-probe.mjs <clone> caa0d72f27de2b887a95e30965a01e8d190f0496 --no-live
+DEPREC68_UNMET held=7/10 ... | M4 MISS S211:quote-not-in-capture,S211:no-bullet | M5 MISS no-live | M9 MISS ...
+
+9. Attack B — S207..S213 exempted instead of captured
+$ node scripts/source-capture.mjs
+SOURCE_CAPTURE: CLEAN captures=38 exemptions=114   exit 0
+$ node gen-pins.mjs ... --check -> PINS_DRIFT S207:pin-absent S208:pin-absent S209:pin-absent S210:pin-absent S211:pin-absent S212:pin-absent S213:pin-absent  exit 1
+$ node .../deprec68-probe.mjs <clone> 541737325d30926bed8473ecdccf448882f28d1c --no-live
+DEPREC68_UNMET held=5/10 ... | M3 MISS cited=7 S207:pin-absent,S208:pin-absent,S209:pin-absent,S210:pin-absent,S211:pin-absent | M4 MISS ... | M6 MISS capture-table-absent | ...
+
+10. Attacks C-F (byte fidelity / confinement still bites on the new paths)
+C hash flip S213      -> SOURCE_CAPTURE: DRIFT captures=45 exemptions=107 bad=1 first=S213:hash-mismatch  exit 1
+D symlinked capture   -> SOURCE_CAPTURE: DRIFT ... first=S212:not-a-regular-file  exit 1
+E ../outside.txt      -> SOURCE_CAPTURE: DRIFT ... first=S210:path-escape  exit 1
+F symlinked directory -> SOURCE_CAPTURE: DRIFT ... first=S208:path-escape  exit 1
+
+11. Worktree CLEAN is not archive CLEAN
+$ git -C <clone> status --porcelain
+ M .ufo/pins/source-captures.json
+ M corpus/SOURCES.md
+?? .ufo/waves/round-68/build/
+?? corpus/knowledge/mcp-deprecation-registry.md
+untracked captures: 8   (gate printed CLEAN while they were untracked)
+
+12. Scout captures present at 12:0x, with their payloads stripped
+K68ScoutS207/captures/deprecated-2026-07-28.md  3950 B, 1 header line  -> payload c12c3cb7d6b8a30c
+K68ScoutS208/captures/feature-lifecycle.md      9306 B, 9 header lines -> payload 3f3371911512591e
+K68ScoutS209/captures/sse-v18.12.6.ts          15726 B, 6 header lines -> payload 0b69229a69b01a37
+K68ScoutS212/captures/sse-v18.13.1.ts          15757 B, 6 header lines -> payload 0b69229a69b01a37
+K68ScoutS210: captures/ dir exists, empty (no file)
+K68ScoutS211: captures/ dir exists, empty (no file)
+K68ScoutS213: pr2596-commits-api.json (99864), mark-seps-final.json (58741) — no patch
+  (the S210/S211 bytes used here come from K68ScribeEntry/captures, each re-verified live by this seat;
+   the S213 patch comes from K68ScribeEntry/captures, re-verified live HTTP 200)

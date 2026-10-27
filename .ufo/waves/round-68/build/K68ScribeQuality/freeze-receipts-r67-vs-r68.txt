@@ -1,0 +1,26 @@
+# round-67 freeze tree at 993a7b16 (hyaku run9 wrap-up: r67 freeze drafts and last capture)
+$ git ls-tree -r --name-only 993a7b16 .ufo/waves/round-67/
+.ufo/waves/round-67/plan.md
+.ufo/waves/round-67/probe/ledger67-probe.mjs
+
+# base receipts the r67 plan names (plan.md:77,79,81,132,134,141)
+77:**Before (base `f29eb699`):** `LEDGER67_UNMET held=0/7` exit 1 (`base/ledger67-base.txt`).
+79:tool + an empty `## Ledger` skeleton + the three registry-home lines → UNMET (`base/ledger67-donothing.txt`);
+81:(`base/ledger67-autoledger.txt`).
+132:**Before (base `f29eb699`):** `DEPREC67_UNMET held=0/10` exit 1 (`base/deprec67-base.txt`).
+134:PROVINCE line, nothing else → UNMET (`base/deprec67-donothing.txt`).
+141:- **Census** before (`base/census-before.txt`, exit 0, six carried W04) and after, pasted in the report.
+
+# on-disk contents of .ufo/waves/round-67/base/
+total 0
+drwxr-xr-x 1 vgpnk vgpnk  0 Oct 27 04:17 .
+drwxr-xr-x 1 vgpnk vgpnk 48 Oct 27 04:18 ..
+
+# round-68 base receipts inside the round-68 freeze commit 39f61816
+$ git ls-tree -r --name-only 39f61816 .ufo/waves/round-68/base/
+.ufo/waves/round-68/base/census-before.txt
+.ufo/waves/round-68/base/deprec68-base.txt
+.ufo/waves/round-68/base/ledger68-base.txt
+$ cut -c1-60 on each rev field
+.ufo/waves/round-68/base/ledger68-base.txt:rev=d23892ad44b41e1af63b3edb949d265ca1dd812d
+.ufo/waves/round-68/base/deprec68-base.txt:rev=d23892ad44b41e1af63b3edb949d265ca1dd812d

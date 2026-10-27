@@ -1,0 +1,26 @@
+# copy identity: the frozen draft as committed at 993a7b16
+$ git rev-parse 993a7b16:.ufo/waves/round-67/probe/ledger67-probe.mjs -> 3a3a45a99daf6d1b4995fd3bbdf2929d6bded6ff
+$ git hash-object ledger67-probe-as-frozen.mjs -> 3a3a45a99daf6d1b4995fd3bbdf2929d6bded6ff
+$ sha256sum ledger67-probe-as-frozen.mjs -> 5d65b315c9ef3aa4574c25e3012e4a5a00f2bfc7695dea7591962193b49d566a  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ScribeQuality/ledger67-probe-as-frozen.mjs
+
+# first exercise of the round-67 freeze draft against the base its plan declares (plan.md:77 `base/ledger67-base.txt`, base f29eb699; s/sha same shape)
+$ node ledger67-probe-as-frozen.mjs <lane> d23892ad44b41e1af63b3edb949d265ca1dd812d --seed 2583a841b9d97d5e
+node:fs:1410
+  const result = binding.mkdir(
+                         ^
+
+Error: EEXIST: file already exists, mkdir '/fast/scratch/hyaku/kumitate-r68/K68ScribeQuality/ledger67.TRiUkO/archive'
+    at mkdirSync (node:fs:1410:26)
+    at extract (file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ScribeQuality/ledger67-probe-as-frozen.mjs:79:3)
+    at file:///home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ScribeQuality/ledger67-probe-as-frozen.mjs:92:13
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -17,
+  code: 'EEXIST',
+  syscall: 'mkdir',
+  path: '/fast/scratch/hyaku/kumitate-r68/K68ScribeQuality/ledger67.TRiUkO/archive'
+}
+
+Node.js v24.21.0
+exit=1

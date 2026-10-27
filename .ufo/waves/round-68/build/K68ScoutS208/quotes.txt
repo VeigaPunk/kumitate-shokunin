@@ -1,0 +1,41 @@
+S208 located quotes — https://modelcontextprotocol.io/community/feature-lifecycle.md
+Fetch: 2026-10-27T14:55:05Z, HTTP 200, body 8794 bytes, sha256 3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee
+(byte-identical to the round-66 wave capture of the same URL).
+Line numbers refer to captures/feature-lifecycle.md (header adds 9 lines; body starts at line 11).
+All S208 quotes below were programmatically verified present in the capture (single-line, so M4's
+substring check will find them verbatim); word counts <= 25.
+
+Q1  (line 36, § Feature States, 10 words):
+"A specification feature is in exactly one of three states:"
+
+Q2  (line 102, § Deprecating a Feature, 9 words):
+"The minimum deprecation window is counted from that release."
+
+Q3  (line 84, § Deprecating a Feature, 13 words):
+"When the deprecation SEP is accepted and reaches Final, the deprecation is scheduled."
+
+Q4  (line 140, § Removing a Feature, 14 words):
+"Features may remain Deprecated, without removal, for much longer than the minimum deprecation window."
+
+REQUIRED-WORDING NOTE — `Three months after`:
+The literal string "Three months after" is NOT present in the S208 page — verified: grep -ci
+"three months after" → 0 in both the .md body and the HTML rendering
+(https://modelcontextprotocol.io/community/feature-lifecycle, HTTP 200, 334513 bytes, 2026-10-27).
+S208's minimum-window clause is a twelve-month floor ("the number of months, at least / twelve,
+that the feature must remain Deprecated ..." — wrap-split at lines 77–79, not locatable as one
+substring) and a ninety-day expedited floor ("at least ninety days between the feature becoming /
+Deprecated and its earliest removal" — wrap-split at lines 151–152).
+
+The "Three months after" grace wording lives one page away, in the Deprecated Registry row for
+HTTP+SSE transport — the S207 capture (deprecated.md at the 2026-07-28 revision), fetched live
+2026-10-27 from https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md
+HTTP 200, 3839 bytes, sha256 c12c3cb7d6b8a30cd4df8ea8162a819df071a42745da6d20165e8fdf94b28baa
+(byte-identical to the round-66 capture), table row at its line 31:
+
+Q6  (S207 capture, Deprecated-table cell, 6 words — NOT in the S208 capture):
+"Three months after SEP-2596 reaches Final"
+
+Binding recommendation for the L1's `## Located quotes`: attach Q6 (or its SEP-2596 sibling,
+"Three months after this SEP is Final") to the S207 id; attach Q1–Q4 to S208. A
+`Three months after` bullet carrying the S208 id would fail M4's capture check and M5's live
+re-fetch, because the string occurs nowhere in this page.

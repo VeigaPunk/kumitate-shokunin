@@ -1,0 +1,28 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/probe/ledger68-probe.mjs	2026-10-27 11:41:15.462487151 -0300
++++ /fast/scratch/hyaku/kumitate-r68/K68ExecToolV2/probe-fix-clean.mjs	2026-10-27 12:03:10.977208165 -0300
+@@ -296,6 +296,7 @@
+   const items102 = [phrase(6), phrase(6)];
+   const decoy = phrase(6); const nested = phrase(5); const prose = phrase(7);
+   const fenceLine = phrase(5);
++  const d5 = phrase(5); // PATCH(r68): captured so A5 can quote D5's own words
+   const s101 = [
+     `# Round 101 — spot-check ${word()}`, '', `${lv} Verdicts`, '', `- ${decoy}`, '',
+     `${lv} 5. Routed defects for the next round`, '',
+@@ -305,7 +306,7 @@
+     '| id | what |', '|---|---|', `| D3 | ${tableItem} |`,
+     '', '```text', `- ${fenceLine}`, '```',
+     '', `- **D4 — ${items101[2]} ${shared}.**`, '',
+-    `- **D5 — ${phrase(5)} ${shared}.**`, '',
++    `- **D5 — ${d5} ${shared}.**`, '',
+     `${lv} Non-author statement`, '', `- ${phrase(4)}`,
+   ];
+   const s102base = [`# Round 102 — ${word()}`, '', `## Routed items`, '', `- ${items102[0]}`, `- ${items102[1]}`, '', '## End', ''];
+@@ -319,7 +320,7 @@
+     { id: 'A2', n: 101, k: 2, q: items101[1].split(' ').slice(0, 4).join(' '), status: 'open', answer: '-' },
+     { id: 'A3', n: 101, k: 3, q: tableItem.split(' ').slice(1, 4).join(' '), status: 'open', answer: '-' },
+     { id: 'A4', n: 101, k: 4, q: items101[2].split(' ').slice(2, 6).join(' '), status: 'open', answer: '-' },
+-    { id: 'A5', n: 101, k: 5, q: `${items101[2].split(' ').slice(2, 4).join(' ')} ${shared}`, status: 'open', answer: '-' },
++    { id: 'A5', n: 101, k: 5, q: `${d5.split(' ').slice(3, 5).join(' ')} ${shared}`, status: 'open', answer: '-' }, // PATCH(r68): A5 quoted items101[2] (D4's words) -> unlocatable
+     { id: 'A6', n: 102, k: 1, q: items102[0].split(' ').slice(0, 3).join(' '), status: 'open', answer: '-' },
+     { id: 'A7', n: 102, k: 2, q: items102[1].split(' ').slice(3, 6).join(' '), status: 'open', answer: '-' },
+   ];

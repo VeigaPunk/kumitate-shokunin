@@ -1,0 +1,33 @@
+# plan sentences vs the receipts they cite (round 68, freeze 39f61816)
+
+## 1. plan.md:86 quotes a tally its receipt contradicts
+**Before (base `d23892ad`):** `LEDGER68_UNMET held=0/7` exit 1 (`base/ledger68-base.txt`).
+$ head -1 .ufo/waves/round-68/base/ledger68-base.txt | cut -c1-100
+LEDGER68_UNMET held=1/7 checks=7 rev=d23892ad44b41e1af63b3edb949d265ca1dd812d rule=L68 seed=2583a841
+$ grep -c "^L[0-9] MISS" .ufo/waves/round-68/base/ledger68-base.txt
+0
+(7 checks, 6 printed MISS lines -> the silent pass is L7, `check(`L7`, bad.length===0)` at probe/ledger68-probe.mjs:459)
+
+## 2. the three control receipts the plan names do not exist at the paths it names
+ABSENT  .ufo/waves/round-68/base/ledger68-donothing.txt
+ABSENT  .ufo/waves/round-68/base/ledger68-autoledger.txt
+ABSENT  .ufo/waves/round-68/base/deprec68-donothing.txt
+$ git ls-tree -r --name-only 39f61816 .ufo/waves/round-68/base/
+.ufo/waves/round-68/base/census-before.txt
+.ufo/waves/round-68/base/deprec68-base.txt
+.ufo/waves/round-68/base/ledger68-base.txt
+$ git ls-tree -r --name-only 39f61816 .ufo/waves/round-68/controls/
+.ufo/waves/round-68/controls/c1-autoledger.txt
+.ufo/waves/round-68/controls/c1-donothing.txt
+.ufo/waves/round-68/controls/c2-donothing.txt
+
+## 3. every committed control receipt names a rev that resolves in neither repo
+.ufo/waves/round-68/controls/c1-autoledger.txt rev=3ab64d18c37ce2db0851af755d6ebe3633f4dd6a
+  lane: UNRESOLVED
+  fleet: UNRESOLVED
+.ufo/waves/round-68/controls/c1-donothing.txt rev=3ec65c91b208142392690aec43c44657fbdc16ad
+  lane: UNRESOLVED
+  fleet: UNRESOLVED
+.ufo/waves/round-68/controls/c2-donothing.txt rev=70434c290f7dd2f32ea868a75989f357d0ff0f3b
+  lane: UNRESOLVED
+  fleet: UNRESOLVED

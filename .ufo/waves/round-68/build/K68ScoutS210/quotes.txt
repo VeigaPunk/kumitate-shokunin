@@ -1,0 +1,20 @@
+S210 located quotes — accessed 2026-10-27; capture: captures/sep2596.md.
+The capture was checked with the deprec68-probe norm/wb matching semantics. Each quote below is <=25 words. PR means a live fetch of the assigned PR URL; SEP means the rendered SEP page or PR .diff URL. SEP-text quotes are NOT live-verifiable from the PR page URL.
+
+PR-page-verifiable (safe for M5 with the assigned PR URL):
+- S210 — "Specification Feature Lifecycle and Deprecation Policy" (6 words; PR title; also SEP canonical-text line 1)
+- S210 — "Establishes a formal lifecycle for individual features within the MCP specification" (11 words; PR body)
+- S210 — "with a minimum twelve-month window between deprecation and earliest removal" (10 words; PR body)
+- S210 — "deprecation and removal are each their own proposal" (8 words; PR body)
+- S210 — "reclassifies the two existing informal deprecations" (6 words; PR body)
+
+SEP-text quotes (capture-located; M5 requires .diff or rendered SEP URL as the row URL):
+- S210 — "Three months after this SEP is Final" (7 words; Transition table, HTTP+SSE row, Earliest removal cell; canonical-text line 233)
+- S210 — "When the deprecation SEP reaches Final the deprecation is scheduled" (10 words; Deprecating a feature; line 113)
+- S210 — "not from the date the SEP reaches Final" (8 words; minimum-window clock; line 108)
+- S210 — "The term \"soft-deprecated\" is retired." (5 words; Feature states; line 73)
+- S210 — "- **Status**: Draft" (3 words; SEP PR-added header; line 3)
+
+Status history in capture's timeline: labeled draft 2026-04-17T17:52:13Z; changed draft→in-review 2026-04-22T17:05:06Z; in-review→accepted 2026-05-13T16:27:23Z; merged/closed 2026-05-18T18:09:21Z; accepted→final 2026-06-03T17:07:09Z. Live rendered SEP page (HTTP 200) says it has reached Final status.
+
+Note for entry authors: `deprec68-probe.mjs` M5 fetches the first URL in the row and matches the quote against that response. The assigned PR page fetch does not contain the SEP's transition-table grace quote; use the separate SEP page/diff row URL when citing that quote. Capture contains PR page, diff, API metadata/events and canonical SEP text, with fetched URLs distinguished.

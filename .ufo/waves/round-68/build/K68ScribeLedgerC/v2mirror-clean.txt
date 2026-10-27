@@ -1,0 +1,20 @@
+$ git -C /fast/scratch/hyaku/kumitate-r68/K68ScribeLedgerC/lane rev-parse HEAD
+39f61816d4ee7a8d401df42c1818c91a9c537bce
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-68/build/K68ScribeLedgerC/check-ledger-c.mjs <lane> ledger61-63.md
+PARSER: round=61 sections=1 items=6
+PARSER: round=62 sections=1 items=5
+PARSER: round=63 sections=1 items=6
+CLASS append-only-violation rows=1 rounds=61
+CLASS carried-unaddressed rows=2 rounds=62,63
+CLASS citation-integrity rows=1 rounds=62
+CLASS dangling-pointer rows=1 rounds=61
+CLASS dispatch-accounting rows=2 rounds=61,62
+CLASS frozen-predicate-defect rows=1 rounds=61
+CLASS reference-drift rows=2 rounds=61,63
+CLASS tally-drift rows=2 rounds=63
+CLASS uncommitted-work rows=1 rounds=61
+CLASS verification-gap rows=2 rounds=62,63
+CLASS wave-shape rows=2 rounds=62,63
+DRAFT rows=17 covered=17 classes=11 problems=0
+LEDGERC_HELD problems=0
+EXIT=0

@@ -1,0 +1,25 @@
+{
+  "round": 59,
+  "rev": "39f61816d4ee7a8d401df42c1818c91a9c537bce",
+  "spotcheck": "corpus/lessons/round-59-verifier-spotcheck.md",
+  "committed_equals_worktree": true,
+  "counter_items67": {
+    "section_count": 1,
+    "section_headings": [
+      {
+        "line": 251,
+        "text": "8. Routed defects"
+      }
+    ],
+    "item_count": 0,
+    "items": [],
+    "section_text": [
+      "\n**No new lane-owned defect is routed.** R58-V1..V8 are repaired in lane bytes without rewriting the\nfiled r58 report, the r58 lesson, the r58 spot-check or the r58 probes, and each repair reproduces\nabove.\n\nNot lane-owned, status-neutral — orchestrator ordering defect: `inline.sh dispatch` was omitted\nbefore the L1 spawn for round 59, so `.ufo/watchdog.log` has no `launch kumitate round=59` line and\n`.ufo/prompts/kumitate-round-59.md` does not exist. The `claim-recovered` line\n(`2026-10-24T21:51:18-03:00 … base=0f66ecd4 reason=dispatch-omitted`) is a verification-time\nreconstruction, not contemporaneous dispatch evidence. Named here for the operator; the lane-round\nitself terminates with a landed, non-marker report.\n\nOperator note, not a lane rewrite: the two `[x]` SHONEN boxes name the **round-58** non-author\nspot-check as verifier and the report itself states that the new `cite-sources` row \"is not yet\nnon-author-checked\"; the other two boxes are `[~]`. This reviewer's spot-check re-measures the new\nrow (`REPAIR59_HELD held=8/8` at the measured rev and at the tip, `CITE_SOURCES_SELFTEST: PASS\n(8/8)`), so the new row's gate is now non-author-checked — but the SHONEN assessment is filed in the\nround report and promotion remains operator-owned. Nothing was written to `SHONEN.md`.\n\nNot credited: the dead `SentinelBounds` seat (exit -9, no session id, no report, not replaced).\nThe 40 s launcher abort (`w1-abort/`, 8 processes started, 0 session ids, 24 never started) was\narchived and counted as a launcher defect, not as seats. The two round-58 L0 questions remain open\nand were not duplicated.\n\n## 9. Non-author statement\n\nBoth declared claims verify by re-measurement at base, measured revision and tip; no owned axis is\nharmed; the round is admitted. The only write this reviewer makes in the lane repo is this file,\nlanded through `scripts/hyaku/jj-lane.sh … --as protocol -- corpus/lessons/round-59-verifier-spotcheck.md`.\n"
+    ]
+  },
+  "v1_routedItems": {
+    "found": true,
+    "item_count": 0
+  },
+  "parsers_agree": true
+}

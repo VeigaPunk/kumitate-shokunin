@@ -1,0 +1,13 @@
+# B02 receipt: v1 --selftest under GIT_DIR=<foreign repo> commits into the foreign repo
+$ GIT_DIR=<decoy>/.git node scripts/routed-ledger.mjs --selftest   # decoy had 1 commit (3e24699)
+$ git -C <decoy> log --oneline
+48d6c5e fixture
+3e24699 decoy (clean)
+$ git -C <decoy> status --porcelain
+ D corpus/lessons/round-7-verifier-spotcheck.md
+ D corpus/lessons/round-8-verifier-spotcheck.md
+ M corpus/routed-ledger.md
+ D notes/answers.md
+?? corpus/lessons/round-101-verifier-spotcheck.md
+?? corpus/lessons/round-102-verifier-spotcheck.md
+?? notes/a.md

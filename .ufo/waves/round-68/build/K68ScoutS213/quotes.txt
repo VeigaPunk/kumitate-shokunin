@@ -1,0 +1,26 @@
+K68ScoutS213 — located quotes for S213 (commit 183238ddac "Mark SEPs as final"), accessed live 2026-10-27.
+Capture: captures/mark-seps-final.json (single-commit record, api.github.com, HTTP 200).
+All quotes verbatim in the capture body; each <= 25 words.
+
+- S213 — "Mark SEPs as final"
+  located: body.commit.message (the full commit message, single line)
+
+- S213 — "2026-06-03T20:45:19Z"
+  located: body.commit.author.date and body.commit.committer.date — the dated
+  Final transition of SEP-2596 (commit authored and committed 2026-06-03).
+
+- S213 — "- **Status**: Final"
+  located: body.files[] patch for seps/2596-spec-feature-lifecycle-and-deprecation.md
+  (hunk @@ -1,6 +1,6 @@ flips "- **Status**: Draft" -> "+ **Status**: Final");
+  the same flip lands in docs/seps/2596-spec-feature-lifecycle-and-deprecation.mdx
+  (Badge "Draft" -> "Final" and the **Status** table cell).
+
+Notes for the L1: the commit record's html_url is
+https://github.com/modelcontextprotocol/modelcontextprotocol/commit/183238ddacd0118a22399cd4743a5b5eaa43dbdd;
+the row URL used is the api.github.com commits endpoint so a live re-fetch returns
+these quotes verbatim. Parent commit a20715022ca8a8fe8fd814f32709f73758984daa;
+committer Caitie McCaffrey; 20 files touched (11 SEPs flipped Draft->Final plus
+docs.json/seps index churn). The commit is NOT itself a commit inside PR #2596's
+branch (the PR's 18 commits end 2026-05-18; the PR merged at
+2026-05-18T18:09:21Z as 219f82421ce13f6b0d9f786e603cf9a659fd5216); 183238ddac is
+the later mainline commit that marked the SEPs Final on 2026-06-03.

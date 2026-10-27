@@ -1,0 +1,16 @@
+# proxy A term counts wave build artifacts (attack)
+CMD(base): cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/base && node scripts/proxy-check.mjs | grep A_DRIFT
+  PROXY  error  A_DRIFT  A: declared=351 computed=543 delta=+192
+PROXY: DRIFT (A_DRIFT term=A declared=351 computed=543 delta=+192; C2_DRIFT term=C2 declared=156 computed=161 delta=+5; C2_TOTAL_DRIFT term=C2_total declared=156 computed=163 delta=+7; K_MEMBERS_DRIFT term=K_members declared=49 computed=53 delta=+4; K_SECTIONS_DRIFT term=K_sections declared=49 computed=53 delta=+4; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+
+SETUP: mkdir -p /fast/scratch/hyaku/kumitate-r68/K68ExecGates/atk/.ufo/waves/round-99/build/DummySeat && 5 x 'export const x=N;' -> d1..d5.mjs
+CMD(attack): cd /fast/scratch/hyaku/kumitate-r68/K68ExecGates/atk && node scripts/proxy-check.mjs | grep A_DRIFT
+  PROXY  error  A_DRIFT  A: declared=351 computed=548 delta=+197
+PROXY: DRIFT (A_DRIFT term=A declared=351 computed=548 delta=+197; C2_DRIFT term=C2 declared=156 computed=161 delta=+5; C2_TOTAL_DRIFT term=C2_total declared=156 computed=163 delta=+7; K_MEMBERS_DRIFT term=K_members declared=49 computed=53 delta=+4; K_SECTIONS_DRIFT term=K_sections declared=49 computed=53 delta=+4; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/harm-matrix.mjs; PIN_UNPINNED term=scripts/routed-ledger.mjs; src-rev=31c465f15669)
+
+# script-file census at base extraction (A's numerator):
+  base total=543 waves=512
+  head total=548 waves=517
+
+# proxy fail-closed arm (pin clone absent shape):
+BOOKED, measured separately

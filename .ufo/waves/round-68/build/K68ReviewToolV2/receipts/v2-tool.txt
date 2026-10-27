@@ -1,0 +1,48 @@
+# K68ReviewToolV2 receipts — v2 draft (.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs, 732 lines)
+
+## v2 selftest
+$ env TMPDIR=<scratch> node …/build/K68ExecToolV2/routed-ledger.mjs --selftest
+… 56 CASE ok lines (20 counter mutants, 8 parser, structure/answer confinement, CLI/ledger/--rev/GIT_DIR/symlink/usage) …
+ROUTED_LEDGER_SELFTEST: PASS (56/56)
+exit=0   (>= 44 required by L1)
+
+## hermeticity
+imports: node:child_process, node:fs, node:os, node:url, node:path only — no http/net/dns/fetch.
+grep over the file for `vgpnk|shokunin|http|fetch\(|net\.|dns|/home/|/tmp/` → no matches.
+fixtures under mkdtemp(tmpdir()) honoring TMPDIR (ran with TMPDIR inside /fast/scratch/...);
+git fixture children run under childEnv() allow-list {PATH, LANG, HOME, TMPDIR} with -c identity.
+
+## six-hardenings battery vs v2 (same fixtures that defeated v1)
+H1a/b --rev ±GIT_DIR=<foreign repo>     : exit=2 FAIL-CLOSED reason=rev-unreadable:HEAD BOTH ways
+        (foreign repo never read; poison neutralized). H1c --selftest under GIT_DIR: PASS (56/56).
+H2a symlinked answer file               : exit=1 FINDING ANSWER_DEAD …:answer-symlink:notes/answers.md (×2 rows)
+H2b --ledger ../outside-tree/…          : exit=2 FAIL-CLOSED reason=ledger-escape:…
+H3  two routed sections                 : exit=1 sections=2 items=2 FINDING UNLEDGERED round-55-item-2
+H4a mid-word substring quote            : exit=1 FINDING QUOTE_ABSENT …round-55-item-1
+H4b two-word quote                      : exit=1 FINDING ROW_MALFORMED …quote-words=2
+H5  answer names :5, quote on line 3    : exit=1 FINDING ANSWER_DEAD …answer-quote-not-at-exact-line:notes/answers.md:5
+H6  fenced pseudo-bullet                : exit=0 CLEAN items=1 (fence excluded)
+F1  one quote-swap defect               : findings=2 — QUOTE_ABSENT + UNLEDGERED (same item; see report finding 3)
+F2  word-boundary-ambiguous quote       : exit=1 FINDING QUOTE_AMBIGUOUS …round-55-item-1-hits=2
+F3  two non-open rows on one item       : exit=1 FINDING ROW_CONTRADICTED …second-non-open-on-round-55-item-1-after-R55-D1
+
+## frozen L4 harness (verbatim replica of probe:284-365) vs v2
+seed 68a1b2c3d4e5f607: FAILING 2/20 — good, no-section
+seed f00dcaf012345678: FAILING 2/20 — good, no-section   (structural, seed-stable)
+v2 full stdout on the frozen `good` fixture:
+FINDING QUOTE_ABSENT A5@line11:round-101-item-5
+FINDING UNLEDGERED round-101-item-5
+ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0 findings=2 first=QUOTE_ABSENT:A5@line11:round-101-item-5
+
+## A5 patch applied to the replica (same 3 lines as build/K68ExecToolV2/patch/ledger68-probe-A5-quote.patch)
+seed 68a1b2c3d4e5f607: FAILING 0/20
+seed f00dcaf012345678: FAILING 0/20
+
+## real-corpus parity (counter items67 vs v2 routedSections, rounds 55..66)
+per-round items identical (3,4,4,8,0,9,6,5,6,5,7,4); totals: counter sections=12 items=61 | v2 sections=12 items=61.
+
+## cross-evidence from the tool seat (independent of this review)
+receipts/counter-on-draft-final.txt : full FROZEN counter vs draft rev a97cc8c7 → held=2/7,
+  `L4 MISS … 2/20 mutants wrong: good…;no-section…` (matches this review's replica exactly).
+receipts/counter-with-A5-patch.txt  : patched counter vs draft rev f47065bd → held=4/7; MISS = L2/L3
+  (ledger data absent) + L6 (registry rows absent); L1/L4/L5/L7 PASS.

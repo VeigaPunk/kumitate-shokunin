@@ -1,0 +1,62 @@
+{
+  "round": 61,
+  "rev": "39f61816d4ee7a8d401df42c1818c91a9c537bce",
+  "spotcheck": "corpus/lessons/round-61-verifier-spotcheck.md",
+  "committed_equals_worktree": true,
+  "counter_items67": {
+    "section_count": 1,
+    "section_headings": [
+      {
+        "line": 211,
+        "text": "6. Routed defects (lane fixes next round)"
+      }
+    ],
+    "item_count": 6,
+    "items": [
+      {
+        "k": 1,
+        "routedId": "R61-V1",
+        "words": 47,
+        "text": "- **R61-V1 — falsifier fixtures live only in tmpfs.** `ab902da2…` and `4247d2d`\n  are cited as evidence, but they resolve only under `/tmp/kumitate-r61*`, which\n  is not closure-durable (§Evidence standard). Commit a `git bundle` of each\n  fixture under `.ufo/waves/round-61/controls/`, or a reproducible build script,\n  and cite the bundled hash."
+      },
+      {
+        "k": 2,
+        "routedId": "R61-V2",
+        "words": 77,
+        "text": "- **R61-V2 — frozen counters admit fabrication and reject honest work.** This is\n  carried as Q57. The next frozen v2 must:\n  - read revision bytes only (`git show <rev>:…`, never `readFileSync` of the worktree);\n  - use `\\s` (not POSIX classes) and the 11-cell contract indices (8/9/11), scoped to `## Registry`;\n  - bind P2 to evidence the lane cannot author (session ids resolvable in `history://`, or stream files);\n  - ship positive and negative controls committed with expected verdicts."
+      },
+      {
+        "k": 3,
+        "routedId": "R61-V3",
+        "words": 85,
+        "text": "- **R61-V3 — in-place edits to filed bytes in `165b830`.** Two filed artifacts\n  were edited in place:\n  - `corpus/lessons/round-60.md` \"Before\" A=102 → A=104. The new value is\n    correct (`ffbfe3cc` tallies A=104), but the change is a rewrite, not an\n    appended correction.\n  - The SCORECARD capabilities row 1794 gained `first working round 60` after\n    the R60 closure ruled C1 unprovable.\n\n  Append a named correction for both. Note in the row's appendix that the\n  capability is not admitted. Do not rewrite again (the lane's own Q52 limit)."
+      },
+      {
+        "k": 4,
+        "routedId": "R61-V4",
+        "words": 30,
+        "text": "- **R61-V4 — R60 fleet-report placeholders.**\n  `.ufo/reports/round-60/kumitate.md` still carries 6\n  `__MEASURED__/__TIP__/__COMMITS__` tokens. File an erratum in the next lane\n  report that names `a745a3b0` / `be4a820c` / `165b830` for each token."
+      },
+      {
+        "k": 5,
+        "routedId": "R61-V5",
+        "words": 53,
+        "text": "- **R61-V5 — proxy DRIFT and an unpinned tool.** Refresh the\n  `kumitate-proxy-v1` stanza to A=115, C2=148, C2_total=148 in place (single\n  stanza), and add `pin.make-dispatch-actual` for `scripts/make-dispatch-actual.mjs`.\n  Run this in the same change as this file's README row and its `covered` pin,\n  or `readme-map` opens in DRIFT again (seventh recurrence of the R56-V3 class)."
+      },
+      {
+        "k": 6,
+        "routedId": "R61-V6",
+        "words": 25,
+        "text": "- **R61-V6 — dead seat `Audit19`.** Its attack item stayed unattacked\n  (`provider rejected task prompt as invalid_prompt`). Re-queue it in the next\n  round's falsify wave.\n"
+      }
+    ],
+    "section_text": [
+      "\n- **R61-V1 — falsifier fixtures live only in tmpfs.** `ab902da2…` and `4247d2d`\n  are cited as evidence, but they resolve only under `/tmp/kumitate-r61*`, which\n  is not closure-durable (§Evidence standard). Commit a `git bundle` of each\n  fixture under `.ufo/waves/round-61/controls/`, or a reproducible build script,\n  and cite the bundled hash.\n- **R61-V2 — frozen counters admit fabrication and reject honest work.** This is\n  carried as Q57. The next frozen v2 must:\n  - read revision bytes only (`git show <rev>:…`, never `readFileSync` of the worktree);\n  - use `\\s` (not POSIX classes) and the 11-cell contract indices (8/9/11), scoped to `## Registry`;\n  - bind P2 to evidence the lane cannot author (session ids resolvable in `history://`, or stream files);\n  - ship positive and negative controls committed with expected verdicts.\n- **R61-V3 — in-place edits to filed bytes in `165b830`.** Two filed artifacts\n  were edited in place:\n  - `corpus/lessons/round-60.md` \"Before\" A=102 → A=104. The new value is\n    correct (`ffbfe3cc` tallies A=104), but the change is a rewrite, not an\n    appended correction.\n  - The SCORECARD capabilities row 1794 gained `first working round 60` after\n    the R60 closure ruled C1 unprovable.\n\n  Append a named correction for both. Note in the row's appendix that the\n  capability is not admitted. Do not rewrite again (the lane's own Q52 limit).\n- **R61-V4 — R60 fleet-report placeholders.**\n  `.ufo/reports/round-60/kumitate.md` still carries 6\n  `__MEASURED__/__TIP__/__COMMITS__` tokens. File an erratum in the next lane\n  report that names `a745a3b0` / `be4a820c` / `165b830` for each token.\n- **R61-V5 — proxy DRIFT and an unpinned tool.** Refresh the\n  `kumitate-proxy-v1` stanza to A=115, C2=148, C2_total=148 in place (single\n  stanza), and add `pin.make-dispatch-actual` for `scripts/make-dispatch-actual.mjs`.\n  Run this in the same change as this file's README row and its `covered` pin,\n  or `readme-map` opens in DRIFT again (seventh recurrence of the R56-V3 class).\n- **R61-V6 — dead seat `Audit19`.** Its attack item stayed unattacked\n  (`provider rejected task prompt as invalid_prompt`). Re-queue it in the next\n  round's falsify wave.\n"
+    ]
+  },
+  "v1_routedItems": {
+    "found": true,
+    "item_count": 6
+  },
+  "parsers_agree": true
+}

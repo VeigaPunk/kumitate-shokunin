@@ -1,0 +1,29 @@
+--- entry-now.md	2026-10-27 12:08:02.761472068 -0300
++++ entry-yagni.md	2026-10-27 12:08:10.454429208 -0300
+@@ -41,11 +41,10 @@
+ ## Registry snapshot
+ 
+ Six data rows, one per row of the live table at S207, read 2026-10-27. The `Deprecated in` and `Earliest removal`
+-cells are the page's own cells, quote for quote, backticks included; only the links are removed. The delimiter row is
+-deliberately absent: the round-68 counter counts every `|`-starting line that is not the `Feature` header, so a
+-standard `|---|` row would be read as a seventh feature (finding K68ScribeEntry-2).
++cells are the page's own cells, quote for quote, backticks included; only the links are removed.
+ 
+ | Feature | Deprecation SEP | Deprecated in | Migration path | Earliest removal |
++|---|---|---|---|---|
+ | Roots | SEP-2577 | `2026-07-28` | Pass directories or files via tool parameters, resource URIs, or server configuration | First revision released on or after 2027-07-28 |
+ | Sampling | SEP-2577 | `2026-07-28` | Integrate directly with LLM provider APIs | First revision released on or after 2027-07-28 |
+ | Logging | SEP-2577 | `2026-07-28` | Log to `stderr` for stdio transports; use OpenTelemetry for observability | First revision released on or after 2027-07-28 |
+@@ -90,9 +89,9 @@
+ `Created:` field in S210's header is a proposal-authoring timestamp: it records when the SEP was opened, and S208
+ anchors both the floor and the grace to a *status* event ("from the date the SEP reaches Final"), so an authoring
+ date cannot start either clock — a SEP that took another year to reach Final would still carry the same `Created:`
+-value. The merge timestamp of PR #2596 (the `merged_at` field of the pull record) is also the wrong event: the pull
+-merged as commit `219f8242` while the SEP still read `Draft`, and the `Final` flip is a *later* commit, S213, which
+-is the only artifact in this chain that both dates the transition and shows the changed line.
++value. The merge timestamp of PR #2596 is the wrong event for the same reason: Final is dated by the commit that
++flips `Status: Draft` to `Status: Final` — S213, the only artifact in this chain that both dates the transition and
++shows the changed line — not by when the pull was merged.
+ 
+ ## Bearing on the installed OMP release
+ 
