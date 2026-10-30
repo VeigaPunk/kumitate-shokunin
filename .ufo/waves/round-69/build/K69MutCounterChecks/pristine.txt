@@ -1,0 +1,12 @@
+STATE pristine ledger_sha256=1f19d1e6e36329a8af0ff17469c7baab740a58cfbcf9d4875ee37c2bb7f946de deprec_sha256=af021f87a33f50bb529bf7f06780cc910e2aeb2d230db294d7edfb36dd2852e7
+WITNESS harness_wrong=0
+L5 MISS real-tool-passes-L4=true stubs-caught=always-clean+always-drift
+PINNED_URL ref=main accepted=false
+PINNED_URL ref=82d60be17d75e69b350c9fe77df2e8cac202ac11 accepted=true
+PINNED_URL ref=v18.13.1 accepted=true
+COMMAND node /fast/scratch/hyaku/kumitate-r69/K69MutCounterChecks/EXPERIMENT-ledger.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 14057f3e3899180c95713bace088fb9c0d0046e3 --seed 696969c1base
+ledger EXIT 1 SIGNAL null ERROR none
+LEDGER69_UNMET held=1/7 checks=7 rev=14057f3e3899180c95713bace088fb9c0d0046e3 rule=L69 seed=696969c1base | L1 MISS exit=0 line=ROUTED_LEDGER_SELFTEST: PASS (33/33) | L2 MISS exit=2 verdict=ROUTED_LEDGER: FAIL-CLOSED reason=ledger-absent:corpus/routed-ledger.md own-items=61 own-sections=12 own-spotchecks=12 | L3 MISS 68 problems: ledger-empty-or-absent,unledgered:55#1,unledgered:55#2,unledgered:55#3,unledgered:56#1,unledgered:56#2 | L4 MISS seed=696969c1base 7/20 mutants wrong: good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo;ordinal:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=7 clo;one-word-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo;ambiguous-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo | L5 MISS real-tool-passes-L4=false stubs-caught=always-clean+always-drift+pathname-dispatch | L6 MISS skill-row=false quality=true capability-row=false
+COMMAND node /fast/scratch/hyaku/kumitate-r69/K69MutCounterChecks/EXPERIMENT-deprec.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 14057f3e3899180c95713bace088fb9c0d0046e3
+deprec EXIT 1 SIGNAL null ERROR none
+DEPREC69_UNMET held=9/11 checks=11 rev=14057f3e3899180c95713bace088fb9c0d0046e3 rule=M69 live=exercised | M9 MISS readme-map-exit=1 | M11 MISS origin-section-absent

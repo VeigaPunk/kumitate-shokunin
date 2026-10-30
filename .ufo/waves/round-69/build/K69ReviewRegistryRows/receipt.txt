@@ -1,0 +1,106 @@
+scout draft paths: []
+freeze=9401d8655970d542b81d318bdad558d6dea39397 baseline_rows=152 max_existing_id=213
+$ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r69/K69ReviewRegistryRows/corpus/SOURCES.md --today 2026-10-30
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	E11	S038 missing used-by scripts/wave-census.mjs
+file	E11	S046 missing used-by SKILL.md
+file	E11	S047 missing used-by SKILL.md
+file	E11	S048 missing used-by SKILL.md
+file	E11	S078 missing used-by scripts/cite-check.mjs
+file	E11	S078 missing used-by scripts/proxy-check.mjs
+file	E11	S078 missing used-by scripts/round-gate.mjs
+file	E11	S079 missing used-by scripts/cap-run.mjs
+file	E11	S084 missing used-by SKILL.md
+file	E11	S093 missing used-by .ufo/waves/round-47/probe/caproute-probe.mjs
+file	E11	S094 missing used-by scripts/cap-run.mjs
+file	E11	S095 missing used-by scripts/cap-run.mjs
+file	E11	S095 missing used-by scripts/cap-spawn.mjs
+file	E11	S098 missing used-by .ufo/waves/round-48/probe/caproute48-probe.mjs
+file	E11	S099 missing used-by scripts/bind-oracle.mjs
+exit=1
+S214 cells=11 kind=code tier=A opened=2026-10-30 recheck=90d used-by-exists=yes cited-in-entry=True
+S215 cells=11 kind=docs tier=A opened=2026-10-30 recheck=90d used-by-exists=yes cited-in-entry=True
+S216 cells=11 kind=docs tier=A opened=2026-10-30 recheck=90d used-by-exists=yes cited-in-entry=True
+S214 curl exit=0 URL=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/specification/2026-07-28/deprecated.mdx bytes=5031 sha256=6ec5fc903d1be37e5ab0afda2acd7765aaf2909b90a2dca405e1aaea8936225b
+S215 curl exit=0 URL=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/community/feature-lifecycle.mdx bytes=9534 sha256=b4f7436905c6162801f19565518342238bd76c1e7d23ade6f1fae24c22c3ec7c
+S216 curl exit=0 URL=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/specification/2025-11-25/basic/transports.mdx bytes=15986 sha256=a247fdbb3cc25c805ef43124db18d9b60a56669b3e65bd163dffb76f4129dfc0
+$ bash -c grep -cE '^\|[[:space:]]*S[0-9]{3,}[[:space:]]*\|' corpus/SOURCES.md
+155
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF!=13 {n++} END{print n+0}' corpus/SOURCES.md
+0
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {t=$5; gsub(/[[:space:]]/,"",t); n[t]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+A=132 B=15 C=8 
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {s=$9; gsub(/[[:space:]]/,"",s); n[s]++} END{for(k in n) printf "%s=%d ", k, n[k]; print ""}' corpus/SOURCES.md
+mined=123 queued=13 rejected=19 
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ {i=$2; gsub(/[[:space:]]/,"",i); print i}' corpus/SOURCES.md | sort | uniq -d
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {i=$2;k=$4;t=$5;s=$9; gsub(/[[:space:]]/,"",i); gsub(/[[:space:]]/,"",k); gsub(/[[:space:]]/,"",t); gsub(/[[:space:]]/,"",s); if (t !~ /^[ABC]$/) print "tier", i, t; if (s !~ /^(queued|mined|rejected)$/) print "status", i, s; if (k !~ /^(spec|docs|paper|code|tool|dataset|talk|book|community|own-work)$/) print "kind", i, k; if (t=="A" && k=="community") print "tier-inflation", i}' corpus/SOURCES.md
+exit=0
+$ bash -c awk -F'|' '/^\|[[:space:]]*S[0-9][0-9][0-9]+[[:space:]]*\|/ && NF==13 {s=$9; gsub(/[[:space:]]/,"",s); if (s=="mined") {n=split($12, a, /[,;]/); for (j=1;j<=n;j++) {p=a[j]; gsub(/^[[:space:]]+|[[:space:]]+$/,"",p); if (p!="" && p!="—") print p}}}' corpus/SOURCES.md | while read -r p; do [ -e "$p" ] || echo "missing: $p"; done
+missing: scripts/wave-census.mjs
+missing: SKILL.md
+missing: SKILL.md
+missing: SKILL.md
+missing: scripts/cite-check.mjs
+missing: scripts/proxy-check.mjs
+missing: scripts/round-gate.mjs
+missing: scripts/cap-run.mjs
+missing: SKILL.md
+missing: .ufo/waves/round-47/probe/caproute-probe.mjs
+missing: scripts/cap-run.mjs
+missing: scripts/cap-run.mjs
+missing: scripts/cap-spawn.mjs
+missing: .ufo/waves/round-48/probe/caproute48-probe.mjs
+missing: scripts/bind-oracle.mjs
+exit=0
+$ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --file /fast/scratch/hyaku/kumitate-r69/K69ReviewRegistryRows/corpus/SOURCES.md --today 2026-10-30
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	E11	S038 missing used-by scripts/wave-census.mjs
+file	E11	S046 missing used-by SKILL.md
+file	E11	S047 missing used-by SKILL.md
+file	E11	S048 missing used-by SKILL.md
+file	E11	S078 missing used-by scripts/cite-check.mjs
+file	E11	S078 missing used-by scripts/proxy-check.mjs
+file	E11	S078 missing used-by scripts/round-gate.mjs
+file	E11	S079 missing used-by scripts/cap-run.mjs
+file	E11	S084 missing used-by SKILL.md
+file	E11	S093 missing used-by .ufo/waves/round-47/probe/caproute-probe.mjs
+file	E11	S094 missing used-by scripts/cap-run.mjs
+file	E11	S095 missing used-by scripts/cap-run.mjs
+file	E11	S095 missing used-by scripts/cap-spawn.mjs
+file	E11	S098 missing used-by .ufo/waves/round-48/probe/caproute48-probe.mjs
+file	E11	S099 missing used-by scripts/bind-oracle.mjs
+exit=1
+$ bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh census --file /fast/scratch/hyaku/kumitate-r69/K69ReviewRegistryRows/corpus/SOURCES.md --today 2026-10-30
+file	rows	155
+file	tier.A	132
+file	tier.B	15
+file	tier.C	8
+file	status.mined	123
+file	status.queued	13
+file	status.rejected	19
+FLEET	rows	155
+FLEET	tier.A	132
+FLEET	tier.B	15
+FLEET	tier.C	8
+FLEET	tier.invalid	0
+FLEET	status.queued	13
+FLEET	status.mined	123
+FLEET	status.rejected	19
+FLEET	status.invalid	0
+FLEET	missing	0
+exit=0

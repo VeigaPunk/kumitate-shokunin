@@ -1,0 +1,2 @@
+Round 59 contributes one routed section and zero ledger items: `corpus/lessons/round-59-verifier-spotcheck.md:251-274` is prose, with no unfenced list/table items; the frozen L69 count remains 61 items across 12 sections (rounds 55–66).
+Carried R58-V1..V8 answers are recorded at `corpus/lessons/round-59.md:31-38` and corroborated in the spot-check at lines 126–135; they belong to round 58's routed items, not invented round-59 rows.

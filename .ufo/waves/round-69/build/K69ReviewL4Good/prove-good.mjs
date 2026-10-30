@@ -1,0 +1,53 @@
+import { createHash } from 'node:crypto';
+import { mkdirSync, readFileSync, writeFileSync, cpSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import assert from 'node:assert/strict';
+const lane = '/home/vgpnk/Projects/shokunin/kumitate-shokunin';
+const build = join(lane, '.ufo/waves/round-69/build/K69ReviewL4Good');
+const scratch = '/fast/scratch/hyaku/kumitate-r69/K69ReviewL4Good';
+const probe = join(lane, '.ufo/waves/round-69/probe/ledger69-probe.mjs');
+const tool = join(lane, '.ufo/waves/round-68/build/K68ExecToolV2/routed-ledger.mjs');
+const source = readFileSync(probe, 'utf8');
+const start = source.indexOf('let seedCtr = 0;');
+const end = source.indexOf('const MUTANTS = [', start);
+assert(start >= 0 && end > start);
+const fixtureSource = source.slice(start, end);
+const SEED = '696969a5';
+const lines = [];
+function log(s) { lines.push(s); console.log(s); }
+mkdirSync(scratch, { recursive: true });
+try {
+  const generate = new Function('createHash', 'mkdirSync', 'writeFileSync', 'join', 'SEED', 'T', fixtureSource + '\nconst dir = join(T, `fx-${rnd().slice(0,16)}`); return { dir, expectItems: buildFixture(dir, "good") };');
+  const { dir, expectItems } = generate(createHash, mkdirSync, writeFileSync, join, SEED, scratch);
+  cpSync(dir, join(build, 'fixture'), { recursive: true });
+  writeFileSync(join(build, 'fixture-builder.txt'), fixtureSource);
+  log(`AXIS: operability; milestone=A5-good-satisfiability seed=${SEED}`);
+  log(`PROBE_SHA256: ${createHash('sha256').update(source).digest('hex')}`);
+  log(`TOOL_SHA256: ${createHash('sha256').update(readFileSync(tool)).digest('hex')}`);
+  const spot = readFileSync(join(dir, 'corpus/lessons/round-101-verifier-spotcheck.md'), 'utf8');
+  const ledger = readFileSync(join(dir, 'corpus/routed-ledger.md'), 'utf8');
+  const d5 = spot.split('\n').find(s => s.startsWith('- **D5 — '));
+  const a5 = ledger.split('\n').find(s => s.startsWith('| A5 |'));
+  const quote = a5.split('|')[4].trim().slice(1, -1);
+  const normalized = d5.replace(/\*\*/g, '');
+  assert(normalized.includes(quote));
+  assert(quote.split(/\s+/).length >= 3 && quote.split(/\s+/).length <= 25);
+  assert.equal(spot.split(quote).length - 1, 1);
+  assert.equal(expectItems, 7);
+  log(`D5: ${d5}`);
+  log(`A5: ${a5}`);
+  log(`A5_BINDING: PASS own-item=true words=${quote.split(/\s+/).length} occurrences-in-entire-spotcheck=1`);
+  log(`COMMAND: node ${tool} --root <generated-opaque-fixture> --from 101 --to 102`);
+  const r = spawnSync('node', [tool, '--root', dir, '--from', '101', '--to', '102'], { cwd: scratch, env: { PATH: process.env.PATH, TMPDIR: scratch, LANG: 'C' }, encoding: 'utf8', timeout: 180000 });
+  log(r.stdout.trim());
+  if (r.stderr) log(`STDERR: ${r.stderr.trim()}`);
+  log(`EXIT: ${r.status}`);
+  assert.equal(r.status, 0);
+  assert.match(r.stdout.trim(), /^ROUTED_LEDGER: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0$/);
+  log('A5_SATISFIABILITY: PASS');
+} finally {
+  rmSync(scratch, { recursive: true, force: true });
+  log('SCRATCH_CLEANUP: removed assigned scratch directory');
+  writeFileSync(join(build, 'receipt.txt'), lines.join('\n') + '\n');
+}

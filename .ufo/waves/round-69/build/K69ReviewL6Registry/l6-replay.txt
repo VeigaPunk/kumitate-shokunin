@@ -1,0 +1,16 @@
+baseline: L6 MISS skill-row=false quality=true capability-row=false; expected=false; PASS
+three-exact-additions: L6 HELD skill-row=true quality=true capability-row=true; expected=true; PASS
+without-SKILL-addition: L6 MISS skill-row=false quality=true capability-row=true; expected=false; PASS
+without-QUALITY-addition: L6 HELD skill-row=true quality=true capability-row=true; expected=true; PASS
+without-capability-addition: L6 MISS skill-row=true quality=true capability-row=false; expected=false; PASS
+capability-after-next-heading: L6 MISS skill-row=true quality=true capability-row=false; expected=false; PASS
+capability-only-second-cell: L6 MISS skill-row=true quality=true capability-row=false; expected=false; PASS
+GATE_ROWS before=24 after=25
+SKILL_REFERENCES ledger69-probe.mjs count=5
+ledger69-probe.mjs:34: *   L6 registry home in the same revision: SKILL.md carries a table row naming `routed-ledger.mjs`;
+ledger69-probe.mjs:286:  const staticPaths = ['corpus/routed-ledger.md', 'SKILL.md', 'corpus/QUALITY.md', 'SCORECARD.md']; // the tool itself is L1's job (a symlinked tool MISSes L1, never executes)
+ledger69-probe.mjs:421:  const skill = rd('SKILL.md') || ''; const q = rd('corpus/QUALITY.md') || ''; const sc = rd('SCORECARD.md') || '';
+ledger69-probe.mjs:422:  const skillRow = skill.split('\n').some((l) => l.startsWith('|') && l.includes('routed-ledger.mjs'));
+ledger69-probe.mjs:432:  check('L6', skillRow && qual && cap, `skill-row=${skillRow} quality=${qual} capability-row=${cap}`);
+SKILL_REFERENCES deprec69-probe.mjs count=0
+L6_REPLAY: PASS cases=7 failures=0

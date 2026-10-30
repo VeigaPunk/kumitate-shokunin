@@ -1,0 +1,20 @@
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r69/K69ScribeLed63 python3 /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-69/build/K69ScribeLed63/verify.py
+SOURCE corpus/lessons/round-63-verifier-spotcheck.md sha256=0b4678d3deb6814275e0c8cfc0aaecc3d969fad889e2076f45bb9244225d8f87
+FENCE_AWARE_COUNT sections=1 items=6 expected=6
+R63-D1 source_line=87 words=3 item_hits=1 section_hits=1 matched_items=1 quote="recurrence, tenth time" PASS
+R63-D1 ANSWER corpus/README.md:190 quote="row added in round 64 so the file does not open the next round in DRIFT" exact_line=PASS
+EXACT_LINE | `lessons/round-63-verifier-spotcheck.md` | Round-63 non-author verification (hyaku closure, non-author integrator): C1 `inline-dispatch-evidence` verified (frozen `INLINE63_HELD held=6/6`, independently recounted 40 + 39 = 79 seats, 0 dead) and C2 `multi-agent-coordinator-topologies`/D63 verified (`TOPOLOGY63_HELD held=7/7`, registry 134 → 136); conformance defects (three `-2` stems, 79 seats against the 80–100 plan band, m_flash 44.3%); routed defects D1–D6 for round 64; row added in round 64 so the file does not open the next round in DRIFT | `.ufo/reports/round-63/kumitate.md`; lane tip `bb184a901d88193cf582de03c57e39945df65f15` at the spot-check |
+R63-D2 source_line=88 words=4 item_hits=1 section_hits=1 matched_items=1 quote="Commit a transcript of" PASS
+R63-D2 status=open answer=- (no closure claimed)
+R63-D3 source_line=89 words=3 item_hits=1 section_hits=1 matched_items=1 quote="w2 name collisions" PASS
+R63-D3 ANSWER corpus/lessons/round-64.md:15 quote="the host store holds three" exact_line=PASS
+EXACT_LINE Not a third row, same class: D3 is the mirror case. The report says "one w2 label landed as `K63R2ConnRoutedDefects-2`" (`8fd46e61:.ufo/reports/round-63/kumitate.md:28`), the host store holds three (`find ~/.omp/agent/sessions -maxdepth 3 -name 'K63R2*-2.jsonl'` → `K63R2ConnRoutedDefects-2`, `K63R2ScoutHostRecords-2`, `K63R2ScoutLeftovers-2`), and the committed lane bytes hold zero (`ls .ufo/waves/round-63/w2 \| grep -c -- '-2'` → `0`; no `-2` among the `name` fields of `w2-results.json`). The count is checkable only against host records, which the receipt-diff tool does not read.
+R63-D4 source_line=90 words=5 item_hits=1 section_hits=1 matched_items=1 quote="masks four missing kimi-root members" PASS
+R63-D4 ANSWER corpus/lessons/round-65.md:138 quote="The kimi layer is DEGRADED (K = 49 of 53)" exact_line=PASS
+EXACT_LINE - **The kimi layer is DEGRADED (K = 49 of 53)** — carried as round-64 D4: `corpus/lessons/round-64-verifier-spotcheck.md:66` says "Kimi layer DEGRADED K=49/53 (host state,
+R63-D5 source_line=91 words=3 item_hits=1 section_hits=1 matched_items=1 quote="the Q51 hash" PASS
+R63-D5 status=open answer=- (no closure claimed)
+R63-D6 source_line=92 words=5 item_hits=1 section_hits=1 matched_items=1 quote="plan the mix before dispatch" PASS
+R63-D6 status=open answer=- (no closure claimed)
+LED63_VERIFY: PASS rows=6 closed=3 open=3
+EXIT=0

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu
+S=/fast/scratch/hyaku/kumitate-r69/K69MutCounterChecks
+if [[ ${1-} != -C ]]; then echo 'guard: missing -C' >&2; exit 98; fi
+D=$2
+case ${3-} in
+init|add|hash-object|update-index|-c|commit)
+  case "$D" in "$S"/*) ;; *) echo 'guard: write outside scratch' >&2; exit 98;; esac
+  if [[ ${3-} != init ]]; then
+    actual=$(/usr/bin/git -C "$D" rev-parse --show-toplevel)
+    [[ "$actual" == "$D" ]] || exit 98
+  fi
+;;
+esac
+exec /usr/bin/git "$@"

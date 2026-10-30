@@ -1,0 +1,9 @@
+ZERO quote="`***`" normalized="*" count=0
+ZERO quote="— — —" normalized="- - -" count=0
+REGEX words=25 literal-match=1 adversarial-a-run=0 escaped=true
+ISOLATED M5 MISS S207:zero-parseable-quote,S207:zero-parseable-quote
+COST repeats=250 bytes=31249 count=240 ms=47.090
+COST repeats=500 bytes=62499 count=480 ms=214.429
+COST repeats=1000 bytes=124999 count=961 ms=659.719
+QUOTE_ARMS: PASS
+helper_exit=0

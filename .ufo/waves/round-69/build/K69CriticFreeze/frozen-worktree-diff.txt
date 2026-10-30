@@ -1,0 +1,16 @@
+Command: git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin diff 9401d8655970d542b81d318bdad558d6dea39397 -- .ufo/waves/round-69/plan.md .ufo/waves/round-69/probe/ledger69-probe.mjs .ufo/waves/round-69/probe/deprec69-probe.mjs .ufo/waves/round-69/probe/c1-controls.sh .ufo/waves/round-69/probe/c2-controls.sh .ufo/waves/round-69/base/ .ufo/waves/round-69/controls/
+Exit: 0 (git diff without --exit-code reports differences without nonzero status)
+diff --git c/.ufo/waves/round-69/controls/c1-donothing.txt w/.ufo/waves/round-69/controls/c1-donothing.txt
+index 31bd1236..e69de29b 100644
+--- c/.ufo/waves/round-69/controls/c1-donothing.txt
++++ w/.ufo/waves/round-69/controls/c1-donothing.txt
+@@ -1,2 +0,0 @@
+-LEDGER69_UNMET held=2/7 checks=7 rev=a4fe6ed00b167fd0982ff028e920d93bb1aa0cce rule=L69 seed=4eddfc0e49278447 | L1 MISS exit=0 line=ROUTED_LEDGER_SELFTEST: PASS (33/33) | L2 MISS exit=1 verdict=ROUTED_LEDGER: DRIFT spotchecks=12 sections=12 items=61 rows=0 open=0 closed=0 wontfix=0 findings=61 first=UNLEDGERED:round-55-item-1 own-items=61 own-sections=12 own-spotchecks=12 | L3 MISS 68 problems: ledger-empty-or-absent,unledgered:55#1,unledgered:55#2,unledgered:55#3,unledgered:56#1,unledgered:56#2 | L4 MISS seed=4eddfc0e49278447 7/20 mutants wrong: good:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo;ordinal:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=8 open=7 clo;one-word-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo;ambiguous-quote:exit=1:ROUTED_LEDGER: DRIFT spotchecks=2 sections=2 items=8 rows=7 open=6 clo | L5 MISS real-tool-passes-L4=false stubs-caught=always-clean+always-drift+pathname-dispatch
+-control=donothing exit=1 rev=a4fe6ed00b167fd0982ff028e920d93bb1aa0cce
+diff --git c/.ufo/waves/round-69/controls/c2-donothing.txt w/.ufo/waves/round-69/controls/c2-donothing.txt
+index cac32a45..e69de29b 100644
+--- c/.ufo/waves/round-69/controls/c2-donothing.txt
++++ w/.ufo/waves/round-69/controls/c2-donothing.txt
+@@ -1,2 +0,0 @@
+-DEPREC69_UNMET held=8/11 checks=11 rev=6737d6395ab56074c66eeb124edd27f4a1d70f1f rule=M69 live=no-live(vacuous-declared) | M5 MISS no-live | M9 MISS readme-map-exit=1 | M11 MISS origin-section-absent
+-control=donothing live=no-live-vacuous-declared exit=1 rev=6737d6395ab56074c66eeb124edd27f4a1d70f1f

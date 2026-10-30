@@ -1,0 +1,57 @@
+CASE ok mutant good: CLEAN spotchecks=2 sections=2 items=7 rows=7 open=6 closed=1 wontfix=0
+CASE ok mutant drop: UNLEDGERED exit 1
+CASE ok mutant quote-swap: QUOTE_ABSENT
+CASE ok mutant quote-decoy: QUOTE_ABSENT
+CASE ok mutant answer-wrong: ANSWER_DEAD
+CASE ok mutant answer-ledger: ANSWER_DEAD
+CASE ok mutant answer-eof: ANSWER_DEAD
+CASE ok mutant dup: ROW_DUPLICATE
+CASE ok mutant ordinal: ITEM_ABSENT
+CASE ok mutant nested-as-item: QUOTE_ABSENT
+CASE ok mutant prose-as-item: QUOTE_ABSENT
+CASE ok mutant long-quote: ROW_MALFORMED
+CASE ok mutant one-word-quote: ROW_MALFORMED
+CASE ok mutant ambiguous-quote: QUOTE_AMBIGUOUS
+CASE ok mutant shifted-answer: ANSWER_DEAD
+CASE ok mutant fence-item: QUOTE_ABSENT
+CASE ok mutant second-section: UNLEDGERED, 3 sections 8 items
+CASE ok mutant contradictory: ROW_CONTRADICTED
+CASE ok mutant no-section: CLEAN 1 section 5 items
+CASE ok mutant ledger-absent: FAIL-CLOSED exit 2
+CASE ok parser: 5 items, fence/prose/nested/table-header excluded
+CASE ok parser: nested bullet is item 1 text, not an item
+CASE ok parser: prose after the list is in no item
+CASE ok parser: fenced bullet is in no item
+CASE ok parser: table header and separator are not items
+CASE ok parser: two routed sections in one file → 2 sections, ordinals continue
+CASE ok parser: deeper sub-heading stays inside the routed section
+CASE ok parser: prose-only routed section yields 0 items, exit 0
+CASE ok two-word quote → ROW_MALFORMED
+CASE ok open row carrying an answer → ROW_MALFORMED
+CASE ok closed row with "-" answer → ROW_MALFORMED
+CASE ok bad status → ROW_MALFORMED
+CASE ok six-cell row → ROW_MALFORMED
+CASE ok R-id whose round cell disagrees → ROW_MALFORMED
+CASE ok round outside the range → ITEM_ABSENT
+CASE ok answer file absent → ANSWER_DEAD
+CASE ok absolute answer path → ANSWER_DEAD
+CASE ok answer path with .. → ANSWER_DEAD
+CASE ok answer pointing into a spot-check → ANSWER_DEAD
+CASE ok answer reached through a symlink → ANSWER_DEAD
+CASE ok --to excludes later spot-checks (spotchecks=1)
+CASE ok --classes prints CLASS lines, no RECURRENT under 4 rounds
+CASE ok RECURRENT fires at 4 distinct rounds
+CASE ok --ledger outside the root → FAIL-CLOSED exit 2
+CASE ok symlinked ledger → FAIL-CLOSED exit 2
+CASE ok ledger without ## Ledger → FAIL-CLOSED exit 2
+CASE ok absent root → FAIL-CLOSED exit 2
+CASE ok no spot-check in range → FAIL-CLOSED exit 2
+CASE ok unreadable --rev → FAIL-CLOSED exit 2
+CASE ok --rev reads committed bytes, not the worktree
+CASE ok inherited GIT_DIR is not honoured (spawned child reads --root repo)
+CASE ok symlinked spot-check → FAIL-CLOSED exit 2
+CASE ok --root that is a symlink → FAIL-CLOSED exit 2
+CASE ok usage: unknown argument → exit 64
+CASE ok usage: --root without a value → exit 64
+CASE ok usage: --from abc → exit 64
+ROUTED_LEDGER_SELFTEST: PASS (56/56)

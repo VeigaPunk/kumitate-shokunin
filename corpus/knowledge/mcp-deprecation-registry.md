@@ -135,3 +135,5 @@ Amendment 2026-10-30 (S214–S216): M69 fetches source bytes independently of th
 - S213 — capture 2026-10-27 — pinned
 
 S214–S216 use upstream commit 82d60be17d75e69b350c9fe77df2e8cac202ac11. The S207/S214 Deprecated tables agree after delinking. Origin authentication here means live HTTPS byte agreement, not a signature or an independent trust authority.
+
+Re-run the demonstrated origin operation on the committed snapshot: `TMPDIR=/fast/scratch/hyaku/kumitate-r69-recheck node .ufo/waves/round-69/probe/deprec69-probe.mjs . 69d3c774a96f61911a6146874a000c66ac968395` (create TMPDIR first). Observed `DEPREC69_HELD held=11/11`, `live=exercised`, exit 0; receipt `.ufo/waves/round-69/close/deprec69-M.txt`. Later network failure or upstream drift is a MISS, never offline proof. A modified capture with a recomputed local pin is the new edge class this operation detects.

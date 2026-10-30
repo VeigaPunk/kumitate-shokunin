@@ -1,0 +1,13 @@
+{
+  "status": "proposal-only; not executed; frozen predicates unchanged",
+  "purpose": "Independent expected outcomes for future cross-claim boundary verification; do not import a common normalizer into the counters.",
+  "vectors": [
+    {"id":"entity-word-count", "quote":"alpha&nbsp;beta gamma", "text":"alpha beta gamma", "rawWords":2, "normalizedWords":3, "expectedByInspection":{"C1ToolQuoteLength":"accept", "L3QuoteLength":"reject", "M4QuoteLength":"accept"}},
+    {"id":"markup-word-count", "quote":"alpha <b> </b>", "text":"alpha", "rawWords":3, "normalizedWords":1, "expectedByInspection":{"C1ToolQuoteLength":"reject", "L3QuoteLength":"accept", "L3Containment":"accept", "M4Containment":"accept"}},
+    {"id":"curly-inner-quote", "quote":"alpha’s beta gamma", "text":"alpha's beta gamma", "expectedByInspection":{"C1Containment":"accept", "C2Containment":"accept"}},
+    {"id":"non-ascii-only", "quote":"甲 乙 丙", "text":"甲 乙 丙", "expectedByInspection":{"C1Containment":"accept", "C2Containment":"reject: ASCII word-character guard"}},
+    {"id":"partial-unicode-word", "quote":"alpha beta gamma", "text":"éalpha beta gammaé", "expectedByInspection":{"C1Containment":"accept", "C2Containment":"accept"}},
+    {"id":"exact-line-shift", "quote":"alpha beta gamma", "before":"heading\nalpha beta gamma\n", "after":"heading\n\nalpha beta gamma\n", "citedLine":2, "expectedByInspection":{"L3":"answer-quote-not-at-exact-line", "C1Tool":"ANSWER_DEAD", "M4M5Containment":"unchanged", "M11":"digest mismatch if capture changes but authenticated origin does not"}},
+    {"id":"curly-container", "bullet":"- S999 — “alpha beta gamma”", "expectedByInspection":{"M4BulletParser":"not parsed; straight ASCII container quotes required"}}
+  ]
+}

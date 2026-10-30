@@ -1,0 +1,61 @@
+# K69ScoutMirror215 verification receipt — 2026-10-30T11:47:00Z
+
+## E1 commit-pinned raw URL fetch
+HTTP:200 bytes:9534
+b4f7436905c6162801f19565518342238bd76c1e7d23ade6f1fae24c22c3ec7c  /fast/scratch/hyaku/kumitate-r69/K69ScoutMirror215/ev.mdx
+
+## E2 re-fetch determinism (immutability of the commit-pinned URL)
+b4f7436905c6162801f19565518342238bd76c1e7d23ade6f1fae24c22c3ec7c  /fast/scratch/hyaku/kumitate-r69/K69ScoutMirror215/ev2.mdx
+cmp: identical
+
+## E3 commit resolution via GitHub API
+sha: 82d60be17d75e69b350c9fe77df2e8cac202ac11
+committer-date: 2026-10-30T08:05:43Z
+subject: Update Filesystems WG Charter (#3447)
+parent: 05456131a785fdac60c575636da8e33bdc80f317
+
+## E4 mirror pin vs live bytes
+pin: {'sourceId': 'S215', 'path': '.ufo/waves/round-69/build/L1Capture/mirrors/feature-lifecycle.mdx', 'sha256': 'b4f7436905c6162801f19565518342238bd76c1e7d23ade6f1fae24c22c3ec7c', 'bytes': 9534, 'captured': '2026-10-30'}
+live-sha: b4f7436905c6162801f19565518342238bd76c1e7d23ade6f1fae24c22c3ec7c bytes: 9534
+MATCH
+
+## E5 grounding quote at lines 65-67
+65: 4. Specify the **minimum deprecation window**: the number of months, at least
+66:    twelve, that the feature must remain Deprecated before it is eligible for
+67:    removal. The window is measured from the release of the specification
+quote-words: 24
+quote located in mdx (ws+emphasis-normalized): True
+
+## E6 site-page lineage (S208's page)
+site.md HTTP:200 bytes:8794
+3f3371911512591e61d80d8e1bf07ac6a93df4e930d1379d24b78034349e74ee  /fast/scratch/hyaku/kumitate-r69/K69ScoutMirror215/site.md
+site.md sha equals S208 capture sha (3f337191...): True
+prose equal after delink+emphasis-strip: False
+  insert | mdx: '' | site: '# Feature Lifecycle and Deprecation Policy '
+  replace | mdx: '------------' | site: ' | '
+  delete | mdx: '------------------------------------------------------------------------------- | site: ''
+  delete | mdx: '- ' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: '- ' | site: ''
+  delete | mdx: '- ' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: '- ' | site: ''
+  delete | mdx: ' -' | site: ''
+  delete | mdx: '---------------------------------------------' | site: ''
+  delete | mdx: '------------------------------------------------------------------------------- | site: ''
+site.html HTTP:200 bytes:166738
+rendered html contains: Specify the minimum deprecation window: the number of mont... -> True
+rendered html contains: The feature remains in the specification but is scheduled ... -> True
+rendered html contains: The twelve-month floor may be shortened when the feature p... -> True
+
+## E7 counter arms touching kind / pinned-url
+445:  const PINNED_URL = (u) => /https:\/\/raw\.githubusercontent\.com\/[^/\s|]+\/[^/\s|]+\/(?:[0-9a-f]{40}|v\d+\.\d+\.\d+)\//.test(u)
+0
+0 (no arm reads the kind cell)
+
+## E8 draft row cell check
+cells: 11
+cells containing a pipe: 0

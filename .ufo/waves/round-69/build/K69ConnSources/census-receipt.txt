@@ -1,0 +1,42 @@
+without-mirrors
+command: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --today 2026-10-30 --file /fast/scratch/hyaku/kumitate-r69/K69ConnSources/registry/corpus/SOURCES.md
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r69/K69ConnSources/registry/corpus/SOURCES.md
+
+
+exit=0
+with-mirrors
+command: bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --today 2026-10-30 --file /fast/scratch/hyaku/kumitate-r69/K69ConnSources/registry/corpus/SOURCES.md
+file	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+file	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+file	W04	S084 duplicate url infection.github.io/guide across scopes
+file	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+file	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+file	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+file	ok	/fast/scratch/hyaku/kumitate-r69/K69ConnSources/registry/corpus/SOURCES.md
+
+
+exit=0
+family_rows=16
+line=153 id=S201 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/types.ts scope=the MCP revision the installed release's coding-agent MCP client (`packages/coding-agent/src/mcp/`) sends and echoes (2025-11-25), read at the tag of the installed release; the release carries a second MCP client, the Z.AI web-search provider at `src/web/search/providers/zai.ts:80`, pinned to 2025-03-26 and outside this row's scope; the lane's OMP rows read `main` docs or unrelated paths at this tag
+line=154 id=S202 kind=docs tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/docs/mcp-runtime-lifecycle.md scope=the documented MCP runtime lifecycle at the tag of the installed release: connect pipeline, the 250 ms startup gate and deferred tools, and the never-replayed-after-dispatch boundary; the staged `omp-session-sharing-and-mcp-lifecycle` MCP half cites an older commit and must re-point here
+line=155 id=S203 kind=code tier=A url=https://github.com/can1357/oh-my-pi/commit/10bce6900b5bdcf7479ed718f52902feeab9ed00.patch scope=the commit that set OMP's MCP protocol revision, at the release the lane now measures: the revision it replaced (2025-03-26, called stale), the interoperability failure that forced the bump (a spec-current server denying every tools/call with a generic internal error), the target it chose (2025-11-25) and the transport choke point where the negotiated revision is echoed; closes issue #8264
+line=156 id=S204 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/client.ts scope=what the installed release's MCP client does across the handshake at v18.12.6: initializeConnection sends protocolVersion MCP_PROTOCOL_VERSION, requests initialize, then records the server's negotiated revision onto the transport before sending notifications/initialized; the comment above the echo states why (the Streamable HTTP spec requires the MCP-Protocol-Version header after initialize)
+line=157 id=S205 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/web/search/providers/zai.ts scope=the second MCP client inside the installed release: the Z.AI web-search provider speaks MCP to api.z.ai and pins its own protocol revision, 2025-03-26, which is the revision the general client was bumped off; this row keeps the entry's revision claim scoped to the coding-agent client in src/mcp/ instead of the whole binary
+line=158 id=S206 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/http.ts scope=when the installed release's Streamable HTTP transport emits the MCP-Protocol-Version header and what value it carries: nothing before negotiation (the initialize request itself has no version header), the server's negotiated revision afterwards, and the transport stripping any user-configured same-named header; this is the shipped shape, which differs from the commit that introduced the header
+line=159 id=S207 kind=spec tier=A url=https://modelcontextprotocol.io/specification/2026-07-28/deprecated.md scope=the Deprecated/Removed registry of MCP revision 2026-07-28
+line=160 id=S208 kind=docs tier=A url=https://modelcontextprotocol.io/community/feature-lifecycle.md scope=the MCP feature lifecycle: minimum deprecation window, its anchor, and expedited removal
+line=161 id=S209 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.12.6/packages/coding-agent/src/mcp/transports/sse.ts scope=the legacy HTTP+SSE transport shipped by oh-my-pi at tag v18.12.6
+line=162 id=S210 kind=spec tier=A url=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/183238ddacd0118a22399cd4743a5b5eaa43dbdd/seps/2596-spec-feature-lifecycle-and-deprecation.md scope=SEP-2596's transition provisions for the two features deprecated before the policy existed
+line=163 id=S211 kind=spec tier=A url=https://modelcontextprotocol.io/specification/2025-11-25/basic/transports.md scope=how the 2025-11-25 revision carried the already-deprecated HTTP+SSE transport
+line=164 id=S212 kind=code tier=A url=https://raw.githubusercontent.com/can1357/oh-my-pi/v18.13.1/packages/coding-agent/src/mcp/transports/sse.ts scope=the legacy HTTP+SSE transport shipped by the oh-my-pi release installed on this host (18.13.1)
+line=165 id=S213 kind=code tier=A url=https://github.com/modelcontextprotocol/modelcontextprotocol/commit/183238ddacd0118a22399cd4743a5b5eaa43dbdd.patch scope=the commit record that dates SEP-2596 reaching Final
+line=166 id=S214 kind=code tier=A url=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/specification/2026-07-28/deprecated.mdx scope=commit-pinned upstream carrier for S207's registry table
+line=167 id=S215 kind=docs tier=A url=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/community/feature-lifecycle.mdx scope=commit-pinned upstream carrier for S208's policy
+line=168 id=S216 kind=docs tier=A url=https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/82d60be17d75e69b350c9fe77df2e8cac202ac11/docs/specification/2025-11-25/basic/transports.mdx scope=commit-pinned upstream carrier for S211's transport compatibility text
+observed_sources_sha256=7d33553d8c091c594b97b4f7461c461eddb469c7aa06b42af157321d88c770a1

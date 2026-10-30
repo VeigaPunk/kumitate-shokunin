@@ -285,12 +285,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=351
+A=687
 C=33
 C1=19
 C1_total=19
-C2=156
-C2_total=156
+C2=167
+C2_total=167
 S_members=88
 S_sections=88
 R_members=92
@@ -299,8 +299,8 @@ coverage_script=10
 coverage_runtime=10
 C1k=5
 C1k_total=5
-K_members=49
-K_sections=49
+K_members=53
+K_sections=53
 coverage_kimi=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
@@ -3024,3 +3024,20 @@ Frozen plan/counters commit 39f61816d4ee7a8d401df42c1818c91a9c537bce; C2 data in
 **Sources.** Before 145 rows (round-66 committed tally); after 152 rows, +7 mined tier-A rows S207–S213, no existing row touched (SOURCES_CHECK: CLEAN rows=152 tiers=A:129,B:15,C:8 status=queued:13,mined:120,rejected:19). Census before and after: six carried W04 duplicate-URL warnings, exit 0; source-capture CLEAN captures=45 exemptions=107; readme-map CLEAN files=165 rows=165 covered=165. Assimilation: re-grounded MCP deprecation theme; staged entry rejected for Created-date clock / invalid recheck grounding.
 
 **Trend verdicts.** Expansion improved: new sourced entry and seven source rows, despite C2's unmet counter. Quality unchanged: source gates are clean but both frozen claim predicates fail; no capability is claimed. Discernment improved: review surfaced the impossible/forgeable C1 predicate, C2 delimiter defect, and unauthenticated capture-pin limit, recorded in corpus/lessons/round-68.md.
+
+## Round 69 — measured predicates and disclosed limits (2026-10-30)
+
+Freeze: `9401d8655970d542b81d318bdad558d6dea39397`; measured revision M: `69d3c774a96f61911a6146874a000c66ac968395`. No axis integer changes: operability 9→9, coverage successors remain 10. Measurements below use M exactly, not the round-68 mismatched revision cited in historical rows.
+
+- C1, operability / routed-ledger acquisition: `node .ufo/waves/round-69/probe/ledger69-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 69d3c774a96f61911a6146874a000c66ac968395 --seed 696969c1close` → `LEDGER69_HELD held=7/7 checks=7`, exit 0 (`close/ledger69-M.txt`). Same counter at base `14057f3e3899180c95713bace088fb9c0d0046e3`, seed `696969c1base`: `LEDGER69_UNMET held=1/7`, exit 1 (`base/ledger69-base.txt`). Integrated v2 selftest 56/56; real ledger tool CLEAN, 61 items/61 rows. These are predicate/capability demonstrations, not proof of semantic resolution of every item.
+- C2, coverage frontier / capture-origin amendment: `node .ufo/waves/round-69/probe/deprec69-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 69d3c774a96f61911a6146874a000c66ac968395` → `DEPREC69_HELD held=11/11 checks=11`, `live=exercised`, exit 0 (`close/deprec69-M.txt`). At base: `DEPREC69_UNMET held=9/11`, live exercised, exit 1 (`base/deprec69-base.txt`). S214–S216 opened this round support three commit-pinned upstream mirrors; digest agreement authenticates bytes, not interpretation or independent authorship.
+
+Admission limits: `PLAN_BEFORE_READY` FAILs historical MAP_DRIFT at freeze (the plan's anticipatory PASS is withdrawn in lesson errata). K69CriticControls demonstrated `LEDGER69_HELD held=7/7` on generated open rows plus four fabricated closures; this does not bypass the v2 tool, but proves location/newness is not semantic remediation. Cheap controls also conflate multiple misses; preserve them and both frozen predicates rather than retrofitting success. Two frozen receipts temporarily overwritten during unsafe original-script replays were restored byte-exact from the freeze after writers settled. Operator/non-author closure decides admission; the lane does not claim universal forgery resistance or exhaustive no-harm.
+
+Sources: 152→155 (+3 tier-A mined), no prior row changed. SOURCES_CHECK, SOURCE_CAPTURE, README_MAP and COUNTER_PINS CLEAN in `close/gates.txt`; census exit 0 with six carried W04 warnings. Considerthese/2026-10-26.md idea 3 mined into Q68; no merge-package adoption. Expansion unchanged (existing entry strengthened, no new uncovered entry); quality improved in measured parser/origin behavior but freeze conformance remains defective; discernment improved through conservative ledger closures and committed counterexamples. Outside spot-check remains pending.
+
+Next-round candidates (not frozen): isolate replay-control output paths and establish complete v2 all-open/autoclose-negative controls before declaring a semantic-closure claim. Keep new claims distinct from this round's unchanged L69/M69 predicates.
+
+Round-69 final receipt reconciliation: Main delivered WAVE-DONE for all 64 seats; results contain 57 nonempty outputs and 56 report files. Eight missing-report names and seven empty-output names are enumerated in `close/wave-reconciliation.json`; result schema supplies no status/error fields, so no dead=0 assertion is made. No residual wave or replacement seats.
+
+Proxy refresh (`close/final-gates.txt`): MATCH A=687 C2=167/167 K=53/53, default exit 0, two PIN_UNPINNED advisories (harm-matrix and routed-ledger; routed-ledger is pinned separately in counter-pins). Kimi census is nevertheless DRIFT for two unlisted host plugin paths, not clean. No host paths were modified; no claim is made that the proxy's K term establishes census health or that the host drift was caused by this round.

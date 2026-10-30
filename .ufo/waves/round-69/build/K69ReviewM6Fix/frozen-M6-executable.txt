@@ -1,0 +1,61 @@
+const delink = (s) => String(s).replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/<([^>]*)>/g, '$1').trim();
+const section = (text, name) => {
+  const L = String(text).split('\n');
+  const at = L.findIndex((l) => new RegExp(`^##\\s+${name}\\s*$`).test(l.trim()));
+  if (at < 0) return null;
+  const out = [];
+  for (let i = at + 1; i < L.length; i += 1) { if (/^##\s/.test(L[i])) break; out.push(L[i]); }
+  return out.join('\n');
+};
+const tableOf = (text) => {
+  // first markdown table under a heading mentioning "Deprecated"
+  const L = String(text).split('\n');
+  let hi = -1;
+  for (let i = 0; i < L.length; i += 1) { if (/^#{1,4}\s.*[Dd]eprecated/.test(L[i])) { hi = i; break; } }
+  if (hi < 0) return null;
+  const rows = [];
+  for (let i = hi + 1; i < L.length; i += 1) {
+    if (/^#{1,4}\s/.test(L[i]) && rows.length) break;
+    if (!L[i].startsWith('|')) { if (rows.length) break; continue; }
+    const c = L[i].trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim());
+    if (/^[\s:-]+$/.test(c.join('')) || c.every((x) => /^\s*$/.test(x))) continue;
+    if (c[0] === 'Feature' || /^-+$/.test(c[0])) continue;
+    rows.push(c);
+  }
+  return rows.length ? rows : null;
+};
+{
+  const bad6 = [];
+  const capRows = tableOf(captureOf.S207 || '');
+  const snapSec = entryText != null ? section(entryText, 'Registry snapshot') : null;
+  // M69 (routed defect R68-2 / lesson `unrenderable-table-workaround`): snapshot rows are parsed cell-wise.
+  // A header separator row (`|---|---|…|`) has pipes BETWEEN cells, so the L68 line-level regex
+  // `/^\|[\s:-]+\|$/` never matched it and counted the delimiter as a 7th data row. A delimiter row is
+  // now recognized by its CELLS: every non-empty cell is only `:`, `-` (and spaces). The proper
+  // Markdown table stays in the entry; omitting the delimiter to satisfy a counter is forbidden.
+  const snapRows = snapSec ? snapSec.split('\n')
+    .filter((l) => l.startsWith('|'))
+    .map((l) => l.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map((x) => x.trim()))
+    .filter((c) => {
+      if (!c.length || c.every((x) => /^\s*$/.test(x))) return false;
+      if (c[0] === 'Feature') return false; // header row
+      const cells = c.filter((x) => !/^\s*$/.test(x));
+      if (cells.length > 0 && cells.every((x) => /^:?-+:?$/.test(x))) return false; // delimiter row
+      return true;
+    }) : [];
+  if (!capRows) bad6.push('capture-table-absent');
+  else {
+    if (snapRows.length !== capRows.length) bad6.push(`rows=${snapRows.length}!=${capRows.length}`);
+    else if (capRows.length < 5) bad6.push(`capture-rows=${capRows.length}<5`);
+    else {
+      const capBy = new Map(capRows.map((c) => [delink(c[0]), c]));
+      for (const s of snapRows) {
+        const c = capBy.get(delink(s[0]));
+        if (!c) { bad6.push(`snapshot-feature-unmatched:${delink(s[0]).slice(0, 30)}`); continue; }
+        if (delink(s[2]) !== delink(c[2])) bad6.push(`deprecated-in:${delink(s[0]).slice(0, 20)}`);
+        if (delink(s[4]) !== delink(c[4])) bad6.push(`earliest-removal:${delink(s[0]).slice(0, 20)}`);
+      }
+    }
+  }
+  check('M6', bad6.length === 0, bad6.slice(0, 5).join(',') || 'ok');
+}

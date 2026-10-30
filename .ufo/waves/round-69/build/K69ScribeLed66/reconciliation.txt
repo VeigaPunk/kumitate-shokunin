@@ -1,0 +1,22 @@
+Observed read-only command (exit 0):
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin log -8 --format='%H %s' -- .ufo/waves/round-66
+Relevant verbatim output:
+d23892ad44b41e1af63b3edb949d265ca1dd812d hyaku run9 wrap-up: last staged-claims capture
+e9ff2719de4dcafddb99246c32f16e4d16b31453 hyaku run9 wrap-up: final late-seat outputs
+a3d76c03cf451bea2ae9d4ffbe3926934fb9333b round-66 w1: seat outputs and build artifacts (salvage after honest-stop report)
+
+Observed read-only command (exit 0):
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show --format=fuller --name-status d23892ad44b41e1af63b3edb949d265ca1dd812d e9ff2719de4dcafddb99246c32f16e4d16b31453
+Selected verbatim name-status lines (not the complete output):
+d23892ad44b41e1af63b3edb949d265ca1dd812d:
+A	.ufo/waves/round-66/build/K66ReviewStagedClaims/captures/timeline.json
+e9ff2719de4dcafddb99246c32f16e4d16b31453:
+M	.ufo/waves/round-66/build/K66MutLedgerProbe/mutation-driver.mjs
+A	.ufo/waves/round-66/build/K66MutLedgerProbe/results-INCONCLUSIVE-attempt.tsv
+A	.ufo/waves/round-66/build/K66MutLedgerProbe/results-INCONCLUSIVE-attempt.tsv.README
+D	.ufo/waves/round-66/build/K66MutLedgerProbe/results.tsv
+
+Read exact .ufo/waves/round-66/build/K66MutLedgerProbe/results-INCONCLUSIVE-attempt.tsv.README:1:
+All rows in this file are INCONCLUSIVE (driver bug: spawnSync timeout given in seconds, is milliseconds; every child SIGTERM'd sub-second). Rerun mutation-driver.mjs for real verdicts.
+
+Disposition evidence: timeline capture kept; old results.tsv removed and an explicitly inconclusive replacement retained. No mutation campaign was rerun by this seat. No matching lane LOG reconciliation inventory was located. These historical commits do not establish receipt of WAVE-DONE or w1-results.json.
