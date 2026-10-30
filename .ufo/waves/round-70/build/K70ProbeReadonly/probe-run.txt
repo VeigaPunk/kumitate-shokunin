@@ -1,0 +1,42 @@
+# K70ProbeReadonly probe run 2026-10-30T15:31:47.198Z
+REAL-LANE frozen scripts vs base 78b98d762ccf3e3a0961f94c4042eaabd2bcb706: [{"f":"c1-controls.sh","matchesBase":true},{"f":"c2-controls.sh","matchesBase":true}]
+CASE A-selftest-ro exit=0 laneDelta=CLEAN
+  stdout: CONTROL_REPLAY_SELFTEST: PASS
+CASE B0-c1-donothing-ro exit=0 laneDelta=CLEAN
+  stdout: (empty)
+  receipt=570B workEmpty=true label=true pass=true
+CASE B1-c1-autoledger-ro exit=0 laneDelta=CLEAN
+  stdout: (empty)
+  receipt=572B workEmpty=true label=true pass=true
+CASE B2-c2-donothing-ro exit=0 laneDelta=CLEAN
+  stdout: (empty)
+  receipt=510B workEmpty=true label=true pass=true
+CASE B3-c2-autoorigin-ro exit=0 laneDelta=CLEAN
+  stdout: (empty)
+  receipt=512B workEmpty=true label=true pass=true
+CASE B4-c2-forgecapture-ro exit=0 laneDelta=CLEAN
+  stdout: (empty)
+  receipt=516B workEmpty=true label=true pass=true
+CASE G-invalid-ro exit=64 laneDelta=CLEAN
+  stdout: (empty)
+  stderr: usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest
+CASE H-outexists-ro exit=73 laneDelta=CLEAN
+  stdout: (empty)
+  stderr: CONTROL_REPLAY_OUT_EXISTS /fast/scratch/hyaku/kumitate-r70/K70ProbeReadonly/existing.txt
+CASE I-drift-ro exit=65 laneDelta=CLEAN
+  stdout: (empty)
+  stderr: CONTROL_REPLAY_SOURCE_DRIFT .ufo/waves/round-69/probe/c1-controls.sh sha256=5e5a7ad6cf399ebef183df81aa28938f044230ea42dad57006ef89c340887977 expected=398f01d71fe4fd756c43068d092e9ff4728f93627ed96e4d70e72d9dc0e1aab2
+  outCreated=false
+CASE J-outdir-ro exit=73 laneDelta=CLEAN
+  stdout: (empty)
+  stderr: CONTROL_REPLAY_ERROR cannot create out: EACCES: permission denied, open '/fast/scratch/hyaku/kumitate-r70/K70ProbeReadonly/ro-outdir/new.txt'
+CASE K-workro-ro exit=1 laneDelta=CLEAN
+  stdout: (empty)
+  stderr: } |  | Node.js v24.21.0
+  outSize=0 (exclusive-create precedes work-root write)
+CASE L-writable-lane exit=0 laneDelta=CLEAN
+  stdout: (empty)
+CASE M-mechanism-model exit=0 receipt=46B workEmpty=true
+REAL-LANE frozen scripts end-state: [{"f":"c1-controls.sh","matchesBase":true},{"f":"c2-controls.sh","matchesBase":true}]
+SCRATCH cleaned: OK
+PROBE-HELD 13/13 lane-clean=true

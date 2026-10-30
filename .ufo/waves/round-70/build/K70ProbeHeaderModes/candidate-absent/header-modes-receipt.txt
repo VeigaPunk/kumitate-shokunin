@@ -1,0 +1,280 @@
+HEADER_MODES_PROBE tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs
+mode=candidate tag=candidate-absent-r1 node=v24.21.0 started=2026-10-30T15:33:00.002Z
+tool_sha256=<tool-absent>
+HM-S00 MISS kind=selftest expect=exit 0 + CONTROL_REPLAY_SELFTEST: PASS note=
+  argv: --selftest
+  observed: {"status":1,"selftestLine":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n    at Module._resolveFilename (node:inte"}
+HM-V01 MISS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt absent
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/valid-c1-donothing-fYJDFa/out.txt --work $RUN/valid-c1-donothing-fYJDFa/work
+  observed: {"status":1,"outExists":false,"label":false,"controlPass":false,"workLeftovers":[],"stray":[]}
+HM-V02 MISS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS autoledger; work reclaimed; no stray files note=receipt absent
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoledger --out $RUN/valid-c1-autoledger-EdXtNa/out.txt --work $RUN/valid-c1-autoledger-EdXtNa/work
+  observed: {"status":1,"outExists":false,"label":false,"controlPass":false,"workLeftovers":[],"stray":[]}
+HM-V03 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt absent
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode donothing --out $RUN/valid-c2-donothing-6iQxE6/out.txt --work $RUN/valid-c2-donothing-6iQxE6/work
+  observed: {"status":1,"outExists":false,"label":false,"controlPass":false,"workLeftovers":[],"stray":[]}
+HM-V04 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS autoorigin; work reclaimed; no stray files note=receipt absent
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoorigin --out $RUN/valid-c2-autoorigin-Rc8fDx/out.txt --work $RUN/valid-c2-autoorigin-Rc8fDx/work
+  observed: {"status":1,"outExists":false,"label":false,"controlPass":false,"workLeftovers":[],"stray":[]}
+HM-V05 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS forgecapture; work reclaimed; no stray files note=receipt absent
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode forgecapture --out $RUN/valid-c2-forgecapture-juJoUk/out.txt --work $RUN/valid-c2-forgecapture-juJoUk/work
+  observed: {"status":1,"outExists":false,"label":false,"controlPass":false,"workLeftovers":[],"stray":[]}
+HM-I001 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode donothing --out $RUN/inv-001-yqLCCq/out.txt --work $RUN/inv-001-yqLCCq/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I002 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoledger --out $RUN/inv-002-zcrQDl/out.txt --work $RUN/inv-002-zcrQDl/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I003 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoorigin --out $RUN/inv-003-R6qucS/out.txt --work $RUN/inv-003-R6qucS/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I004 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode forgecapture --out $RUN/inv-004-3beYSa/out.txt --work $RUN/inv-004-3beYSa/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I005 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode junk --out $RUN/inv-005-4V7hTL/out.txt --work $RUN/inv-005-4V7hTL/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I006 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode  --out $RUN/inv-006-1ucvTH/out.txt --work $RUN/inv-006-1ucvTH/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I007 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode DONOTHING --out $RUN/inv-007-L6AVv8/out.txt --work $RUN/inv-007-L6AVv8/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I008 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode Autoledger --out $RUN/inv-008-S2ovzC/out.txt --work $RUN/inv-008-S2ovzC/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I009 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode donothing --out $RUN/inv-009-enXPod/out.txt --work $RUN/inv-009-enXPod/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I010 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoledger --out $RUN/inv-010-m4p6Ts/out.txt --work $RUN/inv-010-m4p6Ts/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I011 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoorigin --out $RUN/inv-011-eR0aAO/out.txt --work $RUN/inv-011-eR0aAO/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I012 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode forgecapture --out $RUN/inv-012-WEqT0O/out.txt --work $RUN/inv-012-WEqT0O/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I013 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode junk --out $RUN/inv-013-ayg5XI/out.txt --work $RUN/inv-013-ayg5XI/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I014 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode  --out $RUN/inv-014-Zq8q2W/out.txt --work $RUN/inv-014-Zq8q2W/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I015 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode DONOTHING --out $RUN/inv-015-uk6FEJ/out.txt --work $RUN/inv-015-uk6FEJ/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I016 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode Autoledger --out $RUN/inv-016-5RXSe8/out.txt --work $RUN/inv-016-5RXSe8/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I017 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode donothing --out $RUN/inv-017-JYxKjW/out.txt --work $RUN/inv-017-JYxKjW/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I018 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoledger --out $RUN/inv-018-PqqEtQ/out.txt --work $RUN/inv-018-PqqEtQ/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I019 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoorigin --out $RUN/inv-019-zBWpAs/out.txt --work $RUN/inv-019-zBWpAs/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I020 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode forgecapture --out $RUN/inv-020-kLNWBd/out.txt --work $RUN/inv-020-kLNWBd/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I021 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode junk --out $RUN/inv-021-6dh3WN/out.txt --work $RUN/inv-021-6dh3WN/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I022 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode  --out $RUN/inv-022-52tnaQ/out.txt --work $RUN/inv-022-52tnaQ/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I023 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode DONOTHING --out $RUN/inv-023-qK4Ty9/out.txt --work $RUN/inv-023-qK4Ty9/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I024 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode Autoledger --out $RUN/inv-024-iP0dxM/out.txt --work $RUN/inv-024-iP0dxM/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I025 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode donothing --out $RUN/inv-025-TAKn65/out.txt --work $RUN/inv-025-TAKn65/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I026 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoledger --out $RUN/inv-026-wFBJMt/out.txt --work $RUN/inv-026-wFBJMt/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I027 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoorigin --out $RUN/inv-027-8NkTsh/out.txt --work $RUN/inv-027-8NkTsh/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I028 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode forgecapture --out $RUN/inv-028-KbCKVH/out.txt --work $RUN/inv-028-KbCKVH/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I029 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode junk --out $RUN/inv-029-Nwl2pt/out.txt --work $RUN/inv-029-Nwl2pt/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I030 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode  --out $RUN/inv-030-NnyWSb/out.txt --work $RUN/inv-030-NnyWSb/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I031 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode DONOTHING --out $RUN/inv-031-AyKHNX/out.txt --work $RUN/inv-031-AyKHNX/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I032 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode Autoledger --out $RUN/inv-032-d5jJ5o/out.txt --work $RUN/inv-032-d5jJ5o/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I033 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode donothing --out $RUN/inv-033-IOH3wo/out.txt --work $RUN/inv-033-IOH3wo/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I034 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoledger --out $RUN/inv-034-2ujqN5/out.txt --work $RUN/inv-034-2ujqN5/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I035 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoorigin --out $RUN/inv-035-4jmie7/out.txt --work $RUN/inv-035-4jmie7/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I036 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode forgecapture --out $RUN/inv-036-BRoPys/out.txt --work $RUN/inv-036-BRoPys/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I037 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode junk --out $RUN/inv-037-Eikxur/out.txt --work $RUN/inv-037-Eikxur/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I038 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode  --out $RUN/inv-038-BjUnvH/out.txt --work $RUN/inv-038-BjUnvH/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I039 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode DONOTHING --out $RUN/inv-039-GVuLXD/out.txt --work $RUN/inv-039-GVuLXD/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I040 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode Autoledger --out $RUN/inv-040-IFo3KL/out.txt --work $RUN/inv-040-IFo3KL/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I041 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode donothing --out $RUN/inv-041-F4qTQB/out.txt --work $RUN/inv-041-F4qTQB/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I042 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoledger --out $RUN/inv-042-SiMvnn/out.txt --work $RUN/inv-042-SiMvnn/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I043 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoorigin --out $RUN/inv-043-nxGTQG/out.txt --work $RUN/inv-043-nxGTQG/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I044 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode forgecapture --out $RUN/inv-044-Tzz1uX/out.txt --work $RUN/inv-044-Tzz1uX/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I045 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode junk --out $RUN/inv-045-3cis9S/out.txt --work $RUN/inv-045-3cis9S/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I046 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode  --out $RUN/inv-046-jFtNr6/out.txt --work $RUN/inv-046-jFtNr6/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I047 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode DONOTHING --out $RUN/inv-047-lDBlEX/out.txt --work $RUN/inv-047-lDBlEX/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I048 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode Autoledger --out $RUN/inv-048-8hJ9rH/out.txt --work $RUN/inv-048-8hJ9rH/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I049 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode donothing --out $RUN/inv-049-1ldnwg/out.txt --work $RUN/inv-049-1ldnwg/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I050 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoledger --out $RUN/inv-050-BEAyUA/out.txt --work $RUN/inv-050-BEAyUA/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I051 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoorigin --out $RUN/inv-051-BlUehl/out.txt --work $RUN/inv-051-BlUehl/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I052 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode forgecapture --out $RUN/inv-052-0gNeGO/out.txt --work $RUN/inv-052-0gNeGO/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I053 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode junk --out $RUN/inv-053-TD21j2/out.txt --work $RUN/inv-053-TD21j2/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I054 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode  --out $RUN/inv-054-8mgHE7/out.txt --work $RUN/inv-054-8mgHE7/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I055 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode DONOTHING --out $RUN/inv-055-GlheRe/out.txt --work $RUN/inv-055-GlheRe/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I056 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode Autoledger --out $RUN/inv-056-kqGsSq/out.txt --work $RUN/inv-056-kqGsSq/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I057 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode donothing --out $RUN/inv-057-ofoabZ/out.txt --work $RUN/inv-057-ofoabZ/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I058 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoledger --out $RUN/inv-058-xNI3hW/out.txt --work $RUN/inv-058-xNI3hW/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I059 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoorigin --out $RUN/inv-059-m5s15b/out.txt --work $RUN/inv-059-m5s15b/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I060 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode forgecapture --out $RUN/inv-060-ViwgQr/out.txt --work $RUN/inv-060-ViwgQr/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I061 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode junk --out $RUN/inv-061-M8eqqK/out.txt --work $RUN/inv-061-M8eqqK/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I062 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode  --out $RUN/inv-062-23er1r/out.txt --work $RUN/inv-062-23er1r/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I063 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode DONOTHING --out $RUN/inv-063-ooVa6E/out.txt --work $RUN/inv-063-ooVa6E/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I064 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode Autoledger --out $RUN/inv-064-CSinot/out.txt --work $RUN/inv-064-CSinot/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I065 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/inv-065-NK1uiB/out.txt --work $RUN/inv-065-NK1uiB/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I066 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode forgecapture --out $RUN/inv-066-Hcdtxh/out.txt --work $RUN/inv-066-Hcdtxh/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I067 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode junk --out $RUN/inv-067-iXcb5P/out.txt --work $RUN/inv-067-iXcb5P/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I068 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode  --out $RUN/inv-068-XCotBL/out.txt --work $RUN/inv-068-XCotBL/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I069 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode DONOTHING --out $RUN/inv-069-elVxNo/out.txt --work $RUN/inv-069-elVxNo/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I070 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode Autoledger --out $RUN/inv-070-4UGvCi/out.txt --work $RUN/inv-070-4UGvCi/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I071 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoledger --out $RUN/inv-071-EOEsWX/out.txt --work $RUN/inv-071-EOEsWX/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I072 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode junk --out $RUN/inv-072-U8mmYN/out.txt --work $RUN/inv-072-U8mmYN/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I073 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode  --out $RUN/inv-073-n3zyH5/out.txt --work $RUN/inv-073-n3zyH5/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I074 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode DONOTHING --out $RUN/inv-074-1y2yJI/out.txt --work $RUN/inv-074-1y2yJI/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-I075 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode Autoledger --out $RUN/inv-075-rVjaPJ/out.txt --work $RUN/inv-075-rVjaPJ/work
+  observed: {"status":1,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U01 MISS kind=structural expect=exit 64 (bare invocation) note=bare invocation
+  argv: 
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U02 MISS kind=structural expect=exit 64 (missing --family) note=missing --family
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --mode donothing --out $RUN/struct-HM-U02-JyUTV2/out.txt --work $RUN/struct-HM-U02-JyUTV2/work
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U03 MISS kind=structural expect=exit 64 (missing --mode) note=missing --mode
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --out $RUN/struct-HM-U03-MooICB/out.txt --work $RUN/struct-HM-U03-MooICB/work
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U04 MISS kind=structural expect=exit 64 (missing --out) note=missing --out
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --work $RUN/struct-HM-U04-g7Vo5x/work
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U05 MISS kind=structural expect=exit 64 (missing --work) note=missing --work
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U05-8MItye/out.txt
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-U06 MISS kind=structural expect=exit 64 (unknown flag) note=unknown flag
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U06-mupwIB/out.txt --work $RUN/struct-HM-U06-mupwIB/work --frobnicate x
+  observed: {"status":1,"outCreated":false,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-X1 PASS kind=exclusive-out expect=valid pair vs pre-existing out: nonzero exit, sentinel unchanged note=exclusive creation
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/excl-valid-LgZFKu/out.txt --work $RUN/excl-valid-LgZFKu/work
+  observed: {"status":1,"intact":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-X2 MISS kind=exclusive-out-invalid expect=invalid pair vs pre-existing out: exit 64, sentinel unchanged note=refusal before output
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/excl-invalid-0k1Ftl/out.txt --work $RUN/excl-invalid-0k1Ftl/work
+  observed: {"status":1,"intact":true,"stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-N1 INFO kind=informational expect=(none — contract unspecified) note=duplicated --family (last-wins vs refuse unspecified)
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/info-HM-N1-8RfLEL/out.txt --work $RUN/info-HM-N1-8RfLEL/work --family c2
+  observed: {"status":1,"stdout":"","stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-N2 INFO kind=informational expect=(none — contract unspecified) note=--selftest plus extra args
+  argv: --selftest --family c1
+  observed: {"status":1,"stdout":"","stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HM-N3 INFO kind=informational expect=(none — contract unspecified) note=equals-form --family=c1
+  argv: --lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin --family=c1 --mode=donothing --out=$RUN/info-HM-N3-GqGDqg/out.txt --work=$RUN/info-HM-N3-GqGDqg/work
+  observed: {"status":1,"stdout":"","stderr":"node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module '/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/control-replay.mjs'\n "}
+HEADER_MODES_UNMET held=1/89 mode=candidate tag=candidate-absent-r1

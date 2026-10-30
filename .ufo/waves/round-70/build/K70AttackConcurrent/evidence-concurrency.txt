@@ -1,0 +1,13 @@
+=== true-concurrent naive, 8 same-mode replays, one shared work parent ===
+run 1: out-size=45 label-lines=1 err=
+run 2: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+run 3: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+run 4: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+run 5: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+run 6: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+run 7: out-size=45 label-lines=1 err=
+run 8: out-size=0 label-lines=0 err=Error: EEXIST: file already exists, mkdir 'conc-naive/work/c1-donothing'
+work leftovers: 0 entries
+
+=== true-concurrent fixed (mkdtemp), same setup ===
+fixed-candidate concurrent: 8/8 succeeded; work leftovers: 0

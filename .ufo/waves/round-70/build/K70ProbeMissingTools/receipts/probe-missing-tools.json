@@ -1,0 +1,337 @@
+{
+  "summary": {
+    "probe": "K70ProbeMissingTools",
+    "kind": "mechanism-only synthetic reproduction; candidate scripts/control-replay.mjs ABSENT at base 78b98d76 (verified: ENOENT)",
+    "date": "2026-10-30",
+    "tools": [
+      "tar",
+      "git",
+      "bash",
+      "node"
+    ],
+    "levels": {
+      "A": "predicate-shaped `git archive | tar -x` chain",
+      "B": "contract-shaped replay driver (checked=conformant model, unchecked=naive fail-open model)"
+    },
+    "versions": {
+      "node": "v24.21.0",
+      "git": "git version 2.56.0",
+      "tar": "tar (GNU tar) 1.35",
+      "bash": "5.3.20(1)-release"
+    },
+    "installs": "none (all four tools already present; pacman paused per seat rules)",
+    "fixture": {
+      "path": "/fast/scratch/hyaku/kumitate-r70/K70ProbeMissingTools/fx",
+      "frozenSha256": "f9b0e19d17114323f3668419f3835569c8a3564bb230114b02481fe5b2dba6cf",
+      "unchanged": true
+    },
+    "verdicts": [
+      {
+        "id": "B-miss-bash",
+        "expectation": "fail-closed: exit!=0, no out, work reclaimed, no tmp leak",
+        "observed": true,
+        "detail": "exit=70 out=false reclaimed=true"
+      },
+      {
+        "id": "B-miss-git",
+        "expectation": "fail-closed: exit!=0, no out, work reclaimed, no tmp leak",
+        "observed": true,
+        "detail": "exit=70 out=false reclaimed=true"
+      },
+      {
+        "id": "B-miss-node",
+        "expectation": "fail-closed: exit!=0, no out, work reclaimed, no tmp leak",
+        "observed": true,
+        "detail": "exit=null out=false reclaimed=true"
+      },
+      {
+        "id": "B-miss-tar",
+        "expectation": "tar is no driver-level dependency (honest positive)",
+        "observed": true,
+        "detail": "exit=0 out=true"
+      },
+      {
+        "id": "B-nc-donothing",
+        "expectation": "negative control: exit 0 + UNMET receipt + CONTROL-PASS + reclaimed",
+        "observed": true,
+        "detail": "exit=0"
+      },
+      {
+        "id": "B-nc-autoledger",
+        "expectation": "negative control: exit 0 + UNMET receipt + CONTROL-PASS + reclaimed",
+        "observed": true,
+        "detail": "exit=0"
+      },
+      {
+        "id": "B-miss-bash-existing-out",
+        "expectation": "existing output bytes preserved under refusal",
+        "observed": true,
+        "detail": "exit=70 kept=true"
+      },
+      {
+        "id": "B-naive-miss-bash",
+        "expectation": "naive model fails open (discriminator: naive != checked)",
+        "observed": true,
+        "detail": "exit=0 out=36B"
+      },
+      {
+        "id": "B-naive-miss-git",
+        "expectation": "naive model fails open (discriminator: naive != checked)",
+        "observed": true,
+        "detail": "exit=0 out=31B"
+      },
+      {
+        "id": "A-miss-tar",
+        "expectation": "fail-closed via pipefail: exit!=0, nothing extracted",
+        "observed": true,
+        "detail": "exit=127 extracted=false"
+      },
+      {
+        "id": "A-miss-tar-ignoreexit",
+        "expectation": "if the chain status is swallowed and content unverified, tar absence passes silently (fail-open mechanism)",
+        "observed": true,
+        "detail": "exit=0 extracted=false"
+      },
+      {
+        "id": "A-nc-full",
+        "expectation": "negative control extracts cleanly",
+        "observed": true,
+        "detail": "exit=0"
+      },
+      {
+        "id": "A-miss-git",
+        "expectation": "fail-closed: exit!=0, nothing extracted",
+        "observed": true,
+        "detail": "exit=2 extracted=false"
+      },
+      {
+        "id": "B-nc-invalid-args",
+        "expectation": "usage exit 64",
+        "observed": true,
+        "detail": "exit=64"
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "B-nc-donothing",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "full",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 0,
+      "spawnError": null,
+      "stderrTail": "",
+      "outExists": true,
+      "outBytes": 231,
+      "outHasUnmet": true,
+      "outHasControlPass": true,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "SYNTH69_UNMET held=0/2 checks=2 rev=e53007b6df611a93b44d0d8d9390dbfa5a4347d2 rule=SYNTH | L1 MISS synth do-nothing"
+    },
+    {
+      "id": "B-nc-autoledger",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "autoledger",
+      "pathKey": "full",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode autoledger --out out.txt --work work",
+      "exit": 0,
+      "spawnError": null,
+      "stderrTail": "",
+      "outExists": true,
+      "outBytes": 233,
+      "outHasUnmet": true,
+      "outHasControlPass": true,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "SYNTH69_UNMET held=0/2 checks=2 rev=3da8c09ed3e5ba110b591505c28c58e7584dcec1 rule=SYNTH | L1 MISS synth do-nothing"
+    },
+    {
+      "id": "B-nc-invalid-args",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "pathKey": "full",
+      "cmd": "node driver-checked.mjs --family junk",
+      "exit": 64
+    },
+    {
+      "id": "B-miss-bash",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-bash",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 70,
+      "spawnError": null,
+      "stderrTail": "SYNTH-DRIVER-REFUSE code=70 control spawn failed error=ENOENT status=null",
+      "outExists": false,
+      "outBytes": 0,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": ""
+    },
+    {
+      "id": "B-miss-git",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-git",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 70,
+      "spawnError": null,
+      "stderrTail": "SYNTH-DRIVER-REFUSE code=70 control spawn failed error=undefined status=127",
+      "outExists": false,
+      "outBytes": 0,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": ""
+    },
+    {
+      "id": "B-miss-node",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-node",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": null,
+      "spawnError": "ENOENT",
+      "stderrTail": "",
+      "outExists": false,
+      "outBytes": 0,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": ""
+    },
+    {
+      "id": "B-miss-tar",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-tar",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 0,
+      "spawnError": null,
+      "stderrTail": "",
+      "outExists": true,
+      "outBytes": 231,
+      "outHasUnmet": true,
+      "outHasControlPass": true,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "SYNTH69_UNMET held=0/2 checks=2 rev=e53007b6df611a93b44d0d8d9390dbfa5a4347d2 rule=SYNTH | L1 MISS synth do-nothing"
+    },
+    {
+      "id": "B-miss-bash-existing-out",
+      "level": "B",
+      "driver": "driver-checked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-bash",
+      "cmd": "node driver-checked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 70,
+      "spawnError": null,
+      "stderrTail": "SYNTH-DRIVER-REFUSE code=70 control spawn failed error=ENOENT status=null",
+      "outExists": true,
+      "outBytes": 17,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "do-not-overwrite | "
+    },
+    {
+      "id": "B-naive-miss-bash",
+      "level": "B",
+      "driver": "driver-unchecked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-bash",
+      "cmd": "node driver-unchecked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 0,
+      "spawnError": null,
+      "stderrTail": "",
+      "outExists": true,
+      "outBytes": 36,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "naive-driver exit=null error=ENOENT | "
+    },
+    {
+      "id": "B-naive-miss-git",
+      "level": "B",
+      "driver": "driver-unchecked.mjs",
+      "mode": "donothing",
+      "pathKey": "no-git",
+      "cmd": "node driver-unchecked.mjs --lane FX --family c1 --mode donothing --out out.txt --work work",
+      "exit": 0,
+      "spawnError": null,
+      "stderrTail": "",
+      "outExists": true,
+      "outBytes": 31,
+      "outHasUnmet": false,
+      "outHasControlPass": false,
+      "workReclaimed": true,
+      "fixedTmpLeak": false,
+      "receiptHead": "naive-driver exit=1 error=none | "
+    },
+    {
+      "id": "A-nc-full",
+      "level": "A",
+      "driver": "archive-step.sh",
+      "pathKey": "full",
+      "cmd": "bash archive-step.sh FX dest",
+      "exit": 0,
+      "spawnError": null,
+      "extracted": true,
+      "destEntries": [
+        "controls"
+      ],
+      "stderrTail": "shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory"
+    },
+    {
+      "id": "A-miss-tar",
+      "level": "A",
+      "driver": "archive-step.sh",
+      "pathKey": "no-tar",
+      "cmd": "bash archive-step.sh FX dest",
+      "exit": 127,
+      "spawnError": null,
+      "extracted": false,
+      "destEntries": [],
+      "stderrTail": "shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory | /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeMissingTools/synth/archive-step.sh: line 6: tar: command not found"
+    },
+    {
+      "id": "A-miss-tar-ignoreexit",
+      "level": "A",
+      "driver": "archive-step-ignoreexit.sh",
+      "pathKey": "no-tar",
+      "cmd": "bash archive-step-ignoreexit.sh FX dest",
+      "exit": 0,
+      "spawnError": null,
+      "extracted": false,
+      "destEntries": [],
+      "stderrTail": "shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory | /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeMissingTools/synth/archive-step-ignoreexit.sh: line 7: tar: command not found"
+    },
+    {
+      "id": "A-miss-git",
+      "level": "A",
+      "driver": "archive-step.sh",
+      "pathKey": "no-git",
+      "cmd": "bash archive-step.sh FX dest",
+      "exit": 2,
+      "spawnError": null,
+      "extracted": false,
+      "destEntries": [],
+      "stderrTail": "tar: This does not look like a tar archive | tar: Exiting with failure status due to previous errors"
+    }
+  ]
+}

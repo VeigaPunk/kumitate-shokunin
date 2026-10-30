@@ -1,0 +1,13 @@
+HARNESS candidate=mock/control-replay.mjs suite=B pass=11 fail=0 skip=0
+fixture rev=643374d605fec2870abad54a46804c92b7c36f7f pins=c1-controls.sh@e3b0880fc173 c2-controls.sh@14e4ea167bf9
+B0(conform) PASS status=0 child=replay-sSRNfs LANE once=true PROBE once=true W once=true S once=true substituted=true fixedWriteRemoved=true
+B0(uniqueness) PASS child1=replay-sSRNfs child2=replay-MpMx1T
+B:out-append PASS expected-fail=[A5] actual-fail=[A5]
+B:scratch-fixed PASS expected-fail=[A7a] actual-fail=[A7a]
+B:scratch-leave PASS expected-fail=[A6,A7a,A8] actual-fail=[A6,A7a,A8]
+B:scratch-nuke PASS expected-fail=[A6,A7a,A8] actual-fail=[A6,A7a,A8]
+B:drift-accept PASS expected-fail=[A9] actual-fail=[A9]
+B:family-accept PASS expected-fail=[A3,A4] actual-fail=[A3,A4]
+B:gitenv-inherit PASS expected-fail=[A10] actual-fail=[A10]
+B:orig-exec PASS expected-fail=[A6,A7a,A7b,A8,A10] actual-fail=[A6,A7a,A7b,A8,A10]
+B:keep-fixed-write PASS inspection-ok=false status=0 child=replay-ilYMOa LANE once=true PROBE once=true W once=true S once=true substituted=true fixedWriteRemoved=false

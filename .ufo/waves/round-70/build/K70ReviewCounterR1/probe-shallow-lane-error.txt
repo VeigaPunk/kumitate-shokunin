@@ -1,0 +1,13 @@
+# fixture setup (true shallow; local-path clone hardlinks all objects so file:// required)
+git clone --depth 1 --no-checkout file:///home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1/shallow-lane
+git -C <shallow> rev-parse --show-toplevel -> /fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1/shallow-lane
+git -C <shallow> rev-list --count HEAD -> 1
+git -C <shallow> cat-file -e 78b98d762ccf3e3a0961f94c4042eaabd2bcb706 -> exit 1 (B absent)
+
+# command
+TMPDIR=/fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1 node .ufo/waves/round-70/probe/replay70-probe.mjs <shallow> 78b98d762ccf3e3a0961f94c4042eaabd2bcb706
+# observed output
+REPLAY70_ERROR rev=78b98d762ccf3e3a0961f94c4042eaabd2bcb706 rule=R70 reason=archive:fatal: not a tree object: 78b98d762ccf3e3a0961f94c4042eaabd2bcb706
+tar: This does not look like a tar archive
+tar: Exiting with failure status due to previous errors
+PROBE_EXIT=2

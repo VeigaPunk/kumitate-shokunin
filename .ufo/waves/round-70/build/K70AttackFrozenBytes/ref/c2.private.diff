@@ -1,0 +1,32 @@
+--- /fast/scratch/hyaku/kumitate-r70/K70AttackFrozenBytes/src/c2-controls.sh	2026-10-30 12:24:56.222835120 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70AttackFrozenBytes/ref/c2-controls.private.sh	2026-10-30 12:33:58.160887570 -0300
+@@ -20,9 +20,9 @@
+ set -euo pipefail
+ MODE="${1:?usage: c2-controls.sh donothing|autoorigin|forgecapture}"
+ LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+-PROBE="$LANE/.ufo/waves/round-69/probe/deprec69-probe.mjs"
+-W="$LANE/.ufo/waves/round-69/controls"
+-S="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/c2-controls-$MODE"
++PROBE=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-69/probe/deprec69-probe.mjs
++W=WORK/w-c2
++S=WORK/run-c2
+ rm -rf "$S"; mkdir -p "$S/fx"
+ git -C "$LANE" archive 14057f3e3899180c95713bace088fb9c0d0046e3 | tar -x --no-same-owner --no-same-permissions -C "$S/fx"
+ cd "$S/fx"
+@@ -77,7 +77,6 @@
+         c['bytes'] = len(b)
+ pins.write_text(json.dumps(data, indent=2) + '\n')
+ PY
+-    printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt
+     # the forge declares every row pinned (no mirrors): the tampered S210 is content-pinned already
+     python3 - <<'PY'
+ import pathlib
+@@ -103,7 +102,7 @@
+ LIVEFLAG=''
+ [ "$MODE" = forgecapture ] && LIVEFLAG='' || LIVEFLAG='--no-live'
+ # shellcheck disable=SC2086
+-TMPDIR="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69" node "$PROBE" "$S/fx" "$REV" $LIVEFLAG > "$W/c2-$MODE.txt" 2>&1 || RC=$?
++TMPDIR="$S" node "$PROBE" "$S/fx" "$REV" $LIVEFLAG > "$W/c2-$MODE.txt" 2>&1 || RC=$?
+ RC=${RC:-0}
+ echo "control=$MODE live=$([ -n "$LIVEFLAG" ] && echo no-live-vacuous-declared || echo exercised) exit=$RC rev=$REV" >> "$W/c2-$MODE.txt"
+ cat "$W/c2-$MODE.txt"

@@ -1,0 +1,98 @@
+{
+  "seat": "K70ProbeCleanupPermissions",
+  "node": "v24.21.0",
+  "platform": "linux/x64",
+  "scratch": "/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions",
+  "findings": [
+    {
+      "id": "A1",
+      "kind": "MECHANISM-rofiles",
+      "ok": true,
+      "detail": "read-only files in writable dirs clean fine: rm=ok workEmpty=GONE"
+    },
+    {
+      "id": "A2",
+      "kind": "MECHANISM-rodirs",
+      "ok": false,
+      "detail": "read-only dir tree: rmSync(recursive,force) THROWS EACCES op=rm :: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs'; residual=[\"fx-ro\",\"receipt.txt\"]; receipt copied out before cleanup survives=true; conforming chmod+rm reclaims=true"
+    },
+    {
+      "id": "A2b",
+      "kind": "MECHANISM-maxRetries",
+      "ok": true,
+      "detail": "maxRetries=3 retryDelay=10 still THROWS EACCES on read-only dir (EACCES not retryable)"
+    },
+    {
+      "id": "MOCK-TIMEOUT",
+      "kind": "OBSERVATION-mock-timeout",
+      "ok": false,
+      "detail": "mock spawnSync timeout hardcoded 120000ms; measured private c1 donothing control wall 6m33s (user 42m, fleet-loaded host) > 120s and > the frozen probe per-run timeout 300000ms — unmodified mock truncates at 120s (SIGTERM, empty receipt, exit 1), the frozen probe budget is at risk under load, and this probe first hit its own 300s spawn budget on the baseline-slow run (exit=null) before being raised to 900s; -slow private variants raise mock side to 600s for the edge demonstration, labeled"
+    },
+    {
+      "id": "FROZEN-TMPDIR",
+      "kind": "OBSERVATION-frozen-tmpdir",
+      "ok": false,
+      "detail": "frozen c1/c2 controls hardcode TMPDIR=$HYAKU_SCRATCH/kumitate-r69 for the r69 probe; r69 probe mkdtemps directly under TMPDIR (ENOENT if absent); at r70 with S substituted to a private child nothing creates it — replay needs the dir to pre-exist or the tool to mkdir it"
+    },
+    {
+      "id": "MOCK-PIN",
+      "kind": "OBSERVATION-pin-drift",
+      "ok": false,
+      "detail": "unmodified sibling mock refuses lane frozen bytes: CONTROL_REPLAY_SOURCE_DRIFT exit=65 before any cleanup (EXPECTED_PINS stale vs lane c1-controls.sh sha256 01efd6dd...); mock cleanup path exercised via its designed MOCK_MUTANT=drift-accept hook only, labeled"
+    },
+    {
+      "id": "B-NAIVE-BASELINE",
+      "kind": "CANDIDATE-BASELINE",
+      "ok": true,
+      "detail": "exit=0 workEmpty=true outLen=45 outHasReceipt=true stderr=\"\""
+    },
+    {
+      "id": "B-FIXED-BASELINE",
+      "kind": "CANDIDATE-BASELINE",
+      "ok": true,
+      "detail": "exit=0 workEmpty=true outLen=45 outHasReceipt=true stderr=\"\""
+    },
+    {
+      "id": "B-MOCK-BASELINE",
+      "kind": "CANDIDATE-BASELINE",
+      "ok": false,
+      "detail": "exit=65 workEmpty=true outLen=null outHasReceipt=null stderr=\"CONTROL_REPLAY_SOURCE_DRIFT .ufo/waves/round-69/probe/c1-controls.sh sha256=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12 expected=398f01d71fe4fd756c43068d092e9ff4728f93627ed96e4d70e72d9dc0e1aab2\""
+    },
+    {
+      "id": "B-MOCK-BASELINE-DRIFTACCEPT",
+      "kind": "CANDIDATE-BASELINE",
+      "ok": true,
+      "detail": "exit=0 workEmpty=true outLen=1045 outHasReceipt=true stderr=\"\""
+    },
+    {
+      "id": "E-NAIVE-INJECTED",
+      "kind": "CANDIDATE-EDGE",
+      "ok": true,
+      "detail": "exit=1 workEmpty=false outLen=45 outHasReceipt=true stderr=\" | Node.js v24.21.0\""
+    },
+    {
+      "id": "E-FIXED-INJECTED",
+      "kind": "CANDIDATE-EDGE",
+      "ok": true,
+      "detail": "exit=1 workEmpty=false outLen=45 outHasReceipt=true stderr=\" | Node.js v24.21.0\""
+    },
+    {
+      "id": "E-MOCK-INJECTED-DRIFTACCEPT",
+      "kind": "CANDIDATE-EDGE",
+      "ok": true,
+      "detail": "exit=70 workEmpty=false outLen=1045 outHasReceipt=true stderr=\"CONTROL_REPLAY_CLEANUP_FAIL /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC'\""
+    },
+    {
+      "id": "C1",
+      "kind": "MECHANISM-conforming",
+      "ok": true,
+      "detail": "chmod u+rwX walk (lstat, no symlink follow) + rmSync reclaims read-only dir tree"
+    },
+    {
+      "id": "D1",
+      "kind": "MECHANISM-ro-work-root",
+      "ok": true,
+      "detail": "read-only --work root: mkdtemp THROWS Error: EACCES: permission denied, mkdtemp '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/d-ro-work/c1-donothing-XXXXXX'; exit=1; empty exclusive --out left behind=true(len=0)"
+    }
+  ]
+}

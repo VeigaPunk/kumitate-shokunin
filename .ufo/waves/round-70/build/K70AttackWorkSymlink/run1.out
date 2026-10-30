@@ -1,0 +1,39 @@
+fixture-lane: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/lane-sim
+fixture-controls: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/lane-sim/.ufo/waves/round-69/controls
+frozen-entries: c1-autoledger.txt,c1-donothing.txt,c2-autoorigin.txt,c2-donothing.txt,c2-forgecapture.txt
+toy-control-assignment-lines: ["LANE=\"/fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/lane-sim\"","PROBE=\"$LANE/.ufo/waves/round-69/probe/ledger69-probe.mjs\"","W=\"$LANE/.ufo/waves/round-69/controls\"","S=\"${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/toy-$MODE\""]
+
+--- Scenario 1: work root = symlink alias into frozen controls dir
+path.resolve(alias)     = /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/alias-to-controls
+fs.realpathSync(alias)  = /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/lane-sim/.ufo/waves/round-69/controls
+child created at        = /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/lane-sim/.ufo/waves/round-69/controls/replay70-IwBK3d
+child inside controls?  = true
+controls listing WITH run in flight: c1-autoledger.txt,c1-donothing.txt,c2-autoorigin.txt,c2-donothing.txt,c2-forgecapture.txt,replay70-IwBK3d
+probe-style emptiness check readdirSync(alias).length = 6 (frozen receipts + child => never 0)
+controls listing after clean cleanup: c1-autoledger.txt,c1-donothing.txt,c2-autoorigin.txt,c2-donothing.txt,c2-forgecapture.txt
+interrupted run leaves : replay70-nXpJpC => non-receipt file inside frozen controls dir
+cleanup of leftover    :
+controls listing       : c1-autoledger.txt,c1-donothing.txt,c2-autoorigin.txt,c2-donothing.txt,c2-forgecapture.txt
+
+--- Scenario 2: work root = symlink to an unrelated empty dir (sandbox escape)
+child created at       = /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/elsewhere-empty/replay70-DtVU3m
+child under supplied root (esc)? = true
+readdirSync(raw esc) follows the symlink: mid-run length = 1 ; post-cleanup length = 0 => probe-style check is satisfied whenever the symlink TARGET ends empty, regardless of where the child actually was
+
+--- Scenario 3: containment guard on unresolved path is bypassed by alias
+guard(resolve(alias), controls-anchor) refuses?  false (should be true; it is not)
+guard(realpath(alias), controls-anchor) refuses? true (canonicalized guard refuses)
+
+--- Scenario 4: --out creation mechanisms (R9 exercises only a plain existing file)
+open wx on symlink-to-existing: EEXIST
+existsSync guard on symlink-to-existing: EEXIST (existsSync follows symlink; refused but reason wrong)
+existsSync+w on dangling symlink: wrote THROUGH to created target (BAD)
+open wx on dangling symlink: EEXIST
+
+--- Summary
+S1: canonicalize-then-mkdtemp with a controls-dir alias writes the run child INSIDE the frozen controls dir (transient on success, persistent on interruption).
+S2: the same pattern against an unrelated empty dir passes the R3-R7 raw-path emptiness check while writing outside the supplied work root.
+S3: a containment guard computed on path.resolve(work) is bypassed by any symlink alias; the anchor and the work root must both be canonicalized.
+S4: R9-style existsSync+writeFileSync(w) output creation follows dangling symlinks; openSync(out,"wx") refuses all symlinks (EEXIST). The contract pins "exclusive" but not the mechanism.
+run-dir: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB
+transcript: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/run-xUtlDB/transcript.txt

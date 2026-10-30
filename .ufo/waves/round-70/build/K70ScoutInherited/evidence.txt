@@ -1,0 +1,41 @@
+K70ScoutInherited evidence (read-only; lane HEAD 1e00955a)
+
+$ git rev-parse --show-toplevel
+/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ git log --oneline -3
+1e00955a round-70: record opened replay source and validated wave handoff
+3dbe7e6e round-70: freeze replay isolation claim and negative baseline
+78b98d76 round-69 verifier spot-check (integrator, hyaku): non-author admit/reject
+
+$ git diff --stat 78b98d76 HEAD -- .ufo/waves/round-69 scripts
+(empty: no change to frozen round-69 tree or scripts/ between base and HEAD)
+
+$ sha256sum .ufo/waves/round-69/probe/c1-controls.sh .ufo/waves/round-69/probe/c2-controls.sh
+01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12  .ufo/waves/round-69/probe/c1-controls.sh
+679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4  .ufo/waves/round-69/probe/c2-controls.sh
+$ git show 78b98d76:.ufo/waves/round-69/probe/c2-controls.sh | sha256sum
+679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4  -
+$ git show 78b98d76:.ufo/waves/round-69/probe/c1-controls.sh | sha256sum
+01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12  -
+
+$ grep -n '/tmp\|mktemp' .ufo/waves/round-69/probe/c1-controls.sh .ufo/waves/round-69/probe/c2-controls.sh
+.ufo/waves/round-69/probe/c2-controls.sh:80:    printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt
+
+$ ls scripts/control-replay.mjs
+ls: cannot access 'scripts/control-replay.mjs': No such file or directory
+$ grep -rln 'control-replay' scripts .ufo/pins SCORECARD.md SKILL.md
+(no matches)
+
+$ cat .ufo/waves/round-70/base/replay70-base.txt
+REPLAY70_UNMET held=2/10 checks=10 rev=78b98d76... (R1 PASS, R9 PASS, others MISS; exit=1)
+
+$ cat .ufo/waves/round-70/base/freeze-map.txt
+README_MAP: CLEAN files=169 rows=169 covered=169 (exit=0)
+
+$ ls .ufo/waves/round-69/controls
+c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt
+$ ls .ufo/waves/round-69/close/gates.txt -> PLAN_BEFORE_READY: FAIL reason=MAP_DRIFT (historical, round 69)
+$ ls .ufo/reports/round-69/ -> No such file or directory
+
+Not run: probes, controls, originals c1-controls.sh / c2-controls.sh, any fixture or scratch write.
+Tools installed: none. Scratch used: none.

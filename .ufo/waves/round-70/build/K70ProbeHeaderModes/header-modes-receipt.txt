@@ -1,0 +1,280 @@
+HEADER_MODES_PROBE tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeHeaderModes/synthetic-header-edge.mjs
+mode=mechanism-only tag=mechanism-only-r2 node=v24.21.0 started=2026-10-30T15:31:02.812Z
+tool_sha256=7673a0f8f3db6bd9354cea3cb0ae9a4e1b185329dc377cd7d769cae65d7a0cb2
+HM-S00 PASS kind=selftest expect=exit 0 + CONTROL_REPLAY_SELFTEST: PASS note=
+  argv: --selftest
+  observed: {"status":0,"selftestLine":true,"stderr":""}
+HM-V01 PASS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt 196B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/valid-c1-donothing-9p2X7w/out.txt --work $RUN/valid-c1-donothing-9p2X7w/work
+  observed: {"status":0,"outExists":true,"label":true,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V02 PASS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS autoledger; work reclaimed; no stray files note=receipt 198B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoledger --out $RUN/valid-c1-autoledger-hBIvIZ/out.txt --work $RUN/valid-c1-autoledger-hBIvIZ/work
+  observed: {"status":0,"outExists":true,"label":true,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V03 PASS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt 197B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode donothing --out $RUN/valid-c2-donothing-1oFxbp/out.txt --work $RUN/valid-c2-donothing-1oFxbp/work
+  observed: {"status":0,"outExists":true,"label":true,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V04 PASS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS autoorigin; work reclaimed; no stray files note=receipt 199B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoorigin --out $RUN/valid-c2-autoorigin-IwH695/out.txt --work $RUN/valid-c2-autoorigin-IwH695/work
+  observed: {"status":0,"outExists":true,"label":true,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V05 PASS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS forgecapture; work reclaimed; no stray files note=receipt 203B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode forgecapture --out $RUN/valid-c2-forgecapture-lm8gAQ/out.txt --work $RUN/valid-c2-forgecapture-lm8gAQ/work
+  observed: {"status":0,"outExists":true,"label":true,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-I001 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode donothing --out $RUN/inv-001-TNwmj8/out.txt --work $RUN/inv-001-TNwmj8/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I002 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoledger --out $RUN/inv-002-BYYew1/out.txt --work $RUN/inv-002-BYYew1/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I003 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoorigin --out $RUN/inv-003-BMQF02/out.txt --work $RUN/inv-003-BMQF02/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I004 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode forgecapture --out $RUN/inv-004-1ybczP/out.txt --work $RUN/inv-004-1ybczP/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I005 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode junk --out $RUN/inv-005-Qriz2Q/out.txt --work $RUN/inv-005-Qriz2Q/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I006 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode  --out $RUN/inv-006-7WhBaN/out.txt --work $RUN/inv-006-7WhBaN/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I007 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode DONOTHING --out $RUN/inv-007-0DrAd8/out.txt --work $RUN/inv-007-0DrAd8/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I008 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode Autoledger --out $RUN/inv-008-bABrBV/out.txt --work $RUN/inv-008-bABrBV/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"junk\"\n"}
+HM-I009 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode donothing --out $RUN/inv-009-zlLXhs/out.txt --work $RUN/inv-009-zlLXhs/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I010 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoledger --out $RUN/inv-010-WGkNBW/out.txt --work $RUN/inv-010-WGkNBW/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I011 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoorigin --out $RUN/inv-011-edBLny/out.txt --work $RUN/inv-011-edBLny/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I012 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode forgecapture --out $RUN/inv-012-mVx8qi/out.txt --work $RUN/inv-012-mVx8qi/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I013 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode junk --out $RUN/inv-013-tOEA9b/out.txt --work $RUN/inv-013-tOEA9b/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I014 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode  --out $RUN/inv-014-v2Hoea/out.txt --work $RUN/inv-014-v2Hoea/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I015 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode DONOTHING --out $RUN/inv-015-jOyYkS/out.txt --work $RUN/inv-015-jOyYkS/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I016 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode Autoledger --out $RUN/inv-016-Fw8P2I/out.txt --work $RUN/inv-016-Fw8P2I/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C1\"\n"}
+HM-I017 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode donothing --out $RUN/inv-017-qnpwRW/out.txt --work $RUN/inv-017-qnpwRW/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I018 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoledger --out $RUN/inv-018-agK5MV/out.txt --work $RUN/inv-018-agK5MV/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I019 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoorigin --out $RUN/inv-019-wwnRR4/out.txt --work $RUN/inv-019-wwnRR4/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I020 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode forgecapture --out $RUN/inv-020-XLX1X6/out.txt --work $RUN/inv-020-XLX1X6/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I021 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode junk --out $RUN/inv-021-C7pNO0/out.txt --work $RUN/inv-021-C7pNO0/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I022 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode  --out $RUN/inv-022-EzpoIm/out.txt --work $RUN/inv-022-EzpoIm/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I023 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode DONOTHING --out $RUN/inv-023-bJ0kEr/out.txt --work $RUN/inv-023-bJ0kEr/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I024 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode Autoledger --out $RUN/inv-024-qEgeta/out.txt --work $RUN/inv-024-qEgeta/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c3\"\n"}
+HM-I025 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode donothing --out $RUN/inv-025-bFseLA/out.txt --work $RUN/inv-025-bFseLA/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I026 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoledger --out $RUN/inv-026-mc7NMP/out.txt --work $RUN/inv-026-mc7NMP/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I027 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoorigin --out $RUN/inv-027-22KkMu/out.txt --work $RUN/inv-027-22KkMu/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I028 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode forgecapture --out $RUN/inv-028-JWPGu9/out.txt --work $RUN/inv-028-JWPGu9/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I029 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode junk --out $RUN/inv-029-Axruvy/out.txt --work $RUN/inv-029-Axruvy/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I030 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode  --out $RUN/inv-030-cyX6oG/out.txt --work $RUN/inv-030-cyX6oG/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I031 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode DONOTHING --out $RUN/inv-031-VXbITx/out.txt --work $RUN/inv-031-VXbITx/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I032 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode Autoledger --out $RUN/inv-032-DmmE32/out.txt --work $RUN/inv-032-DmmE32/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --family\n"}
+HM-I033 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode donothing --out $RUN/inv-033-Mn9eVb/out.txt --work $RUN/inv-033-Mn9eVb/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I034 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoledger --out $RUN/inv-034-ztfQwr/out.txt --work $RUN/inv-034-ztfQwr/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I035 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoorigin --out $RUN/inv-035-j8n6ZH/out.txt --work $RUN/inv-035-j8n6ZH/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I036 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode forgecapture --out $RUN/inv-036-Zf8Gcj/out.txt --work $RUN/inv-036-Zf8Gcj/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I037 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode junk --out $RUN/inv-037-9OXK8A/out.txt --work $RUN/inv-037-9OXK8A/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I038 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode  --out $RUN/inv-038-AvEe3q/out.txt --work $RUN/inv-038-AvEe3q/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I039 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode DONOTHING --out $RUN/inv-039-gjUKv7/out.txt --work $RUN/inv-039-gjUKv7/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I040 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode Autoledger --out $RUN/inv-040-1eijC3/out.txt --work $RUN/inv-040-1eijC3/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c1 \"\n"}
+HM-I041 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode donothing --out $RUN/inv-041-JgiGxZ/out.txt --work $RUN/inv-041-JgiGxZ/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I042 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoledger --out $RUN/inv-042-gGieEk/out.txt --work $RUN/inv-042-gGieEk/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I043 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoorigin --out $RUN/inv-043-O0e39u/out.txt --work $RUN/inv-043-O0e39u/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I044 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode forgecapture --out $RUN/inv-044-d5wuXG/out.txt --work $RUN/inv-044-d5wuXG/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I045 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode junk --out $RUN/inv-045-Wfn5CF/out.txt --work $RUN/inv-045-Wfn5CF/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I046 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode  --out $RUN/inv-046-xLuLnj/out.txt --work $RUN/inv-046-xLuLnj/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I047 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode DONOTHING --out $RUN/inv-047-9BGsm8/out.txt --work $RUN/inv-047-9BGsm8/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I048 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode Autoledger --out $RUN/inv-048-O3dnY0/out.txt --work $RUN/inv-048-O3dnY0/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \" c1\"\n"}
+HM-I049 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode donothing --out $RUN/inv-049-vngI9U/out.txt --work $RUN/inv-049-vngI9U/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I050 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoledger --out $RUN/inv-050-PyPf25/out.txt --work $RUN/inv-050-PyPf25/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I051 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoorigin --out $RUN/inv-051-6Tfdmc/out.txt --work $RUN/inv-051-6Tfdmc/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I052 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode forgecapture --out $RUN/inv-052-Tu82v6/out.txt --work $RUN/inv-052-Tu82v6/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I053 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode junk --out $RUN/inv-053-jqr6M0/out.txt --work $RUN/inv-053-jqr6M0/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I054 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode  --out $RUN/inv-054-asxBWL/out.txt --work $RUN/inv-054-asxBWL/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I055 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode DONOTHING --out $RUN/inv-055-n1vwH9/out.txt --work $RUN/inv-055-n1vwH9/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I056 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode Autoledger --out $RUN/inv-056-2NlcjE/out.txt --work $RUN/inv-056-2NlcjE/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"c11\"\n"}
+HM-I057 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode donothing --out $RUN/inv-057-GDIZHZ/out.txt --work $RUN/inv-057-GDIZHZ/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I058 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoledger --out $RUN/inv-058-5u5aFU/out.txt --work $RUN/inv-058-5u5aFU/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I059 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoorigin --out $RUN/inv-059-ztZtq0/out.txt --work $RUN/inv-059-ztZtq0/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I060 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode forgecapture --out $RUN/inv-060-WYv7mr/out.txt --work $RUN/inv-060-WYv7mr/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I061 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode junk --out $RUN/inv-061-VrKofd/out.txt --work $RUN/inv-061-VrKofd/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I062 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode  --out $RUN/inv-062-ZYiS3M/out.txt --work $RUN/inv-062-ZYiS3M/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I063 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode DONOTHING --out $RUN/inv-063-gV5Gbh/out.txt --work $RUN/inv-063-gV5Gbh/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I064 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode Autoledger --out $RUN/inv-064-XtxXKp/out.txt --work $RUN/inv-064-XtxXKp/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nfamily must be c1|c2, got \"C2\"\n"}
+HM-I065 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/inv-065-FkD7qB/out.txt --work $RUN/inv-065-FkD7qB/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"autoorigin\" is not valid for family c1\n"}
+HM-I066 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode forgecapture --out $RUN/inv-066-UeoTHR/out.txt --work $RUN/inv-066-UeoTHR/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"forgecapture\" is not valid for family c1\n"}
+HM-I067 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode junk --out $RUN/inv-067-1vOew0/out.txt --work $RUN/inv-067-1vOew0/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"junk\" is not valid for family c1\n"}
+HM-I068 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode  --out $RUN/inv-068-AdoJ44/out.txt --work $RUN/inv-068-AdoJ44/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I069 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode DONOTHING --out $RUN/inv-069-bLufZa/out.txt --work $RUN/inv-069-bLufZa/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"DONOTHING\" is not valid for family c1\n"}
+HM-I070 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode Autoledger --out $RUN/inv-070-WKtzwc/out.txt --work $RUN/inv-070-WKtzwc/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"Autoledger\" is not valid for family c1\n"}
+HM-I071 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoledger --out $RUN/inv-071-sMp2eW/out.txt --work $RUN/inv-071-sMp2eW/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"autoledger\" is not valid for family c2\n"}
+HM-I072 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode junk --out $RUN/inv-072-IjgkiX/out.txt --work $RUN/inv-072-IjgkiX/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"junk\" is not valid for family c2\n"}
+HM-I073 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode  --out $RUN/inv-073-Ay8lrd/out.txt --work $RUN/inv-073-Ay8lrd/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nempty --mode\n"}
+HM-I074 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode DONOTHING --out $RUN/inv-074-rNGL0t/out.txt --work $RUN/inv-074-rNGL0t/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"DONOTHING\" is not valid for family c2\n"}
+HM-I075 PASS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode Autoledger --out $RUN/inv-075-Qak2gp/out.txt --work $RUN/inv-075-Qak2gp/work
+  observed: {"status":64,"outCreated":false,"workLeftovers":[],"diag":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"Autoledger\" is not valid for family c2\n"}
+HM-U01 PASS kind=structural expect=exit 64 (bare invocation) note=bare invocation
+  argv: 
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nbad argc=0\n"}
+HM-U02 PASS kind=structural expect=exit 64 (missing --family) note=missing --family
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --mode donothing --out $RUN/struct-HM-U02-7rrzuR/out.txt --work $RUN/struct-HM-U02-7rrzuR/work
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmissing --family\n"}
+HM-U03 PASS kind=structural expect=exit 64 (missing --mode) note=missing --mode
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --out $RUN/struct-HM-U03-MX7U0v/out.txt --work $RUN/struct-HM-U03-MX7U0v/work
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmissing --mode\n"}
+HM-U04 PASS kind=structural expect=exit 64 (missing --out) note=missing --out
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --work $RUN/struct-HM-U04-bYUOiU/work
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmissing --out\n"}
+HM-U05 PASS kind=structural expect=exit 64 (missing --work) note=missing --work
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U05-1GdDwm/out.txt
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmissing --work\n"}
+HM-U06 PASS kind=structural expect=exit 64 (unknown flag) note=unknown flag
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U06-Ye1KXT/out.txt --work $RUN/struct-HM-U06-Ye1KXT/work --frobnicate x
+  observed: {"status":64,"outCreated":false,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nunknown or unsupported flag --frobnicate\n"}
+HM-X1 PASS kind=exclusive-out expect=valid pair vs pre-existing out: nonzero exit, sentinel unchanged note=exclusive creation
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/excl-valid-uCt4gi/out.txt --work $RUN/excl-valid-uCt4gi/work
+  observed: {"status":73,"intact":true,"stderr":"refusing output: EEXIST: file already exists, open '/fast/scratch/hyaku/kumitate-r70/K70ProbeHeaderModes/run-30QEE3/excl-valid-uCt4gi/out.txt'\n"}
+HM-X2 PASS kind=exclusive-out-invalid expect=invalid pair vs pre-existing out: exit 64, sentinel unchanged note=refusal before output
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/excl-invalid-UHC75V/out.txt --work $RUN/excl-invalid-UHC75V/work
+  observed: {"status":64,"intact":true,"stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nmode \"autoorigin\" is not valid for family c1\n"}
+HM-N1 INFO kind=informational expect=(none — contract unspecified) note=duplicated --family (last-wins vs refuse unspecified)
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/info-HM-N1-ynBmRt/out.txt --work $RUN/info-HM-N1-ynBmRt/work --family c2
+  observed: {"status":64,"stdout":"","stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nduplicate flag --family\n"}
+HM-N2 INFO kind=informational expect=(none — contract unspecified) note=--selftest plus extra args
+  argv: --selftest --family c1
+  observed: {"status":64,"stdout":"","stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nbad argc=3\n"}
+HM-N3 INFO kind=informational expect=(none — contract unspecified) note=equals-form --family=c1
+  argv: --lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin --family=c1 --mode=donothing --out=$RUN/info-HM-N3-7XA8V0/out.txt --work=$RUN/info-HM-N3-7XA8V0/work
+  observed: {"status":64,"stdout":"","stderr":"usage: control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR | --selftest\nbad argc=5\n"}
+HEADER_MODES_HELD held=89/89 mode=mechanism-only tag=mechanism-only-r2

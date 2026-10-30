@@ -1,0 +1,50 @@
+TARGET-SAFE   A existsSync+w S1-regular exit=0 refused=true refused via existsSync victim="do-not-overwrite\n"
+TARGET-SAFE   A existsSync+w S2-link-live exit=0 refused=true refused via existsSync victim="FROZEN-PAYLOAD-DO-NOT-TOUCH\n"
+TARGET-HIT!!  A existsSync+w S3-link-dangling exit=0 refused=false wrote victim="CONTROL-OUTPUT\n"
+TARGET-SAFE   A existsSync+w S4-link-frozen exit=0 refused=true refused via existsSync victim="FROZEN-COUNTER-BYTES\n"
+TARGET-HIT!!  B shell-> S1-regular exit=0 refused=false victim="CONTROL-OUTPUT\n"
+TARGET-HIT!!  B shell-> S2-link-live exit=0 refused=false victim="CONTROL-OUTPUT\n"
+TARGET-HIT!!  B shell-> S3-link-dangling exit=0 refused=false victim="CONTROL-OUTPUT\n"
+TARGET-HIT!!  B shell-> S4-link-frozen exit=0 refused=false victim="CONTROL-OUTPUT\n"
+TARGET-SAFE   C open-wx S1-regular exit=refuse:EEXIST refused=true EEXIST path-blocked
+TARGET-SAFE   C open-wx S2-link-live exit=refuse:EEXIST refused=true EEXIST path-blocked
+TARGET-SAFE   C open-wx S3-link-dangling exit=refuse:EEXIST refused=true EEXIST path-blocked
+TARGET-SAFE   C open-wx S4-link-frozen exit=refuse:EEXIST refused=true EEXIST path-blocked
+TARGET-HIT!!  D rename S1-regular exit=0 refused=false out-is-symlink=false
+TARGET-SAFE   D rename S2-link-live exit=0 refused=false out-is-symlink=false
+TARGET-HIT!!  D rename S3-link-dangling exit=0 refused=false out-is-symlink=false
+TARGET-SAFE   D rename S4-link-frozen exit=0 refused=false out-is-symlink=false
+TARGET-SAFE   E lstat-gate+w S1-regular exit=0 refused=true lstat-present=true
+TARGET-SAFE   E lstat-gate+w S2-link-live exit=0 refused=true lstat-present=true
+TARGET-SAFE   E lstat-gate+w S3-link-dangling exit=0 refused=true lstat-present=true
+TARGET-SAFE   E lstat-gate+w S4-link-frozen exit=0 refused=true lstat-present=true
+
+--- frozen R9 replication (replay70-probe.mjs exact assertion shape) ---
+R9 regular-file arm: status=1 preserved=true (frozen probe would score this PASS)
+probe-untested symlink arm: status=1 victim-unchanged=true  <-- frozen counter never constructs this shape
+probe-untested dangling arm: status=0 referent-created=true referent-bytes="CONTROL-OUTPUT\n"  <-- frozen counter never constructs this shape either
+
+=== SUMMARY (victim-correct) ===
+A existsSync+w | S1-regular | safe=true | exit=0 | refused=true
+A existsSync+w | S2-link-live | safe=true | exit=0 | refused=true
+A existsSync+w | S3-link-dangling | safe=false | exit=0 | refused=false
+A existsSync+w | S4-link-frozen | safe=true | exit=0 | refused=true
+B shell-> | S1-regular | safe=false | exit=0 | refused=false
+B shell-> | S2-link-live | safe=false | exit=0 | refused=false
+B shell-> | S3-link-dangling | safe=false | exit=0 | refused=false
+B shell-> | S4-link-frozen | safe=false | exit=0 | refused=false
+C open-wx | S1-regular | safe=true | exit=refuse:EEXIST | refused=true
+C open-wx | S2-link-live | safe=true | exit=refuse:EEXIST | refused=true
+C open-wx | S3-link-dangling | safe=true | exit=refuse:EEXIST | refused=true
+C open-wx | S4-link-frozen | safe=true | exit=refuse:EEXIST | refused=true
+D rename | S1-regular | safe=false | exit=0 | refused=false
+D rename | S2-link-live | safe=true | exit=0 | refused=false
+D rename | S3-link-dangling | safe=false | exit=0 | refused=false
+D rename | S4-link-frozen | safe=true | exit=0 | refused=false
+E lstat-gate+w | S1-regular | safe=true | exit=0 | refused=true
+E lstat-gate+w | S2-link-live | safe=true | exit=0 | refused=true
+E lstat-gate+w | S3-link-dangling | safe=true | exit=0 | refused=true
+E lstat-gate+w | S4-link-frozen | safe=true | exit=0 | refused=true
+
+target-overwrite cells: 7/20
+sandbox: /fast/scratch/hyaku/kumitate-r70/K70AttackOutputSymlink/attackv2-KSpFek

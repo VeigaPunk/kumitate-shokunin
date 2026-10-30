@@ -1,0 +1,23 @@
+{
+  "mode": "race",
+  "strategy": "toctou",
+  "out": "/fast/scratch/hyaku/kumitate-r70/K70AttackPrivateOutput/race-toctou/result.txt",
+  "runs": [
+    {
+      "code": 0,
+      "stdout": "[mock A toctou] check existsSync(out)=false\n[mock A toctou] WROTE out (exit 0)\n",
+      "stderr": ""
+    },
+    {
+      "code": 0,
+      "stdout": "[mock B toctou] check existsSync(out)=false\n[mock B toctou] WROTE out (exit 0)\n",
+      "stderr": ""
+    }
+  ],
+  "exitCodes": [
+    0,
+    0
+  ],
+  "fileAfter": "REPLAY-RECEIPT nonce=A family=mock mode=private\nCONTROL-PASS mock\n",
+  "fileExists": true
+}

@@ -1,0 +1,24 @@
+--- /fast/scratch/hyaku/kumitate-r70/K70AttackFrozenBytes/src/c1-controls.sh	2026-10-30 12:24:56.222412630 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70AttackFrozenBytes/ref/c1-controls.private.sh	2026-10-30 12:33:58.144611129 -0300
+@@ -16,9 +16,9 @@
+ set -euo pipefail
+ MODE="${1:?usage: c1-controls.sh donothing|autoledger}"
+ LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+-PROBE="$LANE/.ufo/waves/round-69/probe/ledger69-probe.mjs"
+-W="$LANE/.ufo/waves/round-69/controls"
+-S="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/c1-controls-$MODE"
++PROBE=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-69/probe/ledger69-probe.mjs
++W=WORK/w-c1
++S=WORK/run-c1
+ rm -rf "$S"; mkdir -p "$S/fx"
+ cd "$S/fx"
+ git init -q
+@@ -72,7 +72,7 @@
+ git -c user.name=ctl -c user.email=ctl@invalid -c commit.gpgsign=false commit -q --no-verify -m "c1-$MODE fixture"
+ REV=$(git rev-parse HEAD)
+ mkdir -p "$W"
+-TMPDIR="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69" node "$PROBE" "$S/fx" "$REV" > "$W/c1-$MODE.txt" 2>&1 || RC=$?
++TMPDIR="$S" node "$PROBE" "$S/fx" "$REV" > "$W/c1-$MODE.txt" 2>&1 || RC=$?
+ RC=${RC:-0}
+ echo "control=$MODE exit=$RC rev=$REV" >> "$W/c1-$MODE.txt"
+ cat "$W/c1-$MODE.txt"

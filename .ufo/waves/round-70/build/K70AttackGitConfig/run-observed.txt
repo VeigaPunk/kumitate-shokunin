@@ -1,0 +1,36 @@
+=== ARM A-global-template-hooks ===
+exit=1
+  hook-fired-file: /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/A-global-template-hooks/fx/.git/evil-amend-done /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/A-global-template-hooks/fx/.git/evil-hook-fired 
+  fixture-head-tree: README.md attacker-controlled.txt scripts/tool.mjs 
+  head-subject: evil: redirect fixture revision
+
+=== ARM A2-template-config-inject ===
+exit=1
+  hook-fired-file: /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/A2-template-config-inject/fx/.git/evil-hooks-amend-done /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/A2-template-config-inject/fx/.git/evil-hookspath-fired 
+  fixture-head-tree: README.md attacker-hookspath.txt scripts/tool.mjs 
+  head-subject: evil: hookspath redirect
+
+=== ARM B-system-hookspath ===
+exit=1
+  hook-fired-file: /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/B-system-hookspath/fx/.git/evil-hooks-amend-done /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/B-system-hookspath/fx/.git/evil-hookspath-fired 
+  fixture-head-tree: README.md attacker-hookspath.txt scripts/tool.mjs 
+  head-subject: evil: hookspath redirect
+
+=== ARM C-env-count-inject ===
+exit=1
+  hook-fired-file: /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/C-env-count-inject/fx/.git/evil-hooks-amend-done /fast/scratch/hyaku/kumitate-r70/K70AttackGitConfig/work/C-env-count-inject/fx/.git/evil-hookspath-fired 
+  fixture-head-tree: README.md attacker-hookspath.txt scripts/tool.mjs 
+  head-subject: evil: hookspath redirect
+
+=== ARM D-corrected-vs-global ===
+exit=1
+  hook-fired-file: 
+  fixture-head-tree: README.md scripts/tool.mjs 
+  head-subject: c1-donothing fixture
+
+=== ARM E-corrected-vs-system+env ===
+exit=1
+  hook-fired-file: 
+  fixture-head-tree: README.md scripts/tool.mjs 
+  head-subject: c1-donothing fixture
+

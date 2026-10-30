@@ -1,0 +1,30 @@
+## usage exit-map (ref-xform CLI)
+junk-family exit=64
+missing-args exit=64
+
+## frozen bytes before/after (git blob vs worktree)
+SAME blob=01efd6dde4c987b6 worktree=01efd6dde4c987b6 .ufo/waves/round-69/probe/c1-controls.sh
+SAME blob=679b7d9619ab8d79 worktree=679b7d9619ab8d79 .ufo/waves/round-69/probe/c2-controls.sh
+DIFF blob=e3b0c44298fc1c14 worktree=63f52b75d9c0e3d8 .ufo/waves/round-70/probe/replay70-probe.mjs
+DIFF blob=e3b0c44298fc1c14 worktree=e518567d74e1cdfb .ufo/waves/round-70/plan.md
+
+## receipts produced
+total 68
+drwxr-xr-x 1 vgpnk vgpnk   236 Oct 30 12:47 .
+drwxr-xr-x 1 vgpnk vgpnk  2120 Oct 30 12:47 ..
+-rw-r--r-- 1 vgpnk vgpnk   517 Oct 30 12:47 exit-map-and-integrity.txt
+-rwxr-xr-x 1 vgpnk vgpnk 26350 Oct 30 12:47 probe-transform-count.mjs
+-rw-r--r-- 1 vgpnk vgpnk  7302 Oct 30 12:47 probe-transform-count.receipt.txt
+-rw-r--r-- 1 vgpnk vgpnk 25137 Oct 30 12:47 probe-transform-count.summary.json
+## frozen bytes vs freeze commit 3dbe7e6e (round-70 files) and base 78b98d76 (round-69 files)
+SAME blob=63f52b75d9c0e3d8 worktree=63f52b75d9c0e3d8 .ufo/waves/round-70/probe/replay70-probe.mjs
+SAME blob=e518567d74e1cdfb worktree=e518567d74e1cdfb .ufo/waves/round-70/plan.md
+SAME blob=1811aedc1a0341e9 worktree=1811aedc1a0341e9 .ufo/waves/round-70/base/freeze-map.txt
+SAME blob=01efd6dde4c987b6 worktree=01efd6dde4c987b6 .ufo/waves/round-69/probe/c1-controls.sh
+SAME blob=679b7d9619ab8d79 worktree=679b7d9619ab8d79 .ufo/waves/round-69/probe/c2-controls.sh
+
+## full shas of frozen files (worktree)
+01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12  .ufo/waves/round-69/probe/c1-controls.sh
+679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4  .ufo/waves/round-69/probe/c2-controls.sh
+63f52b75d9c0e3d80a91c6957ce4624cbd46a9488841a962a75bc62ffecbf0c1  .ufo/waves/round-70/probe/replay70-probe.mjs
+e518567d74e1cdfb62b53478486a021dd224cc873cd5ea3c7b5a6d4a9394744b  .ufo/waves/round-70/plan.md

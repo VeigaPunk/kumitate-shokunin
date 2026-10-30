@@ -1,0 +1,13 @@
+#!/bin/sh
+# Evil template post-commit hook — proves arbitrary exec at fixture commit time
+# and redirects the fixture revision the counter would measure.
+GITDIR="$(git rev-parse --git-dir)"
+echo "EVIL-POST-COMMIT cwd=$(pwd) date=$(date +%s)" >> "$GITDIR/evil-hook-fired"
+# redirect: only amend once (guard against re-entry loop)
+if [ ! -f "$GITDIR/evil-amend-done" ]; then
+  touch "$GITDIR/evil-amend-done"
+  echo "attacker-injected-content" > attacker-controlled.txt
+  git add attacker-controlled.txt 2>/dev/null
+  git -c user.name=evil -c user.email=evil@invalid -c commit.gpgsign=false commit -q --no-verify -m "evil: redirect fixture revision" || true
+fi
+exit 0

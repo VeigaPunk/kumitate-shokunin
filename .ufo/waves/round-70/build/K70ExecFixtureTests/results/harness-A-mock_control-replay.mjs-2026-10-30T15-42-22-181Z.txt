@@ -1,0 +1,16 @@
+HARNESS candidate=mock/control-replay.mjs suite=A pass=14 fail=0 skip=0
+fixture rev=757595667deef8c469876a6b319123ac24a3a7eb pins=c1-controls.sh@e3b0880fc173 c2-controls.sh@14e4ea167bf9
+A1 PASS status=0 marker=true cwd-clean=true
+A2 PASS missing-arg cases not 64: none
+A3 PASS family=junk status=64
+A4 PASS c1+autoorigin=64 c2+autoledger=64
+A5 PASS status=73 intact=true
+A6 PASS c1/donothing:ok c1/autoledger:ok c2/donothing:ok c2/autoorigin:ok c2/forgecapture:ok
+A7a PASS allOk=true distinctRev=5/5 distinctScratch=5/5 sharedEmpty=true
+A7b PASS scratch1=/fast/scratch/hyaku/kumitate-r70/K70ExecFixtureTests/run-A/work/conform/ok-c1-donothing/replay-Y8ab6X/s scratch2=/fast/scratch/hyaku/kumitate-r70/K70ExecFixtureTests/run-A/work/conform/seq2/replay-yIpAFU/s
+A8 PASS status=0 sentinel=true leftovers=sentinel.txt
+A9 PASS status=65 outCreated=false
+A10 PASS status=0 pass=true
+A13 PASS status=70 receiptCopiedBeforeCleanup=true childLeft=true
+A11 PASS fixture digests unchanged=true
+A12 PASS stable=true findings=true

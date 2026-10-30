@@ -1,0 +1,19 @@
+# K70ProbeUmask transcript 2026-10-30T15:22:58.107Z
+node=v24.21.0 host_umask=0022
+candidate=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeUmask/candidate-private.mjs
+
+## umask=077 child-umask probe: exit=0 out=child_umask=77
+run fresh: exit=0 stdout=replayed c1/donothing child=c1-donothing-pMGmlT stderr=
+receipt mode=600 workdir_after=[] content="LEDGER69_UNMET exit=1\nCONTROL-PASS donothing\n"
+run collision: exit=1 stderr=refusing existing output preserved=true mode=644
+run race: winners=1/8 exits=[0,1,1,1,1,1,1,1] content="DEPREC69_UNMET exit=1\nCONTROL-PASS forgecapture\n" mode=600 workEmpty=true
+
+## umask=022 child-umask probe: exit=0 out=child_umask=22
+run fresh: exit=0 stdout=replayed c1/donothing child=c1-donothing-N3THcm stderr=
+receipt mode=644 workdir_after=[] content="LEDGER69_UNMET exit=1\nCONTROL-PASS donothing\n"
+run collision: exit=1 stderr=refusing existing output preserved=true mode=644
+run race: winners=1/8 exits=[0,1,1,1,1,1,1,1] content="DEPREC69_UNMET exit=1\nCONTROL-PASS forgecapture\n" mode=644 workEmpty=true
+
+## mechanism-only synthetic reproduction (openSync wx + umask)
+mech umask=077: exit=0 first_mode=600 second_open=EEXIST
+mech umask=022: exit=0 first_mode=644 second_open=EEXIST

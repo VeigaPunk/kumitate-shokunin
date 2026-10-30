@@ -1,0 +1,42 @@
+
+== DEMO 1: full trio GIT_DIR+GIT_WORK_TREE+GIT_INDEX_FILE -> foreign commit in a host repo ==
+host HEAD before: ef5fd9654c777906a4a1069bbe6b14da50993160
+REV reported to receipt: a624dac0a5cdee2030e492254eae39639ca5802c
+host HEAD after : a624dac0a5cdee2030e492254eae39639ca5802c
+fixture child has .git? NO
+stolen index created outside workroot? yes
+host repo log:
+  a624dac c1-donothing fixture
+  ef5fd96 host pre-existing commit
+foreign commit tree contents:
+  fixture.txt
+hostfile still tracked at HEAD-1? hostfile.txt 
+REV equals host HEAD (false provenance in receipt)? yes
+
+== DEMO 2: GIT_INDEX_FILE alone -> arbitrary-path file creation outside the work root ==
+REV2=839b79ab0be7cf8ea0adde19afd2f5c2fbb0b000
+outside index exists? yes
+fixture .git/index exists? NO
+
+== DEMO 3: scrubbed env (env -u) -> writes contained in the mkdtemp child (the contract's required defense) ==
+REV3=839b79ab0be7cf8ea0adde19afd2f5c2fbb0b000
+fixture child has .git? yes
+commit inside fixture repo? 839b79a c1-donothing fixture
+
+== DEMO 4: explicit --git-dir/--work-tree overrides GIT_DIR/GIT_WORK_TREE env BUT GIT_INDEX_FILE still leaks ==
+839b79ab0be7cf8ea0adde19afd2f5c2fbb0b000
+fixture child has .git? yes
+host4 repo got objects? objcount=0 (expect 0 -> contained)
+BUT leaked index outside workroot? yes
+
+== DEMO 5: frozen r70 counter's own git helper lines, verbatim, under hostile GIT_DIR (read-only toward lane) ==
+counter R1 line: git -C lane show B:path -> status= 128 stderr= "fatal: path '.ufo/waves/round-69/probe/c1-controls.sh' exists on disk, but not in '78b98d762ccf3e3a0961f94c4042eaabd2bcb706'"
+counter archive line -> status= 2 stderr= "fatal: not a tree object: 78b98d762ccf3e3a0961f94c4042eaabd2bcb706"
+
+== DEMO 6: r69 probes carry the ENV_POISONED preamble + CHILD_ENV scrub that the r70 counter dropped ==
+LEDGER69_UNMET held=0/7 checks=7 rev=unknown rule=L69 | ENV_POISONED:GIT_DIR
+ledger69 exit=2
+DEPREC69_UNMET held=0/11 checks=11 rev=unknown rule=M69 | ENV_POISONED:GIT_DIR
+deprec69 piped head exit=0
+
+== DONE ==

@@ -1,0 +1,212 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "kumitate-r70-wave-reconciliation-v2",
+  "title": "Round-70 wave reconciliation (v2, extends round-69 schema)",
+  "description": "Close-time census of the 64-seat w1 wave. Written once by L1 at close, after WAVE-DONE and results collection. Derives dead vs unknown from persisted evidence only (w1.ready.partial instance ids, results collection settle metadata, report files, build dirs). No live process state is consulted.",
+  "type": "object",
+  "required": [
+    "schema", "wave", "round", "observed_at", "evidence_sources",
+    "declared_seats", "seats", "state_counts", "role_counts",
+    "settled", "settled_nonempty", "reports_present", "missing_reports",
+    "empty_outputs", "dead_seats", "unknown_seats", "handoff"
+  ],
+  "properties": {
+    "schema": { "const": "ufo-wave-reconciliation-v2" },
+    "wave": { "const": "kumitate-r70-w1" },
+    "round": { "const": 70 },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "evidence_sources": {
+      "type": "object",
+      "required": ["dispatch", "ready_partial", "results", "report_dir", "build_root"],
+      "properties": {
+        "dispatch": { "type": "string", "description": "path to w1-dispatch.json" },
+        "ready_partial": { "type": "string", "description": "path to w1.ready.partial (seat -> dispatched instance id)" },
+        "results": { "type": "string", "description": "path to the close-time results collection (w1-results.json v2)" },
+        "report_dir": { "type": "string" },
+        "build_root": { "type": "string" },
+        "observed_rev": { "type": "string", "description": "lane commit id at observation, recorded not asserted" }
+      },
+      "additionalProperties": false
+    },
+    "declared_seats": { "type": "integer", "minimum": 64, "maximum": 64 },
+    "seats": { "type": "array", "items": { "$ref": "#/definitions/seat" }, "minItems": 64, "maxItems": 64 },
+    "state_counts": {
+      "type": "object",
+      "description": "count per seat state; keys must cover the full enum; values sum to declared_seats",
+      "propertyNames": { "$ref": "#/definitions/state" },
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "role_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "settled": {
+      "type": "integer",
+      "description": "r69-compat: seats with a collected results entry (result.present). r69 counted entries; v2 keeps that semantics and adds settled_nonempty."
+    },
+    "settled_nonempty": {
+      "type": "integer",
+      "description": "seats with settle.status=settled AND result.output_bytes>0"
+    },
+    "reports_present": { "type": "integer" },
+    "missing_reports": { "type": "array", "items": { "type": "string" } },
+    "empty_outputs": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "r69-compat: seats whose results entry has empty output"
+    },
+    "dead_seats": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/deadSeat" },
+      "description": "started (positive start evidence) with zero output evidence"
+    },
+    "unknown_seats": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/unknownSeat" },
+      "description": "no start evidence and no output evidence, or collector explicitly could not determine"
+    },
+    "handoff": { "type": "string" }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "state": {
+      "type": "string",
+      "enum": [
+        "pending-collection",
+        "reconciled",
+        "partial_result_only",
+        "partial_report_only",
+        "empty_output",
+        "error",
+        "dead",
+        "unknown"
+      ]
+    },
+    "settleStatus": {
+      "type": "string",
+      "enum": ["settled", "error", "timeout", "unsettled", "unknown"]
+    },
+    "mismatchCode": {
+      "type": "string",
+      "enum": [
+        "UNDECLARED_SEAT",
+        "DUPLICATE_RESULT",
+        "TRAILER_MISSING",
+        "TRAILER_AMBIGUOUS",
+        "TRAILER_UNRESOLVED",
+        "TRAILER_SEAT_MISMATCH",
+        "ARTIFACT_PATH_ABSENT",
+        "RESULT_NEVER_SETTLED",
+        "OUTPUT_REPORT_DRIFT"
+      ]
+    },
+    "seat": {
+      "type": "object",
+      "required": ["name", "role", "milestone", "axes", "dispatch", "settle", "result", "report", "build", "trailer", "state", "mismatches"],
+      "properties": {
+        "name": { "type": "string", "pattern": "^K70[A-Za-z0-9]+$" },
+        "role": { "type": "string", "enum": ["executor", "critic", "reviewer", "mutation-tester", "scout", "scribe", "connector"] },
+        "milestone": { "type": "string" },
+        "axes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "dispatch": {
+          "type": "object",
+          "required": ["declared", "instance", "source"],
+          "properties": {
+            "declared": { "type": "boolean" },
+            "instance": { "type": ["string", "null"], "description": "spawned instance id from w1.ready.partial, e.g. K70ExecRunner-4; null = no dispatch evidence recorded" },
+            "source": { "type": "string", "enum": ["w1.ready.partial", "none"] }
+          },
+          "additionalProperties": false
+        },
+        "settle": {
+          "type": "object",
+          "required": ["status", "session", "settled_at", "error"],
+          "description": "recorded by the collector when the wave settles; THIS is the field set round-69 lacked",
+          "properties": {
+            "status": { "$ref": "#/definitions/settleStatus" },
+            "session": { "type": ["string", "null"], "description": "agent/session id of the settled run, if the collector captured one" },
+            "settled_at": { "type": ["string", "null"], "format": "date-time" },
+            "error": { "type": ["string", "null"], "description": "verbatim settle error text when status=error|timeout" }
+          },
+          "additionalProperties": false
+        },
+        "result": {
+          "type": "object",
+          "required": ["present", "output_bytes", "output_sha256", "duplicate_of"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "output_bytes": { "type": ["integer", "null"], "minimum": 0 },
+            "output_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+            "duplicate_of": { "type": ["string", "null"], "description": "seat name if this entry duplicates another's output" }
+          },
+          "additionalProperties": false
+        },
+        "report": {
+          "type": "object",
+          "required": ["present", "path", "bytes", "sha256"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "path": { "type": "string", "description": ".ufo/waves/round-70/w1/<Seat>.md (lane-relative)" },
+            "bytes": { "type": ["integer", "null"], "minimum": 0 },
+            "sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }
+          },
+          "additionalProperties": false
+        },
+        "build": {
+          "type": "object",
+          "required": ["present", "file_count"],
+          "properties": {
+            "present": { "type": "boolean" },
+            "file_count": { "type": ["integer", "null"], "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "trailer": {
+          "type": "object",
+          "required": ["declared", "parse", "resolves", "matches_seat"],
+          "properties": {
+            "declared": { "type": ["string", "null"], "description": "path from the report's Report: trailer, lane-relative; null if report absent or no Report: marker found" },
+            "parse": {
+              "type": "string",
+              "enum": ["not_applicable", "ok", "missing", "ambiguous_multiple"],
+              "description": "not_applicable = no report on disk; ok = exactly one Report: marker; missing = report present but no Report: marker (disclosed gap, mismatch TRAILER_MISSING, does NOT downgrade the seat state); ambiguous_multiple = more than one Report: marker found"
+            },
+            "resolves": { "type": ["boolean", "null"] },
+            "matches_seat": { "type": ["boolean", "null"], "description": "trailer path equals this seat's own report path" }
+          },
+          "additionalProperties": false
+        },
+        "state": { "$ref": "#/definitions/state" },
+        "mismatches": { "type": "array", "items": { "$ref": "#/definitions/mismatchCode" } }
+      },
+      "additionalProperties": false
+    },
+    "deadSeat": {
+      "type": "object",
+      "required": ["name", "instance", "settle_status", "subreason"],
+      "properties": {
+        "name": { "type": "string" },
+        "instance": { "type": ["string", "null"] },
+        "settle_status": { "$ref": "#/definitions/settleStatus" },
+        "subreason": {
+          "type": "string",
+          "enum": ["timeout", "error_after_start", "no_settle_record"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "unknownSeat": {
+      "type": "object",
+      "required": ["name", "reason"],
+      "properties": {
+        "name": { "type": "string" },
+        "reason": {
+          "type": "string",
+          "enum": ["no_dispatch_no_output", "collector_marked_unknown", "ambiguous_partial"]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

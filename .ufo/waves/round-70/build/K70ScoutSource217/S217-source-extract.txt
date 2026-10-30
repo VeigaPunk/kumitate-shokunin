@@ -1,0 +1,17 @@
+# S217 scout extract — frozen .ufo/waves/round-69/probe/c2-controls.sh at B 78b98d762ccf3e3a0961f94c4042eaabd2bcb706 (read via git show; not executed)
+blob-sha256 679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4
+working-tree-sha256 679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4
+lines 119
+## fixed/lane-bound assignments
+22:LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+23:PROBE="$LANE/.ufo/waves/round-69/probe/deprec69-probe.mjs"
+24:W="$LANE/.ufo/waves/round-69/controls"
+25:S="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/c2-controls-$MODE"
+27:git -C "$LANE" archive 14057f3e3899180c95713bace088fb9c0d0046e3 | tar -x --no-same-owner --no-same-permissions -C "$S/fx"
+80:    printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt
+106:TMPDIR="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69" node "$PROBE" "$S/fx" "$REV" $LIVEFLAG > "$W/c2-$MODE.txt" 2>&1 || RC=$?
+## unused temporary write (line 80), sole use of forge-sed
+80:    printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt
+## receipt write target (line 106)
+106:TMPDIR="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69" node "$PROBE" "$S/fx" "$REV" $LIVEFLAG > "$W/c2-$MODE.txt" 2>&1 || RC=$?
+108:echo "control=$MODE live=$([ -n "$LIVEFLAG" ] && echo no-live-vacuous-declared || echo exercised) exit=$RC rev=$REV" >> "$W/c2-$MODE.txt"

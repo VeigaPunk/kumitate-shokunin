@@ -1,0 +1,23 @@
+== Part A: frozen counter R3-R7 pattern vs NAIVE candidate ==
+R3-equiv c1/donothing: exit=0 ok=true workEmpty=true stderr=
+R4-equiv c1/autoledger: exit=0 ok=true workEmpty=true stderr=
+R5-equiv c2/donothing: exit=0 ok=true workEmpty=true stderr=
+R6-equiv c2/autoorigin: exit=0 ok=true workEmpty=true stderr=
+R7-equiv c2/forgecapture: exit=0 ok=true workEmpty=true stderr=
+Part A: naive candidate passes 5/5 frozen-pattern replays (each with a PRIVATE work dir)
+R8-equiv invalid args: exit=64 (expect 64)
+R9-equiv existing-out refusal: exit=1 existingUnchanged=true
+R9-equiv side-channel: root entries after refusal = ["existing.txt","result-0.txt","result-1.txt","result-2.txt","result-3.txt","result-4.txt","work-0","work-1","work-2","work-3","work-4"]
+== Part B: shared work parent, SEQUENTIAL same-mode replays vs NAIVE ==
+first run : exit=0
+second run (fixed name held by live sibling): exit=1 stderr=node:fs:1410 outExists=true
+work root after collision = ["c1-donothing"]
+== Part B2: shared work parent, CONCURRENT same-mode replays vs NAIVE ==
+concurrent cc1: exit=0 stderr=
+concurrent cc2: exit=0 stderr=
+concurrent receipts present = [{"tag":"cc1","out":true},{"tag":"cc2","out":true}]; work root after = []
+== Part C: shared work parent, CONCURRENT same-mode replays vs FIXED (mkdtemp) ==
+fixed run 1: exit=0 stderr=
+fixed run 2: exit=0 stderr=
+both receipts intact: true; work root empty: true
+(also: sequential shared-parent rerun would still pass — mkdtemp suffix differs per invocation)

@@ -1,0 +1,116 @@
+{
+  "seat": "K70ProbeReadonly",
+  "axis": "read-only lane tree + writable scratch/output",
+  "cases": [
+    {
+      "id": "A-selftest-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "B0-c1-donothing-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 570,
+      "workEmpty": true
+    },
+    {
+      "id": "B1-c1-autoledger-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 572,
+      "workEmpty": true
+    },
+    {
+      "id": "B2-c2-donothing-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 510,
+      "workEmpty": true
+    },
+    {
+      "id": "B3-c2-autoorigin-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 512,
+      "workEmpty": true
+    },
+    {
+      "id": "B4-c2-forgecapture-ro",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 516,
+      "workEmpty": true
+    },
+    {
+      "id": "G-invalid-ro",
+      "status": 64,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "H-outexists-ro",
+      "status": 73,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "I-drift-ro",
+      "status": 65,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "J-outdir-ro",
+      "status": 73,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "K-workro-ro",
+      "status": 1,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "L-writable-lane",
+      "status": 0,
+      "ok": true,
+      "laneClean": true
+    },
+    {
+      "id": "M-mechanism-model",
+      "status": 0,
+      "ok": true,
+      "laneClean": true,
+      "receiptBytes": 46,
+      "expect": "mechanism-only, not candidate verification"
+    }
+  ],
+  "frozenReal": [
+    {
+      "f": "c1-controls.sh",
+      "matchesBase": true
+    },
+    {
+      "f": "c2-controls.sh",
+      "matchesBase": true
+    }
+  ],
+  "frozenEnd": [
+    {
+      "f": "c1-controls.sh",
+      "matchesBase": true
+    },
+    {
+      "f": "c2-controls.sh",
+      "matchesBase": true
+    }
+  ]
+}

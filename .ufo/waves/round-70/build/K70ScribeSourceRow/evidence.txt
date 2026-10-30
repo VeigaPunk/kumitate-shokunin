@@ -1,0 +1,84 @@
+# Observed commands and outcomes — K70ScribeSourceRow (2026-10-30)
+
+All paths absolute; process started at fleet root /home/vgpnk/Projects/shokunin.
+No control script (original or copy) was executed. No scratch directory was created or
+needed (zero scratch writes). No git/jj mutation anywhere; all git invocations read-only
+`git -C <lane> show|rev-parse|status`.
+
+## 1. Frozen-source hash and byte identity (working tree vs base B)
+
+Command:
+```
+L=/home/vgpnk/Projects/shokunin/kumitate-shokunin; F=$L/.ufo/waves/round-69/probe/c2-controls.sh
+sha256sum "$F"; wc -c < "$F"
+git -C "$L" show 78b98d762ccf3e3a0961f94c4042eaabd2bcb706:.ufo/waves/round-69/probe/c2-controls.sh | sha256sum
+git -C "$L" show 78b98d762ccf3e3a0961f94c4042eaabd2bcb706:.ufo/waves/round-69/probe/c2-controls.sh | wc -c
+git -C "$L" rev-parse HEAD
+git -C "$L" show 78b98d762ccf3e3a0961f94c4042eaabd2bcb706:corpus/SOURCES.md | grep -c '^| S217 '
+grep -c '^| S217 ' "$L/corpus/SOURCES.md"
+git -C "$L" status --porcelain=v1 -- corpus/SOURCES.md .ufo/pins/source-captures.json
+git -C "$L" show 78b98d762ccf3e3a0961f94c4042eaabd2bcb706:.ufo/pins/source-captures.json | grep -c '"sourceId": "S217"'
+```
+Observed output (verbatim):
+```
+679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-69/probe/c2-controls.sh
+7030
+679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4  -
+7030
+1e00955a657a5b955992e23915143e7b3e261bb4
+0
+1
+0
+```
+Notes: the last `grep -c` printed 0 and made the combined command exit 1 (grep exits 1 on
+zero matches — expected, not a failure). Meaning: frozen c2 bytes identical working vs B;
+lane HEAD has moved to 1e00955a… during the wave; neither the S217 row nor the S217 pin
+existed at base B — both were landed and committed by L1 during the wave (status clean).
+
+## 2. Exact frozen-source line numbers (grep -n, read-only)
+
+Command: grep -nE '^(W|S|TMPDIR)=|forge-sed' on .ufo/waves/round-69/probe/c2-controls.sh
+Observed (relevant lines):
+```
+24|W="$LANE/.ufo/waves/round-69/controls"
+25|S="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/c2-controls-$MODE"
+80|    printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt
+106|TMPDIR="${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69" node "$PROBE" "$S/fx" "$REV" $LIVEFLAG > "$W/c2-$MODE.txt" 2>&1 || RC=$?
+```
+`forge-sed` matches line 80 only — the /tmp/forge-sed.txt write is never consumed
+("unused"), fixed-name, outside both $S and $W. This confirms round-70 lesson Gate
+("line 24 … ; line 80 writes the unused fixed temporary file") and the landed row's
+anchor "lines 24-25 and 80".
+
+## 3. Sources census on the live lane (read-only checker)
+
+Command: `cd /home/vgpnk/Projects/shokunin/kumitate-shokunin && node scripts/sources-check.mjs`
+(scripts/sources-check.mjs header: "Reads only corpus/SOURCES.md and direct
+corpus/knowledge/*.md entries. It does not use the network or modify the live tree.")
+Observed output (verbatim):
+```
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S028 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=156 tiers=A:133,B:15,C:8 status=queued:13,mined:124,rejected:19 entries_with_source=23 legacy=38)
+exit=0
+```
+The landed S217 row passes the census (no E01/E11/other finding names S217). The two
+USED_BY_ASYMMETRY warnings are pre-existing, concern S028/S124, and are outside this
+seat's scope; reported verbatim.
+
+## 4. Draft row well-formedness
+
+Command:
+```
+awk -F'|' '{print "NF=" NF}' .ufo/waves/round-70/build/K70ScribeSourceRow/row-S217-draft.txt
+sha256sum .ufo/waves/round-70/build/K70ScribeSourceRow/row-S217-draft.txt
+echo "W=\"$LANE/.ufo/waves/round-69/controls\" printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt" | wc -w
+```
+Observed:
+```
+NF=13
+4130d0757b4f39ddd713890e561a1a41bc0346aa192cb3afad020ece53237053  .ufo/waves/round-70/build/K70ScribeSourceRow/row-S217-draft.txt
+12
+```
+NF=13 = 11 cells (no pipe-splitting); Gate quote is 12 words (limit 25).

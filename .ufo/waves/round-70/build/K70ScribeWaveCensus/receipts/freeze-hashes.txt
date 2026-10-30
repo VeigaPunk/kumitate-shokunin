@@ -1,0 +1,17 @@
+# Frozen-artifact provenance (seat K70ScribeWaveCensus)
+# host: 2026-10-30T12:32:14-03:00
+
+$ sha1sum $LANE/.ufo/waves/round-70/plan.md
+56ba28076fb3de255d34a354c9855a248ea97945  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/plan.md
+
+$ git -C $LANE hash-object .ufo/waves/round-70/plan.md
+65332006bea147e8750ed76d0f771633608a4f4e
+
+$ git -C $LANE log --format='%H %s' -1 -- .ufo/waves/round-70/plan.md
+3dbe7e6e2616423d55f0ea2bbcf8fb32fe7bda6a round-70: freeze replay isolation claim and negative baseline
+
+$ git -C $LANE cat-file -p HEAD:.ufo/waves/round-70/plan.md | sha1sum
+56ba28076fb3de255d34a354c9855a248ea97945  -
+
+# NOTE: ticket-frozen plan id 3dbe7e6e2616423d55f0ea2bbcf8fb32fe7bda6a is the FREEZE COMMIT id, not a content hash.
+# Working-tree plan.md is byte-identical to the frozen commit's blob (both sha1 56ba28076fb3de255d34a354c9855a248ea97945). Frozen bytes unchanged by this seat.

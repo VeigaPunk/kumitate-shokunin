@@ -1,0 +1,280 @@
+HEADER_MODES_PROBE tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeHeaderModes/calibration-bad-header.mjs
+mode=mechanism-only tag=calibration-bad-r1 node=v24.21.0 started=2026-10-30T15:33:57.837Z
+tool_sha256=4b55c1ce370b26fbb48198b129a9a0859644e2e9991b10fc226ab42a678d1370
+HM-S00 PASS kind=selftest expect=exit 0 + CONTROL_REPLAY_SELFTEST: PASS note=
+  argv: --selftest
+  observed: {"status":0,"selftestLine":true,"stderr":""}
+HM-V01 MISS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt 63B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/valid-c1-donothing-vndBJQ/out.txt --work $RUN/valid-c1-donothing-vndBJQ/work
+  observed: {"status":0,"outExists":true,"label":false,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V02 MISS kind=valid-pair expect=exit 0; out has LEDGER69_UNMET + CONTROL-PASS autoledger; work reclaimed; no stray files note=receipt 65B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoledger --out $RUN/valid-c1-autoledger-AtY76O/out.txt --work $RUN/valid-c1-autoledger-AtY76O/work
+  observed: {"status":0,"outExists":true,"label":false,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V03 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS donothing; work reclaimed; no stray files note=receipt 63B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode donothing --out $RUN/valid-c2-donothing-yFaGkY/out.txt --work $RUN/valid-c2-donothing-yFaGkY/work
+  observed: {"status":0,"outExists":true,"label":false,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V04 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS autoorigin; work reclaimed; no stray files note=receipt 65B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoorigin --out $RUN/valid-c2-autoorigin-KStMTu/out.txt --work $RUN/valid-c2-autoorigin-KStMTu/work
+  observed: {"status":0,"outExists":true,"label":false,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-V05 MISS kind=valid-pair expect=exit 0; out has DEPREC69_UNMET + CONTROL-PASS forgecapture; work reclaimed; no stray files note=receipt 69B
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode forgecapture --out $RUN/valid-c2-forgecapture-kzLZKr/out.txt --work $RUN/valid-c2-forgecapture-kzLZKr/work
+  observed: {"status":0,"outExists":true,"label":false,"controlPass":true,"workLeftovers":[],"stray":[]}
+HM-I001 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode donothing --out $RUN/inv-001-guZsGw/out.txt --work $RUN/inv-001-guZsGw/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I002 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoledger --out $RUN/inv-002-VYyJri/out.txt --work $RUN/inv-002-VYyJri/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I003 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode autoorigin --out $RUN/inv-003-LNlyLz/out.txt --work $RUN/inv-003-LNlyLz/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I004 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode forgecapture --out $RUN/inv-004-uEu281/out.txt --work $RUN/inv-004-uEu281/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I005 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode junk --out $RUN/inv-005-gmNpT7/out.txt --work $RUN/inv-005-gmNpT7/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I006 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode  --out $RUN/inv-006-co9AsB/out.txt --work $RUN/inv-006-co9AsB/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I007 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode DONOTHING --out $RUN/inv-007-7LO5Bd/out.txt --work $RUN/inv-007-7LO5Bd/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I008 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="junk" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family junk --mode Autoledger --out $RUN/inv-008-lfg9Gy/out.txt --work $RUN/inv-008-lfg9Gy/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I009 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode donothing --out $RUN/inv-009-NqotOa/out.txt --work $RUN/inv-009-NqotOa/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I010 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoledger --out $RUN/inv-010-5ul0W5/out.txt --work $RUN/inv-010-5ul0W5/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I011 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode autoorigin --out $RUN/inv-011-Gr3kLp/out.txt --work $RUN/inv-011-Gr3kLp/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I012 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode forgecapture --out $RUN/inv-012-goHPD7/out.txt --work $RUN/inv-012-goHPD7/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I013 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode junk --out $RUN/inv-013-V8m9FN/out.txt --work $RUN/inv-013-V8m9FN/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I014 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode  --out $RUN/inv-014-0mk7H9/out.txt --work $RUN/inv-014-0mk7H9/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I015 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode DONOTHING --out $RUN/inv-015-MmC3Es/out.txt --work $RUN/inv-015-MmC3Es/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I016 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C1 --mode Autoledger --out $RUN/inv-016-J9460d/out.txt --work $RUN/inv-016-J9460d/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I017 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode donothing --out $RUN/inv-017-CUdV3L/out.txt --work $RUN/inv-017-CUdV3L/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I018 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoledger --out $RUN/inv-018-iqfLWl/out.txt --work $RUN/inv-018-iqfLWl/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I019 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode autoorigin --out $RUN/inv-019-jKKQ6y/out.txt --work $RUN/inv-019-jKKQ6y/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I020 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode forgecapture --out $RUN/inv-020-5YTZju/out.txt --work $RUN/inv-020-5YTZju/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I021 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode junk --out $RUN/inv-021-TahGHF/out.txt --work $RUN/inv-021-TahGHF/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I022 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode  --out $RUN/inv-022-Gx3AaA/out.txt --work $RUN/inv-022-Gx3AaA/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I023 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode DONOTHING --out $RUN/inv-023-3JMi8C/out.txt --work $RUN/inv-023-3JMi8C/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I024 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c3" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c3 --mode Autoledger --out $RUN/inv-024-nQik3o/out.txt --work $RUN/inv-024-nQik3o/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I025 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode donothing --out $RUN/inv-025-ZWim2G/out.txt --work $RUN/inv-025-ZWim2G/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I026 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoledger --out $RUN/inv-026-12zkwj/out.txt --work $RUN/inv-026-12zkwj/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I027 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode autoorigin --out $RUN/inv-027-9fivKA/out.txt --work $RUN/inv-027-9fivKA/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I028 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode forgecapture --out $RUN/inv-028-Y45iTh/out.txt --work $RUN/inv-028-Y45iTh/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I029 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode junk --out $RUN/inv-029-mJ6aSU/out.txt --work $RUN/inv-029-mJ6aSU/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I030 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode  --out $RUN/inv-030-HKRejG/out.txt --work $RUN/inv-030-HKRejG/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I031 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode DONOTHING --out $RUN/inv-031-599Owp/out.txt --work $RUN/inv-031-599Owp/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I032 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  --mode Autoledger --out $RUN/inv-032-YnJxgR/out.txt --work $RUN/inv-032-YnJxgR/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I033 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode donothing --out $RUN/inv-033-h5LEzV/out.txt --work $RUN/inv-033-h5LEzV/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I034 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoledger --out $RUN/inv-034-0Vis0T/out.txt --work $RUN/inv-034-0Vis0T/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I035 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode autoorigin --out $RUN/inv-035-zLmov3/out.txt --work $RUN/inv-035-zLmov3/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I036 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode forgecapture --out $RUN/inv-036-gicOgZ/out.txt --work $RUN/inv-036-gicOgZ/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I037 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode junk --out $RUN/inv-037-l2xk1U/out.txt --work $RUN/inv-037-l2xk1U/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I038 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode  --out $RUN/inv-038-Vwpg0X/out.txt --work $RUN/inv-038-Vwpg0X/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I039 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode DONOTHING --out $RUN/inv-039-xmfaoh/out.txt --work $RUN/inv-039-xmfaoh/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I040 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1 " mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1  --mode Autoledger --out $RUN/inv-040-NCJ02p/out.txt --work $RUN/inv-040-NCJ02p/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I041 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode donothing --out $RUN/inv-041-RoAVtq/out.txt --work $RUN/inv-041-RoAVtq/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I042 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoledger --out $RUN/inv-042-ulpqFN/out.txt --work $RUN/inv-042-ulpqFN/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I043 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode autoorigin --out $RUN/inv-043-pDrsyk/out.txt --work $RUN/inv-043-pDrsyk/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I044 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode forgecapture --out $RUN/inv-044-x63lRk/out.txt --work $RUN/inv-044-x63lRk/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I045 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode junk --out $RUN/inv-045-yQf5HV/out.txt --work $RUN/inv-045-yQf5HV/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I046 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode  --out $RUN/inv-046-kCbP7l/out.txt --work $RUN/inv-046-kCbP7l/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I047 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode DONOTHING --out $RUN/inv-047-p9mrod/out.txt --work $RUN/inv-047-p9mrod/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I048 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family=" c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family  c1 --mode Autoledger --out $RUN/inv-048-uWxQOs/out.txt --work $RUN/inv-048-uWxQOs/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I049 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode donothing --out $RUN/inv-049-R4l9Xq/out.txt --work $RUN/inv-049-R4l9Xq/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I050 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoledger --out $RUN/inv-050-YeEhkc/out.txt --work $RUN/inv-050-YeEhkc/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I051 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode autoorigin --out $RUN/inv-051-u7pLBD/out.txt --work $RUN/inv-051-u7pLBD/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I052 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode forgecapture --out $RUN/inv-052-2rU9JV/out.txt --work $RUN/inv-052-2rU9JV/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I053 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode junk --out $RUN/inv-053-ve6Mah/out.txt --work $RUN/inv-053-ve6Mah/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I054 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode  --out $RUN/inv-054-YG11NX/out.txt --work $RUN/inv-054-YG11NX/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I055 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode DONOTHING --out $RUN/inv-055-QotZrA/out.txt --work $RUN/inv-055-QotZrA/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I056 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c11" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c11 --mode Autoledger --out $RUN/inv-056-skbtkN/out.txt --work $RUN/inv-056-skbtkN/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I057 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="donothing"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode donothing --out $RUN/inv-057-7Cq5Js/out.txt --work $RUN/inv-057-7Cq5Js/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I058 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoledger --out $RUN/inv-058-bMHEom/out.txt --work $RUN/inv-058-bMHEom/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I059 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode autoorigin --out $RUN/inv-059-oYpIv1/out.txt --work $RUN/inv-059-oYpIv1/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I060 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode forgecapture --out $RUN/inv-060-3GtrHa/out.txt --work $RUN/inv-060-3GtrHa/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I061 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode junk --out $RUN/inv-061-QCtBoG/out.txt --work $RUN/inv-061-QCtBoG/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I062 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode  --out $RUN/inv-062-zFOtwO/out.txt --work $RUN/inv-062-zFOtwO/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I063 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode DONOTHING --out $RUN/inv-063-2UeUum/out.txt --work $RUN/inv-063-2UeUum/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I064 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="C2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family C2 --mode Autoledger --out $RUN/inv-064-1ErPMM/out.txt --work $RUN/inv-064-1ErPMM/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I065 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="autoorigin"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/inv-065-A1g66B/out.txt --work $RUN/inv-065-A1g66B/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I066 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="forgecapture"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode forgecapture --out $RUN/inv-066-Fpx1kv/out.txt --work $RUN/inv-066-Fpx1kv/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I067 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode junk --out $RUN/inv-067-dvUHpR/out.txt --work $RUN/inv-067-dvUHpR/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I068 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode  --out $RUN/inv-068-iyx8UP/out.txt --work $RUN/inv-068-iyx8UP/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I069 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode DONOTHING --out $RUN/inv-069-ERoJQb/out.txt --work $RUN/inv-069-ERoJQb/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I070 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c1" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode Autoledger --out $RUN/inv-070-Kxe84x/out.txt --work $RUN/inv-070-Kxe84x/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I071 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode autoledger --out $RUN/inv-071-VbFPVJ/out.txt --work $RUN/inv-071-VbFPVJ/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I072 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="junk"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode junk --out $RUN/inv-072-9EsFe7/out.txt --work $RUN/inv-072-9EsFe7/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I073 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode=""
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode  --out $RUN/inv-073-CKdisq/out.txt --work $RUN/inv-073-CKdisq/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I074 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="DONOTHING"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode DONOTHING --out $RUN/inv-074-IAKHDN/out.txt --work $RUN/inv-074-IAKHDN/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-I075 MISS kind=invalid-pair expect=exit 64; no out created; work untouched; usage diagnostic emitted note=family="c2" mode="Autoledger"
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c2 --mode Autoledger --out $RUN/inv-075-x0eO7E/out.txt --work $RUN/inv-075-x0eO7E/work
+  observed: {"status":0,"outCreated":true,"workLeftovers":[],"diag":true,"stderr":""}
+HM-U01 MISS kind=structural expect=exit 64 (bare invocation) note=bare invocation
+  argv: 
+  observed: {"status":1,"outCreated":false,"stderr":"node:fs:2482\n    return binding.writeFileUtf8(\n                   ^\n\nError: ENOENT: no such file or directory, open ''\n    at Object.writeFileSync (node:fs:2482"}
+HM-U02 MISS kind=structural expect=exit 64 (missing --family) note=missing --family
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --mode donothing --out $RUN/struct-HM-U02-iOGro2/out.txt --work $RUN/struct-HM-U02-iOGro2/work
+  observed: {"status":0,"outCreated":true,"stderr":""}
+HM-U03 MISS kind=structural expect=exit 64 (missing --mode) note=missing --mode
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --out $RUN/struct-HM-U03-6PgtPn/out.txt --work $RUN/struct-HM-U03-6PgtPn/work
+  observed: {"status":0,"outCreated":true,"stderr":""}
+HM-U04 MISS kind=structural expect=exit 64 (missing --out) note=missing --out
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --work $RUN/struct-HM-U04-NAAlEO/work
+  observed: {"status":1,"outCreated":false,"stderr":"node:fs:2482\n    return binding.writeFileUtf8(\n                   ^\n\nError: ENOENT: no such file or directory, open ''\n    at Object.writeFileSync (node:fs:2482"}
+HM-U05 MISS kind=structural expect=exit 64 (missing --work) note=missing --work
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U05-GD69qm/out.txt
+  observed: {"status":0,"outCreated":true,"stderr":""}
+HM-U06 MISS kind=structural expect=exit 64 (unknown flag) note=unknown flag
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/struct-HM-U06-212nj2/out.txt --work $RUN/struct-HM-U06-212nj2/work --frobnicate x
+  observed: {"status":0,"outCreated":true,"stderr":""}
+HM-X1 MISS kind=exclusive-out expect=valid pair vs pre-existing out: nonzero exit, sentinel unchanged note=exclusive creation
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/excl-valid-7xE5zf/out.txt --work $RUN/excl-valid-7xE5zf/work
+  observed: {"status":0,"intact":false,"stderr":""}
+HM-X2 MISS kind=exclusive-out-invalid expect=invalid pair vs pre-existing out: exit 64, sentinel unchanged note=refusal before output
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode autoorigin --out $RUN/excl-invalid-6rHYUk/out.txt --work $RUN/excl-invalid-6rHYUk/work
+  observed: {"status":0,"intact":false,"stderr":""}
+HM-N1 INFO kind=informational expect=(none — contract unspecified) note=duplicated --family (last-wins vs refuse unspecified)
+  argv: --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --family c1 --mode donothing --out $RUN/info-HM-N1-1JcPwP/out.txt --work $RUN/info-HM-N1-1JcPwP/work --family c2
+  observed: {"status":0,"stdout":"CONTROL-PASS donothing\n","stderr":""}
+HM-N2 INFO kind=informational expect=(none — contract unspecified) note=--selftest plus extra args
+  argv: --selftest --family c1
+  observed: {"status":0,"stdout":"CONTROL_REPLAY_SELFTEST: PASS\n","stderr":""}
+HM-N3 INFO kind=informational expect=(none — contract unspecified) note=equals-form --family=c1
+  argv: --lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin --family=c1 --mode=donothing --out=$RUN/info-HM-N3-9ml1dS/out.txt --work=$RUN/info-HM-N3-9ml1dS/work
+  observed: {"status":1,"stdout":"","stderr":"node:fs:2482\n    return binding.writeFileUtf8(\n                   ^\n\nError: ENOENT: no such file or directory, open ''\n    at Object.writeFileSync (node:fs:2482"}
+HEADER_MODES_UNMET held=1/89 mode=mechanism-only tag=calibration-bad-r1

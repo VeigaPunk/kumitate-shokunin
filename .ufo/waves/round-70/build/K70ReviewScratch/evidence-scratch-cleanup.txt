@@ -1,0 +1,70 @@
+# K70ReviewScratch — observed evidence (round-70 C1, axes: scratch-root mapping / cleanup-finally / no hardcoded temp dir)
+
+All runs executed against the SYNTHETIC pinned-source fixture built by
+`build/K70ExecFixtureTests/fixtures/make-fixture.mjs` (fixture lane = git repo inside this
+seat's scratch; `git -C FIXTURE` only, show-toplevel asserted by the fixture builder).
+Fixture lane rev: 7996a7ab8ad521d7ff7bdb6082623fec7dbf53fe.
+Originals `c1-controls.sh` / `c2-controls.sh` were READ, never executed.
+
+## E1 — happy path c1 donothing (mock candidate)
+
+Command:
+```
+node build/K70ExecFixtureTests/mock/control-replay.mjs \
+  --lane /fast/scratch/hyaku/kumitate-r70/K70ReviewScratch/fixture \
+  --family c1 --mode donothing \
+  --out .../out-c1.txt --work .../work-c1
+```
+Observed: EXIT=0; `ls -A work-c1` → EMPTY (child removed); out-c1.txt first lines:
+`LEDGER69_UNMET held=2/10 … live=no-live(synthetic-fixture)` … `CONTROL-PASS donothing`; receipt
+line `scratch=/fast/scratch/hyaku/kumitate-r70/K70ReviewScratch/work-c1/replay-Gks6H2/s`
+proves mkdtemp-child mapping under the supplied --work root (receipt copied to
+`build/K70ReviewScratch/out-c1.txt`).
+
+## E2 — c2 donothing with MOCK_KEEP_PRIVATE=1 (retained child inspection)
+
+Command: same shape, `--family c2 --mode donothing`, env `MOCK_KEEP_PRIVATE=1`,
+work `.../work-c2`. Observed: EXIT=0; retained child `work-c2/replay-0p4f5B/`.
+In `replay-0p4f5B/private-controls.sh`:
+- `grep -n "r70synth-forge-sed\|/tmp" private-controls.sh` → NO match (fixed temporary write removed).
+- Substitutions exactly once each:
+  `LANE=…/fixture`, `PROBE=…/fixture/.ufo/waves/round-69/probe/deprec69-probe.mjs`,
+  `W=…/replay-0p4f5B/w`, `S=…/replay-0p4f5B/s`.
+Receipt copied to `build/K70ReviewScratch/out-c2.txt`.
+
+## E3 — failure path: scratch child leaks (no finally)
+
+Command (pre-created accessible work root; restrictive umask so the mkdtemp child lands mode 000):
+```
+mkdir -p .../work-leak2
+bash -c 'umask 0777; node build/K70ExecFixtureTests/mock/control-replay.mjs \
+  --lane .../fixture --family c1 --mode donothing \
+  --out .../out-leak2.txt --work .../work-leak2'
+```
+Observed: uncaught `Error: EACCES … syscall: open … work-leak2/replay-MjNpyb/private-controls.sh`
+thrown at `mock/control-replay.mjs:118`; process EXIT=1; after exit
+`ls -A work-leak2` → `replay-MjNpyb` (mode `d---------`) STILL PRESENT.
+Step-7 cleanup (`fs.rmSync(child)`, line 142) never ran: it is reached only by falling through
+the happy path. The probe invariant R3–R7 `fs.readdirSync(work).length===0` would fail for this
+work root.
+
+## E4 — static early-exit leak sites (read-only inspection of mock lines)
+
+- line 84: `function fail(code,msg){ … process.exit(code); }`
+- line 90: child creation `fs.mkdtempSync(path.join(workRoot,'replay-'))`
+- line 116: `fail(70, …)` on substitution count ≠ 1 — child already created → leak
+- line 134: `catch { fail(70, 'CONTROL_REPLAY_ERROR writing out: …') }` — child leak
+- line 142: cleanup gated by `MUTANT!=='scratch-leave' && !process.env.MOCK_KEEP_PRIVATE`
+- No try/finally anywhere in the file (grep `finally` → no match).
+
+## E5 — real frozen line 80 vs candidate needles (read-only)
+
+- Real `.ufo/waves/round-69/probe/c2-controls.sh:80`:
+  `printf '%s\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt`
+- Mock needle `r70synth-forge-sed.txt` matches only the SYNTH fixture line
+  (`fixtures/synth-controls/c2-controls.sh:28`, `> /tmp/r70synth-forge-sed.txt`); mock pins
+  (398f01d7/fa8af9db) are the synth digests, so the mock refuses real frozen bytes (exit 65) by design.
+- `build/K70ExecTransform/transform.mjs` targets the real line
+  (regex `> \/tmp\/forge-sed\.txt$`) and its verify() gate requires 0 remnants of `/tmp/`,
+  `HYAKU_SCRATCH`, `kumitate-r69`, exactly 1 `mktemp -d "${R70_WORK}/…"`, exactly 1 `trap … EXIT`
+  (cleanup-on-exit in the generated private script).

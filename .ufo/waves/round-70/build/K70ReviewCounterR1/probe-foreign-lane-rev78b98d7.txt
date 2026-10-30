@@ -1,0 +1,20 @@
+# fixture setup
+git clone --no-checkout /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1/foreign-lane
+git -C <fixture> rev-parse --show-toplevel -> /fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1/foreign-lane   (verified equals fixture)
+git -C <fixture> log --oneline -1 -> 1e00955a round-70: record opened replay source and validated wave handoff
+
+# command (full-history foreign lane, base rev)
+TMPDIR=/fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1 node .ufo/waves/round-70/probe/replay70-probe.mjs /fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1/foreign-lane 78b98d762ccf3e3a0961f94c4042eaabd2bcb706
+# observed output
+REPLAY70_UNMET held=2/10 checks=10 rev=78b98d762ccf3e3a0961f94c4042eaabd2bcb706 rule=R70 live=no-live(vacuous-declared)
+R1 PASS frozen scripts unchanged
+R2 MISS isolated selftest
+R3 MISS family=c1 mode=donothing exit=1 receipt=0 preserved=true
+R4 MISS family=c1 mode=autoledger exit=1 receipt=0 preserved=true
+R5 MISS family=c2 mode=donothing exit=1 receipt=0 preserved=true
+R6 MISS family=c2 mode=autoorigin exit=1 receipt=0 preserved=true
+R7 MISS family=c2 mode=forgecapture exit=1 receipt=0 preserved=true
+R8 MISS invalid args usage
+R9 PASS existing output preserved
+R10 MISS registration triad
+PROBE_EXIT=1

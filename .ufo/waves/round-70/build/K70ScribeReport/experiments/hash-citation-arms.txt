@@ -1,0 +1,14 @@
+### r69 fleet report vs its own receipts (read-only)
+REPORT_RECEIPT: DRIFT HASH_ORPHAN,HASH_FOREIGN (round=69 rev=8f2898409c54612e3400189ef7c6e8227a290388 bytes=11409 report_sha256=683e64b19fb9)
+HASH_ORPHAN ab5915e7b9671e8a1bd375cc6c2748b78dc91629
+HASH_FOREIGN e1968d1b283d0e452c3a0a6a51448d58184710b7
+exit=1
+
+### same report at --rev HEAD
+REPORT_RECEIPT: DRIFT HASH_FOREIGN (round=69 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=11409 report_sha256=683e64b19fb9)
+HASH_FOREIGN e1968d1b283d0e452c3a0a6a51448d58184710b7
+exit=1
+
+### scratch copy with the word 'fleet' added to the fleet-commit line
+REPORT_RECEIPT: CLEAN (round=69 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=11415 report_sha256=8d8fafa0e8f9)
+exit=0

@@ -1,0 +1,28 @@
+fixture-controls: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/live/lane-sim/.ufo/waves/round-69/controls
+initial listing:  c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt 
+
+=== T1: --work = symlink alias into fixture controls dir (slow probe, observe in-flight)
+in-flight listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt control-replay-r6zBL8   (candidate pid=4080024 alive=yes)
+T1 exit=0
+T1 out tail: CONTROL-PASS donothing
+post-run listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt 
+
+=== T2: SIGKILL the candidate mid-run -> leftover inside fixture controls dir
+T2 candidate killed (rc observed by shell=137)
+post-kill listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt control-replay-Nu0JxM 
+leftover: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/live/lane-sim/.ufo/waves/round-69/controls/control-replay-Nu0JxM
+leftover tree: . ./private-c1-donothing.sh ./receipts ./receipts/c1-donothing.txt ./scratch ./scratch/c1-donothing ./tmp 
+leftover removed by driver; listing now: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt 
+
+=== T3: --work = REAL path of the fixture controls dir (no symlink needed)
+in-flight listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt control-replay-QvgJIX 
+T3 exit=0 out tail: CONTROL-PASS donothing
+post-run listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt 
+
+=== T4: --out = symlink (existing target) -> must refuse via wx
+T4 exit=73 (want 73) stderr: refusing to overwrite existing output: /fast/scratch/hyaku/kumitate-r70/K70AttackWorkSymlink/live/t4.out.link
+victim content after: victim\n
+
+=== T5: baseline sanity — plain empty real work dir
+T5 exit=0 out tail: CONTROL-PASS donothing t5work listing: 0 files
+final controls listing: c1-autoledger.txt c1-donothing.txt c2-autoorigin.txt c2-donothing.txt c2-forgecapture.txt 

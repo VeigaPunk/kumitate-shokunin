@@ -1,0 +1,10 @@
+[driver] === micro-demo: Node SIGTERM semantics (finally does not run; child orphaned) ===
+[driver] micro before kill: ["3250120 3249993 3249993 Sl   MainThread      /home/vgpnk/.local/share/fnm/node-versions/v24.21.0/installation/bin/node /fast/scratch/hyaku/kumitate-r70/K70AttackSignals/micro.mjs","3250244 3250120 3249993 S    sleep           sleep 60"]
+[driver] micro finally marker exists: false (expect false)
+[driver] orphaned 'sleep 60' still alive after parent death: ["3250244    1494 3249993 S    sleep           sleep 60"]
+[driver] === scenario 0: happy path (baseline — literal impl passes when uninterrupted) ===
+[driver] --- happy
+[driver] exit=0 signal=null killedAt=null
+[driver] outExists=true outSize=213 outHasPass=true
+[driver] workEntries=[] privateLeftovers=[]
+[driver] === scenario A: SIGTERM while probe child runs => orphan + unreclaimed work + no out ===

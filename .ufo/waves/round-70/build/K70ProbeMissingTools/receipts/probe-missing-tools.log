@@ -1,0 +1,33 @@
+fixture show-toplevel: /fast/scratch/hyaku/kumitate-r70/K70ProbeMissingTools/fx (expected /fast/scratch/hyaku/kumitate-r70/K70ProbeMissingTools/fx)
+fixture frozen-c1.sh sha256=f9b0e19d17114323f3668419f3835569c8a3564bb230114b02481fe5b2dba6cf
+CASE B-nc-donothing: exit=0 err=null out=231B unmet=true pass=true reclaimed=true leak=false
+CASE B-nc-autoledger: exit=0 err=null out=233B unmet=true pass=true reclaimed=true leak=false
+CASE B-nc-invalid-args: exit=64 (expect 64)
+CASE B-miss-bash: exit=70 err=null out=none unmet=false pass=false reclaimed=true leak=false
+CASE B-miss-git: exit=70 err=null out=none unmet=false pass=false reclaimed=true leak=false
+CASE B-miss-node: exit=null err=ENOENT out=none unmet=false pass=false reclaimed=true leak=false
+CASE B-miss-tar: exit=0 err=null out=231B unmet=true pass=true reclaimed=true leak=false
+CASE B-miss-bash-existing-out: exit=70 err=null out=17B unmet=false pass=false reclaimed=true leak=false
+CASE B-naive-miss-bash: exit=0 err=null out=36B unmet=false pass=false reclaimed=true leak=false
+CASE B-naive-miss-git: exit=0 err=null out=31B unmet=false pass=false reclaimed=true leak=false
+CASE A-nc-full: exit=0 extracted=true dest=["controls"]
+CASE A-miss-tar: exit=127 extracted=false dest=[]
+CASE A-miss-tar-ignoreexit: exit=0 extracted=false dest=[]
+CASE A-miss-git: exit=2 extracted=false dest=[]
+fixture frozen bytes unchanged: true
+--- verdicts ---
+HELD  B-miss-bash: exit=70 out=false reclaimed=true
+HELD  B-miss-git: exit=70 out=false reclaimed=true
+HELD  B-miss-node: exit=null out=false reclaimed=true
+HELD  B-miss-tar: exit=0 out=true
+HELD  B-nc-donothing: exit=0
+HELD  B-nc-autoledger: exit=0
+HELD  B-miss-bash-existing-out: exit=70 kept=true
+HELD  B-naive-miss-bash: exit=0 out=36B
+HELD  B-naive-miss-git: exit=0 out=31B
+HELD  A-miss-tar: exit=127 extracted=false
+HELD  A-miss-tar-ignoreexit: exit=0 extracted=false
+HELD  A-nc-full: exit=0
+HELD  A-miss-git: exit=2 extracted=false
+HELD  B-nc-invalid-args: exit=64
+PROBE_MISSING_TOOLS: ALL-AXES-HELD (14/14)

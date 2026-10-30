@@ -1,0 +1,29 @@
+# K70ProbeOutputParent edge probe — missing output parent / nonexistent work root
+node=v24.21.0 candidate=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeOutputParent/candidate-mock/control-replay.mjs
+scratch=/fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run
+lane-before c1=01efd6dde4c9 c2=679b7d9619ab controls=5
+fixture-lane toplevel verified: /fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run/fixture-lane
+fixture-lane head=4108a466d0452da429c952c07a631cc429617259
+
+## Case A: missing output parent
+PASS A.exit-nonzero expect=exit!=0 (refusal) observed=exit=73
+PASS A.no-out-created expect=no out file anywhere under missing parent observed=exists=false parentExists=false
+PASS A.no-work-child expect=no scratch child created under supplied work root observed=workEntries=[]
+PASS A.stderr-reason expect=refusal reason on stderr observed="CONTROL_REPLAY_ERROR cannot create out: ENOENT: no such file or directory, open '/fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run/A/no-parent/result.txt'"
+
+## Case B: nonexistent work root
+PASS B.exit-zero expect=exit=0 with CONTROL-PASS receipt copied out observed=exit=0
+PASS B.receipt-content expect=out carries DEPREC69_UNMET + CONTROL-PASS donothing observed=len=521
+PASS B.workroot-autocreated expect=supplied work root auto-created observed=exists=true
+PASS B.single-child-kept expect=exactly one unique child kept (MOCK_KEEP_PRIVATE) observed=["replay-7y6VGu"]
+PASS B.fixture-toplevel expect=private fixture repo toplevel inside child observed=toplevel=/fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run/B/newroot/replay-7y6VGu/s/fx
+PASS B.fixture-clean expect=fixture lane untouched by candidate run observed=status=""
+PASS B.workroot-empty-after-cleanup expect=work root empty once child removed observed=entries=[]
+
+## Case C: work root under a file component (ENOTDIR)
+PASS C.exit-nonzero expect=exit!=0 (refusal) observed=exit=1
+PASS C.no-work-created expect=nothing created under the file component observed=workExists=false
+FAIL C.partial-out-leak expect=no partial/empty out artifact survives a crash after exclusive create observed=outExists=true size=0
+PASS C.stderr-reason expect=failure surfaced on stderr observed="node:fs:1410 |   const result = binding.mkdir("
+PASS X.fixture-receipts-preserved expect=fixture seeded receipt digests unchanged observed=before=5 after=5
+PASS X.real-lane-untouched expect=real lane frozen scripts + receipts byte-identical observed=unchanged=true

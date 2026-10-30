@@ -1,0 +1,24 @@
+== E1: family=c1 vs clean1-drift2 (sibling c2 drifted); existing out
+refusing to overwrite existing output: /fast/scratch/hyaku/kumitate-r70/K70ReviewSourcePin/out-existing.txt
+exit=73
+== E2: family=c2 vs clean1-drift2 (own c2 drifted); existing out
+frozen-source-sha-mismatch: c2-controls.sh got=f3b7e7d3d5139966a4282ebcf0b53a3191a7e1f5b9ebd83de9c19aa918084d9b want=679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4
+usage:
+  control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR
+  control-replay.mjs --selftest
+modes: c1: donothing|autoledger; c2: donothing|autoorigin|forgecapture
+exit=65
+== E3: family=c1 vs drift1 (own c1 byte-flip); existing out
+frozen-source-sha-mismatch: c1-controls.sh got=de8cc0f1bf9a048e07ce717edced7953c5cfd4ef71b151004477313f4951177b want=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12
+usage:
+  control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR
+  control-replay.mjs --selftest
+modes: c1: donothing|autoledger; c2: donothing|autoorigin|forgecapture
+exit=65
+== E4: family=c1 vs crlf1-clean2 (own c1 CRLF); existing out
+frozen-source-sha-mismatch: c1-controls.sh got=12fc2005a25baedb17e3ed7b46f9adda1e6a16307e47328106169899c425de01 want=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12
+usage:
+  control-replay.mjs --lane DIR --family c1|c2 --mode MODE --out NEWFILE --work DIR
+  control-replay.mjs --selftest
+modes: c1: donothing|autoledger; c2: donothing|autoorigin|forgecapture
+exit=65

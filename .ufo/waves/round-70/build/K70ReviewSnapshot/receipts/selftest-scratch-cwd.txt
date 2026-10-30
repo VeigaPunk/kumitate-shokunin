@@ -1,0 +1,12 @@
+## cmd: TMPDIR=<scratch> node build/K70ExecRunner/scripts/control-replay.mjs --selftest   (cwd=scratch, lane unresolvable)
+CONTROL_REPLAY_SELFTEST: PASS cases=9 ok=9
+ST01-no-args expect=64 observed=64 ok
+ST02-bad-family expect=64 observed=64 ok
+ST03-bad-mode expect=64 observed=64 ok
+ST04-selftest-mixed expect=64 observed=64 ok
+ST05-tamper-refused expect=SKIP observed=SKIP ok SKIP: frozen sources not resolvable
+ST06-transform-once expect=SKIP observed=SKIP ok SKIP: frozen sources not resolvable
+ST07-out-exclusive expect=SKIP observed=SKIP ok SKIP: frozen sources not resolvable
+ST08-private-syntax expect=SKIP observed=SKIP ok SKIP: frozen sources not resolvable
+ST09-c2-transform-static expect=SKIP observed=SKIP ok SKIP: frozen sources not resolvable
+exit=0

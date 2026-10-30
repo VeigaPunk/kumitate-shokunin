@@ -1,0 +1,37 @@
+=== Phase A: MECHANISM (node fs, synthetic) ===
+A1 ro-files-only rm=ok workEmpty=GONE
+A2 ro-dir rm=THROW EACCES op=rm :: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs' residual=["fx-ro","receipt.txt"]
+A2 receipt-intact-after-throw=true conforming-rm-reclaims=true
+A2b ro-dir maxRetries=3 rm=THROW EACCES
+=== Phase B: CANDIDATE private copies ===
+b-naive-baseline: exit=0 workEmpty=true outLen=45 outHasReceipt=true
+b-fixed-baseline: exit=0 workEmpty=true outLen=45 outHasReceipt=true
+b-mock-baseline: exit=65 workEmpty=true outLen=null outHasReceipt=null
+  stderr-tail: CONTROL_REPLAY_SOURCE_DRIFT .ufo/waves/round-69/probe/c1-controls.sh sha256=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12 expected=398f01d71fe4fd756c43068d092e9ff4728f93627ed96e4d70e72d9dc0e1aab2
+b-mock-baseline-driftaccept: exit=0 workEmpty=true outLen=1045 outHasReceipt=true
+e-naive-injected: exit=1 workEmpty=false outLen=45 outHasReceipt=true
+  stderr-tail:  | Node.js v24.21.0
+e-fixed-injected: exit=1 workEmpty=false outLen=45 outHasReceipt=true
+  stderr-tail:  | Node.js v24.21.0
+e-mock-injected-driftaccept: exit=70 workEmpty=false outLen=1045 outHasReceipt=true
+  stderr-tail: CONTROL_REPLAY_CLEANUP_FAIL /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC'
+=== Phase C: CONFORMING cleanup on an edge tree (mechanism) ===
+C1 conforming-rm on ro-dir tree: ok workEmpty=GONE
+=== Phase D: read-only --work root (secondary finding) ===
+D1 ro-work-root: exit=1 outCreated=true outLen=0 err="Error: EACCES: permission denied, mkdtemp '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/d-ro-work/c1-donothing-XXXXXX'"
+PROBE_CLEANUP_PERMISSIONS EDGE-NAMED findings=15
+A1 PASS MECHANISM-rofiles :: read-only files in writable dirs clean fine: rm=ok workEmpty=GONE
+A2 EDGE MECHANISM-rodirs :: read-only dir tree: rmSync(recursive,force) THROWS EACCES op=rm :: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/a2-rodirs'; residual=["fx-ro","receipt.txt"]; receipt copied out before cleanup survives=true; conforming chmod+rm reclaims=true
+A2b PASS MECHANISM-maxRetries :: maxRetries=3 retryDelay=10 still THROWS EACCES on read-only dir (EACCES not retryable)
+MOCK-TIMEOUT EDGE OBSERVATION-mock-timeout :: mock spawnSync timeout hardcoded 120000ms; measured private c1 donothing control wall 6m33s (user 42m, fleet-loaded host) > 120s and > the frozen probe per-run timeout 300000ms — unmodified mock truncates at 120s (SIGTERM, empty receipt, exit 1), the frozen probe budget is at risk under load, and this probe first hit its own 300s spawn budget on the baseline-slow run (exit=null) before being raised to 900s; -slow private variants raise mock side to 600s for the edge demonstration, labeled
+FROZEN-TMPDIR EDGE OBSERVATION-frozen-tmpdir :: frozen c1/c2 controls hardcode TMPDIR=$HYAKU_SCRATCH/kumitate-r69 for the r69 probe; r69 probe mkdtemps directly under TMPDIR (ENOENT if absent); at r70 with S substituted to a private child nothing creates it — replay needs the dir to pre-exist or the tool to mkdir it
+MOCK-PIN EDGE OBSERVATION-pin-drift :: unmodified sibling mock refuses lane frozen bytes: CONTROL_REPLAY_SOURCE_DRIFT exit=65 before any cleanup (EXPECTED_PINS stale vs lane c1-controls.sh sha256 01efd6dd...); mock cleanup path exercised via its designed MOCK_MUTANT=drift-accept hook only, labeled
+B-NAIVE-BASELINE PASS CANDIDATE-BASELINE :: exit=0 workEmpty=true outLen=45 outHasReceipt=true stderr=""
+B-FIXED-BASELINE PASS CANDIDATE-BASELINE :: exit=0 workEmpty=true outLen=45 outHasReceipt=true stderr=""
+B-MOCK-BASELINE EDGE CANDIDATE-BASELINE :: exit=65 workEmpty=true outLen=null outHasReceipt=null stderr="CONTROL_REPLAY_SOURCE_DRIFT .ufo/waves/round-69/probe/c1-controls.sh sha256=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12 expected=398f01d71fe4fd756c43068d092e9ff4728f93627ed96e4d70e72d9dc0e1aab2"
+B-MOCK-BASELINE-DRIFTACCEPT PASS CANDIDATE-BASELINE :: exit=0 workEmpty=true outLen=1045 outHasReceipt=true stderr=""
+E-NAIVE-INJECTED PASS CANDIDATE-EDGE :: exit=1 workEmpty=false outLen=45 outHasReceipt=true stderr=" | Node.js v24.21.0"
+E-FIXED-INJECTED PASS CANDIDATE-EDGE :: exit=1 workEmpty=false outLen=45 outHasReceipt=true stderr=" | Node.js v24.21.0"
+E-MOCK-INJECTED-DRIFTACCEPT PASS CANDIDATE-EDGE :: exit=70 workEmpty=false outLen=1045 outHasReceipt=true stderr="CONTROL_REPLAY_CLEANUP_FAIL /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC: EACCES, Permission denied: /fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/work-e-mock-injected-driftaccept/replay-kYbvYC'"
+C1 PASS MECHANISM-conforming :: chmod u+rwX walk (lstat, no symlink follow) + rmSync reclaims read-only dir tree
+D1 PASS MECHANISM-ro-work-root :: read-only --work root: mkdtemp THROWS Error: EACCES: permission denied, mkdtemp '/fast/scratch/hyaku/kumitate-r70/K70ProbeCleanupPermissions/phaseA-KsOLu5/d-ro-work/c1-donothing-XXXXXX'; exit=1; empty exclusive --out left behind=true(len=0)

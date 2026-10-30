@@ -1,0 +1,20 @@
+# fixture mutation (scratch fixture only; show-toplevel re-asserted = fixture before commit)
+sed -i 's/round-69 C1 (rule L69 v1)/round-69 C1 (rule L69 v1) TAMPERED/' <fixture>/.ufo/waves/round-69/probe/c1-controls.sh
+git -C <fixture> diff --stat -> 1 file changed, 1 insertion(+), 1 deletion(-)
+git -C <fixture> commit -> 39dd67d1abfb1aef3f0c4ea92b7c20852ebaca56 "tamper c1 controls"
+
+# command
+TMPDIR=/fast/scratch/hyaku/kumitate-r70/K70ReviewCounterR1 node .ufo/waves/round-70/probe/replay70-probe.mjs <fixture> 39dd67d1abfb1aef3f0c4ea92b7c20852ebaca56
+# observed output
+REPLAY70_UNMET held=1/10 checks=10 rev=39dd67d1abfb1aef3f0c4ea92b7c20852ebaca56 rule=R70 live=no-live(vacuous-declared)
+R1 MISS frozen scripts unchanged
+R2 MISS isolated selftest
+R3 MISS family=c1 mode=donothing exit=1 receipt=0 preserved=true
+R4 MISS family=c1 mode=autoledger exit=1 receipt=0 preserved=true
+R5 MISS family=c2 mode=donothing exit=1 receipt=0 preserved=true
+R6 MISS family=c2 mode=autoorigin exit=1 receipt=0 preserved=true
+R7 MISS family=c2 mode=forgecapture exit=1 receipt=0 preserved=true
+R8 MISS invalid args usage
+R9 PASS existing output preserved
+R10 MISS registration triad
+PROBE_EXIT=1

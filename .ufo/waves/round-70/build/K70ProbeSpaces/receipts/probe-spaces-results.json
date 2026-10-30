@@ -1,0 +1,120 @@
+{
+  "seat": "K70ProbeSpaces",
+  "label": "mechanism-only (no production candidate exists)",
+  "edge": {
+    "lane1": "/fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/lane edge's with spaces",
+    "lane2": "/fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/lane2 edge's with spaces",
+    "work": "/fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/work root's edge with spaces",
+    "out": "/fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/out dir's edge with spaces",
+    "tmp": "/fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/tmp dir's edge"
+  },
+  "held": "20/20",
+  "results": [
+    {
+      "id": "setup.lane2-clone",
+      "ok": true,
+      "detail": "git clone --bare --shared -> /fast/scratch/hyaku/kumitate-r70/K70ProbeSpaces/lane2 edge's with spaces exit=0"
+    },
+    {
+      "id": "setup.lane2-rev",
+      "ok": true,
+      "detail": "archive rev 14057f3e present in edge lane2"
+    },
+    {
+      "id": "A.fixture",
+      "ok": true,
+      "detail": "fixture git repo at edge path, show-toplevel=true"
+    },
+    {
+      "id": "A.wrapper-run",
+      "ok": true,
+      "detail": "stand-in exit=0 receipt-bytes=509 at spaced out stderr1="
+    },
+    {
+      "id": "A.invalid-64",
+      "ok": true,
+      "detail": "--family junk exit=64"
+    },
+    {
+      "id": "A.exclusive-out",
+      "ok": true,
+      "detail": "second run exit=1 receipt bytes unchanged=true"
+    },
+    {
+      "id": "A.selftest",
+      "ok": true,
+      "detail": "selftest exit=0"
+    },
+    {
+      "id": "B.gen.c1-controls.sh",
+      "ok": true,
+      "detail": "generation problems=0 verify-problems=0 -> c1-controls.private.sh"
+    },
+    {
+      "id": "B.gen.c2-controls.sh",
+      "ok": true,
+      "detail": "generation problems=0 verify-problems=0 -> c2-controls.private.sh"
+    },
+    {
+      "id": "B.c1-donothing",
+      "ok": true,
+      "detail": "exit=0 UNMET+CONTROL-PASS=true l7-selfpoison-miss=true (spaced-TMPDIR parity note)"
+    },
+    {
+      "id": "B.work-reclaimed",
+      "ok": true,
+      "detail": "work root children before=0 after=0 (mkdtemp child + trap reclaim)"
+    },
+    {
+      "id": "B.c1-autoledger",
+      "ok": true,
+      "detail": "exit=0 receipt-bytes=620"
+    },
+    {
+      "id": "B.exclusive-refuse-73",
+      "ok": true,
+      "detail": "second run exit=73 (expect 73) receipt unchanged=true"
+    },
+    {
+      "id": "B.c2-donothing",
+      "ok": true,
+      "detail": "exit=0 UNMET+CONTROL-PASS=true selfpoison-miss=true (parity note)"
+    },
+    {
+      "id": "B.c2-autoorigin",
+      "ok": true,
+      "detail": "exit=0 receipt-bytes=486 selfpoison-miss=true (parity note)"
+    },
+    {
+      "id": "B.no-live-note",
+      "ok": true,
+      "detail": "c2 modes run --no-live (non-live arms only); live forgecapture is network-dependent by plan and is not waived here"
+    },
+    {
+      "id": "C.naive-space-breaks",
+      "ok": true,
+      "detail": "unquoted inline lane path exit=2 stderr1=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/private/naive-inline-space.sh: line 30: syntax error near unexpected token `('"
+    },
+    {
+      "id": "C.naive-apostrophe-breaks",
+      "ok": true,
+      "detail": "inline apostrophe lane path exit=2 stderr1=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/private/naive-inline-apostrophe.sh: line 45: syntax error near unexpected token `('"
+    },
+    {
+      "id": "Z.frozen-unchanged",
+      "ok": true,
+      "detail": "frozen script sha256 identical: true"
+    },
+    {
+      "id": "Z.frozen-receipts-untouched",
+      "ok": true,
+      "detail": "frozen controls dir file set+sha256 identical: true"
+    }
+  ],
+  "keptReceipts": [
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/receipts/B-c1-donothing.txt",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/receipts/B-c1-autoledger.txt",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/receipts/B-c2-donothing.txt",
+    "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbeSpaces/receipts/B-c2-autoorigin.txt"
+  ]
+}

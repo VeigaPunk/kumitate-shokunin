@@ -1,0 +1,10 @@
+CONTROL_REPLAY_SELFTEST: PASS cases=9 ok=9
+ST01-no-args expect=64 observed=64 ok
+ST02-bad-family expect=64 observed=64 ok
+ST03-bad-mode expect=64 observed=64 ok
+ST04-selftest-mixed expect=64 observed=64 ok
+ST05-tamper-refused expect=65 observed=65 ok
+ST06-transform-once expect=true observed=true ok
+ST07-out-exclusive expect=73 observed=73 ok out intact
+ST08-private-syntax expect=true observed=true ok c1/donothing:ok c1/autoledger:ok c2/donothing:ok c2/autoorigin:ok c2/forgecapture:ok
+ST09-c2-transform-static expect=true observed=true ok

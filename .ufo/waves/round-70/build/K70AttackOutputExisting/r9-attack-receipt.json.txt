@@ -1,0 +1,139 @@
+[
+  {
+    "mock": "M0 compliant: refuse before fixture work",
+    "exit": 1,
+    "frozenR9": "PASS",
+    "readErr": null,
+    "victimContentAfter": "\"do-not-overwrite\\n\"",
+    "gitFixtureCalls": 0,
+    "phases": "arg-parse",
+    "createdEntries": [],
+    "destroyedEntries": [],
+    "notes": [
+      "refused on existing output before any fixture work"
+    ],
+    "harnessErr": null
+  },
+  {
+    "mock": "M1 overwrite (no exclusive create)",
+    "exit": 0,
+    "frozenR9": "MISS",
+    "readErr": null,
+    "victimContentAfter": "\"RECEIPT CONTROL-PASS donothing\\n\"",
+    "gitFixtureCalls": 1,
+    "phases": "arg-parse -> fixture-work",
+    "createdEntries": [
+      "workchild-CJhpJ1/"
+    ],
+    "destroyedEntries": [],
+    "notes": [],
+    "harnessErr": null
+  },
+  {
+    "mock": "M2 fixture-work-then-refuse (ordering violation)",
+    "exit": 1,
+    "frozenR9": "PASS",
+    "readErr": null,
+    "victimContentAfter": "\"do-not-overwrite\\n\"",
+    "gitFixtureCalls": 1,
+    "phases": "arg-parse -> git-archive-lane -> run-private-control-copy -> copy-out",
+    "createdEntries": [
+      "residue.marker",
+      "workchild-oqrJBJ/",
+      "workchild-oqrJBJ/staged-receipt.txt"
+    ],
+    "destroyedEntries": [],
+    "notes": [
+      "refused AFTER fixture work (ordering violation, outcome intact)"
+    ],
+    "harnessErr": null
+  },
+  {
+    "mock": "M3 refuse but wipe supplied work root",
+    "exit": 1,
+    "frozenR9": "MISS",
+    "readErr": "ENOENT",
+    "victimContentAfter": null,
+    "gitFixtureCalls": 0,
+    "phases": "arg-parse -> refuse",
+    "createdEntries": [],
+    "destroyedEntries": [
+      "existing.txt",
+      "result-0.txt",
+      "tree/",
+      "tree/.ufo/",
+      "tree/.ufo/waves/",
+      "tree/SKILL.md",
+      "work-0/"
+    ],
+    "notes": [
+      "refused exit 1 but wiped the supplied work root (victim inside)"
+    ],
+    "harnessErr": null
+  },
+  {
+    "mock": "M4 refuse with exit 0",
+    "exit": 0,
+    "frozenR9": "MISS",
+    "readErr": null,
+    "victimContentAfter": "\"do-not-overwrite\\n\"",
+    "gitFixtureCalls": 0,
+    "phases": "arg-parse",
+    "createdEntries": [],
+    "destroyedEntries": [],
+    "notes": [
+      "printed refusal to stdout but exited 0"
+    ],
+    "harnessErr": null
+  },
+  {
+    "mock": "M5 TOCTOU check-then-create (flag w)",
+    "exit": 1,
+    "frozenR9": "PASS",
+    "readErr": null,
+    "victimContentAfter": "\"do-not-overwrite\\n\"",
+    "gitFixtureCalls": 0,
+    "phases": "arg-parse",
+    "createdEntries": [],
+    "destroyedEntries": [],
+    "notes": [],
+    "harnessErr": null
+  },
+  {
+    "mock": "M5a race with plain create (w)",
+    "exit": 0,
+    "frozenR9": "MISS",
+    "readErr": null,
+    "victimContentAfter": "\"RECEIPT\\n\"",
+    "gitFixtureCalls": 0,
+    "phases": "check -> racer -> create(w)",
+    "createdEntries": [
+      "attacker-landed.marker"
+    ],
+    "destroyedEntries": [],
+    "notes": [
+      "attacker landed victim in window: true"
+    ],
+    "harnessErr": null
+  },
+  {
+    "mock": "M5b race with exclusive create (wx)",
+    "exit": 1,
+    "frozenR9": "PASS",
+    "readErr": null,
+    "victimContentAfter": "\"do-not-overwrite\\n\"",
+    "gitFixtureCalls": 0,
+    "phases": "check -> racer -> create(wx)",
+    "createdEntries": [
+      "attacker-landed.marker"
+    ],
+    "destroyedEntries": [],
+    "notes": [
+      "create failed: EEXIST",
+      "attacker landed victim in window: true"
+    ],
+    "harnessErr": null
+  }
+]
+SUMMARY frozenR9=PASS: ["M0 compliant: refuse before fixture work","M2 fixture-work-then-refuse (ordering violation)","M5 TOCTOU check-then-create (flag w)","M5b race with exclusive create (wx)"]
+SUMMARY frozenR9=MISS: ["M1 overwrite (no exclusive create)","M3 refuse but wipe supplied work root","M4 refuse with exit 0","M5a race with plain create (w)"]

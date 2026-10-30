@@ -1,0 +1,45 @@
+K70ProbeTransformCount probe receipt (mechanism-only: no lane candidate scripts/control-replay.mjs exists)
+lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+frozen c1 sha256=01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12 bytes=3844
+frozen c2 sha256=679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4 bytes=7030
+
+PASS c1/ACCEPT-frozen               expected=accept exit=0 observed=exit=0 out=true inv=ok
+PASS c1/ZERO-LANE                   expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:LANE exact needle count 0 != 1: "LANE=/home/vgpnk/Projects/shoku
+PASS c1/ZERO-PROBE                  expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:PROBE exact needle count 0 != 1: "PROBE=\"$LANE/.ufo/waves/round
+PASS c1/ZERO-W                      expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c1/ZERO-S                      expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:S exact needle count 0 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratch
+PASS c1/MULTI-LANE                  expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c1:LANE exact needle count 2 != 1: "LANE=/home/vgpnk/Projects/shok
+PASS c1/MULTI-PROBE                 expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c1:PROBE exact needle count 2 != 1: "PROBE=\"$LANE/.ufo/waves/roun
+PASS c1/MULTI-W                     expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c1:W exact needle count 2 != 1: "W=\"$LANE/.ufo/waves/round-69/con
+PASS c1/MULTI-S                     expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c1:S exact needle count 2 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratc
+PASS c1/MULTI3-S                    expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c1:S exact needle count 3 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratc
+PASS c1/NEARSPACE-W                 expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c1/NEARUNQUOTED-W              expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c1/IDEMPOTENT-regen            expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c1:LANE exact needle count 0 != 1: "LANE=/home/vgpnk/Projects/shoku
+PASS c2/ACCEPT-frozen               expected=accept exit=0 observed=exit=0 out=true inv=ok
+PASS c2/ZERO-LANE                   expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:LANE exact needle count 0 != 1: "LANE=/home/vgpnk/Projects/shoku
+PASS c2/ZERO-PROBE                  expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:PROBE exact needle count 0 != 1: "PROBE=\"$LANE/.ufo/waves/round
+PASS c2/ZERO-W                      expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c2/ZERO-S                      expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:S exact needle count 0 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratch
+PASS c2/MULTI-LANE                  expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c2:LANE exact needle count 2 != 1: "LANE=/home/vgpnk/Projects/shok
+PASS c2/MULTI-PROBE                 expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c2:PROBE exact needle count 2 != 1: "PROBE=\"$LANE/.ufo/waves/roun
+PASS c2/MULTI-W                     expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c2:W exact needle count 2 != 1: "W=\"$LANE/.ufo/waves/round-69/con
+PASS c2/MULTI-S                     expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c2:S exact needle count 2 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratc
+PASS c2/MULTI3-S                    expected=refuse exit=65 id=MULTI no-out observed=exit=65 out=false id=MULTI c2:S exact needle count 3 != 1: "S=\"${HYAKU_SCRATCH:-/fast/scratc
+PASS c2/NEARSPACE-W                 expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c2/NEARUNQUOTED-W              expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:W exact needle count 0 != 1: "W=\"$LANE/.ufo/waves/round-69/cont
+PASS c2/IDEMPOTENT-regen            expected=refuse exit=65 id=ZERO no-out observed=exit=65 out=false id=ZERO c2:LANE exact needle count 0 != 1: "LANE=/home/vgpnk/Projects/shoku
+INFO c1/NAIVE-BASELINE-MULTI-W      expected=informational observed=naive accepts exit=0 real-W-line-frozen=true note=defended-against mode: count-guard refusal prevents this frozen-write acceptance
+INFO c2/NAIVE-BASELINE-MULTI-W      expected=informational observed=naive accepts exit=0 real-W-line-frozen=true note=defended-against mode: count-guard refusal prevents this frozen-write acceptance
+PASS DRAFT/D1-frozen-generate       expected=accept exit=0 + draft verify PASS + private scripts clean (PROBE identity intentional) observed=exit=0 privateDir=true problems=none
+PASS DRAFT/D2-multi-W-S-block       expected=refuse exit=65 needle count 2 != 1 observed=exit=65 stderr=REFUSE-SOURCE-DRIFT: c2-controls.sh:W-S-block: needle count 2 != 1 for "W=\"$LANE/.ufo/waves/round-69/controls
+PASS DRAFT/D2b-comment-dup-backstop expected=count guard passes (combined needle==1); verify() backstop refuses exit=65 observed=exit=65 stderr=VERIFY-FAIL c2-controls.sh: forbidden remnant frozen output dir: 1 note=design note: single-line comment dup slips past the combined W-S needle count; caught only by post-transform verify
+PASS DRAFT/D3-zero-W                expected=refuse exit=65 needle count 0 != 1 observed=exit=65 stderr=REFUSE-SOURCE-DRIFT: c2-controls.sh:W-S-block: needle count 0 != 1 for "W=\"$LANE/.ufo/waves/round-69/controls
+PASS DRAFT/D4-idempotent-regen      expected=refuse exit=65 needle count 0 != 1 observed=exit=65 stderr=REFUSE-SOURCE-DRIFT: c2-controls.sh:LANE: needle count 0 != 1 for "LANE=/home/vgpnk/Projects/shokunin/kumitate
+PASS MOCK/B1-synthetic-baseline     expected=accept exit=0 CONTROL-PASS in out observed=exit=0 pass=true
+PASS MOCK/M1-multi-W                expected=refuse exit=70 stderr~/CONTROL_REPLAY_TRANSFORM assignment W matched 2 times/ (sticky out noted) observed=exit=70 stickyOutBytes=0 stderr=CONTROL_REPLAY_TRANSFORM assignment W matched 2 times
+PASS MOCK/M2-zero-W                 expected=refuse exit=70 stderr~/CONTROL_REPLAY_TRANSFORM assignment W matched 0 times/ (sticky out noted) observed=exit=70 stickyOutBytes=0 stderr=CONTROL_REPLAY_TRANSFORM assignment W matched 0 times
+INFO MOCK/CR-guard-semantics        expected=code-read: count != 1 refuse observed=guard="for (const k of Object.keys(subs)) if (seen[k] !== 1) fail(70, `CONTROL_REPLAY_TRANSFORM assignm"; line-name anchored ^(LANE|PROBE|W|S)=, NOT exact-needle; refuses after --out created (sticky empty out)
+
+result: PASS=34 FAIL=0 INFO=3 SKIP=0
+PROBE_TRANSFORM_COUNT: PASS

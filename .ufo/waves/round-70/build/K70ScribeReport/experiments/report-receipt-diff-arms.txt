@@ -1,0 +1,29 @@
+### draft-skeleton
+REPORT_RECEIPT: CLEAN (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=552 report_sha256=1fefbb2d905c)
+exit=0
+### experiments/exp-order
+REPORT_RECEIPT: DRIFT SECTION_ORDER (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=552 report_sha256=4fff027f3eed)
+SECTION_ORDER SHONEN before Trend verdicts
+exit=1
+### experiments/exp-dup-shonen
+REPORT_RECEIPT: DRIFT SHONEN_COUNT (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=581 report_sha256=013127adea01)
+SHONEN_COUNT headings=2
+exit=1
+### experiments/exp-empty-section
+REPORT_RECEIPT: DRIFT SECTION_EMPTY (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=493 report_sha256=b232b477774b)
+SECTION_EMPTY Trend verdicts
+exit=1
+### experiments/exp-held-untallied
+REPORT_RECEIPT: DRIFT TALLY_UNRECEIPTED (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=552 report_sha256=78c11e29265f)
+TALLY_UNRECEIPTED REPLAY70_HELD held=10/10
+exit=1
+### experiments/exp-tally-scoped
+REPORT_RECEIPT: DRIFT RECEIPT_MISSING,TALLY_UNRECEIPTED (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=632 report_sha256=7ca0ac6f93db)
+RECEIPT_MISSING .ufo/waves/round-70/close/replay70-M.txt
+TALLY_UNRECEIPTED REPLAY70_HELD held=10/10
+exit=1
+### experiments/exp-tally-fullpath
+REPORT_RECEIPT: DRIFT RECEIPT_MISSING,TALLY_UNRECEIPTED (round=70 rev=1e00955a657a5b955992e23915143e7b3e261bb4 bytes=672 report_sha256=c22319aad5fd)
+RECEIPT_MISSING .ufo/waves/round-70/close/replay70-M.txt
+TALLY_UNRECEIPTED REPLAY70_HELD held=10/10
+exit=1

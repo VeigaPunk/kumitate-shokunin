@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+// MOCK candidate for the K70ReviewCounterR8 fixture demonstration only.
+// Purpose: probe the frozen counter's R8 (invalid args -> exit 64) vs fail-closed.
+// Behaviour modelled:
+//  * invalid `--family junk` -> performs WRITES (cwd pollution + external marker) THEN exit 64
+//  * other invalid shapes (unprobed by the counter) -> silently exit 0
+//  * valid five runs -> exclusive-create out with the labels the counter greps
+//  * --selftest -> prints the PASS banner
+import fs from 'node:fs';
+const argv = process.argv.slice(2);
+const observe = process.env.R8_OBSERVE;
+
+// The single shape the frozen counter probes for R8:
+if (argv.length === 2 && argv[0] === '--family' && argv[1] === 'junk') {
+  // NOT fail-closed: mutate before refusing
+  try { fs.writeFileSync('r8-in-tree-pollution.txt', 'written by invalid-args run\n'); } catch {}
+  if (observe) fs.writeFileSync(observe, 'invalid-args run performed a write before exit 64\n');
+  process.stderr.write('usage: --family c1|c2 required with --lane --mode --out --work\n');
+  process.exit(64);
+}
+
+// Other invalid shapes the counter never probes: silently "succeed".
+const get = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : undefined; };
+if (argv[0] === '--selftest') { console.log('CONTROL_REPLAY_SELFTEST: PASS'); process.exit(0); }
+const lane = get('--lane'), family = get('--family'), mode = get('--mode'), out = get('--out'), work = get('--work');
+if (!lane || !family || !mode || !out || !work) process.exit(0); // e.g. missing-mode, unknown-flag, duplicate-flag shapes
+const label = family === 'c1' ? 'LEDGER69_UNMET' : 'DEPREC69_UNMET';
+try {
+  fs.writeFileSync(out, `${label} exit=1\nCONTROL-PASS ${mode}\n`, { flag: 'wx' });
+} catch { process.exit(3); } // exclusive-create refusal for R9
+process.exit(0);

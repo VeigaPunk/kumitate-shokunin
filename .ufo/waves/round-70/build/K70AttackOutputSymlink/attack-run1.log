@@ -1,0 +1,40 @@
+TARGET-SAFE   strat=A-existsSync+w shape=S1 exit=0 refused via existsSync
+TARGET-SAFE   strat=A-existsSync+w shape=S2 exit=0 refused via existsSync
+TARGET-SAFE   strat=A-existsSync+w shape=S3 exit=0 gate passed, wrote
+TARGET-SAFE   strat=A-existsSync+w shape=S4 exit=0 refused via existsSync
+TARGET-SAFE   strat=B-shell-> shape=S1 exit=0 redirect exit=0
+TARGET-HIT!!  strat=B-shell-> shape=S2 exit=0 redirect exit=0
+TARGET-SAFE   strat=B-shell-> shape=S3 exit=0 redirect exit=0
+TARGET-HIT!!  strat=B-shell-> shape=S4 exit=0 redirect exit=0
+TARGET-SAFE   strat=C-open-wx shape=S1 exit=refused:EEXIST exclusive open failed EEXIST
+TARGET-SAFE   strat=C-open-wx shape=S2 exit=refused:EEXIST exclusive open failed EEXIST
+TARGET-SAFE   strat=C-open-wx shape=S3 exit=refused:EEXIST exclusive open failed EEXIST
+TARGET-SAFE   strat=C-open-wx shape=S4 exit=refused:EEXIST exclusive open failed EEXIST
+TARGET-SAFE   strat=D-rename shape=S1 exit=0 renamed; out-is-symlink-now=false
+TARGET-SAFE   strat=D-rename shape=S2 exit=0 renamed; out-is-symlink-now=false
+TARGET-SAFE   strat=D-rename shape=S3 exit=0 renamed; out-is-symlink-now=false
+TARGET-SAFE   strat=D-rename shape=S4 exit=0 renamed; out-is-symlink-now=false
+
+--- frozen R9 replication (regular-file only, per replay70-probe.mjs lines) ---
+R9-regular-file assertion vs symlink-following mock: PASS (candidate unharmed)
+probe-untested shape: exit=1 victim-unchanged=true (TARGET-HIT if false)
+
+=== SUMMARY ===
+A-existsSync+w S1 safe=true exit=0 refused via existsSync
+A-existsSync+w S2 safe=true exit=0 refused via existsSync
+A-existsSync+w S3 safe=true exit=0 gate passed, wrote
+A-existsSync+w S4 safe=true exit=0 refused via existsSync
+B-shell-> S1 safe=true exit=0 redirect exit=0
+B-shell-> S2 safe=false exit=0 redirect exit=0
+B-shell-> S3 safe=true exit=0 redirect exit=0
+B-shell-> S4 safe=false exit=0 redirect exit=0
+C-open-wx S1 safe=true exit=refused:EEXIST exclusive open failed EEXIST
+C-open-wx S2 safe=true exit=refused:EEXIST exclusive open failed EEXIST
+C-open-wx S3 safe=true exit=refused:EEXIST exclusive open failed EEXIST
+C-open-wx S4 safe=true exit=refused:EEXIST exclusive open failed EEXIST
+D-rename S1 safe=true exit=0 renamed; out-is-symlink-now=false
+D-rename S2 safe=true exit=0 renamed; out-is-symlink-now=false
+D-rename S3 safe=true exit=0 renamed; out-is-symlink-now=false
+D-rename S4 safe=true exit=0 renamed; out-is-symlink-now=false
+target-overwrite cells: 2/16
+sandbox: /fast/scratch/hyaku/kumitate-r70/K70AttackOutputSymlink/attack-oB5pvR

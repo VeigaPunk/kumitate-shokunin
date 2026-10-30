@@ -1,0 +1,132 @@
+{
+  "seat": "K70ProbeOutputParent",
+  "kind": "mechanism-only (synthetic reproduction; no production candidate in lane)",
+  "node": "v24.21.0",
+  "fixtureHead": "4108a466d0452da429c952c07a631cc429617259",
+  "laneBefore": {
+    "c1-controls.sh": "01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12",
+    "c2-controls.sh": "679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4",
+    "controls": {
+      "c1-autoledger.txt": "0fd37a31f209c91857f5dc4824a555a6373b796ebabbb0270303ec56338cfccf",
+      "c1-donothing.txt": "a7476ee5c226045f040ea3bd9cc89eaf405f41b0583d2ddccd60350144d7b558",
+      "c2-autoorigin.txt": "e9e668439cbf6501ef19da07febd6b4d054fff5201749853b7c42359e05a83aa",
+      "c2-donothing.txt": "003b059b60264d42286bc01e4ab38c1d267dc9d83ffefff6078aed38c9322309",
+      "c2-forgecapture.txt": "f2ffbd3a29990422bb65543fc34234ea1257294809f696992e1ff571cc6b091e"
+    }
+  },
+  "laneAfter": {
+    "c1-controls.sh": "01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12",
+    "c2-controls.sh": "679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4",
+    "controls": {
+      "c1-autoledger.txt": "0fd37a31f209c91857f5dc4824a555a6373b796ebabbb0270303ec56338cfccf",
+      "c1-donothing.txt": "a7476ee5c226045f040ea3bd9cc89eaf405f41b0583d2ddccd60350144d7b558",
+      "c2-autoorigin.txt": "e9e668439cbf6501ef19da07febd6b4d054fff5201749853b7c42359e05a83aa",
+      "c2-donothing.txt": "003b059b60264d42286bc01e4ab38c1d267dc9d83ffefff6078aed38c9322309",
+      "c2-forgecapture.txt": "f2ffbd3a29990422bb65543fc34234ea1257294809f696992e1ff571cc6b091e"
+    }
+  },
+  "results": [
+    {
+      "id": "A.exit-nonzero",
+      "expectation": "exit!=0 (refusal)",
+      "observed": "exit=73",
+      "pass": true
+    },
+    {
+      "id": "A.no-out-created",
+      "expectation": "no out file anywhere under missing parent",
+      "observed": "exists=false parentExists=false",
+      "pass": true
+    },
+    {
+      "id": "A.no-work-child",
+      "expectation": "no scratch child created under supplied work root",
+      "observed": "workEntries=[]",
+      "pass": true
+    },
+    {
+      "id": "A.stderr-reason",
+      "expectation": "refusal reason on stderr",
+      "observed": "\"CONTROL_REPLAY_ERROR cannot create out: ENOENT: no such file or directory, open '/fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run/A/no-parent/result.txt'\"",
+      "pass": true
+    },
+    {
+      "id": "B.exit-zero",
+      "expectation": "exit=0 with CONTROL-PASS receipt copied out",
+      "observed": "exit=0",
+      "pass": true
+    },
+    {
+      "id": "B.receipt-content",
+      "expectation": "out carries DEPREC69_UNMET + CONTROL-PASS donothing",
+      "observed": "len=521",
+      "pass": true
+    },
+    {
+      "id": "B.workroot-autocreated",
+      "expectation": "supplied work root auto-created",
+      "observed": "exists=true",
+      "pass": true
+    },
+    {
+      "id": "B.single-child-kept",
+      "expectation": "exactly one unique child kept (MOCK_KEEP_PRIVATE)",
+      "observed": "[\"replay-7y6VGu\"]",
+      "pass": true
+    },
+    {
+      "id": "B.fixture-toplevel",
+      "expectation": "private fixture repo toplevel inside child",
+      "observed": "toplevel=/fast/scratch/hyaku/kumitate-r70/K70ProbeOutputParent/run/B/newroot/replay-7y6VGu/s/fx",
+      "pass": true
+    },
+    {
+      "id": "B.fixture-clean",
+      "expectation": "fixture lane untouched by candidate run",
+      "observed": "status=\"\"",
+      "pass": true
+    },
+    {
+      "id": "B.workroot-empty-after-cleanup",
+      "expectation": "work root empty once child removed",
+      "observed": "entries=[]",
+      "pass": true
+    },
+    {
+      "id": "C.exit-nonzero",
+      "expectation": "exit!=0 (refusal)",
+      "observed": "exit=1",
+      "pass": true
+    },
+    {
+      "id": "C.no-work-created",
+      "expectation": "nothing created under the file component",
+      "observed": "workExists=false",
+      "pass": true
+    },
+    {
+      "id": "C.partial-out-leak",
+      "expectation": "no partial/empty out artifact survives a crash after exclusive create",
+      "observed": "outExists=true size=0",
+      "pass": false
+    },
+    {
+      "id": "C.stderr-reason",
+      "expectation": "failure surfaced on stderr",
+      "observed": "\"node:fs:1410 |   const result = binding.mkdir(\"",
+      "pass": true
+    },
+    {
+      "id": "X.fixture-receipts-preserved",
+      "expectation": "fixture seeded receipt digests unchanged",
+      "observed": "before=5 after=5",
+      "pass": true
+    },
+    {
+      "id": "X.real-lane-untouched",
+      "expectation": "real lane frozen scripts + receipts byte-identical",
+      "observed": "unchanged=true",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+K70ReviewScope evidence (read-only review; no production files, no other seats' artifacts, no originals executed)
+Tool inventory: node v24.21.0 and git 2.56.0 pre-existing; no installs or updates performed.
+
+Commands and observed outcomes
+1. git rev-parse --show-toplevel (lane)                       -> /home/vgpnk/Projects/shokunin/kumitate-shokunin
+2. git rev-parse 3dbe7e6e2616423d55f0ea2bbcf8fb32fe7bda6a     -> 3dbe7e6e2616423d55f0ea2bbcf8fb32fe7bda6a (frozen plan commit matches)
+3. git diff --stat 3dbe7e6e HEAD -- round-70 plan/base/probe, pins, round-69
+     -> counter-pins.json +6 (replay70-probe pin only); base/band-control.json and base/source-counts.json +14 each (both absent at 3dbe7e6e, added 1e00955a as receipts)
+4. git diff --stat (working tree) for the same frozen paths    -> empty
+5. git show 78b98d76:.ufo/waves/round-69/probe/c1-controls.sh | sha256sum -> 01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12
+   git show 78b98d76:.ufo/waves/round-69/probe/c2-controls.sh | sha256sum -> 679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4
+   (working tree sha256sum identical; c2 digest equals pins/source-captures.json S217)
+6. Blob compare: 78b98d76 vs HEAD for both c1/c2 scripts -> identical blobs (3658b54c…, 748a6a5a…)
+7. sha256 of replay70-probe.mjs -> 63f52b75d9c0e3d80a91c6957ce4624cbd46a9488841a962a75bc62ffecbf0c1 (matches counter-pins.json replay70-probe)
+8. sha256 of ledger69-probe.mjs, deprec69-probe.mjs, scripts/routed-ledger.mjs -> match pins and base blobs
+9. grep TMPDIR|mkdtemp|tmpdir in ledger69-probe.mjs:78 and deprec69-probe.mjs:88 -> `mkdtempSync(join(tmpdir(), ...))` at top level (no try)
+10. grep forge-sed in c2-controls.sh -> only line 80 (`> /tmp/forge-sed.txt`), no reader
+11. grep '/tmp|/fast' in frozen c1/c2 -> c1:21,75 ; c2:25,80,106 (TMPDIR=${HYAKU_SCRATCH}/kumitate-r69 on c1:75 and c2:106)
+12. ls -ld /fast/scratch/hyaku/kumitate-r69 -> No such file or directory (absent now)
+13. Node mkdtemp probe: TMPDIR=<absent parent> node -e 'fs.mkdtempSync(path.join(os.tmpdir(),"probe."))' -> THREW ENOENT
+14. git status --porcelain -- scripts corpus SKILL.md SCORECARD.md .ufo/pins .ufo/waves/round-69 -> empty (c1 fixture inputs clean at HEAD)
+15. git ls-files .ufo/waves/round-69/controls -> all five frozen receipts tracked
+16. base/replay70-base.txt read: REPLAY70_UNMET held=2/10, R2/R3-R8/R10 MISS, R1/R9 PASS (baseline as frozen)
+17. Frozen r69 receipts read (heads/tails): c1-donothing/autoledger LEDGER69_UNMET exit=1; c2-donothing/autoorigin DEPREC69_UNMET exit=1; c2-forgecapture DEPREC69_UNMET exit=1 live=exercised with S210:origin-sha-mismatch. "CONTROL-PASS" is echoed to stdout by c1:80 / c2:116 and is NOT written into the frozen receipt files.
+18. Not run: scripts/control-replay.mjs does not exist yet (absent in lane), so the replay probe was not executed; no originals c1/c2 executed.

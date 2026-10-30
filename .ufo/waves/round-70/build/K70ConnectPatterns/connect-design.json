@@ -1,0 +1,82 @@
+{
+  "seat": "K70ConnectPatterns",
+  "round": 70,
+  "axis": "operability (C1 replay isolation)",
+  "predicate": "REPLAY70_HELD",
+  "target": "10/10",
+  "frozenBase": "78b98d762ccf3e3a0961f94c4042eaabd2bcb706",
+  "verified": "2026-10-30",
+  "frozenPins": {
+    "c1-controls.sh": "01efd6dde4c987b676b1930f647cc283768e1ae8113fd076b313e54b56aeda12",
+    "c2-controls.sh": "679b7d9619ab8d79139cfe8e956e425f7ccbbf7e58b6eaee5cb72c3deb3a66f4",
+    "replay70-probe.mjs": "63f52b75d9c0e3d80a91c6957ce4624cbd46a9488841a962a75bc62ffecbf0c1",
+    "plan.md": "3dbe7e6e2616423d55f0ea2bbcf8fb32fe7bda6a"
+  },
+  "hazards": [
+    {
+      "id": "fixed-output-overwrite",
+      "evidence": "W=\"$LANE/.ufo/waves/round-69/controls\"; \"> $W/<family>-$MODE.txt\" truncates a committed lane receipt on every replay",
+      "mechanism": "receipt dir re-pointed into private child; sole outward artifact is --out, openSync 'wx' before any work; refusal precedes fixture work"
+    },
+    {
+      "id": "scratch-hardcoding",
+      "evidence": "S=\"${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/<family>-$MODE\" + rm -rf; inline TMPDIR prefix; c2 line 80 writes /tmp/forge-sed.txt (1 occurrence, no reader)",
+      "mechanism": "S and TMPDIR re-pointed into private child; /tmp/forge-sed.txt cut from the private copy only (frozen bytes preserved)"
+    },
+    {
+      "id": "inherited-git-env",
+      "evidence": "K70AttackGitEnv live demo: GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE redirect fixture git writes despite explicit -C (GIT_INDEX_FILE has no CLI override)",
+      "mechanism": "allow-list child env {PATH, TMPDIR, HOME(private), LANG} + GIT_CONFIG_NOSYSTEM=1; extends the r69 probes' CHILD_ENV pattern (ledger69:77, deprec69:87)"
+    }
+  ],
+  "substitutions": {
+    "convention": "exactly-once textual substitution, needle-count verified = 1 in frozen bytes; refusal exit 65 on count != 1",
+    "common": [
+      {"needle": "LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin", "replacement": "LANE=<lane>", "verifiedCount": 1},
+      {"needle": "PROBE=\"$LANE/.ufo/waves/round-69/probe/ledger69-probe.mjs\" | deprec69-probe.mjs", "replacement": "PROBE=<lane>/.ufo/waves/round-69/probe/<probe>", "verifiedCount": 1},
+      {"needle": "W=\"$LANE/.ufo/waves/round-69/controls\"", "replacement": "W=\"$CHILD/receipts\"", "verifiedCount": 1},
+      {"needle": "S=\"${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69/<family>-controls-$MODE\"", "replacement": "S=\"$CHILD/scratch/<family>-$MODE\"", "verifiedCount": 1},
+      {"needle": "TMPDIR=\"${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r69\" node ", "replacement": "TMPDIR=\"$CHILD/tmp\" node ", "verifiedCount": 1},
+      {"needle": "git init -q", "replacement": "git -C \"$S/fx\" init -q", "verifiedCount": 1},
+      {"needle": "git add -A", "replacement": "git -C \"$S/fx\" add -A", "verifiedCount": 1},
+      {"needle": "git -c user.name=ctl -c user.email=ctl@invalid -c commit.gpgsign=false commit -q --no-verify", "replacement": "git -C \"$S/fx\" -c user.name=ctl -c user.email=ctl@invalid -c commit.gpgsign=false commit -q --no-verify", "verifiedCount": 1},
+      {"needle": "REV=$(git rev-parse HEAD)", "replacement": "REV=$(git -C \"$S/fx\" rev-parse HEAD)", "verifiedCount": 1}
+    ],
+    "c2Only": [
+      {"needle": "printf '%s\\n' '- S207 — capture 2026-10-30 — pinned' > /tmp/forge-sed.txt\\n", "operation": "cut", "verifiedCount": 1},
+      {"needle": "git -C \"$LANE\" archive 14057f3e3899180c95713bace088fb9c0d0046e3", "operation": "identity (already explicit fixture-external)", "verifiedCount": 1}
+    ],
+    "receiptContent": {
+      "requirement": "receipt contains UNMET label and 'CONTROL-PASS <mode>' (frozen scripts echo CONTROL-PASS to stdout only)",
+      "options": ["pinned tail rewrite with tee -a (K70ExecRunner candidate)", "runner appends captured stdout control line to private receipt before copy-out (recommended: smaller pinned surface)"],
+      "recommended": 1
+    }
+  },
+  "env": {
+    "childAllowList": {"PATH": "inherited", "TMPDIR": "$CHILD/tmp", "HOME": "$CHILD/home", "LANG": "inherited|C"},
+    "set": {"GIT_CONFIG_NOSYSTEM": "1"},
+    "patternSource": "ledger69-probe.mjs:77, deprec69-probe.mjs:87 (CHILD_ENV allow-list)",
+    "note": "block-list GIT_* scrub is insufficient to evidence: counter is env-blind in benign runs (K70AttackGitEnv defect A); allow-list cannot rot when new GIT_* vars appear"
+  },
+  "ordering": [
+    "verify frozen bytes (65 on mismatch) before any output or fixture work",
+    "openSync(--out, 'wx') before mkdtemp/run (73 on EEXIST; target bytes unchanged)",
+    "refuse --out inside --work (64) so the receipt is not reclaimed and the probe's empty-work check stays satisfiable",
+    "copy receipt out, fsync, close; reclaim child in finally; --work left empty"
+  ],
+  "exitMap": {"0": "control pass", "1": "control fail / honest predicate MISS (never translated)", "64": "usage (R8)", "65": "frozen-source or transform refusal", "70": "internal", "73": "exclusive-output conflict (R9)"},
+  "crossAxisNonHarmConcern": {
+    "surface": "R10 registration (SKILL.md gate row, SCORECARD capability row, counter-pins row) vs coverage/honesty axis",
+    "detail": "R10 checks substring presence only; the plan claims no coverage score and no new knowledge entry; an overclaiming row (general replay runner, implied forgery resistance) inflates coverage without evidence while HELD still prints 10/10",
+    "mitigation": "registration wording bounded to 'replays the five frozen round-69 capability controls in private isolation' with the disclosed live-arm limit quoted verbatim; non-harm to operability (grep satisfied either way)"
+  },
+  "edgeProbesRanked": [
+    {"rank": 1, "probe": "env-poison containment", "hazard": "inherited-git-env", "why": "attacks the one contract clause the frozen counter cannot see; reuse K70AttackGitEnv poison set; assert child-contained commits, no hook canary, host HEAD unchanged"},
+    {"rank": 2, "probe": "exclusive-out matrix (regular/symlink-existing/symlink-dangling/out-inside-work/missing parent)", "hazard": "fixed-output-overwrite", "why": "maps R9 exactly incl. refusal-before-work ordering the base receipt leaves vacuous"},
+    {"rank": 3, "probe": "scratch confinement (HYAKU_SCRATCH garbage/unset, read-only TMPDIR parent, umask 077/022, two modes one work root)", "hazard": "scratch-hardcoding", "why": "proves substituted S ignores the shared namespace and the child is reclaimed"},
+    {"rank": 4, "probe": "frozen-byte refusal (1-byte flip in each frozen file inside a fake --lane)", "hazard": "contract", "why": "pins 'refuse unexpected frozen source bytes' and no-out-on-refusal"},
+    {"rank": 5, "probe": "selftest env-isolation (--selftest under poisoned env, cwd=/)", "hazard": "verification", "why": "pins R2 non-vacuity with stable ids and expected exit map"}
+  ],
+  "explicitlyNotStrongest": "live-network probes of forgecapture — network-dependent by disclosure, non-deterministic, failure reported never waived",
+  "siblingCoverageDoNotDuplicate": ["output-symlink", "work-symlink", "cleanup-permissions", "umask", "timeout/group-kill", "cross-root", "missing-tools", "header-modes", "readonly"]
+}

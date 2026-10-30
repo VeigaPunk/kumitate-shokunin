@@ -1,0 +1,16 @@
+# K70AttackC2Forge — forgecapture network-failure counterexample
+m11.real.digest unreachable -> unreachable -> miss=origin-unreachable
+m11.real.digest http      -> http-404 -> miss=origin-http-404
+m11.real.digest mismatch  -> f992cffc411059ed008c24381238ecf4d58b97dcbff1c658a083480cf8cd1033 -> miss=origin-sha-mismatch
+m11.real.digest match     -> 22213ba8d9a3f7ead8c6149c1c75d94a401199b7a0b69760b3c7d5ab9c23e6fd -> miss=ok
+
+A honest gate + network-fail receipt: control exit=1 (gate intact) -> R7 MISS
+B weakened gate + network-fail receipt: control exit=0 (GATE DROPPED) -> R7 PASS
+C weakened gate + no-live receipt: control exit=0 (GATE DROPPED) -> R7 PASS
+D honest gate + genuine digest-mismatch: control exit=0 (gate intact) -> R7 PASS
+E weakened gate + genuine digest-mismatch: control exit=0 (GATE DROPPED) -> R7 PASS
+
+DEFECT CONFIRMED: 2/2 weakened-gate scenarios count as R7 PASS although no live digest failure occurred
+Root cause: replay70-probe.mjs:36 (R7) requires only DEPREC69_UNMET + CONTROL-PASS forgecapture in the
+receipt; the 'digest arm bit' property (S210:origin-sha-mismatch) and the live=exercised trailer are
+enforced ONLY by c2-controls.sh:113 inside the NON-FROZEN private copy the implementation generates.

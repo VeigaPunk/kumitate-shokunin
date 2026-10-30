@@ -1,0 +1,33 @@
+### expA: spawnSync timeout semantics
+{
+ "status": null,
+ "signal": "SIGTERM",
+ "error": "Error: spawnSync /fast/scratch/hyaku/kumitate-r70/K70AttackTimeout/sim/child-hang-after-print.sh ETIMEDOUT",
+ "stdout_tail": [
+  "control=donothing exit=1 rev=0000000000000000000000000000000000000000",
+  ""
+ ]
+}
+
+### expB: pattern x child matrix with frozen-probe verdict
+=== matrix ===
+p1-x-hangAfterPrint          rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+p1-x-hangMidProbe            rc=1 probe=R3-MISS out_tail=CONTROL-FAIL donothing
+p1-x-clean                   rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+p2-x-hangAfterPrint          rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+p2-x-hangMidProbe            rc=0 probe=R3-MISS out_tail=CONTROL-PASS donothing
+p2-x-clean                   rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+p3-x-hangAfterPrint          rc=1 probe=R3-MISS out_tail=CONTROL-FAIL donothing
+p3-x-hangMidProbe            rc=1 probe=R3-MISS out_tail=CONTROL-FAIL donothing
+p3-x-clean                   rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+p4-x-hangAfterPrint          rc=1 probe=R3-MISS out_tail=CONTROL-FAIL donothing childStatus=null childSignal=SIGTERM
+p4-x-hangMidProbe            rc=1 probe=R3-MISS out_tail=CONTROL-FAIL donothing childStatus=null childSignal=SIGTERM
+p4-x-clean                   rc=0 probe=R3-PASS(frozen-probe-would-count) out_tail=CONTROL-PASS donothing
+
+### expD: orphan propagation on parent kill
+{
+ "tool_status": null,
+ "tool_signal": "SIGTERM",
+ "orphan_pid": "2831737",
+ "orphan_alive_after_parent_death": true
+}

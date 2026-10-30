@@ -1,0 +1,12 @@
+=== K70AttackC2Nothing counterexample: no control/probe executed, all receipts fabricated ===
+R3 PASS family=c1 mode=donothing receipt=322B probeRan=false
+R4 PASS family=c1 mode=autoledger receipt=324B probeRan=false
+R5 PASS family=c2 mode=donothing receipt=322B probeRan=false
+R6 PASS family=c2 mode=autoorigin receipt=324B probeRan=false
+R7 PASS family=c2 mode=forgecapture receipt=328B probeRan=false
+R5-minimal-forgery predicate-satisfied=true receipt=87B probeRan=false
+AGGREGATE fabricated held=5/10 summary-live-marker-if-forgecapture-tampered=exercised
+VACUITY EVIDENCE (read-only inspection, frozen r69 bytes):
+  c2-controls.sh: LIVEFLAG='' only for forgecapture; donothing/autoorigin run deprec69-probe --no-live.
+  deprec69-probe.mjs: NO_LIVE forces M5/M11 misses recorded as no-live; receipt header live=no-live(vacuous-declared).
+  committed receipt c2-donothing.txt line 1: DEPREC69_UNMET ... live=no-live(vacuous-declared).

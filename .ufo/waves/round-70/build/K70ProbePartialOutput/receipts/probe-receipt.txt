@@ -1,0 +1,22 @@
+# K70ProbePartialOutput probe 2026-10-30T15:59:04.904Z
+node=v24.21.0
+cand=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-70/build/K70ProbePartialOutput/private/control-replay.candidate.mjs
+fx=/fast/scratch/hyaku/kumitate-r70/K70ProbePartialOutput/fx sc=/fast/scratch/hyaku/kumitate-r70/K70ProbePartialOutput
+fxBase={"c1-autoledger.txt":"0fd37a31f209c91857f5dc4824a555a6373b796ebabbb0270303ec56338cfccf","c1-donothing.txt":"a7476ee5c226045f040ea3bd9cc89eaf405f41b0583d2ddccd60350144d7b558","c2-autoorigin.txt":"e9e668439cbf6501ef19da07febd6b4d054fff5201749853b7c42359e05a83aa","c2-donothing.txt":"003b059b60264d42286bc01e4ab38c1d267dc9d83ffefff6078aed38c9322309","c2-forgecapture.txt":"f2ffbd3a29990422bb65543fc34234ea1257294809f696992e1ff571cc6b091e"}
+A-donothing PASS exit=0 ms=443 out=4099B workEmpty=true fxStable=true laneStable=true watcher=0
+A-autoledger PASS exit=0 ms=498 out=4102B workEmpty=true fxStable=true laneStable=true watcher=0
+calibration autoledger T=465ms exit=0
+B-kill@80ms PASS exit=null sig=SIGKILL ran=82ms outBytes=0 residue=["replay-EcxfNL"] outsideChild=0 fxStable=true watcher=0
+B-kill@116ms PASS exit=null sig=SIGKILL ran=119ms outBytes=0 residue=["replay-JRu71o"] outsideChild=0 fxStable=true watcher=0
+B-kill@233ms PASS exit=null sig=SIGKILL ran=243ms outBytes=0 residue=["replay-AVJP8W"] outsideChild=0 fxStable=true watcher=0
+B-kill@349ms PASS exit=null sig=SIGKILL ran=353ms outBytes=0 residue=["replay-u0SEgT"] outsideChild=0 fxStable=true watcher=0
+C-childkill@140ms-0 PASS candidateExit=null ran=191ms leftoverReceipt=576B complete=false outBytes=0 fxStable=true watcher=0
+C-childkill@279ms-1 PASS candidateExit=null ran=323ms leftoverReceipt=1344B complete=false outBytes=0 fxStable=true watcher=0
+D-exclusive-out PASS first=0 second=73(want 73) outUnchanged=true err2=CONTROL_REPLAY_OUT_EXISTS /fast/scratch/hyaku/kumitate-r70/K70ProbePartialOutput/D.out
+D-exclusive-under-kill PASS exit=73(want 73, refusal precedes kill) outUnchanged=true
+E-shared-parent-residue PASS residueBefore=1 freshRun=0 residueAfter=1 note=old child dir remains but is never reused (mkdtemp unique)
+F-teeth-attack-detected PASS attackExit=0 clobbered=true watcherSaw=1
+G-mechanism-naive-clobbers PASS direct child write left receipt="CLOBBERED-CLOBBERED-CLOB" (mechanism-only, not candidate verification)
+G-mechanism-contract-intact PASS private-child partial=84B never reached existing receipt; intact=true (mechanism-only)
+Z-final-guards PASS fxStable=true laneStable=true
+SUMMARY 15/15 invariants held; fxChanged=[] laneChanged=false
