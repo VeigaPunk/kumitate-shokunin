@@ -121,3 +121,17 @@ later than the `v18.12.6` that the round-65 rows measure (S201–S206). Two regi
   the normative records, and a row moving between this page and the changelog is not a contradiction.
 - **S209 and S212 are the same bytes.** "Re-verified at v18.13.1" is a re-fetch of unchanged content; it does not
   show that the release *changed* the transport, only that it did not drop it.
+
+## Capture origin
+
+Amendment 2026-10-30 (S214–S216): M69 fetches source bytes independently of the lane's pins and compares SHA256. Mirrors are upstream carriers, not independent authors.
+
+- S207 — capture 2026-10-27 — mirror S214
+- S208 — capture 2026-10-27 — mirror S215
+- S209 — capture 2026-10-27 — pinned
+- S210 — capture 2026-10-27 — pinned
+- S211 — capture 2026-10-27 — mirror S216
+- S212 — capture 2026-10-27 — pinned
+- S213 — capture 2026-10-27 — pinned
+
+S214–S216 use upstream commit 82d60be17d75e69b350c9fe77df2e8cac202ac11. The S207/S214 Deprecated tables agree after delinking. Origin authentication here means live HTTPS byte agreement, not a signature or an independent trust authority.

@@ -1196,3 +1196,7 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   exists at the freeze commit `39f61816` — the committed receipts are `controls/c1-donothing.txt`,
   `controls/c1-autoledger.txt`, `controls/c2-donothing.txt`. Evidence pointer:
   `build/K68ScribeQuality/plan-vs-receipts.txt`.
+
+- **Q66 — live-arm receipts declare live state (round 69).** Grounding: `corpus/lessons/round-69.md` Mistakes, round-68 routed item 4. A receipt records `live=exercised` or `live=no-live(vacuous-declared)`. Red: round-68/base/deprec68-base.txt has no live field; green: round-69/base/deprec69-base.txt does. A no-live receipt never proves an origin claim.
+- **Q67 — settled outputs and report files are counted separately (round 69).** Grounding: `corpus/lessons/round-69.md`, round-68 routed item 3. At WAVE-DONE compare every result name with its nonempty regular report file and name exceptions in the receipt. Red: K68ReviewC1Predicate has a result but no w1 report. Never infer report existence from settlement.
+- **Q68 — registration triad is explicit (round 69).** Grounding: `corpus/lessons/round-69.md` and `considerthese/2026-10-26.md` idea 3, mined 2026-10-30. A newly acquired gate needs a SKILL registry row, its tool pin, and a demonstrated SCORECARD capability row. Red: round-65 harm-matrix lacks the registry/capability rows at its tip; do not call that conformant. Existing debt stays named, not silently reclassified.
