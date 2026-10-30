@@ -291,6 +291,9 @@ fixture suite, `--strict` to fail on warnings.
 
 All entries are falsifiable and cite file+symbol. Opinions marked as such.
 
+| `lessons/round-69-verifier-spotcheck.md` | Non-author round-69 verdict and replay-isolation defects | Hyaku closure at 78b98d7 |
+| `lessons/round-70.md` | Round-70 replay-control isolation gate and mistakes | LOG.md round 70; S217 |
+
 ## Frontier
 
 - **OMP harness contract (task batch, agent hub, discovery):** first entry `knowledge/omp-task-contract.md`; upstream `main` versus the installed OMP binary skew remains named there.
