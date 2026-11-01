@@ -147,7 +147,7 @@ const runControlLocally = (root, env, src, probeName, mode, laneSh) => {
   fs.writeFileSync(script, text, {mode: 0o755});
   const childEnv = {...env};
   for (const k of GIT_SCRUB) delete childEnv[k];
-  const r = spawnSync('bash', [toSh(script), mode], {cwd: child, env: childEnv, encoding: 'utf8', timeout: 300000, maxBuffer: 64 * 1024 * 1024});
+  const r = spawnSync('bash', [toSh(script), mode], {cwd: child, env: childEnv, encoding: 'utf8', timeout: 900000, maxBuffer: 64 * 1024 * 1024});
   const out = {stdout: r.stdout || '', exit: r.status, stderr: r.stderr || ''};
   rmTree(child);
   return out;
@@ -168,7 +168,7 @@ const readReceipt = (file) => {
   const digestOk = digestOf(rec) === rec.digest;
   return {ok: digestOk, rec, text, stdout: text.split('--- child stdout begin ---\n')[1]?.split('\n--- child stdout end ---')[0] ?? ''};
 };
-const runTool = (tree, env, args, timeout = 300000) => spawnSync(process.execPath, [path.join(tree, 'scripts/control-replay.mjs'), ...args],
+const runTool = (tree, env, args, timeout = 900000) => spawnSync(process.execPath, [path.join(tree, 'scripts/control-replay.mjs'), ...args],
   {cwd: tree, env: {...env}, encoding: 'utf8', timeout, maxBuffer: 64 * 1024 * 1024});
 const modeArgs = (root, i, outDir, fm) => {
   const [family, mode] = fm || MODES[i] || ['c1', 'donothing'];

@@ -284,8 +284,11 @@ const replay = (args) => {
   // 5. run the private copy — never the original.
   const startedAt = new Date().toISOString();
   const t0 = Date.now();
+  // 900s budget: the ledger probe's mutant battery alone exceeds 300s on this host
+  // (Windows spawn/archive costs); the frozen v1 counter keeps its own 300s cap and
+  // therefore cannot pass R3-R6 here — disclosed in the round record.
   const r = spawnSync('bash', [toShPath(scriptCopy), args.mode], {
-    cwd: child, env: ce.env, encoding: 'utf8', timeout: 300000, maxBuffer: 64 * 1024 * 1024,
+    cwd: child, env: ce.env, encoding: 'utf8', timeout: 900000, maxBuffer: 64 * 1024 * 1024,
   });
   const durationMs = Date.now() - t0;
   const childStdout = r.stdout || '';
