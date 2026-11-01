@@ -1,0 +1,18 @@
+REPLAY70V2_UNMET held=8/17 checks=17 rev=89cbd998ff956965634b14368231c6d117d6437e rule=R70v2
+V01 PASS frozen bytes match reference
+V02 PASS selftest exit=0
+V03 MISS family=c1 mode=donothing exit=0 digest=ok
+V04 MISS family=c1 mode=autoledger exit=0 digest=ok
+V05 MISS family=c2 mode=donothing exit=0 digest=ok
+V06 MISS family=c2 mode=autoorigin exit=0 digest=ok
+V07 MISS family=c2 mode=forgecapture exit=0 digest=ok
+V08 MISS two runs diverge
+V09 MISS probe-local exit=0 normalized DIFFER
+V10 PASS all six shapes exit 64 side-effect-free
+V11 PASS existing=true link=true
+V12 MISS decoy-unchanged=true tool-exit=null
+V13 MISS exits=1,1 distinctChildren=true
+V14 PASS SKILL + SCORECARD rows and both pins
+V15-print-only PASS REPLAY70V2_UNMET held=3/14 checks=14 rev=0120bb1be885399b48d04d8e04ce4a0feda43b60 rule=R70v2 exit=1
+V16-canned-writer PASS REPLAY70V2_UNMET held=3/14 checks=14 rev=e6df75f01c0b902c996a380f8cb24219838b1f48 rule=R70v2 exit=1
+V17-mutate-then-refuse PASS REPLAY70V2_UNMET held=3/14 checks=14 rev=3ddd8a29881076316a3b9f57d06ac0c198684c0b rule=R70v2 exit=1

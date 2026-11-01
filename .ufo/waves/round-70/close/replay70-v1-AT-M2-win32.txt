@@ -1,0 +1,28 @@
+REPLAY70_UNMET held=5/10 checks=10 rev=89cbd998ff956965634b14368231c6d117d6437e rule=R70 live=no-live(vacuous-declared)
+R1 PASS frozen scripts unchanged
+R2 PASS isolated selftest
+R3 MISS family=c1 mode=donothing exit=null receipt=0 preserved=true
+R4 MISS family=c1 mode=autoledger exit=null receipt=0 preserved=true
+R5 MISS family=c2 mode=donothing exit=null receipt=0 preserved=true
+R6 MISS family=c2 mode=autoorigin exit=null receipt=0 preserved=true
+R7 MISS family=c2 mode=forgecapture exit=null receipt=0 preserved=true
+R8 PASS invalid args usage
+R9 PASS existing output preserved
+R10 PASS registration triad
+node:fs:1282
+  return binding.rmSync(getValidatedPath(path), opts.maxRetries, opts.recursive, opts.retryDelay);
+                 ^
+
+Error: EPERM, Permission denied: \\?\C:\Users\jpvei\AppData\Local\Temp\replay70-PC4qMZ '\\?\C:\Users\jpvei\AppData\Local\Temp\replay70-PC4qMZ'
+    at Object.rmSync (node:fs:1282:18)
+    at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/.ufo/waves/round-70/probe/replay70-probe.mjs:48:12
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: 1,
+  code: 'EPERM',
+  path: '\\\\?\\C:\\Users\\jpvei\\AppData\\Local\\Temp\\replay70-PC4qMZ',
+  syscall: 'rm'
+}
+
+Node.js v24.21.0

@@ -1,0 +1,12 @@
+REPLAY70_UNMET held=6/10 checks=10 rev=3b1483801fe67eadc3cf48874a5a8f8150d1b72f rule=R70 live=exercised
+R1 PASS frozen scripts unchanged
+R2 PASS isolated selftest
+R3 MISS family=c1 mode=donothing exit=null receipt=0 preserved=true
+R4 MISS family=c1 mode=autoledger exit=null receipt=0 preserved=true
+R5 MISS family=c2 mode=donothing exit=null receipt=0 preserved=true
+R6 MISS family=c2 mode=autoorigin exit=null receipt=0 preserved=true
+R7 PASS family=c2 mode=forgecapture exit=0 receipt=1822 preserved=true
+R8 PASS invalid args usage
+R9 PASS existing output preserved
+R10 PASS registration triad
+exit=1
