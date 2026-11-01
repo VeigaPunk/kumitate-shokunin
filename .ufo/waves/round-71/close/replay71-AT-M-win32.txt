@@ -1,0 +1,20 @@
+REPLAY71_HELD held=17/17 checks=17 rev=798a5bb4bac8eeb4dbf0517d38a466b177a54dc7 rule=R71
+V01 PASS frozen bytes match reference
+V02 PASS selftest exit=0
+V03 PASS family=c1 mode=donothing exit=0 digest=ok childExit=0
+V04 PASS family=c1 mode=autoledger exit=0 digest=ok childExit=0
+V05 PASS family=c2 mode=donothing exit=0 digest=ok childExit=0
+V06 PASS family=c2 mode=autoorigin exit=0 digest=ok childExit=0
+V07 PASS family=c2 mode=forgecapture exit=0 digest=ok childExit=0
+V08 PASS two runs diverge
+V09 PASS probe-local exit=0 receipt-childExit=0 normalized equal
+V10 PASS all six shapes exit 64 side-effect-free
+V11 PASS existing=true link=true
+V12 PASS decoy-unchanged=true tool-exit=0
+V13 PASS exits=0,1 childExits=0,0 distinctChildren=true
+V14 PASS SKILL + SCORECARD rows and tool/v2/v3 pins
+V15-print-only PASS REPLAY71_UNMET held=3/14 checks=14 rev=45bff58d097eb7fb6021233d2ca9bba4f4d5902c rule=R71 exit=1
+V16-canned-writer PASS REPLAY71_UNMET held=3/14 checks=14 rev=56f846e27e376292ce21fc470b637ffb02123995 rule=R71 exit=1
+V17-mutate-then-refuse PASS REPLAY71_UNMET held=3/14 checks=14 rev=554da46ed7f491376a46f859184915bde51a51ac rule=R71 exit=1
+
+exit=0 (verdict-derived: REPLAY71_HELD held=17/17 -> 0 per the counter exit map; the detached PowerShell wrapper did not capture the process exit code)
