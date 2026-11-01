@@ -284,11 +284,16 @@ const replay = (args) => {
   // 5. run the private copy — never the original.
   const startedAt = new Date().toISOString();
   const t0 = Date.now();
-  // 900s budget: the ledger probe's mutant battery alone exceeds 300s on this host
-  // (Windows spawn/archive costs); the frozen v1 counter keeps its own 300s cap and
-  // therefore cannot pass R3-R6 here — disclosed in the round record.
+  // 1200s budget (round 71 measured recalibration; r70 precedent 89cbd998): derived per
+  // .ufo/waves/round-71/plan.md's two-step rule from this round's receipts — under the
+  // committed 900s cap the fresh m1 receipts record c1/donothing killed at 900046ms and
+  // c1/autoledger at 900040ms (childExit=-1, SIGTERM); under a 2400s scaffold cap the same
+  // modes complete at 921210ms and 922358ms (s1-*.txt). toolBudget =
+  // ceil(1.25 x 922358 / 60s) x 60s = 1200000ms. A future window slower than ~1.30x the
+  // observed worst completion trips this cap honestly: the receipt records the kill and
+  // the counter reports MISS — never a fabricated pass.
   const r = spawnSync('bash', [toShPath(scriptCopy), args.mode], {
-    cwd: child, env: ce.env, encoding: 'utf8', timeout: 900000, maxBuffer: 64 * 1024 * 1024,
+    cwd: child, env: ce.env, encoding: 'utf8', timeout: 1200000, maxBuffer: 64 * 1024 * 1024,
   });
   const durationMs = Date.now() - t0;
   const childStdout = r.stdout || '';

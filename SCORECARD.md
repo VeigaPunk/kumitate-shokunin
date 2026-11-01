@@ -3064,3 +3064,60 @@ Declared claims (2; causally separable; C1 works the lowest non-retired axis, op
 - **C2 — coverage frontier (isolation-substrates band), sourced output-path attack entry.** Open CWE-59 and CWE-367 this round, add rows S218/S219 with captures, and land `corpus/knowledge/replay-output-isolation-link-following.md` (provenance trio; binds the seat attacks K70AttackOutputSymlink / K70AttackWorkSymlink / K70AttackTmpLiteral and the v2 counter's exclusive-create, link-refusal and scrub arms to the named weakness classes). Falsifiable before→after: SOURCES 156 → 158 rows (`grep -cE '^ {0,3}\| S[0-9]{3}' corpus/SOURCES.md`), entry absent → present, and sources/source-capture/readme-map/cite-sources gates CLEAN at the tip where they were CLEAN-before/entry-absent.
 
 No exploratory claim. Assimilation: considerthese/2026-10-26.md idea 4 (Q69) — the observed wave census (64 dispatched / 55 reports / no results file) is recorded this attempt in the round lesson, completing the mining attempt 2 could not run.
+
+## Round 71 — declaration (2026-11-01, Windows host; recovery round after the rejected-honest-stop)
+
+Base `e1e8e3047eb4d41c81afa40a43397d3d6b1c619b` (the round-70 verifier spot-check commit).
+Round-70 closure routed five defects (D1–D5) and a counter-side recovery; this round lands
+all six. No wave: this host has no AgentSwarm dispatch surface (L0-noted round 70); work is
+L1-only. Frozen plan: `.ufo/waves/round-71/plan.md` (budget-arm derivation rule amended
+in-place before any v3 run — the original one-step rule is named in the amendment).
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | operability (9, integer held) | `replay71-probe` (rule R71), the counter-side ratchet of the scored v2 counter |
+
+**C1 — operability (lowest non-retired axis, 9, terminal integer per the frozen f_O proxy),
+capability `control-replay` ratchet: versioned counter v3 with measured budgets.** Land
+`.ufo/waves/round-71/probe/replay71-probe.mjs` fixing exactly the counter-side defects round
+70 routed, with the five frozen r69 controls, the v1/v2 counter bytes and
+`scripts/control-replay.mjs` hash-checked and untouched: (1) V03–V07 expect the controls'
+real CONTROL-PASS exit (`childExit===0` per the tool's own exit map) with inner-verdict
+consistency and sanctioned substitution counts, where v2 demanded a base-era `childExit===1`
+(`replay70-probe-v2.mjs:227`); (2) V08's cross-run arm uncoupled from that verdict (v2's
+`receipts[0]?.rec` is a cascade: undefined whenever V03 misses); (3) V09 requires
+local-exit = receipt childExit and normalizes the seeded L4 battery, and its detail line
+reports the true comparison (v2 printed `DIFFER` whenever the exit conjunct failed); (4)
+the V12/V13/fixture budgets are derived from this round's fresh measured receipts per the
+plan's two-step rule — the first measurement killed c1/donothing at the r70 tool cap
+(`childExit=-1 SIGTERM durationMs=900046`, `measure/m1-c1-donothing.txt`), so the cap is
+recalibrated from completion measurements with `pin.control-replay` re-pinned in the same
+commit (r70 precedent `89cbd998`); (5) the v2 counter's bytes join the frozen set. Grounding
+source opened this round: S220 (Node child_process spawnSync — a timeout kill reports
+`status: null`, the exact `tool-exit=null` v2's V12 exhibited).
+
+Falsifiable before→after: before (red) = `REPLAY70V2_UNMET held=8/17 checks=17
+rev=89cbd998…` (`.ufo/waves/round-70/close/replay70-v2-AT-M-win32.txt`) — V03–V07 MISS
+`exit=0 digest=ok` (sole failing conjunct `rec.childExit === 1`) while the same five
+controls' committed receipts record `childExit=0` + CONTROL-PASS; V08 MISS as the cascade;
+V09 MISS on the exit expectation + misleading detail; V12 `tool-exit=null` at the 300 000 ms
+counter kill; V13 `exits=1,1` at the tool cap with the c1 mode measured 643 s standalone.
+After (green) = fresh `REPLAY71_HELD held=17/17` exit 0 at this round's measured revision on
+this host, receipts under `.ufo/waves/round-71/close/`. Registration: SKILL registry row
+`| replay71-probe |` (this round), SCORECARD row (this section), `pin.replay71-probe`.
+Counting commands: `grep -c MISS .ufo/waves/round-70/close/replay70-v2-AT-M-win32.txt` → 9;
+the fresh v3 receipt's MISS count → 0 (verdict lines committed).
+
+Carry-in corrections (maintenance, not claims; all append-only): D1 dead pointer landed —
+`.ufo/waves/round-70/close/replay70-v1-AT-BASE-win32.txt` now exists, byte-identical to
+`base/replay70-base.txt` (frozen v1 counter re-run at `78b98d76…` under the disclosed
+adapters); D2 attribution correction (6/10 `live=exercised` is `replay70-v1-AT-M-win32.txt`
+at rev `3b148380`; `replay70-v1-AT-M2-win32.txt` at rev M reads 5/10 with the EPERM
+cleanup-crash tail) — recorded here and in the r71 report; D3 anatomy completed — V08's
+round-70 MISS is the V03–V07 cascade (`receipts[0]?.rec` undefined at
+`replay70-probe-v2.mjs:240`), not a resource failure as hypothesized; D4 named corrections —
+SKILL `control-replay` row 20/20 → 21/21 (row correction with dated note; authority:
+`close/control-replay-selftest.txt` 21/21) and the knowledge entry's quoted tally annotated
+append-only; D5 — round-70 report SHONEN box 4's `[x]` carried no named non-author verifier
+and counts `[~]` per protocol; annotated here and in the r71 report (filed reports are not
+lane-rewritable).

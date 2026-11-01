@@ -293,6 +293,7 @@ All entries are falsifiable and cite file+symbol. Opinions marked as such.
 
 | `lessons/round-69-verifier-spotcheck.md` | Non-author round-69 verdict and replay-isolation defects | Hyaku closure at 78b98d7 |
 | `lessons/round-70.md` | Round-70 replay-control isolation gate and mistakes | LOG.md round 70; S217 |
+| `lessons/round-70-verifier-spotcheck.md` | Non-author round-70 verdict; routed defects D1–D5 and the counter-side recovery | Hyaku closure at 648c687 |
 | `knowledge/replay-output-isolation-link-following.md` | Replay output/work-path isolation: CWE-59 link following and CWE-367 TOCTOU at the instrument boundary | S218/S219; K70 seat attacks; v2 arms V10-V12 |
 
 ## Frontier

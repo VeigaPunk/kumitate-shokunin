@@ -53,3 +53,16 @@ ground: PROVINCE.md §Frontier — `corpus/knowledge/agent-isolation-substrates.
   residual of v2; see `corpus/lessons/round-70.md`).
 - S218/S219 are definition pages (tier A for the weakness vocabulary only); they carry no tool-specific
   guidance beyond the mitigation sentence quoted in the rows.
+
+## Correction (round 71, 2026-11-01; append-only)
+
+The exclusive-create bullet above quotes the selftest tally as
+`CONTROL_REPLAY_SELFTEST: PASS (20/20)`. Those bytes were drafted before the
+`refuse-dangling-link` arm entered the suite; the committed authority is the
+round-70 close receipt `.ufo/waves/round-70/close/control-replay-selftest.txt`,
+which reads `CONTROL_REPLAY_SELFTEST: PASS (21/21)` over 21 hermetic cases.
+The tally drift (20/20 vs 21/21) is round-70 verifier defect D4: the quoted
+number in this entry is stale prose, never a receipt, and the SKILL registry
+row carried the same drift (row-corrected in round 71). The construction the
+entry binds — exclusive create, counted substitutions, link refusal — is
+unchanged by this correction.
