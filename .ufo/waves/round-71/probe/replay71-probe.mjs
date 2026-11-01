@@ -215,7 +215,19 @@ const readReceipt = (file) => {
   let rec;
   try { rec = JSON.parse(line); } catch { return {ok: false, why: 'unparseable', text}; }
   const digestOk = digestOf(rec) === rec.digest;
-  return {ok: digestOk, rec, text, stdout: text.split('--- child stdout begin ---\n')[1]?.split('\n--- child stdout end ---')[0] ?? ''};
+  // Exact stdout reconstruction: the display adds a newline only when the child stdout
+  // does not end with one, so a marker-split that consumes the newline corrupts the
+  // section for every real control (the v2/v3 sha conjunct then fails masked/unmasked).
+  // Reconstruct by trying both candidates against the digest-verified recorded sha.
+  let stdout = '';
+  const b = text.indexOf('--- child stdout begin ---\n');
+  if (b !== -1) {
+    const from = b + '--- child stdout begin ---\n'.length;
+    const e = text.indexOf('\n--- child stdout end ---', from);
+    const raw = e === -1 ? text.slice(from) : text.slice(from, e);
+    stdout = (e !== -1 && sha(Buffer.from(raw + '\n', 'utf8')) === rec.childStdoutSha256) ? raw + '\n' : raw;
+  }
+  return {ok: digestOk, rec, text, stdout};
 };
 const runTool = (tree, env, args, timeout = TOOL_WAIT_MS) => spawnSync(process.execPath, [path.join(tree, 'scripts/control-replay.mjs'), ...args],
   {cwd: tree, env: {...env}, encoding: 'utf8', timeout, maxBuffer: 64 * 1024 * 1024});
@@ -278,7 +290,7 @@ try {
         && rec.childExit === 0 // the CONTROL-PASS exit: control-replay.mjs exit map, round-71 fix for the v2 `=== 1` bug
         && !!verdict && verdict[1] === rulePrefix
         && !!ctlLine && ctlLine[1] === mode
-        && Number(ctlLine[2]) === (verdict[3] === 'HELD' ? 0 : 1) // inner exit matches the inner verdict
+        && Number(ctlLine[2]) === (verdict[2] === 'HELD' ? 0 : 1) // inner exit matches the inner verdict
         && rec.nonce && rec.workChild
         && Array.isArray(rec.scrubbedEnv?.gitRemoved)
         && JSON.stringify(canonicalize(rec.substitutions || {})) === JSON.stringify(canonicalize(EXPECTED_SUBSTITUTIONS(family)))
