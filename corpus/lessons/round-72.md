@@ -97,3 +97,18 @@ r70 different-host disclosure (and now also its win32-crash disclosure above).
 admitted_self: the claim verifies as amended (Amendments 1–2); the two pre-registered
 expectations that measured differently (round-71 NA shape; checklist 8/33) are disclosed in
 the plan amendments and mined above.
+
+## Round-gate at filing (measured; one carried divergence named)
+
+`node scripts/round-gate.mjs --round 72` first read `DRIFT (errors=2 warnings=1)`:
+`SCORECARD_ROW_MISSING` (no `| 72 |` row) and `LOG_ENTRY_MISSING` (no
+`- YYYY-MM-DD — round 72` line) — the gate expects the Move-log row and the list-form LOG
+line that rounds 63–71 replaced with round sections and `##` headings; round 71 reads the
+exact same two errors today (measured: `DRIFT (round=71 … errors=2 warnings=1)`) and its
+close receipt carried only the five corpus gates, so this is a carried gate-versus-practice
+divergence, not a new defect of this round. This round satisfies both error checks
+additively (Move-log row `| 72 |`; a gate-required one-line LOG record above the section
+entry — the `##` entry stays) and names the carried state here; the remaining warning
+(`## Planned names no round later than 72`) is the stale `## Planned` section's state at
+every recent round, disclosed not repaired. The repair that would clear the warning class
+(re-point `## Planned` at the next round) belongs to the next round's declaration.
