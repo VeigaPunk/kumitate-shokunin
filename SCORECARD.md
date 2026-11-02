@@ -459,6 +459,7 @@ the frozen definitions name.
 | 58 | operability (lowest non-retired axis; score 9 held at terminal; capability acquisition `receipt-evidence` + `readme-map` v2 — routed defects R57-V1/V2/V3/V4) | `node .ufo/waves/round-58/probe/attest58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 50548ae5b4a47bb8d8cdc62212ec0648aa3776ee` (freeze tip) → `ATTEST58_UNMET held=7/10`, exit 1 (B8 transcript-absent, B9 items=27, B10 lesson-uncommitted); base `c49f2a8d` → `held=0/10` (`base/attest58-base.txt`) | same command at R1 (hash recorded in the R2 bookkeeping commit and the round-58 LOG entry) → `ATTEST58_HELD held=10/10`, exit 0; `receipt-evidence --selftest` 10/10; `readme-map` v2 CLEAN files=138 rows=138 covered=138, selftest 16/16; A=93, C=28, operability remains 9 (terminal) | `.ufo/waves/round-58/plan.md`; `.ufo/waves/round-58/base/attest58-base.txt`; `.ufo/waves/round-58/close/FINAL-attest58-R1.txt`; command above |
 | 58 | coverage frontier — durable-execution failure recovery / replay (retired aggregate held at 10; no scalar move) | `node .ufo/waves/round-58/probe/doctrine58-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin 50548ae5b4a47bb8d8cdc62212ec0648aa3776ee` (freeze tip) → `DOCTRINE58_UNMET held=3/5`, exit 1 (E2 clause bindings unwrapped, E3 S123 capture uncommitted); base `c49f2a8d` → entry-absent (`base/doctrine58-base.txt`) | same command at R1 (hash recorded in the R2 bookkeeping commit and the round-58 LOG entry) → `DOCTRINE58_HELD held=5/5`, exit 0; `failure-recovery-replay.md` cites S112 (flipped rejected→mined, recorded flip fired) + S122 + S123 (S124 queued); C2=138/138 | `.ufo/waves/round-58/plan.md`; `.ufo/waves/round-58/base/doctrine58-base.txt`; `.ufo/waves/round-58/close/FINAL-doctrine58-R1.txt`; command above |
 | 72 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability deepening of gate `plan-before-ready`, the routed round-71 host defect; sourced on S221) | `bash scripts/plan-before-ready.sh --repo <lane> --round 63` → `--repo is not the repository root` exit 2 in BOTH path forms; `--selftest` → `toplevel mismatch` exit 2; pin `0c7da32a…` (red receipts `.ufo/waves/round-72/open/`) | same commands at `e158ee96…` → round 63 `PASS … map=SKIP reason=MAP_PRE_EPOCH_ROUND` exit 0, round 62 FAIL `NO_PLAN` exit 1 (registry-locked shape), round 71 FAIL `MAP_UNRUNNABLE` (new routed finding, disclosed), `--selftest` → `PASS (39/39)` exit 0 with decisive case `repo-path-form-toplevel`; pin `cb8da6f2…` re-pinned in the same commit (`close/pbr72-blob-identity.txt`) | `.ufo/waves/round-72/plan.md`; `open/pbr72-red-cli.txt`, `open/pbr72-red-selftest.txt`; `close/pbr72-green-cli.txt`, `close/pbr72-green-selftest.txt`; lesson `corpus/lessons/round-72.md`; report `.ufo/reports/round-72/kumitate.md` |
+| 73 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability deepening of gate `plan-before-ready`'s map arm, the routed round-72 host defect; sourced on S222) | `for n in 65..71: bash scripts/plan-before-ready.sh --repo <lane> --round $n` at base pin `cb8da6f2…` → 7/7 `FAIL … map=UNRUNNABLE reason=ARCHIVE` (`open/pbr73-red-sweep.txt`); `--selftest` with the three new cases at base bytes → `FAIL (41/42)`, BAD exactly `map-archive-sanitized` (`open/pbr73-red-selftest-with-cases.txt`) | same commands at `cf58f1d0…` → the sweep's `map=UNRUNNABLE reason=ARCHIVE` count 7 → 0 with real verdicts for all seven rounds (65 PASS 157, 66 PASS 160, 67 FAIL MAP_DRIFT first=uncovered:lessons/round-66-verifier-spotcheck.md, 68 PASS 163, 69 FAIL MAP_DRIFT first=uncovered:lessons/round-68-verifier-spotcheck.md, 70 PASS 169, 71 NA NO_MARKER map=CLEAN 171; `sanitized=16` each; `close/pbr73-green-sweep.txt`); `--selftest` → `PASS (42/42)` exit 0 (`close/pbr73-green-selftest.txt`); pin `4d927ce3…` re-pinned in the same commit (`close/pbr73-blob-identity.txt`) | `.ufo/waves/round-73/plan.md`; `open/pbr73-red-sweep.txt`, `open/pbr73-red-selftest-with-cases.txt`; `close/pbr73-green-sweep.txt`, `close/pbr73-green-selftest.txt`; lesson `corpus/lessons/round-73.md`; report `.ufo/reports/round-73/kumitate.md` |
 | 49 | operability + coverage (integer held 9 — terminal under `f_O`; C1 capability `bind-oracle`, C2 rooted knowledge entry `counter-amendment-discipline`; sourced on S099, opened this round, with S095/S098) | `bindoracle49-probe.mjs` at `b7b040b5`/freeze: `ORACLE_UNMET held=0/6` exit 1 (`controls/CtlNothing-base-b7b040b5.txt`); static forgery control `held=3/6` exit 1; C2 `UNMET reason=entry-absent` | `ORACLE_HELD held=6/6` exit 0 at `0526f898` ×3 time-spaced (`r49/L1-score-0526f898.txt`, `r49/ReRunCounter49-{2,3}.txt`); `DOCTRINE49: HELD clauses=15/15 rows=3` exit 0 at `589d25e4` (doctored control UNMET exit 1) | `node .ufo/waves/round-49/probe/bindoracle49-probe.mjs <lane> 0526f898…`; `node .ufo/waves/round-49/probe/doctrine49-probe.mjs <lane> 589d25e4…` | `0526f898` (C1), `589d25e4` (C2) |
 | 47 | operability (lowest non-retired axis; integer held 9; one claim C1, surface: five child-process sites in kimi-census, sources-check (2), claims-check, anchor-truth routed through `scripts/cap-run.mjs` v2 via new `scripts/cap-spawn.mjs`; sourced on S093–S095, opened this round) | `CAPROUTE_PROBE held=0/5` at base `0bd8be60` and freeze `cac43009` (`probe/receipts/a2-controls.txt`) | L1 score `held=5/5 rule=A2` at `269dadb6` (`close/c1-a2.txt`), but three wave-2 re-runs of the same counter on the same commit read 3/5, 3/5, 4/5 (exec-ancestry loss under load): **not verified** (author reading); freeze rule and A1 each met by a pre-data control and re-designed before data | `node .ufo/waves/round-47/probe/caproute-probe.mjs <lane> <rev>`; plan § A1/A2; `corpus/lessons/round-47.md` § Verdict at close |
 | 46 | operability (lowest non-retired axis; integer held 9 — terminal under the saturating `f_O`; one claim C1, surface: the `--selftest` paths of `scripts/cite-check.mjs`, `proxy-check.mjs`, `round-gate.mjs` and the new runner `scripts/cap-run.mjs`; sourced on S078 and S079, opened this round, with S065, S069, S072, S077) | at base `2b2bf7bb`: O1 `GITENV_CANARY held=0/3` (`.ufo/waves/round-46/probe/receipts/c1-base.txt`; A4 re-score in `controls-A3.txt`), O2 `CAPRUN_PROBE held=0/6` (no runner; `c2-base.txt`) | at the C1 commit `980a16af`: O1 `GITENV_CANARY held=3/3` exit 0 (`close/o1-c1.txt`), O2 `CAPRUN_PROBE held=6/6` exit 0 (`close/o2-c1.txt`); counters frozen through A4 at `e0c18785` before any candidate was measured; every wave-1 control re-scored under them below target (`probe/receipts/controls-A3.txt`); verdict per the residual falsify call in `corpus/lessons/round-46.md` § Verdict at close | `bash .ufo/waves/round-46/probe/gitenv-canary.sh <lane> <rev>`; `node .ufo/waves/round-46/probe/caprun-probe.mjs <lane> <rev>`; plan `.ufo/waves/round-46/plan.md` (freeze `7cd1fa37`, A1 `516977af`, A2 `3b184d3a`, A3 `cacfab32`, A4 `e0c18785`) |
@@ -524,6 +525,17 @@ the frozen definitions name.
 | 8 | coverage | C1 14/18, C2 20/30 ⇒ 5; 11 unmapped corpus files | C2 31/31 (`lessons/round-7.md` added; 5 lesson rows re-pinned to real shas `45b4ed3`/`efe19da`/`e0f5ca7`/`e748e44`/`eca3d14`) ⇒ 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 31; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 31; `comm -23` unmapped = `README.md` only |
 
 ## Planned
+
+**Round 74 — pre-registration (2026-11-02, written by round 73).** Candidates, not commitments:
+(1) **operability — kimi-census win32 portability repair** (routed rounds 72–73; scoping note in
+the round-73 lesson `## Gate`): portable uid gate (`process.getuid` absent on win32), host-split
+selftest arms (the POSIX-native cap-run/bwrap children, FIFO fixtures and POSIX chmod mode floors
+stay origin-host ground, disclosed), hermetic win32 cases, versioned with a same-commit re-pin of
+`pin.kimi-census`; the red receipt at open is already rounds old (`open/gates-open.txt`, r73).
+(2) **operability — proxy-check `SRC_NOT_A_DIR`** (carried r70): a `--src` the stanza pins to an
+existing host path, or a documented host override, so the proxy recompute can run on this host.
+(3) A capability row is due (last verified `control-replay`, round 70; N=3 makes the nudge active
+at round 74): the census repair is the natural candidate if it demonstrates running.
 
 **Round 69 — candidates after round 68 (not frozen).** C1: versioned routed-ledger predicate that removes the L4 answer key and fixes the impossible A5 `good` fixture; add path-blinded, implementation-level falsification before any data seats score it. C2: versioned deprecation-entry predicate that counts valid Markdown table rows and requires independently authenticated capture origin (not only a self-asserted digest plus live URL re-fetch); M5 must also reject zero parseable quotes. Freeze new counters and controls before dispatch; do not change round-68 bytes.
 
@@ -3142,8 +3154,12 @@ No wave: this host has no AgentSwarm dispatch surface (L0-noted round 70); L1-on
 normalization, with a hermetic case and a same-commit re-pin (sourced on S221).** Red at
 base: CLI `--repo is not the repository root` exit 2 in BOTH path forms
 (`.ufo/waves/round-72/open/pbr72-red-cli.txt`); selftest `toplevel mismatch` exit 2
-(`open/pbr72-red-selftest.txt`); checklist item SKILL.md:744 FAIL exit=2 wall=0.851, total
-`CHECKLIST: 7/33 pass` (`open/checklists-BEFORE.txt`). Green at `e158ee96…`:
+(`open/pbr72-red-selftest.txt`); checklist item SKILL.md:744 `FAIL exit=null wall=120.028`,
+total `CHECKLIST: 7/33 pass` (`open/checklists-BEFORE.txt`; corrected round 73, 2026-11-02,
+closure defect D2 — this section originally read "FAIL exit=2 wall=0.851", figures the cited
+receipt does not contain: BOTH the before and the after checklist runs were killed by
+surface-probe's 120 s per-item wall cap; see `corpus/lessons/round-72.md ## Errata`).
+Green at `e158ee96…`:
 `PLAN_BEFORE_READY_SELFTEST: PASS (39/39)` exit 0 including the decisive case
 `repo-path-form-toplevel` (`close/pbr72-green-selftest.txt`); real CLI verdict lines on
 committed history — round 63 PASS exit 0, round 62 FAIL `reason=NO_PLAN` exit 1 (the
@@ -3156,10 +3172,13 @@ exit 2 → exit 0 with `PASS (39/39)`. Operability integer 9 → 9 (terminal `f_
 `.sh` adds no runnable file and no checklist item). SKILL row corrected 38/38 → 39/39 with
 dated note (r71 D4 precedent).
 
-- Checklist-total disclosure (plan Amendment 2): the checklist item now runs but exceeds
-  surface-probe's 120 s per-item wall cap on this host (`close/checklists-AFTER.txt`,
-  `exit=null wall=120.020`); the total stays 7/33 and is NOT claim evidence — the claim's
-  pass-sensitive evidence is the gate's own receipts.
+- Checklist-total disclosure (plan Amendment 2; corrected round 73, 2026-11-02, closure
+  defect D2 — the original bullet read "the checklist item now runs but exceeds", implying a
+  before/after reason change the receipts do not show): the checklist item is killed by
+  surface-probe's 120 s per-item wall cap on BOTH sides (before `open/checklists-BEFORE.txt`,
+  `exit=null wall=120.028`; after `close/checklists-AFTER.txt`, `exit=null wall=120.020`);
+  the total stays 7/33 on both sides and is NOT claim evidence — the claim's pass-sensitive
+  evidence is the gate's own receipts.
 - New routed host defect (first live map-arm run on this host): round 71's plan reads
   `FAIL reason=MAP_UNRUNNABLE map=UNRUNNABLE reason=ARCHIVE` — the archive carries round-57
   fixture symlinks with absolute origin-host targets that MSYS tar cannot create; fail-closed
@@ -3179,3 +3198,70 @@ dated note (r71 D4 precedent).
   (160 / 53 / 174 / 208 / 41); census start/end exit 0 (six carried W04).
   Round gate `scripts/round-gate.mjs --round 72` and `report-receipt-diff` run at filing;
   lines recorded in the round report.
+
+## Round 73 — declaration and verdicts (2026-11-02, Windows host; L1-only, no wave)
+
+Base `651920ccb81f4ce21105cf32ca4c86b1a60f62a3`; work revs `d47393ebb7d969068231fbca829d4013683f9e66`
+(plan + red receipts + S222 + the D1 Amendment-2 landing) and `cf58f1d003ab7d1c0652adf85e5bcce9a8c09389`
+(fix + re-pin + SKILL row + green receipts). No wave: this host has no AgentSwarm dispatch surface
+(L0-noted round 70); L1-only round, disclosed.
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | operability (9, integer held — terminal under `f_O`) | gate `plan-before-ready` **map arm** (`scripts/plan-before-ready.sh`), the round-72 routed host defect (`MAP_UNRUNNABLE reason=ARCHIVE`) |
+
+**C1 — capability deepening of gate `plan-before-ready`'s map arm: disclosed sanitized
+archive extraction that still fails closed, with three hermetic cases and a same-commit
+re-pin (sourced on S222).** Red at base: rounds 65–71 sweep 7/7 `map=UNRUNNABLE
+reason=ARCHIVE` (`open/pbr73-red-sweep.txt`); suite + three new cases at base bytes `FAIL
+(41/42)`, BAD exactly `map-archive-sanitized` (`open/pbr73-red-selftest-with-cases.txt`).
+Green at `cf58f1d0…`: sweep `UNRUNNABLE` count 0, real verdicts for all seven rounds, every
+sanitized verdict disclosing `sanitized=16` (`close/pbr73-green-sweep.txt`); selftest `PASS
+(42/42)` exit 0 (`close/pbr73-green-selftest.txt`); blob re-hashes to the re-pinned pin
+(`close/pbr73-blob-identity.txt`; `pin.plan-before-ready` `cb8da6f2…` → `4d927ce3…` in the
+fix commit, the row's own rule). Fail-closed preserved and pinned by cases
+`map-archive-sanitized-failclosed` / `map-archive-nosymlink-failclosed` (still
+`reason=ARCHIVE`); stage-1 verdicts byte-identical (no `sanitized=` term outside the
+sanitized arm); an excluded corpus/ member is absent from the extracted tree where the map
+gate's own bimap reads DRIFT — sanitization cannot launder a red map. Rounds 67/69 now read
+their real `MAP_DRIFT` red at freeze (first=uncovered: the round-66/68 verifier-spotcheck
+lessons) — honest verdicts, not regressions. Counting command: `for n in 65 66 67 68 69 70
+71; do bash scripts/plan-before-ready.sh --repo <lane> --round $n; done | grep -c
+'map=UNRUNNABLE reason=ARCHIVE'` → 7 before, 0 after. Operability integer 9 → 9 (terminal
+`f_O`; an edited `.sh` adds no runnable file and no checklist item). SKILL row gained the
+`sanitized=<n>` vocabulary, the 42/42 tally and the re-pin note with dated authority.
+
+- Carry-in D1 (dangling "plan Amendment 2" pointers): the amendment text LANDED in
+  `.ufo/waves/round-72/plan.md` (commit `d47393eb…`), below the existing amendment as its
+  authoring intended, with a dated landing note; its two before-state clauses were landed
+  corrected to the receipted figures per D2, and the authored wording is preserved verbatim
+  in `corpus/lessons/round-72.md ## Errata`. The report's/LOG's/lesson's Amendment-2 cites
+  now resolve.
+- Carry-in D2 (BEFORE-checklist figures drift): the receipted truth is
+  `FAIL exit=null wall=120.028` (item SKILL.md:744, `open/checklists-BEFORE.txt` line 167)
+  — both checklist runs were probe-wall-capped, total 7/33 on both sides. Corrected with
+  dated notes in the SCORECARD round-72 section (two cites) and the round-72 lesson
+  `## Errata`; the LOG round-73 entry records the correction; the filed report is not
+  lane-rewritable (r71 N3 precedent) and is corrected lane-side + named in the round-73
+  report. The correction is mined as this round's mistake (erratum quoting recalled
+  figures).
+- Inherited repairs (named): `lessons/round-72-verifier-spotcheck.md` was landed by the
+  round-72 verifier commit (`651920c`) without its README row or `readme-map.json` covered
+  entry — first close-gates pass read `README_MAP: DRIFT files=176 rows=175 covered=175
+  bad=4` (the spotcheck file uncovered+unpinned; the new round-73 lesson
+  orphan-row+stale-covered pre-lesson); repaired in-round (rows + covered entries), receipt
+  re-run CLEAN files=176 rows=176 covered=176. Same class as r72's inherited round-71
+  spotcheck repair: closures land files after the lane's gates ran.
+- Still routed, not silently skipped: `node scripts/kimi-census.mjs` win32 crash
+  (`process.getuid` at `scripts/kimi-census.mjs:258`, re-confirmed at open,
+  `open/gates-open.txt`) — scoping note recorded (the selftest carries POSIX-native arms:
+  cap-run/bwrap gate children, FIFO fixtures, POSIX chmod mode floors; the repair is a
+  portability design, pre-registered candidate for round 74); `node scripts/proxy-check.mjs`
+  `PROXY: FAIL-CLOSED (SRC_NOT_A_DIR)` (carried r70) unchanged.
+- Axes table unchanged: operability 9 (terminal, `f_O` terms A=10 C=33-listed unchanged),
+  coverage rows byte-identical. No axis harmed. No capability row this round (deepening of
+  an existing gate; the last verified row is `control-replay`, round 70): with N=3, the
+  stagnation nudge becomes active at round 74 if no capability row lands there. SOURCES 160
+  → 161 (S222, tier A). Round gate at open read the expected pre-close DRIFT (errors=4,
+  warnings=1: the stale-Planned warning carried since r63–r72), repaired this round by the
+  round-74 pre-registration below.

@@ -112,3 +112,33 @@ entry — the `##` entry stays) and names the carried state here; the remaining 
 (`## Planned names no round later than 72`) is the stale `## Planned` section's state at
 every recent round, disclosed not repaired. The repair that would clear the warning class
 (re-point `## Planned` at the next round) belongs to the next round's declaration.
+
+## Errata (appended round 73, 2026-11-02 — closure defects D1/D2; the text above stays as written)
+
+- **D2 — the round-72 Verdicts section's before-checklist figures drift from the cited
+  receipt.** This lesson's `## Round-72 verdicts` reads "checklist item 744 FAIL exit=2 in
+  0.85 s (`.ufo/waves/round-72/open/checklists-BEFORE.txt`, total 7/33)". The authority
+  receipt reads for that item: `CHECKLIST  FAIL SKILL.md:744 exit=null expected=0
+  substring=miss wall=120.028 load1=0.00` (line 167) — there is no `exit=2` and no `0.851`
+  in the committed round tree. Corrected reading: BOTH the before and the after checklist
+  runs were killed by surface-probe's 120 s per-item wall cap (`exit=null`, wall=120.028 →
+  wall=120.020), total `CHECKLIST: 7/33 pass` on both sides; the fast `toplevel mismatch`
+  exit 2 at base is receipted only in the direct selftest run (`open/pbr72-red-selftest.txt`),
+  not in the checklist run. The same drift appears in the LOG round-72 entry and the
+  SCORECARD round-72 section (corrected there with dated notes; the filed report is not
+  lane-rewritable — corrected lane-side, named in the round-73 report).
+- **D2, second clause — the Mistakes §2 "failure reason changed" narrative is inverted.**
+  Mistakes §2 reads "the item's failure reason changed (tool-refused-to-run → probe-wall-cap)".
+  Per the receipts the reason did NOT change: the checklist run was probe-wall-capped
+  (`exit=null`) on BOTH sides. What changed is only the wall figure (120.028 → 120.020 s).
+  The expectation-coupling mistake itself stands (the plan predicted `PASS exit=0; total
+  8/33`; measured was wall-capped 7/33 on both sides).
+- **D1 — the "plan Amendment 2" cites now resolve.** The Mistakes §2 fix line and the LOG
+  entry cite "plan Amendment 2"; the committed `.ufo/waves/round-72/plan.md` held exactly
+  one Amendment section, so the pointer dangled. Round 73 landed the amendment text (with
+  its own before-state clauses corrected to the receipted `exit=null wall=120.028` figures
+  per D2, and a dated landing note preserving the authored wording). The authored Amendment 2
+  text, preserved verbatim per the corrections-are-new-entries rule, read: "(it no longer
+  dies in 0.85 s with 'toplevel mismatch')" and "the item's failure REASON changed
+  (tool-refused-to-run → probe-wall-cap)" — both contradicted the cited BEFORE receipt for
+  the same reason as the errata above.

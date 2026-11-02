@@ -297,6 +297,8 @@ All entries are falsifiable and cite file+symbol. Opinions marked as such.
 | `lessons/round-71.md` | Round-71 counter-side recovery gate, measured budget recalibration and mistakes | LOG.md round 71; S220 |
 | `lessons/round-71-verifier-spotcheck.md` | Non-author round-71 verdict: green counter re-executed, budget arm checked, N1–N5 notes | Hyaku closure at a615abc (row added round 72 — the closure landed the file without its row) |
 | `lessons/round-72.md` | Round-72 routed host-defect fix (plan-before-ready path forms), the discovered map-arm ARCHIVE defect and mistakes | LOG.md round 72; S221 |
+| `lessons/round-72-verifier-spotcheck.md` | Non-author round-72 verdict: C1 re-measured end-to-end, N1–N5 verified, D1/D2 conformance defects (routed to round 73) | Hyaku closure at 651920c (row added round 73 — the closure landed the file without its row) |
+| `lessons/round-73.md` | Round-73 carry-in D1/D2 corrected (Amendment 2 landed; BEFORE-checklist figures corrected to the receipt) and the routed map-arm ARCHIVE defect fixed (sanitized extraction) | LOG.md round 73; S222 |
 | `knowledge/replay-output-isolation-link-following.md` | Replay output/work-path isolation: CWE-59 link following and CWE-367 TOCTOU at the instrument boundary | S218/S219; K70 seat attacks; v2 arms V10-V12 |
 
 ## Frontier
