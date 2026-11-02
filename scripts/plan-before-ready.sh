@@ -65,7 +65,23 @@
 # form on Windows hosts, symlink-resolving on both). S221 (MSYS2, "Filesystem Paths") grounds
 # the mechanism: the same directory has non-interchangeable path forms across the Cygwin/native
 # boundary. Selftest case repo-path-form-toplevel passes --repo in git's own reported form and
-# fails on the pre-fix bytes wherever the two forms differ.
+# Sanitized archive extraction (round 73; routed from the round-72 lesson "Routed host
+# defects"): the map arm's whole-tree extraction fails on plan trees carrying symlink members
+# this extraction host cannot create (the round-57 SentinelArtifacts attack fixtures: 16
+# mode-120000 members with absolute origin-host or parent-escaping targets; S222, MSYS2
+# "Symlinks"). On a failed first extraction the arm now makes ONE disclosed sanitized second
+# attempt: list the archive, exclude exactly the members the listing names symlinks
+# (--anchored), extract the rest. Fail-closed is unchanged — a member the listing does not
+# name a symlink can never be dropped, an archive with NO symlink members is never
+# re-extracted, any remaining extraction failure is still MAP_UNRUNNABLE reason=ARCHIVE — and
+# the excluded count is disclosed as ` sanitized=<n>` on every verdict the sanitized run
+# produces (sanitization cannot launder a red map: an excluded corpus/ member is absent from
+# the extracted tree, where the gate's own bimap reads orphan-row/uncovered DRIFT). Stage 1
+# and every verdict it produces are byte-identical to the pre-round-73 behavior; the verdict
+# grammar grows only in the sanitized arm. Selftest cases map-archive-sanitized /
+# map-archive-sanitized-failclosed / map-archive-nosymlink-failclosed (fake-tar driven, host
+# independent) pin the arm; the first fails on the pre-fix bytes wherever the plain
+# extraction fails on the fixture.
 set -uo pipefail
 
 REPO_DEFAULT=/home/vgpnk/Projects/shokunin/kumitate-shokunin
@@ -168,6 +184,8 @@ map_first_add() {  # $1=repo $2=plan_sha -> commit in plan's ancestry that ADDS 
 
 map_at_plan() {  # $1=repo $2=plan_sha
   local repo="$1" plan="$2" t out rc line first fc gate_sha node_bin timeout_bin
+  local w SANSUF pbr_ex
+  SANSUF=""
   MAP_FIELD="map=SKIP reason=MAP_PRE_EPOCH"; MAP_FAIL_REASON=""
 
   if [ "$(git -C "$repo" cat-file -t "$plan:$MAP_GATE" 2>/dev/null)" != "blob" ] \
@@ -188,8 +206,42 @@ map_at_plan() {  # $1=repo $2=plan_sha
     MAP_FIELD="map=UNRUNNABLE reason=MKTEMP"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
   trap 'rm -rf "$t"' INT TERM HUP EXIT
   if ! git -C "$repo" archive --format=tar "$plan" 2>/dev/null | tar -x -C "$t" --no-same-owner 2>/dev/null; then
-    rm -rf "$t"; trap - INT TERM HUP EXIT
-    MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    # Round 73: the plan tree may carry symlink members this extraction host cannot create
+    # (the round-57 SentinelArtifacts attack fixtures carry absolute origin-host targets;
+    # S222). Disclosed sanitized second attempt: list the same archive, exclude exactly the
+    # members the listing names symlinks (--anchored), extract the rest. Fail-closed is
+    # unchanged: a member the listing does not name a symlink can never be dropped, an
+    # archive whose listing shows NO symlink members is never re-extracted, and any
+    # remaining extraction failure is still MAP_UNRUNNABLE reason=ARCHIVE. The excluded
+    # count is disclosed as ` sanitized=<n>` on every verdict this sanitized run produces.
+    # Sanitization cannot launder a red map: an excluded member under corpus/ is absent from
+    # the extracted tree, where the map gate's own bimap reads orphan-row/uncovered DRIFT.
+    # Parse limit (disclosed): a member path containing a space or a literal " -> " defeats
+    # the listing parse and degrades to fail-closed (the round-73 red sweep receipt lists
+    # 0 such members in the round-71 plan tree).
+    w="$(mktemp -d "${TMPDIR:-/tmp}/pbr-mapw.XXXXXX" 2>/dev/null)" || {
+      rm -rf "$t"; trap - INT TERM HUP EXIT
+      MAP_FIELD="map=UNRUNNABLE reason=MKTEMP"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0; }
+    trap 'rm -rf "$t" "$w"' INT TERM HUP EXIT
+    if ! git -C "$repo" archive --format=tar "$plan" > "$w/arch.tar" 2>/dev/null \
+       || ! tar -tvf "$w/arch.tar" > "$w/list.txt" 2>/dev/null \
+       || ! awk '$1 ~ /^l/ { i = index($0, " -> "); if (i > 0) { line = substr($0, 1, i - 1); n = split(line, f, " "); print f[n] } }' "$w/list.txt" > "$w/excl.txt"; then
+      rm -rf "$t" "$w"; trap - INT TERM HUP EXIT
+      MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    fi
+    if [ ! -s "$w/excl.txt" ]; then
+      rm -rf "$t" "$w"; trap - INT TERM HUP EXIT
+      MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    fi
+    set --
+    while IFS= read -r pbr_ex; do set -- "$@" "--exclude=$pbr_ex"; done < "$w/excl.txt"
+    if ! tar -x -C "$t" --no-same-owner --anchored "$@" -f "$w/arch.tar" 2>/dev/null; then
+      rm -rf "$t" "$w"; trap - INT TERM HUP EXIT
+      MAP_FIELD="map=UNRUNNABLE reason=ARCHIVE"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    fi
+    SANSUF=" sanitized=$(wc -l < "$w/excl.txt" | tr -d '[:space:]')"
+    rm -rf "$w"
+    trap 'rm -rf "$t"' INT TERM HUP EXIT
   fi
   if [ -n "$timeout_bin" ]; then
     out="$(cd "$t" && "$timeout_bin" -k 5 300 "$node_bin" "$MAP_GATE" 2>&1)"; rc=$?
@@ -202,27 +254,27 @@ map_at_plan() {  # $1=repo $2=plan_sha
     line="$(printf '%s\n' "$out" \
       | sed -n 's/^README_MAP: CLEAN \(files=[0-9][0-9]* rows=[0-9][0-9]* covered=[0-9][0-9]*\)$/\1/p' | head -n 1)"
     if [ -n "$line" ]; then
-      MAP_FIELD="map=CLEAN $line"
+      MAP_FIELD="map=CLEAN $line${SANSUF}"
       return 0
     fi
   fi
   if [ "$rc" = 0 ]; then
-    MAP_FIELD="map=NO_VERDICT map_exit=0"; MAP_FAIL_REASON=MAP_NO_VERDICT; return 0
+    MAP_FIELD="map=NO_VERDICT map_exit=0${SANSUF}"; MAP_FAIL_REASON=MAP_NO_VERDICT; return 0
   fi
   if [ "$rc" = 127 ]; then
-    MAP_FIELD="map=UNRUNNABLE reason=NODE_ABSENT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    MAP_FIELD="map=UNRUNNABLE reason=NODE_ABSENT${SANSUF}"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
   fi
   if [ "$rc" = 124 ]; then
-    MAP_FIELD="map=UNRUNNABLE reason=TIMEOUT"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
+    MAP_FIELD="map=UNRUNNABLE reason=TIMEOUT${SANSUF}"; MAP_FAIL_REASON=MAP_UNRUNNABLE; return 0
   fi
   first="$(printf '%s\n' "$out" | sed -n 's/^README_MAP: DRIFT .*first=//p' | head -n 1)"
   fc="$(printf '%s\n' "$out" | sed -n 's/^README_MAP: FAIL-CLOSED reason=//p' | head -n 1)"
   if [ -n "$first" ]; then
-    MAP_FIELD="map=DRIFT map_exit=$rc map_first=$first"; MAP_FAIL_REASON=MAP_DRIFT
+    MAP_FIELD="map=DRIFT map_exit=$rc map_first=$first${SANSUF}"; MAP_FAIL_REASON=MAP_DRIFT
   elif [ -n "$fc" ]; then
-    MAP_FIELD="map=FAIL-CLOSED map_exit=$rc map_reason=$fc"; MAP_FAIL_REASON=MAP_FAIL_CLOSED
+    MAP_FIELD="map=FAIL-CLOSED map_exit=$rc map_reason=$fc${SANSUF}"; MAP_FAIL_REASON=MAP_FAIL_CLOSED
   else
-    MAP_FIELD="map=UNRUNNABLE map_exit=$rc"; MAP_FAIL_REASON=MAP_UNRUNNABLE
+    MAP_FIELD="map=UNRUNNABLE map_exit=$rc${SANSUF}"; MAP_FAIL_REASON=MAP_UNRUNNABLE
   fi
   return 0
 }
@@ -678,6 +730,73 @@ run_selftest() {
   if [ "$topform" != "$(cd "$d" && pwd -P)" ]; then
     printf 'SELFTEST note %-24s %s\n' repo-path-form-toplevel "host reports differing path forms (git=$topform); the case is decisive here"
   fi
+
+
+  # 37 (round 73) an archive carrying an un-creatable symlink member extracts sanitized and
+  #    still judges the plan's map. The fake tar fails the FIRST extraction (stage 1) then
+  #    delegates everything else, so the sanitized arm is forced deterministically on every
+  #    host (on the origin Unix host a real tar would simply succeed at stage 1 and the arm
+  #    would never fire). The fixture plants a mode-120000 member with an absolute target via
+  #    `update-index --cacheinfo` — no filesystem symlink is created, so this runs on a host
+  #    without symlink privilege. Expected: the real map verdict WITH ` sanitized=1`.
+  d="$(fixture map-archive-sanitized)" || return 2
+  MAP_STUB=green fcommit "$d" 1000000000 "gate" scripts/readme-map.mjs
+  mkdir -p "$d/.ufo/waves/round-9"; printf 'x\n' > "$d/.ufo/waves/round-9/plan.md"
+  pbr_blob="$(printf '/nonexistent-origin-host/target.json' | git -C "$d" hash-object -w --stdin)"
+  git -C "$d" update-index --add --cacheinfo "120000,$pbr_blob,.ufo/waves/round-9/fixture-link"
+  git -C "$d" add -- .ufo/waves/round-9/plan.md >/dev/null 2>&1
+  GIT_AUTHOR_DATE="@1000000000 +0000" GIT_COMMITTER_DATE="@1000000000 +0000" \
+    git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
+    commit -q -m "plan+link" >/dev/null 2>&1
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  pbr_real_tar="$(command -v tar)"
+  mkdir -p "$d/fakebin"
+  cat > "$d/fakebin/tar" <<PBR73EOF
+#!/bin/sh
+if [ "\$1" = "-x" ] && [ ! -f "$d/fakebin/stage1done" ]; then : > "$d/fakebin/stage1done"; exit 2; fi
+exec "$pbr_real_tar" "\$@"
+PBR73EOF
+  chmod +x "$d/fakebin/tar"
+  PATH="$d/fakebin:$PATH" check_has map-archive-sanitized 0 "$d" 9 'sanitized=1'
+
+  # 38 (round 73) a sanitized extraction that STILL fails is still a red: fail-closed is
+  #    unchanged when a member the listing does NOT name a symlink cannot be extracted (here
+  #    the fake tar fails every -x while listing fine). Expected: reason=ARCHIVE, exit 1.
+  d="$(fixture map-archive-sanitized-failclosed)" || return 2
+  MAP_STUB=green fcommit "$d" 1000000000 "gate" scripts/readme-map.mjs
+  mkdir -p "$d/.ufo/waves/round-9"; printf 'x\n' > "$d/.ufo/waves/round-9/plan.md"
+  pbr_blob="$(printf '/nonexistent-origin-host/target.json' | git -C "$d" hash-object -w --stdin)"
+  git -C "$d" update-index --add --cacheinfo "120000,$pbr_blob,.ufo/waves/round-9/fixture-link"
+  git -C "$d" add -- .ufo/waves/round-9/plan.md >/dev/null 2>&1
+  GIT_AUTHOR_DATE="@1000000000 +0000" GIT_COMMITTER_DATE="@1000000000 +0000" \
+    git -C "$d" -c user.name=pbr-fixture -c user.email=pbr@fixture.invalid \
+    commit -q -m "plan+link" >/dev/null 2>&1
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  pbr_real_tar="$(command -v tar)"
+  mkdir -p "$d/fakebin"
+  cat > "$d/fakebin/tar" <<PBR73EOF
+#!/bin/sh
+for pbr_a in "\$@"; do [ "\$pbr_a" = "-x" ] && exit 2; done
+exec "$pbr_real_tar" "\$@"
+PBR73EOF
+  chmod +x "$d/fakebin/tar"
+  PATH="$d/fakebin:$PATH" check_has map-archive-sanitized-failclosed 1 "$d" 9 'reason=ARCHIVE'
+
+  # 39 (round 73) an archive with NO symlink members is never sanitized: a stage-1 extraction
+  #    failure with an empty symlink listing must stay MAP_UNRUNNABLE reason=ARCHIVE (nothing
+  #    may be dropped that the listing does not name a symlink). Expected: reason=ARCHIVE.
+  d="$(fixture map-archive-nosymlink-failclosed)" || return 2
+  MAP_STUB=red fcommit "$d" 1000000000 "gate+plan" scripts/readme-map.mjs .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  pbr_real_tar="$(command -v tar)"
+  mkdir -p "$d/fakebin"
+  cat > "$d/fakebin/tar" <<PBR73EOF
+#!/bin/sh
+if [ "\$1" = "-x" ] && [ ! -f "$d/fakebin/stage1done" ]; then : > "$d/fakebin/stage1done"; exit 2; fi
+exec "$pbr_real_tar" "\$@"
+PBR73EOF
+  chmod +x "$d/fakebin/tar"
+  PATH="$d/fakebin:$PATH" check_has map-archive-nosymlink-failclosed 1 "$d" 9 'reason=ARCHIVE'
 
   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
   rm -rf "$root"
