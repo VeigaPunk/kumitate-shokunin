@@ -116,3 +116,28 @@ after-state claim therefore stands on rounds 63 (PASS) and 62 (FAIL NO_PLAN, the
 registry-row-locked shape) plus the selftest; round 71's real verdict line is disclosed as
 the new routed finding, not as the plan's expected NA.
 
+
+### Amendment 2 (authored round 72 before close, never committed — landed round 73; the amendment above and everything earlier stay as written)
+
+The first amendment's after-state still expected "checklists item SKILL.md:744 PASS exit=0;
+total `CHECKLIST: 8/33 pass`". Measured (`close/checklists-AFTER.txt`): the item reads
+`exit=null … wall=120.020` — surface-probe's own per-item wall cap kills the now-runnable
+39-case suite on this host (Windows process spawn makes the full suite ~8–10 minutes), so the
+checklist total stays 7/33. The claim's pass-sensitive evidence is therefore the gate's own
+receipts — the selftest `PASS (39/39)` exit 0 and the real CLI verdict lines — not the
+checklist total; the 8/33 expectation was a pre-registered misregistration (the probe's 120 s
+cap was never measured before it was written into a prediction) and is mined as this round's
+expectation-coupling mistake. No further amendment follows.
+
+[Landing note, round 73 (2026-11-02) — closure defects D1/D2. This amendment's text was
+authored round 72 before close but never committed; the committed plan held exactly one
+Amendment section, leaving the report's three, the LOG entry's and the lesson's "Amendment 2"
+cites dangling (D1). It is landed here with its two before-state clauses corrected to the
+committed receipt per D2: the authored wording read "(it no longer dies in 0.85 s with
+'toplevel mismatch')" and "the item's failure REASON changed (tool-refused-to-run →
+probe-wall-cap)" — both contradicted the cited BEFORE receipt `.ufo/waves/round-72/open/checklists-BEFORE.txt`,
+which reads `exit=null … wall=120.028` for the same item: BOTH the before and the after
+checklist runs were killed by the probe's 120 s cap and the total is `CHECKLIST: 7/33 pass`
+on both sides; the fast `toplevel mismatch` exit 2 at base is receipted only in the direct
+selftest run (`open/pbr72-red-selftest.txt`), not in the checklist run. The authored wording
+is preserved verbatim in the round-72 lesson errata and the round-73 LOG entry.]
