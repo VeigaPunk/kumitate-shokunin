@@ -36,3 +36,34 @@ Assimilation: none — shokuknow unreachable. considerthese/ re-read 2026-10-26.
 ## Round-71 verdicts
 
 C1 (operability, 9 held; `replay71-probe` rule R71) **verifies by the frozen counter**: at the measured revision `798a5bb4…` the counter reads `REPLAY71_HELD held=17/17 checks=17` exit 0 (`.ufo/waves/round-71/close/replay71-AT-M-win32.txt`) against the committed red `REPLAY70V2_UNMET held=8/17` at the round-70 M. V09's PASS line reads `probe-local exit=0 receipt-childExit=0 normalized equal` — the probe-side comparison genuinely equals, which retroactively confirms that v2's round-70 `DIFFER` detail was its own `ok`-ternary masking and not a normalization failure. Attempt 1 of this round's counter read `REPLAY71_UNMET held=10/17` on the stdout-sha extraction defect (above, preserved as `close/replay71-AT-M-win32-ATTEMPT1-sha-extraction-unmet.txt`) — fixed and re-pinned before scoring; the scored counter's sha is `75094e4a…` at `798a5bb4…`. The final receipt's `exit=0` marker is verdict-derived (the detached wrapper did not capture the process exit code); the verdict line is the authority.
+
+## Errata (round 72, 2026-11-01; the text above stays as written — append-only corrections to this lesson's own wording)
+
+1. **S220 word count (verifier note N2):** the `## Gate` section annotates the S220 quote
+   "(17 words)"; the quote "The exit code of the subprocess, or null if the subprocess
+   terminated due to a signal" is **16 words** (The/exit/code/of/the/subprocess/or/null/if/
+   the/subprocess/terminated/due/to/a/signal). The ≤25-word bound holds either way; the
+   SOURCES S220 row itself carries no count.
+2. **Gates-number drift in the LOG entry (verifier note N1):** the LOG round-71 entry cites
+   `README_MAP CLEAN files=171 rows=171 covered=171, CITE_SOURCES CLEAN cited=206`; the
+   committed close receipt `.ufo/waves/round-71/close/gates.txt` — the authority — reads
+   `files=172 rows=172 covered=172` and `cited=207` (the lesson + README row added in the
+   same close commit moved both between the LOG sentence's measurement and the receipt).
+   LOG is append-only, so the correction lives here and in the LOG round-72 entry.
+3. **"A grows" aside (verifier note N3):** the round-71 report's operability aside "A grows
+   by the one new counter file" is loose: `A` counts runnable-extension files and the new
+   counter is a `.ufo/waves` artifact, not a `scripts/` executable, so **`A` stayed 10**;
+   the unchanged SCORECARD cell was the authority and is correct. Filed reports are not
+   lane-rewritable; the correction lives here.
+4. **"Tool untouched" wording (verifier note N4):** the `## Gate` sentence "with the frozen
+   controls, the v1/v2 counter bytes and `scripts/control-replay.mjs` hash-checked
+   untouched" overstates "untouched" for the tool: `scripts/control-replay.mjs` WAS
+   byte-changed this round by the measured budget recalibration (900000 → 1200000 ms,
+   13 lines) and re-pinned in the same commit (`f4f67ec5`, r70 precedent `89cbd998`).
+   Accurate statement: the controls, the v1/v2 counter bytes and the five frozen receipts
+   are untouched and hash-checked (absent from the diff range); the tool is **pin-checked
+   against its re-pinned sha**. The v3 counter header line "scripts/control-replay.mjs is
+   likewise untouched (pin-checked)" carries the same erratum; the counter's bytes are
+   frozen scored history at pin `75094e4a…` (re-executed by the verifier) and are NOT
+   amended — amending them was rejected this round (round-72 lesson `## Gate`; flip: a
+   versioned v4 successor if a counter-side change is ever routed).

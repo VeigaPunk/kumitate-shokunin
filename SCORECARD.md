@@ -3126,3 +3126,55 @@ lane-rewritable).
 
 - **C1 — verifies by the frozen counter.** Red: `REPLAY70V2_UNMET held=8/17` at the round-70 M (`close/replay70-v2-AT-M-win32.txt`; `grep -c MISS` → 9). Green: `REPLAY71_HELD held=17/17 checks=17 rev=798a5bb4… rule=R71` exit 0 (`close/replay71-AT-M-win32.txt`; `grep -c MISS` → 0) — V03–V07 PASS with `childExit=0` (the routed expectation fix), V08 PASS (cascade gone), V09 PASS with `normalized equal` (the probe-side cross-check genuinely compares equal; v2's `DIFFER` detail was its `ok`-ternary masking, now fixed), V12 PASS at the measured budget (`tool-exit=0` where v2 read `tool-exit=null`), V13 PASS with `exits=0,1 childExits=0,0` (the measured early-finisher corollary, counter-side fix), V14 PASS, V15–V17 PASS (the three stub attacks still read UNMET as fixtures). Controls untouched: V01 hash-checks the r69 controls, the v1/v2 counter bytes and the five frozen receipts inside the run itself; `scripts/control-replay.mjs` is pin-checked. Operability integer 9 → 9 (terminal `f_O`). Attempt 1 of this round's counter ran to completion and read `REPLAY71_UNMET held=10/17` on a counter-side stdout-sha extraction defect (latent in v2, masked there by the childExit bug) — preserved as `close/replay71-AT-M-win32-ATTEMPT1-sha-extraction-unmet.txt`, fixed in work rev 2, mistake mined. No exploratory claim; no axis harmed (no coverage successor moved, no score lowered).
 - Budget derivation (measured, not assumed): m1 receipts record both c1 modes killed at the r70 900 s cap (900046/900040 ms, SIGTERM); scaffold completions read 921210/922358 ms; `toolBudget = ceil(1.25 × 922358 / 60 s) × 60 s = 1 200 000 ms` landed with `pin.control-replay` re-pinned in the same commit (r70 precedent `89cbd998`); the V13 mode (c2/donothing) was chosen from the measured 2-way pair (689670/689597 ms) inside the budget.
+
+## Round 72 — declaration and verdicts (2026-11-01, Windows host; L1-only, no wave)
+
+Base `a615abcc441fe0cd9e49b99b6621dededf5ac330`; work revs `840e64c43c2e01603adfe8a6dd70b371b15e5988`
+(plan + red receipts) and `e158ee96bdf548ade28614e8af7f55802632aa95` (fix + source + re-pin + receipts).
+No wave: this host has no AgentSwarm dispatch surface (L0-noted round 70); L1-only round, disclosed.
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | operability (9, integer held — terminal under `f_O`) | gate `plan-before-ready` (`scripts/plan-before-ready.sh`), the round-71 routed host defect |
+
+**C1 — capability deepening of gate `plan-before-ready`: the Windows-host path-form
+normalization, with a hermetic case and a same-commit re-pin (sourced on S221).** Red at
+base: CLI `--repo is not the repository root` exit 2 in BOTH path forms
+(`.ufo/waves/round-72/open/pbr72-red-cli.txt`); selftest `toplevel mismatch` exit 2
+(`open/pbr72-red-selftest.txt`); checklist item SKILL.md:744 FAIL exit=2 wall=0.851, total
+`CHECKLIST: 7/33 pass` (`open/checklists-BEFORE.txt`). Green at `e158ee96…`:
+`PLAN_BEFORE_READY_SELFTEST: PASS (39/39)` exit 0 including the decisive case
+`repo-path-form-toplevel` (`close/pbr72-green-selftest.txt`); real CLI verdict lines on
+committed history — round 63 PASS exit 0, round 62 FAIL `reason=NO_PLAN` exit 1 (the
+registry-row-locked shape), round 71 FAIL `MAP_UNRUNNABLE` (`close/pbr72-green-cli.txt`);
+committed blob re-hashes to the re-pinned pin (`close/pbr72-blob-identity.txt`;
+`pin.plan-before-ready` `0c7da32a…` → `cb8da6f2…` in the fix commit, the row's own rule).
+Counting commands: `bash scripts/plan-before-ready.sh --repo <lane> --round 63` exit 2 →
+exit 0 with `PLAN_BEFORE_READY: PASS …`; `bash scripts/plan-before-ready.sh --selftest`
+exit 2 → exit 0 with `PASS (39/39)`. Operability integer 9 → 9 (terminal `f_O`; an edited
+`.sh` adds no runnable file and no checklist item). SKILL row corrected 38/38 → 39/39 with
+dated note (r71 D4 precedent).
+
+- Checklist-total disclosure (plan Amendment 2): the checklist item now runs but exceeds
+  surface-probe's 120 s per-item wall cap on this host (`close/checklists-AFTER.txt`,
+  `exit=null wall=120.020`); the total stays 7/33 and is NOT claim evidence — the claim's
+  pass-sensitive evidence is the gate's own receipts.
+- New routed host defect (first live map-arm run on this host): round 71's plan reads
+  `FAIL reason=MAP_UNRUNNABLE map=UNRUNNABLE reason=ARCHIVE` — the archive carries round-57
+  fixture symlinks with absolute origin-host targets that MSYS tar cannot create; fail-closed
+  is correct; the sanitized-extraction repair is routed as a versioned change with a
+  hermetic case (`close/pbr72-map-archive-diagnosis.txt`).
+- Inherited repair (named): `lessons/round-71-verifier-spotcheck.md` was landed by the
+  round-71 closure after r71's gates ran, without its README row or `readme-map.json` pin
+  entry — first close-gates pass read `README_MAP: DRIFT files=174 rows=173 covered=173`;
+  repaired in-round (row + pin entry), receipt re-run CLEAN files=174 rows=174 covered=174.
+- Carry-in notes N1–N4 corrected append-only (`corpus/lessons/round-71.md ## Errata`; N1's
+  authority is `.ufo/waves/round-71/close/gates.txt` reading 172/207); N5 no action. The
+  N4 byte-amendment candidate was REJECTED (scored v3 counter bytes, pin `75094e4a…`;
+  flip: a versioned v4).
+- Axes table unchanged: operability 9 (terminal, `f_O` terms A=10 C=33-listed unchanged),
+  coverage rows byte-identical. No axis harmed. SOURCES 159 → 160 (S221, tier A);
+  SOURCES_CHECK/SOURCE_CAPTURE/README_MAP/CITE_SOURCES/COUNTER_PINS CLEAN at close
+  (160 / 53 / 174 / 208 / 41); census start/end exit 0 (six carried W04).
+  Round gate `scripts/round-gate.mjs --round 72` and `report-receipt-diff` run at filing;
+  lines recorded in the round report.

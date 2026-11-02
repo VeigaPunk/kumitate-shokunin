@@ -1,0 +1,178 @@
+label=AFTER checklists at round-72 (host: win32, node v24.21.0, Git Bash)
+date=2026-11-02T01:40:30Z
+command: node scripts/surface-probe.mjs --checklists
+script bytes under test (item 744): scripts/plan-before-ready.sh sha256 cb8da6f2f99908e27b570d755fda37671d97ae43a3b500afe15f73803379ccb5
+== output ==
+CHECKLIST  FAIL SKILL.md:712 exit=2 expected=0|1 substring=miss wall=0.487 load1=0.00 — Citation gate verdict
+  | cite-check: fail-closed — --src C:\Users\jpvei\Projects\ufo-fsd-alpha is missing
+CHECKLIST  FAIL SKILL.md:713 exit=1 expected=0 substring=miss wall=28.588 load1=0.00 — Citation gate hermetic suite
+  | PASS  exit contract: empty scan set → exit 2 with `empty scan set` on stderr — exit=2 cite-check: fail-closed — empty scan set under C:\Users\jpvei\AppData\Local\Temp\kumitate-cite-selftest-FKuCtT\self-empty-41
+  | PASS  exit contract: zero resolved citations → exit 2 with `zero resolved citations` on stderr — exit=2 cite-check: fail-closed — zero resolved citations under C:\Users\jpvei\AppData\Local\Temp\kumitate-cite-selftest-FKuCtT\self-zero
+  | PASS  exit contract: unknown argument → exit 64 — exit=64
+  | PASS  suite self-observation: injected failure → text VERDICT FAIL, exit 1 — exit=1 verdict=VERDICT: FAIL child-skips=true
+  | PASS  suite self-observation: injected failure → --json verdict FAIL, exit 1 — exit=1 verdict=FAIL group=FAIL child-skips=true
+  | PASS  hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+  | 46/76 cases passed (hermetic)
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:714 exit=2 expected=0 substring=miss wall=0.742 load1=0.00 — Live sighting-surface conformance
+  | SURFACE_PROBE: FAIL-CLOSED (--src C:\fast\scratch\hyaku\kumitate-pin\src is missing)
+  | surface-probe: fail-closed — --src C:\fast\scratch\hyaku\kumitate-pin\src is missing
+CHECKLIST  FAIL SKILL.md:715 exit=1 expected=0 substring=miss wall=0.945 load1=0.00 — Surface-probe hermetic suite
+  |     at selfTest (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/surface-probe.mjs:1553:25)
+  |     at main (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/surface-probe.mjs:1854:29)
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/surface-probe.mjs:1903:20
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | 
+  | Node.js v24.21.0
+CHECKLIST  FAIL SKILL.md:716 exit=1 expected=0 substring=miss wall=2.296 load1=0.00 — Round-gate hermetic suite
+  |     at selfTest (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/round-gate.mjs:914:16)
+  |     at main (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/round-gate.mjs:647:29)
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/round-gate.mjs:1567:20
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | 
+  | Node.js v24.21.0
+CHECKLIST  FAIL SKILL.md:717 exit=2 expected=0 substring=miss wall=0.735 load1=0.00 — Round-close artifact audit
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir C:\Users\jpvei\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\fleet\.ufo\reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir C:\Users\jpvei\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\fleet\.ufo\reports is absent
+CHECKLIST  FAIL SKILL.md:718 exit=2 expected=0 substring=miss wall=0.836 load1=0.00 — Filed-report tracking
+  | ROUND_GATE: FAIL-CLOSED (REPORTS_DIR_MISSING) --reports-dir C:\Users\jpvei\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\fleet\.ufo\reports is absent
+  | round-gate: fail-closed — REPORTS_DIR_MISSING: --reports-dir C:\Users\jpvei\.zcode\workspace\95b1ba4d-5089-47a4-9fd8-54adebbce2ae\fleet\.ufo\reports is absent
+CHECKLIST  FAIL SKILL.md:719 exit=2 expected=0 substring=miss wall=0.688 load1=0.00 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src C:\fast\scratch\hyaku\kumitate-pin\src is absent
+  | proxy-check: fail-closed — SRC_NOT_A_DIR: --src C:\fast\scratch\hyaku\kumitate-pin\src is absent
+CHECKLIST  FAIL SKILL.md:720 exit=1 expected=0 substring=miss wall=114.985 load1=0.00 — Proxy-check hermetic suite
+  | PASS  [117/122]  usage: --kimi-root without a value → exit 64 — exit=64
+  | PASS  [118/122]  usage: a value that is a flag is refused (--kimi-root --json) → exit 64 — exit=64
+  | FAIL  [119/122]  hermeticity: `--selftest` ignores bogus --self/--scorecard and every env var — exit=1 tail=PROXY_SELFTEST: 52/122 pass | VERDICT: FAIL
+  | PASS  [120/122]  hermeticity: a planted GIT_DIR/GIT_WORK_TREE/GIT_INDEX_FILE canary never reaches a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+  | FAIL  [121/122]  every declared finding kind fires in at least one fixture — never fired: A_DRIFT, C_DRIFT, C1_DRIFT, C1_TOTAL_DRIFT, C2_DRIFT, C2_TOTAL_DRIFT, S_MEMBERS_DRIFT, S_SECTIONS_DRIFT, R_MEMBERS_DRIFT, R_SECTIONS_DRIFT, COVERAGE_SCRIPT_DRIFT, COVERAGE_RUNTIME_DRIFT, C1K_DRIFT, C1K_TOTAL_DRIFT, K_MEMBERS_DRIFT, K_SECTIONS_DRIFT, COVERAGE_KIMI_DRIFT, PIN_DRIFT, GATE_PIN_DRIFT, AXES_DRIFT, PIN_UNPINNED, K_SECTION_AMBIGUOUS
+  | PASS  [122/122]  every declared fail-closed arm fires in at least one fixture — 17 arms observed
+  | PROXY_SELFTEST: 51/122 pass
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:721 exit=2 expected=0 substring=miss wall=1.944 load1=0.00 — Member-claims gate
+  | CLAIMS  fail-closed  SRC_NOT_A_DIR  --src C:\fast\scratch\hyaku\kumitate-pin\src is absent
+  | CLAIMS: FAIL-CLOSED (SRC_NOT_A_DIR --src C:\fast\scratch\hyaku\kumitate-pin\src is absent)
+CHECKLIST  FAIL SKILL.md:722 exit=1 expected=0 substring=miss wall=0.516 load1=0.00 — Kimi-substrate census
+  |     at runVerify (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/kimi-census.mjs:438:13)
+  |     at main (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/kimi-census.mjs:1058:16)
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/kimi-census.mjs:1069:14
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | 
+  | Node.js v24.21.0
+CHECKLIST  PASS SKILL.md:723 exit=0 expected=0 substring=hit wall=0.317 load1=0.00 — Sources-registry gate
+CHECKLIST  FAIL SKILL.md:724 exit=1 expected=0 substring=miss wall=0.404 load1=0.00 — Sources-check hermetic suite
+  |     at runCli (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/sources-check.mjs:496:29)
+  |     at main (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/sources-check.mjs:900:38)
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/sources-check.mjs:909:14
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | SOURCES_SELFTEST: 1/46 pass
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:725 exit=2 expected=0 substring=miss wall=0.316 load1=0.00 — Per-anchor truth burn-down
+  | TRUTH: FAIL-CLOSED (SRC_MISSING /fast/scratch/hyaku/kumitate-pin/src)
+CHECKLIST  FAIL SKILL.md:726 exit=1 expected=0 substring=miss wall=22.547 load1=0.00 — Anchor-truth hermetic suite
+  | FAIL AT40 new false anchors at a fresh path read DEBT_NEW against --open (round-40 R39-3 headroom)
+  |      threw process.getuid is not a function
+  | FAIL AT41 an open-true anchor turned false reads DEBT_GREW against --open (round-40 R39-3 re-break)
+  |      threw process.getuid is not a function
+  | FAIL AT42 an honest new true anchor stays CLEAN against --open (the floor refuses false anchors, not new knowledge)
+  |      threw process.getuid is not a function
+  | ANCHOR_TRUTH_SELFTEST: 0/44 pass
+  | VERDICT: FAIL
+CHECKLIST  PASS SKILL.md:727 exit=0 expected=0 substring=hit wall=0.508 load1=0.00 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  FAIL SKILL.md:728 exit=1 expected=0 substring=miss wall=38.454 load1=0.00 — Wave-census hermetic suite
+  | PASS  WC30 dispatch bytes, seats, and report-directory entries are capped — bytes=2 tasks=2 reports=2
+  | PASS  WC31 only a line-anchored final Report trailer names the report — exit=0 WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+  | PASS  WC32 an in-root symlinked report directory fails closed — exit=2 wave-census: fail-closed — C:\Users\jpvei\AppData\Local\Temp\kumitate-wave-census-gkYtWy\r39\.ufo\waves\round-39\build is not the canonical path (symbolic link)
+  | FAIL  WC24 self-observation: a child selftest with one injected failure prints it, counts it, ends VERDICT: FAIL, exits 1 — exit=1 WAVE_CENSUS_SELFTEST: 30/32 pass
+  | WAVE_CENSUS_SELFTEST: 30/32 pass
+  | WAVE_CENSUS_SELFTEST_PRIMARY_EXIT: 1
+  | WAVE_CENSUS_SELFTEST_PRIMARY_VERDICT: FAIL
+  | VERDICT: FAIL
+CHECKLIST  FAIL SKILL.md:729 exit=2 expected=0 substring=miss wall=1.265 load1=0.00 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+  | GATE_MUTANTS: ERROR (mutants=0 killed=0 frozen=0/41 targets=2 rev=working-copy manifest=8486506f859b79ced4865adc34594a3111321e16821a54b1ee114e8d863bb12f leftovers=0)
+  | gate-mutants: setup failed: process.getuid is not a function
+CHECKLIST  FAIL SKILL.md:730 exit=1 expected=0 substring=miss wall=0.157 load1=0.00 — Gate-mutants hermetic suite
+  |     at runSelftest (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/gate-mutants.mjs:906:20)
+  |     at main (file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/gate-mutants.mjs:1184:29)
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/gate-mutants.mjs:1294:26
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | 
+  | Node.js v24.21.0
+CHECKLIST  FAIL SKILL.md:731 exit=1 expected=0 substring=miss wall=0.381 load1=0.00 — OMP agent-root census
+  | INFO chain agent-pre-restore has no generation
+  | INFO chain agent-recovered has no generation
+  | INFO chain history-corrupt has no generation
+  | INFO chain agent-corrupt has no generation
+  | INFO chain mcp-pre-disable has no generation
+  | INFO chain mcp-rea-backup-recovery has no generation
+  | UNLISTED settings.json
+  | OMP_CENSUS: DRIFT (root=C:\Users\jpvei\.omp\agent entries=1 findings=1)
+CHECKLIST  FAIL SKILL.md:732 exit=1 expected=0 substring=miss wall=0.602 load1=0.00 — OMP-census hermetic suite
+  | SELFTEST ok optional-dir-as-file-is-drift
+  | SELFTEST FAIL optional-dir-mode-too-wide: missing "MODE tools want<=0755 got=0777"
+  | SELFTEST ok optional-dir-unlisted-name-is-drift
+  | SELFTEST FAIL absent-member-is-info: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+  | SELFTEST ok empty-root-is-drift
+  | SELFTEST ok unreadable-root
+  | SELFTEST ok usage
+  | VERDICT: FAIL (18 of 29 cases failed)
+CHECKLIST  FAIL SKILL.md:733 exit=1 expected=0 substring=miss wall=0.226 load1=0.00 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+  | 
+  | TypeError: process.getuid is not a function
+  |     at file:///C:/Users/jpvei/.zcode/workspace/95b1ba4d-5089-47a4-9fd8-54adebbce2ae/fleet/kumitate-shokunin/scripts/cap-run.mjs:106:72
+  |     at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+  |     at async node:internal/modules/esm/loader:647:26
+  |     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+  | 
+  | Node.js v24.21.0
+CHECKLIST  FAIL SKILL.md:734 exit=1 expected=0 substring=miss wall=53.156 load1=0.00 — Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`)
+  | case v3-ledger-catches-nonce-reuse-hidden-under-a-non-txt-name: PASS
+  | case v3-ledger-counts-an-attested-receipt-under-any-extension: PASS
+  | case v3-ledger-exempts-a-byte-identical-duplicate-under-a-different-name: PASS
+  | case v3-ledger-skips-directories-and-foreign-files: PASS
+  | case v3-ledger-scan-finds-no-evidence-in-an-empty-directory: PASS
+  | ATTEST_SELFTEST: FAIL
+  | receipt-attest: SELFTEST FAIL v2-sidecar-escaped-basename-round-trips: threw ENOENT: no such file or directory, open 'C:\Users\jpvei\AppData\Local\Temp\receipt-attest-selftest.AA7oGl\case.32hXRZEW\escaped\
+  | receipt-attest: SELFTEST FAIL v2-stdin-binds-32-nonce-bytes-and-child-output: /bin/cat stdout hash does not bind its real stdin output
+CHECKLIST  PASS SKILL.md:735 exit=0 expected=0 substring=hit wall=0.456 load1=0.00 — Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`)
+CHECKLIST  PASS SKILL.md:736 exit=0 expected=0 substring=hit wall=0.503 load1=0.00 — Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`)
+CHECKLIST  PASS SKILL.md:737 exit=0 expected=0 substring=hit wall=0.283 load1=0.00 — SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`)
+CHECKLIST  FAIL SKILL.md:738 exit=1 expected=0 substring=miss wall=0.368 load1=0.00 — Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`)
+  | README_MAP: note unpinned:lessons/round-71-verifier-spotcheck.md
+  | README_MAP: DRIFT files=173 rows=172 covered=172 bad=2 first=uncovered:lessons/round-71-verifier-spotcheck.md
+CHECKLIST  FAIL SKILL.md:739 exit=1 expected=0 substring=hit wall=87.618 load1=0.00 — Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`)
+  | case sweep-no-files: FAIL exit=2 last="RECEIPT_EVIDENCE: FAIL-CLOSED reason=ARCHIVE status=2"
+  | case unparseable-rev: PASS
+  | case sentinel-miss: FAIL exit=2 last="RECEIPT_EVIDENCE: FAIL-CLOSED reason=ARCHIVE status=2"
+  | case span-short: FAIL exit=2 last="RECEIPT_EVIDENCE: FAIL-CLOSED reason=ARCHIVE status=2"
+  | case doctored-prelude: FAIL exit=2 last="RECEIPT_EVIDENCE: FAIL-CLOSED reason=ARCHIVE status=2"
+  | case receipts-unreadable: PASS
+  | RECEIPT_EVIDENCE_SELFTEST: PASS (2/10)
+  | VERDICT: FAIL
+CHECKLIST  PASS SKILL.md:740 exit=0 expected=0 substring=hit wall=0.899 load1=0.00 — README source-id citation gate (round 59; contract `kumitate-cite-sources-v1`)
+CHECKLIST  PASS SKILL.md:741 exit=0 expected=0 substring=hit wall=0.589 load1=0.00 — Round dispatch-evidence gate (round 60; contract `kumitate-dispatch-evidence-v1`; the real run over a round's committed launcher record is the registry row's command, --root <lane> --round <N> --wave <w>)
+CHECKLIST  FAIL SKILL.md:742 exit=1 expected=0 substring=miss wall=1.152 load1=0.00 — Report-vs-receipt diff suite (round 64; contract `kumitate-report-receipt-diff-v3`; twelve finding ids; the real diff before filing a round report is the registry row's command, --lane . --round N --rev <lane-tip> --report <round report>)
+  | REPORT_RECEIPT_SELFTEST: FAIL (fixture root)
+CHECKLIST  FAIL SKILL.md:743 exit=2 expected=0 substring=miss wall=0.328 load1=0.00 — jj seat-containment demo re-run (round 64; contract `kumitate-jj-seat-demo-v2`; 27 keys; exits 0 done or 2 fail-closed and never 1, so it is a demo and not a gate; re-ground the entry on any jj version change)
+  | JJ_SEAT_DEMO: FAIL-CLOSED jj-absent
+CHECKLIST  FAIL SKILL.md:744 exit=null expected=0 substring=miss wall=120.020 load1=0.00 — Plan-before-ready map-arm suite (round 64; the readme-map arm judges readme-map inside git archive PLAN, epoch PBR_MAP_FROM default 65; the real run is the registry row's command, --round N --rev REV)
+  | 62d1009a63ab7c9810d1c2b319e89bd32670e2e9 exit=1 failed=2 na_rounds= map_red=
+  | SELFTEST ok   map-red-at-plan          want=1 got=1  PLAN_BEFORE_READY: FAIL rev=f8c8bed91406a164e9407daca6b09049372ea024 round=9 dir=.ufo/waves/round-9 reason=MAP_DRIFT plan=d4b70aa284f19e27c5e17177d7b423bcbbef4c39 plan_ct=1000000000 marker=f8c8bed91406a164e9407daca6b09049372ea024 marker_kind=ready marker_ct=1000000100 marker_path=.ufo/waves/round-9/w1.ready map=DRIFT map_exit=1 map_first=uncovered:lessons/b.md
+  | SELFTEST ok   map-red-names-file       want=1 got=1  PLAN_BEFORE_READY: FAIL rev=f8c8bed91406a164e9407daca6b09049372ea024 round=9 dir=.ufo/waves/round-9 reason=MAP_DRIFT plan=d4b70aa284f19e27c5e17177d7b423bcbbef4c39 plan_ct=1000000000 marker=f8c8bed91406a164e9407daca6b09049372ea024 marker_kind=ready marker_ct=1000000100 marker_path=.ufo/waves/round-9/w1.ready map=DRIFT map_exit=1 map_first=uncovered:lessons/b.md
+  | SELFTEST ok   map-green-at-plan        want=0 got=0  PLAN_BEFORE_READY: PASS rev=c15f8143e95b0b35954150054e531d2165305363 round=9 dir=.ufo/waves/round-9 plan=c31e47a1d737fa00a6da2f149c5340806cbb210c plan_ct=1000000000 marker=c15f8143e95b0b35954150054e531d2165305363 marker_kind=ready marker_ct=1000000100 marker_path=.ufo/waves/round-9/w1.ready map=CLEAN files=2 rows=2 covered=2
+  | SELFTEST ok   map-red-no-marker        want=1 got=1  PLAN_BEFORE_READY: FAIL rev=d4b70aa284f19e27c5e17177d7b423bcbbef4c39 round=9 dir=.ufo/waves/round-9 reason=MAP_DRIFT plan=d4b70aa284f19e27c5e17177d7b423bcbbef4c39 plan_ct=1000000000 marker=- marker_kind=- marker_ct=- marker_path=- map=DRIFT map_exit=1 map_first=uncovered:lessons/b.md
+  | SELFTEST ok   map-absent-at-plan       want=1 got=1  PLAN_BEFORE_READY: FAIL rev=4c167c6d35338b87b4608a4deccdf30997afcef3 round=9 dir=.ufo/waves/round-9 reason=MAP_ABSENT plan=e0fc7099037e87e4cd310ad3aa03dedbac9a42f0 plan_ct=1000000100 marker=4c167c6d35338b87b4608a4deccdf30997afcef3 marker_kind=ready marker_ct=1000000300 marker_path=.ufo/waves/round-9/w1.ready map=ABSENT
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 7/33 pass
+VERDICT: FAIL
+== exit=1 ==
