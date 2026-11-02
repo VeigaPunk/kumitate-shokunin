@@ -1,0 +1,16 @@
+script_sha256=cb8da6f2f99908e27b570d755fda37671d97ae43a3b500afe15f73803379ccb5 label=AFTER plan-before-ready CLI at round-72 (bytes re-pinned as pin.plan-before-ready; digest per Q24, working-copy at capture time)
+date=2026-11-02T01:31:23Z
+== command: bash scripts/plan-before-ready.sh --repo <Windows-form lane path> --round 63 | --round 62 | --round 71 ==
+-- round 63 --
+PLAN_BEFORE_READY: PASS rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 round=63 dir=.ufo/waves/round-63 plan=b38a2065ab8ac5b198f6569b9013d04411c3d40d plan_ct=1792961253 marker=05b3176915de4175bb211b4b1422d8e56cf16888 marker_kind=ready marker_ct=1792964033 marker_path=.ufo/waves/round-63/w1.ready map=SKIP reason=MAP_PRE_EPOCH_ROUND
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=63-63 rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 exit=0 failed= na_rounds= map_red=
+exit=0
+-- round 62 --
+PLAN_BEFORE_READY: FAIL rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 round=62 dir=.ufo/waves/round-62 reason=NO_PLAN plan=- marker=6d8faede281e509a2201de504ffcb0f7781256fe marker_kind=dispatch marker_ct=1792935222 marker_path=.ufo/waves/round-62/w2-dispatch.json map=SKIP reason=NO_PLAN
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=62-62 rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 exit=1 failed=62 na_rounds= map_red=
+exit=1
+-- round 71 --
+PLAN_BEFORE_READY: FAIL rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 round=71 dir=.ufo/waves/round-71 reason=MAP_UNRUNNABLE plan=f4f67ec5931ee2aa5e0da088f4e3f444e234d08e plan_ct=1793530607 marker=- marker_kind=- marker_ct=- marker_path=- map=UNRUNNABLE reason=ARCHIVE
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=71-71 rev=a615abcc441fe0cd9e49b99b6621dededf5ac330 exit=1 failed=71 na_rounds= map_red=71
+exit=1
+note: PASS/FAIL/NA covered on real committed history; map arm ran live inside git archive of each plan commit

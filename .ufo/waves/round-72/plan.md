@@ -99,3 +99,20 @@ win32 crash, dated). kimi-census `process.getuid` win32 crash and proxy FAIL-CLO
 (`SRC_NOT_A_DIR C:\fast\scratch\hyaku\kumitate-pin\src`) are quoted and dispositioned at
 open (Q13), not silently skipped; the kimi-census repair is routed to a later round (same
 class as this round's routed fix: versioned, with a hermetic case).
+
+## Amendment (added with the fix commit, before close; the text above stays as written)
+
+The plan's after-state expected the round-71 CLI reading to be "NA NO_MARKER + map judged".
+Measured instead (close/pbr72-green-cli.txt): round 71 reads
+`FAIL reason=MAP_UNRUNNABLE … map=UNRUNNABLE reason=ARCHIVE` — with the path-form refusal
+gone, the map arm runs for the first time on this host and fails closed because
+`git archive <plan> | tar -x` cannot extract the round-57 SentinelArtifacts attack-fixture
+symlinks (absolute origin-host targets; MSYS tar cannot create them here). Manual repro and
+the member listing are receipted (`close/pbr72-map-archive-diagnosis.txt`). The FAIL is the
+gate's correct fail-closed behavior on an unextractable archive; the repair (a disclosed
+sanitized extraction that still fails closed on real drift) is routed to a later round as a
+versioned change with a hermetic case — NOT folded into this round's scoped fix. The
+after-state claim therefore stands on rounds 63 (PASS) and 62 (FAIL NO_PLAN, the
+registry-row-locked shape) plus the selftest; round 71's real verdict line is disclosed as
+the new routed finding, not as the plan's expected NA.
+

@@ -54,6 +54,18 @@
 # Read-only: uses only `git log` / `git show` / `git merge-base` / `git cat-file` /
 # `git archive`, plus node. The map arm extracts `git archive PLAN` into a fresh mktemp dir and
 # removes it again; nothing is ever written to the judged repository.
+#
+# Path-form normalization (round 72; routed from the round-71 lesson "Host defect routed"):
+# the --repo equality compared `git rev-parse --show-toplevel` (native form: C:/... on
+# Windows hosts) with `pwd -P` (shell form: /c/... under MSYS2/Git Bash), so EVERY --repo
+# invocation failed off-origin with "--repo is not the repository root" (red receipt
+# .ufo/waves/round-72/open/pbr72-red-cli.txt: both path forms, exit 2) and --selftest could
+# not build fixture 1 ("toplevel mismatch", open/pbr72-red-selftest.txt). Both sides of the
+# equality are now normalized through `cd <path> && pwd -P` (identity on Unix hosts, the MSYS
+# form on Windows hosts, symlink-resolving on both). S221 (MSYS2, "Filesystem Paths") grounds
+# the mechanism: the same directory has non-interchangeable path forms across the Cygwin/native
+# boundary. Selftest case repo-path-form-toplevel passes --repo in git's own reported form and
+# fails on the pre-fix bytes wherever the two forms differ.
 set -uo pipefail
 
 REPO_DEFAULT=/home/vgpnk/Projects/shokunin/kumitate-shokunin
@@ -310,11 +322,12 @@ run_selftest() {
   local root; root="$(mktemp -d "${TMPDIR:-/tmp}/pbr-selftest.XXXXXX")" || {
     echo "PLAN_BEFORE_READY_SELFTEST: ERROR (mktemp failed)" >&2; return 2; }
 
-  fixture() {  # $1=name -> echoes dir, inits it, verifies toplevel
-    local d="$root/$1"
+  fixture() {  # $1=name -> echoes dir, inits it, verifies toplevel (path-form normalized, round 72)
+    local d="$root/$1" gt pp
     mkdir -p "$d"
     git -C "$d" init -q || return 1
-    [ "$(git -C "$d" rev-parse --show-toplevel)" = "$d" ] || { echo "toplevel mismatch $d" >&2; return 1; }
+    gt="$(git -C "$d" rev-parse --show-toplevel 2>/dev/null)"; pp="$(cd "$d" && pwd -P)"
+    [ "$(cd "$gt" 2>/dev/null && pwd -P)" = "$pp" ] || { echo "toplevel mismatch $d" >&2; return 1; }
     printf '%s' "$d"
   }
   fcommit() {  # $1=dir $2=date-epoch $3=msg $4...=paths (relative)
@@ -647,6 +660,25 @@ run_selftest() {
   MAP_FROM=65 check_has map-epoch-round-skip 0 "$d" 9 'map=SKIP reason=MAP_PRE_EPOCH_ROUND'
   MAP_FROM=0
 
+  # 36 --repo in git's own reported form must be accepted (round 72; the path-form
+  #    normalization routed from the round-71 lesson). The pre-fix string equality refused
+  #    the native form on every host where git's toplevel form differs from pwd -P
+  #    (Windows: C:/... vs /c/...); on such a host this case is decisive (fails on the old
+  #    bytes), on a Unix host the forms coincide and the case stays green.
+  d="$(fixture repo-path-form-toplevel)" || return 2
+  fcommit "$d" 1000000000 "plan"  .ufo/waves/round-9/plan.md
+  fcommit "$d" 1000000100 "ready" .ufo/waves/round-9/w1.ready
+  topform="$(git -C "$d" rev-parse --show-toplevel)"
+  out="$(bash "${BASH_SOURCE[0]}" --repo "$topform" --round 9 2>&1)"; rcf=$?
+  if [ "$rcf" = 0 ] && printf '%s' "$out" | grep -q 'PLAN_BEFORE_READY: PASS .*round=9 '; then
+    pass=$((pass+1)); printf 'SELFTEST ok   %-24s want=0 got=%s  %s\n' repo-path-form-toplevel "$rcf" "$(printf '%s' "$out" | head -n 1)"
+  else
+    fail=$((fail+1)); printf 'SELFTEST BAD  %-24s want=0 got=%s  %s\n' repo-path-form-toplevel "$rcf" "$(printf '%s' "$out" | head -n 1)"
+  fi
+  if [ "$topform" != "$(cd "$d" && pwd -P)" ]; then
+    printf 'SELFTEST note %-24s %s\n' repo-path-form-toplevel "host reports differing path forms (git=$topform); the case is decisive here"
+  fi
+
   echo "PLAN_BEFORE_READY_SELFTEST: $([ "$fail" -eq 0 ] && echo PASS || echo FAIL) ($pass/$((pass+fail))) fixtures=$root"
   rm -rf "$root"
   [ "$fail" -eq 0 ] && return 0 || return 1
@@ -671,7 +703,11 @@ fi
 
 top="$(git -C "$REPO" rev-parse --show-toplevel 2>/dev/null)" || {
   echo "plan-before-ready: not a git repository: $REPO" >&2; exit 2; }
-[ "$top" = "$(cd "$REPO" && pwd -P)" ] || {
+# round 72: normalize both sides before comparing — git prints the native form (C:/... on
+# Windows), pwd -P prints the shell form (/c/... under MSYS2); the raw string equality
+# refused every --repo invocation on such hosts (see header note).
+top_norm="$(cd "$top" 2>/dev/null && pwd -P)"; repo_norm="$(cd "$REPO" 2>/dev/null && pwd -P)"
+[ -n "$top_norm" ] && [ "$top_norm" = "$repo_norm" ] || {
   echo "plan-before-ready: --repo is not the repository root (got $top)" >&2; exit 2; }
 
 REV_RESOLVED="$(git -C "$REPO" rev-parse --verify "$REV^{commit}" 2>/dev/null)" || {

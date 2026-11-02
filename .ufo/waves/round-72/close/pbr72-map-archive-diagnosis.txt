@@ -1,0 +1,17 @@
+script_sha256=cb8da6f2f99908e27b570d755fda37671d97ae43a3b500afe15f73803379ccb5 label=map-arm ARCHIVE diagnosis on win32 (new routed host defect, discovered by the round-72 fix's first live map-arm run)
+date=2026-11-02T01:36:28Z
+observed: plan-before-ready --round 71 (close/pbr72-green-cli.txt) reads FAIL reason=MAP_UNRUNNABLE map=UNRUNNABLE reason=ARCHIVE at plan=f4f67ec5
+== manual repro ==
+git archive exit=0 bytes=219105280
+tar -x exit=2
+tar: .ufo/waves/round-57/build/SentinelArtifacts/fx/E8/knowledge-link: Cannot create symlink to ‘/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/corpus/knowledge’: No such file or directory
+tar: .ufo/waves/round-57/build/SentinelArtifacts/fx/E8/linkless/knowledge: Cannot create symlink to ‘/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/corpus/knowledge’: No such file or directory
+tar: .ufo/waves/round-57/build/SentinelArtifacts/fx3/corpus/knowledge/link.md: Cannot create symlink to ‘/etc/hostname’: No such file or directory
+tar: .ufo/waves/round-57/build/SentinelArtifacts/fx6/dir-md/corpus/knowledge/link.md: Cannot create symlink to ‘/etc/hostname’: No such file or directory
+tar: .ufo/waves/round-57/build/SentinelRegistryPaths/reg-link-dangling.json: Cannot create symlink to ‘/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelRegistryPaths/does-not-exist.json’: No such file or directory
+== first symlink members in the archive ==
+lrwxrwxrwx root/root         0 2026-11-01 02:56 .ufo/waves/round-57/build/SentinelArtifacts/fx/E8/knowledge-link -> /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/corpus/knowledge
+lrwxrwxrwx root/root         0 2026-11-01 02:56 .ufo/waves/round-57/build/SentinelArtifacts/fx/E8/linkless/knowledge -> /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-57/build/SentinelArtifacts/fx/E8/corpus/knowledge
+lrwxrwxrwx root/root         0 2026-11-01 02:56 .ufo/waves/round-57/build/SentinelArtifacts/fx3/corpus/knowledge/link.md -> /etc/hostname
+lrwxrwxrwx root/root         0 2026-11-01 02:56 .ufo/waves/round-57/build/SentinelArtifacts/fx6/dir-md/corpus/knowledge/link.md -> /etc/hostname
+note: the failing members are round-57 SentinelArtifacts attack-fixture symlinks whose targets are absolute ORIGIN-host paths (/home/vgpnk/...); MSYS tar on this host cannot create them (no symlink privilege / target absent), so extraction exits 2 and the map arm fails closed
