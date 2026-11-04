@@ -2995,3 +2995,23 @@ S251 (Sigstore cosign verify) is rejected as evidence for the *instrument's* ide
 187 → 189 rows; captures 76 → 78. Assimilation: none (no package row re-grounded this round). Gate
 decisions and mined mistakes (attribution, landing, survivor, number-drift, reference-drift, provider)
 are in `corpus/lessons/round-87.md`.
+
+### Round 87 — measured disposition (2026-11-04)
+
+Measured at M = `d3f64dc43027a9754700e70129b6ba91deaada19`; close battery `.ufo/waves/round-87/close/`.
+Frozen predicate at M: `C87_C1: HELD held=12/12` exit 0 (two direct re-runs agree). Instrument selftest
+39/39; round-86 detection `DRIFT matched=1 mismatched=9 unchecked=0 external=1`; round-87 receipts
+`CLEAN matched=12 mismatched=0 unchecked=0 external=1`. Controls at base: 0/12, 0/12, 1/12, 3/12.
+
+**C1 UNMET.** Three seat-constructed controls reach 12/12 (`build/K87Critic/cand-a-worktree.mjs`,
+its hardcoded-path variant, `build/K87Review/dirkey-control.mjs`), so the frozen kill rule fires and
+the acquisition takes no capability row. The instrument is revision-bound (its selftest carries a
+`worktree-bytes-not-truth` case) and the mutation seat left 5 of 14 mutants alive against the L1
+reference; the defect is in the predicate, not in the candidate.
+
+Accounting: A 35 → 36, C 45 → 46, C2 219 → 222, SOURCES 187 → 189, captures 76 → 78;
+`PROXY: MATCH --strict`. Gate reds: `plan-before-ready` FAIL `MAP_DRIFT` at the plan commit
+`25a3a75d` (the adoption was committed after the freeze); `cite-check` carried debt unchanged.
+Wave: one v1 wave, 14 seats (attack 4/14, connector 1), 11 seat reports; `K87ExecSources` returned no
+artifact and `K87ExecClose`/`K87Mutation` returned artifacts without reports — all three disclosed,
+none credited.

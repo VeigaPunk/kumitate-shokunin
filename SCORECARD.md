@@ -4237,3 +4237,45 @@ census). Predicate: `node .ufo/waves/round-87/probe/probe87-c1.mjs --lane <LANE>
 --rev <REV>` prints `C87_C1: HELD held=12/12` exit 0. Kill rule: any control — committed or
 seat-constructed — that reaches 12/12 makes C1 UNMET. Pre-data controls: base 0/12, constant-CLEAN
 0/12, constant-DRIFT 1/12, path-keyed 3/12 (`controls/*.txt`). No second claim, no exploratory claim.
+
+### Round 87 — measured disposition (2026-11-04)
+
+Measured at M = `d3f64dc43027a9754700e70129b6ba91deaada19` (the integration commit); the close
+battery is `.ufo/waves/round-87/close/`, emitted by the v2 runner at that revision.
+
+| item | measured |
+|---|---|
+| predicate (frozen) | `node .ufo/waves/round-87/probe/probe87-c1.mjs --lane . --work DIR --rev d3f64dc4…` → `C87_C1: HELD held=12/12` exit 0 (`close/c1-probe.txt`; two direct re-runs agree) |
+| before (instrument absent) | `controls/base.txt` 0/12 exit 1 |
+| constant-CLEAN control | `controls/stub-clean.txt` 0/12 exit 1 |
+| constant-DRIFT control | `controls/constant-drift.txt` 1/12 exit 1 |
+| path-keyed control | `controls/path-keyed.txt` 3/12 exit 1 |
+| tool selftest | `RECEIPT_BIND_SELFTEST: PASS held=39/39` exit 0 (`close/bind-selftest.txt`) |
+| round-86 detection | `RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1` exit 1 (`close/bind.txt`) |
+| round-87 close receipts | `RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1` (`close/` self-score) |
+| **kill rule** | **fired**: three seat-constructed controls reach 12/12 — `build/K87Critic/cand-a-worktree.mjs` (hashes the worktree instead of `git show <rev>:<path>`), its hardcoded round-86-path variant, and `build/K87Review/dirkey-control.mjs` |
+| mutant battery | 14 mutants of the L1 reference: 9 killed by the frozen probe, 5 survivors (`build/K87Mutation/summary.json`) |
+| accounting | A 35 → 36, C 45 → 46, C2 219 → 222; `PROXY: MATCH --strict` (A=36 C=46 operability=9) |
+| gate reds | `plan-before-ready` FAIL `MAP_DRIFT` at the plan commit `25a3a75d` (the spot-check adoption was committed *after* the freeze — `close/plan.txt`); `cite-check` carried debt unchanged |
+
+**Verdict: C1 UNMET — rejected-honest-stop, no capability row.** The frozen predicate reads 12/12 at
+M and the instrument is revision-bound, but the predicate cannot discriminate revision binding from
+worktree binding, so a seat-constructed control reaches the target without doing the claimed work. The
+round takes the honest stop rather than narrowing the rule after data. Axes: operability 9 unchanged
+(the scored term moved A 35 → 36 and C 45 → 46; `f_O` 82/85 ≈ 0.965, still terminal at 9), every
+coverage sub-axis unchanged at 10, no axis harmed. Round 88 pre-registration carries a v2 arm that
+makes the worktree differ from the judged revision.
+
+## Round 88 pre-registration (written by round 87). Candidates, not commitments
+
+(1) **`receipt-bind` v2 predicate**: an arm that makes the worktree and the judged revision differ (a
+receipt whose instrument changed after `rev=`) so worktree binding is visible, plus an arm for the
+receipt-declared `rev=` precedence the critic flagged as ambiguous. (2) **`plan-before-ready`
+ordering**: the round froze its plan before the spot-check adoption landed, so the gate read
+`MAP_DRIFT` at the plan commit; the plan step must adopt first. (3) **sentinel's open items on the
+reference**, re-checked against the integrated bytes: unbounded receipt read, duplicate-`cmd=`
+precedence, a symlinked receipt *directory*. (4) **`spotcheck-adopt --check` conflation**
+(round-76/77/78/80 candidate 3). (5) **`K_findings` double penalty** (round-81 candidate 3).
+(6) **`POINTER_DEAD` precision** (round-79/81 candidate). (7) **`cite-check` carried debt**.
+(8) **`receipt-evidence` overlap**: the revenger argues its REPRODUCTION arm already binds a receipt
+to its instrument by execution; a future claim must say which dialect it strengthens.
