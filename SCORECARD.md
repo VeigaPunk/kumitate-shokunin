@@ -574,6 +574,12 @@ the frozen definitions name.
 
 ## Planned
 
+**Round 86 pre-registration** (written by round 85, seven candidates) lives at the end of this file
+under `## Round 85 — pre-registration`: the A-exclusion re-baseline, the `K_findings` double
+penalty, the `spotcheck-adopt --check` split, `POINTER_DEAD` precision, a randomized-fixture arm
+for the round-85 probe, three coverage arms from the round-85 survivors, and a source digest on the
+`SOURCE:` line.
+
 **Round 84 pre-registration** (written by round 83, six candidates) lives at the end of this file under `## Round 84 — pre-registration`. **Round 83 pre-registration** (written by round 82, six candidates) lives above it under `## Round 83 — pre-registration`.
 
 **Round 82 — pre-registration (2026-11-04, written by round 81).** Candidates, not commitments:
