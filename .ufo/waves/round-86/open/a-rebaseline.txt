@@ -1,0 +1,24 @@
+rev=232350995d3001e606609aaf22ba1b58168d3655
+measured=2026-11-04T20:07:11Z
+# BEFORE (v2 definition: every runnable-extension file under the lane tree, .ufo included)
+$ find . -path ./.git -prune -o -path ./.jj -prune -o -type f \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \) -print | wc -l
+981
+exit=0
+$ git ls-tree -r --name-only master | grep -cE '\.(mjs|js|sh|py)$'
+980
+exit=0
+# AMENDMENT (round-85 pre-registration 1): tracked runnable files, .ufo/ excluded
+$ git ls-tree -r --name-only master | grep -E '\.(mjs|js|sh|py)$' | grep -v '^\.ufo/' | wc -l
+35
+exit=0
+$ git ls-tree -r --name-only master | grep -E '\.(mjs|js|sh|py)$' | grep -c '^\.ufo/'   # A_wave
+945
+exit=0
+$ find . -path ./.git -prune -o -path ./.jj -prune -o -path ./.ufo -prune -o -type f \( -name '*.mjs' -o -name '*.js' -o -name '*.sh' -o -name '*.py' \) -print | wc -l   # walk twin of the amendment
+35
+exit=0
+$ grep -c '^\s*- \[' SKILL.md   # C
+45
+exit=0
+# f_O = (A+C)/(A+C+3): before A=980 C=45 -> 1025/1028 = 0.99709 -> floor 9
+# f_O = (A+C)/(A+C+3): amendment A=35 C=45 -> 80/83 = 0.96386 -> floor 9  (integer unchanged)

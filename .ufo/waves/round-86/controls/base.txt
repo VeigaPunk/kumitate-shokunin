@@ -1,0 +1,28 @@
+rev=232350995d3001e606609aaf22ba1b58168d3655
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-86/probe/probe86-c1.mjs --lane /fast/scratch/hyaku/kumitate-r86/controls/base --work /fast/scratch/hyaku/kumitate-r86/controls/base
+C86_C1 arm rnd-clean ok exit=0 want=0
+C86_C1 arm rnd-clean-metadata-crlf ok exit=0 want=0
+C86_C1 arm rnd-fail ok exit=1 want=1
+C86_C1 arm rnd-held-drift ok exit=1 want=1
+C86_C1 arm rnd-total-drift ok exit=1 want=1
+C86_C1 arm rnd-duplicate ok exit=1 want=1
+C86_C1 arm rnd-malformed ok exit=2 want=2
+C86_C1 arm rnd-summary-order ok exit=2 want=2
+C86_C1 arm mut-held ok exit=1 want=1
+C86_C1 arm mut-verdict ok exit=1 want=1
+C86_C1 arm metadata-colon ok exit=0 want=0
+C86_C1 arm honest-red ok exit=1 want=1
+C86_C1 arm missing-receipt ok exit=2 want=2
+C86_C1 arm usage ok exit=64 want=64
+C86_C1 arm src-rnd-clean FAIL exit=0 want=0 line3="SOURCE: sites=11 declared=11 receipt=11" want3="SOURCE: sites=11 declared=11 receipt=11 sha256=360b3608bec92cbd367e4853115c35a350a5d5636ef3366ba910fab855aa5746"
+C86_C1 arm src-digest-a FAIL exit=0 want=0 line3="SOURCE: sites=3 declared=3 receipt=3" want3="SOURCE: sites=3 declared=3 receipt=3 sha256=b011f34c90d3e9db40c55ba5ae2c864291537cfde8e348ee9b82ac6ddd490cef"
+C86_C1 arm src-digest-b FAIL exit=0 want=0 line3="SOURCE: sites=3 declared=3 receipt=3" want3="SOURCE: sites=3 declared=3 receipt=3 sha256=b0275eb5edac339ddcff3a319da218349889d57c66cc7607a3780a79f2a20d2e"
+C86_C1 arm src-no-declared FAIL exit=0 want=0 line3="SOURCE: sites=2 declared=absent receipt=2" want3="SOURCE: sites=2 declared=absent receipt=2 sha256=6f30f3673a19ea78dd88bfae17e9c8591b6db9f63aee83e1b2317bb780799157"
+C86_C1 arm src-two-declarations FAIL exit=0 want=0 line3="SOURCE: sites=3 declared=3 receipt=3" want3="SOURCE: sites=3 declared=3 receipt=3 sha256=f6794b4721e6a443c9170f97001be31c40c0b36984bc0be7f73d0cd8cc48311a"
+C86_C1 arm src-arity FAIL exit=1 want=1 line3="SOURCE: sites=4 declared=4 receipt=3" want3="SOURCE: sites=4 declared=4 receipt=3 sha256=d55f427f738015866c914219132e7fab60dc5adb73fab711dbc1ddb1289ce67b"
+C86_C1 arm src-declared FAIL exit=1 want=1 line3="SOURCE: sites=3 declared=2 receipt=3" want3="SOURCE: sites=3 declared=2 receipt=3 sha256=ca50399023f6c517b7f31a1c2cb0462d28f2b0504088507043889f152d9ef3f2"
+C86_C1 arm src-unbound FAIL exit=1 want=1 line3="SOURCE: sites=3 declared=3 receipt=3" want3="SOURCE: sites=3 declared=3 receipt=3 sha256=88adc3b70486126f6457db701e27c71589f37dc8b86dbce5e6341ad38da76159"
+C86_C1 arm src-unreadable FAIL exit=2 want=2 line3="SOURCE: sites=0 declared=absent receipt=2" want3="SOURCE: sites=0 declared=absent receipt=2 sha256=-"
+C86_C1 arm src-empty FAIL exit=2 want=2 line3="SOURCE: sites=0 declared=2 receipt=2" want3="SOURCE: sites=0 declared=2 receipt=2 sha256=202718b52f70e4488897f0986842df32882356fb46abb3c65b89d1eb206d2115"
+C86_C1: UNMET held=14/24
+exit=1
