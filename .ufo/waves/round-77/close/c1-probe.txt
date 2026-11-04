@@ -1,0 +1,15 @@
+rev=e47266ae093e6f4ba6b30507606c6b7f2b70903f cmd=node .ufo/waves/round-77/probe/probe77.mjs --set c1 --lane . --work /fast/scratch/hyaku/kumitate-r77/close-c1
+CHECK c1.1-snapshot-writer: PASS entries=64 sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3 produced==line==committed
+CHECK c1.2-snapshot-is-open-shape: PASS entries=64 equal to independent lstat receipt
+CHECK c1.3-writer-roundtrip: PASS byte-identical regeneration sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
+CHECK c1.4-census-shape-clean: PASS OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+CHECK c1.5-proxy-shape-terms: PASS source=snapshot O=64/0/35 coverage_omp=10
+CHECK c1.6-offline-equals-root: PASS trimmed O_members=63 equals root judge; six terms equal
+CHECK c1.7-negative-discriminates: PASS O_findings=1 coverage_omp=9 COVERAGE_OMP_DRIFT
+CHECK c1.8-fail-closed: PASS SHAPE_INVALID x3, SHAPE_NOT_FOUND, OMP_SHAPE_INVALID/NOT_FOUND, flags-both 64
+CHECK c1.9-selftests: PASS census 58 cases; proxy 151/151
+CHECK c1.10-no-content-pinned: PASS pin.omp-shape=5980a0c8430ea013… name/kind/mode only; tamper -> GATE_PIN_DRIFT
+CHECK c1.11-mode-discriminates: PASS MODE agent.db -> O_findings=1 coverage_omp=9
+CHECK c1.12-default-path-unchanged: PASS live JSON has no source key; live line has no source=snapshot
+C77_C1: HELD held=12/12
+exit=0

@@ -1,0 +1,93 @@
+{
+  "contract": "kumitate-spotcheck-adopt-mutants-v1",
+  "target": "scripts/spotcheck-adopt.mjs",
+  "base": "4dc470a131e10900fdd456b6b68d7ba27151d9d2",
+  "v2Sha256": "b84343a076da277c62448bdb0bb3b18f834193c8247a13473eab4139555bba8b",
+  "v2Source": "patch delivered by seat K77ExecJournal (.ufo/waves/round-77/build/K77ExecJournal/spotcheck-adopt.patch)",
+  "selftestContract": "node scripts/spotcheck-adopt.mjs --selftest exits 0 and prints SPOTCHECK_ADOPT_SELFTEST: PASS (n/n) with n>=22 plus VERDICT: PASS",
+  "note": "Each find must occur exactly once in the target bytes; the runner applies ONE literal replacement per sandbox copy. A NO-MATCH at M means the anchor drifted with the landed bytes, not that the arm is covered. L1 re-anchor: d/e literals follow the retire(journal)/retire(dir) hardening.",
+  "mutants": [
+    {
+      "id": "a-journal-staged-after-first-write",
+      "arm": "a",
+      "defect": "journal staged after the first destination write (kill at the journal stage then lands on a dirty half-state instead of clean bytes + published journal)",
+      "find": "    journal = stageJournal(lane, path, key, originals);\n    crashAt('journal');\n    for (const [file, bytes] of writes) {\n      replaceAtomic(file, bytes);",
+      "replace": "    for (const [file, bytes] of writes) {\n      replaceAtomic(file, bytes);\n      if (journal === undefined) { journal = stageJournal(lane, path, key, originals); crashAt('journal'); }",
+      "kills": [
+        "selftest case crash-journal (row must be false at journal-stage kill)"
+      ]
+    },
+    {
+      "id": "b-recovery-only-on-adopt",
+      "arm": "b",
+      "defect": "recovery gated to --adopt instead of every non-selftest invocation",
+      "find": "    recover(lane, lines);",
+      "replace": "    if (arm === '--adopt') recover(lane, lines);",
+      "kills": [
+        "selftest cases stale-tmp (--predict must recover), foreign-journal (--check must refuse), crash-journal/crash-row (--check must recover)"
+      ]
+    },
+    {
+      "id": "c-rollback-from-hash-stub",
+      "arm": "c",
+      "defect": "rollback restores from a hash-only stub instead of the .pre bytes",
+      "find": "        const bytes = readFileSync(join(dir, entry.file));",
+      "replace": "        const bytes = Buffer.from(entry.sha256, 'hex');",
+      "kills": [
+        "selftest cases crash-journal/crash-row (rolled-back recovery must restore byte-exact pre-images)"
+      ]
+    },
+    {
+      "id": "d-journal-kept-after-adopt",
+      "arm": "d",
+      "defect": "journal not removed after a successful adopt",
+      "find": "    if (!after.clean) throw new Error('oracle refused');\n    retire(journal);",
+      "replace": "    if (!after.clean) throw new Error('oracle refused');",
+      "kills": [
+        "selftest cases check-clean / idempotence (next invocation must not print RECOVERED; exact single-line output)"
+      ],
+      "note": "re-anchored by the L1 after the retire-by-rename hardening"
+    },
+    {
+      "id": "e-stale-tmp-kept",
+      "arm": "e",
+      "defect": "<uuid>.tmp not cleaned during recovery",
+      "find": "    if (name.endsWith('.tmp') || name.endsWith('.done')) {\n      retire(dir);",
+      "replace": "    if (name.endsWith('.tmp') || name.endsWith('.done')) {",
+      "kills": [
+        "selftest case stale-tmp (journalNames must be empty after recovery)"
+      ],
+      "note": "re-anchored by the L1 after the retire-by-rename hardening"
+    },
+    {
+      "id": "f-foreign-journal-accepted",
+      "arm": "f",
+      "defect": "foreign-lane journal accepted and processed as local (evidence destroyed)",
+      "find": "    if (manifest.lane !== lane) {",
+      "replace": "    if (false && manifest.lane !== lane) {",
+      "kills": [
+        "selftest case foreign-journal (must exit 2 REFUSED_JOURNAL_FOREIGN and retain bytes + journal)"
+      ]
+    },
+    {
+      "id": "g-recovered-line-without-journal",
+      "arm": "g",
+      "defect": "RECOVERED printed unconditionally (recovery line emitted with no journal present)",
+      "find": "  catch (e) { if (e.code === 'ENOENT') return; throw e; }",
+      "replace": "  catch (e) { if (e.code === 'ENOENT') { lines.push('RECOVERED - stale'); return; } throw e; }",
+      "kills": [
+        "selftest case check-clean red-before (a clean fixture must print no RECOVERED line) \u2014 the constant-printer killer"
+      ]
+    },
+    {
+      "id": "h-row-appended-at-eof",
+      "arm": "h",
+      "defect": "row inserted at EOF instead of after the last lessons row (the r76 adopt-appends-at-eof mistake)",
+      "find": "  const boundary = start + (last ? last.index + last[0].length : table.length);",
+      "replace": "  const boundary = raw.length;",
+      "kills": [
+        "selftest case placement (row must land above ## Known gaps)"
+      ]
+    }
+  ]
+}

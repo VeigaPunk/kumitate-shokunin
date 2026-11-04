@@ -1,0 +1,16 @@
+rev=e47266ae093e6f4ba6b30507606c6b7f2b70903f cmd=node .ufo/waves/round-77/probe/probe77.mjs --set c2 --lane . --work /fast/scratch/hyaku/kumitate-r77/close-c2
+CHECK c2.1-journal-surface: PASS contract v2, journal dir, RECOVERED, seam documented in header
+CHECK c2.2-crash-journal: PASS journal: clean → RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back; journal removed
+CHECK c2.3-crash-after-row: PASS row: row-only → RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back; journal removed
+CHECK c2.4-crash-after-pin: PASS pin: complete → RECOVERED corpus/lessons/round-99-verifier-spotcheck.md complete; journal removed
+CHECK c2.5-stale-tmp: PASS RECOVERED - stale; stale removed; bytes unchanged
+CHECK c2.6-foreign-journal: PASS REFUSED_JOURNAL_FOREIGN exit 2; bytes and journal retained
+CHECK c2.7-no-journal-no-line: PASS exit=1 no RECOVERED line, no journal
+CHECK c2.8-recovery-idempotent: PASS one RECOVERED, then stable
+CHECK c2.9-recovery-before-predict: PASS recovery runs before --predict; predict arm then answers
+CHECK c2.10-corrupt-preimage: PASS REFUSED_ORACLE exit 2; destinations and journal retained
+CHECK c2.11-selftest-and-refusals: PASS 26/26 cases; three refusals exit 2, bytes unchanged
+CHECK c2.12-placement-and-lane-map: PASS row adjacent at 7; fixture oracle CLEAN; README_MAP: CLEAN files=186 rows=186 covered=186
+CHECK c2.13-usage: PASS bad --predict and unknown arm exit 64
+C77_C2: HELD held=13/13
+exit=0

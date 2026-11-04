@@ -1,0 +1,7 @@
+rev=e47266ae093e6f4ba6b30507606c6b7f2b70903f cmd=bash -c python3 - <<'EOF'
+import json
+d=json.load(open('.ufo/waves/round-77/w1-results.json'))
+print('seats=%d results=%d reports=%d' % (d['seats'], len(d['results']), len([1 for r in d['results'] if (r.get('output') or '').strip()])))
+EOF
+seats=13 results=13 reports=13
+exit=0
