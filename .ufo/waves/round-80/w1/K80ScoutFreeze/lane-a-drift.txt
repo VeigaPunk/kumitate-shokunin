@@ -1,0 +1,12 @@
+# A-term drift cause: runnable files written into the lane tree (untracked)
+$ git ls-files --others --exclude-standard | grep -E "\.(mjs|js|sh|py)$"
+.ufo/waves/round-80/w1/K80LabratC2/materialize.mjs
+.ufo/waves/round-80/w1/K80LabratC2/run-matrix.sh
+.ufo/waves/round-80/w1/K80LabratC2/summarize.mjs
+$ git status --porcelain -- SCORECARD.md
+ M SCORECARD.md
+$ grep -n "^A=\|^C2=" SCORECARD.md | head -2
+294:A=886
+298:C2=198
+$ node scripts/proxy-check.mjs --json   # terms only
+{"ok":false,"source":"snapshot","A":889,"C2":198,"C2_total":198,"O_members":65,"O_findings":0,"O_bound":35,"coverage_omp":10,"findings":["A_DRIFT A: declared=886 computed=889 delta=+3"]}

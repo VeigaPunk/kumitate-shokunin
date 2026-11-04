@@ -1,0 +1,558 @@
+diff --git i/scripts/spotcheck-adopt.mjs w/scripts/spotcheck-adopt.mjs
+index d404f225..d23f3f42 100755
+--- i/scripts/spotcheck-adopt.mjs
++++ w/scripts/spotcheck-adopt.mjs
+@@ -1,419 +1,158 @@
+ #!/usr/bin/env node
+-/**
+- * kumitate-spotcheck-adopt-v2 — journaled non-author spotcheck adoption.
+- * The unchanged readme-map child owns all map verdicts. Before either rename,
+- * publish both pre-images in .ufo/pins/adopt-journal; the next invocation
+- * completes or rolls back interrupted adoption. Assumes one writer per lane.
+- * Test-only seam: SPOTCHECK_ADOPT_TEST_CRASH=journal|row|pin sends SIGKILL
+- * after journal publication, README replacement, or pin replacement respectively.
+- * Unset in normal use. Recovery protects process crashes, not power loss.
+- */
++// Independent round-80 implementation: coverage and map are separate readings.
+ import { spawnSync } from 'node:child_process';
+-import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
++import { createHash } from 'node:crypto';
++import { readFileSync, writeFileSync, readdirSync, mkdirSync, mkdtempSync, rmSync, lstatSync, renameSync, existsSync } from 'node:fs';
+ import { dirname, join, resolve } from 'node:path';
+ import { tmpdir } from 'node:os';
+ import { fileURLToPath } from 'node:url';
+-import { createHash, randomUUID } from 'node:crypto';
+-
+ const SELF = fileURLToPath(import.meta.url);
+-const DEFAULT_LANE = resolve(dirname(SELF), '..');
+-const NAME = /^round-[0-9]+-verifier-spotcheck\.md$/;
+-const refuse = () => ({ exit: 2, lines: ['REFUSED_ORACLE'] });
++const ORACLE = join(dirname(SELF), 'readme-map.mjs');
++const hash = b => createHash('sha256').update(b).digest('hex');
++const README = 'corpus/README.md', PIN = '.ufo/pins/readme-map.json';
++const rowKeys = text => text.split('\n').flatMap(line => {
++  const m = line.match(/^ {0,3}\|\s*`((?:knowledge|lessons)\/[^`]+)`\s*\|/);
++  return m ? [m[1]] : [];
++});
+ function oracle(lane) {
+-  const r = spawnSync(process.execPath, [join(lane, 'scripts/readme-map.mjs'),
+-    '--registry', join(lane, '.ufo/pins/readme-map.json'), '--readme', join(lane, 'corpus/README.md'),
+-    '--corpus', join(lane, 'corpus/knowledge'), '--corpus', join(lane, 'corpus/lessons')], { encoding: 'utf8', cwd: lane });
+-  const text = r.stdout || '';
+-  const clean = text.trim().match(/^README_MAP: CLEAN files=\d+ rows=\d+ covered=\d+$/);
+-  const findings = [...text.matchAll(/(?:README_MAP: note |first=)([^\r\n]+)/g)].map(m => m[1]);
+-  return { clean: r.status === 0 && !!clean, line: text.trim(), findings,
+-    valid: r.status === 0 ? !!clean : r.status === 1 && /^README_MAP: DRIFT /m.test(text) };
++  const r = spawnSync(process.execPath, [ORACLE, '--registry', join(lane, PIN), '--readme', join(lane, README), '--corpus', join(lane, 'corpus/knowledge'), '--corpus', join(lane, 'corpus/lessons')], { encoding: 'utf8' });
++  const lines = (r.stdout || '').trim().split('\n');
++  if (r.status === 0 && lines.some(l => l.startsWith('README_MAP: CLEAN '))) return { findings: [], first: null };
++  const verdict = lines.find(l => l.startsWith('README_MAP: DRIFT '));
++  const first = verdict?.match(/ first=(.*)$/)?.[1];
++  if (r.status !== 1 || !first) throw Error('oracle');
++  const findings = [first, ...lines.filter(l => l.startsWith('README_MAP: note ')).map(l => l.slice(17))];
++  if (findings.some(f => f.startsWith('format-unmapped:'))) throw Error('oracle');
++  return { findings, first };
+ }
+-function missing(result, key) {
+-  return { row: result.findings.includes(`uncovered:${key}`), pin: result.findings.includes(`unpinned:${key}`) };
+-}
+-function appendPin(raw, key) {
+-  // Preserve every existing byte, including existing entries and indentation.
+-  // Refuse ambiguous property spellings rather than guessing an insertion site.
+-  const matches = [...raw.matchAll(/"covered"\s*:\s*\[/g)];
+-  if (matches.length !== 1) throw new Error('ambiguous covered array');
+-  const start = matches[0].index + matches[0][0].length;
+-  let string = false, escaped = false, end = start;
+-  for (; end < raw.length; end++) {
+-    const c = raw[end];
+-    if (escaped) { escaped = false; continue; }
+-    if (string && c === '\\') { escaped = true; continue; }
+-    if (c === '"') { string = !string; continue; }
+-    if (!string && c === ']') break;
+-  }
+-  const body = raw.slice(start, end);
+-  const boundary = start + body.trimEnd().length;
+-  const addition = `${body.trim() ? ',' : ''}\n  ${JSON.stringify(key)}`;
+-  const next = raw.slice(0, boundary) + addition + raw.slice(boundary);
+-  const doc = JSON.parse(next);
+-  if (!doc.covered.includes(key)) throw new Error('insertion failed');
+-  return next;
+-}
+-function replaceAtomic(path, bytes) {
+-  const temp = `${path}.spotcheck-${randomUUID()}`;
+-  try {
+-    writeFileSync(temp, bytes, { flag: 'wx', mode: lstatSync(path).mode & 0o777 });
+-    renameSync(temp, path);
+-  } finally { rmSync(temp, { force: true }); }
+-}
+-const JOURNAL = '.ufo/pins/adopt-journal';
+-const PRE = [
+-  { path: 'corpus/README.md', file: 'README.pre' },
+-  { path: '.ufo/pins/readme-map.json', file: 'readme-map.pre' },
+-];
+-const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+-/** A destination's real parent must be the lane's own directory (no symlinked parent). */
+-function canonicalParent(file, want, lane) {
+-  const parent = realpathSync(dirname(file));
+-  const expected = join(realpathSync(lane), want);
+-  if (parent !== expected) {
+-    const error = new Error('path escape');
+-    error.token = 'REFUSED_PATH_ESCAPE';
+-    throw error;
++const mapLine = (prefix, o) => `${prefix}: ${o.first ? `DRIFT first=${o.first}` : 'CLEAN'}`;
++function recover(lane) {
++  const root = join(lane, '.ufo/pins/adopt-journal');
++  if (!existsSync(root)) return;
++  for (const name of readdirSync(root).sort().filter(n => !n.endsWith('.retired'))) {
++    const dir = join(root, name), m = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
++    if (m.contract !== 'kumitate-adopt-journal-v1' || m.lane !== lane || !Array.isArray(m.pre) || m.pre.length !== 2) throw Error('journal');
++    const bytes = m.pre.map(p => {
++      if (![README, PIN].includes(p.path) || !['README.pre', 'readme-map.pre'].includes(p.file)) throw Error('journal');
++      const b = readFileSync(join(dir, p.file));
++      if (hash(b) !== p.sha256) throw Error('journal');
++      return b;
++    });
++    if (new Set(m.pre.map(p => p.path)).size !== 2) throw Error('journal');
++    m.pre.forEach((p, i) => {
++      const path = join(lane, p.path);
++      if (!existsSync(path) || hash(readFileSync(path)) !== p.sha256) writeFileSync(path, bytes[i]);
++    });
++    renameSync(dir, `${dir}.retired`);
+   }
+ }
+-/** Retire a journal atomically before recursive deletion: a kill cannot leave a half-journal. */
+-function retire(dir) {
+-  const done = `${dir}.done`;
+-  try { renameSync(dir, done); } catch { /* already retired */ }
+-  rmSync(done, { recursive: true, force: true });
+-}
+-function stageJournal(lane, target, key, originals) {
+-  const root = join(lane, JOURNAL), id = randomUUID();
++function journal(lane, target, key) {
++  const root = join(lane, '.ufo/pins/adopt-journal');
+   mkdirSync(root, { recursive: true });
+-  const temp = join(root, `${id}.tmp`), ready = join(root, id);
+-  mkdirSync(temp);
+-  const pre = PRE.map(entry => {
+-    const bytes = originals.get(join(lane, entry.path));
+-    writeFileSync(join(temp, entry.file), bytes, { flag: 'wx' });
+-    return { ...entry, sha256: sha256(bytes) };
++  const dir = mkdtempSync(join(root, 'adopt-'));
++  const pre = [README, PIN].map((path, i) => {
++    const file = i ? 'readme-map.pre' : 'README.pre', bytes = readFileSync(join(lane, path));
++    writeFileSync(join(dir, file), bytes);
++    return { path, file, sha256: hash(bytes) };
+   });
+-  writeFileSync(join(temp, 'manifest.json'), JSON.stringify({
+-    contract: 'kumitate-adopt-journal-v1', lane, target, key, pre,
+-  }) + '\n', { flag: 'wx' });
+-  renameSync(temp, ready);
+-  return ready;
++  writeFileSync(join(dir, 'manifest.json'), JSON.stringify({ contract: 'kumitate-adopt-journal-v1', lane, target, key, pre }));
++  return dir;
+ }
+-function recover(lane, lines) {
+-  const root = join(lane, JOURNAL);
+-  canonicalParent(root, '.ufo/pins', lane);
+-  let entries;
+-  try { entries = readdirSync(root).sort(); }
+-  catch (e) { if (e.code === 'ENOENT') return; throw e; }
+-  for (const name of entries) {
+-    const dir = join(root, name);
+-    if (!lstatSync(dir).isDirectory()) throw new Error('invalid journal entry');
+-    if (name.endsWith('.tmp') || name.endsWith('.done')) {
+-      retire(dir);
+-      lines.push('RECOVERED - stale');
+-      continue;
+-    }
+-    const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
+-    if (manifest.lane !== lane) {
+-      const error = new Error('foreign journal');
+-      error.token = 'REFUSED_JOURNAL_FOREIGN';
+-      throw error;
+-    }
+-    if (manifest.contract !== 'kumitate-adopt-journal-v1'
+-      || typeof manifest.target !== 'string'
+-      || !manifest.target.startsWith('corpus/lessons/')
+-      || !NAME.test(manifest.target.slice('corpus/lessons/'.length))
+-      || manifest.key !== manifest.target.slice(7)
+-      || !Array.isArray(manifest.pre) || manifest.pre.length !== PRE.length
+-      || manifest.pre.some((entry, i) => entry.path !== PRE[i].path
+-        || entry.file !== PRE[i].file || !/^[0-9a-f]{64}$/.test(entry.sha256)))
+-      throw new Error('invalid journal manifest');
+-    const result = oracle(lane);
+-    let outcome = 'complete';
+-    if (!result.clean) {
+-      // Validate both images before restoring either destination.
+-      const images = manifest.pre.map(entry => {
+-        const bytes = readFileSync(join(dir, entry.file));
+-        if (sha256(bytes) !== entry.sha256) throw new Error('invalid pre-image');
+-        return [join(lane, entry.path), bytes];
+-      });
+-      for (const [path, bytes] of images) replaceAtomic(path, bytes);
+-      outcome = 'rolled-back';
+-    }
+-    retire(dir);
+-    lines.push(`RECOVERED ${manifest.target} ${outcome}`);
++function execute(lane, mode, target) {
++  recover(lane);
++  const before = oracle(lane);
++  const raw = readFileSync(join(lane, README), 'utf8');
++  const pin = JSON.parse(readFileSync(join(lane, PIN), 'utf8'));
++  const rows = rowKeys(raw), covered = key => rows.includes(key) && pin.covered.includes(key);
++  if (mode === 'check') {
++    const spots = readdirSync(join(lane, 'corpus/lessons')).filter(n => n.endsWith('.md') && n.includes('spotcheck')).sort();
++    const uncovered = spots.filter(n => !covered(`lessons/${n}`));
++    console.log(`SPOTCHECK_COVERAGE: ${uncovered.length ? 'DRIFT' : 'CLEAN'} spotchecks=${spots.length} uncovered=${uncovered.length}${uncovered.length ? ` first=corpus/lessons/${uncovered[0]}` : ''}`);
++    console.log(mapLine('MAP', before));
++    return uncovered.length ? 1 : 0;
+   }
+-}
+-function crashAt(stage) {
+-  if (process.env.SPOTCHECK_ADOPT_TEST_CRASH === stage) process.kill(process.pid, 'SIGKILL');
+-}
+-function insertRow(raw, row) {
+-  const heading = /^## Coverage map[^\r\n]*(?:\r?\n|$)/m.exec(raw);
+-  const start = heading ? heading.index + heading[0].length : 0;
+-  const remainder = raw.slice(start);
+-  const nextHeading = remainder.search(/^## /m);
+-  const table = nextHeading < 0 ? remainder : remainder.slice(0, nextHeading);
+-  const lessons = [...table.matchAll(/^\| `lessons\/[^`\r\n]+` \|[^\r\n]*(?:\r?\n|$)/gm)];
+-  const rows = lessons.length ? lessons : [...table.matchAll(/^\| `[^`\r\n]+` \|[^\r\n]*(?:\r?\n|$)/gm)];
+-  const last = rows.at(-1);
+-  const boundary = start + (last ? last.index + last[0].length : table.length);
+-  const prefix = raw.slice(0, boundary);
+-  return prefix + (prefix && !prefix.endsWith('\n') ? '\n' : '') + row + raw.slice(boundary);
+-}
+-function evaluate(lane, arm, value) {
+-  let path, key;
+-  if (arm === '--adopt') {
+-    if (!value.startsWith('corpus/lessons/') || value.slice('corpus/lessons/'.length).includes('/'))
+-      return { exit: 2, lines: ['REFUSED_OUT_OF_SCOPE'] };
+-    if (!NAME.test(value.slice('corpus/lessons/'.length)))
+-      return { exit: 2, lines: ['REFUSED_NOT_SPOTCHECK'] };
+-    path = value; key = path.slice('corpus/'.length);
+-    try {
+-      const full = join(lane, path);
+-      if (!lstatSync(full).isFile() || realpathSync(dirname(full)) !== join(realpathSync(lane), 'corpus/lessons'))
+-        return { exit: 2, lines: ['REFUSED_OUT_OF_SCOPE'] };
+-    } catch (e) {
+-      return { exit: 2, lines: [e.code === 'ENOENT' ? 'REFUSED_ABSENT' : 'REFUSED_ORACLE'] };
+-    }
++  const key = target.replace(/^corpus\//, '');
++  if (!/^(knowledge|lessons)\/[A-Za-z0-9._-]+\.md$/.test(key) || !lstatSync(join(lane, 'corpus', key)).isFile()) throw Error('target');
++  if (before.findings.some(f => f.startsWith('duplicate-row:'))) throw Error('oracle');
++  if (covered(key)) { console.log(`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${target}`); return 0; }
++  const needRow = !rows.includes(key), needPin = !pin.covered.includes(key);
++  const lines = raw.split('\n');
++  if (needRow) {
++    const start = lines.findIndex(l => /^##\s+Coverage map\s*$/.test(l));
++    if (start < 0) throw Error('section');
++    let insert = start + 1;
++    for (let i = start + 1; i < lines.length && !/^##\s/.test(lines[i]); i++) if (/^\s*\|/.test(lines[i])) insert = i + 1;
++    lines.splice(insert, 0, `| \`${key}\` | Verifier spotcheck adopted into the coverage map | ${target} |`);
+   }
+-  if (arm === '--predict') {
+-    path = `corpus/lessons/round-${value}-verifier-spotcheck.md`; key = path.slice('corpus/'.length);
+-    try { lstatSync(join(lane, path)); }
+-    catch (e) { return e.code === 'ENOENT' ? { exit: 0, lines: [`SPOTCHECK_PREDICT: PENDING ${path}`] } : refuse(); }
+-  }
+-  const result = oracle(lane);
+-  if (!result.valid || result.findings.some(f => /^(format-unmapped|duplicate-row):/.test(f))) return refuse();
+-  if (arm === '--check') {
+-    const paths = readdirSync(join(lane, 'corpus/lessons')).filter(n => NAME.test(n)).sort().map(n => `corpus/lessons/${n}`);
+-    const uncovered = paths.filter(p => { const m = missing(result, p.slice(7)); return m.row || m.pin; });
+-    return { exit: result.clean ? 0 : 1, lines: [result.clean
+-      ? `SPOTCHECK_MAP: CLEAN spotchecks=${paths.length} uncovered=0`
+-      : `SPOTCHECK_MAP: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0] || 'oracle'}`] };
+-  }
+-  const m = missing(result, key);
++  if (needPin) pin.covered.push(key);
++  const dir = journal(lane, target, key);
+   try {
+-    canonicalParent(join(lane, 'corpus/README.md'), 'corpus', lane);
+-    canonicalParent(join(lane, '.ufo/pins/readme-map.json'), '.ufo/pins', lane);
+-  } catch { return { exit: 2, lines: ['REFUSED_PATH_ESCAPE'] }; }
+-  if (arm === '--predict') {
+-    const covered = !m.row && !m.pin && lstatSync(join(lane, path)).isFile();
+-    return { exit: covered ? 0 : 1, lines: [`SPOTCHECK_PREDICT: ${covered ? 'COVERED' : 'UNCOVERED'} ${path}`] };
+-  }
+-  if (!m.row && !m.pin) return { exit: 0, lines: [`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${path}`] };
+-  const readme = join(lane, 'corpus/README.md'), pin = join(lane, '.ufo/pins/readme-map.json');
+-  const originals = new Map([[readme, readFileSync(readme)], [pin, readFileSync(pin)]]);
+-  let journal;
+-  try {
+-    const writes = [];
+-    if (m.row) {
+-      const raw = originals.get(readme).toString('utf8');
+-      writes.push([readme, insertRow(raw, `| \`${key}\` | Non-author round-${value.match(/round-([0-9]+)/)[1]} verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |\n`)]);
+-    }
+-    if (m.pin) writes.push([pin, appendPin(originals.get(pin).toString('utf8'), key)]);
+-    journal = stageJournal(lane, path, key, originals);
+-    crashAt('journal');
+-    for (const [file, bytes] of writes) {
+-      replaceAtomic(file, bytes);
+-      crashAt(file === readme ? 'row' : 'pin');
+-    }
++    if (needRow) writeFileSync(join(lane, README), lines.join('\n'));
++    if (needPin) writeFileSync(join(lane, PIN), `${JSON.stringify(pin, null, 2)}\n`);
+     const after = oracle(lane);
+-    if (!after.clean) throw new Error('oracle refused');
+-    retire(journal);
+-    return { exit: 0, lines: [`SPOTCHECK_ADOPT: ADOPTED ${path} wrote=${m.row && m.pin ? 'both' : m.row ? 'row' : 'pin'}`, after.line] };
+-  } catch {
+-    if (journal) {
+-      for (const [file, bytes] of originals) replaceAtomic(file, bytes);
+-      retire(journal);
+-    }
+-    return refuse();
+-  }
++    const own = f => f.slice(f.indexOf(':') + 1) === key;
++    if (!coveredAfter(lane, key) || after.findings.some(own) || JSON.stringify(before.findings.filter(f => !own(f))) !== JSON.stringify(after.findings.filter(f => !own(f)))) throw Error('delta');
++    renameSync(dir, `${dir}.retired`);
++    console.log(`SPOTCHECK_ADOPT: ADOPTED ${target} wrote=${needRow && needPin ? 'both' : needRow ? 'readme' : 'registry'}`);
++    console.log(mapLine('README_MAP', after));
++    return 0;
++  } catch (e) { recover(lane); throw e; }
+ }
+-
+-function selftest(lane) {
+-  const root = mkdtempSync(join(tmpdir(), 'spotcheck-adopt-st-'));
+-  let passed = 0, total = 0;
+-  const target = 'corpus/lessons/round-75-verifier-spotcheck.md';
+-  const key = target.slice(7);
+-  const clean = 'README_MAP: CLEAN files=1 rows=1 covered=1';
+-  function fixture(name, row = false, pin = false, artifact = true) {
+-    const dir = join(root, name);
+-    for (const child of ['scripts', 'corpus/knowledge', 'corpus/lessons', '.ufo/pins']) mkdirSync(join(dir, child), { recursive: true });
+-    copyFileSync(join(lane, 'scripts/readme-map.mjs'), join(dir, 'scripts/readme-map.mjs'));
+-    // A baseline file keeps pending/absent fixtures within the oracle's nonempty contract.
+-    if (!artifact) writeFileSync(join(dir, 'corpus/knowledge/base.md'), '# Base\n');
+-    else writeFileSync(join(dir, target), '# Spotcheck\n');
+-    writeFileSync(join(dir, 'corpus/README.md'), '# Corpus\n' + (!artifact ? '| `knowledge/base.md` | Base | fixture |\n' : row ? `| \`${key}\` | Spotcheck | fixture |\n` : ''));
+-    writeFileSync(join(dir, '.ufo/pins/readme-map.json'), JSON.stringify({ version: 2, covered: !artifact ? ['knowledge/base.md'] : pin ? [key] : [] }, null, 2) + '\n');
+-    return dir;
+-  }
+-  const hash = dir => ['corpus/README.md', '.ufo/pins/readme-map.json'].map(p => createHash('sha256').update(readFileSync(join(dir, p))).digest('hex')).join(':');
+-  const run = (dir, ...args) => {
+-    const r = spawnSync(process.execPath, [SELF, '--lane', dir, ...args], { encoding: 'utf8' });
+-    console.log(`CLI ${args.join(' ')} exit=${r.status} stdout=${JSON.stringify((r.stdout || '').trim())}`);
+-    return { exit: r.status, text: (r.stdout || '').trim() };
++function coveredAfter(lane, key) {
++  return rowKeys(readFileSync(join(lane, README), 'utf8')).includes(key) && JSON.parse(readFileSync(join(lane, PIN), 'utf8')).covered.includes(key);
++}
++function selftest() {
++  const root = mkdtempSync(join(tmpdir(), 'independent-c1-'));
++  let n = 0, pass = 0;
++  const check = (name, ok) => { n++; if (ok) pass++; console.log(`case ${name}: ${ok ? 'PASS' : 'FAIL'}`); };
++  const target = 'corpus/lessons/round-75-verifier-spotcheck.md', key = target.slice(7);
++  const fixture = (name, adopted = false) => {
++    const d = join(root, name);
++    for (const p of ['corpus/knowledge', 'corpus/lessons', '.ufo/pins']) mkdirSync(join(d,p), {recursive:true});
++    writeFileSync(join(d,'corpus/knowledge/base.md'),'# Base\n');
++    writeFileSync(join(d,target),'# Spotcheck\n');
++    writeFileSync(join(d,README), `# Corpus\n\n## Coverage map\n\n| \`knowledge/base.md\` | Base | fixture |\n${adopted ? `| \`${key}\` | Spotcheck | fixture |\n` : ''}\n## Known gaps\n\n- none\n`);
++    writeFileSync(join(d,PIN), `${JSON.stringify({version:2, covered:['knowledge/base.md', ...(adopted ? [key] : [])]},null,2)}\n`);
++    return d;
+   };
+-  function exact(r, exit, text) { return r.exit === exit && r.text === text; }
+-  function test(name, before, action) {
+-    total++;
+-    let red = false, ok = false;
+-    try { red = before(); ok = red && action(); } catch { ok = false; }
+-    if (ok) passed++;
+-    console.log(`CASE ${name}: red-before=${red ? 'PASS' : 'FAIL'} ${ok ? 'PASS' : 'FAIL'}`);
+-  }
++  const run = (d,args,extra={}) => spawnSync(process.execPath,[SELF,'--lane',d,...args], {encoding:'utf8', ...extra});
++  const bytes = d => [README,PIN].map(p => hash(readFileSync(join(d,p)))).join(':');
+   try {
+-    let d = fixture('check-clean');
+-    test('check-clean', () => exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`), () => {
+-      if (run(d, '--adopt', target).exit !== 0) return false;
+-      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0');
+-    });
+-    d = fixture('check-drift', true, true);
+-    test('check-drift', () => exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0'), () => {
+-      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n');
+-      return exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`);
+-    });
+-    for (const [name, row, pin, wrote] of [['adopt-both', false, false, 'both'], ['adopt-row', false, true, 'row'], ['adopt-pin', true, false, 'pin']]) {
+-      d = fixture(name, row, pin);
+-      test(name, () => !oracle(d).clean, () => exact(run(d, '--adopt', target), 0, `SPOTCHECK_ADOPT: ADOPTED ${target} wrote=${wrote}\n${clean}`) && oracle(d).clean);
+-    }
+-    d = fixture('idempotence');
+-    test('idempotence', () => !oracle(d).clean, () => {
+-      if (run(d, '--adopt', target).exit !== 0) return false;
+-      const before = hash(d);
+-      return exact(run(d, '--adopt', target), 0, `SPOTCHECK_ADOPT: ALREADY_ADOPTED ${target}`) && before === hash(d);
+-    });
+-    for (const [name, path, token] of [['out-of-scope', 'SCORECARD.md', 'REFUSED_OUT_OF_SCOPE'], ['not-spotcheck', 'corpus/lessons/round-75.md', 'REFUSED_NOT_SPOTCHECK'], ['absent', 'corpus/lessons/round-99-verifier-spotcheck.md', 'REFUSED_ABSENT']]) {
+-      d = fixture(name);
+-      test(name, () => !oracle(d).clean, () => { const before = hash(d); return exact(run(d, '--adopt', path), 2, token) && hash(d) === before; });
+-    }
+-    for (const name of ['malformed-pin', 'malformed-readme', 'rollback']) {
+-      d = fixture(name);
+-      test(name, () => !oracle(d).clean, () => {
+-        if (name === 'malformed-pin') writeFileSync(join(d, '.ufo/pins/readme-map.json'), '{');
+-        if (name === 'malformed-readme') writeFileSync(join(d, 'corpus/README.md'), '| lessons/broken.md | broken |\n');
+-        if (name === 'rollback') writeFileSync(join(d, 'corpus/knowledge/unrelated.md'), '# Unmapped\n');
+-        const before = hash(d);
+-        return exact(run(d, '--adopt', target), 2, 'REFUSED_ORACLE') && hash(d) === before;
+-      });
+-    }
+-    d = fixture('predict-pending', true, true);
+-    test('predict-pending', () => exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`), () => {
+-      rmSync(join(d, target));
+-      return exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: PENDING ${target}`);
+-    });
+-    d = fixture('predict-covered');
+-    test('predict-covered', () => exact(run(d, '--predict', '75'), 1, `SPOTCHECK_PREDICT: UNCOVERED ${target}`), () => run(d, '--adopt', target).exit === 0 && exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`));
+-    d = fixture('predict-uncovered', true, true);
+-    test('predict-uncovered', () => exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`), () => {
+-      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n');
+-      return exact(run(d, '--predict', '75'), 1, `SPOTCHECK_PREDICT: UNCOVERED ${target}`);
+-    });
+-    d = fixture('usage');
+-    test('usage', () => !oracle(d).clean, () => exact(run(d, '--predict', 'bad'), 64, 'SPOTCHECK_ADOPT: USAGE'));
+-    const journalNames = dir => {
+-      try { return readdirSync(join(dir, JOURNAL)); }
+-      catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+-    };
+-    for (const stage of ['journal', 'row', 'pin']) {
+-      d = fixture(`crash-${stage}`);
+-      test(`crash-${stage}`, () => !oracle(d).clean, () => {
+-        const before = hash(d);
+-        const child = spawnSync(process.execPath, [SELF, '--lane', d, '--adopt', target], {
+-          encoding: 'utf8', env: { ...process.env, SPOTCHECK_ADOPT_TEST_CRASH: stage },
+-        });
+-        console.log(`CRASH ${stage} status=${child.status} signal=${child.signal}`);
+-        if (child.signal !== 'SIGKILL' || journalNames(d).length !== 1) return false;
+-        const post = hash(d);
+-        const row = readFileSync(join(d, 'corpus/README.md'), 'utf8').includes(`| \`${key}\` |`);
+-        const pin = JSON.parse(readFileSync(join(d, '.ufo/pins/readme-map.json'), 'utf8')).covered.includes(key);
+-        if (row !== (stage !== 'journal') || pin !== (stage === 'pin')) return false;
+-        const recovered = run(d, '--check');
+-        const outcome = stage === 'pin' ? 'complete' : 'rolled-back';
+-        return recovered.exit === (stage === 'pin' ? 0 : 1)
+-          && recovered.text.startsWith(`RECOVERED ${target} ${outcome}\n`)
+-          && hash(d) === (stage === 'pin' ? post : before) && journalNames(d).length === 0;
+-      });
+-    }
+-    d = fixture('stale-tmp');
+-    test('stale-tmp', () => !oracle(d).clean, () => {
+-      const before = hash(d), temp = join(d, JOURNAL, `${randomUUID()}.tmp`);
+-      mkdirSync(temp, { recursive: true });
+-      writeFileSync(join(temp, 'manifest.json'), '{');
+-      const recovered = run(d, '--predict', '76');
+-      return recovered.exit === 0 && recovered.text.startsWith('RECOVERED - stale\n')
+-        && hash(d) === before && journalNames(d).length === 0;
+-    });
+-    d = fixture('foreign-journal');
+-    test('foreign-journal', () => !oracle(d).clean, () => {
+-      const before = hash(d);
+-      const images = new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))]));
+-      const journal = stageJournal(d, target, key, images);
+-      const manifestPath = join(journal, 'manifest.json');
+-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+-      manifest.lane = `${d}-foreign`;
+-      const bytes = JSON.stringify(manifest);
+-      writeFileSync(manifestPath, bytes);
+-      return exact(run(d, '--check'), 2, 'REFUSED_JOURNAL_FOREIGN')
+-        && hash(d) === before && readFileSync(manifestPath, 'utf8') === bytes
+-        && journalNames(d).length === 1;
+-    });
+-    d = fixture('placement');
+-    test('placement', () => !oracle(d).clean, () => {
+-      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n\n## Coverage map\n\n## Known gaps\n\n- none\n');
+-      if (run(d, '--adopt', target).exit !== 0) return false;
+-      const raw = readFileSync(join(d, 'corpus/README.md'), 'utf8');
+-      return raw.indexOf(`| \`${key}\` |`) < raw.indexOf('## Known gaps') && oracle(d).clean;
+-    });
+-    d = fixture('recovery-idempotence', true, true);
+-    test('recovery-idempotence', () => oracle(d).clean, () => {
+-      const before = hash(d);
+-      stageJournal(d, target, key, new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))])));
+-      if (!run(d, '--check').text.startsWith(`RECOVERED ${target} complete\n`)) return false;
+-      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0') && hash(d) === before;
+-    });
+-    for (const newline of [false, true]) {
+-      d = fixture(`pin-final-newline-${newline}`);
+-      test(`pin-final-newline-${newline}`, () => !oracle(d).clean, () => {
+-        const pinPath = join(d, '.ufo/pins/readme-map.json');
+-        writeFileSync(pinPath, readFileSync(pinPath, 'utf8').trimEnd() + (newline ? '\n' : ''));
+-        return run(d, '--adopt', target).exit === 0
+-          && readFileSync(pinPath, 'utf8').endsWith('\n') === newline;
+-      });
+-    }
+-    d = fixture('corrupt-pre-image');
+-    test('corrupt-pre-image', () => !oracle(d).clean, () => {
+-      const before = hash(d);
+-      const journal = stageJournal(d, target, key, new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))])));
+-      writeFileSync(join(journal, 'readme-map.pre'), 'corrupt');
+-      return exact(run(d, '--check'), 2, 'REFUSED_ORACLE')
+-        && hash(d) === before && journalNames(d).length === 1;
+-    });
+-  } finally { rmSync(root, { recursive: true, force: true }); }
+-  console.log(`SPOTCHECK_ADOPT_SELFTEST: ${passed === total ? 'PASS' : 'FAIL'} (${passed}/${total})`);
+-  console.log(`VERDICT: ${passed === total ? 'PASS' : 'FAIL'}`);
+-  return passed === total ? 0 : 1;
++    let d=fixture('clean',true), r=run(d,['--check']);
++    check('clean-exit',r.status===0); check('clean-coverage',r.stdout.includes('SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0')); check('clean-map',r.stdout.includes('MAP: CLEAN'));
++    d=fixture('uncovered'); r=run(d,['--check']);
++    check('uncovered-exit',r.status===1); check('uncovered-name',r.stdout.includes(`uncovered=1 first=${target}`)); check('uncovered-map',r.stdout.includes('MAP: DRIFT first='));
++    d=fixture('map-only',true); writeFileSync(join(d,'corpus/knowledge/late.md'),'# Late\n'); r=run(d,['--check']);
++    check('map-only-exit',r.status===0); check('map-only-coverage',r.stdout.includes('CLEAN spotchecks=1 uncovered=0')); check('map-only-first',r.stdout.includes('MAP: DRIFT first=uncovered:knowledge/late.md'));
++    d=fixture('orphan',true); writeFileSync(join(d,README),readFileSync(join(d,README),'utf8')+'| `knowledge/ghost.md` | Ghost | fixture |\n'); r=run(d,['--check']);
++    check('orphan-exit',r.status===0); check('orphan-first',r.stdout.includes('MAP: DRIFT first=orphan-row:knowledge/ghost.md'));
++    d=fixture('format',true); writeFileSync(join(d,README),'# Corpus\n| lessons/not-a-row | broken |\n'); r=run(d,['--check']);
++    check('format-refused',r.status===2 && r.stdout.trim()==='REFUSED_ORACLE');
++    r=run(d,['--bogus']); check('usage',r.status===64 && r.stdout.trim()==='SPOTCHECK_ADOPT: USAGE');
++    d=fixture('adopt'); writeFileSync(join(d,'corpus/knowledge/late.md'),'# Late\n'); r=run(d,['--adopt',target]);
++    check('adopt-exit',r.status===0); check('adopt-both',r.stdout.startsWith(`SPOTCHECK_ADOPT: ADOPTED ${target} wrote=both\n`)); check('adopt-red-map',r.stdout.includes('README_MAP: DRIFT first=uncovered:knowledge/late.md')); check('adopt-row',rowKeys(readFileSync(join(d,README),'utf8')).includes(key)); check('adopt-pin',JSON.parse(readFileSync(join(d,PIN),'utf8')).covered.includes(key));
++    const before=bytes(d); r=run(d,['--adopt',target]); check('idempotent-exit',r.status===0); check('idempotent-line',r.stdout.trim()===`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${target}`); check('idempotent-bytes',bytes(d)===before);
++    d=fixture('duplicate',true); writeFileSync(join(d,README),readFileSync(join(d,README),'utf8')+`| \`${key}\` | Again | fixture |\n`); const dup=bytes(d); r=run(d,['--adopt',target]); check('duplicate-refused',r.status===2); check('duplicate-bytes',bytes(d)===dup);
++    d=fixture('corrupt'); const j=journal(d,target,key); writeFileSync(join(j,'README.pre'),'corrupt'); const corrupt=bytes(d); r=run(d,['--check']); check('corrupt-refused',r.status===2 && r.stdout.trim()==='REFUSED_ORACLE'); check('corrupt-bytes',bytes(d)===corrupt);
++    d=fixture('recovery'); const pre=bytes(d), valid=journal(d,target,key); writeFileSync(join(d,README),'interrupted'); r=run(d,['--check']); check('recovery-bytes',bytes(d)===pre); check('recovery-retired',existsSync(`${valid}.retired`)); check('recovery-reading',r.status===1);
++    d=fixture('invalid'); writeFileSync(join(d,PIN),'invalid'); r=run(d,['--check']); check('invalid-registry',r.status===2 && r.stdout.trim()==='REFUSED_ORACLE');
++    d=fixture('happy'); r=run(d,['--adopt',target]); check('happy-adopt',r.status===0); r=run(d,['--check']); check('happy-check',r.status===0 && r.stdout.includes('MAP: CLEAN'));
++  } finally { rmSync(root,{recursive:true,force:true}); }
++  console.log(`SPOTCHECK_ADOPT_SELFTEST: ${pass===n?'PASS':'FAIL'} (${pass}/${n})`);
++  return pass===n?0:1;
+ }
+ function main(argv) {
+-  let lane = DEFAULT_LANE;
+-  const args = [];
+-  for (let i = 0; i < argv.length; i++) {
+-    if (argv[i] === '--lane' && argv[i + 1]) lane = resolve(argv[++i]);
+-    else args.push(argv[i]);
++  let lane=process.cwd(), mode=null, target;
++  for(let i=0;i<argv.length;i++) {
++    const a=argv[i];
++    if(a==='--lane' && argv[i+1]) lane=resolve(argv[++i]);
++    else if(a==='--check' && !mode) mode='check';
++    else if(a==='--adopt' && !mode && argv[i+1]) {mode='adopt';target=argv[++i];}
++    else if(a==='--selftest' && !mode) mode='selftest';
++    else { console.log('SPOTCHECK_ADOPT: USAGE'); return 64; }
+   }
+-  const arm = args[0];
+-  const single = ['--check', '--selftest'].includes(arm) && args.length === 1;
+-  const pair = ['--adopt', '--predict'].includes(arm) && args.length === 2;
+-  if ((!single && !pair) || (arm === '--predict' && !/^[0-9]+$/.test(args[1]))) {
+-    console.log('SPOTCHECK_ADOPT: USAGE'); return 64;
+-  }
+-  if (arm === '--selftest') return selftest(lane);
+-  const lines = [];
+-  let result;
+-  try {
+-    recover(lane, lines);
+-    result = evaluate(lane, arm, args[1]);
+-  } catch (e) { result = e.token ? { exit: 2, lines: [e.token] } : refuse(); }
+-  result.lines.unshift(...lines);
+-  console.log(result.lines.join('\n'));
+-  return result.exit;
++  if(!mode) {console.log('SPOTCHECK_ADOPT: USAGE');return 64;}
++  try {return mode==='selftest'?selftest():execute(lane,mode,target);}
++  catch {console.log('REFUSED_ORACLE');return 2;}
+ }
+-process.exitCode = main(process.argv.slice(2));
++process.exitCode=main(process.argv.slice(2));

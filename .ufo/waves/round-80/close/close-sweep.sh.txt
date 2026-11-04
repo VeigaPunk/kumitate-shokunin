@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# round-80 close sweep — every receipt starts with the measured revision (r79 D6).
+# Run from the lane root at the close tip: bash .ufo/waves/round-80/close/close-sweep.sh.txt
+set -u
+LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+cd "$LANE" || exit 2
+REV=$(git rev-parse master)
+OUT=.ufo/waves/round-80/close
+mkdir -p "$OUT"
+
+run() { # run <file> <command...>
+  local name="$1"; local file="$OUT/$1"; shift
+  { echo "rev=$REV"; echo "\$ $*"; "$@"; echo "exit=$?"; } > "$file" 2>&1
+  printf '%-34s %s\n' "$name" "$(tail -2 "$file" | head -1 | cut -c1-120)"
+}
+
+run proxy-check.txt              node scripts/proxy-check.mjs
+run proxy-json.txt               node scripts/proxy-check.mjs --json
+run c1-probe.txt                 node .ufo/waves/round-80/probe/probe80-c1.mjs --set c1
+run c2-probe.txt                 node .ufo/waves/round-80/probe/probe80-c2.mjs --set c2
+run spotcheck-check.txt          node scripts/spotcheck-adopt.mjs --check
+run spotcheck-selftest.txt       node scripts/spotcheck-adopt.mjs --selftest
+run proxy-selftest.txt           node scripts/proxy-check.mjs --selftest
+run census-shape.txt             node scripts/omp-census.mjs
+run census-compare.txt           node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json
+run omp-live-real.txt            node scripts/proxy-check.mjs --omp-live
+run kimi-census.txt              node scripts/kimi-census.mjs
+run readme-map.txt               node scripts/readme-map.mjs
+run sources-check.txt            node scripts/sources-check.mjs
+run source-capture.txt           node scripts/source-capture.mjs
+run source-dupes.txt             node scripts/source-dupes.mjs
+run cite-sources.txt             node scripts/cite-sources.mjs
+run claims-check.txt             node scripts/claims-check.mjs
+run anchor-truth.txt             node scripts/anchor-truth.mjs --base e18ff1af3392e3823227644c977c237737fe65c9
+run checklists.txt               node scripts/surface-probe.mjs --checklists
+run sources-census.txt           /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+echo "close sweep done at rev=$REV"

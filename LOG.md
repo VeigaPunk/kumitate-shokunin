@@ -2542,3 +2542,76 @@ sentinel; connector 1; executors 3; scribes 2; scouts 2), planner = L1.
 - 2026-11-04 — round 78 (gate-required one-line record; the full entry is the section above): C1 coverage:kimi-layer — the K score becomes the census decision's derivation (`decide(root)` imported, `K_MEMBER_RULES` deleted, `K_findings` added; clean `55/55/0 → 10`, mode-floor loss `1 → 9`, stray `1 → 9`, missing member `54/1 → 9`; frozen counter `C78_C1: HELD held=12/12`; **reported held-but-harmed**: the frozen formula replaced the `K_sections` factor, so a de-named heading reads base 9 vs patched 10 — not admitted, operator ruling open); C2 operability — capability `omp-shape-compare` (`omp-census --compare` IN_SYNC/DRIFT with added/removed/changed counters, exit 0/1/2, non-scoring; `C78_C2: HELD held=11/11`, selftest 79 cases, mutants 10/10 killed); counter amendments A1–A4 before verdicts; r77 D1–D6 repaired; 7th spotcheck recurrence adopted; S228 opened (166 → 167 rows); census exit 0 start and end.
 
 - 2026-11-04 — round 79 (gate-required one-line record; the full entry is the section below): C1 coverage:kimi-layer — the K score is the product of BOTH factors again (`kCoverage`; de-named heading 10 → 9, one census finding → 9, both → 9, zero members → 0; frozen counter `C79_C1: HELD held=11/11`, base 7/11, stub 4/11; mutant battery 7/7); C2 operability — capability deepening `report-receipt-diff` v4 (`POINTER_DEAD`; 4 non-receipt dead pointers on the filed r78 report beside 6 `RECEIPT_MISSING`; frozen counter `C79_C2: HELD held=12/12`, base 9/12, stub 4/12; selftest 144/144); routed repair `omp-census --compare` transient SQLite sidecars (89 cases, checklist green); `PROXY: MATCH`, README map 194/194, SOURCES 167 → 171; wave: ONE v1 wave, 13 seats (attack 5/13 = 38 %), planner = L1.
+
+## Round 79 — full entry, appended at round 80 (the round-79 bullet above says "the full entry is the section below"; that section was never written — routed by the K80ScribeDocs seat as `reference-drift`, repaired here rather than by rewriting the bullet)
+
+Round 79 ran ONE v1 wave of 13 seats (spec `.ufo/waves/round-79/w1-spec.json`, results
+`.ufo/waves/round-79/w1-results.json`) over base `5019803b` and scaffolding `ba940b51`. Claims: **C1
+coverage:kimi-layer** — the K score is the product of both factors again (`kCoverage`; a de-named member
+heading reads 9, one census finding reads 9, both read 9, zero members read 0; frozen counter
+`C79_C1: HELD held=11/11`, base 7/11, constant-clean stub 4/11; mutant battery 7/7); **C2 operability** —
+capability deepening `report-receipt-diff` v4 (`POINTER_DEAD` resolves every backticked repo-path pointer;
+frozen counter `C79_C2: HELD held=12/12`, base 9/12, stub 4/12; selftest 125 → 144). Routed repair:
+`omp-census --compare` classifies SQLite sidecars as transient (89-case selftest). Evidence:
+`corpus/lessons/round-79.md` (Counters table and its Erratum 1), `.ufo/waves/round-79/{open,close,controls}/`,
+and the filed report. The non-author closure's spot-check (`corpus/lessons/round-79-verifier-spotcheck.md`)
+admitted both claims and routed eight record defects D1–D8, repaired in round 80.
+
+## Round 80 — two readings, one snapshot (2026-11-04, Linux run-15 host; ONE v1 wave of 13 seats)
+
+Base `1968689f9097f839457e242b41f83879e99af58e` (round-79 closure); freeze `c6a7ebd3bd01ec34b2f9349a6756886c5dd85982`
+(plan, both frozen counters, base receipts, two pre-data controls); scaffolding
+`6d03402fddf44cc9797ec590f0f888e933db4677` (the two instrument changes and the re-measured stanza).
+Claims: **C1 operability** — capability deepening `spotcheck-adopt` v3 (the spotcheck set and the README
+map as two readings; `--adopt` validates its own delta), frozen counter `probe80-c1.mjs` (13 arms; base
+6/13, constant-CLEAN stub 3/13, close 13/13); **C2 coverage:omp** — the O terms default to the committed,
+pinned `kumitate-omp-shape-v1` receipt (`source=snapshot`), the live root behind `--omp-live`, frozen
+counter `probe80-c2.mjs` (12 arms; base 4/12, constant-JSON stub 1/12, close 12/12). Both axis integers
+hold (operability 9 terminal; coverage:omp 10), so both moves are surface changes measured by their
+counters, not re-scores.
+
+C1's mechanism: `--check` prints `SPOTCHECK_COVERAGE:` (its own verdict, exit-bearing) and `MAP:`
+(disclosed, non-exit-bearing); `--adopt` compares `otherFindings` before/after and requires only that its
+own target resolves. The live repair this lands is the 9th spotcheck recurrence
+(`corpus/lessons/round-79-verifier-spotcheck.md`, landed by the r79 closure after the lane closed):
+`SPOTCHECK_ADOPT: ADOPTED … wrote=both` → `README_MAP: CLEAN files=195 rows=195 covered=195`. The v2
+fold read `SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=0 first=oracle` on a green-spotcheck/red-map
+fixture and refused the adoption (`open/conflation.txt`).
+
+C2's mechanism: `parseArgs` sets the default O source to `<self>/.ufo/pins/omp-shape.json` when neither
+`--omp-shape` nor `--omp-live`/`--omp-root` is given; both JSON bodies disclose
+`source: "snapshot"|"live"` and the verdict tail carries `source=snapshot`; an absent default receipt
+fails closed `OMP_SHAPE_NOT_FOUND`; `--omp-live` is exclusive with `--omp-shape`/`--omp-root`. The
+receipt was re-captured at 65 members (`OMP_SNAPSHOT: WROTE entries=65 sha256=84e41b9f…`,
+`pin.omp-shape` re-pinned) because the live root gained the operator's
+`config.yml.pre-rebalance2-20261104`; the round-open proxy read `O_MEMBERS_DRIFT declared=64 computed=65`
+and `AXES_DRIFT coverage row=10 derived=9`.
+
+Verification: `PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=198/198 coverage=10; S=88/88
+coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1
+O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669;
+source=snapshot)`, checklists 39/39, README map 198/198, SOURCES 171 → 173 (tier A 146 → 147; C 9 → 10),
+`OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65`, claims gate MATCH, anchor truth CLEAN, kimi census
+CLEAN 55/55. Proxy selftest 159 → 163; spotcheck-adopt selftest 26 → 28.
+
+Sources: S119 re-opened (Kubernetes probes page; `used-by` old→new logged in this round's lesson), S234
+admitted (Terraform dependency lock file, capture bound), S235 rejected (community style guide; reason +
+flip recorded), and **S233 written then withdrawn** — `source-dupes` caught it as a duplicate of S119
+(`new-duplicate … ids=S119,S233`) and the entry was re-pointed. Knowledge:
+`corpus/knowledge/two-reading-verdicts.md` (S119), `corpus/knowledge/snapshot-bound-derived-scores.md`
+(S234). Assimilation: none — `merge/kumitate/` not taken; census exit 0 at both ends (six carried W04).
+Record repairs routed by the r79 spot-check: the r79 report carries an appended erratum (D1, D2, D8),
+`corpus/lessons/round-79.md` Erratum 2 (D3, D4), and the SCORECARD round-80 correction (D5); every r80
+close receipt carries `rev=` (D6) and the round-start census is committed (D7). No tools installed.
+
+Wave: ONE v1 wave, 13 seats (spec `.ufo/waves/round-80/w1-spec.json`, dispatch
+`.ufo/waves/round-80/w1-dispatch.json`, results `.ufo/waves/round-80/w1-results.json`): 3 executors,
+2 scribes, 2 scouts, 1 connector, 2 reviewers, 1 critic, 1 mutation-tester, 1 revenger (`planner` is
+the L1's seat; the validator admits no `labrat`, so the C2 probe rides `revenger`) — attack 4/13 =
+31 %. All 13 settled, 13 wrote reports, no dead seats. The wave found real holes and the tool was
+deepened once afterwards (v3.1: recovery delta rule, subject-exact filter, `NONE` on an empty set,
+`--predict` oracle-first, `REFUSED_NO_MAP_SECTION`, symlink diagnosis, `sourceRead`), with the frozen
+counters re-reading 13/13 and 12/12 against the final bytes; what the wave rejected and what the
+counters cannot see are recorded in the lesson's `## Wave integration` and `## Limits`.
+
+- 2026-11-04 — round 80 (gate-required one-line record; the full entry is the section above): C1 operability — capability deepening `spotcheck-adopt` v3 (two readings `SPOTCHECK_COVERAGE:`/`MAP:`, delta-scoped `--adopt`; frozen counter `C80_C1: HELD held=13/13`, base 6/13, constant-CLEAN stub 3/13; selftest 26 → 28; the 9th spotcheck recurrence adopted through the new rule); C2 coverage:omp — the O terms default to the committed pinned shape receipt (`source=snapshot`, `--omp-live` opt-in; receipt re-captured 65, `pin.omp-shape` re-pinned; frozen counter `C80_C2: HELD held=12/12`, base 4/12, constant-JSON stub 1/12; proxy selftest 159 → 163); stanza `A` 884 → 886, `O_members` 64 → 65, `C2` 194 → 198; `PROXY: MATCH`, checklists 39/39, README map 198/198, SOURCES 171 → 173.

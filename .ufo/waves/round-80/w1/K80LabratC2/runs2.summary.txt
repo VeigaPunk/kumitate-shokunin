@@ -1,0 +1,17 @@
+- proxy --omp-root <declared> (flag path, not env)
+  exit=1 
+  PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; src-rev=31c465f15669)
+- proxy --omp-root <declared> --json
+  exit=1 source=live O=66/0/35 coverage_omp=10 findings=[C2_DRIFT,C2_TOTAL_DRIFT,O_MEMBERS_DRIFT]
+- proxy --omp-root <undeclared>
+  exit=1 
+  PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; O_FINDINGS_DRIFT term=O_findings declared=0 computed=1 delta=+1; COVERAGE_OMP_DRIFT term=coverage_omp declared=10 computed=9 delta=-1; AXES_DRIFT term=coverage:omp declared=10 computed=9; src-rev=31c465f
+- proxy default with OMP_AGENT_ROOT=/nonexistent
+  exit=1 
+  PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; src-rev=31c465f15669; source=snapshot)
+- proxy --omp-live with OMP_AGENT_ROOT=/nonexistent
+  exit=2 
+  proxy-check: fail-closed — OMP_ROOT_NOT_A_DIR: --omp-root /nonexistent/omp-root is not a readable directory (ENOENT)
+- omp-census env OMP_AGENT_ROOT=<undeclared> (does census honour the env?)
+  exit=0 
+  OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)

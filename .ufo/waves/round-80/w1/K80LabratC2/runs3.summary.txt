@@ -1,0 +1,11 @@
+- frozen self=6d03402f, proxy --strict, OMP_AGENT_ROOT=/nonexistent
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=195/195 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- frozen self=6d03402f, proxy --strict, OMP_AGENT_ROOT=<declared>
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=195/195 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- frozen self=6d03402f, proxy --strict --omp-live, OMP_AGENT_ROOT=<declared>
+  exit=1 
+  PROXY: DRIFT (O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; src-rev=31c465f15669)
+- frozen self=6d03402f, omp-census --compare --root <declared>
+  exit=64 

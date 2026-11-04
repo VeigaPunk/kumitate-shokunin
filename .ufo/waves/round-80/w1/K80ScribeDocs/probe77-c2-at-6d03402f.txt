@@ -1,0 +1,14 @@
+CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2
+CHECK c2.2-crash-journal: FAIL requested --check arm did not run after recovery
+CHECK c2.3-crash-after-row: FAIL requested --check arm did not run after recovery
+CHECK c2.4-crash-after-pin: FAIL requested --check arm did not run after recovery
+CHECK c2.5-stale-tmp: PASS RECOVERED - stale; stale removed; bytes unchanged
+CHECK c2.6-foreign-journal: PASS REFUSED_JOURNAL_FOREIGN exit 2; bytes and journal retained
+CHECK c2.7-no-journal-no-line: PASS exit=1 no RECOVERED line, no journal
+CHECK c2.8-recovery-idempotent: PASS one RECOVERED, then stable
+CHECK c2.9-recovery-before-predict: PASS recovery runs before --predict; predict arm then answers
+CHECK c2.10-corrupt-preimage: PASS REFUSED_ORACLE exit 2; destinations and journal retained
+CHECK c2.11-selftest-and-refusals: PASS 28/28 cases; three refusals exit 2, bytes unchanged
+CHECK c2.12-placement-and-lane-map: PASS row adjacent at 7; fixture oracle CLEAN; README_MAP: CLEAN files=195 rows=195 covered=195
+CHECK c2.13-usage: PASS bad --predict and unknown arm exit 64
+C77_C2: UNMET held=9/13

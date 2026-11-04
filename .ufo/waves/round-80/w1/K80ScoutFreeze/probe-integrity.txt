@@ -1,0 +1,22 @@
+# probe counter byte-identity (freeze c6a7ebd3 vs worktree)
+$ git show c6a7ebd3:.ufo/waves/round-80/probe/probe80-c1.mjs | sha256sum
+9cbd0281d835f68107567891f5a3492b4a0620b6005704d4b0f86756d97c0139  -
+$ git show c6a7ebd3:.ufo/waves/round-80/probe/probe80-c2.mjs | sha256sum
+ad514cf410c6065601157f96933958e95e72193002f54fefe7af1061e690b470  -
+$ sha256sum <lane>/.ufo/waves/round-80/probe/probe80-c1.mjs <lane>/.ufo/waves/round-80/probe/probe80-c2.mjs
+9cbd0281d835f68107567891f5a3492b4a0620b6005704d4b0f86756d97c0139  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-80/probe/probe80-c1.mjs
+ad514cf410c6065601157f96933958e95e72193002f54fefe7af1061e690b470  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-80/probe/probe80-c2.mjs
+
+# scaffolding commit files
+6d03402f round-80: scaffolding — spotcheck-adopt v3 two-reading split + delta-scoped adopt; proxy O terms default to the committed shape receipt (--omp-live opt-in); receipt re-captured 65; stanza/pins re-measured
+ .ufo/pins/omp-shape.json    |  5 ++++
+ .ufo/pins/readme-map.json   |  3 ++-
+ SCORECARD.md                | 14 +++++-----
+ SKILL.md                    |  6 ++---
+ corpus/README.md            |  1 +
+ scripts/proxy-check.mjs     | 58 ++++++++++++++++++++++++++++++++++++++--
+ scripts/spotcheck-adopt.mjs | 64 +++++++++++++++++++++++++++++++++------------
+ 7 files changed, 122 insertions(+), 29 deletions(-)
+
+# probe history
+c6a7ebd3 round-80: freeze — plan, C1/C2 counters, open receipts, pre-data controls

@@ -1280,6 +1280,7 @@ function failClosed(opts, token, detail, terms, started) {
     contract: CONTRACT,
     mode: 'check',
     source: opts.ompShape ? 'snapshot' : 'live',
+    sourceRead: Boolean(opts.ompSourceRead),
     ok: false,
     verdict: 'FAIL-CLOSED',
     exitCode: 2,
@@ -1310,6 +1311,7 @@ function runCheck(opts, started) {
     try { shape = shapeFromFile(opts.ompShape); } catch (e) {
       return failClosed(opts, `OMP_${e.code}`, e.message, {}, started);
     }
+    opts.ompSourceRead = true;
   }
   if (statKind(opts.self) !== 'dir') {
     return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, {}, started);
@@ -1372,6 +1374,7 @@ function runCheck(opts, started) {
   let omp;
   try {
     omp = shape ? censusEntries(shape, ompNoteText) : census(opts.ompRoot, ompNoteText);
+    opts.ompSourceRead = true;
   } catch (e) {
     return failClosed(opts, 'OMP_ROOT_NOT_A_DIR',
       `--omp-root ${opts.ompRoot} is not a readable directory (${e.code || e.message})`, {}, started);
@@ -1416,6 +1419,7 @@ function runCheck(opts, started) {
     contract: CONTRACT,
     mode: 'check',
     source: opts.ompShape ? 'snapshot' : 'live',
+    sourceRead: Boolean(opts.ompSourceRead),
     ok: verdict === 'MATCH',
     verdict,
     exitCode,
@@ -2840,7 +2844,7 @@ function selfTest() {
       const text = runProxyRaw(noOmpRoot(dfReceipt), { OMP_AGENT_ROOT: dfReceipt.omp });
       let j = null;
       try { j = JSON.parse(res.stdout); } catch { /* drift text */ }
-      return { ok: res.status === 0 && j !== null && j.source === 'snapshot'
+      return { ok: res.status === 0 && j !== null && j.source === 'snapshot' && j.sourceRead === true
         && j.terms.O_members === 26 && j.terms.O_findings === 0
         && verdictLine(text).includes('source=snapshot'),
       detail: `exit=${res.status} source=${j && j.source} members=${j && j.terms.O_members} ${verdictLine(text).slice(0, 80)}` };
@@ -2856,8 +2860,13 @@ function selfTest() {
     });
     check('OMP default: an absent receipt fails closed instead of reading live', () => {
       const fx = oFixture('omp-default-absent');
-      const res = runProxyRaw(noOmpRoot(fx), { OMP_AGENT_ROOT: fx.omp });
-      return { ok: res.status === 2 && fcToken(res) === 'OMP_SHAPE_NOT_FOUND', detail: `exit=${res.status} ${verdictLine(res).slice(0, 80)}` };
+      const text = runProxyRaw(noOmpRoot(fx), { OMP_AGENT_ROOT: fx.omp });
+      const res = runProxyRaw(noOmpRoot(fx, ['--json']), { OMP_AGENT_ROOT: fx.omp });
+      let j = null;
+      try { j = JSON.parse(res.stdout); } catch { /* text */ }
+      return { ok: text.status === 2 && fcToken(text) === 'OMP_SHAPE_NOT_FOUND' && res.status === 2
+        && j !== null && j.source === 'snapshot' && j.sourceRead === false,
+      detail: `exit=${text.status}/${res.status} source=${j && j.source} read=${j && j.sourceRead} ${verdictLine(text).slice(0, 60)}` };
     });
     check('OMP default: --omp-live and --omp-shape are exclusive', () => {
       const res = runProxyRaw(noOmpRoot(dfReceipt, ['--omp-live', '--omp-shape', shapeFile]));
@@ -3334,6 +3343,7 @@ function parseArgs(argv) {
     ompRoot: DEFAULT_OMP_ROOT,
     ompShape: null,
     ompLive: false,
+    ompSourceRead: false,
     json: false,
     strict: false,
     selftest: false,

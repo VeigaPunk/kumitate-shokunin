@@ -1,0 +1,17 @@
+rev=509afb1d6ec5fc854c1398ae0060d6298ed621d1
+$ node .ufo/waves/round-80/probe/probe80-c1.mjs --set c1
+C80_C1 arm 01 coverage-clean: PASS exit=0 out="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+C80_C1 arm 02 coverage-uncovered: PASS exit=1 out="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+C80_C1 arm 03 map-only-drift-green-coverage: PASS exit=0 out="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=uncovered:knowledge/late.md"
+C80_C1 arm 04 map-orphan-row-green-coverage: PASS exit=0 out="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=orphan-row:knowledge/ghost.md"
+C80_C1 arm 05 both-drift: PASS exit=1 out="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=orphan-row:knowledge/ghost.md"
+C80_C1 arm 06 oracle-refusal-preserved: PASS exit=2 out="REFUSED_ORACLE"
+C80_C1 arm 07 usage-64: PASS exit=64 out="SPOTCHECK_ADOPT: USAGE"
+C80_C1 arm 08 adopt-on-red-map: PASS exit=0 out="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: note unpinned:knowledge/late.md\nREADME_MAP: DRIFT files=3 rows=2 covered=2 bad=2 first=uncovered:knowledge/late.md"
+C80_C1 arm 09 adopt-duplicate-refused: PASS exit=2 out="REFUSED_ORACLE" unchanged=true
+C80_C1 arm 10 adopt-idempotent: PASS exit=0 out="SPOTCHECK_ADOPT: ALREADY_ADOPTED corpus/lessons/round-75-verifier-spotcheck.md" unchanged=true
+C80_C1 arm 11 rollback-clean: PASS exit=2 out="REFUSED_ORACLE" unchanged=true
+C80_C1 arm 12 selftest: PASS exit=0 tail=["SPOTCHECK_ADOPT_SELFTEST: PASS (28/28)","VERDICT: PASS"]
+C80_C1 arm 13 live-lane-clean: PASS exit=0 out=["SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0","MAP: CLEAN"]
+C80_C1: HELD held=13/13
+exit=0

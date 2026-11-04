@@ -1,0 +1,19 @@
+# committed HEAD 509afb1d bytes: proxy reading (archive)
+$ git show HEAD:SCORECARD.md | grep -E "^(A|C2|C2_total)="
+A=886
+C2=195
+C2_total=195
+C2_total=123; computed agrees (`PROXY: MATCH … pins=6 match src-rev=31c465f15669`). A
+C2_total=124: the committed R53 verifier spot-check existed without a README map row, so
+C2=129, C2_total=130: the committed R55 verifier spotcheck existed without a
+C2=135, C2_total=135, `PROXY: MATCH`. Sources rows 116→120: A 96→99, B 12→13, C 8
+C2_total=138, `PROXY: MATCH`. `K_members`/`K_sections` 53→52: the kimi host
+A=110→111 B=15 C=8); the claim does not verify. Score delta: none; coverage stays 10.
+
+$ OMP_AGENT_ROOT=/nonexistent node head/scripts/proxy-check.mjs
+PROXY  error  C2_DRIFT  C2: declared=195 computed=197 delta=+2
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=195 computed=197 delta=+2
+PROXY: DRIFT (C2_DRIFT term=C2 declared=195 computed=197 delta=+2; C2_TOTAL_DRIFT term=C2_total declared=195 computed=197 delta=+2; src-rev=31c465f15669; source=snapshot)
+exit=1
+
+# computed C2 at these bytes = 197 (corpus/README.md rows); the committed stanza says 195.

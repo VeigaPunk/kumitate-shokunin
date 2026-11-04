@@ -1,0 +1,36 @@
+# open-state re-derivation at base 1968689f (archive at /fast/scratch/hyaku/kumitate-r80/K80ScoutFreeze/base; self-lane)
+
+$ node base/scripts/proxy-check.mjs
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=194 computed=195 delta=+1
+PROXY  error  O_MEMBERS_DRIFT  O_members: declared=64 computed=65 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=194 computed=195 delta=+1; O_MEMBERS_DRIFT term=O_members declared=64 computed=65 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+$ node base/scripts/spotcheck-adopt.mjs --lane <base archive> --check
+SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=1 first=corpus/lessons/round-79-verifier-spotcheck.md
+exit=1
+
+$ node base/scripts/spotcheck-adopt.mjs --lane <live lane> --check
+SPOTCHECK_MAP: CLEAN spotchecks=46 uncovered=0
+exit=0
+
+$ node base/scripts/omp-census.mjs
+exit=0
+OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)
+
+$ node base/scripts/omp-census.mjs --compare base/.ufo/pins/omp-shape.json
+exit=1
+OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=64 added=1 removed=0 changed=0 first=config.yml.pre-rebalance2-20261104 transient=0
+
+$ node base/scripts/kimi-census.mjs
+exit=0
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+
+$ node base/scripts/sources-check.mjs
+exit=0
+SOURCES_CHECK: CLEAN (rows=171 tiers=A:146,B:16,C:9 status=queued:13,mined:138,rejected:20 entries_with_source=30 legacy=38)
+
+$ node base/scripts/source-dupes.mjs
+exit=0
+SOURCE_DUPES: CLEAN groups=6 known=6

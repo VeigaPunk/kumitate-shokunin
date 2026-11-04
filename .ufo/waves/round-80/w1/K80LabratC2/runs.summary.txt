@@ -1,0 +1,68 @@
+- materialize live65 (receipt replayed as a real root)
+  exit=0 
+  MATERIALIZE: OK entries=65 dest=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65
+- compare live65 vs receipt (faithfulness baseline)
+  exit=0 
+  OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+- materialize live65-declared
+  exit=0 
+  MATERIALIZE: OK entries=65 dest=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared
+- materialize live65-undeclared
+  exit=0 
+  MATERIALIZE: OK entries=65 dest=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared
+- BASELINE proxy default (lane tree, no env)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- BASELINE proxy default --json (lane tree, no env)
+  exit=0 source=snapshot O=65/0/35 coverage_omp=10 findings=[]
+- proxy default (snapshot; OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- proxy default --json (snapshot; OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared)
+  exit=0 source=snapshot O=65/0/35 coverage_omp=10 findings=[]
+- proxy --omp-live (OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared)
+  exit=1 
+  PROXY: DRIFT (O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; src-rev=31c465f15669)
+- proxy --omp-live --json (OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared)
+  exit=1 source=live O=66/0/35 coverage_omp=10 findings=[O_MEMBERS_DRIFT]
+- omp-census --compare (root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared)
+  exit=1 
+  OMP_SHAPE_COMPARE: DRIFT entries=66 receipt=65 added=1 removed=0 changed=0 first=config.yml.pre-lab80-1-20261104 transient=0
+- omp-census default root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared (checklist item)
+  exit=0 
+  OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared entries=66 findings=0 bound=35/35)
+- proxy default (snapshot; OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- proxy default --json (snapshot; OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared)
+  exit=0 source=snapshot O=65/0/35 coverage_omp=10 findings=[]
+- proxy --omp-live (OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared)
+  exit=1 
+  PROXY: DRIFT (O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; O_FINDINGS_DRIFT term=O_findings declared=0 computed=1 delta=+1; COVERAGE_OMP_DRIFT term=coverage_omp declared=10 computed=9 delta=-1; AXES_DRIFT term=coverage:omp declared=10 computed=9; src-rev=31c465f15669)
+- proxy --omp-live --json (OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared)
+  exit=1 source=live O=66/1/35 coverage_omp=9 findings=[O_MEMBERS_DRIFT,O_FINDINGS_DRIFT,COVERAGE_OMP_DRIFT,AXES_DRIFT]
+- omp-census --compare (root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared)
+  exit=1 
+  OMP_SHAPE_COMPARE: DRIFT entries=66 receipt=65 added=1 removed=0 changed=0 first=zz-undeclared-lab80 transient=0
+- omp-census default root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared (checklist item)
+  exit=1 
+  OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared entries=66 findings=1)
+- proxy default (snapshot; OMP_AGENT_ROOT=/home/vgpnk/.omp/agent)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+- proxy default --json (snapshot; OMP_AGENT_ROOT=/home/vgpnk/.omp/agent)
+  exit=0 source=snapshot O=65/0/35 coverage_omp=10 findings=[]
+- proxy --omp-live (OMP_AGENT_ROOT=/home/vgpnk/.omp/agent)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669)
+- proxy --omp-live --json (OMP_AGENT_ROOT=/home/vgpnk/.omp/agent)
+  exit=0 source=live O=65/0/35 coverage_omp=10 findings=[]
+- omp-census --compare (root=/home/vgpnk/.omp/agent)
+  exit=0 
+  OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+- omp-census default root=/home/vgpnk/.omp/agent (checklist item)
+  exit=0 
+  OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)
+- AFTER proxy default (lane tree, no env)
+  exit=0 
+  PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)

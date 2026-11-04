@@ -1,0 +1,144 @@
+# K80ExecRepairs — raw verification outputs (2026-11-04, lane tip 509afb1d, fleet HEAD 3709eca)
+
+All commands run read-only from /home/vgpnk/Projects/shokunin (fleet) and
+/home/vgpnk/Projects/shokunin/kumitate-shokunin (lane). No git mutations performed.
+
+## D1
+$ sed -n '29,33p' .ufo/waves/round-79/open/gates-open.txt
+== readme map ==
+README_MAP: note unpinned:lessons/round-78-verifier-spotcheck.md
+README_MAP: DRIFT files=191 rows=190 covered=190 bad=2 first=uncovered:lessons/round-78-verifier-spotcheck.md
+map_exit=1
+$ sed -n '33,37p' .ufo/waves/round-79/w1/K79ScoutOpen/gates.txt
+### scaffolding readme-map (routed repair 1 receipt)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/readme-map.mjs)
+  README_MAP: CLEAN files=191 rows=191 covered=191
+exit=0
+$ grep -n 'README_MAP' .ufo/waves/round-79/w1/K79ReviewFreeze/scaffold-tree-readme-map.txt
+1:README_MAP: CLEAN files=191 rows=191 covered=191
+
+## D2
+$ ls .ufo/waves/round-79/w1/        # (listing) no K79MutC2 entry; reports: K79MutC1.md exists, no K79MutC2.md
+$ git log --all --oneline -- '.ufo/waves/round-79/w1/K79MutC2*'
+0                                    # zero commits
+
+## D3
+$ grep -n 'close/shape.txt\|close/census.txt\|close/readme-map.txt\|close/spotcheck-check.txt\|close/census-shape.txt\|close/maps.txt' corpus/lessons/round-79.md
+86:| K census (members / findings) | 55 / 0 | 55 / 0 | `open/gates-open.txt`; `close/census.txt` |
+87:| OMP census (entries / findings / bound) | 64 / 0 / 35 | 64 / 0 / 35 | `open/gates-open.txt`; `close/shape.txt` |
+89:| README map (files / uncovered) | 191 / 0 | 193 / 0 | `open/gates-open.txt`; `close/readme-map.txt` |
+90:| spotcheck map (spotchecks / uncovered) | 45 / 0 | 45 / 0 | `open/gates-open.txt`; `close/spotcheck-check.txt` |
+129-131: (erratum text naming the four as void)
+$ git ls-tree --name-only 357e4e73 -- .ufo/waves/round-79/close/ | sed 's|.*/||' | tr '\n' ' '
+blob-identity.txt c1-probe.txt c2-probe.txt c2-r78.txt census.txt checklists.txt maps.txt mutants-c1.json proxy-check.txt proxy-json.txt report-refs.txt shape.txt sources.txt
+$ git ls-tree --name-only 32620ef5 -- .ufo/waves/round-79/close/ | sed 's|.*/||' | tr '\n' ' '
+blob-identity.txt c1-probe.txt c2-probe.txt c2-r78.txt census-shape.txt checklists.txt maps.txt mutants-c1.json proxy-check.txt proxy-json.txt report-refs.txt sources-census.txt sources.txt
+$ git diff --name-status 357e4e73 32620ef5 -- .ufo/waves/round-79/close/   # (relevant lines)
+R075	.ufo/waves/round-79/close/census.txt	.ufo/waves/round-79/close/census-shape.txt
+D	.ufo/waves/round-79/close/shape.txt
+A	.ufo/waves/round-79/close/sources-census.txt
+$ git show 357e4e73:.ufo/waves/round-79/close/census.txt | head -3
+date=2026-11-04T04:59:59-03:00
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+$ git show 357e4e73:.ufo/waves/round-79/close/shape.txt | head -4
+date=2026-11-04T04:59:59-03:00
+OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+exit=0
+OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0 transient=0
+$ git log --all --format='%h %s' -- .ufo/waves/round-79/close/census.txt
+32620ef5 round-79: close receipts at 357e4e73 ...
+abc3f5f7
+daf305f0
+357e4e73 round-79: composite K score ... wave evidence
+98425328
+  (abc3f5f7/daf305f0/98425328 are empty-subject jj keep-ref snapshots under refs/jj/keep/*)
+
+## D4
+$ printf '%s' '0 if a line is selected, 1 if no lines were selected, and 2 if an error occurred.' | wc -w
+18
+$ sed -n '18,21p' corpus/lessons/round-79.md
+- **Admit — S229, GNU grep manual §2.3 *Exit Status*, kind `docs`, tier A, status `mined`.** Opened
+  2026-11-04: HTTP/2 200, 248692 bytes, sha256 `517177d0…`. Located quote, 21 words: `0 if a line is
+  selected, 1 if no lines were selected, and 2 if an error occurred.` ...
+
+## D5
+$ git diff 5019803b 0fb019a3 -- SCORECARD.md | grep -n 'SETTLEMENT\|All 13 seats'   # (matching diff lines)
+90:-Base `0b4df07b...`. ... <SETTLEMENT>
+91:+Base `0b4df07b...`. ... All 13 seats settled (`.ufo/waves/round-79/w1-results.json`); ...
+111:+(the validator rejects `planner` ...). All 13 seats settled (`.ufo/waves/round-79/w1-results.json`); ...
+$ grep -n 'All 13 seats' SCORECARD.md
+3676:... (round-78 section base paragraph)
+3702:... (round-79 section base paragraph)
+$ python3 -c "import json;d=json.load(open('.ufo/waves/round-78/w1-results.json'));print(d['seats'],len(d['results']))"
+14 14
+$ git diff --stat -- SCORECARD.md
+ SCORECARD.md | 34 ++++++++++++++++++++++++++++++++--
+$ git show HEAD:SCORECARD.md | grep -c 'Round 80 correction'
+0                       # correction drafted on disk only, uncommitted
+
+## D6
+$ git log --format='%an <%ae> %H %s' -- .ufo/waves/round-79/close/c1-probe.txt
+kumitate-shokunin <kumitate@shokunin.local> 32620ef5c0c9c95bd6a5ee85540435f3c374f4a8 round-79: close receipts at 357e4e73 (both counter probes, proxy/census/maps/sources, c2 re-measure of the filed r78 report, blob identities)
+kumitate-shokunin <kumitate@shokunin.local> 357e4e730574486fc1fd77d037768296da6be685 round-79: composite K score ... wave evidence
+$ grep -c 'rev=' .ufo/waves/round-79/close/c1-probe.txt
+0
+$ grep -n 'rev=' .ufo/waves/round-79/close/c2-probe.txt .ufo/waves/round-79/close/proxy-check.txt .ufo/waves/round-79/close/c2-r78.txt
+c2-probe.txt:3:C79_C2 arm fixture-clean ok REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=268 report_sha256=8e7c9610e6b3)
+proxy-check.txt:1:rev=357e4e730574486fc1fd77d037768296da6be685
+c2-r78.txt:1:rev=357e4e730574486fc1fd77d037768296da6be685
+$ grep -in 'rev' .ufo/waves/round-80/probe/probe80-c1.mjs .ufo/waves/round-80/probe/probe80-c2.mjs
+(no output — zero matches in either frozen counter)
+$ grep -n 'rev=' .ufo/waves/round-80/plan.md
+136:every close receipt (`rev=` line).
+
+## D7
+$ cat .ufo/waves/round-79/open/gates-open.txt   # full 40-line file: stanzas =
+== proxy strict == / == proxy json == / == kimi census == / == omp census == / == readme map == / == spotcheck check == / == checklists ==
+  (no sources-census output)
+$ head -30 .ufo/waves/round-80/open/sources-census.txt
+=== sources census at round-80 open (measured 2026-11-04, lane tip ed64ddcabf4e4f6a0d860d288d083fdad34f61c7)
+kumitate	W04	S034 duplicate url ...
+... (six W04) ...
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+census_exit=0
+=== row count / tier histogram
+171
+A=146 B=16 C=9
+$ git ls-tree --name-only c6a7ebd3bd01ec34b2f9349a6756886c5dd85982 -- .ufo/waves/round-80/open/
+.ufo/waves/round-80/open/base-receipts.txt
+.ufo/waves/round-80/open/c1-base.txt
+.ufo/waves/round-80/open/c2-base.txt
+.ufo/waves/round-80/open/conflation.txt
+.ufo/waves/round-80/open/proxy.txt
+  (sources-census.txt NOT in the freeze tree; committed later at 509afb1d)
+$ git log --format='%h %H %s' -- .ufo/waves/round-80/open/sources-census.txt
+509afb1d 509afb1d6ec5fc854c1398ae0060d6298ed621d1 round-80: corpus increment — two sourced knowledge entries (S233/S234) + captures; r79 lesson erratum (D3/D4); round-start sources census; stanza C2 re-measure 197
+
+## D8
+$ git log --format='%an <%ae> %H %s' -- .ufo/reports/round-79/kumitate.md   # (fleet repo)
+kumitate-shokunin <kumitate@shokunin.local> 59aa9ae895f4aa1f78ad753c8c5debac70158d64 round-79: kumitate report erratum (final lane tip and lesson counter values)
+kumitate-shokunin <kumitate@shokunin.local> cbb52bd646f3259d5670b1b5312000f5552407a1 round-79: kumitate report
+$ git show 59aa9ae -s --format='%B' | wc -l          # body: subject line only, blank — body is EMPTY
+$ git diff --stat cbb52bd 59aa9ae -- .ufo/reports/round-79/
+ kumitate-receipt.txt |  2 +-
+ kumitate.md          | 10 ++++++----
+$ git show cbb52bd:.ufo/reports/round-79/kumitate.md | wc -c   → 14070
+$ git show 59aa9ae:.ufo/reports/round-79/kumitate.md | wc -c   → 14251
+$ git show 59aa9ae:.ufo/reports/round-79/kumitate.md | sha256sum | cut -c1-12  → c9a76770f97a
+  (matches the receipt line at 59aa9ae: bytes=14251 report_sha256=c9a76770f97a)
+$ git show cbb52bd:.ufo/reports/round-79/kumitate.md | sha256sum | cut -c1-12  → 6bb0dda3360f
+  (matches the receipt line at cbb52bd: bytes=14070 report_sha256=6bb0dda3360f)
+$ git status --porcelain -- .ufo/reports/round-79/     # (fleet repo)
+ M .ufo/reports/round-79/kumitate.md
+$ git diff --stat -- .ufo/reports/round-79/kumitate.md
+ .ufo/reports/round-79/kumitate.md | 26 ++++++++++++++++++++++++++
+  (the D1/D2/D8 erratum block: uncommitted, appended at end of file)
+
+## Landing state of all repair text (audit-time snapshot)
+- Fleet report D1/D2/D8 erratum: drafted verbatim on disk, UNCOMMITTED (fleet worktree).
+- Lesson D3/D4 (Erratum 2): COMMITTED at 509afb1d; contains the wrong "any lane revision" sentence
+  → Erratum 3 needed (text in erratum-lesson-round-79-erratum3.md).
+- SCORECARD D5 correction: drafted verbatim on disk, UNCOMMITTED (lane worktree, pure-insertion hunk).
+- D6/D7: prevention via plan line 136 + open/sources-census.txt (committed 509afb1d); both procedural,
+  not counter-enforced.

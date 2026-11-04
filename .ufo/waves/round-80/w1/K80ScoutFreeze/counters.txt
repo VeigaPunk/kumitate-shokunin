@@ -1,0 +1,24 @@
+# counter readings
+# C1
+$ probe80-c1.mjs --tool <base archive> --lane <base archive>
+C80_C1: HELD held=6/13
+exit=1
+$ probe80-c1.mjs --tool <base archive>            # lane defaults to the live lane
+C80_C1: HELD held=6/13  exit=1
+$ probe80-c1.mjs --tool <SCAF archive 6d03402f> --lane <SCAF archive>
+C80_C1: HELD held=13/13
+exit=0
+$ probe80-c1.mjs --tool <live lane> --lane <live lane>
+C80_C1: HELD held=13/13  exit=0
+
+# C2
+$ probe80-c2.mjs --tool <base archive> --lane <base archive>
+C80_C2: HELD held=4/12
+exit=1
+$ probe80-c2.mjs --tool <base archive>            # lane defaults to the live lane
+C80_C2: HELD held=5/12  exit=1  (arm 08 flips PASS because the lane receipt is now 65 -> fixture root68)
+$ probe80-c2.mjs --tool <SCAF archive 6d03402f> --lane <SCAF archive>
+C80_C2: HELD held=12/12
+exit=0
+$ probe80-c2.mjs --tool <live lane> --lane <live lane>
+C80_C2: HELD held=12/12  exit=0

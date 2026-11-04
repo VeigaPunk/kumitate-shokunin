@@ -1,0 +1,18 @@
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-80/probe/probe80-c2.mjs --set c2 --tool /fast/scratch/hyaku/kumitate-r80/K80ReviewFreeze/base --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r80/K80ReviewFreeze/work-c2-base
+C80_C2 arm 01 default-snapshot: FAIL exit=1 source=undefined O_members=68 O_findings=0 coverage=10 text_exit=1
+C80_C2 arm 02 live-opt-in: FAIL exit=64 source=undefined O_members=undefined kinds=
+C80_C2 arm 03 offline-default: FAIL exit=2 source=undefined O_members=undefined kinds=OMP_ROOT_NOT_A_DIR
+C80_C2 arm 04 receipt-pinned: PASS exit=1 kinds=A_DRIFT,GATE_PIN_DRIFT
+C80_C2 arm 05 receipt-absent: FAIL exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": 2,\n  \"s"
+C80_C2 arm 06 receipt-invalid: PASS exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": 2,\n  \"self\": \"/home/vgp"
+C80_C2 arm 07 stanza-off-by-one: PASS exit=1 kinds=A_DRIFT,O_MEMBERS_DRIFT
+C80_C2 arm 08 finding-on-receipt: PASS exit=1 O_findings=1 coverage=9
+C80_C2 arm 09 snapshot-equals-census: FAIL census_exit=2 census= proxy=68/0/35
+C80_C2 arm 10 compare-non-scoring: FAIL compare_exit=1 compare="OMP_SHAPE_COMPARE: DRIFT entries=68 receipt=65 added=3 removed=0 changed=0 first=config.yml.pre-arm80-0-20261104 transient=0" proxy_exit=1
+C80_C2 arm 11 selftest: PASS proxy=0 census=0
+C80_C2 arm 12 live-opt-in-clean: FAIL exit=64 source=undefined O_members=undefined
+C80_C2: HELD held=5/12
+
+STDERR:
+
+exit=1

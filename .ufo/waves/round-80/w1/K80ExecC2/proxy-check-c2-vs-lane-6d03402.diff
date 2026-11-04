@@ -1,0 +1,432 @@
+--- /fast/scratch/hyaku/kumitate-r80/K80ExecC2/lane-proxy-6d03402.mjs	2026-11-04 06:11:44.733943972 -0300
++++ /fast/scratch/hyaku/kumitate-r80/K80ExecC2/clone/scripts/proxy-check.mjs	2026-11-04 06:09:01.009475637 -0300
+@@ -56,16 +56,16 @@
+  *   zero denominator → 0. The census reads only the root's depth-1 shape and
+  *   the visible binding note corpus/knowledge/omp-agent-root.md. Both must be
+  *   readable before terms are compared (OMP_ROOT_NOT_A_DIR / OMP_NOTE_MISSING,
+- *   exit 2). `--omp-root` defaults to $OMP_AGENT_ROOT or ~/.omp/agent.
+- *   Round-77 additive --omp-shape FILE instead judges a kumitate-omp-shape-v1
+- *   receipt offline with the same rules and note binding (source=snapshot).
+- *   Exclusive with --omp-root; invalid/unreadable receipts fail closed before scoring.
+- *   Round-80 amendment: the receipt is the DEFAULT O source — `<self>/.ufo/pins/omp-shape.json`
+- *   when it exists and neither --omp-shape nor --omp-live/--omp-root is given — so the
+- *   coverage:omp integer re-derives from committed bytes on any host; `source=snapshot` is
+- *   disclosed in the verdict tail and the JSON body (`source: "snapshot"|"live"`). The live
+- *   root is an explicit opt-in (`--omp-live`, or `--omp-root`); an absent default receipt
+- *   fails closed (OMP_SHAPE_NOT_FOUND), never a silent live read.
++ *   exit 2). Round-80 amendment: the DEFAULT O source is the committed
++ *   kumitate-omp-shape-v1 receipt `<--self>/.ufo/pins/omp-shape.json`
++ *   (disclosed `source=snapshot` in the verdict and the JSON body) — the
++ *   operator-owned live root churns between rounds, so the axis must re-derive
++ *   from committed bytes. An absent or invalid default receipt fails closed
++ *   (`OMP_SHAPE_NOT_FOUND` / `OMP_SHAPE_INVALID`, exit 2) — never a silent
++ *   fallback to the live root. The live read is an explicit opt-in: `--omp-live`
++ *   (root = $OMP_AGENT_ROOT or ~/.omp/agent, disclosed `source=live`) or
++ *   `--omp-root DIR`; round-77's `--omp-shape FILE` reads an explicit receipt
++ *   and stays exclusive with both live opt-ins.
+  *   The sixth Axes row, coverage:omp, is cross-checked just like the other five.
+  * Origin pin (PIN v1, `kumitate-origin-pin-v1`)
+  *   The layer terms are only meaningful when they score the tree they name, so
+@@ -90,7 +90,9 @@
+  * Modes (`--selftest` wins, then help, then `--tip-drift`, else recompute)
+  *   default     recompute the twenty-three terms + the six pins under `--self`,
+  *               `--scorecard`, the origin tree `--src`, the kimi root
+- *               `--kimi-root` and OMP root `--omp-root`, and compare them
++ *               `--kimi-root` and the O source (the committed
++ *               `.ufo/pins/omp-shape.json` receipt by default; `--omp-shape`,
++ *               `--omp-live` or `--omp-root` to override), and compare them
+  *               with the kumitate-proxy-v1 stanza. The registry rows and the
+  *               `## Axes` rows are read from the SAME file as the stanza
+  *               (`--scorecard`, default `<self>/SCORECARD.md`); the two layer
+@@ -317,7 +319,7 @@
+ import { createHash } from 'node:crypto';
+ import { spawnSync } from 'node:child_process';
+ import {
+-  chmodSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
++  chmodSync, copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync,
+ } from 'node:fs';
+ import { lstatSync, symlinkSync } from 'node:fs';
+ import { homedir, tmpdir } from 'node:os';
+@@ -371,7 +373,6 @@
+  */
+ const PIN_CONTRACT = 'kumitate-origin-pin-v1';
+ const PIN_REL = '.ufo/pins/origin.json';
+-const OMP_SHAPE_REL = '.ufo/pins/omp-shape.json';
+ const RE_REV = /^[0-9a-f]{40}$/;
+ 
+ /** The pin a run would use when `--pin` is absent: `<--self>/.ufo/pins/origin.json`. */
+@@ -520,6 +521,8 @@
+ /** Kimi installation the K terms count over; `--kimi-root` overrides it. */
+ const DEFAULT_KIMI_ROOT = process.env.KIMI_ROOT || join(homedir(), '.kimi-code');
+ const DEFAULT_OMP_ROOT = process.env.OMP_AGENT_ROOT || join(homedir(), '.omp', 'agent');
++/** The committed depth-1 shape receipt: the DEFAULT O source since round 80. */
++const OMP_SHAPE_RECEIPT_REL = join('.ufo', 'pins', 'omp-shape.json');
+ 
+ const SCORECARD_FILE = 'SCORECARD.md';
+ const SKILL_FILE = 'SKILL.md';
+@@ -549,7 +552,7 @@
+   'pin.wave-census': 'scripts/wave-census.mjs',
+   'pin.gate-mutants': 'scripts/gate-mutants.mjs',
+   'pin.omp-census': 'scripts/omp-census.mjs',
+-  'pin.omp-shape': '.ufo/pins/omp-shape.json',
++  'pin.omp-shape': OMP_SHAPE_RECEIPT_REL,
+   'pin.cap-run': 'scripts/cap-run.mjs',
+   'pin.bind-oracle': 'scripts/bind-oracle.mjs', // round 50: child-side mount oracle for bind visibility
+   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
+@@ -630,7 +633,7 @@
+   'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
+ ];
+ 
+-const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--omp-root DIR] [--pin FILE] [--json] [--strict]
++const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--omp-root DIR] [--omp-live] [--omp-shape FILE] [--pin FILE] [--json] [--strict]
+        node scripts/proxy-check.mjs --tip-drift [--origin DIR] [--pin FILE] [--self DIR] [--json]
+        node scripts/proxy-check.mjs --selftest
+        node scripts/proxy-check.mjs -h|--help
+@@ -685,13 +688,14 @@
+                      (default: \$KIMI_ROOT or ${DEFAULT_KIMI_ROOT});
+                      a non-directory is refused as KIMI_ROOT_NOT_A_DIR (exit 2),
+                      never scored 0
+-  --omp-root DIR     OMP agent root (default: $OMP_AGENT_ROOT or ~/.omp/agent);
+-                     census reads depth-1 shape only; missing root/note exits 2
+-  --omp-shape FILE   offline depth-1 shape receipt; exclusive with --omp-root
+-  --omp-live         read the LIVE OMP agent root (the pre-round-80 default); exclusive
+-                     with --omp-shape. Without it (and without --omp-root) the O terms
+-                     read <self>/.ufo/pins/omp-shape.json and disclose source=snapshot;
+-                     a missing default receipt fails closed (OMP_SHAPE_NOT_FOUND)
++  --omp-root DIR     OMP agent root for the LIVE read (default: $OMP_AGENT_ROOT or
++                     ~/.omp/agent); passing it opts out of the committed receipt,
++                     like --omp-live; census reads depth-1 shape only; a missing
++                     root or note exits 2 (OMP_ROOT_NOT_A_DIR / OMP_NOTE_MISSING)
++  --omp-live         read the live OMP agent root instead of the committed
++                     receipt; disclosed as source=live in verdict and JSON
++  --omp-shape FILE   explicit depth-1 shape receipt; exclusive with --omp-root
++                     and --omp-live; invalid/unreadable receipts fail closed
+   --json             one machine-readable object on stdout
+   --strict           promote warn-level findings (PIN_UNPINNED,
+                      K_SECTION_AMBIGUOUS) to failure
+@@ -1257,9 +1261,9 @@
+   return parts.join(' ');
+ }
+ 
+-function renderVerdict(verdict, terms, pinStats, findings, srcRev, snapshot = false) {
++function renderVerdict(verdict, terms, pinStats, findings, srcRev, source = null) {
+   const tail = (srcRev ? `; src-rev=${srcRev.slice(0, 12)}` : '')
+-    + (snapshot ? '; source=snapshot' : '');
++    + (source ? `; source=${source}` : '');
+   if (verdict === 'MATCH') {
+     return `PROXY: MATCH (A=${terms.A} C=${terms.C} operability=${terms.operability};`
+       + ` C1=${terms.C1}/${terms.C1_total} C2=${terms.C2}/${terms.C2_total} coverage=${terms.coverage};`
+@@ -1279,7 +1283,7 @@
+   const body = {
+     contract: CONTRACT,
+     mode: 'check',
+-    source: opts.ompShape ? 'snapshot' : 'live',
++    source: opts.ompSource,
+     ok: false,
+     verdict: 'FAIL-CLOSED',
+     exitCode: 2,
+@@ -1314,6 +1318,18 @@
+   if (statKind(opts.self) !== 'dir') {
+     return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, {}, started);
+   }
++  // Round 80: with no explicit receipt and no live opt-in, the O terms read the
++  // COMMITTED shape receipt under --self (disclosed source=snapshot). An absent
++  // or invalid receipt fails closed — never a silent fallback to the live root,
++  // whose operator churn between rounds is exactly what made the axis flake.
++  if (!shape && opts.ompSource === 'snapshot') {
++    const receipt = join(opts.self, OMP_SHAPE_RECEIPT_REL);
++    try { shape = shapeFromFile(receipt); } catch (e) {
++      return failClosed(opts, `OMP_${e.code}`,
++        `default shape receipt ${receipt} is ${e.code === 'SHAPE_NOT_FOUND' ? 'absent' : 'invalid'}`
++        + ` (${e.message}); the live root is an explicit --omp-live opt-in`, {}, started);
++    }
++  }
+   // The origin pin (PIN v1) resolves the tree this run scores and proves it is
+   // the pinned revision BEFORE any term is counted on it: `--src`, else the
+   // pin's clone, else the legacy `$UFO_SRC`/candidate default. With no pin the
+@@ -1415,7 +1431,7 @@
+   const body = {
+     contract: CONTRACT,
+     mode: 'check',
+-    source: opts.ompShape ? 'snapshot' : 'live',
++    source: opts.ompSource,
+     ok: verdict === 'MATCH',
+     verdict,
+     exitCode,
+@@ -1444,7 +1460,7 @@
+     process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
+   } else {
+     const lines = findings.map((f) => `PROXY  ${f.severity}  ${f.kind}  ${f.detail}`);
+-    lines.push(renderVerdict(verdict, terms, pinStats, findings, opts.srcRev, Boolean(opts.ompShape)));
++    lines.push(renderVerdict(verdict, terms, pinStats, findings, opts.srcRev, opts.ompSource));
+     process.stdout.write(`${lines.join('\n')}\n`);
+   }
+   return exitCode;
+@@ -1642,10 +1658,6 @@
+     [SELF, ...(args.includes('--omp-shape') ? [] : ['--omp-root', F1.omp]), ...args], {
+     encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...process.env, ...extraEnv },
+   });
+-  // Round-80: a run that may take the default receipt path (no injected --omp-root).
+-  const runProxyRaw = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args], {
+-    encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...process.env, ...extraEnv },
+-  });
+   const verdictLine = (res) => String(res.stdout ?? '').trim().split('\n').filter(Boolean).at(-1) ?? '';
+   const parseFindings = (stdout) => String(stdout ?? '').split('\n')
+     .map((l) => /^PROXY  (error|warn)  ([A-Z0-9_]+)  (.*)$/u.exec(l))
+@@ -1759,7 +1771,7 @@
+     const r1 = runProxy(args(F1));
+     check('MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict)', () => ({
+       ok: r1.status === 0
+-        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++        && verdictLine(r1) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+       detail: `exit=${r1.status} ${verdictLine(r1)}`,
+     }));
+     check('MATCH: text mode prints the verdict line and nothing else', () => {
+@@ -1769,13 +1781,13 @@
+     const r2 = runProxy(args(F2));
+     check('MATCH: A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3 (literal verdict)', () => ({
+       ok: r2.status === 0
+-        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++        && verdictLine(r2) === 'PROXY: MATCH (A=6 C=1 operability=7; C1=2/3 C2=1/2 coverage=3; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+       detail: `exit=${r2.status} ${verdictLine(r2)}`,
+     }));
+     const r3 = runProxy(args(F3));
+     check('MATCH: A=11 C=3 operability=8 (floor(10×0.8)); C1=3/3 C2=3/3 coverage=10; S=2/3 layer 6; R=1/2 layer 5', () => ({
+       ok: r3.status === 0
+-        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++        && verdictLine(r3) === 'PROXY: MATCH (A=11 C=3 operability=8; C1=3/3 C2=3/3 coverage=10; S=2/3 coverage:script-layer=6; R=1/2 coverage:runtime-layer=5; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+       detail: `exit=${r3.status} ${verdictLine(r3)}`,
+     }));
+     check('A excludes `.git` trees and non-runnable files (.git/junk.mjs, notes.txt)', () => ({
+@@ -1876,7 +1888,7 @@
+     const layersRun = runProxy(args(layers));
+     check('layer MATCH: `S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5` (literal)', () => ({
+       ok: layersRun.status === 0
+-        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++        && verdictLine(layersRun) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=4/4 C2=4/4 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+       detail: `exit=${layersRun.status} ${verdictLine(layersRun)}`,
+     }));
+     const layerCase = (name, edits) => {
+@@ -1944,7 +1956,7 @@
+       const k = kindsEq(res, ['S_SECTIONS_DRIFT']);
+       return {
+         ok: res.status === 1 && k.ok
+-          && verdictLine(res) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=2 computed=1 delta=-1)',
++          && verdictLine(res) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=2 computed=1 delta=-1; source=live)',
+         detail: `exit=${res.status} occurrences=2 distinct=1 kinds=[${k.got}] ${verdictLine(res)}`,
+       };
+     });
+@@ -1953,7 +1965,7 @@
+       const k = kindsEq(res, ['R_SECTIONS_DRIFT']);
+       return {
+         ok: res.status === 1 && k.ok
+-          && verdictLine(res) === 'PROXY: DRIFT (R_SECTIONS_DRIFT term=R_sections declared=2 computed=1 delta=-1)',
++          && verdictLine(res) === 'PROXY: DRIFT (R_SECTIONS_DRIFT term=R_sections declared=2 computed=1 delta=-1; source=live)',
+         detail: `exit=${res.status} occurrences=2 distinct=1 kinds=[${k.got}] ${verdictLine(res)}`,
+       };
+     });
+@@ -2064,7 +2076,7 @@
+       const k = kindsEq(xFamilyRun, ['S_SECTIONS_DRIFT']);
+       return {
+         ok: xFamilyRun.status === 1 && k.ok
+-          && verdictLine(xFamilyRun) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=1 computed=0 delta=-1)',
++          && verdictLine(xFamilyRun) === 'PROXY: DRIFT (S_SECTIONS_DRIFT term=S_sections declared=1 computed=0 delta=-1; source=live)',
+         detail: `exit=${xFamilyRun.status} kinds=[${k.got}] ${verdictLine(xFamilyRun)}`,
+       };
+     });
+@@ -2217,7 +2229,7 @@
+       const k = kindsEq(kr, []);
+       return {
+         ok: kr.status === 0 && k.ok
+-          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+         detail: `exit=${kr.status} kinds=[${k.got}] ${verdictLine(kr)}`,
+       };
+     });
+@@ -2325,7 +2337,7 @@
+       const res = runProxy(args(fx));
+       const k = kindsEq(res, ['C1K_TOTAL_DRIFT']);
+       return {
+-        ok: res.status === 1 && k.ok && verdictLine(res) === 'PROXY: DRIFT (C1K_TOTAL_DRIFT term=C1k_total declared=6 computed=5 delta=-1)',
++        ok: res.status === 1 && k.ok && verdictLine(res) === 'PROXY: DRIFT (C1K_TOTAL_DRIFT term=C1k_total declared=6 computed=5 delta=-1; source=live)',
+         detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res)}`,
+       };
+     });
+@@ -2461,7 +2473,7 @@
+       const k = kindsEq(res, ['K_SECTIONS_DRIFT']);
+       return {
+         ok: res.status === 1 && k.ok
+-          && verdictLine(res) === 'PROXY: DRIFT (K_SECTIONS_DRIFT term=K_sections declared=2 computed=1 delta=-1)',
++          && verdictLine(res) === 'PROXY: DRIFT (K_SECTIONS_DRIFT term=K_sections declared=2 computed=1 delta=-1; source=live)',
+         detail: `exit=${res.status} kinds=[${k.got}] ${verdictLine(res)}`,
+       };
+     });
+@@ -2490,7 +2502,7 @@
+       const k = kindsEq(d1, ['A_DRIFT']);
+       return {
+         ok: d1.status === 1 && k.ok
+-          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2)',
++          && verdictLine(d1) === 'PROXY: DRIFT (A_DRIFT term=A declared=4 computed=6 delta=+2; source=live)',
+         detail: `exit=${d1.status} ${verdictLine(d1)}`,
+       };
+     });
+@@ -2529,7 +2541,7 @@
+     const dEsc = runProxy(args(regPipe));
+     check('registry: `\\|` inside a cell is not a cell break (C1=1/2, MATCH exit 0)', () => ({
+       ok: dEsc.status === 0
+-        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++        && verdictLine(dEsc) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+       detail: `exit=${dEsc.status} ${verdictLine(dEsc)}`,
+     }));
+     const regPipeNo = fxBase('registry-escaped-pipe-no', {
+@@ -2717,7 +2729,7 @@
+       const k = kindsEq(d13, []);
+       return {
+         ok: d13.status === 0 && k.ok
+-          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++          && verdictLine(d13) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+         detail: `exit=${d13.status} kinds=[${k.got}] ${verdictLine(d13)}`,
+       };
+     });
+@@ -2758,7 +2770,7 @@
+       const f = parseFindings(w1.stdout)[0];
+       return {
+         ok: w1.status === 0 && k.ok && f && f.severity === 'warn' && f.detail.includes('scripts/extra.mjs')
+-          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
++          && verdictLine(w1) === 'PROXY: MATCH (A=7 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)',
+         detail: `exit=${w1.status} ${verdictLine(w1)}`,
+       };
+     });
+@@ -2829,38 +2841,49 @@
+       const res = runProxy([...shapeArgs(shapeFile), '--omp-root', oMatch.omp]);
+       return { ok: res.status === 64, detail: `exit=${res.status}` };
+     });
+-    /* Round 80: the committed receipt is the default O source; the live root is opt-in. */
+-    const noOmpRoot = (fx, extra = []) => [...args(fx).filter((a, i, all) =>
+-      a !== '--omp-root' && all[i - 1] !== '--omp-root'), ...extra];
+-    const dfReceipt = oFixture('omp-default-snapshot');
+-    fxWrite(join(dfReceipt.dir, '.ufo/pins/omp-shape.json'), `${JSON.stringify(shapeDoc, null, 2)}\n`);
+-    fxWrite(join(dfReceipt.omp, 'zz-live-only-80.txt'), '');
+-    check('OMP default: the committed receipt is the O source (source=snapshot)', () => {
+-      const res = runProxyRaw(noOmpRoot(dfReceipt, ['--json']), { OMP_AGENT_ROOT: dfReceipt.omp });
+-      const text = runProxyRaw(noOmpRoot(dfReceipt), { OMP_AGENT_ROOT: dfReceipt.omp });
+-      let j = null;
+-      try { j = JSON.parse(res.stdout); } catch { /* drift text */ }
+-      return { ok: res.status === 0 && j !== null && j.source === 'snapshot'
+-        && j.terms.O_members === 26 && j.terms.O_findings === 0
+-        && verdictLine(text).includes('source=snapshot'),
+-      detail: `exit=${res.status} source=${j && j.source} members=${j && j.terms.O_members} ${verdictLine(text).slice(0, 80)}` };
+-    });
+-    check('OMP default: --omp-live reads the live root and sees the added member', () => {
+-      const res = runProxyRaw(noOmpRoot(dfReceipt, ['--json', '--omp-live']), { OMP_AGENT_ROOT: dfReceipt.omp });
+-      let j = null;
+-      try { j = JSON.parse(res.stdout); } catch { /* drift text */ }
+-      return { ok: res.status === 1 && j !== null && j.source === 'live'
+-        && j.terms.O_members === 27 && j.terms.O_findings === 1
+-        && j.findings.some((f) => f.kind === 'O_MEMBERS_DRIFT'),
+-      detail: `exit=${res.status} source=${j && j.source} members=${j && j.terms.O_members}` };
+-    });
+-    check('OMP default: an absent receipt fails closed instead of reading live', () => {
+-      const fx = oFixture('omp-default-absent');
+-      const res = runProxyRaw(noOmpRoot(fx), { OMP_AGENT_ROOT: fx.omp });
+-      return { ok: res.status === 2 && fcToken(res) === 'OMP_SHAPE_NOT_FOUND', detail: `exit=${res.status} ${verdictLine(res).slice(0, 80)}` };
+-    });
+-    check('OMP default: --omp-live and --omp-shape are exclusive', () => {
+-      const res = runProxyRaw(noOmpRoot(dfReceipt, ['--omp-live', '--omp-shape', shapeFile]));
++    /* round 80 — the committed receipt is the DEFAULT O source; live is an opt-in */
++    const bareRun = (args2, extraEnv = {}) => spawnSync(process.execPath, [SELF, ...args2], {
++      encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...process.env, ...extraEnv },
++    });
++    const defaultArgs = (fx2, extra = []) => [
++      ...args(fx2).filter((a, i, all) => a !== '--omp-root' && all[i - 1] !== '--omp-root'),
++      ...extra,
++    ];
++    check('OMP default: the committed receipt answers, source=snapshot, live root untouched', () => {
++      mkdirSync(join(oMatch.dir, '.ufo', 'pins'), { recursive: true });
++      copyFileSync(shapeFile, join(oMatch.dir, '.ufo', 'pins', 'omp-shape.json'));
++      const res = bareRun(defaultArgs(oMatch, ['--json']), { OMP_AGENT_ROOT: '/nonexistent/omp-selftest' });
++      const text = bareRun(defaultArgs(oMatch), { OMP_AGENT_ROOT: '/nonexistent/omp-selftest' });
++      const j = JSON.parse(res.stdout);
++      return { ok: res.status === 0 && j.source === 'snapshot' && j.terms.O_members === 26
++        && j.terms.O_bound === 35 && verdictLine(text).includes('source=snapshot'),
++      detail: `exit=${res.status} source=${j.source} ${verdictLine(text)}` };
++    });
++    check('OMP default: absent receipt fails closed OMP_SHAPE_NOT_FOUND, never a live fallback', () => {
++      const fx2 = oFixture('omp-default-absent');
++      const res = bareRun(defaultArgs(fx2), { OMP_AGENT_ROOT: fx2.omp });
++      return { ok: res.status === 2 && fcToken(res) === 'OMP_SHAPE_NOT_FOUND',
++        detail: `exit=${res.status} ${verdictLine(res)}` };
++    });
++    check('OMP default: corrupt committed receipt fails closed OMP_SHAPE_INVALID', () => {
++      const fx2 = oFixture('omp-default-invalid');
++      mkdirSync(join(fx2.dir, '.ufo', 'pins'), { recursive: true });
++      fxWrite(join(fx2.dir, '.ufo', 'pins', 'omp-shape.json'), '{"contract":"kumitate-omp-shape-v1"}');
++      const res = bareRun(defaultArgs(fx2), { OMP_AGENT_ROOT: fx2.omp });
++      return { ok: res.status === 2 && fcToken(res) === 'OMP_SHAPE_INVALID',
++        detail: `exit=${res.status} ${verdictLine(res)}` };
++    });
++    check('OMP --omp-live: explicit opt-in reads the live root, source=live', () => {
++      const fx2 = oFixture('omp-live-optin');
++      const res = bareRun(defaultArgs(fx2, ['--omp-live', '--json']), { OMP_AGENT_ROOT: fx2.omp });
++      const text = bareRun(defaultArgs(fx2, ['--omp-live']), { OMP_AGENT_ROOT: fx2.omp });
++      const j = JSON.parse(res.stdout);
++      return { ok: res.status === 0 && j.source === 'live' && j.terms.O_members === 26
++        && j.terms.O_findings === 0 && verdictLine(text).includes('source=live'),
++      detail: `exit=${res.status} source=${j.source} ${verdictLine(text)}` };
++    });
++    check('OMP: --omp-live and --omp-shape are exclusive (usage 64)', () => {
++      const res = bareRun([...defaultArgs(oMatch), '--omp-live', '--omp-shape', shapeFile]);
+       return { ok: res.status === 64, detail: `exit=${res.status}` };
+     });
+     check('OMP: one extra member yields O_findings=1 coverage_omp=9 and stale score DRIFT', () => {
+@@ -2982,7 +3005,7 @@
+       ['--self', F1.dir, '--kimi-root', F1.kimi],
+       { HOME: home, UFO_SRC: '' },
+     );
+-    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)';
++    const F1_MATCH = 'PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; source=live)';
+     const rNew = bareProxy(homeWithSrc('home-new', 'Projects/ufo-fsd-alpha'));
+     check('bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha', () => ({
+       ok: rNew.status === 0 && verdictLine(rNew) === F1_MATCH,
+@@ -3131,7 +3154,7 @@
+     const p1 = runProxy(P1_ARGS, pinEnv);
+     const p1j = runProxy([...P1_ARGS, '--json'], pinEnv);
+     const P1_VERDICT = typeof p1head === 'string'
+-      ? `${F1_MATCH.slice(0, -1)}; src-rev=${p1head.slice(0, 12)})`
++      ? F1_MATCH.replace('; pins=6 match; source=live)', `; pins=6 match; src-rev=${p1head.slice(0, 12)}; source=live)`)
+       : '';
+     check('PIN v1: default pin file resolves src from the pin clone, asserts HEAD, prints src-rev=', () => {
+       const j = JSON.parse(p1j.stdout);
+@@ -3334,6 +3357,7 @@
+     ompRoot: DEFAULT_OMP_ROOT,
+     ompShape: null,
+     ompLive: false,
++    ompSource: 'snapshot',
+     json: false,
+     strict: false,
+     selftest: false,
+@@ -3358,17 +3382,20 @@
+     else if (a === '--pin') opts.pin = dirValue(a, next());
+     else if (a === '--kimi-root') opts.kimiRoot = dirValue(a, next());
+     else if (a === '--omp-root') { opts.ompRoot = dirValue(a, next()); ompRootExplicit = true; }
++    else if (a === '--omp-live') opts.ompLive = true;
+     else if (a === '--omp-shape') opts.ompShape = dirValue(a, next());
+-    else if (a === '--omp-live') opts.ompLive = true;
+     else if (a === '--json') opts.json = true;
+     else if (a === '--strict') opts.strict = true;
+     else if (a === '--selftest') opts.selftest = true;
+     else throw new Error(`unknown argument: ${a}`);
+   }
+   if (opts.ompShape && ompRootExplicit) throw new Error('--omp-shape and --omp-root are mutually exclusive');
+-  if (opts.ompLive && (opts.ompShape || ompRootExplicit)) throw new Error('--omp-live and --omp-shape/--omp-root are mutually exclusive');
+-  // Round-80: the committed receipt is the default O source; the live root is opt-in.
+-  if (!opts.ompShape && !opts.ompLive && !ompRootExplicit) opts.ompShape = join(opts.self, OMP_SHAPE_REL);
++  if (opts.ompShape && opts.ompLive) throw new Error('--omp-live and --omp-shape are mutually exclusive');
++  // Round 80: the committed receipt is the default O source; the live agent
++  // root is read only when the operator opts in with --omp-live or --omp-root.
++  // An explicit --omp-shape receipt is a snapshot like the default, so the
++  // disclosed source is `snapshot` for both and `live` only for the opt-ins.
++  opts.ompSource = (opts.ompShape || !(opts.ompLive || ompRootExplicit)) ? 'snapshot' : 'live';
+   if (opts.scorecard === null) opts.scorecard = join(opts.self, SCORECARD_FILE);
+   // The origin tree — and whether a pin asserts it — is resolved in `runCheck`
+   // (never for `--selftest`/`--help`, which win first), so a bare check run

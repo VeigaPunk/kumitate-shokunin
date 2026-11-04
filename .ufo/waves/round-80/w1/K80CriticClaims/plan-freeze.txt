@@ -1,0 +1,35 @@
+=== git status (plan + probes) ===
+ M .ufo/waves/round-80/plan.md
+=== plan.md diff stat ===
+ .ufo/waves/round-80/plan.md | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+=== plan.md working-tree diff (first 60 lines) ===
+diff --git i/.ufo/waves/round-80/plan.md w/.ufo/waves/round-80/plan.md
+index ed810df7..a8087a66 100644
+--- i/.ufo/waves/round-80/plan.md
++++ w/.ufo/waves/round-80/plan.md
+@@ -134,3 +134,20 @@ and fixed by resolving every new pointer this round.
+ This plan, both counters, `open/` and `controls/` are committed at the freeze commit before the wave
+ is dispatched; the after-state is measured at the close commit, which names the measured revision in
+ every close receipt (`rev=` line).
++
++## Amendment 1 (appended 2026-11-04, after the scaffolding commit; supersedes only the text it names)
++
++Written before any seat scored; the claim sentences, arms, kill rules and targets are unchanged.
++
++1. **C1 after-state spotcheck count.** §C1 says the live lane reads `SPOTCHECK_COVERAGE: CLEAN
++   spotchecks=47 uncovered=0`. The measured value is **46** (`node scripts/spotcheck-adopt.mjs --check`
++   at `6d03402f`: `SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0`); the plan's 47 was an
++   arithmetic guess written before the count was taken. The claim sentence (`held=13/13`) is unchanged.
++2. **C2 after-state stanza values.** §C2's after-state names `O_members=65` and the proxy MATCH; the
++   same sentence is what the close re-derives. The stanza's `C2`/`C2_total` moved 195 → 197 when this
++   round's two knowledge entries and their README rows landed: the final close reading is
++   `PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; … O_members=65 …;
++   source=snapshot)`. No arm reads `C2`.
++3. **Seat role.** The validator admits no `labrat` swarm role (`unknown_role`), so the bounded C2 probe
++   rides `revenger` (`K80LabratC2`). Attack seats: critic 1 + reviewer 2 + mutation-tester 1 = 4/13 = 31 %
++   ≥ 25 %; the planner seat is held by the L1 (`planner` is a frozen-topology role the validator rejects).
+=== plan.md committed at HEAD contains? ===
+0
+47:`held=13/13`; the live lane after adoption reads `SPOTCHECK_COVERAGE: CLEAN spotchecks=47
+48:uncovered=0` + `MAP: CLEAN` exit 0; a `git archive` of the base tree reads 0/13 on the same counter

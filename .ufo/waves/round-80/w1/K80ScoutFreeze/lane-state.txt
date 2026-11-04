@@ -1,0 +1,31 @@
+# lane state during recon (HEAD advanced ed64ddca -> 509afb1d mid-session)
+$ git -C <lane> rev-parse HEAD
+509afb1d6ec5fc854c1398ae0060d6298ed621d1
+
+$ node scripts/proxy-check.mjs   # default (snapshot O source)
+PROXY  error  A_DRIFT  A: declared=886 computed=889 delta=+3
+PROXY: DRIFT (A_DRIFT term=A declared=886 computed=889 delta=+3; src-rev=31c465f15669; source=snapshot)
+exit=1
+
+$ node scripts/proxy-check.mjs --omp-live
+PROXY  error  A_DRIFT  A: declared=886 computed=889 delta=+3
+PROXY: DRIFT (A_DRIFT term=A declared=886 computed=889 delta=+3; src-rev=31c465f15669)
+exit=1
+
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0
+MAP: CLEAN
+exit=0
+
+$ node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json
+exit=0
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+
+$ sha256sum .ufo/pins/omp-shape.json
+84e41b9f5167479f2d806686ee702db49d0ebd0a83e6bcb28bd444d50eb0c435  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/omp-shape.json
+$ grep "^pin.omp-shape=" SCORECARD.md
+pin.omp-shape=84e41b9f5167479f2d806686ee702db49d0ebd0a83e6bcb28bd444d50eb0c435
+
+# observed earlier in this session (~05:52), NOT reproducible now: the live root transiently carried 4 extra entries
+#   OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=69 findings=0 bound=35/35)
+#   OMP_SHAPE_COMPARE: DRIFT entries=69 receipt=64 added=3 removed=0 changed=0 first=config.yml.pre-rebalance2-20261104 transient=2

@@ -134,3 +134,57 @@ and fixed by resolving every new pointer this round.
 This plan, both counters, `open/` and `controls/` are committed at the freeze commit before the wave
 is dispatched; the after-state is measured at the close commit, which names the measured revision in
 every close receipt (`rev=` line).
+
+## Amendment 1 (appended 2026-11-04, after the scaffolding commit; supersedes only the text it names)
+
+Written before any seat scored; the claim sentences, arms, kill rules and targets are unchanged.
+
+1. **C1 after-state spotcheck count.** §C1 says the live lane reads `SPOTCHECK_COVERAGE: CLEAN
+   spotchecks=47 uncovered=0`. The measured value is **46** (`node scripts/spotcheck-adopt.mjs --check`
+   at `6d03402f`: `SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0`); the plan's 47 was an
+   arithmetic guess written before the count was taken. The claim sentence (`held=13/13`) is unchanged.
+2. **C2 after-state stanza values.** §C2's after-state names `O_members=65` and the proxy MATCH; the
+   same sentence is what the close re-derives. The stanza's `C2`/`C2_total` moved 195 → 197 when this
+   round's two knowledge entries and their README rows landed: the final close reading is
+   `PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=197/197 coverage=10; … O_members=65 …;
+   source=snapshot)`. No arm reads `C2`.
+3. **Seat role.** The validator admits no `labrat` swarm role (`unknown_role`), so the bounded C2 probe
+   rides `revenger` (`K80LabratC2`). Attack seats: critic 1 + reviewer 2 + mutation-tester 1 = 4/13 = 31 %
+   ≥ 25 %; the planner seat is held by the L1 (`planner` is a frozen-topology role the validator rejects).
+
+## Amendment 2 (appended 2026-11-04 after the wave; plan-text errata only — no claim, arm, kill rule, counter or target changes)
+
+The freeze review (`w1/K80ReviewFreeze.md` F1–F5) and the freeze scout (`w1/K80ScoutFreeze.md` F1–F12)
+found the plan's prose inconsistent with the frozen bytes in seven places. The claim sentences stay as
+frozen; these are citations and predicate wording.
+
+1. **§Controls paths.** §C1/§C2 name `controls/c1-base.txt` and `controls/c2-base.txt`; at the freeze
+   the base transcripts were only `open/c1-base.txt` / `open/c2-base.txt`. Both paths now resolve: the
+   `controls/` files exist as copies with a provenance header naming `open/` and the base command.
+2. **The round-start sources census was not in the freeze.** §Open-state cites `open/sources-census.txt`
+   as a freeze receipt; it was captured after the freeze at tip `ed64ddca` and committed at `509afb1d`.
+   The "frozen before the wave" property covers the plan, both counters, the other five `open/` files
+   and `controls/*.txt` — not this one. It carries its measured tip in its own header.
+3. **`open/c2-base.txt` arm 1's `O_members=67`** is the counter's receipt+3 fixture, not the live root;
+   and both base controls are lane-state dependent (the fixtures are materialised from the lane's
+   receipt, `--lane` defaults to the lane): the frozen C2 base read 4/12 with the then-64-entry lane
+   receipt, `--lane <base archive>` still reads 4/12, and `--tool <base archive>` reads 5/12 today
+   because the lane receipt is now 65 entries.
+4. **C1 arms 9 (`adopt-duplicate-refused`) and 11 (`rollback-clean`) are preservation arms**: they pass
+   at the base tree with the same tokens, because the duplicate guard and journal recovery predate v3.
+   The discriminating C1 arms are 2, 3, 5, 8 and 13; the discriminating C2 arms are 1, 2, 3 and 5.
+5. **Arm 12's selftest floor.** §C1 says `n ≥ 25`; the frozen counter requires `≥ 26`. The counter is
+   stricter — a deleted case cannot pass it — but the two texts disagree; the counter is the measured
+   predicate.
+6. **C2 arm 12 is not the plan's `live-clean`.** The frozen arm is `live-opt-in-clean` against a
+   65-member root materialised from the receipt; the plan's real-live-root reading is recorded
+   separately at `close/omp-live-real.txt` (measured after the last file landed).
+7. **C1 arm 11's "journal retired" is wrong as written.** A corrupt pre-image leaves the journal in
+   place (fail-closed) — that retention is asserted by the tool's `corrupt-pre-image` selftest case
+   (journal count 1, bytes unchanged), not by the frozen arm, which checks the token and the two
+   destination bytes only.
+8. **`A` moved after the freeze.** The `K80LabratC2` seat wrote `materialize.mjs`, `run-matrix.sh` and
+   `summarize.mjs` under `.ufo/waves/round-80/w1/K80LabratC2/` (its reproduction scripts; the wave
+   context asked for scripts in scratch). `A` counts every runnable file under `--self`, so the close
+   re-measures it (886 → the close value) rather than deleting a seat's evidence; the seat's rule
+   breach is a lesson mistake row.

@@ -1,0 +1,34 @@
+=== proxy default (OMP_AGENT_ROOT=/nonexistent)
+PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=195/195 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+EXIT=0
+
+=== proxy --json terms
+{"verdict":"MATCH","source":"snapshot","terms":{"A":886,"C":39,"C2":195,"C2_total":195,"operability":9,"O_members":65,"O_findings":0,"O_bound":35,"coverage_omp":10,"K_members":55,"coverage_kimi":10}}
+
+=== spotcheck --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0
+MAP: CLEAN
+EXIT=0
+
+=== readme-map
+README_MAP: CLEAN files=195 rows=195 covered=195
+EXIT=0
+
+=== omp-census --shape
+OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35)
+EXIT=0
+
+=== omp-census --compare live
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+EXIT=0
+
+=== receipt sha256
+84e41b9f5167479f2d806686ee702db49d0ebd0a83e6bcb28bd444d50eb0c435  .ufo/pins/omp-shape.json
+
+=== spotcheck-adopt --selftest tail
+SPOTCHECK_ADOPT_SELFTEST: PASS (28/28)
+VERDICT: PASS
+
+=== proxy --selftest tail
+PROXY_SELFTEST: 163/163 pass
+VERDICT: PASS

@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 /**
  * kumitate-spotcheck-adopt-v3 — journaled non-author spotcheck adoption, two readings.
+ * v3.1 (round 80 integration): recovery applies the same delta test as `--adopt` (the manifest's
+ * target resolving, never a globally clean map), a zero-file spotcheck set reads `NONE` and exits 1,
+ * `--predict` reads the oracle first (a green answer is never returned from an unevaluable map),
+ * `--adopt` refuses (`REFUSED_NO_MAP_SECTION`) when the README has no `## Coverage map` heading,
+ * and the delta filter strips only the target's own `uncovered:`/`unpinned:` findings.
  * The unchanged readme-map child owns all map verdicts. `--check` reports the spotcheck set
  * (`SPOTCHECK_COVERAGE:`) and the map (`MAP:`) as separate readings, so a green spotcheck set
  * on an unrelated red map is readable; `--adopt` validates its own delta (the target key
@@ -12,7 +17,7 @@
  * Unset in normal use. Recovery protects process crashes, not power loss.
  */
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -36,9 +41,12 @@ function oracle(lane) {
 function missing(result, key) {
   return { row: result.findings.includes(`uncovered:${key}`), pin: result.findings.includes(`unpinned:${key}`) };
 }
-/** Findings that do not name the adopted key: the map's other defects, order-free and deduped. */
+/** Findings that do not name the adopted key: the map's other defects, order-free and deduped.
+ * Subject-exact: only the two findings adoption exists to clear are stripped, so a near-identical
+ * path (`<key> ` with a trailing space) or another class about the key stays in the comparison. */
 function otherFindings(result, key) {
-  return [...new Set(result.findings.filter((f) => !f.includes(key)))].sort();
+  const own = new Set([`uncovered:${key}`, `unpinned:${key}`]);
+  return [...new Set(result.findings.filter((f) => !own.has(f)))].sort();
 }
 function appendPin(raw, key) {
   // Preserve every existing byte, including existing entries and indentation.
@@ -137,8 +145,11 @@ function recover(lane, lines) {
         || entry.file !== PRE[i].file || !/^[0-9a-f]{64}$/.test(entry.sha256)))
       throw new Error('invalid journal manifest');
     const result = oracle(lane);
+    const target = missing(result, manifest.key);
     let outcome = 'complete';
-    if (!result.clean) {
+    // v3.1: the same delta test as `--adopt` — the manifest's target resolving is what "complete"
+    // means; an unrelated red map no longer undoes an adoption that already landed both halves.
+    if (!result.valid || target.row || target.pin) {
       // Validate both images before restoring either destination.
       const images = manifest.pre.map(entry => {
         const bytes = readFileSync(join(dir, entry.file));
@@ -184,21 +195,26 @@ function evaluate(lane, arm, value) {
       return { exit: 2, lines: [e.code === 'ENOENT' ? 'REFUSED_ABSENT' : 'REFUSED_ORACLE'] };
     }
   }
+  let predicts = false;
   if (arm === '--predict') {
     path = `corpus/lessons/round-${value}-verifier-spotcheck.md`; key = path.slice('corpus/'.length);
-    try { lstatSync(join(lane, path)); }
-    catch (e) { return e.code === 'ENOENT' ? { exit: 0, lines: [`SPOTCHECK_PREDICT: PENDING ${path}`] } : refuse(); }
+    try { predicts = lstatSync(join(lane, path)).isFile(); }
+    catch (e) { if (e.code !== 'ENOENT') return refuse(); predicts = false; }
   }
   const result = oracle(lane);
   if (!result.valid || result.findings.some(f => /^(format-unmapped|duplicate-row):/.test(f))) return refuse();
+  if (arm === '--predict' && !predicts) return { exit: 0, lines: [`SPOTCHECK_PREDICT: PENDING ${path}`] };
   if (arm === '--check') {
     const paths = readdirSync(join(lane, 'corpus/lessons')).filter(n => NAME.test(n)).sort().map(n => `corpus/lessons/${n}`);
     const uncovered = paths.filter(p => { const m = missing(result, p.slice(7)); return m.row || m.pin; });
-    const coverage = uncovered.length === 0
-      ? `SPOTCHECK_COVERAGE: CLEAN spotchecks=${paths.length} uncovered=0`
-      : `SPOTCHECK_COVERAGE: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0]}`;
+    const irregular = uncovered.length > 0 && !(() => { try { return lstatSync(join(lane, uncovered[0])).isFile(); } catch { return false; } })();
+    const coverage = paths.length === 0
+      ? 'SPOTCHECK_COVERAGE: NONE spotchecks=0 (an empty spotcheck set is not a pass)'
+      : uncovered.length === 0
+        ? `SPOTCHECK_COVERAGE: CLEAN spotchecks=${paths.length} uncovered=0`
+        : `SPOTCHECK_COVERAGE: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0]}${irregular ? ' (first is not a regular file; --adopt cannot adopt it)' : ''}`;
     const map = result.clean ? 'MAP: CLEAN' : `MAP: DRIFT first=${result.first ?? 'oracle'}`;
-    return { exit: uncovered.length === 0 ? 0 : 1, lines: [coverage, map] };
+    return { exit: paths.length === 0 || uncovered.length > 0 ? 1 : 0, lines: [coverage, map] };
   }
   const m = missing(result, key);
   try {
@@ -211,6 +227,10 @@ function evaluate(lane, arm, value) {
   }
   if (!m.row && !m.pin) return { exit: 0, lines: [`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${path}`] };
   const readme = join(lane, 'corpus/README.md'), pin = join(lane, '.ufo/pins/readme-map.json');
+  // v3.1: a row written above the first heading is structurally wrong though the map parses it.
+  if (m.row && !/^## Coverage map/m.test(readFileSync(readme, 'utf8'))) {
+    return { exit: 2, lines: ['REFUSED_NO_MAP_SECTION'] };
+  }
   const originals = new Map([[readme, readFileSync(readme)], [pin, readFileSync(pin)]]);
   let journal;
   try {
@@ -254,7 +274,7 @@ function selftest(lane) {
     // A baseline file keeps pending/absent fixtures within the oracle's nonempty contract.
     if (!artifact) writeFileSync(join(dir, 'corpus/knowledge/base.md'), '# Base\n');
     else writeFileSync(join(dir, target), '# Spotcheck\n');
-    writeFileSync(join(dir, 'corpus/README.md'), '# Corpus\n' + (!artifact ? '| `knowledge/base.md` | Base | fixture |\n' : row ? `| \`${key}\` | Spotcheck | fixture |\n` : ''));
+    writeFileSync(join(dir, 'corpus/README.md'), `# Corpus\n\n## Coverage map\n\n${!artifact ? '| `knowledge/base.md` | Base | fixture |\n' : row ? `| \`${key}\` | Spotcheck | fixture |\n` : ''}\n## Known gaps\n\n- none\n`);
     writeFileSync(join(dir, '.ufo/pins/readme-map.json'), JSON.stringify({ version: 2, covered: !artifact ? ['knowledge/base.md'] : pin ? [key] : [] }, null, 2) + '\n');
     return dir;
   }
@@ -296,6 +316,54 @@ function selftest(lane) {
       const r = run(d, '--check');
       return r.exit === 0 && r.text === 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=orphan-row:knowledge/ghost.md';
     });
+    d = fixture('check-none');
+    rmSync(join(d, 'corpus/lessons/round-75-verifier-spotcheck.md'));
+    writeFileSync(join(d, 'corpus/knowledge/base.md'), '# Base\n');
+    test('check-none', () => !oracle(d).clean, () => {
+      const r = run(d, '--check');
+      return r.exit === 1
+        && r.text.split('\n')[0] === 'SPOTCHECK_COVERAGE: NONE spotchecks=0 (an empty spotcheck set is not a pass)'
+        && r.text.split('\n')[1] === 'MAP: DRIFT first=uncovered:knowledge/base.md';
+    });
+    d = fixture('no-map-section');
+    writeFileSync(join(d, 'corpus/README.md'), `# Corpus\n\n| \`knowledge/base.md\` | Base | fixture |\n`);
+    test('no-map-section', () => !oracle(d).clean, () => {
+      const before = hash(d);
+      return exact(run(d, '--adopt', target), 2, 'REFUSED_NO_MAP_SECTION') && hash(d) === before;
+    });
+    d = fixture('predict-invalid-oracle');
+    writeFileSync(join(d, '.ufo/pins/readme-map.json'), '{"version":1,"covered":[]}');
+    test('predict-invalid-oracle', () => !oracle(d).valid, () => exact(run(d, '--predict', '99'), 2, 'REFUSED_ORACLE'));
+    d = fixture('path-escape');
+    renameSync(join(d, '.ufo/pins'), join(d, '.ufo/pins-real'));
+    symlinkSync('pins-real', join(d, '.ufo/pins'));
+    test('path-escape', () => !oracle(d).clean, () => {
+      const before = hash(d);
+      return exact(run(d, '--adopt', target), 2, 'REFUSED_PATH_ESCAPE') && hash(d) === before;
+    });
+    d = fixture('recovery-red-map');
+    writeFileSync(join(d, 'corpus/knowledge/late.md'), '# Late\n');
+    test('recovery-red-map', () => !oracle(d).clean, () => {
+      const child = spawnSync(process.execPath, [SELF, '--lane', d, '--adopt', target], {
+        encoding: 'utf8', env: { ...process.env, SPOTCHECK_ADOPT_TEST_CRASH: 'pin' },
+      });
+      if (child.signal !== 'SIGKILL') return false;
+      const recovered = run(d, '--check');
+      return recovered.exit === 0
+        && recovered.text.startsWith(`RECOVERED ${target} complete\n`)
+        && recovered.text.includes('SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0')
+        && recovered.text.includes('MAP: DRIFT first=uncovered:knowledge/late.md');
+    });
+    d = fixture('check-symlink');
+    writeFileSync(join(d, 'corpus/lessons/round-80-real.md'), '# Real\n');
+    rmSync(join(d, target));
+    symlinkSync('round-80-real.md', join(d, target));
+    test('check-symlink', () => !oracle(d).clean, () => {
+      const r = run(d, '--check');
+      return r.exit === 1
+        && r.text.split('\n')[0] === `SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=${target} (first is not a regular file; --adopt cannot adopt it)`
+        && exact(run(d, '--adopt', target), 2, 'REFUSED_OUT_OF_SCOPE');
+    });
     d = fixture('adopt-unrelated-drift');
     writeFileSync(join(d, 'corpus/knowledge/unrelated.md'), '# Unrelated\n');
     test('adopt-unrelated-drift', () => !oracle(d).clean, () => {
@@ -330,6 +398,7 @@ function selftest(lane) {
     d = fixture('predict-pending', true, true);
     test('predict-pending', () => exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`), () => {
       rmSync(join(d, target));
+      writeFileSync(join(d, 'corpus/lessons/round-70.md'), '# Other\n');
       return exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: PENDING ${target}`);
     });
     d = fixture('predict-covered');

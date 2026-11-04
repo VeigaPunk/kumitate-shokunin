@@ -1,0 +1,25 @@
+=== direct --adopt on red map (no crash) ===
+SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both
+README_MAP: DRIFT files=3 rows=3 covered=2 bad=1 first=unpinned:knowledge/late.md
+exit=0
+=== reset fixture ===
+=== crash after row write, same red map ===
+=== post-crash state (journal present, README replaced) ===
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/readme-map.json
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/adopt-journal
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/adopt-journal/a7d1f8a4-d1ad-4021-b16e-5acbed7cac67
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/adopt-journal/a7d1f8a4-d1ad-4021-b16e-5acbed7cac67/README.pre
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/adopt-journal/a7d1f8a4-d1ad-4021-b16e-5acbed7cac67/readme-map.pre
+/fast/scratch/hyaku/kumitate-r80/K80CriticClaims/fx-crash/.ufo/pins/adopt-journal/a7d1f8a4-d1ad-4021-b16e-5acbed7cac67/manifest.json
+| `knowledge/base.md` | Base | fixture |
+| `knowledge/late.md` | Late | fixture |
+| `lessons/round-75-verifier-spotcheck.md` | Non-author round-75 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+{ "version": 2, "covered": ["knowledge/base.md"] }
+=== recovery run --check ===
+RECOVERED corpus/lessons/round-75-verifier-spotcheck.md rolled-back
+SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md
+MAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md
+SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both
+README_MAP: DRIFT files=3 rows=3 covered=2 bad=1 first=unpinned:knowledge/late.md
+retry_exit=0

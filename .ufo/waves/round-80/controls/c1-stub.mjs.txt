@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+// Control stub: a constant CLEAN printer, no fixture is ever read.
+const arm = process.argv[2];
+if (arm === '--selftest') { console.log('SPOTCHECK_ADOPT_SELFTEST: PASS (26/26)'); console.log('VERDICT: PASS'); process.exit(0); }
+console.log('SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0');
+console.log('MAP: CLEAN');
+process.exit(0);

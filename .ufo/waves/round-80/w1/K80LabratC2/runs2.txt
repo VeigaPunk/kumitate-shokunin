@@ -1,0 +1,208 @@
+### proxy --omp-root <declared> (flag path, not env)
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --omp-root /fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared
+PROXY  error  C2_DRIFT  C2: declared=197 computed=198 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=197 computed=198 delta=+1
+PROXY  error  O_MEMBERS_DRIFT  O_members: declared=65 computed=66 delta=+1
+PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; src-rev=31c465f15669)
+EXIT=1
+
+### proxy --omp-root <declared> --json
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --omp-root /fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-declared --json
+{
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "source": "live",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
+  "scorecard": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src",
+  "pin": {
+    "file": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/pins/origin.json",
+    "contract": "kumitate-origin-pin-v1",
+    "repo": "ufo-fsd-alpha",
+    "revision": "31c465f15669f744848bd9f5d56191c5085670f7",
+    "clone": "/fast/scratch/hyaku/kumitate-pin/src",
+    "srcRev": "31c465f15669f744848bd9f5d56191c5085670f7"
+  },
+  "srcRev": "31c465f15669f744848bd9f5d56191c5085670f7",
+  "kimiRoot": "/home/vgpnk/.kimi-code",
+  "strict": false,
+  "terms": {
+    "A": 886,
+    "C": 39,
+    "C1": 19,
+    "C1_total": 19,
+    "C2": 198,
+    "C2_total": 198,
+    "operability": 9,
+    "coverage": 10,
+    "S_members": 88,
+    "S_sections": 88,
+    "R_members": 92,
+    "R_sections": 92,
+    "coverage_script": 10,
+    "coverage_runtime": 10,
+    "C1k": 5,
+    "C1k_total": 5,
+    "K_members": 55,
+    "K_sections": 55,
+    "K_findings": 0,
+    "coverage_kimi": 10,
+    "C1o": 1,
+    "C1o_total": 1,
+    "O_members": 66,
+    "O_findings": 0,
+    "O_bound": 35,
+    "coverage_omp": 10,
+    "pins": {
+      "pin.cite-check": {
+        "file": "scripts/cite-check.mjs",
+        "declared": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+        "computed": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+        "match": true
+      },
+      "pin.surface-probe": {
+        "file": "scripts/surface-probe.mjs",
+        "declared": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+        "computed": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+        "match": true
+      },
+      "pin.round-gate": {
+        "file": "scripts/round-gate.mjs",
+        "declared": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+        "computed": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+        "match": true
+      },
+      "pin.proxy-check": {
+        "file": "scripts/proxy-check.mjs",
+        "declared": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
+        "computed": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
+        "match": true
+      },
+      "pin.claims-check": {
+        "file": "scripts/claims-check.mjs",
+        "declared": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+        "computed": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+        "match": true
+      },
+      "pin.kimi-census": {
+        "file": "scripts/kimi-census.mjs",
+        "declared": "7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439",
+        "computed": "7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439",
+        "match": true
+      }
+    },
+    "pinsMatched": 6,
+    "pinsTotal": 6,
+    "declared": {
+      "A": "886",
+      "C": "39",
+      "C1": "19",
+      "C1_total": "19",
+      "C2": "197",
+      "C2_total": "197",
+      "S_members": "88",
+      "S_sections": "88",
+      "R_members": "92",
+      "R_sections": "92",
+      "coverage_script": "10",
+      "coverage_runtime": "10",
+      "C1k": "5",
+      "C1k_total": "5",
+      "K_members": "55",
+      "K_sections": "55",
+      "K_findings": "0",
+      "coverage_kimi": "10",
+      "C1o": "1",
+      "C1o_total": "1",
+      "O_members": "65",
+      "O_findings": "0",
+      "O_bound": "35",
+      "coverage_omp": "10",
+      "pin.cite-check": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
+      "pin.surface-probe": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
+      "pin.round-gate": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
+      "pin.proxy-check": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
+      "pin.claims-check": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
+      "pin.kimi-census": "7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439"
+    },
+    "stanzaLine": 293
+  },
+  "findings": [
+    {
+      "severity": "error",
+      "kind": "C2_DRIFT",
+      "term": "C2",
+      "declared": 197,
+      "computed": 198,
+      "delta": "+1",
+      "detail": "C2: declared=197 computed=198 delta=+1"
+    },
+    {
+      "severity": "error",
+      "kind": "C2_TOTAL_DRIFT",
+      "term": "C2_total",
+      "declared": 197,
+      "computed": 198,
+      "delta": "+1",
+      "detail": "C2_total: declared=197 computed=198 delta=+1"
+    },
+    {
+      "severity": "error",
+      "kind": "O_MEMBERS_DRIFT",
+      "term": "O_members",
+      "declared": 65,
+      "computed": 66,
+      "delta": "+1",
+      "detail": "O_members: declared=65 computed=66 delta=+1"
+    }
+  ],
+  "errors": 3,
+  "warnings": 0,
+  "durationMs": 72
+}
+EXIT=1
+
+### proxy --omp-root <undeclared>
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --omp-root /fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared
+PROXY  error  C2_DRIFT  C2: declared=197 computed=198 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=197 computed=198 delta=+1
+PROXY  error  O_MEMBERS_DRIFT  O_members: declared=65 computed=66 delta=+1
+PROXY  error  O_FINDINGS_DRIFT  O_findings: declared=0 computed=1 delta=+1
+PROXY  error  COVERAGE_OMP_DRIFT  coverage_omp: declared=10 computed=9 delta=-1
+PROXY  error  AXES_DRIFT  coverage:omp: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; O_MEMBERS_DRIFT term=O_members declared=65 computed=66 delta=+1; O_FINDINGS_DRIFT term=O_findings declared=0 computed=1 delta=+1; COVERAGE_OMP_DRIFT term=coverage_omp declared=10 computed=9 delta=-1; AXES_DRIFT term=coverage:omp declared=10 computed=9; src-rev=31c465f15669)
+EXIT=1
+
+### proxy default with OMP_AGENT_ROOT=/nonexistent
+$ env OMP_AGENT_ROOT=/nonexistent/omp-root node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs
+PROXY  error  C2_DRIFT  C2: declared=197 computed=198 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=197 computed=198 delta=+1
+PROXY: DRIFT (C2_DRIFT term=C2 declared=197 computed=198 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=197 computed=198 delta=+1; src-rev=31c465f15669; source=snapshot)
+EXIT=1
+
+### proxy --omp-live with OMP_AGENT_ROOT=/nonexistent
+$ env OMP_AGENT_ROOT=/nonexistent/omp-root node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --omp-live
+proxy-check: fail-closed — OMP_ROOT_NOT_A_DIR: --omp-root /nonexistent/omp-root is not a readable directory (ENOENT)
+PROXY: FAIL-CLOSED (OMP_ROOT_NOT_A_DIR) --omp-root /nonexistent/omp-root is not a readable directory (ENOENT)
+EXIT=2
+
+### omp-census env OMP_AGENT_ROOT=<undeclared> (does census honour the env?)
+$ env OMP_AGENT_ROOT=/fast/scratch/hyaku/kumitate-r80/K80LabratC2/live65-undeclared node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs
+INFO mcp.json.rea.backup absent
+INFO themes absent
+INFO tools absent
+INFO commands absent
+INFO prompts absent
+INFO memories absent
+INFO extensions absent
+INFO chain agent-pre-restore has no generation
+INFO chain agent-recovered has no generation
+INFO chain history-corrupt has no generation
+INFO chain mcp-pre-disable has no generation
+INFO chain mcp-rea-backup-recovery has no generation
+OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)
+EXIT=0
+

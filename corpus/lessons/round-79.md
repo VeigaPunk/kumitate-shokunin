@@ -133,3 +133,16 @@ The non-author spot-check (`round-79-verifier-spotcheck.md`) routed D3 and D4 ag
   the erratum-1 values; only those four pointers are void.
 - **D4 — superseded word count.** The S229 gate block says the quote is "21 words"; `wc -w` over the quoted
   text is **18**. The quote itself is faithful and under the ≤25-word limit; the recorded number was wrong.
+
+## Erratum 3 (append-only, 2026-11-04, round 80; supersedes only the sentence it names)
+
+Erratum 2's D3 block says the four `close/` names in the `## Counters` table "do not exist at any
+lane revision". That sentence overreaches for two of the four. `close/census.txt` and `close/shape.txt`
+did exist — solely at the measured work revision `357e4e73`, as the kimi census and OMP shape receipts.
+The close commit `32620ef5` renamed `census.txt` to `close/census-shape.txt` and deleted `shape.txt`,
+folding the OMP line into `census-shape.txt`. Precisely: none of the four names exists at the round-79
+close (`32620ef5`) or any later revision, and `close/readme-map.txt` / `close/spotcheck-check.txt`
+never existed at any revision. The four table pointers are void either way; only the sentence's reach
+is corrected here. The committed receipts remain `close/census-shape.txt` (kimi census + OMP line),
+`close/maps.txt` (README map 194/194, spotcheck map 45/0), and `close/sources-census.txt`, per
+Erratum 2.

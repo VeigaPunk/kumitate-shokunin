@@ -295,8 +295,8 @@ A=886
 C=39
 C1=19
 C1_total=19
-C2=195
-C2_total=195
+C2=198
+C2_total=198
 S_members=88
 S_sections=88
 R_members=92
@@ -318,7 +318,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96
+pin.proxy-check=fa79c279d336fd49f2880db58018d231f7e7efcad42a217bfb4efbd22aec35ef
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -349,7 +349,7 @@ pin.report-receipt-diff=cd94e8aa96a61d7ee0fb9993e4a00e21d1348030880afbe8ed07b6b9
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
-pin.spotcheck-adopt=0d9c56dc6d4751e3ea9e0d0eb2ec24c27633637770aecb926f032e53d505bcec
+pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
 -->
 
 
@@ -558,7 +558,24 @@ the frozen definitions name.
 | 79 | coverage:kimi-layer (the K score keeps BOTH factors — the r78 harm repaired under the operator default (b)) and operability (capability deepening `report-receipt-diff` v4 — `POINTER_DEAD`) | `node .ufo/waves/round-79/probe/probe79-c1.mjs --set c1 --lane .` at a `git archive 5019803b` tree → `held=7/11`; the stub lane `held=4/11`; at base a de-named heading reads `coverage_kimi=10` (`controls/c1-base.txt`, `controls/c1-stub.txt`). `probe79-c2` at base → `held=9/12`; stub `4/12`; v3 on the filed r78 report reads only `RECEIPT_MISSING,HASH_DEAD` — no `POINTER_DEAD` (`controls/c2-base.txt`) | `C79_C1: HELD held=11/11` and `C79_C2: HELD held=12/12` at M (`close/c1-probe.txt`, `close/c2-probe.txt`); `REPORT_RECEIPT: DRIFT RECEIPT_MISSING,POINTER_DEAD` on the r78 report re-measured — 4 `POINTER_DEAD` (the non-receipt class) beside the 6 receipt-shaped `RECEIPT_MISSING`, `REPORT_RECEIPT_SELFTEST: PASS (144/144)` (`close/c2-r78.txt`); `PROXY: MATCH`; selftest 159/159 and 55/55 | `.ufo/waves/round-79/{plan.md,probe,open,controls,close}`; `corpus/knowledge/{composite-score-compensability,report-evidence-pointers}.md`; `corpus/lessons/round-79.md` |
 
 
+| 80 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability deepening `spotcheck-adopt` v3, the carried r76–r79 candidate 2; sourced on S233) | `node scripts/spotcheck-adopt.mjs --check` at base `1968689f` → `SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=1 first=corpus/lessons/round-79-verifier-spotcheck.md` exit 1; on a fixture whose spotcheck set is green and whose map is red for an unrelated uncovered file → `SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=0 first=oracle` exit 1, and `--adopt` of the spotcheck → `REFUSED_ORACLE` exit 2 (`open/conflation.txt`); frozen counter at the base archive 6/13 (`open/c1-base.txt`), constant-CLEAN stub 3/13 (`controls/c1-stub.txt`) | at `6d03402f` → two readings `SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0` + `MAP: CLEAN` exit 0; the red-map fixture reads `SPOTCHECK_COVERAGE: CLEAN … uncovered=0` + `MAP: DRIFT first=uncovered:knowledge/late.md` exit 0 and `--adopt` adopts both halves with the other finding intact; frozen counter `C80_C1: HELD held=13/13`; selftest 26 → 28 cases PASS; checklist item repointed to the counter (the r77 probe's label arms read 9/13 — its semantic arms c2.5–c2.13 pass) | `node .ufo/waves/round-80/probe/probe80-c1.mjs --set c1`; `.ufo/waves/round-80/close/c1-probe.txt`; `corpus/knowledge/two-reading-verdicts.md`; S233 |
+
+| 80 | coverage:omp (integer held 10; the axis's measurement becomes offline re-derivable; sourced on S234) | `node scripts/proxy-check.mjs` at `1968689f` → `PROXY: DRIFT (C2_TOTAL_DRIFT declared=194 computed=195; O_MEMBERS_DRIFT declared=64 computed=65; AXES_DRIFT coverage row=10 derived=9)` exit 1 (`open/base-receipts.txt`); an offline O reading did not exist: the live root was the only source; frozen counter at the base archive 4/12 (`open/c2-base.txt`), constant-JSON stub 1/12 (`controls/c2-stub.txt`) | at `6d03402f` → the default reads the pinned 65-entry receipt (`source=snapshot`) and `OMP_AGENT_ROOT=/nonexistent` still reads `PROXY: MATCH (… O_members=65 O_findings=0 O_bound=35 coverage:omp=10; …; source=snapshot)`; `--omp-live` on a 68-member fixture reads `O_members=68` and DRIFTs; `omp-census --compare` IN_SYNC entries=65 receipt=65; frozen counter `C80_C2: HELD held=12/12`; `OMP_SNAPSHOT: WROTE entries=65 sha256=84e41b9f…`, `pin.omp-shape` re-pinned | `node .ufo/waves/round-80/probe/probe80-c2.mjs --set c2`; `.ufo/waves/round-80/close/c2-probe.txt`; `corpus/knowledge/snapshot-bound-derived-scores.md`; S234 |
+
+
 ## Planned
+
+**Round 81 — pre-registration (2026-11-04, written by round 80).** Candidates, not commitments:
+(1) **`POINTER_DEAD` precision** (carried from round 79 candidate 3) — the gate flags prose examples that
+look like paths; evaluate a fenced-example convention or a declared non-evidence list without weakening
+the r79 arms. (2) **`spotcheck-adopt`'s recovery criterion** — `recover()` still completes an interrupted
+adoption only when the whole map is clean (`result.clean`), the criterion v3 removed from `--adopt`;
+align the two or record why the crash path stays stricter. (3) **`K_findings` double-penalty** — a census
+finding on a *missing* member drops both the numerator and the denominator; evaluate subtracting only the
+numerator. (4) **The C1 de-named fixture is a partial copy** (round-79 candidate 4) — build it with
+`git archive` so its `A` parity matches the lane. (5) **Snapshot visibility** — measure whether the
+non-scoring `omp-census --compare` item alone is an adequate watch for live OMP drift, or whether the
+receipt needs an age field (round-78 candidate 3's ground, now that the default is snapshot-bound).
 
 **Round 80 — pre-registration (2026-11-04, written by round 79).** Candidates, not commitments:
 (1) **The live O terms flake on SQLite sidecars:** the proxy's `O_members` reads the live `~/.omp/agent`, whose `agent.db-{shm,wal,journal}` appear while OMP holds the database open (`O_members` 64 ↔ 68, observed at the round-79 close); either apply the round-79 transient classification to `census()`/`shape`/`--compare` and the proxy's live read, or default the proxy's O terms to `--omp-shape` with a disclosed `source=snapshot`, with selftest arms and a stanza re-measure. (2) **`spotcheck-adopt --check` conflates an unrelated map drift with an uncovered spotcheck** (carried three rounds; owner: round-80 L1) — split the two readings. (3) **`POINTER_DEAD` precision:** the gate flags prose examples that look like paths (`MISSION.md`, `readme-map.mjs`, `omp-crash.log` on the r76/r77 reports); evaluate a fenced-example convention or a declared non-evidence list against those two reports, without weakening the r79 arms. (4) **The C1 de-named fixture is a partial copy** (A parity differs from the lane); evaluate building it with `git archive` so the copy's A equals the lane's.
@@ -1252,6 +1269,19 @@ candidates:
    on rows opened in that round and kept distinct from neighboring provinces.
 3. **Repair backlog** — resolve or re-register R43-1/R43-5 and the pending R41-2
    gate-pins ruling before adding a new independent gate-pin family.
+
+## Round 80 correction (2026-11-04; named; supersedes only the text it names)
+
+- **D5 (r79 routed defect).** The section `## Round 78 — declaration and verdicts` closes with
+  "All 13 seats settled (`.ufo/waves/round-79/w1-results.json`); 12 wrote reports under `w1/`; …" — a
+  round-**79** settlement sentence inside the round-78 section. Round 78's own record is
+  `.ufo/waves/round-78/w1-results.json` (`seats: 14`, 14 result rows —
+  `python3 -c "import json;d=json.load(open('.ufo/waves/round-78/w1-results.json'));print(d['seats'],len(d['results']))"`
+  → `14 14`); the round-79 sentence and its file pointer are superseded here and are not evidence for
+  round 78. The `<SETTLEMENT>` placeholder that round 78 left should have been resolved with round-78
+  facts or left named as a placeholder.
+- **Round-79 receipt names.** `corpus/lessons/round-79.md` Erratum 2 names the four `close/` pointers in
+  its `## Counters` table that do not exist and the S229 quote's true word count (18, not 21).
 
 ## Limits (recorded, not hidden)
 

@@ -1,0 +1,20 @@
+=== default at 6d03402f with OMP_AGENT_ROOT=/nonexistent ===
+PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=195/195 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+exit=0
+
+=== --omp-live against the real live root at 6d03402f ===
+PROXY: MATCH (A=886 C=39 operability=9; C1=19/19 C2=195/195 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+=== live-drift fixture: live root with mcp.json mode 0644, default (snapshot) ===
+source=snapshot ok=True verdict=MATCH O_findings=0 kinds=[]
+=== same root, --omp-live ===
+source=live ok=False verdict=DRIFT O_findings=1 kinds=['O_FINDINGS_DRIFT', 'COVERAGE_OMP_DRIFT', 'AXES_DRIFT']
+=== same root, old default (base proxy 1968689f) ===
+ok=False verdict=DRIFT O_findings=1 kinds=['C2_TOTAL_DRIFT', 'O_MEMBERS_DRIFT', 'O_FINDINGS_DRIFT', 'COVERAGE_OMP_DRIFT', 'AXES_DRIFT', 'AXES_DRIFT']
+=== same root, omp-census --compare (non-scoring watch) ===
+OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=65 added=0 removed=0 changed=1 first=mcp.json transient=0
+exit=1
+=== fail-closed source labels ===
+live-missing: source=live verdict=FAIL-CLOSED token=None
+receipt-absent: source=snapshot verdict=FAIL-CLOSED token=None

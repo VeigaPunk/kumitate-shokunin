@@ -46,3 +46,13 @@ a filed report's backticked lane pointers against committed bytes since its roun
 deepening of a gate the lane already owned, not a new cross-lane instrument and not an absorption of
 kotoba's ground; cross-lane report-pointer checking stays reported, never absorbed. Adjacent, unchanged:
 MCP/OAuth security practice → kasegi/kagi; local model serving → kama; research method → chousa.
+
+Round-80 frontier addition (2026-11-04; the bands above stand unchanged): two grounded entries advance
+the orchestration/tooling frontier band — `corpus/knowledge/two-reading-verdicts.md` (a tool that reads
+one surface and writes another keeps one verdict per surface; S119) and
+`corpus/knowledge/snapshot-bound-derived-scores.md` (a score derived from a live operator-owned surface
+reads a committed, hash-pinned snapshot by default, live read opt-in; S234). Both are the lane's own
+instrument ground, not an absorption of a sibling's: report-pointer resolution stays kotoba's (round-79
+addition above), the census/README-map adoption writer stays this lane's, and no sibling's tool is
+executed or re-implemented. Unchanged and binding: member content of `~/.omp/agent` is out of scope
+(readdir + lstat only), and the OMP live root is read only through an explicit live read.
