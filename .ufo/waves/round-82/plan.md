@@ -130,3 +130,9 @@ committed record; R81-6 a rejected candidate this round; R81-7 the refusal count
   (A1.2) and `probe82-c2`'s score arm, which ages the lane's own pinned receipt instead of a synthetic
   one (a synthetic receipt's names are census findings, so it could not isolate "the age never
   scores"). The measured base value 6/13 is stated in the claim above.
+- **A1.6** `DISPATCH_WAVE` agrees modulo the wave-id prefix: the validator writes
+  `wave: "<lane>-r<round>-<slot>"` while `.ready` carries the slot, so the rule is
+  `dispatch.wave === wave || dispatch.wave.endsWith("-" + wave)`. The suite grew 34 → 50 cases
+  (the v2 cases + the suffixed-id agreement case). This wave's own handoff reads
+  `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` (sentinel counted as the fifth
+  adversarial seat, outside the policy's four attack roles).

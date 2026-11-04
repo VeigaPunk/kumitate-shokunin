@@ -185,7 +185,10 @@ export function judge(opts) {
   // F5/F4 (round-81 wave): bind the handoff to the dispatch it names, both directions.
   const stem = dispatchPath.split(sep).at(-1).replace(/\.json$/u, '');
   if (stem !== `${wave}-dispatch`) add('WAVE_BINDING', `dispatch basename ${JSON.stringify(stem)} is not ${JSON.stringify(`${wave}-dispatch`)}`);
-  if (Object.hasOwn(dispatch, 'wave') && dispatch.wave !== wave) {
+  // The dispatch's own wave id may be the slot (`w1`) or the full id the validator writes
+  // (`<lane>-r<round>-w1`); either way its final segment must be this wave.
+  if (Object.hasOwn(dispatch, 'wave')
+      && !(typeof dispatch.wave === 'string' && (dispatch.wave === wave || dispatch.wave.endsWith(`-${wave}`)))) {
     add('DISPATCH_WAVE', `dispatch.wave=${JSON.stringify(dispatch.wave)} for ready.wave=${JSON.stringify(wave)}`);
   }
   if (agentIds && typeof ready.l1 === 'string' && ready.l1.trim() && !agentIds.has(ready.l1)) {
@@ -225,10 +228,19 @@ export function judge(opts) {
     const firstLine = task.task.split('\n')[0].trim();
     if (firstLine !== '/skill:godspeed') add('GODSPEED', `seat ${task.name} does not lead with /skill:godspeed`);
     if (!task.task.includes(laneRoot)) add('TASK_LANE_ROOT', `seat ${task.name} task text does not name ${laneRoot}`);
-    const reportLine = /^Report:\s*(.+)$/m.exec(task.task);
-    if (reportLine) {
-      const raw = reportLine[1].trim().split(/\s+/u)[0];
-      const dest = isAbsolute(raw) ? resolve(raw) : resolve(lane, raw);
+    // The rendered trailer reads `Report: <prose> <path>`; take the first path-shaped token
+    // of any line that starts with `Report:` (the validator's trailer is the last such line).
+    let dest = null;
+    for (const line of task.task.matchAll(/^Report:(.*)$/gmu)) {
+      for (const token of line[1].trim().split(/\s+/u)) {
+        const raw = token.replace(/[)\]},.;]+$/u, '');
+        if (!raw.includes('/')) continue;
+        dest = isAbsolute(raw) ? resolve(raw) : resolve(lane, raw);
+        break;
+      }
+      if (dest) break;
+    }
+    if (dest) {
       if (destinations.has(dest)) add('REPORT_DEST_DUPLICATE', `${task.name} claims ${dest} (also ${destinations.get(dest)})`);
       else destinations.set(dest, task.name);
     }
@@ -516,6 +528,11 @@ function runSelftest(work) {
   judgeCase('dispatch-wave-agree', (fx) => {
     const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
     doc.wave = 'w1';
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'READY');
+  judgeCase('dispatch-wave-agree-suffixed', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.wave = 'kumitate-r81-w1';
     writeFileSync(fx.dispatch, JSON.stringify(doc));
   }, (v) => v.verdict === 'READY');
   judgeCase('report-dest-duplicate', (fx) => {
