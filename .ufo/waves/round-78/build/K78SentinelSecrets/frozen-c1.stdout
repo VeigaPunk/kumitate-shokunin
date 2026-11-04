@@ -1,0 +1,21 @@
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,GATE_PIN_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,GATE_PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78SentinelSecrets/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78SentinelSecrets/lane/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/ku
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=10/12

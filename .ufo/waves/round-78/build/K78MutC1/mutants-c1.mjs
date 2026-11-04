@@ -19,7 +19,6 @@ const MUTANTS = [
   { id: 'hardcoded-members-55', file: 'scripts/proxy-check.mjs', from: 'const members = kimi.members;', to: 'const members = 55;', expected: 'proxy-missing, selftests' },
 ];
 const hash = (bytes) => createHash('sha256').update(bytes).digest('hex');
-const text = (p) => readFileSync(p, 'utf8');
 function detector(lane, phase, work) {
   const r = spawnSync(process.execPath, [PROBE, '--lane', lane, '--work', work], {
     cwd: lane, encoding: 'utf8', timeout: 900000, maxBuffer: 16 * 1024 * 1024,

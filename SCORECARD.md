@@ -291,7 +291,7 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=866
+A=868
 C=39
 C1=19
 C1_total=19

@@ -13,7 +13,7 @@ def main():
  subprocess.run(['tar','-x','-C',str(tree)],stdin=archive.stdout,check=True); archive.stdout.close(); assert archive.wait()==0
  patches=[]
  for seat in ([] if os.environ.get('K78_BASELINE') else ['K78ExecKDerive','K78ExecCompare']):
-  for patch in sorted((L/'.ufo/waves/round-78/build'/seat).glob('*.patch')):
+  for patch in [L/'.ufo/waves/round-78/build'/seat/'patch.diff']:
    subprocess.run(['patch','--batch','-p1','-i',str(patch)],cwd=tree,check=True,capture_output=True); patches.append({'path':str(patch),'sha256':hashlib.sha256(patch.read_bytes()).hexdigest()})
  if len(patches)<2 and not os.environ.get('K78_BASELINE'): raise RuntimeError('Both executor patches required before measurement')
  for f in ['kimi-census.mjs','proxy-check.mjs','omp-census.mjs']:
