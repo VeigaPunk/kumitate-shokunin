@@ -1,0 +1,10 @@
+=== fixture: spotcheck set GREEN, map RED via uncovered:knowledge/late.md
+--- base tool --check
+SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=0 first=oracle
+exit=1
+--- base tool --adopt (unrelated red map blocks the adoption)
+SPOTCHECK_ADOPT: ALREADY_ADOPTED corpus/lessons/round-79-verifier-spotcheck.md
+exit=0
+--- oracle
+README_MAP: note unpinned:knowledge/late.md
+README_MAP: DRIFT files=3 rows=2 covered=2 bad=2 first=uncovered:knowledge/late.md

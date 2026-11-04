@@ -1,0 +1,13 @@
+C80_C2 arm 01 default-snapshot: FAIL exit=0 source=snapshot O_members=65 O_findings=0 coverage=10 text_exit=0
+C80_C2 arm 02 live-opt-in: FAIL exit=0 source=snapshot O_members=65 kinds=
+C80_C2 arm 03 offline-default: PASS exit=0 source=snapshot O_members=65 kinds=
+C80_C2 arm 04 receipt-pinned: FAIL exit=0 kinds=
+C80_C2 arm 05 receipt-absent: FAIL exit=0 out="{\"contract\":\"kumitate-proxy-v1\",\"mode\":\"check\",\"source\":\"snapshot\",\"ok\":true,\"verdict\":\"MATCH\",\"exitCode\":0,\"terms\":{\"O_"
+C80_C2 arm 06 receipt-invalid: FAIL exit=0 out="{\"contract\":\"kumitate-proxy-v1\",\"mode\":\"check\",\"source\":\"snapshot\",\"ok\":true,\"verdict\":\"MATCH\",\"exitCode\":0,\"terms\":{\"O_members\":65,\"O_findings\":0,\"O_bound\":35,"
+C80_C2 arm 07 stanza-off-by-one: FAIL exit=0 kinds=
+C80_C2 arm 08 finding-on-receipt: FAIL exit=0 O_findings=0 coverage=10
+C80_C2 arm 09 snapshot-equals-census: FAIL census_exit=1 census= proxy=65/0/35
+C80_C2 arm 10 compare-non-scoring: FAIL compare_exit=1 compare="" proxy_exit=0
+C80_C2 arm 11 selftest: FAIL proxy=0 census=1
+C80_C2 arm 12 live-opt-in-clean: FAIL exit=0 source=snapshot O_members=65
+C80_C2: HELD held=1/12

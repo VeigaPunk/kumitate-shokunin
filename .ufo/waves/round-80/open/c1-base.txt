@@ -1,0 +1,14 @@
+C80_C1 arm 01 coverage-clean: FAIL exit=0 out="SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0"
+C80_C1 arm 02 coverage-uncovered: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md"
+C80_C1 arm 03 map-only-drift-green-coverage: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=0 first=oracle"
+C80_C1 arm 04 map-orphan-row-green-coverage: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=0 first=oracle"
+C80_C1 arm 05 both-drift: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md"
+C80_C1 arm 06 oracle-refusal-preserved: PASS exit=2 out="REFUSED_ORACLE"
+C80_C1 arm 07 usage-64: PASS exit=64 out="SPOTCHECK_ADOPT: USAGE"
+C80_C1 arm 08 adopt-on-red-map: FAIL exit=2 out="REFUSED_ORACLE"
+C80_C1 arm 09 adopt-duplicate-refused: PASS exit=2 out="REFUSED_ORACLE" unchanged=true
+C80_C1 arm 10 adopt-idempotent: PASS exit=0 out="SPOTCHECK_ADOPT: ALREADY_ADOPTED corpus/lessons/round-75-verifier-spotcheck.md" unchanged=true
+C80_C1 arm 11 rollback-clean: PASS exit=2 out="REFUSED_ORACLE" unchanged=true
+C80_C1 arm 12 selftest: PASS exit=0 tail=["SPOTCHECK_ADOPT_SELFTEST: PASS (26/26)","VERDICT: PASS"]
+C80_C1 arm 13 live-lane-clean: FAIL exit=1 out=["SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=1 first=corpus/lessons/round-79-verifier-spotcheck.md"]
+C80_C1: HELD held=6/13

@@ -1,0 +1,15 @@
+=== spotcheck-adopt --check
+SPOTCHECK_MAP: DRIFT spotchecks=46 uncovered=1 first=corpus/lessons/round-79-verifier-spotcheck.md
+exit=1
+
+=== proxy default
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=194 computed=195 delta=+1
+PROXY  error  O_MEMBERS_DRIFT  O_members: declared=64 computed=65 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=194 computed=195 delta=+1; O_MEMBERS_DRIFT term=O_members declared=64 computed=65 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+=== proxy offline (HOME empty, no live root)
+proxy-check: fail-closed — KIMI_ROOT_NOT_A_DIR: --kimi-root /tmp/tmp.yxgUyjUdgu/.kimi-code is absent
+PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/tmp.yxgUyjUdgu/.kimi-code is absent
+exit=2
