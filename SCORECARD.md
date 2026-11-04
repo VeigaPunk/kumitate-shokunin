@@ -575,6 +575,9 @@ the frozen definitions name.
 
 ## Planned
 
+**Round 86 — declared claim, measured disposition, and round-87 pre-registration** lives at the end of
+this file under `## Round 86 — declaration and measured disposition`.
+
 **Round 86 pre-registration** (written by round 85, seven candidates) lives at the end of this file
 under `## Round 85 — pre-registration`: the A-exclusion re-baseline, the `K_findings` double
 penalty, the `spotcheck-adopt --check` split, `POINTER_DEAD` precision, a randomized-fixture arm
@@ -1981,6 +1984,8 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `omp-shape-compare` | Compare the live OMP root against a `kumitate-omp-shape-v1` receipt, counting added, removed and changed names/kinds/modes without reading member contents or altering proxy scores; exit 0 IN_SYNC, 1 DRIFT, 2 fail-closed | `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` → `OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`; frozen counter `probe78-c2.mjs` → `C78_C2: HELD held=11/11`; selftest 79 cases; `MUTANTS78_C2: ALL-KILLED killed=10/10` | round 78 |
 
 | `counter-receipt` *(unverified — round 85 not admitted; see the round-85 disposition)* | Reconcile one arm-form counter transcript against the bytes it read and the source that produced it: v1's denominator/name/prefix/ok-count/verdict/order checks plus a derived `RECEIPT: bytes=… rows=… held=… findings=… sha256=…` line on every non-USAGE run and an optional `--src` binding — the receipt's arm names must be literal `arm('…')` call sites, its row count must equal the site count, and the last `const|let|var ARMS = <int>` must agree with both (`ARM_UNBOUND`, `SOURCE_ARITY`, `SOURCE_DECLARED`, fail-closed `SOURCE_UNREADABLE`/`SOURCE_ARMS_EMPTY`); never executes receipt bytes; a canned or label-keyed printer cannot reproduce the derived line | `node scripts/counter-receipt.mjs --receipt .ufo/waves/round-83/close/c1-repair.txt --src .ufo/waves/round-83/probe/probe83-c1.mjs` → `DRIFT SOURCE_DECLARED` with `SOURCE: sites=28 declared=27 receipt=28` (the r83 defect caught from the source, invisible to v1); frozen `C85_C1: HELD held=20/20` (`.ufo/waves/round-85/close/c1-probe.txt`); `--selftest` `PASS held=60/60` (`close/selftest.txt`); same-path control `HELD held=3/3 distinct_sha=true` (`close/content-variation.txt`); controls base 1/20, constant 0/20, no-reader 1/20 before data (`controls/`) | round 85 |
+
+| `counter-receipt` v3 *(verified round 86)* | Bind BOTH halves of a counter-transcript answer to the bytes read: v2's transcript reconciliation plus `SOURCE: sites=… declared=… receipt=… sha256=<source bytes>`; the frozen 24-arm probe generates receipts at run time (random count, names, padding, nonce, CRLF) and asserts exit + verdict + the byte-derived `RECEIPT:`/`SOURCE:` lines, so a canned, path-keyed or nonce-replay answer fails | `node .ufo/waves/round-86/probe/probe86-c1.mjs --lane . --work DIR` → `C86_C1: HELD held=24/24` exit 0 at `19b4e440` (`close/c1-probe.txt`); controls base 14/24, stub/noreader/replay 0/24 (`controls/`); `--selftest` 63/63; independent driver 54/54; same-path 3/3 distinct | round 86 |
 
 Round-84 capability disposition: `counter-receipt` is a shipped, self-tested
 instrument, but its acquisition claim is **unadmitted**: the frozen kill rule
@@ -4171,3 +4176,44 @@ assigned this round. R85-V13: historical report commit is
 `b67837ee7136d0dfddce5b36589da3dca5add42f`; the r84 checklist item and Planned pointer
 were carried by `6e3e4749` and `602f1835` respectively and are now named in LOG.
 R85-V15 needs no repair: the closure's census is durable historical evidence.
+
+## Round 86 — declaration and measured disposition (2026-11-04)
+
+One claim: **C1 operability (lowest non-retired axis; integer held 9 — terminal under `f_O`;
+capability acquisition `counter-receipt` v3)**. Frozen at `e7228850690c6bd48400140964cbaf18667fbc06`
+(plan, 24-arm probe, four scored controls); measured at M = `19b4e440e83ea9d618708003f36c3a799eb13e08`.
+The lane's other rows are saturated coverage sub-axes at 10, and a second operability claim would be
+one claim under `AXES.md`, so the round declares one claim and spends the rest of its seats on the
+pre-registered measurement amendment and the routed defects.
+
+| item | measured |
+|---|---|
+| predicate (frozen) | `node .ufo/waves/round-86/probe/probe86-c1.mjs --lane . --work DIR` → `C86_C1: HELD held=24/24` exit 0 at M (`close/c1-probe.txt`) |
+| before (v2 bytes) | `controls/base.txt` → `C86_C1: UNMET held=14/24` exit 1 — the ten source-digest arms fail |
+| constant printer | `0/24` exit 1 (`controls/stub.txt`) |
+| label-keyed no-reader | `0/24` exit 1 (`controls/noreader.txt`) |
+| nonce-only replay | `0/24` exit 1 (`controls/replay.txt`) |
+| same-path variation (supplement, `d12847c5`) | base/stub/no-reader/replay `0/3` each; base distinct, canned controls not (`controls/cv-*.txt`); integrated `3/3 distinct` |
+| tool selftest | `COUNTER_RECEIPT_SELFTEST: PASS held=63/63` exit 0 (`close/selftest.txt`) |
+| independent driver (seat) | `K86_EXEC_DRIVER: HELD held=54/54` against integrated `e9531370…` (`build/K86ExecDriver/`) |
+| A re-baseline (pre-registered) | `open/a-rebaseline.txt`: base tracked A=980 → amendment A=35, `A_wave`=945 at base / 955 at M; `f_O` = 9 under both; `PROXY: MATCH --strict` exit 0 at M with `A=35 A_wave=955 C=45 C2=219/219` |
+| map gate (R85-V12) | `README_MAP: CLEAN files=219 rows=219 covered=219` exit 0; selftest 18/18 including outside-map rejection |
+| carried reds | `cite-check` DRIFT errors 2292→2289 (no new unresolved token from this round's files); `ready-handoff` DRIFT `RELATIVE_WAVE_PATH` ×4 on this round's own dispatch (spec-text defect, disclosed, not rewritten) |
+
+**Verdict: C1 VERIFIED — capability `counter-receipt` v3 enters the repertoire table (round 86).**
+The frozen predicate is green at M, and the frozen kill rule does not fire: every committed control
+stays below 24/24, and no seat-produced control reached it (four of the five attack seats left no
+artifact — disclosed in the report; the mutation-tester died on a provider 401). Axes: operability 9
+(unchanged integer; the scored term moved 980→35 by the pre-registered amendment, disclosed with
+`A_wave`), all coverage sub-axes 10 unchanged, no axis harmed. `A_wave` is non-scoring.
+
+### Round 87 pre-registration (candidates, not commitments)
+
+(1) **`spotcheck-adopt --check` conflates unrelated map drift with an uncovered spotcheck** (round-76/77/78/80
+candidate 3, still open). (2) **`K_findings` double penalty** (round-81 candidate 3, still open).
+(3) **`POINTER_DEAD` precision** (round-79/81 candidate). (4) **`readme-map.mjs:224` latent bug** found by
+`K86ExecMap`: a `covered` symlink whose target exists reads `stale-covered` instead of `covered-not-file`.
+(5) **`cite-check` carried red** 2289 errors — the largest remaining gate debt; it needs its own
+claim rather than a repair pass. (6) **`ready-handoff` wave-path arm**: the gate reads relative
+`.ufo/waves/...` mentions in seat prompts; the spec template needs one absolute-path rule and a
+`--json` line naming each offending seat.

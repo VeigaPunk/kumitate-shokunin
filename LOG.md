@@ -2928,3 +2928,32 @@ are in `corpus/lessons/round-86.md`; the new source-binding knowledge entry
 also corrects the orphan fragment from the historical v2 entry. Assimilation
 none: the correctly spelled shokuknow package is present but no staged rows
 are adopted; the misspelled initial absence claim was corrected before freeze.
+
+### Round 86 — measured disposition (2026-11-04)
+
+Freeze `e7228850690c6bd48400140964cbaf18667fbc06`; integrated work landed at
+M = `19b4e440e83ea9d618708003f36c3a799eb13e08`; close battery re-run at M
+(`.ufo/waves/round-86/close/`). `C86_C1: HELD held=24/24` exit 0; controls
+base 14/24, constant 0/24, no-reader 0/24, nonce-replay 0/24 (exit 1 each);
+`--selftest` 63/63; independent driver 54/54 against integrated `e9531370…`;
+supplemental same-path control `3/3 distinct` (committed `d12847c5` before
+integration, disclosed as a late supplement, frozen probe unchanged).
+`PROXY: MATCH --strict` exit 0 with A=35, A_wave=955, C=45, C2=219/219,
+operability 9; `README_MAP: CLEAN 219/219/219`; map selftest 18/18;
+`SOURCE_CAPTURE: CLEAN captures=76`; `SOURCE_DUPES: CLEAN groups=7 known=7`;
+`SOURCES_CHECK: CLEAN rows=187`; census exit 0; `plan-before-ready --round 86`
+exit 0. Carried red: `cite-check` DRIFT 2289 errors (2292 before this round's
+files; none added). `ready-handoff` reads DRIFT `RELATIVE_WAVE_PATH` ×4 on this
+round's own dispatch — spec-text defect, disclosed, taken artifacts not rewritten.
+
+Wave: ONE v1 wave, 12 seats (executor 4, scribe 1, scout 1, reviewer 1, critic 1,
+mutation-tester 1, sentinel 1, connector 1, revenger 1), attack seats 5/12,
+connector 1, no residual call. Eight seats left durable artifacts
+(`w1/*.md`, `build/*`); four attack seats (reviewer, critic, sentinel, revenger)
+settled without any artifact — the orchestrator kernel restarted mid-wave and
+their output was not retained; `K86Mutation` died with
+`401 Invalid 'Authorization' header or token (type=authentication_error
+param=UNAUTHORIZED)` and stays a dead seat, never replaced. The claim's
+falsification therefore rests on the four frozen pre-data controls, the
+supplemental same-path control, the independent driver and the scout's
+revision-bound recon, not on post-data adversaries — reported as such.
