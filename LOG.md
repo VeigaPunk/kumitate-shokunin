@@ -3015,3 +3015,24 @@ Accounting: A 35 → 36, C 45 → 46, C2 219 → 222, SOURCES 187 → 189, captu
 Wave: one v1 wave, 14 seats (attack 4/14, connector 1), 11 seat reports; `K87ExecSources` returned no
 artifact and `K87ExecClose`/`K87Mutation` returned artifacts without reports — all three disclosed,
 none credited.
+
+## Round 88 — receipt-bind v2: three-body revision fixture, four boundaries, and a scorer still too narrow (2026-11-04)
+
+Base `7ac24afa477a44304a3b125e320ef86929218189`; freeze `114877a3` (plan, 20-arm probe, worktree-twin
+generator, refuse-all control; the round-87 spot-check adopted in the same commit, so the plan reads at a
+clean map — K87-V2); pre-data controls `8735f70f` (17 controls, max 16/20); L1 v2 instrument `0ff3562f`;
+wave spec `8e4ea5f6`. Round-start census exit 0 (`open/census-start.txt`).
+
+Motivating evidence: round 87's honest stop (worktree candidate 12/12) and the round-87 sentinel's four
+fail-open rows. Routed carries: K87-V1 (`open/k87v1-bind-r87.txt`: `RECEIPT_BIND: CLEAN matched=12 …
+external=1` over the round-87 close dir at its M `d3f64dc4`), K87-V3/R86-D3 (`build/K88ExecCarry/`:
+`SOURCE_CAPTURE: CLEAN captures=78`, `SOURCE_DUPES: CLEAN groups=7 known=7`, `SOURCES_CHECK: CLEAN rows=189`
+at `0ff3562f`, selftests 13/13, 12/12, 46/46; R86-D2 not producible — disclosed in the seat report),
+K87-V4 (deterministic `sweep` arm; three runs diff-identical, `build/K88Review2/determinism-diff.txt`).
+
+Wave: one v1 wave of 12 seats (3 executors, 2 scribes, scout, connector, 2 reviewers, critic,
+mutation-tester, sentinel). Integrated: the 20-case selftest extension (39 → 59), SOURCES S252/S253/S254 +
+S218 used-by, the knowledge section *v2* and *Round 88 verdict*, QUALITY Q81, the close runner v3.
+Kill rule fired: nine seat constructions reach `C88_C1: HELD held=20/20` (critic seven, connector one,
+second reviewer one; the sentinel reproduced two of the critic's classes), each shown to skip its
+behaviour off-fixture. C1 is UNMET — see the measured disposition below and `corpus/lessons/round-88.md`.

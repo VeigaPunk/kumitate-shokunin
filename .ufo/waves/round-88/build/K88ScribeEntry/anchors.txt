@@ -1,0 +1,205 @@
+# anchors re-opened at 0ff3562f15c18d0ca01dc6a76c9f827d30c26950 (blob 6061484dde99bded5f6eab4d941f557290efb0e0); file = git show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '15,17p'
+    15	 *   instrument := the SECOND whitespace token of `cmd=` (the program after the interpreter)
+    16	 *   digest     := `tool_sha256=` of the receipt (a 64-hex sha256)
+    17	 *   rev        := `rev=` of the receipt, else `--rev` (a per-receipt `rev=` overrides the default)
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '19,22p'
+    19	 * Bytes come from the judged revision, never from the worktree: a lane-relative or lane-absolute
+    20	 * instrument is hashed from `git cat-file blob <rev>:<path>`, so a dirty worktree cannot launder a
+    21	 * receipt. An absolute instrument outside the lane has no revision to be read at; it is hashed from
+    22	 * the file on disk and additionally counted in `external=`.
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '35,41p'
+    35	 * v2 boundaries (round 88; the round-87 sentinel's fail-open rows 1e, 2a/2d, 3c/3d, 4):
+    36	 *   ESCAPES_LANE       a RELATIVE instrument token that resolves outside --lane. Only an ABSOLUTE
+    37	 *                      token may name an external instrument; `../x` is never silently external.
+    38	 *   SYMLINK_DIR        --dir is itself a symlink (another directory's receipts judged under this path).
+    39	 *   RECEIPT_TOO_LARGE  a receipt larger than MAX_RECEIPT_BYTES (1048576), refused before it is read.
+    40	 *   AMBIGUOUS_FIELD    more than one `cmd=`, `tool_sha256=` or `rev=` line in one receipt (equal
+    41	 *                      values included): first-wins would let an appended line change nothing visibly.
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '68,68p'
+    68	const MAX_RECEIPT_BYTES = 1048576;
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '112,120p'
+   112	function git(dir, args, opts) {
+   113	  const o = opts || {};
+   114	  return spawnSync('git', ['-C', dir, ...args], {
+   115	    encoding: o.buffer ? 'buffer' : 'utf8',
+   116	    maxBuffer: 64 << 20,
+   117	    timeout: 120000,
+   118	    env: gitEnv(o.env),
+   119	  });
+   120	}
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '178,183p'
+   178	function laneRel(lane, abs) {
+   179	  const rel = relative(lane, abs);
+   180	  if (rel === '') return { inside: true, root: true, rel: null };
+   181	  if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) return { inside: false, root: false, rel: null };
+   182	  return { inside: true, root: false, rel };
+   183	}
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '196,199p'
+   196	function blobAt(lane, rev, rel) {
+   197	  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
+   198	  return r.status === 0 ? r.stdout : null;
+   199	}
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '222,223p'
+   222	  const revOk = revResolver(lane);
+   223	  if (!revOk(rev)) throw new FailClosed('REV_UNRESOLVED', `--rev ${rev} is not a commit in ${lane}`);
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '225,230p'
+   225	  let entries;
+   226	  let dirStat;
+   227	  try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   228	  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
+   229	  try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   230	  const files = entries.filter((f) => f.endsWith('.txt')).sort();
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '239,245p'
+   239	  for (const file of files) {
+   240	    const path = join(dir, file);
+   241	    let st;
+   242	    try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
+   243	    if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
+   244	    if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+   245	    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '247,253p'
+   247	    let text;
+   248	    try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+   249	    const field = (key) => {
+   250	      const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+   251	      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+   252	      return all.length ? all[0][1].trim() : null;
+   253	    };
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '255,261p'
+   255	    let receiptRev = rev;
+   256	    const revField = field('rev');
+   257	    if (revField !== null) {
+   258	      if (!FULL_REV.test(revField)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${JSON.stringify(revField)} is not 40 lowercase hex`);
+   259	      receiptRev = revField;
+   260	      if (!revOk(receiptRev)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${receiptRev} is not a commit in ${lane}`);
+   261	    }
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '279,281p'
+   279	    const toks = cmdField.split(/\s+/).filter((t) => t.length > 0);
+   280	    if (toks.length < 2) throw new FailClosed('UNRESOLVED', `${file} cmd= names no instrument: ${JSON.stringify(cmdField)}`);
+   281	    const instrument = toks[1];
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '283,297p'
+   283	    let rel = null;
+   284	    let abs = null;
+   285	    let fromDisk = false;
+   286	    if (isAbsolute(instrument)) {
+   287	      abs = resolve(instrument);
+   288	      const lr = laneRel(lane, abs);
+   289	      if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+   290	      if (lr.inside) rel = lr.rel; else fromDisk = true;
+   291	    } else {
+   292	      abs = resolve(lane, instrument);
+   293	      const lr = laneRel(lane, abs);
+   294	      if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+   295	      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
+   296	      rel = lr.rel;
+   297	    }
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '299,306p'
+   299	    let bytes;
+   300	    if (fromDisk) {
+   301	      try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+   302	      external += 1;
+   303	    } else {
+   304	      bytes = blobAt(lane, receiptRev, rel);
+   305	      if (bytes === null) throw new FailClosed('UNRESOLVED', `${file} instrument absent at ${receiptRev}: ${rel}`);
+   306	    }
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '319,320p'
+   319	  const total = matched + mismatched + unchecked;
+   320	  const clean = total > 0 && mismatched === 0 && unchecked === 0;
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '513,518p'
+   513	  // The judged bytes are the revision's, not the worktree's: a dirty instrument still binds the
+   514	  // committed digest, and a digest of the dirty bytes does not bind at the committed revision.
+   515	  writeFileSync(join(repo, 'scripts', 'alpha.mjs'), 'export const alpha = 3; // dirty worktree\n');
+   516	  expect('dirty-worktree-cannot-launder', runTool(['--dir', rcClean, '--rev', c2]), 0, CLE(1));
+   517	  const rcDirty = mkdir({ 'a.txt': body(c2, sha256(readFileSync(join(repo, 'scripts', 'alpha.mjs'))), 'node scripts/alpha.mjs') });
+   518	  expect('worktree-bytes-not-truth', runTool(['--dir', rcDirty, '--rev', c2]), 1, DRI(0, 1, 0, 0, 'a.txt'));
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '520,520p'
+   520	  const held = results.filter((r) => r.ok).length;
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '548,548p'
+   548	    return bind({ dir: resolve(args.dir), rev: args.rev, laneArg: args.lane, json: args.json });
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | grep -c "expect('\|expectUsage('\|results.push("
+41
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '417,518p' | grep -c 'ESCAPES_LANE\|SYMLINK_DIR\|RECEIPT_TOO_LARGE\|AMBIGUOUS_FIELD'
+0
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 7ac24afa477a44304a3b125e320ef86929218189:scripts/receipt-bind.mjs | sed -n '214,216p;235,238p;276,281p'
+
+  let entries;
+  try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+    const field = (key) => {
+      const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));
+      return m ? m[1].trim() : null;
+    };
+    } else {
+      abs = resolve(lane, instrument);
+      const lr = laneRel(lane, abs);
+      if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+      if (lr.inside) rel = lr.rel; else fromDisk = true;
+    }
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 7ac24afa477a44304a3b125e320ef86929218189:scripts/receipt-bind.mjs | nl -ba | sed -n '215,216p;232,236p;276,281p'
+   215	  let entries;
+   216	  try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   232	
+   233	    let text;
+   234	    try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+   235	    const field = (key) => {
+   236	      const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));
+   276	    } else {
+   277	      abs = resolve(lane, instrument);
+   278	      const lr = laneRel(lane, abs);
+   279	      if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+   280	      if (lr.inside) rel = lr.rel; else fromDisk = true;
+   281	    }
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '21,22p'
+    21	 * receipt. An absolute instrument outside the lane has no revision to be read at; it is hashed from
+    22	 * the file on disk and additionally counted in `external=`.
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '55,55p'
+    55	 * through the link; `cmd=` tokens after the instrument are not inspected; a `cmd=` whose second
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '67,67p'
+    67	const CONTRACT = 'kumitate-receipt-bind-v2';
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '73,76p'
+    73	const GIT_ENV_DROP = [
+    74	  'GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_OBJECT_DIRECTORY', 'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+    75	  'GIT_COMMON_DIR', 'GIT_NAMESPACE', 'GIT_PREFIX', 'GIT_CEILING_DIRECTORIES',
+    76	];
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 0ff3562f15c18d0ca01dc6a76c9f827d30c26950:scripts/receipt-bind.mjs | sed -n '105,110p'
+   105	function gitEnv(extra) {
+   106	  const env = { ...process.env, ...(extra || {}) };
+   107	  for (const k of GIT_ENV_DROP) delete env[k];
+   108	  env.GIT_TERMINAL_PROMPT = '0';
+   109	  return env;
+   110	}
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show 114877a308ffc0bcd63e354bcef03e6b9fe538d4:.ufo/waves/round-88/probe/probe88-c1.mjs | sed -n '119p;149,150p'
+   119	// ---- fixture repository: commit A (body v1), commit B (body v2), dirty worktree (body v3)
+   149	  }
+   150	}
+$ sed -n '48p;52,55p;58,61p;177,179p;429p' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/w1/K87Sentinel.md | cut -c1-140
+    48	| **1e** | **`cmd=` RELATIVE token that resolves outside the lane to an existing file** | **FAIL-OPEN** | **280** | `cmd=node ../../../../../et
+    52	| **2a** | **receipt DIRECTORY is a symlink** to a dir holding a valid receipt | **FAIL-OPEN** | **216** | `CLEAN matched=1 mismatched=0 unchec
+    53	| 2b | same symlinked dir + one mismatching receipt | **FAIL-OPEN** | 216 | `DRIFT matched=1 mismatched=1 … first=bad.txt`, exit 1 (content s
+    54	| 2c | `--dir` symlink → `/etc` | SAFE | 216, 303 | `DRIFT matched=0 mismatched=0 unchecked=0 … first=-`, exit 1 (never CLEAN) |
+    55	| 2d | `--dir` symlink → the committed round-86 close dir | **FAIL-OPEN** | 216 | `DRIFT matched=1 mismatched=9 … external=1 first=c1-probe
+    58	| 3c | duplicate `cmd=`, correct **first**, wrong second | SAFE (first-wins) | 236 | `CLEAN matched=1`, exit 0 |
+    59	| 3d | duplicate `cmd=`, wrong **first**, correct second | SAFE (first-wins) | 236 | `DRIFT mismatched=1`, exit 1 |
+    60	| 3e | duplicate `tool_sha256=`, correct first, wrong second | SAFE (first-wins) | 236 | `CLEAN matched=1`, exit 0 |
+    61	| **4** | **200 MB receipt** | **UNBOUNDED** | **234** (and 285) | 64 MiB receipt → `CLEAN`, **max RSS 185 048 kB**, 0.05 s; no size guard, n
+   177	not exercised: `/dev/zero` passes `isAbsolute` + containment, then `readFileSync` on a size-0 device
+   178	loops until memory is exhausted — same unbounded-reader class as item 4, `[INFERENCE]` from the code
+   179	path (not executed; see §4 for the measured unboundedness on a finite file).
+   429	| **R87-S6** | DOC-GAP | low | 236, 264–266 | duplicate `cmd=`/`tool_sha256=` is first-wins and undocumented; `cmd=` tail after the instrumen
+$ sed -n '12p;26,27p' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Critic/SCORES.md
+    12	| (a) worktree hash | `cand-a-worktree.mjs` | **12/12** | HELD | — (none) |
+    26	- Probe on that mutated clone (worktree ≠ judged rev): `ref-gitshow` 12/12,
+    27	  `cand-a-worktree` 11/12, killed only by `clean-r87`.
+$ sed -n '24p;69p' /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-87.md | cut -c1-160
+    24	**The claim is UNMET.** The frozen kill rule says a seat-constructed control that reaches 12/12
+    69	| survivor | the frozen 12 arms cannot see a worktree-vs-revision hash substitution: `build/K87Critic/cand-a-worktree.mjs` reaches 12/12 while binding the wrong by
+$ grep -n 'C87_C1\|^# exit' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Critic/transcript-cand-a-worktree.txt
+2:# exit=0  candidate_sha256=aaf0863910bd3663baf6bf7bceb1640a114f664fd10baf52543
+15:C87_C1: HELD held=12/12
+$ grep -n 'selftest\|C88_C1\|^exit=' /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ScribeEntry/q81-twin.txt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ScribeEntry/q81-integrated.txt
+q81-twin.txt:6:ARM selftest: FAIL exit=1 RECEIPT_BIND_SELFTEST: FAIL held=36/39
+q81-twin.txt:25:C88_C1: UNMET held=11/20
+q81-twin.txt:26:exit=1
+q81-integrated.txt:6:ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+q81-integrated.txt:25:C88_C1: HELD held=20/20
+q81-integrated.txt:26:exit=0

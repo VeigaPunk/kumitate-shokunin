@@ -510,6 +510,71 @@ function runSelftest(root) {
     results.push({ name: 'json-fail-closed', ok: okf, detail: `exit=${rf.status} ${objf ? objf.token : 'unparsed'}` });
   }
 
+  // v2 boundaries, each with its positive twin.
+  // ESCAPES_LANE: only an ABSOLUTE token may name an external instrument; a relative token that
+  // resolves outside the lane fails closed, while `..` that stays inside the lane still binds.
+  const extDigest = sha256(readFileSync(extPath));
+  const escRel = relative(repo, extPath);
+  const rcEscRel = mkdir({ 'a.txt': body(c2, extDigest, `bash ${escRel}`) });
+  const rcEscInterior = mkdir({ 'a.txt': body(c2, extDigest, `bash scripts/../${escRel}`) });
+  const rcEscAbs = mkdir({ 'a.txt': body(c2, extDigest, `bash ${extPath}`) });
+  const rcDotdotInside = mkdir({ 'a.txt': body(c2, sha256(dAlphaC2), 'node scripts/../scripts/alpha.mjs') });
+  const rcEscAmongClean = mkdir({ 'a.txt': okA, 'b.txt': body(c2, extDigest, `bash ${escRel}`) });
+  expect('escapes-lane-relative', runTool(['--dir', rcEscRel, '--rev', c2]), 2, FC('ESCAPES_LANE'));
+  expect('escapes-lane-interior-dotdot', runTool(['--dir', rcEscInterior, '--rev', c2]), 2, FC('ESCAPES_LANE'));
+  expect('escapes-lane-among-clean', runTool(['--dir', rcEscAmongClean, '--rev', c2]), 2, FC('ESCAPES_LANE'));
+  expect('escapes-lane-twin-absolute-external', runTool(['--dir', rcEscAbs, '--rev', c2]), 0, CLE(1, 1));
+  expect('escapes-lane-twin-dotdot-inside', runTool(['--dir', rcDotdotInside, '--rev', c2]), 0, CLE(1, 0));
+
+  // SYMLINK_DIR: --dir itself a symlink (with or without a trailing slash) fails closed; its real
+  // target binds.
+  const rcLinkTarget = mkdir({ 'a.txt': okA });
+  const linkDir = join(root, 'rc-dir-link');
+  symlinkSync(rcLinkTarget, linkDir);
+  expect('symlink-dir', runTool(['--dir', linkDir, '--rev', c2]), 2, FC('SYMLINK_DIR'));
+  expect('symlink-dir-trailing-slash', runTool(['--dir', `${linkDir}/`, '--rev', c2]), 2, FC('SYMLINK_DIR'));
+  expect('symlink-dir-twin-real-target', runTool(['--dir', rcLinkTarget, '--rev', c2]), 0, CLE(1));
+
+  // RECEIPT_TOO_LARGE: one byte over the limit fails closed — before the receipt is parsed, so an
+  // oversize receipt that would also be ambiguous still reports the size; exactly the limit binds.
+  const padTo = (text, size) => `${text}pad=${'x'.repeat(size - Buffer.byteLength(text) - 5)}\n`;
+  const rcOver = mkdir({ 'a.txt': padTo(okA, MAX_RECEIPT_BYTES + 1) });
+  const rcOverAmbiguous = mkdir({ 'a.txt': padTo(`${okA}cmd=node scripts/beta.mjs\n`, MAX_RECEIPT_BYTES + 1) });
+  const rcAtLimit = mkdir({ 'a.txt': padTo(okA, MAX_RECEIPT_BYTES) });
+  const sizes = [rcOver, rcOverAmbiguous, rcAtLimit].map((d) => lstatSync(join(d, 'a.txt')).size);
+  if (sizes[0] !== MAX_RECEIPT_BYTES + 1 || sizes[1] !== MAX_RECEIPT_BYTES + 1 || sizes[2] !== MAX_RECEIPT_BYTES) {
+    return fixtureFail(`receipt sizes ${sizes.join(',')}`);
+  }
+  expect('receipt-too-large', runTool(['--dir', rcOver, '--rev', c2]), 2, FC('RECEIPT_TOO_LARGE'));
+  expect('receipt-too-large-before-parse', runTool(['--dir', rcOverAmbiguous, '--rev', c2]), 2, FC('RECEIPT_TOO_LARGE'));
+  expect('receipt-too-large-twin-at-limit', runTool(['--dir', rcAtLimit, '--rev', c2]), 0, CLE(1));
+
+  // AMBIGUOUS_FIELD: a second cmd=/tool_sha256=/rev= line fails closed, equal values included,
+  // and before a missing digest could make the receipt merely unchecked; the single-field receipt binds.
+  const rcDupCmd = mkdir({ 'a.txt': `${okA}cmd=node scripts/beta.mjs --selftest\n` });
+  const rcDupCmdEqual = mkdir({ 'a.txt': `${okA}cmd=node scripts/alpha.mjs --selftest\n` });
+  const rcDupDigest = mkdir({ 'a.txt': `${okA}tool_sha256=${sha256(dAlphaC2)}\n` });
+  const rcDupRev = mkdir({ 'a.txt': `${okA}rev=${c2}\n` });
+  const rcDupRevDiffer = mkdir({ 'a.txt': `${okA}rev=${c1}\n` });
+  const rcDupCmdNoDigest = mkdir({ 'a.txt': `${okA.replace(/^tool_sha256=.*$/m, '')}cmd=node scripts/alpha.mjs\n` });
+  const rcDupAmongClean = mkdir({ 'a.txt': okA, 'b.txt': `${okB}cmd=node scripts/beta.mjs --selftest\n` });
+  const rcSingle = mkdir({ 'a.txt': okA, 'b.txt': okB });
+  expect('ambiguous-cmd-differing', runTool(['--dir', rcDupCmd, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-cmd-equal', runTool(['--dir', rcDupCmdEqual, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-tool-sha256', runTool(['--dir', rcDupDigest, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-rev-equal', runTool(['--dir', rcDupRev, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-rev-differing', runTool(['--dir', rcDupRevDiffer, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-cmd-not-unchecked', runTool(['--dir', rcDupCmdNoDigest, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-among-clean', runTool(['--dir', rcDupAmongClean, '--rev', c2]), 2, FC('AMBIGUOUS_FIELD'));
+  expect('ambiguous-twin-single-fields', runTool(['--dir', rcSingle, '--rev', c2]), 0, CLE(2));
+  {
+    const r = runTool(['--dir', rcDupDigest, '--rev', c2, '--json']);
+    let obj = null;
+    try { obj = JSON.parse(r.out.trim()); } catch { obj = null; }
+    const ok = r.status === 2 && obj !== null && obj.verdict === 'FAIL-CLOSED' && obj.token === 'AMBIGUOUS_FIELD';
+    results.push({ name: 'json-ambiguous-field', ok, detail: `exit=${r.status} ${obj ? obj.token : 'unparsed'}` });
+  }
+
   // The judged bytes are the revision's, not the worktree's: a dirty instrument still binds the
   // committed digest, and a digest of the dirty bytes does not bind at the committed revision.
   writeFileSync(join(repo, 'scripts', 'alpha.mjs'), 'export const alpha = 3; // dirty worktree\n');

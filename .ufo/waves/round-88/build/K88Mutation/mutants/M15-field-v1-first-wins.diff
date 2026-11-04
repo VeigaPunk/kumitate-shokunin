@@ -1,0 +1,14 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/mutants/M00-pristine.mjs	2026-11-04 19:06:36.501390926 -0300
++++ mutants/M15-field-v1-first-wins.mjs	2026-11-04 19:07:51.697673129 -0300
+@@ -247,9 +247,8 @@
+     let text;
+     try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+     const field = (key) => {
+-      const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+-      return all.length ? all[0][1].trim() : null;
++      const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));
++      return m ? m[1].trim() : null;
+     };
+ 
+     let receiptRev = rev;

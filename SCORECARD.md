@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=36
-A_wave=1012
+A_wave=1112
 C=46
 C1=19
 C1_total=19
-C2=222
-C2_total=222
+C2=224
+C2_total=224
 S_members=88
 S_sections=88
 R_members=92
@@ -335,7 +335,7 @@ pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
-pin.receipt-bind=b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a
+pin.receipt-bind=1f11f124198fdb894265dc69a75efeca5fbf43d931209d227b2bc1b29e5880ea
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
@@ -4279,3 +4279,25 @@ precedence, a symlinked receipt *directory*. (4) **`spotcheck-adopt --check` con
 (6) **`POINTER_DEAD` precision** (round-79/81 candidate). (7) **`cite-check` carried debt**.
 (8) **`receipt-evidence` overlap**: the revenger argues its REPRODUCTION arm already binds a receipt
 to its instrument by execution; a future claim must say which dialect it strengthens.
+
+## Round 88 — declaration (2026-11-04)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9 terminal under `f_O`), capability
+acquisition `receipt-bind` v2 (contract `kumitate-receipt-bind-v2`) — re-claimed under a scorer that
+makes the judged revision, a second revision and the worktree hold three different bodies of one
+instrument, plus the round-87 sentinel's four fail-open boundaries (`ESCAPES_LANE`, `SYMLINK_DIR`,
+`RECEIPT_TOO_LARGE`, `AMBIGUOUS_FIELD`) as arms with positive twins, and a deterministic sweep
+(K87-V4). Every coverage row is a saturated sub-axis at 10; a second operability claim would be one
+claim under `AXES.md`.
+
+Motivating evidence: round 87's kill rule (`.ufo/waves/round-87/build/K87Critic/transcript-cand-a-worktree.txt`,
+12/12) and the round-87 sentinel's rows 1e, 2a/2d, 3c/3d, 4 (`.ufo/waves/round-87/w1/K87Sentinel.md`).
+
+Frozen at `114877a308ffc0bcd63e354bcef03e6b9fe538d4` (plan, 20-arm probe, control generators). Predicate:
+`node .ufo/waves/round-88/probe/probe88-c1.mjs --lane <LANE> --work <SCRATCH> --rev <REV>` prints
+`C88_C1: HELD held=20/20` exit 0. Kill rule: any control — committed, the integrated instrument's
+worktree twin, or seat-constructed (a tool that skips a claimed behaviour by construction) — at 20/20
+makes C1 UNMET. Pre-data controls committed at `8735f70f545c9a0355816d5ce86b30791ae7e6be` (17 controls):
+`base-v1` (do-nothing) 16/20, `base-v1-worktree` 11/20, `refuse-all` 2/20, `absent` 0/20, round-87
+controls 0–4/20, round-87 seat constructions 8–16/20. Instrument written by the L1 after the controls
+commit, at `0ff3562f15c18d0ca01dc6a76c9f827d30c26950`. No second claim, no exploratory claim.

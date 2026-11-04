@@ -1,0 +1,14 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.176854704 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/f1-size-after-read.mjs	2026-11-04 19:07:56.176784574 -0300
+@@ -242,10 +242,10 @@
+     try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
+     if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
+     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+ 
+     let text;
+     try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
++    if (Buffer.byteLength(text) > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} read whole, then refused`); // CRITIC f1
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+       if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);

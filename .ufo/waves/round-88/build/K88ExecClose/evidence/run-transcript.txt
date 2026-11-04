@@ -1,0 +1,24 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=808840ee7dd1f36cbc330b2c4b8457f226c66c214c0f02702d405470210c7a82
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ExecClose/run-close.mjs --lane /fast/scratch/hyaku/kumitate-r88/K88ExecClose/lane --rev 0ff3562f15c18d0ca01dc6a76c9f827d30c26950 --out /fast/scratch/hyaku/kumitate-r88/K88ExecClose/out2 --work /fast/scratch/hyaku/kumitate-r88/K88ExecClose/work2
+RUN_CLOSE: NOTE out is not the round's close dir /fast/scratch/hyaku/kumitate-r88/K88ExecClose/lane/.ufo/waves/round-88/close
+selftest: exit=0 COUNTER_RECEIPT_SELFTEST: PASS held=63/63
+proxy: exit=1 PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=1012 computed=1016 delta=+4; C2_DRIFT term=C2 declared=222 computed=223 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=222 computed=223 delta=+1; GATE_PIN_DRIFT term=pin.receipt-bind declared=b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a computed=098a6713e663cbb9444ea6ec1da503cbf4bba5690c492b5ec9e73f9ee6cace4d; src-rev=31c465f15669; source=snapshot)
+proxy-selftest: exit=0 VERDICT: PASS
+map: exit=0 README_MAP: CLEAN files=223 rows=223 covered=223
+map-selftest: exit=0 VERDICT: PASS
+spotcheck: exit=0 MAP: CLEAN
+ready: exit=2 READY_HANDOFF: FAIL-CLOSED READY_ABSENT (no ready file at /fast/scratch/hyaku/kumitate-r88/K88ExecClose/lane/.ufo/waves/round-88/w1.ready)
+plan: exit=2 PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=88-88 rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950 exit=2 failed= na_rounds=88 map_red=
+census: exit=0 kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+bind-selftest: exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+c1-probe: exit=1 C88_C1: UNMET held=19/20
+twin: exit=1 C88_C1: UNMET held=11/20
+bind: exit=0 RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1
+RUN_CLOSE: BIND_CASE RECEIPT_BIND: CLEAN matched=12 mismatched=0 unchecked=0 external=1 counted=12 others=12 ALL
+RUN_CLOSE: C1 C88_C1: UNMET held=19/20 exit=1
+RUN_CLOSE: TWIN C88_C1: UNMET held=11/20 exit=1
+RUN_CLOSE: BIND RECEIPT_BIND: CLEAN matched=13 mismatched=0 unchecked=0 external=1 exit=0
+RUN_CLOSE: DONE cases=13 rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950 out=/fast/scratch/hyaku/kumitate-r88/K88ExecClose/out2 bind_exit=0 OK
+exit=0
+signal=none

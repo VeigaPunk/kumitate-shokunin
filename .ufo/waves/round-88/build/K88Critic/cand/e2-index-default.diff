@@ -1,0 +1,11 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.169720261 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/e2-index-default.mjs	2026-11-04 19:07:56.169641961 -0300
+@@ -252,7 +252,7 @@
+       return all.length ? all[0][1].trim() : null;
+     };
+ 
+-    let receiptRev = rev;
++    let receiptRev = ''; // CRITIC e2: no rev= -> blobAt reads `:rel` (the index)
+     const revField = field('rev');
+     if (revField !== null) {
+       if (!FULL_REV.test(revField)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${JSON.stringify(revField)} is not 40 lowercase hex`);

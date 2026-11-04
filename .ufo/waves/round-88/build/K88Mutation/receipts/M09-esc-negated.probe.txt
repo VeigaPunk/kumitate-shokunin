@@ -1,0 +1,27 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=5ccd01ec459eacc5b9ae08717cc6154c08e09880d2580f9128fa9390c6739d2b
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/probe/probe88-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe --rev 0ff3562f15c18d0ca01dc6a76c9f827d30c26950 --tool mutants/M09-esc-negated.mjs
+mutant_sha256=d24a0d4ba61504250df3ed58cb4dc84335ef30a3abc61b0576f785c81a6cc0f4
+ARM usage: PASS exit=64
+ARM selftest: FAIL exit=1 RECEIPT_BIND_SELFTEST: FAIL held=21/39
+ARM detect-r86: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE map-selftest.txt relative instrument resolves outside the lane: scripts/readme-map.mjs
+ARM detect-r86-renamed: FAIL files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE q01-9.txt relative instrument resolves outside the lane: scripts/spotcheck-adopt.mjs
+ARM clean-r87: FAIL copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE bind-selftest.txt relative instrument resolves outside the lane: scripts/receipt-bind.mjs
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=u.txt
+ARM unresolved: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE u.txt relative instrument resolves outside the lane: scripts/absent-88.mjs
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe/probe88/absent-88-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev ffffffffffffffffffffffffffffffffffffffff is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe/probe88/repo
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe/probe88/symlink-receipt/a.txt
+ARM rev-receipt-wins: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM worktree-forgery: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM default-rev: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM rev-receipt-negative: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM untracked-instrument: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/fresh.mjs
+ARM escape-relative: FAIL relative exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at 10de44a60dc80748b89e7a61e31e82495d70286e: null | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: FAIL link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe/probe88/link-dir | real exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM oversize: FAIL 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M09-esc-negated/probe/probe88/oversize/r.txt is 2097328 bytes (limit 1048576) | 512KiB exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM duplicate-field: FAIL dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/tool.mjs
+ARM sweep: FAIL scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE s-anchor-truth.mjs.txt relative instrument resolves outside the lane: scripts/anchor-truth.mjs | flip=s-cite-sources.mjs.txt exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE s-anchor-truth.mjs.txt relative instrument resolves outside the lane: scripts/anchor-truth.mjs
+C88_C1: UNMET held=5/20
+exit=1
+signal=none

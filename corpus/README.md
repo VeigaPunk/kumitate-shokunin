@@ -258,6 +258,7 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/receipt-subject-binding.md` | Receipt-subject binding: the R86-D1 census, why a receipt must digest-bind its instrument, the v1 contract, and its limits | S250, S251; round-87 frozen plan; `.ufo/waves/round-87/open/census-toolbind.txt` |
 | `lessons/round-86-verifier-spotcheck.md` | Non-author round-86 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-87-verifier-spotcheck.md` | Non-author round-87 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-88.md` | Round-88 receipt-bind v2: the three-body revision fixture, four fail-closed boundaries, nine seat constructions at 20/20, the honest UNMET verdict, and the mined mistakes | LOG.md round 88; `.ufo/waves/round-88/` |
 
 ## Known gaps
 

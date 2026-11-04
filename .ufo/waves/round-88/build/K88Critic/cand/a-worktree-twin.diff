@@ -1,0 +1,20 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.182319187 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/a-worktree-twin.mjs	2026-11-04 19:07:56.236690113 -0300
+@@ -1,4 +1,6 @@
+ #!/usr/bin/env node
++import { readFileSync as __wtRead } from 'node:fs';
++import { join as __wtJoin } from 'node:path';
+ /**
+  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
+  * `cmd=` names, at a judged revision.
+@@ -194,8 +196,8 @@
+ }
+ 
+ function blobAt(lane, rev, rel) {
+-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
+-  return r.status === 0 ? r.stdout : null;
++  // WORKTREE FORGERY (probe88 control): bytes from disk, not from the revision.
++  try { return __wtRead(__wtJoin(lane, rel)); } catch { return null; }
+ }
+ 
+ function emitFailClosed(token, detail, json, extra) {

@@ -1,0 +1,11 @@
+rev=8e4ea5f6503e4dccced9ffcfbf95c6882b7cc29b
+tool_sha256=51d852d00b0080b5059b71fbbd92bf7798c4a967cdd78d71b540a181fa6eeaab
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Connector/adjacency-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Connector/cand-instrument-parity.mjs /fast/scratch/hyaku/kumitate-r88/K88Connector/adj2
+fixture rev=82a19c13778e4cea7fdc554c3d4f551b9e86ed42 link.mjs mode=120000
+CASE X1-symlink-blob(digest=sha(link text)): exit=2 signal=none RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT scripts/link.mjs is mode 120000 at 82a19c13778e4cea7fdc554c3d4f551b9e86ed42
+CASE X2-alias-abs(digest=sha(worktree)): exit=1 signal=none RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+CASE X2b-realpath-abs(digest=sha(worktree)) control: exit=1 signal=none RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+CASE X3-alias-lane(digest=sha(worktree)): exit=2 signal=none RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Connector/adj2/adj/alias is not a directory
+CASE X4-fifo-external(timeout 5s): exit=2 signal=none RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument is not a regular file: /fast/scratch/hyaku/kumitate-r88/K88Connector/adj2/adj/fifo
+exit=0
+signal=none

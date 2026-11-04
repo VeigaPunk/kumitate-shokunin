@@ -1,0 +1,18 @@
+cmd=diff norm-run1.out norm-run2.out
+exit=0
+cmd=diff norm-run1.out norm-run3.out
+exit=0
+cmd=diff norm-run1.out norm-run3-clone.out (lane path differs; informative)
+3,5c3,5
+< ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+< ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=q01-9.txt
+< ARM clean-r87: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+---
+> ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=2 first=c1-probe.txt
+> ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=2 first=q01-9.txt
+> ARM clean-r87: FAIL copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=1
+21c21
+< C88_C1: HELD held=20/20
+---
+> C88_C1: UNMET held=19/20
+exit=1

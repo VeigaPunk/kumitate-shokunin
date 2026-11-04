@@ -1,0 +1,27 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=5ccd01ec459eacc5b9ae08717cc6154c08e09880d2580f9128fa9390c6739d2b
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/probe/probe88-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe --rev 0ff3562f15c18d0ca01dc6a76c9f827d30c26950 --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-bind.mjs
+mutant_sha256=098a6713e663cbb9444ea6ec1da503cbf4bba5690c492b5ec9e73f9ee6cace4d
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=q01-9.txt
+ARM clean-r87: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=u.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED u.txt instrument absent at a44e0c60ec8f37952df64111acf9132ba82b9a08: scripts/absent-88.mjs
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe/probe88/absent-88-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev ffffffffffffffffffffffffffffffffffffffff is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe/probe88/repo
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe/probe88/symlink-receipt/a.txt
+ARM rev-receipt-wins: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM worktree-forgery: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM default-rev: PASS exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM rev-receipt-negative: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM untracked-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt instrument absent at a44e0c60ec8f37952df64111acf9132ba82b9a08: scripts/fresh.mjs
+ARM escape-relative: PASS relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../outside/ext.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: PASS link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe/probe88/link-dir | real exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM oversize: PASS 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M00-restored-lane/probe/probe88/oversize/r.txt is 2097328 bytes (limit 1048576) | 512KiB exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM duplicate-field: PASS dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 tool_sha256= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM sweep: PASS scripts=33 clean exit=0 RECEIPT_BIND: CLEAN matched=33 mismatched=0 unchecked=0 external=0 | flip=s-cite-sources.mjs.txt exit=1 RECEIPT_BIND: DRIFT matched=32 mismatched=1 unchecked=0 external=0 first=s-cite-sources.mjs.txt
+C88_C1: HELD held=20/20
+exit=0
+signal=none

@@ -1,0 +1,45 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=8008061c4bd55cc1ef66ad663166b0420f69c8fb56ff87067eb1072302afb91b
+cmd=node mutants/M08-amb-gt1-to-ge1.mjs --selftest --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/selftest
+RECEIPT_BIND_SELFTEST arm usage-bare ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-unknown-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-missing-value ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-duplicate-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-bad-rev ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-work-without-selftest ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-selftest-with-dir ok exit=64
+RECEIPT_BIND_SELFTEST arm clean FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm clean-multi FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm clean-crlf FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm digest-flip FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm cmd-flip FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unchecked-no-cmd FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unchecked-no-digest FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unchecked-bad-digest FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unresolved-instrument FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unresolved-directory-instrument FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm unresolved-bare-instrument FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm dir-missing ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/selftest/receipt-bind-selftest-2325366-emb5rp/absent (ENOENT)
+RECEIPT_BIND_SELFTEST arm dir-is-file ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/selftest/receipt-bind-selftest-2325366-emb5rp/outside/tool.sh (ENOTDIR)
+RECEIPT_BIND_SELFTEST arm rev-unresolved ok exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/selftest/receipt-bind-selftest-2325366-emb5rp/lane
+RECEIPT_BIND_SELFTEST arm rev-per-receipt-overrides FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm rev-default-is-judged FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm symlink-receipt ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/selftest/receipt-bind-selftest-2325366-emb5rp/rc-22/a.txt
+RECEIPT_BIND_SELFTEST arm external-disk FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm external-mismatch FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm lane-absolute-instrument FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm empty-dir-not-clean ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm non-txt-ignored FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm non-txt-only-is-empty ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm sorted-first FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD aa.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm lane-flag-from-outside FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm default-lane-is-toplevel FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm git-env-canary-ignored FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm json-drift FAIL exit=2 {}
+RECEIPT_BIND_SELFTEST arm json-clean FAIL exit=2 FAIL-CLOSED
+RECEIPT_BIND_SELFTEST arm json-fail-closed ok exit=2 DIR_UNREADABLE
+RECEIPT_BIND_SELFTEST arm dirty-worktree-cannot-launder FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD a.txt carries 1 rev= lines
+RECEIPT_BIND_SELFTEST: FAIL held=14/39
+exit=1
+signal=none

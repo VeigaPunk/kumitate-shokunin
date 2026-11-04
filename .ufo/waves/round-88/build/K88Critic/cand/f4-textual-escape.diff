@@ -1,0 +1,13 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.179307885 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/f4-textual-escape.mjs	2026-11-04 19:07:56.179219295 -0300
+@@ -292,8 +292,8 @@
+       abs = resolve(lane, instrument);
+       const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
+-      rel = lr.rel;
++      if (instrument.startsWith('../')) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`); // CRITIC f4: textual
++      if (lr.inside) rel = lr.rel; else fromDisk = true;
+     }
+ 
+     let bytes;

@@ -1,0 +1,1082 @@
+{
+  "seat": "K88Mutation",
+  "target": "scripts/receipt-bind.mjs@0ff3562f15c18d0ca01dc6a76c9f827d30c26950",
+  "target_sha256": "098a6713e663cbb9444ea6ec1da503cbf4bba5690c492b5ec9e73f9ee6cace4d",
+  "judged_rev": "0ff3562f15c18d0ca01dc6a76c9f827d30c26950",
+  "mutants": 26,
+  "killed": 18,
+  "survived": [
+    "M05-size-gt-to-ge",
+    "M11-symdir-after-readdir",
+    "M16-size-x2",
+    "M17-size-minus1",
+    "M18-size-plus1",
+    "M23-size-after-read",
+    "M24-size-on-chars",
+    "M25-receipt-rev-unverified"
+  ],
+  "probe_20_of_20": [
+    "M05-size-gt-to-ge",
+    "M11-symdir-after-readdir",
+    "M16-size-x2",
+    "M17-size-minus1",
+    "M18-size-plus1",
+    "M23-size-after-read",
+    "M24-size-on-chars",
+    "M25-receipt-rev-unverified"
+  ],
+  "rows": [
+    {
+      "id": "M00-pristine",
+      "desc": "pristine copy of 0ff3562f:scripts/receipt-bind.mjs (baseline)",
+      "diff_file": "mutants/M00-pristine.diff",
+      "diff": "",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: PASS held=9/9",
+      "battery_failed_cases": [],
+      "verdict": "baseline",
+      "killed_by": [],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M00-pristine.probe.txt",
+        "receipts/M00-pristine.selftest.txt",
+        "receipts/M00-pristine.battery.txt"
+      ]
+    },
+    {
+      "id": "M01-del-escapes-lane",
+      "desc": "ESCAPES_LANE check deleted",
+      "diff_file": "mutants/M01-del-escapes-lane.diff",
+      "diff": "-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "escape-relative"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:escape-relative"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M01-del-escapes-lane.probe.txt",
+        "receipts/M01-del-escapes-lane.selftest.txt"
+      ]
+    },
+    {
+      "id": "M02-del-symlink-dir",
+      "desc": "SYMLINK_DIR check deleted",
+      "diff_file": "mutants/M02-del-symlink-dir.diff",
+      "diff": "-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "symlink-dir"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:symlink-dir"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M02-del-symlink-dir.probe.txt",
+        "receipts/M02-del-symlink-dir.selftest.txt"
+      ]
+    },
+    {
+      "id": "M03-del-too-large",
+      "desc": "RECEIPT_TOO_LARGE check deleted",
+      "diff_file": "mutants/M03-del-too-large.diff",
+      "diff": "-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "oversize"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:oversize"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M03-del-too-large.probe.txt",
+        "receipts/M03-del-too-large.selftest.txt"
+      ]
+    },
+    {
+      "id": "M04-del-ambiguous",
+      "desc": "AMBIGUOUS_FIELD check deleted (first-wins by fallthrough)",
+      "diff_file": "mutants/M04-del-ambiguous.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M04-del-ambiguous.probe.txt",
+        "receipts/M04-del-ambiguous.selftest.txt"
+      ]
+    },
+    {
+      "id": "M05-size-gt-to-ge",
+      "desc": "size check > flipped to >=",
+      "diff_file": "mutants/M05-size-gt-to-ge.diff",
+      "diff": "-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);\n+    if (st.size >= MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "size-1048576"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-1048576"
+      ],
+      "receipts": [
+        "receipts/M05-size-gt-to-ge.probe.txt",
+        "receipts/M05-size-gt-to-ge.selftest.txt",
+        "receipts/M05-size-gt-to-ge.battery.txt"
+      ]
+    },
+    {
+      "id": "M06-size-gt-to-lt",
+      "desc": "size check > flipped to <",
+      "diff_file": "mutants/M06-size-gt-to-lt.diff",
+      "diff": "-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);\n+    if (st.size < MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);",
+      "probe_held": "4/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unchecked",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=14/39",
+      "selftest_failed_arms": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "unchecked-no-cmd",
+        "unchecked-no-digest",
+        "unchecked-bad-digest",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "unresolved-bare-instrument",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "external-disk",
+        "external-mismatch",
+        "lane-absolute-instrument",
+        "non-txt-ignored",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:detect-r86",
+        "probe:detect-r86-renamed",
+        "probe:clean-r87",
+        "probe:unchecked",
+        "probe:unresolved",
+        "probe:rev-receipt-wins",
+        "probe:worktree-forgery",
+        "probe:default-rev",
+        "probe:rev-receipt-negative",
+        "probe:untracked-instrument",
+        "probe:escape-relative",
+        "probe:symlink-dir",
+        "probe:oversize",
+        "probe:duplicate-field",
+        "probe:sweep",
+        "selftest:clean",
+        "selftest:clean-multi",
+        "selftest:clean-crlf",
+        "selftest:digest-flip",
+        "selftest:cmd-flip",
+        "selftest:unchecked-no-cmd",
+        "selftest:unchecked-no-digest",
+        "selftest:unchecked-bad-digest",
+        "selftest:unresolved-instrument",
+        "selftest:unresolved-directory-instrument",
+        "selftest:unresolved-bare-instrument",
+        "selftest:rev-per-receipt-overrides",
+        "selftest:rev-default-is-judged",
+        "selftest:external-disk",
+        "selftest:external-mismatch",
+        "selftest:lane-absolute-instrument",
+        "selftest:non-txt-ignored",
+        "selftest:sorted-first",
+        "selftest:lane-flag-from-outside",
+        "selftest:default-lane-is-toplevel",
+        "selftest:git-env-canary-ignored",
+        "selftest:json-drift",
+        "selftest:json-clean",
+        "selftest:dirty-worktree-cannot-launder",
+        "selftest:worktree-bytes-not-truth"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M06-size-gt-to-lt.probe.txt",
+        "receipts/M06-size-gt-to-lt.selftest.txt"
+      ]
+    },
+    {
+      "id": "M07-amb-gt1-to-gt2",
+      "desc": "AMBIGUOUS length>1 flipped to >2",
+      "diff_file": "mutants/M07-amb-gt1-to-gt2.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n+      if (all.length > 2) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M07-amb-gt1-to-gt2.probe.txt",
+        "receipts/M07-amb-gt1-to-gt2.selftest.txt"
+      ]
+    },
+    {
+      "id": "M08-amb-gt1-to-ge1",
+      "desc": "AMBIGUOUS length>1 flipped to >=1",
+      "diff_file": "mutants/M08-amb-gt1-to-ge1.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n+      if (all.length >= 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);",
+      "probe_held": "4/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unchecked",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=14/39",
+      "selftest_failed_arms": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "unchecked-no-cmd",
+        "unchecked-no-digest",
+        "unchecked-bad-digest",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "unresolved-bare-instrument",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "external-disk",
+        "external-mismatch",
+        "lane-absolute-instrument",
+        "non-txt-ignored",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:detect-r86",
+        "probe:detect-r86-renamed",
+        "probe:clean-r87",
+        "probe:unchecked",
+        "probe:unresolved",
+        "probe:rev-receipt-wins",
+        "probe:worktree-forgery",
+        "probe:default-rev",
+        "probe:rev-receipt-negative",
+        "probe:untracked-instrument",
+        "probe:escape-relative",
+        "probe:symlink-dir",
+        "probe:oversize",
+        "probe:duplicate-field",
+        "probe:sweep",
+        "selftest:clean",
+        "selftest:clean-multi",
+        "selftest:clean-crlf",
+        "selftest:digest-flip",
+        "selftest:cmd-flip",
+        "selftest:unchecked-no-cmd",
+        "selftest:unchecked-no-digest",
+        "selftest:unchecked-bad-digest",
+        "selftest:unresolved-instrument",
+        "selftest:unresolved-directory-instrument",
+        "selftest:unresolved-bare-instrument",
+        "selftest:rev-per-receipt-overrides",
+        "selftest:rev-default-is-judged",
+        "selftest:external-disk",
+        "selftest:external-mismatch",
+        "selftest:lane-absolute-instrument",
+        "selftest:non-txt-ignored",
+        "selftest:sorted-first",
+        "selftest:lane-flag-from-outside",
+        "selftest:default-lane-is-toplevel",
+        "selftest:git-env-canary-ignored",
+        "selftest:json-drift",
+        "selftest:json-clean",
+        "selftest:dirty-worktree-cannot-launder",
+        "selftest:worktree-bytes-not-truth"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M08-amb-gt1-to-ge1.probe.txt",
+        "receipts/M08-amb-gt1-to-ge1.selftest.txt"
+      ]
+    },
+    {
+      "id": "M09-esc-negated",
+      "desc": "ESCAPES_LANE condition negated (!lr.inside -> lr.inside)",
+      "diff_file": "mutants/M09-esc-negated.diff",
+      "diff": "-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);\n+      if (lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);",
+      "probe_held": "5/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unresolved",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=21/39",
+      "selftest_failed_arms": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "non-txt-ignored",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:detect-r86",
+        "probe:detect-r86-renamed",
+        "probe:clean-r87",
+        "probe:unresolved",
+        "probe:rev-receipt-wins",
+        "probe:worktree-forgery",
+        "probe:default-rev",
+        "probe:rev-receipt-negative",
+        "probe:untracked-instrument",
+        "probe:escape-relative",
+        "probe:symlink-dir",
+        "probe:oversize",
+        "probe:duplicate-field",
+        "probe:sweep",
+        "selftest:clean",
+        "selftest:clean-multi",
+        "selftest:clean-crlf",
+        "selftest:digest-flip",
+        "selftest:cmd-flip",
+        "selftest:unresolved-instrument",
+        "selftest:unresolved-directory-instrument",
+        "selftest:rev-per-receipt-overrides",
+        "selftest:rev-default-is-judged",
+        "selftest:non-txt-ignored",
+        "selftest:sorted-first",
+        "selftest:lane-flag-from-outside",
+        "selftest:default-lane-is-toplevel",
+        "selftest:git-env-canary-ignored",
+        "selftest:json-drift",
+        "selftest:json-clean",
+        "selftest:dirty-worktree-cannot-launder",
+        "selftest:worktree-bytes-not-truth"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M09-esc-negated.probe.txt",
+        "receipts/M09-esc-negated.selftest.txt"
+      ]
+    },
+    {
+      "id": "M10-symdir-negated",
+      "desc": "SYMLINK_DIR condition negated",
+      "diff_file": "mutants/M10-symdir-negated.diff",
+      "diff": "-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);\n+  if (!dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);",
+      "probe_held": "3/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "clean-r87",
+        "unchecked",
+        "unresolved",
+        "symlink-receipt",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "rev-receipt-negative",
+        "untracked-instrument",
+        "escape-relative",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field",
+        "sweep"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=10/39",
+      "selftest_failed_arms": [
+        "clean",
+        "clean-multi",
+        "clean-crlf",
+        "digest-flip",
+        "cmd-flip",
+        "unchecked-no-cmd",
+        "unchecked-no-digest",
+        "unchecked-bad-digest",
+        "unresolved-instrument",
+        "unresolved-directory-instrument",
+        "unresolved-bare-instrument",
+        "dir-is-file",
+        "rev-per-receipt-overrides",
+        "rev-default-is-judged",
+        "symlink-receipt",
+        "external-disk",
+        "external-mismatch",
+        "lane-absolute-instrument",
+        "empty-dir-not-clean",
+        "non-txt-ignored",
+        "non-txt-only-is-empty",
+        "sorted-first",
+        "lane-flag-from-outside",
+        "default-lane-is-toplevel",
+        "git-env-canary-ignored",
+        "json-drift",
+        "json-clean",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:detect-r86",
+        "probe:detect-r86-renamed",
+        "probe:clean-r87",
+        "probe:unchecked",
+        "probe:unresolved",
+        "probe:symlink-receipt",
+        "probe:rev-receipt-wins",
+        "probe:worktree-forgery",
+        "probe:default-rev",
+        "probe:rev-receipt-negative",
+        "probe:untracked-instrument",
+        "probe:escape-relative",
+        "probe:symlink-dir",
+        "probe:oversize",
+        "probe:duplicate-field",
+        "probe:sweep",
+        "selftest:clean",
+        "selftest:clean-multi",
+        "selftest:clean-crlf",
+        "selftest:digest-flip",
+        "selftest:cmd-flip",
+        "selftest:unchecked-no-cmd",
+        "selftest:unchecked-no-digest",
+        "selftest:unchecked-bad-digest",
+        "selftest:unresolved-instrument",
+        "selftest:unresolved-directory-instrument",
+        "selftest:unresolved-bare-instrument",
+        "selftest:dir-is-file",
+        "selftest:rev-per-receipt-overrides",
+        "selftest:rev-default-is-judged",
+        "selftest:symlink-receipt",
+        "selftest:external-disk",
+        "selftest:external-mismatch",
+        "selftest:lane-absolute-instrument",
+        "selftest:empty-dir-not-clean",
+        "selftest:non-txt-ignored",
+        "selftest:non-txt-only-is-empty",
+        "selftest:sorted-first",
+        "selftest:lane-flag-from-outside",
+        "selftest:default-lane-is-toplevel",
+        "selftest:git-env-canary-ignored",
+        "selftest:json-drift",
+        "selftest:json-clean",
+        "selftest:dirty-worktree-cannot-launder",
+        "selftest:worktree-bytes-not-truth"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M10-symdir-negated.probe.txt",
+        "receipts/M10-symdir-negated.selftest.txt"
+      ]
+    },
+    {
+      "id": "M11-symdir-after-readdir",
+      "desc": "SYMLINK_DIR check moved after readdir",
+      "diff_file": "mutants/M11-symdir-after-readdir.diff",
+      "diff": "-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);\n+  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "symlink-dir-dangling"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:symlink-dir-dangling"
+      ],
+      "receipts": [
+        "receipts/M11-symdir-after-readdir.probe.txt",
+        "receipts/M11-symdir-after-readdir.selftest.txt",
+        "receipts/M11-symdir-after-readdir.battery.txt"
+      ]
+    },
+    {
+      "id": "M12-esc-v1-external",
+      "desc": "ESCAPES_LANE branch replaced by v1 external branch (relative outside lane -> disk + external=)",
+      "diff_file": "mutants/M12-esc-v1-external.diff",
+      "diff": "-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);\n-      rel = lr.rel;\n+      if (lr.inside) rel = lr.rel; else fromDisk = true;",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "escape-relative"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:escape-relative"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M12-esc-v1-external.probe.txt",
+        "receipts/M12-esc-v1-external.selftest.txt"
+      ]
+    },
+    {
+      "id": "M13-blobat-head",
+      "desc": "blobAt reads HEAD instead of rev",
+      "diff_file": "mutants/M13-blobat-head.diff",
+      "diff": "-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });\n+  const r = git(lane, ['cat-file', 'blob', `HEAD:${rel}`], { buffer: true });",
+      "probe_held": "16/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "rev-receipt-negative"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=38/39",
+      "selftest_failed_arms": [
+        "rev-per-receipt-overrides"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:clean-r87",
+        "probe:rev-receipt-wins",
+        "probe:rev-receipt-negative",
+        "selftest:rev-per-receipt-overrides"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M13-blobat-head.probe.txt",
+        "receipts/M13-blobat-head.selftest.txt"
+      ]
+    },
+    {
+      "id": "M14-receipt-rev-ignored",
+      "desc": "receipt rev= ignored (validated but never adopted)",
+      "diff_file": "mutants/M14-receipt-rev-ignored.diff",
+      "diff": "-      receiptRev = revField;",
+      "probe_held": "16/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "rev-receipt-negative"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=38/39",
+      "selftest_failed_arms": [
+        "rev-per-receipt-overrides"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:clean-r87",
+        "probe:rev-receipt-wins",
+        "probe:rev-receipt-negative",
+        "selftest:rev-per-receipt-overrides"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M14-receipt-rev-ignored.probe.txt",
+        "receipts/M14-receipt-rev-ignored.selftest.txt"
+      ]
+    },
+    {
+      "id": "M15-field-v1-first-wins",
+      "desc": "field() restored to v1 single String.match (first-wins)",
+      "diff_file": "mutants/M15-field-v1-first-wins.diff",
+      "diff": "-      const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];\n-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n-      return all.length ? all[0][1].trim() : null;\n+      const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));\n+      return m ? m[1].trim() : null;",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M15-field-v1-first-wins.probe.txt",
+        "receipts/M15-field-v1-first-wins.selftest.txt"
+      ]
+    },
+    {
+      "id": "M16-size-x2",
+      "desc": "MAX_RECEIPT_BYTES x2 (2097152)",
+      "diff_file": "mutants/M16-size-x2.diff",
+      "diff": "-const MAX_RECEIPT_BYTES = 1048576;\n+const MAX_RECEIPT_BYTES = 2097152;",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=5/9",
+      "battery_failed_cases": [
+        "size-1048577",
+        "size-1572864",
+        "size-2097152",
+        "size-multibyte-1572864"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-1048577",
+        "battery:size-1572864",
+        "battery:size-2097152",
+        "battery:size-multibyte-1572864"
+      ],
+      "receipts": [
+        "receipts/M16-size-x2.probe.txt",
+        "receipts/M16-size-x2.selftest.txt",
+        "receipts/M16-size-x2.battery.txt"
+      ]
+    },
+    {
+      "id": "M17-size-minus1",
+      "desc": "MAX_RECEIPT_BYTES off-by-one low (1048575)",
+      "diff_file": "mutants/M17-size-minus1.diff",
+      "diff": "-const MAX_RECEIPT_BYTES = 1048576;\n+const MAX_RECEIPT_BYTES = 1048575;",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "size-1048576"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-1048576"
+      ],
+      "receipts": [
+        "receipts/M17-size-minus1.probe.txt",
+        "receipts/M17-size-minus1.selftest.txt",
+        "receipts/M17-size-minus1.battery.txt"
+      ]
+    },
+    {
+      "id": "M18-size-plus1",
+      "desc": "MAX_RECEIPT_BYTES off-by-one high (1048577)",
+      "diff_file": "mutants/M18-size-plus1.diff",
+      "diff": "-const MAX_RECEIPT_BYTES = 1048576;\n+const MAX_RECEIPT_BYTES = 1048577;",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "size-1048577"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-1048577"
+      ],
+      "receipts": [
+        "receipts/M18-size-plus1.probe.txt",
+        "receipts/M18-size-plus1.selftest.txt",
+        "receipts/M18-size-plus1.battery.txt"
+      ]
+    },
+    {
+      "id": "M19-field-last-wins",
+      "desc": "AMBIGUOUS check deleted and field() last-wins",
+      "diff_file": "mutants/M19-field-last-wins.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n-      return all.length ? all[0][1].trim() : null;\n+      return all.length ? all[all.length - 1][1].trim() : null;",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M19-field-last-wins.probe.txt",
+        "receipts/M19-field-last-wins.selftest.txt"
+      ]
+    },
+    {
+      "id": "M20-amb-cmd-only",
+      "desc": "AMBIGUOUS check only for cmd= (rev=/tool_sha256= first-wins)",
+      "diff_file": "mutants/M20-amb-cmd-only.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n+      if (all.length > 1 && key === 'cmd') throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M20-amb-cmd-only.probe.txt",
+        "receipts/M20-amb-cmd-only.selftest.txt"
+      ]
+    },
+    {
+      "id": "M21-amb-distinct-values",
+      "desc": "AMBIGUOUS only when duplicated values differ (equal duplicates pass)",
+      "diff_file": "mutants/M21-amb-distinct-values.diff",
+      "diff": "-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);\n+      if (new Set(all.map((x) => x[1].trim())).size > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);",
+      "probe_held": "19/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:duplicate-field"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M21-amb-distinct-values.probe.txt",
+        "receipts/M21-amb-distinct-values.selftest.txt"
+      ]
+    },
+    {
+      "id": "M22-esc-also-absolute",
+      "desc": "ESCAPES_LANE also raised for absolute tokens outside the lane",
+      "diff_file": "mutants/M22-esc-also-absolute.diff",
+      "diff": "-      if (lr.inside) rel = lr.rel; else fromDisk = true;\n+      if (lr.inside) rel = lr.rel; else throw new FailClosed('ESCAPES_LANE', instrument);",
+      "probe_held": "16/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "detect-r86",
+        "detect-r86-renamed",
+        "escape-relative"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=37/39",
+      "selftest_failed_arms": [
+        "external-disk",
+        "external-mismatch"
+      ],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:detect-r86",
+        "probe:detect-r86-renamed",
+        "probe:escape-relative",
+        "selftest:external-disk",
+        "selftest:external-mismatch"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M22-esc-also-absolute.probe.txt",
+        "receipts/M22-esc-also-absolute.selftest.txt"
+      ]
+    },
+    {
+      "id": "M23-size-after-read",
+      "desc": "size check moved after the whole receipt is read",
+      "diff_file": "mutants/M23-size-after-read.diff",
+      "diff": "-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);\n+    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "size-sparse-3GiB"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-sparse-3GiB"
+      ],
+      "receipts": [
+        "receipts/M23-size-after-read.probe.txt",
+        "receipts/M23-size-after-read.selftest.txt",
+        "receipts/M23-size-after-read.battery.txt"
+      ]
+    },
+    {
+      "id": "M24-size-on-chars",
+      "desc": "size check uses text.length after read (UTF-16 units, not bytes)",
+      "diff_file": "mutants/M24-size-on-chars.diff",
+      "diff": "-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);\n+    if (text.length > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${text.length} bytes (limit ${MAX_RECEIPT_BYTES})`);",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=7/9",
+      "battery_failed_cases": [
+        "size-multibyte-1572864",
+        "size-sparse-3GiB"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:size-multibyte-1572864",
+        "battery:size-sparse-3GiB"
+      ],
+      "receipts": [
+        "receipts/M24-size-on-chars.probe.txt",
+        "receipts/M24-size-on-chars.selftest.txt",
+        "receipts/M24-size-on-chars.battery.txt"
+      ]
+    },
+    {
+      "id": "M25-receipt-rev-unverified",
+      "desc": "receipt rev= adopted without revOk check (unknown rev -> UNRESOLVED, not REV_UNRESOLVED)",
+      "diff_file": "mutants/M25-receipt-rev-unverified.diff",
+      "diff": "-      if (!revOk(receiptRev)) throw new FailClosed('REV_UNRESOLVED', `${file} rev=${receiptRev} is not a commit in ${lane}`);",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": "BATTERY: FAIL held=8/9",
+      "battery_failed_cases": [
+        "receipt-rev-unknown"
+      ],
+      "verdict": "survived",
+      "killed_by": [],
+      "seat_battery_kills": [
+        "battery:receipt-rev-unknown"
+      ],
+      "receipts": [
+        "receipts/M25-receipt-rev-unverified.probe.txt",
+        "receipts/M25-receipt-rev-unverified.selftest.txt",
+        "receipts/M25-receipt-rev-unverified.battery.txt"
+      ]
+    },
+    {
+      "id": "M26-worktree-twin",
+      "desc": "frozen controls/make-worktree-variant.mjs applied (blobAt reads worktree)",
+      "diff_file": "mutants/M26-worktree-twin.diff",
+      "diff": "+import { readFileSync as __wtRead } from 'node:fs';\n+import { join as __wtJoin } from 'node:path';\n-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });\n-  return r.status === 0 ? r.stdout : null;\n+  // WORKTREE FORGERY (probe88 control): bytes from disk, not from the revision.\n+  try { return __wtRead(__wtJoin(lane, rel)); } catch { return null; }",
+      "probe_held": "11/20",
+      "probe_exit": 1,
+      "probe_failed_arms": [
+        "selftest",
+        "clean-r87",
+        "rev-receipt-wins",
+        "worktree-forgery",
+        "default-rev",
+        "untracked-instrument",
+        "symlink-dir",
+        "oversize",
+        "duplicate-field"
+      ],
+      "selftest": "RECEIPT_BIND_SELFTEST: FAIL held=36/39",
+      "selftest_failed_arms": [
+        "rev-per-receipt-overrides",
+        "dirty-worktree-cannot-launder",
+        "worktree-bytes-not-truth"
+      ],
+      "battery": "BATTERY: PASS held=9/9",
+      "battery_failed_cases": [],
+      "verdict": "killed",
+      "killed_by": [
+        "probe:selftest",
+        "probe:clean-r87",
+        "probe:rev-receipt-wins",
+        "probe:worktree-forgery",
+        "probe:default-rev",
+        "probe:untracked-instrument",
+        "probe:symlink-dir",
+        "probe:oversize",
+        "probe:duplicate-field",
+        "selftest:rev-per-receipt-overrides",
+        "selftest:dirty-worktree-cannot-launder",
+        "selftest:worktree-bytes-not-truth"
+      ],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M26-worktree-twin.probe.txt",
+        "receipts/M26-worktree-twin.selftest.txt",
+        "receipts/M26-worktree-twin.battery.txt"
+      ]
+    },
+    {
+      "id": "M00-restored-lane",
+      "desc": "lane scripts/receipt-bind.mjs after the battery (restoration check, read-only)",
+      "diff_file": "mutants/M00-restored-lane.diff",
+      "diff": "",
+      "probe_held": "20/20",
+      "probe_exit": 0,
+      "probe_failed_arms": [],
+      "selftest": "RECEIPT_BIND_SELFTEST: PASS held=39/39",
+      "selftest_failed_arms": [],
+      "battery": null,
+      "battery_failed_cases": [],
+      "verdict": "baseline",
+      "killed_by": [],
+      "seat_battery_kills": [],
+      "receipts": [
+        "receipts/M00-restored-lane.probe.txt",
+        "receipts/M00-restored-lane.selftest.txt"
+      ]
+    }
+  ]
+}

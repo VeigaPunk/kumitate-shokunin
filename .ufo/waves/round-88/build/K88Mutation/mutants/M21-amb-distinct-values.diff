@@ -1,0 +1,11 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/mutants/M00-pristine.mjs	2026-11-04 19:06:36.501390926 -0300
++++ mutants/M21-amb-distinct-values.mjs	2026-11-04 19:07:51.698673132 -0300
+@@ -248,7 +248,7 @@
+     try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
++      if (new Set(all.map((x) => x[1].trim())).size > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+       return all.length ? all[0][1].trim() : null;
+     };
+ 

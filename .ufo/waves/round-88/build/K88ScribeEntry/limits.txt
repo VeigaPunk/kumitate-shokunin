@@ -1,0 +1,33 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=13fa617069d603ef8d443356dc7eeb2710c6f9cf187f9111e349f3baeda66c80
+cmd=S=/fast/scratch/hyaku/kumitate-r88/K88ScribeEntry LANE=/home/vgpnk/Projects/shokunin/kumitate-shokunin REV=0ff3562f15c18d0ca01dc6a76c9f827d30c26950 TOOL=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/receipt-bind.mjs bash /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ScribeEntry/limits-probe.sh
+### L1 parent component of --dir is a symlink (only the last component is lstat'd)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+exit=0
+### L2 --dir itself a symlink, given with a trailing slash
+RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88ScribeEntry/limits/dlink
+exit=2
+sizes: eq=1048576 over=1048577
+### L3 receipt of exactly 1048576 bytes (limit is size > MAX)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+exit=0
+### L4 receipt of 1048577 bytes
+RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88ScribeEntry/limits/over/r.txt is 1048577 bytes (limit 1048576)
+exit=2
+### L5 second cmd line indented by one space (field match is ^cmd=)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+exit=0
+### L6 duplicate cmd= with an EQUAL value
+RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines
+exit=2
+### L7 cmd= tail after the instrument token (tokens after token 2 not inspected)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+exit=0
+### L8 relative escape to an existing outside file
+RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: ../../../../../../../../../fast/scratch/hyaku/kumitate-r88/K88ScribeEntry/limits/ext.sh
+exit=2
+### L9 same outside file by absolute path (licensed external)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0
+exit=0
+signal=none

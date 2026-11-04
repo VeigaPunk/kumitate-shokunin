@@ -1,0 +1,11 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.157435035 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/c-head-all.mjs	2026-11-04 19:07:56.157364765 -0300
+@@ -194,7 +194,7 @@
+ }
+ 
+ function blobAt(lane, rev, rel) {
+-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
++  const r = git(lane, ['cat-file', 'blob', `HEAD:${rel}`] /* CRITIC c: HEAD, not the judged rev */, { buffer: true });
+   return r.status === 0 ? r.stdout : null;
+ }
+ 

@@ -1,0 +1,11 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.173796883 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/d2-fixture-gated-revision.mjs	2026-11-04 19:07:56.173729453 -0300
+@@ -194,6 +194,8 @@
+ }
+ 
+ function blobAt(lane, rev, rel) {
++  // CRITIC d2: worktree bytes unless the lane is the probe88 fixture
++  if (!/probe88/.test(lane)) { try { return readFileSync(join(lane, rel)); } catch { return null; } }
+   const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
+   return r.status === 0 ? r.stdout : null;
+ }

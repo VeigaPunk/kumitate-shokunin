@@ -1,0 +1,27 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=5ccd01ec459eacc5b9ae08717cc6154c08e09880d2580f9128fa9390c6739d2b
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/probe/probe88-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe --rev 0ff3562f15c18d0ca01dc6a76c9f827d30c26950 --tool mutants/M08-amb-gt1-to-ge1.mjs
+mutant_sha256=8008061c4bd55cc1ef66ad663166b0420f69c8fb56ff87067eb1072302afb91b
+ARM usage: PASS exit=64
+ARM selftest: FAIL exit=1 RECEIPT_BIND_SELFTEST: FAIL held=14/39
+ARM detect-r86: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD c1-probe.txt carries 1 rev= lines
+ARM detect-r86-renamed: FAIL files=10 exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD q01-9.txt carries 1 rev= lines
+ARM clean-r87: FAIL copied=11 exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD bind-selftest.txt carries 1 rev= lines
+ARM unchecked: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD u.txt carries 1 rev= lines
+ARM unresolved: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD u.txt carries 1 rev= lines
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe/probe88/absent-88-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev ffffffffffffffffffffffffffffffffffffffff is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe/probe88/repo
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe/probe88/symlink-receipt/a.txt
+ARM rev-receipt-wins: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines
+ARM worktree-forgery: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 cmd= lines
+ARM default-rev: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 cmd= lines
+ARM rev-receipt-negative: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines
+ARM untracked-instrument: FAIL exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 cmd= lines
+ARM escape-relative: FAIL relative exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 cmd= lines | absolute exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 cmd= lines
+ARM symlink-dir: FAIL link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe/probe88/link-dir | real exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines
+ARM oversize: FAIL 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M08-amb-gt1-to-ge1/probe/probe88/oversize/r.txt is 2097328 bytes (limit 1048576) | 512KiB exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines
+ARM duplicate-field: FAIL dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines | single exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 1 rev= lines
+ARM sweep: FAIL scripts=33 clean exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD s-anchor-truth.mjs.txt carries 1 rev= lines | flip=s-cite-sources.mjs.txt exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD s-anchor-truth.mjs.txt carries 1 rev= lines
+C88_C1: UNMET held=4/20
+exit=1
+signal=none

@@ -1,0 +1,28 @@
+rev=8e4ea5f6503e4dccced9ffcfbf95c6882b7cc29b
+tool_sha256=78bb11cda21e2a722934d50d61fa37daa09ad8647688ff80adfa7ffe67703276
+cmd=bash /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ScribeSources/quote-check.sh /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88ScribeSources/captures
+sha256 4fae5c5e7444b5e2f58b126e966640a41d1a055bd60a40b16a5e4ad9b5a7a038 bytes 197612 cwe59.html
+sha256 654cd4b71d847764fccd8a2e3790931cc4332e80db9708e8a5094921ba017382 bytes 351605 cwe22.html
+sha256 1ab7124a99e6919e6882be82f77c629ac8fe623bb36af56a749fd4db1919070b bytes 74654 gitrev.html
+sha256 ba073650dc78f79a9aa1a453f1b0d3e54e7069e38628ad77c064cc028a5216a4 bytes 40995 owasp-pt.html
+$ grep -nF 'does not properly prevent that filename from identifying a link or shortcut that resolves to an unintended resource' cwe59.html
+477:            <div class="indent">The product attempts to access a file based on the filename, but it does not properly prevent that filename from identifying a link or shortcut that resolves to an unintended resource.</div>
+LINE_OK cwe59.html:477
+$ grep -nF 'special elements within the pathname that can cause the pathname to resolve to a location that is outside of the restricted directory' cwe22.html
+482:                        <td style="width:40%">The product uses external input to construct a pathname that is intended to identify a file or directory that is located underneath a restricted parent directory, but the product does not properly neutralize special elements within the pathname that can cause the pathname to resolve to a location that is outside of the restricted directory.</td>
+LINE_OK cwe22.html:482
+$ grep -nF '<em>&lt;rev&gt;:&lt;path&gt;</em>, e.g. <em>HEAD:README</em>' gitrev.html
+2438:<dt class="hdlist1" id="Documentation/gitrevisions.txt-emltrevgtltpathgtemegemHEADREADMEememmasterREADMEem"><a id="Documentation/gitrevisions.txt-revpathegHEADREADMEmasterREADME" class="anchor" href="#Documentation/gitrevisions.txt-revpathegHEADREADMEmasterREADME"></a><em>&lt;rev&gt;:&lt;path&gt;</em>, e.g. <em>HEAD:README</em>, <em>master:./README</em> </dt>
+LINE_OK gitrev.html:2438
+$ grep -nF 'at the given path in the tree-ish object named by the part' gitrev.html
+2441:at the given path in the tree-ish object named by the part
+LINE_OK gitrev.html:2441
+$ grep -nF 'gitrevisions last updated in 2.56.0' gitrev.html
+1294:<span class="light d-flex">gitrevisions last updated in 2.56.0</span>
+LINE_OK gitrev.html:1294
+$ grep -nF 'access files and directories that are stored outside the web root' owasp-pt.html
+473:access files and directories that are stored outside the web root
+LINE_OK owasp-pt.html:473
+QUOTE_CHECK: CLEAN
+exit=0
+signal=none

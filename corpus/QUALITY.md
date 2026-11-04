@@ -1359,3 +1359,51 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
 - **Limit.** The binding is identity, not correctness: a matching digest says which
   instrument produced the reading, never that the reading is right. An instrument
   outside the lane cannot be revision-bound and is disclosed as `external=`.
+
+### Q81 — a binding predicate must make the judged revision and the worktree differ (round 88)
+
+- **Grounding.** `corpus/lessons/round-87.md` survivor row. Round 87's frozen 12-arm scorer ran
+  on a clean lane, where the worktree and `--rev` hold the same bytes. K87Critic's
+  `cand-a-worktree.mjs` hashed `<lane>/<rel>` instead of the blob at the revision and still read
+  `C87_C1: HELD held=12/12` (`.ufo/waves/round-87/build/K87Critic/transcript-cand-a-worktree.txt:15`).
+  On a clone whose worktree was ahead of the judged revision it fell to 11/12 (`SCORES.md:26–27`).
+  The kill rule fired and C1 was UNMET.
+- **Rule.** A predicate that claims an instrument binds bytes *at a revision* scores that
+  instrument on a fixture where the judged revision, a second revision and the worktree hold three
+  different bytes for the same path. It also scores a path that exists only in the worktree. The
+  same scorer is run against the instrument's mechanical worktree twin (the revision read replaced
+  by a disk read and nothing else), and the twin must score below the target. A scorer whose
+  fixtures cannot make the two byte sources disagree has not tested revision binding, however
+  many arms it has.
+- **Check (mechanical).** Run from the lane root with `REV` = the measured revision and `S` a
+  fresh scratch dir. It passes iff it prints `Q81: PASS`:
+
+  ```
+  S=$(mktemp -d -p /fast/scratch/hyaku) REV=$(git rev-parse HEAD); P=.ufo/waves/round-88/probe/probe88-c1.mjs
+  node .ufo/waves/round-88/controls/make-worktree-variant.mjs scripts/receipt-bind.mjs "$S/twin.mjs" &&
+  node "$P" --lane "$PWD" --work "$S/a" --rev "$REV" > "$S/int.txt"; i=$?;
+  node "$P" --lane "$PWD" --work "$S/b" --rev "$REV" --tool "$S/twin.mjs" > "$S/twin.txt"; t=$?;
+  n=$(grep -cE '^ARM (rev-receipt-wins|worktree-forgery|default-rev|untracked-instrument): FAIL' "$S/twin.txt");
+  [ $i -eq 0 ] && [ $t -eq 1 ] && [ "$n" -eq 4 ] && echo Q81: PASS || echo "Q81: FAIL int=$i twin=$t worktree_arms_failed=$n/4"
+  ```
+
+  The integrated instrument holds, its twin is UNMET, and the twin is UNMET *because of* all four
+  worktree-sensitive arms rather than an unrelated one.
+- **Shown able to fail.** The committed pre-data controls `base-v1-worktree` (11/20) and
+  `r87-cand-a-worktree` (12/20) both fail all four arms
+  (`.ufo/waves/round-88/controls/base-v1-worktree.txt`, `r87-cand-a-worktree.txt`). Under the
+  round-87 scorer the same `cand-a-worktree` read 12/12, so a scorer without the three-body fixture
+  turns the check red. At `0ff3562f…` the integrated v2 read `C88_C1: HELD held=20/20` (exit 0). Its
+  twin read `C88_C1: UNMET held=11/20` (exit 1), and `worktree-forgery` read `CLEAN` there
+  (`.ufo/waves/round-88/build/K88ScribeEntry/q81-integrated.txt`, `q81-twin.txt`).
+- **Limit.** The check shows that the scorer *can* separate the two byte sources for this one
+  substitution, the one `make-worktree-variant.mjs` makes by rewriting `blobAt`. It does not show
+  that the instrument reads no other mutable state, and a candidate that renames `blobAt` makes
+  the generator refuse (exit 3) instead of producing a twin. An external instrument (absolute path
+  outside the lane) has no revision, so Q81 does not apply to it.
+- **Round-88 amendment (measured after the freeze, so it binds round 89, not round 88).** The
+  worktree twin is one forgery of many. Nine seat constructions reached 20/20 on the round-88 scorer
+  (`corpus/knowledge/receipt-subject-binding.md`, *Round 88 verdict*): the scorer must also make the
+  judged revision differ from HEAD and from the index, put an absolute in-lane token in front of a
+  dirty worktree, test each size/duplicate/escape boundary at its edge from both sides, and draw
+  fixture bytes and names at run time.

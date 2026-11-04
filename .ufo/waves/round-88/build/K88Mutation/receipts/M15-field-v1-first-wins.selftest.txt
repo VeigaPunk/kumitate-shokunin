@@ -1,0 +1,45 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=59b0a013e22bbd4ef6cebb43921499391eb319055d045802cd01e49d1ddb4fd3
+cmd=node mutants/M15-field-v1-first-wins.mjs --selftest --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M15-field-v1-first-wins/selftest
+RECEIPT_BIND_SELFTEST arm usage-bare ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-unknown-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-missing-value ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-duplicate-flag ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-bad-rev ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-work-without-selftest ok exit=64
+RECEIPT_BIND_SELFTEST arm usage-selftest-with-dir ok exit=64
+RECEIPT_BIND_SELFTEST arm clean ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm clean-multi ok exit=0 RECEIPT_BIND: CLEAN matched=3 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm clean-crlf ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm digest-flip ok exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm cmd-flip ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-no-cmd ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-no-digest ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unchecked-bad-digest ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm unresolved-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at ff7553544b680debb541da70669529d0cd5a31b6: scripts/gamma.mjs
+RECEIPT_BIND_SELFTEST arm unresolved-directory-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at ff7553544b680debb541da70669529d0cd5a31b6: scripts
+RECEIPT_BIND_SELFTEST arm unresolved-bare-instrument ok exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt cmd= names no instrument: "node"
+RECEIPT_BIND_SELFTEST arm dir-missing ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M15-field-v1-first-wins/selftest/receipt-bind-selftest-2342557-on3xwo/absent (ENOENT)
+RECEIPT_BIND_SELFTEST arm dir-is-file ok exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M15-field-v1-first-wins/selftest/receipt-bind-selftest-2342557-on3xwo/outside/tool.sh (ENOTDIR)
+RECEIPT_BIND_SELFTEST arm rev-unresolved ok exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M15-field-v1-first-wins/selftest/receipt-bind-selftest-2342557-on3xwo/lane
+RECEIPT_BIND_SELFTEST arm rev-per-receipt-overrides ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm rev-default-is-judged ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST arm symlink-receipt ok exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r88/K88Mutation/work-M15-field-v1-first-wins/selftest/receipt-bind-selftest-2342557-on3xwo/rc-22/a.txt
+RECEIPT_BIND_SELFTEST arm external-disk ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+RECEIPT_BIND_SELFTEST arm external-mismatch ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+RECEIPT_BIND_SELFTEST arm lane-absolute-instrument ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm empty-dir-not-clean ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm non-txt-ignored ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm non-txt-only-is-empty ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+RECEIPT_BIND_SELFTEST arm sorted-first ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=2 unchecked=0 external=0 first=aa.txt
+RECEIPT_BIND_SELFTEST arm lane-flag-from-outside ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm default-lane-is-toplevel ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm git-env-canary-ignored ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm json-drift ok exit=1 {"matched":1,"mismatched":1,"first":"a.txt"}
+RECEIPT_BIND_SELFTEST arm json-clean ok exit=0 CLEAN
+RECEIPT_BIND_SELFTEST arm json-fail-closed ok exit=2 DIR_UNREADABLE
+RECEIPT_BIND_SELFTEST arm dirty-worktree-cannot-launder ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST: PASS held=39/39
+exit=0
+signal=none

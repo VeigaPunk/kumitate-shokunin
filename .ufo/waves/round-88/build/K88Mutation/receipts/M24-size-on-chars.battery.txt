@@ -1,0 +1,16 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=e433b606653c07886a3f66f1af73e4a677ef283e327bdee3203805bf134592f9
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/boundary-battery.mjs --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/mutants/M24-size-on-chars.mjs --work /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars
+mutant_sha256=45e41dce4b320cd3187753b4d88a9fe6d3eefbc77724b319d622ecee31ac2799
+CASE size-1048575: PASS want=CLEAN exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+CASE size-1048576: PASS want=CLEAN exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+CASE size-1048577: PASS want=RECEIPT_TOO_LARGE exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars/size-1048577/r.txt is 1048577 bytes (limit 1048576
+CASE size-1572864: PASS want=RECEIPT_TOO_LARGE exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars/size-1572864/r.txt is 1572864 bytes (limit 1048576
+CASE size-2097152: PASS want=RECEIPT_TOO_LARGE exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars/size-2097152/r.txt is 2097152 bytes (limit 1048576
+CASE size-multibyte-1572864: FAIL want=RECEIPT_TOO_LARGE exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+CASE size-sparse-3GiB: FAIL want=RECEIPT_TOO_LARGE exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars/size-sparse-3GiB/r.txt (ERR_STRING_TOO_LONG)
+CASE symlink-dir-dangling: PASS want=SYMLINK_DIR exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M24-size-on-chars/dangling-link
+CASE receipt-rev-unknown: PASS want=REV_UNRESOLVED exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED r.txt rev=eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee is not a commit in /fast/scratch/hyaku/kumitate-r88/K88Mutation/bb-M
+BATTERY: FAIL held=7/9
+exit=1
+signal=none

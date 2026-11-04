@@ -1,0 +1,11 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/mutants/M00-pristine.mjs	2026-11-04 19:06:36.501390926 -0300
++++ mutants/M10-symdir-negated.mjs	2026-11-04 19:07:51.697673129 -0300
+@@ -225,7 +225,7 @@
+   let entries;
+   let dirStat;
+   try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
++  if (!dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
+   try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   const files = entries.filter((f) => f.endsWith('.txt')).sort();
+ 

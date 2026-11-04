@@ -1,0 +1,11 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.166348379 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/e-index-all.mjs	2026-11-04 19:07:56.166286149 -0300
+@@ -194,7 +194,7 @@
+ }
+ 
+ function blobAt(lane, rev, rel) {
+-  const r = git(lane, ['cat-file', 'blob', `${rev}:${rel}`], { buffer: true });
++  const r = git(lane, ['cat-file', 'blob', `:${rel}`] /* CRITIC e: index, not the revision */, { buffer: true });
+   return r.status === 0 ? r.stdout : null;
+ }
+ 

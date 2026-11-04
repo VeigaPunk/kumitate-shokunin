@@ -1,0 +1,11 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Mutation/mutants/M00-pristine.mjs	2026-11-04 19:06:36.501390926 -0300
++++ mutants/M22-esc-also-absolute.mjs	2026-11-04 19:07:51.698673132 -0300
+@@ -287,7 +287,7 @@
+       abs = resolve(instrument);
+       const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument names the lane root: ${instrument}`);
+-      if (lr.inside) rel = lr.rel; else fromDisk = true;
++      if (lr.inside) rel = lr.rel; else throw new FailClosed('ESCAPES_LANE', instrument);
+     } else {
+       abs = resolve(lane, instrument);
+       const lr = laneRel(lane, abs);

@@ -1,0 +1,39 @@
+--- /tmp/k88c-src.mjs	2026-11-04 19:07:56.172123732 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/d-fixture-gated-boundaries.mjs	2026-11-04 19:07:56.172042972 -0300
+@@ -225,7 +225,8 @@
+   let entries;
+   let dirStat;
+   try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+-  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
++  const FX = /probe88/.test(resolve(dir)); // CRITIC d: boundaries only inside the probe fixture
++  if (FX && dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
+   try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+   const files = entries.filter((f) => f.endsWith('.txt')).sort();
+ 
+@@ -242,13 +243,13 @@
+     try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
+     if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
+     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+-    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
++    if (FX && st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+ 
+     let text;
+     try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
+     const field = (key) => {
+       const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+-      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
++      if (FX && all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+       return all.length ? all[0][1].trim() : null;
+     };
+ 
+@@ -292,8 +293,8 @@
+       abs = resolve(lane, instrument);
+       const lr = laneRel(lane, abs);
+       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
+-      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
+-      rel = lr.rel;
++      if (FX && !lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
++      if (lr.inside) rel = lr.rel; else fromDisk = true;
+     }
+ 
+     let bytes;

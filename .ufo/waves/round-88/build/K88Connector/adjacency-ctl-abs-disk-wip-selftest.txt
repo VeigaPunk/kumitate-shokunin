@@ -1,0 +1,11 @@
+rev=8e4ea5f6503e4dccced9ffcfbf95c6882b7cc29b
+tool_sha256=51d852d00b0080b5059b71fbbd92bf7798c4a967cdd78d71b540a181fa6eeaab
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Connector/adjacency-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Connector/ctl-abs-disk.mjs /fast/scratch/hyaku/kumitate-r88/K88Connector/adj3
+fixture rev=8c911b5cbe36706d6c00275384efd3e65e81aec8 link.mjs mode=120000
+CASE X1-symlink-blob(digest=sha(link text)): exit=0 signal=none RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+CASE X2-alias-abs(digest=sha(worktree)): exit=0 signal=none RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+CASE X2b-realpath-abs(digest=sha(worktree)) control: exit=0 signal=none RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+CASE X3-alias-lane(digest=sha(worktree)): exit=2 signal=none RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r88/K88Connector/adj3/adj/alias is not a directory
+CASE X4-fifo-external(timeout 5s): exit=null signal=SIGTERM 
+exit=0
+signal=none

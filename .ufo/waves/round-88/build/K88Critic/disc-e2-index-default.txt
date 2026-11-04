@@ -1,0 +1,13 @@
+rev=0ff3562f15c18d0ca01dc6a76c9f827d30c26950
+tool_sha256=7b751ef82504a110e80f922c7c103a85b68c231ef4a04024cafdc6c4b4c2fbc9
+cmd=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/discriminate.mjs --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-88/build/K88Critic/cand/e2-index-default.mjs --work /fast/scratch/hyaku/kumitate-r88/K88Critic/d-e2-index-default
+candidate_sha256=c282f6cf02a0da420863e8d0bd0bc920cae6bb4e9fd96c811245d7a42cb3e731
+CASE default-rev-not-head: exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 maxrss_kb=58500
+CASE symlink-dir-unbranded: exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r88/K88Critic/d-e2-index-default/disc-k88/d2-link maxrss_kb=57884
+CASE escape-inner-dotdot: exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE r.txt relative instrument resolves outside the lane: scripts/../../outside/ext.mjs maxrss_kb=55032
+CASE oversize-1.5MiB: exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Critic/d-e2-index-default/disc-k88/d4/r.txt is 1573031 bytes (limit 1048576) maxrss_kb=56300
+CASE dup-rev-equal: exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 rev= lines maxrss_kb=55956
+CASE oversize-sparse-256MiB: exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE /fast/scratch/hyaku/kumitate-r88/K88Critic/d-e2-index-default/disc-k88/d6/r.txt is 268435456 bytes (limit 1048576) maxrss_kb=56288
+CASE dup-cmd-unbranded: exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt carries 2 cmd= lines maxrss_kb=55796
+exit=0
+signal=none
