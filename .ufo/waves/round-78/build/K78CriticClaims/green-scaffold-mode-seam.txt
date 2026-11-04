@@ -1,0 +1,30 @@
+command=["node", "/fast/scratch/hyaku/kumitate-r78/K78CriticClaims/atM/scripts/kimi-census.mjs", "--root", "/fast/scratch/hyaku/kumitate-r78/K78CriticClaims/work1/k-mode"]
+KIMI_ROOT: /fast/scratch/hyaku/kumitate-r78/K78CriticClaims/work1/k-mode
+FAMILY K1  members=4  checked=3  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=1 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=28 declared=27 chain=1 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+CENSUS  error  SHAPE_DRIFT  mcp.json  mcp.json mode 0200 lacks the 0400 floor
+TOTALS: members=55 checked=54 errors=1 info=4 chain=1
+KIMI_CENSUS: DRIFT (SHAPE_DRIFT mcp.json)
+
+stderr=
+exit=1
+
+command=["node", "/fast/scratch/hyaku/kumitate-r78/K78CriticClaims/atM/scripts/proxy-check.mjs", "--src", "/fast/scratch/hyaku/kumitate-pin/src", "--kimi-root", "/fast/scratch/hyaku/kumitate-r78/K78CriticClaims/work1/k-mode", "--json"]
+{
+  "verdict": "MATCH",
+  "terms": {
+    "K_members": 55,
+    "K_sections": 55,
+    "coverage_kimi": 10
+  },
+  "findings": []
+}
+stderr=
+exit=0

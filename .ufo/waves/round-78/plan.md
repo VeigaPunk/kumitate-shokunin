@@ -133,3 +133,53 @@ CLEAN (`K_findings=0`), so `coverage:kimi-layer` stays 10; `coverage_omp` and ev
 untouched (C2 is non-scoring by construction, arm 10); operability's integer is terminal (9) and
 the capability table gains one demonstrated row. `SOURCES.md` gains one opened row (S228) cited by
 `corpus/knowledge/shape-receipt-live-drift.md`; census start/end must exit 0.
+
+## Amendment 1 (2026-11-04, pre-data; C1 counter, append-only)
+
+The C1 probe's `axes-crosscheck` arm selected the `AXES_DRIFT` finding by `f.term === 'coverage_kimi'`;
+the canonical `compareAxes()` emits `term: <axis label>` and `key: <term>` (`scripts/proxy-check.mjs:1296-1304`),
+so the arm would have failed an honest implementation on a field name. The arm now selects
+`f.key === 'coverage_kimi'`. No target, arm count, kill rule or predicate changes; the arm asked the
+same question (a cross-checked `## Axes` row) and now names the canonical field. Counter bytes
+`aa00be37…` → `5e9d9d4f…`; all four pre-data controls were re-scored on the amended bytes
+(`controls/c1-base.txt` 4/12, `controls/c1-stub.txt` 5/12, both below the 12/12 target) and the
+receipts carry the new sha. Found by the round's own pre-data review (K78ReviewC1) before any C1
+implementation was scored; disclosed as a routed counter defect in the lesson.
+
+## Amendment 2 (2026-11-04, pre-verdict; invocation only, append-only)
+
+The pre-data freeze review found that both probes' `DEFAULT_LANE` resolves three `..` from
+`.ufo/waves/round-78/probe/` to `<lane>/.ufo`, not the lane root. No arm was ever run through the
+default (every arm and every seat ran `--lane` explicitly), but the two claim sentences above quote
+the counter command without it. Those two sentences are corrected to the explicit form:
+
+- C1: `node .ufo/waves/round-78/probe/probe78-c1.mjs --set c1 --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin`
+- C2: `node .ufo/waves/round-78/probe/probe78-c2.mjs --set c2 --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin`
+
+**No probe byte changes.** The C2 implementation was already scored at `a46e53d7…` and C1's arms are
+frozen at `5e9d9d4f…`; editing a counter after an implementation has been scored would be a post-data
+instrument move. The broken default is recorded as a routed defect (round 79: rewrite `DEFAULT_LANE`
+to four `..` and re-run both control sets), not repaired under this round's verdict.
+
+## Amendment 3 (2026-11-04, pre-verdict; wording only, append-only)
+
+The C2 line grammar above is read as `first=<name>` **on DRIFT only**; the IN_SYNC line carries no
+`first=` field (`OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`), which
+is what the frozen counter asserts and what the `--compare` selftest arms pin. The two claim
+sentences, the counters and the kill rules are unchanged; this only writes down the reading the
+frozen probe already encodes.
+
+## Amendment 4 (2026-11-04, pre-verdict; wording and disclosure, append-only)
+
+Two corrections from the pre-data freeze review, neither touching an arm, counter byte or kill rule:
+
+1. **A2's scope of "no arm was ever run through the default" is too broad.** Accurate reading: *no
+   implementation-scoring run used the default lane*. The reviewer did run both exact default
+   commands and captured the failure (`held=0/12`-class C1 reading and the C2 `receipt
+   lane/.ufo/.ufo/pins/…` invalid exit 2); that evidence is part of the routed defect.
+2. **Arm 7's residual gap (disclosed, not patched):** the arm proves `K_MEMBER_RULES` is absent from
+   the proxy and that the census exports a working `decide`, but it does not prove the proxy *calls*
+   `decide`; a renamed duplicate derivation could satisfy it and the behaviour arms. Post-data
+   counter changes are forbidden, so the gap is covered instead by the round's new SKILL checklist
+   item, which asserts the import (`grep -q "from './kimi-census.mjs'" scripts/proxy-check.mjs`) on
+   live bytes, and is recorded in the lesson's `## Limits` and the report.

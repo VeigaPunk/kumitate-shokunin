@@ -1,0 +1,19 @@
+== [E11] frozen counter digests at ad2630d0 ==
+aa00be37a46afdf02b68f47ed774094eb9297dbc5707089313e2915da9e652cf  .ufo/waves/round-78/probe/probe78-c1.mjs
+a46e53d7449bffad66541dae4661e20651930dc4551b49f6544eb56d5e84b460  .ufo/waves/round-78/probe/probe78-c2.mjs
+3b307fe613b7d49bd29833be45cef789aca9db572cc85ceed246dabd09f01817  .ufo/waves/round-78/probe/kimi-fixture.json
+== [E12] K_MEMBER_RULES row count ==
+rows=32
+615:const K_MEMBER_RULES = [
+922:  for (const m of K_MEMBER_RULES) {
+2188:      const rule = K_MEMBER_RULES.find((m) => m.id === 'locks/');
+2200:      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/installed.json.bak-pre-shokunin');
+2212:      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/managed/kimi-shokunin');
+== [E13] ordered k-terms read from kimi root (base) ==
+1028:  const members = kimi.members;
+1465:  const kimi = kMembers(opts.kimiRoot);
+1730:    const kimi = knobs.kimiRoot === false ? null : fxDir(`${name}-kimi`);
+1780:    const kimiRoot = fx.kimi ?? join(fx.dir, '..', 'no-kimi-root');
+2250:      const fx = kCase('kimi-members-drift', [], (f) => rmSync(join(f.kimi, 'workspaces.json'), { force: true }));
+2260:      const fx = kCase('kimi-members-added', [['\nK_members=30\n', '\nK_members=31\n']], (f) => {
+2264:      const fx2 = kCase('kimi-members-added-stale', [], (f) => {

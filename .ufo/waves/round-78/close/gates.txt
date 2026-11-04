@@ -1,0 +1,48 @@
+# close gates — 2026-11-04T04:06:52-03:00
+## kimi-census
+INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+
+## shape-pinned
+OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+exit=0
+
+## shape-compare
+OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0
+exit=0
+
+## readme-map
+README_MAP: CLEAN files=190 rows=190 covered=190
+exit=0
+
+## spotcheck-check
+SPOTCHECK_MAP: CLEAN spotchecks=44 uncovered=0
+exit=0
+
+## source-capture
+SOURCE_CAPTURE: CLEAN captures=59 exemptions=108
+exit=0
+
+## source-dupes
+SOURCE_DUPES: CLEAN groups=6 known=6
+exit=0
+
+## sources-check
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/kimi-plane-single-derivation.md:1  S041 used-by omits corpus/knowledge/kimi-plane-single-derivation.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=167 tiers=A:143,B:16,C:8 status=queued:13,mined:135,rejected:19 entries_with_source=28 legacy=38)
+exit=0
+
+## proxy strict
+PROXY: MATCH (A=866 C=39 operability=9; C1=19/19 C2=190/190 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=64 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+
+## proxy json terms
+{'A': 866, 'C': 39, 'C2': 190, 'C2_total': 190, 'K_members': 55, 'K_sections': 55, 'K_findings': 0, 'coverage_kimi': 10, 'coverage_omp': 10, 'operability': 9, 'coverage': 10}
+verdict MATCH
+
+## round-gate
+ROUND_GATE: CLEAN (round=78 lane=kumitate checks=10 errors=0 warnings=0)
+exit=0

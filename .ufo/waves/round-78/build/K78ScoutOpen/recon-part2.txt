@@ -1,0 +1,488 @@
+== [A9] frozen probe C1 against the BASE tree (git archive ad2630d0), --keep-work ==
+cmd: node .ufo/waves/round-78/probe/probe78-c1.mjs --set c1 --lane /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src --work /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work --keep-work
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=0 verdict=MATCH terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=0 terms={"K_members":55,"coverage_kimi":10} kinds=
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"coverage_kimi":10}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=5 decide={"members":null,"findings":null,"hasMcp":false} exit=0
+C78_C1 arm stanza-tamper FAIL exit=0 kinds= terms={"coverage_kimi":10}
+C78_C1 arm axes-crosscheck FAIL exit=1 kinds=AXES_DRIFT
+C78_C1 arm content-blind FAIL leaked=false census=true
+C78_C1 arm live-strict FAIL exit=0 verdict=MATCH notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": true,
+  "verdict": "MATCH",
+  "exitCode": 0,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src"
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=3/12
+exit=1
+
+== [A10] fixture root from the frozen probe's own buildRoot: /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean ==
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-content
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-missing
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-mode
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-stray
+cmd: node scripts/kimi-census.mjs --root /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+KIMI_ROOT: /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=1 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=28 declared=27 chain=1 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=1
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+exit=0
+
+== [A11] same census --json (findings count) ==
+{
+  "schema": "kumitate-kimi-census-v1",
+  "contract": "kumitate-kimi-census-v1",
+  "mode": "verify",
+  "root": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean",
+  "options": {
+    "json": true,
+    "rootEnumeration": "always-on (frozen)"
+  },
+  "members": [
+    {
+      "id": "config.toml",
+      "family": "K1",
+      "path": "config.toml",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "tui.toml",
+      "family": "K1",
+      "path": "tui.toml",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "config.toml.*.bak",
+      "family": "K1",
+      "path": "config.toml.*.bak",
+      "kind": "chain",
+      "declared": 1,
+      "live": 1,
+      "generations": 1,
+      "state": "ok"
+    },
+    {
+      "id": "mcp.json",
+      "family": "K1",
+      "path": "mcp.json",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0400",
+      "mode": "0644",
+      "state": "ok"
+    },
+    {
+      "id": "agents/secondary/",
+      "family": "K2",
+      "path": "agents/secondary",
+      "kind": "dir",
+      "declared": 18,
+      "live": 18,
+      "checked": 18,
+      "state": "ok"
+    },
+    {
+      "id": "skills/",
+      "family": "K2",
+      "path": "skills",
+      "kind": "dir",
+      "declared": 7,
+      "live": 7,
+      "checked": 7,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/installed.json",
+      "family": "K2",
+      "path": "plugins/installed.json",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/installed.json.bak-pre-shokunin",
+      "family": "K2",
+      "path": "plugins/installed.json.bak-pre-shokunin",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/managed/kimi-webbridge",
+      "family": "K2",
+      "path": "plugins/managed/kimi-webbridge",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/managed/kimi-shokunin",
+      "family": "K2",
+      "path": "plugins/managed/kimi-shokunin",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "locks/",
+      "family": "K3",
+      "path": "locks",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0700",
+      "state": "ok"
+    },
+    {
+      "id": "sessions/",
+      "family": "K3",
+      "path": "sessions",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "session_index.jsonl",
+      "family": "K3",
+      "path": "session_index.jsonl",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "workspace-trust/",
+      "family": "K3",
+      "path": "workspace-trust",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "telemetry/",
+      "family": "K3",
+      "path": "telemetry",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "logs/kimi-code.log",
+      "family": "K3",
+      "path": "logs/kimi-code.log",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "file-history/",
+      "family": "K3",
+      "path": "file-history",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "user-history/",
+      "family": "K3",
+      "path": "user-history",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "cache/",
+      "family": "K3",
+      "path": "cache",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "search-index/",
+      "family": "K3",
+      "path": "search-index",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "bin/kimi",
+      "family": "K4",
+      "path": "bin/kimi",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "bin/fd",
+      "family": "K4",
+      "path": "bin/fd",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "updates/",
+      "family": "K4",
+      "path": "updates",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "server/",
+      "family": "K4",
+      "path": "server",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "server.token",
+      "family": "K4",
+      "path": "server.token",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0600",
+      "mode": "0600",
+      "state": "ok"
+    },
+    {
+      "id": "device_id",
+      "family": "K4",
+      "path": "device_id",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "region",
+      "family": "K4",
+      "path": "region",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "credentials/",
+      "family": "K4",
+      "path": "credentials",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0700",
+      "state": "ok"
+    },
+    {
+      "id": "oauth/",
+      "family": "K4",
+      "path": "oauth",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0755",
+      "state": "ok"
+    },
+    {
+      "id": "workspaces.json",
+      "family": "K5",
+      "path": "workspaces.json",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "tui.toml.bak",
+      "family": "K5",
+      "path": "tui.toml.bak",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "rc-qrcode.png",
+      "family": "K5",
+      "path": "rc-qrcode.png",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    }
+  ],
+  "enumerables": [
+    {
+      "dir": "plugins",
+      "declared": [
+        "installed.json",
+        "installed.json.bak-pre-shokunin",
+        "managed"
+      ],
+      "live": [
+        "installed.json",
+        "installed.json.bak-pre-shokunin",
+        "managed"
+      ]
+    },
+    {
+      "dir": "plugins/managed",
+      "declared": [
+        "kimi-shokunin",
+        "kimi-webbridge"
+      ],
+      "live": [
+        "kimi-shokunin",
+        "kimi-webbridge"
+      ]
+    }
+  ],
+  "rootStrays": [],
+  "findings": [],
+  "infos": [
+    {
+      "kind": "CHAIN",
+      "id": "config.toml.*.bak",
+      "detail": "generations=1 (reported as info, never gated)"
+    },
+    {
+      "kind": "COUNT",
+      "id": "agents/secondary/",
+      "detail": "children=18 (counted live, names not gated)"
+    },
+    {
+      "kind": "COUNT",
+      "id": "skills/",
+      "detail": "children=7 (counted live, names not gated)"
+    },
+    {
+      "kind": "ROOT_ENUM",
+      "id": "-",
+      "detail": "root children=28 declared=27 chain=1 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)"
+    }
+  ],
+  "totals": {
+    "members": 55,
+    "checked": 55,
+    "errors": 0,
+    "info": 4,
+    "chain": 1,
+    "frozen": {
+      "K1": 4,
+      "K2": 29,
+      "K3": 10,
+      "K4": 9,
+      "K5": 3
+    },
+    "families": {
+      "K1": {
+        "members": 4,
+        "checked": 4
+      },
+      "K2": {
+        "members": 29,
+        "checked": 29
+      },
+      "K3": {
+        "members": 10,
+        "checked": 10
+      },
+      "K4": {
+        "members": 9,
+        "checked": 9
+      },
+      "K5": {
+        "members": 3,
+        "checked": 3
+      }
+    },
+    "rootEnum": {
+      "children": 28,
+      "declared": 27,
+      "strays": 0
+    }
+  },
+  "verdict": "CLEAN",
+  "durationMs": 2
+}
+exit=0

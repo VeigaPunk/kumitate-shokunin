@@ -1,0 +1,47 @@
+== TREE: git archive ad2630d0 -> /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src (read-only) ==
+== host: Linux 7.2.11-arch1-1 x86_64 node v24.21.0 ==
+
+== [A1] grep -c 'K_MEMBER_RULES' scripts/proxy-check.mjs ==
+5
+exit=0
+
+== [A2] grep -c 'export ' scripts/kimi-census.mjs ==
+0
+exit=1
+
+== [A3] node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json ==
+exit=0
+--- stderr (head) ---
+--- terms subset ---
+{
+ "verdict": "MATCH",
+ "C2_total": 187,
+ "K_members": 55,
+ "K_sections": 55,
+ "coverage_kimi": 10,
+ "coverage_omp": 10,
+ "has_K_findings": false
+}
+--- grep K_findings in stdout ---
+0
+exit=1
+
+== [A4] node scripts/omp-census.mjs --compare x ==
+omp-census: unknown argument --compare
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]
+exit=64
+
+== [A5] grep -c -- '--compare' scripts/omp-census.mjs ==
+0
+exit=1
+
+== [A6] grep -c -- '--compare' scripts/proxy-check.mjs ==
+0
+exit=1
+
+== [A7] grep -c 'decide' scripts/kimi-census.mjs ==
+0
+exit=1
+== [A8] grep -c 'kimi-census' scripts/proxy-check.mjs ==
+9
+exit=0

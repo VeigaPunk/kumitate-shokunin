@@ -184,7 +184,7 @@ function checkAxesCrosscheck(ctx) {
   if (copy === null) return [false, 'scorecard unreadable'];
   const r = proxy(ctx.lane, ctx.work, ['--kimi-root', ctx.clean, '--scorecard', copy, '--json']);
   const k = kinds(r.json);
-  const axes = (r.json?.findings ?? []).find((f) => f.kind === 'AXES_DRIFT' && f.term === 'coverage_kimi');
+  const axes = (r.json?.findings ?? []).find((f) => f.kind === 'AXES_DRIFT' && f.key === 'coverage_kimi');
   const ok = r.status === 1 && k.has('AXES_DRIFT') && axes !== undefined;
   return ok ? [true, axes.detail] : [false, `exit=${r.status} kinds=${[...k].join(',')}`];
 }

@@ -114,7 +114,7 @@ import {
 } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { capSpawnSync } from './cap-spawn.mjs';
-import { join, dirname, resolve } from 'node:path';
+import { join, dirname, resolve, basename } from 'node:path';
 import { tmpdir, homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
@@ -261,7 +261,7 @@ function declaredRootNames() {
  * enumerate the root against the K1–K5 declared set — the round-20 rule).
  * Returns `{ ok: true, ... }` or the fail-closed arm `{ ok: false, kind, detail }`.
  */
-function verify(root, runningUid = process.getuid()) {
+export function decide(root, runningUid) {
   const findings = [];
   const infos = [];
   const err = (kind, id, detail) => findings.push({ severity: 'error', kind, id, detail });
@@ -276,6 +276,7 @@ function verify(root, runningUid = process.getuid()) {
 
   const famTotals = Object.fromEntries(FAMILIES.map((f) => [f, { members: 0, checked: 0 }]));
   const rows = [];
+  const identities = new Set();
   let chainCount = 0;
 
   for (const m of MEMBERS) {
@@ -288,6 +289,7 @@ function verify(root, runningUid = process.getuid()) {
       const present = gens.length > 0;
       fam.members += present ? 1 : 0;
       fam.checked += present ? 1 : 0;
+      if (present) identities.add(m.path);
       if (!present) err('MEMBER_MISSING', m.id, `${m.path} has no generation under ${root}`);
       rows.push({ id: m.id, family: m.family, path: m.path, kind: m.kind, declared: 1, live: present ? 1 : 0, generations: gens.length, state: present ? 'ok' : 'missing' });
       infos.push({ kind: 'CHAIN', id: m.id, detail: `generations=${gens.length} (reported as info, never gated)` });
@@ -310,6 +312,7 @@ function verify(root, runningUid = process.getuid()) {
         const kids = listChildren(abs) ?? [];
         live = kids.length;
         checked = kids.length;
+        for (const child of kids) identities.add(`${m.path}/${child}`);
         if (kids.length !== m.counted) {
           state = 'count';
           const delta = kids.length > m.counted
@@ -331,6 +334,7 @@ function verify(root, runningUid = process.getuid()) {
         else err('MEMBER_MISSING', m.id, detail);
       }
     }
+    if (m.counted === undefined && live > 0) identities.add(m.path);
 
     // Secret shape pins: kind (above), mode, and directory owner. Stat only.
     if (m.secret && kind !== 'absent') {
@@ -341,7 +345,7 @@ function verify(root, runningUid = process.getuid()) {
       const modeCeiling = m.modeCeiling ?? m.modeFloor;
       const beyondCeiling = m.kind === 'dir' && mode !== null
         && (mode & (0o777 ^ modeCeiling)) !== 0;
-      const wrongOwner = kindOk && m.kind === 'dir' && stat !== null && stat.uid !== runningUid;
+      const wrongOwner = runningUid !== undefined && kindOk && m.kind === 'dir' && stat !== null && stat.uid !== runningUid;
       if (kindOk && (lacksFloor || beyondCeiling || wrongOwner)) {
         state = state === 'ok' ? 'shape' : state;
         if (checked === 1) checked = 0;
@@ -410,7 +414,20 @@ function verify(root, runningUid = process.getuid()) {
     families: famTotals,
     rootEnum: { children: rootChildren.length, declared: declared.size, strays: strays.length },
   };
-  return { ok: true, findings, infos, rows, enumerables, strays, totals };
+  const byBasename = new Map();
+  for (const id of identities) {
+    const name = basename(id);
+    if (!byBasename.has(name)) byBasename.set(name, new Set());
+    byBasename.get(name).add(id);
+  }
+  return {
+    ok: true, members: totals.members, findings, identities, byBasename,
+    rows, counts: totals, infos, families: famTotals, enumerables, strays, totals,
+  };
+}
+
+function verify(root, runningUid) {
+  return decide(root, runningUid);
 }
 
 /* ------------------------------------------------------------------ render */
@@ -441,7 +458,7 @@ function failClosed(opts, token, detail, started) {
 }
 
 function runVerify(opts, started) {
-  const v = verify(opts.root);
+  const v = verify(opts.root, typeof process.getuid === 'function' ? process.getuid() : undefined);
   if (!v.ok) return failClosed(opts, v.kind, v.detail, started);
 
   const verdict = v.findings.length === 0 ? 'CLEAN' : 'DRIFT';
@@ -706,7 +723,7 @@ function selfTest() {
     });
 
     check('SHAPE_DRIFT: locks/ owner must match the running uid', () => {
-      const r = verify(green, process.getuid() ^ 1);
+      const r = verify(green, typeof process.getuid === 'function' ? process.getuid() ^ 1 : undefined);
       const ownerFinding = r.findings.find((finding) => finding.id === 'locks/' && finding.kind === 'SHAPE_DRIFT');
       return {
         ok: ownerFinding !== undefined && ownerFinding.detail.includes('owner does not match the running uid'),

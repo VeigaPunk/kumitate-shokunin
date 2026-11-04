@@ -1,0 +1,25 @@
+# control A — frozen counter C1 (amended A1: axes arm reads f.key) against the BASE tree (git archive 0b4df07b), 2026-11-04T03:42:51-03:00
+probe-sha256=5e9d9d4f237cbcb470f27d442b4c014e3ec359b1bdef7b2fa120421c3d19c4ed
+lane=/fast/scratch/hyaku/kumitate-r78/l1-controls/base
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"coverage_kimi":10} kinds=C2_TOTAL_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"coverage_kimi":10}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=5 decide={"members":null,"findings":null,"hasMcp":false} exit=0
+C78_C1 arm stanza-tamper FAIL exit=1 kinds=C2_TOTAL_DRIFT,AXES_DRIFT terms={"coverage_kimi":10}
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind FAIL leaked=false census=true
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/l1-controls/base",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/l1-controls/base/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=4/12
+exit=1

@@ -1,0 +1,47 @@
+# round-78 open receipts (L1, 2026-11-04T03:32:30-03:00)
+
+## git
+0b4df07b round-77 verifier spot-check (integrator, hyaku): non-author admit/reject
+0b4df07b6f7478e7db6afb6852c418e096663c3c
+
+## node/uname
+v24.21.0
+Linux 7.2.11-arch1-1 x86_64
+
+## kimi-census
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=22 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+
+## omp-census --shape (pinned receipt)
+OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+exit=0
+
+## proxy --strict
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=186 computed=187 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=186 computed=187 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+## spotcheck-adopt --check
+SPOTCHECK_MAP: DRIFT spotchecks=44 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md
+exit=1
+
+## readme-map
+README_MAP: note unpinned:lessons/round-77-verifier-spotcheck.md
+README_MAP: DRIFT files=187 rows=186 covered=186 bad=2 first=uncovered:lessons/round-77-verifier-spotcheck.md
+exit=1
+
+## spotcheck-adopt --predict 78
+SPOTCHECK_PREDICT: PENDING corpus/lessons/round-78-verifier-spotcheck.md
+exit=0

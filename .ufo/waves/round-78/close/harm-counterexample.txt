@@ -1,0 +1,19 @@
+# harm counterexample — C1's frozen formula drops the documentation factor (critic K78CriticClaims, confirmed by L1)
+run-at: 2026-11-04T03:51:03-03:00
+
+## trees
+base    = git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin archive ad2630d0 | tar -x -C <scratch>/harm-base
+patched = same archive + build/K78ExecKDerive/scripts/{kimi-census,proxy-check}.mjs + build/K78ExecCompare/omp-census.mjs + build/K78ExecKDerive/SCORECARD.md with pin.omp-census re-pinned to cb0ea5d6…
+
+## edit applied identically to both trees
+corpus/knowledge/kimi-session-state.md: heading '## `~/.kimi-code/sessions/` — the worktree-keyed session store' → '## The session store — worktree-keyed (heading de-named for the harm probe)'
+reason: one member-naming heading removed; no other heading names sessions/ (verified by output: K_sections 55 → 54)
+
+## commands and outputs
+$ (cd harm-base && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json)
+verdict=DRIFT K_sections=54 K_members=55 coverage_kimi=9 findings=['K_SECTIONS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']
+
+$ (cd l1-int && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json)
+verdict=DRIFT K_sections=54 K_members=55 coverage_kimi=10 findings=['K_SECTIONS_DRIFT']
+
+reading: the base score moves 10 → 9 on a documentation loss; the patched score stays 10 unless the census reports a finding — the frozen formula replaced the K_sections factor rather than adding to it.

@@ -1,0 +1,25 @@
+$ node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-78/build/K78ReviewFreeze/frozen-probe78-c1.mjs --set c1 --lane /fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/scaffold --work /fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/tmp/original-c1
+cwd=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=0 verdict=MATCH terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=0 terms={"K_members":55,"coverage_kimi":10} kinds=
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"coverage_kimi":10}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=5 decide={"members":null,"findings":null,"hasMcp":false} exit=0
+C78_C1 arm stanza-tamper FAIL exit=0 kinds= terms={"coverage_kimi":10}
+C78_C1 arm axes-crosscheck FAIL exit=1 kinds=AXES_DRIFT
+C78_C1 arm content-blind FAIL leaked=false census=true
+C78_C1 arm live-strict FAIL exit=0 verdict=MATCH notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": true,
+  "verdict": "MATCH",
+  "exitCode": 0,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/scaffold",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/scaffold/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/k
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=3/12
+
+exit=1

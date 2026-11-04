@@ -133,3 +133,26 @@ sample the closure can re-open.
   concurrent writer or power loss · evidence: the knowledge entry's limits and the critic's
   table · captured-by: **none** — no lock exists to test · fix: stated, not papered over; the
   contract says single-writer and no `fsync`.
+
+
+## Erratum (round 78, 2026-11-04; append-only; supersedes only the lines it names)
+
+- **D1 — the `## Counters` row's `A`.** The row reads `847 / 35 / 183 / 184 → 856 / 37 / 186 / 186`.
+  The cited `close/proxy-json.txt` reads `"A": 857` at `rev=e47266ae…` (its own header line), and the
+  report, the SCORECARD stanza and the pin block all read 857. The close cell's A is **857**;
+  `C / C2 / C2_total` (37 / 186 / 186) stand.
+- **D4 — quote word counts in `## Gate`.** Quote 2 (§4.4) is annotated "(21)"; the verbatim quote is
+  **20** whitespace words. Quote 3 (§9.5) is annotated "(24)"; the verbatim quote is **25** (still
+  inside the ≤25 bound). Quote 1's annotation (23) is correct.
+- **D5 — the FREEZE-FIX 6 disposition receipt.** `open/r76-freeze-fix-6-disposition.txt` prints a
+  loader `ERR_MODULE_NOT_FOUND` trace followed by `exit=0`; the exit line belongs to the trace
+  display, not to a successful import — the named import itself exits 1. The underlying absence
+  (`git cat-file -e ebfcedfa:scripts/spotcheck-adopt.mjs` → exit 128) is independently true; the
+  receipt's annotation, not its evidence, is corrected here.
+- **D6 — the carried r76 routed item 3 why-not.** The why-not ("`round-gate --close` reports
+  `UPSTREAM_MISSING` on jj detached HEAD; operator-owned instrument, outside lane repair
+  authority") existed only in `build/K77ScribeDocs/round-77-lesson.md`. It is recorded here so the
+  committed lesson carries it: the gate is not weakened from this lane, and the refusal is
+  disclosed each round it fires. (D2 — the base controls re-scored on the final counter bytes with
+  `probe-sha256=d48390c3…` — lands as new receipts under `.ufo/waves/round-77/close/`, never as a
+  rewrite of the filed controls.)

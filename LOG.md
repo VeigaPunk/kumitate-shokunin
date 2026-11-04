@@ -2495,3 +2495,48 @@ with `used-by corpus/knowledge/crash-recoverable-two-file-adoption.md`; SOURCES 
 `merge/kumitate/` re-opened (155 rows / 161 lines / 70 entries) and refused as a bulk append again
 (§10 proportionality, CORPUS rule 4; flip: a dedicated assimilation round). Assimilation: none. No
 tools installed. Census start/end exit 0 (six carried W04).
+
+## 2026-11-04 — round 78 (coverage:kimi-layer becomes a census derivation — reported held-but-harmed; operability capability `omp-shape-compare`)
+
+Two claims, two axes. C1 coverage:kimi-layer: `scripts/kimi-census.mjs` exports `decide(root)`
+(members, findings, identities, byBasename, rows, counts); `scripts/proxy-check.mjs` imports it,
+deletes the duplicate `K_MEMBER_RULES` table, adds the `K_findings` stanza term and derives
+`coverage_kimi = floor(10 × C1k/C1k_total × (K_members − K_findings)/K_members)`. The clean live
+root reads `55/55, 0 findings → 10`; a `mcp.json` that loses its `0400` floor reads `1 → 9`; a stray
+root member `1 → 9`; a missing member `54/1 → 9`. **Reported held-but-harmed:** the frozen formula
+replaces the `K_sections/K_members` factor, so a de-named note heading moves the base score 10 → 9
+while the patched score stays 10 (`close/harm-counterexample.txt`); C1 is not admitted and an L0
+ruling is open (accept the redefinition, pre-register the composite in r79, or revert the formula).
+
+C2 operability (capability acquisition `omp-shape-compare`): `scripts/omp-census.mjs --compare FILE
+[--root DIR]` prints `OMP_SHAPE_COMPARE: IN_SYNC|DRIFT entries=<live> receipt=<n> added=<a>
+removed=<r> changed=<c> first=<name>` (first on DRIFT only); exit 0 in sync, 1 drift, 2 fail-closed
+(`SHAPE_INVALID`, `SHAPE_NOT_FOUND`, `ROOT_NOT_A_DIR`); count-only, shape-only, non-scoring;
+exclusive with `--snapshot`/`--shape`. The capability row enters `SCORECARD.md` this round.
+
+Measured at M with the frozen counters (`--lane .`, plan A2): `C78_C1: HELD held=12/12` and
+`C78_C2: HELD held=11/11` (`close/c1-probe.txt`, `close/c2-probe.txt`); base-tree controls 4/12 and
+2/11, constant-printer controls 5/12 and 5/11 (`controls/`). Selftests: proxy 156/156, kimi-census
+56/56, omp-census 79 cases. Mutant batteries: `MUTANTS78_C1` (8 frozen literals) and
+`MUTANTS78_C2: ALL-KILLED killed=10/10`; the C1 runner's copy filter was fixed to a byte-identical
+tree (the A term counts every runnable file and the seat's `.ufo/waves` exclusion broke the
+baseline) and its digest re-pinned to the frozen probe `5e9d9d4f…` after the A1 amendment.
+
+Counter history before data: A1 (`5e9d9d4f…`, axes arm field `f.term` → `f.key`), A2 (claim commands
+made explicit with `--lane`, the probes' three-`..` default routed to r79), A3 (`first=` is
+DRIFT-only), A4 (the A2 wording narrowed; arm 7's import gap disclosed and covered by checklist item
+38). Routed repairs (not claims): the r77 closure's six defects D1–D6 (counter row 856 → 857
+correction, base controls re-scored on final bytes with `probe-sha256=d48390c3…`, the floor line
+stated against the template's 3-executor split, quote word counts 21 → 20 and 24 → 25, the loader-exit
+annotation, the r76 why-not pointer appended to `corpus/lessons/round-77.md`), the 7th spotcheck
+recurrence (adopted in scaffolding), and the counters' default-lane defect (r79).
+
+Sources: S228 opened (Terraform `plan` `#detailed-exitcode`; capture 276352 bytes, sha256
+`a501ef22…`), `mined`, used by `corpus/knowledge/shape-receipt-live-drift.md`; S227 and S226
+re-opened with no correction needed. SOURCES 166 → 167 (tier A 142 → 143). `merge/kumitate/`
+re-opened and refused as a bulk append again (155 rows / 161 lines / 70 entries; flip: a dedicated
+assimilation round). Assimilation: none. No tools installed. Census start/end exit 0 (six carried
+W04). Wave: ONE v1 wave, 14 seats (attack 6/14 = 43 %: reviewer ×2, critic, mutation-tester ×2,
+sentinel; connector 1; executors 3; scribes 2; scouts 2), planner = L1.
+
+- 2026-11-04 — round 78 (gate-required one-line record; the full entry is the section above): C1 coverage:kimi-layer — the K score becomes the census decision's derivation (`decide(root)` imported, `K_MEMBER_RULES` deleted, `K_findings` added; clean `55/55/0 → 10`, mode-floor loss `1 → 9`, stray `1 → 9`, missing member `54/1 → 9`; frozen counter `C78_C1: HELD held=12/12`; **reported held-but-harmed**: the frozen formula replaced the `K_sections` factor, so a de-named heading reads base 9 vs patched 10 — not admitted, operator ruling open); C2 operability — capability `omp-shape-compare` (`omp-census --compare` IN_SYNC/DRIFT with added/removed/changed counters, exit 0/1/2, non-scoring; `C78_C2: HELD held=11/11`, selftest 79 cases, mutants 10/10 killed); counter amendments A1–A4 before verdicts; r77 D1–D6 repaired; 7th spotcheck recurrence adopted; S228 opened (166 → 167 rows); census exit 0 start and end.

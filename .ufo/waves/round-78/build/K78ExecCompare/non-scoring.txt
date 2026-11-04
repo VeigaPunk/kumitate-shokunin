@@ -1,0 +1,15 @@
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict
+PROXY  error  GATE_PIN_DRIFT  pin.omp-census: declared=14fea9c1e0dd8272494038bc21dc6e81f319841a7acba9a3560508a8f74d5384 computed=cb0ea5d67d347f0cb4c6c85f4985e8f8f044201ec0ddb674ed94068586910bff
+PROXY: DRIFT (GATE_PIN_DRIFT term=pin.omp-census declared=14fea9c1e0dd8272494038bc21dc6e81f319841a7acba9a3560508a8f74d5384 computed=cb0ea5d67d347f0cb4c6c85f4985e8f8f044201ec0ddb674ed94068586910bff; src-rev=31c465f15669)
+exit=1
+$ node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict --scorecard /fast/scratch/hyaku/kumitate-r78/K78ExecCompare/candidate-scorecard.md
+PROXY: MATCH (A=859 C=37 operability=9; C1=19/19 C2=187/187 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=64 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+proxy --compare occurrences=0
+Fixture scorecard differs only in pin.omp-census; lane scorecard untouched.
+$ node scripts/omp-census.mjs --snapshot /fast/scratch/hyaku/kumitate-r78/K78ExecCompare/roundtrip.json
+OMP_SNAPSHOT: WROTE entries=64 sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3 path=/fast/scratch/hyaku/kumitate-r78/K78ExecCompare/roundtrip.json
+exit=0
+$ node scripts/omp-census.mjs --shape /fast/scratch/hyaku/kumitate-r78/K78ExecCompare/roundtrip.json
+OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+exit=0

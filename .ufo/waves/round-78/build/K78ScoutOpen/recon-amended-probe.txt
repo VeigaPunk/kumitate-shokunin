@@ -1,0 +1,24 @@
+== [AM1] run the lane's AMENDED C1 probe (sha 5e9d9d4f, fixture copied from the lane) against the base archive ad2630d0 ==
+cmd: node /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/probe-c1-amended.mjs --set c1 --lane /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src --work /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"coverage_kimi":10} kinds=O_MEMBERS_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"coverage_kimi":10}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=5 decide={"members":null,"findings":null,"hasMcp":false} exit=0
+C78_C1 arm stanza-tamper FAIL exit=1 kinds=O_MEMBERS_DRIFT terms={"coverage_kimi":10}
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind FAIL leaked=false census=true
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=4/12
+exit=1

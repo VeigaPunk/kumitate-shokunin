@@ -1,0 +1,908 @@
+recon.txt — K78ScoutOpen (scout, round 78, lane kumitate-shokunin)
+===============================================================================
+Date: 2026-11-04 (local -03:00; run start 2026-11-04T06:40:51Z UTC)
+Host: Linux 7.2.11-arch1-1 x86_64, node v24.21.0
+Lane (read-only): /home/vgpnk/Projects/shokunin/kumitate-shokunin
+Tree under test: git archive ad2630d0566a561ee078f47fade5644a22c10621
+  -> /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src
+Base tip before the adoption commit: 0b4df07b
+Method: every command ran with cwd = the archive tree; the lane was never
+  written and no git/jj mutation was issued anywhere (git archive is read-only).
+  `exit=` is the exit status of the command immediately above it.
+Source pin used by the proxy: /fast/scratch/hyaku/kumitate-pin/src (present).
+===============================================================================
+
+########## PART 1 — C1 BEFORE state (base tree) ##########
+
+== TREE: git archive ad2630d0 -> /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src (read-only) ==
+== host: Linux 7.2.11-arch1-1 x86_64 node v24.21.0 ==
+
+== [A1] grep -c 'K_MEMBER_RULES' scripts/proxy-check.mjs ==
+5
+exit=0
+
+== [A2] grep -c 'export ' scripts/kimi-census.mjs ==
+0
+exit=1
+
+== [A3] node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json ==
+exit=0
+--- stderr (head) ---
+--- terms subset ---
+{
+ "verdict": "MATCH",
+ "C2_total": 187,
+ "K_members": 55,
+ "K_sections": 55,
+ "coverage_kimi": 10,
+ "coverage_omp": 10,
+ "has_K_findings": false
+}
+--- grep K_findings in stdout ---
+0
+exit=1
+
+== [A4] node scripts/omp-census.mjs --compare x ==
+omp-census: unknown argument --compare
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]
+exit=64
+
+== [A5] grep -c -- '--compare' scripts/omp-census.mjs ==
+0
+exit=1
+
+== [A6] grep -c -- '--compare' scripts/proxy-check.mjs ==
+0
+exit=1
+
+== [A7] grep -c 'decide' scripts/kimi-census.mjs ==
+0
+exit=1
+== [A8] grep -c 'kimi-census' scripts/proxy-check.mjs ==
+9
+exit=0
+
+########## PART 2 — frozen probe at base + fixture census ##########
+
+== [A9] frozen probe C1 against the BASE tree (git archive ad2630d0), --keep-work ==
+cmd: node .ufo/waves/round-78/probe/probe78-c1.mjs --set c1 --lane /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src --work /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work --keep-work
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=0 verdict=MATCH terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=0 terms={"K_members":55,"coverage_kimi":10} kinds=
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"coverage_kimi":10}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=5 decide={"members":null,"findings":null,"hasMcp":false} exit=0
+C78_C1 arm stanza-tamper FAIL exit=0 kinds= terms={"coverage_kimi":10}
+C78_C1 arm axes-crosscheck FAIL exit=1 kinds=AXES_DRIFT
+C78_C1 arm content-blind FAIL leaked=false census=true
+C78_C1 arm live-strict FAIL exit=0 verdict=MATCH notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": true,
+  "verdict": "MATCH",
+  "exitCode": 0,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src"
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=3/12
+exit=1
+
+== [A10] fixture root from the frozen probe's own buildRoot: /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean ==
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-content
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-missing
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-mode
+/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-stray
+cmd: node scripts/kimi-census.mjs --root /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+KIMI_ROOT: /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=1 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=28 declared=27 chain=1 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=1
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+exit=0
+
+== [A11] same census --json (findings count) ==
+{
+  "schema": "kumitate-kimi-census-v1",
+  "contract": "kumitate-kimi-census-v1",
+  "mode": "verify",
+  "root": "/fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work/k-clean",
+  "options": {
+    "json": true,
+    "rootEnumeration": "always-on (frozen)"
+  },
+  "members": [
+    {
+      "id": "config.toml",
+      "family": "K1",
+      "path": "config.toml",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "tui.toml",
+      "family": "K1",
+      "path": "tui.toml",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "config.toml.*.bak",
+      "family": "K1",
+      "path": "config.toml.*.bak",
+      "kind": "chain",
+      "declared": 1,
+      "live": 1,
+      "generations": 1,
+      "state": "ok"
+    },
+    {
+      "id": "mcp.json",
+      "family": "K1",
+      "path": "mcp.json",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0400",
+      "mode": "0644",
+      "state": "ok"
+    },
+    {
+      "id": "agents/secondary/",
+      "family": "K2",
+      "path": "agents/secondary",
+      "kind": "dir",
+      "declared": 18,
+      "live": 18,
+      "checked": 18,
+      "state": "ok"
+    },
+    {
+      "id": "skills/",
+      "family": "K2",
+      "path": "skills",
+      "kind": "dir",
+      "declared": 7,
+      "live": 7,
+      "checked": 7,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/installed.json",
+      "family": "K2",
+      "path": "plugins/installed.json",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/installed.json.bak-pre-shokunin",
+      "family": "K2",
+      "path": "plugins/installed.json.bak-pre-shokunin",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/managed/kimi-webbridge",
+      "family": "K2",
+      "path": "plugins/managed/kimi-webbridge",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "plugins/managed/kimi-shokunin",
+      "family": "K2",
+      "path": "plugins/managed/kimi-shokunin",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "locks/",
+      "family": "K3",
+      "path": "locks",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0700",
+      "state": "ok"
+    },
+    {
+      "id": "sessions/",
+      "family": "K3",
+      "path": "sessions",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "session_index.jsonl",
+      "family": "K3",
+      "path": "session_index.jsonl",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "workspace-trust/",
+      "family": "K3",
+      "path": "workspace-trust",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "telemetry/",
+      "family": "K3",
+      "path": "telemetry",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "logs/kimi-code.log",
+      "family": "K3",
+      "path": "logs/kimi-code.log",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "file-history/",
+      "family": "K3",
+      "path": "file-history",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "user-history/",
+      "family": "K3",
+      "path": "user-history",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "cache/",
+      "family": "K3",
+      "path": "cache",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "search-index/",
+      "family": "K3",
+      "path": "search-index",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "bin/kimi",
+      "family": "K4",
+      "path": "bin/kimi",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "bin/fd",
+      "family": "K4",
+      "path": "bin/fd",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "updates/",
+      "family": "K4",
+      "path": "updates",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "server/",
+      "family": "K4",
+      "path": "server",
+      "kind": "dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "server.token",
+      "family": "K4",
+      "path": "server.token",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0600",
+      "mode": "0600",
+      "state": "ok"
+    },
+    {
+      "id": "device_id",
+      "family": "K4",
+      "path": "device_id",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "region",
+      "family": "K4",
+      "path": "region",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "credentials/",
+      "family": "K4",
+      "path": "credentials",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0700",
+      "state": "ok"
+    },
+    {
+      "id": "oauth/",
+      "family": "K4",
+      "path": "oauth",
+      "kind": "leaf-or-dir",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "secret": true,
+      "modeFloor": "0700",
+      "mode": "0755",
+      "state": "ok"
+    },
+    {
+      "id": "workspaces.json",
+      "family": "K5",
+      "path": "workspaces.json",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "tui.toml.bak",
+      "family": "K5",
+      "path": "tui.toml.bak",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    },
+    {
+      "id": "rc-qrcode.png",
+      "family": "K5",
+      "path": "rc-qrcode.png",
+      "kind": "file",
+      "declared": 1,
+      "live": 1,
+      "checked": 1,
+      "state": "ok"
+    }
+  ],
+  "enumerables": [
+    {
+      "dir": "plugins",
+      "declared": [
+        "installed.json",
+        "installed.json.bak-pre-shokunin",
+        "managed"
+      ],
+      "live": [
+        "installed.json",
+        "installed.json.bak-pre-shokunin",
+        "managed"
+      ]
+    },
+    {
+      "dir": "plugins/managed",
+      "declared": [
+        "kimi-shokunin",
+        "kimi-webbridge"
+      ],
+      "live": [
+        "kimi-shokunin",
+        "kimi-webbridge"
+      ]
+    }
+  ],
+  "rootStrays": [],
+  "findings": [],
+  "infos": [
+    {
+      "kind": "CHAIN",
+      "id": "config.toml.*.bak",
+      "detail": "generations=1 (reported as info, never gated)"
+    },
+    {
+      "kind": "COUNT",
+      "id": "agents/secondary/",
+      "detail": "children=18 (counted live, names not gated)"
+    },
+    {
+      "kind": "COUNT",
+      "id": "skills/",
+      "detail": "children=7 (counted live, names not gated)"
+    },
+    {
+      "kind": "ROOT_ENUM",
+      "id": "-",
+      "detail": "root children=28 declared=27 chain=1 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)"
+    }
+  ],
+  "totals": {
+    "members": 55,
+    "checked": 55,
+    "errors": 0,
+    "info": 4,
+    "chain": 1,
+    "frozen": {
+      "K1": 4,
+      "K2": 29,
+      "K3": 10,
+      "K4": 9,
+      "K5": 3
+    },
+    "families": {
+      "K1": {
+        "members": 4,
+        "checked": 4
+      },
+      "K2": {
+        "members": 29,
+        "checked": 29
+      },
+      "K3": {
+        "members": 10,
+        "checked": 10
+      },
+      "K4": {
+        "members": 9,
+        "checked": 9
+      },
+      "K5": {
+        "members": 3,
+        "checked": 3
+      }
+    },
+    "rootEnum": {
+      "children": 28,
+      "declared": 27,
+      "strays": 0
+    }
+  },
+  "verdict": "CLEAN",
+  "durationMs": 2
+}
+exit=0
+
+########## PART 3 — live lane census + live K root shape ##########
+
+== [L1] live node scripts/kimi-census.mjs ==
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=22 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+
+== [L2] live K root shape: names/kinds/modes only (top level) ==
+d  700 credentials
+d  700 file-history
+d  700 locks
+d  700 sessions
+d  700 telemetry
+d  700 workspace-trust
+d  755 agents
+d  755 bin
+d  755 cache
+d  755 logs
+d  755 oauth
+d  755 plugins
+d  755 search-index
+d  755 server
+d  755 skills
+d  755 updates
+d  755 user-history
+f  600 config.toml
+f  600 config.toml.20261022-140309.pre-xai-direct.bak
+f  600 config.toml.20261024-200924.bak
+f  600 config.toml.20261024-201237.bak
+f  600 config.toml.20261030-180239.bak
+f  600 config.toml.20261030-181314.bak
+f  600 config.toml.20261030-181459.bak
+f  600 config.toml.20261030-183343.bak
+f  600 config.toml.20261030-223243.bak
+f  600 config.toml.20261031-105824.bak
+f  600 config.toml.20261031-111954.bak
+f  600 config.toml.20261031-170833.bak
+f  600 config.toml.20261031-182804.bak
+f  600 config.toml.20261031-190941.bak
+f  600 config.toml.bak
+f  600 device_id
+f  600 server.token
+f  600 session_index.jsonl
+f  600 workspaces.json
+f  644 config.toml.20261018-085645.bak
+f  644 config.toml.20261018-114557.bak
+f  644 config.toml.20261018-143236.bak
+f  644 config.toml.20261018-145016.bak
+f  644 config.toml.20261018-150133.bak
+f  644 config.toml.20261018-161746.bak
+f  644 config.toml.20261018-201656.bak
+f  644 config.toml.20261031-104627.bak
+f  644 mcp.json
+f  644 rc-qrcode.png
+f  644 region
+f  644 tui.toml
+f  644 tui.toml.bak
+
+== [L3] live second level for declared dirs (names only) ==
+d  700 locks/sessions
+d  700 sessions/.index-cache
+d  700 sessions/.index-dirty
+d  700 sessions/wd_kimi-shokunin_6e6deb44aa6f
+d  700 sessions/wd_open-design_bb5b6339b094
+d  700 sessions/wd_projects_48a771e908b1
+d  700 sessions/wd_stakker_52512bd9b331
+d  700 sessions/wd_vgpnk_403b91ce3657
+d  755 agents/secondary
+d  755 agents/ufo
+d  755 cache/client-configs
+d  755 cache/query-store
+d  755 plugins/managed
+d  755 search-index/generations
+d  755 server/events
+d  755 server/instances
+d  755 skills/cursor-lane
+d  755 skills/kimi-webbridge
+f  600 credentials/kimi-code-env-0e4f99c69cc27850.json
+f  600 file-history/wd_chousa-shokunin_b7495dddb5f0
+f  600 file-history/wd_game-dev-2d-shokunin_f03905a590a7
+f  600 file-history/wd_game-dev-3d-shokunin_1d5718ea9394
+f  600 file-history/wd_kaidoku-shokunin_149e98cdb2ff
+f  600 file-history/wd_kake-shokunin_ea959bb7deb6
+f  600 file-history/wd_kama-shokunin_175202f0d061
+f  600 file-history/wd_kimi-shokunin_6e6deb44aa6f
+f  600 file-history/wd_kotoba-shokunin_dbf35917deb4
+f  600 file-history/wd_kotodama-shokunin_79dcf87bd64e
+f  600 file-history/wd_ompskills_b6327a98bd2f
+f  600 file-history/wd_projects_48a771e908b1
+f  600 file-history/wd_prymeagnt_d75727ad1dd2
+f  600 file-history/wd_shokunin_8c4a99c6228c
+f  600 file-history/wd_souji-shokunin_911b2aacba27
+f  600 file-history/wd_stakker_52512bd9b331
+f  600 file-history/wd_tmp_e9671acd2448
+f  600 file-history/wd_ufo-fsd-alpha_bdbf59827037
+f  600 file-history/wd_vgpnk_403b91ce3657
+f  600 workspace-trust/wd_chousa-shokunin_b7495dddb5f0
+f  600 workspace-trust/wd_dbzmon_25f4897e97c0
+f  600 workspace-trust/wd_game-dev-2d-shokunin_f03905a590a7
+f  600 workspace-trust/wd_game-dev-3d-shokunin_1d5718ea9394
+f  600 workspace-trust/wd_kaidoku-shokunin_149e98cdb2ff
+f  600 workspace-trust/wd_kama-shokunin_175202f0d061
+f  600 workspace-trust/wd_kotoba-shokunin_dbf35917deb4
+f  600 workspace-trust/wd_kotodama-shokunin_79dcf87bd64e
+f  600 workspace-trust/wd_ompskills_b6327a98bd2f
+f  600 workspace-trust/wd_projects_48a771e908b1
+f  600 workspace-trust/wd_prymeagnt_d75727ad1dd2
+f  600 workspace-trust/wd_shokunin_8c4a99c6228c
+f  600 workspace-trust/wd_souji-shokunin_911b2aacba27
+f  600 workspace-trust/wd_stakker_52512bd9b331
+f  600 workspace-trust/wd_ufo-fsd-alpha_bdbf59827037
+f  600 workspace-trust/wd_vgpnk_403b91ce3657
+f  644 logs/kimi-code-desktop.log
+f  644 logs/kimi-code.log
+f  644 oauth/kimi-code-env-0e4f99c69cc27850
+f  644 plugins/installed.json
+f  644 plugins/installed.json.bak-pre-shokunin
+f  644 search-index/CURRENT
+f  644 search-index/db.lock
+f  644 search-index/db.textindexes.json
+f  644 search-index/db.wal
+f  644 updates/install.json
+f  644 updates/latest.json
+f  644 updates/rollout.log
+f  644 user-history/2451627c9d0b9535dfc10a23a4cf2a74.jsonl
+f  644 user-history/2f0010a6ea94c1305e889c40a50970cc.jsonl
+f  644 user-history/3813dce78a6b8baee4df8bdff57e6072.jsonl
+f  644 user-history/46dee72f1d50c182d89587f5de609e36.jsonl
+f  644 user-history/54ce13f362c7d0018103470977dc87c5.jsonl
+f  644 user-history/5df8bf1a6d81260e12d7c8a1079445f8.jsonl
+f  644 user-history/70f128c49586537cb1337e2d7e53d8c8.jsonl
+f  644 user-history/8877f52e9d102875892452b78723d6d7.jsonl
+f  644 user-history/8e0cfc7aa8e24edbfafc763bed724ce7.jsonl
+f  644 user-history/9026847fbfa6f049cb575a5ba25b201c.jsonl
+f  644 user-history/96a8983b63ad631ee0d9b9543c48b3e4.jsonl
+f  644 user-history/9a41b9f95b2be05d95d04c0b96cc6350.jsonl
+f  644 user-history/c868d271bb9c6c7b15fdb6bf96911d9b.jsonl
+f  644 user-history/f4b7196c6c57e758de31085d57a204d8.jsonl
+f  644 user-history/f51b7290742ead697bcffada75e3dc24.jsonl
+f  644 user-history/ff693a8d57f37467a428b7444c0abb2f.jsonl
+f  755 bin/fd
+f  755 bin/kimi
+l  777 skills/godspeed
+l  777 skills/reverse-engineer-anything
+l  777 skills/shokunin
+l  777 skills/ufo
+l  777 skills/wwkd
+
+########## PART 4 — S228 and change-surface anchors ##########
+
+== [E1] S228 fetch (curl -sS -L -D headers -o capture) ==
+cmd: curl -sS -L -D s228.headers -o s228.html https://developer.hashicorp.com/terraform/cli/commands/plan
+HTTP/2 200 
+date: Tue, 03 Nov 2026 21:39:40 GMT
+etag: "zd60gu8edy5x8c"
+x-vercel-cache: HIT
+content-length: 276352
+bytes=276352 sha256=a501ef22dec9e3c0bd05ffc7082b0f6a84abf5a96d1c6199a02223b74b207cca
+anchor id count: 1
+
+== [E2] base proxy terms used by the K plane ==
+{"verdict":"MATCH","C1k":5,"C1k_total":5,"K_members":55,"K_sections":55,"coverage_kimi":10,"K_findings_present":false,"declared_has_K_findings":false}
+
+== [E3] base proxy: doc formula + term assembly anchors ==
+178: *     coverage_kimi = floor(10 × C1k/C1k_total × K_sections/K_members); a zero
+57: *   coverage_omp = floor(10 × C1o/C1o_total × (O_members−O_findings)/O_members),
+523:const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
+537:const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
+651:const FINDING_KINDS = [
+1909:    const parentV1Keys = 'A C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections coverage_kimi C1o C1o_total O_members O_findings O_bound coverage_omp pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check pin.claims-check pin.kimi-census';
+1026:function kTerms({ scorecardText, self, kimi }) {
+615:const K_MEMBER_RULES = [
+918:function kMembers(kimiRoot) {
+960:function kMembersNamedByHeading(heading, kimi) {
+863:function layerCoverage(covered, total, sections, members) {
+325:import { BASE_MEMBERS, CHAIN_FAMILIES, census, censusEntries, shapeFromFile } from './omp-census.mjs';
+1188:function compareTerms(terms, declared, findings) {
+1632:function fxScorecard(fx) {
+
+== [E4] base SCORECARD K stanza + axes row (line numbers, first 90 chars) ==
+<!-- kumitate-proxy-v1
+K_members=55
+K_sections=55
+coverage_kimi=10
+358:| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 53/53)` = **10** — round 42: the ro
+1834:| coverage:kimi-layer | unchanged | both 49/49, score 10; secrets remain shape-only |
+
+== [E5] kimi-census structure anchors ==
+121:const CONTRACT = 'kumitate-kimi-census-v1';
+129:const MEMBERS = [
+169:const ENUMERABLE = [
+264:function verify(root, runningUid = process.getuid()) {
+1080:function main() {
+1089:const isEntry = (() => {
+1096:if (isEntry) main();
+
+== [E6] omp-census structure anchors ==
+130:const DEFAULT_SELF = fileURLToPath(new URL('../', import.meta.url));
+144:function readShape(root) {
+160:const SHAPE_CONTRACT = 'kumitate-omp-shape-v1';
+162:function validateShape(doc) {
+182:export function shapeFromFile(file) {
+194:function snapshot(root, file, io) {
+262:export function censusEntries(entries, noteText) {
+314:const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]';
+316:function parseArgs(argv) {
+668:function main(argv, io) {
+689:const isMain = process.argv[1]
+
+== [E7] pinned OMP receipt ==
+5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3  .ufo/pins/omp-shape.json
+keys=contract,entries contract=kumitate-omp-shape-v1 entries=64 first=RULES.md sorted=true
+
+== [E8] live OMP root vs receipt (read-only shape diff) ==
+{"live":64,"receipt":64,"added":[],"removed":[],"changed":[]}
+
+== [E9] SOURCES.md state ==
+rows=166 last=| S227 S228_hits=0
+knowledge docs=64; shape-receipt-live-drift.md present=no
+
+== [E10] proxy selftest expectations bound to the OLD K formula (line numbers) ==
+1825 1835 1841 1942 2220 2224 2245 2271 2322 2546 2734 2775 2965 
+2163 2232 2382 2411 2429 2449 2466 2486 
+
+########## PART 5 — frozen counter digests, table size, call sites ##########
+
+== [E11] frozen counter digests at ad2630d0 ==
+aa00be37a46afdf02b68f47ed774094eb9297dbc5707089313e2915da9e652cf  .ufo/waves/round-78/probe/probe78-c1.mjs
+a46e53d7449bffad66541dae4661e20651930dc4551b49f6544eb56d5e84b460  .ufo/waves/round-78/probe/probe78-c2.mjs
+3b307fe613b7d49bd29833be45cef789aca9db572cc85ceed246dabd09f01817  .ufo/waves/round-78/probe/kimi-fixture.json
+== [E12] K_MEMBER_RULES row count ==
+rows=32
+615:const K_MEMBER_RULES = [
+922:  for (const m of K_MEMBER_RULES) {
+2188:      const rule = K_MEMBER_RULES.find((m) => m.id === 'locks/');
+2200:      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/installed.json.bak-pre-shokunin');
+2212:      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/managed/kimi-shokunin');
+== [E13] ordered k-terms read from kimi root (base) ==
+1028:  const members = kimi.members;
+1465:  const kimi = kMembers(opts.kimiRoot);
+1730:    const kimi = knobs.kimiRoot === false ? null : fxDir(`${name}-kimi`);
+1780:    const kimiRoot = fx.kimi ?? join(fx.dir, '..', 'no-kimi-root');
+2250:      const fx = kCase('kimi-members-drift', [], (f) => rmSync(join(f.kimi, 'workspaces.json'), { force: true }));
+2260:      const fx = kCase('kimi-members-added', [['\nK_members=30\n', '\nK_members=31\n']], (f) => {
+2264:      const fx2 = kCase('kimi-members-added-stale', [], (f) => {
+
+########## NOT PERFORMED (and why) ##########
+- `https://developer.hashicorp.com/terraform/cli/commands/plan?output=1` was NOT
+  fetched: the seat makes that fetch conditional on the first capture lacking the
+  exit-code table, and the capture carries it (id="detailed-exitcode", one anchor).
+- No lane file was edited, staged, committed or pushed; no fixture repo was created;
+  nothing under /tmp is cited. The archive tree and every fixture root live under
+  /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen and were removed after the captures
+  were copied into this build dir.
+
+########## EVIDENCE FILES IN THIS DIR ##########
+- recon.txt (this file), recon-part1.txt, recon-part2.txt, recon-live.txt,
+  recon-extra.txt, recon-extra2.txt — verbatim command transcripts
+- proxy-base.json (base proxy --json, 4233 bytes), proxy-base.err.txt (empty stderr)
+- census-k-clean.json (base census --json on the frozen probe's k-clean fixture, 8705 bytes)
+- terraform-plan.html (S228 capture, 276352 bytes, sha256 a501ef22…),
+  terraform-plan.headers.txt (response headers)
+
+########## PART 6 — C2 BEFORE state (frozen probe at base) ##########
+
+== [C2-B1] base --help ==
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]
+exit=0
+
+== [C2-B2] frozen probe C2 against the BASE tree ==
+cmd: node .ufo/waves/round-78/probe/probe78-c2.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/src --work /fast/scratch/hyaku/kumitate-r78/K78ScoutOpen/work2
+C78_C2 arm usage-lists-compare FAIL exit=0 help=usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest
+C78_C2 arm in-sync FAIL exit=64 line=
+C78_C2 arm added FAIL exit=64 line=
+C78_C2 arm removed FAIL exit=64 line= victim=RULES.md
+C78_C2 arm changed FAIL exit=64 line= victim=RULES.md
+C78_C2 arm invalid-receipt FAIL exit=64 out=omp-census: unknown argument --compare
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest 
+C78_C2 arm absent-receipt FAIL exit=64 out=omp-census: unknown argument --compare
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest 
+C78_C2 arm root-not-dir FAIL exit=64 out=omp-census: unknown argument --compare
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest 
+C78_C2 arm content-blind FAIL leaked=false exit=64 line=
+C78_C2 arm non-scoring ok proxy-compare=0 snapshot=0 shape=0
+C78_C2 arm selftests ok selftest=0 live=0
+C78_C2: HELD held=2/11
+exit=1
+
+########## PART 7 — AXES_DRIFT finding field proof (base tool, arm-9 mutation) ##########
+
+cmd: cp SCORECARD.md work/sc-axes.md
+cmd: perl -0pi -e 's/^\| coverage:kimi-layer \| 10 \|/| coverage:kimi-layer | 9 |/m' work/sc-axes.md
+cmd: node scripts/proxy-check.mjs --kimi-root work/k-clean --scorecard work/sc-axes.md --json  -> exit 1
+(the copied row reads `| coverage:kimi-layer | 9 |`; the tool's single finding follows)
+[
+ {
+  "kind": "AXES_DRIFT",
+  "term": "coverage:kimi-layer",
+  "key": "coverage_kimi",
+  "declared": 9,
+  "computed": 10
+ }
+]
+
+in-tree assertions encoding term=axis-name:
+  scripts/proxy-check.mjs:1301  AXES_DRIFT finding shape {term: axis, key: term}
+  scripts/proxy-check.mjs:2134  selftest asserts term='coverage:runtime-layer' key='coverage_runtime'
+  scripts/proxy-check.mjs:2336  selftest asserts term='coverage:kimi-layer' key='coverage_kimi'
+  scripts/proxy-check.mjs:1906  asserts TERM_KEYS.length === 23
+  scripts/proxy-check.mjs:1909  asserts STANZA_KEYS.join(' ') === parentV1Keys (29 keys)
+  LOG.md:1442,1667           historical records 'AXES_DRIFT term=coverage:kimi-layer declared=10 computed=9'
+
+########## PART 8 — base proxy terms on each frozen fixture root (exact) ##########
+
+cmd: node .ufo/waves/round-78/probe/probe78-c1.mjs --set c1 --lane <archive> --work work --keep-work  -> exit 1 (3/12)
+cmd: node scripts/proxy-check.mjs --kimi-root work/<root> --json   (archive tree)
+k-clean    {"verdict":"MATCH","K_members":55,"K_sections":55,"coverage_kimi":10,"C1k":"5/5","kinds":[]}
+k-mode     {"verdict":"MATCH","K_members":55,"K_sections":55,"coverage_kimi":10,"C1k":"5/5","kinds":[]}
+k-stray    {"verdict":"MATCH","K_members":55,"K_sections":55,"coverage_kimi":10,"C1k":"5/5","kinds":[]}
+k-missing  {"verdict":"DRIFT","K_members":54,"K_sections":54,"coverage_kimi":10,"C1k":"5/5","kinds":["K_MEMBERS_DRIFT","K_SECTIONS_DRIFT"]}
+census k-missing: KIMI_CENSUS: DRIFT (MEMBER_MISSING region)
+(k-missing's DRIFT verdict comes from the archive SCORECARD declaring 55/55; the census finding still moves no score term)
+
+########## PART 9 — lane state observed AFTER the recon (not my edits) ##########
+
+date -u: 2026-11-04T06:49:50Z
+lane HEAD: ad2630d0
+worktree probe78-c1.mjs sha: 5e9d9d4f237cbcb470f27d442b4c014e3ec359b1bdef7b2fa120421c3d19c4ed
+committed (ad2630d0) probe78-c1.mjs sha: aa00be37a46afdf02b68f47ed774094eb9297dbc5707089313e2915da9e652cf
+worktree probe78-c2.mjs sha: a46e53d7449bffad66541dae4661e20651930dc4551b49f6544eb56d5e84b460 (unchanged)
+worktree diff (read-only): plan.md +35 lines (Amendment 1/2/3), probe78-c1.mjs 1 line, four control receipts re-scored.
+Amendment 1: arm axes-crosscheck selector  f.term === 'coverage_kimi'  ->  f.key === 'coverage_kimi'
+Amendment 2: probes' DEFAULT_LANE resolves three '..' to <lane>/.ufo (not the lane root); claim sentences now pass --lane explicitly; probe bytes unchanged.
+Amendment 3: IN_SYNC carries no first= field; first= appears on DRIFT only.
+
+== [ENV] live OMP root vs the pin, re-measured ==
+{"live":64,"receipt":64,"added":[],"removed":[],"changed":[]}
+== [ENV] live proxy re-read (default omp root) ==
+{"verdict":"MATCH","O_members":64,"O_findings":0,"coverage_omp":10,"K_members":55,"coverage_kimi":10}
+
+NOTE: the amended-probe run at 03:51 (recon-amended-probe.txt) transiently read O_MEMBERS_DRIFT in proxy-clean-terms and live-strict;
+      the re-read seconds later is MATCH 64/64. The live ~/.omp/agent is not under the lane's control; C1 arm 11 (live-strict)
+      is therefore sensitive to a transient extra entry in that root (C2 is insulated: its arms use the materialised receipt).

@@ -1,0 +1,73 @@
+== [E1] S228 fetch (curl -sS -L -D headers -o capture) ==
+cmd: curl -sS -L -D s228.headers -o s228.html https://developer.hashicorp.com/terraform/cli/commands/plan
+HTTP/2 200 
+date: Tue, 03 Nov 2026 21:39:40 GMT
+etag: "zd60gu8edy5x8c"
+x-vercel-cache: HIT
+content-length: 276352
+bytes=276352 sha256=a501ef22dec9e3c0bd05ffc7082b0f6a84abf5a96d1c6199a02223b74b207cca
+anchor id count: 1
+
+== [E2] base proxy terms used by the K plane ==
+{"verdict":"MATCH","C1k":5,"C1k_total":5,"K_members":55,"K_sections":55,"coverage_kimi":10,"K_findings_present":false,"declared_has_K_findings":false}
+
+== [E3] base proxy: doc formula + term assembly anchors ==
+178: *     coverage_kimi = floor(10 × C1k/C1k_total × K_sections/K_members); a zero
+57: *   coverage_omp = floor(10 × C1o/C1o_total × (O_members−O_findings)/O_members),
+523:const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
+537:const STANZA_KEYS = [...TERM_KEYS, ...Object.keys(PINS)];
+651:const FINDING_KINDS = [
+1909:    const parentV1Keys = 'A C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections coverage_kimi C1o C1o_total O_members O_findings O_bound coverage_omp pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check pin.claims-check pin.kimi-census';
+1026:function kTerms({ scorecardText, self, kimi }) {
+615:const K_MEMBER_RULES = [
+918:function kMembers(kimiRoot) {
+960:function kMembersNamedByHeading(heading, kimi) {
+863:function layerCoverage(covered, total, sections, members) {
+325:import { BASE_MEMBERS, CHAIN_FAMILIES, census, censusEntries, shapeFromFile } from './omp-census.mjs';
+1188:function compareTerms(terms, declared, findings) {
+1632:function fxScorecard(fx) {
+
+== [E4] base SCORECARD K stanza + axes row (line numbers, first 90 chars) ==
+<!-- kumitate-proxy-v1
+K_members=55
+K_sections=55
+coverage_kimi=10
+358:| coverage:kimi-layer | 10 | `floor(10 × 5/5 × 53/53)` = **10** — round 42: the ro
+1834:| coverage:kimi-layer | unchanged | both 49/49, score 10; secrets remain shape-only |
+
+== [E5] kimi-census structure anchors ==
+121:const CONTRACT = 'kumitate-kimi-census-v1';
+129:const MEMBERS = [
+169:const ENUMERABLE = [
+264:function verify(root, runningUid = process.getuid()) {
+1080:function main() {
+1089:const isEntry = (() => {
+1096:if (isEntry) main();
+
+== [E6] omp-census structure anchors ==
+130:const DEFAULT_SELF = fileURLToPath(new URL('../', import.meta.url));
+144:function readShape(root) {
+160:const SHAPE_CONTRACT = 'kumitate-omp-shape-v1';
+162:function validateShape(doc) {
+182:export function shapeFromFile(file) {
+194:function snapshot(root, file, io) {
+262:export function censusEntries(entries, noteText) {
+314:const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]';
+316:function parseArgs(argv) {
+668:function main(argv, io) {
+689:const isMain = process.argv[1]
+
+== [E7] pinned OMP receipt ==
+5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3  .ufo/pins/omp-shape.json
+keys=contract,entries contract=kumitate-omp-shape-v1 entries=64 first=RULES.md sorted=true
+
+== [E8] live OMP root vs receipt (read-only shape diff) ==
+{"live":64,"receipt":64,"added":[],"removed":[],"changed":[]}
+
+== [E9] SOURCES.md state ==
+rows=166 last=| S227 S228_hits=0
+knowledge docs=64; shape-receipt-live-drift.md present=no
+
+== [E10] proxy selftest expectations bound to the OLD K formula (line numbers) ==
+1825 1835 1841 1942 2220 2224 2245 2271 2322 2546 2734 2775 2965 
+2163 2232 2382 2411 2429 2449 2466 2486 

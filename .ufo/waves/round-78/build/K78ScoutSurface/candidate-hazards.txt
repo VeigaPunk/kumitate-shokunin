@@ -1,0 +1,34 @@
+# integrated candidate vs hazard fixtures — measured read-only (2026-11-04T06:46:00Z)
+candidate=build/K78ExecCompare/omp-census.mjs sha256=cb0ea5d67d347f0cb4c6c85f4985e8f8f044201ec0ddb674ed94068586910bff
+receipt_sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
+fixtures were built under $SCRATCH and are deleted at seat end; this receipt is the artifact.
+
+in-sync                          exit=0 | OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0
+compare+shape                    exit=64 | omp-census: incompatible modes
+compare+snapshot                 exit=64 | omp-census: incompatible modes
+compare+selftest                 exit=64 | omp-census: incompatible modes
+compare+note                     exit=64 | omp-census: incompatible modes
+compare+self                     exit=64 | omp-census: incompatible modes
+compare+work                     exit=0 | OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0
+compare-missing-arg              exit=64 | omp-census: --compare needs a path argument
+compare-empty-arg                exit=64 | omp-census: --compare needs a file argument
+root-is-symlink                  exit=2 | ROOT_NOT_A_DIR
+root-missing                     exit=2 | ROOT_NOT_A_DIR
+receipt-is-symlink               exit=0 | OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0
+root-empty-dir                   exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=0 receipt=64 added=0 removed=64 changed=0 first=RULES.md
+root-has-fifo                    exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=64 added=1 removed=0 changed=0 first=zz-fifo
+root-has-symlink                 exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=64 added=1 removed=0 changed=0 first=zz-link
+two-added-first-min              exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=66 receipt=64 added=2 removed=0 changed=0 first=aa-first
+newline-live-name                exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=64 added=1 removed=0 changed=0 first=aa
+receipt-content-key              exit=2 | SHAPE_INVALID
+receipt-unsorted                 exit=2 | SHAPE_INVALID
+receipt-duplicate                exit=2 | SHAPE_INVALID
+receipt-empty-entries            exit=2 | SHAPE_INVALID
+
+## first= ordering: canonical shape order is JS/UTF-16 (validateShape L171), candidate sorts UTF-8 bytes (L247)
+changed=2 on U+10000 + U+FFFD   exit=1 | OMP_SHAPE_COMPARE: DRIFT entries=2 receipt=2 added=0 removed=0 changed=2 first=\ufffd
+  canonical(UTF-16) min=U+10000 ; candidate(UTF-8) min=U+FFFD
+
+## newline-in-name splits the summary line (one-line invariant violation, measured)
+OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=64 added=1 removed=0 changed=0 first=aa<EOL>
+bb<EOL>

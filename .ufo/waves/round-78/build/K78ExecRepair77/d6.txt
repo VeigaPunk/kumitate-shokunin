@@ -1,0 +1,9 @@
+corpus/lessons/round-76-verifier-spotcheck.md:170-174:
+3. **R75 closure defect D4 (round-gate `UPSTREAM_MISSING` on detached HEAD) is not mentioned
+   (status-neutral, inherited state).** The r75 spotcheck asked for a why-not on every routed
+   defect; the r76 report's inherited-state disposition names D1/D2/errata and the C2 repair of D3
+   but is silent on D4 (operator-side). Record the why-not (operator-owned instrument; lane cannot
+   fix) in the next round.
+.ufo/waves/round-77/build/K77ScribeDocs/round-77-lesson.md:25:
+| close-upstream-instrument-refusal (r75 D4 carried) | frozen plan: `round-gate --close` reports `UPSTREAM_MISSING` on jj detached HEAD | round-gate fail-closed arm | Why-not: operator-owned instrument, outside lane repair authority; disclose refusal, do not weaken the gate. |
+The durable append should carry this rationale into corpus/lessons/round-77.md, rather than silently rewriting historical bytes.

@@ -1,0 +1,359 @@
+probe.sha256=5e9d9d4f237cbcb470f27d442b4c014e3ec359b1bdef7b2fa120421c3d19c4ed
+input=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+=== pristine exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+=== findings-zero:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":0,"coverage_kimi":9} kinds=COVERAGE_KIMI_DRIFT,PIN_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"K_findings":0,"coverage_kimi":9}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"K_findings":0,"coverage_kimi":9}
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 147/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=6/12
+=== findings-zero:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+findings-zero killed {"id":"findings-zero","verdict":"killed","reason":"frozen counter rejected mutant","expected":"proxy-mode-violation, proxy-stray, proxy-missing","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"3c091b88caa1e577647d5607f723168a5242c9f9e213d410ad9dd787778df699","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+=== drop-findings-factor:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":10} kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"K_findings":1,"coverage_kimi":10}
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 136/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=6/12
+=== drop-findings-factor:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+drop-findings-factor killed {"id":"drop-findings-factor","verdict":"killed","reason":"frozen counter rejected mutant","expected":"proxy-mode-violation, proxy-stray","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"0231f52e70c1aeb7f0274887cabe767a6c7b2655889eaf9cdb60cf0eb9c11167","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+=== members-numerator:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":10} kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":54,"K_findings":1,"coverage_kimi":10}
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 148/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=6/12
+=== members-numerator:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+members-numerator killed {"id":"members-numerator","verdict":"killed","reason":"frozen counter rejected mutant","expected":"proxy-mode-violation, proxy-stray, proxy-missing","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"2fac65c02bfc79460e84cdd1e390f4c735c007e44d2b1d918e963c95e353f0a5","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+=== census-no-findings:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation FAIL exit=0 out=KIMI_ROOT: /fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/census-no-findings-mutated/k-mode
+FAMILY K1  members=4  checked=3  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":0,"coverage_kimi":10} kinds=O_MEMBERS_DRIFT,PIN_DRIFT
+C78_C1 arm proxy-stray FAIL census=0 terms={"K_members":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-missing FAIL census=0 terms={"K_members":54,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,O_MEMBERS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=1 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 147/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=5/12
+=== census-no-findings:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+census-no-findings killed {"id":"census-no-findings","verdict":"killed","reason":"frozen counter rejected mutant","expected":"census-mode-violation, proxy-mode-violation, proxy-stray, proxy-missing","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439","mutated":"f39d8281a912a6e03e0d7a38abe3ecda7c36bc0d70019b6e77cb48a5e8f64181","after":"7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439","exactRestoration":true}
+=== private-member-rule:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":56,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_MEMBERS_DRIFT,K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,PIN_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray FAIL census=1 terms={"K_members":56,"K_findings":1,"coverage_kimi":9}
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":9}
+C78_C1 arm single-derivation FAIL K_MEMBER_RULES=2 decide={"members":55,"findings":0,"hasMcp":true} exit=0
+C78_C1 arm stanza-tamper ok kinds=K_MEMBERS_DRIFT,K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p= a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 72/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=6/12
+=== private-member-rule:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+private-member-rule killed {"id":"private-member-rule","verdict":"killed","reason":"frozen counter rejected mutant","expected":"single-derivation, proxy-clean-terms","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"727f1f1bc672d827ff810416ebb3195fd6763605ee9ba2ef29bc1e382c0960bb","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+=== stanza-findings-no-delta:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":9} kinds=COVERAGE_KIMI_DRIFT,PIN_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper FAIL exit=1 kinds=PIN_DRIFT terms={"K_findings":0,"coverage_kimi":10}
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p=t writer — at-entry=0 left=0 init=0 canary-entries=0
+FAIL  [155/156]  every declared finding kind fires in at least one fixture — never fired: K_FINDINGS_DRIFT
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 150/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=7/12
+=== stanza-findings-no-delta:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+stanza-findings-no-delta killed {"id":"stanza-findings-no-delta","verdict":"killed","reason":"frozen counter rejected mutant","expected":"stanza-tamper, proxy-mode-violation","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"7eadb9a51d01f0dbeff3575fe017514922251d03eb20363edb1cbc693ef5f8ec","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+=== ignore-mode-floor:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation FAIL exit=0 out=KIMI_ROOT: /fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/ignore-mode-floor-mutated/k-mode
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  m
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation FAIL exit=1 terms={"K_members":55,"K_findings":0,"coverage_kimi":10} kinds=PIN_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=1 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 154/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=7/12
+=== ignore-mode-floor:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+ignore-mode-floor killed {"id":"ignore-mode-floor","verdict":"killed","reason":"frozen counter rejected mutant","expected":"census-mode-violation, proxy-mode-violation, selftests","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439","mutated":"7f9573fbbafb717979119ce3c3a9f2695fae626d5ac35638d92a2179dcde1ec0","after":"7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439","exactRestoration":true}
+=== hardcoded-members-55:mutated exit=1 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_members":55,"K_sections":55,"K_findings":0,"coverage_kimi":10}
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,PIN_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing FAIL census=1 terms={"K_members":55,"K_findings":1,"coverage_kimi":9}
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT,PIN_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict FAIL exit=1 verdict=DRIFT notes={
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r78/K78MutC1/battery-FvWZrQ/lane/SCORECARD.md",
+  "src": "/fast/scratc
+C78_C1 arm selftests FAIL census=0 proxy=1 p=a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 149/156 pass
+VERDICT: FAIL
+
+C78_C1: HELD held=8/12
+=== hardcoded-members-55:restored exit=0 signal=null error=none ===
+C78_C1 arm census-clean-fixture ok KIMI_CENSUS: CLEAN (members=55 checked=55 chain=1 info=4)
+C78_C1 arm census-mode-violation ok exit=1
+C78_C1 arm proxy-clean-terms ok exit=0 K=55/55 findings=0 cov=10
+C78_C1 arm proxy-mode-violation ok K_findings=1 cov=9 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C78_C1 arm proxy-stray ok census=1 K_findings=1 cov=9
+C78_C1 arm proxy-missing ok K_members=54 K_findings=1 cov=9
+C78_C1 arm single-derivation ok K_MEMBER_RULES=0 decide.members=55 findings=0
+C78_C1 arm stanza-tamper ok kinds=K_FINDINGS_DRIFT
+C78_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C78_C1 arm content-blind ok shape-only
+C78_C1 arm live-strict ok exit=0 K_findings=0 cov=10
+C78_C1 arm selftests ok census=0 proxy=0
+C78_C1: HELD held=12/12
+hardcoded-members-55 killed {"id":"hardcoded-members-55","verdict":"killed","reason":"frozen counter rejected mutant","expected":"proxy-missing, selftests","baselinePass":true,"mutatedExit":1,"restoredPass":true,"before":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","mutated":"cd4e061b443a46c7f599ed4ec6dae4ac964b3f2927289cd93dc3f6f562f1e7c5","after":"12391b3e090c0d0773cc6db44795703a23d602d8255b83a8bdd037a7df947013","exactRestoration":true}
+MUTANTS78_C1: ALL-KILLED killed=8/8

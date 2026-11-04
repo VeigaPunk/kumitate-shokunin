@@ -1,0 +1,54 @@
+Exploratory command observations (summaries, not a fabricated raw terminal transcript).
+
+Initial git calls, before intervening amendments:
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse HEAD
+=> ad2630d0566a561ee078f47fade5644a22c10621
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin rev-parse ad2630d0566a561ee078f47fade5644a22c10621^
+=> 0b4df07b6f7478e7db6afb6852c418e096663c3c
+git diff --stat ad2630d0566a561ee078f47fade5644a22c10621 -- .ufo/waves/round-78 scripts SCORECARD.md
+=> empty, exit 0 at initial examination.
+
+sha256sum initial artifacts:
+776c240c1fca66ffe679d811c03578b882784fd90f24d4c4f81a3690fb491ede plan.md
+aa00be37a46afdf02b68f47ed774094eb9297dbc5707089313e2915da9e652cf probe/probe78-c1.mjs
+a46e53d7449bffad66541dae4661e20651930dc4551b49f6544eb56d5e84b460 probe/probe78-c2.mjs
+3b307fe613b7d49bd29833be45cef789aca9db572cc85ceed246dabd09f01817 probe/kimi-fixture.json
+68a793de4b9770c6ae61072fb35b0c6d11bf2109059f7503d2bf414f19d096ef open/gates-open.txt
+d4c803cbc2190a93b66ff7b5d6efe0c9bd7c0d961adbf5337913c714e90e296f controls/c1-base.txt
+1332cdcdb5f724a34c4f179129a362902ac8c722b8d261a5d47f6079080004ba controls/c1-stub.txt
+60dc35a80a17e66638e2569a038b600381730fcec5671bdd1d2f9e05a81e0f3c controls/c2-base.txt
+0e0eb18604da3dd9bb8b0b674b58e82715d526c21276d1c80237829dd6ef3975 controls/c2-stub.txt
+
+node --version => v24.21.0
+Pinned source git rev-parse --short HEAD => 31c465f.
+
+stat -c '%a %n' on /home/vgpnk/.kimi-code members:
+644 mcp.json
+644 region
+700 credentials
+755 oauth
+600 workspaces.json
+644 tui.toml.bak
+644 rc-qrcode.png
+600 server.token
+600 device_id
+600 config.toml
+644 tui.toml
+600 config.toml.bak
+600 session_index.jsonl
+Child counts: agents/secondary 18; skills 7; root children 49; root names ending .bak 23.
+
+Exploratory table count: K_MEMBER_RULES rows 32; census modeFloor/modeCeiling/secret matching lines 30; proxy table matching secret field lines 4. These are literal counts, not semantic proof. Static read confirms four secret flags, not absence of secret flags.
+Census original has no export declaration.
+
+Initial default commands (TMPDIR under seat scratch; --work under seat scratch; cwd lane):
+node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-78/probe/probe78-c1.mjs --set c1 --work /fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/tmp/c1-scaffold
+=> c1-at-scaffold.txt; actual probe-exit=1.
+node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-78/probe/probe78-c2.mjs --set c2 --work /fast/scratch/hyaku/kumitate-r78/K78ReviewFreeze/tmp/c2-scaffold
+=> c2-at-scaffold.txt; actual probe-exit=2.
+
+Initial live proxy pipeline printed A_DRIFT declared=859 computed=868 delta=+9, but its echo exit=0 was the pipeline tail process, NOT proxy's exit. This status is invalid as proxy evidence. The later complete subprocess receipt open-proxy-scaffold.txt correctly records proxy exit 1 with declared=859 computed=872 delta=+13. Counts changed as concurrent seats wrote build artifacts.
+
+Scratch archive creation used git archive + tar, not a clone or initialized repository. An exploratory git rev-parse inside the archive returned 'fatal: not a git repository'; no git mutation occurred there. Python tar data extraction later rejected historical absolute link .ufo/waves/round-57/build/SentinelArtifacts/fx/E8/knowledge-link; retry excluded symlinks/hardlinks and did not access their targets.
+
+Static grep and ranged source reads located the canonical compareAxes diagnostic (term=axis, key=term) and kimi selftest (term=coverage:kimi-layer, key=coverage_kimi); no LSP device exists. References searches are literal only.

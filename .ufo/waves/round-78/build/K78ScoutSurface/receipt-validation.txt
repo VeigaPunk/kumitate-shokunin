@@ -1,0 +1,21 @@
+# receipt validation shared by --shape today and by --compare after C2 (2026-11-04T06:44:21Z)
+census_sha256=14fea9c1e0dd8272494038bc21dc6e81f319841a7acba9a3560508a8f74d5384
+each row: node scripts/omp-census.mjs --shape <fixture>
+
+ok                   exit=0 | OMP_CENSUS: CLEAN (source=snapshot entries=1 findings=0 bound=35/35)
+unsorted             exit=2 | SHAPE_INVALID
+duplicate-name       exit=2 | SHAPE_INVALID
+content-key          exit=2 | SHAPE_INVALID
+unknown-top-key      exit=2 | SHAPE_INVALID
+empty-entries        exit=2 | SHAPE_INVALID
+top-level-array      exit=2 | SHAPE_INVALID
+mode-0o7777          exit=2 | SHAPE_INVALID
+mode-string          exit=2 | SHAPE_INVALID
+name-slash           exit=2 | SHAPE_INVALID
+name-newline         exit=1 | UNLISTED a
+kind-symlink         exit=1 | UNLISTED a
+receipt-symlink      exit=0 | OMP_CENSUS: CLEAN (source=snapshot entries=1 findings=0 bound=35/35)
+receipt-is-dir       exit=2 | SHAPE_NOT_FOUND
+absent               exit=2 | SHAPE_NOT_FOUND
+malformed-json       exit=2 | SHAPE_INVALID
+empty-file           exit=2 | SHAPE_INVALID

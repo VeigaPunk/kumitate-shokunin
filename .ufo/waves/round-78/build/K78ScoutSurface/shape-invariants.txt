@@ -1,0 +1,34 @@
+# shape invariants measured against scripts/omp-census.mjs @ ad2630d0 (2026-11-04T06:44:15Z)
+census_sha256=14fea9c1e0dd8272494038bc21dc6e81f319841a7acba9a3560508a8f74d5384
+receipt_sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
+
+## A. --snapshot of the pinned receipt materialised depth-1 is byte-identical to the receipt
+OMP_SNAPSHOT: WROTE entries=64 sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3 path=$SCRATCH/inv/snap.json
+exit=0
+snapshot_sha256=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
+BYTES_IDENTICAL=yes
+
+## B. a symlink member is lstat-read as kind=symlink mode=0777
+exit=0
+[{'name': 'zz-link', 'kind': 'symlink', 'mode': 511}]
+
+## C. a symlinked ROOT is refused by the shared reader (lstat), reason=ENOTDIR exit 2
+OMP_SNAPSHOT: ERROR reason=ENOTDIR
+exit=2
+
+## D. an unreadable root is fail-closed (EACCES) exit 2
+OMP_SNAPSHOT: ERROR reason=EACCES
+exit=2
+
+## E. a live FIFO cannot be represented by the receipt schema: --snapshot refuses (SHAPE_INVALID) exit 2
+OMP_SNAPSHOT: ERROR reason=SHAPE_INVALID
+exit=2
+
+## F. --shape is already exclusive with --root (exit 64) — compare must NOT inherit that rule
+omp-census: incompatible modes
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]
+exit=64
+
+## G. --help at base names no --compare (arm 1 red before the change)
+usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]
+exit=0

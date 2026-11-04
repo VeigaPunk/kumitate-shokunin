@@ -1,0 +1,5 @@
+import {spawnSync} from 'node:child_process';
+const a=process.argv.slice(2);
+if(a.includes('--help')) console.log('usage: --compare FILE');
+else if(a.includes('--compare')) console.log('OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0');
+else {const r=spawnSync(process.execPath,[new URL('./omp-original.mjs',import.meta.url).pathname,...a],{stdio:'inherit'});process.exit(r.status??2);}

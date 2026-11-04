@@ -1,0 +1,26 @@
+command=node --input-type=module -e "await import('file:///fast/scratch/hyaku/kumitate-r77/base-tree/scripts/spotcheck-adopt-absent.mjs')"
+cwd=/fast/scratch/hyaku/kumitate-r78/K78ExecRepair77
+node=v26.12.0
+exit=1
+--- stdout (verbatim) ---
+--- stderr (verbatim) ---
+node:internal/modules/esm/resolve:241
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/fast/scratch/hyaku/kumitate-r77/base-tree/scripts/spotcheck-adopt-absent.mjs' imported from /fast/scratch/hyaku/kumitate-r78/K78ExecRepair77/[eval1]
+    at finalizeResolution (node:internal/modules/esm/resolve:241:11)
+    at moduleResolve (node:internal/modules/esm/resolve:846:10)
+    at defaultResolve (node:internal/modules/esm/resolve:973:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:752:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:772:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:810:56)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:651:27)
+    at node:internal/modules/esm/loader:683:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:582:22)
+    at ModuleLoader.import (node:internal/modules/esm/loader:679:21) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///fast/scratch/hyaku/kumitate-r77/base-tree/scripts/spotcheck-adopt-absent.mjs'
+}
+
+Node.js v26.12.0

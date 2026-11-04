@@ -1,0 +1,26 @@
+Round-77 corrected base control; axes=operability + coverage
+base-revision=a321ed8006083be1086a3b991a78d3b4c26f0be9
+probe-revision=e47266ae093e6f4ba6b30507606c6b7f2b70903f
+probe-sha256=d48390c3e2490f2363e31bec6085ca21b5b31cb7bec99b2295580c7a873c4604
+lane-tip-probe-sha256=d48390c3e2490f2363e31bec6085ca21b5b31cb7bec99b2295580c7a873c4604
+probe-bytes-equal=true
+command=node /fast/scratch/hyaku/kumitate-r78/K78ExecRepair77/probe77-final.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r78/K78ExecRepair77/base77 --work /fast/scratch/hyaku/kumitate-r78/K78ExecRepair77/w2
+cwd=/fast/scratch/hyaku/kumitate-r78/K78ExecRepair77
+TMPDIR=/fast/scratch/hyaku/kumitate-r78/K78ExecRepair77/tmp
+exit=1
+--- stdout (verbatim) ---
+CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2,adopt-journal,RECOVERED
+CHECK c2.2-crash-journal: FAIL child not killed: status=0 signal=null
+CHECK c2.3-crash-after-row: FAIL child not killed: status=0 signal=null
+CHECK c2.4-crash-after-pin: FAIL child not killed: status=0 signal=null
+CHECK c2.5-stale-tmp: FAIL lines []
+CHECK c2.6-foreign-journal: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=2 uncovered=1 first=corpus/lessons/round-99-verifier-spotcheck.md"
+CHECK c2.7-no-journal-no-line: PASS exit=1 no RECOVERED line, no journal
+CHECK c2.8-recovery-idempotent: FAIL child not killed
+CHECK c2.9-recovery-before-predict: FAIL child not killed
+CHECK c2.10-corrupt-preimage: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=2 uncovered=1 first=corpus/lessons/round-99-verifier-spotcheck.md"
+CHECK c2.11-selftest-and-refusals: FAIL exit=0 ["SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)","VERDICT: PASS"]
+CHECK c2.12-placement-and-lane-map: FAIL row at 11, last lessons row at 6 (want adjacency)
+CHECK c2.13-usage: PASS bad --predict and unknown arm exit 64
+C77_C2: UNMET held=2/13
+--- stderr (verbatim) ---
