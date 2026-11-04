@@ -160,3 +160,18 @@ target is changed.
 3. `controls/c1-junkwiden.txt` §3 conflated two clauses; an appended `## Correction` there records
    it: clause (a) alone is gameable by a blanket catch-all, clause (b) run on the same committed
    tool rejects it, and (d) proves each declared rule load-bearing.
+
+## Amendment 2 (appended 2026-11-04T01:34-03:00, pre-verdict; freeze bytes above unchanged)
+
+Same seat, accepted; these are clarifications, not relaxations:
+1. §C2 (a): the expected `ORIGIN_TIP_DRIFT: MOVED …` verdict is **one stdout line**; the line break
+   in the bullet is prose wrapping. The report quotes it as one line byte-for-byte from
+   `close/tip-drift.txt`.
+2. §C1 (c): the selftest's final line is `VERDICT: PASS (n cases)` (base reads
+   `VERDICT: PASS (29 cases)`), not a bare `VERDICT: PASS`. Required: exit 0, final line begins
+   `VERDICT: PASS` and carries a case count with n ≥ 34.
+3. §C1 (d): the immediate rerun and the sorted-`FAIL`-name comparison are **L1 integration duties**;
+   `close/c1-mutants.txt` carries per unit the mutant's `FAIL` names, the immediate rerun's identical
+   sorted names, and both exits.
+4. §4/Q66: every control and close receipt header carries `live=exercised` or
+   `live=no-live(<reason>)`; appended to the three pre-freeze control receipts (bytes above unchanged).
