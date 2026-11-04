@@ -241,6 +241,9 @@ export function judge(opts) {
       if (dest) break;
     }
     if (dest) {
+      // F7 (round-82 wave scout): the validator bounds its own reportDir; admission must bound
+      // the destination it accepts, or a hand-edited dispatch can send seats outside the lane.
+      if (!inside(realpathSync(lane), dest)) add('REPORT_DEST_OUTSIDE', `${task.name} report destination ${dest} escapes ${lane}`);
       if (destinations.has(dest)) add('REPORT_DEST_DUPLICATE', `${task.name} claims ${dest} (also ${destinations.get(dest)})`);
       else destinations.set(dest, task.name);
     }
@@ -535,6 +538,35 @@ function runSelftest(work) {
     doc.wave = 'kumitate-r81-w1';
     writeFileSync(fx.dispatch, JSON.stringify(doc));
   }, (v) => v.verdict === 'READY');
+  // Round 82: the validator renders `Report: <prose> <path>`; the destination is the first
+  // path-shaped token, not the first token (the shape the round's own handoff has).
+  judgeCase('trailer-prose-shape', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.taskCall.tasks[0].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/x.md\nReport: write your scoped findings to .ufo/waves/round-81/w1/K.md`;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'READY');
+  judgeCase('trailer-prose-distinct', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    const line = (n) => `Report: write your scoped findings to .ufo/waves/round-82/w1/K${n}.md`;
+    doc.taskCall.tasks[0].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/x.md\n${line(0)}`;
+    doc.taskCall.tasks[1].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/y.md\n${line(1)}`;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'READY');
+
+  judgeCase('trailer-prose-duplicate', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    const line = 'Report: write your scoped findings to .ufo/waves/round-81/w1/K.md';
+    doc.taskCall.tasks[0].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/x.md\n${line}`;
+    doc.taskCall.tasks[1].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/y.md\n${line}`;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('REPORT_DEST_DUPLICATE'));
+
+  judgeCase('report-dest-outside', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.taskCall.tasks[0].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/x.md\nReport: /var/tmp/abs-0.md`;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('REPORT_DEST_OUTSIDE'));
+
   judgeCase('report-dest-duplicate', (fx) => {
     const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
     const first = /^Report:\s*(\S+)/m.exec(doc.taskCall.tasks[0].task)[1];

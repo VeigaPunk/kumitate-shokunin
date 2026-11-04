@@ -1,0 +1,17 @@
+rev=c4396021c31e5d631c3ec498b4fa81cef1b98b46
+note=re-run of the committed control with the post-A1.2 counter bytes (arm 18 renamed); the freeze receipt stays as committed
+C82_C2 arm compare-baseline ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-age-v2 FAIL exit=0 missing=receipt_captured=,age_days=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-age-45 FAIL exit=0 missing=age_days=45 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-max-age-stale FAIL exit=64 missing=SHAPE_STALE_RECEIPT,age_days=45,max_age=30 out=omp-census: --max-age is only meaningful with --shape
+C82_C2 arm compare-max-age-fresh FAIL exit=64 missing=OMP_SHAPE_COMPARE: IN_SYNC out=omp-census: --max-age is only meaningful with --shape
+C82_C2 arm compare-v1-captured-absent FAIL exit=0 missing=captured=absent out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-v1-maxage-unknown FAIL exit=64 missing=SHAPE_AGE_UNKNOWN out=omp-census: --max-age is only meaningful with --shape
+C82_C2 arm shape-maxage-regression ok exit=1 out=SHAPE_STALE age_days=45 max_age=30
+C82_C2 arm score-unchanged ok coverage_omp=10 source=snapshot
+C82_C2 arm compare-content-blind ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-transient ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=4 receipt=3 added=0 removed=0 changed=0 transient=1
+C82_C2 arm compare-counts ok exit=1 out=OMP_SHAPE_COMPARE: DRIFT entries=3 receipt=3 added=1 removed=1 changed=1 first=a-file transient=0
+C82_C2 arm selftest FAIL exit=0 cases=98
+C82_C2: UNMET held=6/13
+exit=1

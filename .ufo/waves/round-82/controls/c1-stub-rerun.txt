@@ -1,0 +1,25 @@
+note=re-run of the committed stub control with the post-A1.2 counter bytes
+C82_C1 arm tool-v2-contract FAIL v2=false
+C82_C1 arm clean-ready ok exit=0 READY_HANDOFF: READY wave=w1 seats=14 out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm wave-binding-stem FAIL exit=0 WAVE_BINDING MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm dispatch-wave-mismatch FAIL exit=0 DISPATCH_WAVE MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm dispatch-wave-agree ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm report-dest-duplicate FAIL exit=0 REPORT_DEST_DUPLICATE MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm l1-seat-collision FAIL exit=0 L1_SEAT_COLLISION MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm l1-unresolved FAIL exit=0 L1_UNRESOLVED MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm l1-resolved ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm agents-absent FAIL exit=0 AGENTS_ABSENT MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm agents-malformed FAIL exit=0 AGENTS_MALFORMED MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm policy-absent FAIL exit=0 POLICY_ABSENT MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm policy-malformed FAIL exit=0 POLICY_MALFORMED MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm policy-band-read FAIL exit=0 BAND MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm policy-band-default ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm policy-roles-narrow FAIL exit=0 ROLE_UNKNOWN MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm labrat-refused FAIL exit=0 ROLE_UNKNOWN MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm dispatch-symlink-refused FAIL exit=0 DISPATCH_ABSENT MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm attack-share FAIL exit=0 ATTACK_SHARE MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm connector-cap FAIL exit=0 CONNECTOR_COUNT MISS out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm round-handoff-ready ok exit=0 READY_HANDOFF: READY wave=w1 out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,executor=4
+C82_C1 arm selftest ok exit=0 cases=45
+C82_C1: UNMET held=6/22
+exit=1

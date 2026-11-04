@@ -1,0 +1,10 @@
+# Round 82 — the r81 disclosure, re-probed on the ROUND-81 (v1) bytes
+rev=0c23c4fc (v1 tool); fixture: .ufo/waves/round-82/w1-dispatch.json is a symlink to outside-dispatch.json, both inside the wave dir
+
+## v1 tool (r81 bytes, lstat regular-file guard)
+READY_HANDOFF: FAIL-CLOSED DISPATCH_ABSENT (dispatch is not a regular file: /fast/scratch/hyaku/kumitate-r82/symlink-probe/lane/.ufo/waves/round-82/w1-dispatch.json)
+exit=2
+
+## v2 tool (round-82 bytes, same fixture)
+READY_HANDOFF: FAIL-CLOSED DISPATCH_ABSENT (dispatch is not a regular file: /fast/scratch/hyaku/kumitate-r82/symlink-probe/lane/.ufo/waves/round-82/w1-dispatch.json)
+exit=2

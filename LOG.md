@@ -2658,3 +2658,45 @@ captures; S117/S118 `used-by` reverts. The 10th spotcheck recurrence is adopted 
 committed (`open/spotcheck-adopt.txt`) — the r80 spot-check's R80-11 asked for exactly that.
 
 - 2026-11-04 — round 81 (gate-required one-line record; the full entry is the section above): C1 operability — capability acquisition `ready-handoff` (`kumitate-ready-handoff-v1`: five-key `.ready` contract judged against the dispatch it names, 12 policy findings, six fail-closed refusals; frozen counter `C81_C1: HELD held=16/16`, base 0/16, stub 3/16; suite 34/34; this round's handoff READY with 14 seats); C2 coverage:omp — the shape receipt becomes self-describing (`kumitate-omp-shape-v2`: `captured_at`, `age_days`, opt-in `--max-age`, `SHAPE_VERSION`/`SHAPE_CLOCK`; frozen counter `C81_C2: HELD held=15/15`, base 4/15, stub 6/15 (Amendment 2); census suite 97 → 98; the frozen arm found a real CLI `--max-age` defect); stanza `A` 886 → 889, `C` 39 → 41, `C2` 198 → 202; `PROXY: MATCH --strict`, checklists 41/41, SOURCES 173 → 175, README map 202/202/202; the 10th spotcheck recurrence adopted with its transcript committed.
+
+## Round 82 — the handoff binds, the receipt ages (2026-11-04, Linux run-15 host; ONE v1 wave of 14 seats)
+
+Base `0c23c4fca408591341f22bad58660ac81e1ec5ff` (the round-81 verifier spot-check, the lane's remote tip);
+freeze `97a630123a8980aa2dba4864998400ab5351dbe3` (plan, both frozen counters, four controls, open receipts;
+the 11th spotcheck recurrence adopted before the freeze); scaffolding
+`63b12695ca3599d92c6d128353ca987daf64365b` (tools + suites) and
+`c4396021c31e5d631c3ec498b4fa81cef1b98b46` (wave payload; S238/S239 + captures). Amendments 1 and 2 are
+append-only in `plan.md`.
+
+Claims: **C1 operability** (the lowest non-retired axis; integer 9 terminal) — `ready-handoff` becomes
+`kumitate-ready-handoff-v2`: the seat band and the seat-role vocabulary are read from `--policy` (the
+campaign's single authority) instead of restated in the tool, the handoff is bound to the dispatch it names
+(basename and payload `wave`), two seats may not claim one `Report:` destination and a destination outside
+the lane is refused, `ready.l1` may not collide with a seat and may be resolved against a caller's
+`--agents` registry. Frozen counter `probe82-c1.mjs` 22 arms: base 0/22, constant-`READY` stub 6/22,
+close 22/22; suite 34 → 54 cases. **C2 coverage:omp** (integer 10 held) — `omp-census --compare` discloses
+`receipt_captured`/`age_days`, takes an opt-in `--max-age` (`SHAPE_STALE_RECEIPT` exit 1) and refuses to
+guess a legacy receipt's age (`SHAPE_AGE_UNKNOWN` exit 2); the age never scores. Frozen counter
+`probe82-c2.mjs` 13 arms: base 6/13, stub 4/13, close 13/13; suite 98 → 105 cases.
+
+The wave's seats attacked both surfaces and the frozen counters: the C1 scout measured that the new
+report-destination rule bounded nothing (an absolute `/var/tmp` destination read READY) and the repair —
+`REPORT_DEST_OUTSIDE` — landed in-round with its own case (Amendment 2 A2.1); the C2 scout mapped eleven
+consumers of the compare line, of which one frozen round-78 probe (full-line equality) and any
+`receipt-evidence` record minted before this round are revision-bound and no longer reproduce (disclosed);
+the revenger showed the role vocabulary is one authority gate↔policy but not validator↔policy (the
+validator hard-codes `SWARM_ROLES`), which is this round's honest limit.
+
+Frontier: S238 (Kubernetes *Validating Admission Policy*, tier A, admitted) and S239 (Open Policy Agent
+docs, rejected with reason + flip) opened this round; two knowledge entries cite them, and S237's `used-by`
+was extended with the change logged old→new in the lesson. `considerthese/2026-10-26.md` idea 1 mined into
+`QUALITY.md` Q75. The 11th spotcheck recurrence was adopted before the freeze, and the round-81 lesson's
+open map reading is corrected by an append-only erratum.
+
+- 2026-11-04 — round 82 (gate-required one-line record; the full entry is the section above): C1 operability
+  — capability deepening `ready-handoff` v2 (`kumitate-ready-handoff-v2`: policy-derived band + role
+  vocabulary, `WAVE_BINDING`, `DISPATCH_WAVE`, `REPORT_DEST_DUPLICATE`/`REPORT_DEST_OUTSIDE`,
+  `L1_SEAT_COLLISION`/`L1_UNRESOLVED`; frozen counter `C82_C1: HELD held=22/22`, base 0/22, stub 6/22;
+  suite 54/54); C2 coverage:omp — the compare path discloses and gates the receipt's age (`receipt_captured`,
+  `age_days`, `--max-age`, `SHAPE_STALE_RECEIPT`/`SHAPE_AGE_UNKNOWN`; frozen counter `C82_C2: HELD
+  held=13/13`, base 6/13, stub 4/13; suite 105 cases); stanza `A` 889 → 891, `C` 41 → 42, `C2` 202 → 206.

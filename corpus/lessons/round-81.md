@@ -141,3 +141,27 @@ Measured at the close tip; every receipt names its `rev=` line (`.ufo/waves/roun
   `f8b4a92b…` differs from the bytes at 06:49:16 only in one selftest case (the lane-id rule was
   already in place and the gate answered READY at write time); the close re-validates READY against
   the pinned bytes (`close/handoff-admission.txt`).
+
+## Erratum (append-only, round 82, 2026-11-04)
+
+1. **Counters table, open README-map row (R81-8).** The table above records the open reading as
+   `CLEAN files=198 rows=198 covered=198` "(after the adoption)". The cited `open/readme-map.txt`
+   reads `CLEAN files=199 rows=199 covered=199`, and `git ls-tree -r --name-only 77c7a8b3
+   corpus/knowledge corpus/lessons | grep -c '\.md$'` → `199`. The 198-row reading is the
+   **pre-adoption** state (rows 198, map DRIFT uncovered=1); the after-adoption reading is
+   **199/199/199**. The round-81 bytes are not rewritten.
+2. **Fail-closed refusal count (R81-7).** The report and the README map row said "six fail-closed
+   refusals". The v1 bytes cite **eight** tokens (`READY_ABSENT`, `READY_MALFORMED`, `READY_UNSAFE`,
+   `DISPATCH_PATH`, `DISPATCH_ABSENT`, `DISPATCH_OUTSIDE`, `PATH_UNSAFE`, `DISPATCH_MALFORMED`);
+   round 82's v2 cites **twelve**: the eight above plus `AGENTS_ABSENT`, `AGENTS_MALFORMED`,
+   `POLICY_ABSENT`, `POLICY_MALFORMED`. A `throw`-site grep alone undercounts because those four are
+   passed through `readJson`. The deriving command matches fourteen tokens — the twelve refusals plus
+   the finding ids `READY_KEYS` and `DISPATCH_WAVE` — and the count is stated with it:
+   `grep -oE "'(READY|DISPATCH|PATH|AGENTS|POLICY)_[A-Z_]+'" scripts/ready-handoff.mjs | sort -u`.
+3. **The realpath survivor's premise (round-81 §Limits, one arm missing).** The limits section
+   inferred that "a symlink placed inside the wave dir and resolving outside passes the lexical
+   `inside()` check". Re-probed on the round-81 bytes at `0c23c4fc`
+   (`.ufo/waves/round-82/build/L1/c1-symlink-probe.txt`): a symlinked dispatch is refused by the
+   `lstatSync(...).isFile()` guard first — `FAIL-CLOSED DISPATCH_ABSENT ("dispatch is not a regular
+   file")`, exit 2. The realpath arm is unreachable behind that guard, so the round-81 survivor was
+   a counter-coverage gap, not a live escape. Round 82's arm 18 asserts the refusal that fires.

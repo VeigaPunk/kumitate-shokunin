@@ -291,12 +291,12 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=889
-C=41
+A=891
+C=42
 C1=19
 C1_total=19
-C2=202
-C2_total=202
+C2=206
+C2_total=206
 S_members=88
 S_sections=88
 R_members=92
@@ -327,7 +327,7 @@ pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23
 pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
-pin.omp-census=ba7cbc8f7f507fcf932d06b53e11d0c0801921000d0ba3d35b27ab37b70c322f
+pin.omp-census=92180f3cc64ccb76208528763d9294b820b56dd97d58b56440dcbc0cdf0c0927
 pin.omp-shape=8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
@@ -349,7 +349,7 @@ pin.report-receipt-diff=cd94e8aa96a61d7ee0fb9993e4a00e21d1348030880afbe8ed07b6b9
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
-pin.ready-handoff=f8fc11f12f74505e95bdf1674c3626e4b810f6be99453177d5bd729349712995
+pin.ready-handoff=7e9827ad1da1ed8ea9257350000b4423afd42b867b500721dba736449401da0e
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
 -->
 
@@ -367,7 +367,7 @@ pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad688
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 88/88)` = **10** at the pinned origin `31c465f1` (round 35). Round open measured the same pin at `floor(10 × 8/8 × 86/88)` = **9**: upstream `964f443e`→`31c465f1` deleted 5 S8 members and added 2 (`S_members` 91 → 88; `S_sections` 86 counted, 5 note sections unresolved). Round 35 re-censused S8 (63 → 60 members, two new sections, departed members kept as history) and re-verified every changed member's anchors (56 fidelity seats). `C1s/C1s_total` = `yes` rows / all `S*` rows (**8/8**); `S_sections` = DISTINCT member identities the claims gate verifies in those rows' notes (since round 35); `S_members` = `ls scripts/*.mjs \| wc -l` → 70 + `find scripts -mindepth 2 -type f \| wc -l` → 18 at `31c465f1`. History: 91/91 ⇒ 10 at `964f443e` (rounds 32–34). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after in `## Move log` | round 35 (re-census at `31c465f1`) |
 | coverage:runtime-layer | 10 | `floor(10 × 11/11 × 92/92)` = **10** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
 | coverage:kimi-layer | 10 | `floor(10 × C1k/C1k_total × K_sections/K_members × (K_members−K_findings)/K_members)` = **10** since round 79 (clean `5/5 × 55/55 × 55/55`; a de-named heading `54/55` ⇒ 9; one census finding ⇒ 9; both ⇒ 9; zero members ⇒ 0 — `scripts/proxy-check.mjs` `kCoverage`, frozen counter `C79_C1: HELD held=11/11`, `.ufo/waves/round-79/close/c1-probe.txt`). **Round 78's harm is repaired:** r78's formula `floor(10 × 5/5 × (55−0)/55)` *replaced* the `K_sections` factor, so a de-named heading read 10 while the base read 9 (critic counterexample `round-78 close/harm-counterexample.txt`; reported harmed). Round 79 restores the documentation factor beside the census factor — the lane default (b) of the open L0 question `kumitate | round-78`, with no operator answer recorded by the round open. Round 42: the root child `locks/` (created by Kimi Code 2.3.0, S041) is declared in K3 in both member lists (`scripts/kimi-census.mjs` and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by ``## `~/.kimi-code/locks/` …`` in `knowledge/kimi-session-state.md`: `K_members`/`K_sections` 52 → 53, census `DRIFT (UNLISTED locks)` exit 1 → `CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, root enumeration `declared=26 strays=1` → `declared=27 strays=0`; integer held (the ratio cannot show this move, the root enumeration does). Round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 (integer); round 42 (terms); round 74 (members) | Round 74: the K2 plane gained two members on the Windows host (2026-10-29, the kimi-shokunin managed-plugin install): `plugins/installed.json.bak-pre-shokunin` (file, the pre-install manifest backup, kimi-webbridge only) and `plugins/managed/kimi-shokunin` (dir, the managed plugin bundle). Declared in both member lists (`scripts/kimi-census.mjs` MEMBERS/ENUMERABLE/FROZEN and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by `## ` sections in `corpus/knowledge/kimi-skills-plugins.md`: `K_members`/`K_sections` 53 → 55, census `DRIFT (UNLISTED ×2)` exit 1 → `CLEAN (members=55 checked=55 chain=22 info=4)` exit 0, selftests 56/56 (census) and 124/124 (proxy); integer held (the ratio cannot show this move; the member counts do).
-| coverage:omp | 10 | `floor(10 × C1o/C1o_total × (O_members − O_findings)/O_members)` — **derived by `scripts/proxy-check.mjs` since round 76** (the census decision is imported, never re-implemented; registry row `O1`), and cross-checked by `AXES_DRIFT`; zero denominator → 0. Round 75 moved the value 3 → 10 (`OMP_CENSUS: DRIFT … findings=40` ⇒ `CLEAN … findings=0 bound=35/35`, `base/omp-census-base.txt`, `close/census.txt`); round 76 adds the derivation, the registry binding and the sixth stanza block — the integer stays 10 because 64/64 already saturates it. Counting command: `node scripts/proxy-check.mjs --json` → `terms.coverage_omp`; the census itself remains the member counter. Round 77 makes the same integer **re-derivable offline** from the pinned `kumitate-omp-shape-v1` receipt (`--snapshot` / `--shape` / `--omp-shape`, `pin.omp-shape`), so a closure no longer depends on the live root; the integer stays 10 | round 77 |
+| coverage:omp | 10 | `floor(10 × C1o/C1o_total × (O_members − O_findings)/O_members)` — **derived by `scripts/proxy-check.mjs` since round 76** (the census decision is imported, never re-implemented; registry row `O1`), and cross-checked by `AXES_DRIFT`; zero denominator → 0. Round 75 moved the value 3 → 10 (`OMP_CENSUS: DRIFT … findings=40` ⇒ `CLEAN … findings=0 bound=35/35`, `base/omp-census-base.txt`, `close/census.txt`); round 76 adds the derivation, the registry binding and the sixth stanza block — the integer stays 10 because 64/64 already saturates it. Counting command: `node scripts/proxy-check.mjs --json` → `terms.coverage_omp`; the census itself remains the member counter. Round 82 (append-only note): the non-scoring `--compare` path now discloses the receipt's capture instant and gates its age on request — the derived integer is unchanged (10) and the age never enters it. Round 77 makes the same integer **re-derivable offline** from the pinned `kumitate-omp-shape-v1` receipt (`--snapshot` / `--shape` / `--omp-shape`, `pin.omp-shape`), so a closure no longer depends on the live root; the integer stays 10 | round 77 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -3828,3 +3828,62 @@ the fix and its regression case are the round's mined mistake.
   and the three layer terms unchanged and byte-consistent; no axis harmed.
 - SOURCES 173 → 175 (S236/S237 tier A `mined`, captures pinned, `SOURCE_CAPTURE: CLEAN captures=67`);
   census start/end exit 0 (six carried W04).
+
+## Round 82 — declaration and verdicts (2026-11-04, Linux run-15 host; ONE v1 wave of 14 seats + the L1 planner seat)
+
+Base `0c23c4fca408591341f22bad58660ac81e1ec5ff` (the round-81 verifier spot-check, the lane's remote tip);
+freeze `97a630123a8980aa2dba4864998400ab5351dbe3` (plan, both frozen counters, four controls, open receipts;
+the 11th spotcheck recurrence adopted **before** the freeze); scaffolding `63b12695ca3599d92c6d128353ca987daf64365b`
+(tools + suites) and `c4396021c31e5d631c3ec498b4fa81cef1b98b46` (wave payload, S238/S239 + captures). Amendments
+1 and 2 are append-only in `plan.md` (the r81 realpath premise refuted; the rendered-trailer parse; the
+report-destination containment repair the wave's scout measured). Dispatch: one v1 wave, 14 seats (attack
+4/14 = 29 % by the policy's four attack roles; `sentinel` is a fifth adversarial seat, 5/14 by the looser
+reading; connector 1, executor 3, scribe 2, scout 2, revenger 1) under `ufo-wave-policy.json` band 8–16;
+the canonical planner seat is held by the L1 (the validator rejects `planner` as a swarm role).
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | operability (lowest non-retired axis; integer 9 terminal — capability deepening) | `scripts/ready-handoff.mjs` `kumitate-ready-handoff-v2`; frozen counter `probe82-c1.mjs` (22 arms); `pin.ready-handoff` |
+| C2 | coverage:omp (integer 10 held; the evidence surface gains the receipt's age) | `scripts/omp-census.mjs --compare` age + `--max-age`; frozen counter `probe82-c2.mjs` (13 arms); `pin.omp-census` |
+
+**C1 — operability: the handoff gate binds what it judges.** Predicate:
+`node .ufo/waves/round-82/probe/probe82-c1.mjs --set c1 --lane .` → `C82_C1: HELD held=22/22` exit 0 at M
+(`close/c1-probe.txt`). Before at `git archive 0c23c4fc`: `held=0/22` (`controls/c1-base.txt`, the v1 tool
+has none of the new tokens); the constant-`READY` stub reads `held=6/22` (`controls/c1-stub.txt`). After at M:
+the round's own handoff reads `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1
+roles=scout=2,executor=3,scribe=2,connector=1,reviewer=2,critic=1,mutation-tester=1,sentinel=1,revenger=1
+policy=ufo-wave-policy.json agents=none` exit 0 (`close/handoff-admission.txt`); the band and the role
+vocabulary come from `--policy` (a 20:30 policy refuses the same wave `BAND`, a policy without `scribe`
+refuses it `ROLE_UNKNOWN`, `labrat` is refused) with `POLICY_ABSENT`/`POLICY_MALFORMED` exit 2; the dispatch
+stem (`WAVE_BINDING`) and payload `wave` (`DISPATCH_WAVE`, slot or `-<slot>`) are bound; two seats on one
+`Report:` destination (`REPORT_DEST_DUPLICATE`) or a destination outside the lane (`REPORT_DEST_OUTSIDE`)
+are refused; `ready.l1` colliding with a seat (`L1_SEAT_COLLISION`) or missing from a caller's `--agents`
+registry (`L1_UNRESOLVED`, `AGENTS_ABSENT`/`AGENTS_MALFORMED` exit 2) is refused. Suite 34 → 54 cases
+(`close/c1-suite.txt`). Limits: the gate stays advisory (nothing fleet-side calls it), `--agents` liveness is
+opt-in, `ATTACK` still names the unreachable `labrat`, and the gate counts spawns while the validator bands on
+spawns + resumes (wave scout F1) — all disclosed in `corpus/lessons/round-82.md` §Limits.
+
+**C2 — coverage:omp: the receipt carries its age on the compare path.** Predicate:
+`node .ufo/waves/round-82/probe/probe82-c2.mjs --set c2 --lane .` → `C82_C2: HELD held=13/13` exit 0 at M
+(`close/c2-probe.txt`). Before at the base tree: `held=6/13` (`controls/c2-base.txt` — round 81's compare
+already holds the five plain-diff arms and `--shape --max-age`; none of the seven new arms); the
+constant-`IN_SYNC` stub reads `held=4/13` (`controls/c2-stub.txt`). After at M: `--compare` prints
+`receipt_captured=<date> age_days=<n>` (`captured=absent age_days=absent` for a legacy v1 receipt);
+`--max-age 30` on a 45-day receipt reads `SHAPE_STALE_RECEIPT entries=… age_days=45 max_age=30` exit 1;
+`--max-age 60` grades `IN_SYNC`; a v1 receipt with a bound reads `SHAPE_AGE_UNKNOWN` exit 2; the age never
+moves `coverage:omp` (`score-unchanged` ages the lane's own pinned receipt and still reads 10). Suite
+98 → 105 cases (`close/c2-suite.txt`). Limit: `captured_at` is self-asserted; custody is the pin.
+
+- Same-commit re-measure (per the stanza's own rule): A 889 → 891 (the two round-82 frozen counters),
+  C 41 → 42 (the compare-age checklist item), C2/C2_total 202 → 206 (two knowledge entries + this
+  round's lesson + the adopted spot-check row), `pin.ready-handoff` `f8fc11f1…` → `7e9827ad…`,
+  `pin.omp-census` `ba7cbc8f…` → `92180f3c…`.
+- Routed repairs (not claims): the 11th spotcheck recurrence adopted before the freeze; R81-1 … R81-8
+  answered in the lesson; the round-81 lesson's open map reading corrected by an append-only erratum;
+  the `corpus/README.md` origin path corrected (`origin-work/ufo-fsd-alpha` → `/home/vgpnk/Projects/ufo-fsd-alpha`);
+  S237 `used-by` extended and its §5.1/§4.2.3 anchor discrepancy recorded for a superseding row;
+  considerthese 2026-10-26 idea 1 → `QUALITY.md` **Q75** (idea 3 is already Q68 and is not re-mined);
+  the wave scout's F7 finding repaired as `REPORT_DEST_OUTSIDE` (Amendment 2).
+- Axes: operability 9 (terminal; the capability row `ready-handoff` deepened, window unchanged),
+  coverage:omp 10 (integer held; the surface gained the receipt's age), `coverage` (retired) and the
+  three layer terms unchanged and byte-consistent with the stanza; no axis harmed.

@@ -2,7 +2,9 @@
 
 Memory for orchestration & tooling work: OMP task/hub dispatch, ufo-fsd
 scripts, `crates/ufo-core-runtime`. Sources are in
-`/home/vgpnk/Projects/origin-work/ufo-fsd-alpha` unless noted.
+`/home/vgpnk/Projects/ufo-fsd-alpha` unless noted (the round-82 wave's connector measured that the
+old path `/home/vgpnk/Projects/origin-work/ufo-fsd-alpha` is absent on this host and the repo lives
+at the former; `PROVINCE.md` already names it).
 
 Citation re-verification (round 8): `node scripts/cite-check.mjs` re-resolves
 every path / line / symbol / pin written in `SKILL.md` + `corpus/**/*.md`
@@ -207,6 +209,8 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/two-reading-verdicts.md` | One tool, one verdict per surface: the spotcheck set and the README map as separate readings, delta-scoped `--adopt`, the k8s probe parallel-verdict source, and the folded-green failure modes | S119; `scripts/spotcheck-adopt.mjs`, `.ufo/waves/round-80/probe/probe80-c1.mjs` |
 | `knowledge/snapshot-bound-derived-scores.md` | A derived score reads a committed, hash-pinned snapshot by default with an explicit live opt-in: the Terraform lock-file source, the r80 `coverage:omp` flake, the watch table and the invisibility limit | S234; `scripts/proxy-check.mjs`, `.ufo/pins/omp-shape.json`, `.ufo/pins/origin.json` |
 | `knowledge/ready-handoff-admission.md` | The inline handoff admission gate `kumitate-ready-handoff-v1`: the five-key `.ready` contract, ready↔dispatch agreement, band/attack/connector arithmetic, the 12 policy findings, the six fail-closed refusals, and what admission does not prove | `scripts/ready-handoff.mjs`, `.ufo/waves/round-81/w1.ready`, `probe81-c1.mjs` |
+| `knowledge/handoff-binding-and-liveness.md` | The seven v2 judgments of `kumitate-ready-handoff-v2`: the dispatch basename and payload `wave` binding, one report destination per seat (the rendered-trailer parser), the `l1` collision rule and its opt-in registry resolution, the policy-derived band and role vocabulary, and what the gate cannot decide offline | `scripts/ready-handoff.mjs`, `probe82-c1.mjs`, `plan.md` §C1, S238 |
+| `knowledge/receipt-age-on-the-compare-path.md` | The OMP shape receipt's own age on the compare path: `receipt_captured`/`age_days` disclosure, the opt-in `--compare --max-age` gate (`SHAPE_STALE_RECEIPT` exit 1), the legacy-receipt refusal (`SHAPE_AGE_UNKNOWN` exit 2), why the age never scores, and the custody limit (a self-asserted capture instant) | `scripts/omp-census.mjs` (`compareShape`), `probe82-c2.mjs`, S237 |
 | `knowledge/self-describing-shape-receipt.md` | `kumitate-omp-shape-v2`: `captured_at` beside `entries`, age disclosure, the opt-in `--max-age` staleness gate, the v1 cutover (`--shape` refuses, `--compare` accepts), clock refusal, and why age never enters the score | `scripts/omp-census.mjs`, `.ufo/pins/omp-shape.json`, `probe81-c2.mjs` |
 | `knowledge/report-evidence-pointers.md` | A report's pointers are evidence: `POINTER_DEAD` resolution bases, `--rev` membership, absence-vs-error separation | S229; `scripts/report-receipt-diff.mjs` v4 |
 | `lessons/round-79.md` | Round-79 method: the composite K score (both factors, harm repaired), `report-receipt-diff` v4 `POINTER_DEAD`, the C2 arm-vs-contract mistake and the omp-census transient repair | LOG.md round 79; `.ufo/waves/round-79/`; S229–S231 |
@@ -214,6 +218,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-80.md` | Two-reading verdicts and snapshot-bound scores: the C1/C2 counters, the duplicate-source catch that folded a new row into S119, the r77 label-arm attribution mistake, and the limits | `.ufo/waves/round-80/`; S119, S234 |
 | `lessons/round-80-verifier-spotcheck.md` | Non-author round-80 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-81.md` | Round-81 method: the inline handoff turned into an admission gate (16 arms; base 0/16) and the shape receipt made self-describing (`captured_at`, age, opt-in `--max-age`, 15 arms); the CLI `--max-age` defect the frozen arm found and its regression case; the scaffold-before-freeze ordering defect and the three §Limits families | LOG.md round 81; `plan.md`, `probe81-c1/c2.mjs` |
+| `lessons/round-82.md` | Round-82 method: the handoff gate bound to its dispatch and to the campaign policy (band + role vocabulary read from `ufo-wave-policy.json`, suite 50 → 53) and the receipt's age on the compare path (13 arms); the r81 realpath-premise refutation, the rendered-trailer parsing defect the real handoff caught, and the refusal-token conflation | LOG.md round 82; `plan.md`, `probe82-c1/c2.mjs` |
 | `lessons/round-81-verifier-spotcheck.md` | Non-author round-81 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 
@@ -282,7 +287,7 @@ fixture suite, `--strict` to fail on warnings.
   code fsync count), the journal uppercase-digest asymmetry, and the `live.rs`
   `QWEN_RESPONSE_FORMAT` (`ufo_dedupe_v2`, no `identity_hash`) vs
   `ufo.dedupe.v4` schema staleness (dormant while `LiveEnv::enabled()` is off).
-  Reproduce before citing as fact; fixes belong to `origin-work/ufo-fsd-alpha`.
+  Reproduce before citing as fact; fixes belong to the origin tree (`/home/vgpnk/Projects/ufo-fsd-alpha`).
 - **Audit holes** — no aggregator/reviewer audit exists for the round-2,
   round-3, round-6 or round-7 corpus deltas, and round 2 and round 7 landed no
   `lessons/round-<N>.md` at the time (round 7's was backfilled in round 8).

@@ -1245,3 +1245,26 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Shown able to fail.** Round 80's S119 row recorded 21 words for a 19-word quote; the same class recurred from round 79 (D4).
   - **Limit.** Counts words, not whether the words ground the claim; a verbatim quote can still be irrelevant.
   - **Supersedes.** None. Adds the arithmetic half of the ≤25-word rule to Q3's verbatim discipline.
+
+- **Q75 — a stated tally is a pointer to a committed transcript, not prose (round 82).** Grounding:
+  `considerthese/2026-10-26.md` self-improvement idea 1 ("check that every number has a transcript"),
+  mined 2026-11-04 and opened at its own evidence — `corpus/lessons/round-81.md` §Routed-defect answers
+  (R80-8: the round-80 LOG stated 26 where the final suite was 34) and
+  `corpus/lessons/round-81-verifier-spotcheck.md` R81-4 (the ready-handoff knowledge entry quotes
+  `31/31 pass` while the shipped suite is 34/34). Idea 3 of the same file is **already implemented**
+  as Q68 and is not re-mined.
+  - **Who checks.** The lane before a round commit; the non-author closure re-runs the grep on the
+    committed tip.
+  - **Field.** Every `N/N pass`, `PASS (n cases)` or `MATCH pins=n` tally written into a report,
+    `LOG.md`, a knowledge entry or `SCORECARD.md` names a committed transcript that contains that exact
+    tally, or states the revision it was measured at when the tally is a run-time reading.
+  - **Command.** `grep -rnE '[0-9]+/[0-9]+ pass|PASS \([0-9]+ cases\)' <files>` then, per hit,
+    `grep -rlF '<tally>' .ufo/waves/round-<N>/ | head -1` — an empty result is an untranscripted tally.
+  - **Fails when.** A tally has no committed receipt containing it; a `verified-at` entry quotes a
+    tally from a revision other than the one it ships at, without naming the revision.
+  - **Shown able to fail.** Round 81's `corpus/knowledge/ready-handoff-admission.md` quoted 31/31 at a
+    tip whose suite is 34/34 (R81-4), and its LOG entry's 26 vs 34 (R80-8) — both found by the
+    outside check, not by the lane.
+  - **Limit.** Proves a transcript exists, not that it is the right transcript; a receipt from another
+    tool with the same tally still passes.
+  - **Supersedes.** None. Adds the pointer half Q74's word count leaves open.

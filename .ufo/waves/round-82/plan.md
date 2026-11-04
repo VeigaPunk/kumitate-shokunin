@@ -136,3 +136,20 @@ committed record; R81-6 a rejected candidate this round; R81-7 the refusal count
   (the v2 cases + the suffixed-id agreement case). This wave's own handoff reads
   `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` (sentinel counted as the fifth
   adversarial seat, outside the policy's four attack roles).
+
+## Amendment 2 (append-only, after the wave's scout reported; supreme before close)
+
+- **A2.1** The wave's C1 scout (`w1/K82ScoutReconC1.md` F7) measured that the new
+  `REPORT_DEST_DUPLICATE` rule bounded nothing: an absolute `Report: /var/tmp/abs-N.md` read READY, so
+  admission could direct seats to write outside the lane. Repaired in the same round as
+  `REPORT_DEST_OUTSIDE` (the resolved destination must be inside the lane) with the case
+  `report-dest-outside`; the frozen counter's 22 arms are unchanged and still read `held=22/22`, and
+  the suite is 54 cases. Shown able to fail: removing the containment line reads `53/54` with that
+  case red (`READY` on an escaping destination).
+- **A2.2** Disclosed, not repaired this round (scout F1–F6, F8–F15): the gate counts `taskCall.tasks`
+  (spawns) while the validator bands on spawns + resumes (F1); the gate reads no `maxLanes`/256
+  ceiling (F2); the role vocabulary is one authority gate↔policy, not validator↔policy, because the
+  validator hard-codes its own `SWARM_ROLES` (F3); `ATTACK` still names `labrat`, which the policy's
+  role set makes unreachable (F4); the godspeed check is stricter than the validator's regex (F5);
+  the report-trailer wording is prompt-enforced (F6); band *source* is `--policy` here and
+  `UFO_CONFIG_PATH` there (F8). These go to the round's limits and to round-83 candidates.

@@ -1,0 +1,26 @@
+rev=c4396021c31e5d631c3ec498b4fa81cef1b98b46
+note=re-run of the committed control with the post-A1.2 counter bytes (arm 18 renamed); the freeze receipt stays as committed
+C82_C1 arm tool-v2-contract FAIL v2=false
+C82_C1 arm clean-ready FAIL exit=64 READY_HANDOFF: READY wave=w1 seats=14 MISS out=unknown argument: --policy
+C82_C1 arm wave-binding-stem FAIL exit=64 WAVE_BINDING MISS out=unknown argument: --policy
+C82_C1 arm dispatch-wave-mismatch FAIL exit=64 DISPATCH_WAVE MISS out=unknown argument: --policy
+C82_C1 arm dispatch-wave-agree FAIL exit=64 READY_HANDOFF: READY MISS out=unknown argument: --policy
+C82_C1 arm report-dest-duplicate FAIL exit=64 REPORT_DEST_DUPLICATE MISS out=unknown argument: --policy
+C82_C1 arm l1-seat-collision FAIL exit=64 L1_SEAT_COLLISION MISS out=unknown argument: --policy
+C82_C1 arm l1-unresolved FAIL exit=64 L1_UNRESOLVED MISS out=unknown argument: --policy
+C82_C1 arm l1-resolved FAIL exit=64 READY_HANDOFF: READY MISS out=unknown argument: --policy
+C82_C1 arm agents-absent FAIL exit=64 AGENTS_ABSENT MISS out=unknown argument: --policy
+C82_C1 arm agents-malformed FAIL exit=64 AGENTS_MALFORMED MISS out=unknown argument: --policy
+C82_C1 arm policy-absent FAIL exit=64 POLICY_ABSENT MISS out=unknown argument: --policy
+C82_C1 arm policy-malformed FAIL exit=64 POLICY_MALFORMED MISS out=unknown argument: --policy
+C82_C1 arm policy-band-read FAIL exit=64 BAND MISS out=unknown argument: --policy
+C82_C1 arm policy-band-default FAIL exit=64 READY_HANDOFF: READY MISS out=unknown argument: --policy
+C82_C1 arm policy-roles-narrow FAIL exit=64 ROLE_UNKNOWN MISS out=unknown argument: --policy
+C82_C1 arm labrat-refused FAIL exit=64 ROLE_UNKNOWN MISS out=unknown argument: --policy
+C82_C1 arm dispatch-symlink-refused FAIL exit=64 DISPATCH_ABSENT MISS out=unknown argument: --policy
+C82_C1 arm attack-share FAIL exit=64 ATTACK_SHARE MISS out=unknown argument: --policy
+C82_C1 arm connector-cap FAIL exit=64 CONNECTOR_COUNT MISS out=unknown argument: --policy
+C82_C1 arm round-handoff-ready FAIL exit=64 READY_HANDOFF: READY wave=w1 MISS out=unknown argument: --policy
+C82_C1 arm selftest FAIL exit=0 cases=34
+C82_C1: UNMET held=0/22
+exit=1
