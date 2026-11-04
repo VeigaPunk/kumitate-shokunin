@@ -1,12 +1,13 @@
-rev=509afb1d6ec5fc854c1398ae0060d6298ed621d1
+rev=42d93b955eccc5fa9d995ca6092c41659672b5d1
 $ node scripts/proxy-check.mjs --json
 {
   "contract": "kumitate-proxy-v1",
   "mode": "check",
   "source": "snapshot",
-  "ok": false,
-  "verdict": "DRIFT",
-  "exitCode": 1,
+  "sourceRead": true,
+  "ok": true,
+  "verdict": "MATCH",
+  "exitCode": 0,
   "self": "/home/vgpnk/Projects/shokunin/kumitate-shokunin",
   "scorecard": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md",
   "src": "/fast/scratch/hyaku/kumitate-pin/src",
@@ -69,8 +70,8 @@ $ node scripts/proxy-check.mjs --json
       },
       "pin.proxy-check": {
         "file": "scripts/proxy-check.mjs",
-        "declared": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
-        "computed": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
+        "declared": "fa79c279d336fd49f2880db58018d231f7e7efcad42a217bfb4efbd22aec35ef",
+        "computed": "fa79c279d336fd49f2880db58018d231f7e7efcad42a217bfb4efbd22aec35ef",
         "match": true
       },
       "pin.claims-check": {
@@ -93,8 +94,8 @@ $ node scripts/proxy-check.mjs --json
       "C": "39",
       "C1": "19",
       "C1_total": "19",
-      "C2": "197",
-      "C2_total": "197",
+      "C2": "198",
+      "C2_total": "198",
       "S_members": "88",
       "S_sections": "88",
       "R_members": "92",
@@ -116,34 +117,15 @@ $ node scripts/proxy-check.mjs --json
       "pin.cite-check": "7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2",
       "pin.surface-probe": "79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35",
       "pin.round-gate": "09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594",
-      "pin.proxy-check": "59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96",
+      "pin.proxy-check": "fa79c279d336fd49f2880db58018d231f7e7efcad42a217bfb4efbd22aec35ef",
       "pin.claims-check": "de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14",
       "pin.kimi-census": "7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439"
     },
     "stanzaLine": 293
   },
-  "findings": [
-    {
-      "severity": "error",
-      "kind": "C2_DRIFT",
-      "term": "C2",
-      "declared": 197,
-      "computed": 198,
-      "delta": "+1",
-      "detail": "C2: declared=197 computed=198 delta=+1"
-    },
-    {
-      "severity": "error",
-      "kind": "C2_TOTAL_DRIFT",
-      "term": "C2_total",
-      "declared": 197,
-      "computed": 198,
-      "delta": "+1",
-      "detail": "C2_total: declared=197 computed=198 delta=+1"
-    }
-  ],
-  "errors": 2,
+  "findings": [],
+  "errors": 0,
   "warnings": 0,
   "durationMs": 71
 }
-exit=1
+exit=0

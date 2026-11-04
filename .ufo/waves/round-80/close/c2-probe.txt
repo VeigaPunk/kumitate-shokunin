@@ -1,16 +1,16 @@
-rev=509afb1d6ec5fc854c1398ae0060d6298ed621d1
+rev=42d93b955eccc5fa9d995ca6092c41659672b5d1
 $ node .ufo/waves/round-80/probe/probe80-c2.mjs --set c2
-C80_C2 arm 01 default-snapshot: FAIL exit=1 source=snapshot O_members=65 O_findings=0 coverage=10 text_exit=1
-C80_C2 arm 02 live-opt-in: PASS exit=1 source=live O_members=68 kinds=C2_DRIFT,C2_TOTAL_DRIFT,O_MEMBERS_DRIFT
-C80_C2 arm 03 offline-default: FAIL exit=1 source=snapshot O_members=65 kinds=C2_DRIFT,C2_TOTAL_DRIFT
-C80_C2 arm 04 receipt-pinned: PASS exit=1 kinds=C2_DRIFT,C2_TOTAL_DRIFT,GATE_PIN_DRIFT
-C80_C2 arm 05 receipt-absent: PASS exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED"
-C80_C2 arm 06 receipt-invalid: PASS exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": 2,\n  \"self\": \"/home/vgp"
-C80_C2 arm 07 stanza-off-by-one: PASS exit=1 kinds=C2_DRIFT,C2_TOTAL_DRIFT,O_MEMBERS_DRIFT
+C80_C2 arm 01 default-snapshot: PASS exit=0 source=snapshot O_members=65 O_findings=0 coverage=10 text_exit=0
+C80_C2 arm 02 live-opt-in: PASS exit=1 source=live O_members=68 kinds=O_MEMBERS_DRIFT
+C80_C2 arm 03 offline-default: PASS exit=0 source=snapshot O_members=65 kinds=
+C80_C2 arm 04 receipt-pinned: PASS exit=1 kinds=GATE_PIN_DRIFT
+C80_C2 arm 05 receipt-absent: PASS exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"sourceRead\": false,\n  \"ok\": false,\n  "
+C80_C2 arm 06 receipt-invalid: PASS exit=2 out="{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"sourceRead\": false,\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": "
+C80_C2 arm 07 stanza-off-by-one: PASS exit=1 kinds=O_MEMBERS_DRIFT
 C80_C2 arm 08 finding-on-receipt: PASS exit=1 O_findings=1 coverage=9
 C80_C2 arm 09 snapshot-equals-census: PASS census_exit=0 census=65/0/35 proxy=65/0/35
-C80_C2 arm 10 compare-non-scoring: FAIL compare_exit=1 compare="OMP_SHAPE_COMPARE: DRIFT entries=68 receipt=65 added=3 removed=0 changed=0 first=config.yml.pre-arm80-0-20261104 transient=0" proxy_exit=1
+C80_C2 arm 10 compare-non-scoring: PASS compare_exit=1 compare="OMP_SHAPE_COMPARE: DRIFT entries=68 receipt=65 added=3 removed=0 changed=0 first=config.yml.pre-arm80-0-20261104 transient=0" proxy_exit=0
 C80_C2 arm 11 selftest: PASS proxy=0 census=0
-C80_C2 arm 12 live-opt-in-clean: FAIL exit=1 source=live O_members=65
-C80_C2: HELD held=8/12
-exit=1
+C80_C2 arm 12 live-opt-in-clean: PASS exit=0 source=live O_members=65
+C80_C2: HELD held=12/12
+exit=0
