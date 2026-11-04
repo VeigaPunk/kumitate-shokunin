@@ -1,4 +1,4 @@
-rev=42d93b955eccc5fa9d995ca6092c41659672b5d1
+rev=6cbd6750aa2849dc2ae1bdcf1787d38ce93fb7e8
 $ node scripts/proxy-check.mjs --selftest
 kumitate proxy-check --selftest (hermetic, node v24.21.0)
 PASS  [  1/163]  MATCH: A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5 (literal verdict) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)
@@ -90,16 +90,16 @@ PASS  [ 86/163]  OMP: all six terms derive from the census and O registry — ex
 PASS  [ 87/163]  OMP snapshot: identical terms and explicit JSON/text source — exit=0 source=snapshot PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=1/1 O_members=26 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; source=snapshot)
 PASS  [ 88/163]  OMP snapshot: added stray derives COVERAGE_OMP_DRIFT — exit=1 findings=1 coverage=9
 PASS  [ 89/163]  fail-closed: OMP_SHAPE_INVALID (OMP snapshot invalid) — exit=2 PROXY: FAIL-CLOSED (OMP_SHAPE_INVALID) invalid shape contract or entries
-PASS  [ 90/163]  fail-closed: OMP_SHAPE_NOT_FOUND (OMP snapshot absent) — exit=2 PROXY: FAIL-CLOSED (OMP_SHAPE_NOT_FOUND) cannot read /tmp/kumitate-proxy-selftest-JzQeXm/a
+PASS  [ 90/163]  fail-closed: OMP_SHAPE_NOT_FOUND (OMP snapshot absent) — exit=2 PROXY: FAIL-CLOSED (OMP_SHAPE_NOT_FOUND) cannot read /tmp/kumitate-proxy-selftest-pGIWwr/a
 PASS  [ 91/163]  OMP snapshot: root and receipt are exclusive — exit=64
 PASS  [ 92/163]  OMP default: the committed receipt is the O source (source=snapshot) — exit=0 source=snapshot members=26 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:sc
 PASS  [ 93/163]  OMP default: --omp-live reads the live root and sees the added member — exit=1 source=live members=27
 PASS  [ 94/163]  OMP default: an absent receipt fails closed instead of reading live — exit=2/2 source=snapshot read=false PROXY: FAIL-CLOSED (OMP_SHAPE_NOT_FOUND) cannot read /tmp/ku
 PASS  [ 95/163]  OMP default: --omp-live and --omp-shape are exclusive — exit=64
 PASS  [ 96/163]  OMP: one extra member yields O_findings=1 coverage_omp=9 and stale score DRIFT — exit=1 O_findings=1 coverage_omp=9 kinds=O_MEMBERS_DRIFT,O_FINDINGS_DRIFT,COVERAGE_OMP_DRIFT,AXES_DRIFT
-PASS  [ 97/163]  fail-closed: OMP_ROOT_NOT_A_DIR (OMP root absent) — exit=2 PROXY: FAIL-CLOSED (OMP_ROOT_NOT_A_DIR) --omp-root /tmp/kumitate-proxy-selftest-JzQeXm/abs
-PASS  [ 98/163]  fail-closed: OMP_ROOT_NOT_A_DIR (OMP root is a file) — exit=2 PROXY: FAIL-CLOSED (OMP_ROOT_NOT_A_DIR) --omp-root /tmp/kumitate-proxy-selftest-JzQeXm/293
-PASS  [ 99/163]  fail-closed: OMP_NOTE_MISSING (OMP binding note missing) — exit=2 PROXY: FAIL-CLOSED (OMP_NOTE_MISSING) cannot read /tmp/kumitate-proxy-selftest-JzQeXm/309-
+PASS  [ 97/163]  fail-closed: OMP_ROOT_NOT_A_DIR (OMP root absent) — exit=2 PROXY: FAIL-CLOSED (OMP_ROOT_NOT_A_DIR) --omp-root /tmp/kumitate-proxy-selftest-pGIWwr/abs
+PASS  [ 98/163]  fail-closed: OMP_ROOT_NOT_A_DIR (OMP root is a file) — exit=2 PROXY: FAIL-CLOSED (OMP_ROOT_NOT_A_DIR) --omp-root /tmp/kumitate-proxy-selftest-pGIWwr/293
+PASS  [ 99/163]  fail-closed: OMP_NOTE_MISSING (OMP binding note missing) — exit=2 PROXY: FAIL-CLOSED (OMP_NOTE_MISSING) cannot read /tmp/kumitate-proxy-selftest-pGIWwr/309-
 PASS  [100/163]  OMP: Axes row must equal the derived coverage:omp integer — exit=1 PROXY: DRIFT (AXES_DRIFT term=coverage:omp declared=9 computed=10)
 PASS  [101/163]  OMP: declared C1o is cross-checked, never trusted — exit=1 PROXY: DRIFT (C1O_DRIFT term=C1o declared=2 computed=1 delta=-1)
 PASS  [102/163]  OMP: declared C1o_total is cross-checked, never trusted — exit=1 PROXY: DRIFT (C1O_TOTAL_DRIFT term=C1o_total declared=2 computed=1 delta=-1)
@@ -108,17 +108,17 @@ PASS  [104/163]  OMP: declared O_findings is cross-checked, never trusted — ex
 PASS  [105/163]  OMP: declared O_bound is cross-checked, never trusted — exit=1 PROXY: DRIFT (O_BOUND_DRIFT term=O_bound declared=34 computed=35 delta=+1)
 PASS  [106/163]  OMP: declared coverage_omp is cross-checked, never trusted — exit=1 PROXY: DRIFT (COVERAGE_OMP_DRIFT term=coverage_omp declared=9 computed=10 delta=+1)
 PASS  [107/163]  OMP: zero denominators score zero, never NaN — no O registry rows → 0; empty OMP root denominator → 0
-PASS  [108/163]  fail-closed: SELF_NOT_A_DIR (self absent) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-JzQeXm/nope-nope i
-PASS  [109/163]  fail-closed: SELF_NOT_A_DIR (self is a file) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-JzQeXm/01-match-ba
-PASS  [110/163]  fail-closed: SRC_NOT_A_DIR (--src absent) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-JzQeXm/nope-src-dir 
-PASS  [111/163]  fail-closed: SRC_NOT_A_DIR (--src is a file) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-JzQeXm/02-match-basi
-PASS  [112/163]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root absent) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-JzQeXm/n
-PASS  [113/163]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root is a file) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-JzQeXm/0
+PASS  [108/163]  fail-closed: SELF_NOT_A_DIR (self absent) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-pGIWwr/nope-nope i
+PASS  [109/163]  fail-closed: SELF_NOT_A_DIR (self is a file) — exit=2 PROXY: FAIL-CLOSED (SELF_NOT_A_DIR) --self /tmp/kumitate-proxy-selftest-pGIWwr/01-match-ba
+PASS  [110/163]  fail-closed: SRC_NOT_A_DIR (--src absent) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-pGIWwr/nope-src-dir 
+PASS  [111/163]  fail-closed: SRC_NOT_A_DIR (--src is a file) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-pGIWwr/02-match-basi
+PASS  [112/163]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root absent) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-pGIWwr/n
+PASS  [113/163]  fail-closed: KIMI_ROOT_NOT_A_DIR (--kimi-root is a file) — exit=2 PROXY: FAIL-CLOSED (KIMI_ROOT_NOT_A_DIR) --kimi-root /tmp/kumitate-proxy-selftest-pGIWwr/0
 PASS  [114/163]  fail-closed: STANZA_MALFORMED (K count value is not an integer) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) K_members="five" is not a non-negative integer
 PASS  [115/163]  fail-closed: STANZA_MALFORMED (coverage_kimi value is not an integer) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) coverage_kimi="1.5" is not a non-negative integer
 PASS  [116/163]  fail-closed: STANZA_KEY_UNKNOWN (unknown K-ish key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 40: K_blocks is not a kumitate-proxy-v1 key
 PASS  [117/163]  fail-closed: STANZA_MALFORMED (required K key absent) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) missing key(s): K_sections
-PASS  [118/163]  fail-closed: SCORECARD_MISSING (SCORECARD.md absent) — exit=2 PROXY: FAIL-CLOSED (SCORECARD_MISSING) --scorecard /tmp/kumitate-proxy-selftest-JzQeXm/341
+PASS  [118/163]  fail-closed: SCORECARD_MISSING (SCORECARD.md absent) — exit=2 PROXY: FAIL-CLOSED (SCORECARD_MISSING) --scorecard /tmp/kumitate-proxy-selftest-pGIWwr/341
 PASS  [119/163]  fail-closed: STANZA_MISSING (no claim block) — exit=2 PROXY: FAIL-CLOSED (STANZA_MISSING) no "<!-- kumitate-proxy-v1" block in the scorecard
 PASS  [120/163]  fail-closed: STANZA_MALFORMED (two claim blocks) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) 2 "<!-- kumitate-proxy-v1" blocks (exactly 1 require
 PASS  [121/163]  fail-closed: STANZA_MALFORMED (block without `-->`) — exit=2 PROXY: FAIL-CLOSED (STANZA_MALFORMED) line 53 is not key=value: "<!-- kumitate-gate-pins-v
@@ -129,30 +129,30 @@ PASS  [125/163]  fail-closed: STANZA_MALFORMED (pin value not a 64-hex sha256) �
 PASS  [126/163]  fail-closed: STANZA_KEY_UNKNOWN (unknown key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 23: Z is not a kumitate-proxy-v1 key
 PASS  [127/163]  fail-closed: STANZA_KEY_DUPLICATE (duplicate key) — exit=2 PROXY: FAIL-CLOSED (STANZA_KEY_DUPLICATE) line 24: C is declared twice
 PASS  [128/163]  fail-closed: REGISTRY_MISSING (no registry rows) — exit=2 PROXY: FAIL-CLOSED (REGISTRY_MISSING) no "| S<n> |" or "| R<n> |" registry row in /tmp/kum
-PASS  [129/163]  fail-closed: SKILL_MISSING (SKILL.md absent) — exit=2 PROXY: FAIL-CLOSED (SKILL_MISSING) /tmp/kumitate-proxy-selftest-JzQeXm/385-no-skill/SKILL.
-PASS  [130/163]  fail-closed: README_MISSING (corpus/README.md absent) — exit=2 PROXY: FAIL-CLOSED (README_MISSING) /tmp/kumitate-proxy-selftest-JzQeXm/389-no-readme/corp
-PASS  [131/163]  fail-closed: CORPUS_DIRS_MISSING (corpus/lessons absent) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) /tmp/kumitate-proxy-selftest-JzQeXm/393-no-lesson
-PASS  [132/163]  fail-closed: CORPUS_DIRS_MISSING (corpus census empty (no *.md in either dir)) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) no *.md under /tmp/kumitate-proxy-selftest-JzQeXm
+PASS  [129/163]  fail-closed: SKILL_MISSING (SKILL.md absent) — exit=2 PROXY: FAIL-CLOSED (SKILL_MISSING) /tmp/kumitate-proxy-selftest-pGIWwr/385-no-skill/SKILL.
+PASS  [130/163]  fail-closed: README_MISSING (corpus/README.md absent) — exit=2 PROXY: FAIL-CLOSED (README_MISSING) /tmp/kumitate-proxy-selftest-pGIWwr/389-no-readme/corp
+PASS  [131/163]  fail-closed: CORPUS_DIRS_MISSING (corpus/lessons absent) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) /tmp/kumitate-proxy-selftest-pGIWwr/393-no-lesson
+PASS  [132/163]  fail-closed: CORPUS_DIRS_MISSING (corpus census empty (no *.md in either dir)) — exit=2 PROXY: FAIL-CLOSED (CORPUS_DIRS_MISSING) no *.md under /tmp/kumitate-proxy-selftest-pGIWwr
 PASS  [133/163]  fail-closed --json: one schema object, ok=false, token as the finding kind — exit=2 verdict=FAIL-CLOSED kind=SELF_NOT_A_DIR
 PASS  [134/163]  bare run (no --src): resolves to the first existing candidate ~/Projects/ufo-fsd-alpha — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
 PASS  [135/163]  bare run (no --src): falls back to the legacy ~/Projects/origin-work/ufo-fsd-alpha when the new path is absent — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
 PASS  [136/163]  bare run (no --src): the new path wins when BOTH candidates exist (candidate order is the spec) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-lay
-PASS  [137/163]  bare run (no --src): both candidates absent keeps SRC_NOT_A_DIR (exit 2, never a scored zero) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-JzQeXm/home-none/Projects/ufo-fsd-alpha 
-PASS  [138/163]  TIP: in-sync required pin gives exact zero counts and exit 0 — ORIGIN_TIP_DRIFT: IN_SYNC pin=b975d3797d85 origin=b975d3797d85 commits=0 changed=0 scripts=0 runtime=0 other=0
-PASS  [139/163]  TIP: moved gives exact commit count and frozen layer classes, exit 1 — ORIGIN_TIP_DRIFT: MOVED pin=b975d3797d85 origin=5571b1938b4f commits=1 changed=8 scripts=2 runtime=2 other=4
-PASS  [140/163]  TIP: JSON has the exact mode fields and --strict has no effect — {"mode":"tip-drift","status":"MOVED","pin":"b975d3797d8509b2a8095d39b67565ca6ddda67e","origin":"5571b1938b4fdfbccc8c7bf910d9be5f108bc2ae","commits":1,"changed":8,"scripts":2,"runtime":2,"other":4}
-PASS  [141/163]  TIP: non-git origin fails closed with SRC_REV_UNVERIFIABLE, exit 2 — ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /tmp/kumitate-proxy-selftest-JzQeXm/402-tip-non-git
-PASS  [142/163]  TIP: malformed explicit pin fails closed with PIN_MALFORMED, exit 2 — ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /tmp/kumitate-proxy-selftest-JzQeXm/tip-malformed.json contract undefined != kumitate-origin-pin-v1
-PASS  [143/163]  TIP: missing default pin cannot silently disable provenance — ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /tmp/kumitate-proxy-selftest-JzQeXm/403-tip-unpinned/.ufo/pins/origin.json is absent
-PASS  [144/163]  TIP: UFO_ORIGIN supplies the live tree independently of pin.clone — ORIGIN_TIP_DRIFT: MOVED pin=b975d3797d85 origin=5571b1938b4f commits=1 changed=8 scripts=2 runtime=2 other=4
+PASS  [137/163]  bare run (no --src): both candidates absent keeps SRC_NOT_A_DIR (exit 2, never a scored zero) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-pGIWwr/home-none/Projects/ufo-fsd-alpha 
+PASS  [138/163]  TIP: in-sync required pin gives exact zero counts and exit 0 — ORIGIN_TIP_DRIFT: IN_SYNC pin=ade694dd5908 origin=ade694dd5908 commits=0 changed=0 scripts=0 runtime=0 other=0
+PASS  [139/163]  TIP: moved gives exact commit count and frozen layer classes, exit 1 — ORIGIN_TIP_DRIFT: MOVED pin=ade694dd5908 origin=47447e9b41fb commits=1 changed=8 scripts=2 runtime=2 other=4
+PASS  [140/163]  TIP: JSON has the exact mode fields and --strict has no effect — {"mode":"tip-drift","status":"MOVED","pin":"ade694dd59080be88d73f01a04a183ca0c30c443","origin":"47447e9b41fb9653dcf6000133f213dfed986a20","commits":1,"changed":8,"scripts":2,"runtime":2,"other":4}
+PASS  [141/163]  TIP: non-git origin fails closed with SRC_REV_UNVERIFIABLE, exit 2 — ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /tmp/kumitate-proxy-selftest-pGIWwr/402-tip-non-git
+PASS  [142/163]  TIP: malformed explicit pin fails closed with PIN_MALFORMED, exit 2 — ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /tmp/kumitate-proxy-selftest-pGIWwr/tip-malformed.json contract undefined != kumitate-origin-pin-v1
+PASS  [143/163]  TIP: missing default pin cannot silently disable provenance — ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /tmp/kumitate-proxy-selftest-pGIWwr/403-tip-unpinned/.ufo/pins/origin.json is absent
+PASS  [144/163]  TIP: UFO_ORIGIN supplies the live tree independently of pin.clone — ORIGIN_TIP_DRIFT: MOVED pin=ade694dd5908 origin=47447e9b41fb commits=1 changed=8 scripts=2 runtime=2 other=4
 PASS  [145/163]  TIP: -h documents --tip-drift and --origin DIR, exit 0 — exit=0
-PASS  [146/163]  PIN v1: default pin file resolves src from the pin clone, asserts HEAD, prints src-rev= — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; src-rev=b975d3797d85)
-PASS  [147/163]  PIN v1: pin revision != HEAD under an explicit --src → SRC_REV_MISMATCH (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_MISMATCH) /tmp/kumitate-proxy-selftest-JzQeXm/409-pin-mismatch-src HEAD 7c09d5fc17e4 != pin 0000000000
-PASS  [148/163]  PIN v1: a pin clone that is not a git repository → SRC_REV_UNVERIFIABLE (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_UNVERIFIABLE) git rev-parse HEAD in /tmp/kumitate-proxy-selftest-JzQeXm/413-pin-nonrepo-src 
-PASS  [149/163]  PIN v1: a pin whose clone is absent → SRC_NOT_A_DIR naming the resolved path (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-JzQeXm/nope-pin-clone is absent
+PASS  [146/163]  PIN v1: default pin file resolves src from the pin clone, asserts HEAD, prints src-rev= — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match; src-rev=ade694dd5908)
+PASS  [147/163]  PIN v1: pin revision != HEAD under an explicit --src → SRC_REV_MISMATCH (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_MISMATCH) /tmp/kumitate-proxy-selftest-pGIWwr/409-pin-mismatch-src HEAD ade694dd5908 != pin 0000000000
+PASS  [148/163]  PIN v1: a pin clone that is not a git repository → SRC_REV_UNVERIFIABLE (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_REV_UNVERIFIABLE) git rev-parse HEAD in /tmp/kumitate-proxy-selftest-pGIWwr/413-pin-nonrepo-src 
+PASS  [149/163]  PIN v1: a pin whose clone is absent → SRC_NOT_A_DIR naming the resolved path (exit 2) — exit=2 PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /tmp/kumitate-proxy-selftest-pGIWwr/nope-pin-clone is absent
 PASS  [150/163]  PIN v1: no pin file → the legacy verdict is unchanged (no src-rev=, pin/srcRev null) — exit=0 PROXY: MATCH (A=6 C=3 operability=7; C1=1/2 C2=2/2 coverage=5; S=0/3 coverage:script-layer=0; R=0/2 coverage:runtime-layer=0; K=0/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)
-PASS  [151/163]  PIN v1: an explicit --pin that does not exist → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-JzQeXm/pin-files/absent.json is absent
-PASS  [152/163]  PIN v1: a pin naming another contract → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-JzQeXm/pin-files/wrong-contract.json contract "kum
+PASS  [151/163]  PIN v1: an explicit --pin that does not exist → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-pGIWwr/pin-files/absent.json is absent
+PASS  [152/163]  PIN v1: a pin naming another contract → PIN_MALFORMED (exit 2) — exit=2 PROXY: FAIL-CLOSED (PIN_MALFORMED) --pin /tmp/kumitate-proxy-selftest-pGIWwr/pin-files/wrong-contract.json contract "kum
 PASS  [153/163]  usage: unknown flag → exit 64, usage on stderr — exit=64 proxy-check: unknown argument: --bogus
 PASS  [154/163]  usage: --self without a value → exit 64 — exit=64
 PASS  [155/163]  usage: a value that is a flag is refused (--self --json) → exit 64 — exit=64
