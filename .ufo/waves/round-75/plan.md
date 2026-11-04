@@ -141,3 +141,22 @@ Lane repo `/home/vgpnk/Projects/shokunin/kumitate-shokunin` only (seats work in 
 $HYAKU_SCRATCH/kumitate-r75/<seat>/, never the lane tree, never commit/push/jj). The L1 only writes
 the report `.ufo/reports/round-75/kumitate.md` (fleet) and appended L0 lines; commits go through
 `jj-lane.sh` (lane) and `fleet-commit.sh` (report).
+
+## Amendment 1 (appended 2026-11-04T01:29-03:00, pre-verdict; the freeze bytes above are unchanged)
+
+Raised by the freeze-review seat (`K75ReviewFreeze`), each item accepted; no predicate, kill rule or
+target is changed.
+
+1. §C1 (b) says the fixture reproduces the live root's depth-1 shape with "files hardlinked". The
+   committed builder `controls/mk-shape-fixture.sh` creates **shape-only empty files carrying the
+   live member's mode** (dirs by `mkdir`), because `/home/vgpnk/.omp/agent` and `$HYAKU_SCRATCH`
+   (`/fast`) are different devices and a hardlink cannot cross them. Superseded wording: "files
+   hardlinked". Substance unchanged: depth-1 shape, one added bogus name, `UNLISTED` on it, exit 1.
+2. `open/prereqs.txt` at the freeze commit carried only identity/version lines; the mode sweep
+   (40 × 0600) and the 57/23/161 layer classification the plan quotes came from ad-hoc commands
+   whose output was not committed. Both sweeps are appended to that same file *after* the freeze
+   commit (append-only; freeze bytes unchanged), and the gap is disclosed in the report and mined
+   as this round's mistake (Q65 class: plan-quotes-receipt).
+3. `controls/c1-junkwiden.txt` §3 conflated two clauses; an appended `## Correction` there records
+   it: clause (a) alone is gameable by a blanket catch-all, clause (b) run on the same committed
+   tool rejects it, and (d) proves each declared rule load-bearing.
