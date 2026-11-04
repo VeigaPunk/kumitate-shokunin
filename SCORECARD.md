@@ -4301,3 +4301,40 @@ makes C1 UNMET. Pre-data controls committed at `8735f70f545c9a0355816d5ce86b3079
 `base-v1` (do-nothing) 16/20, `base-v1-worktree` 11/20, `refuse-all` 2/20, `absent` 0/20, round-87
 controls 0–4/20, round-87 seat constructions 8–16/20. Instrument written by the L1 after the controls
 commit, at `0ff3562f15c18d0ca01dc6a76c9f827d30c26950`. No second claim, no exploratory claim.
+
+### Round 88 — measured disposition (2026-11-04)
+
+Measured at M = `7817d20093015866a419f865fd2e0085195873a9` (the integration commit); close battery `.ufo/waves/round-88/close/` emitted by the
+v3 runner (`.ufo/waves/round-88/run-close.mjs`, bind last, `BIND_CASE … counted=12 others=12 ALL`).
+
+| item | measured |
+|---|---|
+| predicate (frozen) | `C88_C1: HELD held=20/20` exit 0 (`close/c1-probe.txt`) |
+| worktree twin at M | `C88_C1: UNMET held=11/20` exit 1 (`close/twin.txt`) |
+| do-nothing control (`base-v1`, pre-data) | 16/20 exit 1 (`controls/base-v1.txt`) |
+| other pre-data controls | worktree twin of v1 11/20, refuse-all 2/20, absent 0/20, round-87 controls and seat constructions 0–16/20 (`controls/*.txt`) |
+| tool selftest | `RECEIPT_BIND_SELFTEST: PASS held=59/59` (`close/bind-selftest.txt`; 39 → 59) |
+| close receipts | `RECEIPT_BIND: CLEAN matched=13 mismatched=0 unchecked=0 external=1` over all of `close/` |
+| **kill rule** | **fired**: nine seat constructions reach 20/20 — `build/K88Critic/` c2-head-default, e2-index-default, d-fixture-gated-boundaries, f1-size-after-read, f4-textual-escape, f5-loose-limit, f6-dup-equal-ok; `build/K88Connector/ctl-abs-disk.mjs`; `build/K88Review2/nogit-overfit.mjs`; the sentinel reproduced the f1/f4 classes (`build/K88Sentinel/controls/`) |
+| mutant battery | 25 mutants, 8 survive probe + selftest at `0ff3562f` (`build/K88Mutation/summary.json`); the integrated 59-case selftest is a second killer for the boundary-removal mutants |
+| history | v1 and v2 agree on all 41 committed close dirs (`build/K88Scout/walk/table.tsv`) |
+| accounting | A 36, C 46, C2 222 → 224, `pin.receipt-bind` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+| gates | `plan-before-ready` PASS for round 88 (`close/plan.txt`; K87-V2 closed); `ready-handoff` DRIFT `RELATIVE_WAVE_PATH` (K88ExecCarry item text names a lane-relative `.ufo/waves` path — spec defect, disclosed); checklist 40/46 (reds 723, 737, 741, 746, 748, 756 also red at base, `round-gate` row for round 87 missing since round 87) |
+
+**Verdict: C1 UNMET — rejected-honest-stop, no capability row.** The integrated v2 refuses every input the
+nine constructions accept (seat discrimination receipts), but the frozen 20-arm predicate cannot see the
+difference, so the frozen kill rule fires. Axes: operability 9 unchanged, every coverage sub-axis 10
+unchanged, no axis harmed.
+
+## Round 89 pre-registration (written by round 88). Candidates, not commitments
+
+(1) **`receipt-bind` v3 scorer**: judged revision ≠ HEAD ≠ index ≠ worktree; absolute and relative in-lane
+tokens before a dirty worktree; every limit at its edge from both sides (1048576/1048577, multibyte,
+sparse > 2 GiB, dangling `--dir` link, interior `..` escape, equal-valued duplicates); fixture bytes,
+names and commit order drawn at run time; the nine round-88 constructions committed as pre-data controls.
+(2) Reviewer MED: `/proc/self/root` alias makes an in-lane instrument read as external (lexical lane
+membership); LOW-MED: a UTF-8 BOM hides a receipt's `rev=` (`w1/K88Review.md`). (3) Sentinel TOCTOU races
+(lstat→read) and symlinked parent of `--dir` (`w1/K88Sentinel.md`). (4) `USED_BY_ASYMMETRY` ×5 (S243, S028,
+S124, S041, S237; `w1/K88ExecCarry.md`). (5) `ready-handoff` relative-path rule for item text. (6) Carried:
+spotcheck-adopt selftest 33/34 and conflation, `K_findings`, `POINTER_DEAD`, cite-check debt, round-gate
+row/LOG line format for rounds 87–88, receipt-evidence overlap.

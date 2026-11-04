@@ -91,6 +91,11 @@ this lane's authority; no still-unimplemented proposal mined.
 
 ## Frontier
 
+The sentinel also reproduced lstat→read races that bypass `RECEIPT_TOO_LARGE` (73/400),
+`SYMLINK_RECEIPT` (39/400) and `SYMLINK_DIR` (1/400), and a symlinked parent of `--dir` that is followed
+(`w1/K88Sentinel.md`); these are the TOCTOU limit the knowledge entry already names, now measured.
+
+
 Round 89 pre-registration (SCORECARD): a v3 scorer for `receipt-bind` whose pre-data controls
 include the nine round-88 constructions; carried items from round 87 (spotcheck-adopt conflation,
 `K_findings`, `POINTER_DEAD`, cite-check debt, receipt-evidence overlap) with the scout's anchors

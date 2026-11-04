@@ -3036,3 +3036,11 @@ S218 used-by, the knowledge section *v2* and *Round 88 verdict*, QUALITY Q81, th
 Kill rule fired: nine seat constructions reach `C88_C1: HELD held=20/20` (critic seven, connector one,
 second reviewer one; the sentinel reproduced two of the critic's classes), each shown to skip its
 behaviour off-fixture. C1 is UNMET — see the measured disposition below and `corpus/lessons/round-88.md`.
+
+### Round 88 — measured disposition (2026-11-04)
+
+At M `7817d20093015866a419f865fd2e0085195873a9`: frozen predicate `C88_C1: HELD held=20/20`, worktree twin 11/20, selftest 59/59, close receipts
+`CLEAN matched=13 … external=1` with the bind case counting every other receipt (K87-V1 class closed),
+`plan-before-ready` PASS (K87-V2 closed), `PROXY: MATCH --strict` (C2 222 → 224). **C1 UNMET**: nine seat
+constructions reach 20/20 under the frozen kill rule. SOURCES 189 → 192 (S252, S253 admitted A; S254 rejected B;
+S218 used-by extended). `ready-handoff` DRIFT on this round's own spec (relative path in one item), disclosed.
