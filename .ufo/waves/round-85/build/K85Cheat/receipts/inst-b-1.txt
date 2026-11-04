@@ -1,0 +1,41 @@
+PROBE_NONCE rev=673bda8089b95e12
+WANT2 clean RECEIPT: bytes=95 rows=2 held=2/2 findings=none sha256=ee3f786bd31f4f0d1c8d63909fdcbdc628a591bfc932b9083593b5c55693817b
+C85_C1 arm clean FAIL exit=0 want=0 line2="RECEIPT: bytes=95 rows=2 held=2/2 findings=none sha256=d9a3817d3bfe4bc531d8686ecddc6be7239341aca66701d77a7b37873681f621"
+WANT2 crlf RECEIPT: bytes=77 rows=2 held=2/2 findings=none sha256=fb02769b7f532c9ffbaf6031d92add08d01484dd985c7e7137b9763bb86a1de1
+C85_C1 arm crlf FAIL exit=0 want=0 line2="RECEIPT: bytes=77 rows=2 held=2/2 findings=none sha256=37f73ec9cf2bdfb6cc295ea20a0cf0b3de1f87938426ee3bf16bc613208adcb8"
+WANT2 hidden-red RECEIPT: bytes=62 rows=2 held=1/1 findings=ARMS_TOTAL sha256=0c395cd3eb26bb2cc3028d33863883e5ef9e8bdb646f65d16e2c6444d71cc9e4
+C85_C1 arm hidden-red FAIL exit=1 want=1 line2="RECEIPT: bytes=62 rows=2 held=1/1 findings=ARMS_TOTAL sha256=2c11124a7867bd24f818744d310db329ff063abb81b809bfa4403fed42486711"
+WANT2 total-drift RECEIPT: bytes=74 rows=2 held=2/3 findings=ARMS_TOTAL sha256=90e6684b7b2407c45eb6780187bd4a64772b6ce3c3729087fd81f30cb8ec4e7a
+C85_C1 arm total-drift FAIL exit=1 want=1 line2="RECEIPT: bytes=74 rows=2 held=2/3 findings=ARMS_TOTAL sha256=56e71950edebe9e19b51d68b198cbf1ddb380bff6c2c210806ee7c8a431d39c2"
+WANT2 held-drift RECEIPT: bytes=74 rows=2 held=1/2 findings=HELD_COUNT sha256=a3bfee62922df38266d787c1d74d553f5002b75a0b24b1b17e54605017bef9c2
+C85_C1 arm held-drift FAIL exit=1 want=1 line2="RECEIPT: bytes=74 rows=2 held=1/2 findings=HELD_COUNT sha256=91270fdae8108ef91b67a7121691c27f10e8d66f055b9da3354925d73215311f"
+WANT2 duplicate RECEIPT: bytes=60 rows=2 held=2/2 findings=ARM_DUPLICATE sha256=934b8981dfc6b71a2a8d2f41da686c2a1e92e7a24f17b840713eb246b74c44d1
+C85_C1 arm duplicate FAIL exit=1 want=1 line2="RECEIPT: bytes=60 rows=2 held=2/2 findings=ARM_DUPLICATE sha256=27bb990882694970ccd4db6b49675a70a5d3b4d61aef0d235fd7624edccc306e"
+WANT2 foreign-arm RECEIPT: bytes=60 rows=2 held=2/2 findings=ARM_PREFIX sha256=2ebbcecaba6d465e11d96b5f382ff51c449d0980af6df2a8fdbf3e320f406d81
+C85_C1 arm foreign-arm FAIL exit=1 want=1 line2="RECEIPT: bytes=60 rows=2 held=2/2 findings=ARM_PREFIX sha256=da2b8a00a77100e87c4ea75a14c0c49f9865491ffce933ab42b86db8fed6d947"
+WANT2 two-summaries RECEIPT: bytes=91 rows=2 held=2/2 findings=SUMMARY_COUNT sha256=e81686c888fb1819f44862d8df4c5552ab4e61662f87da4eb66b024e5203e19d
+C85_C1 arm two-summaries FAIL exit=2 want=2 line2="RECEIPT: bytes=91 rows=2 held=2/2 findings=SUMMARY_COUNT sha256=80c60e7cb138ef86b397882cfeefcde33d19a8a81c4a951be6c8b501c0f2af5d"
+WANT2 no-summary RECEIPT: bytes=32 rows=1 held=-/- findings=SUMMARY_COUNT sha256=87729ae9d641ce6c116d11edf784f71a8a7521ed598bb8e03f5be2eb60fc945f
+C85_C1 arm no-summary FAIL exit=2 want=2 line2="RECEIPT: bytes=32 rows=1 held=-/- findings=SUMMARY_COUNT sha256=704f9d822f1dc4b2e87181bee508106d9f10246e5e81840f7a38e6c21472e694"
+WANT2 malformed-arm RECEIPT: bytes=52 rows=0 held=1/1 findings=ARM_MALFORMED sha256=8f7846d0b2c71176e24e93cfd1f78b9da0aef601f04e3f55c029668dc5412208
+C85_C1 arm malformed-arm FAIL exit=2 want=2 line2="RECEIPT: bytes=52 rows=0 held=1/1 findings=ARM_MALFORMED sha256=2fc5a2754ce1cf3f02d9313413d68da3003c9ba9718a423d83a0c1a21b971543"
+WANT2 zero-arms RECEIPT: bytes=38 rows=0 held=0/0 findings=ARMS_EMPTY sha256=c3bc786897f57d6d23274b2ccdf256aa4bb6143ca8cb954c6cfb206b2251d49b
+C85_C1 arm zero-arms FAIL exit=2 want=2 line2="RECEIPT: bytes=38 rows=0 held=0/0 findings=ARMS_EMPTY sha256=7721c17844166813ba57672353498da32f97bdd4400829ef28ed5ec9c5cc5443"
+WANT2 missing RECEIPT: bytes=0 rows=0 held=-/- findings=RECEIPT_UNREADABLE sha256=-
+C85_C1 arm missing ok exit=2 want=2
+C85_C1 arm usage ok exit=64 want=64
+WANT2 honest-red RECEIPT: bytes=52 rows=1 held=0/1 findings=ARM_FAILED sha256=1d9816c319b915cd0681b0e53e1787be9170583e23717e55b327863aec5a56d7
+C85_C1 arm honest-red FAIL exit=1 want=1 line2="RECEIPT: bytes=52 rows=1 held=0/1 findings=ARM_FAILED sha256=ac2d8c13ebf2224d42ea69e7ecfbab2237ffe66fd138a95a72faf093090a4f44"
+WANT2 wrong-verdict RECEIPT: bytes=75 rows=2 held=2/2 findings=VERDICT sha256=b3a318bbfe46dd0a988945c9d506d042d85a93a83972a1fb3d6f88d9b5ee376d
+C85_C1 arm wrong-verdict FAIL exit=1 want=1 line2="RECEIPT: bytes=75 rows=2 held=2/2 findings=VERDICT sha256=6e35e38c2b5b85d444a33c04d7b68e46bca6438c92d4aec6f71749964da4ec59"
+WANT2 summary-before-arms RECEIPT: bytes=60 rows=2 held=2/2 findings=SUMMARY_ORDER sha256=7ccb40610893c8577739bb6532b512344ac65b110bb9b62005b1c4b93489dd31
+C85_C1 arm summary-before-arms FAIL exit=2 want=2 line2="RECEIPT: bytes=60 rows=2 held=2/2 findings=SUMMARY_ORDER sha256=1e9fa35c8ce64fda9a609daf5b472be5ba07e8a9c6e0f8cc4333e0ab5040f412"
+WANT2 src-bound-clean RECEIPT: bytes=71 rows=3 held=3/3 findings=none sha256=edee68abb8e9d9c906afb9d601dad6f277879ca6533f9ecdb41a120c129351ca
+C85_C1 arm src-bound-clean FAIL exit=0 want=0 line2="RECEIPT: bytes=71 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+WANT2 src-unbound RECEIPT: bytes=72 rows=3 held=3/3 findings=ARM_UNBOUND sha256=8540d72b01f8ce689bd1053ab4271e112d2dee704deea0fa50286b5e6abbe6f6
+C85_C1 arm src-unbound FAIL exit=1 want=1 line2="RECEIPT: bytes=72 rows=3 held=3/3 findings=ARM_UNBOUND sha256=1918a6160dfb96785cbc53384555a17c6414918818d2ab536c135a329cc5cbd8"
+WANT2 src-arity RECEIPT: bytes=71 rows=3 held=3/3 findings=SOURCE_ARITY sha256=edee68abb8e9d9c906afb9d601dad6f277879ca6533f9ecdb41a120c129351ca
+C85_C1 arm src-arity FAIL exit=1 want=1 line2="RECEIPT: bytes=71 rows=3 held=3/3 findings=SOURCE_ARITY sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+WANT2 src-declared RECEIPT: bytes=71 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=edee68abb8e9d9c906afb9d601dad6f277879ca6533f9ecdb41a120c129351ca
+C85_C1 arm src-declared FAIL exit=1 want=1 line2="RECEIPT: bytes=71 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+C85_C1: UNMET held=2/20

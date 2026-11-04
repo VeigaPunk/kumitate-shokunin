@@ -1,0 +1,10 @@
+# map-repair receipt (round 85).
+# BEFORE: scripts/readme-map.mjs inside the repair commit 6663b3be (row added, pin missing)
+README_MAP: DRIFT files=214 rows=214 covered=213 bad=1 first=unpinned:lessons/round-84-verifier-spotcheck.md
+before_exit=1
+# AFTER: the work tree after the pin edit
+README_MAP: CLEAN files=216 rows=216 covered=216
+after_exit=0
+# spotcheck-adopt --check after
+SPOTCHECK_COVERAGE: CLEAN spotchecks=51 uncovered=0
+MAP: CLEAN

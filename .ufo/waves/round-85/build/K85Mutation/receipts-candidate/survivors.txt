@@ -1,0 +1,34 @@
+# K85Mutation — candidate survivor discriminators and selftest reach
+revision: 9db0c6b5eb9111cfc5581006ba976ca2cd112792
+purpose: show each survivor is behaviour-bearing on an uncovered contract clause, and record whether the candidate's own selftest (not the claim denominator) would catch it.
+
+## candidate-ref --selftest
+exit: 0
+summary: COUNTER_RECEIPT_SELFTEST: PASS held=60/60
+
+## S01 absent-declared-rendered-0
+contract clause: SOURCE line renders declared=absent when --src has no ARMS declaration
+fixture receipt: "X arm a ok\nX arm b ok\nX arm c ok\nX: HELD held=3/3\n"
+fixture src: "arm('a', () => {});\narm('b', () => {});\narm('c', () => {});\n"
+candidate-ref exit=0 out=["COUNTER_RECEIPT: CLEAN","RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768","SOURCE: sites=3 declared=absent receipt=3"]
+mutant exit=0 out=["COUNTER_RECEIPT: CLEAN","RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768","SOURCE: sites=3 declared=0 receipt=3"]
+non_equivalent: true
+mutant --selftest: exit=1 COUNTER_RECEIPT_SELFTEST: FAIL held=57/60 failed_arms=src-no-declared,src-unreadable,src-after-receipt-drift
+
+## S02 first-arms-declaration-wins
+contract clause: source extraction takes the LAST const|let|var ARMS = <int>
+fixture receipt: "X arm a ok\nX arm b ok\nX arm c ok\nX: HELD held=3/3\n"
+fixture src: "const ARMS = 2;\narm('a', () => {});\narm('b', () => {});\nconst ARMS = 3;\narm('c', () => {});\n"
+candidate-ref exit=0 out=["COUNTER_RECEIPT: CLEAN","RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768","SOURCE: sites=3 declared=3 receipt=3"]
+mutant exit=1 out=["COUNTER_RECEIPT: DRIFT SOURCE_DECLARED","RECEIPT: bytes=50 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768","SOURCE: sites=3 declared=2 receipt=3"]
+non_equivalent: true
+mutant --selftest: exit=0 COUNTER_RECEIPT_SELFTEST: PASS held=60/60
+
+## S03 colon-metadata-not-ignored
+contract clause: command:/rev:/exit: metadata lines are ignored, never parsed as arm rows
+fixture receipt: "command: arm a ok\nX arm a ok\nX arm b ok\nX: HELD held=2/2\n"
+fixture src: (none)
+candidate-ref exit=0 out=["COUNTER_RECEIPT: CLEAN","RECEIPT: bytes=57 rows=2 held=2/2 findings=none sha256=a5c664bc2e3b424af81aa0ae4a997e26a7dbf7d8cb4a89e3ec6ee0a0c7671e49"]
+mutant exit=2 out=["COUNTER_RECEIPT: FAIL-CLOSED ARM_MALFORMED","RECEIPT: bytes=57 rows=2 held=2/2 findings=ARM_MALFORMED sha256=a5c664bc2e3b424af81aa0ae4a997e26a7dbf7d8cb4a89e3ec6ee0a0c7671e49"]
+non_equivalent: true
+mutant --selftest: exit=1 COUNTER_RECEIPT_SELFTEST: FAIL held=59/60 failed_arms=metadata-summary-shape

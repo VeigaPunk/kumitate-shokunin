@@ -1,0 +1,115 @@
+# provenance: measured-revision=9db0c6b5eb9111cfc5581006ba976ca2cd112792 tool-sha256=61e9ba682c552f2dc6b9d19a4d2c9215a810373dccf89053b664c844baef89e0
+=== comment-site-phantom
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/comment-site-phantom.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/comment-site-phantom.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=54 rows=3 held=3/3 findings=none sha256=3944fd4cd73800aa997f478e4d3f7b395d6aa93e5a570c465031dc1b1f32cadc
+     SOURCE: sites=3 declared=3 receipt=3
+SRC: "const ARMS = 3;\n// arm('ghost', () => {});\narm('a', () => {});\narm('b', () => {});\n"
+
+=== string-site-phantom
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/string-site-phantom.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/string-site-phantom.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=32 rows=1 held=1/1 findings=none sha256=d0bc9edd1c1d904e8802ab7bbac11e20f142396e53aa557cc7d62d3cf14e080b
+     SOURCE: sites=1 declared=1 receipt=1
+SRC: "const ARMS = 1;\nconst help = \"arm('ghost', () => {})\";\n"
+
+=== substring-disarm-site
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/substring-disarm-site.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/substring-disarm-site.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=32 rows=1 held=1/1 findings=none sha256=d0bc9edd1c1d904e8802ab7bbac11e20f142396e53aa557cc7d62d3cf14e080b
+     SOURCE: sites=1 declared=1 receipt=1
+SRC: "const ARMS = 1;\ndisarm('ghost');\n"
+
+=== minified-source
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/minified-source.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/minified-source.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768
+     SOURCE: sites=3 declared=3 receipt=3
+SRC: "const ARMS=3;arm('a',()=>{});arm('b',()=>{});arm('c',()=>{});"
+
+=== declared-twice-last-wins-clean
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/declared-twice-last-wins-clean.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/declared-twice-last-wins-clean.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=none sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=1 declared=1 receipt=1
+SRC: "const ARMS = 1;\narm('a', () => {});\nconst ARMS = 1;\n"
+
+=== declared-twice-last-diverges-red
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/declared-twice-last-diverges-red.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/declared-twice-last-diverges-red.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=none sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=1 declared=1 receipt=1
+SRC: "const ARMS = 3;\nconst ARMS = 1;\narm('a', () => {});\n"
+
+=== block-comment-declared-after-real
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/block-comment-declared-after-real.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/block-comment-declared-after-real.mjs
+EXIT: 1
+OUT: COUNTER_RECEIPT: DRIFT SOURCE_DECLARED
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_DECLARED sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=1 declared=9 receipt=1
+SRC: "const ARMS = 1;\narm('a', () => {});\n/*\n const ARMS = 9;\n*/\n"
+
+=== string-declared-after-real
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/string-declared-after-real.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/string-declared-after-real.mjs
+EXIT: 1
+OUT: COUNTER_RECEIPT: DRIFT SOURCE_DECLARED
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_DECLARED sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=1 declared=9 receipt=1
+SRC: "const ARMS = 1;\narm('a', () => {});\nconst t = `\nconst ARMS = 9;\n`;\n"
+
+=== double-quote-sites
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/double-quote-sites.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/double-quote-sites.mjs
+EXIT: 2
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_ARMS_EMPTY sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=0 declared=1 receipt=1
+SRC: "const ARMS = 1;\narm(\"a\", () => {});\n"
+
+=== space-before-paren
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/space-before-paren.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/space-before-paren.mjs
+EXIT: 2
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_ARMS_EMPTY sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=0 declared=1 receipt=1
+SRC: "const ARMS = 1;\narm ('a', () => {});\n"
+
+=== uppercase-site-name
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/uppercase-site-name.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/uppercase-site-name.mjs
+EXIT: 2
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_ARMS_EMPTY sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=0 declared=1 receipt=1
+SRC: "const ARMS = 1;\narm('A', () => {});\n"
+
+=== hex-declared
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/hex-declared.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/hex-declared.mjs
+EXIT: 1
+OUT: COUNTER_RECEIPT: DRIFT SOURCE_DECLARED
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=SOURCE_DECLARED sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+     SOURCE: sites=1 declared=0 receipt=1
+SRC: "const ARMS = 0x1;\narm('a', () => {});\n"
+
+=== duplicate-sites
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/duplicate-sites.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/duplicate-sites.mjs
+EXIT: 1
+OUT: COUNTER_RECEIPT: DRIFT SOURCE_ARITY
+     RECEIPT: bytes=39 rows=2 held=2/2 findings=SOURCE_ARITY sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff
+     SOURCE: sites=3 declared=3 receipt=2
+SRC: "const ARMS = 3;\narm('a', () => {});\narm('a', () => {});\narm('b', () => {});\n"
+
+=== same-out-A
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/same-out-A.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/same-out-A.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN | RECEIPT: bytes=28 rows=1 held=1/1 findings=none sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253 | SOURCE: sites=1 declared=1 receipt=1
+
+=== same-out-B
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/same-out-B.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/same-out-B.mjs
+EXIT: 0
+OUT: COUNTER_RECEIPT: CLEAN | RECEIPT: bytes=28 rows=1 held=1/1 findings=none sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253 | SOURCE: sites=1 declared=1 receipt=1
+

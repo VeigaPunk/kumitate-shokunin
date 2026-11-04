@@ -1,0 +1,4 @@
+FIXTURES cases=20 table=20 nonce_line_bytes=21 gen_nonce=rev=5a4862d028748bbf
+OUTDIR /fast/scratch/hyaku/kumitate-r85/K85Cheat/regen
+NONCE_LINE_SOURCE const nonce = `rev=${createHash('sha256').update(String(process.pid) + Date.now()).digest('hex').slice(0, 16)}`;
+COUNTS receipt_arms=18 label_passable=missing,usage

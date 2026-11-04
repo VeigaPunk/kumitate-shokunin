@@ -1,0 +1,15 @@
+# S5 fix receipt (round 85). Seat candidate (pre-fix) vs integrated tool.
+# fixtures: .ufo/waves/round-85/close/s5-fixtures/ (committed)
+--- ARMS = 0x1
+PRE : COUNTER_RECEIPT: DRIFT SOURCE_DECLARED | SOURCE: sites=1 declared=0 receipt=1
+POST: COUNTER_RECEIPT: CLEAN | SOURCE: sites=1 declared=absent receipt=1
+--- ARMS = 1e3
+PRE : COUNTER_RECEIPT: CLEAN | SOURCE: sites=1 declared=1 receipt=1
+POST: COUNTER_RECEIPT: CLEAN | SOURCE: sites=1 declared=absent receipt=1
+--- ARMS = 3.5
+PRE : COUNTER_RECEIPT: DRIFT SOURCE_DECLARED | SOURCE: sites=1 declared=3 receipt=1
+POST: COUNTER_RECEIPT: CLEAN | SOURCE: sites=1 declared=absent receipt=1
+# frozen probe after the fix:
+C85_C1: HELD held=20/20
+# selftest after the fix:
+COUNTER_RECEIPT_SELFTEST: PASS held=60/60

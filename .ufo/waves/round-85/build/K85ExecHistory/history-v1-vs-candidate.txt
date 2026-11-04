@@ -1,0 +1,80 @@
+HISTORY tool label=v1 path=/fast/scratch/hyaku/kumitate-r85/K85ExecHistory/hist/v1.mjs sha256=190a4c1f893a5ffc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0 present=true
+HISTORY tool label=v2 path=/fast/scratch/hyaku/kumitate-r85/K85ExecHistory/hist/candidate.mjs sha256=7659be6e5ea5155a386fddfd3bad7abf5147562391c415d1e8200f9151508bc1 present=true
+HISTORY src file=/fast/scratch/hyaku/kumitate-r85/K85ExecHistory/hist/probe83-c1.mjs sha256=5da10098b192a728be87b0cb676eacdd49e4163c0822dcfa6b53ad9b2b064301 sites=28 declared=27 sites-eq-declared=no
+HISTORY input=.ufo/waves/round-83/close/c1-probe.txt sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20 bytes=5573 note="r83 C1 probe: 28 rows, one red row, headline 27/27"
+HISTORY check shape:c1-probe.txt ok rows=28/28 fails=1/1 summaries=1/1 headline_held=27/27
+HISTORY expect=c1-probe.txt exit=1 verdict=DRIFT ARMS_TOTAL rows=28 held=27/27 fails=1
+HISTORY check copy:c1-probe.txt ok sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+HISTORY check run:v1:c1-probe.txt ok exit=1 want=1 verdict="COUNTER_RECEIPT: DRIFT ARMS_TOTAL"
+HISTORY check receipt:v1:c1-probe.txt ok receipt-line=absent(v1-shape)
+HISTORY result input=c1-probe.txt tool=v1 exit=1 verdict="COUNTER_RECEIPT: DRIFT ARMS_TOTAL" receipt=null
+HISTORY check run:v2:c1-probe.txt ok exit=1 want=1 verdict="COUNTER_RECEIPT: DRIFT ARMS_TOTAL"
+HISTORY check receipt:v2:c1-probe.txt ok line="RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20" pre_rows=28 pre_held=27/27 fails=1
+HISTORY result input=c1-probe.txt tool=v2 exit=1 verdict="COUNTER_RECEIPT: DRIFT ARMS_TOTAL" receipt="RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20"
+HISTORY check immutable:c1-probe.txt ok sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+HISTORY agree=c1-probe.txt exit=yes verdict=yes receipts=mixed exits=v1:1,v2:1
+HISTORY check agree:c1-probe.txt ok v1=1 v2=1
+HISTORY input=.ufo/waves/round-83/close/c1-repair.txt sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063 bytes=5729 note="r83 C1 repair: 28/28 held"
+HISTORY check shape:c1-repair.txt ok rows=28/28 fails=0/0 summaries=1/1 headline_held=28/28
+HISTORY expect=c1-repair.txt exit=0 verdict=CLEAN rows=28 held=28/28 fails=0
+HISTORY check copy:c1-repair.txt ok sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+HISTORY check run:v1:c1-repair.txt ok exit=0 want=0 verdict="COUNTER_RECEIPT: CLEAN"
+HISTORY check receipt:v1:c1-repair.txt ok receipt-line=absent(v1-shape)
+HISTORY result input=c1-repair.txt tool=v1 exit=0 verdict="COUNTER_RECEIPT: CLEAN" receipt=null
+HISTORY check run:v2:c1-repair.txt ok exit=0 want=0 verdict="COUNTER_RECEIPT: CLEAN"
+HISTORY check receipt:v2:c1-repair.txt ok line="RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063" pre_rows=28 pre_held=28/28 fails=0
+HISTORY result input=c1-repair.txt tool=v2 exit=0 verdict="COUNTER_RECEIPT: CLEAN" receipt="RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063"
+HISTORY check immutable:c1-repair.txt ok sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+HISTORY agree=c1-repair.txt exit=yes verdict=yes receipts=mixed exits=v1:0,v2:0
+HISTORY check agree:c1-repair.txt ok v1=0 v2=0
+HISTORY input=.ufo/waves/round-83/close/c2-probe.txt sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933 bytes=2678 note="r83 C2 probe: 16/16 held"
+HISTORY check shape:c2-probe.txt ok rows=16/16 fails=0/0 summaries=1/1 headline_held=16/16
+HISTORY expect=c2-probe.txt exit=0 verdict=CLEAN rows=16 held=16/16 fails=0
+HISTORY check copy:c2-probe.txt ok sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+HISTORY check run:v1:c2-probe.txt ok exit=0 want=0 verdict="COUNTER_RECEIPT: CLEAN"
+HISTORY check receipt:v1:c2-probe.txt ok receipt-line=absent(v1-shape)
+HISTORY result input=c2-probe.txt tool=v1 exit=0 verdict="COUNTER_RECEIPT: CLEAN" receipt=null
+HISTORY check run:v2:c2-probe.txt ok exit=0 want=0 verdict="COUNTER_RECEIPT: CLEAN"
+HISTORY check receipt:v2:c2-probe.txt ok line="RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933" pre_rows=16 pre_held=16/16 fails=0
+HISTORY result input=c2-probe.txt tool=v2 exit=0 verdict="COUNTER_RECEIPT: CLEAN" receipt="RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933"
+HISTORY check immutable:c2-probe.txt ok sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+HISTORY agree=c2-probe.txt exit=yes verdict=yes receipts=mixed exits=v1:0,v2:0
+HISTORY check agree:c2-probe.txt ok v1=0 v2=0
+HISTORY input=.ufo/waves/round-84/close/history-red.txt sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9 bytes=224 note="r84 saved answer (plan label: DRIFT); not itself receipt grammar" plan_label=DRIFT
+HISTORY prior=history-red.txt recorded="DRIFT ARMS_TOTAL" exit=1 (the file is a saved answer, not a receipt)
+HISTORY check shape:history-red.txt ok rows=0/0 fails=0/0 summaries=0/0 headline_held=-
+HISTORY expect=history-red.txt exit=2 verdict=FAIL-CLOSED SUMMARY_COUNT rows=0 held=(not asserted) fails=0
+HISTORY check copy:history-red.txt ok sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+HISTORY check run:v1:history-red.txt ok exit=2 want=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT"
+HISTORY check receipt:v1:history-red.txt ok receipt-line=absent(v1-shape)
+HISTORY result input=history-red.txt tool=v1 exit=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT" receipt=null
+HISTORY check run:v2:history-red.txt ok exit=2 want=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT"
+HISTORY check receipt:v2:history-red.txt ok line="RECEIPT: bytes=224 rows=0 held=-/- findings=SUMMARY_COUNT sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9" pre_rows=0 pre_held=- fails=0
+HISTORY result input=history-red.txt tool=v2 exit=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT" receipt="RECEIPT: bytes=224 rows=0 held=-/- findings=SUMMARY_COUNT sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9"
+HISTORY check immutable:history-red.txt ok sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+HISTORY agree=history-red.txt exit=yes verdict=yes receipts=mixed exits=v1:2,v2:2
+HISTORY check agree:history-red.txt ok v1=2 v2=2
+HISTORY input=.ufo/waves/round-84/close/history-repair.txt sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0 bytes=214 note="r84 saved answer (plan label: CLEAN); not itself receipt grammar" plan_label=CLEAN
+HISTORY prior=history-repair.txt recorded="CLEAN" exit=0 (the file is a saved answer, not a receipt)
+HISTORY check shape:history-repair.txt ok rows=0/0 fails=0/0 summaries=0/0 headline_held=-
+HISTORY expect=history-repair.txt exit=2 verdict=FAIL-CLOSED SUMMARY_COUNT rows=0 held=(not asserted) fails=0
+HISTORY check copy:history-repair.txt ok sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+HISTORY check run:v1:history-repair.txt ok exit=2 want=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT"
+HISTORY check receipt:v1:history-repair.txt ok receipt-line=absent(v1-shape)
+HISTORY result input=history-repair.txt tool=v1 exit=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT" receipt=null
+HISTORY check run:v2:history-repair.txt ok exit=2 want=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT"
+HISTORY check receipt:v2:history-repair.txt ok line="RECEIPT: bytes=214 rows=0 held=-/- findings=SUMMARY_COUNT sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0" pre_rows=0 pre_held=- fails=0
+HISTORY result input=history-repair.txt tool=v2 exit=2 verdict="COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT" receipt="RECEIPT: bytes=214 rows=0 held=-/- findings=SUMMARY_COUNT sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0"
+HISTORY check immutable:history-repair.txt ok sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+HISTORY agree=history-repair.txt exit=yes verdict=yes receipts=mixed exits=v1:2,v2:2
+HISTORY check agree:history-repair.txt ok v1=2 v2=2
+HISTORY src-bound receipt-arms=28 source-sites=28 unbound=0
+HISTORY check src-bound ok all-receipt-arms-have-a-call-site
+HISTORY src-case tool=v1 exit=64 verdict="COUNTER_RECEIPT: USAGE" source=null
+HISTORY src-case tool=v1 no-source-line verdict=USAGE (a tool without --src support must print USAGE)
+HISTORY check src:v1 ok verdict=USAGE
+HISTORY src-case tool=v2 exit=1 verdict="COUNTER_RECEIPT: DRIFT SOURCE_DECLARED" source="SOURCE: sites=28 declared=27 receipt=28"
+HISTORY check src:v2 ok exit=1 want=1 token=SOURCE_DECLARED want-token=SOURCE_DECLARED line="SOURCE: sites=28 declared=27 receipt=28"
+HISTORY check src-receipt:v2 ok line="RECEIPT: bytes=5729 rows=28 held=28/28 findings=SOURCE_DECLARED sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063" bytes=5729 sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063 token=SOURCE_DECLARED
+HISTORY src immutable=yes sha256=5da10098b192a728be87b0cb676eacdd49e4163c0822dcfa6b53ad9b2b064301
+HISTORY: HELD held=44/44 tools=2 inputs=5

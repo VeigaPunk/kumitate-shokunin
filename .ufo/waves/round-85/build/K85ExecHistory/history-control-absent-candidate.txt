@@ -1,0 +1,44 @@
+HISTORY tool label=candidate path=/fast/scratch/hyaku/kumitate-r85/K85ExecHistory/hist/absent-candidate.mjs sha256=- present=false
+HISTORY src file=/fast/scratch/hyaku/kumitate-r85/K85ExecHistory/hist/probe83-c1.mjs sha256=5da10098b192a728be87b0cb676eacdd49e4163c0822dcfa6b53ad9b2b064301 sites=28 declared=27 sites-eq-declared=no
+HISTORY input=.ufo/waves/round-83/close/c1-probe.txt sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20 bytes=5573 note="r83 C1 probe: 28 rows, one red row, headline 27/27"
+HISTORY check shape:c1-probe.txt ok rows=28/28 fails=1/1 summaries=1/1 headline_held=27/27
+HISTORY expect=c1-probe.txt exit=1 verdict=DRIFT ARMS_TOTAL rows=28 held=27/27 fails=1
+HISTORY check copy:c1-probe.txt ok sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+HISTORY check run:candidate:c1-probe.txt FAIL tool-absent
+HISTORY check immutable:c1-probe.txt ok sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+HISTORY agree=c1-probe.txt single-tool=candidate exit=null verdict=null receipt=null
+HISTORY input=.ufo/waves/round-83/close/c1-repair.txt sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063 bytes=5729 note="r83 C1 repair: 28/28 held"
+HISTORY check shape:c1-repair.txt ok rows=28/28 fails=0/0 summaries=1/1 headline_held=28/28
+HISTORY expect=c1-repair.txt exit=0 verdict=CLEAN rows=28 held=28/28 fails=0
+HISTORY check copy:c1-repair.txt ok sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+HISTORY check run:candidate:c1-repair.txt FAIL tool-absent
+HISTORY check immutable:c1-repair.txt ok sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+HISTORY agree=c1-repair.txt single-tool=candidate exit=null verdict=null receipt=null
+HISTORY input=.ufo/waves/round-83/close/c2-probe.txt sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933 bytes=2678 note="r83 C2 probe: 16/16 held"
+HISTORY check shape:c2-probe.txt ok rows=16/16 fails=0/0 summaries=1/1 headline_held=16/16
+HISTORY expect=c2-probe.txt exit=0 verdict=CLEAN rows=16 held=16/16 fails=0
+HISTORY check copy:c2-probe.txt ok sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+HISTORY check run:candidate:c2-probe.txt FAIL tool-absent
+HISTORY check immutable:c2-probe.txt ok sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+HISTORY agree=c2-probe.txt single-tool=candidate exit=null verdict=null receipt=null
+HISTORY input=.ufo/waves/round-84/close/history-red.txt sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9 bytes=224 note="r84 saved answer (plan label: DRIFT); not itself receipt grammar" plan_label=DRIFT
+HISTORY prior=history-red.txt recorded="DRIFT ARMS_TOTAL" exit=1 (the file is a saved answer, not a receipt)
+HISTORY check shape:history-red.txt ok rows=0/0 fails=0/0 summaries=0/0 headline_held=-
+HISTORY expect=history-red.txt exit=2 verdict=FAIL-CLOSED SUMMARY_COUNT rows=0 held=(not asserted) fails=0
+HISTORY check copy:history-red.txt ok sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+HISTORY check run:candidate:history-red.txt FAIL tool-absent
+HISTORY check immutable:history-red.txt ok sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+HISTORY agree=history-red.txt single-tool=candidate exit=null verdict=null receipt=null
+HISTORY input=.ufo/waves/round-84/close/history-repair.txt sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0 bytes=214 note="r84 saved answer (plan label: CLEAN); not itself receipt grammar" plan_label=CLEAN
+HISTORY prior=history-repair.txt recorded="CLEAN" exit=0 (the file is a saved answer, not a receipt)
+HISTORY check shape:history-repair.txt ok rows=0/0 fails=0/0 summaries=0/0 headline_held=-
+HISTORY expect=history-repair.txt exit=2 verdict=FAIL-CLOSED SUMMARY_COUNT rows=0 held=(not asserted) fails=0
+HISTORY check copy:history-repair.txt ok sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+HISTORY check run:candidate:history-repair.txt FAIL tool-absent
+HISTORY check immutable:history-repair.txt ok sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+HISTORY agree=history-repair.txt single-tool=candidate exit=null verdict=null receipt=null
+HISTORY src-bound receipt-arms=28 source-sites=28 unbound=0
+HISTORY check src-bound ok all-receipt-arms-have-a-call-site
+HISTORY check src:candidate FAIL tool-absent
+HISTORY src immutable=yes sha256=5da10098b192a728be87b0cb676eacdd49e4163c0822dcfa6b53ad9b2b064301
+HISTORY: UNMET held=16/22 tools=1 inputs=5

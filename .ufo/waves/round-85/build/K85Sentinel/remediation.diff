@@ -1,0 +1,7 @@
+--- a/scripts/counter-receipt.mjs  (L1 draft v2, sha256 61e9ba68...)
++++ b/scripts/counter-receipt.mjs  (hardened copy, probe 20/20, CV 3/3, selftest 56/56)
+@@
+-const sitePattern = /arm\(\s*'([a-z0-9][a-z0-9-]*)'/g;
+-const declaredPattern = /^[ \t]*(?:const|let|var)[ \t]+ARMS[ \t]*=[ \t]*([0-9]+)[ \t]*;?/gm;
++const sitePattern = /(?<![\w$.])arm\(\s*'([a-z0-9][a-z0-9-]*)'/g;
++const declaredPattern = /^[ \t]*(?:const|let|var)[ \t]+ARMS[ \t]*=[ \t]*([0-9]+)(?![0-9A-Za-z_.])[ \t]*;?/gm;

@@ -1,0 +1,56 @@
+# K85Mutation receipt — M04 arm-unbound-unreachable
+mutant: M04 arm-unbound-unreachable
+change: ARM_UNBOUND check disabled (guarded by false &&)
+expected detector: src-unbound expects DRIFT ARM_UNBOUND but gets CLEAN (killing arm: src-unbound)
+command: node .ufo/waves/round-85/probe/probe85-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Mutation/mutants/M04-arm-unbound-unreachable --work /fast/scratch/hyaku/kumitate-r85/K85Mutation/work/M04
+lane: mutants/M04-arm-unbound-unreachable
+revision: 9db0c6b5eb9111cfc5581006ba976ca2cd112792
+ref_sha256: 34bb75b45d50fed8fc8c101128af2dbf9c0755a42920add44fdedc1cf0cc3c33
+mutant_sha256: 5b74a1f8ebd6c4a26f7768652ff3c85902a7208aad7bde3f9aca6f9b9ef9818c
+exit: 1
+score: C85_C1: UNMET held=19/20
+killing_arm: src-unbound
+failed_arms: src-unbound
+content_variation_exit: 0
+content_variation: CONTENT_VARIATION: HELD held=3/3 distinct_sha=true
+--- probe stdout ---
+C85_C1 arm clean ok exit=0 want=0
+C85_C1 arm crlf ok exit=0 want=0
+C85_C1 arm hidden-red ok exit=1 want=1
+C85_C1 arm total-drift ok exit=1 want=1
+C85_C1 arm held-drift ok exit=1 want=1
+C85_C1 arm duplicate ok exit=1 want=1
+C85_C1 arm foreign-arm ok exit=1 want=1
+C85_C1 arm two-summaries ok exit=2 want=2
+C85_C1 arm no-summary ok exit=2 want=2
+C85_C1 arm malformed-arm ok exit=2 want=2
+C85_C1 arm zero-arms ok exit=2 want=2
+C85_C1 arm missing ok exit=2 want=2
+C85_C1 arm usage ok exit=64 want=64
+C85_C1 arm honest-red ok exit=1 want=1
+C85_C1 arm wrong-verdict ok exit=1 want=1
+C85_C1 arm summary-before-arms ok exit=2 want=2
+C85_C1 arm src-bound-clean ok exit=0 want=0
+C85_C1 arm src-unbound FAIL exit=0 want=1 line2="RECEIPT: bytes=72 rows=3 held=3/3 findings=none sha256=6658011c93d182cd76bc508a831ed5368a8f35556f8f9cc240942cdca1f20355"
+C85_C1 arm src-arity ok exit=1 want=1
+C85_C1 arm src-declared ok exit=1 want=1
+C85_C1: UNMET held=19/20
+
+--- content-variation stdout ---
+CONTENT_VARIATION arm clean-2 ok exit=0 want=0 line2="RECEIPT: bytes=39 rows=2 held=2/2 findings=none sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff"
+CONTENT_VARIATION arm red-1 ok exit=1 want=1 line2="RECEIPT: bytes=31 rows=1 held=0/1 findings=ARM_FAILED sha256=ac2d8c13ebf2224d42ea69e7ecfbab2237ffe66fd138a95a72faf093090a4f44"
+CONTENT_VARIATION arm clean-3 ok exit=0 want=0 line2="RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+CONTENT_VARIATION: HELD held=3/3 distinct_sha=true
+
+--- unified diff vs ref ---
+--- ref
++++ mutants/M04-arm-unbound-unreachable
+@@ -73,7 +73,7 @@
+ /** Bind receipt arms to source sites: unbound names, arity, declared count. */
+ export function bindSource(source, receipt) {
+   const available = new Set(source.sites);
+-  if (receipt.names.some((name) => !available.has(name))) return fail('ARM_UNBOUND', 1);
++  if (false && receipt.names.some((name) => !available.has(name))) return fail('ARM_UNBOUND', 1);
+   if (source.sites.length !== receipt.rows) return fail('SOURCE_ARITY', 1);
+   if (source.declared !== null && source.declared !== source.sites.length) return fail('SOURCE_DECLARED', 1);
+   return { code: 0, token: 'CLEAN' };

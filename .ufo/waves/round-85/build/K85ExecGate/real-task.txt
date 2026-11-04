@@ -1,0 +1,45 @@
+run-at=2026-11-04T18:57:25Z
+rev=9db0c6b5eb9111cfc5581006ba976ca2cd112792 (lane freeze commit; candidate is uncommitted seat output)
+candidate_sha256=7659be6e5ea5155a386fddfd3bad7abf5147562391c415d1e8200f9151508bc1
+
+== r85-v2 command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-probe.txt
+COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+r85-v2_exit=1
+r85-v1_same_bytes=COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+r85-v1_exit=1
+bytes=5573 sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+
+== r85-v2 command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+r85-v2_exit=0
+r85-v1_same_bytes=COUNTER_RECEIPT: CLEAN
+r85-v1_exit=0
+bytes=5729 sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+
+== r85-v2 command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c2-probe.txt
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+r85-v2_exit=0
+r85-v1_same_bytes=COUNTER_RECEIPT: CLEAN
+r85-v1_exit=0
+bytes=2678 sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+
+== r85-v2 command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-red.txt
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+RECEIPT: bytes=224 rows=0 held=-/- findings=SUMMARY_COUNT sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+r85-v2_exit=2
+r85-v1_same_bytes=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+r85-v1_exit=2
+bytes=224 sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+
+== r85-v2 command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-repair.txt
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+RECEIPT: bytes=214 rows=0 held=-/- findings=SUMMARY_COUNT sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+r85-v2_exit=2
+r85-v1_same_bytes=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+r85-v1_exit=2
+bytes=214 sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+
+note=r84 history-{red,repair}.txt are 4-line run transcripts (rev, command=, one verdict line, exit=); they contain no arm rows, so a literal --receipt invocation is SUMMARY_COUNT for v1 and v2 alike. The DRIFT/CLEAN readings belong to the r83 files named in their command= line (measured above).

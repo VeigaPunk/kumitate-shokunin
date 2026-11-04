@@ -1305,3 +1305,20 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   Historical counters stay frozen; this rule adds no universal migration.
 - **Supersedes.** None; extends Q73's reachability check with runtime
   reconciliation of the measured transcript.
+
+- **Q78 — pre-data controls must be able to differ from the work.** Every claim
+  freezes, before its first data commit, four control classes scored by the same
+  frozen counter: (a) the do-nothing/base tree, (b) a constant printer, (c) a
+  label-keyed no-reader that never opens the input, and (d) a same-path content
+  variation (one path written N times with different content must yield N
+  distinct answers and distinct input-derived digests). Each control's expected
+  verdict is asserted exactly — exit code plus the derived line the counter
+  prints — and a control that reaches the target falsifies the counter, not the
+  claim. **Grounding:** round-84's `vacuous` row (`corpus/lessons/round-84.md`:
+  a six-line label-keyed no-reader printed the same 16 labels and reached
+  `held=16/16`, so the claim stopped) and round-85's remedy
+  (`corpus/knowledge/counter-receipt-discrimination.md`, S245; the three
+  controls score 1/20, 0/20 and 1/20 against the frozen 20-arm probe, and the
+  same-path control 0/3 for each). Scope: claims whose evidence is a counter's
+  own output; a claim evidenced by a committed artifact of another kind names
+  the equivalent control that skips its work.

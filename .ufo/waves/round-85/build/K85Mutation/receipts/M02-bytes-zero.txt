@@ -1,0 +1,56 @@
+# K85Mutation receipt — M02 bytes-zero
+mutant: M02 bytes-zero
+change: prints bytes=0 always instead of the real receipt byte length
+expected detector: receipt arms with bytes>0: line2 mismatch (killing arm: clean)
+command: node .ufo/waves/round-85/probe/probe85-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Mutation/mutants/M02-bytes-zero --work /fast/scratch/hyaku/kumitate-r85/K85Mutation/work/M02
+lane: mutants/M02-bytes-zero
+revision: 9db0c6b5eb9111cfc5581006ba976ca2cd112792
+ref_sha256: 34bb75b45d50fed8fc8c101128af2dbf9c0755a42920add44fdedc1cf0cc3c33
+mutant_sha256: cd0873562842bf34d99c28ce1fbeaaafac0afbe4312c932871d01e6f9ddfce83
+exit: 1
+score: C85_C1: UNMET held=2/20
+killing_arm: clean
+failed_arms: clean, crlf, hidden-red, total-drift, held-drift, duplicate, foreign-arm, two-summaries, no-summary, malformed-arm, zero-arms, honest-red, wrong-verdict, summary-before-arms, src-bound-clean, src-unbound, src-arity, src-declared
+content_variation_exit: 1
+content_variation: CONTENT_VARIATION: UNMET held=0/3 distinct_sha=true
+--- probe stdout ---
+C85_C1 arm clean FAIL exit=0 want=0 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=none sha256=2c902863cd2bd49c5da5abbb7901d8b2f5a1c566db9f84a956123bde96b46f01"
+C85_C1 arm crlf FAIL exit=0 want=0 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=none sha256=cf2c8576d2c1b098f9c1863aca6d1142f969e6b3a7bd2ff358d1ac7a40d08a5c"
+C85_C1 arm hidden-red FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=1/1 findings=ARMS_TOTAL sha256=78619e34ff8f15dbe3c4da744d0a13c301aeb1a39ae30bbadd30485cacc3ece7"
+C85_C1 arm total-drift FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=2/3 findings=ARMS_TOTAL sha256=88c1917eb949207e34f3fa91917a4718443232324baeba8d41f27b7a0781650a"
+C85_C1 arm held-drift FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=1/2 findings=HELD_COUNT sha256=d0bed6e8ea60924dcdf7174ada0bad57e09df5367db599308f0e9be6a45dc830"
+C85_C1 arm duplicate FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=ARM_DUPLICATE sha256=e4702e7c15d0451cb7def0f86f16c336232871d932db7ebf5533f49a6408383b"
+C85_C1 arm foreign-arm FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=ARM_PREFIX sha256=3109f8093a0fa2087e4cbaac47f8492bfdda1b3c6b9fd9d98416fd924c8f3a56"
+C85_C1 arm two-summaries FAIL exit=2 want=2 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=SUMMARY_COUNT sha256=99f5c6d5bdf366b7df3ab51dafdccd34cf498a7fe4667cb8a01d368d95cb3edf"
+C85_C1 arm no-summary FAIL exit=2 want=2 line2="RECEIPT: bytes=0 rows=1 held=-/- findings=SUMMARY_COUNT sha256=0aff6fc1e268adb74d65e13838ff4c1d92acb3eade489dfdf0a805c4659de009"
+C85_C1 arm malformed-arm FAIL exit=2 want=2 line2="RECEIPT: bytes=0 rows=0 held=1/1 findings=ARM_MALFORMED sha256=9309a15c5e3d04f3e27e064c30c0548b7b81e7064ae6694bca8e5a6e70531849"
+C85_C1 arm zero-arms FAIL exit=2 want=2 line2="RECEIPT: bytes=0 rows=0 held=0/0 findings=ARMS_EMPTY sha256=b768b93410e8de133375ebb9c621599f57dd7aaf5c78ca07c2b1ec561a95a1c3"
+C85_C1 arm missing ok exit=2 want=2
+C85_C1 arm usage ok exit=64 want=64
+C85_C1 arm honest-red FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=1 held=0/1 findings=ARM_FAILED sha256=6e930c1c1b518a5f640b6cf1aaadfb296db46638c227639f78ea65d9e0906c4e"
+C85_C1 arm wrong-verdict FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=VERDICT sha256=527af4be874ea4e55c3e3e9bc600533f99724202dbb4aac48d4c1b7883e4a1b9"
+C85_C1 arm summary-before-arms FAIL exit=2 want=2 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=SUMMARY_ORDER sha256=309570373a8a6cb15de1a2807f888855088bcc7dc87d3e8a33a04a9234c8b51d"
+C85_C1 arm src-bound-clean FAIL exit=0 want=0 line2="RECEIPT: bytes=0 rows=3 held=3/3 findings=none sha256=b2e88a335fce05fb145afb4d95ecd130251941d0c4d8dbd71a14144f8f3c6b4a"
+C85_C1 arm src-unbound FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=3 held=3/3 findings=ARM_UNBOUND sha256=af8a7a97c1e2e50347e56790beb2fa42019f000b1a21f24728cda10860ba616d"
+C85_C1 arm src-arity FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=3 held=3/3 findings=SOURCE_ARITY sha256=b2e88a335fce05fb145afb4d95ecd130251941d0c4d8dbd71a14144f8f3c6b4a"
+C85_C1 arm src-declared FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=b2e88a335fce05fb145afb4d95ecd130251941d0c4d8dbd71a14144f8f3c6b4a"
+C85_C1: UNMET held=2/20
+
+--- content-variation stdout ---
+CONTENT_VARIATION arm clean-2 FAIL exit=0 want=0 line2="RECEIPT: bytes=0 rows=2 held=2/2 findings=none sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff"
+CONTENT_VARIATION arm red-1 FAIL exit=1 want=1 line2="RECEIPT: bytes=0 rows=1 held=0/1 findings=ARM_FAILED sha256=ac2d8c13ebf2224d42ea69e7ecfbab2237ffe66fd138a95a72faf093090a4f44"
+CONTENT_VARIATION arm clean-3 FAIL exit=0 want=0 line2="RECEIPT: bytes=0 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+CONTENT_VARIATION: UNMET held=0/3 distinct_sha=true
+
+--- unified diff vs ref ---
+--- ref
++++ mutants/M02-bytes-zero
+@@ -162,7 +162,7 @@
+   const label = final.code === 1 ? 'DRIFT ' : final.code === 2 ? 'FAIL-CLOSED ' : '';
+   const sha = createHash('sha256').update(raw).digest('hex');
+   console.log(`COUNTER_RECEIPT: ${label}${final.token}`);
+-  console.log(`RECEIPT: bytes=${raw.length} rows=${receipt.rows} held=${receipt.held} findings=${final.code === 0 ? 'none' : final.token} sha256=${sha}`);
++  console.log(`RECEIPT: bytes=0 rows=${receipt.rows} held=${receipt.held} findings=${final.code === 0 ? 'none' : final.token} sha256=${sha}`);
+   if (source) {
+     const declared = source.declared === null ? 'absent' : source.declared;
+     console.log(`SOURCE: sites=${source.sites.length} declared=${declared} receipt=${receipt.rows}`);

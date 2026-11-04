@@ -2831,3 +2831,61 @@ Receipts: `close/checklists.txt`, `close/harm-matrix.txt`; no operator-host
 file altered and no universal no-harm promise. Main reports ten settled seats
 with exact captured IDs but expired retained status handles; death/model
 counts are not inferred. `close/seat-census.json` preserves the distinction.
+
+- 2026-11-04 — round 85: `counter-receipt` v2 — the receipt check that must read
+  (derived `RECEIPT:`/`SOURCE:` lines, `--src` source binding); frozen 20-arm
+  probe HELD at M, three pre-data controls 1/20, 0/20, 1/20 and same-path
+  variation 0/3; two post-data adversaries reach 20/20 and are disclosed. Q78,
+  S245 admit / S246 reject, four mistakes. Full entry below.
+
+## Round 85 — the receipt check that must read (2026-11-04)
+
+One declared claim, C1 operability (lowest non-retired axis; integer 9 terminal under `f_O`):
+capability acquisition `counter-receipt` v2, frozen in `9db0c6b5`. The round-84 acquisition
+stopped on its own kill rule: a six-line label-keyed no-reader printed the same 16 labels and
+reached `held=16/16` without opening a receipt. v2 makes the answer depend on the bytes read — a
+derived `RECEIPT: bytes=… rows=… held=… findings=… sha256=…` line on every non-USAGE run — and
+binds the transcript to its producer with `--src`: the receipt's arm names must be literal
+`arm('…')` call sites, the row count must equal the site count, and the last declared
+`const|let|var ARMS = <int>` must agree with both.
+
+Frozen before any seat data: plan, the 20-arm probe (every fixture carries a per-run
+`rev=<nonce>` metadata line that the parser ignores and the digest does not), three control tools
+and a same-path content-variation control, all scored and committed (`9db0c6b5`). Measured:
+base v1 `1/20`, constant-CLEAN `0/20`, label-keyed no-reader `1/20`; content variation `0/3` for
+all three; the integrated tool `C85_C1: HELD held=20/20` exit 0, `--selftest` `PASS held=60/60`,
+content variation `HELD held=3/3 distinct_sha=true`. Real task, not only fixtures: r83's
+`c1-repair.txt` is 28/28 and CLEAN under v1, and v2 reads `DRIFT SOURCE_DECLARED` with
+`SOURCE: sites=28 declared=27 receipt=28` — the round-83 `ARMS = 27`/28-call-site defect caught
+from the source before the counter runs. Independent 41-case driver `HELD 41/41`; mutant battery
+11/11 mandated mutants killed with three disclosed survivors.
+
+Honest verdict: **HELD on the frozen predicate and on the three enumerated pre-data controls**;
+the kill rule does not fire on the set the plan names. Two seats then built post-data adversaries
+that read only the per-run nonce and replay a copied table, and both reach `20/20` (one also
+passes the same-path control). That is a predicate-strength limit of any deterministic black-box
+battery, disclosed in `SCORECARD.md` and pre-registered for round 86 as a randomized-fixture arm
+whose expected verdict is unknowable without parsing. Both readings are on the record; the
+closure rules if it reads "any control" more broadly.
+
+Repair-before-freeze `6663b3be` adopted the round-84 non-author spot-check's missing README row,
+but the pin half was missed, so `readme-map` read `covered=213 bad=1` and `plan-before-ready
+--round 85` read `FAIL reason=MAP_DRIFT` at the archived plan; the pin was fixed in the work
+commit and both gates read CLEAN afterwards. That is this round's first mistake row; the second
+is the plan naming r84 `close/history-*.txt` (tool output) as receipts, which v2 correctly reads
+`FAIL-CLOSED SUMMARY_COUNT`. A third (non-decimal `ARMS` literal misparsed, sentinel S5) was
+fixed before M with the frozen probe re-run; a fourth records the three surviving mutant arms.
+
+ONE v1 wave of 13 settled seats; L1 holds the planner seat (the prompt-sanctioned deviation, and
+the fleet-wide open question kake/kotodama filed). Roles: executor 5, scribe 1, scout 1,
+connector 1, reviewer 2, critic 1, mutation-tester 1, sentinel 1. Attack 5/13; connector 1;
+no residual call. WAVE-DONE received before filing; seat reports, candidate and receipts are
+committed under `.ufo/waves/round-85/`.
+
+Sources 182→184: S245 admit (arXiv:2212.06118v3, captured bytes, located quote) and S246 reject
+(ACM DL 403, no located text, flip kept); A 155→157, B 17, C 10; mined 146→147, rejected 23→24;
+registry census exit 0 at both ends. Q78 lands the pre-data control-class bar grounded in the
+round-84 `vacuous` row. Accounting (not admission): A 908→972 (59 wave-scaffolding `.mjs` —
+r84's routed R-proxy, pre-registered for round 86; shipped-only A = 36), C 44→45, C2 214→216,
+`pin.counter-receipt` `190a4c1f…`→`f385bd7a…`; every scalar axis unchanged, no axis harmed on
+the gates run. Assimilation none; no staged package row appended.

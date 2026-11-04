@@ -1,0 +1,103 @@
+# provenance: measured-revision=9db0c6b5eb9111cfc5581006ba976ca2cd112792 tool-sha256=61e9ba682c552f2dc6b9d19a4d2c9215a810373dccf89053b664c844baef89e0
+=== receipt-then-src-flag
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt --src
+EXIT: 64 ms=18
+OUT: COUNTER_RECEIPT: USAGE
+
+=== dup-receipt
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt
+EXIT: 64 ms=16
+OUT: COUNTER_RECEIPT: USAGE
+
+=== dup-src
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/src2.mjs --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/src2.mjs
+EXIT: 64 ms=20
+OUT: COUNTER_RECEIPT: USAGE
+
+=== src-without-receipt
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/src2.mjs
+EXIT: 64 ms=19
+OUT: COUNTER_RECEIPT: USAGE
+
+=== src-before-receipt
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/src2.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt
+EXIT: 0 ms=17
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=39 rows=2 held=2/2 findings=none sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff
+     SOURCE: sites=2 declared=2 receipt=2
+
+=== trailing-src-no-value
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --src
+EXIT: 64 ms=16
+OUT: COUNTER_RECEIPT: USAGE
+
+=== unknown-flag
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --verbose
+EXIT: 64 ms=17
+OUT: COUNTER_RECEIPT: USAGE
+
+=== single-dash-value
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt -
+EXIT: 2 ms=19
+OUT: COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+     RECEIPT: bytes=0 rows=0 held=-/- findings=RECEIPT_UNREADABLE sha256=-
+
+=== clean-as-src
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt
+EXIT: 2 ms=18
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY
+     RECEIPT: bytes=39 rows=2 held=2/2 findings=SOURCE_ARMS_EMPTY sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff
+     SOURCE: sites=0 declared=absent receipt=2
+
+=== flag-named-path-bare
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt --receipt
+EXIT: 64 ms=18
+OUT: COUNTER_RECEIPT: USAGE
+
+=== flag-named-path-dot
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt ./--receipt
+EXIT: 0 ms=19
+OUT: COUNTER_RECEIPT: CLEAN
+     RECEIPT: bytes=28 rows=1 held=1/1 findings=none sha256=2fce18a4b1149339afbe2710c155c7c2c6d17f9cd812d55d1da8f9d8dbdea253
+
+=== directory-receipt
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clidir
+EXIT: 2 ms=20
+OUT: COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+     RECEIPT: bytes=0 rows=0 held=-/- findings=RECEIPT_UNREADABLE sha256=-
+
+=== directory-src
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clidir
+EXIT: 2 ms=18
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SOURCE_UNREADABLE
+     RECEIPT: bytes=39 rows=2 held=2/2 findings=SOURCE_UNREADABLE sha256=dab1df63dc673c8223a083bd9c4396105fa91112339acb9a340d5088966392ff
+     SOURCE: sites=- declared=- receipt=2
+
+=== dev-null-receipt
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /dev/null
+EXIT: 2 ms=18
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+     RECEIPT: bytes=0 rows=0 held=-/- findings=SUMMARY_COUNT sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+=== notatranscript
+CMD: node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/notatranscript.txt
+EXIT: 2 ms=19
+OUT: COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+     RECEIPT: bytes=17 rows=0 held=-/- findings=SUMMARY_COUNT sha256=0e69843553b8c53f60fa5436e2a0d10cb23f9aa0d9b60ac42f0d8e23232a6e30
+
+=== fifo-receipt-no-writer
+CMD: timeout 5 node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fifo-receipt
+EXIT: 124 ms=5002
+OUT: 
+
+=== fifo-src-no-writer
+CMD: timeout 5 node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fx/clean.receipt --src /fast/scratch/hyaku/kumitate-r85/K85Sentinel/fifo-src
+EXIT: 124 ms=5003
+OUT: 
+
+=== dev-zero-receipt-1GiB-cap
+CMD: ( ulimit -v 1048576; timeout 10 node /fast/scratch/hyaku/kumitate-r85/K85Sentinel/lane/scripts/counter-receipt.mjs --receipt /dev/zero )
+attack-cli.sh: line 69: 1323009 Trace/breakpoint trap      ( ulimit -v 1048576; timeout 10 node "$T" --receipt /dev/zero ) > "$S/out/dev-zero.txt" 2>&1
+EXIT: 133 ms=108
+OUT: x11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) [node] 11: 0x8d1209 node::Start(int, char**) [node] 12: 0x7f86ff027781  [/usr/lib/libc.so.6] 13: 0x7f86ff0278b9 __libc_start_main [/usr/lib/libc.so.6] 14: 0x7ef4fe _start [node] timeout: the monitored command dumped core 
+

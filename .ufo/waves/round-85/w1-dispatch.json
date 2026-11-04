@@ -1,0 +1,186 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "kumitate-r85-w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 16,
+    "minLanes": 8,
+    "waveMinLanes": 8,
+    "waveMaxLanes": 16,
+    "declaredMaxLanes": 16,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 13,
+    "resume": 0,
+    "total": 13
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-85/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-85/w1",
+    "members": {
+      "K85ExecGate": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K85ExecFixture": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K85ExecHistory": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K85ExecSelftest": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K85ExecPins": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K85Scribe": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "K85Scout": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "K85Connector": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": null
+      },
+      "K85Review": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "K85Critic": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null
+      },
+      "K85Mutation": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null
+      },
+      "K85Sentinel": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": null
+      },
+      "K85Cheat": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\nKumitate round 85: ONE operability capability claim C1 = counter-receipt v2, a receipt check whose answer depends on bytes it read. Read frozen /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/plan.md and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/probe/probe85-c1.mjs BEFORE work. Freeze commit 9db0c6b5eb9111cfc5581006ba976ca2cd112792; repair commit 6663b3beb4b5bd30e766e9c01f6ba4db24f5c5e8; base a5d3e7549501ae76dbd86a6f81c5e858f1f92446. L1 KumitateR85 holds the planner seat.\n# Contract\nLane /home/vgpnk/Projects/shokunin/kumitate-shokunin. Your cwd starts at the fleet root: EVERY path must be absolute. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>. Write ONLY your own build/<seat>/ subtree and your own report: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/<seat>/ and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/<seat>.md. Never edit production files, the frozen plan or probe, SCORECARD.md, LOG.md, corpus/, SKILL.md, or another seat's subtree; L1 integrates. No task/delegation, no git/jj mutations, no commits or pushes, no writes to the fleet repo, sibling lanes or /home/vgpnk/Projects/shokuknow. Do not run build/lint/tests on the shared tree; only your assigned bounded probes. Scratch rule: every clone, mirror, work tree and fixture of this round lives under the scratch root /fast/scratch/hyaku/kumitate-r85/<seat>/ (replace <seat> by your name); use HYAKU_SCRATCH or an explicit TMPDIR/work argument, never rely on /tmp (under 50 MB only), and delete the scratch root before you yield after copying durable receipts into your build dir. Every receipt names command, exit code and the revision it measured.\n# Claim, frozen\nPredicate: `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/probe/probe85-c1.mjs --lane <DIR with scripts/counter-receipt.mjs> --work <scratch>` must print `C85_C1: HELD held=20/20`, exit 0. Controls scored before data: base v1 1/20, constant-CLEAN 0/20, label-keyed no-reader 1/20 (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/controls/*.txt); same-path content variation (/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/controls/content-variation.mjs) base/stub/no-reader 0/3. Kill rule: any arm red, any control reaching 20/20, or attributable regression = unmet/harmed. Do not change, weaken or re-scope the probe, plan or controls; report attacks as findings.\n# Tooling\nRead /home/vgpnk/.omp/agent/RULES.md first. Install only via uv tool / npx / official binary in ~/.local/bin; ALL pacman transactions are PAUSED host-wide (never -S, -Sy, -Syu, -U, -R). Record any install (tool, version, channel, reason) in your report. No installs are needed by default.\n# Output\nYour outputs are lane-author advice, not the non-author closure; never write SHONEN [x]. New source ids reserved this round are S245/S246. Report blockers or contract bugs without editing the frozen predicate.",
+    "tasks": [
+      {
+        "name": "K85ExecGate",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate (candidate + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85ExecGate.md\n# Change\nWrite the v2 candidate at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs, implementing the frozen contract in /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/plan.md literally: unchanged v1 grammar and precedence, plus `--src` binding (literal arm('<name>' call sites; last `const|let|var ARMS = <int>`; SOURCE_UNREADABLE, SOURCE_ARMS_EMPTY, ARM_UNBOUND, SOURCE_ARITY, SOURCE_DECLARED), the `RECEIPT: bytes=… rows=… held=… findings=… sha256=…` line on every non-USAGE run and `SOURCE: sites=… declared=… receipt=…` when --src is given. Zero-dependency Node ESM, read-only, never executes receipt bytes, no hardcoded /tmp (use --work or HYAKU_SCRATCH). Keep `--selftest [--work DIR]` self-invoking the CLI with exit+first-line assertions and add the six source arms. Write it under your scratch first, then copy to your build dir. Validate it by copying it to a scratch lane tree (mkdir -p SCRATCH/lane/scripts; cp candidate; run the frozen probe with --lane SCRATCH/lane --work SCRATCH/probe) and capture that receipt.\n# Acceptance\nProbe receipt shows C85_C1: HELD held=20/20 exit 0 at your candidate; `node <candidate> --selftest --work SCRATCH/st` prints COUNTER_RECEIPT_SELFTEST: PASS with its arm count. Report any place where the contract is ambiguous or unimplementable rather than inventing behaviour; do not edit the probe or plan.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85ExecGate.md"
+      },
+      {
+        "name": "K85ExecFixture",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecFixture (driver + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85ExecFixture.md\n# Change\nWrite an INDEPENDENT regression driver at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecFixture/independent-cases.mjs taking `--tool FILE --work DIR`: 24+ cases derived from the plan's contract, not copied from the frozen probe. Cover: metadata shapes that look like arms/summaries, CRLF, leading-zero integers, huge but safe integers, unsafe/fraction/exponent/negative counts, two summaries, no summary, malformed names/status/prefix, zero arms, honest UNMET red, wrong verdict, summary-before-arms, missing file, directory as receipt, CLI refusals (unknown flag, duplicate flag, missing value, --src without --receipt), plus the six source arms (bound clean, unbound name, arity mismatch, declared mismatch, source with no sites, missing source). Assert exit code AND a stable token AND the RECEIPT line bytes/sha256 computed from the bytes you wrote. If the candidate exists at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs, run the driver and capture the receipt; otherwise return it unrun and say so. Do not wait-loop.\n# Acceptance\nDriver and its receipt are in your build dir; the receipt names the tool revision or states explicitly that the candidate was absent. Do not edit production files.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85ExecFixture.md"
+      },
+      {
+        "name": "K85ExecHistory",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecHistory (battery + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85ExecHistory.md\n# Change\nBuild a historical-receipt battery at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecHistory/history.mjs taking `--tool FILE --work DIR`: run the v1 and the v2 candidate over the committed receipts /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-probe.txt (expect DRIFT ARMS_TOTAL, exit 1: 28 rows, headline 27/27, one FAIL), /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt (CLEAN, exit 0), /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c2-probe.txt (CLEAN), /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-red.txt (DRIFT), /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-repair.txt (CLEAN). Copy receipts into your scratch before running; never modify the historical bytes. For each receipt record rows/held/findings from the RECEIPT line and whether v1 and v2 agree on exit. Also run v2 with `--src` against /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/probe/probe83-c1.mjs and report the SOURCE line and the finding (that source declares ARMS=27 while having 28 arm() call sites).\n# Acceptance\nA receipt per input with exit, RECEIPT line and v1/v2 agreement; the r83 source case names its finding. If the candidate is absent, run v1 only and say so. No historical file is edited.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85ExecHistory.md"
+      },
+      {
+        "name": "K85ExecSelftest",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecSelftest (audit + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85ExecSelftest.md\n# Change\nAudit the candidate's `--selftest` at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs: (1) run it with `--work` under your scratch and record the arm count and PASS/FAIL; (2) grep the candidate for hardcoded `/tmp`, `/var/tmp`, `mkdtemp` without an explicit root, and any child process spawning without a timeout; (3) verify the selftest actually re-invokes its own CLI (spawn of process.execPath with the script) and asserts exit+first line rather than internal function returns only; (4) check that a deliberate mutation of the candidate (e.g. change one expected token) makes the selftest fail, and that reverting restores PASS — capture both receipts. Report the exact line numbers of each finding. If the candidate is absent, audit the v1 tool at /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs and say the v2 audit is unrun.\n# Acceptance\nReceipts for run, mutant-red and restored-green, plus grep evidence; findings named by line. Never edit the candidate in place — copy to scratch.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85ExecSelftest.md"
+      },
+      {
+        "name": "K85ExecPins",
+        "agent": "executor",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecPins (accounting + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85ExecPins.md\n# Change\nProduce the integration accounting L1 needs after the tool lands. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs (the `kumitate-gate-pins-v1` key map), /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md's machine block `<!-- kumitate-proxy-v1 … -->` and /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-pins.mjs. Enumerate: (1) every pin whose file the v2 edit touches and the exact command to recompute it; (2) every stanza key the edit can move (A, C, pin.counter-receipt, C2 if notes are added) with the counting command for each; (3) every SKILL.md row/checklist item that names the v1 contract or the r84 checklist item, quoted with line numbers; (4) every gate in the lane that consumes counter-receipt (grep, with file:line). Compute A and C now at the frozen tree (`git ls-tree -r --name-only` over the branch, `grep -c '^\\s*- \\[' SKILL.md`) and record the values with commands. Do not edit any file outside your build dir.\n# Acceptance\nAn accounting table with file:line pointers and runnable commands, plus the current A/C values with their commands. No production edits.\n\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85ExecPins.md"
+      },
+      {
+        "name": "K85Scribe",
+        "agent": "scribe",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scribe (drafts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Scribe.md\n# Change\nDraft, for L1 to integrate, exactly four artifacts at their final repo-relative paths under your build dir: (1) /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scribe/knowledge/counter-receipt-discrimination.md — a knowledge note on why an internal-consistency check is not an oracle: the receipt's headline can be reproduced by a printer, so v2 binds the answer to bytes read (bytes/rows/held/sha256) and to the counter source (arm call sites, declared ARMS); include the contract table, precedence, the control classes and the limits (forged consistent receipts still pass; not authentication). Ground it on S245 and cite it, and cite the lane's own evidence paths. (2) /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scribe/quality-q78.md — one QUALITY.md criterion in the file's exact bullet style (`- **Q78 — …` with Grounding:) requiring pre-data control classes: absent tool, constant printer, label-keyed no-reader, same-path content variation, each with an exact unique verdict assertion; grounded in the round-84 `vacuous` row. (3) /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scribe/lesson-round-85.md — `## Mistakes` table in the lane's column shape (class · evidence pointer · captured-by · fix and shown-able-to-fail boundary) with the honest rows you can support from committed bytes, plus Gate/Method sections. (4) /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scribe/sources-rows.md — the two registry rows: S245 admit (Oracle-based Test Adequacy Metrics: A Survey, arXiv:2212.06118 v3; you MUST open the abstract yourself this round and record the URL, access date 2026-11-04 and a ≤25-word located quote) and S246 reject (ACM DL listing of Barr et al. 2015, 10.1109/TSE.2014.2372785, HTTP 403 no located text; flip condition). Use the registry's 11-column shape. Drafts only — do not edit corpus/, SCORECARD.md, LOG.md or SKILL.md.\n# Acceptance\nFour drafts at their build paths, each citing the frozen plan and committed evidence; S245's quote is your own, located and ≤25 words. Report anything you could not ground instead of inventing it.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Scribe.md"
+      },
+      {
+        "name": "K85Scout",
+        "agent": "scout",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Scout (report) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Scout.md\n# Change\nRead-only reconnaissance. (1) Open /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-84.md and /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-84-verifier-spotcheck.md and quote the exact lines of the `vacuous` Mistakes row and the spot-check's C1 kill finding. (2) Enumerate every consumer of `scripts/counter-receipt.mjs`: grep the lane for the name and report file:line for SKILL.md (gate row + checklist items), SCORECARD.md (capability row, pins, prose), scripts/ (proxy-check gate map, counter-pins), corpus/knowledge/ and the wave dirs. For each, say whether the v2 change (new second/third output lines, new CLI flag, new findings, new selftest arm count) invalidates its literal text. (3) Open /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs's gate-pin map and list the keys; state which one names counter-receipt and what happens when its sha changes. (4) List the r84 spot-check's seven routed defects and classify each as landed, carried or closed this round with a file:line pointer where one exists.\n# Acceptance\nA findings report with file:line and literal quotes; no edits anywhere.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Scout.md"
+      },
+      {
+        "name": "K85Connector",
+        "agent": "connector",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Connector (report) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Connector.md\n# Change\nRead-only bounded cross-lane overlap scan. Question: does any sibling shokunin lane already own (a) a pre-data control-class bar for claims, (b) an input-derived/digest line on an evidence receipt, or (c) a counter/selftest discrimination rule? Read-only search under /home/vgpnk/Projects/shokunin/*-shokunin for `control`, `no-reader`, `discriminat`, `sha256=`, `derived line` in corpus/QUALITY.md, corpus/lessons/ and scripts/. For each hit report lane, file:line and a one-line summary. Then state which of the three the kumitate round-85 claim duplicates, which is genuinely new, and whether a lane boundary (PROVINCE.md) is crossed. Also check /home/vgpnk/Projects/shokunin/kumitate-shokunin/considerthese/ for a proposal that already asks for this, quoting the proposal line.\n# Acceptance\nA short overlap table with lanes and file:line, an explicit duplicate/new verdict, and the considerthese quote or `none`. No writes outside your build dir; never edit another lane.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Connector.md"
+      },
+      {
+        "name": "K85Review",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Review (probe attempts + report) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Review.md\n# Change\nFalsify C1 adversarially. (1) Read the frozen plan, probe and all control receipts. Re-derive the control scores yourself by running `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/probe/probe85-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/controls/<base|stub|noreader> --work SCRATCH/p-<c>` and report exit + last line; a mismatch with the committed receipts is a finding. (2) Attempt to construct a tool that reaches 20/20 WITHOUT reading the receipt or source — keyed on the receipt path, the probe source, or canned per-arm output. Commit your attempt in your build dir and report its score. (3) If a candidate exists at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs, run the probe against it and recount; if not, say so. (4) Judge whether the 20 arms are causally separable from the three controls: name any arm a control can pass.\n# Acceptance\nA verdict per sub-question with command, exit and last line; your no-reader attempt and its score are committed. Report disagreement plainly; do not repair the probe.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Review.md"
+      },
+      {
+        "name": "K85Critic",
+        "agent": "critic",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Critic (artifacts + report) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Critic.md\n# Change\nAttack the claim's design, not its implementation. (1) Is the target reachable by a do-nothing control? Enumerate every way a program that never opens the receipt could still print the exact expected lines (probe source inspection, filename keying, environment, timing) and give a verdict on each against the frozen probe's actual assertions. (2) Are the 20 arms outcome-bearing? Name any arm whose expected output is identical to another's or that a constant printer passes, with the exact line. (3) Is the frozen predicate the same sentence as the contract in the plan, and are the finding precedences testable in the order claimed? Point at a contradiction if one exists. (4) Does the claim's before (base v1 1/20) actually measure the absence of the work rather than an unrelated refusal (exit 64)? (5) Name the strongest realistic critique the closure will raise, and whether the round already answers it.\n# Acceptance\nA numbered attack list with evidence lines and a final admission recommendation; committed artifacts for any claimed counterexample. Never edit the probe or plan.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Critic.md"
+      },
+      {
+        "name": "K85Mutation",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Mutation (mutants + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Mutation.md\n# Change\nMutate-and-kill battery. Work from /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs (v1) or the candidate at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs if present; copy it to scratch and produce at least 8 single-change mutants, each in its own scratch lane tree, e.g.: (1) drop the sha256 from the derived line; (2) print bytes=0 always; (3) skip the --src read and always print sites=3; (4) make ARM_UNBOUND unreachable; (5) accept declared ARMS mismatches; (6) constant held=-/-; (7) print the derived line only on CLEAN; (8) skip the nonce bytes by trimming metadata before hashing. Run the frozen probe against each mutant with --lane <mutant tree> and record the score; every mutant must be killed (score < 20/20). Include one mutant that survives if you find one, and say which arm failed to kill it.\n# Acceptance\nA mutant table: change, probe score, exit, killing arm. Mutants and receipts committed in your build dir; the production file is untouched.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Mutation.md"
+      },
+      {
+        "name": "K85Sentinel",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Sentinel (probes + report) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Sentinel.md\n# Change\nAdversarial boundary review of the v2 contract, read-only against /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs (v1) and the plan. Probe and report: (1) receipt-content injection — a FAIL row hidden inside another row's detail, a summary line inside a detail, unicode line separators, NUL bytes, a 1 MiB receipt; (2) CLI injection — `--receipt --src`, duplicated flags, a path named like a flag, a directory, a FIFO you create and never write (with a timeout) — report whether the tool blocks or exhausts memory; (3) source regex anchoring — a `arm('x')` inside a comment or string, a minified source, a source with `ARMS` declared twice; (4) whether any finding can be forged while the derived line stays truthful. Rank by severity and state which are contract limits (to be documented) and which are defects. Do not block on a FIFO longer than 5 s; kill the child.\n# Acceptance\nA severity-ranked finding list with the exact command and observed output for each probe, plus a 'contract limit vs defect' call. No production edits.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Sentinel.md"
+      },
+      {
+        "name": "K85Cheat",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\nYou are a Godspeed-enabled subagent.\n\n1. **Name the axes.**\n2. **Iterate cheap, in parallel.**\n3. **Keep moves that improve any axis and harm none.**\n4. **Don't aim — let the frontier walk itself.**\n\n## IMMEDIATELY STOP ASKING CLARIFYING QUESTIONS. Execute tool calls concurrently in large batches. Do not serialize what can run in parallel. Do not output philosophical reasoning or verbose plans. Act directly via tool calls.\n\n# Target\n/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/build/K85Cheat (probe + receipts) and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/w1/K85Cheat.md\n# Change\nOne bounded empirical hypothesis: a label-keyed no-reader that copies the probe's own fixture values (read from /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-85/probe/probe85-c1.mjs) still cannot reach the target, because every fixture receipt carries a per-run nonce that changes bytes/sha256. Build such a control in your scratch (key on the --receipt basename, print the probe's expected tokens, compute bytes/sha256 from the fixture body WITHOUT the nonce line), run the frozen probe with `--lane SCRATCH/lane` where SCRATCH/lane/scripts/counter-receipt.mjs is your control, and record the score and every arm that still passes. Then state exactly which assertion class defeats the cheat and whether any arm is defeatable without reading the file.\n# Acceptance\nThe control source, the probe receipt with its score, and a per-passing-arm explanation. You hold a reviewer seat: report only, no repairs.\n\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-85/w1/K85Cheat.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}

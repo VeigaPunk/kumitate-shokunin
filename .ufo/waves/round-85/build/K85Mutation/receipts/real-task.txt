@@ -1,0 +1,46 @@
+# K85Mutation — plan real-task bytes measured against the v2 reference
+revision: 9db0c6b5eb9111cfc5581006ba976ca2cd112792
+ref_sha256: 34bb75b45d50fed8fc8c101128af2dbf9c0755a42920add44fdedc1cf0cc3c33
+note: supplementary evidence for the reference the mutants were derived from; it is NOT part of the 20-case claim denominator.
+
+## r83 c1-probe — round-83/close/c1-probe.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-probe.txt
+exit: 1
+--- output ---
+COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+
+## r83 c1-repair — round-83/close/c1-repair.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt
+exit: 0
+--- output ---
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+
+## r83 c2-probe — round-83/close/c2-probe.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c2-probe.txt
+exit: 0
+--- output ---
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+
+## r84 history-red — round-84/close/history-red.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-red.txt
+exit: 2
+--- output ---
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+RECEIPT: bytes=224 rows=0 held=-/- findings=SUMMARY_COUNT sha256=78729d6f4001c6021853ef2fe5654f972f77ce46c49b5f431f1f916e4c05c7b9
+
+## r84 history-repair — round-84/close/history-repair.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-repair.txt
+exit: 2
+--- output ---
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+RECEIPT: bytes=214 rows=0 held=-/- findings=SUMMARY_COUNT sha256=1878cabc56e8fe2153ad79b193beb1eb393da9e85f67efd7cb02bf75d8b1e5e0
+
+## r84 history-c2 — round-84/close/history-c2.txt
+command: node <BUILD>/ref/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-c2.txt
+exit: 2
+--- output ---
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+RECEIPT: bytes=213 rows=0 held=-/- findings=SUMMARY_COUNT sha256=22790b4b85c7a4e8365e04fa915f207a4341da57b531c76d2803a4e9cec1de32

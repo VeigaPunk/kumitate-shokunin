@@ -1,0 +1,21 @@
+# counting receipt — frozen tree 9db0c6b5eb9111cfc5581006ba976ca2cd112792
+## A (runnable files under --self, .git pruned)
+$ git ls-tree -r --name-only 9db0c6b5eb9111cfc5581006ba976ca2cd112792 | grep -E '\.(mjs|js|sh|py)$' | wc -l
+913
+$ ... | grep -c '^\.ufo/'
+878
+$ ... | grep -c '^scripts/'
+35
+## C (SKILL.md task lines)
+$ git show 9db0c6b5eb9111cfc5581006ba976ca2cd112792:SKILL.md | grep -c '^\s*- \['
+44
+## C2 / C2_total
+$ git show 9db0c6b5eb9111cfc5581006ba976ca2cd112792:corpus/README.md | grep -cE '^\| `(knowledge|lessons)/'
+214
+$ git ls-tree -r --name-only 9db0c6b5eb9111cfc5581006ba976ca2cd112792 -- corpus/knowledge corpus/lessons | grep -c '\.md$'
+214
+## pin.counter-receipt
+$ git show 9db0c6b5eb9111cfc5581006ba976ca2cd112792:scripts/counter-receipt.mjs | sha256sum
+190a4c1f893a5ffc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0  -
+## operability
+floor(10*(913+44)/(913+44+3)) = 9

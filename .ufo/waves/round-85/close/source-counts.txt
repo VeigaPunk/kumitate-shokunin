@@ -1,0 +1,9 @@
+# source counts, round 85 (before = a5d3e754 tree, after = work tree)
+cmd: grep -cE '^\| S[0-9]{3,} ' corpus/SOURCES.md
+182
+184
+cmd: status counts (awk over the registry rows)
+a5d3e754 mined=146 queued=13 rejected=23 
+WORK mined=147 queued=13 rejected=24 
+cmd: node scripts/sources-check.mjs
+SOURCES_CHECK: CLEAN (rows=184 tiers=A:157,B:17,C:10 status=queued:13,mined:147,rejected:24 entries_with_source=40 legacy=38)

@@ -1,0 +1,26 @@
+== static greps ==
+-- hardcoded /tmp|/var/tmp --
+NONE
+-- mkdtemp sites --
+24:import { readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+157:  const root = mkdtempSync(join(resolve(work), 'counter-receipt-'));
+-- spawn/exec --
+25:import { spawnSync } from 'node:child_process';
+238:      const result = spawnSync(process.execPath, [script, ...argv], { encoding: 'utf8', timeout: 10000 });
+-- timeout on spawn --
+238:      const result = spawnSync(process.execPath, [script, ...argv], { encoding: 'utf8', timeout: 10000 });
+-- scratch root refs --
+122:    if (args.length === 1) return selftest(process.env.HYAKU_SCRATCH || '/fast/scratch/hyaku');
+157:  const root = mkdtempSync(join(resolve(work), 'counter-receipt-'));
+-- self-invocation --
+28:import { fileURLToPath } from 'node:url';
+30:const script = fileURLToPath(import.meta.url);
+238:      const result = spawnSync(process.execPath, [script, ...argv], { encoding: 'utf8', timeout: 10000 });
+-- writes --
+24:import { readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+156:  mkdirSync(work, { recursive: true });
+229:      if (entry.text !== null) writeFileSync(file, entry.text);
+235:        if (entry.src !== null) writeFileSync(src, entry.src);
+254:    rmSync(root, { recursive: true, force: true });
+== leftover scratch after selftest (expect none) ==
+== /tmp residue ==

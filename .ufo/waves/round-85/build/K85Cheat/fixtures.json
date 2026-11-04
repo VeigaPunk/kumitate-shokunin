@@ -1,0 +1,146 @@
+{
+  "clean": {
+    "text": "rev=dbbb0cc4f393175a\nX arm a ok detail\nX arm b ok detail\nX: HELD held=2/2\n",
+    "code": 0,
+    "token": "CLEAN",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "crlf": {
+    "text": "X arm a ok detail\r\nX arm b ok detail\r\nX: HELD held=2/2\r\n",
+    "code": 0,
+    "token": "CLEAN",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "hidden-red": {
+    "text": "X arm a ok\nX arm b FAIL\nX: HELD held=1/1\n",
+    "code": 1,
+    "token": "ARMS_TOTAL",
+    "rows": 2,
+    "heldCount": "1/1"
+  },
+  "total-drift": {
+    "text": "X arm a ok detail\nX arm b ok detail\nX: HELD held=2/3\n",
+    "code": 1,
+    "token": "ARMS_TOTAL",
+    "rows": 2,
+    "heldCount": "2/3"
+  },
+  "held-drift": {
+    "text": "X arm a ok detail\nX arm b ok detail\nX: HELD held=1/2\n",
+    "code": 1,
+    "token": "HELD_COUNT",
+    "rows": 2,
+    "heldCount": "1/2"
+  },
+  "duplicate": {
+    "text": "X arm a ok\nX arm a ok\nX: HELD held=2/2\n",
+    "code": 1,
+    "token": "ARM_DUPLICATE",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "foreign-arm": {
+    "text": "X arm a ok\nY arm b ok\nX: HELD held=2/2\n",
+    "code": 1,
+    "token": "ARM_PREFIX",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "two-summaries": {
+    "text": "X arm a ok detail\nX arm b ok detail\nX: HELD held=2/2\nX: HELD held=2/2\n",
+    "code": 2,
+    "token": "SUMMARY_COUNT",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "no-summary": {
+    "text": "X arm a ok\n",
+    "code": 2,
+    "token": "SUMMARY_COUNT",
+    "rows": 1,
+    "heldCount": "-/-"
+  },
+  "malformed-arm": {
+    "text": "X arm a MAYBE\nX: HELD held=1/1\n",
+    "code": 2,
+    "token": "ARM_MALFORMED",
+    "rows": 0,
+    "heldCount": "1/1"
+  },
+  "zero-arms": {
+    "text": "X: HELD held=0/0\n",
+    "code": 2,
+    "token": "ARMS_EMPTY",
+    "rows": 0,
+    "heldCount": "0/0"
+  },
+  "missing": {
+    "text": null,
+    "code": 2,
+    "token": "RECEIPT_UNREADABLE",
+    "rows": 0,
+    "heldCount": "-/-"
+  },
+  "usage": {
+    "text": null,
+    "code": 64,
+    "token": "USAGE",
+    "rows": null,
+    "heldCount": null
+  },
+  "honest-red": {
+    "text": "X arm a FAIL\nX: UNMET held=0/1\n",
+    "code": 1,
+    "token": "ARM_FAILED",
+    "rows": 1,
+    "heldCount": "0/1"
+  },
+  "wrong-verdict": {
+    "text": "X arm a ok detail\nX arm b ok detail\nX: UNMET held=2/2\n",
+    "code": 1,
+    "token": "VERDICT",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "summary-before-arms": {
+    "text": "X: HELD held=2/2\nX arm a ok\nX arm b ok\n",
+    "code": 2,
+    "token": "SUMMARY_ORDER",
+    "rows": 2,
+    "heldCount": "2/2"
+  },
+  "src-bound-clean": {
+    "text": "X arm a ok\nX arm b ok\nX arm c ok\nX: HELD held=3/3\n",
+    "code": 0,
+    "token": "CLEAN",
+    "rows": 3,
+    "heldCount": "3/3",
+    "sourceLine": "SOURCE: sites=3 declared=3 receipt=3"
+  },
+  "src-unbound": {
+    "text": "X arm a ok\nX arm b ok\nX arm zz ok\nX: HELD held=3/3\n",
+    "code": 1,
+    "token": "ARM_UNBOUND",
+    "rows": 3,
+    "heldCount": "3/3",
+    "sourceLine": "SOURCE: sites=3 declared=3 receipt=3"
+  },
+  "src-arity": {
+    "text": "X arm a ok\nX arm b ok\nX arm c ok\nX: HELD held=3/3\n",
+    "code": 1,
+    "token": "SOURCE_ARITY",
+    "rows": 3,
+    "heldCount": "3/3",
+    "sourceLine": "SOURCE: sites=4 declared=4 receipt=3"
+  },
+  "src-declared": {
+    "text": "X arm a ok\nX arm b ok\nX arm c ok\nX: HELD held=3/3\n",
+    "code": 1,
+    "token": "SOURCE_DECLARED",
+    "rows": 3,
+    "heldCount": "3/3",
+    "sourceLine": "SOURCE: sites=3 declared=2 receipt=3"
+  }
+}

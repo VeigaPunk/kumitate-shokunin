@@ -1,0 +1,62 @@
+COUNTER_RECEIPT_SELFTEST arm clean ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm crlf ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm metadata ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm metadata-arm-shape ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm metadata-summary-shape ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm no-execution ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm digit-name ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm leading-zero-integers ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm hidden-red FAIL exit=1 want=1:ARMS_TOTAL out=["COUNTER_RECEIPT: DRIFT ARM_TOTAL","RECEIPT: bytes=41 rows=2 held=1/1 findings=ARM_TOTAL sha256=2c11124a7867bd24f818744d310db329ff063abb81b809bfa4403fed42486711"]
+COUNTER_RECEIPT_SELFTEST arm real-hidden-red-class FAIL exit=1 want=1:ARMS_TOTAL out=["COUNTER_RECEIPT: DRIFT ARM_TOTAL","RECEIPT: bytes=632 rows=28 held=27/27 findings=ARM_TOTAL sha256=b9d448dc9535ae449c9415a026efc97f7005fd88464ad6daa498f9587d97541f"]
+COUNTER_RECEIPT_SELFTEST arm total-drift FAIL exit=1 want=1:ARMS_TOTAL out=["COUNTER_RECEIPT: DRIFT ARM_TOTAL","RECEIPT: bytes=53 rows=2 held=2/3 findings=ARM_TOTAL sha256=56e71950edebe9e19b51d68b198cbf1ddb380bff6c2c210806ee7c8a431d39c2"]
+COUNTER_RECEIPT_SELFTEST arm held-drift ok exit=1 want=1:HELD_COUNT
+COUNTER_RECEIPT_SELFTEST arm duplicate ok exit=1 want=1:ARM_DUPLICATE
+COUNTER_RECEIPT_SELFTEST arm foreign-arm ok exit=1 want=1:ARM_PREFIX
+COUNTER_RECEIPT_SELFTEST arm two-summaries ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm no-summary ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm malformed-summary ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm unsafe-held ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm unsafe-total ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm negative-held ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm fraction-total ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm exponent-held ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm bad-verdict ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm bad-summary-prefix ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm malformed-arm ok exit=2 want=2:ARM_MALFORMED
+COUNTER_RECEIPT_SELFTEST arm bad-name ok exit=2 want=2:ARM_MALFORMED
+COUNTER_RECEIPT_SELFTEST arm bad-prefix ok exit=2 want=2:ARM_MALFORMED
+COUNTER_RECEIPT_SELFTEST arm missing-status ok exit=2 want=2:ARM_MALFORMED
+COUNTER_RECEIPT_SELFTEST arm zero-arms ok exit=2 want=2:ARMS_EMPTY
+COUNTER_RECEIPT_SELFTEST arm honest-red ok exit=1 want=1:ARM_FAILED
+COUNTER_RECEIPT_SELFTEST arm wrong-verdict ok exit=1 want=1:VERDICT
+COUNTER_RECEIPT_SELFTEST arm summary-before-arms ok exit=2 want=2:SUMMARY_ORDER
+COUNTER_RECEIPT_SELFTEST arm summary-count-first ok exit=2 want=2:SUMMARY_COUNT
+COUNTER_RECEIPT_SELFTEST arm malformed-before-empty ok exit=2 want=2:ARM_MALFORMED
+COUNTER_RECEIPT_SELFTEST arm empty-before-drift ok exit=2 want=2:ARMS_EMPTY
+COUNTER_RECEIPT_SELFTEST arm order-before-total ok exit=2 want=2:SUMMARY_ORDER
+COUNTER_RECEIPT_SELFTEST arm total-before-duplicate FAIL exit=1 want=1:ARMS_TOTAL out=["COUNTER_RECEIPT: DRIFT ARM_TOTAL","RECEIPT: bytes=53 rows=2 held=0/1 findings=ARM_TOTAL sha256=22bf8c20b79d395b90685f7af900fe637e9e2129fd4ebdecddc05771f9ea39a4"]
+COUNTER_RECEIPT_SELFTEST arm duplicate-before-prefix ok exit=1 want=1:ARM_DUPLICATE
+COUNTER_RECEIPT_SELFTEST arm prefix-before-held ok exit=1 want=1:ARM_PREFIX
+COUNTER_RECEIPT_SELFTEST arm held-before-failed ok exit=1 want=1:HELD_COUNT
+COUNTER_RECEIPT_SELFTEST arm failed-before-verdict ok exit=1 want=1:ARM_FAILED
+COUNTER_RECEIPT_SELFTEST arm missing ok exit=2 want=2:RECEIPT_UNREADABLE
+COUNTER_RECEIPT_SELFTEST arm directory-unreadable ok exit=2 want=2:RECEIPT_UNREADABLE
+COUNTER_RECEIPT_SELFTEST arm usage ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm unknown-cli ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm missing-cli-value ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm duplicate-cli ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm mixed-cli ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm work-without-selftest ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm missing-work-value ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm src-without-receipt ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm missing-src-value ok exit=64 want=64:USAGE
+COUNTER_RECEIPT_SELFTEST arm src-clean ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm src-no-declared ok exit=0 want=0:CLEAN
+COUNTER_RECEIPT_SELFTEST arm src-unreadable ok exit=2 want=2:SOURCE_UNREADABLE
+COUNTER_RECEIPT_SELFTEST arm src-empty ok exit=2 want=2:SOURCE_ARMS_EMPTY
+COUNTER_RECEIPT_SELFTEST arm src-unbound ok exit=1 want=1:ARM_UNBOUND
+COUNTER_RECEIPT_SELFTEST arm src-arity ok exit=1 want=1:SOURCE_ARITY
+COUNTER_RECEIPT_SELFTEST arm src-declared ok exit=1 want=1:SOURCE_DECLARED
+COUNTER_RECEIPT_SELFTEST arm src-after-receipt-drift FAIL exit=1 want=1:ARMS_TOTAL out=["COUNTER_RECEIPT: DRIFT ARM_TOTAL","RECEIPT: bytes=28 rows=1 held=2/2 findings=ARM_TOTAL sha256=c641cbf29ff7e43db1caaa3d56a38e676381b46df26e3389f3a0ae332f89318e","SOURCE: sites=0 declared=absent receipt=1"]
+COUNTER_RECEIPT_SELFTEST: FAIL held=55/60
+CMD=node /fast/scratch/hyaku/kumitate-r85/K85ExecSelftest/v2/mutF.mjs --selftest --work /fast/scratch/hyaku/kumitate-r85/K85ExecSelftest/work/v2-mutF-red EXIT=1

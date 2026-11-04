@@ -1,0 +1,43 @@
+INDEPENDENT_CASES driver=independent-cases.mjs cases=41 tool=/fast/scratch/hyaku/kumitate-r85/K85ExecFixture/ref/scripts/counter-receipt.mjs tool_sha256=0230ba360c6217dab0f9101648136843ad4df550b8853f21365ea9007dd7d1e6 tool_head=nogit work=/fast/scratch/hyaku/kumitate-r85/K85ExecFixture/ref-run/independent-cases-k8yjS9
+INDEPENDENT_CASES arm meta-arm-shape ok exit=0 want=0
+INDEPENDENT_CASES arm meta-summary-shape ok exit=0 want=0
+INDEPENDENT_CASES arm meta-code-shape ok exit=0 want=0
+INDEPENDENT_CASES arm meta-after-summary ok exit=0 want=0
+INDEPENDENT_CASES arm crlf ok exit=0 want=0
+INDEPENDENT_CASES arm crlf-metadata ok exit=0 want=0
+INDEPENDENT_CASES arm leading-zero ok exit=0 want=0 held_render="held=2/2"
+INDEPENDENT_CASES arm huge-safe ok exit=1 want=1
+INDEPENDENT_CASES arm unsafe-held ok exit=2 want=2 held_render="held=9007199254740992/2"
+INDEPENDENT_CASES arm fraction-total ok exit=2 want=2 held_render="held=-/-"
+INDEPENDENT_CASES arm exponent-held ok exit=2 want=2 held_render="held=-/-"
+INDEPENDENT_CASES arm negative-held ok exit=2 want=2 held_render="held=-/-"
+INDEPENDENT_CASES arm two-summaries ok exit=2 want=2
+INDEPENDENT_CASES arm no-summary ok exit=2 want=2
+INDEPENDENT_CASES arm malformed-name ok exit=2 want=2
+INDEPENDENT_CASES arm malformed-status ok exit=2 want=2
+INDEPENDENT_CASES arm malformed-prefix ok exit=2 want=2
+INDEPENDENT_CASES arm zero-arms ok exit=2 want=2
+INDEPENDENT_CASES arm honest-red ok exit=1 want=1
+INDEPENDENT_CASES arm wrong-verdict ok exit=1 want=1
+INDEPENDENT_CASES arm summary-before-arms ok exit=2 want=2
+INDEPENDENT_CASES arm total-drift ok exit=1 want=1
+INDEPENDENT_CASES arm held-drift ok exit=1 want=1
+INDEPENDENT_CASES arm duplicate-arm ok exit=1 want=1
+INDEPENDENT_CASES arm foreign-arm ok exit=1 want=1
+INDEPENDENT_CASES arm missing-file ok exit=2 want=2
+INDEPENDENT_CASES arm directory-receipt ok exit=2 want=2
+INDEPENDENT_CASES arm cli-none ok exit=64 want=64
+INDEPENDENT_CASES arm cli-unknown ok exit=64 want=64
+INDEPENDENT_CASES arm cli-duplicate ok exit=64 want=64
+INDEPENDENT_CASES arm cli-missing-value ok exit=64 want=64
+INDEPENDENT_CASES arm cli-src-only ok exit=64 want=64
+INDEPENDENT_CASES arm cli-mixed ok exit=64 want=64
+INDEPENDENT_CASES arm src-bound-clean ok exit=0 want=0
+INDEPENDENT_CASES arm src-unbound ok exit=1 want=1
+INDEPENDENT_CASES arm src-arity ok exit=1 want=1
+INDEPENDENT_CASES arm src-declared ok exit=1 want=1
+INDEPENDENT_CASES arm src-no-sites ok exit=2 want=2
+INDEPENDENT_CASES arm src-missing ok exit=2 want=2 source_render="SOURCE: sites=0 declared=absent receipt=3"
+INDEPENDENT_CASES arm src-last-declared ok exit=0 want=0
+INDEPENDENT_CASES arm src-declared-absent ok exit=0 want=0
+INDEPENDENT_CASES: HELD held=41/41 tool=/fast/scratch/hyaku/kumitate-r85/K85ExecFixture/ref/scripts/counter-receipt.mjs tool_sha256=0230ba360c6217dab0f9101648136843ad4df550b8853f21365ea9007dd7d1e6 tool_head=nogit

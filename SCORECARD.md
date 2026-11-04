@@ -291,12 +291,12 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=908
-C=44
+A=972
+C=45
 C1=19
 C1_total=19
-C2=214
-C2_total=214
+C2=216
+C2_total=216
 S_members=88
 S_sections=88
 R_members=92
@@ -351,7 +351,7 @@ pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
 pin.ready-handoff=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
-pin.counter-receipt=190a4c1f893a5ffc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0
+pin.counter-receipt=f385bd7a9fbf1dc49d465c8d83fecfd07aae34f6bf619aca7d935eda14f238cd
 -->
 
 
@@ -469,6 +469,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 85 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `counter-receipt` v2) | `node .ufo/waves/round-85/probe/probe85-c1.mjs --lane .ufo/waves/round-85/controls/base --work DIR` → `C85_C1: UNMET held=1/20` exit 1 (`controls/base.txt`, the v1 tool); constant-CLEAN stub `0/20` (`controls/stub.txt`); label-keyed no-reader `1/20` (`controls/noreader.txt`); same-path content variation 0/3 on all three (`controls/cv-*.txt`); v1 could not see the r83 `ARMS = 27`/28-site disagreement at all | at M → `C85_C1: HELD held=20/20` exit 0 (`close/c1-probe.txt`); `--selftest` `PASS held=60/60`; same-path control `HELD held=3/3 distinct_sha=true`; `receipts/c1-repair.txt --src probe83-c1.mjs` → `DRIFT SOURCE_DECLARED`, `SOURCE: sites=28 declared=27 receipt=28`; independent 41-case driver `HELD 41/41`; mutant battery 11/11 mandated mutants killed, 3 survivors disclosed with non-equivalence proofs; `pin.counter-receipt` re-pinned; stanza A 908→972 (scaffolding, disclosed), C 44→45, C2 214→216 | `.ufo/waves/round-85/{plan.md,probe,controls,close}`; `corpus/knowledge/counter-receipt-discrimination.md`; `corpus/lessons/round-85.md`; Q78; S245 admit / S246 reject |
 | 81 | operability (capability acquisition `ready-handoff`; integer held 9 — terminal under `f_O`; sourced on S236) | `node .ufo/waves/round-81/probe/probe81-c1.mjs --tool <base archive>` → `C81_C1: UNMET held=0/16` exit 1 (`controls/c1-base.txt`); constant-printer control `held=3/16` (`controls/c1-stub.txt`); no instrument judged the `.ready` + dispatch pair before the orchestrator took it | at `d140f288` → `C81_C1: HELD held=16/16` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0 (`close/handoff-admission.txt`); suite 34/34; counter `pin.ready-handoff` |
 | 81 | coverage:omp (self-describing receipt; integer held 10; sourced on S237) | `node .ufo/waves/round-81/probe/probe81-c2.mjs --tool <base archive>` → `C81_C2: UNMET held=4/15` exit 1 (`controls/c2-base.txt`, Amendment 2); stub `held=5/15` (`controls/c2-stub.txt`); the receipt carried no capture instant | at `d140f288` → `C81_C2: HELD held=15/15` exit 0 (`close/c2-probe.txt`); `--shape` reads `captured=2026-11-04 age_days=0`; `--max-age 30` on a 45-day receipt → `SHAPE_STALE` exit 1; v1 `SHAPE_VERSION` exit 2; future `SHAPE_CLOCK` exit 2; proxy still `coverage_omp=10` on a stale receipt |
 | 82 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability deepening `ready-handoff` v2; sourced on S238) | `node .ufo/waves/round-82/probe/probe82-c1.mjs --set c1 --lane <base archive>` → `C82_C1: UNMET held=0/22` exit 1 (`controls/c1-base.txt`: the v1 tool answers `unknown argument: --policy`, exit 64); constant-`READY` stub `held=6/22` (`controls/c1-stub.txt`); the gate restated the band and the role vocabulary and never bound the handoff to its dispatch | at `125287f3` → `C82_C1: HELD held=22/22` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 … policy=ufo-wave-policy.json agents=none` exit 0 (`close/handoff-admission.txt`); suite 34 → 54 (`close/c1-suite.txt`); wave mutation battery 11/12 killed (`w1/K82ExecMutate.md`) |
@@ -1971,6 +1972,8 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `spotcheck-adopt` | Own the corpus coverage repair the non-author closure forces every round: enumerate `corpus/lessons/round-*-verifier-spotcheck.md`, adopt one by writing the missing README map row and/or the `readme-map.json` covered entry (append-only, both halves, idempotent, pre-image rollback), and predict the next closure artifact — with the unchanged `readme-map.mjs` as the child oracle and refusals for anything outside its scope | `node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED` with identical bytes (`close/c2-idempotent.txt`); `--selftest` `SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)`; `pin.spotcheck-adopt` | round 76 |
 | `ready-handoff` | Admit an inline spawn handoff before the orchestrator takes it: the five-key `.ready` contract against the dispatch it names and against the dispatcher's own admission arithmetic (band over spawns + resumes, effective cap incl. the 256 ceiling, dispatch schema/counts, the closed role set, the registry `{members}` shape, the reachable attack set, report-destination uniqueness and containment), with typed fail-closed refusals and one exit-bearing verdict plus a `--json` body; reads only the ready file, its dispatch and the named policy/registry, and writes nothing | `node scripts/ready-handoff.mjs --lane . --round 83 --wave w1 --policy /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json` → `READY_HANDOFF: READY wave=w1 seats=15 resumes=0 total=15 attack=4/15 connector=1` exit 0; `--selftest` → `READY_HANDOFF_SELFTEST: 70/70 pass`; frozen counter `C83_C1: HELD held=27/27`; base tree (v2) 15/27, constant-printer stub 3/27 (`.ufo/waves/round-83/controls/`) | round 81; deepened r82 (v2) and r83 (v3) |
 | `omp-shape-compare` | Compare the live OMP root against a `kumitate-omp-shape-v1` receipt, counting added, removed and changed names/kinds/modes without reading member contents or altering proxy scores; exit 0 IN_SYNC, 1 DRIFT, 2 fail-closed | `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` → `OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`; frozen counter `probe78-c2.mjs` → `C78_C2: HELD held=11/11`; selftest 79 cases; `MUTANTS78_C2: ALL-KILLED killed=10/10` | round 78 |
+
+| `counter-receipt` | Reconcile one arm-form counter transcript against the bytes it read and the source that produced it: v1's denominator/name/prefix/ok-count/verdict/order checks plus a derived `RECEIPT: bytes=… rows=… held=… findings=… sha256=…` line on every non-USAGE run and an optional `--src` binding — the receipt's arm names must be literal `arm('…')` call sites, its row count must equal the site count, and the last `const|let|var ARMS = <int>` must agree with both (`ARM_UNBOUND`, `SOURCE_ARITY`, `SOURCE_DECLARED`, fail-closed `SOURCE_UNREADABLE`/`SOURCE_ARMS_EMPTY`); never executes receipt bytes; a canned or label-keyed printer cannot reproduce the derived line | `node scripts/counter-receipt.mjs --receipt .ufo/waves/round-83/close/c1-repair.txt --src .ufo/waves/round-83/probe/probe83-c1.mjs` → `DRIFT SOURCE_DECLARED` with `SOURCE: sites=28 declared=27 receipt=28` (the r83 defect caught from the source, invisible to v1); frozen `C85_C1: HELD held=20/20` (`.ufo/waves/round-85/close/c1-probe.txt`); `--selftest` `PASS held=60/60` (`close/selftest.txt`); same-path control `HELD held=3/3 distinct_sha=true` (`close/content-variation.txt`); controls base 1/20, constant 0/20, no-reader 1/20 before data (`controls/`) | round 85 |
 
 Round-84 capability disposition: `counter-receipt` is a shipped, self-tested
 instrument, but its acquisition claim is **unadmitted**: the frozen kill rule
@@ -4055,3 +4058,74 @@ queued=13, mined 145→146, rejected 22→23 (`close/source-counts.txt` and
 the base/tip sources-check row in `close/harm-matrix.txt`). Registry census
 exits 0 at both ends. Existing source cells unchanged. No assimilation;
 no new verified capability table row from this failed acquisition claim.
+
+## Round 85 — pre-registration (written by round 85). Candidates, not commitments
+
+(1) **`A` excludes wave scaffolding (routed R-proxy, round-84 non-author spot-check §6.3).** The frozen
+`RE_RUNNABLE = /\.(?:mjs|js|sh|py)$/` over `walkFiles(self)` counts every round's
+`.ufo/waves/round-<N>/{probe,build,controls}/**.mjs` — r84 added 11 such files against one shipped
+instrument (`scripts/counter-receipt.mjs`). Pre-registered amendment, to be measured **before** round-86
+data: `A` counts tracked files only, excluding the `.ufo/` subtree, with the command
+`git ls-tree -r --name-only <branch> | grep -E '\.(mjs|js|sh|py)$' | grep -v '^\.ufo/' | wc -l`;
+the stanza keeps `A` as the scored term, adds `A_wave` (the excluded count) as a non-scoring disclosure
+term, and `proxy-check.mjs` gains a selftest arm in which a wave-shaped `.mjs` file does not move `A`.
+The measured pre-amendment values must be recorded beside the post-amendment ones — this is a re-baseline
+with a receipt, never a silent redefinition; the operability integer is terminal at 9 under either
+denominator (`(A+C)/(A+C+3)` ≥ 0.9 for any `A+C ≥ 27`; excluding `.ufo/` reads `A=35` at the round-85
+base, `f_O = 79/82`).
+(2) **`K_findings` double penalty** (round-81 candidate 3, still open): a census finding on a *missing*
+member drops both numerator and denominator.
+(3) **`spotcheck-adopt --check` conflates unrelated map drift with an uncovered spotcheck**
+(round-76/77/78 candidates 3, still open): the r84 spot-check landed without its map row again this round
+and was adopted by hand in `6663b3be`; split the two readings before the twelfth recurrence is fixed by
+hand again.
+(4) **`POINTER_DEAD` precision** (round-79/81 candidate): the cite gate flags prose examples that look
+like paths; the round-84 non-author spot-check adds three dead path citations in a file the lane may not
+edit (L0 question filed).
+
+## Round 85 — declaration and measured disposition (2026-11-04)
+
+One claim: **C1 operability (lowest non-retired axis; integer held 9 — terminal under `f_O`;
+capability acquisition `counter-receipt` v2)**. Frozen at
+`9db0c6b5eb9111cfc5581006ba976ca2cd112792` (plan, probe, controls); repair-before-freeze
+`6663b3beb4b5bd30e766e9c01f6ba4db24f5c5e8` adopted the round-84 non-author spot-check's missing
+README row **and** its `readme-map.json` pin after the row-only repair left `MAP_DRIFT` (this
+round's first mistake).
+
+| item | measured |
+|---|---|
+| predicate (frozen) | `node .ufo/waves/round-85/probe/probe85-c1.mjs --lane . --work DIR` → `C85_C1: HELD held=20/20`, exit 0 at M (`close/c1-probe.txt`) |
+| before (base v1 tool) | same probe against the v1 bytes → `C85_C1: UNMET held=1/20`, exit 1 (`controls/base.txt`; the one pass is the `usage` arm) |
+| constant-CLEAN control | `0/20`, exit 1 (`controls/stub.txt`) |
+| label-keyed no-reader control | `1/20`, exit 1 (`controls/noreader.txt`) |
+| same-path content variation | base 0/3, stub 0/3, no-reader 0/3 (`controls/cv-*.txt`); integrated tool `HELD held=3/3 distinct_sha=true` |
+| tool selftest | `COUNTER_RECEIPT_SELFTEST: PASS held=60/60`, exit 0 (`close/selftest.txt`) |
+| real task | `counter-receipt.mjs --receipt .ufo/waves/round-83/close/c1-repair.txt --src .ufo/waves/round-83/probe/probe83-c1.mjs` → `DRIFT SOURCE_DECLARED` with `SOURCE: sites=28 declared=27 receipt=28`; the r83 red receipt → `DRIFT ARMS_TOTAL`; historical battery `HISTORY: HELD held=28/28` (`close/history-v2.txt`) |
+| independent driver (seat) | `HELD held=41/41` on the integrated bytes (`.ufo/waves/round-85/build/K85ExecFixture/independent-candidate.txt`) |
+| mutant battery (seat) | 11/11 mandated mutants killed; 3 survivors disclosed with non-equivalence proofs (`build/K85Mutation/table.md`) — round-86 arms |
+| post-data adversaries | two constructions reach `20/20` while parsing nothing: read the nonce only (`build/K85Cheat/receipts/probe-c.txt`) and a path-keyed replay that also passes the same-path control (`build/K85Review/…`); disclosed as the predicate's strength limit |
+| accounting | A 908→972 (59 wave-scaffolding `.mjs`, disclosed; shipped-only A = 36), C 44→45 (discrimination checklist item), C2 214→216, `pin.counter-receipt` `190a4c1f…`→`f385bd7a…`; `PROXY: MATCH --strict` |
+
+**Kill-rule reading, stated plainly.** The plan names three controls and scores them before data;
+none reaches the target, so the kill rule does not fire on the control set it names. A literal
+"any program that reaches 20/20" reading would make the rule unsatisfiable for any deterministic
+black-box battery — two seats proved that independently by reading only the per-run nonce and
+replaying a copied table. The round reports both readings rather than choosing one silently:
+**C1 is HELD on the frozen predicate and the enumerated pre-data controls, and the closure is
+asked to rule if it reads the clause more broadly.** The instrument's semantic evidence (the
+`SOURCE_DECLARED` catch on a v1-clean receipt, 60 selftest arms, 41 independent cases) is real
+either way; the predicate-strength gap is pre-registered for round 86 as a randomized-fixture
+arm whose expected verdict is unknowable without parsing.
+(5) **A randomized-fixture arm for `probe85-c1`** (round-85 K85Review F1/F2, K85Cheat F1–F2): the
+frozen battery is deterministic, so a tool that reads only the per-run nonce and replays a copied
+table reaches 20/20. A v3 probe must generate at least one receipt *at run time* with a random arm
+count, random names and a random status distribution, compute the expected verdict/rows/held from
+the generated bytes, and assert the derived line — no canned table can survive it. New counter
+version, pre-registered before its own data.
+(6) **Three coverage arms from the round-85 survivors** (K85Mutation S01–S03): `src-no-declared`
+(a source with sites but no `ARMS` declaration must read `declared=absent`, not `0`),
+`src-two-declarations` (last-wins), `metadata-colon` (a `command: arm …` line is ignored, not
+parsed as a malformed arm).
+(7) **A source digest on the `SOURCE:` line** (K85Sentinel S8): the source half of the answer is
+currently unauditable; a v3 line `SOURCE: sites=… declared=… receipt=… sha256=<source digest>`
+would bind the source bytes, not just the counts extracted from them.
