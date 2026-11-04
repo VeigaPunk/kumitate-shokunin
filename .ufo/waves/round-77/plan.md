@@ -263,3 +263,9 @@ predicate.
 
 No predicate sentence, target, axis arithmetic or kill rule *scope* was narrowed; the target
 (12/12, 13/13) is unchanged and the counter only gained discriminating arms.
+- **A2.4 (after the v2 commit, before any data verdict)** — `c2.12`'s adjacency arm took
+  `lessonRows[last]` from a list that included the newly adopted row, so it compared the row with
+  itself (`row at 7, last lessons row at 7` on a correctly placed fixture). Fixed to compare against
+  the last *prior* lessons row. The integrated clone then reads `C77_C2: HELD held=13/13`; the
+  pre-fix integrated reading was 12/13 with only this arm red (`controls/` carries the counter
+  receipts). No other check changed.

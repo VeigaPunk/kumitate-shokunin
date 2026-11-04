@@ -499,8 +499,8 @@ function c2Checks(lane, work) {
     }
     const lines = readText(fx.readme).split('\n');
     const row = lines.findIndex((l) => l.startsWith(`| \`${KEY}\` |`));
-    const lessonRows = lines.map((l, i) => (l.startsWith('| \`lessons/') ? i : -1)).filter((i) => i >= 0);
-    const lastLesson = lessonRows[lessonRows.length - 1];
+    const priorLessons = lines.map((l, i) => (l.startsWith('| \`lessons/') && i !== row ? i : -1)).filter((i) => i >= 0);
+    const lastLesson = priorLessons[priorLessons.length - 1];
     const gap = lines.findIndex((l) => l === '## Known gaps');
     if (row < 0) return fail('c2.12-placement-and-lane-map', 'adopted row absent', m);
     if (lastLesson === undefined || row !== lastLesson + 1) {
