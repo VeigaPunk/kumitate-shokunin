@@ -1,0 +1,29 @@
+C83_C1 arm tool-v3-contract FAIL v3=false
+C83_C1 arm clean-ready FAIL exit=0 want="READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm band-total-resumes FAIL exit=1 want="READY_HANDOFF: READY wave=w1 seats=6 resumes=6 total=12" out=READY_HANDOFF: DRIFT BAND (6 seats outside 8:16 (policy))
+C83_C1 arm resume-only-exempt FAIL exit=2 want="READY_HANDOFF: READY wave=w1 seats=0 resumes=3 total=3" out=READY_HANDOFF: FAIL-CLOSED DISPATCH_MALFORMED (dispatch must carry taskCall.context (string) and taskCall.tasks (non-empty array))
+C83_C1 arm maxlanes-policy FAIL exit=0 want="MAXLANES" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm maxlanes-dispatch FAIL exit=0 want="MAXLANES" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm maxlanes-impossible FAIL exit=0 want="MAXLANES_IMPOSSIBLE" out=READY_HANDOFF: READY wave=w1 seats=8 attack=2/8 connector=1 roles=reviewer=1,critic=1,connector=1,executor=3,scribe=2 policy=policy.json agents=none
+C83_C1 arm maxlanes-ceiling FAIL exit=0 cap=undefined
+C83_C1 arm dispatch-schema FAIL exit=0 want="DISPATCH_SCHEMA" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm dispatch-counts FAIL lying(exit=0 want="DISPATCH_COUNTS" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none) true(exit=0 want="READY_HANDOFF: READY" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none)
+C83_C1 arm policy-role-unjudgeable FAIL exit=0 want="POLICY_ROLE_UNJUDGEABLE" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm agents-members FAIL exit=2 want="agents=1" out=READY_HANDOFF: FAIL-CLOSED AGENTS_MALFORMED (agents registry must be {agents:[{id}]}: /tmp/c83c1-UNE89H/clean/agents-members.json)
+C83_C1 arm agents-members-nol1 FAIL exit=2 want="L1_UNRESOLVED" out=READY_HANDOFF: FAIL-CLOSED AGENTS_MALFORMED (agents registry must be {agents:[{id}]}: /tmp/c83c1-UNE89H/clean/agents-nol1.json)
+C83_C1 arm agents-array-shape ok exit=0 want="READY_HANDOFF: READY" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=1
+C83_C1 arm agents-malformed ok exit=2 want="AGENTS_MALFORMED" out=READY_HANDOFF: FAIL-CLOSED AGENTS_MALFORMED (agents: not JSON: /tmp/c83c1-UNE89H/clean/agents-bad.json)
+C83_C1 arm labrat-seat-refused ok exit=1 want="ROLE_UNKNOWN" out=READY_HANDOFF: DRIFT ROLE_UNKNOWN (seat K83S13 role "labrat" is not a policy proposal role)
+C83_C1 arm attack-reachable ok exit=0 want="attack=4/14" out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=reviewer=2,critic=1,mutation-tester=1,connector=1,executor=5,scribe=4 policy=policy.json agents=none
+C83_C1 arm attack-share-low ok exit=1 want="ATTACK_SHARE" out=READY_HANDOFF: DRIFT ATTACK_SHARE (2/14 attack seats below 25%)
+C83_C1 arm connector-cap ok exit=1 want="CONNECTOR_COUNT" out=READY_HANDOFF: DRIFT CONNECTOR_COUNT (3 connector seats (at most 2))
+C83_C1 arm band-small ok exit=1 want="BAND" out=READY_HANDOFF: DRIFT BAND (7 seats outside 8:16 (policy))
+C83_C1 arm band-wide ok exit=1 want="BAND" out=READY_HANDOFF: DRIFT BAND (17 seats outside 8:16 (policy))
+C83_C1 arm wave-binding-stem ok exit=1 want="WAVE_BINDING" out=READY_HANDOFF: DRIFT WAVE_BINDING (dispatch basename "other-dispatch" is not "w1-dispatch")
+C83_C1 arm dispatch-wave-mismatch ok exit=1 want="DISPATCH_WAVE" out=READY_HANDOFF: DRIFT DISPATCH_WAVE (dispatch.wave="w2" for ready.wave="w1")
+C83_C1 arm l1-seat-collision ok exit=1 want="L1_SEAT_COLLISION" out=READY_HANDOFF: DRIFT L1_SEAT_COLLISION (ready.l1="K83S01" is also seat K83S01)
+C83_C1 arm report-dest-duplicate ok exit=1 want="REPORT_DEST_DUPLICATE" out=READY_HANDOFF: DRIFT REPORT_DEST_DUPLICATE (K83S02 claims /tmp/c83c1-UNE89H/report-dup/kumitate-shokunin/.ufo/waves/round-83/w1/K83S01.md (also K83S01))
+C83_C1 arm report-dest-outside ok exit=1 want="REPORT_DEST_OUTSIDE" out=READY_HANDOFF: DRIFT REPORT_DEST_OUTSIDE (K83S01 report destination /var/tmp/abs-0.md escapes /tmp/c83c1-UNE89H/report-outside/kumitate-shokunin)
+C83_C1 arm godspeed-missing ok exit=1 want="GODSPEED" out=READY_HANDOFF: DRIFT GODSPEED (seat K83S01 does not lead with /skill:godspeed)
+C83_C1 arm dispatch-outside ok exit=2 want="DISPATCH_OUTSIDE" out=READY_HANDOFF: FAIL-CLOSED DISPATCH_OUTSIDE (dispatch /tmp/c83c1-UNE89H/dispatch-outside/outside-dispatch.json is not under /tmp/c83c1-UNE89H/dispatch-outside/kumitate-shokunin/.ufo/waves/round-83)
+C83_C1: UNMET held=15/27

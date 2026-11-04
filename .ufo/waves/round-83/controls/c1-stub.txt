@@ -1,0 +1,29 @@
+C83_C1 arm tool-v3-contract FAIL v3=false
+C83_C1 arm clean-ready ok exit=0 want="READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm band-total-resumes FAIL exit=0 want="READY_HANDOFF: READY wave=w1 seats=6 resumes=6 total=12" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm resume-only-exempt FAIL exit=0 want="READY_HANDOFF: READY wave=w1 seats=0 resumes=3 total=3" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm maxlanes-policy FAIL exit=0 want="MAXLANES" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm maxlanes-dispatch FAIL exit=0 want="MAXLANES" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm maxlanes-impossible FAIL exit=0 want="MAXLANES_IMPOSSIBLE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm maxlanes-ceiling FAIL exit=0 cap=none
+C83_C1 arm dispatch-schema FAIL exit=0 want="DISPATCH_SCHEMA" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm dispatch-counts FAIL lying(exit=0 want="DISPATCH_COUNTS" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none) true(exit=0 want="READY_HANDOFF: READY" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none)
+C83_C1 arm policy-role-unjudgeable FAIL exit=0 want="POLICY_ROLE_UNJUDGEABLE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm agents-members FAIL exit=0 want="agents=1" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm agents-members-nol1 FAIL exit=0 want="L1_UNRESOLVED" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm agents-array-shape ok exit=0 want="READY_HANDOFF: READY" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm agents-malformed FAIL exit=0 want="AGENTS_MALFORMED" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm labrat-seat-refused FAIL exit=0 want="ROLE_UNKNOWN" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm attack-reachable ok exit=0 want="attack=4/14" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm attack-share-low FAIL exit=0 want="ATTACK_SHARE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm connector-cap FAIL exit=0 want="CONNECTOR_COUNT" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm band-small FAIL exit=0 want="BAND" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm band-wide FAIL exit=0 want="BAND" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm wave-binding-stem FAIL exit=0 want="WAVE_BINDING" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm dispatch-wave-mismatch FAIL exit=0 want="DISPATCH_WAVE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm l1-seat-collision FAIL exit=0 want="L1_SEAT_COLLISION" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm report-dest-duplicate FAIL exit=0 want="REPORT_DEST_DUPLICATE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm report-dest-outside FAIL exit=0 want="REPORT_DEST_OUTSIDE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm godspeed-missing FAIL exit=0 want="GODSPEED" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1 arm dispatch-outside FAIL exit=0 want="DISPATCH_OUTSIDE" out=READY_HANDOFF: READY wave=w1 seats=14 resumes=0 total=14 attack=4/14 connector=1 roles=executor=10 policy=policy.json agents=none
+C83_C1: UNMET held=3/27

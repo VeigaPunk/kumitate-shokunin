@@ -1,0 +1,17 @@
+C83_C2 arm compare-in-sync ok exit=0 want="OMP_SHAPE_COMPARE: IN_SYNC" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-age-disclosed ok exit=0 want="age_days=0" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-future-unbounded FAIL exit=0 want="SHAPE_CLOCK" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-future-bounded FAIL exit=0 want="SHAPE_CLOCK" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-clock-names-instant FAIL exit=0 want="captured_at=2027-02-02T11:59:48Z" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-backdated-age FAIL exit=0 want="age_days=45" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-max-age-stale FAIL exit=0 want="SHAPE_STALE_RECEIPT" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-max-age-pass ok exit=0 want="IN_SYNC" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-legacy-v1 FAIL exit=0 want="captured=absent age_days=absent" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-legacy-bounded FAIL exit=0 want="SHAPE_AGE_UNKNOWN" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-drift FAIL exit=0 want="OMP_SHAPE_COMPARE: DRIFT" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-drift-first FAIL exit=0 want="first=lsp.json" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm compare-transient FAIL exit=0 want="transient=1" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm shape-clock-regression FAIL exit=0 want="SHAPE_CLOCK" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2 arm clock-one-predicate FAIL shape=0 compare=0
+C83_C2 arm compare-missing-receipt FAIL exit=0 want="SHAPE_NOT_FOUND" out=OMP_SHAPE_COMPARE: IN_SYNC entries=2 receipt=2 added=0 removed=0 changed=0 transient=0 receipt_captured=2026-11-04 age_days=0
+C83_C2: UNMET held=3/16
