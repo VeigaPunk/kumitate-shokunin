@@ -1,0 +1,29 @@
+# K85Critic artifact receipt
+seat=K85Critic
+revision=a5d3e7549501ae76dbd86a6f81c5e858f1f92446 (base tool; lane freeze 9db0c6b5eb9111cfc5581006ba976ca2cd112792)
+tool_sha256=190a4c1f893a5ffc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0
+---
+### r83-c1-probe
+command=node /fast/scratch/hyaku/kumitate-r85/K85Critic/base/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-probe.txt
+exit=1
+COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+
+### r83-c1-repair
+command=node /fast/scratch/hyaku/kumitate-r85/K85Critic/base/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt
+exit=0
+COUNTER_RECEIPT: CLEAN
+
+### r83-c2-probe
+command=node /fast/scratch/hyaku/kumitate-r85/K85Critic/base/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c2-probe.txt
+exit=0
+COUNTER_RECEIPT: CLEAN
+
+### r84-history-red
+command=node /fast/scratch/hyaku/kumitate-r85/K85Critic/base/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-red.txt
+exit=2
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+
+### r84-history-repair
+command=node /fast/scratch/hyaku/kumitate-r85/K85Critic/base/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/close/history-repair.txt
+exit=2
+COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT

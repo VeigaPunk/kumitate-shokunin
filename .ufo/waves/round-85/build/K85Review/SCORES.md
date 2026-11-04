@@ -58,3 +58,14 @@ sha256 unchanged (`receipts/canary.txt`). Cross-over demo: a red body saved as
 `clean.txt` → candidate `DRIFT ARM_FAILED` (`receipts/crossover-candidate.txt`),
 `pathkeyed` → `CLEAN … rows=2 held=2/2` with that red file's real sha
 (`receipts/crossover-pathkeyed.txt`).
+
+## Post-measurement integration state (not measured by this seat)
+
+While this seat ran, the worktree moved: `scripts/counter-receipt.mjs` is now
+`sha256=f385bd7a9fbf1dc49d465c8d83fecfd07aae34f6bf619aca7d935eda14f238cd`
+(the candidate `7659be6e…` plus one `sourceDeclared` lookahead line) and
+`SCORECARD.md:354` pins the same sha. L1's in-flight `close/c1-probe.txt` reports
+`C85_C1: HELD held=20/20`; `close/content-variation.txt` reports
+`HELD held=3/3 distinct_sha=true`; neither file names command/exit/revision. All rows
+above were measured at `9db0c6b5` against the v1 production file; the integrated-build
+score is L1's M run, not this seat's.

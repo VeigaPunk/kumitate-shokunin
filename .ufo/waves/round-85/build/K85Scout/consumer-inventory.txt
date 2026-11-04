@@ -1,0 +1,27 @@
+command=grep -rn counter-receipt (lane, excluding .git); every file:line below was read
+rev=9db0c6b5eb9111cfc5581006ba976ca2cd112792 (freeze) unless noted
+
+SKILL.md:607  gate-registry row (v1 text at freeze; v2 text in L1 working tree)
+SKILL.md:760  checklist item round 84 (--selftest -> exit 0 + COUNTER_RECEIPT_SELFTEST: PASS)
+SKILL.md:761  checklist item round 85 (L1 working tree only)
+SCORECARD.md:354  pin.counter-receipt=190a4c1f... (v1 sha; L1 working tree re-pins to f385bd7a...)
+SCORECARD.md:1974-1979  round-84 capability disposition prose
+SCORECARD.md:4015-4032  round-84 declared claim + measured disposition
+SCORECARD.md:4059  ## Round 85 - pre-registration (L1 working tree) item (1) = A-excludes-wave-scaffolding
+scripts/counter-receipt.mjs  the tool (v1 at freeze; v2 f385bd7a... in L1 working tree)
+scripts/proxy-check.mjs:576  GATE_PINS['pin.counter-receipt'] -> scripts/counter-receipt.mjs (29 GATE_PINS keys; 6 parent PINS keys)
+scripts/counter-pins.mjs  NO counter-receipt string; .ufo/pins/counter-pins.json pins probe84-c1 but NOT probe85-c1
+corpus/knowledge/counter-transcript-reconciliation.md:3,18,26-42,44,66  v1 note (recheck still true under v2; contract id, error table and 'prints one verdict' are not)
+corpus/knowledge/counter-receipt-discrimination.md  new v2 note (L1 working tree)
+corpus/QUALITY.md:1287-1306 Q77 (still true under v2); :1309 Q78 new (L1 working tree)
+corpus/README.md:225,341,342 map rows; :356,357 new rows (L1 working tree)
+corpus/SOURCES.md S243/S244 rows; S245 mined + S246 rejected added (L1 working tree)
+corpus/lessons/round-84.md:38,82  v1 contract line; the vacuous Mistakes row
+corpus/lessons/round-84-verifier-spotcheck.md:48,58,60,65,134-142  C1 kill finding + seven routed defects
+.ufo/waves/round-85/plan.md:13,46-58  frozen v2 contract
+.ufo/waves/round-85/probe/probe85-c1.mjs:23  tool path
+.ufo/waves/round-85/controls/{base,stub,noreader}/scripts/counter-receipt.mjs + controls/content-variation.mjs:25  frozen pre-data controls
+.ufo/waves/round-84/**  frozen v1 claim, probe, build, close receipts, w1 reports (historical; not rewritten)
+
+measured proxy-check gate-pin drift behaviour: compareGatePins() scripts/proxy-check.mjs:1165-1182 pushes kind GATE_PIN_DRIFT severity error; summarize() :1245-1249 -> errors>0 => verdict DRIFT, exit 1 (strict only promotes warnings)
+measured sha256 of scripts/counter-receipt.mjs: v1 190a4c1f893a5fc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0 (== SCORECARD.md:354 pin, == .ufo/waves/round-84/build/K84ExecGate/counter-receipt.mjs); v2 working tree f385bd7a9fbf1dc49d465c8d83fecfd07aae34f6bf619aca7d935eda14f238cd (== L1 re-pin)

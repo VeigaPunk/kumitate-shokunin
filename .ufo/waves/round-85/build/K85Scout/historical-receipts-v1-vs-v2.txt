@@ -1,0 +1,9 @@
+command=node scripts/counter-receipt.mjs --receipt <receipt>   (v1 at freeze and v2 at a882a334)
+r83 close/c1-probe.txt   v1: DRIFT ARMS_TOTAL exit 1 | v2: DRIFT ARMS_TOTAL exit 1 + 'RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bff...'
+r83 close/c1-repair.txt  v1: CLEAN exit 0 | v2: CLEAN exit 0 + 'RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d...'
+r83 close/c2-probe.txt   v1: CLEAN exit 0 | v2: CLEAN exit 0 + 'RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857...'
+r84 close/history-red.txt     v1: FAIL-CLOSED SUMMARY_COUNT exit 2 | v2: FAIL-CLOSED SUMMARY_COUNT exit 2
+r84 close/history-repair.txt  v1: FAIL-CLOSED SUMMARY_COUNT exit 2 | v2: FAIL-CLOSED SUMMARY_COUNT exit 2
+r84 close/history-c2.txt      v1: FAIL-CLOSED SUMMARY_COUNT exit 2 | v2: FAIL-CLOSED SUMMARY_COUNT exit 2
+NOTE: the r84 close files are the tool's own output receipts, not arm-form transcripts; see report F-3.
+v2 usage (no args): 'COUNTER_RECEIPT: USAGE', 1 line, exit 64

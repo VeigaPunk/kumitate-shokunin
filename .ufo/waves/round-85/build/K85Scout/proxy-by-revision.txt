@@ -1,0 +1,26 @@
+measured rev=a882a334eaf7d817f484f9e68c2b2059f22fe797 (L1's landed round-85 work commit; landed while this seat was measuring)
+measured rev=9db0c6b5eb9111cfc5581006ba976ca2cd112792 (freeze)
+measured rev=6663b3beb4b5bd30e766e9c01f6ba4db24f5c5e8 (repair)
+measured rev=a5d3e7549501ae76dbd86a6f81c5e858f1f92446 (base)
+measured rev=03432bde1001b2199129ffdd4603193510e568f4 (r84 tip)
+fixture=/fast/scratch/hyaku/kumitate-r85/K85Scout/clone (git clone --shared of the lane; 'git rev-parse --show-toplevel' asserted == fixture dir before each checkout)
+
+command=node scripts/proxy-check.mjs --strict   (run inside the fixture at each revision)
+--- a882a334 (landed) ---
+PROXY  error  A_DRIFT  A: declared=972 computed=975 delta=+3
+PROXY: DRIFT (A_DRIFT term=A declared=972 computed=975 delta=+3; src-rev=31c465f15669; source=snapshot)
+exit=1   [A_DRIFT declared=972 computed=975 delta=+3]
+--- 9db0c6b5 (freeze) ---
+PROXY  error  A_DRIFT  A: declared=908 computed=913 delta=+5
+PROXY: DRIFT (A_DRIFT term=A declared=908 computed=913 delta=+5; src-rev=31c465f15669; source=snapshot)
+exit=1   [A_DRIFT declared=908 computed=913 delta=+5]
+--- 6663b3be (repair) ---
+PROXY: MATCH (A=908 C=44 operability=9; C1=19/19 C2=214/214 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+exit=0   [PROXY: MATCH A=908 C=44 C2=214/214]
+--- a5d3e754 (base) ---
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=213 computed=214 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=213 computed=214 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+exit=1   [C2_TOTAL_DRIFT +1, AXES_DRIFT coverage 10->9]
+
+NOTE: no GATE_PIN_DRIFT at a882a334 -> pin.counter-receipt re-pin matches the landed v2 tool bytes.

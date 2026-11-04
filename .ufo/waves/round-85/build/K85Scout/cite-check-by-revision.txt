@@ -1,0 +1,14 @@
+command=node scripts/cite-check.mjs --self <clone|lane> --fleet <fleet-root|empty> [--json]
+--- lane scope (--self clone --fleet /home/vgpnk/Projects/shokunin) ---
+a5d3e754 (base):   CITE_CHECK: DRIFT (files=219 tokens=14466 errors=2249 warnings=921)
+9db0c6b5 (freeze): CITE_CHECK: DRIFT (files=219 tokens=14467 errors=2249 warnings=921)
+a882a334 (landed): CITE_CHECK: DRIFT (files=221 tokens=14489 errors=2257 warnings=921)
+--- lane-only scope (--self clone --fleet <empty dir>) ---
+03432bde (r84 tip): CITE_CHECK: DRIFT (files=218 tokens=14411 errors=2573 warnings=1008)
+a5d3e754 (base):   CITE_CHECK: DRIFT (files=219 tokens=14458 errors=2602 warnings=1009)
+6663b3be (repair): CITE_CHECK: DRIFT (files=219 tokens=14459 errors=2602 warnings=1009)
+9db0c6b5 (freeze): CITE_CHECK: DRIFT (files=219 tokens=14459 errors=2602 warnings=1009)
+--- per-file attribution, corpus/lessons/round-84-verifier-spotcheck.md ---
+lane-only scope:  29 errors (26 UNRESOLVED source, 3 REV_UNKNOWN)
+fleet-parent scope of live tree: 22 errors (all UNRESOLVED)
+note: the two counts differ by scope; cite the scope with the number

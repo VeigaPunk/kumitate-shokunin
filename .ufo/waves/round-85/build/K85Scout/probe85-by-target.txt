@@ -1,0 +1,18 @@
+command=node .ufo/waves/round-85/probe/probe85-c1.mjs --lane <target> --work <scratch>
+probe source is FROZEN at rev=9db0c6b5eb9111cfc5581006ba976ca2cd112792, sha256=6e7b1eb77988f58e7469661e5e412fb9048dda2a275dd9eec4e9acbf7a53ec94
+
+--- target = live lane (v2 tool, rev a882a334) ---
+C85_C1 arm src-arity ok exit=1 want=1
+C85_C1 arm src-declared ok exit=1 want=1
+C85_C1: HELD held=20/20
+exit=0
+--- target = .ufo/waves/round-85/build/K85ExecGate/counter-receipt.mjs (v2 candidate) ---
+C85_C1 arm src-arity ok exit=1 want=1
+C85_C1 arm src-declared ok exit=1 want=1
+C85_C1: HELD held=20/20
+exit=0
+--- target = lane scripts/counter-receipt.mjs at v1 (frozen) ---
+C85_C1 arm src-arity FAIL exit=64 want=1 line2="" line3=""
+C85_C1 arm src-declared FAIL exit=64 want=1 line2="" line3=""
+C85_C1: UNMET held=1/20
+exit=1

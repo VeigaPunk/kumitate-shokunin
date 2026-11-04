@@ -5,10 +5,13 @@ probe, control, SCORECARD, LOG, corpus or peer-subtree file was edited. All runs
 read-only over the lane; scratch is `/fast/scratch/hyaku/kumitate-r85/K85Review/`
 (deleted before yield), receipts are durable in `build/K85Review/receipts/`.
 
-- Measured revision: `9db0c6b5eb9111cfc5581006ba976ca2cd112792` (lane freeze commit).
-  The worktree carries sibling-side uncommitted `SCORECARD.md`/`.ufo/pins/readme-map.json`
-  changes that I did not touch; `scripts/counter-receipt.mjs` is still v1
-  (`sha256=190a4c1f…254ec0`).
+- Measured revision for every receipt here: `9db0c6b5eb9111cfc5581006ba976ca2cd112792`
+  (lane freeze commit); at that moment `scripts/counter-receipt.mjs` was v1
+  (`190a4c1f…254ec0`). While this seat ran, the integration landed (`a882a334`):
+  `scripts/counter-receipt.mjs` is now `f385bd7a…` (the candidate I measured,
+  `7659be6e…`, plus exactly one regex line — §3a) and `SCORECARD.md:354` now pins
+  `f385bd7a…`. I did not touch either; the integrated build is **not** what my probe
+  receipts measured, so L1's M run is authoritative for it.
 - Frozen inputs, re-hashed: probe `6e7b1eb7…53ec94`, plan `6a20a833…1c1f4d`,
   content-variation `08beaba3…7d0cb7`; `git diff 9db0c6b5 --` over plan/probe/controls is
   empty. Node `v24.21.0` (one runtime, `process.execPath`), kernel `7.2.11-arch1-1`.
@@ -19,7 +22,7 @@ read-only over the lane; scratch is `/fast/scratch/hyaku/kumitate-r85/K85Review/
 
 | question | verdict |
 |---|---|
-| Frozen predicate at the candidate | **HELD, 20/20, exit 0** (two independent runs on different nonces; staged byte-identical copy). L1 must still run it at the integrated tree. |
+| Frozen predicate at the candidate | **HELD, 20/20, exit 0** (two independent runs on different nonces; staged byte-identical copy of `7659be6e…`). The integrated build `f385bd7a…` is one regex line away (§3a) and is L1's M run. |
 | Three committed controls reproducible | **Yes, six for six line-for-line**; base 1/20, stub 0/20, no-reader 1/20; cv 0/3 each. No mismatch. |
 | 20/20 without reading the receipt | **Impossible**: a tool with zero filesystem calls caps at **2/20** (measured). The nonce+sha256 assertion does close round-84's no-read class. |
 | 20/20 while the *verdict* never depends on the bytes | **Achievable**: basename-keyed verdict + bytes read only for `bytes=`/`sha256=` scores **20/20**; the source need not be opened at all (4/4 `--src` arms from a canned string). |
@@ -31,7 +34,9 @@ sincere parser; round-84's no-read class is genuinely closed (zero-read ceiling 
 What the 20/20 does not establish is that the *verdict* came from the bytes: a path-keyed
 reader scores 20/20 without opening `--src`, and a position-keyed reader also passes cv
 (3/3). L1 must weigh those two measured facts against the kill rule's "any control
-reaching 20/20"; I neither narrow the rule nor decide the closure.
+reaching 20/20"; I neither narrow the rule nor decide the closure. Attribution: my 20/20
+attaches to candidate `7659be6e…`; the integrated `f385bd7a…` differs by one regex line
+and must be scored by L1's M run.
 
 ## 1. Control re-derivation (sub-question 1)
 
@@ -52,9 +57,11 @@ revision are in `build/K85Review/receipts/<tag>.txt`.
 | `controls/stub` | 1 | `CONTENT_VARIATION: UNMET held=0/3 distinct_sha=false` | yes |
 | `controls/noreader` | 1 | `CONTENT_VARIATION: UNMET held=0/3 distinct_sha=false` | yes |
 
-Also measured: the frozen predicate on the lane at HEAD (v1 tool) is
-`C85_C1: UNMET held=1/20`, exit 1 (`receipts/probe-lane-HEAD.txt`) — the claim is not
-prematurely satisfied. Base control is byte-identical to
+Also measured: the frozen predicate on the lane at HEAD is `C85_C1: UNMET held=1/20`,
+exit 1 (`receipts/probe-lane-HEAD.txt`); at that instant production was still v1
+(`190a4c1f…`), so the claim is not prematurely satisfied. The worktree has since moved
+(§3a), so this receipt is time-scoped by its recorded revision plus the v1 sha stated
+here. Base control is byte-identical to
 `git show a5d3e754…:scripts/counter-receipt.mjs` (sha `190a4c1f…`). **No mismatch with any
 committed receipt → no finding here.**
 
@@ -131,6 +138,17 @@ harnesses:
   screen found no fixture-name keys, no `eval`/`new Function`/`vm`, and no writes on the
   CLI path (only `--selftest` writes).
 
+**3a. Integrated build (landed mid-seat at `a882a334`).** HEAD now holds
+`scripts/counter-receipt.mjs` `f385bd7a…`; `diff` against the candidate is one hunk: the
+`sourceDeclared` lookahead changes `(?![0-9])` to `(?![0-9A-Za-z_.])` (Sentinel S5's
+non-decimal fix). I did **not** run the frozen harnesses at the lane root — that is L1's M
+run — so my 20/20/cv-3/3 verdict attaches to `7659be6e…`, not automatically to
+`f385bd7a…`. L1's in-flight `close/c1-probe.txt` reports `C85_C1: HELD held=20/20` and
+`close/content-variation.txt` reports `HELD held=3/3 distinct_sha=true`, but neither file
+names its command, exit or revision; the M receipt should carry that header (seat
+contract). All four probe sources terminate the declaration with `;`, so the lookahead
+change is inert for the 20 arms [INFERENCE]; the M receipt is still the measurement.
+
 The candidate is **not** one of my cheats: it parses the bytes and derives the token from
 them. No red arm, no attribution defect observed at the candidate.
 
@@ -148,7 +166,11 @@ mechanism. This is a limit of the frozen predicate, not a defect in the candidat
 does **not** re-open round-84's exact class: zero-read is capped at 2/20. The parallel
 seat K85Cheat measures the sharper version: reading only the 21-byte nonce line and
 replaying a copied table is already 20/20 (their `receipts/probe-c.txt`), so the read
-barrier is one metadata line, not the arm rows.
+barrier is one metadata line, not the arm rows. The landed knowledge note repeats the
+overstatement: `corpus/knowledge/counter-receipt-discrimination.md` says "a partial
+printer fails the arms whose expected values come from bytes it did not read"; `pathkeyed`
+is that partial printer and passes all 20, because the expected verdict fields are
+name-keyed while the two byte-derived fields are read honestly.
 
 ### F2 — HIGH (control-class gap): the frozen control set is satisfied by a position-keyed tool
 
@@ -156,9 +178,9 @@ Evidence: `attempts/stateful` → probe 20/20 exit 0, cv 3/3 exit 0 (receipts ab
 tool's verdicts never depend on the body; it reads bytes only for the two derived fields
 and keys position from a state file beside the receipt (the contract forbids the write,
 but nothing measures read-only either). The proposed random-order control separates it
-(6/12) and the candidate passes 12/12. Q78's class list (`plan.md:70-72`: absent,
-constant, label-keyed no-reader, same-path content variation) does not name position/state
-keying or a path-keyed partial reader. Recommendation (round 86, pre-registered; do not
+(6/12) and the candidate passes 12/12. Q78 has now landed with exactly the plan's four
+classes (`corpus/QUALITY.md:1309`); it does not name position/state keying or a
+path-keyed partial reader. Recommendation (round 86, pre-registered; do not
 change this round's artifacts): add the two classes to Q78 and the cross-over + random
 order to the control suite. K85Cheat's parallel `control-d` reaches the same 20/20 + 3/3
 with a nonce read plus an honest fallback (a real parser outside the 20 fixture names);
@@ -200,16 +222,19 @@ clauses with zero probe arms; a tool could omit them and still score
 that is candidate-side evidence, not the frozen measure. Given the round's coverage axis,
 the closure should say so rather than imply the 20 arms cover the contract.
 
-### F6 — MEDIUM (integration obligations, L1-owned): a pinned gate changes bytes, and the lane docs still describe v1
+### F6 — MEDIUM→LOW (integration state, L1-owned): the pin/doc move is done in the worktree; two evidence details remain
 
-- `SCORECARD.md:354` `pin.counter-receipt=190a4c1f…` is the v1 sha (verified against
-  `scripts/counter-receipt.mjs`); `scripts/proxy-check.mjs:576` binds the key. The
-  candidate sha is `7659be6e…`; integrating it without re-pinning yields
-  `GATE_PIN_DRIFT` under `--strict` (K85ExecPins §2 reaches the same conclusion).
-- `SKILL.md:607` and `:760`, and `corpus/knowledge/counter-transcript-reconciliation.md`,
-  document the v1 one-line contract; v2 adds `RECEIPT:`/`SOURCE:` and `--src`.
-- `corpus/QUALITY.md` has no `Q78` yet (`grep -n Q78` empty); the plan's new criterion is
-  still to land. These are closure edits, not seat edits.
+- `SCORECARD.md:354` pins `f385bd7a…` = `scripts/counter-receipt.mjs` at HEAD
+  (`a882a334`, verified); `scripts/proxy-check.mjs:576` binds the key. The closure must show
+  `node scripts/proxy-check.mjs --strict` MATCH at this pin. (At freeze HEAD the pin was
+  v1 `190a4c1f…`, so the move was necessary; K85ExecPins §2 reaches the same conclusion.)
+- `SKILL.md:607` and `:761` now document the v2 two-line + `SOURCE` contract and the r85
+  checklist item; `corpus/QUALITY.md:1309` now carries Q78. Check that
+  `corpus/knowledge/counter-transcript-reconciliation.md` is updated or explicitly marked
+  v1 at closure, since the new `counter-receipt-discrimination.md` supersedes it.
+- Evidence detail: L1's `close/c1-probe.txt` and `close/content-variation.txt` carry no
+  command, exit or revision header, so they do not by themselves name the tree they
+  measured; the M receipt should carry the seat contract's header.
 
 ### F7 — LOW (control construction): the committed no-reader's 1/20 is not the class ceiling
 
