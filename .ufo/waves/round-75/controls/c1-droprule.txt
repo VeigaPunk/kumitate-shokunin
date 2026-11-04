@@ -1,0 +1,10 @@
+# control C1-droprule (rev=c38382d547a1ec21bb7f51b4c08ef08053e7abae date=2026-11-04T01:21:56-03:00)
+## the real tool with ONLY the agent-corrupt family removed
+SELFTEST FAIL agent-corrupt-generation-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+SELFTEST FAIL agent-corrupt-sidecar-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+SELFTEST FAIL agent-corrupt-mode-too-wide: missing "MODE agent.db.corrupt-1792474833850-9f8e7d6c-5b4a-4392-8180-7f6e5d4c3b2a want<=0600 got=0604"
+SELFTEST FAIL agent-corrupt-sidecar-mode-too-wide: missing "MODE agent.db.corrupt-1792474833850-9f8e7d6c-5b4a-4392-8180-7f6e5d4c3b2a-wal want<=0600 got=0604"
+SELFTEST FAIL agent-corrupt-as-dir-is-drift: missing "KIND agent.db.corrupt-1792474833850-9f8e7d6c-5b4a-4392-8180-7f6e5d4c3b2a want=file got=dir"
+VERDICT: FAIL (5 of 29 cases failed)
+
+exit=1

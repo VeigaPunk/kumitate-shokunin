@@ -1,0 +1,15 @@
+# control C2-stub (rev=c38382d547a1ec21bb7f51b4c08ef08053e7abae date=2026-11-04T01:22:30-03:00)
+## both constant printers print a well-formed line; each misses exactly one frozen arm
+## stub --mode insync (a constant IN_SYNC printer on the MOVED live origin: fails arm (a))
+ORIGIN_TIP_DRIFT: IN_SYNC pin=31c465f15669 origin=31c465f15669 commits=0 changed=0 scripts=0 runtime=0 other=0
+exit=0
+
+## stub --mode moved (a constant MOVED printer on an IN_SYNC tree: fails arm (b))
+ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161
+exit=1
+
+## the live world the predicate must report on (measured, not stubbed)
+pin=31c465f15669f744848bd9f5d56191c5085670f7
+origin=fb7157fcf14625be9d0b91bdd425a4b3212e4194
+commits=58
+changed=241

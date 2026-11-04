@@ -1,0 +1,68 @@
+## node scripts/omp-census.mjs --selftest
+SELFTEST ok unreadable-root
+SELFTEST ok usage
+VERDICT: PASS (29 cases)
+exit=0
+
+## node scripts/proxy-check.mjs --selftest
+PROXY_SELFTEST: 124/124 pass
+VERDICT: PASS
+
+## node scripts/proxy-check.mjs --tip-drift
+proxy-check: unknown argument: --tip-drift
+
+usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--pin FILE] [--json] [--strict]
+       node scripts/proxy-check.mjs --selftest
+       node scripts/proxy-check.mjs -h|--help
+contract id: kumitate-proxy-v1
+
+modes:
+  default      recompute A C C1 C1_total C2 C2_total, the layer terms
+               (S_members S_sections R_members R_sections), the kimi-block terms
+               (C1k C1k_total K_members K_sections), the five scores
+               (operability, coverage, coverage:script-layer,
+               coverage:runtime-layer, coverage:kimi-layer) and the seven script
+               pins, then compare
+               them with the kumitate-proxy-v1 block in --scorecard (default
+               <self>/SCORECARD.md) and with that file's ## Axes rows.
+               The legacy counts are self-only; the layer terms are counted
+               over --src, walked exactly once and in process by
+               probeSections() imported from scripts/claims-check.mjs, and the
+               layer numerator counts only member sections that gate grades
+               inside the row's declared family (out-of-family sections are
+               excluded); the kimi-block terms count over --kimi-root (lstat and
+               readdir only — secret members are never opened) plus the
+               corpus/knowledge/kimi-*.md headings under --self; K_sections is
+               the count of DISTINCT K members those headings name, and a heading
+               whose only candidate is a basename shared by several members names
+               none of them (warn K_SECTION_AMBIGUOUS).
+               With an active origin pin (--pin, or the default pin file under
+               --self) the tree is resolved through the pin and its HEAD is
+               asserted; the verdict then carries src-rev=<12 hex>.
+  --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
+  -h | --help  print this text, exit 0
+
+options:
+  --self DIR         repo root to measure (default: the repo containing this script)
+  --scorecard FILE   claim block + registry rows + ## Axes rows (default <self>/SCORECARD.md)
+  --src DIR          origin tree the layer terms count over, via the claims gate
+                     (default: the pin's clone when a pin is active, else $UFO_SRC,
+                     else the first existing of
+                     ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha);
+                     a non-directory is refused as SRC_NOT_A_DIR (exit 2)
+  --pin FILE         origin pin (kumitate-origin-pin-v1), default <self>/.ufo/pins/origin.json
+                     when that file exists; resolves --src from the pin's clone,
+                     asserts git rev-parse HEAD equals the pin revision
+                     (SRC_REV_MISMATCH / SRC_REV_UNVERIFIABLE, exit 2) and prints
+                     src-rev=<12 hex> in the verdict. A missing default pin file
+                     is not an error — the run is then unpinned and unchanged.
+  --kimi-root DIR    kimi installation the K terms count over
+                     (default: $KIMI_ROOT or /home/vgpnk/.kimi-code);
+                     a non-directory is refused as KIMI_ROOT_NOT_A_DIR (exit 2),
+                     never scored 0
+  --json             one machine-readable object on stdout
+  --strict           promote warn-level findings (PIN_UNPINNED,
+                     K_SECTION_AMBIGUOUS) to failure
+
+exit map: 0 match · 1 drift (findings; warnings too under --strict) · 2 fail-closed · 64 usage
+exit=64

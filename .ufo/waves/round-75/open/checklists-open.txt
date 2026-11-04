@@ -1,0 +1,51 @@
+## node scripts/surface-probe.mjs --checklists rev=c38382d547a1ec21bb7f51b4c08ef08053e7abae
+CHECKLIST  PASS SKILL.md:712 exit=1 expected=0|1 substring=hit wall=4.625 load1=3.56 — Citation gate verdict
+CHECKLIST  PASS SKILL.md:713 exit=0 expected=0 substring=hit wall=0.860 load1=3.60 — Citation gate hermetic suite
+CHECKLIST  PASS SKILL.md:714 exit=0 expected=0 substring=hit wall=0.172 load1=3.60 — Live sighting-surface conformance
+CHECKLIST  PASS SKILL.md:715 exit=0 expected=0 substring=hit wall=1.320 load1=3.60 — Surface-probe hermetic suite
+CHECKLIST  PASS SKILL.md:716 exit=0 expected=0 substring=hit wall=8.162 load1=3.60 — Round-gate hermetic suite
+CHECKLIST  PASS SKILL.md:717 exit=0 expected=0 substring=hit wall=0.049 load1=3.50 — Round-close artifact audit
+CHECKLIST  PASS SKILL.md:718 exit=0 expected=0 substring=hit wall=0.101 load1=3.50 — Filed-report tracking
+CHECKLIST  FAIL SKILL.md:719 exit=1 expected=0 substring=miss wall=0.096 load1=3.50 — Proxy recompute (`--strict` since round 42: a missing or renamed `kumitate-gate-pins-v1` block re-raises `PIN_UNPINNED`, which strict mode fails)
+  | PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=179 computed=180 delta=+1
+  | PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  | PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=179 computed=180 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+CHECKLIST  PASS SKILL.md:720 exit=0 expected=0 substring=hit wall=5.490 load1=3.50 — Proxy-check hermetic suite
+CHECKLIST  PASS SKILL.md:721 exit=0 expected=0 substring=hit wall=0.054 load1=3.46 — Member-claims gate
+CHECKLIST  PASS SKILL.md:722 exit=0 expected=0 substring=hit wall=0.017 load1=3.46 — Kimi-substrate census
+CHECKLIST  PASS SKILL.md:723 exit=0 expected=0 substring=hit wall=0.021 load1=3.46 — Sources-registry gate
+CHECKLIST  PASS SKILL.md:724 exit=0 expected=0 substring=hit wall=2.500 load1=3.46 — Sources-check hermetic suite
+CHECKLIST  PASS SKILL.md:725 exit=0 expected=0 substring=hit wall=0.592 load1=3.35 — Per-anchor truth burn-down
+CHECKLIST  PASS SKILL.md:726 exit=0 expected=0 substring=hit wall=7.479 load1=3.35 — Anchor-truth hermetic suite
+CHECKLIST  PASS SKILL.md:727 exit=0 expected=0 substring=hit wall=0.025 load1=3.24 — Wave census of round 40's committed payloads (payload counts and findings; a payload proves validation, not dispatch)
+CHECKLIST  PASS SKILL.md:728 exit=0 expected=0 substring=hit wall=1.952 load1=3.24 — Wave-census hermetic suite
+CHECKLIST  PASS SKILL.md:729 exit=0 expected=0 substring=hit wall=41.331 load1=3.22 — Gate-mutants battery over the lane's own suites (contract `kumitate-gate-mutants-v2`, kill predicate K43: an evaluable run exiting numeric non-zero with an exact `VERDICT: FAIL` line, confirmed by an immediate rerun with the same sorted `FAIL ` case names; controls re-run after the mutants; 41 frozen mutants of cite-check and wave-census, exit 0 only when every mutant is killed; temp parent `$KUMITATE_GATE_MUTANTS_TMP`, else `~/.cache/kumitate-gate-mutants`)
+CHECKLIST  PASS SKILL.md:730 exit=0 expected=0 substring=hit wall=0.607 load1=4.99 — Gate-mutants hermetic suite
+CHECKLIST  FAIL SKILL.md:731 exit=1 expected=0 substring=miss wall=0.015 load1=4.99 — OMP agent-root census
+  | UNLISTED config.yml.pre-sonnet-haiku-20261028
+  | UNLISTED config.yml.pre-zfl-kfc-20261030
+  | UNLISTED config.yml.pre-zfl-split-20261104
+  | UNLISTED lsp.json
+  | UNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42
+  | UNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42-shm
+  | UNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42-wal
+  | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=40)
+CHECKLIST  PASS SKILL.md:732 exit=0 expected=0 substring=hit wall=0.024 load1=4.99 — OMP-census hermetic suite
+CHECKLIST  PASS SKILL.md:733 exit=0 expected=0 substring=hit wall=7.640 load1=4.99 — Cap-run hermetic suite (round 46; contract `kumitate-cap-run-v1`; needs `systemd-run --user` and unprivileged bwrap)
+CHECKLIST  PASS SKILL.md:734 exit=0 expected=0 substring=hit wall=2.714 load1=4.91 — Receipt-attest hermetic suite (round 53; contract `kumitate-receipt-attest-v3`; hermetic; the final line is `ATTEST_SELFTEST: PASS (n/n)`)
+CHECKLIST  PASS SKILL.md:735 exit=0 expected=0 substring=hit wall=0.024 load1=4.76 — Frozen-counter registry gate (round 54; contract `kumitate-counter-pins-v1`)
+CHECKLIST  PASS SKILL.md:736 exit=0 expected=0 substring=hit wall=0.033 load1=4.76 — Opened-source byte-persistence gate (round 55; contract `kumitate-source-capture-v1`)
+CHECKLIST  PASS SKILL.md:737 exit=0 expected=0 substring=hit wall=0.020 load1=4.76 — SOURCES duplicate-URL ratchet (round 56; contract `kumitate-source-dupes-v1`)
+CHECKLIST  FAIL SKILL.md:738 exit=1 expected=0 substring=miss wall=0.018 load1=4.76 — Corpus coverage-map bimap gate (round 57; contract `kumitate-readme-map-v2`)
+  | README_MAP: note unpinned:lessons/round-74-verifier-spotcheck.md
+  | README_MAP: DRIFT files=180 rows=179 covered=179 bad=2 first=uncovered:lessons/round-74-verifier-spotcheck.md
+CHECKLIST  PASS SKILL.md:739 exit=0 expected=0 substring=hit wall=1.955 load1=4.76 — Receipt-evidence reproduction and sweep gate (round 58; contract `kumitate-receipt-evidence-v1`)
+CHECKLIST  PASS SKILL.md:740 exit=0 expected=0 substring=hit wall=0.031 load1=4.76 — README source-id citation gate (round 59; contract `kumitate-cite-sources-v1`)
+CHECKLIST  PASS SKILL.md:741 exit=0 expected=0 substring=hit wall=0.016 load1=4.76 — Round dispatch-evidence gate (round 60; contract `kumitate-dispatch-evidence-v1`; the real run over a round's committed launcher record is the registry row's command, --root <lane> --round <N> --wave <w>)
+CHECKLIST  PASS SKILL.md:742 exit=0 expected=0 substring=hit wall=1.708 load1=4.76 — Report-vs-receipt diff suite (round 64; contract `kumitate-report-receipt-diff-v3`; twelve finding ids; the real diff before filing a round report is the registry row's command, --lane . --round N --rev <lane-tip> --report <round report>)
+CHECKLIST  PASS SKILL.md:743 exit=0 expected=0 substring=hit wall=0.700 load1=4.45 — jj seat-containment demo re-run (round 64; contract `kumitate-jj-seat-demo-v2`; 27 keys; exits 0 done or 2 fail-closed and never 1, so it is a demo and not a gate; re-ground the entry on any jj version change)
+CHECKLIST  PASS SKILL.md:744 exit=0 expected=0 substring=hit wall=2.066 load1=4.45 — Plan-before-ready map-arm suite (round 64; the readme-map arm judges readme-map inside git archive PLAN, epoch PBR_MAP_FROM default 65; the real run is the registry row's command, --round N --rev REV)
+CHECKLIST_SKIPPED: 0
+CHECKLIST: 30/33 pass
+VERDICT: FAIL
+exit=1

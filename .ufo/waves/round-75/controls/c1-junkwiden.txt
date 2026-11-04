@@ -1,0 +1,27 @@
+# control C1-junkwiden (rev=base
+c38382d547a1ec21bb7f51b4c08ef08053e7abae date=2026-11-04T01:22:18-03:00)
+## 1. a blanket catch-all rule accepts every unmatched name: the verdict line alone is gameable
+INFO mcp.json.rea.backup absent
+INFO themes absent
+INFO tools absent
+INFO commands absent
+INFO prompts absent
+INFO memories absent
+INFO extensions absent
+INFO chain agent-pre-restore has no generation
+INFO chain agent-recovered has no generation
+INFO chain history-corrupt has no generation
+INFO chain mcp-pre-disable has no generation
+INFO chain mcp-rea-backup-recovery has no generation
+OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0)
+exit=0
+
+## 2. the real tool still refuses an undeclared name on a shape fixture (specificity arm (b))
+FIXTURE entries=65 root=/fast/scratch/hyaku/kumitate-r75/l1-control/root bogus=bogus-member-75.txt
+UNLISTED bogus-member-75.txt
+OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/l1-control/root entries=65 findings=41)
+exit=1
+
+## 3. the catch-all copy swallows the bogus member too: (b) alone cannot reject the cheat, (d) does
+OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/l1-control/root entries=65 findings=0)
+exit=0
