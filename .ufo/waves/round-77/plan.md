@@ -184,3 +184,21 @@ trend, not a one-off) is mined as QUALITY row Q72, and this round's lesson carri
 
 Frozen bytes: this file + `probe/probe77.mjs` + `open/*` + `controls/*` in the scaffolding commit.
 Measured commit M is the lane tip that carries the landed work; the report cites it.
+
+## Amendment 1 — probe fixture and registry name (2026-11-04, before any seat verdict)
+
+Append-only; supersedes nothing in the predicates. Two probe defects found by the L1 while the
+wave was in flight, before any seat reported a verdict:
+
+- **A1.1 — check 11's fixture had no `lessons/` row**, so a literal reading of "insert after the
+  last existing lessons row" could not be exercised. The fixture now carries
+  `corpus/lessons/round-01-verifier-spotcheck.md`, its README row inside the coverage-map table,
+  and its `covered` pin entry; the placement arm now reads `fixture row line 11 after ## Known
+  gaps line 8` on the base tool (red) and must read before the heading on the final tool.
+- **A1.2 — the check's registry name** was `c2.11-live-adoption-and-placement` while the function
+  is `c2.11-placement-and-map`; the probe printed `not run`. Fixed; the base reading is unchanged.
+
+No predicate sentence, threshold, target or axis arithmetic changed. Re-scored controls with the
+amended probe: C1 `held=0/10`, C2 `held=2/11`, constant printer `held=0/11`; probe sha256 is in
+`controls/c77-c1-base.txt`. The seats cloned `4dc470a1`; the final measurement runs the amended
+probe, which is committed in the amendment commit that carries this section.

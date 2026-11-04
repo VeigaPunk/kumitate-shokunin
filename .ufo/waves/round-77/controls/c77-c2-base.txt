@@ -1,16 +1,16 @@
 C77_C2 base control — the frozen counter against the base tree (git archive a321ed80), no C2 work landed
-cmd: node .ufo/waves/round-77/probe/probe77.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r77/base-tree --work /fast/scratch/hyaku/kumitate-r77/probe-base2/c2
-probe sha256: 95316919bb5f54a6dd9b01b9b3be74b3c93b08b8add424b2e106e36b3b6ccb9b
+cmd: node .ufo/waves/round-77/probe/probe77.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r77/base-tree --work /fast/scratch/hyaku/kumitate-r77/probe-base4/c2
+probe sha256: 16695655a691ac227c4932b23a5e5b68b8acc1b48b53fce91f75537e67dd0193 (amended: plan Amendment 1)
 ---
 CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2,adopt-journal,RECOVERED,SPOTCHECK_ADOPT_TEST_CRASH
 CHECK c2.2-crash-journal: FAIL child not killed: status=0 signal=null
 CHECK c2.3-crash-after-row: FAIL child not killed: status=0 signal=null
 CHECK c2.4-crash-after-pin: FAIL child not killed: status=0 signal=null
 CHECK c2.5-stale-tmp: FAIL line ""
-CHECK c2.6-foreign-journal: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-99-verifier-spotcheck.md"
+CHECK c2.6-foreign-journal: FAIL exit=1 out="SPOTCHECK_MAP: DRIFT spotchecks=2 uncovered=1 first=corpus/lessons/round-99-verifier-spotcheck.md"
 CHECK c2.7-no-journal-no-line: PASS exit=1 no RECOVERED line, no journal
 CHECK c2.8-recovery-idempotent: FAIL child not killed
 CHECK c2.9-selftest-and-refusals: FAIL exit=0 ["SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)","VERDICT: PASS"]
 CHECK c2.10-usage: PASS bad --predict and unknown arm exit 64
-CHECK c2.11-live-adoption-and-placement: FAIL not run
+CHECK c2.11-placement-and-map: FAIL fixture row line 11 after ## Known gaps line 8
 C77_C2: UNMET held=2/11

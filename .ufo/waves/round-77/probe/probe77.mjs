@@ -248,9 +248,10 @@ function fixture(lane, dir) {
   copyFileSync(join(lane, 'scripts/spotcheck-adopt.mjs'), join(dir, 'scripts/spotcheck-adopt.mjs'));
   writeFileSync(join(dir, 'corpus/knowledge/base.md'), '# Base\n');
   writeFileSync(join(dir, TARGET), '# Spotcheck\n');
+  writeFileSync(join(dir, 'corpus/lessons/round-01-verifier-spotcheck.md'), '# Fixture lesson\n');
   writeFileSync(join(dir, 'corpus/README.md'),
-    `# Corpus\n\n## Coverage map\n\n| \`knowledge/base.md\` | Base | fixture |\n\n## Known gaps\n\n- none\n`);
-  writeFileSync(join(dir, '.ufo/pins/readme-map.json'), `${JSON.stringify({ version: 2, covered: ['knowledge/base.md'] }, null, 2)}\n`);
+    `# Corpus\n\n## Coverage map\n\n| \`knowledge/base.md\` | Base | fixture |\n| \`lessons/round-01-verifier-spotcheck.md\` | Fixture lesson | fixture |\n\n## Known gaps\n\n- none\n`);
+  writeFileSync(join(dir, '.ufo/pins/readme-map.json'), `${JSON.stringify({ version: 2, covered: ['knowledge/base.md', 'lessons/round-01-verifier-spotcheck.md'] }, null, 2)}\n`);
   return { dir, readme: join(dir, 'corpus/README.md'), pin: join(dir, '.ufo/pins/readme-map.json'), journal: join(dir, JOURNAL_REL) };
 }
 
@@ -426,7 +427,7 @@ function main(argv) {
     'c1.8-fail-closed', 'c1.9-selftests', 'c1.10-no-content-pinned']
     : ['c2.1-journal-surface', 'c2.2-crash-journal', 'c2.3-crash-after-row', 'c2.4-crash-after-pin',
       'c2.5-stale-tmp', 'c2.6-foreign-journal', 'c2.7-no-journal-no-line', 'c2.8-recovery-idempotent',
-      'c2.9-selftest-and-refusals', 'c2.10-usage', 'c2.11-live-adoption-and-placement'];
+      'c2.9-selftest-and-refusals', 'c2.10-usage', 'c2.11-placement-and-map'];
   for (const c of checks) {
     if (!registry.includes(c.name)) continue;
     try { c.fn(results); } catch (e) { fail(c.name, `threw: ${e.message}`, results); }
