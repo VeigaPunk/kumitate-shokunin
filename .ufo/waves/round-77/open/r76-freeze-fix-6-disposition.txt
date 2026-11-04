@@ -1,0 +1,15 @@
+R76 FREEZE-FIX 6 — disposition (round 77)
+item: r76 asked that the missing diagnostic for the absent C2 module be retained as supplemental evidence; r76 said '6 items, all dispositioned' but no lane receipt carried the token.
+
+absence re-derived at base ebfcedfa (the r76 base):
+$ git cat-file -e ebfcedfa:scripts/spotcheck-adopt.mjs
+exit=128
+
+loader diagnostic on the real absence (base tree extracted from a321ed80, where the module is present, vs ebfcedfa where it is absent):
+$ node --input-type=module -e "await import('file:///fast/scratch/hyaku/kumitate-r77/base-tree/scripts/spotcheck-adopt-absent.mjs')"
+node:internal/modules/esm/resolve:272
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+exit=0
+
+disposition: the absence is independently true; this receipt supplies the diagnostic the r76 report quoted without a lane receipt. Status-neutral (the r76 C2 claim verified on the live end-to-end adoption); no r76 byte is rewritten.

@@ -1,0 +1,21 @@
+kumitate round 77 — gate readings at freeze (base a321ed80 + the scaffolding routed repair)
+
+[open, before the scaffolding repair]
+readme-map:    README_MAP: DRIFT files=184 rows=183 covered=183 bad=2 first=uncovered:lessons/round-76-verifier-spotcheck.md (exit 1)
+spotcheck:     SPOTCHECK_MAP: DRIFT spotchecks=43 uncovered=1 first=corpus/lessons/round-76-verifier-spotcheck.md (exit 1)
+proxy --strict: PROXY: DRIFT (A_DRIFT term=A declared=847 computed=848 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=183 computed=184 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669) (exit 1)
+checklists:    32/35 pass, VERDICT: FAIL (SKILL.md:722 proxy --strict, :741 readme-map, :742 spotcheck --check)
+
+[freeze, after the routed repair — the two map rows above]
+readme-map:    README_MAP: CLEAN files=184 rows=184 covered=184 (exit 0)
+spotcheck:     SPOTCHECK_MAP: CLEAN spotchecks=43 uncovered=0 (exit 0)
+census:        OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) (exit 0)
+sources-check: SOURCES_CHECK: CLEAN (rows=166 tiers=A:142,B:16,C:8 status=queued:14,mined:133,rejected:19 entries_with_source=25 legacy=38) (exit 0)
+source-capture: SOURCE_CAPTURE: CLEAN captures=58 exemptions=108 (exit 0)
+source-dupes:  SOURCE_DUPES: CLEAN groups=6 known=6 (exit 0)
+sources-census: 6 W04 warnings, exit 0
+proxy --strict: still DRIFT at freeze — A declared=847 computed=848 (this round's probe), C2_total 183/184, AXES coverage 10/9; re-measured at M
+test suites:   omp-census 49 cases PASS; proxy 145/145 PASS; spotcheck-adopt 16/16 PASS
+pins:          pin.omp-shape does not exist yet (C1 lands it); pin.spotcheck-adopt sha256=8b32c86ee6eb1647d9912de27f1765f35b887a6043a62aea92f97424e4bfc249
+
+inherited state: lane clean at a321ed80 (tracked=0 untracked=0, ahead=0 behind=0); no seat leftovers; wave dir created this round.

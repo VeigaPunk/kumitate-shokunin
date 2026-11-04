@@ -179,6 +179,7 @@ Rules: a row is a claim written only after opening the source; append-only excep
 | S224 | oh-my-pi docs/lsp-config.md — https://github.com/can1357/oh-my-pi/blob/v18.15.0/docs/lsp-config.md | docs | A | the native agent directory's user-wide LSP config file name and precedence | § Config file locations (user-config-dir row) and § Recommended locations at tag v18.15.0 = 3fedf8d53267e32a6d7521ce725fdcc4a36fdc67, lines 36 and 40; fetched 2026-11-04, HTTP 200, body sha256 04b56a7d86663141a68dacb79f61d660acee1a33d56cc7a994367b8a90baf9da, 17254 bytes, byte-identical at main | The native user config dir reads lsp.json — "~/.omp/agent/lsp.json is the default-profile spelling" — and user-wide preferences live in that agent-dir file | mined | 2026-11-04 | on-release | corpus/knowledge/omp-agent-root.md |
 | S225 | Fleet run-state records, hyaku goal files runs 7, 9, 10, 15 — /home/vgpnk/Projects/shokunin/.scratch/goal-20261025-hyaku-run7.md, goal-20261026-hyaku-run9.md, goal-20261027-hyaku-run10.md, goal-20261103-hyaku-run15.md | own-work | B | who wrote the operator's config.yml.pre-<slug>-<YYYYMMDD> and agent.db.pre-<slug>-<YYYYMMDD> copies in ~/.omp/agent | run7:13 and run10:66 (config.yml), run9:340 and run10:62 (agent.db), run15:25; fleet tree 2026-11-04 | Each routing change records its pre-edit copy by name — "backup agent.db.pre-kimiroute-20261027" — so these are operator copies, not harness writers | mined | 2026-11-04 | 180d | corpus/knowledge/omp-agent-root.md |
 | S226 | oh-my-pi v18.15.0, packages/utils/src/dirs.ts — https://github.com/can1357/oh-my-pi/blob/v18.15.0/packages/utils/src/dirs.ts | code | A | the agent-directory member names at the INSTALLED release 18.15.0, re-grounding the census v18.12.6 rules | tag v18.15.0 = 3fedf8d53267e32a6d7521ce725fdcc4a36fdc67; file sha256 2d423f4f18e5ed0c25cd4887c68cf2fea704f1615ad4c85846ae5c10d3207f24, 52434 bytes, 1292 lines, byte-identical to S053 v18.12.6; lines 949, 991-992, 1052-1054; fetched 2026-11-04 HTTP 200 (host omp/18.15.0) | Every depth-1 member is one agentSubdir call: "// Agent subdirectories (~/.omp/agent/*)" scopes the block, and 21 distinct names are declared across lines 793-1106 | mined | 2026-11-04 | on-release | corpus/knowledge/omp-agent-root.md |
+| S227 | SQLite — Atomic Commit In SQLite — https://www.sqlite.org/atomiccommit.html | docs | A | rollback-journal recovery of an interrupted multi-file commit, and the ordering a crash-recoverable writer needs | §4.2 Hot Rollback Journals; §4.4 Rolling Back Incomplete Changes; §9.5 Deleting Or Renaming A Hot Journal; page captured 2026-11-04, 77968 bytes, sha256 5a5be7b660217c9408c8a81eaf2faa2d08832ed3790f895a0a713916ad856ea1 | A journal written before the change and replayed on the next open is what makes an interrupted multi-file update recoverable: "A hot journal only exists when an earlier process was in the middle of committing a transaction when it crashed or lost power." (§4.2, 23 words) | queued | 2026-11-04 | 180d | — |
 
 
 ## Paths
@@ -214,6 +215,13 @@ Rules: a row is a claim written only after opening the source; append-only excep
 
 
 ## Search log
+
+**Rollback-journal recovery — query “SQLite atomic commit hot journal recovery”; where: targeted
+fetch of the official SQLite page, 2026-11-04; identified 1, screened 1, opened 1, included 1
+(S227), excluded 0; stop: the page names the journal mechanism and its ordering directly, and the
+lane's two-file adopter needs the ordering, not a second database. Capture:
+`.ufo/waves/round-77/open/captures/sqlite-atomiccommit.html` (77968 bytes, sha256
+`5a5be7b6…`).
 
 **MCP revision delta — query “MCP specification 2026-07-28 changelog stateless
 sessions”; where: web search, 2026-10-19; identified 8, screened 8, included 1,

@@ -306,6 +306,7 @@ All entries are falsifiable and cite file+symbol. Opinions marked as such.
 | `lessons/round-75-verifier-spotcheck.md` | Non-author round-75 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-75.md` | Round-75 method, OMP-plane declaration, origin-tip-drift capability and mistakes | LOG.md round 75 |
 | `lessons/round-76.md` | Round-76 method: coverage:omp becomes census-derived and registry-bound (family O1), the spotcheck-adopt capability, source decisions and mistakes | LOG.md round 76; `.ufo/waves/round-76/plan.md` |
+| `lessons/round-76-verifier-spotcheck.md` | Non-author round-76 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/replay-output-isolation-link-following.md` | Replay output/work-path isolation: CWE-59 link following and CWE-367 TOCTOU at the instrument boundary | S218/S219; K70 seat attacks; v2 arms V10-V12 |
 
 ## Frontier
