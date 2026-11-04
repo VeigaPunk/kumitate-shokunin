@@ -1,0 +1,16 @@
+stub=constant IN_SYNC printer (3 scripts)
+C82_C2 arm compare-baseline ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-age-v2 FAIL exit=0 missing=receipt_captured=,age_days=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-age-45 FAIL exit=0 missing=age_days=45 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-max-age-stale FAIL exit=0 missing=SHAPE_STALE_RECEIPT,age_days=45,max_age=30 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-max-age-fresh ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-v1-captured-absent FAIL exit=0 missing=captured=absent out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-v1-maxage-unknown FAIL exit=0 missing=SHAPE_AGE_UNKNOWN out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm shape-maxage-regression FAIL exit=0 missing=SHAPE_STALE age_days=45 max_age=30 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm score-unchanged FAIL no pinned receipt
+C82_C2 arm compare-content-blind ok exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-transient FAIL exit=0 missing=transient=1 out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm compare-counts FAIL exit=0 missing=added=1,removed=1,changed=1,first= out=OMP_SHAPE_COMPARE: IN_SYNC entries=3 receipt=3 added=0 removed=0 changed=0 transient=0
+C82_C2 arm selftest ok exit=0 cases=100
+C82_C2: UNMET held=4/13
+exit=1
