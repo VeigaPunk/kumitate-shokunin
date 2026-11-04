@@ -3295,7 +3295,7 @@ lessons) — honest verdicts, not regressions. Counting command: `for n in 65 66
 Base `3c369336218329e30248b5d69c41348c02658169`; scaffolding rev `c5bb8a31d6d1e32b260cdc87583c79b2715cf842`
 (open plan + receipts + wave spec/dispatch); Amendment 1 `50baaea0f7b4b6fa73bc477c7d9b08862a8c1870`
 (pre-data FREEZE-FIX: authorized A re-measure, 3 gate-pin additions, C2 predicate shape, seat-count
-correction); work rev `<work rev>` (C1 recreate + C2 declarations + re-pins + repairs + green
+correction); work rev `0d2185b3df5705fda8212177924e215d72a38147` (C1 recreate + C2 declarations + re-pins + repairs + green
 receipts). Dispatch: one v1 wave, 10 seats (attack 4/10 = 40 %: mutation-tester, sentinel, critic,
 reviewer; connectors 1; executors 3; scribe 1; scout 1) under `ufo-wave-policy.json` band 8–16 —
 the §3 floor is met inside the wave, with the canonical planner seat held by the L1 (validator
