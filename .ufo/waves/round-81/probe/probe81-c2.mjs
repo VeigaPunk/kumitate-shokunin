@@ -14,7 +14,7 @@
  * otherwise; 64 usage.
  */
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -78,8 +78,9 @@ function main(argv) {
     const root = join(work, name);
     mkdirSync(root, { recursive: true });
     for (const e of entries) {
-      if (e.kind === 'dir') mkdirSync(join(root, e.name), { recursive: true, mode: e.mode });
-      else writeFileSync(join(root, e.name), '');
+      const full = join(root, e.name);
+      if (e.kind === 'dir') { mkdirSync(full, { recursive: true }); chmodSync(full, e.mode); }
+      else { writeFileSync(full, ''); chmodSync(full, e.mode); }
     }
     return root;
   };
@@ -171,7 +172,7 @@ function main(argv) {
   arm('stale-does-not-score', () => {
     const entries = entriesFor();
     const file = receipt('score.json', { contract: V2, captured_at: iso(45 * 86400000), entries });
-    const r = run(proxyTool, ['--json', '--lane', opts.lane, '--omp-shape', file]);
+    const r = run(proxyTool, ['--json', '--self', opts.lane, '--omp-shape', file]);
     let j;
     try { j = JSON.parse(r.out.slice(r.out.indexOf('{'))); } catch { return { ok: false, detail: `unparsable json exit=${r.code}` }; }
     return {
@@ -182,7 +183,7 @@ function main(argv) {
 
   // 12 — the age is a census surface, not a proxy term (no score widening).
   arm('proxy-terms-unchanged', () => {
-    const r = run(proxyTool, ['--json', '--lane', opts.lane]);
+    const r = run(proxyTool, ['--json', '--self', opts.lane]);
     let j;
     try { j = JSON.parse(r.out.slice(r.out.indexOf('{'))); } catch { return { ok: false, detail: `unparsable json exit=${r.code}` }; }
     const keys = Object.keys(j.terms ?? {});
@@ -202,7 +203,9 @@ function main(argv) {
 
   // 14 — the census suite still passes, including the new v2 cases.
   arm('selftest', () => {
-    const r = run(censusTool, ['--selftest', '--work', join(work, 'selftest')]);
+    const stWork = join(work, 'selftest');
+    mkdirSync(stWork, { recursive: true });
+    const r = run(censusTool, ['--selftest', '--work', stWork]);
     return { ok: r.code === 0 && /VERDICT: PASS \(\d+ cases\)/.test(r.out), detail: `exit=${r.code} out=${r.out.split('\n').at(-1)}` };
   });
 

@@ -295,8 +295,8 @@ A=889
 C=41
 C1=19
 C1_total=19
-C2=201
-C2_total=201
+C2=202
+C2_total=202
 S_members=88
 S_sections=88
 R_members=92
@@ -327,7 +327,7 @@ pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23
 pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
-pin.omp-census=405cf5d43d6ad37de53c76b4b2bef4f44afd2a5480292ed8166f719185f9cbad
+pin.omp-census=ba7cbc8f7f507fcf932d06b53e11d0c0801921000d0ba3d35b27ab37b70c322f
 pin.omp-shape=8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
@@ -349,7 +349,7 @@ pin.report-receipt-diff=cd94e8aa96a61d7ee0fb9993e4a00e21d1348030880afbe8ed07b6b9
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
-pin.ready-handoff=f8b4a92b58d351615b714bdf03052420aaa79854153c5e23b7c714178fbdf531
+pin.ready-handoff=f8fc11f12f74505e95bdf1674c3626e4b810f6be99453177d5bd729349712995
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
 -->
 
@@ -468,6 +468,8 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 81 | operability (capability acquisition `ready-handoff`; integer held 9 — terminal under `f_O`; sourced on S236) | `node .ufo/waves/round-81/probe/probe81-c1.mjs --tool <base archive>` → `C81_C1: UNMET held=0/16` exit 1 (`controls/c1-base.txt`); constant-printer control `held=3/16` (`controls/c1-stub.txt`); no instrument judged the `.ready` + dispatch pair before the orchestrator took it | at `d140f288` → `C81_C1: HELD held=16/16` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0 (`close/handoff-admission.txt`); suite 34/34; counter `pin.ready-handoff` |
+| 81 | coverage:omp (self-describing receipt; integer held 10; sourced on S237) | `node .ufo/waves/round-81/probe/probe81-c2.mjs --tool <base archive>` → `C81_C2: UNMET held=4/15` exit 1 (`controls/c2-base.txt`, Amendment 2); stub `held=5/15` (`controls/c2-stub.txt`); the receipt carried no capture instant | at `d140f288` → `C81_C2: HELD held=15/15` exit 0 (`close/c2-probe.txt`); `--shape` reads `captured=2026-11-04 age_days=0`; `--max-age 30` on a 45-day receipt → `SHAPE_STALE` exit 1; v1 `SHAPE_VERSION` exit 2; future `SHAPE_CLOCK` exit 2; proxy still `coverage_omp=10` on a stale receipt |
 | 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at `ab3c64e9aaaff80faf3a2c93743287e44def4084` → `BINDGUARD50: GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`); the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; the explicit `/tmp` refusal pre-landed at `378b6e7` and G50 already read 8/8 at `6927903` (attribution limit, `close/CritCloseClaims.md` §2); auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
 | 51 | operability (capability acquisition: receipt-attest; C2 frontier entry invocation-attestation sourced on S100/S101) | A51 at base c90b9de9 → ATTEST_UNMET held=0/9; D51 → DOCTRINE_UNMET held=0/5 | A51 held=9/9 at the measured close rev fef67079 (compositional — committed FINAL reads 8/9 at 57333ead; R52-11 mined into Q44); D51 held=5/5 | .ufo/waves/round-51/{base,close,probe}; corpus/knowledge/invocation-attestation.md; report .ufo/reports/round-51/kumitate.md |
 | 52 | operability (capability deepening: receipt-attest v2, contract kumitate-receipt-attest-v2; C2 frontier entry fail-closed-clock-validation sourced on S102/S103) | A52 at base 02c01258 → ATTEST52_UNMET held=5/13 (B1 B1c B2 B2e B3 B4 B5 B5c MISS; B2c B3c B4c B4d B6 pass under v1); D52 → DOCTRINE52_UNMET (E1 entry-absent, checks=1) | ATTEST52_HELD held=13/13 at the measured close rev R1 (close/FINAL-<R1>.txt; idempotence at R2); DOCTRINE52_HELD held=5/5 at R1 | .ufo/waves/round-52/{plan.md,probe/,base/,receipts/,build/,w1/}; corpus/knowledge/fail-closed-clock-validation.md; rows S102/S103; report .ufo/reports/round-52/kumitate.md |
@@ -565,6 +567,27 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 82 — pre-registration (2026-11-04, written by round 81).** Candidates, not commitments:
+(1) **The handoff gate is advisory** — nothing fleet-side invokes `ready-handoff`; rounds 79 and 80
+re-read DRIFT and were dispatched anyway (round-81 scout F1). Either route the gate into the
+dispatcher's take path (an L0/host decision, the file is orchestrator-owned) or record the gate as
+lane-side admission only and stop implying enforcement.
+(2) **Wave↔dispatch binding, `l1` liveness, report-path uniqueness** (scout F4/F5/F6): the dispatch
+filename stem and any `wave` field in the payload must agree with `ready.wave`; `l1` should resolve
+to a registered agent; two seats should not claim one `Report:` path. Each is a new arm on the frozen
+counter, so it is a new counter version, not an edit.
+(3) **Role taxonomy and band authority** (scout F8/F9): the gate admits `labrat`/`distiller` while
+the validator refuses them, and the gate's `8:16` duplicates `ufo-wave-policy.json`'s
+`waveMinLanes`/`waveMaxLanes`. Reconcile to one authority or document the divergence at both ends.
+(4) **Adopt before freeze** — `plan-before-ready --round 81` reads `FAIL … MAP_DRIFT` because the
+plan was frozen before the 10th spotcheck recurrence was adopted (the same class as the r80 D3).
+Make the open repair the first commit of the round, before the freeze commit.
+(5) **`spotcheck-adopt --adopt-pending`** — the recurrence has now landed 10 times; a batch mode that
+adopts every uncovered spotcheck in one journaled pass turns the open repair into one command.
+(6) **C2 residue** (round-81 C2 scout): the proxy never names the v2 receipt in its own docs, and
+`--compare` does not disclose an age; a one-line doc fix plus an optional age line on the
+non-scoring compare.
 
 **Round 81 — pre-registration (2026-11-04, written by round 80).** Candidates, not commitments:
 (1) **`POINTER_DEAD` precision** (carried from round 79 candidate 3) — the gate flags prose examples that
@@ -1939,7 +1962,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `origin-pin-restore` | Re-establish a pinned immutable origin clone from a `kumitate-origin-pin-v1` contract's verbatim `recreate` recipe on a restored host (`--no-hardlinks` object independence, pinned-rev detach checkout, `chmod -R a-w`) and run the full proxy recompute — src resolution, term recompute, `--strict` and selftest — demonstrating the coverage proxies end-to-end on the run-15 Linux host after rounds 70–73 fail-closed on Windows | `git -C /fast/scratch/hyaku/kumitate-pin/src rev-parse HEAD` → `31c465f15669f744848bd9f5d56191c5085670f7` (a-w verified, `build/K74ExecPinRestore/recreate-transcript.txt`); `node scripts/proxy-check.mjs` → `PROXY: MATCH` exit 0 and `--strict` → `PROXY: MATCH` exit 0 (`close/proxy-check.txt`, `close/proxy-check-strict.txt`); five fail-closed arms held (sentinel seat, `w1/K74LabratFailClosed.md`); S223 grounds `--no-hardlinks` | round 74 |
 | `origin-tip-drift` | Compare the lane's pinned origin revision with the live origin in one read-only command: both HEADs, the commit count between them, and the changed-path count classified by the proxy's own frozen layer predicates; one `ORIGIN_TIP_DRIFT:` line with `IN_SYNC` (exit 0), `MOVED` (exit 1) or `FAIL-CLOSED` (exit 2), plus a `--json` object, additive to every default-mode term | `close/tip-drift.txt`; `close/proxy-selftest.txt` (132/132); `close/c2-mutants.txt` | 75 |
 | `spotcheck-adopt` | Own the corpus coverage repair the non-author closure forces every round: enumerate `corpus/lessons/round-*-verifier-spotcheck.md`, adopt one by writing the missing README map row and/or the `readme-map.json` covered entry (append-only, both halves, idempotent, pre-image rollback), and predict the next closure artifact — with the unchanged `readme-map.mjs` as the child oracle and refusals for anything outside its scope | `node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED` with identical bytes (`close/c2-idempotent.txt`); `--selftest` `SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)`; `pin.spotcheck-adopt` | round 76 |
-| `ready-handoff` | Admit an inline spawn handoff before the orchestrator takes it: the five-key `.ready` contract against the dispatch it names, with typed fail-closed refusals (absent/escaping/unsafe/malformed) and twelve policy findings (lane/round/wave agreement, band, attack share, connector cap, planner seat, unknown role, per-seat model key, seat-name shape/duplicates, `/skill:godspeed` lead, lane-root and relative-round-path rules, report-trailer resolution), one exit-bearing verdict and a `--json` body; reads only the ready file and its dispatch and writes nothing | `node scripts/ready-handoff.mjs --lane . --round 81 --wave w1` → `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0; `--selftest` → `READY_HANDOFF_SELFTEST: 31/31 pass`; frozen counter `C81_C1: HELD held=16/16`; base tree 0/16, constant-printer stub 3/16 (`.ufo/waves/round-81/controls/`) | round 81 |
+| `ready-handoff` | Admit an inline spawn handoff before the orchestrator takes it: the five-key `.ready` contract against the dispatch it names, with typed fail-closed refusals (absent/escaping/unsafe/malformed) and twelve policy findings (lane/round/wave agreement, band, attack share, connector cap, planner seat, unknown role, per-seat model key, seat-name shape/duplicates, `/skill:godspeed` lead, lane-root and relative-round-path rules, report-trailer resolution), one exit-bearing verdict and a `--json` body; reads only the ready file and its dispatch and writes nothing | `node scripts/ready-handoff.mjs --lane . --round 81 --wave w1` → `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0; `--selftest` → `READY_HANDOFF_SELFTEST: 34/34 pass`; frozen counter `C81_C1: HELD held=16/16`; base tree 0/16, constant-printer stub 3/16 (`.ufo/waves/round-81/controls/`) | round 81 |
 | `omp-shape-compare` | Compare the live OMP root against a `kumitate-omp-shape-v1` receipt, counting added, removed and changed names/kinds/modes without reading member contents or altering proxy scores; exit 0 IN_SYNC, 1 DRIFT, 2 fail-closed | `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` → `OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`; frozen counter `probe78-c2.mjs` → `C78_C2: HELD held=11/11`; selftest 79 cases; `MUTANTS78_C2: ALL-KILLED killed=10/10` | round 78 |
 
 *Round-77 note (capabilities; the paragraphs above stay as written).* `spotcheck-adopt` deepened v1 → v2 (`kumitate-spotcheck-adopt-v2`): the journal is published before either destination write, recovery runs on every non-selftest arm with exact `RECOVERED <target> rolled-back|complete`, a corrupt pre-image is `REFUSED_ORACLE` with the journal retained, a foreign journal is `REFUSED_JOURNAL_FOREIGN`, a symlinked destination parent is `REFUSED_PATH_ESCAPE`, the row is inserted after the last lessons row, and a finished journal is retired by rename. Evidence: `C77_C2: HELD held=13/13` at M (`.ufo/waves/round-77/close/c2-probe.txt`), selftest 26/26, mutant battery 8/8. This is a deepening, not a new row.
@@ -3752,3 +3775,56 @@ regression; receipt tokens never double-reported; `REPORT_RECEIPT_SELFTEST: PASS
   live MATCH reading, and the live-root flake is routed to round 80 alongside the census-transient class).
 - SOURCES 167 → 171 (S229–S231 tier A `mined`, S232 tier C `rejected`; tier A 143 → 146, C 8 → 9); census
   start/end exit 0 (six carried W04).
+
+## Round 81 — declaration and verdicts (2026-11-04, Linux run-15 host; ONE v1 wave of 14 seats + the L1 planner seat)
+
+Base `77c7a8b3fe7f3cebe681065da283de0ae38ddb5b` (round-80 verifier spot-check, the lane's remote tip);
+freeze `f8783f4be4d7e14aedf125e2c3323d46ce0da403` (plan, both frozen counters, open receipts, pre-data
+controls); scaffolding `d140f2883170cc1b0859ba5359bcdac3123a676e` (both instruments, the pin key, the
+stanza, SKILL rows, two sourced entries + captures). Amendment 1 is append-only in `plan.md` (counter
+fixture repairs, the CLI `--max-age` defect the frozen arm found, the 34-case suite count). The work
+revision is the commit carrying this section; the `close/` receipts are stamped with it in the following
+commit. Dispatch: one v1 wave, 14 seats (policy-attack 4/14 = 29 %: reviewer ×2, critic, mutation-tester;
+sentinel is a fifth adversarial seat, 5/14 = 36 % by the looser reading; connector 1; executors 3; scribes
+2; scouts 2; revenger 1) under `ufo-wave-policy.json` band 8–16; the canonical planner seat is held by the
+L1 (the validator rejects `planner` as a swarm role).
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | operability (capability acquisition `ready-handoff`; integer held at its terminal 9) | new `scripts/ready-handoff.mjs` (`kumitate-ready-handoff-v1`); frozen counter `probe81-c1.mjs` (16 arms); `pin.ready-handoff` |
+| C2 | coverage:omp (self-describing receipt; integer held at 10) | `scripts/omp-census.mjs` shape v2 (`captured_at`, `age_days`, `--max-age`, `SHAPE_VERSION`, `SHAPE_CLOCK`); frozen counter `probe81-c2.mjs` (15 arms); `pin.omp-shape` |
+
+**C1 — operability: capability `ready-handoff`.** Predicate:
+`node .ufo/waves/round-81/probe/probe81-c1.mjs --set c1` → `C81_C1: HELD held=16/16` exit 0 at M
+(`close/c1-probe.txt`). Before at a `git archive 77c7a8b3` tree: `held=0/16` (`controls/c1-base.txt`,
+the tool absent); the constant-printer stub reads `held=3/16` (`controls/c1-stub.txt`). After at M: the
+round's own handoff reads `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0
+(`close/handoff-admission.txt`); a 7- or 17-seat wave reads `DRIFT BAND`; a dispatch outside the round
+dir reads `FAIL-CLOSED DISPATCH_OUTSIDE`; an absent dispatch `FAIL-CLOSED DISPATCH_ABSENT`; the suite is
+`READY_HANDOFF_SELFTEST: 34/34 pass`. Limits: the gate is advisory (no fleet-side caller), and the
+wave-binding, `l1`-liveness and report-path gaps are disclosed in `corpus/lessons/round-81.md` §Limits.
+
+**C2 — coverage:omp: the receipt carries its capture instant.** Predicate:
+`node .ufo/waves/round-81/probe/probe81-c2.mjs --set c2` → `C81_C2: HELD held=15/15` exit 0 at M
+(`close/c2-probe.txt`). Before at the base tree: `held=4/15` (`controls/c2-base.txt`, re-measured under `plan.md`
+Amendment 2; the freeze-time fixtures read 1/15); the constant printer reads `held=6/15`
+(`controls/c2-stub.txt`). After at M: `--shape .ufo/pins/omp-shape.json` reads
+`OMP_CENSUS: CLEAN (… captured=2026-11-04 age_days=0)` exit 0; a 45-day receipt reads `age_days=45` and
+`--max-age 30` → `SHAPE_STALE age_days=45 max_age=30` exit 1; a v1 receipt is `SHAPE_VERSION want=…v2
+got=…v1` exit 2; a future instant is `SHAPE_CLOCK` exit 2; `--compare` still reads a legacy receipt
+`IN_SYNC`; the proxy on a 45-day receipt still reads `MATCH coverage_omp=10`; suite 97 → 98 cases
+(`close/census-selftest.txt`). The frozen arm found a real CLI defect (`main()` dropped `--max-age`);
+the fix and its regression case are the round's mined mistake.
+
+- Same-commit re-measure: A 886 → 889 (the new gate + the two frozen counters), C 39 → 41 (two checklist
+  items), C2/C2_total 198 → 202 (two knowledge entries + the lesson), re-pins `pin.proxy-check`
+  `fa79c279…` → `9ce56643…`, `pin.omp-census` `f19cb1b3…` → measured tip, `pin.omp-shape`
+  `84e41b9f…` → `8b6aaa79…`, new `pin.ready-handoff=f8b4a92b…`.
+- Routed repairs (not claims): the 10th spotcheck recurrence (adopted, transcript committed); R80-1 …
+  R80-12 answered in `corpus/lessons/round-81.md` and `corpus/lessons/round-80.md` §Errata; QUALITY Q74;
+  the S117/S118 `used-by` reverts.
+- Axes: operability 9 (terminal; a new capability row entered, so the stagnation window restarts at 81),
+  coverage:omp 10 (integer held; the measurement surface gained its capture instant), `coverage` (retired)
+  and the three layer terms unchanged and byte-consistent; no axis harmed.
+- SOURCES 173 → 175 (S236/S237 tier A `mined`, captures pinned, `SOURCE_CAPTURE: CLEAN captures=67`);
+  census start/end exit 0 (six carried W04).

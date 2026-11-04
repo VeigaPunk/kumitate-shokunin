@@ -1,0 +1,17 @@
+C81_C1 arm clean-fixture-ready PASS exit=0 out=READY_HANDOFF: READY wave=w1 seats=10 attack=3/10 connector=1 roles=reviewer=1,critic=1,mutation-tester=1,connector=1,executor=3,scribe=3
+C81_C1 arm round-81-live-ready PASS exit=0 out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=scout=2,connector=1,executor=3,mutation-tester=1,reviewer=2,critic=1,sentinel=1,scribe=2,revenger=1
+C81_C1 arm band-below PASS exit=1 out=READY_HANDOFF: DRIFT BAND (7 seats outside 8:16)
+C81_C1 arm band-above PASS exit=1 out=READY_HANDOFF: DRIFT BAND (17 seats outside 8:16)
+C81_C1 arm attack-share PASS exit=1 out=READY_HANDOFF: DRIFT ATTACK_SHARE (2/10 attack seats below 25%)
+C81_C1 arm connector-cap PASS exit=1 out=READY_HANDOFF: DRIFT CONNECTOR_COUNT (3 connector seats (at most 2))
+C81_C1 arm planner-refused PASS exit=1 out=READY_HANDOFF: DRIFT PLANNER_SEAT,ATTACK_SHARE (seat K81S01 is a frozen-topology planner)
+C81_C1 arm model-key-refused PASS exit=1 out=READY_HANDOFF: DRIFT ARTIFACT_KEYS (task[0] carries model (only name/agent/task are dispatch fields))
+C81_C1 arm godspeed-required PASS exit=1 out=READY_HANDOFF: DRIFT GODSPEED (seat K81S01 does not lead with /skill:godspeed)
+C81_C1 arm task-lane-root PASS exit=1 out=READY_HANDOFF: DRIFT TASK_LANE_ROOT (seat K81S01 task text does not name /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/w-control-c1b/task-root/kumitate-shokunin)
+C81_C1 arm relative-wave-path PASS exit=1 out=READY_HANDOFF: DRIFT RELATIVE_WAVE_PATH (seat K81S02 names a lane-relative .ufo/waves path)
+C81_C1 arm ready-keys PASS exit=1 out=READY_HANDOFF: DRIFT READY_KEYS (expected lane,round,wave,dispatch,l1, got dispatch,extra,l1,lane,round,wave)
+C81_C1 arm dispatch-escape PASS exit=2 out=READY_HANDOFF: FAIL-CLOSED DISPATCH_OUTSIDE (dispatch /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/w-control-c1b/escape.json is not under /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/w-control-c1b/dispatch-escape/kumitate-shokunin/.ufo/waves/rou
+C81_C1 arm dispatch-absent PASS exit=2 out=READY_HANDOFF: FAIL-CLOSED DISPATCH_ABSENT (no dispatch at /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/w-control-c1b/dispatch-absent/kumitate-shokunin/.ufo/waves/round-81/w1-dispatch.json)
+C81_C1 arm usage-64 PASS exit=64 out=--round N is required usage: node scripts/ready-handoff.mjs --round N --wave NAME [--lane DIR] [--ready FILE] [--json] [--band LO:HI] [--attack-pct P] | --selftest [--work DIR]
+C81_C1 arm selftest PASS exit=0 out=READY_HANDOFF_SELFTEST: 31/31 pass
+C81_C1: HELD held=16/16 tool=/fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs sha=1bed8387

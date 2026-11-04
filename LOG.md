@@ -2615,3 +2615,46 @@ counters re-reading 13/13 and 12/12 against the final bytes; what the wave rejec
 counters cannot see are recorded in the lesson's `## Wave integration` and `## Limits`.
 
 - 2026-11-04 — round 80 (gate-required one-line record; the full entry is the section above): C1 operability — capability deepening `spotcheck-adopt` v3 (two readings `SPOTCHECK_COVERAGE:`/`MAP:`, delta-scoped `--adopt`; frozen counter `C80_C1: HELD held=13/13`, base 6/13, constant-CLEAN stub 3/13; selftest 26 → 28; the 9th spotcheck recurrence adopted through the new rule); C2 coverage:omp — the O terms default to the committed pinned shape receipt (`source=snapshot`, `--omp-live` opt-in; receipt re-captured 65, `pin.omp-shape` re-pinned; frozen counter `C80_C2: HELD held=12/12`, base 4/12, constant-JSON stub 1/12; proxy selftest 159 → 163); stanza `A` 884 → 886, `O_members` 64 → 65, `C2` 194 → 198; `PROXY: MATCH`, checklists 39/39, README map 198/198, SOURCES 171 → 173.
+
+## Round 81 — admit the handoff, age the receipt (2026-11-04, Linux run-15 host; ONE v1 wave of 14 seats)
+
+Base `77c7a8b3fe7f3cebe681065da283de0ae38ddb5b`; freeze `f8783f4be4d7e14aedf125e2c3323d46ce0da403`
+(plan, both frozen counters, open receipts, pre-data controls: base 0/16 and 4/15, stubs 3/16 and 6/15 — Amendment 2);
+scaffolding `d140f2883170cc1b0859ba5359bcdac3123a676e` (new `scripts/ready-handoff.mjs`; `omp-census`
+shape v2 with `captured_at` + age disclosure + opt-in `--max-age`; `pin.ready-handoff`; two sourced
+entries S236/S237 + captures; stanza C2 201, A 889, C 41). Amendment 1 (append-only, `plan.md`) records
+the counter-fixture repairs and the CLI `--max-age` defect the frozen arm found.
+
+Claims: **C1 operability** — capability `ready-handoff` (`kumitate-ready-handoff-v1`), frozen counter
+`probe81-c1.mjs` (16 arms; base 0/16, stub 3/16, close 16/16); **C2 coverage:omp** — the shape receipt is
+self-describing (`kumitate-omp-shape-v2`), frozen counter `probe81-c2.mjs` (15 arms; base 4/15, stub 6/15 under Amendment 2,
+close 15/15). Both axis integers hold (operability 9 terminal, coverage:omp 10); both moves are surface
+changes their counters measure.
+
+C1's mechanism: a five-key `.ready` contract judged against the dispatch it names, with six fail-closed
+refusals (`READY_ABSENT`, `READY_MALFORMED`, `DISPATCH_PATH`, `DISPATCH_OUTSIDE`, `PATH_UNSAFE`,
+`DISPATCH_ABSENT`/`DISPATCH_MALFORMED`) and twelve policy findings (lane/round/wave agreement, band,
+attack share, connector cap, planner refusal, unknown role, per-seat model key, seat-name shape and
+duplicates, `/skill:godspeed` lead, absolute lane root, lane-relative round-path ban, report-trailer
+resolution). The round's own handoff reads `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14
+connector=1`. It is advisory until the dispatcher calls it — rounds 79 and 80, re-read, both answer DRIFT
+and were dispatched anyway; that limit is the round's first §Limits item and a round-82 candidate.
+
+C2's mechanism: `kumitate-omp-shape-v2` = `{contract, captured_at, entries}`; `--snapshot` stamps the
+instant inside the same tmp+rename atomic pair; `--shape` discloses `captured=<date> age_days=<n>` and
+`--max-age DAYS` gates staleness (`SHAPE_STALE`, exit 1); a v1 receipt is `SHAPE_VERSION` exit 2 and a
+future instant `SHAPE_CLOCK` exit 2, while `--compare` still reads a legacy receipt. The age never scores
+(a 45-day receipt still reads `coverage:omp 10`).
+
+Verification: `PROXY: MATCH (A=889 C=41 operability=9; C1=19/19 C2=201/201 coverage=10; S=88/88;
+R=92/92; K=55/55; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match;
+source=snapshot)` `--strict` exit 0; spotcheck `CLEAN spotchecks=47 uncovered=0` + `MAP: CLEAN`;
+README map 201/201/201; SOURCES 173 → 175 (tier A 149, captures 67); kimi census CLEAN 55/55; sources
+census exit 0; claims gate MATCH; anchor truth CLEAN; census `--shape` age 0 and `--compare` IN_SYNC.
+Proxy selftest 163/163; ready-handoff suite 34/34; census suite 97 → 98.
+
+Sources: S236 (Kubernetes admission controllers) and S237 (RFC 9111 Age) admitted with committed
+captures; S117/S118 `used-by` reverts. The 10th spotcheck recurrence is adopted with its transcript
+committed (`open/spotcheck-adopt.txt`) — the r80 spot-check's R80-11 asked for exactly that.
+
+- 2026-11-04 — round 81 (gate-required one-line record; the full entry is the section above): C1 operability — capability acquisition `ready-handoff` (`kumitate-ready-handoff-v1`: five-key `.ready` contract judged against the dispatch it names, 12 policy findings, six fail-closed refusals; frozen counter `C81_C1: HELD held=16/16`, base 0/16, stub 3/16; suite 34/34; this round's handoff READY with 14 seats); C2 coverage:omp — the shape receipt becomes self-describing (`kumitate-omp-shape-v2`: `captured_at`, `age_days`, opt-in `--max-age`, `SHAPE_VERSION`/`SHAPE_CLOCK`; frozen counter `C81_C2: HELD held=15/15`, base 4/15, stub 6/15 (Amendment 2); census suite 97 → 98; the frozen arm found a real CLI `--max-age` defect); stanza `A` 886 → 889, `C` 39 → 41, `C2` 198 → 202; `PROXY: MATCH --strict`, checklists 41/41, SOURCES 173 → 175, README map 202/202/202; the 10th spotcheck recurrence adopted with its transcript committed.

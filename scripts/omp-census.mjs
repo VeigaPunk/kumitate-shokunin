@@ -527,6 +527,7 @@ function materialise(dir, entries) {
 
 function selftest(work, io) {
   const base = work || process.env.OMP_CENSUS_SELFTEST_DIR || tmpdir();
+  if (work) mkdirSync(work, { recursive: true });
   const scratch = mkdtempSync(join(base, 'omp-census-selftest-'));
   const note = join(scratch, 'note.md');
   writeFileSync(note, DECLARED_NAMES.join('\n'));
@@ -737,6 +738,17 @@ function selftest(work, io) {
   check('shape-age-disclosed', { shape: backdated }, { code: 0, has: ['age_days=45', 'OMP_CENSUS: CLEAN'] });
   check('shape-max-age-stale', { shape: backdated, maxAge: 30 }, { code: 1, has: ['SHAPE_STALE age_days=45 max_age=30'] });
   check('shape-max-age-pass', { shape: backdated, maxAge: 60 }, { code: 0, has: ['OMP_CENSUS: CLEAN'], lacks: ['SHAPE_STALE'] });
+  // CLI dispatch: parseArgs -> main -> runShape must carry --max-age (round-81 reviewer finding;
+  // the 97-case suite passed while main() dropped the flag).
+  {
+    const out = [];
+    const err = [];
+    const code = main(['--shape', backdated, '--max-age', '30'], { out: (x) => out.push(x), err: (x) => err.push(x) });
+    ran++;
+    if (code !== 1 || !out.join('\n').includes('SHAPE_STALE age_days=45 max_age=30')) {
+      failures.push(`cli-max-age: exit=${code} out=${out.join(' | ').slice(0, 160)}`);
+    } else io.out('SELFTEST ok cli-max-age');
+  }
   const future = join(scratch, 'future.json');
   writeFileSync(future, JSON.stringify({ contract: SHAPE_CONTRACT,
     captured_at: new Date(Date.now() + 2 * 86400000).toISOString().replace(/\.\d{3}Z$/u, 'Z'),
@@ -907,6 +919,8 @@ function main(argv, io) {
 const isMain = process.argv[1]
   && resolve(process.argv[1]) === resolve(fileURLToPath(import.meta.url));
 if (isMain) {
+  // A reader that closes the pipe first (`| grep -q`) must not surface as a crash.
+  process.stdout.on('error', (e) => { if (e.code !== 'EPIPE') throw e; });
   const io = { out: (s) => process.stdout.write(`${s}\n`), err: (s) => process.stderr.write(`${s}\n`) };
   process.exitCode = main(process.argv.slice(2), io);
 }

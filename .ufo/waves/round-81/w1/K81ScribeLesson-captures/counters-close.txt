@@ -1,0 +1,44 @@
+rev=d140f2883170cc1b0859ba5359bcdac3123a676e
+captured_at=2026-11-04T06:58:29-03:00
+probe81-c1.sha=c837f011ac95c0d3301c31b5ee2b8d4b49481085825647ee8eb2cb5c14a7a2fb
+probe81-c2.sha=886991f25417b15fdd2e2299e35706c76cb9302a409ccd9e8969307356ef70ab
+ready-handoff.sha=f8b4a92b58d351615b714bdf03052420aaa79854153c5e23b7c714178fbdf531
+omp-census.sha=ba7cbc8f7f507fcf932d06b53e11d0c0801921000d0ba3d35b27ab37b70c322f
+receipt.sha=8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7
+$ node .ufo/waves/round-81/probe/probe81-c1.mjs --set c1
+C81_C1 arm clean-fixture-ready PASS exit=0 out=READY_HANDOFF: READY wave=w1 seats=10 attack=3/10 connector=1 roles=reviewer=1,critic=1,mutation-tester=1,connector=1,executor=3,scribe=3
+C81_C1 arm round-81-live-ready PASS exit=0 out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=scout=2,connector=1,executor=3,mutation-tester=1,reviewer=2,critic=1,sentinel=1,scribe=2,revenger=1
+C81_C1 arm band-below PASS exit=1 out=READY_HANDOFF: DRIFT BAND (7 seats outside 8:16)
+C81_C1 arm band-above PASS exit=1 out=READY_HANDOFF: DRIFT BAND (17 seats outside 8:16)
+C81_C1 arm attack-share PASS exit=1 out=READY_HANDOFF: DRIFT ATTACK_SHARE (2/10 attack seats below 25%)
+C81_C1 arm connector-cap PASS exit=1 out=READY_HANDOFF: DRIFT CONNECTOR_COUNT (3 connector seats (at most 2))
+C81_C1 arm planner-refused PASS exit=1 out=READY_HANDOFF: DRIFT PLANNER_SEAT,ATTACK_SHARE (seat K81S01 is a frozen-topology planner)
+C81_C1 arm model-key-refused PASS exit=1 out=READY_HANDOFF: DRIFT ARTIFACT_KEYS (task[0] carries model (only name/agent/task are dispatch fields))
+C81_C1 arm godspeed-required PASS exit=1 out=READY_HANDOFF: DRIFT GODSPEED (seat K81S01 does not lead with /skill:godspeed)
+C81_C1 arm task-lane-root PASS exit=1 out=READY_HANDOFF: DRIFT TASK_LANE_ROOT (seat K81S01 task text does not name /tmp/k81c1-8ZMBOx/task-root/kumitate-shokunin)
+C81_C1 arm relative-wave-path PASS exit=1 out=READY_HANDOFF: DRIFT RELATIVE_WAVE_PATH (seat K81S02 names a lane-relative .ufo/waves path)
+C81_C1 arm ready-keys PASS exit=1 out=READY_HANDOFF: DRIFT READY_KEYS (expected lane,round,wave,dispatch,l1, got dispatch,extra,l1,lane,round,wave)
+C81_C1 arm dispatch-escape PASS exit=2 out=READY_HANDOFF: FAIL-CLOSED DISPATCH_OUTSIDE (dispatch /tmp/k81c1-8ZMBOx/escape.json is not under /tmp/k81c1-8ZMBOx/dispatch-escape/kumitate-shokunin/.ufo/waves/round-81)
+C81_C1 arm dispatch-absent PASS exit=2 out=READY_HANDOFF: FAIL-CLOSED DISPATCH_ABSENT (no dispatch at /tmp/k81c1-8ZMBOx/dispatch-absent/kumitate-shokunin/.ufo/waves/round-81/w1-dispatch.json)
+C81_C1 arm usage-64 PASS exit=64 out=--round N is required usage: node scripts/ready-handoff.mjs --round N --wave NAME [--lane DIR] [--ready FILE] [--json] [--band LO:HI] [--attack-pct P] | --selftest [--work DIR]
+C81_C1 arm selftest PASS exit=0 out=READY_HANDOFF_SELFTEST: 31/31 pass
+C81_C1: HELD held=16/16 tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs sha=1bed8387
+exit=0
+$ node .ufo/waves/round-81/probe/probe81-c2.mjs --set c2
+C81_C2 arm snapshot-v2 PASS exit=0 contract=kumitate-omp-shape-v2 captured=2026-11-04T09:58:29Z entries=65/65
+C81_C2 arm shape-age-disclosed PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-11-04 age_days=0)
+C81_C2 arm shape-v1-refused PASS exit=2 out=SHAPE_VERSION want=kumitate-omp-shape-v2 got=kumitate-omp-shape-v1
+C81_C2 arm compare-v1-accepted PASS exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+C81_C2 arm shape-age-backdated PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-stale PASS exit=1 out=SHAPE_STALE age_days=45 max_age=30 | OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-pass PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm clock-future-refused PASS exit=2 out=SHAPE_CLOCK captured_at=2026-11-06T09:58:29Z is in the future
+C81_C2 arm captured-at-required PASS exit=2 out=SHAPE_INVALID
+C81_C2 arm compare-v2 PASS exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+C81_C2 arm stale-does-not-score PASS exit=0 verdict=MATCH coverage_omp=10 O_members=65
+C81_C2 arm proxy-terms-unchanged PASS exit=0 injected=none O_members=65
+C81_C2 arm receipt-pinned PASS pin=8b6aaa79e24f computed=8b6aaa79e24f contract=kumitate-omp-shape-v2
+C81_C2 arm selftest PASS exit=0 out=VERDICT: PASS (98 cases)
+C81_C2 arm usage-max-age PASS exit=64 out=omp-census: --max-age is only meaningful with --shape usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR]
+C81_C2: HELD held=15/15 tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs
+exit=0

@@ -1237,3 +1237,11 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Shown able to fail.** The r79 C2 arm 2 before Amendment 2: with the no-deduplicate rule applied the r78 report yields four `POINTER_DEAD` lines, never ten — the arm as written was unreachable.
   - **Limit.** Proves reachability and agreement, not that the arms are decisive; a mutated control can still pass an arm set that is reachable but weak (the mutation batteries are the separate guard).
   - **Supersedes.** None. Extends Q43/Q44's control discipline from targets to arm expectations.
+
+- **Q74 — a lesson's Gate quotes record the quote's true word count, and the count is re-derivable from the capture (round 81).** Grounding: routed defects R80-5 and r79 D4 (two rounds recorded "21 words" for a 19-word quote; `corpus/lessons/round-80-verifier-spotcheck.md` §Discernment, `corpus/lessons/round-79.md` §Erratum). The Gate's per-row word count is the only machine-checkable part of the ≤25-word rule, and it was wrong twice.
+  - **Who checks.** The lane before committing a lesson with new rows; the non-author closure re-runs the command on the committed capture.
+  - **Command.** For every new Gate row, extract the quoted text (the exact bytes between the quote marks the row records), then `wc -w` over it, and compare with the number the row states: `python3 - <<'PY' … q=open('corpus/lessons/round-<N>.md').read(); …` — in practice the closure re-derives it with `grep -o '"[^"]*"' <capture> | grep -F '<first four words>'` plus `wc -w`. A row whose stated count differs from the measured count is a record defect, even when the quote is ≤25 words.
+  - **Fails when.** The stated count differs from `wc -w` of the quoted bytes; or the quote cannot be located verbatim in the committed capture (that is a fabrication check, Q3's sibling).
+  - **Shown able to fail.** Round 80's S119 row recorded 21 words for a 19-word quote; the same class recurred from round 79 (D4).
+  - **Limit.** Counts words, not whether the words ground the claim; a verbatim quote can still be irrelevant.
+  - **Supersedes.** None. Adds the arithmetic half of the ≤25-word rule to Q3's verbatim discipline.

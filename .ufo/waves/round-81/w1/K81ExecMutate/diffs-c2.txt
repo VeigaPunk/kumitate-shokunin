@@ -1,0 +1,74 @@
+=== diff c2-m01-captured ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m01-captured/scripts/omp-census.mjs	2026-11-04 07:02:16.564387123 -0300
+@@ -170,9 +170,7 @@
+ function validateShape(doc) {
+   const keys = doc && typeof doc === 'object' ? Object.keys(doc).sort().join(',') : '';
+   const legacy = doc && doc.contract === LEGACY_SHAPE_CONTRACT && keys === 'contract,entries';
+-  const current = doc && doc.contract === SHAPE_CONTRACT && keys === 'captured_at,contract,entries'
+-    && typeof doc.captured_at === 'string' && ISO_SECOND.test(doc.captured_at)
+-    && !Number.isNaN(Date.parse(doc.captured_at));
++  const current = doc && doc.contract === SHAPE_CONTRACT;
+   if (!legacy && !current) {
+     throw Object.assign(new Error('invalid shape contract, captured_at or entries'), { code: 'SHAPE_INVALID' });
+   }
+=== diff c2-m02-v1 ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m02-v1/scripts/omp-census.mjs	2026-11-04 07:02:16.572387143 -0300
+@@ -466,7 +466,7 @@
+     io.out(e.code);
+     return 2;
+   }
+-  if (doc.contract !== SHAPE_CONTRACT) {
++  if (doc.contract !== SHAPE_CONTRACT && doc.contract !== LEGACY_SHAPE_CONTRACT) {
+     io.out(`SHAPE_VERSION want=${SHAPE_CONTRACT} got=${doc.contract}`);
+     return 2;
+   }
+=== diff c2-m03-invert-age ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m03-invert-age/scripts/omp-census.mjs	2026-11-04 07:02:16.581387165 -0300
+@@ -476,7 +476,7 @@
+     return 2;
+   }
+   let stale = false;
+-  if (maxAge !== null && age > maxAge) {
++  if (maxAge !== null && age < maxAge) {
+     stale = true;
+     io.out(`SHAPE_STALE age_days=${age} max_age=${maxAge}`);
+   }
+=== diff c2-m04-clock ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m04-clock/scripts/omp-census.mjs	2026-11-04 07:02:16.590387187 -0300
+@@ -471,7 +471,7 @@
+     return 2;
+   }
+   const age = receiptAgeDays(doc);
+-  if (age < 0) {
++  if (false) {
+     io.out(`SHAPE_CLOCK captured_at=${doc.captured_at} is in the future`);
+     return 2;
+   }
+=== diff c2-m05-age-exit ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m05-age-exit/scripts/omp-census.mjs	2026-11-04 07:02:16.599387210 -0300
+@@ -490,7 +490,7 @@
+   for (const f of res.findings) io.out(f);
+   const binding = res.verdict === 'CLEAN' ? ` bound=${res.counts.bound}/${res.counts.declared}` : '';
+   io.out(`OMP_CENSUS: ${res.verdict} (source=snapshot entries=${res.counts.entries} findings=${res.findings.length}${binding} captured=${doc.captured_at.slice(0, 10)} age_days=${age})`);
+-  return res.verdict === 'CLEAN' && !stale ? 0 : 1;
++  return res.verdict === 'CLEAN' && !stale && (maxAge !== null || age <= 30) ? 0 : 1;
+ }
+ 
+ // ---------------------------------------------------------------------------
+=== diff c2-m06-max-age ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs	2026-11-04 06:58:17.679054614 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c2-m06-max-age/scripts/omp-census.mjs	2026-11-04 07:02:16.606387227 -0300
+@@ -476,7 +476,7 @@
+     return 2;
+   }
+   let stale = false;
+-  if (maxAge !== null && age > maxAge) {
++  if (false) {
+     stale = true;
+     io.out(`SHAPE_STALE age_days=${age} max_age=${maxAge}`);
+   }

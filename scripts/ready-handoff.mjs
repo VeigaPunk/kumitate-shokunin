@@ -23,7 +23,7 @@
  * Reads: `<ready>`, the dispatch JSON it names, and nothing else. Never follows
  * a dispatch path outside `<lane>/.ufo/waves/round-<N>/`.
  */
-import { existsSync, lstatSync, readFileSync, readdirSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, readFileSync, readdirSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
@@ -102,6 +102,20 @@ export function judge(opts) {
   // --- fail-closed surface -------------------------------------------------
   let readyText;
   try { readyText = readFileSync(readyPath, 'utf8'); } catch { throw new Refusal('READY_ABSENT', `no ready file at ${readyPath}`); }
+  // F10 (round-81 wave): the handoff's own bytes must live in the lane, like the dispatch it names.
+  let readyLst;
+  try { readyLst = lstatSync(readyPath); } catch { throw new Refusal('READY_ABSENT', `no ready file at ${readyPath}`); }
+  if (!readyLst.isFile()) {
+    throw new Refusal('READY_UNSAFE', `ready path is not a regular file (${readyLst.isSymbolicLink() ? 'symlink' : 'non-file'}): ${readyPath}`);
+  }
+  try {
+    if (!inside(realpathSync(lane), realpathSync(readyPath))) {
+      throw new Refusal('READY_UNSAFE', `ready realpath escapes ${lane}`);
+    }
+  } catch (e) {
+    if (e instanceof Refusal) throw e;
+    throw new Refusal('READY_UNSAFE', `cannot resolve ${readyPath}`);
+  }
   let ready;
   try { ready = JSON.parse(readyText); } catch { throw new Refusal('READY_MALFORMED', 'ready file is not JSON'); }
   if (!ready || typeof ready !== 'object' || Array.isArray(ready)) throw new Refusal('READY_MALFORMED', 'ready file is not an object');
@@ -159,8 +173,8 @@ export function judge(opts) {
     if (extra.length) add('ARTIFACT_KEYS', `${where} carries ${extra.join(',')} (only name/agent/task are dispatch fields)`);
     if (typeof task.name !== 'string' || !task.name) { add('SEAT_NAME', `${where} has no name`); return; }
     if (!/^[A-Za-z][A-Za-z0-9]{1,31}$/.test(task.name)) add('SEAT_NAME', `${where} name ${JSON.stringify(task.name)} is not CamelCase <=32`);
-    if (names.has(task.name)) add('SEAT_DUPLICATE', `seat ${task.name} appears twice`);
-    names.add(task.name);
+    if (names.has(task.name.toLowerCase())) add('SEAT_DUPLICATE', `seat ${task.name} appears twice (case-insensitive)`);
+    names.add(task.name.toLowerCase());
     if (typeof task.agent !== 'string' || !task.agent) { add('ROLE_UNKNOWN', `${where} (${task.name}) has no role`); return; }
     if (task.agent === 'planner') { add('PLANNER_SEAT', `seat ${task.name} is a frozen-topology planner`); return; }
     if (!ROLES.has(task.agent)) { add('ROLE_UNKNOWN', `seat ${task.name} role ${JSON.stringify(task.agent)} is not a swarm role`); return; }
@@ -317,6 +331,23 @@ function runSelftest(work) {
     doc.taskCall.context = doc.taskCall.context.replace(/Every `Report:` trailer path[^]*?<that path>\. /, '');
     writeFileSync(fx.dispatch, JSON.stringify(doc));
   }, (v) => v.verdict === 'DRIFT' && v.findings.includes('REPORT_TRAILER'));
+  judgeCase('duplicate-case-variant', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.taskCall.tasks[1].name = doc.taskCall.tasks[0].name.toLowerCase();
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('SEAT_DUPLICATE'));
+  judgeCase('ready-symlink-escape', (fx) => {
+    const outside = join(fx.lane, 'outside-ready.json');
+    writeFileSync(outside, readFileSync(join(fx.dir, 'w1.ready')));
+    rmSync(join(fx.dir, 'w1.ready'));
+    symlinkSync(outside, join(fx.dir, 'w1.ready'));
+  }, (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'READY_UNSAFE');
+  judgeCase('ready-symlink-inside', (fx) => {
+    const insideFile = join(fx.dir, 'w1.ready.json');
+    writeFileSync(insideFile, readFileSync(join(fx.dir, 'w1.ready')));
+    rmSync(join(fx.dir, 'w1.ready'));
+    symlinkSync(insideFile, join(fx.dir, 'w1.ready'));
+  }, (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'READY_UNSAFE');
   judgeCase('duplicate-seat', (fx) => {
     const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
     doc.taskCall.tasks[1].name = doc.taskCall.tasks[0].name;

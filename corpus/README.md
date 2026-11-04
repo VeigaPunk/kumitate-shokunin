@@ -213,6 +213,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-79-verifier-spotcheck.md` | Non-author round-79 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-80.md` | Two-reading verdicts and snapshot-bound scores: the C1/C2 counters, the duplicate-source catch that folded a new row into S119, the r77 label-arm attribution mistake, and the limits | `.ufo/waves/round-80/`; S119, S234 |
 | `lessons/round-80-verifier-spotcheck.md` | Non-author round-80 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-81.md` | Round-81 method: the inline handoff turned into an admission gate (16 arms; base 0/16) and the shape receipt made self-describing (`captured_at`, age, opt-in `--max-age`, 15 arms); the CLI `--max-age` defect the frozen arm found and its regression case; the scaffold-before-freeze ordering defect and the three §Limits families | LOG.md round 81; `plan.md`, `probe81-c1/c2.mjs` |
 
 
 ## Known gaps

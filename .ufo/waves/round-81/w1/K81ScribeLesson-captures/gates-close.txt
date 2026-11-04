@@ -1,0 +1,55 @@
+captured_at=2026-11-04T06:59:12-03:00 rev=d140f2883170cc1b0859ba5359bcdac3123a676e
+$ node scripts/proxy-check.mjs
+PROXY: MATCH (A=889 C=41 operability=9; C1=19/19 C2=201/201 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; O=1/1 O_members=65 O_findings=0 O_bound=35 coverage:omp=10; pins=6 match; src-rev=31c465f15669; source=snapshot)
+exit=0
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=47 uncovered=0
+MAP: CLEAN
+exit=0
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=201 rows=201 covered=201
+exit=0
+$ node scripts/omp-census.mjs
+INFO mcp.json.rea.backup absent
+INFO themes absent
+INFO tools absent
+INFO commands absent
+INFO prompts absent
+INFO memories absent
+INFO extensions absent
+INFO chain agent-pre-restore has no generation
+INFO chain agent-recovered has no generation
+INFO chain history-corrupt has no generation
+INFO chain mcp-pre-disable has no generation
+INFO chain mcp-rea-backup-recovery has no generation
+OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)
+exit=0
+$ node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+exit=0
+$ node scripts/kimi-census.mjs
+KIMI_ROOT: /home/vgpnk/.kimi-code
+FAMILY K1  members=4  checked=4  frozen=4
+FAMILY K2  members=29  checked=29  frozen=29
+FAMILY K3  members=10  checked=10  frozen=10
+FAMILY K4  members=9  checked=9  frozen=9
+FAMILY K5  members=3  checked=3  frozen=3
+INFO  CHAIN  config.toml.*.bak  generations=22 (reported as info, never gated)
+INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+INFO  COUNT  skills/  children=7 (counted live, names not gated)
+INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+$ /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+kumitate	W04	S034 duplicate url stryker-mutator.io/docs/mutation-testing-elements/mutant-states-and-metrics across scopes
+kumitate	W04	S068 duplicate url github.com/can1357/oh-my-pi/tree/45c35e40c46166dc726ccc52f5d27f40f2449f99 across scopes
+kumitate	W04	S084 duplicate url infection.github.io/guide across scopes
+kumitate	W04	S095 duplicate url raw.githubusercontent.com/containers/bubblewrap/v0.13.1/bwrap.xml across scopes
+kumitate	W04	S123 duplicate url docs.langchain.com/oss/python/langgraph/checkpointers across scopes
+kumitate	W04	S126 duplicate url docs.temporal.io/encyclopedia/detecting-activity-failures across scopes
+kumitate	ok	/home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md
+exit=0
+$ node scripts/ready-handoff.mjs --lane . --round 81 --wave w1
+READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=scout=2,connector=1,executor=3,mutation-tester=1,reviewer=2,critic=1,sentinel=1,scribe=2,revenger=1
+exit=0

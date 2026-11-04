@@ -64,7 +64,7 @@ function laneFixture(root, { seats = 10, attack = 3, connector = 1 } = {}) {
       task: `/skill:godspeed\n# Target\n${lane}/corpus/lessons/round-81.md\nReport: .ufo/waves/round-${ROUND}/${WAVE}/${name}.md (relative to ${lane} — write it at ${lane}/.ufo/waves/round-${ROUND}/${WAVE}/${name}.md)\nScratch: $HYAKU_SCRATCH/kumitate-r81/${name}/`,
     };
   });
-  const context = `Every path is under ${lane}. Scratch root: /fast/scratch/hyaku/kumitate-r81/<seat>/ (HYAKU_SCRATCH).`;
+  const context = `Every path is under ${lane}. Every \`Report:\` trailer path is relative to ${lane} — write it at ${lane}/<that path>. Scratch root: /fast/scratch/hyaku/kumitate-r81/<seat>/ (HYAKU_SCRATCH).`;
   const dispatch = join(dir, `${WAVE}-dispatch.json`);
   writeFileSync(dispatch, `${JSON.stringify({ contract: 'ufo-swarm-wave-dispatch-v1', taskCall: { context, tasks } }, null, 2)}\n`);
   writeFileSync(join(dir, `${WAVE}.ready`), `${JSON.stringify({ lane: 'kumitate-shokunin', round: ROUND, wave: WAVE, dispatch, l1: 'KumitateR81' })}\n`);

@@ -49,14 +49,16 @@ the prompt.
 
 ## Why an admission layer, and what it does not prove
 
-Kubernetes names the shape: "An admission controller is a piece of code that
-intercepts requests to the Kubernetes API server prior to persistence of the
-resource, but after the request is authenticated and authorized." The same page
-records the limit that matters here: admission controllers do not block reads,
-"because reads bypass the admission control layer." The gate is deliberately an
-admission layer over *writes* (a handoff about to be taken); it says nothing
-about what the seats do afterwards, and it cannot prove a seat's prompt is
-useful, only that the dispatch is well-formed and policy-legal.
+Kubernetes names the shape: "Admission controllers are code within the
+Kubernetes API server that check the data arriving in a request to modify a
+resource" (S236, *What are they?*), and locates it precisely — admission runs
+after authentication and before persistence, so a request that fails it never
+reaches the store. The same page records the limit that matters here: admission
+controllers do not block reads, because reads bypass the admission control
+layer. The gate is deliberately an admission layer over *writes* (a handoff
+about to be taken); it says nothing about what the seats do afterwards, and it
+cannot prove a seat's prompt is useful, only that the dispatch is well-formed
+and policy-legal.
 
 It also does not replace the validator. `ufo-swarm-wave.mjs plan`/`run` refuses
 malformed specs before a payload exists; `ready-handoff` judges the pair as it

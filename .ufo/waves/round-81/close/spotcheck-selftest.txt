@@ -1,0 +1,87 @@
+rev=d140f2883170cc1b0859ba5359bcdac3123a676e
+CLI --check exit=1 stdout="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CLI --check exit=0 stdout="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+CASE check-clean: red-before=PASS PASS
+CLI --check exit=0 stdout="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+CLI --check exit=1 stdout="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+CASE check-drift: red-before=PASS PASS
+CLI --check exit=1 stdout="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:knowledge/late.md"
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: note unpinned:knowledge/late.md\nREADME_MAP: DRIFT files=2 rows=1 covered=1 bad=2 first=uncovered:knowledge/late.md"
+CLI --check exit=0 stdout="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=uncovered:knowledge/late.md"
+CASE check-map-only-drift: red-before=PASS PASS
+CLI --check exit=0 stdout="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=orphan-row:knowledge/ghost.md"
+CASE check-map-orphan: red-before=PASS PASS
+CLI --check exit=1 stdout="SPOTCHECK_COVERAGE: NONE spotchecks=0 (an empty spotcheck set is not a pass)\nMAP: DRIFT first=uncovered:knowledge/base.md"
+CASE check-none: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=2 stdout="REFUSED_NO_MAP_SECTION"
+CASE no-map-section: red-before=PASS PASS
+CLI --predict 99 exit=2 stdout="REFUSED_ORACLE"
+CASE predict-invalid-oracle: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=2 stdout="REFUSED_PATH_ESCAPE"
+CASE path-escape: red-before=PASS PASS
+CLI --check exit=0 stdout="RECOVERED corpus/lessons/round-75-verifier-spotcheck.md complete\nSPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=uncovered:knowledge/late.md"
+CASE recovery-red-map: red-before=PASS PASS
+CLI --check exit=1 stdout="SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md (first is not a regular file; --adopt cannot adopt it)\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=2 stdout="REFUSED_OUT_OF_SCOPE"
+CASE check-symlink: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: note unpinned:knowledge/unrelated.md\nREADME_MAP: DRIFT files=2 rows=1 covered=1 bad=2 first=uncovered:knowledge/unrelated.md"
+CASE adopt-unrelated-drift: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE adopt-both: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=row\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE adopt-row: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=pin\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE adopt-pin: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ALREADY_ADOPTED corpus/lessons/round-75-verifier-spotcheck.md"
+CASE idempotence: red-before=PASS PASS
+CLI --adopt SCORECARD.md exit=2 stdout="REFUSED_OUT_OF_SCOPE"
+CASE out-of-scope: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75.md exit=2 stdout="REFUSED_NOT_SPOTCHECK"
+CASE not-spotcheck: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-99-verifier-spotcheck.md exit=2 stdout="REFUSED_ABSENT"
+CASE absent: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=2 stdout="REFUSED_ORACLE"
+CASE malformed-pin: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=2 stdout="REFUSED_ORACLE"
+CASE malformed-readme: red-before=PASS PASS
+CLI --predict 75 exit=0 stdout="SPOTCHECK_PREDICT: COVERED corpus/lessons/round-75-verifier-spotcheck.md"
+CLI --predict 75 exit=0 stdout="SPOTCHECK_PREDICT: PENDING corpus/lessons/round-75-verifier-spotcheck.md"
+CASE predict-pending: red-before=PASS PASS
+CLI --predict 75 exit=1 stdout="SPOTCHECK_PREDICT: UNCOVERED corpus/lessons/round-75-verifier-spotcheck.md"
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CLI --predict 75 exit=0 stdout="SPOTCHECK_PREDICT: COVERED corpus/lessons/round-75-verifier-spotcheck.md"
+CASE predict-covered: red-before=PASS PASS
+CLI --predict 75 exit=0 stdout="SPOTCHECK_PREDICT: COVERED corpus/lessons/round-75-verifier-spotcheck.md"
+CLI --predict 75 exit=1 stdout="SPOTCHECK_PREDICT: UNCOVERED corpus/lessons/round-75-verifier-spotcheck.md"
+CASE predict-uncovered: red-before=PASS PASS
+CLI --predict bad exit=64 stdout="SPOTCHECK_ADOPT: USAGE"
+CASE usage: red-before=PASS PASS
+CRASH journal status=null signal=SIGKILL
+CLI --check exit=1 stdout="RECOVERED corpus/lessons/round-75-verifier-spotcheck.md rolled-back\nSPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+CASE crash-journal: red-before=PASS PASS
+CRASH row status=null signal=SIGKILL
+CLI --check exit=1 stdout="RECOVERED corpus/lessons/round-75-verifier-spotcheck.md rolled-back\nSPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-75-verifier-spotcheck.md\nMAP: DRIFT first=uncovered:lessons/round-75-verifier-spotcheck.md"
+CASE crash-row: red-before=PASS PASS
+CRASH pin status=null signal=SIGKILL
+CLI --check exit=0 stdout="RECOVERED corpus/lessons/round-75-verifier-spotcheck.md complete\nSPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+CASE crash-pin: red-before=PASS PASS
+CLI --predict 76 exit=0 stdout="RECOVERED - stale\nSPOTCHECK_PREDICT: PENDING corpus/lessons/round-76-verifier-spotcheck.md"
+CASE stale-tmp: red-before=PASS PASS
+CLI --check exit=2 stdout="REFUSED_JOURNAL_FOREIGN"
+CASE foreign-journal: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE placement: red-before=PASS PASS
+CLI --check exit=0 stdout="RECOVERED corpus/lessons/round-75-verifier-spotcheck.md complete\nSPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+CLI --check exit=0 stdout="SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN"
+CASE recovery-idempotence: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE pin-final-newline-false: red-before=PASS PASS
+CLI --adopt corpus/lessons/round-75-verifier-spotcheck.md exit=0 stdout="SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-75-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=1 rows=1 covered=1"
+CASE pin-final-newline-true: red-before=PASS PASS
+CLI --check exit=2 stdout="REFUSED_ORACLE"
+CASE corrupt-pre-image: red-before=PASS PASS
+SPOTCHECK_ADOPT_SELFTEST: PASS (34/34)
+VERDICT: PASS
+exit=0

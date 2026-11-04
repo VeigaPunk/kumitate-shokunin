@@ -1,0 +1,85 @@
+$ grep -rIn '\.ready' kake-shokunin/scripts tabi-shokunin/scripts */tools
+kake-shokunin/scripts/doc_quote_truth.py:28:  `*-spec.json`, `swarm-registry.json` and `*.ready*` are never receipts.  This
+kake-shokunin/scripts/doc_quote_truth.py:97:                  "swarm-registry.json", "*.ready*")
+kake-shokunin/scripts/doc_quote_truth.py:164:    receipts.  Dispatcher artifacts are never receipts (B5 `*.ready*`), and this
+kake-shokunin/scripts/doc_quote_truth.py:826:        extra={".ufo/waves/round-75/controls/probe.ready.txt": "zz=9\n"})])
+tabi-shokunin/scripts/chrome-cdp-loopback-round44.mjs:186:    const rs = await send('Runtime.evaluate', { expression: 'document.readyState', returnByValue: true });
+tabi-shokunin/scripts/chrome-cdp-loopback-round45.mjs:227:    const rs = await send('Runtime.evaluate', { expression: 'document.readyState', returnByValue: true });
+tabi-shokunin/scripts/chrome-cdp-loopback-round46.mjs:324:    const rs = await send('Runtime.evaluate', { expression: 'document.readyState', returnByValue: true });
+tabi-shokunin/scripts/chrome-cdp-loopback-round56.mjs:545:        return (await evalValue('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round56.mjs:669:      try { return (await evalValue('location.pathname')) === '/echo' && (await evalValue('document.readyState')) === 'complete'; }
+tabi-shokunin/scripts/chrome-cdp-loopback-round57.mjs:964:        return (await evalValue('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round57.mjs:1240:      try { return (await evalValue('location.pathname')) === '/echo' && (await evalValue('document.readyState')) === 'complete'; }
+tabi-shokunin/scripts/chrome-cdp-loopback-round58.mjs:1210:        return (await evalValue('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round58.mjs:1672:      try { return (await evalValue('location.pathname')) === '/echo' && (await evalValue('document.readyState')) === 'complete'; }
+tabi-shokunin/scripts/chrome-cdp-loopback-round59.mjs:1629:        return (await evalValue('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round59.mjs:2270:      try { return (await evalValue('location.pathname')) === '/echo' && (await evalValue('document.readyState')) === 'complete'; }
+tabi-shokunin/scripts/chrome-cdp-loopback-round59.mjs:2299:        return (await evalValue('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round59.mjs:2422:            return (await echoEval('document.readyState')) === 'complete'
+tabi-shokunin/scripts/chrome-cdp-loopback-round61.mjs:264:  for(let i=0;i<100&&!ready;i++){try {ready=await evalValue('document.readyState === "complete" && location.pathname === "/form" && Array.isArray(window.__ptrlog) && document.getElementById("nonce").textContent === '+JSON.stringify(nonce));}catch{}if(!ready)await sleep(100);}
+tabi-shokunin/scripts/webmcp-invoke-round17.mjs:1538:            o.ready !== null &&
+tabi-shokunin/scripts/webmcp-invoke-round17.mjs:1539:            o.ready.ok === false &&
+tabi-shokunin/scripts/webmcp-invoke-round18.mjs:2335:            o.ready !== null &&
+tabi-shokunin/scripts/webmcp-invoke-round18.mjs:2336:            o.ready.ok === false &&
+tabi-shokunin/scripts/webmcp-invoke-round19.mjs:2507:            o.ready !== null &&
+tabi-shokunin/scripts/webmcp-invoke-round19.mjs:2508:            o.ready.ok === false &&
+tabi-shokunin/scripts/webview2-cdp-loopback-round48.mjs:168:        const rs = await send('Runtime.evaluate', { expression: 'document.readyState', returnByValue: true });
+tabi-shokunin/scripts/webview2-cdp-loopback-round49.mjs:270:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round49.mjs:295:          if ((await evalStr('document.readyState')) === 'complete' && String(await evalStr('location.href')).endsWith('/a.html')) { readyA = true; break; }
+tabi-shokunin/scripts/webview2-cdp-loopback-round49.mjs:310:          if (href.endsWith('/b.html') && (await evalStr('document.readyState')) === 'complete') { readyB = true; break; }
+tabi-shokunin/scripts/webview2-cdp-loopback-round50.mjs:288:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round50.mjs:314:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round51.mjs:312:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round51.mjs:338:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round51.mjs:414:              const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round52.mjs:318:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round52.mjs:344:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round52.mjs:420:              const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round53.mjs:319:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round53.mjs:345:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round53.mjs:421:              const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round54.mjs:335:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round54.mjs:361:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round54.mjs:437:              const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round55.mjs:363:        if (await evalStr('document.readyState') === 'complete') break;
+tabi-shokunin/scripts/webview2-cdp-loopback-round55.mjs:389:            const ready = (await evalStr('document.readyState')) === 'complete';
+tabi-shokunin/scripts/webview2-cdp-loopback-round55.mjs:465:              const ready = (await evalStr('document.readyState')) === 'complete';
+chousa-shokunin/tools/freeze-check.py:4:    freeze-check.py --claims <claims.md> --dispatch <wN-dispatch.json> --spec <wN-spec.json> --ready <wN.ready>
+chousa-shokunin/tools/freeze-check.py:268:    if not (a.claims and a.dispatch and a.spec and a.ready):
+chousa-shokunin/tools/freeze-check.py:275:    res, warns = run_checks(a.claims, a.dispatch, a.spec, a.ready, allow)
+chousa-shokunin/tools/freeze-check.py:296:            rdy = load_json(os.path.join(waves, 'round-%d' % r, 'w1.ready'))
+chousa-shokunin/tools/freeze-check.py:315:                              os.path.join(rd, 'w1.ready'), os.path.join(d, 'claims.md'))
+kaidoku-shokunin/tools/round-42/prefile-gate.py:6:  (a) every .ufo/waves/round-N/<wave>.ready has a <wave>.ready.dispatched marker
+kaidoku-shokunin/tools/round-42/prefile-gate.py:195:            os.path.basename(p)[: -len(".ready")]
+kaidoku-shokunin/tools/round-42/prefile-gate.py:196:            for p in glob.glob(os.path.join(self.root, adir, "*.ready"))
+kaidoku-shokunin/tools/round-42/prefile-gate.py:200:            self.fail(cond, "no %s/*.ready wave marker: round has no dispatched wave" % wdir)
+kaidoku-shokunin/tools/round-42/prefile-gate.py:204:            ready = os.path.join(adir, wave + ".ready")
+kaidoku-shokunin/tools/round-42/prefile-gate.py:205:            dispatched = os.path.join(adir, wave + ".ready.dispatched")
+kaidoku-shokunin/tools/round-42/prefile-gate.py:209:                    "wave %s is still running: %s/ has no %s.ready.dispatched"
+kaidoku-shokunin/tools/round-42/prefile-gate.py:253:                self.note(cond, "list-only marker %s.ready" % wave)
+kaidoku-shokunin/tools/round-42/prefile-gate.py:255:            os.path.basename(p) for p in glob.glob(os.path.join(self.root, adir, "*.ready.dispatched"))
+kaidoku-shokunin/tools/round-42/prefile-gate.py:257:        known = {w + ".ready.dispatched" for w in waves}
+kaidoku-shokunin/tools/round-42/prefile-gate.py:260:                self.warn(cond, "orphan dispatch marker %s/%s without a .ready" % (wdir, name))
+kaidoku-shokunin/tools/round-42/prefile-gate.py:479:    ".ufo/waves/round-41/w1.ready": '{"wave":"r41-w1"}\n',
+kaidoku-shokunin/tools/round-42/prefile-gate.py:480:    ".ufo/waves/round-41/w1.ready.dispatched": '{"seats":2}\n',
+kaidoku-shokunin/tools/round-42/prefile-gate.py:483:    ".ufo/waves/round-41/w2.ready": '{"wave":"r41-w2"}\n',
+kaidoku-shokunin/tools/round-42/prefile-gate.py:484:    ".ufo/waves/round-41/w2.ready.dispatched": '{"seats":2}\n',
+kaidoku-shokunin/tools/round-42/prefile-gate.py:564:        lambda f: f.pop(".ufo/waves/round-41/w1.ready.dispatched"),
+kaidoku-shokunin/tools/round-42/prefile-gate.py:568:        ["FAIL", "no w1.ready.dispatched", "GATE RED"],
+kama-shokunin/tools/kama-completion-live.py:337:        ready, last = wait_ready(proc, port, args.ready_timeout)
+kama-shokunin/tools/kama-completion-live.py:347:                f'server not ready within {args.ready_timeout}s '
+kama-shokunin/tools/kama-context-capacity.py:779:               'ready_timeout': args.ready_timeout}
+kama-shokunin/tools/kama-llamacpp-live.py:2248:         ownership) = readiness_loop(proc, port, args.ready_timeout)
+souji-shokunin/tools/souji-freeze-check.py:27:.ufo/waves/round-<N>/ named `*-dispatch*`, `*.ready*`, `*-spec.json`, `*-results.json`.
+souji-shokunin/tools/souji-freeze-check.py:152:            if "-dispatch" in base or ".ready" in base or base.endswith(("-spec.json", "-results.json")):
+souji-shokunin/tools/souji-freeze-check.py:282:     {"pre": {".ufo/waves/round-7/a/w1.ready.dispatched": "x"}}),
+tameshi-shokunin/tools/registry-check.py:1183:            ready_path = os.path.join(scratch, f"{name}.ready")
+tameshi-shokunin/tools/registry-check.py:1240:        daemon_ready_path = os.path.join(scratch, "daemon-exit.ready")
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:53:    ".ufo/waves/round-66/w1.ready.dispatched",
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:54:    ".ufo/waves/round-67/w1.ready.dispatched",
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:56:    ".ufo/waves/round-73/w1.ready.dispatched",
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:57:    ".ufo/waves/round-74/w1.ready.dispatched",
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:58:    ".ufo/waves/round-75/w1.ready",
+tsukuroi-shokunin/tools/check-r75-routed-r76.py:59:    ".ufo/waves/round-75/w1.ready.dispatched",
+tsukuroi-shokunin/tools/check-scrub-grounding-r45.py:46:               `a2w1`/`a2r1` because the orchestrator's dispatcher never takes a spent `.ready` twice and the
+exit=0

@@ -145,3 +145,40 @@ Disclosed after the first frozen-counter runs, before any claim verdict:
 6. **Tool count:** `ready-handoff.mjs --selftest` is 31/31 (the plan's §C1 arm
    16 text says 30/30 — the extra case is `lane-id-accepted`, added when the
    lane-id rule was fixed).
+
+## Amendment 2 (2026-11-04; append-only; written before any verdict)
+
+The pre-data controls committed at the freeze were measured with the pre-Amendment-1 probe fixtures.
+Amendment 1 changed fixtures/args, not arms, so the controls were re-run with the committed counter
+bytes and the receipts under `controls/` are the re-measured readings:
+
+| control | freeze-time reading | committed reading (Amendment 2) |
+|---|---|---|
+| C1 base (`--tool <base archive>`) | 0/16 | 0/16 (`controls/c1-base.txt`) |
+| C1 constant printer | 3/16 | 3/16 (`controls/c1-stub.txt`) |
+| C2 base | 1/15 | **4/15** (`controls/c2-base.txt`) — arms 04, 09, 13, 14 pass at base |
+| C2 constant printer | 5/15 | **6/15** (`controls/c2-stub.txt`) |
+
+Why the C2 base moved: arm 13 (`receipt-pinned`) reads the lane's receipt and stanza, not `--tool`;
+arm 04 (`compare-v1-accepted`) and arm 09 (`captured-at-required`) hold at a base tree that accepts
+only v1; arm 14 (selftest) passes at base. The claim sentence ("a held count below 15 at the base
+tree") is unchanged and still holds at 4/15; the kill rule's per-arm list in §C2 is superseded by this
+table. The plan's "`controls/stub/` describes the stub bytes" is void: the stub is generated inside
+the probe's work dir and only its output is committed.
+
+## Amendment 3 (2026-11-04; append-only; written before any verdict)
+
+The wave's fixture seat (`w1/K81ExecC1Fixtures.md` §"Fixtures the gate gets wrong") found two real
+defects in `ready-handoff.mjs`, both fixed after the frozen counter had been scored 16/16 with the
+earlier bytes and re-scored 16/16 with the fixed bytes:
+
+1. **Case-variant duplicate seats were accepted** (`K81S01` vs `k81s01`): the dedupe Set was
+   case-sensitive. Fixed to dedupe on the lowercased name; new selftest case
+   `duplicate-case-variant`.
+2. **The ready file itself was followed through a symlink out of the lane**: `readFileSync` had no
+   `lstat`/realpath containment for the ready path, while the dispatch it names had both. Fixed:
+   a non-regular ready path, an escaping realpath or an unresolvable path is fail-closed
+   `READY_UNSAFE`; new selftest cases `ready-symlink-escape` and `ready-symlink-inside`.
+3. The suite grows 31 → 34 cases; `pin.ready-handoff` re-pins. The frozen arms are unchanged and
+   still read `C81_C1: HELD held=16/16`. The seat's third finding (seat text may name an absolute
+   path outside the lane, F11) is a limit, not a defect: the handoff is not a sandbox.

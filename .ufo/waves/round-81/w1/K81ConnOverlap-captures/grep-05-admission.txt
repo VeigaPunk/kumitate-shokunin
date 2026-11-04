@@ -1,0 +1,470 @@
+$ grep -rIn -iE 'attack.?share|connector|planner|band[^a-z]|admission|preflight|pre-dispatch|godspeed' kake-shokunin/scripts tabi-shokunin/scripts */tools
+kake-shokunin/scripts/canonical_audit.py:125:        description="Offline static canonical preflight; --help is documentation only.",
+kake-shokunin/scripts/instrument_receipts.py:61:``--write`` is never admission evidence.
+kake-shokunin/scripts/instrument_receipts.py:376:    never admission evidence.  ``worktree_state`` is ``identical``/``differs``
+kake-shokunin/scripts/live_snapshot.py:2:"""GET-only owned-page snapshots for the offline canonical preflight.
+kake-shokunin/scripts/live_snapshot.py:32:USER_AGENT = "kake-shokunin-readonly-preflight/1 (+GET only)"
+tabi-shokunin/scripts/aria-loopback-round13.mjs:188:function buildNoteAdmission(rel, sources, scope) {
+tabi-shokunin/scripts/aria-loopback-round13.mjs:211:function loadNoteAdmission() {
+tabi-shokunin/scripts/aria-loopback-round13.mjs:212:  const primary = buildNoteAdmission(
+tabi-shokunin/scripts/aria-loopback-round13.mjs:217:  const documentedContract = buildNoteAdmission(
+tabi-shokunin/scripts/aria-loopback-round13.mjs:436:  const note = noteFromWorker || loadNoteAdmission();
+tabi-shokunin/scripts/check-aria-metadata.mjs:487:      derivedAdmission: derivedAllGood,
+tabi-shokunin/scripts/check-cited-receipts-v2.mjs:22://       connector|mutant|sentinel|labrat|scribe|quarantine|assimilation
+tabi-shokunin/scripts/check-cited-receipts-v2.mjs:85:  'reviewer', 'critic', 'connector', 'mutant', 'sentinel', 'labrat', 'scribe',
+tabi-shokunin/scripts/check-frontier-admission.mjs:2:// check-frontier-admission.mjs — tabi lane gate: coverage (admission of
+tabi-shokunin/scripts/check-frontier-admission.mjs:66://   node scripts/check-frontier-admission.mjs --rev <REV> --frontier <slug> --since YYYY-MM-DD
+tabi-shokunin/scripts/check-frontier-admission.mjs:68://   node scripts/check-frontier-admission.mjs --selftest [--json]
+tabi-shokunin/scripts/check-frontier-admission.mjs:69://   node scripts/check-frontier-admission.mjs --repo <dir> ...   (tests)
+tabi-shokunin/scripts/check-frontier-admission.mjs:77:const SCHEMA = "tabi-frontier-admission-v1";
+tabi-shokunin/scripts/check-frontier-admission.mjs:78:const SELFTEST_SCHEMA = "tabi-frontier-admission-selftest-v1";
+tabi-shokunin/scripts/check-frontier-admission.mjs:366:  const base = mkdtempSync(join(tmpdir(), "tabi-frontier-admission-selftest-"));
+tabi-shokunin/scripts/check-frontier-admission.mjs:425:    console.error(`FRONTIER_ADMISSION verdict=could-not-evaluate detail=${e.message}`);
+tabi-shokunin/scripts/check-frontier-admission.mjs:429:    console.log("usage: node scripts/check-frontier-admission.mjs --rev <REV> --frontier <slug> --since YYYY-MM-DD [--receipts DIR] [--lesson PATH] [--live] [--json] | --selftest [--json]");
+tabi-shokunin/scripts/check-frontier-admission.mjs:437:      console.log(`FRONTIER_ADMISSION_SELFTEST verdict=${out.ok ? "clean" : "failed"} cases=${out.cases} passed=${out.passed}`);
+tabi-shokunin/scripts/check-frontier-admission.mjs:442:    console.error("FRONTIER_ADMISSION verdict=could-not-evaluate detail=usage: --rev <REV> --frontier <slug> --since YYYY-MM-DD, or --selftest");
+tabi-shokunin/scripts/check-frontier-admission.mjs:450:    console.error(`FRONTIER_ADMISSION verdict=could-not-evaluate detail=${e.message}`);
+tabi-shokunin/scripts/check-frontier-admission.mjs:456:    console.log(`FRONTIER_ADMISSION verdict=${out.clean ? "clean" : "failed"} rev=${out.rev} frontier=${out.frontier} since=${out.since} live=${out.live} population=${out.population} admitted=${out.admitted} failing=${out.failing}`);
+tabi-shokunin/scripts/check-s106-evidence.mjs:2:// check-s106-evidence.mjs — tabi lane gate: depth (routed source-evidence admission).
+tabi-shokunin/scripts/check-s106-evidence.mjs:27:// the admission mechanical: at the measured revision the committed decoded
+tabi-shokunin/scripts/check-user-round-contract.mjs:62:const ROLES = ['scout', 'reviewer', 'critic', 'connector', 'sentinel', 'executor', 'mutation-tester', 'revenger', 'simplifier', 'scribe'];
+tabi-shokunin/scripts/playwright-firefox-egress-round39.mjs:259:  const preflight = sampleSockets(tree0);
+tabi-shokunin/scripts/playwright-firefox-egress-round39.mjs:267:  if (preflight.unavailable) {
+tabi-shokunin/scripts/report-contract.mjs:25:  .replace(/\band\b/g, '&')
+tabi-shokunin/scripts/round-evidence-audit.mjs:17://   c2-wave-caps           a wave above the policy band, a registry above its spec, an
+tabi-shokunin/scripts/round-evidence-audit.mjs:50:// Fleet authority for the wave band. A supplied policy may name one of these bands or a
+tabi-shokunin/scripts/round-evidence-audit.mjs:301:  const band = policy?.sighting?.dispatch?.swarm ?? null;
+tabi-shokunin/scripts/round-evidence-audit.mjs:363:    if (band) {
+tabi-shokunin/scripts/round-evidence-audit.mjs:364:      if (Number.isFinite(maxLanes) && maxLanes > band.waveMaxLanes)
+tabi-shokunin/scripts/round-evidence-audit.mjs:365:        capProblems.push(`${specFile}: maxLanes ${maxLanes} > policy waveMaxLanes ${band.waveMaxLanes}`);
+tabi-shokunin/scripts/round-evidence-audit.mjs:366:      if (Number.isFinite(maxLanes) && maxLanes < band.waveMinLanes)
+tabi-shokunin/scripts/round-evidence-audit.mjs:367:        capProblems.push(`${specFile}: maxLanes ${maxLanes} < policy waveMinLanes ${band.waveMinLanes}`);
+tabi-shokunin/scripts/round-evidence-audit.mjs:380:  if (band === null) capProblems.push("policy band unavailable: the policy input supplied no sighting.dispatch.swarm");
+tabi-shokunin/scripts/round-evidence-audit.mjs:639:    // c2 — red: spec above the band. green: round total exactly at the cap is clean.
+tabi-shokunin/scripts/round-evidence-audit.mjs:640:    runFixtureCase("c2-red-spec-above-band", "c2-wave-caps", (fx) => {
+tabi-shokunin/scripts/round-evidence-audit.mjs:644:      // Specs stay inside the band (2 <= waveMaxLanes 2); only the total exceeds the cap.
+tabi-shokunin/scripts/round-evidence-audit.mjs:731:  // c2 carries two red arms (band and round total), so the inventory is 13, not 12.
+tabi-shokunin/scripts/round-evidence-audit.mjs:768:  const band = policy?.sighting?.dispatch?.swarm;
+tabi-shokunin/scripts/round-evidence-audit.mjs:807:  // c2 — bring every wave inside the band and the round inside its cap, seats and
+tabi-shokunin/scripts/round-evidence-audit.mjs:815:      const maxLanes = Math.min(Number(spec.maxLanes) || 0, band ? band.waveMaxLanes : Number(spec.maxLanes) || 0);
+tabi-shokunin/scripts/round-evidence-audit.mjs:935:// The supplied band must equal a readable fleet authority's band, or be tighter than every
+tabi-shokunin/scripts/round-evidence-audit.mjs:940:  const band = policy?.sighting?.dispatch?.swarm;
+tabi-shokunin/scripts/round-evidence-audit.mjs:941:  if (!band) fail(`the wave policy at ${policyPath} carries no sighting.dispatch.swarm band`);
+tabi-shokunin/scripts/round-evidence-audit.mjs:951:    const otherBand = other?.sighting?.dispatch?.swarm;
+tabi-shokunin/scripts/round-evidence-audit.mjs:952:    if (!otherBand) continue;
+tabi-shokunin/scripts/round-evidence-audit.mjs:953:    authorities.push({ path, sha256: sha256(Buffer.from(text, "utf8")), band: otherBand });
+tabi-shokunin/scripts/round-evidence-audit.mjs:956:  const widest = Math.max(...authorities.map((a) => Number(a.band.waveMaxLanes)));
+tabi-shokunin/scripts/round-evidence-audit.mjs:957:  if (!authorities.some((a) => a.band.waveMaxLanes === band.waveMaxLanes) && Number(band.waveMaxLanes) > widest) {
+tabi-shokunin/scripts/round-evidence-audit.mjs:959:      `policy ${policyPath} declares waveMaxLanes ${band.waveMaxLanes}, wider than every fleet authority (max ${widest}): a supplied policy may tighten the band, never widen it`
+tabi-shokunin/scripts/round-evidence-audit.mjs:962:  return { policy, band, authorities };
+tabi-shokunin/scripts/round-evidence-audit.mjs:1027:  // band the fleet never authorised (the tighten-only guard below is the second lock).
+tabi-shokunin/scripts/round-evidence-audit.mjs:1044:  const { policy, band, authorities } = resolvePolicy(policyPath, policyText);
+tabi-shokunin/scripts/round-evidence-audit.mjs:1079:    policyAuthorities: authorities.map((a) => ({ path: a.path, sha256: a.sha256, waveMaxLanes: a.band.waveMaxLanes })),
+tabi-shokunin/scripts/round-evidence-audit.mjs:1080:    band,
+chousa-shokunin/tools/argv-witness.py:2:"""argv-witness.py — per-record, out-of-band witness of the dead-zone matcher.
+chousa-shokunin/tools/assimilate-rows.py:107:It does not open sources, check quotes, judge province or decide admission.
+chousa-shokunin/tools/freeze-check.py:29:    ('/skill:godspeed\\n\\n' unless the body already starts with '/skill:') + body
+chousa-shokunin/tools/freeze-check.py:71:    pre = '' if body.startswith('/skill:') else '/skill:godspeed\n\n'
+chousa-shokunin/tools/lane-preflight.py:2:"""lane-preflight — one command that runs the chousa lane's committed self-checks and says which failed.
+chousa-shokunin/tools/lane-preflight.py:4:    python3 lane-preflight.py [--root DIR] [--fleet DIR] [--work DIR] [--skip G08[,G..]] [--only G01[,G..]]
+chousa-shokunin/tools/lane-preflight.py:9:    PREFLIGHT=<passed>/<run> FAILED=<ids|none> ENV=<ids|none> SKIPPED=<ids|none>
+chousa-shokunin/tools/lane-preflight.py:12:but one could not run (ENV: the census script of the fleet is absent), or no gate ran at all (`PREFLIGHT=0/0`, every gate
+chousa-shokunin/tools/lane-preflight.py:280:        print(f"lane-preflight: unknown gate id for {flag}: {','.join(bad)}", file=sys.stderr)
+chousa-shokunin/tools/lane-preflight.py:295:        print(f"lane-preflight: --root {a.root} is not a directory", file=sys.stderr)
+chousa-shokunin/tools/lane-preflight.py:300:    work = pathlib.Path(tempfile.mkdtemp(prefix="lane-preflight-", dir=base)) if own else pathlib.Path(a.work)
+chousa-shokunin/tools/lane-preflight.py:302:        print(f"lane-preflight: --work {a.work} is not a directory", file=sys.stderr)
+chousa-shokunin/tools/lane-preflight.py:327:    print(f"PREFLIGHT={sum(res[g] == 'PASS' for g in ran)}/{len(ran)} FAILED={j(failed)} ENV={j(envs)} SKIPPED={j(skipped)}")
+chousa-shokunin/tools/mechanism-witness.py:15:The witness is collected out of band: the gate runs under `bash -x` with a
+kaidoku-shokunin/tools/round-25/a2/c1-calibration.py:68:    # I3: the round-24 outside disagreement became a QUALITY admission criterion (LEARNING.md discernment rule).
+kaidoku-shokunin/tools/round-25/a2/c1-calibration.py:70:    items.append({"id": "I3", "what": "a QUALITY admission-criterion row cites the round-24 spot-check",
+kaidoku-shokunin/tools/round-25/ruler.py:113:              'limit': 'Finite declared exit/primary-finding pairs; no historical admission, discovery completeness, authenticity or behavioral-equivalence certificate.'}
+kaidoku-shokunin/tools/round-41/c1-counter.py:1059:    symlink without any report, unblob extractor.py:68-71). The silent admission
+kaidoku-shokunin/tools/round-42/c1-counter.py:1862:    symlink without any report, unblob extractor.py:68-71). The silent admission
+kaidoku-shokunin/tools/round-43/verify-copies-r43.py:47:                   out-of-band); S081 members byte-equal the published
+kaidoku-shokunin/tools/round-45/c1-counter.py:11:  preflight_selftest              exit 0 with cases>=11 failures=0, run from the bytes at --rev
+kaidoku-shokunin/tools/round-45/c1-counter.py:30:PREFLIGHT = "tools/round-45/frozen-path-preflight.py"
+kaidoku-shokunin/tools/round-45/c1-counter.py:97:def run_preflight(root, rev, work):
+kaidoku-shokunin/tools/round-45/c1-counter.py:98:    body = show(root, rev, PREFLIGHT)
+kaidoku-shokunin/tools/round-45/c1-counter.py:101:    path = os.path.join(work, "frozen-path-preflight.py")
+kaidoku-shokunin/tools/round-45/c1-counter.py:108:    m = re.search(r"PREFLIGHT_SELFTEST: cases=(\d+) failures=(\d+)", proc.stdout)
+kaidoku-shokunin/tools/round-45/c1-counter.py:150:        cites["interpreter"] = PREFLIGHT in block
+kaidoku-shokunin/tools/round-45/c1-counter.py:151:    interpreter_present = git(root, "cat-file", "-e", f"{tip}:{PREFLIGHT}").returncode == 0
+kaidoku-shokunin/tools/round-45/c1-counter.py:157:            selftest = run_preflight(root, tip, work)
+kaidoku-shokunin/tools/round-45/c1-counter.py:183:        reasons.append(f"preflight selftest {selftest}")
+kaidoku-shokunin/tools/round-45/c1-counter.py:196:        "preflight_selftest": selftest,
+kaidoku-shokunin/tools/round-45/c1-counter.py:215:    body = "- **22. Freeze integrity.** " + MARKER + " S140 " + PREFLIGHT + "\n\n"
+kaidoku-shokunin/tools/round-45/c1-counter.py:221:def make_repo(d, skill, preflight_body, claims=True):
+kaidoku-shokunin/tools/round-45/c1-counter.py:227:        "tools/round-45/frozen-path-preflight.py": preflight_body,
+kaidoku-shokunin/tools/round-45/c1-counter.py:253:           "print('PREFLIGHT_SELFTEST: cases=11 failures=0')\n"
+kaidoku-shokunin/tools/round-45/c1-counter.py:257:            "print('PREFLIGHT_SELFTEST: cases=11 failures=1')\n"
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:2:"""Frozen-path preflight v2: red before a commit that touches a claim's frozen paths.
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:27:`PREFLIGHT_SELFTEST: cases=<n> failures=<m>`, and exits 0 iff no case failed.
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:43:GATE = "frozen-path-preflight"
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:57:    path = os.path.join(base, "kaidoku-r45", "preflight-selftest")
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:197:        git(d, "config", "user.email", "preflight@selftest")
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:198:        git(d, "config", "user.name", "preflight selftest")
+kaidoku-shokunin/tools/round-45/frozen-path-preflight.py:281:    print("PREFLIGHT_SELFTEST: cases=%d failures=%d" % (len(cases), len(failures)))
+kaidoku-shokunin/tools/round-46/attest.py:77:        "must_cite": [("literal", "S140"), ("path", "tools/round-45/frozen-path-preflight.py")],
+kaidoku-shokunin/tools/round-49/c2-mismatch.py:63:      base states `Admission: **rejected-harmed**` and a `| calibration | harmed |` axis row.
+kaidoku-shokunin/tools/round-49/c2-mismatch.py:553:    if 'Admission: **rejected-harmed**' not in src:
+kaidoku-shokunin/tools/round-49/c2-mismatch.py:554:        out.append('closure (base) does not state `Admission: **rejected-harmed**`')
+kaidoku-shokunin/tools/round-50/c1-counter.py:1479:    symlink without any report, unblob extractor.py:68-71). The silent admission
+kaidoku-shokunin/tools/round-50/c2-record.py:52:      round-48 closure (which states `Admission: **rejected-harmed**` at BASE) and the
+kaidoku-shokunin/tools/round-50/c2-record.py:89:      `corpus/lessons/round-49-verifier-spotcheck.md` at BASE), its `Admission:` word and
+kaidoku-shokunin/tools/round-50/c2-record.py:533:    if 'Admission: **rejected-harmed**' not in vis(c.bt(CLOSURE48)):
+kaidoku-shokunin/tools/round-50/c2-record.py:534:        out.append('closure (base) does not state `Admission: **rejected-harmed**`')
+kaidoku-shokunin/tools/round-50/c2-record.py:990:    keys = ('expansion', 'quality', 'discernment', 'admission', 'spot_check', 'source')
+kaidoku-shokunin/tools/round-50/c2-record.py:1002:    adm = re.findall(r'Admission:\s*\*\*([a-z-]+)\*\*', vis(c.bt(CLOSURE49)))
+kaidoku-shokunin/tools/round-50/c2-record.py:1004:        out.append('closure (base) states Admission %d times, want 1' % len(adm))
+kaidoku-shokunin/tools/round-50/c2-record.py:1005:    elif d['admission'] != adm[0]:
+kaidoku-shokunin/tools/round-50/c2-record.py:1006:        out.append('admission stated %s, closure says %s' % (d['admission'], adm[0]))
+kaidoku-shokunin/tools/round-50/c2-record.py:1365:        '- B11 expansion=improved quality=unchanged discernment=unchanged admission=admitted '
+kaidoku-shokunin/tools/round-69/packed-elf.py:28:preflight refuses a missing tool, an unusable --work root and a packer whose
+kaidoku-shokunin/tools/round-69/packed-elf.py:231:def preflight(upx: str, pkg: str, work: str, check_work: bool = True) -> dict:
+kaidoku-shokunin/tools/round-69/packed-elf.py:249:            probe = tempfile.mkdtemp(prefix="preflight-", dir=work)
+kaidoku-shokunin/tools/round-69/packed-elf.py:327:    packer_env = preflight(upx, pkg, work, check_work=not skip_run)
+kaidoku-shokunin/tools/round-70/packed-elf.py:310:def preflight(upx: str, pkg: str, work: str, check_work: bool = True,
+kaidoku-shokunin/tools/round-70/packed-elf.py:357:            probe = tempfile.mkdtemp(prefix="preflight-", dir=work)
+kaidoku-shokunin/tools/round-70/packed-elf.py:605:    packer_env = preflight(upx, pkg, work, check_work=not skip_run)
+kaidoku-shokunin/tools/round-71/packed-elf.py:454:def preflight(upx: str, pkg: str, work: str, check_work: bool = True,
+kaidoku-shokunin/tools/round-71/packed-elf.py:503:            probe = tempfile.mkdtemp(prefix="preflight-", dir=work)
+kaidoku-shokunin/tools/round-71/packed-elf.py:787:        packer_env = preflight(upx, pkg, work, check_work=not skip_run,
+kaidoku-shokunin/tools/round-71/seam-probe.py:47:three route preflights concurrently on one --work parent and requires distinct
+kaidoku-shokunin/tools/round-71/seam-probe.py:385:    # preflights started together on one --work parent never collide.
+kaidoku-shokunin/tools/round-72/packed-elf.py:506:def preflight(upx: str, pkg: str, work: str, check_work: bool = True,
+kaidoku-shokunin/tools/round-72/packed-elf.py:555:            probe = tempfile.mkdtemp(prefix="preflight-", dir=work)
+kaidoku-shokunin/tools/round-72/packed-elf.py:939:        packer_env = preflight(upx, pkg, work, check_work=not skip_run,
+kaidoku-shokunin/tools/round-72/seam-probe.py:49:three route preflights concurrently on one --work parent and requires distinct
+kaidoku-shokunin/tools/round-72/seam-probe.py:632:    # preflights started together on one --work parent never collide.
+kaidoku-shokunin/tools/round-73/packed-elf.py:509:def preflight(upx: str, pkg: str, work: str, check_work: bool = True,
+kaidoku-shokunin/tools/round-73/packed-elf.py:558:            probe = tempfile.mkdtemp(prefix="preflight-", dir=work)
+kaidoku-shokunin/tools/round-73/packed-elf.py:974:        packer_env = preflight(upx, pkg, work, check_work=not skip_run,
+kaidoku-shokunin/tools/round-73/seam-probe.py:49:three route preflights concurrently on one --work parent and requires distinct
+kaidoku-shokunin/tools/round-73/seam-probe.py:935:    # preflights started together on one --work parent never collide.
+kaidoku-shokunin/tools/round-74/seam-probe.py:49:three route preflights concurrently on one --work parent and requires distinct
+kaidoku-shokunin/tools/round-74/seam-probe.py:1010:    # preflights started together on one --work parent never collide.
+kaidoku-shokunin/tools/round-75/seam-probe.py:49:three route preflights concurrently on one --work parent and requires distinct
+kaidoku-shokunin/tools/round-75/seam-probe.py:1020:    # preflights started together on one --work parent never collide.
+kama-shokunin/tools/kama-probe.sh:1033:    # sorted for deterministic output (planner r2: assoc-array order is arbitrary)
+kama-shokunin/tools/round76-receipt-scope.py:76:    Only leaf type admission differs from the frozen resolver. Directories and
+kama-shokunin/tools/round79-selfrecord-round78.py:70:WAVE_ROLES = ("executor", "scribe", "scout", "connector", "reviewer", "critic",
+kama-shokunin/tools/round79-selfrecord-round78.py:312:                      r"(\d+) scout, (\d+) connector, (\d+) reviewer, (\d+) critic, "
+kama-shokunin/tools/round79-selfrecord-round78.py:441:    ["executor"] * 3 + ["scribe"] * 3 + ["scout", "connector", "reviewer",
+kama-shokunin/tools/round79-selfrecord-round78.py:472:        f"1 scout, 1 connector, 1 reviewer, 2 critic, 1 mutation-tester; attack 4/12 = "
+kama-shokunin/tools/round79-unregistered-census.py:122:    rows = ["# round-79 scratch registry (census legs; not a consumer admission)"]
+kotodama-shokunin/tools/d2-typed-labels.py:1096:   ["spouse"], [], "Valley Moot statute", "any band, the day only", [], [], ["wedding day"], ["GAR-01", "GAR-03"],
+kotodama-shokunin/tools/d2-typed-labels.py:1205: "SR-01#a|SR-01#b": {"status": "band-keyed-pair", "why": "below-line prohibition and above-line permission of the same rule; jurisdictions are disjoint by construction", "cite": C12 + "318-329"},
+kotodama-shokunin/tools/exercise-handoff-e2e.py:66:  2. preflight: 16 fields, non-canon marker, licensed glossary vocabulary, no
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1220:def v1_preflight(text):
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1449:        problems = v1_preflight(assembly.packet)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1452:                record("preflight", False, problem)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1453:            raise Failed("E2E-COUNT", f"{len(problems)} preflight problem(s): {problems[0]}")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1455:            "preflight",
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1526:    problems = v1_preflight(assembly.packet)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1528:        raise Failed("E2E-COUNT", f"refusing to freeze a packet that fails preflight: {problems[0]}")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1732:        assert any("holds 19 rows" in problem for problem in v1_preflight(dropped)), v1_preflight(dropped)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:1733:        results.append("malformed-07 dropped glossary row: the gate counts 19 rows silently; preflight fails closed")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3222:# v3 parsing, preflight, assembly and run
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3281:    """The harness's clause-slot splitter, mirrored for the exercise's own preflight."""
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3296:def v3_preflight(text, read_set_paths):
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3297:    """The v3 preflight: v1's envelope checks plus the uncertainty grammar and
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3873:        problems = v3_preflight(assembly.packet, set(V3_READ_SET))
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3876:                record("preflight", False, f"{code}: {message}")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3877:            raise Failed(problems[0][0], f"{len(problems)} preflight problem(s): {problems[0][1]}")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:3879:            "preflight",
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4029:    problems = v3_preflight(assembly.packet, set(V3_READ_SET))
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4031:        raise Failed(problems[0][0], f"refusing to freeze a packet that fails preflight: {problems[0][1]}")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4350:        problems = v3_preflight(packet, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4354:        problems = v3_preflight(dropped, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4356:        results.append("m1 dropped D4 claim row: preflight exits E2E-COUNT")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4359:        problems = v3_preflight(off_vocab, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4361:        results.append("m2 off-vocabulary D4 status: preflight exits E2E-UNC")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4367:        problems = v3_preflight(duplicated, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4369:        results.append("m3 duplicated D4 basis: preflight exits E2E-UNC")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4372:        problems = v3_preflight(no_restriction, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4374:        results.append("m4 partial row without restriction: preflight exits E2E-UNC")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4377:        problems = v3_preflight(no_owner, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4379:        results.append("m5 unresolved row without owner: preflight exits E2E-UNC")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4382:        problems = v3_preflight(outside, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4384:        results.append("m7 link to a file outside the v3 read set: preflight exits E2E-LINK")
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4387:        problems = v3_preflight(extra_glossary, read_paths)
+kotodama-shokunin/tools/exercise-handoff-e2e.py:4389:        results.append("m9 extra glossary row: preflight exits E2E-SCAN")
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r19-pre/tools/d2-typed-labels.py:1076:   ["spouse"], [], "Valley Moot statute", "any band, the day only", [], [], ["wedding day"], ["GAR-01", "GAR-03"],
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r19-pre/tools/d2-typed-labels.py:1185: "SR-01#a|SR-01#b": {"status": "band-keyed-pair", "why": "below-line prohibition and above-line permission of the same rule; jurisdictions are disjoint by construction", "cite": C12 + "318-329"},
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r20-post/tools/d2-typed-labels.py:1076:   ["spouse"], [], "Valley Moot statute", "any band, the day only", [], [], ["wedding day"], ["GAR-01", "GAR-03"],
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r20-post/tools/d2-typed-labels.py:1185: "SR-01#a|SR-01#b": {"status": "band-keyed-pair", "why": "below-line prohibition and above-line permission of the same rule; jurisdictions are disjoint by construction", "cite": C12 + "318-329"},
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r22-post/tools/d2-typed-labels.py:1096:   ["spouse"], [], "Valley Moot statute", "any band, the day only", [], [], ["wedding day"], ["GAR-01", "GAR-03"],
+kotodama-shokunin/tools/gates/expected/d4-typed-labels-check-gate/r22-post/tools/d2-typed-labels.py:1205: "SR-01#a|SR-01#b": {"status": "band-keyed-pair", "why": "below-line prohibition and above-line permission of the same rule; jurisdictions are disjoint by construction", "cite": C12 + "318-329"},
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/d2-typed-labels.py:1096:   ["spouse"], [], "Valley Moot statute", "any band, the day only", [], [], ["wedding day"], ["GAR-01", "GAR-03"],
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/d2-typed-labels.py:1205: "SR-01#a|SR-01#b": {"status": "band-keyed-pair", "why": "below-line prohibition and above-line permission of the same rule; jurisdictions are disjoint by construction", "cite": C12 + "318-329"},
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/gates/lexicon-coverage-audit.py:1326:    gloss: silver band (payment)
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/gates/myth-consistency-gate.py:48:Kernel-extension HOLD IDs (this file's documented admission policy, not spec
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/gates/phonology-sanity-gate.py:87: * Band thresholds follow Maddieson 2013, WALS chs. 1–2, 12 (verified against
+kotodama-shokunin/tools/gates/frozen/round-22/d4-repin/inputs/tools/gates/phonology-sanity-gate.py:90:   Outside-band results are REVIEW, never automatic rejection (spec §3).
+kotodama-shokunin/tools/gates/lexicon-coverage-audit.py:1326:    gloss: silver band (payment)
+kotodama-shokunin/tools/gates/myth-consistency-gate.py:48:Kernel-extension HOLD IDs (this file's documented admission policy, not spec
+kotodama-shokunin/tools/gates/phonology-sanity-gate.py:87: * Band thresholds follow Maddieson 2013, WALS chs. 1–2, 12 (verified against
+kotodama-shokunin/tools/gates/phonology-sanity-gate.py:90:   Outside-band results are REVIEW, never automatic rejection (spec §3).
+kotodama-shokunin/tools/gates/provenance-audit.py:5:admission bar for provenance apparatus, corpus/QUALITY.md items 1-3, and the
+kotodama-shokunin/tools/gates/provenance-audit.py:66:admission bar: corpus/QUALITY.md. Stdlib only.
+kotodama-shokunin/tools/harness/claims-freshness.py:2:"""Pre-dispatch claims-freshness gate — part 1/3: input contract + baseline.
+kotodama-shokunin/tools/harness/claims-freshness.py:2702:        description="Pre-dispatch claims-freshness gate (r47 claim O).",
+kotodama-shokunin/tools/harness/receipt_guard.py:2:"""Preflight receipt writes against HEAD and every branch and remote-tracking ref, not the mutable Git index.
+kotodama-shokunin/tools/harness/receipt_guard_adoption.py:18:  local proxy/preflight function that calls it — and whether such a call
+kotodama-shokunin/tools/harness/receipt_guard_adoption.py:902:def guard_preflight():
+kotodama-shokunin/tools/harness/receipt_guard_adoption.py:913:        guard_preflight()
+mado-shokunin/tools/mado-barfoot.py:2:"""mado — bar footprint join: declared waybar config -> live layer box -> reserved band.
+mado-shokunin/tools/mado-barfoot.py:14:monitor's `reserved` band. Nothing is connected, started or written.
+mado-shokunin/tools/mado-barfoot.py:33:    band is the anchored-edge extent plus the opposite edge's margin. Horizontal margins of
+mado-shokunin/tools/mado-barfoot.py:34:    a horizontal bar never enter the band (they only move/resize a zero-width box).
+mado-shokunin/tools/mado-barfoot.py:35:    A negative margin is refused (the band can be voided or extend past the box).
+mado-shokunin/tools/mado-barfoot.py:36:  * `reserved` band order is [left, top, right, bottom] (HyprCtl.cpp monitors reply).
+mado-shokunin/tools/mado-barfoot.py:46:    — the expected band is then 0.
+mado-shokunin/tools/mado-barfoot.py:47:  * Not modelled and named as a limit: a static `monitor … addreserved` band (the reported
+mado-shokunin/tools/mado-barfoot.py:48:    band mixes the static reserve with the layer contribution); an output entry naming the
+mado-shokunin/tools/mado-barfoot.py:73:# The edge opposite the anchored one on the band axis: gtk-layer-shell's auto zone adds
+mado-shokunin/tools/mado-barfoot.py:276:        raise Unmodelled("a negative margin can void or invert the exclusive band; not modelled")
+mado-shokunin/tools/mado-barfoot.py:432:    band = mon["reserved"][RESERVED_INDEX[edge]]
+mado-shokunin/tools/mado-barfoot.py:440:    elif band == expected:
+mado-shokunin/tools/mado-barfoot.py:442:    elif band > expected:
+mado-shokunin/tools/mado-barfoot.py:451:    rows.append(("RESULT", "monitor=%s box=%s reserved=%s band=%d expected=%d verdict=%s"
+mado-shokunin/tools/mado-barfoot.py:452:                 % (monitor, box_verdict, reserved_verdict, band, expected, verdict)))
+mado-shokunin/tools/mado-barfoot.py:532:    # the margined band composes the anchored-edge extent plus the opposite margin
+mado-shokunin/tools/mado-barfoot.py:538:    ok(v == "CLEAN" and any("reserved=EQ band=34 expected=34" in t for _, t in rows), "top margin band eq")
+mado-shokunin/tools/mado-barfoot.py:544:    ok(v == "DIFFER" and rc == 1, "top margin band differ")
+mado-shokunin/tools/mado-barfoot.py:545:    # a horizontal margin never enters a horizontal bar's vertical band; it only moves the box
+mado-shokunin/tools/mado-barfoot.py:551:    ok(v == "CLEAN" and any("box=MATCH reserved=EQ band=38 expected=38" in t for _, t in rows),
+mado-shokunin/tools/mado-barfoot.py:552:       "cross-axis margin stays out of the band")
+mado-shokunin/tools/mado-barfoot.py:553:    # transposed rule: a left bar's band is width + left + right margins
+mado-shokunin/tools/mado-barfoot.py:559:    ok(v == "CLEAN" and any("reserved=EQ band=52 expected=52" in t for _, t in rows), "left margin band eq")
+mado-shokunin/tools/mado-evidence-audit.py:7:authenticated chronology, admission or promotion authority is consulted.
+mado-shokunin/tools/mado-evidence-audit.py:22:AUTHORITY = 'artifact arithmetic and evidence labels only; not semantic correctness, authentication, admission or promotion'
+mado-shokunin/tools/mado-verify.sh:521:  st_eq  "R1: in-band fixture PASSes (exit 0)" 0 "$st_rg"
+mado-shokunin/tools/mado-verify.sh:535:  st_has "R2: FAIL line" "$o1" "REGRESSION_CASE fixture: FAIL (out of band:"
+mado-shokunin/tools/mado-verify.sh:929:  # tag (jj-w1 F6, the live jj shape; CriticAdmission w2 §3). The rescue is
+mado-shokunin/tools/mado-verify.sh:1032:  # CriticAdmission w2 §3: the rescue requires HEAD^{tree} == <tip>^{tree}.
+mado-shokunin/tools/mado-verify.sh:1991:# CriticAdmission / SentinelGatePath wave-2 corrections and ReviewJjFinal):
+mado-shokunin/tools/mado-verify.sh:2033:#   · REGRESSION_TARGET · REGRESSION_RECUT · REGRESSION_BAND · REGRESSION_SWEEP
+mado-shokunin/tools/mado-verify.sh:2240:  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; delta=%s; log: %s)\n' \
+mado-shokunin/tools/mado-verify.sh:2300:  printf 'REGRESSION_BAND: all recorded kills required (recorded %s/%s KILLED; flips=0; inconclusive=0; control GREEN; MUTATE_RESTORE OK; target sha unchanged) — plan §(a) killed-delta<=1 tolerance not applied\n' \
+mado-shokunin/tools/mado-verify.sh:3832:          # the HEAD reading, or a real MOVED would be hidden (CriticAdmission).
+mado-shokunin/tools/mado-win-display.py:45:  - the work-area subtraction's cause (which appbar occupies the band the
+mori-shokunin/tools/mori-commit-runway.py:6:the limit is enforced, and under mode 2 with the error band of the per-CPU counter the kernel's test reads
+mori-shokunin/tools/mori-commit-runway.py:41:  OVERCOMMIT_NEVER) and ``band_kb`` = batch_pages * cpus * page: the test reads the global count without the
+mori-shokunin/tools/mori-commit-runway.py:43:  Committed_AS by up to the band.  ``COMMIT_LOW`` (exit 1) when ``usable_kb <= band_kb``: inside the band the
+mori-shokunin/tools/mori-commit-runway.py:47:  band.
+mori-shokunin/tools/mori-commit-runway.py:54:limit differs from the printed one, ``inside_band`` with COMMIT_LOW) and ``notes``.
+mori-shokunin/tools/mori-commit-runway.py:85:                  "usable_kb", "band_kb", "batch_pages", "cpus_present", "single_request_cap_kb",
+mori-shokunin/tools/mori-commit-runway.py:228:        out["band_kb"] = batch * cpus * page_kb
+mori-shokunin/tools/mori-commit-runway.py:231:        if out["usable_kb"] <= out["band_kb"]:
+mori-shokunin/tools/mori-commit-runway.py:233:            findings.append({"id": "inside_band", "usable_kb": out["usable_kb"], "band_kb": out["band_kb"]})
+mori-shokunin/tools/mori-commit-runway.py:237:                     "reserve: root keeps the admin reserve, a small process part of the user reserve); band_kb "
+mori-shokunin/tools/mori-round16-context-check.py:317:    "L1 MoriR16 holds canonical planner."
+mori-shokunin/tools/mori-round17-context-check.py:462:    "L1 MoriR17 holds canonical planner."
+mori-shokunin/tools/mori-round17-context-check.py:557:_WAVE2_CONTEXT = '''mori round17 wave2 — fresh falsification of settled wave1 work, not independent closure. Three claims: C1 coverage terminal-at-scan, C2 operability branch-anchored census, C3 calibration no-pathspec filename-or-content misroot witness (lowest score5). Read /home/vgpnk/Projects/shokunin/mori-shokunin/.ufo/waves/round-17/contract.md including AmendmentA1, then /home/vgpnk/Projects/shokunin/mori-shokunin/.ufo/waves/round-17/PINNED_INPUTS.json and /home/vgpnk/Projects/shokunin/mori-shokunin/corpus/lessons/round-17.md. L1 MoriR17 remains planner and sole integrator; you attack evidence, never judge admission.
+mori-shokunin/tools/mori-settlement-scan.py:39:ROLES = ("scout", "reviewer", "critic", "connector", "sentinel", "executor",
+mori-shokunin/tools/mori-settlement-scan.py:181:                                "results": [member("A", agent="planner")]})
+mori-shokunin/tools/mori-wave-settlement.py:7:     task's final line, e.g. a terminal `| godspeed` envelope), after stripping
+mori-shokunin/tools/mori-wave-settlement.py:42:    {"id": "r1-godspeed-trailer", "expect": {"exit": 0, "state": "settled", "present": 1, "unparsed": 0}},
+mori-shokunin/tools/mori-wave-settlement.py:512:    elif case_id == "r1-godspeed-trailer":
+mori-shokunin/tools/mori-wave-settlement.py:514:        task["task"] += "\n\n| godspeed"
+souji-shokunin/tools/cand-a1-quarantine.sh:523:  # r10 A1/A2 preflight: for a stale-class target, re-derive the stale
+souji-shokunin/tools/cand-a1-quarantine.sh:530:      block_one "$raw" "stale-recheck=$QS_EV" "preflight stale-recheck"
+souji-shokunin/tools/cand-a1-quarantine.sh:977:  # full-tree) as a PREFLIGHT, so the target is refused before anything is
+souji-shokunin/tools/cand-a1-quarantine.sh:995:  # Preflight refusal: the directory and its fresh descendant stay in place
+souji-shokunin/tools/cand-d1-quarantine.sh:1167:  # tool's own preflight guard, `index-flag-refused`.  Both are the same
+souji-shokunin/tools/cand-d1-quarantine.sh:1175:  # through, so the LOCAL preflight guard must refuse before staging.
+souji-shokunin/tools/cand-f2-quarantine.sh:786:  # F2 (J23): a --separate-git-dir root must be accepted as a repo (preflight).
+souji-shokunin/tools/cand-f2-quarantine.sh:984:  # ---- G2: F2 — a --separate-git-dir repo root is accepted by preflight ----
+souji-shokunin/tools/cand-f2-quarantine.sh:989:    "preflight rc=$g2rc (2 would mean 'not a git repo')"
+souji-shokunin/tools/souji-census.sh:1721:  local -A preflight_timeout=()
+souji-shokunin/tools/souji-census.sh:1747:          preflight_timeout["$repo"]=1
+souji-shokunin/tools/souji-census.sh:1764:    if [ "${preflight_timeout[$repo]+x}" = x ]; then
+souji-shokunin/tools/souji-freeze-check.py:2:"""tools/souji-freeze-check.py - the pre-dispatch freeze checklist as one command.
+souji-shokunin/tools/souji-preservation-evidence.py:2:"""souji-preservation-evidence.py — declared paired-evidence admission gate (r15 / C2).
+souji-shokunin/tools/souji-preservation-evidence.py:211:  and structured fields all agree can still be a false admission: this gate
+souji-shokunin/tools/souji-preservation-evidence.py:2599:        description="Declared paired-evidence admission gate (r15 / C2).")
+souji-shokunin/tools/souji-report-contract.py:180:            # r36 A7 (wave seat SwarmConnector39 3.4): the verdict is the first token after the
+tameshi-shokunin/tools/mutate-and-run.sh:144:# REGRESSION_TOOL / REGRESSION_DATE / REGRESSION_BAND / REGRESSION_EXPECT /
+tameshi-shokunin/tools/mutate-and-run.sh:164:# fixture (in-band PASS, band-edge PASS at killed-delta 1 / flips 1, doctored
+tameshi-shokunin/tools/mutate-and-run.sh:196:BAND_KILLED=1   # --regression: |killed - recorded| tolerance, per case
+tameshi-shokunin/tools/mutate-and-run.sh:197:BAND_FLIPS=1    # --regression: max verdict differences vs the recorded table
+tameshi-shokunin/tools/mutate-and-run.sh:232:OK). Exit: 0 all legs PASS · 1 >= 1 leg out of band · 2 cannot verify (missing
+tameshi-shokunin/tools/mutate-and-run.sh:1233:  # band (BAND_KILLED / BAND_FLIPS); the ledger legs pass 0 0 (exact: every
+tameshi-shokunin/tools/mutate-and-run.sh:1241:  [[ -n "$ktol" ]] || ktol=$BAND_KILLED
+tameshi-shokunin/tools/mutate-and-run.sh:1242:  [[ -n "$ftol" ]] || ftol=$BAND_FLIPS
+tameshi-shokunin/tools/mutate-and-run.sh:1396:    printf 'REGRESSION_CASE %s: PASS (band: killed-delta<=%s flips<=%s inconclusive=0 defects=%s)\n' \
+tameshi-shokunin/tools/mutate-and-run.sh:1400:  printf 'REGRESSION_CASE %s: FAIL (out of band:%s; log: %s)\n' "$name" "$reasons" "$cwd/sweep.log"
+tameshi-shokunin/tools/mutate-and-run.sh:1444:  printf 'REGRESSION_BAND: ledger legs exact (killed-delta<=0 flips<=0 inconclusive=0 defects=exact); fixture-mode default killed-delta<=%s flips<=%s\n' \
+tameshi-shokunin/tools/mutate-and-run.sh:1445:    "$BAND_KILLED" "$BAND_FLIPS"
+tameshi-shokunin/tools/mutate-and-run.sh:1704:  # --regression engine on this fixture (the band is the one stated in the file
+tameshi-shokunin/tools/mutate-and-run.sh:1705:  # header): in-band PASS, doctored recorded-table FAIL, pin / target SETUP.
+tameshi-shokunin/tools/mutate-and-run.sh:1710:  [[ $st_rg -eq 0 ]]; st 'regression engine passes an in-band fixture' $?
+tameshi-shokunin/tools/mutate-and-run.sh:1711:  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg1.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1724:  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: flips=2' "$root/rg2.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1725:  st 'out-of-band FAIL names flips=2' $?
+tameshi-shokunin/tools/mutate-and-run.sh:1744:  # band edges and accounting arms the r4-2 fixtures never exercised: in-band
+tameshi-shokunin/tools/mutate-and-run.sh:1766:  [[ $st_rg -eq 0 ]]; st 'band edge (1 flip / killed-delta 1) still PASSes' $?
+tameshi-shokunin/tools/mutate-and-run.sh:1767:  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg5.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1768:  st 'band-edge PASS line exact' $?
+tameshi-shokunin/tools/mutate-and-run.sh:1770:  st 'band-edge table line exact' $?
+tameshi-shokunin/tools/mutate-and-run.sh:1778:  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=2 flips=2 defects=2-recorded=3;' "$root/rg6.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1789:  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: defects=2-recorded=1;' "$root/rg7.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1801:  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: inconclusive=1;' "$root/rg8.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1812:  grep -qF 'REGRESSION_CASE fixture: PASS (band: killed-delta<=1 flips<=1 inconclusive=0 defects=2)' "$root/rg9.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1833:  grep -qF 'REGRESSION_CASE fixture-git: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg10.out"
+tameshi-shokunin/tools/mutate-and-run.sh:1953:  grep -qF 'REGRESSION_CASE fixture-ownrepo: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg18.out"
+tameshi-shokunin/tools/mutate-and-run.sh:2000:  grep -qF 'REGRESSION_CASE fixture-env-read: PASS (band: killed-delta<=0 flips<=0 inconclusive=0 defects=2)' "$root/rg19.out"
+tameshi-shokunin/tools/mutate-and-run.sh:2010:  grep -qF 'REGRESSION_CASE fixture: FAIL (out of band: killed-delta=1 flips=1;' "$root/rg14.out"
+tameshi-shokunin/tools/rekey-cost.py:6:rekey owe?* Round 52 lost admission to cold-read debt it discovered after the
+tameshi-shokunin/tools/wave-reconcile.py:22:  attack_share   the share of seats whose agent is in the row's named attack
+tameshi-shokunin/tools/wave-reconcile.py:32:record-claim-live-on-attack-share, the two round-74 survivors: a `printed` token
+tameshi-shokunin/tools/wave-reconcile.py:34:`_record_claim` bypass on the `roles` and `attack_share` branches. Each new arm
+tameshi-shokunin/tools/wave-reconcile.py:193:    record block made a forged span a silent pass on roles/attack_share rows).
+tameshi-shokunin/tools/wave-reconcile.py:291:    if kind == 'attack_share':
+tameshi-shokunin/tools/wave-reconcile.py:382:                   {'name': 'S11', 'agent': 'connector'}]),
+tameshi-shokunin/tools/wave-reconcile.py:385:PLAN = (b'- Wave `w1`: 12 seats - 3 executor, 2 scribe, 1 scout, 1 connector,\n'
+tameshi-shokunin/tools/wave-reconcile.py:400:                                              'revenger', 'connector'])]}
+tameshi-shokunin/tools/wave-reconcile.py:579:                'span': '12 seats - 3 executor, 2 scribe, 1 scout, 1 connector,\n'
+tameshi-shokunin/tools/wave-reconcile.py:581:                'roles': {'executor': 3, 'scribe': 2, 'scout': 1, 'connector': 1,
+tameshi-shokunin/tools/wave-reconcile.py:585:            dict(row(kind='attack_share'), id='a', expect='meet',
+tameshi-shokunin/tools/wave-reconcile.py:589:            lambda: measure_row(kind='attack_share',
+tameshi-shokunin/tools/wave-reconcile.py:627:        # `roles` and `attack_share` branches must bind the record span before
+tameshi-shokunin/tools/wave-reconcile.py:644:        arm_raises('arm18-record-claim-live-on-attack-share',
+tameshi-shokunin/tools/wave-reconcile.py:647:                       kind='attack_share',
+tameshi-shokunin/tools/wave-route-mix.py:2:"""wave-route-mix — pre-dispatch provider-concentration check for a swarm wave spec.
+tsukuroi-shokunin/tools/check-fd-band-r49.py:3:descriptor-band exhaustion instead of failing silently, and its stale /tmp comment is gone.
+tsukuroi-shokunin/tools/check-fd-band-r49.py:8:240-249 band and returned 1 with no diagnostic when every descriptor was already open, and
+tsukuroi-shokunin/tools/check-fd-band-r49.py:10:records a failure class (ST_BASE_ERR) and the selftest prints a named `fd band ... exhausted`
+tsukuroi-shokunin/tools/check-fd-band-r49.py:11:diagnostic for the exhausted-band case, and one new selftest case (R49-C3) proves it.
+tsukuroi-shokunin/tools/check-fd-band-r49.py:15:  diag_ok    the script carries the failure class assignment `ST_BASE_ERR=fd-band`, the
+tsukuroi-shokunin/tools/check-fd-band-r49.py:16:             printed diagnostic `fd band %s exhausted`, and >=2 occurrences of `fd band`
+tsukuroi-shokunin/tools/check-fd-band-r49.py:18:  band_ok    `bash <census> --selftest` at REV exits 0, its last line is PASS with 0 failed,
+tsukuroi-shokunin/tools/check-fd-band-r49.py:23:Predicate: stale_ok == 1 and diag_ok == 1 and band_ok == 1 and cases >= 167
+tsukuroi-shokunin/tools/check-fd-band-r49.py:28:Usage: python3 tools/check-fd-band-r49.py --revision <REV> [--work DIR] [--census-file FILE]
+tsukuroi-shokunin/tools/check-fd-band-r49.py:45:DIAG_CODE = 'ST_BASE_ERR=fd-band'
+tsukuroi-shokunin/tools/check-fd-band-r49.py:46:DIAG_TEXT = 'fd band %s exhausted'
+tsukuroi-shokunin/tools/check-fd-band-r49.py:49:PREDICATE = 'stale_ok == 1 and diag_ok == 1 and band_ok == 1 and cases >= 167'
+tsukuroi-shokunin/tools/check-fd-band-r49.py:60:    return tempfile.mkdtemp(prefix='fd-band-', dir=base)
+tsukuroi-shokunin/tools/check-fd-band-r49.py:93:                        and text.count('fd band') >= 2) else 0
+tsukuroi-shokunin/tools/check-fd-band-r49.py:105:        band_ok = 1 if (p.returncode == 0 and summary and summary.group(1) == 'PASS'
+tsukuroi-shokunin/tools/check-fd-band-r49.py:107:        out_obj = {'counter': 'check-fd-band-r49', 'revision': rev, 'base': BASE,
+tsukuroi-shokunin/tools/check-fd-band-r49.py:108:                   'stale_ok': stale_ok, 'diag_ok': diag_ok, 'band_ok': band_ok,
+tsukuroi-shokunin/tools/check-fd-band-r49.py:113:        ok = stale_ok == 1 and diag_ok == 1 and band_ok == 1 and cases >= TARGET_CASES
+tsukuroi-shokunin/tools/check-fd-band-r49.py:131:        print(json.dumps({'counter': 'check-fd-band-r49',
+tsukuroi-shokunin/tools/check-owed-statements-r29.py:8:the "+200 band scanned first" OOM-selection reading (O01-O04), the MP4 "nothing monitored"
+tsukuroi-shokunin/tools/check-owed-statements-r29.py:92:     'exactly the band the kernel scans first'),
+tsukuroi-shokunin/tools/check-owed-statements-r29.py:94:     'the +200 band is chosen first'),
+tsukuroi-shokunin/tools/check-owed-statements-r29.py:98:     'the +200 band is scanned first'),
+tsukuroi-shokunin/tools/check-path-reconciliation.py:82:    if value == 'skill://godspeed' or not selector or ':' not in value:
+tsukuroi-shokunin/tools/check-path-reconciliation.py:105:        if base == 'skill://godspeed' and base in authority:
+tsukuroi-shokunin/tools/check-path-reconciliation.py:348:    nonpath = events(('bash', ''), ('edit', a), ('read', 'skill://godspeed'))
+tsukuroi-shokunin/tools/check-path-reconciliation.py:349:    case('non-path-events', nonpath, bindings([a, 'skill://godspeed']), audit(), 0, 0, 0)
+tsukuroi-shokunin/tools/check-path-reconciliation.py:353:    case('skill-requires-authority', events(('read', 'skill://godspeed')), bindings([a]), audit('S:0'), 1, 1, 0)
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:2:"""Round-46 C2 counter (frozen before data): admission of the pending btrfs scrub grounding rows GR1, GR2, GR3.
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:33:  marks_ok     admission marks at REV, one point each: the entry has a line exactly
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:35:               `## Scrub grounding — round 46 admission`; corpus/README.md has a line containing both
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:45:Usage: python3 tools/check-scrub-admission-r46.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:66:MARK_SKILL = '## Scrub grounding — round 46 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r46.py:255:        'counter': 'check-scrub-admission-r46', 'revision': rev, 'base': BASE, 'base_ok': 1, 'predicate': PREDICATE,
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:2:"""Round-47 C1 counter (frozen before data): admission of the btrfs scrub grounding rows GR1, GR2, GR3.
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:15:  F2 (w1/C2RevCounter.md)   admission marks must not be grantable to negating text: the SKILL mark
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:17:                            negation of admission.
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:19:                            empty stdout: every parse failure is caught and reported in-band.
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:28:Sizing for two amendment rounds (round-46 lesson R46-C2-RESIDUAL-UNIVERSE-ONE-SHOT): admission is
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:34:Usage: python3 tools/check-scrub-admission-r47.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:76:MARK_SKILL = '## Scrub grounding — round 47 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:307:        print(json.dumps({'counter': 'check-scrub-admission-r47', 'error': f'{type(e).__name__}: {e}',
+tsukuroi-shokunin/tools/check-scrub-admission-r47.py:375:        'counter': 'check-scrub-admission-r47', 'revision': rev, 'base': BASE, 'base_ok': 1,
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:2:"""Round-48 C2 counter (frozen before data): admission of the btrfs scrub grounding rows GR1, GR2, GR3.
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:4:Successor of tools/check-scrub-admission-r48.py (round 47 closed `rejected-honest-stop`: the counted
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:19:  negation-proof README mark, in-band parse failures, quote and citation resolution, distinct bodies).
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:25:Usage: python3 tools/check-scrub-admission-r48.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:28:negation-proof README mark, the F3 in-band parse failures, the K22 quote/citation resolution and
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:29:the K23 distinct-bodies rule — see tools/check-scrub-admission-r47.py for their origin findings.
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:73:MARK_SKILL = '## Scrub grounding — round 48 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:297:        print(json.dumps({'counter': 'check-scrub-admission-r48', 'error': f'{type(e).__name__}: {e}',
+tsukuroi-shokunin/tools/check-scrub-admission-r48.py:367:        'counter': 'check-scrub-admission-r48', 'revision': rev, 'base': BASE, 'base_ok': 1,
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:2:"""Round-49 C1 counter (frozen before any seat of round 49): admission of the btrfs scrub
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:24:                SKILL.md line `## Scrub grounding — round 49 admission`, and a README
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:40:Usage: python3 tools/check-scrub-admission-r49.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:86:MARK_SKILL = '## Scrub grounding — round 49 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:385:    out = {'counter': 'check-scrub-admission-r49', 'revision': rev, 'base': BASE,
+tsukuroi-shokunin/tools/check-scrub-admission-r49.py:415:        print(json.dumps({'counter': 'check-scrub-admission-r49',
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:2:"""Round-50 C1 counter (frozen before any seat of round 50): admission of the btrfs scrub
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:35:                SKILL.md line `## Scrub grounding — round 49 admission`, and a README
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:51:Usage: python3 tools/check-scrub-admission-r49.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:97:MARK_SKILL = '## Scrub grounding — round 50 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:130:    'check-scrub-admission-r50.py': ('tools/check-scrub-admission-r50.py',),
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:437:    out = {'counter': 'check-scrub-admission-r49', 'revision': rev, 'base': BASE,
+tsukuroi-shokunin/tools/check-scrub-admission-r50.py:469:        print(json.dumps({'counter': 'check-scrub-admission-r50',
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:2:"""Round-51 C1 counter (frozen before any seat of round 51): admission of the btrfs scrub
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:35:                SKILL.md line `## Scrub grounding — round 51 admission`, and a README
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:52:Usage: python3 tools/check-scrub-admission-r51.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:73:MARK_SKILL = '## Scrub grounding — round 51 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:96:    'check-scrub-admission-r51.py': ('tools/check-scrub-admission-r51.py',),
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:373:    out = {'counter': 'check-scrub-admission-r51', 'revision': rev, 'base': BASE,
+tsukuroi-shokunin/tools/check-scrub-admission-r51.py:403:        print(json.dumps({'counter': 'check-scrub-admission-r51',
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:2:"""Round-52 C1 counter (frozen before any seat of round 52): admission of the btrfs scrub
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:7:18 counted seat names (`R52RevGR<n>{a,b,c}` / `R52CritGR<n>{a,b,c}`), the three admission marks
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:17:Amendment 1 (round 51, pre-w2, before any counted seat scored; freeze bytes: `git show 2732ee6c:tools/check-scrub-admission-r51.py`):
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:42:                SKILL.md line `## Scrub grounding — round 52 admission`, and a README
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:59:Usage: python3 tools/check-scrub-admission-r52.py --revision <REV> [--lane <repo>] [--section-hash]
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:80:MARK_SKILL = '## Scrub grounding — round 52 admission'
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:103:    'check-scrub-admission-r51.py': ('tools/check-scrub-admission-r51.py',),
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:104:    'check-scrub-admission-r52.py': ('tools/check-scrub-admission-r52.py',),
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:381:    out = {'counter': 'check-scrub-admission-r52', 'revision': rev, 'base': BASE,
+tsukuroi-shokunin/tools/check-scrub-admission-r52.py:411:        print(json.dumps({'counter': 'check-scrub-admission-r52',
+tsukuroi-shokunin/tools/check-seat-bindings.py:48:    if value == 'skill://godspeed':
+tsukuroi-shokunin/tools/check-seat-bindings.py:153:                if not isinstance(paths, list) or not paths or any(not local(p) and not (field == 'read_paths' and p == 'skill://godspeed') for p in paths) or len(paths) != len(set(paths)):
+tsukuroi-shokunin/tools/check-seat-bindings.py:212:    binding = {'schema': 'tsukuroi-seat-bindings-v1', 'seats': [{'name': 'A', 'root': LANE, 'read_paths': [src, 'skill://godspeed'], 'write_paths': [report], 'commands': [], 'fetches': []}]}
+tsukuroi-shokunin/tools/check-seat-bindings.py:221:    case('skill', 'read', {'path': 'skill://godspeed'}, 0)
+tsukuroi-shokunin/tools/check-seat-bindings.py:250:    case('skill-write', 'write', {'path': 'skill://godspeed'}, 1, 'SCOPE-PATH-DENIED')
+tsukuroi-shokunin/tools/check-seat-bindings.py:252:    case('skill-selector', 'read', {'path': 'skill://godspeed:raw'}, 1, 'SCOPE-PATH-DENIED')
+tsukuroi-shokunin/tools/check-seat-bindings.py:296:    v2 = {'schema': 'tsukuroi-seat-bindings-v2', 'seats': [{'name': 'A', 'root': LANE, 'read_paths': [src, target, other, 'skill://godspeed'],
+tsukuroi-shokunin/tools/check-seat-bindings.py:307:    for spelling in (target + '/', LANE + '/drafts/./A.md', LANE + '/x/../drafts/A.md', LANE + '//drafts/A.md', target + ':raw', 'drafts/A.md', 'skill://godspeed', 'xd://edit', target.upper()):
+tsukuroi-shokunin/tools/check-seat-bindings.py:330:    v2case('v2-edit-paths-skill', 'read', {'path': src}, 2, 'SCOPE-SCHEMA', manifest=v2mut(lambda s: s.update(edit_paths=['skill://godspeed'])))
+tsukuroi-shokunin/tools/count-ul-rows-r73.py:68:# self-test scores the counter's mechanics, never the note's admission.
+tsukuroi-shokunin/tools/lint-grounding-r51.py:4:The round-47..50 counted cohorts blocked every admission on defects a machine can find:
+tsukuroi-shokunin/tools/lint-grounding-r51.py:366:    """The whole lint as one dict (also used by tools/check-scrub-admission-r51.py)."""
+tsukuroi-shokunin/tools/mutants-owed-statements-r29-landed.py:132:ANCH = {'O02': 'the +200 band is chosen first', 'O04': 'the +200 band is scanned first'}
+tsukuroi-shokunin/tools/mutants-owed-statements-r29-landed.py:204:    md_sub('O04', lambda l: set_field(l, 'now', 'Confirmed again: the +200 band, is scanned first by the kernel on this host, exactly as written before'))
+tsukuroi-shokunin/tools/mutants-owed-statements-r29-v4shapes.py:86:ANCHOR_O01 = 'exactly the band the kernel scans first'
+tsukuroi-shokunin/tools/mutants-owed-statements-r29.py:98:    'O01': 'exactly the band the kernel scans first',
+tsukuroi-shokunin/tools/mutants-owed-statements-r29.py:99:    'O02': 'the +200 band is chosen first',
+tsukuroi-shokunin/tools/mutants-owed-statements-r29.py:101:    'O04': 'the +200 band is scanned first',
+tsukuroi-shokunin/tools/mutants-owed-statements-r29.py:114:    'O01': 'the kernel walks every eligible task and keeps the highest badness score; no band is visited in order',
+tsukuroi-shokunin/tools/mutants-owed-statements-r29.py:115:    'O02': 'selection compares each task badness score once per pass, so a band is never chosen as a unit first',
+tsukuroi-shokunin/tools/report-red-causes.py:222:    named_seat = [s['name'] for s in report['incomplete_seats']] == ['ConnFxPlanner']
+tsukuroi-shokunin/tools/score-selftest-tmpdir-r48.py:177:    except Exception as e:  # in-band, never an empty stdout
+tsukuroi-shokunin/tools/tsukuroi-census.sh:191:#             whole-gate live run 1.11 s, inside the recorded 0.69–1.75 s band).
+tsukuroi-shokunin/tools/tsukuroi-census.sh:736:               the alias band is already open the resolver fails with the named
+tsukuroi-shokunin/tools/tsukuroi-census.sh:737:               diagnostic `fd band <band> exhausted (every descriptor already open)`
+tsukuroi-shokunin/tools/tsukuroi-census.sh:738:               instead of a silent retry, and a malformed band fails as
+tsukuroi-shokunin/tools/tsukuroi-census.sh:739:               `err=fd-band-invalid` — R49-C3); exit 0 pass, 1 fail
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2494:  # script descriptor band (255) and above anything fixtures auto-allocate.
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2499:  # (R49-C3) The band is overridable so a selftest case can exhaust a two-descriptor
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2500:  # band deterministically; production keeps the fixed 240-249 band documented above.
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2501:  band=${SELFTEST_FD_BAND:-240 241 242 243 244 245 246 247 248 249}
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2502:  # (R49-C3, R49RevFdA D3/D4) A malformed band is a named failure: a whitespace-only value
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2505:  case "$band" in
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2506:    *[!0-9\ ]*) ST_BASE_ERR=fd-band-invalid; return 1 ;;
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2508:  case "$band" in
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2510:    *) ST_BASE_ERR=fd-band-invalid; return 1 ;;
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2517:      for fdn in $band; do
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2520:      if [ -e "/proc/self/fd/$fdn" ]; then ST_BASE_ERR=fd-band; return 1; fi
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2543:      fd-band)
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2544:        printf 'selftest: fd band %s exhausted (every descriptor already open), cannot alias TMPDIR <%s>; no /tmp fallback (R49-C3)\n' \
+tsukuroi-shokunin/tools/tsukuroi-census.sh:2545:          "${SELFTEST_FD_BAND:-240 241 242 243 244 245 246 247 248 249}" "${TMPDIR:-<unset>}" >&2 ;;
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4116:  # (R49-C3) fd-band exhaustion is named, not silent: with the alias band narrowed to two
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4118:  # ST_BASE_ERR=fd-band, leave no base and never fall back to /tmp.
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4125:  r49_dir="$work/fx/dirty fd band"
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4139:    r49_old_tmp=${TMPDIR-}; r49_old_band=${SELFTEST_FD_BAND-}
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4141:    SELFTEST_FD_BAND="$r49_f1 $r49_f2"
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4143:      bad 'selftest: an exhausted fd band must fail the base resolver (R49-C3)'
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4144:    elif [ "${ST_BASE_ERR:-}" = 'fd-band' ] && [ -z "${ST_BASE_DIR:-}" ] && [ -z "${ST_BASE_FD:-}" ]; then
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4145:      ok 'selftest: exhausted fd band fails the base resolver and names err=fd-band (R49-C3)'
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4147:      bad "selftest: exhausted fd band must name err=fd-band (got '${ST_BASE_ERR:-<empty>}') (R49-C3)"
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4149:    if [ -n "$r49_old_band" ]; then SELFTEST_FD_BAND=$r49_old_band; else unset SELFTEST_FD_BAND; fi
+tsukuroi-shokunin/tools/tsukuroi-census.sh:4156:    ok 'selftest: fd-band case skipped, no two free probe descriptors (R49-C3)'
+exit=0

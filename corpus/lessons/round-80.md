@@ -156,3 +156,35 @@ deliberate re-capture, watched by the non-scoring compare row.
   is terminal at 9 regardless.
 - **The r77 probe's label arms are red** (9/13) at this round's bytes; that is recorded history, not a
   regression of behavior (c2.5–c2.13 pass).
+
+## Errata (round 81; append-only; supersede only the named text)
+
+R80-1 … R80-12 are answered here or in the round-81 lesson (`corpus/lessons/round-81.md`).
+Where a file is not an append-only round record the repair is in place; where it is, the
+correction is named here and the original bytes are not rewritten.
+
+1. **R80-1 — `open/checklists-scaffold.txt` does not exist.** The "39/39 at the scaffolding
+   `6d03402f`" reading has no committed receipt. The measured reading is the close run in
+   `.ufo/waves/round-80/close/checklists.txt`; the scaffolding-time claim is withdrawn.
+2. **R80-2 — README-map close value.** The §Counters row that reads `CLEAN files=197 rows=197
+   covered=197` is superseded by `README_MAP: CLEAN files=198 rows=198 covered=198`
+   (`.ufo/waves/round-80/close/readme-map.txt`, rev `6cbd6750`).
+3. **R80-3 — C1 base pass count.** "6/13 (5 of the 13 pass at base)" is superseded: six arms
+   pass at base (6, 7, 9, 10, 11, 12) — `.ufo/waves/round-80/open/c1-base.txt`.
+4. **R80-4 — mis-cited conflation transcript.** The base `--adopt` → `REFUSED_ORACLE` receipt
+   is `open/c1-base.txt` arm 08, not `open/conflation.txt` (which shows `ALREADY_ADOPTED`).
+5. **R80-5 — S119 quote word count.** The Gate's "21 words" is superseded by 19 (`wc -w`);
+   the gate-side fix is `corpus/QUALITY.md` Q74 (round 81).
+8. **R80-8 — LOG selftest value.** The LOG entry's "spotcheck-adopt selftest 26 → 28" is
+   superseded by 26 → 34 (`close/spotcheck-selftest.txt`); 28 is the scaffolding reading.
+9. **R80-9 — "final tip".** The report's receipt row is measured at `6cbd6750`; `01d12789`
+   changes only close-receipt bytes.
+10. **R80-10 — base receipts lack the process exit code.** The probes return 1 on a shortfall;
+    the receipt should carry `exit=1`. Round 81's counters append the exit line to every
+    control receipt.
+11. **R80-11 — adoption stdout uncommitted.** Round 81 commits its own adoption transcript at
+    `.ufo/waves/round-81/open/spotcheck-adopt.txt`; the round-80 transcript is not
+    reconstructable and stays void.
+12. **R80-12 — duplicate-gate red-before uncommitted.** Same disposition: the failing run is
+    not on record; the S233 withdrawal is re-derivable from the registry at `509afb1d` vs
+    `6cbd6750`, and no receipt is fabricated for it.

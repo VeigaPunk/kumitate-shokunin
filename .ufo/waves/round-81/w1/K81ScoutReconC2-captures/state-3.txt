@@ -1,0 +1,16 @@
+# state at 2026-11-04T09:55:26Z
+405cf5d43d6ad37de53c76b4b2bef4f44afd2a5480292ed8166f719185f9cbad  scripts/omp-census.mjs
+9ce5664343de48205435b96ad724cbe676ba036102e2beff6978ed94e4c2ecba  scripts/proxy-check.mjs
+8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7  .ufo/pins/omp-shape.json
+--- max-age repro (45d receipt, --max-age 30)
+SHAPE_STALE age_days=45 max_age=30
+OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+EXIT=1
+--- max-age pass (--max-age 60)
+OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+EXIT=0
+--- selftest --work missing
+}
+
+Node.js v24.21.0
+EXIT=1

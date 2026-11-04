@@ -1,0 +1,16 @@
+C81_C2 arm snapshot-v2 PASS exit=0 contract=kumitate-omp-shape-v2 captured=2026-11-04T10:02:55Z entries=65/65
+C81_C2 arm shape-age-disclosed PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-11-04 age_days=0)
+C81_C2 arm shape-v1-refused PASS exit=2 out=SHAPE_VERSION want=kumitate-omp-shape-v2 got=kumitate-omp-shape-v1
+C81_C2 arm compare-v1-accepted PASS exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+C81_C2 arm shape-age-backdated PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-stale PASS exit=1 out=SHAPE_STALE age_days=45 max_age=30 | OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-pass PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm clock-future-refused PASS exit=2 out=SHAPE_CLOCK captured_at=2026-11-06T10:02:55Z is in the future
+C81_C2 arm captured-at-required PASS exit=2 out=SHAPE_INVALID
+C81_C2 arm compare-v2 PASS exit=0 out=OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+C81_C2 arm stale-does-not-score PASS exit=0 verdict=MATCH coverage_omp=10 O_members=65
+C81_C2 arm proxy-terms-unchanged PASS exit=0 injected=none O_members=65
+C81_C2 arm receipt-pinned PASS pin=8b6aaa79e24f computed=8b6aaa79e24f contract=kumitate-omp-shape-v2
+C81_C2 arm selftest PASS exit=0 out=VERDICT: PASS (98 cases)
+C81_C2 arm usage-max-age PASS exit=64 out=omp-census: --max-age is only meaningful with --shape usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR]
+C81_C2: HELD held=15/15 tool=/fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c2/scripts/omp-census.mjs

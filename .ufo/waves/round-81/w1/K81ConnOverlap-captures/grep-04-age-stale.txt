@@ -1,0 +1,46 @@
+$ grep -rInE 'age_days|captured_at|max-age|max_age|SHAPE_STALE|snapshot.*contract|contract.*snapshot' kake-shokunin/scripts tabi-shokunin/scripts */tools
+kake-shokunin/scripts/header_audit.py:424:        ["Strict-Transport-Security", "max-age=31536000; includeSubDomains"],
+kake-shokunin/scripts/header_audit.py:546:        headers[1][1] = "max-age=31536000; includeSubDomains; preload"
+kake-shokunin/scripts/header_audit.py:672:            "Strict-Transport-Security": "max-age=1",
+kake-shokunin/scripts/header_audit.py:809:        headers = copy.deepcopy(clean_headers) + [["Strict-Transport-Security", "max-age=1"],
+tabi-shokunin/scripts/aria-loopback-round13.mjs:220:    'prior docs-held locator/snapshot contract; retained as record, not acquisition credit',
+tabi-shokunin/scripts/check-aria-metadata.mjs:2340:  if (contract.tamper?.reason !== REASON.snapshotTampered) {
+kama-shokunin/tools/test-snapshot.sh:99:python3 - "${JSONS[0]}" "$WORK/snap1.out" <<'PY' && ok "snapshot JSON contract + redaction" || bad "snapshot JSON contract + redaction"
+mado-shokunin/tools/mado-verify.sh:2431:# invariant; --snapshot --help / --snapshot-diff --help print the contract.
+souji-shokunin/tools/impl-05.sh:158:    local hits mtime_now age_days rgrc
+souji-shokunin/tools/impl-05.sh:169:    age_days=$(( ( $(date +%s) - mtime_now ) / 86400 ))
+souji-shokunin/tools/impl-05.sh:170:      if [[ $hits -eq 0 && $age_days -ge $STALE_DAYS ]]; then
+souji-shokunin/tools/impl-05.sh:171:        printf 'VERDICT\t%s\tSAFE\tstale\trefs=0 age=%sd>=%sd scratch-type\n' "$path" "$age_days" "$STALE_DAYS"
+souji-shokunin/tools/impl-05.sh:174:      ev_line="stale-unmet: refs=$hits age=${age_days}d required>=${STALE_DAYS}d"
+souji-shokunin/tools/souji-verify.impl-10.sh:324:age_days() { # <abs> -> integer days since mtime, or empty when unknown
+souji-shokunin/tools/souji-verify.impl-10.sh:535:    age=$(age_days "$abs")
+souji-shokunin/tools/souji-verify.impl-10.sh:538:      EV_EVIDENCE="scratch=$desc refs=0 mtime_age_days=$age"
+souji-shokunin/tools/souji-verify.impl-10.sh:541:    EV_EVIDENCE="scratch=$desc refs=$refs mtime_age_days=${age:-?} owner=${owner:-none}"
+souji-shokunin/tools/souji-verify.impl-11.sh:331:  local scratch=0 refs="" age_days="" mtime now
+souji-shokunin/tools/souji-verify.impl-11.sh:364:      age_days=$(( (now - mtime) / 86400 ))
+souji-shokunin/tools/souji-verify.impl-11.sh:366:      age_days="unknown"
+souji-shokunin/tools/souji-verify.impl-11.sh:375:      printf 'SAFE\tstale\trefs=0 age_days=%s stale_days=%s\tartifact\n' \
+souji-shokunin/tools/souji-verify.impl-11.sh:376:        "$age_days" "$STALE_DAYS"
+souji-shokunin/tools/souji-verify.impl-11.sh:391:    why="$why scratch refs=$refs age_days=$age_days"
+souji-shokunin/tools/souji-verify.impl-13.sh:254:mtime_age_days() {
+souji-shokunin/tools/souji-verify.impl-13.sh:343:    if age=$(mtime_age_days "$p"); then
+souji-shokunin/tools/souji-verify.impl-13.sh:352:            EV_EVIDENCE="scratch=$scratch age_days=$age refs=0 sweep=$sweep scope=$root"
+souji-shokunin/tools/souji-verify.impl-13.sh:360:        note="age_days=$age"
+souji-shokunin/tools/souji-verify.impl-16.sh:400:      emit "$raw" SAFE stale "refs=0 age_days=$age"
+souji-shokunin/tools/souji-verify.impl-16.sh:403:    emit "$raw" NOT-SAFE none "push=$push_state refs=$refs age_days=$age scratch=yes"
+souji-shokunin/tools/souji-verify.impl-16.sh:735:    'refs=0 age_days=3' -- "$fix/r-scratch/.scratch/notes-a.out"
+souji-shokunin/tools/souji-verify.impl-16.sh:737:    'age_days=3' -- --stale-days 5 "$fix/r-scratch/.scratch/notes-a.out"
+tameshi-shokunin/tools/anchor-drift-sweep.py:11:(CORPUS.md contract v1); the rows pin committed snapshots precisely because
+tsukuroi-shokunin/tools/check-boot-chain.py:125:TOP_KEYS = ("schema", "captured_at", "captures", "boot", "verdict_rules",
+tsukuroi-shokunin/tools/check-boot-chain.py:1008:            "captured_at": "2026-10-20T12:35:07-03:00",
+tsukuroi-shokunin/tools/measure-update-recheck.py:107:    captured = doc.get("captured_at")
+tsukuroi-shokunin/tools/measure-update-recheck.py:110:                     "captured_at must be strict UTC YYYY-MM-DDTHH:MM:SSZ")
+tsukuroi-shokunin/tools/measure-update-recheck.py:114:        raise Cannot("E-SNAPSHOT-CAPTURED", SNAPSHOT, "captured_at is not a calendar-valid stamp")
+tsukuroi-shokunin/tools/measure-update-recheck.py:303:                    f"observed_at {observed_raw} != snapshot captured_at {captured}")
+tsukuroi-shokunin/tools/measure-update-recheck.py:308:    if "snapshot_captured_at" in record and record.get("snapshot_captured_at") != observed_raw:
+tsukuroi-shokunin/tools/measure-update-recheck.py:309:        add("R15-C2-CAPTURE-LINK", "snapshot_captured_at differs from observed_at")
+tsukuroi-shokunin/tools/measure-update-recheck.py:427:        "snapshot_captured_at": assessment.captured if assessment else None,
+tsukuroi-shokunin/tools/measure-update-recheck.py:624:                "captured_at": captured,
+tsukuroi-shokunin/tools/measure-update-recheck.py:663:                "snapshot_captured_at": captured,
+tsukuroi-shokunin/tools/measure-update-recheck.py:706:            record["snapshot_captured_at"] = "2026-10-20T07:44:40Z"
+exit=0

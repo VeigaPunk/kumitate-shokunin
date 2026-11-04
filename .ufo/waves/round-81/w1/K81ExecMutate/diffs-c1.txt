@@ -1,0 +1,132 @@
+=== diff c1-m01-band ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m01-band/scripts/ready-handoff.mjs	2026-11-04 07:01:59.555344932 -0300
+@@ -143,7 +143,7 @@
+ 
+   const laneRoot = realpathSync(lane);
+   const [lo, hi] = opts.band.split(':').map(Number);
+-  if (tc.tasks.length < lo || tc.tasks.length > hi) add('BAND', `${tc.tasks.length} seats outside ${lo}:${hi}`);
++  if (false) add('BAND', `${tc.tasks.length} seats outside ${lo}:${hi}`);
+   if (!tc.context.includes(laneRoot)) add('CONTEXT_LANE_ROOT', 'taskCall.context does not name the lane root');
+   if (!/HYAKU_SCRATCH|scratch root/i.test(tc.context)) add('SCRATCH_ROOT', 'taskCall.context does not name the scratch rule');
+ 
+=== diff c1-m02-attack ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m02-attack/scripts/ready-handoff.mjs	2026-11-04 07:02:16.510386989 -0300
+@@ -183,7 +183,7 @@
+     add('REPORT_TRAILER', `${relativeTrailers.length} seat(s) carry a relative Report: trailer and taskCall.context does not say where it resolves (${relativeTrailers[0]})`);
+   }
+   const total = tc.tasks.length;
+-  if (total > 0 && attack * 100 < opts.attackPct * total) add('ATTACK_SHARE', `${attack}/${total} attack seats below ${opts.attackPct}%`);
++  if (false) add('ATTACK_SHARE', `${attack}/${total} attack seats below ${opts.attackPct}%`);
+   if (connectors > 2) add('CONNECTOR_COUNT', `${connectors} connector seats (at most 2)`);
+ 
+   return {
+=== diff c1-m03-connector ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m03-connector/scripts/ready-handoff.mjs	2026-11-04 07:02:16.514386999 -0300
+@@ -184,7 +184,7 @@
+   }
+   const total = tc.tasks.length;
+   if (total > 0 && attack * 100 < opts.attackPct * total) add('ATTACK_SHARE', `${attack}/${total} attack seats below ${opts.attackPct}%`);
+-  if (connectors > 2) add('CONNECTOR_COUNT', `${connectors} connector seats (at most 2)`);
++  if (false) add('CONNECTOR_COUNT', `${connectors} connector seats (at most 2)`);
+ 
+   return {
+     contract: CONTRACT,
+=== diff c1-m04-planner ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m04-planner/scripts/ready-handoff.mjs	2026-11-04 07:02:16.519387011 -0300
+@@ -162,7 +162,7 @@
+     if (names.has(task.name)) add('SEAT_DUPLICATE', `seat ${task.name} appears twice`);
+     names.add(task.name);
+     if (typeof task.agent !== 'string' || !task.agent) { add('ROLE_UNKNOWN', `${where} (${task.name}) has no role`); return; }
+-    if (task.agent === 'planner') { add('PLANNER_SEAT', `seat ${task.name} is a frozen-topology planner`); return; }
++    if (false) { add('PLANNER_SEAT', `seat ${task.name} is a frozen-topology planner`); return; }
+     if (!ROLES.has(task.agent)) { add('ROLE_UNKNOWN', `seat ${task.name} role ${JSON.stringify(task.agent)} is not a swarm role`); return; }
+     roles[task.agent] = (roles[task.agent] ?? 0) + 1;
+     if (ATTACK.has(task.agent)) attack++;
+=== diff c1-m05-godspeed ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m05-godspeed/scripts/ready-handoff.mjs	2026-11-04 07:02:16.523387021 -0300
+@@ -169,7 +169,7 @@
+     if (task.agent === 'connector') connectors++;
+     if (typeof task.task !== 'string' || !task.task.trim()) { add('SEAT_SHAPE', `seat ${task.name} has no task text`); return; }
+     const firstLine = task.task.split('\n')[0].trim();
+-    if (firstLine !== '/skill:godspeed') add('GODSPEED', `seat ${task.name} does not lead with /skill:godspeed`);
++    if (false) add('GODSPEED', `seat ${task.name} does not lead with /skill:godspeed`);
+     if (!task.task.includes(laneRoot)) add('TASK_LANE_ROOT', `seat ${task.name} task text does not name ${laneRoot}`);
+     const withoutTrailers = task.task.replace(/^Report:.*$/gm, '');
+     if (/(^|[\s"'`(])(?:\.\/)?\.ufo\/waves\/round-\d+\//m.test(withoutTrailers)) {
+=== diff c1-m06-lane-root ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m06-lane-root/scripts/ready-handoff.mjs	2026-11-04 07:02:16.527387031 -0300
+@@ -170,7 +170,7 @@
+     if (typeof task.task !== 'string' || !task.task.trim()) { add('SEAT_SHAPE', `seat ${task.name} has no task text`); return; }
+     const firstLine = task.task.split('\n')[0].trim();
+     if (firstLine !== '/skill:godspeed') add('GODSPEED', `seat ${task.name} does not lead with /skill:godspeed`);
+-    if (!task.task.includes(laneRoot)) add('TASK_LANE_ROOT', `seat ${task.name} task text does not name ${laneRoot}`);
++    if (false) add('TASK_LANE_ROOT', `seat ${task.name} task text does not name ${laneRoot}`);
+     const withoutTrailers = task.task.replace(/^Report:.*$/gm, '');
+     if (/(^|[\s"'`(])(?:\.\/)?\.ufo\/waves\/round-\d+\//m.test(withoutTrailers)) {
+       add('RELATIVE_WAVE_PATH', `seat ${task.name} names a lane-relative .ufo/waves path`);
+=== diff c1-m07-dispatch-outside ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m07-dispatch-outside/scripts/ready-handoff.mjs	2026-11-04 07:02:16.534387048 -0300
+@@ -109,7 +109,7 @@
+     throw new Refusal('DISPATCH_PATH', `ready.dispatch must be an absolute path, got ${JSON.stringify(ready.dispatch)}`);
+   }
+   const dispatchPath = resolve(ready.dispatch);
+-  if (!inside(waveDir, dispatchPath)) {
++  if (false) {
+     throw new Refusal('DISPATCH_OUTSIDE', `dispatch ${dispatchPath} is not under ${waveDir}`);
+   }
+   let lst;
+=== diff c1-m08-ready-keys ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m08-ready-keys/scripts/ready-handoff.mjs	2026-11-04 07:02:16.538387058 -0300
+@@ -133,7 +133,7 @@
+   const findings = [];
+   const add = (id, detail) => findings.push({ id, detail });
+   const keys = Object.keys(ready).sort();
+-  if (keys.join(',') !== READY_KEYS.slice().sort().join(',')) add('READY_KEYS', `expected ${READY_KEYS.join(',')}, got ${keys.join(',')}`);
++  if (false) add('READY_KEYS', `expected ${READY_KEYS.join(',')}, got ${keys.join(',')}`);
+   const dirName = lane.split(sep).at(-1);
+   const laneId = dirName.replace(/-shokunin$/u, '');
+   if (ready.lane !== laneId && ready.lane !== dirName) add('LANE_MISMATCH', `ready.lane=${JSON.stringify(ready.lane)} for ${lane} (expected ${laneId} or ${dirName})`);
+=== diff c1-m09-duplicate ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m09-duplicate/scripts/ready-handoff.mjs	2026-11-04 07:02:16.545387076 -0300
+@@ -159,7 +159,7 @@
+     if (extra.length) add('ARTIFACT_KEYS', `${where} carries ${extra.join(',')} (only name/agent/task are dispatch fields)`);
+     if (typeof task.name !== 'string' || !task.name) { add('SEAT_NAME', `${where} has no name`); return; }
+     if (!/^[A-Za-z][A-Za-z0-9]{1,31}$/.test(task.name)) add('SEAT_NAME', `${where} name ${JSON.stringify(task.name)} is not CamelCase <=32`);
+-    if (names.has(task.name)) add('SEAT_DUPLICATE', `seat ${task.name} appears twice`);
++    if (false) add('SEAT_DUPLICATE', `seat ${task.name} appears twice`);
+     names.add(task.name);
+     if (typeof task.agent !== 'string' || !task.agent) { add('ROLE_UNKNOWN', `${where} (${task.name}) has no role`); return; }
+     if (task.agent === 'planner') { add('PLANNER_SEAT', `seat ${task.name} is a frozen-topology planner`); return; }
+=== diff c1-m10-trailer ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m10-trailer/scripts/ready-handoff.mjs	2026-11-04 07:02:16.552387093 -0300
+@@ -179,7 +179,7 @@
+       relativeTrailers.push(task.name);
+     }
+   });
+-  if (relativeTrailers.length && !/relative to|write it at/i.test(tc.context)) {
++  if (false) {
+     add('REPORT_TRAILER', `${relativeTrailers.length} seat(s) carry a relative Report: trailer and taskCall.context does not say where it resolves (${relativeTrailers[0]})`);
+   }
+   const total = tc.tasks.length;
+=== diff c1-m11-realpath ===
+--- /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/control-c1/scripts/ready-handoff.mjs	2026-11-04 06:49:23.170625190 -0300
++++ /fast/scratch/hyaku/kumitate-r81/K81ExecMutate/c1-m11-realpath/scripts/ready-handoff.mjs	2026-11-04 07:02:16.556387103 -0300
+@@ -116,7 +116,7 @@
+   try { lst = lstatSync(dispatchPath); } catch { throw new Refusal('DISPATCH_ABSENT', `no dispatch at ${dispatchPath}`); }
+   if (!lst.isFile()) throw new Refusal('DISPATCH_ABSENT', `dispatch is not a regular file: ${dispatchPath}`);
+   try {
+-    if (!inside(realpathSync(waveDir), realpathSync(dispatchPath))) {
++    if (false) {
+       throw new Refusal('PATH_UNSAFE', `dispatch realpath escapes ${waveDir}`);
+     }
+   } catch (e) {

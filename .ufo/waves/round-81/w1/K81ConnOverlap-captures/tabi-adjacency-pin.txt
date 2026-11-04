@@ -1,0 +1,12 @@
+# tabi adjacency pin reachability against kumitate (read-only, 2026-11-04T06:53:04-03:00)
+$ git -C kumitate-shokunin rev-parse --show-toplevel
+/home/vgpnk/Projects/shokunin/kumitate-shokunin
+$ git for-each-ref refs/heads/
+refs/heads/master 2ac1f34d9f6e7322602ae930f071dcf292d7dae5
+$ git merge-base --is-ancestor 89cbd998ff956965634b14368231c6d117d6437e 77c7a8b3fe7f3cebe681065da283de0ae38ddb5b
+ancestor-of-base=yes exit=0
+$ git merge-base --is-ancestor 89cbd998ff956965634b14368231c6d117d6437e refs/heads/master
+ancestor-of-master=yes exit=0
+$ ls -ld .git .jj
+drwxr-xr-x 1 vgpnk vgpnk 224 Nov  4 06:53 .git
+drwxr-xr-x 1 vgpnk vgpnk  52 Oct 20 21:05 .jj

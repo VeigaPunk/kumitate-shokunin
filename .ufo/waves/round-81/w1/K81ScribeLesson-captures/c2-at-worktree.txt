@@ -1,0 +1,18 @@
+rev=2ac1f34d9f6e7322602ae930f071dcf292d7dae5 omp_census_sha=f19cb1b3b9e41d8f captured_at=2026-11-04T06:54:18-03:00
+C81_C2 arm snapshot-v2 PASS exit=0 contract=kumitate-omp-shape-v2 captured=2026-11-04T09:54:18Z entries=65/65
+C81_C2 arm shape-age-disclosed PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-11-04 age_days=0)
+C81_C2 arm shape-v1-refused PASS exit=2 out=SHAPE_VERSION want=kumitate-omp-shape-v2 got=kumitate-omp-shape-v1
+C81_C2 arm compare-v1-accepted FAIL exit=1 out=OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=65 added=0 removed=0 changed=53 first=agent.db transient=0
+C81_C2 arm shape-age-backdated PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-stale FAIL exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm max-age-pass PASS exit=0 out=OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35 captured=2026-09-20 age_days=45)
+C81_C2 arm clock-future-refused PASS exit=2 out=SHAPE_CLOCK captured_at=2026-11-06T09:54:18Z is in the future
+C81_C2 arm captured-at-required PASS exit=2 out=SHAPE_INVALID
+C81_C2 arm compare-v2 FAIL exit=1 out=OMP_SHAPE_COMPARE: DRIFT entries=65 receipt=65 added=0 removed=0 changed=53 first=agent.db transient=0
+C81_C2 arm stale-does-not-score FAIL unparsable json exit=64
+C81_C2 arm proxy-terms-unchanged FAIL unparsable json exit=64
+C81_C2 arm receipt-pinned PASS pin=8b6aaa79e24f computed=8b6aaa79e24f contract=kumitate-omp-shape-v2
+C81_C2 arm selftest FAIL exit=1 out=Node.js v24.21.0
+C81_C2 arm usage-max-age PASS exit=64 out=omp-census: --max-age is only meaningful with --shape usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR]
+C81_C2: UNMET held=9/15 tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs
+exit=1
