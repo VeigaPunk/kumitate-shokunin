@@ -2835,8 +2835,9 @@ counts are not inferred. `close/seat-census.json` preserves the distinction.
 - 2026-11-04 — round 85: `counter-receipt` v2 — the receipt check that must read
   (derived `RECEIPT:`/`SOURCE:` lines, `--src` source binding); frozen 20-arm
   probe HELD at M, three pre-data controls 1/20, 0/20, 1/20 and same-path
-  variation 0/3; two post-data adversaries reach 20/20 and are disclosed. Q78,
-  S245 admit / S246 reject, four mistakes. Full entry below.
+  variation 0/3; three post-data adversaries reach 20/20, so C1 is UNMET and
+  reported as a rejected-honest-stop. Q78, S245 admit / S246 reject, four
+  mistakes. Full entry below.
 
 ## Round 85 — the receipt check that must read (2026-11-04)
 
@@ -2860,13 +2861,15 @@ content variation `HELD held=3/3 distinct_sha=true`. Real task, not only fixture
 from the source before the counter runs. Independent 41-case driver `HELD 41/41`; mutant battery
 11/11 mandated mutants killed with three disclosed survivors.
 
-Honest verdict: **HELD on the frozen predicate and on the three enumerated pre-data controls**;
-the kill rule does not fire on the set the plan names. Two seats then built post-data adversaries
-that read only the per-run nonce and replay a copied table, and both reach `20/20` (one also
-passes the same-path control). That is a predicate-strength limit of any deterministic black-box
-battery, disclosed in `SCORECARD.md` and pre-registered for round 86 as a randomized-fixture arm
-whose expected verdict is unknowable without parsing. Both readings are on the record; the
-closure rules if it reads "any control" more broadly.
+Honest verdict: **C1 UNMET — rejected-honest-stop, no capability credit.** The frozen predicate
+reads `C85_C1: HELD held=20/20` at M, but the kill rule's clause is "any control reaching 20/20",
+and three attack seats built controls that reach it: a basename-keyed reader that reads the file
+only for `bytes=`/`sha256=`, a nonce-only replayer, and a content-keyed stateless map that also
+passes the same-path control. Under the round-84 precedent a real tool whose control reaches the
+target still stops; the round takes that reading rather than narrowing the rule after data. The
+instrument, registry row and tests land as code and history; the acquisition does not. Round-86
+pre-registration: the probe must generate each fixture's arm names, counts and statuses at run
+time and derive the expected line from those bytes.
 
 Repair-before-freeze `6663b3be` adopted the round-84 non-author spot-check's missing README row,
 but the pin half was missed, so `readme-map` read `covered=213 bad=1` and `plan-before-ready
