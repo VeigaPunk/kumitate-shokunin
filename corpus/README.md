@@ -221,6 +221,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-82.md` | Round-82 method: the handoff gate bound to its dispatch and to the campaign policy (band + role vocabulary read from `ufo-wave-policy.json`, suite 50 → 53) and the receipt's age on the compare path (13 arms); the r81 realpath-premise refutation, the rendered-trailer parsing defect the real handoff caught, and the refusal-token conflation | LOG.md round 82; `plan.md`, `probe82-c1/c2.mjs` |
 | `lessons/round-82-verifier-spotcheck.md` | Round-82 outside check: the eleven-step conformance re-derivation, both claims re-derived over committed bytes, the four routed defects R82-V1–V4 (stale tally, receipt stamped with bytes it did not measure, capability row under-describing v2, edited quote) | `.ufo/reports/round-82/kumitate.md`; `corpus/lessons/round-82-verifier-spotcheck.md` |
 | `lessons/round-81-verifier-spotcheck.md` | Non-author round-81 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-83-verifier-spotcheck.md` | Non-author round-83 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 
 ## Known gaps

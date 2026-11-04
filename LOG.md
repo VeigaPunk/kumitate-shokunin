@@ -2758,3 +2758,12 @@ recurrence) and its four routed defects R82-V1–V4 are answered in this round's
   compare path judges a self-asserted instant (`clockRefusal` shared with `--shape`, `SHAPE_CLOCK` exit 2
   bounded or not, legacy absent-clock disclosure; frozen counter `C83_C2: HELD held=16/16`, base 13/16,
   stub 3/16, suite 108); stanza `A` 891 → 896, `C` 42 → 43, `C2` 206 → 210; SOURCES 177 → 180.
+
+## Round 84 — repair before freeze (2026-11-04)
+
+R83-D6 / the thirteenth spotcheck-map recurrence: adopted the non-author round-83
+spotcheck before freezing any claim (`.ufo/waves/round-84/open/adopt.txt`):
+`README_MAP: CLEAN files=211 rows=211 covered=211`, exit 0. The README row,
+map pin and score stanza C2=210→211 travel together. This is routed maintenance,
+not the round's claim. No inherited uncommitted work at opening (helper state
+`local=a648a6f8f3028fc4f72d27470b4673fe8e3e5866 tracked=0 untracked=0`).
