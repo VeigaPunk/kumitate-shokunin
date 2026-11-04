@@ -1,0 +1,25 @@
+rev=125287f347a0f2841abeaa37e03a3b2cd1fc15c9
+C82_C1 arm tool-v2-contract ok v2=true
+C82_C1 arm clean-ready ok exit=0 READY_HANDOFF: READY wave=w1 seats=14 out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,critic=1,mutation-tester=1,connector=1,executor=4,scribe=4 policy=policy.json agents=none
+C82_C1 arm wave-binding-stem ok exit=1 WAVE_BINDING out=READY_HANDOFF: DRIFT WAVE_BINDING (dispatch basename "other-dispatch" is not "w1-dispatch")
+C82_C1 arm dispatch-wave-mismatch ok exit=1 DISPATCH_WAVE out=READY_HANDOFF: DRIFT DISPATCH_WAVE (dispatch.wave="w2" for ready.wave="w1")
+C82_C1 arm dispatch-wave-agree ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,critic=1,mutation-tester=1,connector=1,executor=4,scribe=4 policy=policy.json agents=none
+C82_C1 arm report-dest-duplicate ok exit=1 REPORT_DEST_DUPLICATE out=READY_HANDOFF: DRIFT REPORT_DEST_DUPLICATE (K82S02 claims /tmp/c82c1-6uW2Dm/report-dup/kumitate-shokunin/.ufo/waves/round-82/w1/K82S01.md (also K82S01))
+C82_C1 arm l1-seat-collision ok exit=1 L1_SEAT_COLLISION out=READY_HANDOFF: DRIFT L1_SEAT_COLLISION (ready.l1="K82S01" is also seat K82S01)
+C82_C1 arm l1-unresolved ok exit=1 L1_UNRESOLVED out=READY_HANDOFF: DRIFT L1_UNRESOLVED (ready.l1="KumitateR82" is not in /tmp/c82c1-6uW2Dm/clean/agents-nol1.json)
+C82_C1 arm l1-resolved ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,critic=1,mutation-tester=1,connector=1,executor=4,scribe=4 policy=policy.json agents=1
+C82_C1 arm agents-absent ok exit=2 AGENTS_ABSENT out=READY_HANDOFF: FAIL-CLOSED AGENTS_ABSENT (agents: cannot read /tmp/c82c1-6uW2Dm/clean/no-such-agents.json)
+C82_C1 arm agents-malformed ok exit=2 AGENTS_MALFORMED out=READY_HANDOFF: FAIL-CLOSED AGENTS_MALFORMED (agents: not JSON: /tmp/c82c1-6uW2Dm/clean/agents-bad.json)
+C82_C1 arm policy-absent ok exit=2 POLICY_ABSENT out=READY_HANDOFF: FAIL-CLOSED POLICY_ABSENT (policy: cannot read /tmp/c82c1-6uW2Dm/clean/no-such-policy.json)
+C82_C1 arm policy-malformed ok exit=2 POLICY_MALFORMED out=READY_HANDOFF: FAIL-CLOSED POLICY_MALFORMED (policy: not JSON: /tmp/c82c1-6uW2Dm/clean/agents-bad.json)
+C82_C1 arm policy-band-read ok exit=1 BAND out=READY_HANDOFF: DRIFT BAND (14 seats outside 20:30 (policy))
+C82_C1 arm policy-band-default ok exit=0 READY_HANDOFF: READY out=READY_HANDOFF: READY wave=w1 seats=14 attack=5/14 connector=1 roles=reviewer=3,critic=1,mutation-tester=1,connector=1,executor=4,scribe=4 policy=policy.json agents=none
+C82_C1 arm policy-roles-narrow ok exit=1 ROLE_UNKNOWN out=READY_HANDOFF: DRIFT ROLE_UNKNOWN,ROLE_UNKNOWN,ROLE_UNKNOWN,ROLE_UNKNOWN (seat K82S08 role "scribe" is not a policy proposal role)
+C82_C1 arm labrat-refused ok exit=1 ROLE_UNKNOWN out=READY_HANDOFF: DRIFT ROLE_UNKNOWN (seat K82S12 role "labrat" is not a policy proposal role)
+C82_C1 arm dispatch-symlink-refused ok exit=2 DISPATCH_ABSENT out=READY_HANDOFF: FAIL-CLOSED DISPATCH_ABSENT (dispatch is not a regular file: /tmp/c82c1-6uW2Dm/symlink/kumitate-shokunin/.ufo/waves/round-82/w1-dispatch.json)
+C82_C1 arm attack-share ok exit=1 ATTACK_SHARE out=READY_HANDOFF: DRIFT ATTACK_SHARE (2/14 attack seats below 25%)
+C82_C1 arm connector-cap ok exit=1 CONNECTOR_COUNT out=READY_HANDOFF: DRIFT CONNECTOR_COUNT (3 connector seats (at most 2))
+C82_C1 arm round-handoff-ready ok exit=0 READY_HANDOFF: READY wave=w1 out=READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 roles=scout=2,executor=3,scribe=2,connector=1,reviewer=2,critic=1,mutation-tester=1,sentinel=1,revenger=1 policy=ufo-wave-policy.json agents=none
+C82_C1 arm selftest ok exit=0 cases=54
+C82_C1: HELD held=22/22
+exit=0
