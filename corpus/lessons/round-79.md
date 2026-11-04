@@ -108,3 +108,15 @@ decisions, not an agreement it cannot attest.
   non-author closure still reads the claims.
 - **The K score remains a live-root term** (`K_members`/`K_findings` read the kimi census), so a closure on a
   different host reads it fail-closed rather than fitted.
+
+## Erratum (append-only, post-landing, 2026-11-04)
+
+The `## Counters` table above was written before the last two registered files (this lesson and the
+README row for it) and the final close receipts. Superseded close values, with their receipts:
+**proxy A / C2 / C2_total = 884 / 194 / 194** (not 875 / 193 / 193; `close/proxy-check.txt`,
+`close/proxy-json.txt`), **README map = 194 / 0** (not 193 / 0; `close/maps.txt`), **kimi census 55/0**,
+**OMP 64/0/35** (`close/census-shape.txt`). The `checklists` row's open value is the post-repair reading
+38/39; the *first* round-open run was 35/39 because the proxy stanza was still red before the adopt
+(`open/gates-open.txt`), and a later 35/39 run was taken mid-edit and is superseded by
+`close/checklists.txt` (39/39 PASS) — the freeze review's FF-6 names both. The claim values are unchanged:
+`C79_C1: HELD held=11/11` and `C79_C2: HELD held=12/12` (`close/c1-probe.txt`, `close/c2-probe.txt`).
