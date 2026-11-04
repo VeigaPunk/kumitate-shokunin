@@ -48,6 +48,11 @@
       ],
       "url": "docs.temporal.io/encyclopedia/detecting-activity-failures",
       "why": "round-60 duplicate (S117 worker-liveness scope, held since round 57, vs S126 failure-detection and timeout contract, opened this round under the durable-execution detection entry). The two captures are byte-identical (sha256 c7f7c40158340e64132b948f77408aced56a4298093069283a3b5239a1b7db50). This is the group the round-59 flip required to be pinned before the detection entry could be adopted; it is pinned in the same change that appends S126. Retained as a pin; resolution = supersede one row into the other, then remove this pin."
+    },
+    {
+      "ids": ["S245", "S247"],
+      "url": "arxiv.org/abs/2212.06118",
+      "why": "Round-86 append-only correction R85-V8/V9: S247 explicitly supersedes S245 with the accurate title and survey tier B. The old immutable row remains historical; this intentional correction pair is pinned, not hidden."
     }
   ]
 }

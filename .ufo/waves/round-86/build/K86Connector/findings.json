@@ -1,0 +1,105 @@
+{
+  "schema": "kumitate-connector-scan-v1",
+  "round": 86,
+  "seat": "K86Connector",
+  "surfaces": {
+    "surface_a": {
+      "description": "a gate that binds an instrument's derived answer to a digest of the bytes it read",
+      "lane_instrument": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs",
+      "uniquely_this_lane": true,
+      "findings": [
+        {
+          "lane": "souji-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/souji-shokunin/tools/souji-census-receipt.py",
+          "mechanism": "capture embeds raw adapter stdout and computes RECEIPT-SHA256=<64hex> covering all preceding header bytes; verify recomputes digest of body above the sha line (RECEIPT-DIGEST-MISMATCH), re-derives counts from embedded output (RECEIPT-COUNT-MISMATCH), and checks script sha256 drift (RECEIPT-SCRIPT-DRIFT).",
+          "ground": "sibling",
+          "verdict": "Not contested: souji owns census-run receipts and sources-census validation; Kumitate's C1 binds arm counter transcripts and counter source call sites."
+        },
+        {
+          "lane": "tameshi-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/context-capture.py",
+          "mechanism": "Re-derives every derived boolean and verdict from the raw observation of a retained context receipt byte-pinned by expected.receipt_sha256; verifies sha256(receipt_bytes) == expected.receipt_sha256 and recomputed verdict equals expected.id / expected.exit.",
+          "ground": "sibling",
+          "verdict": "Not contested: tameshi re-derives raw context receipts, whereas Kumitate binds arm-form counter transcripts."
+        },
+        {
+          "lane": "tameshi-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/tameshi-shokunin/tools/receipt-bytes-bind.py",
+          "mechanism": "Scans receipts for # tool_sha256: <64 hex> and # measured_rev: <rev>, asserting sha256(git cat-file blob <measured_rev>:<tool>) == tool_sha256.",
+          "ground": "sibling",
+          "verdict": "Not contested: tameshi verifies that historical tool SHAs exist in git blobs across evidence files; Kumitate reconciles live/fixture arm transcripts against probe source call sites."
+        },
+        {
+          "lane": "tabi-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/tabi-shokunin/scripts/check-measurement-binding.mjs",
+          "mechanism": "Binds claims in a measurement manifest to the sha256 blob digest of the counter script at the measured revision (counter.sha256), asserting counter_digest_mismatch if blob != sha256.",
+          "ground": "sibling",
+          "verdict": "Not contested: tabi binds measurement manifest JSON metadata to git blobs, not arm counter transcripts."
+        },
+        {
+          "lane": "chousa-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/chousa-shokunin/tools/digest-in-tree.py",
+          "mechanism": "Extracts all 64-hex sha256 pins from a receipt and checks each against sha256 of committed blob bytes in the git object database.",
+          "ground": "sibling",
+          "verdict": "Not contested: chousa verifies object database existence of pinned hashes, not counter transcript reconciliation."
+        },
+        {
+          "lane": "tsukuroi-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/tsukuroi-shokunin/tools/score-census-identity-r46.py",
+          "mechanism": "Evaluates tsukuroi-census.sh --identity, asserting the running bash script prints its own sha256, md5, bytes, and lines, checking against the counter's own calculation over the script file bytes.",
+          "ground": "sibling",
+          "verdict": "Not contested: tsukuroi tests self-fingerprinting of a shell script, not counter transcript checkers."
+        }
+      ]
+    },
+    "surface_b": {
+      "description": "a corpus index gate that is section-blind (counts | rows anywhere)",
+      "lane_instrument": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/readme-map.mjs",
+      "uniquely_this_lane": false,
+      "findings": [
+        {
+          "lane": "kengaku-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/kengaku-shokunin/plans/round75_c1_index_parity.py",
+          "mechanism": "index_rows(readme) splits corpus/README.md lines and matches any line starting with | whose first cell matches FIRST_CELL = r'`(knowledge|lessons)/([^`]+)`' without section heading boundary checks.",
+          "ground": "sibling",
+          "verdict": "Contested mechanism: kengaku used a section-blind table row counter in a round-75 plan probe; not an active gating script in scripts/ or tools/."
+        },
+        {
+          "lane": "souji-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/souji-shokunin/tools/souji-coverage-agreement.py",
+          "mechanism": "Scans corpus/README.md for markdown tables; triggers in_map when table header row has row[0].lower() == 'ground' and row[2].lower().startswith('entries'). It is section-blind (does not check ## headings), but table-header scoped.",
+          "ground": "sibling",
+          "verdict": "Not contested: souji scopes by table column headers (ground/entries), whereas Kumitate's readme-map.mjs was completely section-blind and header-blind."
+        },
+        {
+          "lane": "kotodama-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/kotodama-shokunin/tools/check-corpus-index.py",
+          "mechanism": "Section-aware corpus index auditor. Explicitly matches SECTION_RE = re.compile(r'^## ([a-z-]+)/ \\((\\d+)\\)\\s*$', re.M) and restricts row extraction strictly between section start and the next ## heading.",
+          "ground": "sibling",
+          "verdict": "Not contested (contrast finding): kotodama avoided section-blindness by design, using heading spans."
+        },
+        {
+          "lane": "kaidoku-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/kaidoku-shokunin/tools/round-44/c2-rubric.json",
+          "mechanism": "Command A explicitly slices corpus/README.md by section: sec = readme.split('## Coverage map\\n', 1)[1].split('\\n## ', 1)[0], isolating only rows inside ## Coverage map.",
+          "ground": "sibling",
+          "verdict": "Not contested (contrast finding): kaidoku implemented explicit section slicing to prevent section-blindness."
+        },
+        {
+          "lane": "kama-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/kama-shokunin/tools/round35-coverage-audit.py",
+          "mechanism": "Explicitly bounds audit to section heading: HEADING = '## Coverage map — round 35 addition'; lines outside that heading are ignored.",
+          "ground": "sibling",
+          "verdict": "Not contested (contrast finding): kama strictly checks heading presence and scope."
+        },
+        {
+          "lane": "chousa-shokunin",
+          "file": "/home/vgpnk/Projects/shokunin/chousa-shokunin/tools/lane-preflight.py",
+          "mechanism": "Section-blind path scanner (G02). Uses regex search across the normalized full text of corpus/README.md to ensure every corpus/knowledge/*.md file name appears somewhere, and checks phantom paths against all regex matches.",
+          "ground": "sibling",
+          "verdict": "Not contested: chousa is section-blind but does not count table rows (matches filename tokens anywhere in prose)."
+        }
+      ]
+    }
+  }
+}

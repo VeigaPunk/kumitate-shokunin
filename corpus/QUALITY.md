@@ -1322,3 +1322,19 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   same-path control 0/3 for each). Scope: claims whose evidence is a counter's
   own output; a claim evidenced by a committed artifact of another kind names
   the equivalent control that skips its work.
+
+### Q79 — candidate measurements do not certify integrated bytes (round 86)
+
+- **Grounding.** `corpus/lessons/round-86.md` Mistakes, attribution; R85-V3 in
+  `corpus/lessons/round-85-verifier-spotcheck.md`: the independent 41/41 receipt
+  named candidate `7659be6e…` while production held `f385bd7a…`.
+- **Rule.** Every new verification receipt names the full digest of the instrument
+  actually executed and the measured revision. A candidate run remains candidate-only
+  after integration; retain its receipt, then run the driver against the integrated
+  instrument before describing the result as integrated evidence. A digest alone
+  never certifies semantic correctness.
+- **Shown able to fail.** The two different historical digests above fail the identity
+  comparison even though the candidate transcript says 41/41. The new knowledge entry
+  relabels that result, and round-86 integrated receipts record their own tool digest.
+- **Limit.** This identifies a measurement's subject, not a trusted execution or
+  custody guarantee; it adds no claim about unexecuted checks.

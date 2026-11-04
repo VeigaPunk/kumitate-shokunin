@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * kumitate-counter-receipt-v2 — read-only reconciliation of arm transcripts.
+ * kumitate-counter-receipt-v3 — read-only reconciliation of arm transcripts.
  * node scripts/counter-receipt.mjs --receipt FILE [--src COUNTER.mjs]
  * node scripts/counter-receipt.mjs --selftest [--work DIR]
  *
@@ -19,7 +19,7 @@
  * Output on every non-USAGE run:
  *   COUNTER_RECEIPT: CLEAN|DRIFT <TOKEN>|FAIL-CLOSED <TOKEN>
  *   RECEIPT: bytes=<n> rows=<r> held=<h>/<d> findings=<token|none> sha256=<hex|->
- *   SOURCE: sites=<n> declared=<n|absent> receipt=<r>   (only with --src)
+ *   SOURCE: sites=<n> declared=<n|absent> receipt=<r> sha256=<hex|->   (only with --src)
  */
 import { readFileSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
@@ -86,11 +86,11 @@ function classifyReceipt({ summaries, arms, malformedArm }) {
 function inspectSource(path) {
   let buffer = null;
   try { buffer = readFileSync(path); } catch { buffer = null; }
-  if (buffer === null) return { sites: 0, declared: null, names: [], verdict: { code: 2, token: 'SOURCE_UNREADABLE' } };
+  if (buffer === null) return { sites: 0, declared: null, sha: '-', names: [], verdict: { code: 2, token: 'SOURCE_UNREADABLE' } };
   const names = [...buffer.toString('utf8').matchAll(sourceSite)].map((match) => match[1]);
   const declarations = [...buffer.toString('utf8').matchAll(sourceDeclared)];
   const declared = declarations.length ? Number(declarations[declarations.length - 1][1]) : null;
-  return { sites: names.length, declared, names, verdict: null };
+  return { sites: names.length, declared, sha: createHash('sha256').update(buffer).digest('hex'), names, verdict: null };
 }
 
 function classifySource(source, arms, rows) {
@@ -148,7 +148,7 @@ function main(args) {
 
   console.log(verdictLine(finding.code, finding.token));
   console.log(`RECEIPT: bytes=${observed.bytes} rows=${observed.rows} held=${observed.held} findings=${finding.token === 'CLEAN' ? 'none' : finding.token} sha256=${observed.sha}`);
-  if (source !== null) console.log(`SOURCE: sites=${source.sites} declared=${source.declared === null ? 'absent' : source.declared} receipt=${observed.rows}`);
+  if (source !== null) console.log(`SOURCE: sites=${source.sites} declared=${source.declared === null ? 'absent' : source.declared} receipt=${observed.rows} sha256=${source.sha}`);
   return finding.code;
 }
 
@@ -160,6 +160,11 @@ function selftest(work) {
   const threeSource = "const ARMS = 3;\narm('a', () => {});\narm('b', () => {});\narm('c', () => {});\n";
   const fourSource = "const ARMS = 4;\narm('a', () => {});\narm('b', () => {});\narm('c', () => {});\narm('d', () => {});\n";
   const twoSource = "arm('a', () => {});\narm('b', () => {});\n";
+  const sha = (text) => createHash('sha256').update(text).digest('hex');
+  const emptySource = 'const ARMS = 3;\n// no arm call sites here\n';
+  const declaredTwoSource = "const ARMS = 2;\narm('a', () => {});\narm('b', () => {});\narm('c', () => {});\n";
+  const commentedSource = `${threeSource}// same counts, different bytes\n`;
+  const undeclaredSource = "arm('a', () => {});\narm('b', () => {});\narm('c', () => {});\n";
   const cases = [
     { name: 'clean', text: good, code: 0, token: 'CLEAN' },
     { name: 'crlf', text: good.replaceAll('\n', '\r\n'), code: 0, token: 'CLEAN' },
@@ -213,14 +218,17 @@ function selftest(work) {
     { name: 'missing-work-value', text: null, code: 64, token: 'USAGE', args: ['--selftest', '--work'] },
     { name: 'src-without-receipt', text: null, code: 64, token: 'USAGE', args: ['--src', 'a'] },
     { name: 'missing-src-value', text: null, code: 64, token: 'USAGE', args: ['--receipt', 'a', '--src'] },
-    { name: 'src-clean', text: three, src: threeSource, code: 0, token: 'CLEAN', source: 'SOURCE: sites=3 declared=3 receipt=3' },
-    { name: 'src-no-declared', text: good, src: twoSource, code: 0, token: 'CLEAN', source: 'SOURCE: sites=2 declared=absent receipt=2' },
-    { name: 'src-unreadable', text: good, src: null, code: 2, token: 'SOURCE_UNREADABLE', source: 'SOURCE: sites=0 declared=absent receipt=2' },
-    { name: 'src-empty', text: good, src: 'const ARMS = 3;\n// no arm call sites here\n', code: 2, token: 'SOURCE_ARMS_EMPTY', source: 'SOURCE: sites=0 declared=3 receipt=2' },
-    { name: 'src-unbound', text: 'X arm a ok\nX arm b ok\nX arm zz ok\nX: HELD held=3/3\n', src: threeSource, code: 1, token: 'ARM_UNBOUND', source: 'SOURCE: sites=3 declared=3 receipt=3' },
-    { name: 'src-arity', text: three, src: fourSource, code: 1, token: 'SOURCE_ARITY', source: 'SOURCE: sites=4 declared=4 receipt=3' },
-    { name: 'src-declared', text: three, src: "const ARMS = 2;\narm('a', () => {});\narm('b', () => {});\narm('c', () => {});\n", code: 1, token: 'SOURCE_DECLARED', source: 'SOURCE: sites=3 declared=2 receipt=3' },
-    { name: 'src-after-receipt-drift', text: 'X arm a ok\nX: HELD held=2/2\n', src: null, code: 1, token: 'ARMS_TOTAL', source: 'SOURCE: sites=0 declared=absent receipt=1' },
+    { name: 'src-clean', text: three, src: threeSource, code: 0, token: 'CLEAN', source: `SOURCE: sites=3 declared=3 receipt=3 sha256=${sha(threeSource)}` },
+    { name: 'src-no-declared', text: good, src: twoSource, code: 0, token: 'CLEAN', source: `SOURCE: sites=2 declared=absent receipt=2 sha256=${sha(twoSource)}` },
+    { name: 'src-unreadable', text: good, src: null, code: 2, token: 'SOURCE_UNREADABLE', source: 'SOURCE: sites=0 declared=absent receipt=2 sha256=-' },
+    { name: 'src-empty', text: good, src: emptySource, code: 2, token: 'SOURCE_ARMS_EMPTY', source: `SOURCE: sites=0 declared=3 receipt=2 sha256=${sha(emptySource)}` },
+    { name: 'src-unbound', text: 'X arm a ok\nX arm b ok\nX arm zz ok\nX: HELD held=3/3\n', src: threeSource, code: 1, token: 'ARM_UNBOUND', source: `SOURCE: sites=3 declared=3 receipt=3 sha256=${sha(threeSource)}` },
+    { name: 'src-arity', text: three, src: fourSource, code: 1, token: 'SOURCE_ARITY', source: `SOURCE: sites=4 declared=4 receipt=3 sha256=${sha(fourSource)}` },
+    { name: 'src-declared', text: three, src: declaredTwoSource, code: 1, token: 'SOURCE_DECLARED', source: `SOURCE: sites=3 declared=2 receipt=3 sha256=${sha(declaredTwoSource)}` },
+    { name: 'src-after-receipt-drift', text: 'X arm a ok\nX: HELD held=2/2\n', src: null, code: 1, token: 'ARMS_TOTAL', source: 'SOURCE: sites=0 declared=absent receipt=1 sha256=-' },
+    { name: 'src-digest-bytes', text: three, src: commentedSource, code: 0, token: 'CLEAN', source: `SOURCE: sites=3 declared=3 receipt=3 sha256=${sha(commentedSource)}` },
+    { name: 'src-unreadable-dash', text: three, src: null, code: 2, token: 'SOURCE_UNREADABLE', source: 'SOURCE: sites=0 declared=absent receipt=3 sha256=-' },
+    { name: 'src-undeclared-sites', text: three, src: undeclaredSource, code: 0, token: 'CLEAN', source: `SOURCE: sites=3 declared=absent receipt=3 sha256=${sha(undeclaredSource)}` },
   ];
   let held = 0;
   try {

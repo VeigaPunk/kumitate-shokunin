@@ -291,12 +291,13 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=972
+A=35
+A_wave=955
 C=45
 C1=19
 C1_total=19
-C2=216
-C2_total=216
+C2=219
+C2_total=219
 S_members=88
 S_sections=88
 R_members=92
@@ -318,7 +319,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=b8d52a847be7ea6d821367efb83524442d6e3456745524484b8e93ca054423ff
+pin.proxy-check=fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -337,7 +338,7 @@ pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2c
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
-pin.readme-map=b1c8bf97eb01fdb2ebfd46521c8e805fa2c36f8e10ce9740531162cd0b8ee74e
+pin.readme-map=fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
 pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
 pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
 pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
@@ -351,7 +352,7 @@ pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
 pin.ready-handoff=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
-pin.counter-receipt=f385bd7a9fbf1dc49d465c8d83fecfd07aae34f6bf619aca7d935eda14f238cd
+pin.counter-receipt=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
 -->
 
 
@@ -4140,3 +4141,33 @@ parsed as a malformed arm).
 (7) **A source digest on the `SOURCE:` line** (K85Sentinel S8): the source half of the answer is
 currently unauditable; a v3 line `SOURCE: sites=… declared=… receipt=… sha256=<source digest>`
 would bind the source bytes, not just the counts extracted from them.
+
+## Round 86 — named corrections to round 85 (2026-11-04)
+
+These supersede only the named historical prose, not frozen receipts or rejected admission.
+R85-V1/V2/V14: round 85's `PROXY: MATCH --strict` statement above is incorrect.
+Its committed `close/harm-matrix.txt` says `A_DRIFT declared=972 computed=975 delta=+3`;
+`close/checklists.txt` later says `computed=980 delta=+8`. The proxy checklist red is
+lane-state, not live-host. Historical counts over committed runnable paths are base 908,
+freeze 913, measured 975, tip 980; shipped non-`.ufo` count is 35, not 36. The
+pre-registered round-86 amendment excludes wave artifacts explicitly rather than silently
+re-baselining this old claim. Opening receipt: `.ufo/waves/round-86/open/a-rebaseline.txt`;
+its worktree walk includes the newly written round-86 probe (981), while the pinned base
+tree contains 980. The two populations are deliberately distinguished.
+
+R85-V3: the historical independent 41/41 receipt measured candidate digest `7659be6e…`,
+not the integrated `f385bd7a…`; “on the integrated bytes” above is superseded.
+R85-V4: attack classification under `ready-handoff` v3 excludes sentinel, so the historical
+13-seat wave's admission count is 4/13, not 5/13. No invented READY line is evidence.
+R85-V5/V6: old headerless control receipts remain frozen; new receipts include command,
+revision and exit. The old source arms did not assert exactly three lines; the new probe
+does, but never retroactively repairs round 85. R85-V7: map-repair contains no plan-gate
+line and is evidence only for the readings it actually contains.
+
+R85-V8/V9/V10/V11: new source rows S247/S248 supersede the incorrect title/tier and the
+unreachable-locator conclusion; the new `counter-receipt-source-binding.md` entry supplies
+the orphan fragment's missing command. R85-V12 is the section-membership gate repair
+assigned this round. R85-V13: historical report commit is
+`b67837ee7136d0dfddce5b36589da3dca5add42f`; the r84 checklist item and Planned pointer
+were carried by `6e3e4749` and `602f1835` respectively and are now named in LOG.
+R85-V15 needs no repair: the closure's census is durable historical evidence.

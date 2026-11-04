@@ -1,0 +1,24 @@
+### red c1-probe (receipt only)
+command=node /fast/scratch/hyaku/kumitate-r86/K86ExecTool/lane/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-probe.txt
+COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+RECEIPT: bytes=5573 rows=28 held=27/27 findings=ARMS_TOTAL sha256=07690bffa7037c4f266d253bed4f76e6553a61f8991850b3e139135275cbdc20
+exit=1
+
+### repair c1-repair (receipt only)
+command=node /fast/scratch/hyaku/kumitate-r86/K86ExecTool/lane/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=5729 rows=28 held=28/28 findings=none sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+exit=0
+
+### repair c1-repair --src probe83-c1.mjs (declared 27, sites 28)
+command=node /fast/scratch/hyaku/kumitate-r86/K86ExecTool/lane/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c1-repair.txt --src /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/probe/probe83-c1.mjs
+COUNTER_RECEIPT: DRIFT SOURCE_DECLARED
+RECEIPT: bytes=5729 rows=28 held=28/28 findings=SOURCE_DECLARED sha256=2a327c1d08201ad02a0c2ac565f79bbe8a5f591af03be25582cfb7187842d063
+SOURCE: sites=28 declared=27 receipt=28 sha256=5da10098b192a728be87b0cb676eacdd49e4163c0822dcfa6b53ad9b2b064301
+exit=1
+
+### c2 c2-probe (receipt only)
+command=node /fast/scratch/hyaku/kumitate-r86/K86ExecTool/lane/scripts/counter-receipt.mjs --receipt /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-83/close/c2-probe.txt
+COUNTER_RECEIPT: CLEAN
+RECEIPT: bytes=2678 rows=16 held=16/16 findings=none sha256=ad43c857728b1c6ef1f73e089033cc4457479c29f0a4c2008caa7d2b45355933
+exit=0

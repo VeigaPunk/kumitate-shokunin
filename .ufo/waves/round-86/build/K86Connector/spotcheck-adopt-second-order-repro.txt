@@ -1,0 +1,43 @@
+# Repro of second-order interaction: K86ExecMap candidate readme-map.mjs breaks spotcheck-adopt.mjs --selftest
+
+## 1. Problem
+When scripts/readme-map.mjs is replaced with .ufo/waves/round-86/build/K86ExecMap/readme-map.mjs,
+running `node scripts/spotcheck-adopt.mjs --selftest` fails on test case `check-map-orphan`:
+
+Output:
+  CASE check-clean: red-before=PASS PASS
+  CASE check-drift: red-before=PASS PASS
+  CASE check-map-only-drift: red-before=PASS PASS
+  CASE check-map-orphan: red-before=PASS FAIL
+  ...
+  SPOTCHECK_ADOPT_SELFTEST: FAIL (33/34)
+  VERDICT: FAIL
+
+Exit code: 1
+
+## 2. Root Cause
+In `scripts/spotcheck-adopt.mjs`:
+Line 277 builds fixture READMEs with:
+  `# Corpus\n\n## Coverage map\n\n${...}\n## Known gaps\n\n- none\n`
+Line 314 tests the orphan case by appending an orphan row to EOF:
+  `writeFileSync(join(d, 'corpus/README.md'), readFileSync(join(d, 'corpus/README.md'), 'utf8') + '| `knowledge/ghost.md` | Ghost | fixture |\n');`
+Because `## Known gaps` sits before EOF, appending at EOF places the row *after* `## Known gaps`.
+Under K86ExecMap's new section-membership arm:
+- The row is parsed as `outside` of the coverage map (`outside-map:knowledge/ghost.md`).
+- `outside-map:` is emitted as the first finding.
+- `spotcheck-adopt.mjs:317` expects `MAP: DRIFT first=orphan-row:knowledge/ghost.md`, but receives `MAP: DRIFT first=outside-map:knowledge/ghost.md`.
+- Test case fails.
+
+## 3. Resolution
+In `scripts/spotcheck-adopt.mjs:314`, place the orphan row inside `## Coverage map` (before `## Known gaps`):
+  replace:
+    `+ '| `knowledge/ghost.md` | Ghost | fixture |\n'`
+  with:
+    `.replace('## Known gaps', '| `knowledge/ghost.md` | Ghost | fixture |\n## Known gaps')`
+
+Result after one-line patch:
+  CASE check-map-orphan: red-before=PASS PASS
+  SPOTCHECK_ADOPT_SELFTEST: PASS (34/34)
+  VERDICT: PASS
+
+Exit code: 0

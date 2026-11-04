@@ -1,0 +1,115 @@
+# K86Scout measurement receipts — round 86 — lane=/home/vgpnk/Projects/shokunin/kumitate-shokunin
+# measured_at=2026-11-04T20:28:09Z
+# HEAD=e7228850690c6bd48400140964cbaf18667fbc06
+# base=232350995d3001e606609aaf22ba1b58168d3655
+
+=== 1. proxy-check --strict @ HEAD worktree ===
+PROXY  error  A_DRIFT  A: declared=972 computed=988 delta=+16
+PROXY  error  C2_DRIFT  C2: declared=216 computed=217 delta=+1
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=216 computed=219 delta=+3
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=972 computed=988 delta=+16; C2_DRIFT term=C2 declared=216 computed=217 delta=+1; C2_TOTAL_DRIFT term=C2_total declared=216 computed=219 delta=+3; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+exit=1
+
+=== 2. proxy-check --strict @ base tree (git archive 23235099) ===
+PROXY  error  A_DRIFT  A: declared=972 computed=980 delta=+8
+PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=216 computed=217 delta=+1
+PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+PROXY: DRIFT (A_DRIFT term=A declared=972 computed=980 delta=+8; C2_TOTAL_DRIFT term=C2_total declared=216 computed=217 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+exit=1
+
+=== 3. readme-map @ HEAD ===
+README_MAP: note uncovered:lessons/round-86.md
+README_MAP: note unpinned:knowledge/counter-receipt-source-binding.md
+README_MAP: note unpinned:lessons/round-86.md
+README_MAP: DRIFT files=219 rows=217 covered=217 bad=4 first=uncovered:knowledge/counter-receipt-source-binding.md
+exit=1
+
+=== 4. readme-map @ base tree ===
+README_MAP: note unpinned:lessons/round-85-verifier-spotcheck.md
+README_MAP: DRIFT files=217 rows=216 covered=216 bad=2 first=uncovered:lessons/round-85-verifier-spotcheck.md
+exit=1
+
+=== 5. spotcheck-adopt --check @ HEAD ===
+SPOTCHECK_COVERAGE: CLEAN spotchecks=52 uncovered=0
+MAP: DRIFT first=uncovered:knowledge/counter-receipt-source-binding.md
+exit=0
+
+=== 6. spotcheck-adopt --check @ base tree ===
+SPOTCHECK_COVERAGE: DRIFT spotchecks=52 uncovered=1 first=corpus/lessons/round-85-verifier-spotcheck.md
+MAP: DRIFT first=uncovered:lessons/round-85-verifier-spotcheck.md
+exit=1
+
+=== 7. cite-check @ HEAD ===
+  pins=678 ok=454 mismatch=133 untyped=471 revUnknown=69 unchecked=1
+  indexFiles=1502 selfIndexFiles=9898 fleetIndexFiles=529500
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=224 tokens=14645 errors=2291 warnings=946)
+exit=1
+
+=== 8. cite-check @ base tree ===
+  pins=678 ok=109 mismatch=132 untyped=472 revUnknown=414 unchecked=1
+  indexFiles=1502 selfIndexFiles=275 fleetIndexFiles=554
+VERDICT: FAIL
+CITE_CHECK: DRIFT (files=222 tokens=14636 errors=2964 warnings=1016)
+exit=1
+
+=== 9. round-85 frozen probe @ current integrated tree ===
+C85_C1 arm src-arity ok exit=1 want=1
+C85_C1 arm src-declared ok exit=1 want=1
+C85_C1: HELD held=20/20
+exit=0
+
+=== 10. round-85 controls re-scored (current probe vs r85 control tools) ===
+control base: C85_C1: UNMET held=1/20
+  exit=1
+control stub: C85_C1: UNMET held=0/20
+  exit=1
+control noreader: C85_C1: UNMET held=1/20
+  exit=1
+
+=== 11. round-85 content-variation control (integrated) ===
+CONTENT_VARIATION arm clean-3 ok exit=0 want=0 line2="RECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768"
+CONTENT_VARIATION: HELD held=3/3 distinct_sha=true
+exit=0
+
+=== 12. round-86 frozen probe @ current integrated tree ===
+C86_C1 arm src-empty FAIL exit=2 want=2 line3="SOURCE: sites=0 declared=2 receipt=2" want3="SOURCE: sites=0 declared=2 receipt=2 sha256=202718b52f70e4488897f0986842df32882356fb46abb3c65b89d1eb206d2115"
+C86_C1: UNMET held=14/24
+exit=1
+
+=== 13. round-86 controls re-scored ===
+control base: C86_C1: UNMET held=14/24
+  exit=1
+control stub: C86_C1: UNMET held=0/24
+  exit=1
+control noreader: C86_C1: UNMET held=0/24
+  exit=1
+control replay: C86_C1: UNMET held=0/24
+  exit=1
+
+=== 14. counter-receipt selftest ===
+COUNTER_RECEIPT_SELFTEST: PASS held=60/60
+exit=0
+
+=== 15. A counts by revision (git ls-tree -r --name-only REV | grep -cE '\.(mjs|js|sh|py)$') ===
+a5d3e7549501 total=908 shipped_non_ufo=35 wave_ufo=873
+9db0c6b5 total=913 shipped_non_ufo=35 wave_ufo=878
+a882a334eaf7d817f484f9e68c2b2059f22fe797 total=975 shipped_non_ufo=35 wave_ufo=940
+232350995d3001e606609aaf22ba1b58168d3655 total=980 shipped_non_ufo=35 wave_ufo=945
+e7228850690c6bd48400140964cbaf18667fbc06 total=985 shipped_non_ufo=35 wave_ufo=950
+
+=== 16. ready-handoff gate for round 85 (live) ===
+READY_HANDOFF: READY wave=w1 seats=13 resumes=0 total=13 attack=4/13 connector=1 roles=executor=5,scribe=1,scout=1,connector=1,reviewer=2,critic=1,mutation-tester=1,sentinel=1 policy=ufo-wave-policy.json agents=none
+exit=0
+
+=== 17. plan-before-ready round 86 ===
+PLAN_BEFORE_READY: NA rev=e7228850690c6bd48400140964cbaf18667fbc06 round=86 dir=.ufo/waves/round-86 reason=NO_MARKER plan=e7228850690c6bd48400140964cbaf18667fbc06 plan_ct=1793822971 marker=- map=CLEAN files=217 rows=217 covered=217
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=0 na=1 rounds=86-86 rev=e7228850690c6bd48400140964cbaf18667fbc06 exit=2 failed= na_rounds=86 map_red=
+exit=2
+
+=== 18. proxy-check --json terms @ HEAD ===
+terms {"A":989,"C":45,"C1":19,"C1_total":19,"C2":217,"C2_total":219,"operability":9,"coverage":9}
+declared {"A":"972","C2":"216","C2_total":"216"}
+findings ["A_DRIFT A: declared=972 computed=989 delta=+17","C2_DRIFT C2: declared=216 computed=217 delta=+1","C2_TOTAL_DRIFT C2_total: declared=216 computed=219 delta=+3","AXES_DRIFT coverage: ## Axes row=10 derived=9"]
+exit=1

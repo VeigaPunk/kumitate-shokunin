@@ -1,0 +1,144 @@
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs	2026-11-04 12:56:22.917300122 -0300
++++ /fast/scratch/hyaku/kumitate-r86/K86ExecProxy/tree/scripts/proxy-check.mjs	2026-11-04 17:15:34.382974821 -0300
+@@ -116,8 +116,10 @@
+  *   -h|--help   print USAGE, exit 0.
+  *
+  * Derivation (frozen — the stanza may declare these, never re-charter them)
+- *   A   files under `--self` (any `.git` tree excluded), named
+- *       `*.mjs|*.js|*.sh|*.py`
++ *   A   runnable files under `--self` (any `.git` tree excluded), named
++ *       `*.mjs|*.js|*.sh|*.py`, EXCLUDING the `.ufo/` subtree (round-86 amendment)
++ *   A_wave  runnable files under `<self>/.ufo/`, same name test. NON-SCORING:
++ *       no score and no axis row reads it (the wave-volume term; round-86)
+  *   C   lines of `<self>/SKILL.md` matching /^\s*- \[/
+  *   C1  rows of the scorecard matching /^\| (S|R)\d+ \|/ whose 4th
+  *       `|`-separated cell, trimmed, starts with `yes`; C1_total = those rows
+@@ -188,7 +190,7 @@
+  *   `| coverage:script-layer | N |`, `| coverage:runtime-layer | N |`,
+  *   `| coverage:kimi-layer | N |` and `| coverage:omp | N |`.
+  *   These counts are shell-identical to the commands the scorecard already
+- *   prints: `find . -path ./.git -prune -o -type f \( -name '*.mjs' … \) -print
++ *   prints: `find . -path ./.git -prune -o -path ./.ufo -prune -o -type f \( -name '*.mjs' … \) -print
+  *   | wc -l`, `grep -c '^\s*- \[' SKILL.md`, `grep -cE '^\| (S|R)[0-9]+ \|'`
+  *   plus a 4th-cell `yes` test, `grep -cE '^\| `(knowledge|lessons)/'
+  *   corpus/README.md`, `find corpus/knowledge corpus/lessons -name '*.md' |
+@@ -198,14 +200,14 @@
+  *   Exactly one HTML comment block in the scorecard whose first line is
+  *   `<!-- kumitate-proxy-v1`; its body is `key=value` lines and it is closed by
+  *   a line containing `-->`:
+- *     A C C1 C1_total C2 C2_total           the declared self-only counts
++ *     A A_wave C C1 C1_total C2 C2_total    the declared counts (A_wave non-scoring)
+  *     S_members S_sections R_members R_sections  the declared layer universe
+  *     coverage_script coverage_runtime       the two layer scores
+  *     C1k C1k_total K_members K_sections K_findings  the declared kimi-block universe
+  *     coverage_kimi                          the kimi-layer score
+  *     pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check
+  *     pin.claims-check pin.kimi-census sha256 hex of scripts/<name>.mjs
+- *   All thirty keys (including the six additive O keys) are REQUIRED,
++ *   All thirty-one keys (the six additive O keys and the non-scoring A_wave included) are REQUIRED,
+  *   exactly once; no other key is accepted
+  *   (the stanza key charset forbids `:`, which is why the axes' names are
+  *   spelled `coverage_script` / `coverage_runtime` / `coverage_kimi` here).
+@@ -221,7 +223,7 @@
+  * named gate files are verified, and their listed paths are excluded from
+  * PIN_UNPINNED. It does not widen the frozen v1 keys or pin count.
+  * Findings (text mode prints `PROXY  <severity>  <KIND>  <detail>`)
+- *   error A_DRIFT C_DRIFT C1_DRIFT C1_TOTAL_DRIFT C2_DRIFT C2_TOTAL_DRIFT
++ *   error A_DRIFT A_WAVE_DRIFT C_DRIFT C1_DRIFT C1_TOTAL_DRIFT C2_DRIFT C2_TOTAL_DRIFT
+  *         S_MEMBERS_DRIFT S_SECTIONS_DRIFT R_MEMBERS_DRIFT R_SECTIONS_DRIFT
+  *         COVERAGE_SCRIPT_DRIFT COVERAGE_RUNTIME_DRIFT
+  *         C1K_DRIFT C1K_TOTAL_DRIFT K_MEMBERS_DRIFT K_SECTIONS_DRIFT K_FINDINGS_DRIFT
+@@ -528,7 +530,7 @@
+ const CORPUS_DIRS = ['corpus/knowledge', 'corpus/lessons'];
+ 
+ /** Declared-count keys of the stanza, in comparison order. */
+-const TERM_KEYS = ['A', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
++const TERM_KEYS = ['A', 'A_wave', 'C', 'C1', 'C1_total', 'C2', 'C2_total',
+   'S_members', 'S_sections', 'R_members', 'R_sections',
+   'coverage_script', 'coverage_runtime',
+   'C1k', 'C1k_total', 'K_members', 'K_sections', 'K_findings', 'coverage_kimi',
+@@ -616,7 +618,7 @@
+ 
+ /** Every finding kind the hermetic suite must fire at least once. */
+ const FINDING_KINDS = [
+-  'A_DRIFT', 'C_DRIFT', 'C1_DRIFT', 'C1_TOTAL_DRIFT', 'C2_DRIFT', 'C2_TOTAL_DRIFT',
++  'A_DRIFT', 'A_WAVE_DRIFT', 'C_DRIFT', 'C1_DRIFT', 'C1_TOTAL_DRIFT', 'C2_DRIFT', 'C2_TOTAL_DRIFT',
+   'S_MEMBERS_DRIFT', 'S_SECTIONS_DRIFT', 'R_MEMBERS_DRIFT', 'R_SECTIONS_DRIFT',
+   'COVERAGE_SCRIPT_DRIFT', 'COVERAGE_RUNTIME_DRIFT',
+   'C1K_DRIFT', 'C1K_TOTAL_DRIFT', 'K_MEMBERS_DRIFT', 'K_SECTIONS_DRIFT', 'K_FINDINGS_DRIFT',
+@@ -975,7 +977,10 @@
+ 
+ /** Self-only, origin-layer, K-root and census-derived O terms and scores. */
+ function deriveTerms({ self, scorecardText, skillText, readmeText, notes, probe, kimi, omp }) {
+-  const A = walkFiles(self).filter((r) => RE_RUNNABLE.test(r)).length;
++  // A stops at the wave tree; A_wave is the `.ufo/` half and feeds no score.
++  const runnable = walkFiles(self).filter((r) => RE_RUNNABLE.test(r));
++  const A = runnable.filter((r) => !r.startsWith('.ufo/')).length;
++  const A_wave = runnable.filter((r) => r.startsWith('.ufo/')).length;
+   const C = countLines(skillText, RE_CHECKLIST);
+   const reg = registryCounts(scorecardText);
+   const C2 = countLines(readmeText, RE_README_ROW);
+@@ -985,6 +990,7 @@
+   return {
+     terms: {
+       A,
++      A_wave,
+       C,
+       C1: reg.covered,
+       C1_total: reg.total,
+@@ -1711,7 +1717,7 @@
+     // K fixture: 55 live members, no findings; base registry has no K rows.
+     const fx = {
+       dir, src, kimi, omp, checklist, readmeRows, notes, registry, gatePins,
+-      expect: { C1k: 0, C1k_total: 0, K_members: 55, K_sections: 0, K_findings: 0, coverage_kimi: 0,
++      expect: { A_wave: 0, C1k: 0, C1k_total: 0, K_members: 55, K_sections: 0, K_findings: 0, coverage_kimi: 0,
+         C1o: 0, C1o_total: 0, O_members: 26, O_findings: 0, O_bound: 35, coverage_omp: 0,
+         ...knobs.expect },
+     };
+@@ -1789,6 +1795,28 @@
+       ok: verdictLine(r3).includes('A=11'),
+       detail: `fixture has ${FIXTURE_SCRIPTS.length} scripts + 5 runnables outside scripts/ + .git/junk.mjs + notes.txt → A=11`,
+     }));
++    const waveFx = fxBase('a-wave-moves-not-a', { expect: { ...F1.expect, A_wave: 1 } });
++    fxWrite(join(waveFx.dir, '.ufo/waves/round-86/probe/wave-shaped.mjs'), '// wave-shaped runnable under .ufo\n');
++    const waveRun = runProxy(args(waveFx, ['--json']));
++    check('A_wave: a wave-shaped .mjs under .ufo moves A_wave and not A (MATCH; --json carries A_wave=1)', () => {
++      const j = JSON.parse(waveRun.stdout);
++      return {
++        ok: waveRun.status === 0 && j.verdict === 'MATCH' && j.terms.A === 6 && j.terms.A_wave === 1
++          && j.terms.operability === 7,
++        detail: `exit=${waveRun.status} A=${j.terms.A} A_wave=${j.terms.A_wave}`,
++      };
++    });
++    const waveDrift = fxBase('a-wave-drift', { expect: F1.expect });
++    fxWrite(join(waveDrift.dir, '.ufo/waves/round-86/probe/wave-shaped.mjs'), '// wave-shaped runnable under .ufo\n');
++    const waveDriftRun = runProxy(args(waveDrift));
++    check('A_WAVE_DRIFT: an undeclared .ufo runnable → exactly [A_WAVE_DRIFT], exit 1', () => {
++      const k = kindsEq(waveDriftRun, ['A_WAVE_DRIFT']);
++      return {
++        ok: waveDriftRun.status === 1 && k.ok
++          && verdictLine(waveDriftRun) === 'PROXY: DRIFT (A_WAVE_DRIFT term=A_wave declared=0 computed=1 delta=+1)',
++        detail: `exit=${waveDriftRun.status} kinds=[${k.got}] ${verdictLine(waveDriftRun)}`,
++      };
++    });
+     const r1b = runProxy(args(F1));
+     check('determinism: the same fixture yields byte-identical stdout on a re-run', () => ({
+       ok: String(r1.stdout ?? '') === String(r1b.stdout ?? ''),
+@@ -1845,13 +1873,13 @@
+         detail: `exit=${j3.status} S=${t.S_sections}/${t.S_members} script=${t.coverage_script} R=${t.R_sections}/${t.R_members} runtime=${t.coverage_runtime}`,
+       };
+     });
+-    check('layer terms are declared integers in the stanza (all twenty-four TERM_KEYS compared)', () => ({
+-      ok: TERM_KEYS.length === 24 && TERM_KEYS.includes('coverage_script') && TERM_KEYS.includes('R_sections')
++    check('layer terms are declared integers in the stanza (all twenty-five TERM_KEYS compared)', () => ({
++      ok: TERM_KEYS.length === 25 && TERM_KEYS.includes('coverage_script') && TERM_KEYS.includes('R_sections')
+         && TERM_KEYS.includes('coverage_kimi') && TERM_KEYS.includes('K_members'),
+       detail: `TERM_KEYS=${TERM_KEYS.join(' ')}`,
+     }));
+-    const parentV1Keys = 'A C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections K_findings coverage_kimi C1o C1o_total O_members O_findings O_bound coverage_omp pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check pin.claims-check pin.kimi-census';
+-    check('parent-frozen v1 parser accepts its additive 30-key stanza', () => ({
++    const parentV1Keys = 'A A_wave C C1 C1_total C2 C2_total S_members S_sections R_members R_sections coverage_script coverage_runtime C1k C1k_total K_members K_sections K_findings coverage_kimi C1o C1o_total O_members O_findings O_bound coverage_omp pin.cite-check pin.surface-probe pin.round-gate pin.proxy-check pin.claims-check pin.kimi-census';
++    check('parent-frozen v1 parser accepts its additive 31-key stanza', () => ({
+       ok: STANZA_KEYS.join(' ') === parentV1Keys && r1.status === 0
+         && !F1.scorecard.includes('pin.sources-check='),
+       detail: `keys=${STANZA_KEYS.length} baseKeysMatch=${STANZA_KEYS.join(' ') === parentV1Keys} accepted=${r1.status === 0}`,

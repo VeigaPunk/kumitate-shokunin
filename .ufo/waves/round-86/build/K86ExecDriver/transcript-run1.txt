@@ -1,0 +1,164 @@
+=== fixed arms (contract pins, shipped grammar) ===
+A01 ok   H01 clean (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2
+A02 ok   H02 clean-crlf (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=56 rows=2 held=2/2 findings=none sha256=37f73ec9cf2bdfb6cc295ea20a0cf0b3de1f87938426ee3bf16bc613208adcb8
+A03 ok   H03 metadata-ignored (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=140 rows=2 held=2/2 findings=none sha256=510fcc44481542b24a1a3a2442f5eda90d362adb6ce7d0748e8edbed6053b0e9
+A04 ok   H04 metadata-arm-decoy (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=76 rows=2 held=2/2 findings=none sha256=734e46c907800c12e6efe167c552d67b7be3db2daf4f7a567304bbd583ce0f2d
+A05 ok   H05 detail-not-reparsed (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=55 rows=2 held=2/2 findings=none sha256=1e7e5cfea445d334647043f8b4ab294558ec54aca294e22565917a45563e3cb0
+A06 ok   H22 leading-zero-counts (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=56 rows=2 held=2/2 findings=none sha256=eb4eaf4c56c2ae481648040a6b5ae07582f200915eddf5ebaf1031967e101d72
+A07 ok   H44 mutation-detail-byte (exit 0, want 0)
+      | COUNTER_RECEIPT: CLEAN
+      | RECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=0e915a84442d0f6947a15df207544eddff18f3c4b54739158120bfa5899161e4
+A08 ok   H06 honest-red (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT ARM_FAILED
+      | RECEIPT: bytes=31 rows=1 held=0/1 findings=ARM_FAILED sha256=ac2d8c13ebf2224d42ea69e7ecfbab2237ffe66fd138a95a72faf093090a4f44
+A09 ok   H07 hidden-red (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+      | RECEIPT: bytes=41 rows=2 held=1/1 findings=ARMS_TOTAL sha256=2c11124a7867bd24f818744d310db329ff063abb81b809bfa4403fed42486711
+A10 ok   H08 total-drift (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+      | RECEIPT: bytes=53 rows=2 held=2/3 findings=ARMS_TOTAL sha256=56e71950edebe9e19b51d68b198cbf1ddb380bff6c2c210806ee7c8a431d39c2
+A11 ok   H09 held-drift (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT HELD_COUNT
+      | RECEIPT: bytes=53 rows=2 held=1/2 findings=HELD_COUNT sha256=91270fdae8108ef91b67a7121691c27f10e8d66f055b9da3354925d73215311f
+A12 ok   H10 duplicate (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT ARM_DUPLICATE
+      | RECEIPT: bytes=53 rows=2 held=2/2 findings=ARM_DUPLICATE sha256=3e89d09301b1044350110e71b6192005e2bc1239cba9793f64a421e003a2c93d
+A13 ok   H11 foreign-prefix (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT ARM_PREFIX
+      | RECEIPT: bytes=53 rows=2 held=2/2 findings=ARM_PREFIX sha256=fcd62a5d3e2114e1f5705a0d3a6bc8b263c64ea79505fcb3c2a5350dce615012
+A14 ok   H12 wrong-verdict (exit 1, want 1)
+      | COUNTER_RECEIPT: DRIFT VERDICT
+      | RECEIPT: bytes=54 rows=2 held=2/2 findings=VERDICT sha256=6e35e38c2b5b85d444a33c04d7b68e46bca6438c92d4aec6f71749964da4ec59
+A15 ok   H13 two-summaries (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+      | RECEIPT: bytes=70 rows=2 held=2/2 findings=SUMMARY_COUNT sha256=80c60e7cb138ef86b397882cfeefcde33d19a8a81c4a951be6c8b501c0f2af5d
+A16 ok   H14 no-summary (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+      | RECEIPT: bytes=11 rows=1 held=-/- findings=SUMMARY_COUNT sha256=704f9d822f1dc4b2e87181bee508106d9f10246e5e81840f7a38e6c21472e694
+A17 ok   H15 malformed-summary (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+      | RECEIPT: bytes=62 rows=2 held=-/- findings=SUMMARY_COUNT sha256=e8aea6ae2aced85639f18583a27b0dbee4fe549430a7d554cbf3cf7544666c9b
+A18 ok   H16 unsafe-held (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+      | RECEIPT: bytes=68 rows=2 held=-/- findings=SUMMARY_COUNT sha256=02b8d49046b94dba2b8f410c3efe70ca64683d3cea7cc99d87b0229fcf5015cb
+A19 ok   H17 negative-held (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+      | RECEIPT: bytes=54 rows=2 held=-/- findings=SUMMARY_COUNT sha256=6c6a38a1678e57662ae6b1303feb7f9bdf37adc836ab9258de6f25b51f9246f3
+A20 ok   H18 malformed-arm (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED ARM_MALFORMED
+      | RECEIPT: bytes=56 rows=1 held=2/2 findings=ARM_MALFORMED sha256=1d26161443101b8bd35ae164c5ff8b651def1e246fa1ce17a58580a6ffbb96b9
+A21 ok   H19 zero-arms (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED ARMS_EMPTY
+      | RECEIPT: bytes=17 rows=0 held=0/0 findings=ARMS_EMPTY sha256=7721c17844166813ba57672353498da32f97bdd4400829ef28ed5ec9c5cc5443
+A22 ok   H20 summary-before-arms (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_ORDER
+      | RECEIPT: bytes=39 rows=2 held=2/2 findings=SUMMARY_ORDER sha256=1e9fa35c8ce64fda9a609daf5b472be5ba07e8a9c6e0f8cc4333e0ab5040f412
+A23 ok   H21 empty-before-drift (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED ARMS_EMPTY
+      | RECEIPT: bytes=18 rows=0 held=2/3 findings=ARMS_EMPTY sha256=e186b9c9535a9c10553316ecbbbbc6b9f9e939fcf7986d8302288ba6fb40e4b1
+A24 ok   H23 receipt-missing (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+      | RECEIPT: bytes=0 rows=0 held=-/- findings=RECEIPT_UNREADABLE sha256=-
+A25 ok   H24 receipt-is-directory (exit 2, want 2)
+      | COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+      | RECEIPT: bytes=0 rows=0 held=-/- findings=RECEIPT_UNREADABLE sha256=-
+A26 ok   H25 usage-no-args (exit 64, want 64)
+      | COUNTER_RECEIPT: USAGE
+A27 ok   H26 usage-unknown-flag (exit 64, want 64)
+      | COUNTER_RECEIPT: USAGE
+A28 ok   H27 usage-missing-value (exit 64, want 64)
+      | COUNTER_RECEIPT: USAGE
+A29 ok   H28 usage-duplicate-receipt (exit 64, want 64)
+      | COUNTER_RECEIPT: USAGE
+A30 ok   H29 usage-src-without-receipt (exit 64, want 64)
+      | COUNTER_RECEIPT: USAGE
+A31 FAIL H30 src-clean (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2 sha256=3221da194594c1ce784ee990ef1a673f811ca6fc28e0fa43a6b6584646f6c1ba\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2\n"
+A32 FAIL H31 src-undeclared (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=absent receipt=2 sha256=b7d002c845cd5f0cde971a2861f161be65e2eff822711fa76664f119e586cdbf\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=absent receipt=2\n"
+A33 FAIL H32 src-last-declaration-wins (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2 sha256=4882596819dad96d4b1fac694e73dbc3acf00a36dd5528fc78b5b9d6fee2b560\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2\n"
+A34 FAIL H33 src-missing (exit 2, want 2)
+      want "COUNTER_RECEIPT: FAIL-CLOSED SOURCE_UNREADABLE\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_UNREADABLE sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=0 declared=absent receipt=2 sha256=-\n"
+      got  "COUNTER_RECEIPT: FAIL-CLOSED SOURCE_UNREADABLE\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_UNREADABLE sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=0 declared=absent receipt=2\n"
+A35 FAIL H34 src-no-arm-sites (exit 2, want 2)
+      want "COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_ARMS_EMPTY sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=0 declared=3 receipt=2 sha256=8c07a33c29ace139314f143589d3bfede2f1c07dead6ad786fbcda99e5534836\n"
+      got  "COUNTER_RECEIPT: FAIL-CLOSED SOURCE_ARMS_EMPTY\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_ARMS_EMPTY sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=0 declared=3 receipt=2\n"
+A36 FAIL H35 src-unbound-name (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARM_UNBOUND\nRECEIPT: bytes=51 rows=3 held=3/3 findings=ARM_UNBOUND sha256=1918a6160dfb96785cbc53384555a17c6414918818d2ab536c135a329cc5cbd8\nSOURCE: sites=3 declared=3 receipt=3 sha256=f8414056f9e9b554adb56bf4c0f30b19bb44cb1a3fc247820cf4ceeafaebfa1c\n"
+      got  "COUNTER_RECEIPT: DRIFT ARM_UNBOUND\nRECEIPT: bytes=51 rows=3 held=3/3 findings=ARM_UNBOUND sha256=1918a6160dfb96785cbc53384555a17c6414918818d2ab536c135a329cc5cbd8\nSOURCE: sites=3 declared=3 receipt=3\n"
+A37 FAIL H36 src-arity (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT SOURCE_ARITY\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_ARITY sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=3 declared=3 receipt=2 sha256=f8414056f9e9b554adb56bf4c0f30b19bb44cb1a3fc247820cf4ceeafaebfa1c\n"
+      got  "COUNTER_RECEIPT: DRIFT SOURCE_ARITY\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_ARITY sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=3 declared=3 receipt=2\n"
+A38 FAIL H37 src-declared-drift (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT SOURCE_DECLARED\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_DECLARED sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=3 receipt=2 sha256=4ff964f4dd2a46d087defb01d2da4e5c960ddcb7f063013d3cf440b217cef9df\n"
+      got  "COUNTER_RECEIPT: DRIFT SOURCE_DECLARED\nRECEIPT: bytes=53 rows=2 held=2/2 findings=SOURCE_DECLARED sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=3 receipt=2\n"
+A39 FAIL H38 src-decoys-not-sites (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2 sha256=cbaec61a3161245ea0684398b398b57d1581c0c4a7bdba11ad852e3d597e5924\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2\n"
+A40 FAIL H39 receipt-outranks-source (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARMS_TOTAL\nRECEIPT: bytes=41 rows=2 held=1/1 findings=ARMS_TOTAL sha256=2c11124a7867bd24f818744d310db329ff063abb81b809bfa4403fed42486711\nSOURCE: sites=0 declared=absent receipt=2 sha256=-\n"
+      got  "COUNTER_RECEIPT: DRIFT ARMS_TOTAL\nRECEIPT: bytes=41 rows=2 held=1/1 findings=ARMS_TOTAL sha256=2c11124a7867bd24f818744d310db329ff063abb81b809bfa4403fed42486711\nSOURCE: sites=0 declared=absent receipt=2\n"
+A41 FAIL H40 src-digest-a (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2 sha256=3221da194594c1ce784ee990ef1a673f811ca6fc28e0fa43a6b6584646f6c1ba\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2\n"
+A42 FAIL H41 src-digest-b-same-counts (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2 sha256=201e1a70d804090f636cd6ad685cc0abe1f68e588936d4b602411a4dad195ed8\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=53 rows=2 held=2/2 findings=none sha256=4af2281ce74abd5f2bdff1fa1aaaf075f4873fcd3595577f5be65e67c80e13f2\nSOURCE: sites=2 declared=2 receipt=2\n"
+A43 FAIL H42 mutation-base-clean (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768\nSOURCE: sites=3 declared=3 receipt=3 sha256=f8414056f9e9b554adb56bf4c0f30b19bb44cb1a3fc247820cf4ceeafaebfa1c\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=50 rows=3 held=3/3 findings=none sha256=6d3a9376779b78d0adadbaa379614d1213b578dc4b8b627b1f19461d7878f768\nSOURCE: sites=3 declared=3 receipt=3\n"
+A44 FAIL H43 mutation-status-flip (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT HELD_COUNT\nRECEIPT: bytes=52 rows=3 held=3/3 findings=HELD_COUNT sha256=657fdd4681b88fee76516b04a167f2c3137e2ab4fd48419e91fafe85e6faf9bd\nSOURCE: sites=3 declared=3 receipt=3 sha256=f8414056f9e9b554adb56bf4c0f30b19bb44cb1a3fc247820cf4ceeafaebfa1c\n"
+      got  "COUNTER_RECEIPT: DRIFT HELD_COUNT\nRECEIPT: bytes=52 rows=3 held=3/3 findings=HELD_COUNT sha256=657fdd4681b88fee76516b04a167f2c3137e2ab4fd48419e91fafe85e6faf9bd\nSOURCE: sites=3 declared=3 receipt=3\n"
+=== generated fixtures (run-time random; arm counts, names, statuses, metadata, CRLF) ===
+A45 FAIL G gen-clean n=11 prefix=R20ED82 (exit 0, want 0)
+      want "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=389 rows=11 held=11/11 findings=none sha256=192a8abce5adda1df7ff57337c34860c06e7e8709e14a42713dfdd9c7ec83801\nSOURCE: sites=11 declared=absent receipt=11 sha256=7ce5a9832e6b470550542b7d7385564a586ec9a231d0cf5d418949d52052e073\n"
+      got  "COUNTER_RECEIPT: CLEAN\nRECEIPT: bytes=389 rows=11 held=11/11 findings=none sha256=192a8abce5adda1df7ff57337c34860c06e7e8709e14a42713dfdd9c7ec83801\nSOURCE: sites=11 declared=absent receipt=11\n"
+A46 FAIL G gen-arm-failed n=7 prefix=R6631EA (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARM_FAILED\nRECEIPT: bytes=260 rows=7 held=5/7 findings=ARM_FAILED sha256=a9c8ab5d24f8bd6aca4d3b2e84d780794f2d2fba7623cd26ee57a983b8490f22\nSOURCE: sites=7 declared=7 receipt=7 sha256=d34003370acd51743de35ee63ebf26f9cdae2ca43494771920a66f13c5cf6c7c\n"
+      got  "COUNTER_RECEIPT: DRIFT ARM_FAILED\nRECEIPT: bytes=260 rows=7 held=5/7 findings=ARM_FAILED sha256=a9c8ab5d24f8bd6aca4d3b2e84d780794f2d2fba7623cd26ee57a983b8490f22\nSOURCE: sites=7 declared=7 receipt=7\n"
+A47 FAIL G gen-verdict n=8 prefix=R3B98EE (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT VERDICT\nRECEIPT: bytes=285 rows=8 held=8/8 findings=VERDICT sha256=47e32b711cede97593624d5b72b8ff53bf99165b64fd2027a354373da65bac77\nSOURCE: sites=8 declared=absent receipt=8 sha256=501bd47dc48b968db78ea039282156a7d31644eb46d775ee93d650549bb868d3\n"
+      got  "COUNTER_RECEIPT: DRIFT VERDICT\nRECEIPT: bytes=285 rows=8 held=8/8 findings=VERDICT sha256=47e32b711cede97593624d5b72b8ff53bf99165b64fd2027a354373da65bac77\nSOURCE: sites=8 declared=absent receipt=8\n"
+A48 FAIL G gen-arms-total n=9 prefix=RF88E4D (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARMS_TOTAL\nRECEIPT: bytes=359 rows=9 held=8/10 findings=ARMS_TOTAL sha256=992eca27003b8f926e1232c4a249cbb2dcfd44aa5136f42d1a6c28a0040d720e\nSOURCE: sites=9 declared=9 receipt=9 sha256=d5d3738679a3be45dff61f8d029c7abcc5c476a1f144af881babc803daa8994a\n"
+      got  "COUNTER_RECEIPT: DRIFT ARMS_TOTAL\nRECEIPT: bytes=359 rows=9 held=8/10 findings=ARMS_TOTAL sha256=992eca27003b8f926e1232c4a249cbb2dcfd44aa5136f42d1a6c28a0040d720e\nSOURCE: sites=9 declared=9 receipt=9\n"
+A49 FAIL G gen-held-count n=6 prefix=R0B3309 (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT HELD_COUNT\nRECEIPT: bytes=202 rows=6 held=5/6 findings=HELD_COUNT sha256=5d3d4779935472e2f1b7c01370681d856b063a4957b485c728f23f3981ac6c5c\nSOURCE: sites=6 declared=6 receipt=6 sha256=360e699731a109d372e32059650e309fcb66bd756a5bb32b12630cffed7d1f0b\n"
+      got  "COUNTER_RECEIPT: DRIFT HELD_COUNT\nRECEIPT: bytes=202 rows=6 held=5/6 findings=HELD_COUNT sha256=5d3d4779935472e2f1b7c01370681d856b063a4957b485c728f23f3981ac6c5c\nSOURCE: sites=6 declared=6 receipt=6\n"
+A50 FAIL G gen-duplicate n=4 prefix=RF07ED0 (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARM_DUPLICATE\nRECEIPT: bytes=136 rows=4 held=2/4 findings=ARM_DUPLICATE sha256=83cdfbd09cc48e5d94c15a0070d805e425399edde8ff24354307ac1bfbf20b64\nSOURCE: sites=4 declared=absent receipt=4 sha256=b5f09dfac5c20dc840b60a741503ca3670f33795e875eed5485d17946a6fff1a\n"
+      got  "COUNTER_RECEIPT: DRIFT ARM_DUPLICATE\nRECEIPT: bytes=136 rows=4 held=2/4 findings=ARM_DUPLICATE sha256=83cdfbd09cc48e5d94c15a0070d805e425399edde8ff24354307ac1bfbf20b64\nSOURCE: sites=4 declared=absent receipt=4\n"
+A51 FAIL G gen-prefix n=9 prefix=RD1D12A (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARM_PREFIX\nRECEIPT: bytes=451 rows=9 held=4/9 findings=ARM_PREFIX sha256=f226dd56b66f80dc07046e0b01688b6c61416e88c35b386b1cbe497da2fca385\nSOURCE: sites=9 declared=9 receipt=9 sha256=167c1b89bebf618453ee6968bb0e29a18e3b59885721430e1228490f24d55da9\n"
+      got  "COUNTER_RECEIPT: DRIFT ARM_PREFIX\nRECEIPT: bytes=451 rows=9 held=4/9 findings=ARM_PREFIX sha256=f226dd56b66f80dc07046e0b01688b6c61416e88c35b386b1cbe497da2fca385\nSOURCE: sites=9 declared=9 receipt=9\n"
+A52 FAIL G gen-unbound n=3 prefix=RAA1F2D (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT ARM_UNBOUND\nRECEIPT: bytes=133 rows=3 held=3/3 findings=ARM_UNBOUND sha256=9ffe1c5b74871d0deeb648d11806dacff15712951b69fd970b2e6fc2d9c50657\nSOURCE: sites=3 declared=3 receipt=3 sha256=67fe29f4c05ffc6850ee00e26ba74a787fc4de0759063e136e59d6a89e8b0996\n"
+      got  "COUNTER_RECEIPT: DRIFT ARM_UNBOUND\nRECEIPT: bytes=133 rows=3 held=3/3 findings=ARM_UNBOUND sha256=9ffe1c5b74871d0deeb648d11806dacff15712951b69fd970b2e6fc2d9c50657\nSOURCE: sites=3 declared=3 receipt=3\n"
+A53 FAIL G gen-arity n=8 prefix=R7BA535 (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT SOURCE_ARITY\nRECEIPT: bytes=286 rows=8 held=8/8 findings=SOURCE_ARITY sha256=e90405358e2e04b46c1a0f3c8b2e9bdeb3f1fa9ca2dce4f2d9c715a22fed3c36\nSOURCE: sites=9 declared=absent receipt=8 sha256=6223126c4359a1ead83a5ce8bf47f3a1582b64418e87377710a3a2f7c602a336\n"
+      got  "COUNTER_RECEIPT: DRIFT SOURCE_ARITY\nRECEIPT: bytes=286 rows=8 held=8/8 findings=SOURCE_ARITY sha256=e90405358e2e04b46c1a0f3c8b2e9bdeb3f1fa9ca2dce4f2d9c715a22fed3c36\nSOURCE: sites=9 declared=absent receipt=8\n"
+A54 FAIL G gen-declared n=3 prefix=RB0FAA8 (exit 1, want 1)
+      want "COUNTER_RECEIPT: DRIFT SOURCE_DECLARED\nRECEIPT: bytes=146 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=5de73c38a2c2036a1660086d0152e279da3ec75a77473b93aa8823da657a0a9f\nSOURCE: sites=3 declared=5 receipt=3 sha256=778a79e67e95f9879b7cd7518643c6c50af6986dfa3ee8d7b59b041182f4f83e\n"
+      got  "COUNTER_RECEIPT: DRIFT SOURCE_DECLARED\nRECEIPT: bytes=146 rows=3 held=3/3 findings=SOURCE_DECLARED sha256=5de73c38a2c2036a1660086d0152e279da3ec75a77473b93aa8823da657a0a9f\nSOURCE: sites=3 declared=5 receipt=3\n"
+SEED=e1b2e426
+TOOL=/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs
+TOOL_SHA256=f385bd7a9fbf1dc49d465c8d83fecfd07aae34f6bf619aca7d935eda14f238cd
+TOOL_HEADER=/**
+K86_EXEC_DRIVER: UNMET held=30/54

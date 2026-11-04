@@ -2892,3 +2892,39 @@ round-84 `vacuous` row. Accounting (not admission): A 908→972 (59 wave-scaffol
 r84's routed R-proxy, pre-registered for round 86; shipped-only A = 36), C 44→45, C2 214→216,
 `pin.counter-receipt` `190a4c1f…`→`f385bd7a…`; every scalar axis unchanged, no axis harmed on
 the gates run. Assimilation none; no staged package row appended.
+
+## Round 86 — source-half byte binding and historical corrections (2026-11-04)
+
+Trigger: round-85's non-author spot-check (`corpus/lessons/round-85-verifier-spotcheck.md`)
+rejects the acquisition under its frozen kill rule and routes R85-V1–V15.
+The next plan declares one operability capability claim (the lowest live axis):
+`counter-receipt` v3, exact 24-arm predicate, controls 14/24 and 0/24 each.
+Freeze/control commit `e7228850690c6bd48400140964cbaf18667fbc06` follows adoption
+of the spot-check through `spotcheck-adopt --adopt` (row and pin together).
+Evidence: `.ufo/waves/round-86/plan.md`, `probe/`, `controls/`, `open/`.
+
+Named corrections to round 85 (append-only): the reported proxy MATCH was false;
+its committed receipts show A_DRIFT (975 at M, 980 at tip against declared 972).
+Base/freeze/M/tip tracked runnable counts were 908/913/975/980; shipped-only
+count was 35. The proxy red was lane-state, not live-host. Historical independent
+41/41 tested candidate `7659be6e…`, not integrated `f385bd7a…`; it is candidate-only.
+The ready gate's attack taxonomy yields 4/13, excluding sentinel, not the 5/13
+stated in the preceding log. These corrections do not change the rejected verdict.
+The r84 checklist citation change belongs to
+`6e3e4749f81e624e202b78dda9a7df8a7328f081`; the Planned pointer belongs to
+`602f1835a46b6627ed9f0c0e139279f4b6212444`. The filed historical report is fleet
+commit `b67837ee7136d0dfddce5b36589da3dca5add42f` (R85-V13).
+
+The pre-registered A amendment is measured separately before candidate data:
+`.ufo/waves/round-86/open/a-rebaseline.txt` binds tracked base A=980, non-wave
+A=35, excluded A_wave=945 and C=45. The later worktree walk sees 981 because
+the new probe already exists; it is not substituted for the pinned base count.
+Both denominators leave operability's integer at 9.
+
+S247 corrects S245's survey title/tier; S248 reopens accessible full text and
+supersedes S246's unreachable-locator conclusion. S249 rejects hashing API
+documentation as semantic-correctness evidence. New Gate decisions and quotes
+are in `corpus/lessons/round-86.md`; the new source-binding knowledge entry
+also corrects the orphan fragment from the historical v2 entry. Assimilation
+none: the correctly spelled shokuknow package is present but no staged rows
+are adopted; the misspelled initial absence claim was corrected before freeze.

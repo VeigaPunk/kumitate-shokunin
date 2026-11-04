@@ -1,0 +1,166 @@
+--- scripts/readme-map.mjs	2026-10-24 11:11:30.220350722 -0300
++++ .ufo/waves/round-86/build/K86ExecMap/readme-map.mjs	2026-11-04 17:16:26.156137539 -0300
+@@ -18,9 +18,10 @@
+  *
+  * Verdicts (one line on stdout, after optional per-item notes):
+  *   README_MAP: CLEAN files=<n> rows=<n> covered=<n>   exit 0
+- *   README_MAP: DRIFT files=<n> rows=<n> covered=<m> bad=<k> first=<item>   exit 1
++ *   README_MAP: DRIFT files=<n> rows=<n> covered=<m> bad=<k> outside_map=<j> first=<item>   exit 1
+  *   README_MAP: FAIL-CLOSED reason=<why>                exit 2 (could not evaluate)
+  *   README_MAP: USAGE ...                               exit 64
++ * --json replaces the verdict line with one JSON object (verdict, exit, files, rows, covered, outside_map, bad, first); exit codes are unchanged.
+  *
+  * Registry (default `.ufo/pins/readme-map.json`, lane-root-relative):
+  *   { "version": 2, "covered": ["knowledge/x.md", "lessons/y.md", ...] }
+@@ -44,6 +45,11 @@
+  * *looks* corpus-bound (starts `knowledge/` or `lessons/` but is not a clean
+  * backticked path) is DRIFT `format-unmapped`, never silently dropped.
+  *
++ * Section membership (R85-V12): only rows inside the `## Coverage map` section
++ * count. A `## ` heading ends that section, so a corpus row after `## Frontier`
++ * or `## Known gaps` is not indexed: it reads DRIFT `outside-map:<path>` and
++ * counts toward `outside_map=<j>`.
++ *
+  * Findings:
+  *   - DRIFT `uncovered:<path>` — a live `*.md` with no row.
+  *   - DRIFT `orphan-row:<path>` — a row naming a path with no file.
+@@ -56,6 +62,7 @@
+  *     a regular file (a directory, a symlink to anything, a fifo).
+  *   - DRIFT `unpinned:<path>` — a live file absent from `covered` (the pin
+  *     grows by append when a file lands; the registry is never rewritten).
++ *   - DRIFT `outside-map:<path>` — a corpus row outside the `## Coverage map` section (R85-V12); the note also reads `uncovered` when it has no in-map row.
+  *   - FAIL-CLOSED (exit 2, never a score): registry unreadable / not JSON /
+  *     version ≠ 2 / `covered` not an array / a covered entry malformed,
+  *     duplicated or outside `knowledge|lessons/`; README unreadable; a corpus
+@@ -64,8 +71,8 @@
+  * The gate never writes. It reads the registry, the README and the corpus
+  * directories only.
+  *
+- * Selftest: hermetic fixtures under mkdtemp, sixteen cases, one red-before
+- * per rule; the final line reads `README_MAP_SELFTEST: PASS (16/16)` +
++ * Selftest: hermetic fixtures under mkdtemp, eighteen cases, one red-before
++ * per rule; the final line reads `README_MAP_SELFTEST: PASS (18/18)` +
+  * `VERDICT: PASS`, exit 0.
+  *
+  * Exit map: 0 clean · 1 a real defect (drift) · 2 fail-closed · 64 usage.
+@@ -140,18 +147,23 @@
+     return { ok: false, reason: `README unreadable: ${e.code || 'EIO'}` };
+   }
+   const rows = [];
++  const outside = [];
+   const bad = [];
++  // R85-V12: only the `## Coverage map` section is the index. A `## ` heading
++  // ends the current section; a corpus row anywhere else is `outside`.
++  let inMap = false;
+   for (const line0 of raw.split('\n')) {
+     const line = line0.replace(/^ {0,3}/, '');
++    if (line.startsWith('## ')) { inMap = /^## Coverage map\b/.test(line); continue; }
+     if (!line.startsWith('|')) continue;
+     const m = line.match(/^\|\s*`((?:knowledge|lessons)\/[^`]+)`\s*\|/);
+-    if (m) { rows.push(m[1]); continue; }
++    if (m) { (inMap ? rows : outside).push(m[1]); continue; }
+     const firstCell = line.split('|')[1];
+     if (firstCell && /^\s*`?(knowledge|lessons)\//.test(firstCell)) {
+       bad.push(`format-unmapped:${firstCell.trim().slice(0, 80)}`);
+     }
+   }
+-  return { ok: true, rows, bad };
++  return { ok: true, rows, outside, bad };
+ }
+ 
+ function loadFiles(dirs) {
+@@ -187,7 +199,7 @@
+   if (!cf.ok) return { verdict: 'FAIL-CLOSED', reason: cf.reason, exit: 2 };
+ 
+   const fileSet = new Set(cf.files);
+-  const bad = [...rd.bad];
++  const bad = [...rd.outside.map((r) => `outside-map:${r}`), ...rd.bad];
+   const seen = new Map();
+   for (const r of rd.rows) {
+     if (seen.has(r)) {
+@@ -235,17 +247,25 @@
+   for (const f of cf.files) {
+     if (!covered.has(f)) bad.push(`unpinned:${f}`);
+   }
+-  const stats = { files: cf.files.length, rows: rd.rows.length, covered: reg.covered.length };
++  const stats = { files: cf.files.length, rows: rd.rows.length, covered: reg.covered.length, outside_map: rd.outside.length };
+   if (bad.length > 0) return { verdict: 'DRIFT', ...stats, bad, exit: 1 };
+   return { verdict: 'CLEAN', ...stats, exit: 0 };
+ }
+ 
+-function emit(result) {
+-  if (result.verdict === 'CLEAN') {
++function emit(result, asJson) {
++  if (asJson) {
++    const out = { verdict: result.verdict, exit: result.exit };
++    if (result.verdict === 'FAIL-CLOSED') {
++      out.reason = result.reason;
++    } else {
++      Object.assign(out, { files: result.files, rows: result.rows, covered: result.covered, outside_map: result.outside_map, bad: result.bad || [], first: result.bad ? result.bad[0] : null });
++    }
++    process.stdout.write(`${JSON.stringify(out)}\n`);
++  } else if (result.verdict === 'CLEAN') {
+     process.stdout.write(`README_MAP: CLEAN files=${result.files} rows=${result.rows} covered=${result.covered}\n`);
+   } else if (result.verdict === 'DRIFT') {
+     for (const b of result.bad.slice(1)) process.stdout.write(`README_MAP: note ${b}\n`);
+-    process.stdout.write(`README_MAP: DRIFT files=${result.files} rows=${result.rows} covered=${result.covered} bad=${result.bad.length} first=${result.bad[0]}\n`);
++    process.stdout.write(`README_MAP: DRIFT files=${result.files} rows=${result.rows} covered=${result.covered} bad=${result.bad.length} outside_map=${result.outside_map} first=${result.bad[0]}\n`);
+   } else {
+     process.stdout.write(`README_MAP: FAIL-CLOSED reason=${result.reason}\n`);
+   }
+@@ -263,14 +283,14 @@
+     { encoding: 'utf8', timeout: 60_000, ...opts });
+   const last = (r) => `${r.stdout || ''}`.trim().split('\n').pop() || '';
+   const mkdirp = (d) => { rmSync(d, { recursive: true, force: true }); mkdirSync(d, { recursive: true }); };
+-  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], dirs = [], links = [], rows, covered } = {}) => {
++  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], dirs = [], links = [], rows, covered, tail = '' } = {}) => {
+     mkdirp(dir);
+     mkdirp(join(dir, 'corpus')); mkdirp(join(dir, 'corpus/knowledge')); mkdirp(join(dir, 'corpus/lessons'));
+     for (const f of files) writeFileSync(join(dir, 'corpus', f), `# ${f}\n`);
+     for (const d of dirs) mkdirp(join(dir, 'corpus', d));
+     for (const l of links) symlinkSync(join(dir, 'corpus', `${l}.no-such-target`), join(dir, 'corpus', l));
+     const rowText = rows !== undefined ? rows : files.map((f) => `| \`${f}\` | desc | ptr |\n`).join('');
+-    writeFileSync(join(dir, 'corpus/README.md'), `# README\n\n## Coverage map\n\n${rowText}`);
++    writeFileSync(join(dir, 'corpus/README.md'), `# README\n\n## Coverage map\n\n${rowText}${tail}`);
+     writeFileSync(join(dir, 'reg.json'), JSON.stringify({ version: 2, covered: covered !== undefined ? covered : files }, null, 2));
+     return { reg: join(dir, 'reg.json'), rm: join(dir, 'corpus/README.md'), kd: join(dir, 'corpus/knowledge'), ld: join(dir, 'corpus/lessons') };
+   };
+@@ -400,6 +420,23 @@
+       pass('symlink-stale-covered', r.status === 1 && `${r.stdout}`.includes('stale-covered:lessons/link.md'),
+         `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`);
+     }
++    // 17 — R85-V12: a row after `## Frontier` is outside the coverage map: DRIFT outside_map>=1
++    {
++      const f = fixture(join(root, 'd17'), {
++        rows: '| `knowledge/a.md` | d | p |\n',
++        tail: '\n## Frontier\n\n| `lessons/b.md` | d | p |\n',
++      });
++      const r = run(argsOf(f));
++      pass('outside-map', r.status === 1 && /README_MAP: DRIFT .* outside_map=[1-9][0-9]* first=/.test(`${r.stdout}`) && `${r.stdout}`.includes('outside-map:lessons/b.md'),
++        `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`);
++    }
++    // 18 — R85-V12: rows inside the map stay CLEAN with a prose section after them
++    {
++      const f = fixture(join(root, 'd18'), { tail: '\n## Frontier\n\n- prose that names `knowledge/a.md` without a row\n' });
++      const r = run(argsOf(f));
++      pass('inside-map-clean', r.status === 0 && last(r) === 'README_MAP: CLEAN files=2 rows=2 covered=2',
++        `exit=${r.status} last=${JSON.stringify(last(r))}`);
++    }
+   } finally {
+     rmSync(root, { recursive: true, force: true });
+   }
+@@ -414,11 +451,13 @@
+ let registry = join(LANE, DEFAULT_REGISTRY);
+ let readme = join(LANE, DEFAULT_README);
+ const dirs = [];
++let json = false;
+ for (let i = 0; i < argv.length; i++) {
+   const a = argv[i];
+   if (a === '--registry' && argv[i + 1]) registry = resolve(argv[++i]);
+   else if (a === '--readme' && argv[i + 1]) readme = resolve(argv[++i]);
+   else if (a === '--corpus' && argv[i + 1]) dirs.push(resolve(argv[++i]));
++  else if (a === '--json') json = true;
+   else usage();
+ }
+-emit(evaluate(registry, readme, dirs.length ? dirs : DEFAULT_DIRS.map((d) => join(LANE, d))));
++emit(evaluate(registry, readme, dirs.length ? dirs : DEFAULT_DIRS.map((d) => join(LANE, d))), json);
