@@ -1,0 +1,12 @@
+rev=9fe7f1ea2bdb74a00cc054b28046615fc8f02c9d date=2026-11-04T01:35:34-03:00
+$ node scripts/proxy-check.mjs --tip-drift; echo exit=$?
+ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161
+exit=1
+
+$ node scripts/proxy-check.mjs --tip-drift --origin /fast/scratch/hyaku/kumitate-pin/src; echo exit=$?
+ORIGIN_TIP_DRIFT: IN_SYNC pin=31c465f15669 origin=31c465f15669 commits=0 changed=0 scripts=0 runtime=0 other=0
+exit=0
+
+$ node scripts/proxy-check.mjs --tip-drift --origin /tmp; echo exit=$?
+ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /tmp
+exit=2

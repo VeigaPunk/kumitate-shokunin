@@ -1,0 +1,185 @@
+K75MutRules — axes: operability + coverage; attacked coverage:omp
+Base revision c38382d547a1ec21bb7f51b4c08ef08053e7abae; contract kumitate-omp-census-v1
+All census runs use node; no other runtime invoked for the instrument. Python only constructs isolated files and captures subprocess outputs.
+No tools installed/updated. Live root read via census readdir/lstat only; note files are scratch fixtures.
+Scratch: /fast/scratch/hyaku/kumitate-r75/K75MutRules
+Executor patch arrived within 110.3 seconds of independent scratch preparation; no polling/wait required.
+
+Commands (each node command has cwd=/fast/scratch/hyaku/kumitate-r75/K75MutRules; TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75MutRules):
+git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin show c38382d547a1ec21bb7f51b4c08ef08053e7abae:scripts/omp-census.mjs
+git clone --shared --no-checkout /home/vgpnk/Projects/shokunin/kumitate-shokunin /fast/scratch/hyaku/kumitate-r75/K75MutRules/real-clone
+git -C /fast/scratch/hyaku/kumitate-r75/K75MutRules/real-clone rev-parse --show-toplevel  # asserted exact fixture root before apply
+git -C /fast/scratch/hyaku/kumitate-r75/K75MutRules/real-clone apply /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-75/build/K75ExecCensusRules/K75ExecCensusRules.patch
+Independent: K75_NOTE=/fast/scratch/hyaku/kumitate-r75/K75MutRules/note.md node /fast/scratch/hyaku/kumitate-r75/K75MutRules/mut-base.mjs --root /home/vgpnk/.omp/agent
+Independent selftest: K75_NOTE=/fast/scratch/hyaku/kumitate-r75/K75MutRules/note.md node <tool> --selftest --work /fast/scratch/hyaku/kumitate-r75/K75MutRules
+Independent negative-note: K75_NOTE=/fast/scratch/hyaku/kumitate-r75/K75MutRules/note-missing.md node <tool> --root /home/vgpnk/.omp/agent
+Real: node <tool> --root /home/vgpnk/.omp/agent --note /fast/scratch/hyaku/kumitate-r75/K75MutRules/note.md
+Real negative-note: node <tool> --root /home/vgpnk/.omp/agent --note /fast/scratch/hyaku/kumitate-r75/K75MutRules/note-missing.md
+Real selftest: node <tool> --selftest --work /fast/scratch/hyaku/kumitate-r75/K75MutRules
+For each M1–M8 <tool> is mutants/Mn.mjs (independent) or mutants/real-Mn.mjs (real); exact bytes reconstructed by corresponding saved patch.
+Each mutant selftest immediately rerun; full stdout/stderr/exits in *-matrix.json.
+
+Base-clean proof:
+independent: OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) exit=0
+VERDICT: PASS (34 cases) exit=0
+real: OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) exit=0
+VERDICT: PASS (47 cases) exit=0
+
+## Independent minimal note arm
+mutant | expected | observed line | exit | KILLED|SURVIVOR | reason
+M1 | DRIFT exit=1 UNLISTED lsp.json | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1 bound=34/35) | 1 | KILLED | UNLISTED lsp.json
+  selftest: VERDICT: FAIL (2 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (2 of 34 cases failed) exit=1
+  SELFTEST FAIL lsp-json-mode-too-wide: missing "MODE lsp.json want<=0600 got=0604"
+  SELFTEST FAIL lsp-json-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M2 | DRIFT exit=1 UNLISTED config.yml.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29 bound=34/35) | 1 | KILLED | UNLISTED config.yml.pre-alias-high-20261103
+  selftest: VERDICT: FAIL (1 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 34 cases failed) exit=1
+  SELFTEST FAIL config-pre-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M3 | DRIFT exit=1 UNLISTED agent.db.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=7 bound=34/35) | 1 | KILLED | UNLISTED agent.db.pre-kimi58-unblock-20261027
+  selftest: VERDICT: FAIL (1 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 34 cases failed) exit=1
+  SELFTEST FAIL agent-pre-named-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M4 | DRIFT exit=1 UNLISTED models.db.corrupt- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=3 bound=34/35) | 1 | KILLED | UNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42
+  selftest: VERDICT: FAIL (1 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 34 cases failed) exit=1
+  SELFTEST FAIL models-corrupt-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M5 | DRIFT exit=1 UNLISTED config.yml.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29 bound=35/35) | 1 | KILLED | UNLISTED config.yml.pre-alias-high-20261103
+  selftest: VERDICT: FAIL (1 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 34 cases failed) exit=1
+  SELFTEST FAIL config-pre-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M6 | DRIFT exit=1 MODE lsp.json want<=0400 got=0600 | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1 bound=35/35) | 1 | KILLED | MODE lsp.json want<=0400 got=0600
+  selftest: VERDICT: FAIL (2 of 34 cases failed) exit=1; immediate rerun: VERDICT: FAIL (2 of 34 cases failed) exit=1
+  SELFTEST FAIL lsp-json-mode-too-wide: missing "MODE lsp.json want<=0600 got=0604"
+  SELFTEST FAIL lsp-json-ok: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M7 | SURVIVOR expected: missing note token accepted CLEAN exit=0; selftest may miss omission | OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=34/35) | 0 | SURVIVOR | missing token accepted; live detector SURVIVOR
+  selftest: VERDICT: PASS (34 cases) exit=0; immediate rerun: VERDICT: PASS (34 cases) exit=0
+M8 | SURVIVOR expected: missing note token accepted CLEAN exit=0; selftest may miss omission | OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) | 0 | SURVIVOR | missing token accepted; live detector SURVIVOR
+  selftest: VERDICT: PASS (34 cases) exit=0; immediate rerun: VERDICT: PASS (34 cases) exit=0
+
+## Real patched tool
+mutant | expected | observed line | exit | KILLED|SURVIVOR | reason
+M1 | live DRIFT exit=1 UNLISTED lsp.json | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1) | 1 | KILLED | UNLISTED lsp.json
+  selftest: VERDICT: FAIL (4 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (4 of 47 cases failed) exit=1
+  SELFTEST FAIL binding-total-35-no-NOTE_UNBOUND: missing "bound=35/35"
+  SELFTEST FAIL lsp-MODE-lsp.json: missing "MODE lsp.json want<=0600 got=0644"
+  SELFTEST FAIL lsp-absent-no-MODE-lsp.json: missing "INFO lsp.json absent"
+  SELFTEST FAIL lsp-present-no-UNLISTED-lsp.json: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED lsp.json"
+M2 | live DRIFT exit=1 UNLISTED config.yml.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29) | 1 | KILLED | UNLISTED config.yml.pre-alias-high-20261103
+  selftest: VERDICT: FAIL (4 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (4 of 47 cases failed) exit=1
+  SELFTEST FAIL binding-total-35-no-NOTE_UNBOUND: missing "bound=35/35"
+  SELFTEST FAIL config-pre-MODE: missing "MODE config.yml.pre-editor-20261104 want<=0600 got=0644"
+  SELFTEST FAIL config-pre-generation-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED config.yml.pre-editor-20261104"
+  SELFTEST FAIL config-pre-sidecar-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED config.yml.pre-editor-20261104-"
+M3 | live DRIFT exit=1 UNLISTED agent.db.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=7) | 1 | KILLED | UNLISTED agent.db.pre-kimi58-unblock-20261027
+  selftest: VERDICT: FAIL (4 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (4 of 47 cases failed) exit=1
+  SELFTEST FAIL agent-pre-named-MODE: missing "MODE agent.db.pre-editor-20261104 want<=0600 got=0644"
+  SELFTEST FAIL agent-pre-named-generation-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED agent.db.pre-editor-20261104"
+  SELFTEST FAIL agent-pre-named-sidecar-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED agent.db.pre-editor-20261104-"
+  SELFTEST FAIL binding-total-35-no-NOTE_UNBOUND: missing "bound=35/35"
+M4 | live DRIFT exit=1 UNLISTED models.db.corrupt- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=3) | 1 | KILLED | UNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42
+  selftest: VERDICT: FAIL (5 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (5 of 47 cases failed) exit=1
+  SELFTEST FAIL NOTE_UNBOUND-models-corrupt: exit 0 want 1; missing "NOTE_UNBOUND models-corrupt"; missing "OMP_CENSUS: DRIFT"; unexpected "OMP_CENSUS: CLEAN"
+  SELFTEST FAIL binding-total-35-no-NOTE_UNBOUND: missing "bound=35/35"
+  SELFTEST FAIL models-corrupt-MODE: missing "MODE models.db.corrupt-1792715399999-11111111-2222-4333-8444-555555555555 want<=0600 got=0644"
+  SELFTEST FAIL models-corrupt-generation-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED models.db.corrupt-1792715399999-11111111-2222-4333-8444-555555555555"
+  SELFTEST FAIL models-corrupt-sidecar-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED models.db.corrupt-1792715399999-11111111-2222-4333-8444-555555555555-"
+M5 | live DRIFT exit=1 UNLISTED config.yml.pre- | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29) | 1 | KILLED | UNLISTED config.yml.pre-alias-high-20261103
+  selftest: VERDICT: FAIL (3 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (3 of 47 cases failed) exit=1
+  SELFTEST FAIL config-pre-MODE: missing "MODE config.yml.pre-editor-20261104 want<=0600 got=0644"
+  SELFTEST FAIL config-pre-generation-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED config.yml.pre-editor-20261104"
+  SELFTEST FAIL config-pre-sidecar-no-UNLISTED: exit 1 want 0; missing "OMP_CENSUS: CLEAN"; unexpected "UNLISTED config.yml.pre-editor-20261104-"
+M6 | live DRIFT exit=1 MODE lsp.json want<=0400 got=0600 | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1) | 1 | KILLED | MODE lsp.json want<=0400 got=0600
+  selftest: VERDICT: FAIL (2 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (2 of 47 cases failed) exit=1
+  SELFTEST FAIL lsp-MODE-lsp.json: missing "MODE lsp.json want<=0600 got=0644"
+  SELFTEST FAIL lsp-present-no-UNLISTED-lsp.json: exit 1 want 0; missing "OMP_CENSUS: CLEAN"
+M7 | missing-note live CLEAN survivor; real selftest should KILL NOTE_UNBOUND omission | OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=34/35) | 0 | KILLED | missing token accepted; live detector SURVIVOR; selftest kills: SELFTEST FAIL NOTE_UNBOUND-models-corrupt: exit 0 want 1; missing "NOTE_UNBOUND models-corrupt"; missing "OMP_CENSUS: DRIFT"; unexpected "OMP_CENSUS: CLEAN"
+  selftest: VERDICT: FAIL (1 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 47 cases failed) exit=1
+  SELFTEST FAIL NOTE_UNBOUND-models-corrupt: exit 0 want 1; missing "NOTE_UNBOUND models-corrupt"; missing "OMP_CENSUS: DRIFT"; unexpected "OMP_CENSUS: CLEAN"
+M8 | missing-note live CLEAN survivor; real selftest should KILL NOTE_UNBOUND omission | OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) | 0 | KILLED | missing token accepted; live detector SURVIVOR; selftest kills: SELFTEST FAIL NOTE_UNBOUND-models-corrupt: exit 0 want 1; missing "NOTE_UNBOUND models-corrupt"; missing "OMP_CENSUS: DRIFT"; unexpected "OMP_CENSUS: CLEAN"
+  selftest: VERDICT: FAIL (1 of 47 cases failed) exit=1; immediate rerun: VERDICT: FAIL (1 of 47 cases failed) exit=1
+  SELFTEST FAIL NOTE_UNBOUND-models-corrupt: exit 0 want 1; missing "NOTE_UNBOUND models-corrupt"; missing "OMP_CENSUS: DRIFT"; unexpected "OMP_CENSUS: CLEAN"
+
+Scoreboard corrections / limits:
+M5 exact requested mutation 20\d{6} -> 20\d{4} rejects ALL 29 live config-pre names, not 2/29. Both measured matrices show findings=29.
+M6 uses 0400 as explicitly corrected by assignment. A separate 0644 widening control reads OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35) exit=0; wider permission ceiling cannot reject 0600.
+M7/M8 LIVE-ONLY detectors survive even on real patched tool; real selftest kills both by NOTE_UNBOUND-models-corrupt, including immediate reruns. Independent minimal selftest does NOT test missing-note binding, so M7/M8 are honest survivors there.
+No baseline failures. Independent and real restored bytes pass all previously clean detectors; missing-note negative controls remain DRIFT exit=1 after restoration.
+
+Restoration evidence:
+Independent sha256 before=5bb9fbb2d7d323a20363627b2138882a6e0ea10268ab02d49331cdbf15c4d198 after=5bb9fbb2d7d323a20363627b2138882a6e0ea10268ab02d49331cdbf15c4d198
+Real sha256 before=36a30a9cfe52d76471318e4fc834be417fae9d3c455d0c58d5b7b4a55d346770 after=36a30a9cfe52d76471318e4fc834be417fae9d3c455d0c58d5b7b4a55d346770
+All 16 mutant paths rewritten with exact pristine bytes and detectors repeated: restoration-matrix.json records before/mutated/restored SHA256, full output and exits.
+
+Fixture bytes (UTF-8; final LF):
+note-full.md:
+`lsp.json`
+`RULES.md`
+`agent.db`
+`agents`
+`blobs`
+`cache`
+`config.yml`
+`custom-session-files`
+`history.db`
+`hooks`
+`kimi-device-id`
+`last-changelog-version`
+`mcp.json`
+`mcp.json.rea.backup`
+`models.db`
+`models.yml`
+`predict`
+`sessions`
+`skill-descriptions.db`
+`terminal-sessions`
+`themes`
+`tools`
+`commands`
+`prompts`
+`memories`
+`extensions`
+`config-pre`
+`agent-pre-named`
+`models-corrupt`
+`agent-pre-restore`
+`agent-recovered`
+`history-corrupt`
+`agent-corrupt`
+`mcp-pre-disable`
+`mcp-rea-backup-recovery`
+
+note-missing.md (only models-corrupt token omitted):
+`lsp.json`
+`RULES.md`
+`agent.db`
+`agents`
+`blobs`
+`cache`
+`config.yml`
+`custom-session-files`
+`history.db`
+`hooks`
+`kimi-device-id`
+`last-changelog-version`
+`mcp.json`
+`mcp.json.rea.backup`
+`models.db`
+`models.yml`
+`predict`
+`sessions`
+`skill-descriptions.db`
+`terminal-sessions`
+`themes`
+`tools`
+`commands`
+`prompts`
+`memories`
+`extensions`
+`config-pre`
+`agent-pre-named`
+`agent-pre-restore`
+`agent-recovered`
+`history-corrupt`
+`agent-corrupt`
+`mcp-pre-disable`
+`mcp-rea-backup-recovery`
+
+
+Evidence: independent-base.mjs, real-patched.mjs, executor.patch, 16 mutation patches, independent-pristine.json, real-pristine.json, *-matrix.json, *-restored.json, independent-note-control.json, wider-mode-control.json.
+Self-evaluation: accuracy 5 (raw exits and exact lines retained); completeness 5 (both 8-mutant batteries plus restored detectors); clarity 4 (full JSON verbose but table concise); actionability 5 (patches/replay commands); conciseness 4 (raw evidence intentionally complete). Improvement applied: live-only survivors distinguished from selftest kills.

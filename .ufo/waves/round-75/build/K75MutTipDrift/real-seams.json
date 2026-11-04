@@ -1,0 +1,8 @@
+[
+ {"id":"M1","expected":"IN_SYNC branch removal; equal tip becomes MOVED; moved remains MOVED (different structure from minimal)","from":"  if (head === result.pin) {\n    Object.assign(result, { status: 'IN_SYNC', commits: 0, changed: 0, scripts: 0, runtime: 0, other: 0 });\n    return tipDriftResult(opts, result);\n  }","to":""},
+ {"id":"M2","expected":"commits must differ from 1","from":"status: 'MOVED', commits: Number(count.stdout.trim()), changed: paths.length,","to":"status: 'MOVED', commits: 0, changed: paths.length,"},
+ {"id":"M3","expected":"scripts/runtime become 0; other becomes 7","from":"  const scripts = paths.filter((path) => LAYER_PATTERNS.S.some((pattern) => pattern.test(path))).length;\n  const runtime = paths.filter((path) => LAYER_PATTERNS.R.some((pattern) => pattern.test(path))).length;","to":"  const scripts = 0;\n  const runtime = 0;"},
+ {"id":"M4","expected":"non-git head-null refusal removed; anticipated survivor if later git-count refusal remains","from":"  if (head === null) return refuse('SRC_REV_UNVERIFIABLE', origin);","to":""},
+ {"id":"M5","expected":"malformed wrong-contract pin accepted","from":"  if (body.contract !== PIN_CONTRACT) {\n    return { ok: false, kind: 'PIN_MALFORMED', detail: `--pin ${file} contract ${JSON.stringify(body.contract)} != ${PIN_CONTRACT}` };\n  }","to":""},
+ {"id":"M6","expected":"MOVED and IN_SYNC exit mapping swaps","from":"  return result.status === 'FAIL-CLOSED' ? 2 : result.status === 'MOVED' ? 1 : 0;","to":"  return result.status === 'FAIL-CLOSED' ? 2 : result.status === 'MOVED' ? 0 : 1;"}
+]

@@ -1,0 +1,15 @@
+seat: K75ScoutBackupRecords  date: 2026-11-04
+tree: /fast/scratch/hyaku/kumitate-pin/src
+  git remote -v      -> origin file:///home/vgpnk/Projects/ufo-fsd-alpha (fetch), (push)
+  package.json name  -> ufo-fsd 0.1.0
+  git rev-parse HEAD -> 31c465f15669f744848bd9f5d56191c5085670f7
+command:
+  git -C /fast/scratch/hyaku/kumitate-pin/src grep -nE 'config\.yml\.pre-|agent\.db\.pre-' -- .
+result:
+  stdout: (empty)   lines: 0   git-grep exit status: 1 ("no matches")
+note:
+  packages/utils/src/sqlite.ts is ABSENT in this tree (find . -name sqlite.ts -> empty);
+  this clone is the ufo-fsd origin, not the oh-my-pi source. The sweep is a pin-level negative only.
+companion command (S054 opt-in):
+  grep -rn 'recoverCorruption' /fast/scratch/hyaku/kumitate-pin/src/packages
+  -> stdout empty, rc=1, 0 lines (open limit: not locatable in the pinned tree)

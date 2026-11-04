@@ -1,0 +1,13 @@
+Axes: coverage:omp and operability (tooling); scoped implementation serves C1 only.
+Base: c38382d547a1ec21bb7f51b4c08ef08053e7abae.
+Scratch S=${HYAKU_SCRATCH:-/fast/scratch/hyaku}/kumitate-r75/K75ExecCensusRules.
+Clone: git clone --shared /home/vgpnk/Projects/shokunin/kumitate-shokunin "$S/lane"
+Before checkout: test "$(git -C "$S/lane" rev-parse --show-toplevel)" = "$S/lane"
+Checkout: git -C "$S/lane" checkout -q c38382d547a1ec21bb7f51b4c08ef08053e7abae
+Baseline attempt: TMPDIR="$S" node "$S/lane/scripts/omp-census.mjs" --selftest --work "$S/before". Initial ENOENT was fixture-parent setup error, retained in red-before.txt; mkdir -p "$S/before" then same command produced VERDICT: PASS (29 cases).
+After: mkdir -p "$S/after"; TMPDIR="$S" node "$S/lane/scripts/omp-census.mjs" --selftest --work "$S/after". VERDICT: PASS (47 cases).
+Patch: git -C "$S/lane" diff -- scripts/omp-census.mjs > <build>/K75ExecCensusRules.patch
+NOTE_UNBOUND receipt: node "$S/lane/scripts/omp-census.mjs" --root /home/vgpnk/.omp/agent --note "$S/missing-one.md"; echo exit=$?. Scratch note lists declared base names and family ids except models-corrupt; NOTE_UNBOUND models-corrupt, findings=1, exit=1.
+No member content opened; census uses readdir/lstat only for the agent plane. readFileSync opens only the binding note.
+No LSP tool is exposed among session tools or 350 mounted xd:// devices; definitions/references resolved by source reads rather than claiming an empty LSP result.
+No tools installed or updated. No lane implementation files changed. No commits, pushes or external configuration writes.

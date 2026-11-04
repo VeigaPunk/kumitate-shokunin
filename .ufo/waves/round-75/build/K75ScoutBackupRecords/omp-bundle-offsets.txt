@@ -1,0 +1,27 @@
+seat: K75ScoutBackupRecords  date: 2026-11-04
+object (read-only, supplementary, NOT the pinned tree): /home/vgpnk/.local/bin/omp
+  ELF 64-bit x86-64, 276785328 bytes, BuildID 588d7307f333293c728b74df19b7323c20736899, mtime 2026-11-01
+commands:
+  grep -aoc 'recoverCorruption' /home/vgpnk/.local/bin/omp                 -> 12
+  grep -aob 'recoverCorruption' /home/vgpnk/.local/bin/omp                 -> 113430032 167121710 167121756 167122158 167122202 167123559 167986350 173606514 173942604 178211355 178726976 180452247
+  grep -aob 'corrupt-${Date.now()}' /home/vgpnk/.local/bin/omp             -> 167122374 171098704
+  grep -aob '"models.db"' /home/vgpnk/.local/bin/omp                       -> 166895684 175164804
+  grep -aob 'function JD(' /home/vgpnk/.local/bin/omp                      -> 166895641 (single definition)
+  grep -aob 'JD(' /home/vgpnk/.local/bin/omp                               -> 166895650 173606707 181508475 185592006 218650837 223758339 231764577
+extracted at 167119500 (module marker + suffix list):
+  // packages/utils/src/sqlite.ts
+  var ni = ["-wal", "-shm", "-journal", ""];
+extracted at 167122374 (quarantine helper, generic over the db path e):
+  function ii(e, t) {
+    const r = `${e}.corrupt-${Date.now()}-${crypto.randomUUID()}`;
+    for (const a of ni) { R.chmodSync(`${e}${a}`, 384); R.copyFileSync(`${e}${a}`, `${r}${a}`, R.constants.COPYFILE_EXCL); ... }
+extracted at 167121710 / 167122158 (per-store opt-in branch):
+  const u = r.recoverCorruption ? dn(o, c) : c;
+  if (r.recoverCorruption && ag(u)) { fn(e, o); ... }
+extracted at 166895641 (path helper) and 173606707-173606760 (models caller):
+  function JD(p) { return c.agentSubdir(p, "models.db", "data"); }
+  function wy(u) { const p = JD(); ... }  ->  xR(..., { recoverCorruption: true, onCorruptionPreserved: () => bR(u) })
+  (384 decimal = 0o600)
+scope: byte-level evidence from the installed bundle; it does NOT re-verify oh-my-pi source,
+       and the pinned tree still carries no recoverCorruption hit. Keep the models.db opt-in
+       as an open limit until a source tree is pinned.

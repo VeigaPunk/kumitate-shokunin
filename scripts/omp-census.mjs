@@ -8,7 +8,8 @@
  * census path uses `readdir` of the root and `lstat` of each entry, nothing else.
  *
  * Contract (kumitate-omp-census-v1):
- *   node scripts/omp-census.mjs [--root DIR]        default DIR = $HOME/.omp/agent
+ *   node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE]
+ *     default root = $HOME/.omp/agent; note = <self>/corpus/knowledge/omp-agent-root.md
  *   node scripts/omp-census.mjs --selftest [--work DIR]
  *
  * Exit codes:
@@ -16,8 +17,8 @@
  *   1   exactly one stdout line `OMP_CENSUS: DRIFT (...)`, preceded by finding lines
  *       such as `UNLISTED <name>`, `KIND <name> want=dir got=file`,
  *       `MODE <name> want<=0600 got=0604`
- *   2   fail-closed: the root is unreadable (missing, not a directory, or an entry
- *       vanished mid-read). Never CLEAN.
+ *   2   fail-closed: the root or binding note is unreadable (`NOTE_MISSING` for
+ *       a missing/unreadable note). Never CLEAN.
  *   64  usage error
  *
  * `--selftest` runs a hermetic suite over temporary fixture roots (never the live root)
@@ -38,7 +39,7 @@
  */
 
 import {
-  chmodSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync,
+  chmodSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -64,6 +65,7 @@ const BASE_MEMBERS = [
   { name: 'hooks', kind: 'dir', mode: 0o755, note: 'user hook scripts' }, // source: S060 (discovery/builtin.ts:720 reads it; no upstream writer)
   { name: 'kimi-device-id', kind: 'file', mode: 0o600, note: 'Kimi OAuth device identity' }, // source: S060 (ai/src/registry/oauth/kimi.ts:12,47 mode 0o600)
   { name: 'last-changelog-version', kind: 'file', mode: 0o644, note: 'last seen OMP version marker' }, // source: S053 (dirs.ts:957-960)
+  { name: 'lsp.json', kind: 'file', mode: 0o600, note: 'native agent dir user-wide LSP config' }, // source: S224
   { name: 'mcp.json', kind: 'file', mode: 0o600, note: 'MCP server definitions' }, // source: S060 (mcp/config-writer.ts:71 mode 0o600)
   { name: 'mcp.json.rea.backup', kind: 'file', mode: 0o600, note: 'REA first backup of the MCP server definitions' }, // source: S057 (REA first backup `<config>.rea.backup`)
   { name: 'models.db', kind: 'file', mode: 0o644, note: 'model cache database' }, // source: S053 (dirs.ts:967-970); no chmod upstream, so umask 0644
@@ -94,12 +96,33 @@ const CHAIN_FAMILIES = [
   { id: 'agent-corrupt', owner: 'agent.db', re: /^agent\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'agent.db quarantined after a corruption, epoch ms + uuid' }, // source: S054 (sqlite.ts:193) + S055 (recoverCorruption for agent.db)
   { id: 'mcp-pre-disable', owner: 'mcp.json', re: /^mcp\.json\.pre-disable-\d{8}T\d{4}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copy of mcp.json (not an OMP writer)' }, // source: S061 (fleet lane-addendum.md:82-84)
   { id: 'mcp-rea-backup-recovery', owner: 'mcp.json.rea.backup', re: /^mcp\.json\.rea\.backup\.[0-9a-f]{64}\.recovery$/, kind: 'file', mode: 0o600, note: 'REA backup recovery copy, 64-hex digest' }, // source: S057 (SetupRecoveryBackup.js:36)
+  { id: 'config-pre', owner: 'config.yml', re: /^config\.yml\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the harness config' }, // source: S225
+  { id: 'agent-pre-named', owner: 'agent.db', re: /^agent\.db\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the credentials/settings database' }, // source: S225; UTC restore/recovered forms do not match
+  { id: 'models-corrupt', owner: 'models.db', re: /^models\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'generic SQLite quarantine template applied to the model-cache store' }, // source: S054; live artifact corroborates; per-store opt-in not located
 ];
 
 /** SQLite sidecar suffixes of a member or of a chain generation. Optional. */
 const SIDECAR_RE = /-(shm|wal)$/; // source: S054 (sqlite.ts:12 SQLITE_STORE_SUFFIXES) + S056 (SQLite WAL: sidecars come and go)
 
 const BASE_BY_NAME = new Map(BASE_MEMBERS.map((r) => [r.name, r]));
+const DECLARED_NAMES = [...BASE_MEMBERS.map((r) => r.name), ...CHAIN_FAMILIES.map((r) => r.id)];
+
+/**
+ * Binding is by VISIBLE identifier token, not by substring (round-75 critic counterexample:
+ * a note whose only content is an HTML comment listing every name read `bound=35/35`).
+ * HTML comments render nothing, so they are stripped before the scan, and a name must be
+ * delimited by a non-identifier character on both sides (so `NOT_A_BINDING_models.db_SUFFIX`
+ * binds nothing). A fenced code block is visible text and still binds.
+ */
+function visibleNoteText(text) {
+  return text.replace(/<!--[\s\S]*?-->/gu, '\n');
+}
+const BIND_EDGE = '[^\\w.\\-]';
+function bindsName(visible, name) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+  return new RegExp(`(?:^|${BIND_EDGE})${escaped}(?:$|${BIND_EDGE})`, 'u').test(visible);
+}
+const DEFAULT_SELF = fileURLToPath(new URL('../', import.meta.url));
 
 // ---------------------------------------------------------------------------
 // Shape reading. `readdir` of the root, `lstat` of each entry: names, kinds and
@@ -173,7 +196,7 @@ function ruleFor(name) {
  * Decide the census for one root.
  * Returns { verdict, findings[], infos[], counts }.
  */
-function census(root) {
+function census(root, noteText) {
   const entries = readShape(root);
   const findings = [];
   const infos = [];
@@ -206,12 +229,19 @@ function census(root) {
     if (!hasGeneration) infos.push(`INFO chain ${fam.id} has no generation`);
   }
 
+  let bound = 0;
+  const visible = visibleNoteText(noteText);
+  for (const name of DECLARED_NAMES) {
+    if (bindsName(visible, name)) bound++;
+    else findings.push(`NOTE_UNBOUND ${name}`);
+  }
+
   const verdict = findings.length === 0 ? 'CLEAN' : 'DRIFT';
   return {
     verdict,
     findings,
     infos,
-    counts: { entries: entries.length, base: BASE_MEMBERS.length, families: CHAIN_FAMILIES.length },
+    counts: { entries: entries.length, base: BASE_MEMBERS.length, families: CHAIN_FAMILIES.length, bound, declared: DECLARED_NAMES.length },
   };
 }
 
@@ -219,10 +249,10 @@ function census(root) {
 // Command line
 // ---------------------------------------------------------------------------
 
-const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] | --selftest [--work DIR]';
+const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --selftest [--work DIR]';
 
 function parseArgs(argv) {
-  const o = { root: null, selftest: false, work: null };
+  const o = { root: null, self: DEFAULT_SELF, note: null, selftest: false, work: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--root') {
@@ -230,6 +260,12 @@ function parseArgs(argv) {
       o.root = argv[++i];
     } else if (a.startsWith('--root=')) {
       o.root = a.slice('--root='.length);
+    } else if (a === '--self' || a === '--note') {
+      if (i + 1 >= argv.length) return { error: `${a} needs a path argument` };
+      o[a.slice(2)] = argv[++i];
+    } else if (a.startsWith('--self=') || a.startsWith('--note=')) {
+      const eq = a.indexOf('=');
+      o[a.slice(2, eq)] = a.slice(eq + 1);
     } else if (a === '--selftest') {
       o.selftest = true;
     } else if (a === '--work') {
@@ -248,17 +284,25 @@ function parseArgs(argv) {
  * Run the census for one root and render it.
  * `io` is { out, err } so the selftest can capture output without a child process.
  */
-function runCensus(root, io) {
+function runCensus(root, io, note = join(DEFAULT_SELF, 'corpus', 'knowledge', 'omp-agent-root.md')) {
+  let noteText;
+  try {
+    noteText = readFileSync(note, 'utf8');
+  } catch (e) {
+    io.err(`NOTE_MISSING ${note} reason=${e.code || e.message}`);
+    return 2;
+  }
   let res;
   try {
-    res = census(root);
+    res = census(root, noteText);
   } catch (e) {
     io.err(`OMP_CENSUS: ERROR root=${root} reason=${e.code || e.message}`);
     return 2;
   }
   for (const i of res.infos) io.out(i);
   for (const f of res.findings) io.out(f);
-  io.out(`OMP_CENSUS: ${res.verdict} (root=${root} entries=${res.counts.entries} findings=${res.findings.length})`);
+  const binding = res.verdict === 'CLEAN' ? ` bound=${res.counts.bound}/${res.counts.declared}` : '';
+  io.out(`OMP_CENSUS: ${res.verdict} (root=${root} entries=${res.counts.entries} findings=${res.findings.length}${binding})`);
   return res.verdict === 'CLEAN' ? 0 : 1;
 }
 
@@ -297,13 +341,15 @@ function materialise(dir, entries) {
 function selftest(work, io) {
   const base = work || process.env.OMP_CENSUS_SELFTEST_DIR || tmpdir();
   const scratch = mkdtempSync(join(base, 'omp-census-selftest-'));
+  const note = join(scratch, 'note.md');
+  writeFileSync(note, DECLARED_NAMES.join('\n'));
   const failures = [];
   let ran = 0;
 
   const capture = (argv) => {
     const out = [];
     const err = [];
-    const code = runCensus(argv.root, { out: (s) => out.push(s), err: (s) => err.push(s) });
+    const code = runCensus(argv.root, { out: (s) => out.push(s), err: (s) => err.push(s) }, argv.note ?? note);
     return { code, stdout: out.join('\n'), stderr: err.join('\n') };
   };
 
@@ -312,11 +358,12 @@ function selftest(work, io) {
     const r = capture(argv);
     const problems = [];
     if (r.code !== want.code) problems.push(`exit ${r.code} want ${want.code}`);
+    const output = `${r.stdout}\n${r.stderr}`;
     for (const line of want.has || []) {
-      if (!r.stdout.includes(line)) problems.push(`missing ${JSON.stringify(line)}`);
+      if (!output.includes(line)) problems.push(`missing ${JSON.stringify(line)}`);
     }
     for (const line of want.lacks || []) {
-      if (r.stdout.includes(line)) problems.push(`unexpected ${JSON.stringify(line)}`);
+      if (output.includes(line)) problems.push(`unexpected ${JSON.stringify(line)}`);
     }
     if (problems.length) {
       failures.push(`${name}: ${problems.join('; ')}`);
@@ -417,19 +464,66 @@ function selftest(work, io) {
   fixtureCase('empty-root-is-drift', (l) => [],
     { code: 1, has: ['EMPTY root holds no member', 'OMP_CENSUS: DRIFT'], lacks: ['OMP_CENSUS: CLEAN'] });
 
-  rmSync(scratch, { recursive: true, force: true });
 
-  // Rule: an unreadable root fails closed with exit 2.
+  // New declarations: each acceptance case must turn red when its rule is dropped.
+  fixtureCase('lsp-absent-no-MODE-lsp.json', (l) => l,
+    { code: 0, has: ['INFO lsp.json absent'], lacks: ['MODE lsp.json'] });
+  fixtureCase('lsp-present-no-UNLISTED-lsp.json', (l) => [...l, { name: 'lsp.json', kind: 'file', mode: 0o600 }],
+    { code: 0, has: ['OMP_CENSUS: CLEAN'], lacks: ['UNLISTED lsp.json'] });
+  fixtureCase('lsp-MODE-lsp.json', (l) => [...l, { name: 'lsp.json', kind: 'file', mode: 0o644 }],
+    { code: 1, has: ['MODE lsp.json want<=0600 got=0644'] });
+
+  for (const [id, generation, malformed] of [
+    ['config-pre', 'config.yml.pre-editor-20261104', 'config.yml.pre-editor-2026114'],
+    ['agent-pre-named', 'agent.db.pre-editor-20261104', 'agent.db.pre-editor-2026114'],
+    ['models-corrupt', 'models.db.corrupt-1792715399999-11111111-2222-4333-8444-555555555555',
+      'models.db.corrupt-179271539999-11111111-2222-4333-8444-555555555555'],
+  ]) {
+    fixtureCase(`${id}-generation-no-UNLISTED`, (l) => [...l, { name: generation, kind: 'file', mode: 0o600 }],
+      { code: 0, has: ['OMP_CENSUS: CLEAN'], lacks: [`UNLISTED ${generation}`] });
+    fixtureCase(`${id}-sidecar-no-UNLISTED`, (l) => [...l,
+      { name: `${generation}-wal`, kind: 'file', mode: 0o600 },
+      { name: `${generation}-shm`, kind: 'file', mode: 0o600 }],
+    { code: 0, has: ['OMP_CENSUS: CLEAN'], lacks: [`UNLISTED ${generation}-`] });
+    fixtureCase(`${id}-wrong-date-UNLISTED`, (l) => [...l, { name: malformed, kind: 'file', mode: 0o600 }],
+      { code: 1, has: [`UNLISTED ${malformed}`] });
+    fixtureCase(`${id}-MODE`, (l) => [...l, { name: generation, kind: 'file', mode: 0o644 }],
+      { code: 1, has: [`MODE ${generation} want<=0600 got=0644`] });
+  }
+
+  check('binding-total-35-no-NOTE_UNBOUND', { root: join(scratch, 'clean-fixture') },
+    { code: 0, has: ['bound=35/35'], lacks: ['NOTE_UNBOUND'] });
+  const unboundNote = join(scratch, 'unbound.md');
+  writeFileSync(unboundNote, DECLARED_NAMES.filter((name) => name !== 'models-corrupt').join('\n'));
+  check('NOTE_UNBOUND-models-corrupt', { root: join(scratch, 'clean-fixture'), note: unboundNote },
+    { code: 1, has: ['NOTE_UNBOUND models-corrupt', 'OMP_CENSUS: DRIFT'], lacks: ['OMP_CENSUS: CLEAN'] });
+  // Round-75 critic counterexample (K75CriticClaims): a note whose ONLY content is an HTML
+  // comment listing every declared name must not read CLEAN — comments render nothing.
+  const commentNote = join(scratch, 'comment-only.md');
+  writeFileSync(commentNote, `<!-- ${DECLARED_NAMES.join(' ')} -->\n`);
+  check('NOTE_UNBOUND-comment-only-note', { root: join(scratch, 'clean-fixture'), note: commentNote },
+    { code: 1, has: ['NOTE_UNBOUND models.db', 'OMP_CENSUS: DRIFT'], lacks: ['OMP_CENSUS: CLEAN', 'bound=35/35'] });
+  // Superstring decoys bind nothing: a name must be an identifier token.
+  const decoyNote = join(scratch, 'superstring.md');
+  writeFileSync(decoyNote, DECLARED_NAMES.map((name) => `NOT_A_BINDING_${name}_SUFFIX`).join('\n'));
+  check('NOTE_UNBOUND-superstring-decoys', { root: join(scratch, 'clean-fixture'), note: decoyNote },
+    { code: 1, has: ['NOTE_UNBOUND config.yml', 'OMP_CENSUS: DRIFT'], lacks: ['OMP_CENSUS: CLEAN'] });
+  check('NOTE_MISSING-fail-closed', { root: join(scratch, 'clean-fixture'), note: join(scratch, 'missing.md') },
+    { code: 2, has: ['NOTE_MISSING'], lacks: ['OMP_CENSUS: CLEAN'] });
+
+  // Check root failure before removing the hermetic binding note.
   ran++;
   const missing = join(scratch, 'does-not-exist');
   const err = [];
-  const code = runCensus(missing, { out: () => {}, err: (s) => err.push(s) });
-  if (code !== 2) {
-    failures.push(`unreadable-root: exit ${code} want 2`);
-    io.out(`SELFTEST FAIL unreadable-root: exit ${code} want 2`);
+  const code = runCensus(missing, { out: () => {}, err: (s) => err.push(s) }, note);
+  if (code !== 2 || !err.some((s) => s.includes('OMP_CENSUS: ERROR'))) {
+    failures.push(`unreadable-root: exit ${code} want 2 with root ERROR`);
+    io.out(`SELFTEST FAIL unreadable-root: exit ${code} want 2 with root ERROR`);
   } else {
     io.out('SELFTEST ok unreadable-root');
   }
+  rmSync(scratch, { recursive: true, force: true });
+
 
   // Rule: usage errors exit 64.
   ran++;
@@ -466,7 +560,8 @@ function main(argv, io) {
     return selftest(parsed.work, io);
   }
   const root = parsed.root || join(homedir(), '.omp', 'agent');
-  return runCensus(root, io);
+  const note = parsed.note ?? join(parsed.self, 'corpus', 'knowledge', 'omp-agent-root.md');
+  return runCensus(root, io, note);
 }
 
 const isMain = process.argv[1]

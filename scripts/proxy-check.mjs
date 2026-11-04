@@ -5,6 +5,7 @@
  * kumitate-proxy-v1 (parent-frozen).
  *
  *   node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--pin FILE] [--json] [--strict]
+ *   node scripts/proxy-check.mjs --tip-drift [--origin DIR] [--pin FILE] [--json]
  *   node scripts/proxy-check.mjs --selftest
  *   node scripts/proxy-check.mjs -h|--help
  *
@@ -70,7 +71,7 @@
  *   carries `; src-rev=<first 12 hex>` and the JSON body carries `srcRev`
  *   (null with no pin).
  *
- * Modes (one per run; `--selftest` wins, then `-h|--help`, else the recompute)
+ * Modes (`--selftest` wins, then help, then `--tip-drift`, else recompute)
  *   default     recompute the seventeen terms + the seven pins under `--self`,
  *               `--scorecard`, the origin tree `--src` and the kimi root
  *               `--kimi-root`, and compare them
@@ -81,6 +82,13 @@
  *               active origin pin the tree is resolved as `--src` → pin
  *               `clone` → legacy default, its HEAD is asserted against the pin
  *               revision, and the verdict names `src-rev=`.
+ *   --tip-drift Compare the required pin revision with --origin, $UFO_ORIGIN,
+ *               or the first existing legacy candidate (never pin.clone).
+ *               Read HEAD, count pin..HEAD commits, and classify changed paths
+ *               with LAYER_PATTERNS. IN_SYNC exits 0; MOVED exits 1;
+ *               FAIL-CLOSED exits 2. --strict has no effect. --json emits one
+ *               object with full pin/origin hashes and counts (null if unknown).
+ *               A missing default pin is PIN_MALFORMED in this mode.
  *   --selftest  HERMETIC fixture suite: synthetic repos under `mkdtemp` only.
  *               It never reads this repo, the live scorecard or the
  *               environment, so it PASSes in any tree state and a bogus
@@ -257,7 +265,7 @@
  *   rather than a stack trace.
  *
  * Bounds and what this tool never does
- *   Reads only, under `--self` + the scorecard + the origin tree named by
+ *   Default mode reads only under `--self` + the scorecard + the origin tree named by
  *   `--src` (or the pin's `clone`) + the kimi root named by `--kimi-root`: no
  *   writes, no network, no lock; the ONE subprocess is the pin's
  *   `git -C <src> rev-parse HEAD` (PIN v1, only when a pin is active, run with
@@ -271,6 +279,9 @@
  *   The shape-only members (`mcp.json`, `server.token`, `credentials/`,
  *   `oauth/`) are kind-statted and never opened or content-read; root
  *   enumeration sees names only, and the secret directories are never listed.
+ *   --tip-drift instead reads the pin and the live origin through read-only
+ *   git HEAD/rev-list/diff commands with GIT_OPTIONAL_LOCKS=0; it consults
+ *   UFO_ORIGIN only as --origin's default and never scores default-mode terms.
  *   `--selftest` is the only writer, only into a fresh `mkdtemp` dir it removes
  *   afterwards. Environment: the variables consulted are `UFO_SRC` and
  *   `KIMI_ROOT`, each only as its flag's default
@@ -434,6 +445,57 @@ function resolveOrigin(opts) {
   return { ok: true, src, pin: { ...loaded.pin, srcRev: head } };
 }
 
+/** Read-only origin-tip comparison; independent of every default-mode term. */
+function tipDriftResult(opts, result, kind = '', detail = '') {
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify(result)}\n`);
+  } else if (result.status === 'FAIL-CLOSED') {
+    process.stdout.write(`ORIGIN_TIP_DRIFT: FAIL-CLOSED ${kind} ${detail.replace(/[\r\n]+/gu, ' ')}\n`);
+  } else {
+    const { status, pin, origin, commits, changed, scripts, runtime, other } = result;
+    process.stdout.write(`ORIGIN_TIP_DRIFT: ${status} pin=${pin.slice(0, 12)} origin=${origin.slice(0, 12)} commits=${commits} changed=${changed} scripts=${scripts} runtime=${runtime} other=${other}\n`);
+  }
+  return result.status === 'FAIL-CLOSED' ? 2 : result.status === 'MOVED' ? 1 : 0;
+}
+
+function runTipDrift(opts) {
+  const result = {
+    mode: 'tip-drift', status: 'FAIL-CLOSED', pin: null, origin: null,
+    commits: null, changed: null, scripts: null, runtime: null, other: null,
+  };
+  const refuse = (kind, detail) => tipDriftResult(opts, result, kind, detail);
+  const loaded = readPin(opts.pin ?? join(opts.self, PIN_REL));
+  if (!loaded.ok) return refuse(loaded.kind, loaded.detail);
+  result.pin = loaded.pin.revision;
+  const origin = opts.origin ?? process.env.UFO_ORIGIN
+    ?? SRC_CANDIDATES.find((candidate) => existsSync(candidate)) ?? SRC_CANDIDATES[0];
+  if (statKind(origin) !== 'dir') return refuse('SRC_REV_UNVERIFIABLE', origin);
+  const head = gitHead(origin);
+  if (head === null) return refuse('SRC_REV_UNVERIFIABLE', origin);
+  result.origin = head;
+  if (head === result.pin) {
+    Object.assign(result, { status: 'IN_SYNC', commits: 0, changed: 0, scripts: 0, runtime: 0, other: 0 });
+    return tipDriftResult(opts, result);
+  }
+  const gitRead = (args) => spawnSync('git', ['-C', origin, ...args], {
+    encoding: 'utf8', timeout: 30_000, maxBuffer: 16 * 1024 * 1024, env: gitEnv(),
+  });
+  const count = gitRead(['rev-list', '--count', `${result.pin}..${head}`]);
+  if (count.error || count.status !== 0 || !/^\d+\s*$/u.test(count.stdout ?? '')) {
+    return refuse('SRC_REV_UNVERIFIABLE', origin);
+  }
+  const diff = gitRead(['diff', '--name-only', '-z', result.pin, head, '--']);
+  if (diff.error || diff.status !== 0) return refuse('SRC_REV_UNVERIFIABLE', origin);
+  const paths = diff.stdout.split('\0').filter(Boolean);
+  const scripts = paths.filter((path) => LAYER_PATTERNS.S.some((pattern) => pattern.test(path))).length;
+  const runtime = paths.filter((path) => LAYER_PATTERNS.R.some((pattern) => pattern.test(path))).length;
+  Object.assign(result, {
+    status: 'MOVED', commits: Number(count.stdout.trim()), changed: paths.length,
+    scripts, runtime, other: paths.length - scripts - runtime,
+  });
+  return tipDriftResult(opts, result);
+}
+
 /** Kimi installation the K terms count over; `--kimi-root` overrides it. */
 const DEFAULT_KIMI_ROOT = process.env.KIMI_ROOT || join(homedir(), '.kimi-code');
 
@@ -584,6 +646,7 @@ const FAIL_CLOSED_KINDS = [
 ];
 
 const USAGE = `usage: node scripts/proxy-check.mjs [--self DIR] [--scorecard FILE] [--src DIR] [--kimi-root DIR] [--pin FILE] [--json] [--strict]
+       node scripts/proxy-check.mjs --tip-drift [--origin DIR] [--pin FILE] [--self DIR] [--json]
        node scripts/proxy-check.mjs --selftest
        node scripts/proxy-check.mjs -h|--help
 contract id: ${CONTRACT}
@@ -611,6 +674,9 @@ modes:
                With an active origin pin (--pin, or the default pin file under
                --self) the tree is resolved through the pin and its HEAD is
                asserted; the verdict then carries src-rev=<12 hex>.
+  --tip-drift  compare the required pin with the live origin HEAD (read-only git);
+               report IN_SYNC (0), MOVED (1), or FAIL-CLOSED (2).
+               Missing default pins are PIN_MALFORMED in this mode.
   --selftest   hermetic fixture suite (tmp dirs only; never reads this repo)
   -h | --help  print this text, exit 0
 
@@ -622,6 +688,8 @@ options:
                      else the first existing of
                      ~/Projects/ufo-fsd-alpha and ~/Projects/origin-work/ufo-fsd-alpha);
                      a non-directory is refused as SRC_NOT_A_DIR (exit 2)
+  --origin DIR       live tree for --tip-drift only (default: \$UFO_ORIGIN, else
+                     the first existing legacy origin candidate listed above)
   --pin FILE         origin pin (${PIN_CONTRACT}), default <self>/${PIN_REL}
                      when that file exists; resolves --src from the pin's clone,
                      asserts git rev-parse HEAD equals the pin revision
@@ -2768,6 +2836,8 @@ function selfTest() {
     });
     const fxGitRepo = (dir) => {
       if (gitRun(dir, ['init', '-q']).status !== 0) return null;
+      const top = gitRun(dir, ['rev-parse', '--show-toplevel']);
+      if (top.status !== 0 || String(top.stdout).trim() !== dir) return null;
       const commit = gitRun(dir, ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
         '-c', 'commit.gpgsign=false', 'commit', '-q', '--allow-empty', '-m', 'fixture']);
       if (commit.status !== 0) return null;
@@ -2786,6 +2856,74 @@ function selfTest() {
       return file;
     };
     const pinEnv = { GIT_CEILING_DIRECTORIES: tmp };
+
+    /* round-75 ─ origin-tip-drift: CLI branches, not constant verdicts */
+    const tipRepo = fxDir('tip-origin');
+    const tipHead = fxGitRepo(tipRepo);
+    const tipPin = writePin(join(tmp, 'tip-pin.json'), { revision: tipHead, clone: tipRepo });
+    const tipArgs = ['--tip-drift', '--origin', tipRepo, '--pin', tipPin];
+    const tipEnv = {
+      ...pinEnv, HOME: gitHome, GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: '/dev/null',
+    };
+    const tipSync = `ORIGIN_TIP_DRIFT: IN_SYNC pin=${tipHead?.slice(0, 12)} origin=${tipHead?.slice(0, 12)} commits=0 changed=0 scripts=0 runtime=0 other=0`;
+    check('TIP: in-sync required pin gives exact zero counts and exit 0', () => {
+      const r = runProxy(tipArgs, tipEnv);
+      return { ok: r.status === 0 && r.stdout === `${tipSync}\n` && r.stderr === '', detail: verdictLine(r) };
+    });
+    // Exercise both script patterns, both runtime patterns, and their exclusions.
+    for (const path of [
+      'scripts/tip.mjs', 'scripts/lib/tip.sh',
+      'crates/ufo-core-runtime/src/tip.rs', 'crates/ufo-cli/src/tip.rs',
+      'scripts/tip.sh', 'crates/ufo-cli/src/nested/tip.rs', 'docs/tip.md', 'odd\nname.md',
+    ]) fxWrite(join(tipRepo, path), 'tip\n');
+    const tipTop = gitRun(tipRepo, ['rev-parse', '--show-toplevel']);
+    if (tipTop.status !== 0 || String(tipTop.stdout).trim() !== tipRepo) throw new Error('tip fixture escaped');
+    const tipAdd = gitRun(tipRepo, ['add', '.']);
+    const tipCommit = gitRun(tipRepo, ['-c', 'user.name=fixture', '-c', 'user.email=fixture@example.invalid',
+      '-c', 'commit.gpgsign=false', 'commit', '-q', '-m', 'tip moved']);
+    const movedHead = String(gitRun(tipRepo, ['rev-parse', 'HEAD']).stdout).trim();
+    check('TIP: moved gives exact commit count and frozen layer classes, exit 1', () => {
+      const r = runProxy(tipArgs, tipEnv);
+      const want = `ORIGIN_TIP_DRIFT: MOVED pin=${tipHead?.slice(0, 12)} origin=${movedHead.slice(0, 12)} commits=1 changed=8 scripts=2 runtime=2 other=4`;
+      return {
+        ok: tipAdd.status === 0 && tipCommit.status === 0 && r.status === 1 && r.stdout === `${want}\n` && r.stderr === '',
+        detail: verdictLine(r),
+      };
+    });
+    check('TIP: JSON has the exact mode fields and --strict has no effect', () => {
+      const r = runProxy([...tipArgs, '--json', '--strict'], tipEnv);
+      const want = { mode: 'tip-drift', status: 'MOVED', pin: tipHead, origin: movedHead,
+        commits: 1, changed: 8, scripts: 2, runtime: 2, other: 4 };
+      return { ok: r.status === 1 && r.stdout === `${JSON.stringify(want)}\n`, detail: verdictLine(r) };
+    });
+    check('TIP: non-git origin fails closed with SRC_REV_UNVERIFIABLE, exit 2', () => {
+      const nonGit = fxDir('tip-non-git');
+      const r = runProxy(['--tip-drift', '--origin', nonGit, '--pin', tipPin], tipEnv);
+      return { ok: r.status === 2 && r.stdout === `ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE ${nonGit}\n`,
+        detail: verdictLine(r) };
+    });
+    check('TIP: malformed explicit pin fails closed with PIN_MALFORMED, exit 2', () => {
+      const badPin = join(tmp, 'tip-malformed.json');
+      fxWrite(badPin, '{}\n');
+      const r = runProxy(['--tip-drift', '--origin', tipRepo, '--pin', badPin], tipEnv);
+      return { ok: r.status === 2 && r.stdout.startsWith('ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED '),
+        detail: verdictLine(r) };
+    });
+    check('TIP: missing default pin cannot silently disable provenance', () => {
+      const r = runProxy(['--tip-drift', '--origin', tipRepo, '--self', fxDir('tip-unpinned')], tipEnv);
+      return { ok: r.status === 2 && r.stdout.startsWith('ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED '),
+        detail: verdictLine(r) };
+    });
+    check('TIP: UFO_ORIGIN supplies the live tree independently of pin.clone', () => {
+      const r = runProxy(['--tip-drift', '--pin', tipPin], { ...tipEnv, UFO_ORIGIN: tipRepo });
+      return { ok: r.status === 1 && r.stdout.includes(`origin=${movedHead.slice(0, 12)} commits=1 changed=8`),
+        detail: verdictLine(r) };
+    });
+    check('TIP: -h documents --tip-drift and --origin DIR, exit 0', () => {
+      const r = runProxy(['-h'], tipEnv);
+      return { ok: r.status === 0 && r.stdout.includes('--tip-drift') && r.stdout.includes('--origin DIR'),
+        detail: `exit=${r.status}` };
+    });
 
     // 1) default pin path: <self>/.ufo/pins/origin.json, src resolved from the
     //    pin's clone (NO --src on the command line), HEAD asserted, src-rev=.
@@ -2989,6 +3127,8 @@ function parseArgs(argv) {
     self: DEFAULT_SELF,
     scorecard: null,
     src: null,
+    origin: null,
+    tipDrift: false,
     pin: null,
     pinInfo: null,
     srcRev: null,
@@ -3011,6 +3151,8 @@ function parseArgs(argv) {
     else if (a === '--self') opts.self = dirValue(a, next());
     else if (a === '--scorecard') opts.scorecard = dirValue(a, next());
     else if (a === '--src') opts.src = dirValue(a, next());
+    else if (a === '--origin') opts.origin = dirValue(a, next());
+    else if (a === '--tip-drift') opts.tipDrift = true;
     else if (a === '--pin') opts.pin = dirValue(a, next());
     else if (a === '--kimi-root') opts.kimiRoot = dirValue(a, next());
     else if (a === '--json') opts.json = true;
@@ -3040,6 +3182,14 @@ function main() {
   if (opts.help) {
     process.stdout.write(USAGE);
     return 0;
+  }
+  if (opts.tipDrift) {
+    try { return runTipDrift(opts); } catch (e) {
+      return tipDriftResult(opts, {
+        mode: 'tip-drift', status: 'FAIL-CLOSED', pin: null, origin: null,
+        commits: null, changed: null, scripts: null, runtime: null, other: null,
+      }, 'INTERNAL_ERROR', e && e.message ? e.message : String(e));
+    }
   }
   try {
     return runCheck(opts, started);

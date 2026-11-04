@@ -1,0 +1,211 @@
+Axes: operability + coverage
+Minimal real implementation; not evidence that executor tool kills these mutants.
+TMPDIR=$S mktemp -d "$S/fixture.XXXXXX"
+git -C "$D" init -q
+git -C "$D" rev-parse --show-toplevel == "$D"
+git -C "$D" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false commit -qm pin --allow-empty
+git -C "$D" add .
+git -C "$D" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false commit -qm moved --allow-empty
+node "$FILE" --tip-drift --origin "$ORIGIN" --pin "$PIN" (all four cases; pristine/mutant/restored)
+Live: ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161 exit=1
+M1 expected=MOVED state KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=adba315dd89a99fb1e6cccc4cec96a6776b0b0610ce27cf40c40a67a3d9704d5 restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL MOVED_counts_scripts_runtime_other exit=1
+  MOVED_counts_scripts_runtime_other: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+M2 expected=commits KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=53730b8cf33f5384a7a406f7462b6a10a6d32419b61b4abedf9419647d485202 restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL MOVED_counts_scripts_runtime_other exit=1
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+M3 expected=scripts runtime other KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=fbc0fe0b7d982ce14ab71e465fdc85be9d1c53665dc9860d43108127d3cfd602 restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL MOVED_counts_scripts_runtime_other exit=1
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=0 runtime=0 other=7
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+M4 expected=FAIL-CLOSED_non_git KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=92cbc21b361df85985b5caed01f6024e58a68812655cd4baebbf872bf15a4ecf restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL FAIL-CLOSED_non_git exit=1
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin= commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+M5 expected=FAIL-CLOSED_pin_validation KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=147639d623bc949e9cc0ce67579ba4c71f02c86375e35900bef96c332d5566ce restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL FAIL-CLOSED_pin_validation exit=1
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+M6 expected=state exit mapping KILLED; before=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c mutated=1cedbf79c645c42e1e6b1fbdd41b71c72e7a2787fae8554f067a30a956b2ab6a restored=f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+mutant: VERDICT: FAIL MOVED_counts_scripts_runtime_other,IN_SYNC_state_exit exit=1
+  MOVED_counts_scripts_runtime_other: exit=0 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=1 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+restored: VERDICT: PASS exit=0
+  MOVED_counts_scripts_runtime_other: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE
+  FAIL-CLOSED_pin_validation: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED
+
+REAL PATCHED TOOL MATRIX
+M1 expected=IN_SYNC branch removal; equal tip becomes MOVED; moved remains MOVED (different structure from minimal) KILLED before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=ba7bb52468f4b1acf4e172e081a6dc3b394c89b20c0a1380b58c042b943cd5c2 restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: FAIL IN_SYNC_state_exit exit=1
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+M2 expected=commits must differ from 1 KILLED before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=e53b2054829a16094e1816f5f682c3730739f3eda527eb72bb33666dfcdf2352 restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit exit=1
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+M3 expected=scripts/runtime become 0; other becomes 7 KILLED before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=6bf02cbac10a3858ebd5012550026fc15239c3cb5a6fb8df0cc25b12ed25c3ae restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit exit=1
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=0 runtime=0 other=7
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+M4 expected=non-git head-null refusal removed; anticipated survivor if later git-count refusal remains SURVIVOR before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=e1d5560e2ae385e830e8ac4837a119bcb07816b96c6727ae1bc0ab054c320c11 restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+M5 expected=malformed wrong-contract pin accepted KILLED before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=8fe415a493848d2d0d7f4c8cc51efbafca8bc6c19665dfb5aad99452a13a7219 restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: FAIL FAIL-CLOSED_pin_validation_state_exit exit=1
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+M6 expected=MOVED and IN_SYNC exit mapping swaps KILLED before=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e mutated=b52cc819d847c1866c222496909c1061df43f5590a09ab60f1e3414841ee2b6f restored=92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e exact=true
+pristine: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+mutant: VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit,IN_SYNC_state_exit exit=1
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=0 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=1 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+restored: VERDICT: PASS exit=0
+  MOVED_state_commits_changed_scripts_runtime_other_exit: exit=1 ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3
+  IN_SYNC_state_exit: exit=0 ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0
+  FAIL-CLOSED_non_git_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git
+  FAIL-CLOSED_pin_validation_state_exit: exit=2 ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract "wrong" != kumitate-origin-pin-v1
+Real live: ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161 exit=1
+
+SURVIVOR: real M4 removes only `if (head === null) return refuse(...)`. The non-git fixture is an existing directory; gitHead returns null, then rev-list fails and its independent refusal still returns FAIL-CLOSED SRC_REV_UNVERIFIABLE exit=2. Detector exits 0, VERDICT: PASS. This branch removal is behaviorally redundant on this fixture; it does not prove the whole fail-closed arm load-bearing. No contract widened and no production fix attempted.
+M1 structural difference: minimal removes the inequality/MOVED computation branch, producing IN_SYNC on a moved origin. Real removes the equality/IN_SYNC branch, leaving MOVED on a moved origin and producing MOVED on an equal origin. The real equality branch is not dead: the equal-origin detector kills it.
+Q23: KILLED means the bounded detector, not necessarily the underlying tool, exits 1 with VERDICT: FAIL naming the field/state case. Pristine and exact-restored detectors pass each time. The battery checks the CLI externally; it does not claim the tool's --selftest killed these mutants.
+Commands for real tree: git -C <lane> clone --no-hardlinks --quiet <lane> "$S/real-tool"; assert git -C "$S/real-tool" rev-parse --show-toplevel equals "$S/real-tool"; git -C "$S/real-tool" apply <executor patch>; node "$S/real-battery.mjs".
+No tools installed or upgraded. No lane tracked code or sibling source modified. Base and real mutation files restored byte-for-byte before scratch cleanup.

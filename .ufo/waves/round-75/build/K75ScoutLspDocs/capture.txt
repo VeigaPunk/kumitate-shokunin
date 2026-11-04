@@ -1,0 +1,106 @@
+# S224 capture receipt — oh-my-pi docs/lsp-config.md (+ loader confirmation)
+seat: K75ScoutLspDocs · date: 2026-11-04 (UTC session) · lane base c38382d547a1ec21bb7f51b4c08ef08053e7abae
+
+## 1. Document (the row's source)
+
+URL fetched (exact):
+  https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/lsp-config.md
+   HTTP 200  bytes=17254
+URL cited in the row (immutable tag):
+  https://github.com/can1357/oh-my-pi/blob/v18.15.0/docs/lsp-config.md
+
+save: build/K75ScoutLspDocs/lsp-config.md
+sha256: 04b56a7d86663141a68dacb79f61d660acee1a33d56cc7a994367b8a90baf9da
+bytes: 17254
+HTTP code: 200 (twice: body fetch and header fetch)
+Last-Modified: ABSENT (raw.githubusercontent.com serves no Last-Modified; headers below)
+etag: "304e6b39f1a8e0d3a15b4e3de722a1947cbbfca3a05325a337f847131b5371d2"
+cache-control: max-age=300 · content-type: text/plain; charset=utf-8 · server date: Wed, 04 Nov 2026 04:26:04 GMT
+
+provenance substitute for Last-Modified (GitHub API, commits?path=docs/lsp-config.md):
+  69b861ef aa4  2026-11-01T11:18:37Z  fixup(#17664): pare down native tsc version probe
+  2b4d0b63 6803 2026-11-01T07:29:31Z  fix(lsp): verified package-less tsc before selecting native server
+  62e1568b 65c4 2026-11-01T06:57:40Z  fix(lsp): kept typescript-native for native tsc without package.json
+  d846b4a6 d998 2026-10-29T04:32:17Z  style: reformat
+  1b322218 7919 2026-09-30T17:57:16Z  chore: updated docs
+
+revisions:
+  main            ff0a986b88c223a0a746ed95cda8ddada236140c  (ls-remote; HEAD commit 2026-11-03T20:00:32Z)
+  tag v18.15.0    3fedf8d53267e32a6d7521ce725fdcc4a36fdc67  (ls-remote; commit 2026-11-01T13:45:17Z)  == installed `omp --version` → omp/18.15.0
+  tag v18.16.0    650f3a108229ee11bf68ba3377f4e8c3391cd424  (ls-remote; root package.json catalog on main says 18.16.0)
+
+Version skew, measured not assumed: the same five files were fetched at tag v18.15.0 and
+compared byte-for-byte with the main captures — ALL IDENTICAL:
+  docs/lsp-config.md                        04b56a7d…  (17254 B)  == v18.15.0
+  packages/coding-agent/src/lsp/config.ts   8ca882db…  (18619 B)  == v18.15.0
+  packages/coding-agent/src/utils/config-file-sources.ts aefca6ce… (2620 B) == v18.15.0
+  packages/utils/src/dirs.ts                2d423f4f…  (52434 B)  == v18.15.0
+  packages/coding-agent/src/config.ts       cd640b2a…  (8324 B)   == v18.15.0
+So main is ahead of 18.15.0 in general (catalog 18.16.0) but NOT for the quoted page or the
+loader chain: the quotes hold for the installed release.
+
+## 2. Loader (confirmation that the agent-dir spelling is read)
+
+URL: https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/lsp/config.ts
+     HTTP 200 bytes=18619 → save config.ts, sha256 8ca882dba495c35db006b5fdf8b2f37ab9ad471f129969b807adecef8c243bd3
+     etag "d49f9ab8bbf02b654a156a1f919d9a57b9a89d4ee8ee83831a7c451c9d4515b6"; no Last-Modified
+
+Loader function: `loadConfig(cwd: string): LspConfig` — config.ts:441 (doc comment :409-440).
+  :444  const configSources = configFileSources("lsp", cwd, adaptConfig, { pluginRootSource: marketplaceConfigSource }).reverse();
+  :415  (doc comment) "3. User config dirs: ~/.omp/agent/lsp.*, ~/.pi/agent/lsp.*, ~/.claude/lsp.* (+ hidden variants)"
+  :475  configCache / :477 getConfig(cwd)
+
+Candidate spellings — packages/coding-agent/src/utils/config-file-sources.ts (sha256 aefca6ce…):
+  :47   const filenames = [`${base}.json`, `.${base}.json`, `${base}.yaml`, `.${base}.yaml`, `${base}.yml`, `.${base}.yml`];
+        → for base "lsp": lsp.json, .lsp.json, lsp.yaml, .lsp.yaml, lsp.yml, .lsp.yml
+  :55   addDir(cwd)                                        (highest)
+  :57   for (const dir of getConfigDirPaths("", { user: false, project: true, cwd })) addDir(dir);
+  :59   for (const dir of getConfigDirPaths("", { user: true, project: false })) addDir(dir);   ← user config dirs
+  :61-65 plugin roots; :67 addDir(os.homedir())            (lowest)
+  :21-28 readConfigFile: read+parse guarded, unreadable/malformed file skipped
+
+Which directory is the "native agent directory" — packages/coding-agent/src/config.ts (sha256 cd640b2a…):
+  :11-16 const priorityList = [ { dir: CONFIG_DIR_NAME, globalAgentDir: getConfigAgentDirName }, { dir: ".claude" }, { dir: ".codex" }, { dir: ".gemini" } ];
+  :84-88 USER_CONFIG_BASES; :86 base: () => dir === ".claude" ? resolveClaudePaths().configDir : path.join(os.homedir(), globalAgentDir?.() ?? dir)
+  :128   export function getConfigDirs(subpath, options)   (user dirs pushed highest, :132-143)
+  :162   export function getConfigDirPaths(subpath, options)
+
+Name resolution — packages/utils/src/dirs.ts (sha256 2d423f4f…):
+  :29    export const CONFIG_DIR_NAME: string = ".omp";
+  :330   export function getConfigDirName(): string { return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME; }
+  :334-336 export function getConfigAgentDirName(): string { const profile = getActiveProfile(); return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`; }
+  with PI_CONFIG_DIR unset and no profile → `~/.omp/agent`; the six lsp.* variants sit directly in it.
+
+Installed-release corroboration (read-only strings on the 18.15.0 ELF binary, /home/vgpnk/.local/bin/omp):
+  `PI_CONFIG_DIR` present; `getConfigAgentDirName` present; literals `.omp/agent/AGENTS.md`, `.omp/agent/history.db`,
+  `.omp/agent/agents`, `.omp/agent/managed`, `.omp/agent/sessions/`, `.omp/agent/rules` present.
+  (Not a substitute for the tag byte-compare above; reported as corroboration only.)
+
+## 3. Live member (lstat only — content never read)
+
+stat -c '%n kind=%F mode=%a size=%s mtime=%y' /home/vgpnk/.omp/agent/lsp.json
+  /home/vgpnk/.omp/agent/lsp.json kind=regular file mode=600 size=1225 mtime=2026-10-25 00:56:52.413870216 -0300
+
+PI_CONFIG_DIR=<unset> PI_CODING_AGENT_DIR=<unset> in the probing shell → default-profile spelling `~/.omp/agent` is the live one.
+
+## 4. Pre-check
+
+grep -n 'lsp-config' /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md  → no match, exit 1
+grep -c 'S224'      /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/SOURCES.md  → 0
+→ the URL is not already registered and S224 is free.
+
+## 5. Commands (verbatim)
+
+curl -sSL -o lsp-config.md -w 'DOCS HTTP %{http_code} bytes=%{size_download} url=%{url_effective}\n' https://raw.githubusercontent.com/can1357/oh-my-pi/main/docs/lsp-config.md
+curl -sSL -o config.ts -w 'TS HTTP %{http_code} bytes=%{size_download}\n' https://raw.githubusercontent.com/can1357/oh-my-pi/main/packages/coding-agent/src/lsp/config.ts
+curl -sSL -o config-file-sources.ts .../packages/coding-agent/src/utils/config-file-sources.ts
+curl -sSL -o config.ts.root     .../packages/coding-agent/src/config.ts
+curl -sSL -o utils-dirs.ts      .../packages/utils/src/dirs.ts
+for u in docs/lsp-config.md packages/coding-agent/src/lsp/config.ts packages/coding-agent/src/utils/config-file-sources.ts packages/utils/src/dirs.ts packages/coding-agent/src/config.ts; do curl -sSL -o "v18.15.0/<name>" "https://raw.githubusercontent.com/can1357/oh-my-pi/v18.15.0/$u"; done
+cmp -s <main capture> <v18.15.0 capture>   # 5/5 IDENTICAL
+git ls-remote https://github.com/can1357/oh-my-pi refs/heads/main refs/tags/v18.15.0 refs/tags/v18.16.0
+curl -sS 'https://api.github.com/repos/can1357/oh-my-pi/commits?path=docs/lsp-config.md&per_page=6'
+stat -c ... /home/vgpnk/.omp/agent/lsp.json
+
+No writes outside build/K75ScoutLspDocs; no scratch tree was created (no clone/fixture needed);
+no git/jj mutation; no pacman/install (nothing needed installing).

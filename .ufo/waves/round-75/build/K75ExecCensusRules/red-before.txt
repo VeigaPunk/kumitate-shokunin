@@ -1,0 +1,97 @@
+node:fs:3134
+  return binding.mkdtemp(prefix, options.encoding);
+                 ^
+
+Error: ENOENT: no such file or directory, mkdtemp '/fast/scratch/hyaku/kumitate-r75/K75ExecCensusRules/before/omp-census-selftest-XXXXXX'
+    at mkdtempSync (node:fs:3134:18)
+    at selftest (file:///fast/scratch/hyaku/kumitate-r75/K75ExecCensusRules/lane/scripts/omp-census.mjs:299:19)
+    at main (file:///fast/scratch/hyaku/kumitate-r75/K75ExecCensusRules/lane/scripts/omp-census.mjs:466:12)
+    at file:///fast/scratch/hyaku/kumitate-r75/K75ExecCensusRules/lane/scripts/omp-census.mjs:476:22
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'mkdtemp',
+  path: '/fast/scratch/hyaku/kumitate-r75/K75ExecCensusRules/before/omp-census-selftest-XXXXXX'
+}
+
+Node.js v24.21.0
+SELFTEST ok clean-fixture
+SELFTEST ok kind-base-dir-as-file
+SELFTEST ok kind-base-file-as-dir
+SELFTEST ok mode-base-too-wide
+SELFTEST ok mode-base-narrower-is-fine
+SELFTEST ok unlisted-name
+SELFTEST ok unlisted-chain-on-another-owner
+SELFTEST ok chain-generation-fresh
+SELFTEST ok chain-generation-fresh-uuid
+SELFTEST ok chain-generation-fresh-digest
+SELFTEST ok kind-chain-as-dir
+SELFTEST ok mode-chain-too-wide
+SELFTEST ok sidecar-absent-is-clean
+SELFTEST ok sidecar-of-chain-absent-is-clean
+SELFTEST ok sidecar-mode-too-wide
+SELFTEST ok agent-corrupt-generation-ok
+SELFTEST ok agent-corrupt-sidecar-ok
+SELFTEST ok agent-corrupt-mode-too-wide
+SELFTEST ok agent-corrupt-sidecar-mode-too-wide
+SELFTEST ok agent-corrupt-as-dir-is-drift
+SELFTEST ok optional-dir-ok
+SELFTEST ok optional-dir-absent-is-clean
+SELFTEST ok optional-dir-as-file-is-drift
+SELFTEST ok optional-dir-mode-too-wide
+SELFTEST ok optional-dir-unlisted-name-is-drift
+SELFTEST ok absent-member-is-info
+SELFTEST ok empty-root-is-drift
+SELFTEST ok unreadable-root
+SELFTEST ok usage
+VERDICT: PASS (29 cases)
+SELFTEST ok clean-fixture
+SELFTEST ok kind-base-dir-as-file
+SELFTEST ok kind-base-file-as-dir
+SELFTEST ok mode-base-too-wide
+SELFTEST ok mode-base-narrower-is-fine
+SELFTEST ok unlisted-name
+SELFTEST ok unlisted-chain-on-another-owner
+SELFTEST ok chain-generation-fresh
+SELFTEST ok chain-generation-fresh-uuid
+SELFTEST ok chain-generation-fresh-digest
+SELFTEST ok kind-chain-as-dir
+SELFTEST ok mode-chain-too-wide
+SELFTEST ok sidecar-absent-is-clean
+SELFTEST ok sidecar-of-chain-absent-is-clean
+SELFTEST ok sidecar-mode-too-wide
+SELFTEST ok agent-corrupt-generation-ok
+SELFTEST ok agent-corrupt-sidecar-ok
+SELFTEST ok agent-corrupt-mode-too-wide
+SELFTEST ok agent-corrupt-sidecar-mode-too-wide
+SELFTEST ok agent-corrupt-as-dir-is-drift
+SELFTEST ok optional-dir-ok
+SELFTEST ok optional-dir-absent-is-clean
+SELFTEST ok optional-dir-as-file-is-drift
+SELFTEST ok optional-dir-mode-too-wide
+SELFTEST ok optional-dir-unlisted-name-is-drift
+SELFTEST ok absent-member-is-info
+SELFTEST ok empty-root-is-drift
+SELFTEST ok lsp-absent-no-MODE-lsp.json
+SELFTEST ok lsp-present-no-UNLISTED-lsp.json
+SELFTEST ok lsp-MODE-lsp.json
+SELFTEST ok config-pre-generation-no-UNLISTED
+SELFTEST ok config-pre-sidecar-no-UNLISTED
+SELFTEST ok config-pre-wrong-date-UNLISTED
+SELFTEST ok config-pre-MODE
+SELFTEST ok agent-pre-named-generation-no-UNLISTED
+SELFTEST ok agent-pre-named-sidecar-no-UNLISTED
+SELFTEST ok agent-pre-named-wrong-date-UNLISTED
+SELFTEST ok agent-pre-named-MODE
+SELFTEST ok models-corrupt-generation-no-UNLISTED
+SELFTEST ok models-corrupt-sidecar-no-UNLISTED
+SELFTEST ok models-corrupt-wrong-date-UNLISTED
+SELFTEST ok models-corrupt-MODE
+SELFTEST ok binding-total-35-no-NOTE_UNBOUND
+SELFTEST ok NOTE_UNBOUND-models-corrupt
+SELFTEST ok NOTE_MISSING-fail-closed
+SELFTEST ok unreadable-root
+SELFTEST ok usage
+VERDICT: PASS (47 cases)

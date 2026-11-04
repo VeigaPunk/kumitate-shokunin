@@ -1,0 +1,10 @@
+--- pristine.mjs
++++ M3.mjs
+@@ -97,7 +97,6 @@
+   { id: 'mcp-pre-disable', owner: 'mcp.json', re: /^mcp\.json\.pre-disable-\d{8}T\d{4}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copy of mcp.json (not an OMP writer)' }, // source: S061 (fleet lane-addendum.md:82-84)
+   { id: 'mcp-rea-backup-recovery', owner: 'mcp.json.rea.backup', re: /^mcp\.json\.rea\.backup\.[0-9a-f]{64}\.recovery$/, kind: 'file', mode: 0o600, note: 'REA backup recovery copy, 64-hex digest' }, // source: S057 (SetupRecoveryBackup.js:36)
+   { id: 'config-pre', owner: 'config.yml', re: /^config\.yml\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the harness config' }, // source: S225
+-  { id: 'agent-pre-named', owner: 'agent.db', re: /^agent\.db\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the credentials/settings database' }, // source: S225; UTC restore/recovered forms do not match
+   { id: 'models-corrupt', owner: 'models.db', re: /^models\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'generic SQLite quarantine template applied to the model-cache store' }, // source: S054; live artifact corroborates; per-store opt-in not located
+ ];
+ 

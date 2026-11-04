@@ -1,0 +1,675 @@
+{
+  "matrices": [
+    {
+      "id": "M1",
+      "expected": "IN_SYNC branch removal; equal tip becomes MOVED; moved remains MOVED (different structure from minimal)",
+      "verdict": "KILLED",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "ba7bb52468f4b1acf4e172e081a6dc3b394c89b20c0a1380b58c042b943cd5c2",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL IN_SYNC_state_exit",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M2",
+      "expected": "commits must differ from 1",
+      "verdict": "KILLED",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "e53b2054829a16094e1816f5f682c3730739f3eda527eb72bb33666dfcdf2352",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M3",
+      "expected": "scripts/runtime become 0; other becomes 7",
+      "verdict": "KILLED",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "6bf02cbac10a3858ebd5012550026fc15239c3cb5a6fb8df0cc25b12ed25c3ae",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=0 runtime=0 other=7",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M4",
+      "expected": "non-git head-null refusal removed; anticipated survivor if later git-count refusal remains",
+      "verdict": "SURVIVOR",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "e1d5560e2ae385e830e8ac4837a119bcb07816b96c6727ae1bc0ab054c320c11",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M5",
+      "expected": "malformed wrong-contract pin accepted",
+      "verdict": "KILLED",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "8fe415a493848d2d0d7f4c8cc51efbafca8bc6c19665dfb5aad99452a13a7219",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL FAIL-CLOSED_pin_validation_state_exit",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M6",
+      "expected": "MOVED and IN_SYNC exit mapping swaps",
+      "verdict": "KILLED",
+      "before": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "mutatedHash": "b52cc819d847c1866c222496909c1061df43f5590a09ab60f1e3414841ee2b6f",
+      "after": "92465ddc7ad57111e5a946f83af2788adfd63deb28ab6af49f13fde454eabf2e",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_state_commits_changed_scripts_runtime_other_exit,IN_SYNC_state_exit",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_state_commits_changed_scripts_runtime_other_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/not-git",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation_state_exit",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED --pin /fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/bad-pin.json contract \"wrong\" != kumitate-origin-pin-v1",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    }
+  ],
+  "live": {
+    "exit": 1,
+    "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161",
+    "stderr": ""
+  }
+}

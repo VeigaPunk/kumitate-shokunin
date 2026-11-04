@@ -1,0 +1,42 @@
+Axes: operability + coverage (orchestration/tooling).
+Date: 2026-11-04T04:40:22.215690+00:00
+Base: c38382d547a1ec21bb7f51b4c08ef08053e7abae
+Patch sha256: 85837c60cd1619aecaf511dbfda27ebf0997c12c1c114ba97386fe3e4ae1da8e
+p0-live | entries=64 findings=40 exit 1 | OMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=40) | 1 | HELD
+p1-missing | reason=ENOENT exit 2 | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/no-such-dir reason=ENOENT | 2 | HELD
+p2-file | reason=ENOTDIR exit 2 | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/plainfile reason=ENOTDIR | 2 | HELD
+p3-noperm | reason=EACCES exit 2 | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/noperm reason=EACCES | 2 | HELD
+p4-empty | EMPTY root holds no member exit 1 | EMPTY root holds no member; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/empty entries=0 findings=1) | 1 | HELD
+p5a-sym-declared | KIND config.yml want=file got=symlink exit 1 | KIND config.yml want=file got=symlink; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/symroot entries=1 findings=1) | 1 | HELD
+p5b-sym-unlisted | UNLISTED bogus-sym.txt exit 1 | UNLISTED bogus-sym.txt; KIND config.yml want=file got=symlink; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/symroot entries=2 findings=2) | 1 | HELD
+p6-mode | MODE kimi-device-id want<=0600 got=0644 exit 1 | MODE kimi-device-id want<=0600 got=0644; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/moderoot entries=1 findings=1) | 1 | HELD
+p7a-selftest | VERDICT: PASS (29 cases) exit 0 | VERDICT: PASS (29 cases) | 0 | HELD
+p7b-selftest-bogus-root | VERDICT: PASS (29 cases) exit 0 | VERDICT: PASS (29 cases) | 0 | HELD
+p8-unknownarg | unknown argument exit 64 | omp-census: unknown argument --frobnicate | 64 | HELD
+p9-unlisted-bogus | UNLISTED bogus-75.txt exit 1 | UNLISTED bogus-75.txt; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/root entries=65 findings=41) | 1 | HELD
+p10-junkwiden-live | entries=64 findings=0 exit 0 | OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0) | 0 | HELD
+p11-junkwiden-fixture | entries=65 findings=0 exit 0 | OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/root entries=65 findings=0) | 0 | HELD
+p12-junkwiden-selftest | VERDICT: FAIL (3 of 29 cases failed) exit 1 | VERDICT: FAIL (3 of 29 cases failed) | 1 | HELD
+p13-mode000-member | entries=1 findings=0 exit 0 | OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/zeromode entries=1 findings=0) | 0 | HELD
+p14-member-read-search | no readFileSync/openSync/createReadStream on base path | no matches | 1 (search no-match) | HELD
+patch-good-note | CLEAN bound=35/35 exit 0 | OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/patchroot entries=1 findings=0 bound=35/35) | 0 | HELD
+patch-malformed-dates | UNLISTED both malformed dates and bogus-75.txt exit 1 | UNLISTED bogus-75.txt; UNLISTED config.yml.pre-x-2026; UNLISTED config.yml.pre-x-2026110; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/patchroot entries=4 findings=3) | 1 | HELD
+patch-empty-note | NOTE_UNBOUND nonzero never CLEAN | NOTE_UNBOUND count=35; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/patchroot entries=1 findings=35) | 1 | HELD
+patch-missing-note | NOTE_MISSING exit 2 never CLEAN | NOTE_MISSING /fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/notes/missing.md reason=ENOENT | 2 | HELD
+patch-fenced-note | CLEAN bound=35/35: mention-binding LIMIT | OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/patchroot entries=1 findings=0 bound=35/35) | 0 | HELD
+patch-mode000 | CLEAN entries=1 bound=35/35 despite unreadable member | OMP_CENSUS: CLEAN (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/patchroot entries=1 findings=0 bound=35/35) | 0 | HELD
+patch-missing | reason=ENOENT exit 2; never CLEAN | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/no-such-dir reason=ENOENT | 2 | HELD
+patch-file | reason=ENOTDIR exit 2; never CLEAN | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/plainfile reason=ENOTDIR | 2 | HELD
+patch-unreadable | reason=EACCES exit 2; never CLEAN | OMP_CENSUS: ERROR root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/noperm reason=EACCES | 2 | HELD
+patch-empty | EMPTY root holds no member exit 1; never CLEAN | EMPTY root holds no member; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/empty entries=0 findings=1) | 1 | HELD
+patch-symlink | KIND config.yml want=file got=symlink exit 1; never CLEAN | UNLISTED bogus-sym.txt; KIND config.yml want=file got=symlink; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/symroot entries=2 findings=2) | 1 | HELD
+patch-mode0644 | MODE kimi-device-id want<=0600 got=0644 exit 1; never CLEAN | MODE kimi-device-id want<=0600 got=0644; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/fixtures/moderoot entries=1 findings=1) | 1 | HELD
+patch-shape-bogus | UNLISTED bogus-75.txt exit 1; never CLEAN | UNLISTED bogus-75.txt; OMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r75/K75SentinelCensus/root entries=65 findings=1) | 1 | HELD
+patch-selftest-bogus-root | VERDICT: PASS exit 0 | VERDICT: PASS (47 cases) | 0 | HELD
+
+LIMIT mention-binding: fenced-code-only note passes CLEAN bound=35/35; noteText.includes(name) counts mentions, not explanation/provenance. Not a frozen-predicate violation by itself.
+LIMIT mutation-attribution: (b) rejects the blanket control (bogus shape reads CLEAN exit 0, missing UNLISTED). (c) also rejects it (3/29 selftests fail). (d) alone does not establish causality: already-red mutants can satisfy nonzero/FAIL unless clean baseline and changed sorted failure sets are required. A family removal under catch-all does not change acceptance of its otherwise-valid names; do not claim a blanket drop-mutant kill was run.
+LIMIT content-reading: patched readFileSync(note,'utf8') is present (line 273), so a global no-readFileSync claim is false; readShape lines 123-136 only lstat/readdir. Member mode 000 succeeds on both versions. If --note explicitly targets a member, that override reads it as a note; the shape-only guarantee applies to the census member scan, not arbitrary user-chosen note paths.
+LIMIT selftest-bogus-root shows bogus argument ignored; static main dispatch establishes hermetic branch; no syscall tracing performed.
+LIMIT no timing/race/vanishing-entry stress run; no semantic validity checks of date digits or note text promised.
+No tool installation, no live-root writes, no repo mutations, no remediation.

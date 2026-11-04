@@ -1,0 +1,698 @@
+{
+  "axes": [
+    "operability",
+    "coverage"
+  ],
+  "fixture": {
+    "dir": "/fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/fixture.3ERP0z",
+    "top": "/fast/scratch/hyaku/kumitate-r75/K75MutTipDrift/fixture.3ERP0z",
+    "pin": "783fbebe0216fa639343b84ca48ced2f4b5b4adc",
+    "head": "e37e6c7d76c4f1edd3ec47958c9409080c2785ab",
+    "changed": 7,
+    "scripts": 2,
+    "runtime": 2,
+    "other": 3
+  },
+  "matrices": [
+    {
+      "id": "M1",
+      "expected": "MOVED state",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "adba315dd89a99fb1e6cccc4cec96a6776b0b0610ce27cf40c40a67a3d9704d5",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_counts_scripts_runtime_other",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M2",
+      "expected": "commits",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "53730b8cf33f5384a7a406f7462b6a10a6d32419b61b4abedf9419647d485202",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_counts_scripts_runtime_other",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=0 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M3",
+      "expected": "scripts runtime other",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "fbc0fe0b7d982ce14ab71e465fdc85be9d1c53665dc9860d43108127d3cfd602",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_counts_scripts_runtime_other",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=0 runtime=0 other=7",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M4",
+      "expected": "FAIL-CLOSED_non_git",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "92cbc21b361df85985b5caed01f6024e58a68812655cd4baebbf872bf15a4ecf",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL FAIL-CLOSED_non_git",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin= commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M5",
+      "expected": "FAIL-CLOSED_pin_validation",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "147639d623bc949e9cc0ce67579ba4c71f02c86375e35900bef96c332d5566ce",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL FAIL-CLOSED_pin_validation",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "M6",
+      "expected": "state exit mapping",
+      "verdict": "KILLED",
+      "before": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "mutatedHash": "1cedbf79c645c42e1e6b1fbdd41b71c72e7a2787fae8554f067a30a956b2ab6a",
+      "after": "f19efc192497e63316ad643e581c4636f4922e4174e6578835f9ce7136abcd4c",
+      "exactRestored": true,
+      "pristine": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "mutant": {
+        "exit": 1,
+        "verdict": "VERDICT: FAIL MOVED_counts_scripts_runtime_other,IN_SYNC_state_exit",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": false
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      },
+      "restored": {
+        "exit": 0,
+        "verdict": "VERDICT: PASS",
+        "outputs": [
+          {
+            "name": "MOVED_counts_scripts_runtime_other",
+            "exit": 1,
+            "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=783fbebe0216 origin=e37e6c7d76c4 commits=1 changed=7 scripts=2 runtime=2 other=3",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "IN_SYNC_state_exit",
+            "exit": 0,
+            "stdout": "ORIGIN_TIP_DRIFT: IN_SYNC pin=e37e6c7d76c4 origin=e37e6c7d76c4 commits=0 changed=0 scripts=0 runtime=0 other=0",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_non_git",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED ORIGIN_UNVERIFIABLE",
+            "stderr": "",
+            "ok": true
+          },
+          {
+            "name": "FAIL-CLOSED_pin_validation",
+            "exit": 2,
+            "stdout": "ORIGIN_TIP_DRIFT: FAIL-CLOSED PIN_MALFORMED",
+            "stderr": "",
+            "ok": true
+          }
+        ]
+      }
+    }
+  ],
+  "live": {
+    "exit": 1,
+    "stdout": "ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161",
+    "stderr": ""
+  },
+  "commands": [
+    "TMPDIR=$S mktemp -d \"$S/fixture.XXXXXX\"",
+    "git -C \"$D\" init -q",
+    "git -C \"$D\" rev-parse --show-toplevel == \"$D\"",
+    "git -C \"$D\" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false commit -qm pin --allow-empty",
+    "git -C \"$D\" add .",
+    "git -C \"$D\" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false commit -qm moved --allow-empty",
+    "node \"$FILE\" --tip-drift --origin \"$ORIGIN\" --pin \"$PIN\" (all four cases; pristine/mutant/restored)"
+  ]
+}

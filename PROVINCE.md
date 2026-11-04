@@ -13,6 +13,7 @@
 - Origin runtime layer `/home/vgpnk/Projects/ufo-fsd-alpha/crates/ufo-core-runtime/src/` + `crates/ufo-cli/src/` — rows R1–R11, same gates (`coverage_runtime`).
 - Kimi Code substrate `~/.kimi-code/` — rows K1–K5, gated by `scripts/kimi-census.mjs` (member set; secret members shape-only) + `scripts/proxy-check.mjs` (`coverage_kimi`).
 - The lane's own instruments `scripts/*.mjs` (registry: `SKILL.md` §Gate registry) and its learning registry `corpus/SOURCES.md` (checked by `scripts/sources-check.mjs`).
+- The OMP harness agent plane `~/.omp/agent` — depth-1 members only (names, kinds, permission bits), gated by `scripts/omp-census.mjs` (`kumitate-omp-census-v1`: base members + chain families + the note-binding arm) with `corpus/knowledge/omp-agent-root.md` as its internals-level note; entered core in round 75 when the last 40 undeclared members were declared and bound (`coverage:omp` 3 → 10). Member **content** stays out of scope by design (readdir + lstat only).
 
 ### Frontier — named ground, entered by sourced entries, not yet gated
 

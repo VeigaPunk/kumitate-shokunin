@@ -385,6 +385,13 @@
    "sha256": "d31b6c9f293a5dfc52c551b86be211b2d6dad3d2b4cf0d9c696d5fbed713554a",
    "bytes": 107882,
    "captured": "2026-11-04"
+  },
+  {
+   "sourceId": "S224",
+   "path": ".ufo/waves/round-75/build/L1/lsp-config.md",
+   "sha256": "04b56a7d86663141a68dacb79f61d660acee1a33d56cc7a994367b8a90baf9da",
+   "bytes": 17254,
+   "captured": "2026-11-04"
   }
  ],
  "exemptions": [
@@ -499,6 +506,12 @@
     "S107"
    ],
    "reason": "rows opened before the capture-commit rule (S001-S107, rounds <= 54): the rule starts at round 55; pre-rule rows are exempt rather than retroactively fabricated. S108 (opened round 54, captured round 55) and S109+ are captured."
+  },
+  {
+   "ids": [
+    "S225"
+   ],
+   "reason": "own-work row over operator-owned fleet run-state under .scratch/ (outside the lane repo, deliberately not copied); line-anchored quotes recorded in corpus/lessons/round-75.md Gate"
   }
  ]
 }

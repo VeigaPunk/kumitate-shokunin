@@ -1,0 +1,10 @@
+--- pristine.mjs
++++ M4.mjs
+@@ -91,7 +91,6 @@
+ const CHAIN_FAMILIES = [
+   { id: 'config-pre', owner: 'config.yml', re: /^config\.yml\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600 },
+   { id: 'agent-pre-named', owner: 'agent.db', re: /^agent\.db\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600 },
+-  { id: 'models-corrupt', owner: 'models.db', re: /^models\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600 },
+   { id: 'agent-pre-restore', owner: 'agent.db', re: /^agent\.db\.pre-restore-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db snapshot taken by the operator before a restore (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
+   { id: 'agent-recovered', owner: 'agent.db', re: /^agent\.db\.recovered-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db rebuilt by the operator with sqlite3 .recover (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
+   { id: 'history-corrupt', owner: 'history.db', re: /^history\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'history.db quarantined after a corruption, epoch ms + uuid' }, // source: S054 (sqlite.ts:193, chmod 0o600 at :197-199)

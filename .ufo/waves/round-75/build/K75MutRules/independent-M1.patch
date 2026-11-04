@@ -1,0 +1,10 @@
+--- pristine.mjs
++++ M1.mjs
+@@ -53,7 +53,6 @@
+ 
+ /** Base members: exact name, kind, permission ceiling. */
+ const BASE_MEMBERS = [
+-  { name: 'lsp.json', kind: 'file', mode: 0o600, note: 'LSP configuration' },
+   { name: 'RULES.md', kind: 'file', mode: 0o644, note: 'user rules file OMP reads from the agent root' }, // source: S060 (discovery/builtin.ts:423 reads it; no upstream writer: operator-authored)
+   { name: 'agent.db', kind: 'file', mode: 0o600, note: 'OMP settings and auth database' }, // source: S053 (dirs.ts:952-955) + S055 (chmod 0o600)
+   { name: 'agents', kind: 'dir', mode: 0o755, note: 'user agent definitions' }, // source: S060 (cli/agents-cli.ts:52)

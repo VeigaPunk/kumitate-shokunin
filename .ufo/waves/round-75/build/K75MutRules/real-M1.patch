@@ -1,0 +1,10 @@
+--- pristine.mjs
++++ M1.mjs
+@@ -65,7 +65,6 @@
+   { name: 'hooks', kind: 'dir', mode: 0o755, note: 'user hook scripts' }, // source: S060 (discovery/builtin.ts:720 reads it; no upstream writer)
+   { name: 'kimi-device-id', kind: 'file', mode: 0o600, note: 'Kimi OAuth device identity' }, // source: S060 (ai/src/registry/oauth/kimi.ts:12,47 mode 0o600)
+   { name: 'last-changelog-version', kind: 'file', mode: 0o644, note: 'last seen OMP version marker' }, // source: S053 (dirs.ts:957-960)
+-  { name: 'lsp.json', kind: 'file', mode: 0o600, note: 'native agent dir user-wide LSP config' }, // source: S224
+   { name: 'mcp.json', kind: 'file', mode: 0o600, note: 'MCP server definitions' }, // source: S060 (mcp/config-writer.ts:71 mode 0o600)
+   { name: 'mcp.json.rea.backup', kind: 'file', mode: 0o600, note: 'REA first backup of the MCP server definitions' }, // source: S057 (REA first backup `<config>.rea.backup`)
+   { name: 'models.db', kind: 'file', mode: 0o644, note: 'model cache database' }, // source: S053 (dirs.ts:967-970); no chmod upstream, so umask 0644

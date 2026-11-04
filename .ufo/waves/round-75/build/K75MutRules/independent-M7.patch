@@ -1,0 +1,11 @@
+--- pristine.mjs
++++ M7.mjs
+@@ -215,7 +215,7 @@
+   let bound = 0;
+   for (const token of declared) {
+     if (note.includes('`' + token + '`')) bound++;
+-    else findings.push(`NOTE_UNBOUND ${token}`);
++    else {}
+   }
+   const verdict = findings.length === 0 ? 'CLEAN' : 'DRIFT';
+   return {

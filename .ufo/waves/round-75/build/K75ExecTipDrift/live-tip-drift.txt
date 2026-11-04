@@ -1,0 +1,23 @@
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift node scripts/proxy-check.mjs --tip-drift; echo exit=$?
+ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161
+exit=1
+
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift node scripts/proxy-check.mjs --tip-drift --origin /fast/scratch/hyaku/kumitate-pin/src; echo exit=$?
+ORIGIN_TIP_DRIFT: IN_SYNC pin=31c465f15669 origin=31c465f15669 commits=0 changed=0 scripts=0 runtime=0 other=0
+exit=0
+
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift node scripts/proxy-check.mjs --tip-drift --origin /tmp; echo exit=$?
+ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /tmp
+exit=2
+
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift /run/user/1000/fnm_multishells/1981588_1793727763382/bin/node scripts/proxy-check.mjs --tip-drift; echo exit=$?
+ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161
+exit=1
+
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift /run/user/1000/fnm_multishells/1981588_1793727763382/bin/node scripts/proxy-check.mjs --tip-drift --origin /fast/scratch/hyaku/kumitate-pin/src; echo exit=$?
+ORIGIN_TIP_DRIFT: IN_SYNC pin=31c465f15669 origin=31c465f15669 commits=0 changed=0 scripts=0 runtime=0 other=0
+exit=0
+
+$ TMPDIR=/fast/scratch/hyaku/kumitate-r75/K75ExecTipDrift /run/user/1000/fnm_multishells/1981588_1793727763382/bin/node scripts/proxy-check.mjs --tip-drift --origin /tmp; echo exit=$?
+ORIGIN_TIP_DRIFT: FAIL-CLOSED SRC_REV_UNVERIFIABLE /tmp
+exit=2

@@ -1208,3 +1208,12 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Shown able to fail.** `considerthese/2026-10-26.md` §Things worth watching item 2: round 63 claimed 69/69 in prose without a transcript, and round 64 cited 125 cases against a committed 52/52.
   - **Limit.** Scoped to `N/N` tallies and case counts in `SCORECARD.md`, `SKILL.md`, and round reports; historical round sections are not rewritten in place (append-only); does not replace gate-level diffing (`report-receipt-diff`).
   - **Supersedes.** None. Deepens Q3 (dated re-run or recalled label for counts) and Q24/Q55 (receipt-integrity disciplines) by requiring explicit transcript paths for fractional and ratio tallies.
+
+- **Q71 — a round lesson's `## Gate` source ids must exist in the landed registry and agree with its `used-by` column (round 75).** Grounding: `considerthese/2026-10-26.md` proposal 2 ("Cross-check gate tables against the registry"), mined 2026-11-04 in round 75; defect class: round-65 D1 mapped S204–S206 in the Gate table differently from the landed SOURCES rows and claimed an S206 that was not added.
+  - **Who checks.** The lane before committing a lesson that adds or cites source rows; the non-author closure re-runs the same commands on the committed bytes.
+  - **Command.** `for id in $(grep -oE 'S[0-9]{3,}' corpus/lessons/round-<N>.md | sort -u); do grep -qE "^\|[[:space:]]*$id[[:space:]]*\|" corpus/SOURCES.md || echo "MISSING $id"; done` plus, for every id the Gate says grounds `corpus/knowledge/<entry>.md`, `grep -F "$id" <entry> >/dev/null || echo "NOT-USED $id <entry>"`; and the reverse check `grep -E "^\|[[:space:]]*S[0-9]+" corpus/SOURCES.md` rows whose `used-by` names the new lesson must be cited in that lesson.
+  - **Fails when.** A Gate row cites an id that the registry does not carry; a Gate row says an id grounds an entry whose provenance line does not name it; or a mined row's `used-by` names the new lesson while the Gate omits it.
+  - **Shown able to fail.** The r65 D1 rows (S204–S206) against the landed registry: the id set in the Gate differs from the registry's (the defect the criterion encodes).
+  - **Limit.** Judges id existence and pointer agreement, not whether the quote grounds the claim (that is the closure's spot-check); append-only rows mean a superseded id stays resolvable by design.
+  - **Supersedes.** None. Adds the registry half Q65/Q70 leave to receipts.
+

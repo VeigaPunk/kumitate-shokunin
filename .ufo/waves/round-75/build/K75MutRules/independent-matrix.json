@@ -1,0 +1,194 @@
+[
+  {
+    "mutant": "M1",
+    "change": "drop lsp.json",
+    "expected": "DRIFT exit=1 UNLISTED lsp.json",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nUNLISTED lsp.json\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1 bound=34/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST FAIL lsp-json-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST FAIL lsp-json-mode-too-wide: missing \"MODE lsp.json want<=0600 got=0604\"\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (2 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST FAIL lsp-json-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST FAIL lsp-json-mode-too-wide: missing \"MODE lsp.json want<=0600 got=0604\"\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (2 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "50818a14944586df3df27b4bd7f329ae05e19d7191b4cdc311f9e37d9d860573"
+  },
+  {
+    "mutant": "M2",
+    "change": "drop config-pre",
+    "expected": "DRIFT exit=1 UNLISTED config.yml.pre-",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nUNLISTED config.yml.pre-alias-high-20261103\nUNLISTED config.yml.pre-connector-haiku-20261027\nUNLISTED config.yml.pre-executor-luna-20261029\nUNLISTED config.yml.pre-flash-executor-20261103\nUNLISTED config.yml.pre-flash-gemini-20261104\nUNLISTED config.yml.pre-flash-mim-balance-20261029\nUNLISTED config.yml.pre-flash-zfl-executor-reviewer-20261103\nUNLISTED config.yml.pre-haiku-fallback-20261028\nUNLISTED config.yml.pre-kfc-luna-20261030\nUNLISTED config.yml.pre-kfc-out-sol-in-20261029\nUNLISTED config.yml.pre-kfc-roles-20261027\nUNLISTED config.yml.pre-kfc-swe-only-20261027\nUNLISTED config.yml.pre-kfc-to-sonnet-20261027\nUNLISTED config.yml.pre-lane-mix-20261028\nUNLISTED config.yml.pre-lfm3-uncensored-20261029\nUNLISTED config.yml.pre-mflash-amr-20261103\nUNLISTED config.yml.pre-mflash-commandcode-20261027\nUNLISTED config.yml.pre-mim-for-luna-20261029\nUNLISTED config.yml.pre-mim-to-flash-20261103\nUNLISTED config.yml.pre-more-zfl-20261027\nUNLISTED config.yml.pre-run12-20261029\nUNLISTED config.yml.pre-run13-20261030\nUNLISTED config.yml.pre-run14-20261103\nUNLISTED config.yml.pre-scout-antigravity-20261103\nUNLISTED config.yml.pre-scout-zfl-20261028\nUNLISTED config.yml.pre-sol61-20261029\nUNLISTED config.yml.pre-sonnet-haiku-20261028\nUNLISTED config.yml.pre-zfl-kfc-20261030\nUNLISTED config.yml.pre-zfl-split-20261104\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29 bound=34/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST FAIL config-pre-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST FAIL config-pre-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "bbc9876c7d95cea3c128bbd85d4a0573d7af09aab5d591e627c9dc6faa51827c"
+  },
+  {
+    "mutant": "M3",
+    "change": "drop agent-pre-named",
+    "expected": "DRIFT exit=1 UNLISTED agent.db.pre-",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nUNLISTED agent.db.pre-kimi58-unblock-20261027\nUNLISTED agent.db.pre-kimi58-unblock-20261027-shm\nUNLISTED agent.db.pre-kimi58-unblock-20261027-wal\nUNLISTED agent.db.pre-kimiroute-20261027\nUNLISTED agent.db.pre-kimiroute-20261027-shm\nUNLISTED agent.db.pre-kimiroute-20261027-wal\nUNLISTED agent.db.pre-merge-20261103\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=7 bound=34/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST FAIL agent-pre-named-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST FAIL agent-pre-named-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "f98a53d099f87ea48b7bcbb401da75743a7217d431b819480d7cfb022eed11f7"
+  },
+  {
+    "mutant": "M4",
+    "change": "drop models-corrupt",
+    "expected": "DRIFT exit=1 UNLISTED models.db.corrupt-",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nUNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42\nUNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42-shm\nUNLISTED models.db.corrupt-1793195189612-e1d0feb5-82a6-4d49-adf6-14a78cae5b42-wal\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=3 bound=34/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST FAIL models-corrupt-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST FAIL models-corrupt-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "cc30245e61eea4b2b14ebbcbb331caff09984cc77a48a357b87e40a307863786"
+  },
+  {
+    "mutant": "M5",
+    "change": "narrow config-pre date 20\\d{6} to 20\\d{4}",
+    "expected": "DRIFT exit=1 UNLISTED config.yml.pre-",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain config-pre has no generation\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nUNLISTED config.yml.pre-alias-high-20261103\nUNLISTED config.yml.pre-connector-haiku-20261027\nUNLISTED config.yml.pre-executor-luna-20261029\nUNLISTED config.yml.pre-flash-executor-20261103\nUNLISTED config.yml.pre-flash-gemini-20261104\nUNLISTED config.yml.pre-flash-mim-balance-20261029\nUNLISTED config.yml.pre-flash-zfl-executor-reviewer-20261103\nUNLISTED config.yml.pre-haiku-fallback-20261028\nUNLISTED config.yml.pre-kfc-luna-20261030\nUNLISTED config.yml.pre-kfc-out-sol-in-20261029\nUNLISTED config.yml.pre-kfc-roles-20261027\nUNLISTED config.yml.pre-kfc-swe-only-20261027\nUNLISTED config.yml.pre-kfc-to-sonnet-20261027\nUNLISTED config.yml.pre-lane-mix-20261028\nUNLISTED config.yml.pre-lfm3-uncensored-20261029\nUNLISTED config.yml.pre-mflash-amr-20261103\nUNLISTED config.yml.pre-mflash-commandcode-20261027\nUNLISTED config.yml.pre-mim-for-luna-20261029\nUNLISTED config.yml.pre-mim-to-flash-20261103\nUNLISTED config.yml.pre-more-zfl-20261027\nUNLISTED config.yml.pre-run12-20261029\nUNLISTED config.yml.pre-run13-20261030\nUNLISTED config.yml.pre-run14-20261103\nUNLISTED config.yml.pre-scout-antigravity-20261103\nUNLISTED config.yml.pre-scout-zfl-20261028\nUNLISTED config.yml.pre-sol61-20261029\nUNLISTED config.yml.pre-sonnet-haiku-20261028\nUNLISTED config.yml.pre-zfl-kfc-20261030\nUNLISTED config.yml.pre-zfl-split-20261104\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=29 bound=35/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST FAIL config-pre-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST FAIL config-pre-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (1 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "6eae8cee9b063b8b70de39a35245ca9a77616f7b213b208728f51d3335568fd7"
+  },
+  {
+    "mutant": "M6",
+    "change": "tighten lsp.json mode to 0400 (not widen 0644)",
+    "expected": "DRIFT exit=1 MODE lsp.json want<=0400 got=0600",
+    "live": {
+      "exit": 1,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nMODE lsp.json want<=0400 got=0600\nOMP_CENSUS: DRIFT (root=/home/vgpnk/.omp/agent entries=64 findings=1 bound=35/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST FAIL lsp-json-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST FAIL lsp-json-mode-too-wide: missing \"MODE lsp.json want<=0600 got=0604\"\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (2 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 1,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST FAIL lsp-json-ok: exit 1 want 0; missing \"OMP_CENSUS: CLEAN\"\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST FAIL lsp-json-mode-too-wide: missing \"MODE lsp.json want<=0600 got=0604\"\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: FAIL (2 of 34 cases failed)\n",
+      "stderr": ""
+    },
+    "note_missing": null,
+    "verdict": "KILLED",
+    "sha256": "d95aee3880d2d22d877996811cfe54f64b3966fd1e180c6d40c9b496790e9b48"
+  },
+  {
+    "mutant": "M7",
+    "change": "drop NOTE_UNBOUND push",
+    "expected": "SURVIVOR expected: missing note token accepted CLEAN exit=0; selftest may miss omission",
+    "live": {
+      "exit": 0,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nOMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 0,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: PASS (34 cases)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 0,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: PASS (34 cases)\n",
+      "stderr": ""
+    },
+    "note_missing": {
+      "exit": 0,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nOMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=34/35)\n",
+      "stderr": ""
+    },
+    "verdict": "SURVIVOR",
+    "sha256": "4769cb5abcb5c74a86dfb63785929d593ef93d503be1d789244f00794cdf7c2a"
+  },
+  {
+    "mutant": "M8",
+    "change": "note arm constant bound=35/35 no-op",
+    "expected": "SURVIVOR expected: missing note token accepted CLEAN exit=0; selftest may miss omission",
+    "live": {
+      "exit": 0,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nOMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35)\n",
+      "stderr": ""
+    },
+    "selftest": {
+      "exit": 0,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: PASS (34 cases)\n",
+      "stderr": ""
+    },
+    "selftest_immediate_rerun": {
+      "exit": 0,
+      "stdout": "SELFTEST ok clean-fixture\nSELFTEST ok kind-base-dir-as-file\nSELFTEST ok kind-base-file-as-dir\nSELFTEST ok mode-base-too-wide\nSELFTEST ok mode-base-narrower-is-fine\nSELFTEST ok unlisted-name\nSELFTEST ok unlisted-chain-on-another-owner\nSELFTEST ok chain-generation-fresh\nSELFTEST ok chain-generation-fresh-uuid\nSELFTEST ok chain-generation-fresh-digest\nSELFTEST ok kind-chain-as-dir\nSELFTEST ok mode-chain-too-wide\nSELFTEST ok sidecar-absent-is-clean\nSELFTEST ok sidecar-of-chain-absent-is-clean\nSELFTEST ok sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-generation-ok\nSELFTEST ok agent-corrupt-sidecar-ok\nSELFTEST ok agent-corrupt-mode-too-wide\nSELFTEST ok agent-corrupt-sidecar-mode-too-wide\nSELFTEST ok agent-corrupt-as-dir-is-drift\nSELFTEST ok optional-dir-ok\nSELFTEST ok optional-dir-absent-is-clean\nSELFTEST ok optional-dir-as-file-is-drift\nSELFTEST ok optional-dir-mode-too-wide\nSELFTEST ok optional-dir-unlisted-name-is-drift\nSELFTEST ok absent-member-is-info\nSELFTEST ok empty-root-is-drift\nSELFTEST ok lsp-json-ok\nSELFTEST ok config-pre-ok\nSELFTEST ok agent-pre-named-ok\nSELFTEST ok models-corrupt-ok\nSELFTEST ok lsp-json-mode-too-wide\nSELFTEST ok unreadable-root\nSELFTEST ok usage\nVERDICT: PASS (34 cases)\n",
+      "stderr": ""
+    },
+    "note_missing": {
+      "exit": 0,
+      "stdout": "INFO mcp.json.rea.backup absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nOMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=64 findings=0 bound=35/35)\n",
+      "stderr": ""
+    },
+    "verdict": "SURVIVOR",
+    "sha256": "3595ed806aeece1180112549674bd207c865f7daa7c752e2ca528fc97c80c11a"
+  }
+]

@@ -1,0 +1,11 @@
+--- pristine.mjs
++++ M7.mjs
+@@ -216,7 +216,7 @@
+   let bound = 0;
+   for (const name of DECLARED_NAMES) {
+     if (noteText.includes(name)) bound++;
+-    else findings.push(`NOTE_UNBOUND ${name}`);
++    else {}
+   }
+ 
+   const verdict = findings.length === 0 ? 'CLEAN' : 'DRIFT';
