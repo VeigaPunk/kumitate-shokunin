@@ -1268,3 +1268,18 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Limit.** Proves a transcript exists, not that it is the right transcript; a receipt from another
     tool with the same tally still passes.
   - **Supersedes.** None. Adds the pointer half Q74's word count leaves open.
+
+### Q76 — a round lesson's `## Gate` is checked against the landed registry in the same round (round 83; `considerthese/2026-10-26.md` idea 2)
+
+- **Rule.** Every `S###` a round lesson's `## Gate` names must exist in `corpus/SOURCES.md` with the status
+  and anchor the Gate claims, checked before the lesson is committed. A Gate row is a claim about the
+  registry, not a note beside it.
+- **Command.** `grep -oE 'S[0-9]{3,}' corpus/lessons/round-<N>.md | sort -u | while read id; do grep -q "^| $id " corpus/SOURCES.md || echo "gate-absent:$id"; done`
+  — empty for a conformant lesson; pair it with the status/used-by census when the Gate states a status.
+- **Fails when.** A Gate row cites an id the registry lacks, or claims a status the registry does not carry
+  (round 65 D1's class: Gate rows mapping S204–S206 differently from the landed SOURCES).
+- **Shown able to fail.** Round 83's Gate names S240–S242 and the check prints nothing (all three present and
+  `mined`); the same check over a synthetic `S999` row prints `gate-absent:S999`
+  (`.ufo/waves/round-83/close/gate-registry-check.txt`).
+- **Limit.** Ids only — a Gate quote is not re-opened by this check; the non-author spot-check does that.
+- **Supersedes.** None. Adds the registry half of Q75's transcript rule.

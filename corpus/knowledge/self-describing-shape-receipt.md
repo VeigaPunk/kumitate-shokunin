@@ -70,3 +70,12 @@ consumes it through `readShapeDoc`/`shapeFromFile` in process and derives the
 same six O terms as round 76. The registry row is `omp-census` in `SKILL.md`;
 the pin is `pin.omp-shape`; the frozen counter is `C81_C2` in
 `.ufo/waves/round-81/probe/probe81-c2.mjs`.
+
+## Amendment 2026-11-04 (round 83)
+
+Superseded text, named: *"`--compare` stays report-only and still reads a legacy v1 receipt."* The
+legacy clause holds; **"report-only" no longer does**. Since round 83 the compare path judges the
+receipt's clock on every call — a future instant is `OMP_SHAPE_COMPARE: SHAPE_CLOCK captured_at=<instant>
+age_days=<negative>`, exit 2, bounded or not — while a legacy v1 receipt (no instant) is still read as
+`captured=absent age_days=absent` and only refuses when the caller names a bound (`SHAPE_AGE_UNKNOWN`
+exit 2). Evidence: `corpus/knowledge/self-asserted-instants.md`, `corpus/lessons/round-83.md`.

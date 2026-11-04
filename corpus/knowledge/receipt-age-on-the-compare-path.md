@@ -50,3 +50,19 @@ recheck: `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` at the
 | v1 refused under a bound | v1 receipt, `--max-age 1` → `SHAPE_AGE_UNKNOWN receipt_captured=absent max_age=1` exit 2 |
 
 Fixture receipts were written under `$HYAKU_SCRATCH` and deleted; neither was scored.
+
+## Amendment 2026-11-04 (round 83) — the clock is judged on every compare
+
+Superseded text, named: the bullet *"Future instant plus a bound: `SHAPE_CLOCK age_days=<negative>
+max_age=<m>`, exit 2 …; without a bound the negative age prints and the compare grades"* and the bullet
+*"Compare's exit stays drift-only (`return drift ? 1 : 0`, `scripts/omp-census.mjs:310`); the age is a
+print, not an input."*
+
+Round 83 replaces both with one clock predicate (`clockRefusal`, `scripts/omp-census.mjs`, round-83
+revision): a future (or unparseable) instant refuses **with or without** `--max-age`, printing
+`OMP_SHAPE_COMPARE: SHAPE_CLOCK captured_at=<instant> age_days=<negative>` and exiting 2 before any
+comparison; `--shape` prints the same predicate as `SHAPE_CLOCK captured_at=<instant> age_days=<n>`
+(exit 2). Exit 1 remains drift-only; exit 2 now has two classes on the compare path (`SHAPE_NOT_FOUND`
+and `SHAPE_CLOCK`). The age still never scores — the round-82 arm `score-unchanged` keeps reading
+`coverage_omp=10` on a 45-day receipt. Frozen counter: `.ufo/waves/round-83/probe/probe83-c2.mjs`
+(16 arms). Evidence: `corpus/lessons/round-83.md`, `scripts/omp-census.mjs --selftest` (108 cases).

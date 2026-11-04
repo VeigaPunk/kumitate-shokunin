@@ -2700,3 +2700,61 @@ open map reading is corrected by an append-only erratum.
   suite 54/54); C2 coverage:omp — the compare path discloses and gates the receipt's age (`receipt_captured`,
   `age_days`, `--max-age`, `SHAPE_STALE_RECEIPT`/`SHAPE_AGE_UNKNOWN`; frozen counter `C82_C2: HELD
   held=13/13`, base 6/13, stub 4/13; suite 105 cases); stanza `A` 889 → 891, `C` 41 → 42, `C2` 202 → 206.
+
+## Round 83 — the gate mirrors the dispatcher, the clock is judged everywhere (2026-11-04, Linux run-15 host; ONE v1 wave of 15 seats)
+
+Base `eb8e00956e7a282cb2b53a5bc53e1afa1d0e7fcf` (the round-82 verifier spot-check, the remote tip); freeze
+`eda17453517da3d9f38c708d70b00dc72cf85a33` (plan, both frozen counters, four pre-data controls, open
+receipts); scaffolding `eca7debd9aa6184a81f7e4abb43d507299a31f31` (both instruments, both suites, S240–S242
+with the RFC 3339 capture, the wave payload and its `ready`). Amendments: none — the plan's amendments
+section stays closed; the counter defect is disclosed in the lesson, not amended into the rule.
+
+Claims: **C1 operability** (the lowest non-retired axis; integer 9 terminal) — `ready-handoff` becomes
+`kumitate-ready-handoff-v3`: the band counts spawns + `resumeSends` like the dispatcher (a resume-only
+payload is band-exempt), the effective cap is `min(policy.maxLanes, dispatch.maxLanes|dispatch.policy.maxLanes,
+256)` with `MAXLANES`/`MAXLANES_IMPOSSIBLE` in the dispatcher's precedence order, `dispatch.schema` and a
+declared `counts` are cross-checked (`DISPATCH_SCHEMA`, `DISPATCH_COUNTS`), a policy role outside the
+dispatcher's `SWARM_ROLES` is refused (`POLICY_ROLE_UNJUDGEABLE`), `--agents` accepts the validator's
+`{members}` registry shape and requires its `schema` stamp, `REPORT_DEST_OUTSIDE` gains realpath
+containment, and the attack set is the reachable subset so `labrat` is no longer a phantom attack role.
+Frozen counter `probe83-c1.mjs` (27 declared arms): base (v2) `15/27`, constant-`READY` stub `3/27`, close
+`27/27`; suite 54 → 68 cases. **Disclosed counter defect:** 28 `arm()` call sites against `ARMS = 27` and
+the `band-total-resumes` fixture tripping `ATTACK_SHARE` before its band, so the frozen `HELD held=27/27`
+is reached with one arm red (found by the wave scout and the reviewer, not by the lane); a disclosed
+repair probe re-measures the behaviour at `28/28` (base `15/28`).
+**C2 coverage:omp** (integer held 10) — `omp-census` gains one `clockRefusal` predicate used by both
+`--shape` and `--compare`: a future instant refuses `OMP_SHAPE_COMPARE: SHAPE_CLOCK captured_at=<instant>
+age_days=<negative>` exit 2 with or without `--max-age`, a legacy v1 receipt keeps
+`captured=absent age_days=absent`, and the age still never scores. Frozen counter `probe83-c2.mjs` (16
+arms): base `13/16`, stub `3/16`, close `16/16`; suite 105 → 108 cases.
+
+The wave (15 seats: 2 scouts, 3 executors, 3 scribes, 1 connector, 2 reviewers, 1 critic, 1 mutation-tester,
+1 sentinel, 1 revenger; attack 4/15 = 27 %) attacked both surfaces: the admission scout mapped 35 validator
+checks against the gate's (`PARITY: 9/35` by frozen arms) and found the counter arithmetic defect; the
+census scout named four consumer sites the clock change falsified (two corpus entries — amended
+append-only — and the M-time pin/stanza, repaired in this commit); the sentinel found a lexical-only
+report-destination containment (planted-symlink escape) and the executor landed realpath containment; the
+revenger classified eight gate↔dispatcher differences (four gate defects — resume ownership/shape,
+duplicate expansions, the unclamped band floor — four truthful divergences) and none was absorbed; the
+connector ruled three sibling overlaps (mori's wave settlement is resume-blind, tabi's `c2-wave-caps`
+carries a latent false-positive class, the origin constants are operator-owned) as report-only; the
+critic and mutation-tester tested the predicates and the counters; the scribes wrote the two knowledge
+entries, the lesson and the map rows.
+
+Frontier: S240 (the validator at `fb7157fc`, own-work) and S241 (the registry at the same commit, own-work)
+and S242 (RFC 3339, capture `sha256 c53b2d12…`, 44,033 bytes) opened, admitted and mined; the knowledge
+entries `dispatcher-admission-surface.md` and `self-asserted-instants.md` land with them; the round-82
+verifier spot-check is adopted in-round (map row + readme-map and source-capture pins — the 12th
+recurrence) and its four routed defects R82-V1–V4 are answered in this round's lesson;
+`considerthese/2026-10-26.md` idea 2 is mined into `QUALITY.md` **Q76**. Assimilation: none (the
+`merge/kumitate/` package's IDs collide with the lane's S195–S239; renumbering is a dedicated round).
+
+- 2026-11-04 — round 83 (gate-required one-line record; the full entry is the section above): C1
+  operability — capability deepening `ready-handoff` v3 (`kumitate-ready-handoff-v3`: band over spawns +
+  resumes, effective cap + `MAXLANES_IMPOSSIBLE`, `DISPATCH_SCHEMA`/`DISPATCH_COUNTS`,
+  `POLICY_ROLE_UNJUDGEABLE`, `{members}` registry with its schema stamp, realpath-contained report
+  destinations, reachable attack set; frozen counter `C83_C1: HELD held=27/27`, base 15/27, stub 3/27,
+  counter defect disclosed and repair probe `C83_C1R: HELD held=28/28`, suite 68); C2 coverage:omp — the
+  compare path judges a self-asserted instant (`clockRefusal` shared with `--shape`, `SHAPE_CLOCK` exit 2
+  bounded or not, legacy absent-clock disclosure; frozen counter `C83_C2: HELD held=16/16`, base 13/16,
+  stub 3/16, suite 108); stanza `A` 891 → 896, `C` 42 → 43, `C2` 206 → 210; SOURCES 177 → 180.

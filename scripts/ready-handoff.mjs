@@ -101,6 +101,26 @@ function readJson(file, token, detail, badToken = token) {
   try { return JSON.parse(text); } catch { throw new Refusal(badToken, `${detail}: not JSON: ${file}`); }
 }
 
+/**
+ * True iff `target` (possibly not yet existing) resolves inside `rootReal` once its deepest
+ * existing ancestor is realpath'd. Lexical containment alone accepts a planted symlink
+ * directory inside the lane whose realpath escapes it (round-83 sentinel F-1).
+ */
+function containedInside(rootReal, target) {
+  let probe = target;
+  const rest = [];
+  for (;;) {
+    if (existsSync(probe)) break;
+    const parent = dirname(probe);
+    if (parent === probe) return false;
+    rest.unshift(basename(probe));
+    probe = parent;
+  }
+  let real;
+  try { real = realpathSync(probe); } catch { return false; }
+  return inside(rootReal, join(real, ...rest));
+}
+
 /** True iff `child` is inside `parent` (lexical, after resolve; both absolute). */
 function inside(parent, child) {
   const rel = relative(parent, child);
@@ -198,8 +218,11 @@ export function judge(opts) {
     if (reg && Array.isArray(reg.agents) && reg.agents.length > 0
         && reg.agents.every((a) => a && typeof a.id === 'string' && a.id)) {
       agentIds = new Set(reg.agents.map((a) => a.id));
-    } else if (reg && reg.members && typeof reg.members === 'object' && !Array.isArray(reg.members)
+    } else if (reg && reg.schema === 'ufo-swarm-registry-v1'
+        && reg.members && typeof reg.members === 'object' && !Array.isArray(reg.members)
         && Object.keys(reg.members).length > 0) {
+      // The validator's registry carries its schema stamp; a foreign `{members}` file is not
+      // the registry this gate may resolve liveness against (wave entry §Limits, sentinel R9).
       agentIds = new Set(Object.keys(reg.members));
     } else {
       throw new Refusal('AGENTS_MALFORMED', `agents registry must be {agents:[{id}]} or {members:{name:…}}: ${opts.agents}`);
@@ -304,7 +327,14 @@ export function judge(opts) {
     if (dest) {
       // F7 (round-82 wave scout): the validator bounds its own reportDir; admission must bound
       // the destination it accepts, or a hand-edited dispatch can send seats outside the lane.
-      if (!inside(realpathSync(lane), dest)) add('REPORT_DEST_OUTSIDE', `${task.name} report destination ${dest} escapes ${lane}`);
+      // Round 83 (sentinel F-1): containment is judged on the realpath of the deepest existing
+      // ancestor, so a symlink planted inside the lane cannot carry the destination outside it.
+      const realLane = realpathSync(lane);
+      const tail = relative(lane, dest);
+      const destReal = tail === '' ? realLane : join(realLane, tail);
+      if (tail.startsWith('..') || isAbsolute(tail) || !inside(realLane, destReal) || !containedInside(realLane, destReal)) {
+        add('REPORT_DEST_OUTSIDE', `${task.name} report destination ${dest} escapes ${lane} (realpath check)`);
+      }
       if (destinations.has(dest)) add('REPORT_DEST_DUPLICATE', `${task.name} claims ${dest} (also ${destinations.get(dest)})`);
       else destinations.set(dest, task.name);
     }
@@ -725,6 +755,21 @@ function runSelftest(work) {
     (v) => v.verdict === 'READY');
   judgeCase('agents-members-unresolved', (fx, o) => { o.agents = join(fx.box, 'agents-members-nol1.json'); },
     (v) => v.verdict === 'DRIFT' && v.findings.includes('L1_UNRESOLVED'));
+  judgeCase('agents-members-foreign-schema', (fx, o) => {
+    const foreign = join(fx.box, 'agents-foreign.json');
+    writeFileSync(foreign, `${JSON.stringify({ schema: 'not-a-registry', members: { KumitateR81: { role: 'main' } } })}\n`);
+    o.agents = foreign;
+  }, (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'AGENTS_MALFORMED');
+  judgeCase('report-dest-planted-symlink', (fx) => {
+    // Sentinel F-1: a symlink directory inside the lane must not carry a report destination out.
+    const outside = join(fx.box, 'outside-dir');
+    mkdirSync(outside, { recursive: true });
+    symlinkSync(outside, join(fx.lane, 'planted-link'));
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.taskCall.tasks[0].task = `/skill:godspeed\n# Target\n${fx.lane}/corpus/x.md\nReport: ${fx.lane}/planted-link/evil.md`;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('REPORT_DEST_OUTSIDE'));
+
   cases++;
   {
     const box = join(root, 'maxlanes-ceiling');
