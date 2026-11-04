@@ -291,12 +291,12 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=886
-C=39
+A=889
+C=41
 C1=19
 C1_total=19
-C2=198
-C2_total=198
+C2=201
+C2_total=201
 S_members=88
 S_sections=88
 R_members=92
@@ -318,7 +318,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=fa79c279d336fd49f2880db58018d231f7e7efcad42a217bfb4efbd22aec35ef
+pin.proxy-check=9ce5664343de48205435b96ad724cbe676ba036102e2beff6978ed94e4c2ecba
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -327,8 +327,8 @@ pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23
 pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
-pin.omp-census=c5986057a3fcd27761cbd77c7387267813089ed7c4affb6a4ad03f36d1164c98
-pin.omp-shape=84e41b9f5167479f2d806686ee702db49d0ebd0a83e6bcb28bd444d50eb0c435
+pin.omp-census=405cf5d43d6ad37de53c76b4b2bef4f44afd2a5480292ed8166f719185f9cbad
+pin.omp-shape=8b6aaa79e24fc56f39afdff6488aadeffe909f4e58f6de03f32901333263dae7
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
@@ -349,6 +349,7 @@ pin.report-receipt-diff=cd94e8aa96a61d7ee0fb9993e4a00e21d1348030880afbe8ed07b6b9
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
+pin.ready-handoff=f8b4a92b58d351615b714bdf03052420aaa79854153c5e23b7c714178fbdf531
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
 -->
 
@@ -1938,6 +1939,7 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `origin-pin-restore` | Re-establish a pinned immutable origin clone from a `kumitate-origin-pin-v1` contract's verbatim `recreate` recipe on a restored host (`--no-hardlinks` object independence, pinned-rev detach checkout, `chmod -R a-w`) and run the full proxy recompute — src resolution, term recompute, `--strict` and selftest — demonstrating the coverage proxies end-to-end on the run-15 Linux host after rounds 70–73 fail-closed on Windows | `git -C /fast/scratch/hyaku/kumitate-pin/src rev-parse HEAD` → `31c465f15669f744848bd9f5d56191c5085670f7` (a-w verified, `build/K74ExecPinRestore/recreate-transcript.txt`); `node scripts/proxy-check.mjs` → `PROXY: MATCH` exit 0 and `--strict` → `PROXY: MATCH` exit 0 (`close/proxy-check.txt`, `close/proxy-check-strict.txt`); five fail-closed arms held (sentinel seat, `w1/K74LabratFailClosed.md`); S223 grounds `--no-hardlinks` | round 74 |
 | `origin-tip-drift` | Compare the lane's pinned origin revision with the live origin in one read-only command: both HEADs, the commit count between them, and the changed-path count classified by the proxy's own frozen layer predicates; one `ORIGIN_TIP_DRIFT:` line with `IN_SYNC` (exit 0), `MOVED` (exit 1) or `FAIL-CLOSED` (exit 2), plus a `--json` object, additive to every default-mode term | `close/tip-drift.txt`; `close/proxy-selftest.txt` (132/132); `close/c2-mutants.txt` | 75 |
 | `spotcheck-adopt` | Own the corpus coverage repair the non-author closure forces every round: enumerate `corpus/lessons/round-*-verifier-spotcheck.md`, adopt one by writing the missing README map row and/or the `readme-map.json` covered entry (append-only, both halves, idempotent, pre-image rollback), and predict the next closure artifact — with the unchanged `readme-map.mjs` as the child oracle and refusals for anything outside its scope | `node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED` with identical bytes (`close/c2-idempotent.txt`); `--selftest` `SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)`; `pin.spotcheck-adopt` | round 76 |
+| `ready-handoff` | Admit an inline spawn handoff before the orchestrator takes it: the five-key `.ready` contract against the dispatch it names, with typed fail-closed refusals (absent/escaping/unsafe/malformed) and twelve policy findings (lane/round/wave agreement, band, attack share, connector cap, planner seat, unknown role, per-seat model key, seat-name shape/duplicates, `/skill:godspeed` lead, lane-root and relative-round-path rules, report-trailer resolution), one exit-bearing verdict and a `--json` body; reads only the ready file and its dispatch and writes nothing | `node scripts/ready-handoff.mjs --lane . --round 81 --wave w1` → `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0; `--selftest` → `READY_HANDOFF_SELFTEST: 31/31 pass`; frozen counter `C81_C1: HELD held=16/16`; base tree 0/16, constant-printer stub 3/16 (`.ufo/waves/round-81/controls/`) | round 81 |
 | `omp-shape-compare` | Compare the live OMP root against a `kumitate-omp-shape-v1` receipt, counting added, removed and changed names/kinds/modes without reading member contents or altering proxy scores; exit 0 IN_SYNC, 1 DRIFT, 2 fail-closed | `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` → `OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`; frozen counter `probe78-c2.mjs` → `C78_C2: HELD held=11/11`; selftest 79 cases; `MUTANTS78_C2: ALL-KILLED killed=10/10` | round 78 |
 
 *Round-77 note (capabilities; the paragraphs above stay as written).* `spotcheck-adopt` deepened v1 → v2 (`kumitate-spotcheck-adopt-v2`): the journal is published before either destination write, recovery runs on every non-selftest arm with exact `RECOVERED <target> rolled-back|complete`, a corrupt pre-image is `REFUSED_ORACLE` with the journal retained, a foreign journal is `REFUSED_JOURNAL_FOREIGN`, a symlinked destination parent is `REFUSED_PATH_ESCAPE`, the row is inserted after the last lessons row, and a finished journal is retired by rename. Evidence: `C77_C2: HELD held=13/13` at M (`.ufo/waves/round-77/close/c2-probe.txt`), selftest 26/26, mutant battery 8/8. This is a deepening, not a new row.

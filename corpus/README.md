@@ -206,10 +206,13 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/composite-score-compensability.md` | K score composite: documentation and census-finding factors both bind; the round-78 replacement harm and its repair | S230, S231; `SCORECARD.md ## Axes coverage:kimi-layer` |
 | `knowledge/two-reading-verdicts.md` | One tool, one verdict per surface: the spotcheck set and the README map as separate readings, delta-scoped `--adopt`, the k8s probe parallel-verdict source, and the folded-green failure modes | S119; `scripts/spotcheck-adopt.mjs`, `.ufo/waves/round-80/probe/probe80-c1.mjs` |
 | `knowledge/snapshot-bound-derived-scores.md` | A derived score reads a committed, hash-pinned snapshot by default with an explicit live opt-in: the Terraform lock-file source, the r80 `coverage:omp` flake, the watch table and the invisibility limit | S234; `scripts/proxy-check.mjs`, `.ufo/pins/omp-shape.json`, `.ufo/pins/origin.json` |
+| `knowledge/ready-handoff-admission.md` | The inline handoff admission gate `kumitate-ready-handoff-v1`: the five-key `.ready` contract, ready↔dispatch agreement, band/attack/connector arithmetic, the 12 policy findings, the six fail-closed refusals, and what admission does not prove | `scripts/ready-handoff.mjs`, `.ufo/waves/round-81/w1.ready`, `probe81-c1.mjs` |
+| `knowledge/self-describing-shape-receipt.md` | `kumitate-omp-shape-v2`: `captured_at` beside `entries`, age disclosure, the opt-in `--max-age` staleness gate, the v1 cutover (`--shape` refuses, `--compare` accepts), clock refusal, and why age never enters the score | `scripts/omp-census.mjs`, `.ufo/pins/omp-shape.json`, `probe81-c2.mjs` |
 | `knowledge/report-evidence-pointers.md` | A report's pointers are evidence: `POINTER_DEAD` resolution bases, `--rev` membership, absence-vs-error separation | S229; `scripts/report-receipt-diff.mjs` v4 |
 | `lessons/round-79.md` | Round-79 method: the composite K score (both factors, harm repaired), `report-receipt-diff` v4 `POINTER_DEAD`, the C2 arm-vs-contract mistake and the omp-census transient repair | LOG.md round 79; `.ufo/waves/round-79/`; S229–S231 |
 | `lessons/round-79-verifier-spotcheck.md` | Non-author round-79 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-80.md` | Two-reading verdicts and snapshot-bound scores: the C1/C2 counters, the duplicate-source catch that folded a new row into S119, the r77 label-arm attribution mistake, and the limits | `.ufo/waves/round-80/`; S119, S234 |
+| `lessons/round-80-verifier-spotcheck.md` | Non-author round-80 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 
 ## Known gaps

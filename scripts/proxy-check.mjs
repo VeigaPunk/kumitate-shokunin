@@ -49,6 +49,7 @@
  *   per section; it now counts each member once. A missing/odd `--kimi-root` is
  *   the fail-closed arm `KIMI_ROOT_NOT_A_DIR` (exit 2) — never a scored zero.
  *
+ *   Round-81 amendment: `pin.ready-handoff` joins the kumitate-gate-pins-v1 block; nothing else changes.
  *   Round-76 amendment: six additive O terms (`C1o C1o_total O_members
  *   O_findings O_bound coverage_omp`) reuse `omp-census.mjs` in process.
  *   C1o counts yes fourth cells among /^\\| O\\d+ \\|/ registry rows.
@@ -571,6 +572,7 @@ const GATE_PINS = {
   'pin.harm-matrix': 'scripts/harm-matrix.mjs', // round 74: r44-r45 harm matrix pinned (same backlog)
   'pin.routed-ledger': 'scripts/routed-ledger.mjs', // round 74: r55-66 routed-ledger instrument pinned (same backlog)
   'pin.spotcheck-adopt': 'scripts/spotcheck-adopt.mjs', // round 76: the constrained spotcheck repair client (C2)
+  'pin.ready-handoff': 'scripts/ready-handoff.mjs', // round 81: the inline handoff admission gate (C1)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

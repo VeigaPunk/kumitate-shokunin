@@ -163,11 +163,20 @@ function readShape(root) {
   return entries;
 }
 
-const SHAPE_CONTRACT = 'kumitate-omp-shape-v1';
+const SHAPE_CONTRACT = 'kumitate-omp-shape-v2';
+const LEGACY_SHAPE_CONTRACT = 'kumitate-omp-shape-v1';
+const ISO_SECOND = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/u;
 
 function validateShape(doc) {
-  if (!doc || Object.keys(doc).sort().join(',') !== 'contract,entries'
-      || doc.contract !== SHAPE_CONTRACT || !Array.isArray(doc.entries) || !doc.entries.length) {
+  const keys = doc && typeof doc === 'object' ? Object.keys(doc).sort().join(',') : '';
+  const legacy = doc && doc.contract === LEGACY_SHAPE_CONTRACT && keys === 'contract,entries';
+  const current = doc && doc.contract === SHAPE_CONTRACT && keys === 'captured_at,contract,entries'
+    && typeof doc.captured_at === 'string' && ISO_SECOND.test(doc.captured_at)
+    && !Number.isNaN(Date.parse(doc.captured_at));
+  if (!legacy && !current) {
+    throw Object.assign(new Error('invalid shape contract, captured_at or entries'), { code: 'SHAPE_INVALID' });
+  }
+  if (!Array.isArray(doc.entries) || !doc.entries.length) {
     throw Object.assign(new Error('invalid shape contract or entries'), { code: 'SHAPE_INVALID' });
   }
   let previous = null;
@@ -184,8 +193,8 @@ function validateShape(doc) {
   return doc.entries;
 }
 
-/** Read only the receipt; never follow its names into the live agent root. */
-export function shapeFromFile(file) {
+/** Read the receipt document (contract + captured_at + entries); never follows its names. */
+export function readShapeDoc(file) {
   let text;
   try { text = readFileSync(file, 'utf8'); } catch {
     throw Object.assign(new Error(`cannot read ${file}`), { code: 'SHAPE_NOT_FOUND' });
@@ -194,15 +203,28 @@ export function shapeFromFile(file) {
   try { doc = JSON.parse(text); } catch {
     throw Object.assign(new Error('malformed shape JSON'), { code: 'SHAPE_INVALID' });
   }
-  return validateShape(doc);
+  validateShape(doc);
+  return doc;
 }
 
-function snapshot(root, file, io) {
+/** Read only the entries of the receipt; never follow its names into the live agent root. */
+export function shapeFromFile(file) {
+  return readShapeDoc(file).entries;
+}
+
+/** Whole days between the receipt's capture instant and `now` (0 for the same day). */
+export function receiptAgeDays(doc, now = Date.now()) {
+  const captured = Date.parse(doc.captured_at);
+  return Math.floor((now - captured) / 86400000);
+}
+
+function snapshot(root, file, io, now = new Date()) {
   const tmp = `${file}.${randomUUID()}.tmp`;
   try {
     const entries = readShape(root);
-    validateShape({ contract: SHAPE_CONTRACT, entries });
-    const bytes = `${JSON.stringify({ contract: SHAPE_CONTRACT, entries }, null, 2)}\n`;
+    const captured_at = now.toISOString().replace(/\.\d{3}Z$/u, 'Z');
+    validateShape({ contract: SHAPE_CONTRACT, captured_at, entries });
+    const bytes = `${JSON.stringify({ contract: SHAPE_CONTRACT, captured_at, entries }, null, 2)}\n`;
     writeFileSync(tmp, bytes, { flag: 'wx', mode: 0o600 });
     renameSync(tmp, file);
     const digest = createHash('sha256').update(bytes).digest('hex');
@@ -365,10 +387,10 @@ export function censusEntries(entries, noteText) {
 // Command line
 // ---------------------------------------------------------------------------
 
-const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --compare FILE [--root DIR] | --selftest [--work DIR]';
+const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR] | --selftest [--work DIR]';
 
 function parseArgs(argv) {
-  const o = { root: null, self: DEFAULT_SELF, note: null, snapshot: null, shape: null, compare: null, selftest: false, work: null };
+  const o = { root: null, self: DEFAULT_SELF, note: null, snapshot: null, shape: null, compare: null, maxAge: null, selftest: false, work: null };
   let bindingSpecified = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -385,6 +407,11 @@ function parseArgs(argv) {
       const eq = a.indexOf('=');
       if (a.startsWith('--self=') || a.startsWith('--note=')) bindingSpecified = true;
       o[a.slice(2, eq)] = a.slice(eq + 1);
+    } else if (a === '--max-age') {
+      if (i + 1 >= argv.length) return { error: '--max-age needs a day count' };
+      o.maxAge = Number(argv[++i]);
+    } else if (a.startsWith('--max-age=')) {
+      o.maxAge = Number(a.slice('--max-age='.length));
     } else if (a === '--selftest') {
       o.selftest = true;
     } else if (a === '--work') {
@@ -402,6 +429,8 @@ function parseArgs(argv) {
   for (const key of ['snapshot', 'shape', 'compare']) {
     if (o[key] !== null && (!o[key] || o[key].startsWith('-'))) return { error: `--${key} needs a file argument` };
   }
+  if (o.maxAge !== null && (!Number.isInteger(o.maxAge) || o.maxAge < 0)) return { error: '--max-age must be a non-negative integer' };
+  if (o.maxAge !== null && o.shape === null) return { error: '--max-age is only meaningful with --shape' };
   return o;
 }
 
@@ -431,12 +460,27 @@ function runCensus(root, io, note = join(DEFAULT_SELF, 'corpus', 'knowledge', 'o
   return res.verdict === 'CLEAN' ? 0 : 1;
 }
 
-function runShape(file, io, note) {
-  let entries;
-  try { entries = shapeFromFile(file); } catch (e) {
+function runShape(file, io, note, maxAge = null) {
+  let doc;
+  try { doc = readShapeDoc(file); } catch (e) {
     io.out(e.code);
     return 2;
   }
+  if (doc.contract !== SHAPE_CONTRACT) {
+    io.out(`SHAPE_VERSION want=${SHAPE_CONTRACT} got=${doc.contract}`);
+    return 2;
+  }
+  const age = receiptAgeDays(doc);
+  if (age < 0) {
+    io.out(`SHAPE_CLOCK captured_at=${doc.captured_at} is in the future`);
+    return 2;
+  }
+  let stale = false;
+  if (maxAge !== null && age > maxAge) {
+    stale = true;
+    io.out(`SHAPE_STALE age_days=${age} max_age=${maxAge}`);
+  }
+  const entries = doc.entries;
   let noteText;
   try { noteText = readFileSync(note, 'utf8'); } catch (e) {
     io.err(`NOTE_MISSING ${note} reason=${e.code || e.message}`);
@@ -445,8 +489,8 @@ function runShape(file, io, note) {
   const res = censusEntries(entries, noteText);
   for (const f of res.findings) io.out(f);
   const binding = res.verdict === 'CLEAN' ? ` bound=${res.counts.bound}/${res.counts.declared}` : '';
-  io.out(`OMP_CENSUS: ${res.verdict} (source=snapshot entries=${res.counts.entries} findings=${res.findings.length}${binding})`);
-  return res.verdict === 'CLEAN' ? 0 : 1;
+  io.out(`OMP_CENSUS: ${res.verdict} (source=snapshot entries=${res.counts.entries} findings=${res.findings.length}${binding} captured=${doc.captured_at.slice(0, 10)} age_days=${age})`);
+  return res.verdict === 'CLEAN' && !stale ? 0 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -496,7 +540,7 @@ function selftest(work, io) {
     const code = argv.compare
       ? compareShape(argv.root, argv.compare, ioCapture)
       : argv.shape
-        ? runShape(argv.shape, ioCapture, argv.note ?? note)
+        ? runShape(argv.shape, ioCapture, argv.note ?? note, argv.maxAge)
         : runCensus(argv.root, ioCapture, argv.note ?? note);
     return { code, stdout: out.join('\n'), stderr: err.join('\n') };
   };
@@ -664,31 +708,59 @@ function selftest(work, io) {
   const receiptAgain = join(scratch, 'shape-again.json');
   ran++;
   const quiet = { out: () => {}, err: () => {} };
-  const wrote = snapshot(join(scratch, 'clean-fixture'), receipt, quiet);
+  const NOW = new Date(); NOW.setMilliseconds(0);
+  const wrote = snapshot(join(scratch, 'clean-fixture'), receipt, quiet, NOW);
   const regeneratedRoot = join(scratch, 'regenerated-root');
   materialise(regeneratedRoot, shapeFromFile(receipt));
-  const wroteAgain = snapshot(regeneratedRoot, receiptAgain, quiet);
+  const wroteAgain = snapshot(regeneratedRoot, receiptAgain, quiet, NOW);
   if (wrote !== 0 || wroteAgain !== 0
       || readFileSync(receipt, 'utf8') !== readFileSync(receiptAgain, 'utf8')
       || JSON.stringify(shapeFromFile(receipt)) !== JSON.stringify(readShape(join(scratch, 'clean-fixture')))) {
     failures.push('snapshot-roundtrip: shape or canonical bytes differ');
   } else io.out('SELFTEST ok snapshot-roundtrip');
-  check('shape-clean', { shape: receipt }, { code: 0, has: ['source=snapshot', 'bound=35/35'] });
+  check('shape-clean', { shape: receipt }, { code: 0, has: ['source=snapshot', 'bound=35/35', `captured=${NOW.toISOString().slice(0, 10)} age_days=0`] });
+  const shapeDoc = readShapeDoc(receipt);
+  if (shapeDoc.contract !== SHAPE_CONTRACT || shapeDoc.captured_at !== NOW.toISOString().replace(/\.\d{3}Z$/u, 'Z')
+      || Object.keys(shapeDoc).sort().join(',') !== 'captured_at,contract,entries') {
+    failures.push('snapshot-v2: contract/captured_at/keys are not the v2 shape');
+    ran++;
+  } else io.out('SELFTEST ok snapshot-v2-fields');
+  const legacy = join(scratch, 'legacy-v1.json');
+  writeFileSync(legacy, JSON.stringify({ contract: LEGACY_SHAPE_CONTRACT, entries: shapeFromFile(receipt) }));
+  check('shape-v1-version', { shape: legacy }, { code: 2, has: ['SHAPE_VERSION want=kumitate-omp-shape-v2 got=kumitate-omp-shape-v1'], lacks: ['OMP_CENSUS'] });
+  check('compare-accepts-v1', { compare: legacy, root: join(scratch, 'clean-fixture') },
+    { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC'] });
+  const backdated = join(scratch, 'backdated.json');
+  writeFileSync(backdated, JSON.stringify({ contract: SHAPE_CONTRACT,
+    captured_at: new Date(Date.now() - 45 * 86400000).toISOString().replace(/\.\d{3}Z$/u, 'Z'),
+    entries: shapeFromFile(receipt) }));
+  check('shape-age-disclosed', { shape: backdated }, { code: 0, has: ['age_days=45', 'OMP_CENSUS: CLEAN'] });
+  check('shape-max-age-stale', { shape: backdated, maxAge: 30 }, { code: 1, has: ['SHAPE_STALE age_days=45 max_age=30'] });
+  check('shape-max-age-pass', { shape: backdated, maxAge: 60 }, { code: 0, has: ['OMP_CENSUS: CLEAN'], lacks: ['SHAPE_STALE'] });
+  const future = join(scratch, 'future.json');
+  writeFileSync(future, JSON.stringify({ contract: SHAPE_CONTRACT,
+    captured_at: new Date(Date.now() + 2 * 86400000).toISOString().replace(/\.\d{3}Z$/u, 'Z'),
+    entries: shapeFromFile(receipt) }));
+  check('shape-clock-future', { shape: future }, { code: 2, has: ['SHAPE_CLOCK'] });
+  const noCaptured = join(scratch, 'no-captured.json');
+  writeFileSync(noCaptured, JSON.stringify({ contract: SHAPE_CONTRACT, entries: shapeFromFile(receipt) }));
+  check('shape-v2-missing-captured', { shape: noCaptured }, { code: 2, has: ['SHAPE_INVALID'] });
   const invalid = join(scratch, 'invalid.json');
   writeFileSync(invalid, '{"contract":"kumitate-omp-shape-v1"}');
   check('shape-invalid', { shape: invalid }, { code: 2, has: ['SHAPE_INVALID'] });
   check('shape-not-found', { shape: join(scratch, 'absent.json') }, { code: 2, has: ['SHAPE_NOT_FOUND'] });
   const negative = join(scratch, 'negative.json');
-  writeFileSync(negative, JSON.stringify({ contract: SHAPE_CONTRACT,
+  writeFileSync(negative, JSON.stringify({ contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z',
     entries: [...shapeFromFile(receipt), { name: 'zz-stray.txt', kind: 'file', mode: 0o644 }] }));
   check('shape-negative', { shape: negative }, { code: 1, has: ['UNLISTED zz-stray.txt', 'OMP_CENSUS: DRIFT'] });
   for (const [name, doc] of [
-    ['content-key', { contract: SHAPE_CONTRACT, entries: [{ name: 'agent.db', kind: 'file', mode: 384, content: '' }] }],
-    ['bad-kind', { contract: SHAPE_CONTRACT, entries: [{ name: 'agent.db', kind: 'fifo', mode: 384 }] }],
-    ['wrong-contract', { contract: 'kumitate-omp-shape-v0', entries: [{ name: 'agent.db', kind: 'file', mode: 384 }] }],
-    ['empty', { contract: SHAPE_CONTRACT, entries: [] }],
-    ['unsorted', { contract: SHAPE_CONTRACT, entries: [...shapeFromFile(receipt)].reverse() }],
-    ['extra-key', { contract: SHAPE_CONTRACT, entries: shapeFromFile(receipt), content: '' }],
+    ['content-key', { contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: [{ name: 'agent.db', kind: 'file', mode: 384, content: '' }] }],
+    ['bad-kind', { contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: [{ name: 'agent.db', kind: 'fifo', mode: 384 }] }],
+    ['wrong-contract', { contract: 'kumitate-omp-shape-v0', captured_at: '2025-01-01T00:00:00Z', entries: [{ name: 'agent.db', kind: 'file', mode: 384 }] }],
+    ['bad-captured', { contract: SHAPE_CONTRACT, captured_at: '2026-11-04', entries: [{ name: 'agent.db', kind: 'file', mode: 384 }] }],
+    ['empty', { contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: [] }],
+    ['unsorted', { contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: [...shapeFromFile(receipt)].reverse() }],
+    ['extra-key', { contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: shapeFromFile(receipt), content: '' }],
   ]) {
     writeFileSync(invalid, JSON.stringify(doc));
     check(`shape-${name}`, { shape: invalid }, { code: 2, has: ['SHAPE_INVALID'] });
@@ -702,7 +774,7 @@ function selftest(work, io) {
   const stableEntries = shapeFromFile(receipt)
     .filter((entry) => !/^agent\.db-(?:shm|wal|journal)$/u.test(entry.name));
   const stableReceipt = join(scratch, 'stable-shape.json');
-  writeFileSync(stableReceipt, JSON.stringify({ contract: SHAPE_CONTRACT, entries: stableEntries }));
+  writeFileSync(stableReceipt, JSON.stringify({ contract: SHAPE_CONTRACT, captured_at: '2025-01-01T00:00:00Z', entries: stableEntries }));
   for (const suffix of ['shm', 'wal', 'journal']) {
     const transientRoot = join(scratch, `compare-transient-${suffix}`);
     materialise(transientRoot, [...stableEntries,
@@ -828,7 +900,7 @@ function main(argv, io) {
   if (parsed.snapshot !== null) return snapshot(root, parsed.snapshot, io);
   if (parsed.compare !== null) return compareShape(root, parsed.compare, io);
   const note = parsed.note ?? join(parsed.self, 'corpus', 'knowledge', 'omp-agent-root.md');
-  if (parsed.shape !== null) return runShape(parsed.shape, io, note);
+  if (parsed.shape !== null) return runShape(parsed.shape, io, note, parsed.maxAge);
   return runCensus(root, io, note);
 }
 

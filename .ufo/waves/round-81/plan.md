@@ -118,3 +118,30 @@ round record.
 ONE v1 wave, 12–14 seats: ≥25 % attack (reviewer, critic, mutation-tester, sentinel), one
 connector, executors and scribes for the two instruments' fixtures/entries, scouts for the two
 surfaces. The canonical planner seat is held by the L1 (the validator rejects `planner`).
+
+## Amendment 1 (2026-11-04; append-only; written before any verdict)
+
+Disclosed after the first frozen-counter runs, before any claim verdict:
+
+1. **C1 counter fixture (arm 01).** The probe's clean fixture context did not
+   carry the `Report:` resolution sentence the tool (correctly) requires since
+   the trailer rule moved from the task text to the context; arm 01 read
+   `DRIFT REPORT_TRAILER` against a legal handoff. The fixture context now
+   carries the sentence. No arm name, expected value or tool rule changed.
+2. **C2 counter fixtures (arms 01, 02, 04, 05, 06, 07, 10).** `materialise()`
+   did not restore the receipt's permission bits, so every materialised root
+   read `changed=<n>` under `--compare`; the fixture now chmods each entry to
+   the recorded mode. No arm expectation changed.
+3. **C2 counter proxy arms (11, 12).** The probe invoked the proxy with
+   `--lane`, which the proxy does not accept (exit 64); it now uses `--self`.
+   No expectation changed.
+4. **C2 counter selftest arm (14).** The arm passed a `--work` directory that
+   did not exist; it now creates it first.
+5. **Tool defect found by arm 06:** `omp-census.mjs` `main()` called
+   `runShape(parsed.shape, io, note)` without `parsed.maxAge`, so the CLI
+   `--max-age` gate never fired (the selftest had called `runShape` directly).
+   Fixed in `main()`. This is what the frozen arm is for; recorded under the
+   round lesson `## Mistakes`.
+6. **Tool count:** `ready-handoff.mjs --selftest` is 31/31 (the plan's §C1 arm
+   16 text says 30/30 — the extra case is `lane-id-accepted`, added when the
+   lane-id rule was fixed).
