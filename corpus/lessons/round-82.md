@@ -110,3 +110,20 @@ Corrected in place — a moved surface, per the file contract — and logged her
   entry landed (`close/sources-check.txt`). Final matrix in `close/harm-matrix.txt`.
 - **Plan ordering** `PLAN_BEFORE_READY: PASS … round=82 plan=97a63012 marker=c4396021 map=CLEAN`
   (`close/plan-before-ready.txt`).
+
+## Limits (added after the wave's critic re-measured the counters)
+
+- **The stub bounds in the plan and in both counter headers describe the frozen stub fixture, not
+  every constant printer.** The critic built stronger constant printers: 7/22 for C1 (a stub whose
+  comment carries the v2 literal) and 7/13 for C2 (one line carrying every token the arms match), both
+  above the header's "at most 5" wording and both far below the predicates (22/22, 13/13). The kill
+  rule holds; the wording over-claims (`w1/K82CriticClaims.md` M2/M3).
+- **One frozen arm is satisfied by static text.** `tool-v2-contract` reads the tool's source for the v2
+  literal, so a stub that merely mentions it gains that arm; the other 21 need behaviour.
+- **The C2 counter has no arm for a future-dated compare receipt.** The mutation battery's `c8`
+  (delete the `SHAPE_CLOCK` branch on the compare path) survived 13/13 (`w1/K82ExecCensusMutate.md`);
+  the tool path is exercised by the suite, not by the counter. Round-83 candidate, never a
+  post-data arm.
+- **The rerun controls carry the post-A1.2 counter bytes** (`controls/c1-*-rerun.txt`,
+  `controls/c2-*-rerun.txt`); the frozen control receipts still name the pre-rename arm, and both sets
+  report the same held counts (0/22, 6/22, 6/13, 4/13).

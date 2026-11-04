@@ -470,6 +470,8 @@ the frozen definitions name.
 |---|---|---|---|---|
 | 81 | operability (capability acquisition `ready-handoff`; integer held 9 — terminal under `f_O`; sourced on S236) | `node .ufo/waves/round-81/probe/probe81-c1.mjs --tool <base archive>` → `C81_C1: UNMET held=0/16` exit 1 (`controls/c1-base.txt`); constant-printer control `held=3/16` (`controls/c1-stub.txt`); no instrument judged the `.ready` + dispatch pair before the orchestrator took it | at `d140f288` → `C81_C1: HELD held=16/16` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1` exit 0 (`close/handoff-admission.txt`); suite 34/34; counter `pin.ready-handoff` |
 | 81 | coverage:omp (self-describing receipt; integer held 10; sourced on S237) | `node .ufo/waves/round-81/probe/probe81-c2.mjs --tool <base archive>` → `C81_C2: UNMET held=4/15` exit 1 (`controls/c2-base.txt`, Amendment 2); stub `held=5/15` (`controls/c2-stub.txt`); the receipt carried no capture instant | at `d140f288` → `C81_C2: HELD held=15/15` exit 0 (`close/c2-probe.txt`); `--shape` reads `captured=2026-11-04 age_days=0`; `--max-age 30` on a 45-day receipt → `SHAPE_STALE` exit 1; v1 `SHAPE_VERSION` exit 2; future `SHAPE_CLOCK` exit 2; proxy still `coverage_omp=10` on a stale receipt |
+| 82 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability deepening `ready-handoff` v2; sourced on S238) | `node .ufo/waves/round-82/probe/probe82-c1.mjs --set c1 --lane <base archive>` → `C82_C1: UNMET held=0/22` exit 1 (`controls/c1-base.txt`: the v1 tool answers `unknown argument: --policy`, exit 64); constant-`READY` stub `held=6/22` (`controls/c1-stub.txt`); the gate restated the band and the role vocabulary and never bound the handoff to its dispatch | at `125287f3` → `C82_C1: HELD held=22/22` exit 0 (`close/c1-probe.txt`); this round's handoff `READY_HANDOFF: READY wave=w1 seats=14 attack=4/14 connector=1 … policy=ufo-wave-policy.json agents=none` exit 0 (`close/handoff-admission.txt`); suite 34 → 54 (`close/c1-suite.txt`); wave mutation battery 11/12 killed (`w1/K82ExecMutate.md`) |
+| 82 | coverage:omp (integer held 10; the evidence surface gains the receipt's age) | `node .ufo/waves/round-82/probe/probe82-c2.mjs --set c2 --lane <base archive>` → `C82_C2: UNMET held=6/13` exit 1 (`controls/c2-base.txt`); constant-`IN_SYNC` stub `held=4/13` (`controls/c2-stub.txt`); `--compare` printed no capture instant and `--max-age` on it was usage 64 | at `125287f3` → `C82_C2: HELD held=13/13` exit 0 (`close/c2-probe.txt`); `--compare .ufo/pins/omp-shape.json` → `… receipt_captured=2026-11-04 age_days=0` exit 0 (`close/census-shape.txt`); `--max-age 30` on a 45-day receipt → `SHAPE_STALE_RECEIPT` exit 1; v1 + bound → `SHAPE_AGE_UNKNOWN` exit 2; suite 98 → 105 (`close/c2-suite.txt`); wave mutation battery 7/8 killed (`w1/K82ExecCensusMutate.md`) |
 | 50 | operability (integer held 9 — terminal under `f_O`; one claim C1, surface: `scripts/cap-run.mjs` mount-root refusal for explicit binds and the implicit cwd bind, plus the gate-pin family; sourced on S095) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs <lane> ff40d7dcbc90aa043d7f4003976af6a99ff76642` → `GUARD_UNMET held=5/8` exit 1 (G2 `/tmp` triple, G6 `pin.bind-oracle=absent`, G7 `PROXY: DRIFT`); exposure control: child write through `--bind /tmp` left `host_marker=present` (`controls/CtlExposure-base-ff40d7d.txt`) | same command at `ab3c64e9aaaff80faf3a2c93743287e44def4084` → `BINDGUARD50: GUARD_HELD held=8/8` exit 0 (`close/G50-ab3c64e9.txt`); the first guard commit `227b9e6` read `held=6/8` (stale `pin.cap-run`) and is retained as the failing receipt; the explicit `/tmp` refusal pre-landed at `378b6e7` and G50 already read 8/8 at `6927903` (attribution limit, `close/CritCloseClaims.md` §2); auxiliary `node .ufo/waves/round-50/probe/repairs50-probe.mjs <lane> <rev> --fleet /home/vgpnk/Projects/shokunin` → `LEDGER_HELD held=8/8` exit 0 (base `held=1/8`) | `node .ufo/waves/round-50/probe/bindguard50-probe.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin <rev>`; `.ufo/waves/round-50/close/G50-*.txt`, `close/R50-*.txt`; plan `.ufo/waves/round-50/plan.md`; lesson `corpus/lessons/round-50.md` |
 | 51 | operability (capability acquisition: receipt-attest; C2 frontier entry invocation-attestation sourced on S100/S101) | A51 at base c90b9de9 → ATTEST_UNMET held=0/9; D51 → DOCTRINE_UNMET held=0/5 | A51 held=9/9 at the measured close rev fef67079 (compositional — committed FINAL reads 8/9 at 57333ead; R52-11 mined into Q44); D51 held=5/5 | .ufo/waves/round-51/{base,close,probe}; corpus/knowledge/invocation-attestation.md; report .ufo/reports/round-51/kumitate.md |
 | 52 | operability (capability deepening: receipt-attest v2, contract kumitate-receipt-attest-v2; C2 frontier entry fail-closed-clock-validation sourced on S102/S103) | A52 at base 02c01258 → ATTEST52_UNMET held=5/13 (B1 B1c B2 B2e B3 B4 B5 B5c MISS; B2c B3c B4c B4d B6 pass under v1); D52 → DOCTRINE52_UNMET (E1 entry-absent, checks=1) | ATTEST52_HELD held=13/13 at the measured close rev R1 (close/FINAL-<R1>.txt; idempotence at R2); DOCTRINE52_HELD held=5/5 at R1 | .ufo/waves/round-52/{plan.md,probe/,base/,receipts/,build/,w1/}; corpus/knowledge/fail-closed-clock-validation.md; rows S102/S103; report .ufo/reports/round-52/kumitate.md |
@@ -567,6 +569,8 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 83 pre-registration** (written by round 82, six candidates) lives at the end of this file under `## Round 83 — pre-registration`.
 
 **Round 82 — pre-registration (2026-11-04, written by round 81).** Candidates, not commitments:
 (1) **The handoff gate is advisory** — nothing fleet-side invokes `ready-handoff`; rounds 79 and 80
@@ -3887,3 +3891,20 @@ moves `coverage:omp` (`score-unchanged` ages the lane's own pinned receipt and s
 - Axes: operability 9 (terminal; the capability row `ready-handoff` deepened, window unchanged),
   coverage:omp 10 (integer held; the surface gained the receipt's age), `coverage` (retired) and the
   three layer terms unchanged and byte-consistent with the stanza; no axis harmed.
+
+## Round 83 — pre-registration (2026-11-04, written by round 82). Candidates, not commitments
+
+(1) **The gate counts spawns, the validator bands on spawns + resumes** (wave scout F1, severity H): a
+validator-accepted wave with resume lanes can be refused `BAND` at admission, and resume-lane
+instructions are unjudged. Decide: read `resumeSends` too, or declare the gate's count as the spawn
+count and stop calling it "the band". (2) **Role vocabulary is one authority gate↔policy, not
+validator↔policy** (revenger V4; scout F3): the validator hard-codes `SWARM_ROLES` and never reads
+`proposalRoles`. Either the policy becomes the validator's source or the gate stops claiming the
+policy *is* the authority. (3) **`--agents` shape**: the validator's `swarm-registry.json` is
+`{members:{…}}`, the gate wants `{agents:[{id}]}` — accept the member keys as ids or document the
+refusal (revenger V-row 7). (4) **Counter gaps**: an arm for a future-dated compare receipt (the `c8`
+mutant survived) and a stronger constant-printer bound in both headers (critic M2/M3). (5) **`ATTACK`
+names the unreachable `labrat`** and the plan's headline attack count disagreed with the gate (scout
+F4): derive the attack set from a machine-readable field or drop the dead member. (6) **`maxLanes`/256
+ceiling** absent from the gate (scout F2); `godspeed` and seat-name grammars differ from the validator
+(F5/F10); the dispatch's `schema`/`counts`/`policy` fields are never read (F11).
