@@ -125,10 +125,12 @@ on a host without it the arm's fixture is inert and the probe fails closed.
 
 ## Round shape
 
-ONE v1 wave of 13 seats under `ufo-wave-policy.json` (band 8–16), attack share 5/13 = 38 %
-(reviewer, critic, mutation-tester, labrat, sentinel), one connector seat. The L1 holds the
-canonical §3 planner seat (the validator rejects `planner`); a bounded planning data-walk rides the
-scout item.
+ONE v1 wave of 13 seats under `ufo-wave-policy.json` (band 8–16), attack share 4/13 = 31 % under
+the dispatcher's own attack set (`ready-handoff.mjs` `ATTACK` = reviewer, critic, mutation-tester:
+one reviewer, two critic seats and one mutation-tester), one connector seat, one sentinel. `labrat`
+is a probe seat the validator refuses as a swarm role (`ufo-swarm-wave.mjs` `SWARM_ROLES`), so the
+probe-aware-overfit item rides a second critic seat. The L1 holds the canonical §3 planner seat (the
+validator rejects `planner`); a bounded planning data-walk rides the scout item.
 
 ## Frontier step
 
