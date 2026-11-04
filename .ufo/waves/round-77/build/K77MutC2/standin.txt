@@ -1,0 +1,6 @@
+Stand-in command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-77/build/K77MutC2/mutants.mjs --tool /fast/scratch/hyaku/kumitate-r77/K77MutC2/mini/scripts/adopt.mjs --mutants /fast/scratch/hyaku/kumitate-r77/K77MutC2/mini-mutants.json --work /fast/scratch/hyaku/kumitate-r77/K77MutC2/work-mini
+Good journal mini-tool baseline, broken twin via single replacement, restored good bytes:
+BASELINE exit=0 signal=- timeout=false verdict=PASS
+MUTANT mini-unconditional-recovered KILLED exit=1 restored=pass bytes=ok arm=g
+{"id":"mini-unconditional-recovered","arm":"g","find":"  if (!existsSync(journal)) return;","replace":"  if (!existsSync(journal)) { console.log('RECOVERED - stale'); return; }","before":"4335fd312b5e9a08b707b18fd041c24f9b449268440bf943ecb2ed07ffd71635","mutated":"d8d7bc686984a9483788ca01d47ab6d5af59712f55940fce4fe3bd77c4e6cdf1","after":"4335fd312b5e9a08b707b18fd041c24f9b449268440bf943ecb2ed07ffd71635","mutant":{"exit":1,"signal":null,"timeout":false,"spawnError":null},"restored":{"exit":0,"timeout":false,"spawnError":null}}
+MUTANTS77_C2: ALL-KILLED killed=1/1

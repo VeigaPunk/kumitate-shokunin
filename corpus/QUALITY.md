@@ -1217,3 +1217,12 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   - **Limit.** Judges id existence and pointer agreement, not whether the quote grounds the claim (that is the closure's spot-check); append-only rows mean a superseded id stays resolvable by design.
   - **Supersedes.** None. Adds the registry half Q65/Q70 leave to receipts.
 
+
+- **Q72 — every round lesson carries a `## Counters` table, and a counter that rose without a mention is a defect (round 77).** Grounding: `considerthese/2026-10-26.md` proposal 6 ("Plot noisy counters across rounds"), mined 2026-11-04 in round 77; the observables are already computed every round (proxy findings, census entries/findings, README/spotcheck uncovered, SOURCES rows/tiers) but a rise is noticed only when a spot-check happens to look (r76's open proxy stanza was red while its report named only the map).
+  - **Who checks.** The lane L1 before the round lesson commits; the non-author closure re-derives one row of the table from its receipt.
+  - **Field.** `corpus/lessons/round-<N>.md` carries a `## Counters` table with columns `| counter | open | close | source |`; one row per named counter, each value accompanied by the command or the committed receipt path that produced it; any rise is named in the round report or `## Limits`. The table's rows are the round's own observables — no counter may enter without a command that reads it.
+  - **Command.** `sed -n '/^## Counters/,/^## /p' corpus/lessons/round-<N>.md | grep -c '^|'` must be >= 5 (header, separator, >=3 rows); every `source` cell must name an existing path or a runnable command.
+  - **Fails when.** The table is absent (rounds 68–76 carried numbers in prose only); a value has no source; a counter rises open→close and neither the report nor `## Limits` mentions it.
+  - **Shown able to fail.** Round 76: `open` proxy findings 3 and `open` README uncovered 1 are in receipts but no lesson table; the criterion makes the next round's absence a red row.
+  - **Limit.** It makes a trend visible; it does not plot, graph or threshold counters, and a counter absent from the table is out of scope. It does not replace Q70's transcript rule.
+  - **Supersedes.** None. Adds the trend half Q70 leaves to tallies.

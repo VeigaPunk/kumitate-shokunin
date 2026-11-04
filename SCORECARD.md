@@ -286,12 +286,12 @@ boundary:
 `corpus/knowledge/executable-scorecard.md`.
 
 <!-- kumitate-proxy-v1
-A=847
-C=35
+A=857
+C=37
 C1=19
 C1_total=19
-C2=183
-C2_total=183
+C2=186
+C2_total=186
 S_members=88
 S_sections=88
 R_members=92
@@ -312,7 +312,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=9a2f6e8d3bbd13e7876fd8d6c736947bc4385842419f23d7c502f5bd6cddbba4
+pin.proxy-check=4222c51934cc8d60bc392e3bf7e7b313ad16c73c649e16457beae101d01cb4dc
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=73bea81ccdb7cf27234636d9d4c84af2fc7a8a9a25c201bf42c783d7da9dc3e1
 -->
@@ -321,7 +321,8 @@ pin.anchor-truth=43c37865a5b3ea5912c5be0e1243fa222642b6be0ef6a1103ee03a287614b23
 pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f434
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
-pin.omp-census=f5f7dd6ea4b0fcfeab7fb29d57e3eb6cf87f094960465896f62fc0f6c149b102
+pin.omp-census=14fea9c1e0dd8272494038bc21dc6e81f319841a7acba9a3560508a8f74d5384
+pin.omp-shape=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
@@ -342,7 +343,7 @@ pin.report-receipt-diff=23efb0908b9ebe51f158f590c6512be59aa183e5e25f268b5e0340f7
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
-pin.spotcheck-adopt=8b32c86ee6eb1647d9912de27f1765f35b887a6043a62aea92f97424e4bfc249
+pin.spotcheck-adopt=b84343a076da277c62448bdb0bb3b18f834193c8247a13473eab4139555bba8b
 -->
 
 
@@ -350,12 +351,12 @@ pin.spotcheck-adopt=8b32c86ee6eb1647d9912de27f1765f35b887a6043a62aea92f97424e4bf
 
 | Axis | Score | Evidence pointer | Last change |
 |---|---|---|---|
-| operability | 9 | `f_O = (A+C)/(A+C+3)` with **A=10** (`scripts/cite-check.mjs`, `surface-probe.mjs`, `round-gate.mjs`, `proxy-check.mjs`, `claims-check.mjs`, `kimi-census.mjs`, `sources-check.mjs` (round 34), `anchor-truth.mjs` (round 38), `wave-census.mjs` (round 41), `gate-mutants.mjs` (round 42)) and **C=19** (`## Verifiable checklist`; items 18–19 = the gate-mutants battery and its hermetic suite) ⇒ 29/32 ≈ 0.906 ⇒ **9**. Round 42 moves the integer 8 → 9 (`f_O` 26/29 → 29/32; C1, capability `gate-mutants`). 9 is this proxy's terminal integer: `f_O < 1` for every finite A+C, so `floor(10 × f_O)` never reaches 10 and further items cannot move the integer. C counts listed items; the pass count is a separate measurement quoted with its date. Earlier readings of this cell (A=7 C=13 at round 34, A=8 C=15 at round 40, A=9 C=17 at round 41; round 34 gate-registry rows 0 → 7; round 35 distinct-identity S/R terms, mutation kills 0/2 → 2/2, checklist 9/13 → 12/13) are in `## Move log` and the round sections below | round 42 |
+| operability | 9 | `f_O = (A+C)/(A+C+3)` with **A=10** (`scripts/cite-check.mjs`, `surface-probe.mjs`, `round-gate.mjs`, `proxy-check.mjs`, `claims-check.mjs`, `kimi-census.mjs`, `sources-check.mjs` (round 34), `anchor-truth.mjs` (round 38), `wave-census.mjs` (round 41), `gate-mutants.mjs` (round 42)) and **C=19** (`## Verifiable checklist`; items 18–19 = the gate-mutants battery and its hermetic suite) ⇒ 29/32 ≈ 0.906 ⇒ **9**. Round 42 moves the integer 8 → 9 (`f_O` 26/29 → 29/32; C1, capability `gate-mutants`). 9 is this proxy's terminal integer: `f_O < 1` for every finite A+C, so `floor(10 × f_O)` never reaches 10 and further items cannot move the integer. C counts listed items; the pass count is a separate measurement quoted with its date. Earlier readings of this cell (A=7 C=13 at round 34, A=8 C=15 at round 40, A=9 C=17 at round 41; round 34 gate-registry rows 0 → 7; round 35 distinct-identity S/R terms, mutation kills 0/2 → 2/2, checklist 9/13 → 12/13) are in `## Move log` and the round sections below. Round 77 deepens the `spotcheck-adopt` capability to v2 (crash-recoverable journal, placement, path canonicalisation); at M A=857, C=37 and the integer stays 9 (terminal under `f_O`) | round 77 |
 | coverage | 10 | **Saturated, retired** — `floor(10 × 1.0 × 1.0)` = 10; C1 registry below (**19/19** — `R11` named at internals level in round 15, the last `no` cell), C2 **53/53** (`grep -c` + `find … \| wc -l`; 50/50 when the axis retired), file-level residue **201/211 ≈ 0.952** (re-measured in round 15: 196/211 pre-round, `195/211` at round 13's corpus — reconciled in `## Limits`). 10 is the frozen aggregate's **terminal** value: this axis is retired and its successors `coverage:script-layer` / `coverage:runtime-layer` are live below; the integer is kept because the frozen proxy derives and cross-checks it (`AXES_DRIFT`) | round 15 |
 | coverage:script-layer | 10 | `floor(10 × 8/8 × 88/88)` = **10** at the pinned origin `31c465f1` (round 35). Round open measured the same pin at `floor(10 × 8/8 × 86/88)` = **9**: upstream `964f443e`→`31c465f1` deleted 5 S8 members and added 2 (`S_members` 91 → 88; `S_sections` 86 counted, 5 note sections unresolved). Round 35 re-censused S8 (63 → 60 members, two new sections, departed members kept as history) and re-verified every changed member's anchors (56 fidelity seats). `C1s/C1s_total` = `yes` rows / all `S*` rows (**8/8**); `S_sections` = DISTINCT member identities the claims gate verifies in those rows' notes (since round 35); `S_members` = `ls scripts/*.mjs \| wc -l` → 70 + `find scripts -mindepth 2 -type f \| wc -l` → 18 at `31c465f1`. History: 91/91 ⇒ 10 at `964f443e` (rounds 32–34). Derived by `scripts/proxy-check.mjs` as `coverage_script`; before→after in `## Move log` | round 35 (re-census at `31c465f1`) |
 | coverage:runtime-layer | 10 | `floor(10 × 11/11 × 92/92)` = **10** — current fleet-cycle round 18 adds eight source-backed members in R3/R4/R6 to the baseline 75; denominator 92 remains 88 runtime + 4 CLI files. Require selected rows 5/6/4, strict adv=0, and global occurrence=distinct proof; commands and measured commits are recorded in the current-cycle measurement entry below. Notes: `knowledge/cost-and-profile.md`, `knowledge/runtime-support.md`, `knowledge/distill-and-l3.md` | round 18 (current fleet cycle, 2026-10-15) |
 | coverage:kimi-layer | 10 | `floor(10 × 5/5 × 53/53)` = **10** — round 42: the root child `locks/` (created by Kimi Code 2.3.0, S041) is declared in K3 in both member lists (`scripts/kimi-census.mjs` and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by ``## `~/.kimi-code/locks/` …`` in `knowledge/kimi-session-state.md`: `K_members`/`K_sections` 52 → 53, census `DRIFT (UNLISTED locks)` exit 1 → `CLEAN (members=53 checked=53 chain=8 info=4)` exit 0, root enumeration `declared=26 strays=1` → `declared=27 strays=0`; integer held (the ratio cannot show this move, the root enumeration does). Round 40: the seventh counted-live `skills/` child (`kimi-webbridge`, a real directory) moves `K_members` 51 → 52 (live count), and the new `knowledge/kimi-skills-plugins.md` section `## `~/.kimi-code/skills/kimi-webbridge`` binds it (`K_sections` 51 → 52); the census tripwire is re-pinned 6 → 7 and reads `KIMI_CENSUS: CLEAN (members=52 checked=52 chain=7 info=4)`, selftest 48/48. The heading must carry the FULL path — the bare basename `kimi-webbridge` is now owned by two members (`plugins/managed/kimi-webbridge` and `skills/kimi-webbridge`), so it binds to none and raises `K_SECTION_AMBIGUOUS`. Round 35: the pre-registered K1 registry change adds root `mcp.json` (shape-only: present as a non-directory leaf — FIFO/symlink accepted, the secret-member kind check — with a 0400 floor; never content-read, strace 0 opens), `K_members` 50 → 51, and the existing `knowledge/kimi-mcp-plane.md` heading binds it (`K_sections` 50 → 51); census `DRIFT (UNLISTED mcp.json)` → `CLEAN (members=51 …)`. Round 34: the sixth counted-live `skills/` child (`cursor-lane`) moved the live derivation 9 → 10 (`K_MEMBERS_DRIFT declared=49 computed=50` at open). Distinct-member term since round 22 | round 40 (integer); round 42 (terms); round 74 (members) | Round 74: the K2 plane gained two members on the Windows host (2026-10-29, the kimi-shokunin managed-plugin install): `plugins/installed.json.bak-pre-shokunin` (file, the pre-install manifest backup, kimi-webbridge only) and `plugins/managed/kimi-shokunin` (dir, the managed plugin bundle). Declared in both member lists (`scripts/kimi-census.mjs` MEMBERS/ENUMERABLE/FROZEN and `scripts/proxy-check.mjs` `K_MEMBER_RULES`) and bound by `## ` sections in `corpus/knowledge/kimi-skills-plugins.md`: `K_members`/`K_sections` 53 → 55, census `DRIFT (UNLISTED ×2)` exit 1 → `CLEAN (members=55 checked=55 chain=22 info=4)` exit 0, selftests 56/56 (census) and 124/124 (proxy); integer held (the ratio cannot show this move; the member counts do).
-| coverage:omp | 10 | `floor(10 × C1o/C1o_total × (O_members − O_findings)/O_members)` — **derived by `scripts/proxy-check.mjs` since round 76** (the census decision is imported, never re-implemented; registry row `O1`), and cross-checked by `AXES_DRIFT`; zero denominator → 0. Round 75 moved the value 3 → 10 (`OMP_CENSUS: DRIFT … findings=40` ⇒ `CLEAN … findings=0 bound=35/35`, `base/omp-census-base.txt`, `close/census.txt`); round 76 adds the derivation, the registry binding and the sixth stanza block — the integer stays 10 because 64/64 already saturates it. Counting command: `node scripts/proxy-check.mjs --json` → `terms.coverage_omp`; the census itself remains the member counter | round 76 |
+| coverage:omp | 10 | `floor(10 × C1o/C1o_total × (O_members − O_findings)/O_members)` — **derived by `scripts/proxy-check.mjs` since round 76** (the census decision is imported, never re-implemented; registry row `O1`), and cross-checked by `AXES_DRIFT`; zero denominator → 0. Round 75 moved the value 3 → 10 (`OMP_CENSUS: DRIFT … findings=40` ⇒ `CLEAN … findings=0 bound=35/35`, `base/omp-census-base.txt`, `close/census.txt`); round 76 adds the derivation, the registry binding and the sixth stanza block — the integer stays 10 because 64/64 already saturates it. Counting command: `node scripts/proxy-check.mjs --json` → `terms.coverage_omp`; the census itself remains the member counter. Round 77 makes the same integer **re-derivable offline** from the pinned `kumitate-omp-shape-v1` receipt (`--snapshot` / `--shape` / `--omp-shape`, `pin.omp-shape`), so a closure no longer depends on the live root; the integer stays 10 | round 77 |
 
 Why not 10 on either axis: operability now has five runnable artifacts and ten
 executed checklist items, but still no CI/schedule leg, and the probes cover
@@ -541,6 +542,8 @@ the frozen definitions name.
 | 8 | coverage | C1 14/18, C2 20/30 ⇒ 5; 11 unmapped corpus files | C2 31/31 (`lessons/round-7.md` added; 5 lesson rows re-pinned to real shas `45b4ed3`/`efe19da`/`e0f5ca7`/`e748e44`/`eca3d14`) ⇒ 7 | `grep -c '^\| \`\(knowledge\|lessons\)/' corpus/README.md` → 31; `find corpus/knowledge corpus/lessons -name '*.md' \| wc -l` → 31; `comm -23` unmapped = `README.md` only |
 | 76 | coverage:omp (derivation + registry binding) and operability (capability `spotcheck-adopt`) | 17 terms, no `coverage_omp`, no `O1` row, the axis row itself "deliberately not an `AXIS_ROWS` term"; the spotcheck repair is hand work (5th recurrence, `README_MAP` DRIFT at open) | 23 terms with six O keys derived from the imported census (`C1o=1/1 O_members=64 O_findings=0 O_bound=35 coverage_omp=10`), `O1` registry row, sixth `AXES_DRIFT` row, `--strict` MATCH; `spotcheck-adopt` adopts the r75 closure lesson (`wrote=both`) and `README_MAP: CLEAN files=182 rows=182 covered=182` | `close/proxy-check.txt`, `close/spotcheck-adopt.txt`, `close/c2-idempotent.txt`; plan `cabc7aef` |
 
+| 77 | coverage:omp (offline re-derivation from a pinned shape receipt) and operability (capability deepening `spotcheck-adopt` v2 — crash-recoverable adopt journal) | `node .ufo/waves/round-77/probe/probe77.mjs --set c1 --lane .` at the base tree → `C77_C1: UNMET held=1/12`; `--set c2` → `held=2/13`; the C1 constant printer reads `held=4/12` and the C2 printer `0/13` | `held=12/12` and `held=13/13` at M (`.ufo/waves/round-77/close/c1-probe.txt`, `close/c2-probe.txt`); receipt `5980a0c8…` replays byte-identically; `PROXY: MATCH --strict`; selftests 58/151/26; mutant batteries 6/6 and 8/8 | `.ufo/waves/round-77/{plan.md,probe,open,controls,close}`; `corpus/knowledge/crash-recoverable-two-file-adoption.md`; `corpus/lessons/round-77.md` |
+
 ## Planned
 
 **Round 76 — pre-registration (2026-11-04, written by round 75):** four candidates — the plane's registry binding, drift in the close set, the fifth spotcheck-coverage recurrence, and the kimi win32 candidate's formal retirement — recorded in `## Round 76 — pre-registration` at the end of this file.
@@ -550,6 +553,12 @@ the frozen definitions name.
 (3) **`--check` conflates unrelated map drift with an uncovered spotcheck:** it prints `uncovered=0 first=oracle` when only something else is red. Split the two readings so a green spotcheck set is readable on a red map.
 (4) **One derivation for the K plane:** `proxy-check` still re-derives the Kimi member rules because `kimi-census.mjs` exports no table (the round-76 connector's third-side note). Apply C1's own rule (import the census decision) to K, with the census's selftest arms as the guard.
 
+
+**Round 78 — pre-registration (2026-11-04, written by round 77).** Candidates, not commitments:
+(1) **`spotcheck-adopt --check` conflates unrelated map drift with an uncovered spotcheck:** it prints `uncovered=0 first=oracle` when only something else is red (round-76 candidate 3, still open). Split the two readings.
+(2) **One derivation for the K plane:** `proxy-check` still re-derives the Kimi member rules because `kimi-census.mjs` exports no table (round-76 candidate 4). Apply C1's own rule (import the census decision) to K, with the census selftest arms as the guard.
+(3) **Receipt age vs host drift:** `--shape` proves the shape at capture; a closure running months later cannot tell whether the live root moved. Evaluate a second live-vs-receipt diagnostic (count-only, non-scoring) rather than refreshing the pinned receipt.
+(4) **`c2.12`'s map constant:** the check now reads a self-consistent N; if a later round wants a freeze-facing number, add a per-round declared-N receipt instead of hardcoding.
 
 **Round 75 — pre-registration (2026-11-04, written by round 74).** Candidates, not commitments:
 (1) **omp-plane declaration (coverage:omp / operability):** `node scripts/omp-census.mjs` reads
@@ -1633,6 +1642,18 @@ candidates:
   `--tracked` CLEAN, selftest 57/57, checklist 10/10. This is an uncounted
   operability repair inside the coverage round (A=5, C=10).
 
+Round-77 limits (recorded, not hidden). (a) A `kumitate-omp-shape-v1` receipt is the shape **at
+capture**: it does not track later root drift, and the live default remains the live reading; the
+offline score is only as current as the committed receipt. (b) The adopt journal assumes one
+writer per lane: two concurrent invocations can race on one journal, and no lock is claimed. (c)
+Recovery is process-crash recovery (SIGKILL windows), not power-loss durability — no `fsync`
+contract is stated. (d) Pre-images are the whole `corpus/README.md` and `.ufo/pins/readme-map.json`;
+a credential mistakenly placed in either would be copied. (e) A journal whose manifest and stored
+bytes agree can still be written by a hostile actor: the sha256 check detects mismatched stored
+bytes, not authentication. (f) The frozen counter measures the arms it names; a mutant anchored to
+bytes the integration changed reads NO-MATCH, never a kill (the C2 battery's d/e re-anchor is
+committed).
+
 ## Retired
 
 ### `coverage` — retired at saturation, round 15
@@ -1862,6 +1883,8 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `origin-pin-restore` | Re-establish a pinned immutable origin clone from a `kumitate-origin-pin-v1` contract's verbatim `recreate` recipe on a restored host (`--no-hardlinks` object independence, pinned-rev detach checkout, `chmod -R a-w`) and run the full proxy recompute — src resolution, term recompute, `--strict` and selftest — demonstrating the coverage proxies end-to-end on the run-15 Linux host after rounds 70–73 fail-closed on Windows | `git -C /fast/scratch/hyaku/kumitate-pin/src rev-parse HEAD` → `31c465f15669f744848bd9f5d56191c5085670f7` (a-w verified, `build/K74ExecPinRestore/recreate-transcript.txt`); `node scripts/proxy-check.mjs` → `PROXY: MATCH` exit 0 and `--strict` → `PROXY: MATCH` exit 0 (`close/proxy-check.txt`, `close/proxy-check-strict.txt`); five fail-closed arms held (sentinel seat, `w1/K74LabratFailClosed.md`); S223 grounds `--no-hardlinks` | round 74 |
 | `origin-tip-drift` | Compare the lane's pinned origin revision with the live origin in one read-only command: both HEADs, the commit count between them, and the changed-path count classified by the proxy's own frozen layer predicates; one `ORIGIN_TIP_DRIFT:` line with `IN_SYNC` (exit 0), `MOVED` (exit 1) or `FAIL-CLOSED` (exit 2), plus a `--json` object, additive to every default-mode term | `close/tip-drift.txt`; `close/proxy-selftest.txt` (132/132); `close/c2-mutants.txt` | 75 |
 | `spotcheck-adopt` | Own the corpus coverage repair the non-author closure forces every round: enumerate `corpus/lessons/round-*-verifier-spotcheck.md`, adopt one by writing the missing README map row and/or the `readme-map.json` covered entry (append-only, both halves, idempotent, pre-image rollback), and predict the next closure artifact — with the unchanged `readme-map.mjs` as the child oracle and refusals for anything outside its scope | `node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED` with identical bytes (`close/c2-idempotent.txt`); `--selftest` `SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)`; `pin.spotcheck-adopt` | round 76 |
+*Round-77 note (capabilities; the paragraphs above stay as written).* `spotcheck-adopt` deepened v1 → v2 (`kumitate-spotcheck-adopt-v2`): the journal is published before either destination write, recovery runs on every non-selftest arm with exact `RECOVERED <target> rolled-back|complete`, a corrupt pre-image is `REFUSED_ORACLE` with the journal retained, a foreign journal is `REFUSED_JOURNAL_FOREIGN`, a symlinked destination parent is `REFUSED_PATH_ESCAPE`, the row is inserted after the last lessons row, and a finished journal is retired by rename. Evidence: `C77_C2: HELD held=13/13` at M (`.ufo/waves/round-77/close/c2-probe.txt`), selftest 26/26, mutant battery 8/8. This is a deepening, not a new row.
+
 *Round-48 note (capabilities; the paragraphs above stay as written).* The `counter-rerun` row is the round's C2, verified at `ce9aee5d`: the selftest passes with two mutation controls killed by their own cases, and one real AGREE run over the frozen probe at the measured commit is committed. The r45 note about unverified rows stands for `gate-mutants`, `omp-census` and `cap-spawn`.
 
 *Round-45 note (plan erratum E5).* The `gate-mutants` (round 42) and `omp-census` (round 44) rows were entered by rounds
@@ -3538,3 +3561,56 @@ superseded by its post-filing receipt commits and by the round-75 closure/base t
 report. (D3) `plan-before-ready.sh --round 76` reads `FAIL … map=DRIFT` because the plan was
 committed while `README_MAP` was red; the close is green and the plan archive stays red by design.
 (D4) plan erratum: `STANZA_UNKNOWN_KEY` → `STANZA_KEY_UNKNOWN` (A1.4).
+
+
+## Round 77 — declaration and verdicts (2026-11-04, restored Linux host; ONE v1 wave of 13 seats + the L1 planner seat)
+
+Base `a321ed8006083be1086a3b991a78d3b4c26f0be9`; scaffolding `4dc470a1` (frozen plan + v1 counter +
+open/base receipts + pre-data controls + S227); counter amendments `794704aa` (A1), `9bb6f5b2` (A2),
+`d5f91f90` (A2.4). Dispatch: one v1 wave, 13 seats (attack 6/13 = 46 %: reviewer ×2, critic,
+mutation-tester ×2, sentinel; connector 1; executors 2; scribes 2; scouts 2) under
+`ufo-wave-policy.json` band 8–16; the canonical planner seat is held by the L1 (the validator
+rejects `planner` as a swarm role). All 13 settled, 0 dead (`w1-results.json`, 13 reports).
+
+| claim | axis | instrument |
+|---|---|---|
+| C1 | coverage:omp (evidence re-derivability; integer already 10) | `scripts/omp-census.mjs --snapshot/--shape`, `scripts/proxy-check.mjs --omp-shape`, `.ufo/pins/omp-shape.json`, `pin.omp-shape`; frozen counter 12 checks |
+| C2 | operability (capability deepening; integer held at 9) | `scripts/spotcheck-adopt.mjs` v2 adopt journal; frozen counter 13 checks |
+
+**C1 — coverage:omp: the integer stops depending on the live root.** Before at the base tree:
+`omp-census --snapshot/--shape` and `proxy-check --omp-shape` are usage 64; the counter reads
+`held=1/12` (`controls/c77-c1-base.txt`). After, at M: the committed receipt `5980a0c8…` (64
+entries) equals the independent open lstat receipt and replays byte-identically from a materialised
+root; `--shape` reads `OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)`;
+`--omp-shape` reads the six O terms `1/1 64/0/35 10` with `source=snapshot`; a trimmed 63-entry
+receipt follows the receipt (constant printers cannot); a stray member and a widened `agent.db`
+mode read `O_findings=1 coverage_omp=9`; malformed/absent/content-key receipts, a malformed proxy
+receipt and `--omp-shape`+`--omp-root` fail closed; a zeroed `pin.omp-shape` reads
+`GATE_PIN_DRIFT`; `--strict` → `PROXY: MATCH` (`close/c1-probe.txt`, `close/c1-json.txt`,
+`close/proxy-check.txt`). Selftest 58 cases; mutant battery `MUTANTS77_C1: ALL-KILLED killed=6/6`.
+
+**C2 — operability: adopt is crash-recoverable.** Before at the base tree: no journal surface, the
+counter reads `held=2/13` (only the two trivial negatives); the live map was red (the 6th
+spotcheck recurrence). After, at M: three real SIGKILL windows (journal / row / pin) converge with
+exactly one `RECOVERED <target> rolled-back|complete` line and byte-exact pre-images or unchanged
+post-bytes; a corrupt pre-image is `REFUSED_ORACLE` with destinations and journal retained; a
+foreign journal is `REFUSED_JOURNAL_FOREIGN`; a symlinked destination parent is
+`REFUSED_PATH_ESCAPE` (the sentinel's confirmed outside-lane write, now refused); recovery runs
+before `--predict`; the adopted row is adjacent to the last lessons row and the fixture oracle is
+CLEAN; the lane map reads `files=186 rows=186 covered=186` (`close/c2-probe.txt`,
+`close/spotcheck-check.txt`, `close/readme-map.txt`). Selftest 26/26; mutant battery 8/8
+(`close/mutants77-c2.*`). The recurrence repair itself landed in the scaffolding commit so the
+freeze's map arm is GREEN.
+
+- Same-commit re-measure: A 847 → 857, C 35 → 37 (two checklist items), C2/C2_total 183 → 186 (the
+  round's lesson + knowledge entry), re-pins `pin.omp-census` `f5f7dd6e…` → `14fea9c1…`,
+  `pin.proxy-check` `9a2f6e8d…` → `4222c519…`, `pin.spotcheck-adopt` `8b32c86e…` → `b84343a0…`,
+  new `pin.omp-shape=5980a0c8…`.
+- Axes: coverage:omp 10 (now offline-re-derivable), operability 9 (terminal; capability deepened),
+  coverage (retired) held, layer terms unchanged and byte-consistent; no axis harmed.
+- Routed repairs (not claims): the 6th spotcheck recurrence + the pin's lost final newline (r76
+  D4); the symlink-parent write sink; the cleanup half-journal window; the r76 FREEZE-FIX 6
+  disposition receipt; the r76 carried-reject count corrected to 155 rows / 161 lines / 70
+  entries; R75 D4's why-not recorded in the lesson.
+- SOURCES 165 → 166 (S227 tier A, capture pinned, `queued` → `mined` in the work commit); census
+  start/end exit 0 (six carried W04).

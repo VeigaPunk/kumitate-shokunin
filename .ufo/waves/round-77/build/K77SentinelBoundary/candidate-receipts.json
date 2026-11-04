@@ -1,0 +1,634 @@
+{
+  "base_revision": "4dc470a131e10900fdd456b6b68d7ba27151d9d2",
+  "candidate_sha256": {
+    "omp-census.mjs": "ebedb1f7df89f1538e6c73861692a2c534a0c2461abf3d7126805b91d693f41f",
+    "proxy-check.mjs": "66c04420057d5a404af3df4594fe06602c1b96554f91230f436d2113adcb4109",
+    "spotcheck-adopt.mjs": "1f1f4a0ffafb6f4abeee2188a1deb38575f042b3b8221abccf71bbbf109016e5"
+  },
+  "runs": [
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-outside.json",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "OMP_SNAPSHOT: WROTE entries=1 sha256=9ab29124f1a37bd3416a85d0da07e9572a5d71137b618d6bf16daba923d98bc2 path=/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-outside.json\n",
+      "stderr": "",
+      "side_effect": {
+        "dest": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-outside.json",
+        "exists": true,
+        "symlink": false,
+        "regular": true,
+        "external_symlink_target": "ORIGINAL",
+        "temporary_files": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "../candidate-dotdot.json",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "OMP_SNAPSHOT: WROTE entries=1 sha256=9ab29124f1a37bd3416a85d0da07e9572a5d71137b618d6bf16daba923d98bc2 path=../candidate-dotdot.json\n",
+      "stderr": "",
+      "side_effect": {
+        "dest": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/../candidate-dotdot.json",
+        "exists": true,
+        "symlink": false,
+        "regular": true,
+        "external_symlink_target": "ORIGINAL",
+        "temporary_files": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/snapshot-link",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "OMP_SNAPSHOT: WROTE entries=1 sha256=9ab29124f1a37bd3416a85d0da07e9572a5d71137b618d6bf16daba923d98bc2 path=/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/snapshot-link\n",
+      "stderr": "",
+      "side_effect": {
+        "dest": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/snapshot-link",
+        "exists": true,
+        "symlink": false,
+        "regular": true,
+        "external_symlink_target": "ORIGINAL",
+        "temporary_files": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "OMP_SNAPSHOT: WROTE entries=1 sha256=9ab29124f1a37bd3416a85d0da07e9572a5d71137b618d6bf16daba923d98bc2 path=/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo\n",
+      "stderr": "",
+      "side_effect": {
+        "dest": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo",
+        "exists": true,
+        "symlink": false,
+        "regular": true,
+        "external_symlink_target": "ORIGINAL",
+        "temporary_files": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/existing-directory",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "",
+      "stderr": "OMP_SNAPSHOT: ERROR reason=EISDIR\n",
+      "side_effect": {
+        "dest": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/existing-directory",
+        "exists": true,
+        "symlink": false,
+        "regular": false,
+        "external_symlink_target": "ORIGINAL",
+        "temporary_files": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": "TIMEOUT",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/huge-shape.json"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "SHAPE_INVALID\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/missing-shape.json"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "SHAPE_NOT_FOUND\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-external-manifest",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true,
+        "victim": "UNCHANGED"
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-foreign-pre-fifo",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_JOURNAL_FOREIGN\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true,
+        "victim": null
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-local-pre-fifo",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": "TIMEOUT",
+      "stdout": "",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true,
+        "victim": null
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-traversal-looking",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": false,
+        "victim": null
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-journal-symlink",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": "",
+      "side_effect": {
+        "external_journal_retained": false
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-pin-parent",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-77-verifier-spotcheck.md wrote=both\nREADME_MAP: CLEAN files=2 rows=2 covered=2\n",
+      "stderr": "",
+      "side_effect": {
+        "outside_pin_changed": true
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-0",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": -9,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-0",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-0",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-1",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": -9,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-1",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-1",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-2",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": -9,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-2",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-2",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-3",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": -9,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-3",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-race-3",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-pre-external-file",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "RECOVERED corpus/lessons/round-77-verifier-spotcheck.md rolled-back\nSPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=corpus/lessons/round-77-verifier-spotcheck.md\n",
+      "stderr": "",
+      "side_effect": {
+        "readme_equals_external_preimage": true,
+        "external_unchanged": true,
+        "journal_retained": false
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-journal-stage-outside",
+        "--adopt",
+        "corpus/lessons/round-77-verifier-spotcheck.md"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": -9,
+      "stdout": "",
+      "stderr": "",
+      "side_effect": {
+        "outside_files": [
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f",
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/README.pre",
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/readme-map.pre",
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/manifest.json"
+        ],
+        "modes": {
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/README.pre": "0o644",
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/readme-map.pre": "0o644",
+          "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/outside-journal-stage/e31c909b-36ea-41d6-b318-de10cca9404f/manifest.json": "0o644"
+        }
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/proxy-check.mjs",
+        "--omp-shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo",
+        "--json"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": "TIMEOUT",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/proxy-check.mjs",
+        "--omp-shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/huge-shape.json",
+        "--json"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": 2,\n  \"self\": \"/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane\",\n  \"scorecard\": \"/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/SCORECARD.md\",\n  \"src\": null,\n  \"pin\": null,\n  \"srcRev\": null,\n  \"kimiRoot\": \"/home/vgpnk/.kimi-code\",\n  \"strict\": false,\n  \"terms\": {},\n  \"findings\": [\n    {\n      \"severity\": \"error\",\n      \"kind\": \"OMP_SHAPE_INVALID\",\n      \"detail\": \"malformed shape JSON\"\n    }\n  ],\n  \"errors\": 1,\n  \"warnings\": 0,\n  \"durationMs\": 15\n}\n",
+      "stderr": "proxy-check: fail-closed \u2014 OMP_SHAPE_INVALID: malformed shape JSON\n"
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/proxy-check.mjs",
+        "--omp-shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/missing-shape.json",
+        "--json"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "{\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"source\": \"snapshot\",\n  \"ok\": false,\n  \"verdict\": \"FAIL-CLOSED\",\n  \"exitCode\": 2,\n  \"self\": \"/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane\",\n  \"scorecard\": \"/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/SCORECARD.md\",\n  \"src\": null,\n  \"pin\": null,\n  \"srcRev\": null,\n  \"kimiRoot\": \"/home/vgpnk/.kimi-code\",\n  \"strict\": false,\n  \"terms\": {},\n  \"findings\": [\n    {\n      \"severity\": \"error\",\n      \"kind\": \"OMP_SHAPE_NOT_FOUND\",\n      \"detail\": \"cannot read /fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/missing-shape.json\"\n    }\n  ],\n  \"errors\": 1,\n  \"warnings\": 0,\n  \"durationMs\": 0\n}\n",
+      "stderr": "proxy-check: fail-closed \u2014 OMP_SHAPE_NOT_FOUND: cannot read /fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/missing-shape.json\n"
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-outside.json",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 64,
+      "stdout": "",
+      "stderr": "omp-census: incompatible modes\nusage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]\n"
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 1,
+      "stdout": "INFO RULES.md absent\nINFO agents absent\nINFO blobs absent\nINFO cache absent\nINFO config.yml absent\nINFO custom-session-files absent\nINFO history.db absent\nINFO hooks absent\nINFO kimi-device-id absent\nINFO last-changelog-version absent\nINFO lsp.json absent\nINFO mcp.json.rea.backup absent\nINFO models.db absent\nINFO models.yml absent\nINFO predict absent\nINFO sessions absent\nINFO skill-descriptions.db absent\nINFO terminal-sessions absent\nINFO themes absent\nINFO tools absent\nINFO commands absent\nINFO prompts absent\nINFO memories absent\nINFO extensions absent\nINFO chain agent-pre-restore has no generation\nINFO chain agent-recovered has no generation\nINFO chain history-corrupt has no generation\nINFO chain agent-corrupt has no generation\nINFO chain mcp-pre-disable has no generation\nINFO chain mcp-rea-backup-recovery has no generation\nINFO chain config-pre has no generation\nINFO chain agent-pre-named has no generation\nINFO chain models-corrupt has no generation\nKIND mcp.json want=file got=other\nOMP_CENSUS: DRIFT (root=/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/shape-root entries=2 findings=1)\n",
+      "stderr": "",
+      "race_final_0": {
+        "readme": "# Corpus\n\n## Coverage map\n\n| `knowledge/base.md` | Base | fixture |\n\n## Known gaps\n\n- none\n",
+        "pin": "{\"version\": 2, \"covered\": [\"knowledge/base.md\"]}\n",
+        "journals": []
+      },
+      "race_final_1": {
+        "readme": "# Corpus\n\n## Coverage map\n\n| `knowledge/base.md` | Base | fixture |\n\n## Known gaps\n\n- none\n",
+        "pin": "{\"version\": 2, \"covered\": [\"knowledge/base.md\"]}\n",
+        "journals": []
+      },
+      "race_final_2": {
+        "readme": "# Corpus\n\n## Coverage map\n\n| `knowledge/base.md` | Base | fixture |\n\n## Known gaps\n\n- none\n",
+        "pin": "{\"version\": 2, \"covered\": [\"knowledge/base.md\"]}\n",
+        "journals": []
+      },
+      "race_final_3": {
+        "readme": "# Corpus\n\n## Coverage map\n\n| `knowledge/base.md` | Base | fixture |\n\n## Known gaps\n\n- none\n",
+        "pin": "{\"version\": 2, \"covered\": [\"knowledge/base.md\"]}\n",
+        "journals": []
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-invalid-parent-destination",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-invalid-preimage-traversal",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/spotcheck-adopt.mjs",
+        "--lane",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/candidate-invalid-target-outside",
+        "--check"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 2,
+      "stdout": "REFUSED_ORACLE\n",
+      "stderr": "",
+      "side_effect": {
+        "pair_unchanged": true,
+        "journal_retained": true
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--snapshot",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/dev-full-alias",
+        "--root",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/base-foreign/corpus/knowledge"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": 0,
+      "stdout": "OMP_SNAPSHOT: WROTE entries=1 sha256=9f3dbefd8f523673ce31d0a33a3af48f0a66a59bff8e82fdea68e10d7940fef0 path=/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/dev-full-alias\n",
+      "stderr": "",
+      "side_effect": {
+        "scratch_alias_replaced": true
+      }
+    },
+    {
+      "command": [
+        "node",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane/scripts/omp-census.mjs",
+        "--shape",
+        "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/fifo"
+      ],
+      "cwd": "/fast/scratch/hyaku/kumitate-r77/K77SentinelBoundary/lane",
+      "exit": "TIMEOUT",
+      "stdout": "",
+      "stderr": "",
+      "instrument_sha256": "45bbb62aad19d2aa8358e76c17508b9399e02dd490095ae24bf6da4a7fa77523"
+    }
+  ],
+  "latest_census_sha256": "45bbb62aad19d2aa8358e76c17508b9399e02dd490095ae24bf6da4a7fa77523",
+  "census_update": "Only selftest writer-roundtrip materialisation changed; diff observed with diff -u."
+}

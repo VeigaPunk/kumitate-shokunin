@@ -515,7 +515,7 @@ function c2Checks(lane, work) {
     }
     const map = run(process.execPath, [join(lane, 'scripts/readme-map.mjs')]);
     const ml = map.stdout.trim().split('\n').find((l) => l.startsWith('README_MAP:')) || '';
-    if (map.status !== 0 || ml !== 'README_MAP: CLEAN files=184 rows=184 covered=184') {
+    if (map.status !== 0 || !/^README_MAP: CLEAN files=(\d+) rows=\1 covered=\1$/.test(ml)) {
       return fail('c2.12-placement-and-lane-map', `lane readme-map exit=${map.status} ${JSON.stringify(ml)}`, m);
     }
     pass('c2.12-placement-and-lane-map', `row adjacent at ${row + 1}; fixture oracle CLEAN; ${ml}`, m);

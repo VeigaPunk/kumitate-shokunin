@@ -1,0 +1,1 @@
+{"mutants":[{"id":"mini-unconditional-recovered","arm":"g","defect":"RECOVERED line without a journal","find":"  if (!existsSync(journal)) return;","replace":"  if (!existsSync(journal)) { console.log('RECOVERED - stale'); return; }"}]}

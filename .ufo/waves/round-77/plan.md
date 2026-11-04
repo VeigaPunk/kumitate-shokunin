@@ -269,3 +269,8 @@ No predicate sentence, target, axis arithmetic or kill rule *scope* was narrowed
   the last *prior* lessons row. The integrated clone then reads `C77_C2: HELD held=13/13`; the
   pre-fix integrated reading was 12/13 with only this arm red (`controls/` carries the counter
   receipts). No other check changed.
+- **A2.5 (before data)** — `c2.12`'s lane-map arm froze `files=184 rows=184 covered=184`, but the
+  round's own two corpus files (the lesson and the knowledge entry) legitimately take the live map
+  to 186. The arm now requires a self-consistent `files=N rows=N covered=N` (N from the live tree)
+  and the fixture-oracle CLEAN; the freeze number stays in the plan as the *before* reading. This is
+  the Q22-class "a count is a state, not a constant" correction, disclosed before any verdict.

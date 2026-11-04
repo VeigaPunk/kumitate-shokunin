@@ -1,0 +1,288 @@
+FROZEN_REVISION 4dc470a131e10900fdd456b6b68d7ba27151d9d2
+# /fast/scratch/hyaku/kumitate-r77/K77ConnectorOverlap/lane/scripts/
+## cite-sources.mjs#6099
+ 108:
+*109:    writeFileSync(readme, '| `knowledge/failure-recovery-replay.md` | Temporal replay (S121) |\n');
+ 110:    r = evaluate(readFileSync(readme, 'utf8'), readFileSync(sources, 'utf8'));
+ 111:    check('ghost-s121', r.code === 1 && r.line.includes('first=S121'), r.line);
+ 112:
+## inline-dispatch-evidence.mjs#99B1
+ 103:    if (probe.status !== 0) return { error: `REV_UNREADABLE rev=${rev}` };
+*104:    const hash = probe.stdout.trim(); // resolved once: a moving branch name never changes the snapshot mid-run
+ 105:    return {
+ 106:      read(rel) {
+ 107:        const r = spawnSync('git', ['-C', abs, 'show', `${hash}:${rel}`], { maxBuffer: 256 * 1024 * 1024 });
+## make-dispatch-actual.mjs#AA2D
+ 41:import { spawnSync } from 'node:child_process';
+*42:import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from 'node:fs';
+ 43:import { tmpdir } from 'node:os';
+ 44:import { dirname, join, resolve } from 'node:path';
+ 45:import { fileURLToPath } from 'node:url';
+...
+ 385:  writeFileSync(tmp, text);
+*386:  renameSync(tmp, path);
+ 387:}
+ 388:
+ 389:function deriveContext(outDir) {
+## omp-census.mjs#B5F9
+ 92:export const CHAIN_FAMILIES = [
+*93:  { id: 'agent-pre-restore', owner: 'agent.db', re: /^agent\.db\.pre-restore-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db snapshot taken by the operator before a restore (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
+*94:  { id: 'agent-recovered', owner: 'agent.db', re: /^agent\.db\.recovered-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db rebuilt by the operator with sqlite3 .recover (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
+ 95:  { id: 'history-corrupt', owner: 'history.db', re: /^history\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'history.db quarantined after a corruption, epoch ms + uuid' }, // source: S054 (sqlite.ts:193, chmod 0o600 at :197-199)
+*96:  { id: 'agent-corrupt', owner: 'agent.db', re: /^agent\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'agent.db quarantined after a corruption, epoch ms + uuid' }, // source: S054 (sqlite.ts:193) + S055 (recoverCorruption for agent.db)
+ 97:  { id: 'mcp-pre-disable', owner: 'mcp.json', re: /^mcp\.json\.pre-disable-\d{8}T\d{4}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copy of mcp.json (not an OMP writer)' }, // source: S061 (fleet lane-addendum.md:82-84)
+*98:  { id: 'mcp-rea-backup-recovery', owner: 'mcp.json.rea.backup', re: /^mcp\.json\.rea\.backup\.[0-9a-f]{64}\.recovery$/, kind: 'file', mode: 0o600, note: 'REA backup recovery copy, 64-hex digest' }, // source: S057 (SetupRecoveryBackup.js:36)
+ 99:  { id: 'config-pre', owner: 'config.yml', re: /^config\.yml\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the harness config' }, // source: S225
+*100:  { id: 'agent-pre-named', owner: 'agent.db', re: /^agent\.db\.pre-[a-z0-9][a-z0-9-]*-20\d{6}$/, kind: 'file', mode: 0o600, note: 'operator pre-edit copies of the credentials/settings database' }, // source: S225; UTC restore/recovered forms do not match
+ 101:  { id: 'models-corrupt', owner: 'models.db', re: /^models\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'generic SQLite quarantine template applied to the model-cache store' }, // source: S054; live artifact corroborates; per-store opt-in not located
+ 102:];
+ 103:
+...
+ 326:  { name: 'mcp.json.rea.backup', kind: 'file', mode: 0o600 },
+*327:  { name: 'mcp.json.rea.backup.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.recovery', kind: 'file', mode: 0o600 },
+ 328:  { name: 'models.db', kind: 'file', mode: 0o644 },
+ 329:];
+ 330:
+...
+ 411:    { code: 0, has: ['OMP_CENSUS: CLEAN'] });
+*412:  fixtureCase('chain-generation-fresh-digest', (l) => [...l, { name: 'mcp.json.rea.backup.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.recovery', kind: 'file', mode: 0o600 }],
+ 413:    { code: 0, has: ['OMP_CENSUS: CLEAN'] });
+ 414:
+ 415:  // Rule: chain family kind and permission ceiling.
+## spotcheck-adopt.mjs#85D9
+ 10:import { spawnSync } from 'node:child_process';
+*11:import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+ 12:import { dirname, join, resolve } from 'node:path';
+ 13:import { tmpdir } from 'node:os';
+ 14:import { fileURLToPath } from 'node:url';
+...
+ 59:    writeFileSync(temp, bytes, { flag: 'wx', mode: lstatSync(path).mode & 0o777 });
+*60:    renameSync(temp, path);
+ 61:  } finally { rmSync(temp, { force: true }); }
+ 62:}
+ 63:function evaluate(lane, arm, value) {
+[/fast/scratch/hyaku/kumitate-r77/K77ConnectorOverlap/lane/scripts/spotcheck-adopt.mjs#85D9]
+1:#!/usr/bin/env node
+2:/**
+3: * kumitate-spotcheck-adopt-v1 — append-only non-author spotcheck adoption.
+4: * The unchanged readme-map child owns all map verdicts; its findings select
+5: * the missing sides. Stage complete files beside their destinations, rename,
+6: * and restore original bytes on any caught failure, including oracle refusal.
+7: * Each rename is atomic, NOT a cross-file transaction: SIGKILL between renames
+8: * can leave a repairable half-state (neither individual file is ever partial).
+9: */
+10:import { spawnSync } from 'node:child_process';
+11:import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+12:import { dirname, join, resolve } from 'node:path';
+13:import { tmpdir } from 'node:os';
+14:import { fileURLToPath } from 'node:url';
+15:import { createHash, randomUUID } from 'node:crypto';
+16:
+17:const SELF = fileURLToPath(import.meta.url);
+18:const DEFAULT_LANE = resolve(dirname(SELF), '..');
+19:const NAME = /^round-[0-9]+-verifier-spotcheck\.md$/;
+20:const refuse = () => ({ exit: 2, lines: ['REFUSED_ORACLE'] });
+21:function oracle(lane) {
+22:  const r = spawnSync(process.execPath, [join(lane, 'scripts/readme-map.mjs'),
+23:    '--registry', join(lane, '.ufo/pins/readme-map.json'), '--readme', join(lane, 'corpus/README.md'),
+24:    '--corpus', join(lane, 'corpus/knowledge'), '--corpus', join(lane, 'corpus/lessons')], { encoding: 'utf8', cwd: lane });
+25:  const text = r.stdout || '';
+26:  const clean = text.trim().match(/^README_MAP: CLEAN files=\d+ rows=\d+ covered=\d+$/);
+27:  const findings = [...text.matchAll(/(?:README_MAP: note |first=)([^\r\n]+)/g)].map(m => m[1]);
+28:  return { clean: r.status === 0 && !!clean, line: text.trim(), findings,
+29:    valid: r.status === 0 ? !!clean : r.status === 1 && /^README_MAP: DRIFT /m.test(text) };
+30:}
+31:function missing(result, key) {
+32:  return { row: result.findings.includes(`uncovered:${key}`), pin: result.findings.includes(`unpinned:${key}`) };
+33:}
+34:function appendPin(raw, key) {
+35:  // Preserve every existing byte, including existing entries and indentation.
+36:  // Refuse ambiguous property spellings rather than guessing an insertion site.
+37:  const matches = [...raw.matchAll(/"covered"\s*:\s*\[/g)];
+38:  if (matches.length !== 1) throw new Error('ambiguous covered array');
+39:  const start = matches[0].index + matches[0][0].length;
+40:  let string = false, escaped = false, end = start;
+41:  for (; end < raw.length; end++) {
+42:    const c = raw[end];
+43:    if (escaped) { escaped = false; continue; }
+44:    if (string && c === '\\') { escaped = true; continue; }
+45:    if (c === '"') { string = !string; continue; }
+46:    if (!string && c === ']') break;
+47:  }
+48:  const body = raw.slice(start, end);
+49:  const boundary = start + body.trimEnd().length;
+50:  const addition = `${body.trim() ? ',' : ''}\n  ${JSON.stringify(key)}`;
+51:  const next = raw.slice(0, boundary) + addition + raw.slice(boundary);
+52:  const doc = JSON.parse(next);
+53:  if (!doc.covered.includes(key)) throw new Error('insertion failed');
+54:  return next;
+55:}
+56:function replaceAtomic(path, bytes) {
+57:  const temp = `${path}.spotcheck-${randomUUID()}`;
+58:  try {
+59:    writeFileSync(temp, bytes, { flag: 'wx', mode: lstatSync(path).mode & 0o777 });
+60:    renameSync(temp, path);
+61:  } finally { rmSync(temp, { force: true }); }
+62:}
+63:function evaluate(lane, arm, value) {
+64:  let path, key;
+65:  if (arm === '--adopt') {
+66:    if (!value.startsWith('corpus/lessons/') || value.slice('corpus/lessons/'.length).includes('/'))
+67:      return { exit: 2, lines: ['REFUSED_OUT_OF_SCOPE'] };
+68:    if (!NAME.test(value.slice('corpus/lessons/'.length)))
+69:      return { exit: 2, lines: ['REFUSED_NOT_SPOTCHECK'] };
+70:    path = value; key = path.slice('corpus/'.length);
+71:    try {
+72:      const full = join(lane, path);
+73:      if (!lstatSync(full).isFile() || realpathSync(dirname(full)) !== join(realpathSync(lane), 'corpus/lessons'))
+74:        return { exit: 2, lines: ['REFUSED_OUT_OF_SCOPE'] };
+75:    } catch (e) {
+76:      return { exit: 2, lines: [e.code === 'ENOENT' ? 'REFUSED_ABSENT' : 'REFUSED_ORACLE'] };
+77:    }
+78:  }
+79:  if (arm === '--predict') {
+80:    path = `corpus/lessons/round-${value}-verifier-spotcheck.md`; key = path.slice('corpus/'.length);
+81:    try { lstatSync(join(lane, path)); }
+82:    catch (e) { return e.code === 'ENOENT' ? { exit: 0, lines: [`SPOTCHECK_PREDICT: PENDING ${path}`] } : refuse(); }
+83:  }
+84:  const result = oracle(lane);
+85:  if (!result.valid || result.findings.some(f => /^(format-unmapped|duplicate-row):/.test(f))) return refuse();
+86:  if (arm === '--check') {
+87:    const paths = readdirSync(join(lane, 'corpus/lessons')).filter(n => NAME.test(n)).sort().map(n => `corpus/lessons/${n}`);
+88:    const uncovered = paths.filter(p => { const m = missing(result, p.slice(7)); return m.row || m.pin; });
+89:    return { exit: result.clean ? 0 : 1, lines: [result.clean
+90:      ? `SPOTCHECK_MAP: CLEAN spotchecks=${paths.length} uncovered=0`
+91:      : `SPOTCHECK_MAP: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0] || 'oracle'}`] };
+92:  }
+93:  const m = missing(result, key);
+94:  if (arm === '--predict') {
+95:    const covered = !m.row && !m.pin && lstatSync(join(lane, path)).isFile();
+96:    return { exit: covered ? 0 : 1, lines: [`SPOTCHECK_PREDICT: ${covered ? 'COVERED' : 'UNCOVERED'} ${path}`] };
+97:  }
+98:  if (!m.row && !m.pin) return { exit: 0, lines: [`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${path}`] };
+99:  const readme = join(lane, 'corpus/README.md'), pin = join(lane, '.ufo/pins/readme-map.json');
+100:  const originals = new Map([[readme, readFileSync(readme)], [pin, readFileSync(pin)]]);
+101:  const changed = [];
+102:  try {
+103:    const writes = [];
+104:    if (m.row) {
+105:      const raw = originals.get(readme).toString('utf8');
+106:      writes.push([readme, `${raw}${raw.endsWith('\n') ? '' : '\n'}| \`${key}\` | Non-author round-${value.match(/round-([0-9]+)/)[1]} verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |\n`]);
+107:    }
+108:    if (m.pin) writes.push([pin, appendPin(originals.get(pin).toString('utf8'), key)]);
+109:    for (const [file, bytes] of writes) { replaceAtomic(file, bytes); changed.push(file); }
+110:    const after = oracle(lane);
+111:    if (!after.clean) throw new Error('oracle refused');
+112:    return { exit: 0, lines: [`SPOTCHECK_ADOPT: ADOPTED ${path} wrote=${m.row && m.pin ? 'both' : m.row ? 'row' : 'pin'}`, after.line] };
+113:  } catch {
+114:    for (const file of changed.reverse()) replaceAtomic(file, originals.get(file));
+115:    return refuse();
+116:  }
+117:}
+118:
+119:function selftest(lane) {
+120:  const root = mkdtempSync(join(tmpdir(), 'spotcheck-adopt-st-'));
+121:  let passed = 0, total = 0;
+122:  const target = 'corpus/lessons/round-75-verifier-spotcheck.md';
+123:  const key = target.slice(7);
+124:  const clean = 'README_MAP: CLEAN files=1 rows=1 covered=1';
+125:  function fixture(name, row = false, pin = false, artifact = true) {
+126:    const dir = join(root, name);
+127:    for (const child of ['scripts', 'corpus/knowledge', 'corpus/lessons', '.ufo/pins']) mkdirSync(join(dir, child), { recursive: true });
+128:    copyFileSync(join(lane, 'scripts/readme-map.mjs'), join(dir, 'scripts/readme-map.mjs'));
+129:    // A baseline file keeps pending/absent fixtures within the oracle's nonempty contract.
+130:    if (!artifact) writeFileSync(join(dir, 'corpus/knowledge/base.md'), '# Base\n');
+131:    else writeFileSync(join(dir, target), '# Spotcheck\n');
+132:    writeFileSync(join(dir, 'corpus/README.md'), '# Corpus\n' + (!artifact ? '| `knowledge/base.md` | Base | fixture |\n' : row ? `| \`${key}\` | Spotcheck | fixture |\n` : ''));
+133:    writeFileSync(join(dir, '.ufo/pins/readme-map.json'), JSON.stringify({ version: 2, covered: !artifact ? ['knowledge/base.md'] : pin ? [key] : [] }, null, 2) + '\n');
+134:    return dir;
+135:  }
+136:  const hash = dir => ['corpus/README.md', '.ufo/pins/readme-map.json'].map(p => createHash('sha256').update(readFileSync(join(dir, p))).digest('hex')).join(':');
+137:  const run = (dir, ...args) => {
+138:    const r = spawnSync(process.execPath, [SELF, '--lane', dir, ...args], { encoding: 'utf8' });
+139:    console.log(`CLI ${args.join(' ')} exit=${r.status} stdout=${JSON.stringify((r.stdout || '').trim())}`);
+140:    return { exit: r.status, text: (r.stdout || '').trim() };
+141:  };
+142:  function exact(r, exit, text) { return r.exit === exit && r.text === text; }
+143:  function test(name, before, action) {
+144:    total++;
+145:    let red = false, ok = false;
+146:    try { red = before(); ok = red && action(); } catch { ok = false; }
+147:    if (ok) passed++;
+148:    console.log(`CASE ${name}: red-before=${red ? 'PASS' : 'FAIL'} ${ok ? 'PASS' : 'FAIL'}`);
+149:  }
+150:  try {
+151:    let d = fixture('check-clean');
+152:    test('check-clean', () => exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`), () => {
+153:      if (run(d, '--adopt', target).exit !== 0) return false;
+154:      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0');
+155:    });
+156:    d = fixture('check-drift', true, true);
+157:    test('check-drift', () => exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0'), () => {
+158:      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n');
+159:      return exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`);
+160:    });
+161:    for (const [name, row, pin, wrote] of [['adopt-both', false, false, 'both'], ['adopt-row', false, true, 'row'], ['adopt-pin', true, false, 'pin']]) {
+162:      d = fixture(name, row, pin);
+163:      test(name, () => !oracle(d).clean, () => exact(run(d, '--adopt', target), 0, `SPOTCHECK_ADOPT: ADOPTED ${target} wrote=${wrote}\n${clean}`) && oracle(d).clean);
+164:    }
+165:    d = fixture('idempotence');
+166:    test('idempotence', () => !oracle(d).clean, () => {
+167:      if (run(d, '--adopt', target).exit !== 0) return false;
+168:      const before = hash(d);
+169:      return exact(run(d, '--adopt', target), 0, `SPOTCHECK_ADOPT: ALREADY_ADOPTED ${target}`) && before === hash(d);
+170:    });
+171:    for (const [name, path, token] of [['out-of-scope', 'SCORECARD.md', 'REFUSED_OUT_OF_SCOPE'], ['not-spotcheck', 'corpus/lessons/round-75.md', 'REFUSED_NOT_SPOTCHECK'], ['absent', 'corpus/lessons/round-99-verifier-spotcheck.md', 'REFUSED_ABSENT']]) {
+172:      d = fixture(name);
+173:      test(name, () => !oracle(d).clean, () => { const before = hash(d); return exact(run(d, '--adopt', path), 2, token) && hash(d) === before; });
+174:    }
+175:    for (const name of ['malformed-pin', 'malformed-readme', 'rollback']) {
+176:      d = fixture(name);
+177:      test(name, () => !oracle(d).clean, () => {
+178:        if (name === 'malformed-pin') writeFileSync(join(d, '.ufo/pins/readme-map.json'), '{');
+179:        if (name === 'malformed-readme') writeFileSync(join(d, 'corpus/README.md'), '| lessons/broken.md | broken |\n');
+180:        if (name === 'rollback') writeFileSync(join(d, 'corpus/knowledge/unrelated.md'), '# Unmapped\n');
+181:        const before = hash(d);
+182:        return exact(run(d, '--adopt', target), 2, 'REFUSED_ORACLE') && hash(d) === before;
+183:      });
+184:    }
+185:    d = fixture('predict-pending', true, true);
+186:    test('predict-pending', () => exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`), () => {
+187:      rmSync(join(d, target));
+188:      return exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: PENDING ${target}`);
+189:    });
+190:    d = fixture('predict-covered');
+191:    test('predict-covered', () => exact(run(d, '--predict', '75'), 1, `SPOTCHECK_PREDICT: UNCOVERED ${target}`), () => run(d, '--adopt', target).exit === 0 && exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`));
+192:    d = fixture('predict-uncovered', true, true);
+193:    test('predict-uncovered', () => exact(run(d, '--predict', '75'), 0, `SPOTCHECK_PREDICT: COVERED ${target}`), () => {
+194:      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n');
+195:      return exact(run(d, '--predict', '75'), 1, `SPOTCHECK_PREDICT: UNCOVERED ${target}`);
+196:    });
+197:    d = fixture('usage');
+198:    test('usage', () => !oracle(d).clean, () => exact(run(d, '--predict', 'bad'), 64, 'SPOTCHECK_ADOPT: USAGE'));
+199:  } finally { rmSync(root, { recursive: true, force: true }); }
+200:  console.log(`SPOTCHECK_ADOPT_SELFTEST: ${passed === total ? 'PASS' : 'FAIL'} (${passed}/${total})`);
+201:  console.log(`VERDICT: ${passed === total ? 'PASS' : 'FAIL'}`);
+202:  return passed === total ? 0 : 1;
+203:}
+204:function main(argv) {
+205:  let lane = DEFAULT_LANE;
+206:  const args = [];
+207:  for (let i = 0; i < argv.length; i++) {
+208:    if (argv[i] === '--lane' && argv[i + 1]) lane = resolve(argv[++i]);
+209:    else args.push(argv[i]);
+210:  }
+211:  const arm = args[0];
+212:  const single = ['--check', '--selftest'].includes(arm) && args.length === 1;
+213:  const pair = ['--adopt', '--predict'].includes(arm) && args.length === 2;
+214:  if ((!single && !pair) || (arm === '--predict' && !/^[0-9]+$/.test(args[1]))) {
+215:    console.log('SPOTCHECK_ADOPT: USAGE'); return 64;
+216:  }
+217:  if (arm === '--selftest') return selftest(lane);
+218:  let result;
+219:  try { result = evaluate(lane, arm, args[1]); } catch { result = refuse(); }
+220:  console.log(result.lines.join('\n'));
+221:  return result.exit;
+222:}
+223:process.exitCode = main(process.argv.slice(2));
+SCRATCH_REMOVED True

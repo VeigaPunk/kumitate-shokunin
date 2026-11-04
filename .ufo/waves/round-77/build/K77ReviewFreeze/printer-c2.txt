@@ -1,0 +1,17 @@
+revision-under-review: 4dc470a131e10900fdd456b6b68d7ba27151d9d2
+base-target: a321ed8006083be1086a3b991a78d3b4c26f0be9
+probe-sha256: 95316919bb5f54a6dd9b01b9b3be74b3c93b08b8add424b2e106e36b3b6ccb9b
+command: node /fast/scratch/hyaku/kumitate-r77/K77ReviewFreeze/lane/.ufo/waves/round-77/probe/probe77.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r77/K77ReviewFreeze/attack --work /fast/scratch/hyaku/kumitate-r77/K77ReviewFreeze/work-printer-c2
+exit: 1
+CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2,adopt-journal,SPOTCHECK_ADOPT_TEST_CRASH
+CHECK c2.2-crash-journal: FAIL child not killed: status=0 signal=null
+CHECK c2.3-crash-after-row: FAIL child not killed: status=0 signal=null
+CHECK c2.4-crash-after-pin: FAIL child not killed: status=0 signal=null
+CHECK c2.5-stale-tmp: FAIL line "RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
+CHECK c2.6-foreign-journal: FAIL exit=0 out="RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
+CHECK c2.7-no-journal-no-line: FAIL spurious recovery: RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back
+CHECK c2.8-recovery-idempotent: FAIL child not killed
+CHECK c2.9-selftest-and-refusals: FAIL exit=0 ["RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"]
+CHECK c2.10-usage: FAIL predict=0 bogus=0
+CHECK c2.11-live-adoption-and-placement: FAIL not run
+C77_C2: UNMET held=0/11

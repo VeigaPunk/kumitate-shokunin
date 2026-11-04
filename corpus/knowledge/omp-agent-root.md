@@ -173,3 +173,35 @@ above hold at the installed tag. It also names five `agentSubdir` members the ce
 declare — `modules`, `omp-crash.log`, `omp-debug.log`, `python-gateway`, `secret-placeholder.key` —
 all absent from this host's root (`ls` → `ABSENT` for each; round-76 seat K76ScoutDirsRelease).
 That is a named coverage gap, not a drift: declaring an absent member would report INFO only.
+
+## Offline shape receipt (round 77)
+
+The plane's score no longer depends on reading the live root at closure. Round 77 landed the
+`kumitate-omp-shape-v1` contract: `scripts/omp-census.mjs --snapshot FILE [--root DIR]` writes a
+canonical receipt — only `contract` and `entries`, each entry only `name`, `kind` and integer
+`mode` (`0o777` bits), sorted by name, no content, no root path, no timestamp — staged and
+renamed, printing one `OMP_SNAPSHOT: WROTE entries=<n> sha256=<hex> path=<p>` line. `--shape FILE`
+judges that receipt with the unchanged rule tables and prints
+`OMP_CENSUS: CLEAN|DRIFT (source=snapshot …)`; malformed or unreadable receipts are
+`SHAPE_INVALID` / `SHAPE_NOT_FOUND` at exit 2, never CLEAN. `scripts/proxy-check.mjs
+--omp-shape FILE` feeds the same receipt to the six O terms (`source=snapshot` in the JSON body
+and the verdict line; exclusive with `--omp-root`), and the committed receipt
+`.ufo/pins/omp-shape.json` is pinned as `pin.omp-shape` in the lane-owned
+`kumitate-gate-pins-v1` block, which `--strict` enforces.
+
+Why: the live root is a moving term. At the round-77 open the census read
+`entries=64 findings=0 bound=35/35` (`open/census-open.txt`); earlier the same hour it read 68
+entries with the same zero findings (plan § C1, recorded by the L1, not backed here by a raw
+receipt of that earlier reading). Both readings being clean does not make their denominator
+identical, and a closure cannot re-derive an integer that depends on which minute it runs.
+
+Measured at the round-77 work commit: `c1.3` materialises the committed receipt into a scratch
+root and re-snapshots it **byte-identically** (`sha256 5980a0c8…`); `c1.5`/`c1.6` read the same
+six O terms offline and from a materialised root, including a trimmed 63-entry receipt whose
+`O_members` follows the receipt; `c1.7`/`c1.11` discriminate a stray member and a widened
+`agent.db` mode (`O_findings=1 coverage_omp=9`); `c1.10` shows a zeroed `pin.omp-shape` reading
+`GATE_PIN_DRIFT`. Receipts: `.ufo/waves/round-77/close/c1-probe.txt`, `proxy-json.txt`.
+
+Limits: a receipt is the shape **at capture**; it does not track later root drift, and without
+`--omp-shape` the live default remains the live reading. It contains no member content and proves
+no writer attribution — the chain-family question above is unchanged.

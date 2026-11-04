@@ -59,6 +59,9 @@
  *   the visible binding note corpus/knowledge/omp-agent-root.md. Both must be
  *   readable before terms are compared (OMP_ROOT_NOT_A_DIR / OMP_NOTE_MISSING,
  *   exit 2). `--omp-root` defaults to $OMP_AGENT_ROOT or ~/.omp/agent.
+ *   Round-77 additive --omp-shape FILE instead judges a kumitate-omp-shape-v1
+ *   receipt offline with the same rules and note binding (source=snapshot).
+ *   Exclusive with --omp-root; invalid/unreadable receipts fail closed before scoring.
  *   The sixth Axes row, coverage:omp, is cross-checked just like the other five.
  * Origin pin (PIN v1, `kumitate-origin-pin-v1`)
  *   The layer terms are only meaningful when they score the tree they name, so
@@ -319,7 +322,7 @@ import { fileURLToPath } from 'node:url';
 // two layer terms need its registry-row derivation and its single walk of the
 // origin tree. Importing it runs no CLI — its main() is guarded.
 import { probeSections } from './claims-check.mjs';
-import { BASE_MEMBERS, CHAIN_FAMILIES, census } from './omp-census.mjs';
+import { BASE_MEMBERS, CHAIN_FAMILIES, census, censusEntries, shapeFromFile } from './omp-census.mjs';
 
 const CONTRACT = 'kumitate-proxy-v1';
 const STANZA_HEAD = `<!-- ${CONTRACT}`;
@@ -539,6 +542,7 @@ const GATE_PINS = {
   'pin.wave-census': 'scripts/wave-census.mjs',
   'pin.gate-mutants': 'scripts/gate-mutants.mjs',
   'pin.omp-census': 'scripts/omp-census.mjs',
+  'pin.omp-shape': '.ufo/pins/omp-shape.json',
   'pin.cap-run': 'scripts/cap-run.mjs',
   'pin.bind-oracle': 'scripts/bind-oracle.mjs', // round 50: child-side mount oracle for bind visibility
   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
@@ -656,7 +660,7 @@ const FINDING_KINDS = [
 const FAIL_CLOSED_KINDS = [
   'SELF_NOT_A_DIR', 'PIN_MALFORMED', 'SRC_NOT_A_DIR', 'SRC_REV_UNVERIFIABLE',
   'SRC_REV_MISMATCH', 'KIMI_ROOT_NOT_A_DIR', 'SCORECARD_MISSING',
-  'OMP_ROOT_NOT_A_DIR', 'OMP_NOTE_MISSING',
+  'OMP_ROOT_NOT_A_DIR', 'OMP_NOTE_MISSING', 'OMP_SHAPE_INVALID', 'OMP_SHAPE_NOT_FOUND',
   'STANZA_MISSING', 'STANZA_MALFORMED', 'STANZA_KEY_UNKNOWN', 'STANZA_KEY_DUPLICATE',
   'GATE_PIN_MALFORMED', 'GATE_PIN_KEY_UNKNOWN',
   'REGISTRY_MISSING', 'SKILL_MISSING', 'README_MISSING', 'CORPUS_DIRS_MISSING',
@@ -719,6 +723,7 @@ options:
                      never scored 0
   --omp-root DIR     OMP agent root (default: $OMP_AGENT_ROOT or ~/.omp/agent);
                      census reads depth-1 shape only; missing root/note exits 2
+  --omp-shape FILE   offline depth-1 shape receipt; exclusive with --omp-root
   --json             one machine-readable object on stdout
   --strict           promote warn-level findings (PIN_UNPINNED,
                      K_SECTION_AMBIGUOUS) to failure
@@ -1321,8 +1326,9 @@ function findingSummary(f) {
   return parts.join(' ');
 }
 
-function renderVerdict(verdict, terms, pinStats, findings, srcRev) {
-  const tail = srcRev ? `; src-rev=${srcRev.slice(0, 12)}` : '';
+function renderVerdict(verdict, terms, pinStats, findings, srcRev, snapshot = false) {
+  const tail = (srcRev ? `; src-rev=${srcRev.slice(0, 12)}` : '')
+    + (snapshot ? '; source=snapshot' : '');
   if (verdict === 'MATCH') {
     return `PROXY: MATCH (A=${terms.A} C=${terms.C} operability=${terms.operability};`
       + ` C1=${terms.C1}/${terms.C1_total} C2=${terms.C2}/${terms.C2_total} coverage=${terms.coverage};`
@@ -1342,6 +1348,7 @@ function failClosed(opts, token, detail, terms, started) {
   const body = {
     contract: CONTRACT,
     mode: 'check',
+    ...(opts.ompShape ? { source: 'snapshot' } : {}),
     ok: false,
     verdict: 'FAIL-CLOSED',
     exitCode: 2,
@@ -1367,6 +1374,12 @@ function failClosed(opts, token, detail, terms, started) {
 /* -------------------------------------------------------------------- check */
 
 function runCheck(opts, started) {
+  let shape;
+  if (opts.ompShape) {
+    try { shape = shapeFromFile(opts.ompShape); } catch (e) {
+      return failClosed(opts, `OMP_${e.code}`, e.message, {}, started);
+    }
+  }
   if (statKind(opts.self) !== 'dir') {
     return failClosed(opts, 'SELF_NOT_A_DIR', `--self ${opts.self} is ${statKind(opts.self)}`, {}, started);
   }
@@ -1427,7 +1440,7 @@ function runCheck(opts, started) {
   }
   let omp;
   try {
-    omp = census(opts.ompRoot, ompNoteText);
+    omp = shape ? censusEntries(shape, ompNoteText) : census(opts.ompRoot, ompNoteText);
   } catch (e) {
     return failClosed(opts, 'OMP_ROOT_NOT_A_DIR',
       `--omp-root ${opts.ompRoot} is not a readable directory (${e.code || e.message})`, {}, started);
@@ -1468,6 +1481,7 @@ function runCheck(opts, started) {
   const body = {
     contract: CONTRACT,
     mode: 'check',
+    ...(opts.ompShape ? { source: 'snapshot' } : {}),
     ok: verdict === 'MATCH',
     verdict,
     exitCode,
@@ -1496,7 +1510,7 @@ function runCheck(opts, started) {
     process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);
   } else {
     const lines = findings.map((f) => `PROXY  ${f.severity}  ${f.kind}  ${f.detail}`);
-    lines.push(renderVerdict(verdict, terms, pinStats, findings, opts.srcRev));
+    lines.push(renderVerdict(verdict, terms, pinStats, findings, opts.srcRev, Boolean(opts.ompShape)));
     process.stdout.write(`${lines.join('\n')}\n`);
   }
   return exitCode;
@@ -1689,7 +1703,8 @@ function selfTest() {
     mkdirSync(dirname(p), { recursive: true });
     writeFileSync(p, text);
   };
-  const runProxy = (args, extraEnv = {}) => spawnSync(process.execPath, [SELF, '--omp-root', F1.omp, ...args], {
+  const runProxy = (args, extraEnv = {}) => spawnSync(process.execPath,
+    [SELF, ...(args.includes('--omp-shape') ? [] : ['--omp-root', F1.omp]), ...args], {
     encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024, env: { ...process.env, ...extraEnv },
   });
   const verdictLine = (res) => String(res.stdout ?? '').trim().split('\n').filter(Boolean).at(-1) ?? '';
@@ -2633,6 +2648,24 @@ function selfTest() {
         detail: `exit=${gatePinDriftRun.status} kinds=[${k.got}] ${f ? f.detail.slice(0, 100) : ''}`,
       };
     });
+    const shapePinFixture = fxBase('omp-shape-pin', { expect: F1.expect });
+    const shapeBytes = '{"contract":"kumitate-omp-shape-v1","entries":[]}\n';
+    fxWrite(join(shapePinFixture.dir, '.ufo/pins/omp-shape.json'), shapeBytes);
+    const shapeSha = sha256Hex(Buffer.from(shapeBytes, 'utf8'));
+    fxWrite(join(shapePinFixture.dir, SCORECARD_FILE), shapePinFixture.scorecard.replace(
+      `${GATE_PIN_HEAD}\n`, `${GATE_PIN_HEAD}\npin.omp-shape=${shapeSha}\n`));
+    const tamperedShapeSha = (shapeSha[0] === '0' ? '1' : '0') + shapeSha.slice(1);
+    fxWrite(join(shapePinFixture.dir, SCORECARD_FILE), shapePinFixture.scorecard.replace(
+      `${GATE_PIN_HEAD}\n`, `${GATE_PIN_HEAD}\npin.omp-shape=${tamperedShapeSha}\n`));
+    const shapePinRun = runProxy(args(shapePinFixture));
+    check('GATE_PIN_DRIFT: a changed omp-shape receipt hash is an error', () => {
+      const k = kindsEq(shapePinRun, ['GATE_PIN_DRIFT']);
+      const f = parseFindings(shapePinRun.stdout).find((x) => x.detail.startsWith('pin.omp-shape:'));
+      return {
+        ok: shapePinRun.status === 1 && k.ok && !!f,
+        detail: `exit=${shapePinRun.status} kinds=[${k.got}] ${f ? f.detail.slice(0, 100) : 'no pin.omp-shape finding'}`,
+      };
+    });
     const unknownGatePin = fxBase('gate-pin-unknown', { expect: F1.expect });
     const unknownGatePinText = unknownGatePin.scorecard.replace(
       `${GATE_PIN_HEAD}\n`, `${GATE_PIN_HEAD}\npin.future-unknown=${zeroPin}\n`,
@@ -2773,6 +2806,42 @@ function selfTest() {
       return { ok: res.status === 0 && t.C1o === 1 && t.C1o_total === 1
         && t.O_members === 26 && t.O_findings === 0 && t.O_bound === 35 && t.coverage_omp === 10,
       detail: `exit=${res.status} O=${t.C1o}/${t.C1o_total} members=${t.O_members} findings=${t.O_findings} bound=${t.O_bound} coverage_omp=${t.coverage_omp}` };
+    });
+    const shapeFile = join(tmp, 'omp-shape.json');
+    const shapeDoc = { contract: 'kumitate-omp-shape-v1',
+      entries: BASE_MEMBERS.map(({ name, kind, mode }) => ({ name, kind, mode }))
+        .sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0) };
+    fxWrite(shapeFile, `${JSON.stringify(shapeDoc, null, 2)}\n`);
+    const shapeArgs = (file, extra = []) => [
+      ...args(oMatch).filter((a, i, all) => a !== '--omp-root' && all[i - 1] !== '--omp-root'),
+      '--omp-shape', file, ...extra,
+    ];
+    check('OMP snapshot: identical terms and explicit JSON/text source', () => {
+      const res = runProxy(shapeArgs(shapeFile, ['--json']));
+      const text = runProxy(shapeArgs(shapeFile));
+      const j = JSON.parse(res.stdout);
+      return { ok: res.status === 0 && j.source === 'snapshot' && j.terms.O_members === 26
+        && j.terms.O_findings === 0 && j.terms.O_bound === 35 && j.terms.coverage_omp === 10
+        && verdictLine(text).includes('source=snapshot'),
+      detail: `exit=${res.status} source=${j.source} ${verdictLine(text)}` };
+    });
+    check('OMP snapshot: added stray derives COVERAGE_OMP_DRIFT', () => {
+      const file = join(tmp, 'omp-shape-negative.json');
+      fxWrite(file, JSON.stringify({ ...shapeDoc,
+        entries: [...shapeDoc.entries, { name: 'zz-stray.txt', kind: 'file', mode: 0o644 }] }));
+      const res = runProxy(shapeArgs(file, ['--json']));
+      const j = JSON.parse(res.stdout);
+      return { ok: res.status === 1 && j.terms.O_findings === 1 && j.terms.coverage_omp === 9
+        && j.findings.some((f) => f.kind === 'COVERAGE_OMP_DRIFT'),
+      detail: `exit=${res.status} findings=${j.terms.O_findings} coverage=${j.terms.coverage_omp}` };
+    });
+    const invalidShape = join(tmp, 'omp-shape-invalid.json');
+    fxWrite(invalidShape, '{"contract":"kumitate-omp-shape-v1"}');
+    fc('OMP snapshot invalid', shapeArgs(invalidShape), 'OMP_SHAPE_INVALID');
+    fc('OMP snapshot absent', shapeArgs(join(tmp, 'absent-shape.json')), 'OMP_SHAPE_NOT_FOUND');
+    check('OMP snapshot: root and receipt are exclusive', () => {
+      const res = runProxy([...shapeArgs(shapeFile), '--omp-root', oMatch.omp]);
+      return { ok: res.status === 64, detail: `exit=${res.status}` };
     });
     check('OMP: one extra member yields O_findings=1 coverage_omp=9 and stale score DRIFT', () => {
       const fx = oFixture('omp-extra');
@@ -3243,6 +3312,7 @@ function parseArgs(argv) {
     srcRev: null,
     kimiRoot: DEFAULT_KIMI_ROOT,
     ompRoot: DEFAULT_OMP_ROOT,
+    ompShape: null,
     json: false,
     strict: false,
     selftest: false,
@@ -3254,6 +3324,7 @@ function parseArgs(argv) {
     }
     return resolve(v);
   };
+  let ompRootExplicit = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     const next = () => argv[++i];
@@ -3265,12 +3336,14 @@ function parseArgs(argv) {
     else if (a === '--tip-drift') opts.tipDrift = true;
     else if (a === '--pin') opts.pin = dirValue(a, next());
     else if (a === '--kimi-root') opts.kimiRoot = dirValue(a, next());
-    else if (a === '--omp-root') opts.ompRoot = dirValue(a, next());
+    else if (a === '--omp-root') { opts.ompRoot = dirValue(a, next()); ompRootExplicit = true; }
+    else if (a === '--omp-shape') opts.ompShape = dirValue(a, next());
     else if (a === '--json') opts.json = true;
     else if (a === '--strict') opts.strict = true;
     else if (a === '--selftest') opts.selftest = true;
     else throw new Error(`unknown argument: ${a}`);
   }
+  if (opts.ompShape && ompRootExplicit) throw new Error('--omp-shape and --omp-root are mutually exclusive');
   if (opts.scorecard === null) opts.scorecard = join(opts.self, SCORECARD_FILE);
   // The origin tree — and whether a pin asserts it — is resolved in `runCheck`
   // (never for `--selftest`/`--help`, which win first), so a bare check run

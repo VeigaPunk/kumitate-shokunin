@@ -2458,3 +2458,40 @@ Sources: S226 opened (dirs.ts at the installed release v18.15.0; sha256 `2d423f4
 to S053's v18.12.6 file); SOURCES 164 → 165; SOURCE_CAPTURE CLEAN captures=57; the `merge/kumitate`
 package stays refused as a bulk append (flip: a dedicated assimilation round). Assimilation: none.
 No tools installed. Census start/end exit 0 (6 carried W04).
+
+## 2026-11-04 — round 77 (coverage:omp re-derivable offline from a pinned shape receipt; operability capability deepening `spotcheck-adopt` v2 — crash-recoverable adopt journal)
+
+Two claims, two axes. C1 coverage:omp: `omp-census --snapshot/--shape` write and judge a canonical
+`kumitate-omp-shape-v1` receipt (sorted `{name,kind,mode}` only, staged then renamed), `proxy-check
+--omp-shape` feeds the same six O terms offline (`source=snapshot`), the receipt is committed at
+`.ufo/pins/omp-shape.json` and pinned as `pin.omp-shape` in the lane-owned gate block. The live root
+was a moving term: 64 entries at open, a 68-entry reading earlier the same hour, both clean. C2
+operability: `spotcheck-adopt` v2 publishes a `.ufo/pins/adopt-journal/<uuid>/` journal (manifest +
+both pre-images) before either destination write, recovers on every non-selftest arm with exact
+`RECOVERED <target> rolled-back|complete`, refuses a corrupt pre-image (`REFUSED_ORACLE`), a foreign
+journal (`REFUSED_JOURNAL_FOREIGN`) and a symlinked destination parent (`REFUSED_PATH_ESCAPE`),
+inserts the map row after the last lessons row, and retires a finished journal by rename before
+deletion.
+
+Measured at M with the frozen counter: C1 `C77_C1: HELD held=12/12`, C2 `C77_C2: HELD held=13/13`
+(`.ufo/waves/round-77/close/c1-probe.txt`, `c2-probe.txt`); receipt `5980a0c8…` replays
+byte-identically from a materialised root; `PROXY: MATCH --strict` exit 0; selftests 58, 151 and 26
+cases; mutant batteries `MUTANTS77_C1: ALL-KILLED killed=6/6` and `MUTANTS77_C2: ALL-KILLED
+killed=8/8`. Counter history before data: A1 (`794704aa`, fixture/registry name), A2 (`9bb6f5b2`,
+v2 after the freeze reviewer's constant printer met the v1 kill rule at 5/10), A2.4 (`d5f91f90`,
+adjacency self-comparison), A2.5 (live map N). v1 bytes preserved as `probe77-v1.mjs`; the printer
+receipts stay evidence (C1 4/12, C2 0/13).
+
+Wave: ONE v1 wave, 13 seats (attack 6 = 46 %, connector 1, executors 2, scribes 2, scouts 2), all
+settled, 0 dead. Routed repairs (not claims): the 6th spotcheck recurrence + the pin's lost final
+newline (r76 D4) in the scaffolding commit; the symlinked-pin write sink; the cleanup half-journal
+window; r76 FREEZE-FIX 6 disposition; r76 carried-reject count corrected (155 rows / 161 lines / 70
+entries, unchanged, not larger); R75 D4 why-not recorded; Q72 (per-round counter series, from
+`considerthese/2026-10-26.md` proposal 6). Stanza re-measure A 847 → 857, C 35 → 37, C2/C2_total
+183 → 186; re-pins omp-census/proxy-check/spotcheck-adopt and the new shape receipt.
+
+Sources: S227 opened (SQLite Atomic Commit, sha256 `5a5be7b6…`, 77968 bytes), `queued` → `mined`
+with `used-by corpus/knowledge/crash-recoverable-two-file-adoption.md`; SOURCES 165 → 166.
+`merge/kumitate/` re-opened (155 rows / 161 lines / 70 entries) and refused as a bulk append again
+(§10 proportionality, CORPUS rule 4; flip: a dedicated assimilation round). Assimilation: none. No
+tools installed. Census start/end exit 0 (six carried W04).

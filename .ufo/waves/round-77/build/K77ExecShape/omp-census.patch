@@ -1,0 +1,225 @@
+diff --git i/scripts/omp-census.mjs w/scripts/omp-census.mjs
+index 2d88ef20..7a3ab6c1 100644
+--- i/scripts/omp-census.mjs
++++ w/scripts/omp-census.mjs
+@@ -11,6 +11,10 @@
+  *   node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE]
+  *     default root = $HOME/.omp/agent; note = <self>/corpus/knowledge/omp-agent-root.md
+  *   node scripts/omp-census.mjs --selftest [--work DIR]
++ *   node scripts/omp-census.mjs --snapshot FILE [--root DIR]
++ *   node scripts/omp-census.mjs --shape FILE [--self DIR] [--note FILE]
++ *     kumitate-omp-shape-v1: canonical, content-free depth-1 receipt; atomic write.
++ *     Invalid/unreadable receipts fail closed with SHAPE_INVALID/SHAPE_NOT_FOUND.
+  *
+  * Exit codes:
+  *   0   exactly one stdout line `OMP_CENSUS: CLEAN (...)`
+@@ -39,11 +43,12 @@
+  */
+ 
+ import {
+-  chmodSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync,
++  chmodSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync,
+ } from 'node:fs';
+ import { homedir, tmpdir } from 'node:os';
+ import { join, resolve } from 'node:path';
+ import { fileURLToPath } from 'node:url';
++import { createHash, randomUUID } from 'node:crypto';
+ 
+ // ---------------------------------------------------------------------------
+ // Rules. Each rule cites the `corpus/SOURCES.md` row it rests on (S053-S061, opened in
+@@ -152,6 +157,59 @@ function readShape(root) {
+   return entries;
+ }
+ 
++const SHAPE_CONTRACT = 'kumitate-omp-shape-v1';
++
++function validateShape(doc) {
++  if (!doc || Object.keys(doc).sort().join(',') !== 'contract,entries'
++      || doc.contract !== SHAPE_CONTRACT || !Array.isArray(doc.entries) || !doc.entries.length) {
++    throw Object.assign(new Error('invalid shape contract or entries'), { code: 'SHAPE_INVALID' });
++  }
++  let previous = null;
++  for (const e of doc.entries) {
++    if (!e || Object.keys(e).sort().join(',') !== 'kind,mode,name'
++        || typeof e.name !== 'string' || !e.name || /[/\\\0]/u.test(e.name)
++        || e.name === '.' || e.name === '..' || (previous !== null && previous >= e.name)
++        || !['file', 'dir', 'symlink'].includes(e.kind)
++        || !Number.isInteger(e.mode) || e.mode < 0 || e.mode > 0o777) {
++      throw Object.assign(new Error('invalid or unsorted shape entry'), { code: 'SHAPE_INVALID' });
++    }
++    previous = e.name;
++  }
++  return doc.entries;
++}
++
++/** Read only the receipt; never follow its names into the live agent root. */
++export function shapeFromFile(file) {
++  let text;
++  try { text = readFileSync(file, 'utf8'); } catch {
++    throw Object.assign(new Error(`cannot read ${file}`), { code: 'SHAPE_NOT_FOUND' });
++  }
++  let doc;
++  try { doc = JSON.parse(text); } catch {
++    throw Object.assign(new Error('malformed shape JSON'), { code: 'SHAPE_INVALID' });
++  }
++  return validateShape(doc);
++}
++
++function snapshot(root, file, io) {
++  const tmp = `${file}.${randomUUID()}.tmp`;
++  try {
++    const entries = readShape(root);
++    validateShape({ contract: SHAPE_CONTRACT, entries });
++    const bytes = `${JSON.stringify({ contract: SHAPE_CONTRACT, entries }, null, 2)}\n`;
++    writeFileSync(tmp, bytes, { flag: 'wx', mode: 0o600 });
++    renameSync(tmp, file);
++    const digest = createHash('sha256').update(bytes).digest('hex');
++    io.out(`OMP_SNAPSHOT: WROTE entries=${entries.length} sha256=${digest} path=${file}`);
++    return 0;
++  } catch (e) {
++    io.err(`OMP_SNAPSHOT: ERROR reason=${e.code || e.message}`);
++    return 2;
++  } finally {
++    rmSync(tmp, { force: true });
++  }
++}
++
+ // ---------------------------------------------------------------------------
+ // Rule matching
+ // ---------------------------------------------------------------------------
+@@ -197,7 +255,11 @@ function ruleFor(name) {
+  * Returns { verdict, findings[], infos[], counts }.
+  */
+ export function census(root, noteText) {
+-  const entries = readShape(root);
++  return censusEntries(readShape(root), noteText);
++}
++
++/** Apply exactly the live census rules and binding to an already-read shape. */
++export function censusEntries(entries, noteText) {
+   const findings = [];
+   const infos = [];
+   const present = new Set(entries.map((e) => e.name));
+@@ -249,10 +311,10 @@ export function census(root, noteText) {
+ // Command line
+ // ---------------------------------------------------------------------------
+ 
+-const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --selftest [--work DIR]';
++const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--self DIR] [--note FILE] | --selftest [--work DIR]';
+ 
+ function parseArgs(argv) {
+-  const o = { root: null, self: DEFAULT_SELF, note: null, selftest: false, work: null };
++  const o = { root: null, self: DEFAULT_SELF, note: null, snapshot: null, shape: null, selftest: false, work: null };
+   for (let i = 0; i < argv.length; i++) {
+     const a = argv[i];
+     if (a === '--root') {
+@@ -260,10 +322,10 @@ function parseArgs(argv) {
+       o.root = argv[++i];
+     } else if (a.startsWith('--root=')) {
+       o.root = a.slice('--root='.length);
+-    } else if (a === '--self' || a === '--note') {
++    } else if (a === '--snapshot' || a === '--shape' || a === '--self' || a === '--note') {
+       if (i + 1 >= argv.length) return { error: `${a} needs a path argument` };
+       o[a.slice(2)] = argv[++i];
+-    } else if (a.startsWith('--self=') || a.startsWith('--note=')) {
++    } else if (['--snapshot=', '--shape=', '--self=', '--note='].some((prefix) => a.startsWith(prefix))) {
+       const eq = a.indexOf('=');
+       o[a.slice(2, eq)] = a.slice(eq + 1);
+     } else if (a === '--selftest') {
+@@ -277,6 +339,11 @@ function parseArgs(argv) {
+       return { error: `unknown argument ${a}` };
+     }
+   }
++  if ((o.snapshot !== null && o.shape !== null) || (o.shape !== null && o.root !== null)
++      || (o.selftest && (o.snapshot !== null || o.shape !== null))) return { error: 'incompatible modes' };
++  for (const key of ['snapshot', 'shape']) {
++    if (o[key] !== null && (!o[key] || o[key].startsWith('-'))) return { error: `--${key} needs a file argument` };
++  }
+   return o;
+ }
+ 
+@@ -306,6 +373,24 @@ function runCensus(root, io, note = join(DEFAULT_SELF, 'corpus', 'knowledge', 'o
+   return res.verdict === 'CLEAN' ? 0 : 1;
+ }
+ 
++function runShape(file, io, note) {
++  let entries;
++  try { entries = shapeFromFile(file); } catch (e) {
++    io.out(e.code);
++    return 2;
++  }
++  let noteText;
++  try { noteText = readFileSync(note, 'utf8'); } catch (e) {
++    io.err(`NOTE_MISSING ${note} reason=${e.code || e.message}`);
++    return 2;
++  }
++  const res = censusEntries(entries, noteText);
++  for (const f of res.findings) io.out(f);
++  const binding = res.verdict === 'CLEAN' ? ` bound=${res.counts.bound}/${res.counts.declared}` : '';
++  io.out(`OMP_CENSUS: ${res.verdict} (source=snapshot entries=${res.counts.entries} findings=${res.findings.length}${binding})`);
++  return res.verdict === 'CLEAN' ? 0 : 1;
++}
++
+ // ---------------------------------------------------------------------------
+ // Selftest: hermetic fixture roots under a scratch directory. Fixture files are
+ // created empty; the census never reads a member's content, and the fixtures are
+@@ -349,7 +434,10 @@ function selftest(work, io) {
+   const capture = (argv) => {
+     const out = [];
+     const err = [];
+-    const code = runCensus(argv.root, { out: (s) => out.push(s), err: (s) => err.push(s) }, argv.note ?? note);
++    const ioCapture = { out: (s) => out.push(s), err: (s) => err.push(s) };
++    const code = argv.shape
++      ? runShape(argv.shape, ioCapture, argv.note ?? note)
++      : runCensus(argv.root, ioCapture, argv.note ?? note);
+     return { code, stdout: out.join('\n'), stderr: err.join('\n') };
+   };
+ 
+@@ -511,6 +599,37 @@ function selftest(work, io) {
+   check('NOTE_MISSING-fail-closed', { root: join(scratch, 'clean-fixture'), note: join(scratch, 'missing.md') },
+     { code: 2, has: ['NOTE_MISSING'], lacks: ['OMP_CENSUS: CLEAN'] });
+ 
++
++  const receipt = join(scratch, 'shape.json');
++  const receiptAgain = join(scratch, 'shape-again.json');
++  ran++;
++  const quiet = { out: () => {}, err: () => {} };
++  const wrote = snapshot(join(scratch, 'clean-fixture'), receipt, quiet);
++  const regeneratedRoot = join(scratch, 'regenerated-root');
++  materialise(regeneratedRoot, shapeFromFile(receipt));
++  const wroteAgain = snapshot(regeneratedRoot, receiptAgain, quiet);
++  if (wrote !== 0 || wroteAgain !== 0
++      || readFileSync(receipt, 'utf8') !== readFileSync(receiptAgain, 'utf8')
++      || JSON.stringify(shapeFromFile(receipt)) !== JSON.stringify(readShape(join(scratch, 'clean-fixture')))) {
++    failures.push('snapshot-roundtrip: shape or canonical bytes differ');
++  } else io.out('SELFTEST ok snapshot-roundtrip');
++  check('shape-clean', { shape: receipt }, { code: 0, has: ['source=snapshot', 'bound=35/35'] });
++  const invalid = join(scratch, 'invalid.json');
++  writeFileSync(invalid, '{"contract":"kumitate-omp-shape-v1"}');
++  check('shape-invalid', { shape: invalid }, { code: 2, has: ['SHAPE_INVALID'] });
++  check('shape-not-found', { shape: join(scratch, 'absent.json') }, { code: 2, has: ['SHAPE_NOT_FOUND'] });
++  const negative = join(scratch, 'negative.json');
++  writeFileSync(negative, JSON.stringify({ contract: SHAPE_CONTRACT,
++    entries: [...shapeFromFile(receipt), { name: 'zz-stray.txt', kind: 'file', mode: 0o644 }] }));
++  check('shape-negative', { shape: negative }, { code: 1, has: ['UNLISTED zz-stray.txt', 'OMP_CENSUS: DRIFT'] });
++  for (const [name, doc] of [
++    ['content-key', { contract: SHAPE_CONTRACT, entries: [{ name: 'agent.db', kind: 'file', mode: 384, content: '' }] }],
++    ['bad-kind', { contract: SHAPE_CONTRACT, entries: [{ name: 'agent.db', kind: 'fifo', mode: 384 }] }],
++    ['empty', { contract: SHAPE_CONTRACT, entries: [] }],
++  ]) {
++    writeFileSync(invalid, JSON.stringify(doc));
++    check(`shape-${name}`, { shape: invalid }, { code: 2, has: ['SHAPE_INVALID'] });
++  }
+   // Check root failure before removing the hermetic binding note.
+   ran++;
+   const missing = join(scratch, 'does-not-exist');
+@@ -560,7 +679,9 @@ function main(argv, io) {
+     return selftest(parsed.work, io);
+   }
+   const root = parsed.root || join(homedir(), '.omp', 'agent');
++  if (parsed.snapshot !== null) return snapshot(root, parsed.snapshot, io);
+   const note = parsed.note ?? join(parsed.self, 'corpus', 'knowledge', 'omp-agent-root.md');
++  if (parsed.shape !== null) return runShape(parsed.shape, io, note);
+   return runCensus(root, io, note);
+ }
+ 

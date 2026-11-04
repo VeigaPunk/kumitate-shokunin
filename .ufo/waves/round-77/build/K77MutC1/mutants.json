@@ -1,0 +1,12 @@
+{
+  "contract": "kumitate-mutants77-c1-v1",
+  "timeoutMs": 30000,
+  "mutants": [
+    {"id":"c1-a-unsorted","tool":"scripts/omp-census.mjs","find":"readdirSync(root).sort()","replace":"readdirSync(root).reverse()","expectedDetector":"snapshot canonical sorted-name assertion"},
+    {"id":"c1-b-mode-omitted","tool":"scripts/omp-census.mjs","find":"entries.push({ name, kind: KIND_OF(mst), mode: mst.mode & 0o777 });","replace":"entries.push({ name, kind: KIND_OF(mst) });","expectedDetector":"snapshot required mode / roundtrip validation"},
+    {"id":"c1-c-trusted-counts","tool":"scripts/omp-census.mjs","find":"return validateShape(doc);","replace":"return validateShape(doc).slice(0, doc.counts?.entries ?? 1);","expectedDetector":"shape census derives all entries; negative receipt must retain zz-stray"},
+    {"id":"c1-d-wrong-contract","tool":"scripts/omp-census.mjs","find":"doc.contract !== SHAPE_CONTRACT","replace":"false","expectedDetector":"wrong-contract receipt must be SHAPE_INVALID"},
+    {"id":"c1-e-live-root","tool":"scripts/proxy-check.mjs","find":"shape ? censusEntries(shape, ompNoteText) : census(opts.ompRoot, ompNoteText)","replace":"census(opts.ompRoot, ompNoteText)","expectedDetector":"offline proxy terms must follow receipt, not default live root"},
+    {"id":"c1-f-pin-uncompared","tool":"scripts/proxy-check.mjs","find":"if (computed === sha256) continue;","replace":"if (key === 'pin.omp-shape' || computed === sha256) continue;","expectedDetector":"tampered pin.omp-shape must emit GATE_PIN_DRIFT"}
+  ]
+}

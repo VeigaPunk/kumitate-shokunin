@@ -1,0 +1,12 @@
+CHECK c1.1-snapshot-writer: FAIL no valid .ufo/pins/omp-shape.json
+CHECK c1.2-snapshot-is-open-shape: FAIL no valid snapshot
+CHECK c1.3-writer-roundtrip: FAIL no valid snapshot
+CHECK c1.4-census-shape-clean: FAIL no valid snapshot
+CHECK c1.5-proxy-shape-terms: FAIL no valid snapshot
+CHECK c1.6-offline-equals-root: FAIL no valid snapshot
+CHECK c1.7-negative-discriminates: FAIL no valid snapshot
+CHECK c1.8-fail-closed: FAIL bad.json: exit=64 token=SHAPE_INVALID out=""; absent.json: exit=64 token=SHAPE_NOT_FOUND out=""; bad-entry.json: exit=64 token=SHAPE_INVALID out=""; proxy absent: exit=64 out="proxy-check: unknown argument: --omp-shape\n\nusage: node scripts/proxy-check.mjs [--self DIR] [--s
+CHECK c1.9-selftests: FAIL census exit=0 "VERDICT: PASS (49 cases)"
+CHECK c1.10-no-content-pinned: FAIL snapshot absent
+C77_C1: UNMET held=0/10
+exit=1

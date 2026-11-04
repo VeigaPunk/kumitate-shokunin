@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 /**
- * kumitate-spotcheck-adopt-v1 — append-only non-author spotcheck adoption.
- * The unchanged readme-map child owns all map verdicts; its findings select
- * the missing sides. Stage complete files beside their destinations, rename,
- * and restore original bytes on any caught failure, including oracle refusal.
- * Each rename is atomic, NOT a cross-file transaction: SIGKILL between renames
- * can leave a repairable half-state (neither individual file is ever partial).
+ * kumitate-spotcheck-adopt-v2 — journaled non-author spotcheck adoption.
+ * The unchanged readme-map child owns all map verdicts. Before either rename,
+ * publish both pre-images in .ufo/pins/adopt-journal; the next invocation
+ * completes or rolls back interrupted adoption. Assumes one writer per lane.
+ * Test-only seam: SPOTCHECK_ADOPT_TEST_CRASH=journal|row|pin sends SIGKILL
+ * after journal publication, README replacement, or pin replacement respectively.
+ * Unset in normal use. Recovery protects process crashes, not power loss.
  */
 import { spawnSync } from 'node:child_process';
 import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
@@ -60,6 +61,105 @@ function replaceAtomic(path, bytes) {
     renameSync(temp, path);
   } finally { rmSync(temp, { force: true }); }
 }
+const JOURNAL = '.ufo/pins/adopt-journal';
+const PRE = [
+  { path: 'corpus/README.md', file: 'README.pre' },
+  { path: '.ufo/pins/readme-map.json', file: 'readme-map.pre' },
+];
+const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
+/** A destination's real parent must be the lane's own directory (no symlinked parent). */
+function canonicalParent(file, want, lane) {
+  const parent = realpathSync(dirname(file));
+  const expected = join(realpathSync(lane), want);
+  if (parent !== expected) {
+    const error = new Error('path escape');
+    error.token = 'REFUSED_PATH_ESCAPE';
+    throw error;
+  }
+}
+/** Retire a journal atomically before recursive deletion: a kill cannot leave a half-journal. */
+function retire(dir) {
+  const done = `${dir}.done`;
+  try { renameSync(dir, done); } catch { /* already retired */ }
+  rmSync(done, { recursive: true, force: true });
+}
+function stageJournal(lane, target, key, originals) {
+  const root = join(lane, JOURNAL), id = randomUUID();
+  mkdirSync(root, { recursive: true });
+  const temp = join(root, `${id}.tmp`), ready = join(root, id);
+  mkdirSync(temp);
+  const pre = PRE.map(entry => {
+    const bytes = originals.get(join(lane, entry.path));
+    writeFileSync(join(temp, entry.file), bytes, { flag: 'wx' });
+    return { ...entry, sha256: sha256(bytes) };
+  });
+  writeFileSync(join(temp, 'manifest.json'), JSON.stringify({
+    contract: 'kumitate-adopt-journal-v1', lane, target, key, pre,
+  }) + '\n', { flag: 'wx' });
+  renameSync(temp, ready);
+  return ready;
+}
+function recover(lane, lines) {
+  const root = join(lane, JOURNAL);
+  canonicalParent(root, '.ufo/pins', lane);
+  let entries;
+  try { entries = readdirSync(root).sort(); }
+  catch (e) { if (e.code === 'ENOENT') return; throw e; }
+  for (const name of entries) {
+    const dir = join(root, name);
+    if (!lstatSync(dir).isDirectory()) throw new Error('invalid journal entry');
+    if (name.endsWith('.tmp') || name.endsWith('.done')) {
+      retire(dir);
+      lines.push('RECOVERED - stale');
+      continue;
+    }
+    const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
+    if (manifest.lane !== lane) {
+      const error = new Error('foreign journal');
+      error.token = 'REFUSED_JOURNAL_FOREIGN';
+      throw error;
+    }
+    if (manifest.contract !== 'kumitate-adopt-journal-v1'
+      || typeof manifest.target !== 'string'
+      || !manifest.target.startsWith('corpus/lessons/')
+      || !NAME.test(manifest.target.slice('corpus/lessons/'.length))
+      || manifest.key !== manifest.target.slice(7)
+      || !Array.isArray(manifest.pre) || manifest.pre.length !== PRE.length
+      || manifest.pre.some((entry, i) => entry.path !== PRE[i].path
+        || entry.file !== PRE[i].file || !/^[0-9a-f]{64}$/.test(entry.sha256)))
+      throw new Error('invalid journal manifest');
+    const result = oracle(lane);
+    let outcome = 'complete';
+    if (!result.clean) {
+      // Validate both images before restoring either destination.
+      const images = manifest.pre.map(entry => {
+        const bytes = readFileSync(join(dir, entry.file));
+        if (sha256(bytes) !== entry.sha256) throw new Error('invalid pre-image');
+        return [join(lane, entry.path), bytes];
+      });
+      for (const [path, bytes] of images) replaceAtomic(path, bytes);
+      outcome = 'rolled-back';
+    }
+    retire(dir);
+    lines.push(`RECOVERED ${manifest.target} ${outcome}`);
+  }
+}
+function crashAt(stage) {
+  if (process.env.SPOTCHECK_ADOPT_TEST_CRASH === stage) process.kill(process.pid, 'SIGKILL');
+}
+function insertRow(raw, row) {
+  const heading = /^## Coverage map[^\r\n]*(?:\r?\n|$)/m.exec(raw);
+  const start = heading ? heading.index + heading[0].length : 0;
+  const remainder = raw.slice(start);
+  const nextHeading = remainder.search(/^## /m);
+  const table = nextHeading < 0 ? remainder : remainder.slice(0, nextHeading);
+  const lessons = [...table.matchAll(/^\| `lessons\/[^`\r\n]+` \|[^\r\n]*(?:\r?\n|$)/gm)];
+  const rows = lessons.length ? lessons : [...table.matchAll(/^\| `[^`\r\n]+` \|[^\r\n]*(?:\r?\n|$)/gm)];
+  const last = rows.at(-1);
+  const boundary = start + (last ? last.index + last[0].length : table.length);
+  const prefix = raw.slice(0, boundary);
+  return prefix + (prefix && !prefix.endsWith('\n') ? '\n' : '') + row + raw.slice(boundary);
+}
 function evaluate(lane, arm, value) {
   let path, key;
   if (arm === '--adopt') {
@@ -91,6 +191,10 @@ function evaluate(lane, arm, value) {
       : `SPOTCHECK_MAP: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0] || 'oracle'}`] };
   }
   const m = missing(result, key);
+  try {
+    canonicalParent(join(lane, 'corpus/README.md'), 'corpus', lane);
+    canonicalParent(join(lane, '.ufo/pins/readme-map.json'), '.ufo/pins', lane);
+  } catch { return { exit: 2, lines: ['REFUSED_PATH_ESCAPE'] }; }
   if (arm === '--predict') {
     const covered = !m.row && !m.pin && lstatSync(join(lane, path)).isFile();
     return { exit: covered ? 0 : 1, lines: [`SPOTCHECK_PREDICT: ${covered ? 'COVERED' : 'UNCOVERED'} ${path}`] };
@@ -98,20 +202,29 @@ function evaluate(lane, arm, value) {
   if (!m.row && !m.pin) return { exit: 0, lines: [`SPOTCHECK_ADOPT: ALREADY_ADOPTED ${path}`] };
   const readme = join(lane, 'corpus/README.md'), pin = join(lane, '.ufo/pins/readme-map.json');
   const originals = new Map([[readme, readFileSync(readme)], [pin, readFileSync(pin)]]);
-  const changed = [];
+  let journal;
   try {
     const writes = [];
     if (m.row) {
       const raw = originals.get(readme).toString('utf8');
-      writes.push([readme, `${raw}${raw.endsWith('\n') ? '' : '\n'}| \`${key}\` | Non-author round-${value.match(/round-([0-9]+)/)[1]} verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |\n`]);
+      writes.push([readme, insertRow(raw, `| \`${key}\` | Non-author round-${value.match(/round-([0-9]+)/)[1]} verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |\n`)]);
     }
     if (m.pin) writes.push([pin, appendPin(originals.get(pin).toString('utf8'), key)]);
-    for (const [file, bytes] of writes) { replaceAtomic(file, bytes); changed.push(file); }
+    journal = stageJournal(lane, path, key, originals);
+    crashAt('journal');
+    for (const [file, bytes] of writes) {
+      replaceAtomic(file, bytes);
+      crashAt(file === readme ? 'row' : 'pin');
+    }
     const after = oracle(lane);
     if (!after.clean) throw new Error('oracle refused');
+    retire(journal);
     return { exit: 0, lines: [`SPOTCHECK_ADOPT: ADOPTED ${path} wrote=${m.row && m.pin ? 'both' : m.row ? 'row' : 'pin'}`, after.line] };
   } catch {
-    for (const file of changed.reverse()) replaceAtomic(file, originals.get(file));
+    if (journal) {
+      for (const [file, bytes] of originals) replaceAtomic(file, bytes);
+      retire(journal);
+    }
     return refuse();
   }
 }
@@ -196,6 +309,84 @@ function selftest(lane) {
     });
     d = fixture('usage');
     test('usage', () => !oracle(d).clean, () => exact(run(d, '--predict', 'bad'), 64, 'SPOTCHECK_ADOPT: USAGE'));
+    const journalNames = dir => {
+      try { return readdirSync(join(dir, JOURNAL)); }
+      catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+    };
+    for (const stage of ['journal', 'row', 'pin']) {
+      d = fixture(`crash-${stage}`);
+      test(`crash-${stage}`, () => !oracle(d).clean, () => {
+        const before = hash(d);
+        const child = spawnSync(process.execPath, [SELF, '--lane', d, '--adopt', target], {
+          encoding: 'utf8', env: { ...process.env, SPOTCHECK_ADOPT_TEST_CRASH: stage },
+        });
+        console.log(`CRASH ${stage} status=${child.status} signal=${child.signal}`);
+        if (child.signal !== 'SIGKILL' || journalNames(d).length !== 1) return false;
+        const post = hash(d);
+        const row = readFileSync(join(d, 'corpus/README.md'), 'utf8').includes(`| \`${key}\` |`);
+        const pin = JSON.parse(readFileSync(join(d, '.ufo/pins/readme-map.json'), 'utf8')).covered.includes(key);
+        if (row !== (stage !== 'journal') || pin !== (stage === 'pin')) return false;
+        const recovered = run(d, '--check');
+        const outcome = stage === 'pin' ? 'complete' : 'rolled-back';
+        return recovered.exit === (stage === 'pin' ? 0 : 1)
+          && recovered.text.startsWith(`RECOVERED ${target} ${outcome}\n`)
+          && hash(d) === (stage === 'pin' ? post : before) && journalNames(d).length === 0;
+      });
+    }
+    d = fixture('stale-tmp');
+    test('stale-tmp', () => !oracle(d).clean, () => {
+      const before = hash(d), temp = join(d, JOURNAL, `${randomUUID()}.tmp`);
+      mkdirSync(temp, { recursive: true });
+      writeFileSync(join(temp, 'manifest.json'), '{');
+      const recovered = run(d, '--predict', '76');
+      return recovered.exit === 0 && recovered.text.startsWith('RECOVERED - stale\n')
+        && hash(d) === before && journalNames(d).length === 0;
+    });
+    d = fixture('foreign-journal');
+    test('foreign-journal', () => !oracle(d).clean, () => {
+      const before = hash(d);
+      const images = new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))]));
+      const journal = stageJournal(d, target, key, images);
+      const manifestPath = join(journal, 'manifest.json');
+      const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+      manifest.lane = `${d}-foreign`;
+      const bytes = JSON.stringify(manifest);
+      writeFileSync(manifestPath, bytes);
+      return exact(run(d, '--check'), 2, 'REFUSED_JOURNAL_FOREIGN')
+        && hash(d) === before && readFileSync(manifestPath, 'utf8') === bytes
+        && journalNames(d).length === 1;
+    });
+    d = fixture('placement');
+    test('placement', () => !oracle(d).clean, () => {
+      writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n\n## Coverage map\n\n## Known gaps\n\n- none\n');
+      if (run(d, '--adopt', target).exit !== 0) return false;
+      const raw = readFileSync(join(d, 'corpus/README.md'), 'utf8');
+      return raw.indexOf(`| \`${key}\` |`) < raw.indexOf('## Known gaps') && oracle(d).clean;
+    });
+    d = fixture('recovery-idempotence', true, true);
+    test('recovery-idempotence', () => oracle(d).clean, () => {
+      const before = hash(d);
+      stageJournal(d, target, key, new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))])));
+      if (!run(d, '--check').text.startsWith(`RECOVERED ${target} complete\n`)) return false;
+      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0') && hash(d) === before;
+    });
+    for (const newline of [false, true]) {
+      d = fixture(`pin-final-newline-${newline}`);
+      test(`pin-final-newline-${newline}`, () => !oracle(d).clean, () => {
+        const pinPath = join(d, '.ufo/pins/readme-map.json');
+        writeFileSync(pinPath, readFileSync(pinPath, 'utf8').trimEnd() + (newline ? '\n' : ''));
+        return run(d, '--adopt', target).exit === 0
+          && readFileSync(pinPath, 'utf8').endsWith('\n') === newline;
+      });
+    }
+    d = fixture('corrupt-pre-image');
+    test('corrupt-pre-image', () => !oracle(d).clean, () => {
+      const before = hash(d);
+      const journal = stageJournal(d, target, key, new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))])));
+      writeFileSync(join(journal, 'readme-map.pre'), 'corrupt');
+      return exact(run(d, '--check'), 2, 'REFUSED_ORACLE')
+        && hash(d) === before && journalNames(d).length === 1;
+    });
   } finally { rmSync(root, { recursive: true, force: true }); }
   console.log(`SPOTCHECK_ADOPT_SELFTEST: ${passed === total ? 'PASS' : 'FAIL'} (${passed}/${total})`);
   console.log(`VERDICT: ${passed === total ? 'PASS' : 'FAIL'}`);
@@ -215,8 +406,13 @@ function main(argv) {
     console.log('SPOTCHECK_ADOPT: USAGE'); return 64;
   }
   if (arm === '--selftest') return selftest(lane);
+  const lines = [];
   let result;
-  try { result = evaluate(lane, arm, args[1]); } catch { result = refuse(); }
+  try {
+    recover(lane, lines);
+    result = evaluate(lane, arm, args[1]);
+  } catch (e) { result = e.token ? { exit: 2, lines: [e.token] } : refuse(); }
+  result.lines.unshift(...lines);
   console.log(result.lines.join('\n'));
   return result.exit;
 }
