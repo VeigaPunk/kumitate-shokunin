@@ -1,57 +1,62 @@
 #!/usr/bin/env node
 /**
- * ready-handoff.mjs — kumitate-ready-handoff-v1
+ * ready-handoff.mjs — kumitate-ready-handoff-v2
  *
  * Judge a run-7 inline spawn handoff BEFORE the orchestrator takes it: the
  * `<wave>.ready` file (the cross-session contract this lane writes every round)
  * against the dispatch payload it names, and the payload against the campaign's
- * frozen wave rules.
+ * own wave policy.
  *
  * Usage:
- *   node scripts/ready-handoff.mjs --round N --wave NAME [--lane DIR] [--ready FILE] [--json]
- *                                  [--band LO:HI] [--attack-pct P]
+ *   node scripts/ready-handoff.mjs --round N --wave NAME --policy FILE [--agents FILE]
+ *                                  [--lane DIR] [--ready FILE] [--json] [--attack-pct P]
  *   node scripts/ready-handoff.mjs --selftest [--work DIR]
  *
- * Attribution: the `.ready` contract and every rule below are declared by the
- * round prompt's inline-spawn handoff (§6 run-7 block) and the run-15 round-size
- * ruling (band 8–16, >=25 % attack, at most 2 connector seats, no planner seat,
- * no per-seat model). This gate reads; it never writes to the lane.
+ * Attribution: the `.ready` contract is declared by the round prompt's inline-spawn
+ * handoff (§6 run-7 block). Round 82 (C1) removes the lane's copies of the campaign's
+ * numbers: the seat band and the seat-role vocabulary are read from the policy file the
+ * dispatcher validates against (`ufo-wave-policy.json`: `waveMinLanes`/`waveMaxLanes`
+ * under `sighting.dispatch.swarm`, `proposalRoles` under `nativeProfiles.omp-native-v1`),
+ * so a policy edit cannot desync admission from dispatch. The attack share (>=25 %) and
+ * the connector cap (2) stay lane-owned constants: the policy carries no machine-readable
+ * field for either. The gate also binds the handoff to the dispatch it names (filename
+ * stem, optional payload `wave`), refuses two seats that claim one report destination and
+ * an `l1` that collides with a seat, and — when a caller supplies an agent registry —
+ * requires `l1` to resolve there. It reads; it never writes to the lane.
  *
  * Exit map: 0 READY, 1 DRIFT (policy findings), 2 FAIL-CLOSED (unreadable or
  * unsafe handoff), 64 usage. `--json` prints one object on stdout.
  *
- * Reads: `<ready>`, the dispatch JSON it names, and nothing else. Never follows
- * a dispatch path outside `<lane>/.ufo/waves/round-<N>/`.
+ * Reads: `<ready>`, the dispatch JSON it names, `--policy`, and `--agents` when named.
+ * Never follows a dispatch path outside `<lane>/.ufo/waves/round-<N>/`.
  */
 import { existsSync, lstatSync, readFileSync, readdirSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 
-const CONTRACT = 'kumitate-ready-handoff-v1';
+const CONTRACT = 'kumitate-ready-handoff-v2';
 const SELF = fileURLToPath(import.meta.url);
-/** Frozen taxonomy roles a swarm seat may carry (planner is frozen-topology). */
-const ROLES = new Set(['scout', 'reviewer', 'critic', 'connector', 'sentinel', 'executor',
-  'mutation-tester', 'revenger', 'simplifier', 'scribe', 'labrat', 'distiller']);
-/** The run-15 policy names these four as the attack roles (ufo-wave-policy.json). */
+/** Attack roles: lane-owned (the policy carries no machine-readable field for them). */
 const ATTACK = new Set(['reviewer', 'critic', 'mutation-tester', 'labrat']);
 const READY_KEYS = ['lane', 'round', 'wave', 'dispatch', 'l1'];
 
-const USAGE = 'usage: node scripts/ready-handoff.mjs --round N --wave NAME [--lane DIR] [--ready FILE] [--json] [--band LO:HI] [--attack-pct P] | --selftest [--work DIR]';
+const USAGE = 'usage: node scripts/ready-handoff.mjs --round N --wave NAME --policy FILE [--agents FILE] [--lane DIR] [--ready FILE] [--json] [--attack-pct P] | --selftest [--work DIR]';
 
 class Refusal extends Error {
   constructor(token, detail) { super(detail); this.token = token; this.detail = detail; }
 }
 
 function parseArgs(argv) {
-  const o = { lane: null, round: null, wave: null, ready: null, json: false, selftest: false, work: null, band: '8:16', attackPct: 25 };
+  const o = { lane: null, round: null, wave: null, ready: null, policy: null, agents: null, json: false, selftest: false, work: null, attackPct: 25 };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--lane') o.lane = argv[++i];
     else if (a === '--round') o.round = Number(argv[++i]);
     else if (a === '--wave') o.wave = argv[++i];
     else if (a === '--ready') o.ready = argv[++i];
-    else if (a === '--band') o.band = argv[++i];
+    else if (a === '--policy') o.policy = argv[++i];
+    else if (a === '--agents') o.agents = argv[++i];
     else if (a === '--attack-pct') o.attackPct = Number(argv[++i]);
     else if (a === '--json') o.json = true;
     else if (a === '--selftest') o.selftest = true;
@@ -64,7 +69,7 @@ function parseArgs(argv) {
     if (!Number.isInteger(o.round) || o.round < 1) return { error: '--round N is required' };
     if (typeof o.wave !== 'string' || !o.wave) return { error: '--wave NAME is required' };
   }
-  if (!/^\d+:\d+$/.test(o.band)) return { error: `--band must be LO:HI, got ${o.band}` };
+  if (!o.selftest && (typeof o.policy !== 'string' || !o.policy)) return { error: '--policy FILE is required' };
   if (!Number.isFinite(o.attackPct) || o.attackPct < 0 || o.attackPct > 100) return { error: `--attack-pct must be 0..100, got ${o.attackPct}` };
   return o;
 }
@@ -76,10 +81,10 @@ const sha = (text) => {
   return (h >>> 0).toString(16).padStart(8, '0');
 };
 
-function readJson(file, token, detail) {
+function readJson(file, token, detail, badToken = token) {
   let text;
   try { text = readFileSync(file, 'utf8'); } catch { throw new Refusal(token, `${detail}: cannot read ${file}`); }
-  try { return JSON.parse(text); } catch { throw new Refusal(token, `${detail}: not JSON: ${file}`); }
+  try { return JSON.parse(text); } catch { throw new Refusal(badToken, `${detail}: not JSON: ${file}`); }
 }
 
 /** True iff `child` is inside `parent` (lexical, after resolve; both absolute). */
@@ -143,6 +148,29 @@ export function judge(opts) {
     throw new Refusal('DISPATCH_MALFORMED', 'dispatch must carry taskCall.context (string) and taskCall.tasks (non-empty array)');
   }
 
+  // --- the campaign's own numbers (round-82 C1: one authority) -------------
+  const policy = readJson(opts.policy, 'POLICY_ABSENT', 'policy', 'POLICY_MALFORMED');
+  const swarm = policy && policy.sighting && policy.sighting.dispatch && policy.sighting.dispatch.swarm;
+  const declaredRoles = policy && policy.nativeProfiles && policy.nativeProfiles['omp-native-v1']
+    && policy.nativeProfiles['omp-native-v1'].proposalRoles;
+  const lo = swarm ? swarm.waveMinLanes : undefined;
+  const hi = swarm ? swarm.waveMaxLanes : undefined;
+  if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 1 || hi < lo
+      || !Array.isArray(declaredRoles) || declaredRoles.length === 0
+      || declaredRoles.some((r) => typeof r !== 'string' || !r)) {
+    throw new Refusal('POLICY_MALFORMED', `policy must carry sighting.dispatch.swarm.waveMinLanes/waveMaxLanes and nativeProfiles.omp-native-v1.proposalRoles: ${opts.policy}`);
+  }
+  const seatRoles = new Set(declaredRoles);
+  let agentIds = null;
+  if (opts.agents) {
+    const reg = readJson(opts.agents, 'AGENTS_ABSENT', 'agents', 'AGENTS_MALFORMED');
+    if (!reg || !Array.isArray(reg.agents) || reg.agents.length === 0
+        || reg.agents.some((a) => !a || typeof a.id !== 'string' || !a.id)) {
+      throw new Refusal('AGENTS_MALFORMED', `agents registry must be {agents:[{id}]}: ${opts.agents}`);
+    }
+    agentIds = new Set(reg.agents.map((a) => a.id));
+  }
+
   // --- policy findings -----------------------------------------------------
   const findings = [];
   const add = (id, detail) => findings.push({ id, detail });
@@ -154,15 +182,24 @@ export function judge(opts) {
   if (ready.round !== round) add('ROUND_MISMATCH', `ready.round=${JSON.stringify(ready.round)} for --round ${round}`);
   if (ready.wave !== wave) add('WAVE_MISMATCH', `ready.wave=${JSON.stringify(ready.wave)} for --wave ${wave}`);
   if (typeof ready.l1 !== 'string' || !ready.l1.trim()) add('L1_ABSENT', 'ready.l1 must name the L1 agent id');
+  // F5/F4 (round-81 wave): bind the handoff to the dispatch it names, both directions.
+  const stem = dispatchPath.split(sep).at(-1).replace(/\.json$/u, '');
+  if (stem !== `${wave}-dispatch`) add('WAVE_BINDING', `dispatch basename ${JSON.stringify(stem)} is not ${JSON.stringify(`${wave}-dispatch`)}`);
+  if (Object.hasOwn(dispatch, 'wave') && dispatch.wave !== wave) {
+    add('DISPATCH_WAVE', `dispatch.wave=${JSON.stringify(dispatch.wave)} for ready.wave=${JSON.stringify(wave)}`);
+  }
+  if (agentIds && typeof ready.l1 === 'string' && ready.l1.trim() && !agentIds.has(ready.l1)) {
+    add('L1_UNRESOLVED', `ready.l1=${JSON.stringify(ready.l1)} is not in ${opts.agents}`);
+  }
 
   const laneRoot = realpathSync(lane);
-  const [lo, hi] = opts.band.split(':').map(Number);
-  if (tc.tasks.length < lo || tc.tasks.length > hi) add('BAND', `${tc.tasks.length} seats outside ${lo}:${hi}`);
+  if (tc.tasks.length < lo || tc.tasks.length > hi) add('BAND', `${tc.tasks.length} seats outside ${lo}:${hi} (policy)`);
   if (!tc.context.includes(laneRoot)) add('CONTEXT_LANE_ROOT', 'taskCall.context does not name the lane root');
   if (!/HYAKU_SCRATCH|scratch root/i.test(tc.context)) add('SCRATCH_ROOT', 'taskCall.context does not name the scratch rule');
 
   const relativeTrailers = [];
   const names = new Set();
+  const destinations = new Map();
   const roles = {};
   let attack = 0;
   let connectors = 0;
@@ -176,8 +213,11 @@ export function judge(opts) {
     if (names.has(task.name.toLowerCase())) add('SEAT_DUPLICATE', `seat ${task.name} appears twice (case-insensitive)`);
     names.add(task.name.toLowerCase());
     if (typeof task.agent !== 'string' || !task.agent) { add('ROLE_UNKNOWN', `${where} (${task.name}) has no role`); return; }
+    if (typeof ready.l1 === 'string' && ready.l1.trim() && task.name.toLowerCase() === ready.l1.trim().toLowerCase()) {
+      add('L1_SEAT_COLLISION', `ready.l1=${JSON.stringify(ready.l1)} is also seat ${task.name}`);
+    }
     if (task.agent === 'planner') { add('PLANNER_SEAT', `seat ${task.name} is a frozen-topology planner`); return; }
-    if (!ROLES.has(task.agent)) { add('ROLE_UNKNOWN', `seat ${task.name} role ${JSON.stringify(task.agent)} is not a swarm role`); return; }
+    if (!seatRoles.has(task.agent)) { add('ROLE_UNKNOWN', `seat ${task.name} role ${JSON.stringify(task.agent)} is not a policy proposal role`); return; }
     roles[task.agent] = (roles[task.agent] ?? 0) + 1;
     if (ATTACK.has(task.agent)) attack++;
     if (task.agent === 'connector') connectors++;
@@ -185,6 +225,13 @@ export function judge(opts) {
     const firstLine = task.task.split('\n')[0].trim();
     if (firstLine !== '/skill:godspeed') add('GODSPEED', `seat ${task.name} does not lead with /skill:godspeed`);
     if (!task.task.includes(laneRoot)) add('TASK_LANE_ROOT', `seat ${task.name} task text does not name ${laneRoot}`);
+    const reportLine = /^Report:\s*(.+)$/m.exec(task.task);
+    if (reportLine) {
+      const raw = reportLine[1].trim().split(/\s+/u)[0];
+      const dest = isAbsolute(raw) ? resolve(raw) : resolve(lane, raw);
+      if (destinations.has(dest)) add('REPORT_DEST_DUPLICATE', `${task.name} claims ${dest} (also ${destinations.get(dest)})`);
+      else destinations.set(dest, task.name);
+    }
     const withoutTrailers = task.task.replace(/^Report:.*$/gm, '');
     if (/(^|[\s"'`(])(?:\.\/)?\.ufo\/waves\/round-\d+\//m.test(withoutTrailers)) {
       add('RELATIVE_WAVE_PATH', `seat ${task.name} names a lane-relative .ufo/waves path`);
@@ -209,6 +256,8 @@ export function judge(opts) {
     ready: readyPath,
     dispatch: dispatchPath,
     dispatchSha: sha(readFileSync(dispatchPath, 'utf8')),
+    policy: basename(resolve(opts.policy)),
+    agents: agentIds ? agentIds.size : 'none',
     seats: total,
     roles,
     attack,
@@ -221,7 +270,8 @@ function render(result) {
   if (result.verdict === 'READY') {
     return `READY_HANDOFF: READY wave=${result.wave} seats=${result.seats}`
       + ` attack=${result.attack}/${result.seats} connector=${result.connectors}`
-      + ` roles=${Object.entries(result.roles).map(([k, v]) => `${k}=${v}`).join(',')}`;
+      + ` roles=${Object.entries(result.roles).map(([k, v]) => `${k}=${v}`).join(',')}`
+      + ` policy=${result.policy} agents=${result.agents}`;
   }
   return `READY_HANDOFF: DRIFT ${result.findings.map((f) => f.id).join(',')}`
     + ` (${result.findings[0].detail})`;
@@ -230,6 +280,17 @@ function render(result) {
 // ---------------------------------------------------------------------------
 // Selftest — hermetic fixture lanes; nothing outside --work is read or written.
 // ---------------------------------------------------------------------------
+
+const POLICY_ROLES = ['scout', 'reviewer', 'critic', 'connector', 'sentinel', 'executor',
+  'mutation-tester', 'revenger', 'simplifier', 'scribe'];
+
+function writePolicy(box, { band = [8, 16], roles = POLICY_ROLES } = {}) {
+  const doc = {
+    sighting: { dispatch: { swarm: { waveMinLanes: band[0], waveMaxLanes: band[1] } } },
+    nativeProfiles: { 'omp-native-v1': { proposalRoles: roles } },
+  };
+  writeFileSync(join(box, 'policy.json'), `${JSON.stringify(doc, null, 2)}\n`);
+}
 
 function laneFixture(root, { seats = 10, attack = 3, connector = 1, wave = 'w1', round = 81 } = {}) {
   const lane = join(root, 'kumitate-shokunin');
@@ -253,7 +314,12 @@ function laneFixture(root, { seats = 10, attack = 3, connector = 1, wave = 'w1',
   writeFileSync(dispatch, `${JSON.stringify({ contract: 'ufo-swarm-wave-dispatch-v1', taskCall: { context, tasks } }, null, 2)}\n`);
   const ready = { lane: 'kumitate-shokunin', round, wave, dispatch, l1: 'KumitateR81' };
   writeFileSync(join(dir, `${wave}.ready`), `${JSON.stringify(ready)}\n`);
-  return { lane, dir, dispatch, tasks, context };
+  const box = root;
+  writePolicy(box);
+  writeFileSync(join(box, 'agents-ok.json'), `${JSON.stringify({ agents: [{ id: 'KumitateR81' }] })}\n`);
+  writeFileSync(join(box, 'agents-nol1.json'), `${JSON.stringify({ agents: [{ id: 'KumitateR80' }] })}\n`);
+  writeFileSync(join(box, 'agents-bad.json'), '{not json\n');
+  return { box, lane, dir, dispatch, tasks, context };
 }
 
 function runSelftest(work) {
@@ -265,7 +331,7 @@ function runSelftest(work) {
     const box = join(root, name);
     mkdirSync(box, { recursive: true });
     const fx = laneFixture(box);
-    const opts = { lane: fx.lane, round: 81, wave: 'w1', band: '8:16', attackPct: 25 };
+    const opts = { lane: fx.lane, round: 81, wave: 'w1', policy: join(fx.box, 'policy.json'), attackPct: 25 };
     mutate?.(fx, opts);
     let verdict;
     try {
@@ -432,6 +498,65 @@ function runSelftest(work) {
     doc.taskCall.tasks[1].task = '/skill:godspeed\nno lane root';
     writeFileSync(fx.dispatch, JSON.stringify(doc));
   }, (v) => v.verdict === 'DRIFT' && v.findings.includes('PLANNER_SEAT') && v.findings.includes('TASK_LANE_ROOT'));
+
+  // --- round-82 C1: binding, liveness, destinations, one policy authority -----
+  judgeCase('wave-binding-stem', (fx) => {
+    const moved = join(fx.dir, 'other-dispatch.json');
+    writeFileSync(moved, readFileSync(fx.dispatch));
+    rmSync(fx.dispatch);
+    const ready = JSON.parse(readFileSync(join(fx.dir, 'w1.ready'), 'utf8'));
+    ready.dispatch = moved;
+    writeFileSync(join(fx.dir, 'w1.ready'), JSON.stringify(ready));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('WAVE_BINDING'));
+  judgeCase('dispatch-wave-mismatch', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.wave = 'w2';
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('DISPATCH_WAVE'));
+  judgeCase('dispatch-wave-agree', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.wave = 'w1';
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'READY');
+  judgeCase('report-dest-duplicate', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    const first = /^Report:\s*(\S+)/m.exec(doc.taskCall.tasks[0].task)[1];
+    doc.taskCall.tasks[1].task = doc.taskCall.tasks[1].task.replace(/^Report:\s*\S+/m, `Report: ${first}`);
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('REPORT_DEST_DUPLICATE'));
+  judgeCase('l1-seat-collision', (fx) => {
+    const ready = JSON.parse(readFileSync(join(fx.dir, 'w1.ready'), 'utf8'));
+    ready.l1 = 'K81S01';
+    writeFileSync(join(fx.dir, 'w1.ready'), JSON.stringify(ready));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('L1_SEAT_COLLISION'));
+  judgeCase('l1-unresolved', (fx, o) => { o.agents = join(fx.box, 'agents-nol1.json'); },
+    (v) => v.verdict === 'DRIFT' && v.findings.includes('L1_UNRESOLVED'));
+  judgeCase('l1-resolved', (fx, o) => { o.agents = join(fx.box, 'agents-ok.json'); },
+    (v) => v.verdict === 'READY');
+  judgeCase('agents-absent', (fx, o) => { o.agents = join(fx.box, 'no-such-agents.json'); },
+    (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'AGENTS_ABSENT');
+  judgeCase('agents-malformed', (fx, o) => { o.agents = join(fx.box, 'agents-bad.json'); },
+    (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'AGENTS_MALFORMED');
+  judgeCase('policy-absent', (fx, o) => { o.policy = join(fx.box, 'no-such-policy.json'); },
+    (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'POLICY_ABSENT');
+  judgeCase('policy-malformed', (fx) => { writeFileSync(join(fx.box, 'policy.json'), '{"sighting":{}}'); },
+    (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'POLICY_MALFORMED');
+  judgeCase('policy-band-narrow', (fx) => { writePolicy(fx.box, { band: [20, 30] }); },
+    (v) => v.verdict === 'DRIFT' && v.findings.includes('BAND'));
+  judgeCase('policy-roles-narrow', (fx) => {
+    writePolicy(fx.box, { roles: POLICY_ROLES.filter((r) => r !== 'scribe') });
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('ROLE_UNKNOWN'));
+  judgeCase('labrat-refused', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.taskCall.tasks[9].agent = 'labrat';
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('ROLE_UNKNOWN'));
+  judgeCase('dispatch-symlink-refused', (fx) => {
+    const outside = join(fx.box, 'outside-dispatch.json');
+    writeFileSync(outside, readFileSync(fx.dispatch));
+    rmSync(fx.dispatch);
+    symlinkSync(outside, fx.dispatch);
+  }, (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'DISPATCH_ABSENT');
 
   if (!work) rmSync(root, { recursive: true, force: true });
   const verdict = failures.length ? 'FAIL' : 'PASS';

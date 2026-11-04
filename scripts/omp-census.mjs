@@ -238,12 +238,36 @@ function snapshot(root, file, io, now = new Date()) {
   }
 }
 
-/** Compare only depth-1 metadata; neither member content nor census rules apply. */
-function compareShape(root, file, io) {
-  let receipt;
-  try { receipt = shapeFromFile(file); } catch (e) {
+/**
+ * Compare only depth-1 metadata; neither member content nor census rules apply.
+ * Round 82: the receipt's own capture instant is disclosed on the compare line, and an
+ * opt-in `--max-age DAYS` gates a receipt that has aged past the caller's bound. The age
+ * never scores (the census verdict is unchanged); a legacy v1 receipt carries no instant,
+ * so a caller that names a bound gets `SHAPE_AGE_UNKNOWN` rather than a guessed age.
+ */
+function compareShape(root, file, io, maxAge = null) {
+  let doc;
+  try { doc = readShapeDoc(file); } catch (e) {
     io.out(e.code);
     return 2;
+  }
+  const receipt = doc.entries;
+  const captured = typeof doc.captured_at === 'string' ? doc.captured_at : null;
+  const ageDays = captured === null ? null : receiptAgeDays(doc);
+  const stamp = `receipt_captured=${captured === null ? 'absent' : captured.slice(0, 10)} age_days=${ageDays === null ? 'absent' : ageDays}`;
+  if (maxAge !== null) {
+    if (ageDays === null) {
+      io.out(`OMP_SHAPE_COMPARE: SHAPE_AGE_UNKNOWN receipt_captured=absent max_age=${maxAge}`);
+      return 2;
+    }
+    if (ageDays < 0) {
+      io.out(`OMP_SHAPE_COMPARE: SHAPE_CLOCK age_days=${ageDays} max_age=${maxAge}`);
+      return 2;
+    }
+    if (ageDays > maxAge) {
+      io.out(`OMP_SHAPE_COMPARE: SHAPE_STALE_RECEIPT entries=${receipt.length} age_days=${ageDays} max_age=${maxAge}`);
+      return 1;
+    }
   }
   let live;
   try { live = readShape(root); } catch {
@@ -282,7 +306,7 @@ function compareShape(root, file, io) {
   // LC_ALL=C compares UTF-8 bytes, not locale collation or UTF-16 code units.
   differences.sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
   const drift = differences.length > 0;
-  io.out(`OMP_SHAPE_COMPARE: ${drift ? 'DRIFT' : 'IN_SYNC'} entries=${live.length} receipt=${receipt.length} added=${added} removed=${removed} changed=${changed}${drift ? ` first=${differences[0]}` : ''} transient=${transients.size}`);
+  io.out(`OMP_SHAPE_COMPARE: ${drift ? 'DRIFT' : 'IN_SYNC'} entries=${live.length} receipt=${receipt.length} added=${added} removed=${removed} changed=${changed}${drift ? ` first=${differences[0]}` : ''} transient=${transients.size} ${stamp}`);
   return drift ? 1 : 0;
 }
 
@@ -387,7 +411,7 @@ export function censusEntries(entries, noteText) {
 // Command line
 // ---------------------------------------------------------------------------
 
-const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR] | --selftest [--work DIR]';
+const USAGE = 'usage: node scripts/omp-census.mjs [--root DIR] [--self DIR] [--note FILE] | --snapshot FILE [--root DIR] | --shape FILE [--max-age DAYS] [--self DIR] [--note FILE] | --compare FILE [--root DIR] [--max-age DAYS] | --selftest [--work DIR]';
 
 function parseArgs(argv) {
   const o = { root: null, self: DEFAULT_SELF, note: null, snapshot: null, shape: null, compare: null, maxAge: null, selftest: false, work: null };
@@ -430,7 +454,7 @@ function parseArgs(argv) {
     if (o[key] !== null && (!o[key] || o[key].startsWith('-'))) return { error: `--${key} needs a file argument` };
   }
   if (o.maxAge !== null && (!Number.isInteger(o.maxAge) || o.maxAge < 0)) return { error: '--max-age must be a non-negative integer' };
-  if (o.maxAge !== null && o.shape === null) return { error: '--max-age is only meaningful with --shape' };
+  if (o.maxAge !== null && o.shape === null && o.compare === null) return { error: '--max-age is only meaningful with --shape or --compare' };
   return o;
 }
 
@@ -539,7 +563,7 @@ function selftest(work, io) {
     const err = [];
     const ioCapture = { out: (s) => out.push(s), err: (s) => err.push(s) };
     const code = argv.compare
-      ? compareShape(argv.root, argv.compare, ioCapture)
+      ? compareShape(argv.root, argv.compare, ioCapture, argv.maxAge ?? null)
       : argv.shape
         ? runShape(argv.shape, ioCapture, argv.note ?? note, argv.maxAge)
         : runCensus(argv.root, ioCapture, argv.note ?? note);
@@ -782,6 +806,34 @@ function selftest(work, io) {
   const compareArgs = { compare: receipt, root: compareRoot };
   check('compare-in-sync', compareArgs,
     { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC entries=13 receipt=13 added=0 removed=0 changed=0'], lacks: ['first='] });
+  // Round 82: the compare path discloses the receipt's capture instant and gates age on demand.
+  check('compare-age-disclosed', compareArgs,
+    { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', `receipt_captured=${NOW.toISOString().slice(0, 10)} age_days=0`] });
+  const compareBackdated = join(scratch, 'compare-backdated.json');
+  writeFileSync(compareBackdated, JSON.stringify({ contract: SHAPE_CONTRACT,
+    captured_at: new Date(NOW.getTime() - 45 * 86400000).toISOString().replace(/\.\d{3}Z$/u, 'Z'),
+    entries: shapeFromFile(receipt) }));
+  check('compare-age-backdated', { compare: compareBackdated, root: compareRoot },
+    { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'age_days=45'] });
+  check('compare-max-age-stale', { compare: compareBackdated, root: compareRoot, maxAge: 30 },
+    { code: 1, has: ['SHAPE_STALE_RECEIPT', 'age_days=45', 'max_age=30'], lacks: ['OMP_SHAPE_COMPARE: IN_SYNC'] });
+  check('compare-max-age-pass', { compare: compareBackdated, root: compareRoot, maxAge: 60 },
+    { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'age_days=45'], lacks: ['SHAPE_STALE_RECEIPT'] });
+  check('compare-v1-captured-absent', { compare: legacy, root: join(scratch, 'clean-fixture') },
+    { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'captured=absent', 'age_days=absent'] });
+  check('compare-v1-max-age-unknown', { compare: legacy, root: join(scratch, 'clean-fixture'), maxAge: 1 },
+    { code: 2, has: ['SHAPE_AGE_UNKNOWN', 'max_age=1'], lacks: ['OMP_SHAPE_COMPARE: IN_SYNC'] });
+  // CLI dispatch: parseArgs -> main -> compareShape must carry --max-age (the round-81 class).
+  {
+    const out = [];
+    const err = [];
+    const code = main(['--compare', compareBackdated, '--root', compareRoot, '--max-age', '30'], { out: (x) => out.push(x), err: (x) => err.push(x) });
+    ran++;
+    const text = out.join('\n');
+    if (code !== 1 || !text.includes('SHAPE_STALE_RECEIPT')) {
+      failures.push(`cli-compare-max-age: exit=${code} out=${text.slice(0, 160)}`);
+    } else io.out('SELFTEST ok cli-compare-max-age');
+  }
   // Compare-only exemption: exact live database sidecars, in either shape.
   const stableEntries = shapeFromFile(receipt)
     .filter((entry) => !/^agent\.db-(?:shm|wal|journal)$/u.test(entry.name));
@@ -910,7 +962,7 @@ function main(argv, io) {
   }
   const root = parsed.root || join(homedir(), '.omp', 'agent');
   if (parsed.snapshot !== null) return snapshot(root, parsed.snapshot, io);
-  if (parsed.compare !== null) return compareShape(root, parsed.compare, io);
+  if (parsed.compare !== null) return compareShape(root, parsed.compare, io, parsed.maxAge);
   const note = parsed.note ?? join(parsed.self, 'corpus', 'knowledge', 'omp-agent-root.md');
   if (parsed.shape !== null) return runShape(parsed.shape, io, note, parsed.maxAge);
   return runCensus(root, io, note);

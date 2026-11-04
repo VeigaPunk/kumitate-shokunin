@@ -111,3 +111,22 @@ committed record; R81-6 a rejected candidate this round; R81-7 the refusal count
   (`agents=none` disclosed).
 - The attack share and the connector cap stay lane-owned constants (the campaign policy carries no
   machine-readable field for them); the band and the role vocabulary are policy-derived.
+
+## Amendment 1 (append-only, before any data seat scored; corrections to the frozen text above)
+
+- **A1.1** `--band` is gone from the tool: the seat band and the seat-role vocabulary are read from
+  `--policy` (the plan's C1(f)). `--attack-pct` stays (lane-owned).
+- **A1.2** The round-81 disclosure that "a symlink placed inside the wave dir and resolving outside
+  passes the lexical `inside()` check" is **refuted by measurement**: `lstatSync(dispatch).isFile()`
+  refuses the symlink before the lexical check runs, and the tool answers `FAIL-CLOSED
+  DISPATCH_ABSENT ("dispatch is not a regular file")`. Arm 18 therefore asserts the refusal that
+  actually fires and is renamed `dispatch-symlink-refused`; the count stays 22. The realpath arm stays
+  as defence in depth and stays unreachable behind the lstat guard — disclosed, not claimed.
+- **A1.3** `readJson` gains a distinct malformed token: v1 conflated "cannot read" and "not JSON" under
+  one token, so `AGENTS_MALFORMED`/`POLICY_MALFORMED` were unreachable. The frozen arms 10/11/12/13
+  assert the four distinct tokens.
+- **A1.4** Measured controls: `C82_C1` base `0/22`, stub `6/22`; `C82_C2` base `6/13`, stub `4/13`.
+- **A1.5** The frozen counters changed before data in two disclosed places only: the arm-18 rename
+  (A1.2) and `probe82-c2`'s score arm, which ages the lane's own pinned receipt instead of a synthetic
+  one (a synthetic receipt's names are census findings, so it could not isolate "the age never
+  scores"). The measured base value 6/13 is stated in the claim above.

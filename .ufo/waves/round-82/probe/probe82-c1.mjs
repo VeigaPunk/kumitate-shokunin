@@ -183,7 +183,7 @@ function main() {
   writeFileSync(outside, `${JSON.stringify(fLink.dispatchDoc)}\n`);
   unlinkSync(fLink.dispatch);
   symlinkSync(outside, fLink.dispatch);
-  arm('dispatch-symlink-escape', () => want(judge(fLink), 2, 'PATH_UNSAFE'));
+  arm('dispatch-symlink-refused', () => want(judge(fLink), 2, 'DISPATCH_ABSENT'));
 
   const fAttack = mutate('attack-low', { attack: 2 });
   arm('attack-share', () => want(judge(fAttack), 1, 'ATTACK_SHARE'));
