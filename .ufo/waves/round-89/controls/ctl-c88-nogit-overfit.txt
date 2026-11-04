@@ -1,0 +1,31 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS (self-reported, nothing run)
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+ARM detect-r86-renamed: PASS files=10 exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=q01-9.txt
+ARM clean-r87: PASS copied=11 exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=0
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=1 external=0 first=u.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED scripts/absent-bcc6d5884034.mjs
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r89/l1/controls/c-c88-nogit-overfit/p89-bcc6d5884034/absent-bcc6d5884034-dir
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED ffffffffffffffffffffffffffffffffffffffff
+ARM symlink-receipt: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT a.txt
+ARM rev-receipt-wins: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM worktree-forgery: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+ARM default-rev: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM rev-receipt-negative: PASS exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM untracked-instrument: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED scripts/fresh-bcc6d5884034.mjs
+ARM escape-relative: PASS relative exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE ../outside-bcc6d5884034/ext-bcc6d5884034.mjs | absolute exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM symlink-dir: FAIL link exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_DIR /fast/scratch/hyaku/kumitate-r89/l1/controls/c-c88-nogit-overfit/p89-bcc6d5884034/link-dir-bcc6d5884034 | real exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM oversize: FAIL 2MiB exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE r.txt | 512KiB exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM duplicate-field: FAIL dup-cmd exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt cmd | dup-cmd-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt cmd | dup-digest exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt tool_sha256 | dup-rev exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt rev | single exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM sweep: PASS scripts=33 clean exit=0 RECEIPT_BIND: CLEAN matched=33 mismatched=0 unchecked=0 external=0 | flip=s-cite-sources.mjs.txt exit=1 RECEIPT_BIND: DRIFT matched=32 mismatched=1 unchecked=0 external=0 first=s-cite-sources.mjs.txt
+ARM default-rev-not-head: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM index-not-judged: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM abs-in-lane-at-rev: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM limit-edge: FAIL edge 1048576 exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt | over 1048577 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE r.txt
+ARM limit-before-read: PASS size=1073741824 exit=2 RECEIPT_BIND: FAIL-CLOSED RECEIPT_TOO_LARGE r.txt
+ARM escape-inner-dotdot: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED ESCAPES_LANE scripts/../../outside2-bcc6d5884034/ext2-bcc6d5884034.mjs
+ARM dup-equal-field: PASS dup-rev-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt rev | dup-digest-equal exit=2 RECEIPT_BIND: FAIL-CLOSED AMBIGUOUS_FIELD r.txt tool_sha256
+ARM alias-proc-root: FAIL exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM bom-rev: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+ARM symlink-instrument: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=r.txt
+C89_C1: UNMET held=17/30
