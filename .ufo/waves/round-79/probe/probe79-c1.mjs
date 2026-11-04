@@ -86,12 +86,16 @@ function buildRoot(dest, spec) {
 /** A scoring-relevant copy of the lane (scripts, corpus, pins, scorecard, skill). */
 function copyLane(lane, dest) {
   rmSync(dest, { recursive: true, force: true });
-  mkdirSync(dest, { recursive: true });
-  const r = spawnSync('cp', ['-a',
-    join(lane, 'scripts'), join(lane, 'corpus'), join(lane, 'SCORECARD.md'),
-    join(lane, 'SKILL.md'), join(lane, 'PROVINCE.md'), join(lane, 'README.md'),
-    join(lane, '.ufo'), dest], { encoding: 'utf8', timeout: 600000 });
-  if (r.status !== 0) throw new Error(`copyLane failed: ${(r.stderr || '').slice(0, 200)}`);
+  mkdirSync(join(dest, '.ufo'), { recursive: true });
+  const pairs = [
+    ['scripts', 'scripts'], ['corpus', 'corpus'], ['SCORECARD.md', 'SCORECARD.md'],
+    ['SKILL.md', 'SKILL.md'], ['PROVINCE.md', 'PROVINCE.md'], ['README.md', 'README.md'],
+    ['.ufo/pins', '.ufo/pins'],
+  ];
+  for (const [from, to] of pairs) {
+    const r = spawnSync('cp', ['-a', join(lane, from), join(dest, to)], { encoding: 'utf8', timeout: 600000 });
+    if (r.status !== 0) throw new Error(`copyLane ${from} failed: ${(r.stderr || '').slice(0, 200)}`);
+  }
   return dest;
 }
 
