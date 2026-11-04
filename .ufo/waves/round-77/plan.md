@@ -202,3 +202,64 @@ No predicate sentence, threshold, target or axis arithmetic changed. Re-scored c
 amended probe: C1 `held=0/10`, C2 `held=2/11`, constant printer `held=0/11`; probe sha256 is in
 `controls/c77-c1-base.txt`. The seats cloned `4dc470a1`; the final measurement runs the amended
 probe, which is committed in the amendment commit that carries this section.
+
+## Amendment 2 — counter v2: the v1 printer attack fired the C1 kill rule (2026-11-04, before any verdict)
+
+The pre-data freeze reviewer (`build/K77ReviewFreeze/report.md`, FREEZE-FIX 2) built a constant
+printer that reads no root and no receipt and scored it with the v1 counter: `held=5/10`, passing
+`c1.5` and `c1.6`. The v1 kill rule says "a constant printer meeting 5 or 6" kills the claim, so
+v1 as written cannot admit C1 even with a real implementation. The attack is committed
+(`build/K77ReviewFreeze/printer-c1.txt`). No data seat has scored and no verdict exists; the
+lane's precedent (A1 above, and the v2 counters of `control-replay` / `routed-ledger`) is a
+versioned successor with the failing bytes preserved.
+
+**v1 bytes are preserved verbatim at `.ufo/waves/round-77/probe/probe77-v1.mjs`** (sha256
+`16695655a691ac227c4932b23a5e5b68b8acc1b48b53fce91f75537e67dd0193`). v2 is `probe77.mjs`; the
+report names both and the v1 printer receipt stays evidence.
+
+### v2 C1 (12 checks) — same target, discriminating arms added
+
+`c1.1` now requires the exact line including `path=`, hashes the **produced** file, and requires
+produced = printed = committed sha256. `c1.6` judges a **trimmed** receipt (the
+`last-changelog-version` member dropped; absence is INFO) and requires `O_members` to follow the
+receipt instead of a fixed 64. New: `c1.11` widens `agent.db` to 0604 and requires
+`MODE agent.db want<=0600 got=0604` plus `O_findings=1 coverage_omp=9`; `c1.12` requires the live
+default path to carry no `source` key and no `source=snapshot` line. `c1.8` adds the content-key
+receipt (`SHAPE_INVALID`), a malformed `--omp-shape` (`OMP_SHAPE_INVALID`), the absent case by its
+distinct token (`OMP_SHAPE_NOT_FOUND`), and `--omp-shape` + `--omp-root` → usage 64. `c1.10` adds
+enforcement: a scratch scorecard with a zeroed `pin.omp-shape` must read `GATE_PIN_DRIFT` exit 1.
+The check list is exactly the registry in `probe77.mjs`; `C77_C1: HELD held=12/12` is the predicate.
+
+### v2 C2 (13 checks) — same target, exactness and refusal arms added
+
+The three crash arms now require **exactly one** recovery line, byte-equal to
+`RECOVERED <target> <state>`, and that the requested arm ran after it (`SPOTCHECK_MAP`). New:
+`c2.9` recovers before `--predict` (target line + `SPOTCHECK_PREDICT`); `c2.10` a journal whose
+stored `README.pre` does not match the manifest sha256 must read `REFUSED_ORACLE` exit 2 with
+destinations and journal untouched. `c2.11` raises the selftest floor to 26 cases. `c2.12`
+requires the adopted fixture row to be **adjacent** to the last existing lessons row, the fixture
+oracle CLEAN after adoption, and the lane map exactly `files=184 rows=184 covered=184`. `c2.1`
+requires the crash seam in the header comment (first 20 lines). `C77_C2: HELD held=13/13` is the
+predicate.
+
+### Controls re-scored with v2 (receipts in `controls/`)
+
+- base tree `a321ed80`: C1 `held=1/12` (only `c1.12`, a live-path negative), C2 `held=2/13` (only
+  the trivial negatives `c2.7` and `c2.13`).
+- C1 constant printer (hand-typed open-TSV receipt + stub): `held=4/12` (ceiling 5/12 on the lane,
+  where `c1.2` can pass) — not the target; the kill rule now reads "the 12-check target is not met
+  by a constant printer", recorded with the measured score.
+- C2 constant printer: `held=0/13`.
+
+### Errata (append-only; the frozen text is not rewritten)
+
+- **A2.1** — the plan's C1 before-state cites `open/c1-usage-base.txt`; the committed receipt is
+  `controls/c1-usage-base.txt` (FREEZE-FIX 6). The bytes are the same; the pointer is corrected here.
+- **A2.2** — `open/plan-before-ready-freeze.txt` was produced at the freeze but committed after the
+  scaffolding commit; it is readiness evidence, not part of the frozen tree, and the report says so.
+- **A2.3** — `c2.11`'s name in A1 was `c2.11-placement-and-map`; v2 numbers it `c2.12` and adds
+  `c2.9`/`c2.10`. The registry in `probe77.mjs` is the authority; a name absent from it reads
+  `not run` (the A1.2 class, now also caught by `c2.11`'s selftest floor? no — by `not run` count).
+
+No predicate sentence, target, axis arithmetic or kill rule *scope* was narrowed; the target
+(12/12, 13/13) is unchanged and the counter only gained discriminating arms.

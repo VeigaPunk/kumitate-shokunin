@@ -1,16 +1,17 @@
-C2 constant-printer control — a stub that prints RECOVERED unconditionally is scored by the same frozen counter
-stub: scripts/spotcheck-adopt.mjs prints RECOVERED <arg> rolled-back and exits 0; lane fixture carries no journal code
+C2 constant-printer control v2 — stub prints RECOVERED unconditionally, no journal code
 cmd: node .ufo/waves/round-77/probe/probe77.mjs --set c2 --lane /fast/scratch/hyaku/kumitate-r77/control-printer/lane --work /fast/scratch/hyaku/kumitate-r77/control-printer/work
 ---
-CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2,adopt-journal,SPOTCHECK_ADOPT_TEST_CRASH
+CHECK c2.1-journal-surface: FAIL missing kumitate-spotcheck-adopt-v2,adopt-journal
 CHECK c2.2-crash-journal: FAIL child not killed: status=0 signal=null
 CHECK c2.3-crash-after-row: FAIL child not killed: status=0 signal=null
 CHECK c2.4-crash-after-pin: FAIL child not killed: status=0 signal=null
-CHECK c2.5-stale-tmp: FAIL line "RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
+CHECK c2.5-stale-tmp: FAIL lines ["RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"]
 CHECK c2.6-foreign-journal: FAIL exit=0 out="RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
-CHECK c2.7-no-journal-no-line: FAIL spurious recovery: RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back
+CHECK c2.7-no-journal-no-line: FAIL threw: recoveryLine is not defined
 CHECK c2.8-recovery-idempotent: FAIL child not killed
-CHECK c2.9-selftest-and-refusals: FAIL exit=0 ["RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"]
-CHECK c2.10-usage: FAIL predict=0 bogus=0
-CHECK c2.11-placement-and-map: FAIL fixture adopt exit=0 "RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
-C77_C2: UNMET held=0/11
+CHECK c2.9-recovery-before-predict: FAIL child not killed
+CHECK c2.10-corrupt-preimage: FAIL exit=0 out="RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
+CHECK c2.11-selftest-and-refusals: FAIL exit=0 ["RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"]
+CHECK c2.12-placement-and-lane-map: FAIL fixture adopt exit=0 "RECOVERED corpus/lessons/round-99-verifier-spotcheck.md rolled-back"
+CHECK c2.13-usage: FAIL predict=0 bogus=0
+C77_C2: UNMET held=0/13

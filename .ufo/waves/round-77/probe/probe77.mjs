@@ -101,13 +101,18 @@ function c1Checks(lane, work) {
     if (!validSnapshot(committed)) return fail('c1.1-snapshot-writer', `no valid ${SNAPSHOT_REL}`, m);
     const r = run(process.execPath, [join(lane, 'scripts/omp-census.mjs'), '--snapshot', live]);
     const one = r.stdout.trim().split('\n');
-    const hit = one.find((l) => /^OMP_SNAPSHOT: WROTE entries=\d+ sha256=[0-9a-f]{64}( path=\S+)?$/.test(l));
+    const hit = one.find((l) => /^OMP_SNAPSHOT: WROTE entries=\d+ sha256=[0-9a-f]{64} path=\S+$/.test(l));
     if (r.status !== 0 || !hit) return fail('c1.1-snapshot-writer', `exit=${r.status} out=${JSON.stringify(r.stdout.trim()).slice(0, 200)}`, m);
     const n = Number(hit.match(/entries=(\d+)/)[1]);
     const h = hit.match(/sha256=([0-9a-f]{64})/)[1];
+    const linePath = hit.match(/path=(\S+)$/)[1];
+    if (linePath !== live) return fail('c1.1-snapshot-writer', `path=${linePath} want ${live}`, m);
+    if (!existsSync(live)) return fail('c1.1-snapshot-writer', 'writer printed but wrote no file', m);
     if (n !== committed.entries.length) return fail('c1.1-snapshot-writer', `live entries=${n} committed=${committed.entries.length}`, m);
-    if (h !== sha(snapPath)) return fail('c1.1-snapshot-writer', `line sha256=${h} file sha256=${sha(snapPath)}`, m);
-    pass('c1.1-snapshot-writer', `entries=${n} sha256=${h} line==file`, m);
+    const written = sha(live);
+    if (written !== h) return fail('c1.1-snapshot-writer', `line sha256=${h} produced file sha256=${written}`, m);
+    if (h !== sha(snapPath)) return fail('c1.1-snapshot-writer', `produced sha256=${h} committed=${sha(snapPath)}`, m);
+    pass('c1.1-snapshot-writer', `entries=${n} sha256=${h} produced==line==committed`, m);
   });
 
   check('c1.2-snapshot-is-open-shape', (m) => {
@@ -165,15 +170,25 @@ function c1Checks(lane, work) {
   check('c1.6-offline-equals-root', (m) => {
     const committed = readSnapshotFile(snapPath);
     if (!validSnapshot(committed)) return fail('c1.6-offline-equals-root', 'no valid snapshot', m);
-    try { materialise(committed, root); } catch (e) { return fail('c1.6-offline-equals-root', `materialise: ${e.message}`, m); }
-    const off = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', snapPath, '--json']);
+    // A TRIMMED receipt: drop one optional/base member so a constant printer that always
+    // reports the committed count cannot satisfy this arm. `last-changelog-version` is a
+    // base member whose absence is INFO, not a finding.
+    const trim = committed.entries.filter((e) => e.name !== 'last-changelog-version');
+    if (trim.length !== committed.entries.length - 1) return fail('c1.6-offline-equals-root', 'trim name not in receipt', m);
+    const trimmed = join(work, 'trimmed.json');
+    writeFileSync(trimmed, `${JSON.stringify({ contract: SHAPE_CONTRACT, entries: trim }, null, 2)}\n`);
+    try { materialise({ contract: SHAPE_CONTRACT, entries: trim }, root); } catch (e) { return fail('c1.6-offline-equals-root', `materialise: ${e.message}`, m); }
+    const off = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', trimmed, '--json']);
     const on = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-root', root, '--json']);
     const a = parseJson(off.stdout), b = parseJson(on.stdout);
     if (!a || !b || !a.terms || !b.terms) return fail('c1.6-offline-equals-root', `off=${off.status} on=${on.status} parse`, m);
     const keys = ['C1o', 'C1o_total', 'O_members', 'O_findings', 'O_bound', 'coverage_omp'];
     const bad = keys.filter((k) => a.terms[k] !== b.terms[k]).map((k) => `${k}:${a.terms[k]}!=${b.terms[k]}`);
     if (bad.length) return fail('c1.6-offline-equals-root', bad.join(' '), m);
-    pass('c1.6-offline-equals-root', `six O terms equal (${keys.map((k) => a.terms[k]).join(',')})`, m);
+    if (a.terms.O_members !== trim.length || a.terms.O_findings !== 0) {
+      return fail('c1.6-offline-equals-root', `trimmed receipt O_members=${a.terms.O_members} want ${trim.length}, O_findings=${a.terms.O_findings}`, m);
+    }
+    pass('c1.6-offline-equals-root', `trimmed O_members=${a.terms.O_members} equals root judge; six terms equal`, m);
   });
 
   check('c1.7-negative-discriminates', (m) => {
@@ -208,9 +223,17 @@ function c1Checks(lane, work) {
       if (r.status !== 2 || !r.stdout.includes(token)) bad0.push(`${file.split('/').pop()}: exit=${r.status} token=${token} out=${JSON.stringify(r.stdout.trim()).slice(0, 80)}`);
     }
     const p = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', join(work, 'absent.json'), '--json']);
-    if (!(p.status === 2 && /OMP_SHAPE_(NOT_FOUND|INVALID)/.test(p.stdout + p.stderr))) bad0.push(`proxy absent: exit=${p.status} out=${JSON.stringify((p.stdout + p.stderr).trim()).slice(0, 100)}`);
+    if (!(p.status === 2 && /OMP_SHAPE_NOT_FOUND/.test(p.stdout + p.stderr))) bad0.push(`proxy absent: exit=${p.status} out=${JSON.stringify((p.stdout + p.stderr).trim()).slice(0, 100)}`);
+    const pm = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', bad, '--json']);
+    if (!(pm.status === 2 && /OMP_SHAPE_INVALID/.test(pm.stdout + pm.stderr))) bad0.push(`proxy malformed: exit=${pm.status} out=${JSON.stringify((pm.stdout + pm.stderr).trim()).slice(0, 100)}`);
+    const content = join(work, 'content-key.json');
+    writeFileSync(content, `${JSON.stringify({ contract: SHAPE_CONTRACT, entries: [{ name: 'agent.db', kind: 'file', mode: 0o600, content: '' }] }, null, 2)}\n`);
+    const cc = run(process.execPath, [join(lane, 'scripts/omp-census.mjs'), '--shape', content]);
+    if (!(cc.status === 2 && cc.stdout.includes('SHAPE_INVALID'))) bad0.push(`content-key census: exit=${cc.status} out=${JSON.stringify(cc.stdout.trim()).slice(0, 80)}`);
+    const both = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', snapPath, '--omp-root', root, '--json']);
+    if (both.status !== 64) bad0.push(`flags-both: exit=${both.status} (want 64)`);
     if (bad0.length) return fail('c1.8-fail-closed', bad0.join('; '), m);
-    pass('c1.8-fail-closed', 'SHAPE_INVALID x2, SHAPE_NOT_FOUND, proxy fail-closed', m);
+    pass('c1.8-fail-closed', 'SHAPE_INVALID x3, SHAPE_NOT_FOUND, OMP_SHAPE_INVALID/NOT_FOUND, flags-both 64', m);
   });
 
   check('c1.9-selftests', (m) => {
@@ -233,7 +256,47 @@ function c1Checks(lane, work) {
     if (pin[1] !== sha(snapPath)) return fail('c1.10-no-content-pinned', `pin=${pin[1]} file=${sha(snapPath)}`, m);
     const doc = readSnapshotFile(snapPath);
     if (!validSnapshot(doc)) return fail('c1.10-no-content-pinned', 'entry key set is not exactly name/kind/mode', m);
-    pass('c1.10-no-content-pinned', `pin.omp-shape=${pin[1].slice(0, 16)}… name/kind/mode only`, m);
+    const scText = readText(join(lane, 'SCORECARD.md')) || '';
+    const tampered = scText.replace(pin[0], `pin.omp-shape=${'0'.repeat(64)}`);
+    if (tampered === scText) return fail('c1.10-no-content-pinned', 'could not build tampered scorecard', m);
+    const tamperedPath = join(work, 'scorecard-tampered.md');
+    writeFileSync(tamperedPath, tampered);
+    const t = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--scorecard', tamperedPath, '--json']);
+    const tj = parseJson(t.stdout);
+    const kinds = tj ? (tj.findings || []).map((f) => String(f.kind)) : [];
+    if (t.status !== 1 || !kinds.includes('GATE_PIN_DRIFT')) {
+      return fail('c1.10-no-content-pinned', `tamper exit=${t.status} kinds=${kinds.join(',')}`, m);
+    }
+    pass('c1.10-no-content-pinned', `pin.omp-shape=${pin[1].slice(0, 16)}… name/kind/mode only; tamper -> GATE_PIN_DRIFT`, m);
+  });
+
+  check('c1.11-mode-discriminates', (m) => {
+    const committed = readSnapshotFile(snapPath);
+    if (!validSnapshot(committed)) return fail('c1.11-mode-discriminates', 'no valid snapshot', m);
+    const wide = join(work, 'wide-mode.json');
+    const doc = { contract: SHAPE_CONTRACT, entries: committed.entries.map((e) => (e.name === 'agent.db' ? { ...e, mode: 0o604 } : e)) };
+    writeFileSync(wide, `${JSON.stringify(doc, null, 2)}\n`);
+    const c = run(process.execPath, [join(lane, 'scripts/omp-census.mjs'), '--shape', wide]);
+    if (c.status !== 1 || !c.stdout.includes('MODE agent.db want<=0600 got=0604')) {
+      return fail('c1.11-mode-discriminates', `census exit=${c.status} out=${JSON.stringify(c.stdout.trim()).slice(0, 160)}`, m);
+    }
+    const p = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--omp-shape', wide, '--json']);
+    const j = parseJson(p.stdout);
+    const kinds = j ? (j.findings || []).map((f) => String(f.kind)) : [];
+    if (!j || j.terms.O_findings !== 1 || j.terms.coverage_omp !== 9 || !kinds.includes('COVERAGE_OMP_DRIFT')) {
+      return fail('c1.11-mode-discriminates', `proxy exit=${p.status} O_findings=${j && j.terms.O_findings} coverage_omp=${j && j.terms.coverage_omp} kinds=${kinds.join(',')}`, m);
+    }
+    pass('c1.11-mode-discriminates', 'MODE agent.db -> O_findings=1 coverage_omp=9', m);
+  });
+
+  check('c1.12-default-path-unchanged', (m) => {
+    const live = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs'), '--json']);
+    const j = parseJson(live.stdout);
+    if (!j || !j.terms) return fail('c1.12-default-path-unchanged', `exit=${live.status} unparseable`, m);
+    if (Object.prototype.hasOwnProperty.call(j, 'source')) return fail('c1.12-default-path-unchanged', `live JSON carries source=${JSON.stringify(j.source)}`, m);
+    const plain = run(process.execPath, [join(lane, 'scripts/proxy-check.mjs')]);
+    if (/source=snapshot/.test(plain.stdout)) return fail('c1.12-default-path-unchanged', 'live printed line claims source=snapshot', m);
+    pass('c1.12-default-path-unchanged', 'live JSON has no source key; live line has no source=snapshot', m);
   });
 }
 
@@ -262,15 +325,20 @@ function c2Checks(lane, work) {
   check('c2.1-journal-surface', (m) => {
     const text = readText(tool);
     if (text === null) return fail('c2.1-journal-surface', 'tool absent', m);
-    const need = ['kumitate-spotcheck-adopt-v2', 'adopt-journal', 'RECOVERED', 'SPOTCHECK_ADOPT_TEST_CRASH'];
+    const need = ['kumitate-spotcheck-adopt-v2', 'adopt-journal', 'RECOVERED'];
     const miss = need.filter((t) => !text.includes(t));
     if (miss.length) return fail('c2.1-journal-surface', `missing ${miss.join(',')}`, m);
-    pass('c2.1-journal-surface', 'contract v2, journal dir, RECOVERED, test seam present', m);
+    const head = text.split('\n').slice(0, 20).join('\n');
+    if (!head.includes('SPOTCHECK_ADOPT_TEST_CRASH') || !/SIGKILL/.test(head)) {
+      return fail('c2.1-journal-surface', 'crash seam not documented in the header comment', m);
+    }
+    pass('c2.1-journal-surface', 'contract v2, journal dir, RECOVERED, seam documented in header', m);
   });
 
   const crash = (fx, stage) => run(process.execPath, [tool, '--lane', fx.dir, '--adopt', TARGET],
     { env: { SPOTCHECK_ADOPT_TEST_CRASH: stage } });
-  const recoveryLine = (out) => out.split('\n').find((l) => l.startsWith('RECOVERED ')) || '';
+  const recoveryLines = (out) => out.split('\n').filter((l) => l.startsWith('RECOVERED '));
+  const exactRecovery = (out, want) => recoveryLines(out).length === 1 && recoveryLines(out)[0] === `RECOVERED ${TARGET} ${want}`;
 
   for (const [name, stage, expectHalf, expectLine] of [
     ['c2.2-crash-journal', 'journal', 'clean', 'rolled-back'],
@@ -289,13 +357,15 @@ function c2Checks(lane, work) {
       if (journalEntries(fx).length === 0) return fail(name, 'no journal after crash', m);
       const post = pair(fx);
       const rec = run(process.execPath, [tool, '--lane', fx.dir, '--check']);
-      const line = recoveryLine(rec.stdout);
-      if (!line.includes(` ${expectLine}`)) return fail(name, `recovery line ${JSON.stringify(line)} want ${expectLine}`, m);
+      if (!exactRecovery(rec.stdout, expectLine)) {
+        return fail(name, `recovery lines ${JSON.stringify(recoveryLines(rec.stdout))} want exactly one RECOVERED ${TARGET} ${expectLine}`, m);
+      }
+      if (!/^SPOTCHECK_MAP:/m.test(rec.stdout)) return fail(name, 'requested --check arm did not run after recovery', m);
       if (journalEntries(fx).length !== 0) return fail(name, `journal not removed: ${journalEntries(fx).join(',')}`, m);
       const now = pair(fx);
       if (expectLine === 'rolled-back' && now !== before) return fail(name, `bytes not restored ${now} != ${before}`, m);
       if (expectLine === 'complete' && now !== post) return fail(name, `bytes changed ${now} != ${post}`, m);
-      pass(name, `${stage}: ${half} → ${line} journal removed`, m);
+      pass(name, `${stage}: ${half} → RECOVERED ${TARGET} ${expectLine}; journal removed`, m);
     });
   }
 
@@ -306,8 +376,9 @@ function c2Checks(lane, work) {
     const tmpDir = join(fx.journal, `${Date.now()}-stale.tmp`);
     mkdirSync(tmpDir); writeFileSync(join(tmpDir, 'manifest.json'), '{}\n');
     const r = run(process.execPath, [tool, '--lane', fx.dir, '--check']);
-    const line = recoveryLine(r.stdout);
-    if (!/ stale$/.test(line)) return fail('c2.5-stale-tmp', `line ${JSON.stringify(line)}`, m);
+    const lines = recoveryLines(r.stdout);
+    if (lines.length !== 1 || lines[0] !== 'RECOVERED - stale') return fail('c2.5-stale-tmp', `lines ${JSON.stringify(lines)}`, m);
+    const line = lines[0];
     if (existsSync(tmpDir)) return fail('c2.5-stale-tmp', 'stale .tmp retained', m);
     if (pair(fx) !== before) return fail('c2.5-stale-tmp', 'bytes changed', m);
     pass('c2.5-stale-tmp', `${line}; stale removed; bytes unchanged`, m);
@@ -351,19 +422,54 @@ function c2Checks(lane, work) {
     const r = crash(fx, 'pin');
     if (!(r.signal === 'SIGKILL' || r.status === 137)) return fail('c2.8-recovery-idempotent', 'child not killed', m);
     const first = run(process.execPath, [tool, '--lane', fx.dir, '--check']);
-    if (!/ complete$/.test(recoveryLine(first.stdout))) return fail('c2.8-recovery-idempotent', 'first recovery missing', m);
+    if (!exactRecovery(first.stdout, 'complete')) return fail('c2.8-recovery-idempotent', `first recovery ${JSON.stringify(recoveryLines(first.stdout))}`, m);
     const post = pair(fx);
     const second = run(process.execPath, [tool, '--lane', fx.dir, '--check']);
-    if (second.stdout.includes('RECOVERED ')) return fail('c2.8-recovery-idempotent', 'second recovery line', m);
+    if (recoveryLines(second.stdout).length !== 0) return fail('c2.8-recovery-idempotent', 'second recovery line', m);
     if (pair(fx) !== post) return fail('c2.8-recovery-idempotent', 'bytes changed on second run', m);
     pass('c2.8-recovery-idempotent', 'one RECOVERED, then stable', m);
   });
 
-  check('c2.9-selftest-and-refusals', (m) => {
+  check('c2.9-recovery-before-predict', (m) => {
+    const fx = fixture(lane, join(work, 'c2.9-predict'));
+    const before = pair(fx);
+    const r = crash(fx, 'row');
+    if (!(r.signal === 'SIGKILL' || r.status === 137)) return fail('c2.9-recovery-before-predict', 'child not killed', m);
+    const p = run(process.execPath, [tool, '--lane', fx.dir, '--predict', '99']);
+    if (!exactRecovery(p.stdout, 'rolled-back')) return fail('c2.9-recovery-before-predict', `lines ${JSON.stringify(recoveryLines(p.stdout))}`, m);
+    if (!/^SPOTCHECK_PREDICT:/m.test(p.stdout)) return fail('c2.9-recovery-before-predict', 'predict arm did not run after recovery', m);
+    if (journalEntries(fx).length !== 0) return fail('c2.9-recovery-before-predict', 'journal not removed', m);
+    if (pair(fx) !== before) return fail('c2.9-recovery-before-predict', 'bytes not restored', m);
+    pass('c2.9-recovery-before-predict', 'recovery runs before --predict; predict arm then answers', m);
+  });
+
+  check('c2.10-corrupt-preimage', (m) => {
+    const fx = fixture(lane, join(work, 'c2.10-corrupt'));
+    const before = pair(fx);
+    mkdirSync(fx.journal, { recursive: true });
+    const jdir = join(fx.journal, 'corrupt-0001');
+    mkdirSync(jdir);
+    copyFileSync(fx.pin, join(jdir, 'readme-map.pre'));
+    writeFileSync(join(jdir, 'README.pre'), '# Tampered pre-image\n');
+    writeFileSync(join(jdir, 'manifest.json'), `${JSON.stringify({
+      contract: 'kumitate-adopt-journal-v1', lane: fx.dir, target: TARGET, key: KEY,
+      pre: [
+        { path: 'corpus/README.md', file: 'README.pre', sha256: sha(fx.readme) },
+        { path: '.ufo/pins/readme-map.json', file: 'readme-map.pre', sha256: sha(fx.pin) },
+      ],
+    }, null, 2)}\n`);
+    const r = run(process.execPath, [tool, '--lane', fx.dir, '--check']);
+    if (r.status !== 2 || !r.stdout.includes('REFUSED_ORACLE')) return fail('c2.10-corrupt-preimage', `exit=${r.status} out=${JSON.stringify(r.stdout.trim()).slice(0, 140)}`, m);
+    if (pair(fx) !== before) return fail('c2.10-corrupt-preimage', 'destination bytes changed on a corrupt pre-image', m);
+    if (!existsSync(jdir)) return fail('c2.10-corrupt-preimage', 'corrupt journal removed (evidence destroyed)', m);
+    pass('c2.10-corrupt-preimage', 'REFUSED_ORACLE exit 2; destinations and journal retained', m);
+  });
+
+  check('c2.11-selftest-and-refusals', (m) => {
     const s = run(process.execPath, [tool, '--selftest']);
     const st = s.stdout.match(/SPOTCHECK_ADOPT_SELFTEST: PASS \((\d+)\/\1\)/);
-    if (s.status !== 0 || !st || Number(st[1]) < 22 || !/VERDICT: PASS/.test(s.stdout)) {
-      return fail('c2.9-selftest-and-refusals', `exit=${s.status} ${JSON.stringify(s.stdout.trim().split('\n').slice(-2))}`, m);
+    if (s.status !== 0 || !st || Number(st[1]) < 26 || !/VERDICT: PASS/.test(s.stdout)) {
+      return fail('c2.11-selftest-and-refusals', `exit=${s.status} ${JSON.stringify(s.stdout.trim().split('\n').slice(-2))}`, m);
     }
     const fx = fixture(lane, join(work, 'c2.9-refusals'));
     const before = pair(fx);
@@ -374,34 +480,45 @@ function c2Checks(lane, work) {
       if (r.status !== 2 || !r.stdout.includes(token)) bad.push(`${p}: ${r.status}/${JSON.stringify(r.stdout.trim())}`);
     }
     if (pair(fx) !== before) bad.push('refusal wrote bytes');
-    if (bad.length) return fail('c2.9-selftest-and-refusals', bad.join('; '), m);
-    pass('c2.9-selftest-and-refusals', `${st[1]}/${st[1]} cases; three refusals exit 2, bytes unchanged`, m);
+    if (bad.length) return fail('c2.11-selftest-and-refusals', bad.join('; '), m);
+    pass('c2.11-selftest-and-refusals', `${st[1]}/${st[1]} cases; three refusals exit 2, bytes unchanged`, m);
   });
 
-  check('c2.10-usage', (m) => {
+  check('c2.13-usage', (m) => {
     const a = run(process.execPath, [tool, '--lane', join(work, 'c2.7-no-journal-no-line'), '--predict', 'bad']);
     const b = run(process.execPath, [tool, '--lane', join(work, 'c2.7-no-journal-no-line'), '--bogus']);
-    if (a.status !== 64 || b.status !== 64) return fail('c2.10-usage', `predict=${a.status} bogus=${b.status}`, m);
-    pass('c2.10-usage', 'bad --predict and unknown arm exit 64', m);
+    if (a.status !== 64 || b.status !== 64) return fail('c2.13-usage', `predict=${a.status} bogus=${b.status}`, m);
+    pass('c2.13-usage', 'bad --predict and unknown arm exit 64', m);
   });
 
-  check('c2.11-placement-and-map', (m) => {
-    const fx = fixture(lane, join(work, 'c2.11-placement'));
+  check('c2.12-placement-and-lane-map', (m) => {
+    const fx = fixture(lane, join(work, 'c2.12-placement'));
     const r = run(process.execPath, [tool, '--lane', fx.dir, '--adopt', TARGET]);
     if (r.status !== 0 || !/^SPOTCHECK_ADOPT: ADOPTED /m.test(r.stdout)) {
-      return fail('c2.11-placement-and-map', `fixture adopt exit=${r.status} ${JSON.stringify(r.stdout.trim().slice(0, 120))}`, m);
+      return fail('c2.12-placement-and-lane-map', `fixture adopt exit=${r.status} ${JSON.stringify(r.stdout.trim().slice(0, 120))}`, m);
     }
     const lines = readText(fx.readme).split('\n');
     const row = lines.findIndex((l) => l.startsWith(`| \`${KEY}\` |`));
+    const lessonRows = lines.map((l, i) => (l.startsWith('| \`lessons/') ? i : -1)).filter((i) => i >= 0);
+    const lastLesson = lessonRows[lessonRows.length - 1];
     const gap = lines.findIndex((l) => l === '## Known gaps');
-    if (row < 0) return fail('c2.11-placement-and-map', 'adopted row absent', m);
-    if (gap < 0 || row > gap) return fail('c2.11-placement-and-map', `fixture row line ${row + 1} after ## Known gaps line ${gap + 1}`, m);
+    if (row < 0) return fail('c2.12-placement-and-lane-map', 'adopted row absent', m);
+    if (lastLesson === undefined || row !== lastLesson + 1) {
+      return fail('c2.12-placement-and-lane-map', `row at ${row + 1}, last lessons row at ${lastLesson + 1} (want adjacency)`, m);
+    }
+    if (gap < 0 || row > gap) return fail('c2.12-placement-and-lane-map', `row ${row + 1} after ## Known gaps ${gap + 1}`, m);
+    const foracle = run(process.execPath, [join(lane, 'scripts/readme-map.mjs'),
+      '--registry', join(fx.dir, '.ufo/pins/readme-map.json'), '--readme', join(fx.dir, 'corpus/README.md'),
+      '--corpus', join(fx.dir, 'corpus/knowledge'), '--corpus', join(fx.dir, 'corpus/lessons')]);
+    if (foracle.status !== 0 || !/README_MAP: CLEAN/.test(foracle.stdout)) {
+      return fail('c2.12-placement-and-lane-map', `fixture oracle exit=${foracle.status} ${JSON.stringify(foracle.stdout.trim().slice(0, 120))}`, m);
+    }
     const map = run(process.execPath, [join(lane, 'scripts/readme-map.mjs')]);
     const ml = map.stdout.trim().split('\n').find((l) => l.startsWith('README_MAP:')) || '';
-    if (map.status !== 0 || !/^README_MAP: CLEAN files=(\d+) rows=\1 covered=\1$/.test(ml)) {
-      return fail('c2.11-placement-and-map', `lane readme-map exit=${map.status} ${JSON.stringify(ml)}`, m);
+    if (map.status !== 0 || ml !== 'README_MAP: CLEAN files=184 rows=184 covered=184') {
+      return fail('c2.12-placement-and-lane-map', `lane readme-map exit=${map.status} ${JSON.stringify(ml)}`, m);
     }
-    pass('c2.11-placement-and-map', `fixture row at ${row + 1} before gaps at ${gap + 1}; ${ml}`, m);
+    pass('c2.12-placement-and-lane-map', `row adjacent at ${row + 1}; fixture oracle CLEAN; ${ml}`, m);
   });
 }
 
@@ -424,10 +541,12 @@ function main(argv) {
   if (set === 'c1') c1Checks(lane, work); else c2Checks(lane, work);
   const registry = set === 'c1' ? ['c1.1-snapshot-writer', 'c1.2-snapshot-is-open-shape', 'c1.3-writer-roundtrip',
     'c1.4-census-shape-clean', 'c1.5-proxy-shape-terms', 'c1.6-offline-equals-root', 'c1.7-negative-discriminates',
-    'c1.8-fail-closed', 'c1.9-selftests', 'c1.10-no-content-pinned']
+    'c1.8-fail-closed', 'c1.9-selftests', 'c1.10-no-content-pinned', 'c1.11-mode-discriminates',
+    'c1.12-default-path-unchanged']
     : ['c2.1-journal-surface', 'c2.2-crash-journal', 'c2.3-crash-after-row', 'c2.4-crash-after-pin',
       'c2.5-stale-tmp', 'c2.6-foreign-journal', 'c2.7-no-journal-no-line', 'c2.8-recovery-idempotent',
-      'c2.9-selftest-and-refusals', 'c2.10-usage', 'c2.11-placement-and-map'];
+      'c2.9-recovery-before-predict', 'c2.10-corrupt-preimage', 'c2.11-selftest-and-refusals',
+      'c2.12-placement-and-lane-map', 'c2.13-usage'];
   for (const c of checks) {
     if (!registry.includes(c.name)) continue;
     try { c.fn(results); } catch (e) { fail(c.name, `threw: ${e.message}`, results); }
