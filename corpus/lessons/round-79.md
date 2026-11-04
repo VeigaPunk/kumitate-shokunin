@@ -120,3 +120,16 @@ README row for it) and the final close receipts. Superseded close values, with t
 (`open/gates-open.txt`), and a later 35/39 run was taken mid-edit and is superseded by
 `close/checklists.txt` (39/39 PASS) — the freeze review's FF-6 names both. The claim values are unchanged:
 `C79_C1: HELD held=11/11` and `C79_C2: HELD held=12/12` (`close/c1-probe.txt`, `close/c2-probe.txt`).
+
+## Erratum 2 (append-only, 2026-11-04, round 80; supersedes only the text it names)
+
+The non-author spot-check (`round-79-verifier-spotcheck.md`) routed D3 and D4 against this lesson.
+
+- **D3 — superseded receipt names in `## Counters`.** The table's `close/` column names four receipts that
+  do not exist at any lane revision: `close/census.txt`, `close/shape.txt`, `close/readme-map.txt`,
+  `close/spotcheck-check.txt`. The committed receipts are `close/census-shape.txt` (kimi census, and the
+  OMP receipt line — the OMP shape compare at SCAF-1 is in `close/checklists.txt`), `close/maps.txt`
+  (the README-map and spotcheck-map readings), and `close/sources-census.txt`. The values in the table are
+  the erratum-1 values; only those four pointers are void.
+- **D4 — superseded word count.** The S229 gate block says the quote is "21 words"; `wc -w` over the quoted
+  text is **18**. The quote itself is faithful and under the ≤25-word limit; the recorded number was wrong.
