@@ -106,3 +106,70 @@ The declaration-token counting command and dated receipt are in
   discrimination over one root's shape at one time; writer attributions are checked by re-opening
   the sources, not by the counter. The models.db per-store recovery opt-in is likewise UNKNOWN,
   and S225 records sample operator backups rather than authenticating every matching name.
+
+## Registry binding — family O1 (round 76)
+
+Family `O1` is this plane's registry slot in `SCORECARD.md`; its member gate is
+`scripts/omp-census.mjs` (`kumitate-omp-census-v1`), and since round 76 `scripts/proxy-check.mjs`
+imports that same decision in process (one derivation, reached by import) and derives
+`coverage_omp = floor(10 × C1o/C1o_total × (O_members − O_findings)/O_members)`; a zero denominator
+scores 0. `C1o`/`C1o_total` count scorecard registry rows matching `/^\| O\d+ \|/` and the `yes`
+fourth cells among them; `O_members` is the live depth-1 entry count (sidecars and generations
+included); `O_findings` is the census's finding count (shape findings, `EMPTY` and `NOTE_UNBOUND`
+included); `O_bound` is reported separately (`bound=<b>/<declared>`) and is not multiplied into the
+score. The `## Axes` row `coverage:omp` is now cross-checked by `AXES_DRIFT` like the other five
+axis rows, and the six O stanza keys are required in `kumitate-proxy-v1`.
+
+The index below points at the two existing tables — it does not re-declare kinds, ceilings or
+writer evidence. Each row's own section carries the anchor.
+
+| Declared identifier | Owner slot | Bound by |
+|---|---|---|
+| `RULES.md` | base member | § Members OMP names, row `RULES.md` |
+| `agent.db` | base member | § Members OMP names, row `agent.db` |
+| `agents` | base member | § Members OMP names, dir row (`agents/`) |
+| `blobs` | base member | § Members OMP names, dir row (`blobs/`) |
+| `cache` | base member | § Members OMP names, dir row (`cache/`) |
+| `config.yml` | base member | § Members OMP names, row `config.yml` |
+| `custom-session-files` | base member | § Members OMP names, dir row (`custom-session-files/`) |
+| `history.db` | base member | § Members OMP names, row `history.db` |
+| `hooks` | base member | § Members OMP names, row `hooks/` |
+| `kimi-device-id` | base member | § Members OMP names, row `kimi-device-id` |
+| `last-changelog-version` | base member | § Members OMP names, row `last-changelog-version` |
+| `lsp.json` | base member | § Members OMP names, row `lsp.json` |
+| `mcp.json` | base member | § Members OMP names, row `mcp.json` |
+| `mcp.json.rea.backup` | base member | § Chain families, row `mcp-rea-backup-recovery` |
+| `models.db` | base member | § Members OMP names, row `models.db` |
+| `models.yml` | base member | § Members OMP names, row `models.yml` |
+| `predict` | base member | § Members OMP names, dir row (`predict/`) |
+| `sessions` | base member | § Members OMP names, dir row (`sessions/`) |
+| `skill-descriptions.db` | base member | § Members OMP names, row `skill-descriptions.db` |
+| `terminal-sessions` | base member | § Members OMP names, dir row (`terminal-sessions/`) |
+| `themes` | base member | § Members OMP names, dir row (`themes/`) |
+| `tools` | base member | § Members OMP names, dir row (`tools/`) |
+| `commands` | base member | § Members OMP names, dir row (`commands/`) |
+| `prompts` | base member | § Members OMP names, dir row (`prompts/`) |
+| `memories` | base member | § Members OMP names, dir row (`memories/`) |
+| `extensions` | base member | § Members OMP names, row `extensions/` |
+| `agent-pre-restore` | chain family | § Chain families, row `agent-pre-restore` |
+| `agent-recovered` | chain family | § Chain families, row `agent-recovered` |
+| `history-corrupt` | chain family | § Chain families, row `history-corrupt` |
+| `agent-corrupt` | chain family | § Chain families, row `agent-corrupt` |
+| `mcp-pre-disable` | chain family | § Chain families, row `mcp-pre-disable` |
+| `mcp-rea-backup-recovery` | chain family | § Chain families, row `mcp-rea-backup-recovery` |
+| `config-pre` | chain family | § Chain families, row `config-pre` |
+| `agent-pre-named` | chain family | § Chain families, row `agent-pre-named` |
+| `models-corrupt` | chain family | § Chain families, row `models-corrupt` |
+
+Binding is a visible identifier token delimited on both sides by start/end or a character outside
+`[\w.\-]`: HTML comments are stripped, a fenced code block still binds. Lexical binding does not
+verify who writes a member. Absent members and absent chain generations are INFO, never findings;
+an empty root is a finding. Member content stays out of scope by design: the census path uses
+`readdir` + `lstat` only, and this note is read as text.
+
+S226 (`corpus/SOURCES.md`) re-grounds `packages/utils/src/dirs.ts` at the installed release
+`v18.15.0`: byte-identical to S053's `v18.12.6` file (sha256 `2d423f4f…`), so the directory names
+above hold at the installed tag. It also names five `agentSubdir` members the census does not
+declare — `modules`, `omp-crash.log`, `omp-debug.log`, `python-gateway`, `secret-placeholder.key` —
+all absent from this host's root (`ls` → `ABSENT` for each; round-76 seat K76ScoutDirsRelease).
+That is a named coverage gap, not a drift: declaring an absent member would report INFO only.

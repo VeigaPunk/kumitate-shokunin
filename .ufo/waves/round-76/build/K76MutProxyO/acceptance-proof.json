@@ -1,0 +1,55 @@
+{
+  "bad": {
+    "label": "bad-tree",
+    "exit": 2,
+    "out": "",
+    "err": "mutants: --tree /fast/scratch/hyaku/kumitate-r76/K76MutProxyO/absent is not a readable directory\n"
+  },
+  "twice": {
+    "label": "twice",
+    "exit": 2,
+    "out": "M3 NOT-EVALUABLE(find=2) exit=- token=-\ntally: selected=1 evaluated=0 killed=0 survived=0 not-evaluable=1 (baseline-inconclusive=0 spawn=0 find-fail=1)\n",
+    "err": ""
+  },
+  "baseRevision": "cabc7aefd5f1562299f757e23207710c12e4ed58",
+  "absent": [
+    {
+      "id": "M1",
+      "find": "(O_members - O_findings) / O_members",
+      "matches": 0
+    },
+    {
+      "id": "M2",
+      "find": "Math.floor(10 * (C1o / C1o_total) * ratio)",
+      "matches": 0
+    },
+    {
+      "id": "M3",
+      "find": "return failClosed(opts, 'OMP_ROOT_NOT_A_DIR',",
+      "matches": 0
+    },
+    {
+      "id": "M4",
+      "find": "return failClosed(opts, 'OMP_NOTE_MISSING',",
+      "matches": 0
+    },
+    {
+      "id": "M5",
+      "find": "  { axis: 'coverage:omp', term: 'coverage_omp' },",
+      "matches": 0
+    },
+    {
+      "id": "M6",
+      "find": "const yesRows = oRows.filter((cells) => cells[3].trim().startsWith('yes'));",
+      "matches": 0
+    }
+  ],
+  "ids": [
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5",
+    "M6"
+  ]
+}

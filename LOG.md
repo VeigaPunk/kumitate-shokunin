@@ -2409,3 +2409,52 @@ Tool installs/updates: `scripts/plan-before-ready.sh` sanitized map-arm extracti
 
 - 2026-11-04 — round 75 (restored Linux host; one v1 wave of 12 seats + L1 planner; C1 coverage:omp 3→10 — the OMP agent plane's 40 undeclared members declared and bound in `scripts/omp-census.mjs` (`OMP_CENSUS: CLEAN (… entries=64 findings=0 bound=35/35)`, selftest 49 cases) sourced on S224/S225; C2 operability capability `origin-tip-drift` — `scripts/proxy-check.mjs --tip-drift` reads `ORIGIN_TIP_DRIFT: MOVED … commits=58 changed=241 scripts=57 runtime=23 other=161` exit 1, `IN_SYNC` exit 0, `FAIL-CLOSED` exit 2, suite 132/132; routed repairs: 4th spotcheck-coverage recurrence (`README_MAP: CLEAN files=181 rows=181`), round-74 pin erratum, D2/D3 receipt headers, Q71 from considerthese proposal 2; stanza re-measured A 821→832, C2/C2_total 179→181, `pin.proxy-check`/`pin.omp-census` re-pinned same-commit; `PROXY: MATCH` `--strict` and `OMP_CENSUS: CLEAN` at close. Receipts: `.ufo/waves/round-75/{plan.md,open,base,controls,close,w1}`; lesson `corpus/lessons/round-75.md`; report `.ufo/reports/round-75/kumitate.md`. Two claims verify under the disclosed readings; no axis harmed.`
 
+
+- 2026-11-04 — round 76 (gate-required one-line record; the full entry is the section below): C1 coverage:omp — the axis becomes census-derived (six additive O stanza keys, `O1` registry row, sixth `AXES_DRIFT` row; `PROXY: MATCH --strict` at the work revision, selftest 145/145, 13/13 mutants killed; literal C1(a) grep reads 2 not 1, disclosed); C2 operability — capability `spotcheck-adopt` adopts the r75 closure lesson (`wrote=both`, `README_MAP: CLEAN 182/182/182`), idempotent, 3 refusals, 16/16 selftest, 7/7 adopt mutants killed; S226 opened (165 rows); census exit 0 start and end; four mistakes mined; plan map-arm red at freeze disclosed.
+
+## 2026-11-04 — round 76 (coverage:omp derived + registry-bound; operability capability `spotcheck-adopt`)
+
+Two claims, two axes. Base `ebfcedfaaa375517d99d2281e647a9293541efec`; scaffolding (frozen plan +
+open/base receipts + pre-data controls) `cabc7aefd5f1562299f757e23207710c12e4ed58`; wave payload
+`0ee0b2a7f0a9c5dae31c5ad6c13d0c45cec11364`. ONE v1 wave of 12 seats (attack 5/12 = 42 %: reviewer,
+critic, mutation-tester ×2, sentinel; connector 1; executor 2; scribe 2; scout 2), all 12 settled,
+0 dead (`w1-results.json`); the §3 floor is met inside the wave and the L1 holds the canonical
+planner seat (the validator rejects `planner` as a swarm role).
+
+**C1 — coverage:omp: the axis stops being the one live row the proxy does not derive.** Red at base:
+`node scripts/proxy-check.mjs --json | grep -c '"coverage_omp"'` → 0 and no `| O1 |` registry row.
+Green at the work revision: the probe imports `scripts/omp-census.mjs` (exports added; `isMain`
+unchanged) and derives `C1o=1 C1o_total=1 O_members=64 O_findings=0 O_bound=35 coverage_omp=10`; six
+additive stanza keys; registry family `O1`; the sixth `AXES_DRIFT` row; `--strict` → `PROXY: MATCH`
+exit 0 (`close/proxy-check.txt`); `PROXY_SELFTEST: 145/145 pass`; `OMP_CENSUS: VERDICT: PASS (49
+cases)` (`close/omp-selftest.txt`, `close/proxy-selftest.txt`). Fail-closed: `OMP_ROOT_NOT_A_DIR` and
+`OMP_NOTE_MISSING`, each exit 2 (`close/c1-failclosed-*.txt`). Live negative roots (shape-only):
++1 bogus member → 65/1/9, +10 → 74/10/8, both with `COVERAGE_OMP_DRIFT` + the `coverage:omp`
+`AXES_DRIFT` row (`close/c1-negative-plus1.txt`, `close/c1-negative-plus10.txt`). 13-mutant battery
+on the final bytes, all killed (`close/mutants.txt`). **Literal C1(a) reading: does not verify** —
+the JSON key occurs twice (computed + `terms.declared`), disclosed in `plan.md ## Amendment 1`
+A1.1 and in `corpus/lessons/round-76.md ## Mistakes`; every other clause verifies.
+
+**C2 — operability, capability `spotcheck-adopt`.** New `scripts/spotcheck-adopt.mjs` (contract
+`kumitate-spotcheck-adopt-v1`), the unchanged `readme-map.mjs` as its child oracle: `--check` at base
+`SPOTCHECK_MAP: DRIFT spotchecks=42 uncovered=1` exit 1; `--adopt
+corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN
+files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED`
+with byte-identical files (`close/c2-idempotent.txt`); three refusals exit 2 with no byte written
+(`close/c2-refusals.txt`); `--predict 76` → `PENDING`, `--predict 75` → `COVERED` (`close/c2-after.txt`);
+selftest 16/16 with both half-states and rollback (`close/adopt-selftest.txt`); the same mutant battery
+kills its 7 adopt mutants (`close/mutants.txt`).
+
+Routed repairs landed (not claims): the 5th spotcheck-coverage recurrence repaired **by C2's tool**
+(the r75 closure lesson adopted); stanza re-measured A 833 → 847, C 33 → 35 (two checklist items),
+C2/C2_total 181 → 183; re-pins `pin.omp-census`, `pin.proxy-check` and the new `pin.spotcheck-adopt`;
+SKILL rows for `harm-matrix` and `make-dispatch-actual` (Q68 debt from rounds 65/62) and the
+`spotcheck-adopt` row + two checklist items; R75-spotcheck D1 (A 832 ≠ 833) and D2 (stale remote
+pointers) corrected append-only in the round section below. `plan-before-ready --round 76` reads
+`map=DRIFT` for the PLAN archive because the map was red at freeze (disclosed; the pre-existing map
+arm would have caught it — mistake mined).
+
+Sources: S226 opened (dirs.ts at the installed release v18.15.0; sha256 `2d423f4f…`, byte-identical
+to S053's v18.12.6 file); SOURCES 164 → 165; SOURCE_CAPTURE CLEAN captures=57; the `merge/kumitate`
+package stays refused as a bulk append (flip: a dedicated assimilation round). Assimilation: none.
+No tools installed. Census start/end exit 0 (6 carried W04).

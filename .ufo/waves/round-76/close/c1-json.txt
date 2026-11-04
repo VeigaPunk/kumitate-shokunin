@@ -1,0 +1,25 @@
+## proxy json terms
+verdict MATCH exit 0
+C1o = 1
+C1o_total = 1
+O_members = 64
+O_findings = 0
+O_bound = 35
+coverage_omp = 10
+declared {'C1o': '1', 'C1o_total': '1', 'O_members': '64', 'O_findings': '0', 'O_bound': '35', 'coverage_omp': '10'}
+exit=0
+grep_coverage_omp_lines=2
+[eval]:1
+const j=require(\"./.ufo/waves/round-76/close/proxy-check.json\");console.log(j.terms.coverage_omp)
+                ^
+Expected unicode escape
+
+SyntaxError: Invalid or unexpected token
+    at makeContextifyScript (node:internal/vm:194:14)
+    at compileScript (node:internal/process/execution:388:10)
+    at evalTypeScript (node:internal/process/execution:260:22)
+    at node:internal/main/eval_string:71:3
+
+Node.js v24.21.0
+node_computed=
+computed_coverage_omp=10

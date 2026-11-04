@@ -1,0 +1,5 @@
+NOT RUN: executor wave policy reserves smoke runs and verification to parent.
+Source implementation base: cabc7aefd5f1562299f757e23207710c12e4ed58.
+No observed CLI output, exit status, real-copy adoption verdict, sha256 idempotence comparison, or mutant result is claimed.
+Parent should exercise --check before and after --adopt corpus/lessons/round-75-verifier-spotcheck.md in a disposable corpus/scripts/pins copy, --adopt again with before/after sha256, --predict 75 and --predict 76, all refusal cases, and --selftest.
+Expected (not observed): first adoption wrote=both; row-present/pin-missing wrote=pin; pin-present/row-missing wrote=row.

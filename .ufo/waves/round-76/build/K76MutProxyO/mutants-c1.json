@@ -1,0 +1,74 @@
+{
+  "contract": "kumitate-mutants-v1",
+  "target": "C1 coverage:omp derivation arms (plan.md §C1); one literal replacement per mutant",
+  "base": "cabc7aefd5f1562299f757e23207710c12e4ed58",
+  "note": "find literals are pinned to the C1 design spelling that plan.md §C1 prescribes, in scripts/proxy-check.mjs's own established idiom (failClosed refusal calls, Math.floor ratios, AXIS_ROWS element shape). None exist at the base revision — the runner fails closed (NOT-EVALUABLE(find=0), exit 2) until the C1 patch lands; if the patch spells an expression differently, re-point that mutant's find/replace and re-run. M1/M2/M4 cmds read $HOME/.omp/agent (the run-15 live root) unless OMP_FIXTURE_ROOT overrides the fixture source; the stand-in battery sets both OMP_AGENT_ROOT and OMP_FIXTURE_ROOT to the bundled fixture.",
+  "mutants": [
+    {
+      "id": "M1",
+      "arm": "O_findings subtraction in the coverage_omp score (plan §C1 score line)",
+      "file": "scripts/proxy-check.mjs",
+      "find": "(O_members - O_findings) / O_members",
+      "replace": "O_members / O_members",
+      "cmd": "node \"$MUTANTS_TOOLS/shape-root.mjs\" \"${OMP_FIXTURE_ROOT:-$HOME/.omp/agent}\" .efix && node scripts/proxy-check.mjs --omp-root .efix --json",
+      "expectExit": 1,
+      "expectToken": "\"coverage_omp\": 9",
+      "note": "Killed by the plan-(e) arm: a root with one unlisted member must read O_findings=1 and coverage_omp=9 (64/65 live, 12/13 stand-in — both floor to 9). With the subtraction gone the score reads 10 on a dirty root: token miss."
+    },
+    {
+      "id": "M2",
+      "arm": "coverage_omp must be derived, never a constant printer",
+      "file": "scripts/proxy-check.mjs",
+      "find": "Math.floor(10 * (C1o / C1o_total) * ratio)",
+      "replace": "10",
+      "cmd": "node \"$MUTANTS_TOOLS/shape-root.mjs\" \"${OMP_FIXTURE_ROOT:-$HOME/.omp/agent}\" .efix && node scripts/proxy-check.mjs --omp-root .efix --json",
+      "expectExit": 1,
+      "expectToken": "\"coverage_omp\": 9",
+      "note": "The plan's own kill rule: a constant printer meets predicate (a) (live value is 10), so this mutant is killed only by the value-follows-root arm (e), not by --json on the live root."
+    },
+    {
+      "id": "M3",
+      "arm": "OMP_ROOT_NOT_A_DIR refusal (plan §C1 (d))",
+      "file": "scripts/proxy-check.mjs",
+      "find": "return failClosed(opts, 'OMP_ROOT_NOT_A_DIR',",
+      "replace": "if (false) return failClosed(opts, 'OMP_ROOT_NOT_A_DIR',",
+      "cmd": "node scripts/proxy-check.mjs --omp-root SCORECARD.md --json",
+      "expectExit": 2,
+      "expectToken": "OMP_ROOT_NOT_A_DIR",
+      "note": "Replacing the refusal call's `return` prefix with a dead `if (false) return` keeps the file parseable while dropping the arm (predicate (f)'s branch-removal discipline). The call-prefix literal is unique even if the executor lays the arguments out on one line. Without the arm the run must NOT exit 2 with that token."
+    },
+    {
+      "id": "M4",
+      "arm": "OMP_NOTE_MISSING refusal (plan §C1 (d))",
+      "file": "scripts/proxy-check.mjs",
+      "find": "return failClosed(opts, 'OMP_NOTE_MISSING',",
+      "replace": "if (false) return failClosed(opts, 'OMP_NOTE_MISSING',",
+      "cmd": "rm corpus/knowledge/omp-agent-root.md && node scripts/proxy-check.mjs --json",
+      "expectExit": 2,
+      "expectToken": "OMP_NOTE_MISSING",
+      "note": "The rm is the cmd's own fixture setup inside the disposable copy: the baseline (pristine code, note deleted) must read exit 2 + token, the mutant must not. Root default is $OMP_AGENT_ROOT or ~/.omp/agent (live on the run-15 host)."
+    },
+    {
+      "id": "M5",
+      "arm": "coverage:omp entry in AXIS_ROWS, so AXES_DRIFT cross-checks the ## Axes row (plan §C1 (b))",
+      "file": "scripts/proxy-check.mjs",
+      "find": "  { axis: 'coverage:omp', term: 'coverage_omp' },",
+      "replace": "",
+      "cmd": "sed '/^| coverage:omp | 10 |/s/| 10 |/| 9 |/' SCORECARD.md > .sfix.md && node scripts/proxy-check.mjs --scorecard .sfix.md --json",
+      "expectExit": 1,
+      "expectToken": "coverage:omp",
+      "note": "On the live tree (declared 10 = derived 10) dropping the row is invisible — predicate (b)'s MATCH cannot kill it. The sed fixture declares the Axes row as 9 while the derivation reads 10: with the row present the AXES_DRIFT finding names coverage:omp (token hit, exit 1); with the row dropped AXES_DRIFT skips it (exit 0, token miss). The sed replaces the first `| 10 |` on the coverage:omp line, i.e. the value cell, regardless of the note column."
+    },
+    {
+      "id": "M6",
+      "arm": "C1o counts only registry rows whose 4th cell starts with yes (plan §C1 score line)",
+      "file": "scripts/proxy-check.mjs",
+      "find": "const yesRows = oRows.filter((cells) => cells[3].trim().startsWith('yes'));",
+      "replace": "const yesRows = oRows;",
+      "cmd": "sed '/^| O1 |/a | O2 | mutation probe | none | no — battery fixture |' SCORECARD.md > .c1fix.md && node scripts/proxy-check.mjs --scorecard .c1fix.md --json",
+      "expectExit": 1,
+      "expectToken": "\"coverage_omp\": 5",
+      "note": "Appending a second | O<n> | row whose 4th cell starts with `no` must halve the score: C1o=1/C1o_total=2 reads coverage_omp=5 (COVERAGE_OMP_DRIFT, exit 1). Counting all rows regardless of the yes cell reads 10: token miss."
+    }
+  ]
+}

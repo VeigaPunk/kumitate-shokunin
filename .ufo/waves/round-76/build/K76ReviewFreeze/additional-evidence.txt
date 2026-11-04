@@ -1,0 +1,57 @@
+## C2 manual both-halves counterexample
+$ /home/vgpnk/.local/share/mise/installs/node/24.21.0/bin/node scripts/readme-map.mjs --readme /fast/scratch/hyaku/kumitate-r76/K76ReviewFreeze/row-only.md --registry /fast/scratch/hyaku/kumitate-r76/K76ReviewFreeze/pin-only.json
+README_MAP: CLEAN files=182 rows=182 covered=182
+exit=0
+
+## Marker fallback ancestry
+$ git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin merge-base --is-ancestor cabc7aefd5f1562299f757e23207710c12e4ed58 0ee0b2a7f0a9c5dae31c5ad6c13d0c45cec11364
+exit=0
+
+## Base-to-freeze unchanged inputs
+$ git -C /fast/scratch/hyaku/kumitate-r76/K76ReviewFreeze/lane diff --stat ebfcedfaaa375517d99d2281e647a9293541efec HEAD -- scripts/omp-census.mjs scripts/proxy-check.mjs scripts/readme-map.mjs SCORECARD.md corpus/README.md .ufo/pins/readme-map.json
+exit=0
+
+JSON compatibility model (not an after-implementation run): derived + declared coverage_omp occurrence lines=2; existing serialization proxy-check.mjs:1440-1455
+
+## .ufo/waves/round-76/controls/c1-declare-only.txt
+1:## c1-declare-only: base tool vs a scratch scorecard declaring coverage_omp=10 + an Axes row (rev=ebfcedfaaa375517d99d2281e647a9293541efec)
+2:proxy-check: fail-closed — STANZA_KEY_UNKNOWN: line 305: coverage_omp is not a kumitate-proxy-v1 key
+3:PROXY: FAIL-CLOSED (STANZA_KEY_UNKNOWN) line 305: coverage_omp is not a kumitate-proxy-v1 key
+4:exit=2
+## .ufo/waves/round-76/open/adopt-absent.txt
+1:## node scripts/spotcheck-adopt.mjs at base (rev=ebfcedfaaa375517d99d2281e647a9293541efec)
+2:node:internal/modules/cjs/loader:1568
+3:  throw err;
+4:  ^
+5:exit=1
+## scripts/plan-before-ready.sh
+26:# readme-map arm (round 64; the R56-V3 recurrence's structural fix — a corpus file landed
+27:# without its README row for the tenth time, and `readme-map` only ever detected it AFTER the
+28:# fact). Every round that has a committed PLAN is additionally judged at PLAN, i.e. at the
+29:# commit that carries the plan, by running `node scripts/readme-map.mjs` INSIDE
+30:# `git archive PLAN` (the counter derives its lane from its own path, so the archived copy
+31:# reads the archived corpus/README.md, .ufo/pins/readme-map.json and corpus/{knowledge,lessons}):
+32:#   GREEN  = the archived counter exits 0 and prints `README_MAP: CLEAN`.
+33:#   RED    = anything else: DRIFT (exit 1), FAIL-CLOSED (exit 2), exit 0 without a CLEAN
+34:#            verdict (a counter that prints nothing cannot pass), node/archive/mktemp failure
+35:#            or a 300 s timeout. RED makes the round FAIL with reason=MAP_DRIFT /
+36:#            MAP_NO_VERDICT / MAP_UNRUNNABLE and exit 1 — before the marker/ordering arms, so a
+37:#            round still in flight (plan committed, no wave marker yet: the freeze moment)
+38:#            cannot read NA over a red map.
+## scripts/proxy-check.mjs
+1440:    terms: {
+1441:      ...terms,
+1442:      pins: pinStats.byKey,
+1443:      pinsMatched: pinStats.matched,
+1444:      pinsTotal: pinStats.total,
+1445:      declared: stanza.values,
+1446:      stanzaLine: stanza.line,
+1447:    },
+1448:    findings,
+1449:    errors,
+1450:    warnings,
+1451:    durationMs: Math.max(0, Date.now() - started),
+1452:  };
+1453:
+1454:  if (opts.json) {
+1455:    process.stdout.write(`${JSON.stringify(body, null, 2)}\n`);

@@ -164,3 +164,40 @@ No uncommitted lane-authored leftovers at base: `jj-lane.sh state` reads
 `local=ebfcedfaaa375517d99d2281e647a9293541efec remote=… ahead=0 behind=0` and
 `git status --porcelain` is empty. Files this lane did not author (`corpus/lessons/round-75-verifier-spotcheck.md`,
 `MANIFEST.json`) are named, never edited.
+
+## Amendment 1 (2026-11-04, written by the L1 before any claim verdict)
+
+Append-only. Nothing above is rewritten; every clause below is a correction of a clause that could
+not discriminate as written, landed before the round's verdicts (the round-75 Amendment 1/2
+precedent; the reviewer's FREEZE-FIX items and the critic's FLAWS are the triggers).
+
+- **A1.1 — C1(a)'s JSON occurrence count.** The frozen clause reads `grep -c '"coverage_omp"'` → 1.
+  `--json` prints every term twice — computed `terms.<key>` and the stanza's `terms.declared.<key>` —
+  so a correct implementation reads **2** (`close/c1-json.txt`). The counter discriminated the base
+  (0) but the after-value was mis-frozen because the `terms.declared` block was not read at freeze
+  time. Operative reading: `terms.coverage_omp === 10` and the key present in both slots; both the
+  literal (2 ≠ 1) and the corrected reading are reported, and the literal miss is not papered over.
+- **A1.2 — C1(b)'s `--strict` MATCH and separability.** C1(b) is a whole-tree verdict; at base the
+  stanza is red for an inherited reason (`C2_total` 181/182 and the retired `coverage` AXES row), and
+  the round owes that repair independently as a routed item (D3). C1 therefore depends on the repair
+  landing, not on C2's *tool*: the repair's two halves can also be written by hand (the reviewer
+  reproduced `README_MAP: CLEAN` from a hand-edited row+pin), so the claims stay causally separable
+  at the mechanism level. The receipt shows the tool performed it; it does not claim the tool is the
+  only way.
+- **A1.3 — C2's kill rule.** "A hand edit reaching CLEAN" would kill a valid oracle state, not a
+  defect: the oracle checks a bimap, not its author. The operative proof is the tool's own receipt —
+  `SPOTCHECK_ADOPT: ADOPTED … wrote=both` followed by the oracle's CLEAN line — plus the two
+  half-state controls (`c2-row-only.txt`, `c2-pin-only.txt`) staying DRIFT. A hand edit is not
+  evidence for the claim and no longer a kill condition.
+- **A1.4 — token erratum.** `controls/c1-declare-only.txt` prints `STANZA_KEY_UNKNOWN`; this plan's
+  C1 control paragraph wrote `STANZA_UNKNOWN_KEY`. The receipt is the authority; both spellings are
+  quoted verbatim in the lesson and the report.
+- **A1.5 — runtime provenance.** The plan names node v24.21.0 and every lane receipt in `close/` was
+  run with it (`node --version` printed in each header). Wave seats observed `v26.12.0` on their own
+  PATH; their numbers are seat-side observations, never lane receipts, and are not relabelled.
+- **A1.6 — C1(e) strengthened.** One negative root could be special-cased by a printer (the critic's
+  path-special-case attack). The claim is evidenced on **two** shape-only roots with different
+  results: +1 member → `O_members=65 O_findings=1 coverage_omp=9`; +10 → `74/10/8`
+  (`close/c1-negative-plus1.txt`, `close/c1-negative-plus10.txt`), plus a 13-mutant battery run on
+  the final bytes (`close/mutants.txt`, `MUTANTS76: ALL-KILLED killed=13/13`), whose C1-M2 is the
+  constant-10 printer and C1-M6 the registry-inflation path.

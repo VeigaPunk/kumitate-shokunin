@@ -1,0 +1,74 @@
+[
+  {
+    "id": "M1",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "if (!hasPin) { registry.covered.push(key);",
+    "replace": "if (false) { registry.covered.push(key);",
+    "cmd": "node detect-c2.mjs M1",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M1"
+  },
+  {
+    "id": "M2",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "if (!hasRow) writeFileSync(readme,",
+    "replace": "if (false) writeFileSync(readme,",
+    "cmd": "node detect-c2.mjs M2",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M2"
+  },
+  {
+    "id": "M3",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "if (!p.startsWith('corpus/lessons/'))",
+    "replace": "if (false)",
+    "cmd": "node detect-c2.mjs M3",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M3"
+  },
+  {
+    "id": "M4",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "else if (!/^round-\\d+-verifier-spotcheck\\.md$/.test(p.split('/').at(-1)))",
+    "replace": "else if (false)",
+    "cmd": "node detect-c2.mjs M4",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M4"
+  },
+  {
+    "id": "M5",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "if (hasRow && hasPin) {",
+    "replace": "if (hasRow && hasPin) { writeFileSync(readme, rows + '\\n');",
+    "cmd": "node detect-c2.mjs M5",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M5"
+  },
+  {
+    "id": "M6",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "if (result.status !== 0 || !result.stdout.startsWith('README_MAP: CLEAN'))",
+    "replace": "if (false)",
+    "cmd": "node detect-c2.mjs M6",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M6"
+  },
+  {
+    "id": "M7",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "writeFileSync(readme, rowBytes); writeFileSync(pin, pinBytes);",
+    "replace": "/* defective: omit rollback */",
+    "cmd": "node detect-c2.mjs M7",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M7"
+  },
+  {
+    "id": "M8",
+    "file": "scripts/spotcheck-adopt.mjs",
+    "find": "const covered = mapped(target.slice(7));",
+    "replace": "const covered = exists;",
+    "cmd": "node detect-c2.mjs M8",
+    "expectExit": 0,
+    "expectToken": "C2_DETECTOR: PASS M8"
+  }
+]

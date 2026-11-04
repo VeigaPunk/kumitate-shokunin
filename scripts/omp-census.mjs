@@ -53,7 +53,7 @@ import { fileURLToPath } from 'node:url';
 // ---------------------------------------------------------------------------
 
 /** Base members: exact name, kind, permission ceiling. */
-const BASE_MEMBERS = [
+export const BASE_MEMBERS = [
   { name: 'RULES.md', kind: 'file', mode: 0o644, note: 'user rules file OMP reads from the agent root' }, // source: S060 (discovery/builtin.ts:423 reads it; no upstream writer: operator-authored)
   { name: 'agent.db', kind: 'file', mode: 0o600, note: 'OMP settings and auth database' }, // source: S053 (dirs.ts:952-955) + S055 (chmod 0o600)
   { name: 'agents', kind: 'dir', mode: 0o755, note: 'user agent definitions' }, // source: S060 (cli/agents-cli.ts:52)
@@ -89,7 +89,7 @@ const BASE_MEMBERS = [
  * number of generations; each generation is optional. A chain may also carry the
  * SQLite sidecars `-shm` / `-wal`, which are optional too.
  */
-const CHAIN_FAMILIES = [
+export const CHAIN_FAMILIES = [
   { id: 'agent-pre-restore', owner: 'agent.db', re: /^agent\.db\.pre-restore-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db snapshot taken by the operator before a restore (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
   { id: 'agent-recovered', owner: 'agent.db', re: /^agent\.db\.recovered-\d{8}T\d{6}Z$/, kind: 'file', mode: 0o600, note: 'agent.db rebuilt by the operator with sqlite3 .recover (not an OMP writer)' }, // source: S058 (fleet PHASE4.md:112 recovery record)
   { id: 'history-corrupt', owner: 'history.db', re: /^history\.db\.corrupt-\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/, kind: 'file', mode: 0o600, note: 'history.db quarantined after a corruption, epoch ms + uuid' }, // source: S054 (sqlite.ts:193, chmod 0o600 at :197-199)
@@ -196,7 +196,7 @@ function ruleFor(name) {
  * Decide the census for one root.
  * Returns { verdict, findings[], infos[], counts }.
  */
-function census(root, noteText) {
+export function census(root, noteText) {
   const entries = readShape(root);
   const findings = [];
   const infos = [];
