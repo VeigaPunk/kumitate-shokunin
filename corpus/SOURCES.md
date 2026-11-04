@@ -175,6 +175,9 @@ Rules: a row is a claim written only after opening the source; append-only excep
 
 
 
+| S223 | git clone — https://git-scm.com/docs/git-clone | docs | A | git clone local-path object hardlink semantics | § OPTIONS (`--no-hardlinks`), located quote "Force the cloning process from a repository on a local filesystem to copy the files under the .git/objects directory instead of using hardlinks."; § OPTIONS (`-l`, `--local`), located quote "The files under .git/objects/ directory are hardlinked to save space when possible."; page captured 2026-11-04, 107882 bytes, sha256 d31b6c9f293a5dfc52c551b86be211b2d6dad3d2b4cf0d9c696d5fbed713554a | Local clone defaults to hardlinking objects; `--no-hardlinks` forces copying so an immutable pin clone keeps an independent object store safe from live-repository maintenance | mined | 2026-11-04 | 180d | corpus/knowledge/origin-pin-restore.md |
+
+
 ## Paths
 
 - **Durable-execution band 4 — S106 → S117 → S126 → S133 → S190 → S194 → S195:** delivery

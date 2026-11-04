@@ -1,0 +1,9 @@
+== proxy-check ==
+PROXY: MATCH (A=821 C=33 operability=9; C1=19/19 C2=179/179 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+== proxy-check --strict ==
+PROXY: MATCH (A=821 C=33 operability=9; C1=19/19 C2=179/179 coverage=10; S=88/88 coverage:script-layer=10; R=92/92 coverage:runtime-layer=10; K=55/55 coverage:kimi-layer=10; pins=6 match; src-rev=31c465f15669)
+exit=0
+== proxy-check --json terms ==
+{"A": 821, "C": 33, "C1": 19, "C2": 179, "C2_total": 179, "K_members": 55, "K_sections": 55, "coverage_kimi": 10, "coverage_script": 10, "coverage_runtime": 10}
+verdict MATCH errors 0 warnings 0 exit 0

@@ -6,7 +6,8 @@
  * WHAT IT RE-DERIVES. `~/.kimi-code` is the installation the fleet's lanes run
  * on, and its shape is a frozen fact: the K1–K5 member rules in `SCORECARD.md`
  * were derived from this tree read live — round 35 adds root `mcp.json` to K1,
- * bringing the live member total to 53 (round 40 counts `skills/` live at 7; round 42 adds `locks/`).
+ * bringing the live member total to 53 (round 40 counts `skills/` live at 7; round 42 adds `locks/`;
+ * round 74 declares `plugins/installed.json.bak-pre-shokunin` and `plugins/managed/kimi-shokunin` in K2, total 55).
  * Prose cannot keep that honest — an upgrade can drop `bin/fd`, a new lane file
  * or plugin can appear undeclared, a secret path can loosen, a state dir can
  * vanish. This gate resolves the frozen member set against the tree at
@@ -21,14 +22,15 @@
  *   SHAPE_DRIFT     a shape-only member's pin fails: a mode lacks its declared
  *                   floor bits, or the kind pin fails.
  *
- * MEMBER RULES (frozen; the counts are read live and total 53 on the recon
+ * MEMBER RULES (frozen; the counts are read live and total 55 on the recon
  * tree — `agents/secondary/` = 18 lane files, `skills/` = 7 entries).
  *   K1 = `config.toml`, `tui.toml`, the `config.toml.*.bak` drift chain as ONE
  *        member, and root `mcp.json` (shape-only, mode floor 0400).
  *   K2 = the 18 files under `agents/secondary/` (counted live, names not
  *        gated), the 7 entries under `skills/` (counted live), plus
- *        `plugins/installed.json` and the `plugins/managed/kimi-webbridge`
- *        tree as one presence-only member.
+ *        `plugins/installed.json`, `plugins/installed.json.bak-pre-shokunin`,
+ *        and the `plugins/managed/kimi-webbridge` and `plugins/managed/kimi-shokunin`
+ *        trees as presence-only members.
  *   K3 = `locks/` (mode floor 0700), `sessions/`, `session_index.jsonl`,
  *        `workspace-trust/`, `telemetry/`, `logs/kimi-code.log`,
  *        `file-history/`, `user-history/`, `cache/`, `search-index/`;
@@ -96,6 +98,8 @@
  * ROUND 42 (2026-10-22): `locks/` is the K3 session-lock state root; member
  * total 52 → 53 and `FROZEN.K3` moves 9 → 10. The census stats `locks/` only;
  * it never enumerates `locks/sessions/` or reads lock-file contents.
+ * ROUND 74 (2026-11-04): declares the two drifted members `plugins/installed.json.bak-pre-shokunin`
+ * and `plugins/managed/kimi-shokunin` under K2; live member total 53 → 55; `FROZEN.K2` moves 27 → 29.
  * ROUND 47 (2026-10-23): the selftest's gate children are routed through the
  * bounded runner `scripts/cap-run.mjs` (contract `kumitate-cap-run-v2`) via
  * `scripts/cap-spawn.mjs` `capSpawnSync`: one `--bind` of this suite's own
@@ -131,7 +135,9 @@ const MEMBERS = [
   { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'dir', counted: 18 },
   { id: 'skills/', family: 'K2', path: 'skills', kind: 'dir', counted: 7 },
   { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
+  { id: 'plugins/installed.json.bak-pre-shokunin', family: 'K2', path: 'plugins/installed.json.bak-pre-shokunin', kind: 'file' },
   { id: 'plugins/managed/kimi-webbridge', family: 'K2', path: 'plugins/managed/kimi-webbridge', kind: 'dir' },
+  { id: 'plugins/managed/kimi-shokunin', family: 'K2', path: 'plugins/managed/kimi-shokunin', kind: 'dir' },
 
   { id: 'locks/', family: 'K3', path: 'locks', kind: 'dir', secret: true, modeFloor: 0o700 },
   { id: 'sessions/', family: 'K3', path: 'sessions', kind: 'dir' },
@@ -163,13 +169,13 @@ const MEMBERS = [
 const ENUMERABLE = [
   { dir: 'agents/secondary', childCount: 18 },
   { dir: 'skills', childCount: 7 },
-  { dir: 'plugins', children: ['installed.json', 'managed'] },
-  { dir: 'plugins/managed', children: ['kimi-webbridge'] },
+  { dir: 'plugins', children: ['installed.json', 'installed.json.bak-pre-shokunin', 'managed'] },
+  { dir: 'plugins/managed', children: ['kimi-shokunin', 'kimi-webbridge'] },
 ];
 
 const FAMILIES = ['K1', 'K2', 'K3', 'K4', 'K5'];
 /** The frozen K-block counts, reported for callers comparing rounds 19/20/35/40/42. */
-const FROZEN = { K1: 4, K2: 27, K3: 10, K4: 9, K5: 3 };
+const FROZEN = { K1: 4, K2: 29, K3: 10, K4: 9, K5: 3 };
 
 const FINDING_KINDS = ['MEMBER_MISSING', 'UNLISTED', 'SHAPE_DRIFT'];
 const FAIL_CLOSED_KINDS = ['KIMI_ROOT_MISSING'];
@@ -181,7 +187,7 @@ contract id: ${CONTRACT}
 
 verbs
   verify           the default verb: census ~/.kimi-code against the frozen
-                   K1–K5 member rules (53 members) and print one verdict line
+                   K1–K5 member rules (55 members) and print one verdict line
 
 options
   --root DIR       installation root to census (default: ~/.kimi-code)
@@ -465,7 +471,7 @@ function runVerify(opts, started) {
 
 const FIXTURE_CHAIN = 3;
 
-/** Build a fixture tree holding all 53 members, shape-clean. */
+/** Build a fixture tree holding all 55 members, shape-clean. */
 function fixtureTree(root, { chain = FIXTURE_CHAIN } = {}) {
   for (const m of MEMBERS) {
     if (m.kind === 'chain') continue;
@@ -552,27 +558,27 @@ function selfTest() {
   };
 
   try {
-    // 1. green baseline — the frozen 53, exact verdict line
+    // 1. green baseline — the frozen 55, exact verdict line
     const green = mk('green');
-    check('green fixture → CLEAN exit 0, members=53 checked=53 chain=3 info=4', () => {
+    check('green fixture → CLEAN exit 0, members=55 checked=55 chain=3 info=4', () => {
       const r = runGateIn(['--root', green]);
       return {
         ok: r.status === 0 && kinds(r).length === 0
-          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=53 checked=53 chain=3 info=4)',
+          && lastLine(r) === 'KIMI_CENSUS: CLEAN (members=55 checked=55 chain=3 info=4)',
         detail: `exit=${r.status} last=${lastLine(r)}`,
       };
     });
 
-    // 2. per-family frozen counts: round-42 K3 adds locks/ to the prior 9
-    check('--json families read 4/27/10/9/3 and members=53', () => {
+    // 2. per-family frozen counts: round-42 K3 adds locks/ to the prior 9; round-74 K2 adds two members
+    check('--json families read 4/29/10/9/3 and members=55', () => {
       const r = runGateIn(['--root', green, '--json']);
       const j = JSON.parse(r.stdout);
       const f = j.totals.families;
-      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 53
-        && f.K1.members === 4 && f.K2.members === 27 && f.K3.members === 10 && f.K4.members === 9
+      const ok = j.schema === CONTRACT && j.verdict === 'CLEAN' && j.totals.members === 55
+        && f.K1.members === 4 && f.K2.members === 29 && f.K3.members === 10 && f.K4.members === 9
         && f.K5.members === 3 && f.K5.checked === 3
-        && j.members.length === 30
-        && j.totals.frozen.K1 === 4 && j.totals.frozen.K2 === 27 && j.totals.frozen.K3 === 10
+        && j.members.length === 32
+        && j.totals.frozen.K1 === 4 && j.totals.frozen.K2 === 29 && j.totals.frozen.K3 === 10
         && j.totals.frozen.K4 === 9 && j.totals.frozen.K5 === 3
         && j.totals.rootEnum.declared === 27 && j.totals.rootEnum.strays === 0 && j.rootStrays.length === 0;
       return { ok, detail: `members=${j.totals.members} K1=${f.K1.members} K2=${f.K2.members} K3=${f.K3.members} K4=${f.K4.members} K5=${f.K5.members} rows=${j.members.length} strays=${j.totals.rootEnum.strays}` };
@@ -582,7 +588,7 @@ function selfTest() {
       const j = JSON.parse(runGateIn(['--root', green, '--json']).stdout);
       const t = runGateIn(['--root', green]);
       return {
-        ok: j.totals.members === 53 && lastLine(t).includes(`members=${j.totals.members}`)
+        ok: j.totals.members === 55 && lastLine(t).includes(`members=${j.totals.members}`)
           && lastLine(t).includes(`checked=${j.totals.checked}`) && j.verdict === 'CLEAN',
         detail: `json=${j.totals.members}/${j.totals.checked} text=${lastLine(t).slice(0, 70)}`,
       };
@@ -593,7 +599,7 @@ function selfTest() {
     rmSync(join(drop, 'bin/fd'));
     check('MEMBER_MISSING: a deleted member file (bin/fd)', () => {
       const r = runGateIn(['--root', drop]);
-      return drift(r, 'MEMBER_MISSING', 52);
+      return drift(r, 'MEMBER_MISSING', 54);
     });
 
     const kindFlip = mk('kind-flip');
@@ -606,34 +612,34 @@ function selfTest() {
 
     const dropDir = mk('drop-dir');
     rmSync(join(dropDir, 'telemetry'), { recursive: true });
-    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGateIn(['--root', dropDir]), 'MEMBER_MISSING', 52));
+    check('MEMBER_MISSING: a deleted member directory (telemetry/)', () => drift(runGateIn(['--root', dropDir]), 'MEMBER_MISSING', 54));
 
     const dropBucket = mk('drop-bucket');
     rmSync(join(dropBucket, 'skills', 'skills-lane-04'), { recursive: true });
     check('MEMBER_MISSING: an enumerable dir lost a declared child (skills/ 6 of 7)', () => {
       const r = runGateIn(['--root', dropBucket]);
-      return { ...drift(r, 'MEMBER_MISSING', 52), ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes('6 children, 7 declared') };
+      return { ...drift(r, 'MEMBER_MISSING', 54), ok: drift(r, 'MEMBER_MISSING', 54).ok && r.stdout.includes('6 children, 7 declared') };
     });
     const extraSkill = mk('extra-skill');
     mkdirSync(join(extraSkill, 'skills', 'skills-lane-07'));
     check('UNLISTED: an 8th child under skills/', () => {
       const r = runGateIn(['--root', extraSkill]);
       return {
-        ...drift(r, 'UNLISTED', 54),
-        ok: drift(r, 'UNLISTED', 54).ok && r.stdout.includes('skills/') && r.stdout.includes('8 children, 7 declared'),
+        ...drift(r, 'UNLISTED', 56),
+        ok: drift(r, 'UNLISTED', 56).ok && r.stdout.includes('skills/') && r.stdout.includes('8 children, 7 declared'),
       };
     });
 
     const noChain = mk('no-chain');
     for (const n of readdirSync(noChain)) if (RE_CHAIN.test(n)) rmSync(join(noChain, n));
-    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGateIn(['--root', noChain]), 'MEMBER_MISSING', 52));
+    check('MEMBER_MISSING: the drift chain vanished entirely (presence is gated)', () => drift(runGateIn(['--root', noChain]), 'MEMBER_MISSING', 54));
 
     // 4. UNLISTED arms
     const newLane = mk('new-lane');
     writeFileSync(join(newLane, 'agents/secondary/sec-fast-tp9-ds-flash.md'), 'x\n');
     check('UNLISTED: a 19th lane file under agents/secondary/', () => {
       const r = runGateIn(['--root', newLane]);
-      return { ...drift(r, 'UNLISTED', 54), ok: drift(r, 'UNLISTED', 54).ok && r.stdout.includes('19 children, 18 declared') };
+      return { ...drift(r, 'UNLISTED', 56), ok: drift(r, 'UNLISTED', 56).ok && r.stdout.includes('19 children, 18 declared') };
     });
 
     const newPlugin = mk('new-plugin');
@@ -645,14 +651,34 @@ function selfTest() {
 
     const newManaged = mk('new-managed');
     mkdirSync(join(newManaged, 'plugins/managed/other-plugin'));
-    check('UNLISTED: an undeclared child under plugins/managed/', () => {
+    check('UNLISTED: a third undeclared plugins child under plugins/managed/', () => {
       const r = runGateIn(['--root', newManaged]);
       return { ...drift(r, 'UNLISTED'), ok: drift(r, 'UNLISTED').ok && r.stdout.includes('plugins/managed/other-plugin') };
     });
 
     const dropManaged = mk('drop-managed');
     rmSync(join(dropManaged, 'plugins/managed/kimi-webbridge'), { recursive: true });
-    check('MEMBER_MISSING: the managed webbridge tree removed', () => drift(runGateIn(['--root', dropManaged]), 'MEMBER_MISSING'));
+    check('MEMBER_MISSING: the managed webbridge tree removed', () => drift(runGateIn(['--root', dropManaged]), 'MEMBER_MISSING', 54));
+
+    const dropBak = mk('drop-installed-bak');
+    rmSync(join(dropBak, 'plugins/installed.json.bak-pre-shokunin'));
+    check('MEMBER_MISSING: the backup installed.json.bak-pre-shokunin removed', () => {
+      const r = runGateIn(['--root', dropBak]);
+      return {
+        ...drift(r, 'MEMBER_MISSING', 54),
+        ok: drift(r, 'MEMBER_MISSING', 54).ok && r.stdout.includes('plugins/installed.json.bak-pre-shokunin is absent under'),
+      };
+    });
+
+    const dropShokunin = mk('drop-managed-shokunin');
+    rmSync(join(dropShokunin, 'plugins/managed/kimi-shokunin'), { recursive: true });
+    check('MEMBER_MISSING: the managed kimi-shokunin tree removed', () => {
+      const r = runGateIn(['--root', dropShokunin]);
+      return {
+        ...drift(r, 'MEMBER_MISSING', 54),
+        ok: drift(r, 'MEMBER_MISSING', 54).ok && r.stdout.includes('plugins/managed/kimi-shokunin is absent under'),
+      };
+    });
 
     // 5. SHAPE_DRIFT arms
     const looseDir = mk('loose-dir');
@@ -692,7 +718,7 @@ function selfTest() {
     chmodSync(join(looseFile, 'server.token'), 0o400);
     check('SHAPE_DRIFT: server.token below its 0600 floor (checked counts the failure)', () => {
       const r = runGateIn(['--root', looseFile]);
-      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=52') };
+      return { ...drift(r, 'SHAPE_DRIFT'), ok: drift(r, 'SHAPE_DRIFT').ok && r.stdout.includes('mode 0400 lacks the 0600 floor') && r.stdout.includes('checked=54') };
     });
 
     const secretKind = mk('secret-kind');
@@ -763,7 +789,7 @@ function selfTest() {
       const chainNamed = j.rootStrays.some((n) => n.endsWith('.bak'));
       return {
         ok: r.status === 0 && j.verdict === 'CLEAN' && j.totals.chain === 6
-          && j.totals.members === 53 && j.totals.rootEnum.strays === 0 && !chainNamed
+          && j.totals.members === 55 && j.totals.rootEnum.strays === 0 && !chainNamed
           && j.totals.families.K1.members === 4,
         detail: `exit=${r.status} chain=${j.totals.chain} members=${j.totals.members} strays=${j.totals.rootEnum.strays} rootStrays=[${j.rootStrays.join(',')}] K1=${j.totals.families.K1.members}`,
       };
@@ -775,7 +801,7 @@ function selfTest() {
       const j = JSON.parse(runGateIn(['--root', presentLocks, '--json']).stdout);
       const member = j.members.find((m) => m.id === 'locks/');
       return {
-        ok: r.status === 0 && lastLine(r).includes('members=53 checked=53')
+        ok: r.status === 0 && lastLine(r).includes('members=55 checked=55')
           && j.verdict === 'CLEAN' && member?.kind === 'leaf-or-dir' && member.state === 'ok'
           && member.live === 1 && member.modeFloor === '0700' && member.mode === '0700'
           && j.totals.families.K3.members === 10
@@ -790,7 +816,7 @@ function selfTest() {
       const r = runGateIn(['--root', absentLocks]);
       return {
         ok: r.status === 1 && kinds(r).includes('MEMBER_MISSING')
-          && r.stdout.includes('locks is absent under') && r.stdout.includes('members=52 checked=52')
+          && r.stdout.includes('locks is absent under') && r.stdout.includes('members=54 checked=54')
           && !kinds(r).includes('UNLISTED'),
         detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] last=${lastLine(r)}`,
         kinds: kinds(r),
@@ -820,7 +846,7 @@ function selfTest() {
         ok: r.status === 1 && kinds(r).includes('UNLISTED') && r.stdout.includes('notes.txt sits at the root')
           && r.stdout.includes('not declared by the frozen K1–K5 set')
           && j.rootStrays.length === 1 && j.rootStrays[0] === 'notes.txt'
-          && j.totals.members === 53 && j.totals.rootEnum.strays === 1,
+          && j.totals.members === 55 && j.totals.rootEnum.strays === 1,
         detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] strays=${JSON.stringify(j.rootStrays)} members=${j.totals.members}`,
         kinds: kinds(r),
       };
@@ -842,7 +868,8 @@ function selfTest() {
       const r = runGateIn(['--root', absentMcp]);
       return {
         ok: r.status === 1 && kinds(r).includes('MEMBER_MISSING')
-          && r.stdout.includes('mcp.json is absent') && r.stdout.includes('members=52 checked=52'),
+          && r.stdout.includes('mcp.json is absent') && r.stdout.includes('members=54 checked=54')
+          && !kinds(r).includes('UNLISTED'),
         detail: `exit=${r.status} kinds=[${kinds(r).join(',')}] last=${lastLine(r)}`,
         kinds: kinds(r),
       };
@@ -909,11 +936,11 @@ function selfTest() {
     for (const name of ['workspaces.json', 'tui.toml.bak', 'rc-qrcode.png']) {
       const k5 = mk(`k5-drop-${name}`);
       rmSync(join(k5, name));
-      check(`MEMBER_MISSING: the K5 member ${name} removed (53 → 52)`, () => {
+      check(`MEMBER_MISSING: the K5 member ${name} removed (55 → 54)`, () => {
         const r = runGateIn(['--root', k5]);
         return {
-          ...drift(r, 'MEMBER_MISSING', 52),
-          ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes(`${name} is absent under`)
+          ...drift(r, 'MEMBER_MISSING', 54),
+          ok: drift(r, 'MEMBER_MISSING', 54).ok && r.stdout.includes(`${name} is absent under`)
             && !kinds(r).includes('UNLISTED'),
           detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)} kinds=[${kinds(r).join(',')}]`,
           kinds: kinds(r),
@@ -927,8 +954,8 @@ function selfTest() {
     check('MEMBER_MISSING: workspaces.json declared file, live dir (K5 kind pin)', () => {
       const r = runGateIn(['--root', k5Kind]);
       return {
-        ...drift(r, 'MEMBER_MISSING', 52),
-        ok: drift(r, 'MEMBER_MISSING', 52).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
+        ...drift(r, 'MEMBER_MISSING', 54),
+        ok: drift(r, 'MEMBER_MISSING', 54).ok && r.stdout.includes('workspaces.json is declared file, live dir'),
         detail: `exit=${r.status} last=${lastLine(r).slice(0, 90)}`,
         kinds: kinds(r),
       };
@@ -939,7 +966,7 @@ function selfTest() {
       writeFileSync(join(edited, 'workspaces.json'), '{"wd_changed_000000000000":"/tmp/changed"}\n');
       writeFileSync(join(edited, 'rc-qrcode.png'), 'not-a-png-at-all\n');
       const r = runGateIn(['--root', edited]);
-      return { ...clean(r, 'members=53'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
+      return { ...clean(r, 'members=55'), detail: `exit=${r.status} last=${lastLine(r).slice(0, 80)}` };
     });
 
     // 8. fail-closed arm

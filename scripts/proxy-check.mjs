@@ -481,6 +481,9 @@ const GATE_PINS = {
   'pin.plan-before-ready': 'scripts/plan-before-ready.sh', // round 63: a round's plan.md is committed before its first wave marker (Q58)
   'pin.jj-seat-demo': 'scripts/jj-seat-demo.sh', // round 64 C2: jj seat containment demo (J6 re-runs it)
   'pin.report-receipt-diff': 'scripts/report-receipt-diff.mjs', // proxy-check PIN_UNPINNED: no pin key covered this file
+  'pin.control-replay': 'scripts/control-replay.mjs', // round 74: r70 replay instrument pinned (Windows-era backlog surfaced by the restored-host --strict arm)
+  'pin.harm-matrix': 'scripts/harm-matrix.mjs', // round 74: r44-r45 harm matrix pinned (same backlog)
+  'pin.routed-ledger': 'scripts/routed-ledger.mjs', // round 74: r55-66 routed-ledger instrument pinned (same backlog)
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [
@@ -535,7 +538,9 @@ const K_MEMBER_RULES = [
   { id: 'agents/secondary/', family: 'K2', path: 'agents/secondary', kind: 'counted' },
   { id: 'skills/', family: 'K2', path: 'skills', kind: 'counted' },
   { id: 'plugins/installed.json', family: 'K2', path: 'plugins/installed.json', kind: 'file' },
+  { id: 'plugins/installed.json.bak-pre-shokunin', family: 'K2', path: 'plugins/installed.json.bak-pre-shokunin', kind: 'file' },
   { id: 'plugins/managed/kimi-webbridge', family: 'K2', path: 'plugins/managed/kimi-webbridge', kind: 'dir' },
+  { id: 'plugins/managed/kimi-shokunin', family: 'K2', path: 'plugins/managed/kimi-shokunin', kind: 'dir' },
   { id: 'locks/', family: 'K3', path: 'locks', kind: 'dir' },
   { id: 'sessions/', family: 'K3', path: 'sessions', kind: 'dir' },
   { id: 'session_index.jsonl', family: 'K3', path: 'session_index.jsonl', kind: 'file' },
@@ -2049,6 +2054,30 @@ function selfTest() {
         ok: rule?.family === 'K3' && rule.path === 'locks' && rule.kind === 'dir'
           && observedK.members === 31 && observedK.identities.has('locks'),
         detail: `members=${observedK.members} locks=${observedK.identities.has('locks')} rule=${JSON.stringify(rule)}`,
+      };
+    });
+    check('K member list includes plugins/installed.json.bak-pre-shokunin as one K2 file', () => {
+      const root = fxDir('kimi-installed-bak-member');
+      fixtureKimi(root);
+      writeFileSync(join(root, 'plugins', 'installed.json.bak-pre-shokunin'), 'fixture member\n');
+      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/installed.json.bak-pre-shokunin');
+      const observedK = kMembers(root);
+      return {
+        ok: rule?.family === 'K2' && rule.path === 'plugins/installed.json.bak-pre-shokunin' && rule.kind === 'file'
+          && observedK.members === 31 && observedK.identities.has('plugins/installed.json.bak-pre-shokunin'),
+        detail: `members=${observedK.members} bak=${observedK.identities.has('plugins/installed.json.bak-pre-shokunin')} rule=${JSON.stringify(rule)}`,
+      };
+    });
+    check('K member list includes plugins/managed/kimi-shokunin as one K2 directory', () => {
+      const root = fxDir('kimi-shokunin-member');
+      fixtureKimi(root);
+      mkdirSync(join(root, 'plugins/managed/kimi-shokunin'), { recursive: true });
+      const rule = K_MEMBER_RULES.find((m) => m.id === 'plugins/managed/kimi-shokunin');
+      const observedK = kMembers(root);
+      return {
+        ok: rule?.family === 'K2' && rule.path === 'plugins/managed/kimi-shokunin' && rule.kind === 'dir'
+          && observedK.members === 31 && observedK.identities.has('plugins/managed/kimi-shokunin'),
+        detail: `members=${observedK.members} shokunin=${observedK.identities.has('plugins/managed/kimi-shokunin')} rule=${JSON.stringify(rule)}`,
       };
     });
     check('K terms MATCH: `C1k=5/5 K=4/30 coverage:kimi-layer=1` with C1 still 2/2 (literal verdict)', () => {

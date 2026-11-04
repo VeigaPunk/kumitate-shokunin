@@ -1,0 +1,6 @@
+# L1 mutant re-verification against the APPLIED K74ExecKimiMembers patch (2026-11-04)
+# K74MutKimi reported mutants 4(a)/4(b) SURVIVED against its own hand-built declaration (patch absent at its start).
+# Re-test against the integrated tree (patch applied, 124-case suite):
+mutant 4a (drop plugins/installed.json.bak-pre-shokunin from K_MEMBER_RULES) -> PROXY_SELFTEST: 122/124 pass VERDICT: FAIL -> KILLED
+mutant 4b (drop plugins/managed/kimi-shokunin from K_MEMBER_RULES) -> PROXY_SELFTEST: 122/124 pass VERDICT: FAIL -> KILLED
+the two new fixture cases (K member list includes plugins/installed.json.bak-pre-shokunin / plugins/managed/kimi-shokunin) fail when their rule is dropped.

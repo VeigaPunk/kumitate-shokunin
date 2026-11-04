@@ -358,6 +358,22 @@ manifest records **no** hash, signature, or file list, so tamper detection is no
 this schema. UNKNOWN: whether `enabled: false` suppresses a plugin entirely or only its
 tools; no disabled record exists on this host to observe.
 
+## `~/.kimi-code/plugins/installed.json.bak-pre-shokunin`
+
+The pre-shokunin backup of the plugin install manifest.
+
+Regular file directly under `~/.kimi-code/plugins/`. Measured shape: size 390 B, mode `644`,
+mtime 2026-10-29T04:27:46.
+
+What the backup preserves: the single-plugin state of `plugins/installed.json` prior to the
+installation of `kimi-shokunin` on 2026-10-29. Its size (390 B) and content match the original
+manifest quoted in the `~/.kimi-code/plugins/installed.json` section above, recording only the
+official Moonshot AI `kimi-webbridge` plugin.
+
+Governance: governed by presence and shape (kind: regular file, mode floor `644`); non-secret
+member of the K2 family (declared in `scripts/kimi-census.mjs` and `scripts/proxy-check.mjs`
+`K_MEMBER_RULES`) and an enumerated child of `plugins/`.
+
 ## `~/.kimi-code/plugins/managed/kimi-webbridge`
 
 A managed plugin is a package, not a skill.
@@ -418,6 +434,24 @@ JSON fields`) holding daemon lifecycle/recovery detail. Routed to kama (see belo
 | Enable gate | none observed | `enabled: true` in `~/.kimi-code/plugins/installed.json` |
 | Skill dir discovery | dir name under the scanned root | via the manifest's `"skills": "./skills/"` pointer |
 | Bundle | `SKILL.md` + `references/` or `protocol/` | `SKILL.md` + `references/` only, but also plugin-level metadata + `interface` block |
+
+
+## `~/.kimi-code/plugins/managed/kimi-shokunin`
+
+The local-path managed plugin package.
+
+Directory under `~/.kimi-code/plugins/managed/`. Measured shape: directory inode, mode `755`,
+mtime 2026-10-29T04:27:42. Registered in `~/.kimi-code/plugins/installed.json` with
+`id: "kimi-shokunin"`, `source: "local-path"`, `enabled: true`, and `originalSource: "/home/vgpnk/Projects/kimi-shokunin"`.
+
+Top-level layout (measured, shape-only enumeration): 10 entries comprising 5 regular files
+(`.gitignore`, `LICENSE`, `README.md`, `install.sh`, `kimi.plugin.json`) and 5 subdirectories
+(`commands/`, `considerthese/`, `scripts/`, `skills/`, `templates/`). Unlike `kimi-webbridge`
+(mode `700` package root), `kimi-shokunin` is mode `755`.
+
+Governance: governed by presence and shape (kind: directory, mode floor `755`); non-secret
+member of the K2 family (declared in `scripts/kimi-census.mjs` and `scripts/proxy-check.mjs`
+`K_MEMBER_RULES`) and an enumerated child of `plugins/managed/`.
 
 ## The assigned question — precedence of user skills vs managed plugins
 
@@ -499,10 +533,12 @@ outrank user skills by explicit `interface` config.
 `~/.kimi-code/skills/wwkd/SHA256SUMS`; `sha256sum` over
 `~/.kimi-code/skills/godspeed/directive.md` +
 `~/.kimi-code/skills/ufo/references/godspeed-core/directive.md`;
-`~/.kimi-code/plugins/installed.json`; `~/.kimi-code/plugins/managed/kimi-webbridge/`
+`~/.kimi-code/plugins/installed.json`; `~/.kimi-code/plugins/installed.json.bak-pre-shokunin`;
+`~/.kimi-code/plugins/managed/kimi-webbridge/`
 (`~/.kimi-code/plugins/managed/kimi-webbridge/kimi.plugin.json`,
 `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/SKILL.md`,
 `~/.kimi-code/plugins/managed/kimi-webbridge/skills/kimi-webbridge/references/operations.md`);
+`~/.kimi-code/plugins/managed/kimi-shokunin/` (top-level enumeration);
 `stat` modes for all of the above; `~/.kimi-code/config.toml` and `~/.kimi-code/tui.toml` grepped
 shape-only; `~/.kimi-code/logs/kimi-code.log` grepped for load lines; rendered skill
 listing of this session (scope grouping and precedence rule text).
