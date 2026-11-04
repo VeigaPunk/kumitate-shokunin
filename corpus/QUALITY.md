@@ -1283,3 +1283,25 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   (`.ufo/waves/round-83/close/gate-registry-check.txt`).
 - **Limit.** Ids only — a Gate quote is not re-opened by this check; the non-author spot-check does that.
 - **Supersedes.** None. Adds the registry half of Q75's transcript rule.
+
+### Q77 — reconcile a counter headline with its executed arm rows (round 84)
+
+- **Grounding.** `corpus/lessons/round-84.md` Mistakes, R83-D5: the frozen
+  round-83 counter declared 27 arms, executed 28, and printed HELD 27/27 with
+  one FAIL (`.ufo/waves/round-83/close/c1-probe.txt`).
+- **Rule.** New counters derive their denominator from their executable case
+  roster and refuse an executed-row count that differs. Before citing an
+  arm-form transcript's HELD headline, reconcile row count, unique names,
+  prefix, ok count, FAIL count, verdict and summary order.
+- **Command.** `node scripts/counter-receipt.mjs --receipt FILE`; the new
+  frozen `.ufo/waves/round-84/probe/probe84-c1.mjs` uses its table length and
+  checks ran equals that length, rather than an independent denominator.
+- **Shown able to fail.** On the unchanged r83 C1 receipt the named command
+  must exit 1 `ARMS_TOTAL`; on `close/c1-repair.txt` from r83 it must exit 0.
+  Observed commands and exits land in round-84 `close/history-red.txt` and
+  `close/history-repair.txt`, not a rewritten historical receipt.
+- **Limit.** Transcript consistency is not proof of semantic correctness,
+  complete expected-arm coverage, authenticity or process exit provenance.
+  Historical counters stay frozen; this rule adds no universal migration.
+- **Supersedes.** None; extends Q73's reachability check with runtime
+  reconciliation of the measured transcript.

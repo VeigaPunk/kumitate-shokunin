@@ -1,0 +1,28 @@
+{
+  "revision": "3794b903324e7eb4aec6d92539f2ca4e2c0b6727",
+  "status": "UNRUN; stable candidate unavailable at inspection",
+  "driver": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/build/K84Mutation/mutate84.mjs",
+  "specContract": {
+    "id": "lowercase mutation identifier",
+    "before": "Exact candidate source statement; must occur precisely once",
+    "after": "Replacement disabling only that behavior",
+    "expectedArm": "Frozen arm that must fail under mutation"
+  },
+  "recipes": [
+    {"id":"arms-total-removed","behavior":"Disable denominator-versus-observed-rows guard only","expectedArm":"total-drift","additionalExpectedArm":"hidden-red"},
+    {"id":"fail-ignored","behavior":"Disable any-FAIL guard only","expectedArm":"honest-red"},
+    {"id":"held-trusted","behavior":"Disable declared-held-versus-ok-rows guard only","expectedArm":"held-drift"},
+    {"id":"duplicates-ignored","behavior":"Disable duplicate arm-name guard only","expectedArm":"duplicate"},
+    {"id":"last-summary-wins","behavior":"Replace exactly-one-summary rejection with last-summary selection, retaining absent-summary rejection","expectedArm":"two-summaries"},
+    {"id":"ordering-ignored","behavior":"Disable summary-after-last-arm guard only","expectedArm":"summary-before-arms"}
+  ],
+  "preconditions": [
+    "Candidate and spec paths must be absolute; scratch root must not exist",
+    "Candidate must round-trip UTF-8; before must be nonempty and match exactly once; after must differ",
+    "Choose one recipe per invocation; review exact before/after statements against actual candidate before execution",
+    "Frozen probe source is read-only; only scratch scripts/counter-receipt.mjs is mutated",
+    "Pristine and restored runs must both pass all 16 arms or verdict is inconclusive",
+    "Killed requires mutated probe exit 1 and expected named arm FAIL; other unexpected failures are inconclusive",
+    "Exact original bytes restored and re-probed in finally, then scratch removed after durable receipts"
+  ]
+}

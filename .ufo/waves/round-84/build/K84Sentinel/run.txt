@@ -1,0 +1,9 @@
+rev=3794b903324e7eb4aec6d92539f2ca4e2c0b6727 fixture=copied-working-candidate
+candidate-reviewed.mjs sha256 80332ee9bcf1c64de5b3d14f151b9edffc4ddf991fec9300532a2702c00e2523
+command=env TMPDIR=/fast/scratch/hyaku/kumitate-r84/K84Sentinel/tmp HYAKU_SCRATCH=/fast/scratch/hyaku/kumitate-r84/K84Sentinel/work node /fast/scratch/hyaku/kumitate-r84/K84Sentinel/boundary.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/build/K84ExecGate/counter-receipt.mjs
+cwd=/fast/scratch/hyaku/kumitate-r84/K84Sentinel
+exit=0
+node=v24.21.0
+output={"candidateSha256":"80332ee9bcf1c64de5b3d14f151b9edffc4ddf991fec9300532a2702c00e2523","cases":23,"mismatches":["forged-command-prefix"],"timeouts":[],"receipt":"/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/build/K84Sentinel/boundary-results.json"}
+Driver exit 0 means capture completed, not all cases passed. Per-case commands, exits, outputs, and expectations are in boundary-results.json. Driver creates its own fixture files from literal strings; no git fixture revision exists. The revision above identifies the frozen assignment, not a claim that the candidate exists in that commit. Reproduction: recreate exact scratch root with tmp/work directories; copy boundary-driver.mjs there as boundary.mjs; run command above against preserved candidate-reviewed.mjs instead of mutable owner path. Driver never opens or passes the FIFO to the candidate.
+No tools installed or updated.

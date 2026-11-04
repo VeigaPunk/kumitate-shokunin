@@ -1,0 +1,22 @@
+rev=3794b903324e7eb4aec6d92539f2ca4e2c0b6727 candidate=working-copy
+scripts/counter-receipt.mjs sha256 80332ee9bcf1c64de5b3d14f151b9edffc4ddf991fec9300532a2702c00e2523
+run-at=2026-11-04T15:56:52.298Z
+command=TMPDIR=/fast/scratch/hyaku/kumitate-r84/K84ExecGate/tmp node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/probe/probe84-c1.mjs --lane /fast/scratch/hyaku/kumitate-r84/K84ExecGate --work /fast/scratch/hyaku/kumitate-r84/K84ExecGate/work/probe
+C84_C1 arm clean ok exit=0 want=0:COUNTER_RECEIPT: CLEAN out=COUNTER_RECEIPT: CLEAN
+C84_C1 arm crlf ok exit=0 want=0:COUNTER_RECEIPT: CLEAN out=COUNTER_RECEIPT: CLEAN
+C84_C1 arm hidden-red ok exit=1 want=1:ARMS_TOTAL out=COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+C84_C1 arm total-drift ok exit=1 want=1:ARMS_TOTAL out=COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+C84_C1 arm held-drift ok exit=1 want=1:HELD_COUNT out=COUNTER_RECEIPT: DRIFT HELD_COUNT
+C84_C1 arm duplicate ok exit=1 want=1:ARM_DUPLICATE out=COUNTER_RECEIPT: DRIFT ARM_DUPLICATE
+C84_C1 arm foreign-arm ok exit=1 want=1:ARM_PREFIX out=COUNTER_RECEIPT: DRIFT ARM_PREFIX
+C84_C1 arm two-summaries ok exit=2 want=2:SUMMARY_COUNT out=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+C84_C1 arm no-summary ok exit=2 want=2:SUMMARY_COUNT out=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+C84_C1 arm malformed-arm ok exit=2 want=2:ARM_MALFORMED out=COUNTER_RECEIPT: FAIL-CLOSED ARM_MALFORMED
+C84_C1 arm zero-arms ok exit=2 want=2:ARMS_EMPTY out=COUNTER_RECEIPT: FAIL-CLOSED ARMS_EMPTY
+C84_C1 arm missing ok exit=2 want=2:RECEIPT_UNREADABLE out=COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+C84_C1 arm usage ok exit=64 want=64:COUNTER_RECEIPT: USAGE out=COUNTER_RECEIPT: USAGE
+C84_C1 arm honest-red ok exit=1 want=1:ARM_FAILED out=COUNTER_RECEIPT: DRIFT ARM_FAILED
+C84_C1 arm wrong-verdict ok exit=1 want=1:VERDICT out=COUNTER_RECEIPT: DRIFT VERDICT
+C84_C1 arm summary-before-arms ok exit=2 want=2:SUMMARY_ORDER out=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_ORDER
+C84_C1: HELD held=16/16
+exit=0

@@ -194,6 +194,8 @@ Rules: a row is a claim written only after opening the source; append-only excep
 | S240 | ufo-fsd-alpha — swarm wave validator (`scripts/ufo-swarm-wave.mjs`) — repo path /home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-swarm-wave.mjs at commit fb7157fc | code | A | The dispatcher's own admission arithmetic: the band counts spawns plus resumes, the cap only tightens from policy/spec, and the swarm role set is fixed | lines 265-275 (`SWARM_ROLES`), 896-910 (spec.maxLanes clamp), 1071-1100 (band over `total`), 1360-1372 (`counts`); opened 2026-11-04 | A gate must count what the dispatcher counts (spawns + resumes) and refuse what the dispatcher would refuse; a second arithmetic is drift | mined | 2026-11-04 | on-release | corpus/knowledge/dispatcher-admission-surface.md |
 | S241 | ufo-fsd-alpha — swarm registry (`scripts/ufo-swarm-registry.mjs`) — repo path /home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-swarm-registry.mjs at commit fb7157fc | code | A | The registry file the dispatcher writes: `{schema:"ufo-swarm-registry-v1", members:{name:…}}`, not an agents array | lines 27 and 112-133 (`SWARM_REGISTRY_SCHEMA`, `parsed.members`); opened 2026-11-04 | A liveness reader must accept the registry's real shape, or it judges a file no producer writes | mined | 2026-11-04 | on-release | corpus/knowledge/dispatcher-admission-surface.md |
 | S242 | IETF RFC 3339 — Date and Time on the Internet: Timestamps — https://www.rfc-editor.org/rfc/rfc3339.html | spec | A | What a timestamp denotes: an instant in time with one canonical textual form, not a duration or a guarantee about the reader's clock | Section 1, p.2 ("Date and time expressions indicate an instant in time"); fetched 2026-11-04; capture .ufo/waves/round-83/build/L1/captures/rfc3339.html (sha256 c53b2d12) | A recorded instant is a claim about the past; a reader judges it against its own clock instead of assuming it is past | mined | 2026-11-04 | 180d | corpus/knowledge/self-asserted-instants.md |
+| S243 | Round-83 frozen C1 counter — repo path .ufo/waves/round-83/probe/probe83-c1.mjs at d5fc2c9407a75e939b332560f54548f2dd52629e | own-work | A | A declared denominator can disagree with the runtime arm roster | line 21 ARMS and lines 134-142 arm recorder, 242-246 headline; opened 2026-11-04 | Reconcile executed arm rows with the headline instead of trusting a second constant; the actual 28-row transcript hides a red under held=27/27 | mined | 2026-11-04 | 180d | corpus/knowledge/counter-transcript-reconciliation.md, corpus/lessons/round-84.md |
+| S244 | Round-83 C1 close receipt — repo path .ufo/waves/round-83/close/c1-probe.txt at d5fc2c9407a75e939b332560f54548f2dd52629e | own-work | A | The historical HELD headline considered as sole proof of admission | line 30 headline contrasted with line 4 FAIL and lines 2-29 arm roster; opened 2026-11-04 | REJECTED: the headline alone hides an observed red arm; flip: independently reconcile arm rows and headline before admission | rejected | 2026-11-04 | 180d | corpus/lessons/round-84.md |
 
 
 ## Paths
@@ -229,6 +231,13 @@ Rules: a row is a claim written only after opening the source; append-only excep
 
 
 ## Search log
+
+Round 84 bounded own-work search (2026-11-04): question — can a HELD headline
+hide a red runtime arm? Opened the round-83 C1 counter and close transcript
+at d5fc2c94, identified 2 / screened 2 / included 1 (S243) / rejected 1 (S244).
+The source constant is 27; the transcript's line 4 is FAIL while line 30
+says HELD. Stop: the exact observed contradiction grounds the local checker;
+no claim about arbitrary counter formats or external testing doctrine.
 
 **Rollback-journal recovery — query “SQLite atomic commit hot journal recovery”; where: targeted
 fetch of the official SQLite page, 2026-11-04; identified 1, screened 1, opened 1, included 1

@@ -291,12 +291,12 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=896
-C=43
+A=908
+C=44
 C1=19
 C1_total=19
-C2=211
-C2_total=211
+C2=213
+C2_total=213
 S_members=88
 S_sections=88
 R_members=92
@@ -318,7 +318,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=9ce5664343de48205435b96ad724cbe676ba036102e2beff6978ed94e4c2ecba
+pin.proxy-check=b8d52a847be7ea6d821367efb83524442d6e3456745524484b8e93ca054423ff
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -351,6 +351,7 @@ pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
 pin.ready-handoff=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
 pin.spotcheck-adopt=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
+pin.counter-receipt=190a4c1f893a5ffc0c735a63e7155c830ae9cf2ed038fe7b870bebb11c254ec0
 -->
 
 
@@ -1970,6 +1971,12 @@ Rows enter only through a round that demonstrates the capability running (`AXES.
 | `spotcheck-adopt` | Own the corpus coverage repair the non-author closure forces every round: enumerate `corpus/lessons/round-*-verifier-spotcheck.md`, adopt one by writing the missing README map row and/or the `readme-map.json` covered entry (append-only, both halves, idempotent, pre-image rollback), and predict the next closure artifact — with the unchanged `readme-map.mjs` as the child oracle and refusals for anything outside its scope | `node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-75-verifier-spotcheck.md` → `ADOPTED … wrote=both` + `README_MAP: CLEAN files=182 rows=182 covered=182` exit 0 (`close/spotcheck-adopt.txt`); second run `ALREADY_ADOPTED` with identical bytes (`close/c2-idempotent.txt`); `--selftest` `SPOTCHECK_ADOPT_SELFTEST: PASS (16/16)`; `pin.spotcheck-adopt` | round 76 |
 | `ready-handoff` | Admit an inline spawn handoff before the orchestrator takes it: the five-key `.ready` contract against the dispatch it names and against the dispatcher's own admission arithmetic (band over spawns + resumes, effective cap incl. the 256 ceiling, dispatch schema/counts, the closed role set, the registry `{members}` shape, the reachable attack set, report-destination uniqueness and containment), with typed fail-closed refusals and one exit-bearing verdict plus a `--json` body; reads only the ready file, its dispatch and the named policy/registry, and writes nothing | `node scripts/ready-handoff.mjs --lane . --round 83 --wave w1 --policy /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json` → `READY_HANDOFF: READY wave=w1 seats=15 resumes=0 total=15 attack=4/15 connector=1` exit 0; `--selftest` → `READY_HANDOFF_SELFTEST: 70/70 pass`; frozen counter `C83_C1: HELD held=27/27`; base tree (v2) 15/27, constant-printer stub 3/27 (`.ufo/waves/round-83/controls/`) | round 81; deepened r82 (v2) and r83 (v3) |
 | `omp-shape-compare` | Compare the live OMP root against a `kumitate-omp-shape-v1` receipt, counting added, removed and changed names/kinds/modes without reading member contents or altering proxy scores; exit 0 IN_SYNC, 1 DRIFT, 2 fail-closed | `node scripts/omp-census.mjs --compare .ufo/pins/omp-shape.json` → `OMP_SHAPE_COMPARE: IN_SYNC entries=64 receipt=64 added=0 removed=0 changed=0`; frozen counter `probe78-c2.mjs` → `C78_C2: HELD held=11/11`; selftest 79 cases; `MUTANTS78_C2: ALL-KILLED killed=10/10` | round 78 |
+
+Round-84 capability disposition: `counter-receipt` is a shipped, self-tested
+instrument, but its acquisition claim is **unadmitted**: the frozen kill rule
+fires on K84Critic's no-reader 16/16. It does not enter this verified repertoire
+table on that counter. See `.ufo/waves/round-84/build/K84Critic/no-work-probe-node.txt`
+and `corpus/lessons/round-84.md`; a successor needs a separately frozen predicate.
 
 *Round-77 note (capabilities; the paragraphs above stay as written).* `spotcheck-adopt` deepened v1 → v2 (`kumitate-spotcheck-adopt-v2`): the journal is published before either destination write, recovery runs on every non-selftest arm with exact `RECOVERED <target> rolled-back|complete`, a corrupt pre-image is `REFUSED_ORACLE` with the journal retained, a foreign journal is `REFUSED_JOURNAL_FOREIGN`, a symlinked destination parent is `REFUSED_PATH_ESCAPE`, the row is inserted after the last lessons row, and a finished journal is retired by rename. Evidence: `C77_C2: HELD held=13/13` at M (`.ufo/waves/round-77/close/c2-probe.txt`), selftest 26/26, mutant battery 8/8. This is a deepening, not a new row.
 
@@ -3993,3 +4000,27 @@ names the unreachable `labrat`** and the plan's headline attack count disagreed 
 F4): derive the attack set from a machine-readable field or drop the dead member. (6) **`maxLanes`/256
 ceiling** absent from the gate (scout F2); `godspeed` and seat-name grammars differ from the validator
 (F5/F10); the dispatch's `schema`/`counts`/`policy` fields are never read (F11).
+
+## Round 84 — routed correction to round-83 prose (2026-11-04)
+
+R83-D2: the round-83 "Same-commit re-measure" prose above is superseded:
+`A 891 → 894` → `A 891 → 896`; `pin.ready-handoff c1463c58…` →
+`d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53`.
+The round-83 stanza and `.ufo/waves/round-83/close/proxy-check.txt` were
+already correct; no historical receipt or counter is rewritten. R83-D5's
+counter defect motivates this round's frozen capability claim in
+`.ufo/waves/round-84/plan.md`, with controls `0/16` and `2/16` in its
+`controls/base.txt` and `controls/stub.txt`.
+
+## Round 84 — declared claim (2026-11-04)
+
+One claim: C1 **operability**, lowest non-retired axis, capability acquisition
+`counter-receipt`. Integer 9 remains terminal; the surface move is a runnable
+checker over this lane's counter arm transcripts, not a scalar increment.
+Frozen plan/counter/control commit `3794b903324e7eb4aec6d92539f2ca4e2c0b6727`:
+`node .ufo/waves/round-84/probe/probe84-c1.mjs --lane . --work /fast/scratch/hyaku/kumitate-r84/L1/probe`
+must print `C84_C1: HELD held=16/16`, exit 0. No-work base (tool absent):
+0/16; constant-CLEAN: 2/16 (`.ufo/waves/round-84/controls/base.txt`,
+`controls/stub.txt`). Kill rule and 16 named cases are unchanged in the plan.
+S243 grounds this claim, with S244 explicitly rejected as sole headline proof.
+No second claim, no exploratory claim, no new coverage scalar.

@@ -573,6 +573,7 @@ const GATE_PINS = {
   'pin.routed-ledger': 'scripts/routed-ledger.mjs', // round 74: r55-66 routed-ledger instrument pinned (same backlog)
   'pin.spotcheck-adopt': 'scripts/spotcheck-adopt.mjs', // round 76: the constrained spotcheck repair client (C2)
   'pin.ready-handoff': 'scripts/ready-handoff.mjs', // round 81: the inline handoff admission gate (C1)
+  'pin.counter-receipt': 'scripts/counter-receipt.mjs', // round 84: executed-arm transcript reconciliation
 };
 /** Scorecard `## Axes` rows the derived scores must equal: axis name → term key. */
 const AXIS_ROWS = [

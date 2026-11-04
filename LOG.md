@@ -2767,3 +2767,47 @@ spotcheck before freezing any claim (`.ufo/waves/round-84/open/adopt.txt`):
 map pin and score stanza C2=210→211 travel together. This is routed maintenance,
 not the round's claim. No inherited uncommitted work at opening (helper state
 `local=a648a6f8f3028fc4f72d27470b4673fe8e3e5866 tracked=0 untracked=0`).
+
+## Round 84 — counter-receipt ships; frozen claim stops honestly (2026-11-04)
+
+One declared claim, C1 operability (lowest live axis, score 9 terminal):
+`counter-receipt`, frozen in `3794b903324e7eb4aec6d92539f2ca4e2c0b6727`.
+Motivating evidence: R83-D5, ARMS=27 versus 28 runtime rows and one hidden
+FAIL, reopened as S243/S244. New read-only `scripts/counter-receipt.mjs`
+checks count/name/prefix/outcome/verdict/order against supported text receipts;
+SKILL registry/checklist, gate pin, Q77, knowledge entry, source captures and
+README map/pin land with it. No old counter, receipt or non-author file rewritten.
+
+The wave's strongest result is a rejection: K84Critic's label-keyed no-reader
+reaches `C84_C1: HELD held=16/16` exit 0 without reading receipt contents
+(`.ufo/waves/round-84/build/K84Critic/no-work-probe-node.txt`), firing the
+frozen kill rule. **C1 UNMET; rejected-honest-stop**, irrespective of useful
+implementation measurements. No repertoire-table acquisition or admitted
+integer gain is claimed. Before controls are 0/16 absent and 2/16 constant
+(`controls/base.txt`, `controls/stub.txt` in that wave); no counter is repaired
+after data. Q29's required no-reader/label-keyed controls were missed before
+freeze and are recorded as this round's mistake.
+
+ONE v1 wave of 10 settled seats; L1 holds planner. Roles: executor 3, scribe 1,
+scout 1, connector 1, reviewer 1, critic 1, mutation-tester 1, sentinel 1.
+Attack 3/10; no residual call. WAVE-DONE received before filing. Scribe/source
+and code outputs integrated; independent/boundary findings and mutation
+receipts preserved. Sentinel's metadata false refusal repaired in candidate
+with regression cases; earlier attacks remain bound to their older digest.
+Advisory handoff red SCRATCH_ROOT is disclosed: the taken payload says
+“Scratch exact root” with exact paths rather than the gate's literal phrase.
+It was neither rewritten after take nor respawned.
+
+Sources 180→182, both own-work A, one mined/one rejected, existing cells
+unchanged; S244 is a genuine reject of headline-only proof with a flip.
+Assimilation none; already-implemented considerthese ideas are not re-mined.
+R83-D1–D6 answered in `corpus/lessons/round-84.md`, including prior-map repair
+before freeze, stale SCORECARD correction, narrowed revision promises and
+single Mistakes section. Accounting (not admission): A 896→908, C 43→44,
+C2 210→213; unchanged scalar axes. Final integrated readings are revision
+stamped in `.ufo/waves/round-84/close/`; source/registry conformance stays
+separate from the failed acquisition predicate.
+
+- 2026-11-04 — round 84: C1 operability counter-receipt UNMET (frozen no-reader kill);
+  code and correction evidence in `.ufo/waves/round-84/`, sources S243/S244,
+  lesson `corpus/lessons/round-84.md`; no admitted score or capability gain.
