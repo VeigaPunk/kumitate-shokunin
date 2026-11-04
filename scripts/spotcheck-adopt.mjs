@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /**
- * kumitate-spotcheck-adopt-v2 — journaled non-author spotcheck adoption.
- * The unchanged readme-map child owns all map verdicts. Before either rename,
- * publish both pre-images in .ufo/pins/adopt-journal; the next invocation
- * completes or rolls back interrupted adoption. Assumes one writer per lane.
+ * kumitate-spotcheck-adopt-v3 — journaled non-author spotcheck adoption, two readings.
+ * The unchanged readme-map child owns all map verdicts. `--check` reports the spotcheck set
+ * (`SPOTCHECK_COVERAGE:`) and the map (`MAP:`) as separate readings, so a green spotcheck set
+ * on an unrelated red map is readable; `--adopt` validates its own delta (the target key
+ * resolves, every other finding is unchanged) instead of demanding a globally clean map.
+ * Before either rename, publish both pre-images in .ufo/pins/adopt-journal; the next
+ * invocation completes or rolls back interrupted adoption. Assumes one writer per lane.
  * Test-only seam: SPOTCHECK_ADOPT_TEST_CRASH=journal|row|pin sends SIGKILL
  * after journal publication, README replacement, or pin replacement respectively.
  * Unset in normal use. Recovery protects process crashes, not power loss.
@@ -26,11 +29,16 @@ function oracle(lane) {
   const text = r.stdout || '';
   const clean = text.trim().match(/^README_MAP: CLEAN files=\d+ rows=\d+ covered=\d+$/);
   const findings = [...text.matchAll(/(?:README_MAP: note |first=)([^\r\n]+)/g)].map(m => m[1]);
-  return { clean: r.status === 0 && !!clean, line: text.trim(), findings,
+  const first = /^README_MAP: DRIFT .*?first=([^\r\n ]+)/m.exec(text)?.[1] ?? null;
+  return { clean: r.status === 0 && !!clean, line: text.trim(), findings, first,
     valid: r.status === 0 ? !!clean : r.status === 1 && /^README_MAP: DRIFT /m.test(text) };
 }
 function missing(result, key) {
   return { row: result.findings.includes(`uncovered:${key}`), pin: result.findings.includes(`unpinned:${key}`) };
+}
+/** Findings that do not name the adopted key: the map's other defects, order-free and deduped. */
+function otherFindings(result, key) {
+  return [...new Set(result.findings.filter((f) => !f.includes(key)))].sort();
 }
 function appendPin(raw, key) {
   // Preserve every existing byte, including existing entries and indentation.
@@ -186,9 +194,11 @@ function evaluate(lane, arm, value) {
   if (arm === '--check') {
     const paths = readdirSync(join(lane, 'corpus/lessons')).filter(n => NAME.test(n)).sort().map(n => `corpus/lessons/${n}`);
     const uncovered = paths.filter(p => { const m = missing(result, p.slice(7)); return m.row || m.pin; });
-    return { exit: result.clean ? 0 : 1, lines: [result.clean
-      ? `SPOTCHECK_MAP: CLEAN spotchecks=${paths.length} uncovered=0`
-      : `SPOTCHECK_MAP: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0] || 'oracle'}`] };
+    const coverage = uncovered.length === 0
+      ? `SPOTCHECK_COVERAGE: CLEAN spotchecks=${paths.length} uncovered=0`
+      : `SPOTCHECK_COVERAGE: DRIFT spotchecks=${paths.length} uncovered=${uncovered.length} first=${uncovered[0]}`;
+    const map = result.clean ? 'MAP: CLEAN' : `MAP: DRIFT first=${result.first ?? 'oracle'}`;
+    return { exit: uncovered.length === 0 ? 0 : 1, lines: [coverage, map] };
   }
   const m = missing(result, key);
   try {
@@ -217,7 +227,9 @@ function evaluate(lane, arm, value) {
       crashAt(file === readme ? 'row' : 'pin');
     }
     const after = oracle(lane);
-    if (!after.clean) throw new Error('oracle refused');
+    const target = missing(after, key);
+    const sameOther = JSON.stringify(otherFindings(after, key)) === JSON.stringify(otherFindings(result, key));
+    if (!after.valid || target.row || target.pin || !sameOther) throw new Error('oracle refused');
     retire(journal);
     return { exit: 0, lines: [`SPOTCHECK_ADOPT: ADOPTED ${path} wrote=${m.row && m.pin ? 'both' : m.row ? 'row' : 'pin'}`, after.line] };
   } catch {
@@ -262,14 +274,35 @@ function selftest(lane) {
   }
   try {
     let d = fixture('check-clean');
-    test('check-clean', () => exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`), () => {
+    test('check-clean', () => exact(run(d, '--check'), 1, `SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=${target}\nMAP: DRIFT first=uncovered:${key}`), () => {
       if (run(d, '--adopt', target).exit !== 0) return false;
-      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0');
+      return exact(run(d, '--check'), 0, 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN');
     });
     d = fixture('check-drift', true, true);
-    test('check-drift', () => exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0'), () => {
+    test('check-drift', () => exact(run(d, '--check'), 0, 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN'), () => {
       writeFileSync(join(d, 'corpus/README.md'), '# Corpus\n');
-      return exact(run(d, '--check'), 1, `SPOTCHECK_MAP: DRIFT spotchecks=1 uncovered=1 first=${target}`);
+      return exact(run(d, '--check'), 1, `SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=${target}\nMAP: DRIFT first=uncovered:${key}`);
+    });
+    // The split: a green spotcheck set stays readable on a map red for another reason.
+    d = fixture('check-map-only-drift');
+    writeFileSync(join(d, 'corpus/knowledge/late.md'), '# Late\n');
+    test('check-map-only-drift', () => exact(run(d, '--check'), 1, `SPOTCHECK_COVERAGE: DRIFT spotchecks=1 uncovered=1 first=${target}\nMAP: DRIFT first=uncovered:knowledge/late.md`), () => {
+      if (run(d, '--adopt', target).exit !== 0) return false;
+      return exact(run(d, '--check'), 0, 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=uncovered:knowledge/late.md');
+    });
+    d = fixture('check-map-orphan', true, true);
+    writeFileSync(join(d, 'corpus/README.md'), readFileSync(join(d, 'corpus/README.md'), 'utf8') + '| `knowledge/ghost.md` | Ghost | fixture |\n');
+    test('check-map-orphan', () => !oracle(d).clean, () => {
+      const r = run(d, '--check');
+      return r.exit === 0 && r.text === 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: DRIFT first=orphan-row:knowledge/ghost.md';
+    });
+    d = fixture('adopt-unrelated-drift');
+    writeFileSync(join(d, 'corpus/knowledge/unrelated.md'), '# Unrelated\n');
+    test('adopt-unrelated-drift', () => !oracle(d).clean, () => {
+      const r = run(d, '--adopt', target);
+      const after = oracle(d);
+      return r.exit === 0 && r.text.startsWith(`SPOTCHECK_ADOPT: ADOPTED ${target} wrote=both\n`)
+        && after.findings.includes('uncovered:knowledge/unrelated.md');
     });
     for (const [name, row, pin, wrote] of [['adopt-both', false, false, 'both'], ['adopt-row', false, true, 'row'], ['adopt-pin', true, false, 'pin']]) {
       d = fixture(name, row, pin);
@@ -285,12 +318,11 @@ function selftest(lane) {
       d = fixture(name);
       test(name, () => !oracle(d).clean, () => { const before = hash(d); return exact(run(d, '--adopt', path), 2, token) && hash(d) === before; });
     }
-    for (const name of ['malformed-pin', 'malformed-readme', 'rollback']) {
+    for (const name of ['malformed-pin', 'malformed-readme']) {
       d = fixture(name);
       test(name, () => !oracle(d).clean, () => {
         if (name === 'malformed-pin') writeFileSync(join(d, '.ufo/pins/readme-map.json'), '{');
         if (name === 'malformed-readme') writeFileSync(join(d, 'corpus/README.md'), '| lessons/broken.md | broken |\n');
-        if (name === 'rollback') writeFileSync(join(d, 'corpus/knowledge/unrelated.md'), '# Unmapped\n');
         const before = hash(d);
         return exact(run(d, '--adopt', target), 2, 'REFUSED_ORACLE') && hash(d) === before;
       });
@@ -368,7 +400,7 @@ function selftest(lane) {
       const before = hash(d);
       stageJournal(d, target, key, new Map(PRE.map(entry => [join(d, entry.path), readFileSync(join(d, entry.path))])));
       if (!run(d, '--check').text.startsWith(`RECOVERED ${target} complete\n`)) return false;
-      return exact(run(d, '--check'), 0, 'SPOTCHECK_MAP: CLEAN spotchecks=1 uncovered=0') && hash(d) === before;
+      return exact(run(d, '--check'), 0, 'SPOTCHECK_COVERAGE: CLEAN spotchecks=1 uncovered=0\nMAP: CLEAN') && hash(d) === before;
     });
     for (const newline of [false, true]) {
       d = fixture(`pin-final-newline-${newline}`);

@@ -206,6 +206,7 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/composite-score-compensability.md` | K score composite: documentation and census-finding factors both bind; the round-78 replacement harm and its repair | S230, S231; `SCORECARD.md ## Axes coverage:kimi-layer` |
 | `knowledge/report-evidence-pointers.md` | A report's pointers are evidence: `POINTER_DEAD` resolution bases, `--rev` membership, absence-vs-error separation | S229; `scripts/report-receipt-diff.mjs` v4 |
 | `lessons/round-79.md` | Round-79 method: the composite K score (both factors, harm repaired), `report-receipt-diff` v4 `POINTER_DEAD`, the C2 arm-vs-contract mistake and the omp-census transient repair | LOG.md round 79; `.ufo/waves/round-79/`; S229–S231 |
+| `lessons/round-79-verifier-spotcheck.md` | Non-author round-79 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 
 ## Known gaps

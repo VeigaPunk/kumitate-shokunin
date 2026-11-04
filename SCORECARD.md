@@ -291,12 +291,12 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=884
+A=886
 C=39
 C1=19
 C1_total=19
-C2=194
-C2_total=194
+C2=195
+C2_total=195
 S_members=88
 S_sections=88
 R_members=92
@@ -311,14 +311,14 @@ K_findings=0
 coverage_kimi=10
 C1o=1
 C1o_total=1
-O_members=64
+O_members=65
 O_findings=0
 O_bound=35
 coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b
+pin.proxy-check=59dfeb64efff9fb0fd4b17eb31af7f96f49f22e4ec00c0229c917e07bcb54f96
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -328,7 +328,7 @@ pin.sources-check=5402b2103bb9e3ccd76f7bf3f5880f2249f809c78cee4766a75e3cf30b69f4
 pin.wave-census=76447250f9de1f7e9258d0dfe9544feba18d6c8723db37e77e6ca422235f45f4
 pin.gate-mutants=177f6cbbd70d7503263d00c77357893658a0e393ac722d43034ebd7e429bb717
 pin.omp-census=c5986057a3fcd27761cbd77c7387267813089ed7c4affb6a4ad03f36d1164c98
-pin.omp-shape=5980a0c8430ea0132a220f0b6517e35a2b60426f8321570d69e37b62a06b54f3
+pin.omp-shape=84e41b9f5167479f2d806686ee702db49d0ebd0a83e6bcb28bd444d50eb0c435
 pin.cap-run=e1d0a79b0c38a5d1d60ccba37ab7dd0528d1ee63982aae3213e28572a8d754c5
 pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
@@ -349,7 +349,7 @@ pin.report-receipt-diff=cd94e8aa96a61d7ee0fb9993e4a00e21d1348030880afbe8ed07b6b9
 pin.control-replay=22bd0e31a74f4a58e3303f145d9f88e2ff89d890f21588b4ae2879d4a0e39dc4
 pin.harm-matrix=ab123486e2fd753fc2df10d207b2d92a3759838bd3f31370402717de493f7c38
 pin.routed-ledger=05aacb5ede6b3389a693bb71c6c1cb74281f8bab9b5bf2309027dd97d83913b1
-pin.spotcheck-adopt=b84343a076da277c62448bdb0bb3b18f834193c8247a13473eab4139555bba8b
+pin.spotcheck-adopt=0d9c56dc6d4751e3ea9e0d0eb2ec24c27633637770aecb926f032e53d505bcec
 -->
 
 
