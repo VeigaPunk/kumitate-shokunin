@@ -83,3 +83,24 @@ Sources opened this round (rows in `corpus/SOURCES.md`; capture pinned in
   recorded here (freeze-review A4).
 - **The probes' `DEFAULT_LANE` is one path segment short** (`.ufo`, not the lane). Routed to round
   79; the round's claim commands pass `--lane` explicitly (plan A2).
+
+## Erratum (round 79, 2026-11-04, append-only; the round-78 text above stays as written)
+
+The round-78 non-author spot-check (`round-78-verifier-spotcheck.md`, closure of 2026-11-04) found two
+record defects. Filed reports are not rewritten; this erratum names the superseded readings.
+
+- **Dead evidence pointers (reference-drift).** Eleven `close/` receipts named by the filed r78
+  report do not resolve under the round directory: `close/proxy-json.txt`,
+  `close/census-selftest.txt`, `close/omp-census-selftest.txt`, `close/mutants-c2.txt`,
+  `close/proxy-selftest.txt`, `close/proxy-check.txt`, `close/census.txt`, `close/shape.txt`,
+  `close/readme-map.txt`, `close/spotcheck-check.txt`, `close/sources.txt`. Their content exists
+  under `close/gates.txt`, `close/gates2.txt`, `close/selftests.txt` and `close/proxy.txt`, and the C2
+  mutation battery at `build/K78MutC2/battery-standin.txt`. The round-79 L1's independent
+  re-measurement (`report-receipt-diff` v4 `POINTER_DEAD`, `.ufo/waves/round-79/close/c2-*.txt`) finds
+  ten dead distinct pointers, adding `amended-plan-observed.md`,
+  `knowledge/kimi-plane-single-derivation.md`, `knowledge/shape-receipt-live-drift.md` and
+  `SOURCES.md`. The round-79 report cites only resolving paths.
+- **Close-number drift (number-drift).** The round-78 section's `C2/C2_total = 189` and `README_MAP
+  files=189` are superseded by the final M2 receipt `close/gates2.txt` (04:21:50): `C2=190,
+  C2_total=190` and `README_MAP: CLEAN files=190 rows=190 covered=190`; the round-78 lesson's close
+  `A=874` is the pre-final `rev=working-tree` run, and the same final receipt reads `A=868`.

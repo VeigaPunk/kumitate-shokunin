@@ -112,12 +112,17 @@ function checkUsage(ctx) {
 }
 
 function checkR78(ctx) {
+  // The `close/*` class is v3's RECEIPT_MISSING (measured in the base control:
+  // ids=RECEIPT_MISSING,HASH_DEAD); the no-duplicate rule leaves v4 four dead
+  // non-receipt pointers on this report. Amendment 2 derives this from the
+  // contract after the first arm text contradicted it.
   const r = run(ctx.lane, ['--lane', ctx.lane, '--round', '78', '--report', R78_REPORT], ctx.work);
   const dead = pointerLines(r.stdout);
-  const first = dead.find((l) => l === 'POINTER_DEAD close/proxy-json.txt');
-  const ok = r.status === 1 && dead.length >= 10 && first !== undefined;
-  return ok ? [true, `dead=${dead.length} first=${first}`]
-    : [false, `exit=${r.status} dead=${dead.length} first=${dead[0] ?? 'none'} ids=${ids(r.stdout).join(',')}`];
+  const want = ['POINTER_DEAD amended-plan-observed.md', 'POINTER_DEAD SOURCES.md'];
+  const ok = r.status === 1 && dead.length >= 4 && want.every((w) => dead.includes(w))
+    && ids(r.stdout).includes('RECEIPT_MISSING');
+  return ok ? [true, `dead=${dead.length} ${want.join(' + ')}`]
+    : [false, `exit=${r.status} dead=${dead.length} lines=${dead.join('|')} ids=${ids(r.stdout).join(',')}`];
 }
 
 function checkFixtureClean(ctx) {

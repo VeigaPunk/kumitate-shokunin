@@ -209,3 +209,18 @@ receipt comparison is nondeterministic. Repair: `omp-census --compare` classifie
 `agent.db-{shm,wal,journal}` as transient (reported as `transient=<n>`, excluded from
 added/removed/changed, never a DRIFT on their own), with selftest arms and a `pin.omp-census` re-pin.
 The census and `--shape` readings do not change.
+
+## Amendment 2 (pre-data, 2026-11-04) — C2 counter arm 2 corrected against its own contract
+
+Append-only, before any claim verdict. The §C2/Amendment-1 arm 2 text ("≥10 `POINTER_DEAD` lines,
+first `close/proxy-json.txt`") is arithmetically inconsistent with the same contract's no-duplicate
+rule: `report-receipt-diff` v3 already binds a report-relative `close/…` citation through
+`REL_RECEIPT` and reports it as `RECEIPT_MISSING` — the base control on the filed r78 report reads
+`ids=RECEIPT_MISSING,HASH_DEAD` (`controls/c2-base.txt`). With no double reporting, v4's
+`POINTER_DEAD` covers the **four non-receipt dead pointers**: `amended-plan-observed.md`,
+`knowledge/kimi-plane-single-derivation.md`, `knowledge/shape-receipt-live-drift.md`, `SOURCES.md`.
+Arm 2 now requires: exit 1, ≥4 `POINTER_DEAD` lines, `POINTER_DEAD amended-plan-observed.md` and
+`POINTER_DEAD SOURCES.md` present, and `RECEIPT_MISSING` still in the DRIFT ids. The claim sentence,
+the 12-arm kill rule, the base/stub controls and the target are unchanged. Mined as this round's
+mistake (`corpus/lessons/round-79.md` `## Mistakes`): a counter whose arm contradicts its own
+contract is a freeze defect; the L1's dry run caught it before any verdict.
