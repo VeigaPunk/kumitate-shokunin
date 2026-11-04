@@ -1,0 +1,21 @@
+rev=a648a6f8f3028fc4f72d27470b4673fe8e3e5866
+base_tool_lookup_exit=128
+command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/probe/probe84-c1.mjs --lane /fast/scratch/hyaku/kumitate-r84/L1/base --work /fast/scratch/hyaku/kumitate-r84/L1/probe
+C84_C1 arm clean FAIL exit=127 want=0:COUNTER_RECEIPT: CLEAN out=tool-absent
+C84_C1 arm crlf FAIL exit=127 want=0:COUNTER_RECEIPT: CLEAN out=tool-absent
+C84_C1 arm hidden-red FAIL exit=127 want=1:ARMS_TOTAL out=tool-absent
+C84_C1 arm total-drift FAIL exit=127 want=1:ARMS_TOTAL out=tool-absent
+C84_C1 arm held-drift FAIL exit=127 want=1:HELD_COUNT out=tool-absent
+C84_C1 arm duplicate FAIL exit=127 want=1:ARM_DUPLICATE out=tool-absent
+C84_C1 arm foreign-arm FAIL exit=127 want=1:ARM_PREFIX out=tool-absent
+C84_C1 arm two-summaries FAIL exit=127 want=2:SUMMARY_COUNT out=tool-absent
+C84_C1 arm no-summary FAIL exit=127 want=2:SUMMARY_COUNT out=tool-absent
+C84_C1 arm malformed-arm FAIL exit=127 want=2:ARM_MALFORMED out=tool-absent
+C84_C1 arm zero-arms FAIL exit=127 want=2:ARMS_EMPTY out=tool-absent
+C84_C1 arm missing FAIL exit=127 want=2:RECEIPT_UNREADABLE out=tool-absent
+C84_C1 arm usage FAIL exit=127 want=64:COUNTER_RECEIPT: USAGE out=tool-absent
+C84_C1 arm honest-red FAIL exit=127 want=1:ARM_FAILED out=tool-absent
+C84_C1 arm wrong-verdict FAIL exit=127 want=1:VERDICT out=tool-absent
+C84_C1 arm summary-before-arms FAIL exit=127 want=2:SUMMARY_ORDER out=tool-absent
+C84_C1: UNMET held=0/16
+exit=1
