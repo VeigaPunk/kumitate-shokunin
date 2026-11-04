@@ -1,0 +1,19 @@
+sidecar=shm
+$ node /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/clone/scripts/omp-census.mjs --compare /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/shape.json --root /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/synthetic-root
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=64 added=0 removed=0 changed=0 transient=1
+exit=0
+
+sidecar=wal
+$ node /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/clone/scripts/omp-census.mjs --compare /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/shape.json --root /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/synthetic-root
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=64 added=0 removed=0 changed=0 transient=1
+exit=0
+
+sidecar=journal
+$ node /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/clone/scripts/omp-census.mjs --compare /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/shape.json --root /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/synthetic-root
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=64 added=0 removed=0 changed=0 transient=1
+exit=0
+
+real-added-with-transient
+$ node /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/clone/scripts/omp-census.mjs --compare /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/shape.json --root /fast/scratch/hyaku/kumitate-r79/K79ExecRepairs/synthetic-root
+OMP_SHAPE_COMPARE: DRIFT entries=66 receipt=64 added=1 removed=0 changed=0 first=zz-real-member transient=1
+exit=1

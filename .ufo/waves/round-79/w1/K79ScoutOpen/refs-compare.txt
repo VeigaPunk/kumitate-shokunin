@@ -1,0 +1,52 @@
+# K79ScoutOpen — my pointer census vs the frozen counter (read only AFTER refs.txt/dead-list.txt were written)
+
+## my measurement (command: python3 refs-measure-v2.py)
+raw scope      : refs=47 dead=13 first=close/proxy-json.txt
+pointer scope  : refs=44 dead=10 first=close/proxy-json.txt
+  (pointer scope = raw minus tokens that are not literal repo paths: `controls/*.txt` is a glob;
+   `fleet-commit.sh` and `sources-census.sh` are bare command names — both DO exist, at
+   /home/vgpnk/Projects/shokunin/scripts/hyaku/fleet-commit.sh and .../scripts/sources-census.sh,
+   but under none of the three resolution bases (lane root, report dir, <lane>/.ufo/waves/round-78/))
+
+## the ten dead, by class, and where the content actually lives
+receipt-shaped (6) — v3 already owns this class as RECEIPT_MISSING:
+  close/proxy-json.txt          -> close/proxy.txt exists            (`PROXY: MATCH (A=874 ...)`)
+  close/census-selftest.txt     -> close/selftests.txt exists        (`PROXY_SELFTEST: 156/156`)
+  close/proxy-selftest.txt      -> close/selftests.txt exists
+  close/omp-census-selftest.txt -> close/selftests.txt exists (aggregated)
+  close/proxy-check.txt         -> close/gates.txt exists            (close gates at M)
+  close/mutants-c2.txt          -> NO close/ receipt; the battery is build/K78MutC2/battery-standin.txt
+general (4) — the POINTER_DEAD class C2 must add:
+  SOURCES.md                                -> corpus/SOURCES.md exists
+  knowledge/shape-receipt-live-drift.md     -> corpus/knowledge/shape-receipt-live-drift.md exists
+  knowledge/kimi-plane-single-derivation.md -> corpus/knowledge/kimi-plane-single-derivation.md exists
+  amended-plan-observed.md                  -> build/K78CriticClaims/amended-plan-observed.md exists
+     (note: base (c) is the round ROOT, so seat outputs must carry the `build/` prefix — the report did
+      that for build/K78CriticClaims/section-loss-witness.json, which resolves)
+
+## cross-check against the frozen predicate
+$ sed -n '108,135p' <lane>/.ufo/waves/round-79/probe/probe79-c2.mjs     # arm r78-pointers
+  requires: exit 1, >=4 `POINTER_DEAD` lines, `POINTER_DEAD amended-plan-observed.md` and
+  `POINTER_DEAD SOURCES.md` present, and `RECEIPT_MISSING` still in the DRIFT ids.
+  => 4 is exactly my general class (10 dead - 6 receipt-shaped). Consistent.
+
+## the plan's own arithmetic
+- plan §C2 (pre-Amendment-1, superseded): `refs=41 missing=10` for a `scripts/report-refs.mjs` that does
+  not exist at the base tree. Under the token model the seat spec gives me, the same dead set is 10 but
+  the ref count is 44 (tool scope) / 47 (raw). I cannot reproduce 41 with any rule that still finds all
+  ten named pointers: dropping the 3 non-path tokens gives 44, and any rule that reads 41 must also drop
+  three tokens that DO resolve — so the 41 is a property of a tool that was never built, not of the
+  report's bytes.
+- plan Amendment 1: "DRIFT with 10 POINTER_DEAD lines, first close/proxy-json.txt" — impossible under
+  the same contract's no-duplicate rule (the 6 close/* tokens are RECEIPT_MISSING).
+- plan Amendment 2 + probe arm 2: 4 POINTER_DEAD, corrected against the contract. My measurement agrees.
+
+## base-tree tool behaviour (the red-before)
+$ grep -c POINTER_DEAD base/scripts/report-receipt-diff.mjs   -> 0
+$ grep -c HASH_DEAD    base/scripts/report-receipt-diff.mjs   -> 10  (the id exists in v3)
+  contract header: `kumitate-report-receipt-diff-v3 (round 64, ...)`; findings PLACEHOLDER,
+  TALLY_UNRECEIPTED, TALLY_CHECKS_MISMATCH, RECEIPT_MISSING, RECEIPT_EMPTY.
+$ cat <lane>/.ufo/waves/round-79/controls/c2-base.txt
+  C79_C2 arm r78-pointers FAIL ... dead=0 first=none ids=RECEIPT_MISSING,HASH_DEAD
+  C79_C2 arm fixture-missing FAIL exit=0 ids= lines=
+  C79_C2: HELD held=9/12

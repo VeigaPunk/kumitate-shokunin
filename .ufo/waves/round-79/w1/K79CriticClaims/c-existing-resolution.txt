@@ -1,0 +1,30 @@
+Command: git show 5019803b:scripts/report-receipt-diff.mjs (lines 195-222)
+195:   // cited receipt paths, normalised: trailing punctuation dropped; `..` segments and bare directories are not receipts
+196:   const REL_RECEIPT = /(?<![\w./-])(?:base|close)\/[A-Za-z0-9._*/-]+/g; // a receipt cited relative to the round dir is bound like a full path
+197:   const stripPunct = (p) => (p.endsWith('/..') ? p : p.replace(/[.,;:]+$/, ''));
+198:   const cited = (s) => [...new Set([
+199:     ...[...s.matchAll(RECEIPT_PATH(round))].map((x) => stripPunct(x[0])),
+200:     ...[...s.matchAll(REL_RECEIPT)].map((x) => `.ufo/waves/round-${round}/${stripPunct(x[0])}`),
+201:   ])];
+202:   const globRe = (g) => new RegExp(`^${g.split('*').map((x) => x.replace(/[.+?^${}()|[\]\\]/g, '\\$&')).join('[^/]*')}$`);
+203:   const isPath = (p) => Boolean(p) && !p.split('/').includes('..');
+204:   const matchSpec = (sp, file) => (sp.endsWith('/') ? file.startsWith(sp) : sp.includes('*') ? globRe(sp).test(file) : sp === file);
+205:   // RECEIPT_MISSING / RECEIPT_EMPTY
+206:   for (const p of cited(text)) {
+207:     if (!isPath(p)) { add('RECEIPT_MISSING', `${p} (escape-or-dir)`); continue; }
+208:     if (p.endsWith('/')) { // a directory citation is satisfied by any non-empty committed receipt under it
+209:       const hits = [...receiptNames.keys()].filter((f) => f.startsWith(p));
+210:       if (!hits.length) add('RECEIPT_MISSING', `${p} (no receipt under it)`);
+211:       else if (!hits.some((f) => receiptNames.get(f).trim())) add('RECEIPT_EMPTY', p);
+212:       continue;
+213:     }
+214:     if (p.includes('*')) { // a glob is satisfied by any non-empty committed receipt it matches
+215:       const hits = [...receiptNames.keys()].filter((f) => globRe(p).test(f));
+216:       if (!hits.length) add('RECEIPT_MISSING', p);
+217:       else if (!hits.some((f) => receiptNames.get(f).trim())) add('RECEIPT_EMPTY', p);
+218:       continue;
+219:     }
+220:     if (!receiptNames.has(p)) add('RECEIPT_MISSING', p);
+221:     else if (!receiptNames.get(p).trim()) add('RECEIPT_EMPTY', p);
+222:   }
+cite-check scans only SKILL.md + corpus markdown (listDocs lines 311-318), not filed reports. claims-check scans registry member notes. round-gate resolves commit identities, not general evidence pointers. Existing report-receipt-diff should own general pointer checking; relative base/close already resolved in v3.

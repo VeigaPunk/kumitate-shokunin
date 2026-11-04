@@ -1,0 +1,109 @@
+# K79ScoutOpen — open-gate state at the scaffolding commit (ba940b512d980218b11ed6f34ac2f304c01287ee)
+# tree produced by: git -C <lane> archive ba940b51 | tar -x  (into /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold)
+# origin src: /fast/scratch/hyaku/kumitate-pin/src (unchanged, sha-checked by proxy-check: src-rev=31c465f15669)
+# host: Linux 7.2.11-arch1-1 x86_64; node v24.21.0
+
+### scaffolding proxy --strict (the plan's stated MATCH gate)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict) 
+  PROXY  error  A_DRIFT  A: declared=868 computed=870 delta=+2
+  PROXY: DRIFT (A_DRIFT term=A declared=868 computed=870 delta=+2; src-rev=31c465f15669)
+exit=1
+
+### scaffolding kimi-census
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/kimi-census.mjs) 
+  KIMI_ROOT: /home/vgpnk/.kimi-code
+  FAMILY K1  members=4  checked=4  frozen=4
+  FAMILY K2  members=29  checked=29  frozen=29
+  FAMILY K3  members=10  checked=10  frozen=10
+  FAMILY K4  members=9  checked=9  frozen=9
+  FAMILY K5  members=3  checked=3  frozen=3
+  INFO  CHAIN  config.toml.*.bak  generations=22 (reported as info, never gated)
+  INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+  INFO  COUNT  skills/  children=7 (counted live, names not gated)
+  INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+  TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+  KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+
+### scaffolding omp-census --shape .ufo/pins/omp-shape.json
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/omp-census.mjs --shape .ufo/pins/omp-shape.json) 
+  OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+exit=0
+
+### scaffolding readme-map (routed repair 1 receipt)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/readme-map.mjs) 
+  README_MAP: CLEAN files=191 rows=191 covered=191
+exit=0
+
+### scaffolding spotcheck-adopt --check (routed repair 1 receipt)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/scaffold && node scripts/spotcheck-adopt.mjs --check) 
+  SPOTCHECK_MAP: CLEAN spotchecks=45 uncovered=0
+exit=0
+
+### base tree proxy --strict (5019803b, the pre-scaffolding open state)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/base && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict) 
+  PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=190 computed=191 delta=+1
+  PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=190 computed=191 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+exit=1
+
+### tip tree proxy --strict (8a733ab0, live tip during recon)
+$ (cd /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/tip && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --strict) 
+  PROXY  error  A_DRIFT  A: declared=868 computed=870 delta=+2
+  PROXY: DRIFT (A_DRIFT term=A declared=868 computed=870 delta=+2; src-rev=31c465f15669)
+exit=1
+
+### byte evidence: the two committed open receipts disagree
+$ cat <lane>/.ufo/waves/round-79/open/gates-open.txt  # committed at ba940b51
+  == proxy strict ==
+  PROXY  error  C2_TOTAL_DRIFT  C2_total: declared=190 computed=191 delta=+1
+  PROXY  error  AXES_DRIFT  coverage: ## Axes row=10 derived=9
+  PROXY: DRIFT (C2_TOTAL_DRIFT term=C2_total declared=190 computed=191 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669)
+  proxy_exit=1
+  == proxy json ==
+  {
+    "contract": "kumitate-proxy-v1",
+    "mode": "check",
+    "ok": false,
+    "verdict": "DRIFT",
+  == kimi census ==
+  KIMI_ROOT: /home/vgpnk/.kimi-code
+  FAMILY K1  members=4  checked=4  frozen=4
+  FAMILY K2  members=29  checked=29  frozen=29
+  FAMILY K3  members=10  checked=10  frozen=10
+  FAMILY K4  members=9  checked=9  frozen=9
+  FAMILY K5  members=3  checked=3  frozen=3
+  INFO  CHAIN  config.toml.*.bak  generations=22 (reported as info, never gated)
+  INFO  COUNT  agents/secondary/  children=18 (counted live, names not gated)
+  INFO  COUNT  skills/  children=7 (counted live, names not gated)
+  INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+  TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+  KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+  kimi_exit=0
+  == omp census ==
+  OMP_CENSUS: CLEAN (source=snapshot entries=64 findings=0 bound=35/35)
+  omp_exit=0
+  == readme map ==
+  README_MAP: note unpinned:lessons/round-78-verifier-spotcheck.md
+  README_MAP: DRIFT files=191 rows=190 covered=190 bad=2 first=uncovered:lessons/round-78-verifier-spotcheck.md
+  map_exit=1
+  == spotcheck check ==
+  SPOTCHECK_MAP: DRIFT spotchecks=45 uncovered=1 first=corpus/lessons/round-78-verifier-spotcheck.md
+  spot_exit=1
+  == checklists ==
+  CHECKLIST  PASS SKILL.md:753 exit=0 expected=0 substring=hit wall=0.020 load1=5.11 — OMP shape receipt live comparison (round 78; contract `kumitate-omp-shape-v1` receipt, host-bound, shape-only and non-scoring; a moved live root is a real DRIFT, never an accepted clean exit)
+  CHECKLIST_SKIPPED: 0
+  CHECKLIST: 35/39 pass
+  VERDICT: FAIL
+
+$ python3 -c 'json: verdict/exit/terms of open/proxy-json-open.json'
+   {'verdict': 'MATCH', 'exitCode': 0, 'srcRev': '31c465f15669f744848bd9f5d56191c5085670f7', 'self': '/home/vgpnk/Projects/shokunin/kumitate-shokunin'}
+   {'A': 868, 'C': 39, 'C1': 19, 'C1_total': 19, 'C2': 191, 'C2_total': 191, 'coverage': 10, 'C1k': 5, 'C1k_total': 5, 'K_members': 55, 'K_sections': 55, 'K_findings': 0, 'coverage_kimi': 10}
+   findings: []
+
+### A-term composition: the scaffolding commit is base + two frozen .mjs counters
+$ diff <(find base -type f -name '*.mjs' -o ... ) # runnable files, base vs scaffolding
+  868a869,870
+  > ./.ufo/waves/round-79/probe/probe79-c1.mjs
+  > ./.ufo/waves/round-79/probe/probe79-c2.mjs
+  (868 runnable files at base; 870 at scaffolding: +.ufo/waves/round-79/probe/probe79-c1.mjs +probe79-c2.mjs)

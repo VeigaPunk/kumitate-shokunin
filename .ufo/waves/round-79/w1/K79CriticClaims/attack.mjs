@@ -1,0 +1,31 @@
+import * as fs from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {join,dirname,resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+const lane='/home/vgpnk/Projects/shokunin/kumitate-shokunin', fleet=dirname(lane), out=join(lane,'.ufo/waves/round-79/w1/K79CriticClaims'), scratch='/fast/scratch/hyaku/kumitate-r79/K79CriticClaims';
+fs.mkdirSync(scratch,{recursive:true});
+const keep=(name,text)=>fs.writeFileSync(join(out,name),text);
+const run=(tool,args)=>{const r=spawnSync(process.execPath,[tool,...args],{cwd:scratch,encoding:'utf8',env:{...process.env,TMPDIR:scratch},maxBuffer:20*1024*1024});return {exit:r.status,stdout:r.stdout,stderr:r.stderr,command:[process.execPath,tool,...args].join(' ')};};
+try {
+ const patch=join(lane,'.ufo/waves/round-79/w1/K79ExecReportRefs/patch.diff');
+ fs.mkdirSync(join(scratch,'scripts'),{recursive:true});const baseline=spawnSync('git',['-C',lane,'show','5019803b4e451094cf58c555408ea37490cbc07a:scripts/report-receipt-diff.mjs'],{encoding:'utf8'});if(baseline.status!==0)throw new Error('base unreadable');fs.writeFileSync(join(scratch,'scripts/report-receipt-diff.mjs'),baseline.stdout);const v3=join(scratch,'v3.mjs');fs.writeFileSync(v3,baseline.stdout);
+ const applied=spawnSync('patch',['-p1','-i',patch],{cwd:scratch,encoding:'utf8'});keep('patch-reconstruction.txt',JSON.stringify(applied,null,2));if(applied.status!==0)throw new Error('patch reconstruction failed');
+ const v4=join(scratch,'scripts/report-receipt-diff.mjs'); fs.copyFileSync(v4,join(out,'candidate-v4.mjs'));
+ let table='C1k/C1k_total=1; members=55; exact integer arithmetic\nsections findings r78 composite pre78\n', counts={higher:0,equal:0,lower:0};
+ for(let s=0;s<=55;s++)for(let f=0;f<=55;f++){let old=Math.floor(10*(55-f)/55), composite=Math.floor(10*s*(55-f)/(55*55)), pre=Math.floor(10*s/55);counts[composite>old?'higher':composite<old?'lower':'equal']++;table+=`${s} ${f} ${old} ${composite} ${pre}\n`;}
+ table+=`summary=${JSON.stringify(counts)}\nWitness s=54 f=0: r78=10 composite=9 pre78=9; s=55 f=1: r78=9 composite=9 pre78=10; s=30 f=27: r78=5 composite=2 pre78=5\nComposite cannot raise r78 on valid domain because 0<=sections/members<=1. This is stricter sensitivity, not restoration of scores lost to findings.\nMissing-member correlated witness (if removed member was documented): members=54 sections=54 findings=1 => documentation factor=1, not double penalty. Mode-only finding leaves sections unchanged; denaming-only leaves findings unchanged.\n`;keep('a-arithmetic.txt',table);
+ keep('b-findings-arm.txt','Command: node -e evaluating sections-only mutant for frozen arms\n'+JSON.stringify([{arm:'denamed-heading',sections:54,members:55,findings:0,score:Math.floor(10*54/55),expected:9},{arm:'findings-factor',sections:55,members:55,findings:1,score:Math.floor(10*55/55),expected:9},{arm:'both-factors',sections:54,members:55,findings:1,score:Math.floor(10*54/55),expected:9}],null,2)+'\nfindings-factor kills sections-only: actual 10 vs expected 9. formula-composite also rejects source missing findings ratio. Both-factors alone does not discriminate product from min: both read 9. s=30 f=27 discriminates product 2 vs min 5, absent frozen runtime arms.\n');
+ const source=baseline.stdout.split('\n'); keep('c-existing-resolution.txt','Command: git show 5019803b:scripts/report-receipt-diff.mjs (lines 195-222)\n'+source.slice(194,222).map((l,i)=>`${i+195}: ${l}`).join('\n')+'\ncite-check scans only SKILL.md + corpus markdown (listDocs lines 311-318), not filed reports. claims-check scans registry member notes. round-gate resolves commit identities, not general evidence pointers. Existing report-receipt-diff should own general pointer checking; relative base/close already resolved in v3.\n');
+ const root=join(scratch,'root');fs.mkdirSync(root,{recursive:true});
+ const body=p=>['# fixture','## Work performed',`See \`${p}\`.`, '## Landed changes','none','## Before → after measurements','none','## Sources & frontier','none','## Trend verdicts','none','## SHONEN','- [~] a','- [~] b','- [ ] c','- [~] d',''].join('\n');
+ fs.mkdirSync(join(root,'directory.md'));fs.writeFileSync(join(scratch,'outside.md'),'external bytes\n');fs.symlinkSync(join(scratch,'outside.md'),join(root,'linked.md'));fs.symlinkSync('absent.md',join(root,'dangling.md'));
+ let fixtures='candidate sha256='+createHash('sha256').update(fs.readFileSync(v4)).digest('hex')+'\n';
+ for(const p of ['directory.md','linked.md','../outside.md','dangling.md','missing.md:1+2','missing.md:1','close/missing.txt']){const report=join(root,'report.md');fs.writeFileSync(report,body(p));fixtures+=JSON.stringify({pointer:p,...run(v4,['--lane',root,'--round','79','--report',report])},null,2)+'\n';}
+ keep('d-adversarial-fixtures.txt',fixtures);
+ let comparisons='', real='';
+ for(const round of [76,77,78]){let report=join(fleet,`.ufo/reports/round-${round}/kumitate.md`);const bytes=fs.readFileSync(report);const args=['--lane',lane,'--round',String(round),'--report',report,'--fleet',fleet];let a=run(v3,args), b=run(v4,args);const old=a.stdout.split('\n').slice(1).filter(Boolean), now=b.stdout.split('\n').slice(1).filter(Boolean);comparisons+=JSON.stringify({round,report_sha256:createHash('sha256').update(bytes).digest('hex'),v3:a,v4:b,removed:old.filter(x=>!now.includes(x)),added:now.filter(x=>!old.includes(x))},null,2)+'\n';if(round===78)real=b.stdout;}
+ keep('e-historical-comparison.txt',comparisons);
+ const p78=join(fleet,'.ufo/reports/round-78/kumitate.md'),text=fs.readFileSync(p78,'utf8');let stable='Original r78 byte sha256='+createHash('sha256').update(text).digest('hex')+'\n'+real;
+ const changed=join(root,'changed78.md');fs.writeFileSync(changed,text.replaceAll('close/proxy-json.txt','SCORECARD.md'));stable+='Replace close/proxy-json.txt with real SCORECARD.md in scratch report only:\n'+JSON.stringify(run(v4,['--lane',lane,'--round','78','--report',changed,'--fleet',fleet]),null,2)+'\n';
+ const moved=join(root,'moved78.md');fs.writeFileSync(moved,text);fs.writeFileSync(join(root,'SOURCES.md'),'shadow\n');stable+='Unchanged report moved beside unrelated SOURCES.md:\n'+JSON.stringify(run(v4,['--lane',lane,'--round','78','--report',moved,'--fleet',fleet]),null,2)+'\n';keep('d-live-report-stability.txt',stable);
+}finally{fs.rmSync(scratch,{recursive:true,force:true});}

@@ -1,0 +1,17 @@
+C1 mutation kill matrix
+Baseline: 11/11 exit 0; restored after every mutant: 11/11 exit 0.
+Mutant | defect | verdict | tally | first failing arm
+M1 | Drop sections/members (r78 formula) | KILLED | C79_C1: HELD held=8/11 | denamed-heading
+M2 | Drop (members-findings)/members | KILLED | C79_C1: HELD held=8/11 | findings-factor
+M3 | Math.round instead of Math.floor | KILLED | C79_C1: HELD held=7/11 | denamed-heading
+M4 | Remove both zero-denominator guards | KILLED | C79_C1: HELD held=9/11 | zero-denominator
+M5 | Subtract raw findings after floored documentation product | KILLED | C79_C1: HELD held=8/11 | both-factors
+M6 | Pass occurrence count, not distinct count, to kCoverage | KILLED | C79_C1: HELD held=8/11 | denamed-heading
+M7 | Divide census cleanliness by total, not members | KILLED | C79_C1: HELD held=3/11 | proxy-clean-terms
+
+No full-counter survivors. M6 survives the nested selftests arm but is killed by denamed-heading, findings-factor, both-factors.
+All mutations repinned proxy-check in scratch to prevent PIN_DRIFT-only kills. Exact source+scorecard restoration hashes: results.json.
+Baseline source sha256: ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b
+Baseline scorecard sha256: 083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104
+
+Full actual counter outputs: M1.txt through M7.txt, and M1-restored.txt through M7-restored.txt.

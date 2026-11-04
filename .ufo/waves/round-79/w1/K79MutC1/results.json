@@ -1,0 +1,189 @@
+[
+  {
+    "mutant": "M1",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=8/11",
+    "firstFail": "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+    "allFails": [
+      "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+      "C79_C1 arm formula-composite FAIL helper=kCoverage sections=false findings=true body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (members - findings) / members); ",
+      "C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "aaed27697639f3f19ba89bcef817a81b2bae241bbc6fae74438f787443c1f437",
+      "scorecard": "3c32d36b9639143202e1fb9879350a5c31ab7060db6af72994f1c577fa6bf5ec"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M2",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=8/11",
+    "firstFail": "C79_C1 arm findings-factor FAIL exit=1 terms={\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10} kinds=K_FINDINGS_DRIFT",
+    "allFails": [
+      "C79_C1 arm findings-factor FAIL exit=1 terms={\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10} kinds=K_FINDINGS_DRIFT",
+      "C79_C1 arm formula-composite FAIL helper=kCoverage sections=true findings=false body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (sections / members)); ",
+      "C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "e8b2c4b7815338926764d44b3498751f641b545f33bba7b78a92f20146e7bf26",
+      "scorecard": "605a8c9f535eac2300815dd0a9fe1c6e4264cffbe0eda3405c2ddb26d709e01d"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M3",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=7/11",
+    "firstFail": "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+    "allFails": [
+      "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+      "C79_C1 arm findings-factor FAIL exit=1 terms={\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10} kinds=K_FINDINGS_DRIFT",
+      "C79_C1 arm both-factors FAIL exit=1 terms={\"K_sections\":54,\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10}",
+      "C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "ace6a8d8d166a8dcfcc6f24910f807a51e92283101c54ffe3163998b04d76249",
+      "scorecard": "596485fb007da866af121c0ec27758b85352e36a3a269c36c86e3bd6d8dd42aa"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M4",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=9/11",
+    "firstFail": "C79_C1 arm zero-denominator FAIL exit=1 terms={\"K_members\":0,\"K_sections\":1,\"coverage_kimi\":null}",
+    "allFails": [
+      "C79_C1 arm zero-denominator FAIL exit=1 terms={\"K_members\":0,\"K_sections\":1,\"coverage_kimi\":null}",
+      "C79_C1 arm selftests FAIL proxy=1 census=0  a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "a5103843b6630851fb04b5445de8e092a6df1a24c4480c62ee46c26e1ce4b5b5",
+      "scorecard": "c8b3bb37d1416bd2cd395c27e9b3a2ba56fc158ed94958bcde90d4111cb0ddc4"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M5",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=8/11",
+    "firstFail": "C79_C1 arm both-factors FAIL exit=1 terms={\"K_sections\":54,\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":8}",
+    "allFails": [
+      "C79_C1 arm both-factors FAIL exit=1 terms={\"K_sections\":54,\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":8}",
+      "C79_C1 arm formula-composite FAIL helper=kCoverage sections=true findings=false body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (sections / members)) - findings; ",
+      "C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "ac75548e11e76fea93522b6f63525e6e012c748381c91fb20b53539bc8e45eba",
+      "scorecard": "f7eb609293a03f7c400d16f8c7148d8fefb1a9fea1351848467d31a3ccde77f4"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M6",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=8/11",
+    "firstFail": "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+    "allFails": [
+      "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT",
+      "C79_C1 arm findings-factor FAIL exit=1 terms={\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10} kinds=K_FINDINGS_DRIFT",
+      "C79_C1 arm both-factors FAIL exit=1 terms={\"K_sections\":54,\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":10}"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "c4933e58b67aea2a79bac23e48a6f43bcfdd848b4b7ab33ecd14c9ac5f9454e8",
+      "scorecard": "c5253a35532a1c9f867dc9acd473b98840b4176d6cd247ade963e3354d83c6e8"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  },
+  {
+    "mutant": "M7",
+    "exit": 1,
+    "tally": "C79_C1: HELD held=3/11",
+    "firstFail": "C79_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={\"K_sections\":55,\"K_members\":55,\"K_findings\":0,\"coverage_kimi\":110}",
+    "allFails": [
+      "C79_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={\"K_sections\":55,\"K_members\":55,\"K_findings\":0,\"coverage_kimi\":110}",
+      "C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=108 kinds=A_DRIFT,K_SECTIONS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT",
+      "C79_C1 arm findings-factor FAIL exit=1 terms={\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":108} kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT",
+      "C79_C1 arm both-factors FAIL exit=1 terms={\"K_sections\":54,\"K_members\":55,\"K_findings\":1,\"coverage_kimi\":106}",
+      "C79_C1 arm formula-composite FAIL helper=kCoverage sections=true findings=false body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (sections / members) * (members - findings) / total); ",
+      "C79_C1 arm stanza-tamper FAIL exit=1 kinds=K_FINDINGS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT terms={\"K_findings\":0,\"coverage_kimi\":110}",
+      "C79_C1 arm live-strict FAIL exit=1 verdict=DRIFT {",
+      "C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer \u2014 at-entry=0 left=0 init=0 canary-entries=0"
+    ],
+    "verdict": "KILLED",
+    "before": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "mutated": {
+      "source": "9262cebf29c838739c9418e7ecfbda77349e52d3c9666b29e752d9389cb3d7ca",
+      "scorecard": "0fd55ab0d43078341e7d5f8e58e0349b1584ae64cbe8e6dd1091548d6d245ab0"
+    },
+    "after": {
+      "source": "ab304f970a6eca264ede93dac84f479014aa41a5498b7c040ab8c83830bb853b",
+      "scorecard": "083349202a0f7d52922d76ca62be3ebd952d5eabf7874d11fcd1db533fc68104"
+    },
+    "exactRestore": true,
+    "restoredExit": 0
+  }
+]

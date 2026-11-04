@@ -224,3 +224,34 @@ Arm 2 now requires: exit 1, ≥4 `POINTER_DEAD` lines, `POINTER_DEAD amended-pla
 the 12-arm kill rule, the base/stub controls and the target are unchanged. Mined as this round's
 mistake (`corpus/lessons/round-79.md` `## Mistakes`): a counter whose arm contradicts its own
 contract is a freeze defect; the L1's dry run caught it before any verdict.
+
+## Amendment 3 (post-dispatch, 2026-11-04) — disclosed edits, shape correction, evidence lifetime
+
+Append-only, written after the wave dispatched and before the round's verdicts were filed. The freeze
+review (`w1/K79ReviewFreeze.md`, FF-1…FF-7) named every item below; none changes a claim sentence, a
+counter arm, a kill rule or a control verdict.
+
+1. **C1 probe edited pre-dispatch, disclosed (FF-2).** Commit `83f6815f` also changed
+   `probe/probe79-c1.mjs`'s `copyLane` from one `cp -a` of the whole `.ufo` to per-path pairs ending at
+   `.ufo/pins` (the 254 MB wave archive was being copied into every de-named fixture; the scratch rule
+   forbids a lane mirror). `controls/c1-base.txt` was re-captured against the edited bytes (7/11, kinds
+   gain `A_DRIFT`) and `controls/c1-stub.txt` re-run (4/11). No arm, value or kill rule changed.
+2. **Wave shape corrected (FF-5).** The §Wave-shape paragraph says 12 seats and 42 %; the dispatched and
+   validated wave is **13 seats** (2 scouts, 3 executors, 2 scribes, 1 connector, 1 reviewer, 1 critic,
+   2 mutation-testers, 1 sentinel), attack **5/13 = 38 %**, inside policy `ufo-wave-policy.json` band 8–16.
+3. **Freeze-tree A drift disclosed (FF-1).** The scaffolding commit added the two probes and the round's
+   captured pages after the stanza was written: at `ba940b51` the proxy reads `A=870` against the declared
+   868 (`w1/K79ReviewFreeze/scaffold-tree-proxy-strict.txt`). The §Open-state "→ PROXY: MATCH" sentence is
+   a worktree reading taken after the adopt and before the probes landed; at the measured work revision the
+   stanza is re-measured to the committed tree's A and `--strict` reads MATCH.
+4. **Evidence lifetime (FF-7).** Both probes default `SRC_PIN=/fast/scratch/hyaku/kumitate-pin/src` (the
+   L1's `--no-hardlinks` clone of the audited origin at `31c465f1`, owner L1) and `probe79-c2` reads the
+   filed r78 report from the fleet repo; neither is a freeze byte. Both must survive through M, which they
+   did; close receipts record the readings.
+5. **Open-receipt citations (FF-6).** `open/gates-open.txt` is the BEFORE-repair snapshot (proxy DRIFT,
+   map DRIFT 191/190, spotcheck 1 uncovered, `CHECKLIST: 35/39`); `open/proxy-json-open.json` and
+   `open/checklists-BEFORE.txt` (38/39 after the stanza repair) are the post-repair readings. A later
+   35/39 run mid-round was taken while the lane scripts were being edited (A/pin drift) and is superseded by
+   `close/checklists.txt`.
+6. **Routed repair 4 owner.** `spotcheck-adopt --check`'s map-drift conflation is owned by the round-80
+   kumitate L1.

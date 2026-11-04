@@ -1,0 +1,30 @@
+COMMAND: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-79/probe/probe79-c1.mjs --set c1 --lane /fast/scratch/hyaku/kumitate-r79/K79MutC1/clone --work /fast/scratch/hyaku/kumitate-r79/K79MutC1/work-initial-composite
+EXIT: 1
+C79_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_sections":55,"K_members":55,"K_findings":0,"coverage_kimi":10}
+C79_C1 arm denamed-heading ok K=54/55 cov=9 kinds=A_DRIFT,K_SECTIONS_DRIFT,COVERAGE_KIMI_DRIFT,AXES_DRIFT
+C79_C1 arm findings-factor ok K_findings=1 cov=9
+C79_C1 arm both-factors ok K=54/55 findings=1 cov=9
+C79_C1 arm formula-composite ok helper=kCoverage sections=true findings=true
+C79_C1 arm stanza-tamper ok kinds=A_DRIFT,K_FINDINGS_DRIFT
+C79_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C79_C1 arm zero-denominator ok exit=1 K_members=0 cov=0
+C79_C1 arm live-strict FAIL exit=1 verdict=DRIFT {
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r79/K79MutC1/clone",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r79/K79MutC1/clone/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate-pin/src",
+ 
+C79_C1 arm selftests FAIL proxy=1 census=0 a fixture git writer — at-entry=0 left=0 init=0 canary-entries=0
+PASS  [155/156]  every declared finding kind fires in at least one fixture — 29 kinds observed
+PASS  [156/156]  every declared fail-closed arm fires in at least one fixture — 21 arms observed
+PROXY_SELFTEST: 136/156 pass
+VERDICT: FAIL
+
+C79_C1 arm content-blind ok shape-only
+C79_C1: HELD held=8/11
+
+STDERR:

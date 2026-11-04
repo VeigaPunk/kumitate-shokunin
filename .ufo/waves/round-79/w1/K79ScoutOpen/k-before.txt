@@ -1,0 +1,56 @@
+# K79ScoutOpen — the K plane's BEFORE state at base 5019803b4e451094cf58c555408ea37490cbc07a
+# tree: git -C <lane> archive 5019803b | tar -x  -> /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/base ; de-named copy -> /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/base-denamed
+# fixture root: built from <lane>/.ufo/waves/round-79/probe/kimi-fixture.json (32 members + 30 children;
+#   dirs at their recorded mode, file children 0644) -> /fast/scratch/hyaku/kumitate-r79/K79ScoutOpen/fixture/kimi ; 62 entries
+# host: Linux 7.2.11-arch1-1 x86_64; node v24.21.0
+
+## 1. clean fixture root (the base formula's clean reading)
+$ (cd base && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --kimi-root fixture/kimi --json)
+  exit=1
+  terms: C1k=5 C1k_total=5 K_members=55 K_sections=55 K_findings=0 coverage_kimi=10
+  verdict=DRIFT exitCode=1
+  findings: C2_TOTAL_DRIFT(C2_total: C2_total: declared=190 computed=191 delta=+1), AXES_DRIFT(coverage: coverage: ## Axes row=10 derived=9)
+  composite formula floor(10 x 5/5 x 55/55 x (55-0)/55) = 10
+
+## 2. the harm arm — ONE heading de-named in a COPY of the base tree
+$ edit: base-denamed/corpus/knowledge/kimi-session-state.md:50
+  -## `~/.kimi-code/sessions/` — the worktree-keyed session store
+  +## The worktree-keyed session store
+$ (cd base-denamed && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --kimi-root fixture/kimi --json)
+  exit=1
+  terms: C1k=5 C1k_total=5 K_members=55 K_sections=54 K_findings=0 coverage_kimi=10
+  verdict=DRIFT exitCode=1
+  findings: C2_TOTAL_DRIFT(C2_total: C2_total: declared=190 computed=191 delta=+1), K_SECTIONS_DRIFT(K_sections: K_sections: declared=55 computed=54 delta=-1), AXES_DRIFT(coverage: coverage: ## Axes row=10 derived=9)
+  composite formula floor(10 x 5/5 x 54/55 x (55-0)/55) = 9
+  => the base formula's score is UNCHANGED by losing a section (10): the r78 harm, reproduced.
+  => the composite formula would read 9 (line above). That is the discriminator C1 must make real.
+## 3. the findings factor alone (mode-violating root: mcp.json 0200)
+$ chmod 0200 fixture/kimi-modeviol/mcp.json
+$ (cd base && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --kimi-root fixture/kimi-modeviol --json)
+  exit=1
+  terms: C1k=5 C1k_total=5 K_members=55 K_sections=55 K_findings=1 coverage_kimi=9
+  verdict=DRIFT exitCode=1
+  findings: C2_TOTAL_DRIFT(C2_total: C2_total: declared=190 computed=191 delta=+1), K_FINDINGS_DRIFT(K_findings: K_findings: declared=0 computed=1 delta=+1), COVERAGE_KIMI_DRIFT(coverage_kimi: coverage_kimi: declared=10 computed=9 delta=-1), AXES_DRIFT(coverage: coverage: ## Axes row=10 derived=9), AXES_DRIFT(coverage:kimi-layer: coverage:kimi-layer: ## Axes row=10 derived=9)
+  composite formula floor(10 x 5/5 x 55/55 x (55-1)/55) = 9
+  => the findings factor IS in the base formula (10 -> 9). Only the sections factor is missing.
+## 4. where the base score is computed
+$ grep -n 'function layerCoverage' -A 3 base/scripts/proxy-check.mjs
+  816:function layerCoverage(covered, total, sections, members) {
+  817-  if (total === 0 || members === 0) return 0;
+  818-  return Math.floor(10 * (covered / total) * (sections / members));
+  819-}
+$ sed -n '946,951p' base/scripts/proxy-check.mjs   # the K call passes (members - findings) as 'sections'
+        C1k_total: kreg.total,
+        K_members: members,
+        K_sections: sections.count,
+        K_findings: kimi.findings.length,
+        coverage_kimi: layerCoverage(kreg.covered, kreg.total, members - kimi.findings.length, members),
+      },
+
+## 5. live kimi root, tip tree (for comparison with the plan's `K_sections=55 coverage_kimi=10`)
+$ (cd tip && node scripts/proxy-check.mjs --src /fast/scratch/hyaku/kumitate-pin/src --json)   # default --kimi-root ~/.kimi-code
+  exit=1
+  terms: C1k=5 C1k_total=5 K_members=55 K_sections=55 K_findings=0 coverage_kimi=10
+  verdict=DRIFT exitCode=1
+  findings: A_DRIFT(A: A: declared=868 computed=870 delta=+2)
+  composite formula floor(10 x 5/5 x 55/55 x (55-0)/55) = 10

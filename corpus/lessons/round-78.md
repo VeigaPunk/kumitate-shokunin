@@ -104,3 +104,21 @@ record defects. Filed reports are not rewritten; this erratum names the supersed
   files=189` are superseded by the final M2 receipt `close/gates2.txt` (04:21:50): `C2=190,
   C2_total=190` and `README_MAP: CLEAN files=190 rows=190 covered=190`; the round-78 lesson's close
   `A=874` is the pre-final `rev=working-tree` run, and the same final receipt reads `A=868`.
+
+### Erratum correction (round 79, same day; the erratum above stays as written)
+
+The first erratum paragraph listed eleven `close/` pointers as "named by the filed r78 report". Five of
+them — `close/census.txt`, `close/shape.txt`, `close/readme-map.txt`, `close/spotcheck-check.txt`,
+`close/sources.txt` — occur **zero** times in that report (the round-79 freeze review's
+`.ufo/waves/round-79/w1/K79ReviewFreeze/spotcheck-phantom-pointers.txt`: `grep -c` = 0 each); they were
+copied from the closure's receipt list rather than from the report's bytes. The cited-and-dead receipts
+are the **six** below, and the general-pointer set adds the four non-receipt tokens, for the **ten** dead
+distinct pointers the round-79 measurement reports:
+
+- dead receipts cited by the filed r78 report: `close/proxy-json.txt`, `close/census-selftest.txt`,
+  `close/omp-census-selftest.txt`, `close/mutants-c2.txt`, `close/proxy-selftest.txt`,
+  `close/proxy-check.txt`;
+- dead non-receipt pointers: `amended-plan-observed.md`,
+  `knowledge/kimi-plane-single-derivation.md`, `knowledge/shape-receipt-live-drift.md`, `SOURCES.md`.
+
+The `C2/C2_total = 190` / `README_MAP files=190` / `A=868` readings stand as the final M2 receipt.

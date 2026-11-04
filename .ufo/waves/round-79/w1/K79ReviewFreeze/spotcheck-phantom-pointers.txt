@@ -1,0 +1,37 @@
+Evidence for FREEZE-FIX FF-4 — the r78 spotcheck's "eleven report-cited receipts" vs the filed r78 report's actual bytes.
+
+Filed report: /home/vgpnk/Projects/shokunin/.ufo/reports/round-78/kumitate.md
+Method: grep -c '<name>' over the whole file (substring, any quoting), 2026-11-04, K79ReviewFreeze.
+
+Spotcheck receipt (corpus/lessons/round-78-verifier-spotcheck.md, defect (1)) claims these ELEVEN
+close/* names are "report-cited" and do not resolve:
+
+  close/proxy-json.txt            grep -c = 1   cited, ABSENT from lane .ufo/waves/round-78/close/  -> dead (receipt-shaped)
+  close/census-selftest.txt       grep -c = 1   cited, ABSENT                                        -> dead (receipt-shaped)
+  close/omp-census-selftest.txt   grep -c = 1   cited, ABSENT                                        -> dead (receipt-shaped)
+  close/mutants-c2.txt            grep -c = 1   cited, ABSENT                                        -> dead (receipt-shaped)
+  close/proxy-selftest.txt        grep -c = 1   cited, ABSENT                                        -> dead (receipt-shaped)
+  close/proxy-check.txt           grep -c = 1   cited, ABSENT                                        -> dead (receipt-shaped)
+  close/census.txt                grep -c = 0   NOT cited anywhere in the report                     -> PHANTOM
+  close/shape.txt                 grep -c = 0   NOT cited anywhere in the report                     -> PHANTOM
+  close/readme-map.txt            grep -c = 0   NOT cited anywhere in the report                     -> PHANTOM
+  close/spotcheck-check.txt       grep -c = 0   NOT cited anywhere in the report                     -> PHANTOM
+  close/sources.txt               grep -c = 0   NOT cited anywhere in the report                     -> PHANTOM
+
+So the report's real dead receipt-shaped set is SIX (the plan §C2 list), not eleven.
+
+The four non-receipt dead pointers (cited, absent at lane root / no such dir):
+  amended-plan-observed.md                lane root ABSENT            -> dead (non-receipt)
+  knowledge/kimi-plane-single-derivation.md   lane/knowledge/ ABSENT (file lives at corpus/knowledge/) -> dead (non-receipt)
+  knowledge/shape-receipt-live-drift.md       lane/knowledge/ ABSENT (file lives at corpus/knowledge/) -> dead (non-receipt)
+  SOURCES.md                              lane root ABSENT            -> dead (non-receipt)
+
+True total: 6 receipt-shaped + 4 non-receipt = 10 dead distinct pointers (the plan §C2 count is
+correct; the spotcheck's eleven-name list is corrupted; the erratum's "eleven + adding four = ten"
+is arithmetically incoherent).
+
+Round-78 close/ directory contents (for resolution cross-check):
+c1-probe.txt c2-non-scoring.txt c2-probe.txt checklists.txt gates.txt gates2.txt
+harm-counterexample.txt mutants-c1.txt proxy.txt round-gate.txt selftests.txt sources-census-end.txt
+
+Full distinct backticked-token list extracted from the filed report: r78-backticked-tokens.txt (129 tokens).

@@ -1,0 +1,10 @@
+{
+  "command": "TMPDIR=\"$SCRATCH\" node \"$LANE/.ufo/waves/round-79/probe/probe79-c1.mjs\" --set c1 --lane \"$LANE\" --work \"$SCRATCH/probe\"",
+  "exit": 1,
+  "stdout_bytes": 1159,
+  "stderr_bytes": 0,
+  "stdout_marker_occurrences": 0,
+  "stderr_marker_occurrences": 0,
+  "stdout": "C79_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={\"K_sections\":55,\"K_members\":55,\"K_findings\":0,\"coverage_kimi\":10}\nC79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,K_SECTIONS_DRIFT\nC79_C1 arm findings-factor ok K_findings=1 cov=9\nC79_C1 arm both-factors ok K=54/55 findings=1 cov=9\nC79_C1 arm formula-composite FAIL helper=layerCoverage sections=true findings=false body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (sections / members)); \nC79_C1 arm stanza-tamper ok kinds=A_DRIFT,K_FINDINGS_DRIFT\nC79_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10\nC79_C1 arm zero-denominator ok exit=1 K_members=0 cov=0\nC79_C1 arm live-strict FAIL exit=1 verdict=DRIFT {\n  \"contract\": \"kumitate-proxy-v1\",\n  \"mode\": \"check\",\n  \"ok\": false,\n  \"verdict\": \"DRIFT\",\n  \"exitCode\": 1,\n  \"self\": \"[REDACTED]\",\n  \"scorecard\": \"[REDACTED]\",\n  \"src\": \"/fast/scratch/hyaku/kumitate-pin/src\",\n \nC79_C1 arm selftests ok proxy=0 census=0\nC79_C1 arm content-blind ok shape-only\nC79_C1: HELD held=7/11\n",
+  "stderr": ""
+}

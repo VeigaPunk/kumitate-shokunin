@@ -1,0 +1,94 @@
+== K79ReviewFreeze control re-runs, 2026-11-04, node v24.21.0 ==
+
+-- environment: probes run from lane HEAD 8a733ab0 worktree (probe files identical to HEAD); base/stub lanes are git archives/extractions under scratch (deleted after); SRC_PIN /fast/scratch/hyaku/kumitate-pin/src (rev-pinned 31c465f1) existed throughout.
+
+===== controls-rerun-c1-base.txt =====
+C79_C1 arm proxy-clean-terms FAIL exit=1 verdict=DRIFT terms={"K_sections":55,"K_members":55,"K_findings":0,"coverage_kimi":10}
+C79_C1 arm denamed-heading FAIL exit=1 K=54/55 cov=10 kinds=A_DRIFT,C2_TOTAL_DRIFT,K_SECTIONS_DRIFT,AXES_DRIFT
+C79_C1 arm findings-factor ok K_findings=1 cov=9
+C79_C1 arm both-factors ok K=54/55 findings=1 cov=9
+C79_C1 arm formula-composite FAIL helper=layerCoverage sections=true findings=false body= if (total === 0 || members === 0) return 0; return Math.floor(10 * (covered / total) * (sections / members)); 
+C79_C1 arm stanza-tamper ok kinds=C2_TOTAL_DRIFT,K_FINDINGS_DRIFT,AXES_DRIFT
+C79_C1 arm axes-crosscheck ok coverage:kimi-layer: ## Axes row=9 derived=10
+C79_C1 arm zero-denominator ok exit=1 K_members=0 cov=0
+C79_C1 arm live-strict FAIL exit=1 verdict=DRIFT {
+  "contract": "kumitate-proxy-v1",
+  "mode": "check",
+  "ok": false,
+  "verdict": "DRIFT",
+  "exitCode": 1,
+  "self": "/fast/scratch/hyaku/kumitate-r79/K79ReviewFreeze/base",
+  "scorecard": "/fast/scratch/hyaku/kumitate-r79/K79ReviewFreeze/base/SCORECARD.md",
+  "src": "/fast/scratch/hyaku/kumitate
+C79_C1 arm selftests ok proxy=0 census=0
+C79_C1 arm content-blind ok shape-only
+C79_C1: HELD held=7/11
+c1_base_probe_exit=1
+
+===== controls-rerun-c1-stub.txt =====
+C79_C1 arm proxy-clean-terms ok K=55/55 findings=0 cov=10
+C79_C1 arm denamed-heading FAIL exit=0 K=55/55 cov=10 kinds=
+C79_C1 arm findings-factor FAIL exit=0 terms={"K_members":55,"K_findings":0,"coverage_kimi":10} kinds=
+C79_C1 arm both-factors FAIL exit=0 terms={"K_sections":55,"K_members":55,"K_findings":0,"coverage_kimi":10}
+C79_C1 arm formula-composite FAIL coverage_kimi is not a named-helper call
+C79_C1 arm stanza-tamper FAIL exit=0 kinds= terms={"K_findings":0,"coverage_kimi":10}
+C79_C1 arm axes-crosscheck FAIL exit=0 kinds=
+C79_C1 arm zero-denominator FAIL exit=0 terms={"K_members":55,"K_sections":55,"coverage_kimi":10}
+C79_C1 arm live-strict ok exit=0 K=55/55 cov=10
+C79_C1 arm selftests ok proxy=0 census=0
+C79_C1 arm content-blind ok shape-only
+C79_C1: HELD held=4/11
+c1_stub_probe_exit=1
+
+===== controls-rerun-c2-base.txt =====
+C79_C2 arm usage ok exit=64
+C79_C2 arm r78-pointers FAIL exit=1 dead=0 lines= ids=RECEIPT_MISSING,HASH_DEAD
+C79_C2 arm fixture-clean ok REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=268 report_sha256=8e7c9610e6b3)
+C79_C2 arm fixture-missing FAIL exit=0 ids= lines=
+C79_C2 arm round-scoped ok round-scoped resolved
+C79_C2 arm url-ignored ok url skipped
+C79_C2 arm rev-mode FAIL exit=2 dead=
+C79_C2 arm rev-unverifiable ok exit=2
+C79_C2 arm report-missing ok exit=2
+C79_C2 arm placeholder-regression ok PLACEHOLDER fires
+C79_C2 arm receipt-no-duplicate ok RECEIPT_MISSING only
+C79_C2 arm selftest ok REPORT_RECEIPT_SELFTEST: PASS (125/125)
+C79_C2: HELD held=9/12
+c2_base_probe_exit=1
+
+===== controls-rerun-c2-stub.txt =====
+C79_C2 arm usage FAIL exit=0 stderr=
+C79_C2 arm r78-pointers FAIL exit=0 dead=0 lines= ids=
+C79_C2 arm fixture-clean ok REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=1 report_sha256=000000000000)
+C79_C2 arm fixture-missing FAIL exit=0 ids= lines=
+C79_C2 arm round-scoped ok round-scoped resolved
+C79_C2 arm url-ignored ok url skipped
+C79_C2 arm rev-mode FAIL exit=0 dead=
+C79_C2 arm rev-unverifiable FAIL exit=0 out=REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=1 report_sha256=000000000000)
+
+C79_C2 arm report-missing FAIL exit=0 out=REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=1 report_sha256=000000000000)
+
+C79_C2 arm placeholder-regression FAIL exit=0 ids=
+C79_C2 arm receipt-no-duplicate FAIL exit=0 ids= dead=
+C79_C2 arm selftest FAIL exit=0 REPORT_RECEIPT: CLEAN (round=79 rev=worktree bytes=1 report_sha256=000000000000)|
+C79_C2: HELD held=3/12
+c2_stub_probe_exit=1
+
+===== scaffold-tree-readme-map.txt =====
+README_MAP: CLEAN files=191 rows=191 covered=191
+exit=0
+
+===== scaffold-tree-proxy-strict.txt =====
+PROXY  error  A_DRIFT  A: declared=868 computed=870 delta=+2
+PROXY: DRIFT (A_DRIFT term=A declared=868 computed=870 delta=+2; src-rev=31c465f15669)
+exit=1
+
+===== base-tree-readme-map.txt =====
+README_MAP: note unpinned:lessons/round-78-verifier-spotcheck.md
+README_MAP: DRIFT files=191 rows=190 covered=190 bad=2 first=uncovered:lessons/round-78-verifier-spotcheck.md
+exit=1
+
+===== base-tree-spotcheck.txt =====
+SPOTCHECK_MAP: DRIFT spotchecks=45 uncovered=1 first=corpus/lessons/round-78-verifier-spotcheck.md
+exit=1
+

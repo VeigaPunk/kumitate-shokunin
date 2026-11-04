@@ -1,0 +1,107 @@
+## Does any existing tool resolve report pointers? (no-second-method check)
+
+--- cite-check.mjs: declared scope ---
+ * cite-check.mjs — mechanical citation re-verifier for the kumitate-shokunin docs.
+ *
+ * Re-resolves every path / line / symbol / pin citation written in `SKILL.md`
+ * and `corpus/**\/*.md` against the live trees. Read-only, zero deps, ESM,
+ * node >= 20. Contract: kumitate-cite-check-v1 (parent-frozen v1.5).
+ *
+
+--- cite-check.mjs: document set (listDocs) ---
+function listDocs(selfRoot) {
+  const out = [];
+  if (existsSync(join(selfRoot, 'SKILL.md'))) out.push('SKILL.md');
+  const corpus = join(selfRoot, 'corpus');
+  if (existsSync(corpus)) {
+    for (const rel of walk(corpus).files) if (rel.endsWith('.md')) out.push(join('corpus', rel));
+  }
+  return out.sort((a, b) => (a === 'SKILL.md' ? -1 : b === 'SKILL.md' ? 1 : a.localeCompare(b)));
+
+--- cite-check.mjs: CLI surface ---
+
+const USAGE = `usage: node scripts/cite-check.mjs [options]
+
+  --src DIR       source tree to resolve against (default: $UFO_SRC, else the
+                  first existing of ~/Projects/ufo-fsd-alpha and
+                  ~/Projects/origin-work/ufo-fsd-alpha)
+  --self DIR      docs tree to scan (default: repo root containing this script)
+  --fleet DIR     parent of --self for fleet-parent/sibling-lane docs (default: dirname --self)
+  --json          machine output: {schema:"${SCHEMA}",src,self,fleet,files,totals,verdict}
+                  (suite runs: {schema,suites,verdict})
+  --strict        DRIFT also on warn-level findings
+
+--- grep: report / .ufo/reports in cite-check.mjs ---
+68: *         runtime-artifact, binary-internal — reported, never dropped)
+79: *                index size. Run only by --integrations. Its failures are reported
+143:/** Path shorthands found in the docs (data-driven; see report). */
+173:  'constitution/', 'evidence/', 'reports/',
+384: * (reported, never silently dropped, never error):
+865:  // 2) the fleet aggregator ledger under <fleet>/.ufo/reports/** (bounded probe).
+869:  const roots = [join(fleet, '.ufo', 'reports'), join(fleet, 'reports')];
+1599:function renderText(report, opts) {
+1602:  L.push(`src=${report.src} (index ${report.totals.indexFiles} files)`);
+1603:  L.push(`self=${report.self}  fleet=${report.fleet}`);
+1606:  for (const f of report.files) {
+1615:  const t = report.totals;
+1625:  L.push(`VERDICT: ${report.verdict}`);
+1629:    : `CITE_CHECK: ${report.citeCheck} (files=${t.filesScanned} tokens=${t.tokens} errors=${t.error} warnings=${t.warn})`);
+1823:  // so a citation is reported once, never twice), a quote inside a fence (never
+1864:  // selected at reporting time, so `--integrations` alone stays read-only.
+1891:        detail: hit ? `${hit.kind}/${hit.severity} @${hit.file}:${hit.line}` : 'not reported' };
+1902:      return { ok: Boolean(hit) && hit.severity === 'error', detail: hit ? hit.message : 'not reported' };
+1906:      return { ok: Boolean(hit) && hit.severity === 'error', detail: hit ? hit.message : 'not reported' };
+1910:      return { ok: Boolean(hit), detail: hit ? hit.message : 'not reported' };
+
+--- claims-check.mjs: declared scope ---
+ * claims-check.mjs — the member-claims gate (contract `kumitate-claims-v1`).
+ *
+ * WHAT IT RE-DERIVES. `SCORECARD.md` carries a 19-row surface registry whose
+ * fourth cell is a claim: `yes — <corpus note>` means "the note names every
+ * member of this family at internals level". `scripts/proxy-check.mjs` reads
+ * that cell as a string (`cells[4].startsWith('yes')`) and never opens the
+ * note, so the cheapest fake — flip the cell, or point it at a note that names
+ * nothing — passes every arithmetic check (measured in round 13: a renamed
+ * member section in `corpus/knowledge/remaining-scripts-census.md` still reads
+ * `PROXY: MATCH … coverage=9` exit 0, while the manual probe reads
+ * `MEMBER_PROBE: 58/60 ok` exit 1). This tool is that probe as a gate: it
+ * resolves each covered row's note(s), derives the note's member sections,
+ * and fails on the shapes the family standard names.
+ *
+
+--- claims-check.mjs: CLI surface ---
+      process.exit(64);
+    }
+    return v;
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === '--self') { opts.self = resolve(need(a, argv[++i])); continue; }
+    if (a === '--scorecard') { opts.scorecard = need(a, argv[++i]); continue; }
+    if (a === '--src') { opts.src = resolve(need(a, argv[++i])); continue; }
+    if (a === '--pin') { opts.pin = resolve(need(a, argv[++i])); continue; }
+    if (a === '--row') { opts.row.push(need(a, argv[++i])); continue; }
+    if (a === '--fidelity') { opts.fidelity = true; continue; }
+    if (a === '--fidelity-ratchet') { opts.ratchet = resolve(need(a, argv[++i])); continue; }
+    if (a === '--json') { opts.json = true; continue; }
+    if (a === '--strict') { opts.strict = true; continue; }
+    if (a === '--selftest' || a === '--self-test') { opts.selftest = true; continue; }
+    if (a === '-h' || a === '--help') { opts.help = true; continue; }
+    process.stdout.write(`claims-check: unsupported argument: ${a}\n${USAGE}`);
+    process.exit(64);
+  }
+  // The origin tree — and whether a pin asserts it — is resolved in `runCheck`
+  // (never for `--selftest`/`--help`, which exit first), so a bare check run
+  // stats no live path until it is actually about to score one.
+  return opts;
+}
+
+const TOOL_FILE = fileURLToPath(import.meta.url);
+
+function main() {
+  const started = Date.now();
+  const opts = parseArgs(process.argv.slice(2));
+
+--- grep: report in claims-check.mjs ---
+606:  // part already carries its own finding, and double-reporting muddies the verdict.
+1023:    check('--row S1: the other row\'s NOTE_MISSING is not reported', () => {

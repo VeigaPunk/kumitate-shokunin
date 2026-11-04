@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * report-receipt-diff.mjs — diff a round report against the committed receipts it cites.
- * Contract: kumitate-report-receipt-diff-v3 (round 64, capability report-receipt-diff; v2 + the wave-2 ratchet)
+ * Contract: kumitate-report-receipt-diff-v4 (round 79, capability report-receipt-diff; v3 + evidence pointers)
  * considerthese/2026-10-25.md idea 2: "diff reports against receipts").
  *
  *   node scripts/report-receipt-diff.mjs --lane <lane-dir> --round N --report <file> [--rev <lane-rev>] [--fleet <fleet-dir>]
@@ -18,6 +18,8 @@
  *   RECEIPT_MISSING    a `.ufo/waves/round-N/(base|close)/<file>` path the report names that does not exist at the
  *                      rev, or that escapes the round tree with `..`, is a directory, or is a symlink
  *   RECEIPT_EMPTY      a cited receipt that exists but carries no bytes
+ *   POINTER_DEAD       a backticked repo-path pointer (optional :line or :line-line selector) absent from the lane,
+ *                      report directory and round directory; --rev checks only membership in that git tree
  *   HASH_DEAD          a 39-, 40- or 41-hex hash (either case) that resolves in neither the lane repo nor the fleet repo
  *                      (41 is one character too long for a commit id: a typo is not a commit)
  *   HASH_ORPHAN        a 40-hex hash in the lane repo that is not an ancestor of the lane rev
@@ -41,7 +43,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { pathToFileURL } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 
 const REQUIRED = [
   ['Work performed', /^#{1,6}\s*\**\s*Work performed/im],
@@ -55,6 +57,8 @@ const PLACEHOLDER = /__[A-Za-z][A-Za-z0-9_]{1,}__|\bLANE_HASH\b|\bTBD\b|\bTODO\b
 const TALLY = /(?<![A-Za-z0-9])([A-Za-z0-9]+(?:_[A-Za-z0-9]+)*_(?:held|unmet))\s+held=(\d+)\/(\d+)(?![\d/])/gi;
 const RECEIPT_PATH = (round) => new RegExp(`\\.ufo/waves/round-${round}/(?:base|close)/[A-Za-z0-9._*/-]*`, 'gi');
 const HASH = /\b[0-9a-fA-F]{39,41}\b/g;
+const POINTER_PATH = /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\.(?:txt|json|jsonl|md|mjs|js|sh|py|html|tsv|csv|log)$/;
+const POINTER_SCHEME = /^(?:https?|agent|skill|xd|proc|local|artifact|history|issue|pr|mcp|ssh):\/\//;
 // Confusables (Cyrillic/Greek lookalikes of the Latin letters a verdict label is spelled with) and non-ASCII digit
 // blocks are folded to ASCII in the scan copy only: a claim cannot be hidden from the parser by spelling `HELD` in
 // another script or writing the numbers in another block (forgeries f2 confusable `Н`, f3 full-width, f4 Arabic-Indic).
@@ -149,7 +153,7 @@ function sectionBodies(prose) {
   });
 }
 
-export function diffReport({ lane, round, reportText, rev, fleet }) {
+export function diffReport({ lane, round, reportText, reportPath, rev, fleet }) {
   const findings = [];
   const add = (id, detail) => findings.push({ id, detail });
   const text = reportText.replace(/\r\n?/g, '\n');
@@ -219,6 +223,38 @@ export function diffReport({ lane, round, reportText, rev, fleet }) {
     }
     if (!receiptNames.has(p)) add('RECEIPT_MISSING', p);
     else if (!receiptNames.get(p).trim()) add('RECEIPT_EMPTY', p);
+  }
+  // General evidence pointers are prose-only. Receipt-shaped tokens — the full
+  // `.ufo/waves/round-N/{base,close}/…` form and the round-relative `base/…` /
+  // `close/…` form the receipt pass above binds — stay on the existing receipt
+  // pass: one dead receipt is not also a dead pointer (round-79 Amendment 1).
+  const REL_SHAPED = /^(?:base|close)\/[A-Za-z0-9._*/-]+$/;
+  const pointers = new Set();
+  for (const m of prose.matchAll(/`([^`\n]+)`/g)) {
+    if (POINTER_SCHEME.test(m[1])) continue;
+    const ref = m[1].replace(/:\d+(?:-\d+)?$/, '');
+    if (POINTER_PATH.test(ref) && !RECEIPT_PATH(round).test(ref) && !REL_SHAPED.test(ref)) pointers.add(ref);
+  }
+  const pointerBases = [resolve(lane)];
+  if (reportPath) pointerBases.push(dirname(resolve(reportPath)));
+  pointerBases.push(resolve(lane, `.ufo/waves/round-${round}`));
+  let treeNames;
+  if (rev && pointers.size) {
+    const ls = git(lane, ['ls-tree', '-r', '--name-only', '-z', rev]);
+    if (ls.status !== 0) throw new Error(`pointer tree unreadable: ${rev}`);
+    treeNames = new Set(ls.stdout.split('\0').filter(Boolean));
+  }
+  for (const ref of pointers) {
+    // A pointer must name a regular file inside a base: a directory, a symlink,
+    // a special file or a `..` segment is not evidence (the receipt pass rules
+    // apply here too — round-79 critic d-adversarial fixtures).
+    const unsafe = ref.split('/').includes('..');
+    const found = !unsafe && pointerBases.some((base) => {
+      const path = resolve(base, ref);
+      if (rev) return treeNames.has(relative(resolve(lane), path));
+      try { return lstatSync(path).isFile(); } catch { return false; }
+    });
+    if (!found) add('POINTER_DEAD', unsafe ? `${ref} (escape)` : ref);
   }
   // TALLY_UNRECEIPTED — exact (label, x, y) pairs parsed out of the receipts, never a substring of a line; when the
   // claim's own line cites receipts, only those may carry it (an uncited or superseded receipt does not).
@@ -302,6 +338,9 @@ function selftest() {
   mkdirSync(join(D, '.ufo/waves/round-9/close/sub'), { recursive: true });
   writeFileSync(join(D, '.ufo/waves/round-9/close/sub/deep.receipt'), 'DEEP9_HELD held=2/2 checks=2\n');
   writeFileSync(join(D, 'f.txt'), 'a');
+  mkdirSync(join(D, 'reports'), { recursive: true });
+  writeFileSync(join(D, 'reports/report-note.md'), '# report note\n');
+  writeFileSync(join(D, '.ufo/waves/round-9/note.md'), '# round note\n');
   g('add', '-A'); g('commit', '-q', '-m', 'one with GL9_HELD held=8/8');
   const seed = g('rev-parse', 'HEAD').stdout.trim();
   g('update-index', '--add', '--cacheinfo', `160000,${seed},.ufo/waves/round-9/close/gitlink`);
@@ -438,7 +477,7 @@ function selftest() {
   t('receipt-citation-trailing-period', ids(body('see .ufo/waves/round-9/close/p-tip.txt.')) === '');
   t('receipt-glob-escape', ids(body('see \`.ufo/waves/round-9/close/p.tip*\`')) === 'RECEIPT_MISSING');
   t('receipt-glob-no-crossdir', ids(body('see \`.ufo/waves/round-9/close/*.receipt\`')) === 'RECEIPT_MISSING');
-  t('receipt-other-round-clean', ids(body('see \`.ufo/waves/round-8/base/x.txt\`')) === '');
+  t('receipt-other-round-not-a-current-receipt', ids(body('see \`.ufo/waves/round-8/base/x.txt\`')) === 'POINTER_DEAD');
   t('receipt-dir-empty-round8', diffReport({ lane: D, round: 8, reportText: body('see \`.ufo/waves/round-8/close/\`'), rev: c1, fleet: null }).some((f) => f.id === 'RECEIPT_MISSING'));
   t('receipt-escape-claim-scope', ids(body('X9_HELD held=3/3 (\`.ufo/waves/round-9/close/p-tip.txt/../../../x\`)')) === 'RECEIPT_MISSING');
   t('shonen-star-bullet', ids(body().replace('- [~] b', '* [~] b')) === '');
@@ -466,6 +505,29 @@ function selftest() {
   t('cli-usage-bad-round', spawnSync(process.execPath, [process.argv[1], '--lane', D, '--round', 'abc', '--report', rf], { encoding: 'utf8' }).status === 64);
   t('cli-report-missing-fail-closed', spawnSync(process.execPath, [process.argv[1], '--lane', D, '--round', '9', '--report', join(T, 'nope.md')], { encoding: 'utf8' }).status === 2);
   t('render-header-unique', !render([{ id: 'PLACEHOLDER', detail: 'a' }, { id: 'PLACEHOLDER', detail: 'b' }], 'm').out.includes('DRIFT PLACEHOLDER,PLACEHOLDER'));
+  // v4 pointer extraction and all three resolution bases, with no worktree fallback at a revision.
+  const pointerRun = (extra, rv = c1) => diffReport({
+    lane: D, round: 9, reportText: body(extra), reportPath: join(D, 'reports/report.md'), rev: rv, fleet: null,
+  }).filter((f) => f.id === 'POINTER_DEAD');
+  t('pointer-dead', pointerRun('`missing.md`')[0]?.detail === 'missing.md');
+  t('pointer-clean', pointerRun('`f.txt`').length === 0);
+  t('pointer-line-selector', pointerRun('`f.txt:12` and `f.txt:12-15`').length === 0);
+  t('pointer-dead-selector-deduped', pointerRun('`missing.md:12` and `missing.md:13-15`').length === 1);
+  t('pointer-scheme-skip', pointerRun('`https://example.invalid/missing.md` and `agent://missing.md`').length === 0);
+  t('pointer-round-base', pointerRun('`note.md`', null).length === 0);
+  t('pointer-receipt-shaped-not-duplicated', pointerRun('`close/missing.txt`').length === 0 && ids(body('see `close/missing.txt`')).includes('RECEIPT_MISSING'));
+  t('pointer-directory-is-dead', (() => { mkdirSync(join(D, 'dir.md')); try { return pointerRun('`dir.md`').length === 1; } finally { rmSync(join(D, 'dir.md'), { recursive: true, force: true }); } })());
+  t('pointer-symlink-is-dead', (() => { symlinkSync(join(D, 'f.txt'), join(D, 'link.md')); try { return pointerRun('`link.md`').length === 1; } finally { rmSync(join(D, 'link.md'), { force: true }); } })());
+  t('pointer-escape-is-dead', pointerRun('`../outside.md`')[0]?.detail === '../outside.md (escape)');
+  t('pointer-report-directory', pointerRun('`report-note.md`', null).length === 0);
+  t('pointer-rev-root-membership', pointerRun('`f.txt`', c1).length === 0);
+  t('pointer-rev-round-base', pointerRun('`note.md`', c1).length === 0);
+  t('pointer-rev-report-directory', pointerRun('`report-note.md`', c1).length === 0);
+  t('pointer-rev-no-worktree-fallback', pointerRun('`h.txt`', c1)[0]?.detail === 'h.txt' && pointerRun('`h.txt`', null).length === 0);
+  t('pointer-receipt-no-duplicate', pointerRun('`.ufo/waves/round-9/close/absent.txt`').length === 0);
+  t('pointer-document-order', pointerRun('`b.md` `a.md` `b.md`').map((f) => f.detail).join(',') === 'b.md,a.md');
+  t('pointer-prose-only', pointerRun('```\n`missing.md`\n```\n<!-- `hidden.md` -->').length === 0);
+  t('pointer-exact-grammar', pointerRun('`node missing.mjs` `x.yaml` `/absolute.md` `x.md:1:2`').length === 0);
   rmSync(T, { recursive: true, force: true });
   const pass = results.filter(([, ok]) => ok).length;
   for (const [n, ok] of results) if (!ok) process.stdout.write(`FAIL ${n}\n`);
@@ -500,7 +562,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.ar
   } else if (existsSync(join(dirname(laneAbs), '.git'))) {
     fleet = dirname(laneAbs);
   }
-  const findings = diffReport({ lane: laneAbs, round, reportText, rev: revFull, fleet });
+  const findings = diffReport({ lane: laneAbs, round, reportText, reportPath: resolve(report), rev: revFull, fleet });
   const sha = createHash('sha256').update(reportBuf).digest('hex').slice(0, 12);
   const r = render(findings, `round=${round} rev=${revFull || 'worktree'} bytes=${reportBuf.length} report_sha256=${sha}`);
   process.stdout.write(r.out);

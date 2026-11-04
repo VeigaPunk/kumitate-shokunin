@@ -1,0 +1,83 @@
+diff --git i/scripts/omp-census.mjs w/scripts/omp-census.mjs
+index b95a1035..6bfe1016 100755
+--- i/scripts/omp-census.mjs
++++ w/scripts/omp-census.mjs
+@@ -18,6 +18,8 @@
+  *   node scripts/omp-census.mjs --compare FILE [--root DIR]
+  *     Non-scoring live-vs-receipt diagnostic: names, kinds and modes only.
+  *     One OMP_SHAPE_COMPARE line; exit 0 in sync, 1 drift, 2 fail-closed.
++ *     agent.db-{shm,wal,journal} are transient in this diagnostic only: excluded
++ *     from differences; transient counts distinct names in either shape.
+  *     Exclusive with --snapshot/--shape/--selftest and --self/--note.
+  *
+  * Exit codes:
+@@ -226,11 +228,23 @@ function compareShape(root, file, io) {
+     io.out('ROOT_NOT_A_DIR');
+     return 2;
+   }
++  const isTransient = (name) => /^agent\.db-(?:shm|wal|journal)$/u.test(name);
++  const transients = new Set();
+   const remaining = new Map(receipt.map((entry) => [entry.name, entry]));
+   const differences = [];
++  for (const name of remaining.keys()) {
++    if (isTransient(name)) {
++      transients.add(name);
++      remaining.delete(name);
++    }
++  }
+   let added = 0;
+   let changed = 0;
+   for (const entry of live) {
++    if (isTransient(entry.name)) {
++      transients.add(entry.name);
++      continue;
++    }
+     const prior = remaining.get(entry.name);
+     if (!prior) {
+       added++;
+@@ -246,7 +260,7 @@ function compareShape(root, file, io) {
+   // LC_ALL=C compares UTF-8 bytes, not locale collation or UTF-16 code units.
+   differences.sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
+   const drift = differences.length > 0;
+-  io.out(`OMP_SHAPE_COMPARE: ${drift ? 'DRIFT' : 'IN_SYNC'} entries=${live.length} receipt=${receipt.length} added=${added} removed=${removed} changed=${changed}${drift ? ` first=${differences[0]}` : ''}`);
++  io.out(`OMP_SHAPE_COMPARE: ${drift ? 'DRIFT' : 'IN_SYNC'} entries=${live.length} receipt=${receipt.length} added=${added} removed=${removed} changed=${changed}${drift ? ` first=${differences[0]}` : ''} transient=${transients.size}`);
+   return drift ? 1 : 0;
+ }
+ 
+@@ -684,6 +698,36 @@ function selftest(work, io) {
+   const compareArgs = { compare: receipt, root: compareRoot };
+   check('compare-in-sync', compareArgs,
+     { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC entries=13 receipt=13 added=0 removed=0 changed=0'], lacks: ['first='] });
++  // Compare-only exemption: exact live database sidecars, in either shape.
++  const stableEntries = shapeFromFile(receipt)
++    .filter((entry) => !/^agent\.db-(?:shm|wal|journal)$/u.test(entry.name));
++  const stableReceipt = join(scratch, 'stable-shape.json');
++  writeFileSync(stableReceipt, JSON.stringify({ contract: SHAPE_CONTRACT, entries: stableEntries }));
++  for (const suffix of ['shm', 'wal', 'journal']) {
++    const transientRoot = join(scratch, `compare-transient-${suffix}`);
++    materialise(transientRoot, [...stableEntries,
++      { name: `agent.db-${suffix}`, kind: 'file', mode: 0o600 }]);
++    check(`compare-transient-${suffix}-only`, { compare: stableReceipt, root: transientRoot },
++      { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'added=0 removed=0 changed=0', 'transient=1'],
++        lacks: ['first='] });
++    const transientReceipt = join(scratch, `transient-${suffix}.json`);
++    snapshot(transientRoot, transientReceipt, quiet);
++    rmSync(join(transientRoot, `agent.db-${suffix}`));
++    check(`compare-transient-${suffix}-removed`, { compare: transientReceipt, root: transientRoot },
++      { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'added=0 removed=0 changed=0', 'transient=1'],
++        lacks: ['first='] });
++    writeFileSync(join(transientRoot, `agent.db-${suffix}`), '', { mode: 0o644 });
++    check(`compare-transient-${suffix}-changed`, { compare: transientReceipt, root: transientRoot },
++      { code: 0, has: ['OMP_SHAPE_COMPARE: IN_SYNC', 'added=0 removed=0 changed=0', 'transient=1'],
++        lacks: ['first='] });
++  }
++  const realAddedRoot = join(scratch, 'compare-transient-real-added');
++  materialise(realAddedRoot, [...stableEntries,
++    { name: 'agent.db-shm', kind: 'file', mode: 0o600 },
++    { name: 'zz-real-member', kind: 'file', mode: 0o600 }]);
++  check('compare-transient-real-added', { compare: stableReceipt, root: realAddedRoot },
++    { code: 1, has: ['OMP_SHAPE_COMPARE: DRIFT', 'added=1 removed=0 changed=0 first=zz-real-member',
++      'transient=1'], lacks: ['first=agent.db-shm'] });
+   writeFileSync(join(compareRoot, 'zz-added'), '');
+   check('compare-added', compareArgs,
+     { code: 1, has: ['entries=14 receipt=13 added=1 removed=0 changed=0 first=zz-added'] });

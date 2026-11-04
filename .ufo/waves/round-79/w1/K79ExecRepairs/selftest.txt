@@ -1,0 +1,5 @@
+NOT RUN: the higher-priority fleet editing-wave policy prohibits tests; the parent owns post-integration gates.
+Required parent command after applying patch.diff:
+TMPDIR=<parent-scratch> node scripts/omp-census.mjs --selftest --work <parent-scratch>
+Ten new cases are included: shm/wal/journal added-only, removed-only, metadata-changed (9), and a real added member with a transient (1). Every pre-existing case remains.
+No selftest PASS or clean-apply claim is made by this seat.

@@ -174,7 +174,7 @@
  *         (`K_SECTION_AMBIGUOUS`). Topic-form headings name nothing, and a
  *         member named by five sections still counts once — the honesty term.
  *     K_findings  Number of findings returned by the same census decision.
- *     coverage_kimi = floor(10 × C1k/C1k_total × (K_members − K_findings)/K_members);
+ *     coverage_kimi = floor(10 × C1k/C1k_total × K_sections/K_members × (K_members − K_findings)/K_members);
  *         a zero denominator scores 0, never NaN.
  *   The six derived scores must ALSO equal the integers in the scorecard's
  *   `## Axes` rows `| operability | N |`, `| coverage | N |`,
@@ -818,6 +818,12 @@ function layerCoverage(covered, total, sections, members) {
   return Math.floor(10 * (covered / total) * (sections / members));
 }
 
+/** K coverage retains both documentation coverage and census cleanliness. */
+function kCoverage(covered, total, sections, members, findings) {
+  if (total === 0 || members === 0) return 0;
+  return Math.floor(10 * (covered / total) * (sections / members) * (members - findings) / members);
+}
+
 /**
  * The two layer terms, derived from the claims gate's own output: its registry
  * rows (id prefix, `covered`, resolved section files) and its single origin walk
@@ -947,7 +953,7 @@ function kTerms({ scorecardText, self, kimi }) {
       K_members: members,
       K_sections: sections.count,
       K_findings: kimi.findings.length,
-      coverage_kimi: layerCoverage(kreg.covered, kreg.total, members - kimi.findings.length, members),
+      coverage_kimi: kCoverage(kreg.covered, kreg.total, sections.count, members, kimi.findings.length),
     },
     warnings: sections.warnings,
   };
@@ -2076,7 +2082,7 @@ function selfTest() {
       expect: {
         A: 6, C: 3, C1: 2, C1_total: 2, C2: 3, C2_total: 3, operability: 7, coverage: 10,
         S_members: 3, S_sections: 1, R_members: 2, R_sections: 1, coverage_script: 3, coverage_runtime: 5,
-        C1k: 5, C1k_total: 5, K_members: 55, K_sections: 4, coverage_kimi: 10,
+        C1k: 5, C1k_total: 5, K_members: 55, K_sections: 4, coverage_kimi: 0,
       },
     };
     const kCase = (name, edits = [], mutate = null) => {
@@ -2098,10 +2104,10 @@ function selfTest() {
     const kr = runProxy(args(kMatch));
 
     for (const [name, mutate, members, findings, coverage] of [
-      ['clean', () => {}, 55, 0, 10],
-      ['mode', (f) => chmodSync(join(f.kimi, 'mcp.json'), 0o200), 55, 1, 9],
-      ['stray', (f) => writeFileSync(join(f.kimi, 'extra-member'), 'fixture\n'), 55, 1, 9],
-      ['missing', (f) => rmSync(join(f.kimi, 'region')), 54, 1, 9],
+      ['clean', () => {}, 55, 0, 0],
+      ['mode', (f) => chmodSync(join(f.kimi, 'mcp.json'), 0o200), 55, 1, 0],
+      ['stray', (f) => writeFileSync(join(f.kimi, 'extra-member'), 'fixture\n'), 55, 1, 0],
+      ['missing', (f) => rmSync(join(f.kimi, 'region')), 54, 1, 0],
     ]) {
       check(`census-derived K score: ${name}`, () => {
         const fx = kCase(`kimi-decision-${name}`, [], mutate);
@@ -2112,6 +2118,36 @@ function selfTest() {
             && j.terms.K_members === members && j.terms.K_findings === findings
             && j.terms.coverage_kimi === coverage,
           detail: `exit=${res.status} members=${j.terms.K_members} findings=${j.terms.K_findings} score=${j.terms.coverage_kimi}`,
+        };
+      });
+    }
+
+    for (const [name, denamed, censusFinding, expectedKinds] of [
+      ['denamed-heading', true, false, ['K_SECTIONS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']],
+      ['full-sections-finding', false, true, ['K_FINDINGS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']],
+      ['both-factors', true, true, ['K_SECTIONS_DRIFT', 'K_FINDINGS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']],
+    ]) {
+      check(`composite K score: ${name} ⇒ 9`, () => {
+        const fx = kCase(`kimi-composite-${name}`, [
+          ['\nK_sections=4\n', '\nK_sections=55\n'],
+          ['\ncoverage_kimi=0\n', '\ncoverage_kimi=10\n'],
+          ['| coverage:kimi-layer | 0 |', '| coverage:kimi-layer | 10 |'],
+        ]);
+        const headings = [...kMembers(fx.kimi).identities].map((id) =>
+          denamed && id === 'sessions' ? '## The store, in prose' : `## \`${id}\` — member`);
+        fxWrite(join(fx.dir, 'corpus/knowledge/kimi-alpha.md'), `# Full member coverage\n\n${headings.join('\n\n')}\n`);
+        if (censusFinding) chmodSync(join(fx.kimi, 'mcp.json'), 0o200);
+        const res = runProxy(args(fx, ['--json']));
+        parseFindings(runProxy(args(fx)).stdout);
+        const j = JSON.parse(res.stdout);
+        const got = j.findings.map((f) => f.kind);
+        return {
+          ok: res.status === 1 && j.terms.K_members === 55
+            && j.terms.K_sections === (denamed ? 54 : 55)
+            && j.terms.K_findings === (censusFinding ? 1 : 0)
+            && j.terms.coverage_kimi === 9
+            && JSON.stringify(got) === JSON.stringify(expectedKinds),
+          detail: `exit=${res.status} K=${j.terms.K_sections}/${j.terms.K_members} findings=${j.terms.K_findings} score=${j.terms.coverage_kimi} kinds=[${got}]`,
         };
       });
     }
@@ -2162,11 +2198,11 @@ function selfTest() {
         detail: `members=${observedK.members} shokunin=${observedK.identities.has('plugins/managed/kimi-shokunin')} rule=${JSON.stringify(rule)}`,
       };
     });
-    check('K terms MATCH: `C1k=5/5 K=4/55 coverage:kimi-layer=10` with C1 still 2/2 (literal verdict)', () => {
+    check('K terms MATCH: `C1k=5/5 K=4/55 coverage:kimi-layer=0` with C1 still 2/2 (literal verdict)', () => {
       const k = kindsEq(kr, []);
       return {
         ok: kr.status === 0 && k.ok
-          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/55 coverage:kimi-layer=10; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
+          && verdictLine(kr) === 'PROXY: MATCH (A=6 C=3 operability=7; C1=2/2 C2=3/3 coverage=10; S=1/3 coverage:script-layer=3; R=1/2 coverage:runtime-layer=5; K=4/55 coverage:kimi-layer=0; O=0/0 O_members=26 O_findings=0 O_bound=35 coverage:omp=0; pins=6 match)',
         detail: `exit=${kr.status} kinds=[${k.got}] ${verdictLine(kr)}`,
       };
     });
@@ -2174,9 +2210,9 @@ function selfTest() {
       const j = JSON.parse(runProxy(args(kMatch, ['--json'])).stdout);
       return {
         ok: j.terms.C1k === 5 && j.terms.C1k_total === 5 && j.terms.K_members === 55
-          && j.terms.K_sections === 4 && j.terms.coverage_kimi === 10
+          && j.terms.K_sections === 4 && j.terms.coverage_kimi === 0
           && j.terms.declared.C1k === '5' && j.terms.declared.K_members === '55'
-          && j.terms.declared.coverage_kimi === '10' && j.kimiRoot === kMatch.kimi,
+          && j.terms.declared.coverage_kimi === '0' && j.kimiRoot === kMatch.kimi,
         detail: `terms=${JSON.stringify({ C1k: `${j.terms.C1k}/${j.terms.C1k_total}`, K: `${j.terms.K_sections}/${j.terms.K_members}`, cov: j.terms.coverage_kimi })}`,
       };
     });
@@ -2187,14 +2223,14 @@ function selfTest() {
       });
       const res = runProxy(args(fx));
       return {
-        ok: res.status === 0 && verdictLine(res).includes('K=4/55 coverage:kimi-layer=10'),
+        ok: res.status === 0 && verdictLine(res).includes('K=4/55 coverage:kimi-layer=0'),
         detail: `exit=${res.status} ${verdictLine(res).slice(0, 150)}`,
       };
     });
     check('K_members reads live: a removed K5 file is K_MEMBERS_DRIFT (never a fitted count)', () => {
       const fx = kCase('kimi-members-drift', [], (f) => rmSync(join(f.kimi, 'workspaces.json'), { force: true }));
       const res = runProxy(args(fx));
-      const k = kindsEq(res, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']);
+      const k = kindsEq(res, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT']);
       const f = parseFindings(res.stdout)[0] ?? { detail: '' };
       return {
         ok: res.status === 1 && k.ok && f.detail === 'K_members: declared=55 computed=54 delta=-1',
@@ -2202,7 +2238,7 @@ function selfTest() {
       };
     });
     check('K_members reads live: a new counted-dir child moves the total (55 → 56)', () => {
-      const fx = kCase('kimi-members-added', [['\nK_members=55\n', '\nK_members=56\n'], ['\nK_findings=0\n', '\nK_findings=1\n'], ['\ncoverage_kimi=10\n', '\ncoverage_kimi=9\n'], ['| coverage:kimi-layer | 10 |', '| coverage:kimi-layer | 9 |']], (f) => {
+      const fx = kCase('kimi-members-added', [['\nK_members=55\n', '\nK_members=56\n'], ['\nK_findings=0\n', '\nK_findings=1\n']], (f) => {
         writeFileSync(join(f.kimi, 'skills/skill-b'), 'fixture member\n');
       });
       const okAdded = runProxy(args(fx));
@@ -2210,10 +2246,10 @@ function selfTest() {
         writeFileSync(join(f.kimi, 'agents/secondary/sec-c.md'), 'fixture member\n');
       });
       const stale = runProxy(args(fx2));
-      const k = kindsEq(stale, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']);
+      const k = kindsEq(stale, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT']);
       return {
         ok: okAdded.status === 0 && stale.status === 1 && k.ok
-          && verdictLine(okAdded).includes('K=4/56 coverage:kimi-layer=9')
+          && verdictLine(okAdded).includes('K=4/56 coverage:kimi-layer=0')
           && parseFindings(stale.stdout)[0].detail.includes('declared=55 computed=56'),
         detail: `added=${verdictLine(okAdded).slice(0, 60)} stale=${verdictLine(stale).slice(0, 60)}`,
       };
@@ -2224,7 +2260,7 @@ function selfTest() {
         writeFileSync(join(f.kimi, 'credentials'), 'not a dir\n');
       });
       const res = runProxy(args(fx));
-      const k = kindsEq(res, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']);
+      const k = kindsEq(res, ['K_MEMBERS_DRIFT', 'K_FINDINGS_DRIFT']);
       return {
         ok: res.status === 1 && k.ok && parseFindings(res.stdout)[0].detail.includes('computed=54'),
         detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout)[0] ? parseFindings(res.stdout)[0].detail : ''}`,
@@ -2242,7 +2278,7 @@ function selfTest() {
         detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout)[0] ? parseFindings(res.stdout)[0].detail : ''}`,
       };
     });
-    check('section loss leaves the findings-derived score unchanged', () => {
+    check('section loss below one point retains the floored composite score of zero', () => {
       const fx = kCase('kimi-coverage-recompute', [], (f) => {
         fxWrite(join(f.dir, 'corpus/knowledge/kimi-alpha.md'), FX_KIMI_NOTE
           .replace('## `~/.kimi-code/sessions/` — the store', '## The store, in prose')
@@ -2256,15 +2292,15 @@ function selfTest() {
         detail: `exit=${res.status} kinds=[${k.got}] ${parseFindings(res.stdout).map((x) => x.detail).join(' | ')}`,
       };
     });
-    check('a K row going no moves C1k and the findings-derived score (10 to 8)', () => {
-      const fx = kCase('kimi-c1k-drift', [K5_ROW_OFF, ['\nC1k=5\n', '\nC1k=4\n'], ['\ncoverage_kimi=10\n', '\ncoverage_kimi=8\n'], ['| coverage:kimi-layer | 10 |', '| coverage:kimi-layer | 8 |']]);
+    check('a K row going no moves C1k while the partial-section composite still floors to zero', () => {
+      const fx = kCase('kimi-c1k-drift', [K5_ROW_OFF, ['\nC1k=5\n', '\nC1k=4\n']]);
       const flipped = runProxy(args(fx));
       const staleFx = kCase('kimi-c1k-stale', [K5_ROW_OFF]);
       const stale = runProxy(args(staleFx));
-      const k = kindsEq(stale, ['C1K_DRIFT', 'COVERAGE_KIMI_DRIFT', 'AXES_DRIFT']);
+      const k = kindsEq(stale, ['C1K_DRIFT']);
       return {
         ok: flipped.status === 0 && stale.status === 1 && k.ok
-          && verdictLine(flipped).includes('C1=2/2') && verdictLine(flipped).includes('K=4/55 coverage:kimi-layer=8')
+          && verdictLine(flipped).includes('C1=2/2') && verdictLine(flipped).includes('K=4/55 coverage:kimi-layer=0')
           && parseFindings(stale.stdout)[0].detail === 'C1k: declared=5 computed=4 delta=-1',
         detail: `flipped=${flipped.status} ${verdictLine(flipped).slice(0, 130)} stale=[${k.got}]`,
       };
@@ -2279,13 +2315,13 @@ function selfTest() {
       };
     });
     check('AXES_DRIFT covers `| coverage:kimi-layer | N |`', () => {
-      const fx = kCase('kimi-axes-drift', [['| coverage:kimi-layer | 10 |', '| coverage:kimi-layer | 2 |']]);
+      const fx = kCase('kimi-axes-drift', [['| coverage:kimi-layer | 0 |', '| coverage:kimi-layer | 2 |']]);
       const res = runProxy(args(fx, ['--json']));
       const j = JSON.parse(res.stdout);
       const f = j.findings[0] ?? {};
       return {
         ok: res.status === 1 && j.findings.length === 1 && f.kind === 'AXES_DRIFT'
-          && f.term === 'coverage:kimi-layer' && f.key === 'coverage_kimi' && f.declared === 2 && f.computed === 10,
+          && f.term === 'coverage:kimi-layer' && f.key === 'coverage_kimi' && f.declared === 2 && f.computed === 0,
         detail: `exit=${res.status} findings=${JSON.stringify(j.findings.map((x) => `${x.kind}:${x.term}`))}`,
       };
     });
@@ -2322,7 +2358,7 @@ function selfTest() {
     });
     check('basename ambiguity: a basename owned by two members binds to none and warns; a full path still binds', () => {
       const fx = kCase('kimi-ambiguous', [
-        ['\nK_members=55\n', '\nK_members=56\n'], ['\nK_findings=0\n', '\nK_findings=1\n'], ['\ncoverage_kimi=10\n', '\ncoverage_kimi=9\n'], ['| coverage:kimi-layer | 10 |', '| coverage:kimi-layer | 9 |'],
+        ['\nK_members=55\n', '\nK_members=56\n'], ['\nK_findings=0\n', '\nK_findings=1\n'],
         ['\nK_sections=4\n', '\nK_sections=1\n'],
       ], (f) => {
         writeFileSync(join(f.kimi, 'agents/secondary/skill-a'), 'fixture member\n');
@@ -2385,8 +2421,6 @@ function selfTest() {
       const fx = kCase('kimi-empty-root', [
         ['\nK_members=55\n', '\nK_members=0\n'], ['\nK_findings=0\n', '\nK_findings=32\n'],
         ['\nK_sections=4\n', '\nK_sections=0\n'],
-        ['\ncoverage_kimi=10\n', '\ncoverage_kimi=0\n'],
-        ['| coverage:kimi-layer | 10 |', '| coverage:kimi-layer | 0 |'],
       ], (f) => {
         rmSync(f.kimi, { recursive: true, force: true });
         mkdirSync(f.kimi, { recursive: true });
@@ -2420,7 +2454,7 @@ function selfTest() {
     // The fixtures the fail-closed arms below fire on; the arms run in their own
     // section, where the `fc` helper exists.
     const K_BAD_VALUE = kCase('kimi-bad-value', [['\nK_members=55\n', '\nK_members=five\n']]);
-    const K_BAD_RATIO = kCase('kimi-bad-coverage', [['\ncoverage_kimi=10\n', '\ncoverage_kimi=1.5\n']]);
+    const K_BAD_RATIO = kCase('kimi-bad-coverage', [['\ncoverage_kimi=0\n', '\ncoverage_kimi=1.5\n']]);
     const K_UNKNOWN_KEY = kCase('kimi-unknown-key', [['\nC1k=5\n', '\nC1k=5\nK_blocks=5\n']]);
     const K_MISSING_KEY = kCase('kimi-missing-key', [['K_sections=4\n', '']]);
     check('fail-closed KIMI_ROOT_NOT_A_DIR --json carries the token and no terms', () => {
