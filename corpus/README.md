@@ -222,6 +222,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-82-verifier-spotcheck.md` | Round-82 outside check: the eleven-step conformance re-derivation, both claims re-derived over committed bytes, the four routed defects R82-V1–V4 (stale tally, receipt stamped with bytes it did not measure, capability row under-describing v2, edited quote) | `.ufo/reports/round-82/kumitate.md`; `corpus/lessons/round-82-verifier-spotcheck.md` |
 | `lessons/round-81-verifier-spotcheck.md` | Non-author round-81 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `lessons/round-83-verifier-spotcheck.md` | Non-author round-83 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-84-verifier-spotcheck.md` | Non-author round-84 verdict: C1 UNMET (no-reader reaches 16/16, frozen kill fires), C2 receipts verified, A-proxy inflation and seven routed defects R-cite/R-control/R-proxy/R-checklist/R-planner/R-timing/R-promotion | Hyaku closure at a5d3e75 (row added round 85 — the closure landed the file without its row) |
 
 
 ## Known gaps
