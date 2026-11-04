@@ -202,6 +202,7 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-68-verifier-spotcheck.md` | Round-68 outside verification: both counters unmet; routes path-blind fixtures, valid-table parsing, capture origin, receipt precision and report-file census | round-69 repair; `.ufo/waves/round-69/base/deprec69-base.txt` |
 | `lessons/round-69.md` | Versioned L69/M69 counter repairs, origin carriers S214–S216, mined mistakes and registration proposal | `.ufo/waves/round-69/plan.md`; SOURCES S214–S216 |
 | `lessons/round-77-verifier-spotcheck.md` | Non-author round-77 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `lessons/round-78-verifier-spotcheck.md` | Non-author round-78 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 
 ## Known gaps
