@@ -1,6 +1,6 @@
-source: S233 — Kubernetes, *Configure Liveness, Readiness and Startup Probes* (https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/, opened 2026-11-04); own-work — `scripts/spotcheck-adopt.mjs` v3, `.ufo/waves/round-80/probe/probe80-c1.mjs`
+source: S119 — Kubernetes, *Configure Liveness, Readiness and Startup Probes* (https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/, re-opened 2026-11-04); own-work — `scripts/spotcheck-adopt.mjs` v3, `.ufo/waves/round-80/probe/probe80-c1.mjs`
 verified-at: 2026-11-04, lane tip `6d03402f` — `node scripts/spotcheck-adopt.mjs --check` reads `SPOTCHECK_COVERAGE: CLEAN spotchecks=46 uncovered=0` + `MAP: CLEAN`; `node .ufo/waves/round-80/probe/probe80-c1.mjs --set c1` → `C80_C1: HELD held=13/13`
-recheck: re-run the counter at the next lane tip; re-open S233 if the probe page's readiness/liveness wording changes (cadence 180d)
+recheck: re-run the counter at the next lane tip; re-open S119 if the probe page's readiness/liveness wording changes (cadence 180d)
 
 # Two-reading verdicts — one tool, one verdict per surface
 
@@ -17,9 +17,9 @@ clean before writing A.
 
 Kubernetes runs liveness and readiness as two probes answering different questions, and a pod can be
 "ready but failing liveness" or "alive but not ready": "If the readiness probe fails, the pod will be
-marked unready and will not receive traffic from any services" (S233, readiness-probe example
+marked unready and will not receive traffic from any services" (S119, readiness-probe example
 paragraph), while a failing liveness probe restarts the container. The documentation states the two
-"can be used in parallel for the same container" (S233, *What's next* paragraph) — the operator reads
+"can be used in parallel for the same container" (S119, *What's next* paragraph) — the operator reads
 two signals, never one folded one.
 
 ## The lane's instance (v2 → v3)
