@@ -1,0 +1,197 @@
+{
+  "schema": "ufo-swarm-wave-dispatch-v1",
+  "wave": "kumitate-r81-w1",
+  "policy": {
+    "source": "config",
+    "maxLanes": 14,
+    "minLanes": 8,
+    "waveMinLanes": 8,
+    "waveMaxLanes": 16,
+    "declaredMaxLanes": 14,
+    "hardCeiling": 256,
+    "rampBatchSize": 5,
+    "rampIntervalMs": 700,
+    "globalRunnerCeiling": 1056
+  },
+  "counts": {
+    "spawn": 14,
+    "resume": 0,
+    "total": 14
+  },
+  "registry": {
+    "schema": "ufo-swarm-registry-v1",
+    "path": ".ufo/waves/round-81/w1/swarm-registry.json",
+    "reportDir": ".ufo/waves/round-81/w1",
+    "members": {
+      "K81ScoutReconC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "K81ScoutReconC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scout",
+        "item": null
+      },
+      "K81ConnOverlap": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "connector",
+        "item": null
+      },
+      "K81ExecC1Fixtures": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K81ExecC2Fixtures": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K81ExecMutate": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "executor",
+        "item": null
+      },
+      "K81MutC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "mutation-tester",
+        "item": null
+      },
+      "K81ReviewC1": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "K81ReviewC2": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "reviewer",
+        "item": null
+      },
+      "K81CriticClaims": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "critic",
+        "item": null
+      },
+      "K81Sentinel": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "sentinel",
+        "item": null
+      },
+      "K81ScribeCorpus": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "K81ScribeLesson": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "scribe",
+        "item": null
+      },
+      "K81RevWrongReady": {
+        "kind": "spawn",
+        "agentId": null,
+        "role": "revenger",
+        "item": null
+      }
+    }
+  },
+  "compaction": {
+    "applied": false,
+    "mechanism": null,
+    "reason": null,
+    "savedBytes": 0,
+    "payloadBytesBefore": 0,
+    "payloadBytesAfter": 0
+  },
+  "taskCall": {
+    "context": "# Goal\nkumitate round 81 (lane axes: operability + coverage — orchestration and tooling), ONE v1 wave of 14 seats on the Linux run-15 host. Lane repo: /home/vgpnk/Projects/shokunin/kumitate-shokunin — every path you are given is absolute; your tools start at the FLEET root /home/vgpnk/Projects/shokunin, so a relative path lands in the wrong repo. Every `Report:` trailer path is relative to /home/vgpnk/Projects/shokunin/kumitate-shokunin — write it at /home/vgpnk/Projects/shokunin/kumitate-shokunin/<that path>.\n\n# Round\nRead the frozen plan first: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md — claims C1 `ready-handoff` (new capability, `scripts/ready-handoff.mjs`) and C2 the self-describing OMP shape receipt (`kumitate-omp-shape-v2`, `--shape` age disclosure, `--max-age` gate). Base tip 77c7a8b3fe7f3cebe681065da283de0ae38ddb5b. Open receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/open/; pre-data controls: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/controls/.\n\n# Bounds\n- Lane write scope: /home/vgpnk/Projects/shokunin/kumitate-shokunin. Never write the fleet repo, a sibling lane, MANIFEST.json, .ufo/state/, .ufo/watchdog.log, .scratch/, templates/, or scripts/ at the fleet root. Sibling repos are READ-ONLY (connector seat only).\n- Seats never commit, push, or run a mutating git/jj command anywhere: no `git add|commit|stash|checkout|switch|reset|pull|push`, no mutating `jj`. The L1 is the only writer.\n- Put every script or fixture you write in $HYAKU_SCRATCH/kumitate-r81/<seat>/ and delete it before you yield (shell: trap 'rm -rf -- \"$S\"' EXIT; Python: finally shutil.rmtree). Scratch root /fast/scratch/hyaku/kumitate-r81/. /tmp is only for files under 50 MB, and nothing in /tmp is citable evidence.\n- Fixture repos: D=$(mktemp -d) && git -C \"$D\" init -q, then name -C \"$D\" on every git call; verify `git -C \"$D\" rev-parse --show-toplevel` equals $D before any commit. Never commit with a throwaway identity anywhere.\n- Tooling authorization (operator, 2026-10-19): you may install or upgrade tools that help the task; read /home/vgpnk/.omp/agent/RULES.md first (official channels, update-safety gate; record tool/version/channel/reason in your report). ALL pacman transactions are PAUSED host-wide: install via `uv tool`, `npx`, or an official binary into ~/.local/bin, or name the need in your report.\n- You are a leaf: no subagent dispatch and no background jobs of your own.\n- Honest evidence: an unrun check has not passed; every N/N tally you write names the captured output under your report dir. Write findings with file:line or the exact command + exit code.\n\n# Lane instruments you may run read-only\n`node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs --selftest`, `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs --selftest`, the frozen counters `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c1.mjs` and `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c2.mjs` (both take `--tool DIR` to score another tree), `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs`.",
+    "tasks": [
+      {
+        "name": "K81ScoutReconC1",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\n# Seat — K81ScoutReconC1\n# Target\nRead-only recon of the inline handoff chain the gate `scripts/ready-handoff.mjs` now judges. You edit nothing in the lane; write only your report (and scratch under $HYAKU_SCRATCH/kumitate-r81/K81ScoutReconC1/).\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md §C1 and /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs in full.\n2. Read the validator /home/vgpnk/Projects/ufo-fsd-alpha/scripts/ufo-swarm-wave.mjs: find where the `Report:` trailer and the `/skill:godspeed` line are rendered and which spec shapes it already refuses before dispatch. Quote file:line.\n3. Compare the three committed handoff pairs: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-79/w1.ready + w1-dispatch.json, round-80's, and round-81's (once it exists; if absent, say so). For each, list what the pair would read under the new gate.\n4. List findings F1..Fn: what the validator checks, what only `ready-handoff` checks, what neither checks (e.g. a task naming a nonexistent file, a `l1` id that is not a live agent). Severity (H/M/L) + file:line per finding.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ScoutReconC1.md with a findings table and the commands you ran.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ScoutReconC1.md"
+      },
+      {
+        "name": "K81ScoutReconC2",
+        "agent": "scout",
+        "task": "/skill:godspeed\n\n# Seat — K81ScoutReconC2\n# Target\nRead-only recon of the OMP shape-receipt surface C2 versions (`kumitate-omp-shape-v2`). You edit nothing.\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md §C2 and /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs (validateShape, readShapeDoc, shapeFromFile, receiptAgeDays, snapshot, runShape, compareShape) with line numbers.\n2. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs and name every path where the shape receipt is read, which fields reach `terms`, and whether any age-shaped field can reach a score. Quote file:line.\n3. Name what `captured_at` can and cannot prove: what a forger would need to fake, and which consumer would believe it.\n4. Enumerate every other consumer of the receipt in the lane (grep for `omp-shape`, `shapeFromFile`, `readShapeDoc` under /home/vgpnk/Projects/shokunin/kumitate-shokunin) and say for each whether v2 is a clean cutover.\n5. Findings with severity and file:line; state the exact one-line after-state command you would use to re-derive the claim.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ScoutReconC2.md.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ScoutReconC2.md"
+      },
+      {
+        "name": "K81ConnOverlap",
+        "agent": "connector",
+        "task": "/skill:godspeed\n\n# Seat — K81ConnOverlap\n# Target\nSibling-overlap scan. Read-only across sibling lane repos; write only your report.\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md §C1/§C2 and the two instruments (/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs, /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs).\n2. Grep READ-ONLY across /home/vgpnk/Projects/shokunin/*-shokunin/scripts/ for: `.ready`/handoff/dispatch validators; receipt age/TTL/staleness conventions; shape/snapshot receipts. List matches with repo:file:line.\n3. Name the boundary against this lane's existing gates: `scripts/plan-before-ready.sh`, `scripts/make-dispatch-actual.mjs`, `scripts/wave-census.mjs`, `scripts/dispatch-evidence.mjs`, `scripts/inline-dispatch-evidence.mjs`, `scripts/report-receipt-diff.mjs` — for each, say what it proves and what `ready-handoff` adds that it does not; flag any duplicate.\n4. Name any sibling pattern worth adopting (with file:line) and any sibling that would be harmed by this round.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ConnOverlap.md with the boundary table and the grep commands.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ConnOverlap.md"
+      },
+      {
+        "name": "K81ExecC1Fixtures",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\n# Seat — K81ExecC1Fixtures\n# Target\nAdversarial fixture matrix for `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs`. Fixtures live in your scratch; the matrix and transcripts go in your report dir.\n\n# Change\n1. Build at least 12 fixture lanes under $HYAKU_SCRATCH/kumitate-r81/K81ExecC1Fixtures/ (a lane dir whose round-81 waves directory holds a `w1.ready` beside `w1-dispatch.json`), each targeting a different rule: a 16-seat clean wave; an 8-seat clean wave; `--band 10:12` override; duplicate names differing only by case; an extra task key; a `l1` id that is empty; a context that contradicts the tasks; a dispatch symlinked from inside the wave dir to a file outside the lane; a dispatch reached through a symlinked parent; a ready file that is a symlink escaping the lane; an absolute task path outside the lane (a task that names the lane root but also names /etc); `--json` body key set.\n2. Run the tool for each (`node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs --lane <fixture> --round 81 --wave w1 [--band ...] [--json]`), capture stdout+exit.\n3. Record a matrix: fixture | command | exit | verdict line | whether the outcome is correct for the rule it targets, and name any fixture the gate gets wrong.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ExecC1Fixtures.md with the full matrix and pasted transcript excerpts.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ExecC1Fixtures.md"
+      },
+      {
+        "name": "K81ExecC2Fixtures",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\n# Seat — K81ExecC2Fixtures\n# Target\nFixture matrix for the age surface of `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs` (`--snapshot`, `--shape`, `--max-age`, `--compare`).\n\n# Change\n1. Build receipts under $HYAKU_SCRATCH/kumitate-r81/K81ExecC2Fixtures/: a materialised 65-entry root from the committed receipt, a fresh snapshot, backdated receipts at 1, 30, 31, 45 and 400 days, a future instant, a malformed `captured_at`, a v1 legacy receipt, a v2 receipt with a missing `captured_at`, an unsorted/duplicate entry set.\n2. Run `--snapshot`, `--shape` (with and without `--max-age 0|30|45|60`), `--compare` (with and without `--root`), `--selftest`; capture stdout+exit.\n3. Record a matrix: receipt | command | exit | output line | expected behaviour, and name any arm of `probe81-c2.mjs` your evidence contradicts.\n4. Also run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/proxy-check.mjs --json --omp-shape <backdated receipt>` and state whether the score moves (it must not).\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ExecC2Fixtures.md with the matrix and transcripts.\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ExecC2Fixtures.md"
+      },
+      {
+        "name": "K81ExecMutate",
+        "agent": "executor",
+        "task": "/skill:godspeed\n\n# Seat — K81ExecMutate\n# Target\nMutation battery over both instruments, judged by the frozen counters.\n\n# Change\n1. Copy `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs` into a scratch tree with a `scripts/` layout and apply at least 8 single-literal mutants (one behavior disabled each: band comparison, attack arithmetic, connector cap, planner guard, godspeed check, lane-root check, dispatch-outside guard, ready-keys set, duplicate guard, trailer rule). For each mutant run `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c1.mjs --tool <mutated tree>` and record the held count plus which arm failed first.\n2. Copy `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs` similarly and apply at least 6 mutants (drop captured_at validation, accept v1 in `--shape`, invert the age comparison, drop SHAPE_CLOCK, let age enter the exit code when no `--max-age`, drop the max-age gate). Score each with `probe81-c2.mjs --tool <mutated tree>`.\n3. Report killed/survived per mutant; for every survivor say whether it is a real coverage gap or a doubly-guarded branch.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ExecMutate.md with the mutant table (mutant | diff hunk | held | verdict).\n\nLane bounds: leaf member — no subagent dispatch except your single labrat.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ExecMutate.md"
+      },
+      {
+        "name": "K81MutC1",
+        "agent": "mutation-tester",
+        "task": "/skill:godspeed\n\n# Seat — K81MutC1\n# Target\nIndependent mutants of `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs`, different from the executor's set, aimed at the fail-closed surface and the arithmetic.\n\n# Change\n1. Mutate: remove the `realpathSync` escape check; remove the `inside(waveDir, dispatchPath)` check; make `DISPATCH_ABSENT` return 1 instead of throwing; change `attack * 100 < pct * total` to `<=`; count sentinel as attack; accept `role` as an alias for `agent`; strip the `Report:` line before the trailer test; make `--json` print the findings array unsorted.\n2. Score each mutant with `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c1.mjs --tool <mutated tree>`; record killed/survived and the failing arm.\n3. For survivors: construct the input that should have been caught and show whether any arm sees it; state whether the frozen counter has a real hole.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81MutC1.md.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81MutC1.md"
+      },
+      {
+        "name": "K81ReviewC1",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\n# Seat — K81ReviewC1\n# Target\nReview claim C1 (`ready-handoff`) against Q73: every arm's expected value must be reachable under the contract's other clauses (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/QUALITY.md Q73).\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md §C1 and the frozen counter /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c1.mjs. Build a per-arm table: arm | expected | the contract clause it tests | reachable? | the fixture that reaches it.\n2. Flag any arm that can never hold, any arm that passes at the base tree (preservation arms — name them), and any arm whose expectation is not derived from the contract sentence.\n3. Review the tool's refusal surface for over-broad refusals (a legal handoff the gate would refuse) — give one concrete example per candidate.\n4. Check the live arm: can it pass on a degenerate dispatch (e.g. one task repeated 10 times, or tasks that name the lane root only in a dead comment)?\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ReviewC1.md with the per-arm table and concrete counterexamples.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ReviewC1.md"
+      },
+      {
+        "name": "K81ReviewC2",
+        "agent": "reviewer",
+        "task": "/skill:godspeed\n\n# Seat — K81ReviewC2\n# Target\nReview claim C2 (self-describing shape receipt) for reachability, cutover honesty and no-harm.\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md §C2, /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs (v2 paths) and the frozen counter /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c2.mjs. Per-arm table as in Q73: arm | expected | clause | reachable | fixture.\n2. Judge the cutover: `--shape` refuses v1 (`SHAPE_VERSION`) while `--compare` accepts it. Is that a regression for any committed consumer? Check every committed probe/checklist that runs `--shape` or `--compare` (grep under /home/vgpnk/Projects/shokunin/kumitate-shokunin and /home/vgpnk/Projects/shokunin/kumitate-shokunin/SKILL.md).\n3. Judge the no-harm claim: prove that no age-shaped value can reach `coverage_omp`, and name the one place a future edit could leak it.\n4. Attack the pin: is `pin.omp-shape` read by anything that would accept a re-captured receipt without a new pin? Show the command.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ReviewC2.md with the table and the leak analysis.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ReviewC2.md"
+      },
+      {
+        "name": "K81CriticClaims",
+        "agent": "critic",
+        "task": "/skill:godspeed\n\n# Seat — K81CriticClaims\n# Target\nFalsify the two claims by constructing inputs the instruments accept but that are bad in reality.\n\n# Change\n1. C1: build a ready+dispatch pair that `ready-handoff` reads READY while a real dispatch would be wrong. Candidates: tasks that name the lane root only inside a long comment; a seat role whose prompt contradicts its role; a `l1` id that is not a live agent; a dispatch whose every task is byte-identical; a 16-seat wave whose attack seats are all the same name pattern but whose role field says reviewer.\n2. C2: build receipts that pass `--max-age` but lie (e.g. an old snapshot re-labelled with today's `captured_at`; a receipt whose entries were hand-edited after capture and whose `captured_at` is fresh) and show the gate cannot tell — is that a fabrication hole in the claim sentence?\n3. For each attack: the exact command, exit, output, and whether the claim as written survives. Name what would have to change (in the counter or the tool) to catch it.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81CriticClaims.md with the attack table and the verdict per attack.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81CriticClaims.md"
+      },
+      {
+        "name": "K81Sentinel",
+        "agent": "sentinel",
+        "task": "/skill:godspeed\n\n# Seat — K81Sentinel\n# Target\nSecurity review of the two changed instruments: `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs` and `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs`.\n\n# Change\n1. Path attacks: a ready file that is a symlink to a file outside the lane; a dispatch symlink chain that resolves inside the wave dir but whose parent is a symlink; `..` segments; a dispatch path with a trailing newline or NUL; a path that is a directory; a world-writable dispatch file.\n2. TOCTOU: `lstatSync` then `readFileSync` then `realpathSync` — can the file swap between checks? Show the window and whether the consequence is a read of an outside file.\n3. DoS: a 200 MB dispatch, deep JSON nesting, a 10^9 `--max-age`, a `captured_at` of year 9999, an entries array of 10^6 names.\n4. Write-safety: show that `ready-handoff` writes nothing, and that `omp-census --snapshot` writes only its target via the tmp+rename pair (test a symlinked target and a read-only parent). Compare full-tree hashes before/after one run of each.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81Sentinel.md with a findings table (id | class | severity | repro | evidence) and the hashes.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81Sentinel.md"
+      },
+      {
+        "name": "K81ScribeCorpus",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\n# Seat — K81ScribeCorpus\n# Target\nDraft two knowledge entries for the round's frontier increment. You draft prose only; the L1 lands the files.\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md, /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs and /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/omp-census.mjs; read the lane note style in /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/knowledge/executable-scorecard.md (section shape, `## ` headings, file:line anchors).\n2. Read the two captured sources (open them, do not invent quotes): /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/build/L1/captures/kubernetes-admission.html and /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/build/L1/captures/rfc9111.html. For each, locate one ≤25-word quote that grounds its entry and record the URL, access date 2026-11-04, and the exact quote.\n3. Draft `corpus/knowledge/ready-handoff-admission.md` (the handoff admission gate: the five-key `.ready` contract, the dispatch agreement checks, the wave policy arithmetic, the fail-closed surface, what it does not prove) and `corpus/knowledge/self-describing-shape-receipt.md` (v2 receipt: `captured_at`, age disclosure, opt-in `--max-age`, clock refusal, v1 cutover, what age cannot prove). Each entry names its source as `source: S###` where S### is the id the L1 will land (state `S236` / `S237` as the expected ids and say they are placeholders the L1 must confirm).\n4. Draft the two `corpus/README.md` coverage-map rows (matching the existing table columns) and list them verbatim.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ScribeCorpus.md containing both entries in full (ready to copy), the Gate rows with quotes and word counts, and the README rows.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ScribeCorpus.md"
+      },
+      {
+        "name": "K81ScribeLesson",
+        "agent": "scribe",
+        "task": "/skill:godspeed\n\n# Seat — K81ScribeLesson\n# Target\nDraft `corpus/lessons/round-81.md` from the round's own receipts. Do not invent a number; every value must name the receipt path or command.\n\n# Change\n1. Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/plan.md, /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/open/*, and the frozen counters' outputs you produce by running them (`node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c1.mjs`, `node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/probe/probe81-c2.mjs`). Read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-80.md for the required shapes: front-matter block (author/round/lane/base/freeze/report), `## Gate` (URL, access date, ≤25-word located quote per new row), `## Counters` (Q72 table, >=5 rows, `| counter | open | close | source |`), `## Mistakes` (class | evidence | captured-by | fix), `## Limits`.\n2. Draft the lesson with a `## Routed-defect answers` section answering R80-1 … R80-12 (read /home/vgpnk/Projects/shokunin/kumitate-shokunin/corpus/lessons/round-80-verifier-spotcheck.md): for each, says fixed-here / append-only-erratum / why-not. Use only words the receipts support; mark anything you could not verify as `unverified`.\n3. Draft one mined mistake from this round: the 10th spotcheck-coverage recurrence (evidence: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/open/spotcheck-open.txt; captured-by: the round-open `SPOTCHECK_COVERAGE` gate; fix: the adopt transcript /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/open/spotcheck-adopt.txt) — and name the fix's fail-ability (base counter 0/16 vs M).\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81ScribeLesson.md with the lesson in full, ready to copy.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81ScribeLesson.md"
+      },
+      {
+        "name": "K81RevWrongReady",
+        "agent": "revenger",
+        "task": "/skill:godspeed\n\n# Seat — K81RevWrongReady\n# Target\nReverse-engineer what the orchestrator actually does with a `.ready` file, so the gate's refusals can be judged against reality.\n\n# Change\n1. Find the dispatcher the prompt names: grep /home/vgpnk/Projects/shokunin/scripts and /home/vgpnk/Projects/shokunin/.ufo for the code that polls `*.ready` and writes `*.ready.dispatched` / `*-results.json` (start at scripts/hyaku/, shokunin-watchdog.sh, fleet-dispatcher.mjs). Read it and report the exact acceptance boundary: poll interval, which fields are read, what is ignored, what happens on a malformed file, whether a taken file is ever re-read.\n2. Read /home/vgpnk/Projects/shokunin/.ufo/watchdog.log lines for rounds 79–81 and name the observed timing between a ready file and its dispatch.\n3. Judge `/home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/ready-handoff.mjs` against that reality: which of its refusals are load-bearing, which enforce a rule the dispatcher does not care about (over-strict), and which dispatcher behaviour the gate cannot see. Give the mismatch table.\n\n# Acceptance\nReport at /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-81/w1/K81RevWrongReady.md with the boundary description (file:line) and the mismatch table.\n\nLane bounds: leaf member — no subagent dispatch.\n\nReport: write your scoped findings to .ufo/waves/round-81/w1/K81RevWrongReady.md"
+      }
+    ]
+  },
+  "resumeSends": [],
+  "note": "Issue exactly one batched task call with taskCall ({context, tasks}); never split a wave into multiple task calls (one-swarm-per-wave). Then one hub send per resumeSends entry: hub send --to <entry.resume> --message <entry.message> (entry.name is bookkeeping, not a hub field)."
+}
