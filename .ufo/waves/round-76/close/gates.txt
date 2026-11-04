@@ -1,0 +1,42 @@
+## gates at M rev=beb8a934e9b2d0bb45c64e11c38d4fb370d3205f date=2026-11-04T02:24:01-03:00 node=v24.21.0
+## node scripts/kimi-census.mjs
+INFO  ROOT_ENUM  -  root children=49 declared=27 chain=22 strays=0 (root enumerated against K1–K5; drift-chain generations exempt)
+TOTALS: members=55 checked=55 errors=0 info=4 chain=22
+KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)
+exit=0
+## node scripts/sources-check.mjs
+SOURCES  warn  USED_BY_ASYMMETRY  corpus/knowledge/failure-recovery-replay.md:1  S124 used-by omits corpus/knowledge/failure-recovery-replay.md
+SOURCES  info  LEGACY_NO_HEADER  count=38
+SOURCES_CHECK: CLEAN (rows=165 tiers=A:141,B:16,C:8 status=queued:13,mined:133,rejected:19 entries_with_source=25 legacy=38)
+exit=0
+## node scripts/source-capture.mjs
+SOURCE_CAPTURE: CLEAN captures=57 exemptions=108
+exit=0
+## node scripts/source-dupes.mjs
+SOURCE_DUPES: CLEAN groups=6 known=6
+exit=0
+## node scripts/cite-sources.mjs
+CITE_SOURCES: CLEAN cited=211
+exit=0
+## node scripts/counter-pins.mjs
+COUNTER_PINS: CLEAN pins=41
+exit=0
+## node scripts/readme-map.mjs
+README_MAP: CLEAN files=183 rows=183 covered=183
+exit=0
+## node scripts/round-gate.mjs --round 76
+ROUND_GATE  error  REPORT_MISSING  /home/vgpnk/Projects/shokunin/.ufo/reports/round-76/kumitate.md
+ROUND_GATE: DRIFT (round=76 lane=kumitate checks=5 errors=1 warnings=0)
+exit=1
+## bash scripts/plan-before-ready.sh --round 76
+PLAN_BEFORE_READY: FAIL rev=beb8a934e9b2d0bb45c64e11c38d4fb370d3205f round=76 dir=.ufo/waves/round-76 reason=MAP_DRIFT plan=cabc7aefd5f1562299f757e23207710c12e4ed58 plan_ct=1793768392 marker=beb8a934e9b2d0bb45c64e11c38d4fb370d3205f marker_kind=ready marker_ct=1793769808 marker_path=.ufo/waves/round-76/w1.ready map=DRIFT map_exit=1 map_first=uncovered:lessons/round-75-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=76-76 rev=beb8a934e9b2d0bb45c64e11c38d4fb370d3205f exit=1 failed=76 na_rounds= map_red=76
+exit=1
+## node scripts/proxy-check.mjs --tip-drift
+ORIGIN_TIP_DRIFT: MOVED pin=31c465f15669 origin=fb7157fcf146 commits=58 changed=241 scripts=57 runtime=23 other=161
+exit=1
+## node scripts/wave-census.mjs --round 76
+WAVE round=76 wave=w1 schema=ufo-swarm-wave-dispatch-v1 seats=12 attack=4 reports=12/12 roles: executor=2 mutation-tester=2 scout=2 scribe=2 connector=1 critic=1 reviewer=1 sentinel=1
+ROUND round=76 waves=1 seats=12 attack=4 reports=12/12
+WAVE_CENSUS: CLEAN (rounds=1 waves=1 findings=0)
+exit=0
