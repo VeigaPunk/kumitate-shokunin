@@ -91,3 +91,29 @@ Seats: K74ScoutGitCloneDocs (scout), K74ExecKimiMembers / K74ExecPinRestore / K7
 under `.ufo/waves/round-74/build/`; L1 is the sole integrator. No new runnable-extension files in
 the lane tree (the `A=687` proxy term counts every `*.mjs|js|sh|py` in the tree — patches edit
 existing files only; receipts are `.txt`/`.md`).
+
+## Amendment 1 (2026-11-04, pre-data; K74ReviewFreeze FREEZE-FIX items 7/8/9; authoring L1)
+
+7. **A-term re-measure authorized.** The proxy fail-closed every round 70–73 (Windows host), so the
+   self-only terms accrued unmeasured drift: A declared=687 computed=821 (+134, all under `.ufo/waves`
+   + `scripts/`), C2/C2_total 167/167 → 176/177 (receipt: `build/K74ExecPinRestore/proxy-check.txt`).
+   The same-commit re-measure authorization already written for C2/C2_total EXTENDS to A: the close
+   integration re-measures A to its computed value with the receipt quoted, same commit as the work.
+   The kill rule's "stanza/term edit made to force MATCH" clause is scoped to edits OUTSIDE this
+   authorized refresh; the receipted re-measure is the established re-pin discipline (rounds 34/35/40),
+   not forcing.
+8. **Gate-pin additions authorized.** `--strict` promotes PIN_UNPINNED warnings to drift, and
+   `scripts/control-replay.mjs`, `scripts/harm-matrix.mjs`, `scripts/routed-ledger.mjs` carry no pins
+   (Windows-era leftovers, invisible while the proxy fail-closed). The close integration adds
+   `pin.control-replay` / `pin.harm-matrix` / `pin.routed-ledger` to the `kumitate-gate-pins-v1` block
+   at their current sha256 (22bd0e31…, ab123486…, 05aacb5e…), the block's designed purpose (rounds
+   54–66 precedent); v1's 23 keys are unchanged.
+9. **C2 predicate restated to the tool's true verdict shape:** `node scripts/kimi-census.mjs` prints
+   `KIMI_CENSUS: CLEAN (members=55 checked=55 chain=22 info=4)` exit 0 with the TOTALS line reading
+   `TOTALS: members=55 checked=55 errors=0 info=4 chain=22` (the CLEAN line carries no `errors=`
+   field — the plan's pre-amendment wording quoted a shape the tool never prints; the r42 precedent
+   row quotes the true shape). Both member declarations, both knowledge sections, both selftest
+   tallies with committed transcripts stand as written before the amendment.
+10. **Seat count correction.** The dispatched wave is 10 seats (attack 4/10 = 40 %: mutation-tester,
+    sentinel, critic, reviewer; connectors 1); with the L1's canonical planner seat the round total
+    is 11. The pre-amendment line that read "11 seats … attack 4/11" counted the planner seat twice.
