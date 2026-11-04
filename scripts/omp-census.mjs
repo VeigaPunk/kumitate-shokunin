@@ -213,6 +213,16 @@ export function shapeFromFile(file) {
 }
 
 /** Whole days between the receipt's capture instant and `now` (0 for the same day). */
+/**
+ * Round 83: the one clock predicate both paths use. A receipt's capture instant is
+ * self-asserted; a future (or unparseable) instant is refused rather than aged negatively.
+ */
+export function clockRefusal(doc, ageDays) {
+  if (ageDays === null || Number.isNaN(ageDays)) return null;
+  if (ageDays < 0) return `captured_at=${doc.captured_at} age_days=${ageDays}`;
+  return null;
+}
+
 export function receiptAgeDays(doc, now = Date.now()) {
   const captured = Date.parse(doc.captured_at);
   return Math.floor((now - captured) / 86400000);
@@ -255,13 +265,16 @@ function compareShape(root, file, io, maxAge = null) {
   const captured = typeof doc.captured_at === 'string' ? doc.captured_at : null;
   const ageDays = captured === null ? null : receiptAgeDays(doc);
   const stamp = `receipt_captured=${captured === null ? 'absent' : captured.slice(0, 10)} age_days=${ageDays === null ? 'absent' : ageDays}`;
+  // Round 83: the clock is judged on every compare, not only when a bound is named. One
+  // predicate with --shape; an instant that has not happened yet is refused, never trusted.
+  const clock = clockRefusal(doc, ageDays);
+  if (clock) {
+    io.out(`OMP_SHAPE_COMPARE: SHAPE_CLOCK ${clock}`);
+    return 2;
+  }
   if (maxAge !== null) {
     if (ageDays === null) {
       io.out(`OMP_SHAPE_COMPARE: SHAPE_AGE_UNKNOWN receipt_captured=absent max_age=${maxAge}`);
-      return 2;
-    }
-    if (ageDays < 0) {
-      io.out(`OMP_SHAPE_COMPARE: SHAPE_CLOCK age_days=${ageDays} max_age=${maxAge}`);
       return 2;
     }
     if (ageDays > maxAge) {
@@ -495,8 +508,9 @@ function runShape(file, io, note, maxAge = null) {
     return 2;
   }
   const age = receiptAgeDays(doc);
-  if (age < 0) {
-    io.out(`SHAPE_CLOCK captured_at=${doc.captured_at} is in the future`);
+  const clock = clockRefusal(doc, age);
+  if (clock) {
+    io.out(`SHAPE_CLOCK ${clock}`);
     return 2;
   }
   let stale = false;
@@ -833,6 +847,24 @@ function selftest(work, io) {
     if (code !== 1 || !text.includes('SHAPE_STALE_RECEIPT')) {
       failures.push(`cli-compare-max-age: exit=${code} out=${text.slice(0, 160)}`);
     } else io.out('SELFTEST ok cli-compare-max-age');
+  }
+  // Round 83: the compare path judges the receipt's clock on every call, not only under
+  // `--max-age`, and names the offending instant; one predicate with `--shape`.
+  const futureInstant = new Date(NOW.getTime() + 2 * 86400000).toISOString().replace(/\.\d{3}Z$/u, 'Z');
+  check('compare-clock-future-unbounded', { compare: future, root: compareRoot },
+    { code: 2, has: ['OMP_SHAPE_COMPARE: SHAPE_CLOCK', `captured_at=${futureInstant}`], lacks: ['OMP_SHAPE_COMPARE: IN_SYNC'] });
+  check('compare-clock-future-bounded', { compare: future, root: compareRoot, maxAge: 30 },
+    { code: 2, has: ['OMP_SHAPE_COMPARE: SHAPE_CLOCK'], lacks: ['OMP_SHAPE_COMPARE: IN_SYNC'] });
+  {
+    const shapeOut = [];
+    const compareOut = [];
+    const shapeCode = main(['--shape', future, '--note', receipt], { out: (x) => shapeOut.push(x), err: () => {} });
+    const compareCode = main(['--compare', future, '--root', compareRoot], { out: (x) => compareOut.push(x), err: () => {} });
+    ran++;
+    if (shapeCode !== 2 || compareCode !== 2
+        || !shapeOut.join('\n').includes('SHAPE_CLOCK') || !compareOut.join('\n').includes('SHAPE_CLOCK')) {
+      failures.push(`clock-one-predicate: shape=${shapeCode} compare=${compareCode}`);
+    } else io.out('SELFTEST ok clock-one-predicate');
   }
   // Compare-only exemption: exact live database sidecars, in either shape.
   const stableEntries = shapeFromFile(receipt)

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * ready-handoff.mjs — kumitate-ready-handoff-v2
+ * ready-handoff.mjs — kumitate-ready-handoff-v3
  *
  * Judge a run-7 inline spawn handoff BEFORE the orchestrator takes it: the
  * `<wave>.ready` file (the cross-session contract this lane writes every round)
@@ -35,10 +35,24 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'nod
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 
-const CONTRACT = 'kumitate-ready-handoff-v2';
+const CONTRACT = 'kumitate-ready-handoff-v3';
 const SELF = fileURLToPath(import.meta.url);
-/** Attack roles: lane-owned (the policy carries no machine-readable field for them). */
-const ATTACK = new Set(['reviewer', 'critic', 'mutation-tester', 'labrat']);
+/**
+ * Attack roles: lane-owned (the policy carries no machine-readable field for them) and
+ * limited to roles the dispatcher can actually spawn — `labrat` is a frozen-topology probe
+ * outside `SWARM_ROLES`, so v3 drops it from the attack set.
+ */
+const ATTACK = new Set(['reviewer', 'critic', 'mutation-tester']);
+/**
+ * The dispatcher's accepted swarm roles (`ufo-swarm-wave.mjs` `SWARM_ROLES` at the pinned
+ * origin commit `fb7157fc`). The validator is the authority; a policy that names a role
+ * outside this set is refused (`POLICY_ROLE_UNJUDGEABLE`) rather than silently honoured.
+ */
+const SWARM_ROLES = new Set(['scout', 'reviewer', 'critic', 'connector', 'sentinel', 'executor',
+  'mutation-tester', 'revenger', 'simplifier', 'scribe']);
+/** The dispatcher's payload schema (`SWARM_DISPATCH_SCHEMA` at the same commit) and hard cap. */
+const DISPATCH_SCHEMA = 'ufo-swarm-wave-dispatch-v1';
+const MAX_SWARM_LANES = 256;
 const READY_KEYS = ['lane', 'round', 'wave', 'dispatch', 'l1'];
 
 const USAGE = 'usage: node scripts/ready-handoff.mjs --round N --wave NAME --policy FILE [--agents FILE] [--lane DIR] [--ready FILE] [--json] [--attack-pct P] | --selftest [--work DIR]';
@@ -144,8 +158,15 @@ export function judge(opts) {
   }
   const dispatch = readJson(dispatchPath, 'DISPATCH_MALFORMED', 'dispatch');
   const tc = dispatch && dispatch.taskCall;
-  if (!tc || typeof tc.context !== 'string' || !Array.isArray(tc.tasks) || tc.tasks.length === 0) {
-    throw new Refusal('DISPATCH_MALFORMED', 'dispatch must carry taskCall.context (string) and taskCall.tasks (non-empty array)');
+  const resumeSends = Array.isArray(dispatch && dispatch.resumeSends) ? dispatch.resumeSends : [];
+  const tasks = tc && Array.isArray(tc.tasks) ? tc.tasks : [];
+  // v3: the validator emits `taskCall: null` for a resume-only wave; that payload is legal
+  // and band-exempt. Anything else must still carry a context and tasks.
+  if (tasks.length === 0 && resumeSends.length === 0) {
+    throw new Refusal('DISPATCH_MALFORMED', 'dispatch must carry taskCall.tasks or resumeSends');
+  }
+  if (tasks.length > 0 && (!tc || typeof tc.context !== 'string')) {
+    throw new Refusal('DISPATCH_MALFORMED', 'dispatch must carry taskCall.context (string) and taskCall.tasks');
   }
 
   // --- the campaign's own numbers (round-82 C1: one authority) -------------
@@ -155,6 +176,14 @@ export function judge(opts) {
     && policy.nativeProfiles['omp-native-v1'].proposalRoles;
   const lo = swarm ? swarm.waveMinLanes : undefined;
   const hi = swarm ? swarm.waveMaxLanes : undefined;
+  const policyMaxLanes = swarm && Number.isInteger(swarm.maxLanes) ? swarm.maxLanes : MAX_SWARM_LANES;
+  // The validator's payload carries the effective cap in `policy.maxLanes`; a hand-edited
+  // dispatch may carry a top-level `maxLanes`. Both only tighten.
+  const dispatchMaxLanes = Number.isInteger(dispatch && dispatch.maxLanes)
+    ? dispatch.maxLanes
+    : (Number.isInteger(dispatch && dispatch.policy && dispatch.policy.maxLanes) ? dispatch.policy.maxLanes : null);
+  // A spec may only tighten the cap; the 256 ceiling is never widened (validator behaviour).
+  const cap = Math.min(policyMaxLanes, dispatchMaxLanes ?? Infinity, MAX_SWARM_LANES);
   if (!Number.isInteger(lo) || !Number.isInteger(hi) || lo < 1 || hi < lo
       || !Array.isArray(declaredRoles) || declaredRoles.length === 0
       || declaredRoles.some((r) => typeof r !== 'string' || !r)) {
@@ -164,11 +193,17 @@ export function judge(opts) {
   let agentIds = null;
   if (opts.agents) {
     const reg = readJson(opts.agents, 'AGENTS_ABSENT', 'agents', 'AGENTS_MALFORMED');
-    if (!reg || !Array.isArray(reg.agents) || reg.agents.length === 0
-        || reg.agents.some((a) => !a || typeof a.id !== 'string' || !a.id)) {
-      throw new Refusal('AGENTS_MALFORMED', `agents registry must be {agents:[{id}]}: ${opts.agents}`);
+    // Two shapes are real: this lane's `{agents:[{id}]}` and the validator's
+    // `swarm-registry.json` (`{schema:"ufo-swarm-registry-v1", members:{name:…}}`).
+    if (reg && Array.isArray(reg.agents) && reg.agents.length > 0
+        && reg.agents.every((a) => a && typeof a.id === 'string' && a.id)) {
+      agentIds = new Set(reg.agents.map((a) => a.id));
+    } else if (reg && reg.members && typeof reg.members === 'object' && !Array.isArray(reg.members)
+        && Object.keys(reg.members).length > 0) {
+      agentIds = new Set(Object.keys(reg.members));
+    } else {
+      throw new Refusal('AGENTS_MALFORMED', `agents registry must be {agents:[{id}]} or {members:{name:…}}: ${opts.agents}`);
     }
-    agentIds = new Set(reg.agents.map((a) => a.id));
   }
 
   // --- policy findings -----------------------------------------------------
@@ -196,9 +231,35 @@ export function judge(opts) {
   }
 
   const laneRoot = realpathSync(lane);
-  if (tc.tasks.length < lo || tc.tasks.length > hi) add('BAND', `${tc.tasks.length} seats outside ${lo}:${hi} (policy)`);
-  if (!tc.context.includes(laneRoot)) add('CONTEXT_LANE_ROOT', 'taskCall.context does not name the lane root');
-  if (!/HYAKU_SCRATCH|scratch root/i.test(tc.context)) add('SCRATCH_ROOT', 'taskCall.context does not name the scratch rule');
+  // v3 — the dispatcher's own admission order: a spawn wave whose effective cap sits below
+  // the policy floor is impossible before it is too wide (validator `impossible_band`).
+  const total = tasks.length + resumeSends.length;
+  if (tasks.length > 0 && cap < lo) {
+    add('MAXLANES_IMPOSSIBLE', `effective cap ${cap} is below the wave floor ${lo} (policy maxLanes ${policyMaxLanes}, dispatch maxLanes ${dispatchMaxLanes ?? 'absent'})`);
+  } else if (total > cap) {
+    add('MAXLANES', `${total} lanes exceed the effective cap ${cap} (policy maxLanes ${policyMaxLanes}, dispatch maxLanes ${dispatchMaxLanes ?? 'absent'}, hard ceiling ${MAX_SWARM_LANES})`);
+  } else if (tasks.length > 0 && total < lo) {
+    add('BAND', `${total} lanes (${tasks.length} spawn + ${resumeSends.length} resume) below ${lo}:${hi} (policy)`);
+  } else if (tasks.length > 0 && total > Math.min(hi, cap)) {
+    add('BAND', `${total} lanes (${tasks.length} spawn + ${resumeSends.length} resume) above ${lo}:${Math.min(hi, cap)} (policy)`);
+  }
+  if (dispatch.schema !== DISPATCH_SCHEMA) {
+    add('DISPATCH_SCHEMA', `dispatch.schema=${JSON.stringify(dispatch.schema)} is not ${JSON.stringify(DISPATCH_SCHEMA)}`);
+  }
+  if (dispatch.counts !== undefined) {
+    const c = dispatch.counts;
+    const ok = c && typeof c === 'object' && !Array.isArray(c)
+      && c.spawn === tasks.length && c.resume === resumeSends.length && c.total === total;
+    if (!ok) add('DISPATCH_COUNTS', `dispatch.counts=${JSON.stringify(c)} disagrees with spawn=${tasks.length} resume=${resumeSends.length} total=${total}`);
+  }
+  // The validator refuses a role outside its own SWARM_ROLES; a policy that names one
+  // cannot be honoured, so the gate refuses the handoff instead of pretending to judge it.
+  const unjudgeable = declaredRoles.filter((r) => !SWARM_ROLES.has(r));
+  if (unjudgeable.length) add('POLICY_ROLE_UNJUDGEABLE', `policy proposalRoles names ${unjudgeable.join(',')} outside the dispatcher's SWARM_ROLES`);
+  if (tasks.length > 0) {
+    if (!tc.context.includes(laneRoot)) add('CONTEXT_LANE_ROOT', 'taskCall.context does not name the lane root');
+    if (!/HYAKU_SCRATCH|scratch root/i.test(tc.context)) add('SCRATCH_ROOT', 'taskCall.context does not name the scratch rule');
+  }
 
   const relativeTrailers = [];
   const names = new Set();
@@ -206,7 +267,7 @@ export function judge(opts) {
   const roles = {};
   let attack = 0;
   let connectors = 0;
-  tc.tasks.forEach((task, index) => {
+  tasks.forEach((task, index) => {
     const where = `task[${index}]`;
     if (!task || typeof task !== 'object' || Array.isArray(task)) { add('SEAT_SHAPE', `${where} is not an object`); return; }
     const extra = Object.keys(task).filter((k) => !['name', 'agent', 'task'].includes(k));
@@ -258,8 +319,7 @@ export function judge(opts) {
   if (relativeTrailers.length && !/relative to|write it at/i.test(tc.context)) {
     add('REPORT_TRAILER', `${relativeTrailers.length} seat(s) carry a relative Report: trailer and taskCall.context does not say where it resolves (${relativeTrailers[0]})`);
   }
-  const total = tc.tasks.length;
-  if (total > 0 && attack * 100 < opts.attackPct * total) add('ATTACK_SHARE', `${attack}/${total} attack seats below ${opts.attackPct}%`);
+  if (tasks.length > 0 && attack * 100 < opts.attackPct * total) add('ATTACK_SHARE', `${attack}/${total} attack seats below ${opts.attackPct}%`);
   if (connectors > 2) add('CONNECTOR_COUNT', `${connectors} connector seats (at most 2)`);
 
   return {
@@ -273,7 +333,10 @@ export function judge(opts) {
     dispatchSha: sha(readFileSync(dispatchPath, 'utf8')),
     policy: basename(resolve(opts.policy)),
     agents: agentIds ? agentIds.size : 'none',
-    seats: total,
+    seats: tasks.length,
+    resumes: resumeSends.length,
+    total,
+    cap,
     roles,
     attack,
     connectors,
@@ -283,8 +346,8 @@ export function judge(opts) {
 
 function render(result) {
   if (result.verdict === 'READY') {
-    return `READY_HANDOFF: READY wave=${result.wave} seats=${result.seats}`
-      + ` attack=${result.attack}/${result.seats} connector=${result.connectors}`
+    return `READY_HANDOFF: READY wave=${result.wave} seats=${result.seats} resumes=${result.resumes} total=${result.total}`
+      + ` attack=${result.attack}/${result.total} connector=${result.connectors}`
       + ` roles=${Object.entries(result.roles).map(([k, v]) => `${k}=${v}`).join(',')}`
       + ` policy=${result.policy} agents=${result.agents}`;
   }
@@ -299,15 +362,17 @@ function render(result) {
 const POLICY_ROLES = ['scout', 'reviewer', 'critic', 'connector', 'sentinel', 'executor',
   'mutation-tester', 'revenger', 'simplifier', 'scribe'];
 
-function writePolicy(box, { band = [8, 16], roles = POLICY_ROLES } = {}) {
+function writePolicy(box, { band = [8, 16], roles = POLICY_ROLES, maxLanes } = {}) {
   const doc = {
     sighting: { dispatch: { swarm: { waveMinLanes: band[0], waveMaxLanes: band[1] } } },
     nativeProfiles: { 'omp-native-v1': { proposalRoles: roles } },
   };
+  if (maxLanes !== undefined) doc.sighting.dispatch.swarm.maxLanes = maxLanes;
   writeFileSync(join(box, 'policy.json'), `${JSON.stringify(doc, null, 2)}\n`);
 }
 
-function laneFixture(root, { seats = 10, attack = 3, connector = 1, wave = 'w1', round = 81 } = {}) {
+function laneFixture(root, { seats = 10, attack = 3, connector = 1, wave = 'w1', round = 81,
+  resumes = 0, dispatchMaxLanes, policyMaxLanes } = {}) {
   const lane = join(root, 'kumitate-shokunin');
   const dir = join(lane, '.ufo', 'waves', `round-${round}`);
   mkdirSync(dir, { recursive: true });
@@ -326,11 +391,26 @@ function laneFixture(root, { seats = 10, attack = 3, connector = 1, wave = 'w1',
   });
   const context = `Every path under ${lane}. Every \`Report:\` trailer path is relative to ${lane} — write it at ${lane}/<that path>. Scratch root: /fast/scratch/hyaku/kumitate-r81/<seat>/ (HYAKU_SCRATCH).`;
   const dispatch = join(dir, `${wave}-dispatch.json`);
-  writeFileSync(dispatch, `${JSON.stringify({ contract: 'ufo-swarm-wave-dispatch-v1', taskCall: { context, tasks } }, null, 2)}\n`);
+  const resumeSends = Array.from({ length: resumes }, (_, i) => ({
+    name: `K81R${String(i + 1).padStart(2, '0')}`,
+    resume: tasks.length ? tasks[i % tasks.length].name : 'KumitateR81',
+    message: 'resume per plan',
+  }));
+  const doc = {
+    schema: DISPATCH_SCHEMA,
+    wave,
+    ...(dispatchMaxLanes !== undefined ? { maxLanes: dispatchMaxLanes } : {}),
+    counts: { spawn: tasks.length, resume: resumeSends.length, total: tasks.length + resumeSends.length },
+    taskCall: { context, tasks },
+    resumeSends,
+  };
+  writeFileSync(dispatch, `${JSON.stringify(doc, null, 2)}\n`);
   const ready = { lane: 'kumitate-shokunin', round, wave, dispatch, l1: 'KumitateR81' };
   writeFileSync(join(dir, `${wave}.ready`), `${JSON.stringify(ready)}\n`);
   const box = root;
-  writePolicy(box);
+  writePolicy(box, { maxLanes: policyMaxLanes });
+  writeFileSync(join(box, 'agents-members-ok.json'), `${JSON.stringify({ schema: 'ufo-swarm-registry-v1', members: { KumitateR81: { role: 'main' } } })}\n`);
+  writeFileSync(join(box, 'agents-members-nol1.json'), `${JSON.stringify({ schema: 'ufo-swarm-registry-v1', members: { KumitateR80: { role: 'main' } } })}\n`);
   writeFileSync(join(box, 'agents-ok.json'), `${JSON.stringify({ agents: [{ id: 'KumitateR81' }] })}\n`);
   writeFileSync(join(box, 'agents-nol1.json'), `${JSON.stringify({ agents: [{ id: 'KumitateR80' }] })}\n`);
   writeFileSync(join(box, 'agents-bad.json'), '{not json\n');
@@ -606,6 +686,63 @@ function runSelftest(work) {
     rmSync(fx.dispatch);
     symlinkSync(outside, fx.dispatch);
   }, (v) => v.verdict === 'FAIL-CLOSED' && v.token === 'DISPATCH_ABSENT');
+
+  // --- v3 cases ----------------------------------------------------------
+  judgeCase('band-total-resumes', (fx, o) => {
+    const r = laneFixture(dirname(fx.lane), { seats: 6, attack: 3, resumes: 6 });
+    o.lane = r.lane;
+  }, (v) => v.verdict === 'READY' && v.seats === 6);
+  judgeCase('resume-only-band-exempt', (fx, o) => {
+    const r = laneFixture(dirname(fx.lane), { seats: 0, resumes: 3 });
+    o.lane = r.lane;
+  }, (v) => v.verdict === 'READY' && v.seats === 0);
+  judgeCase('maxlanes-policy', (fx, o) => {
+    const r = laneFixture(dirname(fx.lane), { seats: 10, attack: 3, policyMaxLanes: 8 });
+    o.lane = r.lane;
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('MAXLANES'));
+  judgeCase('maxlanes-dispatch', (fx, o) => {
+    const r = laneFixture(dirname(fx.lane), { seats: 10, attack: 3, dispatchMaxLanes: 8 });
+    o.lane = r.lane;
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('MAXLANES'));
+  judgeCase('maxlanes-impossible', (fx, o) => {
+    const r = laneFixture(dirname(fx.lane), { seats: 10, attack: 3, dispatchMaxLanes: 6 });
+    o.lane = r.lane;
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('MAXLANES_IMPOSSIBLE'));
+  judgeCase('dispatch-schema', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.schema = 'ufo-swarm-wave-dispatch-v0';
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('DISPATCH_SCHEMA'));
+  judgeCase('dispatch-counts', (fx) => {
+    const doc = JSON.parse(readFileSync(fx.dispatch, 'utf8'));
+    doc.counts.spawn = 1;
+    writeFileSync(fx.dispatch, JSON.stringify(doc));
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('DISPATCH_COUNTS'));
+  judgeCase('policy-role-unjudgeable', (fx) => {
+    writePolicy(fx.box, { roles: [...POLICY_ROLES, 'labrat'] });
+  }, (v) => v.verdict === 'DRIFT' && v.findings.includes('POLICY_ROLE_UNJUDGEABLE'));
+  judgeCase('agents-members-shape', (fx, o) => { o.agents = join(fx.box, 'agents-members-ok.json'); },
+    (v) => v.verdict === 'READY');
+  judgeCase('agents-members-unresolved', (fx, o) => { o.agents = join(fx.box, 'agents-members-nol1.json'); },
+    (v) => v.verdict === 'DRIFT' && v.findings.includes('L1_UNRESOLVED'));
+  cases++;
+  {
+    const box = join(root, 'maxlanes-ceiling');
+    mkdirSync(box, { recursive: true });
+    const fxCeil = laneFixture(box, { policyMaxLanes: 512 });
+    let capped = null;
+    try { capped = judge({ lane: fxCeil.lane, round: 81, wave: 'w1', policy: join(box, 'policy.json'), attackPct: 25 }).cap; } catch (e) { capped = e.token ?? 'ERROR'; }
+    ok('maxlanes-ceiling', capped === 256, `cap=${capped}`);
+  }
+  cases++;
+  {
+    const box = join(root, 'attack-line');
+    mkdirSync(box, { recursive: true });
+    const fxA = laneFixture(box);
+    let line = '';
+    try { line = render(judge({ lane: fxA.lane, round: 81, wave: 'w1', policy: join(box, 'policy.json'), attackPct: 25 })); } catch (e) { line = e.token ?? 'ERROR'; }
+    ok('attack-line-total', line.includes('seats=10 resumes=0 total=10') && line.includes('attack=3/10'), line.slice(0, 120));
+  }
 
   if (!work) rmSync(root, { recursive: true, force: true });
   const verdict = failures.length ? 'FAIL' : 'PASS';
