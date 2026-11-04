@@ -1,0 +1,25 @@
+rev=ab8f60138810981bdb1a294fe684b19b332b8a34
+command=node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-84/build/K84ExecFixtures/independent-cases.mjs --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/scripts/counter-receipt.mjs --work /fast/scratch/hyaku/kumitate-r84/L1/close/independent
+K84FX arm clean ok exit=0 want=0:COUNTER_RECEIPT: CLEAN got=COUNTER_RECEIPT: CLEAN
+K84FX arm crlf ok exit=0 want=0:COUNTER_RECEIPT: CLEAN got=COUNTER_RECEIPT: CLEAN
+K84FX arm metadata ok exit=0 want=0:COUNTER_RECEIPT: CLEAN got=COUNTER_RECEIPT: CLEAN
+K84FX arm fake-summary-inline ok exit=0 want=0:COUNTER_RECEIPT: CLEAN got=COUNTER_RECEIPT: CLEAN
+K84FX arm summary-negative ok exit=2 want=2:SUMMARY_COUNT got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+K84FX arm summary-float ok exit=2 want=2:SUMMARY_COUNT got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+K84FX arm summary-unsafe ok exit=2 want=2:SUMMARY_COUNT got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+K84FX arm repeated-summary ok exit=2 want=2:SUMMARY_COUNT got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+K84FX arm no-summary ok exit=2 want=2:SUMMARY_COUNT got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_COUNT
+K84FX arm summary-before-arms ok exit=2 want=2:SUMMARY_ORDER got=COUNTER_RECEIPT: FAIL-CLOSED SUMMARY_ORDER
+K84FX arm malformed-name ok exit=2 want=2:ARM_MALFORMED got=COUNTER_RECEIPT: FAIL-CLOSED ARM_MALFORMED
+K84FX arm malformed-status ok exit=2 want=2:ARM_MALFORMED got=COUNTER_RECEIPT: FAIL-CLOSED ARM_MALFORMED
+K84FX arm zero-arms ok exit=2 want=2:ARMS_EMPTY got=COUNTER_RECEIPT: FAIL-CLOSED ARMS_EMPTY
+K84FX arm missing ok exit=2 want=2:RECEIPT_UNREADABLE got=COUNTER_RECEIPT: FAIL-CLOSED RECEIPT_UNREADABLE
+K84FX arm usage ok exit=64 want=64:COUNTER_RECEIPT: USAGE got=COUNTER_RECEIPT: USAGE
+K84FX arm honest-red ok exit=1 want=1:ARM_FAILED got=COUNTER_RECEIPT: DRIFT ARM_FAILED
+K84FX arm wrong-verdict ok exit=1 want=1:VERDICT got=COUNTER_RECEIPT: DRIFT VERDICT
+K84FX arm total-drift ok exit=1 want=1:ARMS_TOTAL got=COUNTER_RECEIPT: DRIFT ARMS_TOTAL
+K84FX arm duplicate ok exit=1 want=1:ARM_DUPLICATE got=COUNTER_RECEIPT: DRIFT ARM_DUPLICATE
+K84FX arm foreign-arm ok exit=1 want=1:ARM_PREFIX got=COUNTER_RECEIPT: DRIFT ARM_PREFIX
+K84FX arm held-drift ok exit=1 want=1:HELD_COUNT got=COUNTER_RECEIPT: DRIFT HELD_COUNT
+K84FX: HELD held=21/21
+exit=0

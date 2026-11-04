@@ -115,3 +115,54 @@ and suffixed summaries, selftest-only or JSON formats are not. Ordinary reads
 can block on FIFO or exhaust memory on huge input: use trusted committed regular
 receipts; no hostile-filesystem safety claim. No claim about all counter formats
 or no harm anywhere. Final gates report only their enumerated surfaces.
+
+## Integrated readings at the work commit
+
+Measured revision `ab8f60138810981bdb1a294fe684b19b332b8a34`; each following
+new close receipt carries that rev, actual command and exit:
+
+- `close/c1-probe.txt`: HELD 16/16 exit 0; **C1 still UNMET** because the
+  separate frozen no-reader kill is observed, not waived.
+- `close/selftest.txt`: COUNTER_RECEIPT_SELFTEST PASS held=50/50 exit 0.
+  `close/independent.txt`: K84FX HELD held=21/21 exit 0 on final integrated bytes.
+- `close/history-red.txt`: DRIFT ARMS_TOTAL exit 1 on the unchanged r83
+  original; `close/history-repair.txt` and `close/history-c2.txt`: CLEAN exit 0.
+- `close/proxy-check.txt`: MATCH, A=908 C=44 C2=213/213, scalar readings
+  9/10/10/10/10/10. `close/proxy-selftest.txt`: 163/163 pass, exit 0.
+- `close/source-counts.txt`: 180→182 rows, A 153→155, B=17 C=10 held;
+  mined 145→146, rejected 22→23, queued 13 held. `close/sources-census.txt`
+  exit 0, same six W04 cross-scope duplicate warnings as open.
+- Map CLEAN files=213 rows=213 covered=213; source captures CLEAN 72,
+  counter pins CLEAN 45 (`close/readme-map.txt`, `source-capture.txt`,
+  `counter-pins.txt`). Prior-map adoption's before-freeze arm passes at
+  `close/plan-before-ready.txt`, archived freeze map CLEAN 211/211.
+
+### Enumerated regression boundaries, not a universal no-harm claim
+
+`close/checklists.txt` is **41/44 pass, exit 1**, versus r83's historical
+43/43 receipt. The three current red arms are live OMP census (69 entries,
+3 unlisted operator-host members), cap-run suite (11/12), and live compare
+(69 versus receipt 65, added 4). Do not hide these by accepting red as clean.
+The frozen offline OMP score remains 10; this is a live-host drift reading,
+not a new lane score. No operator member is altered or reclassified here.
+
+`close/harm-matrix.txt`: CLEAN over 36 registered gates, held=29 repaired=2
+carried=4 moved=1 harm=0 harm_absent=0 new_red=0, unmeasured=1, exit 0.
+Both base and tip read the same current host: live OMP red is carried;
+cap-run 11/12 and bind-oracle CONTROL_VISIBLE are carried; harm-matrix
+selftest times out at both ends (unmeasured=1). The citation gate stays red
+and **rises errors 2546→2555, warnings 999→1003** with this round's added
+knowledge/lesson; this is CARRIED_MOVED, not improvement. No universal
+“no harm anywhere” claim is made from the matrix's word CLEAN.
+
+### Wave provenance and cleanup
+
+Main supplied WAVE-DONE for all ten seats, then exact captured IDs (each ID
+equals its seat name) and retained-handle statuses `unavailable: handle expired`.
+`close/seat-census.json` records that actual models/deaths are unobserved;
+WAVE-DONE certifies no tracked job still live, not substantive success.
+All ten nonempty reports are present; no replacement or residual dispatch.
+The fleet misroot sweep `close/misroot-sweep.txt` named sibling/runtime state
+and an ambiguous `after` file whose content does not identify kumitate r84;
+none is an identified own-seat misroot, none was deleted. Tool installs: none.
+The round scratch tree is removed after landing; durable evidence is in the lane.

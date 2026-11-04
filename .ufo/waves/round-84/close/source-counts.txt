@@ -1,0 +1,11 @@
+rev=ab8f60138810981bdb1a294fe684b19b332b8a34
+command=python3 -c import subprocess,re,collections,json
+L='/home/vgpnk/Projects/shokunin/kumitate-shokunin'
+for label,rev in [('before','a648a6f8f3028fc4f72d27470b4673fe8e3e5866'),('after','ab8f60138810981bdb1a294fe684b19b332b8a34')]:
+ s=subprocess.check_output(['git','-C',L,'show',rev+':corpus/SOURCES.md'],text=True)
+ rows=[[c.strip() for c in x.split('|')[1:-1]] for x in s.splitlines() if re.match(r'^ {0,3}\|\s*S[0-9]{3,}\s*\|',x)]
+ print(label,rev,'rows='+str(len(rows)),'tiers='+json.dumps(dict(collections.Counter(x[3] for x in rows)),sort_keys=True),'status='+json.dumps(dict(collections.Counter(x[7] for x in rows)),sort_keys=True))
+
+before a648a6f8f3028fc4f72d27470b4673fe8e3e5866 rows=180 tiers={"A": 153, "B": 17, "C": 10} status={"mined": 145, "queued": 13, "rejected": 22}
+after ab8f60138810981bdb1a294fe684b19b332b8a34 rows=182 tiers={"A": 155, "B": 17, "C": 10} status={"mined": 146, "queued": 13, "rejected": 23}
+exit=0

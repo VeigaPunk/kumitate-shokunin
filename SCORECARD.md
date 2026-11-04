@@ -4024,3 +4024,34 @@ must print `C84_C1: HELD held=16/16`, exit 0. No-work base (tool absent):
 `controls/stub.txt`). Kill rule and 16 named cases are unchanged in the plan.
 S243 grounds this claim, with S244 explicitly rejected as sole headline proof.
 No second claim, no exploratory claim, no new coverage scalar.
+
+## Round 84 — measured disposition (2026-11-04)
+
+| round | claim / axis | before | after at measured commit | verdict |
+|---|---|---|---|---|
+| 84 | C1 operability, lowest live axis; counter-receipt acquisition | absent tool 0/16; constant-CLEAN 2/16, exit 1 (`.ufo/waves/round-84/controls/{base,stub}.txt`) | work `ab8f60138810981bdb1a294fe684b19b332b8a34`: frozen probe HELD 16/16 exit 0 (`close/c1-probe.txt`), but no-reader HELD 16/16 exit 0 (`build/K84Critic/no-work-probe-node.txt`) | **UNMET: frozen kill rule fired; rejected-honest-stop**, not an admitted capability |
+
+Counting command (paths in this paragraph relative to the lane):
+`node .ufo/waves/round-84/probe/probe84-c1.mjs --lane . --work /fast/scratch/hyaku/kumitate-r84/L1/probe`.
+The plan at `3794b903324e7eb4aec6d92539f2ca4e2c0b6727` is unchanged; no
+post-data control repair is used to reroll C1. Artifact usefulness is measured
+separately: selftest PASS held=50/50 (`.ufo/waves/round-84/close/selftest.txt`),
+independent K84FX HELD held=21/21 (`close/independent.txt`), historical red
+ARMS_TOTAL exit 1 and repair/C2 CLEAN exit 0 (`close/history-{red,repair,c2}.txt`).
+These short `close/` and `build/` pointers resolve beneath `.ufo/waves/round-84/`.
+
+`node scripts/proxy-check.mjs --strict` at M reads MATCH (A=908 C=44
+C2=213/213), exit 0; its suite 163/163 pass (`close/proxy-check.txt`,
+`close/proxy-selftest.txt`). Axes remain operability 9, retired coverage 10,
+script/runtime/kimi/OMP coverage 10 each; no admitted scalar move. The map's
+open 210/211 debt is repaired, not called a new coverage claim. The
+36-gate matrix finds no clean→red regression in its enumerated registry
+(`close/harm-matrix.txt`), but carries live OMP/cap-run/bind-oracle reds,
+one timeout and the citation-error rise 2546→2555. Checklist 41/44 is red,
+not reclassified (`close/checklists.txt`). No unbounded no-harm assertion.
+
+SOURCES 180→182: S243 mined, S244 rejected; A 153→155, B=17 C=10,
+queued=13, mined 145→146, rejected 22→23 (`close/source-counts.txt` and
+the base/tip sources-check row in `close/harm-matrix.txt`). Registry census
+exits 0 at both ends. Existing source cells unchanged. No assimilation;
+no new verified capability table row from this failed acquisition claim.

@@ -2811,3 +2811,23 @@ separate from the failed acquisition predicate.
 - 2026-11-04 — round 84: C1 operability counter-receipt UNMET (frozen no-reader kill);
   code and correction evidence in `.ufo/waves/round-84/`, sources S243/S244,
   lesson `corpus/lessons/round-84.md`; no admitted score or capability gain.
+
+### Round 84 — integrated measurement at ab8f60138810981bdb1a294fe684b19b332b8a34
+
+`close/c1-probe.txt` HELD 16/16 exit 0 is not admission: the frozen no-reader
+kill remains decisive. Actual tool suite PASS held=50/50, independent 21/21,
+historical red ARMS_TOTAL exit 1, repair/C2 CLEAN exit 0 (`close/selftest.txt`,
+`independent.txt`, `history-{red,repair,c2}.txt`, all under `.ufo/waves/round-84/`).
+Proxy strict MATCH A=908 C=44 C2=213/213, suite 163/163. Map 213/213,
+sources census exit 0, capture 72, counter pins 45. The archived freeze-map
+arm is CLEAN 211/211 (`close/plan-before-ready.txt`).
+
+Limits observed rather than waived: checklist **41/44**, exit 1, with live OMP
+69 entries/3 findings, live compare 69 versus receipt 65 (added 4), and cap-run
+11/12. The 36-gate base/tip harm matrix has harm=0 over its enumerated set;
+live OMP/cap-run/bind-oracle red at both ends, harm selftest timeout at both,
+and citation errors **2546→2555**, warnings **999→1003** (CARRIED_MOVED).
+Receipts: `close/checklists.txt`, `close/harm-matrix.txt`; no operator-host
+file altered and no universal no-harm promise. Main reports ten settled seats
+with exact captured IDs but expired retained status handles; death/model
+counts are not inferred. `close/seat-census.json` preserves the distinction.
