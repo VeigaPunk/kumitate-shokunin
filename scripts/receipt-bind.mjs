@@ -2,7 +2,7 @@
 /**
  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
  * `cmd=` names, at a judged revision.
- * Contract: kumitate-receipt-bind-v1 (round 87, capability `receipt-bind`).
+ * Contract: kumitate-receipt-bind-v2 (round 88; v1 round 87, capability `receipt-bind`).
  *
  *   node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
  *   node scripts/receipt-bind.mjs --selftest [--work <dir>]
@@ -28,8 +28,17 @@
  *   DRIFT  at least one receipt mismatches, or carries no `cmd=`/`tool_sha256=` (counted
  *          `unchecked`: a receipt that binds nothing is not clean), or a digest is present but is
  *          not a sha256, or the directory holds no `.txt` receipt at all. exit 1.
- *   FAIL-CLOSED  DIR_UNREADABLE | SYMLINK_RECEIPT | RECEIPT_UNREADABLE | REV_UNRESOLVED |
- *          UNRESOLVED | LANE_UNREADABLE | LANE_NOT_GIT | INTERNAL. exit 2.
+ *   FAIL-CLOSED  DIR_UNREADABLE | SYMLINK_DIR | SYMLINK_RECEIPT | RECEIPT_UNREADABLE | RECEIPT_TOO_LARGE |
+ *          AMBIGUOUS_FIELD | REV_UNRESOLVED | UNRESOLVED | ESCAPES_LANE | LANE_UNREADABLE | LANE_NOT_GIT |
+ *          INTERNAL. exit 2.
+ *
+ * v2 boundaries (round 88; the round-87 sentinel's fail-open rows 1e, 2a/2d, 3c/3d, 4):
+ *   ESCAPES_LANE       a RELATIVE instrument token that resolves outside --lane. Only an ABSOLUTE
+ *                      token may name an external instrument; `../x` is never silently external.
+ *   SYMLINK_DIR        --dir is itself a symlink (another directory's receipts judged under this path).
+ *   RECEIPT_TOO_LARGE  a receipt larger than MAX_RECEIPT_BYTES (1048576), refused before it is read.
+ *   AMBIGUOUS_FIELD    more than one `cmd=`, `tool_sha256=` or `rev=` line in one receipt (equal
+ *                      values included): first-wins would let an appended line change nothing visibly.
  *   usage  exit 64.
  *
  * Output, text mode, one line on stdout:
@@ -55,7 +64,8 @@ import { tmpdir } from 'node:os';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-receipt-bind-v1';
+const CONTRACT = 'kumitate-receipt-bind-v2';
+const MAX_RECEIPT_BYTES = 1048576;
 const SELF = fileURLToPath(import.meta.url);
 const FULL_REV = /^[a-f0-9]{40}$/;
 const FULL_SHA = /^[a-f0-9]{64}$/;
@@ -84,8 +94,8 @@ absolute instrument outside the lane is hashed from the file on disk and counted
 exit 0   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
 exit 1   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
 exit 2   RECEIPT_BIND: FAIL-CLOSED <TOKEN>[ detail]
-         DIR_UNREADABLE SYMLINK_RECEIPT RECEIPT_UNREADABLE REV_UNRESOLVED UNRESOLVED
-         LANE_UNREADABLE LANE_NOT_GIT INTERNAL
+         DIR_UNREADABLE SYMLINK_DIR SYMLINK_RECEIPT RECEIPT_UNREADABLE RECEIPT_TOO_LARGE AMBIGUOUS_FIELD
+         REV_UNRESOLVED UNRESOLVED ESCAPES_LANE LANE_UNREADABLE LANE_NOT_GIT INTERNAL
 exit 64  usage
 `;
 
@@ -213,6 +223,9 @@ function bind({ dir, rev, laneArg, json }) {
   if (!revOk(rev)) throw new FailClosed('REV_UNRESOLVED', `--rev ${rev} is not a commit in ${lane}`);
 
   let entries;
+  let dirStat;
+  try { dirStat = lstatSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
+  if (dirStat.isSymbolicLink()) throw new FailClosed('SYMLINK_DIR', dir);
   try { entries = readdirSync(dir); } catch (e) { throw new FailClosed('DIR_UNREADABLE', `${dir} (${e.code || 'unreadable'})`); }
   const files = entries.filter((f) => f.endsWith('.txt')).sort();
 
@@ -229,12 +242,14 @@ function bind({ dir, rev, laneArg, json }) {
     try { st = lstatSync(path); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'lstat failed'})`); }
     if (st.isSymbolicLink()) throw new FailClosed('SYMLINK_RECEIPT', path);
     if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
 
     let text;
     try { text = readFileSync(path, 'utf8'); } catch (e) { throw new FailClosed('RECEIPT_UNREADABLE', `${path} (${e.code || 'read failed'})`); }
     const field = (key) => {
-      const m = text.match(new RegExp(`^${key}=(.*)$`, 'm'));
-      return m ? m[1].trim() : null;
+      const all = [...text.matchAll(new RegExp(`^${key}=(.*)$`, 'gm'))];
+      if (all.length > 1) throw new FailClosed('AMBIGUOUS_FIELD', `${file} carries ${all.length} ${key}= lines`);
+      return all.length ? all[0][1].trim() : null;
     };
 
     let receiptRev = rev;
@@ -277,7 +292,8 @@ function bind({ dir, rev, laneArg, json }) {
       abs = resolve(lane, instrument);
       const lr = laneRel(lane, abs);
       if (lr.root) throw new FailClosed('UNRESOLVED', `${file} instrument resolves to the lane root: ${instrument}`);
-      if (lr.inside) rel = lr.rel; else fromDisk = true;
+      if (!lr.inside) throw new FailClosed('ESCAPES_LANE', `${file} relative instrument resolves outside the lane: ${instrument}`);
+      rel = lr.rel;
     }
 
     let bytes;
