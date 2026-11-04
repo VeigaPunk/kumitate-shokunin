@@ -1,0 +1,22 @@
+rev=77c7a8b3fe7f3cebe681065da283de0ae38ddb5b
+$ omp-census
+INFO mcp.json.rea.backup absent
+INFO themes absent
+INFO tools absent
+INFO commands absent
+INFO prompts absent
+INFO memories absent
+INFO extensions absent
+INFO chain agent-pre-restore has no generation
+INFO chain agent-recovered has no generation
+INFO chain history-corrupt has no generation
+INFO chain mcp-pre-disable has no generation
+INFO chain mcp-rea-backup-recovery has no generation
+OMP_CENSUS: CLEAN (root=/home/vgpnk/.omp/agent entries=65 findings=0 bound=35/35)
+exit=0
+$ omp-census --shape
+OMP_CENSUS: CLEAN (source=snapshot entries=65 findings=0 bound=35/35)
+exit=0
+$ omp-census --compare
+OMP_SHAPE_COMPARE: IN_SYNC entries=65 receipt=65 added=0 removed=0 changed=0 transient=0
+exit=0
