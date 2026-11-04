@@ -1,0 +1,10 @@
+CASE clean     IDENTICAL exit=0  README_MAP: CLEAN files=2 rows=2 covered=2|
+CASE dangling  IDENTICAL exit=1  README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=stale-covered:lessons/link.md|
+CASE dirfile   IDENTICAL exit=1  README_MAP: note uncovered:knowledge/dir.md|README_MAP: note covered-not-file:knowledge/dir.md|README_MAP: DRIFT files=3 rows=3 covered=3 bad=3 first=orphan-row:lessons/link.md|
+CASE fifo      IDENTICAL exit=1  README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=covered-not-file:lessons/link.md|
+CASE mixed     IDENTICAL exit=1  README_MAP: note format-unmapped:lessons/stray.md|README_MAP: note duplicate-row:knowledge/a.md|README_MAP: note orphan-row:lessons/gone.md|README_MAP: note uncovered:lessons/b.md|README_MAP: note unpinned:lessons/b.md|README_MAP: DRIFT files=2 rows=3 covered=1 bad=6 outside_map=1 first=outside-map:lessons/b.md|
+CASE regv1     IDENTICAL exit=2  README_MAP: FAIL-CLOSED reason=registry version 1 !== 2 (want the v2 lstat semantics)|
+CASE scope     IDENTICAL exit=2  README_MAP: FAIL-CLOSED reason=covered entry malformed: "scripts/x.md"|
+CASE stale     IDENTICAL exit=1  README_MAP: DRIFT files=2 rows=2 covered=3 bad=1 first=stale-covered:lessons/gone.md|
+CASE lane      IDENTICAL exit=1  README_MAP: note unpinned:lessons/round-86-verifier-spotcheck.md|README_MAP: DRIFT files=220 rows=219 covered=219 bad=2 first=uncovered:lessons/round-86-verifier-spotcheck.md|
+MATRIX_DIFFERENCES=0

@@ -1,0 +1,53 @@
+--- a/scripts/readme-map.mjs
++++ b/scripts/readme-map.mjs
+@@ -224,9 +224,10 @@
+     // v2 (R57-V3): a covered member is scored by name only no longer — it
+     // must lstat as a regular file in its namespace dir.
+     const [ns, leaf] = [c.slice(0, c.indexOf('/')), c.slice(c.indexOf('/') + 1)];
++    const full = join(dirFor[ns], leaf);
+     let lst;
+     try {
+-      lst = lstatSync(join(dirFor[ns], leaf));
++      lst = lstatSync(full);
+     } catch {
+       bad.push(`stale-covered:${c}`);
+       continue;
+@@ -284,12 +285,13 @@
+     { encoding: 'utf8', timeout: 60_000, ...opts });
+   const last = (r) => `${r.stdout || ''}`.trim().split('\n').pop() || '';
+   const mkdirp = (d) => { rmSync(d, { recursive: true, force: true }); mkdirSync(d, { recursive: true }); };
+-  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], dirs = [], links = [], rows, covered, tail = '' } = {}) => {
++  const fixture = (dir, { files = ['knowledge/a.md', 'lessons/b.md'], dirs = [], links = [], linkTo = [], rows, covered, tail = '' } = {}) => {
+     mkdirp(dir);
+     mkdirp(join(dir, 'corpus')); mkdirp(join(dir, 'corpus/knowledge')); mkdirp(join(dir, 'corpus/lessons'));
+     for (const f of files) writeFileSync(join(dir, 'corpus', f), `# ${f}\n`);
+     for (const d of dirs) mkdirp(join(dir, 'corpus', d));
+     for (const l of links) symlinkSync(join(dir, 'corpus', `${l}.no-such-target`), join(dir, 'corpus', l));
++    for (const [l, t] of linkTo) symlinkSync(join(dir, 'corpus', t), join(dir, 'corpus', l));
+     const rowText = rows !== undefined ? rows : files.map((f) => `| \`${f}\` | desc | ptr |\n`).join('');
+     writeFileSync(join(dir, 'corpus/README.md'), `# README\n\n## Coverage map\n\n${rowText}${tail}`);
+     writeFileSync(join(dir, 'reg.json'), JSON.stringify({ version: 2, covered: covered !== undefined ? covered : files }, null, 2));
+@@ -438,6 +440,23 @@
+       pass('inside-map-clean', r.status === 0 && last(r) === 'README_MAP: CLEAN files=2 rows=2 covered=2',
+         `exit=${r.status} last=${JSON.stringify(last(r))}`);
+     }
++    // 19 — R87 latent fix: a covered member that is a symlink whose TARGET EXISTS is DRIFT
++    // covered-not-file (the header contract), never stale-covered. Before the fix the v2
++    // branch called statSync on an unbound identifier, so it threw for every symlink and the
++    // resolving case was misclassified as stale-covered alongside the dangling one.
++    {
++      const f = fixture(join(root, 'd19'), {
++        files: ['knowledge/a.md', 'lessons/b.md'],
++        linkTo: [['lessons/link.md', 'knowledge/a.md']],
++        rows: '| `knowledge/a.md` | d | p |\n| `lessons/b.md` | d | p |\n| `lessons/link.md` | d | p |\n',
++        covered: ['knowledge/a.md', 'lessons/b.md', 'lessons/link.md'],
++      });
++      const r = run(argsOf(f));
++      pass('symlink-resolving-covered-not-file', r.status === 1
++        && `${r.stdout}`.includes('covered-not-file:lessons/link.md')
++        && !`${r.stdout}`.includes('stale-covered:'),
++      `exit=${r.status} out=${JSON.stringify(`${r.stdout}`.slice(-200))}`);
++    }
+   } finally {
+     rmSync(root, { recursive: true, force: true });
+   }

@@ -1,0 +1,70 @@
+# rehearsal close dir: /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/lane/.ufo/waves/round-87/close
+total  
+-rw-r--r-- 5151 bind.txt
+-rw-r--r-- 2002 c1-probe.txt
+-rw-r--r-- 1040 census.txt
+-rw-r--r-- 691 map-selftest.txt
+-rw-r--r-- 348 map.txt
+-rw-r--r-- 322 plan.txt
+-rw-r--r-- 30602 proxy-selftest.txt
+-rw-r--r-- 901 proxy.txt
+-rw-r--r-- 419 ready.txt
+-rw-r--r-- 4882 selftest.txt
+-rw-r--r-- 356 spotcheck.txt
+
+## receipt headers (rev= / tool_sha256= / cmd=) — the shape the round-87 close receipts must carry
+-- bind.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a
+cmd=node scripts/receipt-bind.mjs --selftest --work /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/emit-work/bind-selftest
+exit=0
+-- c1-probe.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=6fbd07b54927681d729f15358577b164a994cefffcff2378839f892137280cee
+cmd=node .ufo/waves/round-87/probe/probe87-c1.mjs --lane /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/lane --work /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/emit-work/probe --rev 562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+exit=0
+-- census.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30
+cmd=bash /home/vgpnk/Projects/shokunin/scripts/sources-census.sh validate --root /home/vgpnk/Projects/shokunin kumitate
+exit=0
+-- map-selftest.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+cmd=node scripts/readme-map.mjs --selftest
+exit=0
+-- map.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+cmd=node scripts/readme-map.mjs
+exit=1
+-- plan.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=4d927ce36c6728c13f48fd7e44d30b8982b5570ea020930e24ca07f0250554ab
+cmd=bash scripts/plan-before-ready.sh --round 87 --rev 562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+exit=2
+-- proxy-selftest.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7
+cmd=node scripts/proxy-check.mjs --selftest
+exit=0
+-- proxy.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7
+cmd=node scripts/proxy-check.mjs --strict
+exit=1
+-- ready.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
+cmd=node scripts/ready-handoff.mjs --round 87 --wave w1 --policy /home/vgpnk/Projects/shokunin/scripts/hyaku/ufo-wave-policy.json
+exit=2
+-- selftest.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
+cmd=node scripts/counter-receipt.mjs --selftest --work /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/emit-work/counter-selftest
+exit=0
+-- spotcheck.txt
+rev=562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9
+tool_sha256=e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
+cmd=node scripts/spotcheck-adopt.mjs --check
+exit=1

@@ -1,0 +1,5 @@
+rev=25a3a75df123a59c5cf0de944a6d2f067e278f82
+tool_sha256=fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+cmd=node scripts/readme-map.mjs --selftest
+exit=0
+signal=none

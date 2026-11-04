@@ -1,0 +1,13 @@
+# base tree at db97929212bb61ae970b10abac3cc4cd976713ae (git archive)
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: DRIFT spotchecks=53 uncovered=1 first=corpus/lessons/round-86-verifier-spotcheck.md
+MAP: DRIFT first=uncovered:lessons/round-86-verifier-spotcheck.md
+exit=1
+
+$ node scripts/readme-map.mjs
+README_MAP: note unpinned:lessons/round-86-verifier-spotcheck.md
+README_MAP: DRIFT files=220 rows=219 covered=219 bad=2 first=uncovered:lessons/round-86-verifier-spotcheck.md
+exit=1
+
+$ grep -c 'round-86-verifier-spotcheck' corpus/README.md
+0

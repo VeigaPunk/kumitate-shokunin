@@ -1,0 +1,32 @@
+# uniform-instrument fixture: all 8 round-87 receipts name scripts/proxy-check.mjs
+# tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Review/../K87ExecBind/receipt-bind.mjs
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=2 first=c1-probe.txt
+ARM clean-r87: PASS exit=0 RECEIPT_BIND: CLEAN matched=8 mismatched=0 unchecked=0 external=0
+ARM flip-cmd: FAIL exit=0 RECEIPT_BIND: CLEAN matched=8 mismatched=0 unchecked=0 external=0 edited=a.txt
+ARM flip-hash: PASS exit=1 RECEIPT_BIND: DRIFT matched=7 mismatched=1 unchecked=0 external=0 first=a.txt edited=a.txt
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=7 mismatched=0 unchecked=1 external=0 first=a.txt edited=a.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt instrument absent at 25a3a75df123a59c5cf0de944a6d2f067e278f82: scripts/absent-87-probe.mjs edited=a.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87Review/w3-candidate/absent-87-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r87/K87Review/lane-clone3
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r87/K87Review/w3-candidate/probe87/symlink/a.txt
+ARM random-fixture: PASS pick=scripts/wave-census.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt
+C87_C1: UNMET held=11/12
+exit=1
+# uniform-instrument fixture: all 8 round-87 receipts name scripts/proxy-check.mjs
+# tool=/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Review/dirkey-control.mjs
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=-
+ARM clean-r87: PASS exit=0 RECEIPT_BIND: CLEAN matched=10 mismatched=0 unchecked=0 external=0
+ARM flip-cmd: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=1 unchecked=0 external=0 first=- edited=a.txt
+ARM flip-hash: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=1 unchecked=0 external=0 first=- edited=a.txt
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=0 unchecked=1 external=0 first=- edited=a.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED scripts/absent-87-probe.mjs edited=a.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87Review/w3-dirkey/absent-87-dir
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r87/K87Review/w3-dirkey/probe87/symlink
+ARM random-fixture: PASS pick=scripts/anchor-truth.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=-
+C87_C1: HELD held=12/12
+exit=0

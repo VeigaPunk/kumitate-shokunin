@@ -1,0 +1,20 @@
+--- fixture ---
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/knowledge
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/knowledge/a.md
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/lessons
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/lessons/b.md
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/lessons/link.md
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/README.md
+/fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/reg.json
+link: ../knowledge/a.md
+link target resolves: yes
+--- corpus/lessons/link.md lstat/stat ---
+lstat isSymbolicLink=true isFile=false
+stat isFile=true
+--- orig: node readme-map.orig.mjs --registry /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/reg.json --readme /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/README.md --corpus /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/knowledge --corpus /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/lessons ---
+README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=stale-covered:lessons/link.md
+ORIG_EXIT=1
+--- patched: node readme-map.patched.mjs --registry /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/reg.json --readme /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/README.md --corpus /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/knowledge --corpus /fast/scratch/hyaku/kumitate-r87/K87ExecMap/work/fixture/corpus/lessons ---
+README_MAP: DRIFT files=3 rows=3 covered=3 bad=1 first=covered-not-file:lessons/link.md
+PATCHED_EXIT=1

@@ -1,0 +1,13 @@
+# REHEARSAL clone /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal2/lane, scripts/receipt-bind.mjs integrated, NO pin key
+# cmd: node scripts/proxy-check.mjs --strict
+## BEFORE (unpinned)
+PROXY  warn  PIN_UNPINNED  scripts/receipt-bind.mjs has no pin.<name> key in the kumitate-proxy-v1 or kumitate-gate-pins-v1 stanza
+PROXY: DRIFT (A_DRIFT term=A declared=35 computed=36 delta=+1; A_WAVE_DRIFT term=A_wave declared=955 computed=960 delta=+5; C2_TOTAL_DRIFT term=C2_total declared=219 computed=220 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; PIN_UNPINNED term=scripts/receipt-bind.mjs; src-rev=31c465f15669; source=snapshot)
+# exit=1
+
+## AFTER (pin.receipt-bind + pin.proxy-check recomputed)
+# cmd: node scripts/proxy-check.mjs --strict
+PROXY: DRIFT (A_DRIFT term=A declared=35 computed=36 delta=+1; A_WAVE_DRIFT term=A_wave declared=955 computed=960 delta=+5; C2_TOTAL_DRIFT term=C2_total declared=219 computed=220 delta=+1; AXES_DRIFT term=coverage declared=10 computed=9; src-rev=31c465f15669; source=snapshot)
+# exit=1
+# sha256 scripts/receipt-bind.mjs = b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a
+# sha256 scripts/proxy-check.mjs  = 35557c39e2084b8fd756645c6d7306d1202c7d19335a108dbeecd7bbac08ce09

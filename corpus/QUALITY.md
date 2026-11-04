@@ -1338,3 +1338,24 @@ Q39–Q41 were added in round 50 (r49 verifier-spotcheck defects 4–5 and the R
   relabels that result, and round-86 integrated receipts record their own tool digest.
 - **Limit.** This identifies a measurement's subject, not a trusted execution or
   custody guarantee; it adds no claim about unexecuted checks.
+
+### Q80 — a receipt's digest must name the instrument its own command invoked (round 87)
+
+- **Grounding.** `corpus/lessons/round-87.md` Mistakes, attribution; routed defect
+  R86-D1: `.ufo/waves/round-86/run-close.mjs:24` hashed `scripts/counter-receipt.mjs`
+  inside its per-case loop, so nine of ten round-86 close receipts named a subject they
+  never invoked (`.ufo/waves/round-87/open/census-toolbind.txt`: 239 receipts — 225 with
+  neither field, 4 with `cmd=` only, 10 with both and 9 of those mismatched).
+- **Rule.** A receipt that states a subject digest states it for the instrument named
+  by that receipt's own command line, at that receipt's own revision. A gate that binds
+  a receipt to its subject reads the receipt's `cmd=`, never a configured path, a
+  filename, or a directory name; a receipt with no command is `unchecked`, and a clean
+  verdict requires zero unchecked receipts as well as zero mismatches.
+- **Shown able to fail.** The frozen 12-arm scorer
+  (`.ufo/waves/round-87/probe/probe87-c1.mjs`) reads `DRIFT matched=1 mismatched=9` on
+  the round-86 bytes and flips on same-directory fixtures whose filename is unchanged;
+  the pre-data path-keyed control scores 3/12 and the constant controls 0/12 and 1/12
+  (`.ufo/waves/round-87/controls/*.txt`).
+- **Limit.** The binding is identity, not correctness: a matching digest says which
+  instrument produced the reading, never that the reading is right. An instrument
+  outside the lane cannot be revision-bound and is disclosed as `external=`.

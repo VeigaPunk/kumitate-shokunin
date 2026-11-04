@@ -1,0 +1,14 @@
+# command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Critic/rev-bind-canary.mjs /fast/scratch/hyaku/kumitate-r87/K87Critic/lane87-mut 25a3a75df123a59c5cf0de944a6d2f067e278f82 3e9c374edccd9ec4461e3f63dbb9c01474677abd ref-gitshow.mjs cand-a-worktree.mjs cand-a2-receiptrev.mjs /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecBind/receipt-bind.mjs
+# exit=1
+CANARY lane=/fast/scratch/hyaku/kumitate-r87/K87Critic/lane87-mut
+CANARY revA=25a3a75df123a59c5cf0de944a6d2f067e278f82 digest@revA=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
+CANARY revB=3e9c374edccd9ec4461e3f63dbb9c01474677abd digest@revB=7435511d3ddf0f1d1025fb5d13a30549dfe5176707df01a127932d24e7eb67cb (worktree is at revB)
+CANARY ref-gitshow.mjs t1 (judged 25a3a75d): exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 -> OK
+CANARY ref-gitshow.mjs t2 (judged 3e9c374e): exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=receipt.txt -> OK
+CANARY cand-a-worktree.mjs t1 (judged 25a3a75d): exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=receipt.txt -> INVERTED
+CANARY cand-a-worktree.mjs t2 (judged 3e9c374e): exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=receipt.txt -> OK
+CANARY cand-a2-receiptrev.mjs t1 (judged 25a3a75d): exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 -> OK
+CANARY cand-a2-receiptrev.mjs t2 (judged 3e9c374e): exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 -> INVERTED
+CANARY receipt-bind.mjs t1 (judged 25a3a75d): exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 -> OK
+CANARY receipt-bind.mjs t2 (judged 3e9c374e): exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 -> INVERTED
+CANARY: INVERTED 3 verdict(s) — candidate does not bind at the judged revision

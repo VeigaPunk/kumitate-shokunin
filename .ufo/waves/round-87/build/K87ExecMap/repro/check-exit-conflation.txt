@@ -1,0 +1,20 @@
+# hermetic: spotcheck set adopted, map red on an unrelated file
+# fresh clone of committed rev 25a3a75d: /fast/scratch/hyaku/kumitate-r87/K87ExecMap/lane-red3 (clean at start)
+# captured 2026-11-04T21:36:14Z
+
+$ node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-86-verifier-spotcheck.md
+SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-86-verifier-spotcheck.md wrote=both
+README_MAP: CLEAN files=220 rows=220 covered=220
+EXIT=0
+
+$ printf "# new\n" > corpus/knowledge/zzz-unmapped.md   (an unrelated live file: no row, no pin)
+
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=53 uncovered=0
+MAP: DRIFT first=uncovered:knowledge/zzz-unmapped.md
+EXIT=0
+
+$ node scripts/readme-map.mjs
+README_MAP: note unpinned:knowledge/zzz-unmapped.md
+README_MAP: DRIFT files=221 rows=220 covered=220 bad=2 first=uncovered:knowledge/zzz-unmapped.md
+EXIT=1

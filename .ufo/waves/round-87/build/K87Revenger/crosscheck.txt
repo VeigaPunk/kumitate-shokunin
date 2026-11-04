@@ -1,0 +1,43 @@
+### P1 — report-receipt-diff over a receipt whose tool_sha256 is 64 zeros and whose cmd= names no file
+$ node scripts/report-receipt-diff.mjs --lane $S/fx --round 9 --report $S/fx/report.md
+REPORT_RECEIPT: CLEAN (round=9 rev=worktree bytes=353 report_sha256=8d4d434a48c5)
+exit=0
+
+### P2 — receipt-evidence cannot read the close-receipt dialect (round-86 close at its own measured rev)
+$ node scripts/receipt-evidence.mjs verify --lane $LANE --rev 19b4e440e83ea9d618708003f36c3a799eb13e08 --receipts .ufo/waves/round-86/close --min-span-ms 0
+RECEIPT_EVIDENCE: UNMET reason=LEDGER detail=c1-probe.txt
+exit=1
+
+### P3 — report-receipt-diff over the round-86 report at the commit that carries its close receipts
+$ ... --round 86 --report /home/vgpnk/Projects/shokunin/.ufo/reports/round-86/kumitate.md --rev 19b4e440e83ea9d618708003f36c3a799eb13e08
+REPORT_RECEIPT: DRIFT RECEIPT_MISSING,POINTER_DEAD,HASH_ORPHAN (round=86 rev=19b4e440e83ea9d618708003f36c3a799eb13e08 bytes=14707 report_sha256=e53d3c3bc8a2)
+RECEIPT_MISSING .ufo/waves/round-86/close/selftest.txt
+RECEIPT_MISSING .ufo/waves/round-86/close/ (no receipt under it)
+RECEIPT_MISSING .ufo/waves/round-86/base/stub/no-reader/replay
+RECEIPT_MISSING .ufo/waves/round-86/close/map.txt
+RECEIPT_MISSING .ufo/waves/round-86/close/map-selftest.txt
+RECEIPT_MISSING .ufo/waves/round-86/close/census.txt
+RECEIPT_MISSING .ufo/waves/round-86/close/ready.txt
+POINTER_DEAD AXES.md
+POINTER_DEAD CORPUS.md
+POINTER_DEAD ufo-wave-policy.json
+HASH_ORPHAN fc0316e7f3bb84b08ead7944891d83d80cd67d9e
+HASH_ORPHAN ee0ffa9f7a5c4ec51663b25a366f9b3d241146a3
+exit=1
+$ ... --round 86 --report /home/vgpnk/Projects/shokunin/.ufo/reports/round-86/kumitate.md --rev ee0ffa9f7a5c4ec51663b25a366f9b3d241146a3
+REPORT_RECEIPT: DRIFT RECEIPT_MISSING,POINTER_DEAD,HASH_ORPHAN (round=86 rev=ee0ffa9f7a5c4ec51663b25a366f9b3d241146a3 bytes=14707 report_sha256=e53d3c3bc8a2)
+RECEIPT_MISSING .ufo/waves/round-86/base/stub/no-reader/replay
+POINTER_DEAD AXES.md
+POINTER_DEAD CORPUS.md
+POINTER_DEAD ufo-wave-policy.json
+HASH_ORPHAN fc0316e7f3bb84b08ead7944891d83d80cd67d9e
+exit=1
+
+### P4 — the digest round-86 wrote for every case, against the instruments it actually measured at 19b4e440e83ea9d618708003f36c3a799eb13e08
+scripts/counter-receipt.mjs                e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
+scripts/proxy-check.mjs                    fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7
+scripts/readme-map.mjs                     fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+scripts/spotcheck-adopt.mjs                e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346
+scripts/ready-handoff.mjs                  d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53
+scripts/plan-before-ready.sh               4d927ce36c6728c13f48fd7e44d30b8982b5570ea020930e24ca07f0250554ab
+receipt field (all ten): tool_sha256=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069

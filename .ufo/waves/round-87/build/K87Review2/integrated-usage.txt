@@ -1,0 +1,24 @@
+receipt-bind: --dir is required
+
+USAGE: node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
+       node scripts/receipt-bind.mjs --selftest [--work <dir>]
+
+Bind every *.txt close receipt under --dir to the instrument its own cmd= names.
+contract kumitate-receipt-bind-v1
+
+  instrument   the SECOND whitespace token of cmd= (the program after the interpreter)
+  digest       tool_sha256= of the receipt (a 64-hex sha256)
+  rev          rev= of the receipt, else --rev (a per-receipt rev= overrides the default)
+  --lane       repository the instruments are read from (default: this cwd's git toplevel)
+  --json       one JSON object on stdout instead of the verdict line
+  --selftest   hermetic fixtures under --work (its own git init repo); needs no lane
+
+Lane-relative and lane-absolute instruments are hashed from git cat-file blob <rev>:<path>; an
+absolute instrument outside the lane is hashed from the file on disk and counted external=.
+
+exit 0   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
+exit 1   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
+exit 2   RECEIPT_BIND: FAIL-CLOSED <TOKEN>[ detail]
+         DIR_UNREADABLE SYMLINK_RECEIPT RECEIPT_UNREADABLE REV_UNRESOLVED UNRESOLVED
+         LANE_UNREADABLE LANE_NOT_GIT INTERNAL
+exit 64  usage

@@ -1,0 +1,15 @@
+# command: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/probe/probe87-c1.mjs --lane /fast/scratch/hyaku/kumitate-r87/K87Critic/lane87 --work /fast/scratch/hyaku/kumitate-r87/K87Critic/work --rev 25a3a75df123a59c5cf0de944a6d2f067e278f82 --tool /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Critic/cand-e-hardcoded-r86.mjs
+# exit=0  candidate_sha256=ab5fa5fde080eaaa02d3d081d6c56b8136a3d3b8669ceb153513489e1d2509ba  core_sha256=feeaed7f66d8c5df9b9c342cc0b5ab6292ed1341fa6607ee2ba01cdb4db38801
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=4/4
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+ARM clean-r87: PASS exit=0 RECEIPT_BIND: CLEAN matched=10 mismatched=0 unchecked=0 external=0
+ARM flip-cmd: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=1 unchecked=0 external=0 first=r87-cite-check.txt edited=r87-cite-check.txt
+ARM flip-hash: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=1 unchecked=0 external=0 first=r87-cite-check.txt edited=r87-cite-check.txt
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=0 unchecked=1 external=0 edited=r87-cite-check.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED scripts/absent-87-probe.mjs edited=r87-cite-check.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87Critic/work/absent-87-dir
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED 0000000000000000000000000000000000000000
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT r87-cite-check.txt
+ARM random-fixture: PASS pick=scripts/control-replay.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt
+C87_C1: HELD held=12/12

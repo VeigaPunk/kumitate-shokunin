@@ -1,0 +1,9 @@
+# Why the measured revision must carry scripts/receipt-bind.mjs: probe arm 12 picks a name from the WORKTREE
+# scripts/ dir and reads it at --rev. worktree scripts/*.mjs = 33 ; at 25a3a75 = 32 ; the only delta is
+# scripts/receipt-bind.mjs (so at the freeze rev arm 12 has a 1/33 chance of picking a file the rev lacks).
+# demo: a receipt naming scripts/receipt-bind.mjs, read at 25a3a75 (which lacks it):
+# cmd: node scripts/receipt-bind.mjs --dir /fast/scratch/hyaku/kumitate-r87/K87ExecBind/revcoverage --rev 25a3a75df123a59c5cf0de944a6d2f067e278f82
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED self.txt instrument absent at 25a3a75df123a59c5cf0de944a6d2f067e278f82: scripts/receipt-bind.mjs
+# exit=2
+# consequence: run the frozen probe with --rev = the integration commit M (which carries the script), never
+# the base db97929 or the freeze 25a3a75.

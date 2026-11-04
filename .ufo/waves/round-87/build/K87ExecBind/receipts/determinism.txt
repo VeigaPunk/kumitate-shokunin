@@ -1,0 +1,5 @@
+# determinism: the same directory twice, byte-identical stdout
+# cmd: node scripts/receipt-bind.mjs --dir .../round-86/close --rev 19b4e44... --lane ...
+run1 exit=1: RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+run2 exit=1: RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+IDENTICAL=yes

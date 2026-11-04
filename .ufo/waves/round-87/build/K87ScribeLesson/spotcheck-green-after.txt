@@ -1,0 +1,14 @@
+# same base tree db979292 after the adopt (green after)
+$ node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-86-verifier-spotcheck.md
+SPOTCHECK_ADOPT: ADOPTED corpus/lessons/round-86-verifier-spotcheck.md wrote=both
+README_MAP: CLEAN files=220 rows=220 covered=220
+exit=0
+
+$ node scripts/spotcheck-adopt.mjs --check
+SPOTCHECK_COVERAGE: CLEAN spotchecks=53 uncovered=0
+MAP: CLEAN
+exit=0
+
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=220 rows=220 covered=220
+exit=0

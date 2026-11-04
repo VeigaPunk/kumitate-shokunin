@@ -1,0 +1,15 @@
+# cmd: same probe at a LATER rev 018a3a07a8088d99df618776a739fb8e29140063 (receipts still declare rev=562bc4b)
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=2 first=c1-probe.txt
+ARM clean-r87: PASS exit=0 RECEIPT_BIND: CLEAN matched=11 mismatched=0 unchecked=0 external=1
+ARM flip-cmd: PASS exit=1 RECEIPT_BIND: DRIFT matched=10 mismatched=1 unchecked=0 external=1 first=bind.txt edited=bind.txt
+ARM flip-hash: PASS exit=1 RECEIPT_BIND: DRIFT matched=10 mismatched=1 unchecked=0 external=1 first=bind.txt edited=bind.txt
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=10 mismatched=0 unchecked=1 external=1 first=bind.txt edited=bind.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED bind.txt instrument absent at 562bc4b109c86aa92f8dc1feedba8fbe3d0c97a9: scripts/absent-87-probe.mjs edited=bind.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/probe-work2/absent-87-dir (ENOENT)
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED --rev 0000000000000000000000000000000000000000 is not a commit in /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/lane
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT /fast/scratch/hyaku/kumitate-r87/K87ExecBind/rehearsal/probe-work2/probe87/symlink/bind.txt
+ARM random-fixture: PASS pick=scripts/receipt-evidence.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt
+C87_C1: HELD held=12/12
+# exit=0

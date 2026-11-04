@@ -1,0 +1,13 @@
+ARM usage: PASS exit=64
+ARM selftest: FAIL exit=1 RECEIPT_BIND_SELFTEST: FAIL held=5/10
+ARM detect-r86: FAIL exit=1 RECEIPT_BIND: DRIFT matched=9 mismatched=1 unchecked=0 external=2 first=selftest.txt
+ARM clean-r87: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=8 unchecked=0 external=0 first=c1-probe.txt
+ARM flip-cmd: FAIL exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=7 unchecked=0 external=0 first=census.txt edited=c1-probe.txt
+ARM flip-hash: FAIL exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=7 unchecked=0 external=0 first=census.txt edited=c1-probe.txt
+ARM unchecked: FAIL exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=7 unchecked=1 external=0 first=census.txt edited=c1-probe.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED c1-probe.txt scripts/absent-87-probe.mjs edited=c1-probe.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED c1-probe.txt rev=0000000000000000000000000000000000000000
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT
+ARM random-fixture: FAIL pick=scripts/gate-mutants.mjs clean_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt | flip_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+C87_C1: UNMET held=5/12

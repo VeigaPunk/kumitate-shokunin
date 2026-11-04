@@ -558,6 +558,7 @@ const GATE_PINS = {
   'pin.cap-spawn': 'scripts/cap-spawn.mjs', // round 47: helper that routes child sites through cap-run
   'pin.counter-rerun': 'scripts/counter-rerun.mjs', // round 48: repeat-run receipt instrument (C2)
   'pin.receipt-attest': 'scripts/receipt-attest.mjs', // round 51: invocation receipt attestation instrument (C1)
+  'pin.receipt-bind': 'scripts/receipt-bind.mjs', // round 87: receipt-to-instrument binding gate (R86-D1)
   'pin.counter-pins': 'scripts/counter-pins.mjs', // round 54: frozen-counter registry gate
   'pin.source-capture': 'scripts/source-capture.mjs', // round 55: opened-source byte-persistence gate
   'pin.source-dupes': 'scripts/source-dupes.mjs', // round 56: SOURCES duplicate-URL ratchet

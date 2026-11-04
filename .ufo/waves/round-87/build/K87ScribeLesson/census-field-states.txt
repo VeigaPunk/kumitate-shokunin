@@ -1,0 +1,21 @@
+# census field-state breakdown, rounds 74-86, base tree db97929212bb61ae970b10abac3cc4cd976713ae
+$ grep -l '^cmd=' .ufo/waves/round-{74..86}/close/*.txt | xargs grep -L '^tool_sha256='  # cmd= present, digest absent
+.ufo/waves/round-85/close/c1-probe.txt
+.ufo/waves/round-85/close/content-variation.txt
+.ufo/waves/round-85/close/history-v2.txt
+.ufo/waves/round-85/close/selftest.txt
+
+$ grep -L '^cmd=' .ufo/waves/round-{74..86}/close/*.txt | wc -l   # neither field
+225
+
+$ ls .ufo/waves/round-{74..86}/close/*.txt | wc -l   # total receipts
+239
+
+$ grep -c '^round-' .ufo/waves/round-87/open/census-toolbind.txt   # census body rows
+238
+
+$ grep -c 'round-86 | selftest.txt' .ufo/waves/round-87/open/census-toolbind.txt   # the one BOUND receipt is never printed
+0
+
+$ head -1 .ufo/waves/round-87/open/census-toolbind.txt
+receipts=239 bound=1 mismatch=9 unresolved=0 no_cmd=229

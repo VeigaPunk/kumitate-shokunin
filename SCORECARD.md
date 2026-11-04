@@ -291,13 +291,13 @@ The K census decision supplies both members and findings; the score is now
 `K_sections` remains independently derived and checked.
 
 <!-- kumitate-proxy-v1
-A=35
-A_wave=955
-C=45
+A=36
+A_wave=1012
+C=46
 C1=19
 C1_total=19
-C2=219
-C2_total=219
+C2=222
+C2_total=222
 S_members=88
 S_sections=88
 R_members=92
@@ -319,7 +319,7 @@ coverage_omp=10
 pin.cite-check=7484274fff4c540f39d6df829708c86c78f25e803a4657ab4d7bae6d025acdf2
 pin.surface-probe=79081e1b3c661590f4fafe5d2343993d966873cb4422b7b5462434366a084d35
 pin.round-gate=09d4d79238f44dd74a0fa727c8f6b193c3fa87200c02340e2f4b3dcc6b354594
-pin.proxy-check=fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7
+pin.proxy-check=c9cd52ce74cb248cc0a904d242129338ce28ac0c6f9e8d92b9c1afdda196516c
 pin.claims-check=de3433b5465a2f2d22c538537e3f9c67e37dc2605888b2ff77adc49264abfe14
 pin.kimi-census=7ea6b793028e2918ca920f0a5d225382bf687740d4cbee4545db963e50572439
 -->
@@ -335,10 +335,11 @@ pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
+pin.receipt-bind=b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
-pin.readme-map=fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+pin.readme-map=263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe
 pin.receipt-evidence=0ea6b66df7dcff4dc9381c688a5182fb1fe2c3be5353df7a52d3c6f2e006972c
 pin.cite-sources=7211be845cd994e6dc3bf1b1ed821a0464d9aa1cce6f4695412095a9fc2921a6
 pin.dispatch-evidence=765a7aa3ef6b11f18548da4a91f98c42e07b825229135c30010f092cc1af65cc
@@ -4217,3 +4218,22 @@ candidate 3, still open). (2) **`K_findings` double penalty** (round-81 candidat
 claim rather than a repair pass. (6) **`ready-handoff` wave-path arm**: the gate reads relative
 `.ufo/waves/...` mentions in seat prompts; the spec template needs one absolute-path rule and a
 `--json` line naming each offending seat.
+
+## Round 87 — declaration (2026-11-04)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9 is terminal under `f_O`), capability
+acquisition `receipt-bind` — the lane must be able to bind a close receipt to the instrument its own
+`cmd=` names, at a judged revision. Every coverage row is a saturated sub-axis at 10 and a second
+operability claim would be one claim under `AXES.md`, so the round declares one claim and spends its
+remaining seats on routed defects R86-D1–D4, the spot-check adoption and the frontier step.
+
+Motivating evidence: `.ufo/waves/round-86/run-close.mjs:24` hashes `scripts/counter-receipt.mjs` inside
+its per-case loop, so 9 of the 10 round-86 close receipts name a subject they never invoked
+(`.ufo/waves/round-87/open/census-toolbind.txt`: receipts=239 bound=1 mismatch=9 no_cmd=229, i.e. 225
+receipts with neither field plus 4 round-85 receipts with `cmd=` only).
+
+Frozen at `25a3a75df123a59c5cf0de944a6d2f067e278f82` (plan, 12-arm probe, four pre-data controls, base
+census). Predicate: `node .ufo/waves/round-87/probe/probe87-c1.mjs --lane <LANE> --work <SCRATCH>
+--rev <REV>` prints `C87_C1: HELD held=12/12` exit 0. Kill rule: any control — committed or
+seat-constructed — that reaches 12/12 makes C1 UNMET. Pre-data controls: base 0/12, constant-CLEAN
+0/12, constant-DRIFT 1/12, path-keyed 3/12 (`controls/*.txt`). No second claim, no exploratory claim.

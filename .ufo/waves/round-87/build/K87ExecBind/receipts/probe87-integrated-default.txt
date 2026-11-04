@@ -1,0 +1,16 @@
+# cmd: node .ufo/waves/round-87/probe/probe87-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r87/K87ExecBind/probe-work --rev 25a3a75df123a59c5cf0de944a6d2f067e278f82   (no --tool: the default is <lane>/scripts/receipt-bind.mjs, already integrated byte-identically)
+# integrated scripts/receipt-bind.mjs sha256 = b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=39/39
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+ARM clean-r87: FAIL no-r87-close
+ARM flip-cmd: FAIL no-r87-close
+ARM flip-hash: FAIL no-r87-close
+ARM unchecked: FAIL no-r87-close
+ARM unresolved: FAIL no-r87-close
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87ExecBind/probe-work/absent-87-dir (ENOENT)
+ARM rev-bad: FAIL no-r87-close
+ARM symlink: FAIL no-r87-close
+ARM random-fixture: PASS pick=scripts/bind-oracle.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt
+C87_C1: UNMET held=5/12
+# exit=1

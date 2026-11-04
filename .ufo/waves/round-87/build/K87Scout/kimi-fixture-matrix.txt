@@ -1,0 +1,7 @@
+fixture | description | K_members K_sections K_findings coverage_kimi | raw(as-written)=10*(s/m)*(m-f)/m
+kf2 | baseline: every declared member present, names matched | 55 55 0 10 | 10.00
+kf3 | bin/fd removed (one absent declared member) | 54 54 1 9 | 9.81
+kf4 | mcp.json mode 0200 (one shape drift, member present) | 55 55 1 9 | 9.82
+kf5 | skills/ removed (one absent 7-child dir) | 48 48 1 9 | 9.79
+kf6 | 15 declared members removed (absent) | 40 40 15 6 | 6.25
+kf7 | 15 undeclared root strays added (members all present) | 55 55 15 7 | 7.27

@@ -2957,3 +2957,41 @@ param=UNAUTHORIZED)` and stays a dead seat, never replaced. The claim's
 falsification therefore rests on the four frozen pre-data controls, the
 supplemental same-path control, the independent driver and the scout's
 revision-bound recon, not on post-data adversaries — reported as such.
+
+## Round 87 — receipt-subject binding: a landed instrument under an under-powered predicate (2026-11-04)
+
+Trigger: round-86's non-author spot-check routes R86-D1–D4 and re-opens the map-row adoption. One
+operability capability claim (lowest live axis): `receipt-bind`, frozen at
+`25a3a75df123a59c5cf0de944a6d2f067e278f82` with a 12-arm probe and four pre-data controls
+(base 0/12, constant-CLEAN 0/12, constant-DRIFT 1/12, path-keyed 3/12). Evidence:
+`.ufo/waves/round-87/{plan.md,probe/,controls/,open/,build/,w1/,close/}`.
+
+R86-D1 repair: `scripts/receipt-bind.mjs` (contract `kumitate-receipt-bind-v1`, 39-case hermetic
+selftest) re-derives, from each receipt's own `cmd=`, the sha256 of the instrument that command names
+at the receipt's own revision (`git cat-file blob <rev>:<path>`; a lane-external instrument from disk,
+counted `external=`); a receipt with no `cmd=`/digest is `unchecked`, and CLEAN requires
+`mismatched=0 AND unchecked==0`. On the round-86 bytes it reads
+`DRIFT matched=1 mismatched=9 unchecked=0 external=1`. The round-87 close receipts are emitted by a v2
+runner that derives the subject per case, and they bind CLEAN.
+
+The claim is **UNMET** under its own frozen kill rule: three seat-constructed controls reach 12/12
+(`build/K87Critic/cand-a-worktree.mjs`, its hardcoded round-86 path variant, and
+`build/K87Review/dirkey-control.mjs`). The load-bearing one is the worktree hash: no arm makes the
+worktree and the judged revision differ, so the predicate cannot see a tool that binds the wrong byte
+source. The integrated instrument *is* revision-bound (its own selftest carries a
+`worktree-bytes-not-truth` case), and the mutation seat left 5 of 14 mutants alive against the L1
+reference. The acquisition takes no capability row; the instrument, its gate row, its checklist item
+and its pin land as code and history.
+
+Routed-defect repairs in the same round: R86-D2/R86-D3 receipts were assigned to a seat that returned
+no artifact (disclosed); R86-D4 is answered by the round's own spec (absolute paths only — the ready
+gate read `READY` on the 14-seat handoff with no `RELATIVE_WAVE_PATH`); the round-86 spot-check was
+adopted through `spotcheck-adopt --adopt` (`wrote=both`, `README_MAP: CLEAN files=220`); and
+`scripts/readme-map.mjs` gains the R87 covered-symlink fix (`covered-not-file` instead of
+`stale-covered`, selftest 19/19).
+
+S250 (in-toto Statement layer) admits the binding rule — an attestation binds to a subject by digest;
+S251 (Sigstore cosign verify) is rejected as evidence for the *instrument's* identity. Registry
+187 → 189 rows; captures 76 → 78. Assimilation: none (no package row re-grounded this round). Gate
+decisions and mined mistakes (attribution, landing, survivor, number-drift, reference-drift, provider)
+are in `corpus/lessons/round-87.md`.

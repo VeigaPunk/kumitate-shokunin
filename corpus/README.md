@@ -253,7 +253,10 @@ fixture suite, `--strict` to fail on warnings.
 | `knowledge/counter-transcript-reconciliation.md` | Runtime arm/headline consistency, error precedence, historical false green and the round-84 label-keyed counterexample; consistency is not admission | S243; `scripts/counter-receipt.mjs`; round-84 frozen plan and critic receipts |
 | `lessons/round-84.md` | Round-84 honest stop: no-reader reaches 16/16, frozen kill fires; S243 admit/S244 reject, Q77 and R83-D1–D6 responses | LOG.md round 84; `.ufo/waves/round-84/plan.md`, `w1/K84Critic.md` |
 | `knowledge/counter-receipt-source-binding.md` | Source-byte digest binding, generated fixtures, corrected source curation and the distinction between consistency and an oracle | S247, S248; round-86 frozen plan |
+| `lessons/round-87.md` | Round-87 receipt-subject binding: the R86-D1 census, the frozen 12-arm scorer, the honest UNMET verdict, and the mined mistakes | LOG.md round 87; `.ufo/waves/round-87/` |
 | `lessons/round-86.md` | Round-86 source binding, controls, source decisions, historical corrections and mined mistakes | LOG.md round 86; `.ufo/waves/round-86/` |
+| `knowledge/receipt-subject-binding.md` | Receipt-subject binding: the R86-D1 census, why a receipt must digest-bind its instrument, the v1 contract, and its limits | S250, S251; round-87 frozen plan; `.ufo/waves/round-87/open/census-toolbind.txt` |
+| `lessons/round-86-verifier-spotcheck.md` | Non-author round-86 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 
 ## Known gaps
 

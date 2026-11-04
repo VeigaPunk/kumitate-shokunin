@@ -1,0 +1,24 @@
+=== 1. census rerun (disclosed tool) ===
+receipts=239 bound=1 mismatch=9 unresolved=0 no_cmd=229
+
+=== 2. field breakdown per round (independent count) ===
+total=239 both=10 cmd_only=4 hash_only=0 neither=225
+
+=== 3. round-86 close count ===
+10
+
+=== 4. run-close.mjs hash line number ===
+24: const hash=createHash('sha256').update(readFileSync(`${lane}/scripts/counter-receipt.mjs`)).digest('hex');
+--- line 20 ---
+ ['plan','bash',['scripts/plan-before-ready.sh','--round','86','--rev',rev]],
+
+=== 5. scripts referencing tool_sha256 ===
+0
+
+=== 6. sha256 of scripts/counter-receipt.mjs now ===
+e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069  scripts/counter-receipt.mjs
+
+=== 7. the one bound receipt head ===
+rev=19b4e440e83ea9d618708003f36c3a799eb13e08
+tool_sha256=e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069
+cmd=node scripts/counter-receipt.mjs --selftest --work /fast/scratch/hyaku/kumitate-r86/L1/close

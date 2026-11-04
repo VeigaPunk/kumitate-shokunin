@@ -1,0 +1,28 @@
+# cmd: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecBind/receipt-bind.mjs --help
+USAGE: node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
+       node scripts/receipt-bind.mjs --selftest [--work <dir>]
+
+Bind every *.txt close receipt under --dir to the instrument its own cmd= names.
+contract kumitate-receipt-bind-v1
+
+  instrument   the SECOND whitespace token of cmd= (the program after the interpreter)
+  digest       tool_sha256= of the receipt (a 64-hex sha256)
+  rev          rev= of the receipt, else --rev (a per-receipt rev= overrides the default)
+  --lane       repository the instruments are read from (default: this cwd's git toplevel)
+  --json       one JSON object on stdout instead of the verdict line
+  --selftest   hermetic fixtures under --work (its own git init repo); needs no lane
+
+Lane-relative and lane-absolute instruments are hashed from git cat-file blob <rev>:<path>; an
+absolute instrument outside the lane is hashed from the file on disk and counted external=.
+
+exit 0   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
+exit 1   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
+exit 2   RECEIPT_BIND: FAIL-CLOSED <TOKEN>[ detail]
+         DIR_UNREADABLE SYMLINK_RECEIPT RECEIPT_UNREADABLE REV_UNRESOLVED UNRESOLVED
+         LANE_UNREADABLE LANE_NOT_GIT INTERNAL
+exit 64  usage
+# exit=0
+
+# cmd: node /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecBind/receipt-bind.mjs --dir .../round-86/close --rev 19b4e44... --lane ... --json
+{"contract":"kumitate-receipt-bind-v1","mode":"bind","ok":false,"verdict":"DRIFT","dir":"/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-86/close","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","lane":"/home/vgpnk/Projects/shokunin/kumitate-shokunin","receipts":10,"matched":1,"mismatched":9,"unchecked":0,"external":1,"first":"c1-probe.txt","rows":[{"file":"c1-probe.txt","verdict":"MISMATCH","instrument":"/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-86/probe/probe86-c1.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"a59dabdbd8f2e3f2afc8656e6c81d3f12300f94ebc18960a9d0fd3e613d8e807"},{"file":"census.txt","verdict":"MISMATCH","instrument":"/home/vgpnk/Projects/shokunin/scripts/sources-census.sh","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"disk","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"3fb7261569f46423dd80ecc23e0a23789a7926f667c7a3fc559d2439d4a64e30"},{"file":"map-selftest.txt","verdict":"MISMATCH","instrument":"scripts/readme-map.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831"},{"file":"map.txt","verdict":"MISMATCH","instrument":"scripts/readme-map.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831"},{"file":"plan.txt","verdict":"MISMATCH","instrument":"scripts/plan-before-ready.sh","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"4d927ce36c6728c13f48fd7e44d30b8982b5570ea020930e24ca07f0250554ab"},{"file":"proxy-selftest.txt","verdict":"MISMATCH","instrument":"scripts/proxy-check.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7"},{"file":"proxy.txt","verdict":"MISMATCH","instrument":"scripts/proxy-check.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7"},{"file":"ready.txt","verdict":"MISMATCH","instrument":"scripts/ready-handoff.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"d6e6ba8a20a02ce233707a8444a2d1404cd0abe08d77595248e26cb876136a53"},{"file":"selftest.txt","verdict":"MATCH","instrument":"scripts/counter-receipt.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","computed":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069"},{"file":"spotcheck.txt","verdict":"MISMATCH","instrument":"scripts/spotcheck-adopt.mjs","rev":"19b4e440e83ea9d618708003f36c3a799eb13e08","source":"git","declared":"e95313700aaf8430c51e0f8abdb991ab168519eecf9803cce3fac51154f31069","computed":"e2b0f0decace6383983571bbc200c25cc9a7b20216ac79f42397884ad6887346"}]}
+# exit=1

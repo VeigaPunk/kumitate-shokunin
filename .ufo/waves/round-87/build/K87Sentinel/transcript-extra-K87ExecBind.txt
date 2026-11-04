@@ -1,0 +1,40 @@
+### (1j) RELATIVE token escaping the lane to /etc/hostname, digest of that file
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0
+
+### (1k) RELATIVE token escaping the lane to the fleet-root script, digest of that file
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument unreadable: /home/vgpnk/Projects/scripts/sources-census.sh (ENOENT)
+exit=2
+
+### (1l) RELATIVE escape with a digest that does NOT match
+RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=r.txt
+exit=1
+
+### (5d) --dir an EXISTING empty directory
+RECEIPT_BIND: DRIFT matched=0 mismatched=0 unchecked=0 external=0 first=-
+exit=1
+
+### (2e) --dir a symlink to a directory that reads CLEAN, plus --json row provenance
+{"contract":"kumitate-receipt-bind-v1","mode":"bind","ok":true,"verdict":"CLEAN","dir":"/fast/scratch/hyaku/kumitate-r87/K87Sentinel/work/extra/2link2","rev":"25a3a75df123a59c5cf0de944a6d2f067e278f82","lane":"/home/vgpnk/Projects/shokunin/kumitate-shokunin","receipts":1,"matched":1,"mismatched":0,"unchecked":0,"external":0,"first":null,"rows":[{"file":"r.txt","verdict":"MATCH","instrument":"scripts/proxy-check.mjs","rev":"25a3a75df123a59c5cf0de944a6d2f067e278f82","source":"git","computed":"fd51dc98ab079141d0256ea8e74f54e49b06e88eb163ed0cea69f3ff7dca8ef7"}]}
+exit=0
+
+### (2f) --dir another round's committed close dir (no symlink, direct path)
+RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=1 first=c1-probe.txt
+exit=1
+
+### (10a) --lane given as a symlink to the lane
+RECEIPT_BIND: FAIL-CLOSED LANE_UNREADABLE /fast/scratch/hyaku/kumitate-r87/K87Sentinel/work/extra/lanelink is not a directory
+exit=2
+
+### (11) --selftest
+RECEIPT_BIND_SELFTEST arm dirty-worktree-cannot-launder ok exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST: PASS held=39/39
+exit=0
+### (1k') RELATIVE escape ../scripts/sources-census.sh (the FLEET root instrument round-86 named), digest of that file
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0
+
+### (1k'') the same instrument named ABSOLUTELY (documented external path)
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0

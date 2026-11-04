@@ -1,0 +1,41 @@
+# canonical adopt, run in the scratch clone /fast/scratch/hyaku/kumitate-r87/K87ExecMap/lane-clone (HEAD 25a3a75d, started clean)
+# captured 2026-11-04T21:34:05Z
+
+$ node scripts/spotcheck-adopt.mjs --adopt corpus/lessons/round-86-verifier-spotcheck.md   [already run: exit 0, wrote=both]
+
+$ git -C <clone> diff -- corpus/README.md .ufo/pins/readme-map.json
+diff --git i/.ufo/pins/readme-map.json w/.ufo/pins/readme-map.json
+index c1305081..da6f44ba 100644
+--- i/.ufo/pins/readme-map.json
++++ w/.ufo/pins/readme-map.json
+@@ -219,6 +219,7 @@
+     "lessons/round-85.md",
+     "lessons/round-85-verifier-spotcheck.md",
+     "knowledge/counter-receipt-source-binding.md",
+-    "lessons/round-86.md"
++    "lessons/round-86.md",
++  "lessons/round-86-verifier-spotcheck.md"
+   ]
+ }
+diff --git i/corpus/README.md w/corpus/README.md
+index 0c99ba32..fbe39325 100644
+--- i/corpus/README.md
++++ w/corpus/README.md
+@@ -254,6 +254,7 @@ fixture suite, `--strict` to fail on warnings.
+ | `lessons/round-84.md` | Round-84 honest stop: no-reader reaches 16/16, frozen kill fires; S243 admit/S244 reject, Q77 and R83-D1–D6 responses | LOG.md round 84; `.ufo/waves/round-84/plan.md`, `w1/K84Critic.md` |
+ | `knowledge/counter-receipt-source-binding.md` | Source-byte digest binding, generated fixtures, corrected source curation and the distinction between consistency and an oracle | S247, S248; round-86 frozen plan |
+ | `lessons/round-86.md` | Round-86 source binding, controls, source decisions, historical corrections and mined mistakes | LOG.md round 86; `.ufo/waves/round-86/` |
++| `lessons/round-86-verifier-spotcheck.md` | Non-author round-86 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+ 
+ ## Known gaps
+ 
+
+$ node scripts/spotcheck-adopt.mjs --check   (after adopt)
+SPOTCHECK_COVERAGE: CLEAN spotchecks=53 uncovered=0
+MAP: CLEAN
+
+$ node scripts/readme-map.mjs   (after adopt)
+README_MAP: CLEAN files=220 rows=220 covered=220
+
+$ ls .ufo/pins/adopt-journal   (journal retired)
+0

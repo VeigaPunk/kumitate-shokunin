@@ -1,0 +1,20 @@
+# arm-12 nondeterminism: scratch clone with scripts/ reduced to proxy-check.mjs (tracked) + zz-untracked.mjs (absent at 25a3a75df123a59c5cf0de944a6d2f067e278f82)
+# same tool, same lane, same rev, six runs
+## run1
+ARM random-fixture: PASS pick=scripts/proxy-check.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=-
+C87_C1: UNMET held=5/12
+## run2
+ARM random-fixture: PASS pick=scripts/proxy-check.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=-
+C87_C1: UNMET held=5/12
+## run3
+ARM random-fixture: FAIL no-scripts
+C87_C1: UNMET held=4/12
+## run4
+ARM random-fixture: FAIL no-scripts
+C87_C1: UNMET held=4/12
+## run5
+ARM random-fixture: FAIL no-scripts
+C87_C1: UNMET held=4/12
+## run6
+ARM random-fixture: PASS pick=scripts/proxy-check.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=-
+C87_C1: UNMET held=5/12

@@ -1,0 +1,14 @@
+ARM usage: PASS exit=64
+ARM selftest: PASS exit=0 RECEIPT_BIND_SELFTEST: PASS held=10/10
+ARM detect-r86: PASS exit=1 RECEIPT_BIND: DRIFT matched=1 mismatched=9 unchecked=0 external=2 first=c1-probe.txt
+ARM clean-r87: PASS exit=0 RECEIPT_BIND: CLEAN matched=8 mismatched=0 unchecked=0 external=0
+ARM flip-cmd: PASS exit=1 RECEIPT_BIND: DRIFT matched=7 mismatched=1 unchecked=0 external=0 first=c1-probe.txt edited=c1-probe.txt
+ARM flip-hash: PASS exit=1 RECEIPT_BIND: DRIFT matched=7 mismatched=1 unchecked=0 external=0 first=c1-probe.txt edited=c1-probe.txt
+ARM unchecked: PASS exit=1 RECEIPT_BIND: DRIFT matched=7 mismatched=0 unchecked=1 external=0 first=null edited=c1-probe.txt
+ARM unresolved: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED UNRESOLVED c1-probe.txt scripts/absent-87-probe.mjs edited=c1-probe.txt
+ARM dir-missing: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED DIR_UNREADABLE
+ARM rev-bad: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED REV_UNRESOLVED c1-probe.txt rev=0000000000000000000000000000000000000000
+ARM symlink: PASS exit=2 RECEIPT_BIND: FAIL-CLOSED SYMLINK_RECEIPT
+ARM random-fixture: PASS pick=scripts/cite-sources.mjs clean_exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0 | flip_exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=gen.txt
+C87_C1: HELD held=12/12
+probe_exit=0

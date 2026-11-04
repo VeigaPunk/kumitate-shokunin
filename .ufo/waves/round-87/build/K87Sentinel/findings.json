@@ -1,0 +1,52 @@
+{
+  "seat": "K87Sentinel",
+  "round": 87,
+  "claim": "C1 receipt-bind",
+  "subject_primary": {
+    "tool": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecBind/receipt-bind.mjs",
+    "tool_sha256": "b640ff3115228e2d7cc1ca748bc892db1887e33f356197ed86937b989eaf4c0a",
+    "lines": 544,
+    "note": "executor candidate; absent at review start (18:26), appeared 18:28, reviewed and re-probed"
+  },
+  "subject_reference": {
+    "tool": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/L1Reference/receipt-bind.mjs",
+    "tool_sha256": "ff91fe78c519766bf4309e5a408c6a14ea78c490997aed12f9efa456bd1b3af5",
+    "note": "L1 reference, reviewed first; kept as the comparison baseline"
+  },
+  "frozen_probe": {
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/probe/probe87-c1.mjs",
+    "sha256": "6fbd07b54927681d729f15358577b164a994cefffcff2378839f892137280cee",
+    "rev_measured": "25a3a75df123a59c5cf0de944a6d2f067e278f82",
+    "result_candidate": "UNMET held=5/12 (usage, selftest, detect-r86, dir-missing, random-fixture PASS; seven arms report no-r87-close because .ufo/waves/round-87/close does not exist yet)",
+    "result_reference": "UNMET held=5/12 (same arm set)"
+  },
+  "items": [
+    { "id": "1", "axis": "cmd= token ../../etc/passwd (absolute-independent traversal)", "verdict": "SAFE", "line": "277-280,289", "observed": "resolves to <lane>/../../etc/passwd, ENOENT -> FAIL-CLOSED UNRESOLVED exit=2" },
+    { "id": "1-abs", "axis": "cmd= absolute path outside lane (documented external)", "verdict": "SAFE", "line": "271-275,284-286", "observed": "CLEAN matched=1 external=1 exit=0 (disclosed in the verdict line); wrong digest -> DRIFT mismatched=1 external=1 exit=1" },
+    { "id": "1-rel-escape", "axis": "cmd= RELATIVE token that resolves outside the lane to an existing file", "verdict": "FAIL-OPEN", "line": "280", "observed": "cmd=node ../../../../../etc/hostname -> CLEAN matched=1 external=1 exit=0; cmd=bash ../scripts/sources-census.sh -> CLEAN matched=1 external=1 exit=0 (the fleet-root instrument round-86 named)", "defect": "R87-S8" },
+    { "id": "1-dir", "axis": "cmd= absolute token that is a directory", "verdict": "SAFE", "line": "284-286", "observed": "FAIL-CLOSED UNRESOLVED ... (EISDIR) exit=2 (crash class fixed vs reference)" },
+    { "id": "2", "axis": "receipt DIRECTORY is a symlink", "verdict": "FAIL-OPEN", "line": "216", "observed": "CLEAN matched=1 exit=0 through the symlink; --json reports dir as the symlink path with no provenance check; symlink to round-86 close -> DRIFT mismatched=9", "defect": "R87-S2" },
+    { "id": "3-crlf", "axis": "CRLF receipt / CRLF rev=", "verdict": "SAFE", "line": "236-237", "observed": "fully CRLF -> CLEAN; mixed rev=OLD CRLF -> DRIFT identical to all-LF control (per-receipt rev honoured)" },
+    { "id": "3-dup", "axis": "duplicate cmd= / duplicate tool_sha256=", "verdict": "SAFE", "line": "236", "observed": "first-wins deterministically (correct-first CLEAN, wrong-first DRIFT); precedence undocumented", "defect": "R87-S6" },
+    { "id": "4", "axis": "200 MB receipt", "verdict": "UNBOUNDED", "line": "234 (and 285)", "observed": "no size guard; 64 MiB receipt -> CLEAN, max RSS 185048 kB, 0.05 s; 200 MB ~= 570 MB RSS [INFERENCE]; no entry-count cap either", "defect": "R87-S5" },
+    { "id": "5", "axis": "--dir / / lane root / empty / missing", "verdict": "SAFE", "line": "216,304", "observed": "/ -> DRIFT matched=0 first=- exit=1; lane root -> DRIFT unchecked=1 first=r8-in-tree-pollution.txt exit=1; empty dir -> DRIFT first=- exit=1; missing dir -> FAIL-CLOSED DIR_UNREADABLE exit=2" },
+    { "id": "6", "axis": "rev= 40 hex but not a commit (random, blob sha, per-receipt)", "verdict": "SAFE", "line": "210-213,243-245", "observed": "FAIL-CLOSED REV_UNRESOLVED exit=2 in all three shapes, including when every receipt is unchecked (precedence fixed vs reference)" },
+    { "id": "7", "axis": "shell injection through cmd=", "verdict": "SAFE", "line": "104", "observed": "spawnSync('git', argv) only, no shell:true; '; touch', $( ), backticks -> FAIL-CLOSED UNRESOLVED exit=2; '| tee' tail ignored and never executed; all four sentinels absent" },
+    { "id": "8", "axis": "non-regular *.txt entries (subdir, FIFO), unreadable, zero-byte, no-instrument cmd", "verdict": "SAFE", "line": "230-234,250-265,304", "observed": "RECEIPT_UNREADABLE exit=2 for subdir/FIFO/mode-000; zero-byte -> DRIFT unchecked=1; cmd= with one token -> UNRESOLVED exit=2; CLEAN requires total>0" },
+    { "id": "9", "axis": "--lane symlink / --lane not a repo", "verdict": "SAFE", "line": "205-207", "observed": "symlinked lane -> FAIL-CLOSED LANE_UNREADABLE exit=2; non-repo -> LANE_NOT_GIT; sanitised GIT_* env (95-100)" },
+    { "id": "10", "axis": "selftest", "verdict": "SAFE", "line": "313-520", "observed": "RECEIPT_BIND_SELFTEST: PASS held=39/39 exit=0" }
+  ],
+  "routed_defects": [
+    { "id": "R87-S2", "class": "FAIL-OPEN", "severity": "medium", "title": "receipt DIRECTORY symlink followed; no lstat on --dir, no lane/round provenance", "lines": "216", "remediation": "lstatSync(dir).isSymbolicLink() -> SYMLINK_RECEIPT; require realpath(dir) under realpath(lane)" },
+    { "id": "R87-S5", "class": "UNBOUNDED", "severity": "medium", "title": "receipt read (and external instrument read) have no size cap; no entry-count cap", "lines": "234,285,216", "remediation": "st.size > 1 MiB -> RECEIPT_UNREADABLE; statSync(abs).isFile() + size guard; cap entries" },
+    { "id": "R87-S8", "class": "FAIL-OPEN", "severity": "low-medium", "title": "a RELATIVE cmd= token that resolves outside the lane is read from disk and counted external, though the contract licenses disk reads only for absolute instruments", "lines": "276-281", "remediation": "in the non-absolute branch, lr.inside===false -> FailClosed('UNRESOLVED'); keep fromDisk only for isAbsolute tokens" },
+    { "id": "R87-S6", "class": "DOC-GAP", "severity": "low", "title": "duplicate cmd=/tool_sha256= is first-wins and undocumented; cmd= tail after the instrument is ignored (a receipt can display a pipeline that never ran and still read CLEAN)", "lines": "236,264-266", "remediation": "state first-wins in the contract or fail closed on duplicates" },
+    { "id": "R87-S9", "class": "NIT", "severity": "cosmetic", "title": "tool_sha256= is lower-cased before validation, so an uppercase digest is silently accepted", "lines": "256", "remediation": "document the leniency or require lowercase in FULL_SHA" }
+  ],
+  "fixed_vs_reference": [
+    "reference R87-S1 (CLEAN matched=0 on non-regular *.txt) -> candidate line 231 fail-closed RECEIPT_UNREADABLE + line 304 total>0",
+    "reference R87-S3 (uncaught EISDIR, exit 1 without a verdict line) -> candidate line 285 try/catch -> UNRESOLVED exit 2, plus main's INTERNAL catch (line 528-536)",
+    "reference R87-S4 (unchecked short-circuit before rev resolution) -> candidate lines 210-213 resolve the default rev before any receipt",
+    "reference nit first=null -> candidate prints first=- (line 311)"
+  ]
+}

@@ -1,0 +1,32 @@
+### patch file: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecMap/readme-map.mjs.patch
+### sha256: 3a8a9f10fb5ea0bdc9cb8a366e6a5d21c0f6d126cbaf6fb7c29c94e2a606877c
+### base: lane scripts/readme-map.mjs at 25a3a75df123a59c5cf0de944a6d2f067e278f82 (sha256 fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831)
+### hunk headers:
+3:@@ -224,9 +224,10 @@
+15:@@ -284,12 +285,13 @@
+30:@@ -438,6 +440,23 @@
+
+$ patch -p1 --dry-run -d <copy> < readme-map.mjs.patch
+checking file scripts/readme-map.mjs
+DRYRUN_EXIT=0
+
+$ patch -p1 -d <copy> < readme-map.mjs.patch
+patching file scripts/readme-map.mjs
+APPLY_EXIT=0
+
+$ cmp <copy>/scripts/readme-map.mjs <build>/readme-map.patched.mjs
+APPLIED_FILE_IDENTICAL=yes
+263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe  /fast/scratch/hyaku/kumitate-r87/K87ExecMap/apply/scripts/readme-map.mjs
+263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87ExecMap/readme-map.patched.mjs
+
+### second check: patch against the COMMITTED blob
+$ git -C <lane> show 25a3a75d:scripts/readme-map.mjs > apply-rev/scripts/readme-map.mjs
+blob sha256 fc119ab6056998fdd8205e9277c2665112af872d43acde20fca98efc986d8831
+$ patch -p1 --dry-run -d apply-rev < readme-map.mjs.patch
+checking file scripts/readme-map.mjs
+DRYRUN_EXIT=0
+$ patch -p1 -d apply-rev < readme-map.mjs.patch
+patching file scripts/readme-map.mjs
+APPLY_EXIT=0
+RESULT_IDENTICAL_TO_CANDIDATE=yes
+263d961c3f42ed3da2479c4c985edd6eadd06f7c151b97370a619ff6880b2afe  /fast/scratch/hyaku/kumitate-r87/K87ExecMap/apply-rev/scripts/readme-map.mjs

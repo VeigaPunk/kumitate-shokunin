@@ -1,0 +1,186 @@
+[
+  {
+    "id": "m01",
+    "desc": "CLEAN drops the unchecked term",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m01.mjs",
+    "bytes": 9553,
+    "edits": [
+      {
+        "old": "if (mismatched === 0 && unchecked === 0) return { code: 0, matched, mismatched, unchecked, external };",
+        "new": "if (mismatched === 0) return { code: 0, matched, mismatched, unchecked, external };"
+      }
+    ]
+  },
+  {
+    "id": "m02",
+    "desc": "CLEAN drops the mismatched term",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m02.mjs",
+    "bytes": 9552,
+    "edits": [
+      {
+        "old": "if (mismatched === 0 && unchecked === 0) return { code: 0, matched, mismatched, unchecked, external };",
+        "new": "if (unchecked === 0) return { code: 0, matched, mismatched, unchecked, external };"
+      }
+    ]
+  },
+  {
+    "id": "m03",
+    "desc": "declared digest accepted at any hex length",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m03.mjs",
+    "bytes": 9569,
+    "edits": [
+      {
+        "old": "^tool_sha256=([a-f0-9]{64})$",
+        "new": "^tool_sha256=([a-f0-9]+)$"
+      }
+    ]
+  },
+  {
+    "id": "m04",
+    "desc": "digest comparison inverted (!= treated as a match)",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m04.mjs",
+    "bytes": 9572,
+    "edits": [
+      {
+        "old": "if (sha(bytes) === declared) matched++;",
+        "new": "if (sha(bytes) !== declared) matched++;"
+      }
+    ]
+  },
+  {
+    "id": "m05",
+    "desc": "symlink detection removed",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m05.mjs",
+    "bytes": 9497,
+    "edits": [
+      {
+        "old": "    if (st.isSymbolicLink()) return { code: 2, token: 'SYMLINK_RECEIPT' };\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "m06",
+    "desc": "missing receipt directory answered as empty CLEAN",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m06.mjs",
+    "bytes": 9601,
+    "edits": [
+      {
+        "old": "if (!existsSync(dir)) return { code: 2, token: 'DIR_UNREADABLE' };",
+        "new": "if (!existsSync(dir)) return { code: 0, matched: 0, mismatched: 0, unchecked: 0, external: 0 };"
+      }
+    ]
+  },
+  {
+    "id": "m07",
+    "desc": "per-receipt rev= ignored in favour of the --rev default",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m07.mjs",
+    "bytes": 9562,
+    "edits": [
+      {
+        "old": "const useRev = ownRev || rev;",
+        "new": "const useRev = rev;"
+      }
+    ]
+  },
+  {
+    "id": "m08",
+    "desc": "worktree bytes used instead of `git show <rev>:<path>`",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m08.mjs",
+    "bytes": 9761,
+    "edits": [
+      {
+        "old": "function git(lane, a) {\n  return spawnSync('git', ['-C', lane, ...a], { maxBuffer: 64 << 20 });\n}",
+        "new": "function git(lane, a) {\n  if (a[0] === 'show') {\n    const p = join(lane, String(a[1]).slice(41));\n    if (existsSync(p)) return { status: 0, stdout: readFileSync(p) };\n    return { status: 1, stdout: null };\n  }\n  return spawnSync('git', ['-C', lane, ...a], { maxBuffer: 64 << 20 });\n}"
+      }
+    ]
+  },
+  {
+    "id": "m09",
+    "desc": "the cmd= string is hashed instead of the instrument file",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m09.mjs",
+    "bytes": 9570,
+    "edits": [
+      {
+        "old": "if (sha(bytes) === declared) matched++;",
+        "new": "if (sha(cmd) === declared) matched++;"
+      }
+    ]
+  },
+  {
+    "id": "m10",
+    "desc": "a receipt with no cmd= is accepted as matched",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m10.mjs",
+    "bytes": 9603,
+    "edits": [
+      {
+        "old": "if (!cmd || !declared) { unchecked++; continue; }",
+        "new": "if (!cmd) { matched++; continue; }\n    if (!declared) { unchecked++; continue; }"
+      }
+    ]
+  },
+  {
+    "id": "m11",
+    "desc": "DRIFT exits 0",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m11.mjs",
+    "bytes": 9572,
+    "edits": [
+      {
+        "old": "external=${r.external} first=${r.first}`);\n  process.exit(1);",
+        "new": "external=${r.external} first=${r.first}`);\n  process.exit(0);"
+      }
+    ]
+  },
+  {
+    "id": "m12",
+    "desc": "CLEAN line prints the file count as matched",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m12.mjs",
+    "bytes": 9591,
+    "edits": [
+      {
+        "old": "return { code: 0, matched, mismatched, unchecked, external };",
+        "new": "return { code: 0, matched, files: files.length, mismatched, unchecked, external };"
+      },
+      {
+        "old": "RECEIPT_BIND: CLEAN matched=${r.matched}",
+        "new": "RECEIPT_BIND: CLEAN matched=${r.files}"
+      }
+    ]
+  },
+  {
+    "id": "m13",
+    "desc": "empty-directory guard removed (empty dir reads CLEAN)",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m13.mjs",
+    "bytes": 9501,
+    "edits": [
+      {
+        "old": "  if (files.length === 0) return { code: 2, token: 'DIR_UNREADABLE' };\n",
+        "new": ""
+      }
+    ]
+  },
+  {
+    "id": "m14",
+    "desc": "both verdict lines print the file count as matched",
+    "path": "/home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-87/build/K87Mutation/mutants/m14.mjs",
+    "bytes": 9610,
+    "edits": [
+      {
+        "old": "return { code: 0, matched, mismatched, unchecked, external };",
+        "new": "return { code: 0, matched, files: files.length, mismatched, unchecked, external };"
+      },
+      {
+        "old": "return { code: 1, matched, mismatched, unchecked, external, first };",
+        "new": "return { code: 1, matched, files: files.length, mismatched, unchecked, external, first };"
+      },
+      {
+        "old": "RECEIPT_BIND: CLEAN matched=${r.matched}",
+        "new": "RECEIPT_BIND: CLEAN matched=${r.files}"
+      },
+      {
+        "old": "RECEIPT_BIND: DRIFT matched=${r.matched}",
+        "new": "RECEIPT_BIND: DRIFT matched=${r.files}"
+      }
+    ]
+  }
+]
