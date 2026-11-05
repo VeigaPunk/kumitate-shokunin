@@ -2,7 +2,7 @@
 /**
  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
  * `cmd=` names, at a judged revision.
- * Contract: kumitate-receipt-bind-v4 (round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
+ * Contract: kumitate-receipt-bind-v5 (round 91; v4 round 90, v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
  *
  *   node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
  *   node scripts/receipt-bind.mjs --selftest [--work <dir>]
@@ -68,6 +68,25 @@
  *                      only: invisible characters inside a value stay value bytes. This subsumes
  *                      the v3 file-leading-BOM strip. Nothing else in the verdict logic changes.
  *
+ * v5 boundary (round 91; capability `receipt-bind` v5, contract kumitate-receipt-bind-v5):
+ *   bounded external reads — an ABSOLUTE instrument token outside the lane (fromDisk) is
+ *                      opened O_RDONLY|O_NOFOLLOW|O_NONBLOCK, fstat'ed on that descriptor, and
+ *                      read from it: a non-regular file (character device /dev/zero or /dev/null,
+ *                      FIFO with no writer, directory) and a regular file over MAX_INSTRUMENT_BYTES
+ *                      (16777216) are FAIL-CLOSED UNRESOLVED, while a regular file at or under the
+ *                      cap (including an empty file) binds from the descriptor as before. The
+ *                      receipt open also carries O_NONBLOCK (RD-4 hardening; verdicts unchanged).
+ *                      The read itself is bounded too (round-91 K91ReviewProc): the descriptor is
+ *                      read in 64 KiB chunks and refused UNRESOLVED as soon as more than
+ *                      MAX_INSTRUMENT_BYTES arrive, whatever fstat said — a procfs/sysfs regular
+ *                      file reports st_size 0 (`/proc/self/pagemap` never reaches EOF;
+ *                      `/proc/<pid>/smaps` can exceed the cap), so the fstat size alone does not
+ *                      bound memory.
+ *                      NOT claimed: atomicity of the type/size check against a concurrent path
+ *                      swap (RD-3/RD-4 races — probabilistic, no deterministic arm), in-lane blob
+ *                      size at the judged revision, new invisible code-point classes, and every
+ *                      other v4 declared limit — unchanged.
+ *
  * Output, text mode, one line on stdout:
  *   RECEIPT_BIND: CLEAN matched=<n> mismatched=0 unchecked=0 external=<e>
  *   RECEIPT_BIND: DRIFT matched=<n> mismatched=<m> unchecked=<u> external=<e> first=<file>
@@ -87,14 +106,15 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
   closeSync, constants as fsConstants, existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync,
-  openSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync, writeSync,
+  openSync, readFileSync, readSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync, writeSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const CONTRACT = 'kumitate-receipt-bind-v4';
+const CONTRACT = 'kumitate-receipt-bind-v5';
 const MAX_RECEIPT_BYTES = 1048576;
+const MAX_INSTRUMENT_BYTES = 16777216;
 const SELF = fileURLToPath(import.meta.url);
 const FULL_REV = /^[a-f0-9]{40}$/;
 const FULL_SHA = /^[a-f0-9]{64}$/;
@@ -285,7 +305,7 @@ function bind({ dir, rev, laneArg, json }) {
     let text;
     let fd = null;
     try {
-      fd = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+      fd = openSync(path, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
       const fst = fstatSync(fd);
       if (!fst.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
       if (fst.size > MAX_RECEIPT_BYTES) {
@@ -369,7 +389,32 @@ function bind({ dir, rev, laneArg, json }) {
       let est;
       try { est = lstatSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'lstat failed'})`); }
       if (est.isSymbolicLink()) throw new FailClosed('SYMLINK_INSTRUMENT', `${file} external instrument is a symlink: ${abs}`);
-      try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+      {
+        let xfd = null;
+        try {
+          xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+          const xst = fstatSync(xfd);
+          if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+          if (xst.size > MAX_INSTRUMENT_BYTES) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+          // Bound the READ, not only the metadata: a pseudo-file's st_size understates it.
+          {
+            const chunks = [];
+            let total = 0;
+            for (;;) {
+              const buf = Buffer.alloc(65536);
+              const n = readSync(xfd, buf, 0, buf.length, null);
+              if (n === 0) break;
+              total += n;
+              if (total > MAX_INSTRUMENT_BYTES) {
+                throw new FailClosed('UNRESOLVED', `${file} external instrument too large (content exceeded the cap while reading; fstat size ${xst.size}): ${abs}`);
+              }
+              chunks.push(buf.subarray(0, n));
+            }
+            bytes = Buffer.concat(chunks, total);
+          }
+        } catch (e) { if (e instanceof FailClosed) throw e; throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs}`); }
+        finally { if (xfd !== null) { try { closeSync(xfd); } catch { /* closed */ } } }
+      }
       external += 1;
     } else {
       // A mode-120000 instrument is a symlink (v3): `cat-file blob` returns its TARGET STRING, so
@@ -712,6 +757,34 @@ function runSelftest(root) {
   const rcAllPrefixedNbsp = mkdir({ 'a.txt': pre('\u00A0')(okA) });
   expect('single-prefixed-zwsp-parses', runTool(['--dir', rcAllPrefixedZwsp, '--rev', c2]), 0, CLE(1));
   expect('single-prefixed-nbsp-parses', runTool(['--dir', rcAllPrefixedNbsp, '--rev', c2]), 0, CLE(1));
+
+  // v5: bounded external reads — each new class, with the CLEAN twins at/under the cap.
+  const rcExtZero = mkdir({ 'a.txt': body(c2, '0'.repeat(64), 'node /dev/zero') });
+  const rcExtNull = mkdir({ 'a.txt': body(c2, '0'.repeat(64), 'node /dev/null') });
+  const fifoPath = join(outside, 'tool-fifo');
+  if (spawnSync('mkfifo', [fifoPath]).status !== 0) return fixtureFail('mkfifo');
+  const rcExtFifo = mkdir({ 'a.txt': body(c2, '0'.repeat(64), `bash ${fifoPath}`) });
+  const rcExtDir = mkdir({ 'a.txt': body(c2, '0'.repeat(64), `bash ${outside}`) });
+  const overPath = join(outside, 'tool-overcap');
+  const atPath = join(outside, 'tool-atcap');
+  const emptyPath = join(outside, 'tool-empty');
+  writeFileSync(emptyPath, '');
+  if (spawnSync('truncate', ['-s', '16777217', overPath]).status !== 0) return fixtureFail('truncate overcap');
+  if (spawnSync('truncate', ['-s', '16777216', atPath]).status !== 0) return fixtureFail('truncate atcap');
+  const rcExtOvercap = mkdir({ 'a.txt': body(c2, '0'.repeat(64), `bash ${overPath}`) });
+  const rcExtAtcap = mkdir({ 'a.txt': body(c2, sha256(Buffer.alloc(MAX_INSTRUMENT_BYTES)), `bash ${atPath}`) });
+  const rcExtEmpty = mkdir({ 'a.txt': body(c2, sha256(Buffer.alloc(0)), `bash ${emptyPath}`) });
+  expect('external-dev-zero', runTool(['--dir', rcExtZero, '--rev', c2]), 2, FC('UNRESOLVED'));
+  expect('external-dev-null', runTool(['--dir', rcExtNull, '--rev', c2]), 2, FC('UNRESOLVED'));
+  expect('external-fifo', runTool(['--dir', rcExtFifo, '--rev', c2]), 2, FC('UNRESOLVED'));
+  expect('external-directory', runTool(['--dir', rcExtDir, '--rev', c2]), 2, FC('UNRESOLVED'));
+  expect('external-over-cap', runTool(['--dir', rcExtOvercap, '--rev', c2]), 2, FC('UNRESOLVED'));
+  expect('external-at-cap-clean', runTool(['--dir', rcExtAtcap, '--rev', c2]), 0, CLE(1, 1));
+  expect('external-empty-clean', runTool(['--dir', rcExtEmpty, '--rev', c2]), 0, CLE(1, 1));
+  // A regular procfs file whose st_size is 0 but whose content never ends is refused by the read
+  // bound (round-91 K91ReviewProc; Linux /proc/self/pagemap).
+  const rcExtPagemap = mkdir({ 'a.txt': body(c2, '0'.repeat(64), 'bash /proc/self/pagemap') });
+  expect('external-pseudo-file-unbounded', runTool(['--dir', rcExtPagemap, '--rev', c2]), 2, FC('UNRESOLVED'));
 
   // The judged bytes are the revision's, not the worktree's: a dirty instrument still binds the
   // committed digest, and a digest of the dirty bytes does not bind at the committed revision.

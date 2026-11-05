@@ -1,0 +1,24 @@
+fixture rev e58cf577817974b43a94aa3059d09f2bbeccc2af
+cap 16777216
+
+PS1 | /proc/kallsyms: st_mode regular=True st_size=0 content_bytes=22489015 over_cap=True sha256=fee87b79c9e354e93ab9149339e51a81b01136c870b84de54de7ceb2c9eb463c
+     content stable across two reads: True
+     (the receipt carries the CORRECT digest of the file's actual content)
+     v4   exit=0 wall=0.15s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+     ref  exit=0 wall=0.15s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+     cand exit=0 wall=0.16s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+     expected (claim): FAIL-CLOSED UNRESOLVED exit 2 — content is over the cap
+
+PS2 | /proc/self/pagemap: st_size=0, content=274877906936 bytes (256 GiB) >> cap
+     v4   exit=-5 wall=0.96s :: timeout: the monitored command dumped core
+     ref  exit=-5 wall=0.95s :: timeout: the monitored command dumped core
+     cand exit=-5 wall=0.94s :: timeout: the monitored command dumped core
+     expected (claim): FAIL-CLOSED UNRESOLVED exit 2 within 20 s under 2 GiB AS
+     NOTE: exit 133 + no verdict line is the SAME failure mode as the round-90 A4
+           (/dev/zero) that this round's claim exists to fix.
+
+PS3 | /proc/self/smaps: st_size=0, content under the cap
+     v4   exit=1 wall=0.03s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+     ref  exit=1 wall=0.02s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+     cand exit=1 wall=0.02s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+

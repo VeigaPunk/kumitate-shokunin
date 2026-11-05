@@ -1,0 +1,19 @@
+372,377c372,379
+<       try {
+<           const fdt = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+<           const tst = fstatSync(fdt);
+<           if (!tst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+<           if (tst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+<           bytes = readFileSync(fdt);
+---
+>       {
+>         let xfd = null;
+>         try {
+>           xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+>           const xst = fstatSync(xfd);
+>           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+>           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+>           bytes = readFileSync(xfd);
+378a381,382
+>         finally { if (xfd !== null) { try { closeSync(xfd); } catch { /* closed */ } } }
+>       }

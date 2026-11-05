@@ -1,0 +1,19 @@
+# K91Mutation — mutation runs against frozen predicate probe91-c1 (rev 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4)
+# Base: .ufo/waves/round-91/controls/ref-fd-fstat.mjs sha256 bc3df527ec224f2f5542d4c42f5583920503e433b5f39734a7be4db626a894db
+# m00-pristine sha256 == base (generator copy verified). Receipts: receipts/<id>.txt (+ .err, all 0 bytes), edits: receipts/<id>.diff
+# Verdict = frozen predicate; each run under prlimit --as=2147483648 timeout 300, TMPDIR=<scratch>, --alt /fast/scratch/hyaku
+m00-pristine	copy of committed positive control (no edit)	C91_C1: HELD held=56/56 rc=0 10s	(none — baseline conclusive)
+m01-drop-nonblock	external open drops O_NONBLOCK	C91_C1: UNMET held=55/56 rc=1 49s	ext-fifo (both contexts; FIFO open blocked, probe 20s arm bound caught it)
+m02-drop-nofollow	external open drops O_NOFOLLOW	C91_C1: HELD held=56/56 rc=0 10s	SURVIVOR
+m03-isfile-to-notisdirectory	!xst.isFile() -> !xst.isDirectory()	C91_C1: UNMET held=49/56 rc=1 10s	selftest (73/76), detect-r86-at-rev, detect-r86-renamed, escape-relative, alias-ancestor-external-twin, ext-empty-twin, ext-atcap (both contexts)
+m04-gte-cap	size cap > -> >= 16777216	C91_C1: UNMET held=55/56 rc=1 10s	ext-atcap (both contexts)
+m05-cap-minus1	size cap 16777216 -> 16777215	C91_C1: UNMET held=55/56 rc=1 10s	ext-atcap (both contexts)
+m06-cap-plus1	size cap 16777216 -> 16777217	C91_C1: UNMET held=55/56 rc=1 10s	ext-overcap (both contexts)
+m07-read-by-path	bytes = readFileSync(xfd) -> readFileSync(abs)	C91_C1: HELD held=56/56 rc=0 10s	SURVIVOR
+m08-swallow-failclosed	catch drops `if (e instanceof FailClosed) throw e`	C91_C1: HELD held=56/56 rc=0 10s	SURVIVOR
+m09-token-swap	not-regular FailClosed token UNRESOLVED -> ESCAPES_LANE	C91_C1: UNMET held=52/56 rc=1 10s	ext-zero, ext-null, ext-fifo, ext-dir (both contexts)
+m10-stat-abs	fstatSync(xfd) -> statSync(abs) (+ statSync import)	C91_C1: HELD held=56/56 rc=0 10s	SURVIVOR
+m11-remove-close	external finally-close removed (fd leak)	C91_C1: HELD held=56/56 rc=0 10s	SURVIVOR
+
+KILL RATIO: 7/11 killed = 64% (plus conclusive baseline m00 HELD 56/56).
+SURVIVORS: m02-drop-nofollow, m07-read-by-path, m08-swallow-failclosed, m10-stat-abs, m11-remove-close — all classified equivalent-on-suite (see w1/K91Mutation.md); zero in-class probe gaps.

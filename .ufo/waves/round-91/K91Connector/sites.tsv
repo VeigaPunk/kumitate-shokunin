@@ -1,0 +1,11 @@
+lane	path	line	function	path_source	fstat_checked	size_capped	nonblock_flag	class_rd2
+tabi	scripts/check-freshness.mjs	32	regularBytes	argv (--repo/--expected/--witness)	YES (fstatSync.isFile)	NO	NO (O_RDONLY|O_NOFOLLOW)	PARTIAL-OVERLAP
+tabi	scripts/check-aria-metadata.mjs	280	readEntry	argv/JSON metadata pathText	YES (fstatSync.isFile)	NO	NO (O_RDONLY|O_NOFOLLOW)	PARTIAL-OVERLAP
+tabi	scripts/check-sources.mjs	166	main	argv (--file REL / SOURCES.md)	YES (fstatSync.isFile)	NO	NO (O_RDONLY|O_NOFOLLOW)	PARTIAL-OVERLAP
+tabi	scripts/check-sources.mjs	232	checkCitation	SOURCES citation candidate path	YES (fstatSync.isFile)	NO	NO (O_RDONLY|O_NOFOLLOW)	PARTIAL-OVERLAP
+tabi	scripts/check-receipt-provenance.mjs	42	checkReceipt	argv (--dir) file entry	NO	NO	NO (default readFileSync)	SAME-CLASS-RD2
+tabi	scripts/check-receipt-provenance.mjs	53	checkReceipt	receipt text (r?.stdoutFile)	NO	NO	NO (default readFileSync)	EXACT-SAME-CLASS-RD2
+tabi	scripts/check-receipt-provenance.mjs	78	checkMatrix	argv (--dir) matrix.*.json	NO	NO	NO (default readFileSync)	SAME-CLASS-RD2
+tabi	scripts/report-contract.mjs	35	readUtf8	argv (--report / --shonen)	NO	NO	NO (default readFileSync)	SAME-CLASS-RD2
+tabi	scripts/check-instrument-registry-r68.mjs	119	main	argv (--skill)	NO	NO	NO (default readFileSync)	SAME-CLASS-RD2
+kake	scripts/probe-delta.mjs	58	parseHistory	argv (--history)	NO	NO	NO (default readFileSync)	SAME-CLASS-RD2

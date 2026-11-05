@@ -265,6 +265,9 @@ fixture suite, `--strict` to fail on warnings.
 | `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
 | `knowledge/receipt-invisible-prefix-fields.md` | Invisible-prefix field lines in receipts (v4): the six-member Cf/White_Space class, the duplicate-field bypass shape, the positive twins, and the measured 47/47 constructions that keep the claim UNMET | S258, S260, S261; `.ufo/waves/round-90/` (probe, controls, `w1/K90Reviewer.md`, `w1/K90CriticA.md`) |
 | `lessons/round-90.md` | Round-90 receipt-bind v4: the blind-scorer freeze, the 47/47 kill-rule constructions (whole-text strip; context-gated prefix), the admitted Q83, and the five mined mistakes | LOG.md round 90; `.ufo/waves/round-90/` |
+| `lessons/round-90-verifier-spotcheck.md` | Non-author round-90 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+| `knowledge/receipt-bounded-external-reads.md` | Bounded external reads (receipt-bind v5): descriptor open `O_NONBLOCK\|O_NOFOLLOW`, fstat type/size refusal, a chunked read bound for procfs files whose `st_size` understates content, and the 56/56 token-keyed constructions that keep the claim UNMET | S263, S264, S265; `.ufo/waves/round-91/` (probe, controls, `K91CriticA/`, `K91ReviewProc/`, `K91Sentinel/`, `close-l1/class-sampler.txt`) |
+| `lessons/round-91.md` | Round-91 receipt-bind v5: the two-context probe, the 14 pre-data controls with a positive control, the three 56/56 kill-rule constructions, admitted Q84/Q85, mistakes M3/M6/M7 | LOG.md round 91; `.ufo/waves/round-91/` |
 
 ## Known gaps
 

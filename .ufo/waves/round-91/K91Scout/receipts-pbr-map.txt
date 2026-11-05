@@ -1,0 +1,264 @@
+# K91Scout live receipts — round-91 recon
+# date: 2026-11-05 ; host: Linux 7.2.11-arch1-1 ; node: v26.12.0
+
+## R1  plan-before-ready --round 91 (frozen plan commit 2b1b8bf3)
+$ bash scripts/plan-before-ready.sh --round 91
+PLAN_BEFORE_READY: FAIL rev=2df92d8db51e17209658d946854b645560f0391b round=91 dir=.ufo/waves/round-91 reason=MAP_DRIFT plan=2b1b8bf3d274db8e608035bffb27bd3b3d4009d4 plan_ct=1793911922 marker=2df92d8db51e17209658d946854b645560f0391b marker_kind=dispatch marker_ct=1793912019 marker_path=.ufo/waves/round-91/w1-dispatch.json map=DRIFT map_exit=1 map_first=uncovered:lessons/round-90-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=91-91 rev=2df92d8db51e17209658d946854b645560f0391b exit=1 failed=91 na_rounds= map_red=91
+exit=1
+
+## R2  plan-before-ready --round 90 (prior round, contrast)
+PLAN_BEFORE_READY: PASS rev=2df92d8db51e17209658d946854b645560f0391b round=90 dir=.ufo/waves/round-90 plan=b67fa9639ca6537b92021ea938f769ff1ed6c883 plan_ct=1793872675 marker=82c9c7efb9d9567341c209ad888012646590e99f marker_kind=ready marker_ct=1793873830 marker_path=.ufo/waves/round-90/w1.ready map=CLEAN files=228 rows=228 covered=228
+PLAN_BEFORE_READY_SUMMARY: pass=1 fail=0 na=0 rounds=90-90 rev=2df92d8db51e17209658d946854b645560f0391b exit=0 failed= na_rounds= map_red=
+exit=0
+
+## R3  readme-map at the LIVE tip
+README_MAP: note unpinned:lessons/round-90-verifier-spotcheck.md
+README_MAP: DRIFT files=231 rows=230 covered=230 bad=2 first=uncovered:lessons/round-90-verifier-spotcheck.md
+exit=1
+
+## R4  readme-map inside git archive of the FROZEN plan commit 2b1b8bf3
+# git archive 2b1b8bf3 -> /fast/scratch/hyaku/kumitate-r91/K91Scout/arch-plan (stderr: )
+README_MAP: note unpinned:lessons/round-90-verifier-spotcheck.md
+README_MAP: DRIFT files=231 rows=230 covered=230 bad=2 first=uncovered:lessons/round-90-verifier-spotcheck.md
+exit=1
+
+## R5  corpus/lessons/round-90-verifier-spotcheck.md present at plan commit? row in corpus/README.md? pin in .ufo/pins/readme-map.json?
+file PRESENT at plan commit
+exit=0
+
+NO README row at plan commit
+exit=0
+
+NO readme-map pin at plan commit
+exit=0
+
+## R6  spotcheck-adopt --check (which spotchecks are unadopted)
+SPOTCHECK_COVERAGE: DRIFT spotchecks=57 uncovered=1 first=corpus/lessons/round-90-verifier-spotcheck.md
+MAP: DRIFT first=uncovered:lessons/round-90-verifier-spotcheck.md
+exit=1
+## R7  proxy-check --strict on the live lane (origin pin clone absent)
+$ node scripts/proxy-check.mjs --strict
+PROXY: FAIL-CLOSED (SRC_NOT_A_DIR) --src /fast/scratch/hyaku/kumitate-pin/src is absent
+proxy-check: fail-closed — SRC_NOT_A_DIR: --src /fast/scratch/hyaku/kumitate-pin/src is absent
+exit=2
+
+## R7b  origin repo + pinned revision present on this host
+$ git -C /home/vgpnk/Projects/ufo-fsd-alpha cat-file -t 31c465f15669f744848bd9f5d56191c5085670f7
+commit
+exit=0
+
+$ ls -d /fast/scratch/hyaku/kumitate-pin 2>&1
+ls: cannot access '/fast/scratch/hyaku/kumitate-pin': No such file or directory
+exit=2
+
+## R8  proxy C2 pair: derived (README rows / corpus notes) vs declared (SCORECARD kumitate-proxy-v1)
+derived C2 (README rows) = 230
+derived C2_total (corpus .md notes) = 231
+
+declared C2 = 230  (SCORECARD.md line 299)
+
+declared C2_total = 230  (SCORECARD.md line 300)
+## R9  frozen probe91 vs BASE v4 at the frozen rev 2b1b8bf3 (transcript: /fast/scratch/hyaku/kumitate-r91/K91Scout/probe-base-v4.txt)
+$ tail -8 /fast/scratch/hyaku/kumitate-r91/K91Scout/probe-base-v4.txt
+ARM ext-empty-twin: PASS A=PASS B=PASS
+ARM ext-fifo: FAIL A=FAIL B=FAIL | A: bound=OUT exit=null  | B: bound=OUT exit=null 
+ARM ext-dir: PASS A=PASS B=PASS
+ARM ext-overcap: FAIL A=FAIL B=FAIL | A: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1 | B: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM ext-atcap: PASS A=PASS B=PASS
+ARM midtoken-invisible: PASS A=PASS B=PASS
+ARM midtoken-twin: PASS A=PASS B=PASS
+C91_C1: UNMET held=52/56
+exit=0
+
+### R9b  base-v4 failing arms
+$ grep '^ARM .*: FAIL' /fast/scratch/hyaku/kumitate-r91/K91Scout/probe-base-v4.txt | sed 's/ | .*//'
+ARM ext-zero: FAIL A=FAIL B=FAIL
+ARM ext-null: FAIL A=FAIL B=FAIL
+ARM ext-fifo: FAIL A=FAIL B=FAIL
+ARM ext-overcap: FAIL A=FAIL B=FAIL
+exit=0
+
+### R9c  base-v4 sha256 (must equal controls/table.txt base-v4-at-rev row)
+$ sha256sum /fast/scratch/hyaku/kumitate-r91/K91Scout/tools/base-v4.mjs
+35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce  /fast/scratch/hyaku/kumitate-r91/K91Scout/tools/base-v4.mjs
+exit=0
+
+### R9d  the invocation (cmd + exit) as recorded in the transcript header is not in the probe output; re-state the command:
+$ timeout 900 node .ufo/waves/round-91/probe/probe91-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r91/K91Scout/w-base --alt /fast/scratch/hyaku --rev 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4 --tool /fast/scratch/hyaku/kumitate-r91/K91Scout/tools/base-v4.mjs
+## R10  frozen probe91 vs the WORKTREE v5 candidate (sha 33ee29eb...)
+$ tail -3 /fast/scratch/hyaku/kumitate-r91/K91Scout/probe-cand-worktree.txt
+ARM midtoken-invisible: PASS A=PASS B=PASS
+ARM midtoken-twin: PASS A=PASS B=PASS
+C91_C1: HELD held=56/56
+exit=0
+
+### R10b  invocation
+$ timeout 900 node .ufo/waves/round-91/probe/probe91-c1.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --work /fast/scratch/hyaku/kumitate-r91/K91Scout/w-cand --alt /fast/scratch/hyaku --rev 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4 --tool /fast/scratch/hyaku/kumitate-r91/K91Scout/tools/cand-worktree.mjs
+## R11  v5 candidate selftest count + the v5 header lines (worktree)
+$ timeout 300 node scripts/receipt-bind.mjs --selftest --work /fast/scratch/hyaku/kumitate-r91/K91Scout/st | tail -2
+RECEIPT_BIND_SELFTEST arm worktree-bytes-not-truth ok exit=1 RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=0 first=a.txt
+RECEIPT_BIND_SELFTEST: PASS held=84/84
+exit=0
+
+$ grep -n 'CONTRACT = \|MAX_INSTRUMENT_BYTES = \|MAX_RECEIPT_BYTES = \|isFile()' scripts/receipt-bind.mjs
+115:const CONTRACT = 'kumitate-receipt-bind-v5';
+116:const MAX_RECEIPT_BYTES = 1048576;
+117:const MAX_INSTRUMENT_BYTES = 16777216;
+300:    if (!st.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+310:      if (!fst.isFile()) throw new FailClosed('RECEIPT_UNREADABLE', `${path} is not a regular file`);
+397:          if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+exit=0
+### R11b  NOTE: the worktree candidate is a MOVING TARGET (another seat is editing scripts/receipt-bind.mjs live).
+$ sha256sum scripts/receipt-bind.mjs
+f39aab5c3de0e708c6f9f8d77b20b2ede540bc61518620a55521318ce66cc5e1  scripts/receipt-bind.mjs
+exit=0
+
+$ stat -c '%n mtime=%y' scripts/receipt-bind.mjs
+scripts/receipt-bind.mjs mtime=2026-11-05 18:05:15.307019398 -0300
+exit=0
+
+    observed: sha 33ee29eb… / selftest 83/83 at 20:59:41Z ; sha now differs and selftest reads 84/84.
+    => re-measure the suite count at M; the value in SKILL.md must be the M measurement, not this one.
+## R12  .ufo/waves/round-91/close/ already exists on disk (empty, scaffolding-created)
+$ ls -la --time-style=full-iso .ufo/waves/round-91/close/ .ufo/waves/round-91/open/
+.ufo/waves/round-91/close/:
+total 0
+drwxr-xr-x 1 vgpnk vgpnk   0 2026-11-05 17:45:24.822535017 -0300 .
+drwxr-xr-x 1 vgpnk vgpnk 476 2026-11-05 18:06:01.617576574 -0300 ..
+
+.ufo/waves/round-91/open/:
+total 4
+drwxr-xr-x 1 vgpnk vgpnk  32 2026-11-05 17:45:24.823535019 -0300 .
+drwxr-xr-x 1 vgpnk vgpnk 476 2026-11-05 18:06:01.617576574 -0300 ..
+-rw-r--r-- 1 vgpnk vgpnk 786 2026-11-05 17:45:25.116469484 -0300 census-start.txt
+exit=0
+
+$ git ls-files .ufo/waves/round-91/close | head; echo '(empty = untracked; git does not track empty dirs)'
+(empty = untracked; git does not track empty dirs)
+exit=0
+
+## R13  drafted r91 close runner refuses the existing --out (writes nothing)
+$ node .ufo/waves/round-91/close-runner/run-close91.mjs --lane /home/vgpnk/Projects/shokunin/kumitate-shokunin --rev 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4 --out /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/close --work /fast/scratch/hyaku/kumitate-r91/K91Scout/w91
+RUN_CLOSE: REFUSED OUT_EXISTS /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/close
+exit=3
+
+## R14  round-gate --round 91 (the three rows the close commit must add)
+$ node scripts/round-gate.mjs --round 91
+ROUND_GATE  error  REPORT_MISSING  /home/vgpnk/Projects/shokunin/.ufo/reports/round-91/kumitate.md
+ROUND_GATE  error  SCORECARD_ROW_MISSING  no table row starting "| 91 |" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md
+ROUND_GATE  warning  SCORECARD_PLAN_MISSING  ## Planned names no round later than 91
+ROUND_GATE  error  LOG_ENTRY_MISSING  no "- YYYY-MM-DD — round 91" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md
+ROUND_GATE: DRIFT (round=91 lane=kumitate checks=5 errors=3 warnings=1)
+exit=1
+
+### R14b  report file (fleet side, not the lane's) present?
+$ ls -la /home/vgpnk/Projects/shokunin/.ufo/reports/round-91/kumitate.md 2>&1
+ls: cannot access '/home/vgpnk/Projects/shokunin/.ufo/reports/round-91/kumitate.md': No such file or directory
+exit=2
+
+### R14c  r90 close: the same three rows were red at close and repaired in bf24587c
+$ tail -6 .ufo/waves/round-90/close/round-gate.txt
+ROUND_GATE  error  SCORECARD_ROW_MISSING  no table row starting "| 90 |" in /home/vgpnk/Projects/shokunin/kumitate-shokunin/SCORECARD.md
+ROUND_GATE  warning  SCORECARD_PLAN_MISSING  ## Planned names no round later than 90
+ROUND_GATE  error  LOG_ENTRY_MISSING  no "- YYYY-MM-DD — round 90" line in /home/vgpnk/Projects/shokunin/kumitate-shokunin/LOG.md
+ROUND_GATE: DRIFT (round=90 lane=kumitate checks=5 errors=3 warnings=1)
+exit=1
+signal=none
+exit=0
+
+$ git show --stat bf24587c | grep -E 'SCORECARD.md|LOG.md'
+ LOG.md                                             |  12 +
+ SCORECARD.md                                       |   1 +
+exit=0
+
+### R14d  the r91 probe REQUIRES --alt (probe91-c1.mjs:108 failClosed('ALT_REQUIRED'))
+$ sed -n '105,112p' .ufo/waves/round-91/probe/probe91-c1.mjs
+}
+if (!existsSync(lane)) failClosed('LANE_UNREADABLE', lane);
+if (!workArg) failClosed('WORK_REQUIRED');
+if (!altArg) failClosed('ALT_REQUIRED');
+if (!/^[a-f0-9]{40}$/.test(rev)) failClosed('REV_NOT_FULL', rev || 'absent');
+if (ctx !== '' && ctx !== 'A' && ctx !== 'B') failClosed('CTX_BAD', ctx);
+const work = resolve(workArg);
+const alt = resolve(altArg);
+exit=0
+
+### R14e  the probe91 usage line (73) and the context-A/B root lines (146-150)
+$ sed -n '73p;146,150p' .ufo/waves/round-91/probe/probe91-c1.mjs
+ *   node probe91-c1.mjs --lane <LANE> --work <SCRATCH> --alt <ALT-ROOT> --rev <40-hex> [--tool <receipt-bind.mjs>]
+// ---- child mode. Context A: fixtures under --work, TMPDIR=--work (an ancestor of every fixture).
+// Context B: fixtures under --alt/r-<rand>, TMPDIR=--alt/t-<rand> (a sibling, never an ancestor).
+// The fixture root name is drawn per run: no round constant, no arm word (Q82).
+const fixRoot = join(ctx === 'A' ? work : alt, `r-${randomBytes(4).toString('hex')}`);
+const tmpDir = ctx === 'A' ? work : join(alt, `t-${randomBytes(4).toString('hex')}`);
+exit=0
+
+## R15  the freeze-commit precedent behind F1
+### G30 THE KEY PRECEDENT: the r90 freeze adopted its predecessor's spot-check IN THE FREEZE COMMIT;
+###     the r91 freeze did NOT. This is why the r91 map arm is red.
+$ git show --stat b67fa963 | grep -E 'corpus/README.md|readme-map.json|plan.md'
+ .ufo/pins/readme-map.json                          |   3 +-
+ .ufo/waves/round-90/plan.md                        | 157 +++++
+ corpus/README.md                                   |   1 +
+exit=0
+
+$ git show --stat 2b1b8bf3 | grep -E 'corpus/README.md|readme-map.json|plan.md'; echo '(no corpus/README.md / readme-map.json lines above = the r91 freeze did NOT adopt)'
+ .ufo/waves/round-91/plan.md                        | 121 +++
+(no corpus/README.md / readme-map.json lines above = the r91 freeze did NOT adopt)
+exit=0
+
+$ git show b67fa963 -- corpus/README.md | grep '^+' | grep -v '^+++'
++| `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+exit=0
+
+$ git show 114877a3 --stat | grep -E 'corpus/README.md|readme-map.json'
+ .ufo/pins/readme-map.json                          |   3 +-
+ corpus/README.md                                   |   1 +
+exit=0
+
+### G31 the r90 verifier spot-check landed in the r91 BASE (0bff4bab), before the r91 freeze
+$ git show --stat 0bff4bab | tail -4
+    round-90 verifier spot-check (integrator, hyaku): non-author admit/reject
+
+ corpus/lessons/round-90-verifier-spotcheck.md | 122 ++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+exit=0
+
+$ git log --oneline --all -S 'lessons/round-90-verifier-spotcheck.md' -- corpus/README.md .ufo/pins/readme-map.json; echo '(empty = never adopted anywhere)'
+(empty = never adopted anywhere)
+exit=0
+## R16  LATE OBSERVATION (18:10 local): another seat adopted the r90 spot-check in the WORKTREE
+$ git status --porcelain | grep -v '^?? .ufo/waves/round-91/'
+ M .ufo/pins/readme-map.json
+ M corpus/README.md
+ M scripts/receipt-bind.mjs
+exit=0
+
+$ git diff .ufo/pins/readme-map.json corpus/README.md | grep '^[+-]' | grep -v '^[+-][+-]'
+-    "lessons/round-90.md"
++    "lessons/round-90.md",
++    "lessons/round-90-verifier-spotcheck.md"
++| `lessons/round-90-verifier-spotcheck.md` | Non-author round-90 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+exit=0
+
+$ node scripts/readme-map.mjs
+README_MAP: CLEAN files=231 rows=231 covered=231
+exit=0
+
+### R16b  BUT the plan-commit map arm is STILL red — it judges git archive <plan commit>, not the worktree
+$ timeout 600 bash scripts/plan-before-ready.sh --round 91 2>&1 | head -2
+PLAN_BEFORE_READY: FAIL rev=2df92d8db51e17209658d946854b645560f0391b round=91 dir=.ufo/waves/round-91 reason=MAP_DRIFT plan=2b1b8bf3d274db8e608035bffb27bd3b3d4009d4 plan_ct=1793911922 marker=2df92d8db51e17209658d946854b645560f0391b marker_kind=dispatch marker_ct=1793912019 marker_path=.ufo/waves/round-91/w1-dispatch.json map=DRIFT map_exit=1 map_first=uncovered:lessons/round-90-verifier-spotcheck.md
+PLAN_BEFORE_READY_SUMMARY: pass=0 fail=1 na=0 rounds=91-91 rev=2df92d8db51e17209658d946854b645560f0391b exit=1 failed=91 na_rounds= map_red=91
+exit=0
+
+### R16c  C2 accounting still stale in SCORECARD.md:299-300 (derived is now 231/231)
+$ grep -n '^C2=\|^C2_total=' SCORECARD.md | head -2
+299:C2=230
+300:C2_total=230
+exit=0
+
+$ ls corpus/knowledge/*.md corpus/lessons/*.md | wc -l; grep -c '^| `' corpus/README.md
+231
+231
+exit=0

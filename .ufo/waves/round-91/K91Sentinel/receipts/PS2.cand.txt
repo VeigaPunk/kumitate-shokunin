@@ -1,0 +1,30 @@
+### command
+prlimit --as=2147483648 -- timeout 20 node /fast/scratch/hyaku/kumitate-r91/K91Sentinel/tools/v5-candidate.mjs --dir /fast/scratch/hyaku/kumitate-r91/K91Sentinel/rcpt/PS2 --rev e58cf577817974b43a94aa3059d09f2bbeccc2af --lane /fast/scratch/hyaku/kumitate-r91/K91Sentinel/fixture-lane
+### exit
+-5
+### wall_s
+0.94
+### verdict
+timeout: the monitored command dumped core
+### stdout
+
+### stderr
+#
+# Fatal process out of memory: Worklist::Segment::Create
+#
+----- Native stack trace -----
+
+ 1: 0x9dde61  [node]
+ 2: 0x27ab085 v8::base::FatalOOM(v8::base::OOMType, char const*) [node]
+ 3: 0xf39c99  [node]
+ 4: 0x141d14b  [node]
+ 5: 0xf101b8  [node]
+ 6: 0xf400bf  [node]
+ 7: 0xf80610  [node]
+ 8: 0xf83eda  [node]
+ 9: 0xf240f0  [node]
+10: 0xf24b9d  [node]
+11: 0xf25679  [node]
+12: 0xf29af0  [node]
+13: 0x19c77d1  [node]
+timeout: the monitored command dumped core

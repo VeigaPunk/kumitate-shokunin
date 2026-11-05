@@ -1,0 +1,112 @@
+fixture lane /fast/scratch/hyaku/kumitate-r91/K91Sentinel/fixture-lane rev e58cf577817974b43a94aa3059d09f2bbeccc2af
+  v4   sha256=35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
+  ref  sha256=bc3df527ec224f2f5542d4c42f5583920503e433b5f39734a7be4db626a894db
+  cand sha256=33ee29ebcbe8eaafe11a4b55493a42f8d4d7ce20af5f5df118ab7d68c063013d
+
+A4 | cmd=node /dev/zero | class=IN-CLASS char device (never EOF)
+  v4   exit=-5 wall=0.9s :: timeout: the monitored command dumped core
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/zero
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/zero
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2 (<20s, 2 GiB AS)
+A5 | external FIFO, no writer | class=IN-CLASS FIFO
+  v4   exit=124 wall=20.0s :: (none)
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/fifo
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/fifo
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2 (no block)
+A6 | external regular file 512 MiB (over cap) | class=IN-CLASS over-cap regular
+  v4   exit=0 wall=0.35s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/big512.bin
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/big512.bin
+  expected: v4: CLEAN external=1 (whole file read) | ref+cand: FAIL-CLOSED UNRESOLVED exit 2
+A7-static | external symlink instrument (no race) | class=IN-CLASS-ish symlink
+  v4   exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/link
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/link
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/link
+  expected: all: FAIL-CLOSED SYMLINK_INSTRUMENT
+N7 | cmd=node /dev/null | class=IN-CLASS char device (reads empty)
+  v4   exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/null
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/null
+  expected: v4: CLEAN external=1 (binds as empty) | ref+cand: FAIL-CLOSED UNRESOLVED exit 2
+N8 | external directory | class=IN-CLASS directory
+  v4   exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext (EISDIR)
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2
+N9 | external regular file 16777217 bytes (cap+1), correct digest | class=IN-CLASS over-cap regular
+  v4   exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/capplus1.bin
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/capplus1.bin
+  expected: v4: CLEAN external=1 | ref+cand: FAIL-CLOSED UNRESOLVED exit 2
+N10 | external regular file exactly 16777216 bytes (at cap), correct digest | class=IN-CLASS at-cap regular
+  v4   exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  cand exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected: all: CLEAN matched=1 external=1 (at cap binds as before)
+N11 | external empty regular file, sha256(empty) | class=IN-CLASS empty regular
+  v4   exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  cand exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected: all: CLEAN matched=1 external=1 (empty binds as before)
+N1 | /proc/self/fd/1 token | class=NEW pseudo-path (symlink)
+  v4   exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /proc/self/fd/1
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /proc/self/fd/1
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /proc/self/fd/1
+  expected: all: FAIL-CLOSED SYMLINK_INSTRUMENT
+N2 | /dev/stdin token | class=NEW pseudo-path (symlink)
+  v4   exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /dev/stdin
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /dev/stdin
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /dev/stdin
+  expected: all: FAIL-CLOSED SYMLINK_INSTRUMENT
+N3 | external named unix socket | class=NEW non-regular (socket)
+  v4   exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sock (ENXIO)
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sock
+  cand exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sock
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2
+N4 | external regular file mode 0000 | class=NEW unreadable regular
+  v4   exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/mode0000.bin (EACCES)
+  ref  exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/mode0000.bin
+  cand exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/mode0000.bin
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2 (EACCES)
+N5 | external sparse file 2^40 bytes | class=IN-CLASS over-cap regular
+  v4   exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sparse2p40.bin (ERR_FS_FILE_TOO_LARGE)
+  ref  exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sparse2p40.bin
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sparse2p40.bin
+  expected: all: FAIL-CLOSED UNRESOLVED exit 2 (no 1 TiB read)
+N6 | external path through /proc/self/root | class=NEW alias path
+  v4   exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  cand exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected: all: CLEAN matched=1 external=1 (same as the plain path)
+N12 | char device behind a symlinked parent (still /dev/ spelled) | class=IN-CLASS char device
+  v4   exit=-5 wall=1.03s :: timeout: the monitored command dumped core
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/linkroot/dev/zero
+  cand exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/linkroot/dev/zero
+  expected: v4: no verdict (OOM) | ref+cand: FAIL-CLOSED UNRESOLVED exit 2
+N13 | char device via /proc/self/root/dev/zero | class=OUT-of-CLASS (plan excludes)
+  v4   exit=-5 wall=0.95s :: timeout: the monitored command dumped core
+  ref  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /proc/self/root/dev/zero
+  cand exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /proc/self/root/dev/zero
+  expected: v4: no verdict (OOM) | ref+cand: FAIL-CLOSED UNRESOLVED exit 2 (ref is stronger than claimed) | plan: 'a char device reachable without a /dev/ spelling' is NOT claimed
+N15 | external regular file behind a symlinked parent | class=NEW alias path
+  v4   exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref  exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  cand exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected: all: CLEAN matched=1 external=1
+
+== pseudo-file measurement: is a size-from-fstat cap a bound on the bytes read? ==
+  {"p":"/proc/self/status","isFile":true,"stSize":0,"readBytes":1528,"exceedsCap":false,"sha":"81239edb490b444fcdcd4879ede763853f606dd4b31733d9f7e470248a0215d6"}
+  {"p":"/proc/self/maps","isFile":true,"stSize":0,"readBytes":8085,"exceedsCap":false,"sha":"8bd2e1194cf977940fc5d8364916213798da1987eb66264597797874cdf8d785"}
+  {"p":"/proc/self/smaps","isFile":true,"stSize":0,"readBytes":83320,"exceedsCap":false,"sha":"5fcf26371168ba2034812c82910d3662d6941df8cda993d468d118b3b60ec5e8"}
+  {"p":"/proc/self/mountinfo","isFile":true,"stSize":0,"readBytes":4078,"exceedsCap":false,"sha":"a6416e1d812de53ad90d3d8ecfa34d66e542a2ff4240beb360016509c9455f13"}
+  {"p":"/proc/self/environ","isFile":true,"stSize":0,"readBytes":14121,"exceedsCap":false,"sha":"d98e2036d72a1c996a27c662bab6d40872db36e580b88aec63a6c3ca76adb384"}
+  {"p":"/proc/self/cmdline","isFile":true,"stSize":0,"readBytes":370,"exceedsCap":false,"sha":"c552058af6051277cfc7ab2cf562fbaa6f96ffe0bdf91893089a0c0e3990ab93"}
+  {"p":"/proc/self/limits","isFile":true,"stSize":0,"readBytes":1323,"exceedsCap":false,"sha":"3c149d5d386c0162e275e03fb207f521bd3760638ee8c01fe98506f1e72d9d1a"}
+  {"p":"/proc/self/task/1/status","err":"ENOENT"}
+  {"p":"/sys/kernel/mm/transparent_hugepage/enabled","isFile":true,"stSize":4096,"readBytes":23,"exceedsCap":false,"sha":"092d84607a0a488f54fe63a5a1ec15e36b307b64c402b1a1d0cae514df659e4d"}
+  {"p":"/sys/devices/system/cpu/online","isFile":true,"stSize":4096,"readBytes":5,"exceedsCap":false,"sha":"2dd7c31aaeb6b872858839ef552b488b3da94db79d5cbf53a52016c621d9c0ca"}
+  {"p":"/proc/version","isFile":true,"stSize":0,"readBytes":158,"exceedsCap":false,"sha":"dc32188aca03a7ae8a2516f541ff4cd7b4074b2dc4f7caec188c9b5d2f95646b"}
+  {"p":"/proc/self/coredump_filter","isFile":true,"stSize":0,"readBytes":9,"exceedsCap":false,"sha":"7b672366a2f8d5a51de64b92ed2eb0b4afed2736ca1c1bd6c03a31d30286429c"}
+  {"p":"/proc/self/keys","err":"ENOENT"}
+  {"p":"/proc/self/attr/current","err":"EINVAL"}
+

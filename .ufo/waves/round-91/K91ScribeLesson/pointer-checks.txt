@@ -1,0 +1,92 @@
+# pointer-checks — every pointer cited in .ufo/waves/round-91/K91ScribeLesson/{knowledge-receipt-bounded-external-reads.md,lesson-mistakes.md,quality-candidate.md}
+# lane root: /home/vgpnk/Projects/shokunin/kumitate-shokunin ; read-only checks only (ls / grep / git show)
+
+RESOLVES  .ufo/waves/round-91/controls/ctl-base-v4-at-rev.txt  (2653 bytes)
+RESOLVES  .ufo/waves/round-91/controls/table.txt  (3510 bytes)
+RESOLVES  .ufo/waves/round-91/controls/ctl-ref-fd-fstat.txt  (2200 bytes)
+RESOLVES  .ufo/waves/round-91/controls/ctl-r90-roundpath-gated+ref.txt  (3668 bytes)
+RESOLVES  .ufo/waves/round-91/controls/ctl-r90-tmpdir-gated+ref.txt  (3668 bytes)
+RESOLVES  .ufo/waves/round-91/controls/ctl-r90-global-strip+ref.txt  (2459 bytes)
+RESOLVES  .ufo/waves/round-91/controls/ref-fd-fstat.mjs  (46458 bytes)
+RESOLVES  .ufo/waves/round-91/controls/run-controls91.mjs  (9516 bytes)
+RESOLVES  .ufo/waves/round-91/probe/probe91-c1.mjs  (44444 bytes)
+RESOLVES  .ufo/waves/round-91/plan.md  (8912 bytes)
+RESOLVES  .ufo/waves/round-90/w1/K90CriticA.md  (8250 bytes)
+RESOLVES  .ufo/waves/round-90/w1/K90Sentinel.md  (10766 bytes)
+RESOLVES  .ufo/waves/round-90/w1/K90Reviewer.md  (6031 bytes)
+RESOLVES  .ufo/waves/round-90/close/round-gate.txt  (709 bytes)
+RESOLVES  .ufo/waves/round-90/K90CriticA/cand/e-round-path-gated-prefix.mjs  (42839 bytes)
+RESOLVES  .ufo/waves/round-90/K90CriticA/cand/d-tmpdir-gated-prefix.mjs  (42909 bytes)
+RESOLVES  corpus/lessons/round-90.md  (7323 bytes)
+RESOLVES  corpus/lessons/round-90-verifier-spotcheck.md  (13237 bytes)
+RESOLVES  corpus/QUALITY.md  (160901 bytes)
+RESOLVES  corpus/knowledge/receipt-invisible-prefix-fields.md  (4120 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeSources/fifo.7.html  (9248 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeSources/open.2.html  (76506 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeSources/fs.html  (774165 bytes)
+RESOLVES  .ufo/waves/round-91/K91ExecInst/receipt-bind-v5.mjs  (49602 bytes)
+RESOLVES  .ufo/waves/round-91/K91ExecCarry/round-gate-r90.txt  (491 bytes)
+RESOLVES  .ufo/waves/round-91/close-runner/run-close91.mjs  (16310 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeLesson/evidence/probe-base-v4-at-rev.txt  (2646 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeLesson/evidence/probe-v5-run1.txt  (2193 bytes)
+RESOLVES  .ufo/waves/round-91/K91ScribeLesson/evidence/evidence-sweep-mistakes.txt  (13145 bytes)
+
+# fleet-repo pointers (outside the lane; cited with absolute paths in the lesson draft)
+RESOLVES  /home/vgpnk/Projects/shokunin/.ufo/reports/round-90/kumitate.md  (17512 bytes)
+
+# line-level checks on the two cited fleet-report lines:
+74:- `round-gate --round 90`: `ROUND_GATE: DRIFT` at the close snapshot only because this report and the round-90 SCORECARD/LOG records did not yet exist; re-run after this report lands (see Pre-report gate).
+126:## Pre-report gate
+# the Pre-report gate section body (lines 126-129) — no round-gate line in it:
+## Pre-report gate
+
+- Lane ls-remote (must equal the final lane hash): `git -C /home/vgpnk/Projects/shokunin/kumitate-shokunin ls-remote origin refs/heads/master` → `bf24587c3e5a17f426b3b6c6dbea777eac054544` (recorded at filing; `jj-lane.sh state` reports `local=remote=bf24587c…`, `ahead=0 behind=0`).
+- `grep -c '^## SHONEN'` on this report → 1 (one heading, four `[~]` lines).
+
+# content greps behind the lesson/knowledge/quality claims:
+-- ctl-base-v4-at-rev.txt ext arms (do-nothing evidence):
+ARM ext-zero: FAIL A=FAIL B=FAIL | A: bound=OUT exit=null  | B: bound=OUT exit=null 
+ARM ext-null: FAIL A=FAIL B=FAIL | A: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1 | B: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM ext-empty-twin: PASS A=PASS B=PASS
+ARM ext-fifo: FAIL A=FAIL B=FAIL | A: bound=OUT exit=null  | B: bound=OUT exit=null 
+ARM ext-dir: PASS A=PASS B=PASS
+ARM ext-overcap: FAIL A=FAIL B=FAIL | A: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1 | B: bound=in exit=0 RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+ARM ext-atcap: PASS A=PASS B=PASS
+-- ctl-ref-fd-fstat.txt headline (positive control):
+C91_C1: HELD held=56/56
+-- ctl-r90-roundpath-gated+ref.txt: count of A=PASS B=FAIL and headline:
+8
+C91_C1: UNMET held=47/56
+-- ctl-r90-tmpdir-gated+ref.txt: count of A=PASS B=FAIL and headline:
+8
+C91_C1: UNMET held=47/56
+-- table.txt: the four rows the drafts quote:
+base-v4-at-rev	C91_C1: UNMET held=52/56	ext-zero,ext-null,ext-fifo,ext-overcap
+ref-fd-fstat	C91_C1: HELD held=56/56	
+refuse-all	C91_C1: UNMET held=8/56	usage,selftest,detect-r86-at-rev,detect-r86-renamed,clean-r87-at-rev,unchecked,dir-missing,rev-bad,symlink-receipt,rev-receipt-wins,worktree-forgery,default-rev,rev-receipt-negative,escape-relative,symlink-dir,oversize,duplicate-field,sweep,default-rev-not-head,index-not-judged,abs-in-lane-at-rev,limit-edge,limit-before-read,escape-inner-dotdot,dup-equal-field,alias-proc-root,alias-proc-root-clean,bom-rev,symlink-instrument,symlink-instrument-space-target,symlink-instrument-twin,abs-symlink-instrument,dotdot-inside,dotdot-inside-worktree,alias-ancestor,alias-ancestor-worktree,alias-ancestor-external-twin,dup-feff,dup-zwsp,dup-zwnj,dup-zwj,dup-lrm,dup-nbsp,single-zwsp,single-nbsp,ext-empty-twin,ext-atcap,midtoken-twin
+absent	C91_C1: UNMET held=0/56	usage,selftest,detect-r86-at-rev,detect-r86-renamed,clean-r87-at-rev,unchecked,unresolved,dir-missing,rev-bad,symlink-receipt,rev-receipt-wins,worktree-forgery,default-rev,rev-receipt-negative,untracked-instrument,escape-relative,symlink-dir,oversize,duplicate-field,sweep,default-rev-not-head,index-not-judged,abs-in-lane-at-rev,limit-edge,limit-before-read,escape-inner-dotdot,dup-equal-field,alias-proc-root,alias-proc-root-clean,bom-rev,symlink-instrument,symlink-instrument-space-target,symlink-instrument-twin,abs-symlink-instrument,dotdot-inside,dotdot-inside-worktree,alias-ancestor,alias-ancestor-worktree,alias-ancestor-external-twin,dup-feff,dup-zwsp,dup-zwnj,dup-zwj,dup-lrm,dup-nbsp,single-zwsp,single-nbsp,ext-zero,ext-null,ext-empty-twin,ext-fifo,ext-dir,ext-overcap,ext-atcap,midtoken-invisible,midtoken-twin
+-- probe91 two-context lines (M3 fix evidence):
+10: *          context A builds fixtures under --work with TMPDIR=--work (an ancestor of every
+11: *          fixture); context B builds fixtures under `--alt/r-<rand>` with TMPDIR=`--alt/t-<rand>`
+12: *          (a sibling, never an ancestor). An arm PASSES only if it passes in BOTH contexts, so a
+-- probe91 mid-token arm (M4, adjacent class):
+821:  arm('midtoken-invisible', fixtureOk && isFail(r, 'UNRESOLVED'), brief(r));
+828:  arm('midtoken-twin', fixtureOk && isClean(r, 1, 0), brief(r));
+-- corpus/QUALITY.md highest criterion id:
+### Q83
+-- corpus/lessons/round-90.md M3 + M5 rows:
+1
+1
+-- round-90 spotcheck §6.1 round-gate route:
+95:1. **ROUND_GATE red at close snapshot** (committed `close/round-gate.txt`: `REPORT_MISSING`,
+-- K90CriticA constructions d and e at 47/47:
+15:Constructions reaching 47/47: `d-tmpdir-gated-prefix` and `e-round-path-gated-prefix`. Kill-rule verdict for
+29:| **d-tmpdir-gated-prefix** (K89-V1 tolerance only if `TMPDIR` is an ancestor of `--dir`) | **47/47** | **47/47** | none |
+30:| **e-round-path-gated-prefix** (K89-V1 tolerance only if `--dir` contains `/kumitate-r90/`) | **47/47** | **47/47** | none |
+56:d-tmpdir-gated-prefix   TMPDIR=.../np-other : CLEAN matched=1 ... exit=0      <- skips K89-V1 outside the gate
+-- K90Sentinel rows A4/A5 (fixed-string match; the earlier grep's empty alternation matched every line):
+| A4 | `cmd=node /dev/zero`: unbounded read of an external instrument (d) | MED | no verdict; V8 `Fatal process out of memory: Worklist::Segment::Create`, exit 133 (2 GiB `ulimit -v`) |
+| A5 | external FIFO instrument: open blocks (d) | MED | no verdict; `exit: 124` after 15 s |
+-- close-runner: round-gate case and no SCORECARD/LOG write:
+178:  ['round-gate', 'node', ['scripts/round-gate.mjs', '--round', ROUND]],
+0

@@ -292,12 +292,12 @@ The K census decision supplies both members and findings; the score is now
 
 <!-- kumitate-proxy-v1
 A=36
-A_wave=1253
+A_wave=1319
 C=46
 C1=19
 C1_total=19
-C2=230
-C2_total=230
+C2=233
+C2_total=233
 S_members=88
 S_sections=88
 R_members=92
@@ -335,7 +335,7 @@ pin.bind-oracle=c3929a97c5b24303b1acadb62ebaa4778768585597cf7fc06d2996602ec211e5
 pin.cap-spawn=1fde43fb7f68992fb5e692188cd9afd3581d1d16c720815adc8d3a1ca3c734d0
 pin.counter-rerun=c002523fc39b521f57a3ee86c3ff154e06aea8ccd6738501138460141abc369b
 pin.receipt-attest=ba5139b1290b204054c043df3140554757116e6fbaf19783b502a24ed1b2ce31
-pin.receipt-bind=35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
+pin.receipt-bind=f39aab5c3de0e708c6f9f8d77b20b2ede540bc61518620a55521318ce66cc5e1
 pin.counter-pins=060d5d8662701340da24f483316053be86bed246510c541a0518492e7b29028e
 pin.source-capture=39bdeb39298672dd3ed81036013de542ad6925587cb84f330ab69de6799d28f5
 pin.source-dupes=ead88b22fbd1525d13dd46c67b427041dc331d202a005285adea813c32530d7a
@@ -471,6 +471,7 @@ the frozen definitions name.
 
 | Round | Axis | Before | After | Evidence |
 |---|---|---|---|---|
+| 91 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v5, bounded external reads; sourced on S263/S264/S265 — **UNMET**, rejected-honest-stop by frozen kill clause (d); no capability row) | `node .ufo/waves/round-91/probe/probe91-c1.mjs --lane . --work <scratch> --alt /fast/scratch/hyaku --rev 0bff4babeec90dd57ea36efeaa94b66db9af381d --tool <v4 at rev>` → do-nothing `C91_C1: UNMET held=52/56` exit 1 (`.ufo/waves/round-91/controls/ctl-base-v4-at-rev.txt`; fails `ext-zero`, `ext-null`, `ext-fifo`, `ext-overcap`); positive control `HELD 56/56`, refuse-all 8/56 (`controls/table.txt`) | at M the integrated v5 reads `C91_C1: HELD held=56/56` twice (`.ufo/waves/round-91/close/probe1.txt`, `close/probe2.txt`), selftest 76 → 84; but three seat constructions also read 56/56 and are wrong inside a declared class (`.ufo/waves/round-91/K91CriticA/scores.md`; L1 re-run `close-l1/l1-rerun-criticA-repros.txt`), so C1 is UNMET; Q84, Q85 admitted; the class sampler separates them (`close-l1/class-sampler.txt`). Lesson `corpus/lessons/round-91.md`; plan `2b1b8bf3` |
 | 90 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v4 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane . --work <scratch> --rev 7218699cfbdec702ba42f35ceac0a8e52d1bd564 --tool .ufo/waves/round-90/controls/…` → do-nothing v3 `C90_C1: UNMET held=39/47` exit 1 (`.ufo/waves/round-90/controls/ctl-base-v3-at-rev.txt`); the eight invisible-prefix arms fail (`dup-feff` … `dup-nbsp`, `single-zwsp`, `single-nbsp`) | at M `82c9c7ef` the integrated v4 reads `C90_C1: HELD held=47/47` exit 0 twice (`.ufo/waves/round-90/close/probe1.txt`, `close/probe2.txt`, `RUN_CLOSE: PROBE_DETERMINISM SAME`), selftest `PASS held=76/76` (`close/selftest.txt`), bind `CLEAN matched=12 … external=1` over 12 of 12 others (`close/bind.txt`), `PROXY: MATCH --strict` (`close/proxy.txt`). The kill rule fired: the reviewer's whole-text strip (`w1/K90Reviewer.md`) and the critic's context-gated prefix tolerances (`w1/K90CriticA.md`, `d-tmpdir-gated-prefix`, `e-round-path-gated-prefix`) each score 47/47, so C1 is UNMET. Checklist 43/46 (`close/checklist-items.txt`): items 737 (operator-owned `~/.omp/agent` findings), 756 (host-bound live OMP comparison) and 739 (cap-run; passes 12/12 on a direct rerun, red under `load1=11.77` in the battery) |
 | 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capability row) | `node .ufo/waves/round-89/probe/probe89-c1.mjs` at base → `C89_C1: UNMET held=27/30` exit 1 (`.ufo/waves/round-89/controls/ctl-base-v2-at-rev.txt`); the kill rule fired on three seat constructions at 30/30 (`build/K89Review/cand-probe-keyed.mjs`, `cand-skip-mode.mjs`, `build/K89Labrat/labrat-label-only.mjs`) | at M `7a8afb5f` the integrated v3 reads `C89_C1: HELD held=30/30`, but the same frozen counter scores the three constructions 30/30, so C1 is UNMET (`.ufo/waves/round-89/close/bind-final.txt` `RECEIPT_BIND: CLEAN matched=18`; `close/bind-selftest.txt` `PASS held=68/68`); routed defects K89-V1..V8 carried to round 90 (`corpus/lessons/round-89-verifier-spotcheck.md` §6). This row was absent at round 89 and is appended by round 90 as the round-89 gate repair (`round-gate` `SCORECARD_ROW_MISSING`).
 | 85 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `counter-receipt` v2) | `node .ufo/waves/round-85/probe/probe85-c1.mjs --lane .ufo/waves/round-85/controls/base --work DIR` → `C85_C1: UNMET held=1/20` exit 1 (`controls/base.txt`, the v1 tool); constant-CLEAN stub `0/20` (`controls/stub.txt`); label-keyed no-reader `1/20` (`controls/noreader.txt`); same-path content variation 0/3 on all three (`controls/cv-*.txt`); v1 could not see the r83 `ARMS = 27`/28-site disagreement at all | at M → `C85_C1: HELD held=20/20` exit 0 (`close/c1-probe.txt`); `--selftest` `PASS held=60/60`; same-path control `HELD held=3/3 distinct_sha=true`; `receipts/c1-repair.txt --src probe83-c1.mjs` → `DRIFT SOURCE_DECLARED`, `SOURCE: sites=28 declared=27 receipt=28`; independent 41-case driver `HELD 41/41`; mutant battery 11/11 mandated mutants killed, 3 survivors disclosed with non-equivalence proofs; `pin.counter-receipt` re-pinned; stanza A 908→972 (scaffolding, disclosed), C 44→45, C2 214→216 | `.ufo/waves/round-85/{plan.md,probe,controls,close}`; `corpus/knowledge/counter-receipt-discrimination.md`; `corpus/lessons/round-85.md`; Q78; S245 admit / S246 reject — **verdict C1 UNMET** (kill rule fires on post-data controls; rejected-honest-stop) |
@@ -577,6 +578,8 @@ the frozen definitions name.
 
 
 ## Planned
+
+**Round 92 — pre-registration** (written by round 91) lives at the end of this file under `## Round 92 pre-registration (written by round 91)`. **Round 91 — declared claim and measured disposition** live above it under `## Round 91 — declaration and measured disposition (2026-11-05)`.
 
 **Round 90 — declared claim** lives at the end of this file under `## Round 90 — declaration (2026-11-05)`.
 
@@ -4422,3 +4425,44 @@ One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal unde
 Frozen at `b67fa9639ca6537b92021ea938f769ff1ed6c883` (plan, 47-arm blind probe `probe90-c1.mjs`, 18 pre-data controls, the control driver, and the Q82 field discipline). Predicate: `node .ufo/waves/round-90/probe/probe90-c1.mjs --lane <LANE> --work <SCRATCH> --rev <REV>` prints `C90_C1: HELD held=47/47` exit 0. Kill rule: any control — committed, the worktree twin at M, or a seat-constructed tool that skips a claimed behaviour — at 47/47 makes C1 UNMET. Do-nothing control (committed v3 at `7218699c`): `C90_C1: UNMET held=39/47`. No second claim, no exploratory claim.
 
 Motivating evidence: rounds 87, 88 and 89 each lost this capability to the same frozen kill rule; round 89's own pre-registration binds this round to a scorer that satisfies Q82 (`corpus/QUALITY.md`).
+
+## Round 91 — declaration and measured disposition (2026-11-05)
+
+One claim: **C1 operability** (lowest non-retired axis; integer 9, terminal under `f_O`), capability
+acquisition `receipt-bind` v5 (contract `kumitate-receipt-bind-v5`): bounded external reads. Stagnation
+nudge active (saturation line 9, window N = 3; last verified capability row `counter-receipt` v3, round
+86). Sourced on S263 (fifo(7)), S264 (open(2)), S265 (Node.js fs), opened this round.
+
+Frozen at `2b1b8bf3d274db8e608035bffb27bd3b3d4009d4` (plan, probe `probe91-c1.mjs` sha256
+`3bd88e8e…3f4c`, 14 pre-data controls incl. the positive control `controls/ref-fd-fstat.mjs`); wave
+spec + validated dispatch `2df92d8db51e17209658d946854b645560f0391b`. Predicate: `C91_C1: HELD
+held=56/56` exit 0 on two runs at M. Kill rule (frozen, `.ufo/waves/round-91/plan.md`): (a) M not
+HELD, (b) a non-positive pre-data control at 56/56, (c) the worktree twin at 56/56, or (d) any tool at
+56/56 with a committed reproduction of a wrong verdict on an input of a declared class.
+
+| item | measured |
+|---|---|
+| do-nothing control (v4 at base, pre-data) | `C91_C1: UNMET held=52/56` (`controls/ctl-base-v4-at-rev.txt`) |
+| other pre-data controls | 12 below terminal (8/56 … 55/56), positive control `HELD 56/56` (`controls/table.txt`) |
+| predicate at M | `C91_C1: HELD held=56/56` exit 0 twice (`close/probe1.txt`, `close/probe2.txt`) |
+| tool selftest | `RECEIPT_BIND_SELFTEST: PASS held=84/84` (`close/selftest.txt`; 76 → 84) |
+| **kill rule** | **fired, clause (d)**: `K91CriticA/cand/cand-extsh-gate.mjs`, `cand-capwindow.mjs`, `cand-dirhash.mjs` each 56/56 ×3 with committed in-class reproductions (`K91CriticA/repro/*`, bundles); L1 re-run `close-l1/l1-rerun-criticA-repros.txt` |
+| harm | v4 vs positive control: AGREE 43/43 close dirs, 479/479 single receipts (`K91CriticB/harm.md`) |
+| mutation | 11 mutants of the positive control's external branch: 7 killed, 5 survivors classified equivalent-on-suite (`K91Mutation/mutants.txt`) |
+| integration beyond the claim | read bound on bytes read (procfs `st_size` 0): `/proc/self/pagemap` and `/proc/kallsyms` refused (K91ReviewProc, K91Sentinel; selftest arm `external-pseudo-file-unbounded`) |
+| class sampler (lesson instrument, not the counter) | v5 and positive control `HELD held=36/36` ×2; the three constructions and v4 UNMET ×2 (`close-l1/class-sampler.txt`) |
+
+**Verdict: C1 UNMET — rejected-honest-stop, no capability row.** The shipped v5 is right on every
+reproduction input; the frozen probe armed each declared class with one fixture token, so it could
+not tell v5 from token-keyed constructions (lesson M7, QUALITY Q85). Axes: operability 9 unchanged,
+every coverage row 10 unchanged, no axis harmed.
+
+## Round 92 pre-registration (written by round 91). Candidates, not commitments
+
+(1) **`receipt-bind` v5 under a class-sampling counter** (Q85) that keeps the two contexts (Q84): every
+declared external class drawn ≥ 6 times per run with random name/extension, over-cap size in
+[16777217, 16777216 + 2^20] plus procfs members (`/proc/self/pagemap`, `/proc/kallsyms`), directories
+empty or populated; the three round-91 constructions committed as pre-data controls. (2) K91Reviewer F1
+— an external symlink-leaf arm. (3) Cf members outside the v4 prefix set (U+00AD, U+200F, U+2060;
+`K91CriticA/repro/shy-strip`). (4) Mutation survivors m02/m07/m10 need a race or pseudo-file member.
+(5) Adjacency for tabi: `check-receipt-provenance.mjs:53` (RD-2 class; connector `w1/K91Connector.md`).

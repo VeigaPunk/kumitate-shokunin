@@ -1,0 +1,11 @@
+--- m00-pristine.mjs	2026-11-05 17:57:29.692177247 -0300
++++ m07-read-by-path.mjs	2026-11-05 17:57:29.692177247 -0300
+@@ -376,7 +376,7 @@
+           const xst = fstatSync(xfd);
+           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+-          bytes = readFileSync(xfd);
++          bytes = readFileSync(abs);
+         } catch (e) { if (e instanceof FailClosed) throw e; throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs}`); }
+         finally { if (xfd !== null) { try { closeSync(xfd); } catch { /* closed */ } } }
+       }

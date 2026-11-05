@@ -1,0 +1,20 @@
+--- m00-pristine.mjs	2026-11-05 17:57:29.692177247 -0300
++++ m10-stat-abs.mjs	2026-11-05 17:57:29.693230067 -0300
+@@ -86,7 +86,7 @@
+ import { spawnSync } from 'node:child_process';
+ import { createHash } from 'node:crypto';
+ import {
+-  closeSync, constants as fsConstants, existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync,
++  closeSync, constants as fsConstants, existsSync, fstatSync, lstatSync, mkdirSync, mkdtempSync, statSync,
+   openSync, readFileSync, readdirSync, realpathSync, rmSync, symlinkSync, writeFileSync, writeSync,
+ } from 'node:fs';
+ import { tmpdir } from 'node:os';
+@@ -373,7 +373,7 @@
+         let xfd = null;
+         try {
+           xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+-          const xst = fstatSync(xfd);
++          const xst = statSync(abs);
+           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+           bytes = readFileSync(xfd);

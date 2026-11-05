@@ -1,0 +1,11 @@
+--- m00-pristine.mjs	2026-11-05 17:57:29.692177247 -0300
++++ m08-swallow-failclosed.mjs	2026-11-05 17:57:29.692177247 -0300
+@@ -377,7 +377,7 @@
+           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+           bytes = readFileSync(xfd);
+-        } catch (e) { if (e instanceof FailClosed) throw e; throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs}`); }
++        } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs}`); }
+         finally { if (xfd !== null) { try { closeSync(xfd); } catch { /* closed */ } } }
+       }
+       external += 1;

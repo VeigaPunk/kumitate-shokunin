@@ -1,0 +1,19 @@
+fixture rev e58cf577817974b43a94aa3059d09f2bbeccc2af
+  v4   /fast/scratch/hyaku/kumitate-r91/K91Sentinel/tools/v4.mjs
+  ref  /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/controls/ref-fd-fstat.mjs
+  cand /fast/scratch/hyaku/kumitate-r91/K91Sentinel/tools/v5-candidate.mjs
+
+A7 | external symlink-swap race | class=OUT-of-CLASS (RD-3, atomicity of the type/size check)
+     (the receipt's tool_sha256 is the digest of the SYMLINK TARGET; a CLEAN = laundering)
+  v4   n=120: {'DRIFT': 67, 'SYMLINK_INSTRUMENT': 33, 'CLEAN(LAUNDERED)': 20}
+  ref  n=120: {'SYMLINK_INSTRUMENT': 41, 'DRIFT': 56, 'UNRESOLVED': 23}
+  cand n=120: {'DRIFT': 48, 'SYMLINK_INSTRUMENT': 42, 'UNRESOLVED': 30}
+  expected: v4 shows CLEAN (laundering) | ref/cand: ZERO CLEAN (O_NOFOLLOW open)
+
+A8 | receipt FIFO-swap race | class=OUT-of-CLASS (RD-4, receipt open is not the claim)
+  v4   n=150: {'CLEAN': 94, 'RECEIPT_UNREADABLE': 50, 'HUNG': 6}
+  ref  n=150: {'CLEAN': 105, 'RECEIPT_UNREADABLE': 43, 'HUNG': 2}
+  cand n=150: {'RECEIPT_UNREADABLE': 81, 'CLEAN': 69}
+  expected: v4/ref show some HUNG (no O_NONBLOCK on the receipt open);
+            cand adds O_NONBLOCK to the receipt open (RD-4 hardening, out of the claim)
+

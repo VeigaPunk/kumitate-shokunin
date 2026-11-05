@@ -1,0 +1,35 @@
+== P1: node readFileSync(fd) on st_size==0 pseudo-files ==
+{"p":"/proc/self/status","isFile":true,"size":0,"fdBytes":1542,"pathBytes":1542,"shaFd":"bbc6fcc6627217bbfd59b74a2e7a7c899d88a6279cb51d37c28e3cbe9f5a3cf7"}
+{"p":"/proc/self/cmdline","isFile":true,"size":0,"fdBytes":57,"pathBytes":57,"shaFd":"2a62d095bbab6ff86191eab19d08cbf543d6548c65ae86ab7143fba4468c4e2b"}
+{"p":"/sys/kernel/mm/transparent_hugepage/enabled","isFile":true,"size":4096,"fdBytes":23,"pathBytes":23,"shaFd":"092d84607a0a488f54fe63a5a1ec15e36b307b64c402b1a1d0cae514df659e4d"}
+
+
+P2: cannot hardlink /dev/zero: [Errno 18] Invalid cross-device link: '/dev/zero' -> '/fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/zeronode'
+P3 | external empty regular file, declared digest sha256(empty) | class=IN-CLASS empty regular
+  v4  exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+P4 | external regular file exactly at 16777216, correct digest | class=IN-CLASS at-cap regular
+  v4  exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+P5 | external regular file 16777217 bytes, CORRECT digest | class=IN-CLASS over-cap regular
+  v4  exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/overcap2.bin
+P6 | external /proc/self/status (st_size 0) with sha256(empty) | class=OUT-of-CLASS (pseudo-file; ReviewProc seat)
+  v4  exit=1 wall=0.03s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+  ref exit=1 wall=0.02s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+P7 fstat char device              /dev/zero: {"path":"/dev/zero","isFile":false,"isFifo":false,"isChr":true,"isDir":false,"isSock":false,"size":0}
+P7 fstat char device (empty)      /dev/null: {"path":"/dev/null","isFile":false,"isFifo":false,"isChr":true,"isDir":false,"isSock":false,"size":0}
+P7 fstat fifo                     /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/fifo2: {"path":"/fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/fifo2","isFile":false,"isFifo":true,"isChr":false,"isDir":false,"isSock":false,"size":0}
+P7 fstat directory                /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext: {"path":"/fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext","isFile":false,"isFifo":false,"isChr":false,"isDir":true,"isSock":false,"size":4096}
+P7 fstat proc pseudo-file         /proc/self/status: {"path":"/proc/self/status","isFile":true,"isFifo":false,"isChr":false,"isDir":false,"isSock":false,"size":0}
+P7 fstat proc fd symlink          /proc/self/fd/1: node:fs:621
+  return binding.open(
+                 ^
+
+Error: ELOOP: too many symbolic links encountered, open '/proc/se
+P7 fstat symlink to fd            /dev/stdin: node:fs:621
+  return binding.open(
+                 ^
+
+Error: ELOOP: too many symbolic links encountered, open '/dev/std
+

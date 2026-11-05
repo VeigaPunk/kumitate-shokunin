@@ -1,0 +1,36 @@
+== candidate cand-extsh-gate.mjs ==
+
+
+#
+# Fatal process out of memory: Worklist::Segment::Create
+#
+----- Native stack trace -----
+
+ 1: 0xa9e1c1  [node]
+ 2: 0x2942122 v8::base::FatalOOM(v8::base::OOMType, char const*) [node]
+ 3: 0xec9cf5  [node]
+ 4: 0xf86882  [node]
+ 5: 0xf715b3  [node]
+ 6: 0xf6cf87  [node]
+ 7: 0xf6cba6  [node]
+ 8: 0xf646f3  [node]
+ 9: 0xf63dfb  [node]
+10: 0xf45529  [node]
+11: 0xf44b9b  [node]
+12: 0xf55562  [node]
+13: 0xf5523f  [node]
+14: 0x19dc0f7  [node]
+15: 0xf41352  [node]
+16: 0xf3496d  [node]
+17: 0xf3471c  [node]
+18: 0xf477c9  [node]
+19: 0x10cded4  [node]
+20: 0xcf5cb5 v8::ArrayBuffer::NewBackingStore(v8::Isolate*, unsigned long, v8::BackingStoreInitializationMode, v8::BackingStoreOnFailureMode) [node]
+21: 0x9ab5dd  [node]
+22: 0x1a33bda  [node]
+timeout: the monitored command dumped core
+exit=133
+== positive control ref-fd-fstat.mjs (same receipt) ==
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument not a regular file: /proc/self/root/dev/zero
+exit=2
+/fast/scratch/hyaku/kumitate-r91/K91CriticA/fix-extsh-gate-devalias/run-repro.sh: line 18: 222712 Trace/breakpoint trap      prlimit --as=2147483648 -- timeout -k 5 25 node "$1" --dir "$W/rc" --rev "$REV" --lane "$L" 2>&1

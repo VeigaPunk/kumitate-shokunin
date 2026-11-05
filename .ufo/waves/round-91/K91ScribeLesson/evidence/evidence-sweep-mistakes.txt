@@ -1,0 +1,89 @@
+# SWEEP — `## Mistakes` sections, rounds 87-90 lessons + verifier spot-checks
+# command: for each file, awk '/^## Mistakes/,/^## [^M]/' <file>
+# lane /home/vgpnk/Projects/shokunin/kumitate-shokunin  (read-only)
+
+===== corpus/lessons/round-87.md
+  ## Mistakes
+  
+  | class | evidence | captured-by | fix and shown-able-to-fail boundary |
+  |---|---|---|---|
+  | attribution | R86-D1: `.ufo/waves/round-86/run-close.mjs:24` computes `sha256(scripts/counter-receipt.mjs)` inside the per-case loop, so 9 of the 10 round-86 close receipts name a subject they never invoked (`open/census-toolbind.txt`: receipts=239 bound=1 mismatch=9 no_cmd=229, i.e. 225 receipts with neither field plus 4 round-85 receipts with `cmd=` only) | Q79 (a receipt names the instrument it executed) plus PROTOCOL's revision-bound-evidence rule; neither was enforced by a gate | `scripts/receipt-bind.mjs` re-derives the pair from the receipt's own `cmd=`; shown able to fail: the round-86 bytes read `DRIFT matched=1 mismatched=9 unchecked=0` and a same-filename fixture flips to `mismatched=1` (arms `detect-r86`, `flip-cmd`, `flip-hash` of the frozen probe) |
+  | landing | the round-86 non-author spot-check again landed without its `corpus/README.md` map row (the frozen plan calls it the fourth recurrence in this series); `spotcheck-adopt --check` read `uncovered=1` at round open | Q80's predecessor (the map gate) reports the state but nothing forced adoption before the next freeze | adopted in-round through `scripts/spotcheck-adopt.mjs --lane . --adopt corpus/lessons/round-86-verifier-spotcheck.md` → `wrote=both`, `README_MAP: CLEAN files=220 rows=220 covered=220`; shown able to fail: `--check` read `DRIFT uncovered=1` immediately before the adoption |
+  | survivor | the frozen 12 arms cannot see a worktree-vs-revision hash substitution: `build/K87Critic/cand-a-worktree.mjs` reaches 12/12 while binding the wrong byte source | the frozen kill rule (a seat-constructed control reaching the target scores like a committed control) | disclosed as the reason C1 is UNMET; the fix is a v2 arm that makes the worktree and the judged revision differ (pre-registered for round 88), never a post-data edit of the frozen probe |
+  | number-drift | the plan's own count of "four same-directory fixtures" is right, but the arm table's `clean-r87` arm also requires `matched>=8`, a threshold that the seat fixtures satisfy only because the close runner emits 12 cases — a future close with fewer than 8 receipts would read `no-r87-close` instead of a clean miss | the L1's post-data re-read of `probe/probe87-c1.mjs:112` | recorded here as a descriptive limit of the frozen arm; the arm is not edited and the count is not restated as a claim |
+  | number-drift | the frozen plan and this round's first knowledge draft said "229 receipts carry neither `cmd=` nor `tool_sha256=`"; measured, 229 is the census bucket `no_cmd=229` = 225 with neither field + 4 round-85 receipts with `cmd=` only (`grep -L '^cmd=' .ufo/waves/round-{74..86}/close/*.txt` → 225; the four are `c1-probe.txt`, `content-variation.txt`, `history-v2.txt`, `selftest.txt`) | the scribe seat's field-state census (`build/K87ScribeLesson/census-field-states.txt`), reported to the L1 before integration; the bucket label was read as a field count | corrected in `corpus/knowledge/receipt-subject-binding.md`, `corpus/QUALITY.md` Q80 and this lesson; the frozen plan keeps its bytes and the correction is recorded here. Shown able to fail: the two statements disagree on the same committed file set |
+  | reference-drift | the frozen plan and the first knowledge draft cited `.ufo/waves/round-86/run-close.mjs:20` for the digest; line 20 is the `plan` case entry and the digest is line 24 | the scribe seat re-opened the file at `19b4e440`; the L1 had cited the line from the plan instead of the source | corrected in the knowledge entry and Q80; the plan's frozen prose stays as history. Shown able to fail: `git show 19b4e440:.ufo/waves/round-86/run-close.mjs` prints `['plan', …]` at line 20 |
+  | provider | one seat (`K87ExecSources`) reported no artifact before the wave settled, and the sentinel reviewed the L1 reference because the executor's candidate did not exist at its start time | the wave's tranche spawning under a shared 60-seat fleet cap | disclosed in the report with each seat's last status; no dead seat is credited |
+  
+
+===== corpus/lessons/round-88.md
+  ## Mistakes
+  
+  | class | evidence | captured-by | fix and shown-able-to-fail boundary |
+  |---|---|---|---|
+  | survivor (predicate power, recurrence of round 87) | nine seat constructions at `C88_C1: HELD held=20/20` (table above); the plan's own "why a do-nothing control cannot reach it" named only the worktree twin, receipt-`rev=` ignoring and blanket refusal | the frozen kill rule (it fired, as designed); Q81 as drafted named only the worktree twin | Q81 round-88 amendment (judged revision ≠ HEAD ≠ index ≠ worktree, absolute and relative tokens, every limit at its edge from both sides, run-time fixture bytes and names). **Not yet shown able to fail**: it binds round 89's scorer, whose pre-data control battery must include the nine constructions above as committed controls |
+  | attribution (K87-V1, mined from round 87) | round 87 cited `RECEIPT_BIND: CLEAN matched=12` for its close receipts; the committed `.ufo/waves/round-87/close/bind.txt` prints `matched=10` because `bind` ran before `c1-probe` and itself | Q80 (subject binding) does not cover "the bind receipt counted every other receipt" | close runner v3 (`run-close.mjs`) runs `bind` last and prints `BIND_CASE … counted=N others=N ALL\|SHORT`, exiting 1 on SHORT; shown able to fail: the round-87 bytes are a SHORT case (`bind.txt` counts 10 against 11 other receipts in that dir); the round-87 erratum receipt `open/k87v1-bind-r87.txt` reads `CLEAN matched=12 … external=1` |
+  | ordering (K87-V2) | round 87's plan commit read `PLAN_BEFORE_READY: FAIL … MAP_DRIFT` because the spot-check adoption landed after the freeze | `plan-before-ready` map arm (it caught it) | the round-87 spot-check was adopted inside the round-88 freeze commit (`open/spotcheck-adopt.txt`: `README_MAP: CLEAN files=223`); the close battery's `plan` case is the check at M |
+  | provider/process | the L1 wrote the integration target before the wave so attack seats had one fixed target (round 87's sentinel reviewed a reference because the candidate did not exist yet); disclosed, not a defect | — | — |
+  
+
+===== corpus/lessons/round-89.md
+  ## Mistakes
+  
+  | class | evidence pointer | captured-by | fix |
+  |---|---|---|---|
+  | **survivor** (round 88, mined here) | `build/K88Critic/SCORES.md` + `build/K88Critic/discriminate.mjs`: nine constructions reached 20/20 while the same round's own off-probe table already showed each of them wrong | `none` at the time — Q81 said a scorer must make the judged revision and the worktree differ, but nothing said a scorer must be scored by its own *known* constructions before the round freezes it | Q81's round-88 amendment (bind the fixture to HEAD/index/worktree/edges) **and** the pre-data control table this round committed (`controls/table.txt`) |
+  | **vacuous** (round 89, this round) | `build/K89Review/probe-cand-probe-keyed.txt` — a tool that computes nothing prints `C89_C1: HELD held=30/30` because `mk(name)` names each fixture directory `<arm>-<nonce>` and the probe reads only stdout | `none` — the plan's limit (a) asserted an output-text oracle could not be gamed this way; it was wrong | **Q82** (new): a scorer may not hand the candidate its fixture's identity; every shape-gated arm carries a positive twin |
+  | **survivor** (round 89, this round) | `build/K89Review/probe-cand-skip-mode.txt` (30/30 by a blob-shape test + literal prefix strip) and `build/K89ExecInst/abs-symlink-check.txt` (the probe has no arm for an *absolute* in-lane symlink token) | Q82, written this round after the finding — it did not exist when the probe was frozen | the Q82 twin requirement; the next scorer draws a non-bare symlink target and an absolute symlink token, and its fixture names carry no arm |
+  | **reference-drift** (round 89, this round) | `probe/probe89-c1.mjs` header still says A25 runs “under a 256 MiB address-space cap”; the code uses a mode-0000 sparse file (the cap was removed before the freeze commit) | Q82's "the scorer's docstring names the fixture it actually builds" | disclosed; the frozen probe is not edited after data |
+  
+
+===== corpus/lessons/round-90.md
+  ## Mistakes
+  
+  | class | evidence pointer | captured-by | fix |
+  |---|---|---|---|
+  | M1 — the scorer hands the candidate its fixture identity in the path (rounds 87, 88, 89: `random-fixture`; `probe88` root with arm-named dirs; `<arm>-<nonce>` basenames) | `corpus/lessons/round-89-verifier-spotcheck.md` §2; `.ufo/waves/round-89/build/K89Review/probe-cand-probe-keyed.txt` (30/30) | none before the freeze: Q82 entered the corpus at `7a8afb5f` (`git log -S'### Q82'`), after the round-89 freeze `adfc2f55`. The round-89 pre-data control table had no name-keyed row. | round-90 probe uses per-run random fixture labels and arm-free counters; `K90ExecAudit` (`q82-audit.mjs`) scans candidate-visible paths for arm labels: `CLEAN labels=47 scanned=130 hits=0` and, as a shown-able-to-fail negative, `LEAK hits=161` (`.ufo/waves/round-90/K90ExecAudit/audit-*.txt`). |
+  | M2 — the invisible-prefix class was never armed: a duplicate field behind U+200B/U+FEFF reads CLEAN (K89-V1) | `.ufo/waves/round-89/build/K89Sentinel/attacks.txt` rows B2, B3, B7; first committed at `7a8afb5f`, after the freeze | none: the round-89 probe had only the file-leading `bom-rev` arm | probe90 arms `dup-feff` … `dup-nbsp` and `single-zwsp`/`single-nbsp`. Red-before: base v3 `39/47`, failing exactly those eight arms (`controls/ctl-base-v3-at-rev.txt`). Green: v4 `47/47`. |
+  | M3 — the probe header's no-round-token claim is false: the mandated scratch root `/fast/scratch/hyaku/kumitate-r90/…` is the `--work` path the candidate sees, and the probe sets `TMPDIR=<work>` for every call | `.ufo/waves/round-90/w1/K90CriticA.md` (constructions d, e: 47/47 on two runs) | none: `K90ExecAudit` checked arm labels in path and file names only, not the scratch root token | **not fixed in round 90** (the probe is frozen; a rule changed after data is not the claim's rule). Routed to round 91: a counter version that runs each arm under two `TMPDIR` values and two work roots with no round token, and a context-invariance control outside the frozen probe. |
+  | M4 — the counter cannot tell field-line scoping from a whole-text strip (no arm places an invisible code point mid-token) | `.ufo/waves/round-90/w1/K90Reviewer.md` candidate 1 (47/47) and step 4 (`cmd=scripts/legit\u200B.mjs` binds CLEAN to `scripts/legit.mjs`) | none | **not fixed in round 90** (frozen). Routed to round 91: mid-token arm with a positive twin (the same receipt without the code point binds clean) and an arm with an invisible code point in a non-field line. |
+  | M5 — round 89 closed with the round-gate's required record lines absent (`SCORECARD` row 89, `LOG` round-89 line, `## Planned` naming no later round) | `node scripts/round-gate.mjs --round 89` at base `7218699c` (`.ufo/waves/round-90/w1/K90Scout.md` §3) | none: the closure ran the proxy and checklists, not the round gate on the base commit | appended the row, the LOG line and the round-90 `## Planned` pointer (`SCORECARD.md`, `LOG.md`); the round-90 close runs `round-gate` on the committed tree. |
+  
+
+===== corpus/lessons/round-87-verifier-spotcheck.md
+  (no '## Mistakes' section; routed-defect headings: 1)
+  15:## 1. Conformance (step 1)
+  27:## 2. Claims
+  64:## 3. Discernment spot-check
+  75:## 4. Trend verdicts
+  85:## 5. Routed defects (lane fixes next round)
+
+===== corpus/lessons/round-88-verifier-spotcheck.md
+  (no '## Mistakes' section; routed-defect headings: 1)
+  15:## 1. Conformance (step 1)
+  31:## 2. Claims
+  75:## 3. Discernment spot-check
+  91:## 4. Trend verdicts
+  105:## 5. Routed defects (lane fixes next round)
+
+===== corpus/lessons/round-89-verifier-spotcheck.md
+  (no '## Mistakes' section; routed-defect headings: 1)
+  18:## 1. Conformance (step 1)
+  37:## 2. Claims
+  64:## 3. Axis verdicts
+  74:## 4. Discernment spot-check (LEARNING.md, from outside)
+  89:## 5. Trend verdicts
+  105:## 6. Routed defects — kumitate must fix in round 90
+  132:## 7. Promotion note
+
+===== corpus/lessons/round-90-verifier-spotcheck.md
+  (no '## Mistakes' section; routed-defect headings: 1)
+  13:## 1. Step-1 conformance
+  27:## 2. Claim re-check — C1 operability, capability acquisition `receipt-bind` v4 (UNMET confirmed)
+  57:## 3. Per-axis verdicts (non-author grading)
+  65:## 4. Discernment spot-check (LEARNING.md — checked from outside)
+  77:## 5. Trend verdicts (this closure's, with evidence)
+  93:## 6. Routed defects (lane must fix in round 91; status-neutral here)
+  110:## 7. SHONEN note for the operator
+  117:## Dispatch/complete digest (copied from the closure brief; watchdog.log is mutable)
+

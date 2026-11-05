@@ -1,0 +1,11 @@
+--- m00-pristine.mjs	2026-11-05 17:57:29.692177247 -0300
++++ m01-drop-nonblock.mjs	2026-11-05 17:57:29.692177247 -0300
+@@ -372,7 +372,7 @@
+       {
+         let xfd = null;
+         try {
+-          xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
++          xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW);
+           const xst = fstatSync(xfd);
+           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);

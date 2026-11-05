@@ -1,0 +1,14 @@
+372c372,382
+<       try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+---
+>       {
+>         let xfd = null;
+>         try {
+>           xfd = openSync(abs, fsConstants.O_RDONLY | fsConstants.O_NOFOLLOW | fsConstants.O_NONBLOCK);
+>           const xst = fstatSync(xfd);
+>           if (!xst.isFile()) throw new FailClosed('UNRESOLVED', `${file} external instrument not a regular file: ${abs}`);
+>           if (xst.size > 16777216) throw new FailClosed('UNRESOLVED', `${file} external instrument too large: ${abs}`);
+>           bytes = readFileSync(xfd);
+>         } catch (e) { if (e instanceof FailClosed) throw e; throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs}`); }
+>         finally { if (xfd !== null) { try { closeSync(xfd); } catch { /* closed */ } } }
+>       }

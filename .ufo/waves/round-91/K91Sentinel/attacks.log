@@ -1,0 +1,109 @@
+fixture lane: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/fixture-lane
+fixture rev:  e58cf577817974b43a94aa3059d09f2bbeccc2af
+v4 tool sha256: 35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
+ref tool sha256: bc3df527ec224f2f5542d4c42f5583920503e433b5f39734a7be4db626a894db
+
+S0 | in-lane arm (driver sanity) | class=carried-v4-arm
+  v4  exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+  ref exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=0
+  expected v4=CLEAN external=0 | expected ref=CLEAN external=0
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/S0.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/S0.ref.txt
+A4 | cmd=node /dev/zero | class=IN-CLASS char device
+  v4  exit=-5 wall=0.94s :: (none)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/zero
+  expected v4=no verdict (OOM/133) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A4.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A4.ref.txt
+A5 | external FIFO (no writer) | class=IN-CLASS FIFO
+  v4  exit=124 wall=20.0s :: (none)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/fifo
+  expected v4=no verdict (hang/124) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A5.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A5.ref.txt
+A6 | external regular file 512 MiB (over cap) | class=IN-CLASS over-cap regular
+  v4  exit=0 wall=0.48s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/big512.bin
+  expected v4=CLEAN external=1 (whole file read) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A6.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/A6.ref.txt
+A7 | external symlink-swap race (120 runs) | class=OUT-of-CLASS (RD-3, atomicity)
+  v4: {'CLEAN': 17, 'DRIFT': 62, 'SYMLINK_INSTRUMENT': 41}
+  ref: {'DRIFT': 55, 'SYMLINK_INSTRUMENT': 41, 'FAIL-CLOSED-other': 24}
+  expected v4: some CLEAN (laundering) | expected ref: zero CLEAN (O_NOFOLLOW open)
+A8 | receipt FIFO-swap race (150 runs) | class=OUT-of-CLASS (RD-4, receipt open)
+  v4: {'CLEAN': 91, 'RECEIPT_UNREADABLE': 50, 'HUNG': 9}
+  ref: {'RECEIPT_UNREADABLE': 52, 'CLEAN': 94, 'HUNG': 4}
+  expected v4: some HUNG | expected ref: same (ref has no O_NONBLOCK on the receipt open;
+               plan's v5 integration target adds it as RD-4 hardening)
+N1 | external /proc/self/fd/1 token | class=NEW pseudo-path
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /proc/self/fd/1
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /proc/self/fd/1
+  expected v4=SYMLINK_INSTRUMENT or UNRESOLVED | expected ref=SYMLINK_INSTRUMENT or UNRESOLVED
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N1.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N1.ref.txt
+N2 | external /dev/stdin token | class=NEW pseudo-path
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /dev/stdin
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED SYMLINK_INSTRUMENT a.txt external instrument is a symlink: /dev/stdin
+  expected v4=SYMLINK_INSTRUMENT or UNRESOLVED | expected ref=SYMLINK_INSTRUMENT or UNRESOLVED
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N2.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N2.ref.txt
+N3 | external named unix socket | class=NEW non-regular (socket)
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sock (ENXIO)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sock
+  expected v4=UNRESOLVED | expected ref=UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N3.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N3.ref.txt
+N4 | external regular file mode 0000 | class=NEW unreadable regular
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/mode0000.bin (EACCES)
+  ref exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/mode0000.bin
+  expected v4=UNRESOLVED (EACCES) | expected ref=UNRESOLVED exit 2 (EACCES)
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N4.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N4.ref.txt
+N5 | external sparse file 2^40 bytes | class=IN-CLASS over-cap regular
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sparse2p40.bin (ERR_FS_FILE_TOO_LARGE)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/sparse2p40.bin
+  expected v4=no verdict (OOM/133) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N5.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N5.ref.txt
+N6 | external path through /proc/self/root | class=NEW alias path
+  v4  exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected v4=CLEAN external=1 | expected ref=CLEAN external=1 (same as plain path) | alias resolves to the same external regular file
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N6.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N6.ref.txt
+N7 | cmd=node /dev/null | class=IN-CLASS char device
+  v4  exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /dev/null
+  expected v4=CLEAN external=1 (binds as empty) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N7.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N7.ref.txt
+N8 | external directory as instrument | class=IN-CLASS directory
+  v4  exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument unreadable: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext (EISDIR)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext
+  expected v4=UNRESOLVED (EISDIR) | expected ref=UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N8.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N8.ref.txt
+N9 | external regular file 16777217 bytes (cap+1) | class=IN-CLASS over-cap regular
+  v4  exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/ext/capplus1.bin
+  expected v4=CLEAN external=1 (read whole) | expected ref=FAIL-CLOSED UNRESOLVED exit 2
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N9.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N9.ref.txt
+N10 | external regular file exactly 16777216 bytes (at cap) | class=IN-CLASS at-cap regular
+  v4  exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.04s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected v4=CLEAN external=1 | expected ref=CLEAN external=1 (at cap binds as before)
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N10.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N10.ref.txt
+N11 | external empty regular file | class=IN-CLASS empty regular
+  v4  exit=0 wall=0.03s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected v4=CLEAN external=1 | expected ref=CLEAN external=1 (empty binds as before)
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N11.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N11.ref.txt
+N12 | char device behind a symlinked parent (/dev/zero) | class=IN-CLASS char device
+  v4  exit=-5 wall=0.99s :: (none)
+  ref exit=2 wall=0.02s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91Sentinel/linkroot/dev/zero
+  expected v4=no verdict (OOM/133) | expected ref=FAIL-CLOSED UNRESOLVED exit 2 | spelled with /dev/; parent is a symlink to /
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N12.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N12.ref.txt
+N13 | char device via /proc/self/root/dev/zero (no /dev/ spelling) | class=OUT-of-CLASS (plan excludes)
+  v4  exit=-5 wall=0.95s :: (none)
+  ref exit=2 wall=0.03s :: RECEIPT_BIND: FAIL-CLOSED UNRESOLVED a.txt external instrument not a regular file: /proc/self/root/dev/zero
+  expected v4=no verdict (OOM/133) | expected ref=FAIL-CLOSED UNRESOLVED exit 2 | plan: 'a char device reachable without a /dev/ spelling' is NOT claimed
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N13.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N13.ref.txt
+N14 | external /proc/self/status (st_size 0 pseudo-file) | class=OUT-of-CLASS (pseudo-file)
+  v4  exit=1 wall=0.03s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+  ref exit=1 wall=0.02s :: RECEIPT_BIND: DRIFT matched=0 mismatched=1 unchecked=0 external=1 first=a.txt
+  expected v4=binds sha256(empty)? | expected ref=same as v4? | ReviewProc seat hypothesis
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N14.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N14.ref.txt
+N15 | external regular file behind a symlinked parent | class=NEW alias path
+  v4  exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  ref exit=0 wall=0.02s :: RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+  expected v4=CLEAN external=1 | expected ref=CLEAN external=1
+  receipts: /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N15.v4.txt , /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/K91Sentinel/receipts/N15.ref.txt

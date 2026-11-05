@@ -1,0 +1,26 @@
+# K91ScribeSources — byte-presence receipts for every quote published this seat.
+# Command per line:  grep -c -F -- "$QUOTE" "$SURFACE"   (exit 0 on a hit)
+# Two surfaces per capture:
+#   *.html        the fetched bytes, sha256 recorded in gate.md
+#   *.flat.txt    the same bytes with tags stripped, entities unescaped and all
+#                 whitespace collapsed to single spaces (flatten.py, in this seat dir)
+# A quote that spans a source line wrap is byte-present in the .flat.txt surface and
+# is absent from the raw .html only because the HTML wraps the sentence across lines.
+fifo_block                 fifo.7.flat.txt      hits=1  Normally, opening the FIFO blocks until the other end is opened also.
+fifo_block                 fifo.7.html          hits=0  Normally, opening the FIFO blocks until the other end is opened also.
+fifo_nonblock_readonly     fifo.7.flat.txt      hits=1  opening for read-only succeeds even if no one has opened on the write side yet
+fifo_nonblock_readonly     fifo.7.html          hits=0  opening for read-only succeeds even if no one has opened on the write side yet
+open_nonblock_wait         open.2.flat.txt      hits=1  Neither the open() nor any subsequent I/O operations on the file descriptor which is returned will cause the calling process to wait.
+open_nonblock_wait         open.2.html          hits=0  Neither the open() nor any subsequent I/O operations on the file descriptor which is returned will cause the calling process to wait.
+open_nofollow_eloop        open.2.flat.txt      hits=1  If the trailing component (i.e., basename) of path is a symbolic link, then the open fails, with the error ELOOP.
+open_nofollow_eloop        open.2.html          hits=0  If the trailing component (i.e., basename) of path is a symbolic link, then the open fails, with the error ELOOP.
+fs_fstat_fd                fs.flat.txt          hits=1  Retrieves the <fs.Stats> for the file descriptor.
+fs_fstat_fd                fs.html              hits=0  Retrieves the <fs.Stats> for the file descriptor.
+fs_opensync_fd             fs.flat.txt          hits=1  Returns an integer representing the file descriptor.
+fs_opensync_fd             fs.html              hits=1  Returns an integer representing the file descriptor.
+fs_const_nonblock          fs.flat.txt          hits=1  Flag indicating to open the file in nonblocking mode when possible.
+fs_const_nonblock          fs.html              hits=1  Flag indicating to open the file in nonblocking mode when possible.
+s255_quote                 r89-proc-root.flat.txt hits=1  a symbolic link that points to the process's root directory, and behaves in the same way as exe, and fd/*
+s255_quote                 r89-proc-root.html   hits=0  a symbolic link that points to the process's root directory, and behaves in the same way as exe, and fd/*
+s260_quote                 r90-unicode-tr44.flat.txt hits=1  U+200B ZERO WIDTH SPACE was originally classified as a space character (General_Category=Zs), but it was reclassified as a Format character (General_Category=Cf)
+s260_quote                 r90-unicode-tr44.html hits=0  U+200B ZERO WIDTH SPACE was originally classified as a space character (General_Category=Zs), but it was reclassified as a Format character (General_Category=Cf)

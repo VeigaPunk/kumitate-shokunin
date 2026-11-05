@@ -1,0 +1,304 @@
+# K91Scout greps receipt — every pointer in recon.md, verified by grep -n at 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4
+# date: 2026-11-05 ; lane: /home/vgpnk/Projects/shokunin/kumitate-shokunin ; rev: 2b1b8bf3d274db8e608035bffb27bd3b3d4009d4
+
+### G1 SKILL.md gate registry row for receipt-bind (contract v4 -> v5)
+2b1b8bf3:SKILL.md:646:| receipt-bind | gate | `node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]` → `RECEIPT_BIND: CLEAN\|DRIFT\|FAIL-CLOSED` (0 clean, 1 drift, 2 fail-closed, 64 
+
+### G2 SKILL.md checklist item 'Receipt-subject binding'
+2b1b8bf3:SKILL.md:763:- [ ] Receipt-subject binding (round 87, v2 round 88, v3 round 89, v4 round 90; contract `kumitate-receipt-bind-v4`; the claim predicates are the frozen scorers at `.ufo/waves/round-87/probe/probe87
+
+### G3 SKILL.md gate-registry prose (count of gate rows/where receipt-bind registered)
+2b1b8bf3:SKILL.md:589:Registry home per the fleet protocol's §Gate standard (round 34). Twenty-nine gate rows over twenty-eight gate files (round 87 adds `receipt-bind`) (each can exit 1 on a real defect; `report-receip
+
+### G4 SCORECARD gate-pins block: pin.receipt-bind
+2b1b8bf3:SCORECARD.md:338:pin.receipt-bind=35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
+
+### G5 SCORECARD kumitate-proxy-v1 block header + pin set
+2b1b8bf3:SCORECARD.md:34:  (+ `scripts/proxy-check.mjs`, contract `kumitate-proxy-v1`, 1173 L, 55-case
+2b1b8bf3:SCORECARD.md:263:### Machine-readable claim block (`kumitate-proxy-v1`)
+2b1b8bf3:SCORECARD.md:273:the separate `kumitate-gate-pins-v1` block below; the sources gate is still a
+2b1b8bf3:SCORECARD.md:293:<!-- kumitate-proxy-v1
+2b1b8bf3:SCORECARD.md:326:<!-- kumitate-gate-pins-v1
+2b1b8bf3:SCORECARD.md:384:retirement-era reading. The `kumitate-proxy-v1` stanza grew a 24th key
+2b1b8bf3:SCORECARD.md:388:removed: `kumitate-proxy-v1` retains its unchanged parent 23-key contract
+2b1b8bf3:SCORECARD.md:394:a separate lane-owned `kumitate-gate-pins-v1` block (pins for anchor-truth, sources-check,
+2b1b8bf3:SCORECARD.md:462:machine-readable claim block in this file (`<!-- kumitate-proxy-v1 … -->`), so a
+2b1b8bf3:SCORECARD.md:558:| 11 | operability | A=3, C=6 ⇒ `f_O = 9/12 = 0.75` ⇒ 7; the plan fixed the arithmetic (`A+C ≥ 12` for 8) and named (a) a scheduled/CI leg or (b) three more genuinely executed items | A=4 (`scripts/proxy-check.mjs`, contract `kumitate-proxy-v1`, 1173 L, 9 finding kinds, 10 fail-closed arms, 55-case hermetic suite) + C=9 (+ filed-report tracking, proxy recompute, proxy-check hermetic suite) ⇒ `f_O = 13/16 = 0.8125` ⇒ **8**; option (a) refused on evidence — the only schedulers on this host are `systemd --user` timers owned by other identities (`ai-usage`, `webzites-probe`, `charter-scribe`) and the kake lane's recorded precedent is that a lane does not toggle host state itself (`.ufo/l0-questions.md`, kake round-12); a parse defect found by L1 falsification AFTER the suite was green — a `\|` inside a registry cell shifted the 4th-cell test and silently stopped counting that row — was fixed with two regression cases (suite 53 → 55, re-pinned) | `node scripts/proxy-check.mjs` → `PROXY: MATCH (A=4 C=9 operability=8; C1=14/18 C2=39/39 coverage=7; pins=4 match)` exit 0; `--selftest` → `PROXY_SELFTEST: 55/55 pass` `VERDICT: PASS` exit 0; `surface-probe.mjs --checklists` → `CHECKLIST: 9/9 pass` exit 0; `round-gate.mjs --tracked` → `ROUND_GATE: CLEAN (mode=tracked checked=8 errors=0 warnings=0)` exit 0; `round-gate.mjs --selftest` 57/57 exit 0; failures kept: `--tracked --close` exit 64, `--tracked --lane other` exit 2 `NO_FILED_REPORTS`, stanza/registry/pin mutations → `PROXY: DRIFT` exit 1; the `\|`-row falsification that exposed the parse defect produced a false MATCH before the fix and the correct parse after it; close: `node scripts/round-gate.mjs --close` → `ROUND_GATE: CLEAN (round=11 lane=kumitate checks=13 errors=0 warnings=0)` exit 0 |
+2b1b8bf3:SCORECARD.md:1843:4. Update the `kumitate-proxy-v1` stanza's four layer terms and the two derived
+2b1b8bf3:SCORECARD.md:1867:`kumitate-proxy-v1` stanza + `## Axes` now carry the measured values:
+2b1b8bf3:SCORECARD.md:1971:| `receipt-attest` | Run one child command and write a machine-checked invocation record: a display `run-at:` prelude plus one canonical-JSON line whose inner digest binds argv/exit/stdout+stderr sha256/wall ISO start-end/`mono_span_ms`/nonce (canonical = parse, drop digest, sort keys recursively, one line), with a GNU `sha256sum` text-mode sidecar over the exact receipt bytes; `verify [--ledger <dir>]` answers `RECEIPT: VALID\|REPLAY\|TAMPERED` (0 valid, 1 replayed-or-tampered, 2 unreadable, 64 usage), checking inner digest, sidecar, clock ordering, ledger nonce freshness and prelude/wall-window consistency, digests computed by `node:crypto` only. The `--ledger` arm is a **nonce ledger** (v3, round 53): it scans the whole ledger directory and flags a nonce only when another attested receipt — under ANY filename — binds the same nonce to a different record digest — not a figure re-derivation, not an evidence-class run ledger, not a helper op-id receipt. | `node scripts/receipt-attest.mjs --selftest` → `ATTEST_SELFTEST: PASS` exit 0 (27 cases); frozen counter `node .ufo/waves/round-51/probe/attest51-probe.mjs <lane> <rev>` → `ATTEST_HELD held=9/9` exit 0 at `efdd7424…`; instrument sha256 `44919763…`, `pin.receipt-attest` in `kumitate-gate-pins-v1` | round 51 |
+2b1b8bf3:SCORECARD.md:1976:| `source-dupes` | Hold the SOURCES duplicate-URL warning class to a pinned set: the registry `.ufo/pins/source-dupes.json` (version 1) enumerates every live duplicate group — rows sharing one normalized URL under differing scopes (the census W04 class) — and `node scripts/source-dupes.mjs` exits 0 only when live groups equal the pinned set exactly; a new duplicate is DRIFT `new-duplicate`, a resolved duplicate is DRIFT `stale-known` until its pin is removed, and a malformed pin set is FAIL-CLOSED exit 2; the warning the census never gates on becomes a scored contract | `node scripts/source-dupes.mjs` → `SOURCE_DUPES: CLEAN groups=4 known=4`; `--selftest` → `SOURCE_DUPES_SELFTEST: PASS (12/12)` + `VERDICT: PASS`; `pin.source-dupes` in `kumitate-gate-pins-v1` | 56 |
+2b1b8bf3:SCORECARD.md:1977:| `readme-map` | Hold the corpus coverage map to a mechanical bimap: every `corpus/knowledge/*.md` and `corpus/lessons/*.md` file carries exactly one ``| `x` |`` row in `corpus/README.md`, every such row names a live file, and every live file is pinned in the `covered` set of `.ufo/pins/readme-map.json` (v2; registry version 2); `uncovered` / `orphan-row` / `duplicate-row` / `format-unmapped` / `stale-covered` / `unpinned` are `README_MAP: DRIFT` exit 1, a malformed registry/README or missing corpus dir is FAIL-CLOSED exit 2, 64 usage; the count-only C2 proxy term becomes a per-file contract that names WHICH file lacks a row (routed defect R56-V3, third recurrence) | `node scripts/readme-map.mjs` → `README_MAP: CLEAN files=141 rows=141 covered=141`; `--selftest` → `README_MAP_SELFTEST: PASS (16/16)` + `VERDICT: PASS`; `pin.readme-map` in `kumitate-gate-pins-v1` is hash-checked by `proxy-check --strict`; SKILL checklist item 27 | 57 |
+2b1b8bf3:SCORECARD.md:1978:| `receipt-evidence` | A receipt set is evidence only if every receipt verifies under the extraction's own receipt-attest, reproduces its recorded argv in the git archive of the judged rev, carries a nonce absent from the descending round-48..57 sweep, and spans the body-clock minimum (contract `kumitate-receipt-evidence-v1`; routed R57-V1/V2/V4). Row added in round 59: the round-58 acquisition landed the gate and the pin, and the capabilities table did not gain the row (R58-V6) | `node scripts/receipt-evidence.mjs --selftest` → `RECEIPT_EVIDENCE_SELFTEST: PASS (10/10)`; `pin.receipt-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 28 | 58 |
+2b1b8bf3:SCORECARD.md:1979:| `cite-sources` | A README map row may not cite an S-id of 3 or more digits that is not a SOURCES row (contract `kumitate-cite-sources-v1`; routed R58-V3). Family ids of one or two digits are ignored. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage | `node scripts/cite-sources.mjs --selftest` → `CITE_SOURCES_SELFTEST: PASS (8/8)`; live at the round-59 base `CITE_SOURCES: DRIFT ghosts=1 first=S121` exit 1; `pin.cite-sources` in `kumitate-gate-pins-v1`; SKILL checklist item 29 | 59 |
+2b1b8bf3:SCORECARD.md:1980:| `dispatch-evidence` | Read a round's **actual** dispatch record and judge it: the launcher progress file (`launcher-progress.tsv` — seat, session id, exit code) against the summary a report quotes (`dispatch-actual.json`) and the seat report files. A prepared spec is not a dispatch (`NOT_A_DISPATCH`); a dead seat is named and never credited (`DEAD_SEAT_UNCREDITED`, `DEAD_MISMATCH`); `PLAN_MISMATCH`, `SESSION_MISMATCH`, `REPORT_ABSENT`, `REGISTRY_MISMATCH`, `EXPECT_MISMATCH`; fail-closed `PROGRESS_ABSENT` / `REGISTRY_UNREADABLE` / `WAVE_DIR_ABSENT`. Exit 0 CLEAN, 1 DRIFT, 2 FAIL-CLOSED, 64 usage (contract `kumitate-dispatch-evidence-v1`; routed R58-V2 turned from prose into a gate) | `node scripts/dispatch-evidence.mjs --selftest` → `DISPATCH_EVIDENCE_SELFTEST: PASS (8/8)` + `VERDICT: PASS`; live over the round-60 committed record → `DISPATCH_EVIDENCE: CLEAN (seats=32 …)`; `pin.dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL checklist item 30; first working round 60 | 60 |
+2b1b8bf3:SCORECARD.md:1981:| `inline-dispatch-evidence` | Judge a run-7 inline wave from records the lane does not author: per-seat host session transcripts (seat marker, context head, task tail, five shape arms, yield, exit), the orchestrator dispatcher log (`spawned`/`done` lines, counts) and committed bytes only under `--rev`; dead seats are counted from transcripts and must be named by `--report`; lane-authored text (lane, seat names, context) is validated as data, never as pattern. A hand-written wave reads `NOT_A_DISPATCH`; a five-row-per-seat forgery reads `SESSION_TOOL_JOIN`. Stated limits: a lane that writes faithful transcripts into the host store and lines into the orchestrator log defeats it; the frozen C1 counter runs the committed tool, so a stub tool reads HELD (wave-2 K63R2CriticC1Stub) | `node scripts/inline-dispatch-evidence.mjs --selftest` → `INLINE_DISPATCH_SELFTEST: PASS (69/69)`; `node scripts/inline-dispatch-evidence.mjs --root . --rev <rev> --round 63 --wave w1` → `INLINE_DISPATCH: CLEAN (seats=40 sessions=40 done=40 reports=40 dead=0)`; 75 committed controls in `.ufo/waves/round-63/controls/inline/`; counting command `node .ufo/waves/round-63/probe/inline63-probe.mjs <lane> <rev> [<tip>]`; `pin.inline-dispatch-evidence` in `kumitate-gate-pins-v1`; SKILL gate-registry row; QUALITY Q59 | 63 |
+2b1b8bf3:SCORECARD.md:2037:symlink case (12/12). `pin.bind-oracle` (r49 M2) plus the family re-pin enter `kumitate-gate-pins-v1`.
+2b1b8bf3:SCORECARD.md:2348:`corpus/lessons/round-42.md` `## Gate`, Q21; R41-2 a separate `kumitate-gate-pins-v1` block
+2b1b8bf3:SCORECARD.md:3096:- **Stale proxy stanza (the `kumitate-proxy-v1` block near line 287).** `proxy-check` requires exactly one
+2b1b8bf3:SCORECARD.md:3547:| C2 | operability (integer held at 9 — terminal under `f_O`; capability acquisition `origin-tip-drift`) | `scripts/proxy-check.mjs --tip-drift` (`kumitate-proxy-v1`, additive), `pin.proxy-check` |
+
+### G6 SCORECARD Capabilities table: does a receipt-bind row exist?
+2b1b8bf3:SCORECARD.md:1958:## Capabilities
+2b1b8bf3:SCORECARD.md:1993:| `counter-receipt` v3 *(verified round 86)* | Bind BOTH halves of a counter-transcript answer to the bytes read: v2's transcript reconciliation plus `SOURCE: sites=… decl
+2b1b8bf3:SCORECARD.md:12
+(count of receipt-bind mentions in SCORECARD.md at rev; the row search below)
+2b1b8bf3:SCORECARD.md:474:| 90 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v4 — **UNMET**, rejected-honest-stop by the froz
+2b1b8bf3:SCORECARD.md:475:| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-stop by the frozen kill rule; no capabili
+2b1b8bf3:SCORECARD.md:4325:| accounting | A 36, C 46, C2 222 → 224, `pin.receipt-bind` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+2b1b8bf3:SCORECARD.md:4387:| accounting | A 36, C 46, C2 224 → 227, `pin.receipt-bind` re-pinned, `pin.omp-census` and `pin.spotcheck-adopt` re-pinned; `PROXY: MATCH --strict` (`close/proxy.txt`) |
+(empty above = NO receipt-bind row in the Capabilities table)
+
+### G7 SCORECARD Move-log rows 90/89 (row format for a new '| 91 |' row)
+2b1b8bf3:SCORECARD.md:474:| 90 | operability (lowest non-retired axis; integer held 9 — terminal under `f_O`; capability acquisition `receipt-bind` v4 — **U
+2b1b8bf3:SCORECARD.md:475:| 89 | operability (lowest non-retired axis; integer held 9; capability acquisition `receipt-bind` v3 — **UNMET**, rejected-honest-s
+2b1b8bf3:SCORECARD.md:470:## Move log
+
+### G8 SCORECARD Planned section
+2b1b8bf3:SCORECARD.md:579:## Planned
+
+### G9 corpus/README.md coverage-map rows for receipt-bind lessons/knowledge
+2b1b8bf3:corpus/README.md:267:| `lessons/round-90.md` | Round-90 receipt-bind v4: the blind-scorer freeze, the 47/47 kill-rule constructions (whole-text strip; context-gated prefix), the admitted Q83, and the five mined mistakes | LOG.md round 90; `.ufo/waves/
+2b1b8bf3:corpus/README.md:159:| `knowledge/receipt-identity-canonicalization.md` | Receipt identity & the ledger evidence set: a receipt's identity is its canonical-JSON record digest (S104, RFC 8785 
+2b1b8bf3:corpus/README.md:160:| `lessons/round-53.md` | Round-53: ONE v2 wave of exactly 64 seats prepared for orchestrator dispatch (24 attack-role seats = 37.5% by reviewer+critic+mutation-tester) u
+2b1b8bf3:corpus/README.md:213:| `knowledge/receipt-age-on-the-compare-path.md` | The OMP shape receipt's own age on the compare path: `receipt_captured`/`age_days` disclosure, the opt-in `--compare --
+2b1b8bf3:corpus/README.md:258:| `knowledge/receipt-subject-binding.md` | Receipt-subject binding: the R86-D1 census, why a receipt must digest-bind its instrument, the v1 contract, and its limits | S2
+2b1b8bf3:corpus/README.md:262:| `knowledge/receipt-lane-membership-and-link-binding.md` | Real-path lane membership, the mode-120000 instrument refusal and BOM tolerance: the three v3 boundaries, each
+2b1b8bf3:corpus/README.md:266:| `knowledge/receipt-invisible-prefix-fields.md` | Invisible-prefix field lines in receipts (v4): the six-member Cf/White_Space class, the duplicate-field bypass shape, t
+2b1b8bf3:corpus/README.md:359:## Frontier
+2b1b8bf3:corpus/README.md:14:## Coverage map
+
+### G10 .ufo/pins/readme-map.json covered entries near round-90
+2b1b8bf3:.ufo/pins/readme-map.json:228:    "lessons/round-89.md",
+2b1b8bf3:.ufo/pins/readme-map.json:231:    "lessons/round-89-verifier-spotcheck.md",
+2b1b8bf3:.ufo/pins/readme-map.json:233:    "lessons/round-90.md"
+
+### G11 PROVINCE.md receipt/binding mentions
+2b1b8bf3:PROVINCE.md:35:Round-70 host correction (2026-10-31, attempt 3; the bands above stand unchanged for the origin host, recorded here as absent where they do not exist here): this lane now runs 
+2b1b8bf3:PROVINCE.md:41:Round-79 province addition (2026-11-04; the bands above stand unchanged): **report-pointer resolution as
+2b1b8bf3:PROVINCE.md:44:`kotoba-shokunin/PROVINCE.md:31` records it. This lane's `scripts/report-receipt-diff.mjs` v4
+2b1b8bf3:PROVINCE.md:50:Round-80 frontier addition (2026-11-04; the bands above stand unchanged): two grounded entries advance
+
+### G12 README.md (lane root) has NO receipt-bind row
+exit=1 (1 = no match)
+
+### G13 LOG.md round-90 entry + gate-required one-line record shape
+2b1b8bf3:LOG.md:3104:## Round 90 — receipt-bind v4: prefix-tolerant field lines under a Q82-blind scorer (2026-11-05, attempt 1)
+2b1b8bf3:LOG.md:3108:- 2026-11-05 — round 90 (gate-required one-line record; the full entry is the section above): C1 operability — `receipt-bind` v4 integrated at `82c9c7ef` (invisible-prefix fie
+
+### G14 scripts/receipt-bind.mjs v4 external branch (lines to change in v5)
+2b1b8bf3:scripts/receipt-bind.mjs:5: * Contract: kumitate-receipt-bind-v4 (round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
+2b1b8bf3:scripts/receipt-bind.mjs:39: *   RECEIPT_TOO_LARGE  a receipt larger than MAX_RECEIPT_BYTES (1048576), refused before it is read.
+2b1b8bf3:scripts/receipt-bind.mjs:96:const CONTRACT = 'kumitate-receipt-bind-v4';
+2b1b8bf3:scripts/receipt-bind.mjs:97:const MAX_RECEIPT_BYTES = 1048576;
+2b1b8bf3:scripts/receipt-bind.mjs:281:    if (st.size > MAX_RECEIPT_BYTES) throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${st.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+2b1b8bf3:scripts/receipt-bind.mjs:291:      if (fst.size > MAX_RECEIPT_BYTES) {
+2b1b8bf3:scripts/receipt-bind.mjs:292:        throw new FailClosed('RECEIPT_TOO_LARGE', `${path} is ${fst.size} bytes (limit ${MAX_RECEIPT_BYTES})`);
+2b1b8bf3:scripts/receipt-bind.mjs:370:      try { est = lstatSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'lstat failed'})`); }
+2b1b8bf3:scripts/receipt-bind.mjs:371:      if (est.isSymbolicLink()) throw new FailClosed('SYMLINK_INSTRUMENT', `${file} external instrument is a symlink: ${abs}`);
+2b1b8bf3:scripts/receipt-bind.mjs:372:      try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+2b1b8bf3:scripts/receipt-bind.mjs:657:  const rcOver = mkdir({ 'a.txt': padTo(okA, MAX_RECEIPT_BYTES + 1) });
+2b1b8bf3:scripts/receipt-bind.mjs:658:  const rcOverAmbiguous = mkdir({ 'a.txt': padTo(`${okA}cmd=node scripts/beta.mjs\n`, MAX_RECEIPT_BYTES + 1) });
+2b1b8bf3:scripts/receipt-bind.mjs:659:  const rcAtLimit = mkdir({ 'a.txt': padTo(okA, MAX_RECEIPT_BYTES) });
+2b1b8bf3:scripts/receipt-bind.mjs:661:  if (sizes[0] !== MAX_RECEIPT_BYTES + 1 || sizes[1] !== MAX_RECEIPT_BYTES + 1 || sizes[2] !== MAX_RECEIPT_BYTES) {
+
+### G15 proxy-check pin registry entry for receipt-bind
+2b1b8bf3:scripts/proxy-check.mjs:561:  'pin.receipt-bind': 'scripts/receipt-bind.mjs', // round 87: receipt-to-instrument binding gate (R86-D1)
+
+### G16 SKILL.md gate-registry table header rows
+SKILL.md:605:| name | kind | entry command | self-test | pinned values live in |
+
+SKILL.md:606:|---|---|---|---|---|
+### G17 SCORECARD.md Capabilities table header + separator
+
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1957:
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1958:## Capabilities
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1959:
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1960:| Capability | What it can now do | Evidence pointer | First-working round |
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1961:|---|---|---|---|
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:SCORECARD.md:1962:| `sources-registry` | Curate where the lane learns: an append-only, tier-scoped registry of opened sources (`corpus/SOURCES.md`, fleet contract v1), checking rows only under `## R
+### G18 probe91 requires --alt (failClosed ALT_REQUIRED) and its usage line
+73: *   node probe91-c1.mjs --lane <LANE> --work <SCRATCH> --alt <ALT-ROOT> --rev <40-hex> [--tool <receipt-bind.mjs>]
+99:const altArg = opt('--alt', '');
+108:if (!altArg) failClosed('ALT_REQUIRED');
+112:const alt = resolve(altArg);
+149:const fixRoot = join(ctx === 'A' ? work : alt, `r-${randomBytes(4).toString('hex')}`);
+
+### G19 r90 runner edit sites (line numbers cited in recon section 2)
+80:const ROUND = '90';
+
+
+
+124:if (existsSync(out)) refuse('OUT_EXISTS', out);
+178:  ['round-gate', 'node', ['scripts/round-gate.mjs', '--round', ROUND]],
+179:  ['plan-before-ready', 'bash', ['scripts/plan-before-ready.sh', '--round', ROUND]],
+186:const CASE_TIMEOUT_MS = { probe1: 1800000, probe2: 1800000, checklists: 2400000 };
+109:const PROBE = join(lane, '.ufo', 'waves', `round-${ROUND}`, 'probe', `probe${ROUND}-c1.mjs`);
+### G20 r91 runner draft already contains all five edits (diff vs r90 runner)
+--- /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-90/K90ExecClose/run-close90.mjs	2026-11-05 07:13:08.919491400 -0300
++++ /home/vgpnk/Projects/shokunin/kumitate-shokunin/.ufo/waves/round-91/close-runner/run-close91.mjs	2026-11-05 17:53:55.205028730 -0300
+@@ -1,9 +1,9 @@
+ #!/usr/bin/env node
+ /**
+- * run-close90.mjs — kumitate round 90 close runner, v1 (derived from round-89 v4,
++ * run-close91.mjs — kumitate round 91 close runner, v2 (round-90 v1 + probe91 `--alt` context root;
+  * `.ufo/waves/round-89/run-close.mjs`, which derived from round-88 v3 / round-87 v2).
+  *
+- *   node run-close90.mjs --lane <DIR> --rev <40-hex> --out <DIR> [--work <DIR>] [--tool <receipt-bind path>]
++ *   node run-close91.mjs --lane <DIR> --rev <40-hex> --out <DIR> [--work <DIR>] [--tool <receipt-bind path>]
+  *
+  * Run from anywhere; every case spawns with cwd = --lane. Receipts are written ONLY into the
+  * `--out` close dir given on argv (scratch artefacts go under `--work`, default
+@@ -16,9 +16,9 @@
+  *     before it). A lane token is digested at REV like every other lane instrument.
+  *   - the frozen scorer `.ufo/waves/round-90/probe/probe90-c1.mjs` runs TWICE (cases `probe1`
+  *     and `probe2`, separate `--work` subdirs `p1`/`p2`, so the two runs never share fixture
+- *     state). The runner prints both `C90_C1:` lines and
++ *     state). The runner prints both `C91_C1:` lines and
+  *     `RUN_CLOSE: PROBE_DETERMINISM SAME|DIFFERENT`; per the frozen predicate only the
+- *     `C90_C1:` verdict line and the exit must agree — the printed arm details embed per-run
++ *     `C91_C1:` verdict line and the exit must agree — the printed arm details embed per-run
+  *     random fixture labels (Q82), so line-for-line stdout identity is NOT compared.
+  *   - case `checklists` (`node scripts/surface-probe.mjs --checklists`, K89-V5) keeps every
+  *     per-item `CHECKLIST` line in its receipt (round 89 committed only the tally). After the
+@@ -69,7 +69,7 @@
+  *
+  * Exit map: 0 every case ran with exit 0 AND the bind case counted every other receipt
+  *           (matched+mismatched+unchecked = cases-1) AND the two probe runs agree on their
+- *           `C90_C1:` line and exit AND no lane instrument changed during the run; 1 otherwise
++ *           `C91_C1:` line and exit AND no lane instrument changed during the run; 1 otherwise
+  *           (a case's non-zero exit is a failed run, never swallowed); 3 refused; 64 usage.
+  */
+ import { spawnSync } from 'node:child_process';
+@@ -77,9 +77,9 @@
+ import { createHash } from 'node:crypto';
+ import { join, resolve, isAbsolute, relative, sep } from 'node:path';
+ 
+-const ROUND = '90';
++const ROUND = '91';
+ const FLEET = '/home/vgpnk/Projects/shokunin';
+-const USAGE = 'USAGE: node run-close90.mjs --lane <DIR> --rev <40-hex> --out <DIR> [--work <DIR>] [--tool <receipt-bind path>]';
++const USAGE = 'USAGE: node run-close91.mjs --lane <DIR> --rev <40-hex> --out <DIR> [--work <DIR>] [--tool <receipt-bind path>]';
+ const argv = process.argv.slice(2);
+ const opt = (name) => {
+   const i = argv.indexOf(name);
+@@ -165,8 +165,8 @@
+ }
+ 
+ const cases = [
+-  ['probe1', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p1'), '--rev', rev, '--tool', toolAbs]],
+-  ['probe2', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p2'), '--rev', rev, '--tool', toolAbs]],
++  ['probe1', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p1'), '--alt', '/fast/scratch/hyaku', '--rev', rev, '--tool', toolAbs]],
++  ['probe2', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p2'), '--alt', '/fast/scratch/hyaku', '--rev', rev, '--tool', toolAbs]],
+   ['selftest', 'node', [toolAbs, '--selftest', '--work', work]],
+   ['checklists', 'node', ['scripts/surface-probe.mjs', '--checklists']],
+   ['proxy', 'node', ['scripts/proxy-check.mjs', '--strict']],
+@@ -234,9 +234,9 @@
+ }
+ 
+ // Frozen-scorer determinism: the probe ran twice over independent run-time fixtures; both
+-// `C90_C1:` lines and both exits must agree (verdict line and exit ONLY — arm details embed
++// `C91_C1:` lines and both exits must agree (verdict line and exit ONLY — arm details embed
+ // per-run random fixture labels by design, Q82).
+-const probeLine = (s) => (s.match(/^C90_C1: .*$/m) || ['C90_C1: none'])[0];
++const probeLine = (s) => (s.match(/^C91_C1: .*$/m) || ['C91_C1: none'])[0];
+ const p1 = results.get('probe1');
+ const p2 = results.get('probe2');
+ console.log(`RUN_CLOSE: PROBE1 ${probeLine(p1.body)} exit=${p1.status}`);
+
+### G21 readme-map registry version + covered array tail
+
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:.ufo/pins/readme-map.json:2:  "version": 2,
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:.ufo/pins/readme-map.json:80:    "knowledge/temporal-worker-versioning-pinning.md",
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:.ufo/pins/readme-map.json:228:    "lessons/round-89.md",
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:.ufo/pins/readme-map.json:231:    "lessons/round-89-verifier-spotcheck.md",
+2b1b8bf3d274db8e608035bffb27bd3b3d4009d4:.ufo/pins/readme-map.json:233:    "lessons/round-90.md"
+### G22 the exact r90 runner lines cited in recon section 2 (by line number)
+run-close90.mjs:80: const ROUND = '90';
+run-close90.mjs:109: const PROBE = join(lane, '.ufo', 'waves', `round-${ROUND}`, 'probe', `probe${ROUND}-c1.mjs`);
+run-close90.mjs:124: if (existsSync(out)) refuse('OUT_EXISTS', out);
+run-close90.mjs:168:   ['probe1', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p1'), '--rev', rev, '--tool', toolAbs]],
+run-close90.mjs:169:   ['probe2', 'node', [PROBE, '--lane', lane, '--work', join(work, 'p2'), '--rev', rev, '--tool', toolAbs]],
+run-close90.mjs:178:   ['round-gate', 'node', ['scripts/round-gate.mjs', '--round', ROUND]],
+run-close90.mjs:179:   ['plan-before-ready', 'bash', ['scripts/plan-before-ready.sh', '--round', ROUND]],
+run-close90.mjs:186: const CASE_TIMEOUT_MS = { probe1: 1800000, probe2: 1800000, checklists: 2400000 };
+run-close90.mjs:239: const probeLine = (s) => (s.match(/^C90_C1: .*$/m) || ['C90_C1: none'])[0];
+run-close90.mjs:291: const allZero = everyRan && [...results.values()].every((r) => r.status === 0);
+run-close90.mjs:294:   ` probe=${probeSame ? 'SAME' : 'DIFF'} count=${countOk ? 'ALL' : 'SHORT'} ${ok ? 'OK' : 'NOT_OK'}`);
+### G23 SKILL.md:589 gate-registry prose (no v5 change needed)
+SKILL.md:589: Registry home per the fleet protocol's §Gate standard (round 34). Twenty-nine gate rows over twenty-eight gate files (round 87 adds `receipt-bind`) (each can exit 1 on a real defect; `report-receipt-d
+### G24 SCORECARD.md:299-300 the declared C2 pair in the kumitate-proxy-v1 block
+SCORECARD.md:293: <!-- kumitate-proxy-v1
+SCORECARD.md:299: C2=230
+SCORECARD.md:300: C2_total=230
+SCORECARD.md:326: <!-- kumitate-gate-pins-v1
+SCORECARD.md:338: pin.receipt-bind=35f4f25e6130dd827747ceff8ced80682d96c6c04d9516f2a463ce58cc7c1fce
+### G25 corpus/README.md anchor lines
+corpus/README.md:14: ## Coverage map
+corpus/README.md:265: | `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+corpus/README.md:266: | `knowledge/receipt-invisible-prefix-fields.md` | Invisible-prefix field lines in receipts (v4): the six-member Cf/White_Space class, the duplicate-field bypass shape, the positive twins, and the mea
+corpus/README.md:267: | `lessons/round-90.md` | Round-90 receipt-bind v4: the blind-scorer freeze, the 47/47 kill-rule constructions (whole-text strip; context-gated prefix), the admitted Q83, and the five mined mistakes |
+corpus/README.md:269: ## Known gaps
+corpus/README.md:359: ## Frontier
+### G26 LOG.md anchor lines
+LOG.md:3104: ## Round 90 — receipt-bind v4: prefix-tolerant field lines under a Q82-blind scorer (2026-11-05, attempt 1)
+LOG.md:3108: - 2026-11-05 — round 90 (gate-required one-line record; the full entry is the section above): C1 operability — `receipt-bind` v4 integrated at `82c9c7ef` (invisible-prefix field lines; selftest 68 → 7
+LOG.md:3112: At M `82c9c7efb9d9567341c209ad888012646590e99f`: `.ufo/waves/round-90/close/` (`run-close90.mjs`, `RUN_CLOSE: DONE cases=13 … count=ALL`): probe1 and probe2 `C90_C1: HELD held=47/47` exit 0, `PROBE_DE
+### G27 scripts/receipt-bind.mjs v4 external branch + constants (the v5 edit site)
+scripts/receipt-bind.mjs:5:  * Contract: kumitate-receipt-bind-v4 (round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
+scripts/receipt-bind.mjs:96: const CONTRACT = 'kumitate-receipt-bind-v4';
+scripts/receipt-bind.mjs:97: const MAX_RECEIPT_BYTES = 1048576;
+scripts/receipt-bind.mjs:370:       try { est = lstatSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'lstat failed'})`); }
+scripts/receipt-bind.mjs:371:       if (est.isSymbolicLink()) throw new FailClosed('SYMLINK_INSTRUMENT', `${file} external instrument is a symlink: ${abs}`);
+scripts/receipt-bind.mjs:372:       try { bytes = readFileSync(abs); } catch (e) { throw new FailClosed('UNRESOLVED', `${file} external instrument unreadable: ${abs} (${e.code || 'read failed'})`); }
+### G28 PROVINCE.md: no receipt-bind mention; the Core band row and the last dated addition
+PROVINCE.md:17: 
+PROVINCE.md:41: Round-79 province addition (2026-11-04; the bands above stand unchanged): **report-pointer resolution as
+PROVINCE.md:50: Round-80 frontier addition (2026-11-04; the bands above stand unchanged): two grounded entries advance### G28b PROVINCE.md Core band row (line 15, corrected anchor)
+PROVINCE.md:15: - The lane's own instruments `scripts/*.mjs` (registry: `SKILL.md` §Gate registry) and its learning registry `corpus/SOURCES.md` (checked by `scripts/sources-check.mjs`).
+### G29 corpus/README.md rows 255-267 (the coverage-map block the r91 lesson row joins)
+corpus/README.md:255: | `knowledge/counter-receipt-source-binding.md` | Source-byte digest binding, generated fixtures, corrected source curation and the distinction between consistency and an
+corpus/README.md:256: | `lessons/round-87.md` | Round-87 receipt-subject binding: the R86-D1 census, the frozen 12-arm scorer, the honest UNMET verdict, and the mined mistakes | LOG.md round 8
+corpus/README.md:257: | `lessons/round-86.md` | Round-86 source binding, controls, source decisions, historical corrections and mined mistakes | LOG.md round 86; `.ufo/waves/round-86/` |
+corpus/README.md:258: | `knowledge/receipt-subject-binding.md` | Receipt-subject binding: the R86-D1 census, why a receipt must digest-bind its instrument, the v1 contract, and its limits | S2
+corpus/README.md:259: | `lessons/round-86-verifier-spotcheck.md` | Non-author round-86 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+corpus/README.md:260: | `lessons/round-87-verifier-spotcheck.md` | Non-author round-87 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+corpus/README.md:261: | `lessons/round-88.md` | Round-88 receipt-bind v2: the three-body revision fixture, four fail-closed boundaries, nine seat constructions at 20/20, the honest UNMET verdi
+corpus/README.md:262: | `knowledge/receipt-lane-membership-and-link-binding.md` | Real-path lane membership, the mode-120000 instrument refusal and BOM tolerance: the three v3 boundaries, each
+corpus/README.md:263: | `lessons/round-88-verifier-spotcheck.md` | Non-author round-88 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+corpus/README.md:264: | `lessons/round-89.md` | Round-89 receipt-bind v3: the 30-arm scorer, 22 pre-data controls, the probe-keyed construction at 30/30, the honest UNMET verdict, and the scor
+corpus/README.md:265: | `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+corpus/README.md:266: | `knowledge/receipt-invisible-prefix-fields.md` | Invisible-prefix field lines in receipts (v4): the six-member Cf/White_Space class, the duplicate-field bypass shape, t
+corpus/README.md:267: | `lessons/round-90.md` | Round-90 receipt-bind v4: the blind-scorer freeze, the 47/47 kill-rule constructions (whole-text strip; context-gated prefix), the admitted Q83,### G30 THE KEY PRECEDENT: the r90 freeze adopted its predecessor's spot-check IN THE FREEZE COMMIT;
+###     the r91 freeze did NOT. This is why the r91 map arm is red.
+$ git show --stat b67fa963 | grep -E 'corpus/README.md|readme-map.json|plan.md'
+ .ufo/pins/readme-map.json                          |   3 +-
+ .ufo/waves/round-90/plan.md                        | 157 +++++
+ corpus/README.md                                   |   1 +
+exit=0
+
+$ git show --stat 2b1b8bf3 | grep -E 'corpus/README.md|readme-map.json|plan.md'; echo '(no corpus/README.md / readme-map.json lines above = the r91 freeze did NOT adopt)'
+ .ufo/waves/round-91/plan.md                        | 121 +++
+(no corpus/README.md / readme-map.json lines above = the r91 freeze did NOT adopt)
+exit=0
+
+$ git show b67fa963 -- corpus/README.md | grep '^+' | grep -v '^+++'
++| `lessons/round-89-verifier-spotcheck.md` | Non-author round-89 verifier spotcheck | Closure artifact; adopted by spotcheck-adopt |
+exit=0
+
+$ git show 114877a3 --stat | grep -E 'corpus/README.md|readme-map.json'
+ .ufo/pins/readme-map.json                          |   3 +-
+ corpus/README.md                                   |   1 +
+exit=0
+
+### G31 the r90 verifier spot-check landed in the r91 BASE (0bff4bab), before the r91 freeze
+$ git show --stat 0bff4bab | tail -4
+    round-90 verifier spot-check (integrator, hyaku): non-author admit/reject
+
+ corpus/lessons/round-90-verifier-spotcheck.md | 122 ++++++++++++++++++++++++++
+ 1 file changed, 122 insertions(+)
+exit=0
+
+$ git log --oneline --all -S 'lessons/round-90-verifier-spotcheck.md' -- corpus/README.md .ufo/pins/readme-map.json; echo '(empty = never adopted anywhere)'
+(empty = never adopted anywhere)
+exit=0

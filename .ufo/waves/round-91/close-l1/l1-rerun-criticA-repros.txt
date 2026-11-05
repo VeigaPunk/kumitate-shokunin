@@ -1,0 +1,21 @@
+### capwindow
+== candidate cand-capwindow.mjs ==
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0
+== positive control ref-fd-fstat.mjs (same receipt, same input) ==
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument too large: /fast/scratch/hyaku/kumitate-r91/K91CriticA/rp-capwindow.DRGTPC/ext/huge.bin
+exit=2
+### dirhash
+== candidate cand-dirhash.mjs ==
+RECEIPT_BIND: CLEAN matched=1 mismatched=0 unchecked=0 external=1
+exit=0
+== positive control ref-fd-fstat.mjs (same receipt, same input) ==
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91CriticA/rp-dirhash.yeyARP/ext/bundle.sh
+exit=2
+### extsh-gate-fifo
+== candidate cand-extsh-gate.mjs ==
+exit=124
+== positive control ref-fd-fstat.mjs (same receipt, same input) ==
+RECEIPT_BIND: FAIL-CLOSED UNRESOLVED r.txt external instrument not a regular file: /fast/scratch/hyaku/kumitate-r91/K91CriticA/rp-extsh-gate-fifo.YRj9ge/ext/pipe.bin
+exit=2
+C91_C1: HELD held=56/56

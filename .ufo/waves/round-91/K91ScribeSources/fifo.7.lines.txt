@@ -1,0 +1,226 @@
+1	
+2	
+3	
+4	
+5	
+6	
+7	
+8	fifo(7) - Linux manual page
+9	
+10	
+11	
+12	
+13	
+14	
+15	
+16	
+17	
+18	
+19	
+20	
+21	
+22	man7.org > Linux > man-pages
+23	
+24	
+25	
+26	Linux/UNIX system programming training
+27	
+28	
+29	
+30	
+31	
+32	
+33	
+34	
+35	fifo(7) — Linux manual page
+36	
+37	
+38	
+39	
+40	
+41	
+42	NAME | DESCRIPTION | NOTES | SEE ALSO | COLOPHON
+43	
+44	
+45	
+46	
+47	
+48	
+49	
+50	
+51	
+52	
+53	
+54	
+55	
+56	
+57	
+58	
+59	
+60	
+61	
+62	
+63	
+64	
+65	
+66	fifo(7) Miscellaneous Information Manual fifo(7)
+67	
+68	NAME top
+69	fifo - first-in first-out special file, named pipe
+70	
+71	DESCRIPTION top
+72	A FIFO special file (a named pipe) is similar to a pipe, except
+73	that it is accessed as part of the filesystem. It can be opened
+74	by multiple processes for reading or writing. When processes are
+75	exchanging data via the FIFO, the kernel passes all data
+76	internally without writing it to the filesystem. Thus, the FIFO
+77	special file has no contents on the filesystem; the filesystem
+78	entry merely serves as a reference point so that processes can
+79	access the pipe using a name in the filesystem.
+80	
+81	The kernel maintains exactly one pipe object for each FIFO special
+82	file that is opened by at least one process. The FIFO must be
+83	opened on both ends (reading and writing) before data can be
+84	passed. Normally, opening the FIFO blocks until the other end is
+85	opened also.
+86	
+87	A process can open a FIFO in nonblocking mode. In this case,
+88	opening for read-only succeeds even if no one has opened on the
+89	write side yet and opening for write-only fails with ENXIO (no
+90	such device or address) unless the other end has already been
+91	opened.
+92	
+93	Under Linux, opening a FIFO for read and write will succeed both
+94	in blocking and nonblocking mode. POSIX leaves this behavior
+95	undefined. This can be used to open a FIFO for writing while
+96	there are no readers available. A process that uses both ends of
+97	the connection in order to communicate with itself should be very
+98	careful to avoid deadlocks.
+99	
+100	NOTES top
+101	For details of the semantics of I/O on FIFOs, see pipe(7).
+102	
+103	When a process tries to write to a FIFO that is not opened for
+104	read on the other side, the process is sent a SIGPIPE signal.
+105	
+106	FIFO special files can be created by mkfifo(3), and are indicated
+107	by ls -l with the file type 'p'.
+108	
+109	SEE ALSO top
+110	mkfifo(1), open(2), pipe(2), sigaction(2), signal(2),
+111	socketpair(2), mkfifo(3), pipe(7)
+112	
+113	COLOPHON top
+114	This page is part of the man-pages (Linux kernel and C library
+115	user-space interface documentation) project. Information about
+116	the project can be found at
+117	⟨https://www.kernel.org/doc/man-pages/⟩. If you have a bug report
+118	for this manual page, see
+119	⟨https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIBUTING⟩.
+120	This page was obtained from the tarball man-pages-6.19.tar.gz
+121	fetched from
+122	⟨https://mirrors.edge.kernel.org/pub/linux/docs/man-pages/⟩ on
+123	2026-09-09. If you discover any rendering problems in this HTML
+124	version of the page, or you believe there is a better or more up-
+125	to-date source for the page, or you have corrections or
+126	improvements to the information in this COLOPHON (which is not
+127	part of the original manual page), send a mail to
+128	man-pages@man7.org
+129	
+130	Linux man-pages 6.19 2026-02-08 fifo(7)
+131	
+132	
+133	
+134	Pages that refer to this page:
+135	open(2),
+136	mkfifo(3),
+137	sd_is_fifo(3),
+138	systemd.socket(5),
+139	pipe(7),
+140	signal(7)
+141	
+142	
+143	
+144	
+145	
+146	
+147	
+148	
+149	
+150	
+151	
+152	
+153	HTML rendering created 2026-09-09
+154	by Michael Kerrisk,
+155	author of
+156	The Linux Programming Interface.
+157	
+158	
+159	For details of in-depth
+160	Linux/UNIX system programming training courses
+161	that I teach, look here.
+162	
+163	
+164	Hosting by jambit GmbH.
+165	
+166	
+167	
+168	
+169	
+170	
+171	
+172	
+173	
+174	
+175	
+176	
+177	
+178	
+179	
+180	
+181	
+182	
+183	
+184	<!-- Default Statcounter code for man7.org/linux/man-pages
+185	http://www.man7.org/linux/man-pages -->
+186	
+187	var sc_project=7422636;
+188	var sc_invisible=1;
+189	var sc_security="9b6714ff";
+190	
+191	<script type="text/javascript"
+192	src="https://www.statcounter.com/counter/counter.js"
+193	async>
+194	<a title="Web Analytics
+195	Made Easy - StatCounter" href="https://statcounter.com/"
+196	target="_blank"><img class="statcounter"
+197	src="https://c.statcounter.com/7422636/0/9b6714ff/1/"
+198	alt="Web Analytics Made Easy -
+199	StatCounter">
+200	
+201	
+202	
+203	
+204	
+205	
+206	
+207	
+208	var _gaq = _gaq || [];
+209	_gaq.push(['_setAccount', 'UA-9830363-8']);
+210	_gaq.push(['_trackPageview']);
+211	
+212	(function() {
+213	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+214	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+215	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+216	})();
+217	
+218	
+219	
+220	
+221	
+222	
+223	
+224	
+225	
+226	

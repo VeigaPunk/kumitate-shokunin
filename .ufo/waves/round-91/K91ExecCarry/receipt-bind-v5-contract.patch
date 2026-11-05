@@ -1,0 +1,20 @@
+--- a/scripts/receipt-bind.mjs
++++ b/scripts/receipt-bind.mjs
+@@ -2,7 +2,7 @@
+ /**
+  * receipt-bind.mjs — bind every close receipt in a directory to the instrument its own
+  * `cmd=` names, at a judged revision.
+- * Contract: kumitate-receipt-bind-v4 (round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
++ * Contract: kumitate-receipt-bind-v5 (round 91; v4 round 90; v3 round 89, v2 round 88, v1 round 87, capability `receipt-bind`).
+  *
+  *   node scripts/receipt-bind.mjs --dir <receipt-dir> --rev <40-hex> [--lane <dir>] [--json]
+  *   node scripts/receipt-bind.mjs --selftest [--work <dir>]
+@@ -93,7 +93,7 @@
+ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+-const CONTRACT = 'kumitate-receipt-bind-v4';
++const CONTRACT = 'kumitate-receipt-bind-v5';
+ const MAX_RECEIPT_BYTES = 1048576;
+ const SELF = fileURLToPath(import.meta.url);
+ const FULL_REV = /^[a-f0-9]{40}$/;
